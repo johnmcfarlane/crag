@@ -1,0 +1,35 @@
+/*
+ *  Sphere3.h
+ *  Crag
+ *
+ *  Created by John on 10/31/09.
+ *  Copyright 2010 John McFarlane. All rights reserved.
+ *
+ */
+
+#pragma once
+
+#include "Sphere.h"
+#include "core/Vector3.h"
+#include "floatOps.h"
+
+template<typename S> class Sphere3 : public Sphere<Vector3<S>, S>
+{
+	typedef Sphere<Vector3<S>, S> Base;
+public:
+	typedef Vector3<S> Vector;
+	
+	Sphere3() { }
+	
+	Sphere3(Vector const & c, S r) : Sphere<Vector, S>(c, r) { }
+	
+	S Area() const {
+		return static_cast<S>(PI * 4.) * Square(Base::GetRadius());
+	}
+	
+	S Volume() const {
+		return static_cast<S>(PI * 4. / 3.) * Cube(Base::GetRadius());
+	}
+};
+
+typedef Sphere3<float> Sphere3f;
