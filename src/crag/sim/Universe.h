@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "sim/Defs.h"
+#include "sim/defs.h"
 #include "core/ConfigEntry.h"
 
 

@@ -23,9 +23,9 @@
 <tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.1994561294" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
 <tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.1293314448" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
 <option id="macosx.cpp.link.option.libs.505209254" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="SDL"/>
-<listOptionValue builtIn="false" value="ode"/>
 <listOptionValue builtIn="false" value="boost_thread"/>
+<listOptionValue builtIn="false" value="ode"/>
+<listOptionValue builtIn="false" value="SDL"/>
 <listOptionValue builtIn="false" value="SDL_image"/>
 <listOptionValue builtIn="false" value="SDLmain"/>
 </option>
@@ -508,9 +508,13 @@
 <builder buildPath="${workspace_loc:/crag/Release}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.release.1630572576" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.release"/>
 <tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release.467179338" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release"/>
 <tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release.1891422699" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release">
-<option id="macosx.cpp.link.option.flags.1697193342" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-framework OpenGL" valueType="string"/>
+<option id="macosx.cpp.link.option.flags.1697193342" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-framework OpenGL -framework Cocoa" valueType="string"/>
 <option id="macosx.cpp.link.option.libs.336725828" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+<listOptionValue builtIn="false" value="boost_thread"/>
+<listOptionValue builtIn="false" value="ode"/>
 <listOptionValue builtIn="false" value="SDL"/>
+<listOptionValue builtIn="false" value="SDL_image"/>
+<listOptionValue builtIn="false" value="SDLmain"/>
 </option>
 <inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1876769640" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

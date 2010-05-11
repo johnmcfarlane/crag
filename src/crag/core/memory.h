@@ -119,7 +119,7 @@ inline void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *))
 #elif defined(__APPLE__)
 	// Apple deliberately prevent use of posix_memalign. 
 	// Malloc is guaranteed to be 16-byte aligned. 
-	// Anything requiring greater alignment can simple run slower on mac. 
+	// Anything requiring greater alignment can simply run slower on mac.
 	return malloc(num_bytes);
 #else
 	void * allocation;
