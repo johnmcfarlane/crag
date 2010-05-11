@@ -3,8 +3,9 @@
  *  Crag
  *
  *  Created by john on 6/30/09.
- *  Copyright 2010 John McFarlane. All rights reserved.
- *  Most of this file makes no sense and was lifted from ODE/OPCODE (http://www.codercorner.com/Opcode.htm)
+ *  Copyright 2009, 2010 John McFarlane. All rights reserved.
+ *  This program is distributed under the terms of the GNU General Public License.
+ *  Most of this file makes no sense and was adapted from ODE/OPCODE (http://www.codercorner.com/Opcode.htm)
  *
  */
 

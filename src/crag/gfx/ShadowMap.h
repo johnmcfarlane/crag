@@ -3,13 +3,14 @@
  *  Crag
  *
  *  Created by John on 12/23/09.
- *  Copyright 2010 John McFarlane. All rights reserved.
+ *  Copyright 2009, 2010 John McFarlane. All rights reserved.
+ *  This program is distributed under the terms of the GNU General Public License.
  *
  */
 
 #pragma once
 
-#include "sim/Defs.h"
+#include "sim/defs.h"
 #include "glpp/Texture.h"
 
 #if defined(NDEBUG)
