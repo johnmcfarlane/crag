@@ -13,13 +13,14 @@
 #include "Name.h"
 
 
-#if defined(WIN32) && 0
+#if ! defined(WIN32)
 #define glppBindBuffer		glBindBuffer
 #define glppBufferData		glBufferData
 #define glppBufferSubData	glBufferSubData
 #define glppDeleteBuffers	glDeleteBuffers
 #define glppGenBuffers		glGenBuffers
 #else
+// works well on WIN32
 #define glppBindBuffer		glBindBufferARB
 #define glppBufferData		glBufferDataARB
 #define glppBufferSubData	glBufferSubDataARB

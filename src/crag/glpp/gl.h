@@ -18,11 +18,8 @@
 #elif defined(WIN32)
 #define GLEW_STATIC
 #define GL_GLEXT_PROTOTYPES
-//#include <GL/glxew.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
-//#include <GL/glext.h>
-//#include <GL/glx.h>
 #include <GL/glu.h>
 #else
 #define GLEW_STATIC

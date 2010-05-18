@@ -297,7 +297,9 @@ class null_stream : public std::ostream
 {
 public:
 	null_stream()
+#if defined(WIN32)
 		: std::ostream(std::_Noinit)
+#endif
 	{
 	}
 };

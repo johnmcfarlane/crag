@@ -12,7 +12,7 @@
 
 #include "Color.h"
 
-#include "sim/Defs.h"
+#include "sim/defs.h"
 
 
 namespace gfx

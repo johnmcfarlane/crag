@@ -36,6 +36,7 @@ gfx::Font::Font(char const * filename, float scale)
 	image.Load(filename);
 	if (! image)
 	{
+		std::cout << "Failed to find font file, " << filename << std::endl;
 		return;
 	}
 	
@@ -55,6 +56,11 @@ gfx::Font::Font(char const * filename, float scale)
 
 void gfx::Font::Print(char const * text, Vector2f const & position) const
 {
+	if (! vbo.IsInitialized())
+	{
+		return;
+	}
+
 	vertex_buffer_mutex.Lock();
 
 	gl::Bind(& vbo);

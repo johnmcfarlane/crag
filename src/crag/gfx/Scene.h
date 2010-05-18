@@ -9,7 +9,7 @@
  */
 
 #include "Pov.h"
-#include "sim/Defs.h"
+#include "sim/defs.h"
 #include "ShadowMap.h"
 
 #include <map>

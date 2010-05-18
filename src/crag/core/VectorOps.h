@@ -51,8 +51,12 @@ template<typename V> bool SafeNormalize(V & v)
 
 template<typename V> bool FastSafeNormalize(V & v)
 {
+#if defined(WIN32)
 	typedef V::Scalar S;
-	//typedef typeof(FastInvSqrt(LengthSq(v))) S;
+#else
+	typedef typeof(FastInvSqrt(LengthSq(v))) S;
+#endif
+
 	S coefficient = FastInvSqrt(LengthSq(v));
 	
 	if (coefficient > 0) {

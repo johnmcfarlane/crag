@@ -11,10 +11,6 @@
 #pragma once
 
 
-#if defined WELL_THIS_DID_SEEM_TO_WORK_UNTIL_I_TRIED_IT_ON_VC10Ex
-#include <SDL/SDL_keyboard.h>
-#include <SDL/SDL_events.h>
-#endif
 
 #define KEY_0 SDLK_0
 #define KEY_1 SDLK_1

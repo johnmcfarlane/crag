@@ -15,8 +15,6 @@
 #include "core/memory.h"
 #include "core/Vector2.h"
 
-//#include <SDL/SDL.h>
-
 
 namespace app
 {

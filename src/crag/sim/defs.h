@@ -1,5 +1,5 @@
 /*
- *  sim/Defs.h
+ *  sim/defs.h
  *  Crag
  *
  *  Created by John on 2/11/10.
