@@ -13,11 +13,11 @@
 #include "Mesh.h"
 #include "Scene.h"
 
+#include "core/Thread.h"
+
 #include "glpp/glpp.h"
 
 #include "app/App.h"
-
-#include <boost/thread.hpp>
 
 
 namespace sim
@@ -57,7 +57,7 @@ namespace form
 		bool OutOfRange() const;
 		
 	private:
-		static void ThreadFunc(SceneThread * st);
+		static void ThreadFunc(SceneThread * scene_thread);
 		void Run();	// Called when thread is launched and runs the loop.
 		void ThreadTick();
 		void AdjustNumQuaterna();
@@ -69,7 +69,7 @@ namespace form
 		Scene scene;
 		int num_nodes;
 		float frame_ratio;
-		boost::mutex scene_mutex;
+		core::Mutex scene_mutex;
 		
 		FormationSet const & formations;		
 		sim::Observer const & observer;
@@ -84,9 +84,9 @@ namespace form
 		// and get passed to the VBOs.
 		form::Mesh mesh;
 		bool mesh_updated;
-		boost::mutex mesh_mutex;
+		core::Mutex mesh_mutex;
 
-		boost::thread * thread;
+		core::Thread * thread;
 	};
 }
 

@@ -21,15 +21,16 @@
 // form::Model
 
 form::Model::Model()
-: root_node(* this)
-, shader(nullptr)
+: shader(nullptr)
 {
+	root_node = RootNode(* this);
 }
 
 form::Model::Model(Model const & rhs)
-: root_node(* this)
-, shader(nullptr)
+: shader(nullptr)
 {
+	root_node = RootNode(* this);
+
 	// Can only copy default-state objects.
 	Assert(rhs.shader == nullptr);
 }

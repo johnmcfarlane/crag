@@ -14,8 +14,6 @@
 
 #include "core/Vector2.h"
 
-#include <SDL/SDL_image.h>
-
 
 namespace gl
 {

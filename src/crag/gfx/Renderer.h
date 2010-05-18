@@ -10,6 +10,12 @@
 
 #pragma once
 
+#include "ShadowMap.h"
+
+#if (SHADOW_MAP_TEST >= 1)
+#include "glpp/Vbo_Types.h"
+#endif
+
 #include "glpp/RenderBuffer.h"
 #include "glpp/FrameBuffer.h"
 
@@ -80,5 +86,9 @@ namespace gfx
 		};
 
 		static StateParam const init_state[];
+
+#if (SHADOW_MAP_TEST >= 1)
+		mutable gl::Vbo2dTex quad_buffer;
+#endif
 	};
 }

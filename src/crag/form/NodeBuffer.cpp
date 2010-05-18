@@ -64,7 +64,7 @@ namespace ANONYMOUS {
 
 
 NodeBuffer::NodeBuffer()
-: nodes(Allocate<Node>(max_num_nodes, 16))
+: nodes(new Node [max_num_nodes])
 , nodes_available_end(nodes)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_available_end(quaterna)
@@ -132,14 +132,15 @@ void NodeBuffer::Verify() const
 		VerifyTrue(q->parent_score < 0);
 		
 		Node const * n = q->nodes;
-		VerifyTrue(n->parent == nullptr);
 		
 		if (test_mid_decrease) {
 			VerifyArrayElement(n, nodes_available_end, nodes_end);
 			VerifyArrayElement(q, quaterna_available_end, quaterna_end);
 			VerifyTrue((n - nodes) == (q - quaterna) * 4);
 		}
-		
+
+		VerifyTrue(n->parent == nullptr);
+
 		VerifyObject(* q);
 	}
 }

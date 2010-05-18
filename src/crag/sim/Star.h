@@ -24,13 +24,14 @@ namespace sim
 
 		void Tick();
 	
-		float GetBoundingRadius() const;
+		Scalar GetBoundingRadius() const;
 		sim::Vector3 const & GetPosition() const;
 	
 		gfx::Light const & GetLight() const;
 
 	private:
 		gfx::Light light;
+		sim::Vector3 position;
 		float radius;
 		float year;
 	};

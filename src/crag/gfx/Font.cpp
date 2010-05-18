@@ -13,9 +13,9 @@
 #include "Font.h"
 #include "Image.h"
 
-#include "app/App.h"
+#include "core/Thread.h"
 
-#include <boost/thread/mutex.hpp>
+#include "app/App.h"
 
 #include <vector>
 
@@ -24,7 +24,7 @@ namespace ANONYMOUS
 {
 	// TODO: All a big hack.
 	::std::vector<gl::Vertex2dTex> vertex_buffer;
-	boost::mutex vertex_buffer_mutex;
+	core::Mutex vertex_buffer_mutex;
 	
 	int margin_hack[2] = { 8, 8 };
 }
@@ -53,9 +53,9 @@ gfx::Font::Font(char const * filename, float scale)
 	vbo.Init();
 }
 
-void gfx::Font::Print(char const * text, Vector2i const & position) const
+void gfx::Font::Print(char const * text, Vector2f const & position) const
 {
-	vertex_buffer_mutex.lock();
+	vertex_buffer_mutex.Lock();
 
 	gl::Bind(& vbo);
 	Bind(& texture);
@@ -64,10 +64,10 @@ void gfx::Font::Print(char const * text, Vector2i const & position) const
 	GenerateVerts(text, position);
 	RenderVerts();
 
-	vertex_buffer_mutex.unlock();
+	vertex_buffer_mutex.Unlock();
 }
 
-void gfx::Font::GenerateVerts(char const * text, Vector2i const & position) const
+void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) const
 {
 	Vector2f p = position;
 	while (true)

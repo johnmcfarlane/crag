@@ -156,7 +156,6 @@ sim::Vector3 const & form::Manager::BeginRender(bool color)
 	
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	
-	//front_buffer_mutex.lock();
 	front_buffer_object->BeginDraw(color);
 	
 	return front_buffer_origin;

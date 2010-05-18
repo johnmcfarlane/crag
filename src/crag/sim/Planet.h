@@ -31,7 +31,7 @@ namespace sim
 		//void Draw() const;
 		void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
 	
-		float GetBoundingRadius() const;
+		Scalar GetBoundingRadius() const;
 		sim::Vector3 const & GetPosition() const;
 	
 		bool CustomCollision(PhysicalBody & that_body) const;

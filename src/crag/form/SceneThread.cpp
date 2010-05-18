@@ -77,7 +77,7 @@ void form::SceneThread::Launch()
 {
 	if (threaded) {
 		Assert(thread == nullptr);
-		thread = new boost::thread(ThreadFunc, this);
+		thread = new core::Thread(ThreadFunc, this);
 	}
 }
 
@@ -87,7 +87,7 @@ void form::SceneThread::Quit()
 
 	if (thread)
 	{
-		thread->join();
+		thread->Join();
 	}
 }
 
@@ -117,12 +117,11 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 {
 	bool polled;
 
-	mesh_mutex.lock();
+	mesh_mutex.Lock();
 	if (mesh_updated)
 	{
 		mbo.Set(mesh);
 
-		//scene_mutex.lock();
 		mesh_origin = scene.GetOrigin();
 
 		//if (reset_origin) {
@@ -137,7 +136,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 	{
 		polled = false;
 	}
-	mesh_mutex.unlock();
+	mesh_mutex.Unlock();
 
 	return polled;
 }
@@ -170,7 +169,7 @@ void form::SceneThread::Run()
 {
 	while (! quit_flag) {
 		if (suspend_flag) {
-			boost::thread::yield();
+			app::Sleep();
 		}
 		else {
 			ThreadTick();
@@ -229,9 +228,9 @@ void form::SceneThread::AdjustNumQuaterna()
 
 void form::SceneThread::GenerateMesh()
 {
-	mesh_mutex.lock();
+	mesh_mutex.Lock();
 	scene.GenerateMesh(mesh);
 	mesh_updated = true;
-	mesh_mutex.unlock();
+	mesh_mutex.Unlock();
 }
 

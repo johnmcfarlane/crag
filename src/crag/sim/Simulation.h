@@ -69,7 +69,7 @@ namespace sim
 		int consecutive_frame_lag;
 		
 		// Periodically recalculat fps
-		float fps;
+		double fps;
 		int frame_count;
 		app::TimeType frame_count_reset_time;
 	};

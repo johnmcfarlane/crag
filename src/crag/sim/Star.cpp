@@ -23,19 +23,19 @@ sim::Star::Star(float init_radius, float init_year)
 
 void sim::Star::Tick()
 {
-	float angle = static_cast<float>(Universe::time * (2. * PI) / year);
-	Vector3f p = Vector3f(- Sin(angle) * radius, - Cos(angle) * radius, 0);
-	light.SetPosition(p);
+	Scalar angle = static_cast<Scalar>(Universe::time * (2. * PI) / year);
+	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, 0);
+	light.SetPosition(position);
 }
 
-float sim::Star::GetBoundingRadius() const
+sim::Scalar sim::Star::GetBoundingRadius() const
 {
 	return 0;	// really just a point light for now
 }
 
 sim::Vector3 const & sim::Star::GetPosition() const
 {
-	return light.GetPosition();
+	return position;
 }
 
 gfx::Light const & sim::Star::GetLight() const

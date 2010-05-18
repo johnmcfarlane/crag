@@ -23,16 +23,30 @@
 // Clean inclusion of <windows.h>.
 
 #if defined(WIN32)
+
+// Set minimum Windows version
+#define _WIN32_WINNT _WIN32_WINNT_WIN2K
+#include <SDKDDKVer.h>
+
+// Main include for Windows world.
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#pragma warning(disable : 4355)
+
+#undef Yield
+
+// Avoid some annoying warnings.
+//#pragma warning(disable : 4355)
 #pragma warning(disable : 4530)
+
 #endif
 
 
 //////////////////////////////////////////////////////////////////////
 // Regular includes.
+
+#include <SDL.h>
+#include <SDL_image.h>
 
 #include <stdlib.h>
 #include <stdint.h>

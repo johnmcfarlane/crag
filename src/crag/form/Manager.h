@@ -14,8 +14,7 @@
 
 #include "sim/defs.h"
 #include "core/Singleton.h"
-
-#include <boost/thread/mutex.hpp>
+#include "core/Thread.h"
 
 #include <set>
 

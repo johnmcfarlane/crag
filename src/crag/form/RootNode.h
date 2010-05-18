@@ -20,9 +20,10 @@ namespace form
 
 	class RootNode : public Node
 	{
-		RootNode(RootNode const & rhs);	// undefined
 	public:
+		RootNode();
 		RootNode(Model & _owner);
+		RootNode(RootNode const & rhs);
 		
 		DUMP_OPERATOR_FRIEND_DECLARATION(RootNode);
 
@@ -35,6 +36,6 @@ namespace form
 	private:
 		void SetVertexCenter(Vertex & vert, Vector3d const & relative_pos, Vector3d const & center, double scale);
 		
-		Model & owner;
+		Model * owner;
 	};
 }

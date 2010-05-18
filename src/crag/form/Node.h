@@ -63,7 +63,7 @@ namespace form
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(Node);
 		
-		OVERLOAD_NEW_DELETE(16);
+		OVERLOAD_NEW_DELETE(128);
 		
 		// An array of four sibling nodes.
 		//typedef Node form::Quaterna[4];

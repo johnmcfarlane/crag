@@ -15,7 +15,7 @@
 #include "core/memory.h"
 #include "core/Vector2.h"
 
-#include <SDL/SDL.h>
+//#include <SDL/SDL.h>
 
 
 namespace app
@@ -139,7 +139,7 @@ bool app::GetEvent(Event & event)
 				return true;
 
 			case SDL_ACTIVEEVENT:
-				SetFocus(event.active.gain);
+				SetFocus(event.active.gain != 0);
 				break;
 
 			case SDL_KEYDOWN:
@@ -188,5 +188,5 @@ double app::TimeTypeToSeconds(TimeType t)
 
 app::TimeType app::SecondsToTimeType(float s)
 {
-	return s * 1000.f;
+	return static_cast<app::TimeType>(s * 1000.f);
 }

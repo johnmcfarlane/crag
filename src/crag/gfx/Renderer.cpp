@@ -76,9 +76,7 @@ void SetFrustrum(class gfx::Frustrum const & frustrum)
 
 #if (SHADOW_MAP_TEST >= 1)
 
-	gl::Vbo2dTex quad_buffer;
-
-void InitShadowMapTest()
+void InitShadowMapTest(gl::Vbo2dTex & quad_buffer)
 {
 	quad_buffer.Init();
 	gl::Bind(& quad_buffer);
@@ -94,7 +92,7 @@ void InitShadowMapTest()
 	quad_buffer.Set(4, quad);
 }
 
-void DrawShadowMapTest(std::map<gfx::ShadowMapKey, gfx::ShadowMap> const & shadow_maps)
+void DrawShadowMapTest(gl::Vbo2dTex & quad_buffer, std::map<gfx::ShadowMapKey, gfx::ShadowMap> const & shadow_maps)
 {
 	GLPP_VERIFY;
 
@@ -148,7 +146,7 @@ void DrawShadowMapTest(std::map<gfx::ShadowMapKey, gfx::ShadowMap> const & shado
 
 #else
 
-void InitShadowMapTest()
+void InitShadowMapTest(gl::Vbo2dTex &)
 {
 }
 
@@ -183,7 +181,9 @@ gfx::Renderer::Renderer()
 		
 		Bind((gl::FrameBuffer *)nullptr);
 		
-		InitShadowMapTest();
+#if (SHADOW_MAP_TEST >= 1)
+		InitShadowMapTest(quad_buffer);
+#endif
 	}
 
 	InitRenderState();
@@ -302,10 +302,12 @@ void gfx::Renderer::Render(Scene & scene) const
 	
 	RenderScene(scene);
 
+#if (SHADOW_MAP_TEST >= 1)
 	if (shadow_mapping) {
-		DrawShadowMapTest(scene.shadow_maps);
+		DrawShadowMapTest(quad_buffer, scene.shadow_maps);
 	}
-	
+#endif
+
 	VerifyRenderState();
 }
 

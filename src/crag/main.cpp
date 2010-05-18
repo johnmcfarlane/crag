@@ -17,8 +17,6 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
-#include <SDL/SDL.h>
-
 #include <fstream>
 
 
@@ -97,6 +95,8 @@ bool Crag()
 		return false;
 	}
 
+	SDL_WM_SetCaption("Crag", nullptr);
+
 	// Run the simulation.
 	sim::Simulation * sim = new sim::Simulation ();
 	sim->Run();
@@ -117,7 +117,7 @@ bool Load()
 	}
 	else
 	{
-		std::cerr << "Failed to open config file \"" << config_filename << "\" for reading.\n";
+		std::cout << "Failed to open config file \"" << config_filename << "\" for reading.\n";
 		return false;
 	}
 #elif (LOAD_CONFIG == 0)
@@ -136,7 +136,7 @@ bool Save()
 	}
 	else
 	{
-		std::cerr << "Failed to open config file \"" << config_filename << "\" for writing.\n";
+		std::cout << "Failed to open config file \"" << config_filename << "\" for writing.\n";
 		return false;
 	}
 }

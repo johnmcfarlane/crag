@@ -13,6 +13,21 @@
 #include "Name.h"
 
 
+#if defined(WIN32) && 0
+#define glppBindBuffer		glBindBuffer
+#define glppBufferData		glBufferData
+#define glppBufferSubData	glBufferSubData
+#define glppDeleteBuffers	glDeleteBuffers
+#define glppGenBuffers		glGenBuffers
+#else
+#define glppBindBuffer		glBindBufferARB
+#define glppBufferData		glBufferDataARB
+#define glppBufferSubData	glBufferSubDataARB
+#define glppDeleteBuffers	glDeleteBuffersARB
+#define glppGenBuffers		glGenBuffersARB
+#endif
+
+
 namespace gl
 {
 	
@@ -25,16 +40,14 @@ namespace gl
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
-			//GLPP_CALL(glBufferData(TARGET, size, nullptr, GL_STATIC_DRAW));
-			GLPP_CALL(glBufferData(TARGET, size, nullptr, GL_STATIC_DRAW_ARB));
+			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GL_STATIC_DRAW_ARB));
 		}
 		
 		void Set(int _num, ELEMENT const * array)
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
-			//GLPP_CALL(glBufferSubData(TARGET, 0, size, array));
-			GLPP_CALL(glBufferSubData(TARGET, 0, size, array));
+			GLPP_CALL(glppBufferSubData(TARGET, 0, size, array));
 		}
 	};
 

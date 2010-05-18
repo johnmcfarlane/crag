@@ -33,6 +33,7 @@
 #define CACHE_LINE_WIDTH 128
 #elif defined(WIN32)
 #define CACHE_LINE_WIDTH 128
+#include <xmmintrin.h>
 #else
 #error Unidentified platform.
 #endif
@@ -78,7 +79,7 @@ inline void PrefetchBlock(void const * ptr)
 #if defined(__GNUC__)
 	__builtin_prefetch(ptr);
 #elif defined(WIN32)
-	_mm_prefetch(ptr, _MM_HINT_T0);	// or is _MM_HINT_NTA better?
+	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);	// or is _MM_HINT_NTA better?
 #else
 #endif
 }
@@ -141,18 +142,26 @@ inline void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *))
 
 template <typename T> void Free(T * allocation)
 {
-#if ! defined(WIN32)
+#if ! defined(WIN32) || 1
 	return free(allocation);
 #else
 	return _aligned_free(allocation);
 #endif
 }
 
-template <typename T> T * Allocate(int num_elements, size_t alignment = 4)
+/*template <typename T> T * Allocate(int num_elements, size_t alignment = 4)
 {
 	size_t num_bytes = sizeof(T) * num_elements;
-	return static_cast<T *>(Allocate(num_bytes, alignment));
-}
+	T * begin = static_cast<T *>(Allocate(num_bytes, alignment));
+	if (begin != nullptr)
+	{
+		T * end = begin + num_elements;
+		for (T * it = begin; it != end; ++ it)
+		{
+			new(it) T();
+		}
+	}
+}*/
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,6 +181,7 @@ inline void operator delete(void * ptr) throw()
 ////////////////////////////////////////////////////////////////////////////////
 // Class new/delete
 
+// This only dictates the alignment of the first element (when allocating an array).
 #define OVERLOAD_NEW_DELETE(ALIGNMENT) \
 	void * operator new (size_t num_bytes) { return Allocate(num_bytes, ALIGNMENT); } \
 	void operator delete (void * ptr) { Free(ptr); }

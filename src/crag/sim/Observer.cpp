@@ -43,11 +43,13 @@ CONFIG_DEFINE (observer_light_attenuation_c, float, 4.000f);
 
 sim::Observer::Observer()
 : Entity()
-, sphere(* this, 1, 1)
+, sphere()
 , speed(0)
 , speed_factor(camera_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
-{	
+{
+	sphere.Init(* this, 1, 1);
+
 	dBodyID body = sphere.GetBody();
 	dBodySetLinearDamping(body, camera_linear_damping);
 	dBodySetAngularDamping(body, camera_angular_damping);
@@ -59,25 +61,25 @@ sim::Observer::~Observer()
 {
 //	camera_pos = GetPosition();
 //	camera_rot = GetRotation();
-	camera_speed_factor = speed_factor;
+	camera_speed_factor = static_cast<float>(speed_factor);
 }
 
 void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 {
-	float velocity_impulse = camera_velocity_impulse * speed_factor;
+	Scalar velocity_impulse = camera_velocity_impulse * speed_factor;
 	Vector3 const impulse_factors[2] = 
 	{
 		Vector3(velocity_impulse, velocity_impulse, velocity_impulse),
 		Vector3(camera_torque_impulse, camera_torque_impulse, camera_torque_impulse),
 	};
 	
-	float inv_t = 1.f / Universe::target_frame_period;
+	Scalar inv_t = 1.f / Universe::target_frame_period;
 
 	for (int d = 0; d < 2; ++ d)
 	{
 		for (int axis = 0; axis < 3; ++ axis)
 		{
-			float factor = impulse.factors[d][axis];
+			Scalar factor = impulse.factors[d][axis];
 
 			impulses[d][axis] = impulse_factors[d][axis] * factor * inv_t;
 		}
@@ -89,7 +91,7 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 			gfx::DebugGraphics::out << (n ? "torque:" : "force: ");
 			for (int m = 0; m < 3; ++ m) {
 				char c;
-				int f = impulse.factors[n][m];
+				int f = static_cast<int>(impulse.factors[n][m]);
 				if (f < 0) {
 					c = '-';
 				}
@@ -129,12 +131,12 @@ void sim::Observer::Tick()
 	light.SetPosition(GetPosition());
 }
 
-Vector3f const * sim::Observer::GetImpulse() const 
+sim::Vector3 const * sim::Observer::GetImpulse() const 
 { 
 	return impulses; 
 }
 
-float sim::Observer::GetBoundingRadius() const
+sim::Scalar sim::Observer::GetBoundingRadius() const
 {
 	return sphere.GetRadius();
 }

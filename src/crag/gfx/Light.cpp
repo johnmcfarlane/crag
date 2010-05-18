@@ -19,7 +19,7 @@
 #include "core/Vector3.h"
 
 
-gfx::Light::Light(sim::Vector3 const & pos, Color4f const & col, float a, float b, float c, bool init_shadows)
+gfx::Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float c, bool init_shadows)
 : position(pos)
 , color(col)
 , attenuation_a(a)
@@ -34,12 +34,12 @@ bool gfx::Light::GenerateShadowMaps() const
 	return shadows;
 }
 
-void gfx::Light::SetPosition(sim::Vector3 const & p)
+void gfx::Light::SetPosition(Vector3f const & p)
 {
 	position = p;
 }
 
-sim::Vector3 const & gfx::Light::GetPosition() const
+Vector3f const & gfx::Light::GetPosition() const
 { 
 	return position; 
 }

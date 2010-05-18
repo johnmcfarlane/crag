@@ -10,6 +10,8 @@
  *
  */
 
+#include "defs.h"
+
 #include "form/Mesh.h"
 
 #include <ode/ode.h>
@@ -17,10 +19,12 @@
 
 namespace sim
 {
+	class Entity;
+
 	class PhysicalBody
 	{
 	public:
-		PhysicalBody(class Entity & entity, dGeomID geom);
+		PhysicalBody();
 		~PhysicalBody();
 
 		//void BeginCollisions();
@@ -31,7 +35,13 @@ namespace sim
 		//Mesh & GetFormationMesh() { return formation_mesh; }
 		//dGeomID GetFormationGeom() { return formation_geom; }
 
+		void Init(Entity & entity, dGeomID init_geom);
+		void Deinit();
+
 	private:
+		void Create(Entity & entity, dGeomID init_geom);
+		void Destroy();
+
 		// The physical thing itself.
 		dBodyID body;
 		dGeomID geom;
@@ -41,8 +51,10 @@ namespace sim
 	class PhysicalSphere : public PhysicalBody
 	{
 	public:
-		PhysicalSphere(Entity & entity, float density, float radius);
+		PhysicalSphere();
 
-		float GetRadius() const;
+		void Init(Entity & entity, float density, float radius);
+
+		Scalar GetRadius() const;
 	};
 }

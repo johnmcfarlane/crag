@@ -51,7 +51,7 @@ void ConfigManager::Load(std::istream & in)
 			}
 			else
 			{
-				std::cerr << "ConfigManager: unrecognised parameter " << name << " on line " << line_num << ".\n";
+				std::cout << "ConfigManager: unrecognised parameter " << name << " on line " << line_num << ".\n";
 			}
 		}
 	}

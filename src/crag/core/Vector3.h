@@ -24,7 +24,10 @@ public:
 	Vector3() { }
 	explicit Vector3(Scalar const * array) : x(array[0]), y(array[1]), z(array[2]) { }
 	Vector3(Scalar ix, Scalar iy, Scalar iz) : x(ix), y(iy), z(iz) { }
-	template<typename I> Vector3(Vector3<I> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z) { }
+	template<typename I> Vector3(Vector3<I> const & rhs) 
+		: x(static_cast<S>(rhs.x))
+		, y(static_cast<S>(rhs.y))
+		, z(static_cast<S>(rhs.z)) { }
 	
 	Scalar const & operator[](int index) const 
 	{

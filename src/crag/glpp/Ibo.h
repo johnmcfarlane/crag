@@ -8,39 +8,49 @@
  *
  */
 
+#pragma once
+
 #include "BufferObject.h"
 
 
+#if defined(WIN32) && 0
+#define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER
+#define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING
+#else
+#define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER_ARB
+#define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB
+#endif
+
 namespace gl
 {
-	class Ibo : public BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER_ARB>
+	class Ibo : public BufferObject<GLuint, GLPP_ELEMENT_ARRAY_BUFFER>
 	{
-		typedef BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER_ARB> BaseClass;
+		typedef BufferObject<GLuint, GLPP_ELEMENT_ARRAY_BUFFER> BaseClass;
 	public:
 	};
 
 
-	template<> inline GLuint Init<GL_ELEMENT_ARRAY_BUFFER_ARB>()
+	template<> inline GLuint Init<GLPP_ELEMENT_ARRAY_BUFFER>()
 	{
 		GLuint id;
-		GLPP_CALL(glGenBuffers(1, &id));
+		GLPP_CALL(glppGenBuffers(1, &id));
 		assert(id != 0);
 		return id;
 	}
 
-	template<> inline void Deinit<GL_ELEMENT_ARRAY_BUFFER_ARB>(GLuint id)
+	template<> inline void Deinit<GLPP_ELEMENT_ARRAY_BUFFER>(GLuint id)
 	{
 		assert (id != 0);
-		GLPP_CALL(glDeleteBuffers(1, &id));
+		GLPP_CALL(glppDeleteBuffers(1, &id));
 	}
 
-	template<> inline void Bind<GL_ELEMENT_ARRAY_BUFFER_ARB>(GLuint id)
+	template<> inline void Bind<GLPP_ELEMENT_ARRAY_BUFFER>(GLuint id)
 	{
-		GLPP_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, id));
+		GLPP_CALL(glppBindBuffer(GLPP_ELEMENT_ARRAY_BUFFER, id));
 	}
 
-	template<> inline GLuint GetBindingEnum<GL_ELEMENT_ARRAY_BUFFER_ARB>()
+	template<> inline GLuint GetBindingEnum<GLPP_ELEMENT_ARRAY_BUFFER>()
 	{
-		return GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB;
+		return GLPP_ELEMENT_ARRAY_BUFFER_BINDING;
 	}
 }

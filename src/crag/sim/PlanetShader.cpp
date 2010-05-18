@@ -137,9 +137,9 @@ Vector3f sim::PlanetShader::CalcMidPointPos(int seed, Vector3f const & near_corn
 	S height2 = Length(near_corners2_d - center);
 	S min_height = Min(height1, height2);
 	S max_height = Max(height1, height2);
-	S avg_height = (min_height + max_height) * .5;
+	S avg_height = (min_height + max_height) * static_cast<S>(.5);
 	
-	S variance = Length(near_corners1 - near_corners2) * .015;
+	S variance = Length(near_corners1 - near_corners2) * static_cast<S>(.015);
 	
 	S height = avg_height + variance * (rnd.GetFloatInclusive() - rnd.GetFloatInclusive());
 	if (height > max_radius)

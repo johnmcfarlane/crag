@@ -23,10 +23,10 @@ namespace gfx
 	public:
 		Font(char const * filename, float scale = 1.f);
 
-		void Print(char const * text, Vector2i const & position) const;
+		void Print(char const * text, Vector2f const & position) const;
 
 	private:
-		void GenerateVerts(char const * text, Vector2i const & position) const;
+		void GenerateVerts(char const * text, Vector2f const & position) const;
 		void RenderVerts() const;
 		
 		void PrintChar(char c, Vector2f & position) const;

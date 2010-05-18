@@ -21,8 +21,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // RootNode
 
+form::RootNode::RootNode()
+	: owner(nullptr)
+{
+}
+
 form::RootNode::RootNode(Model & _owner)
-: owner(_owner)
+	: owner(& _owner)
+{
+}
+
+form::RootNode::RootNode(RootNode const & rhs)
+	: Node(rhs)
+	, owner(rhs.owner)
 {
 }
 
@@ -77,7 +88,7 @@ void form::RootNode::Deinit(VertexBuffer & vertices)
 
 form::Model & form::RootNode::GetOwner() const
 {
-	return owner;
+	return ref(owner);
 }
 
 void form::RootNode::SetCenter(Vector3d const & center, double scale)

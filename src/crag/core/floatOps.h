@@ -19,12 +19,20 @@
 
 #include <math.h>
 
+
+#if defined(WIN32) && (_M_IX86_FP > 0)
+#define __SSE__
+#endif
+
+
 #if defined(__ppc__)
 #include <ppc_intrinsics.h>
-#elif defined(__i386__) || defined(__x86_64__)
-#define USE_SSE2
+#elif defined(__SSE__)
 #include <xmmintrin.h>
+#else
+#error Using intel chipset but __SSE__ not defined. (Hint: GCC uses -msse.)
 #endif
+
 
 #define PI (3.1415926535897932384626433832795)
 
@@ -120,7 +128,7 @@ inline double FastInvSqrt(double a)
 	return __frsqrte(a);
 }
 
-#elif defined(USE_SSE2)
+#elif defined(__SSE__)
 
 inline float FastInvSqrt ( float f )
 {

@@ -296,6 +296,10 @@ void gfx::DebugGraphics::DrawText()
 class null_stream : public std::ostream
 {
 public:
+	null_stream()
+		: std::ostream(std::_Noinit)
+	{
+	}
 };
 
 null_stream out_stream;

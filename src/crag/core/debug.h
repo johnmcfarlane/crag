@@ -45,7 +45,7 @@
 
 
 #define DEBUG_BREAK_VERBOSE(MESSAGE) \
-	::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"\n"; \
+	::std::cout << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"\n"; \
 	DEBUG_BREAK()
 
 
@@ -66,7 +66,7 @@
 
 #define VerifyEqual(A, B, EPSILON) \
 	if (! NearEqual(A, B, EPSILON)) { \
-		::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"\n"; \
+		::std::cout << DEBUG_PRINT_SOURCE << ": break: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"\n"; \
 		DEBUG_BREAK(); \
 	}
 
@@ -76,9 +76,10 @@ template<typename T> void VerifyRef(T const & ref)
 #if defined(__APPLE__)
 	Assert(& ref < reinterpret_cast<T *>(0x120000000));
 #elif defined(WIN32)
-	Assert(false);
+	// Wish there was a way to get this. 
 #else
-	Assert(& ref < reinterpret_cast<T *>(0x800000000000));
+	// Error in Win32 builds.
+	//Assert(& ref < reinterpret_cast<T *>(0x800000000000));
 #endif
 	Assert(& ref >= reinterpret_cast<T *>(0xd0000)); 
 }

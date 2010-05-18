@@ -28,8 +28,6 @@
 #include "core/Matrix4.h"
 #include "core/Vector2.h"
 
-#include <omp.h>
-
 #include <sstream>
 #include <fstream>
 
@@ -108,9 +106,9 @@ void sim::Simulation::Run()
 			app::TimeType busy_end_time = time = app::GetTime();
 			app::TimeType busy_time = busy_end_time - busy_start_time;
 
-			float busy_seconds = app::TimeTypeToSeconds(busy_time);
+			float busy_seconds = static_cast<float>(app::TimeTypeToSeconds(busy_time));
 			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
-			formation_manager->AdjustNumNodes(busy_seconds, Universe::target_frame_period * .5);
+			formation_manager->AdjustNumNodes(busy_seconds, Universe::target_frame_period * .5f);
 		}
 		else 
 		{

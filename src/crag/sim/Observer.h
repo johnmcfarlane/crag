@@ -33,8 +33,8 @@ namespace sim
 		void SetSpeedFactor(int _speed_factor);
 		void Tick();
 		
-		Vector3f const * GetImpulse() const;
-		float GetBoundingRadius() const;
+		Vector3 const * GetImpulse() const;
+		Scalar GetBoundingRadius() const;
 		
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const & pos);
@@ -48,10 +48,10 @@ namespace sim
 	private:
 		void ApplyImpulse();
 		
-		Vector3f impulses[2];	// [pos/rot]
+		Vector3 impulses[2];	// [pos/rot]
 		PhysicalSphere sphere;
-		float speed;
-		float speed_factor;
+		Scalar speed;
+		Scalar speed_factor;
 		gfx::Light light;
 	};
 }

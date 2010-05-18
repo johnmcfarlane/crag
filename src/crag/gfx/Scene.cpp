@@ -16,24 +16,24 @@
 #include <algorithm>
 
 
-CONFIG_DEFINE_ANGLE (camera_fov, float, 55.);
-CONFIG_DEFINE (camera_near, float, .05);
-CONFIG_DEFINE (camera_far, float, 1000000.);
+CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
+CONFIG_DEFINE (camera_near, float, .05f);
+CONFIG_DEFINE (camera_far, float, 1000000);
 
 
 gfx::Scene::Scene()
 : skybox(nullptr)
 {
-	pov.frustrum.fov = camera_fov;
-	pov.frustrum.near_z = camera_near;
-	pov.frustrum.far_z = camera_far;
+	pov.frustrum.fov = static_cast<double>(camera_fov);
+	pov.frustrum.near_z = static_cast<double>(camera_near);
+	pov.frustrum.far_z = static_cast<double>(camera_far);
 }
 
 gfx::Scene::~Scene()
 {
-	camera_fov = pov.frustrum.fov;
-	camera_near = pov.frustrum.near_z;
-	camera_far = pov.frustrum.far_z;
+	camera_fov = static_cast<float>(pov.frustrum.fov);
+	camera_near = static_cast<float>(pov.frustrum.near_z);
+	camera_far = static_cast<float>(pov.frustrum.far_z);
 }
 
 void gfx::Scene::AddLight(Light const & light)

@@ -13,13 +13,12 @@
 #include "App.h"
 
 #include "core/ConfigEntry.h"
-
-#include <boost/thread/thread.hpp>
+#include "core/Thread.h"
 
 
 namespace ANONYMOUS
 {
-	boost::mutex gl_mutex;
+	core::Mutex gl_mutex;
 }
 
 
@@ -31,7 +30,7 @@ bool InitGl()
 	GLenum glew_err = glewInit();
 	if (glew_err != GLEW_OK)
 	{
-		std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+		std::cout << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
 		return false;
 	}
 
@@ -81,12 +80,12 @@ bool InitMultithreadedGl()
 	
 void LockGl()
 {
-	gl_mutex.lock();
+	gl_mutex.Lock();
 }
 
 void UnlockGl()
 {
-	gl_mutex.unlock();
+	gl_mutex.Unlock();
 }
 
 /*GlContext GetGlContext()
@@ -119,7 +118,8 @@ void SetGlContext(GlContext gl_context)
 
 void Sleep(TimeType t)
 {
-	boost::this_thread::sleep(boost::posix_time::milliseconds(t));
+	SDL_Delay(t);
+	//boost::this_thread::sleep(boost::posix_time::milliseconds(t));
 }
 	
 }

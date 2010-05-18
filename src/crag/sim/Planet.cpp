@@ -128,7 +128,7 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	return num_nodes;
 }*/
 
-float sim::Planet::GetBoundingRadius() const
+sim::Scalar sim::Planet::GetBoundingRadius() const
 {
 //	return formation.GetMaxRadius();
 	Assert(false);

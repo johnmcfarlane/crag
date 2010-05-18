@@ -175,7 +175,7 @@ public:
 	}
 #endif
 	
-#if ! defined(NDEBUG) || true
+#if ! defined(NDEBUG) 
 	bool IsFree(T const & element) const
 	{
 		Node const * node = reinterpret_cast<Node const *>(& element);

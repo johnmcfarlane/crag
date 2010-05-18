@@ -38,7 +38,7 @@ namespace app
 
 	// time
 	TimeType GetTime();
-	void Sleep(TimeType t);
+	void Sleep(TimeType t = 0);
 
 	double TimeTypeToSeconds(TimeType t);
 	TimeType SecondsToTimeType(float s);
