@@ -11,7 +11,7 @@
 
 #pragma once
 
-#if ! defined(PLANETS_PCH)
+#if ! defined(CRAG_PCH)
 #error pch.h not included.
 #endif
 

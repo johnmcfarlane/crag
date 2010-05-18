@@ -22,6 +22,8 @@ namespace gfx
 	{
 	public:
 		Font(char const * filename, float scale = 1.f);
+		
+		operator bool() const;
 
 		void Print(char const * text, Vector2f const & position) const;
 

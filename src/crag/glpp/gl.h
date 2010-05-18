@@ -12,9 +12,9 @@
 
 
 #if defined(__APPLE__)
-#include <OpenGL.h>
-#include <CGLCurrent.h>
-#include <glu.h>
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/CGLCurrent.h>
+#include <OpenGL/glu.h>
 #elif defined(WIN32)
 #define GLEW_STATIC
 #define GL_GLEXT_PROTOTYPES

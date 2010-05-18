@@ -37,7 +37,7 @@ namespace ANONYMOUS {
 //////////////////////////////////////////////////////////////////////
 // functions
 
-sim::Vector3 const default_camera_pos(0,0,104550);
+sim::Vector3 const default_camera_pos(0,1010000,0);
 CONFIG_DEFINE (use_default_camera_pos, bool, true);
 CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
@@ -47,7 +47,7 @@ CONFIG_DEFINE (planet_radius_1, float, 100000);
 
 // please don't write in
 CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
-CONFIG_DEFINE (sun_year, float, 2000.f);
+CONFIG_DEFINE (sun_year, float, 30.f);
 
 }
 

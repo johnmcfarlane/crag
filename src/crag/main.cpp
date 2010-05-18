@@ -168,19 +168,8 @@ bool Save()
  *      	Install ODE
  *      	Install boost
  *
- *		XCode: Out of date!
- *			install SFML (including XCode project templates)
- *			Create SFML Graphics Project (as opposed to a windows project); I call mine 'Crag' :)
- *			download/extract ODE
- *			move "ode-0.11.1/build/config-default.h" to "ode-0.11.1/ode/src/config.h"
- *			In the project view, ctrl-click the 'Sources' folder and "Add->Existing Files" and point to "ode-0.11.1/ode/src"; name it 'ode' to avoid confusion.
- *			In the project view, ctrl-click the 'Sources' folder and "Add->Existing Files" and point to "ode-0.11.1/OPCODE"; name it 'ode' to avoid confusion.
- *			remove all the makefile.* files and the config.h.in from the various ODE folders
- *          Add "ode-0.11.1/include" to "Header Search Path" setting
- *          Add "ode-0.11.1/ode/src" to "User Header Search Path" setting
- *			Also add "src" to "User Header Search Path" with "Recursive" on
- *			might also add include path "ode-0.11.1/ode/src"
- *			Add OpenGL Framework to the frameworks folder of the project
+ *		XCode: 
+ *			Don't matter. I done it!
  *
  *		Eclipse:
  *			Copy the src folder into the workspace and refresh the project

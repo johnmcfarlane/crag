@@ -12,11 +12,11 @@
 //////////////////////////////////////////////////////////////////////
 // The PCH should be included once at the top of every .cpp file.
 
-#if defined(PLANETS_PCH)
+#if defined(CRAG_PCH)
 #error pch.h included multiple times
 #else
-#define PLANETS_PCH
-#endif
+
+#define CRAG_PCH
 
 
 //////////////////////////////////////////////////////////////////////
@@ -98,3 +98,5 @@
 // Change to anything but "" to get an explicit namespace.
 // (Will require appending ANONYMOUS to a lot of vars.)
 #define ANONYMOUS
+
+#endif	// CRAG_PCH

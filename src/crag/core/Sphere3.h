@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Sphere.h"
+#include "NSphere.h"
 #include "core/Vector3.h"
 #include "floatOps.h"
 

@@ -282,6 +282,11 @@ void gfx::DebugGraphics::DrawGraphics()
 
 void gfx::DebugGraphics::DrawText()
 {
+	if (! (* font))
+	{
+		return;
+	}
+	
 	char test[1024];
 	strcpy(test, out_stream.str().c_str());
 

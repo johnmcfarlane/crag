@@ -54,6 +54,11 @@ gfx::Font::Font(char const * filename, float scale)
 	vbo.Init();
 }
 
+gfx::Font::operator bool() const
+{
+	return texture.IsInitialized();
+}
+
 void gfx::Font::Print(char const * text, Vector2f const & position) const
 {
 	if (! vbo.IsInitialized())

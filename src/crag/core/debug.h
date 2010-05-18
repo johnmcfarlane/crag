@@ -10,7 +10,7 @@
 
 #pragma once
 
-#if ! defined(PLANETS_PCH)
+#if ! defined(CRAG_PCH)
 #error pch.h not included.
 #endif
 
@@ -74,7 +74,8 @@
 template<typename T> void VerifyRef(T const & ref) 
 { 
 #if defined(__APPLE__)
-	Assert(& ref < reinterpret_cast<T *>(0x120000000));
+	// 64bit
+	//Assert(& ref < reinterpret_cast<T *>(0x120000000));
 #elif defined(WIN32)
 	// Wish there was a way to get this. 
 #else
