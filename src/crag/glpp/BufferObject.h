@@ -13,19 +13,29 @@
 #include "Name.h"
 
 
-#if ! defined(WIN32)
-#define glppBindBuffer		glBindBuffer
-#define glppBufferData		glBufferData
-#define glppBufferSubData	glBufferSubData
-#define glppDeleteBuffers	glDeleteBuffers
-#define glppGenBuffers		glGenBuffers
+#if defined(WIN32) 
+// works best on WIN32  but non-ARB version works with later hw
+#define glppBindBuffer						glBindBufferARB
+#define glppBufferData						glBufferDataARB
+#define glppBufferSubData					glBufferSubDataARB
+#define glppDeleteBuffers					glDeleteBuffersARB
+#define glppGenBuffers						glGenBuffersARB
+#define GLPP_ARRAY_BUFFER					GL_ARRAY_BUFFER_ARB
+#define GLPP_ARRAY_BUFFER_BINDING			GL_ARRAY_BUFFER_BINDING_ARB 
+#define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER_ARB
+#define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB
+#define GLPP_STATIC_DRAW					GL_STATIC_DRAW_ARB
 #else
-// works well on WIN32
-#define glppBindBuffer		glBindBufferARB
-#define glppBufferData		glBufferDataARB
-#define glppBufferSubData	glBufferSubDataARB
-#define glppDeleteBuffers	glDeleteBuffersARB
-#define glppGenBuffers		glGenBuffersARB
+#define glppBindBuffer						glBindBuffer
+#define glppBufferData						glBufferData
+#define glppBufferSubData					glBufferSubData
+#define glppDeleteBuffers					glDeleteBuffers
+#define glppGenBuffers						glGenBuffers
+#define GLPP_ARRAY_BUFFER					GL_ARRAY_BUFFER
+#define GLPP_ARRAY_BUFFER_BINDING			GL_ARRAY_BUFFER_BINDING
+#define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER
+#define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING
+#define GLPP_STATIC_DRAW					GL_STATIC_DRAW
 #endif
 
 
@@ -41,7 +51,7 @@ namespace gl
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
-			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GL_STATIC_DRAW_ARB));
+			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GLPP_STATIC_DRAW));
 		}
 		
 		void Set(int _num, ELEMENT const * array)

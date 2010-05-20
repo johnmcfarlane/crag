@@ -13,16 +13,6 @@
 #include "BufferObject.h"
 
 
-#if ! defined(WIN32)
-#define GLPP_ARRAY_BUFFER			GL_ARRAY_BUFFER
-#define GLPP_ARRAY_BUFFER_BINDING	GL_ARRAY_BUFFER_BINDING
-#else
-// works well on WIN32
-#define GLPP_ARRAY_BUFFER			GL_ARRAY_BUFFER_ARB
-#define GLPP_ARRAY_BUFFER_BINDING	GL_ARRAY_BUFFER_BINDING_ARB 
-#endif
-
-
 namespace gl
 {
 	

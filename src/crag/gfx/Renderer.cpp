@@ -166,7 +166,7 @@ gfx::Renderer::Renderer()
 , smooth_shading(init_smooth_shading)
 , wireframe(init_wireframe)
 {
-	if (! HasShadowSupport()) {
+	if (! HasShadowSupport() || true) {
 		std::cout << "Renderer: Shadows not supported." << std::endl;
 		shadow_mapping = false;
 	}

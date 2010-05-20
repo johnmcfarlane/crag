@@ -16,7 +16,7 @@
 #if defined(NDEBUG)
 #define SHADOW_MAP_TEST 0	// 0 -> Off
 #else
-#define SHADOW_MAP_TEST 2	// 1 -> Show Depth Buffer; 2 -> Show Color Buffer
+#define SHADOW_MAP_TEST 0	// 1 -> Show Depth Buffer; 2 -> Show Color Buffer
 #endif
 
 

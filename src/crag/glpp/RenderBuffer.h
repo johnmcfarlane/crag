@@ -12,48 +12,70 @@
 
 #include "Name.h"
 
+#include "FrameBuffer.h"
+
+
+#if defined(__APPLE__)
+#define glppBindRenderbuffer		glBindRenderbuffer
+#define glppDeleteRenderbuffers		glDeleteRenderbuffers
+#define glppGenRenderbuffers		glGenRenderbuffers
+#define glppRenderbufferStorage		glRenderbufferStorage
+#define GLPP_DEPTH_ATTACHMENT		GL_DEPTH_ATTACHMENT
+#define GLPP_RENDERBUFFER			GL_RENDERBUFFER
+#define GLPP_RENDERBUFFER_BINDING	GL_RENDERBUFFER_BINDING
+#else
+#define glppBindRenderbuffer		glBindRenderbufferEXT
+#define glppDeleteRenderbuffers 	glDeleteRenderbuffersEXT
+#define glppGenRenderbuffers		glGenRenderbuffersEXT
+#define glppRenderbufferStorage 	glRenderbufferStorageEXT
+#define GLPP_DEPTH_ATTACHMENT		GL_DEPTH_ATTACHMENT_EXT
+#define GLPP_RENDERBUFFER			GL_RENDERBUFFER_EXP
+#define GLPP_RENDERBUFFER_BINDING	GL_RENDERBUFFER_BINDING_EXT
+#endif
+
+
 namespace gl 
 {
 
-	class RenderBuffer : public Name<GL_RENDERBUFFER_EXT>
+	class RenderBuffer : public Name<GLPP_RENDERBUFFER>
 	{
-		typedef Name<GL_RENDERBUFFER_EXT> BaseClass;
+		typedef Name<GLPP_RENDERBUFFER> BaseClass;
 		
 	public:
 		void ResizeForDepth(GLsizei width, GLsizei height)
 		{
 			assert(IsBound());
-			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
+			glppRenderbufferStorage(GLPP_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 		}
 		
 		friend void AttachToFrameBuffer(RenderBuffer * render_buffer) 
 		{
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, render_buffer->id);
+			glppFramebufferRenderbuffer(GLPP_FRAMEBUFFER, GLPP_DEPTH_ATTACHMENT, GLPP_RENDERBUFFER, render_buffer->id);
 		}
 	};
 
 
-	template<> inline GLuint Init<GL_RENDERBUFFER_EXT>()
+	template<> inline GLuint Init<GLPP_RENDERBUFFER>()
 	{
 		GLuint id;
-		GLPP_CALL(glGenRenderbuffersEXT(1, & id));
+		GLPP_CALL(glppGenRenderbuffers(1, & id));
 		return id;
 	}
 		   
-	template<> inline void Deinit<GL_RENDERBUFFER_EXT>(GLuint id)
+	template<> inline void Deinit<GLPP_RENDERBUFFER>(GLuint id)
 	{
 		assert(id != 0);
-		GLPP_CALL(glDeleteRenderbuffersEXT(1, & id));
+		GLPP_CALL(glppDeleteRenderbuffers(1, & id));
 	}
 		   
-	template<> inline void Bind<GL_RENDERBUFFER_EXT>(GLuint id)
+	template<> inline void Bind<GLPP_RENDERBUFFER>(GLuint id)
 	{
-		GLPP_CALL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, id));
+		GLPP_CALL(glppBindRenderbuffer(GLPP_RENDERBUFFER, id));
 	}
 		   
-	template<> inline GLuint GetBindingEnum<GL_RENDERBUFFER_EXT>()
+	template<> inline GLuint GetBindingEnum<GLPP_RENDERBUFFER>()
 	{
-		return GL_RENDERBUFFER_BINDING_EXT;
+		return GLPP_RENDERBUFFER_BINDING;
 	}
 			   
 }

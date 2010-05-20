@@ -39,19 +39,6 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh_updated(false)
 , thread(NULL)
 {
-/*#if __APPLE__
-	if (threaded) {
-		CGLContextObj main_thread_render_context = CGLGetCurrentContext();
-		CGLError err = CGLCreateContext(
-										CGLGetPixelFormat(main_thread_render_context),
-										main_thread_render_context,
-										& render_context);
-		
-		if (err != kCGLNoError) {
-			threaded = false;
-		}
-	}
-#endif*/
 }
 
 #if VERIFY
@@ -137,6 +124,8 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 		polled = false;
 	}
 	mesh_mutex.Unlock();
+	
+	app::Sleep(0);
 
 	return polled;
 }
