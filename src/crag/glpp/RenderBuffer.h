@@ -29,7 +29,7 @@
 #define glppGenRenderbuffers		glGenRenderbuffersEXT
 #define glppRenderbufferStorage 	glRenderbufferStorageEXT
 #define GLPP_DEPTH_ATTACHMENT		GL_DEPTH_ATTACHMENT_EXT
-#define GLPP_RENDERBUFFER			GL_RENDERBUFFER_EXP
+#define GLPP_RENDERBUFFER			GL_RENDERBUFFER_EXT
 #define GLPP_RENDERBUFFER_BINDING	GL_RENDERBUFFER_BINDING_EXT
 #endif
 

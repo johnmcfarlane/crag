@@ -13,19 +13,19 @@
 #include "Name.h"
 
 #if defined(__APPLE__)
-#define glppBindFramebuffer glBindFramebuffer
-#define glppDeleteFramebuffers glDeleteFramebuffers
-#define glppGenFramebuffers glGenFramebuffers
+#define glppBindFramebuffer			glBindFramebuffer
+#define glppDeleteFramebuffers		glDeleteFramebuffers
+#define glppGenFramebuffers			glGenFramebuffers
 #define glppFramebufferRenderbuffer glFramebufferRenderbuffer
-#define GLPP_FRAMEBUFFER GL_FRAMEBUFFER
-#define GLPP_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING
+#define GLPP_FRAMEBUFFER			GL_FRAMEBUFFER
+#define GLPP_FRAMEBUFFER_BINDING	GL_FRAMEBUFFER_BINDING
 #else
-#define glppBindFramebuffer glBindFramebufferEXT
-#define glppDeleteFramebuffers glDeleteFramebuffersEXT
-#define glppGenFramebuffers glGenFramebuffersEXT
-#define glppFramebufferRenderbuffer glFramebufferRenderbufferEXP
-#define GLPP_FRAMEBUFFER GL_FRAMEBUFFER_EXT
-#define GLPP_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING_EXT
+#define glppBindFramebuffer			glBindFramebufferEXT
+#define glppDeleteFramebuffers		glDeleteFramebuffersEXT
+#define glppGenFramebuffers			glGenFramebuffersEXT
+#define glppFramebufferRenderbuffer glFramebufferRenderbufferEXT
+#define GLPP_FRAMEBUFFER			GL_FRAMEBUFFER_EXT
+#define GLPP_FRAMEBUFFER_BINDING	GL_FRAMEBUFFER_BINDING_EXT
 #endif
 
 

@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{01C4B482-A68F-4ECC-BA75-E25207C32D7D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>crag</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\crag\app\App.h" />
+    <ClInclude Include="..\..\src\crag\app\AppSdl.h" />
+    <ClInclude Include="..\..\src\crag\core\Circle2.h" />
+    <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
+    <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
+    <ClInclude Include="..\..\src\crag\core\debug.h" />
+    <ClInclude Include="..\..\src\crag\core\floatOps.h" />
+    <ClInclude Include="..\..\src\crag\core\Matrix.h" />
+    <ClInclude Include="..\..\src\crag\core\Matrix4.h" />
+    <ClInclude Include="..\..\src\crag\core\MatrixOps.h" />
+    <ClInclude Include="..\..\src\crag\core\memory.h" />
+    <ClInclude Include="..\..\src\crag\core\NSphere.h" />
+    <ClInclude Include="..\..\src\crag\core\Pool.h" />
+    <ClInclude Include="..\..\src\crag\core\Random.h" />
+    <ClInclude Include="..\..\src\crag\core\Singleton.h" />
+    <ClInclude Include="..\..\src\crag\core\Sphere.h" />
+    <ClInclude Include="..\..\src\crag\core\Sphere3.h" />
+    <ClInclude Include="..\..\src\crag\core\SphereOps.h" />
+    <ClInclude Include="..\..\src\crag\core\Thread.h" />
+    <ClInclude Include="..\..\src\crag\core\Vector.h" />
+    <ClInclude Include="..\..\src\crag\core\Vector2.h" />
+    <ClInclude Include="..\..\src\crag\core\Vector3.h" />
+    <ClInclude Include="..\..\src\crag\core\Vector4.h" />
+    <ClInclude Include="..\..\src\crag\core\VectorOps.h" />
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\Formation.h" />
+    <ClInclude Include="..\..\src\crag\form\GenerateMeshFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\Image.h" />
+    <ClInclude Include="..\..\src\crag\form\Manager.h" />
+    <ClInclude Include="..\..\src\crag\form\Mesh.h" />
+    <ClInclude Include="..\..\src\crag\form\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\crag\form\Model.h" />
+    <ClInclude Include="..\..\src\crag\form\Node.h" />
+    <ClInclude Include="..\..\src\crag\form\NodeBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\NodeFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\NodeTraversal.h" />
+    <ClInclude Include="..\..\src\crag\form\PolyTraversal.h" />
+    <ClInclude Include="..\..\src\crag\form\Quaterna.h" />
+    <ClInclude Include="..\..\src\crag\form\RootNode.h" />
+    <ClInclude Include="..\..\src\crag\form\Scene.h" />
+    <ClInclude Include="..\..\src\crag\form\SceneThread.h" />
+    <ClInclude Include="..\..\src\crag\form\Shader.h" />
+    <ClInclude Include="..\..\src\crag\form\Vertex.h" />
+    <ClInclude Include="..\..\src\crag\form\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Color.h" />
+    <ClInclude Include="..\..\src\crag\gfx\DebugGraphics.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Font.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Image.h" />
+    <ClInclude Include="..\..\src\crag\gfx\IndexBuffer.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Light.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Pov.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Renderer.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Scene.h" />
+    <ClInclude Include="..\..\src\crag\gfx\ShadowMap.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Skybox.h" />
+    <ClInclude Include="..\..\src\crag\glpp\BufferObject.h" />
+    <ClInclude Include="..\..\src\crag\glpp\debug.h" />
+    <ClInclude Include="..\..\src\crag\glpp\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\crag\glpp\gl.h" />
+    <ClInclude Include="..\..\src\crag\glpp\glpp.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Ibo.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Mesh.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Name.h" />
+    <ClInclude Include="..\..\src\crag\glpp\RenderBuffer.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Texture.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Vbo.h" />
+    <ClInclude Include="..\..\src\crag\glpp\Vbo_Types.h" />
+    <ClInclude Include="..\..\src\crag\pch.h" />
+    <ClInclude Include="..\..\src\crag\sim\Controller.h" />
+    <ClInclude Include="..\..\src\crag\sim\defs.h" />
+    <ClInclude Include="..\..\src\crag\sim\Entity.h" />
+    <ClInclude Include="..\..\src\crag\sim\Firmament.h" />
+    <ClInclude Include="..\..\src\crag\sim\FrequencyEstimator.h" />
+    <ClInclude Include="..\..\src\crag\sim\Observer.h" />
+    <ClInclude Include="..\..\src\crag\sim\PhysicalBody.h" />
+    <ClInclude Include="..\..\src\crag\sim\Physics.h" />
+    <ClInclude Include="..\..\src\crag\sim\Planet.h" />
+    <ClInclude Include="..\..\src\crag\sim\PlanetShader.h" />
+    <ClInclude Include="..\..\src\crag\sim\Simulation.h" />
+    <ClInclude Include="..\..\src\crag\sim\Space.h" />
+    <ClInclude Include="..\..\src\crag\sim\Star.h" />
+    <ClInclude Include="..\..\src\crag\sim\Universe.h" />
+    <ClInclude Include="..\..\src\crag\sim\UserInput.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\crag\app\App.cpp" />
+    <ClCompile Include="..\..\src\crag\app\AppSdl.cpp" />
+    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
+    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
+    <ClCompile Include="..\..\src\crag\core\debug.cpp" />
+    <ClCompile Include="..\..\src\crag\core\memory.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Random.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
+    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Image.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
+    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Model.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Node.cpp" />
+    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Scene.cpp" />
+    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Vertex.cpp" />
+    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\DebugGraphics.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Font.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Image.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\IndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Light.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Pov.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Renderer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Scene.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\ShadowMap.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Skybox.cpp" />
+    <ClCompile Include="..\..\src\crag\main.cpp" />
+    <ClCompile Include="..\..\src\crag\pch.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Controller.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Observer.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PhysicalBody.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Physics.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Planet.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Simulation.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\crag\COPYING" />
+    <None Include="..\..\src\crag\readme.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
