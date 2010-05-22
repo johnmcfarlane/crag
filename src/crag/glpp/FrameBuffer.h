@@ -12,7 +12,7 @@
 
 #include "Name.h"
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && 0
 #define glppBindFramebuffer			glBindFramebuffer
 #define glppDeleteFramebuffers		glDeleteFramebuffers
 #define glppGenFramebuffers			glGenFramebuffers

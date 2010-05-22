@@ -15,7 +15,7 @@
 #include "FrameBuffer.h"
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && 0
 #define glppBindRenderbuffer		glBindRenderbuffer
 #define glppDeleteRenderbuffers		glDeleteRenderbuffers
 #define glppGenRenderbuffers		glGenRenderbuffers

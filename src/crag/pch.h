@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////
 // The PCH should be included once at the top of every .cpp file.
 
-#if defined(CRAG_PCH)
+#if defined(CRAG_PCH) && ! defined(__APPLE__)
 #error pch.h included multiple times
 #else
 
@@ -45,7 +45,7 @@
 //////////////////////////////////////////////////////////////////////
 // Regular includes.
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(__APPLE__)
 #include <SDL.h>
 #include <SDL_image.h>
 #else
@@ -56,6 +56,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#if defined(__cplusplus)
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -63,6 +64,7 @@
 
 #include <limits>
 #include <iostream>
+#endif
 
 
 //////////////////////////////////////////////////////////////////////
