@@ -36,6 +36,16 @@ namespace gl
 		GLPP_CALL(glTexGendv(coord, pname, params));
 	}
 
+	// Vertex3
+	inline void Vertex3(GLfloat x, GLfloat y, GLfloat z)
+	{
+		GLPP_CALL(glVertex3f(x, y, z));
+	}
+	inline void Vertex3(GLdouble x, GLdouble y, GLdouble z)
+	{
+		GLPP_CALL(glVertex3d(x, y, z));
+	}
+
 	// Enable/Disable - checks that the call was necessary. 
 	inline void Enable(GLenum cap)
 	{

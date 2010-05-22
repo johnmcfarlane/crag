@@ -47,7 +47,7 @@ CONFIG_DEFINE (planet_radius_1, float, 100000);
 
 // please don't write in
 CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
-CONFIG_DEFINE (sun_year, float, 30.f);
+CONFIG_DEFINE (sun_year, float, 300.f);
 
 }
 
@@ -69,6 +69,32 @@ sim::Simulation::Simulation()
 	InitUniverse();
 	
 	gfx::DebugGraphics::Init();
+}
+
+void sim::Simulation::InitUniverse()
+{
+	scene.SetResolution(app::GetWindowSize());
+	scene.SetSkybox(new Firmament);	// TODO: Time for a ref-counter system.
+	
+	if (use_default_camera_pos) {
+		camera_pos = default_camera_pos;
+		camera_rot = Matrix4::Identity();
+	}
+	observer->SetPosition(camera_pos);
+	observer->SetRotation(camera_rot);
+	
+	Universe::Init();	
+	Universe::AddEntity(* observer);
+	//scene.AddEntity(* observer);
+	scene.AddLight(observer->GetLight());
+	
+	Planet * planet = new Planet (planet_pos_1, planet_radius_1, 8);
+	Universe::AddEntity(* planet);
+	scene.AddEntity(* planet);
+	
+	Star * sun = new Star(sun_orbit_distance, sun_year);
+	scene.AddLight(sun->GetLight());
+	Universe::AddEntity(* sun);
 }
 
 sim::Simulation::~Simulation()
@@ -97,57 +123,36 @@ void sim::Simulation::Run()
 		// Is it time for the next tick?
 		if (time_until_tick <= 0) 
 		{
-			target_tick_time += app::SecondsToTimeType(Universe::target_frame_period);
-			app::TimeType busy_start_time = time;
-			
-			//printf("tick  =%d\n", time);
 			Tick();
 
-			app::TimeType busy_end_time = time = app::GetTime();
-			app::TimeType busy_time = busy_end_time - busy_start_time;
-
-			float busy_seconds = static_cast<float>(app::TimeTypeToSeconds(busy_time));
-			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
-			formation_manager->AdjustNumNodes(busy_seconds, Universe::target_frame_period * .5f);
-		}
-		else 
-		{
-			//printf("sleep =%d %d\n", time, time_until_tick);
-			app::Sleep(time_until_tick);
+			target_tick_time += app::SecondsToTimeType(Universe::target_frame_period);
+			app::TimeType tick_start_time = time;
 			time = app::GetTime();
+			app::TimeType tick_end_time = time;
+			app::TimeType tick_time = tick_end_time - tick_start_time;
+
+			float tick_seconds = static_cast<float>(app::TimeTypeToSeconds(tick_time));
+			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
+			formation_manager->AdjustNumNodes(tick_seconds, Universe::target_frame_period * .5f);
+
+			continue;
 		}
+
+		if (formation_manager->PollMesh())
+		{
+			time = app::GetTime();
+			continue;
+		}
+
+		//printf("sleep =%d %d\n", time, time_until_tick);
+		app::Sleep(time_until_tick);
+		time = app::GetTime();
 	}
 	
 	delete formation_manager;
 	formation_manager = nullptr;
 	
 	DUMP_OBJECT(* formation_manager, std::cout);
-}
-
-void sim::Simulation::InitUniverse()
-{
-	scene.SetResolution(app::GetWindowSize());
-	scene.SetSkybox(new Firmament);	// TODO: Time for a ref-counter system.
-	
-	if (use_default_camera_pos) {
-		camera_pos = default_camera_pos;
-		camera_rot = Matrix4::Identity();
-	}
-	observer->SetPosition(camera_pos);
-	observer->SetRotation(camera_rot);
-	
-	Universe::Init();	
-	Universe::AddEntity(* observer);
-	//scene.AddEntity(* observer);
-	scene.AddLight(observer->GetLight());
-	
-	Planet * planet = new Planet (planet_pos_1, planet_radius_1, 8);
-	Universe::AddEntity(* planet);
-	scene.AddEntity(* planet);
-	
-	Star * sun = new Star(sun_orbit_distance, sun_year);
-	scene.AddLight(sun->GetLight());
-	Universe::AddEntity(* sun);
 }
 
 void sim::Simulation::Tick()

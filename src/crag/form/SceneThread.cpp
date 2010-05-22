@@ -138,6 +138,7 @@ void form::SceneThread::ResetOrigin()
 bool form::SceneThread::OutOfRange() const
 {
 	return false;
+
 	if (reset_origin_flag) 
 	{
 		// We're on it already!

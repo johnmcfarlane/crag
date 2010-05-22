@@ -74,7 +74,7 @@ private:
 		{
 			Color4f const & color = hidden ? colors.hidden_color : colors.color;
 			glColor4f(color.r, color.g, color.b, color.a);
-			glVertex3f(pos.x, pos.y, pos.z);
+			gl::Vertex3(pos.x, pos.y, pos.z);
 		}
 		
 		DebugGraphics::Vector3 pos;
@@ -177,12 +177,12 @@ void gfx::DebugGraphics::AddFrustum(Pov const & pov)
 		Vector3f extent_factors[2];
 		
 		{
-			float aspect = pov.frustrum.resolution.x / pov.frustrum.resolution.y;
+			float aspect = static_cast<float>(pov.frustrum.resolution.x) / pov.frustrum.resolution.y;
 			float y_factor = static_cast<float>(Sin(pov.frustrum.fov * .5));
 			float x_factor = y_factor * aspect;
 			
-			extent_factors[0] = Vector3f(- x_factor, - y_factor, pov.frustrum.near_z);
-			extent_factors[1] = Vector3f(x_factor, y_factor, pov.frustrum.far_z);
+			extent_factors[0] = Vector3f(- x_factor, - y_factor, static_cast<float>(pov.frustrum.near_z));
+			extent_factors[1] = Vector3f(x_factor, y_factor, static_cast<float>(pov.frustrum.far_z));
 		}
 		
 		{

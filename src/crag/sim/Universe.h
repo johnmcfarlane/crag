@@ -11,6 +11,9 @@
 #pragma once
 
 #include "sim/defs.h"
+
+#include "app/App.h"
+
 #include "core/ConfigEntry.h"
 
 
@@ -22,11 +25,9 @@ namespace sim
 	// TODO: Should probably be a singleton and also is a bit of a waste of space.
 	namespace Universe
 	{
-		extern float time;
-		//extern float delta_time;
+		extern app::TimeType time;
 
 		CONFIG_DECLARE (target_frame_period, float);
-		CONFIG_DECLARE (frame_time_error, float);
 	
 		void Init();
 		void Deinit();

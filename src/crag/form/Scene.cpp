@@ -119,12 +119,16 @@ sim::Vector3 const & form::Scene::GetOrigin() const
 
 void form::Scene::SetOrigin(sim::Vector3 const & o) 
 {
+	VerifyObject(* this);
+
 	if (o != origin) {
 		origin = o;
 		SetObserverPos(observer_pos);
 
 		ResetFormations();
 	}
+
+	VerifyObject(* this);
 }
 
 void form::Scene::Tick(FormationSet const & formation_set)

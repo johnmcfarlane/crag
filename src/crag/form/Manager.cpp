@@ -138,11 +138,17 @@ void form::Manager::Tick()
 	}
 	
 	scene_thread->Tick();
+}
 
+bool form::Manager::PollMesh()
+{
 	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin))
 	{
 		std::swap(front_buffer_object, back_buffer_object);
+		return true;
 	}
+
+	return false;
 }
 
 sim::Vector3 const & form::Manager::BeginRender(bool color)

@@ -15,7 +15,7 @@
 
 
 sim::Star::Star(float init_radius, float init_year)
-: light(Vector3f::Zero(), gfx::Color4f(1.0f, 1.00f, 1.0f), 0, 0, 1, true)
+: light(Vector3f::Zero(), gfx::Color4f(1.0f, 1.0f, 1.0f), 0, 0, 1, true)
 , radius(init_radius)
 , year(init_year)
 {
@@ -23,7 +23,7 @@ sim::Star::Star(float init_radius, float init_year)
 
 void sim::Star::Tick()
 {
-	Scalar angle = static_cast<Scalar>(Universe::time * (2. * PI) / year);
+	Scalar angle = static_cast<Scalar>(app::TimeTypeToSeconds(Universe::time) * (2. * PI) / year);
 	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, 0);
 	light.SetPosition(position);
 }

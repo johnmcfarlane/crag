@@ -53,6 +53,7 @@ namespace form {
 		
 		void Launch();
 		void Tick();
+		bool PollMesh();
 
 		// Called by the Renderer.
 		sim::Vector3 const & BeginRender(bool color);	// Returns current origin.
