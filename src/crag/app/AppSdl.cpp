@@ -48,7 +48,7 @@ bool app::Init(Vector2i const & resolution, bool full_screen)
 	}
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-	//SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
+	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 32 );
 
 	// Get existing video info.
 	/*const SDL_VideoInfo* video_info = SDL_GetVideoInfo();

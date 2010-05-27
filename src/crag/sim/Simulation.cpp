@@ -133,7 +133,7 @@ void sim::Simulation::Run()
 
 			float tick_seconds = static_cast<float>(app::TimeTypeToSeconds(tick_time));
 			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
-			formation_manager->AdjustNumNodes(busy_seconds, Universe::target_frame_period * .5f);
+			formation_manager->AdjustNumNodes(tick_seconds, Universe::target_frame_period * .5f);
 			continue;
 		}
 		
