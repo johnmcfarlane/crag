@@ -34,10 +34,10 @@ namespace sim
 		//virtual float CalcScore(form::Node const & node);
 		
 	private:
-		//	typedef sim::Scalar S;
-		//	typedef sim::Vector3 Vec3;
-		typedef float S;
-		typedef Vector3f Vec3;
+		typedef sim::Scalar S;
+		typedef sim::Vector3 Vec3;
+		//typedef float S;
+		//typedef Vector3f Vec3;
 		
 		Vec3 center;		// relative to origin
 		S max_radius;

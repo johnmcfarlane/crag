@@ -111,11 +111,6 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 
 		mesh_origin = scene.GetOrigin();
 
-		//if (reset_origin) {
-		//	scene.SetOrigin(observer.GetPosition());
-		//}
-		//scene_mutex.unlock();
-
 		mesh_updated = false;
 		polled = true;
 	}
@@ -123,6 +118,9 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 	{
 		polled = false;
 	}
+	
+//	GLPP_CALL(glFinish());
+//	GLPP_CALL(glFlush());
 	mesh_mutex.Unlock();
 	
 	app::Sleep(0);
@@ -137,7 +135,6 @@ void form::SceneThread::ResetOrigin()
 
 bool form::SceneThread::OutOfRange() const
 {
-	return false;
 
 	if (reset_origin_flag) 
 	{
@@ -172,25 +169,31 @@ void form::SceneThread::Run()
 void form::SceneThread::ThreadTick()
 {
 	sim::Vector3 const & observer_pos = observer.GetPosition();
-	
-	AdjustNumQuaterna();
 	scene.SetObserverPos(observer_pos);
-	scene.Tick(formations);
-	
-	bool generate = false;
-	
-	if (reset_origin_flag) {
+		
+	bool generate = false;	
+	if (reset_origin_flag) 
+	{
+		generate = false;
+
+		VerifyObject(* this);
+		
 		reset_origin_flag = false;
 		scene.SetOrigin(observer_pos);
-		generate = true;
+
+		VerifyObject(* this);
 	}
-	
-	/*if (scene.GetChurnMetric() > -.05f)*/ {
+	else 
+	{
+		AdjustNumQuaterna();
+
 		generate = true;
 	}
 
-	if (generate) {
-		//scene.ResetChurnCounter();
+	scene.Tick(formations);
+
+	if (generate) 
+	{
 		GenerateMesh();
 	}
 }
@@ -212,15 +215,20 @@ void form::SceneThread::AdjustNumQuaterna()
 	
 	scene.SetNumQuaternaAvailable(target_num_quaterna);
 	
-	// reset this dude in case thread ticks before the next frame happens.
+	// reset this in case thread ticks before the next frame happens.
 	frame_ratio = 1;
 }
 
-void form::SceneThread::GenerateMesh()
+bool form::SceneThread::GenerateMesh()
 {
-	mesh_mutex.Lock();
-	scene.GenerateMesh(mesh);
-	mesh_updated = true;
-	mesh_mutex.Unlock();
+	if (mesh_mutex.TryLock())
+	{
+		scene.GenerateMesh(mesh);
+		mesh_updated = true;
+		mesh_mutex.Unlock();
+		return true;
+	}
+	
+	return false;
 }
 

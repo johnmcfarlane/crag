@@ -16,6 +16,16 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Statement macros
+
+// Semicolon-friendly compound statement,
+#define DO_STATEMENT(STATEMENT) do { STATEMENT } while (false)
+
+// Semicolon-friendly empty statement.
+#define DO_NOTHING do { } while(false)
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Verify / Dump flags
 
 #if defined (NDEBUG)
@@ -53,7 +63,7 @@
 #if defined(NDEBUG)
 #define Assert(CONDITION) DO_NOTHING
 #else
-#define Assert(CONDITION) DO (if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } )
+#define Assert(CONDITION) DO_STATEMENT (if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } )
 #endif
 
 
@@ -97,10 +107,10 @@ template<typename T> void VerifyPtr(T const * ptr)
 #define VerifyObject(OBJECT) (OBJECT).Verify()
 
 // Verify address of object and run object's internal verification.
-#define VerifyObjectRef(REF) DO(VerifyRef(REF); VerifyObject(REF);)
+#define VerifyObjectRef(REF) DO_STATEMENT(VerifyRef(REF); VerifyObject(REF);)
 
 // Verify pointer to object and (if non-null) run object's internal verification.
-#define VerifyObjectPtr(PTR) DO(if (PTR != nullptr) VerifyObjectRef((* PTR));)
+#define VerifyObjectPtr(PTR) DO_STATEMENT(if (PTR != nullptr) VerifyObjectRef((* PTR));)
 
 template<typename T> void VerifyArrayElement(T const * element, T const * begin) 
 { 

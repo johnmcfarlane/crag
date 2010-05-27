@@ -1,0 +1,5 @@
+#!/bin/bash
+#rm crag-maxosx-0.0.*.tar.bz2
+#tar --exclude="*_VectorUtils.h" -cvjf ../planets.tar.bz2 *
+cd ~/Documents/workspace/crag/xcode/crag/build/Release
+tar -cvjf ../../../crag-macosx-0.0..tar.bz2 ./crag.app

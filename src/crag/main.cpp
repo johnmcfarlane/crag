@@ -20,6 +20,7 @@
 
 
 #define LOAD_CONFIG 0
+#define SAVE_CONFIG 1
 
 
 //////////////////////////////////////////////////////////////////////
@@ -126,6 +127,7 @@ bool Load()
 
 bool Save()
 {
+#if (SAVE_CONFIG == 1)
 	std::ofstream out(config_filename);
 
 	if (out.is_open())
@@ -138,6 +140,9 @@ bool Save()
 		std::cout << "Failed to open config file \"" << config_filename << "\" for writing.\n";
 		return false;
 	}
+#elif (SAVE_CONFIG == 0)
+	return false;
+#endif
 }
 
 }

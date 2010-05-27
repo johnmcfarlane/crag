@@ -61,7 +61,7 @@ namespace form
 		void Run();	// Called when thread is launched and runs the loop.
 		void ThreadTick();
 		void AdjustNumQuaterna();
-		void GenerateMesh();
+		bool GenerateMesh();
 		
 		//void Lock();
 		//void Unlock();

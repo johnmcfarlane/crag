@@ -32,7 +32,7 @@ namespace form
 		
 		Model & GetOwner() const;
 
-		void SetCenter(Vector3d const & center, double scale);
+		void SetCenter(Vector3d const & _center, double scale);
 	private:
 		void SetVertexCenter(Vertex & vert, Vector3d const & relative_pos, Vector3d const & center, double scale);
 		

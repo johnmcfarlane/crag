@@ -133,54 +133,14 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 void form::Scene::Tick(FormationSet const & formation_set)
 {
-	/*static RootNode * n = nullptr;
-	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
-		FormationPair & pair = * it;
-		Model & m = pair.second;
-		n = & m.root_node;
-	}*/
-
 	node_buffer.Tick(relative_observer_pos);
 	TickModels(formation_set);
-
-	/*for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
-		FormationPair & pair = * it;
-		Model & m = pair.second;
-		n = & m.root_node;
-	}*/
 }
 
 void form::Scene::GenerateMesh(Mesh & mesh) 
 {
 	node_buffer.GenerateMesh(mesh);
-/*	vertices.ClearNormals();
-	mesh.SetVertices(& vertices);
-	
-	FormationMap::const_iterator end = formation_map.end();
-	for (FormationMap::iterator it = formation_map.begin(); it != end; ++ it)
-	{
-		FormationPair & pair = * it;
-		GenerateMesh(pair, mesh);
-	}
-	
-	vertices.NormalizeNormals();*/
 }
-
-/*int form::Scene::GetNumNodes() const
-{
-	//return node_buffer.GetNumNodesInUse();
-	return node_buffer.GetNumNodesAvailable();
-}*/
-
-/*float form::Scene::GetChurnMetric() const
-{
-	return node_buffer.GetChurnMetric();
-}
-
-void form::Scene::ResetChurnCounter()
-{
-	node_buffer.ResetChurnCounter();
-}*/
 
 int form::Scene::GetNumQuaternaAvailable() const
 {
@@ -253,6 +213,8 @@ void form::Scene::ResetFormations()
 		FormationPair & pair = * i;
 		ResetModel(pair);
 	}
+	
+	node_buffer.OnReset();
 }
 
 void form::Scene::TickModel(Model & model) // TODO: Write a scene::forEach

@@ -71,14 +71,7 @@ NodeBuffer::NodeBuffer()
 , quaterna_end(quaterna + max_num_quaterna)
 , vertices(max_num_verts)
 {
-	Node * n = nodes;
-	for (Quaterna * iterator = quaterna; iterator < quaterna_end; n += 4, ++ iterator) {
-		iterator->parent_score = -1;
-		iterator->nodes = n;
-	}
-	Assert(n == nodes + max_num_nodes);
-	
-	VerifyObject(* this);
+	OnReset();
 }
 
 NodeBuffer::~NodeBuffer()
@@ -201,6 +194,31 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 	}
 }
 
+void NodeBuffer::OnReset()
+{
+	Node * n = nodes;
+	for (Quaterna * iterator = quaterna; iterator < quaterna_end; n += 4, ++ iterator) {
+		iterator->parent_score = -1;
+		iterator->nodes = n;
+	}
+	Assert(n == nodes + max_num_nodes);
+	
+	VerifyObject(* this);
+
+#if 0
+	// Update ranking parent score value.
+	for (Quaterna * iterator = quaterna; iterator != quaterna_available_end; ++ iterator) 
+	{
+		Assert(! iterator->nodes[0].IsInUse());
+		Assert(! iterator->nodes[1].IsInUse());
+		Assert(! iterator->nodes[2].IsInUse());
+		Assert(! iterator->nodes[3].IsInUse());
+		
+		iterator->parent_score = -1;
+	}
+#endif
+}
+
 void NodeBuffer::UpdateNodeScores(Vector3f const & relative_camera_pos)
 {
 	CalculateNodeScoreFunctor f(relative_camera_pos);
@@ -213,7 +231,7 @@ void NodeBuffer::UpdateParentScores()
 	
 	// Update ranking parent score value.
 	for (Quaterna * iterator = quaterna; iterator != quaterna_available_end; ++ iterator) {
-		// fetch ahead ranking->node->parent
+		// fetch ahead quaterna->node->parent
 		Quaterna * to_fetch = iterator;
 		if ((to_fetch += fetch_ahead) < quaterna_available_end) {
 			Node * parent = to_fetch->nodes[0].parent;

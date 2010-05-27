@@ -91,14 +91,15 @@ form::Model & form::RootNode::GetOwner() const
 	return ref(owner);
 }
 
-void form::RootNode::SetCenter(Vector3d const & center, double scale)
+void form::RootNode::SetCenter(Vector3d const & _center, double scale)
 {
 	Assert(children == nullptr);
 	
-	SetVertexCenter(ref(triple[0].corner), Vector3d(-1, -1, -1), center, scale);
-	SetVertexCenter(ref(triple[0].mid_point), Vector3d(-1,  1,  1), center, scale);
-	SetVertexCenter(ref(triple[1].mid_point), Vector3d(1,  -1,  1), center, scale);
-	SetVertexCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), center, scale);
+	center = _center;
+	SetVertexCenter(ref(triple[0].corner), Vector3d(-1, -1, -1), _center, scale);
+	SetVertexCenter(ref(triple[0].mid_point), Vector3d(-1,  1,  1), _center, scale);
+	SetVertexCenter(ref(triple[1].mid_point), Vector3d(1,  -1,  1), _center, scale);
+	SetVertexCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), _center, scale);
 }
 
 void form::RootNode::SetVertexCenter(Vertex & vert, Vector3d const & relative_pos, Vector3d const & center, double scale)

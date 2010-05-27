@@ -1152,6 +1152,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = PROFILE;
 				GCC_VERSION = 4.0;
 				"GCC_VERSION[arch=x86_64]" = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1162,6 +1163,7 @@
 					"$(HEADER_SEARCH_PATHS)",
 					"../../../../workspace/SDL_image-1.2.10",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.4;
 				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
@@ -1179,6 +1181,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = 4.0;
 				"GCC_VERSION[arch=x86_64]" = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

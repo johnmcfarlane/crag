@@ -46,32 +46,45 @@ namespace gl
 		GLPP_CALL(glVertex3d(x, y, z));
 	}
 
+	// Vertex3
+	inline void Vertex3(GLfloat x, GLfloat y, GLfloat z)
+	{
+		GLPP_CALL(glVertex3f(x, y, z));
+	}
+	inline void Vertex3(GLdouble x, GLdouble y, GLdouble z)
+	{
+		GLPP_CALL(glVertex3d(x, y, z));
+	}
+
 	// Enable/Disable - checks that the call was necessary. 
 	inline void Enable(GLenum cap)
 	{
-		assert(glIsEnabled(cap) == GL_FALSE);
-		glEnable(cap);
+		bool enabled = glIsEnabled(cap);
+		GLPP_VERIFY;
+		return enabled;
+	}
+	
+	inline void CheckEnabled(GLenum cap)
+	{
+		assert(IsEnabled(cap));
+	}
+	
+	inline void CheckDisabled(GLenum cap)
+	{
+		assert(! IsEnabled(cap));
+	}
+	
+	// Enable/Disable - checks that the call was necessary. 
+	inline void Enable(GLenum cap, bool enabled = true)
+	{
+		assert(enabled != IsEnabled(cap));
+		(enabled ? glEnable : glDisable)(cap);
 		GLPP_VERIFY;
 	}
 	
 	inline void Disable(GLenum cap)
 	{
-		assert(glIsEnabled(cap) == GL_TRUE);
-		glDisable(cap);
-		GLPP_VERIFY;
-	}
-	
-	// CheckEnabled/Disabled - checks that an enable/disable call was unnecessary. 
-	inline void CheckEnabled(GLenum cap)
-	{
-		assert(glIsEnabled(cap));
-		GLPP_VERIFY;
-	}
-	
-	inline void CheckDisabled(GLenum cap)
-	{
-		assert(glIsEnabled(cap) == GL_FALSE);
-		GLPP_VERIFY;
+		Enable(cap, false);
 	}
 	
 	// Return the name that is currently bound to the given target.
@@ -82,4 +95,14 @@ namespace gl
 		return id;
 	}
 	
+	// Lots of get and set...
+	template<GLenum PNAME> int GetInt()
+	{
+		GLint result;
+		GLPP_CALL(glGetIntegerv(PNAME, & result));
+		return result;
+	}
+	
+	inline void DepthFunc(GLenum func) { GLPP_CALL(glDepthFunc(func)); }
+	inline GLenum DepthFunc() { return GetInt<GL_DEPTH_FUNC>(); }
 }

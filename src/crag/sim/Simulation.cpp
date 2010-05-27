@@ -37,7 +37,7 @@ namespace ANONYMOUS {
 //////////////////////////////////////////////////////////////////////
 // functions
 
-sim::Vector3 const default_camera_pos(0,99495,0);
+sim::Vector3 const default_camera_pos(0,99479.8,0);
 CONFIG_DEFINE (use_default_camera_pos, bool, true);
 CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
@@ -133,17 +133,16 @@ void sim::Simulation::Run()
 
 			float tick_seconds = static_cast<float>(app::TimeTypeToSeconds(tick_time));
 			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
-			formation_manager->AdjustNumNodes(tick_seconds, Universe::target_frame_period * .5f);
-
+			formation_manager->AdjustNumNodes(busy_seconds, Universe::target_frame_period * .5f);
 			continue;
 		}
-
+		
 		if (formation_manager->PollMesh())
 		{
 			time = app::GetTime();
 			continue;
 		}
-
+		
 		//printf("sleep =%d %d\n", time, time_until_tick);
 		app::Sleep(time_until_tick);
 		time = app::GetTime();

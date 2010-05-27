@@ -77,33 +77,63 @@ namespace core
 		void * data;
 		SDL_Thread * sdl_thread;
 	};
+	
 
 	class Mutex
 	{
 	public:
 		Mutex()
-			: sdl_mutex(SDL_CreateMutex())
+			: sdl_semaphore(SDL_CreateSemaphore(1))
 		{
+			Assert(sdl_semaphore != nullptr);
 		}
 
 		~Mutex()
 		{
-			SDL_DestroyMutex(sdl_mutex);
+			Assert(sdl_semaphore != nullptr);
+			Assert(SDL_SemValue(sdl_semaphore) == 1);
+			SDL_DestroySemaphore(sdl_semaphore);
 		}
-
+		
 		void Lock()
 		{
-			SDL_LockMutex(sdl_mutex);
+			int result = SDL_SemWait(sdl_semaphore);
+			
+			// Unknown error.
+			Assert(result == 0);
+		}
+		
+		bool TryLock()
+		{
+			int result = SDL_SemTryWait(sdl_semaphore);
+			
+			switch (result)
+			{
+				case 0:
+					return true;
+					
+				case SDL_MUTEX_TIMEDOUT:
+					return false;
+					
+				default:
+					// Unknown error.
+					Assert(false);
+					return false;
+			}
 		}
 
 		void Unlock()
 		{
-			SDL_UnlockMutex(sdl_mutex);
+			int result = SDL_SemPost(sdl_semaphore);
+
+			// Unknown error.
+			Assert(result == 0);
 		}
 
 	private:
 
-		SDL_mutex * sdl_mutex;
+		// A semaphore - not a SDL_Thread - is necessary for TryLock
+		SDL_sem * sdl_semaphore;
 	};
 }
 

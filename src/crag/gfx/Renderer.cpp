@@ -116,7 +116,7 @@ void DrawShadowMapTest(gl::Vbo2dTex & quad_buffer, std::map<gfx::ShadowMapKey, g
 		float w = 4.f / 3;
 		glOrtho(0, w, 0, 1, 0, 1);
 		
-		//glDepthFunc(GL_ALWAYS);
+		//gl::Set<GL_DEPTH_FUNC>(GL_ALWAYS);
 		gl::Disable(GL_CULL_FACE);
 		
 		gl::Disable(GL_LIGHTING);
@@ -223,7 +223,7 @@ void gfx::Renderer::InitRenderState()
 	GLPP_CALL(glFrontFace(GL_CCW));
 	GLPP_CALL(glCullFace(GL_BACK));
 	GLPP_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
-	GLPP_CALL(glDepthFunc(GL_LEQUAL));
+	gl::DepthFunc(GL_LEQUAL);
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
@@ -240,6 +240,8 @@ void gfx::Renderer::VerifyRenderState() const
 		GLPP_CALL((param->enabled ? gl::CheckEnabled : gl::CheckDisabled)(param->cap));
 		++ param;
 	}
+	
+	Assert(gl::DepthFunc() == GL_LEQUAL);
 #endif	// NDEBUG
 }
 
@@ -314,7 +316,6 @@ void gfx::Renderer::Render(Scene & scene) const
 void gfx::Renderer::RenderScene(Scene const & scene) const
 {
 	VerifyRenderState();
-	SetFrustrum(scene.pov.frustrum);
 
 	if (scene.skybox != nullptr) {
 		// Draw skybox.
@@ -326,6 +327,7 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
 
+	SetFrustrum(scene.pov.frustrum);
 	RenderForeground(scene);
 
 	DebugDraw(scene.pov);
@@ -337,6 +339,12 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 {
 	VerifyRenderState();
+	
+	Frustrum skybox_frustrum = pov.frustrum;
+	skybox_frustrum.near_z = .1f;
+	skybox_frustrum.far_z = 10.f;
+	SetFrustrum(skybox_frustrum);
+
 	SetModelViewMatrix(pov.CalcModelViewMatrix(false));
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
@@ -371,6 +379,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene) const
 		gl::Enable(GL_LIGHTING);
 	}
 
+	Assert(gl::DepthFunc() == GL_LEQUAL);
 	gl::Enable(GL_DEPTH_TEST);
 
 	// Do the rendering
@@ -496,7 +505,7 @@ void gfx::Renderer::RenderShadowLights(Pov const & pov, Scene const & scene) con
 	gl::Enable(GL_BLEND);
 	
 	// Z-sorting
-//	GLPP_CALL(glDepthFunc (GL_LEQUAL));
+//	gl::Set<GL_DEPTH_FUNC>(GL_LEQUAL);
 //	GLPP_CALL(gl::Enable (GL_DEPTH_TEST));
 	
 	for (std::map<ShadowMapKey, ShadowMap>::const_iterator it = scene.shadow_maps.begin(); it != scene.shadow_maps.end(); ++ it)

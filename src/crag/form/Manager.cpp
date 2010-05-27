@@ -144,15 +144,19 @@ bool form::Manager::PollMesh()
 {
 	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin))
 	{
+		// TODO: There should be two form::Mesh objects - not two BO's
 		std::swap(front_buffer_object, back_buffer_object);
 		return true;
 	}
-
+	
 	return false;
 }
 
 sim::Vector3 const & form::Manager::BeginRender(bool color)
 {
+	Assert(gl::DepthFunc() == GL_LEQUAL);
+	Assert(gl::IsEnabled(GL_DEPTH_TEST));
+
 	// TODO: Minimize state changes for these too.
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse);
@@ -169,6 +173,8 @@ sim::Vector3 const & form::Manager::BeginRender(bool color)
 
 void form::Manager::EndRender()
 {
+	Assert(gl::DepthFunc() == GL_LEQUAL);
+	
 	front_buffer_object->Draw();
 	front_buffer_object->EndDraw();
 	

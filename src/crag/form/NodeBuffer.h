@@ -61,6 +61,7 @@ namespace form
 		void SetNumQuaternaAvailable(int n);	
 		
 		void Tick(Vector3f const & relative_camera_pos);
+		void OnReset();
 	private:
 		void UpdateNodeScores(Vector3f const & relative_camera_pos);
 		void UpdateParentScores();

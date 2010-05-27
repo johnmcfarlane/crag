@@ -73,12 +73,6 @@
 // c++0x-friendly NULL.
 #define nullptr 0
 
-// Semicolon-friendly compound statement,
-#define DO(STATEMENT) do { STATEMENT } while (false)
-
-// Semicolon-friendly empty statement.
-#define DO_NOTHING do { } while(false)
-
 
 //////////////////////////////////////////////////////////////////////
 // ODE

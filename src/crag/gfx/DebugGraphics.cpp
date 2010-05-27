@@ -94,7 +94,7 @@ PointArray tris(GL_TRIANGLES);
 void DrawPrimatives(bool hidden)
 {
 	if (hidden) {
-		glDepthFunc (GL_GREATER);
+		gl::DepthFunc(GL_GREATER);
 	}
 
 	points.Draw(hidden);
@@ -102,7 +102,7 @@ void DrawPrimatives(bool hidden)
 	tris.Draw(hidden);
 
 	if (hidden) {
-		glDepthFunc (GL_LEQUAL);
+		gl::DepthFunc(GL_LEQUAL);
 	}
 }
 

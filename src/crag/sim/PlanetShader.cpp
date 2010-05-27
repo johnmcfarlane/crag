@@ -147,7 +147,8 @@ Vector3f sim::PlanetShader::CalcMidPointPos(int seed, Vector3f const & near_corn
 		max_radius = height;
 	}
 	
-	return Vector3f(center + unit * height);
+	Vec3 result = center + unit * height;
+	return result;
 }
 
 
