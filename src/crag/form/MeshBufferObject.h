@@ -14,7 +14,7 @@
 #include "form/Vertex.h"
 
 
-class IndexBuffer;
+namespace gfx { class IndexBuffer; }
 
 
 namespace form
@@ -27,7 +27,7 @@ namespace form
 	public:
 		MeshBufferObject();
 		
-		void Set(form::Mesh const & mesh);
+		void Set(Mesh const & mesh);
 		
 		void BeginDraw(bool color);
 		void EndDraw();
@@ -35,8 +35,8 @@ namespace form
 		void Draw();
 		
 	private:
-		void SetVbo(form::VertexBuffer const & vertices);	
-		void SetIbo(IndexBuffer const & indices);
+		void SetVbo(VertexBuffer const & vertices);	
+		void SetIbo(gfx::IndexBuffer const & indices);
 		
 		int max_index;
 	};

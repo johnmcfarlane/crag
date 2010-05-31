@@ -8,6 +8,8 @@
  *
  */
 
+#pragma once
+
 #include "Matrix4.h"
 #include "core/Vector4.h"
 #include "core/VectorOps.h"
@@ -31,7 +33,7 @@ template<typename S> Matrix4<S> DirectionMatrix(Vector3<S> const & forward, Vect
 	Vector3<S> right = Normalized(CrossProduct(forward, up));
 	Vector3<S> matrix_up = CrossProduct(right, forward);
 
-	return sim::Matrix4(right.x, right.y, right.z, 0,	// T
+	return Matrix4<S>(right.x, right.y, right.z, 0,	// T
 					forward.x, forward.y, forward.z, 0,	// OD
 					matrix_up.x, matrix_up.y, matrix_up.z, 0,	// O
 					0, 0, 0, 1);

@@ -21,13 +21,16 @@
 //////////////////////////////////////////////////////////////////////
 // IndexBuffer member definitions
 
-IndexBuffer::IndexBuffer(int buffer_capacity)
+gfx::IndexBuffer::IndexBuffer(int buffer_capacity)
 {
 	reserve(buffer_capacity);
 }
 
-void IndexBuffer::Clear()
+void gfx::IndexBuffer::Clear()
 {
+	clear();
+
+#if 0
 	size_t s = size();
 	if (s > 0) {
 		GLuint & beginning = * begin();
@@ -35,9 +38,10 @@ void IndexBuffer::Clear()
 		
 		clear();
 	}
+#endif
 }
 
-IndexBuffer::value_type const * IndexBuffer::GetArray() const
+gfx::IndexBuffer::value_type const * gfx::IndexBuffer::GetArray() const
 {
 	return & front();
 }

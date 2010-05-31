@@ -76,7 +76,7 @@ template<typename S> S TriangleArea(S a, S b, S c)
 }
 
 // returns un-normalized normal of the triangle
-template<typename V> V TriangleNormal(V a, V b, V c)
+template<typename V> V TriangleNormal(V const & a, V const & b, V const & c)
 {
 	return CrossProduct(b - a, b - c);
 }

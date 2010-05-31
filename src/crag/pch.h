@@ -19,6 +19,10 @@
 #define CRAG_PCH
 
 
+// Currently, the entire project is C++.
+#if defined(__cplusplus)
+
+
 //////////////////////////////////////////////////////////////////////
 // Clean inclusion of <windows.h>.
 
@@ -43,7 +47,7 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// Regular includes.
+// SDL includes.
 
 #if defined(WIN32) || defined(__APPLE__)
 #include <SDL.h>
@@ -53,10 +57,13 @@
 #include <SDL/SDL_image.h>
 #endif
 
+
+//////////////////////////////////////////////////////////////////////
+// standard includes.
+
 #include <stdlib.h>
 #include <stdint.h>
 
-#if defined(__cplusplus)
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -64,7 +71,6 @@
 
 #include <limits>
 #include <iostream>
-#endif
 
 
 //////////////////////////////////////////////////////////////////////
@@ -72,6 +78,17 @@
 
 // c++0x-friendly NULL.
 #define nullptr 0
+
+
+//////////////////////////////////////////////////////////////////////
+// core includes.
+
+#include "core/debug.h"
+#include "core/floatOps.h"
+#include "core/Matrix.h"
+#include "core/memory.h"
+#include "core/Sphere.h"
+#include "core/Vector.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -94,5 +111,10 @@
 // Change to anything but "" to get an explicit namespace.
 // (Will require appending ANONYMOUS to a lot of vars.)
 #define ANONYMOUS
+
+
+//////////////////////////////////////////////////////////////////////
+
+#endif // defined(__cplusplus)
 
 #endif	// CRAG_PCH

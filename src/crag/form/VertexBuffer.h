@@ -10,24 +10,30 @@
 
 #pragma once
 
-#include "core/Pool.h"
-
 #include "form/Vertex.h"
+
+#include <vector>
 
 
 namespace form 
 {
-	class VertexBuffer : public Pool<Vertex>
+	class VertexBuffer : private std::vector<Vertex>
 	{
-	public:
-		VertexBuffer(int max_num_verts) 
-		: Pool<Vertex>(max_num_verts)
-		{
-		}
+		typedef std::vector<Vertex> Base;
 		
-		void ClearNormals();
+	public:
+		VertexBuffer(int max_num_verts);
+
+		size_t Size() const { return size(); }
+		Vertex const * GetArray() const { return & front(); }
+		Vertex & PushBack();
+		
+		void Clear();
+		//void ClearNormals();
 
 		void NormalizeNormals();
+		
+		int GetIndex(Vertex const & v) const;
 
 		//DUMP_OPERATOR_DECLARATION(VertexBuffer);
 	};

@@ -348,7 +348,7 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 	SetModelViewMatrix(pov.CalcModelViewMatrix(false));
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	gl::CheckEnabled(GL_COLOR_MATERIAL);
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	gl::Enable(GL_TEXTURE_2D);
 	gl::Disable(GL_CULL_FACE);
 
@@ -385,7 +385,9 @@ void gfx::Renderer::RenderForeground(Scene const & scene) const
 	// Do the rendering
 	if (! shadow_mapping) {
 		RenderSimpleLights(scene.lights);
-		RenderEntities(scene.entities, scene.pov, true);
+
+		form::Manager & manager = form::Manager::Get();
+		manager.Render(scene.pov, true);
 	}
 	
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
@@ -415,22 +417,6 @@ void gfx::Renderer::RenderForeground(Scene const & scene) const
 	gl::Disable(GL_DEPTH_TEST);
 }
 
-void gfx::Renderer::RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const
-{
-	// Z-sorting
-	GLPP_CALL(gl::CheckEnabled(GL_DEPTH_TEST));
-
-	form::Manager & manager = form::Manager::Get();
-
-	Pov formation_pov = pov;
-	formation_pov.pos -= manager.BeginRender(color);
-	SetModelViewMatrix(formation_pov.CalcModelViewMatrix());
-	
-	gl::CheckEnabled(GL_COLOR_MATERIAL);
-	
-	manager.EndRender();
-}
-
 // Nothing to do with shadow maps; draws the lights in the main scene.
 void gfx::Renderer::RenderSimpleLights(std::vector<Light const *> const & lights) const
 {
@@ -457,7 +443,7 @@ void gfx::Renderer::RenderSimpleLights(std::vector<Light const *> const & lights
 	}
 	
 	while (light_id <= GL_LIGHT7) {
-		GLPP_CALL(gl::CheckDisabled(light_id));
+		Assert(! gl::IsEnabled(light_id));
 		++ light_id;
 	}
 }
@@ -586,7 +572,7 @@ void gfx::Renderer::RenderShadowLight(Pov const & pov, ShadowMapKey const & key,
 	// TODO: Only render key.entity
 	std::vector<sim::Entity const *> entities;
 	entities.push_back(key.entity);
-	RenderEntities(entities, pov, true);
+	form::Manager::Get().Render(pov, true);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE_ARB, GL_NONE);
 	GLPP_VERIFY;
@@ -703,7 +689,7 @@ void gfx::Renderer::GenerateShadowMap(Scene & scene, ShadowMapKey const & key) c
 	
 	SetModelViewMatrix(s.light_view);
 	
-	//RenderEntities(scene.entities, false);
+	//RenderFormations(scene.entities, false);
 	
 	GLPP_VERIFY;
 	

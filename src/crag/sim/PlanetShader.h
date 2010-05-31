@@ -29,7 +29,7 @@ namespace sim
 		
 		virtual void SetOrigin(Vector3d const & origin);
 
-		virtual void InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Vertex & mid_point);
+		virtual void InitMidPoint(int i, form::Node const & a, form::Node const & b, Vector3f & mid_point);
 		virtual Vector3f CalcMidPointPos(int seed, Vector3f const & near_corners1, Vector3f const & near_corners2, Vector3f const & far_corners1, Vector3f const & far_corners2);
 		//virtual float CalcScore(form::Node const & node);
 		

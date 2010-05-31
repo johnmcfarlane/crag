@@ -11,6 +11,11 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C0009D093BD00EBEB88 /* OpenGL.framework */; };
 		002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C6009D0951E00EBEB88 /* GLUT.framework */; };
+		52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244D911B0E2DD008C0CE8 /* Thread.cpp */; };
+		52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244DC11B0E314008C0CE8 /* Mutex.cpp */; };
+		52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454B11B1A8FB008C0CE8 /* Point.cpp */; };
+		52A2454F11B1AA06008C0CE8 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454D11B1AA06008C0CE8 /* VertexBuffer.cpp */; };
+		52A2455211B1AAB6008C0CE8 /* PointBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */; };
 		52F3A38E11A7979400385922 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30211A7979400385922 /* App.cpp */; };
 		52F3A38F11A7979400385922 /* AppSdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30411A7979400385922 /* AppSdl.cpp */; };
 		52F3A39011A7979400385922 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52F3A30611A7979400385922 /* COPYING */; };
@@ -32,7 +37,6 @@
 		52F3A3A011A7979400385922 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A33E11A7979400385922 /* Scene.cpp */; };
 		52F3A3A111A7979400385922 /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34011A7979400385922 /* SceneThread.cpp */; };
 		52F3A3A211A7979400385922 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34311A7979400385922 /* Vertex.cpp */; };
-		52F3A3A311A7979400385922 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34511A7979400385922 /* VertexBuffer.cpp */; };
 		52F3A3A411A7979400385922 /* DebugGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34911A7979400385922 /* DebugGraphics.cpp */; };
 		52F3A3A511A7979400385922 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34B11A7979400385922 /* Font.cpp */; };
 		52F3A3A611A7979400385922 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A34D11A7979400385922 /* Image.cpp */; };
@@ -173,6 +177,15 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
+		52A244DB11B0E314008C0CE8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
+		52A244DC11B0E314008C0CE8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
+		52A2454A11B1A8FB008C0CE8 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		52A2454B11B1A8FB008C0CE8 /* Point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
+		52A2454D11B1AA06008C0CE8 /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
+		52A2454E11B1AA06008C0CE8 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
+		52A2455011B1AAB6008C0CE8 /* PointBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointBuffer.h; sourceTree = "<group>"; };
+		52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointBuffer.cpp; sourceTree = "<group>"; };
 		52F3A30211A7979400385922 /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
 		52F3A30311A7979400385922 /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
 		52F3A30411A7979400385922 /* AppSdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppSdl.cpp; sourceTree = "<group>"; };
@@ -238,8 +251,6 @@
 		52F3A34211A7979400385922 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		52F3A34311A7979400385922 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		52F3A34411A7979400385922 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
-		52F3A34511A7979400385922 /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
-		52F3A34611A7979400385922 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
 		52F3A34811A7979400385922 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		52F3A34911A7979400385922 /* DebugGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugGraphics.cpp; sourceTree = "<group>"; };
 		52F3A34A11A7979400385922 /* DebugGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugGraphics.h; sourceTree = "<group>"; };
@@ -565,6 +576,8 @@
 				52F3A31211A7979400385922 /* MatrixOps.h */,
 				52F3A31311A7979400385922 /* memory.cpp */,
 				52F3A31411A7979400385922 /* memory.h */,
+				52A244DC11B0E314008C0CE8 /* Mutex.cpp */,
+				52A244DB11B0E314008C0CE8 /* Mutex.h */,
 				52F3A31511A7979400385922 /* NSphere.h */,
 				52F3A31611A7979400385922 /* Pool.h */,
 				52F3A31711A7979400385922 /* Random.cpp */,
@@ -573,6 +586,7 @@
 				52F3A31A11A7979400385922 /* Sphere.h */,
 				52F3A31B11A7979400385922 /* Sphere3.h */,
 				52F3A31C11A7979400385922 /* SphereOps.h */,
+				52A244D911B0E2DD008C0CE8 /* Thread.cpp */,
 				52F3A31D11A7979400385922 /* Thread.h */,
 				52F3A31E11A7979400385922 /* Vector.h */,
 				52F3A31F11A7979400385922 /* Vector2.h */,
@@ -617,10 +631,14 @@
 				52F3A34011A7979400385922 /* SceneThread.cpp */,
 				52F3A34111A7979400385922 /* SceneThread.h */,
 				52F3A34211A7979400385922 /* Shader.h */,
+				52A2454D11B1AA06008C0CE8 /* VertexBuffer.cpp */,
+				52A2454E11B1AA06008C0CE8 /* VertexBuffer.h */,
 				52F3A34311A7979400385922 /* Vertex.cpp */,
 				52F3A34411A7979400385922 /* Vertex.h */,
-				52F3A34511A7979400385922 /* VertexBuffer.cpp */,
-				52F3A34611A7979400385922 /* VertexBuffer.h */,
+				52A2454A11B1A8FB008C0CE8 /* Point.h */,
+				52A2454B11B1A8FB008C0CE8 /* Point.cpp */,
+				52A2455011B1AAB6008C0CE8 /* PointBuffer.h */,
+				52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */,
 			);
 			path = form;
 			sourceTree = "<group>";
@@ -944,7 +962,6 @@
 				52F3A3A011A7979400385922 /* Scene.cpp in Sources */,
 				52F3A3A111A7979400385922 /* SceneThread.cpp in Sources */,
 				52F3A3A211A7979400385922 /* Vertex.cpp in Sources */,
-				52F3A3A311A7979400385922 /* VertexBuffer.cpp in Sources */,
 				52F3A3A411A7979400385922 /* DebugGraphics.cpp in Sources */,
 				52F3A3A511A7979400385922 /* Font.cpp in Sources */,
 				52F3A3A611A7979400385922 /* Image.cpp in Sources */,
@@ -1056,6 +1073,11 @@
 				52F3A6A211A7A23C00385922 /* IMG_xpm.c in Sources */,
 				52F3A6A511A7A23C00385922 /* IMG_xv.c in Sources */,
 				52F3A6A811A7A23C00385922 /* IMG_xxx.c in Sources */,
+				52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */,
+				52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */,
+				52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */,
+				52A2454F11B1AA06008C0CE8 /* VertexBuffer.cpp in Sources */,
+				52A2455211B1AAB6008C0CE8 /* PointBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1173,10 @@
 					/Library/Frameworks,
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = PROFILE;
 				GCC_VERSION = 4.0;
@@ -1180,6 +1206,8 @@
 					/Library/Frameworks,
 					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = 4.0;

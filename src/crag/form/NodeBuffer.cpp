@@ -69,9 +69,9 @@ NodeBuffer::NodeBuffer()
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_available_end(quaterna)
 , quaterna_end(quaterna + max_num_quaterna)
-, vertices(max_num_verts)
+, points(max_num_verts)
 {
-	OnReset();
+	InitQuaterna(quaterna_end);
 }
 
 NodeBuffer::~NodeBuffer()
@@ -97,7 +97,7 @@ void NodeBuffer::Verify() const
 
 	VerifyTrue(num_nodes_available == num_quaterna_available * 4);
 	
-	VerifyObject(vertices);
+	//VerifyObject(points);
 	
 	VerifyTrue(quaterna <= quaterna_available_end);
 	for (Quaterna const * q = quaterna; q != quaterna_available_end; ++ q) {
@@ -188,7 +188,7 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 	UpdateNodeScores(relative_camera_pos);
 	UpdateParentScores();
 	SortNodes();
-
+	
 	for (int timeout = 1; timeout; -- timeout) {
 		ChurnNodes();
 	}
@@ -196,8 +196,19 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 
 void NodeBuffer::OnReset()
 {
+	points.FastClear();
+	InitQuaterna(quaterna_end);
+	
+/*	// Half the number of quaterna for safe measure.
+	int num_quaterna_available = quaterna_available_end - quaterna;
+	num_quaterna_available = (num_quaterna_available + 1) >> 1;
+	quaterna_available_end = quaterna + num_quaterna_available;*/
+}
+
+void NodeBuffer::InitQuaterna(Quaterna const * end)
+{
 	Node * n = nodes;
-	for (Quaterna * iterator = quaterna; iterator < quaterna_end; n += 4, ++ iterator) {
+	for (Quaterna * iterator = quaterna; iterator < end; n += 4, ++ iterator) {
 		iterator->parent_score = -1;
 		iterator->nodes = n;
 	}
@@ -356,8 +367,15 @@ void NodeBuffer::GenerateMesh(Mesh & mesh)
 {
 	//int fetch_ahead = 32;
 	
-	vertices.ClearNormals();
-	mesh.SetVertices(& vertices);
+	points.Clear();
+	
+	gfx::IndexBuffer & indices = mesh.GetIndices();
+	indices.Clear();
+	
+	VertexBuffer & vertices = mesh.GetVertices();
+	vertices.Clear();
+	
+	//mesh.SetVertices(& points);
 	
 	{
 		GenerateMeshFunctor f(mesh);
@@ -402,7 +420,7 @@ bool NodeBuffer::ExpandNode(Node & node)
 	Assert(worst_children + 2 != & node);
 	Assert(worst_children + 3 != & node);
 		
-	Shader & shader = GetShader(node);
+	Shader & shader = GetModel(node).GetShader();
 	InitMidPoints(node, shader);
 	
 	// Work with copy of children until it's certain that expansion is going to work.
@@ -445,30 +463,6 @@ void NodeBuffer::CollapseNode(Node & node)
 	}
 }
 
-Shader & NodeBuffer::GetShader(Node & node)
-{
-	RootNode & root_node = GetRootNode(node);
-	
-	Model & owner = root_node.GetOwner();
-	Assert(& owner.root_node == & root_node);
-	
-	return owner.GetShader();
-}
-
-RootNode & NodeBuffer::GetRootNode(Node & node)
-{
-	//VerifyArrayElement(& node, nodes, nodes_available_end);
-	
-	Node * iterator = & node;
-	while (true) {
-		Node * parent = iterator->parent;
-		if (parent == nullptr) {
-			return * reinterpret_cast<RootNode *> (iterator);
-		}
-		iterator = parent;
-	}
-}
-	
 // Makes sure node's three mid-points are non-null or returns false.
 void NodeBuffer::InitMidPoints(Node & node, Shader & shader)
 {
@@ -483,7 +477,7 @@ void NodeBuffer::InitMidPoints(Node & node, Shader & shader)
 		{
 			// create the mid-point, share it with the cousin
 			Node & cousin = ref(t.cousin);
-			t.mid_point = cousin.triple[triplet_index].mid_point = vertices.Alloc();
+			t.mid_point = cousin.triple[triplet_index].mid_point = points.Alloc();
 			Assert (t.mid_point != nullptr);	// decrease MAX_NUM_NODES (relative to MAX_NUM_VERTS)
 			
 			// and initialize it's position etc..
@@ -496,7 +490,7 @@ bool NodeBuffer::InitChildGeometry(Node & parent, Node * children, Shader & shad
 {
 	// TODO: Hard-code this and remove GetChildCorners.
 	for (int child_index = 0; child_index < 4; ++ child_index) {
-		Vertex * child_corners[3];
+		Point * child_corners[3];
 		parent.GetChildCorners(child_index, child_corners);
 		
 		Node & child = children [child_index];
@@ -606,7 +600,7 @@ void NodeBuffer::DeinitNode(Node & node)
 			if (t.mid_point != nullptr)
 			{
 				// and there is a mid-point, so delete it.
-				vertices.Free(t.mid_point);
+				points.Free(t.mid_point);
 				t.mid_point = nullptr;
 			}
 		}
@@ -772,9 +766,11 @@ Quaterna * NodeBuffer::GetWorstQuaterna(float parent_score)
 {
 	Assert(parent_score >= 0);
 	
-	if (quaterna_available_end > quaterna) {
+	if (quaterna_available_end > quaterna) 
+	{
 		Quaterna & replacement = quaterna_available_end [- 1];
-		if (replacement.IsSuitableReplacement(parent_score)) {
+		if (replacement.IsSuitableReplacement(parent_score)) 
+		{
 			return & replacement;
 		}
 	}
@@ -789,21 +785,25 @@ void NodeBuffer::BubbleSortUp(Quaterna * quartet)
 	Quaterna q = * quartet;
 
 	Quaterna * iterator = quartet;
-	while (true) {
+	while (true) 
+	{
 		-- iterator;
 		
-		if (iterator < quaterna) {
+		if (iterator < quaterna) 
+		{
 			break;
 		}
 		
-		if (iterator->parent_score > q.parent_score) {
+		if (iterator->parent_score > q.parent_score) 
+		{
 			break;
 		}
 	}
 	
 	++ iterator;
 	
-	if (iterator < quartet) {
+	if (iterator < quartet) 
+	{
 		memmove(iterator + 1, iterator, reinterpret_cast<char *> (quartet) - reinterpret_cast<char *> (iterator));
 		(* iterator) = q;
 	}

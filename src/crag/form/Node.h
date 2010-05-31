@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "form/Vertex.h"
+#include "form/Point.h"
 #include "core/memory.h"
 
 
@@ -25,8 +25,7 @@ namespace form
 		Node();
 		~Node();
 		
-		bool InitGeometry(/*Vertex * const * corners*/);
-		//void Deinit(class VertexBuffer & vertices);
+		bool InitGeometry();
 		
 		bool HasChildren() const { return children != nullptr; }
 		bool IsExpanded() const { return HasChildren(); }
@@ -44,18 +43,18 @@ namespace form
 			return ! IsExpanded() && HasAllCousins();
 		}
 		
-		Vertex & GetCorner(int index) { return ref(triple[index].corner); }
-		Vertex const & GetCorner(int index) const { return ref(triple[index].corner); }
+		Point & GetCorner(int index) { return ref(triple[index].corner); }
+		Point const & GetCorner(int index) const { return ref(triple[index].corner); }
 		
-		Vertex const * GetMidPoint(int index) const { return triple[index].mid_point; }
-		Vertex * GetMidPoint(int index) { return triple[index].mid_point; }
+		Point const * GetMidPoint(int index) const { return triple[index].mid_point; }
+		Point * GetMidPoint(int index) { return triple[index].mid_point; }
 		
 		Node const * GetCousin(int index) const { return triple[index].cousin; }
 		Node * GetCousin(int index) { return triple[index].cousin; }
 		void SetCousin(int index, Node & cousin);
 		
 		int GetChildSeed(int child_index) const;
-		void GetChildCorners(int child_index, Vertex * child_corners[3]) const;
+		void GetChildCorners(int child_index, Point * child_corners[3]) const;
 		void GetChildNeighbours(int child_index, Node * child_neighbours[3]) const;
 		
 #if VERIFY
@@ -64,9 +63,6 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Node);
 		
 		OVERLOAD_NEW_DELETE(128);
-		
-		// An array of four sibling nodes.
-		//typedef Node form::Quaterna[4];
 		
 		Node * children;		//  4	/	8
 		Node * parent;			//  4	/	8
@@ -77,8 +73,8 @@ namespace form
 			Triplet();
 			~Triplet();
 			
-			Vertex * corner;
-			Vertex * mid_point;
+			Point * corner;
+			Point * mid_point;
 			Node * cousin;
 		};	// 12	/	24
 		

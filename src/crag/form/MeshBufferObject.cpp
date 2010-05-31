@@ -25,7 +25,7 @@ form::MeshBufferObject::MeshBufferObject()
 
 void form::MeshBufferObject::Set(form::Mesh const & mesh)
 {
-	SetVbo(* mesh.GetVertices());
+	SetVbo(mesh.GetVertices());
 	SetIbo(mesh.GetIndices());
 }
 
@@ -35,7 +35,7 @@ void form::MeshBufferObject::BeginDraw(bool color)
 	glEnableClientState( GL_VERTEX_ARRAY );
 	if (color) {
 		glEnableClientState( GL_NORMAL_ARRAY );
-		glEnableClientState( GL_COLOR_ARRAY );
+	//	glEnableClientState( GL_COLOR_ARRAY );
 	}
 	
 	Bind();
@@ -44,7 +44,7 @@ void form::MeshBufferObject::BeginDraw(bool color)
 	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), & null_vert->pos);
 	if (color) {
 		glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm);
-		glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
+	//	glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
 	}
 }
 
@@ -53,7 +53,7 @@ void form::MeshBufferObject::EndDraw()
 	// Disable all the magic buffer thingeys.
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY );
+	//glDisableClientState(GL_COLOR_ARRAY );
 }	
 
 void form::MeshBufferObject::Draw()
@@ -62,12 +62,12 @@ void form::MeshBufferObject::Draw()
 	gl::Mesh<Vertex>::Draw(0, max_index);
 }
 
-void form::MeshBufferObject::SetVbo(form::VertexBuffer const & vertices)
+void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
 {
-	gl::Mesh<Vertex>::SetVbo(vertices.GetMaxUsed(), vertices.GetArray());
+	gl::Mesh<Vertex>::SetVbo(vertices.Size(), vertices.GetArray());
 }
 
-void form::MeshBufferObject::SetIbo(IndexBuffer const & indices)
+void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
 {
 	max_index = indices.GetSize();
 	gl::Mesh<Vertex>::SetIbo(max_index, indices.GetArray());

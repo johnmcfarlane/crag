@@ -15,35 +15,39 @@
 #include <vector>
 
 
-class IndexBuffer : private std::vector<GLuint>
+namespace gfx
 {
-public:
-	IndexBuffer(int capacity);
-
-	// number of indices
-	int GetSize() const 
-	{ 
-		return size(); 
-	}
 	
-	int GetCapacity() const
+	class IndexBuffer : private std::vector<GLuint>
 	{
-		return capacity();
-	}
+	public:
+		IndexBuffer(int capacity);
 
-	// number of spare faces
-	int GetSlack() const 
-	{ 
-		return capacity() - size(); 
-	}
-	
-	void Clear();
-	
-	void PushBack(value_type index)
-	{
-		push_back(index);
-	}
-	
-	value_type const * GetArray() const;
-};
+		// number of indices
+		int GetSize() const 
+		{ 
+			return size(); 
+		}
+		
+		int GetCapacity() const
+		{
+			return capacity();
+		}
 
+		// number of spare faces
+		int GetSlack() const 
+		{ 
+			return capacity() - size(); 
+		}
+		
+		void Clear();
+		
+		void PushBack(value_type index)
+		{
+			push_back(index);
+		}
+		
+		value_type const * GetArray() const;
+	};
+
+}

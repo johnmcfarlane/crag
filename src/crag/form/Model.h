@@ -15,6 +15,8 @@
 
 namespace form
 {
+	Model & GetModel(Node & node);
+	
 	class VertexBuffer;
 	
 	class Model

@@ -48,6 +48,8 @@ CONFIG_DEFINE (planet_radius_1, float, 100000);
 // please don't write in
 CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
 CONFIG_DEFINE (sun_year, float, 300.f);
+	
+CONFIG_DEFINE (target_tick_proportion, float, .75f);
 
 }
 
@@ -125,15 +127,17 @@ void sim::Simulation::Run()
 		{
 			Tick();
 
+			// Update time variables including how long Tick() took. 
 			target_tick_time += app::SecondsToTimeType(Universe::target_frame_period);
 			app::TimeType tick_start_time = time;
 			time = app::GetTime();
 			app::TimeType tick_end_time = time;
 			app::TimeType tick_time = tick_end_time - tick_start_time;
 
+			// Adjust the number of nodes based on how well we're doing. 
 			float tick_seconds = static_cast<float>(app::TimeTypeToSeconds(tick_time));
-			//printf("adjust=%d %f/%f\n", time, busy_seconds, Universe::target_frame_period * .75);
-			formation_manager->AdjustNumNodes(tick_seconds, Universe::target_frame_period * .5f);
+			float target_tick_seconds = Universe::target_frame_period * target_tick_proportion;
+			formation_manager->AdjustNumNodes(tick_seconds, target_tick_seconds);
 			continue;
 		}
 		

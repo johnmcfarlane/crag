@@ -17,6 +17,20 @@
 #include "core/memory.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Node accessors
+
+form::Model & form::GetModel(Node & node)
+{
+	RootNode & root_node = GetRootNode(node);
+	
+	Model & owner = root_node.GetOwner();
+	Assert(& owner.root_node == & root_node);
+	
+	return owner;
+}
+
+
 /////////////////////////////////////////////////////////////////
 // form::Model
 
@@ -43,7 +57,7 @@ form::Model::~Model()
 void form::Model::SetShader(form::Shader * init_shader)
 {
 	// Currently, no need ever to change shader.
-	Assert(shader == nullptr);
+	Assert((shader == nullptr) != (init_shader == nullptr));
 	
 	shader = init_shader;
 }

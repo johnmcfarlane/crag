@@ -44,18 +44,19 @@ void sim::PlanetShader::SetOrigin(Vector3d const & origin)
 	center = formation.position - origin;
 }
 
-void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Vertex & mid_point) 
+void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, Vector3f & mid_point) 
 {
 	int seed_1 = Random(a.seed + i).GetInt();
 	int seed_2 = Random(b.seed + i).GetInt();
 	int combined_seed(seed_1 + seed_2);
 	
-	Vector3f const & near_a = a.GetCorner(TriMod(i + 1)).pos;
-	Vector3f const & near_b = b.GetCorner(TriMod(i + 1)).pos;
-	Vector3f const & far_a = a.GetCorner(i).pos;
-	Vector3f const & far_b = b.GetCorner(i).pos;
-	mid_point.pos = CalcMidPointPos(combined_seed, near_a, near_b, far_a, far_b);
+	Vector3f const & near_a = a.GetCorner(TriMod(i + 1));
+	Vector3f const & near_b = b.GetCorner(TriMod(i + 1));
+	Vector3f const & far_a = a.GetCorner(i);
+	Vector3f const & far_b = b.GetCorner(i);
+	mid_point = CalcMidPointPos(combined_seed, near_a, near_b, far_a, far_b);
 	
+#if 0
 #if defined(ALTITUDE_COLORS)
 	float altitude_square = LengthSq(mid_point.pos) / Square(scale);
 	if (altitude_square < 1.005f)
@@ -80,9 +81,10 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 		}
 	}
 #else
-	mid_point.red = static_cast<form::Vertex::ColorComp>(formation_color.r * 255);
-	mid_point.green = static_cast<form::Vertex::ColorComp>(formation_color.g * 255);
-	mid_point.blue = static_cast<form::Vertex::ColorComp>(formation_color.b * 255);
+	mid_point.red = static_cast<form::Point::ColorComp>(formation_color.r * 255);
+	mid_point.green = static_cast<form::Point::ColorComp>(formation_color.g * 255);
+	mid_point.blue = static_cast<form::Point::ColorComp>(formation_color.b * 255);
+#endif
 #endif
 	
 #if defined(HACKY_OCCLUSION)
@@ -121,7 +123,7 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	}
 #endif
 	
-	mid_point.flags = 0;
+//	mid_point.flags = 0;
 }
 
 Vector3f sim::PlanetShader::CalcMidPointPos(int seed, Vector3f const & near_corners1, Vector3f const & near_corners2, Vector3f const & /*far_corners1*/, Vector3f const & /*far_corners2*/) 

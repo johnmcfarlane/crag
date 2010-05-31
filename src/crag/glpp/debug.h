@@ -21,7 +21,7 @@
 
 // Place GLPP_VERIFY; in code to assert that no GL errors have been generate. 
 #if defined(NDEBUG)
-#define GLPP_VERIFY DO_NOTHING
+#define GLPP_VERIFY do { } while (false)
 #else
 #define GLPP_VERIFY gl::Verify(__FILE__, __LINE__, "")
 #endif

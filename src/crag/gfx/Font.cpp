@@ -13,7 +13,7 @@
 #include "Font.h"
 #include "Image.h"
 
-#include "core/Thread.h"
+#include "core/Mutex.h"
 
 #include "app/App.h"
 
@@ -110,14 +110,14 @@ void gfx::Font::RenderVerts() const
 	GLPP_VERIFY;
 
 	// State
-	gl::CheckDisabled(GL_LIGHTING);
-	gl::CheckEnabled(GL_COLOR_MATERIAL);
-	gl::CheckDisabled(GL_LIGHT0);
+	Assert(! gl::IsEnabled(GL_LIGHTING));
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	Assert(! gl::IsEnabled(GL_LIGHT0));
 	gl::Enable(GL_TEXTURE_2D);
 	gl::Disable(GL_CULL_FACE);
 	gl::Enable(GL_BLEND);
 	GLPP_CALL(glBlendEquation(GL_FUNC_ADD));
-	gl::CheckDisabled(GL_DEPTH_TEST);
+	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
 	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Matrices

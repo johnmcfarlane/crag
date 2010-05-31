@@ -51,6 +51,12 @@ public:
 		Init();
 	}
 	
+	void FastClear()
+	{
+		Assert(IsEmpty());
+		InitFreeList();
+	}
+	
 	T * Alloc()
 	{
 		VerifyObjectPtr(this);
@@ -230,22 +236,7 @@ private:
 			int buffer_size_bytes = max_num_elements * sizeof(T);
 			array = reinterpret_cast<T *>(new char [buffer_size_bytes]);
 			end = array + max_num_elements;
-			end_used = array;
-			free_list = reinterpret_cast<Node *>(array);
-		
-			for (T * it = array; ; )
-			{
-				Node * & node_next = reinterpret_cast<Node *>(it)->next;
-				++ it;
-
-				if (it == end)
-				{
-					node_next = 0;	// Last element has a null next.
-					break;
-				}
-				
-				node_next = reinterpret_cast<Node *>(it);
-			}
+			InitFreeList();
 		}
 		else
 		{
@@ -253,6 +244,26 @@ private:
 		}
 		
 		//Verify();
+	}
+	
+	void InitFreeList()
+	{
+		end_used = array;
+		free_list = reinterpret_cast<Node *>(array);
+		
+		for (T * it = array; ; )
+		{
+			Node * & node_next = reinterpret_cast<Node *>(it)->next;
+			++ it;
+			
+			if (it == end)
+			{
+				node_next = 0;	// Last element has a null next.
+				break;
+			}
+			
+			node_next = reinterpret_cast<Node *>(it);
+		}
 	}
 	
 	void Deinit()

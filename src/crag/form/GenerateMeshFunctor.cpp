@@ -47,9 +47,9 @@ void form::GenerateMeshFunctor::GenerateMesh(Node & node)
 			int mid_point_index = triplet_indices[true];
 			Assert(mid_point_index >= 0);
 			
-			Vertex * mid_point = node.triple[mid_point_index].mid_point;
-			mesh.AddFace(* mid_point, * node.triple[mid_point_index].corner, * node.triple[TriMod(mid_point_index+1)].corner);
-			mesh.AddFace(* mid_point, * node.triple[TriMod(mid_point_index+2)].corner, * node.triple[mid_point_index].corner);
+			Point & mid_point = ref(node.triple[mid_point_index].mid_point);
+			mesh.AddFace(mid_point, * node.triple[mid_point_index].corner, * node.triple[TriMod(mid_point_index+1)].corner);
+			mesh.AddFace(mid_point, * node.triple[TriMod(mid_point_index+2)].corner, * node.triple[mid_point_index].corner);
 		}	break;
 			
 		case 2: {
@@ -68,7 +68,7 @@ void form::GenerateMeshFunctor::GenerateMesh(Node & node)
 			for (int i = 0; i < 4; ++ i)
 			{
 				// TODO: Refactor 2 switch into 1?!?
-				Vertex * child_corners[3];
+				Point * child_corners[3];
 				node.GetChildCorners(i, child_corners);
 				mesh.AddFace(* child_corners[0], * child_corners[1], * child_corners[2]);
 			}

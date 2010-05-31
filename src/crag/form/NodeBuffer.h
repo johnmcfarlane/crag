@@ -10,10 +10,10 @@
 
 #pragma once
 
-//#include "Node.h"
-#include "VertexBuffer.h"
+#include "PointBuffer.h"
 
 #include "core/debug.h"
+#include "core/Mutex.h"
 #include "core/Vector3.h"
 
 
@@ -21,7 +21,6 @@ namespace form
 {
 	class Mesh;
 	class Node;
-	class RootNode;
 	class Shader;
 	
 	// Declared in .cpp
@@ -50,12 +49,9 @@ namespace form
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(NodeBuffer);
 		
-		VertexBuffer & GetVertices() { return vertices; }
+		PointBuffer & GetPoints() { return points; }
 		
 		int GetNumQuaternaAvailable() const;
-	//	int GetNumNodesInUse() const;
-//		float GetChurnMetric() const;
-//		void ResetChurnCounter(); 
 		
 		// Must be a multiple of four.
 		void SetNumQuaternaAvailable(int n);	
@@ -63,6 +59,7 @@ namespace form
 		void Tick(Vector3f const & relative_camera_pos);
 		void OnReset();
 	private:
+		void InitQuaterna(Quaterna const * end);
 		void UpdateNodeScores(Vector3f const & relative_camera_pos);
 		void UpdateParentScores();
 		void SortNodes();
@@ -78,12 +75,10 @@ namespace form
 		
 		///////////////////////////////////////////////////////
 		// Node-related members.		
-		bool ExpandNode(Node & node/*, Shader & shader*/);
+		bool ExpandNode(Node & node);
 		void CollapseNode(Node & node);
 	private:
 		void InitMidPoints(Node & node, Shader & shader);
-		static class Shader & GetShader(Node & node);
-		static class RootNode & GetRootNode(Node & node);
 		static bool InitChildGeometry(Node & parent, Node * children_copy, Shader & shader);
 		static void InitChildPointers(Node & parent_node);
 		
@@ -119,11 +114,7 @@ namespace form
 		Quaterna * quaterna_end;
 		
 		// Pool of vertices from which to take the corners of nodes.
-		VertexBuffer vertices;
-		
-		//int num_nodes_in_use;
-		//int num_rankings_recycled;
-		//int num_rankings_recycled_this_tick;
+		PointBuffer points;
 	};
 	
 }

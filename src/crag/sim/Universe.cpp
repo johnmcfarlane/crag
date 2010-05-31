@@ -43,7 +43,7 @@ app::TimeType sim::Universe::time = 0;
 
 CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_period, float, 1.f / 60.f);
 
-CONFIG_DEFINE (gravitational_force, float, 0.0000001f);
+CONFIG_DEFINE (gravitational_force, float, 0.000000001f);
 
 
 void sim::Universe::Init()

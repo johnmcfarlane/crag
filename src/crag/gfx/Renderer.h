@@ -59,7 +59,7 @@ namespace gfx
 		void RenderScene(Scene const & scene) const;
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
 		void RenderForeground(Scene const & scene) const;
-		void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
+		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
 		void RenderSimpleLights(std::vector<Light const *> const & lights) const;
 		
 		void RenderShadowLights(Pov const & pov, Scene const & scene) const;

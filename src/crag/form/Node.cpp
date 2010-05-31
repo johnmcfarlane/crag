@@ -12,8 +12,6 @@
 
 #include "form/Node.h"
 
-#include "form/VertexBuffer.h"
-
 #include "core/Random.h"
 #include "core/VectorOps.h"
 
@@ -55,9 +53,9 @@ form::Node::~Node()
 
 bool form::Node::InitGeometry()
 {
-	Vector3f const & a = triple[0].corner->pos;
-	Vector3f const & b = triple[1].corner->pos;
-	Vector3f const & c = triple[2].corner->pos;
+	Vector3f const & a = ref(triple[0].corner);
+	Vector3f const & b = ref(triple[1].corner);
+	Vector3f const & c = ref(triple[2].corner);
 	
 	normal = TriangleNormal(a, b, c);
 	if (! FastSafeNormalize(normal)) {
@@ -91,14 +89,14 @@ int form::Node::GetChildSeed(int child_index) const
 	return Random(Random(seed).GetInt() + child_index).GetInt();
 }
 
-void form::Node::GetChildCorners(int child_index, Vertex * child_corners[3]) const
+void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) const
 {
 	if (child_index < 3)
 	{
 		// Calc child's triple.
 		for (int index_offset = 1; index_offset <= 2; ++ index_offset)
 		{
-			Vertex * & child_corner = child_corners[TriMod(child_index + index_offset)];
+			Point * & child_corner = child_corners[TriMod(child_index + index_offset)];
 			child_corner = triple[TriMod(child_index + (3 - index_offset))].mid_point;
 		}
 		

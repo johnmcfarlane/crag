@@ -18,6 +18,9 @@
 #include "sim/Observer.h"
 
 #include "gfx/DebugGraphics.h"
+#include "gfx/Pov.h"
+
+#include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
 
@@ -152,35 +155,38 @@ bool form::Manager::PollMesh()
 	return false;
 }
 
-sim::Vector3 const & form::Manager::BeginRender(bool color)
-{
+void form::Manager::Render(gfx::Pov const & pov, bool color) const
+{	
+	// State
+	Assert(gl::IsEnabled(GL_DEPTH_TEST));
 	Assert(gl::DepthFunc() == GL_LEQUAL);
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
-
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	Assert(gl::DepthFunc() == GL_LEQUAL);
+	
 	// TODO: Minimize state changes for these too.
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess);
-	
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	
-	front_buffer_object->BeginDraw(color);
-	
-	return front_buffer_origin;
-}
+	// Copy Pov, adjust for mesh's origin and set as matrix.
+	gfx::Pov formation_pov = pov;
+	formation_pov.pos -= front_buffer_origin;
+	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
+	gl::LoadMatrix(formation_pov.CalcModelViewMatrix().GetArray());
 
-void form::Manager::EndRender()
-{
-	Assert(gl::DepthFunc() == GL_LEQUAL);
-	
+	// Draw the mesh!
+	front_buffer_object->BeginDraw(color);	
 	front_buffer_object->Draw();
 	front_buffer_object->EndDraw();
-	
+
+	// Debug output
 	if (gfx::DebugGraphics::GetVerbosity() > .8) {
 		for (int i = 0; i < 2; ++ i) {
-			form::MeshBufferObject * m = buffer_objects + i;
+			form::MeshBufferObject const * m = buffer_objects + i;
 			gfx::DebugGraphics::out << m << ' ';
 			if (m == front_buffer_object) {
 				gfx::DebugGraphics::out << 'f';

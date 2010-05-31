@@ -11,12 +11,13 @@
 #include "pch.h"
 
 #include "form/Mesh.h"
+#include "form/Point.h"
 
 #include "core/VectorOps.h"
 
 
-form::Mesh::Mesh(int max_num_tris, VertexBuffer const * init_vertices)
-: vertices(init_vertices)
+form::Mesh::Mesh(int max_num_verts, int max_num_tris)
+: vertices(max_num_verts)
 , indices(max_num_tris * 3)
 {
 }
@@ -31,10 +32,25 @@ int form::Mesh::GetNumPolys() const
 	return indices.GetSize() / 3;
 }
 
-void form::Mesh::SetVertices(VertexBuffer const * v)
+form::Vertex & form::Mesh::GetVertex(Point & point)
 {
-	vertices = v;
-	ClearPolys();
+	if (point.vert == nullptr)
+	{
+		point.vert = & AddVertex(point);
+	}
+	
+	Assert(point == point.vert->pos);
+	
+	return * point.vert;
+}
+
+form::Vertex & form::Mesh::AddVertex(form::Point const & p)
+{
+	Vertex & addition = vertices.PushBack();
+	addition.pos = p;
+	addition.norm = addition.norm.Zero();
+
+	return addition;
 }
 
 void form::Mesh::ClearPolys()
@@ -50,32 +66,55 @@ void form::Mesh::ClearPolys()
 
 void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal)
 {
-	// TODO: Critical section
-	Assert(vertices != nullptr);
-	
 	Assert(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
-	indices.PushBack(vertices->GetIndex(a));
-	indices.PushBack(vertices->GetIndex(b));
-	indices.PushBack(vertices->GetIndex(c));
+	indices.PushBack(vertices.GetIndex(a));
+	indices.PushBack(vertices.GetIndex(b));
+	indices.PushBack(vertices.GetIndex(c));
 	
 	a.norm += normal;
 	b.norm += normal;
 	c.norm += normal;
 }
 
-void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c)
+/*void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c)
 {
 	Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
 	AddFace(a, b, c, FastNormalize(normal));
+}*/
+
+void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
+{
+	Vertex & vert_a = GetVertex(a);
+	Vertex & vert_b = GetVertex(b);
+	Vertex & vert_c = GetVertex(c);
+	AddFace(vert_a, vert_b, vert_c, normal);
 }
 
-form::VertexBuffer const * form::Mesh::GetVertices() const
+void form::Mesh::AddFace(Point & a, Point & b, Point & c)
+{
+	Vector3f normal = TriangleNormal(static_cast<Vector3f const &>(a), 
+									 static_cast<Vector3f const &>(b), 
+									 static_cast<Vector3f const &>(c));
+	AddFace(a, b, c, FastNormalize(normal));
+}
+
+form::VertexBuffer & form::Mesh::GetVertices() 
 {
 	return vertices;
 }
 
-IndexBuffer const & form::Mesh::GetIndices() const
+form::VertexBuffer const & form::Mesh::GetVertices() const
+{
+	return vertices;
+}
+
+gfx::IndexBuffer & form::Mesh::GetIndices()
+{
+	return indices;
+}
+
+gfx::IndexBuffer const & form::Mesh::GetIndices() const
 {
 	return indices;
 }

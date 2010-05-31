@@ -13,7 +13,7 @@
 #include "App.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Thread.h"
+#include "core/Mutex.h"
 
 
 namespace ANONYMOUS

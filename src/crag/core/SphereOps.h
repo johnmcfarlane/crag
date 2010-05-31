@@ -11,6 +11,7 @@
 #pragma once
 
 #include "floatOps.h"
+#include "NSphere.h"
 
 
 template<typename V, typename S> bool Touches(Sphere<V, S> const & sphere, V const & point)

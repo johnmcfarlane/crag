@@ -16,33 +16,53 @@
 #include "core/VectorOps.h"
 
 
-// TODO: Add dirty normal flag?
-void form::VertexBuffer::ClearNormals()
+form::VertexBuffer::VertexBuffer(int max_num_verts) 
 {
-	// Clear the normals.
-	form::Vertex * verts = GetArray();
-	int num = GetMaxUsed();
-	form::Vertex const * end = verts + num;
-	
-	// prefetch the norm
-	for (form::Vertex * iterator = verts; iterator < end; ++ iterator)
-	{
-		iterator->norm = iterator->norm.Zero();
-	}
+	Base::reserve(max_num_verts);
 }
+
+form::Vertex & form::VertexBuffer::PushBack()
+{
+	Assert(size() < capacity());
+	push_back(Vertex());
+	return back();
+}
+
+void form::VertexBuffer::Clear()
+{
+	resize(0);
+}
+
+/*void form::VertexBuffer::ClearNormals()
+{
+	const_iterator end = Base::end();
+	for (iterator i = begin(); i != end; ++ i)
+	{
+		Vector3f & normal = i->norm;
+		//normal = normal.Zero();
+		Assert(normal == normal.Zero());
+	}
+}*/
 
 void form::VertexBuffer::NormalizeNormals()
 {
-	// Clear the normals.
-	form::Vertex * verts = GetArray();
-	int num = GetMaxUsed();
-	form::Vertex const * end = verts + num;
-	
-	// prefetch the norm
-	for (form::Vertex * iterator = verts; iterator < end; ++ iterator)
+	const_iterator end = Base::end();
+	for (iterator i = begin(); i != end; ++ i)
 	{
-		FastNormalize(iterator->norm);
+		Vector3f & normal = i->norm;
+		FastNormalize(normal);
 	}
+}
+
+int form::VertexBuffer::GetIndex(Vertex const & v) const
+{
+	Vertex const * array = & front();
+
+	int index = & v - array;
+	Assert(index >= 0 && index < size());
+	Assert(& (* this)[index] == & v);
+	
+	return index;
 }
 
 /*#if DUMP 

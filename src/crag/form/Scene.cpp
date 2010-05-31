@@ -63,7 +63,7 @@ void form::Scene::Verify() const
 
 /*void form::SceneVerifyTrue(Mesh const & m) const
 {
-	VertexBuffer const & vb = * m.GetVertices();
+	VertexBuffer const & vb = * m.GetPoints();
 	IndexBuffer const & ib = m.GetIndices();
 	
 	unsigned int const * indices = ib.GetArray();
@@ -209,12 +209,24 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 
 void form::Scene::ResetFormations()
 {
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
+	/*for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
 		FormationPair & pair = * i;
 		ResetModel(pair);
+	}*/
+	
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
+		FormationPair & pair = * i;
+		DeinitModel(pair);
 	}
 	
 	node_buffer.OnReset();
+
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
+		FormationPair & pair = * i;
+		InitModel(pair);
+	}
+
+	VerifyObject(* this);
 }
 
 void form::Scene::TickModel(Model & model) // TODO: Write a scene::forEach
@@ -235,7 +247,7 @@ void form::Scene::InitModel(FormationPair & pair)
 	shader->SetOrigin(origin);
 	model.SetShader(shader);
 
-	model.root_node.Init(formation.seed, node_buffer.GetVertices());
+	model.root_node.Init(formation.seed, node_buffer.GetPoints());
 	model.root_node.SetCenter(formation.position - origin, formation.scale);
 }
 
@@ -245,7 +257,7 @@ void form::Scene::DeinitModel(FormationPair & pair)
 	
 	RootNode & root_node = model.root_node;
 	node_buffer.CollapseNode(root_node);
-	root_node.Deinit(node_buffer.GetVertices());
+	root_node.Deinit(node_buffer.GetPoints());
 	
 	delete & model.GetShader();
 	model.SetShader(nullptr);

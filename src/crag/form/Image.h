@@ -15,7 +15,7 @@
 
 namespace form
 {
-	class VertexBuffer;
+	class PointBuffer;
 	
 	class Image
 	{
@@ -23,18 +23,18 @@ namespace form
 		Image();
 		~Image();
 		
-		void InitVertices(VertexBuffer & vertices);
-		void DeinitVertices(VertexBuffer & vertices);
+		void InitPoints(PointBuffer & points);
+		void DeinitPoints(PointBuffer & points);
 
 		void SetShader(class Shader * init_shader);
 		Shader & GetShader();
 		
 		enum 
 		{
-			NUM_ROOT_VERTICES = 4
+			NUM_ROOT_POINTS = 4
 		};
 		
-		class Vertex * corners [NUM_ROOT_VERTICES];
+		class Point * corners [NUM_ROOT_POINTS];
 		Node root_node;
 		
 	private:

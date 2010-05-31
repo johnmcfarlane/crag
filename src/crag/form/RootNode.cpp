@@ -12,10 +12,28 @@
 
 #include "RootNode.h"
 
-#include "VertexBuffer.h"
+#include "PointBuffer.h"
 
 #include "core/VectorOps.h"
 #include "core/Vector3.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Node accessor
+
+form::RootNode & form::GetRootNode(Node & node)
+{
+	//VerifyArrayElement(& node, nodes, nodes_available_end);
+	
+	Node * iterator = & node;
+	while (true) {
+		Node * parent = iterator->parent;
+		if (parent == nullptr) {
+			return * reinterpret_cast<RootNode *> (iterator);
+		}
+		iterator = parent;
+	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,9 +63,9 @@ DUMP_OPERATOR_DEFINITION(form, RootNode)
 }
 #endif
 
-void form::RootNode::Init(int init_seed, VertexBuffer & vertices)
+void form::RootNode::Init(int init_seed, PointBuffer & vertices)
 {
-	Vertex * corner = vertices.Alloc();
+	Point * corner = vertices.Alloc();
 
 	triple[0].corner = corner;
 	triple[1].corner = corner;
@@ -72,7 +90,7 @@ void form::RootNode::Init(int init_seed, VertexBuffer & vertices)
 	// At this point, the four verts still need setting up.
 }
 
-void form::RootNode::Deinit(VertexBuffer & vertices)
+void form::RootNode::Deinit(PointBuffer & vertices)
 {
 	vertices.Free(triple[0].corner);
 	
@@ -96,19 +114,19 @@ void form::RootNode::SetCenter(Vector3d const & _center, double scale)
 	Assert(children == nullptr);
 	
 	center = _center;
-	SetVertexCenter(ref(triple[0].corner), Vector3d(-1, -1, -1), _center, scale);
-	SetVertexCenter(ref(triple[0].mid_point), Vector3d(-1,  1,  1), _center, scale);
-	SetVertexCenter(ref(triple[1].mid_point), Vector3d(1,  -1,  1), _center, scale);
-	SetVertexCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), _center, scale);
+	SetPointCenter(ref(triple[0].corner), Vector3d(-1, -1, -1), _center, scale);
+	SetPointCenter(ref(triple[0].mid_point), Vector3d(-1,  1,  1), _center, scale);
+	SetPointCenter(ref(triple[1].mid_point), Vector3d(1,  -1,  1), _center, scale);
+	SetPointCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), _center, scale);
 }
 
-void form::RootNode::SetVertexCenter(Vertex & vert, Vector3d const & relative_pos, Vector3d const & center, double scale)
+void form::RootNode::SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & center, double scale)
 {
 	Vector3d dir = Normalized(relative_pos);
-	vert.pos = dir * scale + center;
-	vert.red = 255;
-	vert.green = 255;
-	vert.blue = 255;
-	vert.norm = dir;
+	point = dir * scale + center;
+/*	point.red = 255;
+	point.green = 255;
+	point.blue = 255;
+	point.norm = dir;*/
 }
 

@@ -24,6 +24,11 @@ namespace sim
 	class Observer;
 }
 
+namespace gfx
+{
+	class Pov;
+}
+
 
 namespace form {
 
@@ -56,8 +61,7 @@ namespace form {
 		bool PollMesh();
 
 		// Called by the Renderer.
-		sim::Vector3 const & BeginRender(bool color);	// Returns current origin.
-		void EndRender();
+		void Render(gfx::Pov const & pov, bool color) const;
 
 	private:
 		static bool InitMultithreading();

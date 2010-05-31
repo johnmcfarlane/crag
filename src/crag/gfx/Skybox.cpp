@@ -49,12 +49,12 @@ void gfx::Skybox::Draw() const
 	// TODO: Stupid to push all these and then set them.
 	// Instead, move relevant flags to FormationManager from Graphics.
 	GLPP_VERIFY;
-	gl::CheckDisabled(GL_LIGHTING);
-	gl::CheckEnabled(GL_COLOR_MATERIAL);
-	gl::CheckDisabled(GL_LIGHT0);
-	gl::CheckEnabled(GL_TEXTURE_2D);
-	gl::CheckDisabled(GL_CULL_FACE);
-	gl::CheckDisabled(GL_DEPTH_TEST);
+	Assert(! gl::IsEnabled(GL_LIGHTING));
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	Assert(! gl::IsEnabled(GL_LIGHT0));
+	Assert(gl::IsEnabled(GL_TEXTURE_2D));
+	Assert(! gl::IsEnabled(GL_CULL_FACE));
+	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
 	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Draw VBO

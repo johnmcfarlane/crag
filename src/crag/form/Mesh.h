@@ -17,23 +17,36 @@
 
 namespace form
 {
+	class Point;
+	
 	DUMP_OPERATOR_DECLARATION(Mesh);
 	
 	class Mesh
 	{
 	public:
-		Mesh(int max_num_tris, VertexBuffer const * init_vertices = nullptr);
+		Mesh(int max_num_verts, int max_num_tris);
 
 		int GetIndexCount() const;
 		int GetNumPolys() const;
 		
-		void SetVertices(VertexBuffer const * v);
+		//void SetVertices(VertexBuffer const * v);
+		
+		Vertex & GetVertex(Point & point);
+	private:
+		Vertex & AddVertex(Point const & p);
+	public:
+		
 		void ClearPolys();
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
-		void AddFace(Vertex & a, Vertex & b, Vertex & c);
+		//void AddFace(Vertex & a, Vertex & b, Vertex & c);
+		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
+		void AddFace(Point & a, Point & b, Point & c);
 
-		VertexBuffer const * GetVertices() const;
-		IndexBuffer const & GetIndices() const;
+		VertexBuffer & GetVertices();
+		VertexBuffer const & GetVertices() const;
+		
+		gfx::IndexBuffer & GetIndices();
+		gfx::IndexBuffer const & GetIndices() const;
 		
 #if VERIFY
 		void Verify() const;
@@ -42,8 +55,8 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
 		
 	private:
-		VertexBuffer const * vertices;
-		IndexBuffer indices;
+		VertexBuffer vertices;
+		gfx::IndexBuffer indices;
 	};
 
 }

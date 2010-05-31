@@ -63,9 +63,6 @@ namespace form
 		void GenerateMesh(class Mesh & mesh);
 		
 		// Accessors for nodes.
-		//int GetNumNodes() const;
-		//float GetChurnMetric() const;
-		//void ResetChurnCounter();
 		int GetNumQuaternaAvailable() const;
 		void SetNumQuaternaAvailable(int n);
 		

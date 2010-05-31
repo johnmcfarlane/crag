@@ -12,7 +12,7 @@
 
 #include "Image.h"
 #include "Shader.h"
-#include "VertexBuffer.h"
+#include "PointBuffer.h"
 
 #include "core/memory.h"
 
@@ -24,24 +24,24 @@ form::Image::Image()
 : shader(nullptr)
 {
 	ZeroObject(root_node);
-	ZeroArray(corners, NUM_ROOT_VERTICES); 
+	ZeroArray(corners, NUM_ROOT_POINTS); 
 }
 
 form::Image::~Image()
 {
 	delete shader;
 	
-	for (int i = 0; i < NUM_ROOT_VERTICES; ++ i) {
+	for (int i = 0; i < NUM_ROOT_POINTS; ++ i) {
 		Assert (corners[i] == nullptr);
 	}
 }
 
-void form::Image::InitVertices(VertexBuffer & vertices)
+void form::Image::InitPoints(PointBuffer & points)
 {
-	for (int i = 0; i < NUM_ROOT_VERTICES; ++ i)
+	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
 	{
 		Assert(corners[i] == nullptr);
-		if ((corners[i] = vertices.Alloc()) == nullptr)
+		if ((corners[i] = points.Alloc()) == nullptr)
 		{
 			Assert(false);
 		}
@@ -49,14 +49,14 @@ void form::Image::InitVertices(VertexBuffer & vertices)
 }
 
 // If init got called, deinit must get called before d'tor.
-void form::Image::DeinitVertices(VertexBuffer & vertices)
+void form::Image::DeinitPoints(PointBuffer & points)
 {
-	for (int i = 0; i < NUM_ROOT_VERTICES; ++ i)
+	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
 	{
-		Vertex * vert = corners[i];
-		if (vert != nullptr)
+		Point * point = corners[i];
+		if (point != nullptr)
 		{
-			vertices.Free(vert);
+			points.Free(point);
 			corners[i] = nullptr;
 		}
 	}
