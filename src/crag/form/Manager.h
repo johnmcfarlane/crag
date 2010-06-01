@@ -53,7 +53,7 @@ namespace form {
 		void RemoveFormation(Formation * formation);
 		FormationSet const & GetFormations() const;
 		
-		void AdjustNumNodes(float frame_delta, float target_frame_delta);
+		void AdjustNumNodes(double frame_delta, double target_frame_delta);
 		void ToggleSuspended();
 		
 		void Launch();

@@ -27,7 +27,7 @@ namespace sim
 	{
 		extern app::TimeType time;
 
-		CONFIG_DECLARE (target_frame_period, float);
+		CONFIG_DECLARE (target_frame_seconds, double);
 	
 		void Init();
 		void Deinit();

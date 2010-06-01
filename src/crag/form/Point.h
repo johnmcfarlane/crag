@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Vector3.h"
+#include "core/Vector3.h"
 
 namespace form
 {
@@ -21,11 +21,7 @@ namespace form
 	class Point : public Vector3f
 	{
 	public:
-		Point()
-		: Vector3f(Zero())
-		, vert(nullptr)
-		{
-		}
+		Point();
 		
 		// Attributes
 		Vertex * vert;

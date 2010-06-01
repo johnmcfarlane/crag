@@ -64,11 +64,16 @@ void form::MeshBufferObject::Draw()
 
 void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
 {
-	gl::Mesh<Vertex>::SetVbo(vertices.Size(), vertices.GetArray());
+	size_t num_vertices = vertices.Size();
+	Vertex const * vertex_array = (num_vertices > 0) ? vertices.GetArray() : nullptr;
+	gl::Mesh<Vertex>::SetVbo(num_vertices, vertex_array);
 }
 
 void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
 {
-	max_index = indices.GetSize();
-	gl::Mesh<Vertex>::SetIbo(max_index, indices.GetArray());
+	size_t num_indices = indices.GetSize();
+	gfx::IndexBuffer::value_type const * index_array = (num_indices > 0) ? indices.GetArray() : nullptr;
+	gl::Mesh<Vertex>::SetIbo(num_indices, index_array);
+
+	max_index = num_indices;
 }

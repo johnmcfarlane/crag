@@ -182,7 +182,7 @@ bool sim::Physics::ContainsPhysicalBody(PhysicalBody const & pb) const
 	return std::find(begin, end, & pb) != end;
 }
 
-void sim::Physics::Tick(float delta_time)
+void sim::Physics::Tick(double delta_time)
 {
 	// Detect / represent all collisions.
 	CreateCollisions();

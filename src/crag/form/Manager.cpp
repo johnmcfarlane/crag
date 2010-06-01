@@ -104,14 +104,14 @@ form::FormationSet const & form::Manager::GetFormations() const
 	return formation_set;
 }
 
-void form::Manager::AdjustNumNodes(float frame_delta, float target_frame_delta)
+void form::Manager::AdjustNumNodes(double frame_delta, double target_frame_delta)
 {
 	// Also if doing a screen capture, I shouldn't wonder.
 	if (regenerating) {
 		scene_thread->SetFrameRatio(1);
 	}
 	else {
-		scene_thread->SetFrameRatio(frame_delta / target_frame_delta);
+		scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 	}
 }
 
@@ -172,7 +172,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	
-	// Copy Pov, adjust for mesh's origin and set as matrix.
+	// Copy POV, adjust for mesh's origin and set as matrix.
 	gfx::Pov formation_pov = pov;
 	formation_pov.pos -= front_buffer_origin;
 	GLPP_CALL(glMatrixMode(GL_MODELVIEW));

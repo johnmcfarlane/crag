@@ -8,5 +8,12 @@
  *
  */
 
+#include "pch.h"
+
 #include "Point.h"
 
+form::Point::Point()
+: Vector3f(Zero())
+, vert(nullptr)
+{
+}

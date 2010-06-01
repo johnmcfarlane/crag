@@ -258,8 +258,8 @@ void gfx::DebugGraphics::DrawGraphics()
 
 	// Set state
 	gl::Disable(GL_CULL_FACE);
-	Assert(! gl::IsEnabled(GL_LIGHT0);
-	Assert(! gl::IsEnabled(GL_LIGHTING);
+	Assert(! gl::IsEnabled(GL_LIGHT0));
+	Assert(! gl::IsEnabled(GL_LIGHTING));
 	gl::Enable(GL_DEPTH_TEST);
 	
 	glBlendEquation(GL_FUNC_ADD);

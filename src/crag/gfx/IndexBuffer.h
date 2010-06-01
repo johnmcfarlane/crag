@@ -20,6 +20,8 @@ namespace gfx
 	
 	class IndexBuffer : private std::vector<GLuint>
 	{
+		typedef std::vector<GLuint> Super;
+
 	public:
 		IndexBuffer(int capacity);
 
@@ -47,6 +49,7 @@ namespace gfx
 			push_back(index);
 		}
 		
+		typedef Super::value_type value_type;
 		value_type const * GetArray() const;
 	};
 

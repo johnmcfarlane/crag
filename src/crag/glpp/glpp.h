@@ -49,7 +49,7 @@ namespace gl
 	// Enable/Disable - checks that the call was necessary. 
 	inline bool IsEnabled(GLenum cap)
 	{
-		bool enabled = glIsEnabled(cap);
+		bool enabled = (glIsEnabled(cap) == GL_TRUE);
 		GLPP_VERIFY;
 		return enabled;
 	}

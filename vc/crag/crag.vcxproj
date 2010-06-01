@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\src\crag\core\Matrix4.h" />
     <ClInclude Include="..\..\src\crag\core\MatrixOps.h" />
     <ClInclude Include="..\..\src\crag\core\memory.h" />
+    <ClInclude Include="..\..\src\crag\core\Mutex.h" />
     <ClInclude Include="..\..\src\crag\core\NSphere.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
@@ -132,6 +133,8 @@
     <ClInclude Include="..\..\src\crag\form\NodeBuffer.h" />
     <ClInclude Include="..\..\src\crag\form\NodeFunctor.h" />
     <ClInclude Include="..\..\src\crag\form\NodeTraversal.h" />
+    <ClInclude Include="..\..\src\crag\form\Point.h" />
+    <ClInclude Include="..\..\src\crag\form\PointBuffer.h" />
     <ClInclude Include="..\..\src\crag\form\PolyTraversal.h" />
     <ClInclude Include="..\..\src\crag\form\Quaterna.h" />
     <ClInclude Include="..\..\src\crag\form\RootNode.h" />
@@ -187,7 +190,9 @@
     <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
     <ClCompile Include="..\..\src\crag\core\debug.cpp" />
     <ClCompile Include="..\..\src\crag\core\memory.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Mutex.cpp" />
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
     <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\form\Image.cpp">
@@ -200,6 +205,8 @@
     <ClCompile Include="..\..\src\crag\form\Model.cpp" />
     <ClCompile Include="..\..\src\crag\form\Node.cpp" />
     <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Point.cpp" />
+    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp" />
     <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
     <ClCompile Include="..\..\src\crag\form\Scene.cpp" />
     <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />

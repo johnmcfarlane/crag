@@ -21,8 +21,8 @@
 namespace ANONYMOUS 
 {
 	CONFIG_DEFINE (max_observer_position_length, double, 5000);
-	CONFIG_DEFINE (max_mesh_generation_period, float, .1f);
-	CONFIG_DEFINE (post_reset_freeze_duration, float, 1.25f);
+	CONFIG_DEFINE (max_mesh_generation_period, double, .1f);
+	CONFIG_DEFINE (post_reset_freeze_period, double, 1.25f);
 }
 
 
@@ -154,8 +154,8 @@ bool form::SceneThread::PostResetFreeze() const
 {
 	app::TimeType t = app::GetTime();
 	app::TimeType time_since_reset = t - origin_reset_time;
-	float time_since_reset_seconds = app::TimeTypeToSeconds(time_since_reset);
-	return time_since_reset_seconds < post_reset_freeze_duration;
+	double time_since_reset_seconds = app::TimeTypeToSeconds(time_since_reset);
+	return time_since_reset_seconds < post_reset_freeze_period;
 }
 
 bool form::SceneThread::OutOfRange() const
@@ -254,7 +254,7 @@ void form::SceneThread::AdjustNumQuaterna()
 
 bool form::SceneThread::GenerateMesh()
 {
-	Assert(IsSceneThread());
+	//Assert(IsSceneThread());
 	
 	if (PostResetFreeze())
 	{

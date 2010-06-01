@@ -41,7 +41,7 @@ EntityList entities;
 
 app::TimeType sim::Universe::time = 0;
 
-CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_period, float, 1.f / 60.f);
+CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
 
 CONFIG_DEFINE (gravitational_force, float, 0.000000001f);
 
@@ -80,8 +80,8 @@ void sim::Universe::AddEntity(Entity & entity)
 
 void sim::Universe::Tick()
 {
-	time += app::SecondsToTimeType(target_frame_period);
-	Physics::Get().Tick(target_frame_period);
+	time += app::SecondsToTimeType(target_frame_seconds);
+	Physics::Get().Tick(target_frame_seconds);
 	
 	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{

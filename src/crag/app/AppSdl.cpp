@@ -184,7 +184,7 @@ double app::TimeTypeToSeconds(TimeType t)
 	return 0.001 * t;
 }
 
-app::TimeType app::SecondsToTimeType(float s)
+app::TimeType app::SecondsToTimeType(double s)
 {
 	return static_cast<app::TimeType>(s * 1000.f);
 }

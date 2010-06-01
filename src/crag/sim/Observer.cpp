@@ -73,7 +73,7 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 		Vector3(camera_torque_impulse, camera_torque_impulse, camera_torque_impulse),
 	};
 	
-	Scalar inv_t = 1.f / Universe::target_frame_period;
+	Scalar inv_t = 1.f / Universe::target_frame_seconds;
 
 	for (int d = 0; d < 2; ++ d)
 	{
@@ -126,7 +126,7 @@ void sim::Observer::Tick()
 	Vector3 const & position = GetPosition();
 	Vector3 gravitational_force = Universe::Weight(position, mass);
 	dBodyID body = sphere.GetBody();
-	AddRelForceAtRelPos(body, gravitational_force / static_cast<Scalar>(Universe::target_frame_period), Vector3(0, .1, -0.45));
+	AddRelForceAtRelPos(body, gravitational_force / static_cast<Scalar>(Universe::target_frame_seconds), Vector3(0, .1, -0.45));
 	
 	light.SetPosition(GetPosition());
 }

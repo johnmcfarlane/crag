@@ -73,7 +73,7 @@ namespace sim
 		void RemovePhysicalBody(PhysicalBody & pb);
 		bool ContainsPhysicalBody(PhysicalBody const & pb) const;
 
-		void Tick(float delta_time);
+		void Tick(double delta_time);
 	private:
 		void CreateCollisions();
 		void DestroyCollisions();

@@ -41,5 +41,5 @@ namespace app
 	void Sleep(TimeType t = 0);
 
 	double TimeTypeToSeconds(TimeType t);
-	TimeType SecondsToTimeType(float s);
+	TimeType SecondsToTimeType(double s);
 }

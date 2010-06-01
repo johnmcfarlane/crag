@@ -90,7 +90,7 @@ namespace form
 		core::Mutex mesh_mutex;
 		bool mesh_updated;
 		app::TimeType mesh_generation_time;
-		float mesh_generation_period;
+		double mesh_generation_period;
 
 		core::Thread * thread;
 	};

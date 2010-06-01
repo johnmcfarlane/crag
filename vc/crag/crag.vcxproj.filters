@@ -288,6 +288,15 @@
     <ClInclude Include="..\..\src\crag\pch.h">
       <Filter>Source Files\crag</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Mutex.h">
+      <Filter>Source Files\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Point.h">
+      <Filter>Source Files\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\PointBuffer.h">
+      <Filter>Source Files\crag\form</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp">
@@ -427,6 +436,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\pch.cpp">
       <Filter>Source Files\crag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Mutex.cpp">
+      <Filter>Source Files\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Thread.cpp">
+      <Filter>Source Files\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp">
+      <Filter>Source Files\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Point.cpp">
+      <Filter>Source Files\crag\form</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -59,7 +59,7 @@ int form::VertexBuffer::GetIndex(Vertex const & v) const
 	Vertex const * array = & front();
 
 	int index = & v - array;
-	Assert(index >= 0 && index < size());
+	Assert(index >= 0 && static_cast<size_t>(index) < size());
 	Assert(& (* this)[index] == & v);
 	
 	return index;

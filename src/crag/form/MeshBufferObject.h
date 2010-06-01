@@ -27,7 +27,7 @@ namespace form
 	public:
 		MeshBufferObject();
 		
-		void Set(Mesh const & mesh);
+		void Set(form::Mesh const & mesh);
 		
 		void BeginDraw(bool color);
 		void EndDraw();

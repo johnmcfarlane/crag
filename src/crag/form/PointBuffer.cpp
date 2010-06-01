@@ -8,6 +8,8 @@
  *
  */
 
+#include "pch.h"
+
 #include "PointBuffer.h"
 
 form::PointBuffer::PointBuffer(int max_num_verts) 
