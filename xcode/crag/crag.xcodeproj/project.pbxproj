@@ -11,13 +11,12 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C0009D093BD00EBEB88 /* OpenGL.framework */; };
 		002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C6009D0951E00EBEB88 /* GLUT.framework */; };
+		5277A97511B5E15300ABBC7F /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277A97311B5E15300ABBC7F /* App.cpp */; };
 		52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244D911B0E2DD008C0CE8 /* Thread.cpp */; };
 		52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244DC11B0E314008C0CE8 /* Mutex.cpp */; };
 		52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454B11B1A8FB008C0CE8 /* Point.cpp */; };
 		52A2454F11B1AA06008C0CE8 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454D11B1AA06008C0CE8 /* VertexBuffer.cpp */; };
 		52A2455211B1AAB6008C0CE8 /* PointBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */; };
-		52F3A38E11A7979400385922 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30211A7979400385922 /* App.cpp */; };
-		52F3A38F11A7979400385922 /* AppSdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30411A7979400385922 /* AppSdl.cpp */; };
 		52F3A39011A7979400385922 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52F3A30611A7979400385922 /* COPYING */; };
 		52F3A39111A7979400385922 /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30911A7979400385922 /* ConfigEntry.cpp */; };
 		52F3A39211A7979400385922 /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30B11A7979400385922 /* ConfigManager.cpp */; };
@@ -177,6 +176,8 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5277A97311B5E15300ABBC7F /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = App.cpp; path = app/App.cpp; sourceTree = "<group>"; };
+		5277A97411B5E15300ABBC7F /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = App.h; path = app/App.h; sourceTree = "<group>"; };
 		52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		52A244DB11B0E314008C0CE8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		52A244DC11B0E314008C0CE8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
@@ -186,10 +187,6 @@
 		52A2454E11B1AA06008C0CE8 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
 		52A2455011B1AAB6008C0CE8 /* PointBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointBuffer.h; sourceTree = "<group>"; };
 		52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointBuffer.cpp; sourceTree = "<group>"; };
-		52F3A30211A7979400385922 /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
-		52F3A30311A7979400385922 /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
-		52F3A30411A7979400385922 /* AppSdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppSdl.cpp; sourceTree = "<group>"; };
-		52F3A30511A7979400385922 /* AppSdl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSdl.h; sourceTree = "<group>"; };
 		52F3A30611A7979400385922 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52F3A30811A7979400385922 /* Circle2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle2.h; sourceTree = "<group>"; };
 		52F3A30911A7979400385922 /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -519,6 +516,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5277A97211B5E13C00ABBC7F /* app */ = {
+			isa = PBXGroup;
+			children = (
+				5277A97311B5E15300ABBC7F /* App.cpp */,
+				5277A97411B5E15300ABBC7F /* App.h */,
+			);
+			name = app;
+			sourceTree = "<group>";
+		};
 		52F3A2FF11A7979400385922 /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -534,7 +540,7 @@
 		52F3A30011A7979400385922 /* crag */ = {
 			isa = PBXGroup;
 			children = (
-				52F3A30111A7979400385922 /* app */,
+				5277A97211B5E13C00ABBC7F /* app */,
 				52F3A30611A7979400385922 /* COPYING */,
 				52F3A30711A7979400385922 /* core */,
 				52F3A32311A7979400385922 /* form */,
@@ -547,17 +553,6 @@
 				52F3A36E11A7979400385922 /* sim */,
 			);
 			path = crag;
-			sourceTree = "<group>";
-		};
-		52F3A30111A7979400385922 /* app */ = {
-			isa = PBXGroup;
-			children = (
-				52F3A30211A7979400385922 /* App.cpp */,
-				52F3A30311A7979400385922 /* App.h */,
-				52F3A30411A7979400385922 /* AppSdl.cpp */,
-				52F3A30511A7979400385922 /* AppSdl.h */,
-			);
-			path = app;
 			sourceTree = "<group>";
 		};
 		52F3A30711A7979400385922 /* core */ = {
@@ -942,8 +937,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52F3A38E11A7979400385922 /* App.cpp in Sources */,
-				52F3A38F11A7979400385922 /* AppSdl.cpp in Sources */,
 				52F3A39111A7979400385922 /* ConfigEntry.cpp in Sources */,
 				52F3A39211A7979400385922 /* ConfigManager.cpp in Sources */,
 				52F3A39311A7979400385922 /* debug.cpp in Sources */,
@@ -1078,6 +1071,7 @@
 				52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */,
 				52A2454F11B1AA06008C0CE8 /* VertexBuffer.cpp in Sources */,
 				52A2455211B1AAB6008C0CE8 /* PointBuffer.cpp in Sources */,
+				5277A97511B5E15300ABBC7F /* App.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

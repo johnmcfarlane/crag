@@ -13,8 +13,11 @@
 #include "MeshBufferObject.h"
 
 #include "sim/defs.h"
+
 #include "core/Singleton.h"
 #include "core/Thread.h"
+
+#include "app/App.h"
 
 #include <set>
 
@@ -53,7 +56,7 @@ namespace form {
 		void RemoveFormation(Formation * formation);
 		FormationSet const & GetFormations() const;
 		
-		void AdjustNumNodes(double frame_delta, double target_frame_delta);
+		void AdjustNumNodes(app::TimeType frame_delta, app::TimeType target_frame_delta);
 		void ToggleSuspended();
 		
 		void Launch();

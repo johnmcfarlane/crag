@@ -80,7 +80,7 @@ void sim::Universe::AddEntity(Entity & entity)
 
 void sim::Universe::Tick()
 {
-	time += app::SecondsToTimeType(target_frame_seconds);
+	time += target_frame_seconds;
 	Physics::Get().Tick(target_frame_seconds);
 	
 	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it)

@@ -104,7 +104,7 @@ form::FormationSet const & form::Manager::GetFormations() const
 	return formation_set;
 }
 
-void form::Manager::AdjustNumNodes(double frame_delta, double target_frame_delta)
+void form::Manager::AdjustNumNodes(app::TimeType frame_delta, app::TimeType target_frame_delta)
 {
 	// Also if doing a screen capture, I shouldn't wonder.
 	if (regenerating) {

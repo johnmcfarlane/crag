@@ -12,13 +12,9 @@
 
 #include "Image.h"
 
-#include "app/AppSdl.h"
+#include "app/App.h"
 
 #include "glpp/Texture.h"
-
-//#include <SDL/SDL_endian.h>
-//#include <SDL/SDL_video.h>
-//#include <SDL/SDL_image.h>
 
 
 namespace ANONYMOUS 
@@ -89,23 +85,6 @@ namespace ANONYMOUS
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Image
-
-/*gfx::Image::Image(Image const & that, Format const & format)
-: surface(SDL_ConvertSurface(that.surface, & const_cast<SDL_PixelFormat &>(desired_format), 0))
-{
-}
-
-gfx::Image::Image(Vector2i const & size)
-: surface(nullptr)
-{
-	Create(size);
-}
-
-gfx::Image::Image(char const * filename)
-: surface(nullptr)
-{
-	Load(filename);
-}*/
 
 gfx::Image::Image()
 : surface(nullptr)

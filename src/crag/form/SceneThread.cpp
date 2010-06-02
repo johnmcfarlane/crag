@@ -15,12 +15,14 @@
 
 #include "sim/Observer.h"
 
+#include "gfx/DebugGraphics.h"
+
 #include "core/ConfigEntry.h"
 
 
 namespace ANONYMOUS 
 {
-	CONFIG_DEFINE (max_observer_position_length, double, 5000);
+	CONFIG_DEFINE (max_observer_position_length, double, 2500);
 	CONFIG_DEFINE (max_mesh_generation_period, double, .1f);
 	CONFIG_DEFINE (post_reset_freeze_period, double, 1.25f);
 }
@@ -112,6 +114,13 @@ void form::SceneThread::Tick()
 	if (! threaded) {
 		ThreadTick();
 	}
+	
+	if (gfx::DebugGraphics::GetVerbosity() > 0.91532)
+	{
+		sim::Vector3 const & observer_pos = observer.GetPosition();
+		double observer_position_length = Length(observer_pos - scene.GetOrigin());
+		gfx::DebugGraphics::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
+	}
 }
 
 bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & mesh_origin)
@@ -154,7 +163,7 @@ bool form::SceneThread::PostResetFreeze() const
 {
 	app::TimeType t = app::GetTime();
 	app::TimeType time_since_reset = t - origin_reset_time;
-	double time_since_reset_seconds = app::TimeTypeToSeconds(time_since_reset);
+	double time_since_reset_seconds = time_since_reset;
 	return time_since_reset_seconds < post_reset_freeze_period;
 }
 
@@ -279,7 +288,7 @@ bool form::SceneThread::GenerateMesh()
 
 	mesh_updated = true;
 	app::TimeType t = app::GetTime();
-	mesh_generation_period = app::TimeTypeToSeconds(t - mesh_generation_time);
+	mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
 	return true;
 }

@@ -117,7 +117,6 @@ void sim::Simulation::Run()
 
 	app::TimeType time = app::GetTime();
 	app::TimeType target_tick_time = time;
-	app::TimeType target_tick_duration = app::SecondsToTimeType(Universe::target_frame_seconds);
 	
 	while (HandleEvents())
 	{
@@ -132,15 +131,14 @@ void sim::Simulation::Run()
 			app::TimeType tick_start_time = time;
 			time = app::GetTime();
 			app::TimeType tick_end_time = time;
-			app::TimeType tick_time = tick_end_time - tick_start_time;
+			app::TimeType tick_seconds = tick_end_time - tick_start_time;
 
 			// Adjust the number of nodes based on how well we're doing. 
-			double tick_seconds = app::TimeTypeToSeconds(tick_time);
-			double target_tick_seconds = Universe::target_frame_seconds * target_tick_proportion;
+			app::TimeType target_tick_seconds = Universe::target_frame_seconds * target_tick_proportion;
 			formation_manager->AdjustNumNodes(tick_seconds, target_tick_seconds);
 
 			// Set the next tick as a uniform period ahead. 
-			target_tick_time += target_tick_duration;
+			target_tick_time += Universe::target_frame_seconds;
 
 			continue;
 		}
@@ -200,11 +198,11 @@ void sim::Simulation::Render()
 
 	++ frame_count;
 	app::TimeType time = app::GetTime();
-	double delta = app::TimeTypeToSeconds(time - frame_count_reset_time);
+	app::TimeType delta = time - frame_count_reset_time;
 	if (delta > 1) 
 	{
 		frame_count_reset_time = time;
-		fps = delta / frame_count;
+		fps = static_cast<double>(delta) / frame_count;
 		frame_count = 0;
 	}
 }
