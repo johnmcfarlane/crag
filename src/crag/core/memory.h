@@ -14,13 +14,6 @@
 #error pch.h not included.
 #endif
 
-/*#if defined(WIN32)
-#include <malloc.h>
-#else
-// Note some jiggery pokery goes in on pch.h to ensure the right stdlib.h is included.
-#include <stdlib.h>
-#endif*/
-
 
 //////////////////////////////////////////////////////////////////////
 // Memory Wrecking
@@ -140,34 +133,25 @@ inline void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *))
 #endif
 }
 
-template <typename T> void Free(T * allocation)
+inline void Free(void * allocation)
 {
-#if ! defined(WIN32) || 1
+#if ! defined(WIN32)
 	return free(allocation);
 #else
 	return _aligned_free(allocation);
 #endif
 }
 
-/*template <typename T> T * Allocate(int num_elements, size_t alignment = 4)
-{
-	size_t num_bytes = sizeof(T) * num_elements;
-	T * begin = static_cast<T *>(Allocate(num_bytes, alignment));
-	if (begin != nullptr)
-	{
-		T * end = begin + num_elements;
-		for (T * it = begin; it != end; ++ it)
-		{
-			new(it) T();
-		}
-	}
-}*/
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global new/delete
 
-inline void * operator new (std::size_t num_bytes, const std::nothrow_t&) throw()
+/*inline void * operator new (std::size_t num_bytes, const std::nothrow_t&) throw()
+{
+	return Allocate(num_bytes);
+}
+
+inline void * operator new [] (std::size_t num_bytes, const std::nothrow_t&) throw()
 {
 	return Allocate(num_bytes);
 }
@@ -175,7 +159,7 @@ inline void * operator new (std::size_t num_bytes, const std::nothrow_t&) throw(
 inline void operator delete(void * ptr) throw()
 {
 	Free(ptr);
-}
+}*/
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,5 +168,5 @@ inline void operator delete(void * ptr) throw()
 // This only dictates the alignment of the first element (when allocating an array).
 #define OVERLOAD_NEW_DELETE(ALIGNMENT) \
 	void * operator new (size_t num_bytes) { return Allocate(num_bytes, ALIGNMENT); } \
+	void * operator new [] (size_t num_bytes) { return Allocate(num_bytes, ALIGNMENT); } \
 	void operator delete (void * ptr) { Free(ptr); }
-

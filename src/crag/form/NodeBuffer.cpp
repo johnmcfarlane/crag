@@ -64,13 +64,16 @@ namespace ANONYMOUS {
 
 
 NodeBuffer::NodeBuffer()
-: nodes(new Node [max_num_nodes])
+//: nodes(new Node [max_num_nodes])
+: nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_available_end(nodes)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_available_end(quaterna)
 , quaterna_end(quaterna + max_num_quaterna)
 , points(max_num_verts)
 {
+	ZeroArray(nodes, max_num_nodes);
+
 	InitQuaterna(quaterna_end);
 }
 
@@ -79,8 +82,9 @@ NodeBuffer::~NodeBuffer()
 	Assert(GetNumQuaternaAvailable() == 0);
 	
 	delete quaterna;
+
 	//delete nodes;
-	Free<Node>(nodes);
+	Free(nodes);
 }
 
 #if VERIFY

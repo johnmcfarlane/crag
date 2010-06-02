@@ -47,6 +47,7 @@ bool app::Init(Vector2i const & resolution, bool full_screen)
 	
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 32 );
+	SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 0 );
 	
 	// Get existing video info.
 	/*const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
@@ -195,7 +196,7 @@ app::TimeType app::GetTime()
 
 void app::Sleep(TimeType t)
 {
-	SDL_Delay(t);
+	SDL_Delay(static_cast<Uint32>(t * 1000));
 	//boost::this_thread::sleep(boost::posix_time::milliseconds(t));
 }
 

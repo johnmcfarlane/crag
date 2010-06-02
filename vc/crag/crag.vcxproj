@@ -10,93 +10,68 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{01C4B482-A68F-4ECC-BA75-E25207C32D7D}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>crag</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <FloatingPointExceptions>
-      </FloatingPointExceptions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\crag\app\App.h" />
-    <ClInclude Include="..\..\src\crag\app\AppSdl.h" />
+    <ClCompile Include="..\..\src\crag\core\App.cpp" />
+    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
+    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
+    <ClCompile Include="..\..\src\crag\core\debug.cpp" />
+    <ClCompile Include="..\..\src\crag\core\memory.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Mutex.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Random.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
+    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Image.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">form_image</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">form_image</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
+    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Model.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Node.cpp" />
+    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Point.cpp" />
+    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Scene.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">form_Scene</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">form_Scene</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Vertex.cpp" />
+    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\DebugGraphics.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Font.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Image.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\IndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Light.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Pov.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Renderer.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Scene.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\ShadowMap.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Skybox.cpp" />
+    <ClCompile Include="..\..\src\crag\main.cpp" />
+    <ClCompile Include="..\..\src\crag\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Controller.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Observer.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PhysicalBody.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Physics.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Planet.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Simulation.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\crag\core\App.h" />
     <ClInclude Include="..\..\src\crag\core\Circle2.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
@@ -184,70 +159,93 @@
     <ClInclude Include="..\..\src\crag\sim\UserInput.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\crag\app\App.cpp" />
-    <ClCompile Include="..\..\src\crag\app\AppSdl.cpp" />
-    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
-    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
-    <ClCompile Include="..\..\src\crag\core\debug.cpp" />
-    <ClCompile Include="..\..\src\crag\core\memory.cpp" />
-    <ClCompile Include="..\..\src\crag\core\Mutex.cpp" />
-    <ClCompile Include="..\..\src\crag\core\Random.cpp" />
-    <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
-    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Image.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)1</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)1</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
-    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Model.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Node.cpp" />
-    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Point.cpp" />
-    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Scene.cpp" />
-    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Vertex.cpp" />
-    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\DebugGraphics.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Font.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Image.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\IndexBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Light.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Pov.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Renderer.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Scene.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)0</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\gfx\ShadowMap.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\Skybox.cpp" />
-    <ClCompile Include="..\..\src\crag\main.cpp" />
-    <ClCompile Include="..\..\src\crag\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\sim\Controller.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Observer.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\PhysicalBody.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Physics.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Planet.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\PlanetShader.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Simulation.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\src\crag\COPYING" />
     <None Include="..\..\src\crag\readme.html" />
   </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{01C4B482-A68F-4ECC-BA75-E25207C32D7D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>crag</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <ExceptionHandling>false</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>
+      </FloatingPointExceptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src\crag;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <ExceptionHandling>false</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
