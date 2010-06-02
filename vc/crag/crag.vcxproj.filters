@@ -1,0 +1,443 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{bc29acbb-9226-4f36-9707-31847b693825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag">
+      <UniqueIdentifier>{cc2bc65a-8e58-4421-a419-741210571efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\core">
+      <UniqueIdentifier>{ab80a315-5a58-4943-b42f-e0a96165c0f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\form">
+      <UniqueIdentifier>{e78404e7-c93f-4098-9d66-262f691a2d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\gfx">
+      <UniqueIdentifier>{16c25766-80d2-44d9-899b-289ea7e8d17b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\glpp">
+      <UniqueIdentifier>{2d8013ec-c8e3-4c3e-97d3-2e51861227e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\sim">
+      <UniqueIdentifier>{60bedb30-8ac2-4d81-b614-f3ca52c608e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\crag\core\App.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\debug.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\memory.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Mutex.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Random.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Thread.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Formation.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Image.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Manager.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Mesh.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Model.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Node.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Point.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\RootNode.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Scene.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Vertex.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\DebugGraphics.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Font.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Image.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\IndexBuffer.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Light.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Pov.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Renderer.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Scene.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\ShadowMap.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\gfx\Skybox.cpp">
+      <Filter>src\crag\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Controller.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Entity.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Firmament.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Observer.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\PhysicalBody.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Physics.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Planet.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\PlanetShader.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Simulation.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Star.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\Universe.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\UserInput.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\main.cpp">
+      <Filter>src\crag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\pch.cpp">
+      <Filter>src\crag</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\crag\core\App.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Circle2.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\ConfigEntry.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\ConfigManager.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\debug.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\floatOps.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Matrix4.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Matrix.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\MatrixOps.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\memory.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Mutex.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\NSphere.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Pool.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Random.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Singleton.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Sphere3.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Sphere.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\SphereOps.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Thread.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Vector2.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Vector3.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Vector4.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Vector.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\VectorOps.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Formation.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\GenerateMeshFunctor.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Image.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Manager.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Mesh.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\MeshBufferObject.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Model.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Node.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\NodeBuffer.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\NodeFunctor.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\NodeTraversal.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Point.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\PointBuffer.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\PolyTraversal.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Quaterna.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\RootNode.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Scene.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\SceneThread.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Shader.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Vertex.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\VertexBuffer.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Color.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\DebugGraphics.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Font.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Image.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\IndexBuffer.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Light.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Pov.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Renderer.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Scene.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\ShadowMap.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\gfx\Skybox.h">
+      <Filter>src\crag\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\BufferObject.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\debug.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\FrameBuffer.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\gl.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\glpp.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Ibo.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Mesh.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Name.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\RenderBuffer.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Texture.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Vbo.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\glpp\Vbo_Types.h">
+      <Filter>src\crag\glpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Controller.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\defs.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Entity.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Firmament.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\FrequencyEstimator.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Observer.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\PhysicalBody.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Physics.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Planet.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\PlanetShader.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Simulation.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Space.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Star.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\Universe.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\UserInput.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\pch.h">
+      <Filter>src\crag</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\crag\COPYING">
+      <Filter>src\crag</Filter>
+    </None>
+    <None Include="..\..\src\crag\readme.html">
+      <Filter>src\crag</Filter>
+    </None>
+  </ItemGroup>
+</Project>
