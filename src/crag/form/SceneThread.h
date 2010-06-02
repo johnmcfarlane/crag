@@ -18,7 +18,7 @@
 
 #include "glpp/glpp.h"
 
-#include "app/App.h"
+#include "core/App.h"
 
 
 namespace sim

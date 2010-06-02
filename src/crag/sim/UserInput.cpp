@@ -14,7 +14,7 @@
 #include "core/Vector2.h"
 #include "Space.h"
 
-#include "app/App.h"
+#include "core/App.h"
 
 
 namespace ANONYMOUS {

@@ -17,7 +17,7 @@
 #include "core/Singleton.h"
 #include "core/Thread.h"
 
-#include "app/App.h"
+#include "core/App.h"
 
 #include <set>
 

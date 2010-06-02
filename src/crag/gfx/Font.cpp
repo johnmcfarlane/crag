@@ -15,7 +15,7 @@
 
 #include "core/Mutex.h"
 
-#include "app/App.h"
+#include "core/App.h"
 
 #include <vector>
 

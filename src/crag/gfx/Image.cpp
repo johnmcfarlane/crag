@@ -12,7 +12,7 @@
 
 #include "Image.h"
 
-#include "app/App.h"
+#include "core/App.h"
 
 #include "glpp/Texture.h"
 

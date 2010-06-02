@@ -171,6 +171,7 @@
 			5277A98911B5E94600ABBC7F /* PBXTextBookmark */ = 5277A98911B5E94600ABBC7F /* PBXTextBookmark */;
 			5277A98A11B5E94600ABBC7F /* PBXTextBookmark */ = 5277A98A11B5E94600ABBC7F /* PBXTextBookmark */;
 			5277A98C11B5E94A00ABBC7F /* PBXTextBookmark */ = 5277A98C11B5E94A00ABBC7F /* PBXTextBookmark */;
+			5277A98D11B5E9FA00ABBC7F /* PBXTextBookmark */ = 5277A98D11B5E9FA00ABBC7F /* PBXTextBookmark */;
 			52F54BFA11B564A200F03357 = 52F54BFA11B564A200F03357 /* PBXTextBookmark */;
 			52F54BFB11B564A200F03357 = 52F54BFB11B564A200F03357 /* PBXTextBookmark */;
 			52F54BFC11B564A200F03357 = 52F54BFC11B564A200F03357 /* PBXTextBookmark */;
@@ -191,7 +192,7 @@
 		fRef = 52F3A32D11A7979400385922 /* Manager.h */;
 		name = "Manager.h: 61";
 		rLen = 0;
-		rLoc = 1016;
+		rLoc = 1017;
 		rType = 0;
 		vrLen = 665;
 		vrLoc = 675;
@@ -201,7 +202,7 @@
 		fRef = 52F3A34111A7979400385922 /* SceneThread.h */;
 		name = "SceneThread.h: 59";
 		rLen = 10;
-		rLoc = 1211;
+		rLoc = 1212;
 		rType = 0;
 		vrLen = 1030;
 		vrLoc = 715;
@@ -331,6 +332,30 @@
 		rType = 0;
 		vrLen = 914;
 		vrLoc = 4537;
+	};
+	5277A98D11B5E9FA00ABBC7F /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 52F3A37C11A7979400385922 /* Physics.cpp */;
+		name = "Physics.cpp: 212";
+		rLen = 0;
+		rLoc = 5169;
+		rType = 0;
+		vrLen = 1089;
+		vrLoc = 4484;
+	};
+	5277A98E11B5EA0B00ABBC7F /* App.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {936, 2613}}";
+			sepNavSelRange = "{249, 0}";
+			sepNavVisRange = "{0, 445}";
+		};
+	};
+	5277A98F11B5EA0B00ABBC7F /* App.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {936, 1235}}";
+			sepNavSelRange = "{211, 0}";
+			sepNavVisRange = "{0, 507}";
+		};
 	};
 	52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {
 		uiCtxt = {
@@ -541,9 +566,9 @@
 	};
 	52F3A30E11A7979400385922 /* debug.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {853, 2730}}";
-			sepNavSelRange = "{283, 0}";
-			sepNavVisRange = "{0, 890}";
+			sepNavIntBoundsRect = "{{0, 0}, {936, 2613}}";
+			sepNavSelRange = "{221, 0}";
+			sepNavVisRange = "{0, 573}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
@@ -964,9 +989,9 @@
 	};
 	52F3A37C11A7979400385922 /* Physics.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {936, 4602}}";
-			sepNavSelRange = "{4771, 0}";
-			sepNavVisRange = "{4537, 914}";
+			sepNavIntBoundsRect = "{{0, 0}, {853, 4719}}";
+			sepNavSelRange = "{5169, 0}";
+			sepNavVisRange = "{4484, 1089}";
 		};
 	};
 	52F3A37E11A7979400385922 /* Planet.cpp */ = {
@@ -1120,7 +1145,7 @@
 		fRef = 52F3A34D11A7979400385922 /* Image.cpp */;
 		name = "Image.cpp: 127";
 		rLen = 0;
-		rLoc = 2324;
+		rLoc = 2325;
 		rType = 0;
 		vrLen = 540;
 		vrLoc = 2465;
@@ -1130,7 +1155,7 @@
 		fRef = 52F3A38811A7979400385922 /* Universe.h */;
 		name = "Universe.h: 30";
 		rLen = 0;
-		rLoc = 527;
+		rLoc = 528;
 		rType = 0;
 		vrLen = 487;
 		vrLoc = 215;
@@ -1160,7 +1185,7 @@
 		fRef = 52F54BF611B5644D00F03357 /* Manager.h */;
 		name = "Manager.h: 61";
 		rLen = 0;
-		rLoc = 1016;
+		rLoc = 1017;
 		rType = 0;
 		vrLen = 713;
 		vrLoc = 675;
