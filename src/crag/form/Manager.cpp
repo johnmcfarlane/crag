@@ -163,6 +163,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	Assert(gl::DepthFunc() == GL_LEQUAL);
+	GLPP_CALL(glColor3f(1,1,1));
 	
 	// TODO: Minimize state changes for these too.
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);

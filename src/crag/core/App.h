@@ -69,7 +69,7 @@ namespace app
 	};
 	
 	// init
-	bool Init(Vector2i const & resolution, bool full_screen);
+	bool Init(Vector2i resolution, bool full_screen);
 	
 	// GL
 	bool InitGl();

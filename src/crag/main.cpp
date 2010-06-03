@@ -40,9 +40,11 @@ bool Save();
 
 int main(int /*argc*/, char * * /*argv*/)
 {
-	std::cout << "Crag Demo (c)2010 John McFarlane\n";
+	std::cout << "Crag Demo\n";
+	std::cout << "Copyright 2010 John McFarlane\n";
 	
-	if (! Load()) {
+	if (! Load())
+	{
 		// Make sure we always have a config file handy.
 		Save();
 	}
@@ -62,15 +64,13 @@ int main(int /*argc*/, char * * /*argv*/)
 
 namespace ANONYMOUS {
 
-CONFIG_DEFINE (resolution_x, int, 1000);
-CONFIG_DEFINE (resolution_y, int, 750);
+CONFIG_DEFINE (resolution_x, int, 960);
+CONFIG_DEFINE (resolution_y, int, 720);
 
-#if defined(FULL_SCREEN)
 #if defined(NDEBUG)
-CONFIG_DEFINE (fullscreen, bool, false);
+CONFIG_DEFINE (full_screen, bool, true);
 #else
-CONFIG_DEFINE (fullscreen, bool, false);
-#endif
+CONFIG_DEFINE (full_screen, bool, false);
 #endif
 
 char const config_filename[] = "crag.txt";
@@ -84,12 +84,6 @@ char const config_filename[] = "crag.txt";
 
 bool Crag()
 {
-#if FULL_SCREEN
-	bool full_screen = true;
-#else
-	bool full_screen = false;
-#endif
-
 	if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen))
 	{
 		return false;

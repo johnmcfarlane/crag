@@ -36,7 +36,7 @@ namespace ANONYMOUS
 }
 
 
-bool app::Init(Vector2i const & resolution, bool full_screen)
+bool app::Init(Vector2i resolution, bool full_screen)
 {
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -46,32 +46,36 @@ bool app::Init(Vector2i const & resolution, bool full_screen)
 	}
 	
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 32 );
+	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
 	SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 0 );
 	
 	// Get existing video info.
-	/*const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
-	 if (video_info == nullptr)
-	 {
-	 std::cout << "Failed to get video info: " << SDL_GetError();
-	 return false;
-	 }*/
+	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
+	if (video_info == nullptr)
+	{
+		std::cout << "Failed to get video info: " << SDL_GetError();
+		return false;
+	}
 	
 	// Do the ... uh, thing.
-	//int bpp = video_info->vfmt->BitsPerPixel;
+	int bpp = video_info->vfmt->BitsPerPixel;
 	int flags = SDL_OPENGL | SDL_DOUBLEBUF | SDL_HWSURFACE;	// TODO: Are these optimal?
 	
 	if (full_screen)
 	{
-		//resolution.x = video_info->vfmt->width;
-		//resolution.y = video_info->vfmt->height;
+		resolution.x = video_info->current_w;
+		resolution.y = video_info->current_h	;
 		flags |= SDL_FULLSCREEN;
 	}
 	
-	screen_surface = SDL_SetVideoMode(resolution.x, resolution.y, 0, flags);
+	screen_surface = SDL_SetVideoMode(resolution.x, resolution.y, bpp, flags);
 	if (screen_surface == nullptr)
 	{
-		std::cout << "Failed to set video mode: " << SDL_GetError();
+		std::cout << "Failed to set video mode: " << SDL_GetError() << '\n';
+		std::cout << resolution.x << 'x';
+		std::cout << resolution.y << 'x';
+		std::cout << bpp << " (" << std::hex;
+		std::cout << flags << std::dec << ")\n";
 		return false;
 	}
 	

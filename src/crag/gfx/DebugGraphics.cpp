@@ -131,6 +131,8 @@ void DebugGraphics::Init()
 
 	// TODO: Is this legit content?
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
+	// Maybe this one's ok...
+	// http://www.ogre3d.org/wiki/index.php/Outlined_Fonts
 	font = new Font("font.png", .5f);
 }
 
