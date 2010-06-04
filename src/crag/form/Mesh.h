@@ -31,16 +31,16 @@ namespace form
 		
 		//void SetVertices(VertexBuffer const * v);
 		
-		Vertex & GetVertex(Point & point);
+		Vertex & GetVertex(Point & point, Vector2f const & texture);
 	private:
-		Vertex & AddVertex(Point const & p);
+		Vertex & AddVertex(Point const & p, Vector2f const & texture);
 	public:
 		
 		void ClearPolys();
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
 		//void AddFace(Vertex & a, Vertex & b, Vertex & c);
-		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
-		void AddFace(Point & a, Point & b, Point & c);
+		void AddFace(Point & a, Point & b, Point & c, int ia, Vector3f const & normal);
+		void AddFace(Point & a, Point & b, Point & c, int ia);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;

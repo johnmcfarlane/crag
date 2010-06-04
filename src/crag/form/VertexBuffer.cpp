@@ -33,17 +33,6 @@ void form::VertexBuffer::Clear()
 	resize(0);
 }
 
-/*void form::VertexBuffer::ClearNormals()
-{
-	const_iterator end = Base::end();
-	for (iterator i = begin(); i != end; ++ i)
-	{
-		Vector3f & normal = i->norm;
-		//normal = normal.Zero();
-		Assert(normal == normal.Zero());
-	}
-}*/
-
 void form::VertexBuffer::NormalizeNormals()
 {
 	const_iterator end = Base::end();

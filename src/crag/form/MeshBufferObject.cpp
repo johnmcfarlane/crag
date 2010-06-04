@@ -37,6 +37,7 @@ void form::MeshBufferObject::BeginDraw(bool color)
 		glEnableClientState( GL_NORMAL_ARRAY );
 	//	glEnableClientState( GL_COLOR_ARRAY );
 	}
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	Bind();
 	
@@ -46,6 +47,7 @@ void form::MeshBufferObject::BeginDraw(bool color)
 		glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm);
 	//	glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
 	}
+	glTexCoordPointer (2, GL_FLOAT, sizeof(Vertex), & null_vert->texture);
 }
 
 void form::MeshBufferObject::EndDraw()
@@ -54,6 +56,7 @@ void form::MeshBufferObject::EndDraw()
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	//glDisableClientState(GL_COLOR_ARRAY );
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }	
 
 void form::MeshBufferObject::Draw()

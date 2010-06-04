@@ -19,22 +19,18 @@ namespace form
 	class Vertex
 	{
 	public:
-		Vertex();
-		
-		friend void Verify(Vertex const & var) { }
-
 		// Attributes
 		Vector3f pos;
 
 		// Colour
-		typedef unsigned char ColorComp;
-		ColorComp red;
-		ColorComp green;
-		ColorComp blue;
-		ColorComp flags;	// currently unused
+		//typedef unsigned char ColorComp;
+		//ColorComp red;
+		//ColorComp green;
+		//ColorComp blue;
+		//ColorComp flags;	// currently unused
 
 		Vector3f norm;
 
-		uint32_t padding;
+		Vector2f texture;
 	};
 }

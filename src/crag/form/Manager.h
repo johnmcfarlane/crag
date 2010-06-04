@@ -14,10 +14,11 @@
 
 #include "sim/defs.h"
 
+#include "core/App.h"
 #include "core/Singleton.h"
 #include "core/Thread.h"
 
-#include "core/App.h"
+#include "glpp/Texture.h"
 
 #include <set>
 
@@ -67,13 +68,16 @@ namespace form {
 		void Render(gfx::Pov const & pov, bool color) const;
 
 	private:
-		static bool InitMultithreading();
+		bool InitTexture();
 		
 		FormationSet formation_set;
 		sim::Observer & observer;
 
+		bool suspended;
 		bool regenerating;
 		SceneThread * scene_thread;
+		
+		gl::TextureRgba8 texture;
 
 		// The graphicy things.
 		// TODO: Are two objects currently necessary?

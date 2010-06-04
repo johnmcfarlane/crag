@@ -18,6 +18,7 @@
 #include "sim/Observer.h"
 
 #include "gfx/DebugGraphics.h"
+#include "gfx/Image.h"
 #include "gfx/Pov.h"
 
 #include "glpp/glpp.h"
@@ -40,6 +41,8 @@ CONFIG_DEFINE (enable_multithreding, bool, true);
 
 form::Manager::Manager(sim::Observer & init_observer)
 : observer(init_observer)
+, suspended(false)
+, regenerating(false)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
 , front_buffer_object(& buffer_objects [0])
 , back_buffer_object(& buffer_objects [1])
@@ -52,6 +55,8 @@ form::Manager::Manager(sim::Observer & init_observer)
 		mesh.Bind();
 		mesh.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
 	}
+	
+	InitTexture();
 
 	VerifyObject(* this);
 }
@@ -117,7 +122,7 @@ void form::Manager::AdjustNumNodes(app::TimeType frame_delta, app::TimeType targ
 
 void form::Manager::ToggleSuspended()
 {
-	Assert(false);
+	suspended = ! suspended;
 }
 
 void form::Manager::Launch()
@@ -145,6 +150,11 @@ void form::Manager::Tick()
 
 bool form::Manager::PollMesh()
 {
+	if (suspended)
+	{
+		return false;
+	}
+	
 	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin))
 	{
 		// TODO: There should be two form::Mesh objects - not two BO's
@@ -178,12 +188,22 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	formation_pov.pos -= front_buffer_origin;
 	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
 	gl::LoadMatrix(formation_pov.CalcModelViewMatrix().GetArray());
-
+	
+	
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	gl::Enable(GL_TEXTURE_2D);
+	gl::Bind(& texture);
+	
+	
 	// Draw the mesh!
 	front_buffer_object->BeginDraw(color);	
 	front_buffer_object->Draw();
 	front_buffer_object->EndDraw();
-
+	
+	
+	gl::Disable(GL_TEXTURE_2D);
+	
+	
 	// Debug output
 	if (gfx::DebugGraphics::GetVerbosity() > .8) {
 		for (int i = 0; i < 2; ++ i) {
@@ -218,4 +238,32 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	if (gfx::DebugGraphics::GetVerbosity() > .5) {
 		//DebugGraphics::out << "target nodes:" << target_num_nodes << '\n';
 	}
+}
+
+bool form::Manager::InitTexture()
+{
+	gfx::Image image;
+	Vector2i image_size(128, 128);
+	image.Create(image_size);
+	
+	//float root_two = Sqrt(2.);
+	Vector2i pos;
+	for (pos.y = 0; pos.y < image_size.y; ++ pos.y)
+	{
+		float yf = static_cast<float>(pos.y) / 255;
+		for (pos.x = 0; pos.x < image_size.x; ++ pos.x)
+		{
+			float xf = static_cast<float>(pos.x) / 255;
+			//float d = Sqrt(Square(yf) + Square(xf)) / root_two;
+			
+			image.SetPixel(pos, gfx::Color4f(1.f - xf, 1.f - yf, 0));
+		}
+	}
+	
+	if (! image.CreateTexture(texture))
+	{
+		return false;
+	}
+	
+	return true;
 }
