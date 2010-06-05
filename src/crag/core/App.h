@@ -14,6 +14,9 @@
 
 #include "glpp/gl.h"
 
+#include <SDL_keysym.h>
+#include <SDL_events.h>
+
 
 #define KEY_0 SDLK_0
 #define KEY_1 SDLK_1
@@ -69,7 +72,7 @@ namespace app
 	};
 	
 	// init
-	bool Init(Vector2i resolution, bool full_screen);
+	bool Init(Vector2i resolution, bool full_screen, char const * title);
 	
 	// GL
 	bool InitGl();

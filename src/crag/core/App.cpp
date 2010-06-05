@@ -15,6 +15,8 @@
 #include "core/ConfigEntry.h"
 #include "core/Mutex.h"
 
+#include <SDL_image.h>
+
 
 namespace ANONYMOUS
 {
@@ -36,7 +38,7 @@ namespace ANONYMOUS
 }
 
 
-bool app::Init(Vector2i resolution, bool full_screen)
+bool app::Init(Vector2i resolution, bool full_screen, char const * title)
 {
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -92,6 +94,8 @@ bool app::Init(Vector2i resolution, bool full_screen)
 	mouse_position.x = resolution.y >> 1;
 	mouse_position.y = resolution.y >> 1;
 	window_size = resolution;
+	
+	SDL_WM_SetCaption(title, nullptr);
 	
 	return true;
 }

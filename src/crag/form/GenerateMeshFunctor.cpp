@@ -21,7 +21,7 @@ int GetTwizzle(form::Node const & n)
 	if (parent != nullptr)
 	{
 		int index = & n - parent->children;
-		return 2 * index;
+		return index;
 	}
 	else 
 	{
@@ -84,7 +84,7 @@ void form::GenerateMeshFunctor::GenerateMesh(Node & node)
 			Assert(non_mid_point_index >= 0);
 			
 			// Generate good triangle.
-			mesh.AddFace(* node.triple[TriMod(non_mid_point_index+1)].mid_point, * node.triple[TriMod(non_mid_point_index+2)].mid_point, * node.triple[non_mid_point_index].corner, CalcUvIndex(twizzler+non_mid_point_index+1));
+			mesh.AddFace(* node.triple[TriMod(non_mid_point_index+2)].mid_point, * node.triple[TriMod(non_mid_point_index+1)].mid_point, * node.triple[non_mid_point_index].corner, CalcUvIndex(twizzler+non_mid_point_index+1));
 
 			// Generate wonky quad.
 			mesh.AddFace(* node.triple[TriMod(non_mid_point_index+1)].corner, * node.triple[TriMod(non_mid_point_index+2)].corner, * node.triple[TriMod(non_mid_point_index+2)].mid_point, CalcUvIndex(twizzler+non_mid_point_index+1));

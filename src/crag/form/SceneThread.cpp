@@ -23,8 +23,8 @@
 namespace ANONYMOUS 
 {
 	CONFIG_DEFINE (max_observer_position_length, double, 2500);
-	CONFIG_DEFINE (max_mesh_generation_period, double, .1f);
-	CONFIG_DEFINE (post_reset_freeze_period, double, 1.25f);
+	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .1f);
+	CONFIG_DEFINE (post_reset_freeze_period, app::TimeType, 1.25f);
 }
 
 
@@ -37,6 +37,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , reset_origin_flag(false)
 , suspend_flag(false)
 , quit_flag(false)
+, origin_reset_time(0)
 , mesh(form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f))
 , mesh_updated(false)
 , mesh_generation_time(0)
@@ -147,6 +148,9 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 	
 	mesh_mutex.Unlock();
 	
+	glFlush();
+	glFinish();
+	
 	//app::Sleep(0);
 
 	return polled;
@@ -163,15 +167,21 @@ bool form::SceneThread::PostResetFreeze() const
 {
 	app::TimeType t = app::GetTime();
 	app::TimeType time_since_reset = t - origin_reset_time;
-	double time_since_reset_seconds = time_since_reset;
-	return time_since_reset_seconds < post_reset_freeze_period;
+	return time_since_reset < post_reset_freeze_period;
 }
 
+// TODO: Should really say 'need origin reset'
 bool form::SceneThread::OutOfRange() const
 {
 	if (reset_origin_flag) 
 	{
 		// We're on it already!
+		return false;
+	}
+	
+	if (PostResetFreeze())
+	{
+		// Still making the last one
 		return false;
 	}
 	
@@ -206,24 +216,20 @@ void form::SceneThread::Run()
 
 void form::SceneThread::ThreadTick()
 {
-	//Assert(IsSceneThread());
-
 	sim::Vector3 const & observer_pos = observer.GetPosition();
 	scene.SetObserverPos(observer_pos);
 	
 	if (reset_origin_flag) 
 	{
-		VerifyObject(* this);
-		
 		scene.SetOrigin(observer_pos);
 		reset_origin_flag = false;
 		origin_reset_time = app::GetTime();
-
-		VerifyObject(* this);
 	}
 	else 
 	{
 		AdjustNumQuaterna();
+		
+		VerifyObject(*this);
 	}
 
 	scene.Tick(formations);

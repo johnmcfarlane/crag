@@ -35,9 +35,13 @@ void form::MeshBufferObject::BeginDraw(bool color)
 	glEnableClientState( GL_VERTEX_ARRAY );
 	if (color) {
 		glEnableClientState( GL_NORMAL_ARRAY );
-	//	glEnableClientState( GL_COLOR_ARRAY );
+#if defined(FORM_VERTEX_COLOR)
+		glEnableClientState( GL_COLOR_ARRAY );
+#endif
 	}
+#if defined(FORM_VERTEX_TEXTURE)
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 	
 	Bind();
 	
@@ -45,9 +49,13 @@ void form::MeshBufferObject::BeginDraw(bool color)
 	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), & null_vert->pos);
 	if (color) {
 		glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm);
-	//	glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
+#if defined(FORM_VERTEX_COLOR)
+		glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
+#endif
 	}
+#if defined(FORM_VERTEX_TEXTURE)
 	glTexCoordPointer (2, GL_FLOAT, sizeof(Vertex), & null_vert->texture);
+#endif
 }
 
 void form::MeshBufferObject::EndDraw()
@@ -55,8 +63,12 @@ void form::MeshBufferObject::EndDraw()
 	// Disable all the magic buffer thingeys.
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	//glDisableClientState(GL_COLOR_ARRAY );
+#if defined(FORM_VERTEX_COLOR)
+	glDisableClientState(GL_COLOR_ARRAY );
+#endif
+#if defined(FORM_VERTEX_TEXTURE)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 }	
 
 void form::MeshBufferObject::Draw()

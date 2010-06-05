@@ -56,8 +56,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #else
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+// No actual PCHs for Linux as of yet so omit in favor of individual includes.
+//#include <SDL/SDL.h>
+//#include <SDL/SDL_image.h>
 #endif
 
 
@@ -66,6 +67,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 
 #include <cassert>
 #include <cstdlib>
@@ -74,6 +76,7 @@
 
 #include <limits>
 #include <iostream>
+#include <algorithm>
 
 
 //////////////////////////////////////////////////////////////////////

@@ -13,6 +13,9 @@
 #include "core/Vector3.h"
 
 
+//#define FORM_VERTEX_COLOR
+//#define FORM_VERTEX_TEXTURE
+
 namespace form
 {
 
@@ -22,15 +25,19 @@ namespace form
 		// Attributes
 		Vector3f pos;
 
+#if defined(FORM_VERTEX_COLOR)
 		// Colour
-		//typedef unsigned char ColorComp;
-		//ColorComp red;
-		//ColorComp green;
-		//ColorComp blue;
-		//ColorComp flags;	// currently unused
-
+		typedef unsigned char ColorComp;
+		ColorComp red;
+		ColorComp green;
+		ColorComp blue;
+		ColorComp flags;	// currently unused
+#endif // defined(FORM_VERTEX_COLOR)
+		
 		Vector3f norm;
 
+#if defined(FORM_VERTEX_TEXTURE)
 		Vector2f texture;
+#endif // defined(FORM_VERTEX_TEXTURE)
 	};
 }

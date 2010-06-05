@@ -37,7 +37,7 @@ namespace ANONYMOUS {
 //////////////////////////////////////////////////////////////////////
 // functions
 
-sim::Vector3 const default_camera_pos(0,99479.8,0);
+sim::Vector3 const default_camera_pos(0,99774.6,0);
 CONFIG_DEFINE (use_default_camera_pos, bool, true);
 CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
@@ -120,6 +120,8 @@ void sim::Simulation::Run()
 	
 	while (HandleEvents())
 	{
+		//std::cout << "\ntime:" << time << " target_tick_time:" << target_tick_time;
+		
 		app::TimeType time_until_tick = target_tick_time - time;
 
 		// Is it time for the next tick?
@@ -132,6 +134,7 @@ void sim::Simulation::Run()
 			time = app::GetTime();
 			app::TimeType tick_end_time = time;
 			app::TimeType tick_seconds = tick_end_time - tick_start_time;
+			//std::cout << " tick_seconds:" << tick_seconds;
 
 			// Adjust the number of nodes based on how well we're doing. 
 			app::TimeType target_tick_seconds = Universe::target_frame_seconds * target_tick_proportion;
@@ -145,11 +148,12 @@ void sim::Simulation::Run()
 		
 		if (formation_manager->PollMesh())
 		{
+			//std::cout << " poll";
 			time = app::GetTime();
 			continue;
 		}
 		
-		//printf("sleep =%d %d\n", time, time_until_tick);
+		//std::cout << " sleep:" << time_until_tick;
 		app::Sleep(time_until_tick);
 		time = app::GetTime();
 	}

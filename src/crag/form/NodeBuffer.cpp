@@ -168,8 +168,6 @@ int NodeBuffer::GetNumQuaternaAvailable() const
 
 void NodeBuffer::SetNumQuaternaAvailable(int n)
 {
-	//VerifyObject(* this);
-
 	Quaterna * new_rankings_available_end = Clamp(quaterna + n, quaterna + 0, quaterna_end);
 	
 	if (new_rankings_available_end > quaterna_available_end) {
@@ -181,13 +179,11 @@ void NodeBuffer::SetNumQuaternaAvailable(int n)
 			DecreaseAvailableRankings(new_rankings_available_end);
 		}
 	}
-
-	//VerifyObject(* this);
 }
 
 void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 {
-	//VerifyObject(*this);
+	VerifyObject(*this);
 
 	UpdateNodeScores(relative_camera_pos);
 	UpdateParentScores();
@@ -196,6 +192,8 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 	for (int timeout = 1; timeout; -- timeout) {
 		ChurnNodes();
 	}
+
+	VerifyObject(*this);
 }
 
 void NodeBuffer::OnReset()
@@ -693,8 +691,6 @@ void NodeBuffer::IncreaseAvailableRankings(Quaterna * new_quaterna_available_end
 		++ quaterna_available_end;
 		nodes_available_end += 4;
 	}
-	
-	//VerifyObject(* this);
 }
 
 // TODO: This can be improved a lot.

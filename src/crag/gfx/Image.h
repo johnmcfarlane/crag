@@ -15,6 +15,10 @@
 #include "core/Vector2.h"
 
 
+struct SDL_PixelFormat;
+struct SDL_Surface;
+
+
 namespace gl
 {
 	class TextureRgba8;

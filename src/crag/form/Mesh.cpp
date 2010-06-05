@@ -51,7 +51,9 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p, Vector2f const & tex
 	
 	addition.pos = p;
 	addition.norm = addition.norm.Zero();
+#if defined(FORM_VERTEX_TEXTURE)
 	addition.texture = texture;
+#endif
 
 	return addition;
 }
@@ -88,15 +90,18 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 
 void form::Mesh::AddFace(Point & a, Point & b, Point & c, int ia, Vector3f const & normal)
 {
-	static float uv[3][2] = 
+	static const float low = 0.01f, high = .99f;
+	static const float uv[3][2] = 
 	{
-		{ 0.05f, 0.05f },
-		{ 0.95f, 0.05f },
-		{ 0.05f, 0.95f }
+		{ low, low },
+		{ high, low },
+		{ low, high }
 	};
+	
 	Vertex & vert_a = GetVertex(a, Vector2f(uv[       ia   ][0],uv[       ia   ][1]));
 	Vertex & vert_b = GetVertex(b, Vector2f(uv[TriMod(ia+1)][0],uv[TriMod(ia+1)][1]));
 	Vertex & vert_c = GetVertex(c, Vector2f(uv[TriMod(ia+2)][0],uv[TriMod(ia+2)][1]));
+	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
 

@@ -227,6 +227,7 @@ void gfx::Renderer::InitRenderState()
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
+	GLPP_CALL(glColor4f(1, 1, 1, 1));
 
 	VerifyRenderState();
 }
@@ -311,6 +312,12 @@ void gfx::Renderer::Render(Scene & scene) const
 #endif
 
 	VerifyRenderState();
+
+	GLenum gl_error = glGetError(); 
+	if (gl_error != GL_NO_ERROR) {
+		std::cout << "gfx::Renderer::Render: " << gl_error << '\n';
+		exit(1);
+	}
 }
 
 void gfx::Renderer::RenderScene(Scene const & scene) const
@@ -328,7 +335,16 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 	}
 
 	SetFrustrum(scene.pov.frustrum);
-	RenderForeground(scene);
+	
+	if (wireframe)
+	{
+		RenderForeground(scene, WireframePass1);
+		RenderForeground(scene, WireframePass2);
+	}
+	else {
+		RenderForeground(scene, NormalPass);
+	}
+
 
 	DebugDraw(scene.pov);
 
@@ -360,30 +376,55 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 	VerifyRenderState();
 }
 
-void gfx::Renderer::RenderForeground(Scene const & scene) const
+void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
 {
-	// Set state
-	if (! smooth_shading) {
-		GLPP_CALL(glShadeModel(GL_FLAT));
-	}
-	if (! culling) {
-		gl::Disable(GL_CULL_FACE);
-	}
-	if (wireframe)
+	Assert(gl::DepthFunc() == GL_LEQUAL);
+	switch (pass) 
 	{
-		GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
-		GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
+		case NormalPass:
+			if (! culling) {
+				gl::Disable(GL_CULL_FACE);
+			}
+			break;
+			
+		case WireframePass1:
+			if (! culling)
+			{
+				return;
+			}
+			//GLPP_CALL(glCullFace(GL_FRONT));
+			GLPP_CALL(glColor4f(0, 0, 0, 1));
+			gl::Enable(GL_POLYGON_OFFSET_FILL);
+			GLPP_CALL(glPolygonOffset(1,1));
+			break;
+			
+		case WireframePass2:
+			if (! culling) {
+				gl::Disable(GL_CULL_FACE);
+			}
+			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
+			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
+			break;
+			
+		default:
+			Assert(false);
+	}
+	
+	// Set state
+	if (! smooth_shading) 
+	{
+		GLPP_CALL(glShadeModel(GL_FLAT));
 	}
 	if (lighting)
 	{
 		gl::Enable(GL_LIGHTING);
 	}
-
-	Assert(gl::DepthFunc() == GL_LEQUAL);
+	
 	gl::Enable(GL_DEPTH_TEST);
 
 	// Do the rendering
-	if (! shadow_mapping) {
+	if (! shadow_mapping) 
+	{
 		RenderSimpleLights(scene.lights);
 
 		form::Manager & manager = form::Manager::Get();
@@ -402,19 +443,37 @@ void gfx::Renderer::RenderForeground(Scene const & scene) const
 	if (! smooth_shading) {
 		GLPP_CALL(glShadeModel(GL_SMOOTH));
 	}
-	if (! culling) {
-		gl::Enable(GL_CULL_FACE);
-	}
-	if (wireframe)
-	{
-		GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-		GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
-	}
 	if (lighting)
 	{
 		gl::Disable(GL_LIGHTING);
 	}
 	gl::Disable(GL_DEPTH_TEST);
+
+	switch (pass) 
+	{
+		case NormalPass:
+			if (! culling) {
+				gl::Enable(GL_CULL_FACE);
+			}
+			break;
+			
+		case WireframePass1:
+			GLPP_CALL(glCullFace(GL_BACK));
+			GLPP_CALL(glColor4f(1, 1, 1, 1));
+			gl::Disable(GL_POLYGON_OFFSET_FILL);
+			break;
+			
+		case WireframePass2:
+			if (! culling) {
+				gl::Enable(GL_CULL_FACE);
+			}
+			GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
+			GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
+			break;
+			
+		default:
+			Assert(false);
+	}
 }
 
 // Nothing to do with shadow maps; draws the lights in the main scene.

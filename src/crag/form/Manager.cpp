@@ -24,6 +24,7 @@
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
+#include "core/TextureMapper.h"
 
 
 namespace ANONYMOUS {
@@ -157,7 +158,7 @@ bool form::Manager::PollMesh()
 	
 	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin))
 	{
-		// TODO: There should be two form::Mesh objects - not two BO's
+		// TODO: Do we definitely need two of these?
 		std::swap(front_buffer_object, back_buffer_object);
 		return true;
 	}
@@ -169,11 +170,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 {	
 	// State
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
-	Assert(gl::DepthFunc() == GL_LEQUAL);
-	Assert(gl::IsEnabled(GL_DEPTH_TEST));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	Assert(gl::DepthFunc() == GL_LEQUAL);
-	GLPP_CALL(glColor3f(1,1,1));
 	
 	// TODO: Minimize state changes for these too.
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);
@@ -246,17 +243,33 @@ bool form::Manager::InitTexture()
 	Vector2i image_size(128, 128);
 	image.Create(image_size);
 	
+	TextureMapper mapper(image_size, 0);
+	
+	std::cout << mapper.GetMapping(Vector2f(0, 0)).x << mapper.GetMapping(Vector2f(0, 0)).y;
+	std::cout << mapper.GetMapping(Vector2f(1, 0)).x << mapper.GetMapping(Vector2f(1, 0)).y;
+	std::cout << mapper.GetMapping(Vector2f(0, 1)).x << mapper.GetMapping(Vector2f(0, 1)).y;
+	
 	//float root_two = Sqrt(2.);
 	Vector2i pos;
+	Vector2f f_pos;
 	for (pos.y = 0; pos.y < image_size.y; ++ pos.y)
 	{
-		float yf = static_cast<float>(pos.y) / 255;
+		f_pos.y = pos.y;
 		for (pos.x = 0; pos.x < image_size.x; ++ pos.x)
 		{
-			float xf = static_cast<float>(pos.x) / 255;
-			//float d = Sqrt(Square(yf) + Square(xf)) / root_two;
+			f_pos.x = pos.x;
 			
-			image.SetPixel(pos, gfx::Color4f(1.f - xf, 1.f - yf, 0));
+			Vector2f equalateral_pos = mapper.GetMapping(f_pos);
+			
+			float i = Min(Length(mapper.GetCorner(1) - equalateral_pos), 1.f);
+			
+			image.SetPixel(pos, gfx::Color4f(i, i, i));
+			
+			/*float r = Min(.5f - Length(mapper.GetCorner(0) - equalateral_pos) * .5f, 1.f);
+			float g = Min(.5f - Length(mapper.GetCorner(1) - equalateral_pos) * .5f, 1.f);
+			float b = Min(.5f - Length(mapper.GetCorner(2) - equalateral_pos) * .5f, 1.f);
+		
+			image.SetPixel(pos, gfx::Color4f(r, g, b));*/
 		}
 	}
 	

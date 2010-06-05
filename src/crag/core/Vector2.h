@@ -94,7 +94,7 @@ template<typename Scalar> Vector2<Scalar> & operator *= (Vector2<Scalar> & lhs, 
 	return lhs;
 }
 
-template<typename Scalar> Vector2<Scalar> & operator *= (Vector2<Scalar> & lhs, Scalar rhs)
+template<typename Scalar1, typename Scalar2> Vector2<Scalar1> & operator *= (Vector2<Scalar1> & lhs, Scalar2 rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;

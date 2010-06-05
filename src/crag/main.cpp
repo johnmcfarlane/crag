@@ -16,6 +16,8 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
+#include <SDL_main.h>
+
 #include <fstream>
 
 
@@ -68,7 +70,7 @@ CONFIG_DEFINE (resolution_x, int, 960);
 CONFIG_DEFINE (resolution_y, int, 720);
 
 #if defined(NDEBUG)
-CONFIG_DEFINE (full_screen, bool, true);
+CONFIG_DEFINE (full_screen, bool, false);
 #else
 CONFIG_DEFINE (full_screen, bool, false);
 #endif
@@ -84,12 +86,10 @@ char const config_filename[] = "crag.txt";
 
 bool Crag()
 {
-	if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen))
+	if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
 	{
 		return false;
 	}
-
-	SDL_WM_SetCaption("Crag", nullptr);
 
 	// Run the simulation.
 	sim::Simulation * sim = new sim::Simulation ();
