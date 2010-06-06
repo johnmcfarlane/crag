@@ -314,7 +314,7 @@ void sim::Physics::OnContact(dContact * contact, dGeomID geom1, dGeomID geom2)
 
 void sim::Physics::DrawMeshData(dGeomID formation_geom, int num_triangles)
 {
-#if defined(DEBUG_GRAPHICS)
+#if defined(GFX_DEBUG)
 	for (int triangle = 0; triangle < num_triangles; ++ triangle)
 	{
 		dVector3 points[3];
@@ -329,7 +329,7 @@ void sim::Physics::DrawMeshData(dGeomID formation_geom, int num_triangles)
 			s.z += points[i][2];
 		}
 		s /= 3.f;
-		DebugGraphics::AddPoint(s, col);
+		Debug::AddPoint(s, col);
 #else
 		sim::Vector3 tri[3];
 		for (int i = 0; i < 3; ++ i)
@@ -339,7 +339,7 @@ void sim::Physics::DrawMeshData(dGeomID formation_geom, int num_triangles)
 				tri[i][axis] = points[i][axis];
 			}
 		}
-		DebugGraphics::AddTriangle(tri[0], tri[1], tri[2], col);
+		Debug::AddTriangle(tri[0], tri[1], tri[2], col);
 #endif
 	}
 #endif

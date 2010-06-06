@@ -15,7 +15,7 @@
 
 #include "sim/Observer.h"
 
-#include "gfx/DebugGraphics.h"
+#include "gfx/Debug.h"
 
 #include "core/ConfigEntry.h"
 
@@ -116,15 +116,15 @@ void form::SceneThread::Tick()
 		ThreadTick();
 	}
 	
-	if (gfx::DebugGraphics::GetVerbosity() > 0.91532)
+	if (gfx::Debug::GetVerbosity() > 0.91532)
 	{
 		sim::Vector3 const & observer_pos = observer.GetPosition();
 		double observer_position_length = Length(observer_pos - scene.GetOrigin());
-		gfx::DebugGraphics::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
+		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
 	}
 }
 
-bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & mesh_origin)
+bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin)
 {
 	Assert(IsMainThread());
 	
@@ -136,7 +136,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & me
 	{
 		mbo.Set(mesh);
 
-		mesh_origin = scene.GetOrigin();
+		origin = mesh_origin;
 
 		mesh_updated = false;
 		polled = true;
@@ -290,6 +290,7 @@ bool form::SceneThread::GenerateMesh()
 	}
 	
 	scene.GenerateMesh(mesh);
+	mesh_origin = scene.GetOrigin();
 	mesh_mutex.Unlock();
 
 	mesh_updated = true;

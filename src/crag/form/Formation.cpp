@@ -16,7 +16,7 @@
 #include "form/Mesh.h"
 
 
-#if defined(DEBUG_GRAPHICS)
+#if defined(GFX_DEBUG)
 #define DEBUG_NORMALS 0
 #else
 #define DEBUG_NORMALS 0

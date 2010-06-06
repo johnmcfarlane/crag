@@ -20,7 +20,7 @@
 #include "core/Vector4.h"
 #include "core/ConfigEntry.h"
 
-#include "gfx/DebugGraphics.h"
+#include "gfx/Debug.h"
 
 
 namespace ANONYMOUS {
@@ -86,9 +86,9 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 	}
 	
 	// Debug out
-	if (gfx::DebugGraphics::GetVerbosity() > .8) {
+	if (gfx::Debug::GetVerbosity() > .8) {
 		for (int n = 0; n < 2; ++ n) {
-			gfx::DebugGraphics::out << (n ? "torque:" : "force: ");
+			gfx::Debug::out << (n ? "torque:" : "force: ");
 			for (int m = 0; m < 3; ++ m) {
 				char c;
 				int f = static_cast<int>(impulse.factors[n][m]);
@@ -101,9 +101,9 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 				else if (f > 0) {
 					c = '+';
 				}
-				gfx::DebugGraphics::out << c;
+				gfx::Debug::out << c;
 			}
-			gfx::DebugGraphics::out << '\n';
+			gfx::Debug::out << '\n';
 		}
 	}
 }

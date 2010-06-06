@@ -12,7 +12,7 @@
 
 #include "Renderer.h"
 #include "Scene.h"
-#include "DebugGraphics.h"
+#include "Debug.h"
 #include "Skybox.h"
 #include "Light.h"
 
@@ -642,25 +642,25 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 //	Pov test = pov;
 //	test.frustrum.resolution = Vector2i(100, 100);
 //	test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
-//	DebugGraphics::AddFrustum(test);
+//	Debug::AddFrustum(test);
 	
-	if (DebugGraphics::GetVerbosity() > .2) {
-		DebugGraphics::out << "pos:" << pov.pos << '\n';
+	if (Debug::GetVerbosity() > .2) {
+		Debug::out << "pos:" << pov.pos << '\n';
 	}
 	
-	if (DebugGraphics::GetVerbosity() > .9) {
-		std::streamsize previous_precision = DebugGraphics::out.precision(2);
-		DebugGraphics::out << "rot:" << pov.rot << '\n';
-		DebugGraphics::out.precision(previous_precision);
+	if (Debug::GetVerbosity() > .9) {
+		std::streamsize previous_precision = Debug::out.precision(2);
+		Debug::out << "rot:" << pov.rot << '\n';
+		Debug::out.precision(previous_precision);
 	}
 	
-#if defined(DEBUG_GRAPHICS)
+#if defined(GFX_DEBUG)
 	sim::Vector3 forward = Space::GetForward(pov.rot);
 	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustrum.near_z + 1));
-	//DebugGraphics::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
+	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
 #endif
 	
-	DebugGraphics::DrawGraphics();
+	Debug::DrawGraphics();
 }
 
 void gfx::Renderer::GenerateShadowMaps(Scene & scene) const
@@ -726,8 +726,8 @@ void gfx::Renderer::GenerateShadowMap(Scene & scene, ShadowMapKey const & key) c
 	s.light_proj = light_pov.frustrum.CalcProjectionMatrix();
 	s.light_view = light_pov.CalcModelViewMatrix();
 	
-#if defined(DEBUG_GRAPHICS)
-	DebugGraphics::AddFrustum(light_pov);
+#if defined(GFX_DEBUG)
+	Debug::AddFrustum(light_pov);
 #endif
 	
 	// Render to shadow map texture.
@@ -752,12 +752,12 @@ void gfx::Renderer::GenerateShadowMap(Scene & scene, ShadowMapKey const & key) c
 	
 	GLPP_VERIFY;
 	
-	if (DebugGraphics::GetVerbosity() > .9) {
-		DebugGraphics::out << "light_pov.pos:" << light_pov.pos << '\n';
+	if (Debug::GetVerbosity() > .9) {
+		Debug::out << "light_pov.pos:" << light_pov.pos << '\n';
 	}
-	if (DebugGraphics::GetVerbosity() > .95) {
-		std::streamsize previous_precision = DebugGraphics::out.precision(2);
-		DebugGraphics::out << "light_pov.rot:" << light_pov.rot << '\n';
-		DebugGraphics::out.precision(previous_precision);
+	if (Debug::GetVerbosity() > .95) {
+		std::streamsize previous_precision = Debug::out.precision(2);
+		Debug::out << "light_pov.rot:" << light_pov.rot << '\n';
+		Debug::out.precision(previous_precision);
 	}
 }

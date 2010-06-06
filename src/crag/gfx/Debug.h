@@ -1,5 +1,5 @@
 /*
- *  DebugGraphics.h
+ *  Debug.h
  *  Crag
  *
  *  Created by John on 12/3/09.
@@ -15,7 +15,7 @@
 #include <ostream>
 
 #if defined(PROFILE) 
-#define DEBUG_GRAPHICS
+#define GFX_DEBUG
 #endif
 
 
@@ -32,7 +32,7 @@ namespace gfx
 {
 	class Pov;
 
-	namespace DebugGraphics
+	namespace Debug
 	{
 		// forward declarations
 		typedef ::Vector3<double> Vector3;
@@ -50,10 +50,10 @@ namespace gfx
 			Color4f hidden_color;	// Color for failed pixels.
 		};
 
-		// Warning: points to nullptr unless DEBUG_GRAPHICS is defined.
+		// Warning: points to nullptr unless GFX_DEBUG is defined.
 		extern std::ostream & out;
 
-	#if defined(DEBUG_GRAPHICS)
+	#if defined(GFX_DEBUG)
 		void Init();
 		void Deinit();
 

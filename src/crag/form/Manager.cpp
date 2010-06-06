@@ -17,7 +17,7 @@
 
 #include "sim/Observer.h"
 
-#include "gfx/DebugGraphics.h"
+#include "gfx/Debug.h"
 #include "gfx/Image.h"
 #include "gfx/Pov.h"
 
@@ -202,38 +202,34 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	
 	
 	// Debug output
-	if (gfx::DebugGraphics::GetVerbosity() > .8) {
+	if (gfx::Debug::GetVerbosity() > .75) {
 		for (int i = 0; i < 2; ++ i) {
 			form::MeshBufferObject const * m = buffer_objects + i;
-			gfx::DebugGraphics::out << m << ' ';
+			gfx::Debug::out << m << ' ';
 			if (m == front_buffer_object) {
-				gfx::DebugGraphics::out << 'f';
+				gfx::Debug::out << 'f';
 			}
 			if (m == back_buffer_object) {
-				gfx::DebugGraphics::out << 'b';
+				gfx::Debug::out << 'b';
 			}
-			gfx::DebugGraphics::out << '\n';
+			gfx::Debug::out << '\n';
 		}
 	}
 	
-	if (gfx::DebugGraphics::GetVerbosity() > .6) {
-		//DebugGraphics::out << "churn:" << scene_thread->GetChurnMeasure() << '\n';
-		
-		//DebugGraphics::out << "regen:" << Length(scene_thread->GetObserverPos() - scene_thread->GetOrigin()) / max_observer_position_length << '\n';
-		
-		//DebugGraphics::out << "target:" << static_cast<float>(scene_thread->GetNumNodes()) / scene_thread->GetTargetNumNodes() << '\n';
+	if (gfx::Debug::GetVerbosity() > .75) {
+		gfx::Debug::out << "origin:" << front_buffer_origin << '\n';
 	}
 	
-	if (gfx::DebugGraphics::GetVerbosity() > .05) {
-		//DebugGraphics::out << "polys:" << form::Manager0::GetNumPolys() << '\n';
+	if (gfx::Debug::GetVerbosity() > .05) {
+		//Debug::out << "polys:" << form::Manager0::GetNumPolys() << '\n';
 	}
 	
-	if (gfx::DebugGraphics::GetVerbosity() > .3) {
-		gfx::DebugGraphics::out << "current nodes:" << (scene_thread->GetNumQuaternaAvailable() << 2) << '\n';
+	if (gfx::Debug::GetVerbosity() > .3) {
+		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaAvailable() << 2) << '\n';
 	}
 	
-	if (gfx::DebugGraphics::GetVerbosity() > .5) {
-		//DebugGraphics::out << "target nodes:" << target_num_nodes << '\n';
+	if (gfx::Debug::GetVerbosity() > .5) {
+		//Debug::out << "target nodes:" << target_num_nodes << '\n';
 	}
 }
 

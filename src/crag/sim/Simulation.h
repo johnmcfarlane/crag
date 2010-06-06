@@ -12,7 +12,7 @@
 
 #include "Physics.h"
 
-#include "gfx/DebugGraphics.h"
+#include "gfx/Debug.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 

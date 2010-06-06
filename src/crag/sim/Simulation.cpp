@@ -22,7 +22,7 @@
 #include "form/Scene.h"
 #include "form/Manager.h"
 
-#include "gfx/DebugGraphics.h"
+#include "gfx/Debug.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Matrix4.h"
@@ -70,7 +70,7 @@ sim::Simulation::Simulation()
 
 	InitUniverse();
 	
-	gfx::DebugGraphics::Init();
+	gfx::Debug::Init();
 }
 
 void sim::Simulation::InitUniverse()
@@ -101,7 +101,7 @@ void sim::Simulation::InitUniverse()
 
 sim::Simulation::~Simulation()
 {
-	gfx::DebugGraphics::Deinit();
+	gfx::Debug::Deinit();
 	
 	camera_pos = observer->GetPosition();
 	camera_rot = observer->GetRotation();
@@ -217,17 +217,17 @@ void sim::Simulation::PrintStats() const
 		return;
 	}
 
-	if (gfx::DebugGraphics::GetVerbosity() > .1) {
-		gfx::DebugGraphics::out << "fps:" << 1. / fps << '\n';
+	if (gfx::Debug::GetVerbosity() > .1) {
+		gfx::Debug::out << "fps:" << 1. / fps << '\n';
 	}
 	
-/*	if (DebugGraphics::GetVerbosity() > .4) {
+/*	if (Debug::GetVerbosity() > .4) {
 		RealTimeFrequencyEstimator const & tps = formation_manager.GetTicksPerSecond();
-		DebugGraphics::out << "tps:" << tps.GetFrequency() << '\n';
+		Debug::out << "tps:" << tps.GetFrequency() << '\n';
 	}*/
 
-/*	if (DebugGraphics::GetVerbosity() > .6) {
-		DebugGraphics::out << "idle:" << idle_tick_period << '\n';
+/*	if (Debug::GetVerbosity() > .6) {
+		Debug::out << "idle:" << idle_tick_period << '\n';
 	}*/
 }
 
