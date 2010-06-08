@@ -13,7 +13,6 @@
 #include "Scene.h"
 
 #include "Formation.h"
-//#include "NodeTraversal.h"
 #include "Mesh.h"
 #include "Shader.h"
 
@@ -229,7 +228,7 @@ void form::Scene::ResetFormations()
 	VerifyObject(* this);
 }
 
-void form::Scene::TickModel(Model & model) // TODO: Write a scene::forEach
+void form::Scene::TickModel(Model & model)
 {
 	form::RootNode & root_node = model.root_node;
 	

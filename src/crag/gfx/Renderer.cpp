@@ -132,7 +132,7 @@ void DrawShadowMapTest(gl::Vbo2dTex & quad_buffer, std::map<gfx::ShadowMapKey, g
 #endif
 		
 		gl::Bind(& quad_buffer);
-		glColor3f(1,0,1);
+		gl::SetColor(1,0,1);
 		quad_buffer.Begin();
 		quad_buffer.DrawStrip(0, 4);
 		quad_buffer.End();
@@ -223,11 +223,11 @@ void gfx::Renderer::InitRenderState()
 	GLPP_CALL(glFrontFace(GL_CCW));
 	GLPP_CALL(glCullFace(GL_BACK));
 	GLPP_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
-	gl::DepthFunc(GL_LEQUAL);
+	gl::SetDepthFunc(GL_LEQUAL);
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
-	GLPP_CALL(glColor4f(1, 1, 1, 1));
+	GLPP_CALL(gl::SetColor(gfx::Color4f::White().GetArray()));
 
 	VerifyRenderState();
 }
@@ -242,7 +242,12 @@ void gfx::Renderer::VerifyRenderState() const
 		++ param;
 	}
 	
-	Assert(gl::DepthFunc() == GL_LEQUAL);
+	// TODO: Write equivalent functions for all state in GL. :S
+	Assert(gl::GetDepthFunc() == GL_LEQUAL);
+	
+	gfx::Color4f rgba;
+	gl::GetColor(rgba.GetArray());
+	Assert(rgba == gfx::Color4f::White());
 #endif	// NDEBUG
 }
 
@@ -378,7 +383,7 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 
 void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
 {
-	Assert(gl::DepthFunc() == GL_LEQUAL);
+	Assert(gl::GetDepthFunc() == GL_LEQUAL);
 	switch (pass) 
 	{
 		case NormalPass:
@@ -392,8 +397,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 			{
 				return;
 			}
-			//GLPP_CALL(glCullFace(GL_FRONT));
-			GLPP_CALL(glColor4f(0, 0, 0, 1));
+			gl::SetColor<GLfloat>(0, 0, 0);
 			gl::Enable(GL_POLYGON_OFFSET_FILL);
 			GLPP_CALL(glPolygonOffset(1,1));
 			break;
@@ -459,7 +463,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 			
 		case WireframePass1:
 			GLPP_CALL(glCullFace(GL_BACK));
-			GLPP_CALL(glColor4f(1, 1, 1, 1));
+			gl::SetColor<GLfloat>(1, 1, 1);
 			gl::Disable(GL_POLYGON_OFFSET_FILL);
 			break;
 			

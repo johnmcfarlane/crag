@@ -41,48 +41,43 @@ namespace ANONYMOUS
 		0,			// Uint32 colorkey;
 		255,		// Uint8  alpha;
 	};
-
-	//	#define RMASK 0xff000000
-	//	#define GMASK 0x00ff0000
-	//	#define BMASK 0x0000ff00
-	//	#define AMASK 0x000000ff
-
-	bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
-	{
-		return lhs.ncolors == rhs.ncolors
-			&& memcmp(lhs.colors, rhs.colors, sizeof(SDL_Color) * lhs.ncolors);
-	}
-
-	bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
-	{
-		return ! (lhs == rhs);
-	}
-
-	bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
-	{
-		return (lhs.palette == rhs.palette || * lhs.palette == * rhs.palette)
-			&& lhs.BitsPerPixel == rhs.BitsPerPixel
-			&& lhs.BytesPerPixel == rhs.BytesPerPixel
-			&& lhs.Rloss == rhs.Rloss
-			&& lhs.Gloss == rhs.Gloss
-			&& lhs.Bloss == rhs.Bloss
-			&& lhs.Aloss == rhs.Aloss
-			&& lhs.Rshift == rhs.Rshift
-			&& lhs.Gshift == rhs.Gshift
-			&& lhs.Bshift == rhs.Bshift
-			&& lhs.Ashift == rhs.Ashift
-			&& lhs.Rmask == rhs.Rmask
-			&& lhs.Gmask == rhs.Gmask
-			&& lhs.Bmask == rhs.Bmask
-			&& lhs.Amask == rhs.Amask;
-	}
-
-	bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
-	{
-		return ! (lhs == rhs);
-	}
-
 }	// anonymous namespace
+
+
+bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
+{
+	return lhs.ncolors == rhs.ncolors
+		&& memcmp(lhs.colors, rhs.colors, sizeof(SDL_Color) * lhs.ncolors);
+}
+
+bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
+{
+	return ! (lhs == rhs);
+}
+
+bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
+{
+	return (lhs.palette == rhs.palette || * lhs.palette == * rhs.palette)
+		&& lhs.BitsPerPixel == rhs.BitsPerPixel
+		&& lhs.BytesPerPixel == rhs.BytesPerPixel
+		&& lhs.Rloss == rhs.Rloss
+		&& lhs.Gloss == rhs.Gloss
+		&& lhs.Bloss == rhs.Bloss
+		&& lhs.Aloss == rhs.Aloss
+		&& lhs.Rshift == rhs.Rshift
+		&& lhs.Gshift == rhs.Gshift
+		&& lhs.Bshift == rhs.Bshift
+		&& lhs.Ashift == rhs.Ashift
+		&& lhs.Rmask == rhs.Rmask
+		&& lhs.Gmask == rhs.Gmask
+		&& lhs.Bmask == rhs.Bmask
+		&& lhs.Amask == rhs.Amask;
+}
+
+bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
+{
+	return ! (lhs == rhs);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -73,7 +73,7 @@ private:
 		void Draw(bool hidden) const
 		{
 			Color4f const & color = hidden ? colors.hidden_color : colors.color;
-			glColor4f(color.r, color.g, color.b, color.a);
+			gl::SetColor(color.r, color.g, color.b, color.a);
 			gl::Vertex3(pos.x, pos.y, pos.z);
 		}
 		
@@ -94,7 +94,7 @@ PointArray tris(GL_TRIANGLES);
 void DrawPrimatives(bool hidden)
 {
 	if (hidden) {
-		gl::DepthFunc(GL_GREATER);
+		gl::SetDepthFunc(GL_GREATER);
 	}
 
 	points.Draw(hidden);
@@ -102,7 +102,7 @@ void DrawPrimatives(bool hidden)
 	tris.Draw(hidden);
 
 	if (hidden) {
-		gl::DepthFunc(GL_LEQUAL);
+		gl::SetDepthFunc(GL_LEQUAL);
 	}
 }
 

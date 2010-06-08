@@ -14,7 +14,7 @@
 
 #include <ostream>
 
-#if defined(PROFILE) 
+#if defined(PROFILE) || ! defined(NDEBUG)
 #define GFX_DEBUG
 #endif
 

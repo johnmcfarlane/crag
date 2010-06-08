@@ -11,7 +11,6 @@
 #pragma once
 
 #include "NodeBuffer.h"
-//#include "VertexBuffer.h"
 #include "Model.h"
 
 #include "sim/defs.h"

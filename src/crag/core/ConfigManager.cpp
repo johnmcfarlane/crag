@@ -71,21 +71,34 @@ void ConfigManager::Save(std::ostream & out)
 
 void ConfigManager::AddParameter(ConfigEntry & parameter)
 {
-	// TODO: maybe alpha-sort
-	Assert(GetParameter(parameter.name) == nullptr);
 	Assert(! parameter_set_complete);
+	Assert(parameter.next == nullptr);
 
-	parameter.next = list_head;
-	list_head = & parameter;
+	char const * name = parameter.name;
+	Assert(name != nullptr);
+	Assert(GetParameter(parameter.name) == nullptr);
+
+	ConfigEntry * * ptr_iterator = & list_head;
+	while (true)
+	{
+		ConfigEntry * next = * ptr_iterator;
+		if (next == nullptr || strcmp(next->name, name) > 0)
+		{
+			break;
+		}
+		
+		ptr_iterator = & (* ptr_iterator)->next;
+	}
+	
+	parameter.next = * ptr_iterator;
+	* ptr_iterator = & parameter;
 }
 
 ConfigEntry * ConfigManager::GetParameter(char const * name)
 {
-	int string_length = strlen(name);
 	for (ConfigEntry * iterator = list_head; iterator != nullptr; iterator = iterator->next)
 	{
-		// TODO: Isn't there a problem here if one string is a sub-string of the other?
-		if (strncmp(name, iterator->name, string_length) == 0)
+		if (strcmp(name, iterator->name) == 0)
 		{
 			return iterator;
 		}

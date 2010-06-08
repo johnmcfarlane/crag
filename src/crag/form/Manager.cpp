@@ -172,7 +172,6 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	
-	// TODO: Minimize state changes for these too.
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular));

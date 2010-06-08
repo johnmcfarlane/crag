@@ -21,19 +21,14 @@
 #include <fstream>
 
 
-#define LOAD_CONFIG 0
-#define SAVE_CONFIG 1
-
-
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
 
-namespace ANONYMOUS {
-
-bool Crag();
-bool Load();
-bool Save();
-
+namespace ANONYMOUS 
+{
+	bool Crag();
+	bool Load();
+	bool Save();
 }
 
 
@@ -64,20 +59,27 @@ int main(int /*argc*/, char * * /*argv*/)
 // Local Variables
 
 
+#if defined(ENABLE_CONFIG)
+#define LOAD_CONFIG 1
+#define SAVE_CONFIG 1
+#else
+#define LOAD_CONFIG 0
+#define SAVE_CONFIG 0
+#endif
+
+
 namespace ANONYMOUS {
 
 CONFIG_DEFINE (resolution_x, int, 960);
 CONFIG_DEFINE (resolution_y, int, 720);
 
-#if defined(NDEBUG)
-CONFIG_DEFINE (full_screen, bool, false);
+#if defined(PROFILE)
+	CONFIG_DEFINE (full_screen, bool, false);
 #else
-CONFIG_DEFINE (full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, true);
 #endif
 
-char const config_filename[] = "crag.txt";
-
-//const std::string title = "Crag";
+char const config_filename[] = "crag.cfg";
 
 
 //////////////////////////////////////////////////////////////////////
@@ -140,78 +142,3 @@ bool Save()
 }
 
 }
-
-
-#if 0
-
-/*
- * Required libs/APIs/Framworks/Fireworks/Dreamworks:
- * 		GL/GLU
- * 		SDL
- * 		ODE double-precision
- * 		boost
- *
- * Instructions:
- *      General:
- *		debug defines: PROFILE
- *		retail defines: NDEBUG
- *		ODE needs to be double-precision
- *
- *	Windows:
- *		TODO!
- *
- *      Linux (i.e. Ubuntu):
- *      	Install GL/GLU (packages with mesa and/or dev)
- *      	Install SDL development packages
- *      	Install ODE
- *      	Install boost
- *
- *		XCode: 
- *			Don't matter. I done it!
- *
- *		Eclipse:
- *			Copy the src folder into the workspace and refresh the project
- *			In the project properties:
- *				in C/C++ General -> Paths and Symbols
- *					in Includes -> GNU C++
- *						add workspace folder, "src/crag"
- *						add filesystem folder, "/System/Library/Frameworks/OpenGL.framework/Headers"
- *					in Symbols -> GNU C++ 
- *						Add symbol "PROFILE" to the Debug configuration
- *						Add symbol "NDEBUG" to the Release configuration
- *				in C/C++ Build -> Settings
- *					in Tool Settings -> MacOS X C++ Linker
- *						in -> Libraries
- *							Add Libraries: SDL, ode, boost_thread, SDL_image and SDLmain
- *						in -> Miscellaneous
- *							Add Linker flags: "-framework OpenGL -framework Cocoa"
- *
- */
-
-TODO {
-	ode		formation collision;
-	feat	Tunnels/Craters;
-	misc	Clicker/tally: class that counts the c'tors / d'tors and asserts at program end;
-	coord	Add in other planets again;
-	form	fix seams;
-	form	Fix the fractal;
-	gfx		cull faces based on normal?
-
-	gfx		Tidy up Push/PopAttribs (www.mesa3d.org/brianp/sig97/perfopt.htm);
-	gfx		adaptive z-near/far
-	opt		Z-sort
-	opt		Use intrinsics in dRecipSqrt and other ODE fns
-	opt		Could we upload the verts prior to the indices? They get generated much sooner!
-	opt		Keep track of min and max 'dirty' verts (and maybe also indices) and only upload those.
-
-
-	gfx		Fix Lighting
-	opt		Clip whole planets - will cut them completely out of shadow maps in many cases
-	feat	normalize observer impulse
-	form	Imposing a max angle on the fractal will allow many optimizations
-	form	Consider removing the corners pointers as they are generated along the way
-	form	Different vertices for corners at each level of tesselation?
-	gfx		Advanced Skybox
-	gfx		GLEW MX - need this? 
-}
-#endif

@@ -11,6 +11,7 @@
 #pragma once
 
 
+// TODO: Include default value in file. Then override file version if it changes. 
 //#define ENABLE_CONFIG
 
 
@@ -23,6 +24,7 @@ class ConfigEntry
 
 	ConfigEntry & operator=(ConfigEntry const &);	// undefined
 	ConfigEntry(const ConfigEntry &);	// undefined
+
 public:
 	ConfigEntry(char const * init_name);
 	virtual ~ConfigEntry();

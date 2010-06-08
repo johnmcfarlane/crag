@@ -32,6 +32,9 @@
 #include <fstream>
 
 
+using app::TimeType;
+
+
 namespace ANONYMOUS {
 
 //////////////////////////////////////////////////////////////////////
@@ -49,7 +52,7 @@ CONFIG_DEFINE (planet_radius_1, float, 100000);
 CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
 CONFIG_DEFINE (sun_year, float, 300.f);
 	
-CONFIG_DEFINE (target_tick_proportion, double, .75f);
+CONFIG_DEFINE (target_work_proportion, double, .95f);
 
 }
 
@@ -57,16 +60,15 @@ CONFIG_DEFINE (target_tick_proportion, double, .75f);
 sim::Simulation::Simulation()
 : observer(new Observer)
 , formation_manager(new form::Manager(* observer))
-//, focus(true)
 , paused(false)
 , capture(false)
 , capture_frame(0)
-, max_consecutive_frame_lag(10)
-, consecutive_frame_lag(-1)
+, running_poll_seconds(0)
 , fps(0)
 , frame_count(0)
+, cached_time(0)
 {
-	frame_count_reset_time = app::GetTime();
+	frame_count_reset_time = GetTime(true);
 
 	InitUniverse();
 	
@@ -115,47 +117,57 @@ void sim::Simulation::Run()
 {
 	formation_manager->Launch();
 
-	app::TimeType time = app::GetTime();
-	app::TimeType target_tick_time = time;
+	TimeType const target_frame_seconds = Universe::target_frame_seconds;
+	TimeType const target_work_seconds = target_frame_seconds * target_work_proportion;
+	
+	TimeType target_tick_time = GetTime(true);
 	
 	while (HandleEvents())
 	{
-		//std::cout << "\ntime:" << time << " target_tick_time:" << target_tick_time;
-		
-		app::TimeType time_until_tick = target_tick_time - time;
+		TimeType time_until_next_tick = target_tick_time - GetTime();
 
 		// Is it time for the next tick?
-		if (time_until_tick <= 0) 
+		if (time_until_next_tick > 0) 
 		{
-			Tick();
-
-			// Update time and calculate how long Tick() took. 
-			app::TimeType tick_start_time = time;
-			time = app::GetTime();
-			app::TimeType tick_end_time = time;
-			app::TimeType tick_seconds = tick_end_time - tick_start_time;
-			//std::cout << " tick_seconds:" << tick_seconds;
-
-			// Adjust the number of nodes based on how well we're doing. 
-			app::TimeType target_tick_seconds = Universe::target_frame_seconds * target_tick_proportion;
-			formation_manager->AdjustNumNodes(tick_seconds, target_tick_seconds);
-
-			// Set the next tick as a uniform period ahead. 
-			target_tick_time += Universe::target_frame_seconds;
-
+			// If not, sleep until it is.
+			app::Sleep(time_until_next_tick);
+			GetTime(true);
 			continue;
 		}
+
+		// Set the next tick as a uniform period ahead. 
+		target_tick_time += target_frame_seconds;
 		
-		if (formation_manager->PollMesh())
+		// Remember when tick started.
+		TimeType tick_start_time = GetTime();
+		
+		Tick();
+
+		// Calculate how long Tick() took. 
+		TimeType tick_seconds = GetTime(true) - tick_start_time;
+		
+		// Don't let the buffer swap be part of the time as vsync can cause a delay.
+		SDL_GL_SwapBuffers();
+
+		TimeType pre_swap_time = GetTime(false);
+		TimeType post_swap_time = GetTime();
+		TimeType swap_seconds = post_swap_time - pre_swap_time;
+
+		PollMesh();
+		
+		// Adjust the number of nodes based on how well we're doing. 
+		// Take into account the tick duration AND the time it takes to poll a new mesh.
+		TimeType work_seconds = tick_seconds + running_poll_seconds;
+		formation_manager->AdjustNumNodes(work_seconds, target_work_seconds);
+		
+		if (gfx::Debug::GetVerbosity() > .65)
 		{
-			//std::cout << " poll";
-			time = app::GetTime();
-			continue;
+			gfx::Debug::out << "tick_seconds:" << tick_seconds << '\n';
+			gfx::Debug::out << "poll_seconds:" << running_poll_seconds << '\n';
+			gfx::Debug::out << "work_seconds:" << work_seconds << '\n';
+			gfx::Debug::out << "swap_seconds:" << swap_seconds << '\n';
+			gfx::Debug::out << "target_work_seconds:" << target_work_seconds << '\n';
 		}
-		
-		//std::cout << " sleep:" << time_until_tick;
-		app::Sleep(time_until_tick);
-		time = app::GetTime();
 	}
 	
 	delete formation_manager;
@@ -183,6 +195,21 @@ void sim::Simulation::Tick()
 	Render();
 }
 
+bool sim::Simulation::PollMesh()
+{
+	// Poll for a new mesh.
+	TimeType poll_start_time = GetTime();
+	if (! formation_manager->PollMesh())
+	{
+		return false;
+	}
+
+	TimeType poll_seconds = GetTime(true) - poll_start_time;
+	running_poll_seconds = Max(poll_seconds, running_poll_seconds * .95f);
+	
+	return true;
+}
+
 void sim::Simulation::Render()
 {
 	PrintStats();
@@ -192,8 +219,9 @@ void sim::Simulation::Render()
 	scene.SetCamera(pos, rot);
 
 	renderer.Render(scene);
-	
-	SDL_GL_SwapBuffers();
+
+	// Note: The render still requires a buffer swap,
+	// but as vsync is turned on, this could distort the timing results.
 
 	if (capture)
 	{
@@ -201,8 +229,8 @@ void sim::Simulation::Render()
 	}
 
 	++ frame_count;
-	app::TimeType time = app::GetTime();
-	app::TimeType delta = time - frame_count_reset_time;
+	TimeType time = app::GetTime();
+	TimeType delta = time - frame_count_reset_time;
 	if (delta > 1) 
 	{
 		frame_count_reset_time = time;
@@ -341,3 +369,22 @@ bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 	return true;
 }
 
+TimeType sim::Simulation::GetTime(bool update_time)
+{	
+	if (update_time)
+	{
+		TimeType t = app::GetTime();
+		Assert(t >= cached_time);
+		cached_time = t;
+	}
+	else 
+	{
+#if ! defined(NDEBUG)
+		TimeType t = app::GetTime();
+		TimeType passed = t - cached_time;
+		Assert(passed < .1);
+#endif
+	}
+
+	return cached_time;
+}

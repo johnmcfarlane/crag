@@ -20,7 +20,6 @@ public:
 	// returns pseudo-random whole number in the range [0, MAX]
 	int GetInt()
 	{
-		// TODO: Is this ok in 64 bit?
 		seed = seed * 1103515245 + 12345;
 		return(static_cast<unsigned>(seed >> 16) & 32767);
 	}

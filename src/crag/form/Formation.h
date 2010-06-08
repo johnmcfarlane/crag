@@ -18,7 +18,9 @@ namespace form
 	class Mesh;
 	class Node;
 	
-	// TODO: Better name
+
+	// A formation is an individual element of the formation system.
+	// It contains all the data necessary to create a positioned polyhedron.
 	class Formation
 	{
 	public:
@@ -33,10 +35,6 @@ namespace form
 		
 		// collision
 		void GenerateCollisionMesh(Mesh & mesh, sim::Sphere3 const & sphere) const;
-		
-	private:
-		void Clear();
-		void DeinitNode(Node & node);
 		
 	public:
 		//DUMP_OPERATOR_DECLARATION(Formation);

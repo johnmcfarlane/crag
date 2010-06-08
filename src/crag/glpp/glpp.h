@@ -93,6 +93,35 @@ namespace gl
 		return result;
 	}
 	
-	inline void DepthFunc(GLenum func) { GLPP_CALL(glDepthFunc(func)); }
-	inline GLenum DepthFunc() { return GetInt<GL_DEPTH_FUNC>(); }
+	// set/get depth function
+	inline void SetDepthFunc(GLenum func) { GLPP_CALL(glDepthFunc(func)); }
+	inline GLenum GetDepthFunc() { return GetInt<GL_DEPTH_FUNC>(); }
+	
+	// set current red, green and blue color and set alpha to 1 (full).
+	template <typename COMPONENT> void SetColor(COMPONENT red, COMPONENT green, COMPONENT blue);
+	template <> inline void SetColor<GLbyte>(GLbyte red, GLbyte green, GLbyte blue)			{ GLPP_CALL(glColor3b (red, green, blue)); }
+	template <> inline void SetColor<GLdouble>(GLdouble red, GLdouble green, GLdouble blue)	{ GLPP_CALL(glColor3d (red, green, blue)); }
+	template <> inline void SetColor<GLfloat>(GLfloat red, GLfloat green, GLfloat blue)		{ GLPP_CALL(glColor3f (red, green, blue)); }
+	template <> inline void SetColor<GLint>(GLint red, GLint green, GLint blue)				{ GLPP_CALL(glColor3i (red, green, blue)); }
+	template <> inline void SetColor<GLshort>(GLshort red, GLshort green, GLshort blue)		{ GLPP_CALL(glColor3s (red, green, blue)); }
+	template <> inline void SetColor<GLubyte>(GLubyte red, GLubyte green, GLubyte blue)		{ GLPP_CALL(glColor3ub(red, green, blue)); }
+	template <> inline void SetColor<GLuint>(GLuint red, GLuint green, GLuint blue)			{ GLPP_CALL(glColor3ui(red, green, blue)); }
+	template <> inline void SetColor<GLushort>(GLushort red, GLushort green, GLushort blue)	{ GLPP_CALL(glColor3us(red, green, blue)); }
+	
+	template <typename COMPONENT> void SetColor(COMPONENT red, COMPONENT green, COMPONENT blue, COMPONENT alpha);
+	template <> inline void SetColor(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha)			{ GLPP_CALL(glColor4b (red, green, blue, alpha)); }
+	template <> inline void SetColor(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha)	{ GLPP_CALL(glColor4d (red, green, blue, alpha)); }
+	template <> inline void SetColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)		{ GLPP_CALL(glColor4f (red, green, blue, alpha)); }
+	template <> inline void SetColor(GLint red, GLint green, GLint blue, GLint alpha)				{ GLPP_CALL(glColor4i (red, green, blue, alpha)); }
+	template <> inline void SetColor(GLshort red, GLshort green, GLshort blue, GLshort alpha)		{ GLPP_CALL(glColor4s (red, green, blue, alpha)); }
+	template <> inline void SetColor(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)		{ GLPP_CALL(glColor4ub(red, green, blue, alpha)); }
+	template <> inline void SetColor(GLuint red, GLuint green, GLuint blue, GLuint alpha)			{ GLPP_CALL(glColor4ui(red, green, blue, alpha)); }
+	template <> inline void SetColor(GLushort red, GLushort green, GLushort blue, GLushort alpha)	{ GLPP_CALL(glColor4us(red, green, blue, alpha)); }
+	
+	template<typename COMPONENT> void SetColor(COMPONENT const * rgba)					{ SetColor(rgba[0], rgba[1], rgba[2], rgba[3]); }
+	
+	// get current color
+	inline void GetColor(GLdouble rgba [4])	{ GLPP_CALL(glGetDoublev(GL_CURRENT_COLOR, rgba)); }
+	inline void GetColor(GLfloat rgba [4])	{ GLPP_CALL(glGetFloatv(GL_CURRENT_COLOR, rgba)); }
+	inline void GetColor(GLint rgba [4])	{ GLPP_CALL(glGetIntegerv(GL_CURRENT_COLOR, rgba)); }
 }

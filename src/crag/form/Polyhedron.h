@@ -17,11 +17,11 @@ namespace form
 {
 	class PointBuffer;
 	
-	class Image
+	class Polyhedron
 	{
 	public:
-		Image();
-		~Image();
+		Polyhedron();
+		~Polyhedron();
 		
 		void InitPoints(PointBuffer & points);
 		void DeinitPoints(PointBuffer & points);

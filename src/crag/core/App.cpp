@@ -49,7 +49,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title)
 	
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
-	SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 0 );
+	SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 1 );
 	
 	// Get existing video info.
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
@@ -61,7 +61,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title)
 	
 	// Do the ... uh, thing.
 	int bpp = video_info->vfmt->BitsPerPixel;
-	int flags = SDL_OPENGL | SDL_DOUBLEBUF | SDL_HWSURFACE;	// TODO: Are these optimal?
+	int flags = SDL_OPENGL | SDL_DOUBLEBUF | SDL_HWSURFACE;
 	
 	if (full_screen)
 	{

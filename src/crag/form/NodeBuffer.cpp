@@ -183,7 +183,7 @@ void NodeBuffer::SetNumQuaternaAvailable(int n)
 
 void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 {
-	VerifyObject(*this);
+	//VerifyObject(*this);
 
 	UpdateNodeScores(relative_camera_pos);
 	UpdateParentScores();
@@ -193,7 +193,7 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 		ChurnNodes();
 	}
 
-	VerifyObject(*this);
+	//VerifyObject(*this);
 }
 
 void NodeBuffer::OnReset()

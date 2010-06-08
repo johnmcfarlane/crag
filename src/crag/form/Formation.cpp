@@ -28,20 +28,12 @@ form::Formation::Formation(ShaderFactory const & init_shader_factory, float init
 , scale(init_scale)
 , seed(-1)
 {
-	//Clear();
-
-	// TODO: Really belong here?
-	//FormationManager::AddFormation(this);
-	
 	VerifyObject(* this);
 }
 
 form::Formation::~Formation()
 {
 	VerifyObject(* this);
-	
-	// TODO: Really belong here?
-	//FormationManager::RemoveFormation(this);
 }
 
 void form::Formation::SetPosition(Vector3f const & init_position)
@@ -59,18 +51,6 @@ void form::Formation::GenerateCollisionMesh(form::Mesh & mesh, sim::Sphere3 cons
 	
 	ForEachPoly(root_stub, collide);*/
 }
-
-
-void form::Formation::Clear()
-{
-	Assert(false);
-	/*ZeroObject(corners);
-	ZeroObject(root_node);*/
-}
-
-/*void form::Formation::DeinitNode(Node & node)
-{
-}*/
 
 /*#if DUMP
 void form::Formation::Dump() const

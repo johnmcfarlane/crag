@@ -13,6 +13,7 @@
 		002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C6009D0951E00EBEB88 /* GLUT.framework */; };
 		5277A99011B5EA0B00ABBC7F /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277A98E11B5EA0B00ABBC7F /* App.cpp */; };
 		527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */; };
+		5285815B11BC42D50006A89F /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5285815911BC42D50006A89F /* Polyhedron.cpp */; };
 		52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244D911B0E2DD008C0CE8 /* Thread.cpp */; };
 		52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244DC11B0E314008C0CE8 /* Mutex.cpp */; };
 		52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454B11B1A8FB008C0CE8 /* Point.cpp */; };
@@ -26,7 +27,6 @@
 		52F3A39511A7979400385922 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A31711A7979400385922 /* Random.cpp */; };
 		52F3A39611A7979400385922 /* Formation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A32611A7979400385922 /* Formation.cpp */; };
 		52F3A39711A7979400385922 /* GenerateMeshFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A32811A7979400385922 /* GenerateMeshFunctor.cpp */; };
-		52F3A39811A7979400385922 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A32A11A7979400385922 /* Image.cpp */; };
 		52F3A39911A7979400385922 /* Manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A32C11A7979400385922 /* Manager.cpp */; };
 		52F3A39A11A7979400385922 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A32E11A7979400385922 /* Mesh.cpp */; };
 		52F3A39B11A7979400385922 /* MeshBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A33011A7979400385922 /* MeshBufferObject.cpp */; };
@@ -181,6 +181,8 @@
 		5277A98F11B5EA0B00ABBC7F /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
 		527C53CC11B9ACAF00F6C052 /* TextureMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureMapper.h; sourceTree = "<group>"; };
 		527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
+		5285815911BC42D50006A89F /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
+		5285815A11BC42D50006A89F /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
 		52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		52A244DB11B0E314008C0CE8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		52A244DC11B0E314008C0CE8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
@@ -224,8 +226,6 @@
 		52F3A32711A7979400385922 /* Formation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Formation.h; sourceTree = "<group>"; };
 		52F3A32811A7979400385922 /* GenerateMeshFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerateMeshFunctor.cpp; sourceTree = "<group>"; };
 		52F3A32911A7979400385922 /* GenerateMeshFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerateMeshFunctor.h; sourceTree = "<group>"; };
-		52F3A32A11A7979400385922 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
-		52F3A32B11A7979400385922 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		52F3A32C11A7979400385922 /* Manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Manager.cpp; sourceTree = "<group>"; };
 		52F3A32D11A7979400385922 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
 		52F3A32E11A7979400385922 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
@@ -592,14 +592,14 @@
 		52F3A32311A7979400385922 /* form */ = {
 			isa = PBXGroup;
 			children = (
+				5285815911BC42D50006A89F /* Polyhedron.cpp */,
+				5285815A11BC42D50006A89F /* Polyhedron.h */,
 				52F3A32411A7979400385922 /* CalculateNodeScoreFunctor.h */,
 				52F3A32511A7979400385922 /* ExpandNodeFunctor.h */,
 				52F3A32611A7979400385922 /* Formation.cpp */,
 				52F3A32711A7979400385922 /* Formation.h */,
 				52F3A32811A7979400385922 /* GenerateMeshFunctor.cpp */,
 				52F3A32911A7979400385922 /* GenerateMeshFunctor.h */,
-				52F3A32A11A7979400385922 /* Image.cpp */,
-				52F3A32B11A7979400385922 /* Image.h */,
 				52F3A32C11A7979400385922 /* Manager.cpp */,
 				52F3A32D11A7979400385922 /* Manager.h */,
 				52F3A32E11A7979400385922 /* Mesh.cpp */,
@@ -941,7 +941,6 @@
 				52F3A39511A7979400385922 /* Random.cpp in Sources */,
 				52F3A39611A7979400385922 /* Formation.cpp in Sources */,
 				52F3A39711A7979400385922 /* GenerateMeshFunctor.cpp in Sources */,
-				52F3A39811A7979400385922 /* Image.cpp in Sources */,
 				52F3A39911A7979400385922 /* Manager.cpp in Sources */,
 				52F3A39A11A7979400385922 /* Mesh.cpp in Sources */,
 				52F3A39B11A7979400385922 /* MeshBufferObject.cpp in Sources */,
@@ -1070,6 +1069,7 @@
 				52A2455211B1AAB6008C0CE8 /* PointBuffer.cpp in Sources */,
 				5277A99011B5EA0B00ABBC7F /* App.cpp in Sources */,
 				527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */,
+				5285815B11BC42D50006A89F /* Polyhedron.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1239,7 +1239,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = PROFILE;
 				GCC_VERSION = 4.0;
 				"GCC_VERSION[arch=x86_64]" = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

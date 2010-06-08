@@ -46,7 +46,6 @@ namespace form {
 		void operator()(Node & node)
 		{
 			if (node.IsExpandable()) {
-				// TODO: Critical section
 				if (node_buffer.ExpandNode(node)) {
 					++ num_expanded;
 				}

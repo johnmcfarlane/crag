@@ -1,5 +1,5 @@
 /*
- *  Image.cpp
+ *  Polyhedron.cpp
  *  Crag
  *
  *  Created by John on 2/23/10.
@@ -10,7 +10,7 @@
 
 #include "pch.h"
 
-#include "Image.h"
+#include "Polyhedron.h"
 #include "Shader.h"
 #include "PointBuffer.h"
 
@@ -18,16 +18,16 @@
 
 
 /////////////////////////////////////////////////////////////////
-// form::Image
+// form::Polyhedron
 
-form::Image::Image()
+form::Polyhedron::Polyhedron()
 : shader(nullptr)
 {
 	ZeroObject(root_node);
 	ZeroArray(corners, NUM_ROOT_POINTS); 
 }
 
-form::Image::~Image()
+form::Polyhedron::~Polyhedron()
 {
 	delete shader;
 	
@@ -36,7 +36,7 @@ form::Image::~Image()
 	}
 }
 
-void form::Image::InitPoints(PointBuffer & points)
+void form::Polyhedron::InitPoints(PointBuffer & points)
 {
 	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
 	{
@@ -49,7 +49,7 @@ void form::Image::InitPoints(PointBuffer & points)
 }
 
 // If init got called, deinit must get called before d'tor.
-void form::Image::DeinitPoints(PointBuffer & points)
+void form::Polyhedron::DeinitPoints(PointBuffer & points)
 {
 	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
 	{
@@ -62,7 +62,7 @@ void form::Image::DeinitPoints(PointBuffer & points)
 	}
 }
 
-void form::Image::SetShader(form::Shader * init_shader)
+void form::Polyhedron::SetShader(form::Shader * init_shader)
 {
 	// Currently, no need ever to change shader.
 	Assert(shader == nullptr);
@@ -70,7 +70,7 @@ void form::Image::SetShader(form::Shader * init_shader)
 	shader = init_shader;
 }
 
-form::Shader & form::Image::GetShader()
+form::Shader & form::Polyhedron::GetShader()
 {
 	Assert(shader != nullptr);
 	return * shader;

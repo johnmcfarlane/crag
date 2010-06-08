@@ -34,24 +34,44 @@ namespace gfx
 		{
 
 		}
+		
+		Comp * GetArray()
+		{
+			return reinterpret_cast<Comp *>(this);
+		}
+		
+		Comp const * GetArray() const
+		{
+			return reinterpret_cast<Comp const *>(this);
+		}
 
 		Comp & operator [] (int i)
 		{
 			Assert(i >= 0 && i < 4);
-			return reinterpret_cast<Comp *>(this) [i];
+			return GetArray() [i];
 		}
 
 		Comp operator [] (int i) const
 		{
 			Assert(i >= 0 && i < 4);
-			return reinterpret_cast<Comp const *>(this) [i];
+			return GetArray() [i];
 		}
 
 		operator Comp const * () const
 		{
 			return reinterpret_cast<Comp const *>(this);
 		}
-
+		
+		friend bool operator==(Color4 const & lhs, Color4 const & rhs)
+		{
+			return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
+		}
+		
+		friend bool operator!=(Color4 const & lhs, Color4 const & rhs)
+		{
+			return lhs.r != rhs.r || lhs.g != rhs.g || lhs.b != rhs.b || lhs.a != rhs.a;
+		}
+		
 		Color4 & operator += (Color4 const & rhs)
 		{
 			r += rhs.r;

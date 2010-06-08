@@ -29,7 +29,10 @@ namespace form
 namespace sim
 {
 	class Observer;
+	
+	// TODO: New class, Crag, which deals with app stuff. Simulation to deal with less critical real-time issues.
 
+	// Top-level class, deals with running the simulation and presenting it to screen. 
 	class Simulation
 	{
 	public:
@@ -42,9 +45,7 @@ namespace sim
 		void InitUniverse();
 		
 		void Tick();
-		
-		//void AdjustTargetNumNodes();
-		//float CalculateTargetNumNodes(float current_num_nodes, float tick_period_min, float tick_period_max);
+		bool PollMesh();
 		
 		void Render();
 		void PrintStats() const;
@@ -53,6 +54,8 @@ namespace sim
 		// Returns true until the program should ent.
 		bool HandleEvents();
 		bool OnKeyPress(app::KeyCode key_code);
+		
+		app::TimeType GetTime(bool update = false);
 
 		// Attributes
 		gfx::Renderer renderer;
@@ -65,12 +68,13 @@ namespace sim
 		bool capture;
 		int capture_frame;
 		
-		int max_consecutive_frame_lag;
-		int consecutive_frame_lag;
+		app::TimeType running_poll_seconds;
 		
 		// Periodically recalculat fps
 		double fps;
 		int frame_count;
 		app::TimeType frame_count_reset_time;
+		
+		app::TimeType cached_time;
 	};
 }

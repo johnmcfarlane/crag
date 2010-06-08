@@ -148,11 +148,6 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & or
 	
 	mesh_mutex.Unlock();
 	
-	glFlush();
-	glFinish();
-	
-	//app::Sleep(0);
-
 	return polled;
 }
 
@@ -228,8 +223,6 @@ void form::SceneThread::ThreadTick()
 	else 
 	{
 		AdjustNumQuaterna();
-		
-		VerifyObject(*this);
 	}
 
 	scene.Tick(formations);
