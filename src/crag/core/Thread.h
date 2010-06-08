@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <SDL_Thread.h>
+#include <SDL_thread.h>
 
 
 namespace core

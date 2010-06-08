@@ -1996,6 +1996,7 @@
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.55376086" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.372724156" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/crag/src/crag}&quot;"/>
+<listOptionValue builtIn="false" value="/usr/include/SDL"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1165988189" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="PROFILE"/>
@@ -2968,6 +2969,7 @@
 <option id="gnu.cpp.compiler.exe.release.option.debugging.level.1906511909" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.481515620" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/crag/src/crag}&quot;"/>
+<listOptionValue builtIn="false" value="/usr/include/SDL"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.948584490" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="NDEBUG"/>
