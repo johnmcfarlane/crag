@@ -16,7 +16,8 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
-#include <SDL_main.h>
+// TODO: Remove SDLmain files from OS X project?
+//#include <SDL_main.h>
 
 #include <fstream>
 
