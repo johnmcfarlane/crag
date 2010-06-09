@@ -92,6 +92,8 @@ void form::RootNode::Init(int init_seed, PointBuffer & vertices)
 
 void form::RootNode::Deinit(PointBuffer & vertices)
 {
+	Assert(children == nullptr);
+	
 	vertices.Free(triple[0].corner);
 	
 	for (int i = 0; i < 3; ++ i) {

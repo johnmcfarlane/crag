@@ -10,6 +10,8 @@
 
 #include "pch.h"
 
+#if defined(PROFILE)
+
 #include "profile.h"
 
 
@@ -43,3 +45,5 @@ namespace profile
 		Assert(num_entries == 0);
 	}
 }
+
+#endif

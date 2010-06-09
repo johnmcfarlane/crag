@@ -255,7 +255,11 @@ void form::Scene::DeinitModel(FormationPair & pair)
 	Model & model = pair.second;
 	
 	RootNode & root_node = model.root_node;
+#if ! defined(FAST_SCENE_RESET)
 	node_buffer.CollapseNode(root_node);
+#else
+	root_node.children = nullptr;
+#endif
 	root_node.Deinit(node_buffer.GetPoints());
 	
 	delete & model.GetShader();

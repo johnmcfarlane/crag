@@ -199,7 +199,7 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
 void NodeBuffer::OnReset()
 {
 	points.FastClear();
-	InitQuaterna(quaterna_end);
+	InitQuaterna(quaterna_available_end);
 	
 /*	// Half the number of quaterna for safe measure.
 	int num_quaterna_available = quaterna_available_end - quaterna;
@@ -209,12 +209,15 @@ void NodeBuffer::OnReset()
 
 void NodeBuffer::InitQuaterna(Quaterna const * end)
 {
+#if defined(FAST_SCENE_RESET)
+	ZeroArray(nodes, (end - quaterna) * 4);
+#endif
+	
 	Node * n = nodes;
 	for (Quaterna * iterator = quaterna; iterator < end; n += 4, ++ iterator) {
 		iterator->parent_score = -1;
 		iterator->nodes = n;
 	}
-	Assert(n == nodes + max_num_nodes);
 	
 	VerifyObject(* this);
 

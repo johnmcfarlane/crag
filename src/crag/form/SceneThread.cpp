@@ -23,7 +23,7 @@
 namespace ANONYMOUS 
 {
 	CONFIG_DEFINE (max_observer_position_length, double, 2500);
-	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .1f);
+	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .2f);
 	CONFIG_DEFINE (post_reset_freeze_period, app::TimeType, 1.25f);
 }
 
@@ -128,9 +128,12 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & or
 {
 	Assert(IsMainThread());
 	
+	if (! mesh_mutex.TryLock())
+	{
+		return false;
+	}
+		
 	bool polled;
-	
-	mesh_mutex.Lock();
 	
 	if (mesh_updated)
 	{

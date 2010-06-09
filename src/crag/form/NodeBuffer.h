@@ -33,11 +33,6 @@ namespace form
 		
 		// Constants
 		enum {
-			/*max_num_verts = 500000,
-			max_num_indices = max_num_verts * 3,
-			max_num_nodes = (max_num_verts * 45) / 100,
-			max_num_quaterna = max_num_nodes >> 2,*/
-			
 			max_num_quaterna = 262144,
 			max_num_nodes = max_num_quaterna << 2,
 			max_num_verts = max_num_nodes * 2,

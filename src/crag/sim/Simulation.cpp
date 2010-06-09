@@ -150,7 +150,7 @@ void sim::Simulation::Run()
 		SDL_GL_SwapBuffers();
 
 		TimeType pre_swap_time = GetTime(false);
-		TimeType post_swap_time = GetTime();
+		TimeType post_swap_time = GetTime(true);
 		TimeType swap_seconds = post_swap_time - pre_swap_time;
 
 		PollMesh();
@@ -377,14 +377,14 @@ TimeType sim::Simulation::GetTime(bool update_time)
 		Assert(t >= cached_time);
 		cached_time = t;
 	}
-	else 
+/*	else 
 	{
 #if ! defined(NDEBUG)
 		TimeType t = app::GetTime();
 		TimeType passed = t - cached_time;
-		Assert(passed < .1);
+		Assert(passed < 1.);
 #endif
-	}
+	}*/
 
 	return cached_time;
 }
