@@ -26,6 +26,11 @@ namespace gl
 		GLPP_CALL(glLoadMatrixd(m));
 	}
 
+	inline void Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
+	{
+		GLPP_CALL(glViewport(x, y, width, height));
+	}
+
 	// TexGenv
 	inline void TexGenv(GLenum coord, GLenum pname, const GLfloat *params)
 	{

@@ -10,7 +10,6 @@
 
 #include "Pov.h"
 #include "sim/defs.h"
-#include "ShadowMap.h"
 
 #include <map>
 #include <vector>
@@ -26,10 +25,6 @@ namespace gfx
 {
 	class Light;
 	class Skybox;
-	class ShadowMapKey;
-	class ShadowMap;
-
-	typedef std::map<gfx::ShadowMapKey, gfx::ShadowMap> ShadowMapMap;
 
 
 	class Scene
@@ -55,7 +50,6 @@ namespace gfx
 
 		std::vector<Light const *> lights;
 		std::vector<sim::Entity const *> entities;
-		ShadowMapMap shadow_maps;
 		Skybox const * skybox;
 	};
 }

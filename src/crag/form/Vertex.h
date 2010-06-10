@@ -12,9 +12,13 @@
 
 #include "core/Vector3.h"
 
-
 //#define FORM_VERTEX_COLOR
+#if defined(FORM_VERTEX_COLOR)
+#include "gfx/Color.h"
+#endif
+
 //#define FORM_VERTEX_TEXTURE
+
 
 namespace form
 {
@@ -26,12 +30,7 @@ namespace form
 		Vector3f pos;
 
 #if defined(FORM_VERTEX_COLOR)
-		// Colour
-		typedef unsigned char ColorComp;
-		ColorComp red;
-		ColorComp green;
-		ColorComp blue;
-		ColorComp flags;	// currently unused
+		gfx::Color4b color;
 #endif // defined(FORM_VERTEX_COLOR)
 		
 		Vector3f norm;

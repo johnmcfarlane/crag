@@ -10,12 +10,6 @@
 
 #pragma once
 
-#include "ShadowMap.h"
-
-#if (SHADOW_MAP_TEST >= 1)
-#include "glpp/Vbo_Types.h"
-#endif
-
 #include "glpp/RenderBuffer.h"
 #include "glpp/FrameBuffer.h"
 
@@ -33,8 +27,6 @@ namespace gfx
 {
 	class Light;
 	class Pov;
-	class ShadowMap;
-	class ShadowMapKey;
 	class Skybox;
 
 	class Renderer
@@ -57,7 +49,6 @@ namespace gfx
 		
 		void ToggleCulling();
 		void ToggleLighting();
-		void ToggleShadowMapping();
 		void ToggleSmoothShading();
 		void ToggleWireframe();
 		
@@ -67,22 +58,15 @@ namespace gfx
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
 		void RenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
 		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
-		void RenderSimpleLights(std::vector<Light const *> const & lights) const;
-		
-		void RenderShadowLights(Pov const & pov, Scene const & scene) const;
-		void RenderShadowLight(Pov const & pov, ShadowMapKey const & key, ShadowMap const & map) const;
+		void RenderLights(std::vector<Light const *> const & lights) const;
 		
 		void DebugDraw(Pov const & pov) const;
-		
-		void GenerateShadowMaps(Scene & scene) const;
-		void GenerateShadowMap(Scene & scene, ShadowMapKey const & key) const;
 		
 		gl::FrameBuffer frame_buffer;
 		gl::RenderBuffer depth_buffer;
 		
 		bool culling;
 		bool lighting;
-		bool shadow_mapping;
 		bool smooth_shading;
 		bool wireframe;
 

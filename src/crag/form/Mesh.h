@@ -29,18 +29,16 @@ namespace form
 		int GetIndexCount() const;
 		int GetNumPolys() const;
 		
-		//void SetVertices(VertexBuffer const * v);
-		
-		Vertex & GetVertex(Point & point, Vector2f const & texture);
+		Vertex & GetVertex(Point & point);
 	private:
-		Vertex & AddVertex(Point const & p, Vector2f const & texture);
+		Vertex & AddVertex(Point const & p);
 	public:
 		
 		void ClearPolys();
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
 		//void AddFace(Vertex & a, Vertex & b, Vertex & c);
-		void AddFace(Point & a, Point & b, Point & c, int ia, Vector3f const & normal);
-		void AddFace(Point & a, Point & b, Point & c, int ia);
+		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
+		void AddFace(Point & a, Point & b, Point & c);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;

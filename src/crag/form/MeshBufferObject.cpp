@@ -50,7 +50,7 @@ void form::MeshBufferObject::BeginDraw(bool color)
 	if (color) {
 		glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm);
 #if defined(FORM_VERTEX_COLOR)
-		glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->red);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->color);
 #endif
 	}
 #if defined(FORM_VERTEX_TEXTURE)

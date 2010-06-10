@@ -36,9 +36,7 @@
 </inputType>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.128806316" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
-<option id="gnu.both.asm.option.include.paths.820336541" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
-</option>
+<option id="gnu.both.asm.option.include.paths.820336541" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.assembler.input.212604933" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.823950803" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
@@ -47,7 +45,6 @@
 <option id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level.1911463838" name="Debug Level" superClass="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1086164427" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/crag/src/crag}&quot;"/>
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1865274588" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="PROFILE"/>
@@ -61,9 +58,7 @@
 <option id="gnu.c.compiler.option.preprocessor.def.symbols.1335379437" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="PROFILE"/>
 </option>
-<option id="gnu.c.compiler.option.include.paths.535913145" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
-</option>
+<option id="gnu.c.compiler.option.include.paths.535913145" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.828350350" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 </toolChain>
@@ -1020,9 +1015,7 @@
 </inputType>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release.2004883399" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release">
-<option id="gnu.both.asm.option.include.paths.793381378" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
-</option>
+<option id="gnu.both.asm.option.include.paths.793381378" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.assembler.input.2142501809" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.199583892" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
@@ -1031,7 +1024,6 @@
 <option id="gnu.cpp.compiler.macosx.exe.release.option.debugging.level.598205419" name="Debug Level" superClass="gnu.cpp.compiler.macosx.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.549318977" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/crag/src/crag}&quot;"/>
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.653302490" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="NDEBUG"/>
@@ -1045,9 +1037,7 @@
 <option id="gnu.c.compiler.option.preprocessor.def.symbols.3146677" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="NDEBUG"/>
 </option>
-<option id="gnu.c.compiler.option.include.paths.1725184439" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
-</option>
+<option id="gnu.c.compiler.option.include.paths.1725184439" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.742738241" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 </toolChain>

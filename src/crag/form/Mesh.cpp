@@ -13,6 +13,7 @@
 #include "form/Mesh.h"
 #include "form/Point.h"
 
+#include "core/Random.h"
 #include "core/VectorOps.h"
 
 
@@ -32,11 +33,11 @@ int form::Mesh::GetNumPolys() const
 	return indices.GetSize() / 3;
 }
 
-form::Vertex & form::Mesh::GetVertex(Point & point, Vector2f const & texture)
+form::Vertex & form::Mesh::GetVertex(Point & point)
 {
 	if (point.vert == nullptr)
 	{
-		point.vert = & AddVertex(point, texture);
+		point.vert = & AddVertex(point);
 	}
 	
 	Assert(point == point.vert->pos);
@@ -45,14 +46,19 @@ form::Vertex & form::Mesh::GetVertex(Point & point, Vector2f const & texture)
 	return * point.vert;
 }
 
-form::Vertex & form::Mesh::AddVertex(form::Point const & p, Vector2f const & texture)
+form::Vertex & form::Mesh::AddVertex(form::Point const & p)
 {
 	Vertex & addition = vertices.PushBack();
 	
 	addition.pos = p;
 	addition.norm = addition.norm.Zero();
+
 #if defined(FORM_VERTEX_TEXTURE)
-	addition.texture = texture;
+	addition.texture = p.texture_uv;
+#endif
+
+#if defined(FORM_VERTEX_COLOR)
+	addition.color = gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
 #endif
 
 	return addition;
@@ -88,29 +94,21 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 	AddFace(a, b, c, FastNormalize(normal));
 }*/
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c, int ia, Vector3f const & normal)
+void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
 {
-	static const float low = 0.01f, high = .99f;
-	static const float uv[3][2] = 
-	{
-		{ low, low },
-		{ high, low },
-		{ low, high }
-	};
-	
-	Vertex & vert_a = GetVertex(a, Vector2f(uv[       ia   ][0],uv[       ia   ][1]));
-	Vertex & vert_b = GetVertex(b, Vector2f(uv[TriMod(ia+1)][0],uv[TriMod(ia+1)][1]));
-	Vertex & vert_c = GetVertex(c, Vector2f(uv[TriMod(ia+2)][0],uv[TriMod(ia+2)][1]));
+	Vertex & vert_a = GetVertex(a);
+	Vertex & vert_b = GetVertex(b);
+	Vertex & vert_c = GetVertex(c);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c, int ia)
+void form::Mesh::AddFace(Point & a, Point & b, Point & c)
 {
 	Vector3f normal = TriangleNormal(static_cast<Vector3f const &>(a), 
 									 static_cast<Vector3f const &>(b), 
 									 static_cast<Vector3f const &>(c));
-	AddFace(a, b, c, ia, FastNormalize(normal));
+	AddFace(a, b, c, FastNormalize(normal));
 }
 
 form::VertexBuffer & form::Mesh::GetVertices() 

@@ -350,10 +350,6 @@ bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 			renderer.ToggleLighting();
 			break;
 			
-		case KEY_M:
-			renderer.ToggleShadowMapping();
-			break;
-			
 		case KEY_O:
 			capture = ! capture;
 			break;
