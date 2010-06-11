@@ -204,7 +204,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	gl::Disable(GL_TEXTURE_2D);
 #endif
 	
-	gl::Enable(GL_COLOR_MATERIAL);
+	//gl::Enable(GL_COLOR_MATERIAL);
 
 	// Debug output
 	if (gfx::Debug::GetVerbosity() > .75) {
