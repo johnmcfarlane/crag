@@ -18,7 +18,9 @@
 #include "core/Singleton.h"
 #include "core/Thread.h"
 
+#if defined(FORM_VERTEX_TEXTURE)
 #include "glpp/Texture.h"
+#endif
 
 #include <set>
 
@@ -68,7 +70,9 @@ namespace form {
 		void Render(gfx::Pov const & pov, bool color) const;
 
 	private:
+#if defined(FORM_VERTEX_TEXTURE)
 		bool InitTexture();
+#endif
 		
 		FormationSet formation_set;
 		sim::Observer & observer;
@@ -76,11 +80,12 @@ namespace form {
 		bool suspended;
 		bool regenerating;
 		SceneThread * scene_thread;
-		
-		gl::TextureRgba8 texture;
 
+#if defined(FORM_VERTEX_TEXTURE)
+		gl::TextureRgba8 texture;
+#endif
+		
 		// The graphicy things.
-		// TODO: Are two objects currently necessary?
 		form::MeshBufferObject buffer_objects[2];
 		form::MeshBufferObject * volatile front_buffer_object;
 		form::MeshBufferObject * volatile back_buffer_object;

@@ -109,7 +109,8 @@ namespace form
 		
 		// An array of used nodes in ascending order of score.
 		Quaterna * quaterna;		// [max_num_quaterna]
-		
+
+		//Quaterna * quaterna_used_end;	// TODO
 		Quaterna * quaterna_available_end;
 		Quaterna * quaterna_end;
 		

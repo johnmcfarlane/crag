@@ -57,7 +57,9 @@ form::Manager::Manager(sim::Observer & init_observer)
 		mesh.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
 	}
 	
+#if defined(FORM_VERTEX_TEXTURE)
 	InitTexture();
+#endif
 
 	VerifyObject(* this);
 }
@@ -185,21 +187,25 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
 	gl::LoadMatrix(formation_pov.CalcModelViewMatrix().GetArray());
 	
-	
+#if defined(FORM_VERTEX_TEXTURE)
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	gl::Enable(GL_TEXTURE_2D);
 	gl::Bind(& texture);
-	
+#else
+	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
+#endif
 	
 	// Draw the mesh!
-	front_buffer_object->BeginDraw(color);	
+	front_buffer_object->BeginDraw(color);
 	front_buffer_object->Draw();
 	front_buffer_object->EndDraw();
 	
-	
+#if defined(FORM_VERTEX_TEXTURE)
 	gl::Disable(GL_TEXTURE_2D);
+#endif
 	
-	
+	gl::Enable(GL_COLOR_MATERIAL);
+
 	// Debug output
 	if (gfx::Debug::GetVerbosity() > .75) {
 		for (int i = 0; i < 2; ++ i) {
@@ -232,6 +238,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	}
 }
 
+#if defined(FORM_VERTEX_TEXTURE)
 bool form::Manager::InitTexture()
 {
 	gfx::Image image;
@@ -275,3 +282,4 @@ bool form::Manager::InitTexture()
 	
 	return true;
 }
+#endif	// defined(FORM_VERTEX_TEXTURE)
