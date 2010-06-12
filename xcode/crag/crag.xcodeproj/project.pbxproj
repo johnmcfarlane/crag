@@ -46,7 +46,6 @@
 		52F3A3A911A7979400385922 /* Pov.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A35311A7979400385922 /* Pov.cpp */; };
 		52F3A3AA11A7979400385922 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A35511A7979400385922 /* Renderer.cpp */; };
 		52F3A3AB11A7979400385922 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A35711A7979400385922 /* Scene.cpp */; };
-		52F3A3AC11A7979400385922 /* ShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A35911A7979400385922 /* ShadowMap.cpp */; };
 		52F3A3AD11A7979400385922 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A35B11A7979400385922 /* Skybox.cpp */; };
 		52F3A3AE11A7979400385922 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A36A11A7979400385922 /* main.cpp */; };
 		52F3A3AF11A7979400385922 /* pch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A36B11A7979400385922 /* pch.cpp */; };
@@ -271,8 +270,6 @@
 		52F3A35611A7979400385922 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		52F3A35711A7979400385922 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		52F3A35811A7979400385922 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
-		52F3A35911A7979400385922 /* ShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowMap.cpp; sourceTree = "<group>"; };
-		52F3A35A11A7979400385922 /* ShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowMap.h; sourceTree = "<group>"; };
 		52F3A35B11A7979400385922 /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
 		52F3A35C11A7979400385922 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		52F3A35E11A7979400385922 /* BufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferObject.h; sourceTree = "<group>"; };
@@ -660,8 +657,6 @@
 				52F3A35611A7979400385922 /* Renderer.h */,
 				52F3A35711A7979400385922 /* Scene.cpp */,
 				52F3A35811A7979400385922 /* Scene.h */,
-				52F3A35911A7979400385922 /* ShadowMap.cpp */,
-				52F3A35A11A7979400385922 /* ShadowMap.h */,
 				52F3A35B11A7979400385922 /* Skybox.cpp */,
 				52F3A35C11A7979400385922 /* Skybox.h */,
 			);
@@ -964,7 +959,6 @@
 				52F3A3A911A7979400385922 /* Pov.cpp in Sources */,
 				52F3A3AA11A7979400385922 /* Renderer.cpp in Sources */,
 				52F3A3AB11A7979400385922 /* Scene.cpp in Sources */,
-				52F3A3AC11A7979400385922 /* ShadowMap.cpp in Sources */,
 				52F3A3AD11A7979400385922 /* Skybox.cpp in Sources */,
 				52F3A3AE11A7979400385922 /* main.cpp in Sources */,
 				52F3A3AF11A7979400385922 /* pch.cpp in Sources */,
