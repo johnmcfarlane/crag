@@ -59,7 +59,7 @@ namespace sim
 		Physics();
 		~Physics();
 
-		form::Mesh & GetFormationMesh();
+		//form::Mesh & GetFormationMesh();
 	
 		dBodyID CreateBody(UserDataType & data);
 		static void Destroy(dBodyID body);

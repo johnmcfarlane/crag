@@ -113,11 +113,11 @@ sim::Physics::~Physics()
 	dJointGroupDestroy(contact_joints);
 }
 
-form::Mesh & sim::Physics::GetFormationMesh()
+/*form::Mesh & sim::Physics::GetFormationMesh()
 {
 	form::Mesh * broke = nullptr;
 	return * broke;
-}
+}*/
 
 dBodyID sim::Physics::CreateBody(UserDataType & data)
 {
@@ -241,7 +241,8 @@ void sim::Physics::DestroyCollisions()
 
 void sim::Physics::OnMeshCollision(dGeomID geom)
 {
-/*	form::VertexBuffer const & vertices = formation_mesh.GetVertices();
+#if 0
+	form::VertexBuffer const & vertices = formation_mesh.GetVertices();
 	const void * Vertices = & vertices[0].pos;
 	int VertexStride = sizeof(vertices[0]);
 	int VertexCount = vertices.GetMaxUsed(); 
@@ -260,7 +261,8 @@ void sim::Physics::OnMeshCollision(dGeomID geom)
 	
 	sim::Physics::Get().OnCollision(geom, formation_geom);
 	
-	DrawMeshData(formation_geom, formation_mesh.GetNumPolys());*/
+	DrawMeshData(formation_geom, formation_mesh.GetNumPolys());
+#endif
 }
 
 void sim::Physics::OnCollision(dGeomID geom1, dGeomID geom2)

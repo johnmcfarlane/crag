@@ -77,20 +77,8 @@ bool sim::Planet::IsShadowCatcher() const
 void sim::Planet::Tick()
 {
 	Vector3 const & pos = sim::GetPosition(geom);
-//	Matric4f const & matrix = 
-//	Vector3 const & camera_pos = Graphics::GetCameraPos();
-//	Vector3 const & camera_dir = Graphics::GetCameraDir();
 	
 	formation.SetPosition(pos);
-//	land.SetCameraPos(camera_pos, camera_dir);
-#if SEA
-	sea.SetPosition(pos);
-//	sea.SetCameraPos(camera_pos, camera_dir);
-#endif
-
-	// Update the planet's radius so it collides with anything it /might/ be touching.
-/*	float max_radius = land.GetMaxRadius();
-	dGeomSphereSetRadius(geom, max_radius);*/
 }
 
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
@@ -112,22 +100,6 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	gravity += contribution;
 }
 
-/*int CountDescendants(FormationNode & node)
-{
-	int num_nodes = 0;
-	
-	for (int i = 0; i < 4; ++ i)
-	{
-		FormationNode * child = node.GetChild(i);
-		if (child != nullptr)
-		{
-			num_nodes += CountDescendants(* child) + 1;
-		}
-	}
-	
-	return num_nodes;
-}*/
-
 sim::Scalar sim::Planet::GetBoundingRadius() const
 {
 //	return formation.GetMaxRadius();
@@ -143,7 +115,7 @@ sim::Vector3 const & sim::Planet::GetPosition() const
 // this all goes to shit if two planets collide
 bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
 {
-/*	dGeomID that_geom = that_physical.GetGeom();
+	dGeomID that_geom = that_physical.GetGeom();
 	
 	Physics & physics = Physics::Get();
 	form::Mesh & mesh = physics.GetFormationMesh();
@@ -161,7 +133,7 @@ bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
 		formation.GenerateCollisionMesh(mesh, sphere);
 		
 		physics.OnMeshCollision(that_geom);
-	}*/
+	}
 	
 	return true;
 }
