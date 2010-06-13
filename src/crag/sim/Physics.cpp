@@ -195,32 +195,37 @@ void sim::Physics::Tick(double delta_time)
 }
 
 namespace sim {
-static void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
-{
-	Physics & physics = core::Singleton<Physics>::Get();
-#if ! defined(NDEBUG)
-	Physics & physicsAsData = * reinterpret_cast<Physics *>(data);
-	Assert(& physics == & physicsAsData);
-#endif
 	
-	Entity & entity1 = sim::Physics::GetUserData(geom1);
-	Entity & entity2 = sim::Physics::GetUserData(geom2);
-	
-	PhysicalBody * body1 = entity1.GetPhysicalBody();
-	PhysicalBody * body2 = entity2.GetPhysicalBody();
-	
-	if (body2 != nullptr && entity1.CustomCollision(* body2))
-	{
-		return;
+	namespace {
+		
+		void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
+		{
+			Physics & physics = core::Singleton<Physics>::Get();
+		#if ! defined(NDEBUG)
+			Physics & physicsAsData = * reinterpret_cast<Physics *>(data);
+			Assert(& physics == & physicsAsData);
+		#endif
+			
+			Entity & entity1 = sim::Physics::GetUserData(geom1);
+			Entity & entity2 = sim::Physics::GetUserData(geom2);
+			
+			PhysicalBody * body1 = entity1.GetPhysicalBody();
+			PhysicalBody * body2 = entity2.GetPhysicalBody();
+			
+			if (body2 != nullptr && entity1.CustomCollision(* body2))
+			{
+				return;
+			}
+			
+			if (body1 != nullptr && entity2.CustomCollision(* body1))
+			{
+				return;
+			}
+			
+			physics.OnCollision(geom1, geom2);
+		}
+			
 	}
-	
-	if (body1 != nullptr && entity2.CustomCollision(* body1))
-	{
-		return;
-	}
-	
-	physics.OnCollision(geom1, geom2);
-}
 }
 
 void sim::Physics::CreateCollisions()
