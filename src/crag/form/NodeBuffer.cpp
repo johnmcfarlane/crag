@@ -181,11 +181,11 @@ void NodeBuffer::SetNumQuaternaAvailable(int n)
 	}
 }
 
-void NodeBuffer::Tick(Vector3f const & relative_camera_pos)
+void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
 {
 	//VerifyObject(*this);
 
-	UpdateNodeScores(relative_camera_pos);
+	UpdateNodeScores(relative_camera_pos, camera_dir);
 	UpdateParentScores();
 	SortNodes();
 	
@@ -235,9 +235,9 @@ void NodeBuffer::InitQuaterna(Quaterna const * end)
 #endif
 }
 
-void NodeBuffer::UpdateNodeScores(Vector3f const & relative_camera_pos)
+void NodeBuffer::UpdateNodeScores(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
 {
-	CalculateNodeScoreFunctor f(relative_camera_pos);
+	CalculateNodeScoreFunctor f(relative_camera_pos, camera_dir);
 	ForEachNode(f);
 }
 

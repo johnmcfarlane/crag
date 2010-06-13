@@ -26,8 +26,9 @@ namespace form {
 class CalculateNodeScoreFunctor : public NodeFunctor
 {
 public:
-	CalculateNodeScoreFunctor(Vector3f const & _relative_camera_pos)
+	CalculateNodeScoreFunctor(Vector3f const & _relative_camera_pos, Vector3f const & _camera_direction)
 	: relative_camera_pos(_relative_camera_pos)
+	, camera_direction(_camera_direction)
 	{
 	}
 
@@ -52,10 +53,11 @@ public:
 		}
 		Assert(NearEqual(LengthSq(to_camera), 1.f, 1.02f));
 		
-#if 0	// towardness: -1=facing away, 1=facing towards
+#if 1
+		// towardness: -1=facing away, 1=facing towards
 		// purpose: favour polys which are facing towards the camera
 		float camera_dp = DotProduct(to_camera, node.normal);
-		float towardness_factor = AngleToScoreFactor(1.25f, 0.25f, camera_dp);
+		float towardness_factor = AngleToScoreFactor(1.0f, .0f, camera_dp);
 		score *= towardness_factor;
 
 #if 0
@@ -114,7 +116,7 @@ private:
 			}
 		}
 		
-		Assert (unclipped_score >= 0.f && unclipped_score <= 1.f);
+		Assert (unclipped_score >= -0.001f && unclipped_score <= 1.001f);
 		return unclipped_score;
 	}
 
@@ -124,6 +126,7 @@ private:
 	}
 
 	Vector3f const & relative_camera_pos;
+	Vector3f const & camera_direction;
 };
 
 }	// form

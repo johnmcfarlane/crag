@@ -56,11 +56,11 @@ namespace form
 		// Must be a multiple of four.
 		void SetNumQuaternaAvailable(int n);	
 		
-		void Tick(Vector3f const & relative_camera_pos);
+		void Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir);
 		void OnReset();
 	private:
 		void InitQuaterna(Quaterna const * end);
-		void UpdateNodeScores(Vector3f const & relative_camera_pos);
+		void UpdateNodeScores(Vector3f const & relative_camera_pos, Vector3f const & camera_dir);
 		void UpdateParentScores();
 		void SortNodes();
 		bool ChurnNodes();

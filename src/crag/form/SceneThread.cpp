@@ -14,6 +14,7 @@
 #include "form/Manager.h"
 
 #include "sim/Observer.h"
+#include "sim/Space.h"
 
 #include "gfx/Debug.h"
 
@@ -215,7 +216,9 @@ void form::SceneThread::Run()
 void form::SceneThread::ThreadTick()
 {
 	sim::Vector3 const & observer_pos = observer.GetPosition();
-	scene.SetObserverPos(observer_pos);
+	sim::Matrix4 observer_matrix = observer.GetRotation();
+	sim::Vector3 const & observer_dir = Space::GetForward(observer_matrix);
+	scene.SetObserverPos(observer_pos, observer_dir);
 	
 	if (reset_origin_flag) 
 	{

@@ -53,7 +53,7 @@ namespace form
 		void Clear();
 
 		sim::Vector3 const & GetObserverPos() const;
-		void SetObserverPos(sim::Vector3 const & o);
+		void SetObserverPos(sim::Vector3 const & pos, sim::Vector3 const & dir);
 		
 		sim::Vector3 const & GetOrigin() const;
 		void SetOrigin(sim::Vector3 const & o);
@@ -97,6 +97,7 @@ namespace form
 		FormationMap formation_map;	// The internal record of formations.
 		sim::Vector3 observer_pos;	// The observer position in universal coordinates.
 		sim::Vector3 relative_observer_pos;	// The observer position relative to origin.
+		sim::Vector3 observer_dir;	// The direction in which the observer is facing.
 		sim::Vector3 origin;	// The zero point in universal coordinates.
 	};
 

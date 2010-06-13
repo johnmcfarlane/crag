@@ -105,10 +105,11 @@ sim::Vector3 const & form::Scene::GetObserverPos() const
 	return observer_pos;
 }
 
-void form::Scene::SetObserverPos(sim::Vector3 const & o) 
+void form::Scene::SetObserverPos(sim::Vector3 const & pos, sim::Vector3 const & dir) 
 {
-	observer_pos = o;
+	observer_pos = pos;
 	relative_observer_pos = observer_pos - origin;
+	observer_dir = dir;
 }
 
 sim::Vector3 const & form::Scene::GetOrigin() const
@@ -120,9 +121,10 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 {
 	VerifyObject(* this);
 
-	if (o != origin) {
+	if (o != origin) 
+	{
 		origin = o;
-		SetObserverPos(observer_pos);
+		SetObserverPos(observer_pos, observer_dir);
 
 		ResetFormations();
 	}
@@ -132,7 +134,7 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 void form::Scene::Tick(FormationSet const & formation_set)
 {
-	node_buffer.Tick(relative_observer_pos);
+	node_buffer.Tick(relative_observer_pos, observer_dir);
 	TickModels(formation_set);
 }
 
