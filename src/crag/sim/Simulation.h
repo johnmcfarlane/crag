@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "Physics.h"
-
 #include "gfx/Debug.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
@@ -60,7 +58,6 @@ namespace sim
 		// Attributes
 		gfx::Renderer renderer;
 		gfx::Scene scene;
-		Physics physics;
 		Observer * observer;
 		form::Manager * formation_manager;
 

@@ -9,7 +9,6 @@
  */
 
 #include "Entity.h"
-#include "PhysicalBody.h"
 #include "UserInput.h"
 #include "Controller.h"
 
@@ -17,6 +16,12 @@
 
 #include "core/Vector3.h"
 #include "core/Matrix4.h"
+
+
+namespace physics
+{
+	class SphericalBody;
+}
 
 
 namespace sim
@@ -39,17 +44,19 @@ namespace sim
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const & pos);
 		
-		Matrix4 GetRotation() const;
-		void SetRotation(Matrix4 const & rot);
+		//Matrix4 GetRotation() const;
+		//void SetRotation(Matrix4 const & rot);
 
-		PhysicalBody * GetPhysicalBody();
+		physics::Body * GetBody();
+		physics::Body const * GetBody() const;
+
 		gfx::Light const & GetLight() const;
 
 	private:
 		void ApplyImpulse();
 		
 		Vector3 impulses[2];	// [pos/rot]
-		PhysicalSphere sphere;
+		physics::SphericalBody * sphere;
 		Scalar speed;
 		Scalar speed_factor;
 		gfx::Light light;

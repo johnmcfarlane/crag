@@ -88,8 +88,8 @@ namespace form
 		static void SubstituteChildren(Node * substitute, Node * children);
 		static void RepairChild(Node & child);
 
-		void IncreaseAvailableRankings(Quaterna * new_quaterna_available_end);
-		bool DecreaseAvailableRankings(Quaterna * new_quaterna_available_end);
+		void IncreaseAvailableRankings(Quaterna const * new_quaterna_available_end);
+		bool DecreaseAvailableRankings(Quaterna const * new_quaterna_available_end);
 		
 		Quaterna * GetWorstQuaterna(float parent_score);
 		void BubbleSortUp(Quaterna * quaterna);
@@ -103,16 +103,17 @@ namespace form
 		// Types
 
 		// The fixed-size array of node groups, used and unused.
-		Node * nodes;	// [max_num_nodes]
+		Node * const nodes;	// [max_num_nodes]
 		
 		Node * nodes_available_end;
+		Node const * const nodes_end;
 		
 		// An array of used nodes in ascending order of score.
-		Quaterna * quaterna;		// [max_num_quaterna]
+		Quaterna * const quaterna;		// [max_num_quaterna]
 
 		//Quaterna * quaterna_used_end;	// TODO
 		Quaterna * quaterna_available_end;
-		Quaterna * quaterna_end;
+		Quaterna const * const quaterna_end;
 		
 		// Pool of vertices from which to take the corners of nodes.
 		PointBuffer points;

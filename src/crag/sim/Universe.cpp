@@ -16,8 +16,9 @@
 #include "form/VertexBuffer.h"
 #include "Entity.h"
 #include "core/VectorOps.h"
-#include "Physics.h"
 #include "Firmament.h"
+
+#include "physics/Singleton.h"
 
 #include <algorithm>
 #include <vector>
@@ -81,7 +82,7 @@ void sim::Universe::AddEntity(Entity & entity)
 void sim::Universe::Tick()
 {
 	time += target_frame_seconds;
-	Physics::Get().Tick(target_frame_seconds);
+	physics::Singleton::Get().Tick(target_frame_seconds);
 	
 	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{

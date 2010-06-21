@@ -11,10 +11,14 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C0009D093BD00EBEB88 /* OpenGL.framework */; };
 		002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C6009D0951E00EBEB88 /* GLUT.framework */; };
+		5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5224D96A11C9AC9C0021CDF8 /* Body.cpp */; };
 		526D03A211BF658500F025A9 /* profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526D03A011BF658500F025A9 /* profile.cpp */; };
 		5277A99011B5EA0B00ABBC7F /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277A98E11B5EA0B00ABBC7F /* App.cpp */; };
 		527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */; };
 		5285815B11BC42D50006A89F /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5285815911BC42D50006A89F /* Polyhedron.cpp */; };
+		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
+		528ABAAC11CF218A00C2B411 /* FormationBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAAB11CF218A00C2B411 /* FormationBody.cpp */; };
+		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244D911B0E2DD008C0CE8 /* Thread.cpp */; };
 		52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244DC11B0E314008C0CE8 /* Mutex.cpp */; };
 		52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454B11B1A8FB008C0CE8 /* Point.cpp */; };
@@ -55,8 +59,6 @@
 		52F3A3B311A7979400385922 /* Firmament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37411A7979400385922 /* Firmament.cpp */; };
 		52F3A3B411A7979400385922 /* FrequencyEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37611A7979400385922 /* FrequencyEstimator.cpp */; };
 		52F3A3B511A7979400385922 /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37811A7979400385922 /* Observer.cpp */; };
-		52F3A3B611A7979400385922 /* PhysicalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37A11A7979400385922 /* PhysicalBody.cpp */; };
-		52F3A3B711A7979400385922 /* Physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37C11A7979400385922 /* Physics.cpp */; };
 		52F3A3B811A7979400385922 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37E11A7979400385922 /* Planet.cpp */; };
 		52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A38011A7979400385922 /* PlanetShader.cpp */; };
 		52F3A3BA11A7979400385922 /* Simulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A38211A7979400385922 /* Simulation.cpp */; };
@@ -177,6 +179,8 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5224D96A11C9AC9C0021CDF8 /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Body.cpp; sourceTree = "<group>"; };
+		5224D96B11C9AC9C0021CDF8 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
 		526D03A011BF658500F025A9 /* profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = profile.cpp; sourceTree = "<group>"; };
 		526D03A111BF658500F025A9 /* profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profile.h; sourceTree = "<group>"; };
 		5277A98E11B5EA0B00ABBC7F /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
@@ -185,6 +189,12 @@
 		527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
 		5285815911BC42D50006A89F /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
 		5285815A11BC42D50006A89F /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
+		528ABA6911CF087400C2B411 /* SphericalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphericalBody.cpp; sourceTree = "<group>"; };
+		528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
+		528ABAAA11CF218A00C2B411 /* FormationBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationBody.h; sourceTree = "<group>"; };
+		528ABAAB11CF218A00C2B411 /* FormationBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationBody.cpp; sourceTree = "<group>"; };
+		528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
+		528ABAF411CF2E3B00C2B411 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		52A244DB11B0E314008C0CE8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		52A244DC11B0E314008C0CE8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
@@ -194,6 +204,7 @@
 		52A2454E11B1AA06008C0CE8 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
 		52A2455011B1AAB6008C0CE8 /* PointBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointBuffer.h; sourceTree = "<group>"; };
 		52A2455111B1AAB6008C0CE8 /* PointBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointBuffer.cpp; sourceTree = "<group>"; };
+		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52F3A30611A7979400385922 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52F3A30811A7979400385922 /* Circle2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle2.h; sourceTree = "<group>"; };
 		52F3A30911A7979400385922 /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -299,10 +310,6 @@
 		52F3A37711A7979400385922 /* FrequencyEstimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrequencyEstimator.h; sourceTree = "<group>"; };
 		52F3A37811A7979400385922 /* Observer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Observer.cpp; sourceTree = "<group>"; };
 		52F3A37911A7979400385922 /* Observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observer.h; sourceTree = "<group>"; };
-		52F3A37A11A7979400385922 /* PhysicalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicalBody.cpp; sourceTree = "<group>"; };
-		52F3A37B11A7979400385922 /* PhysicalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhysicalBody.h; sourceTree = "<group>"; };
-		52F3A37C11A7979400385922 /* Physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Physics.cpp; sourceTree = "<group>"; };
-		52F3A37D11A7979400385922 /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Physics.h; sourceTree = "<group>"; };
 		52F3A37E11A7979400385922 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Planet.cpp; sourceTree = "<group>"; };
 		52F3A37F11A7979400385922 /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Planet.h; sourceTree = "<group>"; };
 		52F3A38011A7979400385922 /* PlanetShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetShader.cpp; sourceTree = "<group>"; };
@@ -519,6 +526,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5224D96911C9AC9C0021CDF8 /* physics */ = {
+			isa = PBXGroup;
+			children = (
+				5224D96A11C9AC9C0021CDF8 /* Body.cpp */,
+				5224D96B11C9AC9C0021CDF8 /* Body.h */,
+				528ABAF411CF2E3B00C2B411 /* defs.h */,
+				528ABAAB11CF218A00C2B411 /* FormationBody.cpp */,
+				528ABAAA11CF218A00C2B411 /* FormationBody.h */,
+				528ABAF211CF2E3100C2B411 /* Singleton.cpp */,
+				52B4741A11CD031300FB2686 /* Singleton.h */,
+				528ABA6911CF087400C2B411 /* SphericalBody.cpp */,
+				528ABA6A11CF087400C2B411 /* SphericalBody.h */,
+			);
+			path = physics;
+			sourceTree = "<group>";
+		};
 		52F3A2FF11A7979400385922 /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -534,6 +557,7 @@
 		52F3A30011A7979400385922 /* crag */ = {
 			isa = PBXGroup;
 			children = (
+				5224D96911C9AC9C0021CDF8 /* physics */,
 				52F3A30611A7979400385922 /* COPYING */,
 				52F3A30711A7979400385922 /* core */,
 				52F3A32311A7979400385922 /* form */,
@@ -696,10 +720,6 @@
 				52F3A37711A7979400385922 /* FrequencyEstimator.h */,
 				52F3A37811A7979400385922 /* Observer.cpp */,
 				52F3A37911A7979400385922 /* Observer.h */,
-				52F3A37A11A7979400385922 /* PhysicalBody.cpp */,
-				52F3A37B11A7979400385922 /* PhysicalBody.h */,
-				52F3A37C11A7979400385922 /* Physics.cpp */,
-				52F3A37D11A7979400385922 /* Physics.h */,
 				52F3A37E11A7979400385922 /* Planet.cpp */,
 				52F3A37F11A7979400385922 /* Planet.h */,
 				52F3A38011A7979400385922 /* PlanetShader.cpp */,
@@ -967,8 +987,6 @@
 				52F3A3B311A7979400385922 /* Firmament.cpp in Sources */,
 				52F3A3B411A7979400385922 /* FrequencyEstimator.cpp in Sources */,
 				52F3A3B511A7979400385922 /* Observer.cpp in Sources */,
-				52F3A3B611A7979400385922 /* PhysicalBody.cpp in Sources */,
-				52F3A3B711A7979400385922 /* Physics.cpp in Sources */,
 				52F3A3B811A7979400385922 /* Planet.cpp in Sources */,
 				52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */,
 				52F3A3BA11A7979400385922 /* Simulation.cpp in Sources */,
@@ -1070,6 +1088,10 @@
 				527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */,
 				5285815B11BC42D50006A89F /* Polyhedron.cpp in Sources */,
 				526D03A211BF658500F025A9 /* profile.cpp in Sources */,
+				5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */,
+				528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */,
+				528ABAAC11CF218A00C2B411 /* FormationBody.cpp in Sources */,
+				528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

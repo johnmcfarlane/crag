@@ -57,7 +57,7 @@ public:
 		// towardness: -1=facing away, 1=facing towards
 		// purpose: favour polys which are facing towards the camera
 		float camera_dp = DotProduct(to_camera, node.normal);
-		float towardness_factor = AngleToScoreFactor(1.0f, .0f, camera_dp);
+		float towardness_factor = AngleToScoreFactor(1.0f, .01f, camera_dp);
 		score *= towardness_factor;
 
 #if 0

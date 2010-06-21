@@ -11,9 +11,10 @@
 #include "pch.h"
 
 #include "Planet.h"
-#include "Physics.h"
-#include "PhysicalBody.h"
 #include "PlanetShader.h"
+
+#include "physics/FormationBody.h"
+#include "physics/Singleton.h"
 
 #include "form/Manager.h"
 #include "form/Mesh.h"
@@ -33,25 +34,13 @@ namespace
 sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius, int init_seed)
 	: Entity()
 	, formation(factory, init_radius)
-#if SEA
-	, sea(init_radius)
-#endif
 {
-	Physics & physics = Physics::Get();
-
-	geom = physics.CreateSphere(* this, 1, init_radius);
-	dGeomSetPosition(geom, init_pos.x, init_pos.y, init_pos.z);
+	body = physics::Singleton::Get().CreateFormationBody(* this, init_radius, false);
 	
 	Random rnd(init_seed);
 	formation.seed = rnd.GetInt();
 	formation.SetPosition(init_pos);
 	form::Manager::Get().AddFormation(& formation);
-	
-#if SEA
-	sea.Init(rnd.GetInt());
-	sea.SetPosition(init_pos);
-	form::Manager::AddFormation(sea);
-#endif
 	
 	shadow_map.Init();
 	Bind(& shadow_map);
@@ -64,9 +53,6 @@ sim::Planet::~Planet()
 	if (formation_manager != nullptr) {
 		form::Manager::Get().RemoveFormation(& formation);
 	}
-
-	Physics & physics = Physics::Get();
-	physics.Destroy(geom);
 }
 
 bool sim::Planet::IsShadowCatcher() const
@@ -74,18 +60,19 @@ bool sim::Planet::IsShadowCatcher() const
 	return true;
 }
 
-void sim::Planet::Tick()
+/*void sim::Planet::Tick()
 {
-	Vector3 const & pos = sim::GetPosition(geom);
+	Vector3 const & pos = body->GetPosition();
 	
 	formation.SetPosition(pos);
-}
+}*/
 
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
 	float const density = 1;
 	
-	Vector3 there_to_here = sim::GetPosition(geom) - pos;
+	Vector3 const & here_pos = body->GetPosition();
+	Vector3 there_to_here = here_pos - pos;
 	sim::Scalar distance_square = LengthSq(there_to_here);
 	sim::Scalar distance = Sqrt(distance_square);
 	
@@ -109,19 +96,21 @@ sim::Scalar sim::Planet::GetBoundingRadius() const
 
 sim::Vector3 const & sim::Planet::GetPosition() const
 {
-	return sim::GetPosition(geom);
+	return body->GetPosition();
 }
 
+#if 0
 // this all goes to shit if two planets collide
 bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
 {
+#if 0
 	dGeomID that_geom = that_physical.GetGeom();
 	
 	Physics & physics = Physics::Get();
 	form::Mesh & mesh = physics.GetFormationMesh();
 	mesh.ClearPolys();
 	
-	sim::Sphere3 sphere(::GetPosition(that_geom) - ::GetPosition(geom), dGeomSphereGetRadius(that_geom));
+	sim::Sphere3 body(::GetPosition(that_geom) - ::GetPosition(geom), dGeomSphereGetRadius(that_geom));
 	
 	// Assuming that the other body only ever hits one formation in any one tick.
 	// Currently pretty safe as there is only one formation in the simulation!
@@ -130,13 +119,17 @@ bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
 	{
 		sf::Lock lock(form::Manager::mutex);
 		
-		formation.GenerateCollisionMesh(mesh, sphere);
+		formation.GenerateCollisionMesh(mesh, body);
 		
 		physics.OnMeshCollision(that_geom);
 	}
 	
 	return true;
+#else
+	return false;
+#endif
 }
+#endif
 
 /*#if DUMP
 void sim::Planet::Dump(std::ostream & out) const

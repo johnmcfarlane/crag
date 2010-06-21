@@ -16,6 +16,12 @@
 #include <ode/ode.h>
 
 
+namespace physics
+{
+	class Body;
+}
+
+
 namespace sim
 {
 	class Entity
@@ -33,8 +39,8 @@ namespace sim
 
 		virtual Scalar GetBoundingRadius() const = 0;
 		virtual sim::Vector3 const & GetPosition() const = 0;
-		virtual class PhysicalBody * GetPhysicalBody();
-		virtual bool CustomCollision(PhysicalBody & that_body) const;
+		virtual physics::Body * GetBody();
+		virtual physics::Body const * GetBody() const;
 
 		// Verification
 	#if VERIFY

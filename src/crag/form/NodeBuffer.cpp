@@ -67,6 +67,7 @@ NodeBuffer::NodeBuffer()
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_available_end(nodes)
+, nodes_end(nodes + max_num_nodes)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_available_end(quaterna)
 , quaterna_end(quaterna + max_num_quaterna)
@@ -93,7 +94,7 @@ void NodeBuffer::Verify() const
 	bool test_mid_decrease = true;
 	bool test_post_score_update = false;
 	
-	VerifyArrayElement(nodes_available_end, nodes, nodes + max_num_nodes + 1);	
+	VerifyArrayElement(nodes_available_end, nodes, nodes_end + 1);	
 	VerifyArrayElement(quaterna_available_end, quaterna, quaterna_end + 1);	
 
 	int num_nodes_available = nodes_available_end - nodes;
@@ -121,8 +122,6 @@ void NodeBuffer::Verify() const
 		
 		VerifyObject(* q);
 	}
-	
-	Node const * nodes_end = nodes + max_num_nodes;
 	
 	VerifyTrue(quaterna_available_end <= quaterna_end);
 	for (Quaterna const * q = quaterna_available_end; q != quaterna_end; ++ q) {
@@ -168,7 +167,7 @@ int NodeBuffer::GetNumQuaternaAvailable() const
 
 void NodeBuffer::SetNumQuaternaAvailable(int n)
 {
-	Quaterna * new_rankings_available_end = Clamp(quaterna + n, quaterna + 0, quaterna_end);
+	Quaterna const * const new_rankings_available_end = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
 	
 	if (new_rankings_available_end > quaterna_available_end) {
 		IncreaseAvailableRankings(new_rankings_available_end);
@@ -679,7 +678,7 @@ void NodeBuffer::RepairChild(Node & child)
 	}
 }
 
-void NodeBuffer::IncreaseAvailableRankings(Quaterna * new_quaterna_available_end)
+void NodeBuffer::IncreaseAvailableRankings(Quaterna const * new_quaterna_available_end)
 {
 	Assert (new_quaterna_available_end > quaterna_available_end);
 	Assert (new_quaterna_available_end <= quaterna_end);
@@ -687,9 +686,10 @@ void NodeBuffer::IncreaseAvailableRankings(Quaterna * new_quaterna_available_end
 	while (quaterna_available_end < new_quaterna_available_end) {
 		Assert(! quaterna_available_end->IsInUse());
 
+		VerifyArrayElement(quaterna_available_end->nodes, nodes_available_end, nodes_end);
 		Assert(quaterna_available_end->nodes == nodes_available_end);
 		quaterna_available_end->nodes = nodes_available_end;
-		VerifyArrayElement(quaterna_available_end->nodes, nodes, nodes + max_num_nodes);
+		VerifyArrayElement(quaterna_available_end->nodes, nodes, nodes_end);
 		
 		++ quaterna_available_end;
 		nodes_available_end += 4;
@@ -699,7 +699,7 @@ void NodeBuffer::IncreaseAvailableRankings(Quaterna * new_quaterna_available_end
 // TODO: This can be improved a lot.
 // TODO: Should sweep all surviving quats first and do all the substitutions in the correct order.
 // TODO: That way, the unavailable quats can keep their node pointers.
-bool NodeBuffer::DecreaseAvailableRankings(Quaterna * new_quaterna_available_end)
+bool NodeBuffer::DecreaseAvailableRankings(Quaterna const * new_quaterna_available_end)
 {
 	//VerifyObject(* this);
 

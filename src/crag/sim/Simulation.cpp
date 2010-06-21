@@ -19,6 +19,8 @@
 #include "Universe.h"
 #include "UserInput.h"
 
+#include "physics/Body.h"
+
 #include "form/Scene.h"
 #include "form/Manager.h"
 
@@ -85,7 +87,7 @@ void sim::Simulation::InitUniverse()
 		camera_rot = Matrix4::Identity();
 	}
 	observer->SetPosition(camera_pos);
-	observer->SetRotation(camera_rot);
+	observer->GetBody()->SetRotation(camera_rot);
 	
 	Universe::Init();	
 	Universe::AddEntity(* observer);
@@ -106,7 +108,7 @@ sim::Simulation::~Simulation()
 	gfx::Debug::Deinit();
 	
 	camera_pos = observer->GetPosition();
-	camera_rot = observer->GetRotation();
+	observer->GetBody()->GetRotation(camera_rot);
 	
 	delete formation_manager;
 	
@@ -214,8 +216,12 @@ void sim::Simulation::Render()
 {
 	PrintStats();
 
-	Matrix4 rot = observer->GetRotation();
-	Vector3 pos = observer->GetPosition();
+	physics::Body & observer_body = ref(observer->GetBody());
+	Vector3 pos = observer_body.GetPosition();
+
+	Matrix4 rot;
+	observer_body.GetRotation(rot);
+	
 	scene.SetCamera(pos, rot);
 
 	renderer.Render(scene);

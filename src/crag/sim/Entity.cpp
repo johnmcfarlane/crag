@@ -41,15 +41,21 @@ void sim::Entity::GetGravitationalForce(sim::Vector3 const & /*pos*/, sim::Vecto
 {
 }
 
-sim::PhysicalBody * sim::Entity::GetPhysicalBody()
+physics::Body * sim::Entity::GetBody()
 {
 	return nullptr;
 }
 
-bool sim::Entity::CustomCollision(PhysicalBody & /*that_body*/) const
+physics::Body const * sim::Entity::GetBody() const
 {
-	return false;
+	return nullptr;
 }
+
+//bool sim::Entity::CustomCollision(PhysicalBody &) const
+//{
+//	Assert(false);
+//	return false;
+//}
 
 #if DUMP
 DumpStream & operator << (DumpStream & lhs, Entity & rhs)
