@@ -168,13 +168,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 298791156;
-			PBXWorkspaceStateSaveDate = 298791156;
+			PBXPerProjectTemplateStateSaveDate = 298795496;
+			PBXWorkspaceStateSaveDate = 298795496;
 		};
 		perUserProjectItems = {
-			5207351E11CF325900BFF63B /* PBXTextBookmark */ = 5207351E11CF325900BFF63B /* PBXTextBookmark */;
-			5207351F11CF325900BFF63B /* PBXTextBookmark */ = 5207351F11CF325900BFF63B /* PBXTextBookmark */;
-			5207352011CF325900BFF63B /* PBXTextBookmark */ = 5207352011CF325900BFF63B /* PBXTextBookmark */;
+			5207351E11CF325900BFF63B = 5207351E11CF325900BFF63B /* PBXTextBookmark */;
+			5207351F11CF325900BFF63B = 5207351F11CF325900BFF63B /* PBXTextBookmark */;
+			5207352011CF325900BFF63B = 5207352011CF325900BFF63B /* PBXTextBookmark */;
+			528F0C0011CF41F800C9E519 /* PBXTextBookmark */ = 528F0C0011CF41F800C9E519 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 52F3A2F411A796FC00385922 /* Source Control */;
 		userBuildSettings = {
@@ -187,10 +188,9 @@
 		path = ../../src/crag/physics/Singleton.h;
 		sourceTree = "<group>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 741}}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 767}}";
 			sepNavSelRange = "{957, 0}";
-			sepNavVisRange = "{333, 625}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
+			sepNavVisRange = "{250, 897}";
 		};
 	};
 	5207351E11CF325900BFF63B /* PBXTextBookmark */ = {
@@ -297,9 +297,9 @@
 	};
 	528ABA6911CF087400C2B411 /* SphericalBody.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {851, 715}}";
-			sepNavSelRange = "{970, 0}";
-			sepNavVisRange = "{503, 751}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 715}}";
+			sepNavSelRange = "{1254, 0}";
+			sepNavVisRange = "{274, 980}";
 		};
 	};
 	528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {
@@ -307,20 +307,6 @@
 			sepNavIntBoundsRect = "{{0, 0}, {942, 507}}";
 			sepNavSelRange = "{578, 0}";
 			sepNavVisRange = "{253, 454}";
-		};
-	};
-	528ABAAA11CF218A00C2B411 /* FormationBody.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 416}}";
-			sepNavSelRange = "{453, 0}";
-			sepNavVisRange = "{212, 383}";
-		};
-	};
-	528ABAAB11CF218A00C2B411 /* FormationBody.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {851, 423}}";
-			sepNavSelRange = "{665, 0}";
-			sepNavVisRange = "{0, 732}";
 		};
 	};
 	528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {
@@ -336,6 +322,16 @@
 			sepNavSelRange = "{213, 0}";
 			sepNavVisRange = "{0, 403}";
 		};
+	};
+	528F0C0011CF41F800C9E519 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 52F3A33611A7979400385922 /* NodeBuffer.cpp */;
+		name = "NodeBuffer.cpp: 690";
+		rLen = 0;
+		rLoc = 18054;
+		rType = 0;
+		vrLen = 1096;
+		vrLoc = 17650;
 	};
 	52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {
 		uiCtxt = {
@@ -754,9 +750,9 @@
 	};
 	52F3A33611A7979400385922 /* NodeBuffer.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1104, 11154}}";
-			sepNavSelRange = "{18054, 0}";
-			sepNavVisRange = "{17650, 1096}";
+			sepNavIntBoundsRect = "{{0, 0}, {1104, 11297}}";
+			sepNavSelRange = "{18309, 0}";
+			sepNavVisRange = "{17650, 1525}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
