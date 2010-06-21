@@ -13,7 +13,7 @@
 #include "Planet.h"
 #include "PlanetShader.h"
 
-#include "physics/FormationBody.h"
+#include "sim/PlanetaryBody.h"
 #include "physics/Singleton.h"
 
 #include "form/Manager.h"
@@ -35,7 +35,7 @@ sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius, int init_s
 	: Entity()
 	, formation(factory, init_radius)
 {
-	body = physics::Singleton::Get().CreateFormationBody(* this, init_radius, false);
+	body = physics::Singleton::Get().CreatePlanetaryBody(* this, init_radius, false);
 	
 	Random rnd(init_seed);
 	formation.seed = rnd.GetInt();

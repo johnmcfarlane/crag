@@ -19,12 +19,13 @@
 
 namespace physics
 {
-	class FormationBody;
 }
 
 
 namespace sim
 {
+	class PlanetaryBody;
+
 	class Planet : public Entity
 	{
 	public:
@@ -46,7 +47,7 @@ namespace sim
 
 	private:
 		form::Formation formation;
-		physics::FormationBody * body;
+		sim::PlanetaryBody * body;
 		gl::TextureRgba8 shadow_map;
 	};
 }

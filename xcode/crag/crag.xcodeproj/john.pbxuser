@@ -6,6 +6,7 @@
 		activeExecutable = 52F3A2E111A796DC00385922 /* crag */;
 		activeTarget = 8D1107260486CEB800E47090 /* crag */;
 		addToTargets = (
+			8D1107260486CEB800E47090 /* crag */,
 		);
 		breakpoints = (
 		);
@@ -299,14 +300,14 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {942, 715}}";
 			sepNavSelRange = "{1254, 0}";
-			sepNavVisRange = "{274, 980}";
+			sepNavVisRange = "{273, 981}";
 		};
 	};
 	528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 507}}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 523}}";
 			sepNavSelRange = "{578, 0}";
-			sepNavVisRange = "{253, 454}";
+			sepNavVisRange = "{0, 707}";
 		};
 	};
 	528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {

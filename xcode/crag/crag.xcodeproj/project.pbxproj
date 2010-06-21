@@ -18,6 +18,7 @@
 		5285815B11BC42D50006A89F /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5285815911BC42D50006A89F /* Polyhedron.cpp */; };
 		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
+		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
 		52A244DA11B0E2DD008C0CE8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244D911B0E2DD008C0CE8 /* Thread.cpp */; };
 		52A244DD11B0E314008C0CE8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A244DC11B0E314008C0CE8 /* Mutex.cpp */; };
 		52A2454C11B1A8FB008C0CE8 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A2454B11B1A8FB008C0CE8 /* Point.cpp */; };
@@ -192,6 +193,8 @@
 		528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
 		528ABAF411CF2E3B00C2B411 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
+		528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetaryBody.cpp; sourceTree = "<group>"; };
+		528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetaryBody.h; sourceTree = "<group>"; };
 		52A244D911B0E2DD008C0CE8 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		52A244DB11B0E314008C0CE8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		52A244DC11B0E314008C0CE8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
@@ -704,6 +707,8 @@
 		52F3A36E11A7979400385922 /* sim */ = {
 			isa = PBXGroup;
 			children = (
+				528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */,
+				528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */,
 				52F3A36F11A7979400385922 /* Controller.cpp */,
 				52F3A37011A7979400385922 /* Controller.h */,
 				52F3A37111A7979400385922 /* defs.h */,
@@ -1086,6 +1091,7 @@
 				5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */,
 				528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */,
 				528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */,
+				528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

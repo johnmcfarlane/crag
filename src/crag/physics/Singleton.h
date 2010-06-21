@@ -18,12 +18,12 @@
 namespace sim 
 {
 	class Entity;
+	class PlanetaryBody;
 }
 
 namespace physics
 {
 	class Body;
-	class FormationBody;
 	class SphericalBody;
 	
 	class Singleton : public core::Singleton<Singleton>
@@ -33,7 +33,7 @@ namespace physics
 		~Singleton();
 
 		SphericalBody * CreateSphericalBody(sim::Entity & entity, float radius, bool movable);
-		FormationBody * CreateFormationBody(sim::Entity & entity, float radius, bool movable);
+		sim::PlanetaryBody * CreatePlanetaryBody(sim::Entity & entity, float radius, bool movable);
 		void DestroyBody(Body & body);
 
 		void Tick(double delta_time);

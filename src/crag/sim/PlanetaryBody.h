@@ -10,17 +10,17 @@
 
 #pragma once
 
-#include "SphericalBody.h"
+#include "physics/SphericalBody.h"
 
 
-namespace physics
+namespace sim
 {
 	
-	class FormationBody : public SphericalBody
+	class PlanetaryBody : public physics::SphericalBody
 	{
 		friend class ::physics::Singleton;
 		
-		FormationBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id);
+		PlanetaryBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id);
 	public:
 		
 	private:

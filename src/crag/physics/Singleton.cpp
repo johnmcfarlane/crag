@@ -12,7 +12,9 @@
 #include "Singleton.h"
 
 #include "SphericalBody.h"
-#include "FormationBody.h"
+
+// TODO: Fix Body/Singleton relationship.
+#include "sim/PlanetaryBody.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -43,12 +45,12 @@ physics::SphericalBody * physics::Singleton::CreateSphericalBody(sim::Entity & e
 	return creation;
 }
 
-physics::FormationBody * physics::Singleton::CreateFormationBody(sim::Entity & entity, float radius, bool movable)
+sim::PlanetaryBody * physics::Singleton::CreatePlanetaryBody(sim::Entity & entity, float radius, bool movable)
 {
 	dBodyID body_id = movable ? CreateBody(entity) : 0;	
 	dGeomID geom_id = dCreateSphere(space, radius);
 	
-	FormationBody * creation = new FormationBody(entity, body_id, geom_id);
+	sim::PlanetaryBody * creation = new sim::PlanetaryBody(entity, body_id, geom_id);
 	
 	return creation;
 }
