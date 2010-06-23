@@ -18,7 +18,7 @@
 #define FAST_SCENE_RESET
 
 
-template<class T> class Pool
+template<typename T> class Pool
 {
 	struct Node
 	{
