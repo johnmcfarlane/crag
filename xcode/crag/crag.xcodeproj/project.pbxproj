@@ -707,8 +707,6 @@
 		52F3A36E11A7979400385922 /* sim */ = {
 			isa = PBXGroup;
 			children = (
-				528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */,
-				528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */,
 				52F3A36F11A7979400385922 /* Controller.cpp */,
 				52F3A37011A7979400385922 /* Controller.h */,
 				52F3A37111A7979400385922 /* defs.h */,
@@ -722,6 +720,8 @@
 				52F3A37911A7979400385922 /* Observer.h */,
 				52F3A37E11A7979400385922 /* Planet.cpp */,
 				52F3A37F11A7979400385922 /* Planet.h */,
+				528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */,
+				528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */,
 				52F3A38011A7979400385922 /* PlanetShader.cpp */,
 				52F3A38111A7979400385922 /* PlanetShader.h */,
 				52F3A38211A7979400385922 /* Simulation.cpp */,

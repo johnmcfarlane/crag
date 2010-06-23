@@ -46,22 +46,21 @@ namespace ANONYMOUS
 
 sim::Observer::Observer()
 : Entity()
+, sphere(camera_radius, true)
 , speed(0)
 , speed_factor(camera_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
 {
-	sphere = physics::Singleton::Get().CreateSphericalBody(* this, camera_radius, true);
-	sphere->SetDensity(camera_density);
-	sphere->SetLinearDamping(camera_linear_damping);
-	sphere->SetAngularDamping(camera_angular_damping);
+	sphere.SetData<Observer>(this);
+	sphere.SetDensity(camera_density);
+	sphere.SetLinearDamping(camera_linear_damping);
+	sphere.SetAngularDamping(camera_angular_damping);
 
 	impulses[0] = impulses[1] = Vector3::Zero();
 }
 
 sim::Observer::~Observer()
 {
-//	camera_pos = GetPosition();
-//	camera_rot = GetRotation();
 	camera_speed_factor = static_cast<float>(speed_factor);
 }
 
@@ -126,7 +125,7 @@ void sim::Observer::Tick()
 	float mass = 1;
 	Vector3 const & position = GetPosition();
 	Vector3 gravitational_force = Universe::Weight(position, mass);
-	sphere->AddRelForceAtRelPos(gravitational_force / static_cast<Scalar>(Universe::target_frame_seconds), Vector3(0, .1, -0.45));
+	sphere.AddRelForceAtRelPos(gravitational_force / static_cast<Scalar>(Universe::target_frame_seconds), Vector3(0, .1, -0.45));
 	
 	light.SetPosition(GetPosition());
 }
@@ -138,44 +137,28 @@ sim::Vector3 const * sim::Observer::GetImpulse() const
 
 sim::Scalar sim::Observer::GetBoundingRadius() const
 {
-	return sphere->GetRadius();
+	return sphere.GetRadius();
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const
 {
-	return sphere->GetPosition();
+	return sphere.GetPosition();
 }
 
 void sim::Observer::SetPosition(sim::Vector3 const & pos) 
 {
 	light.SetPosition(pos);
-	sphere->SetPosition(pos);
+	sphere.SetPosition(pos);
 }
-
-/*sim::Matrix4 sim::Observer::GetRotation() const
-{
-	Matrix4 m;
-
-	dBodyID body = sphere->GetBody();
-	sim::GetRotation(body, m);
-	
-	return m;
-}
-
-void sim::Observer::SetRotation(sim::Matrix4 const & rot)
-{
-	dBodyID body = sphere->GetBody();
-	sim::SetRotation(body, rot);
-}*/
 
 physics::Body * sim::Observer::GetBody()
 {
-	return sphere;
+	return & sphere;
 }
 
 physics::Body const * sim::Observer::GetBody() const
 {
-	return sphere;
+	return & sphere;
 }
 
 gfx::Light const & sim::Observer::GetLight() const
@@ -185,6 +168,6 @@ gfx::Light const & sim::Observer::GetLight() const
 
 void sim::Observer::ApplyImpulse()
 {
-	sphere->AddRelForce(impulses [0]);
-	sphere->AddRelTorque(impulses [1]);
+	sphere.AddRelForce(impulses [0]);
+	sphere.AddRelTorque(impulses [1]);
 }

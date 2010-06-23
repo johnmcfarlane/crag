@@ -15,26 +15,16 @@
 #include "core/Singleton.h"
 
 
-namespace sim 
-{
-	class Entity;
-	class PlanetaryBody;
-}
-
 namespace physics
 {
-	class Body;
-	class SphericalBody;
-	
 	class Singleton : public core::Singleton<Singleton>
 	{
+		friend class Body;
+		friend class SphericalBody;
+		
 	public:
 		Singleton();
 		~Singleton();
-
-		SphericalBody * CreateSphericalBody(sim::Entity & entity, float radius, bool movable);
-		sim::PlanetaryBody * CreatePlanetaryBody(sim::Entity & entity, float radius, bool movable);
-		void DestroyBody(Body & body);
 
 		void Tick(double delta_time);
 
@@ -48,7 +38,7 @@ namespace physics
 		
 	private:
 		void OnContact(dContact * contact, dGeomID geom1, dGeomID geom2);
-		dBodyID CreateBody(sim::Entity & entity);
+		dBodyID CreateBody();
 
 		dWorldID world;
 		dSpaceID space;

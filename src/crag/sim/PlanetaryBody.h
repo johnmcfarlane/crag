@@ -20,8 +20,8 @@ namespace sim
 	{
 		friend class ::physics::Singleton;
 		
-		PlanetaryBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id);
 	public:
+		PlanetaryBody(physics::Scalar radius);
 		
 	private:
 		virtual bool OnCollision(Body & that_body);

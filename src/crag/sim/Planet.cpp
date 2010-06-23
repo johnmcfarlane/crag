@@ -33,18 +33,16 @@ namespace
 
 sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius, int init_seed)
 	: Entity()
+	, body(init_radius)
 	, formation(factory, init_radius)
 {
-	body = physics::Singleton::Get().CreatePlanetaryBody(* this, init_radius, false);
+	body.SetData(this);
+	body.SetPosition(init_pos);
 	
 	Random rnd(init_seed);
 	formation.seed = rnd.GetInt();
 	formation.SetPosition(init_pos);
 	form::Manager::Get().AddFormation(& formation);
-	
-	shadow_map.Init();
-	Bind(& shadow_map);
-	shadow_map.Resize(1024, 1024);
 }
 
 sim::Planet::~Planet()
@@ -60,18 +58,11 @@ bool sim::Planet::IsShadowCatcher() const
 	return true;
 }
 
-/*void sim::Planet::Tick()
-{
-	Vector3 const & pos = body->GetPosition();
-	
-	formation.SetPosition(pos);
-}*/
-
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
 	float const density = 1;
 	
-	Vector3 const & here_pos = body->GetPosition();
+	Vector3 const & here_pos = body.GetPosition();
 	Vector3 there_to_here = here_pos - pos;
 	sim::Scalar distance_square = LengthSq(there_to_here);
 	sim::Scalar distance = Sqrt(distance_square);
@@ -96,7 +87,7 @@ sim::Scalar sim::Planet::GetBoundingRadius() const
 
 sim::Vector3 const & sim::Planet::GetPosition() const
 {
-	return body->GetPosition();
+	return body.GetPosition();
 }
 
 #if 0

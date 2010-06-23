@@ -16,8 +16,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // SphericalBody
 
-physics::SphericalBody::SphericalBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id)
-: Body(entity, body_id, geom_id)
+physics::SphericalBody::SphericalBody(bool movable, Scalar radius)
+: Body(dCreateSphere(Singleton::Get().space, radius), movable)
 {
 }
 

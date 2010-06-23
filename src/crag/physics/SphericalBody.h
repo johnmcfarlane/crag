@@ -20,10 +20,8 @@ namespace physics
 	{
 		friend class ::physics::Singleton;
 		
-	protected:
-		SphericalBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id);
-		
 	public:
+		SphericalBody(bool movable, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;

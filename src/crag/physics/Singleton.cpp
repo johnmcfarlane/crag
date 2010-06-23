@@ -10,11 +10,16 @@
 #include "pch.h"
 
 #include "Singleton.h"
-
 #include "SphericalBody.h"
 
-// TODO: Fix Body/Singleton relationship.
-#include "sim/PlanetaryBody.h"
+
+//////////////////////////////////////////////////////////////////////
+// physics::Singleton members
+
+namespace
+{
+	physics::Singleton singleton;
+}
 
 
 //////////////////////////////////////////////////////////////////////
@@ -33,41 +38,7 @@ physics::Singleton::~Singleton()
 	dSpaceDestroy(space);
 	dWorldDestroy(world);
 	dJointGroupDestroy(contact_joints);
-}
-
-physics::SphericalBody * physics::Singleton::CreateSphericalBody(sim::Entity & entity, float radius, bool movable)
-{
-	dBodyID body_id = movable ? CreateBody(entity) : 0;	
-	dGeomID geom_id = dCreateSphere(space, radius);
-	
-	SphericalBody * creation = new SphericalBody(entity, body_id, geom_id);
-	
-	return creation;
-}
-
-sim::PlanetaryBody * physics::Singleton::CreatePlanetaryBody(sim::Entity & entity, float radius, bool movable)
-{
-	dBodyID body_id = movable ? CreateBody(entity) : 0;	
-	dGeomID geom_id = dCreateSphere(space, radius);
-	
-	sim::PlanetaryBody * creation = new sim::PlanetaryBody(entity, body_id, geom_id);
-	
-	return creation;
-}
-
-void physics::Singleton::DestroyBody(Body & body)
-{
-	if (body.body_id != 0)
-	{
-		dBodyDestroy(body.body_id);
-	}
-	
-	Assert(body.geom_id);
-	{
-		dGeomDestroy(body.geom_id);
-	}
-	
-	delete & body;
+	dCloseODE();
 }
 
 void physics::Singleton::Tick(double delta_time)
@@ -195,16 +166,4 @@ void physics::Singleton::OnContact(dContact * contact, dGeomID geom1, dGeomID ge
 	dBodyID body1 = dGeomGetBody(geom1);
 	dBodyID body2 = dGeomGetBody(geom2);
 	dJointAttach (c, body1, body2);
-}
-
-dBodyID physics::Singleton::CreateBody(sim::Entity & entity)
-{
-	dBodyID body = dBodyCreate(world);
-	dBodySetData(body, & entity);
-	return body;
-}
-
-namespace
-{
-	physics::Singleton singleton;
 }

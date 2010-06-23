@@ -13,12 +13,6 @@
 #include "defs.h"
 
 
-namespace sim
-{
-	class Entity;
-}
-
-
 namespace physics
 {
 	class SphericalBody;
@@ -26,13 +20,16 @@ namespace physics
 
 	class Body
 	{
-		friend class ::physics::Singleton;
-		
 	protected:
-		Body(sim::Entity & entity, dBodyID body_id, dGeomID geom_id);
-		virtual ~Body();
+		Body(dGeomID init_geom_id, bool movable);
 	public:
-				
+		virtual ~Body();
+		
+		template<typename DATA_TYPE> void SetData(DATA_TYPE * init_data)
+		{
+			data = reinterpret_cast<void *> (init_data);
+		}
+		
 		virtual void SetDensity(Scalar density) = 0;
 
 		Vector3 const & GetPosition() const;
@@ -52,12 +49,12 @@ namespace physics
 	private:
 		
 		// Data
-		sim::Entity & entity;
+		void * data;
 
 		// ODE objects
 	protected:
-		dBodyID body_id;
 		dGeomID geom_id;
+		dBodyID body_id;
 	};
 	
 }

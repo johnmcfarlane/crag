@@ -13,8 +13,8 @@
 #include "PlanetaryBody.h"
 
 
-sim::PlanetaryBody::PlanetaryBody(sim::Entity & entity, dBodyID body_id, dGeomID geom_id)
-: SphericalBody(entity, body_id, geom_id)
+sim::PlanetaryBody::PlanetaryBody(physics::Scalar radius)
+: physics::SphericalBody(false, radius)
 {
 }
 

@@ -12,6 +12,8 @@
 #include "UserInput.h"
 #include "Controller.h"
 
+#include "physics/SphericalBody.h"
+
 #include "gfx/Light.h"
 
 #include "core/Vector3.h"
@@ -56,7 +58,7 @@ namespace sim
 		void ApplyImpulse();
 		
 		Vector3 impulses[2];	// [pos/rot]
-		physics::SphericalBody * sphere;
+		physics::SphericalBody sphere;
 		Scalar speed;
 		Scalar speed_factor;
 		gfx::Light light;

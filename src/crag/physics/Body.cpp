@@ -11,19 +11,41 @@
 #include "pch.h"
 
 #include "Body.h"
+#include "Singleton.h"
 
 
-physics::Body::Body(sim::Entity & init_entity, dBodyID init_body_id, dGeomID init_geom_id)
-: entity(init_entity)
-, body_id(init_body_id)
+physics::Body::Body(dGeomID init_geom_id, bool movable)
+: data(nullptr)
 , geom_id(init_geom_id)
 {
-	dGeomSetBody(geom_id, body_id);
+	// body_id
+	if (movable)
+	{
+		Singleton & singleton = Singleton::Get();
+		body_id = dBodyCreate(singleton.world);
+
+		dBodySetData(body_id, this);
+		dBodySetGravityMode(body_id, false);
+		dGeomSetBody(geom_id, body_id);
+	}
+	else 
+	{
+		body_id = 0;
+	}
+	
 	dGeomSetData(geom_id, this);
 }
 
 physics::Body::~Body()
 {
+	if (body_id != 0)
+	{
+		dBodyDestroy(body_id);
+	}
+	
+	Assert(geom_id != 0);
+
+	dGeomDestroy(geom_id);
 }
 
 physics::Vector3 const & physics::Body::GetPosition() const
