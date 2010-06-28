@@ -13,19 +13,28 @@
 #include "physics/SphericalBody.h"
 
 
+namespace form
+{
+	class Formation;
+}
+
+
 namespace sim
 {
+	// Planets are roughly sphere shaped, 
+	// so a spherical body is used to detect near collision,
+	// then PlanetaryBody does the work of colliding with the planet's surface.
 	
 	class PlanetaryBody : public physics::SphericalBody
 	{
-		friend class ::physics::Singleton;
-		
 	public:
-		PlanetaryBody(physics::Scalar radius);
+		PlanetaryBody(form::Formation const & formation, physics::Scalar radius);
 		
 	private:
 		virtual bool OnCollision(Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere);
+		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
+		
+		form::Formation const & formation;
 	};
 	
 }

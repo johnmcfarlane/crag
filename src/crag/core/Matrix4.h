@@ -210,7 +210,7 @@ template<typename S> Matrix4<S> Inverse(Matrix4<S> const & matrix)
 		return matrix;		// The matrix is not invertible! Singular case!
 	}
 	
-	S inv_det = Inv(det);
+	S inv_det = Inverse(det);
 	
 	inverse[0][0] = matrix.CoFactor(0,0) * inv_det;
 	inverse[1][0] = matrix.CoFactor(0,1) * inv_det;

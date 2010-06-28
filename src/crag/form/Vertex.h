@@ -10,7 +10,7 @@
  
 #pragma once
 
-#include "core/Vector3.h"
+#include "defs.h"
 
 //#define FORM_VERTEX_COLOR
 #if defined(FORM_VERTEX_COLOR)
@@ -27,7 +27,7 @@ namespace form
 	{
 	public:
 		// Attributes
-		Vector3f pos;
+		Vector3 pos;
 
 #if defined(FORM_VERTEX_COLOR)
 		gfx::Color4b color;

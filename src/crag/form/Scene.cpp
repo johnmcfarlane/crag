@@ -13,6 +13,7 @@
 #include "Scene.h"
 
 #include "Formation.h"
+#include "FormationFunctor.h"
 #include "Mesh.h"
 #include "Shader.h"
 
@@ -138,6 +139,23 @@ void form::Scene::Tick(FormationSet const & formation_set)
 	TickModels(formation_set);
 }
 
+void form::Scene::ForEachFormation(FormationFunctor & f) const
+{
+	f.SetSceneOrigin(origin);
+
+	node_buffer.LockTree();
+	
+	for (form::Scene::FormationMap::const_iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	{
+		form::Scene::FormationPair const & pair = * i;
+		Formation const & formation = * pair.first;
+		Model const & model = pair.second;
+		f(formation, model);
+	}
+	
+	node_buffer.UnlockTree();
+}
+
 void form::Scene::GenerateMesh(Mesh & mesh) 
 {
 	node_buffer.GenerateMesh(mesh);
@@ -151,6 +169,14 @@ int form::Scene::GetNumQuaternaAvailable() const
 void form::Scene::SetNumQuaternaAvailable(int n)
 {
 	node_buffer.SetNumQuaternaAvailable(n);
+}
+
+form::Model const & form::Scene::GetModel(Formation const & formation) const
+{
+	//return formation_map[& formation];
+	FormationMap::const_iterator i = formation_map.find (& formation);
+	Assert(i != formation_map.end());
+	return i->second;
 }
 
 // Currently just updates the formation_map contents.
@@ -210,11 +236,8 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 
 void form::Scene::ResetFormations()
 {
-	/*for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
-		FormationPair & pair = * i;
-		ResetModel(pair);
-	}*/
-	
+	node_buffer.LockTree();
+
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
 		FormationPair & pair = * i;
 		DeinitModel(pair);
@@ -226,6 +249,8 @@ void form::Scene::ResetFormations()
 		FormationPair & pair = * i;
 		InitModel(pair);
 	}
+
+	node_buffer.UnlockTree();
 
 	VerifyObject(* this);
 }

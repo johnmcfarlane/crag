@@ -32,11 +32,10 @@ namespace
 // Planet
 
 sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius, int init_seed)
-	: Entity()
-	, body(init_radius)
-	, formation(factory, init_radius)
+: Entity()
+, formation(factory, init_radius)
+, body(formation, init_radius)
 {
-	body.SetData(this);
 	body.SetPosition(init_pos);
 	
 	Random rnd(init_seed);

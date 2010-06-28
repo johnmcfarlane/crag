@@ -53,7 +53,7 @@ public:
 		}
 		Assert(NearEqual(LengthSq(to_camera), 1.f, 1.02f));
 		
-#if 1
+#if 0
 		// towardness: -1=facing away, 1=facing towards
 		// purpose: favour polys which are facing towards the camera
 		float camera_dp = DotProduct(to_camera, node.normal);

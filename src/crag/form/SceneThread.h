@@ -29,6 +29,7 @@ namespace sim
 
 namespace form
 {
+	
 	// The scene is the workhorse of the formation system. 
 	// SceneThread provides a thread-safe interface to the rest of the system.
 	// Optionally, it can also run the scene without multithreading.
@@ -52,7 +53,8 @@ namespace form
 		int GetNumQuaternaAvailable() const;
 		
 		void Tick();
-		bool PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & mesh);
+		void ForEachFormation(FormationFunctor & f) const;
+		bool PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin);
 		void ResetOrigin();
 		bool PostResetFreeze() const;
 		

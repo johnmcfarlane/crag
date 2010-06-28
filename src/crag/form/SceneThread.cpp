@@ -127,6 +127,11 @@ void form::SceneThread::Tick()
 	}
 }
 
+void form::SceneThread::ForEachFormation(FormationFunctor & f) const
+{
+	scene.ForEachFormation(f);
+}
+
 bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin)
 {
 	Assert(IsMainThread());

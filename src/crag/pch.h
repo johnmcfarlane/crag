@@ -91,9 +91,7 @@
 
 #include "core/debug.h"
 #include "core/floatOps.h"
-#include "core/Matrix.h"
 #include "core/memory.h"
-#include "core/Sphere.h"
 #include "core/Vector.h"
 
 

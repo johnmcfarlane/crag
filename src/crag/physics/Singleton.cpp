@@ -156,13 +156,13 @@ void physics::Singleton::OnCollision(dGeomID geom1, dGeomID geom2)
 		//it->fdir1[2] = 0;
 		//it->fdir1[3] = 0;
 		
-		OnContact(it, geom1, geom2);
+		OnContact(* it, geom1, geom2);
 	}
 }
 
-void physics::Singleton::OnContact(dContact * contact, dGeomID geom1, dGeomID geom2)
+void physics::Singleton::OnContact(dContact const & contact, dGeomID geom1, dGeomID geom2)
 {
-	dJointID c = dJointCreateContact (world, contact_joints, contact);
+	dJointID c = dJointCreateContact (world, contact_joints, & contact);
 	dBodyID body1 = dGeomGetBody(geom1);
 	dBodyID body2 = dGeomGetBody(geom2);
 	dJointAttach (c, body1, body2);

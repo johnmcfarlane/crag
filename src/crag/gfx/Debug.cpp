@@ -50,13 +50,13 @@ public:
 	
 	void Draw(bool hidden) const
 	{
-		glBegin(mode);
+		gl::Begin(mode);
 		for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
 		{
 			Point const & point = * it;
 			point.Draw(hidden);
 		}
-		glEnd();
+		gl::End();
 	}
 	
 private:

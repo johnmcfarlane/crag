@@ -18,8 +18,6 @@ namespace physics
 	
 	class SphericalBody : public Body
 	{
-		friend class ::physics::Singleton;
-		
 	public:
 		SphericalBody(bool movable, Scalar radius);
 		
@@ -30,7 +28,7 @@ namespace physics
 		
 	protected:
 		virtual bool OnCollision(Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere);
+		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
 	};
 
 }

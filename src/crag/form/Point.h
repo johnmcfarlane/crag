@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "core/Vector3.h"
+#include "defs.h"
 
 namespace form
 {
@@ -18,7 +18,9 @@ namespace form
 	
 	// This class stores the position of corners/mid-points in Nodes.
 	// They also remember their vertex in the currently generated mesh.
-	class Point : public Vector3f
+	
+	// TODO: form/defs.f with Vector3.
+	class Point : public Vector3
 	{
 	public:
 		Point();

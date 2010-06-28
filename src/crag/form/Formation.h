@@ -36,7 +36,6 @@ namespace form
 		// collision
 		void GenerateCollisionMesh(Mesh & mesh, sim::Sphere3 const & sphere) const;
 		
-	public:
 		//DUMP_OPERATOR_DECLARATION(Formation);
 		
 #if VERIFY

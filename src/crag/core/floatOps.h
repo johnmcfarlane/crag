@@ -106,14 +106,14 @@ inline double Sqrt(double square)
 	return sqrt(square);
 }
 
-template<typename T> T Inv(T a)
+template<typename T> T Inverse (T a)
 {
 	return static_cast<T>(1) / a;
 }
 
-template<typename T> T InvSqrt(T a)
+template<typename T> T InvSqrt (T a)
 {
-	return Inv(Sqrt(a));
+	return Inverse (Sqrt (a));
 }
 
 #if defined(__ppc__)

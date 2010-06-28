@@ -169,15 +169,37 @@ void NodeBuffer::SetNumQuaternaAvailable(int n)
 {
 	Quaterna const * const new_rankings_available_end = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
 	
-	if (new_rankings_available_end > quaterna_available_end) {
+	if (new_rankings_available_end == quaterna_available_end) 
+	{
+		return;
+	}
+	
+	LockTree();
+
+	if (new_rankings_available_end > quaterna_available_end) 
+	{
 		IncreaseAvailableRankings(new_rankings_available_end);
 	}
-	else if (new_rankings_available_end < quaterna_available_end) {
-		if (! DecreaseAvailableRankings(new_rankings_available_end)) {
+	else
+	{
+		if (! DecreaseAvailableRankings(new_rankings_available_end)) 
+		{
 			std::sort(quaterna, quaterna_available_end, SortByScoreExtreme);
 			DecreaseAvailableRankings(new_rankings_available_end);
 		}
 	}
+
+	UnlockTree();
+}
+
+void NodeBuffer::LockTree() const
+{
+	tree_mutex.Lock();
+}
+
+void NodeBuffer::UnlockTree() const
+{
+	tree_mutex.Unlock();
 }
 
 void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
@@ -199,6 +221,11 @@ void NodeBuffer::OnReset()
 {
 	points.FastClear();
 	InitQuaterna(quaterna_available_end);
+	
+	// The reason this doesn't work is because 
+	// the count isn't increased until AFTER the reset period is ended.
+	//nodes_available_end = nodes;
+	//quaterna_available_end = quaterna;
 	
 /*	// Half the number of quaterna for safe measure.
 	int num_quaterna_available = quaterna_available_end - quaterna;
@@ -433,6 +460,8 @@ bool NodeBuffer::ExpandNode(Node & node)
 		// Probably, a child is too small to be represented using float accuracy.
 		return false;
 	}
+	
+	LockTree();
 
 	// Deinit children.
 	if (worst_quaterna->IsInUse()) {
@@ -448,6 +477,8 @@ bool NodeBuffer::ExpandNode(Node & node)
 
 	node.children = worst_children;
 	InitChildPointers(node);
+	
+	UnlockTree();
 	
 	worst_quaterna->parent_score = score;
 	BubbleSortUp(worst_quaterna);
@@ -853,7 +884,7 @@ template <class FUNCTOR> void NodeBuffer::ForEachNode_Sub(FUNCTOR & f, Node * be
 			f.OnPrefetchPass(* iterator);
 		}
 	}
-
+	
 	// Now do the work.
 	for (Node * iterator = begin; iterator != end; ++ iterator) {
 		f(* iterator);

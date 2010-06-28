@@ -25,11 +25,6 @@ namespace physics
 	public:
 		virtual ~Body();
 		
-		template<typename DATA_TYPE> void SetData(DATA_TYPE * init_data)
-		{
-			data = reinterpret_cast<void *> (init_data);
-		}
-		
 		virtual void SetDensity(Scalar density) = 0;
 
 		Vector3 const & GetPosition() const;
@@ -45,16 +40,11 @@ namespace physics
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
 		virtual bool OnCollision(Body & that_body) = 0;
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere);
-	private:
+		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
 		
-		// Data
-		void * data;
-
-		// ODE objects
 	protected:
-		dGeomID geom_id;
-		dBodyID body_id;
+		dGeomID geom_id;	// the collision info
+		dBodyID body_id;	// the dynaical info
 	};
 	
 }

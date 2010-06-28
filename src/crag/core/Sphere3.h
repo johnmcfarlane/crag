@@ -24,6 +24,10 @@ public:
 	
 	Sphere3(Vector const & c, S r) : Sphere<Vector, S>(c, r) { }
 	
+	// templated copy constructor - can take a Sphere3 of a different type
+	template<typename I> Sphere3(Sphere3<I> const & rhs) 
+	: Base(rhs.center, rhs.radius) { }
+	
 	S Area() const {
 		return static_cast<S>(PI * 4.) * Square(Base::GetRadius());
 	}

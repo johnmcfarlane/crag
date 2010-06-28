@@ -80,9 +80,9 @@ namespace form
 		
 		Triplet triple[3];		// 36	/	72 72
 
-		Vector3f center;		// 12	/	12
+		Vector3 center;			// 12	/	12
 		float area;				//  4	/	 4
-		Vector3f normal;		// 12	/	12
+		Vector3 normal;			// 12	/	12
 		float score;			//  4	/	 4 32
 	};	// 80	/
 	

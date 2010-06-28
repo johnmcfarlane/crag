@@ -15,8 +15,7 @@
 
 
 physics::Body::Body(dGeomID init_geom_id, bool movable)
-: data(nullptr)
-, geom_id(init_geom_id)
+: geom_id(init_geom_id)
 {
 	// body_id
 	if (movable)
@@ -108,7 +107,7 @@ void physics::Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & p
 	dBodyAddForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool physics::Body::OnCollisionWithSphericalBody(SphericalBody & that_sphere)
+bool physics::Body::OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id)
 {
 	// There is no custom code associated with this type of body to deal with collisions with spheres.
 	return false;

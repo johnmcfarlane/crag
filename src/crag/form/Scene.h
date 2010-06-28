@@ -26,6 +26,7 @@ namespace form
 {
 	typedef std::set<class Formation *> FormationSet;
 	
+	class FormationFunctor;
 	class MeshBufferObject;
 	
 	// A representation (view?) of all the existing formations.
@@ -35,6 +36,10 @@ namespace form
 	class Scene
 	{
 		friend class ::ProcessNodeFunctor;
+		
+		// Types for keeping track of a formation using a model.
+		typedef std::map<Formation const *, Model> FormationMap;
+		typedef FormationMap::value_type FormationPair;
 		
 	public:
 		
@@ -59,11 +64,14 @@ namespace form
 		void SetOrigin(sim::Vector3 const & o);
 		
 		void Tick(FormationSet const & formation_set);
+		void ForEachFormation(FormationFunctor & f) const;
 		void GenerateMesh(class Mesh & mesh);
 		
 		// Accessors for nodes.
 		int GetNumQuaternaAvailable() const;
 		void SetNumQuaternaAvailable(int n);
+		
+		Model const & GetModel(Formation const & formation) const;
 		
 	private:
 		
@@ -73,20 +81,11 @@ namespace form
 		void TickModels(FormationSet const & formation_set);
 		void ResetFormations();
 
-		typedef std::map<Formation const *, Model> FormationMap;
-		typedef FormationMap::value_type FormationPair;
-
 		void TickModel(Model & model);
 
 		void InitModel(FormationPair & pair);
 		void DeinitModel(FormationPair & pair);
 		void ResetModel(FormationPair & pair);
-		//bool ResetFormationVertices(FormationPair & pair);
-		
-		void GenerateMesh(FormationPair & pair, Mesh & mesh);
-		
-		//int CountChildNodes() const;
-		//int CountChildNodes(Model const & tree) const;
 		
 		
 		///////////////////////////////////////////////////////

@@ -142,6 +142,7 @@ void form::Manager::Tick()
 	
 	if (regenerating)
 	{
+		// TODO: WTF?
 		if (true /* done regenerating */)
 		{
 			regenerating = false;
@@ -149,6 +150,11 @@ void form::Manager::Tick()
 	}
 	
 	scene_thread->Tick();
+}
+
+void form::Manager::ForEachFormation(FormationFunctor & f) const
+{
+	scene_thread->ForEachFormation(f);
 }
 
 bool form::Manager::PollMesh()

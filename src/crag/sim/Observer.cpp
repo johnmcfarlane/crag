@@ -51,7 +51,6 @@ sim::Observer::Observer()
 , speed_factor(camera_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
 {
-	sphere.SetData<Observer>(this);
 	sphere.SetDensity(camera_density);
 	sphere.SetLinearDamping(camera_linear_damping);
 	sphere.SetAngularDamping(camera_angular_damping);
@@ -115,7 +114,8 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 
 void sim::Observer::SetSpeedFactor(int _speed_factor)
 {
-	speed_factor = static_cast<float>(Power(Power(10., .3), static_cast<double>((_speed_factor << 1) + 1)));
+	// TODO: Specify a range in config.
+	speed_factor = static_cast<float>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
 void sim::Observer::Tick()

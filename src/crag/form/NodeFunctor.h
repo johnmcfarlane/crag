@@ -16,6 +16,7 @@ namespace form {
 	
 	class Node;
 
+	// Base/example class of a functor which is called for each node in the NodeBuffer.
 	class NodeFunctor
 	{
 	public:

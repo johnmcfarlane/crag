@@ -38,6 +38,7 @@ namespace gfx
 
 namespace form {
 
+	class FormationFunctor;
 	class Formation;
 	class SceneThread;
 	
@@ -64,6 +65,7 @@ namespace form {
 		
 		void Launch();
 		void Tick();
+		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh();
 
 		// Called by the Renderer.

@@ -56,6 +56,9 @@ namespace form
 		// Must be a multiple of four.
 		void SetNumQuaternaAvailable(int n);	
 		
+		void LockTree() const;
+		void UnlockTree() const;
+		
 		void Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir);
 		void OnReset();
 	private:
@@ -117,6 +120,10 @@ namespace form
 		
 		// Pool of vertices from which to take the corners of nodes.
 		PointBuffer points;
+		
+		// When locked, the structure of the node trees cannot be changed;
+		// No new children can be added and no old ones removed.
+		mutable core::Mutex tree_mutex;
 	};
 	
 }
