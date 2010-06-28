@@ -17,9 +17,9 @@
 #include "physics/Singleton.h"
 #include "physics/SphericalBody.h"
 
-#include "core/VectorOps.h"
-#include "core/MatrixOps.h"
-#include "core/Vector4.h"
+#include "geom/VectorOps.h"
+#include "geom/MatrixOps.h"
+#include "geom/Vector4.h"
 #include "core/ConfigEntry.h"
 
 #include "gfx/Debug.h"

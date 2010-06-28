@@ -12,7 +12,7 @@
 
 #include "Color.h"
 
-#include "core/Vector2.h"
+#include "geom/Vector2.h"
 
 
 struct SDL_PixelFormat;

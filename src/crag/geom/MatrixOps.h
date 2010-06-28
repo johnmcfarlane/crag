@@ -11,8 +11,8 @@
 #pragma once
 
 #include "Matrix4.h"
-#include "core/Vector4.h"
-#include "core/VectorOps.h"
+#include "geom/Vector4.h"
+#include "geom/VectorOps.h"
 
 
 // 50% chance this is wrong.

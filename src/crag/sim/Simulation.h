@@ -14,7 +14,7 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 
 #include "core/App.h"
 

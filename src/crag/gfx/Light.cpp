@@ -16,7 +16,7 @@
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 
 
 gfx::Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float c, bool init_shadows)

@@ -2,10 +2,11 @@
 {
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecturePreference = i386;
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeExecutable = 52F3A2E111A796DC00385922 /* crag */;
 		activeTarget = 8D1107260486CEB800E47090 /* crag */;
 		addToTargets = (
+			8D1107260486CEB800E47090 /* crag */,
 		);
 		breakpoints = (
 		);
@@ -218,9 +219,9 @@
 	};
 	526D03A011BF658500F025A9 /* profile.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {853, 650}}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 650}}";
 			sepNavSelRange = "{825, 0}";
-			sepNavVisRange = "{28, 797}";
+			sepNavVisRange = "{28, 682}";
 		};
 	};
 	526D03A111BF658500F025A9 /* profile.h */ = {
@@ -240,9 +241,9 @@
 	};
 	5277A98F11B5EA0B00ABBC7F /* App.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {936, 1274}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 758}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 1261}}";
+			sepNavSelRange = "{211, 0}";
+			sepNavVisRange = "{0, 737}";
 		};
 	};
 	5278B8DE11D5048500E2F375 /* defs.h */ = {
@@ -560,20 +561,11 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
-	52F3A30911A7979400385922 /* ConfigEntry.cpp */ = {
+	52F3A30611A7979400385922 /* COPYING */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1221, 3315}}";
-			sepNavSelRange = "{596, 12}";
-			sepNavVisRange = "{0, 949}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
-		};
-	};
-	52F3A30A11A7979400385922 /* ConfigEntry.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {853, 1417}}";
-			sepNavSelRange = "{2300, 0}";
-			sepNavVisRange = "{0, 927}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 8814}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1839}";
 		};
 	};
 	52F3A30B11A7979400385922 /* ConfigManager.cpp */ = {
@@ -607,25 +599,10 @@
 	};
 	52F3A30F11A7979400385922 /* floatOps.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1221, 2886}}";
-			sepNavSelRange = "{1880, 0}";
-			sepNavVisRange = "{1419, 627}";
+			sepNavIntBoundsRect = "{{0, 0}, {942, 2899}}";
+			sepNavSelRange = "{1693, 0}";
+			sepNavVisRange = "{1595, 473}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
-		};
-	};
-	52F3A31111A7979400385922 /* Matrix4.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 3458}}";
-			sepNavSelRange = "{5828, 0}";
-			sepNavVisRange = "{5709, 1261}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
-		};
-	};
-	52F3A31211A7979400385922 /* MatrixOps.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {853, 533}}";
-			sepNavSelRange = "{230, 0}";
-			sepNavVisRange = "{0, 1070}";
 		};
 	};
 	52F3A31411A7979400385922 /* memory.h */ = {
@@ -665,21 +642,13 @@
 			sepNavVisRange = "{397, 529}";
 		};
 	};
-	52F3A31A11A7979400385922 /* Sphere.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 496}}";
-			sepNavSelRange = "{269, 1}";
-			sepNavVisRange = "{0, 272}";
-		};
-	};
-	52F3A31B11A7979400385922 /* Sphere3.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 533}}";
-			sepNavSelRange = "{634, 0}";
-			sepNavVisRange = "{3, 895}";
-		};
-	};
 	52F3A31C11A7979400385922 /* SphereOps.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = SphereOps.h;
+		path = /Users/john/Documents/workspace/crag/src/crag/core/SphereOps.h;
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {936, 988}}";
 			sepNavSelRange = "{1827, 0}";
@@ -691,29 +660,6 @@
 			sepNavIntBoundsRect = "{{0, 0}, {853, 572}}";
 			sepNavSelRange = "{449, 6}";
 			sepNavVisRange = "{16, 725}";
-		};
-	};
-	52F3A31F11A7979400385922 /* Vector2.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1221, 2483}}";
-			sepNavSelRange = "{1929, 0}";
-			sepNavVisRange = "{1207, 1262}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
-		};
-	};
-	52F3A32011A7979400385922 /* Vector3.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 3211}}";
-			sepNavSelRange = "{702, 0}";
-			sepNavVisRange = "{26, 834}";
-			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
-		};
-	};
-	52F3A32211A7979400385922 /* VectorOps.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 1430}}";
-			sepNavSelRange = "{1435, 0}";
-			sepNavVisRange = "{1129, 740}";
 		};
 	};
 	52F3A32411A7979400385922 /* CalculateNodeScoreFunctor.h */ = {
@@ -1122,8 +1068,8 @@
 	52F3A36C11A7979400385922 /* pch.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {942, 1664}}";
-			sepNavSelRange = "{2030, 0}";
-			sepNavVisRange = "{1724, 799}";
+			sepNavSelRange = "{1843, 0}";
+			sepNavVisRange = "{1686, 766}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};

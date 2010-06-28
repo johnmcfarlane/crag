@@ -12,8 +12,8 @@
 #pragma once
 
 #include "Vbo.h"
-#include "core/Vector2.h"
-#include "core/Vector3.h"
+#include "geom/Vector2.h"
+#include "geom/Vector3.h"
 
 
 namespace gl

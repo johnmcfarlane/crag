@@ -15,7 +15,7 @@
 #include "Node.h"
 
 #include "core/floatOps.h"
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 
 
 extern float camera_near;

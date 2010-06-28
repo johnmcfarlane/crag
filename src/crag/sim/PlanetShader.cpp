@@ -17,7 +17,7 @@
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
-#include "core/VectorOps.h"
+#include "geom/VectorOps.h"
 
 #include "gfx/Color.h"
 

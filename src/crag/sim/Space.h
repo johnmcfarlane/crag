@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "core/Matrix4.h"
+#include "geom/Matrix4.h"
 
 // TODO: Space is a terrible name.
 namespace Space 

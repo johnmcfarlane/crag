@@ -24,7 +24,7 @@
 
 #include "glpp/glpp.h"
 
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 
 #include <vector>
 

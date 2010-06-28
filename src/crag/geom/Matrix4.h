@@ -12,7 +12,7 @@
 #pragma once
 
 #include "floatOps.h"
-#include "core/Vector4.h"
+#include "geom/Vector4.h"
 
 
 // 4x4 matrix

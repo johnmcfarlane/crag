@@ -13,7 +13,7 @@
 #include "VertexBuffer.h"
 
 #include "core/memory.h"
-#include "core/VectorOps.h"
+#include "geom/VectorOps.h"
 
 
 form::VertexBuffer::VertexBuffer(int max_num_verts) 

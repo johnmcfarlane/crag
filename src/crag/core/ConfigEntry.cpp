@@ -15,7 +15,7 @@
 #if defined(ENABLE_CONFIG)
 
 #include "core/ConfigManager.h"
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 
 #include "gfx/Color.h"
 

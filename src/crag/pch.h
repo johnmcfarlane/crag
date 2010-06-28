@@ -92,7 +92,8 @@
 #include "core/debug.h"
 #include "core/floatOps.h"
 #include "core/memory.h"
-#include "core/Vector.h"
+
+#include "geom/Vector.h"
 
 
 //////////////////////////////////////////////////////////////////////

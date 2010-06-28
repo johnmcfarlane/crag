@@ -11,7 +11,7 @@
 #include "pch.h"
 
 #include "UserInput.h"
-#include "core/Vector2.h"
+#include "geom/Vector2.h"
 #include "Space.h"
 
 #include "core/App.h"

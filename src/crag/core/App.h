@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "core/Vector2.h"
+#include "geom/Vector2.h"
 
 #include "glpp/gl.h"
 

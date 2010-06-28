@@ -15,7 +15,7 @@
 #include "gfx/IndexBuffer.h"
 #include "form/VertexBuffer.h"
 #include "Entity.h"
-#include "core/VectorOps.h"
+#include "geom/VectorOps.h"
 #include "Firmament.h"
 
 #include "physics/Singleton.h"

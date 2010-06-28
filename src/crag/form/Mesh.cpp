@@ -14,7 +14,7 @@
 #include "form/Point.h"
 
 #include "core/Random.h"
-#include "core/VectorOps.h"
+#include "geom/VectorOps.h"
 
 
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)

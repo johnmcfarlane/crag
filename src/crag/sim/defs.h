@@ -15,11 +15,11 @@
 #error pch.h not included.
 #endif
 
-#include "core/Vector2.h"
-#include "core/Vector3.h"
-#include "core/Vector4.h"
-#include "core/Sphere3.h"
-#include "core/Matrix4.h"
+#include "geom/Vector2.h"
+#include "geom/Vector3.h"
+#include "geom/Vector4.h"
+#include "geom/Sphere3.h"
+#include "geom/Matrix4.h"
 
 
 namespace sim

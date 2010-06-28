@@ -14,8 +14,8 @@
 
 #include "sim/Space.h"
 
-#include "core/MatrixOps.h"
-#include "core/Sphere3.h"
+#include "geom/MatrixOps.h"
+#include "geom/Sphere3.h"
 
 
 // This matrix is ready-transposed for OpenGL.

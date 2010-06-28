@@ -11,7 +11,7 @@
 #pragma once
 
 #include "NSphere.h"
-#include "core/Vector3.h"
+#include "geom/Vector3.h"
 #include "floatOps.h"
 
 template<typename S> class Sphere3 : public Sphere<Vector3<S>, S>

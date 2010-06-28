@@ -13,7 +13,7 @@
 #include "form/Node.h"
 
 #include "core/Random.h"
-#include "core/VectorOps.h"
+#include "geom/VectorOps.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////

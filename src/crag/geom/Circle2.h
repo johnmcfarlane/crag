@@ -8,7 +8,7 @@
  */
 
 #include "Sphere.h"
-#include "core/Vector2.h"
+#include "geom/Vector2.h"
 
 template<typename S> class Circle2 : public Sphere<Vector2<S>, S>
 {

@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "core/Vector3.h"
-#include "core/Matrix4.h"
+#include "geom/Vector3.h"
+#include "geom/Matrix4.h"
 
 #include "ode/ode.h"
 

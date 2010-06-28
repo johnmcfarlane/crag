@@ -27,8 +27,8 @@
 #include "gfx/Debug.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Matrix4.h"
-#include "core/Vector2.h"
+#include "geom/Matrix4.h"
+#include "geom/Vector2.h"
 
 #include <sstream>
 #include <fstream>

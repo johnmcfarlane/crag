@@ -24,8 +24,8 @@
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
-#include "core/MatrixOps.h"
-#include "core/Sphere3.h"
+#include "geom/MatrixOps.h"
+#include "geom/Sphere3.h"
 
 
 #if ! defined(NDEBUG)
