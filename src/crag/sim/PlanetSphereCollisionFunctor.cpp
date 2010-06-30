@@ -12,64 +12,16 @@
 
 #include "PlanetSphereCollisionFunctor.h"
 
-#include "physics/Singleton.h"
-
+#include "form/ForEachNodeFace.h"
 #include "form/Formation.h"
 #include "form/Model.h"
 #include "form/RootNode.h"
-
-#include "gfx/Debug.h"
 
 #include "geom/SphereOps.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// PlanetCollisionFunctor members
-
-sim::PlanetCollisionFunctor::PlanetCollisionFunctor(form::Formation const & in_planet_formation, dGeomID in_planet_geom, dGeomID in_object_geom)
-: planet_formation(in_planet_formation)
-{
-	contact.geom.g1 = in_planet_geom;
-	contact.geom.g2 = in_object_geom;
-}
-
-void sim::PlanetCollisionFunctor::OnContact(Vector3 const & pos, Vector3 const & normal, Scalar depth)
-{
-	contact.surface.mode = dContactBounce /*| dContactSoftCFM*/;
-	contact.surface.mu = 1;				// used (by default)
-	contact.surface.bounce = .5f;		// used
-	contact.surface.bounce_vel = .1f;	// used
-	contact.geom.pos[0] = pos.x;
-	contact.geom.pos[1] = pos.y;
-	contact.geom.pos[2] = pos.z;
-	contact.geom.normal[0] = normal.x;
-	contact.geom.normal[1] = normal.y;
-	contact.geom.normal[2] = normal.z;
-	contact.geom.depth = depth;
-	
-	physics::Singleton & singleton = physics::Singleton::Get();
-	singleton.OnContact(contact, contact.geom.g1, contact.geom.g2);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // PlanetSphereCollisionFunctor members
-
-sim::PlanetSphereCollisionFunctor::Point::Point(form::Vector3 const * init_pos) 
-: pos(init_pos) 
-{ 
-}
-
-bool sim::PlanetSphereCollisionFunctor::Point::operator==(form::Vector3 const * rhs)
-{
-	return pos == rhs;
-}
-
-
-// Slightly hacky optimization:
-// This remembers the maximum point array size and reserves this much next time.
-int sim::PlanetSphereCollisionFunctor::max_num_points = 0;
-
 
 sim::PlanetSphereCollisionFunctor::PlanetSphereCollisionFunctor(form::Formation const & in_planet_formation, 
 																dGeomID in_planet_geom, 
@@ -81,8 +33,6 @@ sim::PlanetSphereCollisionFunctor::PlanetSphereCollisionFunctor(form::Formation 
 {
 	relative_sphere.radius = in_sphere.radius;
 	InitRelativePositions();
-	
-	points.reserve(max_num_points);
 }
 
 sim::PlanetSphereCollisionFunctor::~PlanetSphereCollisionFunctor()
@@ -102,10 +52,54 @@ void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_fo
 		return;
 	}
 	
+	// Step 1: 
 	form::RootNode const & root_node = in_model.root_node;
-	GatherPoints(root_node);
-	TestPoints();
-	SubmitPoints();
+	form::Node const * children = root_node.children;
+	if (children != nullptr)
+	{
+		GatherPoints(children[0]);
+		GatherPoints(children[1]);
+		GatherPoints(children[2]);
+		GatherPoints(children[3]);
+	}
+}
+
+void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal)
+{
+	Vector3 sa(a);
+	Vector3 sb(b);
+	Vector3 sc(c);
+	
+	Scalar planar_depth = sphere.radius - GetDistanceToSurface(sc, sb, sa);
+	if (planar_depth < 0)
+	{
+		return;
+	}
+	
+	Scalar intersection_depth;
+	if (Intersects(relative_sphere, sa, sb, sc, & intersection_depth))
+	{
+		// TODO: Triangle-line intersection. (Might already have this somewhere.)
+		// because sphere.center is the wrong position!
+		OnContact(sphere.center - Vector3(normal) * intersection_depth, normal, intersection_depth);
+		return;
+	}
+	
+	if (planar_depth > sphere.radius)
+	{
+		Vector3 tri_center = (sa + sb + sc) / 3.;
+		Vector3 to_tri = tri_center - relative_formation_center;
+		Vector3 to_sphere = relative_sphere.center - relative_formation_center;
+		if (DotProduct(to_tri, to_sphere) < 0)
+		{
+			// yikes! colliding with a face on the opposite side of the formation
+			return;
+		}
+		
+		// deep penetration :o
+		OnContact(sphere.center, normal, planar_depth);
+		return;
+	}
 }
 
 void sim::PlanetSphereCollisionFunctor::InitRelativePositions()
@@ -116,40 +110,21 @@ void sim::PlanetSphereCollisionFunctor::InitRelativePositions()
 
 void sim::PlanetSphereCollisionFunctor::GatherPoints(form::Node const & node) 
 {	
-	form::Node::Triplet const * t = node.triple;
-	form::Node::Triplet const * const end = t + 3;
-	while (t != end)
+	// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
+	if (CanTraverse(node))
 	{
-		form::Point const * mid_point = t->mid_point;
-		if (mid_point != nullptr)
+		if (node.children != nullptr)
 		{
-			AddPoint(mid_point);
-		}
-		
-		++ t;
-	}
-	
-	if (node.children != nullptr)
-	{
-		for (int i = 0; i < 4; ++ i)
-		{
-			form::Node const & child = node.children[i];
-			
-			// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
-			if (CanTraverse(child))
+			for (int i = 0; i < 4; ++ i)
 			{
+				form::Node const & child = node.children[i];
 				GatherPoints(child);
 			}
 		}
-	}
-}
-
-void sim::PlanetSphereCollisionFunctor::AddPoint(form::Vector3 const * point)
-{
-	PointSet::iterator i = find(points.begin(), points.end(), point);
-	if (i == points.end())
-	{
-		points.push_back(point);
+		else 
+		{
+			ForEachNodeFace(node, * this);
+		}
 	}
 }
 
@@ -172,106 +147,13 @@ bool sim::PlanetSphereCollisionFunctor::CanTraverse(form::Node const & node) con
 
 bool sim::PlanetSphereCollisionFunctor::IsInsideSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const
 {
+	return GetDistanceToSurface(j, k, l) < sphere.radius;
+}
+
+float sim::PlanetSphereCollisionFunctor::GetDistanceToSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const
+{
 	Vector3f normal = TriangleNormal(j, k, l);
 	Normalize(normal);
 	
-	return DotProduct(normal, relative_sphere.center - k) < sphere.radius;
-}
-
-void sim::PlanetSphereCollisionFunctor::TestPoints()
-{
-	// Before we start reducing the number of points, remember the maximum for next time.
-	int num_points = points.size();
-	if (num_points > max_num_points)
-	{
-		max_num_points = num_points;
-	}
-
-	// For all points gathered.
-	for (PointSet::iterator i = points.begin(); i != points.end(); )
-	{
-		Point & point = * i;
-		
-		// Test collision on point and if it fails,
-		if (! TestPoint(point))
-		{
-			// removed it (unordered).
-			point.pos = points.back().pos;
-			points.pop_back();
-		}
-		else 
-		{
-			++ i;
-		}
-	}
-}
-
-bool sim::PlanetSphereCollisionFunctor::TestPoint(Point & point)
-{
-	Vector3 point_pos = * point.pos;
-	Vector3 delta = relative_formation_center - point_pos;
-	Scalar t1, t2;
-
-	DebugDrawPoint(point);
-	
-	if (! GetIntersection(relative_sphere, point_pos, delta, t1, t2))
-	{
-		return false;
-	}
-	
-	if (t2 <= 0 || t1 >= 1)
-	{
-		return false;
-	}
-
-	// Calmp the collision numbers to the range that's within the line.
-	if (t1 < 0)
-	{
-		t1 = 0;
-	}
-	if (t2 > 1)
-	{
-		t2 = 1;
-	}
-
-	point.to_center = delta;
-	
-	point.range_t = t2 - t1;
-	Assert(point.range_t > 0);
-	
-	point.average_t = (t1 + t2) * .5;
-	
-	return true;
-}
-
-void sim::PlanetSphereCollisionFunctor::SubmitPoints() 
-{
-	Scalar inverse_num_points = 1.0 / points.size();
-	
-	for (PointSet::const_iterator i = points.begin(); i != points.end(); ++ i)
-	{
-		Point const & point = * i;
-
-		// The depth of the collision.
-		float l = Length(point.to_center);
-		Scalar depth = point.range_t * l;
-		Assert(depth <= sphere.radius * 2);
-		
-		// The center of the collision.
-		Vector3 relative_middle = Vector3(* point.pos) + point.to_center * point.average_t;
-		
-		Vector3 contact_point = form::SceneToSim(relative_middle, scene_origin);
-		
-		Vector3 normal = relative_sphere.center - contact_point;
-		Normalize(normal);
-		
-		OnContact(contact_point, normal, depth * inverse_num_points);
-	}
-}
-
-void sim::PlanetSphereCollisionFunctor::DebugDrawPoint(Point const & point) const
-{
-	gfx::Debug::AddLine(form::SceneToSim(Vector3(* point.pos), scene_origin), 
-						form::SceneToSim(relative_formation_center, 
-										 scene_origin));
+	return DotProduct(normal, relative_sphere.center - k);
 }

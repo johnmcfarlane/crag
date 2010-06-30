@@ -88,12 +88,6 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 	c.norm += normal;
 }
 
-/*void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c)
-{
-	Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
-	AddFace(a, b, c, FastNormalize(normal));
-}*/
-
 void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
 {
 	Vertex & vert_a = GetVertex(a);
@@ -103,13 +97,13 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & norma
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c)
+/*void form::Mesh::AddFace(Point & a, Point & b, Point & c)
 {
 	Vector3f normal = TriangleNormal(static_cast<Vector3f const &>(a), 
 									 static_cast<Vector3f const &>(b), 
 									 static_cast<Vector3f const &>(c));
 	AddFace(a, b, c, FastNormalize(normal));
-}
+}*/
 
 form::VertexBuffer & form::Mesh::GetVertices() 
 {

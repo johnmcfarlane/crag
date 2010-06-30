@@ -15,8 +15,9 @@
 #include "Node.h"
 
 
-namespace form {
-	
+namespace form 
+{
+	// forward-declarations
 	class Mesh;
 	
 	// TODO: I think the seams will go away if the rule is that a mid-point can only be used if the corresponding neighbour exists.
@@ -49,7 +50,8 @@ namespace form {
 		
 		void operator()(Node & node)
 		{
-			if (IsLeaf(node)) {
+			if (IsLeaf(node)) 
+			{
 				GenerateMesh(node);
 			}
 		}

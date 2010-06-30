@@ -34,13 +34,11 @@ bool sim::PlanetaryBody::OnCollision(Body & that_body)
 
 bool sim::PlanetaryBody::OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id)
 {
-#if MY_COLLISION_SOLUTION_WORKS
 	sim::Sphere3 sphere(that_sphere.GetPosition(), that_sphere.GetRadius());
 	PlanetSphereCollisionFunctor f(formation, geom_id, sphere, that_geom_id);
 	
 	form::Manager const & manager = form::Manager::Get();
 	manager.ForEachFormation(f);
-#endif
 	
 	return true;
 }
