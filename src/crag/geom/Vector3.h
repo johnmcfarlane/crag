@@ -111,7 +111,7 @@ template<typename Scalar> Vector3<Scalar> operator - (Vector3<Scalar> const & rh
 
 template<typename Scalar> Vector3<Scalar> operator - (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
 {
-	return Vector3<Scalar>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+	return ::Vector3<Scalar>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
 template<typename Scalar> Vector3<Scalar> operator + (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
