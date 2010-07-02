@@ -17,14 +17,13 @@
     <ClCompile Include="..\..\src\crag\core\debug.cpp" />
     <ClCompile Include="..\..\src\crag\core\memory.cpp" />
     <ClCompile Include="..\..\src\crag\core\Mutex.cpp" />
+    <ClCompile Include="..\..\src\crag\core\profile.cpp" />
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
+    <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp" />
     <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
+    <ClCompile Include="..\..\src\crag\form\FormationFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Image.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">form_image</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">form_image</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
     <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
     <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp" />
@@ -33,6 +32,7 @@
     <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
     <ClCompile Include="..\..\src\crag\form\Point.cpp" />
     <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\Polyhedron.cpp" />
     <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
     <ClCompile Include="..\..\src\crag\form\Scene.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">form_Scene</ObjectFileName>
@@ -41,7 +41,9 @@
     <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />
     <ClCompile Include="..\..\src\crag\form\Vertex.cpp" />
     <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\DebugGraphics.cpp" />
+    <ClCompile Include="..\..\src\crag\gfx\Debug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)gfxDebug</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\IndexBuffer.cpp" />
@@ -49,22 +51,25 @@
     <ClCompile Include="..\..\src\crag\gfx\Pov.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Renderer.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Scene.cpp" />
-    <ClCompile Include="..\..\src\crag\gfx\ShadowMap.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Skybox.cpp" />
     <ClCompile Include="..\..\src\crag\main.cpp" />
     <ClCompile Include="..\..\src\crag\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\src\crag\physics\Body.cpp" />
+    <ClCompile Include="..\..\src\crag\physics\Singleton.cpp" />
+    <ClCompile Include="..\..\src\crag\physics\SphericalBody.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Controller.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
     <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Observer.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\PhysicalBody.cpp" />
-    <ClCompile Include="..\..\src\crag\sim\Physics.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Planet.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PlanetaryBody.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PlanetCollisionFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\PlanetSphereCollisionFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Simulation.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
@@ -72,34 +77,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\core\App.h" />
-    <ClInclude Include="..\..\src\crag\core\Circle2.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
     <ClInclude Include="..\..\src\crag\core\debug.h" />
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
-    <ClInclude Include="..\..\src\crag\core\Matrix.h" />
-    <ClInclude Include="..\..\src\crag\core\Matrix4.h" />
-    <ClInclude Include="..\..\src\crag\core\MatrixOps.h" />
     <ClInclude Include="..\..\src\crag\core\memory.h" />
     <ClInclude Include="..\..\src\crag\core\Mutex.h" />
-    <ClInclude Include="..\..\src\crag\core\NSphere.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
+    <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
     <ClInclude Include="..\..\src\crag\core\Singleton.h" />
-    <ClInclude Include="..\..\src\crag\core\Sphere.h" />
-    <ClInclude Include="..\..\src\crag\core\Sphere3.h" />
-    <ClInclude Include="..\..\src\crag\core\SphereOps.h" />
+    <ClInclude Include="..\..\src\crag\core\TextureMapper.h" />
     <ClInclude Include="..\..\src\crag\core\Thread.h" />
-    <ClInclude Include="..\..\src\crag\core\Vector.h" />
-    <ClInclude Include="..\..\src\crag\core\Vector2.h" />
-    <ClInclude Include="..\..\src\crag\core\Vector3.h" />
-    <ClInclude Include="..\..\src\crag\core\Vector4.h" />
-    <ClInclude Include="..\..\src\crag\core\VectorOps.h" />
     <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\defs.h" />
     <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\ForEachNodeFace.h" />
     <ClInclude Include="..\..\src\crag\form\Formation.h" />
+    <ClInclude Include="..\..\src\crag\form\FormationFunctor.h" />
     <ClInclude Include="..\..\src\crag\form\GenerateMeshFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\Image.h" />
     <ClInclude Include="..\..\src\crag\form\Manager.h" />
     <ClInclude Include="..\..\src\crag\form\Mesh.h" />
     <ClInclude Include="..\..\src\crag\form\MeshBufferObject.h" />
@@ -110,6 +106,7 @@
     <ClInclude Include="..\..\src\crag\form\NodeTraversal.h" />
     <ClInclude Include="..\..\src\crag\form\Point.h" />
     <ClInclude Include="..\..\src\crag\form\PointBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\Polyhedron.h" />
     <ClInclude Include="..\..\src\crag\form\PolyTraversal.h" />
     <ClInclude Include="..\..\src\crag\form\Quaterna.h" />
     <ClInclude Include="..\..\src\crag\form\RootNode.h" />
@@ -118,8 +115,21 @@
     <ClInclude Include="..\..\src\crag\form\Shader.h" />
     <ClInclude Include="..\..\src\crag\form\Vertex.h" />
     <ClInclude Include="..\..\src\crag\form\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\crag\geom\Circle2.h" />
+    <ClInclude Include="..\..\src\crag\geom\Matrix.h" />
+    <ClInclude Include="..\..\src\crag\geom\Matrix4.h" />
+    <ClInclude Include="..\..\src\crag\geom\MatrixOps.h" />
+    <ClInclude Include="..\..\src\crag\geom\NSphere.h" />
+    <ClInclude Include="..\..\src\crag\geom\Sphere.h" />
+    <ClInclude Include="..\..\src\crag\geom\Sphere3.h" />
+    <ClInclude Include="..\..\src\crag\geom\SphereOps.h" />
+    <ClInclude Include="..\..\src\crag\geom\Vector.h" />
+    <ClInclude Include="..\..\src\crag\geom\Vector2.h" />
+    <ClInclude Include="..\..\src\crag\geom\Vector3.h" />
+    <ClInclude Include="..\..\src\crag\geom\Vector4.h" />
+    <ClInclude Include="..\..\src\crag\geom\VectorOps.h" />
     <ClInclude Include="..\..\src\crag\gfx\Color.h" />
-    <ClInclude Include="..\..\src\crag\gfx\DebugGraphics.h" />
+    <ClInclude Include="..\..\src\crag\gfx\Debug.h" />
     <ClInclude Include="..\..\src\crag\gfx\Font.h" />
     <ClInclude Include="..\..\src\crag\gfx\Image.h" />
     <ClInclude Include="..\..\src\crag\gfx\IndexBuffer.h" />
@@ -127,7 +137,6 @@
     <ClInclude Include="..\..\src\crag\gfx\Pov.h" />
     <ClInclude Include="..\..\src\crag\gfx\Renderer.h" />
     <ClInclude Include="..\..\src\crag\gfx\Scene.h" />
-    <ClInclude Include="..\..\src\crag\gfx\ShadowMap.h" />
     <ClInclude Include="..\..\src\crag\gfx\Skybox.h" />
     <ClInclude Include="..\..\src\crag\glpp\BufferObject.h" />
     <ClInclude Include="..\..\src\crag\glpp\debug.h" />
@@ -142,16 +151,21 @@
     <ClInclude Include="..\..\src\crag\glpp\Vbo.h" />
     <ClInclude Include="..\..\src\crag\glpp\Vbo_Types.h" />
     <ClInclude Include="..\..\src\crag\pch.h" />
+    <ClInclude Include="..\..\src\crag\physics\Body.h" />
+    <ClInclude Include="..\..\src\crag\physics\defs.h" />
+    <ClInclude Include="..\..\src\crag\physics\Singleton.h" />
+    <ClInclude Include="..\..\src\crag\physics\SphericalBody.h" />
     <ClInclude Include="..\..\src\crag\sim\Controller.h" />
     <ClInclude Include="..\..\src\crag\sim\defs.h" />
     <ClInclude Include="..\..\src\crag\sim\Entity.h" />
     <ClInclude Include="..\..\src\crag\sim\Firmament.h" />
     <ClInclude Include="..\..\src\crag\sim\FrequencyEstimator.h" />
     <ClInclude Include="..\..\src\crag\sim\Observer.h" />
-    <ClInclude Include="..\..\src\crag\sim\PhysicalBody.h" />
-    <ClInclude Include="..\..\src\crag\sim\Physics.h" />
     <ClInclude Include="..\..\src\crag\sim\Planet.h" />
+    <ClInclude Include="..\..\src\crag\sim\PlanetaryBody.h" />
+    <ClInclude Include="..\..\src\crag\sim\PlanetCollisionFunctor.h" />
     <ClInclude Include="..\..\src\crag\sim\PlanetShader.h" />
+    <ClInclude Include="..\..\src\crag\sim\PlanetSphereCollisionFunctor.h" />
     <ClInclude Include="..\..\src\crag\sim\Simulation.h" />
     <ClInclude Include="..\..\src\crag\sim\Space.h" />
     <ClInclude Include="..\..\src\crag\sim\Star.h" />

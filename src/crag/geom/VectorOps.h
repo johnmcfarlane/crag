@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "floatOps.h"
+#include "core/floatOps.h"
 
 
 template<typename V> V Normalized(V const & v)

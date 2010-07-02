@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "NSphere.h"
+#include "geom/NSphere.h"
 #include "geom/Vector3.h"
-#include "floatOps.h"
+#include "core/floatOps.h"
 
 template<typename S> class Sphere3 : public Sphere<Vector3<S>, S>
 {
