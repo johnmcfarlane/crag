@@ -108,3 +108,12 @@ template<typename S, typename V> S TriangleArea(V const & a, V const & b, V cons
 	return TriangleArea(ab, bc, ca);
 }
 
+// Distance from triangle, abc to point, p.
+// Result is signed. 
+template<typename S, typename V> S DistanceToSurface(V const & a, V const & b, V const & c, V const & p) 
+{
+	V normal = TriangleNormal(a, b, c);
+	Normalize(normal);
+	
+	return DotProduct(normal, p - b);
+}

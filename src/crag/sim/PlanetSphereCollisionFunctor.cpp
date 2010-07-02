@@ -70,27 +70,29 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 	Vector3 sb(b);
 	Vector3 sc(c);
 	
-	Scalar planar_depth = sphere.radius - GetDistanceToSurface(sc, sb, sa);
-	if (planar_depth < 0)
+	// If the sphere is completely clear of the infinite plan of the triangle,
+	Scalar planar_depth = DistanceToSurface<Scalar>(sa, sb, sc, Vector3(relative_sphere.center));
+	if (planar_depth < - sphere.radius)
+	{
+		// we're good. 
+		return;
+	}
+	
+	// One last check to see if we're 'in the zone' becuase the given triangle
+	// might have been put together by ForEachNodeFace.
+	if (! TouchesInfinitePyramid(sa, sb, sc))
 	{
 		return;
 	}
 	
-	Scalar intersection_depth;
-	if (Intersects(relative_sphere, sa, sb, sc, & intersection_depth))
-	{
-		// TODO: Triangle-line intersection. (Might already have this somewhere.)
-		// because sphere.center is the wrong position!
-		OnContact(sphere.center - Vector3(normal) * intersection_depth, normal, intersection_depth);
-		return;
-	}
-	
+	// The case where the sphere is completely within the surface. 
 	if (planar_depth > sphere.radius)
 	{
 		Vector3 tri_center = (sa + sb + sc) / 3.;
 		Vector3 to_tri = tri_center - relative_formation_center;
 		Vector3 to_sphere = relative_sphere.center - relative_formation_center;
-		if (DotProduct(to_tri, to_sphere) < 0)
+		Scalar dp = DotProduct(Normalized(to_tri), Normalized(to_sphere));
+		if (dp < 0)
 		{
 			// yikes! colliding with a face on the opposite side of the formation
 			return;
@@ -99,6 +101,16 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 		// deep penetration :o
 		OnContact(sphere.center, normal, planar_depth);
 		return;
+	}
+	
+	// Proper contact between triangle (not plane) and sphere.
+	Scalar intersection_depth;
+	if (Intersects(relative_sphere, sa, sb, sc, & intersection_depth))
+	{
+		//intersection_depth = planar_depth;
+		// TODO: Triangle-line intersection. (Might already have this somewhere.)
+		// because sphere.center is the wrong position!
+		OnContact(sphere.center + Vector3(normal) * (sphere.radius - intersection_depth), normal, intersection_depth);
 	}
 }
 
@@ -134,26 +146,13 @@ bool sim::PlanetSphereCollisionFunctor::CanTraverse(form::Node const & node) con
 	Vector3 a = node.GetCorner(0);
 	Vector3 b = node.GetCorner(1);
 	Vector3 c = node.GetCorner(2);
-	
-	if ( ! (IsInsideSurface(relative_formation_center, a, b) 
-			&& IsInsideSurface(relative_formation_center, b, c) 
-			&& IsInsideSurface(relative_formation_center, c, a)))
-	{
-		return false;
-	}
-	
-	return true;
+	return TouchesInfinitePyramid(a, b, c);
 }
 
-bool sim::PlanetSphereCollisionFunctor::IsInsideSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const
+bool sim::PlanetSphereCollisionFunctor::TouchesInfinitePyramid(Vector3 const & a, Vector3 const & b, Vector3 const & c) const
 {
-	return GetDistanceToSurface(j, k, l) < sphere.radius;
-}
-
-float sim::PlanetSphereCollisionFunctor::GetDistanceToSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const
-{
-	Vector3f normal = TriangleNormal(j, k, l);
-	Normalize(normal);
-	
-	return DotProduct(normal, relative_sphere.center - k);
+	Vector3f g;
+	return	Contains(relative_formation_center, a, b, relative_sphere) 
+		&&	Contains(relative_formation_center, b, c, relative_sphere) 
+		&&	Contains(relative_formation_center, c, a, relative_sphere);
 }

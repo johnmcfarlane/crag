@@ -30,7 +30,7 @@ namespace ANONYMOUS
 	CONFIG_DEFINE (camera_radius, float, 1);
 	CONFIG_DEFINE (camera_density, float, 1);
 	
-	CONFIG_DEFINE (camera_speed_factor, float, 100000);
+	CONFIG_DEFINE (camera_speed_factor, float, 631);
 
 	CONFIG_DEFINE (camera_linear_damping, float, 0.04f);
 	CONFIG_DEFINE (camera_angular_damping, float, 0.1f);
@@ -46,7 +46,7 @@ namespace ANONYMOUS
 
 sim::Observer::Observer()
 : Entity()
-, sphere(camera_radius, true)
+, sphere(true, camera_radius)
 , speed(0)
 , speed_factor(camera_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)

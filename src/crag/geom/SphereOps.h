@@ -11,6 +11,7 @@
 #pragma once
 
 #include "floatOps.h"
+#include "VectorOps.h"
 #include "NSphere.h"
 
 
@@ -36,6 +37,11 @@ template<typename V, typename S> bool Touches(Sphere<V, S> const & a, Sphere<V, 
 	return center_distance_squared <= Square(a.radius + b.radius);
 }
 
+// True iff triangle, abc contains sphere, s.
+template<typename V, typename S> bool Contains(V const & a, V const & b, V const & c, Sphere<V, S> const & s) 
+{
+	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
+}
 
 // Sphere-Ray Intersection
 // The ray is represented by start + delta * t

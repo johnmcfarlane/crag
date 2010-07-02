@@ -41,7 +41,7 @@ CONFIG_DEFINE (background_ambient_color, gfx::Color4f, gfx::Color4f(0.1f));
 CONFIG_DEFINE (init_culling, bool, true);
 CONFIG_DEFINE (init_lighting, bool, true);
 CONFIG_DEFINE (init_smooth_shading, bool, true);
-CONFIG_DEFINE (init_wireframe, bool, false);
+CONFIG_DEFINE (init_wireframe, bool, true);
 
 CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 

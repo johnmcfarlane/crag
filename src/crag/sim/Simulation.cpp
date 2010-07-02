@@ -311,61 +311,89 @@ bool sim::Simulation::HandleEvents()
 // returns false iff the program should quit.
 bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 {
-	if ((int)key_code >= (int)KEY_0 && key_code <= (int)KEY_9)
+	enum ModifierCombo 
 	{
-		int num = key_code - KEY_0;
-		if (num == 0) {
-			num = 10;
-		}
-		
-		observer->SetSpeedFactor(num);
-		return true;
-	}
-	
-	switch (key_code)
-	{
-		case KEY_ESCAPE:
-			return false;
-			
-		case KEY_RETURN:
-			if (app::IsKeyDown(KEY_LALT) || app::IsKeyDown(KEY_RALT))
-			{
-			}
-			else {
-				paused = ! paused;
-			}
-			break;
-			
-		case KEY_C:
-			renderer.ToggleCulling();
-			break;
-			
-		case KEY_F:
-			renderer.ToggleSmoothShading();
-			break;
-			
-		case KEY_G:
-			Universe::ToggleGravity();
-			break;
-			
-		case KEY_I:
-			formation_manager->ToggleSuspended();
-			break;
-			
-		case KEY_L:
-			renderer.ToggleLighting();
-			break;
-			
-		case KEY_O:
-			capture = ! capture;
-			break;
+		COMBO_NONE,
+		COMBO_SHIFT,
+		COMBO_CTRL,
+		COMBO_CTRL_SHIFT,
+		COMBO_ALT,
+		COMBO_ALT_SHIFT,
+		COMBO_ALT_CTRL,
+		COMBO_ALT_CTRL_SHIFT,
+	};
 
-		case KEY_P:
-			renderer.ToggleWireframe();
-			break;
+	int combo_map = COMBO_NONE;	
+	if (app::IsKeyDown(KEY_LSHIFT) || app::IsKeyDown(KEY_RSHIFT))
+	{
+		combo_map |= COMBO_SHIFT;
+	}
+	if (app::IsKeyDown(KEY_LCTRL) || app::IsKeyDown(KEY_RCTRL))
+	{
+		combo_map |= COMBO_CTRL;
+	}
+	if (app::IsKeyDown(KEY_LALT) || app::IsKeyDown(KEY_RALT))
+	{
+		combo_map |= COMBO_ALT;
+	}
+
+	switch (combo_map) 
+	{
+		case COMBO_NONE:
+		{
+			if ((int)key_code >= (int)KEY_0 && key_code <= (int)KEY_9)
+			{
+				int num = key_code - KEY_0;
+				if (num == 0) {
+					num = 10;
+				}
+				
+				observer->SetSpeedFactor(num);
+				return true;
+			}
 			
-		default:
+			switch (key_code)
+			{
+				case KEY_ESCAPE:
+					return false;
+					
+				case KEY_RETURN:
+					paused = ! paused;
+					break;
+					
+				case KEY_C:
+					renderer.ToggleCulling();
+					break;
+					
+				case KEY_F:
+					renderer.ToggleSmoothShading();
+					break;
+					
+				case KEY_G:
+					Universe::ToggleGravity();
+					break;
+					
+				case KEY_I:
+					formation_manager->ToggleSuspended();
+					break;
+					
+				case KEY_L:
+					renderer.ToggleLighting();
+					break;
+					
+				case KEY_O:
+					capture = ! capture;
+					break;
+					
+				case KEY_P:
+					renderer.ToggleWireframe();
+					break;
+					
+				default:
+					break;
+			}
 			break;
+		}
 	}
 	
 	return true;

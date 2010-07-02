@@ -30,6 +30,7 @@ namespace sim
 	////////////////////////////////////////////////////////////////////////////////
 	// PlanetSphereCollisionFunctor class
 	
+	// TODO: Replace all this nonsense with a new ODE type?
 	class PlanetSphereCollisionFunctor : public PlanetCollisionFunctor
 	{
 	public:
@@ -50,8 +51,7 @@ namespace sim
 
 		void GatherPoints(form::Node const & node);
 		bool CanTraverse(form::Node const & node) const;
-		bool IsInsideSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const;
-		float GetDistanceToSurface(Vector3 const & j, Vector3 const & k, Vector3 const & l) const;
+		bool TouchesInfinitePyramid(Vector3 const & a, Vector3 const & b, Vector3 const & c) const;
 		
 		//void DebugDrawPoint(Point const & point) const;
 		
