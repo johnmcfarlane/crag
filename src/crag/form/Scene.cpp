@@ -120,8 +120,6 @@ sim::Vector3 const & form::Scene::GetOrigin() const
 
 void form::Scene::SetOrigin(sim::Vector3 const & o) 
 {
-	VerifyObject(* this);
-
 	if (o != origin) 
 	{
 		origin = o;
@@ -129,8 +127,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 		ResetFormations();
 	}
-
-	VerifyObject(* this);
 }
 
 void form::Scene::Tick(FormationSet const & formation_set)
@@ -161,14 +157,19 @@ void form::Scene::GenerateMesh(Mesh & mesh)
 	node_buffer.GenerateMesh(mesh);
 }
 
-int form::Scene::GetNumQuaternaAvailable() const
+int form::Scene::GetNumQuaternaUsed() const
 {
-	return node_buffer.GetNumQuaternaAvailable();
+	return node_buffer.GetNumQuaternaUsed();
 }
 
-void form::Scene::SetNumQuaternaAvailable(int n)
+int form::Scene::GetNumQuaternaUsedTarget() const
 {
-	node_buffer.SetNumQuaternaAvailable(n);
+	return node_buffer.GetNumQuaternaUsedTarget();
+}
+
+void form::Scene::SetNumQuaternaUsedTarget(int n)
+{
+	node_buffer.SetNumQuaternaUsedTarget(n);
 }
 
 form::Model const & form::Scene::GetModel(Formation const & formation) const
@@ -251,16 +252,17 @@ void form::Scene::ResetFormations()
 	}
 
 	node_buffer.UnlockTree();
-
-	VerifyObject(* this);
 }
 
 void form::Scene::TickModel(Model & model)
 {
 	form::RootNode & root_node = model.root_node;
 	
-	if (root_node.IsExpandable()) {
+	if (root_node.IsExpandable()) 
+	{
+		VerifyObject(* this);		
 		node_buffer.ExpandNode(root_node);
+		VerifyObject(* this);
 	}
 }
 

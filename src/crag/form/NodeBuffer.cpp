@@ -66,21 +66,24 @@ namespace ANONYMOUS {
 NodeBuffer::NodeBuffer()
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
-, nodes_available_end(nodes)
+, nodes_used_end(nodes)
 , nodes_end(nodes + max_num_nodes)
 , quaterna(new Quaterna [max_num_quaterna])
-, quaterna_available_end(quaterna)
+, quaterna_used_end(quaterna)
+, quaterna_used_end_target(quaterna)
 , quaterna_end(quaterna + max_num_quaterna)
 , points(max_num_verts)
 {
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
+	
+	VerifyObject(* this);
 }
 
 NodeBuffer::~NodeBuffer()
 {
-	Assert(GetNumQuaternaAvailable() == 0);
+	Assert(GetNumQuaternaUsed() == 0);
 	
 	delete quaterna;
 
@@ -91,52 +94,56 @@ NodeBuffer::~NodeBuffer()
 #if VERIFY
 void NodeBuffer::Verify() const
 {
-	bool test_mid_decrease = true;
-	bool test_post_score_update = false;
-	
-	VerifyArrayElement(nodes_available_end, nodes, nodes_end + 1);	
-	VerifyArrayElement(quaterna_available_end, quaterna, quaterna_end + 1);	
+	Node const * nodes_used_end_target = nodes + (quaterna_used_end_target - quaterna) * 4;
+	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
+	VerifyArrayElement(nodes_used_end_target, nodes_used_end, nodes_end + 1);	
 
-	int num_nodes_available = nodes_available_end - nodes;
-	int num_quaterna_available = quaterna_available_end - quaterna;
+	VerifyArrayElement(quaterna_used_end, quaterna, quaterna_end + 1);	
+	VerifyArrayElement(quaterna_used_end_target, quaterna_used_end, quaterna_end + 1);	
 
-	VerifyTrue(num_nodes_available == num_quaterna_available * 4);
+	int num_nodes_used = nodes_used_end - nodes;
+	int num_quaterna_used = quaterna_used_end - quaterna;
+
+	VerifyTrue(num_nodes_used == num_quaterna_used * 4);
 	
 	//VerifyObject(points);
 	
-	VerifyTrue(quaterna <= quaterna_available_end);
-	for (Quaterna const * q = quaterna; q != quaterna_available_end; ++ q) {
+	for (Quaterna const * q = quaterna; q != quaterna_end; ++ q) 
+	{
 		Node const * n = q->nodes;
-		
-		if (test_mid_decrease) {
-			VerifyArrayElement(n, nodes, nodes_available_end);
-			VerifyArrayElement(q, quaterna, quaterna_available_end);
+
+		Node const * parent = q->nodes[0].parent;
+
+		if (q < quaterna_used_end)
+		{
+			VerifyArrayElement(n, nodes, nodes_used_end);
+			VerifyTrue(parent->score == q->parent_score);
+			
+			for (int i = 0; i < 4; ++ i)
+			{
+				form::Node const & sibling = q->nodes[i];
+				
+				// All four siblings should have the same parent.
+				VerifyTrue(q->nodes[i].parent == parent);
+				if (sibling.children != nullptr)
+				{
+					VerifyArrayElement(sibling.children, nodes, nodes_used_end);
+				}
+			}
 		}
-		
-		if (test_post_score_update) {
-			Node const * parent = q->nodes[0].parent;
-			if (parent != nullptr) {
-				VerifyTrue(parent->score == q->parent_score);
+		else 
+		{
+			VerifyTrue(n - nodes == (q - quaterna) * 4);
+			
+			for (int i = 0; i < 4; ++ i)
+			{
+				form::Node const & sibling = q->nodes[i];
+				
+				VerifyTrue(sibling.parent == nullptr);
+				VerifyTrue(sibling.children == nullptr);
 			}
 		}
 		
-		VerifyObject(* q);
-	}
-	
-	VerifyTrue(quaterna_available_end <= quaterna_end);
-	for (Quaterna const * q = quaterna_available_end; q != quaterna_end; ++ q) {
-		VerifyTrue(q->parent_score < 0);
-		
-		Node const * n = q->nodes;
-		
-		if (test_mid_decrease) {
-			VerifyArrayElement(n, nodes_available_end, nodes_end);
-			VerifyArrayElement(q, quaterna_available_end, quaterna_end);
-			VerifyTrue((n - nodes) == (q - quaterna) * 4);
-		}
-
-		VerifyTrue(n->parent == nullptr);
-
 		VerifyObject(* q);
 	}
 }
@@ -160,36 +167,42 @@ DUMP_OPERATOR_DEFINITION(form, NodeBuffer)
 }
 #endif
 
-int NodeBuffer::GetNumQuaternaAvailable() const
+int NodeBuffer::GetNumQuaternaUsed() const
 {
-	return quaterna_available_end - quaterna;
+	return quaterna_used_end - quaterna;
 }
 
-void NodeBuffer::SetNumQuaternaAvailable(int n)
+int NodeBuffer::GetNumQuaternaUsedTarget() const
 {
-	Quaterna const * const new_rankings_available_end = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
+	return quaterna_used_end_target - quaterna;
+}
+
+void NodeBuffer::SetNumQuaternaUsedTarget(int n)
+{
+	Quaterna * new_target = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
 	
-	if (new_rankings_available_end == quaterna_available_end) 
+	if (quaterna_used_end_target == new_target) 
 	{
 		return;
 	}
 	
-	LockTree();
-
-	if (new_rankings_available_end > quaterna_available_end) 
+	if (new_target > quaterna_used_end) 
 	{
-		IncreaseAvailableRankings(new_rankings_available_end);
+		IncreaseNodes(new_target);
 	}
 	else
 	{
-		if (! DecreaseAvailableRankings(new_rankings_available_end)) 
+		LockTree();
+		
+		if (! DecreaseNodes(new_target)) 
 		{
-			std::sort(quaterna, quaterna_available_end, SortByScoreExtreme);
-			DecreaseAvailableRankings(new_rankings_available_end);
+			Assert(false);
+			//std::sort(quaterna, quaterna_available_end, SortByScoreExtreme);
+			//DecreaseAvailableRankings(new_rankings_available_end);
 		}
+		
+		UnlockTree();
 	}
-
-	UnlockTree();
 }
 
 void NodeBuffer::LockTree() const
@@ -204,8 +217,6 @@ void NodeBuffer::UnlockTree() const
 
 void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
 {
-	//VerifyObject(*this);
-
 	UpdateNodeScores(relative_camera_pos, camera_dir);
 	UpdateParentScores();
 	SortNodes();
@@ -213,24 +224,19 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & cam
 	for (int timeout = 1; timeout; -- timeout) {
 		ChurnNodes();
 	}
-
-	//VerifyObject(*this);
 }
 
 void NodeBuffer::OnReset()
 {
 	points.FastClear();
-	InitQuaterna(quaterna_available_end);
+	InitQuaterna(quaterna_used_end);
+
+	nodes_used_end = nodes;
+	quaterna_used_end = quaterna;
 	
-	// The reason this doesn't work is because 
-	// the count isn't increased until AFTER the reset period is ended.
-	//nodes_available_end = nodes;
-	//quaterna_available_end = quaterna;
-	
-/*	// Half the number of quaterna for safe measure.
-	int num_quaterna_available = quaterna_available_end - quaterna;
-	num_quaterna_available = (num_quaterna_available + 1) >> 1;
-	quaterna_available_end = quaterna + num_quaterna_available;*/
+	// Half the target number of nodes.
+	// Probably not a smart idea.
+	//quaterna_used_end_target -= (quaterna_used_end_target - quaterna) >> 1;
 }
 
 void NodeBuffer::InitQuaterna(Quaterna const * end)
@@ -244,8 +250,6 @@ void NodeBuffer::InitQuaterna(Quaterna const * end)
 		iterator->parent_score = -1;
 		iterator->nodes = n;
 	}
-	
-	VerifyObject(* this);
 
 #if 0
 	// Update ranking parent score value.
@@ -272,22 +276,27 @@ void NodeBuffer::UpdateParentScores()
 	int fetch_ahead = 32;
 	
 	// Update ranking parent score value.
-	for (Quaterna * iterator = quaterna; iterator != quaterna_available_end; ++ iterator) {
+	for (Quaterna * iterator = quaterna; iterator != quaterna_used_end; ++ iterator) 
+	{
 		// fetch ahead quaterna->node->parent
 		Quaterna * to_fetch = iterator;
-		if ((to_fetch += fetch_ahead) < quaterna_available_end) {
+		if ((to_fetch += fetch_ahead) < quaterna_used_end) 
+		{
 			Node * parent = to_fetch->nodes[0].parent;
-			if (parent != nullptr) {
+			if (parent != nullptr) 
+			{
 				// parent
 				PrefetchObject(ref(parent));
 			}
 			
-			if ((to_fetch += fetch_ahead) < quaterna_available_end) {
+			if ((to_fetch += fetch_ahead) < quaterna_used_end) 
+			{
 				// node
 				PrefetchObject(to_fetch->nodes[0]);
 				
 				to_fetch += fetch_ahead;
-				if ((to_fetch += fetch_ahead) < quaterna_available_end) {
+				if ((to_fetch += fetch_ahead) < quaterna_used_end) 
+				{
 					// ranking
 					PrefetchObject(ref(to_fetch));
 				}
@@ -295,23 +304,20 @@ void NodeBuffer::UpdateParentScores()
 		}
 		
 		Node * parent = iterator->nodes[0].parent;
-		if (parent != nullptr) {
+		if (parent != nullptr) 
+		{
 			iterator->parent_score = parent->score;
 		}
 	}
-	
-	//VerifyObject(*this);
 }
 
 // Algorithm to sort nodes array. 
 // TODO: Exploit is_sorted somehow! 
 void NodeBuffer::SortNodes()
 {
-	//VerifyObject(*this);
-	
 #if 1
 	// Sure and steady ... and slow!
-	std::sort(quaterna, quaterna_available_end, SortByScore);
+	std::sort(quaterna, quaterna_used_end, SortByScore);
 	
 #else
 	// Since we only sort nodes in order to find the lowest-scoring nodes, 
@@ -380,14 +386,10 @@ void NodeBuffer::SortNodes()
 	
 //	num_rankings_recycled += num_rankings_recycled_this_tick;
 //	num_rankings_recycled_this_tick = 0;
-
-	//VerifyObject(*this);
 }
 
 bool NodeBuffer::ChurnNodes()
 {
-	//VerifyObject(*this);
-	
 	ExpandNodeFunctor f(* this);
 	ForEachNode(f);
 	
@@ -422,8 +424,6 @@ void NodeBuffer::GenerateMesh(Mesh & mesh)
 
 bool NodeBuffer::ExpandNode(Node & node) 
 {
-	//VerifyObject(*this);
-	
 	Assert(node.IsExpandable());
 	
 	// Get the score to pass to GetWorstQuaterna.
@@ -433,9 +433,11 @@ bool NodeBuffer::ExpandNode(Node & node)
 	// because that would cause a time paradox in the fabric of space.
 	float score = node.score;
 	Node * parent = node.parent;
-	if (parent != nullptr) {
+	if (parent != nullptr) 
+	{
 		float parent_score = parent->score;
-		if (parent_score < score) {
+		if (parent_score < score) 
+		{
 			score = parent_score;
 		}
 	}
@@ -709,50 +711,42 @@ void NodeBuffer::RepairChild(Node & child)
 	}
 }
 
-void NodeBuffer::IncreaseAvailableRankings(Quaterna const * new_quaterna_available_end)
+void NodeBuffer::IncreaseNodes(Quaterna * new_target)
 {
-	Assert (new_quaterna_available_end > quaterna_available_end);
-	Assert (new_quaterna_available_end <= quaterna_end);
-
-	while (quaterna_available_end < new_quaterna_available_end) {
-		Assert(! quaterna_available_end->IsInUse());
-
-		VerifyArrayElement(quaterna_available_end->nodes, nodes_available_end, nodes_end);
-		Assert(quaterna_available_end->nodes == nodes_available_end);
-		quaterna_available_end->nodes = nodes_available_end;
-		VerifyArrayElement(quaterna_available_end->nodes, nodes, nodes_end);
-		
-		++ quaterna_available_end;
-		nodes_available_end += 4;
-	}
+	Assert (new_target > quaterna_used_end);
+	Assert (new_target <= quaterna_end);
+	
+	quaterna_used_end_target = new_target;
 }
 
 // TODO: This can be improved a lot.
 // TODO: Should sweep all surviving quats first and do all the substitutions in the correct order.
 // TODO: That way, the unavailable quats can keep their node pointers.
-bool NodeBuffer::DecreaseAvailableRankings(Quaterna const * new_quaterna_available_end)
+bool NodeBuffer::DecreaseNodes(Quaterna * new_target)
 {
-	//VerifyObject(* this);
-
-	Assert (new_quaterna_available_end >= quaterna);
-	Assert (new_quaterna_available_end < quaterna_available_end);
+	Assert (new_target >= quaterna);
+	Assert (new_target < quaterna_used_end);
 	
-	Quaterna * old_quaterna_available_end = quaterna_available_end;
+	Quaterna * old_quaterna_used_end = quaterna_used_end;
 	
-	int new_num_quaterna = new_quaterna_available_end - quaterna;
+	int new_num_quaterna = new_target - quaterna;
 	int new_num_nodes = new_num_quaterna << 2;
 	Node * new_nodes_available_end = nodes + new_num_nodes;
 	Quaterna * replaced_quaterna = quaterna;
 	
 	bool success = true;
 
-	do {
-		Quaterna & q = quaterna_available_end [- 1];
+	do 
+	{
+		Quaterna & q = quaterna_used_end [- 1];
 		Node * children = q.nodes;
 		
-		if (q.IsInUse()) {
-			if (! q.IsLeaf()) {
+		if (q.IsInUse()) 
+		{
+			if (! q.IsLeaf()) 
+			{
 				success = false;
+				Assert(false);
 				break;
 			}
 			
@@ -767,13 +761,15 @@ bool NodeBuffer::DecreaseAvailableRankings(Quaterna const * new_quaterna_availab
 		Assert(children[3].children == 0);
 		
 		// Are the children of this out-of-range quaterna in range?
-		if (children < new_nodes_available_end) {
+		if (children < new_nodes_available_end) 
+		{
 			Node * replaced_children;
 			
 			// If so, find an in-range quaterna with out-of-range nodes.
-			while ((replaced_children = replaced_quaterna->nodes) < new_nodes_available_end) {
+			while ((replaced_children = replaced_quaterna->nodes) < new_nodes_available_end) 
+			{
 				++ replaced_quaterna;
-				Assert(replaced_quaterna < new_quaterna_available_end);
+				Assert(replaced_quaterna < new_target);
 			}
 			
 			SubstituteChildren(children, replaced_children);
@@ -785,13 +781,13 @@ bool NodeBuffer::DecreaseAvailableRankings(Quaterna const * new_quaterna_availab
 		}
 		Assert(q.nodes >= new_nodes_available_end);
 		
-		nodes_available_end -= 4;
-		-- quaterna_available_end;
-	}	while (quaterna_available_end > new_quaterna_available_end);
+		nodes_used_end -= 4;
+		-- quaterna_used_end;
+	}	while (quaterna_used_end > new_target);
 	
-	std::sort(quaterna_available_end, old_quaterna_available_end, SortByNodes);
+	quaterna_used_end_target = quaterna_used_end;
 	
-	//VerifyObject(* this);
+	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);
 	
 	return success;
 }
@@ -800,9 +796,15 @@ Quaterna * NodeBuffer::GetWorstQuaterna(float parent_score)
 {
 	Assert(parent_score >= 0);
 	
-	if (quaterna_available_end > quaterna) 
+	if (quaterna_used_end != quaterna_used_end_target)
 	{
-		Quaterna & replacement = quaterna_available_end [- 1];
+		nodes_used_end += 4;
+		return quaterna_used_end ++;
+	}
+	
+	if (quaterna_used_end > quaterna) 
+	{
+		Quaterna & replacement = quaterna_used_end [- 1];
 		if (replacement.IsSuitableReplacement(parent_score)) 
 		{
 			return & replacement;
@@ -845,7 +847,7 @@ void NodeBuffer::BubbleSortUp(Quaterna * quartet)
 	
 template <class FUNCTOR> void NodeBuffer::ForEachNode(FUNCTOR & f, int step_size)
 {
-	ForEachNode(f, nodes, nodes_available_end, step_size);
+	ForEachNode(f, nodes, nodes_used_end, step_size);
 }
 
 template <class FUNCTOR> void NodeBuffer::ForEachNode(FUNCTOR & f, Node * begin, Node * end, int step_size)

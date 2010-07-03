@@ -51,10 +51,11 @@ namespace form
 		
 		PointBuffer & GetPoints() { return points; }
 		
-		int GetNumQuaternaAvailable() const;
+		int GetNumQuaternaUsed() const;
+		int GetNumQuaternaUsedTarget() const;
 		
 		// Must be a multiple of four.
-		void SetNumQuaternaAvailable(int n);	
+		void SetNumQuaternaUsedTarget(int n);	
 		
 		void LockTree() const;
 		void UnlockTree() const;
@@ -91,8 +92,8 @@ namespace form
 		static void SubstituteChildren(Node * substitute, Node * children);
 		static void RepairChild(Node & child);
 
-		void IncreaseAvailableRankings(Quaterna const * new_quaterna_available_end);
-		bool DecreaseAvailableRankings(Quaterna const * new_quaterna_available_end);
+		void IncreaseNodes(Quaterna * new_target);
+		bool DecreaseNodes(Quaterna * new_target);
 		
 		Quaterna * GetWorstQuaterna(float parent_score);
 		void BubbleSortUp(Quaterna * quaterna);
@@ -108,14 +109,14 @@ namespace form
 		// The fixed-size array of node groups, used and unused.
 		Node * const nodes;	// [max_num_nodes]
 		
-		Node * nodes_available_end;
+		Node * nodes_used_end;			// end of buffer of actually used nodes
 		Node const * const nodes_end;
 		
 		// An array of used nodes in ascending order of score.
 		Quaterna * const quaterna;		// [max_num_quaterna]
 
-		//Quaterna * quaterna_used_end;	// TODO
-		Quaterna * quaterna_available_end;
+		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
+		Quaterna * quaterna_used_end_target;	// where we'd like quaterna_used_end to be; cannot be less than used_end
 		Quaterna const * const quaterna_end;
 		
 		// Pool of vertices from which to take the corners of nodes.

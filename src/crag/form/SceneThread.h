@@ -50,7 +50,8 @@ namespace form
 		//int GetTargetNumNodes() const;
 		void SetFrameRatio(float ratio);
 
-		int GetNumQuaternaAvailable() const;
+		int GetNumQuaternaUsed() const;
+		int GetNumQuaternaUsedTarget() const;
 		
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;

@@ -236,7 +236,11 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .3) {
-		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaAvailable() << 2) << '\n';
+		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaUsed() << 2) << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .3) {
+		gfx::Debug::out << "target nodes:" << (scene_thread->GetNumQuaternaUsedTarget() << 2) << '\n';
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .5) {

@@ -106,9 +106,14 @@ void form::SceneThread::SetFrameRatio(float ratio)
 	}
 }
 
-int form::SceneThread::GetNumQuaternaAvailable() const
+int form::SceneThread::GetNumQuaternaUsed() const
 {
-	return scene.GetNumQuaternaAvailable();
+	return scene.GetNumQuaternaUsed();
+}
+
+int form::SceneThread::GetNumQuaternaUsedTarget() const
+{
+	return scene.GetNumQuaternaUsedTarget();
 }
 
 void form::SceneThread::Tick()
@@ -260,7 +265,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	Assert(test_out == test_in);
 #endif
 	
-	float num_quaterna = static_cast<float>(scene.GetNumQuaternaAvailable());
+	float num_quaterna = static_cast<float>(scene.GetNumQuaternaUsed());
 	float l = Log(frame_ratio);
 	float e = Exp(l * -0.01f);
 	
@@ -271,7 +276,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	
 	int target_num_quaterna = static_cast<int>(num_quaterna * e) + 1;
 	
-	scene.SetNumQuaternaAvailable(target_num_quaterna);
+	scene.SetNumQuaternaUsedTarget(target_num_quaterna);
 	
 	// reset this in case thread ticks before the next frame happens.
 	frame_ratio = -1;

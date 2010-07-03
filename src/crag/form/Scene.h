@@ -68,8 +68,9 @@ namespace form
 		void GenerateMesh(class Mesh & mesh);
 		
 		// Accessors for nodes.
-		int GetNumQuaternaAvailable() const;
-		void SetNumQuaternaAvailable(int n);
+		int GetNumQuaternaUsed() const;
+		int GetNumQuaternaUsedTarget() const;
+		void SetNumQuaternaUsedTarget(int n);
 		
 		Model const & GetModel(Formation const & formation) const;
 		
