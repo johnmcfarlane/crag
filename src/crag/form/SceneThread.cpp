@@ -34,6 +34,7 @@ namespace ANONYMOUS
 form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
 : num_nodes(100)
 , frame_ratio(-1)
+, scene_tick_period(0)
 , formations(_formations)
 , observer(_observer)
 , threaded(_threaded)
@@ -129,6 +130,11 @@ void form::SceneThread::Tick()
 		sim::Vector3 const & observer_pos = observer.GetPosition();
 		double observer_position_length = Length(observer_pos - scene.GetOrigin());
 		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .75)
+	{
+		gfx::Debug::out << "scene_t:" << scene_tick_period << '\n';
 	}
 }
 
@@ -247,7 +253,10 @@ void form::SceneThread::ThreadTick()
 		AdjustNumQuaterna();
 	}
 
+	app::TimeType scene_tick_time = app::GetTime();
 	scene.Tick(formations);
+	scene_tick_period = app::GetTime() - scene_tick_time;
+
 	GenerateMesh();
 }
 

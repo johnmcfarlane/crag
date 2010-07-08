@@ -21,6 +21,8 @@
 #include "Quaterna.h"
 #include "Shader.h"
 
+#include "cl/Singleton.h"
+
 #include "core/ConfigEntry.h"
 #include "core/floatOps.h"
 
@@ -30,11 +32,13 @@
 using namespace form;
 
 
-namespace ANONYMOUS {
-
+namespace ANONYMOUS 
+{
 //CONFIG_DEFINE (min_sorted_nodes, int, 100);	// At least the first <min_sorted_nodes> in nodes will be sorted (and the lowest of all the array) for sure.
 //CONFIG_DEFINE (prop_sorted_nodes, float, .01f);
 //CONFIG_DEFINE (recycle_to_sorted_coefficient, float, 1.5f);
+	
+	// TODO: Shouldn't these just go in Quaterna.h
 
 	// local function definitions
 	bool SortByScore(Quaterna const & lhs, Quaterna const & rhs)
@@ -63,17 +67,31 @@ namespace ANONYMOUS {
 // NodeBuffer functions
 
 
-NodeBuffer::NodeBuffer()
+#if (USE_OPENCL)
+#define CPU_KERNEL_CL_FILENAME "src/crag/form/CalculateNodeScoreCpu.cl"
+#define GPU_KERNEL_CL_FILENAME "src/crag/form/CalculateNodeScoreGpu.cl"
+#define CPU_KERNEL_CPP_FILENAME "src/crag/form/CalculateNodeScoreCpuString.h"
+#define GPU_KERNEL_CPP_FILENAME "src/crag/form/CalculateNodeScoreGpuString.h"
+#endif
+
+
+NodeBuffer::NodeBuffer(int target_num_quaterna)
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_nodes)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_used_end(quaterna)
-, quaterna_used_end_target(quaterna)
+, quaterna_used_end_target(quaterna + Min(target_num_quaterna, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , points(max_num_verts)
+#if (USE_OPENCL)
+, cpu_kernel(nullptr)
+, gpu_kernel(nullptr)
+#endif
 {
+	InitKernel();
+	
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
@@ -181,22 +199,22 @@ void NodeBuffer::SetNumQuaternaUsedTarget(int n)
 {
 	Quaterna * new_target = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
 	
-	if (quaterna_used_end_target == new_target) 
+	if (new_target == quaterna_used_end) 
 	{
-		return;
+		quaterna_used_end_target == new_target;
 	}
-	
-	if (new_target > quaterna_used_end) 
+	else if (new_target > quaterna_used_end) 
 	{
 		IncreaseNodes(new_target);
 	}
-	else
+	else if (new_target < quaterna_used_end)
 	{
 		LockTree();
 		
 		if (! DecreaseNodes(new_target)) 
 		{
-			Assert(false);
+			//Assert(false);
+			
 			//std::sort(quaterna, quaterna_available_end, SortByScoreExtreme);
 			//DecreaseAvailableRankings(new_rankings_available_end);
 		}
@@ -215,7 +233,7 @@ void NodeBuffer::UnlockTree() const
 	tree_mutex.Unlock();
 }
 
-void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
+void NodeBuffer::Tick(Vector3 const & relative_camera_pos, Vector3 const & camera_dir)
 {
 	UpdateNodeScores(relative_camera_pos, camera_dir);
 	UpdateParentScores();
@@ -224,6 +242,51 @@ void NodeBuffer::Tick(Vector3f const & relative_camera_pos, Vector3f const & cam
 	for (int timeout = 1; timeout; -- timeout) {
 		ChurnNodes();
 	}
+}
+
+void NodeBuffer::InitKernel()
+{
+#if (USE_OPENCL)
+	cl::Singleton const & cl_singleton = cl::Singleton::Get();
+	
+#if ! defined(NDEBUG)
+	char const * cl_filename;
+	char const * cpp_filename;
+	switch (cl_singleton.GetDeviceType())
+	{
+		default:
+			assert(false);	// unrecognized device type
+		case CL_DEVICE_TYPE_DEFAULT:
+			return;
+			
+		case CL_DEVICE_TYPE_CPU:
+			cl_filename = CPU_KERNEL_CL_FILENAME;
+			cpp_filename = CPU_KERNEL_CPP_FILENAME;
+			break;
+			
+		case CL_DEVICE_TYPE_GPU:
+			cl_filename = GPU_KERNEL_CL_FILENAME;
+			cpp_filename = GPU_KERNEL_CPP_FILENAME;
+			break;
+	}
+	
+	char * source_string = source_string = cl::Kernel::LoadClFile(cl_filename);
+	cl::Kernel::SaveCFile(cpp_filename, source_string, "kernel_source");
+	delete [] source_string;
+#endif
+	
+	switch (cl_singleton.GetDeviceType())
+	{
+		case CL_DEVICE_TYPE_CPU:
+			cpu_kernel = new CalculateNodeScoreCpuKernel(max_num_nodes, nodes);
+			break;
+			
+		case CL_DEVICE_TYPE_GPU:
+			gpu_kernel = new CalculateNodeScoreGpuKernel(max_num_nodes);
+			break;
+	}
+	
+#endif
 }
 
 void NodeBuffer::OnReset()
@@ -265,10 +328,23 @@ void NodeBuffer::InitQuaterna(Quaterna const * end)
 #endif
 }
 
-void NodeBuffer::UpdateNodeScores(Vector3f const & relative_camera_pos, Vector3f const & camera_dir)
+void NodeBuffer::UpdateNodeScores(Vector3 const & relative_camera_pos, Vector3 const & camera_dir)
 {
-	CalculateNodeScoreFunctor f(relative_camera_pos, camera_dir);
-	ForEachNode(f);
+#if (USE_OPENCL)
+	if (cpu_kernel != nullptr)
+	{
+		cpu_kernel->Process(nodes, nodes_used_end, relative_camera_pos);
+	}
+	else if (gpu_kernel != nullptr)
+	{
+		gpu_kernel->Process(nodes, nodes_used_end, relative_camera_pos);
+	}
+	else 
+#endif
+	{
+		CalculateNodeScoreFunctor f(relative_camera_pos, camera_dir);
+		ForEachNode(f);
+	}
 }
 
 void NodeBuffer::UpdateParentScores()
@@ -746,7 +822,8 @@ bool NodeBuffer::DecreaseNodes(Quaterna * new_target)
 			if (! q.IsLeaf()) 
 			{
 				success = false;
-				Assert(false);
+				//std::cerr << "success = false\n";
+				//Assert(false);
 				break;
 			}
 			
@@ -825,15 +902,15 @@ void NodeBuffer::BubbleSortUp(Quaterna * quartet)
 	{
 		-- iterator;
 		
-		if (iterator < quaterna) 
+		if (iterator >= quaterna)
 		{
-			break;
+			if (iterator->parent_score <= q.parent_score)
+			{
+				continue;
+			}
 		}
 		
-		if (iterator->parent_score > q.parent_score) 
-		{
-			break;
-		}
+		break;
 	}
 	
 	++ iterator;

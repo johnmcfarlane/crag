@@ -21,18 +21,9 @@
 /////////////////////////////////////////////////////////////////
 // form::Scene
 
-// the root node isn't a proper triangle
-/*form::Node const form::Scene::default_root_stub = 
-{
-	nullptr,
-	Vector3f::Zero(),
-	std::numeric_limits<float>::max(),
-	Vector3f::Zero(),
-};*/
-
-
 form::Scene::Scene()
-: observer_pos(Vector3f::Zero())
+: node_buffer(1024)
+, observer_pos(Vector3f::Zero())
 , relative_observer_pos(Vector3f::Zero())
 , origin(Vector3f::Zero())
 {

@@ -11,6 +11,7 @@
 #pragma once
 
 #include "geom/Vector3.h"
+#include "geom/Vector4.h"
 #include "geom/Sphere3.h"
 
 
@@ -18,6 +19,7 @@ namespace form
 {
 	// Vector Types
 	typedef Vector3f Vector3;
+	typedef Vector4f Vector4;
 	typedef Sphere3f Sphere3;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.

@@ -36,7 +36,6 @@ public:
 	explicit Vector4(Scalar const * array) : x(array[0]), y(array[1]), z(array[2]), w(array[3]) { }
 	Vector4(Scalar ix, Scalar iy, Scalar iz, Scalar iw) : x(ix), y(iy), z(iz), w(iw) { }
 	template<typename I> Vector4(Vector4<I> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
-	template<typename I> Vector4(Vector3<I> const & rhs, I iw = 0) : x(rhs.x), y(rhs.y), z(rhs.z), w(iw) { }
 	
 	operator Vector3<S> const & () const 
 	{

@@ -27,21 +27,31 @@
 #include "core/TextureMapper.h"
 
 
-namespace ANONYMOUS {
+namespace ANONYMOUS 
+{
+	CONFIG_DEFINE (formation_emission, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE (formation_ambient, gfx::Color4f, gfx::Color4f(0.05f));
+	CONFIG_DEFINE (formation_diffuse, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE (formation_specular, float, 0.0f);
+	CONFIG_DEFINE (formation_shininess, float, 0.0f);
 
-CONFIG_DEFINE (formation_emission, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
-CONFIG_DEFINE (formation_ambient, gfx::Color4f, gfx::Color4f(0.05f));
-CONFIG_DEFINE (formation_diffuse, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
-CONFIG_DEFINE (formation_specular, float, 0.0f);
-CONFIG_DEFINE (formation_shininess, float, 0.0f);
+	CONFIG_DEFINE (enable_multithreding, bool, true);
 
-CONFIG_DEFINE (enable_multithreding, bool, true);
-
+#if (USE_OPENCL)
+	//																		  25000 100000
+//	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
+	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
+//	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
+#endif
 }
 
 
 form::Manager::Manager(sim::Observer & init_observer)
-: observer(init_observer)
+: 
+#if (USE_OPENCL)
+cl_singleton(device_type),
+#endif
+  observer(init_observer)
 , suspended(false)
 , regenerating(false)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))

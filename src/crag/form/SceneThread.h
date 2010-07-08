@@ -75,6 +75,7 @@ namespace form
 		int num_nodes;
 		float frame_ratio;
 		core::Mutex scene_mutex;
+		double scene_tick_period;
 		
 		FormationSet const & formations;		
 		sim::Observer const & observer;

@@ -14,7 +14,11 @@
 
 #include "core/debug.h"
 #include "core/Mutex.h"
+
 #include "geom/Vector3.h"
+
+#include "CalculateNodeScoreCpuKernel.h"
+#include "CalculateNodeScoreGpuKernel.h"
 
 
 namespace form
@@ -40,7 +44,7 @@ namespace form
 		};
 		
 		// Member functions
-		NodeBuffer();
+		NodeBuffer(int target_num_nodes);
 		~NodeBuffer();
 		
 #if VERIFY
@@ -60,11 +64,12 @@ namespace form
 		void LockTree() const;
 		void UnlockTree() const;
 		
-		void Tick(Vector3f const & relative_camera_pos, Vector3f const & camera_dir);
+		void Tick(Vector3 const & relative_camera_pos, Vector3 const & camera_dir);
 		void OnReset();
 	private:
+		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
-		void UpdateNodeScores(Vector3f const & relative_camera_pos, Vector3f const & camera_dir);
+		void UpdateNodeScores(Vector3 const & relative_camera_pos, Vector3 const & camera_dir);
 		void UpdateParentScores();
 		void SortNodes();
 		bool ChurnNodes();
@@ -113,6 +118,7 @@ namespace form
 		Node const * const nodes_end;
 		
 		// An array of used nodes in ascending order of score.
+		// TODO: Plural of quaterna is quaterne. Maybe quaterna is just quadruplet in forin. 
 		Quaterna * const quaterna;		// [max_num_quaterna]
 
 		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
@@ -125,6 +131,11 @@ namespace form
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
 		mutable core::Mutex tree_mutex;
+		
+#if (USE_OPENCL)
+		CalculateNodeScoreCpuKernel * cpu_kernel;
+		CalculateNodeScoreGpuKernel * gpu_kernel;
+#endif
 	};
 	
 }
