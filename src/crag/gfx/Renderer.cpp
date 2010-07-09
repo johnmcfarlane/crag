@@ -197,11 +197,11 @@ void gfx::Renderer::Render(Scene & scene) const
 
 	VerifyRenderState();
 
-	GLenum gl_error = glGetError(); 
-	if (gl_error != GL_NO_ERROR) {
-		std::cout << "gfx::Renderer::Render: " << gl_error << '\n';
-		exit(1);
-	}
+	//GLenum gl_error = glGetError(); 
+	//if (gl_error != GL_NO_ERROR) {
+	//	std::cout << "gfx::Renderer::Render: " << gl_error << '\n';
+	//	exit(1);
+	//}
 }
 
 void gfx::Renderer::RenderScene(Scene const & scene) const
