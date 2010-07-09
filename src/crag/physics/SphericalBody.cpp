@@ -8,6 +8,8 @@
  *
  */
 
+#include "pch.h"
+
 #include "SphericalBody.h"
 
 #include "Singleton.h"

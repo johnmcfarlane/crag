@@ -11,6 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\crag\cl\CpuKernel.cpp" />
+    <ClCompile Include="..\..\src\crag\cl\GpuKernel.cpp" />
+    <ClCompile Include="..\..\src\crag\cl\Kernel.cpp" />
+    <ClCompile Include="..\..\src\crag\cl\Singleton.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\crag\core\App.cpp" />
     <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
     <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
@@ -21,8 +28,10 @@
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
     <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp" />
     <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
+    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.cpp" />
+    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreFunctor.cpp" />
+    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
-    <ClCompile Include="..\..\src\crag\form\FormationFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
     <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
@@ -76,6 +85,11 @@
     <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\crag\cl\CpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\cl\defs.h" />
+    <ClInclude Include="..\..\src\crag\cl\GpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\cl\Kernel.h" />
+    <ClInclude Include="..\..\src\crag\cl\Singleton.h" />
     <ClInclude Include="..\..\src\crag\core\App.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
@@ -89,7 +103,11 @@
     <ClInclude Include="..\..\src\crag\core\Singleton.h" />
     <ClInclude Include="..\..\src\crag\core\TextureMapper.h" />
     <ClInclude Include="..\..\src\crag\core\Thread.h" />
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuString.h" />
     <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuString.h" />
     <ClInclude Include="..\..\src\crag\form\defs.h" />
     <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h" />
     <ClInclude Include="..\..\src\crag\form\ForEachNodeFace.h" />
@@ -174,6 +192,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING" />
+    <None Include="..\..\src\crag\form\CalculateNodeScoreCpu.cl" />
+    <None Include="..\..\src\crag\form\CalculateNodeScoreGpu.cl" />
     <None Include="..\..\src\crag\readme.html" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -205,13 +225,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\CUDA\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\CUDA\lib;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\CUDA\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
+    <LibraryPath>C:\CUDA\lib;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -232,7 +252,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -257,7 +277,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

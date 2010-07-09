@@ -12,14 +12,20 @@
 
 #if defined(__ppc__)
 #define USE_OPENCL 0
-#elif defined(__i386__) || defined(__x86_64__)
+#else
 #define USE_OPENCL 1
 #endif
 
 
 #if USE_OPENCL
 
+
+#if defined(__APPLE__)
 #include <OpenCL/opencl.h>
+#else
+#include <CL/opencl.h>
+#endif
+
 
 #if defined(NDEBUG)
 #define CL_CHECK(EXPRESSION) EXPRESSION

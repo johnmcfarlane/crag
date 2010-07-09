@@ -88,7 +88,7 @@ char * cl::Kernel::LoadClFile(char const * filename)
 	}
 
 	// Get the file size and create a buffer big enough to load it.
-	size_t file_size = in_file.tellg();
+	size_t file_size = static_cast<size_t>(in_file.tellg());
 	char * kernel_source = new char [file_size + 1];
 	
 	// Load the file as a string.

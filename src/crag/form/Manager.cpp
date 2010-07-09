@@ -39,9 +39,10 @@ namespace ANONYMOUS
 
 #if (USE_OPENCL)
 	//																		  25000 100000
-//	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
-	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
+	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
+//	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
 //	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
+//	CONFIG_DEFINE (device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
 #endif
 }
 
