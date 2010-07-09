@@ -38,6 +38,8 @@
 #include <windows.h>
 
 #undef Yield
+#undef IN
+#undef OUT
 
 // Avoid some annoying warnings.
 //#pragma warning(disable : 4355)
