@@ -15,7 +15,7 @@
 
 namespace gfx
 {
-	class Frustrum
+	class Frustum
 	{
 	public:
 		sim::Matrix4 CalcProjectionMatrix() const;
@@ -35,7 +35,7 @@ namespace gfx
 		static sim::Matrix4 CameraToModelViewMatrix(sim::Matrix4 const & camera);
 		sim::Matrix4 CalcModelViewMatrix(bool translation = true) const;
 	
-		Frustrum frustrum;
+		Frustum frustum;
 		sim::Vector3 pos;
 		sim::Matrix4 rot;
 	};

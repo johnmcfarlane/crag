@@ -24,16 +24,16 @@ CONFIG_DEFINE (camera_far, float, 1000000);
 gfx::Scene::Scene()
 : skybox(nullptr)
 {
-	pov.frustrum.fov = static_cast<double>(camera_fov);
-	pov.frustrum.near_z = static_cast<double>(camera_near);
-	pov.frustrum.far_z = static_cast<double>(camera_far);
+	pov.frustum.fov = static_cast<double>(camera_fov);
+	pov.frustum.near_z = static_cast<double>(camera_near);
+	pov.frustum.far_z = static_cast<double>(camera_far);
 }
 
 gfx::Scene::~Scene()
 {
-	camera_fov = static_cast<float>(pov.frustrum.fov);
-	camera_near = static_cast<float>(pov.frustrum.near_z);
-	camera_far = static_cast<float>(pov.frustrum.far_z);
+	camera_fov = static_cast<float>(pov.frustum.fov);
+	camera_near = static_cast<float>(pov.frustum.near_z);
+	camera_far = static_cast<float>(pov.frustum.far_z);
 }
 
 void gfx::Scene::AddLight(Light const & light)
@@ -50,7 +50,7 @@ void gfx::Scene::AddEntity(sim::Entity const & entity)
 
 void gfx::Scene::SetResolution(Vector2i const & r)
 {
-	pov.frustrum.resolution = r;
+	pov.frustum.resolution = r;
 }
 
 void gfx::Scene::SetCamera(sim::Vector3 const & pos, sim::Matrix4 const & rot)

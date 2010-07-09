@@ -58,10 +58,10 @@ void SetProjectionMatrix(sim::Matrix4 const & projection_matrix)
 	gl::LoadMatrix(projection_matrix.GetArray());
 }
 
-void SetFrustrum(class gfx::Frustrum const & frustrum)
+void SetFrustum(class gfx::Frustum const & frustum)
 {
-	gl::Viewport(0, 0, frustrum.resolution.x, frustrum.resolution.y);
-	SetProjectionMatrix(frustrum.CalcProjectionMatrix());
+	gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
+	SetProjectionMatrix(frustum.CalcProjectionMatrix());
 }
 
 }	// namespace
@@ -218,7 +218,7 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
 
-	SetFrustrum(scene.pov.frustrum);
+	SetFrustum(scene.pov.frustum);
 	
 	if (wireframe)
 	{
@@ -240,10 +240,10 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 {
 	VerifyRenderState();
 	
-	Frustrum skybox_frustrum = pov.frustrum;
-	skybox_frustrum.near_z = .1f;
-	skybox_frustrum.far_z = 10.f;
-	SetFrustrum(skybox_frustrum);
+	Frustum skybox_frustum = pov.frustum;
+	skybox_frustum.near_z = .1f;
+	skybox_frustum.far_z = 10.f;
+	SetFrustum(skybox_frustum);
 
 	SetModelViewMatrix(pov.CalcModelViewMatrix(false));
 
@@ -386,7 +386,7 @@ void gfx::Renderer::RenderLights(std::vector<Light const *> const & lights) cons
 void gfx::Renderer::DebugDraw(Pov const & pov) const
 {
 //	Pov test = pov;
-//	test.frustrum.resolution = Vector2i(100, 100);
+//	test.frustum.resolution = Vector2i(100, 100);
 //	test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
 //	Debug::AddFrustum(test);
 	
@@ -402,7 +402,7 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	
 #if defined(GFX_DEBUG)
 	sim::Vector3 forward = Space::GetForward(pov.rot);
-	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustrum.near_z + 1));
+	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
 	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
 #endif
 	

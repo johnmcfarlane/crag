@@ -179,12 +179,12 @@ void gfx::Debug::AddFrustum(Pov const & pov)
 		Vector3f extent_factors[2];
 		
 		{
-			float aspect = static_cast<float>(pov.frustrum.resolution.x) / pov.frustrum.resolution.y;
-			float y_factor = static_cast<float>(Sin(pov.frustrum.fov * .5));
+			float aspect = static_cast<float>(pov.frustum.resolution.x) / pov.frustum.resolution.y;
+			float y_factor = static_cast<float>(Sin(pov.frustum.fov * .5));
 			float x_factor = y_factor * aspect;
 			
-			extent_factors[0] = Vector3f(- x_factor, - y_factor, static_cast<float>(pov.frustrum.near_z));
-			extent_factors[1] = Vector3f(x_factor, y_factor, static_cast<float>(pov.frustrum.far_z));
+			extent_factors[0] = Vector3f(- x_factor, - y_factor, static_cast<float>(pov.frustum.near_z));
+			extent_factors[1] = Vector3f(x_factor, y_factor, static_cast<float>(pov.frustum.far_z));
 		}
 		
 		{
@@ -197,7 +197,7 @@ void gfx::Debug::AddFrustum(Pov const & pov)
 									extent_factors[z_index].z,
 									extent_factors[y_index].y * extent_factors[z_index].z, 
 									1.f);
-						//p.z -= pov.frustrum.near_z;
+						//p.z -= pov.frustum.near_z;
 						corners[z_index][y_index][x_index] = static_cast< sim::Vector3 >(m * sim::Vector4(p));
 					}
 				}
@@ -243,7 +243,7 @@ void gfx::Debug::AddFrustum(Pov const & pov)
 	}
 	
 	// pyramid
-	/*Vector3f center = static_cast< Vector3<float> >(Vector4f(0, 0, - pov.frustrum.near_z, 0) * m);
+	/*Vector3f center = static_cast< Vector3<float> >(Vector4f(0, 0, - pov.frustum.near_z, 0) * m);
 	 for (int p = 0; p < 2; ++ p) {
 	 for (int q = 0; q < 2; ++ q) {
 	 Vector3 const & a = corners[0][q][p];

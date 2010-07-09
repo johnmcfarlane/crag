@@ -19,7 +19,7 @@
 
 
 // This matrix is ready-transposed for OpenGL.
-sim::Matrix4 gfx::Frustrum::CalcProjectionMatrix() const
+sim::Matrix4 gfx::Frustum::CalcProjectionMatrix() const
 {
 	double aspect = static_cast<double>(resolution.x) / resolution.y;
 	double f = 1. / Tan(fov * .5);
@@ -41,10 +41,10 @@ void gfx::Pov::LookAtSphere(sim::Vector3 const & eye, sim::Sphere3 const & spher
 	sim::Scalar distance = Length(observer_to_center);	// hypotenuse
 	sim::Scalar adjacent = Sqrt(Square(distance) - Square(sphere.radius));
 	sim::Scalar angle = Atan2(sphere.radius, adjacent);
-	frustrum.fov = 2. * angle;
+	frustum.fov = 2. * angle;
 	
-	frustrum.near_z = distance - sphere.radius;
-	frustrum.far_z = distance + sphere.radius;
+	frustum.near_z = distance - sphere.radius;
+	frustum.far_z = distance + sphere.radius;
 }
 
 sim::Matrix4 gfx::Pov::GetCameraMatrix(bool translation) const
@@ -62,7 +62,7 @@ sim::Matrix4 gfx::Pov::CameraToModelViewMatrix(sim::Matrix4 const & camera)
 	// And we're rotating the universe around the camera. 
 	sim::Matrix4 gl_world = Inverse(gl_camera);
 	
-	// And finally, OpenGL is column-major, so transpose (same as we do in gfx::Frustrum::CalcProjectionMatrix).
+	// And finally, OpenGL is column-major, so transpose (same as we do in gfx::Frustum::CalcProjectionMatrix).
 	return Transpose(gl_world);
 }
 
