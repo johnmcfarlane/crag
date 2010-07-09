@@ -36,7 +36,7 @@ cl::Singleton::Singleton(cl_device_type init_device_type)
 	if (count == 0)
 	{
 		std::cerr << "Could not find an OpenCL platform. Missing driver/GPU?\n";
-		device_type = CL_DEVICE_TYPE_DEFAULT;	// means don't use CL at all
+		device_type = CL_DEVICE_TYPE_ALL;	// means don't use CL at all
 		return;
 	}
 	
@@ -51,14 +51,15 @@ cl::Singleton::Singleton(cl_device_type init_device_type)
 		break;
 
 	case CL_DEVICE_NOT_FOUND:
-		std::cerr << "OpenCL error: CL_DEVICE_NOT_FOUND. Maybe try a different value for config variable, 'device_type'?\n";
-		std::cerr << "\tdevice_type=" << device_type << '\n';
-		std::cerr << "\tValid values are: \n";
-		std::cerr << "\t\t" << CL_DEVICE_TYPE_DEFAULT << " (default)\n";
-		std::cerr << "\t\t" << CL_DEVICE_TYPE_CPU << " (cpu)\n";
-		std::cerr << "\t\t" << CL_DEVICE_TYPE_GPU << " (gpu)\n";
-		std::cerr << "\t\t" << CL_DEVICE_TYPE_ALL << " (don't use OpenCL at all)\n";
-		break;
+		std::cout << "OpenCL error: CL_DEVICE_NOT_FOUND. Maybe try a different value for config variable, 'device_type'?\n";
+		std::cout << "\tdevice_type=" << device_type << '\n';
+		std::cout << "\tValid values are: \n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_DEFAULT << " (default)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_CPU << " (cpu)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_GPU << " (gpu)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_ALL << " (don't use OpenCL at all)\n";
+		device_type = CL_DEVICE_TYPE_ALL;	// means don't use CL at all
+		return;
 
 	default:
 		CL_CHECK(err);
