@@ -36,7 +36,7 @@
 </inputType>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.128806316" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
-<option id="gnu.both.asm.option.include.paths.820336541" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
+<option id="gnu.both.asm.option.include.paths.820336541" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 <inputType id="cdt.managedbuild.tool.gnu.assembler.input.212604933" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.823950803" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
@@ -58,7 +58,7 @@
 <option id="gnu.c.compiler.option.preprocessor.def.symbols.1335379437" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="PROFILE"/>
 </option>
-<option id="gnu.c.compiler.option.include.paths.535913145" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
+<option id="gnu.c.compiler.option.include.paths.535913145" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.828350350" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 </toolChain>
