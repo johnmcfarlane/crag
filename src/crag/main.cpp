@@ -16,7 +16,7 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
-#include <SDL_main.h>
+//#include <SDL_main.h>
 
 #include <fstream>
 

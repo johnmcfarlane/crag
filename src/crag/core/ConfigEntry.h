@@ -12,7 +12,7 @@
 
 
 // TODO: Include default value in file. Then override file version if it changes. 
-//#define ENABLE_CONFIG
+#define ENABLE_CONFIG
 
 
 #if defined(ENABLE_CONFIG)

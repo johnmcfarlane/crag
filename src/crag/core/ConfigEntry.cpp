@@ -19,7 +19,9 @@
 
 #include "gfx/Color.h"
 
-#include "Matrix4.h"
+#include "geom/Matrix4.h"
+
+#include <cstdio>
 
 
 //////////////////////////////////////////////////////////////////////
