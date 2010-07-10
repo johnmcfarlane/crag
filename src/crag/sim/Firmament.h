@@ -16,8 +16,12 @@ class Firmament : public gfx::Skybox
 public:
 	Firmament();
 	
-	static void DrawStar(gfx::Image & side, Vector2f const & uv, float r);
-	
 private:
-	static const int box_edge_size = 256; 
+	void DrawStarsClevur();
+
+	void DrawStarsSimple();
+	static void DrawStar(gfx::Image & side, Vector2f const & uv, float r);
+
+	static const int box_edge_size = 512;
+	static const int num_stars = 5000;
 };
