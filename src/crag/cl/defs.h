@@ -10,10 +10,10 @@
 #pragma once
 
 
-#if defined(__ppc__)
-#define USE_OPENCL 0
-#else
+#if defined(WIN32) || (defined(__APPLE__) && ! defined(__ppc__))
 #define USE_OPENCL 1
+#else
+#define USE_OPENCL 0
 #endif
 
 
