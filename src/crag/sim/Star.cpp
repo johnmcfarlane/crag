@@ -15,7 +15,7 @@
 
 
 sim::Star::Star(float init_radius, float init_year)
-: light(Vector3f::Zero(), gfx::Color4f(1.0f, .95f, .85f), 0, 0, 1, true)
+: light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true)
 , radius(init_radius)
 , year(init_year)
 {
