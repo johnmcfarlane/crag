@@ -43,16 +43,16 @@ public:
 		return GetAxes() [index];
 	} 
 
+	Scalar * GetAxes()
+	{
+		return reinterpret_cast<Scalar *>(this);
+	}
+
 	Scalar const * GetAxes() const
 	{
 		return reinterpret_cast<Scalar const *>(this);
 	}
 
-	Scalar * GetAxes() 
-	{
-		return reinterpret_cast<Scalar *>(this);
-	}
-	
 	static Vector3 Zero() 
 	{
 		return Vector3(0,0,0); 

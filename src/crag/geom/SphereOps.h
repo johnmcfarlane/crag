@@ -94,7 +94,7 @@ template<typename V, typename S> bool Intersects(Sphere<V, S> const & sphere, V 
 	{
 		// Early exit if one of the vertices is inside the sphere
 		V kDiff = c - sphere.center;
-		S fC = LengthSq(kDiff);
+		fC = LengthSq(kDiff);
 		if(fC <= mRadius2)	return true;
 		
 		kDiff = b - sphere.center;
