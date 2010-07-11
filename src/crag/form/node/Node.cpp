@@ -10,7 +10,7 @@
 
 #include "pch.h"
 
-#include "form/Node.h"
+#include "form/node/Node.h"
 
 #include "core/Random.h"
 #include "geom/VectorOps.h"
@@ -144,7 +144,7 @@ void form::Node::Verify() const
 		}
 		
 		VerifyTrue(area > 0);
-		VerifyEqual(LengthSq(normal), 1, 0.001);
+		VerifyEqual(LengthSq(normal), 1, 0.001f);
 		VerifyTrue(score >= 0);
 	}
 	else {

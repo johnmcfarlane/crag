@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include "form/Point.h"
+#include "form/node/Point.h"
+
 #include "core/memory.h"
 
 

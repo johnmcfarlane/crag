@@ -44,10 +44,10 @@ namespace cl
 	template <typename IN, typename OUT> class GpuKernelTemplate : protected GpuKernel
 	{
 	public:
-		GpuKernelTemplate(char const * kernel_source, int max_elements)
-		: GpuKernel(kernel_source, max_elements, sizeof(IN), sizeof(OUT))
-		, input_data(new IN [max_elements])
-		, output_data(new OUT [max_elements])
+		GpuKernelTemplate(char const * kernel_source, int init_max_elements)
+		: GpuKernel(kernel_source, init_max_elements, sizeof(IN), sizeof(OUT))
+		, input_data(new IN [init_max_elements])
+		, output_data(new OUT [init_max_elements])
 		{
 		}
 		

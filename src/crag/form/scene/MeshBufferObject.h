@@ -11,7 +11,7 @@
 #pragma once
 
 #include "glpp/Mesh.h"
-#include "form/Vertex.h"
+#include "form/scene/Vertex.h"
 
 
 namespace gfx { class IndexBuffer; }

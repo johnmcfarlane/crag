@@ -42,11 +42,11 @@ void Firmament::DrawStarsClevur()
 			Vector2f f_pos;
 			for (pos.x = 0; pos.x < box_edge_size; ++ pos.x)
 			{
-				f_pos.x = ((static_cast<float>(pos.x) + .5f) / (static_cast<float>(box_edge_size) - .0)) - .5f;
+				f_pos.x = ((static_cast<float>(pos.x) + .5f) / (static_cast<float>(box_edge_size) - .0f)) - .5f;
 
 				for (pos.y = 0; pos.y < box_edge_size; ++ pos.y)
 				{
-					f_pos.y = ((static_cast<float>(pos.y) + .5f) / (static_cast<float>(box_edge_size) - .0)) - .5f;
+					f_pos.y = ((static_cast<float>(pos.y) + .5f) / (static_cast<float>(box_edge_size) - .0f)) - .5f;
 
 					double intensity = 0;
 					Random random (1);
@@ -81,7 +81,7 @@ void Firmament::DrawStarsClevur()
 
 						line_x = f_pos.x;
 						line_y = f_pos.y;
-						line_z = (w > 0) ? .5 : -.5;
+						line_z = (w > 0) ? .5f : -.5f;
 						Normalize(line_direction);
 
 						float dp = DotProduct(star.center, line_direction);
@@ -90,7 +90,7 @@ void Firmament::DrawStarsClevur()
 						intensity += (double)star.radius / (double)a_sq;
 					}
 
-					float comp = Min(1., .00002 * intensity);
+					float comp = static_cast<float>(Min(1., .00002 * intensity));
 					gfx::Color4f c (comp);
 					side.SetPixel(pos, c);
 				}

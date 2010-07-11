@@ -11,28 +11,23 @@
 #include "pch.h"
 
 #include "Universe.h"
-//#include "form/Manager.h"
-#include "gfx/IndexBuffer.h"
-#include "form/VertexBuffer.h"
 #include "Entity.h"
-#include "geom/VectorOps.h"
-#include "Firmament.h"
 
 #include "physics/Singleton.h"
 
-#include <algorithm>
 #include <vector>
 
 
 //////////////////////////////////////////////////////////////////////
 // local definitions
 
-namespace ANONYMOUS {
+namespace 
+{
 
-CONFIG_DEFINE (gravity, bool, true);
+	CONFIG_DEFINE (gravity, bool, true);
 
-typedef std::vector<sim::Entity *> EntityList;
-EntityList entities;
+	typedef std::vector<sim::Entity *> EntityList;
+	EntityList entities;
 
 }
 

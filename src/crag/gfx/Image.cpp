@@ -19,7 +19,7 @@
 #include <SDL_image.h>
 
 
-namespace ANONYMOUS 
+namespace 
 {
 	gfx::Image::Format opengl_rgba8_format = 
 	{
@@ -41,21 +41,20 @@ namespace ANONYMOUS
 		0,			// Uint32 colorkey;
 		255,		// Uint8  alpha;
 	};
-}	// anonymous namespace
+}
 
-
-bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
+static bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
 {
 	return lhs.ncolors == rhs.ncolors
 		&& memcmp(lhs.colors, rhs.colors, sizeof(SDL_Color) * lhs.ncolors);
 }
 
-bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
+static bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
 {
 	return ! (lhs == rhs);
 }
 
-bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
+static bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
 {
 	return (lhs.palette == rhs.palette || * lhs.palette == * rhs.palette)
 		&& lhs.BitsPerPixel == rhs.BitsPerPixel
@@ -74,7 +73,7 @@ bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
 		&& lhs.Amask == rhs.Amask;
 }
 
-bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
+static bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
 {
 	return ! (lhs == rhs);
 }

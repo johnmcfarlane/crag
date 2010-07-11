@@ -113,14 +113,6 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// Anonymous namespace macro - handy for stubborn debuggers
-
-// Change to anything but "" to get an explicit namespace.
-// (Will require appending ANONYMOUS to a lot of vars.)
-#define ANONYMOUS
-
-
-//////////////////////////////////////////////////////////////////////
 
 #endif // defined(__cplusplus)
 

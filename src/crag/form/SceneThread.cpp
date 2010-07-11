@@ -23,7 +23,7 @@
 #include "core/ConfigEntry.h"
 
 
-namespace ANONYMOUS 
+namespace 
 {
 	CONFIG_DEFINE (max_observer_position_length, double, 2500);
 	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .2f);
@@ -266,13 +266,6 @@ void form::SceneThread::AdjustNumQuaterna()
 	{
 		return;
 	}
-	
-#if ! defined(NDEBUG)
-	Assert(frame_ratio > 0);
-	float test_in = 2.353;
-	float test_out = Log(Exp(test_in));
-	Assert(test_out == test_in);
-#endif
 	
 	float num_quaterna = static_cast<float>(scene.GetNumQuaternaUsed());
 	float l = Log(frame_ratio);

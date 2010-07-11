@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "form/Vertex.h"
+#include "form/scene/Vertex.h"
 
 #include <vector>
 

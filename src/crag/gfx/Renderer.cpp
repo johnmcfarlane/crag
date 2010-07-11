@@ -33,36 +33,37 @@ extern gl::TextureRgba8 const * test_texture;
 #endif
 
 
-namespace ANONYMOUS {
-
-//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
-CONFIG_DEFINE (background_ambient_color, gfx::Color4f, gfx::Color4f(0.1f));
-
-CONFIG_DEFINE (init_culling, bool, true);
-CONFIG_DEFINE (init_lighting, bool, true);
-CONFIG_DEFINE (init_smooth_shading, bool, true);
-CONFIG_DEFINE (init_wireframe, bool, true);
-
-CONFIG_DEFINE (enable_shadow_mapping, bool, true);
-
-
-void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
+namespace 
 {
-	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
-	gl::LoadMatrix(model_view_matrix.GetArray());
-}
 
-void SetProjectionMatrix(sim::Matrix4 const & projection_matrix) 
-{
-	GLPP_CALL(glMatrixMode(GL_PROJECTION));
-	gl::LoadMatrix(projection_matrix.GetArray());
-}
+	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
+	CONFIG_DEFINE (background_ambient_color, gfx::Color4f, gfx::Color4f(0.1f));
 
-void SetFrustum(class gfx::Frustum const & frustum)
-{
-	gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
-	SetProjectionMatrix(frustum.CalcProjectionMatrix());
-}
+	CONFIG_DEFINE (init_culling, bool, true);
+	CONFIG_DEFINE (init_lighting, bool, true);
+	CONFIG_DEFINE (init_smooth_shading, bool, true);
+	CONFIG_DEFINE (init_wireframe, bool, true);
+
+	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
+
+
+	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
+	{
+		GLPP_CALL(glMatrixMode(GL_MODELVIEW));
+		gl::LoadMatrix(model_view_matrix.GetArray());
+	}
+
+	void SetProjectionMatrix(sim::Matrix4 const & projection_matrix) 
+	{
+		GLPP_CALL(glMatrixMode(GL_PROJECTION));
+		gl::LoadMatrix(projection_matrix.GetArray());
+	}
+
+	void SetFrustum(class gfx::Frustum const & frustum)
+	{
+		gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
+		SetProjectionMatrix(frustum.CalcProjectionMatrix());
+	}
 
 }	// namespace
 
@@ -94,7 +95,7 @@ gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 	{ GL_LIGHTING, false },
 	{ GL_DEPTH_TEST, false },
 	{ GL_BLEND, false },
-	{ GL_INVALID_ENUM }
+	{ GL_INVALID_ENUM, false }
 };
 
 void gfx::Renderer::InitRenderState()

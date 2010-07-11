@@ -18,13 +18,14 @@
 #include "core/debug.h"
 
 
-namespace ANONYMOUS {
+namespace 
+{
 
-ConfigEntry * list_head = nullptr;
+	ConfigEntry * list_head = nullptr;
 
-int const max_string_size = 1024;
+	int const max_string_size = 1024;
 
-bool parameter_set_complete = false;
+	bool parameter_set_complete = false;
 
 }
 

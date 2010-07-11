@@ -111,17 +111,6 @@ template<> int Config<int>::StringToValue(char const * string)
 	return sscanf(string, "%d", & var) == 1;
 }
 
-// unsigned __int64 (Win32-only?)
-template<> int Config<unsigned __int64>::ValueToString(char * string) const
-{
-	return sprintf(string, "%I64d", var) > 0;
-}
-
-template<> int Config<unsigned __int64>::StringToValue(char const * string)
-{
-	return sscanf(string, "%I64d", & var) == 1;
-}
-
 // float
 template<> int Config<float>::ValueToString(char * string) const
 {

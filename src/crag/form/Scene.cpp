@@ -136,7 +136,7 @@ void form::Scene::ForEachFormation(FormationFunctor & f) const
 	{
 		form::Scene::FormationPair const & pair = * i;
 		Formation const & formation = * pair.first;
-		Model const & model = pair.second;
+		Polyhedron const & model = pair.second;
 		f(formation, model);
 	}
 	
@@ -163,7 +163,7 @@ void form::Scene::SetNumQuaternaUsedTarget(int n)
 	node_buffer.SetNumQuaternaUsedTarget(n);
 }
 
-form::Model const & form::Scene::GetModel(Formation const & formation) const
+form::Polyhedron const & form::Scene::GetModel(Formation const & formation) const
 {
 	//return formation_map[& formation];
 	FormationMap::const_iterator i = formation_map.find (& formation);
@@ -211,7 +211,7 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 		
 		if (pair == nullptr) {
 			// added
-			m = formation_map.insert(m, FormationPair(formation, Model()));
+			m = formation_map.insert(m, FormationPair(formation, Polyhedron()));
 			pair = & (* m);
 			InitModel(* pair);
 			TickModel(pair->second);
@@ -245,7 +245,7 @@ void form::Scene::ResetFormations()
 	node_buffer.UnlockTree();
 }
 
-void form::Scene::TickModel(Model & model)
+void form::Scene::TickModel(Polyhedron & model)
 {
 	form::RootNode & root_node = model.root_node;
 	
@@ -260,7 +260,7 @@ void form::Scene::TickModel(Model & model)
 void form::Scene::InitModel(FormationPair & pair)
 {
 	Formation const & formation = ref(pair.first);
-	Model & model = pair.second;
+	Polyhedron & model = pair.second;
 	
 	Shader * shader = formation.shader_factory.Create(formation);
 	shader->SetOrigin(origin);
@@ -272,7 +272,7 @@ void form::Scene::InitModel(FormationPair & pair)
 
 void form::Scene::DeinitModel(FormationPair & pair)
 {
-	Model & model = pair.second;
+	Polyhedron & model = pair.second;
 	
 	RootNode & root_node = model.root_node;
 #if ! defined(FAST_SCENE_RESET)
@@ -289,7 +289,7 @@ void form::Scene::DeinitModel(FormationPair & pair)
 void form::Scene::ResetModel(FormationPair & pair)
 {
 	Formation const & formation = ref(pair.first);
-	Model & model = pair.second;
+	Polyhedron & model = pair.second;
 	
 	model.GetShader().SetOrigin(origin);
 	

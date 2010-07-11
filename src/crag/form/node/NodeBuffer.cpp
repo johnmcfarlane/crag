@@ -12,14 +12,16 @@
 
 #include "NodeBuffer.h"
 
-#include "CalculateNodeScoreFunctor.h"
 #include "ExpandNodeFunctor.h"
 #include "GenerateMeshFunctor.h"
-#include "Mesh.h"
-#include "Model.h"
+#include "Polyhedron.h"
 #include "Node.h"
 #include "Quaterna.h"
 #include "Shader.h"
+
+#include "form/score/CalculateNodeScoreFunctor.h"
+
+#include "form/scene/Mesh.h"
 
 #include "cl/Singleton.h"
 
@@ -29,7 +31,7 @@
 #include <algorithm>
 
 
-namespace ANONYMOUS 
+namespace 
 {
 //CONFIG_DEFINE (min_sorted_nodes, int, 100);	// At least the first <min_sorted_nodes> in nodes will be sorted (and the lowest of all the array) for sure.
 //CONFIG_DEFINE (prop_sorted_nodes, float, .01f);
@@ -67,10 +69,10 @@ namespace ANONYMOUS
 
 
 #if (USE_OPENCL)
-#define CPU_KERNEL_CL_FILENAME "src/crag/form/CalculateNodeScoreCpu.cl"
-#define GPU_KERNEL_CL_FILENAME "src/crag/form/CalculateNodeScoreGpu.cl"
-#define CPU_KERNEL_CPP_FILENAME "src/crag/form/CalculateNodeScoreCpuString.h"
-#define GPU_KERNEL_CPP_FILENAME "src/crag/form/CalculateNodeScoreGpuString.h"
+#define CPU_KERNEL_CL_FILENAME "src/crag/form/score/CalculateNodeScoreCpu.cl"
+#define GPU_KERNEL_CL_FILENAME "src/crag/form/score/CalculateNodeScoreGpu.cl"
+#define CPU_KERNEL_CPP_FILENAME "src/crag/form/score/CalculateNodeScoreCpuString.h"
+#define GPU_KERNEL_CPP_FILENAME "src/crag/form/score/CalculateNodeScoreGpuString.h"
 #endif
 
 

@@ -13,7 +13,8 @@
 #include "NodeFunctor.h"
 
 #include "Node.h"
-
+#include "ForEachNodeFace.h"
+#include "Mesh.h"
 
 namespace form 
 {
@@ -52,13 +53,11 @@ namespace form
 		{
 			if (IsLeaf(node)) 
 			{
-				GenerateMesh(node);
+				ForEachNodeFace(node, mesh);
 			}
 		}
 		
 	private:
-		
-		void GenerateMesh(Node & node);
 		
 		Mesh & mesh;
 	};

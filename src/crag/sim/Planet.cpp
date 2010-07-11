@@ -17,7 +17,7 @@
 #include "physics/Singleton.h"
 
 #include "form/Manager.h"
-#include "form/Mesh.h"
+#include "form/scene/Mesh.h"
 
 #include "core/Random.h"
 

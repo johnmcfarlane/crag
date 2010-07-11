@@ -18,7 +18,7 @@
 #include <SDL_image.h>
 
 
-namespace ANONYMOUS
+namespace 
 {
 	bool has_focus = true;
 	

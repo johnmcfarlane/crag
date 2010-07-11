@@ -17,14 +17,14 @@ namespace form
 {
 	class RootNode & GetRootNode(Node & node);
 
-	class Model;
+	class Polyhedron;
 	class PointBuffer;
 
 	class RootNode : public Node
 	{
 	public:
 		RootNode();
-		RootNode(Model & _owner);
+		RootNode(Polyhedron & _owner);
 		RootNode(RootNode const & rhs);
 		
 		DUMP_OPERATOR_FRIEND_DECLARATION(RootNode);
@@ -32,13 +32,13 @@ namespace form
 		void Init(int init_seed, PointBuffer & points);
 		void Deinit(PointBuffer & points);
 		
-		Model & GetOwner() const;
+		Polyhedron & GetOwner() const;
 
 		void SetCenter(Vector3d const & _center, double scale);
 	private:
-		void SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & center, double scale);
+		void SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale);
 		
-		Model * owner;
+		Polyhedron * owner;
 	};
 
 }

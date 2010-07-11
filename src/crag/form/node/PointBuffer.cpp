@@ -20,8 +20,8 @@ form::PointBuffer::PointBuffer(int max_num_verts)
 void form::PointBuffer::Clear()
 {
 	Point * begin = GetArray();
-	Point const * const end = begin + GetMaxUsed();
-	for (Point * i = begin; i != end; ++ i)
+	Point const * const used_end = begin + GetMaxUsed();
+	for (Point * i = begin; i != used_end; ++ i)
 	{
 		Point & point = * i;
 		point.vert = nullptr;

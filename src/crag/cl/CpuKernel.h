@@ -41,8 +41,8 @@ namespace cl
 	template <typename ELEM> class CpuKernelTemplate : protected CpuKernel
 	{
 	public:
-		CpuKernelTemplate(char const * kernel_source, int max_elements, ELEM * init_buffer)
-		: CpuKernel(kernel_source, max_elements, sizeof(ELEM), init_buffer)
+		CpuKernelTemplate(char const * kernel_source, int init_max_elements, ELEM * init_buffer)
+		: CpuKernel(kernel_source, init_max_elements, sizeof(ELEM), init_buffer)
 		{
 		}
 		

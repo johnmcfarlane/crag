@@ -10,7 +10,7 @@
  
 #pragma once
 
-#include "defs.h"
+#include "form/defs.h"
 
 //#define FORM_VERTEX_COLOR
 #if defined(FORM_VERTEX_COLOR)

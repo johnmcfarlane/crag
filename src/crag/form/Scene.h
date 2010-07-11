@@ -11,7 +11,7 @@
 #pragma once
 
 #include "NodeBuffer.h"
-#include "Model.h"
+#include "Polyhedron.h"
 
 #include "sim/defs.h"
 
@@ -38,7 +38,7 @@ namespace form
 		friend class ::ProcessNodeFunctor;
 		
 		// Types for keeping track of a formation using a model.
-		typedef std::map<Formation const *, Model> FormationMap;
+		typedef std::map<Formation const *, Polyhedron> FormationMap;
 		typedef FormationMap::value_type FormationPair;
 		
 	public:
@@ -72,7 +72,7 @@ namespace form
 		int GetNumQuaternaUsedTarget() const;
 		void SetNumQuaternaUsedTarget(int n);
 		
-		Model const & GetModel(Formation const & formation) const;
+		Polyhedron const & GetModel(Formation const & formation) const;
 		
 	private:
 		
@@ -82,7 +82,7 @@ namespace form
 		void TickModels(FormationSet const & formation_set);
 		void ResetFormations();
 
-		void TickModel(Model & model);
+		void TickModel(Polyhedron & model);
 
 		void InitModel(FormationPair & pair);
 		void DeinitModel(FormationPair & pair);

@@ -44,7 +44,7 @@ form::RootNode::RootNode()
 {
 }
 
-form::RootNode::RootNode(Model & _owner)
+form::RootNode::RootNode(Polyhedron & _owner)
 	: owner(& _owner)
 {
 }
@@ -106,7 +106,7 @@ void form::RootNode::Deinit(PointBuffer & vertices)
 	}
 }
 
-form::Model & form::RootNode::GetOwner() const
+form::Polyhedron & form::RootNode::GetOwner() const
 {
 	return ref(owner);
 }
@@ -122,10 +122,10 @@ void form::RootNode::SetCenter(Vector3d const & _center, double scale)
 	SetPointCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), _center, scale);
 }
 
-void form::RootNode::SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & center, double scale)
+void form::RootNode::SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale)
 {
 	Vector3d dir = Normalized(relative_pos);
-	point = dir * scale + center;
+	point = dir * scale + point_center;
 /*	point.red = 255;
 	point.green = 255;
 	point.blue = 255;

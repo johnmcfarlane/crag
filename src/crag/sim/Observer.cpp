@@ -25,7 +25,7 @@
 #include "gfx/Debug.h"
 
 
-namespace ANONYMOUS 
+namespace 
 {
 	CONFIG_DEFINE (camera_radius, float, 1);
 	CONFIG_DEFINE (camera_density, float, 1);

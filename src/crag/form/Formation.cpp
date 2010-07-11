@@ -12,8 +12,7 @@
 
 #include "form/Formation.h"
 
-#include "form/NodeTraversal.h"
-#include "form/Mesh.h"
+#include "form/scene/Mesh.h"
 
 
 #if defined(GFX_DEBUG)

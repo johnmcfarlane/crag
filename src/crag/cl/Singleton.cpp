@@ -14,14 +14,26 @@
 
 #if (USE_OPENCL)
 
+#include "core/ConfigEntry.h"
+
 #include <fstream>
+
+
+namespace
+{
+//																				  25000 100000
+//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
+	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
+//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
+//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Singleton members
 
-cl::Singleton::Singleton(cl_device_type init_device_type)
-: device_type(init_device_type)
+cl::Singleton::Singleton()
+: device_type(opencl_device_type)
 , device_id(0)
 , context(0)
 , queue(0)

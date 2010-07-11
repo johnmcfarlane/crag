@@ -12,10 +12,11 @@
 
 #include "PlanetSphereCollisionFunctor.h"
 
-#include "form/ForEachNodeFace.h"
 #include "form/Formation.h"
-#include "form/Model.h"
-#include "form/RootNode.h"
+#include "form/Polyhedron.h"
+
+#include "form/node/ForEachNodeFace.h"
+#include "form/node/RootNode.h"
 
 #include "geom/SphereOps.h"
 
@@ -45,7 +46,7 @@ void sim::PlanetSphereCollisionFunctor::SetSceneOrigin(sim::Vector3 const & in_s
 	InitRelativePositions();
 }
 
-void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_formation, form::Model const & in_model)
+void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_formation, form::Polyhedron const & in_model)
 {
 	if (& in_formation != & planet_formation)
 	{

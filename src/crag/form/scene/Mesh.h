@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "form/VertexBuffer.h"
+#include "form/scene/VertexBuffer.h"
 #include "gfx/IndexBuffer.h"
 #include "core/debug.h"
 

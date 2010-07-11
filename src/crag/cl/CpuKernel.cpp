@@ -65,4 +65,3 @@ void cl::CpuKernel::SetAdditionalArgs()
 }
 
 #endif
-	

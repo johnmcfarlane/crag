@@ -12,9 +12,23 @@
 
 #include "Polyhedron.h"
 #include "Shader.h"
-#include "PointBuffer.h"
+#include "VertexBuffer.h"
 
 #include "core/memory.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Node accessors
+
+form::Polyhedron & form::GetModel(Node & node)
+{
+	RootNode & root_node = GetRootNode(node);
+	
+	Polyhedron & owner = root_node.GetOwner();
+	Assert(& owner.root_node == & root_node);
+	
+	return owner;
+}
 
 
 /////////////////////////////////////////////////////////////////
@@ -23,49 +37,27 @@
 form::Polyhedron::Polyhedron()
 : shader(nullptr)
 {
-	ZeroObject(root_node);
-	ZeroArray(corners, NUM_ROOT_POINTS); 
+	root_node = RootNode(* this);
+}
+
+form::Polyhedron::Polyhedron(Polyhedron const & rhs)
+: shader(nullptr)
+{
+	root_node = RootNode(* this);
+	
+	// Can only copy default-state objects.
+	Assert(rhs.shader == nullptr);
 }
 
 form::Polyhedron::~Polyhedron()
 {
 	delete shader;
-	
-	for (int i = 0; i < NUM_ROOT_POINTS; ++ i) {
-		Assert (corners[i] == nullptr);
-	}
-}
-
-void form::Polyhedron::InitPoints(PointBuffer & points)
-{
-	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
-	{
-		Assert(corners[i] == nullptr);
-		if ((corners[i] = points.Alloc()) == nullptr)
-		{
-			Assert(false);
-		}
-	}
-}
-
-// If init got called, deinit must get called before d'tor.
-void form::Polyhedron::DeinitPoints(PointBuffer & points)
-{
-	for (int i = 0; i < NUM_ROOT_POINTS; ++ i)
-	{
-		Point * point = corners[i];
-		if (point != nullptr)
-		{
-			points.Free(point);
-			corners[i] = nullptr;
-		}
-	}
 }
 
 void form::Polyhedron::SetShader(form::Shader * init_shader)
 {
 	// Currently, no need ever to change shader.
-	Assert(shader == nullptr);
+	Assert((shader == nullptr) != (init_shader == nullptr));
 	
 	shader = init_shader;
 }

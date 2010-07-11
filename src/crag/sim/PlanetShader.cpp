@@ -13,7 +13,7 @@
 #include "PlanetShader.h"
 
 #include "form/Formation.h"
-#include "form/Node.h"
+#include "form/node/Node.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"

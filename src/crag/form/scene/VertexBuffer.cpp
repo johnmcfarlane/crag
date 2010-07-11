@@ -35,8 +35,8 @@ void form::VertexBuffer::Clear()
 
 void form::VertexBuffer::NormalizeNormals()
 {
-	const_iterator end = Base::end();
-	for (iterator i = begin(); i != end; ++ i)
+	const_iterator end_iterator = Base::end();
+	for (iterator i = begin(); i != end_iterator; ++ i)
 	{
 		Vector3f & normal = i->norm;
 		FastNormalize(normal);

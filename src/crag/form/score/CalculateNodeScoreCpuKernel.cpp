@@ -26,8 +26,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // CalculateNodeScoreCpuKernel members
 
-form::CalculateNodeScoreCpuKernel::CalculateNodeScoreCpuKernel(int max_elements, Node * nodes)
-: BaseClass(kernel_source, max_elements, nodes)
+form::CalculateNodeScoreCpuKernel::CalculateNodeScoreCpuKernel(int init_max_elements, Node * nodes)
+: BaseClass(kernel_source, init_max_elements, nodes)
 , relative_camera_position(Vector4::Zero())
 {
 }

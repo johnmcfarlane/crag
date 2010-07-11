@@ -123,7 +123,7 @@ bool cl::Kernel::SaveCFile(char const * filename, char const * kernel_source, ch
 		}
 	}
 	
-	out_file << "\";";
+	out_file << "\";\n";
 	out_file.close();
 	
 	// TODO: A little less optimizm? 

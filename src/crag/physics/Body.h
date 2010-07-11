@@ -46,5 +46,4 @@ namespace physics
 		dGeomID geom_id;	// the collision info
 		dBodyID body_id;	// the dynaical info
 	};
-	
 }

@@ -12,7 +12,7 @@
 
 #include "sim/defs.h"
 
-#include "form/Shader.h"
+#include "form/node/Shader.h"
 
 
 namespace form {

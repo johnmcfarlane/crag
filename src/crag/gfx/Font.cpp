@@ -20,7 +20,7 @@
 #include <vector>
 
 
-namespace ANONYMOUS
+namespace 
 {
 	// TODO: All a big hack.
 	::std::vector<gl::Vertex2dTex> vertex_buffer;
@@ -128,7 +128,7 @@ void gfx::Font::RenderVerts() const
 	
     glMatrixMode (GL_MODELVIEW); 
 	glLoadIdentity (); 
-	glTranslatef (0.375, 0.375, 0.);
+	glTranslatef (0.375f, 0.375f, 0.f);
 	GLPP_VERIFY;
 	
 	// Draw VBO
@@ -145,8 +145,8 @@ void gfx::Font::RenderVerts() const
 
 void gfx::Font::PrintChar(char c, Vector2f & position) const
 {
-	unsigned int i = static_cast<unsigned char>(c);
-	Vector2i map_pos = Vector2i(i & 15, i >> 4);
+	unsigned int char_index = static_cast<unsigned char>(c);
+	Vector2i map_pos = Vector2i(char_index & 15, char_index >> 4);
 	
 	Vector2f pos[2];
 	Vector2f tex[2];

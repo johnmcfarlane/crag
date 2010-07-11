@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
 
-namespace ANONYMOUS 
+namespace 
 {
 	bool Crag();
 	bool Load();
@@ -68,77 +68,78 @@ int main(int /*argc*/, char * * /*argv*/)
 #endif
 
 
-namespace ANONYMOUS {
-
-CONFIG_DEFINE (resolution_x, int, 960);
-CONFIG_DEFINE (resolution_y, int, 720);
-
-#if defined(PROFILE)
-	CONFIG_DEFINE (full_screen, bool, false);
-#else
-	CONFIG_DEFINE (full_screen, bool, true);
-#endif
-
-char const config_filename[] = "crag.cfg";
-
-
-//////////////////////////////////////////////////////////////////////
-// Local Function Definitions
-
-
-bool Crag()
+namespace 
 {
-	if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
+
+	CONFIG_DEFINE (resolution_x, int, 960);
+	CONFIG_DEFINE (resolution_y, int, 720);
+
+	#if defined(PROFILE)
+		CONFIG_DEFINE (full_screen, bool, false);
+	#else
+		CONFIG_DEFINE (full_screen, bool, true);
+	#endif
+
+	char const config_filename[] = "crag.cfg";
+
+
+	//////////////////////////////////////////////////////////////////////
+	// Local Function Definitions
+
+
+	bool Crag()
 	{
-		return false;
-	}
+		if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
+		{
+			return false;
+		}
 
-	// Run the simulation.
-	sim::Simulation * sim = new sim::Simulation ();
-	sim->Run();
-	delete sim;
+		// Run the simulation.
+		sim::Simulation * sim = new sim::Simulation ();
+		sim->Run();
+		delete sim;
 
-	return true;
-}
-
-bool Load()
-{
-#if (LOAD_CONFIG == 1)
-	std::ifstream in(config_filename);
-
-	if (in.is_open())
-	{
-		ConfigManager::Load(in);
 		return true;
 	}
-	else
-	{
-		std::cout << "Failed to open config file \"" << config_filename << "\" for reading.\n";
-		return false;
-	}
-#elif (LOAD_CONFIG == 0)
-	return false;
-#endif
-}
 
-bool Save()
-{
-#if (SAVE_CONFIG == 1)
-	std::ofstream out(config_filename);
+	bool Load()
+	{
+	#if (LOAD_CONFIG == 1)
+		std::ifstream in(config_filename);
 
-	if (out.is_open())
-	{
-		ConfigManager::Save(out);
-		return true;
-	}
-	else
-	{
-		std::cout << "Failed to open config file \"" << config_filename << "\" for writing.\n";
+		if (in.is_open())
+		{
+			ConfigManager::Load(in);
+			return true;
+		}
+		else
+		{
+			std::cout << "Failed to open config file \"" << config_filename << "\" for reading.\n";
+			return false;
+		}
+	#elif (LOAD_CONFIG == 0)
 		return false;
+	#endif
 	}
-#elif (SAVE_CONFIG == 0)
-	return false;
-#endif
-}
+
+	bool Save()
+	{
+	#if (SAVE_CONFIG == 1)
+		std::ofstream out(config_filename);
+
+		if (out.is_open())
+		{
+			ConfigManager::Save(out);
+			return true;
+		}
+		else
+		{
+			std::cout << "Failed to open config file \"" << config_filename << "\" for writing.\n";
+			return false;
+		}
+	#elif (SAVE_CONFIG == 0)
+		return false;
+	#endif
+	}
 
 }

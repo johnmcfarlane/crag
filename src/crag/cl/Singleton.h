@@ -29,7 +29,7 @@ namespace cl
 		friend class CpuKernel;
 		
 	public:
-		Singleton(cl_device_type device_type);
+		Singleton();
 		~Singleton();
 		
 		cl_device_type GetDeviceType() const;

@@ -13,7 +13,7 @@
 
 #if (USE_OPENCL)
 
-#include "defs.h"
+#include "form/defs.h"
 
 
 namespace form

@@ -17,7 +17,7 @@ namespace form
 {
 	// forward declaration
 	class Formation;
-	class Model;
+	class Polyhedron;
 
 	// Formation Functor Class
 	// Can be passed to ForEachFormation function to iterate over formations (and its model) 
@@ -28,6 +28,6 @@ namespace form
 		virtual ~FormationFunctor() { }
 
 		virtual void SetSceneOrigin(sim::Vector3 const & scene_origin) = 0;
-		virtual void operator()(Formation const & formation, Model const & model) = 0;
+		virtual void operator()(Formation const & formation, Polyhedron const & model) = 0;
 	};
 }
