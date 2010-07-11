@@ -55,7 +55,7 @@
 
 
 #define DEBUG_BREAK_VERBOSE(MESSAGE) \
-	::std::cout << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"\n"; \
+	::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"\n"; \
 	DEBUG_BREAK()
 
 

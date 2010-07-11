@@ -29,95 +29,96 @@
 #include <vector>
 
 
-namespace ANONYMOUS {
-
-using namespace gfx;
-
-class PointArray
+namespace 
 {
-public:
-	PointArray(int init_mode) : mode(init_mode) { }
-	
-	void Clear()
-	{
-		points.clear();
-	}
-	
-	void AddPoint(Debug::Vector3 const & pos, Debug::ColorPair const & colors)
-	{
-		points.push_back(Point(pos, Debug::ColorPair(colors)));
-	}
-	
-	void Draw(bool hidden) const
-	{
-		gl::Begin(mode);
-		for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
-		{
-			Point const & point = * it;
-			point.Draw(hidden);
-		}
-		gl::End();
-	}
-	
-private:
-	
-	class Point
+
+	using namespace gfx;
+
+	class PointArray
 	{
 	public:
-		Point(Vector3f init_pos, Debug::ColorPair const & init_colors)
-		: pos(init_pos)
-		, colors(init_colors)
+		PointArray(int init_mode) : mode(init_mode) { }
+		
+		void Clear()
 		{
+			points.clear();
+		}
+		
+		void AddPoint(Debug::Vector3 const & pos, Debug::ColorPair const & colors)
+		{
+			points.push_back(Point(pos, Debug::ColorPair(colors)));
 		}
 		
 		void Draw(bool hidden) const
 		{
-			Color4f const & color = hidden ? colors.hidden_color : colors.color;
-			gl::SetColor(color.r, color.g, color.b, color.a);
-			gl::Vertex3(pos.x, pos.y, pos.z);
+			gl::Begin(mode);
+			for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
+			{
+				Point const & point = * it;
+				point.Draw(hidden);
+			}
+			gl::End();
 		}
 		
-		Debug::Vector3 pos;
-		Debug::ColorPair colors;
+	private:
+		
+		class Point
+		{
+		public:
+			Point(Vector3f init_pos, Debug::ColorPair const & init_colors)
+			: pos(init_pos)
+			, colors(init_colors)
+			{
+			}
+			
+			void Draw(bool hidden) const
+			{
+				Color4f const & color = hidden ? colors.hidden_color : colors.color;
+				gl::SetColor(color.r, color.g, color.b, color.a);
+				gl::Vertex3(pos.x, pos.y, pos.z);
+			}
+			
+			Debug::Vector3 pos;
+			Debug::ColorPair colors;
+		};
+		
+		typedef std::vector<Point> point_vector;
+		
+		point_vector points;
+		GLenum mode;
 	};
-	
-	typedef std::vector<Point> point_vector;
-	
-	point_vector points;
-	GLenum mode;
-};
 
-PointArray points(GL_POINTS);
-PointArray lines(GL_LINES);
-PointArray tris(GL_TRIANGLES);
+	PointArray points(GL_POINTS);
+	PointArray lines(GL_LINES);
+	PointArray tris(GL_TRIANGLES);
 
-void DrawPrimatives(bool hidden)
-{
-	if (hidden) {
-		gl::SetDepthFunc(GL_GREATER);
+	void DrawPrimatives(bool hidden)
+	{
+		if (hidden) {
+			gl::SetDepthFunc(GL_GREATER);
+		}
+
+		points.Draw(hidden);
+		lines.Draw(hidden);
+		tris.Draw(hidden);
+
+		if (hidden) {
+			gl::SetDepthFunc(GL_LEQUAL);
+		}
 	}
 
-	points.Draw(hidden);
-	lines.Draw(hidden);
-	tris.Draw(hidden);
-
-	if (hidden) {
-		gl::SetDepthFunc(GL_LEQUAL);
+	void ClearPrimatives()
+	{
+		points.Clear();
+		lines.Clear();
+		tris.Clear();
 	}
-}
 
-void ClearPrimatives()
-{
-	points.Clear();
-	lines.Clear();
-	tris.Clear();
-}
+	std::stringstream out_stream;
 
-std::stringstream out_stream;
+	gfx::Font * font = nullptr;
 
-gfx::Font * font = nullptr;
-
-CONFIG_DEFINE(debug_verbosity, double, .5);
+	CONFIG_DEFINE(debug_verbosity, double, .5);
 
 }
 
