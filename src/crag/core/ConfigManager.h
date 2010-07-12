@@ -17,8 +17,8 @@ class ConfigManager
 public:
 	static void AddParameter(ConfigEntry & parameter);
 
-	static void Load(std::istream & in);
-	static void Save(std::ostream & out);
+	static bool Load();
+	static void Save();
 
 private:
 	static ConfigEntry * GetParameter(char const * name);

@@ -88,7 +88,8 @@ void sim::Universe::Tick()
 
 sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
 {
-	if (gravity) {
+	if (gravity) 
+	{
 		sim::Vector3 force = sim::Vector3::Zero();
 		
 		for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) {
@@ -98,7 +99,8 @@ sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
 		
 		return force * static_cast<sim::Scalar>(mass) * static_cast<sim::Scalar>(gravitational_force);
 	}
-	else {
+	else 
+	{
 		return sim::Vector3::Zero();
 	}
 }

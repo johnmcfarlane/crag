@@ -16,10 +16,6 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
-//#include <SDL_main.h>
-
-#include <fstream>
-
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -27,8 +23,6 @@
 namespace 
 {
 	bool Crag();
-	bool Load();
-	bool Save();
 }
 
 
@@ -40,15 +34,15 @@ int main(int /*argc*/, char * * /*argv*/)
 	std::cout << "Crag Demo\n";
 	std::cout << "Copyright 2010 John McFarlane\n";
 	
-	if (! Load())
+	if (! ConfigManager::Load())
 	{
 		// Make sure we always have a config file handy.
-		Save();
+		ConfigManager::Save();
 	}
 	
 	bool ok = Crag();
 	
-	Save();
+	ConfigManager::Save();
 	
 	return ok
 	? EXIT_SUCCESS
@@ -57,15 +51,6 @@ int main(int /*argc*/, char * * /*argv*/)
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
-
-
-#if defined(ENABLE_CONFIG)
-#define LOAD_CONFIG 1
-#define SAVE_CONFIG 1
-#else
-#define LOAD_CONFIG 0
-#define SAVE_CONFIG 0
-#endif
 
 
 namespace 
@@ -101,45 +86,4 @@ namespace
 
 		return true;
 	}
-
-	bool Load()
-	{
-	#if (LOAD_CONFIG == 1)
-		std::ifstream in(config_filename);
-
-		if (in.is_open())
-		{
-			ConfigManager::Load(in);
-			return true;
-		}
-		else
-		{
-			std::cout << "Failed to open config file \"" << config_filename << "\" for reading.\n";
-			return false;
-		}
-	#elif (LOAD_CONFIG == 0)
-		return false;
-	#endif
-	}
-
-	bool Save()
-	{
-	#if (SAVE_CONFIG == 1)
-		std::ofstream out(config_filename);
-
-		if (out.is_open())
-		{
-			ConfigManager::Save(out);
-			return true;
-		}
-		else
-		{
-			std::cout << "Failed to open config file \"" << config_filename << "\" for writing.\n";
-			return false;
-		}
-	#elif (SAVE_CONFIG == 0)
-		return false;
-	#endif
-	}
-
 }

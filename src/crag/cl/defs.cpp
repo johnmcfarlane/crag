@@ -16,15 +16,14 @@
 
 
 // cl_device_type text<->value converters for the config systems.
-template<> int Config<cl_device_type>::ValueToString(char * string) const
+template<> int Config<cl_device_type>::ValueToString(char * string, cl_device_type const & value) 
 {
 	//return sprintf(string, "%I64d", var) > 0;
-	return sprintf(string, "%llu", var) > 0;
+	return sprintf(string, "%llu", value) > 0;
 }
 
-template<> int Config<cl_device_type>::StringToValue(char const * string)
+template<> int Config<cl_device_type>::StringToValue(cl_device_type & value, char const * string)
 {
 	//return sscanf(string, "%I64d", & var) == 1;
-	return sscanf(string, "%llu", & var) == 1;
+	return sscanf(string, "%llu", & value) == 1;
 }
-

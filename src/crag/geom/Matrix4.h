@@ -64,6 +64,19 @@ public:
 		return * this;
 	}
 	
+	friend inline bool operator == (Matrix4 const & lhs, Matrix4 const & rhs)
+	{
+		for (int i = 0; i < 16; ++ i)
+		{
+			if (lhs.array1[i] != rhs.array1[i])
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	// Fast accessors - but behavior is different depending on whether matrix is row or column-major
 	S * operator [] (int i) 
 	{
@@ -157,7 +170,6 @@ private:
 		S array2 [4][4];
 	};
 };
-
 
 template<typename S> Matrix4<S> operator * (Matrix4<S> const & lhs, Matrix4<S> const & rhs)
 {

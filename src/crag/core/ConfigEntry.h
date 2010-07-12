@@ -29,9 +29,11 @@ public:
 	ConfigEntry(char const * init_name);
 	virtual ~ConfigEntry();
 	
-	virtual int ValueToString(char * string) const = 0;
-	virtual int StringToValue(char const * string) = 0;
+	virtual void Get(char * config_string, char * default_string) const = 0;
 
+	// Returns true iff the default has changed.
+	virtual bool Set(char const * config_string, char const * default_string) = 0;
+	
 private:
 	ConfigEntry * next;
 	char const * name;
@@ -41,18 +43,39 @@ private:
 template<typename S> class Config : protected ConfigEntry
 {
 public:
-	Config(S & init_var, char const * init_name) 
+	Config(S & var, char const * init_name) 
 	: ConfigEntry(init_name)
-	, var(init_var)
+	, variable(var)
+	, default_value(var)
 	{ 
 	}
 	
-	virtual int ValueToString(char * string) const;
-	virtual int StringToValue(char const * string);
+	virtual void Get(char * config_string, char * default_string) const
+	{
+		ValueToString(config_string, variable);
+		ValueToString(default_string, default_value);
+	}
 	
-protected:
+	virtual bool Set(char const * config_string, char const * default_string) 
+	{
+		S stored_default_value;
+		StringToValue(stored_default_value, default_string);
+		if (stored_default_value == default_value)
+		{
+			StringToValue(variable, config_string);
+			return false;
+		}
+		
+		Assert(default_value == variable);
+		return true;
+	}
 	
-	S & var;
+private:
+	static int ValueToString(char * string, S const & value);
+	static int StringToValue(S & value, char const * string);
+	
+	S & variable;
+	S const default_value;
 };
 
 
@@ -64,8 +87,8 @@ public:
 	{ 
 	}
 	
-	virtual int ValueToString(char * string) const;
-	virtual int StringToValue(char const * string);
+	static int ValueToString(char * string, S const & value);
+	static int StringToValue(S & value, char const * string);
 };
 
 
