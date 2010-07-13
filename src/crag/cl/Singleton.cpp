@@ -22,10 +22,10 @@
 namespace
 {
 //																				  25000 100000
-//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
+//	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
 	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
-//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
-//	CONFIG_DEFINE (ocl_device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
+//	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
+//	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
 }
 
 
@@ -90,12 +90,37 @@ cl::Singleton::Singleton()
 	// Create a command queue
 	queue = clCreateCommandQueue(context, device_id, 0, &err);
 	CL_CHECK (err);
+
+	cl_device_info param_names[] = 
+	{
+		CL_DEVICE_NAME,
+		CL_DEVICE_PROFILE,
+		CL_DEVICE_VENDOR,
+		CL_DEVICE_VERSION,
+		CL_DRIVER_VERSION
+	};
+	int const num_categories = ARRAY_SIZE(param_names);
+
+	int const param_value_size = 1024;
+	char param_value[param_value_size];
+	for (int i = 0; i < num_categories; ++ i)
+	{
+		CL_CHECK (clGetDeviceInfo(device_id, param_names[i], param_value_size, param_value, NULL));
+		std::cout << "cl device info: " << param_value << '\n';
+	}
 }
 
 cl::Singleton::~Singleton()
 {
-	CL_CHECK (clReleaseCommandQueue(queue));
-	CL_CHECK (clReleaseContext(context));
+	if (queue != NULL)
+	{
+		CL_CHECK (clReleaseCommandQueue(queue));
+	}
+	
+	if (context)
+	{
+		CL_CHECK (clReleaseContext(context));
+	}
 }
 
 cl_device_type cl::Singleton::GetDeviceType() const

@@ -31,6 +31,8 @@
 #error Unidentified platform.
 #endif
 
+// Array size
+#define ARRAY_SIZE(ARRAY) (sizeof(ARRAY)/sizeof(*ARRAY))
 
 // ZeroMemory
 #if ! defined(WIN32)
