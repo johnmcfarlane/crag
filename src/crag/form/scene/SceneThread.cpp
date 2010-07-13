@@ -10,7 +10,7 @@
 
 #include "pch.h"
 
-#include "form/SceneThread.h"
+#include "form/scene/SceneThread.h"
 #include "form/Manager.h"
 
 #include "sim/Observer.h"

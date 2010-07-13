@@ -14,7 +14,7 @@
 
 #include "ExpandNodeFunctor.h"
 #include "GenerateMeshFunctor.h"
-#include "Polyhedron.h"
+#include "form/scene/Polyhedron.h"
 #include "Node.h"
 #include "Quaterna.h"
 #include "Shader.h"
@@ -535,7 +535,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	Assert(worst_children + 2 != & node);
 	Assert(worst_children + 3 != & node);
 		
-	Shader & shader = GetModel(node).GetShader();
+	Shader & shader = GetPolyhedron(node).GetShader();
 	InitMidPoints(node, shader);
 	
 	// Work with copy of children until it's certain that expansion is going to work.

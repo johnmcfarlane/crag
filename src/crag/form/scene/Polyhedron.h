@@ -10,14 +10,14 @@
 
 #pragma once
 
-#include "RootNode.h"
+#include "form/node/RootNode.h"
 
 
 // TODO: Rename Polyhedron to Polyhedron?
 
 namespace form
 {
-	Polyhedron & GetModel(Node & node);
+	Polyhedron & GetPolyhedron(Node & node);
 	
 	class VertexBuffer;
 	

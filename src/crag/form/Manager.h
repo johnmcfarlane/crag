@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "MeshBufferObject.h"
+#include "form/scene/MeshBufferObject.h"
 
 #include "sim/defs.h"
 

@@ -10,8 +10,9 @@
 
 #pragma once
 
-#include "NodeBuffer.h"
-#include "Polyhedron.h"
+#include "form/scene/Polyhedron.h"
+
+#include "form/node/NodeBuffer.h"
 
 #include "sim/defs.h"
 

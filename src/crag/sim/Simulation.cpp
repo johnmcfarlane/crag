@@ -21,7 +21,7 @@
 
 #include "physics/Body.h"
 
-#include "form/Scene.h"
+#include "form/scene/Scene.h"
 #include "form/Manager.h"
 
 #include "gfx/Debug.h"

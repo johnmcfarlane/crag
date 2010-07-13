@@ -13,7 +13,7 @@
 #include "PlanetSphereCollisionFunctor.h"
 
 #include "form/Formation.h"
-#include "form/Polyhedron.h"
+#include "form/scene/Polyhedron.h"
 
 #include "form/node/ForEachNodeFace.h"
 #include "form/node/RootNode.h"

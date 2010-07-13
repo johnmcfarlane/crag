@@ -11,7 +11,7 @@
 #include "pch.h"
 
 #include "Polyhedron.h"
-#include "Shader.h"
+#include "form/node/Shader.h"
 #include "VertexBuffer.h"
 
 #include "core/memory.h"
@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessors
 
-form::Polyhedron & form::GetModel(Node & node)
+form::Polyhedron & form::GetPolyhedron(Node & node)
 {
 	RootNode & root_node = GetRootNode(node);
 	

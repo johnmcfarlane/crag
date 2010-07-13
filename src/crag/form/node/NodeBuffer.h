@@ -17,8 +17,8 @@
 
 #include "geom/Vector3.h"
 
-#include "CalculateNodeScoreCpuKernel.h"
-#include "CalculateNodeScoreGpuKernel.h"
+#include "form/score/CalculateNodeScoreCpuKernel.h"
+#include "form/score/CalculateNodeScoreGpuKernel.h"
 
 
 namespace form

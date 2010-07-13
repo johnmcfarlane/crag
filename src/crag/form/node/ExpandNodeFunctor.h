@@ -12,7 +12,7 @@
 
 #include "NodeFunctor.h"
 
-#include "Polyhedron.h"
+#include "form/scene/Polyhedron.h"
 
 
 namespace form {

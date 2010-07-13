@@ -12,10 +12,12 @@
 
 #include "Scene.h"
 
-#include "Formation.h"
-#include "FormationFunctor.h"
 #include "Mesh.h"
-#include "Shader.h"
+
+#include "form/Formation.h"
+#include "form/FormationFunctor.h"
+
+#include "form/node/Shader.h"
 
 
 /////////////////////////////////////////////////////////////////

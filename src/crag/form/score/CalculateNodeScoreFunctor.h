@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "NodeFunctor.h"
+#include "form/node/NodeFunctor.h"
 
-#include "Node.h"
+#include "form/node/Node.h"
 
 #include "core/floatOps.h"
 #include "geom/Vector3.h"

@@ -13,7 +13,7 @@
 #include "form/Manager.h"
 
 #include "form/Formation.h"
-#include "form/SceneThread.h"
+#include "form/scene/SceneThread.h"
 
 #include "sim/Observer.h"
 
