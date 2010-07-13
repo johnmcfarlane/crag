@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\crag\cl\CpuKernel.cpp" />
+    <ClCompile Include="..\..\src\crag\cl\defs.cpp" />
     <ClCompile Include="..\..\src\crag\cl\GpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\cl\Kernel.cpp" />
     <ClCompile Include="..\..\src\crag\cl\Singleton.cpp">
@@ -28,28 +29,26 @@
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
     <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp" />
     <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.cpp" />
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreFunctor.cpp" />
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
-    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp" />
     <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Mesh.cpp" />
-    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Model.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Node.cpp" />
-    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Point.cpp" />
-    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Polyhedron.cpp" />
-    <ClCompile Include="..\..\src\crag\form\RootNode.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Scene.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">form_Scene</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">form_Scene</ObjectFileName>
+    <ClCompile Include="..\..\src\crag\form\node\Node.cpp" />
+    <ClCompile Include="..\..\src\crag\form\node\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\node\Point.cpp" />
+    <ClCompile Include="..\..\src\crag\form\node\PointBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\node\RootNode.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\Mesh.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\MeshBufferObject.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\Polyhedron.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\Scene.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)form_scene_scene.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)form_scene_scene.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp" />
-    <ClCompile Include="..\..\src\crag\form\Vertex.cpp" />
-    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\SceneThread.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\Vertex.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.cpp" />
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.cpp" />
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Debug.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)gfxDebug</ObjectFileName>
     </ClCompile>
@@ -103,36 +102,33 @@
     <ClInclude Include="..\..\src\crag\core\Singleton.h" />
     <ClInclude Include="..\..\src\crag\core\TextureMapper.h" />
     <ClInclude Include="..\..\src\crag\core\Thread.h" />
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuString.h" />
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuString.h" />
     <ClInclude Include="..\..\src\crag\form\defs.h" />
-    <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\ForEachNodeFace.h" />
     <ClInclude Include="..\..\src\crag\form\Formation.h" />
     <ClInclude Include="..\..\src\crag\form\FormationFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\GenerateMeshFunctor.h" />
     <ClInclude Include="..\..\src\crag\form\Manager.h" />
-    <ClInclude Include="..\..\src\crag\form\Mesh.h" />
-    <ClInclude Include="..\..\src\crag\form\MeshBufferObject.h" />
-    <ClInclude Include="..\..\src\crag\form\Model.h" />
-    <ClInclude Include="..\..\src\crag\form\Node.h" />
-    <ClInclude Include="..\..\src\crag\form\NodeBuffer.h" />
-    <ClInclude Include="..\..\src\crag\form\NodeFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\NodeTraversal.h" />
-    <ClInclude Include="..\..\src\crag\form\Point.h" />
-    <ClInclude Include="..\..\src\crag\form\PointBuffer.h" />
-    <ClInclude Include="..\..\src\crag\form\Polyhedron.h" />
-    <ClInclude Include="..\..\src\crag\form\PolyTraversal.h" />
-    <ClInclude Include="..\..\src\crag\form\Quaterna.h" />
-    <ClInclude Include="..\..\src\crag\form\RootNode.h" />
-    <ClInclude Include="..\..\src\crag\form\Scene.h" />
-    <ClInclude Include="..\..\src\crag\form\SceneThread.h" />
-    <ClInclude Include="..\..\src\crag\form\Shader.h" />
-    <ClInclude Include="..\..\src\crag\form\Vertex.h" />
-    <ClInclude Include="..\..\src\crag\form\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\node\ExpandNodeFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\node\ForEachNodeFace.h" />
+    <ClInclude Include="..\..\src\crag\form\node\GenerateMeshFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\node\Node.h" />
+    <ClInclude Include="..\..\src\crag\form\node\NodeBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\node\NodeFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\node\Point.h" />
+    <ClInclude Include="..\..\src\crag\form\node\PointBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\node\Quaterna.h" />
+    <ClInclude Include="..\..\src\crag\form\node\RootNode.h" />
+    <ClInclude Include="..\..\src\crag\form\node\Shader.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\Mesh.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\Polyhedron.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\Scene.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\SceneThread.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\Vertex.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuString.h" />
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.h" />
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuString.h" />
     <ClInclude Include="..\..\src\crag\geom\Circle2.h" />
     <ClInclude Include="..\..\src\crag\geom\Matrix.h" />
     <ClInclude Include="..\..\src\crag\geom\Matrix4.h" />
@@ -192,8 +188,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING" />
-    <None Include="..\..\src\crag\form\CalculateNodeScoreCpu.cl" />
-    <None Include="..\..\src\crag\form\CalculateNodeScoreGpu.cl" />
+    <None Include="..\..\src\crag\form\score\CalculateNodeScoreCpu.cl" />
+    <None Include="..\..\src\crag\form\score\CalculateNodeScoreGpu.cl" />
     <None Include="..\..\src\crag\readme.html" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

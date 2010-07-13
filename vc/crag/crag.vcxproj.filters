@@ -31,56 +31,17 @@
     <Filter Include="src\crag\cl">
       <UniqueIdentifier>{a925fa61-dc75-4c33-8b5a-aae31f9120da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\crag\form\CalculateNodeScore">
-      <UniqueIdentifier>{b1fad14b-407c-417e-a36f-3ae3c27ab2bc}</UniqueIdentifier>
+    <Filter Include="src\crag\form\score">
+      <UniqueIdentifier>{51d8402a-a520-4f5c-8823-3bf12f1a2043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\form\node">
+      <UniqueIdentifier>{bd7ed971-017f-470f-b2c1-7b59ae13e69a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\form\scene">
+      <UniqueIdentifier>{72a1086b-e839-4a19-97c4-60c45e03428c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\crag\form\Formation.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\GenerateMeshFunctor.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Manager.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Mesh.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\MeshBufferObject.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Model.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Node.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\NodeBuffer.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Point.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\PointBuffer.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\RootNode.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Scene.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\SceneThread.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Vertex.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\VertexBuffer.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp">
       <Filter>src\crag\gfx</Filter>
     </ClCompile>
@@ -192,9 +153,6 @@
     <ClCompile Include="..\..\src\crag\physics\SphericalBody.cpp">
       <Filter>src\crag\physics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\Polyhedron.cpp">
-      <Filter>src\crag\form</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\gfx\Debug.cpp">
       <Filter>src\crag\gfx</Filter>
     </ClCompile>
@@ -210,83 +168,62 @@
     <ClCompile Include="..\..\src\crag\cl\Singleton.cpp">
       <Filter>src\crag\cl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.cpp">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClCompile Include="..\..\src\crag\form\scene\Mesh.cpp">
+      <Filter>src\crag\form\scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreFunctor.cpp">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClCompile Include="..\..\src\crag\form\scene\MeshBufferObject.cpp">
+      <Filter>src\crag\form\scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.cpp">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClCompile Include="..\..\src\crag\form\scene\Polyhedron.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\scene\Scene.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\scene\SceneThread.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\scene\Vertex.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\scene\VertexBuffer.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\node\Node.cpp">
+      <Filter>src\crag\form\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\node\NodeBuffer.cpp">
+      <Filter>src\crag\form\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\node\Point.cpp">
+      <Filter>src\crag\form\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\node\PointBuffer.cpp">
+      <Filter>src\crag\form\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\node\RootNode.cpp">
+      <Filter>src\crag\form\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.cpp">
+      <Filter>src\crag\form\score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.cpp">
+      <Filter>src\crag\form\score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.cpp">
+      <Filter>src\crag\form\score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Formation.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\Manager.cpp">
+      <Filter>src\crag\form</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\cl\defs.cpp">
+      <Filter>src\crag\cl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreFunctor.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\ExpandNodeFunctor.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Formation.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\GenerateMeshFunctor.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Manager.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Mesh.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\MeshBufferObject.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Model.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Node.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\NodeBuffer.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\NodeFunctor.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\NodeTraversal.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Point.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\PointBuffer.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\PolyTraversal.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Quaterna.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\RootNode.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Scene.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\SceneThread.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Shader.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Vertex.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\VertexBuffer.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\crag\gfx\Color.h">
       <Filter>src\crag\gfx</Filter>
     </ClInclude>
@@ -488,18 +425,6 @@
     <ClInclude Include="..\..\src\crag\physics\SphericalBody.h">
       <Filter>src\crag\physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\defs.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\ForEachNodeFace.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\FormationFunctor.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\Polyhedron.h">
-      <Filter>src\crag\form</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\crag\geom\NSphere.h">
       <Filter>src\crag\geom</Filter>
     </ClInclude>
@@ -521,17 +446,86 @@
     <ClInclude Include="..\..\src\crag\cl\Singleton.h">
       <Filter>src\crag\cl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuKernel.h">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClInclude Include="..\..\src\crag\form\scene\Mesh.h">
+      <Filter>src\crag\form\scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreCpuString.h">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClInclude Include="..\..\src\crag\form\scene\MeshBufferObject.h">
+      <Filter>src\crag\form\scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuKernel.h">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClInclude Include="..\..\src\crag\form\scene\Polyhedron.h">
+      <Filter>src\crag\form\scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\CalculateNodeScoreGpuString.h">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <ClInclude Include="..\..\src\crag\form\scene\Scene.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\scene\SceneThread.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\scene\Vertex.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\scene\VertexBuffer.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\ExpandNodeFunctor.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\ForEachNodeFace.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\GenerateMeshFunctor.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\Node.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\NodeBuffer.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\NodeFunctor.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\Point.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\PointBuffer.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\Quaterna.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\RootNode.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\node\Shader.h">
+      <Filter>src\crag\form\node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.h">
+      <Filter>src\crag\form\score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuString.h">
+      <Filter>src\crag\form\score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.h">
+      <Filter>src\crag\form\score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.h">
+      <Filter>src\crag\form\score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuString.h">
+      <Filter>src\crag\form\score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Manager.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\defs.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\Formation.h">
+      <Filter>src\crag\form</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\FormationFunctor.h">
+      <Filter>src\crag\form</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -541,11 +535,11 @@
     <None Include="..\..\src\crag\readme.html">
       <Filter>src\crag</Filter>
     </None>
-    <None Include="..\..\src\crag\form\CalculateNodeScoreCpu.cl">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <None Include="..\..\src\crag\form\score\CalculateNodeScoreCpu.cl">
+      <Filter>src\crag\form\score</Filter>
     </None>
-    <None Include="..\..\src\crag\form\CalculateNodeScoreGpu.cl">
-      <Filter>src\crag\form\CalculateNodeScore</Filter>
+    <None Include="..\..\src\crag\form\score\CalculateNodeScoreGpu.cl">
+      <Filter>src\crag\form\score</Filter>
     </None>
   </ItemGroup>
 </Project>

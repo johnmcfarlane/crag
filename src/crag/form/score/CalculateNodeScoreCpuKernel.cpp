@@ -14,7 +14,7 @@
 
 #if (USE_OPENCL)
 
-#include "Node.h"
+#include "form/node/Node.h"
 
 
 namespace
