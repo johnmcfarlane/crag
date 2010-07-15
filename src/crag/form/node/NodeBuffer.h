@@ -104,10 +104,7 @@ namespace form
 		void BubbleSortUp(Quaterna * quaterna);
 
 		// TODO: Parallelize
-		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, int step_size = 128);
-		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, Node * begin, Node * end, int step_size = 128);
-
-		template <class FUNCTOR> void ForEachNode_Sub(FUNCTOR & f, Node * begin, Node * end);
+		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, int step_size = 1024);
 		
 		// Types
 

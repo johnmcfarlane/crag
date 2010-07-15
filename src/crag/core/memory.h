@@ -68,7 +68,10 @@ template<typename T> inline void CopyObject(T & lhs, T const & rhs)
 	CopyArray(& lhs, & rhs, 1);
 }
 
-// prefetch
+
+////////////////////////////////////////////////////////////////////////////////
+// Prefetch
+
 inline void PrefetchBlock(void const * ptr)
 {
 #if defined(__GNUC__)
@@ -103,6 +106,53 @@ template<typename T> inline void PrefetchArray(T const * object_ptr, int count)
 template<typename T> inline void PrefetchObject(T const & object)
 {
 	PrefetchArray((& object), (& object) + 1);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// ForEach with Prefetch
+
+template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begin, ELEMENT * end, int step_size)
+{
+	int total_num_nodes = end - begin;
+	int full_steps = total_num_nodes / step_size;
+	
+	// main pass
+	for (int step = 0; step < full_steps; step ++)
+	{
+		ELEMENT * sub_begin = begin + step * step_size;
+		ELEMENT * sub_end = sub_begin + step_size;
+		ForEach_Sub(f, sub_begin, sub_end);
+	}
+	
+	// remainder
+	ELEMENT * sub_begin = begin + full_steps * step_size;
+	ELEMENT * sub_end = end;
+	Assert(sub_end - sub_begin == total_num_nodes % step_size);
+	
+	if (sub_begin < sub_end)
+	{
+		ForEach_Sub(f, sub_begin, sub_end);
+	}
+}
+
+template <class FUNCTOR, class ELEMENT> void ForEach_Sub(FUNCTOR & f, ELEMENT * begin, ELEMENT * end)
+{
+	// Pre-fetch the actual nodes.
+	// TODO: Find out if this does any good at all. 
+	PrefetchArray(begin, end);
+	
+	// Do any additional pre-fetching desired by the functor.
+	if (f.PerformPrefetchPass()) {
+		for (ELEMENT * iterator = begin; iterator != end; ++ iterator) {
+			f.OnPrefetchPass(* iterator);
+		}
+	}
+	
+	// Now do the work.
+	for (ELEMENT * iterator = begin; iterator != end; ++ iterator) {
+		f(* iterator);
+	}
 }
 
 

@@ -16,7 +16,7 @@
 #include "GenerateMeshFunctor.h"
 #include "form/scene/Polyhedron.h"
 #include "Node.h"
-#include "Quaterna.h"
+#include "form/node/Quaterna.h"
 #include "Shader.h"
 
 #include "form/score/CalculateNodeScoreFunctor.h"
@@ -524,6 +524,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		}
 	}
 	
+	// TODO: GetWorstQuaterna too slow. BubbleSortUp equally unnecessary. 
 	Quaterna * worst_quaterna = GetWorstQuaterna(score);
 	if (worst_quaterna == nullptr) {
 		return false;
@@ -930,49 +931,6 @@ void form::NodeBuffer::BubbleSortUp(Quaterna * quartet)
 	
 template <class FUNCTOR> void form::NodeBuffer::ForEachNode(FUNCTOR & f, int step_size)
 {
-	ForEachNode(f, nodes, nodes_used_end, step_size);
-}
-
-template <class FUNCTOR> void form::NodeBuffer::ForEachNode(FUNCTOR & f, Node * begin, Node * end, int step_size)
-{
-	int total_num_nodes = end - begin;
-	int full_steps = total_num_nodes / step_size;
-	
-	// main pass
-	for (int step = 0; step < full_steps; step ++)
-	{
-		Node * sub_begin = begin + step * step_size;
-		Node * sub_end = sub_begin + step_size;
-		ForEachNode_Sub(f, sub_begin, sub_end);
-	}
-
-	// remainder
-	Node * sub_begin = begin + full_steps * step_size;
-	Node * sub_end = end;
-	Assert(sub_end - sub_begin == total_num_nodes % step_size);
-
-	if (sub_begin < sub_end)
-	{
-		ForEachNode_Sub(f, sub_begin, sub_end);
-	}
-}
-
-template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Sub(FUNCTOR & f, Node * begin, Node * end)
-{
-	// Pre-fetch the actual nodes.
-	// TODO: Find out if this does any good at all. 
-	PrefetchArray(begin, end);
-
-	// Do any additional pre-fetching desired by the functor.
-	if (f.PerformPrefetchPass()) {
-		for (Node * iterator = begin; iterator != end; ++ iterator) {
-			f.OnPrefetchPass(* iterator);
-		}
-	}
-	
-	// Now do the work.
-	for (Node * iterator = begin; iterator != end; ++ iterator) {
-		f(* iterator);
-	}
+	ForEach(f, nodes, nodes_used_end, step_size);
 }
 

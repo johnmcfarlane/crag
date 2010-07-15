@@ -15,6 +15,16 @@
 
 namespace form
 {
+	
+	// Helper function for ForEachNodeFace function.
+	inline Node::Triplet const * TripletMod(Node::Triplet const * t, Node::Triplet const * last)
+	{
+		assert(t >= last - 2);
+		assert(t < last + 4);
+		return (t <= last) ? t : t - 3;
+	}
+	
+	
 	// Helper function for ForEachNodeFace function;
 	// Calculates normal for given face and passes it on to functor.
 	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, FaceFunctor & f)
@@ -25,31 +35,42 @@ namespace form
 		f.AddFace(a, b, c, FastNormalize(normal));
 	}
 	
-	// Given a Node, n, calculates its triangles and passes them to functor, f, via
-	// member function AddFace(a, b, c, n) where a, b and c are the points of a triangle 
-	// and n is the triangle's normal.
-	template<typename FaceFunctor> void ForEachNodeFace(Node const & n, FaceFunctor & f)
+	
+	// Given a Node, node, calculates its triangles and passes them to functor, f, via
+	// member function AddFace(a, b, c, norm) where a, b and c are the points of a triangle 
+	// and norm is the triangle's normal.
+	template<typename FaceFunctor> void ForEachNodeFace(Node const & node, FaceFunctor & f)
 	{
-		if (n.children != nullptr)
+		if (node.children != nullptr)
 		{
 			// Node, n, isn't a leaf node; its descendents are the ones with the faces.
 			return;
 		}
 		
-		// Step 1: Determine the number of mid-points and note missing / single mid-points.
-		int triplet_indices[2] = { -1, -1 };	// NULL/non-NULL
+		// Step 1: Determine the number of mid-points and note missing / solitary mid-points.
+		Node::Triplet const * odd_one_out[2];	// nullptr / non-nullptr
+#if ! defined(NDEBUG)
+		odd_one_out[0] = odd_one_out[1] = nullptr;
+#endif
 		int num_mid_points = 0;
-		for (int i = 0; i < 3; ++ i)
+		
+		Node::Triplet const * triple = node.triple;
+		Node::Triplet const * t_last = triple + 2;
+		for (Node::Triplet const * t_it = triple; ; ++ t_it)
 		{
-			Node::Triplet const & t = n.triple[i];
-			if (t.cousin != nullptr && t.mid_point != nullptr)
+			if (t_it->cousin == nullptr || t_it->mid_point == nullptr)
 			{
-				triplet_indices[true] = i;
-				++ num_mid_points;
+				odd_one_out[false] = t_it;
 			}
 			else 
 			{
-				triplet_indices[false] = i;
+				odd_one_out[true] = t_it;
+				++ num_mid_points;
+			}
+			
+			if (t_it == t_last)
+			{
+				break;
 			}
 		}
 		
@@ -58,45 +79,58 @@ namespace form
 		{
 			case 0: 
 			{
+				assert(odd_one_out[0] != nullptr);
+				assert(odd_one_out[1] == nullptr);
+
 				// Only the corners are available. Has the advantage that we know what the normal is.
-				f.AddFace(* n.triple[0].corner, * n.triple[1].corner, * n.triple[2].corner, n.normal);
+				f.AddFace(* triple[0].corner, * triple[1].corner, * triple[2].corner, node.normal);
 			}	break;
 				
 			case 1: 
 			{
-				// A single mid-point means that the triangle can be divided in two.
-				int mid_point_index = triplet_indices[true];
-				Assert(mid_point_index >= 0);
+				assert(odd_one_out[0] != nullptr);
+				assert(odd_one_out[1] != nullptr);
 				
-				Point & mid_point = ref(n.triple[mid_point_index].mid_point);
-				AddFace(mid_point, * n.triple[mid_point_index].corner, * n.triple[TriMod(mid_point_index+1)].corner, f);
-				AddFace(mid_point, * n.triple[TriMod(mid_point_index+2)].corner, * n.triple[mid_point_index].corner, f);
+				// A single mid-point means that the triangle can be divided in two.
+				Node::Triplet const * midpoint_triplet_0 = odd_one_out[true];
+				Point * midpoint_0 = midpoint_triplet_0->mid_point;
+				Point * corner_0 = midpoint_triplet_0->corner;
+
+				AddFace(* midpoint_0, * corner_0, * TripletMod(midpoint_triplet_0 + 1, t_last)->corner, f);
+				AddFace(* corner_0, * midpoint_0, * TripletMod(midpoint_triplet_0 + 2, t_last)->corner, f);
 			}	break;
 				
 			case 2: 
 			{
+				assert(odd_one_out[0] != nullptr);
+				assert(odd_one_out[1] != nullptr);
+				
 				// Two mid-points means a triangle between them and their common corner
 				// and a quad made from the rest of the node. 
-				int non_mid_point_index = triplet_indices[false];
-				Assert(non_mid_point_index >= 0);
+				Node::Triplet const * midpoint_triplet_0 = odd_one_out[false];
+				Node::Triplet const * midpoint_triplet_1 = TripletMod(midpoint_triplet_0 + 1, t_last);
+				Node::Triplet const * midpoint_triplet_2 = TripletMod(midpoint_triplet_0 + 2, t_last);
+				
+				Point * midpoint_1 = midpoint_triplet_1->mid_point;
+				Point * midpoint_2 = midpoint_triplet_2->mid_point;
 				
 				// Generate good triangle.
-				AddFace(* n.triple[TriMod(non_mid_point_index+2)].mid_point, * n.triple[TriMod(non_mid_point_index+1)].mid_point, * n.triple[non_mid_point_index].corner, f);
+				AddFace(* midpoint_triplet_0->corner, * midpoint_2, * midpoint_1, f);
 				
 				// Generate wonky quad.
-				AddFace(* n.triple[TriMod(non_mid_point_index+1)].corner, * n.triple[TriMod(non_mid_point_index+2)].corner, * n.triple[TriMod(non_mid_point_index+2)].mid_point, f);
-				AddFace(* n.triple[TriMod(non_mid_point_index+1)].mid_point, * n.triple[TriMod(non_mid_point_index+2)].mid_point, * n.triple[TriMod(non_mid_point_index+2)].corner, f);
+				AddFace(* midpoint_triplet_1->corner, * midpoint_triplet_2->corner, * midpoint_triplet_2->mid_point, f);
+				AddFace(* midpoint_triplet_1->mid_point, * midpoint_triplet_2->mid_point, * midpoint_triplet_2->corner, f);
 			}	break;
 				
 			case 3: 
 			{
-				for (int i = 0; i < 4; ++ i)
-				{
-					// TODO: Refactor 2 switch into 1?!?
-					Point * child_corners[3];
-					n.GetChildCorners(i, child_corners);
-					AddFace(* child_corners[0], * child_corners[1], * child_corners[2], f);
-				}
+				assert(odd_one_out[0] == nullptr);
+				assert(odd_one_out[1] != nullptr);
+				
+				AddFace(* triple[0].corner, * triple[2].mid_point, * triple[1].mid_point, f);
+				AddFace(* triple[1].corner, * triple[0].mid_point, * triple[2].mid_point, f);
+				AddFace(* triple[2].corner, * triple[1].mid_point, * triple[0].mid_point, f);
+				AddFace(* triple[0].mid_point, * triple[1].mid_point, * triple[2].mid_point, f);
 			}	break;
 		}
 	}

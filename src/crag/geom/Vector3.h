@@ -75,7 +75,7 @@ template<typename Scalar> bool operator != (Vector3<Scalar> const & lhs, Vector3
 	return ! (lhs == rhs);
 }
 
-template<typename Scalar> Vector3<Scalar> & operator += (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> & operator += (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
 {
 	lhs.x += rhs.x;
 	lhs.y += rhs.y;
@@ -83,7 +83,7 @@ template<typename Scalar> Vector3<Scalar> & operator += (Vector3<Scalar> & lhs, 
 	return lhs;
 }
 
-template<typename Scalar> Vector3<Scalar> & operator -= (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> & operator -= (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
 {
 	lhs.x -= rhs.x;
 	lhs.y -= rhs.y;
@@ -91,7 +91,7 @@ template<typename Scalar> Vector3<Scalar> & operator -= (Vector3<Scalar> & lhs, 
 	return lhs;
 }
 
-template<typename Scalar> Vector3<Scalar> & operator *= (Vector3<Scalar> & lhs, Scalar rhs)
+template<typename Scalar> inline Vector3<Scalar> & operator *= (Vector3<Scalar> & lhs, Scalar rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;
@@ -104,28 +104,28 @@ template<typename Scalar> Vector3<Scalar> & operator /= (Vector3<Scalar> & lhs, 
 	return lhs *= (static_cast<Scalar>(1) / rhs);
 }
 
-template<typename Scalar> Vector3<Scalar> operator - (Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> operator - (Vector3<Scalar> const & rhs)
 {
 	return Vector3<Scalar>(- rhs.x, - rhs.y, - rhs.z);
 }
 
-template<typename Scalar> Vector3<Scalar> operator - (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> operator - (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
 {
 	return ::Vector3<Scalar>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
-template<typename Scalar> Vector3<Scalar> operator + (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> operator + (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
 {
 	return Vector3<Scalar>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
 }
 
-template<typename Scalar> Vector3<Scalar> operator * (Vector3<Scalar> const & lhs, Scalar rhs)
+template<typename Scalar> inline Vector3<Scalar> operator * (Vector3<Scalar> const & lhs, Scalar rhs)
 {
 	Vector3<Scalar> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> Vector3<Scalar> operator * (Scalar lhs, Vector3<Scalar> const & rhs)
+template<typename Scalar> inline Vector3<Scalar> operator * (Scalar lhs, Vector3<Scalar> const & rhs)
 {
 	Vector3<Scalar> result = rhs;
 	return result *= lhs;
@@ -137,7 +137,7 @@ template<typename Scalar> Vector3<Scalar> operator / (Vector3<Scalar> const & lh
 	return result *= (1.f / rhs);
 }
 
-template<typename Scalar> Scalar LengthSq(Vector3<Scalar> const & v)
+template<typename Scalar> inline Scalar LengthSq(Vector3<Scalar> const & v)
 {
 	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
@@ -148,7 +148,7 @@ template<typename Scalar> Scalar Length(class Vector3<Scalar> const & a)
 	return Sqrt(length_sqaured);
 }
 
-template<typename S1, typename S2> S1 DotProduct(Vector3<S1> const & lhs, Vector3<S2> const & rhs)
+template<typename S1, typename S2> inline S1 DotProduct(Vector3<S1> const & lhs, Vector3<S2> const & rhs)
 {
 	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
@@ -177,48 +177,17 @@ template<typename Scalar> std::istream & operator >> (std::istream & in, Vector3
 
 typedef Vector3<float> Vector3f;
 
-/*class Vector3f : public Vector3<float>
-{
-public:
-	Vector3f() { }
-	explicit Vector3f(float const * array) : Vector3<float>(array) { }
-	Vector3f(float ix, float iy, float iz) : Vector3<float>(ix, iy, iz) { }
-	template<typename I> Vector3f(Vector3<I> const & rhs) : Vector3<float>(rhs) { }
-};*/
-
-/*inline Vector3f & operator /= (Vector3f & lhs, Vector3f const & rhs)
-{
-	lhs /= rhs;
-	return lhs;
-}*/
-
 
 //////////////////////////////////////////////////////////////////
 // Vector3d - double specialization of Vector3
 
 typedef Vector3<double> Vector3d;
 
-/*class Vector3d : public Vector3<double>
-{
-public:
-	Vector3d() { }
-	template<typename I> Vector3d(I ix, I iy, I iz) : Vector3<double>(ix, iy, iz) { }
-	template<typename I> Vector3d(Vector3<I> const & rhs) : Vector3<double>(rhs) { }
-};*/
-
 
 //////////////////////////////////////////////////////////////////
 // Vector3i - int specialization of Vector3
 
 typedef Vector3<int> Vector3i;
-
-/*class Vector3i : public Vector3<int>
-{
-public:
-	Vector3i() { }
-	template<typename I> Vector3i(I ix, I iy, I iz) : Vector3<int>(ix, iy, iz) { }
-	template<typename I> Vector3i(Vector3<I> const & rhs) : Vector3<int>(rhs) { }
-};*/
 
 
 //////////////////////////////////////////////////////////////////

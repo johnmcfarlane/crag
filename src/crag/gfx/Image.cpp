@@ -49,10 +49,10 @@ static bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
 		&& memcmp(lhs.colors, rhs.colors, sizeof(SDL_Color) * lhs.ncolors);
 }
 
-static bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
-{
-	return ! (lhs == rhs);
-}
+//static bool operator != (SDL_Palette const & lhs, SDL_Palette const & rhs)
+//{
+//	return ! (lhs == rhs);
+//}
 
 static bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
 {
