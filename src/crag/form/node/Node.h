@@ -41,7 +41,7 @@ namespace form
 
 		bool IsExpandable() const
 		{
-			return ! IsExpanded() && HasAllCousins();
+			return ! IsExpanded() && HasAllCousins() && score > 0;
 		}
 		
 		Point & GetCorner(int index) { return ref(triple[index].corner); }
