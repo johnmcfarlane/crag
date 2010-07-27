@@ -40,11 +40,7 @@ namespace
 
 
 form::Manager::Manager(sim::Observer & init_observer)
-: 
-#if (USE_OPENCL)
-cl_singleton(),
-#endif
-  observer(init_observer)
+: observer(init_observer)
 , suspended(false)
 , regenerating(false)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))

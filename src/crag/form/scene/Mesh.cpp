@@ -40,7 +40,7 @@ form::Vertex & form::Mesh::GetVertex(Point & point)
 		point.vert = & AddVertex(point);
 	}
 	
-	Assert(point == point.vert->pos);
+	Assert(point.pos == point.vert->pos);
 	//Assert(texture == point.vert->texture);
 	
 	return * point.vert;
@@ -50,7 +50,7 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p)
 {
 	Vertex & addition = vertices.PushBack();
 	
-	addition.pos = p;
+	addition.pos = p.pos;
 	addition.norm = addition.norm.Zero();
 
 #if defined(FORM_VERTEX_TEXTURE)

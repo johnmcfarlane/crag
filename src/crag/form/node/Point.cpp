@@ -13,7 +13,7 @@
 #include "Point.h"
 
 form::Point::Point()
-: Vector3f(Zero())
+: pos(Vector3::Zero())
 , vert(nullptr)
 {
 }

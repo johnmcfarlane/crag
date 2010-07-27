@@ -29,14 +29,15 @@ namespace form
 		
 		DUMP_OPERATOR_FRIEND_DECLARATION(RootNode);
 
-		void Init(int init_seed, PointBuffer & points);
+		void Init(int init_seed, Point * points[4]);
+		void GetPoints(Point * points[4]);
 		void Deinit(PointBuffer & points);
 		
 		Polyhedron & GetOwner() const;
 
-		void SetCenter(Vector3d const & _center, double scale);
+		//void SetCenter(Vector3d const & _center, double scale);
 	private:
-		void SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale);
+		static void SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale);
 		
 		Polyhedron * owner;
 	};

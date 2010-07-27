@@ -37,7 +37,7 @@ form::Scene::~Scene()
 
 	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
 		FormationPair & pair = * it;
-		DeinitModel(pair);
+		DeinitPolyhedron(pair);
 	}
 }
 
@@ -90,7 +90,7 @@ void form::Scene::Clear()
 {
 	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
 		FormationPair & pair = * it;
-		DeinitModel(pair);
+		DeinitPolyhedron(pair);
 	}
 }
 
@@ -138,8 +138,8 @@ void form::Scene::ForEachFormation(FormationFunctor & f) const
 	{
 		form::Scene::FormationPair const & pair = * i;
 		Formation const & formation = * pair.first;
-		Polyhedron const & model = pair.second;
-		f(formation, model);
+		Polyhedron const & polyhedron = pair.second;
+		f(formation, polyhedron);
 	}
 	
 	node_buffer.UnlockTree();
@@ -165,7 +165,7 @@ void form::Scene::SetNumQuaternaUsedTarget(int n)
 	node_buffer.SetNumQuaternaUsedTarget(n);
 }
 
-form::Polyhedron const & form::Scene::GetModel(Formation const & formation) const
+form::Polyhedron const & form::Scene::GetPolyhedron(Formation const & formation) const
 {
 	//return formation_map[& formation];
 	FormationMap::const_iterator i = formation_map.find (& formation);
@@ -189,7 +189,7 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 			
 			// Do we have a match?
 			if (formation == pair->first) {
-				TickModel(pair->second);
+				TickPolyhedron(pair->second);
 				++ s;
 				++ m;
 				continue;
@@ -215,14 +215,14 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 			// added
 			m = formation_map.insert(m, FormationPair(formation, Polyhedron()));
 			pair = & (* m);
-			InitModel(* pair);
-			TickModel(pair->second);
+			InitPolyhedron(* pair);
+			TickPolyhedron(pair->second);
 			++ m;
 			++ s;
 		}
 		else {
 			// removed
-			DeinitModel(* m);
+			DeinitPolyhedron(* m);
 			formation_map.erase(m ++);
 		}
 	}
@@ -234,22 +234,22 @@ void form::Scene::ResetFormations()
 
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
 		FormationPair & pair = * i;
-		DeinitModel(pair);
+		DeinitPolyhedron(pair);
 	}
 	
 	node_buffer.OnReset();
 
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
 		FormationPair & pair = * i;
-		InitModel(pair);
+		InitPolyhedron(pair);
 	}
 
 	node_buffer.UnlockTree();
 }
 
-void form::Scene::TickModel(Polyhedron & model)
+void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 {
-	form::RootNode & root_node = model.root_node;
+	form::RootNode & root_node = polyhedron.root_node;
 	
 	if (root_node.IsExpandable()) 
 	{
@@ -259,44 +259,45 @@ void form::Scene::TickModel(Polyhedron & model)
 	}
 }
 
-void form::Scene::InitModel(FormationPair & pair)
+// TODO: This whole function is a spaghetti junction.
+//  Probably needs to live in Polyhedron.
+void form::Scene::InitPolyhedron(FormationPair & pair)
 {
 	Formation const & formation = ref(pair.first);
-	Polyhedron & model = pair.second;
-	
-	Shader * shader = formation.shader_factory.Create(formation);
-	shader->SetOrigin(origin);
-	model.SetShader(shader);
+	Polyhedron & polyhedron = pair.second;
 
-	model.root_node.Init(formation.seed, node_buffer.GetPoints());
-	model.root_node.SetCenter(formation.position - origin, formation.scale);
+	PointBuffer & points = node_buffer.GetPoints();
+	
+	polyhedron.Init(formation, origin, points);
 }
 
-void form::Scene::DeinitModel(FormationPair & pair)
+void form::Scene::DeinitPolyhedron(FormationPair & pair)
 {
-	Polyhedron & model = pair.second;
+	Polyhedron & polyhedron = pair.second;
 	
-	RootNode & root_node = model.root_node;
+	// Collapse the root node by fair means or foul.
+	RootNode & root_node = polyhedron.root_node;
 #if ! defined(FAST_SCENE_RESET)
 	node_buffer.CollapseNode(root_node);
 #else
 	root_node.children = nullptr;
 #endif
-	root_node.Deinit(node_buffer.GetPoints());
 	
-	delete & model.GetShader();
-	model.SetShader(nullptr);
+	// Continue deinitialization somewhere a bit calmer.
+	polyhedron.Deinit(node_buffer.GetPoints());
 }
 
-void form::Scene::ResetModel(FormationPair & pair)
+void form::Scene::ResetPolyhedron(FormationPair & pair)
 {
 	Formation const & formation = ref(pair.first);
-	Polyhedron & model = pair.second;
+	Polyhedron & polyhedron = pair.second;
 	
-	model.GetShader().SetOrigin(origin);
+	polyhedron.GetShader().SetOrigin(origin);
 	
-	RootNode & root_node = model.root_node;
+	RootNode & root_node = polyhedron.root_node;
 	node_buffer.CollapseNode(root_node);
-	model.root_node.SetCenter(formation.position - origin, formation.scale);
+	
+	Point * points[4];
+	root_node.GetPoints(points);
+	polyhedron.shader->InitRootPoints(formation.seed, points);
 }
-

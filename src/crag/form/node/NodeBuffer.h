@@ -88,7 +88,7 @@ namespace form
 		void CollapseNode(Node & node);
 	private:
 		void InitMidPoints(Node & node, Shader & shader);
-		static bool InitChildGeometry(Node & parent, Node * children_copy, Shader & shader);
+		static bool InitChildGeometry(Node const & parent, Node * children_copy, Shader & shader);
 		static void InitChildPointers(Node & parent_node);
 		
 		void DeinitChildren(Node * children);

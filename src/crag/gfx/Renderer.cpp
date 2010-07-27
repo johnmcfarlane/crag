@@ -197,12 +197,6 @@ void gfx::Renderer::Render(Scene & scene) const
 #endif
 
 	VerifyRenderState();
-
-	//GLenum gl_error = glGetError(); 
-	//if (gl_error != GL_NO_ERROR) {
-	//	std::cout << "gfx::Renderer::Render: " << gl_error << '\n';
-	//	exit(1);
-	//}
 }
 
 void gfx::Renderer::RenderScene(Scene const & scene) const
@@ -407,5 +401,5 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
 #endif
 	
-	Debug::DrawGraphics();
+	Debug::Draw();
 }

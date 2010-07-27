@@ -67,9 +67,9 @@ void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_fo
 
 void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal)
 {
-	Vector3 sa(a);
-	Vector3 sb(b);
-	Vector3 sc(c);
+	Vector3 sa(a.pos);
+	Vector3 sb(b.pos);
+	Vector3 sc(c.pos);
 	
 	// If the sphere is completely clear of the infinite plan of the triangle,
 	Scalar planar_depth = DistanceToSurface<Scalar>(sa, sb, sc, Vector3(relative_sphere.center));
@@ -144,9 +144,9 @@ void sim::PlanetSphereCollisionFunctor::GatherPoints(form::Node const & node)
 // TODO: Better name.
 bool sim::PlanetSphereCollisionFunctor::CanTraverse(form::Node const & node) const
 { 
-	Vector3 a = node.GetCorner(0);
-	Vector3 b = node.GetCorner(1);
-	Vector3 c = node.GetCorner(2);
+	Vector3 a = node.GetCorner(0).pos;
+	Vector3 b = node.GetCorner(1).pos;
+	Vector3 c = node.GetCorner(2).pos;
 	return TouchesInfinitePyramid(a, b, c);
 }
 

@@ -24,10 +24,8 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(class ShaderFactory const & init_shader_factory, float init_scale);	
+		Formation(class ShaderFactory const & init_shader_factory);	
 		virtual ~Formation();
-		
-		float GetScale() const { return scale; }
 		
 		// heavy lifting
 		void SetPosition(Vector3f const & init_position);
@@ -46,7 +44,6 @@ namespace form
 		
 		Vector3d position;
 		ShaderFactory const & shader_factory;
-		float scale;
 		int seed;
 	};
 

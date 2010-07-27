@@ -56,6 +56,7 @@ namespace gfx
 	#if defined(GFX_DEBUG)
 		void Init();
 		void Deinit();
+		void Verify();
 
 		double GetVerbosity();
 		
@@ -63,11 +64,11 @@ namespace gfx
 		void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b);
 		void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1));
 		void AddFrustum(Pov const & pov);
-		void DrawGraphics();
-		void DrawText();
+		void Draw();
 	#else
 		inline void Init() { }
 		inline void Deinit() { }
+		inline void Verify() { }
 	
 		inline double GetVerbosity() { return 0; }
 	
@@ -75,8 +76,7 @@ namespace gfx
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b) { }
 		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
 		inline void AddFrustum(Pov const & pov) { }
-		inline void DrawGraphics() { }
-		inline void DrawText() { }
+		inline void Draw() { }
 	#endif
 	
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors = ColorPair(1, 1))

@@ -37,7 +37,6 @@ namespace sim
 		virtual void Draw() const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
-		virtual Scalar GetBoundingRadius() const = 0;
 		virtual sim::Vector3 const & GetPosition() const = 0;
 		virtual physics::Body * GetBody();
 		virtual physics::Body const * GetBody() const;

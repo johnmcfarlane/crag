@@ -53,17 +53,19 @@ form::Node::~Node()
 
 bool form::Node::InitGeometry()
 {
-	Vector3f const & a = ref(triple[0].corner);
-	Vector3f const & b = ref(triple[1].corner);
-	Vector3f const & c = ref(triple[2].corner);
+	Vector3f const & a = ref(triple[0].corner).pos;
+	Vector3f const & b = ref(triple[1].corner).pos;
+	Vector3f const & c = ref(triple[2].corner).pos;
 	
 	normal = TriangleNormal(a, b, c);
-	if (! FastSafeNormalize(normal)) {
+	if (! FastSafeNormalize(normal)) 
+	{
 		return false;
 	}
 	
 	area = TriangleArea<float>(a, b, c);
-	if (area == 0) {
+	if (area == 0) 
+	{
 		return false;
 	}
 	

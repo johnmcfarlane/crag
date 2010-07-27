@@ -16,6 +16,9 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
+#include "physics/Singleton.h"
+#include "cl/Singleton.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -78,6 +81,9 @@ namespace
 		{
 			return false;
 		}
+		
+		physics::Singleton physics_singleton;
+		cl::Singleton cl_singleton;
 
 		// Run the simulation.
 		sim::Simulation * sim = new sim::Simulation ();

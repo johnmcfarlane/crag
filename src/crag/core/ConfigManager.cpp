@@ -92,6 +92,7 @@ bool ConfigManager::Load()
 		{
 			std::cout << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << ".\n";
 			std::cout << "ConfigManager: Program defaults will be used for remainder of values.\n";
+			break;
 		}
 		
 		if (parameter->Set(value_string, default_line))

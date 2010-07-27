@@ -22,9 +22,8 @@
 #endif
 
 
-form::Formation::Formation(ShaderFactory const & init_shader_factory, float init_scale)
+form::Formation::Formation(ShaderFactory const & init_shader_factory)
 : shader_factory(init_shader_factory)
-, scale(init_scale)
 , seed(-1)
 {
 	VerifyObject(* this);

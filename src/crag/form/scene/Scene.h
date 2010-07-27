@@ -73,7 +73,7 @@ namespace form
 		int GetNumQuaternaUsedTarget() const;
 		void SetNumQuaternaUsedTarget(int n);
 		
-		Polyhedron const & GetModel(Formation const & formation) const;
+		Polyhedron const & GetPolyhedron(Formation const & formation) const;
 		
 	private:
 		
@@ -83,11 +83,11 @@ namespace form
 		void TickModels(FormationSet const & formation_set);
 		void ResetFormations();
 
-		void TickModel(Polyhedron & model);
+		void TickPolyhedron(Polyhedron & model);
 
-		void InitModel(FormationPair & pair);
-		void DeinitModel(FormationPair & pair);
-		void ResetModel(FormationPair & pair);
+		void InitPolyhedron(FormationPair & pair);
+		void DeinitPolyhedron(FormationPair & pair);
+		void ResetPolyhedron(FormationPair & pair);
 		
 		
 		///////////////////////////////////////////////////////

@@ -20,12 +20,13 @@ namespace form
 	// They also remember their vertex in the currently generated mesh.
 	
 	// TODO: form/defs.f with Vector3.
-	class Point : public Vector3
+	class Point
 	{
 	public:
 		Point();
 		
 		// Attributes
+		Vector3 pos;
 		Vertex * vert;
 	};
 }

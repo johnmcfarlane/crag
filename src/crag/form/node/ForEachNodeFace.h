@@ -29,9 +29,7 @@ namespace form
 	// Calculates normal for given face and passes it on to functor.
 	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, FaceFunctor & f)
 	{
-		Vector3f normal = TriangleNormal(static_cast<Vector3 const &>(a), 
-										 static_cast<Vector3 const &>(b), 
-										 static_cast<Vector3 const &>(c));
+		Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
 		f.AddFace(a, b, c, FastNormalize(normal));
 	}
 	

@@ -33,9 +33,6 @@
 
 namespace 
 {
-//CONFIG_DEFINE (min_sorted_nodes, int, 100);	// At least the first <min_sorted_nodes> in nodes will be sorted (and the lowest of all the array) for sure.
-//CONFIG_DEFINE (prop_sorted_nodes, float, .01f);
-//CONFIG_DEFINE (recycle_to_sorted_coefficient, float, 1.5f);
 
 	CONFIG_DEFINE (fix_num_quaterna, int, 0);
 
@@ -160,6 +157,7 @@ void form::NodeBuffer::Verify() const
 				
 				VerifyTrue(sibling.parent == nullptr);
 				VerifyTrue(sibling.children == nullptr);
+				VerifyTrue(sibling.score == 0);
 			}
 		}
 		
@@ -526,7 +524,8 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	
 	// TODO: GetWorstQuaterna too slow. BubbleSortUp equally unnecessary. 
 	Quaterna * worst_quaterna = GetWorstQuaterna(score);
-	if (worst_quaterna == nullptr) {
+	if (worst_quaterna == nullptr) 
+	{
 		return false;
 	}
 	
@@ -541,7 +540,8 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	
 	// Work with copy of children until it's certain that expansion is going to work.
 	Node children_copy[4];	
-	if (! InitChildGeometry(node, children_copy, shader)) {
+	if (! InitChildGeometry(node, children_copy, shader)) 
+	{
 		// Probably, a child is too small to be represented using float accuracy.
 		return false;
 	}
@@ -549,11 +549,16 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	LockTree();
 
 	// Deinit children.
-	if (worst_quaterna->IsInUse()) {
+	bool is_in_use = worst_quaterna->IsInUse();
+	if (is_in_use) 
+	{
 		DeinitChildren(worst_children);
-		Assert(worst_quaterna->nodes[0].score == 0);
+		Assert(worst_children[0].score == 0);
 	}
-	Assert(worst_quaterna->nodes[0].score == 0);
+	Assert(worst_children[0].score == 0);
+	Assert(worst_children[1].score == 0);
+	Assert(worst_children[2].score == 0);
+	Assert(worst_children[3].score == 0);
 	
 	worst_children[0] = children_copy[0];
 	worst_children[1] = children_copy[1];
@@ -606,10 +611,60 @@ void form::NodeBuffer::InitMidPoints(Node & node, Shader & shader)
 	}
 }
 
-bool form::NodeBuffer::InitChildGeometry(Node & parent, Node * children, Shader & shader)
+bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, Shader & shader)
 {
+#if 1
+	Node::Triplet const * parent_triple = parent.triple;
+	
+	Node * child = children;
+	Node::Triplet * child_triple;
+	
+	child_triple = child->triple;
+	child_triple->corner = parent_triple[0].corner;
+	(++ child_triple)->corner = parent_triple[2].mid_point;
+	(++ child_triple)->corner = parent_triple[1].mid_point;
+	if (! child->InitGeometry())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple->corner = parent_triple[2].mid_point;
+	(++ child_triple)->corner = parent_triple[1].corner;
+	(++ child_triple)->corner = parent_triple[0].mid_point;
+	if (! child->InitGeometry())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple->corner = parent_triple[1].mid_point;
+	(++ child_triple)->corner = parent_triple[0].mid_point;
+	(++ child_triple)->corner = parent_triple[2].corner;
+	if (! child->InitGeometry())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple->corner = parent_triple[0].mid_point;
+	(++ child_triple)->corner = parent_triple[1].mid_point;
+	(++ child_triple)->corner = parent_triple[2].mid_point;
+	if (! child->InitGeometry())
+	{
+		return false;
+	}
+#else
+	
 	// TODO: Hard-code this and remove GetChildCorners.
-	for (int child_index = 0; child_index < 4; ++ child_index) {
+	for (int child_index = 0; child_index < 4; ++ child_index) 
+	{
 		Point * child_corners[3];
 		parent.GetChildCorners(child_index, child_corners);
 		
@@ -624,6 +679,7 @@ bool form::NodeBuffer::InitChildGeometry(Node & parent, Node * children, Shader 
 		
 		child.score = 0;	// std::numeric_limits<float>::max();
 	}
+#endif
 	
 	Assert(parent.triple[0].corner == children[0].triple[0].corner);
 	
@@ -878,7 +934,7 @@ bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
 
 form::Quaterna * form::NodeBuffer::GetWorstQuaterna(float parent_score)
 {
-	Assert(parent_score >= 0);
+	Assert(parent_score > 0);
 	
 	if (quaterna_used_end != quaterna_used_end_target)
 	{

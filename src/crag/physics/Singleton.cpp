@@ -16,15 +16,6 @@
 //////////////////////////////////////////////////////////////////////
 // physics::Singleton members
 
-namespace
-{
-	physics::Singleton singleton;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// physics::Singleton members
-
 physics::Singleton::Singleton()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
@@ -68,7 +59,7 @@ void physics::Singleton::OnNearCollisionCallback (void *data, dGeomID geom1, dGe
 {
 #if ! defined(NDEBUG)
 	Singleton & ode_singleton = * reinterpret_cast<Singleton *>(data);
-	Singleton & singleton = core::Singleton<Singleton>::Get();
+	Singleton & singleton = Get();
 	Assert(& ode_singleton == & singleton);
 #endif
 	

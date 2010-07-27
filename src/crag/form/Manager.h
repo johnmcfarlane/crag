@@ -22,8 +22,6 @@
 #include "glpp/Texture.h"
 #endif
 
-#include "cl/Singleton.h"
-
 #include <set>
 
 
@@ -47,6 +45,7 @@ namespace form {
 	typedef std::set<Formation *> FormationSet;
 	
 	
+	// TODO: Consider making this not a singleton.
 	class Manager : public core::Singleton<Manager>
 	{
 	public:
@@ -76,10 +75,6 @@ namespace form {
 	private:
 #if defined(FORM_VERTEX_TEXTURE)
 		bool InitTexture();
-#endif
-		
-#if (USE_OPENCL)
-		cl::Singleton cl_singleton;
 #endif
 		
 		FormationSet formation_set;

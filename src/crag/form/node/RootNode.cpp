@@ -63,9 +63,9 @@ DUMP_OPERATOR_DEFINITION(form, RootNode)
 }
 #endif
 
-void form::RootNode::Init(int init_seed, PointBuffer & vertices)
+void form::RootNode::Init(int init_seed, Point * root_points[4])
 {
-	Point * corner = vertices.Alloc();
+	Point * corner = root_points[0];
 
 	triple[0].corner = corner;
 	triple[1].corner = corner;
@@ -83,23 +83,32 @@ void form::RootNode::Init(int init_seed, PointBuffer & vertices)
 	for (int i = 0; i < 3; ++ i)
 	{
 		Triplet & t = triple[i];
-		t.mid_point = vertices.Alloc();
+		t.mid_point = root_points[i + 1];
 		t.cousin = this;
 	}
 	
 	// At this point, the four verts still need setting up.
 }
 
-void form::RootNode::Deinit(PointBuffer & vertices)
+void form::RootNode::GetPoints(Point * points[4])
+{
+	// TODO: Verify would include check that {points[0] == (triple[1]} == triple[2])
+	points[0] = triple[0].corner;
+	points[1] = triple[0].mid_point;
+	points[2] = triple[1].mid_point;
+	points[3] = triple[2].mid_point;
+}
+
+void form::RootNode::Deinit(PointBuffer & points)
 {
 	Assert(children == nullptr);
 	
-	vertices.Free(triple[0].corner);
+	points.Free(triple[0].corner);
 	
 	for (int i = 0; i < 3; ++ i) {
 		triple[i].corner = nullptr;
 		
-		vertices.Free(triple[i].mid_point);
+		points.Free(triple[i].mid_point);
 		triple[i].mid_point = nullptr;
 		
 		triple[i].cousin = nullptr;
@@ -110,25 +119,3 @@ form::Polyhedron & form::RootNode::GetOwner() const
 {
 	return ref(owner);
 }
-
-void form::RootNode::SetCenter(Vector3d const & _center, double scale)
-{
-	Assert(children == nullptr);
-	
-	center = _center;
-	SetPointCenter(ref(triple[0].corner), Vector3d(-1, -1, -1), _center, scale);
-	SetPointCenter(ref(triple[0].mid_point), Vector3d(-1,  1,  1), _center, scale);
-	SetPointCenter(ref(triple[1].mid_point), Vector3d(1,  -1,  1), _center, scale);
-	SetPointCenter(ref(triple[2].mid_point), Vector3d(1,  1,  -1), _center, scale);
-}
-
-void form::RootNode::SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale)
-{
-	Vector3d dir = Normalized(relative_pos);
-	point = dir * scale + point_center;
-/*	point.red = 255;
-	point.green = 255;
-	point.blue = 255;
-	point.norm = dir;*/
-}
-

@@ -28,6 +28,7 @@ namespace
 	CONFIG_DEFINE (max_observer_position_length, double, 2500);
 	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .2f);
 	CONFIG_DEFINE (post_reset_freeze_period, app::TimeType, 1.25f);
+	CONFIG_DEFINE (dynamic_origin, bool, true);
 }
 
 
@@ -125,7 +126,7 @@ void form::SceneThread::Tick()
 		ThreadTick();
 	}
 	
-	if (gfx::Debug::GetVerbosity() > 0.91532)
+	if (gfx::Debug::GetVerbosity() > 0.2)
 	{
 		sim::Vector3 const & observer_pos = observer.GetPosition();
 		double observer_position_length = Length(observer_pos - scene.GetOrigin());
@@ -135,6 +136,14 @@ void form::SceneThread::Tick()
 	if (gfx::Debug::GetVerbosity() > .75)
 	{
 		gfx::Debug::out << "scene_t:" << scene_tick_period << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .2)
+	{
+		if (PostResetFreeze())
+		{
+			gfx::Debug::out << "resetting...\n";
+		}
 	}
 }
 
@@ -177,7 +186,10 @@ void form::SceneThread::ResetOrigin()
 {
 	Assert(IsMainThread());
 
-	reset_origin_flag = true;
+	if (dynamic_origin)
+	{
+		reset_origin_flag = true;
+	}
 }
 
 bool form::SceneThread::PostResetFreeze() const

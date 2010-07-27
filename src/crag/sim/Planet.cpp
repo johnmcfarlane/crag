@@ -16,39 +16,39 @@
 #include "sim/PlanetaryBody.h"
 #include "physics/Singleton.h"
 
+#include "form/Formation.h"
 #include "form/Manager.h"
 #include "form/scene/Mesh.h"
 
 #include "core/Random.h"
 
 
-namespace 
-{
-	sim::PlanetShaderFactory factory;
-}
-
-
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius, int init_seed)
+sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius_min, float init_radius_max, int init_seed)
 : Entity()
-, formation(factory, init_radius)
-, body(formation, init_radius)
+, radius_min(init_radius_min)
+, radius_max(init_radius_max)
 {
-	body.SetPosition(init_pos);
+	factory = new PlanetShaderFactory(* this);
 	
+	formation = new form::Formation(* factory);
 	Random rnd(init_seed);
-	formation.seed = rnd.GetInt();
-	formation.SetPosition(init_pos);
-	form::Manager::Get().AddFormation(& formation);
+	formation->seed = rnd.GetInt();
+	formation->SetPosition(init_pos);
+	form::Manager::Get().AddFormation(formation);
+	
+	// TODO: Is that an accurate average radius? Shouldn't it be Logarithmic?
+	body = new PlanetaryBody(* formation, radius_max);
+	body->SetPosition(init_pos);
 }
 
 sim::Planet::~Planet()
 {
 	form::Manager * formation_manager = form::Manager::GetPtr();
 	if (formation_manager != nullptr) {
-		form::Manager::Get().RemoveFormation(& formation);
+		form::Manager::Get().RemoveFormation(formation);
 	}
 }
 
@@ -61,14 +61,14 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 {
 	float const density = 1;
 	
-	Vector3 const & here_pos = body.GetPosition();
+	Vector3 const & here_pos = body->GetPosition();
 	Vector3 there_to_here = here_pos - pos;
 	sim::Scalar distance_square = LengthSq(there_to_here);
 	sim::Scalar distance = Sqrt(distance_square);
 	
 	Vector3 direction = there_to_here / distance;
 
-	sim::Scalar radius = formation.GetScale();
+	sim::Scalar radius = GetAverageRadius();
 	sim::Scalar volume = Cube(radius);
 	sim::Scalar mass = volume * density;
 	sim::Scalar force = mass / distance_square;
@@ -77,16 +77,14 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	gravity += contribution;
 }
 
-sim::Scalar sim::Planet::GetBoundingRadius() const
+sim::Scalar sim::Planet::GetAverageRadius() const
 {
-//	return formation.GetMaxRadius();
-	Assert(false);
-	return -1;
+	return (radius_min + radius_max) * .5;
 }
 
 sim::Vector3 const & sim::Planet::GetPosition() const
 {
-	return body.GetPosition();
+	return body->GetPosition();
 }
 
 #if 0
@@ -109,7 +107,7 @@ bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
 	{
 		sf::Lock lock(form::Manager::mutex);
 		
-		formation.GenerateCollisionMesh(mesh, body);
+		formation->GenerateCollisionMesh(mesh, body);
 		
 		physics.OnMeshCollision(that_geom);
 	}

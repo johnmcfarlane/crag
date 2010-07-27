@@ -11,8 +11,11 @@
 #include "pch.h"
 
 #include "Polyhedron.h"
-#include "form/node/Shader.h"
 #include "VertexBuffer.h"
+
+#include "form/Formation.h"
+#include "form/node/PointBuffer.h"
+#include "form/node/Shader.h"
 
 #include "core/memory.h"
 
@@ -54,12 +57,36 @@ form::Polyhedron::~Polyhedron()
 	delete shader;
 }
 
-void form::Polyhedron::SetShader(form::Shader * init_shader)
+void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer)
 {
-	// Currently, no need ever to change shader.
-	Assert((shader == nullptr) != (init_shader == nullptr));
+	// Initialize the shader.
+	shader = formation.shader_factory.Create(formation);
+	shader->SetOrigin(origin);
 	
-	shader = init_shader;
+	// Create me some points.
+	// (These are the four points of the initial tetrahedron.
+	// TODO: Use the word tetrahedron loads more. It sounds clever yet is easy to wikipedarize. 
+	Point * root_points[4] = 
+	{
+		point_buffer.Alloc(),
+		point_buffer.Alloc(),
+		point_buffer.Alloc(),
+		point_buffer.Alloc()
+	};
+	
+	// Initialize the points using the shader.
+	shader->InitRootPoints(formation.seed, root_points);	
+
+	// Initialize the root node with the points
+	root_node.Init(formation.seed, root_points);
+}
+
+void form::Polyhedron::Deinit(PointBuffer & point_buffer)
+{
+	root_node.Deinit(point_buffer);
+	
+	delete shader;
+	shader = nullptr;
 }
 
 form::Shader & form::Polyhedron::GetShader()

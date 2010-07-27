@@ -12,14 +12,17 @@
 
 #include "form/node/RootNode.h"
 
+#include "sim/defs.h"
 
-// TODO: Rename Polyhedron to Polyhedron?
 
 namespace form
 {
-	Polyhedron & GetPolyhedron(Node & node);
+	// Forward-declarations
+	class Shader;
+	class Formation;
 	
-	class VertexBuffer;
+	// Helper function; Given a decendant node, find it's root, and then its polyhedron.
+	Polyhedron & GetPolyhedron(Node & node);
 	
 	// A Polyhedron is an instance of a Formation.
 	// The same Formation is represented in different Scenes by a different Polyhedron.
@@ -32,7 +35,9 @@ namespace form
 		Polyhedron(Polyhedron const & rhs);
 		~Polyhedron();
 		
-		void SetShader(class Shader * init_shader);
+		void Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer);
+		void Deinit(PointBuffer & point_buffer);
+
 		Shader & GetShader();
 		
 		enum 
@@ -40,7 +45,6 @@ namespace form
 			NUM_ROOT_VERTICES = 4
 		};
 		
-		//class Vertex * corners [NUM_ROOT_VERTICES];
 		RootNode root_node;	// Exists purely so that all 'real' nodes have a parent.
 		Shader * shader;
 	};

@@ -33,7 +33,7 @@ namespace
 // Singleton members
 
 cl::Singleton::Singleton()
-: device_type(opencl_device_type)
+: device_type((opencl_device_type >= CL_DEVICE_TYPE_ALL) ? CL_DEVICE_TYPE_ALL : opencl_device_type)
 , device_id(0)
 , context(0)
 , queue(0)
@@ -72,7 +72,18 @@ cl::Singleton::Singleton()
 		std::cout << "\t\t" << CL_DEVICE_TYPE_ALL << " (don't use OpenCL at all)\n";
 		device_type = CL_DEVICE_TYPE_ALL;	// means don't use CL at all
 		return;
-
+			
+	case CL_INVALID_VALUE:
+		std::cout << "OpenCL error: CL_INVALID_VALUE. Maybe try a different value for config variable, 'device_type'?\n";
+		std::cout << "\tdevice_type=" << device_type << '\n';
+		std::cout << "\tValid values are: \n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_DEFAULT << " (default)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_CPU << " (cpu)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_GPU << " (gpu)\n";
+		std::cout << "\t\t" << CL_DEVICE_TYPE_ALL << " (don't use OpenCL at all)\n";
+		device_type = CL_DEVICE_TYPE_ALL;	// means don't use CL at all
+		return;
+			
 	default:
 		CL_CHECK(err);
 	}
