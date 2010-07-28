@@ -25,6 +25,9 @@ namespace form
 	{
 	public:
 		Mesh(int max_num_verts, int max_num_tris);
+		
+		void SetFlatShaded(bool fs);
+		bool GetFlatShaded() const;
 
 		int GetIndexCount() const;
 		int GetNumPolys() const;
@@ -34,10 +37,9 @@ namespace form
 		Vertex & AddVertex(Point const & p);
 	public:
 		
-		void ClearPolys();
+		//void ClearPolys();
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
 		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
-		//void AddFace(Point & a, Point & b, Point & c);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;
@@ -54,6 +56,7 @@ namespace form
 	private:
 		VertexBuffer vertices;
 		gfx::IndexBuffer indices;
+		bool flat_shaded;
 	};
 
 }

@@ -41,8 +41,7 @@ namespace
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
-	CONFIG_DEFINE (init_smooth_shading, bool, true);
-	CONFIG_DEFINE (init_wireframe, bool, true);
+	CONFIG_DEFINE (init_wireframe, bool, false);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
@@ -71,7 +70,6 @@ namespace
 gfx::Renderer::Renderer()
 : culling(init_culling)
 , lighting(init_lighting)
-, smooth_shading(init_smooth_shading)
 , wireframe(init_wireframe)
 {
 	InitRenderState();
@@ -81,7 +79,6 @@ gfx::Renderer::~Renderer()
 {
 	init_culling = culling;
 	init_lighting = lighting;
-	init_smooth_shading = smooth_shading;
 	init_wireframe = wireframe;
 }
 
@@ -172,11 +169,6 @@ void gfx::Renderer::ToggleLighting()
 void gfx::Renderer::ToggleCulling()
 {
 	culling = ! culling;
-}
-
-void gfx::Renderer::ToggleSmoothShading()
-{
-	smooth_shading = ! smooth_shading;
 }
 
 void gfx::Renderer::ToggleWireframe()
@@ -289,10 +281,6 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	}
 	
 	// Set state
-	if (! smooth_shading) 
-	{
-		GLPP_CALL(glShadeModel(GL_FLAT));
-	}
 	if (lighting)
 	{
 		gl::Enable(GL_LIGHTING);
@@ -311,9 +299,6 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	gl::Disable(GL_LIGHT0);
 
 	// Reset state
-	if (! smooth_shading) {
-		GLPP_CALL(glShadeModel(GL_SMOOTH));
-	}
 	if (lighting)
 	{
 		gl::Disable(GL_LIGHTING);

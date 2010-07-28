@@ -13,14 +13,32 @@
 #include "form/scene/Mesh.h"
 #include "form/node/Point.h"
 
-#include "core/Random.h"
 #include "geom/VectorOps.h"
 
+#include "core/ConfigEntry.h"
+#include "core/Random.h"
+
+
+namespace  
+{
+	CONFIG_DEFINE (init_flat_shaded, bool, true);
+}
 
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)
 : vertices(max_num_verts)
 , indices(max_num_tris * 3)
+, flat_shaded(init_flat_shaded)
 {
+}
+
+void form::Mesh::SetFlatShaded(bool fs)
+{
+	flat_shaded = fs;
+}
+
+bool form::Mesh::GetFlatShaded() const
+{
+	return flat_shaded;
 }
 
 int form::Mesh::GetIndexCount() const
@@ -64,7 +82,7 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p)
 	return addition;
 }
 
-void form::Mesh::ClearPolys()
+/*void form::Mesh::ClearPolys()
 {
 #if ! defined(NDEBUG)
 	int max_num_tris = indices.GetCapacity();
@@ -73,7 +91,7 @@ void form::Mesh::ClearPolys()
 	indices.Clear();
 	
 	Assert(max_num_tris == indices.GetCapacity());
-}
+}*/
 
 void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal)
 {
@@ -90,11 +108,20 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 
 void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
 {
-	Vertex & vert_a = GetVertex(a);
-	Vertex & vert_b = GetVertex(b);
-	Vertex & vert_c = GetVertex(c);
+	Vertex * vert_a, * vert_b, * vert_c;
 	
-	AddFace(vert_a, vert_b, vert_c, normal);
+	vert_a = & GetVertex(a);
+	vert_b = & GetVertex(b);
+	if (! flat_shaded)
+	{
+		vert_c = & GetVertex(c);
+	}
+	else 
+	{
+		vert_c = & AddVertex(c);
+	}
+	
+	AddFace(* vert_a, * vert_b, * vert_c, normal);
 }
 
 /*void form::Mesh::AddFace(Point & a, Point & b, Point & c)

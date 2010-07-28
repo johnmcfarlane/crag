@@ -127,6 +127,11 @@ void form::Manager::ToggleSuspended()
 	suspended = ! suspended;
 }
 
+void form::Manager::ToggleFlatShaded()
+{
+	scene_thread->ToggleFlatShaded();
+}
+
 void form::Manager::Launch()
 {
 	scene_thread->Launch();
@@ -163,10 +168,12 @@ bool form::Manager::PollMesh()
 		return false;
 	}
 	
-	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin))
+	bool flat_shaded;
+	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin, flat_shaded))
 	{
 		// TODO: Do we definitely need two of these?
 		std::swap(front_buffer_object, back_buffer_object);
+		front_buffer_flat_shaded = flat_shaded;
 		return true;
 	}
 	
@@ -185,6 +192,11 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+
+	if (front_buffer_flat_shaded) 
+	{
+		GLPP_CALL(glShadeModel(GL_FLAT));
+	}
 	
 	// Copy POV, adjust for mesh's origin and set as matrix.
 	gfx::Pov formation_pov = pov;
@@ -209,6 +221,10 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	gl::Disable(GL_TEXTURE_2D);
 #endif
 	
+	if (front_buffer_flat_shaded) 
+	{
+		GLPP_CALL(glShadeModel(GL_SMOOTH));
+	}
 	//gl::Enable(GL_COLOR_MATERIAL);
 
 	// Debug output

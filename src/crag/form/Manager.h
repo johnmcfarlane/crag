@@ -63,6 +63,7 @@ namespace form {
 		
 		void AdjustNumNodes(app::TimeType frame_delta, app::TimeType target_frame_delta);
 		void ToggleSuspended();
+		void ToggleFlatShaded();
 		
 		void Launch();
 		void Tick();
@@ -92,7 +93,10 @@ namespace form {
 		form::MeshBufferObject buffer_objects[2];
 		form::MeshBufferObject * volatile front_buffer_object;
 		form::MeshBufferObject * volatile back_buffer_object;
+		
+		// TODO: puts these in new object: FrontBufferAttributes
 		sim::Vector3 front_buffer_origin;
+		bool front_buffer_flat_shaded;
 	};	
 
 }

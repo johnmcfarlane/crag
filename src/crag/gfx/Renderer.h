@@ -49,7 +49,6 @@ namespace gfx
 		
 		void ToggleCulling();
 		void ToggleLighting();
-		void ToggleSmoothShading();
 		void ToggleWireframe();
 		
 		void Render(class Scene & scene) const;
@@ -67,7 +66,6 @@ namespace gfx
 		
 		bool culling;
 		bool lighting;
-		bool smooth_shading;
 		bool wireframe;
 
 		struct StateParam

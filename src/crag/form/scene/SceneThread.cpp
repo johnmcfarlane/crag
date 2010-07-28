@@ -152,7 +152,7 @@ void form::SceneThread::ForEachFormation(FormationFunctor & f) const
 	scene.ForEachFormation(f);
 }
 
-bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin)
+bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin, bool & flat_shaded)
 {
 	Assert(IsMainThread());
 	
@@ -165,9 +165,10 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & or
 	
 	if (mesh_updated)
 	{
-		mbo.Set(mesh);
-
 		origin = mesh_origin;
+		flat_shaded = mesh.GetFlatShaded();
+		
+		mbo.Set(mesh);
 
 		mesh_updated = false;
 		polled = true;
@@ -197,6 +198,11 @@ bool form::SceneThread::PostResetFreeze() const
 	app::TimeType t = app::GetTime();
 	app::TimeType time_since_reset = t - origin_reset_time;
 	return time_since_reset < post_reset_freeze_period;
+}
+
+void form::SceneThread::ToggleFlatShaded()
+{
+	mesh.SetFlatShaded(! mesh.GetFlatShaded());
 }
 
 // TODO: Should really say 'need origin reset'

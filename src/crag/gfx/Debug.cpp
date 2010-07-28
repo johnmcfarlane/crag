@@ -82,7 +82,7 @@ namespace
 		
 		static void VerifyColorComp(float c)
 		{
-			VerifyTrue(c >= 0 && c <= 1);
+			Assert(c >= 0 && c <= 1);
 		}
 		
 		void Draw(bool hidden) const
@@ -113,18 +113,18 @@ namespace
 					break;
 					
 				case GL_LINES:
-					VerifyTrue((s % 2) == 0);
+					Assert((s % 2) == 0);
 					break;
 					
 				case GL_TRIANGLES:
-					VerifyTrue((s % 3) == 0);
+					Assert((s % 3) == 0);
 					break;
 					
 				default:
-					VerifyTrue(false);
+					Assert(false);
 			}
 
-			VerifyTrue(s >= 0 && s < 100000);
+			Assert(s >= 0 && s < 100000);
 			for (point_vector::const_iterator i = points.begin(); i != points.end(); ++ i)
 			{
 				Point const & p = * i;

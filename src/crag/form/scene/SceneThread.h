@@ -55,9 +55,10 @@ namespace form
 		
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
-		bool PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin);
+		bool PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin, bool & flat_shaded);
 		void ResetOrigin();
 		bool PostResetFreeze() const;
+		void ToggleFlatShaded();
 		
 		bool OutOfRange() const;
 		

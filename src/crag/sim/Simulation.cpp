@@ -368,7 +368,8 @@ bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 					break;
 					
 				case KEY_F:
-					renderer.ToggleSmoothShading();
+					//renderer.ToggleSmoothShading();
+					formation_manager->ToggleFlatShaded();
 					break;
 					
 				case KEY_G:
