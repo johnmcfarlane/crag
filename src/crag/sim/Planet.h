@@ -34,9 +34,8 @@ namespace sim
 		Planet(sim::Vector3 const & init_pos, float init_min_radius, float init_max_radius, int init_seed);
 		~Planet();
 
-		bool IsShadowCatcher() const;
-	
-		void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
+		virtual void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
+		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range) const;
 	
 		Scalar GetRadiusMin() const { return radius_min; }
 		Scalar GetRadiusMax() const { return radius_max; }

@@ -43,18 +43,18 @@ namespace
 	//////////////////////////////////////////////////////////////////////
 	// functions
 
-	sim::Vector3 const default_camera_pos(0,997740.6,0);
+	sim::Vector3 const default_camera_pos(0,10000100,0);
 	CONFIG_DEFINE (use_default_camera_pos, bool, true);
 	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
 
 	CONFIG_DEFINE (planet_pos_1, sim::Vector3, sim::Vector3::Zero());
-	CONFIG_DEFINE (planet_min_radius_1, float,  999000);
-	CONFIG_DEFINE (planet_max_radius_1, float, 1001000);
+	CONFIG_DEFINE (planet_min_radius_1, float,  9999500);
+	CONFIG_DEFINE (planet_max_radius_1, float, 10000500);
 
 	// please don't write in
 	CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
-	CONFIG_DEFINE (sun_year, float, 300.f);
+	CONFIG_DEFINE (sun_year, float, 30000.f);
 		
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 

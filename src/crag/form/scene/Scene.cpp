@@ -25,9 +25,7 @@
 
 form::Scene::Scene()
 : node_buffer(1024)
-, observer_pos(Vector3f::Zero())
-, relative_observer_pos(Vector3f::Zero())
-, origin(Vector3f::Zero())
+, origin(sim::Vector3::Zero())
 {
 }
 
@@ -94,16 +92,15 @@ void form::Scene::Clear()
 	}
 }
 
-sim::Vector3 const & form::Scene::GetObserverPos() const
+sim::Ray3 const & form::Scene::GetCameraRay() const
 {
-	return observer_pos;
+	return camera_ray;
 }
 
-void form::Scene::SetObserverPos(sim::Vector3 const & pos, sim::Vector3 const & dir) 
+void form::Scene::SetCameraRay(sim::Ray3 const & cr) 
 {
-	observer_pos = pos;
-	relative_observer_pos = observer_pos - origin;
-	observer_dir = dir;
+	camera_ray = cr;
+	camera_ray_relative = sim::Ray3(cr.position - origin, cr.direction);
 }
 
 sim::Vector3 const & form::Scene::GetOrigin() const
@@ -116,7 +113,7 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 	if (o != origin) 
 	{
 		origin = o;
-		SetObserverPos(observer_pos, observer_dir);
+		SetCameraRay(camera_ray);
 
 		ResetFormations();
 	}
@@ -124,7 +121,7 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 void form::Scene::Tick(FormationSet const & formation_set)
 {
-	node_buffer.Tick(relative_observer_pos, observer_dir);
+	node_buffer.Tick(camera_ray_relative);
 	TickModels(formation_set);
 }
 

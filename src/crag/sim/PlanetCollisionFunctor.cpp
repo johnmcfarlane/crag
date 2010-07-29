@@ -14,6 +14,15 @@
 
 #include "physics/Singleton.h"
 
+#include "core/ConfigEntry.h"
+
+
+namespace  
+{
+	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .05);	// coulomb friction coefficient
+	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .25);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetCollisionFunctor members
@@ -28,8 +37,8 @@ sim::PlanetCollisionFunctor::PlanetCollisionFunctor(form::Formation const & in_p
 void sim::PlanetCollisionFunctor::OnContact(Vector3 const & pos, Vector3 const & normal, Scalar depth)
 {
 	contact.surface.mode = dContactBounce /*| dContactSoftCFM*/;
-	contact.surface.mu = 1;				// used (by default)
-	contact.surface.bounce = .5f;		// used
+	contact.surface.mu = planet_collision_friction;				// used (by default)
+	contact.surface.bounce = planet_collision_bounce;		// used
 	contact.surface.bounce_vel = .1f;	// used
 	contact.geom.pos[0] = pos.x;
 	contact.geom.pos[1] = pos.y;

@@ -41,6 +41,11 @@ void sim::Entity::GetGravitationalForce(sim::Vector3 const & /*pos*/, sim::Vecto
 {
 }
 
+bool sim::Entity::GetRenderRange(Ray3 const & camera_ray, double * range) const
+{
+	return false;
+}
+
 physics::Body * sim::Entity::GetBody()
 {
 	return nullptr;

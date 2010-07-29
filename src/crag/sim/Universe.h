@@ -37,6 +37,7 @@ namespace sim
 		void AddEntity(Entity & entity);
 
 		void Tick();
-		sim::Vector3 Weight(sim::Vector3 const & pos, float mass);
+		sim::Vector3 Weight(Vector3 const & pos, float mass);
+		void GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max);
 	}
 }

@@ -57,7 +57,7 @@ sim::Matrix4 gfx::Pov::GetCameraMatrix(bool translation) const
 sim::Matrix4 gfx::Pov::CameraToModelViewMatrix(sim::Matrix4 const & camera)
 {
 	// Between the simulation and GL, z and y are swapped and z is negated.
-	sim::Matrix4 gl_camera = camera * Space::SimToOpenGl<sim::Scalar>();
+	sim::Matrix4 gl_camera = camera * space::SimToOpenGl<sim::Scalar>();
 	
 	// And we're rotating the universe around the camera. 
 	sim::Matrix4 gl_world = Inverse(gl_camera);

@@ -58,8 +58,8 @@ namespace form
 		
 		void Clear();
 
-		sim::Vector3 const & GetObserverPos() const;
-		void SetObserverPos(sim::Vector3 const & pos, sim::Vector3 const & dir);
+		sim::Ray3 const & GetCameraRay() const;
+		void SetCameraRay(sim::Ray3 const & camera_ray);
 		
 		sim::Vector3 const & GetOrigin() const;
 		void SetOrigin(sim::Vector3 const & o);
@@ -95,11 +95,10 @@ namespace form
 		
 		NodeBuffer node_buffer;
 		
-		FormationMap formation_map;	// The internal record of formations.
-		sim::Vector3 observer_pos;	// The observer position in universal coordinates.
-		sim::Vector3 relative_observer_pos;	// The observer position relative to origin.
-		sim::Vector3 observer_dir;	// The direction in which the observer is facing.
-		sim::Vector3 origin;	// The zero point in universal coordinates.
+		FormationMap formation_map;		// The internal record of formations.
+		sim::Ray3 camera_ray;			// The observer position/direction in universal coordinates.
+		sim::Ray3 camera_ray_relative;	// The observer position/direction relative to origin.
+		sim::Vector3 origin;			// The zero point in universal coordinates.
 	};
 
 }

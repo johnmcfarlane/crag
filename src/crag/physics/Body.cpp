@@ -47,6 +47,20 @@ physics::Body::~Body()
 	dGeomDestroy(geom_id);
 }
 
+physics::Scalar physics::Body::GetMass() const
+{
+	if (body_id == 0)
+	{
+		return -1;
+	}
+	
+	dMass m;
+	dBodyGetMass(body_id, & m);
+	Assert(m.mass >= 0);
+	
+	return m.mass;
+}
+
 physics::Vector3 const & physics::Body::GetPosition() const
 {
 	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));

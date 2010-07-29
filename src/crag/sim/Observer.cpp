@@ -27,15 +27,16 @@
 
 namespace 
 {
-	CONFIG_DEFINE (camera_radius, float, 1);
-	CONFIG_DEFINE (camera_density, float, 1);
+	CONFIG_DEFINE (observer_radius, double, .5);
+	CONFIG_DEFINE (observer_density, double, 1);
 	
-	CONFIG_DEFINE (camera_speed_factor, float, 631);
+	CONFIG_DEFINE (observer_speed_factor, double, 631);
+	CONFIG_DEFINE (observer_gravity_center, sim::Vector3, sim::Vector3(0, 0, -.25));
 
-	CONFIG_DEFINE (camera_linear_damping, float, 0.04f);
-	CONFIG_DEFINE (camera_angular_damping, float, 0.1f);
-	CONFIG_DEFINE (camera_velocity_impulse, float, 0.001f);
-	CONFIG_DEFINE (camera_torque_impulse, float, .1f);
+	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
+	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);
+	CONFIG_DEFINE (observer_velocity_impulse, float, 0.002f);
+	CONFIG_DEFINE (observer_torque_impulse, double, .0025f);
 
 	CONFIG_DEFINE (observer_light_color, gfx::Color4f, gfx::Color4f(0.8f, 0.8f, 1.0f));
 	CONFIG_DEFINE (observer_light_attenuation_a, float, 0.00000001f);
@@ -46,30 +47,32 @@ namespace
 
 sim::Observer::Observer()
 : Entity()
-, sphere(true, camera_radius)
+, sphere(true, observer_radius)
 , speed(0)
-, speed_factor(camera_speed_factor)
+, speed_factor(observer_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
 {
-	sphere.SetDensity(camera_density);
-	sphere.SetLinearDamping(camera_linear_damping);
-	sphere.SetAngularDamping(camera_angular_damping);
+	SetSpeedFactor(1);
+	
+	sphere.SetDensity(observer_density);
+	sphere.SetLinearDamping(observer_linear_damping);
+	sphere.SetAngularDamping(observer_angular_damping);
 
 	impulses[0] = impulses[1] = Vector3::Zero();
 }
 
 sim::Observer::~Observer()
 {
-	camera_speed_factor = static_cast<float>(speed_factor);
+	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
 void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 {
-	Scalar velocity_impulse = camera_velocity_impulse * speed_factor;
+	Scalar velocity_impulse = observer_velocity_impulse * speed_factor;
 	Vector3 const impulse_factors[2] = 
 	{
 		Vector3(velocity_impulse, velocity_impulse, velocity_impulse),
-		Vector3(camera_torque_impulse, camera_torque_impulse, camera_torque_impulse),
+		Vector3(observer_torque_impulse, observer_torque_impulse, observer_torque_impulse),
 	};
 	
 	Scalar inv_t = 1.f / Universe::target_frame_seconds;
@@ -115,17 +118,20 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 void sim::Observer::SetSpeedFactor(int _speed_factor)
 {
 	// TODO: Specify a range in config.
-	speed_factor = static_cast<float>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
+	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
 void sim::Observer::Tick()
 {
 	ApplyImpulse();
 
-	float mass = 1;
 	Vector3 const & position = GetPosition();
-	Vector3 gravitational_force = Universe::Weight(position, mass);
-	sphere.AddRelForceAtRelPos(gravitational_force / static_cast<Scalar>(Universe::target_frame_seconds), Vector3(0, .1, -0.45));
+	Scalar mass = sphere.GetMass();
+	Vector3 gravitational_force_per_second = Universe::Weight(position, mass);
+	Vector3 gravitational_force = gravitational_force_per_second / Universe::target_frame_seconds;
+	
+	Vector3 scaled_observer_gravity_center = observer_gravity_center * sphere.GetRadius();
+	sphere.AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
 	
 	light.SetPosition(GetPosition());
 }

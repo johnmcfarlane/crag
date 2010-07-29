@@ -18,6 +18,7 @@
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
+#include "geom/Ray3.h"
 #include "geom/Sphere3.h"
 #include "geom/Matrix4.h"
 
@@ -36,6 +37,7 @@ namespace sim
 	typedef ::Vector2<Scalar> Vector2;
 	typedef ::Vector3<Scalar> Vector3;
 	typedef ::Vector4<Scalar> Vector4;
+	typedef ::Ray3<Scalar> Ray3;
 	typedef ::Sphere3<Scalar> Sphere3;
 	typedef ::Matrix4<Scalar> Matrix4;
 }

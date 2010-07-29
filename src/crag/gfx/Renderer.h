@@ -27,6 +27,7 @@ namespace gfx
 {
 	class Light;
 	class Pov;
+	class Scene;
 	class Skybox;
 
 	class Renderer
@@ -51,7 +52,7 @@ namespace gfx
 		void ToggleLighting();
 		void ToggleWireframe();
 		
-		void Render(class Scene & scene) const;
+		void Render(Scene & scene) const;
 	private:
 		void RenderScene(Scene const & scene) const;
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;

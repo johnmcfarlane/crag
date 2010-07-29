@@ -29,9 +29,10 @@ namespace
 {
 	
 	// Config values
-	CONFIG_DEFINE (planet_shader_depth_medium, int, 6);
-	CONFIG_DEFINE (planet_shader_depth_deep, int, 10);
-	CONFIG_DEFINE (formation_color, gfx::Color4f, gfx::Color4f(1.f, 1.f, 1.f));
+	CONFIG_DEFINE (planet_shader_depth_medium, int, 3);
+	CONFIG_DEFINE (planet_shader_depth_deep, int, 6);
+	CONFIG_DEFINE (planet_shader_error_co, double, 0.995);
+	//CONFIG_DEFINE (formation_color, gfx::Color4f, gfx::Color4f(1.f, 1.f, 1.f));
 	
 	// RootNode initialization data
 	sim::Vector3 root_corners[4] = 
@@ -124,6 +125,20 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	{
 		mid_point.pos = CalcMidPointPos_Shallow(combined_seed, near_a, near_b);
 	}
+	
+#if ! defined(NDEBUG)
+	// Check that resultant point is within the [min, max] range.
+	Scalar altitude1 = Length(mid_point.pos - Vector3f(center));
+	Scalar altitude2 = Length(Vector3(mid_point.pos) - center);
+	if (Min(altitude1, altitude2) < planet.GetRadiusMin())
+	{
+		Assert(false);
+	}
+	if (Max(altitude1, altitude2) > planet.GetRadiusMax())
+	{
+		Assert(false);
+	}
+#endif
 }
 
 // At shallow depth, heigh is highly random.
@@ -134,7 +149,7 @@ Vector3f sim::PlanetShader::CalcMidPointPos_Shallow(int seed,
 	Random rnd(seed);
 
 	Scalar radius_min = planet.GetRadiusMin();
-	Scalar radius_max = planet.GetRadiusMax ();
+	Scalar radius_max = planet.GetRadiusMax();
 	//Scalar radius = planet.GetAverageRadius();
 	Scalar radius_range = radius_max - radius_min;
 	
@@ -144,11 +159,12 @@ Vector3f sim::PlanetShader::CalcMidPointPos_Shallow(int seed,
 	Scalar rnd_a = acos(rnd_x);	// The two nice things about acos is that it's center-biased and it doesn't tend to infinity like most bell-shaped curves.
 	Scalar rnd_n = rnd_a / PI;
 #else
-	Scalar rnd_x = rnd.GetFloatInclusive() * 2. - 1.;
-	rnd_x *= Square(rnd_x);
-	Scalar rnd_n = (rnd_x * .5) + .5;
+	Scalar rnd_x = rnd.GetFloatInclusive() * 2. - 1.;	// Get a random number in the range [-1, 1]
+	rnd_x *= Square(rnd_x);				// Bias the random number towards 0.
+	rnd_x *= planet_shader_error_co;	// Make sure a precision error pushes us beyond the [min - max] range.
+	Scalar rnd_n = (rnd_x * .5) + .5;	// Shift into the range: [0, 1].
 #endif
-	Scalar radius = radius_min + radius_range * rnd_n;
+	Scalar radius = radius_min + radius_range * rnd_n;	// Shift into the range [radius_min, radius_max].
 	Assert(radius >= radius_min);
 	Assert(radius <= radius_max);
 	
@@ -157,7 +173,7 @@ Vector3f sim::PlanetShader::CalcMidPointPos_Shallow(int seed,
 	Vec3 v = (a + b) * .5;
 	v -= center;
 	S length = Length(v);
-	v *= radius / length;
+	v *= (radius / length);
 	v += center;
 	
 	return v;
@@ -177,18 +193,43 @@ Vector3f sim::PlanetShader::CalcMidPointPos_Medium(int seed,
 	S far_a_altitude = Length(far_a_relative -= center);
 	Vec3 far_b_relative = far_b;
 	S far_b_altitude = Length(far_b_relative -= center);
-	S far_distance = Length(far_a - far_b);
+//	S far_distance = Length(far_a - far_b);
 	
 	S far_weight = 0;//near_distance / far_distance;
 	S far_weight_2 = far_weight * 2.;
 	S altitude = (near_a_altitude + near_b_altitude + far_weight * (far_a_altitude + far_b_altitude)) * (1. / (2. + far_weight_2));
 	Vec3 directional = near_a_relative + near_b_relative;
 	S directional_length = Length(directional);
-	
+		
 	Random rnd(seed);	
 	Scalar rnd_x = rnd.GetFloatInclusive() * 2. - 1.;
 	rnd_x *= Square(rnd_x);
-	altitude += rnd_x * near_distance * .05;
+	
+	// Figure out how much the altitude may be varied in either direction,
+	// and clip that variance based on the hard limits of the planet.
+	// Actually, clip it to half of that to make it look less like a hard limit.
+	// And do the clipping based on how far the variance /might/ go.
+	S altitude_variance_coefficient = near_distance * .05;
+	if (rnd_x > 0)
+	{
+		S max_altitude = altitude + altitude_variance_coefficient;
+		S max_allowed_altitude = planet.GetRadiusMax() - 1;
+		if (max_altitude > max_allowed_altitude)
+		{
+			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
+		}
+	}
+	else if (rnd_x < 0)
+	{
+		S min_altitude = altitude - altitude_variance_coefficient;
+		S min_allowed_altitude = planet.GetRadiusMin() + 1;
+		if (min_altitude < min_allowed_altitude)
+		{
+			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
+		}
+	}
+	
+	altitude += rnd_x * altitude_variance_coefficient;
 	
 	directional *= (altitude / directional_length);
 	directional += center;

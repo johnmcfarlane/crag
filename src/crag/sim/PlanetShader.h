@@ -43,6 +43,9 @@ namespace sim
 		Planet const & planet;
 	};
 
+	
+	// The factory for making PlanetShader objects.
+	// Each object will be assigned to a specific polyhedron.
 	class PlanetShaderFactory : public form::ShaderFactory
 	{
 	public:

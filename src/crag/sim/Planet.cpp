@@ -52,11 +52,6 @@ sim::Planet::~Planet()
 	}
 }
 
-bool sim::Planet::IsShadowCatcher() const
-{
-	return true;
-}
-
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
 	float const density = 1;
@@ -75,6 +70,29 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 
 	Vector3 contribution = direction * force;
 	gravity += contribution;
+}
+
+bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range) const
+{
+	// TODO: Reduce the max when it's obscured.
+	Scalar distance = Length(camera_ray.position - GetPosition());
+
+	if (distance > radius_max)
+	{
+		range[0] = distance - radius_max;
+	}
+	else if (distance > radius_min)
+	{
+		range[0] = 0;
+	}
+	else 
+	{
+		range[0] = radius_min - distance;
+	}
+
+	range[1] = distance + radius_max;
+	
+	return true;
 }
 
 sim::Scalar sim::Planet::GetAverageRadius() const

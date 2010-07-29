@@ -21,7 +21,7 @@
 
 namespace  
 {
-	CONFIG_DEFINE (init_flat_shaded, bool, true);
+	CONFIG_DEFINE (init_flat_shaded, bool, false);
 }
 
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)

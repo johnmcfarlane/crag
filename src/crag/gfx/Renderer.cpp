@@ -19,13 +19,15 @@
 #include "form/Manager.h"
 
 #include "sim/Entity.h"
-#include "sim/Space.h"
+#include "sim/space.h"
 
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
 #include "geom/MatrixOps.h"
 #include "geom/Sphere3.h"
+
+#include "sim/Universe.h"	// TODO: Doesn't belong here.
 
 
 #if ! defined(NDEBUG)
@@ -58,12 +60,24 @@ namespace
 		gl::LoadMatrix(projection_matrix.GetArray());
 	}
 
-	void SetFrustum(class gfx::Frustum const & frustum)
+	void SetFrustum(gfx::Frustum const & frustum)
 	{
 		gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
 		SetProjectionMatrix(frustum.CalcProjectionMatrix());
 	}
 
+	void SetForegroundFrustum(gfx::Pov const & pov)
+	{
+		gfx::Frustum frustum = pov.frustum;
+		frustum.near_z = std::numeric_limits<float>::max();
+
+		sim::Ray3 camera_ray = space::GetCameraRay(pov.pos, pov.rot);
+		sim::Universe::GetRenderRange(camera_ray, frustum.near_z, frustum.far_z);
+		
+		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
+		SetFrustum(frustum);
+	}
+	
 }	// namespace
 
 
@@ -205,7 +219,8 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
 
-	SetFrustum(scene.pov.frustum);
+	// Adjust near and far plane
+	SetForegroundFrustum(scene.pov);
 	
 	if (wireframe)
 	{
@@ -381,7 +396,7 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	}
 	
 #if defined(GFX_DEBUG)
-	sim::Vector3 forward = Space::GetForward(pov.rot);
+	sim::Vector3 forward = space::GetForward(pov.rot);
 	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
 	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
 #endif

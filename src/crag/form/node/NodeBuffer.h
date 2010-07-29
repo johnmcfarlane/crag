@@ -64,12 +64,12 @@ namespace form
 		void LockTree() const;
 		void UnlockTree() const;
 		
-		void Tick(Vector3 const & relative_camera_pos, Vector3 const & camera_dir);
+		void Tick(Ray3 const & camera_ray_relative);
 		void OnReset();
 	private:
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
-		void UpdateNodeScores(Vector3 const & relative_camera_pos, Vector3 const & camera_dir);
+		void UpdateNodeScores(Ray3 const & camera_ray_relative);
 		void UpdateParentScores();
 		void SortNodes();
 		bool ChurnNodes();

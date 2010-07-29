@@ -237,9 +237,9 @@ void form::NodeBuffer::UnlockTree() const
 	tree_mutex.Unlock();
 }
 
-void form::NodeBuffer::Tick(Vector3 const & relative_camera_pos, Vector3 const & camera_dir)
+void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
-	UpdateNodeScores(relative_camera_pos, camera_dir);
+	UpdateNodeScores(camera_ray_relative);
 	UpdateParentScores();
 	SortNodes();
 	
@@ -332,21 +332,21 @@ void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 #endif
 }
 
-void form::NodeBuffer::UpdateNodeScores(Vector3 const & relative_camera_pos, Vector3 const & camera_dir)
+void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 {
 #if (USE_OPENCL)
 	if (cpu_kernel != nullptr)
 	{
-		cpu_kernel->Process(nodes, nodes_used_end, relative_camera_pos);
+		cpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position);
 	}
 	else if (gpu_kernel != nullptr)
 	{
-		gpu_kernel->Process(nodes, nodes_used_end, relative_camera_pos);
+		gpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position);
 	}
 	else 
 #endif
 	{
-		CalculateNodeScoreFunctor f(relative_camera_pos, camera_dir);
+		CalculateNodeScoreFunctor f(camera_ray_relative.position, camera_ray_relative.direction);
 		ForEachNode(f);
 	}
 }

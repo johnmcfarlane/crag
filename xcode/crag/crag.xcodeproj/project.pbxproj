@@ -208,6 +208,8 @@
 		527F7AC511EB5F4B00E25B84 /* SceneThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneThread.h; sourceTree = "<group>"; };
 		5282943D11DB17BF00611238 /* PlanetCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetCollisionFunctor.h; sourceTree = "<group>"; };
 		5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetCollisionFunctor.cpp; sourceTree = "<group>"; };
+		5284ED1C11FFFDCA0006A58D /* Ray3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray3.h; sourceTree = "<group>"; };
+		5284ED7C12000ADD0006A58D /* space.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = space.h; sourceTree = "<group>"; };
 		528ABA6911CF087400C2B411 /* SphericalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphericalBody.cpp; sourceTree = "<group>"; };
 		528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
@@ -336,7 +338,6 @@
 		52F3A38111A7979400385922 /* PlanetShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetShader.h; sourceTree = "<group>"; };
 		52F3A38211A7979400385922 /* Simulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Simulation.cpp; sourceTree = "<group>"; };
 		52F3A38311A7979400385922 /* Simulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Simulation.h; sourceTree = "<group>"; };
-		52F3A38411A7979400385922 /* Space.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Space.h; sourceTree = "<group>"; };
 		52F3A38511A7979400385922 /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Star.cpp; sourceTree = "<group>"; };
 		52F3A38611A7979400385922 /* Star.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Star.h; sourceTree = "<group>"; };
 		52F3A38711A7979400385922 /* Universe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Universe.cpp; sourceTree = "<group>"; };
@@ -576,6 +577,7 @@
 		52C53E2011D8FC1000FA73AA /* geom */ = {
 			isa = PBXGroup;
 			children = (
+				5284ED1C11FFFDCA0006A58D /* Ray3.h */,
 				52F6F4FA11E4C2F100241409 /* NSphere.h */,
 				52C53E2111D8FC1000FA73AA /* Circle2.h */,
 				52C53E2211D8FC1000FA73AA /* Matrix.h */,
@@ -780,6 +782,7 @@
 		52F3A36E11A7979400385922 /* sim */ = {
 			isa = PBXGroup;
 			children = (
+				5284ED7C12000ADD0006A58D /* space.h */,
 				52F3A36F11A7979400385922 /* Controller.cpp */,
 				52F3A37011A7979400385922 /* Controller.h */,
 				52F3A37111A7979400385922 /* defs.h */,
@@ -803,7 +806,6 @@
 				5279D15411D3B8D000BD9615 /* PlanetSphereCollisionFunctor.h */,
 				52F3A38211A7979400385922 /* Simulation.cpp */,
 				52F3A38311A7979400385922 /* Simulation.h */,
-				52F3A38411A7979400385922 /* Space.h */,
 				52F3A38511A7979400385922 /* Star.cpp */,
 				52F3A38611A7979400385922 /* Star.h */,
 				52F3A38711A7979400385922 /* Universe.cpp */,
@@ -1243,7 +1245,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.2;
 				"GCC_VERSION[sdk=macosx10.6][arch=i386]" = 4.2;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -1407,7 +1409,7 @@
 				GCC_UNROLL_LOOPS = NO;
 				GCC_VERSION = 4.2;
 				"GCC_VERSION[sdk=macosx10.6][arch=i386]" = 4.2;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -1464,7 +1466,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.2;
 				"GCC_VERSION[sdk=macosx10.6][arch=i386]" = 4.2;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;

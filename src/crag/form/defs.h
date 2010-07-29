@@ -12,15 +12,19 @@
 
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
+#include "geom/Ray3.h"
 #include "geom/Sphere3.h"
 
 
 namespace form
 {
 	// Vector Types
-	typedef Vector3f Vector3;
-	typedef Vector4f Vector4;
-	typedef Sphere3f Sphere3;
+	typedef float Scalar;
+	
+	typedef ::Vector3<Scalar>	Vector3;
+	typedef ::Vector4<Scalar>	Vector4;
+	typedef ::Ray3<Scalar>		Ray3;
+	typedef ::Sphere3<Scalar>	Sphere3;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
 	template <typename V> V SimToScene(V const & sim, V const & scene_origin)

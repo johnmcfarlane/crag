@@ -26,6 +26,7 @@ namespace physics
 		virtual ~Body();
 		
 		virtual void SetDensity(Scalar density) = 0;
+		Scalar GetMass() const;	// -ve means infinite
 
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const &) const;		

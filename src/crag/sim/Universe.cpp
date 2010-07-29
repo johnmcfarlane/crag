@@ -39,7 +39,7 @@ app::TimeType sim::Universe::time = 0;
 
 CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
 
-CONFIG_DEFINE (gravitational_force, float, 0.0000001f);
+CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
 
 
 void sim::Universe::Init()
@@ -94,7 +94,8 @@ sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
 	{
 		sim::Vector3 force = sim::Vector3::Zero();
 		
-		for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) {
+		for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+		{
 			Entity & e = * * it;
 			e.GetGravitationalForce(pos, force);
 		}
@@ -104,5 +105,29 @@ sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
 	else 
 	{
 		return sim::Vector3::Zero();
+	}
+}
+
+void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max)
+{
+//	range_min = + std::numeric_limits<Scalar>::max();
+//	range_max = - std::numeric_limits<Scalar>::max();
+	
+	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	{
+		Entity & e = * * it;
+		double entity_range[2];
+		if (e.GetRenderRange(camera_ray, entity_range))
+		{
+			if (entity_range[0] < range_min)
+			{
+				range_min = entity_range[0];
+			}
+			
+			if (entity_range[1] > range_max)
+			{
+				range_max = entity_range[1];
+			}
+		}
 	}
 }
