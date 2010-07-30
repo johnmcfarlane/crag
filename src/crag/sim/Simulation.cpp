@@ -49,12 +49,12 @@ namespace
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
 
 	CONFIG_DEFINE (planet_pos_1, sim::Vector3, sim::Vector3::Zero());
-	CONFIG_DEFINE (planet_min_radius_1, float,  9999500);
-	CONFIG_DEFINE (planet_max_radius_1, float, 10000500);
+	CONFIG_DEFINE (planet_radius_medium, sim::Scalar,  10000000);
+	CONFIG_DEFINE (planet_radius_range, sim::Scalar, 5000);
 
 	// please don't write in
-	CONFIG_DEFINE (sun_orbit_distance, float, 100000000);	
-	CONFIG_DEFINE (sun_year, float, 30000.f);
+	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
+	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
 		
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 
@@ -96,7 +96,9 @@ void sim::Simulation::InitUniverse()
 	//scene.AddEntity(* observer);
 	scene.AddLight(observer->GetLight());
 	
-	Planet * planet = new Planet (planet_pos_1, planet_min_radius_1, planet_max_radius_1, 8);
+	sim::Scalar planet_radius_min = planet_radius_medium - planet_radius_range * .5;
+	sim::Scalar planet_radius_max = planet_radius_medium + planet_radius_range * .5;
+	Planet * planet = new Planet (planet_pos_1, planet_radius_min, planet_radius_max, 8);
 	Universe::AddEntity(* planet);
 	scene.AddEntity(* planet);
 	
