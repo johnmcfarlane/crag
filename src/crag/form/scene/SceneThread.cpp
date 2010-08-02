@@ -14,7 +14,7 @@
 #include "form/Manager.h"
 
 #include "sim/Observer.h"
-#include "sim/Space.h"
+#include "sim/space.h"
 
 #include "physics/Body.h"
 

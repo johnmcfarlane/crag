@@ -12,7 +12,7 @@
 
 #include "Pov.h"
 
-#include "sim/Space.h"
+#include "sim/space.h"
 
 #include "geom/MatrixOps.h"
 #include "geom/Sphere3.h"

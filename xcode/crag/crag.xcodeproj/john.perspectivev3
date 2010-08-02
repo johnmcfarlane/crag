@@ -290,7 +290,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 501}, {303, 660}}</string>
+							<string>{{0, 135}, {303, 660}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -323,7 +323,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>52F3A2F811A7971900385922</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Controller.h</string>
+								<string>Controller.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -331,11 +331,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>52F3A2F911A7971900385922</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Controller.h</string>
+										<string>Controller.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>5286F9341206782B00B3A463</string>
+										<string>52841CE012070F59004C5021</string>
 										<key>history</key>
 										<array>
 											<string>5286F91A1206766B00B3A463</string>
@@ -346,7 +346,9 @@
 											<string>5286F91F1206766B00B3A463</string>
 											<string>5286F9201206766B00B3A463</string>
 											<string>5286F9211206766B00B3A463</string>
-											<string>5286F9331206782B00B3A463</string>
+											<string>52841CDD12070F59004C5021</string>
+											<string>52841CDE12070F59004C5021</string>
+											<string>52841CDF12070F59004C5021</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -360,18 +362,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {953, 422}}</string>
+								<string>{{0, 0}, {953, 414}}</string>
 								<key>RubberWindowFrame</key>
 								<string>1 59 1278 719 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>422pt</string>
+							<string>414pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>251pt</string>
+							<string>259pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -385,9 +387,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {953, 224}}</string>
-										<key>RubberWindowFrame</key>
-										<string>1 59 1278 719 0 0 1280 778 </string>
+										<string>{{10, 27}, {953, 232}}</string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -403,7 +403,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {953, 224}}</string>
+										<string>{{10, 27}, {953, 232}}</string>
+										<key>RubberWindowFrame</key>
+										<string>1 59 1278 719 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXProjectFindModule</string>
@@ -441,7 +443,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {953, 224}}</string>
+										<string>{{10, 27}, {953, 232}}</string>
 									</dict>
 									<key>Module</key>
 									<string>PBXBuildResultsModule</string>
@@ -469,11 +471,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>5286F9251206766B00B3A463</string>
+				<string>52841CE112070F59004C5021</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>5286F9261206766B00B3A463</string>
+				<string>52841CE212070F59004C5021</string>
 				<string>52F3A2F811A7971900385922</string>
-				<string>5286F9271206766B00B3A463</string>
+				<string>52841CE312070F59004C5021</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -663,8 +665,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>5286F9311206766B00B3A463</string>
-		<string>5286F9321206766B00B3A463</string>
 		<string>/Users/john/Documents/workspace/crag/xcode/crag/crag.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
