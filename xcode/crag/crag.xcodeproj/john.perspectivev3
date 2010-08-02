@@ -197,48 +197,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>5286F92E1206766B00B3A463</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>space.h</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>5286F92F1206766B00B3A463</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>space.h</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>5286F9301206766B00B3A463</string>
-						<key>history</key>
-						<array>
-							<string>5286F90B1206763800B3A463</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {1280, 677}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>0 60 1280 718 0 0 1280 778 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>1278</integer>
@@ -324,7 +283,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>37</integer>
 									<integer>36</integer>
 									<integer>4</integer>
 									<integer>1</integer>
@@ -365,7 +323,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>52F3A2F811A7971900385922</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>space.h</string>
+								<string>Controller.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -373,11 +331,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>52F3A2F911A7971900385922</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>space.h</string>
+										<string>Controller.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>5286F9241206766B00B3A463</string>
+										<string>5286F9341206782B00B3A463</string>
 										<key>history</key>
 										<array>
 											<string>5286F91A1206766B00B3A463</string>
@@ -388,8 +346,7 @@
 											<string>5286F91F1206766B00B3A463</string>
 											<string>5286F9201206766B00B3A463</string>
 											<string>5286F9211206766B00B3A463</string>
-											<string>5286F9221206766B00B3A463</string>
-											<string>5286F9231206766B00B3A463</string>
+											<string>5286F9331206782B00B3A463</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -709,7 +666,6 @@
 		<string>5286F9311206766B00B3A463</string>
 		<string>5286F9321206766B00B3A463</string>
 		<string>/Users/john/Documents/workspace/crag/xcode/crag/crag.xcodeproj</string>
-		<string>5286F92E1206766B00B3A463</string>
 	</array>
 	<key>WindowString</key>
 	<string>1 59 1278 719 0 0 1280 778 </string>
