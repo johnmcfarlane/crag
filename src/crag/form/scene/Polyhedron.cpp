@@ -57,6 +57,12 @@ form::Polyhedron::~Polyhedron()
 	delete shader;
 }
 
+form::Shader & form::Polyhedron::GetShader()
+{
+	Assert(shader != nullptr);
+	return * shader;
+}
+
 void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
@@ -66,6 +72,7 @@ void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & or
 	// Create me some points.
 	// (These are the four points of the initial tetrahedron.
 	// TODO: Use the word tetrahedron loads more. It sounds clever yet is easy to wikipedarize. 
+	// TODO: GetPoints should be the only way we grab points for the benefit of shader.
 	Point * root_points[4] = 
 	{
 		point_buffer.Alloc(),
@@ -89,9 +96,43 @@ void form::Polyhedron::Deinit(PointBuffer & point_buffer)
 	shader = nullptr;
 }
 
-form::Shader & form::Polyhedron::GetShader()
+void form::Polyhedron::SetOrigin(sim::Vector3 const & origin, PointBuffer & point_buffer)
 {
-	Assert(shader != nullptr);
-	return * shader;
+	shader->SetOrigin(origin);
+	
+	Point * root_points[4];
+	root_node.GetPoints(root_points);
+	shader->InitRootPoints(root_node.seed, root_points);
+	
+#if defined(SUPERFAST_SCENE_RESET)	
+	for (int depth = 0; ResetOrigin(root_node, point_buffer, depth); ++ depth)
+	{
+	}
+#endif
 }
 
+bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
+{
+	Node * children = node.children;
+	if (children == nullptr)
+	{
+		return false;
+	}
+	
+	if (depth == 0)
+	{
+		children[0].Reinit(* shader, point_buffer);
+		children[1].Reinit(* shader, point_buffer);
+		children[2].Reinit(* shader, point_buffer);
+		children[3].Reinit(* shader, point_buffer);
+		return true;
+	}
+	else 
+	{
+		-- depth;
+		return	ResetOrigin(children[0], point_buffer, depth)
+			|	ResetOrigin(children[1], point_buffer, depth)
+			|	ResetOrigin(children[2], point_buffer, depth)
+			|	ResetOrigin(children[3], point_buffer, depth);
+	}
+}

@@ -81,6 +81,7 @@ namespace form
 		// Formation-related members.
 		
 		void TickModels(FormationSet const & formation_set);
+		void ResetPolyhedronOrigins();
 		void ResetFormations();
 
 		void TickPolyhedron(Polyhedron & model);

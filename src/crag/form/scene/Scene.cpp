@@ -108,14 +108,33 @@ sim::Vector3 const & form::Scene::GetOrigin() const
 	return origin;
 }
 
+// Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
 void form::Scene::SetOrigin(sim::Vector3 const & o) 
 {
 	if (o != origin) 
 	{
+#if defined(MEGAFAST_SCENE_RESET)
+		sim::Vector3 origin_delta = o - origin;
+#endif
+		
+		node_buffer.LockTree();
 		origin = o;
+		
+		// Setting camera ray to itself cause the local camera ray to be recalculated.
 		SetCameraRay(camera_ray);
 
+		// The difficult bit: fix all our data which relied on the old origin.
+#if defined(SUPERFAST_SCENE_RESET)
+		ResetPolyhedronOrigins();
+#elif defined(MEGAFAST_SCENE_RESET)
+		ResetPolyhedronOrigins();
+		VerifyObject(* this);
+		node_buffer.ResetNodeOrigins(origin_delta);
+#else
 		ResetFormations();
+#endif
+
+		node_buffer.UnlockTree();
 	}
 }
 
@@ -225,23 +244,31 @@ void form::Scene::TickModels(FormationSet const & formation_set)
 	}
 }
 
+void form::Scene::ResetPolyhedronOrigins()
+{
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	{
+		FormationPair & pair = * i;
+		Polyhedron & polyhedron = pair.second;
+		polyhedron.SetOrigin(origin, node_buffer.GetPoints());
+	}
+}
+
 void form::Scene::ResetFormations()
 {
-	node_buffer.LockTree();
-
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	{
 		FormationPair & pair = * i;
 		DeinitPolyhedron(pair);
 	}
 	
 	node_buffer.OnReset();
 
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) {
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	{
 		FormationPair & pair = * i;
 		InitPolyhedron(pair);
 	}
-
-	node_buffer.UnlockTree();
 }
 
 void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
@@ -250,9 +277,7 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 	
 	if (root_node.IsExpandable()) 
 	{
-		VerifyObject(* this);		
 		node_buffer.ExpandNode(root_node);
-		VerifyObject(* this);
 	}
 }
 
@@ -274,10 +299,10 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron.root_node;
-#if ! defined(FAST_SCENE_RESET)
-	node_buffer.CollapseNode(root_node);
-#else
+#if defined(FAST_SCENE_RESET)
 	root_node.children = nullptr;
+#else
+	node_buffer.CollapseNode(root_node);
 #endif
 	
 	// Continue deinitialization somewhere a bit calmer.

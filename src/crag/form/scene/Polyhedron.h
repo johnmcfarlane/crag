@@ -30,21 +30,28 @@ namespace form
 	// is that that have a different root_node and likely live in a different coordinate space.
 	class Polyhedron
 	{
+		friend Polyhedron & GetPolyhedron(Node & node);
 	public:
 		Polyhedron();
 		Polyhedron(Polyhedron const & rhs);
 		~Polyhedron();
 		
+		//RootNode const & GetRootNode() const;
+		Shader & GetShader();
+		
 		void Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
 
-		Shader & GetShader();
-		
+		void SetOrigin(sim::Vector3 const & origin, PointBuffer & point_buffer);
+	private:
+		bool ResetOrigin(Node & node, PointBuffer & point_buffer, int depth);
+
 		enum 
 		{
 			NUM_ROOT_VERTICES = 4
 		};
 		
+	public:
 		RootNode root_node;	// Exists purely so that all 'real' nodes have a parent.
 		Shader * shader;
 	};

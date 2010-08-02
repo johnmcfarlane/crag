@@ -80,6 +80,7 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 , nodes_end(nodes + max_num_nodes)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_used_end(quaterna)
+, quaterna_sorted_end(quaterna)
 , quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : target_num_quaterna, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , points(max_num_verts)
@@ -99,6 +100,8 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 
 form::NodeBuffer::~NodeBuffer()
 {
+	VerifyObject(* this);
+
 	Assert(GetNumQuaternaUsed() == 0);
 	
 	delete quaterna;
@@ -114,55 +117,82 @@ void form::NodeBuffer::Verify() const
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
 	VerifyArrayElement(nodes_used_end_target, nodes_used_end, nodes_end + 1);	
 
-	VerifyArrayElement(quaterna_used_end, quaterna, quaterna_end + 1);	
-	VerifyArrayElement(quaterna_used_end_target, quaterna_used_end, quaterna_end + 1);	
+	VerifyArrayElement(quaterna_sorted_end, quaterna);
+	VerifyArrayElement(quaterna_used_end, quaterna);
+	VerifyArrayElement(quaterna_used_end_target, quaterna);
+	VerifyArrayElement(quaterna_end, quaterna);
+	
+	VerifyTrue(quaterna_sorted_end >= quaterna);
+	VerifyTrue(quaterna_used_end >= quaterna_sorted_end);
+	VerifyTrue(quaterna_used_end_target >= quaterna_used_end);
+	VerifyTrue(quaterna_end >= quaterna_used_end_target);
 
 	int num_nodes_used = nodes_used_end - nodes;
 	int num_quaterna_used = quaterna_used_end - quaterna;
 
 	VerifyTrue(num_nodes_used == num_quaterna_used * 4);
 	
-	//VerifyObject(points);
+	VerifyObject(points);
 	
-	for (Quaterna const * q = quaterna; q != quaterna_end; ++ q) 
+	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
 	{
-		Node const * n = q->nodes;
-
-		Node const * parent = q->nodes[0].parent;
-
-		if (q < quaterna_used_end)
-		{
-			VerifyArrayElement(n, nodes, nodes_used_end);
-			VerifyTrue(parent->score == q->parent_score);
-			
-			for (int i = 0; i < 4; ++ i)
-			{
-				form::Node const & sibling = q->nodes[i];
-				
-				// All four siblings should have the same parent.
-				VerifyTrue(q->nodes[i].parent == parent);
-				if (sibling.children != nullptr)
-				{
-					VerifyArrayElement(sibling.children, nodes, nodes_used_end);
-				}
-			}
-		}
-		else 
-		{
-			VerifyTrue(n - nodes == (q - quaterna) * 4);
-			
-			for (int i = 0; i < 4; ++ i)
-			{
-				form::Node const & sibling = q->nodes[i];
-				
-				VerifyTrue(sibling.parent == nullptr);
-				VerifyTrue(sibling.children == nullptr);
-				VerifyTrue(sibling.score == 0);
-			}
-		}
-		
-		VerifyObject(* q);
+		VerifyUsed(* q);
 	}
+	
+	for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
+	{
+		VerifyUnused(* q);
+	}
+	
+	for (Quaterna const * q2 = quaterna + 1; q2 < quaterna_sorted_end; ++ q2) 
+	{
+		Quaterna const * q1 = q2 - 1;
+		VerifyTrue(q2->parent_score <= q1->parent_score);
+	}
+}
+
+void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
+{
+	Node const * n = q.nodes;
+	VerifyArrayElement(n, nodes, nodes_used_end);
+	
+	Node const * parent = q.nodes[0].parent;
+	
+	VerifyTrue(parent->score == q.parent_score);
+	VerifyTrue(parent->score >= 0);
+	
+	for (int i = 0; i < 4; ++ i)
+	{
+		form::Node const & sibling = q.nodes[i];
+		
+		// All four siblings should have the same parent.
+		VerifyTrue(q.nodes[i].parent == parent);
+		if (sibling.children != nullptr)
+		{
+			VerifyArrayElement(sibling.children, nodes, nodes_used_end);
+		}
+	}
+	
+	VerifyObject(q);
+}
+
+void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
+{
+	VerifyTrue(q.parent_score == -1);
+	
+	Node const * n = q.nodes;
+	VerifyTrue(n - nodes == (& q - quaterna) * 4);
+	
+	for (int i = 0; i < 4; ++ i)
+	{
+		form::Node const & sibling = q.nodes[i];
+		
+		VerifyTrue(sibling.parent == nullptr);
+		VerifyTrue(sibling.children == nullptr);
+		VerifyTrue(sibling.score == 0);
+	}
+	
+	VerifyObject(q);
 }
 #endif
 
@@ -239,13 +269,16 @@ void form::NodeBuffer::UnlockTree() const
 
 void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
+	//VerifyObject(* this);
+	
 	UpdateNodeScores(camera_ray_relative);
 	UpdateParentScores();
-	SortNodes();
 	
-	for (int timeout = 1; timeout; -- timeout) {
-		ChurnNodes();
-	}
+	SortQuaterna();
+
+	ChurnNodes();
+
+	//VerifyObject(* this);
 }
 
 void form::NodeBuffer::InitKernel()
@@ -299,11 +332,36 @@ void form::NodeBuffer::OnReset()
 	InitQuaterna(quaterna_used_end);
 
 	nodes_used_end = nodes;
-	quaterna_used_end = quaterna;
+	quaterna_sorted_end = quaterna_used_end = quaterna;
 	
 	// Half the target number of nodes.
 	// Probably not a smart idea.
 	//quaterna_used_end_target -= (quaterna_used_end_target - quaterna) >> 1;
+}
+
+void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
+{
+	for (Node * node = nodes; node != nodes_used_end; ++ node)
+	{
+		Node::Triplet * triple = node->triple;
+		for (int i = 0; i < 3; ++ i)
+		{
+			Node::Triplet & t = triple[i];
+			if (t.mid_point != nullptr)
+			{
+				// We only want to increment each mid-point once, 
+				// but it's often pointed to by two nodes.
+				// This is an arbitrary test to ensure it's only incremented for one node.
+				// Note that if cousin is null, the condition still passes. 
+				if (node > t.cousin)
+				{
+					t.mid_point->pos -= origin_delta;
+				}
+			}
+		}
+		
+		node->center += origin_delta;
+	}
 }
 
 void form::NodeBuffer::InitQuaterna(Quaterna const * end)
@@ -393,11 +451,12 @@ void form::NodeBuffer::UpdateParentScores()
 
 // Algorithm to sort nodes array. 
 // TODO: Exploit is_sorted somehow! 
-void form::NodeBuffer::SortNodes()
+void form::NodeBuffer::SortQuaterna()
 {
 #if 1
 	// Sure and steady ... and slow!
 	std::sort(quaterna, quaterna_used_end, SortByScore);
+	quaterna_sorted_end = quaterna_used_end;
 	
 #else
 	// Since we only sort nodes in order to find the lowest-scoring nodes, 
@@ -506,37 +565,69 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 {
 	Assert(node.IsExpandable());
 	
-	// Get the score to pass to GetWorstQuaterna.
-	// We don't want to nuke a quaterna with a worse one, hence using the node score.
-	// But also, there's a slim chance that node's parent has a worse score than node's
-	// and we can't end up finding a quaterna that includes node as node's new children
-	// because that would cause a time paradox in the fabric of space.
-	float score = node.score;
-	Node * parent = node.parent;
-	if (parent != nullptr) 
+	// Now find the worst quaterna and attempt to reuse it as node's new children.
+	if (quaterna_used_end != quaterna_used_end_target)
 	{
-		float parent_score = parent->score;
-		if (parent_score < score) 
+		// We currently wish to expand the number of nodes/quaterna used,
+		// so attempt to use the next unused quaterna in the array.
+		Quaterna & unused_quaterna = * quaterna_used_end;
+
+		if (! ExpandNode(node, unused_quaterna))
 		{
-			score = parent_score;
+			return false;
 		}
+		
+		nodes_used_end += 4;
+		++ quaterna_used_end;
 	}
-	
-	// TODO: GetWorstQuaterna too slow. BubbleSortUp equally unnecessary. 
-	Quaterna * worst_quaterna = GetWorstQuaterna(score);
-	if (worst_quaterna == nullptr) 
+	else if (quaterna_sorted_end > quaterna) 
 	{
-		return false;
+		// Get the score to use to find the 'worst' Quaterna.
+		// We don't want to nuke a quaterna with a worse one, hence using the node score.
+		// But also, there's a slim chance that node's parent has a worse score than node's
+		// and we can't end up finding a quaterna that includes node as node's new children
+		// because that would cause a time paradox in the fabric of space.
+		float score = node.score;
+		Node * parent = node.parent;
+		if (parent != nullptr) 
+		{
+			float parent_score = parent->score;
+			if (parent_score < score) 
+			{
+				score = parent_score;
+			}
+		}
+		
+		// Ok, lets try the end of the sequence of sorted quaterna...
+		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];			
+		
+		if (! reusable_quaterna.IsSuitableReplacement(score)) 
+		{			
+			// TODO: If we get here, it's probably a great idea to early-out of the enture churn function.
+			return false;
+		}
+		
+		if (! ExpandNode(node, reusable_quaterna))
+		{
+			return false;
+		}
+		
+		-- quaterna_sorted_end;
 	}
 	
-	Node * worst_children = worst_quaterna->nodes;
+	return true;
+}
+	
+bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
+{
+	Node * worst_children = children_quaterna.nodes;
 	Assert(worst_children + 0 != & node);
 	Assert(worst_children + 1 != & node);
 	Assert(worst_children + 2 != & node);
 	Assert(worst_children + 3 != & node);
 		
 	Shader & shader = GetPolyhedron(node).GetShader();
-	InitMidPoints(node, shader);
+	node.InitMidPoints(points, shader);
 	
 	// Work with copy of children until it's certain that expansion is going to work.
 	Node children_copy[4];	
@@ -549,7 +640,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	LockTree();
 
 	// Deinit children.
-	bool is_in_use = worst_quaterna->IsInUse();
+	bool is_in_use = children_quaterna.IsInUse();
 	if (is_in_use) 
 	{
 		DeinitChildren(worst_children);
@@ -570,11 +661,8 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	
 	UnlockTree();
 	
-	worst_quaterna->parent_score = score;
-	BubbleSortUp(worst_quaterna);
-	
-	VerifyObject(* worst_quaterna);
-	//VerifyObject(*this);
+	children_quaterna.parent_score = node.score;
+	//BubbleSortUp(worst_quaterna);
 	
 	return true;
 }
@@ -585,29 +673,6 @@ void form::NodeBuffer::CollapseNode(Node & node)
 	if (children != nullptr) {
 		DeinitChildren(children);
 		node.children = nullptr;
-	}
-}
-
-// Makes sure node's three mid-points are non-null or returns false.
-void form::NodeBuffer::InitMidPoints(Node & node, Shader & shader)
-{
-	Node::Triplet * triple = node.triple;
-	
-	// Make sure all mid-points exist.
-	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
-	{
-		// If the mid-point does not already exist,
-		Node::Triplet & t = triple[triplet_index];
-		if (t.mid_point == nullptr)
-		{
-			// create the mid-point, share it with the cousin
-			Node & cousin = ref(t.cousin);
-			t.mid_point = cousin.triple[triplet_index].mid_point = points.Alloc();
-			Assert (t.mid_point != nullptr);	// decrease MAX_NUM_NODES (relative to MAX_NUM_VERTS)
-			
-			// and initialize it's position etc..
-			shader.InitMidPoint(triplet_index, node, cousin, * t.mid_point);
-		}
 	}
 }
 
@@ -623,7 +688,7 @@ bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, S
 	child_triple->corner = parent_triple[0].corner;
 	(++ child_triple)->corner = parent_triple[2].mid_point;
 	(++ child_triple)->corner = parent_triple[1].mid_point;
-	if (! child->InitGeometry())
+	if (! child->InitScoreParameters())
 	{
 		return false;
 	}
@@ -634,7 +699,7 @@ bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, S
 	child_triple->corner = parent_triple[2].mid_point;
 	(++ child_triple)->corner = parent_triple[1].corner;
 	(++ child_triple)->corner = parent_triple[0].mid_point;
-	if (! child->InitGeometry())
+	if (! child->InitScoreParameters())
 	{
 		return false;
 	}
@@ -645,7 +710,7 @@ bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, S
 	child_triple->corner = parent_triple[1].mid_point;
 	(++ child_triple)->corner = parent_triple[0].mid_point;
 	(++ child_triple)->corner = parent_triple[2].corner;
-	if (! child->InitGeometry())
+	if (! child->InitScoreParameters())
 	{
 		return false;
 	}
@@ -656,7 +721,7 @@ bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, S
 	child_triple->corner = parent_triple[0].mid_point;
 	(++ child_triple)->corner = parent_triple[1].mid_point;
 	(++ child_triple)->corner = parent_triple[2].mid_point;
-	if (! child->InitGeometry())
+	if (! child->InitScoreParameters())
 	{
 		return false;
 	}
@@ -673,7 +738,7 @@ bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, S
 		child.triple[0].corner = child_corners[0];
 		child.triple[1].corner = child_corners[1];
 		child.triple[2].corner = child_corners[2];
-		if (child.InitGeometry() == false) {
+		if (child.InitScoreParameters() == false) {
 			return false;
 		}
 		
@@ -786,8 +851,6 @@ void form::NodeBuffer::DeinitNode(Node & node)
 	
 	node.parent = nullptr;
 	node.score = 0;
-	
-	VerifyObject(node);
 }
 
 void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
@@ -932,59 +995,6 @@ bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
 	return success;
 }
 
-form::Quaterna * form::NodeBuffer::GetWorstQuaterna(float parent_score)
-{
-	Assert(parent_score > 0);
-	
-	if (quaterna_used_end != quaterna_used_end_target)
-	{
-		nodes_used_end += 4;
-		return quaterna_used_end ++;
-	}
-	
-	if (quaterna_used_end > quaterna) 
-	{
-		Quaterna & replacement = quaterna_used_end [- 1];
-		if (replacement.IsSuitableReplacement(parent_score)) 
-		{
-			return & replacement;
-		}
-	}
-	
-	return nullptr;
-}
-
-// Reposition given, available quartet assuming it's score is higher then its position suggests.
-// Thus is can only go up, i.e. towards the start of the array.
-void form::NodeBuffer::BubbleSortUp(Quaterna * quartet)
-{
-	Quaterna q = * quartet;
-
-	Quaterna * iterator = quartet;
-	while (true) 
-	{
-		-- iterator;
-		
-		if (iterator >= quaterna)
-		{
-			if (iterator->parent_score <= q.parent_score)
-			{
-				continue;
-			}
-		}
-		
-		break;
-	}
-	
-	++ iterator;
-	
-	if (iterator < quartet) 
-	{
-		memmove(iterator + 1, iterator, reinterpret_cast<char *> (quartet) - reinterpret_cast<char *> (iterator));
-		(* iterator) = q;
-	}
-}
-	
 template <class FUNCTOR> void form::NodeBuffer::ForEachNode(FUNCTOR & f, int step_size)
 {
 	ForEach(f, nodes, nodes_used_end, step_size);

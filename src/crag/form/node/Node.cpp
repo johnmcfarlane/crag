@@ -11,6 +11,8 @@
 #include "pch.h"
 
 #include "form/node/Node.h"
+#include "form/node/PointBuffer.h"
+#include "form/node/Shader.h"
 
 #include "core/Random.h"
 #include "geom/VectorOps.h"
@@ -51,7 +53,68 @@ form::Node::~Node()
 	Assert(parent == nullptr);
 }
 
-bool form::Node::InitGeometry()
+// Makes sure node's three mid-points are non-null or returns false.
+void form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
+{
+	// Make sure all mid-points exist.
+	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
+	{
+		// If the mid-point does not already exist,
+		Node::Triplet & t = triple[triplet_index];
+		if (t.mid_point == nullptr)
+		{
+			// create the mid-point, share it with the cousin
+			Node & cousin = ref(t.cousin);
+			t.mid_point = cousin.triple[triplet_index].mid_point = point_buffer.Alloc();
+			
+			// set its value
+			shader.InitMidPoint(triplet_index, * this, ref(t.cousin), ref(t.mid_point));
+		}
+	}
+}
+
+// This gets called when the local origin is changed.
+// It recalculates all positional data, i.e. the mid-points and the center. 
+void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
+{
+	// Make sure all mid-points exist.
+	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
+	{
+		Node::Triplet & t = triple[triplet_index];
+		if (t.cousin != nullptr)
+		{
+			if (t.mid_point != nullptr)
+			{
+				Node & cousin = ref(t.cousin);
+				//if (& cousin > this)	// TODO: Uncomment this if it works.
+				{
+					Point & mid_point = ref(t.mid_point);
+					shader.InitMidPoint(triplet_index, * this, cousin, mid_point);
+				}
+			}
+		}
+		else 
+		{
+			if (t.mid_point != nullptr)
+			{
+				// There's a mid-point but the cousin used to calculate it has since been destroyed.
+				// There's no easy way to calculate the new position (except maybe delta it).
+				// So just remove it instead.
+				point_buffer.Free(t.mid_point);
+				t.mid_point = nullptr;
+				
+				Assert(children == nullptr);
+			}
+		}
+	}
+	
+	Vector3f const & a = ref(triple[0].corner).pos;
+	Vector3f const & b = ref(triple[1].corner).pos;
+	Vector3f const & c = ref(triple[2].corner).pos;
+	center = (a + b + c) / 3.f;
+}
+
+bool form::Node::InitScoreParameters()
 {
 	Vector3f const & a = ref(triple[0].corner).pos;
 	Vector3f const & b = ref(triple[1].corner).pos;

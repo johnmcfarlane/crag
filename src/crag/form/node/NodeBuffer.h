@@ -50,6 +50,8 @@ namespace form
 #if VERIFY
 		//void VerifyRanking(Ranking const * ranking) const;
 		void Verify() const;
+		void VerifyUsed(Quaterna const & q) const;
+		void VerifyUnused(Quaterna const & q) const;
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(NodeBuffer);
 		
@@ -66,12 +68,13 @@ namespace form
 		
 		void Tick(Ray3 const & camera_ray_relative);
 		void OnReset();
+		void ResetNodeOrigins(Vector3 const & origin_delta);
 	private:
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
 		void UpdateNodeScores(Ray3 const & camera_ray_relative);
 		void UpdateParentScores();
-		void SortNodes();
+		void SortQuaterna();
 		bool ChurnNodes();
 	public:
 		
@@ -85,9 +88,9 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Node-related members.		
 		bool ExpandNode(Node & node);
+		bool ExpandNode(Node & node, Quaterna & children_quaterna);
 		void CollapseNode(Node & node);
 	private:
-		void InitMidPoints(Node & node, Shader & shader);
 		static bool InitChildGeometry(Node const & parent, Node * children_copy, Shader & shader);
 		static void InitChildPointers(Node & parent_node);
 		
@@ -100,9 +103,6 @@ namespace form
 		void IncreaseNodes(Quaterna * new_target);
 		bool DecreaseNodes(Quaterna * new_target);
 		
-		Quaterna * GetWorstQuaterna(float parent_score);
-		void BubbleSortUp(Quaterna * quaterna);
-
 		// TODO: Parallelize
 		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, int step_size = 1024);
 		
@@ -119,6 +119,7 @@ namespace form
 		Quaterna * const quaterna;		// [max_num_quaterna]
 
 		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
+		Quaterna * quaterna_sorted_end;			// end of buffer of actually used nodes
 		Quaterna * quaterna_used_end_target;	// where we'd like quaterna_used_end to be; cannot be less than used_end
 		Quaterna const * const quaterna_end;
 		
