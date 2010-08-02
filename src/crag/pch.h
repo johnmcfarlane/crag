@@ -95,7 +95,10 @@
 #include "core/floatOps.h"
 #include "core/memory.h"
 
-#include "geom/Vector.h"
+#include "geom/Vector2.h"
+#include "geom/Vector3.h"
+#include "geom/Vector4.h"
+#include "geom/VectorOps.h"
 
 
 //////////////////////////////////////////////////////////////////////

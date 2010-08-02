@@ -17,8 +17,8 @@
 
 
 CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
-CONFIG_DEFINE (camera_near, float, .05f);
-CONFIG_DEFINE (camera_far, float, 1000000);
+CONFIG_DEFINE (camera_near, float, .25f);
+CONFIG_DEFINE (camera_far, float, 10);
 
 
 gfx::Scene::Scene()

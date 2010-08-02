@@ -10,59 +10,59 @@
 
 #pragma once
 
+#include "Vector.h"
+
 #include "core/debug.h"
 
 
 //////////////////////////////////////////////////////////////////
-// Vector3 - 3-dimensional vector
+// 3-dimensional partical specialization of Vector
 
-template<typename S> class Vector3
+template<typename S> class Vector<S, 3>
 {
 public:
-	typedef S Scalar;
+	//typedef S S;
 	
-	Vector3() { }
-	explicit Vector3(Scalar const * array) : x(array[0]), y(array[1]), z(array[2]) { }
-	Vector3(Scalar ix, Scalar iy, Scalar iz) : x(ix), y(iy), z(iz) { }
-	template<typename I> Vector3(Vector3<I> const & rhs) 
-		: x(static_cast<S>(rhs.x))
-		, y(static_cast<S>(rhs.y))
-		, z(static_cast<S>(rhs.z)) { }
-	
-	Scalar const & operator[](int index) const 
+	Vector() { }
+	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z) { }
+	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) : x(rhs_x), y(rhs_y), z(rhs_z) { }
+
+	// Returns vector as a C-style array. Very unsafe. 
+	// TODO: Cast as a C++-style fixed-size vector instead.
+	S const & operator[](int index) const 
 	{
 		Assert(index >= 0);
 		Assert(index < 3);
 		return GetAxes() [index];
 	} 
 	
-	Scalar & operator[](int index) 
+	S & operator[](int index) 
 	{
 		Assert(index >= 0);
 		Assert(index < 3);
 		return GetAxes() [index];
 	} 
 
-	Scalar * GetAxes()
+	S * GetAxes()
 	{
-		return reinterpret_cast<Scalar *>(this);
+		return reinterpret_cast<S *>(this);
 	}
 
-	Scalar const * GetAxes() const
+	S const * GetAxes() const
 	{
-		return reinterpret_cast<Scalar const *>(this);
+		return reinterpret_cast<S const *>(this);
 	}
 
-	static Vector3 Zero() 
+	static Vector Zero() 
 	{
-		return Vector3(0,0,0); 
+		return Vector(0, 0, 0); 
 	}
-
-	Scalar x, y, z;
+	
+	S x, y, z;
 };
 
 
-template<typename Scalar> bool operator == (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename S> bool operator == (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
 	return
 		lhs.x == rhs.x && 
@@ -70,12 +70,12 @@ template<typename Scalar> bool operator == (Vector3<Scalar> const & lhs, Vector3
 		lhs.z == rhs.z;
 }
 
-template<typename Scalar> bool operator != (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename S> bool operator != (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
 	return ! (lhs == rhs);
 }
 
-template<typename Scalar> inline Vector3<Scalar> & operator += (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> & operator += (Vector<S, 3> & lhs, Vector<S, 3> const & rhs)
 {
 	lhs.x += rhs.x;
 	lhs.y += rhs.y;
@@ -83,7 +83,7 @@ template<typename Scalar> inline Vector3<Scalar> & operator += (Vector3<Scalar> 
 	return lhs;
 }
 
-template<typename Scalar> inline Vector3<Scalar> & operator -= (Vector3<Scalar> & lhs, Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> & operator -= (Vector<S, 3> & lhs, Vector<S, 3> const & rhs)
 {
 	lhs.x -= rhs.x;
 	lhs.y -= rhs.y;
@@ -91,7 +91,7 @@ template<typename Scalar> inline Vector3<Scalar> & operator -= (Vector3<Scalar> 
 	return lhs;
 }
 
-template<typename Scalar> inline Vector3<Scalar> & operator *= (Vector3<Scalar> & lhs, Scalar rhs)
+template<typename S> inline Vector<S, 3> & operator *= (Vector<S, 3> & lhs, S rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;
@@ -99,95 +99,85 @@ template<typename Scalar> inline Vector3<Scalar> & operator *= (Vector3<Scalar> 
 	return lhs;
 }
 
-template<typename Scalar> Vector3<Scalar> & operator /= (Vector3<Scalar> & lhs, Scalar rhs)
+template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
 {
-	return lhs *= (static_cast<Scalar>(1) / rhs);
+	return lhs *= (static_cast<S>(1) / rhs);
 }
 
-template<typename Scalar> inline Vector3<Scalar> operator - (Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & rhs)
 {
-	return Vector3<Scalar>(- rhs.x, - rhs.y, - rhs.z);
+	return Vector<S, 3>(- rhs.x, - rhs.y, - rhs.z);
 }
 
-template<typename Scalar> inline Vector3<Scalar> operator - (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
-	return ::Vector3<Scalar>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+	return ::Vector<S, 3>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
-template<typename Scalar> inline Vector3<Scalar> operator + (Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> operator + (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
-	return Vector3<Scalar>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+	return Vector<S, 3>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
 }
 
-template<typename Scalar> inline Vector3<Scalar> operator * (Vector3<Scalar> const & lhs, Scalar rhs)
+template<typename S> inline Vector<S, 3> operator * (Vector<S, 3> const & lhs, S rhs)
 {
-	Vector3<Scalar> result = lhs;
+	Vector<S, 3> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> inline Vector3<Scalar> operator * (Scalar lhs, Vector3<Scalar> const & rhs)
+template<typename S> inline Vector<S, 3> operator * (S lhs, Vector<S, 3> const & rhs)
 {
-	Vector3<Scalar> result = rhs;
+	Vector<S, 3> result = rhs;
 	return result *= lhs;
 }
 
-template<typename Scalar> Vector3<Scalar> operator / (Vector3<Scalar> const & lhs, Scalar rhs)
+template<typename S> Vector<S, 3> operator / (Vector<S, 3> const & lhs, S rhs)
 {
-	Vector3<Scalar> result = lhs;
+	Vector<S, 3> result = lhs;
 	return result *= (1.f / rhs);
 }
 
-template<typename Scalar> inline Scalar LengthSq(Vector3<Scalar> const & v)
+template<typename S> inline S LengthSq(Vector<S, 3> const & v)
 {
 	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
-template<typename Scalar> Scalar Length(class Vector3<Scalar> const & a)
+template<typename S> S Length(class Vector<S, 3> const & a)
 {
-	Scalar length_sqaured = LengthSq(a);
+	S length_sqaured = LengthSq(a);
 	return Sqrt(length_sqaured);
 }
 
-template<typename S1, typename S2> inline S1 DotProduct(Vector3<S1> const & lhs, Vector3<S2> const & rhs)
+template<typename S> S DotProduct(Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
 	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
-template<typename Scalar> Vector3<Scalar> CrossProduct(Vector3<Scalar> const & lhs, Vector3<Scalar> const & rhs)
+template<typename S> Vector<S, 3> CrossProduct(Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
-	return Vector3<Scalar>(
+	return Vector<S, 3>(
 		lhs.y * rhs.z - lhs.z * rhs.y,
 		lhs.z * rhs.x - lhs.x * rhs.z,
 		lhs.x * rhs.y - lhs.y * rhs.x);
 }
 
-template<typename Scalar> std::ostream & operator << (std::ostream & out, Vector3<Scalar> const & v)
+template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 3> const & v)
 {
 	return out << v.x << ',' << v.y << ',' << v.z;
 }
 
-template<typename Scalar> std::istream & operator >> (std::istream & in, Vector3<Scalar> const & v)
+template<typename S> std::istream & operator >> (std::istream & in, Vector<S, 3> const & v)
 {
 	return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 }
 
 
 //////////////////////////////////////////////////////////////////
-// Vector3f - float specialization of Vector3
+// specializations of Vector3
 
-typedef Vector3<float> Vector3f;
-
-
-//////////////////////////////////////////////////////////////////
-// Vector3d - double specialization of Vector3
-
-typedef Vector3<double> Vector3d;
-
-
-//////////////////////////////////////////////////////////////////
-// Vector3i - int specialization of Vector3
-
-typedef Vector3<int> Vector3i;
+typedef Vector <float, 3> Vector3f;
+typedef Vector <double, 3> Vector3d;
+typedef Vector <int, 3> Vector3i;
 
 
 //////////////////////////////////////////////////////////////////
@@ -207,4 +197,3 @@ inline int TriMod(int i)
 	static const int table[6] = { 0, 1, 2, 0, 1, 2 };
 	return table[i];
 }
-

@@ -75,22 +75,39 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range) const
 {
 	// TODO: Reduce the max when it's obscured.
-	Scalar distance = Length(camera_ray.position - GetPosition());
-
-	if (distance > radius_max)
+	Scalar distance_squared = LengthSq(camera_ray.position - GetPosition());
+	
+	// Is camera inside the planet?
+	Scalar radius_min_squared = Square(radius_min);
+	if (distance_squared < radius_min_squared)
 	{
-		range[0] = distance - radius_max;
+		Scalar distance = Sqrt(distance_squared);
+		range[0] = radius_min - distance;
+		range[1] = distance + radius_max; 
+		return true;
 	}
-	else if (distance > radius_min)
+
+	// Is camera outside the entire planet?
+	Scalar radius_max_squared = Square(radius_max);
+	if (distance_squared > radius_max_squared)
 	{
-		range[0] = 0;
+		Scalar distance = Sqrt(distance_squared);
+		range[0] = distance - radius_max;
 	}
 	else 
 	{
-		range[0] = radius_min - distance;
+		range[0] = 0;
 	}
+	
 
-	range[1] = distance + radius_max;
+	// The furthest you might ever be able too see of this planet
+	// is a ray that skims the sphere of radius_min
+	// and then hits the sphere of radius_max.
+	// For some reason, those two distances appear to be very easy to calculate. 
+	// (Famous last words.)
+	Scalar a = Sqrt(distance_squared - radius_min_squared);
+	Scalar b = Sqrt(radius_max_squared - radius_min_squared);
+	range[1] = a + b;
 	
 	return true;
 }

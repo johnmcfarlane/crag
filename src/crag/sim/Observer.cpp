@@ -31,7 +31,7 @@ namespace
 	CONFIG_DEFINE (observer_density, double, 1);
 	
 	CONFIG_DEFINE (observer_speed_factor, double, 631);
-	CONFIG_DEFINE (observer_gravity_center, sim::Vector3, sim::Vector3(0, 0, -.25));
+	CONFIG_DEFINE (observer_gravity_center, sim::Vector3, sim::Vector3(0., 0., -.25));
 
 	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
 	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);

@@ -21,8 +21,8 @@ namespace form
 	// Vector Types
 	typedef float Scalar;
 	
-	typedef ::Vector3<Scalar>	Vector3;
-	typedef ::Vector4<Scalar>	Vector4;
+	typedef ::Vector<Scalar, 3>	Vector3;
+	typedef ::Vector<Scalar, 4>	Vector4;
 	typedef ::Ray3<Scalar>		Ray3;
 	typedef ::Sphere3<Scalar>	Sphere3;
 	

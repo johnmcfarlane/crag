@@ -13,11 +13,6 @@
 #include "core/debug.h"
 
 
-// When the origin is reset, the formations are deinitialized.
-// This flag skips the correct deinitialization of the nodes and just wipes the buffer instead.
-#define FAST_SCENE_RESET
-
-
 template<typename T> class Pool
 {
 	struct Node
@@ -66,7 +61,7 @@ public:
 	
 	T * Alloc()
 	{
-		VerifyObjectPtr(this);
+		VerifyObject(* this);
 		if (free_list != nullptr)
 		{
 			T * element = reinterpret_cast<T *>(free_list);

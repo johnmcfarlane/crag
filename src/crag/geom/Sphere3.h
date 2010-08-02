@@ -14,11 +14,11 @@
 #include "geom/Vector3.h"
 #include "core/floatOps.h"
 
-template<typename S> class Sphere3 : public Sphere<Vector3<S>, S>
+template<typename S> class Sphere3 : public Sphere<Vector<S, 3>, S>
 {
-	typedef Sphere<Vector3<S>, S> Base;
 public:
-	typedef Vector3<S> Vector;
+	typedef Vector<S, 3> Vector;
+	typedef Sphere<Vector, S> Base;
 	
 	Sphere3() { }
 	

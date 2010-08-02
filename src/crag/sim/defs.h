@@ -34,9 +34,9 @@ namespace sim
 	typedef double Scalar;
 #endif
 	
-	typedef ::Vector2<Scalar> Vector2;
-	typedef ::Vector3<Scalar> Vector3;
-	typedef ::Vector4<Scalar> Vector4;
+	typedef ::Vector<Scalar, 2> Vector2;
+	typedef ::Vector<Scalar, 3> Vector3;
+	typedef ::Vector<Scalar, 4> Vector4;
 	typedef ::Ray3<Scalar> Ray3;
 	typedef ::Sphere3<Scalar> Sphere3;
 	typedef ::Matrix4<Scalar> Matrix4;

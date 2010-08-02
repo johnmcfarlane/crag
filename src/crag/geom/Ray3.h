@@ -19,7 +19,7 @@ class Ray3
 {
 public:
 	typedef S Scalar;
-	typedef Vector3<S> Vector3;
+	typedef Vector<S, 3> Vector3;
 	
 	Ray3() : position(Vector3::Zero()), direction(Vector3::Zero()) 
 	{

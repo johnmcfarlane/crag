@@ -19,9 +19,6 @@
 #endif
 
 
-template <typename S> class Vector3;
-
-
 namespace sim
 {
 	struct AppInfo;
@@ -35,7 +32,7 @@ namespace gfx
 	namespace Debug
 	{
 		// forward declarations
-		typedef ::Vector3<double> Vector3;
+		typedef ::Vector<double, 3> Vector3;
 
 		class ColorPair
 		{

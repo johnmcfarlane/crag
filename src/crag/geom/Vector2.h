@@ -10,170 +10,139 @@
 
 #pragma once
 
+#include "Vector.h"
+
 #include "core/floatOps.h"
 
 
 //////////////////////////////////////////////////////////////////
 // Vector2 - 2-dimensional vector
 
-template<typename S> class Vector2
+
+// 2-dimensional partical specialization of Vector
+template<typename S> class Vector<S, 2>
 {
 public:
-	typedef S Scalar;
-	
-	Vector2() { }
-	
-	Vector2(Scalar ix, Scalar iy) : x(ix), y(iy) { }
-	
-	template<typename S2> Vector2(Vector2<S2> const & rhs) 
-		: x(static_cast<Scalar>(rhs.x)), y(static_cast<Scalar>(rhs.y)) 
-	{ 
-	}
-	
-	Scalar const & operator[](int index) const 
-	{
-		Assert(index >= 0 && index < 2);
-		return GetAxes() [index];
-	} 
-	
-	Scalar & operator[](int index) 
-	{
-		Assert(index >= 0 && index < 2);
-		return GetAxes() [index];
-	} 
+	Vector() { }
+	template<typename RHS_S> Vector(Vector<RHS_S, 2> const & rhs) : x(rhs.x), y(rhs.y) { }
+	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y) : x(rhs_x), y(rhs_y) { }
 
-	Scalar const * GetAxes() const
+	// Returns vector as a C-style array. Very unsafe. 
+	// TODO: Cast as a C++-style fixed-size vector instead.
+	S const * GetAxes() const
 	{
-		static_cast<Scalar const *>(this);
+		static_cast<S const *>(this);
+	}	
+	S * GetAxes()
+	{
+		static_cast<S *>(this);
+	}	
+	
+	S const & operator [] (int index) const
+	{
+		Assert(index >= 0 && index < N);
+		return GetAxes() [index];
 	}
-
-	Scalar * GetAxes() 
+	S & operator [] (int index)
 	{
-		static_cast<Scalar *>(this);
+		Assert(index >= 0 && index < N);
+		return GetAxes() [index];
 	}
 	
-	static Vector2 Zero() 
+	static Vector Zero() 
 	{
-		return Vector2(0,0); 
+		return Vector(0,0); 
 	}
 	
-	Scalar x, y;
+	S x, y;
 };
 
 
-template<typename Scalar> bool operator == (Vector2<Scalar> const & lhs, Vector2<Scalar> const & rhs)
+template<typename S> bool operator == (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 {
 	return
 		lhs.x == rhs.x && 
 		lhs.y == rhs.y;
 }
 
-template<typename Scalar> bool operator != (Vector2<Scalar> const & lhs, Vector2<Scalar> const & rhs)
+template<typename S> bool operator != (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 {
 	return ! (lhs == rhs);
 }
 
-template<typename Scalar> Vector2<Scalar> & operator += (Vector2<Scalar> & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> & operator += (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
 {
 	lhs.x += rhs.x;
 	lhs.y += rhs.y;
 	return lhs;
 }
 
-template<typename Scalar> Vector2<Scalar> & operator -= (Vector2<Scalar> & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> & operator -= (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
 {
 	lhs.x -= rhs.x;
 	lhs.y -= rhs.y;
 	return lhs;
 }
 
-template<typename Scalar> Vector2<Scalar> & operator *= (Vector2<Scalar> & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> & operator *= (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
 {
 	lhs.x *= rhs.x;
 	lhs.y *= rhs.y;
 	return lhs;
 }
 
-template<typename Scalar1, typename Scalar2> Vector2<Scalar1> & operator *= (Vector2<Scalar1> & lhs, Scalar2 rhs)
+template<typename LHS_S, typename RHS_S> Vector<LHS_S, 2> & operator *= (Vector<LHS_S, 2> & lhs, RHS_S rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;
 	return lhs;
 }
 
-template<typename Scalar> Vector2<Scalar> & operator /= (Vector2<Scalar> & lhs, Scalar rhs)
+template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, S rhs)
 {
-	return lhs *= (static_cast<Scalar>(1) / rhs);
+	return lhs *= (static_cast<S>(1) / rhs);
 }
 
-template<typename Scalar> Vector2<Scalar> operator - (Vector2<Scalar> const & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> operator - (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 {
-	Vector2<Scalar> result = lhs;
+	Vector<S, 2> result = lhs;
 	return result -= rhs;
 }
 
-template<typename Scalar> Vector2<Scalar> operator + (Vector2<Scalar> const & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> operator + (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 {
-	Vector2<Scalar> result = lhs;
+	Vector<S, 2> result = lhs;
 	return result += rhs;
 }
 
-template<typename Scalar> Vector2<Scalar> operator * (Vector2<Scalar> const & lhs, Vector2<Scalar> const & rhs)
+template<typename S> Vector<S, 2> operator * (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 {
-	Vector2<Scalar> result = lhs;
+	Vector<S, 2> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> Vector2<Scalar> operator * (Vector2<Scalar> const & lhs, Scalar rhs)
+template<typename S> Vector<S, 2> operator * (Vector<S, 2> const & lhs, S rhs)
 {
-	Vector2<Scalar> result = lhs;
+	Vector<S, 2> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> Scalar LengthSq(Vector2<Scalar> const & v)
+template<typename S> S LengthSq(Vector<S, 2> const & v)
 {
 	return v.x * v.x + v.y * v.y;
 }
 
-template<typename Scalar> Scalar Length(class Vector2<Scalar> const & a)
+template<typename S> S Length(class Vector<S, 2> const & a)
 {
-	Scalar length_sqaured = LengthSq(a);
+	S length_sqaured = LengthSq(a);
 	return Sqrt(length_sqaured);
 }
 
 
 //////////////////////////////////////////////////////////////////
-// Vector2f - float specialization of Vector2
+// specializations of Vector2
 
-class Vector2f : public Vector2<float>
-{
-public:
-	Vector2f() { }
-	Vector2f(float ix, float iy) : Vector2<float>(ix, iy) { }
-	//Vector2f(Vector2<float> const & rhs) : Vector2<float>(rhs) { }
-	template<typename Scalar> Vector2f(Vector2<Scalar> const & rhs) : Vector2<float>(rhs) { }
-};
+typedef Vector<float, 2> Vector2f;
+typedef Vector<double, 2> Vector2d;
+typedef Vector<int, 2> Vector2i;
 
-
-//////////////////////////////////////////////////////////////////
-// Vector2d - double specialization of Vector2
-
-class Vector2d : public Vector2<double>
-{
-public:
-	Vector2d(double ix, double iy) : Vector2<double>(ix, iy) { }
-	Vector2d(Vector2<double> const & rhs) : Vector2<double>(rhs) { }
-};
-
-
-//////////////////////////////////////////////////////////////////
-// Vector2i - int specialization of Vector2
-
-class Vector2i : public Vector2<int>
-{
-public:
-	Vector2i() { }
-	//template<typename Scalar> Vector2i(Scalar ix, Scalar iy) : Vector2<int>(ix, iy) { }
-	Vector2i(int ix, int iy) : Vector2<int>(ix, iy) { }
-	template<typename Scalar> Vector2i(Vector2<Scalar> const & rhs) : Vector2<int>(rhs) { }
-};

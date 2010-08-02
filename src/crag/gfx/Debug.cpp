@@ -105,26 +105,24 @@ namespace
 		
 		void Verify() const
 		{
-			size_t s = points.size();
-			
 			switch (mode)
 			{
 				case GL_POINTS:
 					break;
 					
 				case GL_LINES:
-					Assert((s % 2) == 0);
+					Assert((points.size() % 2) == 0);
 					break;
 					
 				case GL_TRIANGLES:
-					Assert((s % 3) == 0);
+					Assert((points.size() % 3) == 0);
 					break;
 					
 				default:
 					Assert(false);
 			}
 
-			Assert(s >= 0 && s < 100000);
+			Assert(points.size() >= 0 && points.size() < 100000);
 			for (point_vector::const_iterator i = points.begin(); i != points.end(); ++ i)
 			{
 				Point const & p = * i;
@@ -309,12 +307,18 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 									extent_factors[y_index].y * extent_factors[z_index].z, 
 									1.f);
 						//p.z -= pov.frustum.near_z;
-						corners[z_index][y_index][x_index] = static_cast< sim::Vector3 >(m * sim::Vector4(p));
+						
+						Vector3f & corner = corners[z_index][y_index][x_index];
+						sim::Vector4 mult = m * sim::Vector4(p.x, p.y, p.z, p.w);
+						corner.x = mult.x;
+						corner.y = mult.y;
+						corner.z = mult.z;
 					}
 				}
 			}
 			
-			eye = static_cast< sim::Vector3 >(m * sim::Vector4(0, 0, 0, 1));
+			//eye = static_cast< sim::Vector3 >(m * sim::Vector4(0, 0, 0, 1));
+			eye = Vector3f::Zero();
 		}
 	}
 	
@@ -325,9 +329,9 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 		Vector3i indices;
 		
 		for (int p = 0; p < 2; ++ p) {
-			indices[perp_axis_1] = p;
+			indices [perp_axis_1] = p;
 			for (int q = 0; q < 2; ++ q) {
-				indices[perp_axis_2] = q;
+				indices [perp_axis_2] = q;
 				
 				Vector3f const * a, * b;
 				

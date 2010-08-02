@@ -106,14 +106,14 @@ public:
 		}
 	}
 	
-	Vector4<S> const & GetRow(int i) const 
+	Vector<S, 4> const & GetRow(int i) const 
 	{ 
-		return * reinterpret_cast<Vector4<S> const *>(array2[i]); 
+		return * reinterpret_cast<Vector<S, 4> const *>(array2[i]); 
 	}
 	
-	Vector4<S> GetColumn(int i) const 
+	Vector<S, 4> GetColumn(int i) const 
 	{ 
-		return Vector4<S>(array2[0][i], array2[1][i], array2[2][i], array2[3][i]); 
+		return Vector<S, 4>(array2[0][i], array2[1][i], array2[2][i], array2[3][i]); 
 	}
 	
 	S Determinant() const
@@ -193,9 +193,9 @@ template<typename S> Matrix4<S> operator * (Matrix4<S> const & lhs, Matrix4<S> c
 	return result;
 }
 
-template<typename S> Vector4<S> operator * (Matrix4<S> const & lhs, const Vector4<S> & rhs) 
+template<typename S> Vector<S, 4> operator * (Matrix4<S> const & lhs, const Vector<S, 4> & rhs) 
 { 
-	Vector4<S> result;
+	Vector<S, 4> result;
 	result[0] = DotProduct(lhs.GetRow(0), rhs); 
 	result[1] = DotProduct(lhs.GetRow(1), rhs); 
 	result[2] = DotProduct(lhs.GetRow(2), rhs); 
@@ -203,9 +203,9 @@ template<typename S> Vector4<S> operator * (Matrix4<S> const & lhs, const Vector
 	return result;
 }
 
-template<typename S> Vector4<S> operator * (const Vector4<S> & lhs, Matrix4<S> const & rhs) 
+template<typename S> Vector<S, 4> operator * (const Vector<S, 4> & lhs, Matrix4<S> const & rhs) 
 { 
-	Vector4<S> result;
+	Vector<S, 4> result;
 	result[0] = DotProduct(lhs, rhs.GetColumn(0)); 
 	result[1] = DotProduct(lhs, rhs.GetColumn(1)); 
 	result[2] = DotProduct(lhs, rhs.GetColumn(2)); 

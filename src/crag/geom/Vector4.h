@@ -19,63 +19,60 @@
 
 #pragma once
 
-#include "core/debug.h"
+#include "Vector.h"
 
-template<typename S> class Vector3;
+#include "core/debug.h"
 
 
 //////////////////////////////////////////////////////////////////
-// Vector4 - 3-dimensional vector plus a W afixed to the end with sticky tape
+// 3-dimensional partical specialization of Vector
 
-template<typename S> class Vector4
+template<typename S> class Vector<S, 4>
 {
 public:
-	typedef S Scalar;
+	//typedef S S;
 	
-	Vector4() { }
-	explicit Vector4(Scalar const * array) : x(array[0]), y(array[1]), z(array[2]), w(array[3]) { }
-	Vector4(Scalar ix, Scalar iy, Scalar iz, Scalar iw) : x(ix), y(iy), z(iz), w(iw) { }
-	template<typename I> Vector4(Vector4<I> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
+	Vector() { }
+	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
+	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) : x(rhs_x), y(rhs_y), z(rhs_z), w(rhs_w) { }
 	
-	operator Vector3<S> const & () const 
-	{
-		return reinterpret_cast<Vector3<S> const &>(* this);
-	}
-	
-	Scalar const & operator[](int index) const 
+	// Returns vector as a C-style array. Very unsafe. 
+	// TODO: Cast as a C++-style fixed-size vector instead.
+	S const & operator[](int index) const 
 	{
 		Assert(index >= 0);
-		Assert(index < 4);
-		return GetArray() [index];
+		Assert(index < 3);
+		return GetAxes() [index];
 	} 
 	
-	Scalar & operator[](int index) 
+	S & operator[](int index) 
 	{
 		Assert(index >= 0);
-		Assert(index < 4);
-		return GetArray() [index];
+		Assert(index < 3);
+		return GetAxes() [index];
 	} 
 	
-	Scalar const * GetArray() const
+	S * GetAxes()
 	{
-		return reinterpret_cast<Scalar const *>(this);
+		return reinterpret_cast<S *>(this);
 	}
 	
-	Scalar * GetArray() 
+	S const * GetAxes() const
 	{
-		return reinterpret_cast<Scalar *>(this);
+		return reinterpret_cast<S const *>(this);
 	}
 	
-	static Vector4 Zero() 
+	static Vector Zero() 
 	{
-		return Vector4(0, 0, 0, 0); 
+		return Vector(0, 0, 0, 0); 
 	}
 	
-	Scalar x, y, z, w;
+	S x, y, z, w;
 };
 
 
-template<typename Scalar> bool operator == (Vector4<Scalar> const & lhs, Vector4<Scalar> const & rhs)
+
+template<typename S> bool operator == (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
 	return
 	lhs.x == rhs.x && 
@@ -84,12 +81,12 @@ template<typename Scalar> bool operator == (Vector4<Scalar> const & lhs, Vector4
 	lhs.w == rhs.w;
 }
 
-template<typename Scalar> bool operator != (Vector4<Scalar> const & lhs, Vector4<Scalar> const & rhs)
+template<typename S> bool operator != (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
 	return ! (lhs == rhs);
 }
 
-template<typename Scalar> Vector4<Scalar> & operator += (Vector4<Scalar> & lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> & operator += (Vector<S, 4> & lhs, Vector<S, 4> const & rhs)
 {
 	lhs.x += rhs.x;
 	lhs.y += rhs.y;
@@ -98,7 +95,7 @@ template<typename Scalar> Vector4<Scalar> & operator += (Vector4<Scalar> & lhs, 
 	return lhs;
 }
 
-template<typename Scalar> Vector4<Scalar> & operator -= (Vector4<Scalar> & lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> & operator -= (Vector<S, 4> & lhs, Vector<S, 4> const & rhs)
 {
 	lhs.x -= rhs.x;
 	lhs.y -= rhs.y;
@@ -107,16 +104,7 @@ template<typename Scalar> Vector4<Scalar> & operator -= (Vector4<Scalar> & lhs, 
 	return lhs;
 }
 
-/*template<typename Scalar> Vector4<Scalar> & operator *= (Vector4<Scalar> & lhs, Vector4<Scalar> const & rhs)
-{
-	lhs.x *= rhs.x;
-	lhs.y *= rhs.y;
-	lhs.z *= rhs.z;
-	lhs.w *= rhs.w;
-	return lhs;
-}*/
-
-template<typename Scalar> Vector4<Scalar> & operator *= (Vector4<Scalar> & lhs, Scalar rhs)
+template<typename S> Vector<S, 4> & operator *= (Vector<S, 4> & lhs, S rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;
@@ -125,114 +113,66 @@ template<typename Scalar> Vector4<Scalar> & operator *= (Vector4<Scalar> & lhs, 
 	return lhs;
 }
 
-template<typename Scalar> Vector4<Scalar> & operator /= (Vector4<Scalar> & lhs, Scalar rhs)
+template<typename S> Vector<S, 4> & operator /= (Vector<S, 4> & lhs, S rhs)
 {
-	return lhs *= (static_cast<Scalar>(1) / rhs);
+	return lhs *= (static_cast<S>(1) / rhs);
 }
 
-template<typename Scalar> Vector4<Scalar> operator - (Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> operator - (Vector<S, 4> const & rhs)
 {
-	return Vector4<Scalar>(- rhs.x, - rhs.y, - rhs.z, - rhs.w);
+	return Vector<S, 4>(- rhs.x, - rhs.y, - rhs.z, - rhs.w);
 }
 
-template<typename Scalar> Vector4<Scalar> operator - (Vector4<Scalar> const & lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> operator - (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
-	Vector4<Scalar> result = lhs;
+	Vector<S, 4> result = lhs;
 	return result -= rhs;
 }
 
-template<typename Scalar> Vector4<Scalar> operator + (Vector4<Scalar> const & lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> operator + (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
-	Vector4<Scalar> result = lhs;
+	Vector<S, 4> result = lhs;
 	return result += rhs;
 }
 
-template<typename Scalar> Vector4<Scalar> operator * (Vector4<Scalar> const & lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> operator * (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
-	Vector4<Scalar> result = lhs;
+	Vector<S, 4> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> Vector4<Scalar> operator * (Vector4<Scalar> const & lhs, Scalar rhs)
+template<typename S> Vector<S, 4> operator * (Vector<S, 4> const & lhs, S rhs)
 {
-	Vector4<Scalar> result = lhs;
+	Vector<S, 4> result = lhs;
 	return result *= rhs;
 }
 
-template<typename Scalar> Vector4<Scalar> operator * (Scalar lhs, Vector4<Scalar> const & rhs)
+template<typename S> Vector<S, 4> operator * (S lhs, Vector<S, 4> const & rhs)
 {
-	Vector4<Scalar> result = rhs;
+	Vector<S, 4> result = rhs;
 	return result *= lhs;
 }
 
-template<typename Scalar> Vector4<Scalar> operator / (Vector4<Scalar> const & lhs, Scalar rhs)
+template<typename S> Vector<S, 4> operator / (Vector<S, 4> const & lhs, S rhs)
 {
-	Vector4<Scalar> result = lhs;
+	Vector<S, 4> result = lhs;
 	return result *= (1.f / rhs);
 }
 
-template<typename Scalar> Scalar LengthSq(Vector4<Scalar> const & v)
+template<typename S> S LengthSq(Vector<S, 4> const & v)
 {
 	return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
 }
 
-template<typename Scalar> Scalar Length(class Vector4<Scalar> const & a)
-{
-	Scalar length_sqaured = LengthSq(a);
-	return Sqrt(length_sqaured);
-}
-
-template<typename S1, typename S2> S1 DotProduct(Vector4<S1> const & lhs, Vector4<S2> const & rhs)
+template<typename S> S DotProduct(Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 {
 	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 }
 
 
 //////////////////////////////////////////////////////////////////
-// Vector4f - float specialization of Vector4
+// specializations of Vector4
 
-typedef Vector4<float> Vector4f;
-/*class Vector4f : public Vector4<float>
-{
-public:
-	Vector4f() { }
-	explicit Vector4f(float const * array) : Vector4<float>(array) { }
-	Vector4f(float ix, float iy, float iz, float iw) : Vector4<float>(ix, iy, iz, iw) { }
-	template<typename I> Vector4f(Vector4<I> const & rhs) : Vector4<float>(rhs) { }
-	template<typename I> Vector4f(Vector3<I> const & rhs, I iw = 0) : Vector4<float>(rhs, iw) { }
-
-	operator Vector3f const & () const {
-		return reinterpret_cast<Vector3f const &>(* this);
-	}
-};*/
-
-/*inline Vector4f & operator /= (Vector4f & lhs, Vector4f const & rhs)
-{
-	lhs /= rhs;
-	return lhs;
-}*/
-
-
-//////////////////////////////////////////////////////////////////
-// Vector4d - double specialization of Vector4
-
-class Vector4d : public Vector4<double>
-{
-public:
-	Vector4d() { }
-	template<typename I> Vector4d(I ix, I iy, I iz, I iw) : Vector4<double>(ix, iy, iz, iw) { }
-	template<typename I> Vector4d(Vector4<I> const & rhs) : Vector4<double>(rhs) { }
-};
-
-
-//////////////////////////////////////////////////////////////////
-// Vector4i - int specialization of Vector4
-
-class Vector4i : public Vector4<int>
-{
-public:
-	Vector4i() { }
-	template<typename I> Vector4i(I ix, I iy, I iz, I iw) : Vector4<int>(ix, iy, iz, iw) { }
-	template<typename I> Vector4i(Vector4<I> const & rhs) : Vector4<int>(rhs) { }
-};
-
+typedef Vector<float, 4> Vector4f;
+typedef Vector<double, 4> Vector4d;
+typedef Vector<int, 4> Vector4i;

@@ -23,6 +23,6 @@ namespace physics
 	typedef double Scalar;
 #endif
 	
-	typedef Vector3<Scalar> Vector3;
+	typedef Vector<Scalar, 3> Vector3;
 	typedef Matrix4<Scalar> Matrix4;
 }
