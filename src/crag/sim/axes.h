@@ -14,8 +14,8 @@
 #include "geom/Ray3.h"
 
 
-// TODO: Space is a terrible name.
-namespace space 
+// TODO: Axes isn't a great name.
+namespace axes 
 {
 	enum Axis
 	{

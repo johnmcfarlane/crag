@@ -14,7 +14,7 @@
 #include "form/Manager.h"
 
 #include "sim/Observer.h"
-#include "sim/space.h"
+#include "sim/axes.h"
 
 #include "physics/Body.h"
 
@@ -255,7 +255,7 @@ void form::SceneThread::ThreadTick()
 	physics::Body const * observer_body = observer.GetBody();
 	sim::Matrix4 observer_matrix;
 	observer_body->GetRotation(observer_matrix);
-	sim::Ray3 camera_ray = space::GetCameraRay(observer_pos, observer_matrix);
+	sim::Ray3 camera_ray = axes::GetCameraRay(observer_pos, observer_matrix);
 	
 	scene.SetCameraRay(camera_ray);
 	

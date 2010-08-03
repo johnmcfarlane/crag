@@ -21,7 +21,7 @@
 template<typename S> class Vector<S, 3>
 {
 public:
-	//typedef S S;
+	static int const N = 3;
 	
 	Vector() { }
 	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z) { }
@@ -31,15 +31,13 @@ public:
 	// TODO: Cast as a C++-style fixed-size vector instead.
 	S const & operator[](int index) const 
 	{
-		Assert(index >= 0);
-		Assert(index < 3);
+		Assert(index >= 0 && index < N);
 		return GetAxes() [index];
 	} 
 	
 	S & operator[](int index) 
 	{
-		Assert(index >= 0);
-		Assert(index < 3);
+		Assert(index >= 0 && index < N);
 		return GetAxes() [index];
 	} 
 

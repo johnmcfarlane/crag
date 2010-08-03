@@ -10,9 +10,9 @@
 
 #include "pch.h"
 
+#include "axes.h"
 #include "Observer.h"
 #include "Universe.h"
-#include "Space.h"
 
 #include "physics/Singleton.h"
 #include "physics/SphericalBody.h"

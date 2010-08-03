@@ -19,7 +19,7 @@
 #include "form/Manager.h"
 
 #include "sim/Entity.h"
-#include "sim/space.h"
+#include "sim/axes.h"
 
 #include "glpp/glpp.h"
 
@@ -71,7 +71,7 @@ namespace
 		gfx::Frustum frustum = pov.frustum;
 		frustum.near_z = std::numeric_limits<float>::max();
 
-		sim::Ray3 camera_ray = space::GetCameraRay(pov.pos, pov.rot);
+		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
 		sim::Universe::GetRenderRange(camera_ray, frustum.near_z, frustum.far_z);
 		
 		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
@@ -396,7 +396,7 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	}
 	
 #if defined(GFX_DEBUG)
-	sim::Vector3 forward = space::GetForward(pov.rot);
+	sim::Vector3 forward = axes::GetForward(pov.rot);
 	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
 	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
 #endif

@@ -17,12 +17,12 @@
 template<typename S> class Sphere3 : public Sphere<Vector<S, 3>, S>
 {
 public:
-	typedef Vector<S, 3> Vector;
-	typedef Sphere<Vector, S> Base;
+	typedef Vector<S, 3> V;
+	typedef Sphere<V, S> Base;
 	
 	Sphere3() { }
 	
-	Sphere3(Vector const & c, S r) : Sphere<Vector, S>(c, r) { }
+	Sphere3(V const & c, S r) : Sphere<V, S>(c, r) { }
 	
 	// templated copy constructor - can take a Sphere3 of a different type
 	template<typename I> Sphere3(Sphere3<I> const & rhs) 

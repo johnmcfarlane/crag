@@ -23,6 +23,8 @@
 template<typename S> class Vector<S, 2>
 {
 public:
+	static int const N = 2;
+	
 	Vector() { }
 	template<typename RHS_S> Vector(Vector<RHS_S, 2> const & rhs) : x(rhs.x), y(rhs.y) { }
 	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y) : x(rhs_x), y(rhs_y) { }
