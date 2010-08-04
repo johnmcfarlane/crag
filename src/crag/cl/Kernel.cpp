@@ -32,13 +32,15 @@ cl::Kernel::Kernel(char const * kernel_source)
 	CL_CHECK(err);
 	
 	// Build the program executable
-	if (! CL_CHECK(clBuildProgram(program, 0, NULL, NULL, NULL, NULL)))
+	err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+	if (err != CL_SUCCESS)
 	{
 		size_t len;
 		char buffer[2048];
 		
 		clGetProgramBuildInfo(program, singleton.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		std::cerr << buffer << '\n';
+		CL_CHECK(err);
 	}
 	
 	// Create the compute kernel in the program we wish to run

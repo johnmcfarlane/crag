@@ -32,7 +32,7 @@
 #define CL_CHECK(EXPRESSION) EXPRESSION
 #else
 
-//#include "core/debug.h"
+#include "core/debug.h"
 
 #define CL_CHECK(EXPRESSION) CheckResult(EXPRESSION, #EXPRESSION, __FILE__, __LINE__)
 
@@ -47,7 +47,7 @@ namespace cl
 		else 
 		{
 			std::cerr << file << ":" << line << ": cl error: \"" << expression << "\" = " << error_code << '\n';
-			assert(false);
+			DEBUG_BREAK();
 			return false;
 		}
 	}
