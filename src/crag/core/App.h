@@ -38,6 +38,7 @@
 #define KEY_F SDLK_f
 #define KEY_G SDLK_g
 #define KEY_I SDLK_i
+#define KEY_K SDLK_k
 #define KEY_L SDLK_l
 #define KEY_M SDLK_m
 #define KEY_O SDLK_o
