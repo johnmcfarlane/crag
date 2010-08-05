@@ -36,7 +36,6 @@ namespace sim
 		
 		void UpdateInput(Controller::Impulse const & inpulse);	// [rot/pos]
 
-		//void SetSpeed(int _speed);
 		void SetSpeedFactor(int _speed_factor);
 		void Tick();
 		
@@ -46,13 +45,12 @@ namespace sim
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const & pos);
 		
-		//Matrix4 GetRotation() const;
-		//void SetRotation(Matrix4 const & rot);
-
 		physics::Body * GetBody();
 		physics::Body const * GetBody() const;
 
 		gfx::Light const & GetLight() const;
+		
+		Ray3 GetCameraRay() const;
 
 	private:
 		void ApplyImpulse();

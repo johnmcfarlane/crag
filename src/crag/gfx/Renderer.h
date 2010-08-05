@@ -15,6 +15,8 @@
 
 #include "sim/defs.h"
 
+#include "core/Singleton.h"
+
 #include <vector>
 
 
@@ -25,12 +27,17 @@ namespace sim
 
 namespace gfx
 {
+	// forward-declarations
 	class Light;
 	class Pov;
 	class Scene;
 	class Skybox;
 
-	class Renderer
+	// The Renderer class. 
+	// Does all the donkey-work of bullying OpenGL 
+	// into turning the simulated world
+	// into an array of pixels.
+	class Renderer : public core::Singleton<Renderer>
 	{
 		enum ForegroundRenderPass
 		{

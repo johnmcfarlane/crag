@@ -41,7 +41,7 @@ void sim::Entity::GetGravitationalForce(sim::Vector3 const & /*pos*/, sim::Vecto
 {
 }
 
-bool sim::Entity::GetRenderRange(Ray3 const & camera_ray, double * range) const
+bool sim::Entity::GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const
 {
 	return false;
 }
@@ -55,12 +55,6 @@ physics::Body const * sim::Entity::GetBody() const
 {
 	return nullptr;
 }
-
-//bool sim::Entity::CustomCollision(PhysicalBody &) const
-//{
-//	Assert(false);
-//	return false;
-//}
 
 #if DUMP
 DumpStream & operator << (DumpStream & lhs, Entity & rhs)

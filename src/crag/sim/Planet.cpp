@@ -72,41 +72,47 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	gravity += contribution;
 }
 
-bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range) const
+bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const
 {
-	// TODO: Reduce the max when it's obscured.
 	Scalar distance_squared = LengthSq(camera_ray.position - GetPosition());
+	Scalar distance = Sqrt(distance_squared);
 	
 	// Is camera inside the planet?
-	Scalar radius_min_squared = Square(radius_min);
-	if (distance_squared < radius_min_squared)
+	if (distance < radius_min)
 	{
-		Scalar distance = Sqrt(distance_squared);
 		range[0] = radius_min - distance;
 		range[1] = distance + radius_max; 
 		return true;
 	}
 
 	// Is camera outside the entire planet?
-	Scalar radius_max_squared = Square(radius_max);
-	if (distance_squared > radius_max_squared)
+	if (distance > radius_max)
 	{
-		Scalar distance = Sqrt(distance_squared);
 		range[0] = distance - radius_max;
 	}
 	else 
 	{
+		// The camera is between the min and max range of planet heights 
+		// so it could be right up close to stuff.
 		range[0] = 0;
 	}
 	
-
-	// The furthest you might ever be able too see of this planet
+	// Finally we need to calculate the furthest distance from the camera to the planet.
+	
+	// For wireframe mode, it's easy (and the same as when you're inside the planet.
+	if (wireframe)
+	{
+		range[1] = distance + radius_max; 
+		return true;
+	}
+	
+	// Otherwise, the furthest you might ever be able too see of this planet
 	// is a ray that skims the sphere of radius_min
 	// and then hits the sphere of radius_max.
 	// For some reason, those two distances appear to be very easy to calculate. 
 	// (Famous last words.)
-	Scalar a = Sqrt(distance_squared - radius_min_squared);
-	Scalar b = Sqrt(radius_max_squared - radius_min_squared);
+	Scalar a = Sqrt(Square(distance) - Square(radius_min));
+	Scalar b = Sqrt(Square(radius_max) - Square(radius_min));
 	range[1] = a + b;
 	
 	return true;
@@ -121,41 +127,3 @@ sim::Vector3 const & sim::Planet::GetPosition() const
 {
 	return body->GetPosition();
 }
-
-#if 0
-// this all goes to shit if two planets collide
-bool sim::Planet::CustomCollision(PhysicalBody & that_physical) const
-{
-#if 0
-	dGeomID that_geom = that_physical.GetGeom();
-	
-	Physics & physics = Physics::Get();
-	form::Mesh & mesh = physics.GetFormationMesh();
-	mesh.ClearPolys();
-	
-	sim::Sphere3 body(::GetPosition(that_geom) - ::GetPosition(geom), dGeomSphereGetRadius(that_geom));
-	
-	// Assuming that the other body only ever hits one formation in any one tick.
-	// Currently pretty safe as there is only one formation in the simulation!
-	Assert(mesh.GetNumPolys() == 0);
-	
-	{
-		sf::Lock lock(form::Manager::mutex);
-		
-		formation->GenerateCollisionMesh(mesh, body);
-		
-		physics.OnMeshCollision(that_geom);
-	}
-	
-	return true;
-#else
-	return false;
-#endif
-}
-#endif
-
-/*#if DUMP
-void sim::Planet::Dump(std::ostream & out) const
-{
-}
-#endif*/

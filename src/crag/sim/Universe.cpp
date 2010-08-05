@@ -108,7 +108,7 @@ sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
 	}
 }
 
-void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max)
+void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe)
 {
 //	range_min = + std::numeric_limits<Scalar>::max();
 //	range_max = - std::numeric_limits<Scalar>::max();
@@ -117,7 +117,7 @@ void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, 
 	{
 		Entity & e = * * it;
 		double entity_range[2];
-		if (e.GetRenderRange(camera_ray, entity_range))
+		if (e.GetRenderRange(camera_ray, entity_range, wireframe))
 		{
 			if (entity_range[0] < range_min)
 			{

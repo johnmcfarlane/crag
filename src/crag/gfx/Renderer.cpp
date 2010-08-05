@@ -66,13 +66,13 @@ namespace
 		SetProjectionMatrix(frustum.CalcProjectionMatrix());
 	}
 
-	void SetForegroundFrustum(gfx::Pov const & pov)
+	void SetForegroundFrustum(gfx::Pov const & pov, bool wireframe)
 	{
 		gfx::Frustum frustum = pov.frustum;
 		frustum.near_z = std::numeric_limits<float>::max();
 
 		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
-		sim::Universe::GetRenderRange(camera_ray, frustum.near_z, frustum.far_z);
+		sim::Universe::GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
 		
 		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
 		SetFrustum(frustum);
@@ -220,7 +220,7 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 	}
 
 	// Adjust near and far plane
-	SetForegroundFrustum(scene.pov);
+	SetForegroundFrustum(scene.pov, wireframe);
 	
 	if (wireframe)
 	{

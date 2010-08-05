@@ -172,6 +172,15 @@ gfx::Light const & sim::Observer::GetLight() const
 	return light;
 }
 
+sim::Ray3 sim::Observer::GetCameraRay() const
+{
+	sim::Vector3 const & position = sphere.GetPosition();
+	sim::Matrix4 matrix;
+	sphere.GetRotation(matrix);
+	
+	return axes::GetCameraRay(position, matrix);
+}
+
 void sim::Observer::ApplyImpulse()
 {
 	sphere.AddRelForce(impulses [0]);

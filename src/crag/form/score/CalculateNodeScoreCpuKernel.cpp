@@ -28,22 +28,31 @@ namespace
 
 form::CalculateNodeScoreCpuKernel::CalculateNodeScoreCpuKernel(int init_max_elements, Node * nodes)
 : BaseClass(kernel_source, init_max_elements, nodes)
-, relative_camera_position(Vector4::Zero())
+, camera_position(Vector4::Zero())
+, camera_direction(Vector4::Zero())
 {
 }
 
-void form::CalculateNodeScoreCpuKernel::Process(Node * nodes, Node const * nodes_end, Vector3 const & init_relative_camera_position)
+void form::CalculateNodeScoreCpuKernel::Process(Node * nodes, 
+												Node const * nodes_end, 
+												Vector3 const & init_camera_position, 
+												Vector3 const & init_camera_direction)
 {
-	relative_camera_position.x = init_relative_camera_position.x;
-	relative_camera_position.y = init_relative_camera_position.y;
-	relative_camera_position.z = init_relative_camera_position.z;
+	camera_position.x = init_camera_position.x;
+	camera_position.y = init_camera_position.y;
+	camera_position.z = init_camera_position.z;
+	
+	camera_direction.x = init_camera_direction.x;
+	camera_direction.y = init_camera_direction.y;
+	camera_direction.z = init_camera_direction.z;
 	
 	BaseClass::Process(nodes_end - nodes);
 }
 
 void form::CalculateNodeScoreCpuKernel::SetAdditionalArgs()
 {
-	BaseClass::SetAdditionalArg(0, relative_camera_position);
+	BaseClass::SetAdditionalArg(0, camera_position);
+	BaseClass::SetAdditionalArg(1, camera_direction);
 }
 
 #endif

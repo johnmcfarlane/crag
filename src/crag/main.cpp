@@ -18,6 +18,7 @@
 
 #include "physics/Singleton.h"
 #include "cl/Singleton.h"
+#include "gfx/Renderer.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ namespace
 		
 		physics::Singleton physics_singleton;
 		cl::Singleton cl_singleton;
+		gfx::Renderer renderer;
 
 		// Run the simulation.
 		sim::Simulation * sim = new sim::Simulation ();

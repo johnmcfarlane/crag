@@ -25,6 +25,7 @@
 #include "form/Manager.h"
 
 #include "gfx/Debug.h"
+#include "gfx/Renderer.h"
 
 #include "core/ConfigEntry.h"
 #include "geom/Matrix4.h"
@@ -43,7 +44,7 @@ namespace
 	//////////////////////////////////////////////////////////////////////
 	// functions
 
-	sim::Vector3 const default_camera_pos(0,10000100,0);
+	sim::Vector3 const default_camera_pos(0,10000450,0);
 	CONFIG_DEFINE (use_default_camera_pos, bool, true);
 	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
@@ -55,8 +56,10 @@ namespace
 	// please don't write in
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
 	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
-		
+	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
+	
+	CONFIG_DEFINE (startup_grace_period, app::TimeType, 2.f);
 
 }
 
@@ -72,7 +75,7 @@ sim::Simulation::Simulation()
 , frame_count(0)
 , cached_time(0)
 {
-	frame_count_reset_time = GetTime(true);
+	frame_count_reset_time = start_time = GetTime(true);
 
 	InitUniverse();
 	
@@ -185,14 +188,16 @@ void sim::Simulation::Run()
 void sim::Simulation::Tick()
 {
 	// Camera input.
-	if (app::HasFocus()) {
+	if (app::HasFocus()) 
+	{
 		UserInput ui;
 		Controller::Impulse impulse = ui.GetImpulse();
 		observer->UpdateInput(impulse);
 	}
 
 	// Tick the entities.
-	if (! paused) {
+	if (! paused && GetTime() > start_time + startup_grace_period) 
+	{
 		Universe::Tick();
 	}
 	
@@ -228,6 +233,7 @@ void sim::Simulation::Render()
 	
 	scene.SetCamera(pos, rot);
 
+	gfx::Renderer & renderer = gfx::Renderer::Get();
 	renderer.Render(scene);
 
 	// Note: The render still requires a buffer swap,
@@ -356,6 +362,9 @@ bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 				return true;
 			}
 			
+			// Cache off ref to renderer in case it's needed.
+			gfx::Renderer & renderer = gfx::Renderer::Get();
+
 			switch (key_code)
 			{
 				case KEY_ESCAPE:

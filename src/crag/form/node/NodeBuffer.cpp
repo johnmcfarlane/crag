@@ -306,7 +306,8 @@ void form::NodeBuffer::InitKernel()
 			cpp_filename = GPU_KERNEL_CPP_FILENAME;
 			break;
 	}
-	
+
+	// TODO: Check to see if output file has actually changed. If so, exit program.
 	char * source_string = source_string = cl::Kernel::LoadClFile(cl_filename);
 	cl::Kernel::SaveCFile(cpp_filename, source_string, "kernel_source");
 	delete [] source_string;
@@ -395,7 +396,7 @@ void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 #if (USE_OPENCL)
 	if (cpu_kernel != nullptr)
 	{
-		cpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position);
+		cpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position, camera_ray_relative.direction);
 	}
 	else if (gpu_kernel != nullptr)
 	{

@@ -11,7 +11,6 @@
 #pragma once
 
 #include "gfx/Debug.h"
-#include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
 #include "geom/Vector3.h"
@@ -56,7 +55,6 @@ namespace sim
 		app::TimeType GetTime(bool update = false);
 
 		// Attributes
-		gfx::Renderer renderer;
 		gfx::Scene scene;
 		Observer * observer;
 		form::Manager * formation_manager;
@@ -73,5 +71,6 @@ namespace sim
 		app::TimeType frame_count_reset_time;
 		
 		app::TimeType cached_time;
+		app::TimeType start_time;
 	};
 }

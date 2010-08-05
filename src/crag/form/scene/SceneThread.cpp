@@ -252,11 +252,7 @@ void form::SceneThread::Run()
 void form::SceneThread::ThreadTick()
 {
 	sim::Vector3 const & observer_pos = observer.GetPosition();
-	physics::Body const * observer_body = observer.GetBody();
-	sim::Matrix4 observer_matrix;
-	observer_body->GetRotation(observer_matrix);
-	sim::Ray3 camera_ray = axes::GetCameraRay(observer_pos, observer_matrix);
-	
+	sim::Ray3 camera_ray = observer.GetCameraRay();
 	scene.SetCameraRay(camera_ray);
 	
 	if (reset_origin_flag) 

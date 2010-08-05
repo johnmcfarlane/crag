@@ -29,12 +29,16 @@ namespace form
 	public:
 		CalculateNodeScoreCpuKernel(int max_elements, Node * nodes);
 		
-		void Process(Node * nodes, Node const * nodes_end, Vector3 const & relative_camera_position);
+		void Process(Node * nodes, 
+					 Node const * nodes_end, 
+					 Vector3 const & camera_position, 
+					 Vector3 const & camera_direction);
 		
 	private:
 		void SetAdditionalArgs();
 		
-		Vector4 relative_camera_position;
+		Vector4 camera_position;	// formation speace
+		Vector4 camera_direction;
 	};
 	
 }
