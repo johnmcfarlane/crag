@@ -17,7 +17,7 @@
 
 #include "core/debug.h"
 
-#include <math.h>
+#include <cmath>
 
 
 #if defined(WIN32) && (_M_IX86_FP > 0)
@@ -34,7 +34,7 @@
 #endif
 
 
-#define PI M_PI
+#define PI 3.14159265358979323846264338327950288419716939937510
 
 
 //////////////////////////////////////////////////////////////////////
@@ -74,6 +74,11 @@ template<typename T> bool NearEqual(T const & a, T const & b, T const & error)
 inline bool NearEqual(float a, float b, float error = .0001f)
 {
 	return NearEqual<float>(a, b, error);
+}
+
+inline bool NearEqual(double a, double b, double error = .0001)
+{
+	return NearEqual<double>(a, b, error);
 }
 
 template<typename T> T Square(T a)
