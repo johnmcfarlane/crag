@@ -80,34 +80,6 @@ void physics::Singleton::OnNearCollisionCallback (void *data, dGeomID geom1, dGe
 	Assert(false);
 }
 
-#if 0
-void OnMeshCollision(dGeomID geom)
-{
-#if 0
-	form::VertexBuffer const & vertices = formation_mesh.GetVertices();
-	const void * Vertices = & vertices[0].pos;
-	int VertexStride = sizeof(vertices[0]);
-	int VertexCount = vertices.GetMaxUsed(); 
-	
-	IndexBuffer const & indices = formation_mesh.GetIndices();
-	const void * Indices = reinterpret_cast<void const *>(indices.GetArray());
-	int IndexCount = indices.GetSize();
-	int TriStride = sizeof(int) * 3;
-	
-	const void * Normals = & vertices[0].norm;
-	
-	dGeomTriMeshDataBuildSingle1(mesh_data,
-								 Vertices, VertexStride, VertexCount, 
-								 Indices, IndexCount, TriStride, 
-								 Normals);
-	
-	Get().OnCollision(geom, formation_geom);
-	
-	DrawMeshData(formation_geom, formation_mesh.GetNumPolys());
-#endif
-}
-#endif
-
 void physics::Singleton::OnCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
