@@ -158,6 +158,7 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 	
 	Node const * parent = q.nodes[0].parent;
 	
+	VerifyTrue(parent != nullptr);
 	VerifyTrue(parent->score == q.parent_score);
 	VerifyTrue(parent->score >= 0);
 	
@@ -269,16 +270,12 @@ void form::NodeBuffer::UnlockTree() const
 
 void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
-	//VerifyObject(* this);
-	
 	UpdateNodeScores(camera_ray_relative);
 	UpdateParentScores();
 	
 	SortQuaterna();
 
 	ChurnNodes();
-
-	//VerifyObject(* this);
 }
 
 void form::NodeBuffer::InitKernel()
@@ -989,6 +986,7 @@ bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
 		-- quaterna_used_end;
 	}	while (quaterna_used_end > new_target);
 	
+	quaterna_sorted_end = quaterna_used_end;
 	quaterna_used_end_target = quaterna_used_end;
 	
 	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);

@@ -47,12 +47,14 @@ char const * kernel_source = "/*\n" \
 "{\n" \
 "	int i = get_global_id(0);\n" \
 "	\n" \
+"	// TODO: Find out which way is better: this or...\n" \
 "	float4 center = nodes[i].center_area;\n" \
 "	float4 normal = nodes[i].normal_score;\n" \
 "	float score = center.w;	// area\n" \
 "	center.w = 0;\n" \
 "	normal.w = 0;\n" \
 "\n" \
+"	// ... this. \n" \
 "	/*float4 center = \n" \
 "	{ \n" \
 "		nodes[i].center_area.x,\n" \
@@ -77,9 +79,8 @@ char const * kernel_source = "/*\n" \
 "	//camera_to_node = normalize(camera_to_node);\n" \
 "	camera_to_node *= rsqrt(distance_squared);\n" \
 "\n" \
-"	// towardness: -1=facing away, 1=facing towards\n" \
-"	// purpose: favour polys which are facing towards the camera\n" \
-"	// distance\n" \
+"	// As the poly turns away from the camera, its visible area diminishes.\n" \
+"	// However, we still want invisible / barely visible polys to get some score.\n" \
 "	float camera_dp = dot(camera_to_node, normal);\n" \
 "	float towardness_factor = max(camera_dp, 0.1f);\n" \
 "	score *= towardness_factor;\n" \
