@@ -284,11 +284,10 @@
 							<array>
 								<array>
 									<integer>58</integer>
-									<integer>54</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 479}, {312, 660}}</string>
+							<string>{{0, 390}, {312, 660}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -321,13 +320,15 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>52F3A2F811A7971900385922</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>&lt;No Editor&gt;</string>
+								<string></string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>52F3A2F911A7971900385922</string>
+										<key>PBXProjectModuleLabel</key>
+										<string></string>
 									</dict>
 									<key>SplitCount</key>
 									<string>1</string>
@@ -340,18 +341,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {944, 380}}</string>
+								<string>{{0, 0}, {944, 362}}</string>
 								<key>RubberWindowFrame</key>
 								<string>1 59 1278 719 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>380pt</string>
+							<string>362pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>293pt</string>
+							<string>311pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -367,7 +368,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {944, 266}}</string>
+										<string>{{10, 27}, {944, 284}}</string>
 										<key>RubberWindowFrame</key>
 										<string>1 59 1278 719 0 0 1280 778 </string>
 									</dict>
@@ -451,11 +452,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>527F48A0120A3A63002B26C1</string>
+				<string>523D5EEF120AF2F000EAF8A3</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>527F48A1120A3A63002B26C1</string>
+				<string>523D5EF0120AF2F000EAF8A3</string>
 				<string>52F3A2F811A7971900385922</string>
-				<string>527F48A2120A3A63002B26C1</string>
+				<string>523D5EF1120AF2F000EAF8A3</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -604,14 +605,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>527F48A3120A3A63002B26C1</string>
+				<string>52A0CD67120A7638006456EC</string>
 				<string>1CCC7628064C1048000F2A68</string>
 				<string>1CCC7629064C1048000F2A68</string>
-				<string>527F48A4120A3A63002B26C1</string>
-				<string>527F48A5120A3A63002B26C1</string>
-				<string>527F48A6120A3A63002B26C1</string>
-				<string>527F48A7120A3A63002B26C1</string>
-				<string>52F3A2F811A7971900385922</string>
+				<string>52A0CD68120A7638006456EC</string>
+				<string>52A0CD69120A7638006456EC</string>
+				<string>52A0CD6A120A7638006456EC</string>
+				<string>52A0CD6B120A7638006456EC</string>
+				<string>52A0CD6C120A7638006456EC</string>
 			</array>
 			<key>ToolbarConfigUserDefaultsMinorVersion</key>
 			<string>2</string>
@@ -645,9 +646,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>527F4940120A42AF002B26C1</string>
-		<string>527F48A9120A3A63002B26C1</string>
-		<string>527F48AA120A3A63002B26C1</string>
 		<string>/Users/john/Documents/workspace/crag/xcode/crag/crag.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
