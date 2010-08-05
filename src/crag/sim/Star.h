@@ -20,7 +20,7 @@ namespace sim
 	class Star : public Entity
 	{
 	public:
-		Star(float init_radius, float init_year);
+		Star(Scalar init_radius, Scalar init_year);
 
 		void Tick();
 	
@@ -32,7 +32,7 @@ namespace sim
 	private:
 		gfx::Light light;
 		sim::Vector3 position;
-		float radius;
-		float year;
+		Scalar radius;
+		Scalar year;
 	};
 }

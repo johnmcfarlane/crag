@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(sim::Vector3 const & init_pos, float init_radius_min, float init_radius_max, int init_seed)
+sim::Planet::Planet(Vector3 const & init_pos, Scalar init_radius_min, Scalar init_radius_max, int init_seed)
 : Entity()
 , radius_min(init_radius_min)
 , radius_max(init_radius_max)

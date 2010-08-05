@@ -88,7 +88,7 @@ void sim::Universe::Tick()
 	}
 }
 
-sim::Vector3 sim::Universe::Weight(sim::Vector3 const & pos, float mass)
+sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass)
 {
 	if (gravity) 
 	{

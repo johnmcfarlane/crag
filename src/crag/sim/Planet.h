@@ -31,11 +31,11 @@ namespace sim
 	class Planet : public Entity
 	{
 	public:
-		Planet(sim::Vector3 const & init_pos, float init_min_radius, float init_max_radius, int init_seed);
+		Planet(sim::Vector3 const & init_pos, Scalar init_min_radius, Scalar init_max_radius, int init_seed);
 		~Planet();
 
 		virtual void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
-		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;
+		virtual bool GetRenderRange(Ray3 const & camera_ray, Scalar * range, bool wireframe) const;
 	
 		Scalar GetRadiusMin() const { return radius_min; }
 		Scalar GetRadiusMax() const { return radius_max; }
@@ -45,7 +45,7 @@ namespace sim
 		//DUMP_OPERATOR_DECLARATION(Entity);
 
 	private:
-		float radius_min, radius_max;
+		Scalar radius_min, radius_max;
 		PlanetShaderFactory * factory;
 		form::Formation * formation;
 		PlanetaryBody * body;
