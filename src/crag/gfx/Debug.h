@@ -12,6 +12,9 @@
 
 #include "Color.h"
 
+#include "geom/Matrix4.h"
+#include "geom/Vector4.h"
+
 #include <ostream>
 
 #if defined(PROFILE) || ! defined(NDEBUG)
@@ -33,6 +36,8 @@ namespace gfx
 	{
 		// forward declarations
 		typedef ::Vector<double, 3> Vector3;
+		typedef ::Vector<double, 4> Vector4;
+		typedef ::Matrix4<double> Matrix4;
 
 		class ColorPair
 		{

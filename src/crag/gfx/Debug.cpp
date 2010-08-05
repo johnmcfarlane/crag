@@ -281,35 +281,35 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 {
-	Vector3f corners[2][2][2];
-	Vector3f eye;
+	Vector3 corners[2][2][2];
+	Vector3 eye;
 	
 	{
-		Vector3f extent_factors[2];
+		Vector3 extent_factors[2];
 		
 		{
-			float aspect = static_cast<float>(pov.frustum.resolution.x) / pov.frustum.resolution.y;
-			float y_factor = static_cast<float>(Sin(pov.frustum.fov * .5));
-			float x_factor = y_factor * aspect;
+			double aspect = static_cast<float>(pov.frustum.resolution.x) / pov.frustum.resolution.y;
+			double y_factor = static_cast<float>(Sin(pov.frustum.fov * .5));
+			double x_factor = y_factor * aspect;
 			
-			extent_factors[0] = Vector3f(- x_factor, - y_factor, static_cast<float>(pov.frustum.near_z));
-			extent_factors[1] = Vector3f(x_factor, y_factor, static_cast<float>(pov.frustum.far_z));
+			extent_factors[0] = Vector3(- x_factor, - y_factor, static_cast<double>(pov.frustum.near_z));
+			extent_factors[1] = Vector3(x_factor, y_factor, static_cast<double>(pov.frustum.far_z));
 		}
 		
 		{
-			sim::Matrix4 m = pov.GetCameraMatrix();
+			Matrix4 m = pov.GetCameraMatrix();
 			
 			for (int z_index = 0; z_index < 2; ++ z_index) {
 				for (int y_index = 0; y_index < 2; ++ y_index) {
 					for (int x_index = 0; x_index < 2; ++ x_index) {
-						Vector4f p (extent_factors[x_index].x * extent_factors[z_index].z, 
+						Vector4 p (extent_factors[x_index].x * extent_factors[z_index].z, 
 									extent_factors[z_index].z,
 									extent_factors[y_index].y * extent_factors[z_index].z, 
-									1.f);
+									1.);
 						//p.z -= pov.frustum.near_z;
 						
-						Vector3f & corner = corners[z_index][y_index][x_index];
-						sim::Vector4 mult = m * sim::Vector4(p.x, p.y, p.z, p.w);
+						Vector3 & corner = corners[z_index][y_index][x_index];
+						Vector4 mult = m * Vector4(p.x, p.y, p.z, p.w);
 						corner.x = mult.x;
 						corner.y = mult.y;
 						corner.z = mult.z;
@@ -333,7 +333,7 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 			for (int q = 0; q < 2; ++ q) {
 				indices [perp_axis_2] = q;
 				
-				Vector3f const * a, * b;
+				Vector3 const * a, * b;
 				
 				if (axis == 0) {
 					a = & eye;
@@ -420,6 +420,6 @@ public:
 null_stream out_stream;
 
 // Can't find this at link time? Make sure you're wrapping reference in a test of GetVerbosity().
-std::ostream & out = out_stream;
+std::ostream & gfx::Debug::out = out_stream;
 
 #endif
