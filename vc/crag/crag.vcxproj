@@ -134,6 +134,7 @@
     <ClInclude Include="..\..\src\crag\geom\Matrix4.h" />
     <ClInclude Include="..\..\src\crag\geom\MatrixOps.h" />
     <ClInclude Include="..\..\src\crag\geom\NSphere.h" />
+    <ClInclude Include="..\..\src\crag\geom\Ray3.h" />
     <ClInclude Include="..\..\src\crag\geom\Sphere.h" />
     <ClInclude Include="..\..\src\crag\geom\Sphere3.h" />
     <ClInclude Include="..\..\src\crag\geom\SphereOps.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="..\..\src\crag\physics\defs.h" />
     <ClInclude Include="..\..\src\crag\physics\Singleton.h" />
     <ClInclude Include="..\..\src\crag\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\crag\sim\axes.h" />
     <ClInclude Include="..\..\src\crag\sim\Controller.h" />
     <ClInclude Include="..\..\src\crag\sim\defs.h" />
     <ClInclude Include="..\..\src\crag\sim\Entity.h" />

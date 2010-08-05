@@ -527,6 +527,12 @@
     <ClInclude Include="..\..\src\crag\form\FormationFunctor.h">
       <Filter>src\crag\form</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\axes.h">
+      <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\geom\Ray3.h">
+      <Filter>src\crag\geom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING">
