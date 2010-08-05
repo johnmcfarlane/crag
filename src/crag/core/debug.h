@@ -22,7 +22,7 @@
 #define DO_STATEMENT(STATEMENT) do { STATEMENT } while (false)
 
 // Semicolon-friendly empty statement.
-#define DO_NOTHING DO_STATEMENT( )
+#define DO_NOTHING do { } while (false)
 
 
 ////////////////////////////////////////////////////////////////////////////////
