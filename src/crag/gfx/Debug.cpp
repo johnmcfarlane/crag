@@ -222,6 +222,9 @@ void gfx::Debug::Init()
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
 	// Maybe this one's ok...
 	// http://www.ogre3d.org/wiki/index.php/Outlined_Fonts
+
+	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
+	// http://www.libsdl.org/projects/SDL_image/
 	font = new gfx::Font("font.png", .5f);
 }
 

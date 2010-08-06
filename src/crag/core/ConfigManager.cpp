@@ -119,6 +119,10 @@ void ConfigManager::Save()
 	if (defaults_file_ood)
 	{
 		defaults_file.open(defaults_filename);
+		if (! defaults_file.is_open())
+		{
+			std::cout << "Failed to open config defaults file, " << defaults_filename << ".\n";
+		}
 	}
 	
 	for (ConfigEntry const * iterator = list_head; iterator != nullptr; iterator = iterator->next)
