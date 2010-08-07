@@ -73,7 +73,8 @@ namespace form
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
 		void UpdateNodeScores(Ray3 const & camera_ray_relative);
-		void UpdateParentScores();
+		void UpdateGrandparentPrivaledge();
+		void UpdateQuaternaScores();
 		void SortQuaterna();
 		bool ChurnNodes();
 	public:
@@ -124,6 +125,7 @@ namespace form
 		Quaterna const * const quaterna_end;
 		
 		// Pool of vertices from which to take the corners of nodes.
+		// TODO: NodeBuffer and PointBuffer could maybe be owned by the same, parent class. 
 		PointBuffer points;
 		
 		// When locked, the structure of the node trees cannot be changed;

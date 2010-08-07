@@ -49,10 +49,14 @@ namespace
 	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
 
-	CONFIG_DEFINE (planet_pos_1, sim::Vector3, sim::Vector3::Zero());
+	CONFIG_DEFINE (planet_pos, sim::Vector3, sim::Vector3::Zero());
 	CONFIG_DEFINE (planet_radius_medium, sim::Scalar,  10000000);
 	CONFIG_DEFINE (planet_radius_range, sim::Scalar, 5000);
-
+	
+	CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * .75, planet_radius_medium * 1.25, planet_radius_medium * .5));
+	CONFIG_DEFINE (moon_radius_medium, sim::Scalar, 1500000);
+	CONFIG_DEFINE (moon_radius_range, sim::Scalar, 500);
+	
 	// please don't write in
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
 	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
@@ -99,11 +103,13 @@ void sim::Simulation::InitUniverse()
 	//scene.AddEntity(* observer);
 	scene.AddLight(observer->GetLight());
 	
-	sim::Scalar planet_radius_min = planet_radius_medium - planet_radius_range * .5;
-	sim::Scalar planet_radius_max = planet_radius_medium + planet_radius_range * .5;
-	Planet * planet = new Planet (planet_pos_1, planet_radius_min, planet_radius_max, 8);
+	Planet * planet = new Planet (planet_pos, planet_radius_medium, planet_radius_range, 8);
 	Universe::AddEntity(* planet);
 	scene.AddEntity(* planet);
+	
+	Planet * moon = new Planet (moon_pos, moon_radius_medium, moon_radius_range, 8);
+	Universe::AddEntity(* moon);
+	scene.AddEntity(* moon);
 	
 	Star * sun = new Star(sun_orbit_distance, sun_year);
 	scene.AddLight(sun->GetLight());

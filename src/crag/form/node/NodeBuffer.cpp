@@ -14,14 +14,15 @@
 
 #include "ExpandNodeFunctor.h"
 #include "GenerateMeshFunctor.h"
-#include "form/scene/Polyhedron.h"
 #include "Node.h"
-#include "form/node/Quaterna.h"
+#include "Quaterna.h"
 #include "Shader.h"
-
-#include "form/score/CalculateNodeScoreFunctor.h"
+#include "UpdateGrandparentFunctor.h"
 
 #include "form/scene/Mesh.h"
+#include "form/scene/Polyhedron.h"
+
+#include "form/score/CalculateNodeScoreFunctor.h"
 
 #include "cl/Singleton.h"
 
@@ -139,10 +140,11 @@ void form::NodeBuffer::Verify() const
 		VerifyUsed(* q);
 	}
 	
-	for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
+	// Rarely cause a problem and they are often the majority.
+	/*for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
 	{
 		VerifyUnused(* q);
-	}
+	}*/
 	
 	for (Quaterna const * q2 = quaterna + 1; q2 < quaterna_sorted_end; ++ q2) 
 	{
@@ -268,13 +270,28 @@ void form::NodeBuffer::UnlockTree() const
 	tree_mutex.Unlock();
 }
 
+// This is the main tick function for all things 'nodey'.
+// It is also where a considerable amount of the SceneThread's time is spent.
 void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
-	UpdateNodeScores(camera_ray_relative);
-	UpdateParentScores();
+	// Assuming the camera has moved (and maybe new nodes have been created),
+	// the scores for all nodes will be a little different.
 	
+	// Recalculate the node scores.
+	UpdateNodeScores(camera_ray_relative);
+	
+	// Makes sure nodes whose children are parents get a super-high score.
+	UpdateGrandparentPrivaledge();
+	
+	// Reflect the new scores in the quaterna.
+	UpdateQuaternaScores();
+
+	// Now resort the quaterna so they are in order again.
 	SortQuaterna();
 
+	// Finally, using the quaterna,
+	// replace nodes whose parent's scores have dropped enough
+	// with ones whose score have increased enough.p
 	ChurnNodes();
 }
 
@@ -407,7 +424,13 @@ void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 	}
 }
 
-void form::NodeBuffer::UpdateParentScores()
+void form::NodeBuffer::UpdateGrandparentPrivaledge()
+{
+	UpdateGrandparentFunctor f;
+	ForEachNode(f);
+}
+
+void form::NodeBuffer::UpdateQuaternaScores()
 {
 	int fetch_ahead = 32;
 	
@@ -445,6 +468,9 @@ void form::NodeBuffer::UpdateParentScores()
 			iterator->parent_score = parent->score;
 		}
 	}
+	
+	// This basically says: "as far as I know, none of the quaterna are sorted."
+	quaterna_sorted_end = quaterna;
 }
 
 // Algorithm to sort nodes array. 
@@ -986,7 +1012,13 @@ bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
 		-- quaterna_used_end;
 	}	while (quaterna_used_end > new_target);
 	
-	quaterna_sorted_end = quaterna_used_end;
+	// Both quaterna_sorted_end and quaterna_used_end_target 
+	// must be equal to quaterna_used_end at this point. 
+	if (quaterna_sorted_end > quaterna_used_end)
+	{
+		quaterna_sorted_end = quaterna_used_end;
+	}
+	
 	quaterna_used_end_target = quaterna_used_end;
 	
 	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);
