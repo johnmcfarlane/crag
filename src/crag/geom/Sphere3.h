@@ -14,7 +14,8 @@
 
 
 //////////////////////////////////////////////////////////////////
-// 3-dimensional partical specialization of Sphere
+// 3-dimensional partical specialization of Sphere.
+// Often thought of simply as a sphere.
 
 template <typename S> class Sphere<S, 3>
 {
