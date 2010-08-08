@@ -27,11 +27,13 @@ namespace
 
 	int const max_string_size = 1024;
 
+#if ! defined(PROFILE)
 	bool parameter_set_complete = false;
 	bool defaults_file_ood = false;
 
 	char const * config_filename = "crag.cfg";
 	char const * defaults_filename = "default.cfg";
+#endif
 }
 
 
@@ -40,6 +42,7 @@ namespace
 
 bool ConfigManager::Load()
 {
+#if ! defined(PROFILE)
 	// open files
 	std::ifstream config_file(config_filename);
 	if (! config_file.is_open())
@@ -100,12 +103,14 @@ bool ConfigManager::Load()
 			defaults_file_ood = true;
 		}
 	}
+#endif
 	
 	return true;
 }
 
 void ConfigManager::Save()
 {
+#if ! defined(PROFILE)
 	parameter_set_complete = true;
 	
 	// open files
@@ -133,6 +138,7 @@ void ConfigManager::Save()
 		config_file << iterator->name << "=" << config_string << '\n';
 		defaults_file << default_string << '\n';
 	}
+#endif
 }
 
 void ConfigManager::AddParameter(ConfigEntry & parameter)
@@ -174,11 +180,16 @@ ConfigEntry * ConfigManager::GetParameter(char const * name)
 
 #else
 
-void ConfigManager::Load(std::istream &)
+bool ConfigManager::Load()
+{
+	return false;
+}
+
+void ConfigManager::Save()
 {
 }
 
-void ConfigManager::Save(std::ostream &)
+void ConfigManager::AddParameter(ConfigEntry &)
 {
 }
 
