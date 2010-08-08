@@ -23,8 +23,8 @@ namespace form
 	
 	typedef ::Vector<Scalar, 3>	Vector3;
 	typedef ::Vector<Scalar, 4>	Vector4;
-	typedef ::Ray3<Scalar>		Ray3;
-	typedef ::Sphere3<Scalar>	Sphere3;
+	typedef ::Ray<Scalar, 3>	Ray3;
+	typedef ::Sphere<Scalar, 3>	Sphere3;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
 	template <typename V> V SimToScene(V const & sim, V const & scene_origin)

@@ -10,5 +10,8 @@
 
 #pragma once
 
-#include "SphereOps.h"
-#include "Sphere3.h"
+
+// Base class for circles and spheres, i.e. n-spheres.
+template<typename S, int N> class Sphere
+{
+};

@@ -10,27 +10,31 @@
 
 #pragma once
 
-#include "Vector3.h"
-#include "Matrix4.h"
+#include "Ray.h"
 
 
-template <typename S>
-class Ray3
+//////////////////////////////////////////////////////////////////
+// 3-dimensional partical specialization of Sphere
+
+template <typename S> class Ray<S, 3>
 {
 public:
-	typedef S Scalar;
-	typedef Vector<S, 3> Vector3;
+	typedef Vector<S, 3> V;
 	
-	Ray3() : position(Vector3::Zero()), direction(Vector3::Zero()) 
+	Ray() 
 	{
 	}
 	
-	template <typename S2> Ray3(Ray3<S2> const & rhs) : position(rhs.position), direction(rhs.direction) 
+	template <typename RHS_S> Ray(Ray<RHS_S, 3> const & rhs) 
+		: position(rhs.position)
+		, direction(rhs.direction) 
 	{
 		Verify();
 	}
 	
-	Ray3(Vector3 const & pos, Vector3 const & dir) : position(pos), direction(dir) 
+	Ray(V const & pos, V const & dir) 
+		: position(pos)
+		, direction(dir) 
 	{
 		Verify();
 	}
@@ -41,6 +45,6 @@ public:
 	}
 	
 	// attributes
-	Vector3 position;
-	Vector3 direction;
+	V position;
+	V direction;
 };

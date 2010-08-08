@@ -14,6 +14,8 @@
 
 #include "form/node/Shader.h"
 
+#include "core/Random.h"
+
 
 namespace sim
 {
@@ -25,22 +27,31 @@ namespace sim
 	class PlanetShader : public form::Shader
 	{
 	public:
-		PlanetShader(Planet const & init_planet);
-		
-		typedef sim::Scalar S;
-		typedef sim::Vector3 Vec3;
+		PlanetShader(Planet const & init_planet, int num_craters);
 		
 	private:
 		virtual void SetOrigin(Vector3d const & origin);
 		virtual void InitRootPoints(int seed, form::Point * points[]);
 		virtual void InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point);
 		
-		Vector3f CalcMidPointPos_Shallow(int seed, Vector3f const & near_corner1, Vector3f const & near_corner2);
-		Vector3f CalcMidPointPos_Medium(int seed, Vector3f const & near_corner1, Vector3f const & near_corner2, Vector3f const & far_corner1, Vector3f const & far_corner2);
-		Vector3f CalcMidPointPos_Deep(int seed, Vector3f const & near_corner1, Vector3f const & near_corner2, Vector3f const & far_corner1, Vector3f const & far_corner2);
+		struct Params
+		{
+			Random & rnd;
+			Vector3 near_a;
+			Vector3 near_b;
+			Vector3 far_a;
+			Vector3 far_b;
+		};
 		
-		Vec3 center;		// relative to origin
+		sim::Vector3 CalcRootPointPointPos(Params & params);
+		
+		sim::Vector3 CalcMidPointPos_Shallow(Params & params);
+		sim::Vector3 CalcMidPointPos_Medium(Params & params);
+		sim::Vector3 CalcMidPointPos_Deep(Params & params);
+		
+		Vector3 center;		// relative to origin
 		Planet const & planet;
+		int num_craters;
 	};
 
 	
@@ -49,11 +60,12 @@ namespace sim
 	class PlanetShaderFactory : public form::ShaderFactory
 	{
 	public:
-		PlanetShaderFactory(Planet const & init_planet);
+		PlanetShaderFactory(Planet const & init_planet, int num_craters);
 		
 		virtual form::Shader * Create(form::Formation const & formation) const;
 		
 	private:
 		Planet const & planet;	// This system is very complicated for one type of formation (Planet) and only one planet!
+		int num_craters;
 	};
 }

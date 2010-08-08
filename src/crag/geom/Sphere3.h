@@ -10,31 +10,50 @@
 
 #pragma once
 
-#include "geom/NSphere.h"
-#include "geom/Vector3.h"
-#include "core/floatOps.h"
+#include "geom/Sphere.h"
 
-template<typename S> class Sphere3 : public Sphere<Vector<S, 3>, S>
+
+//////////////////////////////////////////////////////////////////
+// 3-dimensional partical specialization of Sphere
+
+template <typename S> class Sphere<S, 3>
 {
 public:
 	typedef Vector<S, 3> V;
-	typedef Sphere<V, S> Base;
+		
+	Sphere() 
+	{ }
 	
-	Sphere3() { }
-	
-	Sphere3(V const & c, S r) : Sphere<V, S>(c, r) { }
+	template<typename RHS_S> Sphere(Vector<RHS_S, 3> const & c, RHS_S r) 
+		: center(c)
+		, radius(r)
+	{ }
 	
 	// templated copy constructor - can take a Sphere3 of a different type
-	template<typename I> Sphere3(Sphere3<I> const & rhs) 
-	: Base(rhs.center, rhs.radius) { }
-	
-	S Area() const {
-		return static_cast<S>(PI * 4.) * Square(Base::GetRadius());
-	}
-	
-	S Volume() const {
-		return static_cast<S>(PI * 4. / 3.) * Cube(Base::GetRadius());
-	}
+	template<typename RHS_S> Sphere(Sphere<RHS_S, 3> const & rhs) 
+		: center(rhs.center)
+		, radius(rhs.radius)
+	{ }
+
+	V center;
+	S radius;
 };
 
-typedef Sphere3<float> Sphere3f;
+
+template<typename S> S Area(Sphere<S, 3> const & s)
+{
+	return static_cast<S>(PI * 4.) * Square(s.radius);
+}
+
+template<typename S> S Volume(Sphere<S, 3> const & s)
+{
+	return static_cast<S>(PI * 4. / 3.) * Cube(s.radius);
+}
+
+
+//////////////////////////////////////////////////////////////////
+// specializations of Sphere3
+
+typedef Sphere<float, 3> Sphere3f;
+typedef Sphere<double, 3> Sphere3d;
+typedef Sphere<int, 3> Sphere3i;

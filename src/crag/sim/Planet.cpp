@@ -12,6 +12,7 @@
 
 #include "Planet.h"
 #include "PlanetShader.h"
+#include "PlanetShader.h"
 
 #include "sim/PlanetaryBody.h"
 #include "physics/Singleton.h"
@@ -26,7 +27,7 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range, int init_seed)
+sim::Planet::Planet(Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range, int init_seed, int num_craters)
 : Entity()
 , radius_min(init_radius_medium - init_radius_range * .5)
 , radius_max(init_radius_medium + init_radius_range * .5)
@@ -34,7 +35,7 @@ sim::Planet::Planet(Vector3 const & init_pos, Scalar init_radius_medium, Scalar 
 	Assert(init_radius_medium > 0);
 	Assert(init_radius_medium > init_radius_range);
 	
-	factory = new PlanetShaderFactory(* this);
+	factory = new PlanetShaderFactory(* this, num_craters);
 	
 	formation = new form::Formation(* factory);
 	Random rnd(init_seed);

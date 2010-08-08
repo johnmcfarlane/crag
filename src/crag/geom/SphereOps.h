@@ -10,20 +10,20 @@
 
 #pragma once
 
-#include "core/floatOps.h"
 #include "VectorOps.h"
-#include "NSphere.h"
+
+#include "core/floatOps.h"
 
 
 // Point-Circle Intersection Test
 
-template<typename V, typename S> bool Contains(Sphere<V, S> const & sphere, V const & point)
+template<typename S, int N> bool Contains(Sphere<S, N> const & sphere, Vector<S, N> const & point)
 {
 	S center_distance_squared = LengthSq(sphere.center - point);
 	return center_distance_squared <= Square(sphere.radius);
 }
 
-template<typename V, typename S> bool IsInside(V const & point, Sphere<V, S> const & sphere)
+template<typename S, int N> bool IsInside(Vector<S, N> const & point, Sphere<S, N> const & sphere)
 {
 	return Contains(sphere, point);
 }
@@ -31,14 +31,14 @@ template<typename V, typename S> bool IsInside(V const & point, Sphere<V, S> con
 
 // Circle-Circle Intersection Test
 
-template<typename V, typename S> bool Touches(Sphere<V, S> const & a, Sphere<V, S> const & b)
+template<typename S, int N> bool Touches(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
 	S center_distance_squared = LengthSquared(a.center - b.center);
 	return center_distance_squared <= Square(a.radius + b.radius);
 }
 
 // True iff triangle, abc contains sphere, s.
-template<typename V, typename S> bool Contains(V const & a, V const & b, V const & c, Sphere<V, S> const & s) 
+template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
 }
@@ -47,14 +47,14 @@ template<typename V, typename S> bool Contains(V const & a, V const & b, V const
 // The ray is represented by start + delta * t
 // t1 and t2 are the two possible intersection points
 // returns false iff the ray misses the sphere (in which case, t1 and t2 are undefined)
-template<typename V, typename S> bool GetIntersection(Sphere<V, S> const & sphere, V const & start, V const & delta, S & t1, S & t2)
+template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Vector<S, N> const & start, Vector<S, N> const & delta, S & t1, S & t2)
 {
 #if 0
 //	p = start + delta * t;
 //	Length(p - sphere.center) == 
 #endif
 	
-	V sphere_to_start = start - sphere.center;
+	Vector<S, N> sphere_to_start = start - sphere.center;
 	S a = LengthSq(delta);
 	S half_b = DotProduct(delta, sphere_to_start);
 	S c = LengthSq(sphere_to_start) - sphere.radius;
@@ -83,11 +83,11 @@ template<typename V, typename S> bool GetIntersection(Sphere<V, S> const & spher
 
 // Circle-Triangle intersection
 // Original code by David Eberly in Magic. via OPCODE collision library distributed with ODE
-template<typename V, typename S> bool Intersects(Sphere<V, S> const & sphere, V const & a, V const & b, V const & c, S * depth = nullptr)
+template<typename S, int N> bool Intersects(Sphere<S, N> const & sphere, Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, S * depth = nullptr)
 {
 	S mRadius2 = Square(sphere.radius);
 
-	V kDiff;
+	Vector<S, N> kDiff;
 	S fC;
 
 	if (depth == nullptr)
@@ -113,10 +113,10 @@ template<typename V, typename S> bool Intersects(Sphere<V, S> const & sphere, V 
 
 	
 	// Else do the full distance test
-	V TriEdge0	= b - a;
-	V TriEdge1	= c - a;
+	Vector<S, N> TriEdge0	= b - a;
+	Vector<S, N> TriEdge1	= c - a;
 	
-	//V kDiff	= a - sphere.center;
+	//Vector<S, N> kDiff	= a - sphere.center;
 	S fA00	= LengthSq(TriEdge0);
 	S fA01	= DotProduct(TriEdge0, TriEdge1);
 	S fA11	= LengthSq(TriEdge1);

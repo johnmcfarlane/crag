@@ -12,8 +12,6 @@
 
 #include "Vector.h"
 
-#include "core/floatOps.h"
-
 
 //////////////////////////////////////////////////////////////////
 // Vector2 - 2-dimensional vector

@@ -73,9 +73,9 @@ namespace axes
 	}
 	
 	// Converts position/matrix combo to a Ray.
-	template<typename S> Ray3<S> GetCameraRay(Vector<S, 3> const & pos, Matrix4<S> const & dir)
+	template<typename S> Ray<S, 3> GetCameraRay(Vector<S, 3> const & pos, Matrix4<S> const & dir)
 	{
-		return Ray3<S>(pos, GetForward(dir));
+		return Ray<S, 3>(pos, GetForward(dir));
 	}
 	
 }

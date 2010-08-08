@@ -21,8 +21,6 @@
 
 #include "Vector.h"
 
-#include "core/debug.h"
-
 
 //////////////////////////////////////////////////////////////////
 // 3-dimensional partical specialization of Vector
