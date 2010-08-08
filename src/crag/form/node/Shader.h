@@ -32,6 +32,7 @@ namespace form
 		virtual void InitMidPoint(int i, Node const & a, Node const & b, Point & mid_point) = 0;
 	};
 	
+	// TODO: This pattern is probably over-complicated.
 	class ShaderFactory
 	{
 	public:
