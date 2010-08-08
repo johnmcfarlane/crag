@@ -20,6 +20,11 @@
 #include <fstream>
 
 
+#if ! defined(NDEBUG) || ! defined(PROFILE)
+#define ENABLE_CONFIG_LOAD_SAVE
+#endif
+
+
 namespace 
 {
 
@@ -27,8 +32,8 @@ namespace
 
 	int const max_string_size = 1024;
 
-#if ! defined(PROFILE)
-	bool parameter_set_complete = false;
+#if defined(ENABLE_CONFIG_LOAD_SAVE)
+	bool parameter_set_complete = false;	
 	bool defaults_file_ood = false;
 
 	char const * config_filename = "crag.cfg";
@@ -42,7 +47,7 @@ namespace
 
 bool ConfigManager::Load()
 {
-#if ! defined(PROFILE)
+#if defined(ENABLE_CONFIG_LOAD_SAVE)
 	// open files
 	std::ifstream config_file(config_filename);
 	if (! config_file.is_open())
@@ -110,7 +115,7 @@ bool ConfigManager::Load()
 
 void ConfigManager::Save()
 {
-#if ! defined(PROFILE)
+#if defined(ENABLE_CONFIG_LOAD_SAVE)
 	parameter_set_complete = true;
 	
 	// open files
