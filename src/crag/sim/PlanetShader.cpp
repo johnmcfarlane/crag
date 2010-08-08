@@ -168,9 +168,9 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	mid_point.pos = result;
 }
 
-sim::Vector3 sim::PlanetShader::CalcRootPointPointPos(Params & params)
+/*sim::Vector3 sim::PlanetShader::CalcRootPointPointPos(Params & params)
 {
-}
+}*/
 
 // At shallow depth, heigh is highly random.
 sim::Vector3 sim::PlanetShader::CalcMidPointPos_Shallow(Params & params) 

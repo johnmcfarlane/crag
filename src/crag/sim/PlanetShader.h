@@ -43,7 +43,7 @@ namespace sim
 			Vector3 far_b;
 		};
 		
-		sim::Vector3 CalcRootPointPointPos(Params & params);
+		//sim::Vector3 CalcRootPointPointPos(Params & params);
 		
 		sim::Vector3 CalcMidPointPos_Shallow(Params & params);
 		sim::Vector3 CalcMidPointPos_Medium(Params & params);
