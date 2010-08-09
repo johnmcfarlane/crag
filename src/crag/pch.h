@@ -76,9 +76,10 @@
 #include <cstring>
 #include <cstddef>
 
+#include <algorithm>
 #include <limits>
 #include <iostream>
-#include <algorithm>
+#include <vector>
 
 
 //////////////////////////////////////////////////////////////////////
