@@ -20,18 +20,18 @@
 namespace form
 {
 	class Formation;
+	class ShaderFactory;
 }
 
 
 namespace sim
 {
-	class PlanetaryBody;
-	class PlanetShaderFactory;
-
+	// A planet is a celestial body which is represented using formation.
+	// TODO: The moon is of class, planet. As such, Planet needs a better name. 
 	class Planet : public Entity
 	{
 	public:
-		Planet(sim::Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range, int init_seed, int num_craters);
+		Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range);
 		~Planet();
 
 		virtual void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
@@ -39,15 +39,16 @@ namespace sim
 	
 		Scalar GetRadiusMin() const { return radius_min; }
 		Scalar GetRadiusMax() const { return radius_max; }
-		Scalar GetAverageRadius() const;
+		Scalar GetRadiusAverage() const;
+		form::Formation const & GetFormation() const;
 		sim::Vector3 const & GetPosition() const;
 
 		//DUMP_OPERATOR_DECLARATION(Entity);
 
 	private:
-		Scalar radius_min, radius_max;
-		PlanetShaderFactory * factory;
+		form::ShaderFactory * factory;
 		form::Formation * formation;
 		PlanetaryBody * body;
+		Scalar radius_min, radius_max;
 	};
 }

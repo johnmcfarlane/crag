@@ -103,11 +103,11 @@ void sim::Simulation::InitUniverse()
 	//scene.AddEntity(* observer);
 	scene.AddLight(observer->GetLight());
 	
-	Planet * planet = new Planet (planet_pos, planet_radius_medium, planet_radius_range, 8, 0);
+	Planet * planet = new Planet (0, 8, planet_pos, planet_radius_medium, planet_radius_range);
 	Universe::AddEntity(* planet);
 	scene.AddEntity(* planet);
 	
-	Planet * moon = new Planet (moon_pos, moon_radius_medium, moon_radius_range, 8, 1);
+	Planet * moon = new Planet (250, 10, moon_pos, moon_radius_medium, moon_radius_range);
 	Universe::AddEntity(* moon);
 	scene.AddEntity(* moon);
 	

@@ -77,6 +77,7 @@ void physics::Singleton::OnNearCollisionCallback (void *data, dGeomID geom1, dGe
 	}
 	
 	// Nothing handled the collision between body1 and body2.
+	// TODO: This currently fires!
 	//Assert(false);
 }
 

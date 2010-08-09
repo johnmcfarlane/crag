@@ -82,7 +82,7 @@ void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & or
 	};
 	
 	// Initialize the points using the shader.
-	shader->InitRootPoints(formation.seed, root_points);	
+	shader->InitRootPoints(root_points);	
 
 	// Initialize the root node with the points
 	root_node.Init(formation.seed, root_points);
@@ -102,7 +102,7 @@ void form::Polyhedron::SetOrigin(sim::Vector3 const & origin, PointBuffer & poin
 	
 	Point * root_points[4];
 	root_node.GetPoints(root_points);
-	shader->InitRootPoints(root_node.seed, root_points);
+	shader->InitRootPoints(root_points);
 	
 #if defined(SUPERFAST_SCENE_RESET)	
 	for (int depth = 0; ResetOrigin(root_node, point_buffer, depth); ++ depth)

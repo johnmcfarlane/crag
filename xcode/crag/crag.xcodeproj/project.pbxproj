@@ -17,6 +17,7 @@
 		5277A99011B5EA0B00ABBC7F /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277A98E11B5EA0B00ABBC7F /* App.cpp */; };
 		5279D15611D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5279D15511D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp */; };
 		527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */; };
+		527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F4AF312101AD400D6AF23 /* MoonShader.cpp */; };
 		527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC211EB5F4B00E25B84 /* Scene.cpp */; };
 		527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */; };
 		5282943F11DB17BF00611238 /* PlanetCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */; };
@@ -203,6 +204,8 @@
 		5279D15511D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetSphereCollisionFunctor.cpp; sourceTree = "<group>"; };
 		527C53CC11B9ACAF00F6C052 /* TextureMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureMapper.h; sourceTree = "<group>"; };
 		527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
+		527F4AF212101AD400D6AF23 /* MoonShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoonShader.h; sourceTree = "<group>"; };
+		527F4AF312101AD400D6AF23 /* MoonShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoonShader.cpp; sourceTree = "<group>"; };
 		527F6929120D072B0070A1CB /* UpdateGrandparentFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateGrandparentFunctor.h; sourceTree = "<group>"; };
 		527F7AC211EB5F4B00E25B84 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		527F7AC311EB5F4B00E25B84 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
@@ -814,6 +817,8 @@
 				52F3A38811A7979400385922 /* Universe.h */,
 				52F3A38911A7979400385922 /* UserInput.cpp */,
 				52F3A38A11A7979400385922 /* UserInput.h */,
+				527F4AF212101AD400D6AF23 /* MoonShader.h */,
+				527F4AF312101AD400D6AF23 /* MoonShader.cpp */,
 			);
 			path = sim;
 			sourceTree = "<group>";
@@ -1203,6 +1208,7 @@
 				527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */,
 				527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */,
 				52483F5211ED865700D0BCB2 /* Polyhedron.cpp in Sources */,
+				527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

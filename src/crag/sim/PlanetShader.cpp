@@ -13,13 +13,15 @@
 #include "Planet.h"
 #include "PlanetShader.h"
 
-//#include "form/Formation.h"
+#include "form/Formation.h"
 #include "form/node/Node.h"
 #include "form/node/Point.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
+
 #include "geom/VectorOps.h"
+#include "geom/SphereOps.h"
 
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
@@ -33,6 +35,8 @@ namespace
 	CONFIG_DEFINE (planet_shader_depth_deep, int, 6);
 	CONFIG_DEFINE (planet_shader_error_co, double, 0.995);
 	//CONFIG_DEFINE (formation_color, gfx::Color4f, gfx::Color4f(1.f, 1.f, 1.f));
+	
+	sim::Scalar root_three = Sqrt(3.);
 	
 	// RootNode initialization data
 	sim::Vector3 root_corners[4] = 
@@ -72,10 +76,9 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader
 
-sim::PlanetShader::PlanetShader(Planet const & init_planet, int init_num_craters)
+sim::PlanetShader::PlanetShader(Planet const & init_planet)
 : center(Vector3::Zero())
 , planet(init_planet)
-, num_craters(init_num_craters)
 {
 }
 
@@ -84,15 +87,23 @@ void sim::PlanetShader::SetOrigin(Vector3d const & origin)
 	center = planet.GetPosition() - origin;
 }
 
-void sim::PlanetShader::InitRootPoints(int seed, form::Point * points[])
+void sim::PlanetShader::InitRootPoints(form::Point * points[])
 {
-	Scalar radius = planet.GetAverageRadius();
-	Scalar root_corner_length = Sqrt(3.);
-	Scalar position_coefficient = radius / root_corner_length;
+	int seed = planet.GetFormation().seed;
 	
+	// This one progresses with each iteration.
+	Random point_randomizer(seed + 1);
+	
+	// This one is the same each time.
+	Random crater_randomizer(seed + 2);
+	
+	Scalar root_corner_length = root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
-		points[i]->pos = root_corners[i] * position_coefficient + center;
+		Vector3 position = root_corners[i] / root_corner_length;
+		CalcRootPointPointPos(point_randomizer, position);
+		position += center;
+		points[i]->pos = position;
 	}
 }
 
@@ -101,39 +112,39 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	int depth = MeasureDepth(& a, planet_shader_depth_deep);
 	Assert(depth == MeasureDepth(& b, planet_shader_depth_deep));
 	
+	Params params;
+	params.near_a = Vector3(a.GetCorner(TriMod(i + 1)).pos) - center;
+	params.near_b = Vector3(b.GetCorner(TriMod(i + 1)).pos) - center;
+	params.far_a = Vector3(a.GetCorner(i).pos) - center;
+	params.far_b = Vector3(b.GetCorner(i).pos) - center;
+	
+	params.near_mid = params.near_a + params.near_b;
+	params.near_mid *= planet.GetRadiusAverage() / Length(params.near_mid);
+	
 	int seed_1 = Random(a.seed + i).GetInt();
 	int seed_2 = Random(b.seed + i).GetInt();
 	int combined_seed(seed_1 + seed_2);
 	Random rnd(combined_seed);
-	
-	Params params = 
-	{
-		rnd,
-		Vector3(a.GetCorner(TriMod(i + 1)).pos) - center,
-		Vector3(b.GetCorner(TriMod(i + 1)).pos) - center,
-		Vector3(a.GetCorner(i).pos) - center,
-		Vector3(b.GetCorner(i).pos) - center
-	};
-	
-	Vector3 result;
+	params.rnd = Random(combined_seed);
+
 	if (depth >= planet_shader_depth_medium)
 	{
 		if (false && depth >= planet_shader_depth_deep)
 		{
-			result = CalcMidPointPos_Deep(params);
+			params.near_mid = CalcMidPointPos_Deep(params);
 		}
 		else
 		{
-			result = CalcMidPointPos_Medium(params);
+			params.near_mid = CalcMidPointPos_Medium(params);
 		}
 	}
 	else 
 	{
-		result = CalcMidPointPos_Shallow(params);
+		params.near_mid = CalcMidPointPos_Shallow(params);
 	}
 	
 /*#if ! defined(NDEBUG)
-	// Check that resultant point is within the [min, max] range.
+	// Check that params.near_midant point is within the [min, max] range.
 	Scalar altitude1 = Length(mid_point.pos - sim::Vector3(center));
 	Scalar altitude2 = Length(Vector3(mid_point.pos) - center);
 	if (Min(altitude1, altitude2) < planet.GetRadiusMin())
@@ -146,38 +157,23 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	}
 #endif*/
 	
-	Scalar planet_radius = planet.GetRadiusMax();
-	Sphere3 crater;
-	Random poo(77);
-	for (int i = 25; i; -- i)
-	{
-		crater.center = Vector3(poo.GetFloatInclusive() - .5f, poo.GetFloatInclusive() - .5f, poo.GetFloatInclusive() - .5f);
-		crater.center *= planet_radius * 1.1 / Length(crater.center);
-		crater.radius = poo.GetFloatInclusive() * planet_radius * .1;
-		
-		Vector3 center_to_result = result - crater.center;
-		Scalar length = Length(center_to_result);
-		if (length < crater.radius)
-		{
-			center_to_result *= crater.radius / length;
-			result = center_to_result + crater.center;
-		}
-	}
-
-	result += center;
-	mid_point.pos = result;
+	params.near_mid += center;
+	mid_point.pos = params.near_mid;
 }
 
-/*sim::Vector3 sim::PlanetShader::CalcRootPointPointPos(Params & params)
+// Comes in normalized. Is then given the correct length.
+void sim::PlanetShader::CalcRootPointPointPos(Random & rnd, sim::Vector3 & position) const
 {
-}*/
+	Scalar radius = planet.GetRadiusAverage();
+	position *= radius;
+}
 
 // At shallow depth, heigh is highly random.
-sim::Vector3 sim::PlanetShader::CalcMidPointPos_Shallow(Params & params) 
+sim::Vector3 sim::PlanetShader::CalcMidPointPos_Shallow(Params & params) const
 {
 	Scalar radius_min = planet.GetRadiusMin();
 	Scalar radius_max = planet.GetRadiusMax();
-	//Scalar radius = planet.GetAverageRadius();
+	//Scalar radius = planet.GetRadiusAverage();
 	Scalar radius_range = radius_max - radius_min;
 	
 	// Do the random stuff to get the radius.
@@ -199,7 +195,7 @@ sim::Vector3 sim::PlanetShader::CalcMidPointPos_Shallow(Params & params)
 	return v;
 }
 
-sim::Vector3 sim::PlanetShader::CalcMidPointPos_Medium(Params & params) 
+sim::Vector3 sim::PlanetShader::CalcMidPointPos_Medium(Params & params) const 
 {
 	Scalar near_a_altitude = Length(params.near_a);
 	Scalar near_b_altitude = Length(params.near_b);
@@ -248,7 +244,7 @@ sim::Vector3 sim::PlanetShader::CalcMidPointPos_Medium(Params & params)
 }
 
 // TODO: Maybe avoid doing the -/+ center by crossing near and far?
-sim::Vector3 sim::PlanetShader::CalcMidPointPos_Deep(Params & params) 
+sim::Vector3 sim::PlanetShader::CalcMidPointPos_Deep(Params & params) const 
 {
 	sim::Vector3 avg = (params.far_a + params.far_b) * .5;
 	return avg;
@@ -301,15 +297,14 @@ sim::Vector3 sim::PlanetShader::CalcMidPointPos_Deep(Params & params)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// PlanetShader
+// PlanetShaderFactory
 
-sim::PlanetShaderFactory::PlanetShaderFactory(Planet const & init_planet, int init_num_craters)
+sim::PlanetShaderFactory::PlanetShaderFactory(Planet const & init_planet)
 : planet(init_planet)
-, num_craters(init_num_craters)
 {
 }
 
 form::Shader * sim::PlanetShaderFactory::Create(form::Formation const & formation) const
 {
-	return new PlanetShader(planet, num_craters);
+	return new PlanetShader(planet);
 }

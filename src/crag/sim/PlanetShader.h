@@ -27,31 +27,31 @@ namespace sim
 	class PlanetShader : public form::Shader
 	{
 	public:
-		PlanetShader(Planet const & init_planet, int num_craters);
+		PlanetShader(Planet const & init_planet);
 		
 	private:
 		virtual void SetOrigin(Vector3d const & origin);
-		virtual void InitRootPoints(int seed, form::Point * points[]);
+		virtual void InitRootPoints(form::Point * points[]);
 		virtual void InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point);
 		
 		struct Params
 		{
-			Random & rnd;
 			Vector3 near_a;
 			Vector3 near_b;
 			Vector3 far_a;
 			Vector3 far_b;
+			Vector3 near_mid;
+			Random rnd;
 		};
 		
-		//sim::Vector3 CalcRootPointPointPos(Params & params);
+		void CalcRootPointPointPos(Random & rnd, Vector3 & position) const;
 		
-		sim::Vector3 CalcMidPointPos_Shallow(Params & params);
-		sim::Vector3 CalcMidPointPos_Medium(Params & params);
-		sim::Vector3 CalcMidPointPos_Deep(Params & params);
+		Vector3 CalcMidPointPos_Shallow(Params & params) const;
+		Vector3 CalcMidPointPos_Medium(Params & params) const;
+		Vector3 CalcMidPointPos_Deep(Params & params) const;
 		
 		Vector3 center;		// relative to origin
 		Planet const & planet;
-		int num_craters;
 	};
 
 	
@@ -60,12 +60,11 @@ namespace sim
 	class PlanetShaderFactory : public form::ShaderFactory
 	{
 	public:
-		PlanetShaderFactory(Planet const & init_planet, int num_craters);
+		PlanetShaderFactory(Planet const & init_planet);
 		
 		virtual form::Shader * Create(form::Formation const & formation) const;
 		
 	private:
 		Planet const & planet;	// This system is very complicated for one type of formation (Planet) and only one planet!
-		int num_craters;
 	};
 }

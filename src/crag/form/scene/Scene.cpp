@@ -311,7 +311,6 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 
 void form::Scene::ResetPolyhedron(FormationPair & pair)
 {
-	Formation const & formation = ref(pair.first);
 	Polyhedron & polyhedron = pair.second;
 	
 	polyhedron.GetShader().SetOrigin(origin);
@@ -321,5 +320,5 @@ void form::Scene::ResetPolyhedron(FormationPair & pair)
 	
 	Point * points[4];
 	root_node.GetPoints(points);
-	polyhedron.shader->InitRootPoints(formation.seed, points);
+	polyhedron.shader->InitRootPoints(points);
 }

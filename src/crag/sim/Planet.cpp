@@ -11,10 +11,10 @@
 #include "pch.h"
 
 #include "Planet.h"
+#include "PlanetaryBody.h"
 #include "PlanetShader.h"
-#include "PlanetShader.h"
+#include "MoonShader.h"
 
-#include "sim/PlanetaryBody.h"
 #include "physics/Singleton.h"
 
 #include "form/Formation.h"
@@ -27,15 +27,22 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range, int init_seed, int num_craters)
+sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range)
 : Entity()
 , radius_min(init_radius_medium - init_radius_range * .5)
 , radius_max(init_radius_medium + init_radius_range * .5)
 {
 	Assert(init_radius_medium > 0);
 	Assert(init_radius_medium > init_radius_range);
-	
-	factory = new PlanetShaderFactory(* this, num_craters);
+
+	if (num_craters > 0)
+	{
+		factory = new MoonShaderFactory(* this, num_craters);
+	}
+	else 
+	{
+		factory = new PlanetShaderFactory(* this);
+	}
 	
 	formation = new form::Formation(* factory);
 	Random rnd(init_seed);
@@ -67,7 +74,7 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	
 	Vector3 direction = there_to_here / distance;
 
-	sim::Scalar radius = GetAverageRadius();
+	sim::Scalar radius = GetRadiusAverage();
 	sim::Scalar volume = Cube(radius);
 	sim::Scalar mass = volume * density;
 	sim::Scalar force = mass / distance_square;
@@ -122,9 +129,14 @@ bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range, bool w
 	return true;
 }
 
-sim::Scalar sim::Planet::GetAverageRadius() const
+sim::Scalar sim::Planet::GetRadiusAverage() const
 {
 	return (radius_min + radius_max) * .5;
+}
+
+form::Formation const & sim::Planet::GetFormation() const
+{
+	return ref(formation);
 }
 
 sim::Vector3 const & sim::Planet::GetPosition() const

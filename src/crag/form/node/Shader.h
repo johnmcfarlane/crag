@@ -28,7 +28,7 @@ namespace form
 		virtual ~Shader() { }
 		
 		virtual void SetOrigin(Vector3d const & origin) = 0;
-		virtual void InitRootPoints(int seed, form::Point * points[]) = 0;
+		virtual void InitRootPoints(form::Point * points[]) = 0;
 		virtual void InitMidPoint(int i, Node const & a, Node const & b, Point & mid_point) = 0;
 	};
 	
