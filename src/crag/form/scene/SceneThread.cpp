@@ -230,10 +230,9 @@ void form::SceneThread::ThreadFunc(SceneThread * scene_thread)
 	scene_thread->Run();
 }
 
+// The main loop of the scene thread. Hopefully it's pretty self-explanatory.
 void form::SceneThread::Run()
 {
-//	Assert(IsSceneThread());
-	
 	while (! quit_flag) 
 	{
 		if (suspend_flag) 
@@ -249,14 +248,17 @@ void form::SceneThread::Run()
 	quit_flag = false;
 }
 
+// The tick function of the scene thread. 
+// This functions gets called repeatedly either in the scene thread - if there is on -
+// or in the main thread as part of the main render/simulation iteration.
 void form::SceneThread::ThreadTick()
 {
-	sim::Vector3 const & observer_pos = observer.GetPosition();
 	sim::Ray3 camera_ray = observer.GetCameraRay();
 	scene.SetCameraRay(camera_ray);
 	
 	if (reset_origin_flag) 
 	{
+		sim::Vector3 const & observer_pos = observer.GetPosition();
 		scene.SetOrigin(observer_pos);
 		reset_origin_flag = false;
 		origin_reset_time = app::GetTime();
