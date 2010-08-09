@@ -29,19 +29,12 @@ public:
 		: position(rhs.position)
 		, direction(rhs.direction) 
 	{
-		Verify();
 	}
 	
 	Ray(V const & pos, V const & dir) 
 		: position(pos)
 		, direction(dir) 
 	{
-		Verify();
-	}
-	
-	void Verify()
-	{ 
-		Assert(NearEqual(Length(direction), 1));
 	}
 	
 	// attributes

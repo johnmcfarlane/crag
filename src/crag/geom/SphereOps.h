@@ -44,20 +44,15 @@ template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> c
 }
 
 // Sphere-Ray Intersection
-// The ray is represented by start + delta * t
+// The ray is represented by ray.position + ray.direction * t
 // t1 and t2 are the two possible intersection points
 // returns false iff the ray misses the sphere (in which case, t1 and t2 are undefined)
-template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Vector<S, N> const & start, Vector<S, N> const & delta, S & t1, S & t2)
+template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & ray, S & t1, S & t2)
 {
-#if 0
-//	p = start + delta * t;
-//	Length(p - sphere.center) == 
-#endif
-	
-	Vector<S, N> sphere_to_start = start - sphere.center;
-	S a = LengthSq(delta);
-	S half_b = DotProduct(delta, sphere_to_start);
-	S c = LengthSq(sphere_to_start) - sphere.radius;
+	Vector<S, N> sphere_to_start = ray.position - sphere.center;
+	S a = LengthSq(ray.direction);
+	S half_b = DotProduct(ray.direction, sphere_to_start);
+	S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 	
 	// (Slightly reduced) Quadratic:
 	// t = (- half_b (+/-) Sqrt(Square(half_b) - (a * c))) / a
@@ -71,7 +66,7 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ve
 	S inverse_a = Inverse(a);
 	
 	S p = (- half_b) * inverse_a;
-	S q = Sqrt(root) * inverse_a;
+	S q = root * inverse_a;
 	
 	t1 = p - q;
 	t2 = p + q;
