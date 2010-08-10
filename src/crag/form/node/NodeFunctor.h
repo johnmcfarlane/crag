@@ -16,7 +16,8 @@ namespace form {
 	
 	class Node;
 
-	// Base/example class of a functor which is called for each node in the NodeBuffer.
+	// Base/example class of a functor which is called 
+	// for each node in the NodeBuffer by NodeBuffer::ForEachNode.
 	class NodeFunctor
 	{
 	public:
@@ -25,7 +26,7 @@ namespace form {
 			return false; 
 		}
 		
-		void OnPrefetchPass(Node const & /*node*/)
+		void OnPrefetchPass(Node const & /*node*/) const
 		{
 			// This function needs to be overridden in the derived class if PerformPrefetchPass returns true.
 			// The node is already guranteed to be prefetched so use this fn to prefetch memory which is less direct.

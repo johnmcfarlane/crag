@@ -14,8 +14,6 @@
 
 #include "form/defs.h"
 
-#include <vector>
-
 
 namespace form 
 {

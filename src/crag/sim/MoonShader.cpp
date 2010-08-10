@@ -56,7 +56,33 @@ sim::MoonShader::MoonShader(Planet const & init_moon, int num_craters)
 	for (CraterVector::iterator i = craters.begin(); i != craters.end(); ++ i)
 	{
 		Sphere3 & crater = * i;
-		GenerateCreater(crater_randomizer, crater);
+
+		for (int timeout = 10; timeout > 0; -- timeout)
+		{
+			// Make a random crater.
+			GenerateCreater(crater_randomizer, crater);
+			
+			// And for all the previously-created craters ...
+			bool contained = false;
+			for (CraterVector::const_iterator j = craters.begin(); j != i; ++ j)
+			{
+				// ... test whether one contains the other.
+				if (Contains(crater, * j) || Contains(* j, crater))
+				{
+					// If so, it's wasteful to have around.
+					contained = true;
+					break;
+				}
+			}
+			
+			if (! contained)
+			{
+				break;
+			}
+			
+			// Only try a fixed number of times to avoid waste.
+			// We don't want to loop forever.
+		}
 	}
 }
 

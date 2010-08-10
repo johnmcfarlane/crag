@@ -63,4 +63,3 @@ gfx::Pov & gfx::Scene::GetPov()
 {
 	return pov;
 }
-

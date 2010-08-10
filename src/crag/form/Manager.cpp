@@ -228,37 +228,41 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	//gl::Enable(GL_COLOR_MATERIAL);
 
 	// Debug output
-	if (gfx::Debug::GetVerbosity() > .75) {
-		for (int i = 0; i < 2; ++ i) {
+	if (gfx::Debug::GetVerbosity() > .75) 
+	{
+		for (int i = 0; i < 2; ++ i) 
+		{
 			form::MeshBufferObject const * m = buffer_objects + i;
 			gfx::Debug::out << m << ' ';
-			if (m == front_buffer_object) {
+			if (m == front_buffer_object) 
+			{
 				gfx::Debug::out << 'f';
 			}
-			if (m == back_buffer_object) {
+			if (m == back_buffer_object) 
+			{
 				gfx::Debug::out << 'b';
 			}
 			gfx::Debug::out << '\n';
 		}
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .75) {
+	if (gfx::Debug::GetVerbosity() > .75) 
+	{
 		gfx::Debug::out << "origin:" << front_buffer_origin << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .05) {
-		//Debug::out << "polys:" << form::Manager0::GetNumPolys() << '\n';
-	}
-	
-	if (gfx::Debug::GetVerbosity() > .3) {
+	if (gfx::Debug::GetVerbosity() > .25) 
+	{
 		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaUsed() << 2) << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .3) {
+	if (gfx::Debug::GetVerbosity() > .3) 
+	{
 		gfx::Debug::out << "target nodes:" << (scene_thread->GetNumQuaternaUsedTarget() << 2) << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .5) {
+	if (gfx::Debug::GetVerbosity() > .5) 
+	{
 		//Debug::out << "target nodes:" << target_num_nodes << '\n';
 	}
 }

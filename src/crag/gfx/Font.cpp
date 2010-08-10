@@ -17,8 +17,6 @@
 
 #include "core/App.h"
 
-#include <vector>
-
 
 namespace 
 {

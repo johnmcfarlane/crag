@@ -122,7 +122,8 @@ void form::SceneThread::Tick()
 {
 	Assert(IsMainThread());
 
-	if (! threaded) {
+	if (! threaded) 
+	{
 		ThreadTick();
 	}
 	
@@ -144,6 +145,11 @@ void form::SceneThread::Tick()
 		{
 			gfx::Debug::out << "resetting...\n";
 		}
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .15) 
+	{
+		gfx::Debug::out << "polys:" << mesh.GetNumPolys() << '\n';
 	}
 }
 

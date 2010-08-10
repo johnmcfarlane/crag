@@ -12,7 +12,6 @@
 #include "sim/defs.h"
 
 #include <map>
-#include <vector>
 
 
 namespace sim

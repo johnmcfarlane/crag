@@ -126,9 +126,9 @@ template<typename V> V TriangleNormal(V const & a, V const & b, V const & c)
 
 // Distance from triangle, abc to point, p.
 // Result is signed. 
-template<typename S, typename V> S DistanceToSurface(V const & a, V const & b, V const & c, V const & p) 
+template<typename S, int N> S DistanceToSurface(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
 {
-	V normal = TriangleNormal(a, b, c);
+	Vector<S, N> normal = TriangleNormal(a, b, c);
 	Normalize(normal);
 	
 	return DotProduct(normal, p - b);

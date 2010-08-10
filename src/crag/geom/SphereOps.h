@@ -37,6 +37,38 @@ template<typename S, int N> bool Touches(Sphere<S, N> const & a, Sphere<S, N> co
 	return center_distance_squared <= Square(a.radius + b.radius);
 }
 
+// True iff b is completely inside a.
+template<typename S, int N> bool Contains(Sphere<S, N> const & a, Sphere<S, N> const & b)
+{
+	if (a.radius < b.radius)
+	{
+		// A is smaller and so cannot contain b.
+		return false;
+	}
+	else
+	{
+		S center_distance_squared = LengthSq(a.center - b.center);
+		return center_distance_squared <= Square(a.radius - b.radius);
+	}
+}
+
+// True iff b is completely inside a.
+// This optimized version assumes that a radius comparison as already been done.
+// If the radii have not been compared, use Contains instead.
+template<typename S, int N> bool ContainsSmallerSphere(Sphere<S, N> const & a, Sphere<S, N> const & b)
+{
+	// There's no point running this test is a isn't big enough to contain b in the first place!
+	assert(a.radius > b.radius);
+	
+	S center_distance_squared = LengthSq(a.center - b.center);
+	return center_distance_squared <= Square(a.radius - b.radius);
+}
+
+template<typename S, int N> bool IsInside(Sphere<S, N> const & a, Sphere<S, N> const & b)
+{
+	return Contains(b, a);
+}
+
 // True iff triangle, abc contains sphere, s.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {

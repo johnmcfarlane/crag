@@ -17,8 +17,6 @@
 
 #include "core/Singleton.h"
 
-#include <vector>
-
 
 namespace sim
 {
