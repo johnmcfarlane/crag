@@ -72,6 +72,7 @@
     <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
     <ClCompile Include="..\..\src\crag\sim\FrequencyEstimator.cpp" />
+    <ClCompile Include="..\..\src\crag\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Observer.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Planet.cpp" />
     <ClCompile Include="..\..\src\crag\sim\PlanetaryBody.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\..\src\crag\sim\Entity.h" />
     <ClInclude Include="..\..\src\crag\sim\Firmament.h" />
     <ClInclude Include="..\..\src\crag\sim\FrequencyEstimator.h" />
+    <ClInclude Include="..\..\src\crag\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\crag\sim\Observer.h" />
     <ClInclude Include="..\..\src\crag\sim\Planet.h" />
     <ClInclude Include="..\..\src\crag\sim\PlanetaryBody.h" />

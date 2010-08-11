@@ -222,6 +222,9 @@
     <ClCompile Include="..\..\src\crag\cl\defs.cpp">
       <Filter>src\crag\cl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\crag\sim\MoonShader.cpp">
+      <Filter>src\crag\sim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\gfx\Color.h">
@@ -532,6 +535,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\crag\geom\Ray3.h">
       <Filter>src\crag\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sim\MoonShader.h">
+      <Filter>src\crag\sim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
