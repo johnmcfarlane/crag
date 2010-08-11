@@ -19,8 +19,8 @@
 
 namespace  
 {
-	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .05);	// coulomb friction coefficient
-	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .25);
+	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .001);	// coulomb friction coefficient
+	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 }
 
 

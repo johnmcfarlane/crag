@@ -65,19 +65,30 @@ sim::Planet::~Planet()
 
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
-	float const density = 1;
+	Vector3 const & center = body->GetPosition();
+	Vector3 to_center = center - pos;
+	sim::Scalar distance = Length(to_center);
 	
-	Vector3 const & here_pos = body->GetPosition();
-	Vector3 there_to_here = here_pos - pos;
-	sim::Scalar distance_square = LengthSq(there_to_here);
-	sim::Scalar distance = Sqrt(distance_square);
-	
-	Vector3 direction = there_to_here / distance;
+	// Calculate the direction of the pull.
+	Vector3 direction = to_center / distance;
 
+	// Calculate the mass.
+	sim::Scalar density = 1;
 	sim::Scalar radius = GetRadiusAverage();
 	sim::Scalar volume = Cube(radius);
 	sim::Scalar mass = volume * density;
-	sim::Scalar force = mass / distance_square;
+
+	// Calculate the force. Actually, this isn't really the force;
+	// It's the potential. Until we know what we're pulling we can't know the force.
+	sim::Scalar force;
+	if (distance < radius)
+	{
+		force = mass * distance / Cube(radius);
+	}
+	else
+	{
+		force = mass / Square(distance);
+	}
 
 	Vector3 contribution = direction * force;
 	gravity += contribution;

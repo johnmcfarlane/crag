@@ -54,6 +54,7 @@ namespace
 	CONFIG_DEFINE (planet_radius_range, sim::Scalar, 5000);
 	
 	CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * 1.5, planet_radius_medium * 2.5, planet_radius_medium * 1.));
+	//CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * .75, planet_radius_medium * 1.25, planet_radius_medium * .5));
 	CONFIG_DEFINE (moon_radius_medium, sim::Scalar, 1500000);
 	CONFIG_DEFINE (moon_radius_range, sim::Scalar, 500);
 	
