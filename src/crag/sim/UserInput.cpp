@@ -81,7 +81,7 @@ namespace
 		// Lots of up/down options
 		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_SPACE },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_RSHIFT },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_LSHIFT },
+		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_LSHIFT },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_RCTRL },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_LCTRL },
 		
