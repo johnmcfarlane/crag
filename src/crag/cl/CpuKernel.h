@@ -21,7 +21,7 @@ namespace cl
 	class CpuKernel : public Kernel
 	{
 	public:
-		CpuKernel(char const * kernel_source, int max_elements, size_t element_size, void * buffer);
+		CpuKernel(int max_elements, size_t element_size, void * buffer);
 		
 		void Process(int num_elements);
 		
@@ -41,8 +41,8 @@ namespace cl
 	template <typename ELEM> class CpuKernelTemplate : protected CpuKernel
 	{
 	public:
-		CpuKernelTemplate(char const * kernel_source, int init_max_elements, ELEM * init_buffer)
-		: CpuKernel(kernel_source, init_max_elements, sizeof(ELEM), init_buffer)
+		CpuKernelTemplate(int init_max_elements, ELEM * init_buffer)
+		: CpuKernel(init_max_elements, sizeof(ELEM), init_buffer)
 		{
 		}
 		

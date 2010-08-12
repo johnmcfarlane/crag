@@ -22,14 +22,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Kernel members
 
-cl::Kernel::Kernel(char const * kernel_source)
+cl::Kernel::Kernel()
+: program(nullptr)
+, kernel(nullptr)
+{
+}
+
+cl::Kernel::~Kernel()
+{
+	clReleaseProgram(program);
+	clReleaseKernel(kernel);
+}
+
+bool cl::Kernel::Compile(char const * kernel_source)
 {
 	int err;
 	Singleton & singleton = Singleton::Get();
 	
 	// Create the compute program from the source buffer
 	program = clCreateProgramWithSource(singleton.context, 1, (const char **) & kernel_source, NULL, &err);
-	CL_CHECK(err);
+	if (! CL_CHECK(err))
+	{
+		return false;
+	}
 	
 	// Build the program executable
 	err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
@@ -41,17 +56,18 @@ cl::Kernel::Kernel(char const * kernel_source)
 		clGetProgramBuildInfo(program, singleton.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		std::cerr << buffer << '\n';
 		CL_CHECK(err);
+		
+		return false;
 	}
 	
 	// Create the compute kernel in the program we wish to run
 	kernel = clCreateKernel(program, "score_nodes", &err);
-	CL_CHECK(err);
-}
-
-cl::Kernel::~Kernel()
-{
-	clReleaseProgram(program);
-	clReleaseKernel(kernel);
+	if (! CL_CHECK(err))
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 void cl::Kernel::Process(int num_elements)

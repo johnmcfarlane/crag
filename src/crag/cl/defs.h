@@ -29,7 +29,7 @@
 
 
 #if defined(NDEBUG)
-#define CL_CHECK(EXPRESSION) EXPRESSION
+#define CL_CHECK(EXPRESSION) (EXPRESSION == CL_SUCCESS)
 #else
 
 #include "core/debug.h"

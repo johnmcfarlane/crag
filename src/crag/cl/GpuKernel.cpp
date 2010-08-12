@@ -20,8 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // GpuKernel members
 
-cl::GpuKernel::GpuKernel(char const * kernel_source, int init_max_elements, size_t init_input_size, size_t init_output_size)
-: Kernel(kernel_source)
+cl::GpuKernel::GpuKernel(int init_max_elements, size_t init_input_size, size_t init_output_size)
+: Kernel()
 , max_elements(init_max_elements)
 , input_size(init_input_size)
 , output_size(init_output_size)

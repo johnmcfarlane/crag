@@ -20,6 +20,11 @@
 namespace
 {
 #include "CalculateNodeScoreCpuString.h"
+
+#if defined(PROFILE)
+	char const * cpu_kernel_cl_filename = "src/crag/form/score/CalculateNodeScoreCpu.cl";
+	char const * cpu_kernel_cpp_filename = "src/crag/form/score/CalculateNodeScoreCpuString.h";
+#endif
 }
 
 
@@ -27,10 +32,30 @@ namespace
 // CalculateNodeScoreCpuKernel members
 
 form::CalculateNodeScoreCpuKernel::CalculateNodeScoreCpuKernel(int init_max_elements, Node * nodes)
-: BaseClass(kernel_source, init_max_elements, nodes)
+: BaseClass(init_max_elements, nodes)
 , camera_position(Vector4::Zero())
 , camera_direction(Vector4::Zero())
 {
+#if defined(PROFILE)
+	// TODO: Check to see if output file has actually changed. If so, exit program.
+	char * cl_source_string = cl::Kernel::LoadClFile(cpu_kernel_cl_filename);
+	
+	if (Compile(cl_source_string))
+	{
+		if (strcmp(cl_source_string, kernel_source) != 0)
+		{
+			cl::Kernel::SaveCFile(cpu_kernel_cpp_filename, cl_source_string, "kernel_source");
+		}
+	}
+	else
+	{
+		Compile(kernel_source);
+	}
+	
+	delete [] cl_source_string;
+#else
+	Compile(kernel_source);
+#endif
 }
 
 void form::CalculateNodeScoreCpuKernel::Process(Node * nodes, 

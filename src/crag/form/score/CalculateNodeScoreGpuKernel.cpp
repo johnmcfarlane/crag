@@ -19,6 +19,11 @@
 namespace
 {
 #include "CalculateNodeScoreGpuString.h"
+	
+#if defined(PROFILE)
+	char const * gpu_kernel_cl_filename = "src/crag/form/score/CalculateNodeScoreGpu.cl";
+	char const * gpu_kernel_cpp_filename = "src/crag/form/score/CalculateNodeScoreGpuString.h";
+#endif
 }
 
 
@@ -26,9 +31,29 @@ namespace
 // CalculateNodeScoreGpuKernel members
 
 form::CalculateNodeScoreGpuKernel::CalculateNodeScoreGpuKernel(int init_max_elements)
-: BaseClass(kernel_source, init_max_elements)
+: BaseClass(init_max_elements)
 , relative_camera_position(Vector4::Zero())
 {
+#if defined(PROFILE)
+	// TODO: Check to see if output file has actually changed. If so, exit program.
+	char * cl_source_string = cl::Kernel::LoadClFile(gpu_kernel_cl_filename);
+	
+	if (Compile(cl_source_string))
+	{
+		if (strcmp(cl_source_string, kernel_source) != 0)
+		{
+			cl::Kernel::SaveCFile(gpu_kernel_cpp_filename, cl_source_string, "kernel_source");
+		}
+	}
+	else
+	{
+		Compile(kernel_source);
+	}
+	
+	delete [] cl_source_string;
+#else
+	Compile(kernel_source);
+#endif
 }
 
 void form::CalculateNodeScoreGpuKernel::Process(Node * nodes, Node const * nodes_end, Vector3 const & init_relative_camera_position)

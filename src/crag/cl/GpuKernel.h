@@ -23,7 +23,7 @@ namespace cl
 	class GpuKernel : public Kernel
 	{
 	public:
-		GpuKernel(char const * kernel_source, int max_elements, size_t input_size, size_t output_size);
+		GpuKernel(int max_elements, size_t input_size, size_t output_size);
 		~GpuKernel();
 		
 		void Process(void const * input_data, void * output_data, int num_elements);
@@ -44,8 +44,8 @@ namespace cl
 	template <typename IN, typename OUT> class GpuKernelTemplate : protected GpuKernel
 	{
 	public:
-		GpuKernelTemplate(char const * kernel_source, int init_max_elements)
-		: GpuKernel(kernel_source, init_max_elements, sizeof(IN), sizeof(OUT))
+		GpuKernelTemplate(int init_max_elements)
+		: GpuKernel(init_max_elements, sizeof(IN), sizeof(OUT))
 		, input_data(new IN [init_max_elements])
 		, output_data(new OUT [init_max_elements])
 		{

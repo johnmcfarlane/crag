@@ -66,14 +66,6 @@ namespace
 // NodeBuffer functions
 
 
-#if (USE_OPENCL)
-#define CPU_KERNEL_CL_FILENAME "src/crag/form/score/CalculateNodeScoreCpu.cl"
-#define GPU_KERNEL_CL_FILENAME "src/crag/form/score/CalculateNodeScoreGpu.cl"
-#define CPU_KERNEL_CPP_FILENAME "src/crag/form/score/CalculateNodeScoreCpuString.h"
-#define GPU_KERNEL_CPP_FILENAME "src/crag/form/score/CalculateNodeScoreGpuString.h"
-#endif
-
-
 form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
@@ -300,33 +292,6 @@ void form::NodeBuffer::InitKernel()
 #if (USE_OPENCL)
 	cl::Singleton const & cl_singleton = cl::Singleton::Get();
 	
-#if ! defined(NDEBUG)
-	char const * cl_filename;
-	char const * cpp_filename;
-	switch (cl_singleton.GetDeviceType())
-	{
-		default:
-			assert(false);	// unrecognized device type
-		case CL_DEVICE_TYPE_ALL:
-			return;
-			
-		case CL_DEVICE_TYPE_CPU:
-			cl_filename = CPU_KERNEL_CL_FILENAME;
-			cpp_filename = CPU_KERNEL_CPP_FILENAME;
-			break;
-			
-		case CL_DEVICE_TYPE_GPU:
-			cl_filename = GPU_KERNEL_CL_FILENAME;
-			cpp_filename = GPU_KERNEL_CPP_FILENAME;
-			break;
-	}
-
-	// TODO: Check to see if output file has actually changed. If so, exit program.
-	char * source_string = source_string = cl::Kernel::LoadClFile(cl_filename);
-	cl::Kernel::SaveCFile(cpp_filename, source_string, "kernel_source");
-	delete [] source_string;
-#endif
-	
 	switch (cl_singleton.GetDeviceType())
 	{
 		case CL_DEVICE_TYPE_CPU:
@@ -337,7 +302,6 @@ void form::NodeBuffer::InitKernel()
 			gpu_kernel = new CalculateNodeScoreGpuKernel(max_num_nodes);
 			break;
 	}
-	
 #endif
 }
 

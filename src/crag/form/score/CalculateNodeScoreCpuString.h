@@ -82,8 +82,9 @@ char const * kernel_source = "/*\n" \
 "	// As the poly turns away from the camera, its visible area diminishes.\n" \
 "	// However, we still want invisible / barely visible polys to get some score.\n" \
 "	float camera_dp = dot(camera_to_node, normal);\n" \
-"	float towardness_factor = max(camera_dp, 0.1f);\n" \
-"	score *= towardness_factor;\n" \
+"//	float towardness_factor = max(camera_dp, 0.1f);\n" \
+"//	score *= towardness_factor;\n" \
+"	score *= powr(5.f, camera_dp);\n" \
 "\n" \
 "	// Distance-based falloff.\n" \
 "	float fudged_min_visible_distance = .25f;	// TODO: hard-coded!\n" \

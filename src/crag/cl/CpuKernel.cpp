@@ -20,8 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // CpuKernel members
 
-cl::CpuKernel::CpuKernel(char const * kernel_source, int init_max_elements, size_t init_element_size, void * init_buffer)
-: Kernel(kernel_source)
+cl::CpuKernel::CpuKernel(int init_max_elements, size_t init_element_size, void * init_buffer)
+: Kernel()
 , max_elements(init_max_elements)
 , element_size(init_element_size)
 , buffer(init_buffer)

@@ -21,9 +21,10 @@ namespace cl
 	class Kernel
 	{
 	public:
-		Kernel(char const * kernel_source);
+		Kernel();
 		virtual ~Kernel();
 		
+		bool Compile(char const * kernel_source);
 		void Process(int num_elements);
 		
 		static char * LoadClFile(char const * filename);	// don't forget to delete the returned string!
