@@ -82,8 +82,9 @@ kernel void score_nodes(
 	// As the poly turns away from the camera, its visible area diminishes.
 	// However, we still want invisible / barely visible polys to get some score.
 	float camera_dp = dot(camera_to_node, normal);
-	float towardness_factor = max(camera_dp, 0.1f);
-	score *= towardness_factor;
+//	float towardness_factor = max(camera_dp, 0.1f);
+//	score *= towardness_factor;
+	score *= powr(5.f, camera_dp);
 
 	// Distance-based falloff.
 	float fudged_min_visible_distance = .25f;	// TODO: hard-coded!
