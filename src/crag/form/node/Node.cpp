@@ -185,23 +185,21 @@ void form::Node::Verify() const
 {
 	VerifyTrue(sizeof(* this) == 80 || sizeof(* this) == 128);
 
-	if (parent != nullptr) {
-		if (children != nullptr) {
-			VerifyRef(* children);
-			VerifyTrue(children[0].parent == this);
-			VerifyTrue(children[1].parent == this);
-			VerifyTrue(children[2].parent == this);
-			VerifyTrue(children[3].parent == this);
-		}
+	if (parent != nullptr) 
+	{
+		int child_index = (this - parent->children);
+		VerifyTrue(parent->children + child_index == this);
+		VerifyTrue(child_index >= 0 && child_index < 4);
+		VerifyTrue(seed == parent->GetChildSeed(child_index));
 		
-		VerifyTrue(this >= & parent->children[0] && this < & parent->children[4]);
-		
-		for (int i = 0; i < 3; ++ i) {
+		for (int i = 0; i < 3; ++ i) 
+		{
 			Triplet const & t = triple[i];
 			VerifyTrue(t.corner != nullptr);
 			
 			Node const * cousin = t.cousin;
-			if (cousin != nullptr) {
+			if (cousin != nullptr) 
+			{
 				Triplet const & ct = cousin->triple[i];
 				VerifyTrue(t.mid_point == ct.mid_point);
 				VerifyTrue(ct.cousin == this);
