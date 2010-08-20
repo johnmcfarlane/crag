@@ -21,9 +21,12 @@
 
 namespace 
 {
-
+#if defined(PROFILE)
+	bool gravity = false;
+#else
 	CONFIG_DEFINE (gravity, bool, true);
-
+#endif
+	
 	typedef std::vector<sim::Entity *> EntityList;
 	EntityList entities;
 
