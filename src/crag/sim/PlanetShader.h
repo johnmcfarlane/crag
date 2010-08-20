@@ -40,7 +40,7 @@ namespace sim
 			Vector3 near_b;
 			Vector3 far_a;
 			Vector3 far_b;
-			Vector3 near_mid;
+			Scalar depth;	// as a proportion of planet_shader_depth_deep
 			Random rnd;
 		};
 		

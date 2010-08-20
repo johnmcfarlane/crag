@@ -12,6 +12,9 @@
 
 #include "form/defs.h"
 
+#include "gfx/Color.h"
+
+
 namespace form
 {
 	class Vertex;
@@ -27,6 +30,7 @@ namespace form
 		
 		// Attributes
 		Vector3 pos;
+		gfx::Color4b col;
 		Vertex * vert;
 	};
 }

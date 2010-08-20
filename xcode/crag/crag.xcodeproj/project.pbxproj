@@ -206,7 +206,6 @@
 		527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
 		527F4AF212101AD400D6AF23 /* MoonShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoonShader.h; sourceTree = "<group>"; };
 		527F4AF312101AD400D6AF23 /* MoonShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoonShader.cpp; sourceTree = "<group>"; };
-		527F6929120D072B0070A1CB /* UpdateGrandparentFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateGrandparentFunctor.h; sourceTree = "<group>"; };
 		527F7AC211EB5F4B00E25B84 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		527F7AC311EB5F4B00E25B84 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneThread.cpp; sourceTree = "<group>"; };
@@ -288,7 +287,6 @@
 		52F3A31D11A7979400385922 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
 		52F3A32611A7979400385922 /* Formation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Formation.cpp; sourceTree = "<group>"; };
 		52F3A32711A7979400385922 /* Formation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Formation.h; sourceTree = "<group>"; };
-		52F3A32911A7979400385922 /* GenerateMeshFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerateMeshFunctor.h; sourceTree = "<group>"; };
 		52F3A32C11A7979400385922 /* Manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Manager.cpp; sourceTree = "<group>"; };
 		52F3A32D11A7979400385922 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
 		52F3A34811A7979400385922 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
@@ -621,7 +619,6 @@
 			children = (
 				52DF18E711E8FF1C00AF25A1 /* ExpandNodeFunctor.h */,
 				52DF18E811E8FF1C00AF25A1 /* ForEachNodeFace.h */,
-				52F3A32911A7979400385922 /* GenerateMeshFunctor.h */,
 				52DF18E911E8FF1C00AF25A1 /* GenerateMeshFunctor.h */,
 				52DF18EA11E8FF1C00AF25A1 /* Node.cpp */,
 				52DF18EB11E8FF1C00AF25A1 /* Node.h */,
@@ -635,7 +632,6 @@
 				52DF18F311E8FF1C00AF25A1 /* RootNode.cpp */,
 				52DF18F411E8FF1C00AF25A1 /* RootNode.h */,
 				52DF18F511E8FF1C00AF25A1 /* Shader.h */,
-				527F6929120D072B0070A1CB /* UpdateGrandparentFunctor.h */,
 			);
 			path = node;
 			sourceTree = "<group>";

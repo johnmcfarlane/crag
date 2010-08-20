@@ -227,7 +227,8 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 		RenderForeground(scene, WireframePass1);
 		RenderForeground(scene, WireframePass2);
 	}
-	else {
+	else 
+	{
 		RenderForeground(scene, NormalPass);
 	}
 
@@ -265,6 +266,8 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
+	
+	bool color = true;
 	switch (pass) 
 	{
 		case NormalPass:
@@ -278,6 +281,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 			{
 				return;
 			}
+			color = false;
 			gl::SetColor<GLfloat>(0, 0, 0);
 			gl::Enable(GL_POLYGON_OFFSET_FILL);
 			GLPP_CALL(glPolygonOffset(1,1));
@@ -287,6 +291,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 			if (! culling) {
 				gl::Disable(GL_CULL_FACE);
 			}
+			//color = false;
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
 			break;
@@ -307,7 +312,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	RenderLights(scene.lights);
 
 	form::Manager & manager = form::Manager::Get();
-	manager.Render(scene.pov, true);
+	manager.Render(scene.pov, color);
 	
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
@@ -385,7 +390,7 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 //	test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
 //	Debug::AddFrustum(test);
 	
-	if (Debug::GetVerbosity() > .2) {
+	if (Debug::GetVerbosity() > .3) {
 		Debug::out << "pos:" << pov.pos << '\n';
 	}
 	

@@ -14,6 +14,7 @@
 
 form::Point::Point()
 : pos(Vector3::Zero())
+, col(gfx::Color4b::Black())
 , vert(nullptr)
 {
 }

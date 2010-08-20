@@ -17,7 +17,6 @@
 #include "Node.h"
 #include "Quaterna.h"
 #include "Shader.h"
-#include "UpdateGrandparentFunctor.h"
 
 #include "form/scene/Mesh.h"
 #include "form/scene/Polyhedron.h"
@@ -106,10 +105,8 @@ form::NodeBuffer::~NodeBuffer()
 #if VERIFY
 void form::NodeBuffer::Verify() const
 {
-	Node const * nodes_used_end_target = nodes + (quaterna_used_end_target - quaterna) * 4;
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
-	VerifyArrayElement(nodes_used_end_target, nodes_used_end, nodes_end + 1);	
-
+	
 	VerifyArrayElement(quaterna_sorted_end, quaterna);
 	VerifyArrayElement(quaterna_used_end, quaterna);
 	VerifyArrayElement(quaterna_used_end_target, quaterna);
@@ -127,22 +124,22 @@ void form::NodeBuffer::Verify() const
 	
 	VerifyObject(points);
 	
-	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
+/*	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
 	{
 		VerifyUsed(* q);
 	}
 	
 	// Rarely cause a problem and they are often the majority.
-	/*for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
+	for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
 	{
 		VerifyUnused(* q);
-	}*/
+	}
 	
 	for (Quaterna const * q2 = quaterna + 1; q2 < quaterna_sorted_end; ++ q2) 
 	{
 		Quaterna const * q1 = q2 - 1;
 		VerifyTrue(q2->parent_score <= q1->parent_score);
-	}
+	}*/
 }
 
 void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
@@ -226,28 +223,21 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 		return;
 	}
 
-	Quaterna * new_target = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
+	Quaterna * new_quaterna_used_end = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
 	
-	if (new_target == quaterna_used_end) 
+	if (new_quaterna_used_end == quaterna_used_end) 
 	{
-		quaterna_used_end_target = new_target;
+		// No change. Just make sure the target is the same
+		quaterna_used_end_target = new_quaterna_used_end;
 	}
-	else if (new_target > quaterna_used_end) 
+	else if (new_quaterna_used_end > quaterna_used_end) 
 	{
-		IncreaseNodes(new_target);
+		IncreaseNodes(new_quaterna_used_end);
 	}
-	else if (new_target < quaterna_used_end)
+	else if (new_quaterna_used_end < quaterna_used_end)
 	{
 		LockTree();
-		
-		if (! DecreaseNodes(new_target)) 
-		{
-			//Assert(false);
-			
-			//std::sort(quaterna, quaterna_available_end, SortByScoreExtreme);
-			//DecreaseAvailableRankings(new_rankings_available_end);
-		}
-		
+		DecreaseNodes(new_quaterna_used_end);
 		UnlockTree();
 	}
 }
@@ -266,14 +256,13 @@ void form::NodeBuffer::UnlockTree() const
 // It is also where a considerable amount of the SceneThread's time is spent.
 void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
+	VerifyObject (* this);	// should fail because of the following.
+
 	// Assuming the camera has moved (and maybe new nodes have been created),
 	// the scores for all nodes will be a little different.
 	
 	// Recalculate the node scores.
 	UpdateNodeScores(camera_ray_relative);
-	
-	// Makes sure nodes whose children are parents get a super-high score.
-	UpdateGrandparentPrivaledge();
 	
 	// Reflect the new scores in the quaterna.
 	UpdateQuaternaScores();
@@ -285,6 +274,8 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 	// replace nodes whose parent's scores have dropped enough
 	// with ones whose score have increased enough.p
 	ChurnNodes();
+	
+	VerifyObject (* this);	// should fail because of the following.
 }
 
 void form::NodeBuffer::InitKernel()
@@ -388,12 +379,6 @@ void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 	}
 }
 
-void form::NodeBuffer::UpdateGrandparentPrivaledge()
-{
-	UpdateGrandparentFunctor f;
-	ForEachNode(f);
-}
-
 void form::NodeBuffer::UpdateQuaternaScores()
 {
 	int fetch_ahead = 32;
@@ -441,6 +426,12 @@ void form::NodeBuffer::UpdateQuaternaScores()
 // TODO: Exploit is_sorted somehow! 
 void form::NodeBuffer::SortQuaterna()
 {
+	if (quaterna_sorted_end == quaterna_used_end)
+	{
+		VerifyObject(* this);
+		return;
+	}
+	
 #if 1
 	// Sure and steady ... and slow!
 	std::sort(quaterna, quaterna_used_end, SortByScore);
@@ -517,6 +508,9 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
+	// TODO: ForEachQuaterna is what I really want.
+	// TODO: This will expand the nodes in an improved order.
+
 	ExpandNodeFunctor f(* this);
 	ForEachNode(f);
 	
@@ -576,15 +570,6 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		// and we can't end up finding a quaterna that includes node as node's new children
 		// because that would cause a time paradox in the fabric of space.
 		float score = node.score;
-		Node * parent = node.parent;
-		if (parent != nullptr) 
-		{
-			float parent_score = parent->score;
-			if (parent_score < score) 
-			{
-				score = parent_score;
-			}
-		}
 		
 		// Ok, lets try the end of the sequence of sorted quaterna...
 		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];			
@@ -601,6 +586,11 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		}
 		
 		-- quaterna_sorted_end;
+	}
+	else
+	{
+		Assert(false);
+		return false;
 	}
 	
 	return true;
@@ -632,7 +622,6 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	if (is_in_use) 
 	{
 		DeinitChildren(worst_children);
-		Assert(worst_children[0].score == 0);
 	}
 	Assert(worst_children[0].score == 0);
 	Assert(worst_children[1].score == 0);
@@ -650,7 +639,6 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	UnlockTree();
 	
 	children_quaterna.parent_score = node.score;
-	//BubbleSortUp(worst_quaterna);
 	
 	return true;
 }
@@ -845,7 +833,8 @@ void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 {
 	Node * parent = original->parent;
 	
-	if (parent != nullptr) {
+	if (parent != nullptr) 
+	{
 		Assert(parent->children == original);
 		parent->children = substitute;
 		
@@ -901,80 +890,81 @@ void form::NodeBuffer::RepairChild(Node & child)
 	}
 }
 
-void form::NodeBuffer::IncreaseNodes(Quaterna * new_target)
+void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterna_used_end)
 {
-	Assert (new_target > quaterna_used_end);
-	Assert (new_target <= quaterna_end);
+	// Verify that the input is indeed a decrease.
+	VerifyArrayElement(new_quaterna_used_end, quaterna_used_end, quaterna_end + 1);
 	
-	quaterna_used_end_target = new_target;
+	// Increasing the target number of nodes is simply a matter of setting a value. 
+	// The target pointer now points into the range of unused quaterna at the end of the array.
+	quaterna_used_end_target = new_quaterna_used_end;
 }
 
 // TODO: This can be improved a lot.
 // TODO: Should sweep all surviving quats first and do all the substitutions in the correct order.
 // TODO: That way, the unavailable quats can keep their node pointers.
-bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
+void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 {
-	Assert (new_target >= quaterna);
-	Assert (new_target < quaterna_used_end);
-	
 	Quaterna * old_quaterna_used_end = quaterna_used_end;
 	
-	int new_num_quaterna = new_target - quaterna;
-	int new_num_nodes = new_num_quaterna << 2;
-	Node * new_nodes_available_end = nodes + new_num_nodes;
-	Quaterna * replaced_quaterna = quaterna;
+	DecreaseQuaterna(new_quaterna_used_end);
 	
-	bool success = true;
+	// Was there any decrease at all?
+	if (old_quaterna_used_end == quaterna_used_end)
+	{
+		Assert(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
+		return;
+	}
+	
+	FixUpDecreasedNodes(old_quaterna_used_end);
 
+	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);
+	
+	VerifyObject (* this);	// should fail because of the following.
+}
+
+// The first state of reducing the number of used nodes - and quaterna - is
+// to 
+void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
+{
+	// Verify that the input is indeed a decrease.
+	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_used_end + 1);
+	
+	// Loop through used quats backwards from far end.
 	do 
 	{
 		Quaterna & q = quaterna_used_end [- 1];
-		Node * children = q.nodes;
+		Node * nodes = q.nodes;
 		
+		// Is the quaterna is being used?
 		if (q.IsInUse()) 
 		{
+			// Is it a leaf, i.e. it is the quaterna associated with a grandparent?
 			if (! q.IsLeaf()) 
 			{
-				success = false;
-				//std::cerr << "success = false\n";
-				//Assert(false);
+				// If so, we cannot easily remove this quaterna.
+				// It's best to stop the reduction at this element.
+				int n = new_quaterna_used_end - quaterna;
+				int m = quaterna_used_end - quaterna;
+				std::cout << m << ":" << n << '\n';
 				break;
 			}
 			
-			q.parent_score = -1;
+			DeinitChildren(nodes);
 			
-			DeinitChildren(children);
+			// It is no longer being used.
+			q.parent_score = -1;
 		}
 
-		Assert(children[0].children == 0);
-		Assert(children[1].children == 0);
-		Assert(children[2].children == 0);
-		Assert(children[3].children == 0);
+		// Either way, there should be no children.
+		Assert(nodes[0].children == 0);
+		Assert(nodes[1].children == 0);
+		Assert(nodes[2].children == 0);
+		Assert(nodes[3].children == 0);
 		
-		// Are the children of this out-of-range quaterna in range?
-		if (children < new_nodes_available_end) 
-		{
-			Node * replaced_children;
-			
-			// If so, find an in-range quaterna with out-of-range nodes.
-			while ((replaced_children = replaced_quaterna->nodes) < new_nodes_available_end) 
-			{
-				++ replaced_quaterna;
-				Assert(replaced_quaterna < new_target);
-			}
-			
-			SubstituteChildren(children, replaced_children);
-			
-			replaced_quaterna->nodes = children;
-			Assert(replaced_quaterna->nodes < new_nodes_available_end);
-			
-			q.nodes = replaced_children;
-		}
-		Assert(q.nodes >= new_nodes_available_end);
-		
-		nodes_used_end -= 4;
 		-- quaterna_used_end;
-	}	while (quaterna_used_end > new_target);
+	}	
+	while (quaterna_used_end > new_quaterna_used_end);
 	
 	// Both quaterna_sorted_end and quaterna_used_end_target 
 	// must be equal to quaterna_used_end at this point. 
@@ -983,11 +973,60 @@ bool form::NodeBuffer::DecreaseNodes(Quaterna * new_target)
 		quaterna_sorted_end = quaterna_used_end;
 	}
 	
+	// Target is really for increasing the target during churn.
 	quaterna_used_end_target = quaterna_used_end;
+}
+
+void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
+{
+	// Remember where the used nodes used to end.
+//	Node * old_nodes_used_end = nodes_used_end;
 	
-	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);
+	// From the new used quaterna value, figure out new used node value.
+	int new_num_quaterna_used = quaterna_used_end - quaterna;
+	int new_num_nodes_used = new_num_quaterna_used << 2;	// 4 nodes per quaterna
+	nodes_used_end = nodes + new_num_nodes_used;
+	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);
 	
-	return success;
+	// Use this pointer to walk down the used quaterna array.
+	Quaterna * used_quaterna = quaterna_used_end;
+	
+	// For all the quaterna that have been freed up by the reduction...
+	for (Quaterna * unused_quaterna = old_quaterna_used_end - 1; unused_quaterna >= quaterna_used_end; -- unused_quaterna)
+	{
+		Assert(! unused_quaterna->IsInUse());
+		
+		Node * nodes = unused_quaterna->nodes;
+		
+		// Is a quatern past the end of used quaterna
+		// pointing to a node before the end of used nodes?
+		if (nodes < nodes_used_end)
+		{
+			// It needs to point to a quad of nodes past the end of used nodes.
+			// There must be a corresponding quad of nodes in such a position that is in use.
+			// They must be swapped.
+			
+			// Find the used quaterna whose nodes are past the end of the used range.
+			Node * substitute_nodes;
+			do
+			{
+				-- used_quaterna;
+				Assert(used_quaterna >= quaterna);
+				substitute_nodes = used_quaterna->nodes;
+			}
+			while (substitute_nodes < nodes_used_end);
+
+			SubstituteChildren(nodes, substitute_nodes);
+			std::swap(used_quaterna->nodes, unused_quaterna->nodes);
+		}
+	}
+
+#if ! defined(NDEBUG)
+	while ((-- used_quaterna) >= quaterna)
+	{
+		Assert(used_quaterna->nodes != nullptr);
+	}
+#endif
 }
 
 template <class FUNCTOR> void form::NodeBuffer::ForEachNode(FUNCTOR & f, int step_size)

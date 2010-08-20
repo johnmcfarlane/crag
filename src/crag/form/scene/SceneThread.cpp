@@ -25,9 +25,11 @@
 
 namespace 
 {
-	CONFIG_DEFINE (max_observer_position_length, double, 2500);
+	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
 	CONFIG_DEFINE (max_mesh_generation_period, app::TimeType, .2f);
 	CONFIG_DEFINE (post_reset_freeze_period, app::TimeType, 1.25f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.01f);
+	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 	CONFIG_DEFINE (dynamic_origin, bool, true);
 }
 
@@ -288,16 +290,26 @@ void form::SceneThread::AdjustNumQuaterna()
 		return;
 	}
 	
-	float num_quaterna = static_cast<float>(scene.GetNumQuaternaUsed());
-	float l = Log(frame_ratio);
-	float e = Exp(l * -0.01f);
-	
+	// Attenuate/invert the frame_ratio.
+	// Thus is becomes a multiplier on the new number of nodes.
+	// A worse frame rate translates into a lower number of nodes
+	// and hopefully, things improve. 
+	float frame_ratio_log = Log(frame_ratio);
+	float frame_ratio_exp = Exp(frame_ratio_log * - frame_rate_reaction_coefficient);
+
+	// Do the same thing with the mesh generation period.
+	// But only if we're over our prescribed time limit.
 	if (mesh_generation_period > max_mesh_generation_period)
 	{
-		e = Min(e, .9f);
+		// And be a lot more blunt.
+		frame_ratio_exp = Min(frame_ratio_exp, max_mesh_generation_reaction_coefficient);
+		
+		// Reset this so there isn't a continuous decrease in node-count before the next recording.
+		mesh_generation_period = 0;
 	}
 	
-	int target_num_quaterna = static_cast<int>(num_quaterna * e) + 1;
+	float num_quaterna = static_cast<float>(scene.GetNumQuaternaUsed());
+	int target_num_quaterna = static_cast<int>(num_quaterna * frame_ratio_exp) + 1;
 	
 	scene.SetNumQuaternaUsedTarget(target_num_quaterna);
 	

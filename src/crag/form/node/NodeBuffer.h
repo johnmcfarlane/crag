@@ -30,9 +30,16 @@ namespace form
 	// Declared in .cpp
 	struct Quaterna;
 	
+	// There's no easy way to explain all the things this class does.
+	// Some of the most complicated code lives in this class.
+	// In short, this is a full set of nodes needed to describe all the formations in a scene. 
+	// Nodes are grouped into fours because they are allocated in this number.
+	// They are also sorted in descending order of the score of their parents using Quaterna. 
+	// This way low-priority leaves can be removed and high-priority parents can grow. 
+	// TODO: This class needs to be broken up further. 
 	class NodeBuffer
 	{
-		friend class ExpandNodeFunctor;
+		//friend class ExpandNodeFunctor;
 	public:
 		
 		// Constants
@@ -73,7 +80,6 @@ namespace form
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
 		void UpdateNodeScores(Ray3 const & camera_ray_relative);
-		void UpdateGrandparentPrivaledge();
 		void UpdateQuaternaScores();
 		void SortQuaterna();
 		bool ChurnNodes();
@@ -101,8 +107,11 @@ namespace form
 		static void SubstituteChildren(Node * substitute, Node * children);
 		static void RepairChild(Node & child);
 
-		void IncreaseNodes(Quaterna * new_target);
-		bool DecreaseNodes(Quaterna * new_target);
+		void IncreaseNodes(Quaterna * new_quaterna_used_end);
+		void DecreaseNodes(Quaterna * new_quaterna_used_end);
+		
+		void DecreaseQuaterna(Quaterna * new_quaterna_used_end);
+		void FixUpDecreasedNodes(Quaterna * old_quaterna_used_end);
 		
 		// TODO: Parallelize
 		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, int step_size = 1024);
@@ -117,6 +126,7 @@ namespace form
 		
 		// An array of used nodes in ascending order of score.
 		// TODO: Plural of quaterna is quaterne. Maybe quaterna is just quadruplet in forin. 
+		// TODO: Maybe store nodes in sets of four and make them the Qua...whatevers and the quaterna something with sorted in the title.
 		Quaterna * const quaterna;		// [max_num_quaterna]
 
 		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
