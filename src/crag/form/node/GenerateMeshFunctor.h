@@ -32,7 +32,7 @@ namespace form
 		
 		bool IsLeaf(Node const & node) const
 		{
-			return node.IsInUse() && node.children == nullptr;
+			return /*node.IsInUse() &&*/ ! node.HasChildren();
 		}
 		
 		bool PerformPrefetchPass() const
@@ -42,7 +42,8 @@ namespace form
 		
 		void OnPrefetchPass(Node const & node)
 		{
-			if (IsLeaf(node)) {
+			if (IsLeaf(node)) 
+			{
 				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(0)));
 				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(1)));
 				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(2)));
