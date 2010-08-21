@@ -66,7 +66,11 @@ namespace form
 		static void ThreadFunc(SceneThread * scene_thread);
 		void Run();	// Called when thread is launched and runs the loop.
 		void ThreadTick();
+		
 		void AdjustNumQuaterna();
+		static int CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio);
+		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period);
+		
 		bool GenerateMesh();
 		
 		bool IsMainThread() const;
@@ -74,7 +78,7 @@ namespace form
 
 		Scene scene;
 		int num_nodes;
-		float frame_ratio;
+		float frame_ratio;	// ~ (actual framerate / ideal framerate)
 		core::Mutex scene_mutex;
 		double scene_tick_period;
 		

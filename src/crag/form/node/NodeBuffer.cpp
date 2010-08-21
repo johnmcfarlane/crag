@@ -223,7 +223,8 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 		return;
 	}
 
-	Quaterna * new_quaterna_used_end = Clamp<Quaterna *>(quaterna + n, quaterna + 0, const_cast<Quaterna *>(quaterna_end));
+	Quaterna * new_quaterna_used_end = quaterna + n;
+	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_end);
 	
 	if (new_quaterna_used_end == quaterna_used_end) 
 	{

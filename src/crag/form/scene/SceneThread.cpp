@@ -290,31 +290,62 @@ void form::SceneThread::AdjustNumQuaterna()
 		return;
 	}
 	
+	// Come up with two accounts of how many quaterna we should have.
+	int current_num_quaterna = scene.GetNumQuaternaUsed();
+	int frame_ratio_directed_target_num_quaterna = CalculateFrameRateDirectedTargetNumQuaterna(current_num_quaterna, frame_ratio);
+	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, mesh_generation_period);
+
+	// Pick the more conservative and submit it.
+	int target_num_quaterna = Min(mesh_generation_directed_target_num_quaterna, frame_ratio_directed_target_num_quaterna);
+	scene.SetNumQuaternaUsedTarget(target_num_quaterna);
+	
+	// Reset the parameters used to come to a decision so
+	// we don't just keep acting on them over and over. 
+	mesh_generation_period = 0;
+	frame_ratio = -1;
+}
+
+// Taking into account the framerate ratio, come up with a quaterna count.
+int form::SceneThread::CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio) 
+{
 	// Attenuate/invert the frame_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
 	float frame_ratio_log = Log(frame_ratio);
 	float frame_ratio_exp = Exp(frame_ratio_log * - frame_rate_reaction_coefficient);
-
-	// Do the same thing with the mesh generation period.
-	// But only if we're over our prescribed time limit.
-	if (mesh_generation_period > max_mesh_generation_period)
+	
+	float num_quaterna = static_cast<float>(current_num_quaterna);	
+	
+	int frame_ratio_directed_target_num_quaterna = static_cast<int>(num_quaterna * frame_ratio_exp) + 1;
+	
+	// Ensure the value is suitably clamped. 
+	if (frame_ratio_directed_target_num_quaterna > NodeBuffer::max_num_quaterna)
 	{
-		// And be a lot more blunt.
-		frame_ratio_exp = Min(frame_ratio_exp, max_mesh_generation_reaction_coefficient);
-		
-		// Reset this so there isn't a continuous decrease in node-count before the next recording.
-		mesh_generation_period = 0;
+		frame_ratio_directed_target_num_quaterna = NodeBuffer::max_num_quaterna;
+	}
+	Assert(frame_ratio_directed_target_num_quaterna > 0);
+	
+	return frame_ratio_directed_target_num_quaterna;
+}
+
+// Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
+int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period)
+{
+	// We're under budget so everything's ok.
+	if (mesh_generation_period < max_mesh_generation_period)
+	{
+		return NodeBuffer::max_num_quaterna;
 	}
 	
-	float num_quaterna = static_cast<float>(scene.GetNumQuaternaUsed());
-	int target_num_quaterna = static_cast<int>(num_quaterna * frame_ratio_exp) + 1;
+	// Reset this so there isn't a continuous decrease in node-count before the next recording.
+	int mesh_generation_directed_target_num_quaterna = static_cast<int>(current_num_quaterna * max_mesh_generation_reaction_coefficient) - 1;
+	if (mesh_generation_directed_target_num_quaterna < 0)
+	{
+		mesh_generation_directed_target_num_quaterna = 0;
+	}
 	
-	scene.SetNumQuaternaUsedTarget(target_num_quaterna);
-	
-	// reset this in case thread ticks before the next frame happens.
-	frame_ratio = -1;
+	return mesh_generation_directed_target_num_quaterna;
 }
 
 bool form::SceneThread::GenerateMesh()

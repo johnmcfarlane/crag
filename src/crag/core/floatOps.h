@@ -50,10 +50,23 @@ template<typename T> T Max(T const & a, T const & b)
 	return (a >= b) ? a : b;
 }
 
-template<typename T> T Clamp(T const & val, T const & min, T const & max)
+template<typename T> T Clamped(T const & val, T const & min, T const & max)
 {
 	Assert(min <= max);
 	return (val <= max) ? (val >= min) ? val : min : max;
+}
+
+template<typename T> void Clamp(T & val, T const & min, T const & max)
+{
+	Assert(min <= max);
+	if (val > max)
+	{
+		val = max;
+	}
+	else if (val < min)
+	{
+		val = min;
+	}
 }
 
 template<typename T> T Abs(T const & val)
