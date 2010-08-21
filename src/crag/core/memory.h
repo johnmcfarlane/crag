@@ -143,14 +143,17 @@ template <class FUNCTOR, class ELEMENT> void ForEach_Sub(FUNCTOR & f, ELEMENT * 
 	PrefetchArray(begin, end);
 	
 	// Do any additional pre-fetching desired by the functor.
-	if (f.PerformPrefetchPass()) {
-		for (ELEMENT * iterator = begin; iterator != end; ++ iterator) {
+	if (f.PerformPrefetchPass()) 
+	{
+		for (ELEMENT * iterator = begin; iterator != end; ++ iterator) 
+		{
 			f.OnPrefetchPass(* iterator);
 		}
 	}
 	
 	// Now do the work.
-	for (ELEMENT * iterator = begin; iterator != end; ++ iterator) {
+	for (ELEMENT * iterator = begin; iterator != end; ++ iterator) 
+	{
 		f(* iterator);
 	}
 }

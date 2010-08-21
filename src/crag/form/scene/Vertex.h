@@ -31,7 +31,7 @@ namespace form
 
 #if defined(FORM_VERTEX_COLOR)
 		gfx::Color4b color;
-#endif // defined(FORM_VERTEX_COLOR)
+#endif
 		
 		Vector3f norm;
 
