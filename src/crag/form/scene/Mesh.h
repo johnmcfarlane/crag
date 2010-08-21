@@ -37,7 +37,6 @@ namespace form
 		Vertex & AddVertex(Point const & p);
 	public:
 		
-		//void ClearPolys();
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
 		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
 

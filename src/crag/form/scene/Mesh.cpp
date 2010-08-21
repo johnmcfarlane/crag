@@ -76,22 +76,12 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p)
 #endif
 
 #if defined(FORM_VERTEX_COLOR)
-	addition.color = gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	//addition.color = gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	addition.color = p.col;
 #endif
 
 	return addition;
 }
-
-/*void form::Mesh::ClearPolys()
-{
-#if ! defined(NDEBUG)
-	int max_num_tris = indices.GetCapacity();
-#endif
-	
-	indices.Clear();
-	
-	Assert(max_num_tris == indices.GetCapacity());
-}*/
 
 void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal)
 {
@@ -123,14 +113,6 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & norma
 	
 	AddFace(* vert_a, * vert_b, * vert_c, normal);
 }
-
-/*void form::Mesh::AddFace(Point & a, Point & b, Point & c)
-{
-	Vector3f normal = TriangleNormal(static_cast<Vector3f const &>(a), 
-									 static_cast<Vector3f const &>(b), 
-									 static_cast<Vector3f const &>(c));
-	AddFace(a, b, c, FastNormalize(normal));
-}*/
 
 form::VertexBuffer & form::Mesh::GetVertices() 
 {
