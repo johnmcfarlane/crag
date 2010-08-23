@@ -34,26 +34,19 @@
 namespace 
 {
 
+	// If non-zero, this number of quaterna is enforced always.
+	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
+	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
 	CONFIG_DEFINE (fix_num_quaterna, int, 0);
 
-	// TODO: Shouldn't these just go in Quaterna.h
 
 	// local function definitions
-	bool SortByScore(form::Quaterna const & lhs, form::Quaterna const & rhs)
+	bool QuaternaSortUsed(form::Quaterna const & lhs, form::Quaterna const & rhs)
 	{
 		return lhs.parent_score > rhs.parent_score;
 	}
 	
-	bool SortByScoreExtreme(form::Quaterna const & lhs, form::Quaterna const & rhs)
-	{
-		if (! lhs.IsEasilyExpendable() && rhs.IsEasilyExpendable()) {
-			return true;
-		}
-		
-		return SortByScore(lhs, rhs);
-	}
-	
-	bool SortByNodes(form::Quaterna const & lhs, form::Quaterna const & rhs)
+	bool QuaternaSortUnused(form::Quaterna const & lhs, form::Quaterna const & rhs)
 	{
 		return lhs.nodes < rhs.nodes;
 	}
@@ -424,7 +417,6 @@ void form::NodeBuffer::UpdateQuaternaScores()
 }
 
 // Algorithm to sort nodes array. 
-// TODO: Exploit is_sorted somehow! 
 void form::NodeBuffer::SortQuaterna()
 {
 	if (quaterna_sorted_end == quaterna_used_end)
@@ -433,78 +425,9 @@ void form::NodeBuffer::SortQuaterna()
 		return;
 	}
 	
-#if 1
 	// Sure and steady ... and slow!
-	std::sort(quaterna, quaterna_used_end, SortByScore);
+	std::sort(quaterna, quaterna_used_end, QuaternaSortUsed);
 	quaterna_sorted_end = quaterna_used_end;
-	
-#else
-	// Since we only sort nodes in order to find the lowest-scoring nodes, 
-	// it makes sense to only bother ensuring the bottom end of nodes contains
-	// all the lowest-scoring nodes in ascening order. Beyond that, they can
-	// remain unordered. This algorithm takes advantage of this affordance.
-	
-	int num_sorted_nodes = Max(static_cast<int>(static_cast<float>(num_rankings_recycled_this_tick) * recycle_to_sorted_coefficient) + 1, min_sorted_nodes);
-	
-	Node * * const sorted_begin = rankings_begin;
-	Node * * const sorted_end = Min(sorted_begin + num_sorted_nodes, quaterna_available_end);
-	
-	// Sort the sorted portion nodes amongst themselves.
-	std::sort(sorted_begin, sorted_end, NodeComp);
-	
-	// Now ensure that nodes beyond
-	Node * * const unsorted_begin = sorted_end;
-	Node * const * const unsorted_end = quaterna_available_end;
-	
-	Node * const * const last_sorted = sorted_end - 1;
-	float last_sorted_score = (* last_sorted)->score;
-	
-	for (Node * * iterator = unsorted_begin; iterator < unsorted_end; ++ iterator)
-	{
-		Node * const node = * iterator;
-		float score = node->score;
-		
-		// If this node is higher score than any in the sorted portion,
-		Assert((* last_sorted)->score == last_sorted_score);
-		if (score >= last_sorted_score)
-		{
-			// then perform a mini-bubble on this and the previous node.
-			// Slowly, the entire array should tend towards sorted - which can only help. 
-			// TODO: cache iterator[-1]->score
-			if (score < iterator[-1]->score)
-			{
-				iterator[0] = iterator[-1];
-				iterator[-1] = node;
-				last_sorted_score = (* last_sorted)->score;
-			}
-			
-			continue;
-		}
-		// The node belongs in the sorted range.
-		
-		// Find the last position in the sorted range where node could go.
-		Node * * result = std::upper_bound(sorted_begin, sorted_end, * iterator, NodeComp);
-		Assert(result >= sorted_begin && result < sorted_end);
-		
-		// They all rolled over and one fell out.
-		(* iterator) = (* last_sorted);
-		
-		// Roll over, roll over.
-		Node * * const src = result;
-		Node * * const dst_begin = result + 1;
-		Node * const * const dst_end = sorted_end;
-		int count = dst_end - dst_begin;
-		memmove(dst_begin, src, count * sizeof(* nodes));
-		
-		// Finally, the little one. 
-		(* src) = node;
-		
-		last_sorted_score = (* last_sorted)->score;
-	}
-#endif
-	
-//	num_rankings_recycled += num_rankings_recycled_this_tick;
-//	num_rankings_recycled_this_tick = 0;
 }
 
 bool form::NodeBuffer::ChurnNodes()
@@ -576,8 +499,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];			
 		
 		if (! reusable_quaterna.IsSuitableReplacement(score)) 
-		{			
-			// TODO: If we get here, it's probably a great idea to early-out of the enture churn function.
+		{
 			return false;
 		}
 		
@@ -901,13 +823,13 @@ void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterna_used_end)
 	quaterna_used_end_target = new_quaterna_used_end;
 }
 
-// TODO: This can be improved a lot.
-// TODO: Should sweep all surviving quats first and do all the substitutions in the correct order.
-// TODO: That way, the unavailable quats can keep their node pointers.
+// Reduce the number of used nodes and, accordingly, the number of used quaterna.
+// This is quite an involved and painful process which sometimes fails half-way through.
 void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 {
 	Quaterna * old_quaterna_used_end = quaterna_used_end;
-	
+
+	// First decrease the number of quaterna. This is the bit that sometimes fails.
 	DecreaseQuaterna(new_quaterna_used_end);
 	
 	// Was there any decrease at all?
@@ -917,9 +839,10 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 		return;
 	}
 	
+	// Because the nodes aren't in the correct order, decreasing them is somewhat more tricky.
 	FixUpDecreasedNodes(old_quaterna_used_end);
 
-	std::sort(quaterna_used_end, old_quaterna_used_end, SortByNodes);
+	std::sort(quaterna_used_end, old_quaterna_used_end, QuaternaSortUnused);
 	
 	VerifyObject (* this);	// should fail because of the following.
 }

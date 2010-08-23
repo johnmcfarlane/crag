@@ -47,14 +47,15 @@ namespace gl
 
 	inline void ReportError(char const * file, int line, char const * statement, GLenum error)
 	{
-		Log(file, line, std::cerr) << "error 0x" << std::hex << error << ": " << gluErrorString(error) << ", \"" << statement << '"' << '\n' << std::endl << std::flush;
+		Log(file, line, std::cerr) << "error 0x" << std::hex << error << ": " << gluErrorString(error) << ", \"" << statement << '"' << std::endl << std::flush;
 		assert(false);
 	}
 
 	inline void Verify(char const * file, int line, char const * statement)
 	{
 		GLenum error = glGetError(); 
-		if (error == GL_NO_ERROR) {
+		if (error == GL_NO_ERROR) 
+		{
 			return;
 		}
 		ReportError(file, line, statement, error);

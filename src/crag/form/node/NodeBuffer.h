@@ -36,7 +36,7 @@ namespace form
 	// Nodes are grouped into fours because they are allocated in this number.
 	// They are also sorted in descending order of the score of their parents using Quaterna. 
 	// This way low-priority leaves can be removed and high-priority parents can grow. 
-	// TODO: This class needs to be broken up further. 
+	// TODO: This class needs to be broken up further. NodeSet contains PointBuffer, NodeBuffer and QuaternaBuffer perhaps?
 	class NodeBuffer
 	{
 		//friend class ExpandNodeFunctor;
@@ -125,7 +125,8 @@ namespace form
 		Node const * const nodes_end;
 		
 		// An array of used nodes in ascending order of score.
-		// TODO: Plural of quaterna is quaterne. Maybe quaterna is just quadruplet in forin. 
+		// TODO: Plural of quaterna is quaterne. Maybe quaterna is just quadruplet in forin languich. 
+		// TODO: quadrisection: The action of dividing something into four parts.
 		// TODO: Maybe store nodes in sets of four and make them the Qua...whatevers and the quaterna something with sorted in the title.
 		Quaterna * const quaterna;		// [max_num_quaterna]
 

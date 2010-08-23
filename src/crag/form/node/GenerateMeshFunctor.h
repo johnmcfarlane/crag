@@ -21,7 +21,9 @@ namespace form
 	// forward-declarations
 	class Mesh;
 	
-	// TODO: I think the seams will go away if the rule is that a mid-point can only be used if the corresponding neighbour exists.
+
+	// This node functor is called on every used node in the NodeNuffer and
+	// uses the vertices associated with those nodes to generate the given mesh.
 	class GenerateMeshFunctor : public NodeFunctor
 	{
 	public:

@@ -281,8 +281,7 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 	}
 }
 
-// TODO: This whole function is a spaghetti junction.
-//  Probably needs to live in Polyhedron.
+// The given pair contains a formation and a polyhedron.
 void form::Scene::InitPolyhedron(FormationPair & pair)
 {
 	Formation const & formation = ref(pair.first);

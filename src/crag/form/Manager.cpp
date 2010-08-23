@@ -46,7 +46,6 @@ form::Manager::Manager(sim::Observer & init_observer)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
 , front_buffer_object(& buffer_objects [0])
 , back_buffer_object(& buffer_objects [1])
-, front_buffer_origin(sim::Vector3::Zero())
 {
 	for (int mesh_index = 0; mesh_index < 2; ++ mesh_index)
 	{
@@ -139,7 +138,7 @@ void form::Manager::Launch()
 
 void form::Manager::Tick()
 {
-	if (scene_thread->OutOfRange()) {
+	if (! scene_thread->IsOriginOk()) {
 		scene_thread->ResetOrigin();
 		regenerating = true;
 	}
@@ -168,12 +167,10 @@ bool form::Manager::PollMesh()
 		return false;
 	}
 	
-	bool flat_shaded;
-	if (scene_thread->PollMesh(* back_buffer_object, front_buffer_origin, flat_shaded))
+	if (scene_thread->PollMesh(* back_buffer_object))
 	{
 		// TODO: Do we definitely need two of these?
 		std::swap(front_buffer_object, back_buffer_object);
-		front_buffer_flat_shaded = flat_shaded;
 		return true;
 	}
 	
@@ -181,53 +178,57 @@ bool form::Manager::PollMesh()
 }
 
 void form::Manager::Render(gfx::Pov const & pov, bool color) const
-{	
+{
+	RenderFormations(pov, color);
+	
+	// This is an arbitrary way to make sure this fn only gets called once per frame.
+	if (color)
+	{
+		DebugStats();
+	}
+}
+
+void form::Manager::RenderFormations(gfx::Pov const & pov, bool color) const
+{
+	if (front_buffer_object->GetNumPolys() <= 0)
+	{
+		return;
+	}
+	
 	// State
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular));
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
+	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
+	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular)));
+	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
+	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
+	GLPP_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
 
-	if (front_buffer_flat_shaded) 
-	{
-		GLPP_CALL(glShadeModel(GL_FLAT));
-	}
-	
-	// Copy POV, adjust for mesh's origin and set as matrix.
-	gfx::Pov formation_pov = pov;
-	formation_pov.pos -= front_buffer_origin;
-	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
-	gl::LoadMatrix(formation_pov.CalcModelViewMatrix().GetArray());
-	
 #if defined(FORM_VERTEX_TEXTURE)
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	gl::Enable(GL_TEXTURE_2D);
-	gl::Bind(& texture);
+	GLPP_CALL(gl::Enable(GL_TEXTURE_2D));
+	GLPP_CALL(gl::Bind(& texture));
 #else
 	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
 #endif
 	
 	// Draw the mesh!
-	front_buffer_object->BeginDraw(color);
+	front_buffer_object->BeginDraw(pov, color);
 	front_buffer_object->Draw();
 	front_buffer_object->EndDraw();
+	GLPP_VERIFY;
 	
 #if defined(FORM_VERTEX_TEXTURE)
-	gl::Disable(GL_TEXTURE_2D);
+	GLPP_CALL(gl::Disable(GL_TEXTURE_2D));
 #endif
 	
-	if (front_buffer_flat_shaded) 
-	{
-		GLPP_CALL(glShadeModel(GL_SMOOTH));
-	}
 	//gl::Enable(GL_COLOR_MATERIAL);
+}
 
-	// Debug output
+void form::Manager::DebugStats() const
+{
 	if (gfx::Debug::GetVerbosity() > .75) 
 	{
 		for (int i = 0; i < 2; ++ i) 
@@ -246,11 +247,6 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 		}
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .75) 
-	{
-		gfx::Debug::out << "origin:" << front_buffer_origin << '\n';
-	}
-	
 	if (gfx::Debug::GetVerbosity() > .25) 
 	{
 		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaUsed() << 2) << '\n';
@@ -264,6 +260,12 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 	if (gfx::Debug::GetVerbosity() > .5) 
 	{
 		//Debug::out << "target nodes:" << target_num_nodes << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .15) 
+	{
+		// TODO: Stop this flickering.
+		gfx::Debug::out << "polys:" << front_buffer_object->GetNumPolys() << '\n';
 	}
 }
 

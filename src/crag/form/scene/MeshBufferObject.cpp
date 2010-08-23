@@ -16,50 +16,75 @@
 #include "core/ConfigEntry.h"
 
 #include "gfx/Color.h"
+#include "gfx/Pov.h"
 
 
 form::MeshBufferObject::MeshBufferObject()
-: max_index(0)
+: origin(Vector3d::Zero())
+, max_index(0)
+, flat_shaded(false)
 {
 }
 
-void form::MeshBufferObject::Set(form::Mesh const & mesh)
+void form::MeshBufferObject::Set(form::Mesh const & mesh, Vector3d const & in_origin, bool in_flat_shaded)
 {
 	SetVbo(mesh.GetVertices());
 	SetIbo(mesh.GetIndices());
+	
+	origin = in_origin;
+	flat_shaded = in_flat_shaded;
 }
 
-void form::MeshBufferObject::BeginDraw(bool color)
+int form::MeshBufferObject::GetNumPolys() const
 {
+	return max_index / 3;
+}
+
+void form::MeshBufferObject::BeginDraw(gfx::Pov pov, bool color)
+{
+	Assert (max_index > 0);
+	
+	// Adjust our copy of the pov for mesh's origin and set as matrix.
+	pov.pos -= origin;
+	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
+	gl::LoadMatrix(pov.CalcModelViewMatrix().GetArray());
+	
+	if (flat_shaded) 
+	{
+		GLPP_CALL(glShadeModel(GL_FLAT));
+	}
+	
 	// Enable all the magic buffer thingeys.
-	glEnableClientState( GL_VERTEX_ARRAY );
+	GLPP_CALL(glEnableClientState( GL_VERTEX_ARRAY ));
 	if (color) {
-		glEnableClientState( GL_NORMAL_ARRAY );
+		GLPP_CALL(glEnableClientState( GL_NORMAL_ARRAY ));
 #if defined(FORM_VERTEX_COLOR)
-		glEnableClientState( GL_COLOR_ARRAY );
+		GLPP_CALL(glEnableClientState( GL_COLOR_ARRAY ));
 #endif
 	}
 #if defined(FORM_VERTEX_TEXTURE)
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	GLPP_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 #endif
 	
 	Bind();
 	
 	const Vertex * null_vert = 0;
-	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), & null_vert->pos);
+	GLPP_CALL(glVertexPointer(3, GL_FLOAT, sizeof(Vertex), & null_vert->pos));
 	if (color) {
-		glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm);
+		GLPP_CALL(glNormalPointer(GL_FLOAT, sizeof(Vertex), & null_vert->norm));
 #if defined(FORM_VERTEX_COLOR)
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->color);
+		GLPP_CALL(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), & null_vert->color));
 #endif
 	}
 #if defined(FORM_VERTEX_TEXTURE)
-	glTexCoordPointer (2, GL_FLOAT, sizeof(Vertex), & null_vert->texture);
+	GLPP_CALL(glTexCoordPointer (2, GL_FLOAT, sizeof(Vertex), & null_vert->texture));
 #endif
 }
 
 void form::MeshBufferObject::EndDraw()
 {
+	Assert (max_index > 0);
+		
 	// Disable all the magic buffer thingeys.
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -69,12 +94,18 @@ void form::MeshBufferObject::EndDraw()
 #if defined(FORM_VERTEX_TEXTURE)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
-}	
+
+	if (flat_shaded) 
+	{
+		GLPP_CALL(glShadeModel(GL_SMOOTH));
+	}
+}
 
 void form::MeshBufferObject::Draw()
 {
+	Assert (max_index > 0);	
 	//Assert(ibo.IsBound());	// sometimes fails for personal amusement
-	gl::Mesh<Vertex>::Draw(0, max_index);
+	GLPP_CALL(gl::Mesh<Vertex>::Draw(0, max_index));
 }
 
 void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
@@ -86,9 +117,7 @@ void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
 
 void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
 {
-	size_t num_indices = indices.GetSize();
-	gfx::IndexBuffer::value_type const * index_array = (num_indices > 0) ? indices.GetArray() : nullptr;
-	gl::Mesh<Vertex>::SetIbo(num_indices, index_array);
-
-	max_index = num_indices;
+	max_index = indices.GetSize();
+	gfx::IndexBuffer::value_type const * index_array = (max_index > 0) ? indices.GetArray() : nullptr;
+	gl::Mesh<Vertex>::SetIbo(max_index, index_array);
 }

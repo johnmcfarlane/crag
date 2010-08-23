@@ -71,8 +71,6 @@ void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & or
 	
 	// Create me some points.
 	// (These are the four points of the initial tetrahedron.
-	// TODO: Use the word tetrahedron loads more. It sounds clever yet is easy to wikipedarize. 
-	// TODO: GetPoints should be the only way we grab points for the benefit of shader.
 	Point * root_points[4] = 
 	{
 		point_buffer.Alloc(),

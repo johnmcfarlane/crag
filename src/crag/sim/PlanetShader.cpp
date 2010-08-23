@@ -38,7 +38,7 @@ namespace
 	
 	sim::Scalar root_three = Sqrt(3.);
 	
-	// RootNode initialization data
+	// RootNode initialization data. A tetrahedron.
 	sim::Vector3 root_corners[4] = 
 	{
 		sim::Vector3(-1, -1, -1),

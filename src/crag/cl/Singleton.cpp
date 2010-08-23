@@ -44,7 +44,6 @@ cl::Singleton::Singleton()
 	cl_platform_id platforms[max_platforms];
 	CL_CHECK (clGetPlatformIDs (max_platforms, platforms, & count));
 
-	Assert(count < 2);	// TODO: Add extra code to choose between multiple platforms.
 	if (count == 0)
 	{
 		std::cerr << "Could not find an OpenCL platform. Missing driver/GPU?\n";

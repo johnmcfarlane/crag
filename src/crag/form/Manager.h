@@ -74,6 +74,9 @@ namespace form {
 		void Render(gfx::Pov const & pov, bool color) const;
 
 	private:
+		void RenderFormations(gfx::Pov const & pov, bool color) const;
+		void DebugStats() const;
+		
 #if defined(FORM_VERTEX_TEXTURE)
 		bool InitTexture();
 #endif
@@ -93,10 +96,6 @@ namespace form {
 		form::MeshBufferObject buffer_objects[2];
 		form::MeshBufferObject * volatile front_buffer_object;
 		form::MeshBufferObject * volatile back_buffer_object;
-		
-		// TODO: puts these in new object: FrontBufferAttributes
-		sim::Vector3 front_buffer_origin;
-		bool front_buffer_flat_shaded;
 	};	
 
 }

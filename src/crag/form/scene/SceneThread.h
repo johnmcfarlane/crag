@@ -33,7 +33,6 @@ namespace form
 	// The scene is the workhorse of the formation system. 
 	// SceneThread provides a thread-safe interface to the rest of the system.
 	// Optionally, it can also run the scene without multithreading.
-	// TODO: Overloaded meaning; this isn't really a thread.
 	class SceneThread
 	{
 	public:
@@ -55,12 +54,12 @@ namespace form
 		
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
-		bool PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin, bool & flat_shaded);
+		bool PollMesh(form::MeshBufferObject & mbo);
 		void ResetOrigin();
 		bool PostResetFreeze() const;
 		void ToggleFlatShaded();
 		
-		bool OutOfRange() const;
+		bool IsOriginOk() const;
 		
 	private:
 		static void ThreadFunc(SceneThread * scene_thread);

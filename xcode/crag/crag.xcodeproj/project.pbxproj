@@ -674,6 +674,7 @@
 			children = (
 				52F6F4ED11E4C2DE00241409 /* cl */,
 				52F3A30611A7979400385922 /* COPYING */,
+				52F3A30711A7979400385922 /* core */,
 				52F3A32311A7979400385922 /* form */,
 				52C53E2011D8FC1000FA73AA /* geom */,
 				52F3A34711A7979400385922 /* gfx */,
@@ -715,22 +716,21 @@
 				52A244D911B0E2DD008C0CE8 /* Thread.cpp */,
 				52F3A31D11A7979400385922 /* Thread.h */,
 			);
-			name = core;
-			path = ../../../crag/src/crag/core;
+			path = core;
 			sourceTree = "<group>";
 		};
 		52F3A32311A7979400385922 /* form */ = {
 			isa = PBXGroup;
 			children = (
-				52DF193811E92CB500AF25A1 /* scene */,
-				52DF18E611E8FF1C00AF25A1 /* node */,
-				52DF187811E8FAC500AF25A1 /* score */,
 				5278B8DE11D5048500E2F375 /* defs.h */,
 				52F3A32611A7979400385922 /* Formation.cpp */,
 				52F3A32711A7979400385922 /* Formation.h */,
 				522CAF7A11D264CD002A3FAE /* FormationFunctor.h */,
 				52F3A32C11A7979400385922 /* Manager.cpp */,
 				52F3A32D11A7979400385922 /* Manager.h */,
+				52DF18E611E8FF1C00AF25A1 /* node */,
+				52DF193811E92CB500AF25A1 /* scene */,
+				52DF187811E8FAC500AF25A1 /* score */,
 			);
 			path = form;
 			sourceTree = "<group>";
@@ -831,7 +831,6 @@
 		52F3A42111A7A1A200385922 /* ode */ = {
 			isa = PBXGroup;
 			children = (
-				52F3A30711A7979400385922 /* core */,
 				52F3A45A11A7A1A300385922 /* array.cpp */,
 				52F3A45B11A7A1A300385922 /* array.h */,
 				52F3A45C11A7A1A300385922 /* box.cpp */,

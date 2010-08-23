@@ -110,25 +110,28 @@ template<typename T> inline void PrefetchObject(T const & object)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// ForEach with Prefetch
+// ForEach - std::for_each chunked with Prefetch
+// 
 
-template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begin, ELEMENT * end, int step_size)
+// TODO: Go back to the scheme where multiple passes are performed by having each functor return another functor. 
+// TODO: Make a SMP version!!!
+template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begin, ELEMENT * end, int chunk_size)
 {
 	int total_num_nodes = end - begin;
-	int full_steps = total_num_nodes / step_size;
+	int full_steps = total_num_nodes / chunk_size;
 	
 	// main pass
 	for (int step = 0; step < full_steps; step ++)
 	{
-		ELEMENT * sub_begin = begin + step * step_size;
-		ELEMENT * sub_end = sub_begin + step_size;
+		ELEMENT * sub_begin = begin + step * chunk_size;
+		ELEMENT * sub_end = sub_begin + chunk_size;
 		ForEach_Sub(f, sub_begin, sub_end);
 	}
 	
 	// remainder
-	ELEMENT * sub_begin = begin + full_steps * step_size;
+	ELEMENT * sub_begin = begin + full_steps * chunk_size;
 	ELEMENT * sub_end = end;
-	Assert(sub_end - sub_begin == total_num_nodes % step_size);
+	Assert(sub_end - sub_begin == total_num_nodes % chunk_size);
 	
 	if (sub_begin < sub_end)
 	{
@@ -139,7 +142,6 @@ template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begi
 template <class FUNCTOR, class ELEMENT> void ForEach_Sub(FUNCTOR & f, ELEMENT * begin, ELEMENT * end)
 {
 	// Pre-fetch the actual nodes.
-	// TODO: Find out if this does any good at all. 
 	PrefetchArray(begin, end);
 	
 	// Do any additional pre-fetching desired by the functor.

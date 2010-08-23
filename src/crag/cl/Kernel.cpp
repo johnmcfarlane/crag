@@ -140,12 +140,9 @@ bool cl::Kernel::SaveCFile(char const * filename, char const * kernel_source, ch
 			out_file << (* c);
 		}
 	}
-	
 	out_file << "\";\n";
-	out_file.close();
-	
-	// TODO: A little less optimizm? 
-	return true;
+
+	return ! out_file.fail();
 }
 
 void cl::Kernel::SetAdditionalArg(int index, size_t size, void const * value)

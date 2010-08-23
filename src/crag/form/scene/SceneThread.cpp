@@ -148,11 +148,6 @@ void form::SceneThread::Tick()
 			gfx::Debug::out << "resetting...\n";
 		}
 	}
-	
-	if (gfx::Debug::GetVerbosity() > .15) 
-	{
-		gfx::Debug::out << "polys:" << mesh.GetNumPolys() << '\n';
-	}
 }
 
 void form::SceneThread::ForEachFormation(FormationFunctor & f) const
@@ -160,7 +155,7 @@ void form::SceneThread::ForEachFormation(FormationFunctor & f) const
 	scene.ForEachFormation(f);
 }
 
-bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & origin, bool & flat_shaded)
+bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
@@ -173,10 +168,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo, sim::Vector3 & or
 	
 	if (mesh_updated)
 	{
-		origin = mesh_origin;
-		flat_shaded = mesh.GetFlatShaded();
-		
-		mbo.Set(mesh);
+		mbo.Set(mesh, mesh_origin, mesh.GetFlatShaded());
 
 		mesh_updated = false;
 		polled = true;
@@ -213,24 +205,26 @@ void form::SceneThread::ToggleFlatShaded()
 	mesh.SetFlatShaded(! mesh.GetFlatShaded());
 }
 
-// TODO: Should really say 'need origin reset'
-bool form::SceneThread::OutOfRange() const
+// Returns false if a new origin is needed.
+bool form::SceneThread::IsOriginOk() const
 {
 	if (reset_origin_flag) 
 	{
 		// We're on it already!
-		return false;
+		return true;
 	}
 	
 	if (PostResetFreeze())
 	{
 		// Still making the last one
-		return false;
+		return true;
 	}
 	
+	// The real test: Is the observer not far enough away from the 
+	// current origin that visible inaccuracies might become apparent?
 	sim::Vector3 const & observer_pos = observer.GetPosition();
 	double observer_position_length = Length(observer_pos - scene.GetOrigin());
-	return observer_position_length > max_observer_position_length;
+	return observer_position_length < max_observer_position_length;
 }
 
 void form::SceneThread::ThreadFunc(SceneThread * scene_thread)
