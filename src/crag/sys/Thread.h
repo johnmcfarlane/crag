@@ -13,8 +13,12 @@
 #include <SDL_thread.h>
 
 
-namespace core
+namespace sys
 {
+
+	// A thread! Well, handles launching / ending a thread.
+	// Rather cumbersome syntax/appearance is because different APIs return different values so I can't
+	// use a common function signature directly but have to run everything through a Launch function.
 	class Thread 
 	{
 	public:
@@ -42,4 +46,5 @@ namespace core
 		void * data;
 		SDL_Thread * sdl_thread;
 	};
+	
 }

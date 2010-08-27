@@ -13,12 +13,12 @@
 #include "Mesh.h"
 #include "Scene.h"
 
-#include "core/Mutex.h"
-#include "core/Thread.h"
+#include "sys/Mutex.h"
+#include "sys/Thread.h"
 
 #include "glpp/glpp.h"
 
-#include "core/App.h"
+#include "sys/App.h"
 
 
 namespace sim
@@ -78,7 +78,7 @@ namespace form
 		Scene scene;
 		int num_nodes;
 		float frame_ratio;	// ~ (actual framerate / ideal framerate)
-		core::Mutex scene_mutex;
+		sys::Mutex scene_mutex;
 		double scene_tick_period;
 		
 		FormationSet const & formations;		
@@ -96,12 +96,12 @@ namespace form
 		// and get passed to the VBOs.
 		form::Mesh mesh;
 		sim::Vector3 mesh_origin;
-		core::Mutex mesh_mutex;
+		sys::Mutex mesh_mutex;
 		bool mesh_updated;
 		app::TimeType mesh_generation_time;
 		double mesh_generation_period;
 
-		core::Thread * thread;
+		sys::Thread * thread;
 	};
 }
 

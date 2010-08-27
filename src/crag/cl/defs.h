@@ -11,15 +11,14 @@
 #pragma once
 
 
-#if defined(WIN32) || (defined(__APPLE__) && ! defined(__ppc__))
-#define USE_OPENCL 1
-#else
-#define USE_OPENCL 0
-#endif
+//#if defined(WIN32) || (defined(__APPLE__) && ! defined(__ppc__))
+//#define USE_OPENCL
+//#endif
 
 
-#if USE_OPENCL
+#if defined(USE_OPENCL)
 
+#error Not currently using OpenCL.
 
 #if defined(__APPLE__)
 #include <OpenCL/opencl.h>

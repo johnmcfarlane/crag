@@ -12,7 +12,7 @@
 
 #include "VertexBuffer.h"
 
-#include "core/memory.h"
+#include "sys/memory.h"
 #include "geom/VectorOps.h"
 
 

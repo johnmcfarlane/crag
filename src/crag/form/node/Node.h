@@ -12,7 +12,7 @@
 
 #include "form/node/Point.h"
 
-#include "core/memory.h"
+#include "sys/memory.h"
 
 
 namespace form

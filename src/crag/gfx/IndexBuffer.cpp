@@ -15,7 +15,7 @@
 //#include "form/VertexBuffer.h"
 
 #include "geom/VectorOps.h"
-#include "core/memory.h"
+#include "sys/memory.h"
 
 
 //////////////////////////////////////////////////////////////////////

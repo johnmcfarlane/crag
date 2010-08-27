@@ -28,6 +28,8 @@
 #include "core/ConfigEntry.h"
 #include "core/floatOps.h"
 
+#include "sys/Scheduler.h"
+
 #include <algorithm>
 
 
@@ -69,7 +71,7 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 , quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : target_num_quaterna, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , points(max_num_verts)
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 , cpu_kernel(nullptr)
 , gpu_kernel(nullptr)
 #endif
@@ -263,18 +265,20 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 
 	// Now resort the quaterna so they are in order again.
 	SortQuaterna();
-
+	
 	// Finally, using the quaterna,
 	// replace nodes whose parent's scores have dropped enough
-	// with ones whose score have increased enough.p
-	ChurnNodes();
+	// with ones whose score have increased enough.
+	while (ChurnNodes())
+	{
+	}
 	
 	VerifyObject (* this);	// should fail because of the following.
 }
 
 void form::NodeBuffer::InitKernel()
 {
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 	cl::Singleton const & cl_singleton = cl::Singleton::Get();
 	
 	switch (cl_singleton.GetDeviceType())
@@ -356,7 +360,7 @@ void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 
 void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 {
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 	if (cpu_kernel != nullptr)
 	{
 		cpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position, camera_ray_relative.direction);
@@ -369,7 +373,7 @@ void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 #endif
 	{
 		CalculateNodeScoreFunctor f(camera_ray_relative.position, camera_ray_relative.direction);
-		ForEachNode(f);
+		ForEachNode_Paralell(f);
 	}
 }
 
@@ -436,7 +440,7 @@ bool form::NodeBuffer::ChurnNodes()
 	// TODO: This will expand the nodes in an improved order.
 
 	ExpandNodeFunctor f(* this);
-	ForEachNode(f);
+	ForEachNode_Serial(f);
 	
 	return f.GetNumExpanded() > 0;
 }
@@ -457,7 +461,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	
 	{
 		GenerateMeshFunctor f(mesh);
-		ForEachNode(f);
+		ForEachNode_Serial(f);
 	}
 	
 	vertices.NormalizeNormals();
@@ -953,8 +957,43 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 #endif
 }
 
-template <class FUNCTOR> void form::NodeBuffer::ForEachNode(FUNCTOR & f, int step_size)
+template <class FUNCTOR> class SchedulerNodeFunctor : public sys::Scheduler::Functor
+{
+public:
+	SchedulerNodeFunctor(FUNCTOR & init_f, form::Node * init_nodes)
+	: f(init_f)
+	, nodes(init_nodes)
+	{
+	}
+	
+private:
+	virtual void operator () (int first, int last)
+	{
+		ForEach_Sub(f, nodes + first, nodes + last);
+	}
+	
+	FUNCTOR & f;
+	form::Node * nodes;
+};
+
+template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Serial(FUNCTOR & f, int step_size)
 {
 	ForEach(f, nodes, nodes_used_end, step_size);
+}
+
+template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Paralell(FUNCTOR & f, int step_size)
+{
+	//ForEachNode_Serial(f, step_size);
+	//return;
+	
+	int num_nodes = nodes_used_end - nodes;
+	if (num_nodes == 0)
+	{
+		return;
+	}
+	
+	sys::Scheduler & scheduler = sys::Scheduler::Get();
+	SchedulerNodeFunctor<FUNCTOR> snf(f, nodes);
+	scheduler.Dispatch(snf, 0, num_nodes, step_size);
 }
 

@@ -16,20 +16,20 @@
 #include "core/debug.h"
 
 
-core::Mutex::Mutex()
+sys::Mutex::Mutex()
 : sdl_semaphore(SDL_CreateSemaphore(1))
 {
 	Assert(sdl_semaphore != nullptr);
 }
 
-core::Mutex::~Mutex()
+sys::Mutex::~Mutex()
 {
 	Assert(sdl_semaphore != nullptr);
 	Assert(SDL_SemValue(sdl_semaphore) == 1);
 	SDL_DestroySemaphore(sdl_semaphore);
 }
 
-void core::Mutex::Lock()
+void sys::Mutex::Lock()
 {
 	if (SDL_SemWait(sdl_semaphore) != 0)
 	{
@@ -38,7 +38,7 @@ void core::Mutex::Lock()
 	}
 }
 
-bool core::Mutex::TryLock()
+bool sys::Mutex::TryLock()
 {
 	int result = SDL_SemTryWait(sdl_semaphore);
 	
@@ -57,7 +57,7 @@ bool core::Mutex::TryLock()
 	}
 }
 
-void core::Mutex::Unlock()
+void sys::Mutex::Unlock()
 {
 	if (SDL_SemPost(sdl_semaphore) != 0)
 	{

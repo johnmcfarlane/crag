@@ -78,7 +78,7 @@ void form::SceneThread::Launch()
 	
 	if (threaded) {
 		Assert(thread == nullptr);
-		thread = new core::Thread(ThreadFunc, this);
+		thread = new sys::Thread(ThreadFunc, this);
 	}
 }
 
@@ -246,8 +246,6 @@ void form::SceneThread::Run()
 			ThreadTick();
 		}
 	}
-	
-	quit_flag = false;
 }
 
 // The tick function of the scene thread. 

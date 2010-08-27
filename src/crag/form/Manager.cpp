@@ -247,7 +247,7 @@ void form::Manager::DebugStats() const
 		}
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .25) 
+	if (gfx::Debug::GetVerbosity() > .2) 
 	{
 		gfx::Debug::out << "current nodes:" << (scene_thread->GetNumQuaternaUsed() << 2) << '\n';
 	}

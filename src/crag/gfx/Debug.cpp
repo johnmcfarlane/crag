@@ -26,7 +26,7 @@
 
 #include "geom/Vector3.h"
 
-#include "core/Mutex.h"
+#include "sys/Mutex.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
 	// Mutex for global functions.
-	core::Mutex mutex;
+	sys::Mutex mutex;
 	
 	// The string into which is written gfx::Debug::out.
 	std::stringstream out_stream;

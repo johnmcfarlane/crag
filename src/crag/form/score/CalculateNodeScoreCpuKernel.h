@@ -11,7 +11,7 @@
 
 #include "cl/CpuKernel.h"
 
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 
 #include "form/defs.h"
 

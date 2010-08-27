@@ -13,16 +13,16 @@
 #include "Font.h"
 #include "Image.h"
 
-#include "core/Mutex.h"
+#include "sys/Mutex.h"
 
-#include "core/App.h"
+#include "sys/App.h"
 
 
 namespace 
 {
 	// TODO: All a big hack.
 	::std::vector<gl::Vertex2dTex> vertex_buffer;
-	core::Mutex vertex_buffer_mutex;
+	sys::Mutex vertex_buffer_mutex;
 	
 	int margin_hack[2] = { 8, 8 };
 }

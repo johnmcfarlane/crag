@@ -10,7 +10,7 @@
 
 #include "defs.h"
 
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 
 #include "Kernel.h"
 

@@ -12,7 +12,7 @@
 
 #include "CalculateNodeScoreCpuKernel.h"
 
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 
 #include "form/node/Node.h"
 

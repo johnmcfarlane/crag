@@ -14,9 +14,10 @@
 
 #include "sim/defs.h"
 
-#include "core/App.h"
 #include "core/Singleton.h"
-#include "core/Thread.h"
+
+#include "sys/App.h"
+#include "sys/Thread.h"
 
 #if defined(FORM_VERTEX_TEXTURE)
 #include "glpp/Texture.h"

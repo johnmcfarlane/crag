@@ -36,7 +36,7 @@ void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 	// towardness: -1=facing away, 1=facing towards
 	// purpose: favour polys which are facing towards the camera
 	float camera_dp = DotProduct(camera_to_node, node.normal);
-	float towardness_factor = Max(camera_dp, 0.1f);
+	float towardness_factor = Exp(camera_dp);
 	score *= towardness_factor;
 
 	// Distance-based falloff.

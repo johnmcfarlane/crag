@@ -16,6 +16,8 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
+#include "sys/Scheduler.h"
+
 #include "physics/Singleton.h"
 #include "cl/Singleton.h"
 #include "gfx/Renderer.h"
@@ -84,9 +86,12 @@ namespace
 		}
 		
 		physics::Singleton physics_singleton;
+#if defined(USE_OPENCL)
 		cl::Singleton cl_singleton;
+#endif
 		gfx::Renderer renderer;
-
+		sys::Scheduler scheduler;
+		
 		// Run the simulation.
 		sim::Simulation * sim = new sim::Simulation ();
 		sim->Run();

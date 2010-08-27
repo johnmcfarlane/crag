@@ -13,7 +13,7 @@
 #include "PointBuffer.h"
 
 #include "core/debug.h"
-#include "core/Mutex.h"
+#include "sys/Mutex.h"
 
 #include "geom/Vector3.h"
 
@@ -113,8 +113,8 @@ namespace form
 		void DecreaseQuaterna(Quaterna * new_quaterna_used_end);
 		void FixUpDecreasedNodes(Quaterna * old_quaterna_used_end);
 		
-		// TODO: Parallelize
-		template <class FUNCTOR> void ForEachNode(FUNCTOR & f, int step_size = 1024);
+		template <class FUNCTOR> void ForEachNode_Serial(FUNCTOR & f, int step_size = 1024);
+		template <class FUNCTOR> void ForEachNode_Paralell(FUNCTOR & f, int step_size = 1024);
 		
 		// Types
 
@@ -141,9 +141,9 @@ namespace form
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
-		mutable core::Mutex tree_mutex;
+		mutable sys::Mutex tree_mutex;
 		
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 		CalculateNodeScoreCpuKernel * cpu_kernel;
 		CalculateNodeScoreGpuKernel * gpu_kernel;
 #endif

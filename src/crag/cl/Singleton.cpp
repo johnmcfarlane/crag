@@ -12,7 +12,7 @@
 
 #include "Singleton.h"
 
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
 
 #include "core/ConfigEntry.h"
 
@@ -23,9 +23,9 @@ namespace
 {
 //																				  25000 100000
 //	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_DEFAULT);	// .091   .4
-	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
+//	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_CPU);		// .06	  .31
 //	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_GPU);		// .1	  .47
-//	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
+	CONFIG_DEFINE (opencl_device_type, cl_device_type, CL_DEVICE_TYPE_ALL);		// means don't use OpenCL
 }
 
 

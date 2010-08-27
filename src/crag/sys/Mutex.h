@@ -13,7 +13,7 @@
 #include "SDL_mutex.h"
 
 
-namespace core
+namespace sys
 {
 	class Mutex
 	{

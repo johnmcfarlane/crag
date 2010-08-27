@@ -15,7 +15,8 @@
 #include "core/ConfigEntry.h"
 
 
-#if (USE_OPENCL)
+#if defined(USE_OPENCL)
+
 // cl_device_type text<->value converters for the config systems.
 template<> int Config<cl_device_type>::ValueToString(char * string, cl_device_type const & value) 
 {

@@ -12,7 +12,7 @@
 
 #include "sim/defs.h"
 
-#include "core/App.h"
+#include "sys/App.h"
 
 #include "core/ConfigEntry.h"
 

@@ -17,7 +17,7 @@
 #include "form/node/PointBuffer.h"
 #include "form/node/Shader.h"
 
-#include "core/memory.h"
+#include "sys/memory.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
