@@ -19,16 +19,12 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\App.cpp" />
     <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
     <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
     <ClCompile Include="..\..\src\crag\core\debug.cpp" />
-    <ClCompile Include="..\..\src\crag\core\memory.cpp" />
-    <ClCompile Include="..\..\src\crag\core\Mutex.cpp" />
     <ClCompile Include="..\..\src\crag\core\profile.cpp" />
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
     <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp" />
-    <ClCompile Include="..\..\src\crag\core\Thread.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
     <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
     <ClCompile Include="..\..\src\crag\form\node\Node.cpp" />
@@ -83,6 +79,13 @@
     <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
     <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\App.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\memory.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\Mutex.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\Scheduler.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp" />
+    <ClCompile Include="..\..\src\crag\sys\Thread.cpp" />
+    <ClCompile Include="..\..\src\distcc\ncpus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\cl\CpuKernel.h" />
@@ -90,19 +93,15 @@
     <ClInclude Include="..\..\src\crag\cl\GpuKernel.h" />
     <ClInclude Include="..\..\src\crag\cl\Kernel.h" />
     <ClInclude Include="..\..\src\crag\cl\Singleton.h" />
-    <ClInclude Include="..\..\src\crag\core\App.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
     <ClInclude Include="..\..\src\crag\core\debug.h" />
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
-    <ClInclude Include="..\..\src\crag\core\memory.h" />
-    <ClInclude Include="..\..\src\crag\core\Mutex.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
     <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
     <ClInclude Include="..\..\src\crag\core\Singleton.h" />
     <ClInclude Include="..\..\src\crag\core\TextureMapper.h" />
-    <ClInclude Include="..\..\src\crag\core\Thread.h" />
     <ClInclude Include="..\..\src\crag\form\defs.h" />
     <ClInclude Include="..\..\src\crag\form\Formation.h" />
     <ClInclude Include="..\..\src\crag\form\FormationFunctor.h" />
@@ -189,6 +188,12 @@
     <ClInclude Include="..\..\src\crag\sim\Star.h" />
     <ClInclude Include="..\..\src\crag\sim\Universe.h" />
     <ClInclude Include="..\..\src\crag\sim\UserInput.h" />
+    <ClInclude Include="..\..\src\crag\sys\App.h" />
+    <ClInclude Include="..\..\src\crag\sys\memory.h" />
+    <ClInclude Include="..\..\src\crag\sys\Mutex.h" />
+    <ClInclude Include="..\..\src\crag\sys\Scheduler.h" />
+    <ClInclude Include="..\..\src\crag\sys\SimpleMutex.h" />
+    <ClInclude Include="..\..\src\crag\sys\Thread.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING" />
@@ -252,7 +257,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -277,7 +282,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

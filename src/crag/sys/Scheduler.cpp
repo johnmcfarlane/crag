@@ -8,6 +8,8 @@
  *
  */
 
+#include "pch.h"
+
 #include "Scheduler.h"
 
 #include "App.h"
@@ -234,6 +236,7 @@ sys::Scheduler::Scheduler()
 : num_slots (GetNumCpus())
 , slots (new Slot [num_slots])
 {
+	std::cout << num_slots << " num CPUs\n";
 }
 
 sys::Scheduler::~Scheduler()

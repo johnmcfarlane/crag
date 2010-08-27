@@ -34,7 +34,7 @@ namespace form
 	public:
 		MeshBufferObject();
 		
-		void Set(Mesh const & mesh, Vector3d const & origin, bool flat_shaded);
+		void Set(form::Mesh const & mesh, Vector3d const & origin, bool flat_shaded);
 		int GetNumPolys() const;
 		
 		void BeginDraw(gfx::Pov pov, bool color);

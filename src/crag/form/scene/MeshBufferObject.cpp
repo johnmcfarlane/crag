@@ -10,8 +10,8 @@
 
 #include "pch.h"
 
-#include "form/scene/MeshBufferObject.h"
-#include "form/scene/Mesh.h"
+#include "MeshBufferObject.h"
+#include "Mesh.h"
 
 #include "core/ConfigEntry.h"
 

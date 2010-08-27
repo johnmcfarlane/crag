@@ -23,6 +23,21 @@
 /* Thanks to Dimitri PAPADOPOULOS-ORFANOS for researching many of the methods
  * in this file. */
 
+#include "pch.h"
+
+#if defined(WIN32)
+
+#include <WinBase.h>
+
+int dcc_ncpus(int *ncpus)
+{
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo( &sysinfo );
+	*ncpus = sysinfo.dwNumberOfProcessors;
+	return 0;
+}
+
+#else
 #include "config.h"
 
 #include <stdio.h>
@@ -119,3 +134,5 @@ int dcc_ncpus(int *ncpus)
     return 0;
 }
 #endif
+
+#endif	// defined(WIN32)

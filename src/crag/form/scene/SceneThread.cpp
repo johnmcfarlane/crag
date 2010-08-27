@@ -285,7 +285,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	// Come up with two accounts of how many quaterna we should have.
 	int current_num_quaterna = scene.GetNumQuaternaUsed();
 	int frame_ratio_directed_target_num_quaterna = CalculateFrameRateDirectedTargetNumQuaterna(current_num_quaterna, frame_ratio);
-	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, mesh_generation_period);
+	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, static_cast<float>(mesh_generation_period));
 
 	// Pick the more conservative and submit it.
 	int target_num_quaterna = Min(mesh_generation_directed_target_num_quaterna, frame_ratio_directed_target_num_quaterna);

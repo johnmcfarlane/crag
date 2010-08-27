@@ -40,6 +40,12 @@
     <Filter Include="src\crag\form\scene">
       <UniqueIdentifier>{72a1086b-e839-4a19-97c4-60c45e03428c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\crag\sys">
+      <UniqueIdentifier>{a3a4d202-b9e7-41e8-9118-03ac202a13b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\distcc">
+      <UniqueIdentifier>{ac80cd62-5108-41fd-b0f3-62a96ab6cf11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp">
@@ -104,36 +110,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\pch.cpp">
       <Filter>src\crag</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\App.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\debug.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\memory.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\Mutex.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\profile.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\Random.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp">
-      <Filter>src\crag\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\core\Thread.cpp">
-      <Filter>src\crag\core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\crag\sim\PlanetaryBody.cpp">
       <Filter>src\crag\sim</Filter>
@@ -224,6 +200,45 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\sim\MoonShader.cpp">
       <Filter>src\crag\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\debug.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\profile.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Random.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp">
+      <Filter>src\crag\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\App.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\memory.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\Mutex.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\Scheduler.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\sys\Thread.cpp">
+      <Filter>src\crag\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\distcc\ncpus.cpp">
+      <Filter>src\distcc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,45 +346,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\crag\pch.h">
       <Filter>src\crag</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\App.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\ConfigEntry.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\ConfigManager.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\debug.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\floatOps.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\memory.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\Mutex.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\Pool.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\profile.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\Random.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\Singleton.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\TextureMapper.h">
-      <Filter>src\crag\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\core\Thread.h">
-      <Filter>src\crag\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\crag\geom\Circle2.h">
       <Filter>src\crag\geom</Filter>
@@ -538,6 +514,51 @@
     </ClInclude>
     <ClInclude Include="..\..\src\crag\sim\MoonShader.h">
       <Filter>src\crag\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\ConfigEntry.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\ConfigManager.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\debug.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\floatOps.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Pool.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\profile.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Random.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Singleton.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\TextureMapper.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\App.h">
+      <Filter>src\crag\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\memory.h">
+      <Filter>src\crag\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\Mutex.h">
+      <Filter>src\crag\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\Scheduler.h">
+      <Filter>src\crag\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\SimpleMutex.h">
+      <Filter>src\crag\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\sys\Thread.h">
+      <Filter>src\crag\sys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
