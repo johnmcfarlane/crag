@@ -68,7 +68,7 @@ namespace
 	#if defined(PROFILE)
 		CONFIG_DEFINE (full_screen, bool, false);
 	#else
-		CONFIG_DEFINE (full_screen, bool, false);
+		CONFIG_DEFINE (full_screen, bool, true);
 	#endif
 
 	char const config_filename[] = "crag.cfg";
