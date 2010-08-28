@@ -78,7 +78,7 @@ void form::SceneThread::Launch()
 	
 	if (threaded) {
 		Assert(thread == nullptr);
-		thread = new sys::Thread(ThreadFunc, this);
+		thread = new Thread(* this);
 	}
 }
 
@@ -225,11 +225,6 @@ bool form::SceneThread::IsOriginOk() const
 	sim::Vector3 const & observer_pos = observer.GetPosition();
 	double observer_position_length = Length(observer_pos - scene.GetOrigin());
 	return observer_position_length < max_observer_position_length;
-}
-
-void form::SceneThread::ThreadFunc(SceneThread * scene_thread)
-{
-	scene_thread->Run();
 }
 
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.

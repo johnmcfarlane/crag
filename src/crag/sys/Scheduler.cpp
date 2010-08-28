@@ -113,8 +113,7 @@ public:
 	Slot()
 	: quit(false)
 	{
-		sys::Scheduler::Slot * data = this;
-		thread = new Thread (Callback, data);
+		thread = new Thread (* this);
 	}
 	
 	~Slot()
@@ -162,11 +161,6 @@ public:
 	}
 	
 private:
-	
-	static void Callback(Slot * slot)
-	{
-		slot->Run();
-	}
 	
 	void Run()
 	{
@@ -222,7 +216,8 @@ private:
 	Task pending_tasks[2];
 	Task current_task;
 	
-	sys::Thread * thread;
+	typedef sys::Thread<Slot, & sys::Scheduler::Slot::Run> Thread;
+	Thread * thread;
 	SimpleMutex mutable mutex;
 	//core::Mutex mutable mutex;
 	bool volatile quit;

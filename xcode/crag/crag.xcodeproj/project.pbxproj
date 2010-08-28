@@ -20,7 +20,6 @@
 		527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D312274AA700E7B3C5 /* memory.cpp */; };
 		527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D512274AA700E7B3C5 /* Mutex.cpp */; };
 		527CF8DE12274AA700E7B3C5 /* Scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D712274AA700E7B3C5 /* Scheduler.cpp */; };
-		527CF8DF12274AA700E7B3C5 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D912274AA700E7B3C5 /* Thread.cpp */; };
 		527CF8E512274BC200E7B3C5 /* SimpleMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */; };
 		527EB8EA12237A28008AF14F /* ncpus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527EB8E912237A28008AF14F /* ncpus.cpp */; };
 		527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F4AF312101AD400D6AF23 /* MoonShader.cpp */; };
@@ -165,7 +164,6 @@
 		52F6F4F711E4C2DE00241409 /* GpuKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F6F4F011E4C2DE00241409 /* GpuKernel.cpp */; };
 		52F6F4F811E4C2DE00241409 /* Kernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F6F4F211E4C2DE00241409 /* Kernel.cpp */; };
 		52F6F4F911E4C2DE00241409 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F6F4F411E4C2DE00241409 /* Singleton.cpp */; };
-		52F6F50A11E4C39B00241409 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F6F50911E4C39B00241409 /* OpenCL.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -213,7 +211,6 @@
 		527CF8D612274AA700E7B3C5 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		527CF8D712274AA700E7B3C5 /* Scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scheduler.cpp; sourceTree = "<group>"; };
 		527CF8D812274AA700E7B3C5 /* Scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scheduler.h; sourceTree = "<group>"; };
-		527CF8D912274AA700E7B3C5 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		527CF8DA12274AA700E7B3C5 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
 		527CF8E312274B3700E7B3C5 /* SimpleMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMutex.h; sourceTree = "<group>"; };
 		527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleMutex.cpp; sourceTree = "<group>"; };
@@ -505,7 +502,6 @@
 				002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */,
-				52F6F50A11E4C39B00241409 /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,7 +591,6 @@
 				527CF8D612274AA700E7B3C5 /* Mutex.h */,
 				527CF8D712274AA700E7B3C5 /* Scheduler.cpp */,
 				527CF8D812274AA700E7B3C5 /* Scheduler.h */,
-				527CF8D912274AA700E7B3C5 /* Thread.cpp */,
 				527CF8DA12274AA700E7B3C5 /* Thread.h */,
 				527CF8E312274B3700E7B3C5 /* SimpleMutex.h */,
 				527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */,
@@ -1234,7 +1229,6 @@
 				527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */,
 				527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */,
 				527CF8DE12274AA700E7B3C5 /* Scheduler.cpp in Sources */,
-				527CF8DF12274AA700E7B3C5 /* Thread.cpp in Sources */,
 				527CF8E512274BC200E7B3C5 /* SimpleMutex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -62,7 +62,6 @@ namespace form
 		bool IsOriginOk() const;
 		
 	private:
-		static void ThreadFunc(SceneThread * scene_thread);
 		void Run();	// Called when thread is launched and runs the loop.
 		void ThreadTick();
 		
@@ -101,7 +100,8 @@ namespace form
 		app::TimeType mesh_generation_time;
 		double mesh_generation_period;
 
-		sys::Thread * thread;
+		typedef sys::Thread<SceneThread, & form::SceneThread::Run> Thread;
+		Thread * thread;
 	};
 }
 
