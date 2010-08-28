@@ -13,7 +13,6 @@
 #include "App.h"
 
 #include "core/ConfigEntry.h"
-#include "sys/Mutex.h"
 
 #include <SDL_image.h>
 

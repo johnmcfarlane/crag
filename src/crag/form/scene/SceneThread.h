@@ -77,7 +77,6 @@ namespace form
 		Scene scene;
 		int num_nodes;
 		float frame_ratio;	// ~ (actual framerate / ideal framerate)
-		sys::Mutex scene_mutex;
 		double scene_tick_period;
 		
 		FormationSet const & formations;		

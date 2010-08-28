@@ -13,8 +13,6 @@
 #include "Font.h"
 #include "Image.h"
 
-#include "sys/Mutex.h"
-
 #include "sys/App.h"
 
 
@@ -22,7 +20,6 @@ namespace
 {
 	// TODO: All a big hack.
 	::std::vector<gl::Vertex2dTex> vertex_buffer;
-	sys::Mutex vertex_buffer_mutex;
 	
 	int margin_hack[2] = { 8, 8 };
 }
@@ -57,6 +54,8 @@ gfx::Font::operator bool() const
 	return texture.IsInitialized();
 }
 
+// Warning: This function isn't thread-safe.
+// Fortunately, neither is the OpenGL it uses so it's neither here nor there.
 void gfx::Font::Print(char const * text, Vector2f const & position) const
 {
 	if (! vbo.IsInitialized())
@@ -64,16 +63,12 @@ void gfx::Font::Print(char const * text, Vector2f const & position) const
 		return;
 	}
 
-	vertex_buffer_mutex.Lock();
-
 	gl::Bind(& vbo);
 	Bind(& texture);
 
 	vertex_buffer.resize(0);
 	GenerateVerts(text, position);
 	RenderVerts();
-
-	vertex_buffer_mutex.Unlock();
 }
 
 void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) const
