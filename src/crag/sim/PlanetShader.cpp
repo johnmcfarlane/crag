@@ -27,6 +27,9 @@
 #include "gfx/Debug.h"
 
 
+// TODO: http://www.paulinternet.nl/?page=bicubic
+
+
 namespace 
 {
 	
