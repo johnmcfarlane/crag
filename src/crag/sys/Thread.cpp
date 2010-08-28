@@ -15,7 +15,10 @@
 
 sys::Thread::~Thread()
 {
-	SDL_KillThread(sdl_thread);
+	if (sdl_thread != nullptr)
+	{
+		SDL_KillThread(sdl_thread);
+	}
 }
 
 bool sys::Thread::IsCurrent() const
@@ -27,7 +30,11 @@ bool sys::Thread::IsCurrent() const
 
 void sys::Thread::Join()
 {
-	SDL_WaitThread(sdl_thread, NULL);
+	if (sdl_thread != nullptr)
+	{
+		SDL_WaitThread(sdl_thread, NULL);
+		sdl_thread = nullptr;
+	}
 }
 
 int sys::Thread::Launch(void * thread_ptr)

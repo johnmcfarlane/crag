@@ -68,7 +68,7 @@ namespace
 	#if defined(PROFILE)
 		CONFIG_DEFINE (full_screen, bool, false);
 	#else
-		CONFIG_DEFINE (full_screen, bool, true);
+		CONFIG_DEFINE (full_screen, bool, false);
 	#endif
 
 	char const config_filename[] = "crag.cfg";
@@ -90,12 +90,13 @@ namespace
 		cl::Singleton cl_singleton;
 #endif
 		gfx::Renderer renderer;
-		sys::Scheduler scheduler;
+		sys::Scheduler scheduler(1);
 		
 		// Run the simulation.
-		sim::Simulation * sim = new sim::Simulation ();
-		sim->Run();
-		delete sim;
+		{
+			sim::Simulation simulation;
+			simulation.Run();
+		}
 
 		return true;
 	}

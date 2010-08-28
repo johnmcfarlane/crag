@@ -232,11 +232,19 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 // sys::Scheduler definitions
 
-sys::Scheduler::Scheduler()
-: num_slots (GetNumCpus())
-, slots (new Slot [num_slots])
+sys::Scheduler::Scheduler(int num_reserved_cpus)
+: num_slots (GetNumCpus() - num_reserved_cpus)
+, slots ((num_slots < 2) ? nullptr : new Slot [num_slots])
 {
-	std::cout << num_slots << " num CPUs\n";
+	std::cout << "Scheduler: num CPUs = " << GetNumCpus() << '\n';
+	if (slots)
+	{
+		std::cout << "Scheduler: num slots = " << num_slots << '\n';
+	}
+	else
+	{
+		std::cout << "Scheduler: no slots\n";
+	}
 }
 
 sys::Scheduler::~Scheduler()
@@ -275,6 +283,12 @@ void sys::Scheduler::DispatchSub(Functor & f, int first, int last)
 		return;
 	}
 
+	if (slots == nullptr)
+	{
+		f(first, last);
+		return;
+	}
+
 	Task p(first, last, & f);
 	
 	Slot const * const slots_end = slots + num_slots;
@@ -294,6 +308,11 @@ void sys::Scheduler::DispatchSub(Functor & f, int first, int last)
 
 bool sys::Scheduler::IsComplete() const
 {
+	if (slots == nullptr)
+	{
+		return true;
+	}
+
 	Slot const * const slots_end = slots + num_slots;
 	
 	for (Slot * i = slots; i != slots_end; ++ i)

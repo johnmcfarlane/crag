@@ -21,7 +21,7 @@ namespace sys
 	class Scheduler : public core::Singleton<Scheduler>
 	{
 	public:
-		Scheduler();
+		Scheduler(int num_reserved_cpus = 0);
 		~Scheduler();
 		
 		// Overload this functor ...
