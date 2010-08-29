@@ -86,7 +86,6 @@ namespace form {
 		sim::Observer & observer;
 
 		bool suspended;
-		bool regenerating;
 		SceneThread * scene_thread;
 
 #if defined(FORM_VERTEX_TEXTURE)

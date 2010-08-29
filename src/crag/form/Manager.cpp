@@ -42,7 +42,6 @@ namespace
 form::Manager::Manager(sim::Observer & init_observer)
 : observer(init_observer)
 , suspended(false)
-, regenerating(false)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
 , front_buffer_object(& buffer_objects [0])
 , back_buffer_object(& buffer_objects [1])
@@ -113,12 +112,7 @@ form::FormationSet const & form::Manager::GetFormations() const
 void form::Manager::AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
 {
 	// Also if doing a screen capture, I shouldn't wonder.
-	if (regenerating) {
-		scene_thread->SetFrameRatio(1);
-	}
-	else {
-		scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
-	}
+	scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 }
 
 void form::Manager::ToggleSuspended()
@@ -138,20 +132,6 @@ void form::Manager::Launch()
 
 void form::Manager::Tick()
 {
-	if (! scene_thread->IsOriginOk()) {
-		scene_thread->ResetOrigin();
-		regenerating = true;
-	}
-	
-	if (regenerating)
-	{
-		// TODO: WTF?
-		if (true /* done regenerating */)
-		{
-			regenerating = false;
-		}
-	}
-	
 	scene_thread->Tick();
 }
 

@@ -55,11 +55,7 @@ namespace form
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh(form::MeshBufferObject & mbo);
-		void ResetOrigin();
-		bool PostResetFreeze() const;
 		void ToggleFlatShaded();
-		
-		bool IsOriginOk() const;
 		
 	private:
 		void Run();	// Called when thread is launched and runs the loop.
@@ -70,6 +66,10 @@ namespace form
 		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period);
 		
 		bool GenerateMesh();
+		
+		bool IsOriginOk() const;
+		bool IsResetOriginRecent() const;
+		void ResetOrigin();
 		
 		bool IsMainThread() const;
 		bool IsSceneThread() const;
@@ -83,7 +83,6 @@ namespace form
 		sim::Observer const & observer;
 		
 		bool threaded;	// If false, object still does the same work, only on the main thread.
-		bool reset_origin_flag;	// When set, a mesh is generated (flushed) and the origin/scene is reset.
 		bool suspend_flag;
 		bool quit_flag;
 		
