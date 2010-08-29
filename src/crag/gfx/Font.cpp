@@ -116,7 +116,7 @@ void gfx::Font::RenderVerts() const
 	// Matrices
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	Vector2i resolution = app::GetWindowSize();
+	Vector2i resolution = sys::GetWindowSize();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
     glMatrixMode (GL_MODELVIEW); 

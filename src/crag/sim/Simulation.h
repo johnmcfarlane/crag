@@ -50,9 +50,9 @@ namespace sim
 		
 		// Returns true until the program should ent.
 		bool HandleEvents();
-		bool OnKeyPress(app::KeyCode key_code);
+		bool OnKeyPress(sys::KeyCode key_code);
 		
-		app::TimeType GetTime(bool update = false);
+		sys::TimeType GetTime(bool update = false);
 
 		// Attributes
 		gfx::Scene scene;
@@ -63,14 +63,14 @@ namespace sim
 		bool capture;
 		int capture_frame;
 		
-		app::TimeType running_poll_seconds;
+		sys::TimeType running_poll_seconds;
 		
 		// Periodically recalculat fps
 		double fps;
 		int frame_count;
-		app::TimeType frame_count_reset_time;
+		sys::TimeType frame_count_reset_time;
 		
-		app::TimeType cached_time;
-		app::TimeType start_time;
+		sys::TimeType cached_time;
+		sys::TimeType start_time;
 	};
 }

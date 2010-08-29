@@ -35,7 +35,7 @@
 #include <fstream>
 
 
-using app::TimeType;
+using sys::TimeType;
 
 
 namespace 
@@ -64,7 +64,7 @@ namespace
 	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 	
-	CONFIG_DEFINE (startup_grace_period, app::TimeType, 2.f);
+	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 2.f);
 
 }
 
@@ -89,7 +89,7 @@ sim::Simulation::Simulation()
 
 void sim::Simulation::InitUniverse()
 {
-	scene.SetResolution(app::GetWindowSize());
+	scene.SetResolution(sys::GetWindowSize());
 	scene.SetSkybox(new Firmament);	// TODO: Time for a ref-counter system.
 	
 	if (use_default_camera_pos) {
@@ -146,7 +146,7 @@ void sim::Simulation::Run()
 		if (time_until_next_tick > 0) 
 		{
 			// If not, sleep until it is.
-			app::Sleep(time_until_next_tick);
+			sys::Sleep(time_until_next_tick);
 			GetTime(true);
 			continue;
 		}
@@ -195,7 +195,7 @@ void sim::Simulation::Run()
 void sim::Simulation::Tick()
 {
 	// Camera input.
-	if (app::HasFocus()) 
+	if (sys::HasFocus()) 
 	{
 		UserInput ui;
 		Controller::Impulse impulse = ui.GetImpulse();
@@ -252,7 +252,7 @@ void sim::Simulation::Render()
 	}
 
 	++ frame_count;
-	TimeType time = app::GetTime();
+	TimeType time = sys::GetTime();
 	TimeType delta = time - frame_count_reset_time;
 	if (delta > 1) 
 	{
@@ -298,8 +298,8 @@ void sim::Simulation::Capture()
 
 bool sim::Simulation::HandleEvents()
 {
-	app::Event event;
-	while (app::GetEvent(event))
+	sys::Event event;
+	while (sys::GetEvent(event))
 	{
 		switch (event.type)
 		{
@@ -326,7 +326,7 @@ bool sim::Simulation::HandleEvents()
 }
 
 // returns false iff the program should quit.
-bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
+bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 {
 	enum ModifierCombo 
 	{
@@ -341,15 +341,15 @@ bool sim::Simulation::OnKeyPress(app::KeyCode key_code)
 	};
 
 	int combo_map = COMBO_NONE;	
-	if (app::IsKeyDown(KEY_LSHIFT) || app::IsKeyDown(KEY_RSHIFT))
+	if (sys::IsKeyDown(KEY_LSHIFT) || sys::IsKeyDown(KEY_RSHIFT))
 	{
 		combo_map |= COMBO_SHIFT;
 	}
-	if (app::IsKeyDown(KEY_LCTRL) || app::IsKeyDown(KEY_RCTRL))
+	if (sys::IsKeyDown(KEY_LCTRL) || sys::IsKeyDown(KEY_RCTRL))
 	{
 		combo_map |= COMBO_CTRL;
 	}
-	if (app::IsKeyDown(KEY_LALT) || app::IsKeyDown(KEY_RALT))
+	if (sys::IsKeyDown(KEY_LALT) || sys::IsKeyDown(KEY_RALT))
 	{
 		combo_map |= COMBO_ALT;
 	}
@@ -424,14 +424,14 @@ TimeType sim::Simulation::GetTime(bool update_time)
 {	
 	if (update_time)
 	{
-		TimeType t = app::GetTime();
+		TimeType t = sys::GetTime();
 		Assert(t >= cached_time);
 		cached_time = t;
 	}
 /*	else 
 	{
 #if ! defined(NDEBUG)
-		TimeType t = app::GetTime();
+		TimeType t = sys::GetTime();
 		TimeType passed = t - cached_time;
 		Assert(passed < 1.);
 #endif

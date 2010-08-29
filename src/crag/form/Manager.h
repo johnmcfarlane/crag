@@ -62,7 +62,7 @@ namespace form {
 		void RemoveFormation(Formation * formation);
 		FormationSet const & GetFormations() const;
 		
-		void AdjustNumNodes(app::TimeType frame_delta, app::TimeType target_frame_delta);
+		void AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
 		void ToggleSuspended();
 		void ToggleFlatShaded();
 		

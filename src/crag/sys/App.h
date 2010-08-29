@@ -58,7 +58,8 @@
 #define KEY_MAX SDLK_LAST
 
 
-namespace app
+// TODO: This is really just a dumping ground now. Needs to be tidied up.
+namespace sys
 {
 	// types
 	typedef SDL_Event Event;
@@ -75,13 +76,9 @@ namespace app
 	// init
 	bool Init(Vector2i resolution, bool full_screen, char const * title);
 	
-	// GL
-	bool InitGl();
-	
 	// input
 	bool IsKeyDown(KeyCode key_code);
 	bool IsButtonDown(MouseButton mouse_button);
-
 	Vector2i GetMousePosition();
 	void SetMousePosition(Vector2i const & position);
 
@@ -95,4 +92,5 @@ namespace app
 	// time
 	TimeType GetTime();
 	void Sleep(TimeType t = 0);
+	int GetNumCpus();
 }

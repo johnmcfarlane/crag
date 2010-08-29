@@ -16,13 +16,20 @@
 
 #include <SDL_image.h>
 
+#if defined(WIN32)
+#include <WinBase.h>
+#elif defined(__APPLE__)
+#include <sys/sysctl.h>
+#else
+#endif
+
 
 namespace 
 {
 	bool has_focus = true;
 	
 	bool key_down [KEY_MAX];
-	bool button_down [app::BUTTON_MAX];
+	bool button_down [sys::BUTTON_MAX];
 	
 	Vector2i mouse_position;
 	Vector2i window_size;
@@ -34,10 +41,27 @@ namespace
 		has_focus = gained_focus;
 		SDL_ShowCursor(! has_focus);
 	}
+
+	
+	bool InitGl()
+	{
+#if defined(GLEW_STATIC )
+		GLenum glew_err = glewInit();
+		if (glew_err != GLEW_OK)
+		{
+			std::cout << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+			return false;
+		}
+		
+		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
+#endif
+		
+		return true;
+	}
 }
 
 
-bool app::Init(Vector2i resolution, bool full_screen, char const * title)
+bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 {
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -99,55 +123,39 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title)
 	return true;
 }
 
-bool app::InitGl()
-{
-#if defined(GLEW_STATIC )
-	GLenum glew_err = glewInit();
-	if (glew_err != GLEW_OK)
-	{
-		std::cout << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
-		return false;
-	}
-	
-	std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
-#endif
-	
-	return true;
-}
-
-bool app::IsKeyDown(KeyCode key_code)
+bool sys::IsKeyDown(KeyCode key_code)
 {
 	return key_down[key_code];
 }
 
-bool app::IsButtonDown(MouseButton mouse_button)
+bool sys::IsButtonDown(MouseButton mouse_button)
 {
 	return button_down[mouse_button];
 }
 
-Vector2i app::GetMousePosition()
+Vector2i sys::GetMousePosition()
 {
 	return mouse_position;
 }
 
-void app::SetMousePosition(Vector2i const & position)
+void sys::SetMousePosition(Vector2i const & position)
 {
 	mouse_position = position;
 	SDL_WarpMouse(mouse_position.x, mouse_position.y);
 }
 
-Vector2i app::GetWindowSize()
+Vector2i sys::GetWindowSize()
 {
 	return window_size;
 }
 
-SDL_Surface & app::GetVideoSurface()
+SDL_Surface & sys::GetVideoSurface()
 {
 	Assert(screen_surface);
 	return * screen_surface;
 }
 
-bool app::GetEvent(Event & event)
+bool sys::GetEvent(Event & event)
 {
 	if (SDL_PollEvent(&event) > 0)
 	{
@@ -191,19 +199,49 @@ bool app::GetEvent(Event & event)
 	return false;
 }
 
-bool app::HasFocus()
+bool sys::HasFocus()
 {
 	return has_focus;
 }
 
-app::TimeType app::GetTime()
+sys::TimeType sys::GetTime()
 {
 	return .001 * SDL_GetTicks();
 }
 
-void app::Sleep(TimeType t)
+void sys::Sleep(TimeType t)
 {
 	SDL_Delay(static_cast<Uint32>(t * 1000));
 	//boost::this_thread::sleep(boost::posix_time::milliseconds(t));
 }
 
+int sys::GetNumCpus()
+{
+#if defined(WIN32)
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo (& sysinfo);
+	return sysinfo.dwNumberOfProcessors;
+#elif defined(__APPLE__)
+	int num_cpus;
+    size_t len = sizeof(num_cpus);
+    int mib[2] = { CTL_HW, HW_NCPU };
+    if (sysctl(mib, 2, & num_cpus, &len, NULL, 0) == 0)
+	{
+		return num_cpus;
+	}
+	
+	Assert(false);
+	return 1;
+#else 
+    // Linux, Solaris, Tru64, UnixWare 7, and Open UNIX 8
+	// Assumes defined(_SC_NPROCESSORS_ONLN).
+    int num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+	if (num_cpus != -1)
+	{
+		return num_cpus;
+	}
+	
+	Assert(false);
+	return 1;
+#endif
+}

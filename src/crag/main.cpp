@@ -80,7 +80,7 @@ namespace
 
 	bool Crag()
 	{
-		if (! app::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
+		if (! sys::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
 		{
 			return false;
 		}

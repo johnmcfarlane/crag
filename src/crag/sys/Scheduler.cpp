@@ -199,7 +199,7 @@ private:
 			Unlock(1);
 
 			// Once there's nothing to do, sleep to give the other thread time to give this one more to do. 
-			app::Sleep();
+			sys::Sleep();
 		}
 	}
 	
@@ -267,7 +267,7 @@ void sys::Scheduler::Dispatch(Functor & f, int first, int last, int step)
 	
 	while (! IsComplete())
 	{
-		app::Sleep();
+		sys::Sleep();
 	}
 }
 
@@ -297,7 +297,7 @@ void sys::Scheduler::DispatchSub(Functor & f, int first, int last)
 			}
 		}
 		
-		app::Sleep();
+		sys::Sleep();
 	}
 }
 

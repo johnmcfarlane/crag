@@ -171,14 +171,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 304739142;
-			PBXWorkspaceStateSaveDate = 304739142;
+			PBXPerProjectTemplateStateSaveDate = 304750697;
+			PBXWorkspaceStateSaveDate = 304750697;
 		};
 		perUserProjectItems = {
-			5279F4F21229AEF800CF8990 = 5279F4F21229AEF800CF8990 /* PBXTextBookmark */;
-			5279F4F31229AEF800CF8990 = 5279F4F31229AEF800CF8990 /* PBXTextBookmark */;
-			5279F4F41229AEF800CF8990 = 5279F4F41229AEF800CF8990 /* PBXTextBookmark */;
-			5279F4FC1229B27700CF8990 = 5279F4FC1229B27700CF8990 /* PBXTextBookmark */;
+			52757901122A20640044875C = 52757901122A20640044875C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 52F3A2F411A796FC00385922 /* Source Control */;
 		userBuildSettings = {
@@ -243,6 +240,21 @@
 			sepNavVisRange = "{0, 846}";
 		};
 	};
+	52757901122A20640044875C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'Mutex' in namespace 'app' does not name a type";
+		fRef = 52757902122A20640044875C /* NodeBuffer.h */;
+		rLen = 1;
+		rLoc = 143;
+		rType = 1;
+	};
+	52757902122A20640044875C /* NodeBuffer.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NodeBuffer.h;
+		path = ../../src/crag/form/node/NodeBuffer.h;
+		sourceTree = "<group>";
+	};
 	5278B8DE11D5048500E2F375 /* defs.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {892, 481}}";
@@ -266,44 +278,6 @@
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
-	5279F4F21229AEF800CF8990 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52F3A34B11A7979400385922 /* Font.cpp */;
-		name = "Font.cpp: 72";
-		rLen = 0;
-		rLoc = 1335;
-		rType = 0;
-		vrLen = 603;
-		vrLoc = 906;
-	};
-	5279F4F31229AEF800CF8990 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52F3A34A11A7979400385922 /* Debug.h */;
-		name = "Debug.h: 37";
-		rLen = 0;
-		rLoc = 475;
-		rType = 0;
-		vrLen = 518;
-		vrLoc = 245;
-	};
-	5279F4F41229AEF800CF8990 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "No matching function for call to 'sys::SimpleMutex::Lock()'";
-		fRef = 52F3A34911A7979400385922 /* Debug.cpp */;
-		rLen = 1;
-		rLoc = 260;
-		rType = 1;
-	};
-	5279F4FC1229B27700CF8990 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52F3A34911A7979400385922 /* Debug.cpp */;
-		name = "Debug.cpp: 427";
-		rLen = 0;
-		rLoc = 8467;
-		rType = 0;
-		vrLen = 695;
-		vrLoc = 4502;
-	};
 	527C53CC11B9ACAF00F6C052 /* TextureMapper.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {892, 442}}";
@@ -321,16 +295,16 @@
 	};
 	527CF8D112274AA700E7B3C5 /* App.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 2808}}";
-			sepNavSelRange = "{282, 0}";
-			sepNavVisRange = "{0, 538}";
+			sepNavIntBoundsRect = "{{0, 0}, {977, 3341}}";
+			sepNavSelRange = "{4659, 0}";
+			sepNavVisRange = "{4167, 531}";
 		};
 	};
 	527CF8D212274AA700E7B3C5 /* App.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 1261}}";
-			sepNavSelRange = "{1292, 3}";
-			sepNavVisRange = "{1171, 507}";
+			sepNavIntBoundsRect = "{{0, 0}, {977, 1235}}";
+			sepNavSelRange = "{1369, 0}";
+			sepNavVisRange = "{1142, 503}";
 		};
 	};
 	527CF8D412274AA700E7B3C5 /* memory.h */ = {
@@ -357,9 +331,9 @@
 	};
 	527CF8D712274AA700E7B3C5 /* Scheduler.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 4277}}";
-			sepNavSelRange = "{2492, 0}";
-			sepNavVisRange = "{2309, 612}";
+			sepNavIntBoundsRect = "{{0, 0}, {780, 3913}}";
+			sepNavSelRange = "{3974, 0}";
+			sepNavVisRange = "{3615, 807}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
@@ -391,13 +365,6 @@
 			sepNavIntBoundsRect = "{{0, 0}, {977, 676}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 479}";
-		};
-	};
-	527EB8E912237A28008AF14F /* ncpus.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 1586}}";
-			sepNavSelRange = "{3474, 0}";
-			sepNavVisRange = "{2578, 1007}";
 		};
 	};
 	527F4AF212101AD400D6AF23 /* MoonShader.h */ = {
@@ -762,9 +729,9 @@
 	};
 	52DF18ED11E8FF1C00AF25A1 /* NodeBuffer.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1221, 2158}}";
-			sepNavSelRange = "{295, 5}";
-			sepNavVisRange = "{0, 1374}";
+			sepNavIntBoundsRect = "{{0, 0}, {977, 1924}}";
+			sepNavSelRange = "{4760, 33}";
+			sepNavVisRange = "{3735, 1188}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
@@ -989,9 +956,9 @@
 	};
 	52F3A30611A7979400385922 /* COPYING */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {883, 8827}}";
+			sepNavIntBoundsRect = "{{0, 0}, {977, 8814}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 2137}";
+			sepNavVisRange = "{0, 1294}";
 		};
 	};
 	52F3A30B11A7979400385922 /* ConfigManager.cpp */ = {
@@ -1257,9 +1224,9 @@
 	};
 	52F3A36A11A7979400385922 /* main.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 1313}}";
-			sepNavSelRange = "{1281, 4}";
-			sepNavVisRange = "{1073, 591}";
+			sepNavIntBoundsRect = "{{0, 0}, {780, 1313}}";
+			sepNavSelRange = "{1697, 0}";
+			sepNavVisRange = "{963, 793}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};
@@ -1378,9 +1345,9 @@
 	};
 	52F3A38211A7979400385922 /* Simulation.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {977, 6045}}";
-			sepNavSelRange = "{9426, 0}";
-			sepNavVisRange = "{9221, 446}";
+			sepNavIntBoundsRect = "{{0, 0}, {977, 6136}}";
+			sepNavSelRange = "{655, 0}";
+			sepNavVisRange = "{7275, 411}";
 			sepNavWindowFrame = "{{0, 4}, {1280, 774}}";
 		};
 	};

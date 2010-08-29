@@ -99,7 +99,7 @@ gfx::Image::Format const & gfx::Image::GetOpenGlRgba8Format()
 
 gfx::Image::Format const & gfx::Image::GetVideoFormat()
 {
-	SDL_Surface const & video_surface = app::GetVideoSurface();
+	SDL_Surface const & video_surface = sys::GetVideoSurface();
 	SDL_PixelFormat const & video_format = ref(video_surface.format);
 	return video_format;
 }

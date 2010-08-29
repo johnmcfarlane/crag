@@ -25,9 +25,9 @@ namespace sim
 	// TODO: Should probably be a singleton and also is a bit of a waste of space.
 	namespace Universe
 	{
-		extern app::TimeType time;
+		extern sys::TimeType time;
 
-		CONFIG_DECLARE (target_frame_seconds, app::TimeType);
+		CONFIG_DECLARE (target_frame_seconds, sys::TimeType);
 	
 		void Init();
 		void Deinit();

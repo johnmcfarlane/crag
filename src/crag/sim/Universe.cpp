@@ -36,7 +36,7 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // Universe definitions
 
-app::TimeType sim::Universe::time = 0;
+sys::TimeType sim::Universe::time = 0;
 
 CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
 

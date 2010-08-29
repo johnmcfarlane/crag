@@ -21,7 +21,6 @@
 		527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D512274AA700E7B3C5 /* Mutex.cpp */; };
 		527CF8DE12274AA700E7B3C5 /* Scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D712274AA700E7B3C5 /* Scheduler.cpp */; };
 		527CF8E512274BC200E7B3C5 /* SimpleMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */; };
-		527EB8EA12237A28008AF14F /* ncpus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527EB8E912237A28008AF14F /* ncpus.cpp */; };
 		527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F4AF312101AD400D6AF23 /* MoonShader.cpp */; };
 		527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC211EB5F4B00E25B84 /* Scene.cpp */; };
 		527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */; };
@@ -214,7 +213,6 @@
 		527CF8DA12274AA700E7B3C5 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
 		527CF8E312274B3700E7B3C5 /* SimpleMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMutex.h; sourceTree = "<group>"; };
 		527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleMutex.cpp; sourceTree = "<group>"; };
-		527EB8E912237A28008AF14F /* ncpus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ncpus.cpp; sourceTree = "<group>"; };
 		527F4AF212101AD400D6AF23 /* MoonShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoonShader.h; sourceTree = "<group>"; };
 		527F4AF312101AD400D6AF23 /* MoonShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoonShader.cpp; sourceTree = "<group>"; };
 		527F7AC211EB5F4B00E25B84 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
@@ -598,14 +596,6 @@
 			path = sys;
 			sourceTree = "<group>";
 		};
-		527EB8E812237A28008AF14F /* distcc */ = {
-			isa = PBXGroup;
-			children = (
-				527EB8E912237A28008AF14F /* ncpus.cpp */,
-			);
-			path = distcc;
-			sourceTree = "<group>";
-		};
 		52C53E2011D8FC1000FA73AA /* geom */ = {
 			isa = PBXGroup;
 			children = (
@@ -690,7 +680,6 @@
 		52F3A2FF11A7979400385922 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				527EB8E812237A28008AF14F /* distcc */,
 				52F3A57411A7A23B00385922 /* SDL_image */,
 				52F3A42111A7A1A200385922 /* ode */,
 				52F3A30011A7979400385922 /* crag */,
@@ -1224,7 +1213,6 @@
 				527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */,
 				52483F5211ED865700D0BCB2 /* Polyhedron.cpp in Sources */,
 				527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */,
-				527EB8EA12237A28008AF14F /* ncpus.cpp in Sources */,
 				527CF8DB12274AA700E7B3C5 /* App.cpp in Sources */,
 				527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */,
 				527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */,

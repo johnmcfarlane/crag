@@ -47,11 +47,11 @@ namespace
 	{
 		bool IsActive() const
 		{
-			return app::IsKeyDown(key);
+			return sys::IsKeyDown(key);
 		}
 		
 		InpulseAffector affector;
-		app::KeyCode key;
+		sys::KeyCode key;
 	};
 
 	InputKeyMapping const keys[] = 
@@ -94,19 +94,19 @@ namespace
 	struct InputMouseMapping
 	{
 		bool IsActive() const {
-			return app::IsButtonDown(button);
+			return sys::IsButtonDown(button);
 		}
 		
 		InpulseAffector affector;
-		app::MouseButton button;
+		sys::MouseButton button;
 	};
 
 	InputMouseMapping buttons[] = 
 	{
-		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, app::BUTTON_LEFT },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, app::BUTTON_RIGHT },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, sys::BUTTON_LEFT },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, sys::BUTTON_RIGHT },
 		
-		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, app::BUTTON_MAX }
+		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, sys::BUTTON_MAX }
 	};
 
 }
@@ -134,12 +134,12 @@ sim::Controller::Impulse sim::UserInput::GetImpulse()
 	
 	// mouse movement
 	Vector2i delta;
-	Vector2i window_size = app::GetWindowSize();
+	Vector2i window_size = sys::GetWindowSize();
 	Vector2i center(window_size.x >> 1, window_size.y >> 1);
 #if __APPLE__ && 0
 	CGGetLastMouseDelta (& delta.x, & delta.y);
 #else
-	Vector2i const & cursor(app::GetMousePosition());
+	Vector2i const & cursor(sys::GetMousePosition());
 	delta = (cursor - center);
 #endif
 	Vector2f mouse_input = Vector2f(delta) * 0.3f;
@@ -148,6 +148,6 @@ sim::Controller::Impulse sim::UserInput::GetImpulse()
 		impulse.factors[sim::Controller::Impulse::TORQUE][axes::RIGHT] -= mouse_input.y;
 	}
 	
-	app::SetMousePosition(Vector2i(center.x, center.y));
+	sys::SetMousePosition(Vector2i(center.x, center.y));
 	return impulse;
 }
