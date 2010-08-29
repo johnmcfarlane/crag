@@ -111,7 +111,6 @@ form::FormationSet const & form::Manager::GetFormations() const
 
 void form::Manager::AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
 {
-	// Also if doing a screen capture, I shouldn't wonder.
 	scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 }
 
@@ -132,6 +131,11 @@ void form::Manager::Launch()
 
 void form::Manager::Tick()
 {
+	if (! scene_thread->IsOriginOk()) 
+	{
+		scene_thread->ResetOrigin();
+	}
+	
 	scene_thread->Tick();
 }
 

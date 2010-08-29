@@ -41,6 +41,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , formations(_formations)
 , observer(_observer)
 , threaded(_threaded)
+, reset_origin_flag(false)
 , suspend_flag(false)
 , quit_flag(false)
 , origin_reset_time(0)
@@ -142,7 +143,7 @@ void form::SceneThread::Tick()
 	
 	if (gfx::Debug::GetVerbosity() > .2)
 	{
-		if (IsResetOriginRecent())
+		if (PostResetFreeze())
 		{
 			gfx::Debug::out << "resetting...\n";
 		}
@@ -182,9 +183,48 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 	return polled;
 }
 
+void form::SceneThread::ResetOrigin()
+{
+	Assert(IsMainThread());
+
+	if (dynamic_origin)
+	{
+		reset_origin_flag = true;
+	}
+}
+
+bool form::SceneThread::PostResetFreeze() const
+{
+	sys::TimeType t = sys::GetTime();
+	sys::TimeType time_since_reset = t - origin_reset_time;
+	return time_since_reset < post_reset_freeze_period;
+}
+
 void form::SceneThread::ToggleFlatShaded()
 {
 	mesh.SetFlatShaded(! mesh.GetFlatShaded());
+}
+
+// Returns false if a new origin is needed.
+bool form::SceneThread::IsOriginOk() const
+{
+	if (reset_origin_flag) 
+	{
+		// We're on it already!
+		return true;
+	}
+	
+	if (PostResetFreeze())
+	{
+		// Still making the last one
+		return true;
+	}
+	
+	// The real test: Is the observer not far enough away from the 
+	// current origin that visible inaccuracies might become apparent?
+	sim::Vector3 const & observer_pos = observer.GetPosition();
+	double observer_position_length = Length(observer_pos - scene.GetOrigin());
+	return observer_position_length < max_observer_position_length;
 }
 
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.
@@ -211,9 +251,12 @@ void form::SceneThread::ThreadTick()
 	sim::Ray3 camera_ray = observer.GetCameraRay();
 	scene.SetCameraRay(camera_ray);
 	
-	if (! IsResetOriginRecent() && ! IsOriginOk())
+	if (reset_origin_flag) 
 	{
-		ResetOrigin();
+		sim::Vector3 const & observer_pos = observer.GetPosition();
+		scene.SetOrigin(observer_pos);
+		reset_origin_flag = false;
+		origin_reset_time = sys::GetTime();
 	}
 	else 
 	{
@@ -229,7 +272,7 @@ void form::SceneThread::ThreadTick()
 
 void form::SceneThread::AdjustNumQuaterna()
 {
-	if (IsResetOriginRecent() || frame_ratio < 0)
+	if (PostResetFreeze() || frame_ratio < 0)
 	{
 		return;
 	}
@@ -296,7 +339,7 @@ bool form::SceneThread::GenerateMesh()
 {
 	//Assert(IsSceneThread());
 	
-	if (IsResetOriginRecent())
+	if (PostResetFreeze())
 	{
 		return false;
 	}
@@ -323,30 +366,6 @@ bool form::SceneThread::GenerateMesh()
 	mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
 	return true;
-}
-
-// Returns false if a new origin is needed.
-bool form::SceneThread::IsOriginOk() const
-{
-	// The real test: Is the observer not far enough away from the 
-	// current origin that visible inaccuracies might become apparent?
-	sim::Vector3 const & observer_pos = observer.GetPosition();
-	double observer_position_length = Length(observer_pos - scene.GetOrigin());
-	return observer_position_length < max_observer_position_length;
-}
-
-bool form::SceneThread::IsResetOriginRecent() const
-{
-	sys::TimeType t = sys::GetTime();
-	sys::TimeType time_since_reset = t - origin_reset_time;
-	return time_since_reset < post_reset_freeze_period;
-}
-
-void form::SceneThread::ResetOrigin()
-{
-	sim::Vector3 const & observer_pos = observer.GetPosition();
-	scene.SetOrigin(observer_pos);
-	origin_reset_time = sys::GetTime();
 }
 
 bool form::SceneThread::IsMainThread() const
