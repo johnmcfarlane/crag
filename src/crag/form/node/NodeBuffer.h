@@ -62,8 +62,6 @@ namespace form
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(NodeBuffer);
 		
-		PointBuffer & GetPoints() { return points; }
-		
 		int GetNumQuaternaUsed() const;
 		int GetNumQuaternaUsedTarget() const;
 		
@@ -98,7 +96,7 @@ namespace form
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
 		void CollapseNode(Node & node);
 	private:
-		static bool InitChildGeometry(Node const & parent, Node * children_copy, Shader & shader);
+		static bool InitChildGeometry(Node const & parent, Node * children_copy);
 		static void InitChildPointers(Node & parent_node);
 		
 		void DeinitChildren(Node * children);
@@ -137,7 +135,7 @@ namespace form
 		
 		// Pool of vertices from which to take the corners of nodes.
 		// TODO: NodeBuffer and PointBuffer could maybe be owned by the same, parent class. 
-		PointBuffer points;
+		PointBuffer point_buffer;
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.

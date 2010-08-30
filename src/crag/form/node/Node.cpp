@@ -54,8 +54,11 @@ form::Node::~Node()
 }
 
 // Makes sure node's three mid-points are non-null or returns false.
-void form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
+bool form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
 {
+	// success
+	bool success = true;
+	
 	// Make sure all mid-points exist.
 	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
 	{
@@ -63,14 +66,125 @@ void form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
 		Node::Triplet & t = triple[triplet_index];
 		if (t.mid_point == nullptr)
 		{
-			// create the mid-point, share it with the cousin
+			// This function shouldn't be called unless all three cousins exist.
 			Node & cousin = ref(t.cousin);
-			t.mid_point = cousin.triple[triplet_index].mid_point = point_buffer.Alloc();
+
+			// Create the mid-point.
+			Point * new_point = point_buffer.Alloc();
+			if (new_point == nullptr)
+			{
+				// We should always have enough points in the buffer.
+				Assert(false);
+				
+				success = false;
+				continue;
+			}
+
+			// Try and set its value.
+			if (! shader.InitMidPoint(triplet_index, ref(this), ref(t.cousin), ref(new_point)))
+			{
+				// If this failed, free it up and return.
+				
+				// Note that there may be one or two other mid-points that were created.
+				// That's ok. They're valid and they might make it easier to expand this
+				// or neighboring nodes in the future. This is because sometimes, a
+				// cousin is destroyed. This makes it impossible to create the point, but
+				// the point is still valid. 
+				point_buffer.Free(new_point);
+				
+				// Because of this, we try and create all three mid-points - even after we
+				// know that failure is inevitable. 
+				success = false;
+				continue;
+			}
+
+			// The mid-point was successfully allocated and initialized.
 			
-			// set its value
-			shader.InitMidPoint(triplet_index, * this, ref(t.cousin), ref(t.mid_point));
+			// Assign the mid-point to this node and the cousin.
+			t.mid_point = cousin.triple[triplet_index].mid_point = new_point;
 		}
 	}
+	
+	return success;
+}
+
+// This step in the initialization of a node is performed 
+// before it is determined that the node can be expanded.
+bool form::Node::InitChildCorners(Node const & parent, Node * children)
+{
+	Assert(parent.children == nullptr);
+	
+#if 1
+	Node::Triplet const * parent_triple = parent.triple;
+	
+	Node * child = children;
+	Node::Triplet * child_triple;
+	
+	child_triple = child->triple;
+	child_triple[0].corner = parent_triple[0].corner;
+	child_triple[1].corner = parent_triple[2].mid_point;
+	child_triple[2].corner = parent_triple[1].mid_point;
+	if (! child->InitScoreParameters())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple[0].corner = parent_triple[2].mid_point;
+	child_triple[1].corner = parent_triple[1].corner;
+	child_triple[2].corner = parent_triple[0].mid_point;
+	if (! child->InitScoreParameters())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple[0].corner = parent_triple[1].mid_point;
+	child_triple[1].corner = parent_triple[0].mid_point;
+	child_triple[2].corner = parent_triple[2].corner;
+	if (! child->InitScoreParameters())
+	{
+		return false;
+	}
+	
+	++ child;
+	
+	child_triple = child->triple;
+	child_triple[0].corner = parent_triple[0].mid_point;
+	child_triple[1].corner = parent_triple[1].mid_point;
+	child_triple[2].corner = parent_triple[2].mid_point;
+	if (! child->InitScoreParameters())
+	{
+		return false;
+	}
+#else
+	
+	// TODO: Hard-code this and remove GetChildCorners.
+	for (int child_index = 0; child_index < 4; ++ child_index) 
+	{
+		Point * child_corners[3];
+		parent.GetChildCorners(child_index, child_corners);
+		
+		Node & child = children [child_index];
+		
+		child.triple[0].corner = child_corners[0];
+		child.triple[1].corner = child_corners[1];
+		child.triple[2].corner = child_corners[2];
+		if (child.InitScoreParameters() == false) {
+			return false;
+		}
+		
+		child.score = 0;	// std::numeric_limits<float>::max();
+	}
+#endif
+	
+	Assert(parent.triple[0].corner == children[0].triple[0].corner);
+	
+	return true;
 }
 
 // This gets called when the local origin is changed.

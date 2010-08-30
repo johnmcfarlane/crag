@@ -108,7 +108,7 @@ void sim::MoonShader::InitRootPoints(form::Point * points[])
 	}
 }
 
-void sim::MoonShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point) 
+bool sim::MoonShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point) 
 {
 	Vector3 near_a = Vector3(a.GetCorner(TriMod(i + 1)).pos) - center;
 	Vector3 near_b = Vector3(b.GetCorner(TriMod(i + 1)).pos) - center;	
@@ -120,6 +120,8 @@ void sim::MoonShader::InitMidPoint(int i, form::Node const & a, form::Node const
 	
 	near_mid += center;
 	mid_point.pos = near_mid;
+	
+	return true;
 }
 
 // Comes in normalized. Is then given the correct length.

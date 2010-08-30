@@ -39,11 +39,8 @@ namespace form
 		~Node();
 
 		// Ensures all three mid-points are allocated and calculated.
-		void InitMidPoints(PointBuffer & point_buffer, Shader & shader);
-		
-		// Assumes all three mid-points have been allocated. (By other InitMidPoints.)
-		// Performs the calculating.
-		//void InitMidPoints(Shader & shader);
+		bool InitMidPoints(PointBuffer & point_buffer, Shader & shader);
+		static bool InitChildCorners(Node const & parent, Node * children);
 
 		// Calls InitMidPoints and recalcs the center position.
 		void Reinit(Shader & shader, PointBuffer & point_buffer);

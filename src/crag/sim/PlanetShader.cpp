@@ -110,7 +110,7 @@ void sim::PlanetShader::InitRootPoints(form::Point * points[])
 	}
 }
 
-void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point) 
+bool sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point) 
 {
 	int depth = MeasureDepth(& a, planet_shader_depth_deep);
 	Assert(depth == MeasureDepth(& b, planet_shader_depth_deep));
@@ -170,6 +170,8 @@ void sim::PlanetShader::InitMidPoint(int i, form::Node const & a, form::Node con
 	result += center;
 	mid_point.pos = result;
 	mid_point.col = gfx::Color4b::White();
+
+	return true;
 }
 
 // Comes in normalized. Is then given the correct length.

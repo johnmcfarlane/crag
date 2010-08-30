@@ -32,7 +32,7 @@ namespace sim
 	private:
 		virtual void SetOrigin(Vector3d const & origin);
 		virtual void InitRootPoints(form::Point * points[]);
-		virtual void InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point);
+		virtual bool InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point);
 		
 		void CalcPointPos(Vector3 & position) const;
 		

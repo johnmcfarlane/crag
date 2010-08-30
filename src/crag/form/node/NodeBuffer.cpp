@@ -70,7 +70,7 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 , quaterna_sorted_end(quaterna)
 , quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : target_num_quaterna, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
-, points(max_num_verts)
+, point_buffer(max_num_verts)
 #if defined(USE_OPENCL)
 , cpu_kernel(nullptr)
 , gpu_kernel(nullptr)
@@ -117,7 +117,7 @@ void form::NodeBuffer::Verify() const
 
 	VerifyTrue(num_nodes_used == num_quaterna_used * 4);
 	
-	VerifyObject(points);
+	VerifyObject(point_buffer);
 	
 /*	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
 	{
@@ -296,7 +296,7 @@ void form::NodeBuffer::InitKernel()
 
 void form::NodeBuffer::OnReset()
 {
-	points.FastClear();
+	point_buffer.FastClear();
 	InitQuaterna(quaterna_used_end);
 
 	nodes_used_end = nodes;
@@ -449,15 +449,13 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 {
 	//int fetch_ahead = 32;
 	
-	points.Clear();
+	point_buffer.Clear();
 	
 	gfx::IndexBuffer & indices = mesh.GetIndices();
 	indices.Clear();
 	
 	VertexBuffer & vertices = mesh.GetVertices();
 	vertices.Clear();
-	
-	//mesh.SetVertices(& points);
 	
 	{
 		GenerateMeshFunctor f(mesh);
@@ -530,13 +528,17 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	Assert(worst_children + 1 != & node);
 	Assert(worst_children + 2 != & node);
 	Assert(worst_children + 3 != & node);
-		
+	
+	// Note that after this point, expansion may fail but the node may have new mid-points.
 	Shader & shader = GetPolyhedron(node).GetShader();
-	node.InitMidPoints(points, shader);
+	if (! node.InitMidPoints(point_buffer, shader))
+	{
+		return false;
+	}
 	
 	// Work with copy of children until it's certain that expansion is going to work.
 	Node children_copy[4];	
-	if (! InitChildGeometry(node, children_copy, shader)) 
+	if (! Node::InitChildCorners(node, children_copy)) 
 	{
 		// Probably, a child is too small to be represented using float accuracy.
 		return false;
@@ -579,82 +581,7 @@ void form::NodeBuffer::CollapseNode(Node & node)
 	}
 }
 
-bool form::NodeBuffer::InitChildGeometry(Node const & parent, Node * children, Shader & shader)
-{
-#if 1
-	Node::Triplet const * parent_triple = parent.triple;
-	
-	Node * child = children;
-	Node::Triplet * child_triple;
-	
-	child_triple = child->triple;
-	child_triple->corner = parent_triple[0].corner;
-	(++ child_triple)->corner = parent_triple[2].mid_point;
-	(++ child_triple)->corner = parent_triple[1].mid_point;
-	if (! child->InitScoreParameters())
-	{
-		return false;
-	}
-	
-	++ child;
-	
-	child_triple = child->triple;
-	child_triple->corner = parent_triple[2].mid_point;
-	(++ child_triple)->corner = parent_triple[1].corner;
-	(++ child_triple)->corner = parent_triple[0].mid_point;
-	if (! child->InitScoreParameters())
-	{
-		return false;
-	}
-	
-	++ child;
-	
-	child_triple = child->triple;
-	child_triple->corner = parent_triple[1].mid_point;
-	(++ child_triple)->corner = parent_triple[0].mid_point;
-	(++ child_triple)->corner = parent_triple[2].corner;
-	if (! child->InitScoreParameters())
-	{
-		return false;
-	}
-	
-	++ child;
-	
-	child_triple = child->triple;
-	child_triple->corner = parent_triple[0].mid_point;
-	(++ child_triple)->corner = parent_triple[1].mid_point;
-	(++ child_triple)->corner = parent_triple[2].mid_point;
-	if (! child->InitScoreParameters())
-	{
-		return false;
-	}
-#else
-	
-	// TODO: Hard-code this and remove GetChildCorners.
-	for (int child_index = 0; child_index < 4; ++ child_index) 
-	{
-		Point * child_corners[3];
-		parent.GetChildCorners(child_index, child_corners);
-		
-		Node & child = children [child_index];
-		
-		child.triple[0].corner = child_corners[0];
-		child.triple[1].corner = child_corners[1];
-		child.triple[2].corner = child_corners[2];
-		if (child.InitScoreParameters() == false) {
-			return false;
-		}
-		
-		child.score = 0;	// std::numeric_limits<float>::max();
-	}
-#endif
-	
-	Assert(parent.triple[0].corner == children[0].triple[0].corner);
-	
-	return true;
-}
-
-// Make sure cousins and their mid-points match up.
+// Make sure cousins and their mid-point_buffer match up.
 // Also make sure all children know who their parent is.
 void form::NodeBuffer::InitChildPointers(Node & parent_node)
 {
@@ -744,7 +671,7 @@ void form::NodeBuffer::DeinitNode(Node & node)
 			if (t.mid_point != nullptr)
 			{
 				// and there is a mid-point, so delete it.
-				points.Free(t.mid_point);
+				point_buffer.Free(t.mid_point);
 				t.mid_point = nullptr;
 			}
 		}
@@ -823,7 +750,7 @@ void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterna_used_end)
 	VerifyArrayElement(new_quaterna_used_end, quaterna_used_end, quaterna_end + 1);
 	
 	// Increasing the target number of nodes is simply a matter of setting a value. 
-	// The target pointer now points into the range of unused quaterna at the end of the array.
+	// The target pointer now point_buffer into the range of unused quaterna at the end of the array.
 	quaterna_used_end_target = new_quaterna_used_end;
 }
 
