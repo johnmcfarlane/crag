@@ -43,9 +43,6 @@
     <Filter Include="src\crag\sys">
       <UniqueIdentifier>{a3a4d202-b9e7-41e8-9118-03ac202a13b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\distcc">
-      <UniqueIdentifier>{ac80cd62-5108-41fd-b0f3-62a96ab6cf11}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp">
@@ -233,12 +230,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp">
       <Filter>src\crag\sys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\sys\Thread.cpp">
-      <Filter>src\crag\sys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\distcc\ncpus.cpp">
-      <Filter>src\distcc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

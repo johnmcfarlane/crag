@@ -84,8 +84,6 @@
     <ClCompile Include="..\..\src\crag\sys\Mutex.cpp" />
     <ClCompile Include="..\..\src\crag\sys\Scheduler.cpp" />
     <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp" />
-    <ClCompile Include="..\..\src\crag\sys\Thread.cpp" />
-    <ClCompile Include="..\..\src\distcc\ncpus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\cl\CpuKernel.h" />

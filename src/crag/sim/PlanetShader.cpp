@@ -142,7 +142,7 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 	{
 		if (false && depth >= planet_shader_depth_deep)
 		{
-			result = CalcMidPointPos_Deep(params);
+			//result = CalcMidPointPos_Deep(params);
 			mid_point.col = gfx::Color4b::Red();
 		}
 		else

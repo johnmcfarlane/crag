@@ -19,38 +19,9 @@
 #include "core/ConfigEntry.h"
 
 
-int dcc_ncpus(int *ncpus);
-
-
 namespace
 {
-	
 	CONFIG_DEFINE(scheduler_num_threads, int, 0);
-	
-	//bool volatile busy = false;
-	
-	
-	// Returns the number of CPUs on this computer that will
-	// be used by the Scheduler. On failure, returns 1. 
-	int GetNumCpus()
-	{
-		// Do we want to use the override? 
-		if (scheduler_num_threads > 0)
-		{
-			return scheduler_num_threads;
-		}
-		
-		// Use a function I dug up on the interweb to get the number of CPUs 
-		// (because SDL doesn't yet have such a function).
-		int ncpus;
-		if (dcc_ncpus(& ncpus) == 0)
-		{
-			return ncpus;
-		}
-		
-		return 1;
-	}
-	
 }
 
 
