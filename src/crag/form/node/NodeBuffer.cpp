@@ -508,7 +508,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		// Make sure that the node isn't replacing itself or one of its ancestors.
 		for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->parent)
 		{
-			if (ancestor >= reusable_quaterna.nodes && ancestor >= reusable_quaterna.nodes + 4)
+			if (ancestor >= reusable_quaterna.nodes && ancestor < reusable_quaterna.nodes + 4)
 			{
 				return false;
 			}
