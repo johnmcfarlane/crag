@@ -29,7 +29,7 @@ namespace form
 		
 		virtual void SetOrigin(Vector3d const & origin) = 0;
 		virtual void InitRootPoints(form::Point * points[]) = 0;
-		virtual bool InitMidPoint(int i, Node const & a, Node const & b, Point & mid_point) = 0;
+		virtual bool InitMidPoint(Point & mid_point, Node const & a, Node const & b, int index) = 0;
 	};
 	
 	// TODO: This pattern is probably over-complicated.

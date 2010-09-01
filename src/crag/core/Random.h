@@ -27,8 +27,7 @@ public:
 	// returns pseudo-random whole number in the range [0, n)
 	int GetInt(int n)
 	{
-		return static_cast<int>((static_cast<int64_t>(GetInt()) * n) / MAX);
-		//return static_cast<int>((static_cast<long long>(GetInt()) * n) / MAX);
+		return static_cast<int>((static_cast<int64_t>(GetInt()) * n) / (MAX + 1));
 	}
 	
 	// returns pseudo-random number in the range [0, 1)

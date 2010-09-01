@@ -33,23 +33,30 @@ namespace sim
 	private:
 		virtual void SetOrigin(Vector3d const & origin);
 		virtual void InitRootPoints(form::Point * points[]);
-		virtual bool InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point);
+		virtual bool InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index);
 		
 		struct Params
 		{
-			Vector3 near_a;
-			Vector3 near_b;
-			Vector3 far_a;
-			Vector3 far_b;
+			form::Point const * grid[4][4];
 			Scalar depth;	// as a proportion of planet_shader_depth_deep
 			Random rnd;
 		};
 		
 		void CalcRootPointPointPos(Random & rnd, Vector3 & position) const;
-		
+
+		static bool GetGrid(form::Point const * grid[4][4], form::Node const & a, form::Node const & b, int index);
+		static void GetNodeLattice(form::Node const * lattice [3][3][2], form::Node const & a, form::Node const & b, int index);
+		void GridToAltitude(Scalar altitude[4][4], form::Point const * grid[4][4]) const;
+
 		Vector3 CalcMidPointPos_Shallow(Params & params) const;
 		Vector3 CalcMidPointPos_Medium(Params & params) const;
 		Vector3 CalcMidPointPos_Deep(Params & params) const;
+		
+		Vector3 GetLocalPosition(form::Point const & point) const;
+		Vector3 GetLocalPosition(form::Vector3 const & point_pos) const;
+		Scalar GetAltitude(form::Point const & point) const;
+		Scalar GetAltitude(form::Vector3 const & point_pos) const;
+		Scalar GetAltitude(Vector3 const & local_pos) const;
 		
 		Vector3 center;		// relative to origin
 		Planet const & planet;

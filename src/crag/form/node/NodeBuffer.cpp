@@ -504,6 +504,15 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		{
 			return false;
 		}
+
+		// Make sure that the node isn't replacing itself or one of its ancestors.
+		for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->parent)
+		{
+			if (ancestor >= reusable_quaterna.nodes && ancestor >= reusable_quaterna.nodes + 4)
+			{
+				return false;
+			}
+		}
 		
 		if (! ExpandNode(node, reusable_quaterna))
 		{
@@ -766,7 +775,7 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 	// Was there any decrease at all?
 	if (old_quaterna_used_end == quaterna_used_end)
 	{
-		Assert(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
+		//Assert(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
 		return;
 	}
 	
@@ -799,9 +808,9 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 			{
 				// If so, we cannot easily remove this quaterna.
 				// It's best to stop the reduction at this element.
-				int n = new_quaterna_used_end - quaterna;
-				int m = quaterna_used_end - quaterna;
-				std::cout << m << ":" << n << '\n';
+			//	int n = new_quaterna_used_end - quaterna;
+			//	int m = quaterna_used_end - quaterna;
+			//	std::cout << m << ":" << n << '\n';
 				break;
 			}
 			
@@ -910,8 +919,8 @@ template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Serial(FUNCTOR & f, 
 
 template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Paralell(FUNCTOR & f, int step_size)
 {
-	//ForEachNode_Serial(f, step_size);
-	//return;
+	ForEachNode_Serial(f, step_size);
+	return;
 	
 	int num_nodes = nodes_used_end - nodes;
 	if (num_nodes == 0)

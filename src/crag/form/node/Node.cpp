@@ -81,7 +81,7 @@ bool form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
 			}
 
 			// Try and set its value.
-			if (! shader.InitMidPoint(triplet_index, ref(this), ref(t.cousin), ref(new_point)))
+			if (! shader.InitMidPoint(ref(new_point), ref(this), ref(t.cousin), triplet_index))
 			{
 				// If this failed, free it up and return.
 				
@@ -203,7 +203,7 @@ void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
 				//if (& cousin > this)	// TODO: Uncomment this if it works.
 				{
 					Point & mid_point = ref(t.mid_point);
-					shader.InitMidPoint(triplet_index, * this, cousin, mid_point);
+					shader.InitMidPoint(mid_point, * this, cousin, triplet_index);
 				}
 			}
 		}

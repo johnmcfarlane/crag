@@ -62,6 +62,8 @@ namespace form
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(NodeBuffer);
 		
+		PointBuffer & GetPoints() { return point_buffer; }
+		
 		int GetNumQuaternaUsed() const;
 		int GetNumQuaternaUsedTarget() const;
 		

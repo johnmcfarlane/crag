@@ -108,10 +108,10 @@ void sim::MoonShader::InitRootPoints(form::Point * points[])
 	}
 }
 
-bool sim::MoonShader::InitMidPoint(int i, form::Node const & a, form::Node const & b, form::Point & mid_point) 
+bool sim::MoonShader::InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index) 
 {
-	Vector3 near_a = Vector3(a.GetCorner(TriMod(i + 1)).pos) - center;
-	Vector3 near_b = Vector3(b.GetCorner(TriMod(i + 1)).pos) - center;	
+	Vector3 near_a = Vector3(a.GetCorner(TriMod(index + 1)).pos) - center;
+	Vector3 near_b = Vector3(b.GetCorner(TriMod(index + 1)).pos) - center;	
 	Vector3 near_mid = near_a + near_b;
 	near_mid *= moon.GetRadiusAverage() / Length(near_mid);
 	
