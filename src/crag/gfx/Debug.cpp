@@ -28,13 +28,15 @@
 
 #include "sys/Mutex.h"
 
+namespace debug {
+	void DrawNodePoints();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local definitions
 
-namespace 
-{
-	
+ANONYMOUS_BEGIN
+
 	using gfx::Debug::ColorPair;
 	using gfx::Debug::Vector3;
 
@@ -120,7 +122,7 @@ namespace
 					Assert(false);
 			}
 
-			Assert(points.size() >= 0 && points.size() < 100000);
+			Assert(points.size() >= 0 && points.size() < 1000000);
 			for (point_vector::const_iterator i = points.begin(); i != points.end(); ++ i)
 			{
 				Point const & p = * i;
@@ -199,7 +201,7 @@ namespace
 		out_stream.str("");
 	}
 
-}
+ANONYMOUS_END
 
 
 
@@ -208,13 +210,13 @@ namespace
 
 
 // Can't find this at link time? Make sure you're wrapping reference in a test of GetVerbosity(). 
-std::ostream & gfx::Debug::out = out_stream;
+std::ostream & gfx::Debug::out = ANONYMOUS::out_stream;
 
 
 // Start things up.
 void gfx::Debug::Init()
 {
-	Assert(font == nullptr);
+	Assert(ANONYMOUS::font == nullptr);
 
 	// TODO: Is this font legit content?
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
@@ -223,25 +225,25 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	font = new gfx::Font("font.png", .5f);
+	ANONYMOUS::font = new gfx::Font("font.png", .5f);
 }
 
 
 // Close things down.
 void gfx::Debug::Deinit()
 {
-	Assert(font != nullptr);
-	delete font;
-	font = nullptr;
+	Assert(ANONYMOUS::font != nullptr);
+	delete ANONYMOUS::font;
+	ANONYMOUS::font = nullptr;
 }
 
 
 // Run any and all sanity checks.
 void gfx::Debug::Verify()
 {
-	points.Verify();
-	lines.Verify();
-	tris.Verify();
+	ANONYMOUS::points.Verify();
+	ANONYMOUS::lines.Verify();
+	ANONYMOUS::tris.Verify();
 }
 
 
@@ -251,33 +253,33 @@ double gfx::Debug::GetVerbosity()
 #if defined(NDEBUG)
 	return .25;
 #else
-	return debug_verbosity;
+	return ANONYMOUS::debug_verbosity;
 #endif
 }
 
 
 void gfx::Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
 {
-	mutex.Lock();
-	points.AddPoint(a, colors);
-	mutex.Unlock();
+	ANONYMOUS::mutex.Lock();
+	ANONYMOUS::points.AddPoint(a, colors);
+	ANONYMOUS::mutex.Unlock();
 }
 
 void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
-	mutex.Lock();
-	lines.AddPoint(a, colors_a);
-	lines.AddPoint(b, colors_b);
-	mutex.Unlock();
+	ANONYMOUS::mutex.Lock();
+	ANONYMOUS::lines.AddPoint(a, colors_a);
+	ANONYMOUS::lines.AddPoint(b, colors_b);
+	ANONYMOUS::mutex.Unlock();
 }
 
 void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
-	mutex.Lock();
-	tris.AddPoint(a, colors);
-	tris.AddPoint(b, colors);
-	tris.AddPoint(c, colors);
-	mutex.Unlock();
+	ANONYMOUS::mutex.Lock();
+	ANONYMOUS::tris.AddPoint(a, colors);
+	ANONYMOUS::tris.AddPoint(b, colors);
+	ANONYMOUS::tris.AddPoint(c, colors);
+	ANONYMOUS::mutex.Unlock();
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)
@@ -372,7 +374,7 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 
 void gfx::Debug::Draw()
 {
-	mutex.Lock();
+	ANONYMOUS::mutex.Lock();
 	
 	GLPP_VERIFY;
 	Verify();
@@ -387,9 +389,9 @@ void gfx::Debug::Draw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl::Enable(GL_BLEND);
 	
-	DrawPrimatives(false);
-	DrawPrimatives(true);
-	ClearPrimatives();
+	ANONYMOUS::DrawPrimatives(false);
+	ANONYMOUS::DrawPrimatives(true);
+	ANONYMOUS::ClearPrimatives();
 	
 	// Unset state
 	gl::Enable(GL_CULL_FACE);
@@ -397,14 +399,14 @@ void gfx::Debug::Draw()
 	gl::Disable(GL_BLEND);
 	gl::SetColor<GLfloat>(1,1,1);
 
-	DrawText();
+	ANONYMOUS::DrawText();
 	
 	Verify();
 	GLPP_VERIFY;
-	mutex.Unlock();
+	ANONYMOUS::mutex.Unlock();
 }
 
-	
+
 #else
 
 class null_stream : public std::ostream

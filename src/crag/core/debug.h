@@ -37,6 +37,22 @@
 #endif
 
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Anonymous namespace wrapper
+
+#if defined (NDEBUG)
+#define ANONYMOUS_BEGIN namespace {
+#define ANONYMOUS_END }
+#define ANONYMOUS
+#else
+#define ANONYMOUS_BEGIN namespace ANON {
+#define ANONYMOUS_END }
+#define ANONYMOUS ANON
+#endif
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Misc debug helpers
 
