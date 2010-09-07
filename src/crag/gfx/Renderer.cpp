@@ -391,7 +391,9 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 //	Debug::AddFrustum(test);
 	
 	if (Debug::GetVerbosity() > .3) {
+		std::streamsize previous_precision = Debug::out.precision(10);
 		Debug::out << "pos:" << pov.pos << '\n';
+		Debug::out.precision(previous_precision);
 	}
 	
 	if (Debug::GetVerbosity() > .9) {
