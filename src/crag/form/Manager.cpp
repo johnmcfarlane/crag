@@ -36,12 +36,13 @@ namespace
 	CONFIG_DEFINE (formation_shininess, float, 0.0f);
 
 	CONFIG_DEFINE (enable_multithreding, bool, true);
+	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 }
 
 
 form::Manager::Manager(sim::Observer & init_observer)
 : observer(init_observer)
-, suspended(false)
+, enable_mesh_generation(true)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
 , front_buffer_object(& buffer_objects [0])
 , back_buffer_object(& buffer_objects [1])
@@ -114,9 +115,19 @@ void form::Manager::AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType targ
 	scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 }
 
-void form::Manager::ToggleSuspended()
+void form::Manager::ToggleSceneThread()
 {
-	suspended = ! suspended;
+	scene_thread->ToggleSuspended();
+}
+
+void form::Manager::ToggleMeshGeneration()
+{
+	enable_mesh_generation = ! enable_mesh_generation;
+}
+
+void form::Manager::ToggleDynamicOrigin()
+{
+	enable_dynamic_origin = ! enable_dynamic_origin;
 }
 
 void form::Manager::ToggleFlatShaded()
@@ -131,7 +142,7 @@ void form::Manager::Launch()
 
 void form::Manager::Tick()
 {
-	if (! scene_thread->IsOriginOk()) 
+	if (enable_dynamic_origin && ! scene_thread->IsOriginOk()) 
 	{
 		scene_thread->ResetOrigin();
 	}
@@ -146,7 +157,7 @@ void form::Manager::ForEachFormation(FormationFunctor & f) const
 
 bool form::Manager::PollMesh()
 {
-	if (suspended)
+	if (! enable_mesh_generation)
 	{
 		return false;
 	}
@@ -241,15 +252,25 @@ void form::Manager::DebugStats() const
 		gfx::Debug::out << "target nodes:" << (scene_thread->GetNumQuaternaUsedTarget() << 2) << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .5) 
-	{
-		//Debug::out << "target nodes:" << target_num_nodes << '\n';
-	}
+	//if (gfx::Debug::GetVerbosity() > .5) 
+	//{
+	//	Debug::out << "target nodes:" << target_num_nodes << '\n';
+	//}
 	
 	if (gfx::Debug::GetVerbosity() > .15) 
 	{
 		// TODO: Stop this flickering.
 		gfx::Debug::out << "polys:" << front_buffer_object->GetNumPolys() << '\n';
+	}
+	
+	if (! enable_mesh_generation && gfx::Debug::GetVerbosity() > .0) 
+	{
+		gfx::Debug::out << "disabled: mesh generation\n";
+	}
+	
+	if (! enable_dynamic_origin && gfx::Debug::GetVerbosity() > .05) 
+	{
+		gfx::Debug::out << "disabled: dynamic origin\n";
 	}
 }
 

@@ -63,7 +63,9 @@ namespace form {
 		FormationSet const & GetFormations() const;
 		
 		void AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
-		void ToggleSuspended();
+		void ToggleSceneThread();
+		void ToggleMeshGeneration();
+		void ToggleDynamicOrigin();
 		void ToggleFlatShaded();
 		
 		void Launch();
@@ -85,7 +87,7 @@ namespace form {
 		FormationSet formation_set;
 		sim::Observer & observer;
 
-		bool suspended;
+		bool enable_mesh_generation;
 		SceneThread * scene_thread;
 
 #if defined(FORM_VERTEX_TEXTURE)

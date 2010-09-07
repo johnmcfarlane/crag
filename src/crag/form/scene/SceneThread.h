@@ -44,6 +44,7 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(SceneThread);
 		
 		void Launch();
+		void ToggleSuspended();
 		void Quit();
 		
 		//int GetTargetNumNodes() const;

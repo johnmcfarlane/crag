@@ -30,7 +30,6 @@ namespace
 	CONFIG_DEFINE (post_reset_freeze_period, sys::TimeType, 1.25f);
 	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.01f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
-	CONFIG_DEFINE (dynamic_origin, bool, true);
 }
 
 
@@ -76,10 +75,16 @@ void form::SceneThread::Launch()
 {
 	Assert(IsMainThread());
 	
-	if (threaded) {
+	if (threaded) 
+	{
 		Assert(thread == nullptr);
 		thread = new Thread(* this);
 	}
+}
+
+void form::SceneThread::ToggleSuspended()
+{
+	suspend_flag = ! suspend_flag;
 }
 
 void form::SceneThread::Quit()
@@ -148,6 +153,11 @@ void form::SceneThread::Tick()
 			gfx::Debug::out << "resetting...\n";
 		}
 	}
+	
+	if (suspend_flag && gfx::Debug::GetVerbosity() > .05)
+	{
+		gfx::Debug::out << "disabled: scene thread\n";
+	}
 }
 
 void form::SceneThread::ForEachFormation(FormationFunctor & f) const
@@ -187,10 +197,7 @@ void form::SceneThread::ResetOrigin()
 {
 	Assert(IsMainThread());
 
-	if (dynamic_origin)
-	{
-		reset_origin_flag = true;
-	}
+	reset_origin_flag = true;
 }
 
 bool form::SceneThread::PostResetFreeze() const

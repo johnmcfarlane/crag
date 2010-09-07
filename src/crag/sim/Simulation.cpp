@@ -379,44 +379,77 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					
 				case KEY_RETURN:
 					paused = ! paused;
-					break;
+					return true;
 					
 				case KEY_C:
 					renderer.ToggleCulling();
-					break;
+					return true;
 					
 				case KEY_F:
 					//renderer.ToggleSmoothShading();
 					formation_manager->ToggleFlatShaded();
-					break;
+					return true;
 					
 				case KEY_G:
 					Universe::ToggleGravity();
-					break;
+					return true;
 					
 				case KEY_I:
-					formation_manager->ToggleSuspended();
-					break;
+					formation_manager->ToggleSceneThread();
+					return true;
 					
 				case KEY_L:
 					renderer.ToggleLighting();
-					break;
+					return true;
 					
 				case KEY_O:
 					capture = ! capture;
-					break;
+					return true;
 					
 				case KEY_P:
 					renderer.ToggleWireframe();
-					break;
+					return true;
 					
 				default:
 					break;
 			}
 			break;
 		}
+			
+		case COMBO_SHIFT:
+		{
+			switch (key_code)
+			{
+				case KEY_I:
+					formation_manager->ToggleMeshGeneration();
+					return true;
+					
+				default:
+					break;
+			}
+			break;
+		}
+			
+		case COMBO_CTRL:
+		{
+			switch (key_code)
+			{
+				case KEY_I:
+					formation_manager->ToggleDynamicOrigin();
+					return true;
+					
+				default:
+					break;
+			}
+			break;
+		}
+			
+		default:
+			break;
 	}
 	
+	// TODO: Move out out of gfx::Debug.
+	gfx::Debug::out << "Unrecognized keystroke\n";
 	return true;
 }
 
