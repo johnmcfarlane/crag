@@ -259,19 +259,20 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 	
 	// Recalculate the node scores.
 	UpdateNodeScores(camera_ray_relative);
-	
-	// Reflect the new scores in the quaterna.
-	UpdateQuaternaScores();
 
-	// Now resort the quaterna so they are in order again.
-	SortQuaterna();
-	
-	// Finally, using the quaterna,
-	// replace nodes whose parent's scores have dropped enough
-	// with ones whose score have increased enough.
-	while (ChurnNodes())
+	do 
 	{
+		// Reflect the new scores in the quaterna.
+		UpdateQuaternaScores();
+
+		// Now resort the quaterna so they are in order again.
+		SortQuaterna();
+		
+		// Finally, using the quaterna,
+		// replace nodes whose parent's scores have dropped enough
+		// with ones whose score have increased enough.
 	}
+	while (ChurnNodes());
 	
 	VerifyObject (* this);	// should fail because of the following.
 }
@@ -529,7 +530,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	
 	return true;
 }
-	
+
 bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
 {
 	Node * worst_children = children_quaterna.nodes;
