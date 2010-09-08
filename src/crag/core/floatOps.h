@@ -227,7 +227,7 @@ inline double Atan2(double x, double y) { return atan2(x, y); }
 //
 // Taken from Paul Breeuwsma: http://www.paulinternet.nl/?page=bicubic
 
-template<typename T> T BicubicInterpolation (T p [4][4], T x, T y) 
+/*template<typename T> T BicubicInterpolation (T p [4][4], T x, T y) 
 {
 	T a00 = p[1][1];
 	T a01 = -.5*p[1][0] + .5*p[1][2];
@@ -255,4 +255,46 @@ template<typename T> T BicubicInterpolation (T p [4][4], T x, T y)
 	a10 * x + a11 * x * y + a12 * x * y2 + a13 * x * y3 +
 	a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
 	a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
+}*/
+
+
+//////////////////////////////////////////////////////////////////////
+// [Bi]cubic Interpolation
+//
+// Taken from GameDev.net: http://www.gamedev.net/community/forums/topic.asp?topic_id=336744
+// Still isn't satisfactory.
+
+template<typename T> T CubicInterpolation(T a, T b, T c, T d, T x)
+{
+	Assert(x >= 0 && x <= 1);
+	
+	T p = (d - c) - (a - b);
+	T q = (a - b) - p;
+	T r = c - a;
+	T s = b;
+	T square = x * x;
+	
+	return (p * (square * x)) + (q * square) + (r * x) + s;
+}
+
+template<typename T> T CubicInterpolation(T samples [4], T x)
+{
+	Assert(x >= 0 && x <= 1);
+	
+	T p = (samples[3] - samples[2]) - (samples[0] - samples[1]);
+	T q = (samples[0] - samples[1]) - p;
+	T r =  samples[2] - samples[0];
+	T s =  samples[1];
+	T square = x * x;
+	
+	return (p * (square * x)) + (q * square) + (r * x) + s;
+}
+
+template<typename T> T BicubicInterpolation(T samples [4][4], T x, T y)
+{
+	return CubicInterpolation(CubicInterpolation(samples[0], x), 
+							  CubicInterpolation(samples[1], x), 
+							  CubicInterpolation(samples[2], x), 
+							  CubicInterpolation(samples[3], x), 
+							  y);
 }
