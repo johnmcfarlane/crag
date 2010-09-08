@@ -35,22 +35,21 @@ namespace sim
 		virtual void InitRootPoints(form::Point * points[]);
 		virtual bool InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index);
 		
-		struct Params
-		{
-			form::Point const * grid[4][4];
-			Scalar depth;	// as a proportion of planet_shader_depth_deep
-			Random rnd;
-		};
+		void CalcRootPointPos(Random & rnd, Vector3 & position) const;
+
+		// Mid-Point Calculation 
+		class Params;
+		bool CalcMidPointPos_Random(sim::Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Params & params) const;
+
+		typedef form::Point const * PointGrid [4][4];
+		typedef form::Node const * NodeLattice [3][3][2];
 		
-		void CalcRootPointPointPos(Random & rnd, Vector3 & position) const;
-
-		static bool GetGrid(form::Point const * grid[4][4], form::Node const & a, form::Node const & b, int index);
-		static void GetNodeLattice(form::Node const * lattice [3][3][2], form::Node const & a, form::Node const & b, int index);
-		void GridToAltitude(Scalar altitude[4][4], form::Point const * grid[4][4]) const;
-
-		Vector3 CalcMidPointPos_Shallow(Params & params) const;
-		Vector3 CalcMidPointPos_Medium(Params & params) const;
-		Vector3 CalcMidPointPos_Deep(Params & params) const;
+		static bool GetPointGrid(PointGrid & grid, Params const & params);
+		static void GetNodeLattice(NodeLattice & lattice, Params const & params);
+		static bool LatticeToGrid(PointGrid & grid, NodeLattice const & lattice, int index);
+		void GridToAltitude(Scalar altitude[4][4], PointGrid const & grid) const;
 		
 		Vector3 GetLocalPosition(form::Point const & point) const;
 		Vector3 GetLocalPosition(form::Vector3 const & point_pos) const;

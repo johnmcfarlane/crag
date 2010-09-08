@@ -28,9 +28,11 @@
 
 #include "sys/Mutex.h"
 
+#if 0
 namespace debug {
 	void DrawNodePoints();
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local definitions
@@ -374,6 +376,9 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 
 void gfx::Debug::Draw()
 {
+#if 0
+	debug::DrawNodePoints();
+#endif
 	ANONYMOUS::mutex.Lock();
 	
 	GLPP_VERIFY;

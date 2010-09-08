@@ -26,8 +26,13 @@
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
 
+#include "sys/Mutex.h"
 
-// TODO: http://www.paulinternet.nl/?page=bicubic
+
+// TODO: Really big todo list:
+// TODO: Go back to polling min/max height from results of fractal stuff.
+// TODO: Try 4-float co-ordinate system: normalized x, y, z and altitude.
+// TODO: Divorce heigh variation from near_distance
 
 
 namespace 
@@ -35,8 +40,9 @@ namespace
 	
 	// Config values
 	CONFIG_DEFINE (planet_shader_depth_medium, int, 3);
-	CONFIG_DEFINE (planet_shader_depth_deep, int, 6);
+	CONFIG_DEFINE (planet_shader_depth_deep, int, 12);
 	CONFIG_DEFINE (planet_shader_error_co, double, 0.995);
+	CONFIG_DEFINE (planet_shader_medium_coefficient, double, 0.05);
 	//CONFIG_DEFINE (formation_color, gfx::Color4f, gfx::Color4f(1.f, 1.f, 1.f));
 	
 	sim::Scalar root_three = Sqrt(3.);
@@ -76,6 +82,103 @@ namespace
 }
 
 
+namespace debug
+{
+#if defined(NDEBUG) || 1
+	void ClearNodePoints() { }
+	void MarkNodePoint(form::Node const & node, form::Point const & point, int row, int column) { }
+	void DrawNodePoints() { }
+	void ClampNodePoints() { }
+#else
+	struct Line
+	{
+		Line(form::Vector3 const & init_a, form::Vector3 const & init_b, int row, int column) 
+		: a(init_a)
+		, b(init_b) 
+		, row(row)
+		, column(column)
+		{ 
+		}
+		
+		form::Vector3 a;
+		form::Vector3 b;
+		int row;
+		int column;
+	};
+	
+	typedef std::vector<Line> LineVector;
+	LineVector lines;
+	sys::Mutex m;
+	int count_down = 50000;
+	
+	void ClearNodePoints() 
+	{
+		if (! count_down)
+		{
+			return;
+		}
+		m.Lock();
+		lines.clear();
+		m.Unlock();
+	}
+	
+	void MarkNodePoint(form::Node const & node, form::Point const & point, int row, int column) 
+	{
+		if (! count_down)
+		{
+			return;
+		}
+		m.Lock();
+		lines.push_back(Line(node.center, point.pos, row, column));
+		m.Unlock();
+	}
+	
+	void DrawNodePoints() 
+	{ 
+		m.Lock();
+		for (LineVector::const_iterator i = lines.begin(); i != lines.end(); ++ i)
+		{
+			Line const & line = * i;
+			gfx::Color4f c(static_cast<float> (line.row) * .25f, static_cast<float> (line.column) * .25f, 1);
+			gfx::Debug::AddLine(line.a, line.b, gfx::Debug::ColorPair(c, c), gfx::Debug::ColorPair(gfx::Color4f::White(), gfx::Color4f::White()));
+		}
+		m.Unlock();
+	}
+	
+	void ClampNodePoints()
+	{
+		if (count_down)
+		{
+			-- count_down;
+		}
+	}
+#endif
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::PlanetShader::PlanetShader
+
+class sim::PlanetShader::Params
+{
+public:
+	Params(form::Node const & init_a, form::Node const & init_b, int init_index, Scalar init_depth, Random init_rnd)
+	: a(init_a)
+	, b(init_b)
+	, index(init_index)
+	, depth(init_depth)
+	, rnd(init_rnd)
+	{
+	}
+	
+	form::Node const & a;
+	form::Node const & b;
+	int const index;
+	Scalar const depth;	// as a proportion of planet_shader_depth_deep
+	Random rnd;
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader
 
@@ -104,7 +207,7 @@ void sim::PlanetShader::InitRootPoints(form::Point * points[])
 	for (int i = 0; i < 4; ++ i)
 	{
 		Vector3 position = root_corners[i] / root_corner_length;
-		CalcRootPointPointPos(point_randomizer, position);
+		CalcRootPointPos(point_randomizer, position);
 		position += center;
 		points[i]->pos = position;
 	}
@@ -114,46 +217,35 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 {
 	int depth = MeasureDepth(& a, planet_shader_depth_deep);
 	Assert(depth == MeasureDepth(& b, planet_shader_depth_deep));
-	
-	Params params;
 
-	if (! GetGrid(params.grid, a, b, index))
-	{
-		//Assert(false);
-		return false;
-	}
-
-	Assert(params.grid[2][1] == & a.GetCorner(TriMod(index + 1)));
-	Assert(params.grid[1][2] == & b.GetCorner(TriMod(index + 1)));
-	Assert(params.grid[1][1] == & a.GetCorner(index));
-	Assert(params.grid[2][2] == & b.GetCorner(index));
-	
-	params.depth = static_cast<Scalar> (depth) / planet_shader_depth_deep;
-	Assert(params.depth >= 0 && params.depth <= 1);
-	
-	int seed_1 = Random(a.seed + index).GetInt();
-	int seed_2 = Random(b.seed + index).GetInt();
+	int seed_1 = Random(Random(a.seed).GetInt() + index).GetInt();
+	int seed_2 = Random(Random(b.seed).GetInt() + index).GetInt();
 	int combined_seed(seed_1 + seed_2);
 	Random rnd(combined_seed);
-	params.rnd = Random(combined_seed);
+
+	Params params(a, b, index, depth, combined_seed);
 	
 	Vector3 result;
-	if (false && depth >= planet_shader_depth_medium)
+	if (depth >= planet_shader_depth_medium)
 	{
 		if (false && depth >= planet_shader_depth_deep)
 		{
-			//result = CalcMidPointPos_Deep(params);
+			if (! CalcMidPointPos_BicubicInterp(result, params))
+			{
+				return false;
+			}
+			
 			mid_point.col = gfx::Color4b::Red();
 		}
 		else
 		{
-			result = CalcMidPointPos_Medium(params);
+			CalcMidPointPos_SimpleInterp(result, params);
 			mid_point.col = gfx::Color4b::Blue();
 		}
 	}
 	else 
 	{
-		result = CalcMidPointPos_Shallow(params);
+		CalcMidPointPos_Random(result, params);
 		mid_point.col = gfx::Color4b::Green();
 	}
 	
@@ -171,138 +263,187 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 	}
 #endif*/
 	
-	result += center;
 	mid_point.pos = result;
 	mid_point.col = gfx::Color4b::White();
+
+	debug::MarkNodePoint(a, mid_point, 0, 0);
+	debug::MarkNodePoint(b, mid_point, 3, 3);
+	debug::ClampNodePoints();
 
 	return true;
 }
 
 // Comes in normalized. Is then given the correct length.
-void sim::PlanetShader::CalcRootPointPointPos(Random & rnd, sim::Vector3 & position) const
+void sim::PlanetShader::CalcRootPointPos(Random & rnd, sim::Vector3 & position) const
 {
 	Scalar radius = planet.GetRadiusAverage();
 	position *= radius;
 }
 
-bool sim::PlanetShader::GetGrid(form::Point const * grid[4][4], form::Node const & a, form::Node const & b, int index)
+// At shallow depth, heigh is highly random.
+bool sim::PlanetShader::CalcMidPointPos_Random(sim::Vector3 & result, Params & params) const
 {
-	form::Node const * lattice [3][3][2];
-	GetNodeLattice(lattice, a, b, index);
+	Scalar radius_min = planet.GetRadiusMin();
+	Scalar radius_max = planet.GetRadiusMax();
+	//Scalar radius = planet.GetRadiusAverage();
+	Scalar radius_range = radius_max - radius_min;
 	
-	int index_1 = TriMod(index + 1);
-	int index_2 = TriMod(index + 2);
+#if 0
+	Scalar radius = (radius_min + radius_range * .5);
+#else
+	
+	// Do the random stuff to get the radius.
+	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;	// Get a random number in the range [-1, 1]
+	rnd_x *= Square(rnd_x);				// Bias the random number towards 0.
+	rnd_x *= planet_shader_error_co;	// Make sure a precision error pushes us beyond the [min - max] range.
+	Scalar rnd_n = (rnd_x * .5) + .5;	// Shift into the range: [0, 1].
 
-	ZeroMemory(reinterpret_cast<char *>(grid), sizeof(form::Point const *) * 4 * 4);
-	for (int row = 0; row < 4; ++ row)
+	Scalar radius = radius_min + radius_range * rnd_n;	// Shift into the range [radius_min, radius_max].
+	Assert(radius >= radius_min);
+	Assert(radius <= radius_max);
+#endif
+	
+	Vector3 near_a = GetLocalPosition(params.a.triple[TriMod(params.index + 1)].corner->pos);
+	Vector3 near_b = GetLocalPosition(params.b.triple[TriMod(params.index + 1)].corner->pos);
+	result = (near_a + near_b) * .5;
+	Scalar length = Length(result);
+	result *= (radius / length);
+	result += center;
+	
+	return true;
+}
+
+bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Params & params) const 
+{
+	Vector3 near_a = GetLocalPosition(params.a.triple[TriMod(params.index + 1)].corner->pos);
+	Vector3 near_b = GetLocalPosition(params.b.triple[TriMod(params.index + 1)].corner->pos);
+	result = near_a + near_b;
+	Scalar result_length = Length(result);
+	
+	Scalar near_a_altitude = GetAltitude(near_a);
+	Scalar near_b_altitude = GetAltitude(near_b);
+	Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
+
+	Scalar near_distance = Length(near_a - near_b);	
+	
+	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
+	rnd_x *= Square(rnd_x);
+	
+	// Figure out how much the altitude may be varied in either direction,
+	// and clip that variance based on the hard limits of the planet.
+	// Actually, clip it to half of that to make it look less like a hard limit.
+	// And do the clipping based on how far the variance /might/ go.
+	Scalar altitude_variance_coefficient = near_distance * planet_shader_medium_coefficient;
+	if (rnd_x > 0)
 	{
-		for (int column = 0; column < 4; ++ column)
+		Scalar max_altitude = altitude + altitude_variance_coefficient;
+		Scalar max_allowed_altitude = planet.GetRadiusMax() - 1;
+		if (max_altitude > max_allowed_altitude)
 		{
-			// Try and get the point from one of the nodes...
-			form::Node const * node;
-			form::Point const * point;
-			
-			// 1: the top-left corner of the first node.
-			if (row < 3 && column < 3)
-			{
-				node = lattice[row][column][0];
-				if (node != nullptr)
-				{
-					point = node->triple[index].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-			}
-			
-			// 2: the bottom-right corner of the second node.
-			if (row > 0 && column > 0)
-			{
-				node = lattice[row - 1][column - 1][1];
-				if (node != nullptr)
-				{
-					point = node->triple[index].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-			}
-			
-			// 3: top-right corner - there's two ways to this one...
-			if (row < 3 && column > 0)
-			{
-				node = lattice[row][column - 1][0];
-				if (node != nullptr)
-				{
-					point = node->triple[index_1].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-				
-				node = lattice[row][column - 1][1];
-				if (node != nullptr)
-				{
-					point = node->triple[index_2].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-			}
-			
-			// 4: bottom-left corner - there's two ways to this one too...
-			if (row > 0 && column < 3)
-			{
-				node = lattice[row - 1][column][0];
-				if (node != nullptr)
-				{
-					point = node->triple[index_2].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-				
-				node = lattice[row - 1][column][1];
-				if (node != nullptr)
-				{
-					point = node->triple[index_1].corner;
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						continue;
-					}
-				}
-			}
-			
-			// 5: Fail
-			//return false;
+			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
+		}
+	}
+	else if (rnd_x < 0)
+	{
+		Scalar min_altitude = altitude - altitude_variance_coefficient;
+		Scalar min_allowed_altitude = planet.GetRadiusMin() + 1;
+		if (min_altitude < min_allowed_altitude)
+		{
+			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
 		}
 	}
 	
+	altitude += rnd_x * altitude_variance_coefficient;
+	
+	result *= (altitude / result_length);
+	result += center;
+	
+	return true;
+}
+
+bool sim::PlanetShader::CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Params & params) const 
+{
+	// Get the grid.
+	PointGrid grid;
+	
+	if (! GetPointGrid(grid, params))
+	{
+		return false;
+	}
+	
+	Assert(grid[2][1] == & params.a.GetCorner(TriMod(params.index + 1)));
+	Assert(grid[1][2] == & params.b.GetCorner(TriMod(params.index + 1)));
+	Assert(grid[1][1] == & params.a.GetCorner(params.index));
+	Assert(grid[2][2] == & params.b.GetCorner(params.index));
+	
+	Scalar alts[4][4];//, * alts_iterator = alts[0];
+	GridToAltitude(alts, grid);
+	Scalar altitude = BicubicInterpolation(alts, .5, .5);
+	
+	Vector3 near_a = GetLocalPosition(* grid[2][1]);
+	Vector3 near_b = GetLocalPosition(* grid[1][2]);
+	Scalar near_distance = Length(near_a - near_b);
+
+	result = near_a + near_b;
+	Scalar result_length = Length(result);
+	
+	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
+	rnd_x *= Square(rnd_x);
+	
+	// Figure out how much the altitude may be varied in either direction,
+	// and clip that variance based on the hard limits of the planet.
+	// Actually, clip it to half of that to make it look less like a hard limit.
+	// And do the clipping based on how far the variance /might/ go.
+	Scalar altitude_variance_coefficient = near_distance * planet_shader_medium_coefficient;
+	if (rnd_x > 0)
+	{
+		Scalar max_altitude = altitude + altitude_variance_coefficient;
+		Scalar max_allowed_altitude = planet.GetRadiusMax() - 1;
+		if (max_altitude > max_allowed_altitude)
+		{
+			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
+		}
+	}
+	else if (rnd_x < 0)
+	{
+		Scalar min_altitude = altitude - altitude_variance_coefficient;
+		Scalar min_allowed_altitude = planet.GetRadiusMin() + 1;
+		if (min_altitude < min_allowed_altitude)
+		{
+			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
+		}
+	}
+	
+	altitude += rnd_x * altitude_variance_coefficient;
+	
+	result *= (altitude / result_length);
+	return true;
+}
+
+bool sim::PlanetShader::GetPointGrid(PointGrid & grid, Params const & params)
+{
+	form::Node const * lattice [3][3][2];
+	GetNodeLattice(lattice, params);
+
+	if (! LatticeToGrid(grid, lattice, params.index))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 // Two nodes, a and b, which are cousins are given; their common side has the given index.
 // Toegether, they form a quadrilateral. That quadrilateral is the center of a 3x3 grid, lattice.
 // The function makes a decent attempt at returning all the nodes in that lattice.
-void sim::PlanetShader::GetNodeLattice(form::Node const * lattice [3][3][2], form::Node const & a, form::Node const & b, int index)
+void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & params)
 {
 	ZeroMemory(reinterpret_cast<char *>(lattice), sizeof(form::Node *) * 3 * 3 * 2);
-	lattice [1][1][0] = & a;
-	lattice [1][1][1] = & b;
+	lattice [1][1][0] = & params.a;
+	lattice [1][1][1] = & params.b;
 	
-	int row_index = TriMod(index + 1);
-	int column_index = TriMod(index + 2);
+	int row_index = TriMod(params.index + 1);
+	int column_index = TriMod(params.index + 2);
 	
 	while (true)
 	{
@@ -328,7 +469,7 @@ void sim::PlanetShader::GetNodeLattice(form::Node const * lattice [3][3][2], for
 					form::Node const * buddy = lattice[row][column][buddy_index];
 					if (buddy != nullptr)
 					{
-						n = buddy->triple[index].cousin;
+						n = buddy->triple[params.index].cousin;
 						if (n != nullptr)
 						{
 							lattice[row][column][node_index] = n;
@@ -409,7 +550,122 @@ void sim::PlanetShader::GetNodeLattice(form::Node const * lattice [3][3][2], for
 	}
 }
 
-void sim::PlanetShader::GridToAltitude(Scalar altitude[4][4], form::Point const * grid[4][4]) const
+// Scans through the given lattice of nodes and uses their corner points to fill in the grid of points.
+// The same corner point may be shared by up to six nodes. 
+bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & lattice, int index)
+{
+	int index_1 = TriMod(index + 1);
+	int index_2 = TriMod(index + 2);
+	
+	debug::ClearNodePoints();
+	
+	ZeroMemory(reinterpret_cast<char *>(grid), sizeof(form::Point const *) * 4 * 4);
+	for (int row = 0; row < 4; ++ row)
+	{
+		for (int column = 0; column < 4; ++ column)
+		{
+			// Try and get the point from one of the nodes...
+			form::Node const * node;
+			form::Point const * point;
+			
+			// 1: the top-left corner of the first node.
+			if (row < 3 && column < 3)
+			{
+				node = lattice[row][column][0];
+				if (node != nullptr)
+				{
+					point = node->triple[index].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+			}
+			
+			// 2: the bottom-right corner of the second node.
+			if (row > 0 && column > 0)
+			{
+				node = lattice[row - 1][column - 1][1];
+				if (node != nullptr)
+				{
+					point = node->triple[index].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+			}
+			
+			// 3: top-right corner - there's two ways to this one...
+			if (row < 3 && column > 0)
+			{
+				node = lattice[row][column - 1][0];
+				if (node != nullptr)
+				{
+					point = node->triple[index_2].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+				
+				node = lattice[row][column - 1][1];
+				if (node != nullptr)
+				{
+					point = node->triple[index_1].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+			}
+			
+			// 4: bottom-left corner - there's two ways to this one too...
+			if (row > 0 && column < 3)
+			{
+				node = lattice[row - 1][column][0];
+				if (node != nullptr)
+				{
+					point = node->triple[index_1].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+				
+				node = lattice[row - 1][column][1];
+				if (node != nullptr)
+				{
+					point = node->triple[index_2].corner;
+					if (point != nullptr)
+					{
+						grid[row][column] = point;
+						debug::MarkNodePoint(* node, * point, row, column);
+						continue;
+					}
+				}
+			}
+			
+			// 5: Fail
+			debug::ClearNodePoints();
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void sim::PlanetShader::GridToAltitude(Scalar altitude[4][4], PointGrid const & grid) const
 {
 	for (int row = 0; row < 4; ++ row)
 	{
@@ -419,120 +675,6 @@ void sim::PlanetShader::GridToAltitude(Scalar altitude[4][4], form::Point const 
 		}
 	}
 }
-
-// At shallow depth, heigh is highly random.
-sim::Vector3 sim::PlanetShader::CalcMidPointPos_Shallow(Params & params) const
-{
-	Scalar radius_min = planet.GetRadiusMin();
-	Scalar radius_max = planet.GetRadiusMax();
-	//Scalar radius = planet.GetRadiusAverage();
-	Scalar radius_range = radius_max - radius_min;
-	
-	// Do the random stuff to get the radius.
-	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;	// Get a random number in the range [-1, 1]
-	rnd_x *= Square(rnd_x);				// Bias the random number towards 0.
-	rnd_x *= planet_shader_error_co;	// Make sure a precision error pushes us beyond the [min - max] range.
-	Scalar rnd_n = (rnd_x * .5) + .5;	// Shift into the range: [0, 1].
-
-	Scalar radius = radius_min + radius_range * rnd_n;	// Shift into the range [radius_min, radius_max].
-	Assert(radius >= radius_min);
-	Assert(radius <= radius_max);
-	
-	Vector3 a = GetLocalPosition(* params.grid[1][2]);
-	Vector3 b = GetLocalPosition(* params.grid[2][1]);
-	Vector3 v = (a + b) * .5;
-	Scalar length = Length(v);
-	v *= (radius / length);
-	
-	return v;
-}
-
-sim::Vector3 sim::PlanetShader::CalcMidPointPos_Medium(Params & params) const 
-{
-	Vector3 near_a = GetLocalPosition(* params.grid[1][2]);
-	Vector3 near_b = GetLocalPosition(* params.grid[2][1]);
-	Vector3 far_a = GetLocalPosition(* params.grid[1][1]);
-	Vector3 far_b = GetLocalPosition(* params.grid[2][2]);
-	
-	Scalar near_a_altitude = GetAltitude(near_a);
-	Scalar near_b_altitude = GetAltitude(near_b);
-	Scalar far_a_altitude = GetAltitude(far_a);
-	Scalar far_b_altitude = GetAltitude(far_b);
-
-	/*Scalar altitude = 0;
-	Scalar alts[16], * alts_iterator = alts;
-	for (int row = 0; row < 4; ++ row)
-	{
-		for (int column = 0; column < 4; ++ column)
-		{
-			* alts_iterator = GetAltitude(* params.grid[column][row]);
-			altitude += * alts_iterator;
-			++ alts_iterator;
-		}
-	}
-	altitude /= 16;
-	int i = params.rnd.GetInt(16);
-	altitude = GetAltitude(* params.grid[0][i]);*/
-		
-	Scalar near_distance = Length(near_a - near_b);
-	
-//	Scalar far_weight = 0;//near_distance / far_distance;
-//	Scalar far_weight_2 = far_weight * 2.;
-//	Scalar altitude = (near_a_altitude + near_b_altitude + far_weight * (far_a_altitude + far_b_altitude)) * (1. / (2. + far_weight_2));
-	//Scalar altitude = (near_a_altitude + near_b_altitude + far_a_altitude + far_b_altitude) * .25;
-	Scalar altitude = (near_a_altitude + near_b_altitude /*+ far_a_altitude + far_b_altitude*/) * .5;
-	Vector3 directional = near_a + near_b;
-	Scalar directional_length = Length(directional);
-		
-	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
-	rnd_x *= Square(rnd_x);
-	
-	// Figure out how much the altitude may be varied in either direction,
-	// and clip that variance based on the hard limits of the planet.
-	// Actually, clip it to half of that to make it look less like a hard limit.
-	// And do the clipping based on how far the variance /might/ go.
-#if 0
-	Scalar altitude_variance_coefficient = near_distance * .05;
-	if (rnd_x > 0)
-	{
-		Scalar max_altitude = altitude + altitude_variance_coefficient;
-		Scalar max_allowed_altitude = planet.GetRadiusMax() - 1;
-		if (max_altitude > max_allowed_altitude)
-		{
-			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
-		}
-	}
-	else if (rnd_x < 0)
-	{
-		Scalar min_altitude = altitude - altitude_variance_coefficient;
-		Scalar min_allowed_altitude = planet.GetRadiusMin() + 1;
-		if (min_altitude < min_allowed_altitude)
-		{
-			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
-		}
-	}
-#endif
-	
-//	altitude += rnd_x * altitude_variance_coefficient;
-	
-	directional *= (altitude / directional_length);
-	return directional;
-}
-
-// TODO: Maybe avoid doing the -/+ center by crossing near and far?
-/*sim::Vector3 sim::PlanetShader::CalcMidPointPos_Deep(Params & params) const 
-{
-	Vector3 inter_near = * params.grid[1][2] - * params.grid[2][1];
-	Vector3 inter_far = * params.grid[1][1] - * params.grid[2][2];
-	Vector3 outward = CrossProduct(inter_far, inter_near);
-	Scalar outward_length = Length(outward);
-	
-	Scalar random = (static_cast<Scalar>(params.rnd.GetFloatInclusive()) - .5) * Length(inter_near) * .05;
-	
-	sim::Vector3 avg = (* params.grid[1][2] + * params.grid[2][1]) * .5;
-	avg += outward * (random / outward_length);
-	return avg;
-}*/
 
 sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point) const
 {
