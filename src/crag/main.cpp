@@ -143,11 +143,11 @@ namespace
 				Assert(array[i] == 0);
 				if (depth >= phase_depth)
 				{
-					array[i] = (samples[1] + samples[2]) * .5;
+					array[i] = (samples[1] + samples[2]) * .5f;
 				}
 				else
 				{
-					array[i] = (samples[0] + samples[3]) * .5;
+					array[i] = (samples[0] + samples[3]) * .5f;
 				}
 			}
 		}
