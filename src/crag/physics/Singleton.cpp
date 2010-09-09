@@ -20,6 +20,7 @@ physics::Singleton::Singleton()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
+, collisions(true)
 {
 	dInitODE2(0);
 }
@@ -34,14 +35,27 @@ physics::Singleton::~Singleton()
 
 void physics::Singleton::Tick(double delta_time)
 {
-	// Detect / represent all collisions.
-	CreateCollisions();
-	
-	// Tick physics (including acting upon collisions).
-	dWorldQuickStep (world, delta_time);
-	
-	// Remove this tick's collision data.
-	DestroyCollisions();
+	if (collisions)
+	{
+		// Detect / represent all collisions.
+		CreateCollisions();
+		
+		// Tick physics (including acting upon collisions).
+		dWorldQuickStep (world, delta_time);
+		
+		// Remove this tick's collision data.
+		DestroyCollisions();
+	}
+	else
+	{
+		// No collision checking, so just tick physics.
+		dWorldQuickStep (world, delta_time);
+	}
+}
+
+void physics::Singleton::ToggleCollisions()
+{
+	collisions = ! collisions;
 }
 
 void physics::Singleton::CreateCollisions()

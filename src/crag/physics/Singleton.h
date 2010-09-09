@@ -27,6 +27,8 @@ namespace physics
 		~Singleton();
 
 		void Tick(double delta_time);
+		
+		void ToggleCollisions();
 
 	private:
 		void CreateCollisions();
@@ -43,6 +45,8 @@ namespace physics
 		dWorldID world;
 		dSpaceID space;
 		dJointGroupID contact_joints;
+		
+		bool collisions;
 	};
 	
 }
