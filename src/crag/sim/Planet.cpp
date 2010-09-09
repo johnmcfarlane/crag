@@ -27,13 +27,13 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range)
+sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_mean)
 : Entity()
-, radius_min(init_radius_medium - init_radius_range * .5)
-, radius_max(init_radius_medium + init_radius_range * .5)
+, radius_mean(init_radius_mean)
+, radius_min(init_radius_mean)
+, radius_max(init_radius_mean)
 {
-	Assert(init_radius_medium > 0);
-	Assert(init_radius_medium > init_radius_range);
+	Assert(radius_mean > 0);
 
 	if (num_craters > 0)
 	{
@@ -58,9 +58,15 @@ sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_po
 sim::Planet::~Planet()
 {
 	form::Manager * formation_manager = form::Manager::GetPtr();
-	if (formation_manager != nullptr) {
+	if (formation_manager != nullptr) 
+	{
 		form::Manager::Get().RemoveFormation(formation);
 	}
+}
+
+void sim::Planet::Tick()
+{
+	body->SetRadius(radius_max);
 }
 
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
@@ -74,7 +80,7 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 
 	// Calculate the mass.
 	sim::Scalar density = 1;
-	sim::Scalar radius = GetRadiusAverage();
+	sim::Scalar radius = GetRadiusMean();
 	sim::Scalar volume = Cube(radius);
 	sim::Scalar mass = volume * density;
 
@@ -140,9 +146,16 @@ bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range, bool w
 	return true;
 }
 
-sim::Scalar sim::Planet::GetRadiusAverage() const
+void sim::Planet::SampleRadius(Scalar r)
 {
-	return (radius_min + radius_max) * .5;
+	if (radius_max < r)
+	{
+		radius_max = r;
+	}
+	else if (radius_min > r)
+	{
+		radius_min = r;
+	}
 }
 
 form::Formation const & sim::Planet::GetFormation() const

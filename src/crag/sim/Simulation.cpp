@@ -20,6 +20,7 @@
 #include "UserInput.h"
 
 #include "physics/Body.h"
+#include "physics/Singleton.h"
 
 #include "form/scene/Scene.h"
 #include "form/Manager.h"
@@ -50,13 +51,11 @@ namespace
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
 
 	CONFIG_DEFINE (planet_pos, sim::Vector3, sim::Vector3::Zero());
-	CONFIG_DEFINE (planet_radius_medium, sim::Scalar,  10000000);
-	CONFIG_DEFINE (planet_radius_range, sim::Scalar, 5000);
+	CONFIG_DEFINE (planet_radius_mean, sim::Scalar,  10000000);
 	
-	CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * 1.5, planet_radius_medium * 2.5, planet_radius_medium * 1.));
+	CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_mean * 1.5, planet_radius_mean * 2.5, planet_radius_mean * 1.));
 	//CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * .75, planet_radius_medium * 1.25, planet_radius_medium * .5));
-	CONFIG_DEFINE (moon_radius_medium, sim::Scalar, 1500000);
-	CONFIG_DEFINE (moon_radius_range, sim::Scalar, 500);
+	CONFIG_DEFINE (moon_radius_mean, sim::Scalar, 1500000);
 	
 	// please don't write in
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
@@ -104,11 +103,11 @@ void sim::Simulation::InitUniverse()
 	//scene.AddEntity(* observer);
 	scene.AddLight(observer->GetLight());
 	
-	Planet * planet = new Planet (0, 8, planet_pos, planet_radius_medium, planet_radius_range);
+	Planet * planet = new Planet (0, 8, planet_pos, planet_radius_mean);
 	Universe::AddEntity(* planet);
 	scene.AddEntity(* planet);
 	
-	Planet * moon = new Planet (250, 10, moon_pos, moon_radius_medium, moon_radius_range);
+	Planet * moon = new Planet (250, 10, moon_pos, moon_radius_mean);
 	Universe::AddEntity(* moon);
 	scene.AddEntity(* moon);
 	
@@ -420,6 +419,13 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 		{
 			switch (key_code)
 			{
+				case KEY_C:
+				{
+					physics::Singleton & physics = physics::Singleton::Get();
+					physics.ToggleCollisions();
+					return true;
+				}
+					
 				case KEY_I:
 					formation_manager->ToggleMeshGeneration();
 					return true;

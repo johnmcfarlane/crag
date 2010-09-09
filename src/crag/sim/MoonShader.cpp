@@ -113,7 +113,7 @@ bool sim::MoonShader::InitMidPoint(form::Point & mid_point, form::Node const & a
 	Vector3 near_a = Vector3(a.GetCorner(TriMod(index + 1)).pos) - center;
 	Vector3 near_b = Vector3(b.GetCorner(TriMod(index + 1)).pos) - center;	
 	Vector3 near_mid = near_a + near_b;
-	near_mid *= moon.GetRadiusAverage() / Length(near_mid);
+	near_mid *= moon.GetRadiusMean() / Length(near_mid);
 	
 	Random crater_randomizer(moon.GetFormation().seed + 2);
 	ApplyCraters(crater_randomizer, near_mid);
@@ -127,7 +127,7 @@ bool sim::MoonShader::InitMidPoint(form::Point & mid_point, form::Node const & a
 // Comes in normalized. Is then given the correct length.
 void sim::MoonShader::CalcPointPos(sim::Vector3 & position) const
 {
-	Scalar radius = moon.GetRadiusAverage();
+	Scalar radius = moon.GetRadiusMean();
 	position *= radius;
 }
 
@@ -170,7 +170,7 @@ void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
 
 void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater) const
 {
-	Scalar moon_radius = moon.GetRadiusAverage();
+	Scalar moon_radius = moon.GetRadiusMean();
 	//Scalar min_crater_distance = moon_radius * 1.05f;	// center to center
 	Scalar max_crater_radius = moon_radius * .25;
 	

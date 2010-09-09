@@ -28,7 +28,7 @@ namespace sim
 	class PlanetShader : public form::Shader
 	{
 	public:
-		PlanetShader(Planet const & init_planet);
+		PlanetShader(Planet & init_planet);
 		
 	private:
 		virtual void SetOrigin(Vector3d const & origin);
@@ -36,6 +36,7 @@ namespace sim
 		virtual bool InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index);
 		
 		void CalcRootPointPos(Random & rnd, Vector3 & position) const;
+		Scalar GetRandomHeight(Random & rnd) const;
 
 		// Mid-Point Calculation 
 		class Params;
@@ -58,7 +59,7 @@ namespace sim
 		Scalar GetAltitude(Vector3 const & local_pos) const;
 		
 		Vector3 center;		// relative to origin
-		Planet const & planet;
+		Planet & planet;
 	};
 
 	
@@ -67,11 +68,11 @@ namespace sim
 	class PlanetShaderFactory : public form::ShaderFactory
 	{
 	public:
-		PlanetShaderFactory(Planet const & init_planet);
+		PlanetShaderFactory(Planet & init_planet);
 		
 		virtual form::Shader * Create(form::Formation const & formation) const;
 		
 	private:
-		Planet const & planet;	// This system is very complicated for one type of formation (Planet) and only one planet!
+		Planet & planet;	// This system is very complicated for one type of formation (Planet) and only one planet!
 	};
 }

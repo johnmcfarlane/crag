@@ -30,8 +30,6 @@ namespace sim
 		Entity();
 		virtual ~Entity();
 
-		virtual bool IsShadowCatcher() const;
-
 		// general callbacks
 		virtual void Tick();
 		virtual void Draw() const;

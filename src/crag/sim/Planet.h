@@ -31,15 +31,18 @@ namespace sim
 	class Planet : public Entity
 	{
 	public:
-		Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_medium, Scalar init_radius_range);
+		Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_mean);
 		~Planet();
 
+		virtual void Tick();
 		virtual void GetGravitationalForce(sim::Vector3 const & pos, sim::Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, Scalar * range, bool wireframe) const;
 	
+		Scalar GetRadiusMean() const { return radius_mean; }
 		Scalar GetRadiusMin() const { return radius_min; }
 		Scalar GetRadiusMax() const { return radius_max; }
-		Scalar GetRadiusAverage() const;
+		void SampleRadius(Scalar r);
+		
 		form::Formation const & GetFormation() const;
 		sim::Vector3 const & GetPosition() const;
 
@@ -49,6 +52,7 @@ namespace sim
 		form::ShaderFactory * factory;
 		form::Formation * formation;
 		PlanetaryBody * body;
+		Scalar radius_mean;
 		Scalar radius_min, radius_max;
 	};
 }

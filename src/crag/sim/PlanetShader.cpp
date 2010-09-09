@@ -30,7 +30,6 @@
 
 
 // TODO: Really big todo list:
-// TODO: Go back to polling min/max height from results of fractal stuff.
 // TODO: Try 4-float co-ordinate system: normalized x, y, z and altitude.
 // TODO: Divorce heigh variation from near_distance
 
@@ -39,11 +38,10 @@ namespace
 {
 	
 	// Config values
-	CONFIG_DEFINE (planet_shader_depth_medium, int, 3);
+	CONFIG_DEFINE (planet_shader_depth_medium, int, 2);
 	CONFIG_DEFINE (planet_shader_depth_deep, int, 12);
-	CONFIG_DEFINE (planet_shader_error_co, double, 0.995);
-	CONFIG_DEFINE (planet_shader_medium_coefficient, double, 0.05);
-	//CONFIG_DEFINE (formation_color, gfx::Color4f, gfx::Color4f(1.f, 1.f, 1.f));
+	CONFIG_DEFINE (planet_shader_random_range, sim::Scalar, 0.001);
+	CONFIG_DEFINE (planet_shader_medium_coefficient, sim::Scalar, .25);
 	
 	sim::Scalar root_three = Sqrt(3.);
 	
@@ -162,7 +160,7 @@ namespace debug
 class sim::PlanetShader::Params
 {
 public:
-	Params(form::Node const & init_a, form::Node const & init_b, int init_index, Scalar init_depth, Random init_rnd)
+	Params(form::Node const & init_a, form::Node const & init_b, int init_index, int init_depth, Random init_rnd)
 	: a(init_a)
 	, b(init_b)
 	, index(init_index)
@@ -174,7 +172,7 @@ public:
 	form::Node const & a;
 	form::Node const & b;
 	int const index;
-	Scalar const depth;	// as a proportion of planet_shader_depth_deep
+	int const depth;	// as a proportion of planet_shader_depth_deep
 	Random rnd;
 };
 
@@ -182,7 +180,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader
 
-sim::PlanetShader::PlanetShader(Planet const & init_planet)
+sim::PlanetShader::PlanetShader(Planet & init_planet)
 : center(Vector3::Zero())
 , planet(init_planet)
 {
@@ -215,8 +213,8 @@ void sim::PlanetShader::InitRootPoints(form::Point * points[])
 
 bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index) 
 {
-	int depth = MeasureDepth(& a, planet_shader_depth_deep);
-	Assert(depth == MeasureDepth(& b, planet_shader_depth_deep));
+	int depth = MeasureDepth(& a, INT_MAX/*planet_shader_depth_deep*/);
+	Assert(depth == MeasureDepth(& b, INT_MAX/*planet_shader_depth_deep*/));
 
 	int seed_1 = Random(Random(a.seed).GetInt() + index).GetInt();
 	int seed_2 = Random(Random(b.seed).GetInt() + index).GetInt();
@@ -249,19 +247,18 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 		mid_point.col = gfx::Color4b::Green();
 	}
 	
-/*#if ! defined(NDEBUG)
+#if ! defined(NDEBUG)
 	// Check that resultant point is within the [min, max] range.
-	Scalar altitude1 = Length(mid_point.pos - sim::Vector3(center));
-	Scalar altitude2 = Length(Vector3(mid_point.pos) - center);
-	if (Min(altitude1, altitude2) < planet.GetRadiusMin())
+	Scalar altitude = Length(result - center);
+	if (altitude < planet.GetRadiusMin() * .99999f)
 	{
 		Assert(false);
 	}
-	if (Max(altitude1, altitude2) > planet.GetRadiusMax())
+	if (altitude > planet.GetRadiusMax() * 1.00001f)
 	{
 		Assert(false);
 	}
-#endif*/
+#endif
 	
 	mid_point.pos = result;
 	mid_point.col = gfx::Color4b::White();
@@ -276,36 +273,27 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 // Comes in normalized. Is then given the correct length.
 void sim::PlanetShader::CalcRootPointPos(Random & rnd, sim::Vector3 & position) const
 {
-	Scalar radius = planet.GetRadiusAverage();
+	Scalar radius = GetRandomHeight(rnd);
 	position *= radius;
+}
+
+sim::Scalar sim::PlanetShader::GetRandomHeight(Random & rnd) const
+{
+	Scalar radius_mean = planet.GetRadiusMean();
+	Scalar random_exponent = (.5 - rnd.GetFloatInclusive()) * planet_shader_random_range;
+	Scalar radius = radius_mean * Exp(random_exponent);
+	return radius;
 }
 
 // At shallow depth, heigh is highly random.
 bool sim::PlanetShader::CalcMidPointPos_Random(sim::Vector3 & result, Params & params) const
 {
-	Scalar radius_min = planet.GetRadiusMin();
-	Scalar radius_max = planet.GetRadiusMax();
-	//Scalar radius = planet.GetRadiusAverage();
-	Scalar radius_range = radius_max - radius_min;
-	
-#if 0
-	Scalar radius = (radius_min + radius_range * .5);
-#else
-	
-	// Do the random stuff to get the radius.
-	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;	// Get a random number in the range [-1, 1]
-	rnd_x *= Square(rnd_x);				// Bias the random number towards 0.
-	rnd_x *= planet_shader_error_co;	// Make sure a precision error pushes us beyond the [min - max] range.
-	Scalar rnd_n = (rnd_x * .5) + .5;	// Shift into the range: [0, 1].
+	Scalar radius = GetRandomHeight(params.rnd);
+	planet.SampleRadius(radius);
 
-	Scalar radius = radius_min + radius_range * rnd_n;	// Shift into the range [radius_min, radius_max].
-	Assert(radius >= radius_min);
-	Assert(radius <= radius_max);
-#endif
-	
 	Vector3 near_a = GetLocalPosition(params.a.triple[TriMod(params.index + 1)].corner->pos);
 	Vector3 near_b = GetLocalPosition(params.b.triple[TriMod(params.index + 1)].corner->pos);
-	result = (near_a + near_b) * .5;
+	result = near_a + near_b;
 	Scalar length = Length(result);
 	result *= (radius / length);
 	result += center;
@@ -324,8 +312,6 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Para
 	Scalar near_b_altitude = GetAltitude(near_b);
 	Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
-	Scalar near_distance = Length(near_a - near_b);	
-	
 	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
 	rnd_x *= Square(rnd_x);
 	
@@ -333,27 +319,15 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Para
 	// and clip that variance based on the hard limits of the planet.
 	// Actually, clip it to half of that to make it look less like a hard limit.
 	// And do the clipping based on how far the variance /might/ go.
-	Scalar altitude_variance_coefficient = near_distance * planet_shader_medium_coefficient;
-	if (rnd_x > 0)
-	{
-		Scalar max_altitude = altitude + altitude_variance_coefficient;
-		Scalar max_allowed_altitude = planet.GetRadiusMax() - 1;
-		if (max_altitude > max_allowed_altitude)
-		{
-			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
-		}
-	}
-	else if (rnd_x < 0)
-	{
-		Scalar min_altitude = altitude - altitude_variance_coefficient;
-		Scalar min_allowed_altitude = planet.GetRadiusMin() + 1;
-		if (min_altitude < min_allowed_altitude)
-		{
-			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
-		}
-	}
+	Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / static_cast<Scalar>(1 << params.depth);
+	
+	Scalar lod_variation_cycler = Sin(0.1 * Max(0, params.depth - planet_shader_depth_medium));
+	altitude_variance_coefficient *= lod_variation_cycler;
+	
+	altitude_variance_coefficient *= planet.GetRadiusMean();
 	
 	altitude += rnd_x * altitude_variance_coefficient;
+	planet.SampleRadius(altitude);
 	
 	result *= (altitude / result_length);
 	result += center;
@@ -376,7 +350,7 @@ bool sim::PlanetShader::CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Par
 	Assert(grid[1][1] == & params.a.GetCorner(params.index));
 	Assert(grid[2][2] == & params.b.GetCorner(params.index));
 	
-	Scalar alts[4][4];//, * alts_iterator = alts[0];
+	Scalar alts[4][4];
 	GridToAltitude(alts, grid);
 	Scalar altitude = BicubicInterpolation(alts, .5, .5);
 	
@@ -695,7 +669,7 @@ sim::Scalar sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos) cons
 {
 	return GetAltitude(GetLocalPosition(point_pos));
 }
-					   
+
 sim::Scalar sim::PlanetShader::GetAltitude(sim::Vector3 const & local_pos) const
 {
 	return Length(local_pos);
@@ -705,7 +679,7 @@ sim::Scalar sim::PlanetShader::GetAltitude(sim::Vector3 const & local_pos) const
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShaderFactory
 
-sim::PlanetShaderFactory::PlanetShaderFactory(Planet const & init_planet)
+sim::PlanetShaderFactory::PlanetShaderFactory(Planet & init_planet)
 : planet(init_planet)
 {
 }

@@ -24,11 +24,6 @@ sim::Entity::~Entity()
 { 
 }
 
-bool sim::Entity::IsShadowCatcher() const
-{
-	return false;
-}
-
 void sim::Entity::Tick()
 {
 }
