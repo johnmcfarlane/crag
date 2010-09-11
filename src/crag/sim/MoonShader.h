@@ -12,7 +12,7 @@
 
 #include "defs.h"
 
-#include "form/Node/Shader.h"
+#include "form/node/Shader.h"
 
 #include "core/Random.h"
 

@@ -213,8 +213,9 @@ void sim::PlanetShader::InitRootPoints(form::Point * points[])
 
 bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index) 
 {
-	int depth = MeasureDepth(& a, INT_MAX/*planet_shader_depth_deep*/);
-	Assert(depth == MeasureDepth(& b, INT_MAX/*planet_shader_depth_deep*/));
+	int max_depth = std::numeric_limits<int>::max();
+	int depth = MeasureDepth(& a, max_depth);
+	Assert(depth == MeasureDepth(& b, max_depth));
 
 	int seed_1 = Random(Random(a.seed).GetInt() + index).GetInt();
 	int seed_2 = Random(Random(b.seed).GetInt() + index).GetInt();
