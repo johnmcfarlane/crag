@@ -57,12 +57,13 @@ namespace form
 		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh(form::MeshBufferObject & mbo);
 		void ResetOrigin();
-		bool PostResetFreeze() const;
 		void ToggleFlatShaded();
 		
 		bool IsOriginOk() const;
-		
 	private:
+		bool IsResetting() const;
+		bool IsGrowing() const;
+
 		void Run();	// Called when thread is launched and runs the loop.
 		void ThreadTick();
 		
@@ -70,7 +71,7 @@ namespace form
 		static int CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio);
 		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period);
 		
-		bool GenerateMesh();
+		void GenerateMesh();
 		
 		bool IsMainThread() const;
 		bool IsSceneThread() const;

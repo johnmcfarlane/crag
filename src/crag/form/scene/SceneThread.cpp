@@ -148,7 +148,7 @@ void form::SceneThread::Tick()
 	
 	if (gfx::Debug::GetVerbosity() > .2)
 	{
-		if (PostResetFreeze())
+		if (IsResetting())
 		{
 			gfx::Debug::out << "resetting...\n";
 		}
@@ -200,13 +200,6 @@ void form::SceneThread::ResetOrigin()
 	reset_origin_flag = true;
 }
 
-bool form::SceneThread::PostResetFreeze() const
-{
-	sys::TimeType t = sys::GetTime();
-	sys::TimeType time_since_reset = t - origin_reset_time;
-	return time_since_reset < post_reset_freeze_period;
-}
-
 void form::SceneThread::ToggleFlatShaded()
 {
 	mesh.SetFlatShaded(! mesh.GetFlatShaded());
@@ -221,7 +214,7 @@ bool form::SceneThread::IsOriginOk() const
 		return true;
 	}
 	
-	if (PostResetFreeze())
+	if (IsGrowing() || IsResetting())
 	{
 		// Still making the last one
 		return true;
@@ -232,6 +225,23 @@ bool form::SceneThread::IsOriginOk() const
 	sim::Vector3 const & observer_pos = observer.GetPosition();
 	double observer_position_length = Length(observer_pos - scene.GetOrigin());
 	return observer_position_length < max_observer_position_length;
+}
+
+bool form::SceneThread::IsResetting() const
+{
+	/*if (IsGrowing())
+	{
+		return true;
+	}*/
+	
+	sys::TimeType t = sys::GetTime();
+	sys::TimeType time_since_reset = t - origin_reset_time;
+	return time_since_reset < post_reset_freeze_period;
+}
+
+bool form::SceneThread::IsGrowing() const
+{
+	return scene.GetNumQuaternaUsed() < scene.GetNumQuaternaUsedTarget();
 }
 
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.
@@ -279,7 +289,7 @@ void form::SceneThread::ThreadTick()
 
 void form::SceneThread::AdjustNumQuaterna()
 {
-	if (PostResetFreeze() || frame_ratio < 0)
+	if (IsResetting() || frame_ratio < 0)
 	{
 		return;
 	}
@@ -342,26 +352,30 @@ int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int curr
 	return mesh_generation_directed_target_num_quaterna;
 }
 
-bool form::SceneThread::GenerateMesh()
+void form::SceneThread::GenerateMesh()
 {
 	//Assert(IsSceneThread());
-	
-	if (PostResetFreeze())
+	if (IsGrowing())
 	{
-		return false;
+		return;
+	}
+	
+	if (IsResetting())
+	{
+		return;
 	}
 	
 	if (mesh_updated)
 	{
 		// No point making multiple meshes if main thread isn't polling them fast enough.
-		return false;
+		return;
 	}
 	
 	if (! mesh_mutex.TryLock())
 	{
 		// Don't wait around if current mesh is being read by main thread;
 		// This thread should be locked as little as possible.
-		return false;
+		return;
 	}
 	
 	scene.GenerateMesh(mesh);
@@ -372,7 +386,6 @@ bool form::SceneThread::GenerateMesh()
 	sys::TimeType t = sys::GetTime();
 	mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
-	return true;
 }
 
 bool form::SceneThread::IsMainThread() const
