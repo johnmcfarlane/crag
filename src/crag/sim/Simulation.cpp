@@ -454,8 +454,6 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			break;
 	}
 	
-	// TODO: Move out out of gfx::Debug.
-	gfx::Debug::out << "Unrecognized keystroke\n";
 	return true;
 }
 

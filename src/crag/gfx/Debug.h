@@ -53,6 +53,7 @@ namespace gfx
 		};
 
 		// Warning: points to nullptr unless GFX_DEBUG is defined.
+		// TODO: Move out out of gfx::Debug.
 		extern std::ostream & out;
 
 	#if defined(GFX_DEBUG)
