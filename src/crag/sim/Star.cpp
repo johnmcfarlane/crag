@@ -23,7 +23,8 @@ sim::Star::Star(Scalar init_radius, Scalar init_year)
 
 void sim::Star::Tick()
 {
-	Scalar angle = static_cast<Scalar>(Universe::time * (2. * PI) / year) + 5;
+	sim::Universe & universe = sim::Universe::Get();
+	Scalar angle = static_cast<Scalar>(universe.GetTime() * (2. * PI) / year) + 5;
 	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, static_cast<Scalar>(0));
 	light.SetPosition(position);
 }

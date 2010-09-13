@@ -15,29 +15,32 @@
 #include "sys/App.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Singleton.h"
 
 
 namespace sim
 {
+	// forward-declarations
 	class Entity;
 	
 	
-	// TODO: Should probably be a singleton and also is a bit of a waste of space.
-	namespace Universe
+	// Currently deals with simulation time, entity managment and physics ticking.
+	class Universe : public core::Singleton<Universe>
 	{
-		extern sys::TimeType time;
-
-		CONFIG_DECLARE (target_frame_seconds, sys::TimeType);
+	public:
+		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 	
-		void Init();
-		void Deinit();
+		Universe();
+		~Universe();
 
+		sys::TimeType GetTime() const;
+		
 		void ToggleGravity();
 
 		void AddEntity(Entity & entity);
 
 		void Tick();
-		Vector3 Weight(Vector3 const & pos, Scalar mass);
-		void GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe);
-	}
+		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
+		void GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
+	};
 }

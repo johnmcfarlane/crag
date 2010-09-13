@@ -127,7 +127,8 @@ void sim::Observer::Tick()
 
 	Vector3 const & position = GetPosition();
 	Scalar mass = sphere.GetMass();
-	Vector3 gravitational_force_per_second = Universe::Weight(position, mass);
+	sim::Universe & universe = sim::Universe::Get();
+	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
 	Vector3 gravitational_force = gravitational_force_per_second / Universe::target_frame_seconds;
 	
 	Vector3 scaled_observer_gravity_center = observer_gravity_center * sphere.GetRadius();

@@ -12,6 +12,7 @@
 #include "pch.h"
 
 #include "sim/Simulation.h"
+#include "sim/Universe.h"
 
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
@@ -96,6 +97,7 @@ namespace
 #endif
 		gfx::Renderer renderer;
 		sys::Scheduler scheduler(1);
+		sim::Universe universe;
 		
 		// Run the simulation.
 		{

@@ -19,40 +19,41 @@
 //////////////////////////////////////////////////////////////////////
 // local definitions
 
-namespace 
+namespace sim
 {
-#if defined(PROFILE)
-	bool gravity = false;
-#else
-	CONFIG_DEFINE (gravity, bool, true);
-#endif
-	
-	typedef std::vector<sim::Entity *> EntityList;
-	EntityList entities;
+	namespace 
+	{
+	#if defined(PROFILE)
+		bool gravity = false;
+	#else
+		CONFIG_DEFINE (gravity, bool, true);
+	#endif
+		
+		CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
+		
+		sys::TimeType time = 0;
+		
+		typedef std::vector<sim::Entity *> EntityList;
+		EntityList entities;
 
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////
 // Universe definitions
 
-sys::TimeType sim::Universe::time = 0;
-
 CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
 
-CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
 
-
-void sim::Universe::Init()
+sim::Universe::Universe()
 {
 	time = 0;
 	
 	Assert(entities.size() == 0);
-
-	//form::Manager::Init();
 }
 
-void sim::Universe::Deinit()
+sim::Universe::~Universe()
 {
 	for (EntityList::iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
@@ -60,8 +61,11 @@ void sim::Universe::Deinit()
 		delete e;
 	}
 	entities.clear();
+}
 
-	//form::Manager::Deinit();
+sys::TimeType sim::Universe::GetTime() const
+{
+	return time;
 }
 
 void sim::Universe::ToggleGravity()
@@ -69,12 +73,14 @@ void sim::Universe::ToggleGravity()
 	gravity = ! gravity;
 }
 
+// TODO: Better to have a RemoveEntity and just assert that array is empty in d'tor.
 void sim::Universe::AddEntity(Entity & entity)
 {
 	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
 	entities.push_back(& entity);
 }
 
+// Perform a step in the simulation. 
 void sim::Universe::Tick()
 {
 	time += target_frame_seconds;
@@ -89,7 +95,9 @@ void sim::Universe::Tick()
 	}
 }
 
-sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass)
+// Given a position and a mass at that position, returns a 
+// reasonable approximation of the weight vector at that position.
+sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
 {
 	if (gravity) 
 	{
@@ -109,11 +117,12 @@ sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass)
 	}
 }
 
-void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe)
+// Given a camera position/direction, conservatively estimates 
+// the minimum and maximum distances at which rendering occurs.
+// TODO: Long-term, this function needs to be replaced with 
+// something that gives and near and far plane value instead. 
+void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
 {
-//	range_min = + std::numeric_limits<Scalar>::max();
-//	range_max = - std::numeric_limits<Scalar>::max();
-	
 	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
 	{
 		Entity & e = * * it;

@@ -72,7 +72,10 @@ namespace
 		frustum.near_z = std::numeric_limits<float>::max();
 
 		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
-		sim::Universe::GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
+		
+		// TODO: This stuff belongs at the sim level - or at least outside the renderer.
+		sim::Universe & universe = sim::Universe::Get();
+		universe.GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
 		
 		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
 		SetFrustum(frustum);

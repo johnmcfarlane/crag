@@ -98,22 +98,22 @@ void sim::Simulation::InitUniverse()
 	observer->SetPosition(camera_pos);
 	observer->GetBody()->SetRotation(camera_rot);
 	
-	Universe::Init();	
-	Universe::AddEntity(* observer);
+	sim::Universe & universe = sim::Universe::Get();
+	universe.AddEntity(* observer);
 	//scene.AddEntity(* observer);
 	scene.AddLight(observer->GetLight());
 	
 	Planet * planet = new Planet (0, 8, planet_pos, planet_radius_mean);
-	Universe::AddEntity(* planet);
+	universe.AddEntity(* planet);
 	scene.AddEntity(* planet);
 	
 	Planet * moon = new Planet (250, 10, moon_pos, moon_radius_mean);
-	Universe::AddEntity(* moon);
+	universe.AddEntity(* moon);
 	scene.AddEntity(* moon);
 	
 	Star * sun = new Star(sun_orbit_distance, sun_year);
 	scene.AddLight(sun->GetLight());
-	Universe::AddEntity(* sun);
+	universe.AddEntity(* sun);
 }
 
 sim::Simulation::~Simulation()
@@ -124,8 +124,6 @@ sim::Simulation::~Simulation()
 	observer->GetBody()->GetRotation(camera_rot);
 	
 	delete formation_manager;
-	
-	Universe::Deinit();
 }
 
 void sim::Simulation::Run()
@@ -204,7 +202,8 @@ void sim::Simulation::Tick()
 	// Tick the entities.
 	if (! paused && GetTime() > start_time + startup_grace_period) 
 	{
-		Universe::Tick();
+		sim::Universe & universe = sim::Universe::Get();
+		universe.Tick();
 	}
 	
 	formation_manager->Tick();
@@ -390,8 +389,10 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case KEY_G:
-					Universe::ToggleGravity();
-					return true;
+				{
+					sim::Universe & universe = sim::Universe::Get();
+					universe.ToggleGravity();
+				}	return true;
 					
 				case KEY_I:
 					formation_manager->ToggleSceneThread();
