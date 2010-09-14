@@ -45,7 +45,7 @@ namespace
 	//////////////////////////////////////////////////////////////////////
 	// functions
 
-	sim::Vector3 const default_camera_pos(0,10000450,0);
+	sim::Vector3 const default_camera_pos(0,9997750,0);
 	CONFIG_DEFINE (use_default_camera_pos, bool, true);
 	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
