@@ -448,21 +448,18 @@ bool form::NodeBuffer::ChurnNodes()
 
 void form::NodeBuffer::GenerateMesh(Mesh & mesh) 
 {
-	//int fetch_ahead = 32;
-	
 	point_buffer.Clear();
+	mesh.Clear();
+
+	GenerateMeshFunctor f(mesh);
+#if defined(THREAD_SAFE_MESH)
+	ForEachNode_Paralell(f);
+#else
+	ForEachNode_Serial(f);
+#endif
 	
-	gfx::IndexBuffer & indices = mesh.GetIndices();
-	indices.Clear();
-	
+	// TODO: Paralellize.
 	VertexBuffer & vertices = mesh.GetVertices();
-	vertices.Clear();
-	
-	{
-		GenerateMeshFunctor f(mesh);
-		ForEachNode_Serial(f);
-	}
-	
 	vertices.NormalizeNormals();
 }
 
@@ -920,9 +917,6 @@ template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Serial(FUNCTOR & f, 
 
 template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Paralell(FUNCTOR & f, int step_size)
 {
-	ForEachNode_Serial(f, step_size);
-	return;
-	
 	int num_nodes = nodes_used_end - nodes;
 	if (num_nodes == 0)
 	{

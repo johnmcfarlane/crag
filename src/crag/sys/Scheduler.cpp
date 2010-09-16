@@ -199,7 +199,7 @@ private:
 // sys::Scheduler definitions
 
 sys::Scheduler::Scheduler(int num_reserved_cpus)
-: num_slots (GetNumCpus() - num_reserved_cpus)
+: num_slots ((scheduler_num_threads == 0) ? GetNumCpus() - num_reserved_cpus : scheduler_num_threads)
 , slots ((num_slots < 2) ? nullptr : new Slot [num_slots])
 {
 	std::cout << "Scheduler: num CPUs = " << GetNumCpus() << '\n';

@@ -14,6 +14,11 @@
 #include "gfx/IndexBuffer.h"
 #include "core/debug.h"
 
+#define THREAD_SAFE_MESH
+#if defined(THREAD_SAFE_MESH)
+#include "sys/Mutex.h"
+#endif
+
 
 namespace form
 {
@@ -25,6 +30,8 @@ namespace form
 	{
 	public:
 		Mesh(int max_num_verts, int max_num_tris);
+		
+		void Clear();
 		
 		void SetFlatShaded(bool fs);
 		bool GetFlatShaded() const;
@@ -53,9 +60,15 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
 		
 	private:
+		void Lock();
+		void Unlock();
+		
 		VertexBuffer vertices;
 		gfx::IndexBuffer indices;
 		bool flat_shaded;
+#if defined(THREAD_SAFE_MESH)
+		sys::Mutex mutex;
+#endif
 	};
 
 }

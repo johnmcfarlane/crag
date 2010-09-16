@@ -31,6 +31,12 @@ form::Mesh::Mesh(int max_num_verts, int max_num_tris)
 {
 }
 
+void form::Mesh::Clear()
+{
+	indices.Clear();
+	vertices.Clear();
+}
+
 void form::Mesh::SetFlatShaded(bool fs)
 {
 	flat_shaded = fs;
@@ -98,20 +104,15 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 
 void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
 {
-	Vertex * vert_a, * vert_b, * vert_c;
+	Lock();
 	
-	vert_a = & GetVertex(a);
-	vert_b = & GetVertex(b);
-	if (! flat_shaded)
-	{
-		vert_c = & GetVertex(c);
-	}
-	else 
-	{
-		vert_c = & AddVertex(c);
-	}
+	Vertex & vert_a = GetVertex(a);
+	Vertex & vert_b = GetVertex(b);
+	Vertex & vert_c = (! flat_shaded) ? GetVertex(c) : AddVertex(c);
 	
-	AddFace(* vert_a, * vert_b, * vert_c, normal);
+	AddFace(vert_a, vert_b, vert_c, normal);
+	
+	Unlock();
 }
 
 form::VertexBuffer & form::Mesh::GetVertices() 
@@ -155,3 +156,17 @@ DUMP_OPERATOR_DEFINITION(form, Mesh)
 	return lhs;
 }
 #endif
+
+void form::Mesh::Lock() 
+{
+#if defined(THREAD_SAFE_MESH)
+	mutex.Lock();
+#endif
+}
+
+void form::Mesh::Unlock() 
+{
+#if defined(THREAD_SAFE_MESH)
+	mutex.Unlock();
+#endif
+}
