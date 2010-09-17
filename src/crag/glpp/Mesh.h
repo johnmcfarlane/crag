@@ -26,7 +26,7 @@ namespace gl
 			ibo.Init();
 		}
 		
-		void Bind()
+		void Bind() const
 		{
 			gl::Bind(& vbo);
 			gl::Bind(& ibo);
@@ -50,7 +50,7 @@ namespace gl
 			ibo.Set(num, array);
 		}
 		
-		void Draw(int min_index, int max_index, GLenum mode = GL_TRIANGLES) 
+		void Draw(int min_index, int max_index, GLenum mode = GL_TRIANGLES) const
 		{
 			// IBO
 			gl::Bind(& ibo);
