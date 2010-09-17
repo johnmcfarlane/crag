@@ -37,10 +37,10 @@ namespace form
 		void Set(form::Mesh const & mesh, Vector3d const & origin, bool flat_shaded);
 		int GetNumPolys() const;
 		
-		void BeginDraw(gfx::Pov pov, bool color);
-		void EndDraw();
+		void BeginDraw(gfx::Pov pov, bool color) const;
+		void EndDraw() const;
 		
-		void Draw();
+		void Draw() const;
 		
 	private:
 		void SetVbo(VertexBuffer const & vertices);	

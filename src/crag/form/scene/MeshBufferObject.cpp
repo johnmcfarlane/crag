@@ -40,7 +40,7 @@ int form::MeshBufferObject::GetNumPolys() const
 	return max_index / 3;
 }
 
-void form::MeshBufferObject::BeginDraw(gfx::Pov pov, bool color)
+void form::MeshBufferObject::BeginDraw(gfx::Pov pov, bool color) const
 {
 	Assert (max_index > 0);
 	
@@ -81,7 +81,7 @@ void form::MeshBufferObject::BeginDraw(gfx::Pov pov, bool color)
 #endif
 }
 
-void form::MeshBufferObject::EndDraw()
+void form::MeshBufferObject::EndDraw() const
 {
 	Assert (max_index > 0);
 		
@@ -101,7 +101,7 @@ void form::MeshBufferObject::EndDraw()
 	}
 }
 
-void form::MeshBufferObject::Draw()
+void form::MeshBufferObject::Draw() const
 {
 	Assert (max_index > 0);	
 	//Assert(ibo.IsBound());	// sometimes fails for personal amusement
