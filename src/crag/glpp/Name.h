@@ -27,6 +27,10 @@ namespace gl
 
 	template<GLenum TARGET> class Name
 	{
+		// Class is non-copyable.
+		Name(Name const & rhs);
+		void operator = (Name const & rhs);
+		
 	public:
 		enum {
 			TARGET_ENUM = TARGET
