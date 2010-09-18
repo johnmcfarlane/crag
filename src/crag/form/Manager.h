@@ -14,6 +14,7 @@
 
 #include "sim/defs.h"
 
+#include "core/double_buffer.h"
 #include "core/Singleton.h"
 
 #include "sys/App.h"
@@ -94,10 +95,8 @@ namespace form {
 		gl::TextureRgba8 texture;
 #endif
 		
-		// The graphicy things.
-		form::MeshBufferObject buffer_objects[2];
-		form::MeshBufferObject * volatile front_buffer_object;
-		form::MeshBufferObject * volatile back_buffer_object;
-	};	
+		// TODO: Do we definitely need two of these?
+		core::double_buffer<form::MeshBufferObject> mesh_buffers;
+	};
 
 }

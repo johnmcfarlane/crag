@@ -44,12 +44,10 @@ form::Manager::Manager(sim::Observer & init_observer)
 : observer(init_observer)
 , enable_mesh_generation(true)
 , scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
-, front_buffer_object(& buffer_objects [0])
-, back_buffer_object(& buffer_objects [1])
 {
 	for (int mesh_index = 0; mesh_index < 2; ++ mesh_index)
 	{
-		form::MeshBufferObject & mesh = buffer_objects[mesh_index];
+		form::MeshBufferObject & mesh = mesh_buffers[mesh_index];
 		mesh.Init();
 		mesh.Bind();
 		mesh.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
@@ -162,10 +160,9 @@ bool form::Manager::PollMesh()
 		return false;
 	}
 	
-	if (scene_thread->PollMesh(* back_buffer_object))
+	if (scene_thread->PollMesh(mesh_buffers.back()))
 	{
-		// TODO: Do we definitely need two of these?
-		std::swap(front_buffer_object, back_buffer_object);
+		mesh_buffers.flip();
 		return true;
 	}
 	
@@ -185,7 +182,7 @@ void form::Manager::Render(gfx::Pov const & pov, bool color) const
 
 void form::Manager::RenderFormations(gfx::Pov const & pov, bool color) const
 {
-	if (front_buffer_object->GetNumPolys() <= 0)
+	if (mesh_buffers.front().GetNumPolys() <= 0)
 	{
 		return;
 	}
@@ -210,9 +207,10 @@ void form::Manager::RenderFormations(gfx::Pov const & pov, bool color) const
 #endif
 	
 	// Draw the mesh!
-	front_buffer_object->BeginDraw(pov, color);
-	front_buffer_object->Draw();
-	front_buffer_object->EndDraw();
+	form::MeshBufferObject const & front_buffer = mesh_buffers.front();
+	front_buffer.BeginDraw(pov, color);
+	front_buffer.Draw();
+	front_buffer.EndDraw();
 	GLPP_VERIFY;
 	
 #if defined(FORM_VERTEX_TEXTURE)
@@ -228,13 +226,13 @@ void form::Manager::DebugStats() const
 	{
 		for (int i = 0; i < 2; ++ i) 
 		{
-			form::MeshBufferObject const * m = buffer_objects + i;
+			form::MeshBufferObject const * m = & mesh_buffers [i];
 			gfx::Debug::out << m << ' ';
-			if (m == front_buffer_object) 
+			if (m == & mesh_buffers.front()) 
 			{
 				gfx::Debug::out << 'f';
 			}
-			if (m == back_buffer_object) 
+			if (m == & mesh_buffers.back()) 
 			{
 				gfx::Debug::out << 'b';
 			}
@@ -260,7 +258,7 @@ void form::Manager::DebugStats() const
 	if (gfx::Debug::GetVerbosity() > .15) 
 	{
 		// TODO: Stop this flickering.
-		gfx::Debug::out << "polys:" << front_buffer_object->GetNumPolys() << '\n';
+		gfx::Debug::out << "polys:" << mesh_buffers.front().GetNumPolys() << '\n';
 	}
 	
 	if (! enable_mesh_generation && gfx::Debug::GetVerbosity() > .0) 
