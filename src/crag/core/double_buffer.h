@@ -29,14 +29,19 @@ namespace core
 		}
 		
 		double_buffer(double_buffer const & rhs)
+		: buffers(rhs.buffers)
 		{
-			set(rhs);
+			set_pointers(rhs);
 		}
 		
 		// copy
 		double_buffer & operator = (double_buffer const & rhs)
 		{
-			set(rhs);
+			buffers[0] = rhs.buffers[0];
+			buffers[1] = rhs.buffers[1];
+			
+			set_pointers(rhs);
+			
 			return * this;
 		}
 		
@@ -83,11 +88,8 @@ namespace core
 		
 	private:
 		
-		void set(double_buffer const & that)
+		void set_pointers(double_buffer const & that)
 		{
-			buffers[0] = that.buffers[0];
-			buffers[1] = that.buffers[1];
-			
 			int front_index = that.buffers - that.front_buffer;			
 			front_buffer = buffers + front_index;
 			back_buffer = buffers + (front_index ^ 1);
