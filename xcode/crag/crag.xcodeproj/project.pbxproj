@@ -228,6 +228,7 @@
 		528ABAF411CF2E3B00C2B411 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetaryBody.cpp; sourceTree = "<group>"; };
 		528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetaryBody.h; sourceTree = "<group>"; };
+		5294D2671243C3C500EA6849 /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
@@ -728,6 +729,7 @@
 				52F3A31911A7979400385922 /* Singleton.h */,
 				527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */,
 				527C53CC11B9ACAF00F6C052 /* TextureMapper.h */,
+				5294D2671243C3C500EA6849 /* double_buffer.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
