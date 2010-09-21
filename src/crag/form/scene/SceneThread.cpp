@@ -43,7 +43,6 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , reset_origin_flag(false)
 , suspend_flag(false)
 , quit_flag(false)
-, origin_reset_time(0)
 , mesh(form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f))
 , mesh_updated(false)
 , mesh_generation_time(0)
@@ -55,7 +54,8 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 #if VERIFY
 void form::SceneThread::Verify() const
 {
-	VerifyObject(scene);
+	VerifyObject(scenes [0]);
+	VerifyObject(scenes [1]);
 }
 #endif
 
@@ -115,35 +115,32 @@ void form::SceneThread::SetFrameRatio(float ratio)
 	}
 }
 
-int form::SceneThread::GetNumQuaternaUsed() const
-{
-	return scene.GetNumQuaternaUsed();
-}
-
-int form::SceneThread::GetNumQuaternaUsedTarget() const
-{
-	return scene.GetNumQuaternaUsedTarget();
-}
-
 void form::SceneThread::Tick()
 {
 	Assert(IsMainThread());
 
 	if (! threaded) 
 	{
-		ThreadTick();
+		TickThread();
 	}
 	
 	if (gfx::Debug::GetVerbosity() > 0.2)
 	{
 		sim::Vector3 const & observer_pos = observer.GetPosition();
-		double observer_position_length = Length(observer_pos - scene.GetOrigin());
+		double observer_position_length = Length(observer_pos - GetActiveScene().GetOrigin());
 		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .75)
 	{
 		gfx::Debug::out << "scene_t:" << scene_tick_period << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .37) 
+	{
+		gfx::Debug::out << "visible_q:" << GetVisibleScene().GetNumQuaternaUsed() << '\n';
+		gfx::Debug::out << " active_q:" << GetActiveScene().GetNumQuaternaUsed() << '\n';
+		gfx::Debug::out << " target_q:" << GetActiveScene().GetNumQuaternaUsedTarget() << '\n';
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .2)
@@ -162,7 +159,7 @@ void form::SceneThread::Tick()
 
 void form::SceneThread::ForEachFormation(FormationFunctor & f) const
 {
-	scene.ForEachFormation(f);
+	GetVisibleScene().ForEachFormation(f);
 }
 
 bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
@@ -223,25 +220,41 @@ bool form::SceneThread::IsOriginOk() const
 	// The real test: Is the observer not far enough away from the 
 	// current origin that visible inaccuracies might become apparent?
 	sim::Vector3 const & observer_pos = observer.GetPosition();
-	double observer_position_length = Length(observer_pos - scene.GetOrigin());
+	double observer_position_length = Length(observer_pos - GetVisibleScene().GetOrigin());
 	return observer_position_length < max_observer_position_length;
 }
 
 bool form::SceneThread::IsResetting() const
 {
-	/*if (IsGrowing())
-	{
-		return true;
-	}*/
-	
-	sys::TimeType t = sys::GetTime();
-	sys::TimeType time_since_reset = t - origin_reset_time;
-	return time_since_reset < post_reset_freeze_period;
+	return is_in_reset_mode;
 }
 
 bool form::SceneThread::IsGrowing() const
 {
-	return scene.GetNumQuaternaUsed() < scene.GetNumQuaternaUsedTarget();
+	Scene const & active_scene = GetActiveScene();
+	int num_used = active_scene.GetNumQuaternaUsed();
+	int num_used_target = active_scene.GetNumQuaternaUsedTarget();
+	return num_used < num_used_target;
+}
+
+form::Scene & form::SceneThread::GetActiveScene()
+{
+	return IsResetting() ? scenes.back() : scenes.front();
+}
+
+form::Scene const & form::SceneThread::GetActiveScene() const
+{
+	return IsResetting() ? scenes.back() : scenes.front();
+}
+
+form::Scene & form::SceneThread::GetVisibleScene()
+{
+	return scenes.front();
+}
+
+form::Scene const & form::SceneThread::GetVisibleScene() const
+{
+	return scenes.front();
 }
 
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.
@@ -255,7 +268,7 @@ void form::SceneThread::Run()
 		}
 		else 
 		{
-			ThreadTick();
+			TickThread();
 		}
 	}
 }
@@ -263,28 +276,61 @@ void form::SceneThread::Run()
 // The tick function of the scene thread. 
 // This functions gets called repeatedly either in the scene thread - if there is on -
 // or in the main thread as part of the main render/simulation iteration.
-void form::SceneThread::ThreadTick()
+void form::SceneThread::TickThread()
 {
-	sim::Ray3 camera_ray = observer.GetCameraRay();
-	scene.SetCameraRay(camera_ray);
-	
 	if (reset_origin_flag) 
 	{
-		sim::Vector3 const & observer_pos = observer.GetPosition();
-		scene.SetOrigin(observer_pos);
-		reset_origin_flag = false;
-		origin_reset_time = sys::GetTime();
+		BeginReset();
 	}
 	else 
 	{
 		AdjustNumQuaterna();
 	}
 
-	sys::TimeType scene_tick_time = sys::GetTime();
-	scene.Tick(formations);
-	scene_tick_period = sys::GetTime() - scene_tick_time;
+	TickActiveScene();
+	
+	if (IsResetting())
+	{
+		if (! IsGrowing())
+		{
+			EndReset();
+		}
+	}
 
 	GenerateMesh();
+}
+
+void form::SceneThread::TickActiveScene()
+{
+	Scene & active_scene = GetActiveScene();
+	sim::Ray3 camera_ray = observer.GetCameraRay();
+	active_scene.SetCameraRay(camera_ray);
+	
+	sys::TimeType scene_tick_time = sys::GetTime();
+	active_scene.Tick(formations);
+	scene_tick_period = sys::GetTime() - scene_tick_time;
+}
+
+void form::SceneThread::BeginReset()
+{
+	Assert(! IsResetting());
+	is_in_reset_mode = true;
+	
+	Scene & active_scene = GetActiveScene();
+	
+	sim::Vector3 const & observer_pos = observer.GetPosition();
+	active_scene.SetOrigin(observer_pos);
+	
+	int current_num_quaterna = GetVisibleScene().GetNumQuaternaUsed();
+	active_scene.SetNumQuaternaUsedTarget(current_num_quaterna);
+	
+	reset_origin_flag = false;
+}
+
+void form::SceneThread::EndReset()
+{
+	is_in_reset_mode = false;
+	scenes.flip();
 }
 
 void form::SceneThread::AdjustNumQuaterna()
@@ -294,14 +340,16 @@ void form::SceneThread::AdjustNumQuaterna()
 		return;
 	}
 	
+	Scene & active_scene = GetActiveScene();
+	
 	// Come up with two accounts of how many quaterna we should have.
-	int current_num_quaterna = scene.GetNumQuaternaUsed();
+	int current_num_quaterna = active_scene.GetNumQuaternaUsed();
 	int frame_ratio_directed_target_num_quaterna = CalculateFrameRateDirectedTargetNumQuaterna(current_num_quaterna, frame_ratio);
 	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, static_cast<float>(mesh_generation_period));
 
 	// Pick the more conservative and submit it.
 	int target_num_quaterna = Min(mesh_generation_directed_target_num_quaterna, frame_ratio_directed_target_num_quaterna);
-	scene.SetNumQuaternaUsedTarget(target_num_quaterna);
+	active_scene.SetNumQuaternaUsedTarget(target_num_quaterna);
 	
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
@@ -378,8 +426,9 @@ void form::SceneThread::GenerateMesh()
 		return;
 	}
 	
-	scene.GenerateMesh(mesh);
-	mesh_origin = scene.GetOrigin();
+	Scene & visible_scene = GetVisibleScene();
+	visible_scene.GenerateMesh(mesh);
+	mesh_origin = visible_scene.GetOrigin();
 	mesh_mutex.Unlock();
 
 	mesh_updated = true;
