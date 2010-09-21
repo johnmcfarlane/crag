@@ -257,11 +257,12 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 	// Assuming the camera has moved (and maybe new nodes have been created),
 	// the scores for all nodes will be a little different.
 	
-	// Recalculate the node scores.
-	UpdateNodeScores(camera_ray_relative);
-
 	do 
 	{
+		// Recalculate the node scores.
+		// TODO: More efficient to recalculate new node scores during ChurnNodes.
+		UpdateNodeScores(camera_ray_relative);
+		
 		// Reflect the new scores in the quaterna.
 		UpdateQuaternaScores();
 
