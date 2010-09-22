@@ -59,7 +59,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // NodeBuffer functions
 
-
 form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
@@ -81,6 +80,8 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
+	
+	node_score_functor.camera_ray.position.x = std::numeric_limits<float>::max();
 	
 	VerifyObject(* this);
 }
@@ -254,15 +255,17 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 {
 	VerifyObject (* this);	// should fail because of the following.
 
+	node_score_functor.camera_ray = camera_ray_relative;
+	
 	// Assuming the camera has moved (and maybe new nodes have been created),
 	// the scores for all nodes will be a little different.
 	
+	// Recalculate the node scores.
+	// More efficient to recalculate new node scores during ChurnNodes.
+	UpdateNodeScores();
+	
 	do 
 	{
-		// Recalculate the node scores.
-		// TODO: More efficient to recalculate new node scores during ChurnNodes.
-		UpdateNodeScores(camera_ray_relative);
-		
 		// Reflect the new scores in the quaterna.
 		UpdateQuaternaScores();
 
@@ -272,8 +275,12 @@ void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
 		// Finally, using the quaterna,
 		// replace nodes whose parent's scores have dropped enough
 		// with ones whose score have increased enough.
+		if (! ChurnNodes())
+		{
+			break;
+		}
 	}
-	while (ChurnNodes());
+	while (IsNodeChurnIntensive());
 	
 	VerifyObject (* this);	// should fail because of the following.
 }
@@ -360,7 +367,7 @@ void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 #endif
 }
 
-void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
+void form::NodeBuffer::UpdateNodeScores()
 {
 #if defined(USE_OPENCL)
 	if (cpu_kernel != nullptr)
@@ -374,8 +381,7 @@ void form::NodeBuffer::UpdateNodeScores(Ray3 const & camera_ray_relative)
 	else 
 #endif
 	{
-		CalculateNodeScoreFunctor f(camera_ray_relative.position, camera_ray_relative.direction);
-		ForEachNode_Paralell(f);
+		ForEachNode_Paralell(node_score_functor);
 	}
 }
 
@@ -576,6 +582,17 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	UnlockTree();
 	
 	children_quaterna.parent_score = node.score;
+	
+	// If NodeBuffer::Tick iterates over the nodes multiple times, the new-comers need their scores corrected.
+	// To call UpdateNodeScores would be inefficient as it scores every used node. 
+	// This way, we only score what is out of date.
+	if (IsNodeChurnIntensive())
+	{
+		node_score_functor (children_quaterna.nodes[0]);
+		node_score_functor (children_quaterna.nodes[1]);
+		node_score_functor (children_quaterna.nodes[2]);
+		node_score_functor (children_quaterna.nodes[3]);
+	}	
 	
 	return true;
 }
@@ -807,9 +824,6 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 			{
 				// If so, we cannot easily remove this quaterna.
 				// It's best to stop the reduction at this element.
-			//	int n = new_quaterna_used_end - quaterna;
-			//	int m = quaterna_used_end - quaterna;
-			//	std::cout << m << ":" << n << '\n';
 				break;
 			}
 			

@@ -17,8 +17,9 @@
 
 #include "geom/Vector3.h"
 
-#include "form/score/CalculateNodeScoreCpuKernel.h"
-#include "form/score/CalculateNodeScoreGpuKernel.h"
+//#include "form/score/CalculateNodeScoreCpuKernel.h"
+//#include "form/score/CalculateNodeScoreGpuKernel.h"
+#include "form/score/CalculateNodeScoreFunctor.h"
 
 
 namespace form
@@ -79,7 +80,7 @@ namespace form
 	private:
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
-		void UpdateNodeScores(Ray3 const & camera_ray_relative);
+		void UpdateNodeScores();
 		void UpdateQuaternaScores();
 		void SortQuaterna();
 		bool ChurnNodes();
@@ -93,7 +94,8 @@ namespace form
 		//bool IsAvailable(class Ranking const * ranking) const;
 		
 		///////////////////////////////////////////////////////
-		// Node-related members.		
+		// Node-related members.
+		static bool IsNodeChurnIntensive() { return true; }
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
 		void CollapseNode(Node & node);
@@ -142,6 +144,8 @@ namespace form
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
 		mutable sys::Mutex tree_mutex;
+		
+		CalculateNodeScoreFunctor node_score_functor;
 		
 #if defined(USE_OPENCL)
 		CalculateNodeScoreCpuKernel * cpu_kernel;

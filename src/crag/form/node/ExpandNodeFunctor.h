@@ -43,10 +43,12 @@ namespace form {
 			PrefetchBlock(node.parent);
 		}
 		
-		void operator()(Node & node)
+		void operator() (Node & node)
 		{
-			if (node.IsExpandable()) {
-				if (node_buffer.ExpandNode(node)) {
+			if (node.IsExpandable()) 
+			{
+				if (node_buffer.ExpandNode(node)) 
+				{
 					++ num_expanded;
 				}
 			}

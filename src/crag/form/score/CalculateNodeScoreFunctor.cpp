@@ -13,14 +13,23 @@
 #include "CalculateNodeScoreFunctor.h"
 
 
+form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
+{
+}
+
+form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor(Ray3 const & _camera_ray)
+: camera_ray(_camera_ray)
+{
+}
+
 void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 {
 	Assert(node.IsInUse());
 	
 	float score = node.area;
 	
-	// distance
-	Vector3f camera_to_node = node.center - relative_camera_pos;
+	// distance	
+	Vector3f camera_to_node = node.center - camera_ray.position;
 	float distance_squared = LengthSq(camera_to_node);
 	Assert(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
@@ -38,7 +47,7 @@ void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 	float camera_dp = DotProduct(camera_to_node, node.normal);
 	float towardness_factor = Exp(camera_dp);
 	score *= towardness_factor;
-
+	
 	// Distance-based falloff.
 	float fudged_min_visible_distance = camera_near;	// same as the near plane (or the camera radius, whichever is greater)
 	score /= Max(distance_squared, Square(fudged_min_visible_distance));

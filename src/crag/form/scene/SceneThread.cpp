@@ -131,7 +131,7 @@ void form::SceneThread::Tick()
 		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .75)
+	if (gfx::Debug::GetVerbosity() > .25)
 	{
 		gfx::Debug::out << "scene_t:" << scene_tick_period << '\n';
 	}

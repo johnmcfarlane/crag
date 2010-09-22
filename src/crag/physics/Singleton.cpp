@@ -22,6 +22,11 @@ physics::Singleton::Singleton()
 , contact_joints(dJointGroupCreate(0))
 , collisions(true)
 {
+	// Notes on using ODE on OS X:
+	//	Download the version-numbered release from from source forge.
+	//	Consult the package's INSTALL.txt file for details of how to build and install ODE.
+	//	In particular, you must build and install the ODE library using double-precision using the following option:
+	//		./configure --enable-double-precision
 	dInitODE2(0);
 }
 

@@ -24,15 +24,21 @@ public:
 	Vector() { }
 
 	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) 
-		: x(static_cast<S>(rhs.x))
-		, y(static_cast<S>(rhs.y))
-		, z(static_cast<S>(rhs.z)) 
+	: x(static_cast<S>(rhs.x))
+	, y(static_cast<S>(rhs.y))
+	, z(static_cast<S>(rhs.z)) 
 	{ }
-
+	
 	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
-		: x(static_cast<S>(rhs_x))
-		, y(static_cast<S>(rhs_y))
-		, z(static_cast<S>(rhs_z)) 
+	: x(static_cast<S>(rhs_x))
+	, y(static_cast<S>(rhs_y))
+	, z(static_cast<S>(rhs_z)) 
+	{ }
+	
+	template<typename RHS_S> Vector(RHS_S rhs_xyz) 
+	: x(static_cast<S>(rhs_xyz))
+	, y(static_cast<S>(rhs_xyz))
+	, z(static_cast<S>(rhs_xyz)) 
 	{ }
 
 	// Returns vector as a C-style array. Very unsafe. 
