@@ -30,6 +30,7 @@
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
 		52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */; };
+		52D03956124A5C5400E797B0 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D03955124A5C5400E797B0 /* libode.a */; };
 		52DF183511E8CDA800AF25A1 /* defs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF183411E8CDA800AF25A1 /* defs.cpp */; };
 		52DF188511E8FAC500AF25A1 /* CalculateNodeScoreCpuKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF187911E8FAC500AF25A1 /* CalculateNodeScoreCpuKernel.cpp */; };
 		52DF188611E8FAC500AF25A1 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF187C11E8FAC500AF25A1 /* CalculateNodeScoreFunctor.cpp */; };
@@ -160,6 +161,7 @@
 		52C53E2A11D8FC1000FA73AA /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
 		52C53E2B11D8FC1000FA73AA /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector4.h; sourceTree = "<group>"; };
 		52C53E2C11D8FC1000FA73AA /* VectorOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorOps.h; sourceTree = "<group>"; };
+		52D03955124A5C5400E797B0 /* libode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libode.a; path = /usr/local/lib/libode.a; sourceTree = "<absolute>"; };
 		52DF183411E8CDA800AF25A1 /* defs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = defs.cpp; sourceTree = "<group>"; };
 		52DF187911E8FAC500AF25A1 /* CalculateNodeScoreCpuKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreCpuKernel.cpp; sourceTree = "<group>"; };
 		52DF187A11E8FAC500AF25A1 /* CalculateNodeScoreCpuKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreCpuKernel.h; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */,
 				524326BE12489EEF00039257 /* SDL_image.framework in Frameworks */,
+				52D03956124A5C5400E797B0 /* libode.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +308,7 @@
 				002F3C6009D0951E00EBEB88 /* GLUT.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				002F3C0009D093BD00EBEB88 /* OpenGL.framework */,
+				52D03955124A5C5400E797B0 /* libode.a */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -847,10 +851,11 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-lode";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 				"SDKROOT[arch=i386]" = macosx10.5;
@@ -870,19 +875,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				HEADER_SEARCH_PATHS = (
-					"~/Documents/workspace/ode-0.11.1/include",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
-					"../../../../workspace/SDL_image-1.2.10",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/.libs\\\"",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/Xcode/graphics/lib\\\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -901,19 +900,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				HEADER_SEARCH_PATHS = (
-					"~/Documents/workspace/ode-0.11.1/include",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
-					"../../../../workspace/SDL_image-1.2.10",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/.libs\\\"",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/Xcode/graphics/lib\\\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -930,19 +923,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				HEADER_SEARCH_PATHS = (
-					"~/Documents/workspace/ode-0.11.1/include",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
-					"../../../../workspace/SDL_image-1.2.10",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/.libs\\\"",
-					"\\\"$(SRCROOT)/../../../../workspace/SDL_image-1.2.10/Xcode/graphics/lib\\\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -1000,10 +987,11 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-lode";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 				"SDKROOT[arch=i386]" = macosx10.5;
@@ -1060,15 +1048,16 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					/Library/Frameworks/SDL_image.framework/Headers,
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
+					/Library/Frameworks/SDL_image.framework/Headers,
 				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-lode";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 				"SDKROOT[arch=i386]" = macosx10.5;
