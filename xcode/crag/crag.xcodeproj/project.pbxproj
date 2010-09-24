@@ -196,6 +196,7 @@
 		52DF193E11E92CB500AF25A1 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52DF193F11E92CB500AF25A1 /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
 		52DF194011E92CB500AF25A1 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
+		52E70F6A124B293E008452A3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		52F3A30611A7979400385922 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52F3A30B11A7979400385922 /* ConfigManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigManager.cpp; sourceTree = "<group>"; };
 		52F3A30C11A7979400385922 /* ConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigManager.h; sourceTree = "<group>"; };
@@ -522,6 +523,7 @@
 				527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */,
 				527C53CC11B9ACAF00F6C052 /* TextureMapper.h */,
 				5294D2671243C3C500EA6849 /* double_buffer.h */,
+				52E70F6A124B293E008452A3 /* core.h */,
 			);
 			path = core;
 			sourceTree = "<group>";

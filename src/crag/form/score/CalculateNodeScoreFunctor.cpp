@@ -12,14 +12,47 @@
 
 #include "CalculateNodeScoreFunctor.h"
 
+#include "core/ConfigEntry.h"
+
+
+extern float camera_near;
+
+
+CONFIG_DEFINE(node_score_recalc_coefficient, double, 0.25);
+CONFIG_DEFINE(node_score_score_coefficient, double, 1.5);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// form::CalculateNodeScoreFunctor definitions
 
 form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 {
+	// make sure that the initial ray is just plain wrong!
+	camera_ray = GetInvalidRay();
+	
+	// Initialize all cached values used by the functor. Try and maintain a high degree of precision. 
+	min_recalc_distance_squared = static_cast<Scalar>(Square(node_score_recalc_coefficient * camera_near));
+	double min_score_distance_squared_precise = Square(node_score_score_coefficient * camera_near);
+	min_score_distance_squared = static_cast<Scalar>(min_score_distance_squared_precise);
+	inverse_min_score_distance_squared = static_cast<Scalar>(1. / min_score_distance_squared_precise);
 }
 
-form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor(Ray3 const & _camera_ray)
-: camera_ray(_camera_ray)
+form::Ray3 form::CalculateNodeScoreFunctor::GetInvalidRay()
 {
+	return Ray3(Vector3(std::numeric_limits<float>::max()),
+				Vector3(std::numeric_limits<float>::max()));
+
+}
+
+bool form::CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
+{
+	Scalar distance_squared = LengthSq(other_camera_ray.position - camera_ray.position);
+	return distance_squared >= min_recalc_distance_squared;
+}
+
+void form::CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
+{
+	camera_ray = new_camera_ray;
 }
 
 void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
@@ -49,8 +82,14 @@ void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 	score *= towardness_factor;
 	
 	// Distance-based falloff.
-	float fudged_min_visible_distance = camera_near;	// same as the near plane (or the camera radius, whichever is greater)
-	score /= Max(distance_squared, Square(fudged_min_visible_distance));
+	if (distance_squared > min_score_distance_squared)
+	{
+		score /= distance_squared;
+	}
+	else 
+	{
+		score *= inverse_min_score_distance_squared;
+	}
 	
 	Assert(score >= 0);
 	node.score = score;

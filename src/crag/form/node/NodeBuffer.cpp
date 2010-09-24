@@ -59,7 +59,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // NodeBuffer functions
 
-form::NodeBuffer::NodeBuffer(int target_num_quaterna)
+form::NodeBuffer::NodeBuffer()
 //: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_used_end(nodes)
@@ -67,9 +67,10 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_used_end(quaterna)
 , quaterna_sorted_end(quaterna)
-, quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : target_num_quaterna, static_cast<int>(max_num_quaterna)))
+, quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : 0, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , point_buffer(max_num_verts)
+, cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
 #if defined(USE_OPENCL)
 , cpu_kernel(nullptr)
 , gpu_kernel(nullptr)
@@ -80,8 +81,6 @@ form::NodeBuffer::NodeBuffer(int target_num_quaterna)
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
-	
-	node_score_functor.camera_ray.position.x = std::numeric_limits<float>::max();
 	
 	VerifyObject(* this);
 }
@@ -251,56 +250,21 @@ void form::NodeBuffer::UnlockTree() const
 
 // This is the main tick function for all things 'nodey'.
 // It is also where a considerable amount of the SceneThread's time is spent.
-void form::NodeBuffer::Tick(Ray3 const & camera_ray_relative)
+void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
 	VerifyObject (* this);	// should fail because of the following.
 
-	node_score_functor.camera_ray = camera_ray_relative;
-	
-	// Assuming the camera has moved (and maybe new nodes have been created),
-	// the scores for all nodes will be a little different.
-	
-	// Recalculate the node scores.
-	// More efficient to recalculate new node scores during ChurnNodes.
-	UpdateNodeScores();
-	
-	do 
-	{
-		// Reflect the new scores in the quaterna.
-		UpdateQuaternaScores();
+	node_score_functor.SetCameraRay(new_camera_ray);
 
-		// Now resort the quaterna so they are in order again.
-		SortQuaterna();
-		
-		// Finally, using the quaterna,
-		// replace nodes whose parent's scores have dropped enough
-		// with ones whose score have increased enough.
-		if (! ChurnNodes())
-		{
-			break;
-		}
-	}
-	while (IsNodeChurnIntensive());
-	
-	VerifyObject (* this);	// should fail because of the following.
-}
-
-void form::NodeBuffer::InitKernel()
-{
-#if defined(USE_OPENCL)
-	cl::Singleton const & cl_singleton = cl::Singleton::Get();
-	
-	switch (cl_singleton.GetDeviceType())
+	// Is the new camera ray significantly different to 
+	// the one used to last score the bulk of the node buffer?
+	if (node_score_functor.IsSignificantlyDifferent(cached_node_score_ray))
 	{
-		case CL_DEVICE_TYPE_CPU:
-			cpu_kernel = new CalculateNodeScoreCpuKernel(max_num_nodes, nodes);
-			break;
-			
-		case CL_DEVICE_TYPE_GPU:
-			gpu_kernel = new CalculateNodeScoreGpuKernel(max_num_nodes);
-			break;
+		UpdateNodeScores();
+		cached_node_score_ray = new_camera_ray;
 	}
-#endif
+	
+	UpdateNodes();
 }
 
 void form::NodeBuffer::OnReset()
@@ -341,6 +305,24 @@ void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
 	}
 }
 
+void form::NodeBuffer::InitKernel()
+{
+#if defined(USE_OPENCL)
+	cl::Singleton const & cl_singleton = cl::Singleton::Get();
+	
+	switch (cl_singleton.GetDeviceType())
+	{
+		case CL_DEVICE_TYPE_CPU:
+			cpu_kernel = new CalculateNodeScoreCpuKernel(max_num_nodes, nodes);
+			break;
+			
+		case CL_DEVICE_TYPE_GPU:
+			gpu_kernel = new CalculateNodeScoreGpuKernel(max_num_nodes);
+			break;
+	}
+#endif
+}
+
 void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 {
 #if defined(FAST_SCENE_RESET)
@@ -365,6 +347,29 @@ void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 		iterator->parent_score = -1;
 	}
 #endif
+}
+
+void form::NodeBuffer::UpdateNodes()
+{
+	do 
+	{
+		// Reflect the new scores in the quaterna.
+		UpdateQuaternaScores();
+		
+		// Now resort the quaterna so they are in order again.
+		SortQuaterna();
+		
+		// Finally, using the quaterna,
+		// replace nodes whose parent's scores have dropped enough
+		// with ones whose score have increased enough.
+		if (! ChurnNodes())
+		{
+			break;
+		}
+	}
+	while (IsNodeChurnIntensive());
+	
+	VerifyObject (* this);	// should fail because of the following.
 }
 
 void form::NodeBuffer::UpdateNodeScores()
@@ -528,7 +533,10 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	}
 	else
 	{
-		Assert(false);
+		// We're clean out of nodes!
+		// Unless the node tree is somehow eating itself,
+		// this probably means a root nodes is expanding
+		// and there are no nodes. 
 		return false;
 	}
 	

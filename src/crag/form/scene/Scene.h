@@ -36,6 +36,8 @@ namespace form
 	// is too great to be represented using float coordinates and greater accuracy is required near the observer.
 	class Scene
 	{
+		OBJECT_NO_COPY (Scene);
+		
 		friend class ::ProcessNodeFunctor;
 		
 		// Types for keeping track of a formation using a model.

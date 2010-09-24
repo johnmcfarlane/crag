@@ -19,6 +19,8 @@ namespace core
 
 	template <typename S> class Singleton
 	{
+		OBJECT_NO_COPY (Singleton);
+		
 	public:
 		static bool IsInstanced()
 		{
@@ -37,18 +39,13 @@ namespace core
 		}
 
 	protected:
+		
 		Singleton()
 		{
 			Assert(the_instance == nullptr);
 			
 			// If S is not derived from Singleton<S>, singleton will break here.
 			the_instance = reinterpret_cast<S *>(this);
-		}
-		
-		Singleton(Singleton const & rhs)
-		{
-			// Seems to be the best way to stop a singleton from being copied.
-			Assert(false);	// No! Stop it!!
 		}
 		
 		virtual ~Singleton()
@@ -58,6 +55,7 @@ namespace core
 		}
 
 	private:
+		
 		static S * the_instance;
 	};
 

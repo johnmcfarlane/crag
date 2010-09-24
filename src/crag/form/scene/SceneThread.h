@@ -37,6 +37,8 @@ namespace form
 	// Optionally, it can also run the scene without multithreading.
 	class SceneThread
 	{
+		OBJECT_NO_COPY (SceneThread);
+		
 	public:
 		SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded);
 		

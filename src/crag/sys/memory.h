@@ -15,9 +15,6 @@
 #endif
 
 
-//////////////////////////////////////////////////////////////////////
-// Memory Wrecking
-
 // This definition is highly questionable. Doublt check it work if compiling on a new platform.
 // I'm assuming that addresses don't need to be aligned for calls to __builtin_prefetch.
 #if defined(__ppc__)
@@ -34,7 +31,12 @@
 // Array size
 #define ARRAY_SIZE(ARRAY) (sizeof(ARRAY)/sizeof(*ARRAY))
 
+
+//////////////////////////////////////////////////////////////////////
+// Low-level Memory Manipulation using templated parameters
+
 // ZeroMemory
+
 #if ! defined(WIN32)
 inline void ZeroMemory(char * ptr, size_t num_bytes)
 {
@@ -52,8 +54,10 @@ template<typename T> inline void ZeroObject(T & object)
 	ZeroMemory(reinterpret_cast<char *>(& object), sizeof(object));
 }
 
-// Copy
-template<typename T> inline void CopyArray(T * lhs, T const * rhs, int count)
+
+// Bitwise Copy
+
+template<typename T> inline void BitwiseCopyArray(T * lhs, T const * rhs, int count)
 {
 	// Make sure this isn't a job for memmove.
 	assert(abs(lhs - rhs) >= count);
@@ -63,13 +67,12 @@ template<typename T> inline void CopyArray(T * lhs, T const * rhs, int count)
 	memcpy(lhs, rhs, num_bytes);
 }
 
-template<typename T> inline void CopyObject(T & lhs, T const & rhs)
+template<typename T> inline void BitwiseCopyObject(T & lhs, T const & rhs)
 {
-	CopyArray(& lhs, & rhs, 1);
+	BitwiseCopyArray(& lhs, & rhs, 1);
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
 // Prefetch
 
 inline void PrefetchBlock(void const * ptr)
@@ -115,6 +118,7 @@ template<typename T> inline void PrefetchObject(T const & object)
 
 // TODO: Go back to the scheme where multiple passes are performed by having each functor return another functor. 
 // TODO: Make a SMP version!!!
+// TODO: Needs its own source file?
 template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begin, ELEMENT * end, int chunk_size)
 {
 	int total_num_nodes = end - begin;

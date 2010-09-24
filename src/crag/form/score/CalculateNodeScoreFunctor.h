@@ -18,66 +18,36 @@
 #include "geom/Vector3.h"
 
 
-extern float camera_near;
-
-
 namespace form 
 {
 
+	// A functor for use primarily in NodeBuffer::ForEachNode_Paralell/Serial.
+	// An object of this class is a member of NodeBuffer and stores all data needed to score the buffer's nodes.
+	
 	class CalculateNodeScoreFunctor : public NodeFunctor
 	{
+		OBJECT_NO_COPY (CalculateNodeScoreFunctor);
+		
 	public:
+		
 		CalculateNodeScoreFunctor();
-		CalculateNodeScoreFunctor(Ray3 const & _camera_ray);
+
+		// Returns a ray that is significantly different to any valid ray. 
+		static Ray3 GetInvalidRay();
+		
+		// Returns true iff using the functor with the given ray instead
+		// would yield significantly different scores.
+		bool IsSignificantlyDifferent(Ray3 const & other_camera_ray) const;
+		
+		void SetCameraRay(Ray3 const & new_camera_ray);
 
 		void operator()(form::Node & node) const;
 
-	#if 0
 	private:
-
-		static inline float AngleToScoreFactor(float opposite_score, float equal_score, float dot_product)
-		{
-			float perpendicular_score = (equal_score + opposite_score) * .5f;
-			float unclipped_score = perpendicular_score + dot_product * (equal_score - perpendicular_score);
-			
-			// passing in range as template params should mean that this little lot
-			// compiles down to something more sane than it appears.
-			if (opposite_score < equal_score) {
-				if (opposite_score < 0.f) {
-					if (unclipped_score < 0.f) {
-						return 0.f;
-					}
-				}
-				if (equal_score > 1.f) {
-					if (unclipped_score > 1.f) {
-						return 1.f;
-					}
-				}
-			}
-			else {
-				if (equal_score < 0.f) {
-					if (unclipped_score < 0.f) {
-						return 0.f;
-					}
-				}
-				if (opposite_score >= 1.f) {
-					if (unclipped_score >= 1.f) {
-						return 1.f;
-					}
-				}
-			}
-			
-			Assert (unclipped_score >= -0.001f && unclipped_score <= 1.001f);
-			return unclipped_score;
-		}
-
-		static inline float AngleToScoreFactor(float opposite_score, float equal_score, Vector3f const & a, Vector3f const & b)
-		{
-			return AngleToScoreFactor(opposite_score, equal_score, DotProduct(a, b));
-		}
-	#endif
-
 		Ray3 camera_ray;
+		Scalar min_recalc_distance_squared;
+		Scalar min_score_distance_squared;
+		Scalar inverse_min_score_distance_squared;
 	};
 
 }	// form

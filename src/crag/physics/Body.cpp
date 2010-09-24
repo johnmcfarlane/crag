@@ -74,7 +74,7 @@ void physics::Body::SetPosition(Vector3 const & position) const
 void physics::Body::GetRotation(Matrix4 & rot) const
 {
 	dReal const * array = dGeomGetRotation(geom_id);
-	CopyArray(rot.GetArray(), array, 12);
+	BitwiseCopyArray(rot.GetArray(), array, 12);
 	rot[3][0] = 0;
 	rot[3][1] = 0;
 	rot[3][2] = 0;

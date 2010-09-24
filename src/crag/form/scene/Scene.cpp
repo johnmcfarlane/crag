@@ -24,7 +24,7 @@
 // form::Scene
 
 form::Scene::Scene()
-: node_buffer(1024)
+: node_buffer()
 , origin(sim::Vector3::Zero())
 {
 }

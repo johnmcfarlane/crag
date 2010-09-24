@@ -40,7 +40,8 @@ namespace form
 	// TODO: This class needs to be broken up further. NodeSet contains PointBuffer, NodeBuffer and QuaternaBuffer perhaps?
 	class NodeBuffer
 	{
-		//friend class ExpandNodeFunctor;
+		OBJECT_NO_COPY (NodeBuffer);
+		
 	public:
 		
 		// Constants
@@ -52,7 +53,7 @@ namespace form
 		};
 		
 		// Member functions
-		NodeBuffer(int target_num_nodes);
+		NodeBuffer();
 		~NodeBuffer();
 		
 #if VERIFY
@@ -74,12 +75,14 @@ namespace form
 		void LockTree() const;
 		void UnlockTree() const;
 		
-		void Tick(Ray3 const & camera_ray_relative);
+		void Tick(Ray3 const & new_camera_ray);
 		void OnReset();
 		void ResetNodeOrigins(Vector3 const & origin_delta);
 	private:
 		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
+		
+		void UpdateNodes();
 		void UpdateNodeScores();
 		void UpdateQuaternaScores();
 		void SortQuaterna();
@@ -146,6 +149,7 @@ namespace form
 		mutable sys::Mutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;
+		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
 		
 #if defined(USE_OPENCL)
 		CalculateNodeScoreCpuKernel * cpu_kernel;
