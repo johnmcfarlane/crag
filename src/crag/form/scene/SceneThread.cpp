@@ -166,7 +166,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
-	if (! mesh_mutex.TryLock())
+	if (! mesh_semaphore.TryLock())
 	{
 		return false;
 	}
@@ -185,7 +185,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 		polled = false;
 	}
 	
-	mesh_mutex.Unlock();
+	mesh_semaphore.Unlock();
 	
 	return polled;
 }
@@ -419,7 +419,7 @@ void form::SceneThread::GenerateMesh()
 		return;
 	}
 	
-	if (! mesh_mutex.TryLock())
+	if (! mesh_semaphore.TryLock())
 	{
 		// Don't wait around if current mesh is being read by main thread;
 		// This thread should be locked as little as possible.
@@ -429,7 +429,7 @@ void form::SceneThread::GenerateMesh()
 	Scene & visible_scene = GetVisibleScene();
 	visible_scene.GenerateMesh(mesh);
 	mesh_origin = visible_scene.GetOrigin();
-	mesh_mutex.Unlock();
+	mesh_semaphore.Unlock();
 
 	mesh_updated = true;
 	sys::TimeType t = sys::GetTime();

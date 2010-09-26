@@ -19,7 +19,7 @@
 		527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */; };
 		527CF8DB12274AA700E7B3C5 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D112274AA700E7B3C5 /* App.cpp */; };
 		527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D312274AA700E7B3C5 /* memory.cpp */; };
-		527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D512274AA700E7B3C5 /* Mutex.cpp */; };
+		527CF8DD12274AA700E7B3C5 /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D512274AA700E7B3C5 /* Semaphore.cpp */; };
 		527CF8DE12274AA700E7B3C5 /* Scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8D712274AA700E7B3C5 /* Scheduler.cpp */; };
 		527CF8E512274BC200E7B3C5 /* SimpleMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */; };
 		527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F4AF312101AD400D6AF23 /* MoonShader.cpp */; };
@@ -29,6 +29,8 @@
 		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
+		52AE9018124FC87500C4E6A3 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52AE9017124FC87500C4E6A3 /* Mutex.cpp */; };
+		52B571C8124D8E4C0067C6FA /* ThreadCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B571C7124D8E4C0067C6FA /* ThreadCondition.cpp */; };
 		52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */; };
 		52D03956124A5C5400E797B0 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D03955124A5C5400E797B0 /* libode.a */; };
 		52DF183511E8CDA800AF25A1 /* defs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF183411E8CDA800AF25A1 /* defs.cpp */; };
@@ -122,8 +124,8 @@
 		527CF8D212274AA700E7B3C5 /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
 		527CF8D312274AA700E7B3C5 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		527CF8D412274AA700E7B3C5 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
-		527CF8D512274AA700E7B3C5 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
-		527CF8D612274AA700E7B3C5 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
+		527CF8D512274AA700E7B3C5 /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
+		527CF8D612274AA700E7B3C5 /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
 		527CF8D712274AA700E7B3C5 /* Scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scheduler.cpp; sourceTree = "<group>"; };
 		527CF8D812274AA700E7B3C5 /* Scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scheduler.h; sourceTree = "<group>"; };
 		527CF8DA12274AA700E7B3C5 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
@@ -147,7 +149,11 @@
 		5294D2671243C3C500EA6849 /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
+		52AE9016124FC87500C4E6A3 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
+		52AE9017124FC87500C4E6A3 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
+		52B571C6124D8E4C0067C6FA /* ThreadCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCondition.h; sourceTree = "<group>"; };
+		52B571C7124D8E4C0067C6FA /* ThreadCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadCondition.cpp; sourceTree = "<group>"; };
 		52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
 		52C53E1A11D8FBF500FA73AA /* ConfigEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigEntry.h; sourceTree = "<group>"; };
 		52C53E2211D8FC1000FA73AA /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
@@ -381,13 +387,17 @@
 				527CF8D212274AA700E7B3C5 /* App.h */,
 				527CF8D312274AA700E7B3C5 /* memory.cpp */,
 				527CF8D412274AA700E7B3C5 /* memory.h */,
-				527CF8D512274AA700E7B3C5 /* Mutex.cpp */,
-				527CF8D612274AA700E7B3C5 /* Mutex.h */,
+				52AE9017124FC87500C4E6A3 /* Mutex.cpp */,
+				52AE9016124FC87500C4E6A3 /* Mutex.h */,
 				527CF8D712274AA700E7B3C5 /* Scheduler.cpp */,
 				527CF8D812274AA700E7B3C5 /* Scheduler.h */,
-				527CF8DA12274AA700E7B3C5 /* Thread.h */,
-				527CF8E312274B3700E7B3C5 /* SimpleMutex.h */,
+				527CF8D512274AA700E7B3C5 /* Semaphore.cpp */,
+				527CF8D612274AA700E7B3C5 /* Semaphore.h */,
 				527CF8E412274BC200E7B3C5 /* SimpleMutex.cpp */,
+				527CF8E312274B3700E7B3C5 /* SimpleMutex.h */,
+				527CF8DA12274AA700E7B3C5 /* Thread.h */,
+				52B571C7124D8E4C0067C6FA /* ThreadCondition.cpp */,
+				52B571C6124D8E4C0067C6FA /* ThreadCondition.h */,
 			);
 			path = sys;
 			sourceTree = "<group>";
@@ -775,9 +785,11 @@
 				527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */,
 				527CF8DB12274AA700E7B3C5 /* App.cpp in Sources */,
 				527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */,
-				527CF8DD12274AA700E7B3C5 /* Mutex.cpp in Sources */,
+				527CF8DD12274AA700E7B3C5 /* Semaphore.cpp in Sources */,
 				527CF8DE12274AA700E7B3C5 /* Scheduler.cpp in Sources */,
 				527CF8E512274BC200E7B3C5 /* SimpleMutex.cpp in Sources */,
+				52B571C8124D8E4C0067C6FA /* ThreadCondition.cpp in Sources */,
+				52AE9018124FC87500C4E6A3 /* Mutex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

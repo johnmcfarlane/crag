@@ -1,5 +1,5 @@
 /*
- *  Mutex.cpp
+ *  Semaphore.cpp
  *  crag
  *
  *  Created by John on 5/28/10.
@@ -10,26 +10,26 @@
 
 #include "pch.h"
 
-#include "Mutex.h"
+#include "Semaphore.h"
 
 // core
 #include "core/debug.h"
 
 
-sys::Mutex::Mutex()
+sys::Semaphore::Semaphore()
 : sdl_semaphore(SDL_CreateSemaphore(1))
 {
 	Assert(sdl_semaphore != nullptr);
 }
 
-sys::Mutex::~Mutex()
+sys::Semaphore::~Semaphore()
 {
 	Assert(sdl_semaphore != nullptr);
 	Assert(SDL_SemValue(sdl_semaphore) == 1);
 	SDL_DestroySemaphore(sdl_semaphore);
 }
 
-void sys::Mutex::Lock()
+void sys::Semaphore::Lock()
 {
 	if (SDL_SemWait(sdl_semaphore) != 0)
 	{
@@ -38,7 +38,7 @@ void sys::Mutex::Lock()
 	}
 }
 
-bool sys::Mutex::TryLock()
+bool sys::Semaphore::TryLock()
 {
 	int result = SDL_SemTryWait(sdl_semaphore);
 	
@@ -57,7 +57,7 @@ bool sys::Mutex::TryLock()
 	}
 }
 
-void sys::Mutex::Unlock()
+void sys::Semaphore::Unlock()
 {
 	if (SDL_SemPost(sdl_semaphore) != 0)
 	{

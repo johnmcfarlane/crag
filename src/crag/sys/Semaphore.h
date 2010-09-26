@@ -1,5 +1,5 @@
 /*
- *  Mutex.h
+ *  Semaphore.h
  *  crag
  *
  *  Created by John on 5/28/10.
@@ -15,11 +15,11 @@
 
 namespace sys
 {
-	class Mutex
+	class Semaphore
 	{
 	public:
-		Mutex();
-		~Mutex();
+		Semaphore();
+		~Semaphore();
 		
 		void Lock();
 		bool TryLock();

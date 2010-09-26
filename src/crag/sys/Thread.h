@@ -16,12 +16,18 @@
 namespace sys
 {
 
-	// TODO: Describe how to use this class. It's a bit unusual. 
+	// Use Thread to launch and manage a thread. 
+	// Specifically, Thread can be used to call a member function from within a newly launched thread.
+	// Template parameter, CLASS, is the class and FUNCTION is the member function to launch into.
+	// The function parameter, object, is the object for which the member function is called.
+	// (Note that two other useful thread-related functions are Sleep and GetNumCpus.)
+
 	template <typename CLASS, void (CLASS::*FUNCTION)()> 
 	class Thread 
 	{
 	public:
-		
+	
+		// Creates and launches a new thread which calls object.FUNCTION().
 		Thread (CLASS & object)
 		: sdl_thread(nullptr)
 		{
@@ -42,12 +48,13 @@ namespace sys
 		// TODO: This doesn't seem to work 100% of the time.
 		bool IsCurrent() const
 		{
-			Uint32 current_thread_id = SDL_ThreadID();
-			Uint32 thread_id = SDL_GetThreadID(sdl_thread);
-			return current_thread_id == thread_id;
+			Uint32 running_thread_id = SDL_ThreadID();
+			Uint32 member_thread_id = SDL_GetThreadID(sdl_thread);
+			return running_thread_id == member_thread_id;
 		}
 
-		// Start the thread, calling the callback.
+		// Creates and launches a new thread which calls object.FUNCTION().
+		// If the thread is already running, it is forcefully stopped first.
 		void Launch(CLASS & object)
 		{
 			Kill();
@@ -55,6 +62,7 @@ namespace sys
 		}
 		
 		// Terminates the thread. Risks losing data the thread is working on.
+		// If possible, try and use Join instead. 
 		void Kill()
 		{
 			if (sdl_thread != nullptr)
@@ -64,7 +72,7 @@ namespace sys
 			}
 		}
 		
-		// Gracefully waits for the thread to end.
+		// Waits for thread to return from FUNCTION.
 		void Join()
 		{
 			if (sdl_thread != nullptr)

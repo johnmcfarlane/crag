@@ -189,8 +189,7 @@ private:
 	
 	typedef sys::Thread<Slot, & sys::Scheduler::Slot::Run> Thread;
 	Thread * thread;
-	SimpleMutex mutable mutex;
-	//core::Mutex mutable mutex;
+	SimpleMutex mutable mutex;	// for checking if there are jobs to do
 	bool volatile quit;
 };
 
