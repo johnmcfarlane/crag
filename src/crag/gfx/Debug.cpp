@@ -227,7 +227,7 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	ANONYMOUS::font = new gfx::Font("font.png", .5f);
+	ANONYMOUS::font = new gfx::Font("font_bitmap.png", .5f);
 }
 
 
