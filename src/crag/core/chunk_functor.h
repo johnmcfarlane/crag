@@ -8,6 +8,10 @@
  *
  */
 
+#pragma once
+
+#include "core/for_each.h"
+
 #include "smp/ForEach.h"
 
 

@@ -149,7 +149,8 @@
 		5294D2671243C3C500EA6849 /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
-		52AE3145125925ED0066FF5B /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
+		52A2CD6D126113A600DFCDF6 /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
+		52AE3145125925ED0066FF5B /* for_each_chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_chunk.h; sourceTree = "<group>"; };
 		52AE314712592C7B0066FF5B /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -525,15 +526,18 @@
 		52F3A30711A7979400385922 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				52AE3145125925ED0066FF5B /* for_each.h */,
 				52AE314712592C7B0066FF5B /* chunk_functor.h */,
 				52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */,
 				52C53E1A11D8FBF500FA73AA /* ConfigEntry.h */,
 				52F3A30B11A7979400385922 /* ConfigManager.cpp */,
 				52F3A30C11A7979400385922 /* ConfigManager.h */,
+				52E70F6A124B293E008452A3 /* core.h */,
 				52F3A30D11A7979400385922 /* debug.cpp */,
 				52F3A30E11A7979400385922 /* debug.h */,
+				5294D2671243C3C500EA6849 /* double_buffer.h */,
 				52F3A30F11A7979400385922 /* floatOps.h */,
+				52A2CD6D126113A600DFCDF6 /* for_each.h */,
+				52AE3145125925ED0066FF5B /* for_each_chunk.h */,
 				52F3A31611A7979400385922 /* Pool.h */,
 				526D03A011BF658500F025A9 /* profile.cpp */,
 				526D03A111BF658500F025A9 /* profile.h */,
@@ -542,8 +546,6 @@
 				52F3A31911A7979400385922 /* Singleton.h */,
 				527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */,
 				527C53CC11B9ACAF00F6C052 /* TextureMapper.h */,
-				5294D2671243C3C500EA6849 /* double_buffer.h */,
-				52E70F6A124B293E008452A3 /* core.h */,
 			);
 			path = core;
 			sourceTree = "<group>";

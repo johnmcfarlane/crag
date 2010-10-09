@@ -27,7 +27,7 @@
 
 #include "core/ConfigEntry.h"
 #include "core/floatOps.h"
-#include "core/for_each.h"
+#include "core/for_each_chunk.h"
 
 #include "smp/ForEach.h"
 
