@@ -79,11 +79,13 @@
     <ClCompile Include="..\..\src\crag\sim\Star.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Universe.cpp" />
     <ClCompile Include="..\..\src\crag\sim\UserInput.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\ForEach.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\Mutex.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\Semaphore.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\SimpleMutex.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\ThreadCondition.cpp" />
     <ClCompile Include="..\..\src\crag\sys\App.cpp" />
     <ClCompile Include="..\..\src\crag\sys\memory.cpp" />
-    <ClCompile Include="..\..\src\crag\sys\Mutex.cpp" />
-    <ClCompile Include="..\..\src\crag\sys\Scheduler.cpp" />
-    <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\cl\CpuKernel.h" />
@@ -91,10 +93,14 @@
     <ClInclude Include="..\..\src\crag\cl\GpuKernel.h" />
     <ClInclude Include="..\..\src\crag\cl\Kernel.h" />
     <ClInclude Include="..\..\src\crag\cl\Singleton.h" />
+    <ClInclude Include="..\..\src\crag\core\chunk_functor.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
+    <ClInclude Include="..\..\src\crag\core\core.h" />
     <ClInclude Include="..\..\src\crag\core\debug.h" />
+    <ClInclude Include="..\..\src\crag\core\double_buffer.h" />
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
+    <ClInclude Include="..\..\src\crag\core\for_each.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
     <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
@@ -186,12 +192,14 @@
     <ClInclude Include="..\..\src\crag\sim\Star.h" />
     <ClInclude Include="..\..\src\crag\sim\Universe.h" />
     <ClInclude Include="..\..\src\crag\sim\UserInput.h" />
+    <ClInclude Include="..\..\src\crag\smp\ForEach.h" />
+    <ClInclude Include="..\..\src\crag\smp\Mutex.h" />
+    <ClInclude Include="..\..\src\crag\smp\Semaphore.h" />
+    <ClInclude Include="..\..\src\crag\smp\SimpleMutex.h" />
+    <ClInclude Include="..\..\src\crag\smp\Thread.h" />
+    <ClInclude Include="..\..\src\crag\smp\ThreadCondition.h" />
     <ClInclude Include="..\..\src\crag\sys\App.h" />
     <ClInclude Include="..\..\src\crag\sys\memory.h" />
-    <ClInclude Include="..\..\src\crag\sys\Mutex.h" />
-    <ClInclude Include="..\..\src\crag\sys\Scheduler.h" />
-    <ClInclude Include="..\..\src\crag\sys\SimpleMutex.h" />
-    <ClInclude Include="..\..\src\crag\sys\Thread.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING" />

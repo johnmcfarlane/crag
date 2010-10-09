@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "sys/time.h"
+#include "sys/App.h"
 
 
 #if defined(PROFILE)
@@ -51,7 +51,7 @@ namespace profile
 }
 
 #define PROFILE_DEFINE(NAME, CHANGE_COEFFICIENT) profile::Meter NAME(CHANGE_COEFFICIENT)
-#define PROFILE_SAMPLE(NAME, SAMPLE) NAME.Submit(SAMPLE)
+#define PROFILE_SAMPLE(NAME, SAMPLE) NAME.Submit(static_cast<profile::Scalar>(SAMPLE))
 #define PROFILE_TIMER(NAME) profile::Timer PROFILE_TIMER_##NAME(NAME)
 #define PROFILE_RESULT(NAME) NAME
 

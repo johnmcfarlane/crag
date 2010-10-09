@@ -24,7 +24,7 @@ profile::Meter::Meter(Scalar const & init_change_coefficient)
 {
 }
 
-profile::Meter::operator Scalar () const
+profile::Meter::operator profile::Scalar () const
 {
 	return store;
 }

@@ -12,7 +12,6 @@
 
 #include "ForEach.h"
 
-#include "App.h"
 #include "Mutex.h"
 #include "Semaphore.h"
 #include "SimpleMutex.h"
@@ -20,11 +19,13 @@
 #include "ThreadCondition.h"
 #include "time.h"
 
+#include "sys/App.h"
+
 #include "core/ConfigEntry.h"
 #include "core/for_each.h"
 
 
-namespace ANONYMOUS
+namespace 
 {
 	
 	// Overrides the value passed to scheduler.
@@ -156,19 +157,19 @@ namespace ANONYMOUS
 	
 	class Worker
 	{
+		OBJECT_NO_COPY(Worker);
+
 	public:
 		Worker()
-		//: quit(false)
-		: thread(new Thread (* this))
 		{
+			thread.Launch(* this);
 		}
 		
 		~Worker()
 		{
 			Assert(foreman == nullptr);
 			
-			thread->Join();
-			delete thread;
+			thread.Join();
 		}
 		
 	private:
@@ -196,7 +197,7 @@ namespace ANONYMOUS
 		}
 				
 		typedef smp::Thread<Worker, & Worker::Run> Thread;
-		Thread * thread;
+		Thread thread;
 	};
 	
 	
@@ -253,17 +254,17 @@ namespace ANONYMOUS
 	
 	void ParallelForEach(Task & task)
 	{
-		ANONYMOUS::foreman->Start(task);
+		foreman->Start(task);
 		Assert(worker_semaphore->GetValue() == 0);
 		
-		ANONYMOUS::ActivateWorkers();
+		ActivateWorkers();
 
-		ANONYMOUS::foreman->WaitForCompletion();
+		foreman->WaitForCompletion();
 		// Last sub_task was dispatched but it may not have finished yet.
 		
-		ANONYMOUS::DeactivateWorkers();
+		DeactivateWorkers();
 		
-		Assert(! ANONYMOUS::foreman->IsWorking());
+		Assert(! foreman->IsWorking());
 	}
 	
 }
@@ -274,22 +275,22 @@ namespace ANONYMOUS
 
 void smp::Init(int num_reserved_cpus)
 {
-	Assert(ANONYMOUS::foreman == nullptr);
-	Assert(ANONYMOUS::worker_semaphore == nullptr);
-	Assert(ANONYMOUS::workers.size() == 0);
+	Assert(foreman == nullptr);
+	Assert(worker_semaphore == nullptr);
+	Assert(workers.size() == 0);
 	
 	int num_cpus = sys::GetNumCpus();
-	int num_worker_threads = ANONYMOUS::CalculateNumWorkers(num_cpus, num_reserved_cpus);
+	int num_worker_threads = CalculateNumWorkers(num_cpus, num_reserved_cpus);
 
 	if (num_worker_threads > 0)
 	{
-		ANONYMOUS::foreman = new ANONYMOUS::Foreman;
-		ANONYMOUS::worker_semaphore = new Semaphore (0);
+		foreman = new Foreman;
+		worker_semaphore = new Semaphore (0);
 
-		ANONYMOUS::workers.resize(num_worker_threads);
-		for (ANONYMOUS::WorkerVector::iterator it = ANONYMOUS::workers.begin(); it != ANONYMOUS::workers.end(); ++ it)
+		workers.resize(num_worker_threads);
+		for (WorkerVector::iterator it = workers.begin(); it != workers.end(); ++ it)
 		{
-			* it = new ANONYMOUS::Worker();
+			* it = new Worker();
 		}
 	}
 
@@ -300,25 +301,25 @@ void smp::Init(int num_reserved_cpus)
 void smp::Deinit()
 {
 	// nullifying the foreman lets the slots know they should quit
-	if (ANONYMOUS::foreman != nullptr)
+	if (foreman != nullptr)
 	{
-		Assert(! ANONYMOUS::foreman->IsWorking());
-		delete ANONYMOUS::foreman;
-		ANONYMOUS::foreman = nullptr;
+		Assert(! foreman->IsWorking());
+		delete foreman;
+		foreman = nullptr;
 	}
 
 	// but they're still asleep so wake them up
-	ANONYMOUS::ActivateWorkers();
+	ActivateWorkers();
 	
 	// now go away!
-	for (ANONYMOUS::WorkerVector::iterator it = ANONYMOUS::workers.begin(); it != ANONYMOUS::workers.end(); ++ it)
+	for (WorkerVector::iterator it = workers.begin(); it != workers.end(); ++ it)
 	{
 		delete * it;
 	}
-	ANONYMOUS::workers.clear();
+	workers.clear();
 
-	delete ANONYMOUS::worker_semaphore;
-	ANONYMOUS::worker_semaphore = nullptr;
+	delete worker_semaphore;
+	worker_semaphore = nullptr;
 }
 
 void smp::ForEach(int f, int l, int ss, Functor & fn)
@@ -333,14 +334,14 @@ void smp::ForEach(int f, int l, int ss, Functor & fn)
 	}
 	
 	// Assign the task to the foreman.
-	ANONYMOUS::Task t = { & fn, f, l, ss };
+	Task t = { & fn, f, l, ss };
 	
-	if (ANONYMOUS::worker_semaphore == nullptr)
+	if (worker_semaphore == nullptr)
 	{
-		ANONYMOUS::SerialForEach(t);
+		SerialForEach(t);
 	}
 	else
 	{
-		ANONYMOUS::ParallelForEach(t);
+		ParallelForEach(t);
 	}
 }

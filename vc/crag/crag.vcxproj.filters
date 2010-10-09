@@ -43,6 +43,9 @@
     <Filter Include="src\crag\sys">
       <UniqueIdentifier>{a3a4d202-b9e7-41e8-9118-03ac202a13b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\crag\smp">
+      <UniqueIdentifier>{845fd690-3cc9-4e42-b8db-33069b69a189}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp">
@@ -222,14 +225,20 @@
     <ClCompile Include="..\..\src\crag\sys\memory.cpp">
       <Filter>src\crag\sys</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\sys\Mutex.cpp">
-      <Filter>src\crag\sys</Filter>
+    <ClCompile Include="..\..\src\crag\smp\ForEach.cpp">
+      <Filter>src\crag\smp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\sys\Scheduler.cpp">
-      <Filter>src\crag\sys</Filter>
+    <ClCompile Include="..\..\src\crag\smp\Mutex.cpp">
+      <Filter>src\crag\smp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\sys\SimpleMutex.cpp">
-      <Filter>src\crag\sys</Filter>
+    <ClCompile Include="..\..\src\crag\smp\Semaphore.cpp">
+      <Filter>src\crag\smp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\smp\SimpleMutex.cpp">
+      <Filter>src\crag\smp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\smp\ThreadCondition.cpp">
+      <Filter>src\crag\smp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -539,17 +548,35 @@
     <ClInclude Include="..\..\src\crag\sys\memory.h">
       <Filter>src\crag\sys</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\sys\Mutex.h">
-      <Filter>src\crag\sys</Filter>
+    <ClInclude Include="..\..\src\crag\smp\ForEach.h">
+      <Filter>src\crag\smp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\sys\Scheduler.h">
-      <Filter>src\crag\sys</Filter>
+    <ClInclude Include="..\..\src\crag\smp\Mutex.h">
+      <Filter>src\crag\smp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\sys\SimpleMutex.h">
-      <Filter>src\crag\sys</Filter>
+    <ClInclude Include="..\..\src\crag\smp\Semaphore.h">
+      <Filter>src\crag\smp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\sys\Thread.h">
-      <Filter>src\crag\sys</Filter>
+    <ClInclude Include="..\..\src\crag\smp\SimpleMutex.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\Thread.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\ThreadCondition.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\chunk_functor.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\core.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\double_buffer.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\for_each.h">
+      <Filter>src\crag\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

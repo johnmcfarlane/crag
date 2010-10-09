@@ -11,10 +11,6 @@
 #pragma once
 
 #include "form/defs.h"
-/*#include "form/node/Node.h"
-
-#include "core/floatOps.h"
-#include "geom/Vector3.h"*/
 
 
 namespace form 

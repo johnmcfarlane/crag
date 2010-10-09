@@ -48,7 +48,7 @@ namespace core
 		
 		void operator() (ITERATOR first, ITERATOR last)
 		{
-			std::for_each<ITERATOR, ITEM_FUNCTOR>(first, last, item_functor);
+			core::for_each<ITERATOR, ITEM_FUNCTOR>(first, last, item_functor);
 		}
 		
 	private:
