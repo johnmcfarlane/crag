@@ -17,7 +17,6 @@
 		5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5242D907125FF038007F7D90 /* ThreadCondition.cpp */; };
 		524326BE12489EEF00039257 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524326BD12489EEF00039257 /* SDL_image.framework */; };
 		52483F5211ED865700D0BCB2 /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52483F5011ED865700D0BCB2 /* Polyhedron.cpp */; };
-		524ADA561260670800920242 /* ForEach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524ADA551260670800920242 /* ForEach.cpp */; };
 		526D03A211BF658500F025A9 /* profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526D03A011BF658500F025A9 /* profile.cpp */; };
 		5279D15611D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5279D15511D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp */; };
 		527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */; };
@@ -121,8 +120,6 @@
 		52469CD612086C1E00E5C98E /* axes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = axes.h; sourceTree = "<group>"; };
 		52483F5011ED865700D0BCB2 /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
 		52483F5111ED865700D0BCB2 /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
-		524ADA52126066DF00920242 /* ForEach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEach.h; sourceTree = "<group>"; };
-		524ADA551260670800920242 /* ForEach.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForEach.cpp; sourceTree = "<group>"; };
 		526D03A011BF658500F025A9 /* profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = profile.cpp; sourceTree = "<group>"; };
 		526D03A111BF658500F025A9 /* profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profile.h; sourceTree = "<group>"; };
 		5278B8DE11D5048500E2F375 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
@@ -391,8 +388,6 @@
 				527CF8D212274AA700E7B3C5 /* App.h */,
 				527CF8D312274AA700E7B3C5 /* memory.cpp */,
 				527CF8D412274AA700E7B3C5 /* memory.h */,
-				524ADA52126066DF00920242 /* ForEach.h */,
-				524ADA551260670800920242 /* ForEach.cpp */,
 			);
 			path = sys;
 			sourceTree = "<group>";
@@ -812,7 +807,6 @@
 				5242D909125FF038007F7D90 /* ForEach.cpp in Sources */,
 				5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */,
 				5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */,
-				524ADA561260670800920242 /* ForEach.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
