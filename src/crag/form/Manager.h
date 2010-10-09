@@ -17,8 +17,8 @@
 #include "core/double_buffer.h"
 #include "core/Singleton.h"
 
-#include "sys/App.h"
-#include "sys/Thread.h"
+#include "smp/Thread.h"
+#include "sys/time.h"
 
 #if defined(FORM_VERTEX_TEXTURE)
 #include "glpp/Texture.h"
@@ -61,7 +61,6 @@ namespace form {
 		
 		void AddFormation(Formation * formation);
 		void RemoveFormation(Formation * formation);
-		FormationSet const & GetFormations() const;
 		
 		void AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
 		void ToggleSceneThread();

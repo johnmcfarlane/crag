@@ -63,11 +63,6 @@ form::Manager::Manager(sim::Observer & init_observer)
 form::Manager::~Manager()
 {
 	scene_thread->Quit();
-	
-/*	for (FormationSet::iterator it = formation_set.begin(); it != formation_set.end(); ++ it) {
-		Formation * formation = * it;
-		delete formation;
-	}*/
 }
 
 #if VERIFY
@@ -101,11 +96,6 @@ void form::Manager::RemoveFormation(form::Formation * formation)
 {
 	Assert(formation_set.find(formation) != formation_set.end());
 	formation_set.erase(formation);
-}
-
-form::FormationSet const & form::Manager::GetFormations() const
-{
-	return formation_set;
 }
 
 void form::Manager::AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
