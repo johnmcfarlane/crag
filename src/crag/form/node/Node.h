@@ -50,6 +50,7 @@ namespace form
 		bool HasChildren() const { return children != nullptr; }
 		bool IsRecyclable() const { return ! HasChildren(); }
 		bool IsInUse() const { return parent != nullptr; }	// IsInUseOrIsRootNode
+		bool IsLeaf() const { return ! HasChildren(); }
 		
 		bool HasAllCousins() const
 		{
@@ -59,7 +60,8 @@ namespace form
 
 		bool IsExpandable() const
 		{
-			return score > 0 && ! HasChildren() && HasAllCousins();
+			Assert(score >= 0);
+			return ! HasChildren() && HasAllCousins() && score != 0;
 		}
 		
 		Point & GetCorner(int index) { return ref(triple[index].corner); }
