@@ -13,7 +13,7 @@
 #include "PointBuffer.h"
 
 #include "core/debug.h"
-#include "sys/Mutex.h"
+#include "smp/Mutex.h"
 
 #include "geom/Vector3.h"
 
@@ -117,9 +117,12 @@ namespace form
 		
 		void DecreaseQuaterna(Quaterna * new_quaterna_used_end);
 		void FixUpDecreasedNodes(Quaterna * old_quaterna_used_end);
+
+		template <typename FUNCTOR> 
+		void ForEachNode(size_t step_size, FUNCTOR f, bool parallel);
 		
-		template <class FUNCTOR> void ForEachNode_Serial(FUNCTOR & f, int step_size = 1024);
-		template <class FUNCTOR> void ForEachNode_Paralell(FUNCTOR & f, int step_size = 1024);
+		template <typename FUNCTOR1, typename FUNCTOR2> 
+		void ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, bool parallel);
 		
 		// Types
 
@@ -146,7 +149,7 @@ namespace form
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
-		mutable sys::Mutex tree_mutex;
+		mutable smp::Mutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 

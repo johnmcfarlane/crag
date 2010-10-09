@@ -26,7 +26,7 @@
 
 #include "geom/Vector3.h"
 
-#include "sys/Mutex.h"
+#include "smp/Mutex.h"
 
 #if 0
 namespace debug {
@@ -46,7 +46,7 @@ ANONYMOUS_BEGIN
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
 	// Mutex for global functions.
-	sys::Mutex mutex;
+	smp::Mutex mutex;
 	
 	// The string into which is written gfx::Debug::out.
 	std::stringstream out_stream;

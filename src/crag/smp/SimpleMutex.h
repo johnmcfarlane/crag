@@ -11,7 +11,7 @@
 #pragma once
 
 
-namespace sys
+namespace smp
 {
 	
 	// Uses Dekker's algorithm to gate access to a resource between two threads: a reader and a writer.
@@ -19,6 +19,8 @@ namespace sys
 	// Only use this for brief locks. 
 	class SimpleMutex
 	{
+		OBJECT_NO_COPY(SimpleMutex);
+		
 	public:
 		SimpleMutex();
 		~SimpleMutex();

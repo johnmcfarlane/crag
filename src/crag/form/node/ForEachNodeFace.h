@@ -46,10 +46,7 @@ namespace form
 		}
 		
 		// Step 1: Determine the number of mid-points and note missing / solitary mid-points.
-		Node::Triplet const * odd_one_out[2];	// nullptr / non-nullptr
-#if ! defined(NDEBUG)
-		odd_one_out[0] = odd_one_out[1] = nullptr;
-#endif
+		Node::Triplet const * odd_one_out[2] = { nullptr, nullptr };
 		int num_mid_points = 0;
 		
 		Node::Triplet const * triple = node.triple;

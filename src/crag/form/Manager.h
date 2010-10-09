@@ -18,7 +18,7 @@
 #include "core/Singleton.h"
 
 #include "smp/Thread.h"
-#include "sys/time.h"
+#include "sys/App.h"
 
 #if defined(FORM_VERTEX_TEXTURE)
 #include "glpp/Texture.h"

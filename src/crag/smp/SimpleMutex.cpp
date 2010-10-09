@@ -13,21 +13,21 @@
 #include "SimpleMutex.h"
 
 
-sys::SimpleMutex::SimpleMutex()
+smp::SimpleMutex::SimpleMutex()
 {
 	flag[0] = false;
 	flag[1] = false;
 	turn = 0;
 }
 
-sys::SimpleMutex::~SimpleMutex()
+smp::SimpleMutex::~SimpleMutex()
 {
 	Assert(! flag[0]);
 	Assert(! flag[1]);
 	Assert(turn == 0 || turn == 1);
 }
 
-void sys::SimpleMutex::Lock(int i)
+void smp::SimpleMutex::Lock(int i)
 {
 	Assert(i == 0 || i == 1);
 	Assert(! flag[i]);
@@ -46,7 +46,7 @@ void sys::SimpleMutex::Lock(int i)
 	}
 }
 
-void sys::SimpleMutex::Unlock(int i)
+void smp::SimpleMutex::Unlock(int i)
 {
 	Assert(i == 0 || i == 1);
 	Assert(flag[i]);

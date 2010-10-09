@@ -13,17 +13,23 @@
 #include "SDL_mutex.h"
 
 
-namespace sys
+namespace smp
 {
 	class Semaphore
 	{
+		OBJECT_NO_COPY(Semaphore);
+		
 	public:
-		Semaphore();
+		typedef unsigned int ValueType;
+		
+		Semaphore(ValueType initial_value = 1);
 		~Semaphore();
 		
-		void Lock();
-		bool TryLock();
-		void Unlock();
+		ValueType GetValue() const;
+		
+		void Decrement();
+		bool TryDecrement();
+		void Increment();
 		
 	private:
 		// A semaphore - not a SDL_Thread - is necessary for TryLock

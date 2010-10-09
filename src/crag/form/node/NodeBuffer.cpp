@@ -27,8 +27,9 @@
 
 #include "core/ConfigEntry.h"
 #include "core/floatOps.h"
+#include "core/for_each.h"
 
-#include "sys/Scheduler.h"
+#include "smp/ForEach.h"
 
 #include <algorithm>
 
@@ -386,7 +387,7 @@ void form::NodeBuffer::UpdateNodeScores()
 	else 
 #endif
 	{
-		ForEachNode_Paralell(node_score_functor);
+		ForEachNode<CalculateNodeScoreFunctor &>(1024, node_score_functor, true);
 	}
 }
 
@@ -453,7 +454,7 @@ bool form::NodeBuffer::ChurnNodes()
 	// TODO: This will expand the nodes in an improved order.
 
 	ExpandNodeFunctor f(* this);
-	ForEachNode_Serial(f);
+	ForEachNode<ExpandNodeFunctor &>(1024, f, false);
 	
 	return f.GetNumExpanded() > 0;
 }
@@ -463,18 +464,20 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	point_buffer.Clear();
 	mesh.Clear();
 
-	GenerateMeshFunctor f(mesh);
+	GenerateMeshPrefetchFunctor mesh_prefetch_functor;
+	GenerateMeshFunctor mesh_functor(mesh);
 #if defined(THREAD_SAFE_MESH)
-	ForEachNode_Paralell(f);
+	bool parallel = true;
 #else
-	ForEachNode_Serial(f);
+	bool parallel = false;
 #endif
-	
-	// TODO: Paralellize.
+
+	ForEachNode<GenerateMeshPrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, parallel);
+
+	// TODO: Parallelize.
 	VertexBuffer & vertices = mesh.GetVertices();
 	vertices.NormalizeNormals();
 }
-
 
 ///////////////////////////////////////////////////////
 // Node-related members.
@@ -914,40 +917,20 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 #endif
 }
 
-template <class FUNCTOR> class SchedulerNodeFunctor : public sys::Scheduler::Functor
+template <typename FUNCTOR> 
+void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR f, bool parallel)
 {
-public:
-	SchedulerNodeFunctor(FUNCTOR & init_f, form::Node * init_nodes)
-	: f(init_f)
-	, nodes(init_nodes)
+	if (nodes_used_end > nodes)
 	{
+		core::for_each<form::Node *, FUNCTOR>(nodes, nodes_used_end, step_size, f, parallel, true);
 	}
-	
-private:
-	virtual void operator () (int first, int last)
-	{
-		ForEach_Sub(f, nodes + first, nodes + last);
-	}
-	
-	FUNCTOR & f;
-	form::Node * nodes;
-};
-
-template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Serial(FUNCTOR & f, int step_size)
-{
-	ForEach(f, nodes, nodes_used_end, step_size);
 }
 
-template <class FUNCTOR> void form::NodeBuffer::ForEachNode_Paralell(FUNCTOR & f, int step_size)
+template <typename FUNCTOR1, typename FUNCTOR2> 
+void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, bool parallel)
 {
-	int num_nodes = nodes_used_end - nodes;
-	if (num_nodes == 0)
+	if (nodes_used_end > nodes)
 	{
-		return;
+		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2>(nodes, nodes_used_end, step_size, f1, f2, parallel, true);
 	}
-	
-	sys::Scheduler & scheduler = sys::Scheduler::Get();
-	SchedulerNodeFunctor<FUNCTOR> snf(f, nodes);
-	scheduler.Dispatch(snf, 0, num_nodes, step_size);
 }
-

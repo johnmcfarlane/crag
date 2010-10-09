@@ -80,13 +80,15 @@ inline void PrefetchBlock(void const * ptr)
 #if defined(__GNUC__)
 	__builtin_prefetch(ptr);
 #elif defined(WIN32)
-	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);	// or is _MM_HINT_NTA better?
+	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);	// TODO: or is _MM_HINT_NTA better?
 #else
 #endif
 }
 
 inline void PrefetchMemory(char const * begin, char const * end)
 {
+	// End still means _after_ the last item.
+	// However, a zero-sized prefetch is wasteful enough that it is prohibited.
 	assert(end > begin);
 	
 	do
@@ -109,59 +111,6 @@ template<typename T> inline void PrefetchArray(T const * object_ptr, int count)
 template<typename T> inline void PrefetchObject(T const & object)
 {
 	PrefetchArray((& object), (& object) + 1);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// ForEach - std::for_each chunked with Prefetch
-// 
-
-// TODO: Go back to the scheme where multiple passes are performed by having each functor return another functor. 
-// TODO: Make a SMP version!!!
-// TODO: Needs its own source file?
-template <class FUNCTOR, class ELEMENT> void ForEach(FUNCTOR & f, ELEMENT * begin, ELEMENT * end, int chunk_size)
-{
-	int total_num_nodes = end - begin;
-	int full_steps = total_num_nodes / chunk_size;
-	
-	// main pass
-	for (int step = 0; step < full_steps; step ++)
-	{
-		ELEMENT * sub_begin = begin + step * chunk_size;
-		ELEMENT * sub_end = sub_begin + chunk_size;
-		ForEach_Sub(f, sub_begin, sub_end);
-	}
-	
-	// remainder
-	ELEMENT * sub_begin = begin + full_steps * chunk_size;
-	ELEMENT * sub_end = end;
-	Assert(sub_end - sub_begin == total_num_nodes % chunk_size);
-	
-	if (sub_begin < sub_end)
-	{
-		ForEach_Sub(f, sub_begin, sub_end);
-	}
-}
-
-template <class FUNCTOR, class ELEMENT> void ForEach_Sub(FUNCTOR & f, ELEMENT * begin, ELEMENT * end)
-{
-	// Pre-fetch the actual nodes.
-	PrefetchArray(begin, end);
-	
-	// Do any additional pre-fetching desired by the functor.
-	if (f.PerformPrefetchPass()) 
-	{
-		for (ELEMENT * iterator = begin; iterator != end; ++ iterator) 
-		{
-			f.OnPrefetchPass(* iterator);
-		}
-	}
-	
-	// Now do the work.
-	for (ELEMENT * iterator = begin; iterator != end; ++ iterator) 
-	{
-		f(* iterator);
-	}
 }
 
 

@@ -26,8 +26,6 @@
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
 
-#include "sys/Mutex.h"
-
 
 // TODO: Really big todo list:
 // TODO: Try 4-float co-ordinate system: normalized x, y, z and altitude.

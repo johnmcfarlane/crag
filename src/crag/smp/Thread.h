@@ -13,7 +13,7 @@
 #include <SDL_thread.h>
 
 
-namespace sys
+namespace smp
 {
 
 	// Use Thread to launch and manage a thread. 
@@ -25,6 +25,7 @@ namespace sys
 	template <typename CLASS, void (CLASS::*FUNCTION)()> 
 	class Thread 
 	{
+		OBJECT_NO_COPY(Thread);		
 	public:
 	
 		// Creates and launches a new thread which calls object.FUNCTION().

@@ -10,21 +10,23 @@
 
 #pragma once
 
-#include "form/node/NodeFunctor.h"
-
-#include "form/node/Node.h"
+#include "form/defs.h"
+/*#include "form/node/Node.h"
 
 #include "core/floatOps.h"
-#include "geom/Vector3.h"
+#include "geom/Vector3.h"*/
 
 
 namespace form 
 {
+	// forward-declarations
+	class Node;
+	
 
 	// A functor for use primarily in NodeBuffer::ForEachNode_Paralell/Serial.
 	// An object of this class is a member of NodeBuffer and stores all data needed to score the buffer's nodes.
 	
-	class CalculateNodeScoreFunctor : public NodeFunctor
+	class CalculateNodeScoreFunctor
 	{
 		OBJECT_NO_COPY (CalculateNodeScoreFunctor);
 		
@@ -41,7 +43,7 @@ namespace form
 		
 		void SetCameraRay(Ray3 const & new_camera_ray);
 
-		void operator()(form::Node & node) const;
+		void operator() (Node & node) const;
 
 	private:
 		Ray3 camera_ray;

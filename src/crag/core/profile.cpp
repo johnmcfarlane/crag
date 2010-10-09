@@ -5,8 +5,8 @@
  *  Created by john on 6/08/10.
  *  Copyright 2009, 2010 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+*
+*/
 
 #include "pch.h"
 
@@ -15,35 +15,49 @@
 #include "profile.h"
 
 
-namespace profile
+////////////////////////////////////////////////////////////////////////////////
+// profile::Meter member definitions
+
+profile::Meter::Meter(Scalar const & init_change_coefficient)
+: store(-1)
+, change_coefficient(init_change_coefficient)
 {
-	namespace
+}
+
+profile::Meter::operator Scalar () const
+{
+	return store;
+}
+
+void profile::Meter::Submit (Scalar sample)
+{
+	Assert(sample >= 0);
+	Assert(change_coefficient > 0 && change_coefficient < 1);
+	if (store >= 0)
 	{
-		Entry * list_head = nullptr;
+		store = store * (static_cast<Scalar>(1) - change_coefficient) + sample * change_coefficient;
 	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	// Entry definitions
-
-	Entry::Entry(char const * init_tag, int init_max_entries)
+	else
 	{
-		Assert(init_tag != nullptr);
-		Assert(init_max_entries > 0);
-
-		next = list_head;
-		tag = tag;
-		num_entries = nullptr;
-		max_entries = init_max_entries;
-		sum_time = 0;
-		list_head = this;
+		store = sample;
 	}
+}
 
-	Entry::~Entry()
-	{
-		Assert(next != nullptr);
-		Assert(tag != nullptr);
-		Assert(num_entries == 0);
-	}
+
+////////////////////////////////////////////////////////////////////////////////
+// profile::Timer member definitions
+
+profile::Timer::Timer(Meter & m)
+: meter(m)
+, start_time(sys::GetTime())
+{
+}
+
+profile::Timer::~Timer()
+{
+	sys::TimeType end_time = sys::GetTime();
+	sys::TimeType duration = end_time - start_time;
+	meter.Submit(static_cast<Scalar>(duration));
 }
 
 #endif

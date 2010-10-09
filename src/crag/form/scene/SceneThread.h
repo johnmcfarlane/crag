@@ -13,8 +13,8 @@
 #include "Mesh.h"
 #include "Scene.h"
 
-#include "sys/Semaphore.h"
-#include "sys/Thread.h"
+#include "smp/Semaphore.h"
+#include "smp/Thread.h"
 
 #include "glpp/glpp.h"
 
@@ -95,7 +95,6 @@ namespace form
 		
 		int num_nodes;
 		float frame_ratio;	// ~ (actual framerate / ideal framerate)
-		double scene_tick_period;
 		
 		FormationSet const & formations;		
 		sim::Observer const & observer;
@@ -110,12 +109,12 @@ namespace form
 		// and get passed to the VBOs.
 		Mesh mesh;
 		sim::Vector3 mesh_origin;
-		sys::Semaphore mesh_semaphore;
+		smp::Semaphore mesh_semaphore;
 		bool mesh_updated;
 		sys::TimeType mesh_generation_time;
-		double mesh_generation_period;
+		sys::TimeType mesh_generation_period;
 
-		typedef sys::Thread<SceneThread, & SceneThread::Run> Thread;
+		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
 		Thread * thread;
 	};
 }

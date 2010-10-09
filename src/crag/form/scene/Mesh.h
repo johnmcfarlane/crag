@@ -16,7 +16,7 @@
 
 #define THREAD_SAFE_MESH
 #if defined(THREAD_SAFE_MESH)
-#include "sys/Mutex.h"
+#include "smp/Mutex.h"
 #endif
 
 
@@ -67,7 +67,7 @@ namespace form
 		gfx::IndexBuffer indices;
 		bool flat_shaded;
 #if defined(THREAD_SAFE_MESH)
-		sys::Mutex mutex;
+		smp::Mutex mutex;
 #endif
 	};
 

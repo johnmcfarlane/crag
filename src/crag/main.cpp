@@ -17,7 +17,7 @@
 #include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
 
-#include "sys/Scheduler.h"
+#include "smp/ForEach.h"
 
 #include "physics/Singleton.h"
 #include "cl/Singleton.h"
@@ -90,13 +90,14 @@ namespace
 		{
 			return false;
 		}
-		
+
+		smp::Init(1);
+
 		physics::Singleton physics_singleton;
 #if defined(USE_OPENCL)
 		cl::Singleton cl_singleton;
 #endif
 		gfx::Renderer renderer;
-		sys::Scheduler scheduler(1);
 		sim::Universe universe;
 		
 		// Run the simulation.
@@ -104,6 +105,8 @@ namespace
 			sim::Simulation simulation;
 			simulation.Run();
 		}
+
+		smp::Deinit();
 
 		return true;
 	}

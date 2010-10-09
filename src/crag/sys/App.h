@@ -1,5 +1,5 @@
 /*
- *  Input.h
+ *  App.h
  *  Crag
  *
  *  Created by John on 1/24/10.
@@ -81,14 +81,14 @@ namespace sys
 	bool IsButtonDown(MouseButton mouse_button);
 	Vector2i GetMousePosition();
 	void SetMousePosition(Vector2i const & position);
-
+	
 	// window
 	Vector2i GetWindowSize();
 	SDL_Surface & GetVideoSurface();
-
+	
 	bool GetEvent(Event & event);
 	bool HasFocus();
-
+	
 	// time
 	TimeType GetTime();
 	void Sleep(TimeType t = 0);

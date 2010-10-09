@@ -1,5 +1,5 @@
 /*
- *  Input.cpp
+ *  App.cpp
  *  Crag
  *
  *  Created by John on 1/24/10.
@@ -13,8 +13,6 @@
 #include "App.h"
 
 #include "core/ConfigEntry.h"
-
-#include <SDL_image.h>
 
 #if defined(WIN32)
 #include <WinBase.h>
@@ -41,7 +39,7 @@ namespace
 		has_focus = gained_focus;
 		SDL_ShowCursor(! has_focus);
 	}
-
+	
 	
 	bool InitGl()
 	{

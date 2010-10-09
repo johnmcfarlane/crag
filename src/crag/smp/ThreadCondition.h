@@ -8,12 +8,12 @@
  *
  */
 
-#include "App.h"
+#include "sys/App.h"
 
 #include <SDL_thread.h>
 
 
-namespace sys
+namespace smp
 {
 	
 	// A thread 'condition' is kind-of a gate which allows one thread to dictate when another thread can continue.
@@ -21,13 +21,14 @@ namespace sys
 	
 	class ThreadCondition 
 	{
+		OBJECT_NO_COPY(ThreadCondition);
 	public:
 		
 		ThreadCondition ();
 		~ThreadCondition();
 		
 		void Wait(class Mutex & mutex);
-		void Wait(class Mutex & mutex, TimeType timeout);
+		void Wait(class Mutex & mutex, sys::TimeType timeout);
 		
 		void Restart();	// Restarts a caller of Wait
 		void RestartAll();	// Restarts all callers of Wait

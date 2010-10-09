@@ -10,17 +10,21 @@
 
 #pragma once
 
-#include "NodeFunctor.h"
-
 #include "form/scene/Polyhedron.h"
 
 
-namespace form {
-	
+namespace form 
+{
+	// forward-declarations
 	class NodeBuffer;
 
-	class ExpandNodeFunctor : public NodeFunctor
+	
+	// Called on each node to (conditionally) expand it
+	// such that newly allocated nodes are assigned as children of it. 
+	class ExpandNodeFunctor
 	{
+		OBJECT_NO_COPY (ExpandNodeFunctor);
+		
 	public:
 		ExpandNodeFunctor(NodeBuffer & _node_buffer)
 		: node_buffer(_node_buffer)
@@ -31,16 +35,6 @@ namespace form {
 		int GetNumExpanded() const
 		{
 			return num_expanded;
-		}
-		
-		bool PerformPrefetchPass() const
-		{
-			return true;
-		}
-		
-		void OnPrefetchPass(Node const & node) const
-		{
-			PrefetchBlock(node.parent);
 		}
 		
 		void operator() (Node & node)

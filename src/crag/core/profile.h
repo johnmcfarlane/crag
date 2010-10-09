@@ -10,81 +10,56 @@
 
 #pragma once
 
+#include "sys/time.h"
+
+
 #if defined(PROFILE)
-
-#include <SDL_timer.h>
-
 
 namespace profile
 {
-
-	class Entry
+	// Determines the accuracy of the profile results.
+	typedef float Scalar;
+	
+	
+	class Meter
 	{
 	public:
-		Entry(char const * tag, int max_entries = 0);
-		~Entry();
-
-		void OnEnter()
-		{
-			Assert(num_entries >= 0 && num_entries != max_entries);
-			Uint32 time = SDL_GetTicks();
-			sum_time += num_entries * (time - last_time);
-			last_time = time;
-			++ num_entries;
-		}
-
-		void OnExit()
-		{
-			Uint32 time = SDL_GetTicks();
-			sum_time += num_entries * (time - last_time);
-			last_time = time;
-			-- num_entries;
-			Assert(num_entries >= 0 && num_entries != max_entries);
-		}
-
+		Meter(Scalar const & init_change_coefficient);
+		
+		operator Scalar () const;
+		
+		void Submit (Scalar sample);
+		
 	private:
-		Entry * next;
-		char const * tag;
-		int num_entries;
-		int max_entries;
-		Uint32 last_time;
-		Uint32 sum_time;
+		
+		Scalar store;
+		Scalar change_coefficient;
 	};
 
-	class Scope
+
+	class Timer
 	{
 	public:
-		Scope(Entry & init_entry)
-		: entry(init_entry)
-		{
-			entry.OnEnter();
-		}
-
-		~Scope()
-		{
-			entry.OnExit();
-		}
-
+		Timer(Meter & m);
+		~Timer();
+		
 	private:
-		Entry & entry;
+		Meter & meter;
+		sys::TimeType start_time;
 	};
+	
 }
 
-#define PROFILE_BEGIN(TAG) \
-	static profile::Entry profile_entry_##TAG(TAG); \
-	profile_entry_##TAG.OnEnter()
-
-#define PROFILE_END(TAG) \
-		profile_entry_##TAG.OnEnter()
-
-#define PROFILE_SCOPE(TAG) \
-	static profile::Entry profile_entry_##TAG(TAG); \
-	profile::Scope scope(profile_entry_##TAG)
+#define PROFILE_DEFINE(NAME, CHANGE_COEFFICIENT) profile::Meter NAME(CHANGE_COEFFICIENT)
+#define PROFILE_SAMPLE(NAME, SAMPLE) NAME.Submit(SAMPLE)
+#define PROFILE_TIMER(NAME) profile::Timer PROFILE_TIMER_##NAME(NAME)
+#define PROFILE_RESULT(NAME) NAME
 
 #else
 
-#define PROFILE_BEGIN(TAG) DO_NOTHING
-#define PROFILE_END(TAG) DO_NOTHING
-#define PROFILE_SCOPE(TAG) DO_NOTHING
+#define PROFILE_DEFINE(NAME, CHANGE_COEFFICIENT) 
+#define PROFILE_SAMPLE(NAME, SAMPLE) DO_NOTHING
+#define PROFILE_TIMER(NAME) DO_NOTHING
+#define PROFILE_RESULT(NAME) (-1)
 
-#endif	// defined(PROFILE)
+#endif

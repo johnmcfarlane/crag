@@ -16,21 +16,21 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sys::Mutex member definitions
+// smp::Mutex member definitions
 
-sys::Mutex::Mutex()
+smp::Mutex::Mutex()
 : sdl_mutex(SDL_CreateMutex())
 {
 	Assert(sdl_mutex != nullptr);
 }
 
-sys::Mutex::~Mutex()
+smp::Mutex::~Mutex()
 {
 	Assert(sdl_mutex != nullptr);
 	SDL_DestroyMutex(sdl_mutex);
 }
 
-void sys::Mutex::Lock()
+void smp::Mutex::Lock()
 {
 	if (SDL_LockMutex(sdl_mutex) != 0)
 	{
@@ -39,7 +39,7 @@ void sys::Mutex::Lock()
 	}
 }
 
-void sys::Mutex::Unlock()
+void smp::Mutex::Unlock()
 {
 	if (SDL_UnlockMutex(sdl_mutex) != 0)
 	{

@@ -15,22 +15,22 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sys::ThreadCondition member definitions
+// smp::ThreadCondition member definitions
 
-sys::ThreadCondition::ThreadCondition ()
+smp::ThreadCondition::ThreadCondition ()
 : sdl_condition(SDL_CreateCond())
 {
 	Assert(sdl_condition != nullptr);
 }
 
-sys::ThreadCondition::~ThreadCondition()
+smp::ThreadCondition::~ThreadCondition()
 {
 	Assert(sdl_condition != nullptr);
 	SDL_DestroyCond(sdl_condition);
 }
 
 // Gracefully waits for the thread to end.
-void sys::ThreadCondition::Wait(sys::Mutex & mutex)
+void smp::ThreadCondition::Wait(smp::Mutex & mutex)
 {
 	if (SDL_CondWait(sdl_condition, mutex.sdl_mutex) != 0)
 	{
@@ -39,7 +39,7 @@ void sys::ThreadCondition::Wait(sys::Mutex & mutex)
 }
 
 // Gracefully waits for the thread to end.
-void sys::ThreadCondition::Wait(sys::Mutex & mutex, TimeType timeout)
+void smp::ThreadCondition::Wait(smp::Mutex & mutex, sys::TimeType timeout)
 {
 	Uint32 ms = static_cast<Uint32> (timeout * 1000);
 	if (SDL_CondWaitTimeout(sdl_condition, mutex.sdl_mutex, ms) != 0)
@@ -48,7 +48,7 @@ void sys::ThreadCondition::Wait(sys::Mutex & mutex, TimeType timeout)
 	}
 }
 
-void sys::ThreadCondition::Restart()
+void smp::ThreadCondition::Restart()
 {
 	if (SDL_CondSignal(sdl_condition) != 0)
 	{
@@ -56,7 +56,7 @@ void sys::ThreadCondition::Restart()
 	}
 }
 
-void sys::ThreadCondition::RestartAll()
+void smp::ThreadCondition::RestartAll()
 {
 	if (SDL_CondBroadcast(sdl_condition) != 0)
 	{

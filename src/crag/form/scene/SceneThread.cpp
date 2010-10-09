@@ -21,6 +21,7 @@
 #include "gfx/Debug.h"
 
 #include "core/ConfigEntry.h"
+#include "core/profile.h"
 
 
 namespace 
@@ -30,13 +31,15 @@ namespace
 	CONFIG_DEFINE (post_reset_freeze_period, sys::TimeType, 1.25f);
 	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.01f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
+
+	PROFILE_DEFINE (scene_tick_period, .01);
+	PROFILE_DEFINE(mesh_generation, 0.1);	
 }
 
 
 form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
 : num_nodes(100)
 , frame_ratio(-1)
-, scene_tick_period(0)
 , formations(_formations)
 , observer(_observer)
 , threaded(_threaded)
@@ -131,9 +134,10 @@ void form::SceneThread::Tick()
 		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .25)
+	if (gfx::Debug::GetVerbosity() > .15)
 	{
-		gfx::Debug::out << "scene_t:" << scene_tick_period << '\n';
+		gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
+		gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation) << '\n';
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .37) 
@@ -166,7 +170,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
-	if (! mesh_semaphore.TryLock())
+	if (! mesh_semaphore.TryDecrement())
 	{
 		return false;
 	}
@@ -185,7 +189,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 		polled = false;
 	}
 	
-	mesh_semaphore.Unlock();
+	mesh_semaphore.Increment();
 	
 	return polled;
 }
@@ -264,6 +268,7 @@ void form::SceneThread::Run()
 	{
 		if (suspend_flag) 
 		{
+			// TODO: Replace with semaphore.
 			sys::Sleep();
 		}
 		else 
@@ -306,9 +311,10 @@ void form::SceneThread::TickActiveScene()
 	sim::Ray3 camera_ray = observer.GetCameraRay();
 	active_scene.SetCameraRay(camera_ray);
 	
-	sys::TimeType scene_tick_time = sys::GetTime();
-	active_scene.Tick(formations);
-	scene_tick_period = sys::GetTime() - scene_tick_time;
+	{
+		PROFILE_TIMER(scene_tick_period);
+		active_scene.Tick(formations);
+	}
 }
 
 void form::SceneThread::BeginReset()
@@ -419,7 +425,7 @@ void form::SceneThread::GenerateMesh()
 		return;
 	}
 	
-	if (! mesh_semaphore.TryLock())
+	if (! mesh_semaphore.TryDecrement())
 	{
 		// Don't wait around if current mesh is being read by main thread;
 		// This thread should be locked as little as possible.
@@ -429,12 +435,14 @@ void form::SceneThread::GenerateMesh()
 	Scene & visible_scene = GetVisibleScene();
 	visible_scene.GenerateMesh(mesh);
 	mesh_origin = visible_scene.GetOrigin();
-	mesh_semaphore.Unlock();
+	mesh_semaphore.Increment();
 
 	mesh_updated = true;
 	sys::TimeType t = sys::GetTime();
 	mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
+	
+	PROFILE_SAMPLE(mesh_generation, mesh_generation_period);
 }
 
 bool form::SceneThread::IsMainThread() const

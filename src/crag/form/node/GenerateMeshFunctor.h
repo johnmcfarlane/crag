@@ -10,11 +10,10 @@
 
 #pragma once
 
-#include "NodeFunctor.h"
-
 #include "Node.h"
 #include "ForEachNodeFace.h"
-#include "form/scene/Mesh.h"
+//#include "form/scene/Mesh.h"
+
 
 namespace form 
 {
@@ -24,37 +23,19 @@ namespace form
 
 	// This node functor is called on every used node in the NodeNuffer and
 	// uses the vertices associated with those nodes to generate the given mesh.
-	class GenerateMeshFunctor : public NodeFunctor
+	class GenerateMeshFunctor
 	{
+		OBJECT_NO_COPY (GenerateMeshFunctor);
+
 	public:
 		GenerateMeshFunctor(Mesh & _mesh) 
 		: mesh(_mesh) 
 		{ 
 		}
 		
-		bool IsLeaf(Node const & node) const
+		void operator() (Node & node)
 		{
-			return /*node.IsInUse() &&*/ ! node.HasChildren();
-		}
-		
-		bool PerformPrefetchPass() const
-		{
-			return true;
-		}
-		
-		void OnPrefetchPass(Node const & node)
-		{
-			if (IsLeaf(node)) 
-			{
-				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(0)));
-				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(1)));
-				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(2)));
-			}
-		}
-		
-		void operator()(Node & node)
-		{
-			if (IsLeaf(node)) 
+			if (node.IsLeaf()) 
 			{
 				ForEachNodeFace(node, mesh);
 			}
@@ -63,6 +44,30 @@ namespace form
 	private:
 		
 		Mesh & mesh;
+	};
+
+	
+	// This node functor is called prior to GenerateMeshFunctor 
+	// to prefetch the points associated with a node.
+	class GenerateMeshPrefetchFunctor
+	{
+		OBJECT_NO_COPY (GenerateMeshPrefetchFunctor);
+		
+	public:
+		GenerateMeshPrefetchFunctor()
+		{
+		}
+		
+		void operator () (Node & node)
+		{
+			if (node.IsLeaf()) 
+			{
+				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(0)));
+				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(1)));
+				PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(2)));
+				// TODO: Consider/test prefetching mid_points. 
+			}
+		}
 	};
 
 }

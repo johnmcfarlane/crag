@@ -13,7 +13,7 @@
 #include "SDL_mutex.h"
 
 
-namespace sys
+namespace smp
 {
 
 	// Regular pthreads-type mutex which may sleep when locked.
@@ -24,6 +24,8 @@ namespace sys
 	{
 		friend class ThreadCondition;
 		
+		OBJECT_NO_COPY(Mutex);
+
 	public:
 		Mutex();
 		~Mutex();

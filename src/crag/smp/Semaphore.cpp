@@ -16,20 +16,24 @@
 #include "core/debug.h"
 
 
-sys::Semaphore::Semaphore()
-: sdl_semaphore(SDL_CreateSemaphore(1))
+smp::Semaphore::Semaphore(ValueType initial_value)
+: sdl_semaphore(SDL_CreateSemaphore(initial_value))
 {
 	Assert(sdl_semaphore != nullptr);
 }
 
-sys::Semaphore::~Semaphore()
+smp::Semaphore::~Semaphore()
 {
 	Assert(sdl_semaphore != nullptr);
-	Assert(SDL_SemValue(sdl_semaphore) == 1);
 	SDL_DestroySemaphore(sdl_semaphore);
 }
 
-void sys::Semaphore::Lock()
+smp::Semaphore::ValueType smp::Semaphore::GetValue() const
+{
+	return SDL_SemValue(sdl_semaphore);
+}
+
+void smp::Semaphore::Decrement()
 {
 	if (SDL_SemWait(sdl_semaphore) != 0)
 	{
@@ -38,7 +42,7 @@ void sys::Semaphore::Lock()
 	}
 }
 
-bool sys::Semaphore::TryLock()
+bool smp::Semaphore::TryDecrement()
 {
 	int result = SDL_SemTryWait(sdl_semaphore);
 	
@@ -57,7 +61,7 @@ bool sys::Semaphore::TryLock()
 	}
 }
 
-void sys::Semaphore::Unlock()
+void smp::Semaphore::Increment()
 {
 	if (SDL_SemPost(sdl_semaphore) != 0)
 	{
