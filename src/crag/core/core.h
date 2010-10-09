@@ -28,5 +28,6 @@
 //	CLASS() = default
 
 #define OBJECT_NO_COPY(CLASS) \
+private: \
 	void operator=(const CLASS &); \
 	CLASS(const CLASS &) 
