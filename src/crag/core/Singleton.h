@@ -17,21 +17,31 @@
 namespace core
 {
 
+	// Any class, S, derived from Singleton is guaranteed to have no more than one instance.
+	// If multiple objects of class, S, are instanced, the program will assert.
+	// Singleton also provides global accessors to the single instance of S.
+
+	// To make your class a singleton, define it as: 
+	//	class MyClass : public Singleton<MyClass> { ... };
 	template <typename S> class Singleton
 	{
 		OBJECT_NO_COPY (Singleton);
 		
 	public:
+		
+		// true iff the instance of S exists.
 		static bool IsInstanced()
 		{
 			return the_instance != nullptr;
 		}
 
+		// returns the singleton or nullptr if it is not instanced.
 		static S * GetPtr()
 		{
 			return the_instance;
 		}
 
+		// returns the singleton; assumes it is instanced. 
 		static S & Get()
 		{
 			Assert(IsInstanced());
@@ -40,6 +50,7 @@ namespace core
 
 	protected:
 		
+		// Singleton is useless on its own so c'tor/d'tor are protected.
 		Singleton()
 		{
 			Assert(the_instance == nullptr);
