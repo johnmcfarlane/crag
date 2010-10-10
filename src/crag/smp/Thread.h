@@ -49,6 +49,11 @@ namespace smp
 		// TODO: This doesn't seem to work 100% of the time.
 		bool IsCurrent() const
 		{
+			if (sdl_thread != nullptr)
+			{
+				return false;
+			}
+			
 			Uint32 running_thread_id = SDL_ThreadID();
 			Uint32 member_thread_id = SDL_GetThreadID(sdl_thread);
 			return running_thread_id == member_thread_id;
