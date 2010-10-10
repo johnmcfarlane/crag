@@ -45,12 +45,20 @@ namespace smp
 			Kill();
 		}
 		
+		// Note: The thread may have quit but this will still return true
+		// until Kill or Join is called.
+		bool IsLaunched() const
+		{
+			return sdl_thread != nullptr;
+		}
+		
 		// True if the calling thread is this thread.
 		// TODO: This doesn't seem to work 100% of the time.
 		bool IsCurrent() const
 		{
-			if (sdl_thread != nullptr)
+			if (! IsLaunched())
 			{
+				// This can't be the current thread if that thread isn't running.
 				return false;
 			}
 			
