@@ -50,7 +50,6 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh_updated(false)
 , mesh_generation_time(0)
 , mesh_generation_period(max_mesh_generation_period)
-, thread(NULL)
 {
 }
 
@@ -76,18 +75,28 @@ DUMP_OPERATOR_DEFINITION(form, SceneThread)
 
 void form::SceneThread::Launch()
 {
-	Assert(IsMainThread());
-	
+	Assert(IsMainThread());	
+	Assert(! thread.IsLaunched());
+
 	if (threaded) 
 	{
-		Assert(thread == nullptr);
-		thread = new Thread(* this);
+		thread.Launch(* this);
 	}
 }
 
 void form::SceneThread::ToggleSuspended()
 {
-	suspend_flag = ! suspend_flag;
+	if (suspend_flag)
+	{
+		Assert(semaphore.GetValue() == 0);
+		semaphore.Increment();
+		suspend_flag = false;
+	}
+	else
+	{
+		semaphore.Decrement();
+		suspend_flag = true;
+	}
 }
 
 void form::SceneThread::Quit()
@@ -96,10 +105,7 @@ void form::SceneThread::Quit()
 	
 	quit_flag = true;
 
-	if (thread)
-	{
-		thread->Join();
-	}
+	thread.Join();
 }
 
 void form::SceneThread::SetFrameRatio(float ratio)
@@ -266,15 +272,9 @@ void form::SceneThread::Run()
 {
 	while (! quit_flag) 
 	{
-		if (suspend_flag) 
-		{
-			// TODO: Replace with semaphore.
-			sys::Sleep();
-		}
-		else 
-		{
-			TickThread();
-		}
+		semaphore.Decrement();
+		TickThread();
+		semaphore.Increment();
 	}
 }
 
@@ -408,7 +408,8 @@ int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int curr
 
 void form::SceneThread::GenerateMesh()
 {
-	//Assert(IsSceneThread());
+	Assert(IsSceneThread());
+	
 	if (IsGrowing())
 	{
 		return;
@@ -447,10 +448,10 @@ void form::SceneThread::GenerateMesh()
 
 bool form::SceneThread::IsMainThread() const
 {
-	return ! threaded || ! (thread != nullptr && thread->IsCurrent());
+	return ! threaded || ! thread.IsCurrent();
 }
 
 bool form::SceneThread::IsSceneThread() const
 {
-	return ! threaded || (thread != nullptr && thread->IsCurrent());
+	return ! threaded || thread.IsCurrent();
 }

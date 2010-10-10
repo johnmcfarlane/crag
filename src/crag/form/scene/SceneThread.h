@@ -115,7 +115,9 @@ namespace form
 		sys::TimeType mesh_generation_period;
 
 		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
-		Thread * thread;
+		Thread thread;
+		
+		smp::Semaphore semaphore;
 	};
 }
 
