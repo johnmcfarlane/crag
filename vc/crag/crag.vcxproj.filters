@@ -578,6 +578,9 @@
     <ClInclude Include="..\..\src\crag\core\for_each.h">
       <Filter>src\crag\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\for_each_chunk.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING">

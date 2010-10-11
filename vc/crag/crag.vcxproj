@@ -101,6 +101,7 @@
     <ClInclude Include="..\..\src\crag\core\double_buffer.h" />
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
     <ClInclude Include="..\..\src\crag\core\for_each.h" />
+    <ClInclude Include="..\..\src\crag\core\for_each_chunk.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
     <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
