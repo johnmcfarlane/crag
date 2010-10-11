@@ -50,6 +50,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh_updated(false)
 , mesh_generation_time(0)
 , mesh_generation_period(max_mesh_generation_period)
+, semaphore(1)
 {
 }
 
@@ -86,16 +87,14 @@ void form::SceneThread::Launch()
 
 void form::SceneThread::ToggleSuspended()
 {
+	suspend_flag = ! suspend_flag;
 	if (suspend_flag)
 	{
-		Assert(semaphore.GetValue() == 0);
-		semaphore.Increment();
-		suspend_flag = false;
+		semaphore.Decrement();
 	}
 	else
 	{
-		semaphore.Decrement();
-		suspend_flag = true;
+		semaphore.Increment();
 	}
 }
 
@@ -105,6 +104,7 @@ void form::SceneThread::Quit()
 	
 	quit_flag = true;
 
+	semaphore.Increment();
 	thread.Join();
 }
 
@@ -270,11 +270,21 @@ form::Scene const & form::SceneThread::GetVisibleScene() const
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.
 void form::SceneThread::Run()
 {
-	while (! quit_flag) 
+	while (true) 
 	{
 		semaphore.Decrement();
+		if (quit_flag)
+		{
+			break;
+		}
+		
 		TickThread();
+
 		semaphore.Increment();
+		if (quit_flag)
+		{
+			break;
+		}
 	}
 }
 
