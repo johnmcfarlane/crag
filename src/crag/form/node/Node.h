@@ -60,12 +60,14 @@ namespace form
 
 		bool IsExpandable() const
 		{
-			Assert(score >= 0);
-			return ! HasChildren() && HasAllCousins() && score != 0;
+			Assert(score > 0);
+			return ! HasChildren() && HasAllCousins() /*&& score != 0*/;
 		}
 		
-		Point & GetCorner(int index) { return ref(triple[index].corner); }
-		Point const & GetCorner(int index) const { return ref(triple[index].corner); }
+		Point * GetCornerPtr(int index) { return triple[index].corner; }
+		Point const * GetCornerPtr(int index) const { return triple[index].corner; }
+		Point & GetCorner(int index) { return ref(GetCornerPtr(index)); }
+		Point const & GetCorner(int index) const { return ref(GetCornerPtr(index)); }
 		
 		Point const * GetMidPoint(int index) const { return triple[index].mid_point; }
 		Point * GetMidPoint(int index) { return triple[index].mid_point; }
