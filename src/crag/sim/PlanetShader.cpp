@@ -290,8 +290,8 @@ bool sim::PlanetShader::CalcMidPointPos_Random(sim::Vector3 & result, Params & p
 	Scalar radius = GetRandomHeight(params.rnd);
 	planet.SampleRadius(radius);
 
-	Vector3 near_a = GetLocalPosition(params.a.triple[TriMod(params.index + 1)].corner->pos);
-	Vector3 near_b = GetLocalPosition(params.b.triple[TriMod(params.index + 1)].corner->pos);
+	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos);
+	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos);
 	result = near_a + near_b;
 	Scalar length = Length(result);
 	result *= (radius / length);
@@ -302,8 +302,8 @@ bool sim::PlanetShader::CalcMidPointPos_Random(sim::Vector3 & result, Params & p
 
 bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Params & params) const 
 {
-	Vector3 near_a = GetLocalPosition(params.a.triple[TriMod(params.index + 1)].corner->pos);
-	Vector3 near_b = GetLocalPosition(params.b.triple[TriMod(params.index + 1)].corner->pos);
+	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos);
+	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos);
 	result = near_a + near_b;
 	Scalar result_length = Length(result);
 	
@@ -442,7 +442,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 					form::Node const * buddy = lattice[row][column][buddy_index];
 					if (buddy != nullptr)
 					{
-						n = buddy->triple[params.index].cousin;
+						n = buddy->GetCousin(params.index);
 						if (n != nullptr)
 						{
 							lattice[row][column][node_index] = n;
@@ -472,7 +472,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 					
 					if (row_neighbour != nullptr)
 					{
-						n = row_neighbour->triple[row_index].cousin;
+						n = row_neighbour->GetCousin(row_index);
 						if (n != nullptr)
 						{
 							lattice[row][column][node_index] = n;
@@ -501,7 +501,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 					
 					if (column_neighbour != nullptr)
 					{
-						n = column_neighbour->triple[column_index].cousin;
+						n = column_neighbour->GetCousin(column_index);
 						if (n != nullptr)
 						{
 							lattice[row][column][node_index] = n;
@@ -547,7 +547,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row][column][0];
 				if (node != nullptr)
 				{
-					point = node->triple[index].corner;
+					point = node->GetCornerPtr(index);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
@@ -563,7 +563,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row - 1][column - 1][1];
 				if (node != nullptr)
 				{
-					point = node->triple[index].corner;
+					point = node->GetCornerPtr(index);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
@@ -579,7 +579,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row][column - 1][0];
 				if (node != nullptr)
 				{
-					point = node->triple[index_2].corner;
+					point = node->GetCornerPtr(index_2);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
@@ -591,7 +591,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row][column - 1][1];
 				if (node != nullptr)
 				{
-					point = node->triple[index_1].corner;
+					point = node->GetCornerPtr(index_1);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
@@ -607,7 +607,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row - 1][column][0];
 				if (node != nullptr)
 				{
-					point = node->triple[index_1].corner;
+					point = node->GetCornerPtr(index_1);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
@@ -619,7 +619,7 @@ bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & latt
 				node = lattice[row - 1][column][1];
 				if (node != nullptr)
 				{
-					point = node->triple[index_2].corner;
+					point = node->GetCornerPtr(index_2);
 					if (point != nullptr)
 					{
 						grid[row][column] = point;
