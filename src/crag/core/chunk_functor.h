@@ -86,27 +86,27 @@ namespace core
 	// chunk_functor_node
 	// 
 	
-	template <typename ITERATOR, typename CHUNK_FUNCTOR, typename PRIOR_CHUNK_FUNCTOR>
+	template <typename ITERATOR, typename CHUNK_FUNCTOR_1, typename CHUNK_FUNCTOR_2>
 	class chunk_functor_node
 	{
 	public:
 		
-		chunk_functor_node(CHUNK_FUNCTOR init_chunk_functor, PRIOR_CHUNK_FUNCTOR init_prior_chunk_functor)
-		: chunk_functor(init_chunk_functor)
-		, prior_chunk_functor(init_prior_chunk_functor)
+		chunk_functor_node(CHUNK_FUNCTOR_1 init_chunk_functor_1, CHUNK_FUNCTOR_2 init_chunk_functor_2)
+		: chunk_functor_1(init_chunk_functor_1)
+		, chunk_functor_2(init_chunk_functor_2)
 		{
 		}
 		
 		void operator() (ITERATOR first, ITERATOR last)
 		{
-			prior_chunk_functor(first, last);
-			chunk_functor(first, last);
+			chunk_functor_1 (first, last);
+			chunk_functor_2 (first, last);
 		}
 		
 	private:
 		
-		CHUNK_FUNCTOR chunk_functor;
-		PRIOR_CHUNK_FUNCTOR prior_chunk_functor;
+		CHUNK_FUNCTOR_1 chunk_functor_1;
+		CHUNK_FUNCTOR_2 chunk_functor_2;
 	};
 	
 	

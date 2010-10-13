@@ -79,11 +79,11 @@ namespace core
 		if (prefetch)
 		{
 			// Construct a new functor out of the given functor and a prefetch functor.
-			typedef chunk_functor_prefetch<ITERATOR> PRIOR_CHUNK_FUNCTOR;
-			PRIOR_CHUNK_FUNCTOR pcf;
+			typedef chunk_functor_prefetch<ITERATOR> CHUNK_FUNCTOR_PREFETCH;
+			CHUNK_FUNCTOR_PREFETCH cfp;
 			
-			typedef chunk_functor_node <ITERATOR, CHUNK_FUNCTOR, PRIOR_CHUNK_FUNCTOR> CHUNK_FUNCTOR_NODE;
-			CHUNK_FUNCTOR_NODE cfn(chunk_functor, pcf);
+			typedef chunk_functor_node <ITERATOR, CHUNK_FUNCTOR_PREFETCH, CHUNK_FUNCTOR> CHUNK_FUNCTOR_NODE;
+			CHUNK_FUNCTOR_NODE cfn(cfp, chunk_functor);
 			
 			if (parallel)
 			{
@@ -130,8 +130,8 @@ namespace core
 		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR2> CHUNK_FUNCTOR2;
 		CHUNK_FUNCTOR2 cf2(item_functor2);
 		
-		typedef chunk_functor_node<ITERATOR, CHUNK_FUNCTOR2, CHUNK_FUNCTOR1> CHUNK_FUNCTOR_NODE;
-		CHUNK_FUNCTOR_NODE cfn(item_functor2, item_functor1);
+		typedef chunk_functor_node<ITERATOR, CHUNK_FUNCTOR1, CHUNK_FUNCTOR2> CHUNK_FUNCTOR_NODE;
+		CHUNK_FUNCTOR_NODE cfn(item_functor1, item_functor2);
 		
 		for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn, parallel, prefetch);
 	}
