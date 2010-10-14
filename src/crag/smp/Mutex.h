@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "SDL_mutex.h"
+#include <SDL_mutex.h>
 
 
 namespace smp
@@ -37,4 +37,5 @@ namespace smp
 
 		SDL_mutex * sdl_mutex;
 	};
+
 }
