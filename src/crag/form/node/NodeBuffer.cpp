@@ -33,6 +33,9 @@
 
 #include <algorithm>
 
+// Note: Doesn't work yet.
+#define EXPAND_NODES_PARALLEL false
+
 
 namespace 
 {
@@ -42,8 +45,19 @@ namespace
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
 	CONFIG_DEFINE (fix_num_quaterna, int, 0);
 
-
+	
+	////////////////////////////////////////////////////////////////////////////////
 	// local function definitions
+
+	void UpdateQuaternaScore(form::Quaterna & q) 
+	{
+		form::Node * parent = q.nodes[0].parent;
+		if (parent != nullptr) 
+		{
+			q.parent_score = parent->score;
+		}
+	}
+		
 	bool QuaternaSortUsed(form::Quaterna const & lhs, form::Quaterna const & rhs)
 	{
 		return lhs.parent_score > rhs.parent_score;
@@ -66,8 +80,8 @@ form::NodeBuffer::NodeBuffer()
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_nodes)
 , quaterna(new Quaterna [max_num_quaterna])
-, quaterna_used_end(quaterna)
 , quaterna_sorted_end(quaterna)
+, quaterna_used_end(quaterna)
 , quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : 0, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , point_buffer(max_num_verts)
@@ -147,7 +161,7 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 	
 	VerifyTrue(parent != nullptr);
 	VerifyTrue(parent->score == q.parent_score);
-	VerifyTrue(parent->score >= 0);
+	VerifyTrue(parent->score > 0);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
@@ -369,8 +383,8 @@ void form::NodeBuffer::UpdateNodes()
 		}
 	}
 	while (IsNodeChurnIntensive());
-	
-	VerifyObject (* this);	// should fail because of the following.
+
+	VerifyObject (* this);
 }
 
 void form::NodeBuffer::UpdateNodeScores()
@@ -393,42 +407,7 @@ void form::NodeBuffer::UpdateNodeScores()
 
 void form::NodeBuffer::UpdateQuaternaScores()
 {
-	int fetch_ahead = 32;
-	
-	// Update ranking parent score value.
-	for (Quaterna * iterator = quaterna; iterator != quaterna_used_end; ++ iterator) 
-	{
-		// fetch ahead quaterna->node->parent
-		Quaterna * to_fetch = iterator;
-		if ((to_fetch += fetch_ahead) < quaterna_used_end) 
-		{
-			Node * parent = to_fetch->nodes[0].parent;
-			if (parent != nullptr) 
-			{
-				// parent
-				PrefetchObject(ref(parent));
-			}
-			
-			if ((to_fetch += fetch_ahead) < quaterna_used_end) 
-			{
-				// node
-				PrefetchObject(to_fetch->nodes[0]);
-				
-				to_fetch += fetch_ahead;
-				if ((to_fetch += fetch_ahead) < quaterna_used_end) 
-				{
-					// ranking
-					PrefetchObject(ref(to_fetch));
-				}
-			}
-		}
-		
-		Node * parent = iterator->nodes[0].parent;
-		if (parent != nullptr) 
-		{
-			iterator->parent_score = parent->score;
-		}
-	}
+	core::for_each(quaterna, quaterna_used_end, 512, UpdateQuaternaScore, true, true);
 	
 	// This basically says: "as far as I know, none of the quaterna are sorted."
 	quaterna_sorted_end = quaterna;
@@ -454,7 +433,7 @@ bool form::NodeBuffer::ChurnNodes()
 	// TODO: This will expand the nodes in an improved order.
 
 	ExpandNodeFunctor f(* this);
-	ForEachNode<ExpandNodeFunctor &>(1024, f, false);
+	ForEachNode<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
 	
 	return f.GetNumExpanded() > 0;
 }
@@ -464,7 +443,8 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	point_buffer.Clear();
 	mesh.Clear();
 
-	GenerateMeshPrefetchFunctor mesh_prefetch_functor;
+	typedef void (* PrefetchFunctor) (Node & node);
+	PrefetchFunctor mesh_prefetch_functor = GenerateMeshPrefetchFunctor;
 	GenerateMeshFunctor mesh_functor(mesh);
 #if defined(THREAD_SAFE_MESH)
 	bool parallel = true;
@@ -472,7 +452,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	bool parallel = false;
 #endif
 
-	ForEachNode<GenerateMeshPrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, parallel);
+	ForEachNode<PrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, parallel);
 
 	// TODO: Parallelize.
 	VertexBuffer & vertices = mesh.GetVertices();
@@ -569,8 +549,10 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 		return false;
 	}
 	
+#if (EXPAND_NODES_PARALLEL)
 	LockTree();
-
+#endif
+	
 	// Deinit children.
 	bool is_in_use = children_quaterna.IsInUse();
 	if (is_in_use) 
@@ -590,7 +572,9 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	node.children = worst_children;
 	InitChildPointers(node);
 	
+#if defined (EXPAND_NODES_PARALLEL)
 	UnlockTree();
+#endif
 	
 	children_quaterna.parent_score = node.score;
 	

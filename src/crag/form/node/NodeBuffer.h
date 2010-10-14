@@ -138,8 +138,8 @@ namespace form
 		// TODO: Maybe store nodes in sets of four and make them the Qua...whatevers and the quaterna something with sorted in the title.
 		Quaterna * const quaterna;		// [max_num_quaterna]
 
+		Quaterna * quaterna_sorted_end;			// end of the range the we know is sorted
 		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
-		Quaterna * quaterna_sorted_end;			// end of buffer of actually used nodes
 		Quaterna * quaterna_used_end_target;	// where we'd like quaterna_used_end to be; cannot be less than used_end
 		Quaterna const * const quaterna_end;
 		
