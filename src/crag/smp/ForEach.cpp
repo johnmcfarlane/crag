@@ -116,6 +116,8 @@ namespace
 		// to be snapped up by the worker threads.
 		void WaitForCompletion()
 		{
+			// TODO: It should pretty easy now to save on a worker 
+			// and have this thread do work instead.
 			completion_condition.Wait(completion_mutex);
 		}
 		
@@ -176,7 +178,7 @@ namespace
 		
 		void Run()
 		{
-			// Loop until it's time to finish up.
+			// Loop until it's time to shut down.
 			while (true)
 			{
 				worker_semaphore->Decrement();
@@ -185,11 +187,12 @@ namespace
 				{
 					break;
 				}
-				
+
+				// Loop while there's something to do.
 				Task t;
-				if (foreman->GetSubTask(t))
+				while (foreman->GetSubTask(t))
 				{
-					(* t.functor) (t.first, t.last);					
+					(* t.functor) (t.first, t.last);
 				}
 
 				worker_semaphore->Increment();
