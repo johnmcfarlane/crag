@@ -85,14 +85,7 @@ namespace core
 			typedef chunk_functor_node <ITERATOR, CHUNK_FUNCTOR_PREFETCH, CHUNK_FUNCTOR> CHUNK_FUNCTOR_NODE;
 			CHUNK_FUNCTOR_NODE cfn(cfp, chunk_functor);
 			
-			if (parallel)
-			{
-				for_each_chunk_parallel<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn);
-			}
-			else
-			{
-				for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn);
-			}
+			for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn, parallel, false);
 		}
 		else 
 		{
