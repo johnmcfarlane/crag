@@ -15,6 +15,18 @@
 #include "core/Pool.h"
 
 
+//#define POINT_BUFFER_MT_SAFE
+
+#if defined(POINT_BUFFER_MT_SAFE)
+#include "smp/Lock.h"
+#define POINT_BUFFER_LOCK smp::Lock lock(mutex)
+#else
+#define POINT_BUFFER_LOCK DO_NOTHING
+#endif
+
+
+// TODO: Tidy this little lot up...
+
 // When the origin is reset, the formations are deinitialized.
 // This flag skips the correct deinitialization of the nodes and just wipes the buffer instead.
 //#define FAST_SCENE_RESET
@@ -30,13 +42,34 @@
 
 namespace form 
 {
-	class PointBuffer : public Pool<Point>
+	class PointBuffer : private Pool<Point>
 	{
+		typedef Pool<Point> super;
 	public:
 		PointBuffer(int max_num_verts);
 		
 		void Clear();
-
-		//DUMP_OPERATOR_DECLARATION(VertexBuffer);
+		void FastClear();
+		
+		Point * Alloc()
+		{
+			POINT_BUFFER_LOCK;
+			return super::Alloc();
+		}
+		
+		void Free(Point * ptr)
+		{
+			POINT_BUFFER_LOCK;
+			super::Free(ptr);
+		}
+		
+#if VERIFY
+		void Verify() const;
+#endif
+		
+	private:
+#if defined(POINT_BUFFER_MT_SAFE)
+		mutable smp::Mutex mutex;
+#endif
 	};
 }
