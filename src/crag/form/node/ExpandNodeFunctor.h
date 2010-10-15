@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "form/scene/Polyhedron.h"
+#include "Quaterna.h"
 
 
 namespace form 
@@ -37,6 +37,7 @@ namespace form
 			return num_expanded;
 		}
 		
+		// The node version. 
 		void operator() (Node & node)
 		{
 			if (node.IsExpandable()) 
@@ -46,6 +47,15 @@ namespace form
 					++ num_expanded;
 				}
 			}
+		}
+		
+		// The quaterna version.
+		void operator() (Quaterna & quaterna)
+		{
+			operator() (quaterna.nodes[0]);
+			operator() (quaterna.nodes[1]);
+			operator() (quaterna.nodes[2]);
+			operator() (quaterna.nodes[3]);
 		}
 		
 	private:

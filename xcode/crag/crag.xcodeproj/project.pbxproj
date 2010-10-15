@@ -144,6 +144,7 @@
 		528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
 		528ABAF411CF2E3B00C2B411 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
+		528B53D31267DD0D00E7BF76 /* Quaterna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quaterna.h; sourceTree = "<group>"; };
 		528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetaryBody.cpp; sourceTree = "<group>"; };
 		528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetaryBody.h; sourceTree = "<group>"; };
 		5294D2671243C3C500EA6849 /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
@@ -465,6 +466,7 @@
 				52DF18F011E8FF1C00AF25A1 /* Point.h */,
 				52DF18F111E8FF1C00AF25A1 /* PointBuffer.cpp */,
 				52DF18F211E8FF1C00AF25A1 /* PointBuffer.h */,
+				528B53D31267DD0D00E7BF76 /* Quaterna.h */,
 				52DF18F311E8FF1C00AF25A1 /* RootNode.cpp */,
 				52DF18F411E8FF1C00AF25A1 /* RootNode.h */,
 				52DF18F511E8FF1C00AF25A1 /* Shader.h */,

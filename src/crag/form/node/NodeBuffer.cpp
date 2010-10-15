@@ -407,7 +407,7 @@ void form::NodeBuffer::UpdateNodeScores()
 
 void form::NodeBuffer::UpdateQuaternaScores()
 {
-	core::for_each(quaterna, quaterna_used_end, 512, UpdateQuaternaScore, true, true);
+	ForEachQuaterna(512, UpdateQuaternaScore, true);
 	
 	// This basically says: "as far as I know, none of the quaterna are sorted."
 	quaterna_sorted_end = quaterna;
@@ -433,7 +433,8 @@ bool form::NodeBuffer::ChurnNodes()
 	// TODO: This will expand the nodes in an improved order.
 
 	ExpandNodeFunctor f(* this);
-	ForEachNode<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
+	//ForEachNode<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
+	ForEachQuaterna<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
 	
 	return f.GetNumExpanded() > 0;
 }
@@ -912,5 +913,14 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, b
 	if (nodes_used_end > nodes)
 	{
 		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2>(nodes, nodes_used_end, step_size, f1, f2, parallel, true);
+	}
+}
+
+template <typename FUNCTOR> 
+void form::NodeBuffer::ForEachQuaterna(size_t step_size, FUNCTOR f, bool parallel)
+{
+	if (quaterna_used_end > quaterna)
+	{
+		core::for_each<form::Quaterna *, FUNCTOR>(quaterna, quaterna_used_end, step_size, f, parallel, true);
 	}
 }

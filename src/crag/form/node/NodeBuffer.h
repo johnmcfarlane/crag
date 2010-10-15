@@ -123,7 +123,10 @@ namespace form
 		
 		template <typename FUNCTOR1, typename FUNCTOR2> 
 		void ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, bool parallel);
-		
+
+		template <typename FUNCTOR> 
+		void ForEachQuaterna(size_t step_size, FUNCTOR f, bool parallel);
+
 		// Types
 
 		// The fixed-size array of node groups, used and unused.
