@@ -549,9 +549,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 		return false;
 	}
 	
-#if (EXPAND_NODES_PARALLEL)
 	LockTree();
-#endif
 	
 	// Deinit children.
 	bool is_in_use = children_quaterna.IsInUse();
@@ -572,9 +570,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	node.children = worst_children;
 	InitChildPointers(node);
 	
-#if defined (EXPAND_NODES_PARALLEL)
 	UnlockTree();
-#endif
 	
 	children_quaterna.parent_score = node.score;
 	
@@ -587,7 +583,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 		node_score_functor (children_quaterna.nodes[1]);
 		node_score_functor (children_quaterna.nodes[2]);
 		node_score_functor (children_quaterna.nodes[3]);
-	}	
+	}
 	
 	return true;
 }
