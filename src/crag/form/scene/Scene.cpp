@@ -166,6 +166,11 @@ void form::Scene::GenerateMesh(Mesh & mesh)
 	node_buffer.GenerateMesh(mesh);
 }
 
+int form::Scene::GetNumNodesUsed() const
+{
+	return node_buffer.GetNumNodesUsed();
+}
+
 int form::Scene::GetNumQuaternaUsed() const
 {
 	return node_buffer.GetNumQuaternaUsed();

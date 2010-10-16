@@ -66,6 +66,7 @@ namespace form
 		
 		PointBuffer & GetPoints() { return point_buffer; }
 		
+		int GetNumNodesUsed() const;
 		int GetNumQuaternaUsed() const;
 		int GetNumQuaternaUsedTarget() const;
 		

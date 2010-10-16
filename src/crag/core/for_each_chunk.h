@@ -116,22 +116,22 @@ namespace core
 	// supporting for_each functions
 	// 
 	
-	template <typename ITERATOR, typename ITEM_FUNCTOR>
+	template <typename ITERATOR, typename ITEM_FUNCTOR, int UNROLL_HINT>
 	void for_each(ITERATOR first, ITERATOR last, size_t chunk_size, ITEM_FUNCTOR item_functor, bool parallel, bool prefetch)
 	{
-		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR> CHUNK_FUNCTOR;
+		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR, UNROLL_HINT> CHUNK_FUNCTOR;
 		CHUNK_FUNCTOR cf(item_functor);
 		
 		for_each_chunk<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, cf, parallel, prefetch);
 	}
 	
-	template <typename ITERATOR, typename ITEM_FUNCTOR1, typename ITEM_FUNCTOR2>
+	template <typename ITERATOR, typename ITEM_FUNCTOR1, typename ITEM_FUNCTOR2, int UNROLL_HINT>
 	void for_each(ITERATOR first, ITERATOR last, size_t chunk_size, ITEM_FUNCTOR1 item_functor1, ITEM_FUNCTOR2 item_functor2, bool parallel, bool prefetch)
 	{
-		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR1> CHUNK_FUNCTOR1;
+		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR1, UNROLL_HINT> CHUNK_FUNCTOR1;
 		CHUNK_FUNCTOR1 cf1(item_functor1);
 		
-		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR2> CHUNK_FUNCTOR2;
+		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR2, UNROLL_HINT> CHUNK_FUNCTOR2;
 		CHUNK_FUNCTOR2 cf2(item_functor2);
 		
 		typedef chunk_functor_node<ITERATOR, CHUNK_FUNCTOR1, CHUNK_FUNCTOR2> CHUNK_FUNCTOR_NODE;

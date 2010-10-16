@@ -32,14 +32,18 @@ profile::Meter::operator profile::Scalar () const
 void profile::Meter::Submit (Scalar sample)
 {
 	Assert(sample >= 0);
-	Assert(change_coefficient > 0 && change_coefficient < 1);
-	if (store >= 0)
+	if (! std::isnan(sample) && ! std::isinf(sample))
 	{
-		store = store * (static_cast<Scalar>(1) - change_coefficient) + sample * change_coefficient;
-	}
-	else
-	{
-		store = sample;
+		Assert(sample != std::numeric_limits<Scalar>::infinity());
+		Assert(change_coefficient > 0 && change_coefficient < 1);
+		if (store >= 0)
+		{
+			store = store * (static_cast<Scalar>(1) - change_coefficient) + sample * change_coefficient;
+		}
+		else
+		{
+			store = sample;
+		}
 	}
 }
 
@@ -47,17 +51,16 @@ void profile::Meter::Submit (Scalar sample)
 ////////////////////////////////////////////////////////////////////////////////
 // profile::Timer member definitions
 
-profile::Timer::Timer(Meter & m)
-: meter(m)
-, start_time(sys::GetTime())
+profile::Timer::Timer()
+: start_time(sys::GetTime())
 {
 }
 
-profile::Timer::~Timer()
+profile::Timer::operator Scalar () const
 {
-	sys::TimeType end_time = sys::GetTime();
-	sys::TimeType duration = end_time - start_time;
-	meter.Submit(static_cast<Scalar>(duration));
+	sys::TimeType now = sys::GetTime();
+	sys::TimeType duration = now - start_time;
+	return duration;
 }
 
 #endif

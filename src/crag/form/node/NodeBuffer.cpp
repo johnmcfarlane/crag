@@ -43,7 +43,7 @@ namespace
 	// If non-zero, this number of quaterna is enforced always.
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+	CONFIG_DEFINE (fix_num_quaterna, int, 50000);
 
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +215,11 @@ DUMP_OPERATOR_DEFINITION(form, NodeBuffer)
 	return lhs;
 }
 #endif
+
+int form::NodeBuffer::GetNumNodesUsed() const
+{
+	return nodes_used_end - nodes;
+}
 
 int form::NodeBuffer::GetNumQuaternaUsed() const
 {
@@ -903,7 +908,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR f, bool parallel)
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR>(nodes, nodes_used_end, step_size, f, parallel, true);
+		core::for_each<form::Node *, FUNCTOR, 4>(nodes, nodes_used_end, step_size, f, parallel, true);
 	}
 }
 
@@ -912,7 +917,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, b
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2>(nodes, nodes_used_end, step_size, f1, f2, parallel, true);
+		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, 4>(nodes, nodes_used_end, step_size, f1, f2, parallel, true);
 	}
 }
 
@@ -921,6 +926,7 @@ void form::NodeBuffer::ForEachQuaterna(size_t step_size, FUNCTOR f, bool paralle
 {
 	if (quaterna_used_end > quaterna)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR>(quaterna, quaterna_used_end, step_size, f, parallel, true);
+		// TODO: Consider fixing the number of quaterna to multiples of N to see if there's an unrolling advantage.
+		core::for_each<form::Quaterna *, FUNCTOR, 1>(quaterna, quaterna_used_end, step_size, f, parallel, true);
 	}
 }

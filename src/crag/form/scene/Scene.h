@@ -70,7 +70,8 @@ namespace form
 		void ForEachFormation(FormationFunctor & f) const;
 		void GenerateMesh(class Mesh & mesh);
 		
-		// Accessors for nodes.
+		// Accessors for nodes/quaterna.
+		int GetNumNodesUsed() const;
 		int GetNumQuaternaUsed() const;
 		int GetNumQuaternaUsedTarget() const;
 		void SetNumQuaternaUsedTarget(int n);

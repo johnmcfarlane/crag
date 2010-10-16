@@ -40,11 +40,10 @@ namespace profile
 	class Timer
 	{
 	public:
-		Timer(Meter & m);
-		~Timer();
+		Timer();
+		operator Scalar () const;
 		
 	private:
-		Meter & meter;
 		sys::TimeType start_time;
 	};
 	
@@ -52,14 +51,16 @@ namespace profile
 
 #define PROFILE_DEFINE(NAME, CHANGE_COEFFICIENT) profile::Meter NAME(CHANGE_COEFFICIENT)
 #define PROFILE_SAMPLE(NAME, SAMPLE) NAME.Submit(static_cast<profile::Scalar>(SAMPLE))
-#define PROFILE_TIMER(NAME) profile::Timer PROFILE_TIMER_##NAME(NAME)
+#define PROFILE_TIMER_BEGIN(NAME) profile::Timer PROFILE_TIMER_##NAME
+#define PROFILE_TIMER_READ(NAME) (static_cast<profile::Scalar>(PROFILE_TIMER_##NAME))
 #define PROFILE_RESULT(NAME) NAME
 
 #else
 
 #define PROFILE_DEFINE(NAME, CHANGE_COEFFICIENT) 
 #define PROFILE_SAMPLE(NAME, SAMPLE) DO_NOTHING
-#define PROFILE_TIMER(NAME) DO_NOTHING
+#define PROFILE_TIMER_BEGIN(NAME) DO_NOTHING
+#define PROFILE_TIMER_READ(NAME) (-1)
 #define PROFILE_RESULT(NAME) (-1)
 
 #endif

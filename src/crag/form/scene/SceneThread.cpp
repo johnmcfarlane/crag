@@ -33,7 +33,9 @@ namespace
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 
 	PROFILE_DEFINE (scene_tick_period, .01);
-	PROFILE_DEFINE(mesh_generation, 0.1);	
+	PROFILE_DEFINE (scene_tick_per_quaterna, .1);
+	PROFILE_DEFINE (mesh_generation_period, .01);	
+	PROFILE_DEFINE (mesh_generation_per_quaterna, .1);
 }
 
 
@@ -49,7 +51,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh(form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f))
 , mesh_updated(false)
 , mesh_generation_time(0)
-, mesh_generation_period(max_mesh_generation_period)
+, last_mesh_generation_period(max_mesh_generation_period)
 , semaphore(1)
 {
 }
@@ -142,13 +144,31 @@ void form::SceneThread::Tick()
 	
 	if (gfx::Debug::GetVerbosity() > .15)
 	{
-		gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
-		gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation) << '\n';
+		//gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
+		//gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation_period) << '\n';
+		
+		std::ios_base::fmtflags flags = gfx::Debug::out.flags(std::ios::fixed);
+		std::streamsize previous_precision = gfx::Debug::out.precision(10);
+		gfx::Debug::out << "scene_t/q(us):" << 1000000.f * PROFILE_RESULT(scene_tick_per_quaterna) << '\n';
+		gfx::Debug::out << "meshg_t/q(ms):" << 1000.f * PROFILE_RESULT(mesh_generation_per_quaterna) << '\n';
+		gfx::Debug::out.flags(flags);
+		gfx::Debug::out.precision(previous_precision);
+	}
+	
+	Assert(GetVisibleScene().GetNumNodesUsed() = GetVisibleScene().GetNumQuaternaUsed() * 4);
+	
+	if (gfx::Debug::GetVerbosity() > .72) 
+	{
+		gfx::Debug::out << "nodes:" << GetVisibleScene().GetNumNodesUsed() << '\n';
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .17) 
+	{
+		gfx::Debug::out << "visible_q:" << GetVisibleScene().GetNumQuaternaUsed() << '\n';
 	}
 	
 	if (gfx::Debug::GetVerbosity() > .37) 
 	{
-		gfx::Debug::out << "visible_q:" << GetVisibleScene().GetNumQuaternaUsed() << '\n';
 		gfx::Debug::out << " active_q:" << GetActiveScene().GetNumQuaternaUsed() << '\n';
 		gfx::Debug::out << " target_q:" << GetActiveScene().GetNumQuaternaUsedTarget() << '\n';
 	}
@@ -322,8 +342,12 @@ void form::SceneThread::TickActiveScene()
 	active_scene.SetCameraRay(camera_ray);
 	
 	{
-		PROFILE_TIMER(scene_tick_period);
+		PROFILE_TIMER_BEGIN(t);
+		
 		active_scene.Tick(formations);
+		
+		PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / active_scene.GetNumQuaternaUsed());
+		PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 	}
 }
 
@@ -361,7 +385,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	// Come up with two accounts of how many quaterna we should have.
 	int current_num_quaterna = active_scene.GetNumQuaternaUsed();
 	int frame_ratio_directed_target_num_quaterna = CalculateFrameRateDirectedTargetNumQuaterna(current_num_quaterna, frame_ratio);
-	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, static_cast<float>(mesh_generation_period));
+	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, static_cast<float>(last_mesh_generation_period));
 
 	// Pick the more conservative and submit it.
 	int target_num_quaterna = Min(mesh_generation_directed_target_num_quaterna, frame_ratio_directed_target_num_quaterna);
@@ -369,7 +393,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
-	mesh_generation_period = 0;
+	last_mesh_generation_period = 0;
 	frame_ratio = -1;
 }
 
@@ -398,11 +422,12 @@ int form::SceneThread::CalculateFrameRateDirectedTargetNumQuaterna(int current_n
 }
 
 // Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
-int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period)
+int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float last_mesh_generation_period)
 {
 	// We're under budget so everything's ok.
-	if (mesh_generation_period < max_mesh_generation_period)
+	if (last_mesh_generation_period < max_mesh_generation_period)
 	{
+		// As far as this function's concerned, increase the count to anything you like (within reason).
 		return NodeBuffer::max_num_quaterna;
 	}
 	
@@ -450,10 +475,11 @@ void form::SceneThread::GenerateMesh()
 
 	mesh_updated = true;
 	sys::TimeType t = sys::GetTime();
-	mesh_generation_period = t - mesh_generation_time;
+	last_mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
 	
-	PROFILE_SAMPLE(mesh_generation, mesh_generation_period);
+	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 }
 
 bool form::SceneThread::IsMainThread() const

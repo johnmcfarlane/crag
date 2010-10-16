@@ -80,7 +80,7 @@ namespace form
 
 		void AdjustNumQuaterna();
 		static int CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio);
-		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float mesh_generation_period);
+		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float last_mesh_generation_period);
 		
 		void GenerateMesh();
 		
@@ -112,7 +112,7 @@ namespace form
 		smp::Semaphore mesh_semaphore;
 		bool mesh_updated;
 		sys::TimeType mesh_generation_time;
-		sys::TimeType mesh_generation_period;
+		sys::TimeType last_mesh_generation_period;
 
 		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
 		Thread thread;

@@ -41,7 +41,7 @@ namespace core
 	// A chunk functor that iterates over the input range 
 	// and calls the given function for each element.
 	
-	template <typename ITERATOR, typename ITEM_FUNCTOR>
+	template <typename ITERATOR, typename ITEM_FUNCTOR, int UNROLL_HINT>
 	class chunk_functor_for_each
 	{
 	public:
@@ -52,7 +52,7 @@ namespace core
 		
 		void operator() (ITERATOR first, ITERATOR last)
 		{
-			core::for_each<ITERATOR, ITEM_FUNCTOR>(first, last, item_functor);
+			for_each<ITERATOR, ITEM_FUNCTOR, UNROLL_HINT>(first, last, item_functor);
 		}
 		
 	private:
