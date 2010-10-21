@@ -79,8 +79,8 @@ namespace core
 		if (prefetch)
 		{
 			// Construct a new functor out of the given functor and a prefetch functor.
-			typedef chunk_functor_prefetch<ITERATOR> CHUNK_FUNCTOR_PREFETCH;
-			CHUNK_FUNCTOR_PREFETCH cfp;
+			typedef void (* CHUNK_FUNCTOR_PREFETCH) (ITERATOR, ITERATOR);
+			CHUNK_FUNCTOR_PREFETCH cfp = PrefetchArray <ITERATOR>;
 			
 			typedef chunk_functor_node <ITERATOR, CHUNK_FUNCTOR_PREFETCH, CHUNK_FUNCTOR> CHUNK_FUNCTOR_NODE;
 			CHUNK_FUNCTOR_NODE cfn(cfp, chunk_functor);

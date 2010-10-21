@@ -19,23 +19,6 @@ namespace core
 {
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// chunk_functor_null
-	// 
-	// A chunk functor that does nothing.
-	
-	template <typename ITERATOR>
-	class chunk_functor_null
-	{
-	public:
-		void operator() (ITERATOR, ITERATOR)
-		{
-			// Here's the line of code where we do nothing.
-			// TODO: Consider removing this functor; it doesn't seem very useful.
-		}
-	};
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
 	// chunk_functor_for_each
 	// 
 	// A chunk functor that iterates over the input range 
@@ -58,27 +41,6 @@ namespace core
 	private:
 		
 		ITEM_FUNCTOR item_functor;
-	};
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// chunk_functor_prefetch
-	// 
-	// A chunk functor that prefetches the input range.
-	// TODO: How do we eliminate this in favor of the actual prefetch function?
-	
-	template <typename ITERATOR>
-	class chunk_functor_prefetch
-	{
-	public:
-		chunk_functor_prefetch()
-		{
-		}
-		
-		void operator() (ITERATOR first, ITERATOR last)
-		{
-			PrefetchArray(first, last);
-		}
 	};
 	
 	
