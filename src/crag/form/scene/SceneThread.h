@@ -93,7 +93,6 @@ namespace form
 		core::double_buffer<Scene> scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
 		
-		int num_nodes;
 		float frame_ratio;	// ~ (actual framerate / ideal framerate)
 		
 		FormationSet const & formations;		
@@ -117,7 +116,8 @@ namespace form
 		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
 		Thread thread;
 		
-		smp::Semaphore semaphore;
+		// TODO: Make non-thread mode work again.
+		smp::Semaphore suspend_semaphore;
 	};
 }
 

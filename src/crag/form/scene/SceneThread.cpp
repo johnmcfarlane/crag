@@ -27,9 +27,8 @@
 namespace 
 {
 	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
-	CONFIG_DEFINE (max_mesh_generation_period, sys::TimeType, .2f);
-	CONFIG_DEFINE (post_reset_freeze_period, sys::TimeType, 1.25f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.015f);
+	CONFIG_DEFINE (max_mesh_generation_period, sys::TimeType, 0.35f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.02f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 
 	PROFILE_DEFINE (scene_tick_period, .01);
@@ -40,8 +39,7 @@ namespace
 
 
 form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
-: num_nodes(100)
-, frame_ratio(-1)
+: frame_ratio(-1)
 , formations(_formations)
 , observer(_observer)
 , threaded(_threaded)
@@ -52,7 +50,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh_updated(false)
 , mesh_generation_time(0)
 , last_mesh_generation_period(max_mesh_generation_period)
-, semaphore(1)
+, suspend_semaphore(1)
 {
 }
 
@@ -92,11 +90,11 @@ void form::SceneThread::ToggleSuspended()
 	suspend_flag = ! suspend_flag;
 	if (suspend_flag)
 	{
-		semaphore.Decrement();
+		suspend_semaphore.Decrement();
 	}
 	else
 	{
-		semaphore.Increment();
+		suspend_semaphore.Increment();
 	}
 }
 
@@ -106,7 +104,7 @@ void form::SceneThread::Quit()
 	
 	quit_flag = true;
 
-	semaphore.Increment();
+	suspend_semaphore.Increment();
 	thread.Join();
 }
 
@@ -155,7 +153,7 @@ void form::SceneThread::Tick()
 		gfx::Debug::out.precision(previous_precision);
 	}
 	
-	Assert(GetVisibleScene().GetNumNodesUsed() = GetVisibleScene().GetNumQuaternaUsed() * 4);
+	Assert(GetVisibleScene().GetNumNodesUsed() == GetVisibleScene().GetNumQuaternaUsed() * 4);
 	
 	if (gfx::Debug::GetVerbosity() > .72) 
 	{
@@ -292,7 +290,7 @@ void form::SceneThread::Run()
 {
 	while (true) 
 	{
-		semaphore.Decrement();
+		suspend_semaphore.Decrement();
 		if (quit_flag)
 		{
 			break;
@@ -300,7 +298,7 @@ void form::SceneThread::Run()
 		
 		TickThread();
 
-		semaphore.Increment();
+		suspend_semaphore.Increment();
 		if (quit_flag)
 		{
 			break;
