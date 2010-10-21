@@ -471,8 +471,8 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 bool form::NodeBuffer::ExpandNode(Node & node) 
 {
 	Assert(node.IsExpandable());
-	
-	// Now find the worst quaterna and attempt to reuse it as node's new children.
+
+	// Try and get an unused quaterna.
 	if (quaterna_used_end != quaterna_used_end_target)
 	{
 		// We currently wish to expand the number of nodes/quaterna used,
@@ -486,8 +486,11 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		
 		nodes_used_end += 4;
 		++ quaterna_used_end;
+		return true;
 	}
-	else if (quaterna_sorted_end > quaterna) 
+	
+	// Find the lowest-scoring quaterna in used and attempt to reuse it.
+	if (quaterna_sorted_end > quaterna) 
 	{
 		// Get the score to use to find the 'worst' Quaterna.
 		// We don't want to nuke a quaterna with a worse one, hence using the node score.
@@ -519,17 +522,14 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		}
 		
 		-- quaterna_sorted_end;
+		return true;
 	}
-	else
-	{
-		// We're clean out of nodes!
-		// Unless the node tree is somehow eating itself,
-		// this probably means a root nodes is expanding
-		// and there are no nodes. 
-		return false;
-	}
-	
-	return true;
+
+	// We're clean out of nodes!
+	// Unless the node tree is somehow eating itself,
+	// this probably means a root nodes is expanding
+	// and there are no nodes. 
+	return false;
 }
 
 bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
