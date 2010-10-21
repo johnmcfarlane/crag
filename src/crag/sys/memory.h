@@ -98,9 +98,11 @@ inline void PrefetchMemory(char const * begin, char const * end)
 	}	while (begin < end);
 }
 
-template<typename T> inline void PrefetchArray(T const * begin, T const * end)
+// Iterator is typically either a vector iterator or a pointer.
+// Non-memory sequential stores will either fail or be highly inefficient.
+template<typename ITERATOR> inline void PrefetchArray(ITERATOR begin, ITERATOR end)
 {
-	PrefetchMemory(reinterpret_cast<char const *>(begin), reinterpret_cast<char const *>(end));
+	PrefetchMemory(& reinterpret_cast<char const &>(* begin), & reinterpret_cast<char const &>(* end));
 }
 
 template<typename T> inline void PrefetchArray(T const * object_ptr, int count)
