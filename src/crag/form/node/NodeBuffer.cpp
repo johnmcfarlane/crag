@@ -29,12 +29,12 @@
 #include "core/floatOps.h"
 #include "core/for_each_chunk.h"
 
-#include "smp/ForEach.h"
-
 #include <algorithm>
 
 // Note: Doesn't work yet.
 #define EXPAND_NODES_PARALLEL false
+
+#define PREFETCH_ARRAYS false
 
 
 namespace 
@@ -43,7 +43,7 @@ namespace
 	// If non-zero, this number of quaterna is enforced always.
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+	CONFIG_DEFINE (fix_num_quaterna, int, 40000);
 
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -449,8 +449,6 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	point_buffer.Clear();
 	mesh.Clear();
 
-	typedef void (* PrefetchFunctor) (Node & node);
-	PrefetchFunctor mesh_prefetch_functor = GenerateMeshPrefetchFunctor;
 	GenerateMeshFunctor mesh_functor(mesh);
 #if defined(THREAD_SAFE_MESH)
 	bool parallel = true;
@@ -458,8 +456,14 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	bool parallel = false;
 #endif
 
+#if PREFETCH_ARRAYS
+	typedef void (* PrefetchFunctor) (Node & node);
+	PrefetchFunctor mesh_prefetch_functor = GenerateMeshPrefetchFunctor;
 	ForEachNode<PrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, parallel);
-
+#else
+	ForEachNode<GenerateMeshFunctor &>(512, mesh_functor, parallel);
+#endif
+	
 	// TODO: Parallelize.
 	VertexBuffer & vertices = mesh.GetVertices();
 	vertices.NormalizeNormals();
@@ -908,7 +912,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR f, bool parallel)
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR, 4>(nodes, nodes_used_end, step_size, f, parallel, true);
+		core::for_each<form::Node *, FUNCTOR, 4>(nodes, nodes_used_end, step_size, f, parallel, PREFETCH_ARRAYS);
 	}
 }
 
@@ -917,7 +921,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, b
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, 4>(nodes, nodes_used_end, step_size, f1, f2, parallel, true);
+		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, 4>(nodes, nodes_used_end, step_size, f1, f2, parallel, PREFETCH_ARRAYS);
 	}
 }
 
@@ -927,6 +931,6 @@ void form::NodeBuffer::ForEachQuaterna(size_t step_size, FUNCTOR f, bool paralle
 	if (quaterna_used_end > quaterna)
 	{
 		// TODO: Consider fixing the number of quaterna to multiples of N to see if there's an unrolling advantage.
-		core::for_each<form::Quaterna *, FUNCTOR, 1>(quaterna, quaterna_used_end, step_size, f, parallel, true);
+		core::for_each<form::Quaterna *, FUNCTOR, 1>(quaterna, quaterna_used_end, step_size, f, parallel, PREFETCH_ARRAYS);
 	}
 }
