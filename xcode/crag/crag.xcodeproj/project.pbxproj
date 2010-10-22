@@ -125,6 +125,7 @@
 		5278B8DE11D5048500E2F375 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5279D15411D3B8D000BD9615 /* PlanetSphereCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetSphereCollisionFunctor.h; sourceTree = "<group>"; };
 		5279D15511D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetSphereCollisionFunctor.cpp; sourceTree = "<group>"; };
+		527B549E127146C300A7F1EA /* MeshProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshProperties.h; sourceTree = "<group>"; };
 		527C53CC11B9ACAF00F6C052 /* TextureMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureMapper.h; sourceTree = "<group>"; };
 		527C53CD11B9ACAF00F6C052 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
 		527CF8D112274AA700E7B3C5 /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
@@ -477,12 +478,13 @@
 		52DF193811E92CB500AF25A1 /* scene */ = {
 			isa = PBXGroup;
 			children = (
-				52483F5011ED865700D0BCB2 /* Polyhedron.cpp */,
-				52483F5111ED865700D0BCB2 /* Polyhedron.h */,
 				52DF193911E92CB500AF25A1 /* Mesh.cpp */,
 				52DF193A11E92CB500AF25A1 /* Mesh.h */,
 				52DF193B11E92CB500AF25A1 /* MeshBufferObject.cpp */,
 				52DF193C11E92CB500AF25A1 /* MeshBufferObject.h */,
+				527B549E127146C300A7F1EA /* MeshProperties.h */,
+				52483F5011ED865700D0BCB2 /* Polyhedron.cpp */,
+				52483F5111ED865700D0BCB2 /* Polyhedron.h */,
 				527F7AC211EB5F4B00E25B84 /* Scene.cpp */,
 				527F7AC311EB5F4B00E25B84 /* Scene.h */,
 				527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */,

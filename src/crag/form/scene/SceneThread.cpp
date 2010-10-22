@@ -142,8 +142,8 @@ void form::SceneThread::Tick()
 	
 	if (gfx::Debug::GetVerbosity() > .15)
 	{
-		//gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
-		//gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation_period) << '\n';
+		gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
+		gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation_period) << '\n';
 		
 		std::ios_base::fmtflags flags = gfx::Debug::out.flags(std::ios::fixed);
 		std::streamsize previous_precision = gfx::Debug::out.precision(10);
@@ -152,8 +152,6 @@ void form::SceneThread::Tick()
 		gfx::Debug::out.flags(flags);
 		gfx::Debug::out.precision(previous_precision);
 	}
-	
-	Assert(GetVisibleScene().GetNumNodesUsed() == GetVisibleScene().GetNumQuaternaUsed() * 4);
 	
 	if (gfx::Debug::GetVerbosity() > .72) 
 	{
@@ -190,7 +188,7 @@ void form::SceneThread::ForEachFormation(FormationFunctor & f) const
 	GetVisibleScene().ForEachFormation(f);
 }
 
-bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
+bool form::SceneThread::PollMesh(MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
@@ -203,7 +201,7 @@ bool form::SceneThread::PollMesh(form::MeshBufferObject & mbo)
 	
 	if (mesh_updated)
 	{
-		mbo.Set(mesh, mesh_origin, mesh.GetFlatShaded());
+		mbo.Set(mesh);
 
 		mesh_updated = false;
 		polled = true;
@@ -227,7 +225,8 @@ void form::SceneThread::ResetOrigin()
 
 void form::SceneThread::ToggleFlatShaded()
 {
-	mesh.SetFlatShaded(! mesh.GetFlatShaded());
+	bool & flat_shaded = mesh.GetProperties().flat_shaded;
+	flat_shaded = ! flat_shaded;
 }
 
 // Returns false if a new origin is needed.
@@ -443,10 +442,10 @@ void form::SceneThread::GenerateMesh()
 {
 	Assert(IsSceneThread());
 	
-	if (IsGrowing())
+/*	if (IsGrowing())
 	{
 		return;
-	}
+	}*/
 	
 	if (IsResetting())
 	{
@@ -468,7 +467,6 @@ void form::SceneThread::GenerateMesh()
 	
 	Scene & visible_scene = GetVisibleScene();
 	visible_scene.GenerateMesh(mesh);
-	mesh_origin = visible_scene.GetOrigin();
 	mesh_semaphore.Increment();
 
 	mesh_updated = true;

@@ -78,6 +78,7 @@ namespace core
 	{
 		if (prefetch)
 		{
+			Assert(false);
 			// Construct a new functor out of the given functor and a prefetch functor.
 			typedef void (* CHUNK_FUNCTOR_PREFETCH) (ITERATOR, ITERATOR);
 			CHUNK_FUNCTOR_PREFETCH cfp = PrefetchArray <ITERATOR>;

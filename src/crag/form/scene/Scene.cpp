@@ -164,6 +164,7 @@ void form::Scene::ForEachFormation(FormationFunctor & f) const
 void form::Scene::GenerateMesh(Mesh & mesh) 
 {
 	node_buffer.GenerateMesh(mesh);
+	mesh.GetProperties().origin = origin;
 }
 
 int form::Scene::GetNumNodesUsed() const

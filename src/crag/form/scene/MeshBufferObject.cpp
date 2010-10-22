@@ -20,19 +20,17 @@
 
 
 form::MeshBufferObject::MeshBufferObject()
-: origin(Vector3d::Zero())
-, max_index(0)
-, flat_shaded(false)
+: max_index(0)
+, properties(false)
 {
 }
 
-void form::MeshBufferObject::Set(form::Mesh const & mesh, Vector3d const & in_origin, bool in_flat_shaded)
+void form::MeshBufferObject::Set(form::Mesh const & mesh)
 {
 	SetVbo(mesh.GetVertices());
 	SetIbo(mesh.GetIndices());
 	
-	origin = in_origin;
-	flat_shaded = in_flat_shaded;
+	properties = mesh.GetProperties();
 }
 
 int form::MeshBufferObject::GetNumPolys() const
@@ -45,11 +43,11 @@ void form::MeshBufferObject::BeginDraw(gfx::Pov pov, bool color) const
 	Assert (max_index > 0);
 	
 	// Adjust our copy of the pov for mesh's origin and set as matrix.
-	pov.pos -= origin;
+	pov.pos -= properties.origin;
 	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
 	gl::LoadMatrix(pov.CalcModelViewMatrix().GetArray());
 	
-	if (flat_shaded) 
+	if (properties.flat_shaded) 
 	{
 		GLPP_CALL(glShadeModel(GL_FLAT));
 	}
@@ -95,7 +93,7 @@ void form::MeshBufferObject::EndDraw() const
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 
-	if (flat_shaded) 
+	if (properties.flat_shaded) 
 	{
 		GLPP_CALL(glShadeModel(GL_SMOOTH));
 	}

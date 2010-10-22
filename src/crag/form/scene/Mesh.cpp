@@ -24,10 +24,11 @@ namespace
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
 }
 
+
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)
 : vertices(max_num_verts)
 , indices(max_num_tris * 3)
-, flat_shaded(init_flat_shaded)
+, properties(init_flat_shaded)
 {
 }
 
@@ -37,14 +38,14 @@ void form::Mesh::Clear()
 	vertices.Clear();
 }
 
-void form::Mesh::SetFlatShaded(bool fs)
+form::MeshProperties & form::Mesh::GetProperties()
 {
-	flat_shaded = fs;
+	return properties;
 }
 
-bool form::Mesh::GetFlatShaded() const
+form::MeshProperties const & form::Mesh::GetProperties() const
 {
-	return flat_shaded;
+	return properties;
 }
 
 int form::Mesh::GetIndexCount() const
@@ -108,7 +109,7 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & norma
 	
 	Vertex & vert_a = GetVertex(a);
 	Vertex & vert_b = GetVertex(b);
-	Vertex & vert_c = (! flat_shaded) ? GetVertex(c) : AddVertex(c);
+	Vertex & vert_c = (! properties.flat_shaded) ? GetVertex(c) : AddVertex(c);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 	
@@ -142,18 +143,6 @@ void form::Mesh::Verify() const
 	
 	VerifyTrue ((indices.GetSize() % 3) == 0);
 	VerifyTrue ((indices.GetSlack() % 3) == 0);
-}
-#endif
-
-#if DUMP
-DUMP_OPERATOR_DEFINITION(form, Mesh)
-{
-	lhs << "Mesh:" << '\n';
-	
-	lhs << "vertices: " << rhs.vertices;
-	lhs << lhs.NewLine() << '\n';
-	lhs << "indices" << rhs.indices;
-	return lhs;
 }
 #endif
 

@@ -10,8 +10,10 @@
 
 #pragma once
 
+#include "Vertex.h"
+#include "MeshProperties.h"
+
 #include "glpp/Mesh.h"
-#include "form/scene/Vertex.h"
 
 
 namespace gfx 
@@ -34,7 +36,7 @@ namespace form
 	public:
 		MeshBufferObject();
 		
-		void Set(form::Mesh const & mesh, Vector3d const & origin, bool flat_shaded);
+		void Set(form::Mesh const & mesh);
 		int GetNumPolys() const;
 		
 		void BeginDraw(gfx::Pov pov, bool color) const;
@@ -46,8 +48,7 @@ namespace form
 		void SetVbo(VertexBuffer const & vertices);	
 		void SetIbo(gfx::IndexBuffer const & indices);
 		
-		Vector3d origin;
 		int max_index;
-		bool flat_shaded;		
+		MeshProperties properties;
 	};
 }
