@@ -55,7 +55,8 @@ namespace form
 		bool HasAllCousins() const
 		{
 			// Make sure all three cousins are available.
-			return triple[0].cousin != nullptr && triple[1].cousin != nullptr && triple[2].cousin != nullptr;
+			//return triple[0].cousin != nullptr && triple[1].cousin != nullptr && triple[2].cousin != nullptr;
+			return (size_t(triple[0].cousin) * size_t(triple[1].cousin) * size_t(triple[2].cousin)) != 0;
 		}
 
 		bool IsExpandable() const
