@@ -43,7 +43,7 @@ namespace
 	// If non-zero, this number of quaterna is enforced always.
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+	CONFIG_DEFINE (fix_num_quaterna, int, 40000);
 
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 	}
 
 	Quaterna * new_quaterna_used_end = quaterna + n;
-	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_end);
+	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_end + 1);
 	
 	if (new_quaterna_used_end == quaterna_used_end) 
 	{

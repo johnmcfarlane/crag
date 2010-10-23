@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Regulator.h"
 #include "Scene.h"
 
 #include "smp/Semaphore.h"
@@ -51,8 +52,8 @@ namespace form
 		void ToggleSuspended();
 		void Quit();
 		
-		//int GetTargetNumNodes() const;
-		void SetFrameRatio(float ratio);
+		void SampleFrameRatio(float ratio);
+		void ResetRegulator();
 
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
@@ -79,9 +80,7 @@ namespace form
 		void EndReset();
 
 		void AdjustNumQuaterna();
-		static int CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio);
-		static int CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float last_mesh_generation_period);
-		
+
 		void GenerateMesh();
 		
 		bool IsMainThread() const;
@@ -92,9 +91,7 @@ namespace form
 		// It's the active scene which is reshaped for LODding purposes (churned).
 		core::double_buffer<Scene> scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
-		
-		float frame_ratio;	// ~ (actual framerate / ideal framerate)
-		
+				
 		FormationSet const & formations;		
 		sim::Observer const & observer;
 		
@@ -110,12 +107,12 @@ namespace form
 		smp::Semaphore mesh_semaphore;
 		bool mesh_updated;
 		sys::TimeType mesh_generation_time;
-		sys::TimeType last_mesh_generation_period;
 
 		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
 		Thread thread;
 		
 		smp::Semaphore suspend_semaphore;
+		Regulator regulator;
 	};
 }
 

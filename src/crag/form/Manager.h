@@ -62,7 +62,7 @@ namespace form {
 		void AddFormation(Formation * formation);
 		void RemoveFormation(Formation * formation);
 		
-		void AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
+		void SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
 		void ToggleSceneThread();
 		void ToggleMeshGeneration();
 		void ToggleDynamicOrigin();
@@ -72,6 +72,7 @@ namespace form {
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh();
+		void ResetRegulator();
 
 		// Called by the Renderer.
 		void Render(gfx::Pov const & pov, bool color) const;

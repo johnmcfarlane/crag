@@ -26,6 +26,7 @@
 		527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC211EB5F4B00E25B84 /* Scene.cpp */; };
 		527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */; };
 		5282943F11DB17BF00611238 /* PlanetCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */; };
+		52887596127352650048AC81 /* Regulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52887595127352650048AC81 /* Regulator.cpp */; };
 		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
@@ -141,6 +142,8 @@
 		5282943D11DB17BF00611238 /* PlanetCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetCollisionFunctor.h; sourceTree = "<group>"; };
 		5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetCollisionFunctor.cpp; sourceTree = "<group>"; };
 		5284ED1C11FFFDCA0006A58D /* Ray3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray3.h; sourceTree = "<group>"; };
+		52887594127352650048AC81 /* Regulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Regulator.h; sourceTree = "<group>"; };
+		52887595127352650048AC81 /* Regulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Regulator.cpp; sourceTree = "<group>"; };
 		528ABA6911CF087400C2B411 /* SphericalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphericalBody.cpp; sourceTree = "<group>"; };
 		528ABA6A11CF087400C2B411 /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		528ABAF211CF2E3100C2B411 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
@@ -495,6 +498,8 @@
 				52DF193E11E92CB500AF25A1 /* Vertex.h */,
 				52DF193F11E92CB500AF25A1 /* VertexBuffer.cpp */,
 				52DF194011E92CB500AF25A1 /* VertexBuffer.h */,
+				52887594127352650048AC81 /* Regulator.h */,
+				52887595127352650048AC81 /* Regulator.cpp */,
 			);
 			path = scene;
 			sourceTree = "<group>";
@@ -817,6 +822,7 @@
 				5242D909125FF038007F7D90 /* ForEach.cpp in Sources */,
 				5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */,
 				5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */,
+				52887596127352650048AC81 /* Regulator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

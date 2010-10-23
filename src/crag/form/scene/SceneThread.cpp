@@ -27,10 +27,7 @@
 namespace 
 {
 	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
-	CONFIG_DEFINE (max_mesh_generation_period, sys::TimeType, 0.35f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.015f);
-	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
-
+	
 	PROFILE_DEFINE (scene_tick_period, .01);
 	PROFILE_DEFINE (scene_tick_per_quaterna, .1);
 	PROFILE_DEFINE (mesh_generation_period, .01);	
@@ -39,8 +36,7 @@ namespace
 
 
 form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
-: frame_ratio(-1)
-, formations(_formations)
+: formations(_formations)
 , observer(_observer)
 , threaded(_threaded)
 , reset_origin_flag(false)
@@ -49,7 +45,6 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , mesh(form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f))
 , mesh_updated(false)
 , mesh_generation_time(0)
-, last_mesh_generation_period(max_mesh_generation_period)
 , suspend_semaphore(1)
 {
 }
@@ -112,20 +107,18 @@ void form::SceneThread::Quit()
 	thread.Join();
 }
 
-void form::SceneThread::SetFrameRatio(float ratio)
+void form::SceneThread::SampleFrameRatio(float ratio)
 {
 	Assert(IsMainThread());
 	
-	float clipped_frame_ratio = Max(ratio, std::numeric_limits<float>::min());
-	
-	if (frame_ratio < 0)
-	{
-		frame_ratio = clipped_frame_ratio;
-	}
-	else 
-	{
-		frame_ratio = Max(frame_ratio, clipped_frame_ratio);
-	}
+	regulator.SampleFrameRatio(ratio);
+}
+
+// Should be called whenever there is the possability of a change in 
+// performance of the system, such as startup or on certain system messages.
+void form::SceneThread::ResetRegulator()
+{
+	regulator = Regulator();
 }
 
 void form::SceneThread::Tick()
@@ -196,7 +189,7 @@ bool form::SceneThread::PollMesh(MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
-	if (! mesh_semaphore.TryDecrement())
+	if (! mesh_updated || ! mesh_semaphore.TryDecrement())
 	{
 		return false;
 	}
@@ -376,70 +369,21 @@ void form::SceneThread::EndReset()
 
 void form::SceneThread::AdjustNumQuaterna()
 {
-	if (IsResetting() || frame_ratio < 0)
+	if (IsResetting())
 	{
 		return;
 	}
 	
-	Scene & active_scene = GetActiveScene();
-	
-	// Come up with two accounts of how many quaterna we should have.
+	// Get the regulator input.
+	Scene & active_scene = GetActiveScene();	
 	int current_num_quaterna = active_scene.GetNumQuaternaUsed();
-	int frame_ratio_directed_target_num_quaterna = CalculateFrameRateDirectedTargetNumQuaterna(current_num_quaterna, frame_ratio);
-	int mesh_generation_directed_target_num_quaterna = CalculateMeshGenerationDirectedTargetNumQuaterna(current_num_quaterna, static_cast<float>(last_mesh_generation_period));
-
-	// Pick the more conservative and submit it.
-	int target_num_quaterna = Min(mesh_generation_directed_target_num_quaterna, frame_ratio_directed_target_num_quaterna);
+	
+	// Calculate the regulator output.
+	int target_num_quaterna = regulator.GetAdjustedLoad(current_num_quaterna);
+	target_num_quaterna = Min(target_num_quaterna, int(NodeBuffer::max_num_quaterna));
+	
+	// Apply the regulator output.
 	active_scene.SetNumQuaternaUsedTarget(target_num_quaterna);
-	
-	// Reset the parameters used to come to a decision so
-	// we don't just keep acting on them over and over. 
-	last_mesh_generation_period = 0;
-	frame_ratio = -1;
-}
-
-// Taking into account the framerate ratio, come up with a quaterna count.
-int form::SceneThread::CalculateFrameRateDirectedTargetNumQuaterna(int current_num_quaterna, float frame_ratio) 
-{
-	// Attenuate/invert the frame_ratio.
-	// Thus is becomes a multiplier on the new number of nodes.
-	// A worse frame rate translates into a lower number of nodes
-	// and hopefully, things improve. 
-	float frame_ratio_log = Log(frame_ratio);
-	float frame_ratio_exp = Exp(frame_ratio_log * - frame_rate_reaction_coefficient);
-	
-	float num_quaterna = static_cast<float>(current_num_quaterna);	
-	
-	int frame_ratio_directed_target_num_quaterna = static_cast<int>(num_quaterna * frame_ratio_exp) + 1;
-	
-	// Ensure the value is suitably clamped. 
-	if (frame_ratio_directed_target_num_quaterna > NodeBuffer::max_num_quaterna)
-	{
-		frame_ratio_directed_target_num_quaterna = NodeBuffer::max_num_quaterna;
-	}
-	Assert(frame_ratio_directed_target_num_quaterna > 0);
-	
-	return frame_ratio_directed_target_num_quaterna;
-}
-
-// Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
-int form::SceneThread::CalculateMeshGenerationDirectedTargetNumQuaterna(int current_num_quaterna, float last_mesh_generation_period)
-{
-	// We're under budget so everything's ok.
-	if (last_mesh_generation_period < max_mesh_generation_period)
-	{
-		// As far as this function's concerned, increase the count to anything you like (within reason).
-		return NodeBuffer::max_num_quaterna;
-	}
-	
-	// Reset this so there isn't a continuous decrease in node-count before the next recording.
-	int mesh_generation_directed_target_num_quaterna = static_cast<int>(current_num_quaterna * max_mesh_generation_reaction_coefficient) - 1;
-	if (mesh_generation_directed_target_num_quaterna < 0)
-	{
-		mesh_generation_directed_target_num_quaterna = 0;
-	}
-	
-	return mesh_generation_directed_target_num_quaterna;
 }
 
 void form::SceneThread::GenerateMesh()
@@ -475,7 +419,8 @@ void form::SceneThread::GenerateMesh()
 
 	mesh_updated = true;
 	sys::TimeType t = sys::GetTime();
-	last_mesh_generation_period = t - mesh_generation_time;
+	sys::TimeType last_mesh_generation_period = t - mesh_generation_time;
+	regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
 	
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNumQuaternaUsed());

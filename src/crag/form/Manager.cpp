@@ -98,9 +98,9 @@ void form::Manager::RemoveFormation(form::Formation * formation)
 	formation_set.erase(formation);
 }
 
-void form::Manager::AdjustNumNodes(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
+void form::Manager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
 {
-	scene_thread->SetFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
+	scene_thread->SampleFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 }
 
 void form::Manager::ToggleSceneThread()
@@ -157,6 +157,11 @@ bool form::Manager::PollMesh()
 	}
 	
 	return false;
+}
+
+void form::Manager::ResetRegulator()
+{
+	scene_thread->ResetRegulator();
 }
 
 void form::Manager::Render(gfx::Pov const & pov, bool color) const

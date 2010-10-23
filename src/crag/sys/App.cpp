@@ -166,7 +166,7 @@ bool sys::GetEvent(Event & event)
 				
 			case SDL_ACTIVEEVENT:
 				SetFocus(event.active.gain != 0);
-				break;
+				return true;
 				
 			case SDL_KEYDOWN:
 				key_down [event.key.keysym.sym] = true;

@@ -61,7 +61,7 @@ namespace
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
 	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
 	
-	CONFIG_DEFINE (target_work_proportion, double, .95f);
+	CONFIG_DEFINE (target_work_proportion, double, .75f);
 	
 	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 2.f);
 
@@ -171,7 +171,7 @@ void sim::Simulation::Run()
 		// Adjust the number of nodes based on how well we're doing. 
 		// Take into account the tick duration AND the time it takes to poll a new mesh.
 		TimeType work_seconds = tick_seconds + running_poll_seconds;
-		formation_manager->AdjustNumNodes(work_seconds, target_work_seconds);
+		formation_manager->SampleFrameRatio(work_seconds, target_work_seconds);
 		
 		if (gfx::Debug::GetVerbosity() > .65)
 		{
@@ -200,7 +200,7 @@ void sim::Simulation::Tick()
 	}
 
 	// Tick the entities.
-	if (! paused && GetTime() > start_time + startup_grace_period) 
+	if (! paused && GetTime(true) > start_time + startup_grace_period) 
 	{
 		sim::Universe & universe = sim::Universe::Get();
 		universe.Tick();
@@ -252,7 +252,7 @@ void sim::Simulation::Render()
 	++ frame_count;
 	TimeType time = sys::GetTime();
 	TimeType delta = time - frame_count_reset_time;
-	if (delta > 1) 
+	if (frame_count == 60) 
 	{
 		frame_count_reset_time = time;
 		fps = static_cast<double>(delta) / frame_count;
@@ -306,6 +306,7 @@ bool sim::Simulation::HandleEvents()
 
 			case SDL_VIDEORESIZE:
 				scene.SetResolution(Vector2i(event.resize.w, event.resize.h));
+				formation_manager->ResetRegulator();
 				break;
 
 			case SDL_KEYDOWN:
@@ -313,6 +314,10 @@ bool sim::Simulation::HandleEvents()
 				{
 					return false;
 				}
+				break;
+				
+			case SDL_ACTIVEEVENT:
+				formation_manager->ResetRegulator();
 				break;
 
 			default:
