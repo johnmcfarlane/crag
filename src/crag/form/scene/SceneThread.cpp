@@ -28,7 +28,7 @@ namespace
 {
 	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
 	CONFIG_DEFINE (max_mesh_generation_period, sys::TimeType, 0.35f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.02f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient, float, 0.015f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 
 	PROFILE_DEFINE (scene_tick_period, .01);
