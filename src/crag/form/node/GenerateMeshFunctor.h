@@ -12,7 +12,6 @@
 
 #include "Node.h"
 #include "ForEachNodeFace.h"
-//#include "form/scene/Mesh.h"
 
 
 namespace form 

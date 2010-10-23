@@ -94,10 +94,17 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 {
 	Assert(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
-	indices.PushBack(vertices.GetIndex(a));
-	indices.PushBack(vertices.GetIndex(b));
-	indices.PushBack(vertices.GetIndex(c));
+	gfx::IndexBuffer::value_type corner_indices [3] = 
+	{
+		vertices.GetIndex(a),
+		vertices.GetIndex(b),
+		vertices.GetIndex(c)
+	};
 	
+	indices.PushBack(corner_indices);
+
+	// These additions are not thread-safe but I can't imagine it causing more
+	// than a minor inaccuracy in the normal calculation. 
 	a.norm += normal;
 	b.norm += normal;
 	c.norm += normal;
@@ -105,15 +112,11 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 
 void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
 {
-	Lock();
-	
 	Vertex & vert_a = GetVertex(a);
 	Vertex & vert_b = GetVertex(b);
 	Vertex & vert_c = (! properties.flat_shaded) ? GetVertex(c) : AddVertex(c);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
-	
-	Unlock();
 }
 
 form::VertexBuffer & form::Mesh::GetVertices() 
@@ -145,17 +148,3 @@ void form::Mesh::Verify() const
 	VerifyTrue ((indices.GetSlack() % 3) == 0);
 }
 #endif
-
-void form::Mesh::Lock() 
-{
-#if defined(THREAD_SAFE_MESH)
-	mutex.Lock();
-#endif
-}
-
-void form::Mesh::Unlock() 
-{
-#if defined(THREAD_SAFE_MESH)
-	mutex.Unlock();
-#endif
-}

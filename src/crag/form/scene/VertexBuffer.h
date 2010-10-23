@@ -12,14 +12,14 @@
 
 #include "form/scene/Vertex.h"
 
-#include <vector>
+#include "smp/vector.h"
 
 
 namespace form 
 {
-	class VertexBuffer : private std::vector<Vertex>
+	class VertexBuffer : private smp::vector<Vertex>
 	{
-		typedef std::vector<Vertex> Base;
+		typedef smp::vector<Vertex> Super;
 		
 	public:
 		VertexBuffer(int max_num_verts);

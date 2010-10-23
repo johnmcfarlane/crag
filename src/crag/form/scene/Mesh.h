@@ -17,12 +17,6 @@
 
 #include "core/debug.h"
 
-// TODO: Do we need this any more?
-#define THREAD_SAFE_MESH
-#if defined(THREAD_SAFE_MESH)
-#include "smp/Mutex.h"
-#endif
-
 
 namespace form
 {
@@ -65,16 +59,9 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
 		
 	private:
-		void Lock();
-		void Unlock();
-		
 		VertexBuffer vertices;
 		gfx::IndexBuffer indices;
 		MeshProperties properties;
-
-#if defined(THREAD_SAFE_MESH)
-		smp::Mutex mutex;
-#endif
 	};
 
 }

@@ -17,25 +17,23 @@
 
 
 form::VertexBuffer::VertexBuffer(int max_num_verts) 
+: Super(max_num_verts)
 {
-	Base::reserve(max_num_verts);
 }
 
 form::Vertex & form::VertexBuffer::PushBack()
 {
-	Assert(size() < capacity());
-	push_back(Vertex());
-	return back();
+	return grow(1);
 }
 
 void form::VertexBuffer::Clear()
 {
-	resize(0);
+	clear();
 }
 
 void form::VertexBuffer::NormalizeNormals()
 {
-	const_iterator end_iterator = Base::end();
+	const_iterator end_iterator = Super::end();
 	for (iterator i = begin(); i != end_iterator; ++ i)
 	{
 		Vector3f & normal = i->norm;
@@ -48,8 +46,6 @@ int form::VertexBuffer::GetIndex(Vertex const & v) const
 	Vertex const * array = & front();
 
 	int index = & v - array;
-	Assert(index >= 0 && static_cast<size_t>(index) < size());
-	Assert(& (* this)[index] == & v);
 	
 	return index;
 }

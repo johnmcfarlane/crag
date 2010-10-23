@@ -12,15 +12,15 @@
 
 #include "glpp/glpp.h"
 
-#include <vector>
+#include "smp/vector.h"
 
 
 namespace gfx
 {
 	
-	class IndexBuffer : private std::vector<GLuint>
+	class IndexBuffer : private smp::vector<GLuint>
 	{
-		typedef std::vector<GLuint> Super;
+		typedef smp::vector<GLuint> Super;
 
 	public:
 		IndexBuffer(int capacity);
@@ -44,9 +44,9 @@ namespace gfx
 		
 		void Clear();
 		
-		void PushBack(value_type index)
+		void PushBack(value_type corner_indices [3])
 		{
-			push_back(index);
+			grow(3, corner_indices);
 		}
 		
 		typedef Super::value_type value_type;

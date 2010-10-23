@@ -49,7 +49,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local function definitions
 
-	void UpdateQuaternaScore(form::Quaterna & q) 
+	inline void UpdateQuaternaScore(form::Quaterna & q) 
 	{
 		form::Node * parent = q.nodes[0].parent;
 		if (parent != nullptr) 
@@ -412,7 +412,7 @@ void form::NodeBuffer::UpdateNodeScores()
 
 void form::NodeBuffer::UpdateQuaternaScores()
 {
-	ForEachQuaterna(512, UpdateQuaternaScore, true);
+	ForEachQuaterna(128, UpdateQuaternaScore, true);
 	
 	// This basically says: "as far as I know, none of the quaterna are sorted."
 	quaterna_sorted_end = quaterna;
@@ -450,18 +450,13 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	mesh.Clear();
 
 	GenerateMeshFunctor mesh_functor(mesh);
-#if defined(THREAD_SAFE_MESH)
-	bool parallel = true;
-#else
-	bool parallel = false;
-#endif
 
 #if PREFETCH_ARRAYS
 	typedef void (* PrefetchFunctor) (Node & node);
 	PrefetchFunctor mesh_prefetch_functor = GenerateMeshPrefetchFunctor;
-	ForEachNode<PrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, parallel);
+	ForEachNode<PrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, true);
 #else
-	ForEachNode<GenerateMeshFunctor &>(512, mesh_functor, parallel);
+	ForEachNode<GenerateMeshFunctor &>(512, mesh_functor, true);
 #endif
 	
 	// TODO: Parallelize.

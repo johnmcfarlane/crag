@@ -40,6 +40,9 @@ namespace form
 		// The node version. 
 		void operator() (Node & node)
 		{
+			// TODO: After refactoring class to include ExpandNode functions,
+			// maybe cache off the quaterna which is next due to be the replacement.
+			// (Will this work in parallel?)
 			if (node.IsExpandable()) 
 			{
 				if (node_buffer.ExpandNode(node)) 

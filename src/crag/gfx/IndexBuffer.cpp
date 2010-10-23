@@ -22,8 +22,8 @@
 // IndexBuffer member definitions
 
 gfx::IndexBuffer::IndexBuffer(int buffer_capacity)
+: Super(buffer_capacity)
 {
-	reserve(buffer_capacity);
 }
 
 void gfx::IndexBuffer::Clear()
