@@ -53,9 +53,7 @@ public:
 	
 	void FastClear()
 	{
-#if ! defined(FAST_SCENE_RESET)
 		Assert(IsEmpty());
-#endif
 		InitFreeList();
 	}
 	

@@ -345,28 +345,11 @@ void form::NodeBuffer::InitKernel()
 
 void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 {
-#if defined(FAST_SCENE_RESET)
-	ZeroArray(nodes, (end - quaterna) * 4);
-#endif
-	
 	Node * n = nodes;
 	for (Quaterna * iterator = quaterna; iterator < end; n += 4, ++ iterator) {
 		iterator->parent_score = -1;
 		iterator->nodes = n;
 	}
-
-#if 0
-	// Update ranking parent score value.
-	for (Quaterna * iterator = quaterna; iterator != quaterna_available_end; ++ iterator) 
-	{
-		Assert(! iterator->nodes[0].IsInUse());
-		Assert(! iterator->nodes[1].IsInUse());
-		Assert(! iterator->nodes[2].IsInUse());
-		Assert(! iterator->nodes[3].IsInUse());
-		
-		iterator->parent_score = -1;
-	}
-#endif
 }
 
 void form::NodeBuffer::UpdateNodes()

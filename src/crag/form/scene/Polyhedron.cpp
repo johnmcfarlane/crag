@@ -101,12 +101,6 @@ void form::Polyhedron::SetOrigin(sim::Vector3 const & origin, PointBuffer & poin
 	Point * root_points[4];
 	root_node.GetPoints(root_points);
 	shader->InitRootPoints(root_points);
-	
-#if defined(SUPERFAST_SCENE_RESET)	
-	for (int depth = 0; ResetOrigin(root_node, point_buffer, depth); ++ depth)
-	{
-	}
-#endif
 }
 
 bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)

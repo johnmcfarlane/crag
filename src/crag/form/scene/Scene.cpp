@@ -113,10 +113,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 {
 	if (o != origin) 
 	{
-#if defined(MEGAFAST_SCENE_RESET)
-		sim::Vector3 origin_delta = o - origin;
-#endif
-		
 		node_buffer.LockTree();
 		origin = o;
 		
@@ -124,15 +120,7 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 		SetCameraRay(camera_ray);
 
 		// The difficult bit: fix all our data which relied on the old origin.
-#if defined(SUPERFAST_SCENE_RESET)
-		ResetPolyhedronOrigins();
-#elif defined(MEGAFAST_SCENE_RESET)
-		ResetPolyhedronOrigins();
-		VerifyObject(* this);
-		node_buffer.ResetNodeOrigins(origin_delta);
-#else
 		ResetFormations();
-#endif
 
 		node_buffer.UnlockTree();
 	}
@@ -304,11 +292,7 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron.root_node;
-#if defined(FAST_SCENE_RESET)
-	root_node.children = nullptr;
-#else
 	node_buffer.CollapseNode(root_node);
-#endif
 	
 	// Continue deinitialization somewhere a bit calmer.
 	polyhedron.Deinit(node_buffer.GetPoints());
