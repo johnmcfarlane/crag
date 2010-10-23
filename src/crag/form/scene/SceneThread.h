@@ -115,7 +115,6 @@ namespace form
 		typedef smp::Thread<SceneThread, & SceneThread::Run> Thread;
 		Thread thread;
 		
-		// TODO: Make non-thread mode work again.
 		smp::Semaphore suspend_semaphore;
 	};
 }

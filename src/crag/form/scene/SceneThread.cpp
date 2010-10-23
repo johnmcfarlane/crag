@@ -88,13 +88,17 @@ void form::SceneThread::Launch()
 void form::SceneThread::ToggleSuspended()
 {
 	suspend_flag = ! suspend_flag;
-	if (suspend_flag)
+	
+	if (threaded)
 	{
-		suspend_semaphore.Decrement();
-	}
-	else
-	{
-		suspend_semaphore.Increment();
+		if (suspend_flag)
+		{
+			suspend_semaphore.Decrement();
+		}
+		else
+		{
+			suspend_semaphore.Increment();
+		}
 	}
 }
 
@@ -128,7 +132,7 @@ void form::SceneThread::Tick()
 {
 	Assert(IsMainThread());
 
-	if (! threaded) 
+	if (! threaded && ! suspend_flag) 
 	{
 		TickThread();
 	}
