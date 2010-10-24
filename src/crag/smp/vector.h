@@ -193,22 +193,6 @@ namespace smp
 			return * pre_last;
 		}
 		
-		T & grow(size_type num, T * fillers)
-		{
-			// Increase the array.
-			T * pre_last = grow_uninit (num);
-			
-			// Initialize the new elements.
-			T const * post_last = pre_last + num;
-			for (T * it = pre_last; it != post_last; ++ it, ++ fillers)
-			{
-				new (it) T (* fillers);
-			}
-			
-			// Return the first of the new elements.
-			return * pre_last;
-		}
-		
 	private:
 		
 		// Grows the vector but doesn't initialize the newcomers.

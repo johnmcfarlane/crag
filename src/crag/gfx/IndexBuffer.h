@@ -44,9 +44,9 @@ namespace gfx
 		
 		void Clear();
 		
-		void PushBack(value_type corner_indices [3])
+		value_type & PushBack()
 		{
-			grow(3, corner_indices);
+			return grow(3);
 		}
 		
 		typedef Super::value_type value_type;

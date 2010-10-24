@@ -94,14 +94,10 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 {
 	Assert(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
-	gfx::IndexBuffer::value_type corner_indices [3] = 
-	{
-		vertices.GetIndex(a),
-		vertices.GetIndex(b),
-		vertices.GetIndex(c)
-	};
-	
-	indices.PushBack(corner_indices);
+	gfx::IndexBuffer::value_type * corner_indices = & indices.PushBack();
+	corner_indices [0] = vertices.GetIndex(a);
+	corner_indices [1] = vertices.GetIndex(b);
+	corner_indices [2] = vertices.GetIndex(c);
 
 	// These additions are not thread-safe but I can't imagine it causing more
 	// than a minor inaccuracy in the normal calculation. 
