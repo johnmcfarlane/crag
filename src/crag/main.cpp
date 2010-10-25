@@ -91,7 +91,7 @@ namespace
 			return false;
 		}
 
-		smp::Init(1);
+		smp::Init(0);
 
 		physics::Singleton physics_singleton;
 #if defined(USE_OPENCL)

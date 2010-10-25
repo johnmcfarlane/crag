@@ -28,9 +28,9 @@ namespace
 {
 	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
 	
-	PROFILE_DEFINE (scene_tick_period, .01);
+	PROFILE_DEFINE (scene_tick_period, .1);
 	PROFILE_DEFINE (scene_tick_per_quaterna, .1);
-	PROFILE_DEFINE (mesh_generation_period, .01);	
+	PROFILE_DEFINE (mesh_generation_period, .1);	
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .1);
 }
 

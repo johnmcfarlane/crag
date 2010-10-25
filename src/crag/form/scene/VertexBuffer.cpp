@@ -14,6 +14,16 @@
 
 #include "sys/memory.h"
 #include "geom/VectorOps.h"
+#include "core/for_each_chunk.h"
+
+
+namespace
+{
+	void Normalize(form::Vertex & v)
+	{
+		FastNormalize(v.norm);
+	}
+}
 
 
 form::VertexBuffer::VertexBuffer(int max_num_verts) 
@@ -33,13 +43,9 @@ void form::VertexBuffer::Clear()
 
 void form::VertexBuffer::NormalizeNormals()
 {
-	// TODO: Parallelize
-	const_iterator end_iterator = Super::end();
-	for (iterator i = begin(); i != end_iterator; ++ i)
-	{
-		Vector3f & normal = i->norm;
-		FastNormalize(normal);
-	}
+	typedef void (* FUNCTION)(form::Vertex & v);
+
+	core::for_each<iterator, FUNCTION, 1>(begin(), end(), 1024, Normalize, true, false);
 }
 
 int form::VertexBuffer::GetIndex(Vertex const & v) const
