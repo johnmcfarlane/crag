@@ -11,7 +11,7 @@
 #pragma once
 
 
-#if defined(GCC)
+#if defined(__GNUC__)
 #define AtomicFetchAndAdd(AUGEND, ADDEND) __sync_fetch_and_add(& AUGEND, ADDEND)
 #elif defined(WIN32)
 #define AtomicFetchAndAdd(AUGEND, ADDEND) _InterlockedExchangeAdd(& reinterpret_cast<volatile long &>(AUGEND), ADDEND)

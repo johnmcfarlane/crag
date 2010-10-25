@@ -197,7 +197,7 @@ template<typename T> inline T RadToDeg(T d)
 
 inline bool IsANumber(double n)
 {
-#if defined(GCC)
+#if defined(__GNUC__)
 	return std::isnan(n);
 #elif defined(WIN32)
 	return _isnan(n) == 0;
@@ -211,7 +211,7 @@ inline bool IsANumber(float n)
 
 inline bool IsFinite(double n)
 {
-#if defined(GCC)
+#if defined(__GNUC__)
 	return std::isinf(n);
 #elif defined(WIN32)
 	return _finite(n) != 0;

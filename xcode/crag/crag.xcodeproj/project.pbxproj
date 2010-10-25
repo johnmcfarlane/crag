@@ -172,6 +172,8 @@
 		52C53E2A11D8FC1000FA73AA /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
 		52C53E2B11D8FC1000FA73AA /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector4.h; sourceTree = "<group>"; };
 		52C53E2C11D8FC1000FA73AA /* VectorOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorOps.h; sourceTree = "<group>"; };
+		52C5DAC61275E0AE005F9AD4 /* intOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intOps.h; sourceTree = "<group>"; };
+		52C5DAC71275E0C4005F9AD4 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
 		52C6D6C312675EDC00672963 /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
 		52D03955124A5C5400E797B0 /* libode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libode.a; path = /usr/local/lib/libode.a; sourceTree = "<absolute>"; };
 		52DEDD8C125FEFC800C12C19 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
@@ -403,6 +405,7 @@
 		5284FFCE125F783E00E98C2C /* smp */ = {
 			isa = PBXGroup;
 			children = (
+				52C5DAC71275E0C4005F9AD4 /* atomic.h */,
 				52C6D6C312675EDC00672963 /* Lock.h */,
 				52DEDD8C125FEFC800C12C19 /* Mutex.cpp */,
 				52DEDD8D125FEFC800C12C19 /* Mutex.h */,
@@ -539,6 +542,7 @@
 		52F3A30711A7979400385922 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				52C5DAC61275E0AE005F9AD4 /* intOps.h */,
 				52AE314712592C7B0066FF5B /* chunk_functor.h */,
 				52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */,
 				52C53E1A11D8FBF500FA73AA /* ConfigEntry.h */,
