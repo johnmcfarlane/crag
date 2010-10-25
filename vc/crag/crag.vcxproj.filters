@@ -240,6 +240,9 @@
     <ClCompile Include="..\..\src\crag\smp\ThreadCondition.cpp">
       <Filter>src\crag\smp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\crag\form\scene\Regulator.cpp">
+      <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\crag\gfx\Color.h">
@@ -579,6 +582,24 @@
       <Filter>src\crag\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\crag\core\for_each_chunk.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\scene\MeshProperties.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\form\scene\Regulator.h">
+      <Filter>src\crag\form\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\Lock.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\vector.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\atomic.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\intOps.h">
       <Filter>src\crag\core</Filter>
     </ClInclude>
   </ItemGroup>

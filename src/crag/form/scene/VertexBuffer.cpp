@@ -33,6 +33,7 @@ void form::VertexBuffer::Clear()
 
 void form::VertexBuffer::NormalizeNormals()
 {
+	// TODO: Parallelize
 	const_iterator end_iterator = Super::end();
 	for (iterator i = begin(); i != end_iterator; ++ i)
 	{

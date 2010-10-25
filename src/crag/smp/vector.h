@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "atomic.h"
+
 
 namespace smp
 {
@@ -200,7 +202,7 @@ namespace smp
 		{
 			size_type & last_bytes = reinterpret_cast<size_type &> (last);
 			size_type increment_bytes = sizeof(T) * num;
-			size_type fetched_bytes = __sync_fetch_and_add (& last_bytes, increment_bytes);
+			size_type fetched_bytes = AtomicFetchAndAdd (last_bytes, increment_bytes);
 			return reinterpret_cast<T *> (fetched_bytes);
 		}
 		
@@ -210,7 +212,7 @@ namespace smp
 			size_type c_bytes = sizeof(T) * c;
 			
 			// Allocate the buffer and set first and last to the start of it.
-			char * buffer = reinterpret_cast<char *> (Allocate (c_bytes, sizeof(T)));
+			char * buffer = reinterpret_cast<char *> (Allocate (c_bytes, CalculateAlignment(sizeof(T))));
 			first = last = reinterpret_cast<T *> (buffer);
 			
 			// Set everything to end of buffer.

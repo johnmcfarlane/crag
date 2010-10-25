@@ -119,6 +119,19 @@ template<typename T> inline void PrefetchObject(T const & object)
 ////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
+// Given an element of size, type_size, 
+// calculate the optimum alignment for array allocation.
+inline size_t CalculateAlignment(size_t type_size)
+{
+	size_t alignment = 1;
+	while ((type_size & 1) == 0)
+	{
+		alignment <<= 1;
+		type_size >>= 1;
+	}
+	return alignment;
+}
+
 inline void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *))
 {
 #if defined(WIN32)

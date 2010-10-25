@@ -31,8 +31,7 @@ profile::Meter::operator profile::Scalar () const
 
 void profile::Meter::Submit (Scalar sample)
 {
-	Assert(sample >= 0);
-	if (! std::isnan(sample) && ! std::isinf(sample))
+	if (IsANumber(sample) && IsFinite(sample))
 	{
 		Assert(sample != std::numeric_limits<Scalar>::infinity());
 		Assert(change_coefficient > 0 && change_coefficient < 1);
@@ -56,11 +55,11 @@ profile::Timer::Timer()
 {
 }
 
-profile::Timer::operator Scalar () const
+profile::Timer::operator profile::Scalar () const
 {
 	sys::TimeType now = sys::GetTime();
 	sys::TimeType duration = now - start_time;
-	return duration;
+	return profile::Scalar(duration);
 }
 
 #endif

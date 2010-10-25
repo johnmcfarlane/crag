@@ -195,6 +195,34 @@ template<typename T> inline T RadToDeg(T d)
 	return d * static_cast<T>(180.0 / PI); 
 }
 
+inline bool IsANumber(double n)
+{
+#if defined(GCC)
+	return std::isnan(n);
+#elif defined(WIN32)
+	return _isnan(n) == 0;
+#endif
+}
+
+inline bool IsANumber(float n)
+{
+	return IsANumber(double(n));
+}
+
+inline bool IsFinite(double n)
+{
+#if defined(GCC)
+	return std::isinf(n);
+#elif defined(WIN32)
+	return _finite(n) != 0;
+#endif
+}
+
+inline bool IsFinite(float n)
+{
+	return IsFinite(double(n));
+}
+
 
 // Trigonometry
 

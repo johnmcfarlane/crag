@@ -35,6 +35,7 @@
     <ClCompile Include="..\..\src\crag\form\scene\Mesh.cpp" />
     <ClCompile Include="..\..\src\crag\form\scene\MeshBufferObject.cpp" />
     <ClCompile Include="..\..\src\crag\form\scene\Polyhedron.cpp" />
+    <ClCompile Include="..\..\src\crag\form\scene\Regulator.cpp" />
     <ClCompile Include="..\..\src\crag\form\scene\Scene.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)form_scene_scene.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)form_scene_scene.obj</ObjectFileName>
@@ -102,6 +103,7 @@
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
     <ClInclude Include="..\..\src\crag\core\for_each.h" />
     <ClInclude Include="..\..\src\crag\core\for_each_chunk.h" />
+    <ClInclude Include="..\..\src\crag\core\intOps.h" />
     <ClInclude Include="..\..\src\crag\core\Pool.h" />
     <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
@@ -124,7 +126,9 @@
     <ClInclude Include="..\..\src\crag\form\node\Shader.h" />
     <ClInclude Include="..\..\src\crag\form\scene\Mesh.h" />
     <ClInclude Include="..\..\src\crag\form\scene\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\MeshProperties.h" />
     <ClInclude Include="..\..\src\crag\form\scene\Polyhedron.h" />
+    <ClInclude Include="..\..\src\crag\form\scene\Regulator.h" />
     <ClInclude Include="..\..\src\crag\form\scene\Scene.h" />
     <ClInclude Include="..\..\src\crag\form\scene\SceneThread.h" />
     <ClInclude Include="..\..\src\crag\form\scene\Vertex.h" />
@@ -193,12 +197,15 @@
     <ClInclude Include="..\..\src\crag\sim\Star.h" />
     <ClInclude Include="..\..\src\crag\sim\Universe.h" />
     <ClInclude Include="..\..\src\crag\sim\UserInput.h" />
+    <ClInclude Include="..\..\src\crag\smp\atomic.h" />
     <ClInclude Include="..\..\src\crag\smp\ForEach.h" />
+    <ClInclude Include="..\..\src\crag\smp\Lock.h" />
     <ClInclude Include="..\..\src\crag\smp\Mutex.h" />
     <ClInclude Include="..\..\src\crag\smp\Semaphore.h" />
     <ClInclude Include="..\..\src\crag\smp\SimpleMutex.h" />
     <ClInclude Include="..\..\src\crag\smp\Thread.h" />
     <ClInclude Include="..\..\src\crag\smp\ThreadCondition.h" />
+    <ClInclude Include="..\..\src\crag\smp\vector.h" />
     <ClInclude Include="..\..\src\crag\sys\App.h" />
     <ClInclude Include="..\..\src\crag\sys\memory.h" />
   </ItemGroup>
