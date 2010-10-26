@@ -33,8 +33,7 @@ public:
 	enum 
 	{ 
 		BIT_COUNT = 0,
-		FIELD_SIZE = 0,
-		ALIGN_SIZE = 0
+		FIELD_SIZE = 0
 	};
 };
 
