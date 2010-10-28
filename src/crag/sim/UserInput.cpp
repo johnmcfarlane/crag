@@ -57,8 +57,8 @@ namespace
 	InputKeyMapping const keys[] = 
 	{
 		// Arrow keys
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_LEFT },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_RIGHT },
+		{ { sim::Controller::Impulse::TORQUE, axes::UP, +1 }, KEY_LEFT },
+		{ { sim::Controller::Impulse::TORQUE, axes::UP, -1 }, KEY_RIGHT },
 		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, KEY_UP },
 		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, KEY_DOWN },
 		
@@ -84,6 +84,9 @@ namespace
 		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_LSHIFT },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_RCTRL },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_LCTRL },
+		
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_COMMA },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_PERIOD },
 		
 		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, KEY_MAX }
 	};
