@@ -187,6 +187,11 @@ ANONYMOUS_BEGIN
 		tris.Clear();
 	}
 	
+	void ResetStream()
+	{
+		ANONYMOUS::out_stream.str("");
+	}
+
 	void DrawText()
 	{
 		if (! (* font))
@@ -194,13 +199,14 @@ ANONYMOUS_BEGIN
 			return;
 		}
 		
-		char test[1024];
-		strcpy(test, out_stream.str().c_str());
+		size_t const max_string_size = 1024;
+		char test[max_string_size + 1];
+		strncpy(test, out_stream.str().c_str(), max_string_size);
 		
 		Vector2i p = Vector2i::Zero();
 		font->Print(test, p);
 		
-		out_stream.str("");
+		ResetStream();
 	}
 
 ANONYMOUS_END
