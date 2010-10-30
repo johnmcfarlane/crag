@@ -25,6 +25,8 @@ form::MeshBufferObject::MeshBufferObject()
 {
 }
 
+// TODO: http://www.opengl.org/wiki/Vertex_Specification_Best_Practices
+// TODO: Section "Dynamic VBO" - test the glBufferData(NULL) thing once and for all.
 void form::MeshBufferObject::Set(form::Mesh const & mesh)
 {
 	SetVbo(mesh.GetVertices());

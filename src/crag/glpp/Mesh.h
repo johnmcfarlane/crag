@@ -57,6 +57,13 @@ namespace gl
 			glDrawElements (mode, max_index - min_index, GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(sizeof(int) * min_index));
 		}
 		
+		void Clear()
+		{
+			Bind();
+			vbo.Set(0, nullptr);
+			ibo.Set(0, nullptr);
+		}
+		
 		bool IsBound() const
 		{
 			return vbo.IsBound() && ibo.IsBound();

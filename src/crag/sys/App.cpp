@@ -59,7 +59,7 @@ namespace
 }
 
 
-bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
+bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char const * title)
 {
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -68,9 +68,9 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 		return false;
 	}
 	
-	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
-	SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 1 );
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, enable_vsync ? 1 : 0);
 	
 	// Get existing video info.
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
@@ -87,7 +87,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	if (full_screen)
 	{
 		resolution.x = video_info->current_w;
-		resolution.y = video_info->current_h	;
+		resolution.y = video_info->current_h;
 		flags |= SDL_FULLSCREEN;
 	}
 	

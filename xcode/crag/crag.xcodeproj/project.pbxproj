@@ -542,7 +542,6 @@
 		52F3A30711A7979400385922 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				52C5DAC61275E0AE005F9AD4 /* intOps.h */,
 				52AE314712592C7B0066FF5B /* chunk_functor.h */,
 				52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */,
 				52C53E1A11D8FBF500FA73AA /* ConfigEntry.h */,
@@ -555,6 +554,7 @@
 				52F3A30F11A7979400385922 /* floatOps.h */,
 				52A2CD6D126113A600DFCDF6 /* for_each.h */,
 				52AE3145125925ED0066FF5B /* for_each_chunk.h */,
+				52C5DAC61275E0AE005F9AD4 /* intOps.h */,
 				52F3A31611A7979400385922 /* Pool.h */,
 				526D03A011BF658500F025A9 /* profile.cpp */,
 				526D03A111BF658500F025A9 /* profile.h */,
@@ -570,11 +570,11 @@
 		52F3A32311A7979400385922 /* form */ = {
 			isa = PBXGroup;
 			children = (
+				52F3A32C11A7979400385922 /* Manager.cpp */,
 				5278B8DE11D5048500E2F375 /* defs.h */,
 				52F3A32611A7979400385922 /* Formation.cpp */,
 				52F3A32711A7979400385922 /* Formation.h */,
 				522CAF7A11D264CD002A3FAE /* FormationFunctor.h */,
-				52F3A32C11A7979400385922 /* Manager.cpp */,
 				52F3A32D11A7979400385922 /* Manager.h */,
 				52DF18E611E8FF1C00AF25A1 /* node */,
 				52DF193811E92CB500AF25A1 /* scene */,

@@ -36,7 +36,9 @@ namespace form
 		
 		sys::TimeType reset_time;
 		
-		float frame_ratio;	// ~ (actual frame time / ideal frame time), i.e. greater is worse
+		float frame_ratio_sum;	// ~ (actual frame time / ideal frame time), i.e. greater is worse
+		int frame_ratio_count;
+		
 		float mesh_generation_period;	// again, greater is worse
 	};
 

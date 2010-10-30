@@ -17,18 +17,20 @@
 
 namespace 
 {
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_base, float, 0.01f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient_base, float, 0.015f);
 	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost, float, 0.05f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 2.f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 3.f);
 	
-	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
+	// TODO: Base it on full scene thread cycle.
+	CONFIG_DEFINE (max_mesh_generation_period, float, 1.35f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 }
 
 
 form::Regulator::Regulator()
 : reset_time (sys::GetTime())
-, frame_ratio(-1)
+, frame_ratio_sum(0)
+, frame_ratio_count(0)
 , mesh_generation_period(-1)
 {
 }
@@ -37,8 +39,12 @@ form::Regulator::Regulator()
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameRatio(float fr)
 {
-	float clipped_frame_ratio = Max(fr, std::numeric_limits<float>::min());
-	frame_ratio = Max(frame_ratio, clipped_frame_ratio);
+	Assert(fr >= 0);
+
+	//	frame_ratio_sum += fr;
+	//	++ frame_ratio_count;
+	frame_ratio_sum = Max(frame_ratio_sum, fr);
+	frame_ratio_count = 1;
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
@@ -49,12 +55,6 @@ void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 
 int form::Regulator::GetAdjustedLoad(int current_load)
 {
-	// TODO: Do we want a similar rule for mesh generation?
-	if (frame_ratio < 0)
-	{
-		return current_load;
-	}
-	
 	// Come up with two accounts of how many quaterna we should have.
 	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(current_load);
 	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(current_load);
@@ -62,11 +62,27 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 	// Pick the more conservative of the two numbers.
 	int adjusted_load = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
 	
+#if ! defined(NDEBUG)
+	if (adjusted_load < current_load)
+	{
+		int less_nodes = 1;
+	}
+	else if (adjusted_load > current_load)
+	{
+		int more_nodes = 1;
+	}
+	else
+	{
+		int no_change = 1;
+	}
+#endif
+
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
 	mesh_generation_period = -1;
-	frame_ratio = -1;
-
+	frame_ratio_sum = 0;
+	frame_ratio_count = 0;
+	
 	// return the result
 	return adjusted_load;
 }
@@ -74,33 +90,54 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 // Taking into account the framerate ratio, come up with a quaterna count.
 int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load) const
 {
+	// No samples to measure from?
+	if (frame_ratio_count == 0)
+	{
+		// Don't recommend any change.
+		return current_load;
+	}
+	
 	sys::TimeType t = sys::GetTime() - reset_time;
+	float frame_ratio_avg = frame_ratio_sum / frame_ratio_count;
+	if (frame_ratio_avg <= 0)
+	{
+		Assert(frame_ratio_avg == 0);
+		return current_load + 1;
+	}
 	
 	// Attenuate/invert the frame_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
-	float frame_ratio_log = Log(frame_ratio);
+	float frame_ratio_log = Log(frame_ratio_avg);
 	float frame_ratio_exp = Exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(t));
 	
-	int frame_ratio_directed_target_num_quaterna = static_cast<int>(static_cast<float>(current_load) * frame_ratio_exp) + 1;
+	float exact_target_load = static_cast<float>(current_load) * frame_ratio_exp;
+	int target_load = static_cast<int>(exact_target_load);
+	
+	if (target_load == current_load)
+	{
+		if (exact_target_load >= 0)
+		{
+			++ target_load;
+		}
+		else 
+		{
+			-- target_load;
+		}
+	}
 	
 	// Ensure the value is suitably clamped. 
-	Assert(frame_ratio_directed_target_num_quaterna > 0);
+	Assert(target_load >= 0);
 	
-	return frame_ratio_directed_target_num_quaterna;
+	return target_load;
 }
 
 // Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
 int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load) const
 {
-	// If we don't have a current reading.
-	if (mesh_generation_period < 0)
-	{
-	}
-	
-	// We're under budget so everything's ok.
-	if (mesh_generation_period < max_mesh_generation_period)
+	// If we don't have a current reading or we're under budget everything's ok.
+	if (mesh_generation_period < 0 || mesh_generation_period < max_mesh_generation_period)
 	{
 		// As far as this function's concerned, increase the count to anything you like (within reason).
 		return std::numeric_limits<int>::max();

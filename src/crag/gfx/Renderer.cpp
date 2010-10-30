@@ -30,6 +30,10 @@
 #include "sim/Universe.h"	// TODO: Doesn't belong here.
 
 
+using sys::TimeType;
+using sys::GetTime;
+
+
 #if ! defined(NDEBUG)
 extern gl::TextureRgba8 const * test_texture;
 #endif
@@ -85,9 +89,13 @@ namespace
 
 
 gfx::Renderer::Renderer()
-: culling(init_culling)
+: last_frame_time(GetTime())
+, culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
+, fps(0)
+, frame_count(0)
+, frame_count_reset_time(last_frame_time)
 {
 	InitRenderState();
 }
@@ -193,31 +201,73 @@ void gfx::Renderer::ToggleWireframe()
 	wireframe = ! wireframe;
 }
 
-void gfx::Renderer::Render(Scene & scene) const
+TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 {
-	VerifyRenderState();
+	// Render the scene to the back buffer.
+	RenderScene(scene);	
 
-	RenderScene(scene);
-
-#if (SHADOW_MAP_TEST >= 1)
-	if (shadow_mapping) {
-		DrawShadowMapTest(quad_buffer, scene.shadow_maps);
+	TimeType frame_time;
+	
+	// A guestimate of the time spent waiting for vertical synchronization. 
+	TimeType idle;
+	
+	// Flip the front and back buffers and get timing information.
+	if (enable_vsync)
+	{
+		// I have no idea why this works, or seems to work
+		// or works on my hardware, or even seems to work on my hardware
+		// but it often does. I'm especially baffled by the glFlush().
+		
+		glFlush();
+		TimeType pre_finish = GetTime();
+		SDL_GL_SwapBuffers();
+		glFinish();
+		frame_time = GetTime();
+		idle = frame_time - pre_finish;
 	}
-#endif
+	else
+	{
+		SDL_GL_SwapBuffers();
+		frame_time = GetTime();
+		idle = 0;
+	}
 
-	VerifyRenderState();
+	if (Debug::GetVerbosity() > .4) 
+	{
+		Debug::out << "idle:" << idle << '\n';
+	}
+
+	// Independant stat counters for measuring the FPS.
+	++ frame_count;
+	sys::TimeType fps_delta = frame_time - frame_count_reset_time;
+	if (frame_count == 60) 
+	{
+		frame_count_reset_time = frame_time;
+		fps = static_cast<double>(fps_delta) / frame_count;
+		frame_count = 0;
+	}
+	
+	// Calculate the amount of time from the last frame to this one.
+	sys::TimeType frame_delta = frame_time - last_frame_time;
+	Assert(frame_delta >= idle);
+	last_frame_time = frame_time;
+
+	// Return the frame delta - our basic performance metric.
+	return frame_delta - idle * .75;
 }
 
 void gfx::Renderer::RenderScene(Scene const & scene) const
 {
 	VerifyRenderState();
 
-	if (scene.skybox != nullptr) {
+	if (scene.skybox != nullptr) 
+	{
 		// Draw skybox.
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 		RenderSkybox(* scene.skybox, scene.pov);
 	}
-	else {
+	else 
+	{
 		// Clear screen.
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
@@ -393,13 +443,20 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 //	test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
 //	Debug::AddFrustum(test);
 	
-	if (Debug::GetVerbosity() > .3) {
+	if (Debug::GetVerbosity() > .1) 
+	{
+		Debug::out << "fps:" << 1. / fps << '\n';
+	}
+	
+	if (Debug::GetVerbosity() > .3) 
+	{
 		std::streamsize previous_precision = Debug::out.precision(10);
 		Debug::out << "pos:" << pov.pos << '\n';
 		Debug::out.precision(previous_precision);
 	}
 	
-	if (Debug::GetVerbosity() > .9) {
+	if (Debug::GetVerbosity() > .9) 
+	{
 		std::streamsize previous_precision = Debug::out.precision(2);
 		Debug::out << "rot:" << pov.rot << '\n';
 		Debug::out.precision(previous_precision);

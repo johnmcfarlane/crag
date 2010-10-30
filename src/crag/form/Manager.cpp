@@ -152,6 +152,7 @@ bool form::Manager::PollMesh()
 	
 	if (scene_thread->PollMesh(mesh_buffers.back()))
 	{
+		mesh_buffers.front().Clear();
 		mesh_buffers.flip();
 		return true;
 	}

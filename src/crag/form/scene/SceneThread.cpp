@@ -10,8 +10,9 @@
 
 #include "pch.h"
 
-#include "form/scene/SceneThread.h"
-#include "form/Manager.h"
+#include "SceneThread.h"
+#include "Manager.h"
+#include "Mesh.h"
 
 #include "sim/Observer.h"
 #include "sim/axes.h"
@@ -42,11 +43,19 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , reset_origin_flag(false)
 , suspend_flag(false)
 , quit_flag(false)
-, mesh(form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f))
-, mesh_updated(false)
+//, mesh_updated(false)
+, back_buffer_ready(false)
 , mesh_generation_time(0)
 , suspend_semaphore(1)
 {
+	meshes [0] = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
+	meshes [1] = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
+}
+
+form::SceneThread::~SceneThread()
+{
+	delete meshes [0];
+	delete meshes [1];
 }
 
 #if VERIFY
@@ -189,28 +198,15 @@ bool form::SceneThread::PollMesh(MeshBufferObject & mbo)
 {
 	Assert(IsMainThread());
 	
-	if (! mesh_updated || ! mesh_semaphore.TryDecrement())
+	if (back_buffer_ready)
 	{
-		return false;
-	}
-		
-	bool polled;
-	
-	if (mesh_updated)
-	{
-		mbo.Set(mesh);
-
-		mesh_updated = false;
-		polled = true;
-	}
-	else
-	{
-		polled = false;
+		meshes.flip();
+		back_buffer_ready = false;
 	}
 	
-	mesh_semaphore.Increment();
+	mbo.Set(* meshes.front());
 	
-	return polled;
+	return true;
 }
 
 void form::SceneThread::ResetOrigin()
@@ -222,8 +218,10 @@ void form::SceneThread::ResetOrigin()
 
 void form::SceneThread::ToggleFlatShaded()
 {
-	bool & flat_shaded = mesh.GetProperties().flat_shaded;
+	bool flat_shaded = meshes[0]->GetProperties().flat_shaded;
 	flat_shaded = ! flat_shaded;
+	meshes[0]->GetProperties().flat_shaded = flat_shaded;
+	meshes[1]->GetProperties().flat_shaded = flat_shaded;
 }
 
 // Returns false if a new origin is needed.
@@ -380,7 +378,7 @@ void form::SceneThread::AdjustNumQuaterna()
 	
 	// Calculate the regulator output.
 	int target_num_quaterna = regulator.GetAdjustedLoad(current_num_quaterna);
-	target_num_quaterna = Min(target_num_quaterna, int(NodeBuffer::max_num_quaterna));
+	Clamp(target_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
 	
 	// Apply the regulator output.
 	active_scene.SetNumQuaternaUsedTarget(target_num_quaterna);
@@ -390,34 +388,16 @@ void form::SceneThread::GenerateMesh()
 {
 	Assert(IsSceneThread());
 	
-/*	if (IsGrowing())
+	if (IsResetting() || back_buffer_ready)
 	{
-		return;
-	}*/
-	
-	if (IsResetting())
-	{
-		return;
-	}
-	
-	if (mesh_updated)
-	{
-		// No point making multiple meshes if main thread isn't polling them fast enough.
-		return;
-	}
-	
-	if (! mesh_semaphore.TryDecrement())
-	{
-		// Don't wait around if current mesh is being read by main thread;
-		// This thread should be locked as little as possible.
 		return;
 	}
 	
 	Scene & visible_scene = GetVisibleScene();
-	visible_scene.GenerateMesh(mesh);
-	mesh_semaphore.Increment();
+	visible_scene.GenerateMesh(* meshes.back());
+	
+	back_buffer_ready = true;
 
-	mesh_updated = true;
 	sys::TimeType t = sys::GetTime();
 	sys::TimeType last_mesh_generation_period = t - mesh_generation_time;
 	regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);

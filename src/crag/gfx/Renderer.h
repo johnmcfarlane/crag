@@ -15,13 +15,14 @@
 
 #include "sim/defs.h"
 
-#include "core/Singleton.h"
+#include "sys/App.h"
 
 
 namespace sim
 {
 	class Entity;
 }
+
 
 namespace gfx
 {
@@ -35,8 +36,10 @@ namespace gfx
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Renderer : public core::Singleton<Renderer>
+	class Renderer
 	{
+		OBJECT_NO_COPY(Renderer);
+		
 		enum ForegroundRenderPass
 		{
 			NormalPass,
@@ -57,7 +60,8 @@ namespace gfx
 		void ToggleLighting();
 		void ToggleWireframe();
 		
-		void Render(Scene & scene) const;
+		// Returns the estimated time thread was busy this frame.
+		sys::TimeType Render(Scene & scene, bool enable_vsync);
 	private:
 		void RenderScene(Scene const & scene) const;
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
@@ -69,6 +73,8 @@ namespace gfx
 		
 		gl::FrameBuffer frame_buffer;
 		gl::RenderBuffer depth_buffer;
+		
+		sys::TimeType last_frame_time;
 		
 		bool culling;
 		bool lighting;
@@ -82,8 +88,8 @@ namespace gfx
 
 		static StateParam const init_state[];
 
-#if (SHADOW_MAP_TEST >= 1)
-		mutable gl::Vbo2dTex quad_buffer;
-#endif
+		double fps;
+		int frame_count;
+		sys::TimeType frame_count_reset_time;
 	};
 }

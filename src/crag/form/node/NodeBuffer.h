@@ -46,6 +46,7 @@ namespace form
 		
 		// Constants
 		enum {
+			min_num_quaterna = 256,
 			max_num_quaterna = 262144,
 			max_num_nodes = max_num_quaterna << 2,
 			max_num_verts = max_num_nodes * 2,

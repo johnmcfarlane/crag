@@ -21,7 +21,6 @@
 
 #include "physics/Singleton.h"
 #include "cl/Singleton.h"
-#include "gfx/Renderer.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -68,14 +67,16 @@ int main(int /*argc*/, char * * /*argv*/)
 namespace 
 {
 
-	CONFIG_DEFINE (resolution_x, int, 960);
-	CONFIG_DEFINE (resolution_y, int, 720);
+	CONFIG_DEFINE (video_resolution_x, int, 800);
+	CONFIG_DEFINE (video_resolution_y, int, 600);
 
 	#if defined(PROFILE)
-		CONFIG_DEFINE (full_screen, bool, false);
+		CONFIG_DEFINE (video_full_screen, bool, false);
 	#else
-		CONFIG_DEFINE (full_screen, bool, true);
+		CONFIG_DEFINE (video_full_screen, bool, true);
 	#endif
+	
+	CONFIG_DEFINE (video_vsync, bool, true);
 
 	char const config_filename[] = "crag.cfg";
 
@@ -86,7 +87,7 @@ namespace
 
 	bool Crag()
 	{
-		if (! sys::Init(Vector2i(resolution_x, resolution_y), full_screen, "Crag"))
+		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, video_vsync, "Crag"))
 		{
 			return false;
 		}
@@ -97,12 +98,11 @@ namespace
 #if defined(USE_OPENCL)
 		cl::Singleton cl_singleton;
 #endif
-		gfx::Renderer renderer;
 		sim::Universe universe;
 		
 		// Run the simulation.
 		{
-			sim::Simulation simulation;
+			sim::Simulation simulation (video_vsync);
 			simulation.Run();
 		}
 

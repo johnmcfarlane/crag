@@ -25,6 +25,8 @@
 #define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER_ARB
 #define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB
 #define GLPP_STATIC_DRAW					GL_STATIC_DRAW_ARB
+#define GLPP_DYNAMIC_DRAW					GL_DYNAMIC_DRAW_ARB 
+#define GLPP_STREAM_DRAW					GL_STREAM_DRAW_ARB 
 #else
 #define glppBindBuffer						glBindBuffer
 #define glppBufferData						glBufferData
@@ -36,6 +38,8 @@
 #define GLPP_ELEMENT_ARRAY_BUFFER			GL_ELEMENT_ARRAY_BUFFER
 #define GLPP_ELEMENT_ARRAY_BUFFER_BINDING	GL_ELEMENT_ARRAY_BUFFER_BINDING
 #define GLPP_STATIC_DRAW					GL_STATIC_DRAW
+#define GLPP_DYNAMIC_DRAW					GL_DYNAMIC_DRAW
+#define GLPP_STREAM_DRAW					GL_STREAM_DRAW
 #endif
 
 
@@ -51,7 +55,7 @@ namespace gl
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
-			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GLPP_STATIC_DRAW));
+			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GLPP_STREAM_DRAW));
 		}
 		
 		void Set(int _num, ELEMENT const * array)
@@ -59,6 +63,12 @@ namespace gl
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
 			GLPP_CALL(glppBufferSubData(TARGET, 0, size, array));
+		}
+		
+		void Clear()
+		{
+			assert(BaseClass::IsBound());
+			GLPP_CALL(glppBufferData(TARGET, 0, nullptr, GLPP_STREAM_DRAW));
 		}
 	};
 

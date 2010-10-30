@@ -37,6 +37,7 @@
 
 
 using sys::TimeType;
+using sys::GetTime;
 
 
 namespace 
@@ -61,26 +62,21 @@ namespace
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
 	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
 	
-	CONFIG_DEFINE (target_work_proportion, double, .75f);
-	
-	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 2.f);
+	CONFIG_DEFINE (target_work_proportion, double, .95f);
+	CONFIG_DEFINE (startup_grace_period, TimeType, 2.f);
 
 }
 
 
-sim::Simulation::Simulation()
+sim::Simulation::Simulation(bool init_enable_vsync)
 : observer(new Observer)
 , formation_manager(new form::Manager(* observer))
+, enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
 , capture_frame(0)
-, running_poll_seconds(0)
-, fps(0)
-, frame_count(0)
-, cached_time(0)
+, start_time(GetTime())
 {
-	frame_count_reset_time = start_time = GetTime(true);
-
 	InitUniverse();
 	
 	gfx::Debug::Init();
@@ -129,57 +125,29 @@ sim::Simulation::~Simulation()
 void sim::Simulation::Run()
 {
 	formation_manager->Launch();
-
-	TimeType const target_frame_seconds = Universe::target_frame_seconds;
-	TimeType const target_work_seconds = target_frame_seconds * target_work_proportion;
 	
-	TimeType target_tick_time = GetTime(true);
+	TimeType next_tick_time = GetTime();
 	
 	while (HandleEvents())
 	{
-		TimeType time_until_next_tick = target_tick_time - GetTime();
-
-		// Is it time for the next tick?
-		if (time_until_next_tick > 0) 
+		TimeType time = GetTime();
+		TimeType time_to_next_time = next_tick_time - time;
+		if (time_to_next_time > 0)
 		{
-			// If not, sleep until it is.
-			sys::Sleep(time_until_next_tick);
-			GetTime(true);
-			continue;
+			Render();
 		}
-
-		// Set the next tick as a uniform period ahead. 
-		target_tick_time += target_frame_seconds;
-		
-		// Remember when tick started.
-		TimeType tick_start_time = GetTime();
-		
-		Tick();
-
-		// Calculate how long Tick() took. 
-		TimeType tick_seconds = GetTime(true) - tick_start_time;
-		
-		// Don't let the buffer swap be part of the time as vsync can cause a delay.
-		SDL_GL_SwapBuffers();
-
-		TimeType pre_swap_time = GetTime(false);
-		TimeType post_swap_time = GetTime(true);
-		TimeType swap_seconds = post_swap_time - pre_swap_time;
-
-		PollMesh();
-		
-		// Adjust the number of nodes based on how well we're doing. 
-		// Take into account the tick duration AND the time it takes to poll a new mesh.
-		TimeType work_seconds = tick_seconds + running_poll_seconds;
-		formation_manager->SampleFrameRatio(work_seconds, target_work_seconds);
-		
-		if (gfx::Debug::GetVerbosity() > .65)
+		else
 		{
-			gfx::Debug::out << "tick_seconds:" << tick_seconds << '\n';
-			gfx::Debug::out << "poll_seconds:" << running_poll_seconds << '\n';
-			gfx::Debug::out << "work_seconds:" << work_seconds << '\n';
-			gfx::Debug::out << "swap_seconds:" << swap_seconds << '\n';
-			gfx::Debug::out << "target_work_seconds:" << target_work_seconds << '\n';
+			Tick();
+			
+			if (time_to_next_time > 1)
+			{
+				next_tick_time = time;
+			}
+			else
+			{
+				next_tick_time += Universe::target_frame_seconds;
+			}
 		}
 	}
 	
@@ -191,72 +159,53 @@ void sim::Simulation::Run()
 
 void sim::Simulation::Tick()
 {
-	// Camera input.
-	if (sys::HasFocus()) 
-	{
-		UserInput ui;
-		Controller::Impulse impulse = ui.GetImpulse();
-		observer->UpdateInput(impulse);
-	}
-
 	// Tick the entities.
-	if (! paused && GetTime(true) > start_time + startup_grace_period) 
+	if (! paused && GetTime() > start_time + startup_grace_period) 
 	{
+		// Camera input.
+		if (sys::HasFocus()) 
+		{
+			UserInput ui;
+			Controller::Impulse impulse = ui.GetImpulse();
+			observer->UpdateInput(impulse);
+		}
+		
 		sim::Universe & universe = sim::Universe::Get();
 		universe.Tick();
 	}
 	
 	formation_manager->Tick();
-
-	Render();
-}
-
-bool sim::Simulation::PollMesh()
-{
-	// Poll for a new mesh.
-	TimeType poll_start_time = GetTime();
-	if (! formation_manager->PollMesh())
-	{
-		return false;
-	}
-
-	TimeType poll_seconds = GetTime(true) - poll_start_time;
-	running_poll_seconds = Max(poll_seconds, running_poll_seconds * .95f);
-	
-	return true;
 }
 
 void sim::Simulation::Render()
 {
+	// Now that the mesh is not needed, it's a good time to look at copying a new one.
+	formation_manager->PollMesh();
+	
 	PrintStats();
 
+	// Set scene's camera position from observer.
 	physics::Body & observer_body = ref(observer->GetBody());
 	Vector3 pos = observer_body.GetPosition();
-
 	Matrix4 rot;
 	observer_body.GetRotation(rot);
-	
 	scene.SetCamera(pos, rot);
 
-	gfx::Renderer & renderer = gfx::Renderer::Get();
-	renderer.Render(scene);
-
-	// Note: The render still requires a buffer swap,
-	// but as vsync is turned on, this could distort the timing results.
-
+	// Render scene and get an estimation of our load on system.
+	TimeType frame_time = renderer.Render(scene, enable_vsync);
+	
+	// Regulator feedback.
+	TimeType target_frame_time = Universe::target_frame_seconds;
+	if (enable_vsync)
+	{
+		target_frame_time *= target_work_proportion;
+	}
+	formation_manager->SampleFrameRatio(frame_time, target_frame_time);
+	
+	// Screen capture.
 	if (capture)
 	{
 		Capture();
-	}
-
-	++ frame_count;
-	TimeType time = sys::GetTime();
-	TimeType delta = time - frame_count_reset_time;
-	if (frame_count == 60) 
-	{
-		frame_count_reset_time = time;
-		fps = static_cast<double>(delta) / frame_count;
-		frame_count = 0;
 	}
 }
 
@@ -264,10 +213,6 @@ void sim::Simulation::PrintStats() const
 {
 	if (capture) {
 		return;
-	}
-
-	if (gfx::Debug::GetVerbosity() > .1) {
-		gfx::Debug::out << "fps:" << 1. / fps << '\n';
 	}
 	
 /*	if (Debug::GetVerbosity() > .4) {
@@ -372,9 +317,6 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 				return true;
 			}
 			
-			// Cache off ref to renderer in case it's needed.
-			gfx::Renderer & renderer = gfx::Renderer::Get();
-
 			switch (key_code)
 			{
 				case KEY_ESCAPE:
@@ -461,24 +403,4 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 	}
 	
 	return true;
-}
-
-TimeType sim::Simulation::GetTime(bool update_time)
-{	
-	if (update_time)
-	{
-		TimeType t = sys::GetTime();
-		Assert(t >= cached_time);
-		cached_time = t;
-	}
-/*	else 
-	{
-#if ! defined(NDEBUG)
-		TimeType t = sys::GetTime();
-		TimeType passed = t - cached_time;
-		Assert(passed < 1.);
-#endif
-	}*/
-
-	return cached_time;
 }
