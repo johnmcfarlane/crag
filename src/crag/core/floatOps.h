@@ -195,32 +195,32 @@ template<typename T> inline T RadToDeg(T d)
 	return d * static_cast<T>(180.0 / PI); 
 }
 
-inline bool IsANumber(double n)
+inline bool IsNaN(double n)
 {
 #if defined(__GNUC__)
 	return std::isnan(n);
 #elif defined(WIN32)
-	return _isnan(n) == 0;
+	return _isnan(n) != 0;
 #endif
 }
 
-inline bool IsANumber(float n)
+inline bool IsNaN(float n)
 {
-	return IsANumber(double(n));
+	return IsNaN(double(n));
 }
 
-inline bool IsFinite(double n)
+inline bool IsInf(double n)
 {
 #if defined(__GNUC__)
 	return std::isinf(n);
 #elif defined(WIN32)
-	return _finite(n) != 0;
+	return _finite(n) == 0;
 #endif
 }
 
-inline bool IsFinite(float n)
+inline bool IsInf(float n)
 {
-	return IsFinite(double(n));
+	return IsInf(double(n));
 }
 
 

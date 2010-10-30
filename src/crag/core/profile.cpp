@@ -31,7 +31,7 @@ profile::Meter::operator profile::Scalar () const
 
 void profile::Meter::Submit (Scalar sample)
 {
-	if (IsANumber(sample) && IsFinite(sample))
+	if (! IsNaN(sample) && ! IsInf(sample))
 	{
 		Assert(sample != std::numeric_limits<Scalar>::infinity());
 		Assert(change_coefficient > 0 && change_coefficient < 1);
