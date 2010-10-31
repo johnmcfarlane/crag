@@ -11,7 +11,7 @@
 #include "pch.h"
 
 #include "SceneThread.h"
-#include "Manager.h"
+#include "form/Manager.h"
 #include "Mesh.h"
 
 #include "sim/Observer.h"
