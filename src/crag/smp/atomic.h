@@ -12,7 +12,14 @@
 
 
 #if defined(__GNUC__)
+
 #define AtomicFetchAndAdd(AUGEND, ADDEND) __sync_fetch_and_add(& AUGEND, ADDEND)
+#define AtomicMemoryBarrier __sync_synchronize
+
 #elif defined(WIN32)
+
+//#include <intrin.h>
 #define AtomicFetchAndAdd(AUGEND, ADDEND) _InterlockedExchangeAdd(& reinterpret_cast<volatile long &>(AUGEND), ADDEND)
+#define AtomicMemoryBarrier MemoryBarrier
+
 #endif
