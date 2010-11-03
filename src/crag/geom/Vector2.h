@@ -33,7 +33,6 @@ public:
 	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y) : x(rhs_x), y(rhs_y) { }
 
 	// Returns vector as a C-style array. Very unsafe. 
-	// TODO: Cast as a C++-style fixed-size vector instead.
 	S const * GetAxes() const
 	{
 		static_cast<S const *>(this);

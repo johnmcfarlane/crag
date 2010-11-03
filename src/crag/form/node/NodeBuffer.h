@@ -17,8 +17,6 @@
 
 #include "geom/Vector3.h"
 
-//#include "form/score/CalculateNodeScoreCpuKernel.h"
-//#include "form/score/CalculateNodeScoreGpuKernel.h"
 #include "form/score/CalculateNodeScoreFunctor.h"
 
 
@@ -46,9 +44,19 @@ namespace form
 		
 		// Constants
 		enum {
-			min_num_quaterna = 256,
-			max_num_quaterna = 262144,
-			max_num_nodes = max_num_quaterna << 2,
+			// tweakables
+			portion_num_quaterna = 1,	// TODO: Cannot increase above 1
+			min_num_portions = 64,
+			max_num_portions = 65536,
+
+			// derivations
+			num_nodes_per_quaterna = 4,
+			portion_num_nodes = portion_num_quaterna * num_nodes_per_quaterna,
+			
+			min_num_quaterna = min_num_portions * portion_num_quaterna,
+			max_num_quaterna = max_num_portions * portion_num_quaterna,
+
+			max_num_nodes = max_num_quaterna * num_nodes_per_quaterna,
 			max_num_verts = max_num_nodes * 2,
 			max_num_indices = max_num_verts * 3
 		};

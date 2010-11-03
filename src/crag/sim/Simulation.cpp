@@ -85,7 +85,7 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 void sim::Simulation::InitUniverse()
 {
 	scene.SetResolution(sys::GetWindowSize());
-	scene.SetSkybox(new Firmament);	// TODO: Time for a ref-counter system.
+	scene.SetSkybox(new Firmament);
 	
 	if (use_default_camera_pos) {
 		camera_pos = default_camera_pos;

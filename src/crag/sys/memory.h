@@ -80,7 +80,7 @@ inline void PrefetchBlock(void const * ptr)
 #if defined(__GNUC__)
 	__builtin_prefetch(ptr);
 #elif defined(WIN32)
-	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);	// TODO: or is _MM_HINT_NTA better?
+	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);
 #else
 #endif
 }

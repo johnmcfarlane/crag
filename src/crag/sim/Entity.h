@@ -12,7 +12,6 @@
 
 #include "defs.h"
 
-// TODO: Really shouldn't be included here.
 #include <ode/ode.h>
 
 

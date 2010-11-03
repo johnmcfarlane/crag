@@ -34,7 +34,7 @@ namespace
 	PROFILE_DEFINE (scene_tick_period, .1);
 	PROFILE_DEFINE (scene_tick_per_quaterna, .1);
 	PROFILE_DEFINE (mesh_generation_period, .1);	
-	PROFILE_DEFINE (mesh_generation_per_quaterna, .1);
+	PROFILE_DEFINE (mesh_generation_per_quaterna, .05);
 }
 
 
@@ -47,7 +47,7 @@ form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer c
 , quit_flag(false)
 //, mesh_updated(false)
 , back_buffer_ready(false)
-, mesh_generation_time(0)
+, mesh_generation_time(sys::GetTime())
 , suspend_semaphore(1)
 {
 	meshes [0] = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
@@ -148,11 +148,14 @@ void form::SceneThread::Tick()
 		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
 	}
 	
-	if (gfx::Debug::GetVerbosity() > .15)
+	if (gfx::Debug::GetVerbosity() > .35)
 	{
 		gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
 		gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation_period) << '\n';
-		
+	}
+	
+	if (gfx::Debug::GetVerbosity() > .15)
+	{
 		std::ios_base::fmtflags flags = gfx::Debug::out.flags(std::ios::fixed);
 		std::streamsize previous_precision = gfx::Debug::out.precision(10);
 		gfx::Debug::out << "scene_t/q(us):" << 1000000.f * PROFILE_RESULT(scene_tick_per_quaterna) << '\n';

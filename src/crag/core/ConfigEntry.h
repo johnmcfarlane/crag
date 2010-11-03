@@ -11,7 +11,7 @@
 #pragma once
 
 
-// TODO: Include default value in file. Then override file version if it changes. 
+// TODO: Are the values being read in ok? I've seen mesh gen value bulldozed on WIN32.
 #define ENABLE_CONFIG
 
 

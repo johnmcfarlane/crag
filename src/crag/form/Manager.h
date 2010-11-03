@@ -48,7 +48,6 @@ namespace form {
 	typedef std::set<Formation *> FormationSet;
 	
 	
-	// TODO: Consider making this not a singleton.
 	class Manager : public core::Singleton<Manager>
 	{
 	public:
@@ -96,7 +95,6 @@ namespace form {
 		gl::TextureRgba8 texture;
 #endif
 		
-		// TODO: Do we definitely need two of these?
 		core::double_buffer<form::MeshBufferObject> mesh_buffers;
 	};
 

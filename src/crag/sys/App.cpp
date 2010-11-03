@@ -12,6 +12,10 @@
 
 #include "App.h"
 
+#if defined(__APPLE__)
+#include <CoreFoundation/CFDate.h>
+#endif
+
 
 namespace 
 {
@@ -25,6 +29,10 @@ namespace
 	
 	SDL_Surface * screen_surface = nullptr;
 	
+#if defined(WIN32)
+	TimeType inv_query_performance_frequency = 0;
+#endif
+
 	void SetFocus(bool gained_focus)
 	{
 		has_focus = gained_focus;
@@ -52,6 +60,17 @@ namespace
 
 bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char const * title)
 {
+#if defined(WIN32)
+	LARGE_INTEGER query_performance_frequency;
+	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency == 0)
+	{
+		std::cerr << "Failed to read QueryPerformanceFrequency.\n";
+		return false;
+	}
+	
+	inf_query_performance_frequency = 1. / query_performance_frequency;
+#endif
+
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
@@ -193,9 +212,20 @@ bool sys::HasFocus()
 	return has_focus;
 }
 
-// TODO: Windows try QueryPerformanceCounter and QueryPerformanceFrequency.
-// TODO: Linux try CLOCK_MONOTONIC clock using POSIX clock_gettime.
 sys::TimeType sys::GetTime()
 {
+#if defined(__APPLE__)
+	return CFAbsoluteTimeGetCurrent ();
+#elif defined(WIN32)
+	// TODO: Test this
+	LARGE_INTEGER performance_count;
+	if (QueryPerformanceCounter(& performance_count) == FALSE)
+	{
+		ASSERT(false);
+	}
+	return inf_query_performance_frequency * query_performance_frequency;
+#else
+	// TODO: Linux try CLOCK_MONOTONIC clock using POSIX clock_gettime.
 	return .001 * SDL_GetTicks();
+#endif
 }

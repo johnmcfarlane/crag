@@ -27,8 +27,9 @@ namespace sim
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// PlanetSphereCollisionFunctor class
+	//
+	// Deals with Planet-Sphere collision.
 	
-	// TODO: Replace all this nonsense with a new ODE type?
 	class PlanetSphereCollisionFunctor : public PlanetCollisionFunctor
 	{
 	public:

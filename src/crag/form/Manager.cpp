@@ -238,7 +238,6 @@ void form::Manager::DebugStats() const
 	
 	if (gfx::Debug::GetVerbosity() > .15) 
 	{
-		// TODO: Stop this flickering.
 		gfx::Debug::out << "polys:" << mesh_buffers.front().GetNumPolys() << '\n';
 	}
 	

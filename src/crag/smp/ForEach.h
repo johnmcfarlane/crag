@@ -28,6 +28,5 @@ namespace smp
 	
 	// ... and pass it in here. 
 	// Function won't return until all work is done.
-	// TODO: Add interleaved version.
 	void ForEach(int first, int last, int step, Functor & f);
 }

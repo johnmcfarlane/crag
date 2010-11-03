@@ -141,7 +141,8 @@ void sim::PlanetSphereCollisionFunctor::GatherPoints(form::Node const & node)
 	}
 }
 
-// TODO: Better name.
+// Returns true if the functor's sphere interescts with the infinite pyramic
+// formed by projecting the planet's center through the given node's triangle.
 bool sim::PlanetSphereCollisionFunctor::CanTraverse(form::Node const & node) const
 { 
 	Vector3 a = node.GetCorner(0).pos;

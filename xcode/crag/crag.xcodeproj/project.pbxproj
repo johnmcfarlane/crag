@@ -69,7 +69,6 @@
 		52F3A3B111A7979400385922 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A36F11A7979400385922 /* Controller.cpp */; };
 		52F3A3B211A7979400385922 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37211A7979400385922 /* Entity.cpp */; };
 		52F3A3B311A7979400385922 /* Firmament.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37411A7979400385922 /* Firmament.cpp */; };
-		52F3A3B411A7979400385922 /* FrequencyEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37611A7979400385922 /* FrequencyEstimator.cpp */; };
 		52F3A3B511A7979400385922 /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37811A7979400385922 /* Observer.cpp */; };
 		52F3A3B811A7979400385922 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A37E11A7979400385922 /* Planet.cpp */; };
 		52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A38011A7979400385922 /* PlanetShader.cpp */; };
@@ -112,6 +111,7 @@
 		5224D96B11C9AC9C0021CDF8 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
 		5227E7571280F26B00027571 /* smp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smp.h; sourceTree = "<group>"; };
 		5227E7581280F26B00027571 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
+		5227E80A1281832B00027571 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		522CAF7A11D264CD002A3FAE /* FormationFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationFunctor.h; sourceTree = "<group>"; };
 		5242D902125FF038007F7D90 /* ForEach.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForEach.cpp; sourceTree = "<group>"; };
 		5242D903125FF038007F7D90 /* ForEach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEach.h; sourceTree = "<group>"; };
@@ -273,8 +273,6 @@
 		52F3A37311A7979400385922 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		52F3A37411A7979400385922 /* Firmament.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Firmament.cpp; sourceTree = "<group>"; };
 		52F3A37511A7979400385922 /* Firmament.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Firmament.h; sourceTree = "<group>"; };
-		52F3A37611A7979400385922 /* FrequencyEstimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequencyEstimator.cpp; sourceTree = "<group>"; };
-		52F3A37711A7979400385922 /* FrequencyEstimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrequencyEstimator.h; sourceTree = "<group>"; };
 		52F3A37811A7979400385922 /* Observer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Observer.cpp; sourceTree = "<group>"; };
 		52F3A37911A7979400385922 /* Observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observer.h; sourceTree = "<group>"; };
 		52F3A37E11A7979400385922 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Planet.cpp; sourceTree = "<group>"; };
@@ -358,6 +356,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				5227E80A1281832B00027571 /* CoreFoundation.framework */,
 			);
 			name = crag;
 			sourceTree = "<group>";
@@ -644,8 +643,6 @@
 				52F3A37311A7979400385922 /* Entity.h */,
 				52F3A37411A7979400385922 /* Firmament.cpp */,
 				52F3A37511A7979400385922 /* Firmament.h */,
-				52F3A37611A7979400385922 /* FrequencyEstimator.cpp */,
-				52F3A37711A7979400385922 /* FrequencyEstimator.h */,
 				52F3A37811A7979400385922 /* Observer.cpp */,
 				52F3A37911A7979400385922 /* Observer.h */,
 				52F3A37E11A7979400385922 /* Planet.cpp */,
@@ -785,7 +782,6 @@
 				52F3A3B111A7979400385922 /* Controller.cpp in Sources */,
 				52F3A3B211A7979400385922 /* Entity.cpp in Sources */,
 				52F3A3B311A7979400385922 /* Firmament.cpp in Sources */,
-				52F3A3B411A7979400385922 /* FrequencyEstimator.cpp in Sources */,
 				52F3A3B511A7979400385922 /* Observer.cpp in Sources */,
 				52F3A3B811A7979400385922 /* Planet.cpp in Sources */,
 				52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */,

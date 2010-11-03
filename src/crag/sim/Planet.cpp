@@ -50,8 +50,7 @@ sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_po
 	formation->SetPosition(init_pos);
 	form::Manager::Get().AddFormation(formation);
 	
-	// TODO: Is that an accurate average radius? Shouldn't it be Logarithmic?
-	body = new PlanetaryBody(* formation, radius_max);
+	body = new PlanetaryBody(* formation, init_radius_mean);
 	body->SetPosition(init_pos);
 }
 

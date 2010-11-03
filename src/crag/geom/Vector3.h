@@ -42,7 +42,6 @@ public:
 	{ }
 
 	// Returns vector as a C-style array. Very unsafe. 
-	// TODO: Cast as a C++-style fixed-size vector instead.
 	S const & operator[](int index) const 
 	{
 		Assert(index >= 0 && index < N);

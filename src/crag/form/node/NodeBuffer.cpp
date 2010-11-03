@@ -121,8 +121,14 @@ void form::NodeBuffer::Verify() const
 	VerifyTrue(quaterna_end >= quaterna_used_end_target);
 
 	int num_nodes_used = nodes_used_end - nodes;
+	VerifyTrue((num_nodes_used % portion_num_nodes) == 0);
+	
 	int num_quaterna_used = quaterna_used_end - quaterna;
-
+	VerifyTrue((num_quaterna_used % portion_num_quaterna) == 0);
+	
+	int num_quaterna_used_target = quaterna_used_end_target - quaterna;
+	VerifyTrue((num_quaterna_used_target % portion_num_quaterna) == 0);
+	
 	VerifyTrue(num_nodes_used == num_quaterna_used * 4);
 	
 	VerifyObject(point_buffer);
@@ -291,6 +297,7 @@ void form::NodeBuffer::OnReset()
 	// Half the target number of nodes.
 	// Probably not a smart idea.
 	//quaterna_used_end_target -= (quaterna_used_end_target - quaterna) >> 1;
+	VerifyObject(* this);
 }
 
 void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
@@ -410,9 +417,6 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
-	// TODO: ForEachQuaterna is what I really want.
-	// TODO: This will expand the nodes in an improved order.
-
 	ExpandNodeFunctor f(* this);
 	//ForEachNode<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
 	ForEachQuaterna<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
@@ -422,6 +426,8 @@ bool form::NodeBuffer::ChurnNodes()
 
 void form::NodeBuffer::GenerateMesh(Mesh & mesh) 
 {
+	VerifyObject(* this);
+	
 	point_buffer.Clear();
 	mesh.Clear();
 
@@ -438,7 +444,6 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 		ForEachNode<GenerateMeshFunctor &>(512, mesh_functor, true);
 	}
 	
-	// TODO: Parallelize.
 	VertexBuffer & vertices = mesh.GetVertices();
 	vertices.NormalizeNormals();
 }
@@ -752,6 +757,8 @@ void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterna_used_end)
 	// Increasing the target number of nodes is simply a matter of setting a value. 
 	// The target pointer now point_buffer into the range of unused quaterna at the end of the array.
 	quaterna_used_end_target = new_quaterna_used_end;
+	
+	VerifyObject(* this);
 }
 
 // Reduce the number of used nodes and, accordingly, the number of used quaterna.
@@ -831,9 +838,6 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 
 void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 {
-	// Remember where the used nodes used to end.
-//	Node * old_nodes_used_end = nodes_used_end;
-	
 	// From the new used quaterna value, figure out new used node value.
 	int new_num_quaterna_used = quaterna_used_end - quaterna;
 	int new_num_nodes_used = new_num_quaterna_used << 2;	// 4 nodes per quaterna
@@ -886,7 +890,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR f, bool parallel)
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR, 4>(nodes, nodes_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
+		core::for_each<form::Node *, FUNCTOR, portion_num_nodes>(nodes, nodes_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
 	}
 }
 
@@ -895,7 +899,7 @@ void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, b
 {
 	if (nodes_used_end > nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, 4>(nodes, nodes_used_end, step_size, f1, f2, parallel, node_buffer_prefetch_arrays);
+		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, portion_num_nodes>(nodes, nodes_used_end, step_size, f1, f2, parallel, node_buffer_prefetch_arrays);
 	}
 }
 
@@ -904,7 +908,6 @@ void form::NodeBuffer::ForEachQuaterna(size_t step_size, FUNCTOR f, bool paralle
 {
 	if (quaterna_used_end > quaterna)
 	{
-		// TODO: Consider fixing the number of quaterna to multiples of N to see if there's an unrolling advantage.
-		core::for_each<form::Quaterna *, FUNCTOR, 1>(quaterna, quaterna_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
+		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
 	}
 }
