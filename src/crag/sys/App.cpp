@@ -12,15 +12,6 @@
 
 #include "App.h"
 
-#include "core/ConfigEntry.h"
-
-#if defined(WIN32)
-#include <WinBase.h>
-#elif defined(__APPLE__)
-#include <sys/sysctl.h>
-#else
-#endif
-
 
 namespace 
 {
@@ -202,44 +193,9 @@ bool sys::HasFocus()
 	return has_focus;
 }
 
+// TODO: Windows try QueryPerformanceCounter and QueryPerformanceFrequency.
+// TODO: Linux try CLOCK_MONOTONIC clock using POSIX clock_gettime.
 sys::TimeType sys::GetTime()
 {
 	return .001 * SDL_GetTicks();
-}
-
-void sys::Sleep(TimeType t)
-{
-	SDL_Delay(static_cast<Uint32>(t * 1000));
-	//boost::this_thread::sleep(boost::posix_time::milliseconds(t));
-}
-
-int sys::GetNumCpus()
-{
-#if defined(WIN32)
-	SYSTEM_INFO sysinfo;
-	GetSystemInfo (& sysinfo);
-	return sysinfo.dwNumberOfProcessors;
-#elif defined(__APPLE__)
-	int num_cpus;
-    size_t len = sizeof(num_cpus);
-    int mib[2] = { CTL_HW, HW_NCPU };
-    if (sysctl(mib, 2, & num_cpus, &len, NULL, 0) == 0)
-	{
-		return num_cpus;
-	}
-	
-	Assert(false);
-	return 1;
-#else 
-    // Linux, Solaris, Tru64, UnixWare 7, and Open UNIX 8
-	// Assumes defined(_SC_NPROCESSORS_ONLN).
-    int num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-	if (num_cpus != -1)
-	{
-		return num_cpus;
-	}
-	
-	Assert(false);
-	return 1;
-#endif
 }

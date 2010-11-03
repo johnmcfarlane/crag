@@ -18,8 +18,6 @@
 
 #include "glpp/glpp.h"
 
-#include "sys/App.h"
-
 #include "core/double_buffer.h"
 
 

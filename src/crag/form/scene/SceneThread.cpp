@@ -21,6 +21,8 @@
 
 #include "gfx/Debug.h"
 
+#include "smp/smp.h"
+
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
 
@@ -282,6 +284,12 @@ form::Scene const & form::SceneThread::GetVisibleScene() const
 // The main loop of the scene thread. Hopefully it's pretty self-explanatory.
 void form::SceneThread::Run()
 {
+	// This sleep is really only here so that IsSceneThread/IsMainThread will work properly.
+	// (See notes in Thread.h for details.)
+	smp::Sleep(0);
+
+	Assert (IsSceneThread());
+	
 	while (true) 
 	{
 		suspend_semaphore.Decrement();
@@ -329,6 +337,8 @@ void form::SceneThread::TickThread()
 
 void form::SceneThread::TickActiveScene()
 {
+	Assert(IsSceneThread());	
+
 	Scene & active_scene = GetActiveScene();
 	sim::Ray3 camera_ray = observer.GetCameraRay();
 	active_scene.SetCameraRay(camera_ray);
@@ -345,6 +355,8 @@ void form::SceneThread::TickActiveScene()
 
 void form::SceneThread::BeginReset()
 {
+	Assert(IsSceneThread());	
+
 	Assert(! IsResetting());
 	is_in_reset_mode = true;
 	
@@ -361,12 +373,16 @@ void form::SceneThread::BeginReset()
 
 void form::SceneThread::EndReset()
 {
+	Assert(IsSceneThread());	
+
 	is_in_reset_mode = false;
 	scenes.flip();
 }
 
 void form::SceneThread::AdjustNumQuaterna()
 {
+	Assert (IsSceneThread());
+	
 	if (IsResetting())
 	{
 		return;

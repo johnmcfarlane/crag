@@ -19,7 +19,7 @@
 #include "ThreadCondition.h"
 #include "time.h"
 
-#include "sys/App.h"
+#include "smp/smp.h"
 
 #include "core/ConfigEntry.h"
 #include "core/for_each.h"
@@ -116,8 +116,11 @@ namespace
 		// to be snapped up by the worker threads.
 		void WaitForCompletion()
 		{
-			// TODO: It should pretty easy now to save on a worker 
-			// and have this thread do work instead.
+			Task t;
+			while (GetSubTask(t))
+			{
+				(* t.functor) (t.first, t.last);
+			}
 			completion_condition.Wait(completion_mutex);
 		}
 		
@@ -237,15 +240,17 @@ namespace
 			return scheduler_num_threads;
 		}
 		
-		int num_worker_threads = num_cpus - num_reserved_cpus;
-		if (num_worker_threads < 2)
+		// The minus one is because the initiating thread picks up work 
+		// once it's kicked off the work.
+		int num_worker_threads = num_cpus - num_reserved_cpus - 1;
+		if (num_worker_threads < 0)
 		{
-			return 0;
+			num_worker_threads = 0;
 		}
 		
 		return num_worker_threads;
 	}
-
+	
 	void SerialForEach(Task & task)
 	{
 		Task sub_task;
@@ -261,7 +266,7 @@ namespace
 		Assert(worker_semaphore->GetValue() == 0);
 		
 		ActivateWorkers();
-
+		
 		foreman->WaitForCompletion();
 		// Last sub_task was dispatched but it may not have finished yet.
 		
@@ -276,14 +281,14 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // smp::scheduler definitions
 
-void smp::Init(int num_reserved_cpus)
+void smp::Init(int num_reserved_cores)
 {
 	Assert(foreman == nullptr);
 	Assert(worker_semaphore == nullptr);
 	Assert(workers.size() == 0);
 	
-	int num_cpus = sys::GetNumCpus();
-	int num_worker_threads = CalculateNumWorkers(num_cpus, num_reserved_cpus);
+	int num_cpus = smp::GetNumCpus();
+	int num_worker_threads = CalculateNumWorkers(num_cpus, num_reserved_cores);
 
 	if (num_worker_threads > 0)
 	{

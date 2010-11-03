@@ -15,7 +15,7 @@
 
 namespace smp
 {
-	void Init(int num_reserved_cpus = 0);
+	void Init(int num_reserved_cores = 0);
 	void Deinit();
 	
 	// Overload this functor ...

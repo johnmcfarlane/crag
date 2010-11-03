@@ -12,6 +12,7 @@
 		002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C0009D093BD00EBEB88 /* OpenGL.framework */; };
 		002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F3C6009D0951E00EBEB88 /* GLUT.framework */; };
 		5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5224D96A11C9AC9C0021CDF8 /* Body.cpp */; };
+		5227E7591280F26B00027571 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5227E7581280F26B00027571 /* smp.cpp */; };
 		5242D909125FF038007F7D90 /* ForEach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5242D902125FF038007F7D90 /* ForEach.cpp */; };
 		5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5242D904125FF038007F7D90 /* Semaphore.cpp */; };
 		5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5242D907125FF038007F7D90 /* ThreadCondition.cpp */; };
@@ -109,6 +110,8 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		5224D96A11C9AC9C0021CDF8 /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Body.cpp; sourceTree = "<group>"; };
 		5224D96B11C9AC9C0021CDF8 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
+		5227E7571280F26B00027571 /* smp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smp.h; sourceTree = "<group>"; };
+		5227E7581280F26B00027571 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
 		522CAF7A11D264CD002A3FAE /* FormationFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationFunctor.h; sourceTree = "<group>"; };
 		5242D902125FF038007F7D90 /* ForEach.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForEach.cpp; sourceTree = "<group>"; };
 		5242D903125FF038007F7D90 /* ForEach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEach.h; sourceTree = "<group>"; };
@@ -406,15 +409,17 @@
 			isa = PBXGroup;
 			children = (
 				52C5DAC71275E0C4005F9AD4 /* atomic.h */,
+				5242D902125FF038007F7D90 /* ForEach.cpp */,
+				5242D903125FF038007F7D90 /* ForEach.h */,
 				52C6D6C312675EDC00672963 /* Lock.h */,
 				52DEDD8C125FEFC800C12C19 /* Mutex.cpp */,
 				52DEDD8D125FEFC800C12C19 /* Mutex.h */,
-				5242D902125FF038007F7D90 /* ForEach.cpp */,
-				5242D903125FF038007F7D90 /* ForEach.h */,
 				5242D904125FF038007F7D90 /* Semaphore.cpp */,
 				5242D905125FF038007F7D90 /* Semaphore.h */,
 				52DEDD8E125FEFC800C12C19 /* SimpleMutex.cpp */,
 				52DEDD8F125FEFC800C12C19 /* SimpleMutex.h */,
+				5227E7581280F26B00027571 /* smp.cpp */,
+				5227E7571280F26B00027571 /* smp.h */,
 				5242D906125FF038007F7D90 /* Thread.h */,
 				5242D907125FF038007F7D90 /* ThreadCondition.cpp */,
 				5242D908125FF038007F7D90 /* ThreadCondition.h */,
@@ -827,6 +832,7 @@
 				5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */,
 				5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */,
 				52887596127352650048AC81 /* Regulator.cpp in Sources */,
+				5227E7591280F26B00027571 /* smp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

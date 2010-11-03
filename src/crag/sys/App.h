@@ -60,7 +60,6 @@
 #define KEY_MAX SDLK_LAST
 
 
-// TODO: This is really just a dumping ground now. Needs to be tidied up.
 namespace sys
 {
 	// types
@@ -93,6 +92,4 @@ namespace sys
 	
 	// time
 	TimeType GetTime();
-	void Sleep(TimeType t = 0);
-	int GetNumCpus();
 }

@@ -14,22 +14,15 @@
 
 #include "ExpandNodeFunctor.h"
 #include "GenerateMeshFunctor.h"
-#include "Node.h"
 #include "Quaterna.h"
 #include "Shader.h"
 
 #include "form/scene/Mesh.h"
 #include "form/scene/Polyhedron.h"
 
-#include "form/score/CalculateNodeScoreFunctor.h"
-
-#include "cl/Singleton.h"
-
 #include "core/ConfigEntry.h"
-#include "core/floatOps.h"
 #include "core/for_each_chunk.h"
 
-#include <algorithm>
 
 // Note: Doesn't work yet.
 #define EXPAND_NODES_PARALLEL false

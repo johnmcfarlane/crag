@@ -22,6 +22,10 @@ namespace smp
 	// The function parameter, object, is the object for which the member function is called.
 	// (Note that two other useful thread-related functions are Sleep and GetNumCpus.)
 
+	// WARNING: Immediately after launching the new thread it is wise to Sleep that thread.
+	// WARNING: Otherwise, various of the Thread member functions will return incorrect results.
+	// WARNING: This is because the internal state of the class is updated on return from SDL_CreateThread.
+
 	template <typename CLASS, void (CLASS::*FUNCTION)()> 
 	class Thread 
 	{
@@ -45,15 +49,13 @@ namespace smp
 			Kill();
 		}
 		
-		// Note: The thread may have quit but this will still return true
-		// until Kill or Join is called.
+		// Note: The thread may have quit but this will still return true until Kill or Join is called.
 		bool IsLaunched() const
 		{
 			return sdl_thread != nullptr;
 		}
 		
 		// True if the calling thread is this thread.
-		// TODO: This doesn't seem to work 100% of the time.
 		bool IsCurrent() const
 		{
 			if (! IsLaunched())
@@ -79,6 +81,9 @@ namespace smp
 		// If possible, try and use Join instead. 
 		void Kill()
 		{
+			// Shouldn't be called from within the thread.
+			Assert (! IsCurrent());
+			
 			if (sdl_thread != nullptr)
 			{
 				SDL_KillThread(sdl_thread);
@@ -89,6 +94,9 @@ namespace smp
 		// Waits for thread to return from FUNCTION.
 		void Join()
 		{
+			// Shouldn't be called from within the thread.
+			Assert (! IsCurrent());
+			
 			if (sdl_thread != nullptr)
 			{
 				SDL_WaitThread(sdl_thread, NULL);
