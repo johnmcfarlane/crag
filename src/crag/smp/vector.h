@@ -118,6 +118,12 @@ namespace smp
 			verify();
 		}
 		
+		bool empty() const
+		{
+			verify();
+			return first == last;
+		}
+		
 		size_type size() const
 		{
 			verify();
@@ -162,6 +168,11 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Element append functions - thread safe
 		// These are atomic fetch and push back operations.
+		
+		void push_back(T const & value)
+		{
+			grow(1) = value;
+		}
 		
 		T & grow(size_type num)
 		{
