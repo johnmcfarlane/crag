@@ -55,8 +55,8 @@
 // SDL includes.
 
 #if defined(WIN32) || defined(__APPLE__)
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL/SDL.h>
+#include <SDL_image/SDL_image.h>
 #else
 // No actual PCHs for Linux as of yet so omit in favor of individual includes.
 //#include <SDL/SDL.h>

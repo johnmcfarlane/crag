@@ -12,7 +12,7 @@
 
 #include "defs.h"
 
-#include <ode/ode.h>
+#include "physics/defs.h"
 
 
 namespace physics

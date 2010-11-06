@@ -16,8 +16,6 @@
 
 #include "glpp/Texture.h"
 
-#include <SDL_image.h>
-
 
 namespace 
 {
