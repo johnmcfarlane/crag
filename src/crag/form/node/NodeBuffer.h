@@ -13,7 +13,9 @@
 #include "PointBuffer.h"
 
 #include "core/debug.h"
+
 #include "smp/Mutex.h"
+#include "smp/Vector.h"
 
 #include "geom/Vector3.h"
 
@@ -166,6 +168,16 @@ namespace form
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
+		
+		// Used during the ExpandNodes process.
+		smp::vector<Node *> expandable_nodes;
+		/*template <unsigned NUM_BITS> SimpleBitMap
+		{
+			static unsigned const BYTES_PER_ELEMENT = sizeof(unsigned);
+			static unsigned const BITS_PER_ELEMENT = BYTES_PER_ELEMENT * CHAR_BIT;
+			static unsigned const NUM_ELEMENTS = max_num_nodes / BITS_PER_ELEMENT;
+			unsigned bits [NUM_ELEMENTS];
+		}	expandable_nodes_maps;		*/
 		
 #if defined(USE_OPENCL)
 		CalculateNodeScoreCpuKernel * cpu_kernel;

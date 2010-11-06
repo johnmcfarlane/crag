@@ -34,7 +34,7 @@ namespace
 	// If non-zero, this number of quaterna is enforced always.
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+	CONFIG_DEFINE (fix_num_quaterna, int, 40000);
 
 	CONFIG_DEFINE (node_buffer_prefetch_arrays, bool, false);
 	
@@ -89,6 +89,10 @@ form::NodeBuffer::NodeBuffer()
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
+	
+	// Well there's four megs right there.
+	expandable_nodes.reserve(max_num_nodes);
+	//ZeroObject (expandable_nodes_maps);
 	
 	VerifyObject(* this);
 }
@@ -417,11 +421,41 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
-	ExpandNodeFunctor f(* this);
-	//ForEachNode<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
-	ForEachQuaterna<ExpandNodeFunctor &>(512, f, EXPAND_NODES_PARALLEL);
+	Assert(expandable_nodes.empty());
 	
-	return f.GetNumExpanded() > 0;
+	if (EXPAND_NODES_PARALLEL)
+	{
+		// Stage 1: Gather - this can be done in parallel
+		GatherExpandNodeFunctor gather(expandable_nodes);
+		ForEachQuaterna<GatherExpandNodeFunctor &>(512, gather, true);
+
+		if (expandable_nodes.empty())
+		{
+			// No suitable nodes were found.
+			return false;
+		}
+		
+		// Stage 2: Expand - this cannot be done in parallel
+		ExpandNodeFunctor expand(* this);
+		
+		typedef smp::vector<Node *> vector;
+		vector::const_iterator begin = expandable_nodes.begin();
+		vector::const_iterator end = expandable_nodes.end();
+		
+		core::for_each<vector::const_iterator, ExpandNodeFunctor &, 1>(begin, end, 1024, expand, false, node_buffer_prefetch_arrays);
+
+		expandable_nodes.clear();
+		return expand.GetNumExpanded() > 0;
+	}
+	else 
+	{
+		ExpandNodeFunctor f(* this);
+
+		ForEachQuaterna<ExpandNodeFunctor &>(512, f, false);
+		
+		return f.GetNumExpanded() > 0;
+	}
+
 }
 
 void form::NodeBuffer::GenerateMesh(Mesh & mesh) 

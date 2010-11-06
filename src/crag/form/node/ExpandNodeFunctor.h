@@ -12,12 +12,49 @@
 
 #include "Quaterna.h"
 
+#include "smp/vector.h"
+
 
 namespace form 
 {
 	// forward-declarations
 	class NodeBuffer;
-
+	
+	
+	// Called on each node to (conditionally) expand it
+	// such that newly allocated nodes are assigned as children of it. 
+	class GatherExpandNodeFunctor
+	{
+		OBJECT_NO_COPY (GatherExpandNodeFunctor);
+		
+	public:
+		GatherExpandNodeFunctor(smp::vector<Node *> & init_expandable_nodes)
+		: expandable_nodes(init_expandable_nodes)
+		{
+		}
+		
+		// The node version. 
+		void operator() (Node & node)
+		{
+			if (node.IsExpandable()) 
+			{
+				expandable_nodes.push_back(& node);
+			}
+		}
+		
+		// The quaterna version.
+		void operator() (Quaterna & quaterna)
+		{
+			operator() (quaterna.nodes[0]);
+			operator() (quaterna.nodes[1]);
+			operator() (quaterna.nodes[2]);
+			operator() (quaterna.nodes[3]);
+		}
+		
+	private:
+		smp::vector<Node *> & expandable_nodes;
+	};
+	
 	
 	// Called on each node to (conditionally) expand it
 	// such that newly allocated nodes are assigned as children of it. 
@@ -38,11 +75,11 @@ namespace form
 		}
 		
 		// The node version. 
-		void operator() (Node & node)
+		void operator() (Node * node)
 		{
-			if (node.IsExpandable()) 
+			if (node->IsExpandable()) 
 			{
-				if (node_buffer.ExpandNode(node)) 
+				if (node_buffer.ExpandNode(* node)) 
 				{
 					++ num_expanded;
 				}
@@ -52,14 +89,14 @@ namespace form
 		// The quaterna version.
 		void operator() (Quaterna & quaterna)
 		{
-			operator() (quaterna.nodes[0]);
-			operator() (quaterna.nodes[1]);
-			operator() (quaterna.nodes[2]);
-			operator() (quaterna.nodes[3]);
+			operator() (quaterna.nodes + 0);
+			operator() (quaterna.nodes + 1);
+			operator() (quaterna.nodes + 2);
+			operator() (quaterna.nodes + 3);
 		}
 		
 	private:
-
+		
 		NodeBuffer & node_buffer;
 		int num_expanded;
 	};
