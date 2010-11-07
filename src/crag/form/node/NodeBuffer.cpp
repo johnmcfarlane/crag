@@ -34,8 +34,13 @@ namespace
 	// If non-zero, this number of quaterna is enforced always.
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-	CONFIG_DEFINE (fix_num_quaterna, int, 40000);
-
+#if defined(PROFILE)
+	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+#else
+	// Don't ever change this value from zero!!!
+	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+#endif
+	
 	CONFIG_DEFINE (node_buffer_prefetch_arrays, bool, false);
 	
 	

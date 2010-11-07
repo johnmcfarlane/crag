@@ -45,10 +45,10 @@
 		52DF194211E92CB500AF25A1 /* MeshBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF193B11E92CB500AF25A1 /* MeshBufferObject.cpp */; };
 		52DF194311E92CB500AF25A1 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF193D11E92CB500AF25A1 /* Vertex.cpp */; };
 		52DF194411E92CB500AF25A1 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DF193F11E92CB500AF25A1 /* VertexBuffer.cpp */; };
-		52DF7E221285429B00045BC8 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DF7E211285429B00045BC8 /* SDL_image.framework */; };
-		52DF7FBB12854AA100045BC8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DF7E9B12854A5200045BC8 /* SDL.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		52DF809112854D8F00045BC8 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF7E211285429B00045BC8 /* SDL_image.framework */; };
-		52DF809212854D9B00045BC8 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF7E9B12854A5200045BC8 /* SDL.framework */; };
+		52DF80CB1285522F00045BC8 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DF80CA1285522F00045BC8 /* SDL_image.framework */; };
+		52DF80CD1285522F00045BC8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DF80CC1285522F00045BC8 /* SDL.framework */; };
+		52DF818F1285524D00045BC8 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF80CA1285522F00045BC8 /* SDL_image.framework */; };
+		52DF81901285524D00045BC8 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF80CC1285522F00045BC8 /* SDL.framework */; };
 		52F3A39011A7979400385922 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52F3A30611A7979400385922 /* COPYING */; };
 		52F3A39211A7979400385922 /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30B11A7979400385922 /* ConfigManager.cpp */; };
 		52F3A39311A7979400385922 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30D11A7979400385922 /* debug.cpp */; };
@@ -93,8 +93,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				52DF809212854D9B00045BC8 /* SDL.framework in Copy Frameworks into .app bundle */,
-				52DF809112854D8F00045BC8 /* SDL_image.framework in Copy Frameworks into .app bundle */,
+				52DF818F1285524D00045BC8 /* SDL_image.framework in Copy Frameworks into .app bundle */,
+				52DF81901285524D00045BC8 /* SDL.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,8 +225,8 @@
 		52DF193E11E92CB500AF25A1 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52DF193F11E92CB500AF25A1 /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
 		52DF194011E92CB500AF25A1 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
-		52DF7E211285429B00045BC8 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/john/Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
-		52DF7E9B12854A5200045BC8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Users/john/Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		52DF80CA1285522F00045BC8 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/john/Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
+		52DF80CC1285522F00045BC8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Users/john/Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		52E70F6A124B293E008452A3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		52F3A30611A7979400385922 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52F3A30B11A7979400385922 /* ConfigManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigManager.cpp; sourceTree = "<group>"; };
@@ -318,12 +318,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52DF7FBB12854AA100045BC8 /* SDL.framework in Frameworks */,
 				002F3C6109D0951E00EBEB88 /* GLUT.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				002F3C0109D093BD00EBEB88 /* OpenGL.framework in Frameworks */,
 				52D03956124A5C5400E797B0 /* libode.a in Frameworks */,
-				52DF7E221285429B00045BC8 /* SDL_image.framework in Frameworks */,
+				52DF80CB1285522F00045BC8 /* SDL_image.framework in Frameworks */,
+				52DF80CD1285522F00045BC8 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,8 +337,8 @@
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				002F3C0009D093BD00EBEB88 /* OpenGL.framework */,
 				52D03955124A5C5400E797B0 /* libode.a */,
-				52DF7E211285429B00045BC8 /* SDL_image.framework */,
-				52DF7E9B12854A5200045BC8 /* SDL.framework */,
+				52DF80CA1285522F00045BC8 /* SDL_image.framework */,
+				52DF80CC1285522F00045BC8 /* SDL.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
