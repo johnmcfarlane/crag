@@ -289,7 +289,7 @@ void form::SceneThread::Run()
 {
 	// This sleep is really only here so that IsSceneThread/IsMainThread will work properly.
 	// (See notes in Thread.h for details.)
-	smp::Sleep(0);
+	smp::Sleep(1);
 
 	Assert (IsSceneThread());
 	
