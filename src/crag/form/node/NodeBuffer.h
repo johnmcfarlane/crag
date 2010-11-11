@@ -24,12 +24,18 @@
 
 namespace form
 {
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// forward-declarations
+	
 	class Mesh;
 	class Node;
 	class Shader;
 	
-	// Declared in .cpp
 	struct Quaterna;
+	
+	template <size_t MAX_NUM_NODES> class ExpandNodeParallelFunctor;
+
 	
 	// There's no easy way to explain all the things this class does.
 	// Some of the most complicated code lives in this class.
@@ -62,7 +68,9 @@ namespace form
 			max_num_verts = max_num_nodes * 2,
 			max_num_indices = max_num_verts * 3
 		};
-		
+
+		friend class ExpandNodeParallelFunctor <max_num_nodes>;
+
 		// Member functions
 		NodeBuffer();
 		~NodeBuffer();
@@ -111,6 +119,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Node-related members.
 		static bool IsNodeChurnIntensive() { return true; }
+		float GetWorseReplacableQuaternaScore() const;
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
 		void CollapseNode(Node & node);
@@ -168,16 +177,6 @@ namespace form
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
-		
-		// Used during the ExpandNodes process.
-		smp::vector<Node *> expandable_nodes;
-		/*template <unsigned NUM_BITS> SimpleBitMap
-		{
-			static unsigned const BYTES_PER_ELEMENT = sizeof(unsigned);
-			static unsigned const BITS_PER_ELEMENT = BYTES_PER_ELEMENT * CHAR_BIT;
-			static unsigned const NUM_ELEMENTS = max_num_nodes / BITS_PER_ELEMENT;
-			unsigned bits [NUM_ELEMENTS];
-		}	expandable_nodes_maps;		*/
 		
 #if defined(USE_OPENCL)
 		CalculateNodeScoreCpuKernel * cpu_kernel;

@@ -12,8 +12,6 @@
 
 #include "Quaterna.h"
 
-#include "smp/vector.h"
-
 
 namespace form 
 {
@@ -23,22 +21,41 @@ namespace form
 	
 	// Called on each node to (conditionally) expand it
 	// such that newly allocated nodes are assigned as children of it. 
-	class GatherExpandNodeFunctor
+	class ExpandNodeFunctor
 	{
-		OBJECT_NO_COPY (GatherExpandNodeFunctor);
+		OBJECT_NO_COPY (ExpandNodeFunctor);
 		
 	public:
-		GatherExpandNodeFunctor(smp::vector<Node *> & init_expandable_nodes)
-		: expandable_nodes(init_expandable_nodes)
+		ExpandNodeFunctor (NodeBuffer & init_node_buffer)
+		: node_buffer (init_node_buffer)
+		, num_expanded (0)
 		{
+			RecalculateMinScore();
+		}
+		
+		void RecalculateMinScore()
+		{
+			min_score = node_buffer.GetWorseReplacableQuaternaScore();
+		}
+		
+		int GetNumExpanded() const
+		{
+			return num_expanded;
 		}
 		
 		// The node version. 
 		void operator() (Node & node)
 		{
-			if (node.IsExpandable()) 
+			if (node.score > min_score)
 			{
-				expandable_nodes.push_back(& node);
+				if (node.IsExpandable()) 
+				{
+					if (node_buffer.ExpandNode(node)) 
+					{
+						RecalculateMinScore();
+						++ num_expanded;
+					}
+				}
 			}
 		}
 		
@@ -52,52 +69,9 @@ namespace form
 		}
 		
 	private:
-		smp::vector<Node *> & expandable_nodes;
-	};
-	
-	
-	// Called on each node to (conditionally) expand it
-	// such that newly allocated nodes are assigned as children of it. 
-	class ExpandNodeFunctor
-	{
-		OBJECT_NO_COPY (ExpandNodeFunctor);
-		
-	public:
-		ExpandNodeFunctor(NodeBuffer & _node_buffer)
-		: node_buffer(_node_buffer)
-		, num_expanded(0)
-		{
-		}
-		
-		int GetNumExpanded() const
-		{
-			return num_expanded;
-		}
-		
-		// The node version. 
-		void operator() (Node * node)
-		{
-			if (node->IsExpandable()) 
-			{
-				if (node_buffer.ExpandNode(* node)) 
-				{
-					++ num_expanded;
-				}
-			}
-		}
-		
-		// The quaterna version.
-		void operator() (Quaterna & quaterna)
-		{
-			operator() (quaterna.nodes + 0);
-			operator() (quaterna.nodes + 1);
-			operator() (quaterna.nodes + 2);
-			operator() (quaterna.nodes + 3);
-		}
-		
-	private:
 		
 		NodeBuffer & node_buffer;
 		int num_expanded;
+		float min_score;
 	};
 }

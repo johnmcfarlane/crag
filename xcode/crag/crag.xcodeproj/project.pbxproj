@@ -151,6 +151,7 @@
 		527F7AC311EB5F4B00E25B84 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		527F7AC411EB5F4B00E25B84 /* SceneThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneThread.cpp; sourceTree = "<group>"; };
 		527F7AC511EB5F4B00E25B84 /* SceneThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneThread.h; sourceTree = "<group>"; };
+		527FBAC71288DEF700DE3329 /* ExpandNodeParallelFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandNodeParallelFunctor.h; sourceTree = "<group>"; };
 		5282943D11DB17BF00611238 /* PlanetCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetCollisionFunctor.h; sourceTree = "<group>"; };
 		5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetCollisionFunctor.cpp; sourceTree = "<group>"; };
 		5284ED1C11FFFDCA0006A58D /* Ray3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray3.h; sourceTree = "<group>"; };
@@ -480,6 +481,7 @@
 			isa = PBXGroup;
 			children = (
 				52DF18E711E8FF1C00AF25A1 /* ExpandNodeFunctor.h */,
+				527FBAC71288DEF700DE3329 /* ExpandNodeParallelFunctor.h */,
 				52DF18E811E8FF1C00AF25A1 /* ForEachNodeFace.h */,
 				52DF18E911E8FF1C00AF25A1 /* GenerateMeshFunctor.h */,
 				52DF18EA11E8FF1C00AF25A1 /* Node.cpp */,
