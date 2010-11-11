@@ -13,6 +13,7 @@
 #include "NodeBuffer.h"
 
 #include "ExpandNodeFunctor.h"
+#include "ExpandNodeParallelFunctor.h"
 #include "GenerateMeshFunctor.h"
 #include "Quaterna.h"
 #include "Shader.h"
@@ -35,7 +36,7 @@ namespace
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
 #if defined(PROFILE)
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
+	CONFIG_DEFINE (fix_num_quaterna, int, 10000);
 #else
 	// Don't ever change this value from zero!!!
 	CONFIG_DEFINE (fix_num_quaterna, int, 0);
@@ -73,7 +74,6 @@ namespace
 // NodeBuffer functions
 
 form::NodeBuffer::NodeBuffer()
-//: nodes(new Node [max_num_nodes])
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_nodes)
@@ -94,11 +94,7 @@ form::NodeBuffer::NodeBuffer()
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
-	
-	// Well there's four megs right there.
-	expandable_nodes.reserve(max_num_nodes);
-	//ZeroObject (expandable_nodes_maps);
-	
+
 	VerifyObject(* this);
 }
 
@@ -426,37 +422,37 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
-	Assert(expandable_nodes.empty());
-	
 	if (EXPAND_NODES_PARALLEL)
 	{
+		int num_nodes = nodes_used_end - nodes;
+		if (num_nodes == 0)
+		{
+			return false;
+		}
+		
 		// Stage 1: Gather - this can be done in parallel
-		GatherExpandNodeFunctor gather(expandable_nodes);
-		ForEachQuaterna<GatherExpandNodeFunctor &>(512, gather, true);
+		typedef ExpandNodeParallelFunctor <max_num_nodes> Functor;
+		Functor f(* this);
+		
+		smp::ForEach(0, num_nodes, 1024, f);
 
-		if (expandable_nodes.empty())
+		if (f.GetNumExpanded() == 0)
 		{
 			// No suitable nodes were found.
 			return false;
 		}
 		
-		// Stage 2: Expand - this cannot be done in parallel
-		ExpandNodeFunctor expand(* this);
-		
-		typedef smp::vector<Node *> vector;
-		vector::const_iterator begin = expandable_nodes.begin();
-		vector::const_iterator end = expandable_nodes.end();
-		
-		core::for_each<vector::const_iterator, ExpandNodeFunctor &, 1>(begin, end, 1024, expand, false, node_buffer_prefetch_arrays);
-
-		expandable_nodes.clear();
-		return expand.GetNumExpanded() > 0;
+		// Same object, different functor.
+		f.ResetNumExpanded();
+		core::for_each_chunk <Node *, Functor &> (nodes, nodes_used_end, 1024, f);
+		return f.GetNumExpanded() > 0;
 	}
 	else 
 	{
 		ExpandNodeFunctor f(* this);
 
 		ForEachQuaterna<ExpandNodeFunctor &>(512, f, false);
+		//ForEachNode<ExpandNodeFunctor &> (2048, f, false);
 		
 		return f.GetNumExpanded() > 0;
 	}
@@ -489,6 +485,31 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 
 ///////////////////////////////////////////////////////
 // Node-related members.
+
+float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
+{
+	// See if there are unused quaterna.
+	if (quaterna_used_end != quaterna_used_end_target)
+	{
+		// As any used quaterna could replace an unused quaterna,
+		// we ought to aim pretty low. 
+		return -1;
+	}
+	
+	// Find the (known) lowest-scoring quaterna in used.
+	if (quaterna_sorted_end > quaterna) 
+	{
+		// Ok, lets try the end of the sequence of sorted quaterna...
+		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];
+		return reusable_quaterna.parent_score;
+	}
+	
+	// We're clean out of nodes!
+	// Unless the node tree is somehow eating itself,
+	// this probably means a root nodes is expanding
+	// and there are no nodes. 
+	return std::numeric_limits<float>::max();
+}
 
 bool form::NodeBuffer::ExpandNode(Node & node) 
 {
