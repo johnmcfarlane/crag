@@ -74,41 +74,15 @@ namespace core
 	// 
 	
 	template <typename ITERATOR, typename CHUNK_FUNCTOR>
-	void for_each_chunk(ITERATOR first, ITERATOR last, size_t chunk_size, CHUNK_FUNCTOR chunk_functor, bool parallel, bool prefetch)
+	void for_each_chunk(ITERATOR first, ITERATOR last, size_t chunk_size, CHUNK_FUNCTOR chunk_functor, bool parallel)
 	{
-		if (prefetch)
+		if (parallel)
 		{
-			Assert(false);
-			// Construct a new functor out of the given functor and a prefetch functor.
-			typedef void (* CHUNK_FUNCTOR_PREFETCH) (ITERATOR, ITERATOR);
-			CHUNK_FUNCTOR_PREFETCH cfp = PrefetchArray <ITERATOR>;
-			
-			typedef chunk_functor_node <ITERATOR, CHUNK_FUNCTOR_PREFETCH, CHUNK_FUNCTOR> CHUNK_FUNCTOR_NODE;
-			CHUNK_FUNCTOR_NODE cfn(cfp, chunk_functor);
-			
-			// This ought to work but it stalls the compiler...
-			//for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn, parallel, false);
-		
-			// ... this version works ok because there's no recursive call. 
-			if (parallel)
-			{
-				for_each_chunk_parallel<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn);
-			}
-			else
-			{
-				for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn);
-			}
+			for_each_chunk_parallel<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, chunk_functor);
 		}
-		else 
+		else
 		{
-			if (parallel)
-			{
-				for_each_chunk_parallel<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, chunk_functor);
-			}
-			else
-			{
-				for_each_chunk<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, chunk_functor);
-			}
+			for_each_chunk<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, chunk_functor);
 		}
 	}
 	
@@ -118,27 +92,12 @@ namespace core
 	// 
 	
 	template <typename ITERATOR, typename ITEM_FUNCTOR, int UNROLL_HINT>
-	void for_each(ITERATOR first, ITERATOR last, size_t chunk_size, ITEM_FUNCTOR item_functor, bool parallel, bool prefetch)
+	void for_each(ITERATOR first, ITERATOR last, size_t chunk_size, ITEM_FUNCTOR item_functor, bool parallel)
 	{
 		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR, UNROLL_HINT> CHUNK_FUNCTOR;
 		CHUNK_FUNCTOR cf(item_functor);
 		
-		for_each_chunk<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, cf, parallel, prefetch);
-	}
-	
-	template <typename ITERATOR, typename ITEM_FUNCTOR1, typename ITEM_FUNCTOR2, int UNROLL_HINT>
-	void for_each(ITERATOR first, ITERATOR last, size_t chunk_size, ITEM_FUNCTOR1 item_functor1, ITEM_FUNCTOR2 item_functor2, bool parallel, bool prefetch)
-	{
-		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR1, UNROLL_HINT> CHUNK_FUNCTOR1;
-		CHUNK_FUNCTOR1 cf1(item_functor1);
-		
-		typedef chunk_functor_for_each<ITERATOR, ITEM_FUNCTOR2, UNROLL_HINT> CHUNK_FUNCTOR2;
-		CHUNK_FUNCTOR2 cf2(item_functor2);
-		
-		typedef chunk_functor_node<ITERATOR, CHUNK_FUNCTOR1, CHUNK_FUNCTOR2> CHUNK_FUNCTOR_NODE;
-		CHUNK_FUNCTOR_NODE cfn(item_functor1, item_functor2);
-		
-		for_each_chunk<ITERATOR, CHUNK_FUNCTOR_NODE>(first, last, chunk_size, cfn, parallel, prefetch);
+		for_each_chunk<ITERATOR, CHUNK_FUNCTOR>(first, last, chunk_size, cf, parallel);
 	}
 	
 }

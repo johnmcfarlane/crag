@@ -45,18 +45,4 @@ namespace form
 		Mesh & mesh;
 	};
 
-	
-	// This node functor is called prior to GenerateMeshFunctor 
-	// to prefetch the points associated with a node.
-	void GenerateMeshPrefetchFunctor (Node & node)
-	{
-		if (node.IsLeaf()) 
-		{
-			PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(0)));
-			PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(1)));
-			PrefetchBlock(reinterpret_cast<void const *>(& node.GetCorner(2)));
-			// TODO: Consider/test prefetching mid_points. 
-		}
-	}
-
 }

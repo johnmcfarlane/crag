@@ -45,34 +45,6 @@ namespace core
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// chunk_functor_node
-	// 
-	
-	template <typename ITERATOR, typename CHUNK_FUNCTOR_1, typename CHUNK_FUNCTOR_2>
-	class chunk_functor_node
-	{
-	public:
-		
-		chunk_functor_node(CHUNK_FUNCTOR_1 init_chunk_functor_1, CHUNK_FUNCTOR_2 init_chunk_functor_2)
-		: chunk_functor_1(init_chunk_functor_1)
-		, chunk_functor_2(init_chunk_functor_2)
-		{
-		}
-		
-		void operator() (ITERATOR first, ITERATOR last)
-		{
-			chunk_functor_1 (first, last);
-			chunk_functor_2 (first, last);
-		}
-		
-	private:
-		
-		CHUNK_FUNCTOR_1 chunk_functor_1;
-		CHUNK_FUNCTOR_2 chunk_functor_2;
-	};
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
 	// chunk_functor_parallel
 	// 
 	// This one is the odd one out; 

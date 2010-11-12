@@ -140,13 +140,10 @@ namespace form
 		void FixUpDecreasedNodes(Quaterna * old_quaterna_used_end);
 
 		template <typename FUNCTOR> 
-		void ForEachNode(size_t step_size, FUNCTOR f, bool parallel);
+		void ForEachNode(FUNCTOR f, size_t step_size, bool parallel = false);
 		
-		template <typename FUNCTOR1, typename FUNCTOR2> 
-		void ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, bool parallel);
-
 		template <typename FUNCTOR> 
-		void ForEachQuaterna(size_t step_size, FUNCTOR f, bool parallel);
+		void ForEachQuaterna(FUNCTOR f, size_t step_size = 1, bool parallel = false);
 
 		// Types
 

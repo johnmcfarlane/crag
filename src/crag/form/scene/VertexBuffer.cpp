@@ -45,7 +45,7 @@ void form::VertexBuffer::NormalizeNormals()
 {
 	typedef void (* FUNCTION)(form::Vertex & v);
 
-	core::for_each<iterator, FUNCTION, 1>(begin(), end(), 1024, Normalize, true, false);
+	core::for_each <iterator, FUNCTION, 1> (begin(), end(), 1024, Normalize, true);
 }
 
 int form::VertexBuffer::GetIndex(Vertex const & v) const

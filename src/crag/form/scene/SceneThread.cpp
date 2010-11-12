@@ -31,12 +31,15 @@ namespace
 {
 	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
 	
-	PROFILE_DEFINE (scene_tick_period, .05);
-	PROFILE_DEFINE (scene_tick_per_quaterna, .05);
-	PROFILE_DEFINE (mesh_generation_period, .05);	
-	PROFILE_DEFINE (mesh_generation_per_quaterna, .05);
+	PROFILE_DEFINE (scene_tick_period, .01);
+	PROFILE_DEFINE (scene_tick_per_quaterna, .0025);
+	PROFILE_DEFINE (mesh_generation_period, .01);	
+	PROFILE_DEFINE (mesh_generation_per_quaterna, .01);
 }
 
+// TODO: Move debug text out of gfx::Debug
+// TODO: Make debug text show up in Retail
+// TODO: Make Churn exit on reaching a ratio of expanded to non-expanded.
 
 form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
 : formations(_formations)

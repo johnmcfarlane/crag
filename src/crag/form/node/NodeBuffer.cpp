@@ -13,7 +13,6 @@
 #include "NodeBuffer.h"
 
 #include "ExpandNodeFunctor.h"
-#include "ExpandNodeParallelFunctor.h"
 #include "GenerateMeshFunctor.h"
 #include "Quaterna.h"
 #include "Shader.h"
@@ -25,10 +24,6 @@
 #include "core/for_each_chunk.h"
 
 
-// Note: Doesn't work yet.
-#define EXPAND_NODES_PARALLEL false
-
-
 namespace 
 {
 
@@ -36,13 +31,11 @@ namespace
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
 	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
 #if defined(PROFILE)
-	CONFIG_DEFINE (fix_num_quaterna, int, 10000);
+	CONFIG_DEFINE (fix_num_quaterna, int, 0);
 #else
 	// Don't ever change this value from zero!!!
 	CONFIG_DEFINE (fix_num_quaterna, int, 0);
 #endif
-	
-	CONFIG_DEFINE (node_buffer_prefetch_arrays, bool, false);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -394,13 +387,14 @@ void form::NodeBuffer::UpdateNodeScores()
 	else 
 #endif
 	{
-		ForEachNode<CalculateNodeScoreFunctor &>(1024, node_score_functor, true);
+		// TODO: Try ForEachQuaterna. Faster?
+		ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 	}
 }
 
 void form::NodeBuffer::UpdateQuaternaScores()
 {
-	ForEachQuaterna(128, UpdateQuaternaScore, true);
+	ForEachQuaterna(UpdateQuaternaScore, 1024, true);
 	
 	// This basically says: "as far as I know, none of the quaterna are sorted."
 	quaterna_sorted_end = quaterna;
@@ -422,41 +416,12 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
-	if (EXPAND_NODES_PARALLEL)
-	{
-		int num_nodes = nodes_used_end - nodes;
-		if (num_nodes == 0)
-		{
-			return false;
-		}
-		
-		// Stage 1: Gather - this can be done in parallel
-		typedef ExpandNodeParallelFunctor <max_num_nodes> Functor;
-		Functor f(* this);
-		
-		smp::ForEach(0, num_nodes, 1024, f);
+	ExpandNodeFunctor f(* this);
 
-		if (f.GetNumExpanded() == 0)
-		{
-			// No suitable nodes were found.
-			return false;
-		}
-		
-		// Same object, different functor.
-		f.ResetNumExpanded();
-		core::for_each_chunk <Node *, Functor &> (nodes, nodes_used_end, 1024, f);
-		return f.GetNumExpanded() > 0;
-	}
-	else 
-	{
-		ExpandNodeFunctor f(* this);
-
-		ForEachQuaterna<ExpandNodeFunctor &>(512, f, false);
-		//ForEachNode<ExpandNodeFunctor &> (2048, f, false);
-		
-		return f.GetNumExpanded() > 0;
-	}
-
+	ForEachQuaterna<ExpandNodeFunctor &>(f, 1);
+	//ForEachNode<ExpandNodeFunctor &> (f, 1);
+	
+	return f.GetNumExpanded() > 0;
 }
 
 void form::NodeBuffer::GenerateMesh(Mesh & mesh) 
@@ -468,16 +433,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 
 	GenerateMeshFunctor mesh_functor(mesh);
 
-	if (node_buffer_prefetch_arrays)
-	{
-		typedef void (* PrefetchFunctor) (Node & node);
-		PrefetchFunctor mesh_prefetch_functor = GenerateMeshPrefetchFunctor;
-		ForEachNode<PrefetchFunctor &, GenerateMeshFunctor &>(512, mesh_prefetch_functor, mesh_functor, true);
-	}
-	else
-	{
-		ForEachNode<GenerateMeshFunctor &>(512, mesh_functor, true);
-	}
+	ForEachNode<GenerateMeshFunctor &>(mesh_functor, 1024, true);
 	
 	VertexBuffer & vertices = mesh.GetVertices();
 	vertices.NormalizeNormals();
@@ -946,28 +902,37 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 }
 
 template <typename FUNCTOR> 
-void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR f, bool parallel)
+void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 {
-	if (nodes_used_end > nodes)
+	if (nodes_used_end == nodes)
 	{
-		core::for_each<form::Node *, FUNCTOR, portion_num_nodes>(nodes, nodes_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
+		return;
 	}
-}
-
-template <typename FUNCTOR1, typename FUNCTOR2> 
-void form::NodeBuffer::ForEachNode(size_t step_size, FUNCTOR1 f1, FUNCTOR2 f2, bool parallel)
-{
-	if (nodes_used_end > nodes)
+	
+	if (! parallel && step_size == 1)
 	{
-		core::for_each<form::Node *, FUNCTOR1, FUNCTOR2, portion_num_nodes>(nodes, nodes_used_end, step_size, f1, f2, parallel, node_buffer_prefetch_arrays);
+		core::for_each <form::Node *, FUNCTOR> (nodes, nodes_used_end, f);
+	}
+	else 
+	{
+		core::for_each<form::Node *, FUNCTOR, portion_num_nodes>(nodes, nodes_used_end, step_size, f, parallel);
 	}
 }
 
 template <typename FUNCTOR> 
-void form::NodeBuffer::ForEachQuaterna(size_t step_size, FUNCTOR f, bool parallel)
+void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool parallel)
 {
-	if (quaterna_used_end > quaterna)
+	if (quaterna_used_end == quaterna)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, step_size, f, parallel, node_buffer_prefetch_arrays);
+		return;
+	}
+
+	if (! parallel && step_size == 1)
+	{
+		core::for_each<form::Quaterna *, FUNCTOR>(quaterna, quaterna_used_end, f);
+	}
+	else
+	{
+		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, step_size, f, parallel);
 	}
 }
