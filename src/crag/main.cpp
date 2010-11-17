@@ -45,7 +45,7 @@ int main(int /*argc*/, char * * /*argv*/)
 	std::cout << "Crag Demo\n";
 	std::cout << "Copyright 2010 John McFarlane\n";
 	
-	ConfigManager config_manager;
+	core::ConfigManager config_manager;
 	
 	return Crag() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -42,6 +42,10 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // Config function definitions
 
+
+using core::ConfigManager;
+
+
 ConfigManager::ConfigManager()
 {
 	if (! Load())

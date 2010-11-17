@@ -13,16 +13,23 @@
 #include "Enumeration.h"
 
 
-class ConfigEntry;
-
-
-class ConfigManager : public core::Enumeration<ConfigEntry>
+namespace core
 {
-public:
-	ConfigManager();
-	~ConfigManager();
 	
-private:
-	bool Load();
-	void Save();
-};
+	// forward-declaration
+	class ConfigEntry;
+
+
+	// Contains the complete list of configuration settings.
+	class ConfigManager : public core::Enumeration<ConfigEntry>
+	{
+	public:
+		ConfigManager();
+		~ConfigManager();
+		
+	private:
+		bool Load();
+		void Save();
+	};
+
+}

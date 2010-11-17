@@ -25,8 +25,11 @@
 #include <cstdio>
 
 
+namespace core {
+
+
 //////////////////////////////////////////////////////////////////////
-// ConfigEntry function definitions
+// core::ConfigEntry function definitions
 
 ConfigEntry::ConfigEntry(char const * init_name)
 : super(init_name)
@@ -233,5 +236,7 @@ template<> int ConfigAngle<double>::StringToValue(double & value, char const * s
 		return 0;
 	}
 }
+
+}	// namespace core
 
 #endif	// ENABLE_CONFIG

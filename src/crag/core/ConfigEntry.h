@@ -19,80 +19,85 @@
 #include "Enumeration.h"
 
 
-class ConfigEntry : public core::Enumeration<ConfigEntry>::node
+namespace core
 {
-	typedef core::Enumeration<ConfigEntry>::node super;
-
-	ConfigEntry & operator=(ConfigEntry const &);	// undefined
-	ConfigEntry(const ConfigEntry &);	// undefined
-
-public:
-	ConfigEntry(char const * init_name);
 	
-	virtual void Get(char * config_string, char * default_string) const = 0;
-
-	// Returns true iff the default has changed.
-	virtual bool Set(char const * config_string, char const * default_string) = 0;
-};
-
-
-template<typename S> class Config : protected ConfigEntry
-{
-public:
-	Config(S & var, char const * init_name) 
-	: ConfigEntry(init_name)
-	, variable(var)
-	, default_value(var)
-	{ 
-	}
-	
-	virtual void Get(char * config_string, char * default_string) const
+	class ConfigEntry : public core::Enumeration<ConfigEntry>::node
 	{
-		ValueToString(config_string, variable);
-		ValueToString(default_string, default_value);
-	}
-	
-	virtual bool Set(char const * config_string, char const * default_string) 
+		typedef Enumeration<ConfigEntry>::node super;
+
+		ConfigEntry & operator=(ConfigEntry const &);	// undefined
+		ConfigEntry(const ConfigEntry &);	// undefined
+
+	public:
+		ConfigEntry(char const * init_name);
+		
+		virtual void Get(char * config_string, char * default_string) const = 0;
+
+		// Returns true iff the default has changed.
+		virtual bool Set(char const * config_string, char const * default_string) = 0;
+	};
+
+
+	template<typename S> class Config : protected ConfigEntry
 	{
-		S stored_default_value;
-		StringToValue(stored_default_value, default_string);
-		if (stored_default_value == default_value)
-		{
-			StringToValue(variable, config_string);
-			return false;
+	public:
+		Config(S & var, char const * init_name) 
+		: ConfigEntry(init_name)
+		, variable(var)
+		, default_value(var)
+		{ 
 		}
 		
-		Assert(default_value == variable);
-		return true;
-	}
-	
-private:
-	static int ValueToString(char * string, S const & value);
-	static int StringToValue(S & value, char const * string);
-	
-	S & variable;
-	S const default_value;
-};
+		virtual void Get(char * config_string, char * default_string) const
+		{
+			ValueToString(config_string, variable);
+			ValueToString(default_string, default_value);
+		}
+		
+		virtual bool Set(char const * config_string, char const * default_string) 
+		{
+			S stored_default_value;
+			StringToValue(stored_default_value, default_string);
+			if (stored_default_value == default_value)
+			{
+				StringToValue(variable, config_string);
+				return false;
+			}
+			
+			Assert(default_value == variable);
+			return true;
+		}
+		
+	private:
+		static int ValueToString(char * string, S const & value);
+		static int StringToValue(S & value, char const * string);
+		
+		S & variable;
+		S const default_value;
+	};
 
 
-template<typename S> class ConfigAngle : protected Config<S>
-{
-public:
-	ConfigAngle(S & init_var, char const * init_name) 
-	: Config<S>(init_var, init_name)
-	{ 
-	}
-	
-	static int ValueToString(char * string, S const & value);
-	static int StringToValue(S & value, char const * string);
-};
+	template<typename S> class ConfigAngle : protected Config<S>
+	{
+	public:
+		ConfigAngle(S & init_var, char const * init_name) 
+		: Config<S>(init_var, init_name)
+		{ 
+		}
+		
+		static int ValueToString(char * string, S const & value);
+		static int StringToValue(S & value, char const * string);
+	};
+
+}
 
 
-#define CONFIG_DEFINE(name, type, default) type name = default; Config<type> name##config (name, #name)
-#define CONFIG_DEFINE_MEMBER(class, name, type, default) type class::name = default; Config<type> name##config (class::name, #name)
+#define CONFIG_DEFINE(name, type, default) type name = default; core::Config<type> name##config (name, #name)
+#define CONFIG_DEFINE_MEMBER(class, name, type, default) type class::name = default; core::Config<type> name##config (class::name, #name)
 
-#define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default); ConfigAngle<type> name##config (name, #name)
-#define CONFIG_DEFINE_ANGLE_MEMBER(class, name, type, default) type class::name = DegToRad(default); ConfigAngle<type> name##config (class::name, #name)
+#define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default); core::ConfigAngle<type> name##config (name, #name)
+#define CONFIG_DEFINE_ANGLE_MEMBER(class, name, type, default) type class::name = DegToRad(default); core::ConfigAngle<type> name##config (class::name, #name)
 
 #else
 
