@@ -23,11 +23,11 @@ namespace sim
 {
 	namespace 
 	{
-	#if defined(PROFILE)
+#if defined(NDEBUG) && defined(PROFILE)
 		bool gravity = false;
-	#else
+#else
 		CONFIG_DEFINE (gravity, bool, true);
-	#endif
+#endif
 		
 		CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
 		
