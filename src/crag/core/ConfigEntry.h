@@ -26,11 +26,8 @@ namespace core
 	{
 		typedef Enumeration<ConfigEntry>::node super;
 
-		ConfigEntry & operator=(ConfigEntry const &);	// undefined
-		ConfigEntry(const ConfigEntry &);	// undefined
-
 	public:
-		ConfigEntry(char const * init_name);
+		ConfigEntry(char const * name) : super(name) { }
 		
 		virtual void Get(char * config_string, char * default_string) const = 0;
 

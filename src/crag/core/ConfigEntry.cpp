@@ -29,15 +29,6 @@ namespace core {
 
 
 //////////////////////////////////////////////////////////////////////
-// core::ConfigEntry function definitions
-
-ConfigEntry::ConfigEntry(char const * init_name)
-: super(init_name)
-{
-}
-
-
-//////////////////////////////////////////////////////////////////////
 // ValueToString / StringToValue specializations
 
 // bool
