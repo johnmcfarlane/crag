@@ -14,29 +14,25 @@
 // TODO: Are the values being read in ok? I've seen mesh gen value bulldozed on WIN32.
 #define ENABLE_CONFIG
 
-
 #if defined(ENABLE_CONFIG)
 
+#include "Enumeration.h"
 
-class ConfigEntry
+
+class ConfigEntry : public core::Enumeration<ConfigEntry>::node
 {
-	friend class ConfigManager;
+	typedef core::Enumeration<ConfigEntry>::node super;
 
 	ConfigEntry & operator=(ConfigEntry const &);	// undefined
 	ConfigEntry(const ConfigEntry &);	// undefined
 
 public:
 	ConfigEntry(char const * init_name);
-	virtual ~ConfigEntry();
 	
 	virtual void Get(char * config_string, char * default_string) const = 0;
 
 	// Returns true iff the default has changed.
 	virtual bool Set(char const * config_string, char const * default_string) = 0;
-	
-private:
-	ConfigEntry * next;
-	char const * name;
 };
 
 

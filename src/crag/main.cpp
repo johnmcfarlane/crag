@@ -45,19 +45,9 @@ int main(int /*argc*/, char * * /*argv*/)
 	std::cout << "Crag Demo\n";
 	std::cout << "Copyright 2010 John McFarlane\n";
 	
-	if (! ConfigManager::Load())
-	{
-		// Make sure we always have a config file handy.
-		ConfigManager::Save();
-	}
+	ConfigManager config_manager;
 	
-	bool ok = Crag();
-	
-	ConfigManager::Save();
-	
-	return ok
-	? EXIT_SUCCESS
-	: EXIT_FAILURE;
+	return Crag() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //////////////////////////////////////////////////////////////////////

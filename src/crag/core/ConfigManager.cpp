@@ -10,8 +10,8 @@
 
 #include "pch.h"
 
-#include "core/ConfigManager.h"
-#include "core/ConfigEntry.h"
+#include "ConfigManager.h"
+#include "ConfigEntry.h"
 
 #if defined(ENABLE_CONFIG)
 
@@ -27,9 +27,6 @@
 
 namespace 
 {
-
-	ConfigEntry * list_head = nullptr;
-
 	int const max_string_size = 1024;
 
 #if defined(ENABLE_CONFIG_LOAD_SAVE)
@@ -44,6 +41,20 @@ namespace
 
 //////////////////////////////////////////////////////////////////////
 // Config function definitions
+
+ConfigManager::ConfigManager()
+{
+	if (! config_manager.Load())
+	{
+		// Make sure we always have a config file handy.
+		config_manager.Save();
+	}
+}
+
+ConfigManager::~ConfigManager()
+{
+	config_manager.Save();
+}
 
 bool ConfigManager::Load()
 {
@@ -95,7 +106,7 @@ bool ConfigManager::Load()
 		char const * name_string = config_line;
 		
 		// Get the parameter in question, given its name.
-		ConfigEntry * parameter = GetParameter(name_string);
+		ConfigEntry * parameter = * find(name_string);
 		if (parameter == nullptr)
 		{
 			std::cout << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << ".\n";
@@ -135,52 +146,15 @@ void ConfigManager::Save()
 		}
 	}
 	
-	for (ConfigEntry const * iterator = list_head; iterator != nullptr; iterator = iterator->next)
+	for (iterator i = begin(); i != end(); ++ i)
 	{
 		char config_string[max_string_size];
 		char default_string[max_string_size];
-		iterator->Get(config_string, default_string);
-		config_file << iterator->name << "=" << config_string << '\n';
+		i->Get(config_string, default_string);
+		config_file << i->GetName() << "=" << config_string << '\n';
 		defaults_file << default_string << '\n';
 	}
 #endif
-}
-
-void ConfigManager::AddParameter(ConfigEntry & parameter)
-{
-	Assert(! parameter_set_complete);
-	Assert(parameter.next == nullptr);
-
-	char const * name = parameter.name;
-	Assert(name != nullptr);
-	Assert(GetParameter(parameter.name) == nullptr);
-
-	ConfigEntry * * ptr_iterator = & list_head;
-	while (true)
-	{
-		ConfigEntry * next = * ptr_iterator;
-		if (next == nullptr || strcmp(next->name, name) > 0)
-		{
-			break;
-		}
-		
-		ptr_iterator = & (* ptr_iterator)->next;
-	}
-	
-	parameter.next = * ptr_iterator;
-	* ptr_iterator = & parameter;
-}
-
-ConfigEntry * ConfigManager::GetParameter(char const * name)
-{
-	for (ConfigEntry * iterator = list_head; iterator != nullptr; iterator = iterator->next)
-	{
-		if (strcmp(name, iterator->name) == 0)
-		{
-			return iterator;
-		}
-	}
-	return nullptr;
 }
 
 #else
@@ -191,10 +165,6 @@ bool ConfigManager::Load()
 }
 
 void ConfigManager::Save()
-{
-}
-
-void ConfigManager::AddParameter(ConfigEntry &)
 {
 }
 

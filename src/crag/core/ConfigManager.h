@@ -10,16 +10,19 @@
 
 #pragma once
 
+#include "Enumeration.h"
+
+
 class ConfigEntry;
 
-class ConfigManager
+
+class ConfigManager : public core::Enumeration<ConfigEntry>
 {
 public:
-	static void AddParameter(ConfigEntry & parameter);
-
-	static bool Load();
-	static void Save();
-
+	ConfigManager();
+	~ConfigManager();
+	
 private:
-	static ConfigEntry * GetParameter(char const * name);
+	bool Load();
+	void Save();
 };

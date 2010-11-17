@@ -153,6 +153,7 @@
 		527F7AC511EB5F4B00E25B84 /* SceneThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneThread.h; sourceTree = "<group>"; };
 		5282943D11DB17BF00611238 /* PlanetCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetCollisionFunctor.h; sourceTree = "<group>"; };
 		5282943E11DB17BF00611238 /* PlanetCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetCollisionFunctor.cpp; sourceTree = "<group>"; };
+		52840247128E229B00F8AFE9 /* Enumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enumeration.h; sourceTree = "<group>"; };
 		5284ED1C11FFFDCA0006A58D /* Ray3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray3.h; sourceTree = "<group>"; };
 		52887594127352650048AC81 /* Regulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Regulator.h; sourceTree = "<group>"; };
 		52887595127352650048AC81 /* Regulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Regulator.cpp; sourceTree = "<group>"; };
@@ -566,6 +567,7 @@
 				52F3A30D11A7979400385922 /* debug.cpp */,
 				52F3A30E11A7979400385922 /* debug.h */,
 				5294D2671243C3C500EA6849 /* double_buffer.h */,
+				52840247128E229B00F8AFE9 /* Enumeration.h */,
 				52F3A30F11A7979400385922 /* floatOps.h */,
 				52A2CD6D126113A600DFCDF6 /* for_each.h */,
 				52AE3145125925ED0066FF5B /* for_each_chunk.h */,

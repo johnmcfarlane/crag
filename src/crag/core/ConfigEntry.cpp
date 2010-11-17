@@ -10,11 +10,12 @@
 
 #include "pch.h"
 
-#include "core/ConfigEntry.h"
+#include "ConfigEntry.h"
 
 #if defined(ENABLE_CONFIG)
 
-#include "core/ConfigManager.h"
+#include "ConfigManager.h"
+
 #include "geom/Vector3.h"
 
 #include "gfx/Color.h"
@@ -28,12 +29,7 @@
 // ConfigEntry function definitions
 
 ConfigEntry::ConfigEntry(char const * init_name)
-: name(init_name)
-{
-	ConfigManager::AddParameter(* this);
-}
-
-ConfigEntry::~ConfigEntry()
+: super(init_name)
 {
 }
 
