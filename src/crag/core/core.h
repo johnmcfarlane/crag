@@ -17,7 +17,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// Prevent object from being copied. Put at top of class definition. 
+// OBJECT_NO_COPY
+// 
+// Prevent object from being copied. 
+// Put at top of class definition. 
+// Then try very hard not to define these functions.
 
 // Ready for C++0x
 //#define OBJECT_NO_COPY(CLASS) \
@@ -28,4 +32,18 @@
 #define OBJECT_NO_COPY(CLASS) \
 private: \
 	void operator=(const CLASS &); \
+	CLASS(const CLASS &) 
+
+
+//////////////////////////////////////////////////////////////////////
+// OBJECT_NO_INSTANCE
+// 
+// Prevent object from being instanced. 
+// Put at top of class definition. 
+// Then try very hard not to define these functions.
+
+#define OBJECT_NO_INSTANCE(CLASS) \
+private: \
+	void operator=(const CLASS &); \
+	CLASS(); \
 	CLASS(const CLASS &) 
