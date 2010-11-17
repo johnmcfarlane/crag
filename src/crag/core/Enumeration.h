@@ -99,7 +99,7 @@ namespace core
 			: _name(name)
 			{
 				// Find the insertion point.
-				iterator match = Enumeration::find_nearest(name);
+				iterator match = Enumeration::find_insertion(name);
 				
 				// Make sure it's not a perfect match, i.e. a duplicate.
 				Assert(* match == nullptr || compare_name(match->GetName(), name) != 0);

@@ -44,16 +44,16 @@ namespace
 
 ConfigManager::ConfigManager()
 {
-	if (! config_manager.Load())
+	if (! Load())
 	{
 		// Make sure we always have a config file handy.
-		config_manager.Save();
+		Save();
 	}
 }
 
 ConfigManager::~ConfigManager()
 {
-	config_manager.Save();
+	Save();
 }
 
 bool ConfigManager::Load()
