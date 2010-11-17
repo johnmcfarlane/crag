@@ -17,13 +17,12 @@
 
 #include "sim/Observer.h"
 
-#include "gfx/Debug.h"
-#include "gfx/Image.h"
 #include "gfx/Pov.h"
 
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Statistics.h"
 #include "core/TextureMapper.h"
 
 
@@ -37,6 +36,10 @@ namespace
 
 	CONFIG_DEFINE (enable_multithreding, bool, true);
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
+
+	STAT (num_polys, int, .05);
+	STAT (mesh_generation, bool, .2);
+	STAT (dynamic_origin, bool, .2);
 }
 
 
@@ -218,7 +221,7 @@ void form::Manager::RenderFormations(gfx::Pov const & pov, bool color) const
 
 void form::Manager::DebugStats() const
 {
-	if (gfx::Debug::GetVerbosity() > .75) 
+	/* if (gfx::Debug::GetVerbosity() > .75) 
 	{
 		for (int i = 0; i < 2; ++ i) 
 		{
@@ -234,22 +237,11 @@ void form::Manager::DebugStats() const
 			}
 			gfx::Debug::out << '\n';
 		}
-	}
+	} */
 	
-	if (gfx::Debug::GetVerbosity() > .15) 
-	{
-		gfx::Debug::out << "polys:" << mesh_buffers.front().GetNumPolys() << '\n';
-	}
-	
-	if (! enable_mesh_generation && gfx::Debug::GetVerbosity() > .0) 
-	{
-		gfx::Debug::out << "disabled: mesh generation\n";
-	}
-	
-	if (! enable_dynamic_origin && gfx::Debug::GetVerbosity() > .05) 
-	{
-		gfx::Debug::out << "disabled: dynamic origin\n";
-	}
+	STAT_SET (num_polys, mesh_buffers.front().GetNumPolys());
+	STAT_SET (mesh_generation, enable_mesh_generation);
+	STAT_SET (dynamic_origin, enable_dynamic_origin);
 }
 
 #if defined(FORM_VERTEX_TEXTURE)

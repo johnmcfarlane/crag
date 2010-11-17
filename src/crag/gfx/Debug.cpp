@@ -14,8 +14,6 @@
 
 #include "core/ConfigEntry.h"
 
-#include <sstream>
-
 #if defined(GFX_DEBUG)
 
 #include "Color.h"
@@ -28,17 +26,13 @@
 
 #include "smp/Mutex.h"
 
-#if 0
-namespace debug {
-	void DrawNodePoints();
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local definitions
 
-ANONYMOUS_BEGIN
-
+namespace
+{
+	
 	using gfx::Debug::ColorPair;
 	using gfx::Debug::Vector3;
 
@@ -47,9 +41,6 @@ ANONYMOUS_BEGIN
 		
 	// Mutex for global functions.
 	smp::Mutex mutex;
-	
-	// The string into which is written gfx::Debug::out.
-	std::stringstream out_stream;
 	
 	// The font used to print the string to screen.
 	gfx::Font * font = nullptr;
@@ -186,30 +177,8 @@ ANONYMOUS_BEGIN
 		lines.Clear();
 		tris.Clear();
 	}
-	
-	void ResetStream()
-	{
-		ANONYMOUS::out_stream.str("");
-	}
 
-	void DrawText()
-	{
-		if (! (* font))
-		{
-			return;
-		}
-		
-		size_t const max_string_size = 1024;
-		char test[max_string_size + 1];
-		strncpy(test, out_stream.str().c_str(), max_string_size);
-		
-		Vector2i p = Vector2i::Zero();
-		font->Print(test, p);
-		
-		ResetStream();
-	}
-
-ANONYMOUS_END
+}
 
 
 
@@ -217,14 +186,10 @@ ANONYMOUS_END
 // gfx::Debug defines
 
 
-// Can't find this at link time? Make sure you're wrapping reference in a test of GetVerbosity(). 
-std::ostream & gfx::Debug::out = ANONYMOUS::out_stream;
-
-
 // Start things up.
 void gfx::Debug::Init()
 {
-	Assert(ANONYMOUS::font == nullptr);
+	Assert(font == nullptr);
 
 	// TODO: Is this font legit content?
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
@@ -233,25 +198,25 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	ANONYMOUS::font = new gfx::Font("font_bitmap.png", .5f);
+	font = new gfx::Font("font_bitmap.png", .5f);
 }
 
 
 // Close things down.
 void gfx::Debug::Deinit()
 {
-	Assert(ANONYMOUS::font != nullptr);
-	delete ANONYMOUS::font;
-	ANONYMOUS::font = nullptr;
+	Assert(font != nullptr);
+	delete font;
+	font = nullptr;
 }
 
 
 // Run any and all sanity checks.
 void gfx::Debug::Verify()
 {
-	ANONYMOUS::points.Verify();
-	ANONYMOUS::lines.Verify();
-	ANONYMOUS::tris.Verify();
+	points.Verify();
+	lines.Verify();
+	tris.Verify();
 }
 
 
@@ -261,33 +226,33 @@ double gfx::Debug::GetVerbosity()
 #if defined(NDEBUG)
 	return .25;
 #else
-	return ANONYMOUS::debug_verbosity;
+	return debug_verbosity;
 #endif
 }
 
 
 void gfx::Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
 {
-	ANONYMOUS::mutex.Lock();
-	ANONYMOUS::points.AddPoint(a, colors);
-	ANONYMOUS::mutex.Unlock();
+	mutex.Lock();
+	points.AddPoint(a, colors);
+	mutex.Unlock();
 }
 
 void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
-	ANONYMOUS::mutex.Lock();
-	ANONYMOUS::lines.AddPoint(a, colors_a);
-	ANONYMOUS::lines.AddPoint(b, colors_b);
-	ANONYMOUS::mutex.Unlock();
+	mutex.Lock();
+	lines.AddPoint(a, colors_a);
+	lines.AddPoint(b, colors_b);
+	mutex.Unlock();
 }
 
 void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
-	ANONYMOUS::mutex.Lock();
-	ANONYMOUS::tris.AddPoint(a, colors);
-	ANONYMOUS::tris.AddPoint(b, colors);
-	ANONYMOUS::tris.AddPoint(c, colors);
-	ANONYMOUS::mutex.Unlock();
+	mutex.Lock();
+	tris.AddPoint(a, colors);
+	tris.AddPoint(b, colors);
+	tris.AddPoint(c, colors);
+	mutex.Unlock();
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)
@@ -382,10 +347,7 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 
 void gfx::Debug::Draw()
 {
-#if 0
-	debug::DrawNodePoints();
-#endif
-	ANONYMOUS::mutex.Lock();
+	mutex.Lock();
 	
 	GLPP_VERIFY;
 	Verify();
@@ -400,9 +362,9 @@ void gfx::Debug::Draw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl::Enable(GL_BLEND);
 	
-	ANONYMOUS::DrawPrimatives(false);
-	ANONYMOUS::DrawPrimatives(true);
-	ANONYMOUS::ClearPrimatives();
+	DrawPrimatives(false);
+	DrawPrimatives(true);
+	ClearPrimatives();
 	
 	// Unset state
 	gl::Enable(GL_CULL_FACE);
@@ -410,13 +372,20 @@ void gfx::Debug::Draw()
 	gl::Disable(GL_BLEND);
 	gl::SetColor<GLfloat>(1,1,1);
 
-	ANONYMOUS::DrawText();
-	
 	Verify();
 	GLPP_VERIFY;
-	ANONYMOUS::mutex.Unlock();
+	mutex.Unlock();
 }
 
+void gfx::Debug::DrawText(char const * text, Vector2i const & position)
+{
+	if (! (* font))
+	{
+		return;
+	}
+	
+	font->Print(text, position);
+}
 
 #else
 

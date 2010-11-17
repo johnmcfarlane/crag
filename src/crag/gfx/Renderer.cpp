@@ -11,6 +11,7 @@
 #include "pch.h"
 
 #include "Renderer.h"
+#include "Color.h"
 #include "Scene.h"
 #include "Debug.h"
 #include "Skybox.h"
@@ -18,16 +19,16 @@
 
 #include "form/Manager.h"
 
-#include "sim/Entity.h"
 #include "sim/axes.h"
 
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
-#include "geom/MatrixOps.h"
-#include "geom/Sphere3.h"
+#include "core/Statistics.h"
 
 #include "sim/Universe.h"	// TODO: Doesn't belong here.
+
+#include <sstream>
 
 
 using sys::TimeType;
@@ -51,7 +52,11 @@ namespace
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
-
+	STAT (idle, bool, .2);
+	STAT (fps, float, .0);
+	STAT (pos, sim::Vector3, .3);
+	STAT (rot, sim::Matrix4, .9);
+	
 	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
 	{
 		GLPP_CALL(glMatrixMode(GL_MODELVIEW));
@@ -93,7 +98,7 @@ gfx::Renderer::Renderer()
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
-, fps(0)
+, average_frame_time(0)
 , frame_count(0)
 , frame_count_reset_time(last_frame_time)
 {
@@ -232,18 +237,13 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 		idle = 0;
 	}
 
-	if (Debug::GetVerbosity() > .4) 
-	{
-		Debug::out << "idle:" << idle << '\n';
-	}
-
 	// Independant stat counters for measuring the FPS.
 	++ frame_count;
 	sys::TimeType fps_delta = frame_time - frame_count_reset_time;
 	if (frame_count == 60) 
 	{
 		frame_count_reset_time = frame_time;
-		fps = static_cast<double>(fps_delta) / frame_count;
+		average_frame_time = static_cast<double>(fps_delta) / frame_count;
 		frame_count = 0;
 	}
 	
@@ -438,35 +438,37 @@ void gfx::Renderer::RenderLights(std::vector<Light const *> const & lights) cons
 
 void gfx::Renderer::DebugDraw(Pov const & pov) const
 {
-//	Pov test = pov;
-//	test.frustum.resolution = Vector2i(100, 100);
-//	test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
-//	Debug::AddFrustum(test);
-	
-	if (Debug::GetVerbosity() > .1) 
-	{
-		Debug::out << "fps:" << 1. / fps << '\n';
-	}
-	
-	if (Debug::GetVerbosity() > .3) 
-	{
-		std::streamsize previous_precision = Debug::out.precision(10);
-		Debug::out << "pos:" << pov.pos << '\n';
-		Debug::out.precision(previous_precision);
-	}
-	
-	if (Debug::GetVerbosity() > .9) 
-	{
-		std::streamsize previous_precision = Debug::out.precision(2);
-		Debug::out << "rot:" << pov.rot << '\n';
-		Debug::out.precision(previous_precision);
-	}
-	
 #if defined(GFX_DEBUG)
-	sim::Vector3 forward = axes::GetForward(pov.rot);
-	sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
+	//Pov test = pov;
+	//test.frustum.resolution = Vector2i(100, 100);
+	//test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
+	//Debug::AddFrustum(test);
+
+	//sim::Vector3 forward = axes::GetForward(pov.rot);
+	//sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
 	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
-#endif
 	
 	Debug::Draw();
+	
+#if defined (GATHER_STATS)
+	STAT_SET (fps, 1.f / average_frame_time);
+	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
+	STAT_SET (rot, pov.rot);	// std::streamsize previous_precision = out.precision(2); ...; out.precision(previous_precision);
+	
+	// The string into which is written gfx::Debug text.
+	std::stringstream out_stream;
+	
+	for (core::Statistics::iterator i = core::Statistics::begin(); i != core::Statistics::end(); ++ i)
+	{
+		core::StatInterface const & stat = ref(* i);
+		if (Debug::GetVerbosity() > stat.GetVerbosity())
+		{
+			out_stream << stat.GetName() << ": " << stat << '\n';
+		}
+	}
+	
+	Debug::DrawText(out_stream.str().c_str(), Vector2i::Zero());
+#endif
+	
+#endif
 }

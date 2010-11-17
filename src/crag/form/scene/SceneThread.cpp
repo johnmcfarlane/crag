@@ -24,6 +24,7 @@
 #include "smp/smp.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Statistics.h"
 #include "core/profile.h"
 
 
@@ -35,6 +36,18 @@ namespace
 	PROFILE_DEFINE (scene_tick_per_quaterna, .0025);
 	PROFILE_DEFINE (mesh_generation_period, .01);	
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01);
+
+	STAT (quats_used, int, .15);
+	STAT (quats_visible, int, .17);
+	STAT (scene_thread, bool, .35);
+	STAT (oor, double, .22);
+	STAT (scene_t, sys::TimeType, .35);
+	STAT (meshg_t, sys::TimeType, .35);
+	STAT (scene_tpq_us, sys::TimeType, .2);	// time per quaterna (microseconds)
+	STAT (meshg_tpq_ms, sys::TimeType, .2);	// time per quaterna (miliseconds)
+	STAT (nodes, int, .72);
+	STAT (quats_target, int, .37);
+	STAT (resetting, bool, .2);
 }
 
 // TODO: Move debug text out of gfx::Debug
@@ -143,58 +156,33 @@ void form::SceneThread::Tick()
 	{
 		TickThread();
 	}
+
+#if defined (GATHER_STATS)
+	sim::Vector3 const & observer_pos = observer.GetPosition();
+	double observer_position_length = Length(observer_pos - GetActiveScene().GetOrigin());
+	double oor = max_observer_position_length - observer_position_length;
+	STAT_SET (oor, oor);
+#endif
+
+	STAT_SET (scene_t, PROFILE_RESULT(scene_tick_period));
+	STAT_SET (meshg_t, PROFILE_RESULT(mesh_generation_period));
+
+	//std::ios_base::fmtflags flags = out.flags(std::ios::fixed);
+	//std::streamsize previous_precision = out.precision(10);
+	STAT_SET (scene_tpq_us, 1000000.f * PROFILE_RESULT(scene_tick_per_quaterna));
+	STAT_SET (meshg_tpq_ms, 1000.f * PROFILE_RESULT(mesh_generation_per_quaterna));
+	//gfx::Debug::out.flags(flags);
+	//gfx::Debug::out.precision(previous_precision);
 	
-	if (gfx::Debug::GetVerbosity() > 0.2)
-	{
-		sim::Vector3 const & observer_pos = observer.GetPosition();
-		double observer_position_length = Length(observer_pos - GetActiveScene().GetOrigin());
-		gfx::Debug::out << "oor:" << max_observer_position_length - observer_position_length << '\n';
-	}
+	STAT_SET (nodes, GetVisibleScene().GetNumNodesUsed());
 	
-	if (gfx::Debug::GetVerbosity() > .35)
-	{
-		gfx::Debug::out << "scene_t:" << PROFILE_RESULT(scene_tick_period) << '\n';
-		gfx::Debug::out << "meshg_t:" << PROFILE_RESULT(mesh_generation_period) << '\n';
-	}
+	STAT_SET (quats_visible, GetVisibleScene().GetNumQuaternaUsed());
+
+	STAT_SET (quats_used, GetActiveScene().GetNumQuaternaUsed());
+	STAT_SET (quats_target, GetActiveScene().GetNumQuaternaUsedTarget());
 	
-	if (gfx::Debug::GetVerbosity() > .15)
-	{
-		std::ios_base::fmtflags flags = gfx::Debug::out.flags(std::ios::fixed);
-		std::streamsize previous_precision = gfx::Debug::out.precision(10);
-		gfx::Debug::out << "scene_t/q(us):" << 1000000.f * PROFILE_RESULT(scene_tick_per_quaterna) << '\n';
-		gfx::Debug::out << "meshg_t/q(ms):" << 1000.f * PROFILE_RESULT(mesh_generation_per_quaterna) << '\n';
-		gfx::Debug::out.flags(flags);
-		gfx::Debug::out.precision(previous_precision);
-	}
-	
-	if (gfx::Debug::GetVerbosity() > .72) 
-	{
-		gfx::Debug::out << "nodes:" << GetVisibleScene().GetNumNodesUsed() << '\n';
-	}
-	
-	if (gfx::Debug::GetVerbosity() > .17) 
-	{
-		gfx::Debug::out << "visible_q:" << GetVisibleScene().GetNumQuaternaUsed() << '\n';
-	}
-	
-	if (gfx::Debug::GetVerbosity() > .37) 
-	{
-		gfx::Debug::out << " active_q:" << GetActiveScene().GetNumQuaternaUsed() << '\n';
-		gfx::Debug::out << " target_q:" << GetActiveScene().GetNumQuaternaUsedTarget() << '\n';
-	}
-	
-	if (gfx::Debug::GetVerbosity() > .2)
-	{
-		if (IsResetting())
-		{
-			gfx::Debug::out << "resetting...\n";
-		}
-	}
-	
-	if (suspend_flag && gfx::Debug::GetVerbosity() > .05)
-	{
-		gfx::Debug::out << "disabled: scene thread\n";
-	}
+	STAT_SET (resetting, IsResetting());
+	STAT_SET (scene_thread, ! suspend_flag);
 }
 
 void form::SceneThread::ForEachFormation(FormationFunctor & f) const

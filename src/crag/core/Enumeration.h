@@ -1,5 +1,5 @@
 /*
- *  enumeration.h
+ *  Enumeration.h
  *  crag
  *
  *  Created by John McFarlane on 11/11/10.
@@ -15,6 +15,13 @@
 
 namespace core
 {
+	
+	template <typename VT>
+	int operator - (VT const & lhs, VT const & rhs)
+	{
+		return strcmp(lhs.GetName(), rhs.GetName());
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Enumeration class
@@ -98,15 +105,18 @@ namespace core
 			node(name_type name)
 			: _name(name)
 			{
+				// up-cast 
+				value_type * value = static_cast<value_type *>(this);
+				
 				// Find the insertion point.
-				iterator match = Enumeration::find_insertion(name);
+				iterator match = Enumeration::find_insertion(* value);
 				
 				// Make sure it's not a perfect match, i.e. a duplicate.
-				Assert(* match == nullptr || compare_name(match->GetName(), name) != 0);
+				Assert(* match == nullptr || strcmp(match->GetName(), name) != 0);
 				
 				// Insert this into list.
 				_next = * match;
-				* match = static_cast<value_type *>(this);
+				* match = value;
 				
 				// Basically, make sure there's no multiple inheritance going on.
 				// TODO: Make this compile-time.
@@ -147,7 +157,7 @@ namespace core
 			
 			while (i != end())
 			{
-				int c = compare_name(name, i.GetName());
+				int c = strcmp(name, i.GetName());
 				if (c <= 0)
 				{
 					if (c < 0)
@@ -167,13 +177,14 @@ namespace core
 		}
 		
 		// returns iterator of the element directly preceeding or matching the given name
-		static iterator find_insertion (name_type name)
+		static iterator find_insertion (value_type const & value)
 		{
 			iterator i = begin();
 			
 			while (i != end())
 			{
-				int c = compare_name(name, i.GetName());
+				value_type const & i_value = ref(* i);
+				int c = value - i_value;
 				if (c <= 0)
 				{
 					return i;
@@ -186,16 +197,6 @@ namespace core
 		}
 		
 	private:
-		static int compare_name(name_type lhs, name_type rhs)
-		{
-			return strcmp(lhs, rhs);
-		}
-
-		static int compare_node(node const & lhs, node const & rhs)
-		{
-			return compare_name(lhs.GetName(), rhs.GetName());
-		}
-
 		static value_type * _head;
 		static value_type * _tail;	// never changes; needed for end()
 	};

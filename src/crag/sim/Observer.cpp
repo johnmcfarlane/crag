@@ -86,34 +86,7 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 			impulses[d][axis] = impulse_factors[d][axis] * factor * inv_t;
 		}
 	}
-	
-	// Debug out
-	if (gfx::Debug::GetVerbosity() > .8) {
-		for (int n = 0; n < 2; ++ n) {
-			gfx::Debug::out << (n ? "torque:" : "force: ");
-			for (int m = 0; m < 3; ++ m) {
-				char c;
-				int f = static_cast<int>(impulse.factors[n][m]);
-				if (f < 0) {
-					c = '-';
-				}
-				else if (f == 0) {
-					c = '0';
-				}
-				else if (f > 0) {
-					c = '+';
-				}
-				gfx::Debug::out << c;
-			}
-			gfx::Debug::out << '\n';
-		}
-	}
 }
-
-/*void sim::Observer::SetSpeed(int _speed)
-{
-	speed = _speed;
-}*/
 
 void sim::Observer::SetSpeedFactor(int _speed_factor)
 {

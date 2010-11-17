@@ -88,7 +88,7 @@ namespace gfx
 
 		static StateParam const init_state[];
 
-		double fps;
+		float average_frame_time;
 		int frame_count;
 		sys::TimeType frame_count_reset_time;
 	};
