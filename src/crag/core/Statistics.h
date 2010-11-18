@@ -48,7 +48,7 @@ namespace core
 		
 		virtual void Write (std::ostream & out) const = 0;
 		
-		friend int operator - (StatInterface const & lhs, StatInterface const & rhs);
+		friend bool operator < (StatInterface const & lhs, StatInterface const & rhs);
 
 	private:
 		float _verbosity;

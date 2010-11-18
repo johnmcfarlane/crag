@@ -28,22 +28,22 @@ float StatInterface::GetVerbosity() const
 	return _verbosity;
 }
 
-int core::operator - (StatInterface const & lhs, StatInterface const & rhs)
+bool core::operator < (StatInterface const & lhs, StatInterface const & rhs)
 {
-	/*float verbosity_difference = lhs.GetVerbosity() - rhs.GetVerbosity();
+	float verbosity_difference = lhs.GetVerbosity() - rhs.GetVerbosity();
 	if (verbosity_difference < 0)
 	{
-		return +1;
+		return true;
 	}
 	else if (verbosity_difference > 0)
 	{
-		return -1;
+		return false;
 	}
-	else*/
+	else
 	{
 		core::Statistics::node const & lhs_node = lhs;
 		core::Statistics::node const & rhs_node = rhs;
-		return lhs_node - rhs_node;
+		return lhs_node < rhs_node;
 	}
 }
 

@@ -17,9 +17,9 @@ namespace core
 {
 	
 	template <typename VT>
-	int operator - (VT const & lhs, VT const & rhs)
+	bool operator < (VT const & lhs, VT const & rhs)
 	{
-		return strcmp(lhs.GetName(), rhs.GetName());
+		return strcmp(lhs.GetName(), rhs.GetName()) < 0;
 	}
 	
 	
@@ -39,9 +39,14 @@ namespace core
 		typedef char const * name_type;
 		typedef ELEMENT_TYPE value_type;
 
+		// c'tor
+		Enumeration()
+		{
+			sort();
+		}
+		
 		
 		// minimal stl-style iterator for scanning through the list
-		// TODO: Make protected and create const_iterator.
 		class iterator
 		{
 		public:
@@ -92,13 +97,15 @@ namespace core
 			value_type * * _ptr;
 		};
 		
-
+		
 		// the base class for the objects to be stored in the Enumeration
+		// Derive from this the class of objects that are to be enumerated.
 		class node
 		{
 			OBJECT_NO_COPY(node);
 			
 			friend class iterator;
+			friend class Enumeration;
 			
 		public:
 			
@@ -108,19 +115,13 @@ namespace core
 				// up-cast 
 				value_type * value = static_cast<value_type *>(this);
 				
-				// Find the insertion point.
-				iterator match = Enumeration::find_insertion(* value);
-				
-				// Make sure it's not a perfect match, i.e. a duplicate.
-				Assert(* match == nullptr || strcmp(match->GetName(), name) != 0);
-				
 				// Insert this into list.
-				_next = * match;
-				* match = value;
+				_next = _head;
+				_head = value;
 				
 				// Basically, make sure there's no multiple inheritance going on.
 				// TODO: Make this compile-time.
-				Assert(* match == this);
+				Assert(_head == this);
 			}
 			
 			virtual ~node()
@@ -137,9 +138,9 @@ namespace core
 			name_type _name;
 			value_type * _next;
 		};
-
 		
-		// interface
+		
+		// accessors
 		
 		static iterator begin ()
 		{
@@ -176,27 +177,45 @@ namespace core
 			return i;
 		}
 		
-		// returns iterator of the element directly preceeding or matching the given name
-		static iterator find_insertion (value_type const & value)
+	private:
+		
+		// Sort the contents of the list.
+		static void sort()
 		{
-			iterator i = begin();
+			// Move the main (unsorted) list into a temporary list.
+			value_type * temp_head = _head;
 			
-			while (i != end())
+			// Empty the main list.
+			_head = nullptr;
+			
+			// While the temp list is not empty,
+			while (temp_head != nullptr)
 			{
-				value_type const & i_value = ref(* i);
-				int c = value - i_value;
-				if (c <= 0)
-				{
-					return i;
-				}
+				// remove the head of the temp list,
+				value_type & inserted = * temp_head;
+				temp_head = inserted._next;
 				
-				++ i;
+				// and for all elements in the main list,
+				for (iterator i = begin(); ; ++ i)
+				{
+					// skip if they're in the correct order relative to the element to be inserted.
+					if (i != end())
+					{
+						value_type & insertion_point = * * i;
+						if (insertion_point < inserted)
+						{
+							continue;
+						}
+					}
+					
+					// Otherwise, here is where the inserted element should be inserted.
+					inserted._next = * i;
+					(* i) = & inserted;
+					break;
+				}
 			}
-			
-			return i;
 		}
 		
-	private:
 		static value_type * _head;
 		static value_type * _tail;	// never changes; needed for end()
 	};

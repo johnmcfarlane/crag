@@ -38,8 +38,8 @@ namespace
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 
 	STAT (num_polys, int, .05);
-	STAT (mesh_generation, bool, .2);
-	STAT (dynamic_origin, bool, .2);
+	STAT (mesh_generation, bool, .206);
+	STAT (dynamic_origin, bool, .206);
 }
 
 

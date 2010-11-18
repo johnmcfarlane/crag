@@ -38,16 +38,16 @@ namespace
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01);
 
 	STAT (quats_used, int, .15);
-	STAT (quats_visible, int, .17);
+	STAT (quats_visible, int, .27);
 	STAT (scene_thread, bool, .35);
-	STAT (oor, double, .22);
+	STAT (oor, double, .175);
 	STAT (scene_t, sys::TimeType, .35);
 	STAT (meshg_t, sys::TimeType, .35);
-	STAT (scene_tpq_us, sys::TimeType, .2);	// time per quaterna (microseconds)
-	STAT (meshg_tpq_ms, sys::TimeType, .2);	// time per quaterna (miliseconds)
+	STAT (scene_tpq_us, sys::TimeType, .202);	// time per quaterna (microseconds)
+	STAT (meshg_tpq_ms, sys::TimeType, .202);	// time per quaterna (miliseconds)
 	STAT (nodes, int, .72);
 	STAT (quats_target, int, .37);
-	STAT (resetting, bool, .2);
+	STAT (resetting, bool, .4);
 }
 
 // TODO: Move debug text out of gfx::Debug

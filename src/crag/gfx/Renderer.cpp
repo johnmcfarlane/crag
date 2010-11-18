@@ -26,7 +26,7 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-#include "sim/Universe.h"	// TODO: Doesn't belong here.
+#include "sim/Universe.h"
 
 #include <sstream>
 
@@ -52,7 +52,7 @@ namespace
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
-	STAT (idle, bool, .2);
+	STAT (idle, double, .18);
 	STAT (fps, float, .0);
 	STAT (pos, sim::Vector3, .3);
 	STAT (rot, sim::Matrix4, .9);
@@ -236,6 +236,8 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 		frame_time = GetTime();
 		idle = 0;
 	}
+	
+	STAT_SET(idle, idle);
 
 	// Independant stat counters for measuring the FPS.
 	++ frame_count;
