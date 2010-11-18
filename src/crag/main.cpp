@@ -79,8 +79,10 @@ namespace
 			return false;
 		}
 		
+#if defined (GATHER_STATS)
 		core::Statistics stat_manager;
-
+#endif
+		
 		smp::Init(0);
 
 		physics::Singleton physics_singleton;
