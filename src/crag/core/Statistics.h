@@ -66,8 +66,9 @@ namespace core
 	public:
 		typedef VALUE_TYPE value_type;
 		
-		Stat(char const * name, float verbosity)
+		Stat(char const * name, VALUE_TYPE init, float verbosity)
 		: StatInterface(name, verbosity)
+		, _value(init)
 		{
 		}
 
@@ -82,12 +83,18 @@ namespace core
 }
 
 
-#define STAT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, VERBOSITY)
+#define STAT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, 0, VERBOSITY)
+#define STAT_DEFAULT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, TYPE(), VERBOSITY)
+#define STAT_EXTERN(NAME, TYPE) extern core::Stat<TYPE> NAME##_stat
 #define STAT_SET(NAME, VALUE) NAME##_stat._value = VALUE
+#define STAT_INC(NAME, VALUE) (++ NAME##_stat._value)
 
 #else
 
 #define STAT(NAME, TYPE, VERBOSITY) extern int NAME##_stat
+#define STAT_DEFAULT(NAME, TYPE, VERBOSITY) extern int NAME##_stat
+#define STAT_EXTERN(NAME, TYPE) extern int NAME##_stat
 #define STAT_SET(NAME, VALUE) DO_NOTHING
+#define STAT_INC(NAME, VALUE) DO_NOTHING
 
 #endif

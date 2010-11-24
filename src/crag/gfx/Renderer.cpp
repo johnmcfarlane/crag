@@ -55,7 +55,7 @@ namespace
 	STAT (idle, double, .18);
 	STAT (fps, float, .0);
 	STAT (pos, sim::Vector3, .3);
-	STAT (rot, sim::Matrix4, .9);
+	STAT_DEFAULT (rot, sim::Matrix4, .9);
 	
 	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
 	{
