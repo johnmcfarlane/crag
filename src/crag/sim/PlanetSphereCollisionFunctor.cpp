@@ -40,31 +40,6 @@ sim::PlanetSphereCollisionFunctor::~PlanetSphereCollisionFunctor()
 {
 }
 
-void sim::PlanetSphereCollisionFunctor::SetSceneOrigin(sim::Vector3 const & in_scene_origin)
-{
-	scene_origin = in_scene_origin;
-	InitRelativePositions();
-}
-
-void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_formation, form::Polyhedron const & in_model)
-{
-	if (& in_formation != & planet_formation)
-	{
-		return;
-	}
-	
-	// Step 1: 
-	form::RootNode const & root_node = in_model.root_node;
-	form::Node const * children = root_node.children;
-	if (children != nullptr)
-	{
-		GatherPoints(children[0]);
-		GatherPoints(children[1]);
-		GatherPoints(children[2]);
-		GatherPoints(children[3]);
-	}
-}
-
 void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal)
 {
 	Vector3 sa(a.pos);
@@ -112,6 +87,31 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 		// TODO: Triangle-line intersection. (Might already have this somewhere.)
 		// because sphere.center is the wrong position!
 		OnContact(sphere.center + Vector3(normal) * (sphere.radius - intersection_depth), normal, intersection_depth);
+	}
+}
+
+void sim::PlanetSphereCollisionFunctor::SetSceneOrigin(sim::Vector3 const & in_scene_origin)
+{
+	scene_origin = in_scene_origin;
+	InitRelativePositions();
+}
+
+void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_formation, form::Polyhedron const & in_model)
+{
+	if (& in_formation != & planet_formation)
+	{
+		return;
+	}
+	
+	// Step 1: 
+	form::RootNode const & root_node = in_model.root_node;
+	form::Node const * children = root_node.children;
+	if (children != nullptr)
+	{
+		GatherPoints(children[0]);
+		GatherPoints(children[1]);
+		GatherPoints(children[2]);
+		GatherPoints(children[3]);
 	}
 }
 
