@@ -250,6 +250,16 @@ bool form::Node::InitScoreParameters()
 	return true;
 }
 
+void form::Node::SetChildren(Node * c) 
+{ 
+	children = c; 
+}
+
+void form::Node::SetParent(Node * p) 
+{ 
+	parent = p; 
+}
+
 void form::Node::SetCousin(int index, Node & cousin)
 {
 	Triplet & this_triplet = triple[index];

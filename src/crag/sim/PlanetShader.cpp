@@ -59,7 +59,7 @@ namespace
 		
 		while (true)
 		{
-			n = n->parent;			
+			n = n->GetParent();
 			if (n == nullptr)
 			{
 				break;

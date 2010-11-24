@@ -105,7 +105,7 @@ void form::Polyhedron::SetOrigin(sim::Vector3 const & origin, PointBuffer & poin
 
 bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
 {
-	Node * children = node.children;
+	Node * children = node.GetChildren();
 	if (children == nullptr)
 	{
 		return false;

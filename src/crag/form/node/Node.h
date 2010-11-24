@@ -65,6 +65,14 @@ namespace form
 			return ! HasChildren() && HasAllCousins() /*&& score != 0*/;
 		}
 		
+		Node * GetChildren() { return children; }
+		Node const * GetChildren() const { return children; }
+		void SetChildren(Node * c);
+		
+		Node * GetParent() { return parent; }
+		Node const * GetParent() const { return parent; }
+		void SetParent(Node * p);
+		
 		Point * GetCornerPtr(int index) { return triple[index].corner; }
 		Point const * GetCornerPtr(int index) const { return triple[index].corner; }
 		Point & GetCorner(int index) { return ref(GetCornerPtr(index)); }
@@ -88,8 +96,10 @@ namespace form
 		
 		OVERLOAD_NEW_DELETE(128);
 		
+	private:
 		Node * children;		//  4	/	8
 		Node * parent;			//  4	/	8
+	public:
 		int seed;				//  4	/	4
 
 		struct Triplet

@@ -43,7 +43,7 @@ namespace
 
 	inline void UpdateQuaternaScore(form::Quaterna & q) 
 	{
-		form::Node * parent = q.nodes[0].parent;
+		form::Node * parent = q.nodes[0].GetParent();
 		if (parent != nullptr) 
 		{
 			q.parent_score = parent->score;
@@ -154,7 +154,7 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 	Node const * n = q.nodes;
 	VerifyArrayElement(n, nodes, nodes_used_end);
 	
-	Node const * parent = q.nodes[0].parent;
+	Node const * parent = q.nodes[0].GetParent();
 	
 	VerifyTrue(parent != nullptr);
 	VerifyTrue(parent->score == q.parent_score);
@@ -165,10 +165,11 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 		form::Node const & sibling = q.nodes[i];
 		
 		// All four siblings should have the same parent.
-		VerifyTrue(q.nodes[i].parent == parent);
-		if (sibling.children != nullptr)
+		VerifyTrue(q.nodes[i].GetParent() == parent);
+		Node const * children = sibling.GetChildren();
+		if (children != nullptr)
 		{
-			VerifyArrayElement(sibling.children, nodes, nodes_used_end);
+			VerifyArrayElement(children, nodes, nodes_used_end);
 		}
 	}
 	
@@ -186,8 +187,8 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 	{
 		form::Node const & sibling = q.nodes[i];
 		
-		VerifyTrue(sibling.parent == nullptr);
-		VerifyTrue(sibling.children == nullptr);
+		VerifyTrue(sibling.GetParent() == nullptr);
+		VerifyTrue(! sibling.HasChildren());
 		VerifyTrue(sibling.score == 0);
 	}
 	
@@ -507,7 +508,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		}
 
 		// Make sure that the node isn't replacing itself or one of its ancestors.
-		for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->parent)
+		for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->GetParent())
 		{
 			if (ancestor >= reusable_quaterna.nodes && ancestor < reusable_quaterna.nodes + 4)
 			{
@@ -572,7 +573,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	worst_children[2] = children_copy[2];
 	worst_children[3] = children_copy[3];
 
-	node.children = worst_children;
+	node.SetChildren(worst_children);
 	InitChildPointers(node);
 	
 	UnlockTree();
@@ -595,10 +596,10 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 
 void form::NodeBuffer::CollapseNode(Node & node)
 {
-	Node * children = node.children;
+	Node * children = node.GetChildren();
 	if (children != nullptr) {
 		DeinitChildren(children);
-		node.children = nullptr;
+		node.SetChildren(nullptr);
 	}
 }
 
@@ -607,7 +608,7 @@ void form::NodeBuffer::CollapseNode(Node & node)
 void form::NodeBuffer::InitChildPointers(Node & parent_node)
 {
 	Node::Triplet const * parent_triple = parent_node.triple;
-	Node * nodes = parent_node.children;
+	Node * nodes = parent_node.GetChildren();
 	Node & center = nodes[3];
 	
 	for (int i = 0; i < 3; ++ i)
@@ -629,7 +630,7 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 		Assert(node.triple[j].corner == parent_triple[k].mid_point);
 		Node * parent_cousin_j = parent_triple[j].cousin;
 		if (parent_cousin_j != nullptr) {
-			Node * parent_cousin_children_j = parent_cousin_j->children;
+			Node * parent_cousin_children_j = parent_cousin_j->GetChildren();
 			if (parent_cousin_children_j != nullptr) {
 				node.SetCousin(j, parent_cousin_children_j[k]);
 			}
@@ -639,24 +640,24 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 		Assert(node.triple[k].corner == parent_triple[j].mid_point);
 		Node * parent_cousin_k = parent_triple[k].cousin;
 		if (parent_cousin_k != nullptr) {
-			Node * parent_cousin_children_k = parent_cousin_k->children;
+			Node * parent_cousin_children_k = parent_cousin_k->GetChildren();
 			if (parent_cousin_children_k != nullptr) {
 				node.SetCousin(k, parent_cousin_children_k[j]);
 			}
 		}
 		
 		node.seed = parent_node.GetChildSeed(i);
-		node.parent = & parent_node;
+		node.SetParent(& parent_node);
 	}
 	
 	center.seed = parent_node.GetChildSeed(3);
-	center.parent = & parent_node;
+	center.SetParent(& parent_node);
 }
 
 void form::NodeBuffer::DeinitChildren(Node * children)
 {
-	Assert(children->parent->children == children);
-	children->parent->children = nullptr;
+	Assert(children->GetParent()->GetChildren() == children);
+	children->GetParent()->SetChildren(nullptr);
 	
 	DeinitNode(children[0]);
 	DeinitNode(children[1]);
@@ -700,18 +701,18 @@ void form::NodeBuffer::DeinitNode(Node & node)
 		Assert(t.mid_point == nullptr);
 	}
 	
-	node.parent = nullptr;
+	node.SetParent(nullptr);
 	node.score = 0;
 }
 
 void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 {
-	Node * parent = original->parent;
+	Node * parent = original->GetParent();
 	
 	if (parent != nullptr) 
 	{
-		Assert(parent->children == original);
-		parent->children = substitute;
+		Assert(parent->GetChildren() == original);
+		parent->SetChildren(substitute);
 		
 		substitute[0] = original[0];
 		RepairChild(substitute[0]);
@@ -743,12 +744,12 @@ void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 void form::NodeBuffer::RepairChild(Node & child)
 {
 	// Repair children's parent pointers.
-	Node * node_it = child.children;
+	Node * node_it = child.GetChildren();
 	if (node_it != nullptr) {
 		Node * node_end = node_it + 4;
 		do {
-			Assert(node_it->parent != & child);
-			node_it->parent = & child;
+			Assert(node_it->GetParent() != & child);
+			node_it->SetParent(& child);
 			++ node_it;
 		}	while (node_it < node_end);
 	}
@@ -818,7 +819,7 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 		if (q.IsInUse()) 
 		{
 			// Is it a leaf, i.e. it is the quaterna associated with a grandparent?
-			if (! q.IsLeaf()) 
+			if (q.HasGrandChildren()) 
 			{
 				// If so, we cannot easily remove this quaterna.
 				// It's best to stop the reduction at this element.
@@ -832,10 +833,10 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 		}
 
 		// Either way, there should be no children.
-		Assert(nodes[0].children == 0);
-		Assert(nodes[1].children == 0);
-		Assert(nodes[2].children == 0);
-		Assert(nodes[3].children == 0);
+		Assert(! nodes[0].HasChildren());
+		Assert(! nodes[1].HasChildren());
+		Assert(! nodes[2].HasChildren());
+		Assert(! nodes[3].HasChildren());
 		
 		-- quaterna_used_end;
 	}	

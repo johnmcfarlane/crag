@@ -105,7 +105,7 @@ void sim::PlanetSphereCollisionFunctor::operator()(form::Formation const & in_fo
 	
 	// Step 1: 
 	form::RootNode const & root_node = in_model.root_node;
-	form::Node const * children = root_node.children;
+	form::Node const * children = root_node.GetChildren();
 	if (children != nullptr)
 	{
 		GatherPoints(children[0]);
@@ -126,13 +126,16 @@ void sim::PlanetSphereCollisionFunctor::GatherPoints(form::Node const & node)
 	// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
 	if (CanTraverse(node))
 	{
-		if (node.children != nullptr)
+		form::Node const * const children = node.GetChildren();
+		if (children != nullptr)
 		{
-			for (int i = 0; i < 4; ++ i)
+			form::Node const * child = children;
+			form::Node const * const children_end = child + 4;
+			do
 			{
-				form::Node const & child = node.children[i];
-				GatherPoints(child);
-			}
+				GatherPoints(* child);
+				++ child;
+			}	while (child != children_end);
 		}
 		else 
 		{

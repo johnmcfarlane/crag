@@ -27,7 +27,7 @@ form::RootNode & form::GetRootNode(Node & node)
 	
 	Node * iterator = & node;
 	while (true) {
-		Node * parent = iterator->parent;
+		Node * parent = iterator->GetParent();
 		if (parent == nullptr) {
 			return * reinterpret_cast<RootNode *> (iterator);
 		}
@@ -77,7 +77,7 @@ void form::RootNode::Init(int init_seed, Point * root_points[4])
 	score = std::numeric_limits<float>::max();
 	
 	//Assert(sizeof(* this) == 44 * 4);
-	Assert(parent == nullptr);
+	Assert(GetParent() == nullptr);
 	seed = init_seed;
 	
 	for (int i = 0; i < 3; ++ i)
@@ -101,7 +101,7 @@ void form::RootNode::GetPoints(Point * points[4])
 
 void form::RootNode::Deinit(PointBuffer & points)
 {
-	Assert(children == nullptr);
+	Assert(! HasChildren());
 	
 	points.Free(triple[0].corner);
 	

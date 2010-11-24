@@ -30,7 +30,7 @@ namespace form
 		{
 			VerifyTrue(nodes != nullptr);
 			
-			Node * parent = nodes[0].parent;
+			Node * parent = nodes[0].GetParent();
 			
 			if (parent_score < 0) {
 				VerifyTrue(parent_score == -1);
@@ -41,7 +41,7 @@ namespace form
 			}
 			
 			for (Node * it = nodes; it != nodes + 4; ++ it) {
-				VerifyTrue(it->parent == parent);
+				VerifyTrue(it->GetParent() == parent);
 				VerifyObject(* it);
 			}
 		}
@@ -52,22 +52,22 @@ namespace form
 			return parent_score >= 0;
 		}
 		
-		bool IsLeaf() const
+		bool HasGrandChildren() const
 		{
-			return nodes[0].children == nullptr
-			&& nodes[1].children == nullptr
-			&& nodes[2].children == nullptr
-			&& nodes[3].children == nullptr;
+			return nodes[0].HasChildren()
+				|| nodes[1].HasChildren()
+				|| nodes[2].HasChildren()
+				|| nodes[3].HasChildren();
 		}
 		
 		bool IsEasilyExpendable() const 
 		{
-			return (! IsInUse()) || IsLeaf();
+			return ! (IsInUse() && HasGrandChildren());
 		}
 		
 		bool IsSuitableReplacement(float new_parent_score) const
 		{
-			return parent_score < new_parent_score && IsLeaf();
+			return parent_score < new_parent_score && ! HasGrandChildren();
 		}
 		
 		float parent_score;	// the score of the node for which this is the children
