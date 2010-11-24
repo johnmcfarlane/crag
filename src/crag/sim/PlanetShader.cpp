@@ -46,10 +46,10 @@ namespace
 	// RootNode initialization data. A tetrahedron.
 	sim::Vector3 root_corners[4] = 
 	{
-		sim::Vector3(-1, -1, -1),
 		sim::Vector3(-1,  1,  1),
 		sim::Vector3( 1, -1,  1),
-		sim::Vector3( 1,  1, -1)
+		sim::Vector3( 1,  1, -1),
+		sim::Vector3(-1, -1, -1)
 	};
 	
 	// InitMidPoint helper

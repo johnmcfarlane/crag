@@ -48,7 +48,7 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 	
 	// If the sphere is completely clear of the infinite plan of the triangle,
 	Scalar planar_depth = DistanceToSurface<Scalar>(sa, sb, sc, Vector3(relative_sphere.center));
-	if (planar_depth < - sphere.radius)
+	if (planar_depth > sphere.radius)
 	{
 		// we're good. 
 		return;
@@ -62,7 +62,7 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 	}
 	
 	// The case where the sphere is completely within the surface. 
-	if (planar_depth > sphere.radius)
+	if (planar_depth < sphere.radius)
 	{
 		Vector3 tri_center = (sa + sb + sc) / 3.;
 		Vector3 to_tri = tri_center - relative_formation_center;
@@ -74,14 +74,14 @@ void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Poi
 			return;
 		}
 		
-		// deep penetration :o
-		OnContact(sphere.center, normal, planar_depth);
+		// TODO: Is the normal passed to AddFace negative? If so, lighting's still wrong. 
+		OnContact(sphere.center, - normal, - planar_depth);
 		return;
 	}
 	
 	// Proper contact between triangle (not plane) and sphere.
 	Scalar intersection_depth;
-	if (Intersects(relative_sphere, sa, sb, sc, & intersection_depth))
+	if (Intersects(relative_sphere, sc, sb, sa, & intersection_depth))
 	{
 		//intersection_depth = planar_depth;
 		// TODO: Triangle-line intersection. (Might already have this somewhere.)
@@ -153,8 +153,7 @@ bool sim::PlanetSphereCollisionFunctor::CanTraverse(form::Node const & node) con
 
 bool sim::PlanetSphereCollisionFunctor::TouchesInfinitePyramid(Vector3 const & a, Vector3 const & b, Vector3 const & c) const
 {
-	Vector3f g;
-	return	Contains(relative_formation_center, a, b, relative_sphere) 
-		&&	Contains(relative_formation_center, b, c, relative_sphere) 
-		&&	Contains(relative_formation_center, c, a, relative_sphere);
+	return	Contains(relative_formation_center, a, c, relative_sphere) 
+		&&	Contains(relative_formation_center, b, a, relative_sphere) 
+		&&	Contains(relative_formation_center, c, b, relative_sphere);
 }

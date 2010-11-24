@@ -134,7 +134,7 @@ void gfx::Renderer::InitRenderState()
 		++ param;
 	}
 
-	GLPP_CALL(glFrontFace(GL_CCW));
+	GLPP_CALL(glFrontFace(GL_CW));
 	GLPP_CALL(glCullFace(GL_BACK));
 	GLPP_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 	gl::SetDepthFunc(GL_LEQUAL);

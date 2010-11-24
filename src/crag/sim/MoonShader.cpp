@@ -31,10 +31,10 @@ namespace
 	// RootNode initialization data, i.e. a tetrahedron.
 	sim::Vector3 root_corners[4] = 
 	{
-		sim::Vector3(-1, -1, -1),
 		sim::Vector3(-1,  1,  1),
 		sim::Vector3( 1, -1,  1),
-		sim::Vector3( 1,  1, -1)
+		sim::Vector3( 1,  1, -1),
+		sim::Vector3(-1, -1, -1)
 	};
 	
 }
