@@ -47,7 +47,7 @@ namespace form
 		
 		bool InitScoreParameters();
 		
-		bool HasChildren() const { return children != nullptr; }
+		bool HasChildren() const { return GetChildren() != nullptr; }
 		bool IsRecyclable() const { return ! HasChildren(); }
 		bool IsInUse() const { return parent != nullptr; }	// IsInUseOrIsRootNode
 		bool IsLeaf() const { return ! HasChildren(); }
@@ -65,8 +65,15 @@ namespace form
 			return ! HasChildren() && HasAllCousins() /*&& score != 0*/;
 		}
 		
-		Node * GetChildren() { return children; }
-		Node const * GetChildren() const { return children; }
+		typedef size_t flag_type;
+		static flag_type const flag_mask = 0x3f;
+		static flag_type const pointer_mask = ~ flag_mask;
+		
+		flag_type GetFlags() const { return flags_and_children & flag_mask; }
+		void SetFlags(flag_type f);
+		
+		Node * GetChildren() { return reinterpret_cast<Node *>(flags_and_children & pointer_mask); }
+		Node const * GetChildren() const { return reinterpret_cast<Node *>(flags_and_children & pointer_mask); }
 		void SetChildren(Node * c);
 		
 		Node * GetParent() { return parent; }
@@ -97,7 +104,7 @@ namespace form
 		OVERLOAD_NEW_DELETE(128);
 		
 	private:
-		Node * children;		//  4	/	8
+		flag_type flags_and_children;	//  4	/	8
 		Node * parent;			//  4	/	8
 	public:
 		int seed;				//  4	/	4

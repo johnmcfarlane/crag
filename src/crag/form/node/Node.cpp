@@ -40,7 +40,7 @@ form::Node::Triplet::~Triplet()
 // Node
 
 form::Node::Node()
-: children (nullptr)
+: flags_and_children (0)
 , parent (nullptr)
 , seed (0)
 , score (0)
@@ -49,7 +49,7 @@ form::Node::Node()
 
 form::Node::~Node()
 {
-	Assert(children == nullptr);
+	Assert(GetChildren() == nullptr);
 	Assert(parent == nullptr);
 }
 
@@ -112,7 +112,7 @@ bool form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
 // before it is determined that the node can be expanded.
 bool form::Node::InitChildCorners(Node const & parent, Node * children)
 {
-	Assert(parent.children == nullptr);
+	Assert(parent.GetChildren() == nullptr);
 	
 #if 1
 	Node::Triplet const * parent_triple = parent.triple;
@@ -217,7 +217,7 @@ void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
 				point_buffer.Free(t.mid_point);
 				t.mid_point = nullptr;
 				
-				Assert(children == nullptr);
+				Assert(GetChildren() == nullptr);
 			}
 		}
 	}
@@ -250,9 +250,18 @@ bool form::Node::InitScoreParameters()
 	return true;
 }
 
+void form::Node::SetFlags(flag_type f) 
+{
+	Assert ((f & pointer_mask) == 0);
+	flags_and_children &= pointer_mask;
+	flags_and_children |= f; 
+}
+
 void form::Node::SetChildren(Node * c) 
 { 
-	children = c; 
+	Assert ((reinterpret_cast<flag_type>(c) & flag_mask) == 0);
+	flags_and_children &= flag_mask;
+	flags_and_children |= reinterpret_cast<flag_type>(c); 
 }
 
 void form::Node::SetParent(Node * p) 
@@ -311,8 +320,8 @@ void form::Node::Verify() const
 
 	if (parent != nullptr) 
 	{
-		int child_index = (this - parent->children);
-		VerifyTrue(parent->children + child_index == this);
+		int child_index = (this - parent->GetChildren());
+		VerifyTrue(parent->GetChildren() + child_index == this);
 		VerifyTrue(child_index >= 0 && child_index < 4);
 		VerifyTrue(seed == parent->GetChildSeed(child_index));
 		
@@ -335,7 +344,7 @@ void form::Node::Verify() const
 		VerifyTrue(score >= 0);
 	}
 	else {
-		VerifyTrue(children == nullptr);
+		VerifyTrue(GetChildren() == nullptr);
 		
 		for (int i = 0; i < 3; ++ i) {
 			Triplet const & t = triple[i];
@@ -353,9 +362,9 @@ void form::Node::Verify() const
 #if DUMP
 DUMP_OPERATOR_DEFINITION(form, Node)
 {
-	lhs << lhs.NewLine() << "children:" << rhs.children;
-	if (rhs.children != nullptr) {
-		lhs << "(" << ',' << (rhs.children + 1) << ',' << (rhs.children + 2) << ',' << (rhs.children + 3) << ')';
+	lhs << lhs.NewLine() << "children:" << rhs.GetChildren();
+	if (rhs.GetChildren() != nullptr) {
+		lhs << "(" << ',' << (rhs.GetChildren() + 1) << ',' << (rhs.GetChildren() + 2) << ',' << (rhs.GetChildren() + 3) << ')';
 	}
 	lhs << "; parent:" << rhs.parent;
 	lhs << "; seed:" << rhs.seed << ';';
