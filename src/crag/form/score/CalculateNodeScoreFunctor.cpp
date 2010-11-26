@@ -64,22 +64,22 @@ void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 	float score = node.area;
 	
 	// distance	
-	Vector3f camera_to_node = node.center - camera_ray.position;
-	float distance_squared = LengthSq(camera_to_node);
+	Vector3f node_to_camera = camera_ray.position - node.center;
+	float distance_squared = LengthSq(node_to_camera);
 	Assert(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
 	{
-		camera_to_node *= FastInvSqrt(distance_squared);
+		node_to_camera *= FastInvSqrt(distance_squared);
 	}
 	else 
 	{
-		camera_to_node = Vector3f(1,0,0);
+		node_to_camera = Vector3f(1,0,0);
 	}
-	Assert(NearEqual(LengthSq(camera_to_node), 1.f, 1.02f));
+	Assert(NearEqual(LengthSq(node_to_camera), 1.f, 1.02f));
 	
 	// towardness: -1=facing away, 1=facing towards
 	// purpose: favour polys which are facing towards the camera
-	float camera_dp = DotProduct(camera_to_node, node.normal);
+	float camera_dp = DotProduct(node_to_camera, node.normal);
 	float towardness_factor = Exp(camera_dp);
 	score *= towardness_factor;
 	
