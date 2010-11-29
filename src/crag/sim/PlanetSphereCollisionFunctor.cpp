@@ -40,7 +40,7 @@ sim::PlanetSphereCollisionFunctor::~PlanetSphereCollisionFunctor()
 {
 }
 
-void sim::PlanetSphereCollisionFunctor::AddFace(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal)
+void sim::PlanetSphereCollisionFunctor::operator()(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal)
 {
 	Vector3 sa(a.pos);
 	Vector3 sb(b.pos);

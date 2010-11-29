@@ -39,11 +39,13 @@ namespace sim
 									 dGeomID in_sphere_geom);
 		~PlanetSphereCollisionFunctor();
 		
-		// Slightly hacky - this class is two functors: a FormationFunctor and a ForEachNodeFace functor.
-		void AddFace(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal);
+		// ForEachNodeFace functor
+		void operator()(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal);
 		
 	private:
 		virtual void SetSceneOrigin(sim::Vector3 const & in_scene_origin);
+		
+		// ForEachFormation functor
 		virtual void operator()(form::Formation const & in_formation, form::Polyhedron const & in_model);
 	
 		void InitRelativePositions();

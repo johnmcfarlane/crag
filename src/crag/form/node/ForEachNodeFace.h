@@ -30,7 +30,7 @@ namespace form
 	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, FaceFunctor & f)
 	{
 		Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
-		f.AddFace(a, b, c, FastNormalize(normal));
+		f (a, b, c, FastNormalize(normal));
 	}
 	
 	
@@ -75,7 +75,7 @@ namespace form
 				assert(odd_one_out[1] == nullptr);
 
 				// Only the corners are available. Has the advantage that we know what the normal is.
-				f.AddFace(* triple[0].corner, * triple[1].corner, * triple[2].corner, node.normal);
+				f (* triple[0].corner, * triple[1].corner, * triple[2].corner, node.normal);
 			}	break;
 				
 			case 1: 

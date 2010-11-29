@@ -11,6 +11,8 @@
 #pragma once
 
 #include "Node.h"
+
+#include "Mesh.h"
 #include "ForEachNodeFace.h"
 
 
@@ -32,12 +34,19 @@ namespace form
 		{ 
 		}
 		
+		// NodeBuffer::ForEachNode functor
 		void operator() (Node & node)
 		{
 			if (node.IsLeaf()) 
 			{
-				ForEachNodeFace(node, mesh);
+				ForEachNodeFace(node, * this);
 			}
+		}
+		
+		// ForEachNodeFact functor
+		void operator()(Point & a, Point & b, Point & c, Vector3f const & normal)
+		{
+			mesh.AddFace(a, b, c, normal);
 		}
 		
 	private:
