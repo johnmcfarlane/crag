@@ -15,6 +15,7 @@
 #include "PlanetSphereCollisionFunctor.h"
 
 #include "form/Manager.h"
+#include "form/scene/SceneThread.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ bool sim::PlanetaryBody::OnCollisionWithSphericalBody(SphericalBody & that_spher
 	PlanetSphereCollisionFunctor f(formation, geom_id, sphere, that_geom_id);
 	
 	form::Manager const & manager = form::Manager::Get();
-	manager.ForEachFormation(f);
+	manager.GetSceneThread().ForEachFormation(f);
 	
 	return true;
 }

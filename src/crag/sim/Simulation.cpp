@@ -22,7 +22,7 @@
 #include "physics/Body.h"
 #include "physics/Singleton.h"
 
-#include "form/scene/Scene.h"
+#include "form/scene/SceneThread.h"
 #include "form/Manager.h"
 
 #include "gfx/Debug.h"
@@ -124,7 +124,7 @@ sim::Simulation::~Simulation()
 
 void sim::Simulation::Run()
 {
-	formation_manager->Launch();
+	formation_manager->GetSceneThread().Launch();
 	
 	TimeType next_tick_time = GetTime();
 	
@@ -251,7 +251,7 @@ bool sim::Simulation::HandleEvents()
 
 			case SDL_VIDEORESIZE:
 				scene.SetResolution(Vector2i(event.resize.w, event.resize.h));
-				formation_manager->ResetRegulator();
+				formation_manager->GetSceneThread().ResetRegulator();
 				break;
 
 			case SDL_KEYDOWN:
@@ -262,7 +262,7 @@ bool sim::Simulation::HandleEvents()
 				break;
 				
 			case SDL_ACTIVEEVENT:
-				formation_manager->ResetRegulator();
+				formation_manager->GetSceneThread().ResetRegulator();
 				break;
 
 			default:
@@ -332,7 +332,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					
 				case KEY_F:
 					//renderer.ToggleSmoothShading();
-					formation_manager->ToggleFlatShaded();
+					formation_manager->GetSceneThread().ToggleFlatShaded();
 					return true;
 					
 				case KEY_G:
@@ -342,7 +342,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 				}	return true;
 					
 				case KEY_I:
-					formation_manager->ToggleSceneThread();
+					formation_manager->GetSceneThread().ToggleSuspended();
 					return true;
 					
 				case KEY_L:

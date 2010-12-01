@@ -250,8 +250,11 @@ bool form::SceneThread::IsResetting() const
 bool form::SceneThread::IsGrowing() const
 {
 	Scene const & active_scene = GetActiveScene();
-	int num_used = active_scene.GetNumQuaternaUsed();
-	int num_used_target = active_scene.GetNumQuaternaUsedTarget();
+	NodeBuffer const & node_buffer = active_scene.GetNodeBuffer();
+	
+	int num_used = node_buffer.GetNumQuaternaUsed();
+	int num_used_target = node_buffer.GetNumQuaternaUsedTarget();
+	
 	return num_used < num_used_target;
 }
 
@@ -354,13 +357,17 @@ void form::SceneThread::BeginReset()
 	Assert(! IsResetting());
 	is_in_reset_mode = true;
 	
+	// Transfer the origin from the old scene to the new one.
 	Scene & active_scene = GetActiveScene();
-	
+	Scene & visible_scene = GetVisibleScene();
 	sim::Vector3 const & observer_pos = observer.GetPosition();
 	active_scene.SetOrigin(observer_pos);
-	
-	int current_num_quaterna = GetVisibleScene().GetNumQuaternaUsed();
-	active_scene.SetNumQuaternaUsedTarget(current_num_quaterna);
+
+	// Transfer the quaterna count from the old buffer to the new one.
+	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
+	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
+	int current_num_quaterna = visible_node_buffer.GetNumQuaternaUsed();
+	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterna);
 	
 	reset_origin_flag = false;
 }
@@ -383,15 +390,15 @@ void form::SceneThread::AdjustNumQuaterna()
 	}
 	
 	// Get the regulator input.
-	Scene & active_scene = GetActiveScene();	
-	int current_num_quaterna = active_scene.GetNumQuaternaUsed();
+	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
+	int current_num_quaterna = active_buffer.GetNumQuaternaUsed();
 	
 	// Calculate the regulator output.
 	int target_num_quaterna = regulator.GetAdjustedLoad(current_num_quaterna);
 	Clamp(target_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
 	
 	// Apply the regulator output.
-	active_scene.SetNumQuaternaUsedTarget(target_num_quaterna);
+	active_buffer.SetNumQuaternaUsedTarget(target_num_quaterna);
 }
 
 void form::SceneThread::GenerateMesh()

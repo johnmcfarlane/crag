@@ -92,6 +92,16 @@ void form::Scene::Clear()
 	}
 }
 
+form::NodeBuffer & form::Scene::GetNodeBuffer()
+{
+	return node_buffer;
+}
+
+form::NodeBuffer const & form::Scene::GetNodeBuffer() const
+{
+	return node_buffer;
+}
+
 sim::Ray3 const & form::Scene::GetCameraRay() const
 {
 	return camera_ray;
@@ -153,26 +163,6 @@ void form::Scene::GenerateMesh(Mesh & mesh)
 {
 	node_buffer.GenerateMesh(mesh);
 	mesh.GetProperties().origin = origin;
-}
-
-int form::Scene::GetNumNodesUsed() const
-{
-	return node_buffer.GetNumNodesUsed();
-}
-
-int form::Scene::GetNumQuaternaUsed() const
-{
-	return node_buffer.GetNumQuaternaUsed();
-}
-
-int form::Scene::GetNumQuaternaUsedTarget() const
-{
-	return node_buffer.GetNumQuaternaUsedTarget();
-}
-
-void form::Scene::SetNumQuaternaUsedTarget(int n)
-{
-	node_buffer.SetNumQuaternaUsedTarget(n);
 }
 
 form::Polyhedron const & form::Scene::GetPolyhedron(Formation const & formation) const

@@ -59,7 +59,11 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Scene);
 		
 		void Clear();
-
+		
+		// Accessors for nodes/quaterna.
+		NodeBuffer & GetNodeBuffer();
+		NodeBuffer const & GetNodeBuffer() const;
+		
 		sim::Ray3 const & GetCameraRay() const;
 		void SetCameraRay(sim::Ray3 const & camera_ray);
 		
@@ -69,12 +73,6 @@ namespace form
 		void Tick(FormationSet const & formation_set);
 		void ForEachFormation(FormationFunctor & f) const;
 		void GenerateMesh(class Mesh & mesh);
-		
-		// Accessors for nodes/quaterna.
-		int GetNumNodesUsed() const;
-		int GetNumQuaternaUsed() const;
-		int GetNumQuaternaUsedTarget() const;
-		void SetNumQuaternaUsedTarget(int n);
 		
 		Polyhedron const & GetPolyhedron(Formation const & formation) const;
 		

@@ -59,20 +59,18 @@ namespace form {
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(Manager);
 		
+		SceneThread & GetSceneThread();
+		SceneThread const & GetSceneThread() const;
+		
 		void AddFormation(Formation * formation);
 		void RemoveFormation(Formation * formation);
 		
 		void SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
-		void ToggleSceneThread();
 		void ToggleMeshGeneration();
 		void ToggleDynamicOrigin();
-		void ToggleFlatShaded();
 		
-		void Launch();
 		void Tick();
-		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh();
-		void ResetRegulator();
 
 		// Called by the Renderer.
 		void Render(gfx::Pov const & pov, bool color) const;

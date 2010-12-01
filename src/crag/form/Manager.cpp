@@ -89,6 +89,16 @@ DUMP_OPERATOR_DEFINITION(form, Manager)
 }
 #endif
 
+form::SceneThread & form::Manager::GetSceneThread()
+{
+	return ref(scene_thread);
+}
+
+form::SceneThread const & form::Manager::GetSceneThread() const
+{
+	return ref(scene_thread);
+}
+
 void form::Manager::AddFormation(form::Formation * formation)
 {
 	Assert(formation_set.find(formation) == formation_set.end());
@@ -106,11 +116,6 @@ void form::Manager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType ta
 	scene_thread->SampleFrameRatio(static_cast<float>(frame_delta / target_frame_delta));
 }
 
-void form::Manager::ToggleSceneThread()
-{
-	scene_thread->ToggleSuspended();
-}
-
 void form::Manager::ToggleMeshGeneration()
 {
 	enable_mesh_generation = ! enable_mesh_generation;
@@ -121,16 +126,6 @@ void form::Manager::ToggleDynamicOrigin()
 	enable_dynamic_origin = ! enable_dynamic_origin;
 }
 
-void form::Manager::ToggleFlatShaded()
-{
-	scene_thread->ToggleFlatShaded();
-}
-
-void form::Manager::Launch()
-{
-	scene_thread->Launch();
-}
-
 void form::Manager::Tick()
 {
 	if (enable_dynamic_origin && ! scene_thread->IsOriginOk()) 
@@ -139,11 +134,6 @@ void form::Manager::Tick()
 	}
 	
 	scene_thread->Tick();
-}
-
-void form::Manager::ForEachFormation(FormationFunctor & f) const
-{
-	scene_thread->ForEachFormation(f);
 }
 
 bool form::Manager::PollMesh()
@@ -161,11 +151,6 @@ bool form::Manager::PollMesh()
 	}
 	
 	return false;
-}
-
-void form::Manager::ResetRegulator()
-{
-	scene_thread->ResetRegulator();
 }
 
 void form::Manager::Render(gfx::Pov const & pov, bool color) const
