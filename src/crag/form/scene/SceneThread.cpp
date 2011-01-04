@@ -174,12 +174,12 @@ void form::SceneThread::Tick()
 	//gfx::Debug::out.flags(flags);
 	//gfx::Debug::out.precision(previous_precision);
 	
-	STAT_SET (nodes, GetVisibleScene().GetNumNodesUsed());
+	STAT_SET (nodes, GetVisibleScene().GetNodeBuffer().GetNumNodesUsed());
 	
-	STAT_SET (quats_visible, GetVisibleScene().GetNumQuaternaUsed());
+	STAT_SET (quats_visible, GetVisibleScene().GetNodeBuffer().GetNumQuaternaUsed());
 
-	STAT_SET (quats_used, GetActiveScene().GetNumQuaternaUsed());
-	STAT_SET (quats_target, GetActiveScene().GetNumQuaternaUsedTarget());
+	STAT_SET (quats_used, GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
+	STAT_SET (quats_target, GetActiveScene().GetNodeBuffer().GetNumQuaternaUsedTarget());
 	
 	STAT_SET (resetting, IsResetting());
 	STAT_SET (scene_thread, ! suspend_flag);
@@ -345,7 +345,7 @@ void form::SceneThread::TickActiveScene()
 		
 		active_scene.Tick(formations);
 		
-		PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / active_scene.GetNumQuaternaUsed());
+		PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / active_scene.GetNodeBuffer().GetNumQuaternaUsed());
 		PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 	}
 }
@@ -420,7 +420,7 @@ void form::SceneThread::GenerateMesh()
 	regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
 	
-	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 }
 
