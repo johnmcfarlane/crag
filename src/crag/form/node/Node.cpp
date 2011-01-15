@@ -114,7 +114,6 @@ bool form::Node::InitChildCorners(Node const & parent, Node * children)
 {
 	Assert(parent.GetChildren() == nullptr);
 	
-#if 1
 	Node::Triplet const * parent_triple = parent.triple;
 	
 	Node * child = children;
@@ -161,26 +160,6 @@ bool form::Node::InitChildCorners(Node const & parent, Node * children)
 	{
 		return false;
 	}
-#else
-	
-	// TODO: Hard-code this and remove GetChildCorners.
-	for (int child_index = 0; child_index < 4; ++ child_index) 
-	{
-		Point * child_corners[3];
-		parent.GetChildCorners(child_index, child_corners);
-		
-		Node & child = children [child_index];
-		
-		child.triple[0].corner = child_corners[0];
-		child.triple[1].corner = child_corners[1];
-		child.triple[2].corner = child_corners[2];
-		if (child.InitScoreParameters() == false) {
-			return false;
-		}
-		
-		child.score = 0;	// std::numeric_limits<float>::max();
-	}
-#endif
 	
 	Assert(parent.triple[0].corner == children[0].triple[0].corner);
 	

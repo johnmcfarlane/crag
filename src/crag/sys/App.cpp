@@ -225,7 +225,7 @@ sys::TimeType sys::GetTime()
 	}
 	return inf_query_performance_frequency * query_performance_frequency;
 #else
-	// TODO: Linux try CLOCK_MONOTONIC clock using POSIX clock_gettime.
+	// Might want to try CLOCK_MONOTONIC clock using POSIX clock_gettime.
 	return .001 * SDL_GetTicks();
 #endif
 }

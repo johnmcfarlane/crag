@@ -120,7 +120,6 @@ namespace core
 				_head = value;
 				
 				// Basically, make sure there's no multiple inheritance going on.
-				// TODO: Make this compile-time.
 				Assert(_head == this);
 			}
 			

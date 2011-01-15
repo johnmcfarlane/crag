@@ -26,9 +26,7 @@ public:
 	static Vector2f GetCorner(int index);
 	
 private:
-	Vector2f origin;	// 3x2?
-	
-	// TODO: 2x2 matrix?
+	Vector2f origin;
 	Vector2f up;
 	Vector2f right;
 };
