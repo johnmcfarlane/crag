@@ -12,6 +12,8 @@
 
 #include "sys/App.h"
 
+#include "smp/SimpleMutex.h"
+
 
 namespace form
 {
@@ -20,8 +22,12 @@ namespace form
 	// and uses them to determine whether the load on the system should be increased or decreased.
 	class Regulator
 	{
+		OBJECT_NO_COPY(Regulator);
+
 	public:
 		Regulator();
+		
+		void Reset();
 
 		void SampleFrameRatio(float fr);
 		void SampleMeshGenerationPeriod(sys::TimeType mgp);
@@ -30,16 +36,16 @@ namespace form
 		int GetAdjustedLoad(int current_load);
 		
 	private:
-		int CalculateFrameRateDirectedTargetLoad(int current_load) const;
+		int CalculateFrameRateDirectedTargetLoad(int current_load, sys::TimeType sim_time) const;
 		int CalculateMeshGenerationDirectedTargetLoad(int current_load) const;
-		static float CalculateFrameRateReactionCoefficient(sys::TimeType t);
+		static float CalculateFrameRateReactionCoefficient(sys::TimeType sim_time);
 		
 		sys::TimeType reset_time;
 		
-		float frame_ratio_sum;	// ~ (actual frame time / ideal frame time), i.e. greater is worse
-		int frame_ratio_count;
-		
+		float frame_ratio_max;	// ~ (actual frame time / ideal frame time), i.e. greater is worse		
 		float mesh_generation_period;	// again, greater is worse
+		
+		smp::SimpleMutex mutex;
 	};
 
 }

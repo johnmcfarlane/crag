@@ -145,7 +145,7 @@ void form::SceneThread::SampleFrameRatio(float ratio)
 // performance of the system, such as startup or on certain system messages.
 void form::SceneThread::ResetRegulator()
 {
-	regulator = Regulator();
+	regulator.Reset();
 }
 
 void form::SceneThread::Tick()

@@ -28,35 +28,47 @@ namespace
 
 
 form::Regulator::Regulator()
-: reset_time (sys::GetTime())
-, frame_ratio_sum(0)
-, frame_ratio_count(0)
-, mesh_generation_period(-1)
 {
+	Reset();
+}
+
+void form::Regulator::Reset()
+{
+	reset_time = sys::GetTime();
+	frame_ratio_max = 0;
+	mesh_generation_period = -1;
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameRatio(float fr)
 {
+	mutex.Lock(0);
+	
 	Assert(fr >= 0);
+	frame_ratio_max = Max(frame_ratio_max, fr);
 
-	//	frame_ratio_sum += fr;
-	//	++ frame_ratio_count;
-	frame_ratio_sum = Max(frame_ratio_sum, fr);
-	frame_ratio_count = 1;
+	mutex.Unlock(0);
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 {
+	mutex.Lock(0);
+
 	Assert(mgp >= 0);
 	mesh_generation_period = Max(static_cast<float>(mgp), mesh_generation_period);
+
+	mutex.Unlock(0);
 }
 
 int form::Regulator::GetAdjustedLoad(int current_load)
 {
+	mutex.Lock(1);
+
+	sys::TimeType sim_time = sys::GetTime() - reset_time;
+
 	// Come up with two accounts of how many quaterna we should have.
-	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(current_load);
+	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(current_load, sim_time);
 	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(current_load);
 
 	// Pick the more conservative of the two numbers.
@@ -80,37 +92,29 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
 	mesh_generation_period = -1;
-	frame_ratio_sum = 0;
-	frame_ratio_count = 0;
+	frame_ratio_max = 0;
 	
 	// return the result
+	mutex.Unlock(1);
 	return adjusted_load;
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
-int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load) const
+int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, sys::TimeType sim_time) const
 {
 	// No samples to measure from?
-	if (frame_ratio_count == 0)
+	if (frame_ratio_max == 0)
 	{
 		// Don't recommend any change.
 		return current_load;
-	}
-	
-	sys::TimeType t = sys::GetTime() - reset_time;
-	float frame_ratio_avg = frame_ratio_sum / frame_ratio_count;
-	if (frame_ratio_avg <= 0)
-	{
-		Assert(frame_ratio_avg == 0);
-		return current_load + 1;
 	}
 	
 	// Attenuate/invert the frame_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
-	float frame_ratio_log = Log(frame_ratio_avg);
-	float frame_ratio_exp = Exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(t));
+	float frame_ratio_log = Log(frame_ratio_max);
+	float frame_ratio_exp = Exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
 	
 	float exact_target_load = static_cast<float>(current_load) * frame_ratio_exp;
 	int target_load = static_cast<int>(exact_target_load);
@@ -159,9 +163,9 @@ int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load)
 // Plus large changes in the number of quaterna causes additional slowdown of its own 
 // which feeds back into the system in a way which causes yet more hunting-type behavior.
 // Thus the reaction coefficient is given a boost which decays over time. 
-float form::Regulator::CalculateFrameRateReactionCoefficient(sys::TimeType t)
+float form::Regulator::CalculateFrameRateReactionCoefficient(sys::TimeType sim_time)
 {
-	float boost_factor = Power(.5f, static_cast<float>(t) / frame_rate_reaction_coefficient_boost_half_life);
+	float boost_factor = Power(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
 	float boost_summand = frame_rate_reaction_coefficient_boost * boost_factor;
 	float base_summand = frame_rate_reaction_coefficient_base;
 	return boost_summand + base_summand;

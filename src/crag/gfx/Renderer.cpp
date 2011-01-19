@@ -255,7 +255,7 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 	last_frame_time = frame_time;
 
 	// Return the frame delta - our basic performance metric.
-	return frame_delta - idle * .75;
+	return frame_delta - idle * .5;
 }
 
 void gfx::Renderer::RenderScene(Scene const & scene) const
