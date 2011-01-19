@@ -77,13 +77,7 @@ form::NodeBuffer::NodeBuffer()
 , quaterna_end(quaterna + max_num_quaterna)
 , point_buffer(max_num_verts)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
-#if defined(USE_OPENCL)
-, cpu_kernel(nullptr)
-, gpu_kernel(nullptr)
-#endif
 {
-	InitKernel();
-	
 	ZeroArray(nodes, max_num_nodes);
 
 	InitQuaterna(quaterna_end);
@@ -324,24 +318,6 @@ void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
 	}
 }
 
-void form::NodeBuffer::InitKernel()
-{
-#if defined(USE_OPENCL)
-	cl::Singleton const & cl_singleton = cl::Singleton::Get();
-	
-	switch (cl_singleton.GetDeviceType())
-	{
-		case CL_DEVICE_TYPE_CPU:
-			cpu_kernel = new CalculateNodeScoreCpuKernel(max_num_nodes, nodes);
-			break;
-			
-		case CL_DEVICE_TYPE_GPU:
-			gpu_kernel = new CalculateNodeScoreGpuKernel(max_num_nodes);
-			break;
-	}
-#endif
-}
-
 void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 {
 	Node * n = nodes;
@@ -376,21 +352,8 @@ void form::NodeBuffer::UpdateNodes()
 
 void form::NodeBuffer::UpdateNodeScores()
 {
-#if defined(USE_OPENCL)
-	if (cpu_kernel != nullptr)
-	{
-		cpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position, camera_ray_relative.direction);
-	}
-	else if (gpu_kernel != nullptr)
-	{
-		gpu_kernel->Process(nodes, nodes_used_end, camera_ray_relative.position);
-	}
-	else 
-#endif
-	{
-		// TODO: Try ForEachQuaterna. Faster?
-		ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
-	}
+	// TODO: Try ForEachQuaterna. Faster?
+	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 }
 
 void form::NodeBuffer::UpdateQuaternaScores()

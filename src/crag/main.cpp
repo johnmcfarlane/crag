@@ -21,7 +21,6 @@
 #include "smp/ForEach.h"
 
 #include "physics/Singleton.h"
-#include "cl/Singleton.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -86,9 +85,6 @@ namespace
 		smp::Init(0);
 
 		physics::Singleton physics_singleton;
-#if defined(USE_OPENCL)
-		cl::Singleton cl_singleton;
-#endif
 		sim::Universe universe;
 		
 		// Run the simulation.

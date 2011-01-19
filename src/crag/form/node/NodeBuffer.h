@@ -99,7 +99,6 @@ namespace form
 		void OnReset();
 		void ResetNodeOrigins(Vector3 const & origin_delta);
 	private:
-		void InitKernel();
 		void InitQuaterna(Quaterna const * end);
 		
 		void UpdateNodes();
@@ -174,11 +173,6 @@ namespace form
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
-		
-#if defined(USE_OPENCL)
-		CalculateNodeScoreCpuKernel * cpu_kernel;
-		CalculateNodeScoreGpuKernel * gpu_kernel;
-#endif
 	};
 	
 }
