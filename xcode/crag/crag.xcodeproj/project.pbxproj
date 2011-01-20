@@ -32,7 +32,6 @@
 		52A9479112E7D2D300F23642 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478D12E7D2D300F23642 /* Script.cpp */; };
 		52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478F12E7D2D300F23642 /* Singleton.cpp */; };
 		52A948DA12E8170A00F23642 /* libv8.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A948D912E8170A00F23642 /* libv8.a */; };
-		52A948F512E8181300F23642 /* begin.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52A948F112E817DB00F23642 /* begin.js */; };
 		52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */; };
 		52D03956124A5C5400E797B0 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D03955124A5C5400E797B0 /* libode.a */; };
 		52DEDD90125FEFC800C12C19 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DEDD8C125FEFC800C12C19 /* Mutex.cpp */; };
@@ -51,6 +50,7 @@
 		52DF80CD1285522F00045BC8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DF80CC1285522F00045BC8 /* SDL.framework */; };
 		52DF818F1285524D00045BC8 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF80CA1285522F00045BC8 /* SDL_image.framework */; };
 		52DF81901285524D00045BC8 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 52DF80CC1285522F00045BC8 /* SDL.framework */; };
+		52E8BB9812E81DCE0080C75D /* begin.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52E8BB8D12E81D9B0080C75D /* begin.js */; };
 		52F3A39011A7979400385922 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52F3A30611A7979400385922 /* COPYING */; };
 		52F3A39211A7979400385922 /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30B11A7979400385922 /* ConfigManager.cpp */; };
 		52F3A39311A7979400385922 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F3A30D11A7979400385922 /* debug.cpp */; };
@@ -100,10 +100,10 @@
 		52A947BD12E7D51400F23642 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = scripts;
+			dstPath = script;
 			dstSubfolderSpec = 7;
 			files = (
-				52A948F512E8181300F23642 /* begin.js in CopyFiles */,
+				52E8BB9812E81DCE0080C75D /* begin.js in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,7 +174,6 @@
 		52A9478F12E7D2D300F23642 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
 		52A9479012E7D2D300F23642 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52A948D912E8170A00F23642 /* libv8.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libv8.a; path = "/Users/john/Downloads/v8/v8-read-only/libv8.a"; sourceTree = "<absolute>"; };
-		52A948F112E817DB00F23642 /* begin.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = begin.js; sourceTree = "<group>"; };
 		52AE3145125925ED0066FF5B /* for_each_chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_chunk.h; sourceTree = "<group>"; };
 		52AE314712592C7B0066FF5B /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
@@ -227,6 +226,7 @@
 		52DF80CA1285522F00045BC8 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/john/Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
 		52DF80CC1285522F00045BC8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Users/john/Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		52E70F6A124B293E008452A3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		52E8BB8D12E81D9B0080C75D /* begin.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = begin.js; sourceTree = "<group>"; };
 		52F3A30611A7979400385922 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52F3A30B11A7979400385922 /* ConfigManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigManager.cpp; sourceTree = "<group>"; };
 		52F3A30C11A7979400385922 /* ConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigManager.h; sourceTree = "<group>"; };
@@ -355,7 +355,7 @@
 		29B97314FDCFA39411CA2CEA /* crag */ = {
 			isa = PBXGroup;
 			children = (
-				52A948F012E817DB00F23642 /* script */,
+				52E8BB8C12E81D8C0080C75D /* script */,
 				52F3A2FF11A7979400385922 /* src */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -442,15 +442,6 @@
 			path = vm;
 			sourceTree = "<group>";
 		};
-		52A948F012E817DB00F23642 /* script */ = {
-			isa = PBXGroup;
-			children = (
-				52A948F112E817DB00F23642 /* begin.js */,
-			);
-			name = script;
-			path = ../../script;
-			sourceTree = SOURCE_ROOT;
-		};
 		52C53E2011D8FC1000FA73AA /* geom */ = {
 			isa = PBXGroup;
 			children = (
@@ -526,6 +517,15 @@
 			);
 			path = scene;
 			sourceTree = "<group>";
+		};
+		52E8BB8C12E81D8C0080C75D /* script */ = {
+			isa = PBXGroup;
+			children = (
+				52E8BB8D12E81D9B0080C75D /* begin.js */,
+			);
+			name = script;
+			path = ../../script;
+			sourceTree = SOURCE_ROOT;
 		};
 		52F3A2FF11A7979400385922 /* src */ = {
 			isa = PBXGroup;
