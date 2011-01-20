@@ -22,6 +22,8 @@
 
 #include "physics/Singleton.h"
 
+#include "vm/Singleton.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -86,6 +88,7 @@ namespace
 
 		physics::Singleton physics_singleton;
 		sim::Universe universe;
+		vm::Singleton virtual_machine;
 		
 		// Run the simulation.
 		{

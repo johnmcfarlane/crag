@@ -29,6 +29,10 @@
 		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
+		52A9479112E7D2D300F23642 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478D12E7D2D300F23642 /* Script.cpp */; };
+		52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478F12E7D2D300F23642 /* Singleton.cpp */; };
+		52A948DA12E8170A00F23642 /* libv8.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A948D912E8170A00F23642 /* libv8.a */; };
+		52A948F512E8181300F23642 /* begin.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52A948F112E817DB00F23642 /* begin.js */; };
 		52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */; };
 		52D03956124A5C5400E797B0 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D03955124A5C5400E797B0 /* libode.a */; };
 		52DEDD90125FEFC800C12C19 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52DEDD8C125FEFC800C12C19 /* Mutex.cpp */; };
@@ -93,12 +97,13 @@
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		52DF7FDC12854D6800045BC8 /* CopyFiles */ = {
+		52A947BD12E7D51400F23642 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstPath = scripts;
+			dstSubfolderSpec = 7;
 			files = (
+				52A948F512E8181300F23642 /* begin.js in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +169,12 @@
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		52A2CD6D126113A600DFCDF6 /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
+		52A9478D12E7D2D300F23642 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
+		52A9478E12E7D2D300F23642 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
+		52A9478F12E7D2D300F23642 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
+		52A9479012E7D2D300F23642 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
+		52A948D912E8170A00F23642 /* libv8.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libv8.a; path = "/Users/john/Downloads/v8/v8-read-only/libv8.a"; sourceTree = "<absolute>"; };
+		52A948F112E817DB00F23642 /* begin.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = begin.js; sourceTree = "<group>"; };
 		52AE3145125925ED0066FF5B /* for_each_chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_chunk.h; sourceTree = "<group>"; };
 		52AE314712592C7B0066FF5B /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
@@ -303,6 +314,7 @@
 				52D03956124A5C5400E797B0 /* libode.a in Frameworks */,
 				52DF80CB1285522F00045BC8 /* SDL_image.framework in Frameworks */,
 				52DF80CD1285522F00045BC8 /* SDL.framework in Frameworks */,
+				52A948DA12E8170A00F23642 /* libv8.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +330,7 @@
 				52D03955124A5C5400E797B0 /* libode.a */,
 				52DF80CA1285522F00045BC8 /* SDL_image.framework */,
 				52DF80CC1285522F00045BC8 /* SDL.framework */,
+				52A948D912E8170A00F23642 /* libv8.a */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -342,6 +355,7 @@
 		29B97314FDCFA39411CA2CEA /* crag */ = {
 			isa = PBXGroup;
 			children = (
+				52A948F012E817DB00F23642 /* script */,
 				52F3A2FF11A7979400385922 /* src */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -416,6 +430,26 @@
 			);
 			path = smp;
 			sourceTree = "<group>";
+		};
+		52A9478C12E7D2D300F23642 /* vm */ = {
+			isa = PBXGroup;
+			children = (
+				52A9478D12E7D2D300F23642 /* Script.cpp */,
+				52A9478E12E7D2D300F23642 /* Script.h */,
+				52A9478F12E7D2D300F23642 /* Singleton.cpp */,
+				52A9479012E7D2D300F23642 /* Singleton.h */,
+			);
+			path = vm;
+			sourceTree = "<group>";
+		};
+		52A948F012E817DB00F23642 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				52A948F112E817DB00F23642 /* begin.js */,
+			);
+			name = script;
+			path = ../../script;
+			sourceTree = SOURCE_ROOT;
 		};
 		52C53E2011D8FC1000FA73AA /* geom */ = {
 			isa = PBXGroup;
@@ -520,6 +554,7 @@
 				52F3A36E11A7979400385922 /* sim */,
 				5284FFCE125F783E00E98C2C /* smp */,
 				527CF8D012274AA700E7B3C5 /* sys */,
+				52A9478C12E7D2D300F23642 /* vm */,
 			);
 			path = crag;
 			sourceTree = "<group>";
@@ -673,7 +708,7 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				002F39FD09D0883400EBEB88 /* Copy Frameworks into .app bundle */,
-				52DF7FDC12854D6800045BC8 /* CopyFiles */,
+				52A947BD12E7D51400F23642 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -731,66 +766,68 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				527CF8DB12274AA700E7B3C5 /* App.cpp in Sources */,
+				5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */,
+				52DF188611E8FAC500AF25A1 /* CalculateNodeScoreFunctor.cpp in Sources */,
+				52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */,
 				52F3A39211A7979400385922 /* ConfigManager.cpp in Sources */,
+				52F3A3B111A7979400385922 /* Controller.cpp in Sources */,
 				52F3A39311A7979400385922 /* debug.cpp in Sources */,
-				52F3A39511A7979400385922 /* Random.cpp in Sources */,
-				52F3A39611A7979400385922 /* Formation.cpp in Sources */,
-				52F3A39911A7979400385922 /* Manager.cpp in Sources */,
 				52F3A3A411A7979400385922 /* Debug.cpp in Sources */,
+				52F3A3B211A7979400385922 /* Entity.cpp in Sources */,
+				52F3A3B311A7979400385922 /* Firmament.cpp in Sources */,
 				52F3A3A511A7979400385922 /* Font.cpp in Sources */,
+				5242D909125FF038007F7D90 /* ForEach.cpp in Sources */,
+				52F3A39611A7979400385922 /* Formation.cpp in Sources */,
 				52F3A3A611A7979400385922 /* Image.cpp in Sources */,
 				52F3A3A711A7979400385922 /* IndexBuffer.cpp in Sources */,
 				52F3A3A811A7979400385922 /* Light.cpp in Sources */,
-				52F3A3A911A7979400385922 /* Pov.cpp in Sources */,
-				52F3A3AA11A7979400385922 /* Renderer.cpp in Sources */,
-				52F3A3AB11A7979400385922 /* Scene.cpp in Sources */,
-				52F3A3AD11A7979400385922 /* Skybox.cpp in Sources */,
 				52F3A3AE11A7979400385922 /* main.cpp in Sources */,
-				52F3A3AF11A7979400385922 /* pch.cpp in Sources */,
-				52F3A3B111A7979400385922 /* Controller.cpp in Sources */,
-				52F3A3B211A7979400385922 /* Entity.cpp in Sources */,
-				52F3A3B311A7979400385922 /* Firmament.cpp in Sources */,
-				52F3A3B511A7979400385922 /* Observer.cpp in Sources */,
-				52F3A3B811A7979400385922 /* Planet.cpp in Sources */,
-				52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */,
-				52F3A3BA11A7979400385922 /* Simulation.cpp in Sources */,
-				52F3A3BB11A7979400385922 /* Star.cpp in Sources */,
-				52F3A3BC11A7979400385922 /* Universe.cpp in Sources */,
-				52F3A3BD11A7979400385922 /* UserInput.cpp in Sources */,
-				52F3A3BE11A7979400385922 /* SDLMain.m in Sources */,
-				527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */,
-				526D03A211BF658500F025A9 /* profile.cpp in Sources */,
-				5224D96E11C9AC9C0021CDF8 /* Body.cpp in Sources */,
-				528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */,
-				528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */,
-				528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */,
-				5279D15611D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp in Sources */,
-				52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */,
-				5282943F11DB17BF00611238 /* PlanetCollisionFunctor.cpp in Sources */,
-				52DF188611E8FAC500AF25A1 /* CalculateNodeScoreFunctor.cpp in Sources */,
-				52DF18F611E8FF1C00AF25A1 /* Node.cpp in Sources */,
-				52DF18F711E8FF1C00AF25A1 /* NodeBuffer.cpp in Sources */,
-				52DF18F811E8FF1C00AF25A1 /* Point.cpp in Sources */,
-				52DF18F911E8FF1C00AF25A1 /* PointBuffer.cpp in Sources */,
-				52DF18FA11E8FF1C00AF25A1 /* RootNode.cpp in Sources */,
+				52F3A39911A7979400385922 /* Manager.cpp in Sources */,
+				527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */,
 				52DF194111E92CB500AF25A1 /* Mesh.cpp in Sources */,
 				52DF194211E92CB500AF25A1 /* MeshBufferObject.cpp in Sources */,
-				52DF194311E92CB500AF25A1 /* Vertex.cpp in Sources */,
-				52DF194411E92CB500AF25A1 /* VertexBuffer.cpp in Sources */,
+				527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */,
+				52DEDD90125FEFC800C12C19 /* Mutex.cpp in Sources */,
+				52DF18F611E8FF1C00AF25A1 /* Node.cpp in Sources */,
+				52DF18F711E8FF1C00AF25A1 /* NodeBuffer.cpp in Sources */,
+				52F3A3B511A7979400385922 /* Observer.cpp in Sources */,
+				52F3A3AF11A7979400385922 /* pch.cpp in Sources */,
+				52F3A3B811A7979400385922 /* Planet.cpp in Sources */,
+				528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */,
+				5282943F11DB17BF00611238 /* PlanetCollisionFunctor.cpp in Sources */,
+				52F3A3B911A7979400385922 /* PlanetShader.cpp in Sources */,
+				5279D15611D3B8D000BD9615 /* PlanetSphereCollisionFunctor.cpp in Sources */,
+				52DF18F811E8FF1C00AF25A1 /* Point.cpp in Sources */,
+				52DF18F911E8FF1C00AF25A1 /* PointBuffer.cpp in Sources */,
+				52483F5211ED865700D0BCB2 /* Polyhedron.cpp in Sources */,
+				52F3A3A911A7979400385922 /* Pov.cpp in Sources */,
+				526D03A211BF658500F025A9 /* profile.cpp in Sources */,
+				52F3A39511A7979400385922 /* Random.cpp in Sources */,
+				52887596127352650048AC81 /* Regulator.cpp in Sources */,
+				52F3A3AA11A7979400385922 /* Renderer.cpp in Sources */,
+				52DF18FA11E8FF1C00AF25A1 /* RootNode.cpp in Sources */,
+				52F3A3AB11A7979400385922 /* Scene.cpp in Sources */,
 				527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */,
 				527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */,
-				52483F5211ED865700D0BCB2 /* Polyhedron.cpp in Sources */,
-				527F4AF412101AD400D6AF23 /* MoonShader.cpp in Sources */,
-				527CF8DB12274AA700E7B3C5 /* App.cpp in Sources */,
-				527CF8DC12274AA700E7B3C5 /* memory.cpp in Sources */,
-				52DEDD90125FEFC800C12C19 /* Mutex.cpp in Sources */,
-				52DEDD91125FEFC800C12C19 /* SimpleMutex.cpp in Sources */,
-				5242D909125FF038007F7D90 /* ForEach.cpp in Sources */,
+				52A9479112E7D2D300F23642 /* Script.cpp in Sources */,
+				52F3A3BE11A7979400385922 /* SDLMain.m in Sources */,
 				5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */,
-				5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */,
-				52887596127352650048AC81 /* Regulator.cpp in Sources */,
+				52DEDD91125FEFC800C12C19 /* SimpleMutex.cpp in Sources */,
+				52F3A3BA11A7979400385922 /* Simulation.cpp in Sources */,
+				528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */,
+				52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */,
+				52F3A3AD11A7979400385922 /* Skybox.cpp in Sources */,
 				5227E7591280F26B00027571 /* smp.cpp in Sources */,
+				528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */,
+				52F3A3BB11A7979400385922 /* Star.cpp in Sources */,
 				52822458129399A5008241AF /* Statistics.cpp in Sources */,
+				527C53CE11B9ACAF00F6C052 /* TextureMapper.cpp in Sources */,
+				5242D90B125FF038007F7D90 /* ThreadCondition.cpp in Sources */,
+				52F3A3BC11A7979400385922 /* Universe.cpp in Sources */,
+				52F3A3BD11A7979400385922 /* UserInput.cpp in Sources */,
+				52DF194311E92CB500AF25A1 /* Vertex.cpp in Sources */,
+				52DF194411E92CB500AF25A1 /* VertexBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,6 +899,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"~/Downloads/v8/v8-read-only/include",
 					/usr/local/include,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
@@ -901,7 +939,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Downloads/v8/v8-read-only\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -929,7 +970,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Downloads/v8/v8-read-only\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -955,7 +999,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Downloads/v8/v8-read-only\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = crag;
 				WRAPPER_EXTENSION = app;
@@ -1009,6 +1056,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"~/Downloads/v8/v8-read-only/include",
 					/usr/local/include,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
@@ -1077,6 +1125,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"~/Downloads/v8/v8-read-only/include",
 					/usr/local/include,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",

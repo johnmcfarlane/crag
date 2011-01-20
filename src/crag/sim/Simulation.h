@@ -15,6 +15,8 @@
 
 #include "geom/Vector3.h"
 
+#include "vm/Script.h"
+
 #include "sys/App.h"
 
 
@@ -65,5 +67,7 @@ namespace sim
 		gfx::Renderer renderer;
 		
 		sys::TimeType start_time;
+		
+		vm::Script script;
 	};
 }

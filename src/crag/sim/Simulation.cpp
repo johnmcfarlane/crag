@@ -35,6 +35,8 @@
 #include <sstream>
 #include <fstream>
 
+#include <v8.h>
+
 
 using sys::TimeType;
 using sys::GetTime;
@@ -84,6 +86,13 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 
 void sim::Simulation::InitUniverse()
 {
+	std::ifstream script_source_file("./script/begin.js");
+	if (script_source_file.good()) 
+	{
+		script.Compile(script_source_file);
+		script.Run();
+	}
+
 	scene.SetResolution(sys::GetWindowSize());
 	scene.SetSkybox(new Firmament);
 	
