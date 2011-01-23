@@ -67,15 +67,14 @@
 //////////////////////////////////////////////////////////////////////
 // standard includes.
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <math.h>
-
+// C standard library
 #include <cassert>
+#include <cmath>
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <cstddef>
 
+// C++ standard library
 #include <algorithm>
 #include <limits>
 #include <iostream>
