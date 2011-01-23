@@ -38,12 +38,14 @@ namespace sim
 	public:
 		Simulation(bool init_enable_vsync);
 		~Simulation();
-
-		void Run();
 		
+		bool Init();
 	private:
 		void InitUniverse();
-		
+		bool InitScript();
+
+	public:
+		void Run();
 		void Tick();
 		
 		void Render();
@@ -68,6 +70,8 @@ namespace sim
 		
 		sys::TimeType start_time;
 		
-		vm::Script script;
+		vm::Script begin_script;
+		vm::Script tick_script;
+		vm::Script end_script;
 	};
 }

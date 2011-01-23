@@ -1,1 +1,1 @@
-'Hello' + ', World!'
+'Begin script'

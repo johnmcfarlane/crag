@@ -28,6 +28,8 @@
 		52887596127352650048AC81 /* Regulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52887595127352650048AC81 /* Regulator.cpp */; };
 		528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABA6911CF087400C2B411 /* SphericalBody.cpp */; };
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
+		528E222612EC01E000E142A2 /* tick.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B6EA8612EB4E6F00976DEA /* tick.js */; };
+		528E222712EC01E000E142A2 /* end.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B6EA8812EB4E7B00976DEA /* end.js */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
 		52A9479112E7D2D300F23642 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478D12E7D2D300F23642 /* Script.cpp */; };
 		52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478F12E7D2D300F23642 /* Singleton.cpp */; };
@@ -104,6 +106,8 @@
 			dstSubfolderSpec = 7;
 			files = (
 				52E8BB9812E81DCE0080C75D /* begin.js in CopyFiles */,
+				528E222712EC01E000E142A2 /* end.js in CopyFiles */,
+				528E222612EC01E000E142A2 /* tick.js in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,6 +181,8 @@
 		52AE3145125925ED0066FF5B /* for_each_chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_chunk.h; sourceTree = "<group>"; };
 		52AE314712592C7B0066FF5B /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
+		52B6EA8612EB4E6F00976DEA /* tick.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = tick.js; sourceTree = "<group>"; };
+		52B6EA8812EB4E7B00976DEA /* end.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = end.js; sourceTree = "<group>"; };
 		52B7BBAE1272D61B00BAE8DD /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
 		52C53E1A11D8FBF500FA73AA /* ConfigEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigEntry.h; sourceTree = "<group>"; };
@@ -522,6 +528,8 @@
 			isa = PBXGroup;
 			children = (
 				52E8BB8D12E81D9B0080C75D /* begin.js */,
+				52B6EA8612EB4E6F00976DEA /* tick.js */,
+				52B6EA8812EB4E7B00976DEA /* end.js */,
 			);
 			name = script;
 			path = ../../script;

@@ -93,7 +93,10 @@ namespace
 		// Run the simulation.
 		{
 			sim::Simulation simulation (video_vsync);
-			simulation.Run();
+			if (simulation.Init())
+			{
+				simulation.Run();
+			}
 		}
 
 		smp::Deinit();

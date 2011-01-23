@@ -103,10 +103,14 @@ gfx::Renderer::Renderer()
 , frame_count_reset_time(last_frame_time)
 {
 	InitRenderState();
+
+	Debug::Init();
 }
 
 gfx::Renderer::~Renderer()
 {
+	Debug::Deinit();
+
 	init_culling = culling;
 	init_lighting = lighting;
 	init_wireframe = wireframe;

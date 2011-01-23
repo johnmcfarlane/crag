@@ -25,15 +25,11 @@
 #include "form/scene/SceneThread.h"
 #include "form/Manager.h"
 
-#include "gfx/Debug.h"
 #include "gfx/Renderer.h"
 
 #include "core/ConfigEntry.h"
 #include "geom/Matrix4.h"
 #include "geom/Vector2.h"
-
-#include <sstream>
-#include <fstream>
 
 #include <v8.h>
 
@@ -79,20 +75,26 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 , capture_frame(0)
 , start_time(GetTime())
 {
-	InitUniverse();
+}
+
+sim::Simulation::~Simulation()
+{
+	end_script.Run();
+
+	camera_pos = observer->GetPosition();
+	observer->GetBody()->GetRotation(camera_rot);
 	
-	gfx::Debug::Init();
+	delete formation_manager;
+}
+
+bool sim::Simulation::Init()
+{
+	InitUniverse();
+	return InitScript();
 }
 
 void sim::Simulation::InitUniverse()
 {
-	std::ifstream script_source_file("./script/begin.js");
-	if (script_source_file.good()) 
-	{
-		script.Compile(script_source_file);
-		script.Run();
-	}
-
 	scene.SetResolution(sys::GetWindowSize());
 	scene.SetSkybox(new Firmament);
 	
@@ -121,14 +123,20 @@ void sim::Simulation::InitUniverse()
 	universe.AddEntity(* sun);
 }
 
-sim::Simulation::~Simulation()
+					  
+bool sim::Simulation::InitScript()
 {
-	gfx::Debug::Deinit();
+	if (begin_script.CompileFromFile("./script/begin.js")
+		&& tick_script.CompileFromFile("./script/tick.js")
+		&& end_script.CompileFromFile("./script/end.js"))
+	{
+		//	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
+		//	global->Set(v8::String::New("CreatePlanet"), v8::FunctionTemplate::New(CreatePlanet));
+		begin_script.Run();
+		return true;
+	}
 	
-	camera_pos = observer->GetPosition();
-	observer->GetBody()->GetRotation(camera_rot);
-	
-	delete formation_manager;
+	return false;
 }
 
 void sim::Simulation::Run()
@@ -178,6 +186,8 @@ void sim::Simulation::Tick()
 			Controller::Impulse impulse = ui.GetImpulse();
 			observer->UpdateInput(impulse);
 		}
+		
+		tick_script.Run();
 		
 		sim::Universe & universe = sim::Universe::Get();
 		universe.Tick();
@@ -236,6 +246,7 @@ void sim::Simulation::PrintStats() const
 
 void sim::Simulation::Capture()
 {
+#if 0
 	// Standard string/stream classes: 1/10.
 	std::ostringstream filename_stream;
 	filename_stream << "../../../" << capture_frame << ".jpg";
@@ -246,6 +257,7 @@ void sim::Simulation::Capture()
 	//image.SaveToFile(filename_string);
 	
 	++ capture_frame;
+#endif
 }
 
 bool sim::Simulation::HandleEvents()

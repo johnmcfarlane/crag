@@ -21,10 +21,11 @@ namespace vm
 	public:
 		Script();
 		
+		bool CompileFromFile(char const * source_filename);
 		void Compile(char const * source_code);
 		void Compile(std::istream & source_file);
 
-		void Run();
+		bool Run();
 		
 	private:
 		v8::Handle<v8::Script> script;
