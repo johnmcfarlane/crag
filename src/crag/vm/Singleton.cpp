@@ -14,13 +14,26 @@
 
 
 vm::Singleton::Singleton()
-: context(v8::Context::New())
-, context_scope(context)
+: global(v8::ObjectTemplate::New())
 {
 }
-
 
 vm::Singleton::~Singleton()
 {
 	context.Dispose();
+}
+
+void vm::Singleton::SetAccessor(v8::Handle<v8::String> name,
+				 v8::AccessorGetter getter,
+				 v8::AccessorSetter setter,
+				 v8::Handle<v8::Value> data,
+				 v8::AccessControl settings,
+				 v8::PropertyAttribute attribute)
+{
+	global->SetAccessor(name, getter, setter, data, settings, attribute);
+}
+
+void vm::Singleton::Begin()
+{
+	context = v8::Context::New(NULL, global);	
 }

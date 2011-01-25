@@ -31,6 +31,9 @@
 #include "geom/Matrix4.h"
 #include "geom/Vector2.h"
 
+#include "vm/Singleton.h"
+#include "vm/Scope.h"
+
 #include <v8.h>
 
 
@@ -42,7 +45,7 @@ namespace
 {
 
 	//////////////////////////////////////////////////////////////////////
-	// functions
+	// config variables
 
 	sim::Vector3 const default_camera_pos(0,9997750,0);
 	CONFIG_DEFINE (use_default_camera_pos, bool, true);
@@ -62,7 +65,16 @@ namespace
 	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 	CONFIG_DEFINE (startup_grace_period, TimeType, 2.f);
-
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	// script accessors
+	
+	v8::Handle<v8::Value> GetTime(v8::Local<v8::String> property, const v8::AccessorInfo& info) 
+	{
+		return v8::Number::New(sim::Universe::Get().GetTime());
+	}
+	
 }
 
 
@@ -79,7 +91,10 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 
 sim::Simulation::~Simulation()
 {
-	end_script.Run();
+	{
+		vm::Scope context_scope;
+		end_script.Run();
+	}
 
 	camera_pos = observer->GetPosition();
 	observer->GetBody()->GetRotation(camera_rot);
@@ -123,20 +138,25 @@ void sim::Simulation::InitUniverse()
 	universe.AddEntity(* sun);
 }
 
-					  
 bool sim::Simulation::InitScript()
 {
-	if (begin_script.CompileFromFile("./script/begin.js")
-		&& tick_script.CompileFromFile("./script/tick.js")
-		&& end_script.CompileFromFile("./script/end.js"))
+	vm::Singleton & singleton = vm::Singleton::Get();
+	singleton.SetAccessor(v8::String::New("t"), GetTime, nullptr);
+	singleton.Begin();
+	
 	{
-		//	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
-		//	global->Set(v8::String::New("CreatePlanet"), v8::FunctionTemplate::New(CreatePlanet));
+		vm::Scope scope;
+		if (! (begin_script.CompileFromFile("./script/begin.js")
+			&& tick_script.CompileFromFile("./script/tick.js")
+			&& end_script.CompileFromFile("./script/end.js")))
+		{
+			return false;
+		}
+	
 		begin_script.Run();
-		return true;
 	}
 	
-	return false;
+	return true;
 }
 
 void sim::Simulation::Run()
@@ -186,8 +206,11 @@ void sim::Simulation::Tick()
 			Controller::Impulse impulse = ui.GetImpulse();
 			observer->UpdateInput(impulse);
 		}
-		
-		tick_script.Run();
+
+		{
+			vm::Scope context_scope;
+			tick_script.Run();
+		}
 		
 		sim::Universe & universe = sim::Universe::Get();
 		universe.Tick();

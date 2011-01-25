@@ -19,18 +19,6 @@ vm::Script::Script()
 {
 }
 
-bool vm::Script::CompileFromFile(char const * source_filename)
-{
-	std::ifstream script_source_file(source_filename);
-	if (! script_source_file.good()) 
-	{
-		return false;
-	}
-	
-	Compile(script_source_file);
-	return true;
-}
-
 void vm::Script::Compile(char const * source_code)
 {
 	v8::Handle<v8::String> v8_source = v8::String::New(source_code);
@@ -51,6 +39,19 @@ void vm::Script::Compile(std::istream & source_file)
 
 	char const * source_code = & buffer.front();
 	Compile(source_code);
+}
+
+bool vm::Script::CompileFromFile(char const * source_filename)
+{
+	std::ifstream script_source_file(source_filename);
+	if (! script_source_file.good()) 
+	{
+		std::cerr << "Failed to open script file, \"" << source_filename << "\"." << std::endl;
+		return false;
+	}
+	
+	Compile(script_source_file);
+	return true;
 }
 
 bool vm::Script::Run()

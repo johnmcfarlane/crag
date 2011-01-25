@@ -16,14 +16,15 @@
 namespace vm
 {
 	
+	// A v8 script.
 	class Script
 	{
 	public:
 		Script();
 		
-		bool CompileFromFile(char const * source_filename);
 		void Compile(char const * source_code);
 		void Compile(std::istream & source_file);
+		bool CompileFromFile(char const * source_filename);
 
 		bool Run();
 		

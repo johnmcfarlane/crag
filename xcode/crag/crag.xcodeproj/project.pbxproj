@@ -31,6 +31,7 @@
 		528E222612EC01E000E142A2 /* tick.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B6EA8612EB4E6F00976DEA /* tick.js */; };
 		528E222712EC01E000E142A2 /* end.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B6EA8812EB4E7B00976DEA /* end.js */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
+		52985EEC12EEC97A00138155 /* Scope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52985EEB12EEC97A00138155 /* Scope.cpp */; };
 		52A9479112E7D2D300F23642 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478D12E7D2D300F23642 /* Script.cpp */; };
 		52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478F12E7D2D300F23642 /* Singleton.cpp */; };
 		52A948DA12E8170A00F23642 /* libv8.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A948D912E8170A00F23642 /* libv8.a */; };
@@ -170,6 +171,8 @@
 		528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetaryBody.cpp; sourceTree = "<group>"; };
 		528F0C0911CFBF7C00C9E519 /* PlanetaryBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetaryBody.h; sourceTree = "<group>"; };
 		5294D2671243C3C500EA6849 /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
+		52985EEA12EEC97A00138155 /* Scope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scope.h; sourceTree = "<group>"; };
+		52985EEB12EEC97A00138155 /* Scope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scope.cpp; sourceTree = "<group>"; };
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		52A2CD6D126113A600DFCDF6 /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
@@ -444,6 +447,8 @@
 				52A9478E12E7D2D300F23642 /* Script.h */,
 				52A9478F12E7D2D300F23642 /* Singleton.cpp */,
 				52A9479012E7D2D300F23642 /* Singleton.h */,
+				52985EEA12EEC97A00138155 /* Scope.h */,
+				52985EEB12EEC97A00138155 /* Scope.cpp */,
 			);
 			path = vm;
 			sourceTree = "<group>";
@@ -836,6 +841,7 @@
 				52F3A3BD11A7979400385922 /* UserInput.cpp in Sources */,
 				52DF194311E92CB500AF25A1 /* Vertex.cpp in Sources */,
 				52DF194411E92CB500AF25A1 /* VertexBuffer.cpp in Sources */,
+				52985EEC12EEC97A00138155 /* Scope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1030,7 +1036,7 @@
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_ASM_KEYWORD = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
