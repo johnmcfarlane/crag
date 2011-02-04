@@ -10,14 +10,16 @@
 
 #pragma once
 
+#include "Universe.h"
+
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
 #include "geom/Vector3.h"
 
-#include "vm/Script.h"
-
 #include "sys/App.h"
+
+#include "smp/Singleton.h"
 
 
 namespace form
@@ -28,24 +30,30 @@ namespace form
 
 namespace sim
 {
-	class Observer;
-	
-	// TODO: New class, Crag, which deals with app stuff. Simulation to deal with less critical real-time issues.
 
 	// Top-level class, deals with running the simulation and presenting it to screen. 
-	class Simulation
+	class Simulation : public smp::Singleton<Simulation>
 	{
 	public:
 		Simulation(bool init_enable_vsync);
 		~Simulation();
-		
-		bool Init();
+	
 	private:
-		void InitUniverse();
-		bool InitScript();
-
+		void Init();
 	public:
+		
+		Universe const & GetUniverse() const;
+		
+		gfx::Scene & GetScene();
+		gfx::Scene const & GetScene() const;
+		
+		void AddEntity(Entity & entity);
+		void RemoveEntity(Entity & entity);
+		
+		void SetCameraPos(sim::Vector3 const & pos, sim::Matrix4 const & rot);
+		
 		void Run();
+	private:
 		void Tick();
 		
 		void Render();
@@ -57,7 +65,8 @@ namespace sim
 		bool OnKeyPress(sys::KeyCode key_code);
 
 		// Attributes
-		Observer * observer;
+		Universe universe;
+
 		form::Manager * formation_manager;
 
 		bool enable_vsync;
@@ -69,9 +78,6 @@ namespace sim
 		gfx::Renderer renderer;
 		
 		sys::TimeType start_time;
-		
-		vm::Script begin_script;
-		vm::Script tick_script;
-		vm::Script end_script;
 	};
+	
 }

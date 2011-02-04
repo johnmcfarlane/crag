@@ -3,33 +3,34 @@
  *  crag
  *
  *  Created by John McFarlane on 1/19/11.
- *  Copyright 2009 - 2011 John McFarlane. All rights reserved.
+ *  Copyright 2009-2011 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
  *
  */
 
 #pragma once
 
-#include <v8.h>
-
 
 namespace vm
 {
 	
-	// A v8 script.
 	class Script
 	{
 	public:
 		Script();
+		Script(std::istream & source_file);
+		Script(char const * source_filename);
+		~Script();
 		
-		void Compile(char const * source_code);
-		void Compile(std::istream & source_file);
-		bool CompileFromFile(char const * source_filename);
+		void Clear();
+		void Load(std::istream & source_file);
+		bool Load(char const * source_code);
 
-		bool Run();
+		bool IsOk() const;
+		char const * GetBuffer() const;
 		
 	private:
-		v8::Handle<v8::Script> script;
+		char * buffer;
 	};
 
 }

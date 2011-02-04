@@ -12,29 +12,19 @@
 
 #include "Simulation.h"
 
+#include "axes.h"
 #include "Firmament.h"
 #include "Observer.h"
-#include "Planet.h"
 #include "Star.h"
-#include "Universe.h"
-#include "UserInput.h"
 
-#include "physics/Body.h"
 #include "physics/Singleton.h"
 
 #include "form/scene/SceneThread.h"
 #include "form/Manager.h"
 
-#include "gfx/Renderer.h"
-
 #include "core/ConfigEntry.h"
-#include "geom/Matrix4.h"
-#include "geom/Vector2.h"
 
 #include "vm/Singleton.h"
-#include "vm/Scope.h"
-
-#include <v8.h>
 
 
 using sys::TimeType;
@@ -47,126 +37,99 @@ namespace
 	//////////////////////////////////////////////////////////////////////
 	// config variables
 
+	// TODO: Currently not used. 
+	// Find a way to reflect config variables in python. 
+#if 0
 	sim::Vector3 const default_camera_pos(0,9997750,0);
 	CONFIG_DEFINE (use_default_camera_pos, bool, true);
 	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
 	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
 
-	CONFIG_DEFINE (planet_pos, sim::Vector3, sim::Vector3::Zero());
-	CONFIG_DEFINE (planet_radius_mean, sim::Scalar,  10000000);
-	
-	CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_mean * 1.5, planet_radius_mean * 2.5, planet_radius_mean * 1.));
-	//CONFIG_DEFINE (moon_pos, sim::Vector3, sim::Vector3(planet_radius_medium * .75, planet_radius_medium * 1.25, planet_radius_medium * .5));
-	CONFIG_DEFINE (moon_radius_mean, sim::Scalar, 1500000);
-	
 	// please don't write in
 	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
 	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
+#endif
 	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
-	CONFIG_DEFINE (startup_grace_period, TimeType, 2.f);
-	
-	
-	//////////////////////////////////////////////////////////////////////
-	// script accessors
-	
-	v8::Handle<v8::Value> GetTime(v8::Local<v8::String> property, const v8::AccessorInfo& info) 
-	{
-		return v8::Number::New(sim::Universe::Get().GetTime());
-	}
+	CONFIG_DEFINE (startup_grace_period, TimeType, 1.f);
 	
 }
 
 
 sim::Simulation::Simulation(bool init_enable_vsync)
-: observer(new Observer)
-, formation_manager(new form::Manager(* observer))
-, enable_vsync(init_enable_vsync)
+: enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
 , capture_frame(0)
 , start_time(GetTime())
 {
+	SimulationPtr s(GetPtr());
+	
+	scene.SetResolution(sys::GetWindowSize());
+	scene.SetSkybox(new Firmament);
+	
+	formation_manager = new form::Manager();
+	
+	SetCameraPos(Vector3::Zero(), Matrix4::Identity());
 }
 
 sim::Simulation::~Simulation()
 {
-	{
-		vm::Scope context_scope;
-		end_script.Run();
-	}
-
-	camera_pos = observer->GetPosition();
-	observer->GetBody()->GetRotation(camera_rot);
-	
 	delete formation_manager;
 }
 
-bool sim::Simulation::Init()
+sim::Universe const & sim::Simulation::GetUniverse() const
 {
-	InitUniverse();
-	return InitScript();
+	return universe;
 }
 
-void sim::Simulation::InitUniverse()
+gfx::Scene & sim::Simulation::GetScene()
 {
-	scene.SetResolution(sys::GetWindowSize());
-	scene.SetSkybox(new Firmament);
-	
-	if (use_default_camera_pos) {
-		camera_pos = default_camera_pos;
-		camera_rot = Matrix4::Identity();
-	}
-	observer->SetPosition(camera_pos);
-	observer->GetBody()->SetRotation(camera_rot);
-	
-	sim::Universe & universe = sim::Universe::Get();
-	universe.AddEntity(* observer);
-	//scene.AddEntity(* observer);
-	scene.AddLight(observer->GetLight());
-	
-	Planet * planet = new Planet (0, 8, planet_pos, planet_radius_mean);
-	universe.AddEntity(* planet);
-	scene.AddEntity(* planet);
-	
-	Planet * moon = new Planet (250, 10, moon_pos, moon_radius_mean);
-	universe.AddEntity(* moon);
-	scene.AddEntity(* moon);
-	
-	Star * sun = new Star(sun_orbit_distance, sun_year);
-	scene.AddLight(sun->GetLight());
-	universe.AddEntity(* sun);
+	return scene;
 }
 
-bool sim::Simulation::InitScript()
+gfx::Scene const & sim::Simulation::GetScene() const
 {
-	vm::Singleton & singleton = vm::Singleton::Get();
-	singleton.SetAccessor(v8::String::New("t"), GetTime, nullptr);
-	singleton.Begin();
-	
-	{
-		vm::Scope scope;
-		if (! (begin_script.CompileFromFile("./script/begin.js")
-			&& tick_script.CompileFromFile("./script/tick.js")
-			&& end_script.CompileFromFile("./script/end.js")))
-		{
-			return false;
-		}
-	
-		begin_script.Run();
-	}
-	
-	return true;
+	return scene;
+}
+
+void sim::Simulation::AddEntity(Entity & entity)
+{
+	universe.AddEntity(entity);
+	scene.AddEntity(entity);
+}
+
+void sim::Simulation::RemoveEntity(Entity & entity)
+{
+	universe.RemoveEntity(entity);
+	scene.RemoveEntity(entity);
+}
+
+void sim::Simulation::SetCameraPos(Vector3 const & pos, Matrix4 const & rot)
+{
+	scene.SetCamera(pos, rot);
+	formation_manager->GetSceneThread().SetCameraPos(axes::GetCameraRay(pos, rot));
 }
 
 void sim::Simulation::Run()
 {
+	vm::Singleton vm_singleton("./script/main.py");
 	formation_manager->GetSceneThread().Launch();
 	
 	TimeType next_tick_time = GetTime();
 	
-	while (HandleEvents())
+	while (true)
 	{
+		if (! HandleEvents())
+		{
+			break;
+		}
+		
+		if (vm::Singleton::Get().IsDone())
+		{
+			break;
+		}
+		
 		TimeType time = GetTime();
 		TimeType time_to_next_time = next_tick_time - time;
 		if (time_to_next_time > 0)
@@ -196,24 +159,13 @@ void sim::Simulation::Run()
 
 void sim::Simulation::Tick()
 {
-	// Tick the entities.
-	if (! paused && GetTime() > start_time + startup_grace_period) 
-	{
-		// Camera input.
-		if (sys::HasFocus()) 
-		{
-			UserInput ui;
-			Controller::Impulse impulse = ui.GetImpulse();
-			observer->UpdateInput(impulse);
-		}
+	SimulationPtr lock = GetPtr();
 
-		{
-			vm::Scope context_scope;
-			tick_script.Run();
-		}
-		
-		sim::Universe & universe = sim::Universe::Get();
-		universe.Tick();
+	// Tick the entities.
+	if (! paused) 
+	{
+		bool physics = GetTime() > start_time + startup_grace_period;
+		universe.Tick(physics);
 	}
 	
 	formation_manager->Tick();
@@ -225,13 +177,6 @@ void sim::Simulation::Render()
 	formation_manager->PollMesh();
 	
 	PrintStats();
-
-	// Set scene's camera position from observer.
-	physics::Body & observer_body = ref(observer->GetBody());
-	Vector3 pos = observer_body.GetPosition();
-	Matrix4 rot;
-	observer_body.GetRotation(rot);
-	scene.SetCamera(pos, rot);
 
 	// Render scene and get an estimation of our load on system.
 	TimeType frame_time = renderer.Render(scene, enable_vsync);
@@ -357,7 +302,8 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					num = 10;
 				}
 				
-				observer->SetSpeedFactor(num);
+				Assert(false);
+				//observer->SetSpeedFactor(num);
 				return true;
 			}
 			
@@ -381,7 +327,6 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					
 				case KEY_G:
 				{
-					sim::Universe & universe = sim::Universe::Get();
 					universe.ToggleGravity();
 				}	return true;
 					

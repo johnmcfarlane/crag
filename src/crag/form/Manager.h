@@ -28,11 +28,6 @@
 #include <set>
 
 
-namespace sim
-{
-	class Observer;
-}
-
 namespace gfx
 {
 	class Pov;
@@ -51,7 +46,7 @@ namespace form {
 	class Manager : public core::Singleton<Manager>
 	{
 	public:
-		Manager(sim::Observer & init_observer);
+		Manager();
 		~Manager();
 		
 #if VERIFY
@@ -84,7 +79,6 @@ namespace form {
 #endif
 		
 		FormationSet formation_set;
-		sim::Observer & observer;
 
 		bool enable_mesh_generation;
 		SceneThread * scene_thread;

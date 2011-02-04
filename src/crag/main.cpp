@@ -12,17 +12,12 @@
 #include "pch.h"
 
 #include "sim/Simulation.h"
-#include "sim/Universe.h"
 
-#include "core/ConfigEntry.h"
 #include "core/ConfigManager.h"
-#include "core/Statistics.h"
 
 #include "smp/ForEach.h"
 
 #include "physics/Singleton.h"
-
-#include "vm/Singleton.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -87,16 +82,11 @@ namespace
 		smp::Init(0);
 
 		physics::Singleton physics_singleton;
-		sim::Universe universe;
-		vm::Singleton virtual_machine;
 		
 		// Run the simulation.
 		{
 			sim::Simulation simulation (video_vsync);
-			if (simulation.Init())
-			{
-				simulation.Run();
-			}
+			simulation.Run();
 		}
 
 		smp::Deinit();

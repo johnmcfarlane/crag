@@ -43,10 +43,9 @@ namespace
 }
 
 
-form::Manager::Manager(sim::Observer & init_observer)
-: observer(init_observer)
-, enable_mesh_generation(true)
-, scene_thread(new SceneThread (formation_set, init_observer, enable_multithreding))
+form::Manager::Manager()
+: enable_mesh_generation(true)
+, scene_thread(new SceneThread (formation_set, enable_multithreding))
 {
 	for (int mesh_index = 0; mesh_index < 2; ++ mesh_index)
 	{

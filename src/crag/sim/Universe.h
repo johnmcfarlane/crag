@@ -25,7 +25,7 @@ namespace sim
 	
 	
 	// Currently deals with simulation time, entity managment and physics ticking.
-	class Universe : public core::Singleton<Universe>
+	class Universe
 	{
 	public:
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
@@ -38,9 +38,15 @@ namespace sim
 		void ToggleGravity();
 
 		void AddEntity(Entity & entity);
+		void RemoveEntity(Entity & entity);
 
-		void Tick();
+		void Tick(bool physics);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
-		void GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
+
+	private:
+		sys::TimeType time;
+		
+		typedef std::vector<sim::Entity *> EntityVector;
+		EntityVector entities;
 	};
 }

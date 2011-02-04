@@ -20,15 +20,16 @@ namespace sim
 	class Star : public Entity
 	{
 	public:
-		Star(Scalar init_radius, Scalar init_year);
+		Star(SimulationPtr const & s, Scalar init_radius, Scalar init_year);
 
-		void Tick();
+		// Type-specific allocation via script.
+		static Star * Create(PyObject * args);
+		
+		void Tick(Universe const & universe);
 	
 		Scalar GetBoundingRadius() const;
-		sim::Vector3 const & GetPosition() const;
+		virtual sim::Vector3 const & GetPosition() const;
 	
-		gfx::Light const & GetLight() const;
-
 	private:
 		gfx::Light light;
 		sim::Vector3 position;

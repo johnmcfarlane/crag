@@ -13,8 +13,6 @@
 #include "glpp/RenderBuffer.h"
 #include "glpp/FrameBuffer.h"
 
-#include "sim/defs.h"
-
 #include "sys/App.h"
 
 
@@ -67,7 +65,7 @@ namespace gfx
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
 		void RenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
 		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
-		void RenderLights(std::vector<Light const *> const & lights) const;
+		void EnableLights(std::vector<Light const *> const & lights, bool enabled) const;
 		
 		void DebugDraw(Pov const & pov) const;
 		

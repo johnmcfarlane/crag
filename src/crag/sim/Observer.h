@@ -31,26 +31,19 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
-		Observer();
+		Observer(SimulationPtr const & s, sim::Vector3 const & init_pos);
 		~Observer();
 		
+		// Type-specific allocation via script.
+		static Observer * Create(PyObject * args);
+
 		void UpdateInput(Controller::Impulse const & inpulse);	// [rot/pos]
 
 		void SetSpeedFactor(int _speed_factor);
-		void Tick();
+		void Tick(Universe const & universe);
 		
-		Vector3 const * GetImpulse() const;
-		Scalar GetBoundingRadius() const;
-		
-		Vector3 const & GetPosition() const;
+		virtual Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const & pos);
-		
-		physics::Body * GetBody();
-		physics::Body const * GetBody() const;
-
-		gfx::Light const & GetLight() const;
-		
-		Ray3 GetCameraRay() const;
 
 	private:
 		void ApplyImpulse();

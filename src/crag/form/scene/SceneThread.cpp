@@ -14,7 +14,6 @@
 #include "form/Manager.h"
 #include "Mesh.h"
 
-#include "sim/Observer.h"
 #include "sim/axes.h"
 
 #include "physics/Body.h"
@@ -54,9 +53,9 @@ namespace
 // TODO: Make debug text show up in Retail
 // TODO: Make Churn exit on reaching a ratio of expanded to non-expanded.
 
-form::SceneThread::SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded)
+form::SceneThread::SceneThread(FormationSet const & _formations, bool _threaded)
 : formations(_formations)
-, observer(_observer)
+, camera_pos(sim::Ray3::Zero())
 , threaded(_threaded)
 , reset_origin_flag(false)
 , suspend_flag(false)
@@ -158,8 +157,7 @@ void form::SceneThread::Tick()
 	}
 
 #if defined (GATHER_STATS)
-	sim::Vector3 const & observer_pos = observer.GetPosition();
-	double observer_position_length = Length(observer_pos - GetActiveScene().GetOrigin());
+	double observer_position_length = Length(camera_pos.position - GetActiveScene().GetOrigin());
 	double oor = max_observer_position_length - observer_position_length;
 	STAT_SET (oor, oor);
 #endif
@@ -205,6 +203,11 @@ bool form::SceneThread::PollMesh(MeshBufferObject & mbo)
 	return true;
 }
 
+void form::SceneThread::SetCameraPos(sim::Ray3 const & _camera_pos)
+{
+	camera_pos = _camera_pos;
+}
+
 void form::SceneThread::ResetOrigin()
 {
 	Assert(IsMainThread());
@@ -237,8 +240,7 @@ bool form::SceneThread::IsOriginOk() const
 	
 	// The real test: Is the observer not far enough away from the 
 	// current origin that visible inaccuracies might become apparent?
-	sim::Vector3 const & observer_pos = observer.GetPosition();
-	double observer_position_length = Length(observer_pos - GetVisibleScene().GetOrigin());
+	double observer_position_length = Length(camera_pos.position - GetVisibleScene().GetOrigin());
 	return observer_position_length < max_observer_position_length;
 }
 
@@ -337,8 +339,7 @@ void form::SceneThread::TickActiveScene()
 	Assert(IsSceneThread());	
 
 	Scene & active_scene = GetActiveScene();
-	sim::Ray3 camera_ray = observer.GetCameraRay();
-	active_scene.SetCameraRay(camera_ray);
+	active_scene.SetCameraRay(camera_pos);
 	
 	{
 		PROFILE_TIMER_BEGIN(t);
@@ -360,8 +361,7 @@ void form::SceneThread::BeginReset()
 	// Transfer the origin from the old scene to the new one.
 	Scene & active_scene = GetActiveScene();
 	Scene & visible_scene = GetVisibleScene();
-	sim::Vector3 const & observer_pos = observer.GetPosition();
-	active_scene.SetOrigin(observer_pos);
+	active_scene.SetOrigin(camera_pos.position);
 
 	// Transfer the quaterna count from the old buffer to the new one.
 	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();

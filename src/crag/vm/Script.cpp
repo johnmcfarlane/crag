@@ -3,7 +3,7 @@
  *  crag
  *
  *  Created by John McFarlane on 1/19/11.
- *  Copyright 2009 - 2011 John McFarlane. All rights reserved.
+ *  Copyright 2009-2011 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
  *
  */
@@ -16,16 +16,37 @@
 
 
 vm::Script::Script()
+: buffer(nullptr)
 {
 }
 
-void vm::Script::Compile(char const * source_code)
+vm::Script::Script(std::istream & source_file)
+: buffer(nullptr)
 {
-	v8::Handle<v8::String> v8_source = v8::String::New(source_code);
-	script = v8::Script::Compile(v8_source);
+	Load(source_file);
 }
 
-void vm::Script::Compile(std::istream & source_file)
+vm::Script::Script(char const * source_filename)
+: buffer(nullptr)
+{
+	Load(source_filename);
+}
+
+vm::Script::~Script()
+{
+	delete [] buffer;
+}
+
+void vm::Script::Clear()
+{
+	if (buffer != nullptr)
+	{
+		delete [] buffer;
+		buffer = nullptr;
+	}
+}
+
+void vm::Script::Load(std::istream & source_file)
 {
 	// Get the length of the file.
 	source_file.seekg(0,std::ios::end);
@@ -33,47 +54,31 @@ void vm::Script::Compile(std::istream & source_file)
 	source_file.seekg(0,std::ios::beg);
 	
 	// Read file as a string and terminate with null.
-	std::vector<char> buffer(length + std::streampos(1));
-	source_file.read(&buffer[0],length);
+	buffer = new char [length + std::streampos(1)];
+	source_file.read(buffer,length);
 	buffer [length] = '\0';
-
-	char const * source_code = & buffer.front();
-	Compile(source_code);
 }
 
-bool vm::Script::CompileFromFile(char const * source_filename)
+bool vm::Script::Load(char const * source_filename)
 {
-	std::ifstream script_source_file(source_filename);
-	if (! script_source_file.good()) 
+	Clear();
+	
+	std::ifstream source_file(source_filename);
+	if (! source_file.good()) 
 	{
-		std::cerr << "Failed to open script file, \"" << source_filename << "\"." << std::endl;
 		return false;
 	}
 	
-	Compile(script_source_file);
+	Load(source_file);
 	return true;
 }
 
-bool vm::Script::Run()
+bool vm::Script::IsOk() const
 {
-	Assert(! script.IsEmpty());
-	
-	// Run the script to get the result.
-	v8::Handle<v8::Value> result = script->Run();
-	
-	if (result.IsEmpty())
-	{
-		// This probably means there's an error in the script.
-		return false;
-	}
-	
-	if (! result->IsUndefined())
-	{
-		// Happens if the script outputs something.
-		// Convert the result to an ASCII string and print it.
-		v8::String::AsciiValue ascii(result);
-		std::cout << "vm:" << * ascii << '\n';
-	}
-	
-	return true;
+	return buffer != nullptr;
+}
+
+char const * vm::Script::GetBuffer() const
+{
+	return buffer;
 }

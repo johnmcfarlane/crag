@@ -3,7 +3,7 @@
  *  Crag
  *
  *  Created by john on 5/21/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
+ *  Copyright 2009-2011 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
  *
  */
@@ -11,8 +11,6 @@
 #pragma once
 
 #include "defs.h"
-
-#include "physics/defs.h"
 
 
 namespace physics
@@ -23,14 +21,17 @@ namespace physics
 
 namespace sim
 {
+	class Universe;
+	
+	// The base class for 'things' that exist in the simulation.
 	class Entity
 	{
 	public:
-		Entity();
+		Entity(SimulationPtr const & s);
 		virtual ~Entity();
 
 		// general callbacks
-		virtual void Tick();
+		virtual void Tick(Universe const & universe);
 		virtual void Draw() const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;
@@ -46,4 +47,5 @@ namespace sim
 	
 		//DUMP_OPERATOR_DECLARATION(Entity);
 	};
+	
 }

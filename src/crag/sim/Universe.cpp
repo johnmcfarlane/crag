@@ -30,12 +30,6 @@ namespace sim
 #endif
 		
 		CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
-		
-		sys::TimeType time = 0;
-		
-		typedef std::vector<sim::Entity *> EntityList;
-		EntityList entities;
-
 	}
 }
 
@@ -47,20 +41,14 @@ CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
 
 
 sim::Universe::Universe()
+: time(0)
 {
-	time = 0;
-	
 	Assert(entities.size() == 0);
 }
 
 sim::Universe::~Universe()
 {
-	for (EntityList::iterator it = entities.begin(); it != entities.end(); ++ it)
-	{
-		Entity * e = * it;
-		delete e;
-	}
-	entities.clear();
+	Assert(entities.empty());
 }
 
 sys::TimeType sim::Universe::GetTime() const
@@ -73,25 +61,36 @@ void sim::Universe::ToggleGravity()
 	gravity = ! gravity;
 }
 
-// TODO: Better to have a RemoveEntity and just assert that array is empty in d'tor.
 void sim::Universe::AddEntity(Entity & entity)
 {
 	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
 	entities.push_back(& entity);
 }
 
+void sim::Universe::RemoveEntity(Entity & entity)
+{
+	EntityVector::iterator i = std::find(entities.begin(), entities.end(), & entity);
+	Assert(i != entities.end());
+	entities.erase(i);
+	
+	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
+}
+
 // Perform a step in the simulation. 
-void sim::Universe::Tick()
+void sim::Universe::Tick(bool physics)
 {
 	time += target_frame_seconds;
 	
-	physics::Singleton & physics_singleton = physics::Singleton::Get();
-	physics_singleton.Tick(target_frame_seconds);
+	if (physics)
+	{
+		physics::Singleton & physics_singleton = physics::Singleton::Get();
+		physics_singleton.Tick(target_frame_seconds);
+	}
 	
-	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it)
+	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
 		Entity & e = * * it;
-		e.Tick();
+		e.Tick(* this);
 	}
 }
 
@@ -103,7 +102,7 @@ sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
 	{
 		sim::Vector3 force = sim::Vector3::Zero();
 		
-		for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+		for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
 		{
 			Entity & e = * * it;
 			e.GetGravitationalForce(pos, force);
@@ -117,27 +116,3 @@ sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
 	}
 }
 
-// Given a camera position/direction, conservatively estimates 
-// the minimum and maximum distances at which rendering occurs.
-// TODO: Long-term, this function needs to be replaced with 
-// something that gives and near and far plane value instead. 
-void sim::Universe::GetRenderRange(Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
-{
-	for (EntityList::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
-	{
-		Entity & e = * * it;
-		double entity_range[2];
-		if (e.GetRenderRange(camera_ray, entity_range, wireframe))
-		{
-			if (entity_range[0] < range_min)
-			{
-				range_min = entity_range[0];
-			}
-			
-			if (entity_range[1] > range_max)
-			{
-				range_max = entity_range[1];
-			}
-		}
-	}
-}

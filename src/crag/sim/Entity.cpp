@@ -3,7 +3,7 @@
  *  Crag
  *
  *  Created by john on 5/21/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
+ *  Copyright 2009-2010 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
  *
  */
@@ -12,19 +12,24 @@
 
 #include "Entity.h"
 
+#include "Simulation.h"
+
 
 //////////////////////////////////////////////////////////////////////
-// Entity Member Definitions
+// Entity member definitions
 
-sim::Entity::Entity()
+sim::Entity::Entity(SimulationPtr const & s)
 {
+	s->AddEntity(* this);
 }
 
 sim::Entity::~Entity()
-{ 
+{
+	SimulationPtr s(Simulation::GetPtr());
+	s->RemoveEntity(* this);
 }
 
-void sim::Entity::Tick()
+void sim::Entity::Tick(Universe const & universe)
 {
 }
 

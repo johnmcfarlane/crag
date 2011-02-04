@@ -11,6 +11,9 @@
 #include "pch.h"
 
 #include "Scene.h"
+
+#include "sim/Entity.h"
+
 #include "core/ConfigEntry.h"
 
 #include <algorithm>
@@ -31,6 +34,8 @@ gfx::Scene::Scene()
 
 gfx::Scene::~Scene()
 {
+	Assert(entities.empty());
+	
 	camera_fov = static_cast<float>(pov.frustum.fov);
 	camera_near = static_cast<float>(pov.frustum.near_z);
 	camera_far = static_cast<float>(pov.frustum.far_z);
@@ -48,6 +53,15 @@ void gfx::Scene::AddEntity(sim::Entity const & entity)
 	entities.push_back(& entity);
 }
 
+void gfx::Scene::RemoveEntity(sim::Entity const & entity)
+{
+	EntityVector::iterator i = std::find(entities.begin(), entities.end(), & entity);
+	Assert(i != entities.end());
+	entities.erase(i);
+
+	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
+}
+
 void gfx::Scene::SetResolution(Vector2i const & r)
 {
 	pov.frustum.resolution = r;
@@ -62,4 +76,34 @@ void gfx::Scene::SetCamera(sim::Vector3 const & pos, sim::Matrix4 const & rot)
 gfx::Pov & gfx::Scene::GetPov()
 {
 	return pov;
+}
+
+gfx::Pov const & gfx::Scene::GetPov() const
+{
+	return pov;
+}
+
+// Given a camera position/direction, conservatively estimates 
+// the minimum and maximum distances at which rendering occurs.
+// TODO: Long-term, this function needs to be replaced with 
+// something that gives and near and far plane value instead. 
+void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
+{
+	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	{
+		sim::Entity const & e = * * it;
+		double entity_range[2];
+		if (e.GetRenderRange(camera_ray, entity_range, wireframe))
+		{
+			if (entity_range[0] < range_min)
+			{
+				range_min = entity_range[0];
+			}
+			
+			if (entity_range[1] > range_max)
+			{
+				range_max = entity_range[1];
+			}
+		}
+	}
 }

@@ -12,6 +12,7 @@
 
 #include "axes.h"
 #include "Observer.h"
+#include "Simulation.h"
 #include "Universe.h"
 
 #include "physics/Singleton.h"
@@ -45,8 +46,8 @@ namespace
 }
 
 
-sim::Observer::Observer()
-: Entity()
+sim::Observer::Observer(SimulationPtr const & s, sim::Vector3 const & init_pos)
+: Entity(s)
 , sphere(true, observer_radius)
 , speed(0)
 , speed_factor(observer_speed_factor)
@@ -59,11 +60,32 @@ sim::Observer::Observer()
 	sphere.SetAngularDamping(observer_angular_damping);
 
 	impulses[0] = impulses[1] = Vector3::Zero();
+	
+	SetPosition(init_pos);
+
+	gfx::Scene & scene = s->GetScene();
+	scene.AddLight(light);
 }
 
 sim::Observer::~Observer()
 {
 	observer_speed_factor = static_cast<double>(speed_factor);
+}
+
+sim::Observer * sim::Observer::Create(PyObject * args)
+{
+	// Parse planet creation parameters
+	Vector<double, 3> center;
+	if (! PyArg_ParseTuple(args, "ddd", &center.x, &center.y, &center.z))
+	{
+		return nullptr;
+	}
+	
+	// Create planet object.
+	SimulationPtr s(Simulation::GetPtr());
+	Observer * observer = new Observer(s, center);
+	
+	return observer;
 }
 
 void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
@@ -94,30 +116,37 @@ void sim::Observer::SetSpeedFactor(int _speed_factor)
 	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
-void sim::Observer::Tick()
+void sim::Observer::Tick(Universe const & universe)
 {
+	// Camera input.
+	if (sys::HasFocus()) 
+	{
+		UserInput ui;
+		Controller::Impulse impulse = ui.GetImpulse();
+		UpdateInput(impulse);
+	}
+	
 	ApplyImpulse();
 
+	// Gravity
 	Vector3 const & position = GetPosition();
 	Scalar mass = sphere.GetMass();
-	sim::Universe & universe = sim::Universe::Get();
 	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
 	Vector3 gravitational_force = gravitational_force_per_second / Universe::target_frame_seconds;
 	
 	Vector3 scaled_observer_gravity_center = observer_gravity_center * sphere.GetRadius();
 	sphere.AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
 	
-	light.SetPosition(GetPosition());
-}
+	// Light
+	light.SetPosition(position);
 
-sim::Vector3 const * sim::Observer::GetImpulse() const 
-{ 
-	return impulses; 
-}
-
-sim::Scalar sim::Observer::GetBoundingRadius() const
-{
-	return sphere.GetRadius();
+	// Set simulation camera.
+	Vector3 pos = sphere.GetPosition();
+	Matrix4 rot;
+	sphere.GetRotation(rot);
+	
+	SimulationPtr s = Simulation::GetPtr();
+	s->SetCameraPos(position, rot);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const
@@ -129,30 +158,6 @@ void sim::Observer::SetPosition(sim::Vector3 const & pos)
 {
 	light.SetPosition(pos);
 	sphere.SetPosition(pos);
-}
-
-physics::Body * sim::Observer::GetBody()
-{
-	return & sphere;
-}
-
-physics::Body const * sim::Observer::GetBody() const
-{
-	return & sphere;
-}
-
-gfx::Light const & sim::Observer::GetLight() const
-{
-	return light;
-}
-
-sim::Ray3 sim::Observer::GetCameraRay() const
-{
-	sim::Vector3 const & position = sphere.GetPosition();
-	sim::Matrix4 matrix;
-	sphere.GetRotation(matrix);
-	
-	return axes::GetCameraRay(position, matrix);
 }
 
 void sim::Observer::ApplyImpulse()

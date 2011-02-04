@@ -3,43 +3,47 @@
  *  crag
  *
  *  Created by John McFarlane on 1/19/11.
- *  Copyright 2009 - 2011 John McFarlane. All rights reserved.
+ *  Copyright 2009-2011 John McFarlane. All rights reserved.
  *  This program is distributed under the terms of the GNU General Public License.
  *
  */
 
 #pragma once
 
+#include "Script.h"
+
 #include "core/Singleton.h"
 
-#include <v8.h>
+#include "smp/Thread.h"
 
 
 namespace vm
 {
 	
-	// A collection of the v8-related objects that are unique in the simulation (so far).
+	// The scripting support is centered here.
+	// The given script is run in a thread until it is done or interrupted.
+	// The two ways that scripting come to an end are:
+	// 1. The script finishes, in which case IsDone will return true.
+	// 2. The Singleton's d'tor tells the script/thread to end.
 	class Singleton : public core::Singleton<Singleton>
 	{
-		friend class Scope;
-		
 	public:
-		Singleton();
+		Singleton(char const * init_source_filename);
 		~Singleton();
 		
-		void SetAccessor(v8::Handle<v8::String> name,
-						 v8::AccessorGetter getter,
-						 v8::AccessorSetter setter = 0,
-						 v8::Handle<v8::Value> data = v8::Handle<v8::Value>(),
-						 v8::AccessControl settings = v8::DEFAULT,
-						 v8::PropertyAttribute attribute = v8::None);
-		
-		void Begin();
+		// Means that the script is done and the program should quit.
+		bool IsDone() const;
 		
 	private:
-		v8::HandleScope handle_scope;
-		v8::Handle<v8::ObjectTemplate> global;
-		v8::Persistent<v8::Context> context;
+		void Run();
+
+		// types
+		typedef smp::Thread<Singleton, & Singleton::Run> Thread;
+
+		// attributes
+		bool done;
+		char const * source_filename;		
+		Thread thread;
 	};
 	
 }

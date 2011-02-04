@@ -37,6 +37,11 @@ public:
 	{
 	}
 	
+	static Ray Zero() 
+	{
+		return Ray(V::Zero(), V::Zero()); 
+	}
+
 	// attributes
 	V position;
 	V direction;

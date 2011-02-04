@@ -21,12 +21,6 @@
 #include "core/double_buffer.h"
 
 
-namespace sim
-{
-	class Observer;
-}
-
-
 namespace form
 {
 	
@@ -38,7 +32,7 @@ namespace form
 		OBJECT_NO_COPY (SceneThread);
 		
 	public:
-		SceneThread(FormationSet const & _formations, sim::Observer const & _observer, bool _threaded);
+		SceneThread(FormationSet const & _formations, bool _threaded);
 		~SceneThread();
 		
 #if VERIFY
@@ -56,6 +50,7 @@ namespace form
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
 		bool PollMesh(MeshBufferObject & mbo);
+		void SetCameraPos(sim::Ray3 const & camera_pos);
 		void ResetOrigin();
 		void ToggleFlatShaded();
 		
@@ -91,7 +86,7 @@ namespace form
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
 				
 		FormationSet const & formations;		
-		sim::Observer const & observer;
+		sim::Ray3 camera_pos;
 		
 		bool threaded;	// If false, object still does the same work, only on the main thread.
 		bool reset_origin_flag;	// When set, tells thread to generate a new scene with a new origin.

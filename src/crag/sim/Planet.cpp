@@ -13,6 +13,8 @@
 #include "Planet.h"
 #include "PlanetaryBody.h"
 #include "PlanetShader.h"
+#include "Simulation.h"
+
 #include "MoonShader.h"
 
 #include "physics/Singleton.h"
@@ -27,8 +29,8 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(int num_craters, int init_seed, sim::Vector3 const & init_pos, Scalar init_radius_mean)
-: Entity()
+sim::Planet::Planet(SimulationPtr const & s, sim::Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters)
+: Entity(s)
 , radius_mean(init_radius_mean)
 , radius_min(init_radius_mean)
 , radius_max(init_radius_mean)
@@ -63,7 +65,26 @@ sim::Planet::~Planet()
 	}
 }
 
-void sim::Planet::Tick()
+sim::Planet * sim::Planet::Create(PyObject * args)
+{
+	// Parse planet creation parameters
+	sim::Vector3 center;
+	sim::Scalar radius;
+	int random_seed;
+	int num_craters;
+	if (! PyArg_ParseTuple(args, "ddddii", & center.x, & center.y, & center.z, & radius, & random_seed, & num_craters))
+	{
+		return nullptr;
+	}
+	
+	// Create planet object.
+	SimulationPtr s(Simulation::GetPtr());
+	sim::Planet * planet = new sim::Planet(s, center, radius, random_seed, num_craters);
+	
+	return planet;
+}
+
+void sim::Planet::Tick(Universe const & universe)
 {
 	body->SetRadius(radius_max);
 }

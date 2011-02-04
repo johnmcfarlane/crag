@@ -12,7 +12,6 @@
 
 #include "Renderer.h"
 #include "Color.h"
-#include "Scene.h"
 #include "Debug.h"
 #include "Skybox.h"
 #include "Light.h"
@@ -21,12 +20,12 @@
 
 #include "sim/axes.h"
 
-#include "glpp/glpp.h"
+#include "glpp/Texture.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-#include "sim/Universe.h"
+#include "sim/Simulation.h"
 
 #include <sstream>
 
@@ -75,16 +74,15 @@ namespace
 		SetProjectionMatrix(frustum.CalcProjectionMatrix());
 	}
 
-	void SetForegroundFrustum(gfx::Pov const & pov, bool wireframe)
+	void SetForegroundFrustum(gfx::Scene const & scene, bool wireframe)
 	{
+		gfx::Pov const & pov = scene.GetPov();
 		gfx::Frustum frustum = pov.frustum;
 		frustum.near_z = std::numeric_limits<float>::max();
 
 		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
 		
-		// TODO: This stuff belongs at the sim level - or at least outside the renderer.
-		sim::Universe & universe = sim::Universe::Get();
-		universe.GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
+		scene.GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
 		
 		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
 		SetFrustum(frustum);
@@ -212,8 +210,12 @@ void gfx::Renderer::ToggleWireframe()
 
 TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 {
-	// Render the scene to the back buffer.
-	RenderScene(scene);	
+	{
+		sim::SimulationPtr lock = sim::Simulation::GetPtr();
+
+		// Render the scene to the back buffer.
+		RenderScene(scene);	
+	}
 
 	TimeType frame_time;
 	
@@ -279,7 +281,7 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 	}
 
 	// Adjust near and far plane
-	SetForegroundFrustum(scene.pov, wireframe);
+	SetForegroundFrustum(scene, wireframe);
 	
 	if (wireframe)
 	{
@@ -363,23 +365,20 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	if (lighting)
 	{
 		gl::Enable(GL_LIGHTING);
+		EnableLights(scene.lights, true);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
-
+	
 	// Do the rendering
-	RenderLights(scene.lights);
-
 	form::Manager & manager = form::Manager::Get();
 	manager.Render(scene.pov, color);
-	
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
-	gl::Disable(GL_LIGHT0);
-
 	// Reset state
 	if (lighting)
 	{
+		EnableLights(scene.lights, false);
 		gl::Disable(GL_LIGHTING);
 	}
 	gl::Disable(GL_DEPTH_TEST);
@@ -411,12 +410,16 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	}
 }
 
-// Nothing to do with shadow maps; draws the lights in the main scene.
-void gfx::Renderer::RenderLights(std::vector<Light const *> const & lights) const
+// Nothing to do with shadow maps; sets/unsets the lights in the main scene.
+void gfx::Renderer::EnableLights(std::vector<Light const *> const & lights, bool enabled) const
 {
-	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-	GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
+	if (enabled)
+	{
+		// TODO: Move this out of Render routine.
+		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
+		GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
+		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
+	}
 	
 	int light_id = GL_LIGHT0; 
 	for (std::vector<Light const *>::const_iterator it = lights.begin(); it != lights.end(); ++ it) {
@@ -424,9 +427,11 @@ void gfx::Renderer::RenderLights(std::vector<Light const *> const & lights) cons
 		Assert(light != nullptr);
 		
 		if (light->IsActive()) {
-			// TODO: Redundant state change?
-			GLPP_CALL(glEnable(light_id));
-			light->Draw(light_id);
+			gl::Enable(light_id, enabled);
+			if (enabled)
+			{
+				light->Draw(light_id);
+			}
 			
 			++ light_id;
 			if (light_id > GL_LIGHT7) {
