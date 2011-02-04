@@ -13,7 +13,7 @@
 #include "core/Singleton.h"
 
 
-namespace vm
+namespace script
 {
 	
 	// Class class helps bind a native type, NativeType, to a Python class.

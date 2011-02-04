@@ -27,8 +27,8 @@ namespace
 	
 	PyObject * Done(PyObject * self, PyObject * args)
 	{
-		vm::Singleton const & vm = vm::Singleton::Get();
-		bool is_done = vm.IsDone();
+		script::Singleton const & script = script::Singleton::Get();
+		bool is_done = script.IsDone();
 		return Py_BuildValue("i", int(is_done));
 	}
 	
@@ -54,14 +54,14 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Singleton member definitions
 
-vm::Singleton::Singleton(char const * init_source_filename)
+script::Singleton::Singleton(char const * init_source_filename)
 : done(false)
 , source_filename(init_source_filename)
 {
 	thread.Launch(* this);
 }
 
-vm::Singleton::~Singleton()
+script::Singleton::~Singleton()
 {
 	// Communicate to the script that it's time to end.
 	done = true;
@@ -70,12 +70,12 @@ vm::Singleton::~Singleton()
 	thread.Join();
 }
 
-bool vm::Singleton::IsDone() const
+bool script::Singleton::IsDone() const
 {
 	return done;
 }
 
-void vm::Singleton::Run()
+void script::Singleton::Run()
 {
 	Py_Initialize();
 	

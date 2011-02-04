@@ -11,7 +11,7 @@
 #pragma once
 
 
-namespace vm
+namespace script
 {
 	
 	class Script

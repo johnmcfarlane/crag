@@ -15,29 +15,29 @@
 #include <fstream>
 
 
-vm::Script::Script()
+script::Script::Script()
 : buffer(nullptr)
 {
 }
 
-vm::Script::Script(std::istream & source_file)
+script::Script::Script(std::istream & source_file)
 : buffer(nullptr)
 {
 	Load(source_file);
 }
 
-vm::Script::Script(char const * source_filename)
+script::Script::Script(char const * source_filename)
 : buffer(nullptr)
 {
 	Load(source_filename);
 }
 
-vm::Script::~Script()
+script::Script::~Script()
 {
 	delete [] buffer;
 }
 
-void vm::Script::Clear()
+void script::Script::Clear()
 {
 	if (buffer != nullptr)
 	{
@@ -46,7 +46,7 @@ void vm::Script::Clear()
 	}
 }
 
-void vm::Script::Load(std::istream & source_file)
+void script::Script::Load(std::istream & source_file)
 {
 	// Get the length of the file.
 	source_file.seekg(0,std::ios::end);
@@ -59,7 +59,7 @@ void vm::Script::Load(std::istream & source_file)
 	buffer [length] = '\0';
 }
 
-bool vm::Script::Load(char const * source_filename)
+bool script::Script::Load(char const * source_filename)
 {
 	Clear();
 	
@@ -73,12 +73,12 @@ bool vm::Script::Load(char const * source_filename)
 	return true;
 }
 
-bool vm::Script::IsOk() const
+bool script::Script::IsOk() const
 {
 	return buffer != nullptr;
 }
 
-char const * vm::Script::GetBuffer() const
+char const * script::Script::GetBuffer() const
 {
 	return buffer;
 }

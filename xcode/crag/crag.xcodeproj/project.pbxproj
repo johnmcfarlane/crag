@@ -30,8 +30,8 @@
 		528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ABAF211CF2E3100C2B411 /* Singleton.cpp */; };
 		528F0C0A11CFBF7C00C9E519 /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528F0C0811CFBF7C00C9E519 /* PlanetaryBody.cpp */; };
 		529F438112F2640E007ACC28 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529F438012F2640E007ACC28 /* Python.framework */; };
-		52A9479112E7D2D300F23642 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478D12E7D2D300F23642 /* Script.cpp */; };
-		52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A9478F12E7D2D300F23642 /* Singleton.cpp */; };
+		52B1025B12FBFBE300EC602C /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B1025712FBFBE300EC602C /* Script.cpp */; };
+		52B1025C12FBFBE300EC602C /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B1025912FBFBE300EC602C /* Singleton.cpp */; };
 		52BC409912F8EB69001740B0 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52D574EB12F296E9004DA2DC /* main.py */; };
 		52C53E1B11D8FBF500FA73AA /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */; };
 		52D03956124A5C5400E797B0 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D03955124A5C5400E797B0 /* libode.a */; };
@@ -171,15 +171,15 @@
 		529FC595120E78D2000755E3 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		529FC618120E81EC000755E3 /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		52A2CD6D126113A600DFCDF6 /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
-		52A9478D12E7D2D300F23642 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
-		52A9478E12E7D2D300F23642 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
-		52A9478F12E7D2D300F23642 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
-		52A9479012E7D2D300F23642 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52AE3145125925ED0066FF5B /* for_each_chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_chunk.h; sourceTree = "<group>"; };
 		52AE314712592C7B0066FF5B /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
+		52B1025612FBFBE300EC602C /* Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Class.h; sourceTree = "<group>"; };
+		52B1025712FBFBE300EC602C /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
+		52B1025812FBFBE300EC602C /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
+		52B1025912FBFBE300EC602C /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
+		52B1025A12FBFBE300EC602C /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52B4741A11CD031300FB2686 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52B7BBAE1272D61B00BAE8DD /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
-		52BC3F1012F7DF8A001740B0 /* Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Class.h; sourceTree = "<group>"; };
 		52BC3F1312F7E115001740B0 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		52BC3F6812F7FE51001740B0 /* ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ptr.h; sourceTree = "<group>"; };
 		52C53E1911D8FBF500FA73AA /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -437,16 +437,16 @@
 			path = smp;
 			sourceTree = "<group>";
 		};
-		52A9478C12E7D2D300F23642 /* vm */ = {
+		52B1025512FBFBE300EC602C /* script */ = {
 			isa = PBXGroup;
 			children = (
-				52BC3F1012F7DF8A001740B0 /* Class.h */,
-				52A9478D12E7D2D300F23642 /* Script.cpp */,
-				52A9478E12E7D2D300F23642 /* Script.h */,
-				52A9478F12E7D2D300F23642 /* Singleton.cpp */,
-				52A9479012E7D2D300F23642 /* Singleton.h */,
+				52B1025612FBFBE300EC602C /* Class.h */,
+				52B1025712FBFBE300EC602C /* Script.cpp */,
+				52B1025812FBFBE300EC602C /* Script.h */,
+				52B1025912FBFBE300EC602C /* Singleton.cpp */,
+				52B1025A12FBFBE300EC602C /* Singleton.h */,
 			);
-			path = vm;
+			path = script;
 			sourceTree = "<group>";
 		};
 		52C53E2011D8FC1000FA73AA /* geom */ = {
@@ -558,10 +558,10 @@
 				52F3A36C11A7979400385922 /* pch.h */,
 				5224D96911C9AC9C0021CDF8 /* physics */,
 				52F3A36D11A7979400385922 /* readme.html */,
+				52B1025512FBFBE300EC602C /* script */,
 				52F3A36E11A7979400385922 /* sim */,
 				5284FFCE125F783E00E98C2C /* smp */,
 				527CF8D012274AA700E7B3C5 /* sys */,
-				52A9478C12E7D2D300F23642 /* vm */,
 			);
 			path = crag;
 			sourceTree = "<group>";
@@ -818,13 +818,11 @@
 				52F3A3AB11A7979400385922 /* Scene.cpp in Sources */,
 				527F7AC611EB5F4B00E25B84 /* Scene.cpp in Sources */,
 				527F7AC711EB5F4B00E25B84 /* SceneThread.cpp in Sources */,
-				52A9479112E7D2D300F23642 /* Script.cpp in Sources */,
 				52F3A3BE11A7979400385922 /* SDLMain.m in Sources */,
 				5242D90A125FF038007F7D90 /* Semaphore.cpp in Sources */,
 				52DEDD91125FEFC800C12C19 /* SimpleMutex.cpp in Sources */,
 				52F3A3BA11A7979400385922 /* Simulation.cpp in Sources */,
 				528ABAF311CF2E3100C2B411 /* Singleton.cpp in Sources */,
-				52A9479212E7D2D300F23642 /* Singleton.cpp in Sources */,
 				52F3A3AD11A7979400385922 /* Skybox.cpp in Sources */,
 				5227E7591280F26B00027571 /* smp.cpp in Sources */,
 				528ABA6B11CF087400C2B411 /* SphericalBody.cpp in Sources */,
@@ -836,6 +834,8 @@
 				52F3A3BD11A7979400385922 /* UserInput.cpp in Sources */,
 				52DF194311E92CB500AF25A1 /* Vertex.cpp in Sources */,
 				52DF194411E92CB500AF25A1 /* VertexBuffer.cpp in Sources */,
+				52B1025B12FBFBE300EC602C /* Script.cpp in Sources */,
+				52B1025C12FBFBE300EC602C /* Singleton.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

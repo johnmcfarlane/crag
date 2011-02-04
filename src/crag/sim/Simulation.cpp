@@ -24,7 +24,7 @@
 
 #include "core/ConfigEntry.h"
 
-#include "vm/Singleton.h"
+#include "script/Singleton.h"
 
 
 using sys::TimeType;
@@ -113,7 +113,7 @@ void sim::Simulation::SetCameraPos(Vector3 const & pos, Matrix4 const & rot)
 
 void sim::Simulation::Run()
 {
-	vm::Singleton vm_singleton("./script/main.py");
+	script::Singleton vm_singleton("./script/main.py");
 	formation_manager->GetSceneThread().Launch();
 	
 	TimeType next_tick_time = GetTime();
@@ -125,7 +125,7 @@ void sim::Simulation::Run()
 			break;
 		}
 		
-		if (vm::Singleton::Get().IsDone())
+		if (script::Singleton::Get().IsDone())
 		{
 			break;
 		}

@@ -1,5 +1,5 @@
 /*
- *  vm.h
+ *  Singleton.h
  *  crag
  *
  *  Created by John McFarlane on 1/19/11.
@@ -17,7 +17,7 @@
 #include "smp/Thread.h"
 
 
-namespace vm
+namespace script
 {
 	
 	// The scripting support is centered here.
