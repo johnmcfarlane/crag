@@ -54,7 +54,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Singleton member definitions
 
-script::Singleton::Singleton(char const * init_source_filename)
+script::Singleton::Singleton(char * init_source_filename)
 : done(false)
 , source_filename(init_source_filename)
 {
@@ -84,9 +84,10 @@ void script::Singleton::Run()
 		Class<sim::Planet> planet_class("crag.Planet", "An Entity representing an astral body that has a surface.", crag_module);
 		Class<sim::Observer> observer_class("crag.Observer", "An Entity representing the camera.", crag_module);
 		Class<sim::Star> star_class("crag.Star", "An Entity representing an astral body that emits light.", crag_module);
-		
-		FILE * source_file = fopen(source_filename, "rt");
-		PyRun_SimpleFileExFlags(source_file, source_filename, true, nullptr);
+
+		// This version works well but requires non-const parameters. 
+		PyObject* PyFileObject = PyFile_FromString(source_filename, "r");
+		PyRun_SimpleFile(PyFile_AsFile(PyFileObject), source_filename);
 	}
 	
 	Py_Finalize();
