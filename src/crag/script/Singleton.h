@@ -28,7 +28,7 @@ namespace script
 	class Singleton : public core::Singleton<Singleton>
 	{
 	public:
-		Singleton(char * init_source_filename);
+		Singleton(char const * init_source_filename);
 		~Singleton();
 		
 		// Means that the script is done and the program should quit.
@@ -42,7 +42,7 @@ namespace script
 
 		// attributes
 		bool done;
-		char * source_filename;		
+		char const * source_filename;		
 		Thread thread;
 	};
 	
