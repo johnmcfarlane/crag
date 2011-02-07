@@ -50,11 +50,11 @@ void script::Script::Load(std::istream & source_file)
 {
 	// Get the length of the file.
 	source_file.seekg(0,std::ios::end);
-	std::streampos length = source_file.tellg();
+	int length = int(source_file.tellg());
 	source_file.seekg(0,std::ios::beg);
 	
 	// Read file as a string and terminate with null.
-	buffer = new char [length + std::streampos(1)];
+	buffer = new char [length + 1];
 	source_file.read(buffer,length);
 	buffer [length] = '\0';
 }

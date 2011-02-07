@@ -54,7 +54,10 @@
 //////////////////////////////////////////////////////////////////////
 // SDL includes.
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32)
+#include <SDL.h>
+#include <SDL_image.h>
+#elif defined(__APPLE__)
 #include <SDL/SDL.h>
 #include <SDL_image/SDL_image.h>
 #else
@@ -113,7 +116,17 @@
 //////////////////////////////////////////////////////////////////////
 // Python
 
+#if defined(WIN32)
+#if defined(_DEBUG)
+#undef _DEBUG
+#include "Python.h"
+#define _DEBUG
+#else
+#include "Python.h"
+#endif
+#else
 #include "Python/Python.h"
+#endif
 
 
 //////////////////////////////////////////////////////////////////////

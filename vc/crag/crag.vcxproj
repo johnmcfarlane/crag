@@ -11,19 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\crag\cl\CpuKernel.cpp" />
-    <ClCompile Include="..\..\src\crag\cl\defs.cpp" />
-    <ClCompile Include="..\..\src\crag\cl\GpuKernel.cpp" />
-    <ClCompile Include="..\..\src\crag\cl\Kernel.cpp" />
-    <ClCompile Include="..\..\src\crag\cl\Singleton.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)cl_Singleton</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\core\ConfigEntry.cpp" />
     <ClCompile Include="..\..\src\crag\core\ConfigManager.cpp" />
-    <ClCompile Include="..\..\src\crag\core\debug.cpp" />
+    <ClCompile Include="..\..\src\crag\core\debug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core_Debug</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core_Debug</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\crag\core\profile.cpp" />
     <ClCompile Include="..\..\src\crag\core\Random.cpp" />
+    <ClCompile Include="..\..\src\crag\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\crag\core\TextureMapper.cpp" />
     <ClCompile Include="..\..\src\crag\form\Formation.cpp" />
     <ClCompile Include="..\..\src\crag\form\Manager.cpp" />
@@ -43,11 +39,10 @@
     <ClCompile Include="..\..\src\crag\form\scene\SceneThread.cpp" />
     <ClCompile Include="..\..\src\crag\form\scene\Vertex.cpp" />
     <ClCompile Include="..\..\src\crag\form\scene\VertexBuffer.cpp" />
-    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.cpp" />
-    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Debug.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)gfxDebug</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)gfx_Debug</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)gfx_Debug</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\crag\gfx\Font.cpp" />
     <ClCompile Include="..\..\src\crag\gfx\Image.cpp" />
@@ -63,8 +58,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\src\crag\physics\Body.cpp" />
-    <ClCompile Include="..\..\src\crag\physics\Singleton.cpp" />
+    <ClCompile Include="..\..\src\crag\physics\Singleton.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)physics_Singleton</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)physics_Singleton</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\crag\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\crag\script\Script.cpp" />
+    <ClCompile Include="..\..\src\crag\script\Singleton.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)script_Singleton</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)script_Singleton</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\crag\sim\Controller.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\crag\sim\Firmament.cpp" />
@@ -84,22 +87,19 @@
     <ClCompile Include="..\..\src\crag\smp\Mutex.cpp" />
     <ClCompile Include="..\..\src\crag\smp\Semaphore.cpp" />
     <ClCompile Include="..\..\src\crag\smp\SimpleMutex.cpp" />
+    <ClCompile Include="..\..\src\crag\smp\smp.cpp" />
     <ClCompile Include="..\..\src\crag\smp\ThreadCondition.cpp" />
     <ClCompile Include="..\..\src\crag\sys\App.cpp" />
     <ClCompile Include="..\..\src\crag\sys\memory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\crag\cl\CpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\cl\defs.h" />
-    <ClInclude Include="..\..\src\crag\cl\GpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\cl\Kernel.h" />
-    <ClInclude Include="..\..\src\crag\cl\Singleton.h" />
     <ClInclude Include="..\..\src\crag\core\chunk_functor.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\crag\core\ConfigManager.h" />
     <ClInclude Include="..\..\src\crag\core\core.h" />
     <ClInclude Include="..\..\src\crag\core\debug.h" />
     <ClInclude Include="..\..\src\crag\core\double_buffer.h" />
+    <ClInclude Include="..\..\src\crag\core\Enumeration.h" />
     <ClInclude Include="..\..\src\crag\core\floatOps.h" />
     <ClInclude Include="..\..\src\crag\core\for_each.h" />
     <ClInclude Include="..\..\src\crag\core\for_each_chunk.h" />
@@ -108,6 +108,7 @@
     <ClInclude Include="..\..\src\crag\core\profile.h" />
     <ClInclude Include="..\..\src\crag\core\Random.h" />
     <ClInclude Include="..\..\src\crag\core\Singleton.h" />
+    <ClInclude Include="..\..\src\crag\core\Statistics.h" />
     <ClInclude Include="..\..\src\crag\core\TextureMapper.h" />
     <ClInclude Include="..\..\src\crag\form\defs.h" />
     <ClInclude Include="..\..\src\crag\form\Formation.h" />
@@ -133,11 +134,7 @@
     <ClInclude Include="..\..\src\crag\form\scene\SceneThread.h" />
     <ClInclude Include="..\..\src\crag\form\scene\Vertex.h" />
     <ClInclude Include="..\..\src\crag\form\scene\VertexBuffer.h" />
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuString.h" />
     <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.h" />
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.h" />
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuString.h" />
     <ClInclude Include="..\..\src\crag\geom\Circle2.h" />
     <ClInclude Include="..\..\src\crag\geom\Matrix.h" />
     <ClInclude Include="..\..\src\crag\geom\Matrix4.h" />
@@ -179,6 +176,9 @@
     <ClInclude Include="..\..\src\crag\physics\defs.h" />
     <ClInclude Include="..\..\src\crag\physics\Singleton.h" />
     <ClInclude Include="..\..\src\crag\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\crag\script\Class.h" />
+    <ClInclude Include="..\..\src\crag\script\Script.h" />
+    <ClInclude Include="..\..\src\crag\script\Singleton.h" />
     <ClInclude Include="..\..\src\crag\sim\axes.h" />
     <ClInclude Include="..\..\src\crag\sim\Controller.h" />
     <ClInclude Include="..\..\src\crag\sim\defs.h" />
@@ -201,8 +201,11 @@
     <ClInclude Include="..\..\src\crag\smp\ForEach.h" />
     <ClInclude Include="..\..\src\crag\smp\Lock.h" />
     <ClInclude Include="..\..\src\crag\smp\Mutex.h" />
+    <ClInclude Include="..\..\src\crag\smp\ptr.h" />
     <ClInclude Include="..\..\src\crag\smp\Semaphore.h" />
     <ClInclude Include="..\..\src\crag\smp\SimpleMutex.h" />
+    <ClInclude Include="..\..\src\crag\smp\Singleton.h" />
+    <ClInclude Include="..\..\src\crag\smp\smp.h" />
     <ClInclude Include="..\..\src\crag\smp\Thread.h" />
     <ClInclude Include="..\..\src\crag\smp\ThreadCondition.h" />
     <ClInclude Include="..\..\src\crag\smp\vector.h" />
@@ -210,9 +213,8 @@
     <ClInclude Include="..\..\src\crag\sys\memory.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\script\main.py" />
     <None Include="..\..\src\crag\COPYING" />
-    <None Include="..\..\src\crag\form\score\CalculateNodeScoreCpu.cl" />
-    <None Include="..\..\src\crag\form\score\CalculateNodeScoreGpu.cl" />
     <None Include="..\..\src\crag\readme.html" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -244,13 +246,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\CUDA\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\CUDA\lib;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;..\..\vc\SDL\include;..\..\vc\SDL_image\include;..\..\vc\glew\include;..\..\vc\ode\include;C:\Python26\include;C:\Python26\include\Stackless</IncludePath>
+    <LibraryPath>C:\Python26\libs;..\..\vc\glew\lib;..\..\vc\SDL\lib;..\..\vc\SDL_image\lib;..\..\vc\ode\lib\DebugDoubleLib;$(LibraryPath)</LibraryPath>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\CUDA\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\include;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\include;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\include;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\include</IncludePath>
-    <LibraryPath>C:\CUDA\lib;C:\Documents and Settings\john\My Documents\workspace\SDL_image-1.2.10\lib;C:\Documents and Settings\john\My Documents\workspace\SDL-1.2.14\lib;C:\Documents and Settings\john\My Documents\workspace\ode-0.11.1\lib\ReleaseDoubleLib;C:\Documents and Settings\john\My Documents\workspace\glew-1.5.4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;..\..\vc\SDL\include;..\..\vc\SDL_image\include;..\..\vc\glew\include;..\..\vc\ode\include;C:\Python26\include;C:\Python26\include\Stackless</IncludePath>
+    <LibraryPath>C:\Python26\libs;..\..\vc\glew\lib;..\..\vc\SDL\lib;..\..\vc\SDL_image\lib;..\..\vc\ode\lib\ReleaseDoubleLib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -271,8 +278,16 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_doubled.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\$(TargetName)_d$(TargetExt)"</Command>
+      <Message>Copying binary to working folder...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -298,6 +313,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>SDL.lib;SDL_image.lib;SDLmain.lib;ode_double.lib;glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying binary to working folder...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

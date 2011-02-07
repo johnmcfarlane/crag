@@ -251,7 +251,7 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 	if (frame_count == 60) 
 	{
 		frame_count_reset_time = frame_time;
-		average_frame_time = static_cast<double>(fps_delta) / frame_count;
+		average_frame_time = static_cast<float>(fps_delta) / frame_count;
 		frame_count = 0;
 	}
 	

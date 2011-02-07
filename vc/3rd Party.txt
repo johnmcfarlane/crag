@@ -1,0 +1,3 @@
+This is where external libraries belong for the Win32 crag project. Download them and unzip them to here without their version numbers. For example, put the contents of the glew-1.5.8 in a folder called "crag/vc/glew".
+
+In general, download the pre-build development versions of libraries, i.e. the ones with headers and lib/dll files. The exception is ode which is included in the crag solution. Nevertheless, copy the contents of ode-0.11.1 into a folder called "crag/vc/ode".

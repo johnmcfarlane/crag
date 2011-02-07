@@ -403,6 +403,8 @@ public:
 null_stream out_stream;
 
 // Can't find this at link time? Make sure you're wrapping reference in a test of GetVerbosity().
+#if ! defined(WIN32)
 std::ostream & gfx::Debug::out = out_stream;
+#endif
 
 #endif

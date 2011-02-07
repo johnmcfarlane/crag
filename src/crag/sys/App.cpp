@@ -30,7 +30,7 @@ namespace
 	SDL_Surface * screen_surface = nullptr;
 	
 #if defined(WIN32)
-	TimeType inv_query_performance_frequency = 0;
+	sys::TimeType inv_query_performance_frequency = 0;
 #endif
 
 	void SetFocus(bool gained_focus)
@@ -62,13 +62,13 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 {
 #if defined(WIN32)
 	LARGE_INTEGER query_performance_frequency;
-	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency == 0)
+	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency.QuadPart == 0)
 	{
 		std::cerr << "Failed to read QueryPerformanceFrequency.\n";
 		return false;
 	}
 	
-	inf_query_performance_frequency = 1. / query_performance_frequency;
+	inv_query_performance_frequency = 1. / query_performance_frequency.QuadPart;
 #endif
 
 	// Initialize SDL.
@@ -216,14 +216,14 @@ sys::TimeType sys::GetTime()
 {
 #if defined(__APPLE__)
 	return CFAbsoluteTimeGetCurrent ();
-#elif defined(WIN32)
+#elif defined(WIN32) && 0
 	// TODO: Test this
 	LARGE_INTEGER performance_count;
 	if (QueryPerformanceCounter(& performance_count) == FALSE)
 	{
-		ASSERT(false);
+		Assert(false);
 	}
-	return inf_query_performance_frequency * query_performance_frequency;
+	return inv_query_performance_frequency * performance_count.QuadPart;
 #else
 	// Might want to try CLOCK_MONOTONIC clock using POSIX clock_gettime.
 	return .001 * SDL_GetTicks();

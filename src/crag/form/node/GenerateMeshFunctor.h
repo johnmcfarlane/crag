@@ -12,7 +12,7 @@
 
 #include "Node.h"
 
-#include "Mesh.h"
+#include "form/scene/Mesh.h"
 #include "ForEachNodeFace.h"
 
 

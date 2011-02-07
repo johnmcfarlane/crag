@@ -28,9 +28,6 @@
     <Filter Include="src\crag\physics">
       <UniqueIdentifier>{bfbdb453-ba31-45de-a0cf-5e138f251251}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\crag\cl">
-      <UniqueIdentifier>{a925fa61-dc75-4c33-8b5a-aae31f9120da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\crag\form\score">
       <UniqueIdentifier>{51d8402a-a520-4f5c-8823-3bf12f1a2043}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,12 @@
     </Filter>
     <Filter Include="src\crag\smp">
       <UniqueIdentifier>{845fd690-3cc9-4e42-b8db-33069b69a189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crag\script">
+      <UniqueIdentifier>{a0146fd3-1297-48ab-ade5-4743e057399c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script">
+      <UniqueIdentifier>{2e538a96-e75f-483a-9b49-1d26cc1b72a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,18 +135,6 @@
     <ClCompile Include="..\..\src\crag\gfx\Debug.cpp">
       <Filter>src\crag\gfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\cl\CpuKernel.cpp">
-      <Filter>src\crag\cl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\cl\GpuKernel.cpp">
-      <Filter>src\crag\cl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\cl\Kernel.cpp">
-      <Filter>src\crag\cl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\cl\Singleton.cpp">
-      <Filter>src\crag\cl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\form\scene\Mesh.cpp">
       <Filter>src\crag\form\scene</Filter>
     </ClCompile>
@@ -180,13 +171,7 @@
     <ClCompile Include="..\..\src\crag\form\node\RootNode.cpp">
       <Filter>src\crag\form\node</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.cpp">
-      <Filter>src\crag\form\score</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.cpp">
-      <Filter>src\crag\form\score</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.cpp">
       <Filter>src\crag\form\score</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\crag\form\Formation.cpp">
@@ -194,9 +179,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\form\Manager.cpp">
       <Filter>src\crag\form</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\crag\cl\defs.cpp">
-      <Filter>src\crag\cl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\crag\sim\MoonShader.cpp">
       <Filter>src\crag\sim</Filter>
@@ -242,6 +224,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\crag\form\scene\Regulator.cpp">
       <Filter>src\crag\form\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\script\Script.cpp">
+      <Filter>src\crag\script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\script\Singleton.cpp">
+      <Filter>src\crag\script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\smp\smp.cpp">
+      <Filter>src\crag\smp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\crag\core\Statistics.cpp">
+      <Filter>src\crag\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,21 +407,6 @@
     <ClInclude Include="..\..\src\crag\gfx\Debug.h">
       <Filter>src\crag\gfx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\cl\CpuKernel.h">
-      <Filter>src\crag\cl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\cl\defs.h">
-      <Filter>src\crag\cl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\cl\GpuKernel.h">
-      <Filter>src\crag\cl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\cl\Kernel.h">
-      <Filter>src\crag\cl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\cl\Singleton.h">
-      <Filter>src\crag\cl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\crag\form\scene\Mesh.h">
       <Filter>src\crag\form\scene</Filter>
     </ClInclude>
@@ -482,19 +461,7 @@
     <ClInclude Include="..\..\src\crag\form\node\Shader.h">
       <Filter>src\crag\form\node</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuKernel.h">
-      <Filter>src\crag\form\score</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreCpuString.h">
-      <Filter>src\crag\form\score</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreFunctor.h">
-      <Filter>src\crag\form\score</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuKernel.h">
-      <Filter>src\crag\form\score</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\crag\form\score\CalculateNodeScoreGpuString.h">
       <Filter>src\crag\form\score</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\crag\form\Manager.h">
@@ -602,6 +569,30 @@
     <ClInclude Include="..\..\src\crag\core\intOps.h">
       <Filter>src\crag\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\crag\script\Class.h">
+      <Filter>src\crag\script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\script\Script.h">
+      <Filter>src\crag\script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\script\Singleton.h">
+      <Filter>src\crag\script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\ptr.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\Singleton.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\smp\smp.h">
+      <Filter>src\crag\smp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Enumeration.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\crag\core\Statistics.h">
+      <Filter>src\crag\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\crag\COPYING">
@@ -610,11 +601,8 @@
     <None Include="..\..\src\crag\readme.html">
       <Filter>src\crag</Filter>
     </None>
-    <None Include="..\..\src\crag\form\score\CalculateNodeScoreCpu.cl">
-      <Filter>src\crag\form\score</Filter>
-    </None>
-    <None Include="..\..\src\crag\form\score\CalculateNodeScoreGpu.cl">
-      <Filter>src\crag\form\score</Filter>
+    <None Include="..\..\script\main.py">
+      <Filter>script</Filter>
     </None>
   </ItemGroup>
 </Project>
