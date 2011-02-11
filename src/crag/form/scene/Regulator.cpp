@@ -74,7 +74,7 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 	// Pick the more conservative of the two numbers.
 	int adjusted_load = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
 	
-#if ! defined(NDEBUG)
+#if ! defined(NDEBUG) && 0
 	if (adjusted_load < current_load)
 	{
 		int less_nodes = 1;
