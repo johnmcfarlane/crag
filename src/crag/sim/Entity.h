@@ -29,14 +29,19 @@ namespace sim
 	public:
 		Entity(SimulationPtr const & s);
 		virtual ~Entity();
+		
+		// Type-specific allocation via script.
+		static Entity * Create(PyObject * args);
 
 		// general callbacks
 		virtual void Tick(Universe const & universe);
 		virtual void Draw() const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;
-
-		virtual sim::Vector3 const & GetPosition() const = 0;
+		
+		virtual void SetPosition(Vector3 const & position);
+		virtual Vector3 const & GetPosition() const = 0;
+		
 		virtual physics::Body * GetBody();
 		virtual physics::Body const * GetBody() const;
 

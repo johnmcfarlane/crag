@@ -46,7 +46,7 @@ namespace sim
 	private:
 		sys::TimeType time;
 		
-		typedef std::vector<sim::Entity *> EntityVector;
+		typedef std::vector<Entity *> EntityVector;
 		EntityVector entities;
 	};
 }

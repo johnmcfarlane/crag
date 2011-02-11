@@ -3,7 +3,7 @@ import crag
 import time
 
 def main():
-	print 'main script function started',time.ctime(time.time())
+	print 'begin main script function'
 
 	# Create planets
 	planet_radius = 10000000
@@ -20,10 +20,10 @@ def main():
 	observer = crag.Observer(0, 10000235, 0)
 
 	# Main loop
-	while crag.Done() == 0:
+	while crag.done() == 0:
 		time.sleep(0.01)
 
-	print 'main script function ended',time.ctime(time.time())
+	print 'end main script function'
 
 gc.disable()
 main()

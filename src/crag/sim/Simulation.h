@@ -50,7 +50,7 @@ namespace sim
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
 		
-		void SetCameraPos(sim::Vector3 const & pos, sim::Matrix4 const & rot);
+		void SetCameraPos(Vector3 const & pos, Matrix4 const & rot);
 		
 		void Run();
 	private:

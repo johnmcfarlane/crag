@@ -40,9 +40,9 @@ namespace sim
 
 		// Mid-Point Calculation 
 		class Params;
-		bool CalcMidPointPos_Random(sim::Vector3 & result, Params & params) const;
-		bool CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Params & params) const;
-		bool CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_Random(Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_SimpleInterp(Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_BicubicInterp(Vector3 & result, Params & params) const;
 
 		typedef form::Point const * PointGrid [4][4];
 		typedef form::Node const * NodeLattice [3][3][2];

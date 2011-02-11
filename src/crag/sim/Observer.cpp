@@ -46,7 +46,7 @@ namespace
 }
 
 
-sim::Observer::Observer(SimulationPtr const & s, sim::Vector3 const & init_pos)
+sim::Observer::Observer(SimulationPtr const & s, Vector3 const & init_pos)
 : Entity(s)
 , sphere(true, observer_radius)
 , speed(0)

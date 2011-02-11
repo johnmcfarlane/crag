@@ -43,11 +43,11 @@ namespace
 	
 	PyMethodDef crag_methods[] = 
 	{
-		{"Done", Done, METH_VARARGS, "Returns true iff it's time to quit."},
-		{"Time", Time, METH_VARARGS, "Returns simulation time in seconds."},
+		{"done", Done, METH_VARARGS, "Returns true iff it's time to quit."},
+		{"time", Time, METH_VARARGS, "Returns simulation time in seconds."},
 		{NULL, NULL, 0, NULL}
 	};
-	
+
 }
 
 
@@ -81,9 +81,10 @@ void script::Singleton::Run()
 	
 	{
 		PyObject * crag_module = Py_InitModule("crag", crag_methods);
-		Class<sim::Planet> planet_class("crag.Planet", "An Entity representing an astral body that has a surface.", crag_module);
-		Class<sim::Observer> observer_class("crag.Observer", "An Entity representing the camera.", crag_module);
-		Class<sim::Star> star_class("crag.Star", "An Entity representing an astral body that emits light.", crag_module);
+		Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.");
+		Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", entity_class);
+		Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", entity_class);
+		Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", entity_class);
 
 		char mode[] = "r";
 		PyObject* PyFileObject = PyFile_FromString(const_cast<char *>(source_filename), mode);

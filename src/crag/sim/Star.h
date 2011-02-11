@@ -28,11 +28,12 @@ namespace sim
 		void Tick(Universe const & universe);
 	
 		Scalar GetBoundingRadius() const;
-		virtual sim::Vector3 const & GetPosition() const;
+		
+		virtual Vector3 const & GetPosition() const;
 	
 	private:
 		gfx::Light light;
-		sim::Vector3 position;
+		Vector3 position;
 		Scalar radius;
 		Scalar year;
 	};

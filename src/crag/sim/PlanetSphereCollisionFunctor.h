@@ -35,7 +35,7 @@ namespace sim
 	public:
 		PlanetSphereCollisionFunctor(form::Formation const & in_planet_formation, 
 									 dGeomID in_planet_geom, 
-									 sim::Sphere3 const & in_sphere, 
+									 Sphere3 const & in_sphere, 
 									 dGeomID in_sphere_geom);
 		~PlanetSphereCollisionFunctor();
 		
@@ -43,7 +43,7 @@ namespace sim
 		void operator()(form::Point const & a, form::Point const & b, form::Point const & c, form::Vector3 const & normal);
 		
 	private:
-		virtual void SetSceneOrigin(sim::Vector3 const & in_scene_origin);
+		virtual void SetSceneOrigin(Vector3 const & in_scene_origin);
 		
 		// ForEachFormation functor
 		virtual void operator()(form::Formation const & in_formation, form::Polyhedron const & in_model);

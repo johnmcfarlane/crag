@@ -31,7 +31,7 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
-		Observer(SimulationPtr const & s, sim::Vector3 const & init_pos);
+		Observer(SimulationPtr const & s, Vector3 const & init_pos);
 		~Observer();
 		
 		// Type-specific allocation via script.
@@ -43,7 +43,7 @@ namespace sim
 		void Tick(Universe const & universe);
 		
 		virtual Vector3 const & GetPosition() const;
-		void SetPosition(Vector3 const & pos);
+		virtual void SetPosition(Vector3 const & pos);
 
 	private:
 		void ApplyImpulse();
