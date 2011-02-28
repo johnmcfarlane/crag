@@ -21,6 +21,8 @@ namespace core
 	template <typename T> class double_buffer
 	{
 	public:
+		typedef T value_type;
+		
 		// c'tor
 		double_buffer()
 		: front_buffer(buffers + 0)
@@ -46,35 +48,35 @@ namespace core
 		}
 		
 		// front buffer accessors
-		T & front()
+		value_type & front()
 		{
 			return * front_buffer;
 		}
 		
-		T const & front() const
+		value_type const & front() const
 		{
 			return * front_buffer;
 		}
 		
 		// back buffer accessors
-		T & back()
+		value_type & back()
 		{
 			return * back_buffer;
 		}
 		
-		T const & back() const
+		value_type const & back() const
 		{
 			return * back_buffer;
 		}
 		
 		// index accessors
-		T & operator [] (int n)
+		value_type & operator [] (int n)
 		{
 			Assert(n == 0 || n == 1);
 			return buffers [n];
 		}
 		
-		T const & operator [] (int n) const
+		value_type const & operator [] (int n) const
 		{
 			Assert(n == 0 || n == 1);
 			return buffers [n];
@@ -95,9 +97,9 @@ namespace core
 			back_buffer = buffers + (front_index ^ 1);
 		}
 		
-		T buffers[2];
-		T * front_buffer;
-		T * back_buffer;
+		value_type buffers[2];
+		value_type * front_buffer;
+		value_type * back_buffer;
 	};
 	
 }
