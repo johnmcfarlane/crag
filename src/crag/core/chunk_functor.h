@@ -4,7 +4,8 @@
  *  Classes for making things to pass into core::for_each_chunk function
  *
  *  Created by John on 10/3/10.
- *  Copyright 2010 John McFarlane. All rights reserved.
+ *  Copyright 2010-2011 John McFarlane. All rights reserved.
+ *  This program is distributed under the terms of the GNU General Public License.
  *
  */
 
