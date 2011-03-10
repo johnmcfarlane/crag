@@ -3,7 +3,8 @@
  *  crag
  *
  *  Created by John on 6/19/10.
- *  Copyright 2010 __MyCompanyName__. All rights reserved.
+ *  Copyright 2009-2011 John McFarlane. All rights reserved.
+ *  This program is distributed under the terms of the GNU General Public License.
  *
  */
 
