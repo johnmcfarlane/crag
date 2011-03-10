@@ -17,7 +17,7 @@
 #include "Quaterna.h"
 #include "Shader.h"
 
-#include "form/scene/Mesh.h"
+// TODO: Remove dependency on Polyhedron
 #include "form/scene/Polyhedron.h"
 
 #include "core/ConfigEntry.h"
@@ -44,10 +44,7 @@ namespace
 	inline void UpdateQuaternaScore(form::Quaterna & q) 
 	{
 		form::Node * parent = q.nodes[0].GetParent();
-		if (parent != nullptr) 
-		{
-			q.parent_score = parent->score;
-		}
+		q.parent_score = (parent != nullptr) ? parent->score : -1;
 	}
 		
 	bool QuaternaSortUsed(form::Quaterna const & lhs, form::Quaterna const & rhs)
@@ -89,7 +86,16 @@ form::NodeBuffer::~NodeBuffer()
 {
 	VerifyObject(* this);
 
-	Assert(GetNumQuaternaUsed() == 0);
+#if ! defined(NDEBUG)
+	for (Quaterna const * i = quaterna; i != quaterna_used_end; ++ i)
+	{
+		Assert(! i->HasGrandChildren());
+		Assert(! i->nodes[0].IsInUse());
+		Assert(! i->nodes[1].IsInUse());
+		Assert(! i->nodes[2].IsInUse());
+		Assert(! i->nodes[3].IsInUse());
+	}
+#endif
 	
 	delete quaterna;
 
@@ -125,7 +131,7 @@ void form::NodeBuffer::Verify() const
 	
 	VerifyObject(point_buffer);
 	
-/*	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
+	/*for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
 	{
 		VerifyUsed(* q);
 	}
@@ -264,7 +270,7 @@ void form::NodeBuffer::UnlockTree() const
 // It is also where a considerable amount of the SceneThread's time is spent.
 void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
-	VerifyObject (* this);	// should fail because of the following.
+	VerifyObject (* this);
 
 	node_score_functor.SetCameraRay(new_camera_ray);
 
@@ -277,6 +283,8 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 	}
 	
 	UpdateNodes();
+	
+	VerifyObject(* this);
 }
 
 void form::NodeBuffer::OnReset()
@@ -331,11 +339,7 @@ void form::NodeBuffer::UpdateNodes()
 {
 	do 
 	{
-		// Reflect the new scores in the quaterna.
-		UpdateQuaternaScores();
-		
-		// Now resort the quaterna so they are in order again.
-		SortQuaterna();
+		UpdateQuaterna();
 		
 		// Finally, using the quaterna,
 		// replace nodes whose parent's scores have dropped enough
@@ -346,14 +350,21 @@ void form::NodeBuffer::UpdateNodes()
 		}
 	}
 	while (IsNodeChurnIntensive());
-
-	VerifyObject (* this);
 }
 
 void form::NodeBuffer::UpdateNodeScores()
 {
 	// TODO: Try ForEachQuaterna. Faster?
 	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
+}
+
+void form::NodeBuffer::UpdateQuaterna()
+{
+	// Reflect the new scores in the quaterna.
+	UpdateQuaternaScores();
+	
+	// Now resort the quaterna so they are in order again.
+	SortQuaterna();
 }
 
 void form::NodeBuffer::UpdateQuaternaScores()
@@ -555,6 +566,34 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	}
 	
 	return true;
+}
+
+void form::NodeBuffer::CollapseNodes(Node & root)
+{
+	// Remove the entire tree from the given root.
+	CollapseNode(root);
+	
+	// Run an update to restore the state of the buffer ...
+	UpdateQuaterna();
+	
+	// ... except there may still be unused nodes in the used area.
+	Quaterna * old_quaterna_used_end = quaterna_used_end;
+
+	// Roll back to the start of the unused quaterna.
+	do
+		-- quaterna_used_end;
+	while (quaterna_used_end >= quaterna && ! quaterna_used_end->IsInUse());
+	++ quaterna_used_end;
+	
+	if (quaterna_sorted_end > quaterna_used_end)
+	{
+		quaterna_sorted_end = quaterna_used_end;
+	}
+	
+	// Swap used nodes in unused range with unused nodes in used range.
+	FixUpDecreasedNodes(old_quaterna_used_end);
+	
+	VerifyObject(* this);
 }
 
 void form::NodeBuffer::CollapseNode(Node & node)
@@ -762,11 +801,9 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 
 	std::sort(quaterna_used_end, old_quaterna_used_end, QuaternaSortUnused);
 	
-	VerifyObject (* this);	// should fail because of the following.
+	VerifyObject (* this);
 }
 
-// The first state of reducing the number of used nodes - and quaterna - is
-// to 
 void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 {
 	// Verify that the input is indeed a decrease.

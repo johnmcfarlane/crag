@@ -69,11 +69,16 @@ namespace form
 		
 		sim::Vector3 const & GetOrigin() const;
 		void SetOrigin(sim::Vector3 const & o);
+		bool IsOriginOk() const;
 		
-		void Tick(FormationSet const & formation_set);
+		void AddFormation(Formation const & formation);
+		void RemoveFormation(Formation const & formation);
+		
+		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
 		void GenerateMesh(class Mesh & mesh);
 		
+		Polyhedron & GetPolyhedron(Formation const & formation);
 		Polyhedron const & GetPolyhedron(Formation const & formation) const;
 		
 	private:
@@ -81,7 +86,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Formation-related members.
 		
-		void TickModels(FormationSet const & formation_set);
+		void TickModels();
 		void ResetPolyhedronOrigins();
 		void ResetFormations();
 
@@ -89,7 +94,6 @@ namespace form
 
 		void InitPolyhedron(FormationPair & pair);
 		void DeinitPolyhedron(FormationPair & pair);
-		void ResetPolyhedron(FormationPair & pair);
 		
 		
 		///////////////////////////////////////////////////////

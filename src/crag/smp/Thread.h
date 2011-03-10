@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "smp.h"
+
 #include <SDL_thread.h>
 
 
@@ -22,22 +24,16 @@ namespace smp
 	// The function parameter, object, is the object for which the member function is called.
 	// (Note that two other useful thread-related functions are Sleep and GetNumCpus.)
 
-	// WARNING: Immediately after launching the new thread it is wise to Sleep that thread.
+	// WARNING: Immediately after launching the new thread it is wise to Sleep that thread. TODO: Is it?
 	// WARNING: Otherwise, various of the Thread member functions will return incorrect results.
 	// WARNING: This is because the internal state of the class is updated on return from SDL_CreateThread.
 
-	template <typename CLASS, void (CLASS::*FUNCTION)()> 
+	template <typename CLASS> 
 	class Thread 
 	{
-		OBJECT_NO_COPY(Thread);		
+		OBJECT_NO_COPY(Thread);
+		
 	public:
-	
-		// Creates and launches a new thread which calls object.FUNCTION().
-		Thread (CLASS & object)
-		: sdl_thread(nullptr)
-		{
-			Launch(object);
-		}
 		
 		Thread()
 		: sdl_thread(nullptr)
@@ -46,7 +42,7 @@ namespace smp
 		
 		~Thread()
 		{
-			Kill();
+			Join();
 		}
 		
 		// Note: The thread may have quit but this will still return true until Kill or Join is called.
@@ -71,10 +67,14 @@ namespace smp
 
 		// Creates and launches a new thread which calls object.FUNCTION().
 		// If the thread is already running, it is forcefully stopped first.
+		template <void (CLASS::*FUNCTION)()>
 		void Launch(CLASS & object)
 		{
-			Kill();
-			sdl_thread = SDL_CreateThread(Callback, reinterpret_cast<void *>(& object));
+			// If launched already, wait to stop being launched.
+			Join();
+			
+			// Call the given FUNCTION, passing given object, in a new thread. 
+			sdl_thread = SDL_CreateThread(Callback<FUNCTION>, reinterpret_cast<void *>(& object));
 		}
 		
 		// Terminates the thread. Risks losing data the thread is working on.
@@ -106,9 +106,11 @@ namespace smp
 
 	private:
 		
+		template <void (CLASS::*FUNCTION)()>
 		static int Callback(void * data)
 		{
 			Assert(data != nullptr);
+			Sleep(0);
 			CLASS & object = * reinterpret_cast<CLASS *> (data);
 			(object.*FUNCTION)();
 			return 0;

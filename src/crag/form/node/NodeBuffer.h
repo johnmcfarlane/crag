@@ -103,6 +103,7 @@ namespace form
 		
 		void UpdateNodes();
 		void UpdateNodeScores();
+		void UpdateQuaterna();
 		void UpdateQuaternaScores();
 		void SortQuaterna();
 		bool ChurnNodes();
@@ -121,8 +122,9 @@ namespace form
 		float GetWorseReplacableQuaternaScore() const;
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
-		void CollapseNode(Node & node);
+		void CollapseNodes(Node & root);
 	private:
+		void CollapseNode(Node & node);
 		static bool InitChildGeometry(Node const & parent, Node * children_copy);
 		static void InitChildPointers(Node & parent_node);
 		

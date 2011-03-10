@@ -22,21 +22,14 @@
 #include "smp/Singleton.h"
 
 
-namespace form
-{
-	class Manager;
-}
-
-
 namespace sim
 {
-
+	
 	// Top-level class, deals with running the simulation and presenting it to screen. 
 	class Simulation : public smp::Singleton<Simulation>
 	{
 	public:
 		Simulation(bool init_enable_vsync);
-		~Simulation();
 	
 	private:
 		void Init();
@@ -50,9 +43,12 @@ namespace sim
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
 		
-		void SetCameraPos(Vector3 const & pos, Matrix4 const & rot);
+		static void SetCameraPos(Vector3 const & pos, Matrix4 const & rot);
 		
+		static bool HandleEvent(sys::Event const & event);
+
 		void Run();
+		void Exit();		
 	private:
 		void Tick();
 		
@@ -61,17 +57,15 @@ namespace sim
 		void Capture();
 		
 		// Returns true until the program should ent.
-		bool HandleEvents();
-		bool OnKeyPress(sys::KeyCode key_code);
+		static bool OnKeyPress(sys::KeyCode key_code);
 
 		// Attributes
 		Universe universe;
 
-		form::Manager * formation_manager;
-
 		bool enable_vsync;
 		bool paused;
 		bool capture;
+		bool exit;
 		int capture_frame;
 		
 		gfx::Scene scene;

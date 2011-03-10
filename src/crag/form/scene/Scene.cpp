@@ -19,12 +19,22 @@
 
 #include "form/node/Shader.h"
 
+#include "core/ConfigEntry.h"
+
+
+namespace
+{
+	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
+}
+
 
 /////////////////////////////////////////////////////////////////
 // form::Scene
 
 form::Scene::Scene()
 : node_buffer()
+, camera_ray(sim::Ray3::Zero())
+, camera_ray_relative(sim::Ray3::Zero())
 , origin(sim::Vector3::Zero())
 {
 }
@@ -32,11 +42,6 @@ form::Scene::Scene()
 form::Scene::~Scene()
 {
 	Clear();
-
-	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
-		FormationPair & pair = * it;
-		DeinitPolyhedron(pair);
-	}
 }
 
 #if VERIFY
@@ -90,6 +95,8 @@ void form::Scene::Clear()
 		FormationPair & pair = * it;
 		DeinitPolyhedron(pair);
 	}
+	
+	formation_map.clear();
 }
 
 form::NodeBuffer & form::Scene::GetNodeBuffer()
@@ -136,18 +143,45 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 	}
 }
 
-void form::Scene::Tick(FormationSet const & formation_set)
+bool form::Scene::IsOriginOk() const
+{
+	// killme
+//	float d1 = Length(camera_ray_relative.position);
+//	float d2 = Length(camera_ray.position - GetOrigin());
+//	Assert(NearEqual(Length(camera_ray_relative.position), Length(camera_ray.position - GetOrigin()), 0.01));
+
+	// The real test: Is the observer not far enough away from the 
+	// current origin that visible inaccuracies might become apparent?
+	double observer_position_length = Length(camera_ray_relative.position);
+	return observer_position_length < max_observer_position_length;
+}
+
+void form::Scene::AddFormation(Formation const & formation)
+{
+	Assert(formation_map.find(& formation) == formation_map.end());
+	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron()));
+	InitPolyhedron(* i);
+}
+
+void form::Scene::RemoveFormation(Formation const & formation)
+{
+	FormationMap::iterator i = formation_map.find(& formation);
+	Assert(i != formation_map.end());
+	
+	DeinitPolyhedron(* i);
+	formation_map.erase(i);
+}
+
+void form::Scene::Tick()
 {
 	node_buffer.Tick(camera_ray_relative);
-	TickModels(formation_set);
+	TickModels();
 }
 
 void form::Scene::ForEachFormation(FormationFunctor & f) const
 {
 	f.SetSceneOrigin(origin);
 
-	node_buffer.LockTree();
-	
 	for (form::Scene::FormationMap::const_iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
 		form::Scene::FormationPair const & pair = * i;
@@ -155,8 +189,6 @@ void form::Scene::ForEachFormation(FormationFunctor & f) const
 		Polyhedron const & polyhedron = pair.second;
 		f(formation, polyhedron);
 	}
-	
-	node_buffer.UnlockTree();
 }
 
 void form::Scene::GenerateMesh(Mesh & mesh) 
@@ -165,66 +197,24 @@ void form::Scene::GenerateMesh(Mesh & mesh)
 	mesh.GetProperties().origin = origin;
 }
 
+form::Polyhedron & form::Scene::GetPolyhedron(Formation const & formation)
+{
+	return formation_map[& formation];
+}
+
 form::Polyhedron const & form::Scene::GetPolyhedron(Formation const & formation) const
 {
-	//return formation_map[& formation];
 	FormationMap::const_iterator i = formation_map.find (& formation);
 	Assert(i != formation_map.end());
 	return i->second;
 }
 
 // Currently just updates the formation_map contents.
-void form::Scene::TickModels(FormationSet const & formation_set)
+void form::Scene::TickModels()
 {
-	FormationSet::iterator s = formation_set.begin();
-	FormationMap::iterator m = formation_map.begin();
-	
-	// Deal with elements of one objet being absent from the other and vica versa.
-	while (true) {
-		Formation * formation = (s != formation_set.end()) ? * s : nullptr;
-		FormationPair * pair = (m != formation_map.end()) ? & (* m) : nullptr;
-
-		// Are we at neither the end of one sequence or other?
-		if (formation != nullptr && pair != nullptr) {
-			
-			// Do we have a match?
-			if (formation == pair->first) {
-				TickPolyhedron(pair->second);
-				++ s;
-				++ m;
-				continue;
-			}
-			else {
-				// Is the formation missing from our internal store?
-				if (formation < pair->first) {
-					pair = nullptr;
-				}
-				else {
-					formation = nullptr;
-				}
-			}
-		}
-		else if (formation == nullptr && pair == nullptr) {
-			break;
-		}
-		
-		// Here, we know that a formation has been added or removed from <formations>.
-		Assert((formation == nullptr) != (pair == nullptr));
-		
-		if (pair == nullptr) {
-			// added
-			m = formation_map.insert(m, FormationPair(formation, Polyhedron()));
-			pair = & (* m);
-			InitPolyhedron(* pair);
-			TickPolyhedron(pair->second);
-			++ m;
-			++ s;
-		}
-		else {
-			// removed
-			DeinitPolyhedron(* m);
-			formation_map.erase(m ++);
-		}
+	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i)
+	{
+		TickPolyhedron(i->second);
 	}
 }
 
@@ -238,6 +228,7 @@ void form::Scene::ResetPolyhedronOrigins()
 	}
 }
 
+// TODO: Write an ungraceful/fast version of this.
 void form::Scene::ResetFormations()
 {
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
@@ -282,22 +273,8 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron.root_node;
-	node_buffer.CollapseNode(root_node);
+	node_buffer.CollapseNodes(root_node);
 	
 	// Continue deinitialization somewhere a bit calmer.
 	polyhedron.Deinit(node_buffer.GetPoints());
-}
-
-void form::Scene::ResetPolyhedron(FormationPair & pair)
-{
-	Polyhedron & polyhedron = pair.second;
-	
-	polyhedron.GetShader().SetOrigin(origin);
-	
-	RootNode & root_node = polyhedron.root_node;
-	node_buffer.CollapseNode(root_node);
-	
-	Point * points[4];
-	root_node.GetPoints(points);
-	polyhedron.shader->InitRootPoints(points);
 }

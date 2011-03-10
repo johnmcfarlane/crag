@@ -14,50 +14,50 @@
 
 #include "glpp/gl.h"
 
-#include <SDL_keysym.h>
+// TODO: Get rid of/update these key codes.
+#include <SDL_keycode.h>
 #include <SDL_events.h>
 
 
-#define KEY_0 SDLK_0
-#define KEY_1 SDLK_1
-#define KEY_9 SDLK_9
-#define KEY_LEFT SDLK_LEFT
-#define KEY_RIGHT SDLK_RIGHT
-#define KEY_UP SDLK_UP
-#define KEY_DOWN SDLK_DOWN
-#define KEY_INSERT SDLK_INSERT
-#define KEY_DELETE SDLK_DELETE
-#define KEY_HOME SDLK_HOME
-#define KEY_END SDLK_END
-#define KEY_PAGEUP SDLK_PAGEUP
-#define KEY_PAGEDOWN SDLK_PAGEDOWN
-#define KEY_A SDLK_a
-#define KEY_C SDLK_c
-#define KEY_D SDLK_d
-#define KEY_E SDLK_e
-#define KEY_F SDLK_f
-#define KEY_G SDLK_g
-#define KEY_I SDLK_i
-#define KEY_K SDLK_k
-#define KEY_L SDLK_l
-#define KEY_M SDLK_m
-#define KEY_O SDLK_o
-#define KEY_P SDLK_p
-#define KEY_Q SDLK_q
-#define KEY_W SDLK_w
-#define KEY_S SDLK_s
-#define KEY_COMMA SDLK_COMMA
-#define KEY_PERIOD SDLK_PERIOD
-#define KEY_RETURN SDLK_RETURN
-#define KEY_ESCAPE SDLK_ESCAPE
-#define KEY_SPACE SDLK_SPACE
-#define KEY_RSHIFT SDLK_RSHIFT
-#define KEY_LSHIFT SDLK_LSHIFT
-#define KEY_RCTRL SDLK_RCTRL
-#define KEY_LCTRL SDLK_LCTRL
-#define KEY_RALT SDLK_RALT
-#define KEY_LALT SDLK_LALT
-#define KEY_MAX SDLK_LAST
+#define KEY_0 SDL_SCANCODE_0
+#define KEY_1 SDL_SCANCODE_1
+#define KEY_9 SDL_SCANCODE_9
+#define KEY_LEFT SDL_SCANCODE_LEFT
+#define KEY_RIGHT SDL_SCANCODE_RIGHT
+#define KEY_UP SDL_SCANCODE_UP
+#define KEY_DOWN SDL_SCANCODE_DOWN
+#define KEY_INSERT SDL_SCANCODE_INSERT
+#define KEY_DELETE SDL_SCANCODE_DELETE
+#define KEY_HOME SDL_SCANCODE_HOME
+#define KEY_END SDL_SCANCODE_END
+#define KEY_PAGEUP SDL_SCANCODE_PAGEUP
+#define KEY_PAGEDOWN SDL_SCANCODE_PAGEDOWN
+#define KEY_A SDL_SCANCODE_A
+#define KEY_C SDL_SCANCODE_C
+#define KEY_D SDL_SCANCODE_D
+#define KEY_E SDL_SCANCODE_E
+#define KEY_F SDL_SCANCODE_F
+#define KEY_G SDL_SCANCODE_G
+#define KEY_I SDL_SCANCODE_I
+#define KEY_K SDL_SCANCODE_K
+#define KEY_L SDL_SCANCODE_L
+#define KEY_M SDL_SCANCODE_M
+#define KEY_O SDL_SCANCODE_O
+#define KEY_P SDL_SCANCODE_P
+#define KEY_Q SDL_SCANCODE_Q
+#define KEY_W SDL_SCANCODE_W
+#define KEY_S SDL_SCANCODE_S
+#define KEY_COMMA SDL_SCANCODE_COMMA
+#define KEY_PERIOD SDL_SCANCODE_PERIOD
+#define KEY_RETURN SDL_SCANCODE_RETURN
+#define KEY_ESCAPE SDL_SCANCODE_ESCAPE
+#define KEY_SPACE SDL_SCANCODE_SPACE
+#define KEY_RSHIFT SDL_SCANCODE_RSHIFT
+#define KEY_LSHIFT SDL_SCANCODE_LSHIFT
+#define KEY_RCTRL SDL_SCANCODE_RCTRL
+#define KEY_LCTRL SDL_SCANCODE_LCTRL
+#define KEY_RALT SDL_SCANCODE_RALT
+#define KEY_LALT SDL_SCANCODE_LALT
 
 
 namespace sys
@@ -76,18 +76,19 @@ namespace sys
 	
 	// init
 	bool Init(Vector2i resolution, bool full_screen, bool enable_vsync, char const * title);
+	void Deinit();
 	
 	// input
 	bool IsKeyDown(KeyCode key_code);
 	bool IsButtonDown(MouseButton mouse_button);
-	Vector2i GetMousePosition();
-	void SetMousePosition(Vector2i const & position);
 	
 	// window
 	Vector2i GetWindowSize();
-	SDL_Surface & GetVideoSurface();
+	//SDL_Surface & GetVideoSurface();
+	void SwapBuffers();
+	void MakeCurrent();
 	
-	bool GetEvent(Event & event);
+	bool GetEvent(Event & event, bool block);
 	bool HasFocus();
 	
 	// time

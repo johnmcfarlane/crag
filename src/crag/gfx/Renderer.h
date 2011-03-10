@@ -68,6 +68,9 @@ namespace gfx
 		void EnableLights(std::vector<Light const *> const & lights, bool enabled) const;
 		
 		void DebugDraw(Pov const & pov) const;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// Attributes
 		
 		gl::FrameBuffer frame_buffer;
 		gl::RenderBuffer depth_buffer;
@@ -82,6 +85,9 @@ namespace gfx
 		{
 			GLenum cap;
 			bool enabled;
+#if ! defined(NDEBUG)
+			char const * name;
+#endif
 		};
 
 		static StateParam const init_state[];

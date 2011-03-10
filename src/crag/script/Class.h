@@ -22,14 +22,14 @@ namespace script
 	{
 	public:
 		template <typename BaseClass>
-		Class(char const * qualified_name, PyObject & module, char const * doc, BaseClass & base_class)
+		Class(char const * qualified_name, PyObject & module, char const * doc, PyMethodDef * observer_methods, BaseClass & base_class)
 		{
-			InitType(qualified_name, module, doc, & base_class.GetTypeObject());
+			InitType(qualified_name, module, doc, observer_methods, & base_class.GetTypeObject());
 		}
 		
-		Class(char const * qualified_name, PyObject & module, char const * doc)
+		Class(char const * qualified_name, PyObject & module, char const * doc, PyMethodDef * observer_methods)
 		{
-			InitType(qualified_name, module, doc, nullptr);
+			InitType(qualified_name, module, doc, observer_methods, nullptr);
 		}
 		
 		~Class()
@@ -42,6 +42,12 @@ namespace script
 			return type_object;
 		}
 		
+		static NativeType * GetNativeObject(PyObject * self)
+		{
+			Object * o = reinterpret_cast<Object *> (self);
+			return o->ptr;
+		}
+		
 	private:
 		
 		class Object
@@ -51,7 +57,7 @@ namespace script
 			NativeType * ptr;
 		};
 		
-		void InitType(char const * qualified_name, PyObject & module, char const * doc, PyTypeObject * base_type)
+		void InitType(char const * qualified_name, PyObject & module, char const * doc, PyMethodDef * observer_methods, PyTypeObject * base_type)
 		{
 			PyTypeObject blank_type_object = 
 			{
@@ -68,6 +74,7 @@ namespace script
 			type_object.tp_dealloc = Dealloc;
 			type_object.tp_flags = (base_type == nullptr) ? Py_TPFLAGS_DEFAULT : Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
 			type_object.tp_doc = doc;
+			type_object.tp_methods = observer_methods;
 			type_object.tp_base = base_type;
 			type_object.tp_init = reinterpret_cast<initproc>(Init);
 			type_object.tp_new = New;
@@ -112,10 +119,10 @@ namespace script
 		
 		static void Dealloc(PyObject * po)
 		{
-			Object * o = reinterpret_cast<Object *>(po);
-			delete o->ptr;
+			NativeType * native_object = GetNativeObject(po);
+			NativeType::Destroy(ref(native_object));
 		}
-		
+
 		// static data
 		PyTypeObject type_object;
 	};

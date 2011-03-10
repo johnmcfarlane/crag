@@ -37,7 +37,7 @@ sim::Star * sim::Star::Create(PyObject * args)
 	}
 	
 	// Create planet object.
-	SimulationPtr s(Simulation::GetPtr());
+	SimulationPtr s(Simulation::GetLock());
 	sim::Star * star = new sim::Star(s, orbital_radius, orbital_year);
 	
 	return star;

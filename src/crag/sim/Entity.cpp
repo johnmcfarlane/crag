@@ -25,8 +25,6 @@ sim::Entity::Entity(SimulationPtr const & s)
 
 sim::Entity::~Entity()
 {
-	SimulationPtr s(Simulation::GetPtr());
-	s->RemoveEntity(* this);
 }
 
 sim::Entity * sim::Entity::Create(PyObject * args)
@@ -35,6 +33,14 @@ sim::Entity * sim::Entity::Create(PyObject * args)
 	Assert(false);
 	
 	return nullptr;
+}
+
+void sim::Entity::Destroy(Entity & entity)
+{
+	SimulationPtr simulation(Simulation::GetLock());
+	simulation->RemoveEntity(entity);
+	
+	delete & entity;
 }
 
 void sim::Entity::Tick(Universe const & universe)

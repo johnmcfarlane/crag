@@ -20,8 +20,8 @@
 #include "physics/Singleton.h"
 
 #include "form/Formation.h"
-#include "form/Manager.h"
 #include "form/scene/Mesh.h"
+#include "form/FormationManager.h"
 
 #include "core/Random.h"
 
@@ -37,6 +37,7 @@ sim::Planet::Planet(SimulationPtr const & s, sim::Vector3 const & init_pos, Scal
 {
 	Assert(radius_mean > 0);
 
+	// factory
 	if (num_craters > 0)
 	{
 		factory = new MoonShaderFactory(* this, num_craters);
@@ -46,23 +47,26 @@ sim::Planet::Planet(SimulationPtr const & s, sim::Vector3 const & init_pos, Scal
 		factory = new PlanetShaderFactory(* this);
 	}
 	
+	// formation
 	formation = new form::Formation(* factory);
 	Random rnd(init_seed);
 	formation->seed = rnd.GetInt();
 	formation->SetPosition(init_pos);
-	form::Manager::Get().AddFormation(formation);
 	
+	// body
 	body = new PlanetaryBody(* formation, init_radius_mean);
 	body->SetPosition(init_pos);
+	
+	// register with formation manager
+	form::FormationManager::AddFormation(* formation);
 }
 
 sim::Planet::~Planet()
 {
-	form::Manager * formation_manager = form::Manager::GetPtr();
-	if (formation_manager != nullptr) 
-	{
-		form::Manager::Get().RemoveFormation(formation);
-	}
+	form::FormationManager::RemoveFormation(* formation);
+	delete body;
+	delete formation;
+	delete factory;
 }
 
 sim::Planet * sim::Planet::Create(PyObject * args)
@@ -78,7 +82,7 @@ sim::Planet * sim::Planet::Create(PyObject * args)
 	}
 	
 	// Create planet object.
-	SimulationPtr s(Simulation::GetPtr());
+	SimulationPtr s(Simulation::GetLock());
 	sim::Planet * planet = new sim::Planet(s, center, radius, random_seed, num_craters);
 	
 	return planet;

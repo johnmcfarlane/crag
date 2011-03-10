@@ -82,10 +82,15 @@ sim::Observer * sim::Observer::Create(PyObject * args)
 	}
 	
 	// Create planet object.
-	SimulationPtr s(Simulation::GetPtr());
+	SimulationPtr s(Simulation::GetLock());
 	Observer * observer = new Observer(s, center);
 	
 	return observer;
+}
+
+void sim::Observer::AddRotation(Vector3 const & angles)
+{
+	impulses[1] += angles;
 }
 
 void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
@@ -105,7 +110,7 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 		{
 			Scalar factor = impulse.factors[d][axis];
 
-			impulses[d][axis] = impulse_factors[d][axis] * factor * inv_t;
+			impulses[d][axis] += impulse_factors[d][axis] * factor * inv_t;
 		}
 	}
 }
@@ -145,8 +150,7 @@ void sim::Observer::Tick(Universe const & universe)
 	Matrix4 rot;
 	sphere.GetRotation(rot);
 	
-	SimulationPtr s = Simulation::GetPtr();
-	s->SetCameraPos(position, rot);
+	Simulation::SetCameraPos(position, rot);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const
@@ -163,5 +167,8 @@ void sim::Observer::SetPosition(sim::Vector3 const & pos)
 void sim::Observer::ApplyImpulse()
 {
 	sphere.AddRelForce(impulses [0]);
+	impulses[0] = Vector3::Zero();
+	
 	sphere.AddRelTorque(impulses [1]);
+	impulses[1] = Vector3::Zero();
 }

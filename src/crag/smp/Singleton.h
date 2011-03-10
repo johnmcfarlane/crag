@@ -23,10 +23,13 @@ namespace smp
 	template <typename S> class Singleton : protected core::Singleton<S>
 	{
 	public:
-		static ptr<S> GetPtr()
+		typedef ptr<S> ptr;
+		
+		// TODO: Reads-write lock.
+		static ptr GetLock()
 		{
 			S & ref = core::Singleton<S>::Get();
-			return ptr<S>(ref, ref._mutex);
+			return ptr(ref, ref._mutex);
 		}
 		
 	private:

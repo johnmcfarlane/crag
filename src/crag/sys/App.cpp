@@ -21,14 +21,13 @@ namespace
 {
 	bool has_focus = true;
 	
-	bool key_down [KEY_MAX];
 	bool button_down [sys::BUTTON_MAX];
 	
-	Vector2i mouse_position;
 	Vector2i window_size;
 	
-	SDL_Surface * screen_surface = nullptr;
-	
+	SDL_Window * window = nullptr;
+	SDL_GLContext context = nullptr;
+		
 #if defined(WIN32)
 	sys::TimeType inv_query_performance_frequency = 0;
 #endif
@@ -36,7 +35,10 @@ namespace
 	void SetFocus(bool gained_focus)
 	{
 		has_focus = gained_focus;
-		SDL_ShowCursor(! has_focus);
+		SDL_SetWindowGrab(window, gained_focus ? SDL_TRUE : SDL_FALSE);
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+		SDL_ShowCursor(has_focus ? SDL_DISABLE : SDL_ENABLE);
+		SDL_SetRelativeMouseMode(has_focus ? SDL_TRUE : SDL_FALSE);
 	}
 	
 	
@@ -78,37 +80,39 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 		return false;
 	}
 	
+	Assert(window == nullptr);
+	Assert(context == nullptr);
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, enable_vsync ? 1 : 0);
 	
 	// Get existing video info.
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
 	if (video_info == nullptr)
 	{
-		std::cout << "Failed to get video info: " << SDL_GetError();
+		std::cout << "Failed to get video info: " << SDL_GetError() << std::endl;
 		return false;
 	}
 	
-	// Do the ... uh, thing.
-	int bpp = video_info->vfmt->BitsPerPixel;
-	int flags = SDL_OPENGL | SDL_DOUBLEBUF | SDL_HWSURFACE;
+	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	
 	if (full_screen)
 	{
 		resolution.x = video_info->current_w;
 		resolution.y = video_info->current_h;
-		flags |= SDL_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
-	screen_surface = SDL_SetVideoMode(resolution.x, resolution.y, bpp, flags);
-	if (screen_surface == nullptr)
+	window = SDL_CreateWindow("Crag", 
+							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+							  resolution.x, resolution.y, 
+							  flags);
+	
+	context = SDL_GL_CreateContext(window);
+	
+	if (SDL_GL_SetSwapInterval(enable_vsync ? 1 : 0))
 	{
-		std::cout << "Failed to set video mode: " << SDL_GetError() << '\n';
-		std::cout << resolution.x << 'x';
-		std::cout << resolution.y << 'x';
-		std::cout << bpp << " (" << std::hex;
-		std::cout << flags << std::dec << ")\n";
+		std::cout << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
 		return false;
 	}
 	
@@ -119,21 +123,43 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 	
 	SetFocus(true);
 	
-	ZeroObject(key_down);
 	ZeroObject(button_down);
 	
-	mouse_position.x = resolution.y >> 1;
-	mouse_position.y = resolution.y >> 1;
 	window_size = resolution;
-	
-	SDL_WM_SetCaption(title, nullptr);
 	
 	return true;
 }
 
+void sys::Deinit()
+{
+	Assert(window != nullptr);
+	Assert(context != nullptr);
+
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
+
+	SDL_DestroyWindow(window);
+	window = nullptr;
+	
+	SDL_Quit();
+
+}
+
 bool sys::IsKeyDown(KeyCode key_code)
 {
-	return key_down[key_code];
+	if (key_code >= 0)
+	{
+		int num_keys;
+		Uint8 * key_down = SDL_GetKeyboardState(& num_keys);
+		
+		if (key_code < num_keys)
+		{
+			return key_down[key_code];
+		}
+	}
+	
+	Assert(false);
+	return false;
 }
 
 bool sys::IsButtonDown(MouseButton mouse_button)
@@ -141,70 +167,61 @@ bool sys::IsButtonDown(MouseButton mouse_button)
 	return button_down[mouse_button];
 }
 
-Vector2i sys::GetMousePosition()
-{
-	return mouse_position;
-}
-
-void sys::SetMousePosition(Vector2i const & position)
-{
-	mouse_position = position;
-	SDL_WarpMouse(mouse_position.x, mouse_position.y);
-}
-
 Vector2i sys::GetWindowSize()
 {
 	return window_size;
 }
 
-SDL_Surface & sys::GetVideoSurface()
+void sys::MakeCurrent()
 {
-	Assert(screen_surface);
-	return * screen_surface;
+	if (SDL_GL_MakeCurrent(window, context) != 0)
+	{
+		Assert(false);
+	}
 }
 
-bool sys::GetEvent(Event & event)
+void sys::SwapBuffers()
 {
-	if (SDL_PollEvent(&event) > 0)
+	SDL_GL_SwapWindow(window);
+}
+
+bool sys::GetEvent(Event & event, bool block)
+{
+	if ((block ? SDL_WaitEvent : SDL_PollEvent)(&event) <= 0)
 	{
-		switch (event.type)
-		{
-			case SDL_VIDEORESIZE:
-				window_size.x = event.resize.w;
-				window_size.y = event.resize.h;
-				return true;
-				
-			case SDL_ACTIVEEVENT:
-				SetFocus(event.active.gain != 0);
-				return true;
-				
-			case SDL_KEYDOWN:
-				key_down [event.key.keysym.sym] = true;
-				return true;
-				
-			case SDL_KEYUP:
-				key_down [event.key.keysym.sym] = false;
-				return true;
-				
-			case SDL_MOUSEBUTTONDOWN:
-				button_down [event.button.button] = true;
-				return true;
-				
-			case SDL_MOUSEBUTTONUP:
-				button_down [event.button.button] = false;
-				return true;
-				
-			case SDL_MOUSEMOTION:
-				mouse_position.x = event.motion.x;
-				mouse_position.y = event.motion.y;
-				return true;
-				
-			default:
-				return true;
-		}
+		return false;
 	}
 	
-	return false;
+	switch (event.type)
+	{
+		case SDL_VIDEORESIZE:
+			window_size.x = event.resize.w;
+			window_size.y = event.resize.h;
+			break;
+			
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+					SetFocus(true);
+					break;
+					
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+					SetFocus(false);
+					break;
+			}
+			break;
+			
+		case SDL_MOUSEBUTTONDOWN:
+			button_down [event.button.button] = true;
+			break;
+			
+		case SDL_MOUSEBUTTONUP:
+			button_down [event.button.button] = false;
+			break;
+	}
+	
+	return true;
 }
 
 bool sys::HasFocus()

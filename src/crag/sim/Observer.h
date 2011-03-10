@@ -37,7 +37,8 @@ namespace sim
 		// Type-specific allocation via script.
 		static Observer * Create(PyObject * args);
 
-		void UpdateInput(Controller::Impulse const & inpulse);	// [rot/pos]
+		void AddRotation(Vector3 const & angles);
+		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeedFactor(int _speed_factor);
 		void Tick(Universe const & universe);

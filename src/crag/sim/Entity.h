@@ -32,6 +32,7 @@ namespace sim
 		
 		// Type-specific allocation via script.
 		static Entity * Create(PyObject * args);
+		static void Destroy(Entity & entity);
 
 		// general callbacks
 		virtual void Tick(Universe const & universe);

@@ -31,9 +31,6 @@ namespace gfx
 	{
 	public:
 
-		//Image(Image const & that, Format const & format);
-		//Image(Vector2i const & size);
-		//Image(char const * filename);
 		Image();
 		~Image();
 
@@ -42,7 +39,6 @@ namespace gfx
 		// formats
 		typedef SDL_PixelFormat Format;
 		static Format const & GetOpenGlRgba8Format();
-		static Format const & GetVideoFormat();
 
 		// init
 		bool Create(Vector2i const & size, Format const & format = GetOpenGlRgba8Format());

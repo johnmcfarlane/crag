@@ -167,7 +167,7 @@ namespace
 	public:
 		Worker()
 		{
-			thread.Launch(* this);
+			thread.Launch<& Worker::Run>(* this);
 		}
 		
 		~Worker()
@@ -202,7 +202,7 @@ namespace
 			}
 		}
 				
-		typedef smp::Thread<Worker, & Worker::Run> Thread;
+		typedef smp::Thread<Worker> Thread;
 		Thread thread;
 	};
 	

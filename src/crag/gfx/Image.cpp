@@ -21,6 +21,7 @@ namespace
 {
 	gfx::Image::Format opengl_rgba8_format = 
 	{
+		SDL_PIXELFORMAT_RGBA8888,	// Uint32 format;
 		nullptr,	// SDL_Palette *palette;
 		32,			// Uint8  BitsPerPixel;
 		4,			// Uint8  BytesPerPixel;
@@ -36,8 +37,8 @@ namespace
 		0x0000ff00,	// Uint32 Gmask;
 		0x00ff0000,	// Uint32 Bmask;
 		0xff000000,	// Uint32 Amask;
-		0,			// Uint32 colorkey;
-		255,		// Uint8  alpha;
+		0,			// int refcount;
+		nullptr,	// SDL_PixelFormat *next;
 	};
 }
 
@@ -93,13 +94,6 @@ gfx::Image::~Image()
 gfx::Image::Format const & gfx::Image::GetOpenGlRgba8Format()
 {
 	return opengl_rgba8_format;
-}
-
-gfx::Image::Format const & gfx::Image::GetVideoFormat()
-{
-	SDL_Surface const & video_surface = sys::GetVideoSurface();
-	SDL_PixelFormat const & video_format = ref(video_surface.format);
-	return video_format;
 }
 
 bool gfx::Image::Create(Vector2i const & size, Format const & format)
@@ -197,7 +191,7 @@ void gfx::Image::Clear(Color4b const & color)
 
 void gfx::Image::Load(char const * filename)
 {
-	surface = IMG_Load(filename);
+	surface = SDL_LoadBMP(filename);
 }
 
 bool gfx::Image::Reformat(SDL_PixelFormat const & desired_format)

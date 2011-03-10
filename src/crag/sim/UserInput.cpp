@@ -88,7 +88,7 @@ namespace
 		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_COMMA },
 		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_PERIOD },
 		
-		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, KEY_MAX }
+		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, -1 }
 	};
 
 
@@ -134,23 +134,6 @@ sim::Controller::Impulse sim::UserInput::GetImpulse()
 	
 	// mouse buttons
 	MapInputs(buttons, impulse);
-	
-	// mouse movement
-	Vector2i delta;
-	Vector2i window_size = sys::GetWindowSize();
-	Vector2i center(window_size.x >> 1, window_size.y >> 1);
-#if __APPLE__ && 0
-	CGGetLastMouseDelta (& delta.x, & delta.y);
-#else
-	Vector2i const & cursor(sys::GetMousePosition());
-	delta = (cursor - center);
-#endif
-	Vector2f mouse_input = Vector2f(delta) * 0.3f;
-	if (Length(mouse_input) > 0) {
-		impulse.factors[sim::Controller::Impulse::TORQUE][axes::UP] -= mouse_input.x;
-		impulse.factors[sim::Controller::Impulse::TORQUE][axes::RIGHT] -= mouse_input.y;
-	}
-	
-	sys::SetMousePosition(Vector2i(center.x, center.y));
+
 	return impulse;
 }

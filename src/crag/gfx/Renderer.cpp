@@ -16,7 +16,7 @@
 #include "Skybox.h"
 #include "Light.h"
 
-#include "form/Manager.h"
+#include "form/FormationManager.h"
 
 #include "sim/axes.h"
 
@@ -114,17 +114,23 @@ gfx::Renderer::~Renderer()
 	init_wireframe = wireframe;
 }
 
+#if defined(NDEBUG)
+#define INIT(CAP,ENABLED) { CAP,ENABLED }
+#else
+#define INIT(CAP,ENABLED) { CAP,ENABLED,#CAP }
+#endif
+
 gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 {
-	{ GL_COLOR_MATERIAL, true },
-	{ GL_TEXTURE_2D, false },
-	{ GL_NORMALIZE, false },
-	{ GL_CULL_FACE, true },
-	{ GL_LIGHT0, false },
-	{ GL_LIGHTING, false },
-	{ GL_DEPTH_TEST, false },
-	{ GL_BLEND, false },
-	{ GL_INVALID_ENUM, false }
+	INIT(GL_COLOR_MATERIAL, true),
+	INIT(GL_TEXTURE_2D, false),
+	INIT(GL_NORMALIZE, false),
+	INIT(GL_CULL_FACE, true),
+	INIT(GL_LIGHT0, false),
+	INIT(GL_LIGHTING, false),
+	INIT(GL_DEPTH_TEST, false),
+	INIT(GL_BLEND, false),
+	INIT(GL_INVALID_ENUM, false)
 };
 
 void gfx::Renderer::InitRenderState()
@@ -210,12 +216,8 @@ void gfx::Renderer::ToggleWireframe()
 
 TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 {
-	{
-		sim::SimulationPtr lock = sim::Simulation::GetPtr();
-
-		// Render the scene to the back buffer.
-		RenderScene(scene);	
-	}
+	// Render the scene to the back buffer.
+	RenderScene(scene);	
 
 	TimeType frame_time;
 	
@@ -231,7 +233,7 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 		
 		glFlush();
 		TimeType pre_finish = GetTime();
-		SDL_GL_SwapBuffers();
+		sys::SwapBuffers();
 		glFinish();
 		frame_time = GetTime();
 		idle = frame_time - pre_finish;
@@ -371,8 +373,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	gl::Enable(GL_DEPTH_TEST);
 	
 	// Do the rendering
-	form::Manager & manager = form::Manager::Get();
-	manager.Render(scene.pov, color);
+	form::FormationManager::Render(scene.pov, color);
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
 	// Reset state

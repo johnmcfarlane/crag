@@ -20,11 +20,9 @@
 #include "physics/Singleton.h"
 
 #include "form/scene/SceneThread.h"
-#include "form/Manager.h"
+#include "form/FormationManager.h"
 
 #include "core/ConfigEntry.h"
-
-#include "script/Singleton.h"
 
 
 using sys::TimeType;
@@ -60,22 +58,12 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 : enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
+, exit(false)
 , capture_frame(0)
 , start_time(GetTime())
 {
-	SimulationPtr s(GetPtr());
-	
 	scene.SetResolution(sys::GetWindowSize());
 	scene.SetSkybox(new Firmament);
-	
-	formation_manager = new form::Manager();
-	
-	SetCameraPos(Vector3::Zero(), Matrix4::Identity());
-}
-
-sim::Simulation::~Simulation()
-{
-	delete formation_manager;
 }
 
 sim::Universe const & sim::Simulation::GetUniverse() const
@@ -107,29 +95,23 @@ void sim::Simulation::RemoveEntity(Entity & entity)
 
 void sim::Simulation::SetCameraPos(Vector3 const & pos, Matrix4 const & rot)
 {
-	scene.SetCamera(pos, rot);
-	formation_manager->GetSceneThread().SetCameraPos(axes::GetCameraRay(pos, rot));
+	Simulation & sim = Get();	
+	sim.scene.SetCamera(pos, rot);
+	
+	form::FormationManager::SetCameraPos(axes::GetCameraRay(pos, rot));
 }
 
 void sim::Simulation::Run()
 {
-	script::Singleton vm_singleton("./script/main.py");
-	formation_manager->GetSceneThread().Launch();
+	FUNCTION_NO_REENTRY;
+
+	// TODO: Doesn't belong here.
+	sys::MakeCurrent();
 	
 	TimeType next_tick_time = GetTime();
 	
-	while (true)
+	while (! exit)
 	{
-		if (! HandleEvents())
-		{
-			break;
-		}
-		
-		if (script::Singleton::Get().IsDone())
-		{
-			break;
-		}
-		
 		TimeType time = GetTime();
 		TimeType time_to_next_time = next_tick_time - time;
 		if (time_to_next_time > 0)
@@ -150,31 +132,30 @@ void sim::Simulation::Run()
 			}
 		}
 	}
-	
-	delete formation_manager;
-	formation_manager = nullptr;
-	
-	DUMP_OBJECT(* formation_manager, std::cout);
+
+	//DUMP_OBJECT(* form_thread, std::cout);
+}
+
+void sim::Simulation::Exit()
+{
+	exit = true;
 }
 
 void sim::Simulation::Tick()
 {
-	SimulationPtr lock = GetPtr();
-
 	// Tick the entities.
 	if (! paused) 
 	{
+		Simulation::ptr lock = GetLock();
+
 		bool physics = GetTime() > start_time + startup_grace_period;
 		universe.Tick(physics);
 	}
-	
-	formation_manager->Tick();
 }
 
 void sim::Simulation::Render()
 {
-	// Now that the mesh is not needed, it's a good time to look at copying a new one.
-	formation_manager->PollMesh();
+	form::FormationManager::PollMesh();
 	
 	PrintStats();
 
@@ -187,7 +168,8 @@ void sim::Simulation::Render()
 	{
 		target_frame_time *= target_work_proportion;
 	}
-	formation_manager->SampleFrameRatio(frame_time, target_frame_time);
+	
+	form::FormationManager::SampleFrameRatio(frame_time, target_frame_time);
 	
 	// Screen capture.
 	if (capture)
@@ -203,7 +185,7 @@ void sim::Simulation::PrintStats() const
 	}
 	
 /*	if (Debug::GetVerbosity() > .4) {
-		RealTimeFrequencyEstimator const & tps = formation_manager.GetTicksPerSecond();
+		RealTimeFrequencyEstimator const & tps = form_thread.GetTicksPerSecond();
 		Debug::out << "tps:" << tps.GetFrequency() << '\n';
 	}*/
 
@@ -228,43 +210,37 @@ void sim::Simulation::Capture()
 #endif
 }
 
-bool sim::Simulation::HandleEvents()
+bool sim::Simulation::HandleEvent(sys::Event const & event)
 {
-	sys::Event event;
-	while (sys::GetEvent(event))
+	switch (event.type)
 	{
-		switch (event.type)
+		case SDL_VIDEORESIZE:
 		{
-			case SDL_QUIT:
-				return false;
-
-			case SDL_VIDEORESIZE:
-				scene.SetResolution(Vector2i(event.resize.w, event.resize.h));
-				formation_manager->GetSceneThread().ResetRegulator();
-				break;
-
-			case SDL_KEYDOWN:
-				if (! OnKeyPress(event.key.keysym.sym))
-				{
-					return false;
-				}
-				break;
-				
-			case SDL_ACTIVEEVENT:
-				formation_manager->GetSceneThread().ResetRegulator();
-				break;
-
-			default:
-				break;
+			sim::Simulation & s = Get();
+			s.scene.SetResolution(Vector2i(event.resize.w, event.resize.h));
+			form::FormationManager::ResetRegulator();
+			return true;
 		}
-	}
 
-	return true;
+		case SDL_KEYDOWN:
+			return OnKeyPress(event.key.keysym.sym);
+			
+		case SDL_ACTIVEEVENT:
+		{
+			form::FormationManager::ResetRegulator();			
+			return true;
+		}
+
+		default:
+			return false;
+	}
 }
 
 // returns false iff the program should quit.
 bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 {
+	sim::Simulation & s = Get();
+
 	enum ModifierCombo 
 	{
 		COMBO_NONE,
@@ -295,7 +271,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 	{
 		case COMBO_NONE:
 		{
-			if ((int)key_code >= (int)KEY_0 && key_code <= (int)KEY_9)
+			/*if ((int)key_code >= (int)KEY_0 && key_code <= (int)KEY_9)
 			{
 				int num = key_code - KEY_0;
 				if (num == 0) {
@@ -303,47 +279,42 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 				}
 				
 				Assert(false);
-				//observer->SetSpeedFactor(num);
+				observer->SetSpeedFactor(num);
 				return true;
-			}
+			}*/
 			
 			switch (key_code)
 			{
-				case KEY_ESCAPE:
-					return false;
-					
 				case KEY_RETURN:
-					paused = ! paused;
+					s.paused = ! s.paused;
 					return true;
 					
 				case KEY_C:
-					renderer.ToggleCulling();
+					s.renderer.ToggleCulling();
 					return true;
 					
 				case KEY_F:
-					//renderer.ToggleSmoothShading();
-					formation_manager->GetSceneThread().ToggleFlatShaded();
+					form::FormationManager::ToggleFlatShaded();
 					return true;
 					
 				case KEY_G:
-				{
-					universe.ToggleGravity();
-				}	return true;
+					s.universe.ToggleGravity();
+					return true;
 					
 				case KEY_I:
-					formation_manager->GetSceneThread().ToggleSuspended();
+					form::FormationManager::ToggleSuspended();
 					return true;
 					
 				case KEY_L:
-					renderer.ToggleLighting();
+					s.renderer.ToggleLighting();
 					return true;
 					
 				case KEY_O:
-					capture = ! capture;
+					s.capture = ! s.capture;
 					return true;
 					
 				case KEY_P:
-					renderer.ToggleWireframe();
+					s.renderer.ToggleWireframe();
 					return true;
 					
 				default:
@@ -364,7 +335,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 				}
 					
 				case KEY_I:
-					formation_manager->ToggleMeshGeneration();
+					form::FormationManager::ToggleMeshGeneration();
 					return true;
 					
 				default:
@@ -378,7 +349,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			switch (key_code)
 			{
 				case KEY_I:
-					formation_manager->ToggleDynamicOrigin();
+					form::FormationManager::ToggleDynamicOrigin();
 					return true;
 					
 				default:
@@ -391,5 +362,6 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			break;
 	}
 	
-	return true;
+	return false;
 }
+
