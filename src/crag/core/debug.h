@@ -83,6 +83,22 @@
 #endif
 
 
+//////////////////////////////////////////////////////////////////////
+// FUNCTION_NO_REENTRY
+// 
+// Prevent function from being called twice simultaneously,
+// either recursively of in multiple threads.
+// Put at the top of a function. 
+
+#if defined(NDEBUG)
+#define FUNCTION_NO_REENTRY DO_NOTHING
+#else
+#define FUNCTION_NO_REENTRY \
+static int counter = 0; \
+struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } R
+#endif
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Verify helper functions
 
