@@ -8,6 +8,8 @@
  *
  */
 
+#pragma once
+
 
 //////////////////////////////////////////////////////////////////////
 // !0
@@ -21,7 +23,6 @@
 // 
 // Prevent object from being copied. 
 // Put at top of class definition. 
-// Then try very hard not to define these functions.
 
 // Ready for C++0x
 //#define OBJECT_NO_COPY(CLASS) \
@@ -40,7 +41,6 @@ private: \
 // 
 // Prevent object from being instanced. 
 // Put at top of class definition. 
-// Then try very hard not to define these functions.
 
 #define OBJECT_NO_INSTANCE(CLASS) \
 private: \
