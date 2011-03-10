@@ -20,7 +20,6 @@ namespace core
 	// Any class, S, derived from Singleton is guaranteed to have no more than one instance.
 	// If multiple objects of class, S, are instanced, the program will assert.
 	// Singleton also provides global accessors to the single instance of S.
-	// TODO: Break into Singleton and GlobalSingleton.
 
 	// To make your class a singleton, define it as 
 	//	class MyClass : public Singleton<MyClass> { ... };
@@ -51,7 +50,7 @@ namespace core
 		{
 			Assert(the_instance == nullptr);
 			
-			// If S is not derived from Singleton<S>, singleton will break here.
+			// If S is not derived from Singleton<S>, singleton will be buggy here.
 			the_instance = reinterpret_cast<S *>(this);
 		}
 		
