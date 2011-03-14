@@ -21,12 +21,14 @@ template<typename T> class Pool
 	};
 
 public:
+	typedef size_t size_type;
+	
 	Pool() 
 	{
 		Init();
 	}
 
-	Pool(int max_elements) 
+	Pool(size_type max_elements) 
 	{
 		Init(max_elements);
 	}
@@ -36,7 +38,7 @@ public:
 		Deinit();
 	}
 	
-	void Resize(int max_num_elements)
+	void Resize(size_type max_num_elements)
 	{
 		if (array + max_num_elements != end)
 		{
@@ -100,21 +102,21 @@ public:
 	}
 	
 	// Element Access
-	T & operator [] (int i)
+	T & operator [] (size_type i)
 	{
 		Assert(i >= 0);
 		Assert(i < GetCapacity());
 		return array[i];
 	}
 	
-	T const & operator [] (int i) const
+	T const & operator [] (size_type i) const
 	{
 		Assert(i >= 0);
 		Assert(i < GetCapacity());
 		return array[i];
 	}
 	
-	int GetIndex(T const & element) const
+	size_type GetIndex(T const & element) const
 	{
 		Assert(& element >= array);
 		Assert(& element < end);
@@ -131,23 +133,23 @@ public:
 		return array;
 	}
 	
-	int GetCapacity() const
+	size_type GetCapacity() const
 	{
 		return end - array;
 	}
 	
-	int GetMaxUsed() const
+	size_type GetMaxUsed() const
 	{
 		return end_used - array;
 	}
 	
 	// Slow!
-	int GetNumFree() const
+	size_type GetNumFree() const
 	{
 		return GetListSize(free_list);
 	}
 	
-	int GetNumUsed() const
+	size_type GetNumUsed() const
 	{
 		return GetCapacity() - GetNumFree();
 	}
@@ -227,13 +229,13 @@ private:
 		//VerifyTrue(this);
 	}
 	
-	void Init(int max_num_elements)
+	void Init(size_type max_num_elements)
 	{
 		if (max_num_elements != 0)
 		{
 			Assert(max_num_elements > 0);
 			
-			int buffer_size_bytes = max_num_elements * sizeof(T);
+			size_type buffer_size_bytes = max_num_elements * sizeof(T);
 			array = reinterpret_cast<T *>(new char [buffer_size_bytes]);
 			end = array + max_num_elements;
 			InitFreeList();
@@ -273,9 +275,9 @@ private:
 	}
 	
 	// Free List
-	int GetListSize(Node const * node) const
+	size_type GetListSize(Node const * node) const
 	{
-		int list_size = 0;
+		size_type list_size = 0;
 		while (node != 0)
 		{
 			//Assert (IsValidElement(* reinterpret_cast<T const *>(node)));

@@ -215,7 +215,7 @@ namespace
 	
 	void ActivateWorkers()
 	{
-		for (int n = workers.size(); n; -- n)
+		for (WorkerVector::size_type n = workers.size(); n; -- n)
 		{
 			worker_semaphore->Increment();
 		}
@@ -223,7 +223,7 @@ namespace
 	
 	void DeactivateWorkers()
 	{
-		for (int n = workers.size(); n; -- n)
+		for (WorkerVector::size_type n = workers.size(); n; -- n)
 		{
 			worker_semaphore->Decrement();
 		}

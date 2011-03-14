@@ -93,7 +93,7 @@ void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) cons
 		}
 	}
 	
-	int num_verts = vertex_buffer.size();
+	size_t num_verts = vertex_buffer.size();
 	vbo.Resize(num_verts);
 	vbo.Set(num_verts, & vertex_buffer[0]);	
 }

@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "SDL_mutex.h"
-
 
 namespace smp
 {

@@ -54,7 +54,7 @@ namespace core
 			the_instance = reinterpret_cast<S *>(this);
 		}
 		
-		~Singleton()
+		virtual ~Singleton()
 		{
 			Assert(the_instance == reinterpret_cast<S *>(this));
 			the_instance = nullptr;

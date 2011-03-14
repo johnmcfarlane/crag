@@ -91,9 +91,9 @@ namespace core
 
 #else
 
-#define STAT(NAME, TYPE, VERBOSITY) extern int NAME##_stat
-#define STAT_DEFAULT(NAME, TYPE, VERBOSITY) extern int NAME##_stat
-#define STAT_EXTERN(NAME, TYPE) extern int NAME##_stat
+#define STAT(NAME, TYPE, VERBOSITY) namespace NAME##_stat { }
+#define STAT_DEFAULT(NAME, TYPE, VERBOSITY) namespace NAME##_stat { }
+#define STAT_EXTERN(NAME, TYPE) namespace NAME##_stat { }
 #define STAT_SET(NAME, VALUE) DO_NOTHING
 #define STAT_INC(NAME, VALUE) DO_NOTHING
 

@@ -48,12 +48,12 @@ form::MeshProperties const & form::Mesh::GetProperties() const
 	return properties;
 }
 
-int form::Mesh::GetIndexCount() const
+size_t form::Mesh::GetIndexCount() const
 {
 	return indices.GetSize();
 }
 
-int form::Mesh::GetNumPolys() const
+size_t form::Mesh::GetNumPolys() const
 {
 	return indices.GetSize() / 3;
 }

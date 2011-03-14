@@ -113,6 +113,7 @@ void form::FormationManager::Exit()
 	quit_flag = true;
 }
 
+// TODO: Paralellize scenes[n].AddFormation/RemoveFormation
 void form::FormationManager::AddFormation(form::Formation & formation)
 {
 	ptr lock = GetLock();

@@ -51,14 +51,14 @@ namespace gl
 	{
 		typedef Name<TARGET> BaseClass;
 	public:
-		void Resize(int _num)
+		void Resize(size_t _num)
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;
 			GLPP_CALL(glppBufferData(TARGET, size, nullptr, GLPP_STREAM_DRAW));
 		}
 		
-		void Set(int _num, ELEMENT const * array)
+		void Set(size_t _num, ELEMENT const * array)
 		{
 			assert(BaseClass::IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * _num;

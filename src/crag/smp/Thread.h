@@ -12,8 +12,6 @@
 
 #include "smp.h"
 
-#include <SDL_thread.h>
-
 
 namespace smp
 {
@@ -60,8 +58,8 @@ namespace smp
 				return false;
 			}
 			
-			Uint32 running_thread_id = SDL_ThreadID();
-			Uint32 member_thread_id = SDL_GetThreadID(sdl_thread);
+			SDL_threadID running_thread_id = SDL_ThreadID();
+			SDL_threadID member_thread_id = SDL_GetThreadID(sdl_thread);
 			return running_thread_id == member_thread_id;
 		}
 

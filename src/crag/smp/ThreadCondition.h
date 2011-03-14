@@ -10,8 +10,6 @@
 
 #include "sys/App.h"
 
-#include <SDL_thread.h>
-
 
 namespace smp
 {

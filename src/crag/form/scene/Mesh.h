@@ -35,8 +35,8 @@ namespace form
 		MeshProperties & GetProperties();
 		MeshProperties const & GetProperties() const;
 
-		int GetIndexCount() const;
-		int GetNumPolys() const;
+		size_t GetIndexCount() const;
+		size_t GetNumPolys() const;
 		
 		Vertex & GetVertex(Point & point);
 	private:

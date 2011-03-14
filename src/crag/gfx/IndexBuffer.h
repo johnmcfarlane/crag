@@ -1,5 +1,5 @@
 /*
-` *  IndexBuffer.h
+ *  IndexBuffer.h
  *  Crag
  *
  *  Created by john on 5/3/09.
@@ -28,18 +28,18 @@ namespace gfx
 		// number of indices
 		int GetSize() const 
 		{ 
-			return size(); 
+			return static_cast<int>(size());
 		}
 		
 		int GetCapacity() const
 		{
-			return capacity();
+			return static_cast<int>(capacity());
 		}
 
 		// number of spare faces
 		int GetSlack() const 
 		{ 
-			return capacity() - size(); 
+			return GetCapacity() - GetSize();
 		}
 		
 		void Clear();

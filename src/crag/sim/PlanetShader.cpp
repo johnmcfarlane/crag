@@ -454,7 +454,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 							lattice[row][column][node_index] = n;
 							
 							// Node was retrieved from his buddy.
-							++ changed;
+							changed = true;
 							continue;
 						}
 					}
@@ -483,7 +483,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 						{
 							lattice[row][column][node_index] = n;
 							// Node was retrieved from his row neighbour.
-							++ changed;
+							changed = true;
 							continue;
 						}
 					}
@@ -513,7 +513,7 @@ void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & par
 							lattice[row][column][node_index] = n;
 							
 							// Node was retrieved from his row neighbour.
-							++ changed;
+							changed = true;
 							continue;
 						}
 					}

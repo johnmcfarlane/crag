@@ -14,10 +14,6 @@
 
 #include "glpp/gl.h"
 
-// TODO: Get rid of/update these key codes.
-#include <SDL_keycode.h>
-#include <SDL_events.h>
-
 
 #define KEY_0 SDL_SCANCODE_0
 #define KEY_1 SDL_SCANCODE_1

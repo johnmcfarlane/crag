@@ -211,9 +211,11 @@ namespace smp
 		// Grows the vector but doesn't initialize the newcomers.
 		T * grow_uninit(size_type num)
 		{
-			size_type & last_bytes = reinterpret_cast<size_type &> (last);
-			size_type increment_bytes = sizeof(T) * num;
-			size_type fetched_bytes = AtomicFetchAndAdd (last_bytes, increment_bytes);
+			typedef int atomic_type;
+            static_assert(sizeof(void *) == sizeof(atomic_type), "cannot cast pointer to int for fetch-add atomic");
+			atomic_type & last_bytes = reinterpret_cast<atomic_type &> (last);
+			atomic_type increment_bytes = sizeof(T) * num;
+			atomic_type fetched_bytes = AtomicFetchAndAdd (last_bytes, increment_bytes);
 			return reinterpret_cast<T *> (fetched_bytes);
 		}
 		

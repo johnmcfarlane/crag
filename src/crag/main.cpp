@@ -61,8 +61,6 @@ namespace
 #endif
 	
 	CONFIG_DEFINE (video_vsync, bool, true);
-	
-	char const config_filename[] = "crag.cfg";
 
 
 	//////////////////////////////////////////////////////////////////////
