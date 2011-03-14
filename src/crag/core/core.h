@@ -19,6 +19,13 @@
 
 
 //////////////////////////////////////////////////////////////////////
+// static_assert
+
+// provides some of the functionality of c++0x compile-time asserts.
+#define static_assert(pred, message) switch(0){case 0:case pred:;}
+
+
+//////////////////////////////////////////////////////////////////////
 // OBJECT_NO_COPY
 // 
 // Prevent object from being copied. 
