@@ -5,7 +5,7 @@
     Feel free to customize this file to suit your needs
 */
 
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include "SDLMain.h"
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
@@ -84,16 +84,16 @@ static NSString *getApplicationName(void)
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory:(BOOL)shouldChdir
 {
-    if (shouldChdir)
+    if (shouldChdir || true)
     {
+		int result;
         char parentdir[MAXPATHLEN];
         CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-        CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
-        if (CFURLGetFileSystemRepresentation(url2, 1, (UInt8 *)parentdir, MAXPATHLEN)) {
-            chdir(parentdir);   /* chdir to the binary app's parent */
+		if (CFURLGetFileSystemRepresentation(url, 1, (UInt8 *)parentdir, MAXPATHLEN)) {
+			strcat(parentdir, "/Contents/Resources");
+            result = chdir(parentdir);   /* chdir to the binary app's parent */
         }
         CFRelease(url);
-        CFRelease(url2);
     }
 }
 
@@ -310,8 +310,8 @@ static void CustomApplicationMain (int argc, char **argv)
 - (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString
 {
     unsigned int bufferSize;
-    unsigned int selfLen = [self length];
-    unsigned int aStringLen = [aString length];
+    NSUInteger selfLen = [self length];
+    NSUInteger aStringLen = [aString length];
     unichar *buffer;
     NSRange localRange;
     NSString *result;
