@@ -77,7 +77,28 @@
 		5213C9DD132DE48E0021EA91 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5213C998132DE48E0021EA91 /* App.cpp */; };
 		5213C9DE132DE48E0021EA91 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5213C99A132DE48E0021EA91 /* memory.cpp */; };
 		5213C9DF132DE48E0021EA91 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5213C99E132DE48E0021EA91 /* SDLMain.m */; };
+		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
+		52F819A4132DF0A60045C3A8 /* observer.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
+		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
+		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
+		52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */; };
+		52F819AC132DF13C0045C3A8 /* crag-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A9132DF13C0045C3A8 /* crag-Info.plist */; };
+		52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 52F819AA132DF13C0045C3A8 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		52F8199E132DF0940045C3A8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = script;
+			dstSubfolderSpec = 7;
+			files = (
+				52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */,
+				52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		52055D5E132DE312000C6578 /* crag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = crag.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,6 +292,11 @@
 		5213C99B132DE48E0021EA91 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		5213C99D132DE48E0021EA91 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		5213C99E132DE48E0021EA91 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
+		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
+		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
+		52F819A9132DF13C0045C3A8 /* crag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "crag-Info.plist"; sourceTree = "<group>"; };
+		52F819AB132DF13C0045C3A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +318,8 @@
 		52055D53132DE312000C6578 = {
 			isa = PBXGroup;
 			children = (
+				52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */,
+				52F819A0132DF0A60045C3A8 /* script */,
 				5213C8D8132DE48E0021EA91 /* src */,
 				52055D68132DE312000C6578 /* crag */,
 				52055D61132DE312000C6578 /* Frameworks */,
@@ -333,6 +361,8 @@
 		52055D68132DE312000C6578 /* crag */ = {
 			isa = PBXGroup;
 			children = (
+				52F819A9132DF13C0045C3A8 /* crag-Info.plist */,
+				52F819AA132DF13C0045C3A8 /* InfoPlist.strings */,
 			);
 			path = crag;
 			sourceTree = "<group>";
@@ -655,6 +685,16 @@
 			path = SDLmain;
 			sourceTree = "<group>";
 		};
+		52F819A0132DF0A60045C3A8 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				52F819A1132DF0A60045C3A8 /* main.py */,
+				52F819A2132DF0A60045C3A8 /* observer.py */,
+			);
+			name = script;
+			path = ../../script;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -665,6 +705,7 @@
 				52055D5A132DE312000C6578 /* Sources */,
 				52055D5B132DE312000C6578 /* Frameworks */,
 				52055D5C132DE312000C6578 /* Resources */,
+				52F8199E132DF0940045C3A8 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -702,8 +743,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */,
 				5213C99F132DE48E0021EA91 /* COPYING in Resources */,
 				5213C9C5132DE48E0021EA91 /* readme.html in Resources */,
+				52F819A3132DF0A60045C3A8 /* main.py in Resources */,
+				52F819A4132DF0A60045C3A8 /* observer.py in Resources */,
+				52F819AC132DF13C0045C3A8 /* crag-Info.plist in Resources */,
+				52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -781,6 +827,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		52F819AA132DF13C0045C3A8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52F819AB132DF13C0045C3A8 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		52055D7A132DE312000C6578 /* Debug */ = {
