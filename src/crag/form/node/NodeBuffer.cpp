@@ -131,10 +131,10 @@ void form::NodeBuffer::Verify() const
 	
 	VerifyObject(point_buffer);
 	
-	for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
+	/*for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
 	{
 		VerifyUsed(* q);
-	}
+	}*/
 	
 	// Rarely cause a problem and they are often the majority.
 	/*for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
