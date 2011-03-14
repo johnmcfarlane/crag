@@ -111,12 +111,12 @@ namespace core
 			
 			node(name_type name)
 			: _name(name)
+			, _next(_head)
 			{
 				// up-cast 
 				value_type * value = static_cast<value_type *>(this);
 				
 				// Insert this into list.
-				_next = _head;
 				_head = value;
 				
 				// Basically, make sure there's no multiple inheritance going on.
