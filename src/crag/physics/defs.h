@@ -19,6 +19,7 @@
 //	Also, as this project is compiled for i386 with a number of optimizations, more flags may be required.
 //	As of writing this, the current ./configure CL that works is as follows:
 //		CFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" CXXFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" ./configure --enable-double-precision --disable-demos
+#define _ODE_MISC_H_
 #include <ode/ode.h>
 
 

@@ -12,7 +12,7 @@
 
 #include "form/FormationFunctor.h"
 
-#include <ode/ode.h>
+#include "physics/defs.h"
 
 
 namespace sim 
