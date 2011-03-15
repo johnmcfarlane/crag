@@ -38,7 +38,6 @@ namespace
 		SDL_SetWindowGrab(window, gained_focus ? SDL_TRUE : SDL_FALSE);
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		SDL_ShowCursor(has_focus ? SDL_DISABLE : SDL_ENABLE);
-		SDL_SetRelativeMouseMode(has_focus ? SDL_TRUE : SDL_FALSE);
 	}
 	
 	
@@ -122,7 +121,8 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 	}
 	
 	SetFocus(true);
-	
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 	ZeroObject(button_down);
 	
 	window_size = resolution;
