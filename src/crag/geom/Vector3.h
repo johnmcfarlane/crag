@@ -153,12 +153,6 @@ template<typename S> inline S LengthSq(Vector<S, 3> const & v)
 	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
-template<typename S> S Length(class Vector<S, 3> const & a)
-{
-	S length_sqaured = LengthSq(a);
-	return Sqrt(length_sqaured);
-}
-
 template<typename S> S DotProduct(Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 {
 	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;

@@ -136,12 +136,6 @@ template<typename S> S LengthSq(Vector<S, 2> const & v)
 	return v.x * v.x + v.y * v.y;
 }
 
-template<typename S> S Length(class Vector<S, 2> const & a)
-{
-	S length_sqaured = LengthSq(a);
-	return Sqrt(length_sqaured);
-}
-
 
 //////////////////////////////////////////////////////////////////
 // specializations of Vector2
