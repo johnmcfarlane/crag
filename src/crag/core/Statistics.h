@@ -22,25 +22,13 @@
 
 namespace core
 {
-
-	////////////////////////////////////////////////////////////////////////////////
-	// forward-declaration
-	
-	class StatInterface;
-	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// classes
 	
-	class Statistics : public Enumeration <StatInterface>
+	class StatInterface 
 	{
-	public:
-	};
-
-	class StatInterface : public Statistics::node
-	{
-		typedef Statistics::node super;
-		
+		ENUMERATED_CLASS(StatInterface);
 	public:
 		StatInterface (char const * name, float verbosity);
 		
@@ -78,6 +66,12 @@ namespace core
 		}
 		
 		value_type _value;
+	};
+	
+	class Statistics : public Enumeration <StatInterface>
+	{
+		typedef Enumeration <StatInterface> super;
+	public:
 	};
 	
 }

@@ -110,7 +110,7 @@ bool ConfigManager::Load()
 		char const * name_string = config_line;
 		
 		// Get the parameter in question, given its name.
-		ConfigEntry * parameter = * find(name_string);
+		ConfigEntry * parameter = find(name_string);
 		if (parameter == nullptr)
 		{
 			std::cout << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << ".\n";

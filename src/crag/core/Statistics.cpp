@@ -18,9 +18,9 @@
 using core::StatInterface;
 
 StatInterface::StatInterface(char const * name, float verbosity)
-: super(name)
-, _verbosity(verbosity)
+: _verbosity(verbosity)
 {
+	InitEnumeration(name);
 }
 
 float StatInterface::GetVerbosity() const
@@ -41,9 +41,7 @@ bool core::operator < (StatInterface const & lhs, StatInterface const & rhs)
 	}
 	else
 	{
-		core::Statistics::node const & lhs_node = lhs;
-		core::Statistics::node const & rhs_node = rhs;
-		return lhs_node < rhs_node;
+		return Enumeration<StatInterface>::sort_function(lhs, rhs);
 	}
 }
 

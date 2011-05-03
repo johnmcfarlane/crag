@@ -472,7 +472,7 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	
 	for (core::Statistics::iterator i = core::Statistics::begin(); i != core::Statistics::end(); ++ i)
 	{
-		core::StatInterface const & stat = ref(* i);
+		core::StatInterface const & stat = * i;
 		if (Debug::GetVerbosity() > stat.GetVerbosity())
 		{
 			out_stream << stat.GetName() << ": " << stat << '\n';

@@ -22,12 +22,11 @@
 namespace core
 {
 	
-	class ConfigEntry : public core::Enumeration<ConfigEntry>::node
+	class ConfigEntry
 	{
-		typedef Enumeration<ConfigEntry>::node super;
-
+		ENUMERATED_CLASS(ConfigEntry);		
 	public:
-		ConfigEntry(char const * name) : super(name) { }
+		ConfigEntry(name_type name) { InitEnumeration(name); }
 		
 		virtual void Get(char * config_string, char * default_string) const = 0;
 

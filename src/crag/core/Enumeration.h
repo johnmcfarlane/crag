@@ -11,216 +11,92 @@
 #pragma once
 
 #include "Singleton.h"
+#include "intrusive_list.h"
+
+
+#define ENUMERATED_CLASS(CLASS) \
+public: \
+	friend class core::Enumeration<CLASS>; \
+	typedef core::Enumeration<CLASS> Enumeration; \
+	typedef intrusive::hook hook_type; \
+	typedef char const * name_type; \
+	void InitEnumeration(name_type name) { Enumeration::add(* this); _name = name; } \
+	char const * GetName() const { return _name; } \
+private: \
+	hook_type _hook; \
+	name_type _name
 
 
 namespace core
 {
 	
-	template <typename VT>
-	bool operator < (VT const & lhs, VT const & rhs)
+	template <typename ELEMENT>
+	class Enumeration
 	{
-		return strcmp(lhs.GetName(), rhs.GetName()) < 0;
-	}
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// Enumeration class
-	// 
-	// Stores an alphabetized, global list of all objects of type, ELEMENT_TYPE.
-	// Optimized to store lists of globally scoped objects.
-	// Thus, manages to avoid using dynamic allocation.
-	// ELEMENT_TYPE must be derived from Enumeration<ELEMENT_TYPE>::node.
-	// Used for development-related odds and ends such as config values and profiling stats.
-	
-	template <typename ELEMENT_TYPE> 
-	class Enumeration : public Singleton < Enumeration<ELEMENT_TYPE> >
-	{
+	protected:
+		typedef ELEMENT value_type;
+		typedef intrusive::list<value_type, & value_type::_hook> list;
 	public:
-		typedef char const * name_type;
-		typedef ELEMENT_TYPE value_type;
-
-		// c'tor
-		Enumeration()
+		typedef typename list::iterator iterator;
+		typedef typename value_type::name_type name_type;
+		
+		static void add(ELEMENT & addition)
 		{
-			sort();
+			_values.push_back(addition);
 		}
 		
+		static value_type * find(name_type name)
+		{
+			find_by_name f(name);
+			iterator i = std::find_if(_values.begin(), _values.end(), f);
+			if (i == _values.end())
+			{
+				return nullptr;
+			}
+			
+			value_type & value = * i;
+			return & value;
+		}
 		
-		// minimal stl-style iterator for scanning through the list
-		class iterator
+		static iterator begin()
+		{
+			return _values.begin();
+		}
+		
+		static iterator end()
+		{
+			return _values.end();
+		}
+		
+		static bool sort_function(name_type const & lhs, name_type const & rhs)
+		{
+			return strcmp(lhs, rhs);
+		}
+		static bool sort_function(value_type const & lhs, value_type const & rhs)
+		{
+			return sort_function(lhs._name, rhs._name);
+		}
+		class find_by_name
 		{
 		public:
-			
-			iterator() : _ptr (nullptr) { }
-			iterator(value_type * & n) : _ptr (& n) { }
-			
-			value_type * & operator * ()
+			find_by_name(name_type name) : _name(name) { }
+			bool operator()(value_type const & value) const
 			{
-				return * _ptr;
-			}
-			
-			value_type * & operator -> ()
-			{
-				return * _ptr;
-			}
-			
-			friend bool operator == (iterator const & lhs, iterator const & rhs)
-			{
-				return * lhs._ptr == * rhs._ptr;
-			}
-			
-			friend bool operator != (iterator const & lhs, iterator const & rhs)
-			{
-				return * lhs._ptr != * rhs._ptr;
-			}
-			
-			iterator & operator ++ () 
-			{
-				_ptr = & (* _ptr)->_next;
-				return * this;
-			}
-			
-			name_type GetName () const
-			{
-				Verify ();
-				Assert (* _ptr != nullptr);
-				return (* _ptr)->_name;
-			}
-			
-		private:
-			
-			void Verify() const
-			{
-				Assert(_ptr != nullptr);
-			}
-			
-			value_type * * _ptr;
-		};
-		
-		
-		// the base class for the objects to be stored in the Enumeration
-		// Derive from this the class of objects that are to be enumerated.
-		class node
-		{
-			OBJECT_NO_COPY(node);
-			
-			friend class iterator;
-			friend class Enumeration;
-			
-		public:
-			
-			node(name_type name)
-			: _name(name)
-			, _next(_head)
-			{
-				// up-cast 
-				value_type * value = static_cast<value_type *>(this);
+				// I guess the linker failed to whittle down the strings.
+				// Use the slower strcmp test instead.
+				Assert((strcmp(value._name, _name) == 0) == (value._name == _name));
 				
-				// Insert this into list.
-				_head = value;
-				
-				// Basically, make sure there's no multiple inheritance going on.
-				Assert(_head == this);
+				return value._name == _name;
 			}
-			
-			virtual ~node()
-			{
-			}
-			
-			name_type GetName() const
-			{
-				return _name;
-			}
-			
 		private:
-			
 			name_type _name;
-			value_type * _next;
 		};
-		
-		
-		// accessors
-		
-		static iterator begin ()
-		{
-			return iterator (_head);
-		}
-		
-		static iterator end ()
-		{
-			return iterator (_tail);
-		}
-		
-		static iterator find (name_type name)
-		{
-			iterator i = begin();
-			
-			while (i != end())
-			{
-				int c = strcmp(name, i.GetName());
-				if (c <= 0)
-				{
-					if (c < 0)
-					{
-						return end();
-					}
-					else
-					{
-						return i;
-					}
-				}
-				
-				++ i;
-			}
-			
-			return i;
-		}
 		
 	private:
-		
-		// Sort the contents of the list.
-		static void sort()
-		{
-			// Move the main (unsorted) list into a temporary list.
-			value_type * temp_head = _head;
-			
-			// Empty the main list.
-			_head = nullptr;
-			
-			// While the temp list is not empty,
-			while (temp_head != nullptr)
-			{
-				// remove the head of the temp list,
-				value_type & inserted = * temp_head;
-				temp_head = inserted._next;
-				
-				// and for all elements in the main list,
-				for (iterator i = begin(); ; ++ i)
-				{
-					// skip if they're in the correct order relative to the element to be inserted.
-					if (i != end())
-					{
-						value_type & insertion_point = * * i;
-						if (insertion_point < inserted)
-						{
-							continue;
-						}
-					}
-					
-					// Otherwise, here is where the inserted element should be inserted.
-					inserted._next = * i;
-					(* i) = & inserted;
-					break;
-				}
-			}
-		}
-		
-		static value_type * _head;
-		static value_type * _tail;	// never changes; needed for end()
+		static list _values;
 	};
 	
 	
-	template <typename ELEMENT_TYPE> ELEMENT_TYPE * Enumeration<ELEMENT_TYPE>::_head = nullptr;
-	template <typename ELEMENT_TYPE> ELEMENT_TYPE * Enumeration<ELEMENT_TYPE>::_tail = nullptr;
+	template <typename ELEMENT> typename Enumeration<ELEMENT>::list Enumeration<ELEMENT>::_values;
 	
 }

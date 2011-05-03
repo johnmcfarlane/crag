@@ -10,19 +10,17 @@
 
 #pragma once
 
-#include "Enumeration.h"
+#include "ConfigEntry.h"
 
 
 namespace core
 {
-	
-	// forward-declaration
-	class ConfigEntry;
-
 
 	// Contains the complete list of configuration settings.
 	class ConfigManager : public core::Enumeration<ConfigEntry>
 	{
+		typedef core::Enumeration<ConfigEntry> super;
+		typedef super::iterator iterator;
 	public:
 		ConfigManager();
 		~ConfigManager();
