@@ -25,18 +25,19 @@ namespace
 		nullptr,	// SDL_Palette *palette;
 		32,			// Uint8  BitsPerPixel;
 		4,			// Uint8  BytesPerPixel;
+		{ 0, 0 },
+		0x00ff0000,	// Uint32 Rmask;
+		0x0000ff00,	// Uint32 Gmask;
+		0x000000ff,	// Uint32 Bmask;
+		0xff000000,	// Uint32 Amask;
 		0,			// Uint8  Rloss;
 		0,			// Uint8  Gloss;
 		0,			// Uint8  Bloss;
 		0,			// Uint8  Aloss;
-		0,			// Uint8  Rshift;
+		16,			// Uint8  Rshift;
 		8,			// Uint8  Gshift;
-		16,			// Uint8  Bshift;
+		0,			// Uint8  Bshift;
 		24,			// Uint8  Ashift;
-		0x000000ff,	// Uint32 Rmask;
-		0x0000ff00,	// Uint32 Gmask;
-		0x00ff0000,	// Uint32 Bmask;
-		0xff000000,	// Uint32 Amask;
 		0,			// int refcount;
 		nullptr,	// SDL_PixelFormat *next;
 	};
