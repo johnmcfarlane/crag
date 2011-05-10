@@ -92,7 +92,7 @@ bool ConfigManager::Load()
 		if (defaults_file.getline(default_line, max_string_size - 1) == nullptr)
 		{
 			std::cout << "ConfigManager: Unrecognised default parameter on line " << line_num << ".\n";
-			std::cout << "ConfigManager: Program defaults will be used to remainder of values.\n";
+			std::cout << "ConfigManager: Program defaults will be used for remainder of values.\n";
 			break;
 		}
 
