@@ -15,8 +15,6 @@
 #include "geom/Matrix4.h"
 #include "geom/Vector4.h"
 
-#include <ostream>
-
 #if defined(PROFILE) || ! defined(NDEBUG)
 #define GFX_DEBUG
 #endif

@@ -387,24 +387,4 @@ void gfx::Debug::DrawText(char const * text, Vector2i const & position)
 	font->Print(text, position);
 }
 
-#else
-
-class null_stream : public std::ostream
-{
-public:
-	null_stream()
-#if defined(WIN32)
-		: std::ostream(std::_Noinit)
-#endif
-	{
-	}
-};
-
-null_stream out_stream;
-
-// Can't find this at link time? Make sure you're wrapping reference in a test of GetVerbosity().
-#if ! defined(WIN32)
-std::ostream & gfx::Debug::out = out_stream;
-#endif
-
 #endif
