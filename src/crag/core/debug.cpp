@@ -16,7 +16,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // DumpStream members
 
-#if DUMP
+#if defined(DUMP)
 
 DumpStream::DumpStream(std::ostream & _out)
 : out(_out)

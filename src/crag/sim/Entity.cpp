@@ -76,8 +76,8 @@ physics::Body const * sim::Entity::GetBody() const
 	return nullptr;
 }
 
-#if DUMP
-DumpStream & operator << (DumpStream & lhs, Entity & rhs)
+#if defined(DUMP)
+DumpStream & operator << (DumpStream & lhs, sim::Entity & rhs)
 {
 	return lhs;
 }

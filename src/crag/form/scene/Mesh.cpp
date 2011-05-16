@@ -135,7 +135,7 @@ gfx::IndexBuffer const & form::Mesh::GetIndices() const
 	return indices;
 }
 
-#if VERIFY
+#if defined(VERIFY)
 void form::Mesh::Verify() const
 {
 	::VerifyRef(vertices);

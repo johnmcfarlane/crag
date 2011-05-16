@@ -25,7 +25,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// Quaterna members
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const
 		{
 			VerifyTrue(nodes != nullptr);

@@ -48,7 +48,7 @@ namespace form
 			super::Free(ptr);
 		}
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const;
 #endif
 		

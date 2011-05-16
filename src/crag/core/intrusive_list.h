@@ -64,9 +64,11 @@ namespace core
 			
 			void verify() const
 			{
+#if defined(VERIFY)
 				VerifyTrue((_next == this) == (_previous == this));
 				VerifyRef(_next != nullptr);
 				VerifyRef(_previous != nullptr);
+#endif
 			}
 			
 		protected:

@@ -291,7 +291,7 @@ void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) cons
 	Assert(child_corners[2] != nullptr);
 }
 
-#if VERIFY
+#if defined(VERIFY)
 // Not valid for root_node!
 void form::Node::Verify() const
 {
@@ -338,7 +338,7 @@ void form::Node::Verify() const
 }
 #endif
 
-#if DUMP
+#if defined(DUMP)
 DUMP_OPERATOR_DEFINITION(form, Node)
 {
 	lhs << lhs.NewLine() << "children:" << rhs.GetChildren();

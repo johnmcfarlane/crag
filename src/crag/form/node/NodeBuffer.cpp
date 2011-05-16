@@ -103,7 +103,7 @@ form::NodeBuffer::~NodeBuffer()
 	Free(nodes);
 }
 
-#if VERIFY
+#if defined(VERIFY)
 void form::NodeBuffer::Verify() const
 {
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
@@ -196,10 +196,10 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
-#if DUMP
+#if defined(DUMP)
 DUMP_OPERATOR_DEFINITION(form, NodeBuffer)
 {
-	for (Quaterna * r = rhs.quaterna; r != rhs.quaterna_available_end; ++ r) {
+	for (Quaterna * r = rhs.quaterna; r != rhs.quaterna_used_end; ++ r) {
 		lhs << lhs.NewLine() << "p_score:" << r->parent_score << "; children:" << r->nodes;
 		DumpStream indented = lhs;
 		DumpStream indented_more = indented;

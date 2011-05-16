@@ -55,7 +55,7 @@ form::RootNode::RootNode(RootNode const & rhs)
 {
 }
 
-#if DUMP
+#if defined(DUMP)
 DUMP_OPERATOR_DEFINITION(form, RootNode)
 {
 	lhs << dynamic_cast<Node const &> (rhs);

@@ -84,7 +84,7 @@ public:
 	{
 		Assert (ptr != nullptr);
 
-#if VERIFY
+#if defined(VERIFY)
 		T const * element = reinterpret_cast<T *>(ptr);
 
 		// Check this is a valid element pointer for this pool. 
@@ -176,7 +176,7 @@ public:
 		return true;
 	}
 	
-#if VERIFY
+#if defined(VERIFY)
 	void Verify() const
 	{
 		VerifyTrue (free_list == nullptr || IsValidElement(reinterpret_cast<T *>(free_list)));

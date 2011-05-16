@@ -52,7 +52,7 @@ namespace form
 		gfx::IndexBuffer & GetIndices();
 		gfx::IndexBuffer const & GetIndices() const;
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const;
 #endif
 		

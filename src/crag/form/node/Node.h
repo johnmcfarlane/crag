@@ -96,7 +96,7 @@ namespace form
 		void GetChildCorners(int child_index, Point * child_corners[3]) const;
 		void GetChildNeighbours(int child_index, Node * child_neighbours[3]) const;
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const;
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(Node);

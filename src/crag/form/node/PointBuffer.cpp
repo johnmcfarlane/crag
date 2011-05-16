@@ -36,7 +36,7 @@ void form::PointBuffer::FastClear()
 	super::FastClear();
 }
 
-#if VERIFY
+#if defined(VERIFY)
 void form::PointBuffer::Verify() const
 {
 	POINT_BUFFER_LOCK;

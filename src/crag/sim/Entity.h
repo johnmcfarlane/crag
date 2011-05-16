@@ -47,7 +47,7 @@ namespace sim
 		virtual physics::Body const * GetBody() const;
 
 		// Verification
-	#if VERIFY
+	#if defined(VERIFY)
 		void Verify(Entity const & entity);
 	#endif
 	

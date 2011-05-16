@@ -36,7 +36,7 @@ namespace form
 		
 		//DUMP_OPERATOR_DECLARATION(Formation);
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const;
 		void VerifyNode(class Node const & r) const;
 		int CountNumNodes(Node const * node) const;

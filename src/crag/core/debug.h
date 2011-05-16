@@ -28,15 +28,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Verify / Dump flags
 
-#if defined (NDEBUG)
-#define VERIFY (0)
-#define DUMP (0)
-#else
-#define VERIFY (1)
-#define DUMP (0)
+#if ! defined (NDEBUG)
+#define VERIFY
+#define DUMP
+#elif defined(VERIFY) || defined(DUMP)
+#error VERIFY or DUMP defined but NDEBUG is not
 #endif
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +99,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 ////////////////////////////////////////////////////////////////////////////////
 // Verify helper functions
 
-#if (VERIFY)
+#if defined(VERIFY)
 
 #define VerifyTrue(CONDITION) do { if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } } while (false)
 
@@ -175,7 +172,7 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 ////////////////////////////////////////////////////////////////////////////////
 // Dump helper functions
 
-#if (DUMP)
+#if defined(DUMP)
 
 class DumpStream
 {

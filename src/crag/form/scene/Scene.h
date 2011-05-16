@@ -52,7 +52,7 @@ namespace form
 		Scene();
 		~Scene();
 		
-#if VERIFY
+#if defined(VERIFY)
 		void Verify() const;
 		//void Verify(Mesh const & m) const;
 #endif

@@ -75,7 +75,7 @@ namespace form
 		NodeBuffer();
 		~NodeBuffer();
 		
-#if VERIFY
+#if defined(VERIFY)
 		//void VerifyRanking(Ranking const * ranking) const;
 		void Verify() const;
 		void VerifyUsed(Quaterna const & q) const;

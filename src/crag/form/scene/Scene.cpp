@@ -44,7 +44,7 @@ form::Scene::~Scene()
 	Clear();
 }
 
-#if VERIFY
+#if defined(VERIFY)
 void form::Scene::Verify() const
 {
 	VerifyObject(node_buffer);
@@ -71,7 +71,7 @@ void form::Scene::Verify() const
 }*/
 #endif
 
-#if DUMP
+#if defined(DUMP)
 DUMP_OPERATOR_DEFINITION(form, Scene)
 {
 	DumpStream indented = lhs;

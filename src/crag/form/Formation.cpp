@@ -50,7 +50,7 @@ void form::Formation::GenerateCollisionMesh(form::Mesh & mesh, sim::Sphere3 cons
 	ForEachPoly(root_stub, collide);*/
 }
 
-/*#if DUMP
+/*#if defined(DUMP)
 void form::Formation::Dump() const
 {
 	for (IteratorConst it (& root_node); it; ++ it)
@@ -65,7 +65,7 @@ void form::Formation::Dump() const
 }
 #endif*/
 
-#if VERIFY
+#if defined(VERIFY)
 void form::Formation::Verify() const
 {
 	//VerifyNode(root_node);

@@ -57,7 +57,7 @@ int form::VertexBuffer::GetIndex(Vertex const & v) const
 	return index;
 }
 
-/*#if DUMP 
+/*#if defined(DUMP) 
 DUMP_OPERATOR_DEFINITION(form, VertexBuffer)
 {
 	for (int i = 0; i < rhs.GetMaxUsed(); ++ i) {
