@@ -58,8 +58,14 @@ namespace core
 			
 			void detach()
 			{
-				deinit();
-				init();
+				if(! is_detached())
+				{
+					deinit();
+					init();
+				}
+				
+				Assert(is_detached());
+				verify();
 			}
 			
 			void verify() const
@@ -79,9 +85,10 @@ namespace core
 				verify();
 			}
 			
+			// insert this before l
 			void insert(hook & l)
 			{
-				Assert(l.is_detached());
+				Assert(is_detached());
 				_next = & l;
 				_previous = l._previous;
 				_next->_previous = _previous->_next = this;
@@ -129,7 +136,7 @@ namespace core
 			{
 				hook & l = n.*Member;
 				l.detach();
-				insert(l);
+				l.insert(* this);
 			}
 			
 			void pop_front()
