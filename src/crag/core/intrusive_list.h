@@ -41,16 +41,6 @@ namespace core
 				deinit(); 
 			}
 			
-			size_type size() const
-			{
-				size_type s = 0;
-				for (hook * i = _next; i != this; i = i->_next)
-				{
-					++ s;
-				}
-				return s;
-			}
-			
 			bool is_detached() const 
 			{ 
 				return _next == this; 
@@ -72,8 +62,8 @@ namespace core
 			{
 #if defined(VERIFY)
 				VerifyTrue((_next == this) == (_previous == this));
-				VerifyRef(_next != nullptr);
-				VerifyRef(_previous != nullptr);
+				VerifyRef(* _next);
+				VerifyRef(* _previous);
 #endif
 			}
 			
@@ -114,7 +104,7 @@ namespace core
 		// intrusive::list
 		// A list which requires no allocation to contain members.
 		template<typename Class, hook Class::* Member>
-		class list : public hook
+		class list : protected hook
 		{
 		public:
 			typedef Class value_type;
@@ -126,6 +116,46 @@ namespace core
 				unlink();
 			}
 			
+			// capacity
+			bool empty() const
+			{
+				return is_detached();
+			}
+			
+			size_type size() const
+			{
+				size_type s = 0;
+				for (hook * i = _next; i != this; i = i->_next)
+				{
+					++ s;
+				}
+				return s;
+			}
+			
+			// access
+			value_type & front()
+			{
+				Assert(! empty());
+				return * iterator(* _next);
+			}
+			value_type const & front() const
+			{
+				Assert(! empty());
+				return * const_iterator(* _next);
+			}
+			
+			value_type & back()
+			{
+				Assert(! empty());
+				return * iterator(* _previous);
+			}
+			value_type const & back() const
+			{
+				Assert(! empty());
+				return * const_iterator(* _previous);
+			}
+			
+			// modifiers
 			void clear()
 			{
 				unlink();
@@ -144,6 +174,12 @@ namespace core
 				_next->detach();
 			}
 			
+			void pop_back()
+			{
+				_previous->detach();
+			}
+			
+			// iterators
 			class const_iterator
 			{
 				friend class list;
