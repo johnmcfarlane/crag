@@ -88,7 +88,7 @@ public:
 		T const * element = reinterpret_cast<T *>(ptr);
 
 		// Check this is a valid element pointer for this pool. 
-		Assert(IsValidElement(element));
+		VerifyTrue(IsValidElement(element));
 		
 		// Check this isn't a double-free.
 ///////////////////////////////////		Assert(! IsFree(element));
