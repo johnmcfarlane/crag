@@ -22,12 +22,13 @@ namespace physics
 namespace sim
 {
 	class Universe;
+
 	
 	// The base class for 'things' that exist in the simulation.
 	class Entity
 	{
 	public:
-		Entity(SimulationPtr const & s);
+		Entity();
 		virtual ~Entity();
 		
 		// Type-specific allocation via script.
@@ -35,7 +36,7 @@ namespace sim
 		static void Destroy(Entity & entity);
 
 		// general callbacks
-		virtual void Tick(Universe const & universe);
+		virtual void Tick();
 		virtual void Draw() const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;

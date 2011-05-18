@@ -17,8 +17,6 @@
 
 #include "MoonShader.h"
 
-#include "physics/Singleton.h"
-
 #include "form/Formation.h"
 #include "form/scene/Mesh.h"
 #include "form/FormationManager.h"
@@ -29,9 +27,8 @@
 //////////////////////////////////////////////////////////////////////
 // Planet
 
-sim::Planet::Planet(SimulationPtr const & s, sim::Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters)
-: Entity(s)
-, radius_mean(init_radius_mean)
+sim::Planet::Planet(sim::Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters)
+: radius_mean(init_radius_mean)
 , radius_min(init_radius_mean)
 , radius_max(init_radius_mean)
 {
@@ -54,16 +51,23 @@ sim::Planet::Planet(SimulationPtr const & s, sim::Vector3 const & init_pos, Scal
 	formation->SetPosition(init_pos);
 	
 	// body
-	body = new PlanetaryBody(* formation, init_radius_mean);
-	body->SetPosition(init_pos);
-	
+	{
+		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
+		body = new PlanetaryBody(physics_engine, * formation, init_radius_mean);
+		body->SetPosition(init_pos);
+	}
+
 	// register with formation manager
-	form::FormationManager::AddFormation(* formation);
+	form::AddFormationMessage message = { * formation };
+	form::FormationManager::SendMessage(message);
 }
 
 sim::Planet::~Planet()
 {
-	form::FormationManager::RemoveFormation(* formation);
+	// unregister with formation manager
+	form::RemoveFormationMessage message = { * formation };
+	form::FormationManager::SendMessage(message);
+
 	delete body;
 	delete formation;
 	delete factory;
@@ -81,14 +85,18 @@ sim::Planet * sim::Planet::Create(PyObject * args)
 		return nullptr;
 	}
 	
-	// Create planet object.
-	SimulationPtr s(Simulation::GetLock());
-	sim::Planet * planet = new sim::Planet(s, center, radius, random_seed, num_craters);
+	// create message
+	Planet * planet = nullptr;
+	AddPlanetMessage message = { center, radius, random_seed, num_craters };
 	
+	// send
+	Simulation::SendMessage(message, planet);
+
+	Assert(planet != nullptr);
 	return planet;
 }
 
-void sim::Planet::Tick(Universe const & universe)
+void sim::Planet::Tick()
 {
 	body->SetRadius(radius_max);
 }

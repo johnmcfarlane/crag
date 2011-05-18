@@ -18,9 +18,8 @@
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
-sim::Entity::Entity(SimulationPtr const & s)
+sim::Entity::Entity()
 {
-	s->AddEntity(* this);
 }
 
 sim::Entity::~Entity()
@@ -37,13 +36,14 @@ sim::Entity * sim::Entity::Create(PyObject * args)
 
 void sim::Entity::Destroy(Entity & entity)
 {
-	SimulationPtr simulation(Simulation::GetLock());
-	simulation->RemoveEntity(entity);
-	
-	delete & entity;
+	// create message
+	RemoveEntityMessage message = { entity };
+
+	// set message
+	Simulation::SendMessage(message);
 }
 
-void sim::Entity::Tick(Universe const & universe)
+void sim::Entity::Tick()
 {
 }
 
@@ -75,10 +75,3 @@ physics::Body const * sim::Entity::GetBody() const
 {
 	return nullptr;
 }
-
-#if defined(DUMP)
-DumpStream & operator << (DumpStream & lhs, sim::Entity & rhs)
-{
-	return lhs;
-}
-#endif

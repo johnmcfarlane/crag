@@ -23,11 +23,6 @@
 #include "geom/Matrix4.h"
 
 
-namespace smp 
-{ 
-	template <typename T> class ptr; 
-}
-
 namespace sim
 {
 	// dSINGLE and dDOUBLE are mutually excludive macros required by ODE.
@@ -45,7 +40,16 @@ namespace sim
 	typedef ::Ray<Scalar, 3>	Ray3;
 	typedef ::Sphere<Scalar, 3> Sphere3;
 	typedef ::Matrix4<Scalar> Matrix4;
-
-	class Simulation;
-	typedef smp::ptr<Simulation> SimulationPtr;
+	
+	// TODO: Consolidate these into a single matrix.
+	struct CameraProjection
+	{
+		Vector3 pos;
+		Matrix4 rot;
+	};
+	
+	struct SetCameraMessage
+	{
+		CameraProjection projection;
+	};
 }

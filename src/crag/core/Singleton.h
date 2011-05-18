@@ -16,6 +16,8 @@
 
 namespace core
 {
+	// TODO: Remove this singleton. It's more trouble than it's worth.
+	// TODO: (Not to mention that Singletons are considered harmful.)
 
 	// Any class, S, derived from Singleton is guaranteed to have no more than one instance.
 	// If multiple objects of class, S, are instanced, the program will assert.
@@ -32,15 +34,15 @@ namespace core
 	public:
 		
 		// returns the singleton or nullptr if it is not instanced.
-		static S * GetPtr()
+		static S * Ptr()
 		{
 			return the_instance;
 		}
 
 		// returns the singleton; assumes it is instanced. 
-		static S & Get()
+		static S & Ref()
 		{
-			return ref(GetPtr());
+			return ref(Ptr());
 		}
 
 	protected:
@@ -65,5 +67,5 @@ namespace core
 		static S * the_instance;
 	};
 
-	template<typename T> T * core::Singleton<T>::the_instance = nullptr;
+	template<typename S> S * Singleton<S>::the_instance = nullptr;
 }

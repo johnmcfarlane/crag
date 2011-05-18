@@ -10,10 +10,6 @@
 
 #pragma once
 
-#include "form/scene/Polyhedron.h"
-
-#include "form/node/NodeBuffer.h"
-
 #include "sim/defs.h"
 
 #include <set>
@@ -25,11 +21,14 @@ class ProcessNodeFunctor;
 
 namespace form
 {
-	typedef std::set<class Formation *> FormationSet;
-	
+	class Formation;
+	class Polyhedron;
 	class FormationFunctor;
-	class MeshBufferObject;
+	class Mesh;
+	class NodeBuffer;
 	
+	typedef std::set<class Formation *> FormationSet;
+		
 	// A representation (view?) of all the existing formations.
 	// The scene is relative to a point in space which becomes the local origin for the scene.
 	// The reason for the class is that the coordinate space of even a single large formation
@@ -76,11 +75,7 @@ namespace form
 		
 		void Tick();
 		void ForEachFormation(FormationFunctor & f) const;
-		void GenerateMesh(class Mesh & mesh);
-		
-		Polyhedron & GetPolyhedron(Formation const & formation);
-		Polyhedron const & GetPolyhedron(Formation const & formation) const;
-		
+		void GenerateMesh(Mesh & mesh) const;
 	private:
 		
 		///////////////////////////////////////////////////////
@@ -99,7 +94,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Attributes
 		
-		NodeBuffer node_buffer;
+		NodeBuffer * node_buffer;
 		
 		FormationMap formation_map;		// The internal record of formations.
 		sim::Ray3 camera_ray;			// The observer position/direction in universal coordinates.

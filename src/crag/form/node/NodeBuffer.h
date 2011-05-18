@@ -171,6 +171,7 @@ namespace form
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
+		// TODO: Spin lock instead?
 		mutable smp::Mutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;

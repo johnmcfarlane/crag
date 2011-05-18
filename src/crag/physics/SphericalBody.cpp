@@ -12,14 +12,14 @@
 
 #include "SphericalBody.h"
 
-#include "Singleton.h"
+#include "Engine.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // SphericalBody
 
-physics::SphericalBody::SphericalBody(bool movable, Scalar radius)
-: Body(dCreateSphere(Singleton::Get().space, radius), movable)
+physics::SphericalBody::SphericalBody(physics::Engine & physics_engine, bool movable, Scalar radius)
+: Body(physics_engine, dCreateSphere(physics_engine.space, radius), movable)
 {
 }
 
@@ -43,16 +43,16 @@ void physics::SphericalBody::SetDensity(Scalar density)
 	dBodySetMass (body_id, & m);
 }
 
-bool physics::SphericalBody::OnCollision(Body & that_body)
+bool physics::SphericalBody::OnCollision(Engine & engine, Body & that_body)
 {
-	return that_body.OnCollisionWithSphericalBody(* this, geom_id);
+	return that_body.OnCollisionWithSphericalBody(engine, * this, geom_id);
 }
 
-bool physics::SphericalBody::OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id)
+bool physics::SphericalBody::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id)
 {
 	Assert(that_geom_id == that_sphere.geom_id);
 	
 	// There is no special code for sphere-sphere collision. 
-	Singleton::Get().OnCollision(geom_id, that_geom_id);
+	engine.OnCollision(geom_id, that_geom_id);
 	return true;
 }

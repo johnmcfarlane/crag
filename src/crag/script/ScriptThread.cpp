@@ -17,6 +17,7 @@
 #include "sim/Planet.h"
 #include "sim/Star.h"
 #include "sim/Simulation.h"
+#include "sim/Universe.h"
 
 
 #if defined(NDEBUG)
@@ -35,10 +36,9 @@ FILE_LOCAL_BEGIN
 
 PyObject * time(PyObject * self, PyObject * args)
 {
-	sim::Simulation::ptr sim_lock(sim::Simulation::GetLock());
-	
-	sim::Universe const & universe = sim_lock->GetUniverse();
-	sys::TimeType time = universe.GetTime();
+	sim::Simulation & simulation = sim::Simulation::Ref();
+
+	sys::TimeType time = simulation.GetTime();
 	return Py_BuildValue("d", time);
 }
 
@@ -48,7 +48,7 @@ PyObject * get_event(PyObject * self, PyObject * args)
 	bool blocking = true;
 	while (sys::GetEvent(event, blocking))
 	{
-		if (sim::Simulation::HandleEvent(event))
+		if (sim::Simulation::Ref().HandleEvent(event))
 		{
 			// The simulation object caught the event.
 			continue;
@@ -99,7 +99,6 @@ PyObject * observer_add_rotation(PyObject * self, PyObject * args)
 	}
 	
 	sim::Observer * observer = script::Class<sim::Observer>::GetNativeObject(self);
-	sim::Simulation::ptr sim_lock(sim::Simulation::GetLock());
 	observer->AddRotation(rotations);
 
 	Py_RETURN_NONE;
@@ -126,19 +125,23 @@ script::ScriptThread::~ScriptThread()
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
-void script::ScriptThread::Run(char const * source_filename)
+void script::ScriptThread::Run()
 {
 	Py_Initialize();
-	{
-		PyObject * crag_module = Py_InitModule("crag", crag_methods);
-		Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.", nullptr);
-		Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
-		Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
-		Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);	
-		
-		char mode[] = "r";
-		PyObject* PyFileObject = PyFile_FromString(const_cast<char *>(source_filename), mode);
-		PyRun_SimpleFile(PyFile_AsFile(PyFileObject), source_filename);
-	}
+	Run("./script/main.py");
+	exit(0);	// TODO
 	Py_Finalize();
+}
+
+void script::ScriptThread::Run(char const * source_filename)
+{
+	PyObject * crag_module = Py_InitModule("crag", crag_methods);
+	Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.", nullptr);
+	Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
+	Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
+	Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);	
+	
+	char mode[] = "r";
+	PyObject* PyFileObject = PyFile_FromString(const_cast<char *>(source_filename), mode);
+	PyRun_SimpleFile(PyFile_AsFile(PyFileObject), source_filename);
 }

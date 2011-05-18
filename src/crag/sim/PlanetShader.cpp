@@ -187,11 +187,6 @@ sim::PlanetShader::PlanetShader(Planet & init_planet)
 
 void sim::PlanetShader::SetOrigin(Vector3d const & origin)
 {
-	// Get a lock on the simulation object 
-	// as this is likely to be run from a different thread.
-	// TODO: This is silly. So is TickModels. Fix it. 
-	Simulation::ptr lock(Simulation::GetLock());
-	
 	center = planet.GetPosition() - origin;
 }
 

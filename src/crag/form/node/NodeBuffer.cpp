@@ -254,8 +254,11 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 		DecreaseNodes(new_quaterna_used_end);
 		UnlockTree();
 	}
+	
+	VerifyObject(* this);
 }
 
+// TODO: Are these needed now?
 void form::NodeBuffer::LockTree() const
 {
 	tree_mutex.Lock();
@@ -592,8 +595,6 @@ void form::NodeBuffer::CollapseNodes(Node & root)
 	
 	// Swap used nodes in unused range with unused nodes in used range.
 	FixUpDecreasedNodes(old_quaterna_used_end);
-	
-	VerifyObject(* this);
 }
 
 void form::NodeBuffer::CollapseNode(Node & node)
@@ -798,8 +799,6 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
 	
 	// Because the nodes aren't in the correct order, decreasing them is somewhat more tricky.
 	FixUpDecreasedNodes(old_quaterna_used_end);
-
-	std::sort(quaterna_used_end, old_quaterna_used_end, QuaternaSortUnused);
 	
 	VerifyObject (* this);
 }
@@ -853,12 +852,15 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 	quaterna_used_end_target = quaterna_used_end;
 }
 
+#define WIP 0
 void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 {
 	// From the new used quaterna value, figure out new used node value.
+#if (WIP == 0)
 	int new_num_quaterna_used = quaterna_used_end - quaterna;
 	int new_num_nodes_used = new_num_quaterna_used << 2;	// 4 nodes per quaterna
 	nodes_used_end = nodes + new_num_nodes_used;
+#endif
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);
 	
 	// Use this pointer to walk down the used quaterna array.
@@ -892,14 +894,20 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 			SubstituteChildren(nodes, substitute_nodes);
 			std::swap(used_quaterna->nodes, unused_quaterna->nodes);
 		}
+		
+#if (WIP == 1)
+		// Finally steam-roll over whatever the nodes pointer was because 
+		// we want unused quaterna to point to their equivalent in the node array;
+		nodes_used_end -= 4;
+		unused_quaterna->nodes = nodes_used_end;
+#endif
 	}
 
-#if ! defined(NDEBUG)
-	while ((-- used_quaterna) >= quaterna)
-	{
-		Assert(used_quaterna->nodes != nullptr);
-	}
-#endif
+	// Finally, the nodes were swapped between used and unused quats in any old order.
+	// But the unused nodes need to line up with the unused quaterna.
+	std::sort(quaterna_used_end, old_quaterna_used_end, QuaternaSortUnused);
+	
+	VerifyObject(* this);
 }
 
 template <typename FUNCTOR> 

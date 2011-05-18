@@ -15,7 +15,6 @@
 #include "Simulation.h"
 #include "Universe.h"
 
-#include "physics/Singleton.h"
 #include "physics/SphericalBody.h"
 
 #include "geom/VectorOps.h"
@@ -24,6 +23,7 @@
 #include "core/ConfigEntry.h"
 
 #include "gfx/Debug.h"
+#include "gfx/Scene.h"
 
 
 namespace 
@@ -46,9 +46,9 @@ namespace
 }
 
 
-sim::Observer::Observer(SimulationPtr const & s, Vector3 const & init_pos)
-: Entity(s)
-, sphere(true, observer_radius)
+sim::Observer::Observer(Vector3 const & init_pos)
+: Entity()
+, sphere(Simulation::Ref().GetPhysicsEngine(), true, observer_radius)
 , speed(0)
 , speed_factor(observer_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
@@ -63,7 +63,7 @@ sim::Observer::Observer(SimulationPtr const & s, Vector3 const & init_pos)
 	
 	SetPosition(init_pos);
 
-	gfx::Scene & scene = s->GetScene();
+	gfx::Scene & scene = Simulation::Ref().GetScene();
 	scene.AddLight(light);
 }
 
@@ -80,11 +80,14 @@ sim::Observer * sim::Observer::Create(PyObject * args)
 	{
 		return nullptr;
 	}
-	
-	// Create planet object.
-	SimulationPtr s(Simulation::GetLock());
-	Observer * observer = new Observer(s, center);
-	
+
+	// create message
+	Observer * observer = nullptr;
+	AddObserverMessage message = { center };
+
+	// send
+	Simulation::SendMessage(message, observer);
+
 	return observer;
 }
 
@@ -102,7 +105,7 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 		Vector3(observer_torque_impulse, observer_torque_impulse, observer_torque_impulse),
 	};
 	
-	Scalar inv_t = 1.f / Universe::target_frame_seconds;
+	Scalar inv_t = 1.f / Simulation::target_frame_seconds;
 
 	for (int d = 0; d < 2; ++ d)
 	{
@@ -121,7 +124,7 @@ void sim::Observer::SetSpeedFactor(int _speed_factor)
 	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
-void sim::Observer::Tick(Universe const & universe)
+void sim::Observer::Tick()
 {
 	// Camera input.
 	if (sys::HasFocus()) 
@@ -136,9 +139,12 @@ void sim::Observer::Tick(Universe const & universe)
 	// Gravity
 	Vector3 const & position = GetPosition();
 	Scalar mass = sphere.GetMass();
-	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
-	Vector3 gravitational_force = gravitational_force_per_second / Universe::target_frame_seconds;
 	
+	Universe & universe = Simulation::Ref().GetUniverse();
+	
+	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
+	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+
 	Vector3 scaled_observer_gravity_center = observer_gravity_center * sphere.GetRadius();
 	sphere.AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
 	
@@ -150,7 +156,8 @@ void sim::Observer::Tick(Universe const & universe)
 	Matrix4 rot;
 	sphere.GetRotation(rot);
 	
-	Simulation::SetCameraPos(position, rot);
+	SetCameraMessage message = { position, rot };
+	Simulation::SendMessage(message);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const

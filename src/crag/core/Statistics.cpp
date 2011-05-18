@@ -28,21 +28,22 @@ float StatInterface::GetVerbosity() const
 	return _verbosity;
 }
 
-bool core::operator < (StatInterface const & lhs, StatInterface const & rhs)
-{
-	float verbosity_difference = lhs.GetVerbosity() - rhs.GetVerbosity();
-	if (verbosity_difference < 0)
-	{
-		return true;
-	}
-	else if (verbosity_difference > 0)
-	{
-		return false;
-	}
-	else
-	{
-		return Enumeration<StatInterface>::sort_function(lhs, rhs);
-	}
-}
+// TODO: Reinstate. (Oh, and what does it do??)
+//bool core::operator < (StatInterface const & lhs, StatInterface const & rhs)
+//{
+//	float verbosity_difference = lhs.GetVerbosity() - rhs.GetVerbosity();
+//	if (verbosity_difference < 0)
+//	{
+//		return true;
+//	}
+//	else if (verbosity_difference > 0)
+//	{
+//		return false;
+//	}
+//	else
+//	{
+//		return Enumeration<StatInterface>::sort_function(lhs, rhs);
+//	}
+//}
 
 #endif

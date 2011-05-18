@@ -13,6 +13,8 @@
 #include "Renderer.h"
 #include "Color.h"
 #include "Debug.h"
+#include "Pov.h"
+#include "Scene.h"
 #include "Skybox.h"
 #include "Light.h"
 
@@ -28,10 +30,6 @@
 #include "sim/Simulation.h"
 
 #include <sstream>
-
-
-using sys::TimeType;
-using sys::GetTime;
 
 
 #if ! defined(NDEBUG)
@@ -51,10 +49,10 @@ namespace
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
-	STAT (idle, double, .18);
-	STAT (fps, float, .0);
-	STAT (pos, sim::Vector3, .3);
-	STAT_DEFAULT (rot, sim::Matrix4, .9);
+	STAT (idle, double, .18f);
+	STAT (fps, float, .0f);
+	STAT (pos, sim::Vector3, .3f);
+	STAT_DEFAULT (rot, sim::Matrix4, .9f);
 	
 	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
 	{
@@ -92,7 +90,7 @@ namespace
 
 
 gfx::Renderer::Renderer()
-: last_frame_time(GetTime())
+: last_frame_time(sys::GetTime())
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
@@ -214,15 +212,15 @@ void gfx::Renderer::ToggleWireframe()
 	wireframe = ! wireframe;
 }
 
-TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
+sys::TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 {
 	// Render the scene to the back buffer.
 	RenderScene(scene);	
 
-	TimeType frame_time;
+	sys::TimeType frame_time;
 	
 	// A guestimate of the time spent waiting for vertical synchronization. 
-	TimeType idle;
+	sys::TimeType idle;
 	
 	// Flip the front and back buffers and get timing information.
 	if (enable_vsync)
@@ -232,16 +230,16 @@ TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 		// but it often does. I'm especially baffled by the glFlush().
 		
 		glFlush();
-		TimeType pre_finish = GetTime();
+		sys::TimeType pre_finish = sys::GetTime();
 		sys::SwapBuffers();
 		glFinish();
-		frame_time = GetTime();
+		frame_time = sys::GetTime();
 		idle = frame_time - pre_finish;
 	}
 	else
 	{
 		SDL_GL_SwapBuffers();
-		frame_time = GetTime();
+		frame_time = sys::GetTime();
 		idle = 0;
 	}
 	
@@ -373,7 +371,8 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	gl::Enable(GL_DEPTH_TEST);
 	
 	// Do the rendering
-	form::FormationManager::Render(scene.pov, color);
+	form::FormationManager & fm = form::FormationManager::Ref();
+	fm.Render(scene.pov, color);
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
 	// Reset state

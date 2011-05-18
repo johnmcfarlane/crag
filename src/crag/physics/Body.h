@@ -16,12 +16,12 @@
 namespace physics
 {
 	class SphericalBody;
-	class Singleton;
+	class Engine;
 
 	class Body
 	{
 	protected:
-		Body(dGeomID init_geom_id, bool movable);
+		Body(Engine & engine, dGeomID init_geom_id, bool movable);
 	public:
 		virtual ~Body();
 		
@@ -40,8 +40,8 @@ namespace physics
 		void AddRelForce(Vector3 const & force);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
-		virtual bool OnCollision(Body & that_body) = 0;
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
+		virtual bool OnCollision(Engine & engine, Body & that_body) = 0;
+		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id);
 		
 	protected:
 		dGeomID geom_id;	// the collision info

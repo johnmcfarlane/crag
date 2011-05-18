@@ -1,12 +1,12 @@
-/*
- *  form/Scene.cpp
- *  Crag
- *
- *  Created by John on 2/8/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+// form/Scene.cpp
+// Crag
+//
+// Created by John on 2/8/10.
+// Copyright 2009, 2010 John McFarlane. All rights reserved.
+// This program is distributed under the terms of the GNU General Public License.
+//
+
 
 #include "pch.h"
 
@@ -16,8 +16,12 @@
 
 #include "form/Formation.h"
 #include "form/FormationFunctor.h"
+#include "form/FormationManager.h"
 
+#include "form/node/NodeBuffer.h"
 #include "form/node/Shader.h"
+
+#include "form/scene/Polyhedron.h"
 
 #include "core/ConfigEntry.h"
 
@@ -32,7 +36,7 @@ namespace
 // form::Scene
 
 form::Scene::Scene()
-: node_buffer()
+: node_buffer(new NodeBuffer)
 , camera_ray(sim::Ray3::Zero())
 , camera_ray_relative(sim::Ray3::Zero())
 , origin(sim::Vector3::Zero())
@@ -42,13 +46,14 @@ form::Scene::Scene()
 form::Scene::~Scene()
 {
 	Clear();
+	delete node_buffer;
 }
 
 #if defined(VERIFY)
 void form::Scene::Verify() const
 {
-	VerifyObject(node_buffer);
-
+	VerifyObject(* node_buffer);
+	
 	//	int count_num_nodes = CountChildNodes();
 	//	int buffer_num_nodes = node_buffer.GetNumNodes();
 	
@@ -101,12 +106,12 @@ void form::Scene::Clear()
 
 form::NodeBuffer & form::Scene::GetNodeBuffer()
 {
-	return node_buffer;
+	return ref(node_buffer);
 }
 
 form::NodeBuffer const & form::Scene::GetNodeBuffer() const
 {
-	return node_buffer;
+	return ref(node_buffer);
 }
 
 sim::Ray3 const & form::Scene::GetCameraRay() const
@@ -130,7 +135,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 {
 	if (o != origin) 
 	{
-		node_buffer.LockTree();
 		origin = o;
 		
 		// Setting camera ray to itself cause the local camera ray to be recalculated.
@@ -138,8 +142,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 		// The difficult bit: fix all our data which relied on the old origin.
 		ResetFormations();
-
-		node_buffer.UnlockTree();
 	}
 }
 
@@ -174,7 +176,7 @@ void form::Scene::RemoveFormation(Formation const & formation)
 
 void form::Scene::Tick()
 {
-	node_buffer.Tick(camera_ray_relative);
+	node_buffer->Tick(camera_ray_relative);
 	TickModels();
 }
 
@@ -191,22 +193,10 @@ void form::Scene::ForEachFormation(FormationFunctor & f) const
 	}
 }
 
-void form::Scene::GenerateMesh(Mesh & mesh) 
+void form::Scene::GenerateMesh(Mesh & mesh) const
 {
-	node_buffer.GenerateMesh(mesh);
+	node_buffer->GenerateMesh(mesh);
 	mesh.GetProperties().origin = origin;
-}
-
-form::Polyhedron & form::Scene::GetPolyhedron(Formation const & formation)
-{
-	return formation_map[& formation];
-}
-
-form::Polyhedron const & form::Scene::GetPolyhedron(Formation const & formation) const
-{
-	FormationMap::const_iterator i = formation_map.find (& formation);
-	Assert(i != formation_map.end());
-	return i->second;
 }
 
 // Currently just updates the formation_map contents.
@@ -224,7 +214,7 @@ void form::Scene::ResetPolyhedronOrigins()
 	{
 		FormationPair & pair = * i;
 		Polyhedron & polyhedron = pair.second;
-		polyhedron.SetOrigin(origin, node_buffer.GetPoints());
+		polyhedron.SetOrigin(origin, node_buffer->GetPoints());
 	}
 }
 
@@ -237,7 +227,7 @@ void form::Scene::ResetFormations()
 		DeinitPolyhedron(pair);
 	}
 	
-	node_buffer.OnReset();
+	node_buffer->OnReset();
 
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
@@ -252,7 +242,9 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 	
 	if (root_node.IsExpandable()) 
 	{
-		node_buffer.ExpandNode(root_node);
+		VerifyObject(* this);
+		node_buffer->ExpandNode(root_node);
+		VerifyObject(* this);
 	}
 }
 
@@ -262,7 +254,7 @@ void form::Scene::InitPolyhedron(FormationPair & pair)
 	Formation const & formation = ref(pair.first);
 	Polyhedron & polyhedron = pair.second;
 
-	PointBuffer & points = node_buffer.GetPoints();
+	PointBuffer & points = node_buffer->GetPoints();
 	
 	polyhedron.Init(formation, origin, points);
 }
@@ -273,8 +265,9 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron.root_node;
-	node_buffer.CollapseNodes(root_node);
+	
+	node_buffer->CollapseNodes(root_node);
 	
 	// Continue deinitialization somewhere a bit calmer.
-	polyhedron.Deinit(node_buffer.GetPoints());
+	polyhedron.Deinit(node_buffer->GetPoints());
 }

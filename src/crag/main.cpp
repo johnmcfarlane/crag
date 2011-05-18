@@ -1,12 +1,11 @@
-/*
- *  Crag.cpp
- *  Crag
- *
- *  Created by john on 6/13/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+// Crag.cpp
+// Crag
+//
+// Created by john on 6/13/09.
+// Copyright 2009, 2010 John McFarlane. All rights reserved.
+// This program is distributed under the terms of the GNU General Public License.
+//
 
 
 #include "pch.h"
@@ -14,9 +13,7 @@
 #include "core/ConfigManager.h"
 
 #include "smp/ForEach.h"
-#include "smp/Thread.h"
 
-#include "physics/Singleton.h"
 #include "form/FormationManager.h"
 #include "sim/Simulation.h"
 
@@ -83,29 +80,26 @@ namespace
 		
 		smp::Init(1);
 
-		physics::Singleton physics;
-		
 		{
 			form::FormationManager formation_manager;
-			smp::Thread<form::FormationManager> formation_thread;
-			formation_thread.Launch<& form::FormationManager::Run>(formation_manager);
+			formation_manager.Launch();
 			
 			sim::Simulation simulation(true);
-			smp::Thread<sim::Simulation> simulation_thread;
-			simulation_thread.Launch<& sim::Simulation::Run>(simulation);
+			simulation.Launch();
+			
+			smp::Sleep(0.25);
 			
 			// Launch the script engine.
 			// Note: this needs to run in the main thread because SDL
 			// was initialized from here and script uses SDL events fns. 
+			// Hence we call Run instead of Launch and Join.
 			script::ScriptThread script_thread;
-			script_thread.Run("./script/main.py");
-
-			{
-				sim::Simulation::ptr sim_lock = sim::Simulation::GetLock();
-				form::FormationManager::ptr form_lock = form::FormationManager::GetLock();
-				simulation.Exit();
-				formation_manager.Exit();
-			}
+			script_thread.Run();
+			
+			// Terminate the actors.
+			smp::TerminateMessage message;
+			sim::Simulation::SendMessage(message);
+			form::FormationManager::SendMessage(message);
 		}
 		
 		smp::Deinit();

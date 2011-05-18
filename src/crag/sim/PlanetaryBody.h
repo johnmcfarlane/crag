@@ -28,7 +28,7 @@ namespace sim
 	class PlanetaryBody : public physics::SphericalBody
 	{
 	public:
-		PlanetaryBody(form::Formation const & formation, physics::Scalar radius);
+		PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius);
 		
 	private:
 		virtual bool OnCollision(Body & that_body);

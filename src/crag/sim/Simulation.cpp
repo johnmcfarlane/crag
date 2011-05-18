@@ -15,18 +15,19 @@
 #include "axes.h"
 #include "Firmament.h"
 #include "Observer.h"
+#include "Planet.h"
 #include "Star.h"
+#include "Universe.h"
 
-#include "physics/Singleton.h"
+#include "physics/Engine.h"
 
 #include "form/scene/SceneThread.h"
 #include "form/FormationManager.h"
 
+#include "gfx/Renderer.h"
+#include "gfx/Scene.h"
+
 #include "core/ConfigEntry.h"
-
-
-using sys::TimeType;
-using sys::GetTime;
 
 
 namespace 
@@ -49,56 +50,140 @@ namespace
 #endif
 	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
-	CONFIG_DEFINE (startup_grace_period, TimeType, 1.f);
+	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 1.f);
 	
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::Simulation
+
+CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
 sim::Simulation::Simulation(bool init_enable_vsync)
 : enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
-, exit(false)
 , capture_frame(0)
-, start_time(GetTime())
+, start_time(sys::GetTime())
+, universe(new Universe)
+, physics_engine(new physics::Engine)
+, scene(new gfx::Scene)
+, renderer(new gfx::Renderer)
 {
-	scene.SetResolution(sys::GetWindowSize());
-	scene.SetSkybox(new Firmament);
+	scene->SetResolution(sys::GetWindowSize());
+	scene->SetSkybox(new Firmament);
+	
+	Assert(singleton == nullptr);
+	singleton = this;
 }
 
-sim::Universe const & sim::Simulation::GetUniverse() const
+sim::Simulation::~Simulation()
+{
+	Assert(singleton == this);
+	singleton = nullptr;
+
+	delete universe;
+	universe = nullptr;
+	
+	delete renderer;
+	renderer = nullptr;
+	
+	delete scene;
+	scene = nullptr;
+
+	delete physics_engine;
+	physics_engine = nullptr;
+}
+
+void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
+{
+}
+
+void sim::Simulation::OnMessage(AddObserverMessage const & message, Observer * & reply)
+{
+	reply = new Observer(message.center);
+	
+	AddEntity(* reply);
+}
+
+#include "Planet.h"
+void sim::Simulation::OnMessage(AddPlanetMessage const & message, Planet * & reply)
+{
+	reply = new Planet(	message.center,
+						message.radius,
+						message.random_seed,
+						message.num_craters);
+	
+	AddEntity(* reply);
+}
+
+void sim::Simulation::OnMessage(AddStarMessage const & message, Star * & reply)
+{
+	reply = new Star(message.orbital_radius, message.orbital_year);
+	
+	AddEntity(* reply);
+}
+
+void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
+{
+	RemoveEntity(message.entity);
+	delete & message.entity;
+}
+
+void sim::Simulation::OnMessage(SetCameraMessage const & message)
+{
+	scene->SetCamera(message.projection.pos, message.projection.rot);
+
+	form::FormationManager::SendMessage(message);
+}
+
+sys::TimeType sim::Simulation::GetTime() const
+{
+	return universe->GetTime();
+}
+
+sim::Universe & sim::Simulation::GetUniverse() 
+{
+	return ref(universe);
+}
+
+/*sim::UniverseResource const & sim::Simulation::GetUniverse() const
 {
 	return universe;
+}*/
+
+physics::Engine & sim::Simulation::GetPhysicsEngine()
+{
+	return ref(physics_engine);
 }
+
+/*physics::Engine const & sim::Simulation::GetPhysicsEngine() const
+{
+	return ref(physics_engine);
+}*/
 
 gfx::Scene & sim::Simulation::GetScene()
 {
-	return scene;
+	return ref(scene);
 }
 
-gfx::Scene const & sim::Simulation::GetScene() const
+/*gfx::Scene const & sim::Simulation::GetScene() const
 {
 	return scene;
-}
+}*/
 
 void sim::Simulation::AddEntity(Entity & entity)
 {
-	universe.AddEntity(entity);
-	scene.AddEntity(entity);
+	universe->AddEntity(entity);
+	scene->AddEntity(entity);
 }
 
 void sim::Simulation::RemoveEntity(Entity & entity)
 {
-	universe.RemoveEntity(entity);
-	scene.RemoveEntity(entity);
-}
+	universe->RemoveEntity(entity);
+	scene->RemoveEntity(entity);
 
-void sim::Simulation::SetCameraPos(Vector3 const & pos, Matrix4 const & rot)
-{
-	Simulation & sim = Get();	
-	sim.scene.SetCamera(pos, rot);
-	
-	form::FormationManager::SetCameraPos(axes::GetCameraRay(pos, rot));
 }
 
 void sim::Simulation::Run()
@@ -108,13 +193,13 @@ void sim::Simulation::Run()
 	// TODO: Doesn't belong here.
 	sys::MakeCurrent();
 	
-	TimeType next_tick_time = GetTime();
+	sys::TimeType next_tick_time = sys::GetTime();
 	
-	while (! exit)
+	while (ProcessMessages())
 	{
-		TimeType time = GetTime();
-		TimeType time_to_next_time = next_tick_time - time;
-		if (time_to_next_time > 0)
+		sys::TimeType time = sys::GetTime();
+		sys::TimeType time_to_next_tick = next_tick_time - time;
+		if (time_to_next_tick > 0)
 		{
 			Render();
 		}
@@ -122,13 +207,13 @@ void sim::Simulation::Run()
 		{
 			Tick();
 			
-			if (time_to_next_time > 1)
+			if (time_to_next_tick > 1)
 			{
 				next_tick_time = time;
 			}
 			else
 			{
-				next_tick_time += Universe::target_frame_seconds;
+				next_tick_time += target_frame_seconds;
 			}
 		}
 	}
@@ -136,40 +221,39 @@ void sim::Simulation::Run()
 	//DUMP_OBJECT(* form_thread, std::cout);
 }
 
-void sim::Simulation::Exit()
-{
-	exit = true;
-}
-
 void sim::Simulation::Tick()
 {
 	// Tick the entities.
 	if (! paused) 
 	{
-		Simulation::ptr lock = GetLock();
-
-		bool physics = GetTime() > start_time + startup_grace_period;
-		universe.Tick(physics);
+		bool freeze_physics = sys::GetTime() < start_time + startup_grace_period;
+		if (! freeze_physics)
+		{
+			physics_engine->Tick(target_frame_seconds);
+		}
+		
+		universe->Tick(target_frame_seconds);
 	}
 }
 
 void sim::Simulation::Render()
 {
-	form::FormationManager::PollMesh();
+	form::FormationManager & formation_manager = form::FormationManager::Ref();
+	formation_manager.PollMesh();
 	
 	PrintStats();
 
 	// Render scene and get an estimation of our load on system.
-	TimeType frame_time = renderer.Render(scene, enable_vsync);
+	sys::TimeType frame_time = renderer->Render(* scene, enable_vsync);
 	
 	// Regulator feedback.
-	TimeType target_frame_time = Universe::target_frame_seconds;
+	sys::TimeType target_frame_time = target_frame_seconds;
 	if (enable_vsync)
 	{
 		target_frame_time *= target_work_proportion;
 	}
 	
-	form::FormationManager::SampleFrameRatio(frame_time, target_frame_time);
+	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
 	
 	// Screen capture.
 	if (capture)
@@ -216,9 +300,8 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 	{
 		case SDL_VIDEORESIZE:
 		{
-			sim::Simulation & s = Get();
-			s.scene.SetResolution(Vector2i(event.resize.w, event.resize.h));
-			form::FormationManager::ResetRegulator();
+			scene->SetResolution(Vector2i(event.resize.w, event.resize.h));
+			form::FormationManager::Ref().ResetRegulator();
 			return true;
 		}
 
@@ -227,7 +310,7 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 			
 		case SDL_ACTIVEEVENT:
 		{
-			form::FormationManager::ResetRegulator();			
+			form::FormationManager::Ref().ResetRegulator();			
 			return true;
 		}
 
@@ -239,8 +322,6 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 // returns false iff the program should quit.
 bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 {
-	sim::Simulation & s = Get();
-
 	enum ModifierCombo 
 	{
 		COMBO_NONE,
@@ -286,35 +367,35 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			switch (key_code)
 			{
 				case KEY_RETURN:
-					s.paused = ! s.paused;
+					paused = ! paused;
 					return true;
 					
 				case KEY_C:
-					s.renderer.ToggleCulling();
+					renderer->ToggleCulling();
 					return true;
 					
 				case KEY_F:
-					form::FormationManager::ToggleFlatShaded();
+					form::FormationManager::Ref().ToggleFlatShaded();
 					return true;
 					
 				case KEY_G:
-					s.universe.ToggleGravity();
+					universe->ToggleGravity();
 					return true;
 					
 				case KEY_I:
-					form::FormationManager::ToggleSuspended();
+					form::FormationManager::Ref().ToggleSuspended();
 					return true;
 					
 				case KEY_L:
-					s.renderer.ToggleLighting();
+					renderer->ToggleLighting();
 					return true;
 					
 				case KEY_O:
-					s.capture = ! s.capture;
+					capture = ! capture;
 					return true;
 					
 				case KEY_P:
-					s.renderer.ToggleWireframe();
+					renderer->ToggleWireframe();
 					return true;
 					
 				default:
@@ -329,13 +410,12 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			{
 				case KEY_C:
 				{
-					physics::Singleton & physics = physics::Singleton::Get();
-					physics.ToggleCollisions();
+					physics_engine->ToggleCollisions();
 					return true;
 				}
 					
 				case KEY_I:
-					form::FormationManager::ToggleMeshGeneration();
+					form::FormationManager::Ref().ToggleMeshGeneration();
 					return true;
 					
 				default:
@@ -349,7 +429,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			switch (key_code)
 			{
 				case KEY_I:
-					form::FormationManager::ToggleDynamicOrigin();
+					form::FormationManager::Ref().ToggleDynamicOrigin();
 					return true;
 					
 				default:
@@ -365,3 +445,5 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 	return false;
 }
 
+
+sim::Simulation * sim::Simulation::singleton = nullptr;

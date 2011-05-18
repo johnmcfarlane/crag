@@ -15,11 +15,12 @@
 
 namespace physics
 {
+	class Engine;
 	
 	class SphericalBody : public Body
 	{
 	public:
-		SphericalBody(bool movable, Scalar radius);
+		SphericalBody(physics::Engine & physics_engine, bool movable, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;
@@ -27,8 +28,8 @@ namespace physics
 		virtual void SetDensity(Scalar density);
 		
 	protected:
-		virtual bool OnCollision(Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
+		virtual bool OnCollision(Engine & engine, Body & that_body);
+		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id);
 	};
 
 }

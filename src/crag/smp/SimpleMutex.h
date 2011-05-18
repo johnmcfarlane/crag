@@ -10,28 +10,37 @@
 
 #pragma once
 
+#include "Mutex.h"
+
 
 namespace smp
 {
 	
-	// Uses Dekker's algorithm to gate access to a resource between two threads: a reader and a writer.
-	// This is a naive implementation which may not work on all architectures. 
+	// Wrapper for SDL implementation of a spin lock. 
 	// Only use this for brief locks. 
+
 	class SimpleMutex
 	{
 		OBJECT_NO_COPY(SimpleMutex);
 		
 	public:
-		SimpleMutex();
-		~SimpleMutex();
+		SimpleMutex()
+		: spin_lock(0)
+		{
+		}
 		
-		void Lock(int i);
-		void Unlock(int i);
+		void Lock()
+		{
+			SDL_AtomicLock(& spin_lock);
+		}
+		
+		void Unlock()
+		{
+			SDL_AtomicUnlock(& spin_lock);
+		}
 		
 	private:
-		
-		volatile bool flag[2];
-		volatile int turn;
+		SDL_SpinLock spin_lock;
 	};
 
 }

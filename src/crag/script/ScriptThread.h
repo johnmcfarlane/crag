@@ -10,19 +10,24 @@
 
 #pragma once
 
+#include "smp/Actor.h"
+
 
 namespace script
 {
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
-	class ScriptThread
+	class ScriptThread : public smp::Actor<ScriptThread>
 	{
 	public:
 		ScriptThread();
 		~ScriptThread();
 		
-		void Run(char const * source_filename);		
+		virtual void Run();
+		
+	private:
+		void Run(char const * source_filename);
 	};
 	
 }

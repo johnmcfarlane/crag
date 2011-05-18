@@ -11,17 +11,16 @@
 #include "pch.h"
 
 #include "Body.h"
-#include "Singleton.h"
+#include "Engine.h"
 
 
-physics::Body::Body(dGeomID init_geom_id, bool movable)
+physics::Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 : geom_id(init_geom_id)
 {
 	// body_id
 	if (movable)
 	{
-		Singleton & singleton = Singleton::Get();
-		body_id = dBodyCreate(singleton.world);
+		body_id = dBodyCreate(engine.world);
 
 		dBodySetData(body_id, this);
 		dBodySetGravityMode(body_id, false);
@@ -121,7 +120,7 @@ void physics::Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & p
 	dBodyAddForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool physics::Body::OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id)
+bool physics::Body::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id)
 {
 	// There is no custom code associated with this type of body to deal with collisions with spheres.
 	return false;

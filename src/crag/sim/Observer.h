@@ -1,12 +1,12 @@
-/*
- *  Observer.h
- *  Crag
- *
- *  Created by john on 5/13/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+// Observer.h
+// Crag
+//
+// Created by john on 5/13/09.
+// Copyright 2009, 2010 John McFarlane. All rights reserved.
+// This program is distributed under the terms of the GNU General Public License.
+//
+
 
 #include "Entity.h"
 #include "UserInput.h"
@@ -31,7 +31,7 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
-		Observer(SimulationPtr const & s, Vector3 const & init_pos);
+		Observer(Vector3 const & init_pos);
 		~Observer();
 		
 		// Type-specific allocation via script.
@@ -41,7 +41,7 @@ namespace sim
 		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeedFactor(int _speed_factor);
-		void Tick(Universe const & universe);
+		void Tick();
 		
 		virtual Vector3 const & GetPosition() const;
 		virtual void SetPosition(Vector3 const & pos);

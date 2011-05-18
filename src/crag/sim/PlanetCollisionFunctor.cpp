@@ -12,12 +12,14 @@
 
 #include "PlanetCollisionFunctor.h"
 
-#include "physics/Singleton.h"
+#include "Simulation.h"
+
+#include "physics/Engine.h"
 
 #include "core/ConfigEntry.h"
 
 
-namespace  
+namespace
 {
 	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .001);	// coulomb friction coefficient
 	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
@@ -48,7 +50,7 @@ void sim::PlanetCollisionFunctor::OnContact(Vector3 const & pos, Vector3 const &
 	contact.geom.normal[2] = normal.z;
 	contact.geom.depth = depth;
 	
-	physics::Singleton & singleton = physics::Singleton::Get();
-	singleton.OnContact(contact, contact.geom.g1, contact.geom.g2);
+	physics::Engine & physics_engine = Simulation::Ref().GetPhysicsEngine();
+	physics_engine.OnContact(contact, contact.geom.g1, contact.geom.g2);
 }
 

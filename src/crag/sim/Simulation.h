@@ -10,46 +10,122 @@
 
 #pragma once
 
-#include "Universe.h"
+#include "defs.h"
 
-#include "gfx/Renderer.h"
-#include "gfx/Scene.h"
+#include "smp/Actor.h"
 
-#include "geom/Vector3.h"
+#include "core/ConfigEntry.h"
+#include "core/Singleton.h"
 
 #include "sys/App.h"
 
-#include "smp/Singleton.h"
+
+namespace gfx 
+{
+	class Renderer;
+	class Scene;
+}
+
+namespace physics 
+{
+	class Engine;
+}
 
 
 namespace sim
 {
 	
-	// Top-level class, deals with running the simulation and presenting it to screen. 
-	class Simulation : public smp::Singleton<Simulation>
+	class Entity;
+	class Simulation;
+	class Universe;
+	
+	
+	// TODO: Tidy this horrible lot up.
+	class Observer;
+	struct AddObserverMessage
+	{
+		Vector3 center;
+	};
+	
+
+	class Planet;
+	struct AddPlanetMessage
+	{
+		Vector3 center;
+		Scalar radius;
+		int random_seed;
+		int num_craters;
+	};
+	
+	
+	class Star;
+	struct AddStarMessage
+	{
+		Scalar orbital_radius;
+		Scalar orbital_year;
+	};
+	
+	
+	struct RemoveEntityMessage
+	{
+		Entity & entity;
+	};
+	
+	
+	class Simulation : public smp::Actor<Simulation>
 	{
 	public:
-		Simulation(bool init_enable_vsync);
+		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
+
+		Simulation(bool init_enable_vsync = true);
+		~Simulation();
+		
+		// Singleton
+		static Simulation & Ref() { return ref(singleton); }
 	
+		// Message passing
+		template <typename MESSAGE>
+		static void SendMessage(MESSAGE const & message) 
+		{ 
+			Simulation & destination = Ref(); 
+			smp::Actor<Simulation>::SendMessage(destination, message); 
+		}
+		
+		template <typename MESSAGE, typename RESULT>
+		static void SendMessage(MESSAGE const & message, RESULT & result) 
+		{ 
+			Simulation & destination = Ref(); 
+			smp::Actor<Simulation>::SendMessage(destination, message, result); 
+		}
+		
+		void OnMessage(smp::TerminateMessage const & message);
+		void OnMessage(AddObserverMessage const & message, Observer * & reply);
+		void OnMessage(AddPlanetMessage const & message, Planet * & reply);
+		void OnMessage(AddStarMessage const & message, Star * & reply);
+		void OnMessage(RemoveEntityMessage const & message);
+		void OnMessage(SetCameraMessage const & message);
+		
 	private:
 		void Init();
-	public:
 		
-		Universe const & GetUniverse() const;
+	public:
+		sys::TimeType GetTime() const;
+		
+		Universe & GetUniverse();
+
+		physics::Engine & GetPhysicsEngine();		
 		
 		gfx::Scene & GetScene();
-		gfx::Scene const & GetScene() const;
 		
+	private:
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
 		
-		static void SetCameraPos(Vector3 const & pos, Matrix4 const & rot);
-		
-		static bool HandleEvent(sys::Event const & event);
+	public:		
+		bool HandleEvent(sys::Event const & event);
 
-		void Run();
-		void Exit();		
 	private:
+		void Run();
 		void Tick();
 		
 		void Render();
@@ -57,21 +133,23 @@ namespace sim
 		void Capture();
 		
 		// Returns true until the program should ent.
-		static bool OnKeyPress(sys::KeyCode key_code);
+		bool OnKeyPress(sys::KeyCode key_code);
 
 		// Attributes
-		Universe universe;
-
 		bool enable_vsync;
 		bool paused;
 		bool capture;
-		bool exit;
 		int capture_frame;
 		
-		gfx::Scene scene;
-		gfx::Renderer renderer;
+		Universe * universe;
+		physics::Engine * physics_engine;
+
+		gfx::Scene * scene;
+		gfx::Renderer * renderer;
 		
 		sys::TimeType start_time;
+		
+		static Simulation * singleton;
 	};
 	
 }

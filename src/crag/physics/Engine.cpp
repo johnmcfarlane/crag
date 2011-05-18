@@ -1,5 +1,5 @@
 /*
- *  Singleton.cpp
+ *  Engine.cpp
  *  crag
  *
  *  Created by John on 6/19/10.
@@ -10,14 +10,14 @@
 
 #include "pch.h"
 
-#include "Singleton.h"
+#include "Engine.h"
 #include "SphericalBody.h"
 
 
 //////////////////////////////////////////////////////////////////////
-// physics::Singleton members
+// physics::Engine members
 
-physics::Singleton::Singleton()
+physics::Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
@@ -26,7 +26,7 @@ physics::Singleton::Singleton()
 	dInitODE2(0);
 }
 
-physics::Singleton::~Singleton()
+physics::Engine::~Engine()
 {
 	dSpaceDestroy(space);
 	dWorldDestroy(world);
@@ -34,7 +34,7 @@ physics::Singleton::~Singleton()
 	dCloseODE();
 }
 
-void physics::Singleton::Tick(double delta_time)
+void physics::Engine::Tick(double delta_time)
 {
 	if (collisions)
 	{
@@ -54,39 +54,35 @@ void physics::Singleton::Tick(double delta_time)
 	}
 }
 
-void physics::Singleton::ToggleCollisions()
+void physics::Engine::ToggleCollisions()
 {
 	collisions = ! collisions;
 }
 
-void physics::Singleton::CreateCollisions()
+void physics::Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
 }
 
-void physics::Singleton::DestroyCollisions()
+void physics::Engine::DestroyCollisions()
 {
 	dJointGroupEmpty(contact_joints);
 }
 
-void physics::Singleton::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
+void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
 {
-#if ! defined(NDEBUG)
-	Singleton & ode_singleton = * reinterpret_cast<Singleton *>(data);
-	Singleton & singleton = Get();
-	Assert(& ode_singleton == & singleton);
-#endif
+	Engine & engine = * reinterpret_cast<Engine *>(data);
 	
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
 	
-	if (body1.OnCollision(body2))
+	if (body1.OnCollision(engine, body2))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(body1))
+	if (body2.OnCollision(engine, body1))
 	{
 		return;
 	}
@@ -95,7 +91,7 @@ void physics::Singleton::OnNearCollisionCallback (void *data, dGeomID geom1, dGe
 	Assert(false);
 }
 
-void physics::Singleton::OnCollision(dGeomID geom1, dGeomID geom2)
+void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
 	// TODO: If cost of loop below gets too much, this array can be made a permanent member of this object and much of the init can be skipped.
@@ -138,7 +134,7 @@ void physics::Singleton::OnCollision(dGeomID geom1, dGeomID geom2)
 	}
 }
 
-void physics::Singleton::OnContact(dContact const & contact, dGeomID geom1, dGeomID geom2)
+void physics::Engine::OnContact(dContact const & contact, dGeomID geom1, dGeomID geom2)
 {
 	dJointID c = dJointCreateContact (world, contact_joints, & contact);
 	dBodyID body1 = dGeomGetBody(geom1);

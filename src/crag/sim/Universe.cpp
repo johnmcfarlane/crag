@@ -13,37 +13,17 @@
 #include "Universe.h"
 #include "Entity.h"
 
-#include "physics/Singleton.h"
-
-
-//////////////////////////////////////////////////////////////////////
-// local definitions
-
-namespace sim
-{
-	namespace 
-	{
-#if defined(NDEBUG) && defined(PROFILE)
-		bool gravity = false;
-#else
-		CONFIG_DEFINE (gravity, bool, true);
-#endif
-		
-		CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////
 // Universe definitions
 
-CONFIG_DEFINE_MEMBER (sim::Universe, target_frame_seconds, double, 1.f / 60.f);
+CONFIG_DEFINE_MEMBER (sim::Universe, gravitational_force, float, 0.0000000025f);
+CONFIG_DEFINE_MEMBER (sim::Universe, gravity, bool, true);
 
 
 sim::Universe::Universe()
 : time(0)
 {
-	Assert(entities.size() == 0);
 }
 
 sim::Universe::~Universe()
@@ -77,20 +57,14 @@ void sim::Universe::RemoveEntity(Entity & entity)
 }
 
 // Perform a step in the simulation. 
-void sim::Universe::Tick(bool physics)
+void sim::Universe::Tick(sys::TimeType target_frame_seconds)
 {
 	time += target_frame_seconds;
-	
-	if (physics)
-	{
-		physics::Singleton & physics_singleton = physics::Singleton::Get();
-		physics_singleton.Tick(target_frame_seconds);
-	}
 	
 	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
 		Entity & e = * * it;
-		e.Tick(* this);
+		e.Tick();
 	}
 }
 
@@ -115,4 +89,3 @@ sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
 		return sim::Vector3::Zero();
 	}
 }
-

@@ -43,27 +43,27 @@ void form::Regulator::Reset()
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameRatio(float fr)
 {
-	mutex.Lock(0);
+	mutex.Lock();
 	
 	Assert(fr >= 0);
 	frame_ratio_max = Max(frame_ratio_max, fr);
 
-	mutex.Unlock(0);
+	mutex.Unlock();
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 {
-	mutex.Lock(0);
+	mutex.Lock();
 
 	Assert(mgp >= 0);
 	mesh_generation_period = Max(static_cast<float>(mgp), mesh_generation_period);
 
-	mutex.Unlock(0);
+	mutex.Unlock();
 }
 
 int form::Regulator::GetAdjustedLoad(int current_load)
 {
-	mutex.Lock(1);
+	mutex.Lock();
 
 	sys::TimeType sim_time = sys::GetTime() - reset_time;
 
@@ -95,7 +95,7 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 	frame_ratio_max = 0;
 	
 	// return the result
-	mutex.Unlock(1);
+	mutex.Unlock();
 	return adjusted_load;
 }
 

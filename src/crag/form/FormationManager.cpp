@@ -1,12 +1,12 @@
-/*
- *  form/FormationManager.cpp
- *  Crag
- *
- *  Created by john on 5/23/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+// form/FormationManager.cpp
+// Crag
+//
+// Created by john on 5/23/09.
+// Copyright 2009, 2010 John McFarlane. All rights reserved.
+// This program is distributed under the terms of the GNU General Public License.
+//
+
 
 #include "pch.h"
 
@@ -18,11 +18,14 @@
 #include "form/Node/NodeBuffer.h"
 #include "form/scene/SceneThread.h"
 
+#include "sim/axes.h"
 #include "sim/Observer.h"
 
 #include "gfx/Pov.h"
 
 #include "glpp/glpp.h"
+
+#include "smp/ForEach.h"
 
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
@@ -46,9 +49,10 @@ namespace
 	CONFIG_DEFINE (enable_multithreding, bool, true);
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 
-	STAT (num_polys, int, .05);
-	STAT (mesh_generation, bool, .206);
-	STAT (dynamic_origin, bool, .206);
+	STAT (num_polys, int, .05f);
+	STAT (num_quats_used, int, 0.15f);
+	STAT (mesh_generation, bool, .206f);
+	STAT (dynamic_origin, bool, .206f);
 }
 
 
@@ -63,7 +67,7 @@ form::FormationManager::FormationManager()
 	for (int index = 0; index < 2; ++ index)
 	{
 		// initialize mesh buffer
-		MboDoubleBuffer::value_type & mbo = mesh_buffers[index];
+		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Init();
 		mbo.Bind();
 		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
@@ -72,23 +76,52 @@ form::FormationManager::FormationManager()
 		MeshDoubleBuffer::value_type & mesh = meshes[index];
 		mesh = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
 	}
+	
+	Assert(singleton == nullptr);
+	singleton = this;
 }
 
 form::FormationManager::~FormationManager()
 {
-	delete meshes [0];
-	delete meshes [1];
+	Assert(singleton == this);
+	singleton = nullptr;
+	
+	delete & meshes [0];
+	delete & meshes [1];
+}
+
+#if defined(VERIFY)
+void form::FormationManager::Verify() const
+{
+	VerifyObject(scenes.front());
+	VerifyObject(scenes.back());
+}
+#endif
+
+void form::FormationManager::OnMessage(smp::TerminateMessage const & message)
+{
+}
+
+void form::FormationManager::OnMessage(AddFormationMessage const & message)
+{
+	AddFormation(message.formation);
+}
+
+void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
+{
+	RemoveFormation(message.formation);
+}
+
+void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
+{
+	SetCameraPos(message.projection);
 }
 
 void form::FormationManager::Run()
 {
 	FUNCTION_NO_REENTRY;
 	
-//	// This sleep is really only here so that IsSceneThread/IsMainThread will work properly.
-//	// (See notes in Thread.h for details.)
-//	smp::Sleep(1);
-	
-	while (true) 
+	while (ProcessMessages()) 
 	{
 		suspend_semaphore.Decrement();
 		if (quit_flag)
@@ -116,67 +149,53 @@ void form::FormationManager::Exit()
 // TODO: Paralellize scenes[n].AddFormation/RemoveFormation
 void form::FormationManager::AddFormation(form::Formation & formation)
 {
-	ptr lock = GetLock();
-
-	Assert(lock->formation_set.find(& formation) == lock->formation_set.end());
-	lock->formation_set.insert(& formation);
-	lock->scenes[0].AddFormation(formation);
-	lock->scenes[1].AddFormation(formation);
+	Assert(formation_set.find(& formation) == formation_set.end());
+	formation_set.insert(& formation);
+	scenes[0].AddFormation(formation);
+	scenes[1].AddFormation(formation);
 }
 
 void form::FormationManager::RemoveFormation(form::Formation & formation)
 {
-	ptr lock = GetLock();
-	
-	Assert(lock->formation_set.find(& formation) != lock->formation_set.end());
-	lock->formation_set.erase(& formation);
-	lock->scenes[0].RemoveFormation(formation);
-	lock->scenes[1].RemoveFormation(formation);
+	Assert(formation_set.find(& formation) != formation_set.end());
+	formation_set.erase(& formation);
+	scenes[0].RemoveFormation(formation);
+	scenes[1].RemoveFormation(formation);
 }
 
 void form::FormationManager::ForEachFormation(FormationFunctor & f) const
 {
-	ptr lock = GetLock();
-	
 	GetVisibleScene().ForEachFormation(f);
 }
 
 void form::FormationManager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
 {
-	FormationManager & instance = Get();
-	
 	float ratio = static_cast<float>(frame_delta / target_frame_delta);
-	instance.regulator.SampleFrameRatio(ratio);
+	regulator.SampleFrameRatio(ratio);
 }
 
 void form::FormationManager::ResetRegulator()
 {
-	FormationManager & instance = Get();
-	
-	instance.regulator.Reset();
+	regulator.Reset();
 }
 
 void form::FormationManager::ToggleSuspended()
 {
-	FormationManager & instance = Get();
+	suspend_flag = ! suspend_flag;
 	
-	instance.suspend_flag = ! instance.suspend_flag;
-	
-	if (instance.suspend_flag)
+	if (suspend_flag)
 	{
-		instance.suspend_semaphore.Decrement();
+		suspend_semaphore.Decrement();
 	}
 	else
 	{
-		instance.suspend_semaphore.Increment();
+		suspend_semaphore.Increment();
 	}
 }
 
 void form::FormationManager::ToggleMeshGeneration()
 {
-	FormationManager & instance = Get();
-	
-	instance.enable_mesh_generation = ! instance.enable_mesh_generation;
+	enable_mesh_generation = ! enable_mesh_generation;
 }
 
 void form::FormationManager::ToggleDynamicOrigin()
@@ -186,41 +205,37 @@ void form::FormationManager::ToggleDynamicOrigin()
 
 void form::FormationManager::ToggleFlatShaded()
 {
-	FormationManager & instance = Get();
-	
-	bool flat_shaded = instance.meshes[0]->GetProperties().flat_shaded;
+	bool flat_shaded = meshes[0]->GetProperties().flat_shaded;
 	flat_shaded = ! flat_shaded;
 	
-	instance.meshes[0]->GetProperties().flat_shaded = flat_shaded;
-	instance.meshes[1]->GetProperties().flat_shaded = flat_shaded;
+	meshes[0]->GetProperties().flat_shaded = flat_shaded;
+	meshes[1]->GetProperties().flat_shaded = flat_shaded;
 }
 
-void form::FormationManager::SetCameraPos(sim::Ray3 const & camera_pos)
+void form::FormationManager::SetCameraPos(sim::CameraProjection const & projection)
 {
-	FormationManager & f = Get();
-	f._camera_pos = camera_pos;
+	_camera_pos = axes::GetCameraRay(projection.pos, projection.rot);
 }
 
 void form::FormationManager::PollMesh()
 {
-	FormationManager & s = Get();
-	
-	if (! s.enable_mesh_generation)
+	if (! enable_mesh_generation)
 	{
 		return;
 	}
 	
-	if (! s.back_mesh_buffer_ready)
+	if (! back_mesh_buffer_ready)
 	{
 		return;
 	}
 	
-	s.mesh_buffers.back().Set(* s.meshes.back());
-	s.mesh_buffers.flip();
-	s.mesh_buffers.back().Clear();
-	s.back_mesh_buffer_ready = false;
+	Mesh & back_mesh = ref(meshes.back()); 
+	mbo_buffers.back().Set(back_mesh);
+	mbo_buffers.flip();
+	mbo_buffers.back().Clear();
+	back_mesh_buffer_ready = false;
 
-	STAT_SET (num_polys, s.mesh_buffers.front().GetNumPolys());
+	STAT_SET (num_polys, mbo_buffers.front().GetNumPolys());
 }
 
 void form::FormationManager::Render(gfx::Pov const & pov, bool color)
@@ -236,9 +251,7 @@ void form::FormationManager::Render(gfx::Pov const & pov, bool color)
 
 void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color) 
 {
-	FormationManager & singleton = Get();
-	
-	if (singleton.mesh_buffers.front().GetNumPolys() <= 0)
+	if (mbo_buffers.front().GetNumPolys() <= 0)
 	{
 		return;
 	}
@@ -257,7 +270,7 @@ void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color)
 	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
 	
 	// Draw the mesh!
-	form::MeshBufferObject const & front_buffer = singleton.mesh_buffers.front();
+	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	front_buffer.BeginDraw(pov, color);
 	front_buffer.Draw();
 	front_buffer.EndDraw();
@@ -268,25 +281,8 @@ void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color)
 
 void form::FormationManager::DebugStats() 
 {
-	/* if (gfx::Debug::GetVerbosity() > .75) 
-	{
-		for (int i = 0; i < 2; ++ i) 
-		{
-			form::MeshBufferObject const * m = & mesh_buffers [i];
-			gfx::Debug::out << m << ' ';
-			if (m == & mesh_buffers.front()) 
-			{
-				gfx::Debug::out << 'f';
-			}
-			if (m == & mesh_buffers.back()) 
-			{
-				gfx::Debug::out << 'b';
-			}
-			gfx::Debug::out << '\n';
-		}
-	} */
-	
-	STAT_SET (mesh_generation, Get().enable_mesh_generation);
+	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
+	STAT_SET (mesh_generation, enable_mesh_generation);
 	STAT_SET (dynamic_origin, enable_dynamic_origin);
 }
 
@@ -302,8 +298,6 @@ void form::FormationManager::Tick()
 		BeginReset();
 	}
 
-	ptr lock = GetLock();
-	
 	if (! reset_origin_flag)
 	{
 		AdjustNumQuaterna();
@@ -320,6 +314,8 @@ void form::FormationManager::Tick()
 	}
 	
 	GenerateMesh();
+
+	//VerifyObject(* this);
 }
 
 void form::FormationManager::TickActiveScene()
@@ -343,6 +339,7 @@ void form::FormationManager::AdjustNumQuaterna()
 	
 	// Get the regulator input.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
+	
 	int current_num_quaterna = active_buffer.GetNumQuaternaUsed();
 	
 	// Calculate the regulator output.
@@ -360,9 +357,10 @@ void form::FormationManager::GenerateMesh()
 		return;
 	}
 	
-	Scene & visible_scene = GetVisibleScene();
+	Scene const & visible_scene = GetVisibleScene();
 	
-	visible_scene.GenerateMesh(* meshes.back());
+	Mesh & mesh = ref(meshes.back());
+	visible_scene.GenerateMesh(mesh);
 	
 	back_mesh_buffer_ready = true;
 	
@@ -386,16 +384,19 @@ void form::FormationManager::BeginReset()
 	active_scene.SetOrigin(_camera_pos.position);
 	
 	// Transfer the quaterna count from the old buffer to the new one.
-	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
 	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
 	int current_num_quaterna = visible_node_buffer.GetNumQuaternaUsed();
+
+	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
 	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterna);
 }
 
 void form::FormationManager::EndReset()
 {
+	VerifyObject(* this);
 	is_in_reset_mode = false;
 	scenes.flip();
+	VerifyObject(* this);
 }
 
 form::Scene & form::FormationManager::GetActiveScene()
@@ -445,3 +446,6 @@ bool form::FormationManager::IsResetting() const
 {
 	return is_in_reset_mode;
 }
+
+
+form::FormationManager * form::FormationManager::singleton = nullptr;

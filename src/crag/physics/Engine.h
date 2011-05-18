@@ -1,5 +1,5 @@
 /*
- *  Singleton.h
+ *  Engine.h
  *  Crag
  *
  *  Created by John on 10/29/09.
@@ -12,19 +12,18 @@
 
 #include "defs.h"
 
-#include "core/Singleton.h"
-
 
 namespace physics
 {
-	class Singleton : public core::Singleton<Singleton>
+	
+	class Engine
 	{
 		friend class Body;
 		friend class SphericalBody;
 		
 	public:
-		Singleton();
-		~Singleton();
+		Engine();
+		~Engine();
 
 		void Tick(double delta_time);
 		

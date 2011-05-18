@@ -31,13 +31,13 @@ namespace sim
 	class Planet : public Entity
 	{
 	public:
-		Planet(SimulationPtr const & s, Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters);
+		Planet(Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters);
 		~Planet();
 
 		// Type-specific allocation via script.
 		static Planet * Create(PyObject * args);
 		
-		virtual void Tick(Universe const & universe);
+		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, Scalar * range, bool wireframe) const;
 	

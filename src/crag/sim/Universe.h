@@ -18,6 +18,12 @@
 #include "core/Singleton.h"
 
 
+namespace physics 
+{
+	class Physics;
+}
+
+
 namespace sim
 {
 	// forward-declarations
@@ -28,8 +34,10 @@ namespace sim
 	class Universe
 	{
 	public:
-		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
-	
+		CONFIG_DECLARE_MEMBER (gravitational_force, float);
+		CONFIG_DECLARE_MEMBER (gravity, bool);
+
+		// methods
 		Universe();
 		~Universe();
 
@@ -40,10 +48,11 @@ namespace sim
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
 
-		void Tick(bool physics);
+		void Tick(sys::TimeType target_frame_seconds);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
 
 	private:
+		// attributes
 		sys::TimeType time;
 		
 		typedef std::vector<Entity *> EntityVector;
