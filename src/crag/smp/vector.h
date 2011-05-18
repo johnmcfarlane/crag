@@ -43,9 +43,6 @@ namespace smp
 		}
 		
 		vector(size_type c)
-		: first(nullptr)
-		, last(nullptr)
-		, everything(nullptr)
 		{
 			init(c);
 		}
