@@ -10,31 +10,31 @@
 
 #pragma once
 
-#include "Mutex.h"
-
 
 namespace smp
 {
 	
-	// Simple mutex lock scoper.
-	// This might be correct terminology.
+	// Lock is useful for critical sections and scope-base mutex locking.
+	// The given mutex is locked immediately the Lock object comes into scope
+	// and is unlocked when the object goes out of scope.
 	
+	template <typename MUTEX>
 	class Lock
 	{
 		OBJECT_NO_COPY(Lock);
 		
 	public:
-		Lock(Mutex & m) : mutex(m)
+		Lock(MUTEX & m) : _mutex(m)
 		{
-			mutex.Lock();
+			_mutex.Lock();
 		}
 		
 		~Lock()
 		{
-			mutex.Unlock();
+			_mutex.Unlock();
 		}
 		
 	private:
-		Mutex & mutex;
+		MUTEX & _mutex;
 	};
 }
