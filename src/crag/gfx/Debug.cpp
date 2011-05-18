@@ -33,6 +33,7 @@
 namespace
 {
 	
+	// TODO: Remove
 	using gfx::Debug::ColorPair;
 	using gfx::Debug::Vector3;
 
