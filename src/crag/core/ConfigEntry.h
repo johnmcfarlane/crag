@@ -11,7 +11,6 @@
 #pragma once
 
 
-// TODO: Are the values being read in ok? I've seen mesh gen value bulldozed on WIN32.
 #define ENABLE_CONFIG
 
 #if defined(ENABLE_CONFIG)
