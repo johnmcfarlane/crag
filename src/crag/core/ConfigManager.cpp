@@ -48,7 +48,7 @@ using core::ConfigManager;
 
 ConfigManager::ConfigManager()
 {
-	TODO: sort
+	// TODO: sort
 	
 	if (! Load())
 	{
