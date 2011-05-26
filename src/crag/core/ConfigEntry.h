@@ -21,11 +21,11 @@
 namespace core
 {
 	
-	class ConfigEntry
+	class ConfigEntry : public Enumeration<ConfigEntry>
 	{
-		ENUMERATED_CLASS(ConfigEntry);		
+		typedef Enumeration<ConfigEntry> super;
 	public:
-		ConfigEntry(name_type name) { InitEnumeration(name); }
+		ConfigEntry(char const * name) : super(name) { }
 		
 		virtual void Get(char * config_string, char * default_string) const = 0;
 

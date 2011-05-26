@@ -14,89 +14,99 @@
 #include "intrusive_list.h"
 
 
-#define ENUMERATED_CLASS(CLASS) \
-public: \
-	friend class core::Enumeration<CLASS>; \
-	typedef core::Enumeration<CLASS> Enumeration; \
-	typedef intrusive::hook hook_type; \
-	typedef char const * name_type; \
-	void InitEnumeration(name_type name) { Enumeration::add(* this); _name = name; } \
-	char const * GetName() const { return _name; } \
-private: \
-	hook_type _hook; \
-	name_type _name
-
-
 namespace core
 {
 	
-	template <typename ELEMENT>
+	template <typename TYPE>
+	class Enumeration;
+
+	template < typename TYPE>
 	class Enumeration
 	{
-	protected:
-		typedef ELEMENT value_type;
-		typedef intrusive::list<value_type, & value_type::_hook> list;
-	public:
-		typedef typename list::iterator iterator;
-		typedef typename value_type::name_type name_type;
+		OBJECT_NO_COPY(Enumeration);
 		
-		static void add(ELEMENT & addition)
+		typedef TYPE value_type;
+		
+		typedef char const * name_type;
+		name_type _name;
+		
+		typedef intrusive::hook hook_type; 
+		hook_type _hook;
+
+		typedef intrusive::list<Enumeration<TYPE>, & Enumeration<TYPE>::_hook> list_type;
+		static list_type _values;
+	public:
+		typedef typename list_type::const_iterator const_iterator;
+		typedef typename list_type::iterator iterator;
+		
+		Enumeration(name_type name)
+		: _name(name)
 		{
-			_values.push_back(addition);
+			// note: asserts may fail horribly before main begins.
+			Assert(find(_name) == nullptr);	// entries must be unique
+			Assert(reinterpret_cast<value_type *>(this) == this);	// this must be base for TYPE 
+			Assert(false);
+			
+			iterator insertion = std::upper_bound(begin(), end(), _name, Enumeration<TYPE>::compare);
+			_values.insert(insertion, * this);
+			
+			Assert(find(_name) != nullptr);
+		}
+		
+		bool operator==(name_type name) const
+		{
+			Assert((name == _name) == (strcmp(name, _name) == 0));
+			return name == _name;
+		}
+		
+		operator value_type & ()
+		{
+			return * reinterpret_cast<value_type *>(this);
+		}
+		
+		operator value_type const & () const
+		{
+			return * static_cast<value_type const *>(this);
+		}
+		
+		name_type GetName() const
+		{
+			return _name;
 		}
 		
 		static value_type * find(name_type name)
 		{
-			find_by_name f(name);
-			iterator i = std::find_if(_values.begin(), _values.end(), f);
-			if (i == _values.end())
+			iterator found = std::find(begin(), end(), name);
+			if (found == end())
 			{
 				return nullptr;
 			}
-			
-			value_type & value = * i;
-			return & value;
+			else
+			{
+				Enumeration & found_enumeration = * found;
+				value_type & found_value = found_enumeration;
+				return & found_value;
+			}
 		}
 		
-		static iterator begin()
+		static const_iterator begin()
 		{
 			return _values.begin();
 		}
 		
-		static iterator end()
+		static const_iterator end()
 		{
 			return _values.end();
 		}
 		
-		static bool sort_function(name_type const & lhs, name_type const & rhs)
-		{
-			return strcmp(lhs, rhs);
-		}
-		static bool sort_function(value_type const & lhs, value_type const & rhs)
-		{
-			return sort_function(lhs._name, rhs._name);
-		}
-		class find_by_name
-		{
-		public:
-			find_by_name(name_type name) : _name(name) { }
-			bool operator()(value_type const & value) const
-			{
-				// I guess the linker failed to whittle down the strings.
-				// Use the slower strcmp test instead.
-				Assert((strcmp(value._name, _name) == 0) == (value._name == _name));
-				
-				return value._name == _name;
-			}
-		private:
-			name_type _name;
-		};
-		
 	private:
-		static list _values;
+		static bool compare(name_type lhs, Enumeration<TYPE> const & rhs)
+		{
+			return strcmp(lhs, rhs._name) < 0;
+		}
 	};
 	
 	
-	template <typename ELEMENT> typename Enumeration<ELEMENT>::list Enumeration<ELEMENT>::_values;
-	
+	template <typename TYPE> 
+	typename Enumeration<TYPE>::list_type Enumeration<TYPE>::_values;
 }

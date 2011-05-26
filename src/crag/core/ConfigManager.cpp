@@ -112,7 +112,7 @@ bool ConfigManager::Load()
 		char const * name_string = config_line;
 		
 		// Get the parameter in question, given its name.
-		ConfigEntry * parameter = find(name_string);
+		ConfigEntry * parameter = ConfigEntry::find(name_string);
 		if (parameter == nullptr)
 		{
 			std::cout << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << ".\n";
@@ -152,12 +152,13 @@ void ConfigManager::Save()
 		}
 	}
 	
-	for (iterator i = begin(); i != end(); ++ i)
+	for (ConfigEntry::iterator i = ConfigEntry::begin(); i != ConfigEntry::end(); ++ i)
 	{
 		char config_string[max_string_size];
 		char default_string[max_string_size];
-		i->Get(config_string, default_string);
-		config_file << i->GetName() << "=" << config_string << '\n';
+		ConfigEntry & config_entry = * i;
+		config_entry.Get(config_string, default_string);
+		config_file << config_entry.GetName() << "=" << config_string << '\n';
 		defaults_file << default_string << '\n';
 	}
 #endif

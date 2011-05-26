@@ -17,10 +17,8 @@ namespace core
 {
 
 	// Contains the complete list of configuration settings.
-	class ConfigManager : public core::Enumeration<ConfigEntry>
+	class ConfigManager
 	{
-		typedef core::Enumeration<ConfigEntry> super;
-		typedef super::iterator iterator;
 	public:
 		ConfigManager();
 		~ConfigManager();

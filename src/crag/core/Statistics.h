@@ -26,9 +26,8 @@ namespace core
 	////////////////////////////////////////////////////////////////////////////////
 	// classes
 	
-	class StatInterface 
+	class StatInterface : public Enumeration<StatInterface>
 	{
-		ENUMERATED_CLASS(StatInterface);
 	public:
 		StatInterface (char const * name, float verbosity);
 		

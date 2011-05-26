@@ -18,9 +18,9 @@
 using core::StatInterface;
 
 StatInterface::StatInterface(char const * name, float verbosity)
-: _verbosity(verbosity)
+: Enumeration<StatInterface>(name)
+, _verbosity(verbosity)
 {
-	InitEnumeration(name);
 }
 
 float StatInterface::GetVerbosity() const
