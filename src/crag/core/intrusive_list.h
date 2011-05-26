@@ -111,75 +111,17 @@ namespace core
 			typedef ptrdiff_t difference_type;
 			typedef size_t size_type;
 
+			////////////////////////////////////////////////////////////////////////////////
+			// d'tor
+			
 			~list()
 			{
 				unlink();
 			}
 			
-			// capacity
-			bool empty() const
-			{
-				return is_detached();
-			}
-			
-			size_type size() const
-			{
-				size_type s = 0;
-				for (hook * i = _next; i != this; i = i->_next)
-				{
-					++ s;
-				}
-				return s;
-			}
-			
-			// access
-			value_type & front()
-			{
-				Assert(! empty());
-				return * iterator(* _next);
-			}
-			value_type const & front() const
-			{
-				Assert(! empty());
-				return * const_iterator(* _next);
-			}
-			
-			value_type & back()
-			{
-				Assert(! empty());
-				return * iterator(* _previous);
-			}
-			value_type const & back() const
-			{
-				Assert(! empty());
-				return * const_iterator(* _previous);
-			}
-			
-			// modifiers
-			void clear()
-			{
-				unlink();
-				init();
-			}
-			
-			void push_back(Class & n)
-			{
-				hook & l = n.*Member;
-				l.detach();
-				l.insert(* this);
-			}
-			
-			void pop_front()
-			{
-				_next->detach();
-			}
-			
-			void pop_back()
-			{
-				_previous->detach();
-			}
-			
+			////////////////////////////////////////////////////////////////////////////////
 			// iterators
+			
 			class const_iterator
 			{
 				friend class list;
@@ -192,7 +134,11 @@ namespace core
 				typedef typename list::difference_type difference_type;
 				typedef typename list::value_type const * pointer;
 				typedef typename list::value_type const & reference;
-
+				
+				const_iterator() : _h(nullptr) 
+				{ 
+				}
+				
 				const_iterator(const_iterator const & rhs) : _h(rhs._h) 
 				{ 
 				}
@@ -217,29 +163,29 @@ namespace core
 					return * this; 
 				}
 				
-				Class const * operator * () const
+				value_type const & operator * () const
 				{
 					return ref(get_ptr());
 				}
-				Class const & operator -> () const
+				value_type const * operator -> () const
 				{
-					return ref(get_ptr());
+					return get_ptr();
 				}
 				
 			protected:
-				Class * get_ptr() const
+				value_type * get_ptr() const
 				{
 					Assert(_h != nullptr);
-					Class * zclass_ptr = nullptr;
+					value_type * zclass_ptr = nullptr;
 					hook & zmember_ptr = zclass_ptr->*Member;
 					char * zmember_cptr = (char *)& zmember_ptr;
 					char * member_cptr = (char *)_h;
 					size_type offset = member_cptr - zmember_cptr;
 					char * class_cptr = (char *)offset;
-					Class * class_ptr = (Class *)class_cptr;
+					value_type * class_ptr = (value_type *)class_cptr;
 					return class_ptr;
 				}
-
+				
 				// data
 				hook * _h;
 			};
@@ -254,7 +200,7 @@ namespace core
 				iterator(const_iterator const & rhs) : const_iterator(rhs) 
 				{ 
 				}
-
+				
 				iterator operator++() 
 				{ 
 					const_iterator::operator++(); return * this; 
@@ -263,12 +209,12 @@ namespace core
 				{ 
 					const_iterator::operator--(); return * this; 
 				}
-
-				Class & operator * () 
+				
+				value_type & operator * () 
 				{
 					return ref(const_iterator::get_ptr());
 				}
-				Class * operator -> () 
+				value_type * operator -> () 
 				{
 					return const_iterator::get_ptr();
 				}
@@ -282,6 +228,98 @@ namespace core
 			iterator end()
 			{
 				return iterator(* this);
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////
+			// capacity
+
+			bool empty() const
+			{
+				return is_detached();
+			}
+			
+			size_type size() const
+			{
+				size_type s = 0;
+				for (hook * i = _next; i != this; i = i->_next)
+				{
+					++ s;
+				}
+				return s;
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////
+			// access
+
+			value_type & front()
+			{
+				Assert(! empty());
+				return * iterator(* _next);
+			}
+			value_type const & front() const
+			{
+				Assert(! empty());
+				return * const_iterator(* _next);
+			}
+			
+			value_type & back()
+			{
+				Assert(! empty());
+				return * iterator(* _previous);
+			}
+			value_type const & back() const
+			{
+				Assert(! empty());
+				return * const_iterator(* _previous);
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////
+			// modifiers
+			
+			void clear()
+			{
+				unlink();
+				init();
+			}
+			
+			void push_back(value_type & n)
+			{
+				hook & l = n.*Member;
+				l.detach();
+				l.insert(* this);
+			}
+			
+			void pop_front()
+			{
+				_next->detach();
+			}
+			
+			void pop_back()
+			{
+				_previous->detach();
+			}
+			
+			// insert insertion before position
+			void insert(iterator position, value_type & insertion)
+			{
+				hook & l = insertion.*Member;
+				l.detach();
+
+				insert_detached(position, insertion);
+			}
+			
+			// same as insert but insertion MUST be detatched already
+			void insert_detached(iterator position, value_type & detached_insertion)
+			{
+				// TODO: Test that position is contained and insertion is not.
+				// TODO: find isn't going to work because end is sort-of legit.
+				hook & insertion_hook = detached_insertion.*Member;
+				Assert(insertion_hook.is_detached());
+				
+				value_type & position_element = * position;
+				hook & position_hook = position_element.*Member;
+				
+				insertion_hook.insert(position_hook);
 			}
 			
 		private:
