@@ -54,3 +54,20 @@ private: \
 	void operator=(const CLASS &); \
 	CLASS(); \
 	CLASS(const CLASS &) 
+
+
+//////////////////////////////////////////////////////////////////////
+// OBJECT_SINGLETON
+// 
+// Prevent object from being instanced more than once.
+// Put at top of class definition. 
+
+#if defined(NDEBUG)
+#define OBJECT_SINGLETON(CLASS) \
+private: \
+    enum { _is_singleton = 1; }
+#else
+#define OBJECT_SINGLETON(CLASS) \
+private: \
+    core::Singleton<CLASS> _singleton
+#endif
