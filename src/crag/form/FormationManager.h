@@ -70,10 +70,7 @@ namespace form {
 		
 		// Message passing
 		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) { smp::Actor<FormationManager>::SendMessage(Ref(), message); }
-		
-		template <typename MESSAGE, typename RESULT>
-		static void SendMessage(MESSAGE const & message, RESULT & result) { smp::Actor<FormationManager>::SendMessage(Ref(), message, result); }
+		static void SendMessage(MESSAGE const & message) { smp::Actor<FormationManager>::SendMessage(Ref(), message, false); }
 		
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);

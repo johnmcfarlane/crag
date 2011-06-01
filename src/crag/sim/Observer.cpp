@@ -82,12 +82,12 @@ sim::Observer * sim::Observer::Create(PyObject * args)
 	}
 
 	// create message
-	Observer * observer = nullptr;
-	AddObserverMessage message = { center };
-
+	Observer * observer = reinterpret_cast<Observer *>(new char [sizeof(Observer)]);
+	AddObserverMessage message = { center, * observer };
+	
 	// send
-	Simulation::SendMessage(message, observer);
-
+	Simulation::SendMessage(message, true);
+	
 	return observer;
 }
 
@@ -157,7 +157,7 @@ void sim::Observer::Tick()
 	sphere.GetRotation(rot);
 	
 	SetCameraMessage message = { position, rot };
-	Simulation::SendMessage(message);
+	Simulation::SendMessage(message, false);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const

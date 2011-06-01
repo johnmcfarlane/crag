@@ -55,15 +55,9 @@ namespace smp
 		}
 		
 		template <typename MESSAGE>
-		static void SendMessage(CLASS & destination, MESSAGE const & message)
+		static void SendMessage(CLASS & destination, MESSAGE const & message, bool blocking)
 		{
-			destination.PushMessage(destination, message);
-		}
-		
-		template <typename MESSAGE, typename REPLY>
-		static void SendMessage(CLASS & destination, MESSAGE const & message, REPLY & reply)
-		{
-			destination.PushMessage(destination, message, reply);
+			destination.PushMessage(destination, message, blocking);
 		}
 		
 		void OnMessage(TerminateMessage const & message)
@@ -94,23 +88,21 @@ namespace smp
 		
 	private:
 		template <typename MESSAGE>
-		void PushMessage(CLASS & destination, MESSAGE const & message)
+		void PushMessage(CLASS & destination, MESSAGE const & message, bool blocking)
 		{
 			Assert(& destination == this);
 			
 			// TODO: aim towards zero-allocation model.
-			_MessageEnvelope * envelope = new NonBlockingMessageEnvelope<CLASS, MESSAGE>(destination, message);
+			_MessageEnvelope * envelope;
 			
-			Push(* envelope);
-		}
-		
-		template <typename MESSAGE, typename REPLY>
-		void PushMessage(CLASS & destination, MESSAGE const & message, REPLY & reply)
-		{
-			Assert(& destination == this);
-			
-			// TODO: aim towards zero-allocation model.
-			_MessageEnvelope * envelope = new BlockingMessageEnvelope<CLASS, MESSAGE, REPLY>(destination, message, reply);
+			if (blocking)
+			{
+				envelope = new BlockingMessageEnvelope<CLASS, MESSAGE>(destination, message);
+			}
+			else
+			{
+				envelope = new NonBlockingMessageEnvelope<CLASS, MESSAGE>(destination, message);
+			}
 			
 			Push(* envelope);
 			

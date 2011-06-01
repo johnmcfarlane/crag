@@ -86,13 +86,12 @@ sim::Planet * sim::Planet::Create(PyObject * args)
 	}
 	
 	// create message
-	Planet * planet = nullptr;
-	AddPlanetMessage message = { center, radius, random_seed, num_craters };
+	Planet * planet = reinterpret_cast<Planet *>(new char [sizeof(Planet)]);
+	AddPlanetMessage message = { center, radius, random_seed, num_craters, * planet };
 	
 	// send
-	Simulation::SendMessage(message, planet);
+	Simulation::SendMessage(message, true);
 
-	Assert(planet != nullptr);
 	return planet;
 }
 

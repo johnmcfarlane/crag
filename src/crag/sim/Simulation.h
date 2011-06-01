@@ -45,9 +45,10 @@ namespace sim
 	struct AddObserverMessage
 	{
 		Vector3 center;
+		Observer & observer;
 	};
 	
-
+	
 	class Planet;
 	struct AddPlanetMessage
 	{
@@ -55,6 +56,7 @@ namespace sim
 		Scalar radius;
 		int random_seed;
 		int num_craters;
+		Planet & planet;
 	};
 	
 	
@@ -63,6 +65,7 @@ namespace sim
 	{
 		Scalar orbital_radius;
 		Scalar orbital_year;
+		Star & star;
 	};
 	
 	
@@ -86,23 +89,16 @@ namespace sim
 	
 		// Message passing
 		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) 
+		static void SendMessage(MESSAGE const & message, bool blocking) 
 		{ 
 			Simulation & destination = Ref(); 
-			smp::Actor<Simulation>::SendMessage(destination, message); 
-		}
-		
-		template <typename MESSAGE, typename RESULT>
-		static void SendMessage(MESSAGE const & message, RESULT & result) 
-		{ 
-			Simulation & destination = Ref(); 
-			smp::Actor<Simulation>::SendMessage(destination, message, result); 
+			smp::Actor<Simulation>::SendMessage(destination, message, blocking); 
 		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
-		void OnMessage(AddObserverMessage const & message, Observer * & reply);
-		void OnMessage(AddPlanetMessage const & message, Planet * & reply);
-		void OnMessage(AddStarMessage const & message, Star * & reply);
+		void OnMessage(AddObserverMessage const & message);
+		void OnMessage(AddPlanetMessage const & message);
+		void OnMessage(AddStarMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
 		void OnMessage(SetCameraMessage const & message);
 		

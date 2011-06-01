@@ -23,7 +23,7 @@ namespace smp
 	};
 	
 	
-	template <class MESSAGE> bool IsTerminateMessage();
+	template <typename MESSAGE> bool IsTerminateMessage();
 	
 	template <>
 	inline bool IsTerminateMessage<TerminateMessage>() 
@@ -31,7 +31,7 @@ namespace smp
 		return true;
 	}
 	
-	template <class MESSAGE> 
+	template <typename MESSAGE> 
 	inline bool IsTerminateMessage() 
 	{
 		return false;
@@ -102,14 +102,13 @@ namespace smp
 	
 	// As NonBlockingMessageEnvelope but blocks until the message has been processed.
 	// Try and avoid this kind of message.
-	template <typename CLASS, typename MESSAGE, typename REPLY>
+	template <typename CLASS, typename MESSAGE>
 	class BlockingMessageEnvelope : public MessageEnvelope<CLASS>
 	{
 	public:
-		BlockingMessageEnvelope(CLASS & destination, MESSAGE const & message, REPLY & reply)
+		BlockingMessageEnvelope(CLASS & destination, MESSAGE const & message)
 		: _destination(destination)
 		, _message(message)
-		, _reply(reply)
 		, _semaphore(0)
 		{
 		}
@@ -123,8 +122,7 @@ namespace smp
 		// returns true if the Actor should continue (false=terminate)
 		bool Execute()
 		{
-			_destination.OnMessage(_message, _reply);
-			//_condition.Restart();
+			_destination.OnMessage(_message);
 			_semaphore.Increment();
 			return ! IsTerminateMessage<MESSAGE>();
 		}
@@ -132,9 +130,6 @@ namespace smp
 	private:
 		MESSAGE _message;
 		CLASS & _destination;
-		REPLY & _reply;
-		//ThreadCondition _condition;
-		//Mutex _mutex;
 		Semaphore _semaphore;
 	};
 	

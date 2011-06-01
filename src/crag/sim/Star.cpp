@@ -40,8 +40,8 @@ sim::Star * sim::Star::Create(PyObject * args)
 	}
 	
 	// create message
-	Star * star = nullptr;
-	AddStarMessage message = { orbital_radius, orbital_year };
+	Star * star = reinterpret_cast<Star *>(new char [sizeof(Star)]);
+	AddStarMessage message = { orbital_radius, orbital_year, * star };
 	
 	// send
 	Simulation::SendMessage(message, star);

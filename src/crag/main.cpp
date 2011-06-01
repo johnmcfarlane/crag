@@ -98,7 +98,7 @@ namespace
 			
 			// Terminate the actors.
 			smp::TerminateMessage message;
-			sim::Simulation::SendMessage(message);
+			sim::Simulation::SendMessage(message, false);
 			form::FormationManager::SendMessage(message);
 		}
 		

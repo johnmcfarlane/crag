@@ -100,29 +100,29 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 {
 }
 
-void sim::Simulation::OnMessage(AddObserverMessage const & message, Observer * & reply)
+void sim::Simulation::OnMessage(AddObserverMessage const & message)
 {
-	reply = new Observer(message.center);
+	new (& message.observer) Observer(message.center);
 	
-	AddEntity(* reply);
+	AddEntity(message.observer);
 }
 
 #include "Planet.h"
-void sim::Simulation::OnMessage(AddPlanetMessage const & message, Planet * & reply)
+void sim::Simulation::OnMessage(AddPlanetMessage const & message)
 {
-	reply = new Planet(	message.center,
-						message.radius,
-						message.random_seed,
-						message.num_craters);
+	new (& message.planet) Planet(message.center,
+								  message.radius,
+								  message.random_seed,
+								  message.num_craters);
 	
-	AddEntity(* reply);
+	AddEntity(message.planet);
 }
 
-void sim::Simulation::OnMessage(AddStarMessage const & message, Star * & reply)
+void sim::Simulation::OnMessage(AddStarMessage const & message)
 {
-	reply = new Star(message.orbital_radius, message.orbital_year);
+	new (& message.star) Star(message.orbital_radius, message.orbital_year);
 	
-	AddEntity(* reply);
+	AddEntity(message.star);
 }
 
 void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
