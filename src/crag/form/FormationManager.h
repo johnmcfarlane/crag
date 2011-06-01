@@ -55,6 +55,7 @@ namespace form {
 	
 	class FormationManager : public smp::Actor<FormationManager>
 	{
+		OBJECT_SINGLETON(FormationManager);
 	public:
 		FormationManager();
 		~FormationManager();

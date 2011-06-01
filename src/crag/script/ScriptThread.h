@@ -11,6 +11,7 @@
 #pragma once
 
 #include "smp/Actor.h"
+#include "core/Singleton.h"
 
 
 namespace script
@@ -20,6 +21,7 @@ namespace script
 	// When Run finished, the program is done.
 	class ScriptThread : public smp::Actor<ScriptThread>
 	{
+		OBJECT_SINGLETON(ScriptThread);
 	public:
 		ScriptThread();
 		~ScriptThread();
