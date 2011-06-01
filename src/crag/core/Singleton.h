@@ -16,36 +16,13 @@
 
 namespace core
 {
-	// TODO: Remove this singleton. It's more trouble than it's worth.
-	// TODO: (Not to mention that Singletons are considered harmful.)
-
-	// Any class, S, derived from Singleton is guaranteed to have no more than one instance.
-	// If multiple objects of class, S, are instanced, the program will assert.
-	// Singleton also provides global accessors to the single instance of S.
-
-	// To make your class a singleton, define it as 
-	//	class MyClass : public Singleton<MyClass> { ... };
-	// or prevent global access, define it as:
-	//	class MyClass : private Singleton<MyClass> { ... };
+	
+    // A singleton simply asserts if it is instanced multiply.
 	template <typename S> class Singleton
 	{
 		OBJECT_NO_COPY (Singleton);
-		
+        
 	public:
-		
-		// returns the singleton or nullptr if it is not instanced.
-		static S * Ptr()
-		{
-			return the_instance;
-		}
-
-		// returns the singleton; assumes it is instanced. 
-		static S & Ref()
-		{
-			return ref(Ptr());
-		}
-
-	protected:
 		
 		// Singleton is useless on its own so c'tor/d'tor are protected.
 		Singleton()
@@ -61,9 +38,9 @@ namespace core
 			Assert(the_instance == reinterpret_cast<S *>(this));
 			the_instance = nullptr;
 		}
-
-	private:
 		
+	private:
+        
 		static S * the_instance;
 	};
 
