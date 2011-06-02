@@ -63,7 +63,7 @@ namespace smp
 		virtual void WaitForReply() = 0;
 		
 	private:
-		core::intrusive::hook h;
+		core::intrusive::hook<MessageEnvelope> h;
 		
 		// friends
 		friend class Actor<CLASS>;

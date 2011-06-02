@@ -30,7 +30,7 @@ namespace core
 		typedef char const * name_type;
 		name_type _name;
 		
-		typedef intrusive::hook hook_type; 
+		typedef typename intrusive::hook<Enumeration> hook_type;
 		hook_type _hook;
 
 		typedef intrusive::list<Enumeration<TYPE>, & Enumeration<TYPE>::_hook> list_type;
