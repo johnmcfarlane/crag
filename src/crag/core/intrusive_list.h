@@ -13,19 +13,22 @@
 namespace core
 {
 	
-	// intrusive double-linked list classes
+	// Intrusive Double-Linked List class
 	namespace intrusive
 	{
 		
 		// forward-declarations
-		template <typename Class> class hook;
-		template <typename Class, hook<Class> Class::* Member> class list;
 		template <typename Class> class list_base;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
-		// hook
+		// core::intrusive::hook
+		// 
+		// To enable listing of a Class, give it a member variable of type 
+		// core::intrusive::hook<Class>. Then add them to a list of type, 
+		// core::intrusive::hook<Class, & Class::MemberVariable>. Objects can
+		// only be listed multiple times if they have multiple hooks.
 		
 		template<typename Class>
 		class hook
@@ -97,7 +100,7 @@ namespace core
 		
 		////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
-		// list_base
+		// core::intrusive::list_base - do not use; use list instead.
 		
 		template <typename Class>
 		class list_base
@@ -375,15 +378,23 @@ namespace core
 		
 		////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
-		// list
+		// core::intrusive::list
+		//
+		// Stores elements of Class where Class contains a member variable of type,
+		// core::intrusive::hook<Class> which is specified by parameter, Member.
+		// Warning: Elements must be explicitly removed from one list 
+		// before being added to another.
 		
 		template<typename Class, hook<Class> Class::* Member>
 		class list : public list_base<Class>
 		{
+			////////////////////////////////////////////////////////////////////////////////
+			// types
+			
 			typedef typename core::intrusive::list_base<Class> super;
+		public:
 			typedef typename super::hook_type hook_type;
 			typedef typename super::size_type size_type;
-		public:
 			typedef typename super::value_type value_type;
 			
 			typedef typename ::core::intrusive::list_base<Class>::template const_iterator<Member> const_iterator;
