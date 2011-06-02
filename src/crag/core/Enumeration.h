@@ -18,9 +18,6 @@ namespace core
 {
 	
 	template <typename TYPE>
-	class Enumeration;
-
-	template < typename TYPE>
 	class Enumeration
 	{
 		OBJECT_NO_COPY(Enumeration);
@@ -30,10 +27,10 @@ namespace core
 		typedef char const * name_type;
 		name_type _name;
 		
-		typedef typename intrusive::hook<Enumeration> hook_type;
+		typedef intrusive::hook<Enumeration> hook_type;
 		hook_type _hook;
 
-		typedef intrusive::list<Enumeration<TYPE>, & Enumeration<TYPE>::_hook> list_type;
+		typedef intrusive::list<Enumeration, & Enumeration::_hook> list_type;
 		static list_type _values;
 	public:
 		typedef typename list_type::const_iterator const_iterator;
@@ -44,10 +41,9 @@ namespace core
 		{
 			// note: asserts may fail horribly before main begins.
 			Assert(find(_name) == nullptr);	// entries must be unique
-			Assert(reinterpret_cast<value_type *>(this) == this);	// this must be base for TYPE 
-			Assert(false);
+			Assert(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
 			
-			iterator insertion = std::upper_bound(begin(), end(), _name, Enumeration<TYPE>::compare);
+			iterator insertion = std::upper_bound(begin(), end(), _name, compare);
 			_values.insert(insertion, * this);
 			
 			Assert(find(_name) != nullptr);
@@ -61,7 +57,7 @@ namespace core
 		
 		operator value_type & ()
 		{
-			return * reinterpret_cast<value_type *>(this);
+			return * static_cast<value_type *>(this);
 		}
 		
 		operator value_type const & () const
@@ -100,7 +96,7 @@ namespace core
 		}
 		
 	private:
-		static bool compare(name_type lhs, Enumeration<TYPE> const & rhs)
+		static bool compare(name_type lhs, Enumeration const & rhs)
 		{
 			return strcmp(lhs, rhs._name) < 0;
 		}
