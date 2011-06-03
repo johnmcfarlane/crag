@@ -27,9 +27,9 @@ namespace smp
 		// types
 		typedef MessageEnvelope<CLASS> _MessageEnvelope;
 		typedef core::intrusive::list<_MessageEnvelope, & _MessageEnvelope::h> _list;
-		typedef Thread<Actor> _Thread;
-		typedef SimpleMutex _Mutex;
-		typedef Lock<_Mutex> _Lock;
+		typedef Thread<Actor> Thread;
+		typedef SimpleMutex Mutex;
+		typedef Lock<Mutex> Lock;
 	public:
 		virtual ~Actor() 
 		{ 
@@ -38,11 +38,11 @@ namespace smp
 		void Launch()
 		{
 			// type of the smp::Thread templated member function we wish to call
-			typedef void (_Thread::*THREAD_FUNCTION)(Actor & object);
+			typedef void (Thread::*THREAD_FUNCTION)(Actor & object);
 			
 			// pointer to the function with template parameter of Actor member function
 			// OnLaunch is the function that will be called by the thread class in the new thread.
-			THREAD_FUNCTION f = & _Thread::template Launch<& Actor::Run>;
+			THREAD_FUNCTION f = & Thread::template Launch<& Actor::Run>;
 			
 			// This line is too simple to deserve a random stream of programming terms like the others.
 			(_thread.*f)(* this);
@@ -126,18 +126,18 @@ namespace smp
 		
 		void Push(_MessageEnvelope & envelope)
 		{
-			_Lock critical_section(_mutex);
+			Lock critical_section(_mutex);
 			
 			_envelopes.push_back(envelope);
 		}
 		
 		_MessageEnvelope * Pop()
 		{
-			_Lock critical_section(_mutex);
+			Lock critical_section(_mutex);
 			
 			if (! _envelopes.empty())
 			{			
-				_MessageEnvelope & envelope = _envelopes.back();
+				_MessageEnvelope & envelope = _envelopes.front();
 				_envelopes.pop_front();
 				return & envelope;
 			}
@@ -151,8 +151,8 @@ namespace smp
 		
 		// attributes
 		_list _envelopes;
-		_Thread _thread;
-		_Mutex _mutex;
+		Thread _thread;
+		Mutex _mutex;
 	};
 	
 }
