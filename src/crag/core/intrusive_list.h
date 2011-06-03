@@ -223,40 +223,46 @@ namespace core
 				}
 			};
 			
-			template <hook_type Class::*Member/*, value_type * hook_type::*Next, value_type * hook_type::*Previous*/>
-			iterator<Member/*, Next, Previous*/> begin()
+			template <hook_type Class::*Member>
+			iterator<Member> begin()
 			{
-				return iterator<Member/*, & hook_type::_next, & hook_type::_previous*/>(_head.get_next());
+				return iterator<Member>(_head.get_next());
+			}
+			template <hook_type Class::*Member>
+			const_iterator<Member> begin() const
+			{
+				return const_iterator<Member>(_head.get_next());
 			}
 			
-			template <hook_type Class::*Member/*, value_type * hook_type::*Next, value_type * hook_type::*Previous*/>
-			iterator<Member/*, Next, Previous*/> end()
+			template <hook_type Class::*Member>
+			iterator<Member> end()
 			{
-				Class & o = get_object<Member>(_head);
-				return iterator<Member>(& o);
+				Class & sham = get_object<Member>(_head);
+				return iterator<Member>(& sham);
+			}
+			template <hook_type Class::*Member>
+			const_iterator<Member> end() const
+			{
+				Class const & sham = get_object<Member>(_head);
+				return iterator<Member>(& sham);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// access
 			
 			template <hook_type Class::*Member>
-			bool contains(value_type const & element)
+			bool contains(value_type const & element) const
 			{
-				return std::find(begin(), end(), element) != end();
-			}
-			
-			// detach an element that is in this list.
-			// TODO: Break out static section and move this-based Asserts into list.
-			template <hook_type Class::*Member>
-			void remove(value_type & element)
-			{
-				Assert(is_attached(element));
-				Assert(contains(element));
+				for (const_iterator<Member> i = begin<Member>(); i != end<Member>(); ++ i)
+				{
+					value_type const & contained = * i;
+					if (& element == & contained)
+					{
+						return true;
+					}
+				}
 				
-				unlink<Member>(element);
-				
-				Assert(is_detached(element));
-				Assert(! contains(element));
+				return false;
 			}
 			
 			template <hook_type Class::*Member>
@@ -375,6 +381,12 @@ namespace core
 				return object_ref;
 			}
 			
+			template <hook_type Class::* Member>
+			static value_type const & get_object(hook_type const & h)
+			{
+				return get_object<Member>(const_cast<hook_type &>(h));
+			}
+			
 			////////////////////////////////////////////////////////////////////////////////
 			// data
 			
@@ -438,7 +450,9 @@ namespace core
 			
 			bool empty() const
 			{
-				return super::_head.get_next() == super::_head.get_previous();
+				hook_type const & this_hook = super::_head;
+				hook_type const & next_hook = super::_head.get_next()->*Member;
+				return & next_hook == & this_hook;
 			}
 			
 			size_type size() const
@@ -513,6 +527,12 @@ namespace core
 			{
 				super::template unlink_all<Member>();
 				super::template init<Member>();
+			}
+			
+			void remove(value_type & element)
+			{
+				Assert(super::template contains<Member>(element));
+				super::template detach<Member>(element);
 			}
 		};
 		
