@@ -49,10 +49,14 @@ namespace core
 			Assert(find(_name) != nullptr);
 		}
 		
+		~Enumeration()
+		{
+			_values.remove(* this);
+		}
+		
 		bool operator==(name_type name) const
 		{
-			Assert((name == _name) == (strcmp(name, _name) == 0));
-			return name == _name;
+			return (name == _name) || (strcmp(name, _name) == 0);
 		}
 		
 		operator value_type & ()
