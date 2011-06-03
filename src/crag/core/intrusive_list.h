@@ -63,8 +63,16 @@ namespace core
 			{
 				return _next;
 			}
+			value_type const * get_next() const
+			{
+				return _next;
+			}
 			
 			value_type * get_previous()
+			{
+				return _previous;
+			}
+			value_type const * get_previous() const
 			{
 				return _previous;
 			}
@@ -430,7 +438,7 @@ namespace core
 			
 			bool empty() const
 			{
-				return super::_head.is_detached();
+				return super::_head.get_next() == super::_head.get_previous();
 			}
 			
 			size_type size() const
