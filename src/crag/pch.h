@@ -106,17 +106,8 @@
 //////////////////////////////////////////////////////////////////////
 // Python
 
-#if defined(WIN32)
-#if defined(_DEBUG)
-#undef _DEBUG
+// Crag uses Stackless Python ~3.1.
 #include "Python.h"
-#define _DEBUG
-#else
-#include "Python.h"
-#endif
-#else
-#include "Python/Python.h"
-#endif
 
 
 //////////////////////////////////////////////////////////////////////
