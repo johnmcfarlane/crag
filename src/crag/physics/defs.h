@@ -18,7 +18,7 @@
 //	In particular, you must build and install the ODE library using double-precision. 
 //	Also, as this project is compiled for i386 with a number of optimizations, more flags may be required.
 //	As of writing this, the current ./configure CL that works is as follows:
-//		CFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" CXXFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" ./configure --enable-double-precision --disable-demos
+//		CFLAGS="-arch i386 -fno-exceptions -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" CXXFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" ./configure --enable-double-precision --disable-demos --prefix=$HOME
 
 // Hack to skip warnings in <ode/misc.h>
 #define _ODE_MISC_H_
