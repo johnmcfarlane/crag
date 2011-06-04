@@ -45,7 +45,7 @@ namespace core
 			
 			~hook() 
 			{ 
-				// Must call detach before attached hook is destroyed.
+				// Must call list::remove before attached hook is destroyed.
 				Assert(_next == _previous);
 			}
 			
