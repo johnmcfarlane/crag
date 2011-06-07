@@ -21,11 +21,29 @@
 #include "form/scene/Mesh.h"
 #include "form/FormationManager.h"
 
+#include "script/MetaClass.h"
+
 #include "core/Random.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Planet script binding
+
+DEFINE_SCRIPT_CLASS(sim, Planet);
+
+namespace script
+{
+	template <>
+	PyMethodDef sim::Planet::MetaClass::_functions[] = 
+	{
+		{NULL}  /* Sentinel */
+	};
+}
 
 
 //////////////////////////////////////////////////////////////////////
 // Planet
+
 
 sim::Planet::Planet(sim::Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters)
 : radius_mean(init_radius_mean)
@@ -73,7 +91,7 @@ sim::Planet::~Planet()
 	delete factory;
 }
 
-sim::Planet * sim::Planet::Create(PyObject * args)
+bool sim::Planet::Create(Planet & planet, PyObject * args)
 {
 	// Parse planet creation parameters
 	sim::Vector3 center;
@@ -82,17 +100,16 @@ sim::Planet * sim::Planet::Create(PyObject * args)
 	int num_craters;
 	if (! PyArg_ParseTuple(args, "ddddii", & center.x, & center.y, & center.z, & radius, & random_seed, & num_craters))
 	{
-		return nullptr;
+		return false;
 	}
 	
 	// create message
-	Planet * planet = reinterpret_cast<Planet *>(new char [sizeof(Planet)]);
-	AddPlanetMessage message = { center, radius, random_seed, num_craters, * planet };
+	AddPlanetMessage message = { center, radius, random_seed, num_craters, planet };
 	
 	// send
 	Simulation::SendMessage(message, true);
 
-	return planet;
+	return true;
 }
 
 void sim::Planet::Tick()

@@ -26,14 +26,6 @@ sim::Entity::~Entity()
 {
 }
 
-sim::Entity * sim::Entity::Create(PyObject * args)
-{
-	// Entity is abstract.
-	Assert(false);
-	
-	return nullptr;
-}
-
 void sim::Entity::Destroy(Entity & entity)
 {
 	// create message

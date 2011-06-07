@@ -54,30 +54,30 @@ SDL_SCANCODE_SPACE = 44
  
 
 def run_observer():
-	print 'begin run_observer'
-	observer = crag.Observer(0, 10000235, 0)
-	planet_radius = 25000000
-	# moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
+    print('begin run_observer')
+    observer = crag.Observer(0, 10000235, 0)
+    planet_radius = 25000000
+    # moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
 
-	while 1:
-		event = crag.get_event()
-		
-		if event[0] == "exit":
-			break
-		elif event[0] == "keydown":
-			if event[1] == SDL_SCANCODE_ESCAPE and event[2] == 1:
-				break
-			elif event[1] == SDL_SCANCODE_X:
-				if event[2] == 0:
-					pass
-					# moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
-				else:
-					pass
-					# moon3 = None
-		elif event[0] == "mousemove":
-			sensitivity = 0.1
-			observer.add_rotation(float(- event[2]) * sensitivity, 0.0, float(- event[1]) * sensitivity)
-		else:
-			stackless.schedule()
+    while 1:
+        event = crag.get_event()
+        
+        if event[0] == "exit":
+            break
+        elif event[0] == "keydown":
+            if event[1] == SDL_SCANCODE_ESCAPE and event[2] == 1:
+                break
+            elif event[1] == SDL_SCANCODE_X:
+                if event[2] == 0:
+                    pass
+                    # moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
+                else:
+                    pass
+                    # moon3 = None
+        elif event[0] == "mousemove":
+            sensitivity = 0.1
+            observer.add_rotation(float(- event[2]) * sensitivity, 0.0, float(- event[1]) * sensitivity)
+        else:
+            stackless.schedule()
 
-	print 'end run_observer'
+    print('end run_observer')

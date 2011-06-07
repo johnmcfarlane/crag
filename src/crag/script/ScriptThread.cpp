@@ -11,13 +11,9 @@
 #include "pch.h"
 
 #include "ScriptThread.h"
-#include "Class.h"
+#include "MetaClass.h"
 
-#include "sim/Observer.h"
-#include "sim/Planet.h"
-#include "sim/Star.h"
 #include "sim/Simulation.h"
-#include "sim/Universe.h"
 
 
 #if defined(NDEBUG)
@@ -28,6 +24,8 @@
 #define FILE_LOCAL_END 
 #endif
 
+// Compiling python yourself? My preference:
+// CFLAGS="-arch i386" ./configure --with-universal-archs=intel --enable-universalsdk=/Developer/SDKs/MacOSX10.6.sdk --prefix=$HOME --enable-stacklessfewerregisters
 
 FILE_LOCAL_BEGIN
 
@@ -86,29 +84,26 @@ PyMethodDef crag_methods[] =
 	{NULL, NULL, 0, NULL}
 };
 
+static PyModuleDef crag_module_def = {
+    PyModuleDef_HEAD_INIT, "crag", NULL, -1, crag_methods,
+    NULL, NULL, NULL, NULL
+};
 
-////////////////////////////////////////////////////////////////////////////////
-// ScriptThread member definitions
-
-PyObject * observer_add_rotation(PyObject * self, PyObject * args)
+PyObject * create_crag_module()
 {
-	sim::Vector3 rotations;
-	if (! PyArg_ParseTuple(args, "ddd", & rotations.x, & rotations.y, & rotations.z))
-	{
-		return nullptr;
-	}
-	
-	sim::Observer * observer = script::Class<sim::Observer>::GetNativeObject(self);
-	observer->AddRotation(rotations);
+    // Create the module
+    PyObject & crag_module = ref(PyModule_Create(& crag_module_def));
 
-	Py_RETURN_NONE;
+	// Register the classes
+	for (script::MetaClassBase::iterator i = script::MetaClassBase::begin(); i != script::MetaClassBase::end(); ++ i)
+	{
+		script::MetaClassBase & meta_class = * i;
+		meta_class.Init(crag_module, "crag", "No documentation available. TBD");
+	}
+    
+    return & crag_module;
 }
 
-PyMethodDef observer_methods[] = {
-	{"add_rotation", (PyCFunction)observer_add_rotation, METH_VARARGS, "Add some rotational impulse to the observer"},
-	//{"add_thrust", (PyCFunction)observer_add_thrust, METH_VARARGS, "Add some thrust impulse to the observer"},
-	{NULL}  /* Sentinel */
-};
 
 FILE_LOCAL_END
 
@@ -120,28 +115,25 @@ script::ScriptThread::ScriptThread()
 {
 }
 
-script::ScriptThread::~ScriptThread()
-{
-}
-
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run()
 {
+    int failure = PyImport_AppendInittab("crag", & create_crag_module);
+    Assert(! failure);
+    
 	Py_Initialize();
 	Run("./script/main.py");
-	exit(0);	// TODO
 	Py_Finalize();
 }
 
 void script::ScriptThread::Run(char const * source_filename)
 {
-	PyObject * crag_module = Py_InitModule("crag", crag_methods);
-	Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.", nullptr);
-	Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
-	Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
-	Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);	
-	
-	char mode[] = "r";
-	PyObject* PyFileObject = PyFile_FromString(const_cast<char *>(source_filename), mode);
-	PyRun_SimpleFile(PyFile_AsFile(PyFileObject), source_filename);
+	FILE * file = fopen(source_filename, "r");
+	PyRun_SimpleFileEx(file, source_filename, true);
 }
+
+// TODO: Add documentation back in:
+//Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.", nullptr);
+//Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
+//Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
+//Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);

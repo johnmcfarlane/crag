@@ -8,10 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
-		5213C8D0132DE3660021EA91 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8CF132DE3660021EA91 /* SDL.framework */; };
-		5213C8D3132DE3800021EA91 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D2132DE3800021EA91 /* Python.framework */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
-		5213C8D7132DE3F80021EA91 /* libode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D6132DE3F80021EA91 /* libode.a */; };
 		526423CA135F49FB00C00EFE /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52642301135F49FA00C00EFE /* COPYING */; };
 		526423CB135F49FB00C00EFE /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642304135F49FA00C00EFE /* ConfigEntry.cpp */; };
 		526423CC135F49FB00C00EFE /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642306135F49FA00C00EFE /* ConfigManager.cpp */; };
@@ -105,10 +102,7 @@
 		52055D65132DE312000C6578 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		5213C8CF132DE3660021EA91 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
-		5213C8D2132DE3800021EA91 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../Library/Frameworks/Python.framework; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
-		5213C8D6132DE3F80021EA91 /* libode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libode.a; path = ../../../../../../usr/local/lib/libode.a; sourceTree = "<group>"; };
 		52642301135F49FA00C00EFE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52642303135F49FA00C00EFE /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52642304135F49FA00C00EFE /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -228,10 +222,9 @@
 		52642382135F49FA00C00EFE /* SphericalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphericalBody.cpp; sourceTree = "<group>"; };
 		52642383135F49FA00C00EFE /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		52642384135F49FA00C00EFE /* readme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = readme.html; sourceTree = "<group>"; };
-		52642386135F49FA00C00EFE /* Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Class.h; sourceTree = "<group>"; };
 		52642387135F49FA00C00EFE /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
 		52642388135F49FA00C00EFE /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
-		52642389135F49FA00C00EFE /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; };
+		52642389135F49FA00C00EFE /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; usesTabs = 1; wrapsLines = 0; };
 		5264238A135F49FA00C00EFE /* ScriptThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptThread.h; sourceTree = "<group>"; };
 		5264238C135F49FA00C00EFE /* axes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = axes.h; sourceTree = "<group>"; };
 		5264238D135F49FA00C00EFE /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
@@ -288,12 +281,14 @@
 		526423C6135F49FB00C00EFE /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		529B025713610D79009AE194 /* ring_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ring_buffer.h; sourceTree = "<group>"; };
 		52ADFADB1366CA9A00A891D8 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
 		52B6A5FA136A81CD00ECDEA9 /* intrusive_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intrusive_list.h; sourceTree = "<group>"; };
 		52D79F2113608A04001063D2 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		52D79F2213608A04001063D2 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
+		52E12AE81399339700711F95 /* MetaClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaClass.h; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
@@ -307,10 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */,
-				5213C8D0132DE3660021EA91 /* SDL.framework in Frameworks */,
-				5213C8D3132DE3800021EA91 /* Python.framework in Frameworks */,
 				5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */,
-				5213C8D7132DE3F80021EA91 /* libode.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,10 +332,7 @@
 		52055D61132DE312000C6578 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5213C8D6132DE3F80021EA91 /* libode.a */,
 				5213C8D4132DE39A0021EA91 /* OpenGL.framework */,
-				5213C8D2132DE3800021EA91 /* Python.framework */,
-				5213C8CF132DE3660021EA91 /* SDL.framework */,
 				52055D62132DE312000C6578 /* Cocoa.framework */,
 				52055D64132DE312000C6578 /* Other Frameworks */,
 			);
@@ -595,7 +584,8 @@
 		52642385135F49FA00C00EFE /* script */ = {
 			isa = PBXGroup;
 			children = (
-				52642386135F49FA00C00EFE /* Class.h */,
+				5282AAA0139E007B0076E4F4 /* Object.h */,
+				52E12AE81399339700711F95 /* MetaClass.h */,
 				52642387135F49FA00C00EFE /* Script.cpp */,
 				52642388135F49FA00C00EFE /* Script.h */,
 				52642389135F49FA00C00EFE /* ScriptThread.cpp */,
@@ -883,8 +873,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(HOME)/Library/Frameworks\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -892,9 +882,19 @@
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				GCC_PREPROCESSOR_DEFINITIONS = PROFILE;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					"~/include",
+					"~/include/python3.1",
+				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
+				LIBRARY_SEARCH_PATHS = "~/lib";
+				OTHER_LDFLAGS = (
+					"-lode",
+					"-lsdl",
+					"-lpython3.1",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				USER_HEADER_SEARCH_PATHS = ../../src/crag;
 				WRAPPER_EXTENSION = app;
 			};
@@ -908,17 +908,27 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(HOME)/Library/Frameworks\"",
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Frameworks\"",
 				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					"~/include",
+					"~/include/python3.1",
+				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
+				LIBRARY_SEARCH_PATHS = "~/lib";
+				OTHER_LDFLAGS = (
+					"-lode",
+					"-lsdl",
+					"-lpython3.1",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				USER_HEADER_SEARCH_PATHS = ../../src/crag;
 				WRAPPER_EXTENSION = app;
 			};

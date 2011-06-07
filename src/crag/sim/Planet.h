@@ -30,12 +30,14 @@ namespace sim
 	// TODO: The moon is of class, planet. As such, Planet needs a better name. 
 	class Planet : public Entity
 	{
+		DECLARE_SCRIPT_CLASS(Planet, Entity);
+		
 	public:
 		Planet(Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters);
 		~Planet();
 
 		// Type-specific allocation via script.
-		static Planet * Create(PyObject * args);
+		static bool Create(Planet & planet, PyObject * args);
 		
 		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;

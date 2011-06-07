@@ -10,7 +10,6 @@
 
 #include "pch.h"
 
-#include "axes.h"
 #include "Observer.h"
 #include "Simulation.h"
 #include "Universe.h"
@@ -21,6 +20,8 @@
 #include "geom/MatrixOps.h"
 #include "geom/Vector4.h"
 #include "core/ConfigEntry.h"
+
+#include "script/MetaClass.h"
 
 #include "gfx/Debug.h"
 #include "gfx/Scene.h"
@@ -45,6 +46,39 @@ namespace
 	CONFIG_DEFINE (observer_light_attenuation_c, float, 4.000f);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::Observer script binding
+
+DEFINE_SCRIPT_CLASS(sim, Observer);
+
+namespace script
+{
+	PyObject * observer_add_rotation(PyObject * self, PyObject * args)
+	{
+		sim::Vector3 rotations;
+		if (! PyArg_ParseTuple(args, "ddd", & rotations.x, & rotations.y, & rotations.z))
+		{
+			return nullptr;
+		}
+		
+		sim::Observer & observer = script::GetRef<sim::Observer>(self);
+		observer.AddRotation(rotations);
+		
+		Py_RETURN_NONE;
+	}
+	
+	template <>
+	PyMethodDef sim::Observer::MetaClass::_functions[] = 
+	{
+		{"add_rotation", (PyCFunction)observer_add_rotation, METH_VARARGS, "Add some rotational impulse to the observer"},
+		{NULL}  /* Sentinel */
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Observer	member definitions
 
 sim::Observer::Observer(Vector3 const & init_pos)
 : Entity()
@@ -72,23 +106,22 @@ sim::Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-sim::Observer * sim::Observer::Create(PyObject * args)
+bool sim::Observer::Create(Observer & observer, PyObject * args)
 {
 	// Parse planet creation parameters
 	Vector<double, 3> center;
 	if (! PyArg_ParseTuple(args, "ddd", &center.x, &center.y, &center.z))
 	{
-		return nullptr;
+		return false;
 	}
 
 	// create message
-	Observer * observer = reinterpret_cast<Observer *>(new char [sizeof(Observer)]);
-	AddObserverMessage message = { center, * observer };
-	
+	AddObserverMessage message = { center, observer };
+
 	// send
 	Simulation::SendMessage(message, true);
-	
-	return observer;
+
+	return true;
 }
 
 void sim::Observer::AddRotation(Vector3 const & angles)

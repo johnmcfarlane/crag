@@ -19,11 +19,13 @@ namespace sim
 {
 	class Star : public Entity
 	{
+		DECLARE_SCRIPT_CLASS(Star, Entity);
+		
 	public:
 		Star(Scalar init_radius, Scalar init_year);
 
 		// Type-specific allocation via script.
-		static Star * Create(PyObject * args);
+		static bool Create(Star & star, PyObject * args);
 		
 		void Tick();
 	

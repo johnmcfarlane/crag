@@ -30,12 +30,14 @@ namespace sim
 {
 	class Observer : public Entity
 	{
+		DECLARE_SCRIPT_CLASS(Observer, Entity);
+
 	public:
 		Observer(Vector3 const & init_pos);
 		~Observer();
 		
 		// Type-specific allocation via script.
-		static Observer * Create(PyObject * args);
+		static bool Create(Observer & observer, PyObject * args);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);

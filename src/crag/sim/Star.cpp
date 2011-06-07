@@ -17,6 +17,26 @@
 
 #include "gfx/Scene.h"
 
+#include "script/MetaClass.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::Star script binding
+
+DEFINE_SCRIPT_CLASS(sim, Star);
+
+namespace script
+{
+	template <>
+	PyMethodDef sim::Star::MetaClass::_functions[] = 
+	{
+		{NULL}  /* Sentinel */
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::Star member definitions
 
 sim::Star::Star(Scalar init_radius, Scalar init_year)
 : Entity()
@@ -29,24 +49,23 @@ sim::Star::Star(Scalar init_radius, Scalar init_year)
 	scene.AddLight(light);
 }
 
-sim::Star * sim::Star::Create(PyObject * args)
+bool sim::Star::Create(Star & star, PyObject * args)
 {
 	// Parse planet creation parameters
 	sim::Scalar orbital_radius;
 	sim::Scalar orbital_year;
 	if (! PyArg_ParseTuple(args, "dd", & orbital_radius, & orbital_year))
 	{
-		return nullptr;
+		return false;
 	}
 	
 	// create message
-	Star * star = reinterpret_cast<Star *>(new char [sizeof(Star)]);
-	AddStarMessage message = { orbital_radius, orbital_year, * star };
+	AddStarMessage message = { orbital_radius, orbital_year, star };
 	
 	// send
-	Simulation::SendMessage(message, star);
+	Simulation::SendMessage(message, true);
 
-	return star;
+	return true;
 }
 
 void sim::Star::Tick()

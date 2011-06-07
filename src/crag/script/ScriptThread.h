@@ -24,7 +24,6 @@ namespace script
 		OBJECT_SINGLETON(ScriptThread);
 	public:
 		ScriptThread();
-		~ScriptThread();
 		
 		virtual void Run();
 		

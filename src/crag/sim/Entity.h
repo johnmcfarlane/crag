@@ -12,6 +12,8 @@
 
 #include "defs.h"
 
+#include "script/Object.h"
+
 
 namespace physics
 {
@@ -25,14 +27,16 @@ namespace sim
 
 	
 	// The base class for 'things' that exist in the simulation.
-	class Entity
+	class Entity : public script::Object
 	{
+	public:
+		DECLARE_SCRIPT_CLASS(Entity, script::Object);
+		
 	public:
 		Entity();
 		virtual ~Entity();
 		
 		// Type-specific allocation via script.
-		static Entity * Create(PyObject * args);
 		static void Destroy(Entity & entity);
 
 		// general callbacks
