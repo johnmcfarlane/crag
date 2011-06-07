@@ -148,30 +148,15 @@ sim::Universe & sim::Simulation::GetUniverse()
 	return ref(universe);
 }
 
-/*sim::UniverseResource const & sim::Simulation::GetUniverse() const
-{
-	return universe;
-}*/
-
 physics::Engine & sim::Simulation::GetPhysicsEngine()
 {
 	return ref(physics_engine);
 }
 
-/*physics::Engine const & sim::Simulation::GetPhysicsEngine() const
-{
-	return ref(physics_engine);
-}*/
-
 gfx::Scene & sim::Simulation::GetScene()
 {
 	return ref(scene);
 }
-
-/*gfx::Scene const & sim::Simulation::GetScene() const
-{
-	return scene;
-}*/
 
 void sim::Simulation::AddEntity(Entity & entity)
 {
