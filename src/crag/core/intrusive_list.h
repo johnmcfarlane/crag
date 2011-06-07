@@ -360,31 +360,13 @@ namespace core
 			template <hook_type Class::* Member>
 			static value_type & get_object(hook_type & h)
 			{
-				VerifyRef(h);
-				
-				// Get byte pointer to where hook would be in a null object.
-				value_type * const null_object_ptr = nullptr;
-				char * null_hook_cptr = (char *)&(null_object_ptr->*Member);
-				
-				// Get byte pointer to where it is now.
-				char * hook_cptr = (char *)& h;
-				
-				// Get the difference between the two pointers.
-				// This is equal to the byte pointer of the object which h is part of.
-				// (Hopefully, this is the first line that actually makes code.)
-				size_t offset = hook_cptr - null_hook_cptr;
-				
-				// Return 
-				value_type & object_ref = * reinterpret_cast<Class *>(offset);
-				//Assert(& get_hook<Class, Member>(object_ref) == & h);
-				
-				return object_ref;
+				return get_owner<Class, hook_type, Member>(h);
 			}
 			
 			template <hook_type Class::* Member>
 			static value_type const & get_object(hook_type const & h)
 			{
-				return get_object<Member>(const_cast<hook_type &>(h));
+				return get_owner<Class, hook_type const, Member>(h);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
