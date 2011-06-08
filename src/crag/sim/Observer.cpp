@@ -68,10 +68,25 @@ namespace script
 		Py_RETURN_NONE;
 	}
 	
+	PyObject * observer_set_speed(PyObject * self, PyObject * args)
+	{
+		int speed_factor;
+		if (! PyArg_ParseTuple(args, "i", & speed_factor))
+		{
+			return nullptr;
+		}
+		
+		sim::Observer & observer = script::GetRef<sim::Observer>(self);
+		observer.SetSpeedFactor(speed_factor);
+		
+		Py_RETURN_NONE;
+	}
+	
 	template <>
 	PyMethodDef sim::Observer::MetaClass::_functions[] = 
 	{
 		{"add_rotation", (PyCFunction)observer_add_rotation, METH_VARARGS, "Add some rotational impulse to the observer"},
+		{"set_speed", (PyCFunction)observer_set_speed, METH_VARARGS, "Set the impulse speed of the observer"},
 		{NULL}  /* Sentinel */
 	};
 }

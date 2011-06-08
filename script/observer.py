@@ -53,31 +53,51 @@ SDL_SCANCODE_TAB = 43
 SDL_SCANCODE_SPACE = 44
  
 
+class observer_task:
+	def __init__(self):
+		self.__observer = crag.Observer(0, 10000235, 0)
+		self.__is_done = False
+
+	def done(self):
+		return self.__is_done
+	
+	# returns True if an event was handled
+	def handle_event(self):
+		event = crag.get_event()
+		
+		if event[0] == "exit":
+			self.__is_done = True
+		elif event[0] == "key":
+			self.handle_keyboard(event[1], event[2] == 1)
+		elif event[0] == "mousemove":
+			self.handle_mousemove(float(event[1]), float(event[2]))
+		else:
+			return False
+		return True
+
+	# returns True if an event was handled
+	def handle_keyboard(self, scancode, is_down):
+		if is_down:
+			if scancode == SDL_SCANCODE_ESCAPE:
+				self.__is_done = True
+			elif scancode == SDL_SCANCODE_0:
+				self.__observer.set_speed(0)
+			elif scancode >= SDL_SCANCODE_1 and scancode <= SDL_SCANCODE_9:
+				self.__observer.set_speed(scancode + 1 - SDL_SCANCODE_1)
+
+	# returns True if an event was handled
+	def handle_mousemove(self, x_delta, y_delta):
+		self.sensitivity = 0.1
+		x_rotation = - y_delta * self.sensitivity
+		y_rotation = - x_delta * self.sensitivity
+		self.__observer.add_rotation(x_rotation, 0.0, y_rotation)
+
 def run_observer():
-    print('begin run_observer')
-    observer = crag.Observer(0, 10000235, 0)
-    planet_radius = 25000000
-    # moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
+	print('begin run_observer')
 
-    while 1:
-        event = crag.get_event()
-        
-        if event[0] == "exit":
-            break
-        elif event[0] == "keydown":
-            if event[1] == SDL_SCANCODE_ESCAPE and event[2] == 1:
-                break
-            elif event[1] == SDL_SCANCODE_X:
-                if event[2] == 0:
-                    pass
-                    # moon3 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 15000000, 10, 250)
-                else:
-                    pass
-                    # moon3 = None
-        elif event[0] == "mousemove":
-            sensitivity = 0.1
-            observer.add_rotation(float(- event[2]) * sensitivity, 0.0, float(- event[1]) * sensitivity)
-        else:
-            stackless.schedule()
+	o = observer_task()
+	while not o.done():
+		if not o.handle_event():
+			stackless.schedule()
 
-    print('end run_observer')
+	print('end run_observer')

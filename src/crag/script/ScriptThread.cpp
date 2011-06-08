@@ -59,13 +59,16 @@ PyObject * get_event(PyObject * self, PyObject * args)
 				return Py_BuildValue("si", "exit", 0);
 				
 			case SDL_KEYDOWN:
-				return Py_BuildValue("sii", "keydown", event.key.keysym.scancode, 1);
+				return Py_BuildValue("sii", "key", event.key.keysym.scancode, 1);
 				
 			case SDL_KEYUP:
-				return Py_BuildValue("sii", "keydown", event.key.keysym.scancode, 0);
+				return Py_BuildValue("sii", "key", event.key.keysym.scancode, 0);
 				
 			case SDL_MOUSEBUTTONDOWN:
-				return Py_BuildValue("si", "buttondown", event.button.button);
+				return Py_BuildValue("si", "mousebutton", event.button.button, 1);
+				
+			case SDL_MOUSEBUTTONUP:
+				return Py_BuildValue("si", "mousebutton", event.button.button, 0);
 				
 			case SDL_MOUSEMOTION:
 				return Py_BuildValue("sii", "mousemove", event.motion.xrel, event.motion.yrel);
