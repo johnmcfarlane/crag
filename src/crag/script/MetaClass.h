@@ -17,57 +17,53 @@
 
 namespace script
 {
-	// TODO: Break out MetaClass and make use of Object 
-	// to clean up how bases are dealt with.
+	template <typename CLASS> CLASS & GetRef(PyObject & self);
+	template <typename CLASS> CLASS & GetRef(PyObject * self);
+	template <typename CLASS> CLASS * GetPtr(PyObject & self);
+	template <typename CLASS> CLASS * GetPtr(PyObject * self);
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// MetaClass helper declarations
-	
-	// IsVoid
-	template <typename CLASS> bool IsVoid();
-
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// MetaClassBase class
+	// MetaClassPoly class
 	
 	// Note: This is the base class of MetaClass, 
 	// Note: not the MetaClass for base classes.
-	class MetaClassBase : public core::Enumeration<MetaClassBase>
+	class MetaClassPoly : public core::Enumeration<MetaClassPoly>
 	{
-		typedef core::Enumeration<MetaClassBase> super;
+		typedef core::Enumeration<MetaClassPoly> super;
 	public:
-		MetaClassBase(char const * name) 
+		MetaClassPoly(char const * name) 
 		: super(name)
 		{ 
 		}
-		virtual ~MetaClassBase()
+		virtual ~MetaClassPoly()
 		{
 		}
 		
-		// TODO: Protect this by making InitModule a static member of the class.
 		virtual void Init(PyObject & module, char const * module_name, char const * documentation) = 0;
 		virtual void Deinit() = 0;
 	};
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// MetaClass class
+	// MetaClassCommon class
 	// 
-	// Helps bind a native type, CLASS, to a Python class.
+	// Templated members common to all MetaClass specializations.
 	
-	template<typename CLASS> 
-	class MetaClass : public MetaClassBase
+	template <typename CLASS>
+	class MetaClassCommon : public MetaClassPoly
 	{
-		OBJECT_SINGLETON(MetaClass);
-		typedef typename CLASS::super BASE_CLASS;
+		friend CLASS & GetRef<CLASS>(PyObject & self);
+		friend CLASS * GetPtr<CLASS>(PyObject & self);
+		
+		OBJECT_SINGLETON(MetaClassCommon);
 		
 	public:
-		MetaClass(char const * name)
-		: MetaClassBase(name)
+		MetaClassCommon(char const * name)
+		: MetaClassPoly(name)
 		{
 		}
 		
-		~MetaClass()
+		~MetaClassCommon()
 		{
 			if (IsInitialized())
 			{
@@ -75,14 +71,9 @@ namespace script
 			}
 		}
 		
-		bool IsInitialized() const
+		static bool IsInitialized() 
 		{
 			return _type_object.tp_name != nullptr;
-		}
-		
-		static bool IsBaseClass()
-		{
-			return IsVoid<BASE_CLASS>();
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -91,73 +82,26 @@ namespace script
 		// Guide: Basically when casting, use reference versions 
 		// when you're sure of the result. Otherwise, use pointers.
 		
-		// GetRef/Ptr functions convert a PyObject object into a CLASS object.
-		static CLASS & GetRef(PyObject & self)
+		static void InitTypeObjectBase(PyTypeObject & type_object)
 		{
-			// Trying to cast to the wrong type of class?
-			Assert (& _type_object == self.ob_type);
-
-			// Cast from self to script::Object and then to derived type.
-			Object & base_object = core::get_owner<Object, PyObject, & Object::ob_base>(self);
-			CLASS & object = static_cast<CLASS &>(base_object);
-
-			// Reverse the process to make sure everything's in the right place. 
-			Assert(& object.ob_base == & self);
-			Assert(object.ob_base.ob_type == & _type_object);
-
-			return object;
-		}
-		static CLASS & GetRef(PyObject * self)
-		{
-			Assert (self != nullptr);
-			return GetRef(* self);
+			type_object.tp_base = & _type_object;
 		}
 		
-		static CLASS * GetPtr(PyObject & self)
-		{
-			if (& _type_object != self.ob_type)
-			{
-				return nullptr;
-			}
-			
-			return & GetRef(self);
-		}
-		static CLASS * GetPtr(PyObject * self)
-		{
-			if (self == nullptr)
-			{
-				return nullptr;
-			}
-			
-			return GetPtr(* self);
-		}
+	protected:
 		
-	private:
-
-		////////////////////////////////////////////////////////////////////////////////
-		// MetaClassBase overrides
-		
-		virtual void Init(PyObject & module, char const * module_name, char const * documentation)
+		static void InitTypeObject(PyTypeObject & type_object, char const * type_name, PyObject & module, char const * module_name, char const * documentation)
 		{
 			Assert(! IsInitialized());
 			
-			char const * name = GetName();
+			char const * name = type_name;
 			char const * dot = strchr(name, '.');
 			Assert(dot != nullptr);
 			char const * class_name = dot + 1;
 			
 			_type_object.tp_name = name;
 			_type_object.tp_basicsize = sizeof(CLASS);
-			_type_object.tp_dealloc = DeleteObject;
-			_type_object.tp_flags = IsBaseClass() ? Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE : Py_TPFLAGS_DEFAULT;
 			_type_object.tp_doc = documentation;
-			_type_object.tp_methods = _functions;
-			
-			_type_object.tp_base = IsBaseClass() ? nullptr : & MetaClass<BASE_CLASS>::_type_object;
-			
-			//_type_object.tp_init = reinterpret_cast<initproc>(Init);
-			_type_object.tp_alloc = Alloc;
-			_type_object.tp_new = NewObject;
+			_type_object.tp_methods = _methods;
 			
 			if (PyType_Ready(& _type_object) < 0)
 			{
@@ -167,20 +111,93 @@ namespace script
 			
 			Py_INCREF(& _type_object);
 			PyModule_AddObject(& module, class_name, (PyObject *)& _type_object);
-
+			
 			Assert(IsInitialized());
 		}
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// MetaClassPoly overrides
 		
 		virtual void Deinit()
 		{
 			Assert(IsInitialized());
 			
-			// TODO: Clean up strings etc. from things like _type_object.tp_name?
-			Py_DECREF(& _type_object);
-			
+			Py_DECREF(& _type_object);			
 			_type_object.tp_name = nullptr;
-
+			
 			Assert(! IsInitialized());			
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// data
+		
+		static PyMethodDef _methods [];
+		static PyTypeObject _type_object;
+	};
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// MetaClass class
+	// 
+	// Helps bind a native type, CLASS, to a Python class.
+	// Has two specializations: root and derived.
+	
+	template<typename CLASS> class MetaClass;
+	
+	
+	// root (or top) class specialization of MetaClass
+	template<> 
+	class MetaClass<Object> : public MetaClassCommon<Object>
+	{
+		typedef MetaClassCommon<Object> super;
+	public:
+		MetaClass(char const * name)
+		: super(name)
+		{
+		}
+		
+	private:
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// MetaClassPoly overrides
+		
+		virtual void Init(PyObject & module, char const * module_name, char const * documentation)
+		{
+			super::_type_object.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
+			super::_type_object.tp_base = nullptr;
+			
+			InitTypeObject(super::_type_object, GetName(), module, module_name, documentation);
+		}
+	};
+	
+	
+	// non-root class specialization of MetaClass
+	template<typename CLASS> 
+	class MetaClass : public MetaClassCommon<CLASS>
+	{
+		typedef MetaClassCommon<CLASS> super;
+		typedef typename CLASS::super BASE_CLASS;
+	public:
+		MetaClass(char const * name)
+		: super(name)
+		{
+		}
+		
+	private:
+
+		////////////////////////////////////////////////////////////////////////////////
+		// MetaClassPoly overrides
+		
+		virtual void Init(PyObject & module, char const * module_name, char const * documentation)
+		{
+			MetaClass<BASE_CLASS>::InitTypeObjectBase(super::_type_object);
+			
+			super::_type_object.tp_dealloc = DeleteObject;
+			super::_type_object.tp_flags = Py_TPFLAGS_DEFAULT;
+			super::_type_object.tp_alloc = Alloc;
+			super::_type_object.tp_new = NewObject;
+
+			super::InitTypeObject(super::_type_object, this->GetName(), module, module_name, documentation);
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -195,8 +212,8 @@ namespace script
 			// Initialize the memory (this is prior to a constructor being called).
 			ZeroObject(uninitialized_object);
 			uninitialized_object.ob_base.ob_refcnt = 1;
-			uninitialized_object.ob_base.ob_type = & _type_object;
-
+			uninitialized_object.ob_base.ob_type = & super::_type_object;
+			
 			// Note that the start of the allocation is NOT being returned.
 			// Our objects need vtables so that's just not possible.
 			return & uninitialized_object.ob_base;
@@ -210,7 +227,7 @@ namespace script
 			if (po != nullptr) 
 			{
 				// Allocate the object.
-				CLASS & object = GetRef(po);
+				CLASS & object = CLASS::GetRef(po);
 				
 				CLASS::Create(object, args); 
 			}
@@ -221,16 +238,10 @@ namespace script
 		
 		static void DeleteObject(PyObject * po)
 		{
-			CLASS & object = GetRef(po);
+			CLASS & object = CLASS::GetRef(po);
 			CLASS::Destroy(object);
 		}
 		
-		////////////////////////////////////////////////////////////////////////////////
-		// data
-		
-		static PyMethodDef _functions [];
-	public:
-		static PyTypeObject _type_object;		
 	};
 	
 	
@@ -238,42 +249,55 @@ namespace script
 	// MetaClass member definitions
 	
 	template <typename CLASS>
-	PyTypeObject MetaClass<CLASS>::_type_object = 
+	PyTypeObject MetaClassCommon<CLASS>::_type_object = 
 	{ 
 		PyVarObject_HEAD_INIT(NULL, 0) 
 	};
 
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// MetaClass helper definitions
+	// Functions to cast from PyObject to native objects.
 	
-	// IsVoid
-	template <> inline bool IsVoid<void>()
-	{
-		return true;
-	}
-	template <typename CLASS> bool IsVoid()
-	{
-		return false;
-	}
-	
-	// Casts
 	template <typename CLASS> CLASS & GetRef(PyObject & self)
 	{
-		return MetaClass<CLASS>::GetRef(self);
-	}	
+		// Trying to cast to the wrong type of class?
+		Assert (& MetaClass<CLASS>::_type_object == self.ob_type);
+		
+		// Cast from self to script::Object and then to derived type.
+		Object & base_object = core::get_owner<Object, PyObject, & Object::ob_base>(self);
+		CLASS & object = static_cast<CLASS &>(base_object);
+		
+		// Reverse the process to make sure everything's in the right place. 
+		Assert(& object.ob_base == & self);
+		Assert(object.ob_base.ob_type == & MetaClass<CLASS>::_type_object);
+		
+		return object;
+	}
+	
 	template <typename CLASS> CLASS & GetRef(PyObject * self)
 	{
-		return MetaClass<CLASS>::GetRef(self);
-	}	
+		Assert (self != nullptr);
+		return GetRef<CLASS>(* self);
+	}
 	
-	template <typename CLASS> CLASS & GetPtr(PyObject & self)
+	template <typename CLASS> CLASS * GetPtr(PyObject & self)
 	{
-		return MetaClass<CLASS>::GetRef(self);
-	}	
-	template <typename CLASS> CLASS & GetPtr(PyObject * self)
+		if (& MetaClass<CLASS>::_type_object != self.ob_type)
+		{
+			return nullptr;
+		}
+		
+		return & GetRef<CLASS>(self);
+	}
+	
+	template <typename CLASS> CLASS * GetPtr(PyObject * self)
 	{
-		return MetaClass<CLASS>::GetRef(self);
+		if (self == nullptr)
+		{
+			return nullptr;
+		}
+		
+		return GetPtr<CLASS>(* self);
 	}
 	
 }

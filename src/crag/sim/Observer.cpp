@@ -50,9 +50,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Observer script binding
 
-DEFINE_SCRIPT_CLASS(sim, Observer);
-
-namespace script
+namespace 
 {
 	PyObject * observer_add_rotation(PyObject * self, PyObject * args)
 	{
@@ -62,7 +60,7 @@ namespace script
 			return nullptr;
 		}
 		
-		sim::Observer & observer = script::GetRef<sim::Observer>(self);
+		sim::Observer & observer = sim::Observer::GetRef(self);
 		observer.AddRotation(rotations);
 		
 		Py_RETURN_NONE;
@@ -76,20 +74,17 @@ namespace script
 			return nullptr;
 		}
 		
-		sim::Observer & observer = script::GetRef<sim::Observer>(self);
+		sim::Observer & observer = sim::Observer::GetRef(self);
 		observer.SetSpeedFactor(speed_factor);
 		
 		Py_RETURN_NONE;
 	}
-	
-	template <>
-	PyMethodDef sim::Observer::MetaClass::_functions[] = 
-	{
-		{"add_rotation", (PyCFunction)observer_add_rotation, METH_VARARGS, "Add some rotational impulse to the observer"},
-		{"set_speed", (PyCFunction)observer_set_speed, METH_VARARGS, "Set the impulse speed of the observer"},
-		{NULL}  /* Sentinel */
-	};
 }
+
+DEFINE_SCRIPT_CLASS_BEGIN(sim, Observer)
+	SCRIPT_CLASS_METHOD("add_rotation", observer_add_rotation, "Add some rotational impulse to the observer")
+	SCRIPT_CLASS_METHOD("set_speed", observer_set_speed, "Set the impulse speed of the observer")
+DEFINE_SCRIPT_CLASS_END
 
 
 ////////////////////////////////////////////////////////////////////////////////

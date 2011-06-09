@@ -98,9 +98,9 @@ PyObject * create_crag_module()
     PyObject & crag_module = ref(PyModule_Create(& crag_module_def));
 
 	// Register the classes
-	for (script::MetaClassBase::iterator i = script::MetaClassBase::begin(); i != script::MetaClassBase::end(); ++ i)
+	for (script::MetaClassPoly::iterator i = script::MetaClassPoly::begin(); i != script::MetaClassPoly::end(); ++ i)
 	{
-		script::MetaClassBase & meta_class = * i;
+		script::MetaClassPoly & meta_class = * i;
 		meta_class.Init(crag_module, "crag", "No documentation available. TBD");
 	}
     

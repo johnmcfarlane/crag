@@ -23,16 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star script binding
 
-DEFINE_SCRIPT_CLASS(sim, Star);
-
-namespace script
-{
-	template <>
-	PyMethodDef sim::Star::MetaClass::_functions[] = 
-	{
-		{NULL}  /* Sentinel */
-	};
-}
+DEFINE_SCRIPT_CLASS(sim, Star)
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -29,16 +29,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Planet script binding
 
-DEFINE_SCRIPT_CLASS(sim, Planet);
-
-namespace script
-{
-	template <>
-	PyMethodDef sim::Planet::MetaClass::_functions[] = 
-	{
-		{NULL}  /* Sentinel */
-	};
-}
+DEFINE_SCRIPT_CLASS(sim, Planet)
 
 
 //////////////////////////////////////////////////////////////////////
