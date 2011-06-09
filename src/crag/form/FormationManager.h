@@ -52,6 +52,11 @@ namespace form {
 		Formation & formation;
 	};
 	
+	struct ForEachFormationMessage
+	{
+		FormationFunctor & functor;
+	};
+	
 	
 	class FormationManager : public smp::Actor<FormationManager>
 	{
@@ -70,11 +75,15 @@ namespace form {
 		
 		// Message passing
 		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) { smp::Actor<FormationManager>::SendMessage(Ref(), message, false); }
+		static void SendMessage(MESSAGE const & message, bool blocking) 
+		{ 
+			smp::Actor<FormationManager>::SendMessage(Ref(), message, blocking); 
+		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);
 		void OnMessage(RemoveFormationMessage const & message);
+		void OnMessage(ForEachFormationMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
 	private:

@@ -135,7 +135,7 @@ void sim::Simulation::OnMessage(SetCameraMessage const & message)
 {
 	scene->SetCamera(message.projection.pos, message.projection.rot);
 
-	form::FormationManager::SendMessage(message);
+	form::FormationManager::SendMessage(message, false);
 }
 
 sys::TimeType sim::Simulation::GetTime() const

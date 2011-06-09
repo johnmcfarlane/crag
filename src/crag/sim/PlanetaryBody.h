@@ -31,8 +31,8 @@ namespace sim
 		PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius);
 		
 	private:
-		virtual bool OnCollision(Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(SphericalBody & that_sphere, dGeomID that_geom_id);
+		virtual bool OnCollision(physics::Engine & engine, Body & that_body);
+		virtual bool OnCollisionWithSphericalBody(physics::Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id);
 		
 		form::Formation const & formation;
 	};

@@ -68,14 +68,14 @@ sim::Planet::Planet(sim::Vector3 const & init_pos, Scalar init_radius_mean, int 
 
 	// register with formation manager
 	form::AddFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message);
+	form::FormationManager::SendMessage(message, false);
 }
 
 sim::Planet::~Planet()
 {
 	// unregister with formation manager
 	form::RemoveFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message);
+	form::FormationManager::SendMessage(message, false);
 
 	delete body;
 	delete formation;

@@ -112,6 +112,11 @@ void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
 	RemoveFormation(message.formation);
 }
 
+void form::FormationManager::OnMessage(ForEachFormationMessage const & message)
+{
+	ForEachFormation(message.functor);
+}
+
 void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
 {
 	SetCameraPos(message.projection);
