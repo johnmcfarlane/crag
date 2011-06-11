@@ -121,8 +121,11 @@ script::ScriptThread::ScriptThread()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run()
 {
-    int failure = PyImport_AppendInittab("crag", & create_crag_module);
-    Assert(! failure);
+    if (PyImport_AppendInittab("crag", & create_crag_module))
+	{
+		std::cout << "failed to create crag python module.\n";
+		return;
+	}
     
 	Py_Initialize();
 	Run("./script/main.py");
