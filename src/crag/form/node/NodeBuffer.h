@@ -19,7 +19,7 @@
 
 #include "geom/Vector3.h"
 
-#include "form/score/CalculateNodeScoreFunctor.h"
+#include "form/node/CalculateNodeScoreFunctor.h"
 
 
 namespace form

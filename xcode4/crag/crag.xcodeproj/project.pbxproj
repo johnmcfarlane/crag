@@ -32,7 +32,6 @@
 		526423DE135F49FB00C00EFE /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264233E135F49FA00C00EFE /* SceneThread.cpp */; };
 		526423DF135F49FB00C00EFE /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642340135F49FA00C00EFE /* Vertex.cpp */; };
 		526423E0135F49FB00C00EFE /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642342135F49FA00C00EFE /* VertexBuffer.cpp */; };
-		526423E1135F49FB00C00EFE /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642345135F49FA00C00EFE /* CalculateNodeScoreFunctor.cpp */; };
 		526423E2135F49FB00C00EFE /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642358135F49FA00C00EFE /* Debug.cpp */; };
 		526423E3135F49FB00C00EFE /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235A135F49FA00C00EFE /* Font.cpp */; };
 		526423E4135F49FB00C00EFE /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235C135F49FA00C00EFE /* Image.cpp */; };
@@ -73,6 +72,7 @@
 		5264240A135F49FB00C00EFE /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C3135F49FB00C00EFE /* App.cpp */; };
 		5264240B135F49FB00C00EFE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C5135F49FB00C00EFE /* memory.cpp */; };
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
+		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
 		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A4132DF0A60045C3A8 /* observer.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
@@ -166,8 +166,6 @@
 		52642341135F49FA00C00EFE /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52642342135F49FA00C00EFE /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
 		52642343135F49FA00C00EFE /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
-		52642345135F49FA00C00EFE /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
-		52642346135F49FA00C00EFE /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		52642348135F49FA00C00EFE /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
 		52642349135F49FA00C00EFE /* Matrix4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix4.h; sourceTree = "<group>"; };
 		5264234A135F49FA00C00EFE /* MatrixOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatrixOps.h; sourceTree = "<group>"; };
@@ -282,6 +280,8 @@
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
+		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		529B025713610D79009AE194 /* ring_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ring_buffer.h; sourceTree = "<group>"; };
 		52ADFADB1366CA9A00A891D8 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
@@ -441,7 +441,6 @@
 				52642321135F49FA00C00EFE /* FormationManager.h */,
 				52642322135F49FA00C00EFE /* node */,
 				52642332135F49FA00C00EFE /* scene */,
-				52642344135F49FA00C00EFE /* score */,
 			);
 			path = form;
 			sourceTree = "<group>";
@@ -449,6 +448,8 @@
 		52642322135F49FA00C00EFE /* node */ = {
 			isa = PBXGroup;
 			children = (
+				528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */,
+				528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */,
 				52642323135F49FA00C00EFE /* ExpandNodeFunctor.h */,
 				52642324135F49FA00C00EFE /* ForEachNodeFace.h */,
 				52642325135F49FA00C00EFE /* GenerateMeshFunctor.h */,
@@ -490,15 +491,6 @@
 				52642343135F49FA00C00EFE /* VertexBuffer.h */,
 			);
 			path = scene;
-			sourceTree = "<group>";
-		};
-		52642344135F49FA00C00EFE /* score */ = {
-			isa = PBXGroup;
-			children = (
-				52642345135F49FA00C00EFE /* CalculateNodeScoreFunctor.cpp */,
-				52642346135F49FA00C00EFE /* CalculateNodeScoreFunctor.h */,
-			);
-			path = score;
 			sourceTree = "<group>";
 		};
 		52642347135F49FA00C00EFE /* geom */ = {
@@ -776,7 +768,6 @@
 				526423DE135F49FB00C00EFE /* SceneThread.cpp in Sources */,
 				526423DF135F49FB00C00EFE /* Vertex.cpp in Sources */,
 				526423E0135F49FB00C00EFE /* VertexBuffer.cpp in Sources */,
-				526423E1135F49FB00C00EFE /* CalculateNodeScoreFunctor.cpp in Sources */,
 				526423E2135F49FB00C00EFE /* Debug.cpp in Sources */,
 				526423E3135F49FB00C00EFE /* Font.cpp in Sources */,
 				526423E4135F49FB00C00EFE /* Image.cpp in Sources */,
@@ -817,6 +808,7 @@
 				5264240B135F49FB00C00EFE /* memory.cpp in Sources */,
 				5264240C135F49FB00C00EFE /* SDLMain.m in Sources */,
 				52D79F2313608A04001063D2 /* Engine.cpp in Sources */,
+				528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
