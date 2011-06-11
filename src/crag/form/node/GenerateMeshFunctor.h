@@ -43,7 +43,7 @@ namespace form
 			}
 		}
 		
-		// ForEachNodeFact functor
+		// ForEachNodeFace functor
 		void operator()(Point & a, Point & b, Point & c, Vector3f const & normal)
 		{
 			mesh.AddFace(a, b, c, normal);
