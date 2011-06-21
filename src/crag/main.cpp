@@ -78,7 +78,7 @@ namespace
 		core::Statistics stat_manager;
 #endif
 		
-		smp::Init(1);
+		smp::Init(0);
 
 		{
 			form::FormationManager formation_manager;
