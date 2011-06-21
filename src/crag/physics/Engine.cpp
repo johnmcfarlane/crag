@@ -43,6 +43,7 @@ void physics::Engine::Tick(double delta_time)
 		
 		// Tick physics (including acting upon collisions).
 		dWorldQuickStep (world, delta_time);
+		//dWorldStep (world, delta_time);
 		
 		// Remove this tick's collision data.
 		DestroyCollisions();
@@ -91,6 +92,7 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 	Assert(false);
 }
 
+// This is the default handler. It leaves ODE to deal with it. 
 void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
@@ -125,19 +127,28 @@ void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
 		//surface.slip1 = 0;
 		//surface.slip2 = 0;
 		
+		it->geom.g1 = geom1;
+		it->geom.g2 = geom2;
+
 		//it->fdir1[0] = 0;
 		//it->fdir1[1] = 0;
 		//it->fdir1[2] = 0;
 		//it->fdir1[3] = 0;
 		
-		OnContact(* it, geom1, geom2);
+		OnContact(* it);
 	}
 }
 
-void physics::Engine::OnContact(dContact const & contact, dGeomID geom1, dGeomID geom2)
+void physics::Engine::OnContact(dContact const & contact)
 {
 	dJointID c = dJointCreateContact (world, contact_joints, & contact);
-	dBodyID body1 = dGeomGetBody(geom1);
-	dBodyID body2 = dGeomGetBody(geom2);
+	
+	dBodyID body1 = dGeomGetBody(contact.geom.g1);
+	dBodyID body2 = dGeomGetBody(contact.geom.g2);
+	
 	dJointAttach (c, body1, body2);
+
+	// Make sure the bodies are in the right world.
+	Assert(body1 == nullptr || dBodyGetWorld(body1) == world);
+	Assert(body2 == nullptr || dBodyGetWorld(body2) == world);
 }

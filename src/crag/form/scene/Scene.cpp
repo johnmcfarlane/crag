@@ -15,7 +15,6 @@
 #include "Mesh.h"
 
 #include "form/Formation.h"
-#include "form/FormationFunctor.h"
 #include "form/FormationManager.h"
 
 #include "form/node/NodeBuffer.h"
@@ -174,23 +173,23 @@ void form::Scene::RemoveFormation(Formation const & formation)
 	formation_map.erase(i);
 }
 
+form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation) const
+{
+	FormationMap::const_iterator found = formation_map.find(& formation);
+	if (found == formation_map.end())
+	{
+		return nullptr;
+	}
+	else
+	{
+		return & found->second;
+	}
+}
+
 void form::Scene::Tick()
 {
 	node_buffer->Tick(camera_ray_relative);
 	TickModels();
-}
-
-void form::Scene::ForEachFormation(FormationFunctor & f) const
-{
-	f.SetSceneOrigin(origin);
-
-	for (form::Scene::FormationMap::const_iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
-	{
-		form::Scene::FormationPair const & pair = * i;
-		Formation const & formation = * pair.first;
-		Polyhedron const & polyhedron = pair.second;
-		f(formation, polyhedron);
-	}
 }
 
 void form::Scene::GenerateMesh(Mesh & mesh) const

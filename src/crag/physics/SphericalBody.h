@@ -29,7 +29,7 @@ namespace physics
 		
 	protected:
 		virtual bool OnCollision(Engine & engine, Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id);
+		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere);
 	};
 
 }

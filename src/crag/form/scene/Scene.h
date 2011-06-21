@@ -72,9 +72,9 @@ namespace form
 		
 		void AddFormation(Formation const & formation);
 		void RemoveFormation(Formation const & formation);
+		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		
 		void Tick();
-		void ForEachFormation(FormationFunctor & f) const;
 		void GenerateMesh(Mesh & mesh) const;
 	private:
 		

@@ -25,6 +25,7 @@ namespace physics
 	public:
 		virtual ~Body();
 		
+		dGeomID GetGeomId() const;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 
@@ -41,7 +42,7 @@ namespace physics
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
 		virtual bool OnCollision(Engine & engine, Body & that_body) = 0;
-		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id);
+		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere);
 		
 	protected:
 		dGeomID geom_id;	// the collision info

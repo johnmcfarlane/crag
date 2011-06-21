@@ -56,9 +56,7 @@
 		526423F9135F49FB00C00EFE /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642398135F49FA00C00EFE /* Observer.cpp */; };
 		526423FA135F49FB00C00EFE /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264239A135F49FA00C00EFE /* Planet.cpp */; };
 		526423FB135F49FB00C00EFE /* PlanetaryBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264239C135F49FA00C00EFE /* PlanetaryBody.cpp */; };
-		526423FC135F49FB00C00EFE /* PlanetCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264239E135F49FA00C00EFE /* PlanetCollisionFunctor.cpp */; };
 		526423FD135F49FB00C00EFE /* PlanetShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423A0135F49FA00C00EFE /* PlanetShader.cpp */; };
-		526423FE135F49FB00C00EFE /* PlanetSphereCollisionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423A2135F49FA00C00EFE /* PlanetSphereCollisionFunctor.cpp */; };
 		526423FF135F49FB00C00EFE /* Simulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423A4135F49FA00C00EFE /* Simulation.cpp */; };
 		52642400135F49FB00C00EFE /* Star.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423A6135F49FA00C00EFE /* Star.cpp */; };
 		52642401135F49FB00C00EFE /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423A8135F49FA00C00EFE /* Universe.cpp */; };
@@ -131,7 +129,6 @@
 		5264231C135F49FA00C00EFE /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5264231D135F49FA00C00EFE /* Formation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = Formation.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		5264231E135F49FA00C00EFE /* Formation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Formation.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5264231F135F49FA00C00EFE /* FormationFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationFunctor.h; sourceTree = "<group>"; };
 		52642320135F49FA00C00EFE /* FormationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationManager.cpp; sourceTree = "<group>"; };
 		52642321135F49FA00C00EFE /* FormationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationManager.h; sourceTree = "<group>"; };
 		52642323135F49FA00C00EFE /* ExpandNodeFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandNodeFunctor.h; sourceTree = "<group>"; };
@@ -242,12 +239,8 @@
 		5264239B135F49FA00C00EFE /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Planet.h; sourceTree = "<group>"; };
 		5264239C135F49FA00C00EFE /* PlanetaryBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetaryBody.cpp; sourceTree = "<group>"; };
 		5264239D135F49FA00C00EFE /* PlanetaryBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetaryBody.h; sourceTree = "<group>"; };
-		5264239E135F49FA00C00EFE /* PlanetCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetCollisionFunctor.cpp; sourceTree = "<group>"; };
-		5264239F135F49FA00C00EFE /* PlanetCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetCollisionFunctor.h; sourceTree = "<group>"; };
 		526423A0135F49FA00C00EFE /* PlanetShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetShader.cpp; sourceTree = "<group>"; };
 		526423A1135F49FA00C00EFE /* PlanetShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetShader.h; sourceTree = "<group>"; };
-		526423A2135F49FA00C00EFE /* PlanetSphereCollisionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetSphereCollisionFunctor.cpp; sourceTree = "<group>"; };
-		526423A3135F49FA00C00EFE /* PlanetSphereCollisionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetSphereCollisionFunctor.h; sourceTree = "<group>"; };
 		526423A4135F49FA00C00EFE /* Simulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Simulation.cpp; sourceTree = "<group>"; };
 		526423A5135F49FA00C00EFE /* Simulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Simulation.h; sourceTree = "<group>"; };
 		526423A6135F49FA00C00EFE /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Star.cpp; sourceTree = "<group>"; };
@@ -279,6 +272,7 @@
 		526423C6135F49FB00C00EFE /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
@@ -436,7 +430,6 @@
 				5264231C135F49FA00C00EFE /* defs.h */,
 				5264231D135F49FA00C00EFE /* Formation.cpp */,
 				5264231E135F49FA00C00EFE /* Formation.h */,
-				5264231F135F49FA00C00EFE /* FormationFunctor.h */,
 				52642320135F49FA00C00EFE /* FormationManager.cpp */,
 				52642321135F49FA00C00EFE /* FormationManager.h */,
 				52642322135F49FA00C00EFE /* node */,
@@ -472,6 +465,7 @@
 		52642332135F49FA00C00EFE /* scene */ = {
 			isa = PBXGroup;
 			children = (
+				52678A1613B0853C0024F060 /* ForEachIntersection.h */,
 				52642333135F49FA00C00EFE /* Mesh.cpp */,
 				52642334135F49FA00C00EFE /* Mesh.h */,
 				52642335135F49FA00C00EFE /* MeshBufferObject.cpp */,
@@ -607,12 +601,8 @@
 				5264239B135F49FA00C00EFE /* Planet.h */,
 				5264239C135F49FA00C00EFE /* PlanetaryBody.cpp */,
 				5264239D135F49FA00C00EFE /* PlanetaryBody.h */,
-				5264239E135F49FA00C00EFE /* PlanetCollisionFunctor.cpp */,
-				5264239F135F49FA00C00EFE /* PlanetCollisionFunctor.h */,
 				526423A0135F49FA00C00EFE /* PlanetShader.cpp */,
 				526423A1135F49FA00C00EFE /* PlanetShader.h */,
-				526423A2135F49FA00C00EFE /* PlanetSphereCollisionFunctor.cpp */,
-				526423A3135F49FA00C00EFE /* PlanetSphereCollisionFunctor.h */,
 				526423A4135F49FA00C00EFE /* Simulation.cpp */,
 				526423A5135F49FA00C00EFE /* Simulation.h */,
 				526423A6135F49FA00C00EFE /* Star.cpp */,
@@ -791,9 +781,7 @@
 				526423F9135F49FB00C00EFE /* Observer.cpp in Sources */,
 				526423FA135F49FB00C00EFE /* Planet.cpp in Sources */,
 				526423FB135F49FB00C00EFE /* PlanetaryBody.cpp in Sources */,
-				526423FC135F49FB00C00EFE /* PlanetCollisionFunctor.cpp in Sources */,
 				526423FD135F49FB00C00EFE /* PlanetShader.cpp in Sources */,
-				526423FE135F49FB00C00EFE /* PlanetSphereCollisionFunctor.cpp in Sources */,
 				526423FF135F49FB00C00EFE /* Simulation.cpp in Sources */,
 				52642400135F49FB00C00EFE /* Star.cpp in Sources */,
 				52642401135F49FB00C00EFE /* Universe.cpp in Sources */,
@@ -854,6 +842,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
 			};
 			name = Release;

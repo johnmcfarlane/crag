@@ -33,14 +33,21 @@ namespace gfx
 }
 
 
-namespace form {
-
+namespace form 
+{	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// forward declarations
+	
 	class FormationFunctor;
 	class Formation;
 	class Scene;
 	
 	typedef std::set<Formation *> FormationSet;
 	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// FormationManager message classes
 	
 	struct AddFormationMessage
 	{
@@ -52,12 +59,11 @@ namespace form {
 		Formation & formation;
 	};
 	
-	struct ForEachFormationMessage
-	{
-		FormationFunctor & functor;
-	};
 	
+	////////////////////////////////////////////////////////////////////////////////
+	// FormationManager class
 	
+	// The top-most formation management class.
 	class FormationManager : public smp::Actor<FormationManager>
 	{
 		OBJECT_SINGLETON(FormationManager);
@@ -77,13 +83,13 @@ namespace form {
 		template <typename MESSAGE>
 		static void SendMessage(MESSAGE const & message, bool blocking) 
 		{ 
-			smp::Actor<FormationManager>::SendMessage(Ref(), message, blocking); 
+			FormationManager & formation_manager = Ref();
+			smp::Actor<FormationManager>::SendMessage(formation_manager, message, blocking); 
 		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);
 		void OnMessage(RemoveFormationMessage const & message);
-		void OnMessage(ForEachFormationMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
 	private:
@@ -91,10 +97,16 @@ namespace form {
 		void Exit();
 		
 		void AddFormation(Formation & formation);
-		void RemoveFormation(Formation & formation);		
-		void ForEachFormation(FormationFunctor & f) const;
+		void RemoveFormation(Formation & formation);
 		
 	public:
+		struct IntersectionFunctor
+		{
+			virtual ~IntersectionFunctor() { }
+			virtual void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth) = 0;
+		};
+		void ForEachIntersection(sim::Sphere3 const & sphere, Formation const & formation, IntersectionFunctor & functor) const;
+		
 		void SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
 		void ResetRegulator();
 		

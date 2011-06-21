@@ -36,7 +36,7 @@ namespace physics
 		
 	public:
 		void OnCollision(dGeomID geom1, dGeomID geom2);
-		void OnContact(dContact const & contact, dGeomID geom1, dGeomID geom2);
+		void OnContact(dContact const & contact);
 		
 	private:
 		dBodyID CreateBody();

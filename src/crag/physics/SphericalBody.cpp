@@ -45,14 +45,12 @@ void physics::SphericalBody::SetDensity(Scalar density)
 
 bool physics::SphericalBody::OnCollision(Engine & engine, Body & that_body)
 {
-	return that_body.OnCollisionWithSphericalBody(engine, * this, geom_id);
+	return that_body.OnCollisionWithSphericalBody(engine, * this);
 }
 
-bool physics::SphericalBody::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere, dGeomID that_geom_id)
+bool physics::SphericalBody::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere)
 {
-	Assert(that_geom_id == that_sphere.geom_id);
-	
 	// There is no special code for sphere-sphere collision. 
-	engine.OnCollision(geom_id, that_geom_id);
+	engine.OnCollision(geom_id, that_sphere.geom_id);
 	return true;
 }

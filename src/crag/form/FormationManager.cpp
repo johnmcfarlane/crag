@@ -16,6 +16,7 @@
 #include "Mesh.h"
 
 #include "form/Node/NodeBuffer.h"
+#include "form/scene/ForEachIntersection.h"
 #include "form/scene/SceneThread.h"
 
 #include "sim/axes.h"
@@ -112,11 +113,6 @@ void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
 	RemoveFormation(message.formation);
 }
 
-void form::FormationManager::OnMessage(ForEachFormationMessage const & message)
-{
-	ForEachFormation(message.functor);
-}
-
 void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
 {
 	SetCameraPos(message.projection);
@@ -168,9 +164,26 @@ void form::FormationManager::RemoveFormation(form::Formation & formation)
 	scenes[1].RemoveFormation(formation);
 }
 
-void form::FormationManager::ForEachFormation(FormationFunctor & f) const
+void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Formation const & formation, IntersectionFunctor & functor) const
 {
-	GetVisibleScene().ForEachFormation(f);
+	Scene const & scene = GetVisibleScene();
+	Polyhedron const * polyhedron = scene.GetPolyhedron(formation);
+	if (polyhedron == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	sim::Vector3 const & origin = scene.GetOrigin();
+	form::Vector3 relative_formation_position(form::SimToScene(formation.position, origin));
+	form::Sphere3 relative_sphere(form::SimToScene(sphere.center, origin), sphere.radius);
+	
+	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	node_buffer.LockTree();
+	
+	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor);
+	
+	node_buffer.UnlockTree();
 }
 
 void form::FormationManager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
