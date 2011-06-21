@@ -337,49 +337,37 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 	{
 		case COMBO_NONE:
 		{
-			/*if ((int)key_code >= (int)KEY_0 && key_code <= (int)KEY_9)
-			{
-				int num = key_code - KEY_0;
-				if (num == 0) {
-					num = 10;
-				}
-				
-				Assert(false);
-				observer->SetSpeedFactor(num);
-				return true;
-			}*/
-			
 			switch (key_code)
 			{
-				case KEY_RETURN:
+				case SDLK_RETURN:
 					paused = ! paused;
 					return true;
 					
-				case KEY_C:
+				case SDLK_c:
 					renderer->ToggleCulling();
 					return true;
 					
-				case KEY_F:
+				case SDLK_f:
 					form::FormationManager::Ref().ToggleFlatShaded();
 					return true;
 					
-				case KEY_G:
+				case SDLK_g:
 					universe->ToggleGravity();
 					return true;
 					
-				case KEY_I:
+				case SDLK_i:
 					form::FormationManager::Ref().ToggleSuspended();
 					return true;
 					
-				case KEY_L:
+				case SDLK_l:
 					renderer->ToggleLighting();
 					return true;
 					
-				case KEY_O:
+				case SDLK_o:
 					capture = ! capture;
 					return true;
 					
-				case KEY_P:
+				case SDLK_p:
 					renderer->ToggleWireframe();
 					return true;
 					
@@ -393,13 +381,13 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 		{
 			switch (key_code)
 			{
-				case KEY_C:
+				case SDLK_c:
 				{
 					physics_engine->ToggleCollisions();
 					return true;
 				}
 					
-				case KEY_I:
+				case SDLK_i:
 					form::FormationManager::Ref().ToggleMeshGeneration();
 					return true;
 					
@@ -413,7 +401,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 		{
 			switch (key_code)
 			{
-				case KEY_I:
+				case SDLK_i:
 					form::FormationManager::Ref().ToggleDynamicOrigin();
 					return true;
 					
