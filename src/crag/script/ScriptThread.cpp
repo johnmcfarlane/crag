@@ -46,10 +46,13 @@ PyObject * get_event(PyObject * self, PyObject * args)
 	bool blocking = true;
 	while (sys::GetEvent(event, blocking))
 	{
-		if (sim::Simulation::Ref().HandleEvent(event))
 		{
-			// The simulation object caught the event.
-			continue;
+			sim::Simulation & simulation = sim::Simulation::Ref();
+			if (simulation.HandleEvent(event))
+			{
+				// The simulation object caught the event.
+				continue;
+			}
 		}
 		
 		// Return details of certain events back to the script.
@@ -59,10 +62,10 @@ PyObject * get_event(PyObject * self, PyObject * args)
 				return Py_BuildValue("si", "exit", 0);
 				
 			case SDL_KEYDOWN:
-				return Py_BuildValue("sii", "key", event.key.keysym.scancode, 1);
+				return Py_BuildValue("sii", "key", event.key.keysym.sym, 1);
 				
 			case SDL_KEYUP:
-				return Py_BuildValue("sii", "key", event.key.keysym.scancode, 0);
+				return Py_BuildValue("sii", "key", event.key.keysym.sym, 0);
 				
 			case SDL_MOUSEBUTTONDOWN:
 				return Py_BuildValue("si", "mousebutton", event.button.button, 1);
@@ -130,6 +133,9 @@ void script::ScriptThread::Run()
 	Py_Initialize();
 	Run("./script/main.py");
 	Py_Finalize();
+	
+	// TODO: Many many loose ends currently.
+	exit(0);
 }
 
 void script::ScriptThread::Run(char const * source_filename)
