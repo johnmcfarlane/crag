@@ -24,7 +24,7 @@
 #define FILE_LOCAL_END 
 #endif
 
-// Compiling python yourself? My preference:
+// Compiling stackless python on OS X yourself? My preference:
 // CFLAGS="-arch i386" ./configure --with-universal-archs=intel --enable-universalsdk=/Developer/SDKs/MacOSX10.6.sdk --prefix=$HOME --enable-stacklessfewerregisters
 
 FILE_LOCAL_BEGIN
@@ -43,7 +43,7 @@ PyObject * time(PyObject * self, PyObject * args)
 PyObject * get_event(PyObject * self, PyObject * args)
 {
 	sys::Event event;
-	bool blocking = true;
+	bool blocking = false;
 	while (sys::GetEvent(event, blocking))
 	{
 		{
@@ -77,10 +77,9 @@ PyObject * get_event(PyObject * self, PyObject * args)
 				return Py_BuildValue("sii", "mousemove", event.motion.xrel, event.motion.yrel);
 		}
 	}
-	
-	// There was an error. That's all the docs say.
-	Assert(false);
-	return nullptr;
+
+	// There are no more events.
+	Py_RETURN_NONE;
 }
 
 PyMethodDef crag_methods[] = 

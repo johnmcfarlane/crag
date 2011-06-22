@@ -6,6 +6,8 @@
 # Copyright 2010-2011 John McFarlane. All rights reserved.
 # This program is distributed under the terms of the GNU General Public License.
 
+import time
+
 
 # from SDL_keycode.h
 SDLK_ESCAPE = 27
@@ -14,37 +16,45 @@ SDLK_1 = 49
 SDLK_9 = 57
 
 
-class observer_task:
+class observer:
 	def __init__(self):
 		self.__observer = crag.Observer(0, 10000235, 0)
 		self.__is_done = False
-
-	def done(self):
-		return self.__is_done
 	
+	def run(self):
+		num_uneventful = 0
+		while True:
+			event = crag.get_event()
+			if event != None:
+				if self.handle_event(event):
+					return
+				num_uneventful = 0
+			else:
+				stackless.schedule()
+				num_uneventful += 1
+				if num_uneventful > 1:
+					time.sleep(0.01)
+
 	# returns True if an event was handled
-	def handle_event(self):
-		event = crag.get_event()
-		
+	def handle_event(self, event):
 		if event[0] == "exit":
-			self.__is_done = True
+			return True
 		elif event[0] == "key":
-			self.handle_keyboard(event[1], event[2] == 1)
+			return self.handle_keyboard(event[1], event[2] == 1)
 		elif event[0] == "mousemove":
-			self.handle_mousemove(float(event[1]), float(event[2]))
-		else:
-			return False
-		return True
+			return self.handle_mousemove(float(event[1]), float(event[2]))
+		return False
 
 	# returns True if an event was handled
 	def handle_keyboard(self, keysym, is_down):
 		if is_down:
 			if keysym == SDLK_ESCAPE:
-				self.__is_done = True
+				return True
 			elif keysym == SDLK_0:
-				self.__observer.set_speed(0)
+				self.__observer.set_speed(10)
 			elif keysym >= SDLK_1 and keysym <= SDLK_9:
 				self.__observer.set_speed(keysym + 1 - SDLK_1)
+		return False
 
 	# returns True if an event was handled
 	def handle_mousemove(self, x_delta, y_delta):
@@ -52,13 +62,4 @@ class observer_task:
 		x_rotation = - y_delta * self.sensitivity
 		y_rotation = - x_delta * self.sensitivity
 		self.__observer.add_rotation(x_rotation, 0.0, y_rotation)
-
-def run_observer():
-	print('begin run_observer')
-
-	o = observer_task()
-	while not o.done():
-		if not o.handle_event():
-			stackless.schedule()
-
-	print('end run_observer')
+		return False
