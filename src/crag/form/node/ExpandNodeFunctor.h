@@ -46,7 +46,6 @@ namespace form
 		// The node version. 
 		void operator() (Node & node)
 		{
-			// TODO: Try the integer union trick.
 			if (node.score > min_score)
 			{
 				if (node.IsExpandable()) 

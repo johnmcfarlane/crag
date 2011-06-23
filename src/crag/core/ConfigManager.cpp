@@ -48,8 +48,6 @@ using core::ConfigManager;
 
 ConfigManager::ConfigManager()
 {
-	// TODO: sort
-	
 	if (! Load())
 	{
 		// Make sure we always have a config file handy.

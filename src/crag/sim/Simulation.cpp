@@ -36,19 +36,6 @@ namespace
 	//////////////////////////////////////////////////////////////////////
 	// config variables
 
-	// TODO: Currently not used. 
-	// Find a way to reflect config variables in python. 
-#if 0
-	sim::Vector3 const default_camera_pos(0,9997750,0);
-	CONFIG_DEFINE (use_default_camera_pos, bool, true);
-	CONFIG_DEFINE (camera_pos, sim::Vector3, default_camera_pos);
-	CONFIG_DEFINE (camera_rot, sim::Matrix4, static_cast<sim::Matrix4>(sim::Matrix4::Identity()));
-
-	// please don't write in
-	CONFIG_DEFINE (sun_orbit_distance, sim::Scalar, 100000000);	
-	CONFIG_DEFINE (sun_year, sim::Scalar, 30000);
-#endif
-	
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 1.f);
 	

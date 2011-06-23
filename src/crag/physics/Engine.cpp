@@ -96,7 +96,6 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
-	// TODO: If cost of loop below gets too much, this array can be made a permanent member of this object and much of the init can be skipped.
 	int const max_num_contacts = 128;
 	dContact contacts [max_num_contacts];
 	
