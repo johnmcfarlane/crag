@@ -87,8 +87,8 @@ form::FormationManager::~FormationManager()
 	Assert(singleton == this);
 	singleton = nullptr;
 	
-	delete & meshes [0];
-	delete & meshes [1];
+	delete meshes [0];
+	delete meshes [1];
 }
 
 #if defined(VERIFY)
