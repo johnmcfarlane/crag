@@ -22,18 +22,13 @@ class observer:
 		self.__is_done = False
 	
 	def run(self):
-		num_uneventful = 0
 		while True:
 			event = crag.get_event()
 			if event != None:
 				if self.handle_event(event):
 					return
-				num_uneventful = 0
 			else:
 				stackless.schedule()
-				num_uneventful += 1
-				if num_uneventful > 1:
-					time.sleep(0.01)
 
 	# returns True if an event was handled
 	def handle_event(self, event):

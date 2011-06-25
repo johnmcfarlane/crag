@@ -35,44 +35,11 @@ namespace physics
 namespace sim
 {
 	
-	class Entity;
 	class Simulation;
 	class Universe;
 	
-	
-	// TODO: Tidy this horrible lot up.
-	class Observer;
-	struct AddObserverMessage
-	{
-		Vector3 center;
-		Observer & observer;
-	};
-	
-	
-	class Planet;
-	struct AddPlanetMessage
-	{
-		Vector3 center;
-		Scalar radius;
-		int random_seed;
-		int num_craters;
-		Planet & planet;
-	};
-	
-	
-	class Star;
-	struct AddStarMessage
-	{
-		Scalar orbital_radius;
-		Scalar orbital_year;
-		Star & star;
-	};
-	
-	
-	struct RemoveEntityMessage
-	{
-		Entity & entity;
-	};
+	struct AddEntityMessage;
+	struct RemoveEntityMessage;
 	
 	
 	class Simulation : public smp::Actor<Simulation>
@@ -96,9 +63,7 @@ namespace sim
 		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
-		void OnMessage(AddObserverMessage const & message);
-		void OnMessage(AddPlanetMessage const & message);
-		void OnMessage(AddStarMessage const & message);
+		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
 		void OnMessage(SetCameraMessage const & message);
 		
@@ -113,10 +78,6 @@ namespace sim
 		physics::Engine & GetPhysicsEngine();		
 		
 		gfx::Scene & GetScene();
-		
-	private:
-		void AddEntity(Entity & entity);
-		void RemoveEntity(Entity & entity);
 		
 	public:		
 		bool HandleEvent(sys::Event const & event);

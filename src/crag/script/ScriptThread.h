@@ -22,13 +22,30 @@ namespace script
 	class ScriptThread : public smp::Actor<ScriptThread>
 	{
 		OBJECT_SINGLETON(ScriptThread);
+		
+		typedef smp::Actor<ScriptThread> super;
 	public:
 		ScriptThread();
+		~ScriptThread();
 		
+		// Singleton
+		static ScriptThread & Ref() { return ref(singleton); }
+		
+		// Message passing. (Currently unused.)
+		template <typename MESSAGE>
+		static void SendMessage(MESSAGE const & message) 
+		{ 
+			ScriptThread & destination = Ref(); 
+			smp::Actor<ScriptThread>::SendMessage(destination, message, false); 
+		}
+
+		// thread entry point
 		virtual void Run();
 		
-	private:
-		void Run(char const * source_filename);
+		PyObject * PollEvent();
+		
+	private:		
+		static ScriptThread * singleton;
 	};
 	
 }

@@ -75,7 +75,13 @@ sim::Planet::~Planet()
 {
 	// unregister with formation manager
 	form::RemoveFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message, false);
+	
+	// TODO: This shouldn't have to be blocking. The probably cause
+	// is that not only is formation being deleted here right away,
+	// but also factory is deleted AND it keeps a reference to this planet. 
+	// The solution is to put factory in formation and to keep planet out 
+	// of shader.
+	form::FormationManager::SendMessage(message, true);
 
 	delete body;
 	delete formation;
@@ -94,8 +100,14 @@ bool sim::Planet::Create(Planet & planet, PyObject * args)
 		return false;
 	}
 	
+	// construct planet
+	new (& planet) Planet(center,
+						  radius,
+						  random_seed,
+						  num_craters);
+
 	// create message
-	AddPlanetMessage message = { center, radius, random_seed, num_craters, planet };
+	AddEntityMessage message = { planet };
 	
 	// send
 	Simulation::SendMessage(message, true);

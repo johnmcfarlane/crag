@@ -14,15 +14,15 @@
 
 #include "axes.h"
 #include "Firmament.h"
-#include "Observer.h"
-#include "Planet.h"
-#include "Star.h"
+#include "Entity.h"
 #include "Universe.h"
 
 #include "physics/Engine.h"
 
 #include "form/scene/SceneThread.h"
 #include "form/FormationManager.h"
+
+#include "script/ScriptThread.h"
 
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
@@ -58,6 +58,7 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 , scene(new gfx::Scene)
 , renderer(new gfx::Renderer)
 {
+	// TODO: Belongs in script.
 	scene->SetResolution(sys::GetWindowSize());
 	scene->SetSkybox(new Firmament);
 	
@@ -87,34 +88,17 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 {
 }
 
-void sim::Simulation::OnMessage(AddObserverMessage const & message)
+void sim::Simulation::OnMessage(AddEntityMessage const & message)
 {
-	new (& message.observer) Observer(message.center);
-	
-	AddEntity(message.observer);
-}
-
-#include "Planet.h"
-void sim::Simulation::OnMessage(AddPlanetMessage const & message)
-{
-	new (& message.planet) Planet(message.center,
-								  message.radius,
-								  message.random_seed,
-								  message.num_craters);
-	
-	AddEntity(message.planet);
-}
-
-void sim::Simulation::OnMessage(AddStarMessage const & message)
-{
-	new (& message.star) Star(message.orbital_radius, message.orbital_year);
-	
-	AddEntity(message.star);
+	universe->AddEntity(message.entity);
+	scene->AddEntity(message.entity);
 }
 
 void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 {
-	RemoveEntity(message.entity);
+	universe->RemoveEntity(message.entity);
+	scene->RemoveEntity(message.entity);
+	
 	delete & message.entity;
 }
 
@@ -143,19 +127,6 @@ physics::Engine & sim::Simulation::GetPhysicsEngine()
 gfx::Scene & sim::Simulation::GetScene()
 {
 	return ref(scene);
-}
-
-void sim::Simulation::AddEntity(Entity & entity)
-{
-	universe->AddEntity(entity);
-	scene->AddEntity(entity);
-}
-
-void sim::Simulation::RemoveEntity(Entity & entity)
-{
-	universe->RemoveEntity(entity);
-	scene->RemoveEntity(entity);
-
 }
 
 void sim::Simulation::Run()

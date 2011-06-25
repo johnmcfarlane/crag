@@ -15,16 +15,23 @@
 #include "script/Object.h"
 
 
-namespace physics
-{
-	class Body;
-}
-
-
 namespace sim
 {
+	class Entity;
 	class Universe;
 
+	
+	// Entity-related messages
+	struct AddEntityMessage
+	{
+		Entity & entity;
+	};
+	
+	struct RemoveEntityMessage
+	{
+		Entity & entity;
+	};
+	
 	
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public script::Object
@@ -47,9 +54,6 @@ namespace sim
 		
 		virtual void SetPosition(Vector3 const & position);
 		virtual Vector3 const & GetPosition() const = 0;
-		
-		virtual physics::Body * GetBody();
-		virtual physics::Body const * GetBody() const;
 
 		// Verification
 	#if defined(VERIFY)

@@ -57,13 +57,3 @@ void sim::Entity::SetPosition(Vector3 const & position)
 	// For now, only observer can have its position set.
 	Assert(false);
 }
-
-physics::Body * sim::Entity::GetBody()
-{
-	return nullptr;
-}
-
-physics::Body const * sim::Entity::GetBody() const
-{
-	return nullptr;
-}

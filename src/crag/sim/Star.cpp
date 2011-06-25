@@ -50,8 +50,11 @@ bool sim::Star::Create(Star & star, PyObject * args)
 		return false;
 	}
 	
+	// construct star
+	new (& star) Star(orbital_radius, orbital_year);
+	
 	// create message
-	AddStarMessage message = { orbital_radius, orbital_year, star };
+	AddEntityMessage message = { star };
 	
 	// send
 	Simulation::SendMessage(message, true);

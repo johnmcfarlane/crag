@@ -70,6 +70,7 @@
 		5264240A135F49FB00C00EFE /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C3135F49FB00C00EFE /* App.cpp */; };
 		5264240B135F49FB00C00EFE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C5135F49FB00C00EFE /* memory.cpp */; };
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
+		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
 		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
@@ -274,6 +275,8 @@
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		5287831E13B389CD00B67A38 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
+		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -611,6 +614,8 @@
 				526423A9135F49FA00C00EFE /* Universe.h */,
 				526423AA135F49FA00C00EFE /* UserInput.cpp */,
 				526423AB135F49FA00C00EFE /* UserInput.h */,
+				5287831E13B389CD00B67A38 /* Ball.cpp */,
+				5287831F13B389CD00B67A38 /* Ball.h */,
 			);
 			path = sim;
 			sourceTree = "<group>";
@@ -797,6 +802,7 @@
 				5264240C135F49FB00C00EFE /* SDLMain.m in Sources */,
 				52D79F2313608A04001063D2 /* Engine.cpp in Sources */,
 				528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */,
+				5287832013B389CD00B67A38 /* Ball.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

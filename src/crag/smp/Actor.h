@@ -33,6 +33,8 @@ namespace smp
 	public:
 		virtual ~Actor() 
 		{ 
+			_thread.Join();
+			Assert(_envelopes.empty());
 		}
 		
 		void Launch()

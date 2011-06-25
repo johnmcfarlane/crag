@@ -125,8 +125,11 @@ bool sim::Observer::Create(Observer & observer, PyObject * args)
 		return false;
 	}
 
+	// construct observer
+	new (& observer) Observer(center);
+	
 	// create message
-	AddObserverMessage message = { center, observer };
+	AddEntityMessage message = { observer };
 
 	// send
 	Simulation::SendMessage(message, true);

@@ -32,7 +32,7 @@ FILE_LOCAL_BEGIN
 ////////////////////////////////////////////////////////////////////////////////
 // crag module Functions
 
-PyObject * time(PyObject * self, PyObject * args)
+PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
 	sim::Simulation & simulation = sim::Simulation::Ref();
 
@@ -40,46 +40,66 @@ PyObject * time(PyObject * self, PyObject * args)
 	return Py_BuildValue("d", time);
 }
 
-PyObject * get_event(PyObject * self, PyObject * args)
+PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 {
-	sys::Event event;
-	bool blocking = false;
-	while (sys::GetEvent(event, blocking))
+	script::ScriptThread & script_thread = script::ScriptThread::Ref();
+	return script_thread.PollEvent();
+}
+
+PyObject * create_event_object(sys::Event const & event)
+{
+	switch (event.type)
 	{
+		case SDL_QUIT:
+			return Py_BuildValue("si", "exit", 0);
+			
+		case SDL_KEYDOWN:
+			return Py_BuildValue("sii", "key", event.key.keysym.sym, 1);
+			
+		case SDL_KEYUP:
+			return Py_BuildValue("sii", "key", event.key.keysym.sym, 0);
+			
+		case SDL_MOUSEBUTTONDOWN:
+			return Py_BuildValue("si", "mousebutton", event.button.button, 1);
+			
+		case SDL_MOUSEBUTTONUP:
+			return Py_BuildValue("si", "mousebutton", event.button.button, 0);
+			
+		case SDL_MOUSEMOTION:
+			return Py_BuildValue("sii", "mousemove", event.motion.xrel, event.motion.yrel);
+			
+		default:
+			return nullptr;
+	}
+}
+
+bool handle_events(PyObject * & event_object)
+{
+	// If no events are pending,
+	sys::Event event;
+	if (! sys::GetEvent(event, false))
+	{
+		// then nothing's happening event-wise.
+		return false;
+	}
+	else
+	{
+		// If the simulation actor caught the event,
+		sim::Simulation & simulation = sim::Simulation::Ref();
+		if (simulation.HandleEvent(event))
 		{
-			sim::Simulation & simulation = sim::Simulation::Ref();
-			if (simulation.HandleEvent(event))
-			{
-				// The simulation object caught the event.
-				continue;
-			}
+			// then blank the event
+			event_object = nullptr;
+		}
+		else
+		{
+			// else try and create an event object for script to deal with.
+			event_object = create_event_object(event);	
 		}
 		
-		// Return details of certain events back to the script.
-		switch (event.type)
-		{
-			case SDL_QUIT:
-				return Py_BuildValue("si", "exit", 0);
-				
-			case SDL_KEYDOWN:
-				return Py_BuildValue("sii", "key", event.key.keysym.sym, 1);
-				
-			case SDL_KEYUP:
-				return Py_BuildValue("sii", "key", event.key.keysym.sym, 0);
-				
-			case SDL_MOUSEBUTTONDOWN:
-				return Py_BuildValue("si", "mousebutton", event.button.button, 1);
-				
-			case SDL_MOUSEBUTTONUP:
-				return Py_BuildValue("si", "mousebutton", event.button.button, 0);
-				
-			case SDL_MOUSEMOTION:
-				return Py_BuildValue("sii", "mousemove", event.motion.xrel, event.motion.yrel);
-		}
+		// Either way, signal that there was activity.
+		return true;
 	}
-
-	// There are no more events.
-	Py_RETURN_NONE;
 }
 
 PyMethodDef crag_methods[] = 
@@ -118,29 +138,77 @@ FILE_LOCAL_END
 
 script::ScriptThread::ScriptThread()
 {
+	Assert(singleton == nullptr);
+	singleton = this;
+}
+
+script::ScriptThread::~ScriptThread()
+{
+	Assert(singleton == this);
+	singleton = nullptr;
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run()
 {
+	char const * source_filename = "./script/main.py";
+	FILE * file = fopen(source_filename, "r");
+	if (file == nullptr)
+	{
+		std::cout << "Failed to open main Python file, \"" << source_filename << "\".\n";
+		return;
+	}
+	
     if (PyImport_AppendInittab("crag", & create_crag_module))
 	{
-		std::cout << "failed to create crag python module.\n";
+		std::cout << "Failed to create crag python module.\n";
 		return;
 	}
     
 	Py_Initialize();
-	Run("./script/main.py");
+	PyRun_SimpleFileEx(file, source_filename, true);
 	Py_Finalize();
 	
+	ProcessMessages();
+	
 	// TODO: Many many loose ends currently.
-	exit(0);
+	//exit(0);
 }
 
-void script::ScriptThread::Run(char const * source_filename)
+PyObject * script::ScriptThread::PollEvent()
 {
-	FILE * file = fopen(source_filename, "r");
-	PyRun_SimpleFileEx(file, source_filename, true);
+	bool idle = true;
+	
+	while (true)
+	{
+		if (! ProcessMessages())
+		{
+			// It's the script thread that's supposed to decide when the other actors should quit.
+			DEBUG_BREAK();
+		}
+		
+		PyObject * event_object;
+		if (! handle_events(event_object))
+		{	
+			break;
+		}
+		
+		if (event_object != nullptr)
+		{
+			return event_object;
+		}
+		
+		idle = false;
+	}
+	
+	if (idle)
+	{
+		// Yield for a little while
+		smp::Sleep(.01f);
+	}
+	
+	// There are no more pending events.
+	Py_RETURN_NONE;
 }
 
 // TODO: Add documentation back in:
@@ -148,3 +216,6 @@ void script::ScriptThread::Run(char const * source_filename)
 //Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
 //Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
 //Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);
+
+
+script::ScriptThread * script::ScriptThread::singleton = nullptr;
