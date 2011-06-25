@@ -27,6 +27,7 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
+#include "sim/Entity.h"
 #include "sim/Simulation.h"
 
 #include <sstream>
@@ -268,6 +269,20 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 {
 	VerifyRenderState();
 
+	// The skybox, basically.
+	RenderBackground(scene);
+	
+	// All the things.
+	RenderForeground(scene);
+	
+	// Crap you generally don't want.
+	DebugDraw(scene.pov);
+
+	VerifyRenderState();
+}
+
+void gfx::Renderer::RenderBackground(Scene const & scene) const
+{
 	if (scene.skybox != nullptr) 
 	{
 		// Draw skybox.
@@ -279,24 +294,6 @@ void gfx::Renderer::RenderScene(Scene const & scene) const
 		// Clear screen.
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
-
-	// Adjust near and far plane
-	SetForegroundFrustum(scene, wireframe);
-	
-	if (wireframe)
-	{
-		RenderForeground(scene, WireframePass1);
-		RenderForeground(scene, WireframePass2);
-	}
-	else 
-	{
-		RenderForeground(scene, NormalPass);
-	}
-
-
-	DebugDraw(scene.pov);
-
-	VerifyRenderState();
 }
 
 // Assumes projectin matrix is already set. Hoses modelview matrix.
@@ -322,6 +319,22 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 	gl::Enable(GL_CULL_FACE);
 
 	VerifyRenderState();
+}
+
+void gfx::Renderer::RenderForeground(Scene const & scene) const
+{
+	// Adjust near and far plane
+	SetForegroundFrustum(scene, wireframe);
+	
+	if (wireframe)
+	{
+		RenderForegroundPass(scene, WireframePass1);
+		RenderForegroundPass(scene, WireframePass2);
+	}
+	else 
+	{
+		RenderForegroundPass(scene, NormalPass);
+	}
 }
 
 bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass, bool & color) const
@@ -374,7 +387,7 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 	return true;
 }
 
-void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPass pass) const
 {
 	bool color;
 	if (! BeginRenderForeground(scene, pass, color))
@@ -382,10 +395,17 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 		return;
 	}
 	
-	// Do the rendering
+	// Render the formations.
 	form::FormationManager & fm = form::FormationManager::Ref();
 	fm.Render(scene.pov, color);
-	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
+	//SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
+	
+	// Render everything else.
+	for (Scene::EntityVector::const_iterator i = scene.entities.begin(), end = scene.entities.end(); i != end; ++ i)
+	{
+		sim::Entity const & entity = * * i;
+		entity.Draw();
+	}
 	
 	EndRenderForeground(scene, pass);
 }
