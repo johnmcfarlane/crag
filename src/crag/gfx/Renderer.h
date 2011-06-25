@@ -63,7 +63,11 @@ namespace gfx
 	private:
 		void RenderScene(Scene const & scene) const;
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
+		
+		bool BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass, bool & color) const;
 		void RenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
+		void EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
+		
 		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
 		void EnableLights(std::vector<Light const *> const & lights, bool enabled) const;
 		

@@ -324,23 +324,23 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 	VerifyRenderState();
 }
 
-void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass, bool & color) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
 	
-	bool color = true;
 	switch (pass) 
 	{
 		case NormalPass:
 			if (! culling) {
 				gl::Disable(GL_CULL_FACE);
 			}
+			color = true;
 			break;
 			
 		case WireframePass1:
 			if (! culling)
 			{
-				return;
+				return false;
 			}
 			color = false;
 			gl::SetColor<GLfloat>(0, 0, 0);
@@ -352,6 +352,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 			if (! culling) {
 				gl::Disable(GL_CULL_FACE);
 			}
+			color = true;
 			//color = false;
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
@@ -370,11 +371,27 @@ void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass p
 	
 	gl::Enable(GL_DEPTH_TEST);
 	
+	return true;
+}
+
+void gfx::Renderer::RenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+{
+	bool color;
+	if (! BeginRenderForeground(scene, pass, color))
+	{
+		return;
+	}
+	
 	// Do the rendering
 	form::FormationManager & fm = form::FormationManager::Ref();
 	fm.Render(scene.pov, color);
 	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
+	EndRenderForeground(scene, pass);
+}
+
+void gfx::Renderer::EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+{
 	// Reset state
 	if (lighting)
 	{
