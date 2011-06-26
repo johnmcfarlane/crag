@@ -20,24 +20,19 @@
 template <typename S> class Sphere<S, 3>
 {
 public:
-	typedef Vector<S, 3> V;
-		
+	typedef S Scalar;
+	typedef Vector<Scalar, 3> Vector;
+	
 	Sphere() 
 	{ }
 	
-	template<typename RHS_S> Sphere(Vector<RHS_S, 3> const & c, RHS_S r) 
+	Sphere(Vector const & c, Scalar r) 
 		: center(c)
 		, radius(r)
 	{ }
 	
-	// templated copy constructor - can take a Sphere3 of a different type
-	template<typename RHS_S> Sphere(Sphere<RHS_S, 3> const & rhs) 
-		: center(rhs.center)
-		, radius(rhs.radius)
-	{ }
-
-	V center;
-	S radius;
+	Vector center;
+	Scalar radius;
 };
 
 
