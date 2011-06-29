@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "form/scene/Vertex.h"
+#include "form/defs.h"
 
 #include "smp/vector.h"
 

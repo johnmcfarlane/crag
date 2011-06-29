@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Vertex.h"
+#include "defs.h"
 #include "MeshProperties.h"
 
 #include "glpp/Mesh.h"

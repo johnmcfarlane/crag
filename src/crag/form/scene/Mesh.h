@@ -17,6 +17,8 @@
 
 #include "core/debug.h"
 
+#include "glpp/Vbo_Types.h"
+
 
 namespace form
 {

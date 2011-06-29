@@ -10,7 +10,9 @@
 
 #include "pch.h"
 
-#include "form/scene/Mesh.h"
+#include "Mesh.h"
+
+#include "form/defs.h"
 #include "form/node/Point.h"
 
 #include "geom/VectorOps.h"
