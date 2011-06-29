@@ -289,9 +289,9 @@ void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color)
 	
 	// Draw the mesh!
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	front_buffer.BeginDraw(pov, color);
+	front_buffer.Activate(pov, color);
 	front_buffer.Draw();
-	front_buffer.EndDraw();
+	front_buffer.Deactivate();
 	GLPP_VERIFY;
 	
 	//gl::Enable(GL_COLOR_MATERIAL);

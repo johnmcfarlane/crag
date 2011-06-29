@@ -16,6 +16,12 @@
 #include "geom/Sphere3.h"
 
 
+namespace gl
+{
+	struct Vertex3dNorm;
+}
+
+
 namespace form
 {
 	// Vector Types
@@ -35,4 +41,7 @@ namespace form
 	{
 		return scene + scene_origin;
 	}
+	
+	// Vertex
+	typedef gl::Vertex3dNorm Vertex;
 }

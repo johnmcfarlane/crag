@@ -33,14 +33,15 @@ namespace form
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
 	class MeshBufferObject : public gl::Mesh<Vertex>
 	{
+		typedef gl::Mesh<Vertex> super;
 	public:
 		MeshBufferObject();
 		
 		void Set(form::Mesh const & mesh);
 		int GetNumPolys() const;
 		
-		void BeginDraw(gfx::Pov pov, bool color) const;
-		void EndDraw() const;
+		void Activate(gfx::Pov pov, bool color) const;
+		void Deactivate() const;
 		
 		void Draw() const;
 		

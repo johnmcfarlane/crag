@@ -125,10 +125,10 @@ void gfx::Font::RenderVerts() const
 	GLPP_VERIFY;
 	
 	// Draw VBO
-	vbo.Begin();
+	vbo.Activate();
 	int num_verts = vertex_buffer.size();
 	vbo.DrawQuads(0, num_verts);
-	vbo.End();
+	vbo.Deactivate();
 	
 	GLPP_CALL(glDepthMask(GL_TRUE));
 	gl::Disable(GL_TEXTURE_2D);

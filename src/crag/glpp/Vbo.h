@@ -27,10 +27,10 @@ namespace gl
 		}
 		
 		// Must be individually defined for each type of Vertex; includes the glEnableClientState and gl*Pointer calls.
-		inline void Begin() const;
+		inline void Activate() const;
 
 		// Must be individually defined for each type of Vertex; includes the glDisableClientState calls.
-		inline void End() const;
+		inline void Deactivate() const;
 
 		void Draw(GLenum mode, GLint first, GLsizei count) const
 		{

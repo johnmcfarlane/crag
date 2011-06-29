@@ -17,8 +17,6 @@
 
 namespace form
 {
-	class Vertex;
-	
 	// This class stores the position of corners/mid-points in Nodes.
 	// They also remember their vertex in the currently generated mesh.
 	

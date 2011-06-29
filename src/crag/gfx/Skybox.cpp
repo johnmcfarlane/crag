@@ -60,7 +60,7 @@ void gfx::Skybox::Draw() const
 	// Draw VBO
 	Bind(& vbo);
 	
-	vbo.Begin();
+	vbo.Activate();
 	
 	int index = 0;
 	for (int axis = 0; axis < 3; ++ axis)
@@ -74,7 +74,7 @@ void gfx::Skybox::Draw() const
 		}
 	}
 	
-	vbo.End();
+	vbo.Deactivate();
 
 	GLPP_CALL(glDepthMask(GL_TRUE));
 }

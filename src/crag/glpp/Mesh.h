@@ -50,6 +50,16 @@ namespace gl
 			ibo.Set(num, array);
 		}
 		
+		void Activate() const
+		{
+			vbo.Activate();
+		}
+		
+		void Deactivate() const
+		{
+			vbo.Deactivate();
+		}
+		
 		void Draw(int min_index, int max_index, GLenum mode = GL_TRIANGLES) const
 		{
 			// IBO
