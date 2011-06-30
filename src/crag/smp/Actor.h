@@ -33,26 +33,38 @@ namespace smp
 	public:
 		virtual ~Actor() 
 		{ 
-			_thread.Join();
+			// Never called from within the thread.
+			Assert(! _thread.IsCurrent());
+			
+			// Must call Stop from the outside thread first.
+			Assert(! _thread.IsLaunched());
 			Assert(_envelopes.empty());
 		}
 		
-		void Launch()
+		void Start()
 		{
+			// Never called from within the thread.
+			Assert(! _thread.IsCurrent());
+			
 			// type of the smp::Thread templated member function we wish to call
 			typedef void (Thread::*THREAD_FUNCTION)(Actor & object);
 			
 			// pointer to the function with template parameter of Actor member function
 			// OnLaunch is the function that will be called by the thread class in the new thread.
-			THREAD_FUNCTION f = & Thread::template Launch<& Actor::Run>;
+			THREAD_FUNCTION f = & Thread::template Launch<& Actor::Run, & Actor::_thread>;
 			
 			// This line is too simple to deserve a random stream of programming terms like the others.
 			(_thread.*f)(* this);
 		}
 		
 		// Called from a thread that will block until the actor terminates.
-		void Join()
+		void Stop()
 		{
+			// Never called from within the thread.
+			Assert(! _thread.IsCurrent());
+			
+			smp::TerminateMessage message;
+			SendMessage(* static_cast<CLASS *>(this), message, false);
 			_thread.Join();
 		}
 		

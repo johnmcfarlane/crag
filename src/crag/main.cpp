@@ -82,10 +82,10 @@ namespace
 
 		{
 			form::FormationManager formation_manager;
-			formation_manager.Launch();
-			
 			sim::Simulation simulation(true);
-			simulation.Launch();
+
+			formation_manager.Start();
+			simulation.Start();
 			
 			smp::Sleep(0.25);
 			
@@ -96,10 +96,9 @@ namespace
 			script::ScriptThread script_thread;
 			script_thread.Run();
 			
-			// Terminate the actors.
-			smp::TerminateMessage message;
-			sim::Simulation::SendMessage(message, false);
-			form::FormationManager::SendMessage(message, false);
+			// Stop the actors.
+			simulation.Stop();
+			formation_manager.Stop();
 		}
 		
 		smp::Deinit();

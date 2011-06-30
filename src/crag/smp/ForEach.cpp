@@ -167,7 +167,7 @@ namespace
 	public:
 		Worker()
 		{
-			thread.Launch<& Worker::Run>(* this);
+			thread.Launch<& Worker::Run, & Worker::thread>(* this);
 		}
 		
 		~Worker()
