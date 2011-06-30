@@ -280,7 +280,7 @@ void sim::PlanetShader::CalcRootPointPos(Random & rnd, sim::Vector3 & position) 
 sim::Scalar sim::PlanetShader::GetRandomHeight(Random & rnd) const
 {
 	Scalar radius_mean = planet.GetRadiusMean();
-	Scalar random_exponent = (.5 - rnd.GetFloatInclusive()) * planet_shader_random_range;
+	Scalar random_exponent = (.5 - rnd.GetUnitInclusive<Scalar>()) * planet_shader_random_range;
 	Scalar radius = radius_mean * Exp(random_exponent);
 	return radius;
 }
@@ -312,7 +312,7 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Para
 	Scalar near_b_altitude = GetAltitude(near_b);
 	Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
-	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
+	Scalar rnd_x = params.rnd.GetUnitInclusive<Scalar>() * 2. - 1.;
 	rnd_x *= Square(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,
@@ -361,7 +361,7 @@ bool sim::PlanetShader::CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Par
 	result = near_a + near_b;
 	Scalar result_length = Length(result);
 	
-	Scalar rnd_x = params.rnd.GetFloatInclusive() * 2. - 1.;
+	Scalar rnd_x = params.rnd.GetUnitInclusive<Scalar>() * 2. - 1.;
 	rnd_x *= Square(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,

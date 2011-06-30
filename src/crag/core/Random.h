@@ -16,56 +16,80 @@ class Random
 {
 public:
 	Random(unsigned long iseed = 1) : seed(iseed) { }
-
-	// returns pseudo-random whole number in the range [0, MAX]
+	
+	// returns pseudo-random whole number in the range [0, maximum]
 	int GetInt()
 	{
 		seed = seed * 1103515245 + 12345;
-		return(static_cast<unsigned>(seed >> 16) & 32767);
+		return(static_cast<unsigned>(seed >> (num_bits + 1)) & maximum);
 	}
-
+	
 	// returns pseudo-random whole number in the range [0, n)
 	int GetInt(int n)
 	{
-		return static_cast<int>((static_cast<int64_t>(GetInt()) * n) / (MAX + 1));
+		int64_t r = GetInt();
+		r *= n;
+		r >>= num_bits;
+		return static_cast<int>(r);
 	}
 	
 	// returns pseudo-random number in the range [0, 1)
-	float GetFloat()
+	template <typename S>
+	S GetUnit()
 	{
-		return static_cast<float>(GetInt()) / (MAX + 1);
-	}
-
-	// returns pseudo-random number in the range [0, 1]
-	float GetFloatInclusive()
-	{
-		return static_cast<float>(GetInt()) / MAX;
+		S inverse = S(1) / bound;
+		return inverse * GetInt();
 	}
 	
-	// returns pseudo-random number in the range [0, 1)
-	double GetDouble()
-	{
-		return static_cast<double>(GetInt()) / (MAX + 1);
-	}
-
 	// returns pseudo-random number in the range [0, 1]
-	double GetDoubleInclusive()
+	template <typename S>
+	S GetUnitInclusive()
 	{
-		return static_cast<double>(GetInt()) / MAX;
+		S inverse = S(1) / maximum;
+		return inverse * GetInt();
 	}
 	
-	void GetGaussians(float & y1, float & y2);
-	void GetGaussians(double & y1, double & y2);
+	template <typename S>
+	void GetGaussians(S & y1, S & y2)
+	{
+		S const one = 1;
+		S const two = 2;
 
-	enum 
-	{ 
-		MAX = 32767 
+		// TODO: Test accuracy of each alternative.
+		S x1, x2, w;
+
+		do {
+			x1 = two * GetUnitInclusive<S>() - one;
+			x2 = two * GetUnitInclusive<S>() - one;
+			w = x1 * x1 + x2 * x2;
+		} while ( w >= one );
+
+		w = Sqrt( (-two * Log( w ) ) / w );
+		y1 = x1 * w;
+		y2 = x2 * w;
+
+		//// might be faster for RISC chipsets
+		//S x1 = one - GetUnit<S>();
+		//S x2 = GetUnitInclusive<S>();
+		//S d = Sqrt(-two * Log(x1));
+		//S a = two * static_cast<S>(PI) * x2;
+		//y1 = d * Cos(a);
+		//y2 = d * Sin(a);
+	}
+	
+	// constants
+	enum
+	{
+		num_bits = 15,
+		bound = 1 << num_bits,
+		maximum = bound - 1
 	};
-
+	
+	// global seed
 	static Random sequence;
 	
 private:
-
+	
 	unsigned long seed;
 };
 

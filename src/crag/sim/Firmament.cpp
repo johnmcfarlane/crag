@@ -65,10 +65,10 @@ void Firmament::DrawStarsClevur()
 
 					for (int i = num_stars; i; -- i)
 					{
-						star.center.x = random.GetFloatInclusive() - .5f;
-						star.center.y = random.GetFloatInclusive() - .5f;
-						star.center.z = random.GetFloatInclusive() - .5f;
-						star.radius = Square(random.GetFloatInclusive());
+						star.center.x = random.GetUnitInclusive<float>() - .5f;
+						star.center.y = random.GetUnitInclusive<float>() - .5f;
+						star.center.z = random.GetUnitInclusive<float>() - .5f;
+						star.radius = Square(random.GetUnitInclusive<float>());
 
 						float w = star_z;
 						if ((w > 0) != (pole != 0) || w == 0)
@@ -118,10 +118,10 @@ void Firmament::DrawStarsSimple()
 				//random.GetGaussians(star.center.x, star.center.y);
 				//random.GetGaussians(star.center.z, star.radius);
 				//star.radius = Abs(star.radius);
-				star.center.x = random.GetFloatInclusive() - .5f;
-				star.center.y = random.GetFloatInclusive() - .5f;
-				star.center.z = random.GetFloatInclusive() - .5f;
-				star.radius = Square(random.GetFloatInclusive());
+				star.center.x = random.GetUnitInclusive<float>() - .5f;
+				star.center.y = random.GetUnitInclusive<float>() - .5f;
+				star.center.z = random.GetUnitInclusive<float>() - .5f;
+				star.radius = Square(random.GetUnitInclusive<float>());
 				
 				float const * axes = star.center.GetAxes();
 				float w = axes[axis];

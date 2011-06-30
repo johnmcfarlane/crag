@@ -175,14 +175,14 @@ void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater) const
 	Scalar max_crater_radius = moon_radius * .25;
 	
 	// First off, decide radius.
-	Scalar crater_radius_coefficient = Power(rnd.GetFloatInclusive(), 1.75f);
+	Scalar crater_radius_coefficient = Power(rnd.GetUnitInclusive<float>(), 1.75f);
 	crater.radius = max_crater_radius * crater_radius_coefficient;
 	
 	// Get a position which is within a radius=.5 sphere with even distribution.
 	Scalar crater_center_squared;	// distance from moon center
 	do
 	{
-		crater.center = Vector3(rnd.GetFloatInclusive() - .5f, rnd.GetFloatInclusive() - .5f, rnd.GetFloatInclusive() - .5f);
+		crater.center = Vector3(rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f);
 		crater_center_squared = LengthSq(crater.center);
 	}
 	while (crater_center_squared > Square(.5f));
