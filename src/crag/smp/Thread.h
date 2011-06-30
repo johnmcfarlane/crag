@@ -65,14 +65,16 @@ namespace smp
 
 		// Creates and launches a new thread which calls object.FUNCTION().
 		// If the thread is already running, it is forcefully stopped first.
-		template <void (CLASS::*FUNCTION)()>
+		// MEMBER points to the member of CLASS which holds this Thread.
+		// This is so it can safely update its internal state before progressing.
+		template <void (CLASS::*FUNCTION)(), Thread CLASS::*MEMBER>
 		void Launch(CLASS & object)
 		{
 			// If launched already, wait to stop being launched.
 			Join();
 			
 			// Call the given FUNCTION, passing given object, in a new thread. 
-			sdl_thread = SDL_CreateThread(Callback<FUNCTION>, reinterpret_cast<void *>(& object));
+			sdl_thread = SDL_CreateThread(Callback<FUNCTION, MEMBER>, reinterpret_cast<void *>(& object));
 		}
 		
 		// Terminates the thread. Risks losing data the thread is working on.
@@ -104,12 +106,20 @@ namespace smp
 
 	private:
 		
-		template <void (CLASS::*FUNCTION)()>
+		template <void (CLASS::*FUNCTION)(), Thread CLASS::*MEMBER>
 		static int Callback(void * data)
 		{
 			Assert(data != nullptr);
-			Sleep(0);
 			CLASS & object = * reinterpret_cast<CLASS *> (data);
+			
+			// Ensure that the Thread::sdl_thread gets set before progressing.
+			// This ensures 
+			Thread const & thread = object.*MEMBER;
+			while (thread.sdl_thread == nullptr)
+			{
+				Sleep(0);
+			}
+			
 			(object.*FUNCTION)();
 			return 0;
 		}
