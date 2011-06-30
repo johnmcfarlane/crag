@@ -13,6 +13,14 @@
 #include "Engine.h"
 #include "SphericalBody.h"
 
+#include "core/ConfigEntry.h"
+
+
+namespace 
+{
+	CONFIG_DEFINE (collisions, bool, true);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // physics::Engine members
@@ -21,7 +29,6 @@ physics::Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, collisions(true)
 {
 	dInitODE2(0);
 }

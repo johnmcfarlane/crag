@@ -44,8 +44,6 @@ namespace physics
 		dWorldID world;
 		dSpaceID space;
 		dJointGroupID contact_joints;
-		
-		bool collisions;
 	};
 	
 }
