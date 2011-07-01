@@ -16,9 +16,9 @@
 namespace gl
 {
 	
-	template<typename Vertex> class Vbo : public BufferObject<Vertex, GLPP_ARRAY_BUFFER>
+	template<typename Vertex> class Vbo : public BufferObject<Vertex, gl::ARRAY_BUFFER>
 	{
-		typedef BufferObject<Vertex, GLPP_ARRAY_BUFFER> BaseClass;
+		typedef BufferObject<Vertex, gl::ARRAY_BUFFER> BaseClass;
 		
 	public:
 		bool IsBound() const
@@ -55,28 +55,28 @@ namespace gl
 	};
 
 
-	template<> inline GLuint Init<GLPP_ARRAY_BUFFER>()
+	template<> inline GLuint Init<gl::ARRAY_BUFFER>()
 	{
 		GLuint id;
-		GLPP_CALL(glppGenBuffers(1, &id));
+		GLPP_CALL(gl::GenBuffers(1, &id));
 		assert(id != 0);
 		return id;
 	}
 
-	template<> inline void Deinit<GLPP_ARRAY_BUFFER>(GLuint id)
+	template<> inline void Deinit<gl::ARRAY_BUFFER>(GLuint id)
 	{
 		assert (id != 0);
-		GLPP_CALL(glppGenBuffers(1, &id));
+		GLPP_CALL(gl::GenBuffers(1, &id));
 	}
 
-	template<> inline void Bind<GLPP_ARRAY_BUFFER>(GLuint id)
+	template<> inline void Bind<gl::ARRAY_BUFFER>(GLuint id)
 	{
-		GLPP_CALL(glppBindBuffer(GLPP_ARRAY_BUFFER, id));
+		GLPP_CALL(gl::BindBuffer(gl::ARRAY_BUFFER, id));
 	}
 
-	template<> inline GLuint GetBindingEnum<GLPP_ARRAY_BUFFER>()
+	template<> inline GLuint GetBindingEnum<gl::ARRAY_BUFFER>()
 	{
-		return GLPP_ARRAY_BUFFER_BINDING;
+		return gl::ARRAY_BUFFER_BINDING;
 	}
 
 }
