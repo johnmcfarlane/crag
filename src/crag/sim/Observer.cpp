@@ -90,25 +90,12 @@ DEFINE_SCRIPT_CLASS_END
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-sim::Observer::Observer(Vector3 const & init_pos)
+sim::Observer::Observer()
 : Entity()
-, sphere(Simulation::Ref().GetPhysicsEngine(), true, observer_radius)
 , speed(0)
 , speed_factor(observer_speed_factor)
 , light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
 {
-	SetSpeedFactor(1);
-	
-	sphere.SetDensity(observer_density);
-	sphere.SetLinearDamping(observer_linear_damping);
-	sphere.SetAngularDamping(observer_angular_damping);
-
-	impulses[0] = impulses[1] = Vector3::Zero();
-	
-	SetPosition(init_pos);
-
-	gfx::Scene & scene = Simulation::Ref().GetScene();
-	scene.AddLight(light);
 }
 
 sim::Observer::~Observer()
@@ -116,24 +103,43 @@ sim::Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-bool sim::Observer::Create(Observer & observer, PyObject * args)
+void sim::Observer::Create(Observer & observer, PyObject & args)
 {
-	// Parse planet creation parameters
-	Vector<double, 3> center;
-	if (! PyArg_ParseTuple(args, "ddd", &center.x, &center.y, &center.z))
-	{
-		return false;
-	}
-
 	// construct observer
-	new (& observer) Observer(center);
+	new (& observer) Observer();
 	
 	// create message
-	AddEntityMessage message = { observer };
+	AddEntityMessage message = { observer, args };
 
 	// send
 	Simulation::SendMessage(message, true);
+}
 
+bool sim::Observer::Init(PyObject & args)
+{
+	// Parse planet creation parameters
+	Vector<double, 3> center;
+	if (! PyArg_ParseTuple(& args, "ddd", &center.x, &center.y, &center.z))
+	{
+		// TODO: Deal with this more gracefully.
+		return false;
+	}
+	
+	physics::Engine & physics_engine = Simulation::Ref().GetPhysicsEngine();
+	body = new physics::SphericalBody(physics_engine, true, observer_radius);
+	SetSpeedFactor(1);
+	
+	body->SetDensity(observer_density);
+	body->SetLinearDamping(observer_linear_damping);
+	body->SetAngularDamping(observer_angular_damping);
+	
+	impulses[0] = impulses[1] = Vector3::Zero();
+	
+	SetPosition(center);
+	
+	gfx::Scene & scene = Simulation::Ref().GetScene();
+	scene.AddLight(light);
+	
 	return true;
 }
 
@@ -184,23 +190,23 @@ void sim::Observer::Tick()
 
 	// Gravity
 	Vector3 const & position = GetPosition();
-	Scalar mass = sphere.GetMass();
+	Scalar mass = body->GetMass();
 	
 	Universe & universe = Simulation::Ref().GetUniverse();
 	
 	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
 	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
 
-	Vector3 scaled_observer_gravity_center = observer_gravity_center * sphere.GetRadius();
-	sphere.AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
+	Vector3 scaled_observer_gravity_center = observer_gravity_center * body->GetRadius();
+	body->AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
 	
 	// Light
 	light.SetPosition(position);
 
 	// Set simulation camera.
-	Vector3 pos = sphere.GetPosition();
+	Vector3 pos = body->GetPosition();
 	Matrix4 rot;
-	sphere.GetRotation(rot);
+	body->GetRotation(rot);
 	
 	SetCameraMessage message = { position, rot };
 	Simulation::SendMessage(message, false);
@@ -208,20 +214,20 @@ void sim::Observer::Tick()
 
 sim::Vector3 const & sim::Observer::GetPosition() const
 {
-	return sphere.GetPosition();
+	return body->GetPosition();
 }
 
 void sim::Observer::SetPosition(sim::Vector3 const & pos) 
 {
 	light.SetPosition(pos);
-	sphere.SetPosition(pos);
+	body->SetPosition(pos);
 }
 
 void sim::Observer::ApplyImpulse()
 {
-	sphere.AddRelForce(impulses [0]);
+	body->AddRelForce(impulses [0]);
 	impulses[0] = Vector3::Zero();
 	
-	sphere.AddRelTorque(impulses [1]);
+	body->AddRelTorque(impulses [1]);
 	impulses[1] = Vector3::Zero();
 }

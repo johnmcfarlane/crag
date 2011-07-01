@@ -90,8 +90,11 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 
 void sim::Simulation::OnMessage(AddEntityMessage const & message)
 {
-	universe->AddEntity(message.entity);
-	scene->AddEntity(message.entity);
+	Entity & entity = message.entity;
+	entity.Init(message.args);
+	
+	universe->AddEntity(entity);
+	scene->AddEntity(entity);
 }
 
 void sim::Simulation::OnMessage(RemoveEntityMessage const & message)

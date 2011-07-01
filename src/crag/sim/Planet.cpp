@@ -36,39 +36,11 @@ DEFINE_SCRIPT_CLASS(sim, Planet)
 // Planet
 
 
-sim::Planet::Planet(sim::Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters)
-: radius_mean(init_radius_mean)
-, radius_min(init_radius_mean)
-, radius_max(init_radius_mean)
+sim::Planet::Planet()
+: factory(nullptr)
+, formation(nullptr)
+, body(nullptr)
 {
-	Assert(radius_mean > 0);
-
-	// factory
-	if (num_craters > 0)
-	{
-		factory = new MoonShaderFactory(* this, num_craters);
-	}
-	else 
-	{
-		factory = new PlanetShaderFactory(* this);
-	}
-	
-	// formation
-	formation = new form::Formation(* factory);
-	Random rnd(init_seed);
-	formation->seed = rnd.GetInt();
-	formation->SetPosition(init_pos);
-	
-	// body
-	{
-		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
-		body = new PlanetaryBody(physics_engine, * formation, init_radius_mean);
-		body->SetPosition(init_pos);
-	}
-
-	// register with formation manager
-	form::AddFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message, false);
 }
 
 sim::Planet::~Planet()
@@ -88,30 +60,59 @@ sim::Planet::~Planet()
 	delete factory;
 }
 
-bool sim::Planet::Create(Planet & planet, PyObject * args)
-{
-	// Parse planet creation parameters
-	sim::Vector3 center;
-	sim::Scalar radius;
-	int random_seed;
-	int num_craters;
-	if (! PyArg_ParseTuple(args, "ddddii", & center.x, & center.y, & center.z, & radius, & random_seed, & num_craters))
-	{
-		return false;
-	}
-	
+void sim::Planet::Create(Planet & planet, PyObject & args)
+{	
 	// construct planet
-	new (& planet) Planet(center,
-						  radius,
-						  random_seed,
-						  num_craters);
+	new (& planet) Planet();
 
 	// create message
-	AddEntityMessage message = { planet };
+	AddEntityMessage message = { planet, args };
 	
 	// send
 	Simulation::SendMessage(message, true);
+}
 
+bool sim::Planet::Init(PyObject & args)
+{
+	// Parse planet creation parameters
+	sim::Vector3 center;
+	int random_seed;
+	int num_craters;
+	if (! PyArg_ParseTuple(& args, "ddddii", & center.x, & center.y, & center.z, & radius_mean, & random_seed, & num_craters))
+	{
+		return false;
+	}
+
+	Assert(radius_mean > 0);
+	radius_min = radius_mean;
+	radius_max = radius_mean;
+
+	// factory
+	if (num_craters > 0)
+	{
+		factory = new MoonShaderFactory(* this, num_craters);
+	}
+	else 
+	{
+		factory = new PlanetShaderFactory(* this);
+	}
+		
+	// formation
+	formation = new form::Formation(* factory);
+	formation->seed = random_seed;
+	formation->SetPosition(center);
+		
+	// body
+	{
+		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
+		body = new PlanetaryBody(physics_engine, * formation, radius_mean);
+		body->SetPosition(center);
+	}
+	
+	// register with formation manager
+	form::AddFormationMessage message = { * formation };
+	form::FormationManager::SendMessage(message, false);
+	
 	return true;
 }
 

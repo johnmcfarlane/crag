@@ -33,12 +33,15 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Planet, Entity);
 		
 	public:
-		Planet(Vector3 const & init_pos, Scalar init_radius_mean, int init_seed, int num_craters);
+		Planet();
 		~Planet();
 
 		// Type-specific allocation via script.
-		static bool Create(Planet & planet, PyObject * args);
-		
+		static void Create(Planet & planet, PyObject & args);
+
+		// Called from the simulation thread.
+		virtual bool Init(PyObject & args);
+
 		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, Scalar * range, bool wireframe) const;

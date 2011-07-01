@@ -25,6 +25,7 @@ namespace sim
 	struct AddEntityMessage
 	{
 		Entity & entity;
+		PyObject & args;
 	};
 	
 	struct RemoveEntityMessage
@@ -45,6 +46,9 @@ namespace sim
 		
 		// Type-specific allocation via script.
 		static void Destroy(Entity & entity);
+		
+		// Called from the simulation thread.
+		virtual bool Init(PyObject & args) = 0;
 
 		// general callbacks
 		virtual void Tick();

@@ -229,7 +229,7 @@ namespace script
 				// Allocate the object.
 				CLASS & object = CLASS::GetRef(po);
 				
-				CLASS::Create(object, args); 
+				CLASS::Create(object, * args); 
 			}
 			
 			// Return the result.

@@ -22,10 +22,13 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Star, Entity);
 		
 	public:
-		Star(Scalar init_radius, Scalar init_year);
+		Star();
 
 		// Type-specific allocation via script.
-		static bool Create(Star & star, PyObject * args);
+		static void Create(Star & star, PyObject & args);
+		
+		// Called from the simulation thread.
+		bool Init(PyObject & args);
 		
 		void Tick();
 	

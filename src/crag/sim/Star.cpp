@@ -29,36 +29,37 @@ DEFINE_SCRIPT_CLASS(sim, Star)
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
 
-sim::Star::Star(Scalar init_radius, Scalar init_year)
+sim::Star::Star()
 : Entity()
 , light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true)
-, radius(init_radius)
-, year(init_year)
+, radius(-1)
+, year(-1)
 {
 	Simulation & sim = Simulation::Ref();
 	gfx::Scene & scene = sim.GetScene();
 	scene.AddLight(light);
 }
 
-bool sim::Star::Create(Star & star, PyObject * args)
+void sim::Star::Create(Star & star, PyObject & args)
+{
+	// construct star
+	new (& star) Star();
+	
+	// create message
+	AddEntityMessage message = { star, args };
+	
+	// send
+	Simulation::SendMessage(message, true);
+}
+
+bool sim::Star::Init(PyObject & args)
 {
 	// Parse planet creation parameters
-	sim::Scalar orbital_radius;
-	sim::Scalar orbital_year;
-	if (! PyArg_ParseTuple(args, "dd", & orbital_radius, & orbital_year))
+	if (! PyArg_ParseTuple(& args, "dd", & radius, & year))
 	{
 		return false;
 	}
 	
-	// construct star
-	new (& star) Star(orbital_radius, orbital_year);
-	
-	// create message
-	AddEntityMessage message = { star };
-	
-	// send
-	Simulation::SendMessage(message, true);
-
 	return true;
 }
 

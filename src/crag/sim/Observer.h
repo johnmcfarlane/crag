@@ -33,11 +33,14 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Observer, Entity);
 
 	public:
-		Observer(Vector3 const & init_pos);
+		Observer();
 		~Observer();
 		
 		// Type-specific allocation via script.
-		static bool Create(Observer & observer, PyObject * args);
+		static void Create(Observer & observer, PyObject & args);
+		
+		// Called from the simulation thread.
+		bool Init(PyObject & args);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
@@ -52,7 +55,7 @@ namespace sim
 		void ApplyImpulse();
 		
 		Vector3 impulses[2];	// [pos/rot]
-		physics::SphericalBody sphere;
+		physics::SphericalBody * body;
 		Scalar speed;
 		Scalar speed_factor;
 		gfx::Light light;
