@@ -63,6 +63,7 @@ void form::MeshBufferObject::Deactivate() const
 	Assert (max_index > 0);
 
 	super::Deactivate();
+	super::Unbind();
 	
 	if (properties.flat_shaded) 
 	{

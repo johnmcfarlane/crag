@@ -63,8 +63,8 @@ void gfx::Font::Print(char const * text, Vector2f const & position) const
 		return;
 	}
 
-	gl::Bind(& vbo);
-	Bind(& texture);
+	gl::Bind(vbo);
+	Bind(texture);
 
 	vertex_buffer.resize(0);
 	GenerateVerts(text, position);

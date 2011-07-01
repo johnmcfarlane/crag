@@ -19,6 +19,7 @@ namespace gl
 	
 	template<typename Vertex> class Mesh
 	{
+		typedef Vbo<Vertex> Vbo;
 	public:
 		void Init()
 		{
@@ -28,8 +29,14 @@ namespace gl
 		
 		void Bind() const
 		{
-			gl::Bind(& vbo);
-			gl::Bind(& ibo);
+			gl::Bind(vbo);
+			gl::Bind(ibo);
+		}
+		
+		void Unbind() const
+		{
+			gl::Unbind(vbo);
+			gl::Unbind(ibo);
 		}
 		
 		void Resize(int num_verts, int num_indices)
@@ -40,13 +47,11 @@ namespace gl
 		
 		void SetVbo(int num, Vertex const * array)
 		{
-			gl::Bind(& vbo);
 			vbo.Set(num, array);
 		}
 		
 		void SetIbo(int num, GLuint const * array)
 		{
-			gl::Bind(& ibo);
 			ibo.Set(num, array);
 		}
 		
@@ -63,13 +68,13 @@ namespace gl
 		void Draw(int min_index, int max_index, GLenum mode = GL_TRIANGLES) const
 		{
 			// IBO
-			gl::Bind(& ibo);
+			assert(IsBound());
 			glDrawElements (mode, max_index - min_index, GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(sizeof(int) * min_index));
 		}
 		
 		void Clear()
 		{
-			Bind();
+			assert(IsBound());
 			vbo.Set(0, nullptr);
 			ibo.Set(0, nullptr);
 		}
@@ -87,7 +92,7 @@ namespace gl
 	#endif
 		
 	protected:
-		Vbo<Vertex> vbo;	// verts
+		Vbo vbo;	// verts
 		Ibo ibo;	// indices
 	};
 

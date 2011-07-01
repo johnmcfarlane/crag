@@ -74,7 +74,8 @@ namespace gl
 			return gl::GetBound(GetBindingEnum<TARGET>()) == id;
 		}
 		
-		template<typename GL_NAME> friend void Bind(GL_NAME * name);
+		template<typename GL_NAME> friend void Bind(GL_NAME & name);
+		template<typename GL_NAME> friend void Unbind(GL_NAME & name);
 		
 	#if defined(DUMP)
 		friend std::ostream & operator << (std::ostream &out, Name const & n)
@@ -89,17 +90,18 @@ namespace gl
 	};
 
 
-	template<typename GL_NAME> void Bind(GL_NAME * name)
+	template<typename GL_NAME> void Bind(GL_NAME & name)
 	{
-		if (name != nullptr) {
-			assert(name->id != 0);
-			gl::Bind<GL_NAME::TARGET_ENUM>(name->id);
-			assert(name->IsBound());
-		}
-		else {
-			gl::Bind<GL_NAME::TARGET_ENUM>(0);
-		}
-		
+		assert(! name.IsBound());
+		gl::Bind<GL_NAME::TARGET_ENUM>(name.id);
+		assert(name.IsBound());
 	}
-
+	
+	template<typename GL_NAME> void Unbind(GL_NAME & name)
+	{
+		assert(name.IsBound());
+		gl::Bind<GL_NAME::TARGET_ENUM>(0);
+		assert(! name.IsBound());
+	}
+	
 }

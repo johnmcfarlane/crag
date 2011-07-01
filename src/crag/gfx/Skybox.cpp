@@ -58,8 +58,7 @@ void gfx::Skybox::Draw() const
 	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Draw VBO
-	Bind(& vbo);
-	
+	Bind(vbo);
 	vbo.Activate();
 	
 	int index = 0;
@@ -68,13 +67,14 @@ void gfx::Skybox::Draw() const
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			gl::TextureRgba8 const & side = sides[axis][pole];
-			Bind(& side);
+			Bind(side);
 			vbo.DrawStrip(index, 4);
 			index += 4;
 		}
 	}
 	
 	vbo.Deactivate();
+	Unbind(vbo);
 
 	GLPP_CALL(glDepthMask(GL_TRUE));
 }
@@ -121,7 +121,8 @@ void gfx::Skybox::InitVerts()
 		}
 	}
 	
-	Bind(& vbo);
+	Bind(vbo);
 	vbo.Resize(3 * 2 * 4);
 	vbo.Set(3 * 2 * 4, verts[0][0]);
+	Unbind(vbo);
 }

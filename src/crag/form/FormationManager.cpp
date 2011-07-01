@@ -72,6 +72,7 @@ form::FormationManager::FormationManager()
 		mbo.Init();
 		mbo.Bind();
 		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
+		mbo.Unbind();
 		
 		// TODO: Is there a 1:1 Mesh/Scene mapping? If so, Mesh should live in Scene.
 		MeshDoubleBuffer::value_type & mesh = meshes[index];
@@ -248,9 +249,17 @@ void form::FormationManager::PollMesh()
 	}
 	
 	Mesh & back_mesh = ref(meshes.back()); 
+	
+	mbo_buffers.back().Bind();
 	mbo_buffers.back().Set(back_mesh);
+	mbo_buffers.back().Unbind();
+	
 	mbo_buffers.flip();
+	
+	mbo_buffers.back().Bind();
 	mbo_buffers.back().Clear();
+	mbo_buffers.back().Unbind();
+	
 	back_mesh_buffer_ready = false;
 
 	STAT_SET (num_polys, mbo_buffers.front().GetNumPolys());

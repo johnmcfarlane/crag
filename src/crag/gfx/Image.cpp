@@ -163,7 +163,7 @@ bool gfx::Image::CreateTexture(gl::TextureRgba8 & texture) const
 	}
 	
 	texture.Init();
-	gl::Bind(& texture);
+	gl::Bind(texture);
 	texture.Resize(GetWidth(), GetHeight());
 	texture.Set(0, 0, GetWidth(), GetHeight(), reinterpret_cast<GLvoid const *>(surface->pixels));
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
