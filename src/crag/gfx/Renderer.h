@@ -67,7 +67,7 @@ namespace gfx
 		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
 		
 		void RenderForeground(Scene const & scene) const;
-		bool BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass, bool & color) const;
+		bool BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
 		void RenderForegroundPass(Scene const & scene, ForegroundRenderPass pass) const;
 		void EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
 		

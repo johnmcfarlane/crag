@@ -40,7 +40,7 @@ namespace form
 		void Set(form::Mesh const & mesh);
 		int GetNumPolys() const;
 		
-		void Activate(gfx::Pov pov, bool color) const;
+		void Activate(gfx::Pov pov) const;
 		void Deactivate() const;
 		
 		void Draw() const;

@@ -57,11 +57,13 @@ namespace gl
 		
 		void Activate() const
 		{
+			Assert(IsBound());
 			vbo.Activate();
 		}
 		
 		void Deactivate() const
 		{
+			Assert(IsBound());
 			vbo.Deactivate();
 		}
 		

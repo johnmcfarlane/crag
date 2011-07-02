@@ -18,7 +18,6 @@
 namespace sim
 {
 	class Entity;
-	class Universe;
 
 	
 	// Entity-related messages
@@ -37,7 +36,6 @@ namespace sim
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public script::Object
 	{
-	public:
 		DECLARE_SCRIPT_CLASS(Entity, script::Object);
 		
 	public:

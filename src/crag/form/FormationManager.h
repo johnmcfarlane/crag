@@ -121,10 +121,8 @@ namespace form
 		void PollMesh();
 
 		// Called by the Renderer.
-		void Render(gfx::Pov const & pov, bool color);
+		void Render(gfx::Pov const & pov);
 	private:
-		void RenderFormations(gfx::Pov const & pov, bool color);
-		void DebugStats();
 
 		void Tick();
 		void TickActiveScene();

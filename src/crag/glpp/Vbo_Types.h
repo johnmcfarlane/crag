@@ -58,43 +58,44 @@ namespace gl
 		
 		GLPP_VERIFY;
 	}
+
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// 3-float Position.
 	
-	//	struct Vertex3d
-	//	{
-	//		Vector3f pos;
-	//	};
-	//	
-	//	class Vbo3d : public Vbo<Vertex3d>
-	//	{
-	//	public:
-	//	};
-	//	
-	//	template<> inline void Vbo<Vertex3d>::Activate() const
-	//	{
-	//		assert(IsBound());
-	//		
-	//		// enable vertex arrays
-	//		glEnableClientState( GL_VERTEX_ARRAY );
-	//		
-	//		const Vertex3d * null_vert = 0;
-	//		glVertexPointer(3, GL_FLOAT, sizeof(Vertex3d), & null_vert->pos);
-	//		
-	//		GLPP_VERIFY;
-	//	}
-	//	
-	//	template<> inline void Vbo<Vertex3d>::Deactivate() const
-	//	{
-	//		assert(IsBound());
-	//		
-	//		// disable vertex arrays
-	//		glDisableClientState( GL_VERTEX_ARRAY );
-	//		
-	//		GLPP_VERIFY;
-	//	}
+	struct Vertex3d
+	{
+		Vector3f pos;
+	};
+	
+	class Vbo3d : public Vbo<Vertex3d>
+	{
+	public:
+	};
+	
+	template<> inline void Vbo<Vertex3d>::Activate() const
+	{
+		assert(IsBound());
+		
+		// enable vertex arrays
+		glEnableClientState( GL_VERTEX_ARRAY );
+		
+		const Vertex3d * null_vert = 0;
+		glVertexPointer(3, GL_FLOAT, sizeof(Vertex3d), & null_vert->pos);
+		
+		GLPP_VERIFY;
+	}
+	
+	template<> inline void Vbo<Vertex3d>::Deactivate() const
+	{
+		assert(IsBound());
+		
+		// disable vertex arrays
+		glDisableClientState( GL_VERTEX_ARRAY );
+		
+		GLPP_VERIFY;
+	}
 	
 	
 	////////////////////////////////////////////////////////////////////////////////

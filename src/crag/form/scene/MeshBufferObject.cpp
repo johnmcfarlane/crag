@@ -40,7 +40,7 @@ int form::MeshBufferObject::GetNumPolys() const
 	return max_index / 3;
 }
 
-void form::MeshBufferObject::Activate(gfx::Pov pov, bool color) const
+void form::MeshBufferObject::Activate(gfx::Pov pov) const
 {
 	Assert (max_index > 0);
 	
@@ -54,7 +54,6 @@ void form::MeshBufferObject::Activate(gfx::Pov pov, bool color) const
 		GLPP_CALL(glShadeModel(GL_FLAT));
 	}
 
-	super::Bind();
 	super::Activate();
 }
 
@@ -73,9 +72,7 @@ void form::MeshBufferObject::Deactivate() const
 
 void form::MeshBufferObject::Draw() const
 {
-	Assert (max_index > 0);	
-	//Assert(ibo.IsBound());	// sometimes fails for personal amusement
-	GLPP_CALL(super::Draw(0, max_index));
+	super::Draw(0, max_index);
 }
 
 void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)

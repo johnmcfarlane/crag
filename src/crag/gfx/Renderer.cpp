@@ -337,7 +337,7 @@ void gfx::Renderer::RenderForeground(Scene const & scene) const
 	}
 }
 
-bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass, bool & color) const
+bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
 	
@@ -347,7 +347,6 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 			if (! culling) {
 				gl::Disable(GL_CULL_FACE);
 			}
-			color = true;
 			break;
 			
 		case WireframePass1:
@@ -355,7 +354,6 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 			{
 				return false;
 			}
-			color = false;
 			gl::SetColor<GLfloat>(0, 0, 0);
 			gl::Enable(GL_POLYGON_OFFSET_FILL);
 			GLPP_CALL(glPolygonOffset(1,1));
@@ -365,8 +363,6 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 			if (! culling) {
 				gl::Disable(GL_CULL_FACE);
 			}
-			color = true;
-			//color = false;
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
 			break;
@@ -387,23 +383,30 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 	return true;
 }
 
+// Each pass draws all the geometry. Typically, there is one per frame
+// unless wireframe mode is on. 
 void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPass pass) const
 {
-	bool color;
-	if (! BeginRenderForeground(scene, pass, color))
+	if (! BeginRenderForeground(scene, pass))
 	{
 		return;
 	}
 	
 	// Render the formations.
 	form::FormationManager & fm = form::FormationManager::Ref();
-	fm.Render(scene.pov, color);
-	//SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
+	fm.Render(scene.pov);
+	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
 	// Render everything else.
 	for (Scene::EntityVector::const_iterator i = scene.entities.begin(), end = scene.entities.end(); i != end; ++ i)
 	{
 		sim::Entity const & entity = * * i;
+		
+		sim::Vector3 const & position = entity.GetPosition();
+		Pov entity_pov (scene.pov);
+		entity_pov.pos = scene.pov.pos - position;
+		SetModelViewMatrix(entity_pov.CalcModelViewMatrix());
+
 		entity.Draw();
 	}
 	

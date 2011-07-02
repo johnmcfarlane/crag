@@ -20,7 +20,7 @@
 
 namespace physics 
 {
-	class Physics;
+	class Body;
 }
 
 
@@ -50,6 +50,8 @@ namespace sim
 
 		void Tick(sys::TimeType target_frame_seconds);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
+		void ApplyGravity(physics::Body & body) const;
+		void ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const;
 
 	private:
 		// attributes

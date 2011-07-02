@@ -11,43 +11,49 @@
 #include "pch.h"
 
 #include "Universe.h"
+
+#include "Simulation.h"
 #include "Entity.h"
 
+#include "physics/Body.h"
+
+
+using namespace sim;
 
 //////////////////////////////////////////////////////////////////////
 // Universe definitions
 
-CONFIG_DEFINE_MEMBER (sim::Universe, gravitational_force, float, 0.0000000025f);
-CONFIG_DEFINE_MEMBER (sim::Universe, gravity, bool, true);
+CONFIG_DEFINE_MEMBER (Universe, gravitational_force, float, 0.0000000025f);
+CONFIG_DEFINE_MEMBER (Universe, gravity, bool, true);
 
 
-sim::Universe::Universe()
+Universe::Universe()
 : time(0)
 {
 }
 
-sim::Universe::~Universe()
+Universe::~Universe()
 {
 	Assert(entities.empty());
 }
 
-sys::TimeType sim::Universe::GetTime() const
+sys::TimeType Universe::GetTime() const
 {
 	return time;
 }
 
-void sim::Universe::ToggleGravity()
+void Universe::ToggleGravity()
 {
 	gravity = ! gravity;
 }
 
-void sim::Universe::AddEntity(Entity & entity)
+void Universe::AddEntity(Entity & entity)
 {
 	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
 	entities.push_back(& entity);
 }
 
-void sim::Universe::RemoveEntity(Entity & entity)
+void Universe::RemoveEntity(Entity & entity)
 {
 	EntityVector::iterator i = std::find(entities.begin(), entities.end(), & entity);
 	Assert(i != entities.end());
@@ -57,7 +63,7 @@ void sim::Universe::RemoveEntity(Entity & entity)
 }
 
 // Perform a step in the simulation. 
-void sim::Universe::Tick(sys::TimeType target_frame_seconds)
+void Universe::Tick(sys::TimeType target_frame_seconds)
 {
 	time += target_frame_seconds;
 	
@@ -70,11 +76,11 @@ void sim::Universe::Tick(sys::TimeType target_frame_seconds)
 
 // Given a position and a mass at that position, returns a 
 // reasonable approximation of the weight vector at that position.
-sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
+Vector3 Universe::Weight(Vector3 const & pos, Scalar mass) const
 {
 	if (gravity) 
 	{
-		sim::Vector3 force = sim::Vector3::Zero();
+		Vector3 force = Vector3::Zero();
 		
 		for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
 		{
@@ -82,10 +88,32 @@ sim::Vector3 sim::Universe::Weight(Vector3 const & pos, Scalar mass) const
 			e.GetGravitationalForce(pos, force);
 		}
 		
-		return force * static_cast<sim::Scalar>(mass) * static_cast<sim::Scalar>(gravitational_force);
+		return force * static_cast<Scalar>(mass) * static_cast<Scalar>(gravitational_force);
 	}
 	else 
 	{
-		return sim::Vector3::Zero();
+		return Vector3::Zero();
 	}
+}
+
+void Universe::ApplyGravity(physics::Body & body) const
+{
+	Vector3 const & position = body.GetPosition();
+	Scalar mass = body.GetMass();
+	
+	Vector3 gravitational_force_per_second = Weight(position, mass);
+	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+	
+	body.AddRelForce(gravitational_force);
+}
+
+void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const
+{
+	Vector3 const & position = body.GetPosition();
+	Scalar mass = body.GetMass();
+	
+	Vector3 gravitational_force_per_second = Weight(position, mass);
+	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+	
+	body.AddRelForceAtRelPos(gravitational_force, center_of_mass);
 }

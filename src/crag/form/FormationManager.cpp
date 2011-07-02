@@ -263,20 +263,14 @@ void form::FormationManager::PollMesh()
 	back_mesh_buffer_ready = false;
 
 	STAT_SET (num_polys, mbo_buffers.front().GetNumPolys());
+
+	// Used to live inside Render.
+	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
+	STAT_SET (mesh_generation, enable_mesh_generation);
+	STAT_SET (dynamic_origin, enable_dynamic_origin);
 }
 
-void form::FormationManager::Render(gfx::Pov const & pov, bool color)
-{
-	RenderFormations(pov, color);
-	
-	// This is an arbitrary way to make sure this fn only gets called once per frame.
-	if (color)
-	{
-		DebugStats();
-	}
-}
-
-void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color) 
+void form::FormationManager::Render(gfx::Pov const & pov)
 {
 	if (mbo_buffers.front().GetNumPolys() <= 0)
 	{
@@ -298,19 +292,11 @@ void form::FormationManager::RenderFormations(gfx::Pov const & pov, bool color)
 	
 	// Draw the mesh!
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	front_buffer.Activate(pov, color);
+	front_buffer.Bind();
+	front_buffer.Activate(pov);
 	front_buffer.Draw();
 	front_buffer.Deactivate();
 	GLPP_VERIFY;
-	
-	//gl::Enable(GL_COLOR_MATERIAL);
-}
-
-void form::FormationManager::DebugStats() 
-{
-	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
-	STAT_SET (mesh_generation, enable_mesh_generation);
-	STAT_SET (dynamic_origin, enable_dynamic_origin);
 }
 
 // The tick function of the scene thread. 
