@@ -73,11 +73,9 @@ namespace gl
 			vbo.Deactivate();
 		}
 		
-		void Draw(int min_index, int max_index, GLenum mode = GL_TRIANGLES) const
+		void Draw(GLuint first, GLsizei count, GLenum mode = GL_TRIANGLES) const
 		{
-			// IBO
-			assert(IsBound());
-			glDrawElements (mode, max_index - min_index, GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(sizeof(int) * min_index));
+			DrawElements(ibo, mode, first, count);
 		}
 		
 		bool IsBound() const

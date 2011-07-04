@@ -122,12 +122,12 @@ void gfx::Font::RenderVerts() const
 	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Matrices
-	glMatrixMode (GL_PROJECTION);
+	gl::MatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	Vector2i resolution = sys::GetWindowSize();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
-    glMatrixMode (GL_MODELVIEW); 
+	gl::MatrixMode (GL_MODELVIEW); 
 	glLoadIdentity (); 
 	glTranslatef (0.375f, 0.375f, 0.f);
 	GLPP_VERIFY;

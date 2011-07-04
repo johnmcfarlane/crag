@@ -46,12 +46,12 @@ void form::MeshBufferObject::Activate(gfx::Pov pov) const
 	
 	// Adjust our copy of the pov for mesh's origin and set as matrix.
 	pov.pos -= properties.origin;
-	GLPP_CALL(glMatrixMode(GL_MODELVIEW));
+	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(pov.CalcModelViewMatrix().GetArray());
 	
 	if (properties.flat_shaded) 
 	{
-		GLPP_CALL(glShadeModel(GL_FLAT));
+		gl::ShadeModel(GL_FLAT);
 	}
 
 	super::Activate();
@@ -66,7 +66,7 @@ void form::MeshBufferObject::Deactivate() const
 	
 	if (properties.flat_shaded) 
 	{
-		GLPP_CALL(glShadeModel(GL_SMOOTH));
+		gl::ShadeModel(GL_SMOOTH);
 	}
 }
 

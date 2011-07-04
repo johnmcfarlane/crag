@@ -278,6 +278,7 @@
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		529B025713610D79009AE194 /* ring_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ring_buffer.h; sourceTree = "<group>"; };
+		52A02F7813C215F8003F5705 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52ADFADB1366CA9A00A891D8 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
 		52B6A5FA136A81CD00ECDEA9 /* intrusive_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intrusive_list.h; sourceTree = "<group>"; };
 		52D79F2113608A04001063D2 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
@@ -547,6 +548,7 @@
 				52642374135F49FA00C00EFE /* Texture.h */,
 				52642375135F49FA00C00EFE /* Vbo.h */,
 				52642376135F49FA00C00EFE /* Vbo_Types.h */,
+				52A02F7813C215F8003F5705 /* Vertex.h */,
 			);
 			path = glpp;
 			sourceTree = "<group>";

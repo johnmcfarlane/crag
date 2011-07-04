@@ -57,7 +57,7 @@ namespace
 	
 	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
 	{
-		GLPP_CALL(glMatrixMode(GL_MODELVIEW));
+		gl::MatrixMode(GL_MODELVIEW);
 		gl::LoadMatrix(model_view_matrix.GetArray());
 	}
 
@@ -67,7 +67,7 @@ namespace
 
 		sim::Matrix4 const & projection_matrix = frustum.CalcProjectionMatrix();
 
-		GLPP_CALL(glMatrixMode(GL_PROJECTION));
+		gl::MatrixMode(GL_PROJECTION);
 		gl::LoadMatrix(projection_matrix.GetArray());
 	}
 

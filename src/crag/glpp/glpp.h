@@ -92,6 +92,16 @@ namespace gl
 		return GetInt<GL_DEPTH_FUNC>(); 
 	}
 	
+	// set/get shade model
+	inline void ShadeModel(GLenum model)
+	{
+		GLPP_CALL(glShadeModel(model));
+	}
+	inline GLenum GetShadeModel()
+	{
+		return GetInt<GL_SHADE_MODEL>();
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Non-buffer poly rendering
@@ -131,7 +141,7 @@ namespace gl
 		GLPP_CALL(glLoadMatrixd(m));
 	}
 
-	inline void SetMatrixMode(GLenum mode)
+	inline void MatrixMode(GLenum mode)
 	{
 		GLPP_CALL(glMatrixMode(mode));
 	}

@@ -15,7 +15,13 @@
 
 namespace gl
 {
+
+	// forward-declarations
+	template <typename VERTEX> void EnableClientState();
+	template <typename VERTEX> void DisableClientState();
+	template <typename VERTEX> void Pointer();
 	
+	// Vbo - Vertex Buffer Object
 	template<typename Vertex> class Vbo : public BufferObject<Vertex, gl::ARRAY_BUFFER>
 	{
 		typedef BufferObject<Vertex, gl::ARRAY_BUFFER> BaseClass;
@@ -27,10 +33,25 @@ namespace gl
 		}
 		
 		// Must be individually defined for each type of Vertex; includes the glEnableClientState and gl*Pointer calls.
-		inline void Activate() const;
+		inline void Activate() const
+		{
+			assert(IsBound());
+			
+			EnableClientState<Vertex>();
+			Pointer<Vertex>();
+			
+			GLPP_VERIFY;
+		}
 
 		// Must be individually defined for each type of Vertex; includes the glDisableClientState calls.
-		inline void Deactivate() const;
+		inline void Deactivate() const
+		{
+			assert(IsBound());
+			
+			DisableClientState<Vertex>();
+			
+			GLPP_VERIFY;
+		}
 
 		void Draw(GLenum mode, GLint first, GLsizei count) const
 		{
