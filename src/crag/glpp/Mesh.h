@@ -23,36 +23,42 @@ namespace gl
 	public:
 		void Init()
 		{
-			vbo.Init();
-			ibo.Init();
+			GenBuffer(vbo);
+			GenBuffer(ibo);
+		}
+		
+		void Deinit()
+		{
+			DeleteBuffer(ibo);
+			DeleteBuffer(vbo);
 		}
 		
 		void Bind() const
 		{
-			gl::Bind(vbo);
-			gl::Bind(ibo);
+			BindBuffer(vbo);
+			BindBuffer(ibo);
 		}
 		
 		void Unbind() const
 		{
-			gl::Unbind(vbo);
-			gl::Unbind(ibo);
+			UnbindBuffer(vbo);
+			UnbindBuffer(ibo);
 		}
 		
 		void Resize(int num_verts, int num_indices)
 		{
-			vbo.Resize(num_verts);
-			ibo.Resize(num_indices);
+			BufferData(vbo, num_verts);
+			BufferData(ibo, num_indices);
 		}
 		
 		void SetVbo(int num, Vertex const * array)
 		{
-			vbo.Set(num, array);
+			BufferSubData(vbo, num, array);
 		}
 		
 		void SetIbo(int num, GLuint const * array)
 		{
-			ibo.Set(num, array);
+			BufferSubData(ibo, num, array);
 		}
 		
 		void Activate() const
@@ -72,13 +78,6 @@ namespace gl
 			// IBO
 			assert(IsBound());
 			glDrawElements (mode, max_index - min_index, GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(sizeof(int) * min_index));
-		}
-		
-		void Clear()
-		{
-			assert(IsBound());
-			vbo.Set(0, nullptr);
-			ibo.Set(0, nullptr);
 		}
 		
 		bool IsBound() const

@@ -56,7 +56,7 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
 , scene(new gfx::Scene)
-, renderer(new gfx::Renderer)
+, renderer(nullptr)
 {
 	// TODO: Belongs in script.
 	scene->SetResolution(sys::GetWindowSize());
@@ -74,9 +74,6 @@ sim::Simulation::~Simulation()
 	delete universe;
 	universe = nullptr;
 	
-	delete renderer;
-	renderer = nullptr;
-	
 	delete scene;
 	scene = nullptr;
 
@@ -91,7 +88,11 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 void sim::Simulation::OnMessage(AddEntityMessage const & message)
 {
 	Entity & entity = message.entity;
-	entity.Init(message.args);
+	if (! entity.Init(message.args))
+	{
+		std::cout << "Bad input parameters to entity\n";
+		DEBUG_BREAK();
+	}
 	
 	universe->AddEntity(entity);
 	scene->AddEntity(entity);
@@ -136,9 +137,8 @@ void sim::Simulation::Run()
 {
 	FUNCTION_NO_REENTRY;
 
-	// TODO: Doesn't belong here.
-	sys::MakeCurrent();
-	
+	renderer = new gfx::Renderer;
+
 	sys::TimeType next_tick_time = sys::GetTime();
 	
 	while (ProcessMessages())
@@ -165,6 +165,8 @@ void sim::Simulation::Run()
 	}
 
 	//DUMP_OBJECT(* form_thread, std::cout);
+	delete renderer;
+	renderer = nullptr;
 }
 
 void sim::Simulation::Tick()

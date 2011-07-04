@@ -32,10 +32,6 @@ namespace gl
 		void operator = (Name const & rhs);
 		
 	public:
-		enum {
-			TARGET_ENUM = TARGET
-		};
-		
 		Name()
 		: id(0)
 		{
@@ -43,65 +39,16 @@ namespace gl
 		
 		~Name()
 		{
-			Deinit();
+			assert(! IsInitialized());
 		}
 		
-		// Initialization.
 		bool IsInitialized() const
 		{
 			return id != 0;
 		}
-		
-		void Init()
-		{
-			if (id != 0) {
-				gl::Deinit<TARGET>(id);
-			}
-			id = gl::Init<TARGET>();
-		}
-		
-		void Deinit()
-		{
-			if (id != 0) {
-				gl::Deinit<TARGET>(id);
-				id = 0;
-			}
-		}
-		
-		// Binding
-		bool IsBound() const
-		{
-			return gl::GetBound(GetBindingEnum<TARGET>()) == id;
-		}
-		
-		template<typename GL_NAME> friend void Bind(GL_NAME & name);
-		template<typename GL_NAME> friend void Unbind(GL_NAME & name);
-		
-	#if defined(DUMP)
-		friend std::ostream & operator << (std::ostream &out, Name const & n)
-		{
-			out << "id:" << n.id;
-			return out;
-		}
-	#endif
 
 	protected:
 		GLuint id;
 	};
-
-
-	template<typename GL_NAME> void Bind(GL_NAME & name)
-	{
-		assert(! name.IsBound());
-		gl::Bind<GL_NAME::TARGET_ENUM>(name.id);
-		assert(name.IsBound());
-	}
-	
-	template<typename GL_NAME> void Unbind(GL_NAME & name)
-	{
-		assert(name.IsBound());
-		gl::Bind<GL_NAME::TARGET_ENUM>(0);
-		assert(! name.IsBound());
-	}
 	
 }

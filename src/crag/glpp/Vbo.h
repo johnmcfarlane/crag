@@ -54,29 +54,4 @@ namespace gl
 		}
 	};
 
-
-	template<> inline GLuint Init<gl::ARRAY_BUFFER>()
-	{
-		GLuint id;
-		GLPP_CALL(gl::GenBuffers(1, &id));
-		assert(id != 0);
-		return id;
-	}
-
-	template<> inline void Deinit<gl::ARRAY_BUFFER>(GLuint id)
-	{
-		assert (id != 0);
-		GLPP_CALL(gl::GenBuffers(1, &id));
-	}
-
-	template<> inline void Bind<gl::ARRAY_BUFFER>(GLuint id)
-	{
-		GLPP_CALL(gl::BindBuffer(gl::ARRAY_BUFFER, id));
-	}
-
-	template<> inline GLuint GetBindingEnum<gl::ARRAY_BUFFER>()
-	{
-		return gl::ARRAY_BUFFER_BINDING;
-	}
-
 }

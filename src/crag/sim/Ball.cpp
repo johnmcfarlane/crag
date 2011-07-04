@@ -45,6 +45,11 @@ Ball::Ball()
 {
 }
 
+Ball::~Ball()
+{
+	_mesh.Deinit();
+}
+
 void Ball::Create(Ball & ball, PyObject & args)
 {
 	// construct ball

@@ -46,7 +46,13 @@ gfx::Font::Font(char const * filename, float scale)
 
 	image.CreateTexture(texture);
 	
-	vbo.Init();
+	gl::GenBuffer(vbo);
+}
+
+gfx::Font::~Font()
+{
+	gl::DeleteBuffer(vbo);
+	gl::DeleteTexture(texture);
 }
 
 gfx::Font::operator bool() const
@@ -63,12 +69,15 @@ void gfx::Font::Print(char const * text, Vector2f const & position) const
 		return;
 	}
 
-	gl::Bind(vbo);
-	Bind(texture);
+	BindTexture(texture);
 
+	BindBuffer(vbo);
 	vertex_buffer.resize(0);
 	GenerateVerts(text, position);
 	RenderVerts();
+	UnbindBuffer(vbo);
+
+	UnbindTexture(texture);
 }
 
 void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) const
@@ -94,8 +103,7 @@ void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) cons
 	}
 	
 	size_t num_verts = vertex_buffer.size();
-	vbo.Resize(num_verts);
-	vbo.Set(num_verts, & vertex_buffer[0]);	
+	gl::BufferData(vbo, num_verts, & vertex_buffer[0]);
 }
 
 void gfx::Font::RenderVerts() const

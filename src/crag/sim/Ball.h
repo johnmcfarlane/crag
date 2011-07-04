@@ -29,6 +29,7 @@ namespace sim
 		
 	public:
 		Ball();
+		~Ball();
 		
 		// Type-specific allocation via script.
 		static void Create(Ball & ball, PyObject & args);

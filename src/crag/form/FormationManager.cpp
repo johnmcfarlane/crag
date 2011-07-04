@@ -68,6 +68,7 @@ form::FormationManager::FormationManager()
 	for (int index = 0; index < 2; ++ index)
 	{
 		// initialize mesh buffer
+		// TODO: This belongs in the OpenGL thread.
 		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Init();
 		mbo.Bind();
@@ -88,8 +89,13 @@ form::FormationManager::~FormationManager()
 	Assert(singleton == this);
 	singleton = nullptr;
 	
-	delete meshes [0];
-	delete meshes [1];
+	for (int index = 0; index < 2; ++ index)
+	{
+		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
+		mbo.Deinit();
+		
+		delete meshes [index];
+	}
 }
 
 #if defined(VERIFY)
@@ -255,10 +261,6 @@ void form::FormationManager::PollMesh()
 	mbo_buffers.back().Unbind();
 	
 	mbo_buffers.flip();
-	
-	mbo_buffers.back().Bind();
-	mbo_buffers.back().Clear();
-	mbo_buffers.back().Unbind();
 	
 	back_mesh_buffer_ready = false;
 

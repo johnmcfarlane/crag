@@ -18,19 +18,9 @@
 #include "core/Random.h"
 
 
-#if ! defined (NDEBUG)
-gl::TextureRgba8 const * test_texture = nullptr;
-#endif
-
-
 gfx::Skybox::Skybox()
 {
-	InitSides();
 	InitVerts();
-	
-#if ! defined (NDEBUG)
-	test_texture = & sides[0][0];
-#endif
 }
 
 gfx::Skybox::~Skybox()
@@ -58,7 +48,7 @@ void gfx::Skybox::Draw() const
 	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Draw VBO
-	Bind(vbo);
+	gl::BindBuffer(vbo);
 	vbo.Activate();
 	
 	int index = 0;
@@ -67,32 +57,21 @@ void gfx::Skybox::Draw() const
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			gl::TextureRgba8 const & side = sides[axis][pole];
-			Bind(side);
+			gl::BindTexture(side);
 			vbo.DrawStrip(index, 4);
 			index += 4;
 		}
 	}
 	
 	vbo.Deactivate();
-	Unbind(vbo);
+	gl::UnbindBuffer(vbo);
 
 	GLPP_CALL(glDepthMask(GL_TRUE));
 }
 
-void gfx::Skybox::InitSides()
-{
-	for (int axis = 0; axis < 3; ++ axis)
-	{
-		for (int pole = 0; pole < 2; ++ pole)
-		{
-			sides[axis][pole].Init();
-		}
-	}
-}
-
 void gfx::Skybox::InitVerts()
 {
-	vbo.Init();
+	GenBuffer(vbo);
 	gl::Vertex3dTex verts[3][2][4];
 	
 	for (int axis = 0; axis < 3; ++ axis)
@@ -121,8 +100,7 @@ void gfx::Skybox::InitVerts()
 		}
 	}
 	
-	Bind(vbo);
-	vbo.Resize(3 * 2 * 4);
-	vbo.Set(3 * 2 * 4, verts[0][0]);
-	Unbind(vbo);
+	BindBuffer(vbo);
+	BufferData(vbo, 3 * 2 * 4, verts[0][0]);
+	gl::UnbindBuffer(vbo);
 }

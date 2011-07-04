@@ -16,6 +16,86 @@
 
 namespace gl 
 {
+	
+#if defined(WIN32) 	
+	enum
+	{
+		ARRAY_BUFFER = GL_ARRAY_BUFFER_ARB, 
+		ARRAY_BUFFER_BINDING = GL_ARRAY_BUFFER_BINDING_ARB, 
+		ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER_ARB, 
+		ELEMENT_ARRAY_BUFFER_BINDING = GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB, 
+		STATIC_DRAW = GL_STATIC_DRAW_ARB, 
+		DYNAMIC_DRAW = GL_DYNAMIC_DRAW_ARB, 
+		STREAM_DRAW = GL_STREAM_DRAW_ARB
+	};
+#else
+	enum
+	{
+		ARRAY_BUFFER = GL_ARRAY_BUFFER, 
+		ARRAY_BUFFER_BINDING = GL_ARRAY_BUFFER_BINDING, 
+		ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER, 
+		ELEMENT_ARRAY_BUFFER_BINDING = GL_ELEMENT_ARRAY_BUFFER_BINDING, 
+		STATIC_DRAW = GL_STATIC_DRAW, 
+		DYNAMIC_DRAW = GL_DYNAMIC_DRAW, 
+		STREAM_DRAW = GL_STREAM_DRAW
+	};
+#endif
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// General state access
+	
+	// Lots of get and set...
+	template<GLenum PNAME> int GetInt()
+	{
+		GLint result;
+		GLPP_CALL(glGetIntegerv(PNAME, & result));
+		return result;
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Capability
+	
+	// Enable/Disable - checks that the call was necessary. 
+	inline bool IsEnabled(GLenum cap)
+	{
+		bool enabled = (glIsEnabled(cap) == GL_TRUE);
+		GLPP_VERIFY;
+		return enabled;
+	}
+	
+	// Enable/Disable - checks that the call was necessary. 
+	inline void Enable(GLenum cap)
+	{
+		assert(! IsEnabled(cap));
+		GLPP_CALL(glEnable(cap));
+	}
+	
+	inline void Disable(GLenum cap)
+	{
+		assert(IsEnabled(cap));
+		GLPP_CALL(glDisable(cap));
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Specific state access
+	
+	// set/get depth function
+	inline void SetDepthFunc(GLenum func) 
+	{ 
+		GLPP_CALL(glDepthFunc(func)); 
+	}
+	
+	inline GLenum GetDepthFunc() 
+	{ 
+		return GetInt<GL_DEPTH_FUNC>(); 
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Non-buffer poly rendering
+	
 	// Begin/End
 	inline void Begin(GLenum mode)
 	{
@@ -28,7 +108,20 @@ namespace gl
 		GLPP_VERIFY;
 	}
 	
-	// LoadMatrix
+	// Vertex3
+	inline void Vertex3(GLfloat x, GLfloat y, GLfloat z)
+	{
+		glVertex3f(x, y, z);
+	}
+	inline void Vertex3(GLdouble x, GLdouble y, GLdouble z)
+	{
+		glVertex3d(x, y, z);
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Matrix
+	
 	inline void LoadMatrix(GLfloat const * m)
 	{
 		GLPP_CALL(glLoadMatrixf(m));
@@ -38,12 +131,34 @@ namespace gl
 		GLPP_CALL(glLoadMatrixd(m));
 	}
 
+	inline void SetMatrixMode(GLenum mode)
+	{
+		GLPP_CALL(glMatrixMode(mode));
+	}
+	inline GLenum GetMatrixMode()
+	{
+		return GetInt<GL_MATRIX_MODE>();
+	}
+
 	inline void Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	{
 		GLPP_CALL(glViewport(x, y, width, height));
 	}
 
-	// TexGenv
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Binding
+	
+	template <GLenum TARGET> GLuint GetBinding();
+	template <> inline GLuint GetBinding<ARRAY_BUFFER>() { return GetInt<ARRAY_BUFFER_BINDING>(); }
+	template <> inline GLuint GetBinding<ELEMENT_ARRAY_BUFFER>() { return GetInt<ELEMENT_ARRAY_BUFFER_BINDING>(); }
+	template <> inline GLuint GetBinding<GL_RENDERBUFFER_EXT>() { return GetInt<GL_RENDERBUFFER_BINDING_EXT>(); }
+	template <> inline GLuint GetBinding<GL_TEXTURE_2D>() { return GetInt<GL_TEXTURE_BINDING_2D>(); }
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Texture
+	
 	inline void TexGenv(GLenum coord, GLenum pname, const GLfloat *params)
 	{
 		GLPP_CALL(glTexGenfv(coord, pname, params));
@@ -53,66 +168,9 @@ namespace gl
 		GLPP_CALL(glTexGendv(coord, pname, params));
 	}
 
-	// Vertex3
-	inline void Vertex3(GLfloat x, GLfloat y, GLfloat z)
-	{
-		/*GLPP_CALL*/(glVertex3f(x, y, z));
-	}
-	inline void Vertex3(GLdouble x, GLdouble y, GLdouble z)
-	{
-		/*GLPP_CALL*/(glVertex3d(x, y, z));
-	}
-
-	// Enable/Disable - checks that the call was necessary. 
-	inline bool IsEnabled(GLenum cap)
-	{
-		bool enabled = (glIsEnabled(cap) == GL_TRUE);
-		GLPP_VERIFY;
-		return enabled;
-	}
 	
-	inline void CheckEnabled(GLenum cap)
-	{
-		assert(IsEnabled(cap));
-	}
-	
-	inline void CheckDisabled(GLenum cap)
-	{
-		assert(! IsEnabled(cap));
-	}
-	
-	// Enable/Disable - checks that the call was necessary. 
-	inline void Enable(GLenum cap, bool enabled = true)
-	{
-		assert(enabled != IsEnabled(cap));
-		(enabled ? glEnable : glDisable)(cap);
-		GLPP_VERIFY;
-	}
-	
-	inline void Disable(GLenum cap)
-	{
-		Enable(cap, false);
-	}
-	
-	// Return the name that is currently bound to the given target.
-	inline GLuint GetBound(GLenum target_binding) 
-	{
-		GLint id;
-		GLPP_CALL(glGetIntegerv(target_binding, & id));
-		return id;
-	}
-	
-	// Lots of get and set...
-	template<GLenum PNAME> int GetInt()
-	{
-		GLint result;
-		GLPP_CALL(glGetIntegerv(PNAME, & result));
-		return result;
-	}
-	
-	// set/get depth function
-	inline void SetDepthFunc(GLenum func) { GLPP_CALL(glDepthFunc(func)); }
-	inline GLenum GetDepthFunc() { return GetInt<GL_DEPTH_FUNC>(); }
+	////////////////////////////////////////////////////////////////////////////////
+	// Color
 	
 	// set current red, green and blue color and set alpha to 1 (full).
 	template <typename COMPONENT> void SetColor(COMPONENT red, COMPONENT green, COMPONENT blue);
@@ -125,6 +183,7 @@ namespace gl
 	template <> inline void SetColor<GLuint>(GLuint red, GLuint green, GLuint blue)			{ /*GLPP_CALL*/(glColor3ui(red, green, blue)); }
 	template <> inline void SetColor<GLushort>(GLushort red, GLushort green, GLushort blue)	{ /*GLPP_CALL*/(glColor3us(red, green, blue)); }
 	
+	// set current red, green, blue and alpha.
 	template <typename COMPONENT> void SetColor(COMPONENT red, COMPONENT green, COMPONENT blue, COMPONENT alpha);
 	template <> inline void SetColor(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha)			{ /*GLPP_CALL*/(glColor4b (red, green, blue, alpha)); }
 	template <> inline void SetColor(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha)	{ /*GLPP_CALL*/(glColor4d (red, green, blue, alpha)); }
@@ -135,6 +194,7 @@ namespace gl
 	template <> inline void SetColor(GLuint red, GLuint green, GLuint blue, GLuint alpha)			{ /*GLPP_CALL*/(glColor4ui(red, green, blue, alpha)); }
 	template <> inline void SetColor(GLushort red, GLushort green, GLushort blue, GLushort alpha)	{ /*GLPP_CALL*/(glColor4us(red, green, blue, alpha)); }
 	
+	// set current red, green, blue and alpha from an array.
 	template<typename COMPONENT> void SetColor(COMPONENT const * rgba)					{ SetColor(rgba[0], rgba[1], rgba[2], rgba[3]); }
 	
 	// get current color

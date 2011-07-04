@@ -79,8 +79,8 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
 		
-		gl::FrameBuffer frame_buffer;
-		gl::RenderBuffer depth_buffer;
+		//gl::FrameBuffer frame_buffer;
+		//gl::RenderBuffer depth_buffer;
 		
 		sys::TimeType last_frame_time;
 		

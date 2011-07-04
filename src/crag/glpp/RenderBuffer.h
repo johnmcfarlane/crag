@@ -10,6 +10,7 @@
 
 #pragma once
 
+#if 0
 #include "Name.h"
 
 #include "FrameBuffer.h"
@@ -79,3 +80,4 @@ namespace gl
 	}
 			   
 }
+#endif

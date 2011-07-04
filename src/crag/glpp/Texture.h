@@ -15,116 +15,91 @@
 
 namespace gl
 {
-		
-	template <GLenum INTERNAL_FORMAT> class Texture : public Name<GL_TEXTURE_2D>
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Texture function declarations
+	
+	template <GLenum FORMAT> class Texture;
+	
+	template<GLenum FORMAT> void GenTexture(Texture<FORMAT> & t);
+	template<GLenum FORMAT> void DeleteTexture(Texture<FORMAT> & t);
+	template<GLenum FORMAT> void BindTexture(Texture<FORMAT> const & t);
+	template<GLenum FORMAT> void UnbindTexture(Texture<FORMAT> const & t);
+	template<GLenum FORMAT> void TexImage(Texture<FORMAT> & t, GLsizei width, GLsizei height, GLvoid const * pixels = nullptr);
+	template<GLenum FORMAT> void TexSubImage(Texture<FORMAT> & t, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels);
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Texture classes
+	
+	template <GLenum FORMAT> class Texture : public Name<GL_TEXTURE_2D>
 	{
 	public:
-		inline void Resize(GLsizei width, GLsizei height);
-		
-		void Set(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels);
-		
-		// nullptr passes back to regular back buffer
-		template <GLenum IF, GLenum ATTACHMENT> friend void SetAsTarget(Texture<IF> * texture);
-	};
-
-
-	// Name specializations for GL_TEXTURE_2D
-
-	template<> inline GLuint Init<GL_TEXTURE_2D>()
-	{
-		GLuint id;
-		GLPP_CALL(glGenTextures(1, & id));
-		return id;
-	}
-
-	template<> inline void Deinit<GL_TEXTURE_2D>(GLuint id)
-	{
-		GLPP_CALL(glDeleteTextures(1, & id));
-	}
-
-	template<> inline void Bind<GL_TEXTURE_2D>(GLuint id)
-	{
-		GLPP_CALL(glBindTexture(GL_TEXTURE_2D, id));
-	}
-
-	template<> inline GLuint GetBindingEnum<GL_TEXTURE_2D>()
-	{
-		return GL_TEXTURE_BINDING_2D;
-	}
-
-	template<GLenum INTERNAL_FORMAT, GLenum ATTACHMENT> void SetAsTarget(Texture<INTERNAL_FORMAT> * texture)
-	{
-		// Detach any existing texture.
-		GLPP_CALL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, ATTACHMENT, GL_TEXTURE_2D, 0, 0));
-		
-		if (texture != nullptr) {
-			assert(texture->IsBound());
-			GLPP_CALL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, ATTACHMENT, GL_TEXTURE_2D, texture->id, 0));
+		bool IsBound() const
+		{
+			assert(IsInitialized());
+			return GetBinding<GL_TEXTURE_2D>() == id;
 		}
+		
+		friend void GenTexture<FORMAT>(Texture & t);
+		friend void DeleteTexture<FORMAT>(Texture & t);
+		friend void BindTexture<FORMAT>(Texture const & t);
+	};
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Texture function declarations
+	
+	template<GLenum FORMAT> void GenTexture(Texture<FORMAT> & t) 
+	{ 
+		assert(! t.IsInitialized());
+		GLPP_CALL(glGenTextures(1, & t.id)); 
 	}
-
-
-	// TextureRgba8 - 'True color' specializations of Texture
-
+	
+	template<GLenum FORMAT> void DeleteTexture(Texture<FORMAT> & t) 
+	{ 
+		assert(! t.IsBound());
+		GLPP_CALL(glDeleteTextures(1, & t.id)); 
+		t.id = 0;
+	}
+	
+	template<GLenum FORMAT> void BindTexture(Texture<FORMAT> const & t) 
+	{
+		assert(! t.IsBound());
+		GLPP_CALL(glBindTexture(GL_TEXTURE_2D, t.id)); 
+	}
+	
+	template<GLenum FORMAT> void UnbindTexture(Texture<FORMAT> const & t) 
+	{ 
+		assert(t.IsBound());
+#if ! defined(NDEBUG)
+		GLPP_CALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+#endif
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// TextureRgba8 Texture specializations
+	
 	class TextureRgba8 : public Texture<GL_RGBA8>
 	{
-	public:
 	};
-
-	template<> inline void Texture<GL_RGBA8>::Resize(GLsizei width, GLsizei height)
+	
+	template<> inline void TexImage<GL_RGBA8>(Texture<GL_RGBA8> & t, GLsizei width, GLsizei height, GLvoid const * pixels)
 	{
-		assert(IsBound());
+		assert(t.IsBound());
 		GLPP_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
-							 width, height, 0, 
-							 GL_RGBA, GL_UNSIGNED_BYTE, nullptr));	
-	}
-
-	template<> inline void Texture<GL_RGBA8>::Set(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels)
-	{
-		assert(IsBound());
-		GLPP_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 
-								xoffset, yoffset, 
-								width, height,
-								GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-	}
-
-	inline void SetAsTarget(Texture<GL_RGBA8> * texture)
-	{
-		SetAsTarget<GL_RGBA8, GL_COLOR_ATTACHMENT0_EXT>(texture);
-	}
-
-
-	// TextureDepth24 - 24-bit depth buffer specializations of Texture
-	// TODO: Maybe change this to GL_DEPTH_COMPONENT a la 'Paul's Projects' tutorial
-
-	class TextureDepth : public Texture<GL_DEPTH_COMPONENT>
-	{
-	};
-
-	template<> inline void Texture<GL_DEPTH_COMPONENT>::Resize(GLsizei width, GLsizei height)
-	{
-		assert(IsBound());
-	/*	GLPP_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
-							 width, height, 0, 
-							 GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr));*/
-		GLPP_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 
 							   width, height, 0, 
-							   GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr));	
+							   GL_RGBA, GL_UNSIGNED_BYTE, pixels));	
 	}
-
-	template<> inline void Texture<GL_DEPTH_COMPONENT>::Set(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels)
+	
+	template<> inline void TexSubImage<GL_RGBA8>(Texture<GL_RGBA8> & t, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels)
 	{
-		// Seems unlikely that you'd ever want to call this.
-		assert(IsBound());
+		assert(t.IsBound());
 		GLPP_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 
-								xoffset, yoffset, 
-								width, height,
-								GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, pixels));
-	}
-
-	inline void SetAsTarget(Texture<GL_DEPTH_COMPONENT> * texture)
-	{
-		SetAsTarget<GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT_EXT>(texture);
+								  xoffset, yoffset, 
+								  width, height,
+								  GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 	}
 
 }

@@ -61,16 +61,14 @@ namespace
 		gl::LoadMatrix(model_view_matrix.GetArray());
 	}
 
-	void SetProjectionMatrix(sim::Matrix4 const & projection_matrix) 
-	{
-		GLPP_CALL(glMatrixMode(GL_PROJECTION));
-		gl::LoadMatrix(projection_matrix.GetArray());
-	}
-
 	void SetFrustum(gfx::Frustum const & frustum)
 	{
 		gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
-		SetProjectionMatrix(frustum.CalcProjectionMatrix());
+
+		sim::Matrix4 const & projection_matrix = frustum.CalcProjectionMatrix();
+
+		GLPP_CALL(glMatrixMode(GL_PROJECTION));
+		gl::LoadMatrix(projection_matrix.GetArray());
 	}
 
 	void SetForegroundFrustum(gfx::Scene const & scene, bool wireframe)
@@ -99,6 +97,8 @@ gfx::Renderer::Renderer()
 , frame_count(0)
 , frame_count_reset_time(last_frame_time)
 {
+	sys::MakeCurrent();
+	
 	InitRenderState();
 
 	Debug::Init();
@@ -164,7 +164,7 @@ void gfx::Renderer::VerifyRenderState() const
 	StateParam const * param = init_state;
 	while (param->cap != GL_INVALID_ENUM)
 	{
-		GLPP_CALL((param->enabled ? gl::CheckEnabled : gl::CheckDisabled)(param->cap));
+		Assert(param->enabled == gl::IsEnabled(param->cap));
 		++ param;
 	}
 	
@@ -467,10 +467,14 @@ void gfx::Renderer::EnableLights(std::vector<Light const *> const & lights, bool
 		Assert(light != nullptr);
 		
 		if (light->IsActive()) {
-			gl::Enable(light_id, enabled);
 			if (enabled)
 			{
+				gl::Enable(light_id);
 				light->Draw(light_id);
+			}
+			else
+			{
+				gl::Disable(light_id);
 			}
 			
 			++ light_id;

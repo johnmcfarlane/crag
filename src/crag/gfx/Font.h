@@ -22,6 +22,7 @@ namespace gfx
 	{
 	public:
 		Font(char const * filename, float scale = 1.f);
+		~Font();
 		
 		operator bool() const;
 

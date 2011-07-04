@@ -30,7 +30,6 @@ namespace gfx
 		void Draw() const;
 
 	private:
-		void InitSides();
 		void InitVerts();
 	
 		// Attribs
