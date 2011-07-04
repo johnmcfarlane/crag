@@ -61,7 +61,8 @@ namespace sim
 			Simulation & destination = Ref(); 
 			smp::Actor<Simulation>::SendMessage(destination, message, blocking); 
 		}
-		
+
+		// TODO: These should not be public. 
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);

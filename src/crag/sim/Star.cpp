@@ -43,7 +43,7 @@ sim::Star::Star()
 void sim::Star::Create(Star & star, PyObject & args)
 {
 	// construct star
-	new (& star) Star();
+	new (& star) Star;
 	
 	// create message
 	AddEntityMessage message = { star, args };

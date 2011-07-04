@@ -106,7 +106,7 @@ sim::Observer::~Observer()
 void sim::Observer::Create(Observer & observer, PyObject & args)
 {
 	// construct observer
-	new (& observer) Observer();
+	new (& observer) Observer;
 	
 	// create message
 	AddEntityMessage message = { observer, args };

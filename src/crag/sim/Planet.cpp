@@ -23,8 +23,6 @@
 
 #include "script/MetaClass.h"
 
-#include "core/Random.h"
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Planet script binding
@@ -63,7 +61,7 @@ sim::Planet::~Planet()
 void sim::Planet::Create(Planet & planet, PyObject & args)
 {	
 	// construct planet
-	new (& planet) Planet();
+	new (& planet) Planet;
 
 	// create message
 	AddEntityMessage message = { planet, args };
