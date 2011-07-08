@@ -55,12 +55,6 @@ namespace
 	STAT (pos, sim::Vector3, .3f);
 	STAT_DEFAULT (rot, sim::Matrix4, .9f);
 	
-	void SetModelViewMatrix(sim::Matrix4 const & model_view_matrix) 
-	{
-		gl::MatrixMode(GL_MODELVIEW);
-		gl::LoadMatrix(model_view_matrix.GetArray());
-	}
-
 	void SetFrustum(gfx::Frustum const & frustum)
 	{
 		gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
@@ -301,12 +295,16 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 {
 	VerifyRenderState();
 	
+	// Set projection matrix within relatively tight bounds.
 	Frustum skybox_frustum = pov.frustum;
 	skybox_frustum.near_z = .1f;
 	skybox_frustum.far_z = 10.f;
 	SetFrustum(skybox_frustum);
 
-	SetModelViewMatrix(pov.CalcModelViewMatrix(false));
+	// Set matrix (minus the translation).
+	sim::Matrix4 skybox_model_view_matrix = pov.CalcModelViewMatrix(false);
+	gl::MatrixMode(GL_MODELVIEW);
+	gl::LoadMatrix(skybox_model_view_matrix.GetArray());
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
@@ -395,19 +393,12 @@ void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPa
 	// Render the formations.
 	form::FormationManager & fm = form::FormationManager::Ref();
 	fm.Render(scene.pov);
-	SetModelViewMatrix(scene.pov.CalcModelViewMatrix());
 	
 	// Render everything else.
 	for (Scene::EntityVector::const_iterator i = scene.entities.begin(), end = scene.entities.end(); i != end; ++ i)
 	{
 		sim::Entity const & entity = * * i;
-		
-		sim::Vector3 const & position = entity.GetPosition();
-		Pov entity_pov (scene.pov);
-		entity_pov.pos = scene.pov.pos - position;
-		SetModelViewMatrix(entity_pov.CalcModelViewMatrix());
-
-		entity.Draw();
+		entity.Draw(scene.pov);
 	}
 	
 	EndRenderForeground(scene, pass);

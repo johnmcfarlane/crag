@@ -15,23 +15,14 @@
 #include "script/Object.h"
 
 
+namespace gfx
+{
+	class Pov;
+}
+
+
 namespace sim
 {
-	class Entity;
-
-	
-	// Entity-related messages
-	struct AddEntityMessage
-	{
-		Entity & entity;
-		PyObject & args;
-	};
-	
-	struct RemoveEntityMessage
-	{
-		Entity & entity;
-	};
-	
 	
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public script::Object
@@ -50,7 +41,7 @@ namespace sim
 
 		// general callbacks
 		virtual void Tick();
-		virtual void Draw() const;
+		virtual void Draw(gfx::Pov const & pov) const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;
 		
@@ -63,6 +54,19 @@ namespace sim
 	#endif
 	
 		//DUMP_OPERATOR_DECLARATION(Entity);
+	};
+	
+	
+	// Entity-related messages
+	struct AddEntityMessage
+	{
+		Entity & entity;
+		PyObject & args;
+	};
+	
+	struct RemoveEntityMessage
+	{
+		Entity & entity;
 	};
 	
 }

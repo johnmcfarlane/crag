@@ -20,6 +20,8 @@
 
 #include "script/MetaClass.h"
 
+#include "gfx/Pov.h"
+
 
 namespace 
 {
@@ -28,8 +30,8 @@ namespace
 	
 	CONFIG_DEFINE (ball_density, double, 1);
 
-	CONFIG_DEFINE (ball_linear_damping, double, 0.025f);
-	CONFIG_DEFINE (ball_angular_damping, double, 0.05f);
+	CONFIG_DEFINE (ball_linear_damping, double, 0.005f);
+	CONFIG_DEFINE (ball_angular_damping, double, 0.00005f);
 }
 
 
@@ -53,6 +55,7 @@ Ball::Ball()
 Ball::~Ball()
 {
 	_mesh.Deinit();
+	DeleteBuffer(_quad);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -88,6 +91,7 @@ bool Ball::Init(PyObject & args)
 	
 	// graphics
 	InitMesh(radius);
+	InitQuad();
 	
 	return true;
 }
@@ -99,27 +103,82 @@ void Ball::Tick()
 	universe.ApplyGravity(* _body);
 }
 
-void Ball::Draw() const
+void Ball::Draw(gfx::Pov const & pov) const
 {
 	GLPP_VERIFY;
 	
-	// temp code to show off the lodding capability
-	unsigned lod = int(2.5 + 2.49 * Sin(sys::GetTime()));
-	assert(lod >= 0 && lod < 6);
-	unsigned faces_begin = lod ? GeodesicSphere::TotalNumFaces(lod - 1) : 0;
-	unsigned faces_num = GeodesicSphere::LodNumFaces(lod);
-
-	// compensate for the smaller low-lod versions with scaling.
+	// Calculate the LoD.
+	unsigned lod = CalculateLod(pov);
+	
+	// Set the matrix.
+	SetMatrix(pov);
+	
+	// Low-LoD meshes are smaller than the sphere they approximate.
+	// Apply a corrective scale to compensate.
 	float scale = _lod_coefficients[lod];
 	gl::Scale(scale, scale, scale);
 	
+	// Select the correct range of indices, given the LoD.
+	unsigned faces_begin = lod ? GeodesicSphere::TotalNumFaces(lod - 1) : 0;
+	unsigned faces_num = GeodesicSphere::LodNumFaces(lod);
+	unsigned indices_begin = faces_begin * 3;
+	unsigned indices_num = faces_num * 3;
+
+	// Perform the draw calls.
 	_mesh.Bind();
 	_mesh.Activate();
-	_mesh.Draw(faces_begin * 3, faces_num * 3);
+	_mesh.Draw(indices_begin, indices_num);
 	_mesh.Deactivate();
 	_mesh.Unbind();
 	
+	// (work in progress)
+//	// Matrices
+//	gl::MatrixMode (GL_PROJECTION);
+//	glPushMatrix();
+//	glLoadIdentity ();
+//	Vector2i resolution = sys::GetWindowSize();
+//	gluOrtho2D (0, resolution.x, resolution.y, 0);
+//	glPopMatrix();
+//	
+//	gl::MatrixMode (GL_MODELVIEW); 
+//	glLoadIdentity (); 
+//	glTranslatef (0.375f, 0.375f, 0.f);
+//	GLPP_VERIFY;
+//	
+//	BindBuffer(_quad);
+//	_quad.Activate();
+//	_quad.DrawStrip(0, 4);
+//	_quad.Deactivate();
+//	UnbindBuffer(_quad);
+	
 	GLPP_VERIFY;
+}
+
+void Ball::SetMatrix(gfx::Pov const & pov) const
+{
+	gfx::Pov entity_pov (pov);
+	entity_pov.pos = pov.pos - _body->GetPosition();
+	sim::Matrix4 model_view_matrix = entity_pov.CalcModelViewMatrix();
+	sim::Matrix4 ball_rotation;
+	_body->GetRotation(ball_rotation);
+	model_view_matrix = ball_rotation * model_view_matrix;
+	
+	gl::MatrixMode(GL_MODELVIEW);
+	gl::LoadMatrix(model_view_matrix.GetArray());	
+}
+
+unsigned Ball::CalculateLod(gfx::Pov const & pov) const
+{
+	sim::Vector3 relative_position = pov.pos - _body->GetPosition();
+	Scalar radius = _body->GetRadius();
+	
+	Scalar mn1 = 1500;
+	Scalar inv_distance = Power(LengthSq(relative_position), -0.5);
+	int lod = int(Power(mn1 * radius * inv_distance, .25));
+	Clamp(lod, 1, 5);
+	-- lod;
+	
+	return lod;
 }
 
 void Ball::InitMesh(Scalar radius)
@@ -145,6 +204,23 @@ void Ball::InitMesh(Scalar radius)
 	_mesh.SetVbo(verts.size(), & verts[0]);
 
 	_mesh.Unbind();
+}
+
+void Ball::InitQuad()
+{
+	float l = 1.f;
+	QuadVertex verts[4] = 
+	{
+		{ Vector3f(-l, -l, 0.f), Vector3f(0, 0, 0) },
+		{ Vector3f(+l, -l, 0.f), Vector3f(1, 0, 0) },
+		{ Vector3f(-l, +l, 0.f), Vector3f(0, 1, 0) },
+		{ Vector3f(+l, +l, 0.f), Vector3f(1, 1, 0) }
+	};
+	
+	GenBuffer(_quad);
+	BindBuffer(_quad);
+	BufferData(_quad, 4, verts);
+	UnbindBuffer(_quad);
 }
 
 Vector3 const & Ball::GetPosition() const

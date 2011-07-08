@@ -39,7 +39,7 @@ void sim::Entity::Tick()
 {
 }
 
-void sim::Entity::Draw() const
+void sim::Entity::Draw(gfx::Pov const & pov) const
 {
 }
 
