@@ -20,6 +20,11 @@ namespace physics
 	class SphericalBody;
 }
 
+namespace gfx
+{
+	template <typename VERTEX> class GeodesicSphere;
+}
+
 
 namespace sim
 {
@@ -47,9 +52,14 @@ namespace sim
 		
 		// types
 		typedef gl::Vertex3dNorm Vertex;
+		typedef gfx::GeodesicSphere<Vertex> GeodesicSphere;
 
 		// variables
 		physics::SphericalBody * _body;
 		gl::Mesh<Vertex> _mesh;
+		std::vector<float> _lod_coefficients;
+		
+		static GLuint const num_lods = 4;
+		static GLuint const lods[num_lods];
 	};
 }

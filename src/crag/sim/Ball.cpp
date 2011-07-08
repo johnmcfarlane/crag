@@ -16,11 +16,16 @@
 
 #include "physics/SphericalBody.h"
 
+#include "gfx/GeodesicSphere.h"
+
 #include "script/MetaClass.h"
 
 
 namespace 
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// Config values
+	
 	CONFIG_DEFINE (ball_density, double, 1);
 
 	CONFIG_DEFINE (ball_linear_damping, double, 0.025f);
@@ -97,10 +102,20 @@ void Ball::Tick()
 void Ball::Draw() const
 {
 	GLPP_VERIFY;
+	
+	// temp code to show off the lodding capability
+	unsigned lod = int(2.5 + 2.49 * Sin(sys::GetTime()));
+	assert(lod >= 0 && lod < 6);
+	unsigned faces_begin = lod ? GeodesicSphere::TotalNumFaces(lod - 1) : 0;
+	unsigned faces_num = GeodesicSphere::LodNumFaces(lod);
 
+	// compensate for the smaller low-lod versions with scaling.
+	float scale = _lod_coefficients[lod];
+	gl::Scale(scale, scale, scale);
+	
 	_mesh.Bind();
 	_mesh.Activate();
-	_mesh.Draw(0, 60);
+	_mesh.Draw(faces_begin * 3, faces_num * 3);
 	_mesh.Deactivate();
 	_mesh.Unbind();
 	
@@ -109,62 +124,26 @@ void Ball::Draw() const
 
 void Ball::InitMesh(Scalar radius)
 {
-	// no prizes for guessing where I cribbed this code...
-	Scalar const x = .525731112119133606 * radius;
-	Scalar const z = .850650808352039932 * radius;
+	GeodesicSphere source(5, radius);
 	
-	static Vertex verts [] = 
-	{
-		{ Vector3(-x, .0,  z) },
-		{ Vector3( x, .0,  z) },
-		{ Vector3(-x, .0, -z) },
-		{ Vector3( x, .0, -z) },
-		{ Vector3(.0,  z,  x) },
-		{ Vector3(.0,  z, -x) },
-		{ Vector3(.0, -z,  x) },
-		{ Vector3(.0, -z, -x) },
-		{ Vector3( z,  x, .0) },
-		{ Vector3(-z,  x, .0) },
-		{ Vector3( z, -x, .0) },
-		{ Vector3(-z, -x, .0) }
-	};
-	int num_verts = ARRAY_SIZE(verts);
+	_lod_coefficients = source.GetCoefficients();
 	
-	for (int i = 0; i < num_verts; ++ i)
+	GeodesicSphere::VertexVector & verts = source.GetVerts();
+	float inverse_radius = 1.f / radius;
+	for (GeodesicSphere::VertexVector::iterator v = verts.begin(); v != verts.end(); ++ v)
 	{
-		verts[i].norm = verts[i].pos;
+		v->norm = v->pos * inverse_radius;
 	}
 	
-	static GLuint tindices[20][3] = 
-	{ 
-		{0,4,1}, 
-		{0,9,4}, 
-		{9,5,4}, 
-		{4,5,8}, 
-		{4,8,1},    
-		{8,10,1}, 
-		{8,3,10}, 
-		{5,3,8}, 
-		{5,2,3}, 
-		{2,7,3},    
-		{7,10,3}, 
-		{7,6,10}, 
-		{7,11,6}, 
-		{11,0,6}, 
-		{0,1,6}, 
-		{6,1,10}, 
-		{9,0,11}, 
-		{9,11,2}, 
-		{9,2,5}, 
-		{7,2,11} 
-	};
-	int num_indices = ARRAY_SIZE(tindices) * 3;
+	GeodesicSphere::FaceVector & faces = source.GetFaces();
 	
 	_mesh.Init();
 	_mesh.Bind();
-	_mesh.Resize(num_verts, num_indices);
-	_mesh.SetIbo(num_indices, tindices[0]);
-	_mesh.SetVbo(num_verts, verts);
+
+	_mesh.Resize(verts.size(), faces.size() * 3);
+	_mesh.SetIbo(faces.size() * 3, faces[0]._indices);
+	_mesh.SetVbo(verts.size(), & verts[0]);
+
 	_mesh.Unbind();
 }
 
