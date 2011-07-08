@@ -35,15 +35,15 @@ public:
 	Scalar radius;
 };
 
-
-template<typename S> S Area(Sphere<S, 3> const & s)
+// Sphere property specializations
+template<typename S> S SphereArea<3>(S radius)
 {
-	return static_cast<S>(PI * 4.) * Square(s.radius);
+	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
 }
 
-template<typename S> S Volume(Sphere<S, 3> const & s)
+template<typename S, int N> S SphereVolume(S radius)
 {
-	return static_cast<S>(PI * 4. / 3.) * Cube(s.radius);
+	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
 }
 
 
