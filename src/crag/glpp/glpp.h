@@ -154,6 +154,16 @@ namespace gl
 	{
 		GLPP_CALL(glViewport(x, y, width, height));
 	}
+	
+	// Scale
+	inline void Scale(GLfloat x, GLfloat y, GLfloat z)
+	{
+		GLPP_CALL(glScalef(x, y, z));
+	}
+	inline void Scale(GLdouble x, GLdouble y, GLdouble z)
+	{
+		GLPP_CALL(glScaled(x, y, z));
+	}
 
 	
 	////////////////////////////////////////////////////////////////////////////////
