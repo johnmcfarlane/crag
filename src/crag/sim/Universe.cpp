@@ -104,7 +104,7 @@ void Universe::ApplyGravity(physics::Body & body) const
 	Vector3 gravitational_force_per_second = Weight(position, mass);
 	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
 	
-	body.AddRelForce(gravitational_force);
+	body.AddForce(gravitational_force);
 }
 
 void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const

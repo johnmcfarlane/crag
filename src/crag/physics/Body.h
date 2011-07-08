@@ -38,6 +38,7 @@ namespace physics
 		void SetLinearDamping(Scalar linear_damping);
 		void SetAngularDamping(Scalar angular_damping);
 		void AddRelTorque(Vector3 const & torque);
+		void AddForce(Vector3 const & force);
 		void AddRelForce(Vector3 const & force);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		

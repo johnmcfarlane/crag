@@ -113,6 +113,12 @@ void physics::Body::AddRelTorque(Vector3 const & torque)
 	dBodyAddRelTorque(body_id, torque.x, torque.y, torque.z);
 }
 
+void physics::Body::AddForce(Vector3 const & force)
+{
+	Assert(body_id != 0);
+	dBodyAddForce(body_id, force.x, force.y, force.z);
+}
+
 void physics::Body::AddRelForce(Vector3 const & force)
 {
 	Assert(body_id != 0);
