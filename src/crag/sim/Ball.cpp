@@ -127,7 +127,7 @@ void Ball::Draw(gfx::Pov const & pov) const
 	// Perform the draw calls.
 	_mesh.Bind();
 	_mesh.Activate();
-	_mesh.Draw(indices_begin, indices_num);
+	_mesh.Draw(GL_TRIANGLES, indices_num, indices_begin);
 	_mesh.Deactivate();
 	_mesh.Unbind();
 	

@@ -25,9 +25,10 @@ namespace gl
 		}		
 	};
 
-	inline void DrawElements(Ibo const & ibo, GLenum mode, GLuint first, GLsizei count)
+	inline void DrawElements(Ibo const & ibo, GLenum mode, GLsizei count, GLuint first = 0)
 	{
 		assert(ibo.IsBound());
-		GLPP_CALL(glDrawElements (mode, count, GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(sizeof(GLuint) * first)));
+		GLvoid const * ptr = reinterpret_cast<const GLvoid *>(sizeof(GLuint) * first);
+		GLPP_CALL(glDrawElements(mode, count, GL_UNSIGNED_INT, ptr));
 	}
 }

@@ -73,9 +73,10 @@ namespace gl
 			vbo.Deactivate();
 		}
 		
-		void Draw(GLuint first, GLsizei count, GLenum mode = GL_TRIANGLES) const
+		void Draw(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
-			DrawElements(ibo, mode, first, count);
+			assert(mode == GL_TRIANGLES);
+			DrawElements(ibo, mode, count, first);
 		}
 		
 		bool IsBound() const

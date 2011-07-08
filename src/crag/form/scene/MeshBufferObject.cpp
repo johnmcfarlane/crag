@@ -72,7 +72,7 @@ void form::MeshBufferObject::Deactivate() const
 
 void form::MeshBufferObject::Draw() const
 {
-	super::Draw(0, max_index);
+	super::Draw(GL_TRIANGLES, max_index);
 }
 
 void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
