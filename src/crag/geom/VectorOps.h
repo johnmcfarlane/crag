@@ -100,7 +100,6 @@ template<typename S, int N> bool FastSafeNormalize(Vector<S, N> & v)
 ////////////////////////////////////////////////////////////////////////////////
 // Triangle Functions
 
-
 // Given the lengths of the sides of a triangle, returns the area of the triangle.
 template<typename S> S TriangleArea(S a, S b, S c)
 {
@@ -132,6 +131,15 @@ template<typename S, int N> S DistanceToSurface(Vector<S, N> const & a, Vector<S
 	Normalize(normal);
 	
 	return DotProduct(normal, p - b);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Tetrahedron Functions
+
+template<typename S, typename V> S TetrahedronVolume(V const & a, V const & b, V const & c, V const & d)
+{
+	return Abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
 }
 
 
