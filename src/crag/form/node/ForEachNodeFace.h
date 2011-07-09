@@ -39,8 +39,8 @@ namespace form
 	// and norm is the triangle's normal.
 	template<typename FaceFunctor> void ForEachNodeFace(Node const & node, FaceFunctor & f)
 	{
-		// Node, n, isn't a leaf node; its descendents are the ones with the faces.
-		Assert (! node.HasChildren());
+		// Generally, it's advised to call this fn only for leaf nodes. 
+		// But not required.
 		
 		// Step 1: Determine the number of mid-points and note missing / solitary mid-points.
 		Node::Triplet const * odd_one_out[2] = { nullptr, nullptr };

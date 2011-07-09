@@ -160,8 +160,8 @@ void Ball::SetMatrix(gfx::Pov const & pov) const
 	entity_pov.pos = pov.pos - _body->GetPosition();
 	sim::Matrix4 model_view_matrix = entity_pov.CalcModelViewMatrix();
 	sim::Matrix4 ball_rotation;
-	_body->GetRotation(ball_rotation);
-	model_view_matrix = ball_rotation * model_view_matrix;
+	//_body->GetRotation(ball_rotation);
+	//model_view_matrix = ball_rotation * model_view_matrix;
 	
 	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(model_view_matrix.GetArray());	

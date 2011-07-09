@@ -106,15 +106,16 @@ namespace form
 	
 
 	// This class holds all the data necessary to test the shape for intersection 
-	// against nodes and mines down through the nodes, calling the functor on them. 
+	// against nodes, and mines down through the nodes, calling the functor on them. 
 	template <typename SHAPE, typename COLLISION_FUNCTOR>
 	class Traveler
 	{
 	public:
-		Traveler(Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor)
+		Traveler(Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, Scalar min_length)
 		: _shape(shape)
 		, _origin(origin)
 		, _functor(functor)
+		, _min_length_squared(Square(min_length))
 		{
 			_pyramid.center = polyhedron_center;
 		}
@@ -129,8 +130,19 @@ namespace form
 			if (TouchesInfinitePyramid(_shape, _pyramid))
 			{
 				form::Node const * const children = node.GetChildren();
-				if (children != nullptr)
+				if (children == nullptr)
 				{
+					// We're at a leaf node; process faces.
+					ForEachNodeFace(node, * this);
+				}
+				else if (LengthSq(_pyramid.a - _pyramid.b) < _min_length_squared)
+				{
+					// We've gone too deep; process faces.
+					ForEachNodeFace(node, * this);
+				}
+				else
+				{
+					// Keep recurring into the tree.
 					form::Node const * child = children;
 					form::Node const * const children_end = child + 4;
 					do
@@ -138,10 +150,6 @@ namespace form
 						GatherPoints(* child);
 						++ child;
 					}	while (child != children_end);
-				}
-				else 
-				{
-					ForEachNodeFace(node, * this);
 				}
 			}
 		}
@@ -170,6 +178,10 @@ namespace form
 		Pyramid _pyramid;
 		SHAPE const & _shape;
 		COLLISION_FUNCTOR & _functor;
+		
+		// After an arbitrarily chosen triangle edge becomes shorter than this,
+		// recursion ends. This prevents expensive, exhaustive searches.
+		Scalar _min_length_squared;
 	};
 
 	
@@ -178,9 +190,9 @@ namespace form
 	
 	// general
 	template <typename SHAPE, typename COLLISION_FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor)
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, float min_length)
 	{
-		Traveler<SHAPE, COLLISION_FUNCTOR> traveler(polyhedron_center, shape, origin, functor);
+		Traveler<SHAPE, COLLISION_FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_length);
 		
 		form::RootNode const & root_node = polyhedron.root_node;
 		form::Node const * children = root_node.GetChildren();
