@@ -12,6 +12,8 @@
 
 #include "Scene.h"
 
+#include "Sphere.h"
+
 #include "sim/Entity.h"
 
 #include "core/ConfigEntry.h"
@@ -26,6 +28,7 @@ CONFIG_DEFINE (camera_far, float, 10);
 
 gfx::Scene::Scene()
 : skybox(nullptr)
+, _sphere(* new Sphere)
 {
 	pov.frustum.fov = static_cast<double>(camera_fov);
 	pov.frustum.near_z = static_cast<double>(camera_near);
@@ -39,6 +42,8 @@ gfx::Scene::~Scene()
 	camera_fov = static_cast<float>(pov.frustum.fov);
 	camera_near = static_cast<float>(pov.frustum.near_z);
 	camera_far = static_cast<float>(pov.frustum.far_z);
+
+	delete & _sphere;
 }
 
 void gfx::Scene::AddLight(Light const & light)
@@ -106,4 +111,9 @@ void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min
 			}
 		}
 	}
+}
+
+gfx::Sphere const & gfx::Scene::GetSphere() const
+{
+	return _sphere;
 }

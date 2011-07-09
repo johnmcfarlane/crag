@@ -21,6 +21,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/Scene.h"
+#include "gfx/Sphere.h"
 
 
 namespace 
@@ -50,11 +51,6 @@ using namespace sim;
 Ball::Ball()
 : _body(nullptr)
 {
-}
-
-Ball::~Ball()
-{
-	_mesh.Deinit();
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -88,9 +84,6 @@ bool Ball::Init(PyObject & args)
 	_body->SetLinearDamping(ball_linear_damping);
 	_body->SetAngularDamping(ball_angular_damping);
 	
-	// graphics
-	InitMesh();
-	
 	return true;
 }
 
@@ -116,21 +109,8 @@ void Ball::Draw(gfx::Scene const & scene) const
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	Scalar radius = _body->GetRadius();
-	float scale = _lod_coefficients[lod] * radius;
-	gl::Scale(scale, scale, scale);
-	
-	// Select the correct range of indices, given the LoD.
-	unsigned faces_begin = lod ? GeodesicSphere::TotalNumFaces(lod - 1) : 0;
-	unsigned faces_num = GeodesicSphere::LodNumFaces(lod);
-	unsigned indices_begin = faces_begin * 3;
-	unsigned indices_num = faces_num * 3;
-
-	// Perform the draw calls.
-	_mesh.Bind();
-	_mesh.Activate();
-	_mesh.Draw(GL_TRIANGLES, indices_num, indices_begin);
-	_mesh.Deactivate();
-	_mesh.Unbind();
+	gfx::Sphere const & sphere = scene.GetSphere();
+	sphere.Draw(radius, lod);
 	
 	GLPP_VERIFY;
 }
@@ -160,30 +140,6 @@ unsigned Ball::CalculateLod(gfx::Pov const & pov) const
 	-- lod;
 	
 	return lod;
-}
-
-void Ball::InitMesh()
-{
-	GeodesicSphere source(5);
-	
-	_lod_coefficients = source.GetCoefficients();
-	
-	GeodesicSphere::VertexVector & verts = source.GetVerts();
-	for (GeodesicSphere::VertexVector::iterator v = verts.begin(); v != verts.end(); ++ v)
-	{
-		v->norm = v->pos;
-	}
-	
-	GeodesicSphere::FaceVector & faces = source.GetFaces();
-	
-	_mesh.Init();
-	_mesh.Bind();
-
-	_mesh.Resize(verts.size(), faces.size() * 3);
-	_mesh.SetIbo(faces.size() * 3, faces[0]._indices);
-	_mesh.SetVbo(verts.size(), & verts[0]);
-
-	_mesh.Unbind();
 }
 
 Vector3 const & Ball::GetPosition() const

@@ -22,7 +22,6 @@ namespace physics
 
 namespace gfx
 {
-	template <typename VERTEX> class GeodesicSphere;
 	class Pov;
 }
 
@@ -35,7 +34,6 @@ namespace sim
 		
 	public:
 		Ball();
-		~Ball();
 		
 		// Type-specific allocation via script.
 		static void Create(Ball & ball, PyObject & args);
@@ -51,18 +49,7 @@ namespace sim
 		
 		virtual Vector3 const & GetPosition() const;
 		
-		void InitMesh();
-		
-		// types
-		typedef gl::Vertex3dNorm Vertex;
-		typedef gfx::GeodesicSphere<Vertex> GeodesicSphere;
-
 		// variables
 		physics::SphericalBody * _body;
-		gl::Mesh<Vertex> _mesh;
-		std::vector<float> _lod_coefficients;
-		
-		static GLuint const num_lods = 4;
-		static GLuint const lods[num_lods];
 	};
 }

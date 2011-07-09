@@ -11,9 +11,8 @@
 #pragma once
 
 #include "Pov.h"
-#include "sim/defs.h"
 
-#include <map>
+#include "sim/defs.h"
 
 
 namespace sim
@@ -26,6 +25,7 @@ namespace gfx
 {
 	class Light;
 	class Skybox;
+	class Sphere;
 
 
 	class Scene
@@ -49,6 +49,8 @@ namespace gfx
 				
 		void SetSkybox(Skybox const * s) { skybox = s; }
 		Skybox const * GetSkybox() const { return skybox; }
+		
+		Sphere const & GetSphere() const;
 
 		void GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
 		
@@ -63,5 +65,6 @@ namespace gfx
 		LightVector lights;
 		EntityVector entities;
 		Skybox const * skybox;
+		Sphere const & _sphere;
 	};
 }

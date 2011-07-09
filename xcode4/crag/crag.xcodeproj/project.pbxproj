@@ -71,6 +71,7 @@
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
+		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
 		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A4132DF0A60045C3A8 /* observer.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
@@ -276,6 +277,8 @@
 		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
+		5293538513C8FD1900B5218B /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
+		5293538613C8FD1900B5218B /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Sphere.h; sourceTree = "<group>"; };
 		5295003513C5B4020015349B /* GeodesicSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeodesicSphere.h; sourceTree = "<group>"; };
 		5295003813C6069E0015349B /* icosahedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icosahedron.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -533,6 +536,8 @@
 				52642369135F49FA00C00EFE /* Skybox.h */,
 				5295003513C5B4020015349B /* GeodesicSphere.h */,
 				5295003813C6069E0015349B /* icosahedron.h */,
+				5293538513C8FD1900B5218B /* Sphere.cpp */,
+				5293538613C8FD1900B5218B /* Sphere.h */,
 			);
 			path = gfx;
 			sourceTree = "<group>";
@@ -803,6 +808,7 @@
 				52D79F2313608A04001063D2 /* Engine.cpp in Sources */,
 				528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */,
 				5287832013B389CD00B67A38 /* Ball.cpp in Sources */,
+				5293538713C8FD1900B5218B /* Sphere.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
