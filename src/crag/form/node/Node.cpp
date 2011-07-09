@@ -41,7 +41,7 @@ form::Node::Triplet::~Triplet()
 
 form::Node::Node()
 : flags_and_children (0)
-, parent (nullptr)
+, _parent (nullptr)
 , seed (0)
 , score (0)
 {
@@ -50,7 +50,7 @@ form::Node::Node()
 form::Node::~Node()
 {
 	Assert(GetChildren() == nullptr);
-	Assert(parent == nullptr);
+	Assert(_parent == nullptr);
 }
 
 // Makes sure node's three mid-points are non-null or returns false.
@@ -245,7 +245,7 @@ void form::Node::SetChildren(Node * c)
 
 void form::Node::SetParent(Node * p) 
 { 
-	parent = p; 
+	_parent = p; 
 }
 
 void form::Node::SetCousin(int index, Node & cousin)
@@ -297,12 +297,12 @@ void form::Node::Verify() const
 {
 	VerifyTrue(sizeof(* this) == 80 || sizeof(* this) == 128);
 
-	if (parent != nullptr) 
+	if (_parent != nullptr) 
 	{
-		int child_index = (this - parent->GetChildren());
-		VerifyTrue(parent->GetChildren() + child_index == this);
+		int child_index = (this - _parent->GetChildren());
+		VerifyTrue(_parent->GetChildren() + child_index == this);
 		VerifyTrue(child_index >= 0 && child_index < 4);
-		VerifyTrue(seed == parent->GetChildSeed(child_index));
+		VerifyTrue(seed == _parent->GetChildSeed(child_index));
 		
 		for (int i = 0; i < 3; ++ i) 
 		{
@@ -345,7 +345,7 @@ DUMP_OPERATOR_DEFINITION(form, Node)
 	if (rhs.GetChildren() != nullptr) {
 		lhs << "(" << ',' << (rhs.GetChildren() + 1) << ',' << (rhs.GetChildren() + 2) << ',' << (rhs.GetChildren() + 3) << ')';
 	}
-	lhs << "; parent:" << rhs.parent;
+	lhs << "; parent:" << rhs._parent;
 	lhs << "; seed:" << rhs.seed << ';';
 	
 	DumpStream indented(lhs);

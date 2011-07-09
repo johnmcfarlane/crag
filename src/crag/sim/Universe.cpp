@@ -24,7 +24,7 @@ using namespace sim;
 // Universe definitions
 
 CONFIG_DEFINE_MEMBER (Universe, gravitational_force, float, 0.0000000025f);
-CONFIG_DEFINE_MEMBER (Universe, gravity, bool, true);
+CONFIG_DEFINE_MEMBER (Universe, apply_gravity, bool, true);
 
 
 Universe::Universe()
@@ -44,7 +44,7 @@ sys::TimeType Universe::GetTime() const
 
 void Universe::ToggleGravity()
 {
-	gravity = ! gravity;
+	apply_gravity = ! apply_gravity;
 }
 
 void Universe::AddEntity(Entity & entity)
@@ -78,7 +78,7 @@ void Universe::Tick(sys::TimeType target_frame_seconds)
 // reasonable approximation of the weight vector at that position.
 Vector3 Universe::Weight(Vector3 const & pos, Scalar mass) const
 {
-	if (gravity) 
+	if (apply_gravity) 
 	{
 		Vector3 force = Vector3::Zero();
 		
@@ -102,9 +102,9 @@ void Universe::ApplyGravity(physics::Body & body) const
 	Scalar mass = body.GetMass();
 	
 	Vector3 gravitational_force_per_second = Weight(position, mass);
-	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+	Vector3 gravity = gravitational_force_per_second / Simulation::target_frame_seconds;
 	
-	body.AddForce(gravitational_force);
+	body.AddForce(gravity);
 }
 
 void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const
@@ -113,7 +113,7 @@ void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass
 	Scalar mass = body.GetMass();
 	
 	Vector3 gravitational_force_per_second = Weight(position, mass);
-	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+	Vector3 gravity = gravitational_force_per_second / Simulation::target_frame_seconds;
 	
-	body.AddRelForceAtRelPos(gravitational_force, center_of_mass);
+	body.AddRelForceAtRelPos(gravity, center_of_mass);
 }

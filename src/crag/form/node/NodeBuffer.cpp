@@ -608,12 +608,12 @@ void form::NodeBuffer::CollapseNode(Node & node)
 void form::NodeBuffer::InitChildPointers(Node & parent_node)
 {
 	Node::Triplet const * parent_triple = parent_node.triple;
-	Node * nodes = parent_node.GetChildren();
-	Node & center = nodes[3];
+	Node * child_nodes = parent_node.GetChildren();
+	Node & center = child_nodes[3];
 	
 	for (int i = 0; i < 3; ++ i)
 	{
-		Node & node = nodes[i];
+		Node & node = child_nodes[i];
 
 		// This is the side which the child shares with its sibling in the center.
 		// anteroposterior
@@ -809,7 +809,7 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 	do 
 	{
 		Quaterna & q = quaterna_used_end [- 1];
-		Node * nodes = q.nodes;
+		Node * quaterna_nodes = q.nodes;
 		
 		// Is the quaterna is being used?
 		if (q.IsInUse()) 
@@ -822,17 +822,17 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 				break;
 			}
 			
-			DeinitChildren(nodes);
+			DeinitChildren(quaterna_nodes);
 			
 			// It is no longer being used.
 			q.parent_score = -1;
 		}
 
 		// Either way, there should be no children.
-		Assert(! nodes[0].HasChildren());
-		Assert(! nodes[1].HasChildren());
-		Assert(! nodes[2].HasChildren());
-		Assert(! nodes[3].HasChildren());
+		Assert(! quaterna_nodes[0].HasChildren());
+		Assert(! quaterna_nodes[1].HasChildren());
+		Assert(! quaterna_nodes[2].HasChildren());
+		Assert(! quaterna_nodes[3].HasChildren());
 		
 		-- quaterna_used_end;
 	}	
@@ -868,11 +868,11 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 	{
 		Assert(! unused_quaterna->IsInUse());
 		
-		Node * nodes = unused_quaterna->nodes;
+		Node * unused_nodes = unused_quaterna->nodes;
 		
 		// Is a quatern past the end of used quaterna
 		// pointing to a node before the end of used nodes?
-		if (nodes < nodes_used_end)
+		if (unused_nodes < nodes_used_end)
 		{
 			// It needs to point to a quad of nodes past the end of used nodes.
 			// There must be a corresponding quad of nodes in such a position that is in use.
@@ -888,7 +888,7 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 			}
 			while (substitute_nodes < nodes_used_end);
 
-			SubstituteChildren(nodes, substitute_nodes);
+			SubstituteChildren(unused_nodes, substitute_nodes);
 			std::swap(used_quaterna->nodes, unused_quaterna->nodes);
 		}
 		

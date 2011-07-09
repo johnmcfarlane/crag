@@ -134,7 +134,6 @@ void sim::MoonShader::CalcPointPos(sim::Vector3 & position) const
 void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
 {
 	Scalar t1, t2;
-	Sphere3 crater;
 	Ray3 ray(Vector3::Zero(), position);
 	
 	Scalar t = 1;

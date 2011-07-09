@@ -35,7 +35,7 @@ namespace sim
 	{
 	public:
 		CONFIG_DECLARE_MEMBER (gravitational_force, float);
-		CONFIG_DECLARE_MEMBER (gravity, bool);
+		CONFIG_DECLARE_MEMBER (apply_gravity, bool);
 
 		// methods
 		Universe();

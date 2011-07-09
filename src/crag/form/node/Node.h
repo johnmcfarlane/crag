@@ -49,7 +49,7 @@ namespace form
 		
 		bool HasChildren() const { return GetChildren() != nullptr; }
 		bool IsRecyclable() const { return ! HasChildren(); }
-		bool IsInUse() const { return parent != nullptr; }	// IsInUseOrIsRootNode
+		bool IsInUse() const { return _parent != nullptr; }	// IsInUseOrIsRootNode
 		bool IsLeaf() const { return ! HasChildren(); }
 		
 		bool HasAllCousins() const
@@ -76,8 +76,8 @@ namespace form
 		Node const * GetChildren() const { return reinterpret_cast<Node *>(flags_and_children & pointer_mask); }
 		void SetChildren(Node * c);
 		
-		Node * GetParent() { return parent; }
-		Node const * GetParent() const { return parent; }
+		Node * GetParent() { return _parent; }
+		Node const * GetParent() const { return _parent; }
 		void SetParent(Node * p);
 		
 		Point * GetCornerPtr(int index) { return triple[index].corner; }
@@ -105,7 +105,7 @@ namespace form
 		
 	private:
 		flag_type flags_and_children;	//  4	/	8
-		Node * parent;			//  4	/	8
+		Node * _parent;			//  4	/	8
 	public:
 		int seed;				//  4	/	4
 
