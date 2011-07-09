@@ -27,7 +27,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .0001);	// coulomb friction coefficient
+	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1);	// coulomb friction coefficient
 	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 
 	
@@ -42,7 +42,7 @@ namespace
 		{
 			ZeroObject(_contact);
 			
-			_contact.surface.mode = dContactBounce;
+			_contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
 			
 			_contact.surface.mu = planet_collision_friction;
 			//_contact.surface.mu2 = 0;
@@ -112,8 +112,6 @@ bool sim::PlanetaryBody::OnCollisionWithSphericalBody(physics::Engine & engine, 
 	dGeomID object_geom = that_sphere.GetGeomId();	
 	dGeomID planet_geom = GetGeomId();
 	IntersectionFunctor functor(object_geom, planet_geom);
-
-	form::Formation const & formation = GetFormation();
 
 	form::FormationManager & formation_manager = form::FormationManager::Ref();
 	formation_manager.ForEachIntersection(sphere, formation, functor);

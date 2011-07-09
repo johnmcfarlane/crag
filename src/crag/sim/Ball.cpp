@@ -32,7 +32,7 @@ namespace
 	CONFIG_DEFINE (ball_density, double, 1);
 
 	CONFIG_DEFINE (ball_linear_damping, double, 0.005f);
-	CONFIG_DEFINE (ball_angular_damping, double, 0.00005f);
+	CONFIG_DEFINE (ball_angular_damping, double, 0.005f);
 }
 
 
@@ -121,8 +121,8 @@ void Ball::SetMatrix(gfx::Pov const & pov) const
 	entity_pov.pos = pov.pos - _body->GetPosition();
 	sim::Matrix4 model_view_matrix = entity_pov.CalcModelViewMatrix();
 	sim::Matrix4 ball_rotation;
-	//_body->GetRotation(ball_rotation);
-	//model_view_matrix = ball_rotation * model_view_matrix;
+	_body->GetRotation(ball_rotation);
+	model_view_matrix = ball_rotation * model_view_matrix;
 	
 	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(model_view_matrix.GetArray());	
