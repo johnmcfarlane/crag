@@ -20,7 +20,7 @@
 
 #include "script/MetaClass.h"
 
-#include "gfx/Pov.h"
+#include "gfx/Scene.h"
 
 
 namespace 
@@ -55,7 +55,6 @@ Ball::Ball()
 Ball::~Ball()
 {
 	_mesh.Deinit();
-	DeleteBuffer(_quad);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -90,8 +89,7 @@ bool Ball::Init(PyObject & args)
 	_body->SetAngularDamping(ball_angular_damping);
 	
 	// graphics
-	InitMesh(radius);
-	InitQuad();
+	InitMesh();
 	
 	return true;
 }
@@ -103,9 +101,11 @@ void Ball::Tick()
 	universe.ApplyGravity(* _body);
 }
 
-void Ball::Draw(gfx::Pov const & pov) const
+void Ball::Draw(gfx::Scene const & scene) const
 {
 	GLPP_VERIFY;
+	
+	gfx::Pov const & pov = scene.GetPov();
 	
 	// Calculate the LoD.
 	unsigned lod = CalculateLod(pov);
@@ -115,7 +115,8 @@ void Ball::Draw(gfx::Pov const & pov) const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	float scale = _lod_coefficients[lod];
+	Scalar radius = _body->GetRadius();
+	float scale = _lod_coefficients[lod] * radius;
 	gl::Scale(scale, scale, scale);
 	
 	// Select the correct range of indices, given the LoD.
@@ -130,26 +131,6 @@ void Ball::Draw(gfx::Pov const & pov) const
 	_mesh.Draw(GL_TRIANGLES, indices_num, indices_begin);
 	_mesh.Deactivate();
 	_mesh.Unbind();
-	
-	// (work in progress)
-//	// Matrices
-//	gl::MatrixMode (GL_PROJECTION);
-//	glPushMatrix();
-//	glLoadIdentity ();
-//	Vector2i resolution = sys::GetWindowSize();
-//	gluOrtho2D (0, resolution.x, resolution.y, 0);
-//	glPopMatrix();
-//	
-//	gl::MatrixMode (GL_MODELVIEW); 
-//	glLoadIdentity (); 
-//	glTranslatef (0.375f, 0.375f, 0.f);
-//	GLPP_VERIFY;
-//	
-//	BindBuffer(_quad);
-//	_quad.Activate();
-//	_quad.DrawStrip(0, 4);
-//	_quad.Deactivate();
-//	UnbindBuffer(_quad);
 	
 	GLPP_VERIFY;
 }
@@ -181,17 +162,16 @@ unsigned Ball::CalculateLod(gfx::Pov const & pov) const
 	return lod;
 }
 
-void Ball::InitMesh(Scalar radius)
+void Ball::InitMesh()
 {
-	GeodesicSphere source(5, radius);
+	GeodesicSphere source(5);
 	
 	_lod_coefficients = source.GetCoefficients();
 	
 	GeodesicSphere::VertexVector & verts = source.GetVerts();
-	float inverse_radius = 1.f / radius;
 	for (GeodesicSphere::VertexVector::iterator v = verts.begin(); v != verts.end(); ++ v)
 	{
-		v->norm = v->pos * inverse_radius;
+		v->norm = v->pos;
 	}
 	
 	GeodesicSphere::FaceVector & faces = source.GetFaces();
@@ -204,23 +184,6 @@ void Ball::InitMesh(Scalar radius)
 	_mesh.SetVbo(verts.size(), & verts[0]);
 
 	_mesh.Unbind();
-}
-
-void Ball::InitQuad()
-{
-	float l = 1.f;
-	QuadVertex verts[4] = 
-	{
-		{ Vector3f(-l, -l, 0.f), Vector3f(0, 0, 0) },
-		{ Vector3f(+l, -l, 0.f), Vector3f(1, 0, 0) },
-		{ Vector3f(-l, +l, 0.f), Vector3f(0, 1, 0) },
-		{ Vector3f(+l, +l, 0.f), Vector3f(1, 1, 0) }
-	};
-	
-	GenBuffer(_quad);
-	BindBuffer(_quad);
-	BufferData(_quad, 4, verts);
-	UnbindBuffer(_quad);
 }
 
 Vector3 const & Ball::GetPosition() const

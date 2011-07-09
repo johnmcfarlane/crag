@@ -17,7 +17,7 @@
 
 namespace gfx
 {
-	class Pov;
+	class Scene;
 }
 
 
@@ -41,7 +41,7 @@ namespace sim
 
 		// general callbacks
 		virtual void Tick();
-		virtual void Draw(gfx::Pov const & pov) const;
+		virtual void Draw(gfx::Scene const & scene) const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual bool GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const;
 		

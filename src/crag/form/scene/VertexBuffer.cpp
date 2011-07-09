@@ -43,13 +43,6 @@ void form::VertexBuffer::Clear()
 	clear();
 }
 
-void form::VertexBuffer::NormalizeNormals()
-{
-	typedef void (* FUNCTION)(form::Vertex & v);
-
-	core::for_each <iterator, FUNCTION, 1> (begin(), end(), 1024, Normalize, true);
-}
-
 int form::VertexBuffer::GetIndex(Vertex const & v) const
 {
 	Vertex const * array = & front();
@@ -58,23 +51,3 @@ int form::VertexBuffer::GetIndex(Vertex const & v) const
 	
 	return index;
 }
-
-/*#if defined(DUMP) 
-DUMP_OPERATOR_DEFINITION(form, VertexBuffer)
-{
-	for (int i = 0; i < rhs.GetMaxUsed(); ++ i) {
-		form::Vertex const & vertex = rhs[i];
-		
-		if (rhs.IsFree(vertex)) {
-			continue;
-		}
-		
-		lhs << i;
-		lhs << " : " << vertex.pos.x << ',' << vertex.pos.y << ',' << vertex.pos.z;
-		lhs << " : " << vertex.norm.x << ',' << vertex.norm.y << ',' << vertex.norm.z;
-		lhs << '\n';
-	}
-	
-	return lhs;
-}
-#endif*/

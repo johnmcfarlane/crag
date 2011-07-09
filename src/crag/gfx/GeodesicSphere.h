@@ -41,9 +41,8 @@ namespace gfx
 		typedef std::vector<Scalar> ScalarVector;
 		
 		
-		GeodesicSphere(unsigned max_depth, Scalar radius = 1)
+		GeodesicSphere(unsigned max_depth)
 		: _max_depth(max_depth)
-		, _radius(radius)
 		{
 			_verts.resize(TotalNumVerts(max_depth));
 			_faces.resize(TotalNumFaces(max_depth));
@@ -126,9 +125,9 @@ namespace gfx
 			for (unsigned i = 0; i != icosahedron::num_verts; ++ i)
 			{
 				Vertex & v = _verts[i];
-				v.pos.x = icosahedron::verts[i][0] * _radius;
-				v.pos.y = icosahedron::verts[i][1] * _radius;
-				v.pos.z = icosahedron::verts[i][2] * _radius;
+				v.pos.x = icosahedron::verts[i][0];
+				v.pos.y = icosahedron::verts[i][1];
+				v.pos.z = icosahedron::verts[i][2];
 			}
 			
 			assert(icosahedron::num_faces == TotalNumFaces(0));
@@ -217,9 +216,7 @@ namespace gfx
 			// Now(*), normalize.
 			for (unsigned child_vert_index = child_vert_begin; child_vert_index != child_vert_end; ++ child_vert_index)
 			{
-				Vector & pos = _verts[child_vert_index].pos;
-				Scalar length = Length(pos);
-				pos *= _radius / length;
+				Normalize(_verts[child_vert_index].pos);
 			}
 		}
 		
@@ -238,7 +235,7 @@ namespace gfx
 				actual_volume += TetrahedronVolume<float>(a, b, c, d);
 			}
 			
-			double ideal_volume = SphereVolume<double, 3>(_radius);
+			double ideal_volume = SphereVolume<double, 3>(1);
 			double volume_adjust = ideal_volume / actual_volume;
 			double coefficient = Power(volume_adjust, 1. / 3.);
 			
@@ -247,7 +244,6 @@ namespace gfx
 		
 		// variables
 		unsigned const _max_depth;
-		Scalar const _radius;
 		
 		VertexVector _verts;
 		FaceVector _faces;

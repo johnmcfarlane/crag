@@ -29,12 +29,7 @@ namespace form
 		Vertex & PushBack();
 		
 		void Clear();
-		//void ClearNormals();
 
-		void NormalizeNormals();
-		
 		int GetIndex(Vertex const & v) const;
-
-		//DUMP_OPERATOR_DECLARATION(VertexBuffer);
 	};
 }

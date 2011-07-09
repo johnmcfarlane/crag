@@ -23,6 +23,7 @@ namespace physics
 namespace gfx
 {
 	template <typename VERTEX> class GeodesicSphere;
+	class Pov;
 }
 
 
@@ -43,26 +44,22 @@ namespace sim
 		bool Init(PyObject & args);
 		
 		void Tick();
-		void Draw(gfx::Pov const & pov) const;
+		void Draw(gfx::Scene const & scene) const;
 	private:
 		void SetMatrix(gfx::Pov const & pov) const;
 		unsigned CalculateLod(gfx::Pov const & pov) const;
 		
 		virtual Vector3 const & GetPosition() const;
 		
-		void InitMesh(Scalar radius);
-		void InitQuad();
+		void InitMesh();
 		
 		// types
-		typedef gl::Vertex3dNorm MeshVertex;
-		typedef gl::Vertex3dNorm QuadVertex;
 		typedef gl::Vertex3dNorm Vertex;
 		typedef gfx::GeodesicSphere<Vertex> GeodesicSphere;
 
 		// variables
 		physics::SphericalBody * _body;
-		gl::Mesh<MeshVertex> _mesh;
-		gl::Vbo<QuadVertex> _quad;
+		gl::Mesh<Vertex> _mesh;
 		std::vector<float> _lod_coefficients;
 		
 		static GLuint const num_lods = 4;

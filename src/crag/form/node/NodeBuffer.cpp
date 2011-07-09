@@ -412,9 +412,6 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	GenerateMeshFunctor mesh_functor(mesh);
 
 	ForEachNode<GenerateMeshFunctor &>(mesh_functor, 1024, true);
-	
-	VertexBuffer & vertices = mesh.GetVertices();
-	vertices.NormalizeNormals();
 }
 
 ///////////////////////////////////////////////////////

@@ -22,9 +22,9 @@ planet_radius = 10000000
 planet = crag.Planet(0, 0, 0, planet_radius, 3634, 0)
 moon1 = crag.Planet(planet_radius * 1.5, planet_radius * 2.5, planet_radius * 1., 1500000, 10, 250)
 moon2 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 2500000, 13, 0)
-ball1 = crag.Ball(0, 10000250, 10, 1);
-ball2 = crag.Ball(0, 10000250, 20, 2);
-ball3 = crag.Ball(0, 10000250, 30, 4);
+ball1 = crag.Ball(0, 10000250, -10, 1);
+ball2 = crag.Ball(0, 10000250, -20, 2);
+ball3 = crag.Ball(0, 10000250, -30, 4);
 
 # Create sun. 
 sun_orbit_distance = 100000000.

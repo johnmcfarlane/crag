@@ -117,7 +117,7 @@ gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 {
 	INIT(GL_COLOR_MATERIAL, true),
 	INIT(GL_TEXTURE_2D, false),
-	INIT(GL_NORMALIZE, false),
+	INIT(GL_NORMALIZE, true),
 	INIT(GL_CULL_FACE, true),
 	INIT(GL_LIGHT0, false),
 	INIT(GL_LIGHTING, false),
@@ -398,7 +398,7 @@ void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPa
 	for (Scene::EntityVector::const_iterator i = scene.entities.begin(), end = scene.entities.end(); i != end; ++ i)
 	{
 		sim::Entity const & entity = * * i;
-		entity.Draw(scene.pov);
+		entity.Draw(scene);
 	}
 	
 	EndRenderForeground(scene, pass);
