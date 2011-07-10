@@ -8,7 +8,10 @@
 
 import gc
 import crag
+import math
+import random
 import stackless
+import time
 
 exec(open("script/observer.py").read())
 
@@ -22,9 +25,6 @@ planet_radius = 10000000
 planet = crag.Planet(0, 0, 0, planet_radius, 3634, 0)
 moon1 = crag.Planet(planet_radius * 1.5, planet_radius * 2.5, planet_radius * 1., 1500000, 10, 250)
 moon2 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 2500000, 13, 0)
-ball1 = crag.Ball(0, 10000250, -10, 1);
-ball2 = crag.Ball(0, 10000250, -20, 2);
-ball3 = crag.Ball(0, 10000250, -30, 4);
 
 # Create sun. 
 sun_orbit_distance = 100000000.
@@ -36,8 +36,15 @@ o = observer()
 observer_tasklet = stackless.tasklet(o.run)()
 
 # Main loop
+next_drop = time.time() + 1
+balls = []
 while stackless.runcount > 1:
-	# Kind-of pointless right now...
+	now = time.time()
+	if now > next_drop:
+		next_drop = now + 1
+		balls.append(crag.Ball(random.random() - .5, 10000250, -4.5 + random.random(), math.exp(- random.random())))
+		if len(balls) > 25:
+			balls.pop(0)
 	stackless.schedule()
 
 print('end main script function')
