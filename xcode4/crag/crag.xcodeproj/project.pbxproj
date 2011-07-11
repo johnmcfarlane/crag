@@ -936,7 +936,7 @@
 				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
 				LIBRARY_SEARCH_PATHS = "~/lib";
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-lode",
 					"-lsdl",
