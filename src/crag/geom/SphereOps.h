@@ -69,7 +69,7 @@ template<typename S, int N> bool IsInside(Sphere<S, N> const & a, Sphere<S, N> c
 	return Contains(b, a);
 }
 
-// True iff triangle, abc contains sphere, s.
+// True iff plane, abc, contains sphere, s.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
