@@ -26,11 +26,6 @@ gfx::Sphere::Sphere()
 	_lod_coefficients = source.GetCoefficients();
 	
 	Geodesic::VertexVector & verts = source.GetVerts();
-	for (Geodesic::VertexVector::iterator v = verts.begin(); v != verts.end(); ++ v)
-	{
-		v->norm = v->pos;
-	}
-	
 	Geodesic::FaceVector & faces = source.GetFaces();
 	
 	_mesh.Init();

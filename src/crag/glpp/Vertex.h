@@ -42,6 +42,12 @@ namespace gl
 		Vector3f norm;
 	};
 	
+	// For spheres where the normal IS the position.
+	struct Vertex3dNormHybrid
+	{
+		Vector3f pos;
+	};
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// EnableClientState
@@ -63,6 +69,11 @@ namespace gl
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	template <> inline void EnableClientState<Vertex3dNorm>()
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+	}
+	template <> inline void EnableClientState<Vertex3dNormHybrid>()
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
@@ -89,6 +100,11 @@ namespace gl
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	template <> inline void DisableClientState<Vertex3dNorm>()
+	{
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}
+	template <> inline void DisableClientState<Vertex3dNormHybrid>()
 	{
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
@@ -122,6 +138,12 @@ namespace gl
 		const Vertex3dNorm * null_vert = 0;
 		glVertexPointer(3, GL_FLOAT, sizeof(Vertex3dNorm), & null_vert->pos);
 		glNormalPointer(GL_FLOAT, sizeof(Vertex3dNorm), & null_vert->norm);
+	}
+	template <> inline void Pointer<Vertex3dNormHybrid>()
+	{
+		const Vertex3dNormHybrid * null_vert = 0;
+		glVertexPointer(3, GL_FLOAT, sizeof(Vertex3dNormHybrid), & null_vert->pos);
+		glNormalPointer(GL_FLOAT, sizeof(Vertex3dNormHybrid), & null_vert->pos);
 	}
 	
 }

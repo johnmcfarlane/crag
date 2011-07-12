@@ -30,7 +30,7 @@ namespace gfx
 		void Draw(float radius, int lod = num_sphere_lods - 1) const;
 		
 		// types
-		typedef gl::Vertex3dNorm Vertex;
+		typedef gl::Vertex3dNormHybrid Vertex;
 	private:
 		typedef gl::Mesh<Vertex> Mesh;
 		
