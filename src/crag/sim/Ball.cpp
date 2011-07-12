@@ -53,6 +53,11 @@ Ball::Ball()
 {
 }
 
+Ball::~Ball()
+{
+	delete _body;
+}
+
 void Ball::Create(Ball & ball, PyObject & args)
 {
 	// construct ball
@@ -134,8 +139,8 @@ unsigned Ball::CalculateLod(gfx::Pov const & pov) const
 	Scalar radius = _body->GetRadius();
 	
 	Scalar mn1 = 1500;
-	Scalar inv_distance = Power(LengthSq(relative_position), -0.5);
-	int lod = int(Power(mn1 * radius * inv_distance, .25));
+	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
+	int lod = int(Power(mn1 * radius * inv_distance, .3));
 	Clamp(lod, 1, 5);
 	-- lod;
 	
