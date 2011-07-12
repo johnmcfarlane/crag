@@ -32,8 +32,12 @@ namespace gl
 	class Vbo3dTex : public Vbo<Vertex3dTex>
 	{
 	};
-
+	
 	class Vbo3dNorm : public Vbo<Vertex3dNorm>
+	{
+	};
+	
+	class VboRgba : public Vbo<VertexRgba>
 	{
 	};
 	
