@@ -55,13 +55,9 @@ sim::Simulation::Simulation(bool init_enable_vsync)
 , start_time(sys::GetTime())
 , universe(new Universe)
 , physics_engine(new physics::Engine)
-, scene(new gfx::Scene)
+, scene(nullptr)
 , renderer(nullptr)
 {
-	// TODO: Belongs in script.
-	scene->SetResolution(sys::GetWindowSize());
-	scene->SetSkybox(new Firmament);
-	
 	Assert(singleton == nullptr);
 	singleton = this;
 }
@@ -73,9 +69,6 @@ sim::Simulation::~Simulation()
 
 	delete universe;
 	universe = nullptr;
-	
-	delete scene;
-	scene = nullptr;
 
 	delete physics_engine;
 	physics_engine = nullptr;
@@ -137,8 +130,12 @@ void sim::Simulation::Run()
 {
 	FUNCTION_NO_REENTRY;
 
+	// init graphics stuff
 	renderer = new gfx::Renderer;
-
+	scene = new gfx::Scene;
+	scene->SetResolution(sys::GetWindowSize());
+	scene->SetSkybox(new Firmament);
+	
 	sys::TimeType next_tick_time = sys::GetTime();
 	
 	while (ProcessMessages())
@@ -163,6 +160,9 @@ void sim::Simulation::Run()
 			}
 		}
 	}
+	
+	delete scene;
+	scene = nullptr;
 
 	//DUMP_OBJECT(* form_thread, std::cout);
 	delete renderer;

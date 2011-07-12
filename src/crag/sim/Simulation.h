@@ -103,8 +103,8 @@ namespace sim
 		Universe * universe;
 		physics::Engine * physics_engine;
 
-		gfx::Scene * scene;
 		gfx::Renderer * renderer;
+		gfx::Scene * scene;
 		
 		sys::TimeType start_time;
 		
