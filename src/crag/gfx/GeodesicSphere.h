@@ -86,8 +86,13 @@ namespace gfx
 			}
 		}
 		
-		static unsigned TotalNumFaces(unsigned lod)
+		static unsigned TotalNumFaces(int lod)
 		{
+			if (lod < 0)
+			{
+				return 0;
+			}
+			
 			unsigned total = LodNumFaces(lod);
 			if (lod > 0)
 			{
@@ -108,8 +113,13 @@ namespace gfx
 			}
 		}
 		
-		static unsigned TotalNumVerts(unsigned lod)
+		static unsigned TotalNumVerts(int lod)
 		{
+			if (lod < 0)
+			{
+				return 0;
+			}
+			
 			unsigned total = LodNumVerts(lod);
 			if (lod > 0)
 			{
@@ -145,7 +155,7 @@ namespace gfx
 		{
 			assert(depth >= 1);
 			
-			unsigned const parent_face_begin = (depth == 1) ? 0 : TotalNumFaces(depth - 2);
+			unsigned const parent_face_begin = TotalNumFaces(depth - 2);
 			unsigned const parent_face_end = TotalNumFaces(depth - 1);
 			
 			unsigned const child_face_begin = parent_face_end;
@@ -226,7 +236,7 @@ namespace gfx
 			double actual_volume = 0;
 			Vector3f d = Vector3f::Zero();
 			
-			typename FaceVector::const_iterator faces_begin = _faces.begin() + (depth ? TotalNumFaces(depth - 1) : 0);
+			typename FaceVector::const_iterator faces_begin = _faces.begin() + TotalNumFaces(depth - 1);
 			typename FaceVector::const_iterator faces_end = _faces.begin() + TotalNumFaces(depth);
 			for (typename FaceVector::const_iterator i = faces_begin; i != faces_end; ++ i)
 			{
