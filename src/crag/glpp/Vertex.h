@@ -53,9 +53,9 @@ namespace gl
 		GLuint rgba;
 		struct
 		{
-			GLbyte a, b, g, r;
+			GLubyte r, g, b, a;
 		};
-		GLbyte array[4];
+		GLubyte array[4];
 	};
 		
 	
@@ -166,7 +166,7 @@ namespace gl
 	template <> inline void Pointer<VertexRgba>()
 	{
 		const VertexRgba * null_vert = 0;
-		glColorPointer(4, GL_BYTE, sizeof(VertexRgba), null_vert);
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, null_vert);
 	}
 	
 }
