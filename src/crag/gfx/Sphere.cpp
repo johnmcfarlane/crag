@@ -21,19 +21,22 @@ typedef gfx::GeodesicSphere<gfx::Sphere::Vertex> Geodesic;
 
 gfx::Sphere::Sphere()
 {
-	Geodesic source(num_sphere_lods);
+	Geodesic::VertexVector verts;
+	Geodesic::FaceVector faces;
+	
+	Geodesic source(verts, faces, num_sphere_lods);
 	
 	_lod_coefficients = source.GetCoefficients();
 	
-	Geodesic::VertexVector & verts = source.GetVerts();
-	Geodesic::FaceVector & faces = source.GetFaces();
+	int num_verts = verts.size();
+	int num_faces = faces.size();
 	
 	_mesh.Init();
 	_mesh.Bind();
 	
-	_mesh.Resize(verts.size(), faces.size() * 3);
-	_mesh.SetIbo(faces.size() * 3, faces[0]._indices);
-	_mesh.SetVbo(verts.size(), & verts[0]);
+	_mesh.Resize(num_verts, num_faces * 3);
+	_mesh.SetIbo(num_faces * 3, faces[0]._indices);
+	_mesh.SetVbo(num_verts, & verts[0]);
 	
 	_mesh.Unbind();
 }
@@ -49,7 +52,7 @@ void gfx::Sphere::Draw(float radius, int lod) const
 	gl::Scale(scale, scale, scale);
 	
 	// Select the correct range of indices, given the LoD.
-	unsigned faces_begin = lod ? Geodesic::TotalNumFaces(lod - 1) : 0;
+	unsigned faces_begin = Geodesic::TotalNumFaces(lod - 1);
 	unsigned faces_num = Geodesic::LodNumFaces(lod);
 	unsigned indices_begin = faces_begin * 3;
 	unsigned indices_num = faces_num * 3;

@@ -42,8 +42,10 @@ namespace gfx
 		typedef std::vector<Scalar> ScalarVector;
 		
 		
-		GeodesicSphere(unsigned max_depth)
-		: _max_depth(max_depth)
+		GeodesicSphere(VertexVector & verts, FaceVector & faces, unsigned max_depth)
+		: _verts(verts)
+		, _faces(faces)
+		, _max_depth(max_depth)
 		{
 			_verts.resize(TotalNumVerts(max_depth));
 			_faces.resize(TotalNumFaces(max_depth));
@@ -57,16 +59,6 @@ namespace gfx
 				SubDivide(depth);
 				_coefficients[depth] = CalculateCoefficient(depth);
 			}
-		}
-		
-		VertexVector & GetVerts() 
-		{
-			return _verts;
-		}
-		
-		FaceVector & GetFaces() 
-		{
-			return _faces;
 		}
 		
 		ScalarVector GetCoefficients() const
@@ -256,8 +248,8 @@ namespace gfx
 		// variables
 		unsigned const _max_depth;
 		
-		VertexVector _verts;
-		FaceVector _faces;
+		VertexVector & _verts;
+		FaceVector & _faces;
 		ScalarVector _coefficients;
 	};
 	
