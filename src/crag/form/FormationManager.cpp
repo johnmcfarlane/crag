@@ -50,7 +50,7 @@ namespace
 	//CONFIG_DEFINE (enable_multithreding, bool, true);
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 	
-	CONFIG_DEFINE (formation_sphere_collision_length, double, 0.25);
+	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
 
 	STAT (num_polys, int, .05f);
 	STAT (num_quats_used, int, 0.15f);
@@ -183,7 +183,6 @@ void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Fo
 		return;
 	}
 	
-	sim::Scalar min_length = formation_sphere_collision_length;
 	sim::Vector3 const & origin = scene.GetOrigin();
 	form::Vector3 relative_formation_position(form::SimToScene(formation.position, origin));
 	form::Sphere3 relative_sphere(form::SimToScene(sphere.center, origin), sphere.radius);
@@ -191,7 +190,8 @@ void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Fo
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
 	node_buffer.LockTree();
 	
-	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_length);
+	float min_parent_score = node_buffer.GetMinParentScore() * formation_sphere_collision_detail_factor;
+	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
 	
 	node_buffer.UnlockTree();
 }

@@ -89,6 +89,9 @@ namespace form
 		int GetNumQuaternaUsed() const;
 		int GetNumQuaternaUsedTarget() const;
 		
+		// returns 0 if there are none
+		float GetMinParentScore() const;
+		
 		// Must be a multiple of four.
 		void SetNumQuaternaUsedTarget(int n);	
 		

@@ -229,6 +229,19 @@ int form::NodeBuffer::GetNumQuaternaUsedTarget() const
 	return quaterna_used_end_target - quaterna;
 }
 
+float form::NodeBuffer::GetMinParentScore() const
+{
+	if (quaterna_used_end > quaterna)
+	{
+		Quaterna last_quaterna = quaterna_used_end [-1];
+		return last_quaterna.parent_score;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 {
 	if (fix_num_quaterna != 0)

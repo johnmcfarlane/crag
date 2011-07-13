@@ -111,11 +111,11 @@ namespace form
 	class Traveler
 	{
 	public:
-		Traveler(Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, Scalar min_length)
+		Traveler(Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, Scalar min_score)
 		: _shape(shape)
 		, _origin(origin)
 		, _functor(functor)
-		, _min_length_squared(Square(min_length))
+		, _min_score(min_score)
 		{
 			_pyramid.center = polyhedron_center;
 		}
@@ -130,14 +130,9 @@ namespace form
 			if (TouchesInfinitePyramid(_shape, _pyramid))
 			{
 				form::Node const * const children = node.GetChildren();
-				if (children == nullptr)
+				if (children == nullptr || node.score < _min_score)
 				{
-					// We're at a leaf node; process faces.
-					ForEachNodeFace(node, * this);
-				}
-				else if (LengthSq(_pyramid.a - _pyramid.b) < _min_length_squared)
-				{
-					// We've gone too deep; process faces.
+					// We're at a leaf node or one which is too insignificant; process faces.
 					ForEachNodeFace(node, * this);
 				}
 				else
@@ -181,7 +176,7 @@ namespace form
 		
 		// After an arbitrarily chosen triangle edge becomes shorter than this,
 		// recursion ends. This prevents expensive, exhaustive searches.
-		Scalar _min_length_squared;
+		Scalar _min_score;
 	};
 
 	
@@ -190,9 +185,9 @@ namespace form
 	
 	// general
 	template <typename SHAPE, typename COLLISION_FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, float min_length)
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, float min_score)
 	{
-		Traveler<SHAPE, COLLISION_FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_length);
+		Traveler<SHAPE, COLLISION_FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_score);
 		
 		form::RootNode const & root_node = polyhedron.root_node;
 		form::Node const * children = root_node.GetChildren();
