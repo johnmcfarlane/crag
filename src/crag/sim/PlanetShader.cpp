@@ -28,19 +28,13 @@
 #include "gfx/Debug.h"
 
 
-// TODO: Really big todo list:
-// TODO: Try 4-float co-ordinate system: normalized x, y, z and altitude.
-// TODO: Divorce heigh variation from near_distance
-
-
 namespace 
 {
 	
 	// Config values
 	CONFIG_DEFINE (planet_shader_depth_medium, int, 2);
-	CONFIG_DEFINE (planet_shader_depth_deep, int, 12);
-	CONFIG_DEFINE (planet_shader_random_range, sim::Scalar, 0.001);
-	CONFIG_DEFINE (planet_shader_medium_coefficient, sim::Scalar, .25);
+	CONFIG_DEFINE (planet_shader_random_range, sim::Scalar, 0.002);
+	CONFIG_DEFINE (planet_shader_medium_coefficient, sim::Scalar, .35);
 	
 	sim::Scalar root_three = Sqrt(3.);
 	
@@ -200,10 +194,10 @@ void sim::PlanetShader::InitRootPoints(form::Point * points[])
 	// This one is the same each time.
 	Random crater_randomizer(seed + 2);
 	
-	Scalar root_corner_length = root_three;
+	Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
-		Vector3 position = root_corners[i] / root_corner_length;
+		Vector3 position = root_corners[i] * inverse_root_corner_length;
 		CalcRootPointPos(point_randomizer, position);
 		position += center;
 		points[i]->pos = position;
@@ -226,20 +220,8 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 	Vector3 result;
 	if (depth >= planet_shader_depth_medium)
 	{
-		if (false && depth >= planet_shader_depth_deep)
-		{
-			if (! CalcMidPointPos_BicubicInterp(result, params))
-			{
-				return false;
-			}
-			
-			mid_point.col = gfx::Color4b::Red();
-		}
-		else
-		{
-			CalcMidPointPos_SimpleInterp(result, params);
-			mid_point.col = gfx::Color4b::Blue();
-		}
+		CalcMidPointPos_SimpleInterp(result, params);
+		mid_point.col = gfx::Color4b::Blue();
 	}
 	else 
 	{
@@ -333,321 +315,6 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Para
 	result += center;
 	
 	return true;
-}
-
-bool sim::PlanetShader::CalcMidPointPos_BicubicInterp(sim::Vector3 & result, Params & params) const 
-{
-	// Get the grid.
-	PointGrid grid;
-	
-	if (! GetPointGrid(grid, params))
-	{
-		return false;
-	}
-	
-	Assert(grid[2][1] == & params.a.GetCorner(TriMod(params.index + 1)));
-	Assert(grid[1][2] == & params.b.GetCorner(TriMod(params.index + 1)));
-	Assert(grid[1][1] == & params.a.GetCorner(params.index));
-	Assert(grid[2][2] == & params.b.GetCorner(params.index));
-	
-	Scalar alts[4][4];
-	GridToAltitude(alts, grid);
-	Scalar altitude = BicubicInterpolation(alts, .5, .5);
-	
-	Vector3 near_a = GetLocalPosition(* grid[2][1]);
-	Vector3 near_b = GetLocalPosition(* grid[1][2]);
-	Scalar near_distance = Length(near_a - near_b);
-
-	result = near_a + near_b;
-	Scalar result_length = Length(result);
-	
-	Scalar rnd_x = params.rnd.GetUnitInclusive<Scalar>() * 2. - 1.;
-	rnd_x *= Square(rnd_x);
-	
-	// Figure out how much the altitude may be varied in either direction,
-	// and clip that variance based on the hard limits of the planet.
-	// Actually, clip it to half of that to make it look less like a hard limit.
-	// And do the clipping based on how far the variance /might/ go.
-	Scalar altitude_variance_coefficient = near_distance * planet_shader_medium_coefficient;
-	if (rnd_x > 0)
-	{
-		Scalar max_altitude = altitude + altitude_variance_coefficient;
-		Scalar max_allowed_altitude = planet.GetRadiusMax() - 1;
-		if (max_altitude > max_allowed_altitude)
-		{
-			altitude_variance_coefficient = (max_allowed_altitude - altitude) * .5;
-		}
-	}
-	else if (rnd_x < 0)
-	{
-		Scalar min_altitude = altitude - altitude_variance_coefficient;
-		Scalar min_allowed_altitude = planet.GetRadiusMin() + 1;
-		if (min_altitude < min_allowed_altitude)
-		{
-			altitude_variance_coefficient = (altitude - min_allowed_altitude) * .5;
-		}
-	}
-	
-	altitude += rnd_x * altitude_variance_coefficient;
-	
-	result *= (altitude / result_length);
-	return true;
-}
-
-bool sim::PlanetShader::GetPointGrid(PointGrid & grid, Params const & params)
-{
-	form::Node const * lattice [3][3][2];
-	GetNodeLattice(lattice, params);
-
-	if (! LatticeToGrid(grid, lattice, params.index))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-// Two nodes, a and b, which are cousins are given; their common side has the given index.
-// Toegether, they form a quadrilateral. That quadrilateral is the center of a 3x3 grid, lattice.
-// The function makes a decent attempt at returning all the nodes in that lattice.
-void sim::PlanetShader::GetNodeLattice(NodeLattice & lattice, Params const & params)
-{
-	ZeroMemory(reinterpret_cast<char *>(lattice), sizeof(form::Node *) * 3 * 3 * 2);
-	lattice [1][1][0] = & params.a;
-	lattice [1][1][1] = & params.b;
-	
-	int row_index = TriMod(params.index + 1);
-	int column_index = TriMod(params.index + 2);
-	
-	while (true)
-	{
-		bool changed = false;
-		
-		for (int row = 0; row < 3; ++ row)
-		{
-			for (int column = 0; column < 3; ++ column)
-			{
-				for (int node_index = 0; node_index < 2; ++ node_index)
-				{
-					// For each node in the lattice,
-					form::Node const * n = lattice[row][column][node_index];				
-					if (n != nullptr)
-					{
-						// we've already got this one so yay!
-						continue;
-					}
-					// Otherwise, there are three (easy) ways to get the pointer we're after:
-					
-					// 1: The 'buddy'.
-					int buddy_index = ! node_index;
-					form::Node const * buddy = lattice[row][column][buddy_index];
-					if (buddy != nullptr)
-					{
-						n = buddy->GetCousin(params.index);
-						if (n != nullptr)
-						{
-							lattice[row][column][node_index] = n;
-							
-							// Node was retrieved from his buddy.
-							changed = true;
-							continue;
-						}
-					}
-					
-					// 2: From the 'row neighbour'.
-					form::Node const * row_neighbour = nullptr;					
-					if (node_index == 0)
-					{
-						if (row > 0)
-						{
-							row_neighbour = lattice[row - 1][column][buddy_index];
-						}
-					}
-					else
-					{
-						if (row < 2)
-						{
-							row_neighbour = lattice[row + 1][column][buddy_index];
-						}
-					}
-					
-					if (row_neighbour != nullptr)
-					{
-						n = row_neighbour->GetCousin(row_index);
-						if (n != nullptr)
-						{
-							lattice[row][column][node_index] = n;
-							// Node was retrieved from his row neighbour.
-							changed = true;
-							continue;
-						}
-					}
-					
-					// 3: From the 'column neighbour'.
-					form::Node const * column_neighbour = nullptr;					
-					if (node_index == 0)
-					{
-						if (column > 0)
-						{
-							column_neighbour = lattice[row][column - 1][buddy_index];
-						}
-					}
-					else
-					{
-						if (column < 2)
-						{
-							column_neighbour = lattice[row][column + 1][buddy_index];
-						}
-					}
-					
-					if (column_neighbour != nullptr)
-					{
-						n = column_neighbour->GetCousin(column_index);
-						if (n != nullptr)
-						{
-							lattice[row][column][node_index] = n;
-							
-							// Node was retrieved from his row neighbour.
-							changed = true;
-							continue;
-						}
-					}
-				}
-			}
-		}
-		
-		// Did we get anything done this pass?
-		if (! changed)
-		{
-			break;
-		}
-	}
-}
-
-// Scans through the given lattice of nodes and uses their corner points to fill in the grid of points.
-// The same corner point may be shared by up to six nodes. 
-bool sim::PlanetShader::LatticeToGrid(PointGrid & grid, NodeLattice const & lattice, int index)
-{
-	int index_1 = TriMod(index + 1);
-	int index_2 = TriMod(index + 2);
-	
-	debug::ClearNodePoints();
-	
-	ZeroMemory(reinterpret_cast<char *>(grid), sizeof(form::Point const *) * 4 * 4);
-	for (int row = 0; row < 4; ++ row)
-	{
-		for (int column = 0; column < 4; ++ column)
-		{
-			// Try and get the point from one of the nodes...
-			form::Node const * node;
-			form::Point const * point;
-			
-			// 1: the top-left corner of the first node.
-			if (row < 3 && column < 3)
-			{
-				node = lattice[row][column][0];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-			}
-			
-			// 2: the bottom-right corner of the second node.
-			if (row > 0 && column > 0)
-			{
-				node = lattice[row - 1][column - 1][1];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-			}
-			
-			// 3: top-right corner - there's two ways to this one...
-			if (row < 3 && column > 0)
-			{
-				node = lattice[row][column - 1][0];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index_2);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-				
-				node = lattice[row][column - 1][1];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index_1);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-			}
-			
-			// 4: bottom-left corner - there's two ways to this one too...
-			if (row > 0 && column < 3)
-			{
-				node = lattice[row - 1][column][0];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index_1);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-				
-				node = lattice[row - 1][column][1];
-				if (node != nullptr)
-				{
-					point = node->GetCornerPtr(index_2);
-					if (point != nullptr)
-					{
-						grid[row][column] = point;
-						debug::MarkNodePoint(* node, * point, row, column);
-						continue;
-					}
-				}
-			}
-			
-			// 5: Fail
-			debug::ClearNodePoints();
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-void sim::PlanetShader::GridToAltitude(Scalar altitude[4][4], PointGrid const & grid) const
-{
-	for (int row = 0; row < 4; ++ row)
-	{
-		for (int column = 0; column < 4; ++ column)
-		{
-			altitude[row][column] = GetAltitude(* grid[row][column]);
-		}
-	}
 }
 
 sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point) const

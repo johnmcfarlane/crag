@@ -42,16 +42,7 @@ namespace sim
 		class Params;
 		bool CalcMidPointPos_Random(Vector3 & result, Params & params) const;
 		bool CalcMidPointPos_SimpleInterp(Vector3 & result, Params & params) const;
-		bool CalcMidPointPos_BicubicInterp(Vector3 & result, Params & params) const;
 
-		typedef form::Point const * PointGrid [4][4];
-		typedef form::Node const * NodeLattice [3][3][2];
-		
-		static bool GetPointGrid(PointGrid & grid, Params const & params);
-		static void GetNodeLattice(NodeLattice & lattice, Params const & params);
-		static bool LatticeToGrid(PointGrid & grid, NodeLattice const & lattice, int index);
-		void GridToAltitude(Scalar altitude[4][4], PointGrid const & grid) const;
-		
 		Vector3 GetLocalPosition(form::Point const & point) const;
 		Vector3 GetLocalPosition(form::Vector3 const & point_pos) const;
 		Scalar GetAltitude(form::Point const & point) const;
