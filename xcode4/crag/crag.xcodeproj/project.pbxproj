@@ -166,7 +166,6 @@
 		52642349135F49FA00C00EFE /* Matrix4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix4.h; sourceTree = "<group>"; };
 		5264234A135F49FA00C00EFE /* MatrixOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatrixOps.h; sourceTree = "<group>"; };
 		5264234B135F49FA00C00EFE /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
-		5264234C135F49FA00C00EFE /* Ray3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray3.h; sourceTree = "<group>"; };
 		5264234D135F49FA00C00EFE /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		5264234E135F49FA00C00EFE /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		5264234F135F49FA00C00EFE /* Sphere3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere3.h; sourceTree = "<group>"; };
@@ -498,7 +497,6 @@
 				52642349135F49FA00C00EFE /* Matrix4.h */,
 				5264234A135F49FA00C00EFE /* MatrixOps.h */,
 				5264234B135F49FA00C00EFE /* Ray.h */,
-				5264234C135F49FA00C00EFE /* Ray3.h */,
 				5264234D135F49FA00C00EFE /* Sphere.h */,
 				5264234E135F49FA00C00EFE /* Sphere2.h */,
 				5264234F135F49FA00C00EFE /* Sphere3.h */,

@@ -188,7 +188,8 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 
 void form::Scene::Tick()
 {
-	node_buffer->Tick(camera_ray_relative);
+	form::Ray3 form_camera_ray(camera_ray_relative.position, camera_ray_relative.direction);
+	node_buffer->Tick(form_camera_ray);
 	TickModels();
 }
 

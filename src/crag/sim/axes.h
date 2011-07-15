@@ -11,7 +11,7 @@
 #pragma once
 
 #include "geom/Matrix4.h"
-#include "geom/Ray3.h"
+#include "geom/Ray.h"
 
 
 namespace axes 

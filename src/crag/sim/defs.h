@@ -18,7 +18,7 @@
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
-#include "geom/Ray3.h"
+#include "geom/Ray.h"
 #include "geom/Sphere3.h"
 #include "geom/Matrix4.h"
 

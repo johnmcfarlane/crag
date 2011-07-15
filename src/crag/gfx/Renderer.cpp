@@ -46,7 +46,7 @@ namespace
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
-	CONFIG_DEFINE (init_wireframe, bool, false);
+	CONFIG_DEFINE (init_wireframe, bool, true);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
@@ -352,9 +352,9 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 			{
 				return false;
 			}
-			gl::SetColor<GLfloat>(0, 0, 0);
 			gl::Enable(GL_POLYGON_OFFSET_FILL);
 			GLPP_CALL(glPolygonOffset(1,1));
+			gl::SetColor<GLfloat>(1.f, 1.f, 1.f);
 			break;
 			
 		case WireframePass2:
@@ -363,6 +363,7 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 			}
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
+			gl::SetColor<GLfloat>(0.f, 0.f, 0.f);
 			break;
 			
 		default:
@@ -370,7 +371,7 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 	}
 	
 	// Set state
-	if (lighting)
+	if (lighting && pass != WireframePass2)
 	{
 		gl::Enable(GL_LIGHTING);
 		EnableLights(scene.lights, true);
@@ -407,7 +408,7 @@ void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPa
 void gfx::Renderer::EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const
 {
 	// Reset state
-	if (lighting)
+	if (lighting && pass != WireframePass2)
 	{
 		EnableLights(scene.lights, false);
 		gl::Disable(GL_LIGHTING);
@@ -424,11 +425,11 @@ void gfx::Renderer::EndRenderForeground(Scene const & scene, ForegroundRenderPas
 			
 		case WireframePass1:
 			GLPP_CALL(glCullFace(GL_BACK));
-			gl::SetColor<GLfloat>(1, 1, 1);
 			gl::Disable(GL_POLYGON_OFFSET_FILL);
 			break;
 			
 		case WireframePass2:
+			gl::SetColor<GLfloat>(1, 1, 1);
 			if (! culling) {
 				gl::Enable(GL_CULL_FACE);
 			}

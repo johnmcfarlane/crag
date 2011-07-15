@@ -12,7 +12,7 @@
 
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
-#include "geom/Ray3.h"
+#include "geom/Ray.h"
 #include "geom/Sphere3.h"
 
 
