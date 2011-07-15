@@ -42,7 +42,7 @@ while stackless.runcount > 1:
 	now = time.time()
 	if now > next_drop:
 		next_drop = now + 1
-		balls.append(crag.Ball(random.random() - .5, 10000250, -4.5 + random.random(), math.exp(- random.random())))
+		balls.append(crag.Ball(random.random() - .5, 10000580, -4.5 + random.random(), math.exp(- random.random() * 2)))
 		if len(balls) > 25:
 			balls.pop(0)
 	stackless.schedule()

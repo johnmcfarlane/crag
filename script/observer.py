@@ -18,7 +18,7 @@ SDLK_9 = 57
 
 class observer:
 	def __init__(self):
-		self.__observer = crag.Observer(0, 10000235, 0)
+		self.__observer = crag.Observer(0, 10000580, 0)
 		self.__is_done = False
 	
 	def run(self):
