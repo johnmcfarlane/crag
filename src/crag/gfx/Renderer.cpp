@@ -55,16 +55,6 @@ namespace
 	STAT (pos, sim::Vector3, .3f);
 	STAT_DEFAULT (rot, sim::Matrix4, .9f);
 	
-	void SetFrustum(gfx::Frustum const & frustum)
-	{
-		gl::Viewport(0, 0, frustum.resolution.x, frustum.resolution.y);
-
-		sim::Matrix4 const & projection_matrix = frustum.CalcProjectionMatrix();
-
-		gl::MatrixMode(GL_PROJECTION);
-		gl::LoadMatrix(projection_matrix.GetArray());
-	}
-
 	void SetForegroundFrustum(gfx::Scene const & scene, bool wireframe)
 	{
 		gfx::Pov const & pov = scene.GetPov();
@@ -76,7 +66,7 @@ namespace
 		scene.GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
 		
 		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
-		SetFrustum(frustum);
+		frustum.SetProjectionMatrix();
 	}
 	
 }	// namespace
@@ -299,7 +289,7 @@ void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
 	Frustum skybox_frustum = pov.frustum;
 	skybox_frustum.near_z = .1f;
 	skybox_frustum.far_z = 10.f;
-	SetFrustum(skybox_frustum);
+	skybox_frustum.SetProjectionMatrix();
 
 	// Set matrix (minus the translation).
 	sim::Matrix4 skybox_model_view_matrix = pov.CalcModelViewMatrix(false);

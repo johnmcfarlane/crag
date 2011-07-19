@@ -17,6 +17,8 @@
 #include "geom/MatrixOps.h"
 #include "geom/Sphere3.h"
 
+#include "glpp/glpp.h"
+
 
 // This matrix is ready-transposed for OpenGL.
 sim::Matrix4 gfx::Frustum::CalcProjectionMatrix() const
@@ -28,6 +30,16 @@ sim::Matrix4 gfx::Frustum::CalcProjectionMatrix() const
 		0, static_cast<float>(f), 0, 0, 
 		0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,
 		0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
+}
+
+void gfx::Frustum::SetProjectionMatrix() const
+{
+	gl::Viewport(0, 0, resolution.x, resolution.y);
+	
+	sim::Matrix4 const & projection_matrix = CalcProjectionMatrix();
+	
+	gl::MatrixMode(GL_PROJECTION);
+	gl::LoadMatrix(projection_matrix.GetArray());
 }
 
 void gfx::Pov::LookAtSphere(sim::Vector3 const & eye, sim::Sphere3 const & sphere, sim::Vector3 const & up)

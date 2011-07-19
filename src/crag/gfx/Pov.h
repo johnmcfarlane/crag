@@ -19,6 +19,7 @@ namespace gfx
 	{
 	public:
 		sim::Matrix4 CalcProjectionMatrix() const;
+		void SetProjectionMatrix() const;
 
 		Vector2i resolution;
 		double fov;	// radians
