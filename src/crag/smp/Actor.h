@@ -64,14 +64,14 @@ namespace smp
 			Assert(! _thread.IsCurrent());
 			
 			smp::TerminateMessage message;
-			SendMessage(* static_cast<CLASS *>(this), message, false);
+			SendMessage(* static_cast<CLASS *>(this), message);
 			_thread.Join();
 		}
 		
 		template <typename MESSAGE>
-		static void SendMessage(CLASS & destination, MESSAGE const & message, bool blocking)
+		static void SendMessage(CLASS & destination, MESSAGE const & message)
 		{
-			destination.PushMessage(destination, message, blocking);
+			destination.PushMessage(destination, message);
 		}
 		
 		void OnMessage(TerminateMessage const & message)
@@ -102,25 +102,16 @@ namespace smp
 		
 	private:
 		template <typename MESSAGE>
-		void PushMessage(CLASS & destination, MESSAGE const & message, bool blocking)
+		void PushMessage(CLASS & destination, MESSAGE const & message)
 		{
 			Assert(& destination == this);
 			
 			// TODO: aim towards zero-allocation model.
 			_MessageEnvelope * envelope;
 			
-			if (blocking)
-			{
-				envelope = new BlockingMessageEnvelope<CLASS, MESSAGE>(destination, message);
-			}
-			else
-			{
-				envelope = new NonBlockingMessageEnvelope<CLASS, MESSAGE>(destination, message);
-			}
+			envelope = new SpecializedMessageEnvelope<CLASS, MESSAGE>(destination, message);
 			
 			Push(* envelope);
-			
-			envelope->WaitForReply();
 		}
 		
 		_MessageEnvelope * PopMessage()

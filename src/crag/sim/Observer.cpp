@@ -112,7 +112,7 @@ void sim::Observer::Create(Observer & observer, PyObject & args)
 	AddEntityMessage message = { observer, args };
 
 	// send
-	Simulation::SendMessage(message, true);
+	Simulation::SendMessage(message);
 }
 
 bool sim::Observer::Init(PyObject & args)
@@ -209,7 +209,7 @@ void sim::Observer::Tick()
 	body->GetRotation(rot);
 	
 	SetCameraMessage message = { position, rot };
-	Simulation::SendMessage(message, false);
+	Simulation::SendMessage(message);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const

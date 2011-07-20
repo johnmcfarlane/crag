@@ -49,7 +49,7 @@ void sim::Star::Create(Star & star, PyObject & args)
 	AddEntityMessage message = { star, args };
 	
 	// send
-	Simulation::SendMessage(message, true);
+	Simulation::SendMessage(message);
 }
 
 bool sim::Star::Init(PyObject & args)

@@ -56,10 +56,10 @@ namespace sim
 	
 		// Message passing
 		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message, bool blocking) 
+		static void SendMessage(MESSAGE const & message) 
 		{ 
 			Simulation & destination = Ref(); 
-			smp::Actor<Simulation>::SendMessage(destination, message, blocking); 
+			smp::Actor<Simulation>::SendMessage(destination, message); 
 		}
 
 		// TODO: These should not be public. 

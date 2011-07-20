@@ -229,6 +229,11 @@ namespace script
 				// Allocate the object.
 				CLASS & object = CLASS::GetRef(po);
 				
+				// Hold on to arguments object.
+				// It will be put on a thread message queue.
+				// (Decremented in sim::Simulation::OnMessage.)
+				Py_INCREF(args);
+				
 				CLASS::Create(object, * args); 
 			}
 			

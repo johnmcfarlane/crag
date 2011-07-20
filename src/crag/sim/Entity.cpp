@@ -32,7 +32,7 @@ void sim::Entity::Destroy(Entity & entity)
 	RemoveEntityMessage message = { entity };
 
 	// set message
-	Simulation::SendMessage(message, true);
+	Simulation::SendMessage(message);
 }
 
 void sim::Entity::Tick()

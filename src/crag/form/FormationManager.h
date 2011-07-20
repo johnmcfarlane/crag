@@ -81,10 +81,10 @@ namespace form
 		
 		// Message passing
 		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message, bool blocking) 
+		static void SendMessage(MESSAGE const & message) 
 		{ 
 			FormationManager & formation_manager = Ref();
-			smp::Actor<FormationManager>::SendMessage(formation_manager, message, blocking); 
+			smp::Actor<FormationManager>::SendMessage(formation_manager, message); 
 		}
 		
 		void OnMessage(smp::TerminateMessage const & message);

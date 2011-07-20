@@ -87,6 +87,10 @@ void sim::Simulation::OnMessage(AddEntityMessage const & message)
 		DEBUG_BREAK();
 	}
 	
+	// Let go of arguments object.
+	// (Incremented in script::MetaClass::NewObject.)
+	Py_DECREF(& message.args);
+	
 	universe->AddEntity(entity);
 	scene->AddEntity(entity);
 }
@@ -103,7 +107,7 @@ void sim::Simulation::OnMessage(SetCameraMessage const & message)
 {
 	scene->SetCamera(message.projection.pos, message.projection.rot);
 
-	form::FormationManager::SendMessage(message, false);
+	form::FormationManager::SendMessage(message);
 }
 
 sys::TimeType sim::Simulation::GetTime() const

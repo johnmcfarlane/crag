@@ -10,7 +10,6 @@
 #pragma once
 
 #include "core/intrusive_list.h"
-#include "Semaphore.h"
 
 
 namespace smp
@@ -60,8 +59,6 @@ namespace smp
 		// returns false if the Actor should quit
 		virtual bool Execute() = 0;
 		
-		virtual void WaitForReply() = 0;
-		
 	private:
 		core::intrusive::hook<MessageEnvelope> h;
 		
@@ -73,10 +70,10 @@ namespace smp
 	// Message-type-specific message wrapper class.
 	// Does all the work.
 	template <typename CLASS, typename MESSAGE>
-	class NonBlockingMessageEnvelope : public MessageEnvelope<CLASS>
+	class SpecializedMessageEnvelope : public MessageEnvelope<CLASS>
 	{
 	public:
-		NonBlockingMessageEnvelope(CLASS & destination, MESSAGE const & message)
+		SpecializedMessageEnvelope(CLASS & destination, MESSAGE const & message)
 		: _message(message) 
 		, _destination(destination)
 		{ 
@@ -89,48 +86,9 @@ namespace smp
 			return ! IsTerminateMessage<MESSAGE>();
 		}
 		
-		virtual void WaitForReply()
-		{
-			// No need to wait for reply.
-		}
-		
 	private:
 		MESSAGE _message;
 		CLASS & _destination;
-	};
-	
-	
-	// As NonBlockingMessageEnvelope but blocks until the message has been processed.
-	// Try and avoid this kind of message.
-	template <typename CLASS, typename MESSAGE>
-	class BlockingMessageEnvelope : public MessageEnvelope<CLASS>
-	{
-	public:
-		BlockingMessageEnvelope(CLASS & destination, MESSAGE const & message)
-		: _destination(destination)
-		, _message(message)
-		, _semaphore(0)
-		{
-		}
-		
-		void WaitForReply()
-		{
-			//_condition.Wait(_mutex);
-			_semaphore.Decrement();
-		}
-		
-		// returns true if the Actor should continue (false=terminate)
-		bool Execute()
-		{
-			_destination.OnMessage(_message);
-			_semaphore.Increment();
-			return ! IsTerminateMessage<MESSAGE>();
-		}
-		
-	private:
-		MESSAGE _message;
-		CLASS & _destination;
-		Semaphore _semaphore;
 	};
 	
 }

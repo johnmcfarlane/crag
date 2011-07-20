@@ -51,7 +51,8 @@ sim::Planet::~Planet()
 	// but also factory is deleted AND it keeps a reference to this planet. 
 	// The solution is to put factory in formation and to keep planet out 
 	// of shader.
-	form::FormationManager::SendMessage(message, true);
+	std::cout << "Probable memory corruption\n";
+	form::FormationManager::SendMessage(message);
 
 	delete body;
 	delete formation;
@@ -67,7 +68,7 @@ void sim::Planet::Create(Planet & planet, PyObject & args)
 	AddEntityMessage message = { planet, args };
 	
 	// send
-	Simulation::SendMessage(message, true);
+	Simulation::SendMessage(message);
 }
 
 bool sim::Planet::Init(PyObject & args)
@@ -109,7 +110,7 @@ bool sim::Planet::Init(PyObject & args)
 	
 	// register with formation manager
 	form::AddFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message, false);
+	form::FormationManager::SendMessage(message);
 	
 	return true;
 }

@@ -67,7 +67,7 @@ void Ball::Create(Ball & ball, PyObject & args)
 	AddEntityMessage message = { ball, args };
 	
 	// send
-	Simulation::SendMessage(message, true);
+	Simulation::SendMessage(message);
 }
 
 bool Ball::Init(PyObject & args)
