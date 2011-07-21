@@ -49,3 +49,12 @@ Vector<S, N> Project(Ray<S, N> const & ray, S proportion)
 {
 	return ray.position + ray.direction * proportion;
 }
+
+
+//////////////////////////////////////////////////////////////////
+// specializations of Ray
+
+typedef Ray<float, 2> Ray2f;
+typedef Ray<double, 2> Ray2d;
+typedef Ray<float, 3> Ray3f;
+typedef Ray<double, 3> Ray3d;
