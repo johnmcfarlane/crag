@@ -31,7 +31,8 @@ sun_orbit_distance = 100000000.
 sun_year = 30000.
 sun = crag.Star(sun_orbit_distance, sun_year)
 
-# Create observer
+# Create observer (after formations have had time to expand)
+crag.sleep(1)
 o = observer()
 observer_tasklet = stackless.tasklet(o.run)()
 

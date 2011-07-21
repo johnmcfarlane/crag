@@ -40,6 +40,20 @@ PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 	return Py_BuildValue("d", time);
 }
 
+PyObject * sleep(PyObject * /*self*/, PyObject * args)
+{
+	// Get the time parameter.
+	sys::TimeType delay;
+	if (! PyArg_ParseTuple(args, "d", & delay))
+	{
+		delay = 0;
+	}
+	
+	smp::Sleep(delay);
+	
+	return nullptr;
+}
+
 PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 {
 	script::ScriptThread & script_thread = script::ScriptThread::Ref();
@@ -105,6 +119,7 @@ bool handle_events(PyObject * & event_object)
 PyMethodDef crag_methods[] = 
 {
 	{"time", time, METH_VARARGS, "Returns simulation time in seconds."},
+	{"sleep", time, METH_VARARGS, "Sleeps the scripting thread without global-locking."},
 	{"get_event", get_event, METH_VARARGS, "Returns the next event in the event queue."},
 	{NULL, NULL, 0, NULL}
 };

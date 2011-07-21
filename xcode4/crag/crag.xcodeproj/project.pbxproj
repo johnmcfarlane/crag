@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
+		524EA30A13D1401000664A2F /* utility.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		526423CA135F49FB00C00EFE /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52642301135F49FA00C00EFE /* COPYING */; };
 		526423CB135F49FB00C00EFE /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642304135F49FA00C00EFE /* ConfigEntry.cpp */; };
 		526423CC135F49FB00C00EFE /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642306135F49FA00C00EFE /* ConfigManager.cpp */; };
@@ -72,6 +73,7 @@
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
+		529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
 		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A4132DF0A60045C3A8 /* observer.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
@@ -88,6 +90,7 @@
 			dstPath = script;
 			dstSubfolderSpec = 7;
 			files = (
+				524EA30A13D1401000664A2F /* utility.py in CopyFiles */,
 				52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */,
 				52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */,
 			);
@@ -282,6 +285,7 @@
 		5295003813C6069E0015349B /* icosahedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icosahedron.h; sourceTree = "<group>"; };
 		5299A11B137300F40075F39B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		529B025713610D79009AE194 /* ring_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ring_buffer.h; sourceTree = "<group>"; };
+		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52A02F7813C215F8003F5705 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52ADFADB1366CA9A00A891D8 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
 		52B6A5FA136A81CD00ECDEA9 /* intrusive_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intrusive_list.h; sourceTree = "<group>"; };
@@ -676,6 +680,7 @@
 			children = (
 				52F819A1132DF0A60045C3A8 /* main.py */,
 				52F819A2132DF0A60045C3A8 /* observer.py */,
+				529D2BBC13D1277F00B0EEE2 /* utility.py */,
 			);
 			name = script;
 			path = ../../script;
@@ -735,6 +740,7 @@
 				52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */,
 				526423CA135F49FB00C00EFE /* COPYING in Resources */,
 				526423F1135F49FB00C00EFE /* readme.html in Resources */,
+				529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,7 +37,6 @@ namespace
 	// config variables
 
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
-	CONFIG_DEFINE (startup_grace_period, sys::TimeType, 1.f);
 	
 }
 
@@ -178,11 +177,7 @@ void sim::Simulation::Tick()
 	// Tick the entities.
 	if (! paused) 
 	{
-		bool freeze_physics = sys::GetTime() < start_time + startup_grace_period;
-		if (! freeze_physics)
-		{
-			physics_engine->Tick(target_frame_seconds);
-		}
+		physics_engine->Tick(target_frame_seconds);
 		
 		universe->Tick(target_frame_seconds);
 	}

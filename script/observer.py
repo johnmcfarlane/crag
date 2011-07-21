@@ -8,6 +8,8 @@
 
 import time
 
+exec(open("script/utility.py").read())
+
 
 # from SDL_keycode.h
 SDLK_ESCAPE = 27
@@ -23,12 +25,9 @@ class observer:
 	
 	def run(self):
 		while True:
-			event = crag.get_event()
-			if event != None:
-				if self.handle_event(event):
-					return
-			else:
-				stackless.schedule()
+			event = get_event()
+			if self.handle_event(event):
+				return
 
 	# returns True if an event was handled
 	def handle_event(self, event):
