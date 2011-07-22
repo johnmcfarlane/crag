@@ -131,6 +131,8 @@ void form::FormationManager::Run()
 {
 	FUNCTION_NO_REENTRY;
 	
+	smp::SetThreadPriority(-1);
+	
 	while (ProcessMessages()) 
 	{
 		suspend_semaphore.Decrement();

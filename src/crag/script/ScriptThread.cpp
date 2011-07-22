@@ -166,6 +166,8 @@ script::ScriptThread::~ScriptThread()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run()
 {
+	smp::SetThreadPriority(1);
+	
 	char const * source_filename = "./script/main.py";
 	FILE * file = fopen(source_filename, "r");
 	if (file == nullptr)

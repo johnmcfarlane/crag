@@ -25,6 +25,25 @@ void smp::Sleep(double seconds)
 	SDL_Delay(Uint32(seconds * 1000));
 }
 
+void smp::SetThreadPriority(int priority)
+{
+	// Set thread priority.
+	SDL_ThreadPriority sdl_priority;
+	if (priority > 0)
+	{
+		sdl_priority = SDL_THREAD_PRIORITY_HIGH;
+	}
+	else if (priority == 0)
+	{
+		sdl_priority = SDL_THREAD_PRIORITY_NORMAL;
+	}
+	else
+	{
+		sdl_priority = SDL_THREAD_PRIORITY_LOW;
+	}
+	
+	SDL_SetThreadPriority(sdl_priority);
+}
 
 int smp::GetNumCpus()
 {
