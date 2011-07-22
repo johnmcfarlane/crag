@@ -107,8 +107,6 @@ namespace sim
 		gfx::Renderer * renderer;
 		gfx::Scene * scene;
 		
-		sys::TimeType start_time;
-		
 		static Simulation * singleton;
 	};
 	
