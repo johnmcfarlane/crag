@@ -16,25 +16,9 @@ namespace smp
 {
 	
 	// Tells the Actor to terminate execution.
-	// Can be overridden in CLASS but don't forget to call through!
 	struct TerminateMessage
 	{
 	};
-	
-	
-	template <typename MESSAGE> bool IsTerminateMessage();
-	
-	template <>
-	inline bool IsTerminateMessage<TerminateMessage>() 
-	{
-		return true;
-	}
-	
-	template <typename MESSAGE> 
-	inline bool IsTerminateMessage() 
-	{
-		return false;
-	}
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +41,7 @@ namespace smp
 		}
 		
 		// returns false if the Actor should quit
-		virtual bool Execute() = 0;
+		virtual void Execute() = 0;
 		
 	private:
 		core::intrusive::hook<MessageEnvelope> h;
@@ -80,10 +64,9 @@ namespace smp
 		}
 		
 		// returns true if the Actor should continue (false=terminate)
-		virtual bool Execute()
+		virtual void Execute()
 		{
 			_destination.OnMessage(_message);
-			return ! IsTerminateMessage<MESSAGE>();
 		}
 		
 	private:

@@ -74,30 +74,34 @@ namespace smp
 			destination.PushMessage(destination, message);
 		}
 		
-		void OnMessage(TerminateMessage const & message)
-		{
-		}
-		
 	protected:
 		// returns false iff the Actor should quit
-		bool ProcessMessages()
+		bool ProcessMessage()
 		{
-			bool ok = true;
+			_MessageEnvelope * m = PopMessage();
 			
-			while (true)
+			if (m == nullptr)
 			{
-				_MessageEnvelope * m = PopMessage();
-				
-				if (m == nullptr)
-				{
-					break;
-				}
-				
-				ok &= m->Execute();
-				delete m;
+				return false;
+			}
+
+			m->Execute();
+			delete m;
+			
+			return true;
+		}
+		
+		// returns number of messages process
+		int ProcessMessages()
+		{
+			int num_messages = 0;
+			
+			while (ProcessMessage())
+			{
+				++ num_messages;
 			}
 			
-			return ok;
+			return num_messages;
 		}
 		
 	private:

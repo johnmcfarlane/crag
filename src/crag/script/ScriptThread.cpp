@@ -198,10 +198,9 @@ PyObject * script::ScriptThread::PollEvent()
 	
 	while (true)
 	{
-		if (! ProcessMessages())
+		if (ProcessMessages() > 0)
 		{
-			// It's the script thread that's supposed to decide when the other actors should quit.
-			DEBUG_BREAK();
+			idle = false;
 		}
 		
 		PyObject * event_object;

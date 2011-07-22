@@ -94,7 +94,6 @@ namespace form
 
 	private:
 		void Run();
-		void Exit();
 		
 		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation & formation);
@@ -171,6 +170,7 @@ namespace form
 		SceneDoubleBuffer scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
 		
+		// TODO: This is pre-messages. Perhaps there's a better way now?
 		smp::Semaphore suspend_semaphore;		
 		
 		static FormationManager * singleton;

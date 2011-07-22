@@ -47,7 +47,8 @@ namespace
 CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
 sim::Simulation::Simulation(bool init_enable_vsync)
-: enable_vsync(init_enable_vsync)
+: quit_flag(false)
+, enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
 , capture_frame(0)
@@ -75,6 +76,7 @@ sim::Simulation::~Simulation()
 
 void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 {
+	quit_flag = true;
 }
 
 void sim::Simulation::OnMessage(AddEntityMessage const & message)
@@ -141,7 +143,7 @@ void sim::Simulation::Run()
 	
 	sys::TimeType next_tick_time = sys::GetTime();
 	
-	while (ProcessMessages())
+	do
 	{
 		sys::TimeType time = sys::GetTime();
 		sys::TimeType time_to_next_tick = next_tick_time - time;
@@ -162,7 +164,10 @@ void sim::Simulation::Run()
 				next_tick_time += target_frame_seconds;
 			}
 		}
+
+		ProcessMessages();
 	}
+	while (! quit_flag);
 	
 	delete scene;
 	scene = nullptr;

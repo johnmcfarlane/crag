@@ -110,6 +110,7 @@ void form::FormationManager::Verify() const
 
 void form::FormationManager::OnMessage(smp::TerminateMessage const & message)
 {
+	quit_flag = true;
 }
 
 void form::FormationManager::OnMessage(AddFormationMessage const & message)
@@ -133,8 +134,10 @@ void form::FormationManager::Run()
 	
 	smp::SetThreadPriority(-1);
 	
-	while (ProcessMessages()) 
+	while (true) 
 	{
+		ProcessMessages();
+		
 		suspend_semaphore.Decrement();
 		if (quit_flag)
 		{
@@ -149,13 +152,6 @@ void form::FormationManager::Run()
 			break;
 		}
 	}
-}
-
-void form::FormationManager::Exit()
-{
-	FUNCTION_NO_REENTRY;
-	
-	quit_flag = true;
 }
 
 // TODO: Paralellize scenes[n].AddFormation/RemoveFormation

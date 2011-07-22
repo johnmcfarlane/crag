@@ -95,6 +95,7 @@ namespace sim
 		bool OnKeyPress(sys::KeyCode key_code);
 
 		// Attributes
+		bool quit_flag;
 		bool enable_vsync;
 		bool paused;
 		bool capture;
