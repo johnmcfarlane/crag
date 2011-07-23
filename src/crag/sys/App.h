@@ -71,7 +71,7 @@ namespace sys
 	};
 	
 	// init
-	bool Init(Vector2i resolution, bool full_screen, bool enable_vsync, char const * title);
+	bool Init(Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
 	
 	// input

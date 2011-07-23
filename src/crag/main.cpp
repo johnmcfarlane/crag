@@ -57,8 +57,6 @@ namespace
 	CONFIG_DEFINE (video_full_screen, bool, true);
 #endif
 	
-	CONFIG_DEFINE (video_vsync, bool, true);
-
 
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
@@ -69,7 +67,7 @@ namespace
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, video_vsync, "Crag"))
+		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, "Crag"))
 		{
 			return false;
 		}
@@ -82,7 +80,7 @@ namespace
 
 		{
 			form::FormationManager formation_manager;
-			sim::Simulation simulation(true);
+			sim::Simulation simulation;
 
 			formation_manager.Start();
 			simulation.Start();

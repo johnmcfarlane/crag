@@ -59,7 +59,7 @@ namespace gfx
 		void ToggleWireframe();
 		
 		// Returns the estimated time thread was busy this frame.
-		sys::TimeType Render(Scene & scene, bool enable_vsync);
+		sys::TimeType Render(Scene & scene);
 	private:
 		void RenderScene(Scene const & scene) const;
 		

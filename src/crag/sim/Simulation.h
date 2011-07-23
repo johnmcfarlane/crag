@@ -48,7 +48,7 @@ namespace sim
 	public:
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 
-		Simulation(bool init_enable_vsync = true);
+		Simulation();
 		~Simulation();
 		
 		// Singleton
@@ -96,7 +96,6 @@ namespace sim
 
 		// Attributes
 		bool quit_flag;
-		bool enable_vsync;
 		bool paused;
 		bool capture;
 		int capture_frame;

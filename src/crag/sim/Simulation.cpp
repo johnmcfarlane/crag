@@ -46,9 +46,8 @@ namespace
 
 CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
-sim::Simulation::Simulation(bool init_enable_vsync)
+sim::Simulation::Simulation()
 : quit_flag(false)
-, enable_vsync(init_enable_vsync)
 , paused(false)
 , capture(false)
 , capture_frame(0)
@@ -195,14 +194,11 @@ void sim::Simulation::Render()
 	PrintStats();
 
 	// Render scene and get an estimation of our load on system.
-	sys::TimeType frame_time = renderer->Render(* scene, enable_vsync);
+	sys::TimeType frame_time = renderer->Render(* scene);
 	
 	// Regulator feedback.
 	sys::TimeType target_frame_time = target_frame_seconds;
-	if (enable_vsync)
-	{
-		target_frame_time *= target_work_proportion;
-	}
+	target_frame_time *= target_work_proportion;
 	
 	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
 	

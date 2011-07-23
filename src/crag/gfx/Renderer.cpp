@@ -197,7 +197,7 @@ void gfx::Renderer::ToggleWireframe()
 	wireframe = ! wireframe;
 }
 
-sys::TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
+sys::TimeType gfx::Renderer::Render(Scene & scene)
 {
 	// Render the scene to the back buffer.
 	RenderScene(scene);	
@@ -208,25 +208,17 @@ sys::TimeType gfx::Renderer::Render(Scene & scene, bool enable_vsync)
 	sys::TimeType idle;
 	
 	// Flip the front and back buffers and get timing information.
-	if (enable_vsync)
-	{
-		// I have no idea why this works, or seems to work
-		// or works on my hardware, or even seems to work on my hardware
-		// but it often does. I'm especially baffled by the glFlush().
-		
-		glFlush();
-		sys::TimeType pre_finish = sys::GetTime();
-		sys::SwapBuffers();
-		glFinish();
-		frame_time = sys::GetTime();
-		idle = frame_time - pre_finish;
-	}
-	else
-	{
-		SDL_GL_SwapBuffers();
-		frame_time = sys::GetTime();
-		idle = 0;
-	}
+
+	// I have no idea why this works, or seems to work
+	// or works on my hardware, or even seems to work on my hardware
+	// but it often does. I'm especially baffled by the glFlush().
+	
+	glFlush();
+	sys::TimeType pre_finish = sys::GetTime();
+	sys::SwapBuffers();
+	glFinish();
+	frame_time = sys::GetTime();
+	idle = frame_time - pre_finish;
 	
 	STAT_SET(idle, idle);
 

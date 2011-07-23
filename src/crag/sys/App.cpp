@@ -59,7 +59,7 @@ namespace
 }
 
 
-bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char const * title)
+bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 {
 #if defined(WIN32)
 	LARGE_INTEGER query_performance_frequency;
@@ -109,7 +109,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 	
 	context = SDL_GL_CreateContext(window);
 	
-	if (SDL_GL_SetSwapInterval(enable_vsync ? 1 : 0))
+	if (SDL_GL_SetSwapInterval(1))
 	{
 		std::cout << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
 		return false;
