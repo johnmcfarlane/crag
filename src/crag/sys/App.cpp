@@ -121,6 +121,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, bool enable_vsync, char co
 	}
 	
 	SetFocus(true);
+	SDL_WarpMouseInWindow(window, resolution.x >> 1, resolution.y >> 1);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	ZeroObject(button_down);
