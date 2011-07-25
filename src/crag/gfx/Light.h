@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Object.h"
+
 #include "Color.h"
 
 #include "sim/defs.h"
@@ -17,18 +19,20 @@
 
 namespace gfx
 {
-	class Light
+	class Light : public Object
 	{
 	public:
 		Light(Vector3f const & pos, Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
+		
+		virtual RenderStage::type GetRenderStage() const;
 	
-		bool IsActive() const { return true; }
+		bool IsActive() const;
 		bool GenerateShadowMaps() const;
 	
 		void SetPosition(Vector3f const & p);
 		Vector3f const & GetPosition() const;
 
-		void Draw(int light_id) const;
+		void Draw(Scene const & scene) const;
 
 	private:
 		Vector3f position;

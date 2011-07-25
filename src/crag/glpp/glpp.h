@@ -45,6 +45,14 @@ namespace gl
 	// General state access
 	
 	// Lots of get and set...
+	template<GLenum PNAME> bool GetBool()
+	{
+		GLboolean result;
+		GLPP_CALL(glGetBooleanv(PNAME, & result));
+		return result;
+	}
+	
+	// Lots of get and set...
 	template<GLenum PNAME> int GetInt()
 	{
 		GLint result;
@@ -90,6 +98,17 @@ namespace gl
 	inline GLenum GetDepthFunc() 
 	{ 
 		return GetInt<GL_DEPTH_FUNC>(); 
+	}
+	
+	// set/get depth mask
+	inline void SetDepthMask(bool flag) 
+	{ 
+		GLPP_CALL(glDepthMask(flag)); 
+	}
+	
+	inline bool GetDepthMask() 
+	{ 
+		return GetBool<GL_DEPTH_WRITEMASK>();
 	}
 	
 	// set/get shade model

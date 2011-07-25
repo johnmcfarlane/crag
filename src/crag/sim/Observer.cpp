@@ -24,6 +24,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/Debug.h"
+#include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
 
@@ -108,10 +109,8 @@ void sim::Observer::Create(Observer & observer, PyObject & args)
 	// construct observer
 	new (& observer) Observer;
 	
-	// create message
+	// send creation message
 	AddEntityMessage message = { observer, args };
-
-	// send
 	Simulation::SendMessage(message);
 }
 
@@ -137,8 +136,8 @@ bool sim::Observer::Init(PyObject & args)
 	
 	SetPosition(center);
 	
-	gfx::Scene & scene = Simulation::Ref().GetScene();
-	scene.AddLight(light);
+	//gfx::Scene & scene = Simulation::Ref().GetScene();
+	//scene.AddLight(light);
 	
 	return true;
 }

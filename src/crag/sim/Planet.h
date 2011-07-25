@@ -12,20 +12,23 @@
 
 #include "Entity.h"
 
-#include "PlanetaryBody.h"
-
-#include "glpp/Texture.h"
-
 
 namespace form
 {
 	class Formation;
-	class ShaderFactory;
+}
+
+namespace gfx
+{
+	class Planet;
 }
 
 
 namespace sim
 {
+	class PlanetaryBody;
+	
+	
 	// A planet is a celestial body which is represented using formation.
 	// TODO: The moon is of class, planet. As such, Planet needs a better name. 
 	class Planet : public Entity
@@ -44,11 +47,11 @@ namespace sim
 
 		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
-		virtual bool GetRenderRange(Ray3 const & camera_ray, Scalar * range, bool wireframe) const;
-	
-		Scalar GetRadiusMean() const { return radius_mean; }
-		Scalar GetRadiusMin() const { return radius_min; }
-		Scalar GetRadiusMax() const { return radius_max; }
+		virtual void UpdateModels() const;
+		
+		Scalar GetRadiusMean() const { return _radius_mean; }
+		Scalar GetRadiusMin() const { return _radius_min; }
+		Scalar GetRadiusMax() const { return _radius_max; }
 		void SampleRadius(Scalar r);
 		
 		form::Formation const & GetFormation() const;
@@ -57,10 +60,10 @@ namespace sim
 		//DUMP_OPERATOR_DECLARATION(Entity);
 
 	private:
-		form::ShaderFactory * factory;
-		form::Formation * formation;
-		PlanetaryBody * body;
-		Scalar radius_mean;
-		Scalar radius_min, radius_max;
+		form::Formation * _formation;
+		PlanetaryBody * _body;
+		gfx::Planet * _model;
+		Scalar _radius_mean;
+		Scalar _radius_min, _radius_max;
 	};
 }

@@ -21,7 +21,85 @@
 #include "form/scene/Mesh.h"
 #include "form/FormationManager.h"
 
+#include "gfx/Object.h"
+#include "gfx/Renderer.h"
+
 #include "script/MetaClass.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Planet class
+
+namespace gfx
+{
+	// graphical representation of a Planet
+	class Planet : public Object
+	{
+	public:
+		Planet(Vector const & position)
+		: Object(position)
+		{
+		}
+
+		virtual bool GetRenderRange(sim::Ray3 const & camera_ray, double * range, bool wireframe) const 
+		{
+			Scalar distance_squared = LengthSq(camera_ray.position - GetPosition());
+			Scalar distance = Sqrt(distance_squared);
+			
+			// Is camera inside the planet?
+			if (distance < _radius_min)
+			{
+				range[0] = _radius_min - distance;
+				range[1] = distance + _radius_max; 
+				return true;
+			}
+			
+			// Is camera outside the entire planet?
+			if (distance > _radius_max)
+			{
+				range[0] = distance - _radius_max;
+			}
+			else 
+			{
+				// The camera is between the min and max range of planet heights 
+				// so it could be right up close to stuff.
+				range[0] = 0;
+			}
+			
+			// Finally we need to calculate the furthest distance from the camera to the planet.
+			
+			// For wireframe mode, it's easy (and the same as when you're inside the planet.
+			if (wireframe)
+			{
+				range[1] = distance + _radius_max; 
+				return true;
+			}
+			
+			// Otherwise, the furthest you might ever be able too see of this planet
+			// is a ray that skims the sphere of _radius_min
+			// and then hits the sphere of _radius_max.
+			// For some reason, those two distances appear to be very easy to calculate. 
+			// (Famous last words.)
+			Scalar a = Sqrt(Square(distance) - Square(_radius_min));
+			Scalar b = Sqrt(Square(_radius_max) - Square(_radius_min));
+			range[1] = a + b;
+			
+			return true;
+		}
+		
+		virtual void Draw(gfx::Scene const & scene) const 
+		{ 
+			// actual drawing is taken care of by the formation manager
+		}
+		
+		virtual RenderStage::type GetRenderStage() const 
+		{ 
+			return RenderStage::foreground; 
+		}
+		
+		Scalar _radius_min, _radius_max;
+	};
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,28 +113,30 @@ DEFINE_SCRIPT_CLASS(sim, Planet)
 
 
 sim::Planet::Planet()
-: factory(nullptr)
-, formation(nullptr)
-, body(nullptr)
+: _formation(nullptr)
+, _body(nullptr)
+, _model(nullptr)
 {
 }
 
 sim::Planet::~Planet()
 {
-	// unregister with formation manager
-	form::RemoveFormationMessage message = { * formation };
+	{
+		// unregister with renderer
+		gfx::RemoveObjectMessage message = { ref(_model) };
+		gfx::Renderer::SendMessage(message);
+		_model = nullptr;
+	}
 	
-	// TODO: This shouldn't have to be blocking. The probably cause
-	// is that not only is formation being deleted here right away,
-	// but also factory is deleted AND it keeps a reference to this planet. 
-	// The solution is to put factory in formation and to keep planet out 
-	// of shader.
-	std::cout << "Probable memory corruption\n";
-	form::FormationManager::SendMessage(message);
+	{
+		// unregister with formation manager
+		form::RemoveFormationMessage message = { ref(_formation) };
+		form::FormationManager::SendMessage(message);
+		_formation = nullptr;
+	}
 
-	delete body;
-	delete formation;
-	delete factory;
+	delete _body;
+	_body = nullptr;
 }
 
 void sim::Planet::Create(Planet & planet, PyObject & args)
@@ -77,52 +157,68 @@ bool sim::Planet::Init(PyObject & args)
 	sim::Vector3 center;
 	int random_seed;
 	int num_craters;
-	if (! PyArg_ParseTuple(& args, "ddddii", & center.x, & center.y, & center.z, & radius_mean, & random_seed, & num_craters))
+	if (! PyArg_ParseTuple(& args, "ddddii", & center.x, & center.y, & center.z, & _radius_mean, & random_seed, & num_craters))
 	{
 		return false;
 	}
 
-	Assert(radius_mean > 0);
-	radius_min = radius_mean;
-	radius_max = radius_mean;
-
-	// factory
-	if (num_craters > 0)
-	{
-		factory = new MoonShaderFactory(* this, num_craters);
-	}
-	else 
-	{
-		factory = new PlanetShaderFactory(* this);
-	}
-		
-	// formation
-	formation = new form::Formation(* factory);
-	formation->seed = random_seed;
-	formation->SetPosition(center);
-		
-	// body
-	{
-		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
-		body = new PlanetaryBody(physics_engine, * formation, radius_mean);
-		body->SetPosition(center);
-	}
+	Assert(_radius_mean > 0);
+	_radius_min = _radius_mean;
+	_radius_max = _radius_mean;
 	
-	// register with formation manager
-	form::AddFormationMessage message = { * formation };
-	form::FormationManager::SendMessage(message);
+	// allocations
+	{
+		// factory
+		form::ShaderFactory * factory;
+		if (num_craters > 0)
+		{
+			factory = new MoonShaderFactory(* this, num_craters);
+		}
+		else 
+		{
+			factory = new PlanetShaderFactory(* this);
+		}
+			
+		// formation
+		_formation = new form::Formation(* factory);
+		_formation->seed = random_seed;
+		_formation->SetPosition(center);
+		
+		// body
+		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
+		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
+		_body->SetPosition(center);
+
+		// model
+		_model = new gfx::Planet(center);
+	}
+
+	// messages
+	{
+		// register with formation manager
+		{
+			form::AddFormationMessage message = { ref(_formation) };
+			form::FormationManager::SendMessage(message);
+		}
+		
+		// register with the renderer
+		{
+			gfx::AddObjectMessage message = { ref(_model) };
+			gfx::Renderer::SendMessage(message);
+		}
+	}
 	
 	return true;
 }
 
 void sim::Planet::Tick()
 {
-	body->SetRadius(radius_max);
+	_body->SetRadius(_radius_max);
 }
 
 void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
-	Vector3 const & center = body->GetPosition();
+	Vector3 const & center = _body->GetPosition();
 	Vector3 to_center = center - pos;
 	sim::Scalar distance = Length(to_center);
 	
@@ -151,70 +247,32 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	gravity += contribution;
 }
 
-bool sim::Planet::GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const
+void sim::Planet::UpdateModels() const
 {
-	Scalar distance_squared = LengthSq(camera_ray.position - GetPosition());
-	Scalar distance = Sqrt(distance_squared);
-	
-	// Is camera inside the planet?
-	if (distance < radius_min)
-	{
-		range[0] = radius_min - distance;
-		range[1] = distance + radius_max; 
-		return true;
-	}
-
-	// Is camera outside the entire planet?
-	if (distance > radius_max)
-	{
-		range[0] = distance - radius_max;
-	}
-	else 
-	{
-		// The camera is between the min and max range of planet heights 
-		// so it could be right up close to stuff.
-		range[0] = 0;
-	}
-	
-	// Finally we need to calculate the furthest distance from the camera to the planet.
-	
-	// For wireframe mode, it's easy (and the same as when you're inside the planet.
-	if (wireframe)
-	{
-		range[1] = distance + radius_max; 
-		return true;
-	}
-	
-	// Otherwise, the furthest you might ever be able too see of this planet
-	// is a ray that skims the sphere of radius_min
-	// and then hits the sphere of radius_max.
-	// For some reason, those two distances appear to be very easy to calculate. 
-	// (Famous last words.)
-	Scalar a = Sqrt(Square(distance) - Square(radius_min));
-	Scalar b = Sqrt(Square(radius_max) - Square(radius_min));
-	range[1] = a + b;
-	
-	return true;
+	gfx::UpdateObjectMessage<gfx::Planet> message(ref(_model));
+	message._updated._radius_min = _radius_min;
+	message._updated._radius_max = _radius_max;
+	gfx::Renderer::SendMessage(message);
 }
 
 void sim::Planet::SampleRadius(Scalar r)
 {
-	if (radius_max < r)
+	if (_radius_max < r)
 	{
-		radius_max = r;
+		_radius_max = r;
 	}
-	else if (radius_min > r)
+	else if (_radius_min > r)
 	{
-		radius_min = r;
+		_radius_min = r;
 	}
 }
 
 form::Formation const & sim::Planet::GetFormation() const
 {
-	return ref(formation);
+	return ref(_formation);
 }
 
 sim::Vector3 const & sim::Planet::GetPosition() const
 {
-	return body->GetPosition();
+	return _body->GetPosition();
 }

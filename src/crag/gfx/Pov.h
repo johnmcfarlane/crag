@@ -31,13 +31,21 @@ namespace gfx
 	class Pov
 	{
 	public:
-		void LookAtSphere(sim::Vector3 const & eye, sim::Sphere3 const & sphere, sim::Vector3 const & up);
-		sim::Matrix4 GetCameraMatrix(bool translation = true) const;
-		static sim::Matrix4 CameraToModelViewMatrix(sim::Matrix4 const & camera);
-		sim::Matrix4 CalcModelViewMatrix(bool translation = true) const;
+		// types
+		typedef sim::Vector3 Vector;
+		typedef sim::Matrix4 Matrix;
+		
+		// functions
+		Pov();
+		
+		void LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up);
+		Matrix GetCameraMatrix(bool translation = true) const;
+		static Matrix CameraToModelViewMatrix(Matrix const & camera);
+		Matrix CalcModelViewMatrix(bool translation = true) const;
 	
+		// variables
 		Frustum frustum;
-		sim::Vector3 pos;
-		sim::Matrix4 rot;
+		Vector pos;
+		Matrix rot;
 	};
 }

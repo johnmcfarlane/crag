@@ -22,7 +22,8 @@
 
 void smp::Sleep(double seconds)
 {
-	SDL_Delay(Uint32(seconds * 1000));
+	Uint32 ms = Uint32(seconds * 1000);
+	SDL_Delay(ms);
 }
 
 void smp::SetThreadPriority(int priority)
@@ -43,6 +44,15 @@ void smp::SetThreadPriority(int priority)
 	}
 	
 	SDL_SetThreadPriority(sdl_priority);
+}
+
+void smp::SetThreadName(char const * thread_name)
+{
+	// OS X 10.6
+	pthread_setname_np(thread_name);
+	
+	// Win32: http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
+	// Linux: http://stackoverflow.com/questions/778085/how-to-name-a-thread-in-linux
 }
 
 int smp::GetNumCpus()

@@ -25,20 +25,8 @@
 #include "script/ScriptThread.h"
 
 #include "gfx/Renderer.h"
-#include "gfx/Scene.h"
 
 #include "core/ConfigEntry.h"
-
-
-namespace 
-{
-
-	//////////////////////////////////////////////////////////////////////
-	// config variables
-
-	CONFIG_DEFINE (target_work_proportion, double, .95f);
-	
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,11 +38,10 @@ sim::Simulation::Simulation()
 : quit_flag(false)
 , paused(false)
 , capture(false)
+, renderer_ready(true)
 , capture_frame(0)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
-, scene(nullptr)
-, renderer(nullptr)
 {
 	Assert(singleton == nullptr);
 	singleton = this;
@@ -91,22 +78,25 @@ void sim::Simulation::OnMessage(AddEntityMessage const & message)
 	Py_DECREF(& message.args);
 	
 	universe->AddEntity(entity);
-	scene->AddEntity(entity);
+	entity.UpdateModels();
 }
 
 void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 {
 	universe->RemoveEntity(message.entity);
-	scene->RemoveEntity(message.entity);
 	
 	delete & message.entity;
 }
 
 void sim::Simulation::OnMessage(SetCameraMessage const & message)
 {
-	scene->SetCamera(message.projection.pos, message.projection.rot);
-
+	gfx::Renderer::SendMessage(message);
 	form::FormationManager::SendMessage(message);
+}
+
+void sim::Simulation::OnMessage(gfx::RendererReadyMessage const & message)
+{
+	renderer_ready = true;
 }
 
 sys::TimeType sim::Simulation::GetTime() const
@@ -124,36 +114,31 @@ physics::Engine & sim::Simulation::GetPhysicsEngine()
 	return ref(physics_engine);
 }
 
-gfx::Scene & sim::Simulation::GetScene()
-{
-	return ref(scene);
-}
-
 void sim::Simulation::Run()
 {
 	FUNCTION_NO_REENTRY;
-
-	// init graphics stuff
-	renderer = new gfx::Renderer;
-	scene = new gfx::Scene;
-	scene->SetResolution(sys::GetWindowSize());
-	scene->SetSkybox(new Firmament);
 	
+	smp::SetThreadPriority(0);
+	smp::SetThreadName("Simulation");
+
 	sys::TimeType next_tick_time = sys::GetTime();
 	
-	do
+	while (! quit_flag)
 	{
 		sys::TimeType time = sys::GetTime();
 		sys::TimeType time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
-			Render();
+			if (ProcessMessages() == 0)
+			{
+				smp::Sleep(0);
+			}
 		}
 		else
 		{
 			Tick();
 			
-			if (time_to_next_tick > 1)
+			if (time_to_next_tick < -1)
 			{
 				next_tick_time = time;
 			}
@@ -162,17 +147,7 @@ void sim::Simulation::Run()
 				next_tick_time += target_frame_seconds;
 			}
 		}
-
-		ProcessMessages();
 	}
-	while (! quit_flag);
-	
-	delete scene;
-	scene = nullptr;
-
-	//DUMP_OBJECT(* form_thread, std::cout);
-	delete renderer;
-	renderer = nullptr;
 }
 
 void sim::Simulation::Tick()
@@ -180,33 +155,29 @@ void sim::Simulation::Tick()
 	// Tick the entities.
 	if (! paused) 
 	{
-		physics_engine->Tick(target_frame_seconds);
-		
+		// Perform the Entity-specific simulation.
 		universe->Tick(target_frame_seconds);
+
+		// Run physics/collisions.
+		physics_engine->Tick(target_frame_seconds);		
+		
+		// Tell renderer about changes.
+		if (renderer_ready)
+		{
+			universe->UpdateModels();
+			renderer_ready = false;
+		}
 	}
+	
+	Render();
 }
 
 void sim::Simulation::Render()
 {
-	form::FormationManager & formation_manager = form::FormationManager::Ref();
-	formation_manager.PollMesh();
-	
 	PrintStats();
-
-	// Render scene and get an estimation of our load on system.
-	sys::TimeType frame_time = renderer->Render(* scene);
 	
-	// Regulator feedback.
-	sys::TimeType target_frame_time = target_frame_seconds;
-	target_frame_time *= target_work_proportion;
-	
-	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
-	
-	// Screen capture.
-	if (capture)
-	{
-		Capture();
-	}
+	gfx::RenderMessage message;
+	gfx::Renderer::SendMessage(message);
 }
 
 void sim::Simulation::PrintStats() const
@@ -247,8 +218,8 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 	{
 		case SDL_VIDEORESIZE:
 		{
-			scene->SetResolution(Vector2i(event.resize.w, event.resize.h));
-			form::FormationManager::Ref().ResetRegulator();
+			gfx::ResizeMessage message = { Vector2i(event.resize.w, event.resize.h) };
+			gfx::Renderer::SendMessage(message);
 			return true;
 		}
 
@@ -306,7 +277,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_c:
-					renderer->ToggleCulling();
+					gfx::Renderer::Ref().ToggleCulling();
 					return true;
 					
 				case SDLK_f:
@@ -322,7 +293,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_l:
-					renderer->ToggleLighting();
+					gfx::Renderer::Ref().ToggleLighting();
 					return true;
 					
 				case SDLK_o:
@@ -330,7 +301,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_p:
-					renderer->ToggleWireframe();
+					gfx::Renderer::Ref().ToggleWireframe();
 					return true;
 					
 				default:

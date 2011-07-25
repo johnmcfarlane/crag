@@ -181,6 +181,16 @@ namespace
 		
 		void Run()
 		{
+			smp::SetThreadPriority(-1);
+			
+			{
+				static int counter = 0;
+				char thread_name[256];
+				sprintf(thread_name, "Worker #%d", counter);
+				smp::SetThreadName(thread_name);
+				++ counter;
+			}
+			
 			// Loop until it's time to shut down.
 			while (true)
 			{

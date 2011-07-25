@@ -119,7 +119,7 @@ void gfx::Font::RenderVerts() const
 	gl::Enable(GL_BLEND);
 	GLPP_CALL(glBlendEquation(GL_FUNC_ADD));
 	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
-	GLPP_CALL(glDepthMask(GL_FALSE));
+	gl::SetDepthMask(false);
 	
 	// Matrices
 	gl::MatrixMode (GL_PROJECTION);
@@ -138,7 +138,7 @@ void gfx::Font::RenderVerts() const
 	vbo.DrawQuads(0, num_verts);
 	vbo.Deactivate();
 	
-	GLPP_CALL(glDepthMask(GL_TRUE));
+	gl::SetDepthMask(true);
 	gl::Disable(GL_TEXTURE_2D);
 	gl::Enable(GL_CULL_FACE);
 	gl::Disable(GL_BLEND);

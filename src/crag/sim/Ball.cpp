@@ -16,12 +16,12 @@
 
 #include "physics/SphericalBody.h"
 
-#include "gfx/GeodesicSphere.h"
-
 #include "script/MetaClass.h"
 
-#include "gfx/Scene.h"
-#include "gfx/Sphere.h"
+#include "gfx/Ball.h"
+#include "gfx/Renderer.h"
+//#include "gfx/Scene.h"
+//#include "gfx/Sphere.h"
 
 
 namespace 
@@ -50,12 +50,18 @@ using namespace sim;
 
 Ball::Ball()
 : _body(nullptr)
+, _model(nullptr)
 {
 }
 
 Ball::~Ball()
 {
 	delete _body;
+	
+	{
+		gfx::RemoveObjectMessage message = { ref(_model) };
+		gfx::Renderer::SendMessage(message);
+	}
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -89,6 +95,12 @@ bool Ball::Init(PyObject & args)
 	_body->SetLinearDamping(ball_linear_damping);
 	_body->SetAngularDamping(ball_angular_damping);
 	
+	{
+		_model = new gfx::Ball(radius);
+		gfx::AddObjectMessage message = { ref(_model) };
+		gfx::Renderer::SendMessage(message);
+	}
+	
 	return true;
 }
 
@@ -99,52 +111,13 @@ void Ball::Tick()
 	universe.ApplyGravity(* _body);
 }
 
-void Ball::Draw(gfx::Scene const & scene) const
+void Ball::UpdateModels() const
 {
-	GLPP_VERIFY;
+	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
+	message._updated._position = _body->GetPosition();
+	_body->GetRotation(message._updated._rotation);
 	
-	gfx::Pov const & pov = scene.GetPov();
-	
-	// Calculate the LoD.
-	unsigned lod = CalculateLod(pov);
-	
-	// Set the matrix.
-	SetMatrix(pov);
-	
-	// Low-LoD meshes are smaller than the sphere they approximate.
-	// Apply a corrective scale to compensate.
-	Scalar radius = _body->GetRadius();
-	gfx::Sphere const & sphere = scene.GetSphere();
-	sphere.Draw(radius, lod);
-	
-	GLPP_VERIFY;
-}
-
-void Ball::SetMatrix(gfx::Pov const & pov) const
-{
-	gfx::Pov entity_pov (pov);
-	entity_pov.pos = pov.pos - _body->GetPosition();
-	sim::Matrix4 model_view_matrix = entity_pov.CalcModelViewMatrix();
-	sim::Matrix4 ball_rotation;
-	_body->GetRotation(ball_rotation);
-	model_view_matrix = ball_rotation * model_view_matrix;
-	
-	gl::MatrixMode(GL_MODELVIEW);
-	gl::LoadMatrix(model_view_matrix.GetArray());	
-}
-
-unsigned Ball::CalculateLod(gfx::Pov const & pov) const
-{
-	sim::Vector3 relative_position = pov.pos - _body->GetPosition();
-	Scalar radius = _body->GetRadius();
-	
-	Scalar mn1 = 1500;
-	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
-	int lod = int(Power(mn1 * radius * inv_distance, .3));
-	Clamp(lod, 1, 5);
-	-- lod;
-	
-	return lod;
+	gfx::Renderer::SendMessage(message);
 }
 
 Vector3 const & Ball::GetPosition() const

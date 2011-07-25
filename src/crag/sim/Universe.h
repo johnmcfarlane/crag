@@ -53,6 +53,7 @@ namespace sim
 		void ApplyGravity(physics::Body & body) const;
 		void ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const;
 
+		void UpdateModels() const;
 	private:
 		// attributes
 		sys::TimeType time;

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Object.h"
+
 #include "glpp/Vbo_Types.h"
 #include "glpp/Texture.h"
 
@@ -17,8 +19,9 @@
 namespace gfx
 {
 	class Image;
+	class Scene;
 
-	class Skybox
+	class Skybox : public Object
 	{
 		// Methods
 	public:
@@ -27,7 +30,8 @@ namespace gfx
 
 		void SetSide(int axis, int pole, gfx::Image const & image);
 
-		void Draw() const;
+		virtual void Draw(Scene const & scene) const;
+		virtual RenderStage::type GetRenderStage() const;
 
 	private:
 		void InitVerts();

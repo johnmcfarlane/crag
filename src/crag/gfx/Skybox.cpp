@@ -11,6 +11,8 @@
 #include "pch.h"
 
 #include "Skybox.h"
+
+#include "Scene.h"
 #include "Pov.h"
 
 #include "gfx/Image.h"
@@ -18,34 +20,62 @@
 #include "core/Random.h"
 
 
-gfx::Skybox::Skybox()
+using namespace gfx;
+
+
+Skybox::Skybox()
 {
 	InitVerts();
 }
 
-gfx::Skybox::~Skybox()
+Skybox::~Skybox()
 { 
+	gl::DeleteBuffer(vbo);
+
+	for (int axis = 0; axis < 3; ++ axis)
+	{
+		for (int pole = 0; pole < 2; ++ pole)
+		{
+			gl::TextureRgba8 & side = sides[axis][pole];
+			gl::DeleteTexture(side);
+		}
+	}
 }
 
-void gfx::Skybox::SetSide(int axis, int pole, Image const & image)
+void Skybox::SetSide(int axis, int pole, Image const & image)
 {
 	gl::TextureRgba8 & side_tex = sides[axis][pole];
 
 	image.CreateTexture(side_tex);
 }
 
-void gfx::Skybox::Draw() const
+void Skybox::Draw(Scene const & scene) const
 {
-	// TODO: Stupid to push all these and then set them.
-	// Instead, move relevant flags to FormationManager from Graphics.
-	GLPP_VERIFY;
+	Pov const & pov = scene.GetPov();
+	
+	// Set projection matrix within relatively tight bounds.
+	Frustum skybox_frustum = pov.frustum;
+	skybox_frustum.near_z = .1f;
+	skybox_frustum.far_z = 10.f;
+	skybox_frustum.SetProjectionMatrix();
+	
+	// Set matrix (minus the translation).
+	sim::Matrix4 skybox_model_view_matrix = pov.CalcModelViewMatrix(false);
+	gl::MatrixMode(GL_MODELVIEW);
+	gl::LoadMatrix(skybox_model_view_matrix.GetArray());
+	
+	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
+	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	gl::Enable(GL_TEXTURE_2D);
+	gl::Disable(GL_CULL_FACE);
+	gl::SetDepthMask(false);
+
 	Assert(! gl::IsEnabled(GL_LIGHTING));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	Assert(! gl::IsEnabled(GL_LIGHT0));
 	Assert(gl::IsEnabled(GL_TEXTURE_2D));
 	Assert(! gl::IsEnabled(GL_CULL_FACE));
 	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
-	GLPP_CALL(glDepthMask(GL_FALSE));
 	
 	// Draw VBO
 	gl::BindBuffer(vbo);
@@ -66,12 +96,19 @@ void gfx::Skybox::Draw() const
 	vbo.Deactivate();
 	gl::UnbindBuffer(vbo);
 
-	GLPP_CALL(glDepthMask(GL_TRUE));
+	gl::SetDepthMask(true);
+	gl::Disable(GL_TEXTURE_2D);
+	gl::Enable(GL_CULL_FACE);
 }
 
-void gfx::Skybox::InitVerts()
+RenderStage::type Skybox::GetRenderStage() const
 {
-	GenBuffer(vbo);
+	return RenderStage::background;
+}
+
+void Skybox::InitVerts()
+{
+	gl::GenBuffer(vbo);
 	gl::Vertex3dTex verts[3][2][4];
 	
 	for (int axis = 0; axis < 3; ++ axis)
@@ -100,7 +137,7 @@ void gfx::Skybox::InitVerts()
 		}
 	}
 	
-	BindBuffer(vbo);
-	BufferData(vbo, 3 * 2 * 4, verts[0][0]);
+	gl::BindBuffer(vbo);
+	gl::BufferData(vbo, 3 * 2 * 4, verts[0][0]);
 	gl::UnbindBuffer(vbo);
 }

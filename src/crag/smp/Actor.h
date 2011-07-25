@@ -24,13 +24,20 @@ namespace smp
 	template <typename CLASS>
 	class Actor
 	{
+		OBJECT_NO_COPY(Actor);
+		
 		// types
 		typedef MessageEnvelope<CLASS> _MessageEnvelope;
 		typedef core::intrusive::list<_MessageEnvelope, & _MessageEnvelope::h> _list;
 		typedef Thread<Actor> Thread;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
+		
 	public:
+		Actor()
+		{
+		}
+		
 		virtual ~Actor() 
 		{ 
 			// Never called from within the thread.
@@ -38,7 +45,9 @@ namespace smp
 			
 			// Must call Stop from the outside thread first.
 			Assert(! _thread.IsLaunched());
-			Assert(_envelopes.empty());
+			
+			//Assert(_envelopes.empty());
+			FlushMessages();
 		}
 		
 		void Start()
@@ -49,7 +58,7 @@ namespace smp
 			// type of the smp::Thread templated member function we wish to call
 			typedef void (Thread::*THREAD_FUNCTION)(Actor & object);
 			
-			// pointer to the function with template parameter of Actor member function
+//			// pointer to the function with template parameter of Actor member function
 			// OnLaunch is the function that will be called by the thread class in the new thread.
 			THREAD_FUNCTION f = & Thread::template Launch<& Actor::Run, & Actor::_thread>;
 			
@@ -102,6 +111,22 @@ namespace smp
 			}
 			
 			return num_messages;
+		}
+		
+		// empty the message queue without executing the messages
+		void FlushMessages()
+		{
+			while (true)
+			{
+				_MessageEnvelope * m = PopMessage();
+				
+				if (m == nullptr)
+				{
+					break;
+				}
+				
+				delete m;
+			}
 		}
 		
 	private:

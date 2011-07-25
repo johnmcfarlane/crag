@@ -117,7 +117,7 @@ namespace form
 	private:
 		void SetCameraPos(sim::CameraProjection const & projection);
 	public:
-		void PollMesh();
+		bool PollMesh();
 
 		// Called by the Renderer.
 		void Render(gfx::Pov const & pov);

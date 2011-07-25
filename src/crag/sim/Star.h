@@ -12,7 +12,11 @@
 
 #include "Entity.h"
 
-#include "gfx/Light.h"
+
+namespace gfx
+{
+	class Light;
+}
 
 
 namespace sim
@@ -23,6 +27,7 @@ namespace sim
 		
 	public:
 		Star();
+		~Star();
 
 		// Type-specific allocation via script.
 		static void Create(Star & star, PyObject & args);
@@ -31,13 +36,15 @@ namespace sim
 		bool Init(PyObject & args);
 		
 		void Tick();
+		
+		void UpdateModels() const;
 	
 		Scalar GetBoundingRadius() const;
 		
 		virtual Vector3 const & GetPosition() const;
 	
 	private:
-		gfx::Light light;
+		gfx::Light * light;
 		Vector3 position;
 		Scalar radius;
 		Scalar year;

@@ -12,6 +12,7 @@
 
 #include "form/Formation.h"
 
+#include "form/node/Shader.h"
 #include "form/scene/Mesh.h"
 
 
@@ -32,6 +33,7 @@ form::Formation::Formation(ShaderFactory const & init_shader_factory)
 form::Formation::~Formation()
 {
 	VerifyObject(* this);
+	delete & shader_factory;
 }
 
 void form::Formation::SetPosition(Vector3f const & init_position)

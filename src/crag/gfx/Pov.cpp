@@ -20,8 +20,11 @@
 #include "glpp/glpp.h"
 
 
+using namespace gfx;
+
+
 // This matrix is ready-transposed for OpenGL.
-sim::Matrix4 gfx::Frustum::CalcProjectionMatrix() const
+sim::Matrix4 Frustum::CalcProjectionMatrix() const
 {
 	double aspect = static_cast<double>(resolution.x) / resolution.y;
 	double f = 1. / Tan(fov * .5);
@@ -32,7 +35,7 @@ sim::Matrix4 gfx::Frustum::CalcProjectionMatrix() const
 		0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
 }
 
-void gfx::Frustum::SetProjectionMatrix() const
+void Frustum::SetProjectionMatrix() const
 {
 	gl::Viewport(0, 0, resolution.x, resolution.y);
 	
@@ -42,12 +45,18 @@ void gfx::Frustum::SetProjectionMatrix() const
 	gl::LoadMatrix(projection_matrix.GetArray());
 }
 
-void gfx::Pov::LookAtSphere(sim::Vector3 const & eye, sim::Sphere3 const & sphere, sim::Vector3 const & up)
+Pov::Pov()
+: pos(Vector::Zero())
+, rot(Matrix::Identity())
+{
+}
+
+void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up)
 {
 	pos = eye;
 
-	sim::Vector3 observer_to_center = sphere.center - pos;
-	sim::Vector3 forward = Normalized(observer_to_center);
+	Vector observer_to_center = sphere.center - pos;
+	Vector forward = Normalized(observer_to_center);
 	rot = Transposition(DirectionMatrix(forward, up));
 
 	sim::Scalar distance = Length(observer_to_center);	// hypotenuse
@@ -59,30 +68,30 @@ void gfx::Pov::LookAtSphere(sim::Vector3 const & eye, sim::Sphere3 const & spher
 	frustum.far_z = distance + sphere.radius;
 }
 
-sim::Matrix4 gfx::Pov::GetCameraMatrix(bool translation) const
+Pov::Matrix Pov::GetCameraMatrix(bool translation) const
 {
 	// Put the position and rotation together into one, simulation-space camera matrix.
 	// (For the skybox, we don't want translation.) 
 	return translation ? TranslationMatrix(pos) * rot : rot;
 }
 
-sim::Matrix4 gfx::Pov::CameraToModelViewMatrix(sim::Matrix4 const & camera)
+Pov::Matrix Pov::CameraToModelViewMatrix(Matrix const & camera)
 {
 	// Between the simulation and GL, z and y are swapped and z is negated.
-	sim::Matrix4 gl_camera = camera * axes::SimToOpenGl<sim::Scalar>();
+	Matrix gl_camera = camera * axes::SimToOpenGl<sim::Scalar>();
 	
 	// And we're rotating the universe around the camera. 
-	sim::Matrix4 gl_world = Inverse(gl_camera);
+	Matrix gl_world = Inverse(gl_camera);
 	
-	// And finally, OpenGL is column-major, so transpose (same as we do in gfx::Frustum::CalcProjectionMatrix).
+	// And finally, OpenGL is column-major, so transpose (same as we do in Frustum::CalcProjectionMatrix).
 	return Transpose(gl_world);
 }
 
-sim::Matrix4 gfx::Pov::CalcModelViewMatrix(bool translation) const
+Pov::Matrix Pov::CalcModelViewMatrix(bool translation) const
 {
 	// Put the position and rotation together into one, simulation-space camera matrix.
 	// (For the skybox, we don't want translation.) 
-	sim::Matrix4 sim_camera = GetCameraMatrix(translation);
+	Matrix sim_camera = GetCameraMatrix(translation);
 	
 	return CameraToModelViewMatrix(sim_camera);	
 }

@@ -75,6 +75,10 @@ namespace smp
 			
 			// Call the given FUNCTION, passing given object, in a new thread. 
 			sdl_thread = SDL_CreateThread(Callback<FUNCTION, MEMBER>, reinterpret_cast<void *>(& object));
+
+			// Sanity tests.
+			Assert((object.*MEMBER).IsLaunched());
+			Assert(! (object.*MEMBER).IsCurrent());
 		}
 		
 		// Terminates the thread. Risks losing data the thread is working on.
@@ -113,14 +117,21 @@ namespace smp
 			CLASS & object = * reinterpret_cast<CLASS *> (data);
 			
 			// Ensure that the Thread::sdl_thread gets set before progressing.
-			// This ensures 
+			// This ensures IsLaunched and IsCurrent return correct results.
 			Thread const & thread = object.*MEMBER;
 			while (thread.sdl_thread == nullptr)
 			{
 				Sleep(0);
 			}
 			
+			// Sanity tests.
+			Assert(thread.IsLaunched());
+			Assert(thread.IsCurrent());
+			
+			// Call given FUNCTION for given object.
 			(object.*FUNCTION)();
+			
+			// done
 			return 0;
 		}
 		

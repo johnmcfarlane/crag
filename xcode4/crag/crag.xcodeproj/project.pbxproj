@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
+		52207E0013DAB50F00CA0F1F /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52207DFF13DAB50E00CA0F1F /* Object.cpp */; };
 		524EA30A13D1401000664A2F /* utility.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		526423CA135F49FB00C00EFE /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52642301135F49FA00C00EFE /* COPYING */; };
 		526423CB135F49FB00C00EFE /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642304135F49FA00C00EFE /* ConfigEntry.cpp */; };
@@ -70,6 +71,7 @@
 		5264240A135F49FB00C00EFE /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C3135F49FB00C00EFE /* App.cpp */; };
 		5264240B135F49FB00C00EFE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C5135F49FB00C00EFE /* memory.cpp */; };
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
+		52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52858A9B13D6E86300D95BEE /* Ball.cpp */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
@@ -105,6 +107,9 @@
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
+		52207DFF13DAB50E00CA0F1F /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
+		524EA32513D4030E00664A2F /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		524EA32613D4032900664A2F /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		52642301135F49FA00C00EFE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52642303135F49FA00C00EFE /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52642304135F49FA00C00EFE /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -275,6 +280,8 @@
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		52858A9B13D6E86300D95BEE /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
+		5285F05913D546B20058DBF7 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5287831E13B389CD00B67A38 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
@@ -540,6 +547,11 @@
 				5295003813C6069E0015349B /* icosahedron.h */,
 				5293538513C8FD1900B5218B /* Sphere.cpp */,
 				5293538613C8FD1900B5218B /* Sphere.h */,
+				524EA32513D4030E00664A2F /* Object.h */,
+				524EA32613D4032900664A2F /* Ball.h */,
+				5285F05913D546B20058DBF7 /* defs.h */,
+				52858A9B13D6E86300D95BEE /* Ball.cpp */,
+				52207DFF13DAB50E00CA0F1F /* Object.cpp */,
 			);
 			path = gfx;
 			sourceTree = "<group>";
@@ -813,6 +825,8 @@
 				528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */,
 				5287832013B389CD00B67A38 /* Ball.cpp in Sources */,
 				5293538713C8FD1900B5218B /* Sphere.cpp in Sources */,
+				52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */,
+				52207E0013DAB50F00CA0F1F /* Object.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,7 +16,7 @@
 
 #include "form/FormationManager.h"
 #include "sim/Simulation.h"
-
+#include "gfx/Renderer.h"
 
 #include "script/ScriptThread.h"
 
@@ -54,9 +54,9 @@ namespace
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #else
-	CONFIG_DEFINE (video_full_screen, bool, true);
+	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
-	
+
 
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
@@ -79,13 +79,13 @@ namespace
 		smp::Init(0);
 
 		{
+			gfx::Renderer renderer;
 			form::FormationManager formation_manager;
 			sim::Simulation simulation;
 
+			renderer.Start();
 			formation_manager.Start();
 			simulation.Start();
-			
-			smp::Sleep(0.25);
 			
 			// Launch the script engine.
 			// Note: this needs to run in the main thread because SDL
@@ -97,6 +97,7 @@ namespace
 			// Stop the actors.
 			simulation.Stop();
 			formation_manager.Stop();
+			renderer.Stop();
 		}
 		
 		smp::Deinit();

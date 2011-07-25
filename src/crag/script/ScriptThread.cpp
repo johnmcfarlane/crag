@@ -167,6 +167,7 @@ script::ScriptThread::~ScriptThread()
 void script::ScriptThread::Run()
 {
 	smp::SetThreadPriority(1);
+	smp::SetThreadName("Script");
 	
 	char const * source_filename = "./script/main.py";
 	FILE * file = fopen(source_filename, "r");
@@ -220,7 +221,7 @@ PyObject * script::ScriptThread::PollEvent()
 	if (idle)
 	{
 		// Yield for a little while
-		smp::Sleep(.01f);
+		smp::Sleep(0);
 	}
 	
 	// There are no more pending events.

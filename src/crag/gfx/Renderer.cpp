@@ -28,6 +28,7 @@
 #include "core/Statistics.h"
 
 #include "sim/Entity.h"
+#include "sim/Firmament.h"	// TODO
 #include "sim/Simulation.h"
 
 #include <sstream>
@@ -43,6 +44,7 @@ namespace
 
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, gfx::Color4f, gfx::Color4f(0.1f));
+	CONFIG_DEFINE (target_work_proportion, double, .95f);
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
@@ -74,27 +76,59 @@ namespace
 
 gfx::Renderer::Renderer()
 : last_frame_time(sys::GetTime())
+, quit_flag(false)
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
+, render_flag(false)
 , average_frame_time(0)
 , frame_count(0)
 , frame_count_reset_time(last_frame_time)
 {
-	sys::MakeCurrent();
-	
-	InitRenderState();
-
-	Debug::Init();
+	Assert(singleton == nullptr);
+	singleton = this;
 }
 
 gfx::Renderer::~Renderer()
 {
-	Debug::Deinit();
+	Assert(singleton == this);
+	singleton = nullptr;
+}
 
-	init_culling = culling;
-	init_lighting = lighting;
-	init_wireframe = wireframe;
+void gfx::Renderer::OnMessage(smp::TerminateMessage const & message)
+{
+	quit_flag = true;
+}
+
+void gfx::Renderer::OnMessage(AddObjectMessage const & message)
+{
+	Object & object = message._object;
+	scene->AddObject(object);
+}
+
+void gfx::Renderer::OnMessage(RemoveObjectMessage const & message)
+{
+	Object & object = message._object;
+	scene->RemoveObject(object);
+	delete & object;
+}
+
+void gfx::Renderer::OnMessage(RenderMessage const & message)
+{
+	//render_flag = true;
+	++ render_flag;
+}
+
+void gfx::Renderer::OnMessage(ResizeMessage const & message)
+{
+	scene->SetResolution(message.size);
+	form::FormationManager::Ref().ResetRegulator();
+}
+
+// TODO: Make camera an object so that positional messages are the same as for other objects.
+void gfx::Renderer::OnMessage(sim::SetCameraMessage const & message)
+{
+	scene->SetCamera(message.projection.pos, message.projection.rot);
 }
 
 #if defined(NDEBUG)
@@ -115,6 +149,80 @@ gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 	INIT(GL_BLEND, false),
 	INIT(GL_INVALID_ENUM, false)
 };
+
+void gfx::Renderer::Run()
+{
+	FUNCTION_NO_REENTRY;
+	
+	smp::SetThreadPriority(1);
+	smp::SetThreadName("Renderer");
+	
+	sys::MakeCurrent();
+	
+	scene = new Scene;
+	scene->SetResolution(sys::GetWindowSize());
+	
+	Object & skybox = ref(new Firmament);
+	scene->AddObject(skybox);	// TODO: Call still belongs in sim
+	
+	InitRenderState();
+	
+	Debug::Init();
+	
+	MainLoop();
+
+	Debug::Deinit();
+	
+	init_culling = culling;
+	init_lighting = lighting;
+	init_wireframe = wireframe;
+	
+	scene->RemoveObject(skybox);
+	delete & skybox;
+	
+	delete scene;
+}
+
+void gfx::Renderer::MainLoop()
+{
+	form::FormationManager & formation_manager = form::FormationManager::Ref();
+	
+	bool busy = false;
+	do
+	{
+		if (render_flag)
+		{
+			Render();
+			
+			busy = true;
+			
+			RendererReadyMessage message;
+			sim::Simulation::SendMessage(message);
+
+//			do
+//			{
+//				render_flag = false;
+//			}	while (ProcessMessage());
+		}
+		
+		if (formation_manager.PollMesh())
+		{
+			busy = true;
+		}
+
+		if (! busy)
+		{
+			smp::Sleep(0);
+			busy = false;
+		}
+
+		if (ProcessMessages())
+		{
+			busy = true;
+		}
+	}
+	while (! quit_flag);
+}
 
 void gfx::Renderer::InitRenderState()
 {
@@ -148,7 +256,13 @@ void gfx::Renderer::VerifyRenderState() const
 	StateParam const * param = init_state;
 	while (param->cap != GL_INVALID_ENUM)
 	{
-		Assert(param->enabled == gl::IsEnabled(param->cap));
+#if ! defined(NDEBUG)
+		if (param->enabled != gl::IsEnabled(param->cap))
+		{
+			std::cout << "Bad render state: " << param->name << std::endl;
+			Assert(false);
+		}
+#endif
 		++ param;
 	}
 	
@@ -161,6 +275,7 @@ void gfx::Renderer::VerifyRenderState() const
 #endif	// NDEBUG
 }
 
+// TODO: Remove?
 bool gfx::Renderer::HasShadowSupport() const
 {
 	if (! enable_shadow_mapping) {
@@ -197,10 +312,10 @@ void gfx::Renderer::ToggleWireframe()
 	wireframe = ! wireframe;
 }
 
-sys::TimeType gfx::Renderer::Render(Scene & scene)
+void gfx::Renderer::Render()
 {
 	// Render the scene to the back buffer.
-	RenderScene(scene);	
+	RenderScene();	
 
 	sys::TimeType frame_time;
 	
@@ -222,109 +337,82 @@ sys::TimeType gfx::Renderer::Render(Scene & scene)
 	
 	STAT_SET(idle, idle);
 
-	// Independant stat counters for measuring the FPS.
-	++ frame_count;
-	sys::TimeType fps_delta = frame_time - frame_count_reset_time;
-	if (frame_count == 60) 
-	{
-		frame_count_reset_time = frame_time;
-		average_frame_time = static_cast<float>(fps_delta) / frame_count;
-		frame_count = 0;
-	}
+//	// Independant stat counters for measuring the FPS.
+//	++ frame_count;
+//	sys::TimeType fps_delta = frame_time - frame_count_reset_time;
+//	if (frame_count == 60) 
+//	{
+//		frame_count_reset_time = frame_time;
+//		average_frame_time = static_cast<float>(fps_delta) / frame_count;
+//		frame_count = 0;
+//	}
 	
 	// Calculate the amount of time from the last frame to this one.
-	sys::TimeType frame_delta = frame_time - last_frame_time;
-	Assert(frame_delta >= idle);
-	last_frame_time = frame_time;
+//	sys::TimeType frame_delta = frame_time - last_frame_time;
+//	Assert(frame_delta >= idle);
+//	last_frame_time = frame_time;
 
-	// Return the frame delta - our basic performance metric.
-	return frame_delta - idle * .5;
+	// Regulator feedback.
+//	sys::TimeType frame_time = frame_delta - idle * .5;
+//	sys::TimeType target_frame_time = sim::Simulation::target_frame_seconds;
+//	if (enable_vsync)
+//	{
+//		target_frame_time *= target_work_proportion;
+//	}
+	
+	//formation_manager.SampleFrameRatio(frame_time, target_frame_time);
 }
 
-void gfx::Renderer::RenderScene(Scene const & scene) const
+void gfx::Renderer::RenderScene() const
 {
 	VerifyRenderState();
 
 	// The skybox, basically.
-	RenderBackground(scene);
+	// TODO: Why not do this last?
+	// TODO: And for that matter, formations second to last.
+	RenderBackground();
 	
 	// All the things.
-	RenderForeground(scene);
+	RenderForeground();
 	
 	// Crap you generally don't want.
-	DebugDraw(scene.pov);
+	DebugDraw();
 
 	VerifyRenderState();
 }
 
-void gfx::Renderer::RenderBackground(Scene const & scene) const
+void gfx::Renderer::RenderBackground() const
 {
-	if (scene.skybox != nullptr) 
-	{
-		// Draw skybox.
-		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-		RenderSkybox(* scene.skybox, scene.pov);
-	}
-	else 
-	{
-		// Clear screen.
-		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
-	}
+	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
+	Draw(RenderStage::background);
 }
 
-// Assumes projectin matrix is already set. Hoses modelview matrix.
-void gfx::Renderer::RenderSkybox(Skybox const & skybox, Pov const & pov) const
-{
-	VerifyRenderState();
-	
-	// Set projection matrix within relatively tight bounds.
-	Frustum skybox_frustum = pov.frustum;
-	skybox_frustum.near_z = .1f;
-	skybox_frustum.far_z = 10.f;
-	skybox_frustum.SetProjectionMatrix();
-
-	// Set matrix (minus the translation).
-	sim::Matrix4 skybox_model_view_matrix = pov.CalcModelViewMatrix(false);
-	gl::MatrixMode(GL_MODELVIEW);
-	gl::LoadMatrix(skybox_model_view_matrix.GetArray());
-
-	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	gl::Enable(GL_TEXTURE_2D);
-	gl::Disable(GL_CULL_FACE);
-
-	skybox.Draw();
-
-	gl::Disable(GL_TEXTURE_2D);
-	gl::Enable(GL_CULL_FACE);
-
-	VerifyRenderState();
-}
-
-void gfx::Renderer::RenderForeground(Scene const & scene) const
+void gfx::Renderer::RenderForeground() const
 {
 	// Adjust near and far plane
-	SetForegroundFrustum(scene, wireframe);
+	SetForegroundFrustum(* scene, wireframe && false);
 	
 	if (wireframe)
 	{
-		RenderForegroundPass(scene, WireframePass1);
-		RenderForegroundPass(scene, WireframePass2);
+		RenderForegroundPass(WireframePass1);
+		RenderForegroundPass(WireframePass2);
 	}
 	else 
 	{
-		RenderForegroundPass(scene, NormalPass);
+		RenderForegroundPass(NormalPass);
 	}
 }
 
-bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
-	
+	//gl::SetDepthFunc(GL_GREATER);
+		
 	switch (pass) 
 	{
 		case NormalPass:
-			if (! culling) {
+			if (! culling) 
+			{
 				gl::Disable(GL_CULL_FACE);
 			}
 			break;
@@ -356,7 +444,7 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 	if (lighting && pass != WireframePass2)
 	{
 		gl::Enable(GL_LIGHTING);
-		EnableLights(scene.lights, true);
+		EnableLights(true);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
@@ -366,33 +454,30 @@ bool gfx::Renderer::BeginRenderForeground(Scene const & scene, ForegroundRenderP
 
 // Each pass draws all the geometry. Typically, there is one per frame
 // unless wireframe mode is on. 
-void gfx::Renderer::RenderForegroundPass(Scene const & scene, ForegroundRenderPass pass) const
+void gfx::Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 {
-	if (! BeginRenderForeground(scene, pass))
+	if (! BeginRenderForeground(pass))
 	{
 		return;
 	}
 	
 	// Render the formations.
 	form::FormationManager & fm = form::FormationManager::Ref();
-	fm.Render(scene.pov);
+	fm.Render(scene->GetPov());
 	
-	// Render everything else.
-	for (Scene::EntityVector::const_iterator i = scene.entities.begin(), end = scene.entities.end(); i != end; ++ i)
-	{
-		sim::Entity const & entity = * * i;
-		entity.Draw(scene);
-	}
+	Draw(RenderStage::foreground);
 	
-	EndRenderForeground(scene, pass);
+	EndRenderForeground(pass);
+	
+	VerifyRenderState();
 }
 
-void gfx::Renderer::EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const
+void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 {
 	// Reset state
 	if (lighting && pass != WireframePass2)
 	{
-		EnableLights(scene.lights, false);
+		EnableLights(false);
 		gl::Disable(GL_LIGHTING);
 	}
 	gl::Disable(GL_DEPTH_TEST);
@@ -422,10 +507,11 @@ void gfx::Renderer::EndRenderForeground(Scene const & scene, ForegroundRenderPas
 		default:
 			Assert(false);
 	}
+	gl::SetDepthFunc(GL_LEQUAL);
 }
 
 // Nothing to do with shadow maps; sets/unsets the lights in the main scene.
-void gfx::Renderer::EnableLights(std::vector<Light const *> const & lights, bool enabled) const
+void gfx::Renderer::EnableLights(bool enabled) const
 {
 	if (enabled)
 	{
@@ -435,27 +521,26 @@ void gfx::Renderer::EnableLights(std::vector<Light const *> const & lights, bool
 		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
 	}
 	
+	ObjectVector lights = scene->GetObjects(RenderStage::light);
 	int light_id = GL_LIGHT0; 
-	for (std::vector<Light const *>::const_iterator it = lights.begin(); it != lights.end(); ++ it) {
-		Light const * light = * it;
-		Assert(light != nullptr);
+	for (ObjectVector::const_iterator it = lights.begin(); it != lights.end(); ++ it) 
+	{
+		Object const & light = ref(* it);
 		
-		if (light->IsActive()) {
-			if (enabled)
-			{
-				gl::Enable(light_id);
-				light->Draw(light_id);
-			}
-			else
-			{
-				gl::Disable(light_id);
-			}
-			
-			++ light_id;
-			if (light_id > GL_LIGHT7) {
-				Assert(false);	// too many lights
-				break;
-			}
+		if (enabled)
+		{
+			gl::Enable(light_id);
+			light.Draw(* scene);
+		}
+		else
+		{
+			gl::Disable(light_id);
+		}
+		
+		++ light_id;
+		if (light_id > GL_LIGHT7) {
+			Assert(false);	// too many lights
+			break;
 		}
 	}
 	
@@ -465,9 +550,22 @@ void gfx::Renderer::EnableLights(std::vector<Light const *> const & lights, bool
 	}
 }
 
-void gfx::Renderer::DebugDraw(Pov const & pov) const
+void gfx::Renderer::Draw(RenderStage::type render_stage) const
+{
+	ObjectVector const & objects = scene->GetObjects(render_stage);
+	
+	for (ObjectVector::const_iterator i = objects.begin(); i != objects.end(); ++ i)
+	{
+		Object const & object = ref(* i);
+		object.Draw(* scene);
+	}
+}
+
+void gfx::Renderer::DebugDraw() const
 {
 #if defined(GFX_DEBUG)
+	Pov const & pov = scene->GetPov();
+
 	//Pov test = pov;
 	//test.frustum.resolution = Vector2i(100, 100);
 	//test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
@@ -501,3 +599,6 @@ void gfx::Renderer::DebugDraw(Pov const & pov) const
 	
 #endif
 }
+
+
+gfx::Renderer * gfx::Renderer::singleton = nullptr;

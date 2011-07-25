@@ -98,6 +98,8 @@ form::FormationManager::~FormationManager()
 		
 		delete meshes [index];
 	}
+	
+	Assert(formation_set.empty());
 }
 
 #if defined(VERIFY)
@@ -121,6 +123,7 @@ void form::FormationManager::OnMessage(AddFormationMessage const & message)
 void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
 {
 	RemoveFormation(message.formation);
+	delete & message.formation;
 }
 
 void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
@@ -133,6 +136,7 @@ void form::FormationManager::Run()
 	FUNCTION_NO_REENTRY;
 	
 	smp::SetThreadPriority(-1);
+	smp::SetThreadName("Formation");
 	
 	while (true) 
 	{
@@ -243,16 +247,16 @@ void form::FormationManager::SetCameraPos(sim::CameraProjection const & projecti
 	_camera_pos = axes::GetCameraRay(projection.pos, projection.rot);
 }
 
-void form::FormationManager::PollMesh()
+bool form::FormationManager::PollMesh()
 {
 	if (! enable_mesh_generation)
 	{
-		return;
+		return false;
 	}
 	
 	if (! back_mesh_buffer_ready)
 	{
-		return;
+		return false;
 	}
 	
 	Mesh & back_mesh = ref(meshes.back()); 
@@ -271,6 +275,8 @@ void form::FormationManager::PollMesh()
 	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
 	STAT_SET (mesh_generation, enable_mesh_generation);
 	STAT_SET (dynamic_origin, enable_dynamic_origin);
+	
+	return true;
 }
 
 void form::FormationManager::Render(gfx::Pov const & pov)
@@ -387,6 +393,8 @@ void form::FormationManager::GenerateMesh()
 	
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
+	
+	smp::Sleep(0);
 }
 
 void form::FormationManager::BeginReset()

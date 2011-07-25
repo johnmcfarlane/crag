@@ -10,15 +10,22 @@
 
 #pragma once
 
+#include "defs.h"
+
 #include "glpp/RenderBuffer.h"
 #include "glpp/FrameBuffer.h"
 
+#include "smp/Actor.h"
+
 #include "sys/App.h"
+
+#include "geom/Matrix4.h"
 
 
 namespace sim
 {
 	class Entity;
+	struct SetCameraMessage;
 }
 
 
@@ -26,15 +33,28 @@ namespace gfx
 {
 	// forward-declarations
 	class Light;
+	class Object;
 	class Pov;
 	class Scene;
 	class Skybox;
+	
+	
+	struct AddObjectMessage;
+	struct RemoveObjectMessage;
+	struct RenderMessage { };
+	struct RendererReadyMessage { };
 
+	
+	struct ResizeMessage
+	{
+		Vector2i size;
+	};
+	
 	// The Renderer class. 
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Renderer
+	class Renderer : public smp::Actor<Renderer>
 	{
 		OBJECT_NO_COPY(Renderer);
 		
@@ -49,44 +69,76 @@ namespace gfx
 		Renderer();
 		~Renderer();
 		
+		// Singleton
+		static Renderer & Ref() { return ref(singleton); }
+		
+		// Message passing
+		template <typename MESSAGE>
+		static void SendMessage(MESSAGE const & message) 
+		{ 
+			Renderer & destination = Ref(); 
+			smp::Actor<Renderer>::SendMessage(destination, message); 
+		}
+
+		void OnMessage(smp::TerminateMessage const & message);
+		void OnMessage(AddObjectMessage const & message);
+		void OnMessage(RemoveObjectMessage const & message);
+		template <typename OBJECT> void OnMessage(UpdateObjectMessage<OBJECT> const & message)
+		{
+			message._object = message._updated;
+		}
+		void OnMessage(RenderMessage const & message);
+		void OnMessage(ResizeMessage const & message);
+		void OnMessage(sim::SetCameraMessage const & message);
+
+	private:
+		virtual void Run();
+		void MainLoop();
+		
 		void InitRenderState();
 		void VerifyRenderState() const;
 
 		bool HasShadowSupport() const;
 		
+	public:
 		void ToggleCulling();
 		void ToggleLighting();
 		void ToggleWireframe();
 		
-		// Returns the estimated time thread was busy this frame.
-		sys::TimeType Render(Scene & scene);
 	private:
-		void RenderScene(Scene const & scene) const;
+		// Returns the estimated time thread was busy this frame.
+		void Render();
+		void RenderScene() const;
 		
-		void RenderBackground(Scene const & scene) const;
-		void RenderSkybox(Skybox const & skybox, Pov const & pov) const;
+		void RenderBackground() const;
 		
-		void RenderForeground(Scene const & scene) const;
-		bool BeginRenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
-		void RenderForegroundPass(Scene const & scene, ForegroundRenderPass pass) const;
-		void EndRenderForeground(Scene const & scene, ForegroundRenderPass pass) const;
+		void RenderForeground() const;
+		bool BeginRenderForeground(ForegroundRenderPass pass) const;
+		void RenderForegroundPass(ForegroundRenderPass pass) const;
+		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
 		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
-		void EnableLights(std::vector<Light const *> const & lights, bool enabled) const;
+		void EnableLights(bool enabled) const;
 		
-		void DebugDraw(Pov const & pov) const;
+		void Draw(RenderStage::type render_stage) const;
+		
+		void DebugDraw() const;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
 		
+		Scene * scene;
+
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
 		
 		sys::TimeType last_frame_time;
 		
+		bool quit_flag;
 		bool culling;
 		bool lighting;
 		bool wireframe;
+		int render_flag;
 
 		struct StateParam
 		{
@@ -102,5 +154,7 @@ namespace gfx
 		float average_frame_time;
 		int frame_count;
 		sys::TimeType frame_count_reset_time;
+		
+		static Renderer * singleton;
 	};
 }

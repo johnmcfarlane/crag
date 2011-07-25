@@ -117,3 +117,12 @@ void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass
 	
 	body.AddRelForceAtRelPos(gravity, center_of_mass);
 }
+
+void Universe::UpdateModels() const
+{
+	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	{
+		Entity & e = * * it;
+		e.UpdateModels();
+	}
+}

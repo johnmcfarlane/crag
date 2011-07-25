@@ -20,15 +20,14 @@
 #include "sys/App.h"
 
 
-namespace gfx 
-{
-	class Renderer;
-	class Scene;
-}
-
 namespace physics 
 {
 	class Engine;
+}
+
+namespace gfx
+{
+	struct RendererReadyMessage;
 }
 
 
@@ -67,6 +66,7 @@ namespace sim
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
 		void OnMessage(SetCameraMessage const & message);
+		void OnMessage(gfx::RendererReadyMessage const & message);
 		
 	private:
 		void Init();
@@ -77,8 +77,6 @@ namespace sim
 		Universe & GetUniverse();
 
 		physics::Engine & GetPhysicsEngine();		
-		
-		gfx::Scene & GetScene();
 		
 	public:		
 		bool HandleEvent(sys::Event const & event);
@@ -98,13 +96,11 @@ namespace sim
 		bool quit_flag;
 		bool paused;
 		bool capture;
+		bool renderer_ready;
 		int capture_frame;
 		
 		Universe * universe;
 		physics::Engine * physics_engine;
-
-		gfx::Renderer * renderer;
-		gfx::Scene * scene;
 		
 		static Simulation * singleton;
 	};

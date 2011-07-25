@@ -15,7 +15,8 @@
 #include "Simulation.h"
 #include "Universe.h"
 
-#include "gfx/Scene.h"
+#include "gfx/Light.h"
+#include "gfx/Renderer.h"
 
 #include "script/MetaClass.h"
 
@@ -31,13 +32,16 @@ DEFINE_SCRIPT_CLASS(sim, Star)
 
 sim::Star::Star()
 : Entity()
-, light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true)
+, light(nullptr)
 , radius(-1)
 , year(-1)
 {
-	Simulation & sim = Simulation::Ref();
-	gfx::Scene & scene = sim.GetScene();
-	scene.AddLight(light);
+}
+
+sim::Star::~Star()
+{
+	gfx::RemoveObjectMessage message = { ref(light) };
+	gfx::Renderer::SendMessage(message);
 }
 
 void sim::Star::Create(Star & star, PyObject & args)
@@ -59,6 +63,13 @@ bool sim::Star::Init(PyObject & args)
 	{
 		return false;
 	}
+
+	// initialize light
+	light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
+	
+	// pass to the renderer
+	gfx::AddObjectMessage message = { ref(light) };
+	gfx::Renderer::SendMessage(message);
 	
 	return true;
 }
@@ -68,7 +79,17 @@ void sim::Star::Tick()
 	sys::TimeType t = sim::Simulation::Ref().GetTime();
 	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
 	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, static_cast<Scalar>(0));
-	light.SetPosition(position);
+	light->SetPosition(position);
+}
+
+void sim::Star::UpdateModels() const
+{
+	gfx::UpdateObjectMessage<gfx::Light> message(ref(light));
+	
+	message._updated._position = GetPosition();
+	message._updated._rotation = Matrix4d::Identity();
+	
+	gfx::Renderer::SendMessage(message);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

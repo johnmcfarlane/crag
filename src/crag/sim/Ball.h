@@ -11,9 +11,6 @@
 
 #include "Entity.h"
 
-#include "glpp/Mesh.h"
-#include "glpp/Vbo_Types.h"
-
 
 namespace physics
 {
@@ -22,7 +19,7 @@ namespace physics
 
 namespace gfx
 {
-	class Pov;
+	class Ball;
 }
 
 
@@ -43,14 +40,12 @@ namespace sim
 		bool Init(PyObject & args);
 		
 		void Tick();
-		void Draw(gfx::Scene const & scene) const;
+		void UpdateModels() const;
 	private:
-		void SetMatrix(gfx::Pov const & pov) const;
-		unsigned CalculateLod(gfx::Pov const & pov) const;
-		
 		virtual Vector3 const & GetPosition() const;
 		
 		// variables
 		physics::SphericalBody * _body;
+		gfx::Ball * _model;
 	};
 }

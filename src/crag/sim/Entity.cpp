@@ -15,18 +15,21 @@
 #include "Simulation.h"
 
 
+using namespace sim;
+
+
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
-sim::Entity::Entity()
+Entity::Entity()
 {
 }
 
-sim::Entity::~Entity()
+Entity::~Entity()
 {
 }
 
-void sim::Entity::Destroy(Entity & entity)
+void Entity::Destroy(Entity & entity)
 {
 	// create message
 	RemoveEntityMessage message = { entity };
@@ -35,24 +38,19 @@ void sim::Entity::Destroy(Entity & entity)
 	Simulation::SendMessage(message);
 }
 
-void sim::Entity::Tick()
+void Entity::Tick()
 {
 }
 
-void sim::Entity::Draw(gfx::Scene const & scene) const
+void Entity::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
 {
 }
 
-void sim::Entity::GetGravitationalForce(sim::Vector3 const & /*pos*/, sim::Vector3 & /*gravity*/) const
+void Entity::UpdateModels() const
 {
 }
 
-bool sim::Entity::GetRenderRange(Ray3 const & camera_ray, double * range, bool wireframe) const
-{
-	return false;
-}
-
-void sim::Entity::SetPosition(Vector3 const & position)
+void Entity::SetPosition(Vector3 const & position)
 {
 	// For now, only observer can have its position set.
 	Assert(false);

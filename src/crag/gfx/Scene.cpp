@@ -14,9 +14,9 @@
 
 #include "Sphere.h"
 
-#include "sim/Entity.h"
-
 #include "core/ConfigEntry.h"
+
+#include "gfx/Object.h"
 
 #include <algorithm>
 
@@ -27,8 +27,7 @@ CONFIG_DEFINE (camera_far, float, 10);
 
 
 gfx::Scene::Scene()
-: skybox(nullptr)
-, _sphere(* new Sphere)
+: _sphere(* new Sphere)
 {
 	pov.frustum.fov = static_cast<double>(camera_fov);
 	pov.frustum.near_z = static_cast<double>(camera_near);
@@ -37,7 +36,10 @@ gfx::Scene::Scene()
 
 gfx::Scene::~Scene()
 {
-	Assert(entities.empty());
+	for (ObjectVector * it = _objects; it != _objects + RenderStage::num; ++ it)
+	{
+		Assert(it->empty());
+	}
 	
 	camera_fov = static_cast<float>(pov.frustum.fov);
 	camera_near = static_cast<float>(pov.frustum.near_z);
@@ -46,25 +48,30 @@ gfx::Scene::~Scene()
 	delete & _sphere;
 }
 
-void gfx::Scene::AddLight(Light const & light)
+void gfx::Scene::AddObject(Object const & object)
 {
-	Assert(std::find(lights.begin(), lights.end(), & light) == lights.end());
-	lights.push_back(& light);
+	RenderStage::type stage = object.GetRenderStage();
+	ObjectVector & objects = _objects[stage];
+	
+	Assert(std::find(objects.begin(), objects.end(), & object) == objects.end());
+	objects.push_back(& object);
 }
 
-void gfx::Scene::AddEntity(sim::Entity const & entity)
+void gfx::Scene::RemoveObject(Object const & object)
 {
-	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
-	entities.push_back(& entity);
+	RenderStage::type stage = object.GetRenderStage();
+	ObjectVector & objects = _objects[stage];
+	
+	ObjectVector::iterator i = std::find(objects.begin(), objects.end(), & object);
+	Assert(i != objects.end());
+	objects.erase(i);
+
+	Assert(std::find(objects.begin(), objects.end(), & object) == objects.end());
 }
 
-void gfx::Scene::RemoveEntity(sim::Entity const & entity)
+gfx::ObjectVector const & gfx::Scene::GetObjects(RenderStage::type render_stage) const
 {
-	EntityVector::iterator i = std::find(entities.begin(), entities.end(), & entity);
-	Assert(i != entities.end());
-	entities.erase(i);
-
-	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
+	return _objects[render_stage];
 }
 
 void gfx::Scene::SetResolution(Vector2i const & r)
@@ -94,20 +101,24 @@ gfx::Pov const & gfx::Scene::GetPov() const
 // something that gives and near and far plane value instead. 
 void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
 {
-	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	for (ObjectVector const * vector_iterator = _objects; vector_iterator != _objects + RenderStage::num; ++ vector_iterator) 
 	{
-		sim::Entity const & e = * * it;
-		double entity_range[2];
-		if (e.GetRenderRange(camera_ray, entity_range, wireframe))
+		ObjectVector objects = * vector_iterator;
+		for (ObjectVector::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
 		{
-			if (entity_range[0] < range_min)
+			Object const & object = * * object_iterator;
+			double object_range[2];
+			if (object.GetRenderRange(camera_ray, object_range, wireframe))
 			{
-				range_min = entity_range[0];
-			}
-			
-			if (entity_range[1] > range_max)
-			{
-				range_max = entity_range[1];
+				if (object_range[0] < range_min)
+				{
+					range_min = object_range[0];
+				}
+				
+				if (object_range[1] > range_max)
+				{
+					range_max = object_range[1];
+				}
 			}
 		}
 	}
