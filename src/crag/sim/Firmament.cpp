@@ -21,8 +21,13 @@
 
 Firmament::Firmament()
 {
+}
+
+void Firmament::Init()
+{
+	Skybox::Init();
+	
 	DrawStarsSimple();
-	//DrawStarsClevur();
 }
 
 void Firmament::DrawStarsClevur()

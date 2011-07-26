@@ -11,32 +11,22 @@
 #include "pch.h"
 
 #include "Renderer.h"
+
 #include "Color.h"
 #include "Debug.h"
 #include "Pov.h"
 #include "Scene.h"
-#include "Skybox.h"
-#include "Light.h"
+#include "Object.h"
 
 #include "form/FormationManager.h"
 
 #include "sim/axes.h"
-
-#include "glpp/Texture.h"
+#include "sim/Simulation.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-#include "sim/Entity.h"
-#include "sim/Firmament.h"	// TODO
-#include "sim/Simulation.h"
-
 #include <sstream>
-
-
-#if ! defined(NDEBUG)
-extern gl::TextureRgba8 const * test_texture;
-#endif
 
 
 namespace 
@@ -103,6 +93,7 @@ void gfx::Renderer::OnMessage(smp::TerminateMessage const & message)
 void gfx::Renderer::OnMessage(AddObjectMessage const & message)
 {
 	Object & object = message._object;
+	object.Init();
 	scene->AddObject(object);
 }
 
@@ -162,9 +153,6 @@ void gfx::Renderer::Run()
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
 	
-	Object & skybox = ref(new Firmament);
-	scene->AddObject(skybox);	// TODO: Call still belongs in sim
-	
 	InitRenderState();
 	
 	Debug::Init();
@@ -176,9 +164,6 @@ void gfx::Renderer::Run()
 	init_culling = culling;
 	init_lighting = lighting;
 	init_wireframe = wireframe;
-	
-	scene->RemoveObject(skybox);
-	delete & skybox;
 	
 	delete scene;
 }
@@ -383,8 +368,22 @@ void gfx::Renderer::RenderScene() const
 
 void gfx::Renderer::RenderBackground() const
 {
-	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-	Draw(RenderStage::background);
+	ObjectVector const & objects = scene->GetObjects(RenderStage::background);
+
+	// Basically, if we have a skybox yet,
+	if (objects.size() > 0)
+	{
+		// only clear the depth buffer
+		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
+		
+		// and draw the skybox
+		Draw(objects);
+	}
+	else
+	{
+		// else, clear the screen to black.
+		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+	}
 }
 
 void gfx::Renderer::RenderForeground() const
@@ -553,7 +552,11 @@ void gfx::Renderer::EnableLights(bool enabled) const
 void gfx::Renderer::Draw(RenderStage::type render_stage) const
 {
 	ObjectVector const & objects = scene->GetObjects(render_stage);
-	
+	Draw(objects);
+}
+
+void gfx::Renderer::Draw(ObjectVector const & objects) const
+{
 	for (ObjectVector::const_iterator i = objects.begin(); i != objects.end(); ++ i)
 	{
 		Object const & object = ref(* i);

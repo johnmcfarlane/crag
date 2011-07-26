@@ -45,6 +45,9 @@ namespace script
 		PyObject * PollEvent();
 		
 	private:		
+		static char const * _source_filename;
+		FILE * _source_file;
+
 		static ScriptThread * singleton;
 	};
 	

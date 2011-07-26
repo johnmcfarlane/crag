@@ -121,6 +121,9 @@ void sim::Simulation::Run()
 	smp::SetThreadPriority(0);
 	smp::SetThreadName("Simulation");
 
+	gfx::AddObjectMessage add_skybox_message = { ref(new Firmament) };
+	gfx::Renderer::SendMessage(add_skybox_message);
+	
 	sys::TimeType next_tick_time = sys::GetTime();
 	
 	while (! quit_flag)
@@ -148,6 +151,9 @@ void sim::Simulation::Run()
 			}
 		}
 	}
+	
+	gfx::RemoveObjectMessage remove_skybox_message = { add_skybox_message._object };
+	gfx::Renderer::SendMessage(remove_skybox_message);
 }
 
 void sim::Simulation::Tick()

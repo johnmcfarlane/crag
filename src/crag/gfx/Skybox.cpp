@@ -25,7 +25,6 @@ using namespace gfx;
 
 Skybox::Skybox()
 {
-	InitVerts();
 }
 
 Skybox::~Skybox()
@@ -40,6 +39,11 @@ Skybox::~Skybox()
 			gl::DeleteTexture(side);
 		}
 	}
+}
+
+void Skybox::Init()
+{
+	InitVerts();
 }
 
 void Skybox::SetSide(int axis, int pole, Image const & image)

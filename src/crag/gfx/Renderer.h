@@ -117,10 +117,11 @@ namespace gfx
 		void RenderForegroundPass(ForegroundRenderPass pass) const;
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
-		//void RenderEntities(std::vector<sim::Entity const *> const & entities, Pov const & pov, bool color) const;
 		void EnableLights(bool enabled) const;
 		
+		// returns the number of objects renderer
 		void Draw(RenderStage::type render_stage) const;
+		void Draw(ObjectVector const & objects) const;
 		
 		void DebugDraw() const;
 

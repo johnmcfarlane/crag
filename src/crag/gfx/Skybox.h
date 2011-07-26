@@ -28,6 +28,8 @@ namespace gfx
 		Skybox();
 		virtual ~Skybox();
 
+		virtual void Init();
+
 		void SetSide(int axis, int pole, gfx::Image const & image);
 
 		virtual void Draw(Scene const & scene) const;

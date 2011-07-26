@@ -33,6 +33,8 @@ namespace gfx
 		// functions
 		Object(Vector const & position = Vector::Zero(), Matrix const & rotation = Matrix::Identity());
 		virtual ~Object();
+
+		virtual void Init();	// called on arrival in render thread 
 		
 		Vector3d const & GetPosition() const;
 		

@@ -25,6 +25,10 @@ Object::~Object()
 { 
 }
 
+void Object::Init()
+{
+}
+
 Object::Vector const & Object::GetPosition() const 
 { 
 	return _position; 

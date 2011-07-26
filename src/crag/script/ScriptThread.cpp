@@ -152,28 +152,18 @@ FILE_LOCAL_END
 // ScriptThread member definitions
 
 script::ScriptThread::ScriptThread()
+: _source_file(nullptr)
 {
 	Assert(singleton == nullptr);
 	singleton = this;
-}
 
-script::ScriptThread::~ScriptThread()
-{
-	Assert(singleton == this);
-	singleton = nullptr;
-}
-
-// Note: Run should be called from same thread as c'tor/d'tor.
-void script::ScriptThread::Run()
-{
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Script");
 	
-	char const * source_filename = "./script/main.py";
-	FILE * file = fopen(source_filename, "r");
-	if (file == nullptr)
+	_source_file = fopen(_source_filename, "r");
+	if (_source_file == nullptr)
 	{
-		std::cout << "Failed to open main Python file, \"" << source_filename << "\".\n";
+		std::cout << "Failed to open main Python file, \"" << _source_filename << "\".\n";
 		return;
 	}
 	
@@ -184,8 +174,20 @@ void script::ScriptThread::Run()
 	}
     
 	Py_Initialize();
-	PyRun_SimpleFileEx(file, source_filename, true);
+}
+
+script::ScriptThread::~ScriptThread()
+{
 	Py_Finalize();
+
+	Assert(singleton == this);
+	singleton = nullptr;
+}
+
+// Note: Run should be called from same thread as c'tor/d'tor.
+void script::ScriptThread::Run()
+{
+	PyRun_SimpleFileEx(_source_file, _source_filename, true);
 	
 	ProcessMessages();
 	
@@ -234,5 +236,7 @@ PyObject * script::ScriptThread::PollEvent()
 //Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
 //Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);
 
+
+char const * script::ScriptThread::_source_filename = "./script/main.py";
 
 script::ScriptThread * script::ScriptThread::singleton = nullptr;

@@ -82,17 +82,20 @@ namespace
 			gfx::Renderer renderer;
 			form::FormationManager formation_manager;
 			sim::Simulation simulation;
-
-			renderer.Start();
-			formation_manager.Start();
-			simulation.Start();
 			
-			// Launch the script engine.
-			// Note: this needs to run in the main thread because SDL
-			// was initialized from here and script uses SDL events fns. 
-			// Hence we call Run instead of Launch and Join.
-			script::ScriptThread script_thread;
-			script_thread.Run();
+			{
+				// Launch the script engine.
+				// Note: this needs to run in the main thread because SDL
+				// was initialized from here and script uses SDL events fns. 
+				// Hence we call Run instead of Launch and Join.
+				script::ScriptThread script_thread;
+				
+				renderer.Start();
+				formation_manager.Start();
+				simulation.Start();
+				
+				script_thread.Run();
+			}
 			
 			// Stop the actors.
 			simulation.Stop();

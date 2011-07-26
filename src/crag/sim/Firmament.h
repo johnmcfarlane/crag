@@ -17,6 +17,8 @@ public:
 	Firmament();
 	
 private:
+	virtual void Init();
+	
 	void DrawStarsClevur();
 
 	void DrawStarsSimple();
