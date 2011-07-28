@@ -158,6 +158,7 @@ namespace form
 		MeshDoubleBuffer meshes;
 		
 		sys::TimeType mesh_generation_time;
+		int rendered_num_quaternia;
 		
 		MboDoubleBuffer mbo_buffers;
 

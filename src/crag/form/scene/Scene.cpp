@@ -146,11 +146,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 
 bool form::Scene::IsOriginOk() const
 {
-	// killme
-//	float d1 = Length(camera_ray_relative.position);
-//	float d2 = Length(camera_ray.position - GetOrigin());
-//	Assert(NearEqual(Length(camera_ray_relative.position), Length(camera_ray.position - GetOrigin()), 0.01));
-
 	// The real test: Is the observer not far enough away from the 
 	// current origin that visible inaccuracies might become apparent?
 	double observer_position_length = Length(camera_ray_relative.position);

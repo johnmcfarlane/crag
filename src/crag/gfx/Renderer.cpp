@@ -29,6 +29,11 @@
 #include <sstream>
 
 
+using sys::TimeType;
+
+
+CONFIG_DEFINE (multisample, bool, false);
+
 namespace 
 {
 
@@ -43,6 +48,7 @@ namespace
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 
 	STAT (idle, double, .18f);
+	STAT (frame_time, double, .18f);
 	STAT (fps, float, .0f);
 	STAT (pos, sim::Vector3, .3f);
 	STAT_DEFAULT (rot, sim::Matrix4, .9f);
@@ -70,13 +76,13 @@ gfx::Renderer::Renderer()
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
-, render_flag(false)
-, average_frame_time(0)
-, frame_count(0)
-, frame_count_reset_time(last_frame_time)
 {
 	Assert(singleton == nullptr);
 	singleton = this;
+	
+#if ! defined(NDEBUG)
+	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
+#endif
 }
 
 gfx::Renderer::~Renderer()
@@ -104,10 +110,9 @@ void gfx::Renderer::OnMessage(RemoveObjectMessage const & message)
 	delete & object;
 }
 
-void gfx::Renderer::OnMessage(RenderMessage const & message)
+void gfx::Renderer::OnMessage(RenderReadyMessage const & message)
 {
-	//render_flag = true;
-	++ render_flag;
+	ready = message.ready;
 }
 
 void gfx::Renderer::OnMessage(ResizeMessage const & message)
@@ -138,13 +143,45 @@ gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 	INIT(GL_LIGHTING, false),
 	INIT(GL_DEPTH_TEST, false),
 	INIT(GL_BLEND, false),
-	INIT(GL_INVALID_ENUM, false)
+	INIT(GL_INVALID_ENUM, false),
+	INIT(GL_MULTISAMPLE, false),
+	INIT(GL_LINE_SMOOTH, false),
+	INIT(GL_POLYGON_SMOOTH, false)
 };
 
 void gfx::Renderer::Run()
 {
 	FUNCTION_NO_REENTRY;
 	
+	Init();
+	MainLoop();
+	Deinit();
+}
+
+void gfx::Renderer::MainLoop()
+{
+	do
+	{
+		ProcessMessagesAndGetReady();
+		Render();
+	}
+	while (! quit_flag);
+}
+
+void gfx::Renderer::ProcessMessagesAndGetReady()
+{
+	ProcessMessages();
+	while (! ready)
+	{
+		if (! ProcessMessage())
+		{
+			smp::Sleep(0);
+		}
+	}
+}
+
+void gfx::Renderer::Init()
+{
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
@@ -153,60 +190,26 @@ void gfx::Renderer::Run()
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
 	
+	gl::GenFence(_fence1);
+	gl::GenFence(_fence2);
+	
 	InitRenderState();
 	
 	Debug::Init();
-	
-	MainLoop();
+}
 
+void gfx::Renderer::Deinit()
+{
 	Debug::Deinit();
 	
 	init_culling = culling;
 	init_lighting = lighting;
 	init_wireframe = wireframe;
 	
-	delete scene;
-}
-
-void gfx::Renderer::MainLoop()
-{
-	form::FormationManager & formation_manager = form::FormationManager::Ref();
+	gl::DeleteFence(_fence2);
+	gl::DeleteFence(_fence1);
 	
-	bool busy = false;
-	do
-	{
-		if (render_flag)
-		{
-			Render();
-			
-			busy = true;
-			
-			RendererReadyMessage message;
-			sim::Simulation::SendMessage(message);
-
-//			do
-//			{
-//				render_flag = false;
-//			}	while (ProcessMessage());
-		}
-		
-		if (formation_manager.PollMesh())
-		{
-			busy = true;
-		}
-
-		if (! busy)
-		{
-			smp::Sleep(0);
-			busy = false;
-		}
-
-		if (ProcessMessages())
-		{
-			busy = true;
-		}
-	}
-	while (! quit_flag);
+	delete scene;
 }
 
 void gfx::Renderer::InitRenderState()
@@ -231,6 +234,9 @@ void gfx::Renderer::InitRenderState()
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
 	VerifyRenderState();
 }
@@ -300,52 +306,41 @@ void gfx::Renderer::ToggleWireframe()
 void gfx::Renderer::Render()
 {
 	// Render the scene to the back buffer.
-	RenderScene();	
+	form::FormationManager & formation_manager = form::FormationManager::Ref();	
+	formation_manager.PollMesh();
+	
+	RenderScene();
 
-	sys::TimeType frame_time;
-	
-	// A guestimate of the time spent waiting for vertical synchronization. 
-	sys::TimeType idle;
-	
-	// Flip the front and back buffers and get timing information.
-
-	// I have no idea why this works, or seems to work
-	// or works on my hardware, or even seems to work on my hardware
-	// but it often does. I'm especially baffled by the glFlush().
-	
-	glFlush();
-	sys::TimeType pre_finish = sys::GetTime();
+	// Flip the front and back buffers and set fences.
+	gl::SetFence(_fence1);
 	sys::SwapBuffers();
-	glFinish();
-	frame_time = sys::GetTime();
-	idle = frame_time - pre_finish;
+	gl::SetFence(_fence2);
 	
+	// Get timing information from the fences.
+	gl::FinishFence(_fence1);
+	TimeType pre_sync = sys::GetTime();
+	gl::FinishFence(_fence2);
+	TimeType post_sync = sys::GetTime();
+	TimeType idle = post_sync - pre_sync;
 	STAT_SET(idle, idle);
-
-//	// Independant stat counters for measuring the FPS.
-//	++ frame_count;
-//	sys::TimeType fps_delta = frame_time - frame_count_reset_time;
-//	if (frame_count == 60) 
-//	{
-//		frame_count_reset_time = frame_time;
-//		average_frame_time = static_cast<float>(fps_delta) / frame_count;
-//		frame_count = 0;
-//	}
 	
-	// Calculate the amount of time from the last frame to this one.
-//	sys::TimeType frame_delta = frame_time - last_frame_time;
-//	Assert(frame_delta >= idle);
-//	last_frame_time = frame_time;
-
+	// Use it to figure out just how much work was done.
+	TimeType frame_time = (post_sync - last_frame_time) - idle;
+	last_frame_time = post_sync;
+	STAT_SET(frame_time, frame_time);
+	
+#if ! defined(NDEBUG)
+	// update fps
+	memmove(_fps_history, _fps_history + 1, sizeof(* _fps_history) * (_fps_history_size - 1));
+	_fps_history[_fps_history_size - 1] = sys::GetTime();
+	STAT_SET (fps, double(_fps_history_size - 1) / (_fps_history[_fps_history_size - 1] - _fps_history[0]));
+#endif
+	
 	// Regulator feedback.
-//	sys::TimeType frame_time = frame_delta - idle * .5;
-//	sys::TimeType target_frame_time = sim::Simulation::target_frame_seconds;
-//	if (enable_vsync)
-//	{
-//		target_frame_time *= target_work_proportion;
-//	}
+	TimeType target_frame_time = sim::Simulation::target_frame_seconds;
+	target_frame_time *= target_work_proportion;
 	
-	//formation_manager.SampleFrameRatio(frame_time, target_frame_time);
+	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
 }
 
 void gfx::Renderer::RenderScene() const
@@ -377,7 +372,7 @@ void gfx::Renderer::RenderBackground() const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 		
 		// and draw the skybox
-		Draw(objects);
+		RenderStage(objects);
 	}
 	else
 	{
@@ -405,7 +400,6 @@ void gfx::Renderer::RenderForeground() const
 bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
-	//gl::SetDepthFunc(GL_GREATER);
 		
 	switch (pass) 
 	{
@@ -413,6 +407,11 @@ bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 			if (! culling) 
 			{
 				gl::Disable(GL_CULL_FACE);
+			}
+			if (multisample)
+			{
+				gl::Enable(GL_MULTISAMPLE);
+				gl::Enable(GL_POLYGON_SMOOTH);
 			}
 			break;
 			
@@ -427,8 +426,14 @@ bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 			break;
 			
 		case WireframePass2:
-			if (! culling) {
+			if (! culling) 
+			{
 				gl::Disable(GL_CULL_FACE);
+			}
+			if (multisample)
+			{
+				gl::Enable(GL_MULTISAMPLE);
+				gl::Enable(GL_LINE_SMOOTH);
 			}
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
@@ -464,7 +469,7 @@ void gfx::Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 	form::FormationManager & fm = form::FormationManager::Ref();
 	fm.Render(scene->GetPov());
 	
-	Draw(RenderStage::foreground);
+	RenderStage(RenderStage::foreground);
 	
 	EndRenderForeground(pass);
 	
@@ -484,8 +489,14 @@ void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	switch (pass) 
 	{
 		case NormalPass:
-			if (! culling) {
+			if (! culling) 
+			{
 				gl::Enable(GL_CULL_FACE);
+			}
+			if (multisample)
+			{
+				gl::Disable(GL_POLYGON_SMOOTH);
+				gl::Disable(GL_MULTISAMPLE);
 			}
 			break;
 			
@@ -496,8 +507,14 @@ void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 			
 		case WireframePass2:
 			gl::SetColor<GLfloat>(1, 1, 1);
-			if (! culling) {
+			if (! culling) 
+			{
 				gl::Enable(GL_CULL_FACE);
+			}
+			if (multisample)
+			{
+				gl::Disable(GL_LINE_SMOOTH);
+				gl::Disable(GL_MULTISAMPLE);
 			}
 			GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 			GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
@@ -549,13 +566,13 @@ void gfx::Renderer::EnableLights(bool enabled) const
 	}
 }
 
-void gfx::Renderer::Draw(RenderStage::type render_stage) const
+void gfx::Renderer::RenderStage(RenderStage::type render_stage) const
 {
 	ObjectVector const & objects = scene->GetObjects(render_stage);
-	Draw(objects);
+	RenderStage(objects);
 }
 
-void gfx::Renderer::Draw(ObjectVector const & objects) const
+void gfx::Renderer::RenderStage(ObjectVector const & objects) const
 {
 	for (ObjectVector::const_iterator i = objects.begin(); i != objects.end(); ++ i)
 	{
@@ -581,7 +598,6 @@ void gfx::Renderer::DebugDraw() const
 	Debug::Draw();
 	
 #if defined (GATHER_STATS)
-	STAT_SET (fps, 1.f / average_frame_time);
 	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
 	STAT_SET (rot, pov.rot);	// std::streamsize previous_precision = out.precision(2); ...; out.precision(previous_precision);
 	

@@ -12,9 +12,17 @@
 
 #include "App.h"
 
+#include "ConfigEntry.h"
+
+#include "glpp/glpp.h"
+
 #if defined(__APPLE__)
 #include <CoreFoundation/CFDate.h>
 #endif
+
+
+// defined in Renderer.cpp
+CONFIG_DECLARE (multisample, bool);
 
 
 namespace 
@@ -84,6 +92,12 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	
+	if (multisample)
+	{
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+	}
 	
 	// Get existing video info.
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();

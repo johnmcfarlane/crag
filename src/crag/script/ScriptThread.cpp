@@ -51,7 +51,7 @@ PyObject * sleep(PyObject * /*self*/, PyObject * args)
 	
 	smp::Sleep(delay);
 	
-	return nullptr;
+	Py_RETURN_NONE;
 }
 
 PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
@@ -119,7 +119,7 @@ bool handle_events(PyObject * & event_object)
 PyMethodDef crag_methods[] = 
 {
 	{"time", time, METH_VARARGS, "Returns simulation time in seconds."},
-	{"sleep", time, METH_VARARGS, "Sleeps the scripting thread without global-locking."},
+	{"sleep", sleep, METH_VARARGS, "Sleeps the scripting thread without global-locking."},
 	{"get_event", get_event, METH_VARARGS, "Returns the next event in the event queue."},
 	{NULL, NULL, 0, NULL}
 };

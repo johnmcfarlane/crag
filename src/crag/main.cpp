@@ -54,7 +54,7 @@ namespace
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #else
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (video_full_screen, bool, true);
 #endif
 
 
@@ -79,28 +79,28 @@ namespace
 		smp::Init(0);
 
 		{
-			gfx::Renderer renderer;
-			form::FormationManager formation_manager;
-			sim::Simulation simulation;
+			// Launch the script engine.
+			// Note: this needs to run in the main thread because SDL
+			// was initialized from here and script uses SDL events fns. 
+			// Hence we call Run instead of Launch and Join.
+			script::ScriptThread script_thread;
 			
 			{
-				// Launch the script engine.
-				// Note: this needs to run in the main thread because SDL
-				// was initialized from here and script uses SDL events fns. 
-				// Hence we call Run instead of Launch and Join.
-				script::ScriptThread script_thread;
+				gfx::Renderer renderer;
+				form::FormationManager formation_manager;
+				sim::Simulation simulation;
 				
 				renderer.Start();
 				formation_manager.Start();
 				simulation.Start();
 				
 				script_thread.Run();
+				
+				// Stop the actors.
+				simulation.Stop();
+				formation_manager.Stop();
+				renderer.Stop();
 			}
-			
-			// Stop the actors.
-			simulation.Stop();
-			formation_manager.Stop();
-			renderer.Stop();
 		}
 		
 		smp::Deinit();

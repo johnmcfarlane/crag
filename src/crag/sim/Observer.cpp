@@ -16,9 +16,12 @@
 
 #include "physics/SphericalBody.h"
 
+#include "form/FormationManager.h"
+
 #include "geom/VectorOps.h"
 #include "geom/MatrixOps.h"
 #include "geom/Vector4.h"
+
 #include "core/ConfigEntry.h"
 
 #include "script/MetaClass.h"
@@ -201,14 +204,21 @@ void sim::Observer::Tick()
 	
 	// Light
 	light.SetPosition(position);
+}
 
+void sim::Observer::UpdateModels() const
+{
 	// Set simulation camera.
-	Vector3 pos = body->GetPosition();
-	Matrix4 rot;
-	body->GetRotation(rot);
-	
-	SetCameraMessage message = { position, rot };
-	Simulation::SendMessage(message);
+	Vector3 position = body->GetPosition();
+	Matrix4 rotation;
+	body->GetRotation(rotation);
+
+	// Give renderer the new camera position.
+	SetCameraMessage message = { position, rotation };
+	gfx::Renderer::SendMessage(message);
+
+	// This happens to be a good time to sent message elsewhere.
+	form::FormationManager::SendMessage(message);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const

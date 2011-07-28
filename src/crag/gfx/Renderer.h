@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "glpp/Fence.h"
 #include "defs.h"
 
 #include "glpp/RenderBuffer.h"
@@ -32,18 +33,12 @@ namespace sim
 namespace gfx
 {
 	// forward-declarations
-	class Light;
-	class Object;
-	class Pov;
 	class Scene;
-	class Skybox;
-	
 	
 	struct AddObjectMessage;
 	struct RemoveObjectMessage;
-	struct RenderMessage { };
-	struct RendererReadyMessage { };
-
+	struct RenderReadyMessage { bool ready; };
+	
 	
 	struct ResizeMessage
 	{
@@ -87,13 +82,17 @@ namespace gfx
 		{
 			message._object = message._updated;
 		}
-		void OnMessage(RenderMessage const & message);
+		void OnMessage(RenderReadyMessage const & message);
 		void OnMessage(ResizeMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
 	private:
 		virtual void Run();
 		void MainLoop();
+		void ProcessMessagesAndGetReady();
+
+		void Init();
+		void Deinit();
 		
 		void InitRenderState();
 		void VerifyRenderState() const;
@@ -120,8 +119,8 @@ namespace gfx
 		void EnableLights(bool enabled) const;
 		
 		// returns the number of objects renderer
-		void Draw(RenderStage::type render_stage) const;
-		void Draw(ObjectVector const & objects) const;
+		void RenderStage(RenderStage::type render_stage) const;
+		void RenderStage(ObjectVector const & objects) const;
 		
 		void DebugDraw() const;
 
@@ -136,10 +135,10 @@ namespace gfx
 		sys::TimeType last_frame_time;
 		
 		bool quit_flag;
+		bool ready;
 		bool culling;
 		bool lighting;
 		bool wireframe;
-		int render_flag;
 
 		struct StateParam
 		{
@@ -151,10 +150,14 @@ namespace gfx
 		};
 
 		static StateParam const init_state[];
-
-		float average_frame_time;
-		int frame_count;
-		sys::TimeType frame_count_reset_time;
+		
+#if ! defined(NDEBUG)
+		// fps counter
+		static int const _fps_history_size = 60;
+		sys::TimeType _fps_history[_fps_history_size];
+#endif
+		
+		gl::Fence _fence1, _fence2;
 		
 		static Renderer * singleton;
 	};

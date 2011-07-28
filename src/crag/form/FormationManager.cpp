@@ -66,6 +66,8 @@ form::FormationManager::FormationManager()
 , back_mesh_buffer_ready(false)
 , suspend_semaphore(1)
 , mesh_generation_time(sys::GetTime())
+, rendered_num_quaternia(0)
+, _camera_pos(sim::Ray3::Zero())
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -249,6 +251,9 @@ void form::FormationManager::SetCameraPos(sim::CameraProjection const & projecti
 
 bool form::FormationManager::PollMesh()
 {
+	STAT_SET (mesh_generation, enable_mesh_generation);
+	STAT_SET (dynamic_origin, enable_dynamic_origin);
+
 	if (! enable_mesh_generation)
 	{
 		return false;
@@ -273,8 +278,6 @@ bool form::FormationManager::PollMesh()
 
 	// Used to live inside Render.
 	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
-	STAT_SET (mesh_generation, enable_mesh_generation);
-	STAT_SET (dynamic_origin, enable_dynamic_origin);
 	
 	return true;
 }
@@ -285,6 +288,10 @@ void form::FormationManager::Render(gfx::Pov const & pov)
 	{
 		return;
 	}
+
+	// When asking the regulator to adjust the number of quaterna.
+	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
+	rendered_num_quaternia = active_buffer.GetNumQuaternaUsed();
 	
 	// State
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));
@@ -359,16 +366,12 @@ void form::FormationManager::AdjustNumQuaterna()
 		return;
 	}
 	
-	// Get the regulator input.
-	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	
-	int current_num_quaterna = active_buffer.GetNumQuaternaUsed();
-	
 	// Calculate the regulator output.
-	int target_num_quaterna = regulator.GetAdjustedLoad(current_num_quaterna);
+	int target_num_quaterna = regulator.GetAdjustedLoad(rendered_num_quaternia);
 	Clamp(target_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
 	
 	// Apply the regulator output.
+	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
 	active_buffer.SetNumQuaternaUsedTarget(target_num_quaterna);
 }
 

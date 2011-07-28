@@ -65,7 +65,6 @@ namespace sim
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
-		void OnMessage(SetCameraMessage const & message);
 		void OnMessage(gfx::RendererReadyMessage const & message);
 		
 	private:
@@ -84,8 +83,8 @@ namespace sim
 	private:
 		void Run();
 		void Tick();
+		void UpdateRenderer() const;
 		
-		void Render();
 		void PrintStats() const;
 		void Capture();
 		
@@ -96,7 +95,6 @@ namespace sim
 		bool quit_flag;
 		bool paused;
 		bool capture;
-		bool renderer_ready;
 		int capture_frame;
 		
 		Universe * universe;

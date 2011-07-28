@@ -279,6 +279,7 @@
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
+		5281798A13DFEC2C009D5B8B /* Fence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		52858A9B13D6E86300D95BEE /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5285F05913D546B20058DBF7 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
@@ -572,6 +573,7 @@
 				52642375135F49FA00C00EFE /* Vbo.h */,
 				52642376135F49FA00C00EFE /* Vbo_Types.h */,
 				52A02F7813C215F8003F5705 /* Vertex.h */,
+				5281798A13DFEC2C009D5B8B /* Fence.h */,
 			);
 			path = glpp;
 			sourceTree = "<group>";

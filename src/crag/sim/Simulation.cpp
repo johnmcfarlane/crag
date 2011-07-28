@@ -38,7 +38,6 @@ sim::Simulation::Simulation()
 : quit_flag(false)
 , paused(false)
 , capture(false)
-, renderer_ready(true)
 , capture_frame(0)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
@@ -88,15 +87,9 @@ void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 	delete & message.entity;
 }
 
-void sim::Simulation::OnMessage(SetCameraMessage const & message)
-{
-	gfx::Renderer::SendMessage(message);
-	form::FormationManager::SendMessage(message);
-}
-
 void sim::Simulation::OnMessage(gfx::RendererReadyMessage const & message)
 {
-	renderer_ready = true;
+	Assert(false);
 }
 
 sys::TimeType sim::Simulation::GetTime() const
@@ -168,21 +161,19 @@ void sim::Simulation::Tick()
 		physics_engine->Tick(target_frame_seconds);		
 		
 		// Tell renderer about changes.
-		if (renderer_ready)
-		{
-			universe->UpdateModels();
-			renderer_ready = false;
-		}
+		UpdateRenderer();
 	}
-	
-	Render();
 }
 
-void sim::Simulation::Render()
+void sim::Simulation::UpdateRenderer() const
 {
-	PrintStats();
+	gfx::RenderReadyMessage message;
+	message.ready = false;
+	gfx::Renderer::SendMessage(message);
 	
-	gfx::RenderMessage message;
+	universe->UpdateModels();
+	
+	message.ready = true;
 	gfx::Renderer::SendMessage(message);
 }
 

@@ -46,7 +46,8 @@ namespace sim
 		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeedFactor(int _speed_factor);
-		void Tick();
+		virtual void Tick();
+		virtual void UpdateModels() const;
 		
 		virtual Vector3 const & GetPosition() const;
 		virtual void SetPosition(Vector3 const & pos);
