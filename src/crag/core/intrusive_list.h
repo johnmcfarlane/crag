@@ -360,7 +360,7 @@ namespace core
 			template <hook_type Class::* Member>
 			static value_type & get_object(hook_type & h)
 			{
-				return get_owner<Class, hook_type, Member>(h);
+				return ::core::get_owner<Class, hook_type, Member>(h);
 			}
 			
 			template <hook_type Class::* Member>
