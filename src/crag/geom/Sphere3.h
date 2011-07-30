@@ -36,7 +36,7 @@ public:
 };
 
 // Sphere property specializations
-template<typename S> S SphereArea<3>(S radius)
+template<typename S, int N> S SphereArea<S, 3>(S radius)
 {
 	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
 }
