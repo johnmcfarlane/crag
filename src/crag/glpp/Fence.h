@@ -62,7 +62,7 @@ namespace gl
 		friend bool TestFence(Fence const & f)
 		{
 			assert(f.IsInitialized());
-			bool result = glTestFenceAPPLE(f._id);
+			bool result = glTestFenceAPPLE(f._id) != GL_FALSE;
 			GLPP_VERIFY;
 			return result;
 		}
