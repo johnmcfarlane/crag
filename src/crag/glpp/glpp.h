@@ -16,8 +16,12 @@
 
 namespace gl 
 {
-	
-#if defined(WIN32) 	
+
+#if defined(WIN32)
+#define GLPP_USE_ARB
+#endif
+
+#if defined(GLPP_USE_ARB)
 	enum
 	{
 		ARRAY_BUFFER = GL_ARRAY_BUFFER_ARB, 
@@ -49,7 +53,7 @@ namespace gl
 	{
 		GLboolean result;
 		GLPP_CALL(glGetBooleanv(PNAME, & result));
-		return result;
+		return result != GL_FALSE;
 	}
 	
 	// Lots of get and set...

@@ -52,7 +52,7 @@ namespace gl
 	template <typename ELEMENT, GLenum TARGET> void GenBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(! bo.IsInitialized());
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glGenBuffersARB(1, & bo.id));
 #else
 		GLPP_CALL(glGenBuffers(1, & bo.id));
@@ -62,7 +62,7 @@ namespace gl
 	template <typename ELEMENT, GLenum TARGET> void DeleteBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(bo.IsInitialized());
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glDeleteBuffersARB(1, & bo.id));
 #else
 		GLPP_CALL(glDeleteBuffers(1, & bo.id));
@@ -74,7 +74,7 @@ namespace gl
 	{
 		assert(bo.IsInitialized());
 		assert(! bo.IsBound());
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glBindBufferARB(TARGET, bo.id)); 
 #else
 		GLPP_CALL(glBindBuffer(TARGET, bo.id)); 
@@ -85,7 +85,7 @@ namespace gl
 	{
 		assert(bo.IsBound());
 #if ! defined(NDEBUG)
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glBindBufferARB(TARGET, 0)); 
 #else
 		GLPP_CALL(glBindBuffer(TARGET, 0)); 
@@ -97,7 +97,7 @@ namespace gl
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glBufferDataARB(TARGET, size, array, STREAM_DRAW));
 #else
 		GLPP_CALL(glBufferData(TARGET, size, array, STREAM_DRAW));
@@ -108,7 +108,7 @@ namespace gl
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-#if defined(WIN32)
+#if defined(GLPP_USE_ARB)
 		GLPP_CALL(glBufferSubDataARB(TARGET, 0, size, array));
 #else
 		GLPP_CALL(glBufferSubData(TARGET, 0, size, array));
