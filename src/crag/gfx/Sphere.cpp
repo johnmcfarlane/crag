@@ -82,9 +82,9 @@ void gfx::Sphere::InitColors(VertexVector const & vertex_positions)
 		
 		Color c;
 #if 1
-		c.r = (v.pos.x + 1.f) * 127.5;
-		c.g = (v.pos.y + 1.f) * 127.5;
-		c.b = (v.pos.z + 1.f) * 127.5;
+		c.r = GLubyte((v.pos.x + 1.) * 127.5);
+		c.g = GLubyte((v.pos.y + 1.) * 127.5);
+		c.b = GLubyte((v.pos.z + 1.) * 127.5);
 #else
 		float b = v.pos.x * v.pos.y * v.pos.z;
 		float d = Power(Abs(b), .5f) * b / Abs(b);
