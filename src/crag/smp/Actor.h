@@ -12,7 +12,7 @@
 #include "Message.h"
 #include "Lock.h"
 #include "SimpleMutex.h"
-#include "Thread.h"
+#include "ObjectThread.h"
 
 
 namespace smp
@@ -29,7 +29,7 @@ namespace smp
 		// types
 		typedef MessageEnvelope<CLASS> _MessageEnvelope;
 		typedef core::intrusive::list<_MessageEnvelope, & _MessageEnvelope::h> _list;
-		typedef Thread<Actor> Thread;
+		typedef ObjectThread<Actor> Thread;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 		

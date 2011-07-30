@@ -15,7 +15,7 @@
 #include "Mutex.h"
 #include "Semaphore.h"
 #include "SimpleMutex.h"
-#include "Thread.h"
+#include "ObjectThread.h"
 #include "ThreadCondition.h"
 #include "time.h"
 
@@ -211,8 +211,8 @@ namespace
 				worker_semaphore->Increment();
 			}
 		}
-				
-		typedef smp::Thread<Worker> Thread;
+		
+		typedef smp::ObjectThread<Worker> Thread;
 		Thread thread;
 	};
 	
