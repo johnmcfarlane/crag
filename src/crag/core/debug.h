@@ -87,7 +87,7 @@
 // either recursively of in multiple threads.
 // Put at the top of a function. 
 
-#if defined(NDEBUG)
+#if defined(NDEBUG) || defined(WIN32)
 #define FUNCTION_NO_REENTRY DO_NOTHING
 #else
 #define FUNCTION_NO_REENTRY \
