@@ -33,6 +33,9 @@ namespace sim
 		Entity();
 		virtual ~Entity();
 		
+		// Type-specific allocation via script. DO NOT CALL.
+		static void Create(Entity & entity, PyObject & args);
+
 		// Type-specific allocation via script.
 		static void Destroy(Entity & entity);
 		
