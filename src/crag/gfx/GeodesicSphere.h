@@ -242,7 +242,7 @@ namespace gfx
 			double volume_adjust = ideal_volume / actual_volume;
 			double coefficient = Power(volume_adjust, 1. / 3.);
 			
-			return coefficient;
+			return float(coefficient);
 		}
 		
 		// variables

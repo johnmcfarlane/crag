@@ -50,7 +50,7 @@ void Ball::Draw(gfx::Scene const & scene) const
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	gfx::Sphere const & sphere = scene.GetSphere();
-	sphere.Draw(_radius, lod);
+	sphere.Draw(float(_radius), lod);
 	
 	GLPP_VERIFY;
 }
