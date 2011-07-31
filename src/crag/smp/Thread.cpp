@@ -11,8 +11,6 @@
 
 #include "Thread.h"
 
-#include "SDL_thread.h"
-
 
 using namespace smp;
 
