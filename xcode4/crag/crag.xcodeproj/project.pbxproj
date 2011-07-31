@@ -71,6 +71,7 @@
 		5264240A135F49FB00C00EFE /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C3135F49FB00C00EFE /* App.cpp */; };
 		5264240B135F49FB00C00EFE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C5135F49FB00C00EFE /* memory.cpp */; };
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
+		5280DD3B13E4AA220091287D /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5280DD3A13E4AA220091287D /* Thread.cpp */; };
 		52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52858A9B13D6E86300D95BEE /* Ball.cpp */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
@@ -279,6 +280,8 @@
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
+		5280DD3913E4AA220091287D /* ObjectThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectThread.h; sourceTree = "<group>"; };
+		5280DD3A13E4AA220091287D /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		5281798A13DFEC2C009D5B8B /* Fence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		52858A9B13D6E86300D95BEE /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
@@ -645,6 +648,8 @@
 		526423AC135F49FA00C00EFE /* smp */ = {
 			isa = PBXGroup;
 			children = (
+				5280DD3913E4AA220091287D /* ObjectThread.h */,
+				5280DD3A13E4AA220091287D /* Thread.cpp */,
 				52ADFADB1366CA9A00A891D8 /* Actor.h */,
 				526423AD135F49FB00C00EFE /* atomic.h */,
 				526423AE135F49FB00C00EFE /* ForEach.cpp */,
@@ -829,6 +834,7 @@
 				5293538713C8FD1900B5218B /* Sphere.cpp in Sources */,
 				52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */,
 				52207E0013DAB50F00CA0F1F /* Object.cpp in Sources */,
+				5280DD3B13E4AA220091287D /* Thread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
