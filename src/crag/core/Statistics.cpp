@@ -23,6 +23,10 @@ StatInterface::StatInterface(char const * name, float verbosity)
 {
 }
 
+StatInterface::~StatInterface()
+{
+}
+
 float StatInterface::GetVerbosity() const
 {
 	return _verbosity;

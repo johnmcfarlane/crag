@@ -16,8 +16,8 @@ namespace icosahedron
 	// Mesh information for an icosahedron 
 	
 	// no prizes for guessing where I cribbed this code...
-	float const x = .525731112119133606;
-	float const z = .850650808352039932;
+	float const x = .525731112119133606f;
+	float const z = .850650808352039932f;
 	float const o = 0;
 	
 	// coordinates of the 12 vertices

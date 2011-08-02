@@ -333,7 +333,7 @@ void gfx::Renderer::Render()
 	// update fps
 	memmove(_fps_history, _fps_history + 1, sizeof(* _fps_history) * (_fps_history_size - 1));
 	_fps_history[_fps_history_size - 1] = sys::GetTime();
-	STAT_SET (fps, double(_fps_history_size - 1) / (_fps_history[_fps_history_size - 1] - _fps_history[0]));
+	STAT_SET (fps, float(_fps_history_size - 1) / float(_fps_history[_fps_history_size - 1] - _fps_history[0]));
 #endif
 	
 	// Regulator feedback.

@@ -36,10 +36,17 @@ public:
 };
 
 // Sphere property specializations
+#if defined(WIN32)
 template<typename S, int N> S SphereArea<S, 3>(S radius)
 {
 	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
 }
+#else	// TODO: Can this be resolved?
+template<typename S, int N> S SphereArea(S radius)
+{
+	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
+}
+#endif
 
 template<typename S, int N> S SphereVolume(S radius)
 {

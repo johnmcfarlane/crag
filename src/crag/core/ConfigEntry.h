@@ -29,6 +29,10 @@ namespace core
 		{ 
 		}
 		
+		virtual ~ConfigEntry()
+		{
+		}
+		
 		virtual void Get(char * config_string, char * default_string) const = 0;
 
 		// Returns true iff the default has changed.

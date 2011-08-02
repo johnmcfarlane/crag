@@ -30,6 +30,7 @@ namespace core
 	{
 	public:
 		StatInterface (char const * name, float verbosity);
+		virtual ~StatInterface();
 		
 		float GetVerbosity () const;
 		
@@ -56,6 +57,10 @@ namespace core
 		Stat(char const * name, VALUE_TYPE init, float verbosity)
 		: StatInterface(name, verbosity)
 		, _value(init)
+		{
+		}
+		
+		virtual ~Stat()
 		{
 		}
 

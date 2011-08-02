@@ -189,7 +189,7 @@ void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Fo
 	
 	sim::Vector3 const & origin = scene.GetOrigin();
 	form::Vector3 relative_formation_position(form::SimToScene(formation.position, origin));
-	form::Sphere3 relative_sphere(form::SimToScene(sphere.center, origin), sphere.radius);
+	form::Sphere3 relative_sphere(form::SimToScene(sphere.center, origin), form::Scalar(sphere.radius));
 	
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
 	node_buffer.LockTree();
