@@ -35,7 +35,7 @@ void smp::SharedMutex::ReadLock()
 
 void smp::SharedMutex::ReadUnlock()
 {
-	if (AtomicFetchAndSub(read_count, 1) == 1)
+	if (AtomicFetchAndAdd(read_count, -1) == 1)
 	{
 		write_lock.Unlock();				
 	}
@@ -55,7 +55,7 @@ void smp::SharedMutex::WriteUnlock()
 {
 	write_lock.Unlock();
 	
-	if (AtomicFetchAndSub(write_count, 1) == 1) 
+	if (AtomicFetchAndAdd(write_count, -1) == 1) 
 	{
 		read_lock.Unlock();	
 	}

@@ -14,7 +14,6 @@
 #if defined(__GNUC__)
 
 #define AtomicFetchAndAdd(AUGEND, ADDEND) __sync_fetch_and_add(& AUGEND, ADDEND)
-#define AtomicFetchAndSub(AUGEND, ADDEND) __sync_fetch_and_sub(& AUGEND, ADDEND)
 #define AtomicMemoryBarrier __sync_synchronize
 
 #elif defined(WIN32)
