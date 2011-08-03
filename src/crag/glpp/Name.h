@@ -14,6 +14,10 @@
 
 #include "glpp.h"
 
+// TODO: In all the places where textures, buffer objects etc. are
+// tested for not-being-bound immediately prior to binding, should
+// maybe test for nothing-at-all-bounded instead?
+
 
 namespace gl
 {
