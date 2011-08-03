@@ -70,47 +70,18 @@ namespace core
 		bool push_back(CLASS const & source)
 		{
 			verify();
+			
 			size_type header_size = sizeof(size_type);
 			size_type source_size = round_up(sizeof(CLASS));
 			size_type entry_size = header_size + source_size;
 			
-			// if all goes smoothly, the end of the copied-to memory
-			byte * destination_begin = _data_end;
-			byte * destination_end = destination_begin + entry_size;
+			byte * destination_begin, * destination_end;
+			if (! allocate_entry(destination_begin, destination_end, entry_size))
+			{
+				// not enough room.
+				return false;
+			}
 			
-			// if the existing data wraps around,
-			if (_data_begin > _data_end)
-			{
-				// if write will run past the end of the buffer,
-				if (destination_end >= _data_begin)
-				{
-					// not enough room.
-					assert(false);
-					return false;
-				}
-			}
-			else
-			{
-				// if write will run past the end of the entire buffer,
-				if (destination_end > _buffer_end)
-				{
-					// wrap around
-					destination_begin = _buffer_begin;
-					destination_end = destination_begin + entry_size;
-
-					// if writing at the start of the buffer will overwrite the start of the data,
-					if (destination_end >= _data_begin)
-					{
-						// there's not enough room.
-						assert(false);
-						return false;
-					}
-					
-					// write blank header to denote wrap around
-					* reinterpret_cast<size_type *>(_data_end) = 0;
-				}
-			}
-
 			// write header
 			* reinterpret_cast<size_type *>(destination_begin) = entry_size;
 			
@@ -118,8 +89,7 @@ namespace core
 			new (destination_begin + header_size) CLASS (source);
 			
 			// update member variable. this MUST be done last of all for thread safety.
-			_data_end = (destination_end == _buffer_end)
-			? _buffer_begin : destination_end;
+			_data_end = (destination_end == _buffer_end) ? _buffer_begin : destination_end;
 			
 			verify();
 			return true;
@@ -158,8 +128,20 @@ namespace core
 					new_data_begin = _buffer_begin;
 				}
 			}
+
+			// If the buffer is becomming empty,
+			if (new_data_begin == _data_end)
+			{
+				// reset the pointers.
+				// This prevents the situation where it is left
+				// with a zero header at the end of the buffer.
+				init();
+			}
+			else
+			{
+				_data_begin = new_data_begin;
+			}
 			
-			_data_begin = new_data_begin;
 			verify();
 		}
 		
@@ -173,6 +155,34 @@ namespace core
 		
 	private:
 		
+		bool allocate_entry(byte * & destination_begin, byte * & destination_end, size_type entry_size)
+		{
+			destination_begin = _data_end;
+			destination_end = destination_begin + entry_size;
+			
+			// If the existing data is contiguous,
+			if (_data_begin <= _data_end)
+			{
+				// and there's enough room at the end,
+				if (destination_end <= _buffer_end)
+				{
+					// we're good.
+					return true;
+				}
+
+				// wrap around
+				destination_begin = _buffer_begin;
+				destination_end = destination_begin + entry_size;
+				
+				// and write blank header to denote wrap around.
+				* reinterpret_cast<size_type *>(_data_end) = 0;
+			}
+			// Either way, proposed destination now starts earlier than _data_begin.
+			
+			// But does the destination end earlier than _data_begin? 
+			return destination_end < _data_begin;
+		}
+		
 		size_type round_up(size_type num_bytes)
 		{
 			size_t mask = (sizeof(size_type) - 1);
@@ -182,15 +192,22 @@ namespace core
 		void allocate(size_type num_bytes)
 		{
 			assert((num_bytes & (sizeof(size_type) - 1)) == 0);
+			
 			_buffer_begin = new byte [num_bytes];
 			_buffer_end = _buffer_begin + num_bytes;
-			_data_begin = _buffer_begin;
-			_data_end = _buffer_begin;
+			
+			init();
 		}
 		
 		void deallocate()
 		{
 			delete [] _buffer_begin;
+		}
+		
+		void init()
+		{
+			_data_begin = _buffer_begin;
+			_data_end = _buffer_begin;
 		}
 		
 		void verify() const
