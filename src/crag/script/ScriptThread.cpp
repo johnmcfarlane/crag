@@ -152,7 +152,8 @@ FILE_LOCAL_END
 // ScriptThread member definitions
 
 script::ScriptThread::ScriptThread()
-: _source_file(nullptr)
+: super(64)
+, _source_file(nullptr)
 {
 	Assert(singleton == nullptr);
 	singleton = this;

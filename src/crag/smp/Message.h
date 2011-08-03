@@ -41,11 +41,9 @@ namespace smp
 		}
 		
 		// returns false if the Actor should quit
-		virtual void Execute() = 0;
+		virtual void Execute() const = 0;
 		
 	private:
-		core::intrusive::hook<MessageEnvelope> h;
-		
 		// friends
 		friend class Actor<CLASS>;
 	};
@@ -56,6 +54,7 @@ namespace smp
 	template <typename CLASS, typename MESSAGE>
 	class SpecializedMessageEnvelope : public MessageEnvelope<CLASS>
 	{
+		typedef MessageEnvelope<CLASS> super;
 	public:
 		SpecializedMessageEnvelope(CLASS & destination, MESSAGE const & message)
 		: _message(message) 
@@ -64,7 +63,7 @@ namespace smp
 		}
 		
 		// returns true if the Actor should continue (false=terminate)
-		virtual void Execute()
+		virtual void Execute() const
 		{
 			_destination.OnMessage(_message);
 		}

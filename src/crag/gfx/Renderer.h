@@ -53,6 +53,8 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Renderer);
 		
+		typedef smp::Actor<Renderer> super;
+		
 		enum ForegroundRenderPass
 		{
 			NormalPass,

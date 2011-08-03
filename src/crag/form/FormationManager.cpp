@@ -60,7 +60,8 @@ namespace
 
 
 form::FormationManager::FormationManager()
-: quit_flag(false)
+: super(262144)	// TODO: This is crazy!
+, quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , back_mesh_buffer_ready(false)

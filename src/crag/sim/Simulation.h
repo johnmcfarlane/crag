@@ -44,6 +44,8 @@ namespace sim
 	class Simulation : public smp::Actor<Simulation>
 	{
 		OBJECT_SINGLETON(Simulation);
+		
+		typedef smp::Actor<Simulation> super;
 	public:
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 

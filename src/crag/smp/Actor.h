@@ -14,6 +14,8 @@
 #include "SimpleMutex.h"
 #include "ObjectThread.h"
 
+#include "core/ring_buffer.h"
+
 
 namespace smp
 {
@@ -27,14 +29,15 @@ namespace smp
 		OBJECT_NO_COPY(Actor);
 		
 		// types
-		typedef MessageEnvelope<CLASS> _MessageEnvelope;
-		typedef core::intrusive::list<_MessageEnvelope, & _MessageEnvelope::h> _list;
+		typedef MessageEnvelope<CLASS> MessageEnvelope;
+		typedef core::ring_buffer<MessageEnvelope> EnvelopeQueue;
 		typedef ObjectThread<Actor> Thread;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 		
 	public:
-		Actor()
+		Actor(size_t ring_buffer_size)
+		: _envelopes(ring_buffer_size)
 		{
 		}
 		
@@ -58,7 +61,7 @@ namespace smp
 			// type of the smp::Thread templated member function we wish to call
 			typedef void (Thread::*THREAD_FUNCTION)(Actor & object);
 			
-//			// pointer to the function with template parameter of Actor member function
+			// pointer to the function with template parameter of Actor member function
 			// OnLaunch is the function that will be called by the thread class in the new thread.
 			THREAD_FUNCTION f = & Thread::template Launch<& Actor::Run, & Actor::_thread>;
 			
@@ -87,16 +90,16 @@ namespace smp
 		// returns false iff the Actor should quit
 		bool ProcessMessage()
 		{
-			_MessageEnvelope * m = PopMessage();
-			
-			if (m == nullptr)
+			// Slightly risky, but I think we can avoid a lock here.
+			if (_envelopes.empty())
 			{
 				return false;
 			}
-
-			m->Execute();
-			delete m;
 			
+			MessageEnvelope const & envelope = _envelopes.front();
+			envelope.Execute();
+			Lock critical_section(_mutex);
+			_envelopes.pop_front();
 			return true;
 		}
 		
@@ -116,17 +119,8 @@ namespace smp
 		// empty the message queue without executing the messages
 		void FlushMessages()
 		{
-			while (true)
-			{
-				_MessageEnvelope * m = PopMessage();
-				
-				if (m == nullptr)
-				{
-					break;
-				}
-				
-				delete m;
-			}
+			Lock critical_section(_mutex);
+			_envelopes.clear();
 		}
 		
 	private:
@@ -135,56 +129,22 @@ namespace smp
 		{
 			Assert(& destination == this);
 			
-			// TODO: aim towards zero-allocation model.
-			_MessageEnvelope * envelope;
-			
-			envelope = new SpecializedMessageEnvelope<CLASS, MESSAGE>(destination, message);
-			
-			Push(* envelope);
-		}
-		
-		_MessageEnvelope * PopMessage()
-		{
-			// Reading _envelopes outside the lock is potentially risky.
-			// However, the result needs to be double-checked next so bad results
-			// either way are far from catastrophic. 
-			if (_envelopes.empty())
-			{
-				return nullptr;
-			}
-			
-			_MessageEnvelope * envelope = Pop();
-			
-			return envelope;
-		}
-		
-		void Push(_MessageEnvelope & envelope)
-		{
+			SpecializedMessageEnvelope<CLASS, MESSAGE> envelope (destination, message);
+
 			Lock critical_section(_mutex);
 			
-			_envelopes.push_back(envelope);
-		}
-		
-		_MessageEnvelope * Pop()
-		{
-			Lock critical_section(_mutex);
-			
-			if (! _envelopes.empty())
-			{			
-				_MessageEnvelope & envelope = _envelopes.front();
-				_envelopes.pop_front();
-				return & envelope;
-			}
-			else
+			while (! _envelopes.push_back(envelope))
 			{
-				return nullptr;
+				std::cerr << "CRITICAL ERROR: Actor ring buffer full!" << std::endl;
+				assert(false);
+				Sleep(0);
 			}
 		}
 		
 		virtual void Run() = 0;
 		
 		// attributes
-		_list _envelopes;
+		EnvelopeQueue _envelopes;
 		Thread _thread;
 		Mutex _mutex;
 	};

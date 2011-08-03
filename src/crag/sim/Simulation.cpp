@@ -35,7 +35,8 @@
 CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
 sim::Simulation::Simulation()
-: quit_flag(false)
+: super(1024)
+, quit_flag(false)
 , paused(false)
 , capture(false)
 , capture_frame(0)

@@ -302,6 +302,7 @@
 		52B6A5FA136A81CD00ECDEA9 /* intrusive_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intrusive_list.h; sourceTree = "<group>"; };
 		52D79F2113608A04001063D2 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		52D79F2213608A04001063D2 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
+		52DF9F7513E65A9F008D9D7B /* ring_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ring_buffer.h; sourceTree = "<group>"; };
 		52E12AE81399339700711F95 /* MetaClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaClass.h; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
@@ -440,6 +441,7 @@
 				52642318135F49FA00C00EFE /* Statistics.h */,
 				52642319135F49FA00C00EFE /* TextureMapper.cpp */,
 				5264231A135F49FA00C00EFE /* TextureMapper.h */,
+				52DF9F7513E65A9F008D9D7B /* ring_buffer.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -910,7 +912,7 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SHADOW = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				HEADER_SEARCH_PATHS = (
 					"~/include",
 					"~/include/python3.1",

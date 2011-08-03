@@ -71,7 +71,8 @@ namespace
 
 
 gfx::Renderer::Renderer()
-: last_frame_time(sys::GetTime())
+: super(0x10000)
+, last_frame_time(sys::GetTime())
 , quit_flag(false)
 , culling(init_culling)
 , lighting(init_lighting)
