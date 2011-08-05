@@ -35,7 +35,7 @@
 CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
 sim::Simulation::Simulation()
-: super(1024)
+: super(0x400)
 , quit_flag(false)
 , paused(false)
 , capture(false)
@@ -57,6 +57,10 @@ sim::Simulation::~Simulation()
 
 	delete physics_engine;
 	physics_engine = nullptr;
+	
+#if ! defined(NDEBUG)
+	std::cout << "~Simulation: message buffer size=" << GetQueueCapacity() << std::endl;
+#endif
 }
 
 void sim::Simulation::OnMessage(smp::TerminateMessage const & message)

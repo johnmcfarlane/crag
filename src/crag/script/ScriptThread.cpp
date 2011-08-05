@@ -152,7 +152,7 @@ FILE_LOCAL_END
 // ScriptThread member definitions
 
 script::ScriptThread::ScriptThread()
-: super(64)
+: super(0x400)
 , _source_file(nullptr)
 {
 	Assert(singleton == nullptr);
@@ -183,6 +183,10 @@ script::ScriptThread::~ScriptThread()
 
 	Assert(singleton == this);
 	singleton = nullptr;
+
+#if ! defined(NDEBUG)
+	std::cout << "~ScriptThread: message buffer size=" << GetQueueCapacity() << std::endl;
+#endif
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.

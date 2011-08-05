@@ -71,7 +71,7 @@ namespace
 
 
 gfx::Renderer::Renderer()
-: super(0x10000)
+: super(0x8000)
 , last_frame_time(sys::GetTime())
 , quit_flag(false)
 , culling(init_culling)
@@ -90,6 +90,10 @@ gfx::Renderer::~Renderer()
 {
 	Assert(singleton == this);
 	singleton = nullptr;
+
+#if ! defined(NDEBUG)
+	std::cout << "~Renderer: message buffer size=" << GetQueueCapacity() << std::endl;
+#endif
 }
 
 void gfx::Renderer::OnMessage(smp::TerminateMessage const & message)

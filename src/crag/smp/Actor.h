@@ -53,6 +53,11 @@ namespace smp
 			FlushMessages();
 		}
 		
+		size_t GetQueueCapacity() const
+		{
+			return _envelopes.capacity();
+		}
+		
 		void Start()
 		{
 			// Never called from within the thread.
@@ -96,9 +101,12 @@ namespace smp
 				return false;
 			}
 			
+			// TODO: Look into ways to prevent locking of the buffer.
+			Lock critical_section(_mutex);
+			
 			MessageEnvelope const & envelope = _envelopes.front();
 			envelope.Execute();
-			Lock critical_section(_mutex);
+
 			_envelopes.pop_front();
 			return true;
 		}
@@ -135,9 +143,12 @@ namespace smp
 			
 			while (! _envelopes.push_back(envelope))
 			{
-				std::cerr << "CRITICAL ERROR: Actor ring buffer full!" << std::endl;
-				assert(false);
-				Sleep(0);
+				if (! _envelopes.reserve(_envelopes.capacity() << 1))
+				{
+					// may cause a log-up, or buffer may clear
+					assert(false);
+					smp::Sleep(0);
+				}
 			}
 		}
 		

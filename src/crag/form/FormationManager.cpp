@@ -60,7 +60,7 @@ namespace
 
 
 form::FormationManager::FormationManager()
-: super(262144)	// TODO: This is crazy!
+: super(0x8000)
 , quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
@@ -103,6 +103,10 @@ form::FormationManager::~FormationManager()
 	}
 	
 	Assert(formation_set.empty());
+
+#if ! defined(NDEBUG)
+	std::cout << "~FormationManager: message buffer size=" << GetQueueCapacity() << std::endl;
+#endif
 }
 
 #if defined(VERIFY)
