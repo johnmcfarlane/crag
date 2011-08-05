@@ -180,7 +180,7 @@ void gfx::Renderer::ProcessMessagesAndGetReady()
 	{
 		if (! ProcessMessage())
 		{
-			smp::Sleep(0);
+			smp::Sleep(0.001);
 		}
 	}
 }

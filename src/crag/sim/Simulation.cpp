@@ -132,7 +132,7 @@ void sim::Simulation::Run()
 		{
 			if (ProcessMessages() == 0)
 			{
-				smp::Sleep(0);
+				smp::Sleep(0.001);
 			}
 		}
 		else

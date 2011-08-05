@@ -228,7 +228,7 @@ PyObject * script::ScriptThread::PollEvent()
 	if (idle)
 	{
 		// Yield for a little while
-		smp::Sleep(0);
+		smp::Sleep(0.001);
 	}
 	
 	// There are no more pending events.
