@@ -13,10 +13,10 @@
 #include "FormationManager.h"
 
 #include "Formation.h"
-#include "Mesh.h"
 
-#include "form/Node/NodeBuffer.h"
+#include "form/node/NodeBuffer.h"
 #include "form/scene/ForEachIntersection.h"
+#include "form/scene/Mesh.h"
 #include "form/scene/MeshBufferObject.h"
 
 #include "sim/axes.h"
