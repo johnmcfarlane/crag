@@ -19,7 +19,6 @@
 
 #include "physics/Engine.h"
 
-#include "form/scene/SceneThread.h"
 #include "form/FormationManager.h"
 
 #include "script/ScriptThread.h"
@@ -132,7 +131,7 @@ void sim::Simulation::Run()
 		{
 			if (ProcessMessages() == 0)
 			{
-				smp::Sleep(0.001);
+				smp::Sleep(0);
 			}
 		}
 		else

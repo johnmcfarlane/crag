@@ -31,7 +31,6 @@
 		526423DB135F49FB00C00EFE /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642338135F49FA00C00EFE /* Polyhedron.cpp */; };
 		526423DC135F49FB00C00EFE /* Regulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264233A135F49FA00C00EFE /* Regulator.cpp */; };
 		526423DD135F49FB00C00EFE /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264233C135F49FA00C00EFE /* Scene.cpp */; };
-		526423DE135F49FB00C00EFE /* SceneThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264233E135F49FA00C00EFE /* SceneThread.cpp */; };
 		526423E0135F49FB00C00EFE /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642342135F49FA00C00EFE /* VertexBuffer.cpp */; };
 		526423E2135F49FB00C00EFE /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642358135F49FA00C00EFE /* Debug.cpp */; };
 		526423E3135F49FB00C00EFE /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235A135F49FA00C00EFE /* Font.cpp */; };
@@ -167,8 +166,6 @@
 		5264233B135F49FA00C00EFE /* Regulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Regulator.h; sourceTree = "<group>"; };
 		5264233C135F49FA00C00EFE /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = Scene.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		5264233D135F49FA00C00EFE /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Scene.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5264233E135F49FA00C00EFE /* SceneThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneThread.cpp; sourceTree = "<group>"; };
-		5264233F135F49FA00C00EFE /* SceneThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneThread.h; sourceTree = "<group>"; };
 		52642342135F49FA00C00EFE /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
 		52642343135F49FA00C00EFE /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
 		52642348135F49FA00C00EFE /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
@@ -499,8 +496,6 @@
 				5264233B135F49FA00C00EFE /* Regulator.h */,
 				5264233C135F49FA00C00EFE /* Scene.cpp */,
 				5264233D135F49FA00C00EFE /* Scene.h */,
-				5264233E135F49FA00C00EFE /* SceneThread.cpp */,
-				5264233F135F49FA00C00EFE /* SceneThread.h */,
 				52642342135F49FA00C00EFE /* VertexBuffer.cpp */,
 				52642343135F49FA00C00EFE /* VertexBuffer.h */,
 			);
@@ -791,7 +786,6 @@
 				526423DB135F49FB00C00EFE /* Polyhedron.cpp in Sources */,
 				526423DC135F49FB00C00EFE /* Regulator.cpp in Sources */,
 				526423DD135F49FB00C00EFE /* Scene.cpp in Sources */,
-				526423DE135F49FB00C00EFE /* SceneThread.cpp in Sources */,
 				526423E0135F49FB00C00EFE /* VertexBuffer.cpp in Sources */,
 				526423E2135F49FB00C00EFE /* Debug.cpp in Sources */,
 				526423E3135F49FB00C00EFE /* Font.cpp in Sources */,

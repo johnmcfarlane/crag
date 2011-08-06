@@ -18,7 +18,6 @@
 #include "physics/Engine.h"
 
 #include "form/FormationManager.h"
-#include "form/scene/SceneThread.h"
 
 
 namespace
