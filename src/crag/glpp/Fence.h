@@ -68,6 +68,7 @@ namespace gl
 	{
 		assert(! f.IsInitialized());
 		GLPP_CALL(glGenFencesAPPLE(1, & f._id));
+		return true;
 	}
 	inline void DeleteFence(Fence & f)
 	{
