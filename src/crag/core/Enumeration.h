@@ -53,7 +53,7 @@ namespace core
 			Assert(find(_name) == nullptr);	// entries must be unique
 			Assert(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
 			
-			iterator insertion = std::upper_bound(begin(), end(), _name, compare);
+			iterator insertion = std::upper_bound(begin(), end(), * this);
 			_values.insert(insertion, * this);
 			
 			Assert(find(_name) != nullptr);
@@ -62,6 +62,11 @@ namespace core
 		~Enumeration()
 		{
 			_values.remove(* this);
+		}
+
+		bool operator<(Enumeration const & rhs) const
+		{
+			return (_name != rhs._name) && strcmp(_name, rhs._name) < 0;
 		}
 		
 		bool operator==(name_type name) const
@@ -107,12 +112,6 @@ namespace core
 		static const_iterator end()
 		{
 			return _values.end();
-		}
-		
-	private:
-		static bool compare(name_type lhs, Enumeration const & rhs)
-		{
-			return strcmp(lhs, rhs._name) < 0;
 		}
 	};
 	
