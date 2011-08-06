@@ -93,6 +93,7 @@ void Skybox::Draw(Scene const & scene) const
 			gl::TextureRgba8 const & side = sides[axis][pole];
 			gl::BindTexture(side);
 			vbo.DrawStrip(index, 4);
+			gl::UnbindTexture(side);
 			index += 4;
 		}
 	}
