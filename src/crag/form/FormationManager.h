@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "form/scene/MeshBufferObject.h"
 #include "form/scene/Regulator.h"
 #include "form/scene/Scene.h"
 
@@ -41,6 +40,7 @@ namespace form
 	
 	class FormationFunctor;
 	class Formation;
+	class MeshBufferObject;
 	class Scene;
 	
 	typedef std::set<Formation *> FormationSet;
@@ -119,10 +119,10 @@ namespace form
 	private:
 		void SetCameraPos(sim::CameraProjection const & projection);
 	public:
-		bool PollMesh();
+		bool PollMesh(MeshBufferObject & back_mesh);
 
 		// Called by the Renderer.
-		void Render(gfx::Pov const & pov);
+		void Render();
 	private:
 
 		void Tick();
@@ -145,7 +145,6 @@ namespace form
 		
 		// types
 		typedef core::double_buffer<Mesh *> MeshDoubleBuffer;
-		typedef core::double_buffer<MeshBufferObject> MboDoubleBuffer;
 		typedef core::double_buffer<Scene> SceneDoubleBuffer;
 		
 		// attributes
@@ -162,8 +161,6 @@ namespace form
 		sys::TimeType mesh_generation_time;
 		int rendered_num_quaternia;
 		
-		MboDoubleBuffer mbo_buffers;
-
 		Regulator regulator;
 		sim::Ray3 _camera_pos;
 

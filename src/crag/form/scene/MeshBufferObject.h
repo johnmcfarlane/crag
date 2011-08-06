@@ -15,6 +15,7 @@
 #include "MeshProperties.h"
 
 #include "glpp/Mesh.h"
+#include "glpp/Vertex.h"
 
 
 namespace gfx 

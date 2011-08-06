@@ -10,17 +10,21 @@
 
 #pragma once
 
-#include "glpp/Fence.h"
 #include "defs.h"
 
-#include "glpp/RenderBuffer.h"
+#include "form/scene/MeshBufferObject.h"
+
+#include "glpp/Fence.h"
 #include "glpp/FrameBuffer.h"
+#include "glpp/RenderBuffer.h"
 
 #include "smp/Actor.h"
 
 #include "sys/App.h"
 
 #include "geom/Matrix4.h"
+
+#include "core/double_buffer.h"
 
 
 namespace sim
@@ -116,11 +120,11 @@ namespace gfx
 		void RenderForeground() const;
 		bool BeginRenderForeground(ForegroundRenderPass pass) const;
 		void RenderForegroundPass(ForegroundRenderPass pass) const;
+		void RenderFormations() const;
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
 		void EnableLights(bool enabled) const;
 		
-		// returns the number of objects renderer
 		void RenderStage(RenderStage::type render_stage) const;
 		void RenderStage(ObjectVector const & objects) const;
 		
@@ -133,6 +137,9 @@ namespace gfx
 
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
+		
+		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
+		MboDoubleBuffer mbo_buffers;
 		
 		sys::TimeType last_frame_time;
 		

@@ -19,6 +19,7 @@
 #include "Object.h"
 
 #include "form/FormationManager.h"
+#include "form/node/NodeBuffer.h"
 
 #include "sim/axes.h"
 #include "sim/Simulation.h"
@@ -195,6 +196,16 @@ void gfx::Renderer::Init()
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
 	
+	for (int index = 0; index < 2; ++ index)
+	{
+		// initialize mesh buffer
+		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
+		mbo.Init();
+		mbo.Bind();
+		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
+		mbo.Unbind();
+	}
+	
 	gl::GenFence(_fence1);
 	gl::GenFence(_fence2);
 	
@@ -213,6 +224,12 @@ void gfx::Renderer::Deinit()
 	
 	gl::DeleteFence(_fence2);
 	gl::DeleteFence(_fence1);
+
+	for (int index = 0; index < 2; ++ index)
+	{
+		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
+		mbo.Deinit();
+	}
 	
 	delete scene;
 }
@@ -312,7 +329,11 @@ void gfx::Renderer::Render()
 {
 	// Render the scene to the back buffer.
 	form::FormationManager & formation_manager = form::FormationManager::Ref();	
-	formation_manager.PollMesh();
+	form::MeshBufferObject & back_mbo = mbo_buffers.back();
+	if (formation_manager.PollMesh(back_mbo))
+	{
+		mbo_buffers.flip();
+	}
 	
 	RenderScene();
 
@@ -470,15 +491,33 @@ void gfx::Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 		return;
 	}
 	
-	// Render the formations.
-	form::FormationManager & fm = form::FormationManager::Ref();
-	fm.Render(scene->GetPov());
+	RenderFormations();
 	
 	RenderStage(RenderStage::foreground);
 	
 	EndRenderForeground(pass);
 	
 	VerifyRenderState();
+}
+
+void gfx::Renderer::RenderFormations() const
+{
+	// Render the formations.
+	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
+	if (front_buffer.GetNumPolys() <= 0)
+	{
+		return;
+	}
+	
+	form::FormationManager & fm = form::FormationManager::Ref();
+	fm.Render();
+	
+	// Draw the mesh!
+	front_buffer.Bind();
+	front_buffer.Activate(scene->GetPov());
+	front_buffer.Draw();
+	front_buffer.Deactivate();
+	GLPP_VERIFY;
 }
 
 void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const

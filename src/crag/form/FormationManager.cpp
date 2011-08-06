@@ -17,11 +17,10 @@
 
 #include "form/Node/NodeBuffer.h"
 #include "form/scene/ForEachIntersection.h"
+#include "form/scene/MeshBufferObject.h"
 
 #include "sim/axes.h"
 #include "sim/Observer.h"
-
-#include "gfx/Pov.h"
 
 #include "glpp/glpp.h"
 
@@ -71,14 +70,6 @@ form::FormationManager::FormationManager()
 {
 	for (int index = 0; index < 2; ++ index)
 	{
-		// initialize mesh buffer
-		// TODO: This belongs in the OpenGL thread.
-		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
-		mbo.Init();
-		mbo.Bind();
-		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
-		mbo.Unbind();
-		
 		// TODO: Is there a 1:1 Mesh/Scene mapping? If so, Mesh should live in Scene.
 		MeshDoubleBuffer::value_type & mesh = meshes[index];
 		mesh = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
@@ -95,9 +86,6 @@ form::FormationManager::~FormationManager()
 	
 	for (int index = 0; index < 2; ++ index)
 	{
-		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
-		mbo.Deinit();
-		
 		delete meshes [index];
 	}
 	
@@ -253,7 +241,7 @@ void form::FormationManager::SetCameraPos(sim::CameraProjection const & projecti
 	_camera_pos = axes::GetCameraRay(projection.pos, projection.rot);
 }
 
-bool form::FormationManager::PollMesh()
+bool form::FormationManager::PollMesh(MeshBufferObject & mbo)
 {
 	STAT_SET (mesh_generation, enable_mesh_generation);
 	STAT_SET (dynamic_origin, enable_dynamic_origin);
@@ -270,15 +258,13 @@ bool form::FormationManager::PollMesh()
 	
 	Mesh & back_mesh = ref(meshes.back()); 
 	
-	mbo_buffers.back().Bind();
-	mbo_buffers.back().Set(back_mesh);
-	mbo_buffers.back().Unbind();
-	
-	mbo_buffers.flip();
+	mbo.Bind();
+	mbo.Set(back_mesh);
+	mbo.Unbind();
 	
 	back_mesh_buffer_ready = false;
 
-	STAT_SET (num_polys, mbo_buffers.front().GetNumPolys());
+	STAT_SET (num_polys, mbo.GetNumPolys());
 
 	// Used to live inside Render.
 	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
@@ -286,13 +272,8 @@ bool form::FormationManager::PollMesh()
 	return true;
 }
 
-void form::FormationManager::Render(gfx::Pov const & pov)
+void form::FormationManager::Render()
 {
-	if (mbo_buffers.front().GetNumPolys() <= 0)
-	{
-		return;
-	}
-
 	// When asking the regulator to adjust the number of quaterna.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
 	rendered_num_quaternia = active_buffer.GetNumQuaternaUsed();
@@ -309,14 +290,6 @@ void form::FormationManager::Render(gfx::Pov const & pov)
 	GLPP_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
 
 	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
-	
-	// Draw the mesh!
-	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	front_buffer.Bind();
-	front_buffer.Activate(pov);
-	front_buffer.Draw();
-	front_buffer.Deactivate();
-	GLPP_VERIFY;
 }
 
 // The tick function of the scene thread. 
