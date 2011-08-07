@@ -73,6 +73,9 @@ namespace sys
 	// init
 	bool Init(Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
+
+	bool InitGl();
+	void DeinitGl();
 	
 	// input
 	bool IsKeyDown(KeyCode key_code);
@@ -82,7 +85,6 @@ namespace sys
 	Vector2i GetWindowSize();
 	//SDL_Surface & GetVideoSurface();
 	void SwapBuffers();
-	void MakeCurrent();
 	
 	bool GetEvent(Event & event, bool block);
 	bool HasFocus();

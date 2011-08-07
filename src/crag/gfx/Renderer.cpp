@@ -31,6 +31,7 @@
 
 
 using sys::TimeType;
+using namespace gfx;
 
 
 CONFIG_DEFINE (multisample, bool, false);
@@ -39,7 +40,7 @@ namespace
 {
 
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
-	CONFIG_DEFINE (background_ambient_color, gfx::Color4f, gfx::Color4f(0.1f));
+	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 
 	CONFIG_DEFINE (init_culling, bool, true);
@@ -54,10 +55,10 @@ namespace
 	STAT (pos, sim::Vector3, .3f);
 	STAT_DEFAULT (rot, sim::Matrix4, .9f);
 	
-	void SetForegroundFrustum(gfx::Scene const & scene, bool wireframe)
+	void SetForegroundFrustum(Scene const & scene, bool wireframe)
 	{
-		gfx::Pov const & pov = scene.GetPov();
-		gfx::Frustum frustum = pov.frustum;
+		Pov const & pov = scene.GetPov();
+		Frustum frustum = pov.frustum;
 		frustum.near_z = std::numeric_limits<float>::max();
 
 		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
@@ -71,7 +72,7 @@ namespace
 }	// namespace
 
 
-gfx::Renderer::Renderer()
+Renderer::Renderer()
 : super(0x8000)
 , last_frame_time(sys::GetTime())
 , quit_flag(false)
@@ -87,7 +88,7 @@ gfx::Renderer::Renderer()
 #endif
 }
 
-gfx::Renderer::~Renderer()
+Renderer::~Renderer()
 {
 	Assert(singleton == this);
 	singleton = nullptr;
@@ -97,38 +98,38 @@ gfx::Renderer::~Renderer()
 #endif
 }
 
-void gfx::Renderer::OnMessage(smp::TerminateMessage const & message)
+void Renderer::OnMessage(smp::TerminateMessage const & message)
 {
 	quit_flag = true;
 }
 
-void gfx::Renderer::OnMessage(AddObjectMessage const & message)
+void Renderer::OnMessage(AddObjectMessage const & message)
 {
 	Object & object = message._object;
 	object.Init();
 	scene->AddObject(object);
 }
 
-void gfx::Renderer::OnMessage(RemoveObjectMessage const & message)
+void Renderer::OnMessage(RemoveObjectMessage const & message)
 {
 	Object & object = message._object;
 	scene->RemoveObject(object);
 	delete & object;
 }
 
-void gfx::Renderer::OnMessage(RenderReadyMessage const & message)
+void Renderer::OnMessage(RenderReadyMessage const & message)
 {
 	ready = message.ready;
 }
 
-void gfx::Renderer::OnMessage(ResizeMessage const & message)
+void Renderer::OnMessage(ResizeMessage const & message)
 {
 	scene->SetResolution(message.size);
 	form::FormationManager::Ref().ResetRegulator();
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void gfx::Renderer::OnMessage(sim::SetCameraMessage const & message)
+void Renderer::OnMessage(sim::SetCameraMessage const & message)
 {
 	scene->SetCamera(message.projection.pos, message.projection.rot);
 }
@@ -139,7 +140,7 @@ void gfx::Renderer::OnMessage(sim::SetCameraMessage const & message)
 #define INIT(CAP,ENABLED) { CAP,ENABLED,#CAP }
 #endif
 
-gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
+Renderer::StateParam const Renderer::init_state[] =
 {
 	INIT(GL_COLOR_MATERIAL, true),
 	INIT(GL_TEXTURE_2D, false),
@@ -155,16 +156,20 @@ gfx::Renderer::StateParam const gfx::Renderer::init_state[] =
 	INIT(GL_POLYGON_SMOOTH, false)
 };
 
-void gfx::Renderer::Run()
+void Renderer::Run()
 {
 	FUNCTION_NO_REENTRY;
 	
-	Init();
+	if (! Init())
+	{
+		return;
+	}
+
 	MainLoop();
 	Deinit();
 }
 
-void gfx::Renderer::MainLoop()
+void Renderer::MainLoop()
 {
 	do
 	{
@@ -174,7 +179,7 @@ void gfx::Renderer::MainLoop()
 	while (! quit_flag);
 }
 
-void gfx::Renderer::ProcessMessagesAndGetReady()
+void Renderer::ProcessMessagesAndGetReady()
 {
 	ProcessMessages();
 	while (! ready)
@@ -186,12 +191,15 @@ void gfx::Renderer::ProcessMessagesAndGetReady()
 	}
 }
 
-void gfx::Renderer::Init()
+bool Renderer::Init()
 {
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
-	sys::MakeCurrent();
+	if (! sys::InitGl())
+	{
+		return false;
+	}
 	
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
@@ -212,9 +220,10 @@ void gfx::Renderer::Init()
 	InitRenderState();
 	
 	Debug::Init();
+	return true;
 }
 
-void gfx::Renderer::Deinit()
+void Renderer::Deinit()
 {
 	Debug::Deinit();
 	
@@ -222,8 +231,15 @@ void gfx::Renderer::Deinit()
 	init_lighting = lighting;
 	init_wireframe = wireframe;
 	
-	gl::DeleteFence(_fence2);
-	gl::DeleteFence(_fence1);
+	if (_fence2.IsInitialized())
+	{
+		gl::DeleteFence(_fence2);
+	}
+
+	if (_fence1.IsInitialized())
+	{
+		gl::DeleteFence(_fence1);
+	}
 
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -232,9 +248,11 @@ void gfx::Renderer::Deinit()
 	}
 	
 	delete scene;
+
+	sys::DeinitGl();
 }
 
-void gfx::Renderer::InitRenderState()
+void Renderer::InitRenderState()
 {
 	StateParam const * param = init_state;
 	while (param->cap != GL_INVALID_ENUM)
@@ -250,7 +268,7 @@ void gfx::Renderer::InitRenderState()
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
-	GLPP_CALL(gl::SetColor(gfx::Color4f::White().GetArray()));
+	GLPP_CALL(gl::SetColor(Color4f::White().GetArray()));
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -263,7 +281,7 @@ void gfx::Renderer::InitRenderState()
 	VerifyRenderState();
 }
 
-void gfx::Renderer::VerifyRenderState() const
+void Renderer::VerifyRenderState() const
 {
 #if ! defined(NDEBUG)
 	StateParam const * param = init_state;
@@ -282,14 +300,14 @@ void gfx::Renderer::VerifyRenderState() const
 	// TODO: Write equivalent functions for all state in GL. :S
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
 	
-	gfx::Color4f rgba;
+	Color4f rgba;
 	gl::GetColor(rgba.GetArray());
-	Assert(rgba == gfx::Color4f::White());
+	Assert(rgba == Color4f::White());
 #endif	// NDEBUG
 }
 
 // TODO: Remove?
-bool gfx::Renderer::HasShadowSupport() const
+bool Renderer::HasShadowSupport() const
 {
 	if (! enable_shadow_mapping) {
 		return false;
@@ -310,22 +328,22 @@ bool gfx::Renderer::HasShadowSupport() const
 	return true;
 }
 
-void gfx::Renderer::ToggleLighting()
+void Renderer::ToggleLighting()
 {
 	lighting = ! lighting;
 }
 
-void gfx::Renderer::ToggleCulling()
+void Renderer::ToggleCulling()
 {
 	culling = ! culling;
 }
 
-void gfx::Renderer::ToggleWireframe()
+void Renderer::ToggleWireframe()
 {
 	wireframe = ! wireframe;
 }
 
-void gfx::Renderer::Render()
+void Renderer::Render()
 {
 	// Render the scene to the back buffer.
 	form::FormationManager & formation_manager = form::FormationManager::Ref();	
@@ -338,14 +356,14 @@ void gfx::Renderer::Render()
 	RenderScene();
 
 	// Flip the front and back buffers and set fences.
-	gl::SetFence(_fence1);
+	SetFence(_fence1);
 	sys::SwapBuffers();
-	gl::SetFence(_fence2);
+	SetFence(_fence2);
 	
 	// Get timing information from the fences.
-	gl::FinishFence(_fence1);
+	FinishFence(_fence1);
 	TimeType pre_sync = sys::GetTime();
-	gl::FinishFence(_fence2);
+	FinishFence(_fence2);
 	TimeType post_sync = sys::GetTime();
 	TimeType idle = post_sync - pre_sync;
 	STAT_SET(idle, idle);
@@ -369,7 +387,7 @@ void gfx::Renderer::Render()
 	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
 }
 
-void gfx::Renderer::RenderScene() const
+void Renderer::RenderScene() const
 {
 	VerifyRenderState();
 
@@ -387,7 +405,7 @@ void gfx::Renderer::RenderScene() const
 	VerifyRenderState();
 }
 
-void gfx::Renderer::RenderBackground() const
+void Renderer::RenderBackground() const
 {
 	ObjectVector const & objects = scene->GetObjects(RenderStage::background);
 
@@ -407,7 +425,7 @@ void gfx::Renderer::RenderBackground() const
 	}
 }
 
-void gfx::Renderer::RenderForeground() const
+void Renderer::RenderForeground() const
 {
 	// Adjust near and far plane
 	SetForegroundFrustum(* scene, wireframe && false);
@@ -423,7 +441,7 @@ void gfx::Renderer::RenderForeground() const
 	}
 }
 
-bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
+bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 {
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
 		
@@ -484,7 +502,7 @@ bool gfx::Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 
 // Each pass draws all the geometry. Typically, there is one per frame
 // unless wireframe mode is on. 
-void gfx::Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
+void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 {
 	if (! BeginRenderForeground(pass))
 	{
@@ -500,7 +518,7 @@ void gfx::Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 	VerifyRenderState();
 }
 
-void gfx::Renderer::RenderFormations() const
+void Renderer::RenderFormations() const
 {
 	// Render the formations.
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
@@ -520,7 +538,7 @@ void gfx::Renderer::RenderFormations() const
 	GLPP_VERIFY;
 }
 
-void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const
+void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 {
 	// Reset state
 	if (lighting && pass != WireframePass2)
@@ -571,7 +589,7 @@ void gfx::Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 }
 
 // Nothing to do with shadow maps; sets/unsets the lights in the main scene.
-void gfx::Renderer::EnableLights(bool enabled) const
+void Renderer::EnableLights(bool enabled) const
 {
 	if (enabled)
 	{
@@ -610,13 +628,13 @@ void gfx::Renderer::EnableLights(bool enabled) const
 	}
 }
 
-void gfx::Renderer::RenderStage(RenderStage::type render_stage) const
+void Renderer::RenderStage(RenderStage::type render_stage) const
 {
 	ObjectVector const & objects = scene->GetObjects(render_stage);
 	RenderStage(objects);
 }
 
-void gfx::Renderer::RenderStage(ObjectVector const & objects) const
+void Renderer::RenderStage(ObjectVector const & objects) const
 {
 	for (ObjectVector::const_iterator i = objects.begin(); i != objects.end(); ++ i)
 	{
@@ -625,7 +643,7 @@ void gfx::Renderer::RenderStage(ObjectVector const & objects) const
 	}
 }
 
-void gfx::Renderer::DebugDraw() const
+void Renderer::DebugDraw() const
 {
 #if defined(GFX_DEBUG)
 	Pov const & pov = scene->GetPov();
@@ -645,7 +663,7 @@ void gfx::Renderer::DebugDraw() const
 	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
 	STAT_SET (rot, pov.rot);	// std::streamsize previous_precision = out.precision(2); ...; out.precision(previous_precision);
 	
-	// The string into which is written gfx::Debug text.
+	// The string into which is written Debug text.
 	std::stringstream out_stream;
 	
 	for (core::Statistics::iterator i = core::Statistics::begin(); i != core::Statistics::end(); ++ i)
@@ -663,5 +681,21 @@ void gfx::Renderer::DebugDraw() const
 #endif
 }
 
+void Renderer::SetFence(gl::Fence & fence)
+{
+	if (fence.IsInitialized())
+	{
+		gl::SetFence(fence);
+	}
+}
 
-gfx::Renderer * gfx::Renderer::singleton = nullptr;
+void Renderer::FinishFence(gl::Fence & fence)
+{
+	if (fence.IsInitialized())
+	{
+		gl::FinishFence(fence);
+	}
+}
+
+
+Renderer * Renderer::singleton = nullptr;

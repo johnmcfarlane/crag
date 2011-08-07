@@ -12,7 +12,7 @@
 
 #include "App.h"
 
-#include "ConfigEntry.h"
+#include "core/ConfigEntry.h"
 
 #include "glpp/glpp.h"
 
@@ -49,7 +49,7 @@ namespace
 	}
 	
 	
-	bool InitGl()
+	bool InitGlew()
 	{
 #if defined(GLEW_STATIC )
 		GLenum glew_err = glewInit();
@@ -88,7 +88,6 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	}
 	
 	Assert(window == nullptr);
-	Assert(context == nullptr);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -121,16 +120,9 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 							  resolution.x, resolution.y, 
 							  flags);
 	
-	context = SDL_GL_CreateContext(window);
-	
 	if (SDL_GL_SetSwapInterval(1))
 	{
 		std::cerr << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
-		return false;
-	}
-	
-	if (! InitGl())
-	{
 		return false;
 	}
 	
@@ -148,16 +140,39 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 void sys::Deinit()
 {
 	Assert(window != nullptr);
-	Assert(context != nullptr);
-
-	SDL_GL_DeleteContext(context);
-	context = nullptr;
 
 	SDL_DestroyWindow(window);
 	window = nullptr;
 	
 	SDL_Quit();
 
+}
+
+bool sys::InitGl()
+{
+	Assert(context == nullptr);
+	context = SDL_GL_CreateContext(window);
+	
+	if (SDL_GL_MakeCurrent(window, context) != 0)
+	{
+		// TODO: SDL error reporting support - like OpenGL
+		return false;
+	}
+
+	if (! InitGlew())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void sys::DeinitGl()
+{
+	Assert(context != nullptr);
+
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
 }
 
 bool sys::IsKeyDown(KeyCode key_code)
@@ -169,7 +184,7 @@ bool sys::IsKeyDown(KeyCode key_code)
 		
 		if (key_code < num_keys)
 		{
-			return key_down[key_code];
+			return key_down[key_code] != false;
 		}
 	}
 	
@@ -185,14 +200,6 @@ bool sys::IsButtonDown(MouseButton mouse_button)
 Vector2i sys::GetWindowSize()
 {
 	return window_size;
-}
-
-void sys::MakeCurrent()
-{
-	if (SDL_GL_MakeCurrent(window, context) != 0)
-	{
-		Assert(false);
-	}
 }
 
 void sys::SwapBuffers()

@@ -97,7 +97,7 @@ namespace gfx
 		void MainLoop();
 		void ProcessMessagesAndGetReady();
 
-		void Init();
+		bool Init();
 		void Deinit();
 		
 		void InitRenderState();
@@ -129,6 +129,9 @@ namespace gfx
 		void RenderStage(ObjectVector const & objects) const;
 		
 		void DebugDraw() const;
+
+		static void SetFence(gl::Fence & fence);
+		static void FinishFence(gl::Fence & fence);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
