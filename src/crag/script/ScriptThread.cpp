@@ -240,7 +240,7 @@ bool script::ScriptThread::RedirectPythonOutput(char const * filename)
 {
 	PyObject* sys = PyImport_ImportModule("sys");
 	PyObject* io = PyImport_ImportModule("io");
-	PyObject* pystdout = PyObject_CallMethod(io, "open", "ss", "python.txt", "wt");
+	PyObject* pystdout = PyObject_CallMethod(io, const_cast<char *>("open"), const_cast<char *>("ss"), "python.txt", "wt");
 
 	if (-1 == PyObject_SetAttrString(sys, "stdout", pystdout)) 
 	{

@@ -46,7 +46,6 @@
 		526423ED135F49FB00C00EFE /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264237B135F49FA00C00EFE /* Body.cpp */; };
 		526423F0135F49FB00C00EFE /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642382135F49FA00C00EFE /* SphericalBody.cpp */; };
 		526423F1135F49FB00C00EFE /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = 52642384135F49FA00C00EFE /* readme.html */; };
-		526423F2135F49FB00C00EFE /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642387135F49FA00C00EFE /* Script.cpp */; };
 		526423F3135F49FB00C00EFE /* ScriptThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642389135F49FA00C00EFE /* ScriptThread.cpp */; };
 		526423F4135F49FB00C00EFE /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264238D135F49FA00C00EFE /* Controller.cpp */; };
 		526423F5135F49FB00C00EFE /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642390135F49FA00C00EFE /* Entity.cpp */; };
@@ -221,8 +220,6 @@
 		52642382135F49FA00C00EFE /* SphericalBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphericalBody.cpp; sourceTree = "<group>"; };
 		52642383135F49FA00C00EFE /* SphericalBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphericalBody.h; sourceTree = "<group>"; };
 		52642384135F49FA00C00EFE /* readme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = readme.html; sourceTree = "<group>"; };
-		52642387135F49FA00C00EFE /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
-		52642388135F49FA00C00EFE /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		52642389135F49FA00C00EFE /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; usesTabs = 1; wrapsLines = 0; };
 		5264238A135F49FA00C00EFE /* ScriptThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptThread.h; sourceTree = "<group>"; };
 		5264238C135F49FA00C00EFE /* axes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = axes.h; sourceTree = "<group>"; };
@@ -597,8 +594,6 @@
 			children = (
 				5282AAA0139E007B0076E4F4 /* Object.h */,
 				52E12AE81399339700711F95 /* MetaClass.h */,
-				52642387135F49FA00C00EFE /* Script.cpp */,
-				52642388135F49FA00C00EFE /* Script.h */,
 				52642389135F49FA00C00EFE /* ScriptThread.cpp */,
 				5264238A135F49FA00C00EFE /* ScriptThread.h */,
 			);
@@ -800,7 +795,6 @@
 				526423EC135F49FB00C00EFE /* pch.cpp in Sources */,
 				526423ED135F49FB00C00EFE /* Body.cpp in Sources */,
 				526423F0135F49FB00C00EFE /* SphericalBody.cpp in Sources */,
-				526423F2135F49FB00C00EFE /* Script.cpp in Sources */,
 				526423F3135F49FB00C00EFE /* ScriptThread.cpp in Sources */,
 				526423F4135F49FB00C00EFE /* Controller.cpp in Sources */,
 				526423F5135F49FB00C00EFE /* Entity.cpp in Sources */,
