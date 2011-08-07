@@ -247,7 +247,7 @@ namespace
 	{
 		if (scheduler_num_threads != 0)
 		{
-			return scheduler_num_threads;
+			return scheduler_num_threads - 1;
 		}
 		
 		// The minus one is because the initiating thread picks up work 
@@ -313,7 +313,7 @@ void smp::Init(int num_reserved_cores)
 	}
 
 	std::cout << "scheduler: num CPUs = " << num_cpus << '\n';
-	std::cout << "scheduler: num slots = " << num_worker_threads << '\n';
+	std::cout << "scheduler: num worker threads = " << num_worker_threads << '\n';
 }
 
 void smp::Deinit()
