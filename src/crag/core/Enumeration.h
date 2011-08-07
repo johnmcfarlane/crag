@@ -40,8 +40,6 @@ namespace core
 			typedef intrusive::list<CLASS, & CLASS::_hook> list_type;
 		};
 		typedef typename ListTypeDefinitionHelper<Enumeration>::list_type list_type;
-
-		static list_type _values;
 	public:
 		typedef typename list_type::const_iterator const_iterator;
 		typedef typename list_type::iterator iterator;
@@ -54,14 +52,14 @@ namespace core
 			Assert(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
 			
 			iterator insertion = std::upper_bound(begin(), end(), * this);
-			_values.insert(insertion, * this);
+			get_values().insert(insertion, * this);
 			
 			Assert(find(_name) != nullptr);
 		}
 		
 		~Enumeration()
 		{
-			_values.remove(* this);
+			get_values().remove(* this);
 		}
 
 		bool operator<(Enumeration const & rhs) const
@@ -106,16 +104,20 @@ namespace core
 		
 		static const_iterator begin()
 		{
-			return _values.begin();
+			return get_values().begin();
 		}
 		
 		static const_iterator end()
 		{
-			return _values.end();
+			return get_values().end();
+		}
+
+	private:
+		static list_type & get_values()
+		{
+			// the global list of objects of this type
+			static list_type values;
+			return values;
 		}
 	};
-	
-	
-	template <typename TYPE> 
-	typename Enumeration<TYPE>::list_type Enumeration<TYPE>::_values;
 }
