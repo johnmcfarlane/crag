@@ -67,7 +67,7 @@ namespace gl
 	{
 #if ! defined(NDEBUG)
 #if defined(GLPP_LOG)
-		Log(file, line, std::cout) << statement << std::endl << std::flush;
+		Log(file, line, std::cerr) << statement << std::endl << std::flush;
 #endif
 		Verify(file, line, statement);
 #endif

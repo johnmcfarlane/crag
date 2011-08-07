@@ -272,7 +272,7 @@ void gfx::Renderer::VerifyRenderState() const
 #if ! defined(NDEBUG)
 		if (param->enabled != gl::IsEnabled(param->cap))
 		{
-			std::cout << "Bad render state: " << param->name << std::endl;
+			std::cerr << "Bad render state: " << param->name << std::endl;
 			Assert(false);
 		}
 #endif

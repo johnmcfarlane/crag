@@ -67,14 +67,14 @@ bool ConfigManager::Load()
 	std::ifstream config_file(config_filename);
 	if (! config_file.is_open())
 	{
-		std::cout << "Failed to open config file, " << config_filename << ".\n";
+		std::cerr << "Failed to open config file, " << config_filename << "." << std::endl;
 		return false;
 	}
 
 	std::ifstream defaults_file(defaults_filename);
 	if (! defaults_file.is_open())
 	{
-		std::cout << "Failed to open defaults file, " << defaults_filename << ".\n";
+		std::cerr << "Failed to open defaults file, " << defaults_filename << "." << std::endl;
 		defaults_file_ood = true;
 	}
 	else
@@ -91,8 +91,8 @@ bool ConfigManager::Load()
 		// read default value
 		if (defaults_file.getline(default_line, max_string_size - 1) == nullptr)
 		{
-			std::cout << "ConfigManager: Unrecognised default parameter on line " << line_num << ".\n";
-			std::cout << "ConfigManager: Program defaults will be used for remainder of values.\n";
+			std::cerr << "ConfigManager: Unrecognised default parameter on line " << line_num << "." << std::endl;
+			std::cerr << "ConfigManager: Program defaults will be used for remainder of values." << std::endl;
 			break;
 		}
 
@@ -100,8 +100,8 @@ bool ConfigManager::Load()
 		char * value_string = strchr(config_line, '=');
 		if (value_string == nullptr)
 		{
-			std::cout << "ConfigManager: Invalid line " << line_num << " of config file.\n";
-			std::cout << "ConfigManager: Program defaults will be used for remainder of values.\n";
+			std::cerr << "ConfigManager: Invalid line " << line_num << " of config file." << std::endl;
+			std::cerr << "ConfigManager: Program defaults will be used for remainder of values." << std::endl;
 			break;
 		}
 		
@@ -113,8 +113,8 @@ bool ConfigManager::Load()
 		ConfigEntry * parameter = ConfigEntry::find(name_string);
 		if (parameter == nullptr)
 		{
-			std::cout << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << ".\n";
-			std::cout << "ConfigManager: Program defaults will be used for remainder of values.\n";
+			std::cerr << "ConfigManager: unrecognised parameter " << name_string << " on line " << line_num << "." << std::endl;
+			std::cerr << "ConfigManager: Program defaults will be used for remainder of values." << std::endl;
 			break;
 		}
 		
@@ -137,7 +137,7 @@ void ConfigManager::Save()
 	std::ofstream config_file(config_filename);
 	if (! config_file.is_open())
 	{
-		std::cout << "Failed to open config file, " << config_filename << ".\n";
+		std::cerr << "Failed to open config file, " << config_filename << "." << std::endl;
 	}
 	
 	std::ofstream defaults_file;
@@ -146,7 +146,7 @@ void ConfigManager::Save()
 		defaults_file.open(defaults_filename);
 		if (! defaults_file.is_open())
 		{
-			std::cout << "Failed to open config defaults file, " << defaults_filename << ".\n";
+			std::cerr << "Failed to open config defaults file, " << defaults_filename << "." << std::endl;
 		}
 	}
 	

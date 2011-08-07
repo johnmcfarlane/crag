@@ -164,13 +164,13 @@ script::ScriptThread::ScriptThread()
 	_source_file = fopen(_source_filename, "r");
 	if (_source_file == nullptr)
 	{
-		std::cout << "Failed to open main Python file, \"" << _source_filename << "\".\n";
+		std::cerr << "Failed to open main Python file, \"" << _source_filename << "\"." << std::endl;
 		return;
 	}
 	
     if (PyImport_AppendInittab("crag", & create_crag_module))
 	{
-		std::cout << "Failed to create crag python module.\n";
+		std::cerr << "Failed to create crag python module." << std::endl;
 		return;
 	}
     

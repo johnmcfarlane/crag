@@ -35,8 +35,8 @@ namespace
 
 int SDL_main(int /*argc*/, char * * /*argv*/)
 {
-	std::cout << "Crag Demo\n";
-	std::cout << "Copyright 2010 John McFarlane\n";
+	std::cout << "Crag Demo" << std::endl;
+	std::cout << "Copyright 2010 John McFarlane" << std::endl;
 	
 	return Crag() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

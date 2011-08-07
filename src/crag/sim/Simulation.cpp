@@ -72,7 +72,7 @@ void sim::Simulation::OnMessage(AddEntityMessage const & message)
 	Entity & entity = message.entity;
 	if (! entity.Init(message.args))
 	{
-		std::cout << "Bad input parameters to entity\n";
+		std::cerr << "Bad input parameters to entity" << std::endl;
 		DEBUG_BREAK();
 	}
 	

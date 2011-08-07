@@ -31,7 +31,7 @@ gfx::Font::Font(char const * filename, float scale)
 	image.Load(filename);
 	if (! image)
 	{
-		std::cout << "Failed to find font file, " << filename << std::endl;
+		std::cerr << "Failed to find font file, " << filename << std::endl;
 		return;
 	}
 	

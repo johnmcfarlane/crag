@@ -68,7 +68,7 @@
 
 
 #define DEBUG_BREAK_VERBOSE(MESSAGE) \
-	::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"\n"; \
+	::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"" << std::endl; \
 	DEBUG_BREAK()
 
 
@@ -105,7 +105,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 
 #define VerifyEqual(A, B, EPSILON) \
 	if (! NearEqual(A, B, EPSILON)) { \
-		::std::cout << DEBUG_PRINT_SOURCE << ": break: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"\n"; \
+		::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"" << std::endl; \
 		DEBUG_BREAK(); \
 	}
 
@@ -177,7 +177,7 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 class DumpStream
 {
 public:
-	DumpStream(std::ostream & _out = std::cout);
+	DumpStream(std::ostream & _out = std::cerr);
 	DumpStream(DumpStream & previous);
 	
 	template <typename F> friend DumpStream & operator << (DumpStream & stream, F const & f)

@@ -55,7 +55,7 @@ namespace
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
-			std::cout << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
 			return false;
 		}
 		
@@ -73,7 +73,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	LARGE_INTEGER query_performance_frequency;
 	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency.QuadPart == 0)
 	{
-		std::cerr << "Failed to read QueryPerformanceFrequency.\n";
+		std::cerr << "Failed to read QueryPerformanceFrequency." << std::endl;
 		return false;
 	}
 	
@@ -83,7 +83,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
-		std::cout << "Failed to initialize SDL: " << SDL_GetError();
+		std::cerr << "Failed to initialize SDL: " << SDL_GetError();
 		return false;
 	}
 	
@@ -103,7 +103,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
 	if (video_info == nullptr)
 	{
-		std::cout << "Failed to get video info: " << SDL_GetError() << std::endl;
+		std::cerr << "Failed to get video info: " << SDL_GetError() << std::endl;
 		return false;
 	}
 	
@@ -125,7 +125,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	
 	if (SDL_GL_SetSwapInterval(1))
 	{
-		std::cout << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
+		std::cerr << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
 		return false;
 	}
 	
