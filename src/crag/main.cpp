@@ -20,6 +20,8 @@
 
 #include "script/ScriptThread.h"
 
+#include <fstream>
+
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -35,6 +37,14 @@ namespace
 
 int SDL_main(int /*argc*/, char * * /*argv*/)
 {
+#if defined(WIN32)
+	std::ofstream cout_filestr, cerr_filestr;
+	cout_filestr.open ("cout.txt");
+	cerr_filestr.open ("cerr.txt");
+	std::cout.rdbuf(cout_filestr.rdbuf());
+	std::cerr.rdbuf(cerr_filestr.rdbuf());
+#endif
+
 	std::cout << "Crag Demo" << std::endl;
 	std::cout << "Copyright 2010 John McFarlane" << std::endl;
 	
