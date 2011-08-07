@@ -34,10 +34,10 @@
 
 namespace 
 {
-	PROFILE_DEFINE (scene_tick_period, .01);
-	PROFILE_DEFINE (scene_tick_per_quaterna, .0025);
-	PROFILE_DEFINE (mesh_generation_period, .01);	
-	PROFILE_DEFINE (mesh_generation_per_quaterna, .01);
+	PROFILE_DEFINE (scene_tick_period, .01f);
+	PROFILE_DEFINE (scene_tick_per_quaterna, .0025f);
+	PROFILE_DEFINE (mesh_generation_period, .01f);	
+	PROFILE_DEFINE (mesh_generation_per_quaterna, .01f);
 		
 	CONFIG_DEFINE (formation_emission, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_ambient, gfx::Color4f, gfx::Color4f(0.05f));
