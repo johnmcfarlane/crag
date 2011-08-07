@@ -45,6 +45,9 @@ namespace script
 		PyObject * PollEvent();
 		
 	private:		
+		static bool RedirectPythonOutput(char const * filename);
+
+		// variables
 		static char const * _source_filename;
 		FILE * _source_file;
 

@@ -192,12 +192,13 @@ script::ScriptThread::~ScriptThread()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run()
 {
+#if defined(WIN32)
+	RedirectPythonOutput("python.txt");
+#endif
+
 	PyRun_SimpleFileEx(_source_file, _source_filename, true);
 	
 	ProcessMessages();
-	
-	// TODO: Many many loose ends currently.
-	//exit(0);
 }
 
 PyObject * script::ScriptThread::PollEvent()
@@ -235,11 +236,23 @@ PyObject * script::ScriptThread::PollEvent()
 	Py_RETURN_NONE;
 }
 
-// TODO: Add documentation back in:
-//Class<sim::Entity> entity_class("crag.Entity", * crag_module, "An Entity.", nullptr);
-//Class<sim::Planet> planet_class("crag.Planet", * crag_module, "An Entity representing an astral body that has a surface.", nullptr, entity_class);
-//Class<sim::Observer> observer_class("crag.Observer", * crag_module, "An Entity representing the camera.", observer_methods, entity_class);
-//Class<sim::Star> star_class("crag.Star", * crag_module, "An Entity representing an astral body that emits light.", nullptr, entity_class);
+bool script::ScriptThread::RedirectPythonOutput(char const * filename)
+{
+	PyObject* sys = PyImport_ImportModule("sys");
+	PyObject* io = PyImport_ImportModule("io");
+	PyObject* pystdout = PyObject_CallMethod(io, "open", "ss", "python.txt", "wt");
+
+	if (-1 == PyObject_SetAttrString(sys, "stdout", pystdout)) 
+	{
+		return false;
+	}
+
+	Py_DECREF(sys);
+	Py_DECREF(io);
+	Py_DECREF(pystdout);
+	
+	return true;
+}
 
 
 char const * script::ScriptThread::_source_filename = "./script/main.py";
