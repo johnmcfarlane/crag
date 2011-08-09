@@ -18,7 +18,7 @@
 #include "glpp/FrameBuffer.h"
 #include "glpp/RenderBuffer.h"
 
-#include "smp/Actor.h"
+#include "smp/Daemon.h"
 
 #include "sys/App.h"
 
@@ -53,11 +53,9 @@ namespace gfx
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Renderer : public smp::Actor<Renderer>
+	class Renderer
 	{
 		OBJECT_NO_COPY(Renderer);
-		
-		typedef smp::Actor<Renderer> super;
 		
 		enum ForegroundRenderPass
 		{
@@ -67,20 +65,11 @@ namespace gfx
 		};
 		
 	public:
+		typedef smp::Daemon<Renderer, true> Daemon;
+		
 		Renderer();
 		~Renderer();
 		
-		// Singleton
-		static Renderer & Ref() { return ref(singleton); }
-		
-		// Message passing
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) 
-		{ 
-			Renderer & destination = Ref(); 
-			smp::Actor<Renderer>::SendMessage(destination, message); 
-		}
-
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddObjectMessage const & message);
 		void OnMessage(RemoveObjectMessage const & message);
@@ -92,10 +81,10 @@ namespace gfx
 		void OnMessage(ResizeMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
+		void Run(Daemon::MessageQueue & message_queue);
 	private:
-		virtual void Run();
 		void MainLoop();
-		void ProcessMessagesAndGetReady();
+		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
 
 		bool Init();
 		void Deinit();
@@ -171,6 +160,6 @@ namespace gfx
 		
 		gl::Fence _fence1, _fence2;
 		
-		static Renderer * singleton;
+		static Daemon * singleton;
 	};
 }

@@ -58,8 +58,7 @@ namespace
 
 
 form::FormationManager::FormationManager()
-: super(0x8000)
-, quit_flag(false)
+: quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , back_mesh_buffer_ready(false)
@@ -74,26 +73,19 @@ form::FormationManager::FormationManager()
 		MeshDoubleBuffer::value_type & mesh = meshes[index];
 		mesh = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
 	}
-	
-	Assert(singleton == nullptr);
-	singleton = this;
+
+	smp::SetThreadPriority(-1);
+	smp::SetThreadName("Formation");
 }
 
 form::FormationManager::~FormationManager()
 {
-	Assert(singleton == this);
-	singleton = nullptr;
-	
 	for (int index = 0; index < 2; ++ index)
 	{
 		delete meshes [index];
 	}
 	
 	Assert(formation_set.empty());
-
-#if ! defined(NDEBUG)
-	std::cout << "~FormationManager: message buffer size=" << GetQueueCapacity() << std::endl;
-#endif
 }
 
 #if defined(VERIFY)
@@ -125,7 +117,7 @@ void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
 	SetCameraPos(message.projection);
 }
 
-void form::FormationManager::Run()
+void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
@@ -134,7 +126,7 @@ void form::FormationManager::Run()
 	
 	while (true) 
 	{
-		ProcessMessages();
+		message_queue.DispatchMessages(* this);
 		
 		suspend_semaphore.Decrement();
 		if (quit_flag)
@@ -452,4 +444,4 @@ bool form::FormationManager::IsResetting() const
 }
 
 
-form::FormationManager * form::FormationManager::singleton = nullptr;
+form::FormationManager::Daemon * form::FormationManager::singleton = nullptr;

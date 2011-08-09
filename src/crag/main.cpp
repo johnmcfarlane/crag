@@ -93,23 +93,25 @@ namespace
 			// Note: this needs to run in the main thread because SDL
 			// was initialized from here and script uses SDL events fns. 
 			// Hence we call Run instead of Launch and Join.
-			script::ScriptThread script_thread;
+			script::ScriptThread::Daemon script_daemon(0x400);
 			
 			{
-				gfx::Renderer renderer;
-				form::FormationManager formation_manager;
-				sim::Simulation simulation;
+				gfx::Renderer::Daemon renderer(0x8000);
+				form::FormationManager::Daemon formation_manager(0x8000);
+				sim::Simulation::Daemon simulation(0x400);
 				
-				renderer.Start();
-				formation_manager.Start();
+				// TODO: Delicate order of startup/shutdown
+				// is mostly due to direct access to Daemons.
+				formation_manager.Start(); smp::Sleep(0.1);
 				simulation.Start();
+				renderer.Start();
 				
-				script_thread.Run();
+				script_daemon.Run();
 				
 				// Stop the actors.
 				simulation.Stop();
-				formation_manager.Stop();
 				renderer.Stop();
+				formation_manager.Stop();
 			}
 		}
 		

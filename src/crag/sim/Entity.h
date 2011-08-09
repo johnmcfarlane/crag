@@ -23,6 +23,9 @@ namespace gfx
 
 namespace sim
 {
+	// forward-declaration
+	class Simulation;
+	
 	
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public script::Object
@@ -40,10 +43,10 @@ namespace sim
 		static void Destroy(Entity & entity);
 		
 		// Called from the simulation thread.
-		virtual bool Init(PyObject & args) = 0;
+		virtual bool Init(Simulation & simulation, PyObject & args) = 0;
 
 		// general callbacks
-		virtual void Tick();
+		virtual void Tick(Simulation & simulation);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		
 		virtual void UpdateModels() const;

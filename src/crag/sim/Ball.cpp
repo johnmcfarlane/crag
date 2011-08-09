@@ -60,7 +60,7 @@ Ball::~Ball()
 	
 	{
 		gfx::RemoveObjectMessage message = { ref(_model) };
-		gfx::Renderer::SendMessage(message);
+		gfx::Renderer::Daemon::SendMessage(message);
 	}
 }
 
@@ -73,10 +73,10 @@ void Ball::Create(Ball & ball, PyObject & args)
 	AddEntityMessage message = { ball, args };
 	
 	// send
-	Simulation::SendMessage(message);
+	Simulation::Daemon::SendMessage(message);
 }
 
-bool Ball::Init(PyObject & args)
+bool Ball::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
 	Vector<double, 3> center;
@@ -88,7 +88,7 @@ bool Ball::Init(PyObject & args)
 	}
 	
 	// physics
-	physics::Engine & physics_engine = Simulation::Ref().GetPhysicsEngine();	
+	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
 	_body = new physics::SphericalBody(physics_engine, true, radius);
 	_body->SetPosition(center);
 	_body->SetDensity(ball_density);
@@ -98,16 +98,16 @@ bool Ball::Init(PyObject & args)
 	{
 		_model = new gfx::Ball(radius);
 		gfx::AddObjectMessage message = { ref(_model) };
-		gfx::Renderer::SendMessage(message);
+		gfx::Renderer::Daemon::SendMessage(message);
 	}
 	
 	return true;
 }
 
-void Ball::Tick()
+void Ball::Tick(Simulation & simulation)
 {
 	// Gravity
-	Universe const & universe = Simulation::Ref().GetUniverse();
+	Universe const & universe = simulation.GetUniverse();
 	universe.ApplyGravity(* _body);
 }
 
@@ -117,7 +117,7 @@ void Ball::UpdateModels() const
 	message._updated._position = _body->GetPosition();
 	_body->GetRotation(message._updated._rotation);
 	
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 Vector3 const & Ball::GetPosition() const

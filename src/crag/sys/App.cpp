@@ -120,12 +120,6 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 							  resolution.x, resolution.y, 
 							  flags);
 	
-	if (SDL_GL_SetSwapInterval(1))
-	{
-		std::cerr << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
-		return false;
-	}
-	
 	SetFocus(true);
 	SDL_WarpMouseInWindow(window, resolution.x >> 1, resolution.y >> 1);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -164,6 +158,12 @@ bool sys::InitGl()
 		return false;
 	}
 
+	if (SDL_GL_SetSwapInterval(1))
+	{
+		std::cerr << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
+		return false;
+	}
+	
 	return true;
 }
 

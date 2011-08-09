@@ -114,10 +114,10 @@ void sim::Observer::Create(Observer & observer, PyObject & args)
 	
 	// send creation message
 	AddEntityMessage message = { observer, args };
-	Simulation::SendMessage(message);
+	Simulation::Daemon::SendMessage(message);
 }
 
-bool sim::Observer::Init(PyObject & args)
+bool sim::Observer::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
 	Vector<double, 3> center;
@@ -127,7 +127,7 @@ bool sim::Observer::Init(PyObject & args)
 		return false;
 	}
 	
-	physics::Engine & physics_engine = Simulation::Ref().GetPhysicsEngine();
+	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 	body = new physics::SphericalBody(physics_engine, true, observer_radius);
 	SetSpeedFactor(1);
 	
@@ -178,7 +178,7 @@ void sim::Observer::SetSpeedFactor(int _speed_factor)
 	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
-void sim::Observer::Tick()
+void sim::Observer::Tick(Simulation & simulation)
 {
 	// Camera input.
 	if (sys::HasFocus()) 
@@ -194,7 +194,7 @@ void sim::Observer::Tick()
 	Vector3 const & position = GetPosition();
 	Scalar mass = body->GetMass();
 	
-	Universe & universe = Simulation::Ref().GetUniverse();
+	Universe & universe = simulation.GetUniverse();
 	
 	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
 	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
@@ -215,10 +215,10 @@ void sim::Observer::UpdateModels() const
 
 	// Give renderer the new camera position.
 	SetCameraMessage message = { position, rotation };
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 
 	// This happens to be a good time to sent message elsewhere.
-	form::FormationManager::SendMessage(message);
+	form::FormationManager::Daemon::SendMessage(message);
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const

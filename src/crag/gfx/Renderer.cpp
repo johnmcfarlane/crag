@@ -73,29 +73,25 @@ namespace
 
 
 Renderer::Renderer()
-: super(0x8000)
-, last_frame_time(sys::GetTime())
+: last_frame_time(sys::GetTime())
 , quit_flag(false)
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
 {
-	Assert(singleton == nullptr);
-	singleton = this;
-	
 #if ! defined(NDEBUG)
 	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
 #endif
+	
+	if (! Init())
+	{
+		quit_flag = true;
+	}
 }
 
 Renderer::~Renderer()
 {
-	Assert(singleton == this);
-	singleton = nullptr;
-
-#if ! defined(NDEBUG)
-	std::cout << "~Renderer: message buffer size=" << GetQueueCapacity() << std::endl;
-#endif
+	Deinit();
 }
 
 void Renderer::OnMessage(smp::TerminateMessage const & message)
@@ -125,7 +121,7 @@ void Renderer::OnMessage(RenderReadyMessage const & message)
 void Renderer::OnMessage(ResizeMessage const & message)
 {
 	scene->SetResolution(message.size);
-	form::FormationManager::Ref().ResetRegulator();
+	form::FormationManager::Daemon::Ref().ResetRegulator();
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
@@ -156,35 +152,21 @@ Renderer::StateParam const Renderer::init_state[] =
 	INIT(GL_POLYGON_SMOOTH, false)
 };
 
-void Renderer::Run()
+void Renderer::Run(Daemon::MessageQueue & message_queue)
 {
-	FUNCTION_NO_REENTRY;
-	
-	if (! Init())
+	while (! quit_flag)
 	{
-		return;
-	}
-
-	MainLoop();
-	Deinit();
-}
-
-void Renderer::MainLoop()
-{
-	do
-	{
-		ProcessMessagesAndGetReady();
+		ProcessMessagesAndGetReady(message_queue);
 		Render();
 	}
-	while (! quit_flag);
 }
 
-void Renderer::ProcessMessagesAndGetReady()
+void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	ProcessMessages();
+	message_queue.DispatchMessages(* this);
 	while (! ready)
 	{
-		if (! ProcessMessage())
+		if (! message_queue.DispatchMessage(* this))
 		{
 			smp::Sleep(0.001);
 		}
@@ -346,7 +328,7 @@ void Renderer::ToggleWireframe()
 void Renderer::Render()
 {
 	// Render the scene to the back buffer.
-	form::FormationManager & formation_manager = form::FormationManager::Ref();	
+	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();	
 	form::MeshBufferObject & back_mbo = mbo_buffers.back();
 	if (formation_manager.PollMesh(back_mbo))
 	{
@@ -527,7 +509,7 @@ void Renderer::RenderFormations() const
 		return;
 	}
 	
-	form::FormationManager & fm = form::FormationManager::Ref();
+	form::FormationManager & fm = form::FormationManager::Daemon::Ref();
 	fm.Render();
 	
 	// Draw the mesh!
@@ -698,4 +680,4 @@ void Renderer::FinishFence(gl::Fence & fence)
 }
 
 
-Renderer * Renderer::singleton = nullptr;
+Renderer::Daemon * Renderer::singleton = nullptr;

@@ -124,14 +124,14 @@ sim::Planet::~Planet()
 	{
 		// unregister with renderer
 		gfx::RemoveObjectMessage message = { ref(_model) };
-		gfx::Renderer::SendMessage(message);
+		gfx::Renderer::Daemon::SendMessage(message);
 		_model = nullptr;
 	}
 	
 	{
 		// unregister with formation manager
 		form::RemoveFormationMessage message = { ref(_formation) };
-		form::FormationManager::SendMessage(message);
+		form::FormationManager::Daemon::SendMessage(message);
 		_formation = nullptr;
 	}
 
@@ -148,10 +148,10 @@ void sim::Planet::Create(Planet & planet, PyObject & args)
 	AddEntityMessage message = { planet, args };
 	
 	// send
-	Simulation::SendMessage(message);
+	Simulation::Daemon::SendMessage(message);
 }
 
-bool sim::Planet::Init(PyObject & args)
+bool sim::Planet::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
 	sim::Vector3 center;
@@ -185,7 +185,7 @@ bool sim::Planet::Init(PyObject & args)
 		_formation->SetPosition(center);
 		
 		// body
-		physics::Engine & physics_engine = sim::Simulation::Ref().GetPhysicsEngine();
+		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
 		_body->SetPosition(center);
 
@@ -198,20 +198,20 @@ bool sim::Planet::Init(PyObject & args)
 		// register with formation manager
 		{
 			form::AddFormationMessage message = { ref(_formation) };
-			form::FormationManager::SendMessage(message);
+			form::FormationManager::Daemon::SendMessage(message);
 		}
 		
 		// register with the renderer
 		{
 			gfx::AddObjectMessage message = { ref(_model) };
-			gfx::Renderer::SendMessage(message);
+			gfx::Renderer::Daemon::SendMessage(message);
 		}
 	}
 	
 	return true;
 }
 
-void sim::Planet::Tick()
+void sim::Planet::Tick(Simulation & simulation)
 {
 	_body->SetRadius(_radius_max);
 }
@@ -252,7 +252,7 @@ void sim::Planet::UpdateModels() const
 	gfx::UpdateObjectMessage<gfx::Planet> message(ref(_model));
 	message._updated._radius_min = _radius_min;
 	message._updated._radius_max = _radius_max;
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 void sim::Planet::SampleRadius(Scalar r)

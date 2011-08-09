@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "smp/Actor.h"
+#include "smp/Daemon.h"
 #include "core/Singleton.h"
 
 
@@ -19,28 +19,18 @@ namespace script
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
-	class ScriptThread : public smp::Actor<ScriptThread>
+	class ScriptThread
 	{
 		OBJECT_SINGLETON(ScriptThread);
 		
-		typedef smp::Actor<ScriptThread> super;
 	public:
+		typedef smp::Daemon<ScriptThread, false> Daemon;
+
 		ScriptThread();
 		~ScriptThread();
 		
-		// Singleton
-		static ScriptThread & Ref() { return ref(singleton); }
-		
-		// Message passing. (Currently unused.)
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) 
-		{ 
-			ScriptThread & destination = Ref(); 
-			smp::Actor<ScriptThread>::SendMessage(destination, message, false); 
-		}
-
 		// thread entry point
-		virtual void Run();
+		void Run(Daemon::MessageQueue & message_queue);
 		
 		PyObject * PollEvent();
 		
@@ -50,8 +40,7 @@ namespace script
 		// variables
 		static char const * _source_filename;
 		FILE * _source_file;
-
-		static ScriptThread * singleton;
+		Daemon::MessageQueue * _message_queue;
 	};
 	
 }

@@ -43,9 +43,9 @@ namespace sim
 		static void Create(Planet & planet, PyObject & args);
 
 		// Called from the simulation thread.
-		virtual bool Init(PyObject & args);
+		virtual bool Init(Simulation & simulation, PyObject & args);
 
-		virtual void Tick();
+		virtual void Tick(Simulation & simulation);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual void UpdateModels() const;
 		

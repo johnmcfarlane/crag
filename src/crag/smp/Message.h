@@ -41,7 +41,7 @@ namespace smp
 		}
 		
 		// returns false if the Actor should quit
-		virtual void Execute() const = 0;
+		virtual void Dispatch(CLASS & destination) const = 0;
 		
 	private:
 		// friends
@@ -50,27 +50,24 @@ namespace smp
 	
 	
 	// Message-type-specific message wrapper class.
-	// Does all the work.
 	template <typename CLASS, typename MESSAGE>
 	class SpecializedMessageEnvelope : public MessageEnvelope<CLASS>
 	{
 		typedef MessageEnvelope<CLASS> super;
 	public:
-		SpecializedMessageEnvelope(CLASS & destination, MESSAGE const & message)
+		SpecializedMessageEnvelope(MESSAGE const & message)
 		: _message(message) 
-		, _destination(destination)
 		{ 
 		}
 		
 		// returns true if the Actor should continue (false=terminate)
-		virtual void Execute() const
+		virtual void Dispatch(CLASS & destination) const
 		{
-			_destination.OnMessage(_message);
+			destination.OnMessage(_message);
 		}
 		
 	private:
 		MESSAGE _message;
-		CLASS & _destination;
 	};
 	
 }

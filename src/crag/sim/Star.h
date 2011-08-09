@@ -33,9 +33,9 @@ namespace sim
 		static void Create(Star & star, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(PyObject & args);
+		bool Init(Simulation & simulation, PyObject & args);
 		
-		void Tick();
+		void Tick(Simulation & simulation);
 		
 		void UpdateModels() const;
 	

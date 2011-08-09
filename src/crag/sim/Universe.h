@@ -28,6 +28,7 @@ namespace sim
 {
 	// forward-declarations
 	class Entity;
+	class Simulation;
 	
 	
 	// Currently deals with simulation time, entity managment and physics ticking.
@@ -48,7 +49,7 @@ namespace sim
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
 
-		void Tick(sys::TimeType target_frame_seconds);
+		void Tick(Simulation & simulation, sys::TimeType target_frame_seconds);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
 		void ApplyGravity(physics::Body & body) const;
 		void ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const;

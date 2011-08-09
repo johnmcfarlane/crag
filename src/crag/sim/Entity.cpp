@@ -35,10 +35,10 @@ void Entity::Destroy(Entity & entity)
 	RemoveEntityMessage message = { entity };
 
 	// set message
-	Simulation::SendMessage(message);
+	Simulation::Daemon::SendMessage(message);
 }
 
-void Entity::Tick()
+void Entity::Tick(Simulation & simulation)
 {
 }
 

@@ -36,8 +36,8 @@ namespace
 	class IntersectionFunctor : public form::FormationManager::IntersectionFunctor
 	{
 	public:
-		IntersectionFunctor(dGeomID object_geom, dGeomID planet_geom)
-		: _physics_engine(sim::Simulation::Ref().GetPhysicsEngine())
+		IntersectionFunctor(physics::Engine & engine, dGeomID object_geom, dGeomID planet_geom)
+		: _physics_engine(engine)
 		{
 			ZeroObject(_contact);
 			
@@ -110,9 +110,9 @@ bool sim::PlanetaryBody::OnCollisionWithSphericalBody(physics::Engine & engine, 
 
 	dGeomID object_geom = that_sphere.GetGeomId();	
 	dGeomID planet_geom = GetGeomId();
-	IntersectionFunctor functor(object_geom, planet_geom);
+	IntersectionFunctor functor(engine, object_geom, planet_geom);
 
-	form::FormationManager & formation_manager = form::FormationManager::Ref();
+	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
 	formation_manager.ForEachIntersection(sphere, formation, functor);
 	
 	return true;

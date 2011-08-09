@@ -41,7 +41,7 @@ sim::Star::Star()
 sim::Star::~Star()
 {
 	gfx::RemoveObjectMessage message = { ref(light) };
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 void sim::Star::Create(Star & star, PyObject & args)
@@ -53,10 +53,10 @@ void sim::Star::Create(Star & star, PyObject & args)
 	AddEntityMessage message = { star, args };
 	
 	// send
-	Simulation::SendMessage(message);
+	Simulation::Daemon::SendMessage(message);
 }
 
-bool sim::Star::Init(PyObject & args)
+bool sim::Star::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
 	if (! PyArg_ParseTuple(& args, "dd", & radius, & year))
@@ -69,14 +69,14 @@ bool sim::Star::Init(PyObject & args)
 	
 	// pass to the renderer
 	gfx::AddObjectMessage message = { ref(light) };
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 	
 	return true;
 }
 
-void sim::Star::Tick()
+void sim::Star::Tick(Simulation & simulation)
 {
-	sys::TimeType t = sim::Simulation::Ref().GetTime();
+	sys::TimeType t = simulation.GetTime();
 	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
 	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, static_cast<Scalar>(0));
 	light->SetPosition(position);
@@ -89,7 +89,7 @@ void sim::Star::UpdateModels() const
 	message._updated._position = GetPosition();
 	message._updated._rotation = Matrix4d::Identity();
 	
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

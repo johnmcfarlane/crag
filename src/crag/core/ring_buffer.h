@@ -15,7 +15,7 @@
 
 namespace core
 {
-	template <typename BASE_CLASS, typename SIZE_TYPE = size_t>
+	template <typename BASE_CLASS>
 	class ring_buffer
 	{
 		OBJECT_NO_COPY(ring_buffer);
@@ -24,7 +24,8 @@ namespace core
 		// types
 		typedef unsigned char byte;
 	public:
-		typedef SIZE_TYPE size_type;
+		typedef BASE_CLASS value_type;
+		typedef size_t size_type;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -103,20 +104,20 @@ namespace core
 		}
 		
 		// access
-		BASE_CLASS & front() 
+		value_type & front() 
 		{
 			verify();
 			assert(! empty());
 			
-			return * reinterpret_cast<BASE_CLASS *>(_data_begin + sizeof(size_type));
+			return * reinterpret_cast<value_type *>(_data_begin + sizeof(size_type));
 		}
 		
-		BASE_CLASS const & front() const
+		value_type const & front() const
 		{
 			verify();
 			assert(! empty());
 			
-			return * reinterpret_cast<BASE_CLASS *>(_data_begin + sizeof(size_type));
+			return * reinterpret_cast<value_type *>(_data_begin + sizeof(size_type));
 		}
 		
 		// modifiers
@@ -150,8 +151,8 @@ namespace core
 			assert(round_up(entry_size) == entry_size);
 			
 			// call d'tor for object
-			BASE_CLASS & object = front();
-			object.~BASE_CLASS();
+			value_type & object = front();
+			object.~value_type();
 			
 			byte * new_data_begin = _data_begin + entry_size;
 			

@@ -34,8 +34,8 @@ FILE_LOCAL_BEGIN
 
 PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
-	sim::Simulation & simulation = sim::Simulation::Ref();
-
+	sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
+	
 	sys::TimeType time = simulation.GetTime();
 	return Py_BuildValue("d", time);
 }
@@ -56,7 +56,7 @@ PyObject * sleep(PyObject * /*self*/, PyObject * args)
 
 PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 {
-	script::ScriptThread & script_thread = script::ScriptThread::Ref();
+	script::ScriptThread & script_thread = script::ScriptThread::Daemon::Ref();
 	return script_thread.PollEvent();
 }
 
@@ -99,7 +99,7 @@ bool handle_events(PyObject * & event_object)
 	else
 	{
 		// If the simulation actor caught the event,
-		sim::Simulation & simulation = sim::Simulation::Ref();
+		sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
 		if (simulation.HandleEvent(event))
 		{
 			// then blank the event
@@ -152,12 +152,9 @@ FILE_LOCAL_END
 // ScriptThread member definitions
 
 script::ScriptThread::ScriptThread()
-: super(0x400)
-, _source_file(nullptr)
+: _source_file(nullptr)
+, _message_queue(nullptr)
 {
-	Assert(singleton == nullptr);
-	singleton = this;
-
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Script");
 	
@@ -180,25 +177,21 @@ script::ScriptThread::ScriptThread()
 script::ScriptThread::~ScriptThread()
 {
 	Py_Finalize();
-
-	Assert(singleton == this);
-	singleton = nullptr;
-
-#if ! defined(NDEBUG)
-	std::cout << "~ScriptThread: message buffer size=" << GetQueueCapacity() << std::endl;
-#endif
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
-void script::ScriptThread::Run()
+void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 {
+	_message_queue = & message_queue;
+
 #if defined(WIN32)
 	RedirectPythonOutput("python.txt");
 #endif
 
 	PyRun_SimpleFileEx(_source_file, _source_filename, true);
 	
-	ProcessMessages();
+	_message_queue->DispatchMessages(* this);
+	_message_queue = nullptr;
 }
 
 PyObject * script::ScriptThread::PollEvent()
@@ -207,7 +200,7 @@ PyObject * script::ScriptThread::PollEvent()
 	
 	while (true)
 	{
-		if (ProcessMessages() > 0)
+		if (_message_queue->DispatchMessages(* this) > 0)
 		{
 			idle = false;
 		}
@@ -256,5 +249,3 @@ bool script::ScriptThread::RedirectPythonOutput(char const * filename)
 
 
 char const * script::ScriptThread::_source_filename = "./script/main.py";
-
-script::ScriptThread * script::ScriptThread::singleton = nullptr;

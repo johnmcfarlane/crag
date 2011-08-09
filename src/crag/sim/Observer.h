@@ -40,13 +40,13 @@ namespace sim
 		static void Create(Observer & observer, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(PyObject & args);
+		bool Init(Simulation & simulation, PyObject & args);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeedFactor(int _speed_factor);
-		virtual void Tick();
+		virtual void Tick(Simulation & simulation);
 		virtual void UpdateModels() const;
 		
 		virtual Vector3 const & GetPosition() const;

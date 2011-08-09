@@ -12,7 +12,7 @@
 
 #include "defs.h"
 
-#include "smp/Actor.h"
+#include "smp/Daemon.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Singleton.h"
@@ -41,29 +41,18 @@ namespace sim
 	struct RemoveEntityMessage;
 	
 	
-	class Simulation : public smp::Actor<Simulation>
+	class Simulation
 	{
 		OBJECT_SINGLETON(Simulation);
-		
-		typedef smp::Actor<Simulation> super;
+
 	public:
+		typedef smp::Daemon<Simulation, true> Daemon;
+
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 
 		Simulation();
 		~Simulation();
 		
-		// Singleton
-		static Simulation & Ref() { return ref(singleton); }
-	
-		// Message passing
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) 
-		{ 
-			Simulation & destination = Ref(); 
-			smp::Actor<Simulation>::SendMessage(destination, message); 
-		}
-
-		// TODO: These should not be public. 
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
@@ -79,11 +68,10 @@ namespace sim
 
 		physics::Engine & GetPhysicsEngine();		
 		
-	public:		
 		bool HandleEvent(sys::Event const & event);
 
+		void Run(Daemon::MessageQueue & message_queue);
 	private:
-		void Run();
 		void Tick();
 		void UpdateRenderer() const;
 		
@@ -101,8 +89,6 @@ namespace sim
 		
 		Universe * universe;
 		physics::Engine * physics_engine;
-		
-		static Simulation * singleton;
 	};
 	
 }

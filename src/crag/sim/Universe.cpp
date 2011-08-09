@@ -63,14 +63,14 @@ void Universe::RemoveEntity(Entity & entity)
 }
 
 // Perform a step in the simulation. 
-void Universe::Tick(sys::TimeType target_frame_seconds)
+void Universe::Tick(Simulation & simulation, sys::TimeType target_frame_seconds)
 {
 	time += target_frame_seconds;
 	
 	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
 		Entity & e = * * it;
-		e.Tick();
+		e.Tick(simulation);
 	}
 }
 

@@ -18,7 +18,7 @@
 #include "core/double_buffer.h"
 #include "core/Singleton.h"
 
-#include "smp/Actor.h"
+#include "smp/Daemon.h"
 #include "smp/Semaphore.h"
 
 #include "sys/App.h"
@@ -64,12 +64,13 @@ namespace form
 	// FormationManager class
 	
 	// The top-most formation management class.
-	class FormationManager : public smp::Actor<FormationManager>
+	class FormationManager
 	{
 		OBJECT_SINGLETON(FormationManager);
 		
-		typedef smp::Actor<FormationManager> super;
 	public:
+		typedef smp::Daemon<FormationManager, true> Daemon;
+
 		FormationManager();
 		~FormationManager();
 		
@@ -79,24 +80,22 @@ namespace form
 #endif
 		
 		// Singleton
-		static FormationManager & Ref() { return ref(singleton); }
+		//static Daemon & Ref() { return ref(singleton); }
 		
-		// Message passing
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message) 
-		{ 
-			FormationManager & formation_manager = Ref();
-			smp::Actor<FormationManager>::SendMessage(formation_manager, message); 
-		}
+//		// Message passing
+//		template <typename MESSAGE>
+//		static void SendMessage(MESSAGE const & message) 
+//		{ 
+//			singleton->SendMessage(message); 
+//		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);
 		void OnMessage(RemoveFormationMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
-	private:
-		void Run();
-		
+		void Run(Daemon::MessageQueue & message_queue);
+	private:		
 		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation & formation);
 		
@@ -173,7 +172,7 @@ namespace form
 		// TODO: This is pre-messages. Perhaps there's a better way now?
 		smp::Semaphore suspend_semaphore;		
 		
-		static FormationManager * singleton;
+		static Daemon * singleton;
 	};
 
 }

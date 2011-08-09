@@ -34,32 +34,22 @@
 CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
 sim::Simulation::Simulation()
-: super(0x400)
-, quit_flag(false)
+: quit_flag(false)
 , paused(false)
 , capture(false)
 , capture_frame(0)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
 {
-	Assert(singleton == nullptr);
-	singleton = this;
 }
 
 sim::Simulation::~Simulation()
 {
-	Assert(singleton == this);
-	singleton = nullptr;
-
 	delete universe;
 	universe = nullptr;
 
 	delete physics_engine;
 	physics_engine = nullptr;
-	
-#if ! defined(NDEBUG)
-	std::cout << "~Simulation: message buffer size=" << GetQueueCapacity() << std::endl;
-#endif
 }
 
 void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
@@ -70,7 +60,7 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 void sim::Simulation::OnMessage(AddEntityMessage const & message)
 {
 	Entity & entity = message.entity;
-	if (! entity.Init(message.args))
+	if (! entity.Init(* this, message.args))
 	{
 		std::cerr << "Bad input parameters to entity" << std::endl;
 		DEBUG_BREAK();
@@ -111,7 +101,7 @@ physics::Engine & sim::Simulation::GetPhysicsEngine()
 	return ref(physics_engine);
 }
 
-void sim::Simulation::Run()
+void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
@@ -119,7 +109,7 @@ void sim::Simulation::Run()
 	smp::SetThreadName("Simulation");
 
 	gfx::AddObjectMessage add_skybox_message = { ref(new Firmament) };
-	gfx::Renderer::SendMessage(add_skybox_message);
+	gfx::Renderer::Daemon::SendMessage(add_skybox_message);
 	
 	sys::TimeType next_tick_time = sys::GetTime();
 	
@@ -129,7 +119,7 @@ void sim::Simulation::Run()
 		sys::TimeType time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
-			if (ProcessMessages() == 0)
+			if (message_queue.DispatchMessages(* this) == 0)
 			{
 				smp::Sleep(0);
 			}
@@ -150,7 +140,7 @@ void sim::Simulation::Run()
 	}
 	
 	gfx::RemoveObjectMessage remove_skybox_message = { add_skybox_message._object };
-	gfx::Renderer::SendMessage(remove_skybox_message);
+	gfx::Renderer::Daemon::SendMessage(remove_skybox_message);
 }
 
 void sim::Simulation::Tick()
@@ -159,7 +149,7 @@ void sim::Simulation::Tick()
 	if (! paused) 
 	{
 		// Perform the Entity-specific simulation.
-		universe->Tick(target_frame_seconds);
+		universe->Tick(* this, target_frame_seconds);
 
 		// Run physics/collisions.
 		physics_engine->Tick(target_frame_seconds);		
@@ -173,12 +163,12 @@ void sim::Simulation::UpdateRenderer() const
 {
 	gfx::RenderReadyMessage message;
 	message.ready = false;
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 	
 	universe->UpdateModels();
 	
 	message.ready = true;
-	gfx::Renderer::SendMessage(message);
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 void sim::Simulation::PrintStats() const
@@ -220,7 +210,7 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 		case SDL_VIDEORESIZE:
 		{
 			gfx::ResizeMessage message = { Vector2i(event.resize.w, event.resize.h) };
-			gfx::Renderer::SendMessage(message);
+			gfx::Renderer::Daemon::SendMessage(message);
 			return true;
 		}
 
@@ -229,7 +219,7 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 			
 		case SDL_ACTIVEEVENT:
 		{
-			form::FormationManager::Ref().ResetRegulator();			
+			form::FormationManager::Daemon::Ref().ResetRegulator();			
 			return true;
 		}
 
@@ -278,11 +268,11 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_c:
-					gfx::Renderer::Ref().ToggleCulling();
+					gfx::Renderer::Daemon::Ref().ToggleCulling();
 					return true;
 					
 				case SDLK_f:
-					form::FormationManager::Ref().ToggleFlatShaded();
+					form::FormationManager::Daemon::Ref().ToggleFlatShaded();
 					return true;
 					
 				case SDLK_g:
@@ -290,11 +280,11 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_i:
-					form::FormationManager::Ref().ToggleSuspended();
+					form::FormationManager::Daemon::Ref().ToggleSuspended();
 					return true;
 					
 				case SDLK_l:
-					gfx::Renderer::Ref().ToggleLighting();
+					gfx::Renderer::Daemon::Ref().ToggleLighting();
 					return true;
 					
 				case SDLK_o:
@@ -302,7 +292,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 					return true;
 					
 				case SDLK_p:
-					gfx::Renderer::Ref().ToggleWireframe();
+					gfx::Renderer::Daemon::Ref().ToggleWireframe();
 					return true;
 					
 				default:
@@ -322,7 +312,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 				}
 					
 				case SDLK_i:
-					form::FormationManager::Ref().ToggleMeshGeneration();
+					form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
 					return true;
 					
 				default:
@@ -336,7 +326,7 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 			switch (key_code)
 			{
 				case SDLK_i:
-					form::FormationManager::Ref().ToggleDynamicOrigin();
+					form::FormationManager::Daemon::Ref().ToggleDynamicOrigin();
 					return true;
 					
 				default:
@@ -351,6 +341,3 @@ bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
 	
 	return false;
 }
-
-
-sim::Simulation * sim::Simulation::singleton = nullptr;
