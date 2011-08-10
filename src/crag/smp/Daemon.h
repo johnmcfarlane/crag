@@ -12,7 +12,7 @@
 #include "Lock.h"
 #include "Message.h"
 #include "MessageQueue.h"
-#include "ObjectThread.h"
+#include "Thread.h"
 
 #include "core/ring_buffer.h"
 
@@ -31,7 +31,6 @@ namespace smp
 
 		typedef CLASS Class;
 		typedef MessageEnvelope<Class> MessageEnvelope;
-		typedef ObjectThread<Daemon> Thread;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 	public:
@@ -84,18 +83,7 @@ namespace smp
 				Run();
 			}
 			
-			// Never called from within the thread.
-			Assert(! _thread.IsCurrent());
-			
-			// type of the smp::Thread templated member function we wish to call
-			typedef void (Thread::*THREAD_FUNCTION)(Daemon & object);
-			
-			// pointer to the function with template parameter of Daemon member function
-			// OnLaunch is the function that will be called by the thread class in the new thread.
-			THREAD_FUNCTION f = & Thread::template Launch<& Daemon::Run, & Daemon::_thread>;
-			
-			// This line is too simple to deserve a random stream of programming terms like the others.
-			(_thread.*f)(* this);
+			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this);
 		}
 		
 		// Called from a thread that will block until the actor terminates.

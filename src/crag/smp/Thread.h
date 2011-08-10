@@ -41,6 +41,18 @@ namespace smp
 		// Creates and launches a new thread.
 		void Launch(Function callback, void * data);
 		
+		// Object-oriented thread launch.
+		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
+		static void Launch(CLASS & object)
+		{
+			Thread & thread = object.*THREAD;
+			
+			// Never called from within the thread.
+			Assert(! thread.IsCurrent());
+			
+			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object);
+		}
+		
 		// Terminates the thread. Risks losing data the thread is working on.
 		// If possible, try and use Join instead. 
 		void Kill();
@@ -49,8 +61,26 @@ namespace smp
 		void Join();
 
 	private:
-		
+		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
+		static int Callback(void * data)
+		{
+			Assert(data != nullptr);
+			CLASS & object = * reinterpret_cast<CLASS *>(data);
+			
+			// Ensure that the Thread::sdl_thread gets set before progressing.
+			// This ensures that IsLaunched returns the correct result.
+			Thread const & object_thread = object.*THREAD;
+			while (! object_thread.IsLaunched())
+			{
+				Sleep(0);
+			}
+			
+			// Call the class' member function.
+			(object.*FUNCTION)();
+			
+			return 0;
+		}
+
 		SDL_Thread * sdl_thread;
 	};
-	
 }

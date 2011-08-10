@@ -275,7 +275,6 @@
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
 		527FA6C013F0486000284F6A /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
-		5280DD3913E4AA220091287D /* ObjectThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectThread.h; sourceTree = "<group>"; };
 		5280DD3A13E4AA220091287D /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		5281798A13DFEC2C009D5B8B /* Fence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
@@ -641,7 +640,6 @@
 			isa = PBXGroup;
 			children = (
 				52CCFBE013F12A67000C2B29 /* Daemon.h */,
-				5280DD3913E4AA220091287D /* ObjectThread.h */,
 				5280DD3A13E4AA220091287D /* Thread.cpp */,
 				526423AD135F49FB00C00EFE /* atomic.h */,
 				526423AE135F49FB00C00EFE /* ForEach.cpp */,

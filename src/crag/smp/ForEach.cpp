@@ -15,7 +15,7 @@
 #include "Mutex.h"
 #include "Semaphore.h"
 #include "SimpleMutex.h"
-#include "ObjectThread.h"
+#include "Thread.h"
 #include "ThreadCondition.h"
 #include "time.h"
 
@@ -167,7 +167,7 @@ namespace
 	public:
 		Worker()
 		{
-			thread.Launch<& Worker::Run, & Worker::thread>(* this);
+			smp::Thread::Launch<Worker, & Worker::thread, & Worker::Run>(* this);
 		}
 		
 		~Worker()
@@ -212,8 +212,7 @@ namespace
 			}
 		}
 		
-		typedef smp::ObjectThread<Worker> Thread;
-		Thread thread;
+		smp::Thread thread;
 	};
 	
 	
