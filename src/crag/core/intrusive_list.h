@@ -422,7 +422,16 @@ namespace core
 			{
 				return super::template begin<Member>();
 			}
+			const_iterator begin() const
+			{
+				return super::template begin<Member>();
+			}
+
 			iterator end()
+			{
+				return super::template end<Member>();
+			}
+			const_iterator end() const
 			{
 				return super::template end<Member>();
 			}
