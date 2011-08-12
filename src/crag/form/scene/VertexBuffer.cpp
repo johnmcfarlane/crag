@@ -14,7 +14,6 @@
 
 #include "sys/memory.h"
 #include "geom/VectorOps.h"
-#include "core/for_each_chunk.h"
 
 #include "glpp/Vbo_Types.h"
 

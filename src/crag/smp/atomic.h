@@ -23,3 +23,5 @@
 #define AtomicMemoryBarrier MemoryBarrier
 
 #endif
+
+#define AtomicCompilerBarrier SDL_CompilerBarrier

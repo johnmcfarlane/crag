@@ -20,8 +20,9 @@
 // TODO: Remove dependency on Polyhedron
 #include "form/scene/Polyhedron.h"
 
+#include "smp/for_each.h"
+
 #include "core/ConfigEntry.h"
-#include "core/for_each_chunk.h"
 
 
 namespace 
@@ -928,13 +929,13 @@ void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 		return;
 	}
 	
-	if (! parallel && step_size == 1)
+	if (! parallel)
 	{
-		core::for_each <form::Node *, FUNCTOR> (nodes, nodes_used_end, f);
+		core::for_each <form::Node *, FUNCTOR, portion_num_quaterna> (nodes, nodes_used_end, f);
 	}
 	else 
 	{
-		core::for_each<form::Node *, FUNCTOR, portion_num_nodes>(nodes, nodes_used_end, step_size, f, parallel);
+		smp::for_each <form::Node *, FUNCTOR, portion_num_quaterna>(nodes, nodes_used_end, f, step_size, -1);
 	}
 }
 
@@ -948,10 +949,10 @@ void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool paralle
 
 	if (! parallel && step_size == 1)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR>(quaterna, quaterna_used_end, f);
+		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, f);
 	}
 	else
 	{
-		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, step_size, f, parallel);
+		smp::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, f, step_size, -1);
 	}
 }

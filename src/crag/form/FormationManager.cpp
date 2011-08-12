@@ -24,8 +24,6 @@
 
 #include "glpp/glpp.h"
 
-#include "smp/ForEach.h"
-
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
 #include "core/Statistics.h"

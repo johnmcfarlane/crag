@@ -12,7 +12,7 @@
 
 #include "core/ConfigManager.h"
 
-#include "smp/ForEach.h"
+#include "smp/scheduler.h"
 
 #include "form/FormationManager.h"
 #include "sim/Simulation.h"
@@ -86,7 +86,7 @@ namespace
 		core::Statistics stat_manager;
 #endif
 		
-		smp::Init(0);
+		smp::scheduler::Init();
 
 		{
 			// Launch the script engine.
@@ -102,7 +102,7 @@ namespace
 				
 				// TODO: Delicate order of startup/shutdown
 				// is mostly due to direct access to Daemons.
-				formation_manager.Start(); smp::Sleep(0.1);
+				formation_manager.Start();
 				simulation.Start();
 				renderer.Start();
 				
@@ -115,7 +115,7 @@ namespace
 			}
 		}
 		
-		smp::Deinit();
+		smp::scheduler::Deinit();
 		sys::Deinit();
 
 		return true;

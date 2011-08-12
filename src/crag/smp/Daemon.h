@@ -85,6 +85,12 @@ namespace smp
 			}
 			
 			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this);
+			
+			while (_object == nullptr)
+			{
+				// block until the the object is constructed and assigned
+				Sleep(0);
+			}
 		}
 		
 		// Called from a thread that will block until the actor terminates.

@@ -44,31 +44,4 @@ namespace core
 		ITEM_FUNCTOR item_functor;
 	};
 	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// chunk_functor_parallel
-	// 
-	// This one is the odd one out; 
-	// scheduler system uses polymorphic functor.
-	
-	template <typename ITERATOR, typename CHUNK_FUNCTOR> class chunk_functor_parallel : public smp::Functor
-	{
-	public:
-		chunk_functor_parallel(ITERATOR init_first, CHUNK_FUNCTOR init_cf)
-		: first(init_first)
-		, cf(init_cf)
-		{
-		}
-		
-	private:
-		// Note: These are offsets from init_first.
-		virtual void operator () (int chunk_first, int chunk_last)
-		{
-			cf(first + chunk_first, first + chunk_last);
-		}
-		
-		ITERATOR first;
-		CHUNK_FUNCTOR cf;
-	};
-	
 }
