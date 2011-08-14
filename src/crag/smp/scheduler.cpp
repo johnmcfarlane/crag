@@ -365,7 +365,8 @@ namespace smp
 					if (! task_manager.ExecuteUnit())
 					{
 						// or sleep.
-						Sleep(0);
+						// TODO: Start using semaphores again.
+						Sleep(0.01);
 					}
 				}
 				
