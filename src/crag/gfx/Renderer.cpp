@@ -491,9 +491,9 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 		return;
 	}
 	
-	RenderFormations();
-	
 	RenderStage(RenderStage::foreground);
+	
+	RenderFormations();
 	
 	EndRenderForeground(pass);
 	
