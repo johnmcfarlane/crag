@@ -17,6 +17,7 @@
 #include "Thread.h"
 
 #include "core/intrusive_list.h"
+#include "core/ring_buffer.h"
 
 #define ENABLE_SCHEDULER
 
@@ -26,7 +27,7 @@ namespace smp
 	namespace scheduler
 	{
 #if defined(ENABLE_SCHEDULER)
-
+		
 		namespace
 		{
 			
@@ -43,13 +44,14 @@ namespace smp
 				
 			public:
 				// functions
-				Task(Job & job, int num_units, int priority, bool block)
+				Task(Job & job, int num_units, int priority, bool automatic, int * num_complete)
 				: _job(job)
 				, _num_units(num_units)
 				, _next_unit(0)
 				, _completed_units(0)
 				, _priority(priority)
-				, _block(block)
+				, _automatic(automatic)
+				, _num_complete(num_complete)
 				{
 				}
 				
@@ -59,16 +61,15 @@ namespace smp
 					
 					// If task is blocking, deletion is up to
 					// the caller of scheduler::Submit
-					if (! IsBlocking())
+					if (_automatic)
 					{
 						delete & _job;
 					}
-				}
-				
-				// Is this a task which is blocking the calling thread?
-				bool IsBlocking() const
-				{
-					return _block;
+					
+					if (_num_complete != nullptr)
+					{
+						AtomicFetchAndAdd(* _num_complete, 1);
+					}
 				}
 				
 				// Do the given unit of work on the task.
@@ -87,26 +88,27 @@ namespace smp
 				// (or -ve if none are unassigned).
 				int SolicitUnit()
 				{
-					// get value of _next_unit and increment it
+					// Get value of _next_unit and increment it.
 					int assignment = AtomicFetchAndAdd(_next_unit, 1);
 					
-					// if we are out of units,
-					if (assignment >= _num_units)
+					// If it's within range,
+					if (assignment < _num_units)
 					{
-						// discretely decrement it again
-						AtomicFetchAndAdd(_next_unit, -1);
-						
-						// and return failure value.
-						return -1;
+						// return it.
+						return assignment;
 					}
 					
-					return assignment;
+					// discretely decrement it again
+					AtomicFetchAndAdd(_next_unit, -1);
+					
+					// and return failure value.
+					return -1;
 				}
 				
 				// Register the fact that a unit of work is completed.
 				void OnUnitComplete()
 				{
-					if (AtomicFetchAndAdd(_completed_units, 1) > _num_units)
+					if (AtomicFetchAndAdd(_completed_units, 1) >= _num_units)
 					{
 						// should never exceed _num_units
 						Assert(false);
@@ -127,7 +129,8 @@ namespace smp
 				int _next_unit;
 				int _completed_units;
 				int _priority;
-				bool _block;
+				bool _automatic;
+				int * _num_complete;
 				
 			public:
 				// type of the list in which these are stored
@@ -153,40 +156,61 @@ namespace smp
 				
 				~TaskManager()
 				{
-					while (! _tasks.empty())
+					while (true)
 					{
+						{
+							Lock l(_mutex);
+							
+							if (_tasks.empty())
+							{
+								return;
+							}
+						}
+
 						Sleep(0);
 					}
 				}
-
+				
 				// called from a thread requesting work
-				void Submit(Job & job, int num_units, int priority, bool block)
+				void Submit(Job & job, int num_units, int priority, bool automatic, int * num_complete)
 				{
 					// create a task to represent the given job
-					Task & task = ref(new Task(job, num_units, priority, block));
-
-					AddTask(task);
+					// TODO: Anyway to avoid this dynamic allocation?
+					// TODO: Perhaps keep a buffer of them; they're all the same size.
+					Task & task = ref(new Task(job, num_units, priority, automatic, num_complete));
 					
-					Finish(task);
+					AddTask(task);
 				}
 				
-				// called from a thread volunteering to do work
+				// "Make yourself useful."
+				// Called from a thread volunteering to do work.
 				bool ExecuteUnit()
 				{
 					Task * task;
 					int unit_index;
 					
-					if (SolicitUnit(task, unit_index))
+					// If a unit of work cannot be acquired,
+					if (! SolicitUnit(task, unit_index))
 					{
-						task->ProcessUnit(unit_index);
-						
-						OnUnitComplete(* task);
-						return true;
-					}
-					else
-					{
+						// return failure: no work was done.
 						return false;
 					}
+
+					// Perform the work.
+					task->ProcessUnit(unit_index);
+					
+					// Wrap up the work.
+					OnUnitComplete(* task);
+					
+					// If the task is completely done,
+					if (task->IsCompleted())
+					{
+						// delet it.
+						delete task;
+					}
+					
+					// return success: work was done.
+					return true;
 				}
 				
 			private:
@@ -194,8 +218,8 @@ namespace smp
 				{
 					Lock l(_mutex);
 					
-					// true only while scheduler is used blockingly in one thread.
-					Assert(_tasks.empty());
+					// true only while scheduler is used blockingly in two threads.
+					Assert(_tasks.size() < 1);
 					
 					// find the correct position in the queue given the priority
 					Iterator position = _tasks.begin();
@@ -210,22 +234,6 @@ namespace smp
 					
 					// insert task at that position
 					_tasks.insert(position, task);
-				}
-				
-				void Finish(Task & task)
-				{
-					// If blocking, 
-					if (task.IsBlocking())
-					{
-						// wait for the task to be completed,
-						while (! task.IsCompleted())
-						{
-							ExecuteUnit();
-						}
-						
-						// and delete it.
-						RemoveAndDelete(task);
-					}
 				}
 				
 				// Try and get a unit of work to do.
@@ -257,30 +265,18 @@ namespace smp
 				// Inform this that an assigned unit of work was completed.
 				void OnUnitComplete(Task & task)
 				{
+					Lock l(_mutex);
+				
 					// Increment the completed count.
 					task.OnUnitComplete();
 					
 					// If the task is complete,
 					if (task.IsCompleted())
 					{
-						// If scheduler is responsible for freeing it,
-						if (! task.IsBlocking())
-						{
-							// remove/delete the task.
-							RemoveAndDelete(task);
-						}
+						_tasks.remove(task);
 					}
 				}
 				
-				// Removes the task from the list and deletes it.
-				// (Doesn't necessarily delete the job.)
-				void RemoveAndDelete(Task & task)
-				{
-					Lock l(_mutex);
-					
-					_tasks.remove(task);
-				}
-
 				// variables
 				TaskList _tasks;
 				Mutex _mutex;
@@ -306,7 +302,7 @@ namespace smp
 						it->Launch(RunThread, nullptr);
 					}
 					
-					std::cout << "scheduler using " << num_threads << "threads." << std::endl;
+					std::cout << "scheduler using " << num_threads << " threads." << std::endl;
 				}
 				
 				~ThreadBuffer()
@@ -357,7 +353,7 @@ namespace smp
 				
 				// Singleton & task manager don't ever change until shutdown.
 				TaskManager & task_manager = singleton->GetTaskManager();
-
+				
 				// Until we're all done,
 				while (singleton != nullptr)
 				{
@@ -373,17 +369,17 @@ namespace smp
 				return 0;
 			}
 		}
-
-
+		
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// Threaded version of scheduler interface
-
+		
 		void Init()
 		{
 			Assert(singleton == nullptr);
 			singleton = new Singleton;
 		}
-
+		
 		void Deinit()
 		{
 			Singleton & s = ref(singleton);
@@ -393,40 +389,34 @@ namespace smp
 			
 			delete & s;
 		}
-
-		void Submit(Job & job, int num_units, int priority, bool block)
+		
+		void Complete(Job & job, int num_units, int priority)
 		{
-			switch (num_units)
+			TaskManager & task_manager = singleton->GetTaskManager();
+
+			// contains a count of the jobs completed
+			int num_complete = 0;
+
+			task_manager.Submit(job, num_units, priority, false, & num_complete);
+			
+			// While waiting for job to complete, do some of the work.
+			while (num_complete < 1)
 			{
-				case 0:
-					break;
-					
-				case 1:
-					if (block)
-					{
-						// We're blocking the thread anyway, so only bother to parallelize 
-						// if there is more than one unit of work to perform.
-						job(0);
-						break;
-					}
-					
-				default:
-					singleton->GetTaskManager().Submit(job, num_units, priority, block);
-					break;
+				task_manager.ExecuteUnit();
 			}
 		}
-
+		
 #else
 		////////////////////////////////////////////////////////////////////////////////
 		// Non-threaded version of scheduler interface
 		//
 		// Handy for ruling out threading issues when debugging
-
+		
 		void Init() { }
-
+		
 		void Deinit() { }
-
-		void Submit(Job & job, int num_units, int priority, bool block)
+		
+		void Complete(Job & job, int num_units, int priority)
 		{
 			for (size_t unit_index = 0; unit_index < num_units; ++ unit_index)
 			{

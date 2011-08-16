@@ -26,14 +26,13 @@ namespace smp
 			
 			// virtual d'tor
 			virtual ~Job() { }
-
+			
 			// Perform a unit of work which is independant of the rest,
 			// i.e. one which can be performed in parallel.
 			virtual void operator() (size_type unit) = 0;
 		};
 
-		// Perform the given job.
-		// If block is false, task is deleted by the scheduler.
-		void Submit(Job & job, int num_units, int priority, bool block);
+		// blocking, parallel job execution
+		void Complete(Job & job, int num_units, int priority);
 	}
 }

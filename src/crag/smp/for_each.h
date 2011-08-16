@@ -58,6 +58,6 @@ namespace smp
 	{
 		ChunkedJob<ITERATOR, FUNCTOR, UNROLL_PITCH> chunk_functor(first, last, functor, unit_size);
 
-		scheduler::Submit(chunk_functor, chunk_functor.NumUnits(), priority, true);
+		scheduler::Complete(chunk_functor, chunk_functor.NumUnits(), priority);
 	}
 }
