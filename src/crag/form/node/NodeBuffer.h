@@ -152,7 +152,7 @@ namespace form
 		// Types
 
 		// The fixed-size array of node groups, used and unused.
-		Node * const nodes;	// [max_num_nodes]
+		Node * nodes;	// [max_num_nodes]
 		
 		Node * nodes_used_end;			// end of buffer of actually used nodes
 		Node const * const nodes_end;
