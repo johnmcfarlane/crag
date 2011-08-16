@@ -21,7 +21,7 @@ namespace smp
 	class MessageQueue
 	{
 		typedef CLASS Class;
-		typedef core::ring_buffer<MESSAGE_BASE> Buffer;
+		typedef core::ring_buffer<MESSAGE_BASE, true> Buffer;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 	public:
@@ -70,14 +70,11 @@ namespace smp
 		{
 			Lock critical_section(_mutex);
 			
-			while (! _buffer.push_back(object))
+			if (! _buffer.push_back(object))
 			{
-				if (! _buffer.reserve(_buffer.capacity() << 1))
-				{
-					// may cause a log-up, or buffer may clear
-					assert(false);
-					smp::Sleep(0);
-				}
+				// may cause a lock-up, or buffer may clear
+				assert(false);
+				smp::Sleep(0);
 			}
 		}
 		
