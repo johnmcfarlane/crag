@@ -17,7 +17,8 @@ namespace core
 {
 	// A sequence container which stores variable-sized objects of base class, BASE_CLASS.
 	// Designed to easily push_back and pop_front. Requires allocation only to adjust capacity.
-	template <typename BASE_CLASS>
+	// Iff BITWISE_EXPANSION, push_back will automatically use reserve if the buffer if full.
+	template <typename BASE_CLASS, bool BITWISE_EXPANSION = false>
 	class ring_buffer
 	{
 		OBJECT_NO_COPY(ring_buffer);
@@ -118,7 +119,7 @@ namespace core
 				}
 				
 				// and try and allocate enough space for a copy of the object.
-				value_type * object_copy = copy.allocate_object(object_size);
+				value_type * object_copy = copy.allocate_object_memory(object_size);
 				
 				// If there wasn't enough space for the allocation,
 				if (object_copy == nullptr)
@@ -191,10 +192,9 @@ namespace core
 			size_type source_size = round_up(sizeof(CLASS));
 			
 			// allocate space for the object
-			value_type * back = allocate_object(source_size);
+			value_type * back = allocate_object_memory(source_size);
 			if (back == nullptr)
 			{
-				verify();
 				return false;
 			}
 			
@@ -239,17 +239,46 @@ namespace core
 		}
 		
 	private:
-		
-		value_type * allocate_object(size_type source_size)
+		// allocates memory for the object
+		value_type * allocate_object_memory(size_type source_size)
 		{
 			assert(source_size >= sizeof(value_type));
 			size_type block_size = block::header_size + source_size;
 			
+			// Determine the beginning/end of the block where the object will live.
 			block * block_begin, * block_end;
+			
+			// If there isn't space with the current buffer,
 			if (! locate_next_block(block_begin, block_end, block_size))
 			{
-				// not enough room.
-				return nullptr;
+				// and if bitwise expansion is not allowed,
+				if (! BITWISE_EXPANSION)
+				{
+					// then fail.
+					return nullptr;
+				}
+				
+				// Determine a new buffer capacity,
+				size_type new_capacity = capacity();
+				size_type minimum_capacity = new_capacity + block_size;
+				do 
+				{
+					// to be a power of two multiple.
+					new_capacity <<= 1;
+				}	while (new_capacity < minimum_capacity);
+				
+				// If resizing the buffer to that capacity fails,
+				if (! reserve(new_capacity))
+				{
+					// then new_capacity was calculated incorrectly.
+					assert(false);
+					return nullptr;
+				}
+				
+				// block extents are now easy to calculate
+				block_begin = * _data_end;
+				block_end = reinterpret_cast<block *>(reinterpret_cast<char *>(block_begin) + block_size);
+				assert(block_end <= _buffer_end);
 			}
 			
 			// in case new block is not contiguous,
