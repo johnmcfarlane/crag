@@ -159,10 +159,32 @@ void form::FormationManager::RemoveFormation(form::Formation & formation)
 	scenes[1].RemoveFormation(formation);
 }
 
-void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Formation const & formation, IntersectionFunctor & functor) const
+void form::FormationManager::ForEachIntersection(IntersectionFunctor & functor) const
 {
 	Scene const & scene = GetVisibleScene();
-	Polyhedron const * polyhedron = scene.GetPolyhedron(formation);
+	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	node_buffer.LockTree();
+
+	ForEachIntersectionLocked(functor);
+	
+	node_buffer.UnlockTree();
+}
+
+void form::FormationManager::ForEachTreeQuery(BatchedFunctorBuffer & functor_buffer) const
+{
+	Scene const & scene = GetVisibleScene();
+	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	node_buffer.LockTree();
+
+	smp::scheduler::Complete(functor_buffer, 1);
+
+	node_buffer.UnlockTree();
+}
+
+void form::FormationManager::ForEachIntersectionLocked(IntersectionFunctor & functor) const
+{
+	Scene const & scene = GetVisibleScene();
+	Polyhedron const * polyhedron = scene.GetPolyhedron(functor._formation);
 	if (polyhedron == nullptr)
 	{
 		Assert(false);
@@ -170,16 +192,13 @@ void form::FormationManager::ForEachIntersection(sim::Sphere3 const & sphere, Fo
 	}
 	
 	sim::Vector3 const & origin = scene.GetOrigin();
-	form::Vector3 relative_formation_position(form::SimToScene(formation.position, origin));
-	form::Sphere3 relative_sphere(form::SimToScene(sphere.center, origin), form::Scalar(sphere.radius));
+	form::Vector3 relative_formation_position(form::SimToScene(functor._formation.position, origin));
+	form::Sphere3 relative_sphere(form::SimToScene(functor._sphere.center, origin), form::Scalar(functor._sphere.radius));
 	
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.LockTree();
-	
 	float min_parent_score = node_buffer.GetMinParentScore() * formation_sphere_collision_detail_factor;
-	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
 	
-	node_buffer.UnlockTree();
+	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
 }
 
 void form::FormationManager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta)

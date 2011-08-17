@@ -20,7 +20,7 @@ namespace physics
 	class SphericalBody : public Body
 	{
 	public:
-		SphericalBody(physics::Engine & physics_engine, bool movable, Scalar radius);
+		SphericalBody(Engine & engine, bool movable, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;

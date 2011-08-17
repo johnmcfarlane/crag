@@ -13,13 +13,20 @@
 #include "Engine.h"
 #include "SphericalBody.h"
 
+#include "form/FormationManager.h"
+
+#include "smp/for_each.h"
+
 #include "core/ConfigEntry.h"
 
+
+using namespace physics;
 
 namespace 
 {
 	CONFIG_DEFINE (collisions, bool, true);
 }
+CONFIG_DEFINE (collisions_parallelization, bool, true);
 
 
 //////////////////////////////////////////////////////////////////////
@@ -29,6 +36,7 @@ physics::Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
+, _deferred_collisions(4096)
 {
 	dInitODE2(0);
 }
@@ -47,6 +55,8 @@ void physics::Engine::Tick(double delta_time)
 	{
 		// Detect / represent all collisions.
 		CreateCollisions();
+		
+		ProcessDeferredCollisions();
 		
 		// Tick physics (including acting upon collisions).
 		dWorldQuickStep (world, delta_time);
@@ -73,11 +83,26 @@ void physics::Engine::CreateCollisions()
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
 }
 
+void physics::Engine::ProcessDeferredCollisions()
+{
+	if (_deferred_collisions.empty())
+	{
+		return;
+	}
+	
+	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
+	formation_manager.ForEachTreeQuery(_deferred_collisions);
+
+	_deferred_collisions.clear();
+}
+
 void physics::Engine::DestroyCollisions()
 {
 	dJointGroupEmpty(contact_joints);
 }
 
+// Called by ODE when geometry collides. In the case of planets, 
+// this means the outer shell of the planet.
 void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
 {
 	Engine & engine = * reinterpret_cast<Engine *>(data);
@@ -103,7 +128,7 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
-void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
+void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
 	int const max_num_contacts = 128;
@@ -150,6 +175,8 @@ void physics::Engine::OnCollision(dGeomID geom1, dGeomID geom2)
 
 void physics::Engine::OnContact(dContact const & contact)
 {
+	_mutex.Lock();
+	
 	dJointID c = dJointCreateContact (world, contact_joints, & contact);
 	
 	dBodyID body1 = dGeomGetBody(contact.geom.g1);
@@ -160,4 +187,6 @@ void physics::Engine::OnContact(dContact const & contact)
 	// Make sure the bodies are in the right world.
 	Assert(body1 == nullptr || dBodyGetWorld(body1) == world);
 	Assert(body2 == nullptr || dBodyGetWorld(body2) == world);
+
+	_mutex.Unlock();
 }

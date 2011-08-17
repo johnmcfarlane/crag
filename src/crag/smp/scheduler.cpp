@@ -218,15 +218,12 @@ namespace smp
 				{
 					Lock l(_mutex);
 					
-					// true only while scheduler is used blockingly in two threads.
-					Assert(_tasks.size() < 1);
-					
 					// find the correct position in the queue given the priority
 					Iterator position = _tasks.begin();
 					for (Iterator end = _tasks.end(); position != end; ++ position)
 					{
 						Task const & lhs = * position;
-						if (! (lhs < task))
+						if (lhs < task)
 						{
 							break;
 						}
@@ -292,8 +289,10 @@ namespace smp
 			public:
 				ThreadBuffer()
 				{
-					// Create a thread for each CPU.
-					int num_threads = GetNumCpus();
+					// Create a thread for each CPU (except one).
+					// TODO: once non-blocking tasks are used, re-add the extra thread and
+					// num_complete should be a semaphore and this thread should idle.
+					int num_threads = GetNumCpus() - 1;
 					_threads = new Thread [num_threads];
 					
 					// Launch them all.
@@ -406,6 +405,23 @@ namespace smp
 			}
 		}
 		
+		void Complete(Batch & batch, int priority)
+		{
+			TaskManager & task_manager = singleton->GetTaskManager();
+			
+			int num_jobs = 0, num_complete = 0;
+			
+			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ num_jobs, ++ i)
+			{
+				task_manager.Submit(* i, 1, priority, false, & num_complete);
+			}
+			
+			// While waiting for job to complete, do some of the work.
+			while (num_complete < num_jobs)
+			{
+				task_manager.ExecuteUnit();
+			}
+		}		
 #else
 		////////////////////////////////////////////////////////////////////////////////
 		// Non-threaded version of scheduler interface
@@ -421,6 +437,14 @@ namespace smp
 			for (size_t unit_index = 0; unit_index < num_units; ++ unit_index)
 			{
 				job(unit_index);
+			}
+		}
+		
+		void Complete(Batch & batch, int priority)
+		{
+			for (Batch::iterator i = batch.begin(); i != batch.end(); ++ i)
+			{
+				Complete(* i, 1, priority);
 			}
 		}
 #endif

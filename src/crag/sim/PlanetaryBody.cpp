@@ -20,6 +20,9 @@
 #include "form/FormationManager.h"
 
 
+CONFIG_DECLARE(collisions_parallelization, bool);
+
+
 namespace
 {
 	
@@ -35,9 +38,11 @@ namespace
 
 	class IntersectionFunctor : public form::FormationManager::IntersectionFunctor
 	{
+		typedef form::FormationManager::IntersectionFunctor super;
 	public:
-		IntersectionFunctor(physics::Engine & engine, dGeomID object_geom, dGeomID planet_geom)
-		: _physics_engine(engine)
+		IntersectionFunctor(sim::Sphere3 const & sphere, form::Formation const & formation, dGeomID object_geom, dGeomID planet_geom)
+		: super(sphere, formation)
+		, _physics_engine(sim::Simulation::Daemon::Ref().GetPhysicsEngine())
 		{
 			ZeroObject(_contact);
 			
@@ -75,7 +80,32 @@ namespace
 		dContact _contact;
 		physics::Engine & _physics_engine;
 	};
-}	
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// DeferredIntersectionFunctor - wrapper for IntersectionFunctor
+	
+	class DeferredIntersectionFunctor : public smp::scheduler::Job
+	{
+	public:	
+		DeferredIntersectionFunctor(form::FormationManager & formation_manager, IntersectionFunctor & intersection_functor)
+		: _formation_manager(formation_manager)
+		, _intersection_functor(intersection_functor)
+		{
+		}
+		
+	private:
+		virtual void operator () (size_type unit_index)
+		{
+			Assert(unit_index == 0);
+			
+			_formation_manager.ForEachIntersectionLocked(_intersection_functor);
+		}
+		
+		form::FormationManager & _formation_manager;
+		IntersectionFunctor _intersection_functor;
+	};
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,22 +128,25 @@ bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body & that_body)
 	return false;
 }
 
-struct TestSphereCollisionMessage
-{
-	sim::PlanetaryBody const & _planetary_body;
-	physics::SphericalBody const & _spherical_body;
-};
-
 bool sim::PlanetaryBody::OnCollisionWithSphericalBody(physics::Engine & engine, SphericalBody & that_sphere)
 {
 	Sphere3 sphere(that_sphere.GetPosition(), that_sphere.GetRadius());
-
+	
 	dGeomID object_geom = that_sphere.GetGeomId();	
 	dGeomID planet_geom = GetGeomId();
-	IntersectionFunctor functor(engine, object_geom, planet_geom);
-
+	IntersectionFunctor functor(sphere, formation, object_geom, planet_geom);
+	
 	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
-	formation_manager.ForEachIntersection(sphere, formation, functor);
+
+	if (collisions_parallelization)
+	{
+		DeferredIntersectionFunctor deferred_functor(formation_manager, functor);
+		engine.DeferCollision(deferred_functor);
+	}
+	else
+	{
+		formation_manager.ForEachIntersection(functor);
+	}
 	
 	return true;
 }

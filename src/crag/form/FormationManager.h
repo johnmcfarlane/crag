@@ -19,6 +19,7 @@
 #include "core/Singleton.h"
 
 #include "smp/Daemon.h"
+#include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
 #include "sys/App.h"
@@ -69,25 +70,29 @@ namespace form
 		OBJECT_SINGLETON(FormationManager);
 		
 	public:
+		// types
 		typedef smp::Daemon<FormationManager, true> Daemon;
+		
+		struct IntersectionFunctor
+		{
+			IntersectionFunctor(sim::Sphere3 const & sphere, Formation const & formation) : _sphere(sphere), _formation(formation) { }
+			virtual ~IntersectionFunctor() { }
+			virtual void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth) = 0;
+			
+			sim::Sphere3 const _sphere;
+			Formation const & _formation;
+		};
 
+		typedef core::ring_buffer<smp::scheduler::Job, true> BatchedFunctorBuffer;
+
+		// functions
 		FormationManager();
 		~FormationManager();
 		
-		// Verification
 #if defined(VERIFY)
+		// Verification
 		void Verify() const;
 #endif
-		
-		// Singleton
-		//static Daemon & Ref() { return ref(singleton); }
-		
-//		// Message passing
-//		template <typename MESSAGE>
-//		static void SendMessage(MESSAGE const & message) 
-//		{ 
-//			singleton->SendMessage(message); 
-//		}
 		
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);
@@ -98,14 +103,17 @@ namespace form
 	private:		
 		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation & formation);
-		
 	public:
-		struct IntersectionFunctor
-		{
-			virtual ~IntersectionFunctor() { }
-			virtual void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth) = 0;
-		};
-		void ForEachIntersection(sim::Sphere3 const & sphere, Formation const & formation, IntersectionFunctor & functor) const;
+		
+		// Individual intersection tests.
+		void ForEachIntersection(IntersectionFunctor & functor) const;
+
+		// batched formation tests (node tree is locked for the duration of the batch)
+		void ForEachTreeQuery(BatchedFunctorBuffer & functor_buffer) const;
+
+		// Intersection test called from within ForEachTreeQuery.
+		// TODO: Yes, this interface is a little messed up.
+		void ForEachIntersectionLocked(IntersectionFunctor & functor) const;
 		
 		void SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
 		void ResetRegulator();

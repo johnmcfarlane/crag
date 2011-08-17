@@ -18,8 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // SphericalBody
 
-physics::SphericalBody::SphericalBody(physics::Engine & physics_engine, bool movable, Scalar radius)
-: Body(physics_engine, dCreateSphere(physics_engine.space, radius), movable)
+physics::SphericalBody::SphericalBody(Engine & engine, bool movable, Scalar radius)
+: Body(engine, dCreateSphere(engine.space, radius), movable)
 {
 }
 
@@ -51,6 +51,6 @@ bool physics::SphericalBody::OnCollision(Engine & engine, Body & that_body)
 bool physics::SphericalBody::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere)
 {
 	// There is no special code for sphere-sphere collision. 
-	engine.OnCollision(geom_id, that_sphere.geom_id);
+	engine.OnUnhandledCollision(geom_id, that_sphere.geom_id);
 	return true;
 }

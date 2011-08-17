@@ -9,14 +9,19 @@
 
 #pragma once
 
+namespace core
+{
+	template <typename BASE_CLASS, bool BITWISE_EXPANSION> class ring_buffer;
+}
+
+
 namespace smp
 {
 	// A system for performing parallelized tasks using multiple processors.
 	namespace scheduler
 	{
-		// init/deinit
-		void Init();
-		void Deinit();
+		////////////////////////////////////////////////////////////////////////////////
+		// types
 		
 		// base class for task descriptor
 		class Job
@@ -31,8 +36,19 @@ namespace smp
 			// i.e. one which can be performed in parallel.
 			virtual void operator() (size_type unit) = 0;
 		};
-
+		
+		// heterogenic collection of single-unit jobs.
+		typedef core::ring_buffer<Job, true> Batch;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
+		// init/deinit
+		void Init();
+		void Deinit();
+		
 		// blocking, parallel job execution
 		void Complete(Job & job, int num_units, int priority);
+		void Complete(Batch & batch, int priority);
 	}
 }
