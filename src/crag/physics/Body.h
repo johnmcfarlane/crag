@@ -15,9 +15,11 @@
 
 namespace physics
 {
+	// forward-declarations
 	class SphericalBody;
 	class Engine;
 
+	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body
 	{
 	protected:
