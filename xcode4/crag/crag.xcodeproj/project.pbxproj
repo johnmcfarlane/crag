@@ -72,6 +72,8 @@
 		5283EFD013F2D4EA00BEC592 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */; };
 		52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52858A9B13D6E86300D95BEE /* Ball.cpp */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
+		528C20C11403708700B203E8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
+		528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
 		529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
@@ -85,6 +87,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		528C20C31403715300B203E8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		52F8199E132DF0940045C3A8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -249,7 +261,7 @@
 		526423AA135F49FA00C00EFE /* UserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserInput.cpp; sourceTree = "<group>"; };
 		526423AB135F49FA00C00EFE /* UserInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInput.h; sourceTree = "<group>"; };
 		526423AD135F49FB00C00EFE /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
-		526423AF135F49FB00C00EFE /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; path = for_each.h; sourceTree = "<group>"; };
+		526423AF135F49FB00C00EFE /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
 		526423B0135F49FB00C00EFE /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
 		526423B1135F49FB00C00EFE /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
 		526423B2135F49FB00C00EFE /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
@@ -282,6 +294,7 @@
 		5285F05913D546B20058DBF7 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5287831E13B389CD00B67A38 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
+		528C20C01403708700B203E8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		5293538513C8FD1900B5218B /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
@@ -311,6 +324,7 @@
 			files = (
 				52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */,
 				5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */,
+				528C20C11403708700B203E8 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +354,7 @@
 		52055D61132DE312000C6578 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				528C20C01403708700B203E8 /* SDL.framework */,
 				5213C8D4132DE39A0021EA91 /* OpenGL.framework */,
 				52055D62132DE312000C6578 /* Cocoa.framework */,
 				52055D64132DE312000C6578 /* Other Frameworks */,
@@ -706,6 +721,7 @@
 				52055D5B132DE312000C6578 /* Frameworks */,
 				52055D5C132DE312000C6578 /* Resources */,
 				52F8199E132DF0940045C3A8 /* CopyFiles */,
+				528C20C31403715300B203E8 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -907,7 +923,6 @@
 				LIBRARY_SEARCH_PATHS = "~/lib";
 				OTHER_LDFLAGS = (
 					"-lode",
-					"-lsdl",
 					"-lpython3.1",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -953,7 +968,6 @@
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-lode",
-					"-lsdl",
 					"-lpython3.1",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
