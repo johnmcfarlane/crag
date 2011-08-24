@@ -39,6 +39,8 @@ namespace
 #if defined(WIN32)
 	sys::TimeType inv_query_performance_frequency = 0;
 #endif
+	
+	char const * _program_path;
 
 	void SetFocus(bool gained_focus)
 	{
@@ -67,7 +69,7 @@ namespace
 }
 
 
-bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
+bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
 #if defined(WIN32)
 	LARGE_INTEGER query_performance_frequency;
@@ -128,6 +130,8 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title)
 	
 	window_size = resolution;
 	
+	_program_path = program_path;
+	
 	return true;
 }
 
@@ -140,6 +144,11 @@ void sys::Deinit()
 	
 	SDL_Quit();
 
+}
+
+char const * sys::GetProgramPath()
+{
+	return _program_path;
 }
 
 bool sys::InitGl()

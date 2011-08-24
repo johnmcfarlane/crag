@@ -6,12 +6,11 @@
 # Copyright 2010-2011 John McFarlane. All rights reserved.
 # This program is distributed under the terms of the GNU General Public License.
 
-import gc
 import crag
+import gc
 import math
 import random
 import stackless
-import time
 
 exec(open("script/observer.py").read())
 

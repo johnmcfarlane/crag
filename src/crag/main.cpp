@@ -28,14 +28,14 @@
 
 namespace 
 {
-	bool Crag();
+	bool Crag(char const * program_path);
 }
 
 
 //////////////////////////////////////////////////////////////////////
 // main
 
-int SDL_main(int /*argc*/, char * * /*argv*/)
+int SDL_main(int /*argc*/, char * * argv)
 {
 #if defined(WIN32)
 	std::ofstream cout_filestr, cerr_filestr;
@@ -48,7 +48,7 @@ int SDL_main(int /*argc*/, char * * /*argv*/)
 	std::cout << "Crag Demo" << std::endl;
 	std::cout << "Copyright 2010 John McFarlane" << std::endl;
 	
-	return Crag() ? EXIT_SUCCESS : EXIT_FAILURE;
+	return Crag(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -72,12 +72,12 @@ namespace
 	// Local Function Definitions
 
 
-	bool Crag()
+	bool Crag(char const * program_path)
 	{
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, "Crag"))
+		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, "Crag", program_path))
 		{
 			return false;
 		}

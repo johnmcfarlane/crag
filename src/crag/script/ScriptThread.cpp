@@ -170,7 +170,12 @@ script::ScriptThread::ScriptThread()
 		std::cerr << "Failed to create crag python module." << std::endl;
 		return;
 	}
-    
+	
+	// Set executable name so Python knows where to looks for libs.
+	wchar_t program_path[FILENAME_MAX + 1];
+	mbstowcs(program_path, sys::GetProgramPath(), FILENAME_MAX);
+	Py_SetProgramName(program_path);
+
 	Py_Initialize();
 }
 

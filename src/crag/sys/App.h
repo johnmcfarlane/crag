@@ -71,8 +71,10 @@ namespace sys
 	};
 	
 	// init
-	bool Init(Vector2i resolution, bool full_screen, char const * title);
+	bool Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path);
 	void Deinit();
+	
+	char const * GetProgramPath();
 
 	bool InitGl();
 	void DeinitGl();
