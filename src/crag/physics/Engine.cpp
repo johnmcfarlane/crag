@@ -16,6 +16,7 @@
 #include "form/FormationManager.h"
 
 #include "smp/for_each.h"
+#include "smp/Lock.h"
 
 #include "core/ConfigEntry.h"
 
@@ -37,6 +38,7 @@ physics::Engine::Engine()
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
 , _deferred_collisions(4096)
+, _contacts(65536)
 {
 	dInitODE2(0);
 }
@@ -55,14 +57,14 @@ void physics::Engine::Tick(double delta_time)
 	{
 		// Detect / represent all collisions.
 		CreateCollisions();
-		
-		ProcessDeferredCollisions();
+		CreateJoints();
 		
 		// Tick physics (including acting upon collisions).
 		dWorldQuickStep (world, delta_time);
 		//dWorldStep (world, delta_time);
 		
 		// Remove this tick's collision data.
+		DestroyJoints();
 		DestroyCollisions();
 	}
 	else
@@ -81,6 +83,27 @@ void physics::Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
+
+	ProcessDeferredCollisions();	
+}
+
+void physics::Engine::CreateJoints()
+{
+	for (ContactVector::const_iterator i = _contacts.begin(); i != _contacts.end(); ++ i)
+	{
+		dContact const & contact = * i;
+		
+		dBodyID body1 = dGeomGetBody(contact.geom.g1);
+		dBodyID body2 = dGeomGetBody(contact.geom.g2);
+		
+		// body sanity tests
+		Assert(body1 != body2);
+		Assert(body1 == nullptr || dBodyGetWorld(body1) == world);
+		Assert(body2 == nullptr || dBodyGetWorld(body2) == world);	
+		
+		dJointID c = dJointCreateContact (world, contact_joints, & contact);
+		dJointAttach (c, body1, body2);
+	}
 }
 
 void physics::Engine::ProcessDeferredCollisions()
@@ -96,9 +119,14 @@ void physics::Engine::ProcessDeferredCollisions()
 	_deferred_collisions.clear();
 }
 
-void physics::Engine::DestroyCollisions()
+void physics::Engine::DestroyJoints()
 {
 	dJointGroupEmpty(contact_joints);
+}
+
+void physics::Engine::DestroyCollisions()
+{
+	_contacts.clear();
 }
 
 // Called by ODE when geometry collides. In the case of planets, 
@@ -131,23 +159,29 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
-	int const max_num_contacts = 128;
-	dContact contacts [max_num_contacts];
+	int const max_contacts_per_collision = 1;
+	dContactGeom contact_geoms [max_contacts_per_collision];
 	
-	int num_contacts = dCollide (geom1, geom2, max_num_contacts, & contacts[0].geom, sizeof(* contacts));
+	int num_contacts = dCollide (geom1, geom2, max_contacts_per_collision, contact_geoms, sizeof(dContactGeom));
 	if (num_contacts == 0)
 	{
 		return;
 	}
 	
 	// Time to increase max_num_contacts?
-	Assert (num_contacts < max_num_contacts);
+	Assert (num_contacts <= max_contacts_per_collision);
 	
-	dContact const * const end = contacts + num_contacts;
-	for (dContact * it = contacts; it != end; ++ it)
+	dContact * contacts = _contacts.grow(num_contacts);
+	
+	for (int index = 0; index < num_contacts; ++ index)
 	{
+		dContactGeom & contact_geom = contact_geoms[index];
+		dContact & contact = contacts[index];
+		
+		contact.geom = contact_geom;
+		
 		// init the surface member of the contact
-		dSurfaceParameters & surface = it->surface;
+		dSurfaceParameters & surface = contact.surface;
 		surface.mode = dContactBounce | dContactSoftCFM;
 		surface.mu = 1;				// used (by default)
 		//surface.mu2 = 0;
@@ -161,32 +195,20 @@ void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 		//surface.slip1 = 0;
 		//surface.slip2 = 0;
 		
-		it->geom.g1 = geom1;
-		it->geom.g2 = geom2;
+		contact.geom.g1 = geom1;
+		contact.geom.g2 = geom2;
 
 		//it->fdir1[0] = 0;
 		//it->fdir1[1] = 0;
 		//it->fdir1[2] = 0;
 		//it->fdir1[3] = 0;
-		
-		OnContact(* it);
 	}
 }
 
 void physics::Engine::OnContact(dContact const & contact)
 {
-	_mutex.Lock();
+	// geometry sanity tests
+	Assert(contact.geom.g1 != contact.geom.g2);
 	
-	dJointID c = dJointCreateContact (world, contact_joints, & contact);
-	
-	dBodyID body1 = dGeomGetBody(contact.geom.g1);
-	dBodyID body2 = dGeomGetBody(contact.geom.g2);
-	
-	dJointAttach (c, body1, body2);
-
-	// Make sure the bodies are in the right world.
-	Assert(body1 == nullptr || dBodyGetWorld(body1) == world);
-	Assert(body2 == nullptr || dBodyGetWorld(body2) == world);
-
-	_mutex.Unlock();
+	_contacts.push_back(contact);
 }

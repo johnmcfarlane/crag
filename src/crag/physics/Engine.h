@@ -12,8 +12,8 @@
 
 #include "defs.h"
 
-#include "smp/Mutex.h"
 #include "smp/scheduler.h"
+#include "smp/vector.h"
 
 #include "core/ring_buffer.h"
 
@@ -27,8 +27,9 @@ namespace physics
 		friend class Body;
 		friend class SphericalBody;
 		
-	public:
 		// types
+		typedef smp::vector<dContact> ContactVector;
+	public:
 		typedef smp::scheduler::Batch DeferredCollisionBuffer;
 		
 		// functions
@@ -41,7 +42,9 @@ namespace physics
 
 	private:
 		void CreateCollisions();
+		void CreateJoints();
 		void ProcessDeferredCollisions();
+		void DestroyJoints();
 		void DestroyCollisions();
 		static void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2);
 		
@@ -65,7 +68,7 @@ namespace physics
 		
 		// Called once individual points of contact have been determined.
 		void OnContact(dContact const & contact);
-		
+
 	private:
 		dBodyID CreateBody();
 
@@ -73,9 +76,13 @@ namespace physics
 		dWorldID world;
 		dSpaceID space;
 		dJointGroupID contact_joints;
-		
-		smp::Mutex _mutex;
+
+		// collisions between formations and other objects;
+		// these get performed while the formation node tree is locked.
 		DeferredCollisionBuffer _deferred_collisions;
+		
+		// it seems that ODE keeps a hold of the contacts which are passed to it.
+		ContactVector _contacts;
 	};
 	
 }
