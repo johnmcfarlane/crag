@@ -28,23 +28,23 @@ namespace
 
 
 form::VertexBuffer::VertexBuffer(int max_num_verts) 
-: Super(max_num_verts)
+: _verts(max_num_verts)
 {
 }
 
 form::Vertex & form::VertexBuffer::PushBack()
 {
-	return grow(1);
+	return * _verts.grow(1);
 }
 
 void form::VertexBuffer::Clear()
 {
-	clear();
+	_verts.clear();
 }
 
 int form::VertexBuffer::GetIndex(Vertex const & v) const
 {
-	Vertex const * array = & front();
+	Vertex const * array = & _verts.front();
 
 	int index = & v - array;
 	

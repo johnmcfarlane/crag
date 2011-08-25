@@ -46,7 +46,7 @@ namespace gfx
 		
 		value_type & PushBack()
 		{
-			return grow(3);
+			return * grow(3);
 		}
 		
 		typedef Super::value_type value_type;

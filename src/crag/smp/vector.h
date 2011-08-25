@@ -168,10 +168,10 @@ namespace smp
 		
 		void push_back(T const & value)
 		{
-			grow(1) = value;
+			* grow(1) = value;
 		}
 		
-		T & grow(size_type num)
+		iterator grow(size_type num)
 		{
 			// Increase the array.
 			T * pre_last = grow_uninit (num);
@@ -184,10 +184,10 @@ namespace smp
 			}
 			
 			// Return the first of the new elements.
-			return * pre_last;
+			return pre_last;
 		}
 		
-		T & grow(size_type num, T & filler)
+		iterator grow(size_type num, T & filler)
 		{
 			// Increase the array.
 			T * pre_last = grow_uninit (num);
@@ -200,7 +200,7 @@ namespace smp
 			}
 			
 			// Return the first of the new elements.
-			return * pre_last;
+			return pre_last;
 		}
 		
 	private:

@@ -17,19 +17,21 @@
 
 namespace form 
 {
-	class VertexBuffer : private smp::vector<Vertex>
+	class VertexBuffer
 	{
-		typedef smp::vector<Vertex> Super;
-		
 	public:
+		// functions
 		VertexBuffer(int max_num_verts);
 
-		size_t Size() const { return size(); }
-		Vertex const * GetArray() const { return & front(); }
+		size_t Size() const { return _verts.size(); }
+		Vertex const * GetArray() const { return & _verts.front(); }
 		Vertex & PushBack();
 		
 		void Clear();
 
 		int GetIndex(Vertex const & v) const;
+		
+		// variables
+		smp::vector<Vertex> _verts;
 	};
 }
