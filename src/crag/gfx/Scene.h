@@ -21,8 +21,8 @@ namespace gfx
 {
 	class Object;
 	class Sphere;
-
-
+	
+	
 	class Scene
 	{
 	public:
@@ -31,7 +31,7 @@ namespace gfx
 		
 		void AddObject(Object const & object);
 		void RemoveObject(Object const & object);
-		ObjectVector const & GetObjects(RenderStage::type render_stage) const;
+		ObjectSet const & GetObjects(Layer::type layer) const;
 		
 		void SetResolution(Vector2i const & r);
 		void SetCamera(sim::Vector3 const & pos, sim::Matrix4 const & rot);
@@ -40,14 +40,14 @@ namespace gfx
 		Pov const & GetPov() const;
 		
 		Sphere const & GetSphere() const;
-
+		
 		void GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
 		
 	private:
 		// attributes
 		Pov pov;
-
-		ObjectVector _objects[RenderStage::num];
+		
+		ObjectSet _objects[Layer::num];
 		Sphere const & _sphere;
 	};
 }

@@ -23,8 +23,8 @@ namespace gfx
 		Ball(Scalar radius);
 		
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
-		virtual void Draw(Scene const & scene) const;
-		virtual RenderStage::type GetRenderStage() const;
+		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual bool IsInLayer(Layer::type) const;
 		
 		Scalar _radius;
 		

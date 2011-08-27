@@ -35,11 +35,6 @@ Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float 
 {
 }
 
-RenderStage::type Light::GetRenderStage() const
-{
-	return RenderStage::light;
-}
-
 bool Light::IsActive() const 
 { 
 	return true; 
@@ -60,12 +55,17 @@ Vector3f const & Light::GetPosition() const
 	return position; 
 }
 
-void Light::Draw(Scene const & scene) const
+void Light::Render(Layer::type layer, Scene const & scene) const
 {
-	ObjectVector const & lights = scene.GetObjects(RenderStage::light);
-	ObjectVector::const_iterator vector_position = std::find(lights.begin(), lights.end(), this);
-	Assert(vector_position != lights.end());
-	int light_index = vector_position - lights.begin();
+	Assert (layer == Layer::light);
+	
+	ObjectSet const & lights = scene.GetObjects(Layer::light);
+	int light_index = 0;
+	for (ObjectSet::const_iterator vector_position = lights.begin(); * vector_position != this; ++ light_index)
+	{
+		Assert(vector_position != lights.end());
+		++ vector_position;
+	}
 	
 	int light_id = GL_LIGHT0 + light_index;
 	Assert(light_id <= GL_LIGHT7);
@@ -85,4 +85,9 @@ void Light::Draw(Scene const & scene) const
 		1	// or is it this that makes it positional?
 	};
 	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));
+}
+
+bool Light::IsInLayer(Layer::type layer) const
+{
+	return layer == Layer::light;
 }

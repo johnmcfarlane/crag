@@ -114,8 +114,7 @@ namespace gfx
 		
 		void EnableLights(bool enabled) const;
 		
-		void RenderStage(RenderStage::type render_stage) const;
-		void RenderStage(ObjectVector const & objects) const;
+		void Layer(Layer::type layer) const;
 		
 		void DebugDraw() const;
 

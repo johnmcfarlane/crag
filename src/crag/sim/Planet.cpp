@@ -87,14 +87,14 @@ namespace gfx
 			return true;
 		}
 		
-		virtual void Draw(gfx::Scene const & scene) const 
+		virtual void Render(Layer::type layer, gfx::Scene const & scene) const 
 		{ 
 			// actual drawing is taken care of by the formation manager
 		}
 		
-		virtual RenderStage::type GetRenderStage() const 
+		virtual bool IsInLayer(Layer::type layer) const 
 		{ 
-			return RenderStage::foreground; 
+			return layer == Layer::foreground; 
 		}
 		
 		Scalar _radius_min, _radius_max;

@@ -36,7 +36,7 @@ gfx::Scene::Scene()
 
 gfx::Scene::~Scene()
 {
-	for (ObjectVector * it = _objects; it != _objects + RenderStage::num; ++ it)
+	for (ObjectSet * it = _objects; it != _objects + Layer::num; ++ it)
 	{
 		Assert(it->empty());
 	}
@@ -44,34 +44,41 @@ gfx::Scene::~Scene()
 	camera_fov = static_cast<float>(pov.frustum.fov);
 	camera_near = static_cast<float>(pov.frustum.near_z);
 	camera_far = static_cast<float>(pov.frustum.far_z);
-
+	
 	delete & _sphere;
 }
 
 void gfx::Scene::AddObject(Object const & object)
 {
-	RenderStage::type stage = object.GetRenderStage();
-	ObjectVector & objects = _objects[stage];
-	
-	Assert(std::find(objects.begin(), objects.end(), & object) == objects.end());
-	objects.push_back(& object);
+	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
+	{
+		if (object.IsInLayer(layer))
+		{
+			ObjectSet & objects = _objects[layer];
+			
+			Assert(objects.count(& object) == 0);
+			objects.insert(& object);
+		}
+	}
 }
 
 void gfx::Scene::RemoveObject(Object const & object)
 {
-	RenderStage::type stage = object.GetRenderStage();
-	ObjectVector & objects = _objects[stage];
-	
-	ObjectVector::iterator i = std::find(objects.begin(), objects.end(), & object);
-	Assert(i != objects.end());
-	objects.erase(i);
-
-	Assert(std::find(objects.begin(), objects.end(), & object) == objects.end());
+	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
+	{
+		if (object.IsInLayer(layer))
+		{
+			ObjectSet & objects = _objects[layer];
+			
+			Assert(objects.count(& object) == 1);
+			objects.erase(& object);
+		}
+	}
 }
 
-gfx::ObjectVector const & gfx::Scene::GetObjects(RenderStage::type render_stage) const
+gfx::ObjectSet const & gfx::Scene::GetObjects(Layer::type layer) const
 {
-	return _objects[render_stage];
+	return _objects[layer];
 }
 
 void gfx::Scene::SetResolution(Vector2i const & r)
@@ -101,10 +108,10 @@ gfx::Pov const & gfx::Scene::GetPov() const
 // something that gives and near and far plane value instead. 
 void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
 {
-	for (ObjectVector const * vector_iterator = _objects; vector_iterator != _objects + RenderStage::num; ++ vector_iterator) 
+	for (ObjectSet const * vector_iterator = _objects; vector_iterator != _objects + Layer::num; ++ vector_iterator) 
 	{
-		ObjectVector objects = * vector_iterator;
-		for (ObjectVector::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
+		ObjectSet objects = * vector_iterator;
+		for (ObjectSet::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
 		{
 			Object const & object = * * object_iterator;
 			double object_range[2];

@@ -53,7 +53,7 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-void Skybox::Draw(Scene const & scene) const
+void Skybox::Render(Layer::type layer, Scene const & scene) const
 {
 	Pov const & pov = scene.GetPov();
 	
@@ -106,9 +106,9 @@ void Skybox::Draw(Scene const & scene) const
 	gl::Enable(GL_CULL_FACE);
 }
 
-RenderStage::type Skybox::GetRenderStage() const
+bool Skybox::IsInLayer(Layer::type layer) const
 {
-	return RenderStage::background;
+	return layer == Layer::background;
 }
 
 void Skybox::InitVerts()

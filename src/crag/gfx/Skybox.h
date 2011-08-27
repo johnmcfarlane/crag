@@ -32,8 +32,8 @@ namespace gfx
 
 		void SetSide(int axis, int pole, gfx::Image const & image);
 
-		virtual void Draw(Scene const & scene) const;
-		virtual RenderStage::type GetRenderStage() const;
+		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual bool IsInLayer(Layer::type layer) const;
 
 	private:
 		void InitVerts();

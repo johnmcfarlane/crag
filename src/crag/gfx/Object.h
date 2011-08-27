@@ -29,18 +29,24 @@ namespace gfx
 		typedef Vector<Scalar, 3> Vector;
 		typedef Matrix4<Scalar> Matrix;
 		typedef Ray<Scalar, 3> Ray;
-
+		
 		// functions
 		Object(Vector const & position = Vector::Zero(), Matrix const & rotation = Matrix::Identity());
 		virtual ~Object();
-
+		
 		virtual void Init();	// called on arrival in render thread 
 		
 		Vector3d const & GetPosition() const;
 		
+		// Return the necessary z-clipping range required to render this object through the given camera.
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
-		virtual void Draw(Scene const & scene) const;
-		virtual RenderStage::type GetRenderStage() const = 0;
+		
+		// at states for which IsInLayer returns true
+		virtual void Render(Layer::type layer, Scene const & scene) const = 0;
+		
+		// returns true iff this object belongs in the given render layer;
+		// currently must remain invariant
+		virtual bool IsInLayer(Layer::type) const = 0;
 		
 		// variables
 		Vector _position;

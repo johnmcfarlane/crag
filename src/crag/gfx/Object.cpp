@@ -38,7 +38,3 @@ bool Object::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wirefra
 { 
 	return false; 
 }
-
-void Object::Draw(Scene const & scene) const 
-{ 
-}

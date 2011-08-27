@@ -35,7 +35,7 @@ bool Ball::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe
 	return true;
 }
 
-void Ball::Draw(gfx::Scene const & scene) const
+void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 {
 	GLPP_VERIFY;
 	
@@ -55,9 +55,9 @@ void Ball::Draw(gfx::Scene const & scene) const
 	GLPP_VERIFY;
 }
 
-RenderStage::type Ball::GetRenderStage() const 
+bool Ball::IsInLayer(Layer::type layer) const 
 { 
-	return RenderStage::foreground; 
+	return layer == Layer::foreground; 
 }
 
 void Ball::SetMatrix(gfx::Pov const & pov) const

@@ -334,7 +334,7 @@ void Renderer::Render()
 	{
 		mbo_buffers.flip();
 	}
-	
+
 	RenderScene();
 
 	// Flip the front and back buffers and set fences.
@@ -389,7 +389,7 @@ void Renderer::RenderScene() const
 
 void Renderer::RenderBackground() const
 {
-	ObjectVector const & objects = scene->GetObjects(RenderStage::background);
+	ObjectSet const & objects = scene->GetObjects(Layer::background);
 
 	// Basically, if we have a skybox yet,
 	if (objects.size() > 0)
@@ -398,7 +398,7 @@ void Renderer::RenderBackground() const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 		
 		// and draw the skybox
-		RenderStage(objects);
+		Layer(Layer::background);
 	}
 	else
 	{
@@ -491,7 +491,7 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 		return;
 	}
 	
-	RenderStage(RenderStage::foreground);
+	Layer(Layer::foreground);
 	
 	RenderFormations();
 	
@@ -581,16 +581,17 @@ void Renderer::EnableLights(bool enabled) const
 		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
 	}
 	
-	ObjectVector lights = scene->GetObjects(RenderStage::light);
+	ObjectSet lights = scene->GetObjects(Layer::light);
 	int light_id = GL_LIGHT0; 
-	for (ObjectVector::const_iterator it = lights.begin(); it != lights.end(); ++ it) 
+	for (ObjectSet::const_iterator it = lights.begin(); it != lights.end(); ++ it) 
 	{
 		Object const & light = ref(* it);
+		Assert(light.IsInLayer(Layer::light));
 		
 		if (enabled)
 		{
 			gl::Enable(light_id);
-			light.Draw(* scene);
+			light.Render(Layer::light, * scene);
 		}
 		else
 		{
@@ -610,18 +611,16 @@ void Renderer::EnableLights(bool enabled) const
 	}
 }
 
-void Renderer::RenderStage(RenderStage::type render_stage) const
+void Renderer::Layer(Layer::type layer) const
 {
-	ObjectVector const & objects = scene->GetObjects(render_stage);
-	RenderStage(objects);
-}
-
-void Renderer::RenderStage(ObjectVector const & objects) const
-{
-	for (ObjectVector::const_iterator i = objects.begin(); i != objects.end(); ++ i)
+	ObjectSet const & objects = scene->GetObjects(layer);
+	for (ObjectSet::const_iterator i = objects.begin(); i != objects.end(); ++ i)
 	{
 		Object const & object = ref(* i);
-		object.Draw(* scene);
+		
+		Assert(object.IsInLayer(layer));
+		
+		object.Render(layer, * scene);
 	}
 }
 

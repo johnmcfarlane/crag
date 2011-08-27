@@ -11,24 +11,27 @@
 
 namespace gfx
 {
-	// categorization of objects drawn at rendered stages
-	namespace RenderStage
+	// categorization of objects drawn at rendered layers
+	namespace Layer
 	{
 		enum type
 		{
 			background,
 			light,
 			foreground,
-			num
+			num,
+			
+			begin = 0,
+			end = num
 		};
 	}
 	
 	// base class of objects which are rendered
 	class Object;
-
+	
 	// storage type for Object
-	typedef std::vector<Object const *> ObjectVector;
-
+	typedef std::set<Object const *> ObjectSet;
+	
 	// Passed to gfx:Renderer; specialized for classes derived from gfx::Object;
 	template <typename OBJECT> struct UpdateObjectMessage;
 }
