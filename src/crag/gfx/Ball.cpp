@@ -21,18 +21,26 @@ using namespace gfx;
 
 
 Ball::Ball(Scalar radius)
-: _radius(radius)
+: _position(Vector::Zero())
+, _rotation(Matrix::Identity()) 
+, _radius(radius)
 {
 }
 
 bool Ball::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
 { 
-	Scalar distance = Length(camera_ray.position - GetPosition());
+	Scalar distance = Length(camera_ray.position - _position);
 	
 	range[0] = distance - _radius;
 	range[1] = distance + _radius;
 	
 	return true;
+}
+
+void Ball::Update(UpdateParams const & params)
+{
+	_position = params._position;
+	_rotation = params._rotation;
 }
 
 void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
@@ -63,7 +71,7 @@ bool Ball::IsInLayer(Layer::type layer) const
 void Ball::SetMatrix(gfx::Pov const & pov) const
 {
 	gfx::Pov entity_pov (pov);
-	entity_pov.pos = pov.pos - GetPosition();
+	entity_pov.pos = pov.pos - _position;
 	Matrix model_view_matrix = entity_pov.CalcModelViewMatrix();
 	model_view_matrix = _rotation * model_view_matrix;
 	
@@ -73,7 +81,7 @@ void Ball::SetMatrix(gfx::Pov const & pov) const
 
 unsigned Ball::CalculateLod(gfx::Pov const & pov) const
 {
-	Vector relative_position = pov.pos - GetPosition();
+	Vector relative_position = pov.pos - _position;
 	
 	Scalar mn1 = 1500;
 	Scalar inv_distance = InvSqrt(LengthSq(relative_position));

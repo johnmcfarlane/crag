@@ -22,20 +22,23 @@ namespace gfx
 	class Light : public Object
 	{
 	public:
+		// types
+		typedef Vector UpdateParams;
+		
+		// functions
 		Light(Vector3f const & pos, Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
 		
 		bool IsActive() const;
 		bool GenerateShadowMaps() const;
 		
-		void SetPosition(Vector3f const & p);
-		Vector3f const & GetPosition() const;
-		
+		virtual void Update(UpdateParams const & params);
 		virtual void Render(Layer::type layer, Scene const & scene) const;
 		
 		virtual bool IsInLayer(Layer::type) const;
 		
-	private:
-		Vector3f position;
+		// variables
+	private:		
+		Vector _position;
 		Color4f color;
 		float attenuation_a;
 		float attenuation_b;

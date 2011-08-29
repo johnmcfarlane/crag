@@ -23,14 +23,15 @@
 using namespace gfx;
 
 
-Skybox::Skybox()
+void Skybox::Init()
 {
+	InitVerts();
 }
 
-Skybox::~Skybox()
-{ 
+void Skybox::Deinit()
+{
 	gl::DeleteBuffer(vbo);
-
+	
 	for (int axis = 0; axis < 3; ++ axis)
 	{
 		for (int pole = 0; pole < 2; ++ pole)
@@ -39,11 +40,6 @@ Skybox::~Skybox()
 			gl::DeleteTexture(side);
 		}
 	}
-}
-
-void Skybox::Init()
-{
-	InitVerts();
 }
 
 void Skybox::SetSide(int axis, int pole, Image const & image)

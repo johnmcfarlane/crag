@@ -31,12 +31,11 @@ namespace gfx
 		typedef Ray<Scalar, 3> Ray;
 		
 		// functions
-		Object(Vector const & position = Vector::Zero(), Matrix const & rotation = Matrix::Identity());
+		Object();
 		virtual ~Object();
 		
 		virtual void Init();	// called on arrival in render thread 
-		
-		Vector3d const & GetPosition() const;
+		virtual void Deinit();
 		
 		// Return the necessary z-clipping range required to render this object through the given camera.
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
@@ -47,10 +46,6 @@ namespace gfx
 		// returns true iff this object belongs in the given render layer;
 		// currently must remain invariant
 		virtual bool IsInLayer(Layer::type) const = 0;
-		
-		// variables
-		Vector _position;
-		Matrix _rotation;
 	};
 	
 	// messages
@@ -65,15 +60,21 @@ namespace gfx
 	};
 	
 	template <typename OBJECT>
-	struct UpdateObjectMessage
+	class UpdateObjectMessage
 	{
-		UpdateObjectMessage(OBJECT & object) 
+		// types
+		typedef OBJECT ObjectType;
+		typedef typename ObjectType::UpdateParams UpdateParams;
+		
+	public:
+		// functions
+		UpdateObjectMessage(ObjectType & object)
 		: _object(object)
-		, _updated(object) 
 		{ 
 		}
 		
-		OBJECT & _object;
-		OBJECT _updated;
+		// variables
+		ObjectType & _object;
+		UpdateParams _params;
 	};
 }

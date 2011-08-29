@@ -27,6 +27,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/Debug.h"
+#include "gfx/Light.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
@@ -98,12 +99,18 @@ sim::Observer::Observer()
 : Entity()
 , speed(0)
 , speed_factor(observer_speed_factor)
-, light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)
+, _light(ref(new gfx::Light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)))
 {
 }
 
 sim::Observer::~Observer()
 {
+	// un-register with the renderer
+	{
+		gfx::RemoveObjectMessage message = { _light };
+		gfx::Renderer::Daemon::SendMessage(message);
+	}
+
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
@@ -139,8 +146,11 @@ bool sim::Observer::Init(Simulation & simulation, PyObject & args)
 	
 	SetPosition(center);
 	
-	//gfx::Scene & scene = Simulation::Ref().GetScene();
-	//scene.AddLight(light);
+	// register with the renderer
+	{
+		gfx::AddObjectMessage message = { _light };
+		gfx::Renderer::Daemon::SendMessage(message);
+	}
 	
 	return true;
 }
@@ -201,9 +211,6 @@ void sim::Observer::Tick(Simulation & simulation)
 
 	Vector3 scaled_observer_gravity_center = observer_gravity_center * body->GetRadius();
 	body->AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
-	
-	// Light
-	light.SetPosition(position);
 }
 
 void sim::Observer::UpdateModels() const
@@ -214,11 +221,22 @@ void sim::Observer::UpdateModels() const
 	body->GetRotation(rotation);
 
 	// Give renderer the new camera position.
-	SetCameraMessage message = { position, rotation };
-	gfx::Renderer::Daemon::SendMessage(message);
+	{
+		SetCameraMessage message = { position, rotation };
+		gfx::Renderer::Daemon::SendMessage(message);
 
-	// This happens to be a good time to sent message elsewhere.
-	form::FormationManager::Daemon::SendMessage(message);
+		// This happens to be a good time to sent message elsewhere.
+		form::FormationManager::Daemon::SendMessage(message);
+	}
+
+	// Give renderer the new light position.
+	// TODO: This light doesn't appear to be working currently.
+	{
+		gfx::UpdateObjectMessage<gfx::Light> message(_light);
+		message._params = position;
+		
+		gfx::Renderer::Daemon::SendMessage(message);
+	}
 }
 
 sim::Vector3 const & sim::Observer::GetPosition() const
@@ -228,7 +246,6 @@ sim::Vector3 const & sim::Observer::GetPosition() const
 
 void sim::Observer::SetPosition(sim::Vector3 const & pos) 
 {
-	light.SetPosition(pos);
 	body->SetPosition(pos);
 }
 

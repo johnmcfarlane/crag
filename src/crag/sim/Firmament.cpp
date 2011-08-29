@@ -19,10 +19,6 @@
 #include "geom/Sphere3.h"
 
 
-Firmament::Firmament()
-{
-}
-
 void Firmament::Init()
 {
 	Skybox::Init();

@@ -15,9 +15,7 @@
 using namespace gfx;
 
 
-Object::Object(Vector const & position, Matrix const & rotation) 
-: _position(Vector::Zero())
-, _rotation(Matrix::Identity()) 
+Object::Object()
 { 
 }
 
@@ -29,9 +27,8 @@ void Object::Init()
 {
 }
 
-Object::Vector const & Object::GetPosition() const 
-{ 
-	return _position; 
+void Object::Deinit()
+{
 }
 
 bool Object::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 

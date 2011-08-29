@@ -20,16 +20,28 @@ namespace gfx
 	class Ball : public Object
 	{
 	public:
+		// types
+		struct UpdateParams
+		{
+			Vector _position;
+			Matrix _rotation;
+		};
+		
+		// functions
 		Ball(Scalar radius);
 		
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
+		virtual void Update(UpdateParams const & params);
 		virtual void Render(Layer::type layer, Scene const & scene) const;
 		virtual bool IsInLayer(Layer::type) const;
-		
-		Scalar _radius;
 		
 	private:
 		void SetMatrix(Pov const & pov) const;
 		unsigned CalculateLod(Pov const & pov) const;		
+		
+		// variables
+		Vector _position;
+		Matrix _rotation;
+		Scalar _radius;
 	};
 }

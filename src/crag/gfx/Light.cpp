@@ -26,7 +26,7 @@ using namespace gfx;
 
 
 Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float c, bool init_shadows)
-: position(pos)
+: _position(pos)
 , color(col)
 , attenuation_a(a)
 , attenuation_b(b)
@@ -45,14 +45,9 @@ bool Light::GenerateShadowMaps() const
 	return shadows;
 }
 
-void Light::SetPosition(Vector3f const & p)
+void Light::Update(UpdateParams const & params)
 {
-	position = p;
-}
-
-Vector3f const & Light::GetPosition() const
-{ 
-	return position; 
+	_position = params;
 }
 
 void Light::Render(Layer::type layer, Scene const & scene) const
@@ -79,9 +74,9 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
 	
 	float l[4] = {
-		position.x,
-		position.y,
-		position.z,
+		_position.x,
+		_position.y,
+		_position.z,
 		1	// or is it this that makes it positional?
 	};
 	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));

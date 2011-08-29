@@ -110,6 +110,7 @@ void Renderer::OnMessage(RemoveObjectMessage const & message)
 {
 	Object & object = message._object;
 	scene->RemoveObject(object);
+	object.Deinit();
 	delete & object;
 }
 
@@ -374,8 +375,6 @@ void Renderer::RenderScene() const
 	VerifyRenderState();
 
 	// The skybox, basically.
-	// TODO: Why not do this last?
-	// TODO: And for that matter, formations second to last.
 	RenderBackground();
 	
 	// All the things.

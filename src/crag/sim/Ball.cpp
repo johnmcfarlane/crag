@@ -114,8 +114,8 @@ void Ball::Tick(Simulation & simulation)
 void Ball::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
-	message._updated._position = _body->GetPosition();
-	_body->GetRotation(message._updated._rotation);
+	message._params._position = _body->GetPosition();
+	_body->GetRotation(message._params._rotation);
 	
 	gfx::Renderer::Daemon::SendMessage(message);
 }

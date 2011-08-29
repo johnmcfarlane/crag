@@ -36,28 +36,42 @@ namespace gfx
 	class Planet : public Object
 	{
 	public:
-		Planet(Vector const & position)
-		: Object(position)
+		// types
+		class UpdateParams
 		{
+		public:
+			Vector _position;
+			Scalar _radius_min, _radius_max;
+		};
+
+		// functions
+		Planet(Vector const & position)
+		{
+			_salient._position = position;
 		}
 
+		virtual void Update(UpdateParams const & params)
+		{
+			_salient = params;
+		}
+		
 		virtual bool GetRenderRange(sim::Ray3 const & camera_ray, double * range, bool wireframe) const 
 		{
-			Scalar distance_squared = LengthSq(camera_ray.position - GetPosition());
+			Scalar distance_squared = LengthSq(camera_ray.position - _salient._position);
 			Scalar distance = Sqrt(distance_squared);
 			
 			// Is camera inside the planet?
-			if (distance < _radius_min)
+			if (distance < _salient._radius_min)
 			{
-				range[0] = _radius_min - distance;
-				range[1] = distance + _radius_max; 
+				range[0] = _salient._radius_min - distance;
+				range[1] = distance + _salient._radius_max; 
 				return true;
 			}
 			
 			// Is camera outside the entire planet?
-			if (distance > _radius_max)
+			if (distance > _salient._radius_max)
 			{
-				range[0] = distance - _radius_max;
+				range[0] = distance - _salient._radius_max;
 			}
 			else 
 			{
@@ -71,7 +85,7 @@ namespace gfx
 			// For wireframe mode, it's easy (and the same as when you're inside the planet.
 			if (wireframe)
 			{
-				range[1] = distance + _radius_max; 
+				range[1] = distance + _salient._radius_max; 
 				return true;
 			}
 			
@@ -80,8 +94,8 @@ namespace gfx
 			// and then hits the sphere of _radius_max.
 			// For some reason, those two distances appear to be very easy to calculate. 
 			// (Famous last words.)
-			Scalar a = Sqrt(Square(distance) - Square(_radius_min));
-			Scalar b = Sqrt(Square(_radius_max) - Square(_radius_min));
+			Scalar a = Sqrt(Square(distance) - Square(_salient._radius_min));
+			Scalar b = Sqrt(Square(_salient._radius_max) - Square(_salient._radius_min));
 			range[1] = a + b;
 			
 			return true;
@@ -97,7 +111,8 @@ namespace gfx
 			return layer == Layer::foreground; 
 		}
 		
-		Scalar _radius_min, _radius_max;
+		// variables
+		UpdateParams _salient;
 	};
 }
 
@@ -250,8 +265,8 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 void sim::Planet::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Planet> message(ref(_model));
-	message._updated._radius_min = _radius_min;
-	message._updated._radius_max = _radius_max;
+	message._params._radius_min = _radius_min;
+	message._params._radius_max = _radius_max;
 	gfx::Renderer::Daemon::SendMessage(message);
 }
 

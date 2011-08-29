@@ -79,15 +79,13 @@ void sim::Star::Tick(Simulation & simulation)
 	sys::TimeType t = simulation.GetTime();
 	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
 	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, static_cast<Scalar>(0));
-	light->SetPosition(position);
 }
 
 void sim::Star::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Light> message(ref(light));
 	
-	message._updated._position = GetPosition();
-	message._updated._rotation = Matrix4d::Identity();
+	message._params = GetPosition();
 	
 	gfx::Renderer::Daemon::SendMessage(message);
 }

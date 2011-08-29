@@ -51,9 +51,6 @@ namespace sim
 		
 		virtual void UpdateModels() const;
 		
-		virtual void SetPosition(Vector3 const & position);
-		virtual Vector3 const & GetPosition() const = 0;
-
 		// Verification
 	#if defined(VERIFY)
 		void Verify(Entity const & entity);

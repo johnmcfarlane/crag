@@ -14,8 +14,6 @@
 
 #include "physics/SphericalBody.h"
 
-#include "gfx/Light.h"
-
 #include "geom/Vector3.h"
 #include "geom/Matrix4.h"
 
@@ -23,6 +21,11 @@
 namespace physics
 {
 	class SphericalBody;
+}
+
+namespace gfx
+{
+	class Light;
 }
 
 
@@ -59,6 +62,6 @@ namespace sim
 		physics::SphericalBody * body;
 		Scalar speed;
 		Scalar speed_factor;
-		gfx::Light light;
+		gfx::Light & _light;
 	};
 }

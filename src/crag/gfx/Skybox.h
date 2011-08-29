@@ -25,10 +25,8 @@ namespace gfx
 	{
 		// Methods
 	public:
-		Skybox();
-		virtual ~Skybox();
-
 		virtual void Init();
+		virtual void Deinit();
 
 		void SetSide(int axis, int pole, gfx::Image const & image);
 

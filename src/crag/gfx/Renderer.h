@@ -75,7 +75,7 @@ namespace gfx
 		void OnMessage(RemoveObjectMessage const & message);
 		template <typename OBJECT> void OnMessage(UpdateObjectMessage<OBJECT> const & message)
 		{
-			message._object = message._updated;
+			message._object.Update(message._params);
 		}
 		void OnMessage(RenderReadyMessage const & message);
 		void OnMessage(ResizeMessage const & message);

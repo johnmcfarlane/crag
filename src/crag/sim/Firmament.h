@@ -13,9 +13,6 @@
 
 class Firmament : public gfx::Skybox
 {
-public:
-	Firmament();
-	
 private:
 	virtual void Init();
 	

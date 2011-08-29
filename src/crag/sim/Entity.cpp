@@ -49,9 +49,3 @@ void Entity::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*
 void Entity::UpdateModels() const
 {
 }
-
-void Entity::SetPosition(Vector3 const & position)
-{
-	// For now, only observer can have its position set.
-	Assert(false);
-}
