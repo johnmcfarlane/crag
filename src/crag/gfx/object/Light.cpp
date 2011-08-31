@@ -12,8 +12,7 @@
 
 #include "Light.h"
 
-#include "Color.h"
-#include "Scene.h"
+#include "gfx/Scene.h"
 
 #include "glpp/glpp.h"
 

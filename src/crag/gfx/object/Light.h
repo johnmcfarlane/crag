@@ -12,7 +12,7 @@
 
 #include "Object.h"
 
-#include "Color.h"
+#include "gfx/Color.h"
 
 #include "sim/defs.h"
 

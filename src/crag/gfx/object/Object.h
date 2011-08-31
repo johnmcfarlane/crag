@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "defs.h"
+#include "gfx/defs.h"
 
 #include "geom/Ray.h"
 #include "geom/Matrix4.h"

@@ -16,7 +16,7 @@
 #include "Debug.h"
 #include "Pov.h"
 #include "Scene.h"
-#include "Object.h"
+#include "object/Object.h"
 
 #include "form/FormationManager.h"
 #include "form/node/NodeBuffer.h"

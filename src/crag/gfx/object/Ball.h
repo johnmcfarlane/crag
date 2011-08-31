@@ -1,5 +1,5 @@
 //
-//  Ball.h
+//  gfx/object/Ball.h
 //  crag
 //
 //  Created by John McFarlane on 7/17/11.
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "gfx/object/Object.h"
 
 namespace gfx
 {

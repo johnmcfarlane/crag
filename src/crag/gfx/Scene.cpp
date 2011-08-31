@@ -16,7 +16,7 @@
 
 #include "core/ConfigEntry.h"
 
-#include "gfx/Object.h"
+#include "gfx/object/Object.h"
 
 #include <algorithm>
 

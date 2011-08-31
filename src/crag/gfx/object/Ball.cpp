@@ -1,5 +1,5 @@
 //
-//  Ball.cpp
+//  gfx/object/Ball.cpp
 //  crag
 //
 //  Created by John McFarlane on 7/17/11.
@@ -11,8 +11,8 @@
 
 #include "Ball.h"
 
-#include "Scene.h"
-#include "Sphere.h"
+#include "gfx/Scene.h"
+#include "gfx/Sphere.h"
 
 #include "glpp/glpp.h"
 

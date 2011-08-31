@@ -12,10 +12,9 @@
 
 #include "Skybox.h"
 
-#include "Scene.h"
-#include "Pov.h"
-
 #include "gfx/Image.h"
+#include "gfx/Pov.h"
+#include "gfx/Scene.h"
 
 #include "core/Random.h"
 
