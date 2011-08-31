@@ -44,6 +44,7 @@ namespace smp
 		Daemon(size_t ring_buffer_size)
 		: _object(nullptr)
 		, _envelopes(ring_buffer_size)
+		, _flush_flag(false)
 		{
 			Assert(singleton == nullptr);
 			singleton = this;
@@ -51,19 +52,23 @@ namespace smp
 		
 		~Daemon() 
 		{ 
+			Assert(_flush_flag);
+			_flush_flag = false;
+			
+			Assert(singleton == this);
+			singleton = nullptr;
+			
+			_thread.Join();
+
 			// Never called from within the thread.
 			Assert(! _thread.IsCurrent());
 			
 			// Must call Stop from the outside thread first.
 			Assert(! _thread.IsLaunched());
 			
-			//Assert(_envelopes.empty());
-			_envelopes.Clear();
+			Assert(_envelopes.IsEmpty());
 			
 			Assert(_object == nullptr);
-			
-			Assert(singleton == this);
-			singleton = nullptr;
 		}
 		
 		// TODO: Always represents failure to completely encapsulate the object.
@@ -81,7 +86,7 @@ namespace smp
 		{
 			if (! THREADED)
 			{
-				Run();
+				return;
 			}
 			
 			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this);
@@ -89,13 +94,15 @@ namespace smp
 			while (_object == nullptr)
 			{
 				// block until the the object is constructed and assigned
-				Sleep(0);
+				Sleep();
 			}
 		}
 		
-		// Called from a thread that will block until the actor terminates.
-		void Stop()
+		// Inform the daemon object that it should stop working and flush its message queue.
+		void RequestStop()
 		{
+			Assert(! _flush_flag);
+			
 			if (! THREADED)
 			{
 				return;
@@ -106,7 +113,23 @@ namespace smp
 			
 			smp::TerminateMessage message;
 			SendMessage(message);
-			_thread.Join();
+		}
+		
+		// Waits on the daemon object to stop working and flush its message queue.
+		void AcknowledgeStop()
+		{
+			if (THREADED)
+			{
+				while (! _flush_flag)
+				{
+					Sleep();
+				}
+			}
+			else
+			{
+				while (FlushMessages());
+				_flush_flag = true;
+			}
 		}
 		
 		void Run()
@@ -116,6 +139,18 @@ namespace smp
 			
 			_object = new Class;
 			_object->Run(_envelopes);
+			
+			if (THREADED)
+			{
+				// Acknowledge that this won't be sending any more.
+				_flush_flag = true;
+				
+				while (_flush_flag)
+				{
+					FlushMessages();
+				}
+			}
+			
 			delete _object;
 			_object = nullptr;
 		}
@@ -135,6 +170,17 @@ namespace smp
 			_envelopes.PushBack(envelope);
 		}
 		
+		bool FlushMessages()
+		{
+			if (! _envelopes.DispatchMessages(* _object))
+			{
+				Sleep();
+				return false;
+			}
+			
+			return true;
+		}
+		
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
@@ -142,6 +188,7 @@ namespace smp
 		Class * _object;
 		MessageQueue _envelopes;
 		Thread _thread;
+		bool _flush_flag;
 		
 		static Daemon * singleton;
 	};

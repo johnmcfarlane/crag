@@ -89,30 +89,34 @@ namespace
 		smp::scheduler::Init();
 
 		{
-			// Launch the script engine.
-			// Note: this needs to run in the main thread because SDL
-			// was initialized from here and script uses SDL events fns. 
-			// Hence we call Run instead of Launch and Join.
+			// Instanciate the four daemons
 			script::ScriptThread::Daemon script_daemon(0x400);
+			gfx::Renderer::Daemon renderer(0x8000);
+			form::FormationManager::Daemon formation_manager(0x8000);
+			sim::Simulation::Daemon simulation(0x400);
 			
-			{
-				gfx::Renderer::Daemon renderer(0x8000);
-				form::FormationManager::Daemon formation_manager(0x8000);
-				sim::Simulation::Daemon simulation(0x400);
-				
-				// TODO: Delicate order of startup/shutdown
-				// is mostly due to direct access to Daemons.
-				formation_manager.Start();
-				simulation.Start();
-				renderer.Start();
-				
-				script_daemon.Run();
-				
-				// Stop the actors.
-				simulation.Stop();
-				renderer.Stop();
-				formation_manager.Stop();
-			}
+			// start thread for three of the daemons
+			formation_manager.Start();
+			simulation.Start();
+			renderer.Start();
+			
+			// Launch the script engine daemon.
+			// It needs to run in the main thread because SDL was initialized from here
+			// and script uses SDL events fns. Hence we call Run instead of Start etc..
+			script_daemon.Run();
+			// The script daemon returning is the signal for the program to finish.
+			
+			// Tell the daemons to wind down.
+			script_daemon.RequestStop();
+			simulation.RequestStop();
+			renderer.RequestStop();
+			formation_manager.RequestStop();
+
+			// Wait until they have all stopped working.
+			script_daemon.AcknowledgeStop();
+			simulation.AcknowledgeStop();
+			renderer.AcknowledgeStop();
+			formation_manager.AcknowledgeStop();
 		}
 		
 		smp::scheduler::Deinit();

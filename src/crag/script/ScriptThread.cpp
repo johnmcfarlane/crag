@@ -184,6 +184,10 @@ script::ScriptThread::~ScriptThread()
 	Py_Finalize();
 }
 
+void script::ScriptThread::OnMessage(smp::TerminateMessage const & message)
+{
+}
+
 // Note: Run should be called from same thread as c'tor/d'tor.
 void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 {

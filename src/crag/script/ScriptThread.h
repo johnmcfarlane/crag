@@ -29,6 +29,8 @@ namespace script
 		ScriptThread();
 		~ScriptThread();
 		
+		void OnMessage(smp::TerminateMessage const & message);
+
 		// thread entry point
 		void Run(Daemon::MessageQueue & message_queue);
 		

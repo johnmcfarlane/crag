@@ -78,6 +78,11 @@ namespace smp
 			}
 		}
 		
+		bool IsEmpty() const
+		{
+			return _buffer.empty();
+		}
+		
 		void Clear()
 		{
 			Lock critical_section(_mutex);
