@@ -1,5 +1,5 @@
 /*
- *  Skybox.cpp
+ *  gfx/object/Skybox.cpp
  *  Crag
  *
  *  Created by John on 11/29/09.

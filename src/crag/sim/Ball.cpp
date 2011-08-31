@@ -1,5 +1,5 @@
 //
-//  Ball.cpp
+//  sim/Ball.cpp
 //  crag
 //
 //  Created by John McFarlane on 6/23/11.
@@ -18,7 +18,7 @@
 
 #include "script/MetaClass.h"
 
-#include "gfx/Ball.h"
+#include "gfx/object/Ball.h"
 #include "gfx/Renderer.h"
 //#include "gfx/Scene.h"
 //#include "gfx/Sphere.h"

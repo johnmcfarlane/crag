@@ -1,5 +1,5 @@
 /*
- *  Light.cpp
+ *  gfx/object/Light.cpp
  *  Crag
  *
  *  Created by John on 12/4/09.

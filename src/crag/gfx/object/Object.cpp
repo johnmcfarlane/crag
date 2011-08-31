@@ -1,5 +1,5 @@
 //
-//  Object.cpp
+//  gfx/object/Object.cpp
 //  crag
 //
 //  Created by John McFarlane on 7/23/11.

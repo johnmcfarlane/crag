@@ -1,5 +1,5 @@
 /*
- *  Planet.h
+ *  sim/Planet.h
  *  Crag
  *
  *  Created by john on 4/13/09.

@@ -1,5 +1,5 @@
 /*
- *  Light.h
+ *  gfx/object/Light.h
  *  Crag
  *
  *  Created by John on 12/4/09.

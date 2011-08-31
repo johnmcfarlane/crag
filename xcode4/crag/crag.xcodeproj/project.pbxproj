@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
-		52207E0013DAB50F00CA0F1F /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52207DFF13DAB50E00CA0F1F /* Object.cpp */; };
 		524EA30A13D1401000664A2F /* utility.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		526423CA135F49FB00C00EFE /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52642301135F49FA00C00EFE /* COPYING */; };
 		526423CB135F49FB00C00EFE /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642304135F49FA00C00EFE /* ConfigEntry.cpp */; };
@@ -36,11 +35,9 @@
 		526423E3135F49FB00C00EFE /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235A135F49FA00C00EFE /* Font.cpp */; };
 		526423E4135F49FB00C00EFE /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235C135F49FA00C00EFE /* Image.cpp */; };
 		526423E5135F49FB00C00EFE /* IndexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264235E135F49FA00C00EFE /* IndexBuffer.cpp */; };
-		526423E6135F49FB00C00EFE /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642360135F49FA00C00EFE /* Light.cpp */; };
 		526423E7135F49FB00C00EFE /* Pov.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642362135F49FA00C00EFE /* Pov.cpp */; };
 		526423E8135F49FB00C00EFE /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642364135F49FA00C00EFE /* Renderer.cpp */; };
 		526423E9135F49FB00C00EFE /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642366135F49FA00C00EFE /* Scene.cpp */; };
-		526423EA135F49FB00C00EFE /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642368135F49FA00C00EFE /* Skybox.cpp */; };
 		526423EB135F49FB00C00EFE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642377135F49FA00C00EFE /* main.cpp */; };
 		526423EC135F49FB00C00EFE /* pch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52642378135F49FA00C00EFE /* pch.cpp */; };
 		526423ED135F49FB00C00EFE /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5264237B135F49FA00C00EFE /* Body.cpp */; };
@@ -70,8 +67,12 @@
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
 		5280DD3B13E4AA220091287D /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5280DD3A13E4AA220091287D /* Thread.cpp */; };
 		5283EFD013F2D4EA00BEC592 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */; };
-		52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52858A9B13D6E86300D95BEE /* Ball.cpp */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
+		5288E529140E141100192F72 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E51F140E141100192F72 /* Ball.cpp */; };
+		5288E52A140E141100192F72 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E521140E141100192F72 /* Light.cpp */; };
+		5288E52B140E141100192F72 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E523140E141100192F72 /* Object.cpp */; };
+		5288E52C140E141100192F72 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E525140E141100192F72 /* Planet.cpp */; };
+		5288E52D140E141100192F72 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E527140E141100192F72 /* Skybox.cpp */; };
 		528C20C11403708700B203E8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
@@ -118,9 +119,6 @@
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
-		52207DFF13DAB50E00CA0F1F /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
-		524EA32513D4030E00664A2F /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
-		524EA32613D4032900664A2F /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		52642301135F49FA00C00EFE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		52642303135F49FA00C00EFE /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		52642304135F49FA00C00EFE /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -199,16 +197,12 @@
 		5264235D135F49FA00C00EFE /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		5264235E135F49FA00C00EFE /* IndexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexBuffer.cpp; sourceTree = "<group>"; };
 		5264235F135F49FA00C00EFE /* IndexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexBuffer.h; sourceTree = "<group>"; };
-		52642360135F49FA00C00EFE /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
-		52642361135F49FA00C00EFE /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		52642362135F49FA00C00EFE /* Pov.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pov.cpp; sourceTree = "<group>"; };
 		52642363135F49FA00C00EFE /* Pov.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pov.h; sourceTree = "<group>"; };
 		52642364135F49FA00C00EFE /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		52642365135F49FA00C00EFE /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		52642366135F49FA00C00EFE /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		52642367135F49FA00C00EFE /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
-		52642368135F49FA00C00EFE /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
-		52642369135F49FA00C00EFE /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		5264236B135F49FA00C00EFE /* BufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferObject.h; sourceTree = "<group>"; };
 		5264236C135F49FA00C00EFE /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		5264236D135F49FA00C00EFE /* FrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameBuffer.h; sourceTree = "<group>"; };
@@ -290,10 +284,19 @@
 		5282AAA0139E007B0076E4F4 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		5283EFCC13F2D4A600BEC592 /* scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
 		5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scheduler.cpp; sourceTree = "<group>"; };
-		52858A9B13D6E86300D95BEE /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5285F05913D546B20058DBF7 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5287831E13B389CD00B67A38 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
+		5288E51F140E141100192F72 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
+		5288E520140E141100192F72 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
+		5288E521140E141100192F72 /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
+		5288E522140E141100192F72 /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
+		5288E523140E141100192F72 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
+		5288E524140E141100192F72 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		5288E525140E141100192F72 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Planet.cpp; sourceTree = "<group>"; };
+		5288E526140E141100192F72 /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Planet.h; sourceTree = "<group>"; };
+		5288E527140E141100192F72 /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
+		5288E528140E141100192F72 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		528C20C01403708700B203E8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
@@ -535,6 +538,7 @@
 		52642356135F49FA00C00EFE /* gfx */ = {
 			isa = PBXGroup;
 			children = (
+				5288E51E140E141100192F72 /* object */,
 				52642357135F49FA00C00EFE /* Color.h */,
 				52642358135F49FA00C00EFE /* Debug.cpp */,
 				52642359135F49FA00C00EFE /* Debug.h */,
@@ -544,25 +548,17 @@
 				5264235D135F49FA00C00EFE /* Image.h */,
 				5264235E135F49FA00C00EFE /* IndexBuffer.cpp */,
 				5264235F135F49FA00C00EFE /* IndexBuffer.h */,
-				52642360135F49FA00C00EFE /* Light.cpp */,
-				52642361135F49FA00C00EFE /* Light.h */,
 				52642362135F49FA00C00EFE /* Pov.cpp */,
 				52642363135F49FA00C00EFE /* Pov.h */,
 				52642364135F49FA00C00EFE /* Renderer.cpp */,
 				52642365135F49FA00C00EFE /* Renderer.h */,
 				52642366135F49FA00C00EFE /* Scene.cpp */,
 				52642367135F49FA00C00EFE /* Scene.h */,
-				52642368135F49FA00C00EFE /* Skybox.cpp */,
-				52642369135F49FA00C00EFE /* Skybox.h */,
 				5295003513C5B4020015349B /* GeodesicSphere.h */,
 				5295003813C6069E0015349B /* icosahedron.h */,
 				5293538513C8FD1900B5218B /* Sphere.cpp */,
 				5293538613C8FD1900B5218B /* Sphere.h */,
-				524EA32513D4030E00664A2F /* Object.h */,
-				524EA32613D4032900664A2F /* Ball.h */,
 				5285F05913D546B20058DBF7 /* defs.h */,
-				52858A9B13D6E86300D95BEE /* Ball.cpp */,
-				52207DFF13DAB50E00CA0F1F /* Object.cpp */,
 			);
 			path = gfx;
 			sourceTree = "<group>";
@@ -699,6 +695,23 @@
 			path = SDLmain;
 			sourceTree = "<group>";
 		};
+		5288E51E140E141100192F72 /* object */ = {
+			isa = PBXGroup;
+			children = (
+				5288E51F140E141100192F72 /* Ball.cpp */,
+				5288E520140E141100192F72 /* Ball.h */,
+				5288E521140E141100192F72 /* Light.cpp */,
+				5288E522140E141100192F72 /* Light.h */,
+				5288E523140E141100192F72 /* Object.cpp */,
+				5288E524140E141100192F72 /* Object.h */,
+				5288E525140E141100192F72 /* Planet.cpp */,
+				5288E526140E141100192F72 /* Planet.h */,
+				5288E527140E141100192F72 /* Skybox.cpp */,
+				5288E528140E141100192F72 /* Skybox.h */,
+			);
+			path = object;
+			sourceTree = "<group>";
+		};
 		52F819A0132DF0A60045C3A8 /* script */ = {
 			isa = PBXGroup;
 			children = (
@@ -800,11 +813,9 @@
 				526423E3135F49FB00C00EFE /* Font.cpp in Sources */,
 				526423E4135F49FB00C00EFE /* Image.cpp in Sources */,
 				526423E5135F49FB00C00EFE /* IndexBuffer.cpp in Sources */,
-				526423E6135F49FB00C00EFE /* Light.cpp in Sources */,
 				526423E7135F49FB00C00EFE /* Pov.cpp in Sources */,
 				526423E8135F49FB00C00EFE /* Renderer.cpp in Sources */,
 				526423E9135F49FB00C00EFE /* Scene.cpp in Sources */,
-				526423EA135F49FB00C00EFE /* Skybox.cpp in Sources */,
 				526423EB135F49FB00C00EFE /* main.cpp in Sources */,
 				526423EC135F49FB00C00EFE /* pch.cpp in Sources */,
 				526423ED135F49FB00C00EFE /* Body.cpp in Sources */,
@@ -835,10 +846,13 @@
 				528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */,
 				5287832013B389CD00B67A38 /* Ball.cpp in Sources */,
 				5293538713C8FD1900B5218B /* Sphere.cpp in Sources */,
-				52858A9C13D6E86400D95BEE /* Ball.cpp in Sources */,
-				52207E0013DAB50F00CA0F1F /* Object.cpp in Sources */,
 				5280DD3B13E4AA220091287D /* Thread.cpp in Sources */,
 				5283EFD013F2D4EA00BEC592 /* scheduler.cpp in Sources */,
+				5288E529140E141100192F72 /* Ball.cpp in Sources */,
+				5288E52A140E141100192F72 /* Light.cpp in Sources */,
+				5288E52B140E141100192F72 /* Object.cpp in Sources */,
+				5288E52C140E141100192F72 /* Planet.cpp in Sources */,
+				5288E52D140E141100192F72 /* Skybox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

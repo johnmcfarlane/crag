@@ -1,5 +1,5 @@
 //
-//  Planet.h
+//  gfx/object/Planet.h
 //  crag
 //
 //  Created by John McFarlane on 8/30/11.

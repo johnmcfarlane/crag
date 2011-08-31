@@ -8,7 +8,7 @@
  *
  */
 
-#include "gfx/Skybox.h"
+#include "Skybox.h"
 
 
 class Firmament : public gfx::Skybox

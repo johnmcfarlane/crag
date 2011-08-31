@@ -1,5 +1,5 @@
 //
-//  Object.h
+//  gfx/object/Object.h
 //  crag
 //
 //  Created by John McFarlane on 7/17/11.

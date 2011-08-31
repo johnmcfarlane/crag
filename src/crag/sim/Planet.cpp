@@ -1,5 +1,5 @@
 /*
- *  Planet.cpp
+ *  sim/Planet.cpp
  *  Crag
  *
  *  Created by john on 4/14/09.
@@ -21,7 +21,7 @@
 #include "form/scene/Mesh.h"
 #include "form/FormationManager.h"
 
-#include "gfx/Object.h"
+#include "gfx/object/Object.h"
 #include "gfx/Renderer.h"
 
 #include "script/MetaClass.h"

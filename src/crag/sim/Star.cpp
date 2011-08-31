@@ -15,7 +15,7 @@
 #include "Simulation.h"
 #include "Universe.h"
 
-#include "gfx/Light.h"
+#include "gfx/object/Light.h"
 #include "gfx/Renderer.h"
 
 #include "script/MetaClass.h"

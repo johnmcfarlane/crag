@@ -1,5 +1,5 @@
 //
-//  Planet.cpp
+//  gfx/object/Planet.cpp
 //  crag
 //
 //  Created by John McFarlane on 8/30/11.

@@ -1,5 +1,5 @@
 //
-//  Ball.h
+//  sim/Ball.h
 //  crag
 //
 //  Created by John McFarlane on 6/23/11.
