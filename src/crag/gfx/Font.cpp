@@ -103,7 +103,7 @@ void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) cons
 	}
 	
 	size_t num_verts = vertex_buffer.size();
-	gl::BufferData(vbo, num_verts, & vertex_buffer[0]);
+	gl::BufferData(vbo, num_verts, & vertex_buffer.front(), gl::STATIC_DRAW);
 }
 
 void gfx::Font::RenderVerts() const

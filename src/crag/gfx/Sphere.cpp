@@ -99,7 +99,7 @@ void gfx::Sphere::InitColors(VertexVector const & vertex_positions)
 	gl::GenBuffer(_color_vbo);
 	gl::BindBuffer(_color_vbo);
 	
-	gl::BufferData(_color_vbo, num_verts, & * vert_colors.begin());
+	gl::BufferData(_color_vbo, num_verts, & vert_colors.front(), gl::STATIC_DRAW);
 	gl::UnbindBuffer(_color_vbo);
 }
 

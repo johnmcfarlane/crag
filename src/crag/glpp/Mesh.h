@@ -47,8 +47,8 @@ namespace gl
 		
 		void Resize(int num_verts, int num_indices, BufferDataUsage usage)
 		{
-			BufferData(vbo, num_verts, static_cast<Vertex *>(nullptr), usage);
-			BufferData(ibo, num_indices, static_cast<GLuint *>(nullptr), usage);
+			BufferData(vbo, num_verts, usage);
+			BufferData(ibo, num_indices, usage);
 		}
 		
 		void SetVbo(int num, Vertex const * array)

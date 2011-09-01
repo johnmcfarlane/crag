@@ -77,11 +77,16 @@ namespace gl
 #endif
 	}
 	
-	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array = nullptr, BufferDataUsage usage = STATIC_DRAW)
+	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array, BufferDataUsage usage)
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
 		GLPP_CALL_FUNCTION_ARB(BufferData, (TARGET, size, array, usage));
+	}
+	
+	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, BufferDataUsage usage)
+	{
+		BufferData(bo, num, static_cast<ELEMENT *>(nullptr), usage);
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void BufferSubData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array)
