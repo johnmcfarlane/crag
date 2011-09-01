@@ -20,25 +20,29 @@ namespace gfx
 {
 	class Image;
 	class Scene;
-
+	
 	class Skybox : public Object
 	{
+		// Types
+		typedef gl::Vbo3dTex Vbo;
+		typedef gl::TextureRgba8 Texture;
+		
 		// Methods
 	public:
 		virtual void Init();
 		virtual void Deinit();
-
-		void SetSide(int axis, int pole, gfx::Image const & image);
-
+		
+		void SetSide(int axis, int pole, Image const & image);
+		
 		virtual void Render(Layer::type layer, Scene const & scene) const;
 		virtual bool IsInLayer(Layer::type layer) const;
-
+		
 	private:
 		void InitVerts();
-	
+		
 		// Attribs
-		gl::TextureRgba8 sides[3][2];
-		gl::Vbo3dTex vbo;
+		Texture sides[3][2];
+		Vbo vbo;
 	};
-
+	
 }

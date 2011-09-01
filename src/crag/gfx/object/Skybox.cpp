@@ -35,7 +35,7 @@ void Skybox::Deinit()
 	{
 		for (int pole = 0; pole < 2; ++ pole)
 		{
-			gl::TextureRgba8 & side = sides[axis][pole];
+			Texture & side = sides[axis][pole];
 			gl::DeleteTexture(side);
 		}
 	}
@@ -43,8 +43,8 @@ void Skybox::Deinit()
 
 void Skybox::SetSide(int axis, int pole, Image const & image)
 {
-	gl::TextureRgba8 & side_tex = sides[axis][pole];
-
+	Texture & side_tex = sides[axis][pole];
+	
 	image.CreateTexture(side_tex);
 }
 
@@ -68,7 +68,7 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	gl::Enable(GL_TEXTURE_2D);
 	gl::Disable(GL_CULL_FACE);
 	gl::SetDepthMask(false);
-
+	
 	Assert(! gl::IsEnabled(GL_LIGHTING));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	Assert(! gl::IsEnabled(GL_LIGHT0));
@@ -85,7 +85,7 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	{
 		for (int pole = 0; pole < 2; ++ pole)
 		{
-			gl::TextureRgba8 const & side = sides[axis][pole];
+			Texture const & side = sides[axis][pole];
 			gl::BindTexture(side);
 			vbo.DrawStrip(index, 4);
 			gl::UnbindTexture(side);
@@ -95,7 +95,7 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	
 	vbo.Deactivate();
 	gl::UnbindBuffer(vbo);
-
+	
 	gl::SetDepthMask(true);
 	gl::Disable(GL_TEXTURE_2D);
 	gl::Enable(GL_CULL_FACE);
@@ -138,6 +138,6 @@ void Skybox::InitVerts()
 	}
 	
 	gl::BindBuffer(vbo);
-	gl::BufferData(vbo, 3 * 2 * 4, verts[0][0]);
+	gl::BufferData(vbo, 3 * 2 * 4, verts[0][0], gl::STATIC_DRAW);
 	gl::UnbindBuffer(vbo);
 }
