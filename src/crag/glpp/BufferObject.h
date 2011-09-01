@@ -44,29 +44,21 @@ namespace gl
 		friend void DeleteBuffer<ELEMENT, TARGET>(BufferObject & bo);
 		friend void BindBuffer<ELEMENT, TARGET>(BufferObject const & bo);
 	};
-				  
-
+	
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// BufferObject helper definitions
-
+	
 	template <typename ELEMENT, GLenum TARGET> void GenBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(! bo.IsInitialized());
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glGenBuffersARB(1, & bo.id));
-#else
-		GLPP_CALL(glGenBuffers(1, & bo.id));
-#endif
+		GLPP_CALL_FUNCTION_ARB(GenBuffers, (1, & bo.id));
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void DeleteBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(bo.IsInitialized());
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glDeleteBuffersARB(1, & bo.id));
-#else
-		GLPP_CALL(glDeleteBuffers(1, & bo.id));
-#endif
+		GLPP_CALL_FUNCTION_ARB(DeleteBuffers, (1, & bo.id));
 		bo.id = 0;
 	}
 	
@@ -74,44 +66,28 @@ namespace gl
 	{
 		assert(bo.IsInitialized());
 		assert(! bo.IsBound());
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glBindBufferARB(TARGET, bo.id)); 
-#else
-		GLPP_CALL(glBindBuffer(TARGET, bo.id)); 
-#endif
+		GLPP_CALL_FUNCTION_ARB(BindBuffer, (TARGET, bo.id));
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void UnbindBuffer(BufferObject<ELEMENT, TARGET> const & bo)
 	{
 		assert(bo.IsBound());
 #if ! defined(NDEBUG)
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glBindBufferARB(TARGET, 0)); 
-#else
-		GLPP_CALL(glBindBuffer(TARGET, 0)); 
-#endif
+		GLPP_CALL_FUNCTION_ARB(BindBuffer, (TARGET, 0)); 
 #endif
 	}
 	
-	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array = nullptr)
+	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array = nullptr, BufferDataUsage usage = STATIC_DRAW)
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glBufferDataARB(TARGET, size, array, STREAM_DRAW));
-#else
-		GLPP_CALL(glBufferData(TARGET, size, array, STREAM_DRAW));
-#endif
+		GLPP_CALL_FUNCTION_ARB(BufferData, (TARGET, size, array, usage));
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void BufferSubData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, ELEMENT const * array)
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-#if defined(GLPP_USE_ARB)
-		GLPP_CALL(glBufferSubDataARB(TARGET, 0, size, array));
-#else
-		GLPP_CALL(glBufferSubData(TARGET, 0, size, array));
-#endif
+		GLPP_CALL_FUNCTION_ARB(BufferSubData, (TARGET, 0, size, array));
 	}
 }

@@ -32,7 +32,7 @@ gfx::Sphere::Sphere()
 	_mesh.Init();
 	_mesh.Bind();
 	
-	_mesh.Resize(num_verts, num_faces * 3);
+	_mesh.Resize(num_verts, num_faces * 3, gl::STATIC_DRAW);
 	_mesh.SetIbo(num_faces * 3, faces[0]._indices);
 	_mesh.SetVbo(num_verts, & verts[0]);
 	

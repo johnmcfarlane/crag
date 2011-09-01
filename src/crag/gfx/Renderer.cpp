@@ -193,7 +193,7 @@ bool Renderer::Init()
 		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Init();
 		mbo.Bind();
-		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
+		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices, gl::DYNAMIC_DRAW);
 		mbo.Unbind();
 	}
 	

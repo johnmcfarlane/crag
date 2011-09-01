@@ -45,10 +45,10 @@ namespace gl
 			UnbindBuffer(ibo);
 		}
 		
-		void Resize(int num_verts, int num_indices)
+		void Resize(int num_verts, int num_indices, BufferDataUsage usage)
 		{
-			BufferData(vbo, num_verts);
-			BufferData(ibo, num_indices);
+			BufferData(vbo, num_verts, static_cast<Vertex *>(nullptr), usage);
+			BufferData(ibo, num_indices, static_cast<GLuint *>(nullptr), usage);
 		}
 		
 		void SetVbo(int num, Vertex const * array)

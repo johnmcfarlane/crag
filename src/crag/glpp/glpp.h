@@ -16,34 +16,40 @@
 
 namespace gl 
 {
-
+	
 #if defined(WIN32)
 #define GLPP_USE_ARB
 #endif
-
+	
 #if defined(GLPP_USE_ARB)
-	enum
-	{
-		ARRAY_BUFFER = GL_ARRAY_BUFFER_ARB, 
-		ARRAY_BUFFER_BINDING = GL_ARRAY_BUFFER_BINDING_ARB, 
-		ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER_ARB, 
-		ELEMENT_ARRAY_BUFFER_BINDING = GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB, 
-		STATIC_DRAW = GL_STATIC_DRAW_ARB, 
-		DYNAMIC_DRAW = GL_DYNAMIC_DRAW_ARB, 
-		STREAM_DRAW = GL_STREAM_DRAW_ARB
-	};
+#define GLPP_DEFINE_CONSTANT_ARB(NAME) NAME = GL##NAME##ARB
+#define GLPP_CALL_FUNCTION_ARB(NAME, PARAMS) GLPP_CALL(gl##NAME##ARB PARAMS)
+#define 
 #else
+#define GLPP_DEFINE_CONSTANT_ARB(NAME) NAME = GL_##NAME
+#define GLPP_CALL_FUNCTION_ARB(NAME, PARAMS) GLPP_CALL(gl##NAME PARAMS)
+#endif
+	
 	enum
 	{
-		ARRAY_BUFFER = GL_ARRAY_BUFFER, 
-		ARRAY_BUFFER_BINDING = GL_ARRAY_BUFFER_BINDING, 
-		ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER, 
-		ELEMENT_ARRAY_BUFFER_BINDING = GL_ELEMENT_ARRAY_BUFFER_BINDING, 
-		STATIC_DRAW = GL_STATIC_DRAW, 
-		DYNAMIC_DRAW = GL_DYNAMIC_DRAW, 
-		STREAM_DRAW = GL_STREAM_DRAW
+		GLPP_DEFINE_CONSTANT_ARB(ARRAY_BUFFER), 
+		GLPP_DEFINE_CONSTANT_ARB(ARRAY_BUFFER_BINDING), 
+		GLPP_DEFINE_CONSTANT_ARB(ELEMENT_ARRAY_BUFFER), 
+		GLPP_DEFINE_CONSTANT_ARB(ELEMENT_ARRAY_BUFFER_BINDING)
 	};
-#endif
+	
+	enum BufferDataUsage
+	{
+		GLPP_DEFINE_CONSTANT_ARB(STREAM_DRAW),
+		GLPP_DEFINE_CONSTANT_ARB(STATIC_DRAW), 
+		GLPP_DEFINE_CONSTANT_ARB(DYNAMIC_DRAW), 
+		GLPP_DEFINE_CONSTANT_ARB(STREAM_READ),
+		GLPP_DEFINE_CONSTANT_ARB(STATIC_READ), 
+		GLPP_DEFINE_CONSTANT_ARB(DYNAMIC_READ), 
+		GLPP_DEFINE_CONSTANT_ARB(STREAM_COPY),
+		GLPP_DEFINE_CONSTANT_ARB(STATIC_COPY), 
+		GLPP_DEFINE_CONSTANT_ARB(DYNAMIC_COPY), 
+	};
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// General state access
@@ -163,7 +169,7 @@ namespace gl
 	{
 		GLPP_CALL(glLoadMatrixd(m));
 	}
-
+	
 	inline void MatrixMode(GLenum mode)
 	{
 		GLPP_CALL(glMatrixMode(mode));
@@ -172,7 +178,7 @@ namespace gl
 	{
 		return GetInt<GL_MATRIX_MODE>();
 	}
-
+	
 	inline void Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	{
 		GLPP_CALL(glViewport(x, y, width, height));
@@ -187,7 +193,7 @@ namespace gl
 	{
 		GLPP_CALL(glScaled(x, y, z));
 	}
-
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Binding
@@ -210,7 +216,7 @@ namespace gl
 	{
 		GLPP_CALL(glTexGendv(coord, pname, params));
 	}
-
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Color
@@ -244,4 +250,19 @@ namespace gl
 	inline void GetColor(GLdouble rgba [4])	{ GLPP_CALL(glGetDoublev(GL_CURRENT_COLOR, rgba)); }
 	inline void GetColor(GLfloat rgba [4])	{ GLPP_CALL(glGetFloatv(GL_CURRENT_COLOR, rgba)); }
 	inline void GetColor(GLint rgba [4])	{ GLPP_CALL(glGetIntegerv(GL_CURRENT_COLOR, rgba)); }
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Misc functions
+	
+	inline void Finish()
+	{
+		glFinish();
+		GLPP_VERIFY;
+	}
+	inline void Flush()
+	{
+		glFlush();
+		GLPP_VERIFY;
+	}
 }
