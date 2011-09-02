@@ -72,7 +72,7 @@ namespace smp
 			Thread const & object_thread = object.*THREAD;
 			while (! object_thread.IsLaunched())
 			{
-				Sleep(0);
+				Yield();
 			}
 			
 			// Call the class' member function.

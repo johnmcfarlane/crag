@@ -383,7 +383,7 @@ void form::FormationManager::GenerateMesh()
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
-	smp::Sleep(0);
+	smp::Yield();
 }
 
 void form::FormationManager::BeginReset()

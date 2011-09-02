@@ -74,7 +74,7 @@ namespace smp
 			{
 				// may cause a lock-up, or buffer may clear
 				assert(false);
-				smp::Sleep(0);
+				smp::Yield();
 			}
 		}
 		

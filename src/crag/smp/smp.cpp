@@ -20,6 +20,11 @@
 #endif
 
 
+void smp::Yield()
+{
+	SDL_Delay(1);
+}
+
 void smp::Sleep(double seconds)
 {
 	Uint32 ms = Uint32(seconds * 1000);

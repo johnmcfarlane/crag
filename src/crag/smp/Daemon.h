@@ -94,7 +94,7 @@ namespace smp
 			while (_object == nullptr)
 			{
 				// block until the the object is constructed and assigned
-				Sleep();
+				Yield();
 			}
 		}
 		
@@ -122,7 +122,7 @@ namespace smp
 			{
 				while (! _flush_flag)
 				{
-					Sleep();
+					Yield();
 				}
 			}
 			else
@@ -174,7 +174,6 @@ namespace smp
 		{
 			if (! _envelopes.DispatchMessages(* _object))
 			{
-				Sleep();
 				return false;
 			}
 			

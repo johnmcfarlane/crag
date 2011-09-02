@@ -169,7 +169,7 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 	{
 		if (! message_queue.DispatchMessage(* this))
 		{
-			smp::Sleep(0.001);
+			smp::Yield();
 		}
 	}
 }

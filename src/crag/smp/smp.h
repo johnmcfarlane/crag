@@ -13,9 +13,12 @@
 
 namespace smp
 {
+	// Move on to another thread.
+	void Yield();
+	
 	// Sleep the thread for at least the given amount of time.
-	void Sleep(double seconds = 0);
-
+	void Sleep(double seconds);
+	
 	// Set scheduling priority for current thread.
 	// Pass in +ve/0/-ve for high/normal/low priority.
 	void SetThreadPriority(int priority);

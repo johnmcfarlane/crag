@@ -121,7 +121,7 @@ void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 		{
 			if (message_queue.DispatchMessages(* this) == 0)
 			{
-				smp::Sleep(0);
+				smp::Yield();
 			}
 		}
 		else

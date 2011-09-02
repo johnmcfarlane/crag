@@ -167,7 +167,7 @@ namespace smp
 							}
 						}
 
-						Sleep(0);
+						Yield();
 					}
 				}
 				
@@ -347,7 +347,7 @@ namespace smp
 				// Sleep until after the singleton is full constructed.
 				while (singleton == nullptr)
 				{
-					Sleep(0);
+					Yield();
 				}
 				
 				// Singleton & task manager don't ever change until shutdown.
@@ -361,7 +361,7 @@ namespace smp
 					{
 						// or sleep.
 						// TODO: Start using semaphores again.
-						Sleep(0.01);
+						Yield();
 					}
 				}
 				
