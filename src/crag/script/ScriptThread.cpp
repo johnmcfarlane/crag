@@ -13,7 +13,10 @@
 #include "ScriptThread.h"
 #include "MetaClass.h"
 
+#include "sim/axes.h"
 #include "sim/Simulation.h"
+
+#include "gfx/Renderer.h"
 
 
 #if defined(NDEBUG)
@@ -59,6 +62,29 @@ PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 	script::ScriptThread & script_thread = script::ScriptThread::Daemon::Ref();
 	return script_thread.PollEvent();
 }
+
+PyObject * set_camera(PyObject * /*self*/, PyObject * args)
+{
+	typedef sim::Vector3 Vector;
+	// Get the coordinates.
+	sim::SetCameraMessage message;
+	if (! PyArg_ParseTuple(args, "ddd", 
+						   & message.projection.pos.x, & message.projection.pos.y, & message.projection.pos.z))
+	{
+		std::cout << "set_camera error: invalid inputs. Must be x, y, z numbers." << std::endl;
+	}
+	else
+	{
+		message.projection.rot = sim::Matrix4::Identity();		
+		gfx::Renderer::Daemon::SendMessage(message);
+	}
+	
+	Py_RETURN_NONE;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// support functions
 
 PyObject * create_event_object(sys::Event const & event)
 {
@@ -121,6 +147,7 @@ PyMethodDef crag_methods[] =
 	{"time", time, METH_VARARGS, "Returns simulation time in seconds."},
 	{"sleep", sleep, METH_VARARGS, "Sleeps the scripting thread without global-locking."},
 	{"get_event", get_event, METH_VARARGS, "Returns the next event in the event queue."},
+	{"set_camera", set_camera, METH_VARARGS, "Sets the origin to the given (x,y,z) position."},
 	{NULL, NULL, 0, NULL}
 };
 
@@ -133,7 +160,7 @@ PyObject * create_crag_module()
 {
     // Create the module
     PyObject & crag_module = ref(PyModule_Create(& crag_module_def));
-
+	
 	// Register the classes
 	for (script::MetaClassPoly::iterator i = script::MetaClassPoly::begin(); i != script::MetaClassPoly::end(); ++ i)
 	{
@@ -175,7 +202,7 @@ script::ScriptThread::ScriptThread()
 	wchar_t program_path[FILENAME_MAX + 1];
 	mbstowcs(program_path, sys::GetProgramPath(), FILENAME_MAX);
 	Py_SetProgramName(program_path);
-
+	
 	Py_Initialize();
 }
 
@@ -192,11 +219,11 @@ void script::ScriptThread::OnMessage(smp::TerminateMessage const & message)
 void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 {
 	_message_queue = & message_queue;
-
+	
 #if defined(WIN32)
 	RedirectPythonOutput("python.txt");
 #endif
-
+	
 	PyRun_SimpleFileEx(_source_file, _source_filename, true);
 	
 	_message_queue->DispatchMessages(* this);
@@ -243,12 +270,12 @@ bool script::ScriptThread::RedirectPythonOutput(char const * filename)
 	PyObject* sys = PyImport_ImportModule("sys");
 	PyObject* io = PyImport_ImportModule("io");
 	PyObject* pystdout = PyObject_CallMethod(io, const_cast<char *>("open"), const_cast<char *>("ss"), "python.txt", "wt");
-
+	
 	if (-1 == PyObject_SetAttrString(sys, "stdout", pystdout)) 
 	{
 		return false;
 	}
-
+	
 	Py_DECREF(sys);
 	Py_DECREF(io);
 	Py_DECREF(pystdout);
