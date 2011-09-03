@@ -42,7 +42,7 @@ def main_loop():
 	observer_tasklet = stackless.tasklet(o.run)()
 	
 	# Main loop
-	next_drop = time.time() + 1
+	next_drop = crag.time() + 1
 	balls = []
 	while stackless.runcount > 1:
 		now = crag.time()
