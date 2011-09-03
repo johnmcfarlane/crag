@@ -45,7 +45,7 @@ def main_loop():
 	next_drop = time.time() + 1
 	balls = []
 	while stackless.runcount > 1:
-		now = time.time()
+		now = crag.time()
 		if now > next_drop:
 			next_drop = now + 1
 			balls.append(crag.Ball(random.random() - .5, 10000580, -4.5 + random.random(), math.exp(- random.random() * 2)))
