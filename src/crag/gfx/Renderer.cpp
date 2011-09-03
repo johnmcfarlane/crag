@@ -129,6 +129,9 @@ void Renderer::OnMessage(ResizeMessage const & message)
 void Renderer::OnMessage(sim::SetCameraMessage const & message)
 {
 	scene->SetCamera(message.projection.pos, message.projection.rot);
+	
+	// pass this on to the formation manager to update the node scores
+	form::FormationManager::Daemon::SendMessage(message);
 }
 
 #if defined(NDEBUG)

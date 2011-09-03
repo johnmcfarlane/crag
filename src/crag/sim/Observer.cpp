@@ -16,8 +16,6 @@
 
 #include "physics/SphericalBody.h"
 
-#include "form/FormationManager.h"
-
 #include "geom/VectorOps.h"
 #include "geom/MatrixOps.h"
 #include "geom/Vector4.h"
@@ -224,9 +222,6 @@ void sim::Observer::UpdateModels() const
 	{
 		SetCameraMessage message = { position, rotation };
 		gfx::Renderer::Daemon::SendMessage(message);
-
-		// This happens to be a good time to sent message elsewhere.
-		form::FormationManager::Daemon::SendMessage(message);
 	}
 
 	// Give renderer the new light position.
