@@ -65,7 +65,7 @@ namespace gfx
 		};
 		
 	public:
-		typedef smp::Daemon<Renderer, true> Daemon;
+		typedef smp::Daemon<Renderer> Daemon;
 		
 		Renderer();
 		~Renderer();

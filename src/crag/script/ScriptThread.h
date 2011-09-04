@@ -11,11 +11,19 @@
 #pragma once
 
 #include "smp/Daemon.h"
+
+#include "sys/App.h"
+
 #include "core/Singleton.h"
 
 
 namespace script
 {
+	
+	struct EventMessage
+	{
+		sys::Event event;
+	};
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
@@ -23,12 +31,16 @@ namespace script
 	{
 		OBJECT_SINGLETON(ScriptThread);
 		
+		// types
+		typedef std::queue<PyObject *> EventQueue;
+		
 	public:
-		typedef smp::Daemon<ScriptThread, false> Daemon;
+		typedef smp::Daemon<ScriptThread> Daemon;
 
 		ScriptThread();
 		~ScriptThread();
 		
+		void OnMessage(EventMessage const & message);
 		void OnMessage(smp::TerminateMessage const & message);
 
 		// thread entry point
@@ -43,6 +55,7 @@ namespace script
 		static char const * _source_filename;
 		FILE * _source_file;
 		Daemon::MessageQueue * _message_queue;
+		EventQueue _events;
 	};
 	
 }

@@ -211,6 +211,17 @@ script::ScriptThread::~ScriptThread()
 	Py_Finalize();
 }
 
+void script::ScriptThread::OnMessage(EventMessage const & message)
+{
+	PyObject * event_object = create_event_object(message.event);
+	if (event_object == nullptr)
+	{
+		return;
+	}
+	
+	_events.push(event_object);
+}
+
 void script::ScriptThread::OnMessage(smp::TerminateMessage const & message)
 {
 }
@@ -232,37 +243,24 @@ void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 
 PyObject * script::ScriptThread::PollEvent()
 {
-	bool idle = true;
+	bool idle = _message_queue->DispatchMessages(* this) == 0;
 	
-	while (true)
+	if (_events.empty())
 	{
-		if (_message_queue->DispatchMessages(* this) > 0)
+		if (idle)
 		{
-			idle = false;
+			// Yield for a little while
+			smp::Yield();
 		}
-		
-		PyObject * event_object;
-		if (! handle_events(event_object))
-		{	
-			break;
-		}
-		
-		if (event_object != nullptr)
-		{
-			return event_object;
-		}
-		
-		idle = false;
+
+		// There are no more pending events.
+		Py_RETURN_NONE;
 	}
 	
-	if (idle)
-	{
-		// Yield for a little while
-		smp::Yield();
-	}
+	PyObject * event_object = _events.front();
+	_events.pop();
 	
-	// There are no more pending events.
-	Py_RETURN_NONE;
+	return event_object;
 }
 
 bool script::ScriptThread::RedirectPythonOutput(char const * filename)

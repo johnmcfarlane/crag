@@ -115,14 +115,13 @@ void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 	
 	while (! quit_flag)
 	{
+		message_queue.DispatchMessages(* this);
+		
 		sys::TimeType time = sys::GetTime();
 		sys::TimeType time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
-			if (message_queue.DispatchMessages(* this) == 0)
-			{
-				smp::Yield();
-			}
+			smp::Yield();
 		}
 		else
 		{

@@ -71,7 +71,7 @@ namespace form
 		
 	public:
 		// types
-		typedef smp::Daemon<FormationManager, true> Daemon;
+		typedef smp::Daemon<FormationManager> Daemon;
 		
 		struct IntersectionFunctor
 		{

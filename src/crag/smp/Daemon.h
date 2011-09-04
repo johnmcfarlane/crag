@@ -22,13 +22,21 @@ namespace smp
 	////////////////////////////////////////////////////////////////////////////////
 	// thread-safe wrapper for a service/sub-system 
 	
-	template <typename CLASS, bool THREADED>
+	template <typename CLASS>
 	class Daemon
 	{
 		OBJECT_NO_COPY(Daemon);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
+		
+		enum State
+		{
+			initialized,
+			running,
+			flushing,
+			flushed,
+		};
 
 		typedef CLASS Class;
 		typedef MessageEnvelope<Class> MessageEnvelope;
@@ -44,7 +52,7 @@ namespace smp
 		Daemon(size_t ring_buffer_size)
 		: _object(nullptr)
 		, _envelopes(ring_buffer_size)
-		, _flush_flag(false)
+		, _state(initialized)
 		{
 			Assert(singleton == nullptr);
 			singleton = this;
@@ -52,8 +60,7 @@ namespace smp
 		
 		~Daemon() 
 		{ 
-			Assert(_flush_flag);
-			_flush_flag = false;
+			Assert(_state == flushed);
 			
 			Assert(singleton == this);
 			singleton = nullptr;
@@ -77,6 +84,12 @@ namespace smp
 			return ref(singleton->_object);
 		}
 		
+		// specifically, the thread is still in the object's Run function
+		bool IsRunning() const
+		{
+			return _state <= running;
+		}
+		
 		size_t GetQueueCapacity() const
 		{
 			return _envelopes.capacity();
@@ -84,11 +97,8 @@ namespace smp
 		
 		void Start()
 		{
-			if (! THREADED)
-			{
-				return;
-			}
-			
+			Assert(! singleton->_thread.IsCurrent());
+
 			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this);
 			
 			while (_object == nullptr)
@@ -99,14 +109,10 @@ namespace smp
 		}
 		
 		// Inform the daemon object that it should stop working and flush its message queue.
-		void RequestStop()
+		void BeginFlush()
 		{
-			Assert(! _flush_flag);
-			
-			if (! THREADED)
-			{
-				return;
-			}
+			Assert(! singleton->_thread.IsCurrent());
+			Assert(_state <= flushing);
 			
 			// Never called from within the thread.
 			Assert(! _thread.IsCurrent());
@@ -115,40 +121,44 @@ namespace smp
 			SendMessage(message);
 		}
 		
-		// Waits on the daemon object to stop working and flush its message queue.
-		void AcknowledgeStop()
+		// Waits on the daemon object to stop working and start flushing its message queue.
+		void Flush()
 		{
-			if (THREADED)
+			Assert(! singleton->_thread.IsCurrent());
+			
+			while (IsRunning())
 			{
-				while (! _flush_flag)
-				{
-					Yield();
-				}
+				Yield();
 			}
-			else
-			{
-				while (FlushMessages());
-				_flush_flag = true;
-			}
+		}
+		
+		void EndFlush()
+		{
+			Assert(! singleton->_thread.IsCurrent());			
+			Assert(_state = flushing);
+			Assert(_envelopes.IsEmpty());
+			
+			_state = flushed;
 		}
 		
 		void Run()
 		{
 			FUNCTION_NO_REENTRY;
-			Assert(! THREADED || singleton->_thread.IsCurrent());
+			
+			Assert(singleton->_thread.IsCurrent());
+			
+			Assert(_state == initialized);
+			_state = running;
 			
 			_object = new Class;
 			_object->Run(_envelopes);
 			
-			if (THREADED)
+			// Acknowledge that this won't be sending any more.
+			_state = flushing;
+			
+			while (_state == flushing)
 			{
-				// Acknowledge that this won't be sending any more.
-				_flush_flag = true;
-				
-				while (_flush_flag)
-				{
-					FlushMessages();
-				}
+				FlushMessages();
 			}
 			
 			delete _object;
@@ -187,12 +197,12 @@ namespace smp
 		Class * _object;
 		MessageQueue _envelopes;
 		Thread _thread;
-		bool _flush_flag;
+		State _state;
 		
 		static Daemon * singleton;
 	};
 	
 	// the singleton
-	template <typename CLASS, bool THREADED>
-	Daemon<CLASS, THREADED> * Daemon<CLASS, THREADED>::singleton = nullptr;
+	template <typename CLASS>
+	Daemon<CLASS> * Daemon<CLASS>::singleton = nullptr;
 }

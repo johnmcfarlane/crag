@@ -66,11 +66,34 @@ namespace
 #else
 	CONFIG_DEFINE (video_full_screen, bool, true);
 #endif
-
-
+	
+	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
 
+	bool HandleEvent()
+	{
+		script::EventMessage message;
+
+		// If no events are pending,
+		if (! sys::GetEvent(message.event, false))
+		{
+			// then nothing's happening event-wise.
+			return false;
+		}
+		else
+		{
+			// If the simulation actor caught the event,
+			sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
+			if (! simulation.HandleEvent(message.event))
+			{
+				script::ScriptThread::Daemon::SendMessage(message);
+			}
+			
+			// Either way, signal that there was activity.
+			return true;
+		}
+	}
 
 	bool Crag(char const * program_path)
 	{
@@ -87,7 +110,7 @@ namespace
 #endif
 		
 		smp::scheduler::Init();
-
+		
 		{
 			// Instanciate the four daemons
 			script::ScriptThread::Daemon script_daemon(0x400);
@@ -95,28 +118,37 @@ namespace
 			form::FormationManager::Daemon formation_manager(0x8000);
 			sim::Simulation::Daemon simulation(0x400);
 			
-			// start thread for three of the daemons
+			// start thread the daemons
+			script_daemon.Start();
 			formation_manager.Start();
 			simulation.Start();
 			renderer.Start();
 			
-			// Launch the script engine daemon.
-			// It needs to run in the main thread because SDL was initialized from here
-			// and script uses SDL events fns. Hence we call Run instead of Start etc..
-			script_daemon.Run();
-			// The script daemon returning is the signal for the program to finish.
+			while (script_daemon.IsRunning())
+			{
+				while (! HandleEvent())
+				{
+					smp::Yield();
+				}
+			}
 			
 			// Tell the daemons to wind down.
-			script_daemon.RequestStop();
-			simulation.RequestStop();
-			renderer.RequestStop();
-			formation_manager.RequestStop();
-
+			script_daemon.BeginFlush();
+			simulation.BeginFlush();
+			renderer.BeginFlush();
+			formation_manager.BeginFlush();
+			
 			// Wait until they have all stopped working.
-			script_daemon.AcknowledgeStop();
-			simulation.AcknowledgeStop();
-			renderer.AcknowledgeStop();
-			formation_manager.AcknowledgeStop();
+			script_daemon.Flush();
+			simulation.Flush();
+			renderer.Flush();
+			formation_manager.Flush();
+			
+			// Wait until they have all stopped working.
+			script_daemon.EndFlush();
+			simulation.EndFlush();
+			renderer.EndFlush();
+			formation_manager.EndFlush();
 		}
 		
 		smp::scheduler::Deinit();

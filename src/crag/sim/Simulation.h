@@ -46,7 +46,7 @@ namespace sim
 		OBJECT_SINGLETON(Simulation);
 
 	public:
-		typedef smp::Daemon<Simulation, true> Daemon;
+		typedef smp::Daemon<Simulation> Daemon;
 
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 
