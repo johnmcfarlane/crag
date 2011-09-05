@@ -40,6 +40,8 @@ namespace gfx
 		// Return the necessary z-clipping range required to render this object through the given camera.
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
 		
+		virtual void PreRender();
+		
 		// at states for which IsInLayer returns true
 		virtual void Render(Layer::type layer, Scene const & scene) const = 0;
 		
