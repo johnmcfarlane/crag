@@ -29,8 +29,10 @@ namespace gfx
 		Scene();
 		~Scene();
 		
-		void AddObject(Object const & object);
-		void RemoveObject(Object const & object);
+		bool Empty() const;
+		
+		void AddObject(Object & object);
+		void RemoveObject(Object & object);
 		ObjectSet const & GetObjects(Layer::type layer) const;
 		
 		void SetResolution(Vector2i const & r);

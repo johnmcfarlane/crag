@@ -36,10 +36,13 @@ gfx::Scene::Scene()
 
 gfx::Scene::~Scene()
 {
-	for (ObjectSet * it = _objects; it != _objects + Layer::num; ++ it)
+#if ! defined(NDEBUG)
+	for (Layer::type index = Layer::begin; index != Layer::end; ++ index)
 	{
-		Assert(it->empty());
+		ObjectSet & objects = _objects[index];
+		Assert(objects.empty());
 	}
+#endif
 	
 	camera_fov = static_cast<float>(pov.frustum.fov);
 	camera_near = static_cast<float>(pov.frustum.near_z);
@@ -48,7 +51,20 @@ gfx::Scene::~Scene()
 	delete & _sphere;
 }
 
-void gfx::Scene::AddObject(Object const & object)
+bool gfx::Scene::Empty() const
+{
+	for (Layer::type index = Layer::begin; index != Layer::end; ++ index)
+	{
+		if (! _objects[index].empty())
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void gfx::Scene::AddObject(Object & object)
 {
 	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
 	{
@@ -62,7 +78,7 @@ void gfx::Scene::AddObject(Object const & object)
 	}
 }
 
-void gfx::Scene::RemoveObject(Object const & object)
+void gfx::Scene::RemoveObject(Object & object)
 {
 	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
 	{

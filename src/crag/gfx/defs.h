@@ -30,7 +30,7 @@ namespace gfx
 	class Object;
 	
 	// storage type for Object
-	typedef std::set<Object const *> ObjectSet;
+	typedef std::set<Object *> ObjectSet;
 	
 	// Passed to gfx:Renderer; specialized for classes derived from gfx::Object;
 	template <typename OBJECT> struct UpdateObjectMessage;
