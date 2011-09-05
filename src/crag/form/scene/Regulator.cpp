@@ -35,51 +35,52 @@ form::Regulator::Regulator()
 void form::Regulator::Reset()
 {
 	reset_time = sys::GetTime();
+	_num_quaterna = -1;
 	frame_ratio_max = 0;
-	mesh_generation_period = -1;
+	mesh_generation_period = 0;
+}
+
+void form::Regulator::SetNumQuaterna(int num_quaterna)
+{
+	_num_quaterna = num_quaterna;
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void form::Regulator::SampleFrameRatio(float fr)
+void form::Regulator::SampleFrameFitness(float fitness)
 {
-	mutex.Lock();
-	
-	Assert(fr >= 0);
-	frame_ratio_max = Max(frame_ratio_max, fr);
-
-	mutex.Unlock();
+	Assert(fitness >= 0);
+	frame_ratio_max = Max(frame_ratio_max, 1.f / fitness);
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 {
-	mutex.Lock();
-
 	Assert(mgp >= 0);
 	mesh_generation_period = Max(static_cast<float>(mgp), mesh_generation_period);
-
-	mutex.Unlock();
 }
 
-int form::Regulator::GetAdjustedLoad(int current_load)
+int form::Regulator::GetRecommendedNumQuaterna()
 {
-	mutex.Lock();
-
+	if ((frame_ratio_max == 0 && mesh_generation_period == 0) || _num_quaterna == -1)
+	{
+		return _num_quaterna;
+	}
+	
 	sys::TimeType sim_time = sys::GetTime() - reset_time;
 
 	// Come up with two accounts of how many quaterna we should have.
-	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(current_load, sim_time);
-	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(current_load);
+	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(_num_quaterna, sim_time);
+	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterna);
 
 	// Pick the more conservative of the two numbers.
-	int adjusted_load = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
+	int recommended_num_quaternia = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
 	
 #if ! defined(NDEBUG) && 0
-	if (adjusted_load < current_load)
+	if (recommended_num_quaternia < _num_quaterna)
 	{
 		int less_nodes = 1;
 	}
-	else if (adjusted_load > current_load)
+	else if (recommended_num_quaternia > _num_quaterna)
 	{
 		int more_nodes = 1;
 	}
@@ -88,15 +89,14 @@ int form::Regulator::GetAdjustedLoad(int current_load)
 		int no_change = 1;
 	}
 #endif
-
+	
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
-	mesh_generation_period = -1;
 	frame_ratio_max = 0;
+	mesh_generation_period = 0;
 	
 	// return the result
-	mutex.Unlock();
-	return adjusted_load;
+	return recommended_num_quaternia;
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
@@ -141,7 +141,7 @@ int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, sys:
 int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load) const
 {
 	// If we don't have a current reading or we're under budget everything's ok.
-	if (mesh_generation_period < 0 || mesh_generation_period < max_mesh_generation_period)
+	if (mesh_generation_period <= 0 || mesh_generation_period < max_mesh_generation_period)
 	{
 		// As far as this function's concerned, increase the count to anything you like (within reason).
 		return std::numeric_limits<int>::max();

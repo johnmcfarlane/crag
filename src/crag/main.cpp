@@ -83,10 +83,11 @@ namespace
 		}
 		else
 		{
-			// If the simulation actor caught the event,
+			// If the simulation actor didn't catch the event,
 			sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
 			if (! simulation.HandleEvent(message.event))
 			{
+				// then send it to the script thread.
 				script::ScriptThread::Daemon::SendMessage(message);
 			}
 			
@@ -113,20 +114,20 @@ namespace
 		
 		{
 			// Instanciate the four daemons
-			script::ScriptThread::Daemon script_daemon(0x400);
 			gfx::Renderer::Daemon renderer(0x8000);
 			form::FormationManager::Daemon formation_manager(0x8000);
 			sim::Simulation::Daemon simulation(0x400);
+			script::ScriptThread::Daemon script_daemon(0x400);
 			
 			// start thread the daemons
-			script_daemon.Start();
 			formation_manager.Start();
 			simulation.Start();
 			renderer.Start();
+			script_daemon.Start();
 			
 			while (script_daemon.IsRunning())
 			{
-				while (! HandleEvent())
+				if (! HandleEvent())
 				{
 					smp::Yield();
 				}
@@ -139,12 +140,12 @@ namespace
 			formation_manager.BeginFlush();
 			
 			// Wait until they have all stopped working.
-			script_daemon.Flush();
-			simulation.Flush();
-			renderer.Flush();
-			formation_manager.Flush();
+			script_daemon.Synchronize();
+			simulation.Synchronize();
+			renderer.Synchronize();
+			formation_manager.Synchronize();
 			
-			// Wait until they have all stopped working.
+			// Wait until they have all finished flushing.
 			script_daemon.EndFlush();
 			simulation.EndFlush();
 			renderer.EndFlush();

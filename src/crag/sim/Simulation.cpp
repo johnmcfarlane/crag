@@ -218,7 +218,8 @@ bool sim::Simulation::HandleEvent(sys::Event const & event)
 			
 		case SDL_ACTIVEEVENT:
 		{
-			form::FormationManager::Daemon::Ref().ResetRegulator();			
+			form::RegulatorResetMessage message;
+			form::FormationManager::Daemon::SendMessage(message);			
 			return true;
 		}
 

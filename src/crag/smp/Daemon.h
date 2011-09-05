@@ -34,8 +34,10 @@ namespace smp
 		{
 			initialized,
 			running,
-			flushing,
-			flushed,
+			acknowledge_flush_begin,
+			request_flush_end,
+			acknowledge_flush_end,
+			request_destroy
 		};
 
 		typedef CLASS Class;
@@ -60,7 +62,8 @@ namespace smp
 		
 		~Daemon() 
 		{ 
-			Assert(_state == flushed);
+			Assert(_state == acknowledge_flush_end);
+			_state = request_destroy;
 			
 			Assert(singleton == this);
 			singleton = nullptr;
@@ -108,11 +111,11 @@ namespace smp
 			}
 		}
 		
-		// Inform the daemon object that it should stop working and flush its message queue.
+		// Tell the daemon to wind down.
 		void BeginFlush()
 		{
 			Assert(! singleton->_thread.IsCurrent());
-			Assert(_state <= flushing);
+			Assert(_state <= acknowledge_flush_begin);
 			
 			// Never called from within the thread.
 			Assert(! _thread.IsCurrent());
@@ -121,31 +124,47 @@ namespace smp
 			SendMessage(message);
 		}
 		
-		// Waits on the daemon object to stop working and start flushing its message queue.
-		void Flush()
+		// Wait until it has stopped working.
+		void Synchronize()
 		{
 			Assert(! singleton->_thread.IsCurrent());
+			Assert(_state <= acknowledge_flush_begin);
 			
-			while (IsRunning())
+			while (_state < acknowledge_flush_begin)
 			{
 				Yield();
 			}
 		}
 		
+		// Wait until it has finished flushing.
 		void EndFlush()
 		{
 			Assert(! singleton->_thread.IsCurrent());			
-			Assert(_state = flushing);
-			Assert(_envelopes.IsEmpty());
+			Assert(_state == acknowledge_flush_begin);
 			
-			_state = flushed;
+			_state = request_flush_end;
+			while (_state < acknowledge_flush_end)
+			{
+				Yield();
+			}
+			Assert(acknowledge_flush_end);
+			
+			Assert(_envelopes.IsEmpty());
 		}
 		
+		template <typename MESSAGE>
+		static void SendMessage(MESSAGE const & message)
+		{
+			singleton->PushMessage(message);
+		}
+		
+	private:
 		void Run()
 		{
 			FUNCTION_NO_REENTRY;
 			
-			Assert(singleton->_thread.IsCurrent());
+			Assert(this == singleton);
+			Assert(_thread.IsCurrent());
 			
 			Assert(_state == initialized);
 			_state = running;
@@ -154,24 +173,23 @@ namespace smp
 			_object->Run(_envelopes);
 			
 			// Acknowledge that this won't be sending any more.
-			_state = flushing;
-			
-			while (_state == flushing)
+			_state = acknowledge_flush_begin;
+			while (_state == acknowledge_flush_begin)
 			{
 				FlushMessages();
 			}
 			
+			Assert(_state == request_flush_end);
+			while (! _envelopes.IsEmpty())
+			{
+				FlushMessages();
+			}
+			_state = acknowledge_flush_end;
+			
 			delete _object;
 			_object = nullptr;
 		}
-
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message)
-		{
-			singleton->PushMessage(message);
-		}
 		
-	private:
 		template <typename MESSAGE>
 		void PushMessage(MESSAGE const & message)
 		{

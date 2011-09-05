@@ -23,7 +23,7 @@ namespace gfx
 	public:
 		typedef gl::Vertex3dNormHybrid Vertex;
 	private:
-		typedef gl::Mesh<Vertex> Mesh;
+		typedef gl::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
 		typedef gl::VertexRgba Color;
 		typedef std::vector<Vertex> VertexVector;
 	public:

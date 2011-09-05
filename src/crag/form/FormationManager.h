@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "form/scene/Mesh.h"
 #include "form/scene/Regulator.h"
 #include "form/scene/Scene.h"
 
@@ -24,12 +25,11 @@
 
 #include "sys/App.h"
 
-#include <set>
-
 
 namespace gfx
 {
 	class Pov;
+	class FormationSet;
 }
 
 
@@ -60,6 +60,23 @@ namespace form
 		Formation & formation;
 	};
 	
+	// tell the regulator to reset its counters
+	struct RegulatorResetMessage
+	{
+	};
+	
+	// tell the regulator how many nodes the currently rendered mesh consists of.
+	struct RegulatorNumQuaternaMessage
+	{
+		int _num_quaterna;
+	};
+	
+	// send the regulator the result of the last frame.
+	struct RegulatorFrameMessage
+	{
+		float _fitness;
+	};
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// FormationManager class
@@ -70,6 +87,7 @@ namespace form
 		OBJECT_SINGLETON(FormationManager);
 		
 	public:
+		////////////////////////////////////////////////////////////////////////////////
 		// types
 		typedef smp::Daemon<FormationManager> Daemon;
 		
@@ -85,7 +103,9 @@ namespace form
 
 		typedef core::ring_buffer<smp::scheduler::Job, true> BatchedFunctorBuffer;
 
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
+		
 		FormationManager();
 		~FormationManager();
 		
@@ -97,8 +117,13 @@ namespace form
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddFormationMessage const & message);
 		void OnMessage(RemoveFormationMessage const & message);
+		void OnMessage(MeshMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
-
+		
+		void OnMessage(RegulatorResetMessage const & message);
+		void OnMessage(RegulatorNumQuaternaMessage const & message);
+		void OnMessage(RegulatorFrameMessage const & message);
+		
 		void Run(Daemon::MessageQueue & message_queue);
 	private:		
 		void AddFormation(Formation & formation);
@@ -115,9 +140,6 @@ namespace form
 		// TODO: Yes, this interface is a little messed up.
 		void ForEachIntersectionLocked(IntersectionFunctor & functor) const;
 		
-		void SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta);
-		void ResetRegulator();
-		
 		void ToggleSuspended();
 		void ToggleMeshGeneration();
 		void ToggleDynamicOrigin();
@@ -125,16 +147,11 @@ namespace form
 		
 	private:
 		void SetCameraPos(sim::CameraProjection const & projection);
-	public:
-		bool PollMesh(MeshBufferObject & back_mesh);
-
-		// Called by the Renderer.
-		void Render();
-	private:
 
 		void Tick();
 		void TickActiveScene();
 		void GenerateMesh();
+		Mesh * PopMesh();
 
 		void AdjustNumQuaterna();
 		void BeginReset();
@@ -150,9 +167,11 @@ namespace form
 		bool IsGrowing() const;
 		bool IsResetting() const;
 		
+		////////////////////////////////////////////////////////////////////////////////
 		// types
-		typedef core::double_buffer<Mesh *> MeshDoubleBuffer;
+		
 		typedef core::double_buffer<Scene> SceneDoubleBuffer;
+		gfx::FormationSet & _model;
 		
 		// attributes
 		FormationSet formation_set;
@@ -160,15 +179,14 @@ namespace form
 		bool quit_flag;
 		bool suspend_flag;
 		bool enable_mesh_generation;
+		bool flat_shaded_flag;
 		
-		volatile bool back_mesh_buffer_ready;
-		
-		MeshDoubleBuffer meshes;
+		//MeshDoubleBuffer meshes;
+		Mesh::list_type _meshes;
 		
 		sys::TimeType mesh_generation_time;
-		int rendered_num_quaternia;
 		
-		Regulator regulator;
+		Regulator _regulator;
 		sim::Ray3 _camera_pos;
 
 		// The front scene is always the one being displayed and is usually the 'active' scene.

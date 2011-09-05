@@ -21,7 +21,6 @@
 
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
-, properties(false)
 {
 }
 
@@ -45,11 +44,11 @@ void form::MeshBufferObject::Activate(gfx::Pov pov) const
 	Assert (max_index > 0);
 	
 	// Adjust our copy of the pov for mesh's origin and set as matrix.
-	pov.pos -= properties.origin;
+	pov.pos -= properties._origin;
 	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(pov.CalcModelViewMatrix().GetArray());
 	
-	if (properties.flat_shaded) 
+	if (properties._flat_shaded) 
 	{
 		gl::ShadeModel(GL_FLAT);
 	}
@@ -64,7 +63,7 @@ void form::MeshBufferObject::Deactivate() const
 	super::Deactivate();
 	super::Unbind();
 	
-	if (properties.flat_shaded) 
+	if (properties._flat_shaded) 
 	{
 		gl::ShadeModel(GL_SMOOTH);
 	}

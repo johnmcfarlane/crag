@@ -16,6 +16,7 @@ namespace gfx
 	{
 		enum type
 		{
+			pre_render,
 			background,
 			light,
 			foreground,

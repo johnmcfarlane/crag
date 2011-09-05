@@ -119,10 +119,12 @@ void Renderer::OnMessage(RenderReadyMessage const & message)
 	ready = message.ready;
 }
 
-void Renderer::OnMessage(ResizeMessage const & message)
+void Renderer::OnMessage(ResizeMessage const & resize_message)
 {
-	scene->SetResolution(message.size);
-	form::FormationManager::Daemon::Ref().ResetRegulator();
+	scene->SetResolution(resize_message.size);
+
+	form::RegulatorResetMessage reset_message;
+	form::FormationManager::Daemon::SendMessage(reset_message);			
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
@@ -161,6 +163,7 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 	while (! quit_flag)
 	{
 		ProcessMessagesAndGetReady(message_queue);
+		PreRender();
 		Render();
 	}
 }
@@ -190,16 +193,6 @@ bool Renderer::Init()
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
 	
-	for (int index = 0; index < 2; ++ index)
-	{
-		// initialize mesh buffer
-		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
-		mbo.Init();
-		mbo.Bind();
-		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices, gl::DYNAMIC_DRAW);
-		mbo.Unbind();
-	}
-	
 	gl::GenFence(_fence1);
 	gl::GenFence(_fence2);
 	
@@ -227,12 +220,6 @@ void Renderer::Deinit()
 		gl::DeleteFence(_fence1);
 	}
 
-	for (int index = 0; index < 2; ++ index)
-	{
-		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
-		mbo.Deinit();
-	}
-	
 	delete scene;
 
 	sys::DeinitGl();
@@ -329,19 +316,33 @@ void Renderer::ToggleWireframe()
 	wireframe = ! wireframe;
 }
 
+void Renderer::PreRender()
+{
+	ObjectSet const & objects = scene->GetObjects(Layer::pre_render);
+	for (ObjectSet::iterator i = objects.begin(); i != objects.end(); ++ i)
+	{
+		Object & object = ref(* i);
+		
+		Assert(object.IsInLayer(Layer::pre_render));
+		
+		object.PreRender();
+	}
+}
+
 void Renderer::Render()
 {
-	// Render the scene to the back buffer.
-	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();	
-	form::MeshBufferObject & back_mbo = mbo_buffers.back();
-	if (formation_manager.PollMesh(back_mbo))
-	{
-		mbo_buffers.flip();
-	}
+//	// Render the scene to the back buffer.
+//	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();	
+//	form::MeshBufferObject & back_mbo = _mbo_buffers.back();
+//	if (formation_manager.PollMesh(back_mbo))
+//	{
+//		mbo_buffers.flip();
+//	}
 
 	RenderScene();
 
 	// Flip the front and back buffers and set fences.
+	// TODO: These are costly. Try and eliminate one.
 	SetFence(_fence1);
 	sys::SwapBuffers();
 	SetFence(_fence2);
@@ -370,7 +371,9 @@ void Renderer::Render()
 	TimeType target_frame_time = sim::Simulation::target_frame_seconds;
 	target_frame_time *= target_work_proportion;
 	
-	formation_manager.SampleFrameRatio(frame_time, target_frame_time);
+	form::RegulatorFrameMessage message;
+	message._fitness = target_frame_time / frame_time;
+	form::FormationManager::Daemon::SendMessage(message);
 }
 
 void Renderer::RenderScene() const
@@ -400,7 +403,7 @@ void Renderer::RenderBackground() const
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 		
 		// and draw the skybox
-		Layer(Layer::background);
+		RenderLayer(Layer::background);
 	}
 	else
 	{
@@ -493,33 +496,11 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 		return;
 	}
 	
-	Layer(Layer::foreground);
-	
-	RenderFormations();
+	RenderLayer(Layer::foreground);
 	
 	EndRenderForeground(pass);
 	
 	VerifyRenderState();
-}
-
-void Renderer::RenderFormations() const
-{
-	// Render the formations.
-	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	if (front_buffer.GetNumPolys() <= 0)
-	{
-		return;
-	}
-	
-	form::FormationManager & fm = form::FormationManager::Daemon::Ref();
-	fm.Render();
-	
-	// Draw the mesh!
-	front_buffer.Bind();
-	front_buffer.Activate(scene->GetPov());
-	front_buffer.Draw();
-	front_buffer.Deactivate();
-	GLPP_VERIFY;
 }
 
 void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
@@ -613,7 +594,7 @@ void Renderer::EnableLights(bool enabled) const
 	}
 }
 
-void Renderer::Layer(Layer::type layer) const
+void Renderer::RenderLayer(Layer::type layer) const
 {
 	ObjectSet const & objects = scene->GetObjects(layer);
 	for (ObjectSet::const_iterator i = objects.begin(); i != objects.end(); ++ i)

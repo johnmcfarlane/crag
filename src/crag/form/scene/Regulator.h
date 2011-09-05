@@ -12,14 +12,13 @@
 
 #include "sys/App.h"
 
-#include "smp/SimpleMutex.h"
-
 
 namespace form
 {
 
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
+	// TODO: Keep results as target num quaterna
 	class Regulator
 	{
 		OBJECT_NO_COPY(Regulator);
@@ -28,12 +27,13 @@ namespace form
 		Regulator();
 		
 		void Reset();
-
-		void SampleFrameRatio(float fr);
+		
+		void SetNumQuaterna(int num_quaterna);
+		void SampleFrameFitness(float fitness);
 		void SampleMeshGenerationPeriod(sys::TimeType mgp);
 		
 		// returns a recommended load given the current load, and resets sample counters.
-		int GetAdjustedLoad(int current_load);
+		int GetRecommendedNumQuaterna();
 		
 	private:
 		int CalculateFrameRateDirectedTargetLoad(int current_load, sys::TimeType sim_time) const;
@@ -42,10 +42,9 @@ namespace form
 		
 		sys::TimeType reset_time;
 		
+		int _num_quaterna;
 		float frame_ratio_max;	// ~ (actual frame time / ideal frame time), i.e. greater is worse		
 		float mesh_generation_period;	// again, greater is worse
-		
-		smp::SimpleMutex mutex;
 	};
 
 }

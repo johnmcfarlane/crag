@@ -12,8 +12,6 @@
 
 #include "defs.h"
 
-#include "form/scene/MeshBufferObject.h"
-
 #include "glpp/Fence.h"
 #include "glpp/FrameBuffer.h"
 #include "glpp/RenderBuffer.h"
@@ -100,7 +98,7 @@ namespace gfx
 		void ToggleWireframe();
 		
 	private:
-		// Returns the estimated time thread was busy this frame.
+		void PreRender();		
 		void Render();
 		void RenderScene() const;
 		
@@ -109,12 +107,11 @@ namespace gfx
 		void RenderForeground() const;
 		bool BeginRenderForeground(ForegroundRenderPass pass) const;
 		void RenderForegroundPass(ForegroundRenderPass pass) const;
-		void RenderFormations() const;
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
 		void EnableLights(bool enabled) const;
 		
-		void Layer(Layer::type layer) const;
+		void RenderLayer(Layer::type layer) const;
 		
 		void DebugDraw() const;
 
@@ -128,9 +125,6 @@ namespace gfx
 
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
-		
-		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
-		MboDoubleBuffer mbo_buffers;
 		
 		sys::TimeType last_frame_time;
 		

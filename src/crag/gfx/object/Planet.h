@@ -29,8 +29,8 @@ namespace gfx
 		// functions
 		Planet(Vector const & position);
 		
-	private:
 		virtual void Update(UpdateParams const & params);
+	private:
 		virtual bool GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const;
 		virtual void Render(Layer::type layer, gfx::Scene const & scene) const;
 		virtual bool IsInLayer(Layer::type layer) const;

@@ -73,6 +73,7 @@
 		5288E52B140E141100192F72 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E523140E141100192F72 /* Object.cpp */; };
 		5288E52C140E141100192F72 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E525140E141100192F72 /* Planet.cpp */; };
 		5288E52D140E141100192F72 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E527140E141100192F72 /* Skybox.cpp */; };
+		528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528BF6FB140E1A9F0032E31F /* FormationSet.cpp */; };
 		528C20C11403708700B203E8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
@@ -297,6 +298,8 @@
 		5288E526140E141100192F72 /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Planet.h; sourceTree = "<group>"; };
 		5288E527140E141100192F72 /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
 		5288E528140E141100192F72 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
+		528BF6FB140E1A9F0032E31F /* FormationSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationSet.cpp; sourceTree = "<group>"; };
+		528BF6FC140E1A9F0032E31F /* FormationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationSet.h; sourceTree = "<group>"; };
 		528C20C01403708700B203E8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
@@ -708,6 +711,8 @@
 				5288E526140E141100192F72 /* Planet.h */,
 				5288E527140E141100192F72 /* Skybox.cpp */,
 				5288E528140E141100192F72 /* Skybox.h */,
+				528BF6FB140E1A9F0032E31F /* FormationSet.cpp */,
+				528BF6FC140E1A9F0032E31F /* FormationSet.h */,
 			);
 			path = object;
 			sourceTree = "<group>";
@@ -853,6 +858,7 @@
 				5288E52B140E141100192F72 /* Object.cpp in Sources */,
 				5288E52C140E141100192F72 /* Planet.cpp in Sources */,
 				5288E52D140E141100192F72 /* Skybox.cpp in Sources */,
+				528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -914,6 +920,7 @@
 					"$(inherited)",
 				);
 				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -951,17 +958,18 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(HOME)/Library/Frameworks\"",
 					"$(inherited)",
 				);
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_FAST_MATH = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../src/crag/pch.h;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;

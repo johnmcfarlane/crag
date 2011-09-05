@@ -16,6 +16,7 @@
 #include "gfx/IndexBuffer.h"
 
 #include "core/debug.h"
+#include "core/intrusive_list.h"
 
 #include "glpp/Vbo_Types.h"
 
@@ -30,6 +31,10 @@ namespace form
 	class Mesh
 	{
 	public:
+		// types
+		typedef core::intrusive::hook<Mesh> hook_type;
+
+		// functions
 		Mesh(int max_num_verts, int max_num_tris);
 		
 		void Clear();
@@ -61,9 +66,22 @@ namespace form
 		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
 		
 	private:
+		// variables
 		VertexBuffer vertices;
 		gfx::IndexBuffer indices;
 		MeshProperties properties;
+		hook_type _hook;
+		
+	public:
+		// list type
+		typedef core::intrusive::list<Mesh, & Mesh::_hook> list_type;
 	};
 
+
+	// used to return an unused mesh back to the formation manager
+	struct MeshMessage
+	{
+		Mesh & _mesh;
+	};
+	
 }

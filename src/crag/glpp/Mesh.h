@@ -16,8 +16,8 @@
 
 namespace gl
 {
-	
-	template<typename Vertex> class Mesh
+	// TODO: This doesn't belong here.
+	template<typename Vertex, BufferDataUsage Usage> class Mesh
 	{
 		typedef Vbo<Vertex> Vbo;
 	public:

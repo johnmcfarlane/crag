@@ -191,7 +191,10 @@ void form::Scene::Tick()
 void form::Scene::GenerateMesh(Mesh & mesh) const
 {
 	node_buffer->GenerateMesh(mesh);
-	mesh.GetProperties().origin = origin;
+	
+	MeshProperties & properties = mesh.GetProperties();
+	properties._origin = origin;
+	properties._num_quaterna = node_buffer->GetNumQuaternaUsed();
 }
 
 // Currently just updates the formation_map contents.

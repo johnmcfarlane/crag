@@ -34,6 +34,8 @@ namespace gl
 	{
 		typedef Name<TARGET> super;
 	public:
+		typedef ELEMENT VertexType;
+		
 		bool IsBound() const
 		{
 			assert(super::IsInitialized());

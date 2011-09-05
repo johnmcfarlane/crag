@@ -30,7 +30,6 @@ namespace
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)
 : vertices(max_num_verts)
 , indices(max_num_tris * 3)
-, properties(init_flat_shaded)
 {
 }
 
@@ -112,7 +111,7 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & norma
 {
 	Vertex & vert_a = GetVertex(a);
 	Vertex & vert_b = GetVertex(b);
-	Vertex & vert_c = (! properties.flat_shaded) ? GetVertex(c) : AddVertex(c);
+	Vertex & vert_c = (! properties._flat_shaded) ? GetVertex(c) : AddVertex(c);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }

@@ -19,14 +19,23 @@ namespace form
 	{
 		typedef Vector3d Vector3;
 		
-		MeshProperties(bool init_flat_shaded = false, Vector3 const & init_origin = Vector3::Zero()) 
-		: origin(init_origin)
-		, flat_shaded(init_flat_shaded)
+		MeshProperties() 
+		: _origin(Vector3::Zero())
+		, _num_quaterna(0)
+		, _flat_shaded(false)
 		{
 		}
 		
-		Vector3 origin;
-		bool flat_shaded;
+		MeshProperties(Vector3 origin, int num_quaterna, bool flat_shaded) 
+		: _origin(origin)
+		, _num_quaterna(num_quaterna)
+		, _flat_shaded(flat_shaded)
+		{
+		}
+		
+		Vector3 _origin;
+		int _num_quaterna;
+		bool _flat_shaded;
 	};
 	
 }

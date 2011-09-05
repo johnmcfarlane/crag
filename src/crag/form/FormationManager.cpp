@@ -16,18 +16,16 @@
 
 #include "form/node/NodeBuffer.h"
 #include "form/scene/ForEachIntersection.h"
-#include "form/scene/Mesh.h"
-#include "form/scene/MeshBufferObject.h"
 
 #include "sim/axes.h"
-#include "sim/Observer.h"
 
-#include "glpp/glpp.h"
+#include "gfx/Color.h"
+#include "gfx/Renderer.h"
+#include "gfx/object/FormationSet.h"
 
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
 #include "core/Statistics.h"
-#include "core/TextureMapper.h"
 
 
 namespace 
@@ -36,51 +34,52 @@ namespace
 	PROFILE_DEFINE (scene_tick_per_quaterna, .0025f);
 	PROFILE_DEFINE (mesh_generation_period, .01f);	
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01f);
-		
-	CONFIG_DEFINE (formation_emission, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE (formation_ambient, gfx::Color4f, gfx::Color4f(0.05f));
-	CONFIG_DEFINE (formation_diffuse, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE (formation_specular, float, 0.0f);
-	CONFIG_DEFINE (formation_shininess, float, 0.0f);
 
-	//CONFIG_DEFINE (enable_multithreding, bool, true);
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 	
 	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
 
-	STAT (num_polys, int, .05f);
-	STAT (num_quats_used, int, 0.15f);
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// FormationManager member definitions
+
 form::FormationManager::FormationManager()
-: quit_flag(false)
+: _model(ref(new gfx::FormationSet))
+, quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
-, back_mesh_buffer_ready(false)
+, flat_shaded_flag(false)
 , suspend_semaphore(1)
 , mesh_generation_time(sys::GetTime())
-, rendered_num_quaternia(0)
 , _camera_pos(sim::Ray3::Zero())
 {
-	for (int index = 0; index < 2; ++ index)
-	{
-		// TODO: Is there a 1:1 Mesh/Scene mapping? If so, Mesh should live in Scene.
-		MeshDoubleBuffer::value_type & mesh = meshes[index];
-		mesh = new Mesh (form::NodeBuffer::max_num_verts, static_cast<int>(form::NodeBuffer::max_num_verts * 1.25f));
-	}
-
 	smp::SetThreadPriority(-1);
 	smp::SetThreadName("Formation");
+
+	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
+	{
+		int max_num_verts = form::NodeBuffer::max_num_verts;
+		int max_num_tris = static_cast<int>(max_num_verts * 1.25f);
+		Mesh & mesh = ref(new Mesh (max_num_verts, max_num_tris));
+		_meshes.push_back(mesh);
+	}
 }
 
 form::FormationManager::~FormationManager()
 {
-	for (int index = 0; index < 2; ++ index)
+#if ! defined(NDEBUG)
+	std::cout << "FormationManager has " << _meshes.size() << " meshes." << std::endl;
+#endif
+	
+	while (! _meshes.empty())
 	{
-		delete meshes [index];
+		Mesh & mesh = _meshes.front();
+		_meshes.pop_front();
+		delete & mesh;
 	}
 	
 	Assert(formation_set.empty());
@@ -110,18 +109,41 @@ void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
 	delete & message.formation;
 }
 
+void form::FormationManager::OnMessage(MeshMessage const & message)
+{
+	_meshes.push_back(message._mesh);
+}
+
 void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
 {
 	SetCameraPos(message.projection);
+}
+
+void form::FormationManager::OnMessage(RegulatorResetMessage const & message)
+{
+	_regulator.Reset();
+}
+
+void form::FormationManager::OnMessage(RegulatorNumQuaternaMessage const & message)
+{
+	_regulator.SetNumQuaterna(message._num_quaterna);
+}
+
+void form::FormationManager::OnMessage(RegulatorFrameMessage const & message)
+{
+	_regulator.SampleFrameFitness(message._fitness);
 }
 
 void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	smp::SetThreadPriority(-1);
-	smp::SetThreadName("Formation");
-	
+	// register with the renderer
+	{
+		gfx::AddObjectMessage message = { _model };
+		gfx::Renderer::Daemon::SendMessage(message);
+	}
+
 	while (true) 
 	{
 		message_queue.DispatchMessages(* this);
@@ -134,11 +156,21 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 		
 		Tick();
 		
+		message_queue.DispatchMessages(* this);
+
+		GenerateMesh();
+		
 		suspend_semaphore.Increment();
 		if (quit_flag)
 		{
 			break;
 		}
+	}
+
+	// un-register with the renderer
+	{
+		gfx::RemoveObjectMessage message = { _model };
+		gfx::Renderer::Daemon::SendMessage(message);
 	}
 }
 
@@ -201,17 +233,6 @@ void form::FormationManager::ForEachIntersectionLocked(IntersectionFunctor & fun
 	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
 }
 
-void form::FormationManager::SampleFrameRatio(sys::TimeType frame_delta, sys::TimeType target_frame_delta)
-{
-	float ratio = static_cast<float>(frame_delta / target_frame_delta);
-	regulator.SampleFrameRatio(ratio);
-}
-
-void form::FormationManager::ResetRegulator()
-{
-	regulator.Reset();
-}
-
 void form::FormationManager::ToggleSuspended()
 {
 	suspend_flag = ! suspend_flag;
@@ -238,67 +259,12 @@ void form::FormationManager::ToggleDynamicOrigin()
 
 void form::FormationManager::ToggleFlatShaded()
 {
-	bool flat_shaded = meshes[0]->GetProperties().flat_shaded;
-	flat_shaded = ! flat_shaded;
-	
-	meshes[0]->GetProperties().flat_shaded = flat_shaded;
-	meshes[1]->GetProperties().flat_shaded = flat_shaded;
+	flat_shaded_flag = ! flat_shaded_flag;
 }
 
 void form::FormationManager::SetCameraPos(sim::CameraProjection const & projection)
 {
 	_camera_pos = axes::GetCameraRay(projection.pos, projection.rot);
-}
-
-bool form::FormationManager::PollMesh(MeshBufferObject & mbo)
-{
-	STAT_SET (mesh_generation, enable_mesh_generation);
-	STAT_SET (dynamic_origin, enable_dynamic_origin);
-
-	if (! enable_mesh_generation)
-	{
-		return false;
-	}
-	
-	if (! back_mesh_buffer_ready)
-	{
-		return false;
-	}
-	
-	Mesh & back_mesh = ref(meshes.back()); 
-	
-	mbo.Bind();
-	mbo.Set(back_mesh);
-	mbo.Unbind();
-	
-	back_mesh_buffer_ready = false;
-
-	STAT_SET (num_polys, mbo.GetNumPolys());
-
-	// Used to live inside Render.
-	STAT_SET (num_quats_used, scenes.front().GetNodeBuffer().GetNumQuaternaUsed());
-	
-	return true;
-}
-
-void form::FormationManager::Render()
-{
-	// When asking the regulator to adjust the number of quaterna.
-	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	rendered_num_quaternia = active_buffer.GetNumQuaternaUsed();
-	
-	// State
-	Assert(gl::IsEnabled(GL_DEPTH_TEST));
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular)));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
-	GLPP_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
-
-	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
 }
 
 // The tick function of the scene thread. 
@@ -327,8 +293,6 @@ void form::FormationManager::Tick()
 			EndReset();
 		}
 	}
-	
-	GenerateMesh();
 
 	//VerifyObject(* this);
 }
@@ -353,37 +317,61 @@ void form::FormationManager::AdjustNumQuaterna()
 	}
 	
 	// Calculate the regulator output.
-	int target_num_quaterna = regulator.GetAdjustedLoad(rendered_num_quaternia);
-	Clamp(target_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
+	int recommended_num_quaterna = _regulator.GetRecommendedNumQuaterna();
+	Clamp(recommended_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
 	
 	// Apply the regulator output.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	active_buffer.SetNumQuaternaUsedTarget(target_num_quaterna);
+	active_buffer.SetNumQuaternaUsedTarget(recommended_num_quaterna);
 }
 
 void form::FormationManager::GenerateMesh()
 {
-	if (IsResetting() || back_mesh_buffer_ready)
+	if (IsResetting())
+	{
+		return;
+	}
+	
+	// get an available mesh
+	Mesh * mesh = PopMesh();
+	if (mesh == nullptr)
 	{
 		return;
 	}
 	
 	Scene const & visible_scene = GetVisibleScene();
 	
-	Mesh & mesh = ref(meshes.back());
-	visible_scene.GenerateMesh(mesh);
+	// build it
+	mesh->GetProperties()._flat_shaded = flat_shaded_flag;
+	visible_scene.GenerateMesh(* mesh);
 	
-	back_mesh_buffer_ready = true;
+	// sent it to the FormationSet object
+	gfx::UpdateObjectMessage<gfx::FormationSet> message(_model);
+	message._params = mesh;
+	gfx::Renderer::Daemon::SendMessage(message);
 	
+	// record timing information
 	sys::TimeType t = sys::GetTime();
 	sys::TimeType last_mesh_generation_period = t - mesh_generation_time;
-	regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
+	_regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
 	
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();
+}
+
+form::Mesh * form::FormationManager::PopMesh()
+{
+	if (_meshes.empty())
+	{
+		return nullptr;
+	}
+
+	Mesh & mesh = _meshes.front();
+	_meshes.pop_front();
+	return & mesh;
 }
 
 void form::FormationManager::BeginReset()

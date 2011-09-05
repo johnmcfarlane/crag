@@ -33,9 +33,9 @@ namespace form
 	
 	
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
-	class MeshBufferObject : public gl::Mesh<Vertex>
+	class MeshBufferObject : public gl::Mesh<Vertex, gl::DYNAMIC_DRAW>
 	{
-		typedef gl::Mesh<Vertex> super;
+		typedef gl::Mesh<Vertex, gl::DYNAMIC_DRAW> super;
 	public:
 		MeshBufferObject();
 		
