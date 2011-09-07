@@ -50,6 +50,10 @@ namespace
 		SDL_ShowCursor(has_focus ? SDL_DISABLE : SDL_ENABLE);
 	}
 	
+	void ReportSdlError(char const * message)
+	{
+		std::cerr << message << ": " << SDL_GetError() << std::endl;
+	}
 	
 	bool InitGlew()
 	{
@@ -85,7 +89,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
-		std::cerr << "Failed to initialize SDL: " << SDL_GetError();
+		ReportSdlError("Failed to initialize SDL");
 		return false;
 	}
 	
@@ -104,7 +108,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
 	if (video_info == nullptr)
 	{
-		std::cerr << "Failed to get video info: " << SDL_GetError() << std::endl;
+		ReportSdlError("Failed to get video info");
 		return false;
 	}
 	
@@ -158,7 +162,7 @@ bool sys::InitGl()
 	
 	if (SDL_GL_MakeCurrent(window, context) != 0)
 	{
-		// TODO: SDL error reporting support - like OpenGL
+		ReportSdlError("Failed to get GL context");
 		return false;
 	}
 
@@ -169,7 +173,7 @@ bool sys::InitGl()
 
 	if (SDL_GL_SetSwapInterval(1))
 	{
-		std::cerr << "Hardware doesn't support vsync: " << SDL_GetError() << std::endl;
+		ReportSdlError("Hardware doesn't support vsync");
 		return false;
 	}
 	
