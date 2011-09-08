@@ -70,32 +70,178 @@ namespace
 	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
-
+	
+	// returns false iff the program should quit.
+	bool OnKeyPress(sys::KeyCode key_code)
+	{
+		enum ModifierCombo 
+		{
+			COMBO_NONE,
+			COMBO_SHIFT,
+			COMBO_CTRL,
+			COMBO_CTRL_SHIFT,
+			COMBO_ALT,
+			COMBO_ALT_SHIFT,
+			COMBO_ALT_CTRL,
+			COMBO_ALT_CTRL_SHIFT,
+		};
+		
+		int combo_map = COMBO_NONE;	
+		if (sys::IsKeyDown(KEY_LSHIFT) || sys::IsKeyDown(KEY_RSHIFT))
+		{
+			combo_map |= COMBO_SHIFT;
+		}
+		if (sys::IsKeyDown(KEY_LCTRL) || sys::IsKeyDown(KEY_RCTRL))
+		{
+			combo_map |= COMBO_CTRL;
+		}
+		if (sys::IsKeyDown(KEY_LALT) || sys::IsKeyDown(KEY_RALT))
+		{
+			combo_map |= COMBO_ALT;
+		}
+		
+		switch (combo_map) 
+		{
+			case COMBO_NONE:
+			{
+				switch (key_code)
+				{
+					case SDLK_RETURN:
+					{
+						sim::TogglePauseMessage message;
+						sim::Simulation::Daemon::SendMessage(message);
+						return true;
+					}
+						
+					case SDLK_c:
+						gfx::Renderer::Daemon::Ref().ToggleCulling();
+						return true;
+						
+					case SDLK_f:
+						form::FormationManager::Daemon::Ref().ToggleFlatShaded();
+						return true;
+						
+					case SDLK_g:
+					{
+						sim::ToggleGravityMessage message;
+						sim::Simulation::Daemon::SendMessage(message);
+						return true;
+					}
+						
+					case SDLK_i:
+						form::FormationManager::Daemon::Ref().ToggleSuspended();
+						return true;
+						
+					case SDLK_l:
+						gfx::Renderer::Daemon::Ref().ToggleLighting();
+						return true;
+						
+					case SDLK_o:
+					{
+						sim::ToggleCaptureMessage message;
+						sim::Simulation::Daemon::SendMessage(message);
+						return true;
+					}
+						
+					case SDLK_p:
+						gfx::Renderer::Daemon::Ref().ToggleWireframe();
+						return true;
+						
+					default:
+						break;
+				}
+				break;
+			}
+				
+			case COMBO_SHIFT:
+			{
+				switch (key_code)
+				{
+					case SDLK_c:
+					{
+						sim::ToggleCollisionMessage message;
+						sim::Simulation::Daemon::SendMessage(message);
+						return true;
+					}
+						
+					case SDLK_i:
+						form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
+						return true;
+						
+					default:
+						break;
+				}
+				break;
+			}
+				
+			case COMBO_CTRL:
+			{
+				switch (key_code)
+				{
+					case SDLK_i:
+						form::FormationManager::Daemon::Ref().ToggleDynamicOrigin();
+						return true;
+						
+					default:
+						break;
+				}
+				break;
+			}
+				
+			default:
+				break;
+		}
+		
+		return false;
+	}
+	
 	bool HandleEvent()
 	{
-		script::EventMessage message;
-
+		script::EventMessage event_message;
+		
 		// If no events are pending,
-		if (! sys::GetEvent(message.event, false))
+		if (! sys::GetEvent(event_message.event, false))
 		{
 			// then nothing's happening event-wise.
 			return false;
 		}
-		else
+		
+		switch (event_message.event.type)
 		{
-			// If the simulation actor didn't catch the event,
-			sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
-			if (! simulation.HandleEvent(message.event))
+			case SDL_VIDEORESIZE:
 			{
-				// then send it to the script thread.
-				script::ScriptThread::Daemon::SendMessage(message);
+				gfx::ResizeMessage message = { Vector2i(event_message.event.resize.w, event_message.event.resize.h) };
+				gfx::Renderer::Daemon::SendMessage(message);
+				return true;
 			}
-			
-			// Either way, signal that there was activity.
-			return true;
+				
+			case SDL_KEYDOWN:
+			{
+				if (OnKeyPress(event_message.event.key.keysym.sym))
+				{
+					return true;
+				}
+				break;
+			}
+				
+			case SDL_ACTIVEEVENT:
+			{
+				form::RegulatorResetMessage message;
+				form::FormationManager::Daemon::SendMessage(message);			
+				return true;
+			}
+				
+			default:
+			{
+				break;
+			}
 		}
-	}
 
+		// If not caught here, then send it to the script thread.
+		script::ScriptThread::Daemon::SendMessage(event_message);
+		return true;
+	}
+	
 	bool Crag(char const * program_path)
 	{
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.

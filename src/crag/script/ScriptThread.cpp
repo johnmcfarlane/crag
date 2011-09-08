@@ -113,35 +113,6 @@ PyObject * create_event_object(sys::Event const & event)
 	}
 }
 
-bool handle_events(PyObject * & event_object)
-{
-	// If no events are pending,
-	sys::Event event;
-	if (! sys::GetEvent(event, false))
-	{
-		// then nothing's happening event-wise.
-		return false;
-	}
-	else
-	{
-		// If the simulation actor caught the event,
-		sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
-		if (simulation.HandleEvent(event))
-		{
-			// then blank the event
-			event_object = nullptr;
-		}
-		else
-		{
-			// else try and create an event object for script to deal with.
-			event_object = create_event_object(event);	
-		}
-		
-		// Either way, signal that there was activity.
-		return true;
-	}
-}
-
 PyMethodDef crag_methods[] = 
 {
 	{"time", time, METH_VARARGS, "Returns simulation time in seconds."},

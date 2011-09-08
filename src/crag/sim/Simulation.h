@@ -39,6 +39,10 @@ namespace sim
 	
 	struct AddEntityMessage;
 	struct RemoveEntityMessage;
+	struct TogglePauseMessage { };
+	struct ToggleCaptureMessage { };
+	struct ToggleGravityMessage { };
+	struct ToggleCollisionMessage { };
 	
 	
 	class Simulation
@@ -56,6 +60,10 @@ namespace sim
 		void OnMessage(smp::TerminateMessage const & message);
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
+		void OnMessage(TogglePauseMessage const & message);
+		void OnMessage(ToggleCaptureMessage const & message);
+		void OnMessage(ToggleGravityMessage const & message);
+		void OnMessage(ToggleCollisionMessage const & message);
 		void OnMessage(gfx::RendererReadyMessage const & message);
 		
 	private:
@@ -68,8 +76,6 @@ namespace sim
 
 		physics::Engine & GetPhysicsEngine();		
 		
-		bool HandleEvent(sys::Event const & event);
-
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void Tick();
@@ -78,9 +84,6 @@ namespace sim
 		void PrintStats() const;
 		void Capture();
 		
-		// Returns true until the program should ent.
-		bool OnKeyPress(sys::KeyCode key_code);
-
 		// Attributes
 		bool quit_flag;
 		bool paused;

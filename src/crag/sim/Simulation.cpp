@@ -81,6 +81,26 @@ void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 	delete & message.entity;
 }
 
+void sim::Simulation::OnMessage(TogglePauseMessage const & message)
+{
+	paused = ! paused;
+}
+
+void sim::Simulation::OnMessage(ToggleCaptureMessage const & message)
+{
+	capture = ! capture;
+}
+
+void sim::Simulation::OnMessage(ToggleGravityMessage const & message)
+{
+	universe->ToggleGravity();
+}
+
+void sim::Simulation::OnMessage(ToggleCollisionMessage const & message)
+{
+	physics_engine->ToggleCollisions();
+}
+
 void sim::Simulation::OnMessage(gfx::RendererReadyMessage const & message)
 {
 	Assert(false);
@@ -202,142 +222,3 @@ void sim::Simulation::Capture()
 #endif
 }
 
-bool sim::Simulation::HandleEvent(sys::Event const & event)
-{
-	switch (event.type)
-	{
-		case SDL_VIDEORESIZE:
-		{
-			gfx::ResizeMessage message = { Vector2i(event.resize.w, event.resize.h) };
-			gfx::Renderer::Daemon::SendMessage(message);
-			return true;
-		}
-
-		case SDL_KEYDOWN:
-			return OnKeyPress(event.key.keysym.sym);
-			
-		case SDL_ACTIVEEVENT:
-		{
-			form::RegulatorResetMessage message;
-			form::FormationManager::Daemon::SendMessage(message);			
-			return true;
-		}
-
-		default:
-			return false;
-	}
-}
-
-// returns false iff the program should quit.
-bool sim::Simulation::OnKeyPress(sys::KeyCode key_code)
-{
-	enum ModifierCombo 
-	{
-		COMBO_NONE,
-		COMBO_SHIFT,
-		COMBO_CTRL,
-		COMBO_CTRL_SHIFT,
-		COMBO_ALT,
-		COMBO_ALT_SHIFT,
-		COMBO_ALT_CTRL,
-		COMBO_ALT_CTRL_SHIFT,
-	};
-
-	int combo_map = COMBO_NONE;	
-	if (sys::IsKeyDown(KEY_LSHIFT) || sys::IsKeyDown(KEY_RSHIFT))
-	{
-		combo_map |= COMBO_SHIFT;
-	}
-	if (sys::IsKeyDown(KEY_LCTRL) || sys::IsKeyDown(KEY_RCTRL))
-	{
-		combo_map |= COMBO_CTRL;
-	}
-	if (sys::IsKeyDown(KEY_LALT) || sys::IsKeyDown(KEY_RALT))
-	{
-		combo_map |= COMBO_ALT;
-	}
-
-	switch (combo_map) 
-	{
-		case COMBO_NONE:
-		{
-			switch (key_code)
-			{
-				case SDLK_RETURN:
-					paused = ! paused;
-					return true;
-					
-				case SDLK_c:
-					gfx::Renderer::Daemon::Ref().ToggleCulling();
-					return true;
-					
-				case SDLK_f:
-					form::FormationManager::Daemon::Ref().ToggleFlatShaded();
-					return true;
-					
-				case SDLK_g:
-					universe->ToggleGravity();
-					return true;
-					
-				case SDLK_i:
-					form::FormationManager::Daemon::Ref().ToggleSuspended();
-					return true;
-					
-				case SDLK_l:
-					gfx::Renderer::Daemon::Ref().ToggleLighting();
-					return true;
-					
-				case SDLK_o:
-					capture = ! capture;
-					return true;
-					
-				case SDLK_p:
-					gfx::Renderer::Daemon::Ref().ToggleWireframe();
-					return true;
-					
-				default:
-					break;
-			}
-			break;
-		}
-			
-		case COMBO_SHIFT:
-		{
-			switch (key_code)
-			{
-				case SDLK_c:
-				{
-					physics_engine->ToggleCollisions();
-					return true;
-				}
-					
-				case SDLK_i:
-					form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
-					return true;
-					
-				default:
-					break;
-			}
-			break;
-		}
-			
-		case COMBO_CTRL:
-		{
-			switch (key_code)
-			{
-				case SDLK_i:
-					form::FormationManager::Daemon::Ref().ToggleDynamicOrigin();
-					return true;
-					
-				default:
-					break;
-			}
-			break;
-		}
-			
-		default:
-			break;
-	}
-	
-	return false;
-}
