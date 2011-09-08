@@ -22,7 +22,7 @@ namespace
 	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 5.f);
 	
 	// TODO: Base it on full scene thread cycle.
-	CONFIG_DEFINE (max_mesh_generation_period, float, 1.35f);
+	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 }
 
