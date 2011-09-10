@@ -31,8 +31,6 @@ namespace
 	
 	bool button_down [sys::BUTTON_MAX];
 	
-	Vector2i window_size;
-	
 	SDL_Window * window = nullptr;
 	SDL_GLContext context = nullptr;
 		
@@ -48,11 +46,6 @@ namespace
 		SDL_SetWindowGrab(window, gained_focus ? SDL_TRUE : SDL_FALSE);
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		SDL_ShowCursor(has_focus ? SDL_DISABLE : SDL_ENABLE);
-	}
-	
-	void ReportSdlError(char const * message)
-	{
-		std::cerr << message << ": " << SDL_GetError() << std::endl;
 	}
 	
 	bool InitGlew()
@@ -132,8 +125,6 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 
 	ZeroObject(button_down);
 	
-	window_size = resolution;
-	
 	_program_path = program_path;
 	
 	return true;
@@ -153,6 +144,11 @@ void sys::Deinit()
 char const * sys::GetProgramPath()
 {
 	return _program_path;
+}
+
+void sys::ReportSdlError(char const * message)
+{
+	std::cerr << message << ": " << SDL_GetError() << std::endl;
 }
 
 bool sys::InitGl()
@@ -212,7 +208,16 @@ bool sys::IsButtonDown(MouseButton mouse_button)
 
 Vector2i sys::GetWindowSize()
 {
+	Vector2i window_size;	
+	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
 	return window_size;
+}
+
+Vector2i sys::GetWindowPosition()
+{
+	Vector2i window_position;	
+	SDL_GetWindowPosition(window, & window_position.x, & window_position.y);
+	return window_position;
 }
 
 void sys::SwapBuffers()
@@ -229,11 +234,6 @@ bool sys::GetEvent(Event & event, bool block)
 	
 	switch (event.type)
 	{
-		case SDL_VIDEORESIZE:
-			window_size.x = event.resize.w;
-			window_size.y = event.resize.h;
-			break;
-			
 		case SDL_WINDOWEVENT:
 			switch (event.window.event)
 			{

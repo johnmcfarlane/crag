@@ -75,7 +75,8 @@ namespace sys
 	void Deinit();
 	
 	char const * GetProgramPath();
-
+	void ReportSdlError(char const * message);
+	
 	bool InitGl();
 	void DeinitGl();
 	
@@ -85,6 +86,7 @@ namespace sys
 	
 	// window
 	Vector2i GetWindowSize();
+	Vector2i GetWindowPosition();
 	//SDL_Surface & GetVideoSurface();
 	void SwapBuffers();
 	
