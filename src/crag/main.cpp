@@ -138,8 +138,8 @@ namespace
 						
 					case SDLK_o:
 					{
-						sim::ToggleCaptureMessage message;
-						sim::Simulation::Daemon::SendMessage(message);
+						gfx::ToggleCaptureMessage message;
+						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
 					}
 						

@@ -61,7 +61,6 @@ namespace sim
 		void OnMessage(AddEntityMessage const & message);
 		void OnMessage(RemoveEntityMessage const & message);
 		void OnMessage(TogglePauseMessage const & message);
-		void OnMessage(ToggleCaptureMessage const & message);
 		void OnMessage(ToggleGravityMessage const & message);
 		void OnMessage(ToggleCollisionMessage const & message);
 		void OnMessage(gfx::RendererReadyMessage const & message);
@@ -81,14 +80,9 @@ namespace sim
 		void Tick();
 		void UpdateRenderer() const;
 		
-		void PrintStats() const;
-		void Capture();
-		
 		// Attributes
 		bool quit_flag;
 		bool paused;
-		bool capture;
-		int capture_frame;
 		
 		Universe * universe;
 		physics::Engine * physics_engine;

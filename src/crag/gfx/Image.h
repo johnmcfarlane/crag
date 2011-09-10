@@ -59,11 +59,13 @@ namespace gfx
 		// misc
 		void Clear(Color4b const & color);
 		void Load(char const * filename);
+		bool Save(char const * filename);
+		bool CaptureScreen();
 		bool Reformat(SDL_PixelFormat const & desired_format);
 		bool FormatForScreen();
 		bool FormatForOpenGl();
 
-		friend bool Blit(Image * dst, Vector2i const & dst_pos, Image const & src, Vector2i const & src_pos, Vector2i const & size);
+		static bool CopyVFlip(Image & dst, Image const & src);
 
 	private:
 

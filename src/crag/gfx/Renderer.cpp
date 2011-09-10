@@ -14,6 +14,7 @@
 
 #include "Color.h"
 #include "Debug.h"
+#include "Image.h"
 #include "Pov.h"
 #include "Scene.h"
 #include "object/Object.h"
@@ -48,6 +49,15 @@ namespace
 	CONFIG_DEFINE (init_wireframe, bool, true);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
+	
+	CONFIG_DEFINE (capture_enable, bool, false);
+	CONFIG_DEFINE (capture_skip, int, 1);
+	
+	// TODO
+	//CONFIG_DEFINE (record_enable, bool, false);
+	//CONFIG_DEFINE (record_playback, bool, false);
+	//CONFIG_DEFINE (capture, bool, false);
+	//CONFIG_DEFINE (record_playback_skip, int, 1);
 
 	STAT (idle, double, .18f);
 	STAT (frame_time, double, .18f);
@@ -78,6 +88,7 @@ Renderer::Renderer()
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
+, capture_frame(0)
 {
 #if ! defined(NDEBUG)
 	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
@@ -127,6 +138,11 @@ void Renderer::OnMessage(ResizeMessage const & resize_message)
 	form::FormationManager::Daemon::SendMessage(reset_message);			
 }
 
+void Renderer::OnMessage(ToggleCaptureMessage const & message)
+{
+	capture_enable = ! capture_enable;
+}
+
 // TODO: Make camera an object so that positional messages are the same as for other objects.
 void Renderer::OnMessage(sim::SetCameraMessage const & message)
 {
@@ -165,17 +181,33 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 		ProcessMessagesAndGetReady(message_queue);
 		PreRender();
 		Render();
+		Capture();
 	}
 }
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	message_queue.DispatchMessages(* this);
-	while (! ready)
+	int frames_to_skip;
+	if (capture_enable)
 	{
-		if (! message_queue.DispatchMessage(* this))
+		frames_to_skip = capture_skip;
+	}
+	else 
+	{
+		frames_to_skip = 0;
+		message_queue.DispatchMessages(* this);
+	}
+	
+	for (int frame = 0; frame <= capture_skip; ++ frame)
+	{
+		ready = false;
+		
+		while (! ready)
 		{
-			smp::Yield();
+			if (! message_queue.DispatchMessage(* this))
+			{
+				smp::Yield();
+			}
 		}
 	}
 }
@@ -331,14 +363,6 @@ void Renderer::PreRender()
 
 void Renderer::Render()
 {
-//	// Render the scene to the back buffer.
-//	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();	
-//	form::MeshBufferObject & back_mbo = _mbo_buffers.back();
-//	if (formation_manager.PollMesh(back_mbo))
-//	{
-//		mbo_buffers.flip();
-//	}
-
 	RenderScene();
 
 	// Flip the front and back buffers and set fences.
@@ -610,6 +634,11 @@ void Renderer::RenderLayer(Layer::type layer) const
 void Renderer::DebugDraw() const
 {
 #if defined(GFX_DEBUG)
+	if (capture_enable)
+	{
+		return;
+	}
+	
 	Pov const & pov = scene->GetPov();
 
 	//Pov test = pov;
@@ -643,6 +672,31 @@ void Renderer::DebugDraw() const
 #endif
 	
 #endif
+}
+
+void Renderer::Capture()
+{
+	if (! capture_enable)
+	{
+		return;
+	}
+	
+	// Standard string/stream classes: 1/10.
+	std::ostringstream filename_stream;
+	filename_stream << "../../../" << capture_frame << ".bmp";
+	std::string filename_string = filename_stream.str();
+	
+	bool success = capture_image[0].CaptureScreen()
+		&& gfx::Image::CopyVFlip(capture_image[1], capture_image[0])
+		&& capture_image[1].Save(filename_string.c_str());
+	
+	if (! success)
+	{
+		capture_enable = false;
+		return;
+	}
+
+	++ capture_frame;
 }
 
 void Renderer::SetFence(gl::Fence & fence)

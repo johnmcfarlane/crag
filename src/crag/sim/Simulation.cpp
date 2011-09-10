@@ -36,8 +36,6 @@ CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f)
 sim::Simulation::Simulation()
 : quit_flag(false)
 , paused(false)
-, capture(false)
-, capture_frame(0)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
 {
@@ -84,11 +82,6 @@ void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 void sim::Simulation::OnMessage(TogglePauseMessage const & message)
 {
 	paused = ! paused;
-}
-
-void sim::Simulation::OnMessage(ToggleCaptureMessage const & message)
-{
-	capture = ! capture;
 }
 
 void sim::Simulation::OnMessage(ToggleGravityMessage const & message)
@@ -188,37 +181,5 @@ void sim::Simulation::UpdateRenderer() const
 	
 	message.ready = true;
 	gfx::Renderer::Daemon::SendMessage(message);
-}
-
-void sim::Simulation::PrintStats() const
-{
-	if (capture) {
-		return;
-	}
-	
-/*	if (Debug::GetVerbosity() > .4) {
-		RealTimeFrequencyEstimator const & tps = form_thread.GetTicksPerSecond();
-		Debug::out << "tps:" << tps.GetFrequency() << '\n';
-	}*/
-
-/*	if (Debug::GetVerbosity() > .6) {
-		Debug::out << "idle:" << idle_tick_period << '\n';
-	}*/
-}
-
-void sim::Simulation::Capture()
-{
-#if 0
-	// Standard string/stream classes: 1/10.
-	std::ostringstream filename_stream;
-	filename_stream << "../../../" << capture_frame << ".jpg";
-	std::string filename_string = filename_stream.str();
-	
-	Assert(false);
-	//gfx::Image image = window.Capture();
-	//image.SaveToFile(filename_string);
-	
-	++ capture_frame;
-#endif
 }
 

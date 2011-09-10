@@ -12,6 +12,8 @@
 
 #include "defs.h"
 
+#include "Image.h"
+
 #include "glpp/Fence.h"
 #include "glpp/FrameBuffer.h"
 #include "glpp/RenderBuffer.h"
@@ -40,6 +42,7 @@ namespace gfx
 	struct AddObjectMessage;
 	struct RemoveObjectMessage;
 	struct RenderReadyMessage { bool ready; };
+	struct ToggleCaptureMessage { };
 	
 	
 	struct ResizeMessage
@@ -77,6 +80,7 @@ namespace gfx
 		}
 		void OnMessage(RenderReadyMessage const & message);
 		void OnMessage(ResizeMessage const & message);
+		void OnMessage(ToggleCaptureMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
 		void Run(Daemon::MessageQueue & message_queue);
@@ -114,7 +118,8 @@ namespace gfx
 		void RenderLayer(Layer::type layer) const;
 		
 		void DebugDraw() const;
-
+		void Capture();
+		
 		static void SetFence(gl::Fence & fence);
 		static void FinishFence(gl::Fence & fence);
 
@@ -133,6 +138,9 @@ namespace gfx
 		bool culling;
 		bool lighting;
 		bool wireframe;
+		int capture_frame;
+		
+		gfx::Image capture_image[2];
 
 		struct StateParam
 		{

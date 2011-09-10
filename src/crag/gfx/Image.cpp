@@ -195,6 +195,35 @@ void gfx::Image::Load(char const * filename)
 	surface = SDL_LoadBMP(filename);
 }
 
+bool gfx::Image::Save(char const * filename)
+{
+	if (SDL_SaveBMP(surface, filename) != 0)
+	{
+		sys::ReportSdlError("Failed to save bitmap");
+		return false;
+	}
+	
+	return true;
+}
+
+bool gfx::Image::CaptureScreen()
+{
+	Vector2i window_size = sys::GetWindowSize();
+	Vector2i window_position = sys::GetWindowPosition();
+	
+	if (! Create(window_size))
+	{
+		return false;
+	}
+	
+	GLPP_CALL(glReadPixels(0, 0,
+						   window_size.x, window_size.y, 
+						   GL_RGBA, GL_UNSIGNED_BYTE,
+						   surface->pixels));
+	
+	return true;
+}
+
 bool gfx::Image::Reformat(SDL_PixelFormat const & desired_format)
 {
 	if (surface != nullptr)
@@ -242,27 +271,26 @@ bool gfx::Image::FormatForOpenGl()
 	return false;
 }
 
-bool gfx::Blit(Image * dst, Vector2i const & dst_pos, Image const & src, Vector2i const & src_pos, Vector2i const & size)
+bool gfx::Image::CopyVFlip(Image & dst, Image const & src)
 {
-	SDL_Surface * dst_surface = (dst == nullptr)
-			? SDL_GetVideoSurface()
-			: dst->surface;
-
-	SDL_Rect srcrect =
+	Vector2i size = src.GetSize();
+	if (! dst.Create(size))
 	{
-		src_pos.x,
-		src_pos.y,
-		size.x,
-		size.y,
-	};
-
-	SDL_Rect dstrect =
+		return false;
+	}
+	
+	SDL_Rect srcrect = { 0, 0, size.x, 1 };
+	SDL_Rect dstrect = { 0, size.y - 1, size.x, 1 };
+	while (dstrect.y >= 0)
 	{
-		dst_pos.x,
-		dst_pos.y,
-		size.x,	// unnecessary?
-		size.y,	// unnecessary?
-	};
-
-	return SDL_BlitSurface(src.surface, & srcrect, dst_surface, & dstrect) == 0;
+		if (SDL_BlitSurface(src.surface, & srcrect, dst.surface, & dstrect) != 0)
+		{
+			Assert(false);
+		}
+		
+		++ srcrect.y;
+		-- dstrect.y;
+	}
+	
+	return true;
 }
