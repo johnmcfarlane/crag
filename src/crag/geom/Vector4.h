@@ -23,7 +23,7 @@
 
 
 //////////////////////////////////////////////////////////////////
-// 3-dimensional partical specialization of Vector
+// 4-dimensional partical specialization of Vector
 
 template<typename S> class Vector<S, 4>
 {
@@ -31,7 +31,7 @@ public:
 	//typedef S S;
 	
 	Vector() { }
-	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
+	template<typename RHS_S> Vector(Vector<RHS_S, 4> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
 
 	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) 
 		: x(static_cast<S>(rhs_x))
@@ -44,14 +44,14 @@ public:
 	S const & operator[](int index) const 
 	{
 		Assert(index >= 0);
-		Assert(index < 3);
+		Assert(index < 4);
 		return GetAxes() [index];
 	} 
 	
 	S & operator[](int index) 
 	{
 		Assert(index >= 0);
-		Assert(index < 3);
+		Assert(index < 4);
 		return GetAxes() [index];
 	} 
 	
