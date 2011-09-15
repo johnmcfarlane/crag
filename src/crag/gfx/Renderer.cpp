@@ -187,6 +187,8 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
+	ready = false;
+	
 	int frames_to_skip;
 	if (capture_enable)
 	{
@@ -200,8 +202,6 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 	
 	for (int frame = 0; frame <= capture_skip; ++ frame)
 	{
-		ready = false;
-		
 		while (! ready)
 		{
 			if (! message_queue.DispatchMessage(* this))
