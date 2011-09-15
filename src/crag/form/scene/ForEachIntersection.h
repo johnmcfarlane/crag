@@ -49,7 +49,7 @@ namespace form
 					  Vector3 & collision_pos, Vector3 & collision_normal, Scalar & collision_depth) 
 	{
 		// the distance from the center of the sphere to the surface. 
-		Scalar distance = DistanceToSurface/*<Scalar>*/(pyramid.a, pyramid.b, pyramid.c, sphere.center);
+		Scalar distance = DistanceToSurface(pyramid.a, face_norm, sphere.center);
 
 		if (distance > sphere.radius)
 		{
