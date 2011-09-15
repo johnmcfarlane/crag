@@ -16,7 +16,6 @@
 
 #include "physics/SphericalBody.h"
 
-#include "geom/VectorOps.h"
 #include "geom/MatrixOps.h"
 #include "geom/Vector4.h"
 

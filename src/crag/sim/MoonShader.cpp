@@ -17,9 +17,9 @@
 #include "form/node/Node.h"
 #include "form/node/Point.h"
 
-#include "geom/SphereOps.h"
-
 #include "core/ConfigEntry.h"
+
+#include "geom/Intersection.h"
 
 
 namespace 

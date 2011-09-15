@@ -183,12 +183,10 @@
 		5264234D135F49FA00C00EFE /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		5264234E135F49FA00C00EFE /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
 		5264234F135F49FA00C00EFE /* Sphere3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere3.h; sourceTree = "<group>"; };
-		52642350135F49FA00C00EFE /* SphereOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereOps.h; sourceTree = "<group>"; };
 		52642351135F49FA00C00EFE /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		52642352135F49FA00C00EFE /* Vector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2.h; sourceTree = "<group>"; };
 		52642353135F49FA00C00EFE /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
 		52642354135F49FA00C00EFE /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector4.h; sourceTree = "<group>"; };
-		52642355135F49FA00C00EFE /* VectorOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorOps.h; sourceTree = "<group>"; };
 		52642357135F49FA00C00EFE /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		52642358135F49FA00C00EFE /* Debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 		52642359135F49FA00C00EFE /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
@@ -303,6 +301,9 @@
 		528C20C01403708700B203E8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
+		52903BD71420E9B800F86C54 /* Magnitude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Magnitude.h; sourceTree = "<group>"; };
+		52903BD91420EB2400F86C54 /* Distance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Distance.h; sourceTree = "<group>"; };
+		52903BDA1420FE6E00F86C54 /* Intersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Intersection.h; sourceTree = "<group>"; };
 		5293538513C8FD1900B5218B /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
 		5293538613C8FD1900B5218B /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		5295003513C5B4020015349B /* GeodesicSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeodesicSphere.h; sourceTree = "<group>"; };
@@ -528,12 +529,13 @@
 				5264234D135F49FA00C00EFE /* Sphere.h */,
 				5264234E135F49FA00C00EFE /* Sphere2.h */,
 				5264234F135F49FA00C00EFE /* Sphere3.h */,
-				52642350135F49FA00C00EFE /* SphereOps.h */,
 				52642351135F49FA00C00EFE /* Vector.h */,
 				52642352135F49FA00C00EFE /* Vector2.h */,
 				52642353135F49FA00C00EFE /* Vector3.h */,
 				52642354135F49FA00C00EFE /* Vector4.h */,
-				52642355135F49FA00C00EFE /* VectorOps.h */,
+				52903BD71420E9B800F86C54 /* Magnitude.h */,
+				52903BD91420EB2400F86C54 /* Distance.h */,
+				52903BDA1420FE6E00F86C54 /* Intersection.h */,
 			);
 			path = geom;
 			sourceTree = "<group>";

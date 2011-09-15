@@ -15,8 +15,6 @@
 #include "form/defs.h"
 #include "form/node/Point.h"
 
-#include "geom/VectorOps.h"
-
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 

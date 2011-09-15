@@ -21,9 +21,6 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
-#include "geom/VectorOps.h"
-#include "geom/SphereOps.h"
-
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
 

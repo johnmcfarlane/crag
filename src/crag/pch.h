@@ -92,7 +92,7 @@
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
-#include "geom/VectorOps.h"
+#include "geom/Magnitude.h"
 
 
 //////////////////////////////////////////////////////////////////////

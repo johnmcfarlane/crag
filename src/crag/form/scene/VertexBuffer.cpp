@@ -13,7 +13,6 @@
 #include "VertexBuffer.h"
 
 #include "sys/memory.h"
-#include "geom/VectorOps.h"
 
 #include "glpp/Vbo_Types.h"
 

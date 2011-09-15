@@ -14,7 +14,6 @@
 
 #include "PointBuffer.h"
 
-#include "geom/VectorOps.h"
 #include "geom/Vector3.h"
 
 

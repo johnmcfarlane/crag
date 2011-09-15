@@ -1,43 +1,30 @@
-/*
- *  SphereUtils.h
- *  Crag
- *
- *  Created by John on 1/5/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Intersection.h
+//  crag
+//
+//  Created by John McFarlane on 9/14/11.
+//  Copyright 2011 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
+//  Functions for determining the intersection between geometric entities.
+//
 
 #pragma once
 
-#include "VectorOps.h"
-
-#include "core/floatOps.h"
+#include "geom/Distance.h"
 
 
-// Point-Circle Intersection Test
+////////////////////////////////////////////////////////////////////////////////
+// Containment tests
 
+// Returns true iff sphere contains point.
 template<typename S, int N> bool Contains(Sphere<S, N> const & sphere, Vector<S, N> const & point)
 {
 	S center_distance_squared = LengthSq(sphere.center - point);
 	return center_distance_squared <= Square(sphere.radius);
 }
 
-template<typename S, int N> bool IsInside(Vector<S, N> const & point, Sphere<S, N> const & sphere)
-{
-	return Contains(sphere, point);
-}
-
-
-// Circle-Circle Intersection Test
-
-template<typename S, int N> bool Touches(Sphere<S, N> const & a, Sphere<S, N> const & b)
-{
-	S center_distance_squared = LengthSquared(a.center - b.center);
-	return center_distance_squared <= Square(a.radius + b.radius);
-}
-
-// True iff b is completely inside a.
+// Returns true iff b is completely inside a.
 template<typename S, int N> bool Contains(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
 	if (a.radius < b.radius)
@@ -52,10 +39,10 @@ template<typename S, int N> bool Contains(Sphere<S, N> const & a, Sphere<S, N> c
 	}
 }
 
-// True iff b is completely inside a.
+// Returns true iff b is completely inside a.
 // This optimized version assumes that a radius comparison as already been done.
 // If the radii have not been compared, use Contains instead.
-template<typename S, int N> bool ContainsSmallerSphere(Sphere<S, N> const & a, Sphere<S, N> const & b)
+template<typename S, int N> bool ContainsSmaller(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
 	// There's no point running this test is a isn't big enough to contain b in the first place!
 	assert(a.radius > b.radius);
@@ -64,21 +51,52 @@ template<typename S, int N> bool ContainsSmallerSphere(Sphere<S, N> const & a, S
 	return center_distance_squared <= Square(a.radius - b.radius);
 }
 
-template<typename S, int N> bool IsInside(Sphere<S, N> const & a, Sphere<S, N> const & b)
+// Returns true iff plane, abc, contains point, p.
+template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
 {
-	return Contains(b, a);
+	return DistanceToSurface<S>(a, b, c, p) < 0;
 }
 
-// True iff plane, abc, contains sphere, s.
+// Returns true iff plane, abc, contains sphere, s.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
 }
 
-// Sphere-Ray Intersection
-// The ray is represented by ray.position + ray.direction * t
-// t1 and t2 are the two possible intersection points
-// returns false iff the ray misses the sphere (in which case, t1 and t2 are undefined)
+// Returns true if a is in between b and c.
+template<typename V> bool IsInBetween(V const & a, V const & b, V const & c)
+{
+	V ab = a - b;
+	V bc = b - c;	
+	if (DotProduct(ab, bc) > 0)
+	{
+		return false;
+	}
+	
+	V ca = c - a;
+	if (DotProduct(bc, ca) > 0)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Intersection tests
+
+// Returns true iff a and b intersect with one another.
+template<typename S, int N> bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
+{
+	S center_distance_squared = LengthSquared(a.center - b.center);
+	return center_distance_squared <= Square(a.radius + b.radius);
+}
+
+// Returns true iff sphere and ray intersect with one another.
+// The ray is represented by ray.position + ray.direction * t.
+// The two possible intersection points are t1 and t2.
+// If single-point intersection, t1 == t2.
 template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & ray, S & t1, S & t2)
 {
 	Vector<S, N> sphere_to_start = ray.position - sphere.center;
@@ -102,21 +120,20 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ra
 	
 	t1 = p - q;
 	t2 = p + q;
-
+	
 	Assert(t1 <= t2);
 	return true;
 }
 
-
-// Circle-Triangle intersection
+// Returns true iff sphere and triangle intersect with one another.
 // Original code by David Eberly in Magic. via OPCODE collision library distributed with ODE
-template<typename S, int N> bool Intersects(Sphere<S, N> const & sphere, Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, S * depth = nullptr)
+template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, S * depth = nullptr)
 {
 	S mRadius2 = Square(sphere.radius);
-
+	
 	Vector<S, N> kDiff;
 	S fC;
-
+	
 	if (depth == nullptr)
 	{
 		// Early exit if one of the vertices is inside the sphere
@@ -137,7 +154,7 @@ template<typename S, int N> bool Intersects(Sphere<S, N> const & sphere, Vector<
 		kDiff = a - sphere.center;
 		fC = LengthSq(kDiff);
 	}
-
+	
 	
 	// Else do the full distance test
 	Vector<S, N> TriEdge0	= b - a;
@@ -297,7 +314,7 @@ template<typename S, int N> bool Intersects(Sphere<S, N> const & sphere, Vector<
 			}
 		}
 	}
-
+	
 	S AbsSqrDist = Abs(SqrDist);
 	if (AbsSqrDist < mRadius2)
 	{
@@ -312,3 +329,15 @@ template<typename S, int N> bool Intersects(Sphere<S, N> const & sphere, Vector<
 		return false;
 	}
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Surface normal (really needs its own file)
+
+// Given the positions of the corners of a triangle, 
+// returns un-normalized normal of the triangle.
+template<typename V> V TriangleNormal(V const & a, V const & b, V const & c)
+{
+	return CrossProduct(b - a, b - c);
+}
+

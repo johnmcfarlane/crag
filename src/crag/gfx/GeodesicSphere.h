@@ -11,7 +11,6 @@
 
 #include "icosahedron.h"
 
-#include "geom/VectorOps.h"
 #include "geom/Sphere3.h"
 
 

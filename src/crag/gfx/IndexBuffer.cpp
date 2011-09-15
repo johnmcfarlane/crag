@@ -12,9 +12,6 @@
 
 #include "gfx/IndexBuffer.h"
 
-//#include "form/VertexBuffer.h"
-
-#include "geom/VectorOps.h"
 #include "sys/memory.h"
 
 

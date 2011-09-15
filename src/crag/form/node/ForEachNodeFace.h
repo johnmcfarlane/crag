@@ -12,6 +12,8 @@
 
 #include "Node.h"
 
+#include "geom/Intersection.h"
+
 
 namespace form
 {

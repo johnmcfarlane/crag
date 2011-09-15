@@ -10,7 +10,7 @@
 #include "form/scene/Polyhedron.h"
 #include "form/node/ForEachNodeFace.h"
 
-#include "geom/SphereOps.h"
+#include "geom/Intersection.h"
 
 
 namespace form
@@ -88,7 +88,7 @@ namespace form
 		
 		// Proper contact between triangle (not plane) and sphere.
 		Scalar intersection_depth;
-		if (Intersects(sphere, pyramid.c, pyramid.b, pyramid.a, & intersection_depth))
+		if (GetIntersection(sphere, pyramid.c, pyramid.b, pyramid.a, & intersection_depth))
 		{
 			//intersection_depth = distance;
 			// TODO: Triangle-line intersection. (Might already have this somewhere.)

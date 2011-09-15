@@ -15,7 +15,8 @@
 #include "form/node/Shader.h"
 
 #include "core/Random.h"
-#include "geom/VectorOps.h"
+
+#include "geom/Intersection.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
