@@ -53,7 +53,7 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 	unsigned lod = CalculateLod(pov);
 	
 	// Set the matrix.
-	SetMatrix(pov);
+	pov.SetModelView(_position, _rotation);
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
@@ -66,16 +66,6 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 bool Ball::IsInLayer(Layer::type layer) const 
 { 
 	return layer == Layer::foreground; 
-}
-
-void Ball::SetMatrix(gfx::Pov const & pov) const
-{
-	gfx::Pov entity_pov (pov);
-	entity_pov.pos = pov.pos - _position;
-	Matrix model_view_matrix = entity_pov.CalcModelViewMatrix();
-	model_view_matrix = _rotation * model_view_matrix;
-	
-	gl::LoadMatrix(model_view_matrix.GetArray());	
 }
 
 unsigned Ball::CalculateLod(gfx::Pov const & pov) const

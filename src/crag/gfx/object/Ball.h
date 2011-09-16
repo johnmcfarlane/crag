@@ -36,7 +36,6 @@ namespace gfx
 		virtual bool IsInLayer(Layer::type) const;
 		
 	private:
-		void SetMatrix(Pov const & pov) const;
 		unsigned CalculateLod(Pov const & pov) const;		
 		
 		// variables

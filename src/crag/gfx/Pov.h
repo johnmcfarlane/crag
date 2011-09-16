@@ -20,13 +20,13 @@ namespace gfx
 	public:
 		sim::Matrix4 CalcProjectionMatrix() const;
 		void SetProjectionMatrix() const;
-
+		
 		Vector2i resolution;
 		double fov;	// radians
 		double near_z;
 		double far_z;
 	};
-
+	
 	// Point of view
 	class Pov
 	{
@@ -42,7 +42,10 @@ namespace gfx
 		Matrix GetCameraMatrix(bool translation = true) const;
 		static Matrix CameraToModelViewMatrix(Matrix const & camera);
 		Matrix CalcModelViewMatrix(bool translation = true) const;
-	
+		
+		void SetModelView(Vector const & model_position) const;
+		void SetModelView(Vector const & model_position, Matrix const & model_rotation) const;
+		
 		// variables
 		Frustum frustum;
 		Vector pos;

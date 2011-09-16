@@ -23,16 +23,18 @@
 using namespace gfx;
 
 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Frustum member definitions
+
 // This matrix is ready-transposed for OpenGL.
 sim::Matrix4 Frustum::CalcProjectionMatrix() const
 {
 	double aspect = static_cast<double>(resolution.x) / resolution.y;
 	double f = 1. / Tan(fov * .5);
-	return sim::Matrix4(
-		static_cast<float>(f / aspect), 0, 0, 0, 
-		0, static_cast<float>(f), 0, 0, 
-		0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,
-		0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
+	return sim::Matrix4(static_cast<float>(f / aspect), 0, 0, 0, 
+						0, static_cast<float>(f), 0, 0, 
+						0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,
+						0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
 }
 
 void Frustum::SetProjectionMatrix() const
@@ -46,6 +48,10 @@ void Frustum::SetProjectionMatrix() const
 	gl::MatrixMode(GL_MODELVIEW);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Pov member definitions
+
 Pov::Pov()
 : pos(Vector::Zero())
 , rot(Matrix::Identity())
@@ -55,11 +61,11 @@ Pov::Pov()
 void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up)
 {
 	pos = eye;
-
+	
 	Vector observer_to_center = sphere.center - pos;
 	Vector forward = Normalized(observer_to_center);
 	rot = Transposition(DirectionMatrix(forward, up));
-
+	
 	sim::Scalar distance = Length(observer_to_center);	// hypotenuse
 	sim::Scalar adjacent = Sqrt(Square(distance) - Square(sphere.radius));
 	sim::Scalar angle = Atan2(sphere.radius, adjacent);
@@ -95,4 +101,26 @@ Pov::Matrix Pov::CalcModelViewMatrix(bool translation) const
 	Matrix sim_camera = GetCameraMatrix(translation);
 	
 	return CameraToModelViewMatrix(sim_camera);	
+}
+
+void Pov::SetModelView(Vector const & model_position) const
+{
+	gfx::Pov model_pov (* this);
+	model_pov.pos -= model_position;
+	Matrix model_view_matrix = model_pov.CalcModelViewMatrix();
+	
+	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
+	gl::LoadMatrix(model_view_matrix.GetArray());	
+}
+
+void Pov::SetModelView(Vector const & model_position, Matrix const & model_rotation) const
+{
+	gfx::Pov model_pov (* this);
+	model_pov.pos -= model_position;
+	Matrix model_view_matrix = model_pov.CalcModelViewMatrix();
+	
+	model_view_matrix = model_rotation * model_view_matrix;
+	
+	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
+	gl::LoadMatrix(model_view_matrix.GetArray());	
 }
