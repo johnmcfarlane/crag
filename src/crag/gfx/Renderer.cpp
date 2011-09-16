@@ -108,6 +108,7 @@ Renderer::~Renderer()
 void Renderer::OnMessage(smp::TerminateMessage const & message)
 {
 	quit_flag = true;
+	ready = true;
 }
 
 void Renderer::OnMessage(AddObjectMessage const & message)
