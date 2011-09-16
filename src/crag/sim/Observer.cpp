@@ -23,7 +23,6 @@
 
 #include "script/MetaClass.h"
 
-#include "gfx/Debug.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/object/Light.h"
