@@ -74,7 +74,7 @@ void gfx::Sphere::InitColors(VertexVector const & vertex_positions)
 {
 	// Color buffer
 	std::vector<Color> vert_colors;
-	int num_verts = vertex_positions.size();
+	std::size_t num_verts = vertex_positions.size();
 	vert_colors.reserve(num_verts);
 	for (Geodesic::VertexVector::const_iterator i = vertex_positions.begin(); i != vertex_positions.end(); ++ i)
 	{

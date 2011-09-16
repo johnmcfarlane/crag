@@ -17,15 +17,6 @@
 #include "glpp/Vbo_Types.h"
 
 
-namespace
-{
-	void Normalize(form::Vertex & v)
-	{
-		FastNormalize(v.norm);
-	}
-}
-
-
 form::VertexBuffer::VertexBuffer(int max_num_verts) 
 : _verts(max_num_verts)
 {
