@@ -62,8 +62,8 @@ namespace
 		
 		void Verify() const
 		{
-			VerifyColor(colors.color);
-			VerifyColor(colors.hidden_color);
+			VerifyColor(colors._color);
+			VerifyColor(colors._hidden_color);
 		}
 		
 		static void VerifyColor(gfx::Color4f const & col)
@@ -81,7 +81,7 @@ namespace
 		
 		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
-			gfx::Color4f const & color = hidden ? colors.hidden_color : colors.color;
+			gfx::Color4f const & color = hidden ? colors._hidden_color : colors._color;
 			gl::SetColor(color.r, color.g, color.b, color.a);
 			gl::Vertex3(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
 		}
@@ -258,14 +258,13 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 
 void gfx::Debug::AddBasis(Vector3 const & center, double scale)
 {
-	float alpha = .25f;
-	Debug::AddLine(center, center + Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red(), Color4f::Red() * Color4f(1.f, alpha)));
-	Debug::AddLine(center, center + Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green(), Color4f::Green() * Color4f(1.f, alpha)));
-	Debug::AddLine(center, center + Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue(), Color4f::Blue() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red()));
+	Debug::AddLine(center, center + Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green()));
+	Debug::AddLine(center, center + Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue()));
 	
-	Debug::AddLine(center, center + Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan(), Color4f::Cyan() * Color4f(1.f, alpha)));
-	Debug::AddLine(center, center + Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta(), Color4f::Magenta() * Color4f(1.f, alpha)));
-	Debug::AddLine(center, center + Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow(), Color4f::Yellow() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan()));
+	Debug::AddLine(center, center + Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta()));
+	Debug::AddLine(center, center + Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow()));
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)

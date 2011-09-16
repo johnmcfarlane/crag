@@ -40,14 +40,21 @@ namespace gfx
 		class ColorPair
 		{
 		public:
-			ColorPair(Color4f const & init_color, Color4f const & init_hidden_color = Color4f(0, 0))
-			: color(init_color)
-			, hidden_color(init_hidden_color)
+			ColorPair(Color4f const & color, Color4f const & hidden_color)
+			: _color(color)
+			, _hidden_color(hidden_color)
 			{
 			}
-
-			Color4f color;	// Color to draw pixels that are visible, i.e. pass the z test.
-			Color4f hidden_color;	// Color for failed pixels.
+			
+			ColorPair(Color4f const & color, float hidden_alpha = .5f)
+			: _color(color)
+			, _hidden_color(color)
+			{
+				_hidden_color.a *= hidden_alpha;
+			}
+			
+			Color4f _color;	// Color to draw pixels that are visible, i.e. pass the z test.
+			Color4f _hidden_color;	// Color for failed pixels.
 		};
 
 #if defined(GFX_DEBUG)
