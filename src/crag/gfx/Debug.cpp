@@ -259,13 +259,13 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 void gfx::Debug::AddBasis(Vector3 const & center, double scale)
 {
 	float alpha = .25f;
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red(), Color4f::Red() * Color4f(1.f, alpha)));
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green(), Color4f::Green() * Color4f(1.f, alpha)));
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue(), Color4f::Blue() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red(), Color4f::Red() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green(), Color4f::Green() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue(), Color4f::Blue() * Color4f(1.f, alpha)));
 	
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan(), Color4f::Cyan() * Color4f(1.f, alpha)));
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta(), Color4f::Magenta() * Color4f(1.f, alpha)));
-	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow(), Color4f::Yellow() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan(), Color4f::Cyan() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta(), Color4f::Magenta() * Color4f(1.f, alpha)));
+	Debug::AddLine(center, center + Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow(), Color4f::Yellow() * Color4f(1.f, alpha)));
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)

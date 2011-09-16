@@ -41,6 +41,7 @@ namespace form
 		
 		void Set(form::Mesh const & mesh);
 		int GetNumPolys() const;
+		MeshProperties::Vector3 const & GetOrigin() const;
 		
 		void Activate(gfx::Pov pov) const;
 		void Deactivate() const;

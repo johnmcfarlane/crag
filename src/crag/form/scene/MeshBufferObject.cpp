@@ -39,6 +39,11 @@ int form::MeshBufferObject::GetNumPolys() const
 	return max_index / 3;
 }
 
+form::MeshProperties::Vector3 const & form::MeshBufferObject::GetOrigin() const
+{
+	return properties._origin;
+}
+
 void form::MeshBufferObject::Activate(gfx::Pov pov) const
 {
 	Assert (max_index > 0);
