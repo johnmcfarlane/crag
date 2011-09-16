@@ -75,11 +75,11 @@ void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector c
 	frustum.far_z = distance + sphere.radius;
 }
 
-Pov::Matrix Pov::GetCameraMatrix(bool translation) const
+Pov::Matrix Pov::GetCameraMatrix() const
 {
 	// Put the position and rotation together into one, simulation-space camera matrix.
 	// (For the skybox, we don't want translation.) 
-	return translation ? TranslationMatrix(pos) * rot : rot;
+	return TranslationMatrix(pos) * rot;
 }
 
 Pov::Matrix Pov::CameraToModelViewMatrix(Matrix const & camera)
@@ -94,11 +94,11 @@ Pov::Matrix Pov::CameraToModelViewMatrix(Matrix const & camera)
 	return Transpose(gl_world);
 }
 
-Pov::Matrix Pov::CalcModelViewMatrix(bool translation) const
+Pov::Matrix Pov::CalcModelViewMatrix() const
 {
 	// Put the position and rotation together into one, simulation-space camera matrix.
 	// (For the skybox, we don't want translation.) 
-	Matrix sim_camera = GetCameraMatrix(translation);
+	Matrix sim_camera = GetCameraMatrix();
 	
 	return CameraToModelViewMatrix(sim_camera);	
 }

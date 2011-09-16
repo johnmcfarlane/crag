@@ -39,9 +39,9 @@ namespace gfx
 		Pov();
 		
 		void LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up);
-		Matrix GetCameraMatrix(bool translation = true) const;
+		Matrix GetCameraMatrix() const;
 		static Matrix CameraToModelViewMatrix(Matrix const & camera);
-		Matrix CalcModelViewMatrix(bool translation = true) const;
+		Matrix CalcModelViewMatrix() const;
 		
 		void SetModelView(Vector const & model_position) const;
 		void SetModelView(Vector const & model_position, Matrix const & model_rotation) const;
