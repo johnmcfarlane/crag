@@ -83,13 +83,20 @@ namespace gfx
 
 		friend Color4 operator * (Color4 const & lhs, Comp rhs)
 		{
-			return Color4(
-				lhs.r * rhs,
-				lhs.g * rhs,
-				lhs.b * rhs,
-				lhs.a * rhs);
+			return Color4(lhs.r * rhs,
+						  lhs.g * rhs,
+						  lhs.b * rhs,
+						  lhs.a * rhs);
 		}
-
+		
+		friend Color4 operator * (Color4 const & lhs, Color4 const & rhs)
+		{
+			return Color4(lhs.r * rhs.r,
+						  lhs.g * rhs.g,
+						  lhs.b * rhs.b,
+						  lhs.a * rhs.a);
+		}
+		
 		friend Color4 operator / (Color4 const & lhs, Comp rhs)
 		{
 			return lhs * (1.f / rhs);

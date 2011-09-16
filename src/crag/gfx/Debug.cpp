@@ -79,11 +79,11 @@ namespace
 			Assert(c >= 0 && c <= 1);
 		}
 		
-		void Draw(bool hidden) const
+		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
 			gfx::Color4f const & color = hidden ? colors.hidden_color : colors.color;
 			gl::SetColor(color.r, color.g, color.b, color.a);
-			gl::Vertex3(pos.x, pos.y, pos.z);
+			gl::Vertex3(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
 		}
 		
 		Vector3 pos;
@@ -134,13 +134,13 @@ namespace
 			points.push_back(Point(pos, ColorPair(colors)));
 		}
 		
-		void Draw(bool hidden) const
+		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
 			gl::Begin(mode);
 			for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
 			{
 				Point const & point = * it;
-				point.Draw(hidden);
+				point.Draw(camera_pos, hidden);
 			}
 			gl::End();
 		}
@@ -157,15 +157,15 @@ namespace
 	PointArray lines(GL_LINES);
 	PointArray tris(GL_TRIANGLES);
 
-	void DrawPrimatives(bool hidden)
+	void DrawPrimatives(Vector3 const & camera_pos, bool hidden)
 	{
 		if (hidden) {
 			gl::SetDepthFunc(GL_GREATER);
 		}
 
-		points.Draw(hidden);
-		lines.Draw(hidden);
-		tris.Draw(hidden);
+		points.Draw(camera_pos, hidden);
+		lines.Draw(camera_pos, hidden);
+		tris.Draw(camera_pos, hidden);
 
 		if (hidden) {
 			gl::SetDepthFunc(GL_LEQUAL);
@@ -254,6 +254,18 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 	tris.AddPoint(b, colors);
 	tris.AddPoint(c, colors);
 	mutex.Unlock();
+}
+
+void gfx::Debug::AddBasis(Vector3 const & center, double scale)
+{
+	float alpha = .25f;
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red(), Color4f::Red() * Color4f(1.f, alpha)));
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green(), Color4f::Green() * Color4f(1.f, alpha)));
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue(), Color4f::Blue() * Color4f(1.f, alpha)));
+	
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan(), Color4f::Cyan() * Color4f(1.f, alpha)));
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta(), Color4f::Magenta() * Color4f(1.f, alpha)));
+	Debug::AddLine(sim::Vector3::Zero(), Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow(), Color4f::Yellow() * Color4f(1.f, alpha)));
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)
@@ -346,7 +358,7 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 	 }*/
 }
 
-void gfx::Debug::Draw()
+void gfx::Debug::Draw(Vector3 const & camera_pos)
 {
 	mutex.Lock();
 	
@@ -363,8 +375,8 @@ void gfx::Debug::Draw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl::Enable(GL_BLEND);
 	
-	DrawPrimatives(false);
-	DrawPrimatives(true);
+	DrawPrimatives(camera_pos, false);
+	DrawPrimatives(camera_pos, true);
 	ClearPrimatives();
 	
 	// Unset state

@@ -642,19 +642,12 @@ void Renderer::DebugDraw() const
 	{
 		return;
 	}
+
+	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
-
-	//Pov test = pov;
-	//test.frustum.resolution = Vector2i(100, 100);
-	//test.LookAtSphere(sim::Vector3(0, -200000.f, 0), sim::Sphere3(sim::Vector3::Zero(), 199999.f), Space::GetUp<float>());
-	//Debug::AddFrustum(test);
-
-	//sim::Vector3 forward = axes::GetForward(pov.rot);
-	//sim::Vector3 ahead = pov.pos + (forward * (sim::Scalar)(pov.frustum.near_z + 1));
-	//Debug::DrawLine(ahead, ahead + sim::Vector3(1, 1, 1));
-	
-	Debug::Draw();
+	pov.SetModelView(- pov.pos);
+	Debug::Draw(- pov.pos);
 	
 #if defined (GATHER_STATS)
 	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
