@@ -647,8 +647,8 @@ void Renderer::DebugDraw() const
 	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
-	pov.SetModelView(- pov.pos);
-	Debug::Draw(- pov.pos);
+	pov.SetModelView(pov.pos);
+	Debug::Draw(pov.pos);
 	
 #if defined (GATHER_STATS)
 	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);

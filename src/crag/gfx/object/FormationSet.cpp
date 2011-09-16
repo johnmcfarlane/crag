@@ -11,10 +11,11 @@
 
 #include "FormationSet.h"
 
+#include "gfx/Debug.h"
+#include "gfx/Scene.h"
+
 #include "form/FormationManager.h"
 #include "form/node/NodeBuffer.h"
-
-#include "gfx/Scene.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
@@ -103,6 +104,11 @@ void FormationSet::PreRender()
 {
 	FinishBufferUpload();
 	BeginBufferUpload();
+
+#if ! defined(NDEBUG)
+	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
+	Debug::AddBasis(front_buffer.GetOrigin(), 1.);
+#endif
 }
 
 void FormationSet::Render(Layer::type layer, Scene const & scene) const
