@@ -43,6 +43,7 @@ void Frustum::SetProjectionMatrix() const
 	
 	gl::MatrixMode(GL_PROJECTION);
 	gl::LoadMatrix(projection_matrix.GetArray());
+	gl::MatrixMode(GL_MODELVIEW);
 }
 
 Pov::Pov()

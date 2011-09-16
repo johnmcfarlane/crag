@@ -45,7 +45,6 @@ void form::MeshBufferObject::Activate(gfx::Pov pov) const
 	
 	// Adjust our copy of the pov for mesh's origin and set as matrix.
 	pov.pos -= properties._origin;
-	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(pov.CalcModelViewMatrix().GetArray());
 	
 	if (properties._flat_shaded) 

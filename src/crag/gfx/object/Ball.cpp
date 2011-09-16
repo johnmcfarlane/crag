@@ -75,7 +75,6 @@ void Ball::SetMatrix(gfx::Pov const & pov) const
 	Matrix model_view_matrix = entity_pov.CalcModelViewMatrix();
 	model_view_matrix = _rotation * model_view_matrix;
 	
-	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(model_view_matrix.GetArray());	
 }
 

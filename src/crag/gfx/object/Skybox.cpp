@@ -60,7 +60,6 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	
 	// Set matrix (minus the translation).
 	sim::Matrix4 skybox_model_view_matrix = pov.CalcModelViewMatrix(false);
-	gl::MatrixMode(GL_MODELVIEW);
 	gl::LoadMatrix(skybox_model_view_matrix.GetArray());
 	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.

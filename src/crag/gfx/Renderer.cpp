@@ -283,6 +283,8 @@ void Renderer::InitRenderState()
 	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
+	gl::MatrixMode(GL_MODELVIEW);
+	
 	VerifyRenderState();
 }
 
@@ -308,6 +310,8 @@ void Renderer::VerifyRenderState() const
 	Color4f rgba;
 	gl::GetColor(rgba.GetArray());
 	Assert(rgba == Color4f::White());
+	
+	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
 #endif	// NDEBUG
 }
 
