@@ -101,8 +101,6 @@ namespace form
 #endif
 		DUMP_OPERATOR_FRIEND_DECLARATION(Node);
 		
-		OVERLOAD_NEW_DELETE(128);
-		
 	private:
 		flag_type flags_and_children;	//  4	/	8
 		Node * _parent;			//  4	/	8

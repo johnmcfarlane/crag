@@ -13,13 +13,37 @@
 #include "memory.h"
 
 
-/*void * operator new(size_t num_bytes)
+void * Allocate(size_t num_bytes, size_t alignment)
 {
-	return Allocate(num_bytes);
+#if defined(WIN32)
+	return _aligned_malloc(num_bytes, alignment);
+#elif defined(__APPLE__)
+	// Apple deliberately prevent use of posix_memalign. 
+	// Malloc is guaranteed to be 16-byte aligned. 
+	// Anything requiring greater alignment can simply run slower on mac.
+	return malloc(num_bytes);
+#else
+	void * allocation;
+	int error = posix_memalign(& allocation, 8, num_bytes);
+	if (error == 0)
+	{
+		return allocation;
+	}
+	else
+	{
+		// EINVAL means alignement isn't max(sizeof(void*), 2^n)
+		// ENOMEM means no memory
+		assert(false);
+		return nullptr;
+	}
+#endif
 }
 
-void operator delete(void * ptr)
+void Free(void * allocation)
 {
-	Free(ptr);
-}*/
-
+#if ! defined(WIN32)
+	return free(allocation);
+#else
+	return _aligned_free(allocation);
+#endif
+}

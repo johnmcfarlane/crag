@@ -131,69 +131,9 @@ inline size_t CalculateAlignment(size_t type_size)
 	return alignment;
 }
 
-inline void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *))
-{
-#if defined(WIN32)
-	return _aligned_malloc(num_bytes, alignment);
-#elif defined(__APPLE__)
-	// Apple deliberately prevent use of posix_memalign. 
-	// Malloc is guaranteed to be 16-byte aligned. 
-	// Anything requiring greater alignment can simply run slower on mac.
-	return malloc(num_bytes);
-#else
-	void * allocation;
-	int error = posix_memalign(& allocation, 8, num_bytes);
-	if (error == 0)
-	{
-		return allocation;
-	}
-	else
-	{
-		// EINVAL means alignement isn't max(sizeof(void*), 2^n)
-		// ENOMEM means no memory
-		assert(false);
-		return nullptr;
-	}
-#endif
-}
+void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
 
-inline void Free(void * allocation)
-{
-#if ! defined(WIN32)
-	return free(allocation);
-#else
-	return _aligned_free(allocation);
-#endif
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Global new/delete
-
-/*inline void * operator new (std::size_t num_bytes, const std::nothrow_t&) throw()
-{
-	return Allocate(num_bytes);
-}
-
-inline void * operator new [] (std::size_t num_bytes, const std::nothrow_t&) throw()
-{
-	return Allocate(num_bytes);
-}
-
-inline void operator delete(void * ptr) throw()
-{
-	Free(ptr);
-}*/
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Class new/delete
-
-// This only dictates the alignment of the first element (when allocating an array).
-#define OVERLOAD_NEW_DELETE(ALIGNMENT) \
-	void * operator new (size_t num_bytes) { return Allocate(num_bytes, ALIGNMENT); } \
-	void * operator new [] (size_t num_bytes) { return Allocate(num_bytes, ALIGNMENT); } \
-	void operator delete (void * ptr) { Free(ptr); }
+void Free(void * allocation);
 
 
 //////////////////////////////////////////////////////////////////////
