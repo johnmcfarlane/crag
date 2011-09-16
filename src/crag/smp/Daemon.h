@@ -169,9 +169,12 @@ namespace smp
 			Assert(_state == initialized);
 			_state = running;
 			
-			_object = new Class;
-			_object->Run(_envelopes);
+			// create object
+			Class object;
+			_object = & object;
 			
+			object.Run(_envelopes);
+		
 			// Acknowledge that this won't be sending any more.
 			_state = acknowledge_flush_begin;
 			while (_state == acknowledge_flush_begin)
@@ -184,9 +187,10 @@ namespace smp
 			{
 				FlushMessages();
 			}
-			_state = acknowledge_flush_end;
 			
-			delete _object;
+			_state = acknowledge_flush_end;
+		
+			// destroy object
 			_object = nullptr;
 		}
 		
