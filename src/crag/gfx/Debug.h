@@ -68,6 +68,7 @@ namespace gfx
 		void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b);
 		void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1));
 		void AddBasis(Vector3 const & center, double scale);
+		void AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale);
 		void AddFrustum(Pov const & pov);
 		
 		void Draw(Vector3 const & camera_pos);
@@ -85,6 +86,7 @@ namespace gfx
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b) { }
 		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
 		inline void AddBasis(Vector3 const & center, double scale) { }
+		inline void AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale) { }
 		inline void AddFrustum(Pov const & pov) { }
 		inline void Draw(Vector3 const &) { }
 		inline void DrawText(char const * text, Vector2i const & position) { }

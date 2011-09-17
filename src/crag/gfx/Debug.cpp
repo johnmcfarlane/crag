@@ -20,6 +20,8 @@
 #include "Font.h"
 #include "Pov.h"
 
+#include "sim/axes.h"
+
 #include "glpp/glpp.h"
 
 #include "geom/Vector3.h"
@@ -258,13 +260,20 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 
 void gfx::Debug::AddBasis(Vector3 const & center, double scale)
 {
-	Debug::AddLine(center, center + Debug::Vector3(scale, 0., 0.), Debug::ColorPair(Color4f::Red()));
-	Debug::AddLine(center, center + Debug::Vector3(0., scale, 0.), Debug::ColorPair(Color4f::Green()));
-	Debug::AddLine(center, center + Debug::Vector3(0., 0., scale), Debug::ColorPair(Color4f::Blue()));
+	AddBasis(center, Matrix4::Identity(), scale);
+}
+
+void gfx::Debug::AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale)
+{
+	using namespace axes;
 	
-	Debug::AddLine(center, center + Debug::Vector3(- scale, 0., 0.), Debug::ColorPair(Color4f::Cyan()));
-	Debug::AddLine(center, center + Debug::Vector3(0., - scale, 0.), Debug::ColorPair(Color4f::Magenta()));
-	Debug::AddLine(center, center + Debug::Vector3(0., 0., - scale), Debug::ColorPair(Color4f::Yellow()));
+	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale, Debug::ColorPair(Color4f::Red()));
+	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale, Debug::ColorPair(Color4f::Green()));
+	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Blue()));
+	
+	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale, Debug::ColorPair(Color4f::Cyan()));
+	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale, Debug::ColorPair(Color4f::Magenta()));
+	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Yellow()));
 }
 
 void gfx::Debug::AddFrustum(gfx::Pov const & pov)
