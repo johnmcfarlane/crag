@@ -18,11 +18,27 @@
 // 4x4 matrix
 
 // Column-major in line with OpenGL (and nothing else it would seem).
-template<typename S> class Matrix4
+template<typename S> 
+class Matrix4
 {
 public:
-	Matrix4() 
+	// types
+	typedef Vector<S, 4> Row;
+	
+	// functions
+	Matrix4()
 	{
+	}
+	
+	Matrix4(Row const & row0,
+			Row const & row1,
+			Row const & row2,
+			Row const & row3)
+	{
+		rows[0] = row0;
+		rows[1] = row1;
+		rows[2] = row2;
+		rows[3] = row3;
 	}
 	
 	Matrix4(S m00, S m01, S m02, S m03, 
@@ -30,45 +46,29 @@ public:
 			S m20, S m21, S m22, S m23, 
 			S m30, S m31, S m32, S m33) 
 	{
-		array1[0] = m00;
-		array1[1] = m01; 
-		array1[2] = m02; 
-		array1[3] = m03; 
-		array1[4] = m10; 
-		array1[5] = m11; 
-		array1[6] = m12; 
-		array1[7] = m13; 
-		array1[8] = m20; 
-		array1[9] = m21; 
-		array1[10] = m22; 
-		array1[11] = m23; 
-		array1[12] = m30; 
-		array1[13] = m31; 
-		array1[14] = m32; 
-		array1[15] = m33; 
-	}
-	
-	Matrix4(Matrix4 const & rhs) 
-	{
-		SetArray(rhs.array1);
-	}
-	
-	/*Matrix4(S const rhs [16]) 
-	{
-		SetArray(rhs);
-	}*/
-	
-	Matrix4 & operator = (Matrix4 const & rhs)
-	{
-		SetArray(rhs.array1);
-		return * this;
+		rows[0][0] = m00;
+		rows[0][1] = m01; 
+		rows[0][2] = m02; 
+		rows[0][3] = m03; 
+		rows[1][0] = m10; 
+		rows[1][1] = m11; 
+		rows[1][2] = m12; 
+		rows[1][3] = m13; 
+		rows[2][0] = m20; 
+		rows[2][1] = m21; 
+		rows[2][2] = m22; 
+		rows[2][3] = m23; 
+		rows[3][0] = m30; 
+		rows[3][1] = m31; 
+		rows[3][2] = m32; 
+		rows[3][3] = m33; 
 	}
 	
 	friend inline bool operator == (Matrix4 const & lhs, Matrix4 const & rhs)
 	{
 		for (int i = 0; i < 16; ++ i)
 		{
-			if (lhs.array1[i] != rhs.array1[i])
+			if (lhs.rows[i] != rhs.rows[i])
 			{
 				return false;
 			}
@@ -78,50 +78,42 @@ public:
 	}
 	
 	// Fast accessors - but behavior is different depending on whether matrix is row or column-major
-	S * operator [] (int i) 
+	Row & operator [] (int i) 
 	{
-		return array2[i];
+		return rows[i];
 	}
 	
-	S const * operator [] (int i) const
+	Row const & operator [] (int i) const
 	{
-		return array2[i];
+		return rows[i];
 	}
-		
+	
+	// returns a raw array of numbers
 	S * GetArray() 
 	{
-		return array1;
+		return & rows[0][0];
 	}
 	
 	S const * GetArray() const 
 	{
-		return array1;
+		return & rows[0][0];
 	}
 	
 	void SetArray(S const rhs [16])
 	{
-		for (int i = 0; i < 16; ++ i)
-		{
-			array1[i] = rhs[i];
-		}
+		BitwiseCopyArray(GetArray(), rhs, 16);
 	}
 	
-	Vector<S, 4> const & GetRow(int i) const 
+	// fast because matrix is row major
+	Row const & GetRow(int i) const 
 	{ 
-		return * reinterpret_cast<Vector<S, 4> const *>(array2[i]); 
+		return rows[i]; 
 	}
 	
-	Vector<S, 4> GetColumn(int i) const 
+	// slow because matrix is row major and return value needs to be composed and copied
+	Row GetColumn(int i) const 
 	{ 
-		return Vector<S, 4>(array2[0][i], array2[1][i], array2[2][i], array2[3][i]); 
-	}
-	
-	S Determinant() const
-	{
-		return	array2[0][0] * CoFactor(0, 0) +
-				array2[0][1] * CoFactor(0, 1) +
-				array2[0][2] * CoFactor(0, 2) +
-				array2[0][3] * CoFactor(0, 3);
+		return Row(rows[0][i], rows[1][i], rows[2][i], rows[3][i]); 
 	}
 	
 	S CoFactor(int row, int column) const
@@ -132,12 +124,12 @@ public:
 		int column_1 = (column + 1) & 3;
 		int column_2 = (column + 2) & 3;
 		int column_3 = (column + 3) & 3;
-		S a =	(	array2[row_1][column_1]*array2[row_2][column_2]*array2[row_3][column_3] +
-					array2[row_1][column_2]*array2[row_2][column_3]*array2[row_3][column_1] +
-					array2[row_1][column_3]*array2[row_2][column_1]*array2[row_3][column_2])
-			  - (	array2[row_3][column_1]*array2[row_2][column_2]*array2[row_1][column_3] +
-					array2[row_3][column_2]*array2[row_2][column_3]*array2[row_1][column_1] +
-					array2[row_3][column_3]*array2[row_2][column_1]*array2[row_1][column_2]);
+		S a =	(	rows[row_1][column_1]*rows[row_2][column_2]*rows[row_3][column_3] +
+					rows[row_1][column_2]*rows[row_2][column_3]*rows[row_3][column_1] +
+					rows[row_1][column_3]*rows[row_2][column_1]*rows[row_3][column_2])
+			  - (	rows[row_3][column_1]*rows[row_2][column_2]*rows[row_1][column_3] +
+					rows[row_3][column_2]*rows[row_2][column_3]*rows[row_1][column_1] +
+					rows[row_3][column_3]*rows[row_2][column_1]*rows[row_1][column_2]);
 		
 		if ((row + column) & 1) {
 			a *= -1.f;
@@ -148,30 +140,29 @@ public:
 	
 	static Matrix4 Identity() 
 	{
-		return Matrix4(1, 0, 0, 0, 
-					   0, 1, 0, 0, 
-					   0, 0, 1, 0, 
-					   0, 0, 0, 1); 
+		return Matrix4(Row(1, 0, 0, 0),
+					   Row(0, 1, 0, 0),
+					   Row(0, 0, 1, 0),
+					   Row(0, 0, 0, 1)); 
 	}
 	
 	static Matrix4 Zero() 
 	{
-		return Matrix4(0, 0, 0, 0, 
-					   0, 0, 0, 0, 
-					   0, 0, 0, 0, 
-					   0, 0, 0, 0); 
+		return Matrix4(Row::Zero(), 
+					   Row::Zero(), 
+					   Row::Zero(), 
+					   Row::Zero());
 	}
 	
 private:
 
-	union 
-	{
-		S array1 [16];
-		S array2 [4][4];
-	};
+	// variables
+	Row rows [4];
 };
 
-template<typename S> Matrix4<S> operator * (Matrix4<S> const & lhs, Matrix4<S> const & rhs)
+
+template<typename S> 
+Matrix4<S> operator * (Matrix4<S> const & lhs, Matrix4<S> const & rhs)
 {
 	Matrix4<S> result;
 	result[0][0] = lhs[0][0]*rhs[0][0] + lhs[0][1]*rhs[1][0] + lhs[0][2]*rhs[2][0] + lhs[0][3]*rhs[3][0];
@@ -193,7 +184,8 @@ template<typename S> Matrix4<S> operator * (Matrix4<S> const & lhs, Matrix4<S> c
 	return result;
 }
 
-template<typename S> Vector<S, 4> operator * (Matrix4<S> const & lhs, const Vector<S, 4> & rhs) 
+template<typename S> 
+Vector<S, 4> operator * (Matrix4<S> const & lhs, const Vector<S, 4> & rhs) 
 { 
 	Vector<S, 4> result;
 	result[0] = DotProduct(lhs.GetRow(0), rhs); 
@@ -203,7 +195,8 @@ template<typename S> Vector<S, 4> operator * (Matrix4<S> const & lhs, const Vect
 	return result;
 }
 
-template<typename S> Vector<S, 4> operator * (const Vector<S, 4> & lhs, Matrix4<S> const & rhs) 
+template<typename S> 
+Vector<S, 4> operator * (const Vector<S, 4> & lhs, Matrix4<S> const & rhs) 
 { 
 	Vector<S, 4> result;
 	result[0] = DotProduct(lhs, rhs.GetColumn(0)); 
@@ -213,12 +206,23 @@ template<typename S> Vector<S, 4> operator * (const Vector<S, 4> & lhs, Matrix4<
 	return result;
 }
 
-template<typename S> Matrix4<S> Inverse(Matrix4<S> const & matrix)
+template<typename S> 
+S Determinant(Matrix4<S> const & matrix) 
+{
+	return matrix[0][0] * matrix.CoFactor(0, 0)
+		+ matrix[0][1] * matrix.CoFactor(0, 1)
+		+ matrix[0][2] * matrix.CoFactor(0, 2)
+		+ matrix[0][3] * matrix.CoFactor(0, 3);
+}
+
+template<typename S> 
+Matrix4<S> Inverse(Matrix4<S> const & matrix)
 {
 	Matrix4<S> inverse;
 	
-	S det = matrix.Determinant();
-	if(Abs(det) < std::numeric_limits<S>::min()) {
+	S det = Determinant(matrix);
+	if(Abs(det) < std::numeric_limits<S>::min()) 
+	{
 		return matrix;		// The matrix is not invertible! Singular case!
 	}
 	
@@ -244,7 +248,8 @@ template<typename S> Matrix4<S> Inverse(Matrix4<S> const & matrix)
 	return inverse;
 }
 
-template<typename S> Matrix4<S> & Transpose(Matrix4<S> & matrix)
+template<typename S> 
+Matrix4<S> & Transpose(Matrix4<S> & matrix)
 {
 	std::swap(matrix[1][0], matrix[0][1]);
 	std::swap(matrix[2][0], matrix[0][2]);
@@ -255,7 +260,8 @@ template<typename S> Matrix4<S> & Transpose(Matrix4<S> & matrix)
 	return matrix;
 }
 
-template<typename S> Matrix4<S> Transposition(Matrix4<S> const & matrix)
+template<typename S> 
+Matrix4<S> Transposition(Matrix4<S> const & matrix)
 {
 	Matrix4<S> transposition;
 	
@@ -268,7 +274,8 @@ template<typename S> Matrix4<S> Transposition(Matrix4<S> const & matrix)
 	return transposition;
 }
 
-template<typename S> std::ostream & operator << (std::ostream & out, Matrix4<S> const & m)
+template<typename S> 
+std::ostream & operator << (std::ostream & out, Matrix4<S> const & m)
 {
 	out << '[';
 	for (int row = 0; row < 4; ++ row) {
@@ -277,7 +284,8 @@ template<typename S> std::ostream & operator << (std::ostream & out, Matrix4<S> 
 	return out << ']';
 }
 
-/*template<typename S> std::istream & operator >> (std::istream & in, Matrix4<S> & m)
+/*template<typename S> 
+std::istream & operator >> (std::istream & in, Matrix4<S> & m)
 {
 	in >> '[';
 	for (int row = 0; row < 4; ++ row) {
