@@ -37,7 +37,7 @@ namespace core
 		virtual void Write (std::ostream & out) const = 0;
 		
 		friend bool operator < (StatInterface const & lhs, StatInterface const & rhs);
-
+		
 	private:
 		float _verbosity;
 	};
@@ -63,7 +63,7 @@ namespace core
 		virtual ~Stat()
 		{
 		}
-
+		
 		void Write (std::ostream & out) const
 		{
 			out << _value;
@@ -82,7 +82,7 @@ namespace core
 
 
 #define STAT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, 0, VERBOSITY)
-#define STAT_DEFAULT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, TYPE(), VERBOSITY)
+#define STAT_DEFAULT(NAME, TYPE, VERBOSITY, DEFAULT) core::Stat<TYPE> NAME##_stat (#NAME, DEFAULT, VERBOSITY)
 #define STAT_EXTERN(NAME, TYPE) extern core::Stat<TYPE> NAME##_stat
 #define STAT_SET(NAME, VALUE) NAME##_stat._value = VALUE
 #define STAT_INC(NAME, VALUE) (++ NAME##_stat._value)

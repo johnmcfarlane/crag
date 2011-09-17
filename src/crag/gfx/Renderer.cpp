@@ -62,8 +62,8 @@ namespace
 	STAT (idle, double, .18f);
 	STAT (frame_time, double, .18f);
 	STAT (fps, float, .0f);
-	STAT (pos, sim::Vector3, .3f);
-	STAT_DEFAULT (rot, sim::Matrix4, .9f);
+	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
+	STAT_DEFAULT (rot, sim::Matrix4, .9f, sim::Matrix4::Identity());
 	
 	void SetForegroundFrustum(Scene const & scene, bool wireframe)
 	{
