@@ -20,8 +20,6 @@
 
 #include "gfx/object/Ball.h"
 #include "gfx/Renderer.h"
-//#include "gfx/Scene.h"
-//#include "gfx/Sphere.h"
 
 
 namespace 
