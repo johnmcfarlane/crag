@@ -67,6 +67,7 @@
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
 		5280DD3B13E4AA220091287D /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5280DD3A13E4AA220091287D /* Thread.cpp */; };
 		5283EFD013F2D4EA00BEC592 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */; };
+		52874D7614253236007F0842 /* IntersectionFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52874D7414253236007F0842 /* IntersectionFunctor.cpp */; };
 		5287832013B389CD00B67A38 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5287831E13B389CD00B67A38 /* Ball.cpp */; };
 		5288E529140E141100192F72 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E51F140E141100192F72 /* Ball.cpp */; };
 		5288E52A140E141100192F72 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E521140E141100192F72 /* Light.cpp */; };
@@ -284,6 +285,8 @@
 		5283EFCC13F2D4A600BEC592 /* scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
 		5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scheduler.cpp; sourceTree = "<group>"; };
 		5285F05913D546B20058DBF7 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
+		52874D7414253236007F0842 /* IntersectionFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntersectionFunctor.cpp; sourceTree = "<group>"; };
+		52874D7514253236007F0842 /* IntersectionFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntersectionFunctor.h; sourceTree = "<group>"; };
 		5287831E13B389CD00B67A38 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
 		5287831F13B389CD00B67A38 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		5288E51F140E141100192F72 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball.cpp; sourceTree = "<group>"; };
@@ -599,6 +602,8 @@
 				5264237D135F49FA00C00EFE /* defs.h */,
 				52642382135F49FA00C00EFE /* SphericalBody.cpp */,
 				52642383135F49FA00C00EFE /* SphericalBody.h */,
+				52874D7414253236007F0842 /* IntersectionFunctor.cpp */,
+				52874D7514253236007F0842 /* IntersectionFunctor.h */,
 			);
 			path = physics;
 			sourceTree = "<group>";
@@ -861,6 +866,7 @@
 				5288E52C140E141100192F72 /* Planet.cpp in Sources */,
 				5288E52D140E141100192F72 /* Skybox.cpp in Sources */,
 				528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */,
+				52874D7614253236007F0842 /* IntersectionFunctor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

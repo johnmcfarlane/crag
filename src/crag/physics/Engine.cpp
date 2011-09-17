@@ -83,7 +83,7 @@ void physics::Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
-
+	
 	ProcessDeferredCollisions();	
 }
 
@@ -114,8 +114,11 @@ void physics::Engine::ProcessDeferredCollisions()
 	}
 	
 	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
-	formation_manager.ForEachTreeQuery(_deferred_collisions);
-
+	
+	formation_manager.LockTree();
+	smp::scheduler::Complete(_deferred_collisions, 1);
+	formation_manager.UnlockTree();
+	
 	_deferred_collisions.clear();
 }
 
@@ -151,8 +154,7 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 		return;
 	}
 	
-	// Nothing handled the collision between body1 and body2.
-	Assert(false);
+	engine.OnUnhandledCollision(geom1, geom2);
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
@@ -183,25 +185,12 @@ void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 		// init the surface member of the contact
 		dSurfaceParameters & surface = contact.surface;
 		surface.mode = dContactBounce | dContactSoftCFM;
-		surface.mu = 1;				// used (by default)
-		//surface.mu2 = 0;
-		surface.bounce = .5f;		// used
-		surface.bounce_vel = .1f;	// used
-		//surface.soft_erp = 0;
-		//surface.soft_cfm = 0.001;
-		//surface.motion1 = 0;
-		//surface.motion2 = 0;
-		//surface.motionN = 0;
-		//surface.slip1 = 0;
-		//surface.slip2 = 0;
+		surface.mu = 1;
+		surface.bounce = .5f;
+		surface.bounce_vel = .1f;
 		
 		contact.geom.g1 = geom1;
 		contact.geom.g2 = geom2;
-
-		//it->fdir1[0] = 0;
-		//it->fdir1[1] = 0;
-		//it->fdir1[2] = 0;
-		//it->fdir1[3] = 0;
 	}
 }
 

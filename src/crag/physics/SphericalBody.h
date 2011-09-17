@@ -24,12 +24,11 @@ namespace physics
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;
-
+		
 		virtual void SetDensity(Scalar density);
 		
 	protected:
-		virtual bool OnCollision(Engine & engine, Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere);
+		virtual void OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const;
 	};
-
+	
 }

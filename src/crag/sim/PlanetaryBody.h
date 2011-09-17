@@ -30,12 +30,13 @@ namespace sim
 	public:
 		PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius);
 		
-		form::Formation const & GetFormation() const;
 	private:
-		virtual bool OnCollision(physics::Engine & engine, Body & that_body);
-		virtual bool OnCollisionWithSphericalBody(physics::Engine & engine, SphericalBody & that_sphere);
+		virtual bool OnCollision(physics::Engine & engine, Body const & that_body) const;
 		
-		form::Formation const & formation;
+		virtual void OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const;
+		
+		// variables
+		form::Formation const & _formation;
 	};
 	
 }

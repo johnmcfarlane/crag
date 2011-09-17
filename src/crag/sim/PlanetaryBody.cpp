@@ -16,11 +16,12 @@
 #include "Simulation.h"
 
 #include "physics/Engine.h"
+#include "physics/IntersectionFunctor.h"
 
+#include "form/Formation.h"
 #include "form/FormationManager.h"
-
-
-CONFIG_DECLARE(collisions_parallelization, bool);
+#include "form/node/NodeBuffer.h"
+#include "form/scene/ForEachIntersection.h"
 
 
 namespace
@@ -29,67 +30,18 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1);	// coulomb friction coefficient
-	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
-
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// IntersectionFunctor - handles individual contact points
-
-	class IntersectionFunctor : public form::FormationManager::IntersectionFunctor
-	{
-		typedef form::FormationManager::IntersectionFunctor super;
-	public:
-		IntersectionFunctor(sim::Sphere3 const & sphere, form::Formation const & formation, dGeomID object_geom, dGeomID planet_geom)
-		: super(sphere, formation)
-		, _physics_engine(sim::Simulation::Daemon::Ref().GetPhysicsEngine())
-		{
-			ZeroObject(_contact);
-			
-			_contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
-			
-			_contact.surface.mu = planet_collision_friction;
-			//_contact.surface.mu2 = 0;
-			_contact.surface.bounce = planet_collision_bounce;
-			_contact.surface.bounce_vel = .1f;
-			//_contact.surface.soft_erp = 0;
-			//_contact.surface.soft_cfm = 0;
-			//_contact.surface.motion1;
-			//_contact.surface.motion2;
-			//_contact.surface.motionN;
-			//_contact.surface.slip1;
-			//_contact.surface.slip2;
-			_contact.geom.g1 = object_geom;
-			_contact.geom.g2 = planet_geom;
-		}
-		
-	private:
-		void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth) 
-		{
-			_contact.geom.pos[0] = pos.x;//form::SceneToSim(sim::Scalar(pos.x), _origin.x);
-			_contact.geom.pos[1] = pos.y;//form::SceneToSim(sim::Scalar(pos.y), _origin.y);
-			_contact.geom.pos[2] = pos.z;//form::SceneToSim(sim::Scalar(pos.z), _origin.z);
-			_contact.geom.normal[0] = normal.x;
-			_contact.geom.normal[1] = normal.y;
-			_contact.geom.normal[2] = normal.z;
-			_contact.geom.depth = depth;
-			
-			_physics_engine.OnContact(_contact);
-		}
-		
-		dContact _contact;
-		physics::Engine & _physics_engine;
-	};
+	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// DeferredIntersectionFunctor - wrapper for IntersectionFunctor
+	// DeferredIntersectionFunctor - wrapper for TreeQueryFunctor
 	
 	class DeferredIntersectionFunctor : public smp::scheduler::Job
 	{
 	public:	
-		DeferredIntersectionFunctor(form::FormationManager & formation_manager, IntersectionFunctor & intersection_functor)
-		: _formation_manager(formation_manager)
+		DeferredIntersectionFunctor(physics::Body const & body, sim::PlanetaryBody const & planetary_body, physics::IntersectionFunctor const & intersection_functor)
+		: _body(body)
+		, _planetary_body(planetary_body)
 		, _intersection_functor(intersection_functor)
 		{
 		}
@@ -99,11 +51,12 @@ namespace
 		{
 			Assert(unit_index == 0);
 			
-			_formation_manager.ForEachIntersectionLocked(_intersection_functor);
+			_body.OnDeferredCollisionWithPlanet(_planetary_body, _intersection_functor);
 		}
 		
-		form::FormationManager & _formation_manager;
-		IntersectionFunctor _intersection_functor;
+		physics::Body const & _body;
+		sim::PlanetaryBody const & _planetary_body;
+		physics::IntersectionFunctor _intersection_functor;
 	};
 }
 
@@ -111,42 +64,43 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetaryBody members
 
-sim::PlanetaryBody::PlanetaryBody(physics::Engine & physics_engine, form::Formation const & init_formation, physics::Scalar init_radius)
-: physics::SphericalBody(physics_engine, false, init_radius)
-, formation(init_formation)
+sim::PlanetaryBody::PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius)
+: physics::SphericalBody(physics_engine, false, radius)
+, _formation(formation)
 {
 }
 
-form::Formation const & sim::PlanetaryBody::GetFormation() const 
-{ 
-	return formation; 
-}
-
-bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body & that_body)
+bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body const & that_body) const
 {
-	// Rely on other body being a sphere and calling this->OnCollisionWithSphericalBody.
-	return false;
-}
-
-bool sim::PlanetaryBody::OnCollisionWithSphericalBody(physics::Engine & engine, SphericalBody & that_sphere)
-{
-	Sphere3 sphere(that_sphere.GetPosition(), that_sphere.GetRadius());
-	
-	dGeomID object_geom = that_sphere.GetGeomId();	
+	dGeomID object_geom = that_body.GetGeomId();
 	dGeomID planet_geom = GetGeomId();
-	IntersectionFunctor functor(sphere, formation, object_geom, planet_geom);
+	physics::IntersectionFunctor intersection_functor(object_geom, planet_geom);
 	
-	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
-
-	if (collisions_parallelization)
-	{
-		DeferredIntersectionFunctor deferred_functor(formation_manager, functor);
-		engine.DeferCollision(deferred_functor);
-	}
-	else
-	{
-		formation_manager.ForEachIntersection(functor);
-	}
+	DeferredIntersectionFunctor deferred_functor(that_body, * this, intersection_functor);	
+	engine.DeferCollision(deferred_functor);
 	
 	return true;
+}
+
+void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const
+{
+	physics::SphericalBody const & sphere = static_cast<physics::SphericalBody const &>(body);
+	form::FormationManager const & formation_manager = form::FormationManager::Daemon::Ref();
+	form::Scene const & scene = formation_manager.OnTreeQuery();
+	sim::Vector3 const & origin = scene.GetOrigin();
+	
+	form::Sphere3 relative_sphere(form::SimToScene(sphere.GetPosition(), origin), form::Scalar(sphere.GetRadius()));
+	
+	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
+	if (polyhedron == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
+	form::NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	float min_parent_score = node_buffer.GetMinParentScore() * formation_sphere_collision_detail_factor;
+	
+	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
 }

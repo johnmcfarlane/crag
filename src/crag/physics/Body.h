@@ -12,13 +12,15 @@
 
 #include "defs.h"
 
+#include "form/defs.h"
+
 
 namespace physics
 {
 	// forward-declarations
-	class SphericalBody;
 	class Engine;
-
+	class IntersectionFunctor;
+	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body
 	{
@@ -30,7 +32,7 @@ namespace physics
 		dGeomID GetGeomId() const;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
-
+		
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const &) const;		
 		void GetRotation(Matrix4 & rot) const;
@@ -44,8 +46,10 @@ namespace physics
 		void AddRelForce(Vector3 const & force);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
-		virtual bool OnCollision(Engine & engine, Body & that_body) = 0;
-		virtual bool OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere);
+		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
+		
+		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
 		
 	protected:
 		dGeomID geom_id;	// the collision info

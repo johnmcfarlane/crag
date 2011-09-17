@@ -13,6 +13,13 @@
 #include "SphericalBody.h"
 
 #include "Engine.h"
+//#include "IntersectionFunctor.h"
+//#include "PlanetaryBody.h"
+//
+//#include "form/FormationManager.h"
+//#include "form/Formation.h"
+//#include "form/node/NodeBuffer.h"
+//#include "form/scene/ForEachIntersection.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,14 +50,7 @@ void physics::SphericalBody::SetDensity(Scalar density)
 	dBodySetMass (body_id, & m);
 }
 
-bool physics::SphericalBody::OnCollision(Engine & engine, Body & that_body)
+void physics::SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const
 {
-	return that_body.OnCollisionWithSphericalBody(engine, * this);
-}
-
-bool physics::SphericalBody::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere)
-{
-	// There is no special code for sphere-sphere collision. 
-	engine.OnUnhandledCollision(geom_id, that_sphere.geom_id);
-	return true;
+	planet.OnDeferredCollisionWithSphere(* this, functor);
 }

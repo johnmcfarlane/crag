@@ -21,7 +21,7 @@ physics::Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 	if (movable)
 	{
 		body_id = dBodyCreate(engine.world);
-
+		
 		dBodySetData(body_id, this);
 		dBodySetGravityMode(body_id, false);
 		dGeomSetBody(geom_id, body_id);
@@ -42,7 +42,7 @@ physics::Body::~Body()
 	}
 	
 	Assert(geom_id != 0);
-
+	
 	dGeomDestroy(geom_id);
 }
 
@@ -131,8 +131,17 @@ void physics::Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & p
 	dBodyAddForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool physics::Body::OnCollisionWithSphericalBody(Engine & engine, SphericalBody & that_sphere)
+bool physics::Body::OnCollision(Engine & engine, Body const & that_body) const
 {
-	// There is no custom code associated with this type of body to deal with collisions with spheres.
 	return false;
+}
+
+void physics::Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const
+{
+	Assert(false);
+}
+
+void physics::Body::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
+{
+	Assert(false);
 }

@@ -91,18 +91,15 @@ namespace form
 		// types
 		typedef smp::Daemon<FormationManager> Daemon;
 		
-		struct IntersectionFunctor
+		struct TreeQueryFunctor
 		{
-			IntersectionFunctor(sim::Sphere3 const & sphere, Formation const & formation) : _sphere(sphere), _formation(formation) { }
-			virtual ~IntersectionFunctor() { }
-			virtual void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth) = 0;
+			virtual ~TreeQueryFunctor() { }
+			virtual void operator () (Scene const & scene) = 0;
 			
-			sim::Sphere3 const _sphere;
-			Formation const & _formation;
 		};
-
+		
 		typedef core::ring_buffer<smp::scheduler::Job, true> BatchedFunctorBuffer;
-
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
@@ -130,15 +127,10 @@ namespace form
 		void RemoveFormation(Formation & formation);
 	public:
 		
-		// Individual intersection tests.
-		void ForEachIntersection(IntersectionFunctor & functor) const;
-
-		// batched formation tests (node tree is locked for the duration of the batch)
-		void ForEachTreeQuery(BatchedFunctorBuffer & functor_buffer) const;
-
-		// Intersection test called from within ForEachTreeQuery.
-		// TODO: Yes, this interface is a little messed up.
-		void ForEachIntersectionLocked(IntersectionFunctor & functor) const;
+		// intersection support
+		void LockTree();
+		void UnlockTree();
+		Scene const & OnTreeQuery() const;
 		
 		void ToggleSuspended();
 		void ToggleMeshGeneration();
@@ -147,12 +139,12 @@ namespace form
 		
 	private:
 		void SetCameraPos(sim::CameraProjection const & projection);
-
+		
 		void Tick();
 		void TickActiveScene();
 		void GenerateMesh();
 		Mesh * PopMesh();
-
+		
 		void AdjustNumQuaterna();
 		void BeginReset();
 		void EndReset();
@@ -175,7 +167,7 @@ namespace form
 		
 		// attributes
 		FormationSet formation_set;
-
+		
 		bool quit_flag;
 		bool suspend_flag;
 		bool enable_mesh_generation;
@@ -188,7 +180,7 @@ namespace form
 		
 		Regulator _regulator;
 		sim::Ray3 _camera_pos;
-
+		
 		// The front scene is always the one being displayed and is usually the 'active' scene.
 		// During an origin reset, the back scene is the active one.
 		// It's the active scene which is reshaped for LODding purposes (churned).
@@ -200,5 +192,5 @@ namespace form
 		
 		static Daemon * singleton;
 	};
-
+	
 }

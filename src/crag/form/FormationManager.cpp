@@ -34,11 +34,9 @@ namespace
 	PROFILE_DEFINE (scene_tick_per_quaterna, .0025f);
 	PROFILE_DEFINE (mesh_generation_period, .01f);	
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01f);
-
+	
 	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 	
-	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
-
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
 }
@@ -59,7 +57,7 @@ form::FormationManager::FormationManager()
 {
 	smp::SetThreadPriority(-1);
 	smp::SetThreadName("Formation");
-
+	
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
 		int max_num_verts = form::NodeBuffer::max_num_verts;
@@ -143,7 +141,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 		gfx::AddObjectMessage message = { _model };
 		gfx::Renderer::Daemon::SendMessage(message);
 	}
-
+	
 	while (true) 
 	{
 		message_queue.DispatchMessages(* this);
@@ -157,7 +155,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 		Tick();
 		
 		message_queue.DispatchMessages(* this);
-
+		
 		GenerateMesh();
 		
 		suspend_semaphore.Increment();
@@ -166,7 +164,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 			break;
 		}
 	}
-
+	
 	// un-register with the renderer
 	{
 		gfx::RemoveObjectMessage message = { _model };
@@ -191,46 +189,24 @@ void form::FormationManager::RemoveFormation(form::Formation & formation)
 	scenes[1].RemoveFormation(formation);
 }
 
-void form::FormationManager::ForEachIntersection(IntersectionFunctor & functor) const
+void form::FormationManager::LockTree()
 {
+	// TODO: How does this guarantee a swap won't happen.
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
 	node_buffer.LockTree();
-
-	ForEachIntersectionLocked(functor);
-	
-	node_buffer.UnlockTree();
 }
 
-void form::FormationManager::ForEachTreeQuery(BatchedFunctorBuffer & functor_buffer) const
+void form::FormationManager::UnlockTree()
 {
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.LockTree();
-
-	smp::scheduler::Complete(functor_buffer, 1);
-
 	node_buffer.UnlockTree();
 }
 
-void form::FormationManager::ForEachIntersectionLocked(IntersectionFunctor & functor) const
+form::Scene const & form::FormationManager::OnTreeQuery() const
 {
-	Scene const & scene = GetVisibleScene();
-	Polyhedron const * polyhedron = scene.GetPolyhedron(functor._formation);
-	if (polyhedron == nullptr)
-	{
-		Assert(false);
-		return;
-	}
-	
-	sim::Vector3 const & origin = scene.GetOrigin();
-	form::Vector3 relative_formation_position(form::SimToScene(functor._formation.position, origin));
-	form::Sphere3 relative_sphere(form::SimToScene(functor._sphere.center, origin), form::Scalar(functor._sphere.radius));
-	
-	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	float min_parent_score = node_buffer.GetMinParentScore() * formation_sphere_collision_detail_factor;
-	
-	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
+	return GetVisibleScene();
 }
 
 void form::FormationManager::ToggleSuspended()
@@ -273,12 +249,12 @@ void form::FormationManager::SetCameraPos(sim::CameraProjection const & projecti
 void form::FormationManager::Tick()
 {
 	bool reset_origin_flag = enable_dynamic_origin && ! IsOriginOk();
-
+	
 	if (reset_origin_flag) 
 	{
 		BeginReset();
 	}
-
+	
 	if (! reset_origin_flag)
 	{
 		AdjustNumQuaterna();
@@ -293,7 +269,7 @@ void form::FormationManager::Tick()
 			EndReset();
 		}
 	}
-
+	
 	//VerifyObject(* this);
 }
 
@@ -368,7 +344,7 @@ form::Mesh * form::FormationManager::PopMesh()
 	{
 		return nullptr;
 	}
-
+	
 	Mesh & mesh = _meshes.front();
 	_meshes.pop_front();
 	return & mesh;
@@ -387,7 +363,7 @@ void form::FormationManager::BeginReset()
 	// Transfer the quaterna count from the old buffer to the new one.
 	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
 	int current_num_quaterna = visible_node_buffer.GetNumQuaternaUsed();
-
+	
 	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
 	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterna);
 }

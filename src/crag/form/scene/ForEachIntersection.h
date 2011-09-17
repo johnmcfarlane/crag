@@ -19,7 +19,7 @@ namespace form
 	// ForEachIntersection functions
 	//
 	// For the given polyhedron, calls functor for all faces which intersect with shape.
-
+	
 	// forward-declaration
 	template <typename SHAPE, typename FUNCTOR>
 	void ForEachIntersection(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, SHAPE const & shape, FUNCTOR const & functor);
@@ -35,83 +35,33 @@ namespace form
 		Vector3 center;
 		Vector3 a, b, c;
 	};
-
-	bool TouchesInfinitePyramid(Sphere<Scalar, 3> const & sphere, Pyramid const & pyramid) 
+	
+	inline bool TouchesInfinitePyramid(Sphere3 const & sphere, Pyramid const & pyramid) 
 	{
 		return Contains(pyramid.center, pyramid.a, pyramid.c, sphere) 
-			&& Contains(pyramid.center, pyramid.b, pyramid.a, sphere) 
-			&& Contains(pyramid.center, pyramid.c, pyramid.b, sphere);
+		&& Contains(pyramid.center, pyramid.b, pyramid.a, sphere) 
+		&& Contains(pyramid.center, pyramid.c, pyramid.b, sphere);
 	}
+	
+	template <typename SHAPE, typename FUNCTOR> class Traveler;
 	
 	// Get the details of the actual collision between a face and the sphere.
-	bool GetCollision(Sphere<Scalar, 3> const & sphere, 
-					  Pyramid const & pyramid, Vector3 const & face_norm, 
-					  Vector3 & collision_pos, Vector3 & collision_normal, Scalar & collision_depth) 
-	{
-		// the distance from the center of the sphere to the surface. 
-		Scalar distance = DistanceToSurface(pyramid.a, face_norm, sphere.center);
-
-		if (distance > sphere.radius)
-		{
-			// we're good. 
-			return false;
-		}
-		
-		// One last check to see if we're 'in the zone' becuase the given triangle
-		// might have been put together by ForEachNodeFace.
-		if (! TouchesInfinitePyramid(sphere, pyramid))
-		{
-			return false;
-		}
-		
-		// The case where the sphere is completely within the surface. 
-		if (distance < - sphere.radius)
-		{
-			Vector3 tri_center = (pyramid.a + pyramid.b + pyramid.c) / 3.f;
-			Vector3 to_tri = tri_center - pyramid.center;
-			Vector3 to_sphere = sphere.center - pyramid.center;
-			Scalar dp = DotProduct(Normalized(to_tri), Normalized(to_sphere));
-			if (dp < 0)
-			{
-				// yikes! colliding with a face on the opposite side of the formation
-				return false;
-			}
-			
-			// TODO: Is the normal passed to AddFace negative? If so, lighting's still wrong. 
-			// Note: collision_pos is in global coordinates
-			collision_pos = sphere.center;
-			collision_normal = face_norm;
-			collision_depth = sphere.radius - distance;
-			
-			return true;
-		}
-		
-		// Proper contact between triangle (not plane) and sphere.
-		Scalar intersection_depth;
-		if (GetIntersection(sphere, pyramid.c, pyramid.b, pyramid.a, & intersection_depth))
-		{
-			//intersection_depth = distance;
-			// TODO: Triangle-line intersection. (Might already have this somewhere.)
-			// because sphere.center is the wrong position!
-			// Note: collision_pos is in global coordinates
-			collision_pos = sphere.center + Vector3(face_norm) * (intersection_depth - sphere.radius);
-			collision_normal = face_norm;
-			collision_depth = intersection_depth;
-			
-			return true;
-		}
-		
-		return false;
-	}
+	template <typename SHAPE, typename FUNCTOR>
+	void TestCollisions(Traveler<SHAPE, FUNCTOR> const & traveler,
+						Pyramid const & pyramid, 
+						Vector3 const & face_norm);
 	
-
 	// This class holds all the data necessary to test the shape for intersection 
 	// against nodes, and mines down through the nodes, calling the functor on them. 
-	template <typename SHAPE, typename COLLISION_FUNCTOR>
+	template <typename SHAPE, typename FUNCTOR>
 	class Traveler
 	{
 	public:
-		Traveler(Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, Scalar min_score)
+		// types
+		typedef SHAPE ShapeType;
+		
+		// functions
+		Traveler(Vector3 const & polyhedron_center, ShapeType const & shape, sim::Vector3 const & origin, FUNCTOR & functor, Scalar min_score)
 		: _shape(shape)
 		, _origin(origin)
 		, _functor(functor)
@@ -138,13 +88,10 @@ namespace form
 				else
 				{
 					// Keep recurring into the tree.
-					form::Node const * child = children;
-					form::Node const * const children_end = child + 4;
-					do
-					{
-						GatherPoints(* child);
-						++ child;
-					}	while (child != children_end);
+					GatherPoints(children[0]);
+					GatherPoints(children[1]);
+					GatherPoints(children[2]);
+					GatherPoints(children[3]);
 				}
 			}
 		}
@@ -156,38 +103,92 @@ namespace form
 			_pyramid.b = b.pos;
 			_pyramid.c = c.pos;
 			
-			Vector3 collision_pos, collision_normal;
-			Scalar collision_depth;
-			if (GetCollision(_shape, _pyramid, normal, collision_pos, collision_normal, collision_depth))
-			{
-				sim::Vector3 sim_collision_pos = form::SceneToSim(collision_pos, _origin);
-				sim::Vector3 sim_collision_normal = collision_normal;
-				sim::Scalar sim_collision_depth = collision_depth;
-				_functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
-			}
+			TestCollisions(* this, _pyramid, normal);
 		}
 		
-	private:
 		// data
-		Vector3 const _origin;
+		sim::Vector3 const _origin;
 		Pyramid _pyramid;
-		SHAPE const & _shape;
-		COLLISION_FUNCTOR & _functor;
+		ShapeType const & _shape;
+		FUNCTOR & _functor;
 		
 		// After an arbitrarily chosen triangle edge becomes shorter than this,
 		// recursion ends. This prevents expensive, exhaustive searches.
 		Scalar _min_score;
 	};
-
+	
+	// Get the details of the actual collision between a face and the sphere.
+	template <typename FUNCTOR>
+	inline void TestCollisions<Sphere, FUNCTOR>(Traveler<Sphere3, FUNCTOR> const & traveler,
+												Pyramid const & pyramid, 
+												Vector3 const & face_norm) 
+	{
+		Sphere3 const & sphere = traveler._shape;
+		
+		// the distance from the center of the sphere to the surface. 
+		Scalar distance = DistanceToSurface(pyramid.a, face_norm, sphere.center);
+		
+		if (distance > sphere.radius)
+		{
+			// we're good. 
+			return;
+		}
+		
+		// One last check to see if we're 'in the zone' becuase the given triangle
+		// might have been put together by ForEachNodeFace.
+		if (! TouchesInfinitePyramid(sphere, pyramid))
+		{
+			return;
+		}
+		
+		// The case where the sphere is completely within the surface. 
+		if (distance < - sphere.radius)
+		{
+			Vector3 tri_center = (pyramid.a + pyramid.b + pyramid.c) / 3.f;
+			Vector3 to_tri = tri_center - pyramid.center;
+			Vector3 to_sphere = sphere.center - pyramid.center;
+			Scalar dp = DotProduct(Normalized(to_tri), Normalized(to_sphere));
+			if (dp < 0)
+			{
+				// yikes! colliding with a face on the opposite side of the formation
+				return;
+			}
+			
+			// Note: collision_pos is in global coordinates
+			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center, traveler._origin);
+			sim::Vector3 sim_collision_normal = face_norm;
+			sim::Scalar sim_collision_depth = sphere.radius - distance;
+			
+			traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+			return;
+		}
+		
+		// Proper contact between triangle (not plane) and sphere.
+		Scalar intersection_depth;
+		if (GetIntersection(sphere, pyramid.c, pyramid.b, pyramid.a, & intersection_depth))
+		{
+			//intersection_depth = distance;
+			// TODO: Triangle-line intersection. (Might already have this somewhere.)
+			// because sphere.center is the wrong position!
+			// Note: collision_pos is in global coordinates
+			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center + Vector3(face_norm) * (intersection_depth - sphere.radius), traveler._origin);
+			sim::Vector3 sim_collision_normal = face_norm;
+			sim::Scalar sim_collision_depth = intersection_depth;
+			
+			traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+			return;
+		}
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// ForEachIntersection implementation
 	
 	// general
-	template <typename SHAPE, typename COLLISION_FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, COLLISION_FUNCTOR & functor, float min_score)
+	template <typename SHAPE, typename FUNCTOR>
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_score)
 	{
-		Traveler<SHAPE, COLLISION_FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_score);
+		Traveler<SHAPE, FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_score);
 		
 		form::RootNode const & root_node = polyhedron.root_node;
 		form::Node const * children = root_node.GetChildren();
@@ -199,5 +200,5 @@ namespace form
 			traveler.GatherPoints(children[3]);
 		}
 	}
-
+	
 }

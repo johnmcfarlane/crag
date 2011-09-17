@@ -18,13 +18,18 @@
 #include "core/ring_buffer.h"
 
 
+#include "sim/defs.h"
 namespace physics
 {
+	// forward-declarations
 	class Body;
 	
+	// The physics singleton.
 	class Engine
 	{
+		// TODO: Messy
 		friend class Body;
+		friend class BoxBody;
 		friend class SphericalBody;
 		
 		// types
@@ -35,11 +40,11 @@ namespace physics
 		// functions
 		Engine();
 		~Engine();
-
+		
 		void Tick(double delta_time);
 		
 		void ToggleCollisions();
-
+		
 	private:
 		void CreateCollisions();
 		void CreateJoints();
@@ -48,10 +53,10 @@ namespace physics
 		void DestroyCollisions();
 		static void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2);
 		
-	public:
 		// Called by bodies which don't handling their own.
 		void OnUnhandledCollision(dGeomID geom1, dGeomID geom2);
 		
+	public:
 		// Called by bodies whose collision may be costly and can be parallelized.
 		template <typename FUNCTOR>
 		void DeferCollision(FUNCTOR & collision_functor)
@@ -68,15 +73,15 @@ namespace physics
 		
 		// Called once individual points of contact have been determined.
 		void OnContact(dContact const & contact);
-
+		
 	private:
 		dBodyID CreateBody();
-
+		
 		// variables
 		dWorldID world;
 		dSpaceID space;
 		dJointGroupID contact_joints;
-
+		
 		// collisions between formations and other objects;
 		// these get performed while the formation node tree is locked.
 		DeferredCollisionBuffer _deferred_collisions;
