@@ -53,7 +53,7 @@ class observer:
 	# returns True if an event was handled
 	def handle_mousemove(self, x_delta, y_delta):
 		self.sensitivity = 0.1
+		z_rotation = - x_delta * self.sensitivity
 		x_rotation = - y_delta * self.sensitivity
-		y_rotation = - x_delta * self.sensitivity
-		self.__observer.add_rotation(x_rotation, 0.0, y_rotation)
+		self.__observer.add_rotation(x_rotation, 0.0, z_rotation)
 		return False
