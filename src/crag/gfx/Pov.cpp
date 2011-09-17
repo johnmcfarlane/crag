@@ -82,45 +82,22 @@ Pov::Matrix Pov::GetCameraMatrix() const
 	return TranslationMatrix(pos) * rot;
 }
 
-Pov::Matrix Pov::CameraToModelViewMatrix(Matrix const & camera)
-{
-	// Between the simulation and GL, z and y are swapped and z is negated.
-	Matrix gl_camera = camera * axes::SimToOpenGl<sim::Scalar>();
-	
-	// And we're rotating the universe around the camera. 
-	Matrix gl_world = Inverse(gl_camera);
-	
-	// And finally, OpenGL is column-major, so transpose (same as we do in Frustum::CalcProjectionMatrix).
-	return Transpose(gl_world);
-}
-
-Pov::Matrix Pov::CalcModelViewMatrix() const
-{
-	// Put the position and rotation together into one, simulation-space camera matrix.
-	// (For the skybox, we don't want translation.) 
-	Matrix sim_camera = GetCameraMatrix();
-	
-	return CameraToModelViewMatrix(sim_camera);	
-}
-
 void Pov::SetModelView(Vector const & model_position) const
 {
-	gfx::Pov model_pov (* this);
-	model_pov.pos -= model_position;
-	Matrix model_view_matrix = model_pov.CalcModelViewMatrix();
-	
-	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
-	gl::LoadMatrix(model_view_matrix.GetArray());	
+	SetModelView(model_position, Matrix::Identity());
 }
 
 void Pov::SetModelView(Vector const & model_position, Matrix const & model_rotation) const
 {
-	gfx::Pov model_pov (* this);
-	model_pov.pos -= model_position;
-	Matrix model_view_matrix = model_pov.CalcModelViewMatrix();
+	Matrix camera_matrix = GetCameraMatrix();
+	Matrix camera_transform = Inverse(camera_matrix);
 	
-	model_view_matrix = model_rotation * model_view_matrix;
+	Matrix model_matrix = TranslationMatrix(model_position) * model_rotation;
+	
+	Matrix model_view_matrix = camera_transform * model_matrix;
+	
+	Matrix gl_model_view_matrix = Transpose(model_view_matrix) * axes::SimToOpenGl<sim::Scalar>();	
 	
 	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
-	gl::LoadMatrix(model_view_matrix.GetArray());	
+	gl::LoadMatrix(gl_model_view_matrix.GetArray());	
 }

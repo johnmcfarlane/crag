@@ -40,8 +40,6 @@ namespace gfx
 		
 		void LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up);
 		Matrix GetCameraMatrix() const;
-		static Matrix CameraToModelViewMatrix(Matrix const & camera);
-		Matrix CalcModelViewMatrix() const;
 		
 		void SetModelView(Vector const & model_position) const;
 		void SetModelView(Vector const & model_position, Matrix const & model_rotation) const;
