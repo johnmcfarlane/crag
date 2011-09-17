@@ -200,12 +200,9 @@ namespace smp
 					task->ProcessUnit(unit_index);
 					
 					// Wrap up the work.
-					OnUnitComplete(* task);
-					
-					// If the task is completely done,
-					if (task->IsCompleted())
+					if (OnUnitComplete(* task))
 					{
-						// delet it.
+						// If the task is completely done, delet it.
 						delete task;
 					}
 					
@@ -260,7 +257,8 @@ namespace smp
 				}
 				
 				// Inform this that an assigned unit of work was completed.
-				void OnUnitComplete(Task & task)
+				// Returns true iff the task is complete.
+				bool OnUnitComplete(Task & task)
 				{
 					Lock l(_mutex);
 				
@@ -271,7 +269,10 @@ namespace smp
 					if (task.IsCompleted())
 					{
 						_tasks.remove(task);
+						return true;
 					}
+					
+					return false;
 				}
 				
 				// variables
