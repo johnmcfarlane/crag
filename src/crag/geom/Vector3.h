@@ -21,7 +21,9 @@ template<typename S> class Vector<S, 3>
 public:
 	static int const N = 3;
 	
-	Vector() { }
+	Vector() 
+	{ 
+	}
 
 	template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) 
 	: x(static_cast<S>(rhs.x))
@@ -35,10 +37,10 @@ public:
 	, z(static_cast<S>(rhs_z)) 
 	{ }
 	
-	template<typename RHS_S> Vector(RHS_S rhs_xyz) 
-	: x(static_cast<S>(rhs_xyz))
-	, y(static_cast<S>(rhs_xyz))
-	, z(static_cast<S>(rhs_xyz)) 
+	template<typename RHS_S> Vector(RHS_S const * rhs_array) 
+	: x(static_cast<S>(rhs_array[0]))
+	, y(static_cast<S>(rhs_array[1]))
+	, z(static_cast<S>(rhs_array[2])) 
 	{ }
 
 	// Returns vector as a C-style array. Very unsafe. 
@@ -67,6 +69,12 @@ public:
 	static Vector Zero() 
 	{
 		return Vector(0, 0, 0); 
+	}
+	
+	static Vector Max()
+	{
+		S max_value = std::numeric_limits<S>::max();
+		return Vector(max_value, max_value, max_value);
 	}
 	
 	S x, y, z;

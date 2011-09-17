@@ -41,9 +41,7 @@ form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 
 form::Ray3 form::CalculateNodeScoreFunctor::GetInvalidRay()
 {
-	return Ray3(Vector3(std::numeric_limits<float>::max()),
-				Vector3(std::numeric_limits<float>::max()));
-
+	return Ray3(Vector3::Max(), Vector3::Max());
 }
 
 bool form::CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
