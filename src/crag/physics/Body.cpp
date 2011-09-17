@@ -136,6 +136,11 @@ bool physics::Body::OnCollision(Engine & engine, Body const & that_body) const
 	return false;
 }
 
+void physics::Body::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const
+{
+	Assert(false);
+}
+
 void physics::Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const
 {
 	Assert(false);

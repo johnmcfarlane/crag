@@ -13,6 +13,7 @@
 #include "Scene.h"
 
 #include "Sphere.h"
+#include "Cuboid.h"
 
 #include "core/ConfigEntry.h"
 
@@ -27,7 +28,8 @@ CONFIG_DEFINE (camera_far, float, 10);
 
 
 gfx::Scene::Scene()
-: _sphere(* new Sphere)
+: _cuboid(* new Cuboid)
+, _sphere(* new Sphere)
 {
 	pov.frustum.fov = static_cast<double>(camera_fov);
 	pov.frustum.near_z = static_cast<double>(camera_near);
@@ -49,6 +51,7 @@ gfx::Scene::~Scene()
 	camera_far = static_cast<float>(pov.frustum.far_z);
 	
 	delete & _sphere;
+	delete & _cuboid;
 }
 
 bool gfx::Scene::Empty() const
@@ -150,4 +153,9 @@ void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min
 gfx::Sphere const & gfx::Scene::GetSphere() const
 {
 	return _sphere;
+}
+
+gfx::Cuboid const & gfx::Scene::GetCuboid() const
+{
+	return _cuboid;
 }

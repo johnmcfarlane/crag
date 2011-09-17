@@ -32,9 +32,10 @@ namespace sim
 		
 	private:
 		virtual bool OnCollision(physics::Engine & engine, Body const & that_body) const;
-		
+
+		virtual void OnDeferredCollisionWithBox(physics::Body const & body, physics::IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const;
-		
+
 		// variables
 		form::Formation const & _formation;
 	};

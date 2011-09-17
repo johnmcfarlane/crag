@@ -43,14 +43,24 @@ def main_loop():
 	
 	# Main loop
 	next_drop = crag.time() + 1
-	balls = []
+	shapes = []
+	ball = True
 	while stackless.runcount > 1:
 		now = crag.time()
-		if now > next_drop:
+		if now > next_drop and len(shapes) < 100:
 			next_drop = now + 1
-			balls.append(crag.Ball(random.random() - .5, 10000580, -4.5 + random.random(), math.exp(- random.random() * 2)))
-			if len(balls) > 25:
-				balls.pop(0)
+			if ball:
+				shapes.append(crag.Ball(random.random() - .5, 10000580, -4.5 + random.random(), math.exp(- random.random() * 2)))
+			else:
+				shapes.append(crag.Box(random.random() - .5, 
+					10000580, 
+					-9.0 + random.random(), 
+					math.exp(- random.random() * 2), 
+					math.exp(- random.random() * 2), 
+					math.exp(- random.random() * 2)))
+			ball = not ball
+			if len(shapes) > 25:
+				shapes.pop(0)
 		stackless.schedule()
 
 main_loop()

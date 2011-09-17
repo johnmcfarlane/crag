@@ -36,11 +36,35 @@ namespace form
 		Vector3 a, b, c;
 	};
 	
+	struct PointCloud
+	{
+		// types
+		typedef std::vector<Vector3> Vector;
+		
+		// variables
+		Sphere3 sphere;	// bounding sphere
+		Vector points;	// point cloud
+	};
+	
+	inline bool TouchesInfinitePyramid(Vector3 const & point, Pyramid const & pyramid) 
+	{
+		return Contains(pyramid.center, pyramid.a, pyramid.c, point) 
+		&& Contains(pyramid.center, pyramid.b, pyramid.a, point) 
+		&& Contains(pyramid.center, pyramid.c, pyramid.b, point);
+	}
+	
 	inline bool TouchesInfinitePyramid(Sphere3 const & sphere, Pyramid const & pyramid) 
 	{
 		return Contains(pyramid.center, pyramid.a, pyramid.c, sphere) 
 		&& Contains(pyramid.center, pyramid.b, pyramid.a, sphere) 
 		&& Contains(pyramid.center, pyramid.c, pyramid.b, sphere);
+	}
+	
+	inline bool TouchesInfinitePyramid(PointCloud const & shape, Pyramid const & pyramid) 
+	{
+		return Contains(pyramid.center, pyramid.a, pyramid.c, shape.sphere) 
+		&& Contains(pyramid.center, pyramid.b, pyramid.a, shape.sphere) 
+		&& Contains(pyramid.center, pyramid.c, pyramid.b, shape.sphere);
 	}
 	
 	template <typename SHAPE, typename FUNCTOR> class Traveler;
@@ -177,6 +201,49 @@ namespace form
 			
 			traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
 			return;
+		}
+	}
+	
+	// Get the details of the actual collision between a face and a point cloud.
+	template <typename FUNCTOR>
+	inline void TestCollisions<PointCloud, FUNCTOR>(Traveler<PointCloud, FUNCTOR> const & traveler,
+													Pyramid const & pyramid, 
+													Vector3 const & face_norm) 
+	{
+		PointCloud const & shape = traveler._shape;
+		
+		// the distance from the center of the sphere to the surface. 
+		Scalar sphere_distance = DistanceToSurface(pyramid.a, face_norm, shape.sphere.center);
+		
+		if (sphere_distance > shape.sphere.radius)
+		{
+			// shape is clear. 
+			return;
+		}
+		
+		// One last check to see if we're 'in the zone' becuase the given triangle
+		// might have been put together by ForEachNodeFace.
+		if (! TouchesInfinitePyramid(shape.sphere, pyramid))
+		{
+			return;
+		}
+		
+		PointCloud::Vector::const_iterator end = shape.points.end();
+		for (PointCloud::Vector::const_iterator it = shape.points.begin(); it != end; ++ it)
+		{
+			Vector3 const & point = * it;
+			Scalar distance = DistanceToSurface(pyramid.a, face_norm, point);
+			if (distance < 0)
+			{
+				if (TouchesInfinitePyramid(point, pyramid))
+				{
+					sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(point - face_norm * distance, traveler._origin);
+					sim::Vector3 sim_collision_normal = face_norm;
+					sim::Scalar sim_collision_depth = - distance;
+					
+					traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+				}
+			}
 		}
 	}
 	

@@ -15,6 +15,7 @@
 #include "defs.h"
 #include "Simulation.h"
 
+#include "physics/BoxBody.h"
 #include "physics/Engine.h"
 #include "physics/IntersectionFunctor.h"
 
@@ -31,6 +32,7 @@ namespace
 	// config constants
 	
 	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
+	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 20.f);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +82,56 @@ bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body const & that
 	engine.DeferCollision(deferred_functor);
 	
 	return true;
+}
+
+void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, physics::IntersectionFunctor & functor) const
+{
+	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
+	form::FormationManager const & formation_manager = form::FormationManager::Daemon::Ref();
+	form::Scene const & scene = formation_manager.OnTreeQuery();
+	sim::Vector3 const & origin = scene.GetOrigin();
+	
+	// Get vital geometric information about the cuboid.
+	Vector3 dimensions = box.GetDimensions();
+	Matrix4 rotation;
+	box.GetRotation(rotation);
+	
+	// Initialise the PointCloud.
+	form::PointCloud shape;
+	
+	// bounding sphere
+	shape.sphere.center = form::SimToScene(box.GetPosition(), origin);
+	shape.sphere.radius = form::Scalar(Length(dimensions) * 99.5);
+	
+	// points
+	int const num_corners = 8;
+	shape.points.resize(num_corners);
+	for (int corner_index = 0; corner_index != num_corners; ++ corner_index)
+	{
+		sim::Vector4 corner;
+		corner.x = ((corner_index & 1) ? dimensions.x : - dimensions.x) * .5;
+		corner.y = ((corner_index & 2) ? dimensions.y : - dimensions.y) * .5;
+		corner.z = ((corner_index & 4) ? dimensions.z : - dimensions.z) * .5;
+		corner.w = 0;
+		sim::Vector4 rotated_corner = rotation * corner;
+		shape.points[corner_index].x = rotated_corner.x + shape.sphere.center.x;
+		shape.points[corner_index].y = rotated_corner.y + shape.sphere.center.y;
+		shape.points[corner_index].z = rotated_corner.z + shape.sphere.center.z;
+	}
+	
+	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
+	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
+	if (polyhedron == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
+	form::NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	float min_parent_score = node_buffer.GetMinParentScore() * formation_box_collision_detail_factor;
+	
+	form::ForEachIntersection(* polyhedron, relative_formation_position, shape, origin, functor, min_parent_score);
 }
 
 void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const

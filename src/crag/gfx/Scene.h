@@ -20,6 +20,7 @@
 namespace gfx
 {
 	class Object;
+	class Cuboid;
 	class Sphere;
 	
 	
@@ -41,6 +42,7 @@ namespace gfx
 		Pov & GetPov();
 		Pov const & GetPov() const;
 		
+		Cuboid const & GetCuboid() const;
 		Sphere const & GetSphere() const;
 		
 		void GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
@@ -50,6 +52,7 @@ namespace gfx
 		Pov pov;
 		
 		ObjectSet _objects[Layer::num];
+		Cuboid const & _cuboid;
 		Sphere const & _sphere;
 	};
 }
