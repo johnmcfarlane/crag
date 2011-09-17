@@ -13,13 +13,6 @@
 #include "SphericalBody.h"
 
 #include "Engine.h"
-//#include "IntersectionFunctor.h"
-//#include "PlanetaryBody.h"
-//
-//#include "form/FormationManager.h"
-//#include "form/Formation.h"
-//#include "form/node/NodeBuffer.h"
-//#include "form/scene/ForEachIntersection.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
