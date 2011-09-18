@@ -31,7 +31,8 @@ bool Box::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe)
 { 
 	Scalar distance = Length(camera_ray.position - _position);
 	
-	// TODO: Can be tightened up.
+	// This could be improved by sampling each of the 8 corners of the box
+	// but it probably isn't worth the clock cycles to do that.
 	float radius = Length(_size) * .5f;
 	range[0] = distance - radius;
 	range[1] = distance + radius;

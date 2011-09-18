@@ -81,7 +81,7 @@ namespace smp
 			Assert(_object == nullptr);
 		}
 		
-		// TODO: Always represents failure to completely encapsulate the object.
+		// Usually represents failure to completely encapsulate the object.
 		static Class & Ref()
 		{
 			return ref(singleton->_object);
