@@ -48,23 +48,23 @@ namespace form
 	
 	inline bool TouchesInfinitePyramid(Vector3 const & point, Pyramid const & pyramid) 
 	{
-		return Contains(pyramid.center, pyramid.a, pyramid.c, point) 
-		&& Contains(pyramid.center, pyramid.b, pyramid.a, point) 
-		&& Contains(pyramid.center, pyramid.c, pyramid.b, point);
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, point) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, point) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, point);
 	}
 	
 	inline bool TouchesInfinitePyramid(Sphere3 const & sphere, Pyramid const & pyramid) 
 	{
-		return Contains(pyramid.center, pyramid.a, pyramid.c, sphere) 
-		&& Contains(pyramid.center, pyramid.b, pyramid.a, sphere) 
-		&& Contains(pyramid.center, pyramid.c, pyramid.b, sphere);
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, sphere) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, sphere) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, sphere);
 	}
 	
 	inline bool TouchesInfinitePyramid(PointCloud const & shape, Pyramid const & pyramid) 
 	{
-		return Contains(pyramid.center, pyramid.a, pyramid.c, shape.sphere) 
-		&& Contains(pyramid.center, pyramid.b, pyramid.a, shape.sphere) 
-		&& Contains(pyramid.center, pyramid.c, pyramid.b, shape.sphere);
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, shape.sphere) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, shape.sphere) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, shape.sphere);
 	}
 	
 	template <typename SHAPE, typename FUNCTOR> class Traveler;
