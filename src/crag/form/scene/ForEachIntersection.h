@@ -103,20 +103,28 @@ namespace form
 			// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
 			if (TouchesInfinitePyramid(_shape, _pyramid))
 			{
+				// If we're as far into the tree as we're going to get,
+				if (node.score < _min_score)
+				{
+					// process node as a single face.
+					TestCollisions(* this, _pyramid, node.normal);
+					return;
+				}
+
+				// We're at a leaf node and haven't reached the min score,
 				form::Node const * const children = node.GetChildren();
-				if (children == nullptr || node.score < _min_score)
+				if (children == nullptr)
 				{
-					// We're at a leaf node or one which is too insignificant; process faces.
+					// try and go a bit deeper by calling ForEachNodeFace.
 					ForEachNodeFace(node, * this);
+					return;
 				}
-				else
-				{
-					// Keep recurring into the tree.
-					GatherPoints(children[0]);
-					GatherPoints(children[1]);
-					GatherPoints(children[2]);
-					GatherPoints(children[3]);
-				}
+
+				// Keep recurring into the tree.
+				GatherPoints(children[0]);
+				GatherPoints(children[1]);
+				GatherPoints(children[2]);
+				GatherPoints(children[3]);
 			}
 		}
 		
