@@ -25,23 +25,20 @@
 #include "core/ConfigEntry.h"
 
 
+CONFIG_DECLARE (profile_mode, bool);
+
+
 namespace 
 {
 
-	// If non-zero, this number of quaterna is enforced always.
+	// If profile_mode==true, this number of quaterna is enforced always (with reason).
 	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
-	// TODO: Force CONFIG_DEFINE & pals to include a description in the .cfg file.
-#if defined(PROFILE)
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
-#else
-	// Don't ever change this value from zero!!!
-	CONFIG_DEFINE (fix_num_quaterna, int, 0);
-#endif
+	CONFIG_DEFINE (profile_num_quaterna, int, 6400);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// local function definitions
-
+	
 	inline void UpdateQuaternaScore(form::Quaterna & q) 
 	{
 		form::Node * parent = q.nodes[0].GetParent();
@@ -71,7 +68,7 @@ form::NodeBuffer::NodeBuffer()
 , quaterna(new Quaterna [max_num_quaterna])
 , quaterna_sorted_end(quaterna)
 , quaterna_used_end(quaterna)
-, quaterna_used_end_target(quaterna + Min(fix_num_quaterna ? fix_num_quaterna : 0, static_cast<int>(max_num_quaterna)))
+, quaterna_used_end_target(quaterna + Min(profile_mode ? profile_num_quaterna : 0, static_cast<int>(max_num_quaterna)))
 , quaterna_end(quaterna + max_num_quaterna)
 , point_buffer(max_num_verts)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
@@ -243,7 +240,7 @@ float form::NodeBuffer::GetMinParentScore() const
 
 void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 {
-	if (fix_num_quaterna != 0)
+	if (profile_mode)
 	{
 		return;
 	}

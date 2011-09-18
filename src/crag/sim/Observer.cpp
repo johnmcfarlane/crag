@@ -28,6 +28,9 @@
 #include "gfx/object/Light.h"
 
 
+CONFIG_DECLARE (profile_mode, bool);
+
+
 namespace 
 {
 	CONFIG_DEFINE (observer_radius, double, .5);
@@ -197,16 +200,19 @@ void sim::Observer::Tick(Simulation & simulation)
 	ApplyImpulse();
 
 	// Gravity
-	Vector3 const & position = GetPosition();
-	Scalar mass = body->GetMass();
-	
-	Universe & universe = simulation.GetUniverse();
-	
-	Vector3 gravitational_force_per_second = universe.Weight(position, mass);
-	Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
+	if (! profile_mode)
+	{
+		Vector3 const & position = GetPosition();
+		Scalar mass = body->GetMass();
+		
+		Universe & universe = simulation.GetUniverse();
+		
+		Vector3 gravitational_force_per_second = universe.Weight(position, mass);
+		Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
 
-	Vector3 scaled_observer_gravity_center = observer_gravity_center * body->GetRadius();
-	body->AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
+		Vector3 scaled_observer_gravity_center = observer_gravity_center * body->GetRadius();
+		body->AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
+	}
 }
 
 void sim::Observer::UpdateModels() const

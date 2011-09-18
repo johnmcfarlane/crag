@@ -55,6 +55,9 @@ int SDL_main(int /*argc*/, char * * argv)
 // Local Variables
 
 
+CONFIG_DEFINE (profile_mode, bool, true);
+
+
 namespace 
 {
 
@@ -64,7 +67,7 @@ namespace
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #else
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (video_full_screen, bool, true);
 #endif
 	
 	
@@ -247,7 +250,9 @@ namespace
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		if (! sys::Init(Vector2i(video_resolution_x, video_resolution_y), video_full_screen, "Crag", program_path))
+		Vector2i video_resolution(video_resolution_x, video_resolution_y);
+		bool full_screen = (! profile_mode) && video_full_screen;
+		if (! sys::Init(video_resolution, full_screen, "Crag", program_path))
 		{
 			return false;
 		}

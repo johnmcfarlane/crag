@@ -23,6 +23,7 @@
 
 // defined in Renderer.cpp
 CONFIG_DECLARE (multisample, bool);
+CONFIG_DECLARE (profile_mode, bool);
 
 
 namespace 
@@ -167,7 +168,8 @@ bool sys::InitGl()
 		return false;
 	}
 
-	if (SDL_GL_SetSwapInterval(1))
+	int swap_interval = profile_mode ? 0 : 1;
+	if (SDL_GL_SetSwapInterval(swap_interval))
 	{
 		ReportSdlError("Hardware doesn't support vsync");
 		return false;

@@ -36,6 +36,8 @@ using namespace gfx;
 
 
 CONFIG_DEFINE (multisample, bool, false);
+CONFIG_DECLARE (profile_mode, bool);
+
 
 namespace 
 {
@@ -85,6 +87,7 @@ namespace
 Renderer::Renderer()
 : last_frame_time(sys::GetTime())
 , quit_flag(false)
+, ready(true)
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
@@ -188,7 +191,10 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	ready = false;
+	if (! profile_mode)
+	{
+		ready = false;
+	}
 	
 	int frames_to_skip;
 	if (capture_enable)
