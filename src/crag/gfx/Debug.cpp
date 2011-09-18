@@ -37,6 +37,8 @@ using namespace gfx;
 
 namespace
 {
+	using namespace Debug;
+
 	// Messages of below this verbosity value should get printed.
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
