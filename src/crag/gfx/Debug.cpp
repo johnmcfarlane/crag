@@ -29,16 +29,14 @@
 #include "smp/Mutex.h"
 
 
+using namespace gfx;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Local definitions
 
 namespace
 {
-	
-	// TODO: Remove
-	using gfx::Debug::ColorPair;
-	using gfx::Debug::Vector3;
-
 	// Messages of below this verbosity value should get printed.
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
@@ -46,7 +44,7 @@ namespace
 	smp::Mutex mutex;
 	
 	// The font used to print the string to screen.
-	gfx::Font * font = nullptr;
+	Font * font = nullptr;
 	
 
 	// Stores a point of debug geometry. 
@@ -68,7 +66,7 @@ namespace
 			VerifyColor(colors._hidden_color);
 		}
 		
-		static void VerifyColor(gfx::Color4f const & col)
+		static void VerifyColor(Color4f const & col)
 		{
 			VerifyColorComp(col.r);
 			VerifyColorComp(col.g);
@@ -83,7 +81,7 @@ namespace
 		
 		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
-			gfx::Color4f const & color = hidden ? colors._hidden_color : colors._color;
+			Color4f const & color = hidden ? colors._hidden_color : colors._color;
 			gl::SetColor(color.r, color.g, color.b, color.a);
 			gl::Vertex3(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
 		}
@@ -190,23 +188,22 @@ namespace
 
 
 // Start things up.
-void gfx::Debug::Init()
+void Debug::Init()
 {
 	Assert(font == nullptr);
 
-	// TODO: Is this font legit content?
+	// Some font sources:
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
-	// Maybe this one's ok...
 	// http://www.ogre3d.org/wiki/index.php/Outlined_Fonts
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	font = new gfx::Font("font_bitmap.bmp", .5f);
+	font = new Font("font_bitmap.bmp", .5f);
 }
 
 
 // Close things down.
-void gfx::Debug::Deinit()
+void Debug::Deinit()
 {
 	Assert(font != nullptr);
 	delete font;
@@ -215,7 +212,7 @@ void gfx::Debug::Deinit()
 
 
 // Run any and all sanity checks.
-void gfx::Debug::Verify()
+void Debug::Verify()
 {
 	points.Verify();
 	lines.Verify();
@@ -224,7 +221,7 @@ void gfx::Debug::Verify()
 
 
 // Return a value indicating how much logging output gets printed to screen each frame.
-double gfx::Debug::GetVerbosity() 
+double Debug::GetVerbosity() 
 { 
 #if defined(NDEBUG)
 	return .25;
@@ -234,14 +231,14 @@ double gfx::Debug::GetVerbosity()
 }
 
 
-void gfx::Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
+void Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
 {
 	mutex.Lock();
 	points.AddPoint(a, colors);
 	mutex.Unlock();
 }
 
-void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
+void Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
 	mutex.Lock();
 	lines.AddPoint(a, colors_a);
@@ -249,7 +246,7 @@ void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const &
 	mutex.Unlock();
 }
 
-void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
+void Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
 	mutex.Lock();
 	tris.AddPoint(a, colors);
@@ -258,12 +255,12 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 	mutex.Unlock();
 }
 
-void gfx::Debug::AddBasis(Vector3 const & center, double scale)
+void Debug::AddBasis(Vector3 const & center, double scale)
 {
 	AddBasis(center, Matrix4::Identity(), scale);
 }
 
-void gfx::Debug::AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale)
+void Debug::AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale)
 {
 	using namespace axes;
 	
@@ -276,7 +273,7 @@ void gfx::Debug::AddBasis(Vector3 const & center, Matrix4 const & rotation, doub
 	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Yellow()));
 }
 
-void gfx::Debug::AddFrustum(gfx::Pov const & pov)
+void Debug::AddFrustum(Pov const & pov)
 {
 	Vector3 corners[2][2][2];
 	Vector3 eye;
@@ -343,10 +340,10 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 				indices[axis] = 1;
 				b = & corners[indices[0]][indices[1]][indices[2]];
 				
-				gfx::Color4f visible = gfx::Color4f::Black();
+				Color4f visible = Color4f::Black();
 				visible[axis] = 1;
 				
-				gfx::Color4f invisible = visible;
+				Color4f invisible = visible;
 				invisible.a = .2f;
 				
 				AddLine(* a, * b, ColorPair(visible, invisible));
@@ -366,7 +363,7 @@ void gfx::Debug::AddFrustum(gfx::Pov const & pov)
 	 }*/
 }
 
-void gfx::Debug::Draw(Vector3 const & camera_pos)
+void Debug::Draw(Vector3 const & camera_pos)
 {
 	mutex.Lock();
 	
@@ -398,7 +395,7 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 	mutex.Unlock();
 }
 
-void gfx::Debug::DrawText(char const * text, Vector2i const & position)
+void Debug::DrawText(char const * text, Vector2i const & position)
 {
 	if (! (* font))
 	{
