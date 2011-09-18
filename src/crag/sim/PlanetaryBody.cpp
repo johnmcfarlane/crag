@@ -32,7 +32,7 @@ namespace
 	// config constants
 	
 	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
-	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 20.f);
+	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 10.f);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	
 	// bounding sphere
 	shape.sphere.center = form::SimToScene(box.GetPosition(), origin);
-	shape.sphere.radius = form::Scalar(Length(dimensions) * 99.5);
+	shape.sphere.radius = form::Scalar(Length(dimensions));
 	
 	// points
 	int const num_corners = 8;
