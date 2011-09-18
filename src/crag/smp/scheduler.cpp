@@ -13,6 +13,7 @@
 
 #include "atomic.h"
 #include "Lock.h"
+#include "Semaphore.h"
 #include "SimpleMutex.h"
 #include "Thread.h"
 
@@ -44,7 +45,7 @@ namespace smp
 				
 			public:
 				// functions
-				Task(Job & job, int num_units, int priority, bool automatic, int * num_complete)
+				Task(Job & job, int num_units, int priority, bool automatic, Semaphore * num_complete)
 				: _job(job)
 				, _num_units(num_units)
 				, _next_unit(0)
@@ -68,7 +69,7 @@ namespace smp
 					
 					if (_num_complete != nullptr)
 					{
-						AtomicFetchAndAdd(* _num_complete, 1);
+						_num_complete->Increment();
 					}
 				}
 				
@@ -130,7 +131,7 @@ namespace smp
 				int _completed_units;
 				int _priority;
 				bool _automatic;
-				int * _num_complete;
+				Semaphore * _num_complete;
 				
 			public:
 				// type of the list in which these are stored
@@ -172,7 +173,7 @@ namespace smp
 				}
 				
 				// called from a thread requesting work
-				void Submit(Job & job, int num_units, int priority, bool automatic, int * num_complete)
+				void Submit(Job & job, int num_units, int priority, bool automatic, Semaphore * num_complete)
 				{
 					// create a task to represent the given job
 					// TODO: Anyway to avoid this dynamic allocation?
@@ -395,32 +396,28 @@ namespace smp
 			TaskManager & task_manager = singleton->GetTaskManager();
 
 			// contains a count of the jobs completed
-			int num_complete = 0;
+			Semaphore num_complete(0);
 
 			task_manager.Submit(job, num_units, priority, false, & num_complete);
 			
-			// While waiting for job to complete, do some of the work.
-			while (num_complete < 1)
-			{
-				task_manager.ExecuteUnit();
-			}
+			num_complete.Decrement();
 		}
 		
 		void Complete(Batch & batch, int priority)
 		{
 			TaskManager & task_manager = singleton->GetTaskManager();
 			
-			int num_jobs = 0, num_complete = 0;
+			int num_jobs = 0;
+			Semaphore num_complete(0);
 			
 			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ num_jobs, ++ i)
 			{
 				task_manager.Submit(* i, 1, priority, false, & num_complete);
 			}
 			
-			// While waiting for job to complete, do some of the work.
-			while (num_complete < num_jobs)
+			for (; num_jobs > 0; -- num_jobs)
 			{
-				task_manager.ExecuteUnit();
+				num_complete.Decrement();
 			}
 		}		
 #else
