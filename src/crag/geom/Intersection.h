@@ -57,10 +57,22 @@ template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> c
 	return DistanceToSurface<S>(a, b, c, p) < 0;
 }
 
+// Returns true iff plane, abc, contains point, p.
+template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
+{
+	return FastDistanceToSurface<S>(a, b, c, p) < 0;
+}
+
 // Returns true iff plane, abc, contains sphere, s.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
+}
+
+// Returns true iff plane, abc, contains sphere, s.
+template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
+{
+	return FastDistanceToSurface<S>(a, b, c, s.center) < s.radius;
 }
 
 // Returns true if a is in between b and c.
