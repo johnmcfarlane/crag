@@ -51,6 +51,21 @@ physics::Engine::~Engine()
 	dCloseODE();
 }
 
+dBodyID physics::Engine::CreateBody() const
+{
+	return dBodyCreate(world);
+}
+
+dGeomID physics::Engine::CreateBox(Vector3 const & dimensions) const
+{
+	return dCreateBox(space, dimensions.x, dimensions.y, dimensions.z);
+}
+
+dGeomID physics::Engine::CreateSphere(Scalar radius) const
+{
+	return dCreateSphere(space, radius);
+}
+
 void physics::Engine::Tick(double delta_time)
 {
 	if (collisions)

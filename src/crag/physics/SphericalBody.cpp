@@ -19,7 +19,7 @@
 // SphericalBody
 
 physics::SphericalBody::SphericalBody(Engine & engine, bool movable, Scalar radius)
-: Body(engine, dCreateSphere(engine.space, radius), movable)
+: Body(engine, engine.CreateSphere(radius), movable)
 {
 }
 

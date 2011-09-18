@@ -27,11 +27,6 @@ namespace physics
 	// The physics singleton.
 	class Engine
 	{
-		// TODO: Messy
-		friend class Body;
-		friend class BoxBody;
-		friend class SphericalBody;
-		
 		// types
 		typedef smp::vector<dContact> ContactVector;
 	public:
@@ -40,6 +35,10 @@ namespace physics
 		// functions
 		Engine();
 		~Engine();
+		
+		dBodyID CreateBody() const;
+		dGeomID CreateBox(Vector3 const & dimensions) const;
+		dGeomID CreateSphere(Scalar radius) const;
 		
 		void Tick(double delta_time);
 		
@@ -74,9 +73,7 @@ namespace physics
 		// Called once individual points of contact have been determined.
 		void OnContact(dContact const & contact);
 		
-	private:
-		dBodyID CreateBody();
-		
+	private:		
 		// variables
 		dWorldID world;
 		dSpaceID space;

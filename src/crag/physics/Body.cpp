@@ -20,7 +20,7 @@ physics::Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 	// body_id
 	if (movable)
 	{
-		body_id = dBodyCreate(engine.world);
+		body_id = engine.CreateBody();
 		
 		dBodySetData(body_id, this);
 		dBodySetGravityMode(body_id, false);

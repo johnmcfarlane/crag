@@ -19,7 +19,7 @@
 // BoxBody
 
 physics::BoxBody::BoxBody(Engine & engine, bool movable, Vector3 const & dimensions)
-: Body(engine, dCreateBox(engine.space, dimensions.x, dimensions.y, dimensions.z), movable)
+: Body(engine, engine.CreateBox(dimensions), movable)
 {
 }
 
