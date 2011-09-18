@@ -1,21 +1,11 @@
-/*
- *  Vector4.h
- *  Crag
- *
- *  Created by John on 1/12/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
-
-/*
- *  Vector4.h
- *  Crag
- *
- *  Created by john on 5/14/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *
- */
+//
+//  Vector4.h
+//  Crag
+//
+//  Created by john on 5/14/09.
+//  Copyright 2009 - 2011 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 
