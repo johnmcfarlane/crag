@@ -102,7 +102,7 @@ template<typename V> bool IsInBetween(V const & a, V const & b, V const & c)
 template<typename S, int N> bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
 	S center_distance_squared = LengthSquared(a.center - b.center);
-	return center_distance_squared <= Square(a.radius + b.radius);
+	return center_distance_squared < Square(a.radius + b.radius);
 }
 
 // Returns true iff sphere and ray intersect with one another.
