@@ -42,25 +42,28 @@ def main_loop():
 	observer_tasklet = stackless.tasklet(o.run)()
 	
 	# Main loop
-	next_drop = crag.time() + 1
+	drop_period = .5
+	next_drop = crag.time() + drop_period
 	shapes = []
 	ball = True
 	while stackless.runcount > 1:
 		now = crag.time()
 		if now > next_drop and len(shapes) < 100:
-			next_drop = now + 1
+			x = random.random() - .5
+			y = 10000580
+			z = -4.5 + random.random()
 			if ball:
-				shapes.append(crag.Ball(random.random() - .5, 10000580, -4.5 + random.random(), math.exp(- random.random() * 2)))
+				r = math.exp(- random.random() * 2)
+				shapes.append(crag.Ball(x, y, z, r))
 			else:
-				shapes.append(crag.Box(random.random() - .5, 
-					10000580, 
-					-9.0 + random.random(), 
-					math.exp(- random.random() * 2), 
-					math.exp(- random.random() * 2), 
-					math.exp(- random.random() * 2)))
+				w = math.exp(- random.random() * 2)
+				l = math.exp(- random.random() * 2)
+				h = math.exp(- random.random() * 2)
+				shapes.append(crag.Box(x, y, z, w, l, h))
 			ball = not ball
-			if len(shapes) > 25:
+			if len(shapes) > 50:
 				shapes.pop(0)
+			next_drop = now + drop_period
 		stackless.schedule()
 
 main_loop()
