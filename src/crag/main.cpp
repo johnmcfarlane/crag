@@ -55,7 +55,7 @@ int SDL_main(int /*argc*/, char * * argv)
 // Local Variables
 
 
-CONFIG_DEFINE (profile_mode, bool, true);
+CONFIG_DEFINE (profile_mode, bool, false);
 
 
 namespace 
