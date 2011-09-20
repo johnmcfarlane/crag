@@ -22,9 +22,20 @@
 #include <algorithm>
 
 
-CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
+// used in CalculateNodeScoreFunctor.cpp
 CONFIG_DEFINE (camera_near, float, .25f);
-CONFIG_DEFINE (camera_far, float, 10);
+
+
+namespace
+{
+	CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
+	CONFIG_DEFINE (camera_far, float, 10);
+
+	gfx::Layer::type operator++(gfx::Layer::type & layer_index)
+	{
+		return layer_index = gfx::Layer::type(int(layer_index) + 1);
+	}
+}
 
 
 gfx::Scene::Scene()
@@ -93,6 +104,11 @@ void gfx::Scene::RemoveObject(Object & object)
 			objects.erase(& object);
 		}
 	}
+}
+
+gfx::ObjectSet & gfx::Scene::GetObjects(Layer::type layer)
+{
+	return _objects[layer];
 }
 
 gfx::ObjectSet const & gfx::Scene::GetObjects(Layer::type layer) const

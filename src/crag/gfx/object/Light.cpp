@@ -73,9 +73,9 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
 	
 	float l[4] = {
-		_position.x,
-		_position.y,
-		_position.z,
+		float(_position.x),
+		float(_position.y),
+		float(_position.z),
 		1	// or is it this that makes it positional?
 	};
 	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));

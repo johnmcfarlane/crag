@@ -34,5 +34,5 @@ namespace gfx
 	typedef std::set<Object *> ObjectSet;
 	
 	// Passed to gfx:Renderer; specialized for classes derived from gfx::Object;
-	template <typename OBJECT> struct UpdateObjectMessage;
+	template <typename OBJECT> class UpdateObjectMessage;
 }

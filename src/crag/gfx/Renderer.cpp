@@ -361,7 +361,7 @@ void Renderer::ToggleWireframe()
 
 void Renderer::PreRender()
 {
-	ObjectSet const & objects = scene->GetObjects(Layer::pre_render);
+	ObjectSet & objects = scene->GetObjects(Layer::pre_render);
 	for (ObjectSet::iterator i = objects.begin(); i != objects.end(); ++ i)
 	{
 		Object & object = ref(* i);
@@ -407,7 +407,7 @@ void Renderer::Render()
 	target_frame_time *= target_work_proportion;
 	
 	form::RegulatorFrameMessage message;
-	message._fitness = target_frame_time / frame_time;
+	message._fitness = float(target_frame_time / frame_time);
 	form::FormationManager::Daemon::SendMessage(message);
 }
 

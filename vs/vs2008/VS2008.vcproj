@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\src\crag;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PROFILE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -103,6 +103,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -530,15 +531,15 @@
 				Name="gfx"
 				>
 				<File
-					RelativePath="..\..\src\crag\gfx\Ball.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Ball.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\crag\gfx\Color.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\gfx\Cuboid.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\gfx\Cuboid.h"
 					>
 				</File>
 				<File
@@ -594,22 +595,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\gfx\Light.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Light.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Object.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Object.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\crag\gfx\Pov.cpp"
 					>
 				</File>
@@ -650,14 +635,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\gfx\Skybox.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Skybox.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\crag\gfx\Sphere.cpp"
 					>
 				</File>
@@ -665,6 +642,82 @@
 					RelativePath="..\..\src\crag\gfx\Sphere.h"
 					>
 				</File>
+				<Filter
+					Name="object"
+					>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Ball.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Ball"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Ball.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Box.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Box.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\FormationSet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\FormationSet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Light.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Light.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Object.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Object.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Planet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Planet"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Planet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Skybox.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\gfx\object\Skybox.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="glpp"
@@ -738,6 +791,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\crag\physics\BoxBody.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\physics\BoxBody.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\crag\physics\defs.h"
 					>
 				</File>
@@ -747,6 +808,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\physics\Engine.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\physics\IntersectionFunctor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\physics\IntersectionFunctor.h"
 					>
 				</File>
 				<File
@@ -914,11 +983,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\ForEach.cpp"
+					RelativePath="..\..\src\crag\smp\Daemon.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\ForEach.h"
+					RelativePath="..\..\src\crag\smp\for_each.h"
 					>
 				</File>
 				<File
@@ -927,6 +996,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\smp\Message.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\smp\MessageQueue.h"
 					>
 				</File>
 				<File
@@ -943,6 +1016,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\smp\ring_buffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\smp\scheduler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\smp\scheduler.h"
 					>
 				</File>
 				<File

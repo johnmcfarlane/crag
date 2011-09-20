@@ -114,9 +114,9 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 		corner.z = ((corner_index & 4) ? dimensions.z : - dimensions.z) * .5;
 		corner.w = 0;
 		sim::Vector4 rotated_corner = rotation * corner;
-		shape.points[corner_index].x = rotated_corner.x + shape.sphere.center.x;
-		shape.points[corner_index].y = rotated_corner.y + shape.sphere.center.y;
-		shape.points[corner_index].z = rotated_corner.z + shape.sphere.center.z;
+		shape.points[corner_index].x = float(rotated_corner.x + shape.sphere.center.x);
+		shape.points[corner_index].y = float(rotated_corner.y + shape.sphere.center.y);
+		shape.points[corner_index].z = float(rotated_corner.z + shape.sphere.center.z);
 	}
 	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.

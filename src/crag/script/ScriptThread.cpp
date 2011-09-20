@@ -203,7 +203,10 @@ void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 	_message_queue = & message_queue;
 	
 #if defined(WIN32)
-	RedirectPythonOutput("python.txt");
+	if (! RedirectPythonOutput())
+	{
+		std::cerr << "Failed to redirect python output" << std::endl;
+	}
 #endif
 	
 	PyRun_SimpleFileEx(_source_file, _source_filename, true);
@@ -234,20 +237,27 @@ PyObject * script::ScriptThread::PollEvent()
 	return event_object;
 }
 
-bool script::ScriptThread::RedirectPythonOutput(char const * filename)
+bool script::ScriptThread::RedirectPythonOutput()
 {
 	PyObject* sys = PyImport_ImportModule("sys");
 	PyObject* io = PyImport_ImportModule("io");
-	PyObject* pystdout = PyObject_CallMethod(io, const_cast<char *>("open"), const_cast<char *>("ss"), "python.txt", "wt");
-	
+
+	PyObject* pystdout = PyObject_CallMethod(io, "open", "ss", "pout.txt", "wt");
 	if (-1 == PyObject_SetAttrString(sys, "stdout", pystdout)) 
 	{
 		return false;
 	}
-	
-	Py_DECREF(sys);
-	Py_DECREF(io);
 	Py_DECREF(pystdout);
+
+	PyObject* pystderr = PyObject_CallMethod(io, "open", "ss", "perr.txt", "wt");
+	if (-1 == PyObject_SetAttrString(sys, "stderr", pystderr)) 
+	{
+		return false;
+	}
+	Py_DECREF(pystderr);
+
+	Py_DECREF(io);
+	Py_DECREF(sys);
 	
 	return true;
 }

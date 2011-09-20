@@ -28,17 +28,17 @@ gfx::Cuboid::Cuboid()
 			
 			Vertex * polygon_verts = verts[axis][pole];
 			Vector3 normal = Vector3::Zero();
-			normal[axis] = pole_sign;
+			normal[axis] = float(pole_sign);
 			
 			Vertex * polygon_vert = polygon_verts;
 			Vector3 position;
 			position[axis] = .5f * pole_sign;
 			for (int p = 0; p < 2; ++ p)
 			{
-				position[index_1] = (p) ? -.5 : .5;
+				position[index_1] = (p) ? -.5f : .5f;
 				for (int q = 0; q < 2; ++ polygon_vert, ++ q)
 				{
-					position[index_2] = (q) ? -.5 : .5;
+					position[index_2] = (q) ? -.5f : .5f;
 					polygon_vert->pos = position;
 					polygon_vert->norm = normal;
 				}

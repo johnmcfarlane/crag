@@ -69,9 +69,14 @@ namespace form
 	
 	template <typename SHAPE, typename FUNCTOR> class Traveler;
 	
-	// Get the details of the actual collision between a face and the sphere.
-	template <typename SHAPE, typename FUNCTOR>
-	void TestCollisions(Traveler<SHAPE, FUNCTOR> const & traveler,
+	// Get the details of the actual collision between a face and the shape.
+	template <typename FUNCTOR>
+	void TestCollisions(Traveler<Sphere3, FUNCTOR> const & traveler,
+						Pyramid const & pyramid, 
+						Vector3 const & face_norm);
+
+	template <typename FUNCTOR>
+	void TestCollisions(Traveler<PointCloud, FUNCTOR> const & traveler,
 						Pyramid const & pyramid, 
 						Vector3 const & face_norm);
 	
@@ -151,7 +156,7 @@ namespace form
 	
 	// Get the details of the actual collision between a face and the sphere.
 	template <typename FUNCTOR>
-	inline void TestCollisions<Sphere, FUNCTOR>(Traveler<Sphere3, FUNCTOR> const & traveler,
+	inline void TestCollisions(Traveler<Sphere3, FUNCTOR> const & traveler,
 												Pyramid const & pyramid, 
 												Vector3 const & face_norm) 
 	{
@@ -214,9 +219,9 @@ namespace form
 	
 	// Get the details of the actual collision between a face and a point cloud.
 	template <typename FUNCTOR>
-	inline void TestCollisions<PointCloud, FUNCTOR>(Traveler<PointCloud, FUNCTOR> const & traveler,
-													Pyramid const & pyramid, 
-													Vector3 const & face_norm) 
+	inline void TestCollisions(Traveler<PointCloud, FUNCTOR> const & traveler,
+								Pyramid const & pyramid, 
+								Vector3 const & face_norm) 
 	{
 		PointCloud const & shape = traveler._shape;
 		

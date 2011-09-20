@@ -34,6 +34,8 @@ namespace gfx
 		
 		void AddObject(Object & object);
 		void RemoveObject(Object & object);
+		
+		ObjectSet & GetObjects(Layer::type layer);
 		ObjectSet const & GetObjects(Layer::type layer) const;
 		
 		void SetResolution(Vector2i const & r);

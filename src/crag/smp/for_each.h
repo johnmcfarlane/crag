@@ -54,7 +54,7 @@ namespace smp
 	};
 	
 	template <typename ITERATOR, typename FUNCTOR, size_t UNROLL_PITCH> 
-	void for_each(ITERATOR first, ITERATOR last, FUNCTOR & functor, size_t unit_size, int priority)
+	void for_each(ITERATOR first, ITERATOR last, FUNCTOR functor, size_t unit_size, int priority)
 	{
 		ChunkedJob<ITERATOR, FUNCTOR, UNROLL_PITCH> chunk_functor(first, last, functor, unit_size);
 

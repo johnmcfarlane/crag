@@ -74,7 +74,13 @@ namespace form
 		
 	public:
 		// list type
-		typedef core::intrusive::list<Mesh, & Mesh::_hook> list_type;
+//		typedef core::intrusive::list<Mesh, & Mesh::_hook> list_type;
+		template <typename CLASS> 
+		struct ListTypeDefinitionHelper
+		{
+			typedef core::intrusive::list<CLASS, & CLASS::_hook> list_type;
+		};
+		typedef ListTypeDefinitionHelper<Mesh>::list_type list_type;
 	};
 
 

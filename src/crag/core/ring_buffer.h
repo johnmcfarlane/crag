@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "atomic.h"
-
 #include <algorithm>
 
 
