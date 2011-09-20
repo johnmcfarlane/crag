@@ -44,9 +44,9 @@ IntersectionFunctor::IntersectionFunctor(dGeomID object_geom, dGeomID planet_geo
 
 void IntersectionFunctor::operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth)
 {
-	_contact.geom.pos[0] = pos.x;//form::SceneToSim(sim::Scalar(pos.x), _origin.x);
-	_contact.geom.pos[1] = pos.y;//form::SceneToSim(sim::Scalar(pos.y), _origin.y);
-	_contact.geom.pos[2] = pos.z;//form::SceneToSim(sim::Scalar(pos.z), _origin.z);
+	_contact.geom.pos[0] = pos.x;
+	_contact.geom.pos[1] = pos.y;
+	_contact.geom.pos[2] = pos.z;
 	_contact.geom.normal[0] = normal.x;
 	_contact.geom.normal[1] = normal.y;
 	_contact.geom.normal[2] = normal.z;
