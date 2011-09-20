@@ -213,7 +213,7 @@ void physics::Engine::OnContact(dContact const & contact)
 {
 	// geometry sanity tests
 	Assert(contact.geom.g1 != contact.geom.g2);
-	Assert(contact.geom.depth > 0);
+	Assert(contact.geom.depth >= 0);
 	
 	_contacts.push_back(contact);
 }
