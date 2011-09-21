@@ -53,13 +53,13 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	Pov const & pov = scene.GetPov();
 	
 	// Set projection matrix within relatively tight bounds.
-	Frustum skybox_frustum = pov.frustum;
+	Frustum skybox_frustum = pov.GetFrustum();
 	skybox_frustum.near_z = .1f;
 	skybox_frustum.far_z = 10.f;
 	skybox_frustum.SetProjectionMatrix();
 	
-	// Set matrix (minus the translation).
-	pov.SetModelView(pov.pos);
+	// Set model view matrix (with zero translation).
+	pov.SetModelView(pov.GetPosition());
 	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));

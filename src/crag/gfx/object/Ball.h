@@ -36,7 +36,7 @@ namespace gfx
 		virtual bool IsInLayer(Layer::type) const;
 		
 	private:
-		unsigned CalculateLod(Pov const & pov) const;		
+		unsigned CalculateLod(Vector const & camera_position) const;		
 		
 		// variables
 		Vector _position;

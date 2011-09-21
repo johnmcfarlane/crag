@@ -42,9 +42,11 @@ gfx::Scene::Scene()
 : _cuboid(* new Cuboid)
 , _sphere(* new Sphere)
 {
-	pov.frustum.fov = static_cast<double>(camera_fov);
-	pov.frustum.near_z = static_cast<double>(camera_near);
-	pov.frustum.far_z = static_cast<double>(camera_far);
+	Frustum & frustum = pov.GetFrustum();
+
+	frustum.fov = static_cast<double>(camera_fov);
+	frustum.near_z = static_cast<double>(camera_near);
+	frustum.far_z = static_cast<double>(camera_far);
 }
 
 gfx::Scene::~Scene()
@@ -57,9 +59,11 @@ gfx::Scene::~Scene()
 	}
 #endif
 	
-	camera_fov = static_cast<float>(pov.frustum.fov);
-	camera_near = static_cast<float>(pov.frustum.near_z);
-	camera_far = static_cast<float>(pov.frustum.far_z);
+	Frustum const & frustum = pov.GetFrustum();
+	
+	camera_fov = static_cast<float>(frustum.fov);
+	camera_near = static_cast<float>(frustum.near_z);
+	camera_far = static_cast<float>(frustum.far_z);
 	
 	delete & _sphere;
 	delete & _cuboid;
@@ -118,13 +122,12 @@ gfx::ObjectSet const & gfx::Scene::GetObjects(Layer::type layer) const
 
 void gfx::Scene::SetResolution(Vector2i const & r)
 {
-	pov.frustum.resolution = r;
+	pov.GetFrustum().resolution = r;
 }
 
-void gfx::Scene::SetCamera(sim::Vector3 const & pos, sim::Matrix4 const & rot)
+void gfx::Scene::SetCameraTransformation(sim::Matrix4 const & transformation)
 {
-	pov.pos = pos;
-	pov.rot = rot;
+	pov.SetTransformation(transformation);
 }
 
 gfx::Pov & gfx::Scene::GetPov()

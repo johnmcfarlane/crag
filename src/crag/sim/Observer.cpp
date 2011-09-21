@@ -224,7 +224,7 @@ void sim::Observer::UpdateModels() const
 
 	// Give renderer the new camera position.
 	{
-		SetCameraMessage message = { position, rotation };
+		SetCameraMessage message = { Transformation(position, rotation) };
 		gfx::Renderer::Daemon::SendMessage(message);
 	}
 

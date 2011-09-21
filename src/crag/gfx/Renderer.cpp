@@ -65,20 +65,22 @@ namespace
 	STAT (frame_time, double, .18f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
-	STAT_DEFAULT (rot, sim::Matrix4, .9f, sim::Matrix4::Identity());
 	
+	// Given the scene (including frustum), creates an adjusted frustum
+	// with suitable near/far z values and applies it to the projection matrix.
 	void SetForegroundFrustum(Scene const & scene, bool wireframe)
 	{
 		Pov const & pov = scene.GetPov();
-		Frustum frustum = pov.frustum;
-		frustum.near_z = std::numeric_limits<float>::max();
+		Frustum const & pov_frustum = pov.GetFrustum();
+		Frustum adjusted_frustum = pov_frustum;
+		adjusted_frustum.near_z = std::numeric_limits<float>::max();
 
-		sim::Ray3 camera_ray = axes::GetCameraRay(pov.pos, pov.rot);
+		sim::Ray3 camera_ray = axes::GetCameraRay(pov.GetTransformation());
 		
-		scene.GetRenderRange(camera_ray, frustum.near_z, frustum.far_z, wireframe);
+		scene.GetRenderRange(camera_ray, adjusted_frustum.near_z, adjusted_frustum.far_z, wireframe);
 		
-		frustum.near_z = Max(frustum.near_z * .5, pov.frustum.near_z);
-		frustum.SetProjectionMatrix();
+		adjusted_frustum.near_z = Max(adjusted_frustum.near_z * .5, pov_frustum.near_z);
+		adjusted_frustum.SetProjectionMatrix();
 	}
 	
 }	// namespace
@@ -166,7 +168,7 @@ void Renderer::OnMessage(ToggleCaptureMessage const & message)
 // TODO: Make camera an object so that positional messages are the same as for other objects.
 void Renderer::OnMessage(sim::SetCameraMessage const & message)
 {
-	scene->SetCamera(message.projection.pos, message.projection.rot);
+	scene->SetCameraTransformation(message.transformation);
 	
 	// pass this on to the formation manager to update the node scores
 	form::FormationManager::Daemon::SendMessage(message);
@@ -649,12 +651,12 @@ void Renderer::DebugDraw() const
 	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
-	pov.SetModelView(pov.pos);
-	Debug::Draw(pov.pos);
+	sim::Vector3 pos = pov.GetPosition();
+	pov.SetModelView(pos);
+	Debug::Draw(pos);
 	
 #if defined (GATHER_STATS)
-	STAT_SET (pos, pov.pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
-	STAT_SET (rot, pov.rot);	// std::streamsize previous_precision = out.precision(2); ...; out.precision(previous_precision);
+	STAT_SET (pos, pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
 	
 	// The string into which is written Debug text.
 	std::stringstream out_stream;

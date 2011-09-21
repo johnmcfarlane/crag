@@ -114,7 +114,7 @@ void form::FormationManager::OnMessage(MeshMessage const & message)
 
 void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
 {
-	SetCameraPos(message.projection);
+	SetCamera(message.transformation);
 }
 
 void form::FormationManager::OnMessage(RegulatorResetMessage const & message)
@@ -237,9 +237,9 @@ void form::FormationManager::ToggleFlatShaded()
 	flat_shaded_flag = ! flat_shaded_flag;
 }
 
-void form::FormationManager::SetCameraPos(sim::CameraProjection const & projection)
+void form::FormationManager::SetCamera(sim::Matrix4 const & transformation)
 {
-	_camera_pos = axes::GetCameraRay(projection.pos, projection.rot);
+	_camera_pos = axes::GetCameraRay(transformation);
 }
 
 // The tick function of the scene thread. 

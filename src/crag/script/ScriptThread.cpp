@@ -66,16 +66,18 @@ PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 PyObject * set_camera(PyObject * /*self*/, PyObject * args)
 {
 	typedef sim::Vector3 Vector;
+
 	// Get the coordinates.
-	sim::SetCameraMessage message;
+	sim::Vector3 position;
 	if (! PyArg_ParseTuple(args, "ddd", 
-						   & message.projection.pos.x, & message.projection.pos.y, & message.projection.pos.z))
+						   & position.x, & position.y, & position.z))
 	{
 		std::cout << "set_camera error: invalid inputs. Must be x, y, z numbers." << std::endl;
 	}
 	else
 	{
-		message.projection.rot = sim::Matrix4::Identity();		
+		sim::SetCameraMessage message;
+		message.transformation = TranslationMatrix(position);
 		gfx::Renderer::Daemon::SendMessage(message);
 	}
 	

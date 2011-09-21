@@ -50,7 +50,7 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 	gfx::Pov const & pov = scene.GetPov();
 	
 	// Calculate the LoD.
-	unsigned lod = CalculateLod(pov);
+	unsigned lod = CalculateLod(pov.GetPosition());
 	
 	// Set the matrix.
 	pov.SetModelView(_position, _rotation);
@@ -68,9 +68,9 @@ bool Ball::IsInLayer(Layer::type layer) const
 	return layer == Layer::foreground; 
 }
 
-unsigned Ball::CalculateLod(gfx::Pov const & pov) const
+unsigned Ball::CalculateLod(Vector const & camera_position) const
 {
-	Vector relative_position = pov.pos - _position;
+	Vector relative_position = camera_position - _position;
 	
 	Scalar mn1 = 1500;
 	Scalar inv_distance = InvSqrt(LengthSq(relative_position));

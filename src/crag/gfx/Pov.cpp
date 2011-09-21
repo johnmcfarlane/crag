@@ -53,11 +53,37 @@ void Frustum::SetProjectionMatrix() const
 // gfx::Pov member definitions
 
 Pov::Pov()
-: pos(Vector::Zero())
-, rot(Matrix::Identity())
+: _transformation(Matrix::Identity())
 {
 }
 
+Frustum & Pov::GetFrustum()
+{
+	return _frustum;
+}
+
+Frustum const & Pov::GetFrustum() const
+{
+	return _frustum;
+}
+
+void Pov::SetTransformation(sim::Matrix4 const & transformation)
+{
+	_transformation = transformation;
+}
+
+Pov::Matrix const & Pov::GetTransformation() const
+{
+	return _transformation;
+}
+
+Pov::Vector Pov::GetPosition() const
+{
+	return TranslationVector(_transformation);
+}
+
+#if defined(NOT_DEPRECATED)
+// handy for shadows
 void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up)
 {
 	pos = eye;
@@ -74,27 +100,23 @@ void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector c
 	frustum.near_z = distance - sphere.radius;
 	frustum.far_z = distance + sphere.radius;
 }
-
-Pov::Matrix Pov::GetCameraMatrix() const
-{
-	// Put the position and rotation together into one, simulation-space camera matrix.
-	// (For the skybox, we don't want translation.) 
-	return TranslationMatrix(pos) * rot;
-}
+#endif
 
 void Pov::SetModelView(Vector const & model_position) const
 {
-	SetModelView(model_position, Matrix::Identity());
+	SetModelView(TranslationMatrix(model_position));
 }
 
 void Pov::SetModelView(Vector const & model_position, Matrix const & model_rotation) const
 {
-	Matrix camera_matrix = GetCameraMatrix();
-	Matrix camera_transform = Inverse(camera_matrix);
+	SetModelView(Transformation(model_position, model_rotation));
+}
+
+void Pov::SetModelView(Matrix const & model_transformation) const
+{
+	Matrix camera_transform = Inverse(_transformation);
 	
-	Matrix model_matrix = TranslationMatrix(model_position) * model_rotation;
-	
-	Matrix model_view_matrix = camera_transform * model_matrix;
+	Matrix model_view_matrix = camera_transform * model_transformation;
 	
 	Matrix gl_model_view_matrix = Transpose(model_view_matrix) * axes::SimToOpenGl<sim::Scalar>();	
 	

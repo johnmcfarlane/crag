@@ -38,15 +38,23 @@ namespace gfx
 		// functions
 		Pov();
 		
+		Frustum & GetFrustum();
+		Frustum const & GetFrustum() const;
+
+		void SetTransformation(sim::Matrix4 const & transformation);
+		Matrix const & GetTransformation() const;
+		
+		Vector GetPosition() const;
+	
 		void LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up);
-		Matrix GetCameraMatrix() const;
 		
 		void SetModelView(Vector const & model_position) const;
 		void SetModelView(Vector const & model_position, Matrix const & model_rotation) const;
+		void SetModelView(Matrix const & model_transformation) const;
 		
+	private:
 		// variables
-		Frustum frustum;
-		Vector pos;
-		Matrix rot;
+		Frustum _frustum;
+		Matrix _transformation;
 	};
 }

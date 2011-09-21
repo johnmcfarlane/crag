@@ -72,7 +72,7 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 	GLPP_CALL(glLightfv(light_id, GL_LINEAR_ATTENUATION, & attenuation_b));
 	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
 	
-	Vector pos = _position - scene.GetPov().pos;
+	Vector pos = _position - scene.GetPov().GetPosition();
 	float l[4] = {
 		float(pos.x),
 		float(pos.y),

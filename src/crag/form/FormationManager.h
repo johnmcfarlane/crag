@@ -138,7 +138,7 @@ namespace form
 		void ToggleFlatShaded();
 		
 	private:
-		void SetCameraPos(sim::CameraProjection const & projection);
+		void SetCamera(sim::Matrix4 const & transformation);
 		
 		void Tick();
 		void TickActiveScene();

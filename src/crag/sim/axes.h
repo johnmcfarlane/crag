@@ -11,6 +11,7 @@
 #pragma once
 
 #include "geom/Matrix4.h"
+#include "geom/MatrixOps.h"
 #include "geom/Ray.h"
 
 
@@ -55,9 +56,9 @@ namespace axes
 	}
 	
 	// Converts position/matrix combo to a Ray.
-	template<typename S> Ray<S, 3> GetCameraRay(Vector<S, 3> const & pos, Matrix4<S> const & dir)
+	template<typename S> Ray<S, 3> GetCameraRay(Matrix4<S> const & transformation)
 	{
-		return Ray<S, 3>(pos, GetAxis(dir, FORWARD));
+		return Ray<S, 3>(TranslationVector(transformation), GetAxis(transformation, FORWARD));
 	}
 	
 }

@@ -41,15 +41,8 @@ namespace sim
 	typedef ::Sphere<Scalar, 3> Sphere3;
 	typedef ::Matrix4<Scalar> Matrix4;
 	
-	// TODO: Consolidate these into a single matrix.
-	struct CameraProjection
-	{
-		Vector3 pos;
-		Matrix4 rot;
-	};
-	
 	struct SetCameraMessage
 	{
-		CameraProjection projection;
+		Matrix4 transformation;
 	};
 }

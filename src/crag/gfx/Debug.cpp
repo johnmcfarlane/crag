@@ -284,16 +284,18 @@ void Debug::AddFrustum(Pov const & pov)
 		Vector3 extent_factors[2];
 		
 		{
-			double aspect = static_cast<float>(pov.frustum.resolution.x) / pov.frustum.resolution.y;
-			double y_factor = static_cast<float>(Sin(pov.frustum.fov * .5));
+			Frustum const & frustum = pov.GetFrustum();
+			
+			double aspect = static_cast<float>(frustum.resolution.x) / frustum.resolution.y;
+			double y_factor = static_cast<float>(Sin(frustum.fov * .5));
 			double x_factor = y_factor * aspect;
 			
-			extent_factors[0] = Vector3(- x_factor, - y_factor, static_cast<double>(pov.frustum.near_z));
-			extent_factors[1] = Vector3(x_factor, y_factor, static_cast<double>(pov.frustum.far_z));
+			extent_factors[0] = Vector3(- x_factor, - y_factor, static_cast<double>(frustum.near_z));
+			extent_factors[1] = Vector3(x_factor, y_factor, static_cast<double>(frustum.far_z));
 		}
 		
 		{
-			Matrix4 m = pov.GetCameraMatrix();
+			Matrix4 m = pov.GetTransformation();
 			
 			for (int z_index = 0; z_index < 2; ++ z_index) {
 				for (int y_index = 0; y_index < 2; ++ y_index) {
@@ -302,7 +304,7 @@ void Debug::AddFrustum(Pov const & pov)
 									extent_factors[z_index].z,
 									extent_factors[y_index].y * extent_factors[z_index].z, 
 									1.);
-						//p.z -= pov.frustum.near_z;
+						//p.z -= frustum.near_z;
 						
 						Vector3 & corner = corners[z_index][y_index][x_index];
 						Vector4 mult = m * Vector4(p.x, p.y, p.z, p.w);
@@ -354,7 +356,7 @@ void Debug::AddFrustum(Pov const & pov)
 	}
 	
 	// pyramid
-	/*Vector3f center = static_cast< Vector3<float> >(Vector4f(0, 0, - pov.frustum.near_z, 0) * m);
+	/*Vector3f center = static_cast< Vector3<float> >(Vector4f(0, 0, - frustum.near_z, 0) * m);
 	 for (int p = 0; p < 2; ++ p) {
 	 for (int q = 0; q < 2; ++ q) {
 	 Vector3 const & a = corners[0][q][p];
