@@ -73,6 +73,8 @@ form::NodeBuffer::NodeBuffer()
 , point_buffer(max_num_verts)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
 {
+	ZeroArray(nodes, max_num_nodes);
+
 	InitQuaterna(quaterna_end);
 
 	VerifyObject(* this);
