@@ -301,7 +301,7 @@ namespace smp
 					// Create a thread for each CPU (except one).
 					// TODO: once non-blocking tasks are used, re-add the extra thread and
 					// num_complete should be a semaphore and this thread should idle.
-					int num_threads = GetNumCpus() - 1;
+					int num_threads = GetNumCpus();
 					_threads = new Thread [num_threads];
 					
 					// Launch them all.
