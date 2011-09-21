@@ -373,10 +373,14 @@ void form::FormationManager::EndReset()
 	
 	is_in_reset_mode = false;
 	
-	LockTree();
+	Scene const & scene = GetVisibleScene();
+	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
+	node_buffer.LockTree();
+
 	scenes.flip();
-	UnlockTree();
-	
+
+	node_buffer.UnlockTree();
+
 	VerifyObject(* this);
 }
 
