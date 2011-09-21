@@ -117,8 +117,11 @@ namespace
 					}
 						
 					case SDLK_c:
-						gfx::Renderer::Daemon::Ref().ToggleCulling();
+					{
+						gfx::ToggleCullingMessage message;
+						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
+					}
 						
 					case SDLK_f:
 						form::FormationManager::Daemon::Ref().ToggleFlatShaded();
@@ -136,8 +139,11 @@ namespace
 						return true;
 						
 					case SDLK_l:
-						gfx::Renderer::Daemon::Ref().ToggleLighting();
+					{
+						gfx::ToggleLightingMessage message;
+						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
+					}
 						
 					case SDLK_o:
 					{
@@ -147,8 +153,11 @@ namespace
 					}
 						
 					case SDLK_p:
-						gfx::Renderer::Daemon::Ref().ToggleWireframe();
+					{
+						gfx::ToggleWireframeMessage message;
+						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
+					}
 						
 					default:
 						break;

@@ -142,6 +142,22 @@ void Renderer::OnMessage(ResizeMessage const & resize_message)
 	form::FormationManager::Daemon::SendMessage(reset_message);			
 }
 
+
+void Renderer::OnMessage(ToggleCullingMessage const & message)
+{
+	culling = ! culling;
+}
+
+void Renderer::OnMessage(ToggleLightingMessage const & message)
+{
+	lighting = ! lighting;
+}
+
+void Renderer::OnMessage(ToggleWireframeMessage const & message)
+{
+	wireframe = ! wireframe;
+}
+
 void Renderer::OnMessage(ToggleCaptureMessage const & message)
 {
 	capture_enable = ! capture_enable;
@@ -337,21 +353,6 @@ bool Renderer::HasShadowSupport() const
 #endif
 	
 	return true;
-}
-
-void Renderer::ToggleLighting()
-{
-	lighting = ! lighting;
-}
-
-void Renderer::ToggleCulling()
-{
-	culling = ! culling;
-}
-
-void Renderer::ToggleWireframe()
-{
-	wireframe = ! wireframe;
 }
 
 void Renderer::PreRender()

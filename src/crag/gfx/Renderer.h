@@ -42,6 +42,9 @@ namespace gfx
 	struct AddObjectMessage;
 	struct RemoveObjectMessage;
 	struct RenderReadyMessage { bool ready; };
+	struct ToggleCullingMessage { };
+	struct ToggleLightingMessage { };
+	struct ToggleWireframeMessage { };
 	struct ToggleCaptureMessage { };
 	
 	
@@ -80,6 +83,9 @@ namespace gfx
 		}
 		void OnMessage(RenderReadyMessage const & message);
 		void OnMessage(ResizeMessage const & message);
+		void OnMessage(ToggleCullingMessage const & message);
+		void OnMessage(ToggleLightingMessage const & message);
+		void OnMessage(ToggleWireframeMessage const & message);
 		void OnMessage(ToggleCaptureMessage const & message);
 		void OnMessage(sim::SetCameraMessage const & message);
 
@@ -96,12 +102,6 @@ namespace gfx
 
 		bool HasShadowSupport() const;
 		
-	public:
-		void ToggleCulling();
-		void ToggleLighting();
-		void ToggleWireframe();
-		
-	private:
 		void PreRender();		
 		void Render();
 		void RenderScene() const;
