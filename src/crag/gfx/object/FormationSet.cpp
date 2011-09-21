@@ -49,7 +49,7 @@ FormationSet::FormationSet()
 void FormationSet::Init()
 {
 	gl::GenFence(_fence);
-	
+
 	for (int index = 0; index < 2; ++ index)
 	{
 		// initialize mesh buffer
@@ -168,7 +168,10 @@ bool FormationSet::BeginBufferUpload()
 	
 	back_buffer.Bind();
 	back_buffer.Set(* _queued_mesh);
-	gl::SetFence(_fence);
+	if (_fence.IsInitialized())
+	{
+		gl::SetFence(_fence);
+	}
 	back_buffer.Unbind();
 	
 	_pending_mesh = _queued_mesh;
@@ -185,7 +188,7 @@ bool FormationSet::FinishBufferUpload()
 		return false;
 	}
 	
-	if (! gl::TestFence(_fence))
+	if (_fence.IsInitialized() && ! gl::TestFence(_fence))
 	{
 		// mesh is not finished uploading
 		return false;
