@@ -191,7 +191,6 @@ void form::FormationManager::RemoveFormation(form::Formation & formation)
 
 void form::FormationManager::LockTree()
 {
-	// TODO: How does this guarantee a swap won't happen.
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
 	node_buffer.LockTree();
@@ -371,8 +370,13 @@ void form::FormationManager::BeginReset()
 void form::FormationManager::EndReset()
 {
 	VerifyObject(* this);
+	
 	is_in_reset_mode = false;
+	
+	LockTree();
 	scenes.flip();
+	UnlockTree();
+	
 	VerifyObject(* this);
 }
 
