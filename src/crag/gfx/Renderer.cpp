@@ -280,7 +280,6 @@ void Renderer::InitRenderState()
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
-	GLPP_CALL(gl::SetColor(Color4f::White().GetArray()));
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -313,10 +312,6 @@ void Renderer::VerifyRenderState() const
 	
 	// TODO: Write equivalent functions for all state in GL. :S
 	Assert(gl::GetDepthFunc() == GL_LEQUAL);
-	
-	Color4f rgba;
-	gl::GetColor(rgba.GetArray());
-	Assert(rgba == Color4f::White());
 	
 	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
 #endif	// NDEBUG
