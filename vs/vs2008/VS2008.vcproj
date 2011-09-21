@@ -664,6 +664,14 @@
 					<File
 						RelativePath="..\..\src\crag\gfx\object\Box.cpp"
 						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Box"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\src\crag\gfx\object\Box.h"
@@ -860,6 +868,22 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\sim\Ball.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\sim\Box.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Box"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\sim\Box.h"
 					>
 				</File>
 				<File
