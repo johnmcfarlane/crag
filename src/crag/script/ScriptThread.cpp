@@ -239,6 +239,7 @@ PyObject * script::ScriptThread::PollEvent()
 
 bool script::ScriptThread::RedirectPythonOutput()
 {
+#if defined(WIN32)
 	PyObject* sys = PyImport_ImportModule("sys");
 	PyObject* io = PyImport_ImportModule("io");
 
@@ -258,6 +259,7 @@ bool script::ScriptThread::RedirectPythonOutput()
 
 	Py_DECREF(io);
 	Py_DECREF(sys);
+#endif
 	
 	return true;
 }
