@@ -194,7 +194,7 @@ void form::Scene::GenerateMesh(Mesh & mesh) const
 	
 	MeshProperties & properties = mesh.GetProperties();
 	properties._origin = origin;
-	properties._num_quaterna = node_buffer->GetNumQuaternaUsed();
+	properties._num_quaterne = node_buffer->GetNumQuaternaUsed();
 }
 
 // Currently just updates the formation_map contents.

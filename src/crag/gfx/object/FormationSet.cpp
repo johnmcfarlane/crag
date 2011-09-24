@@ -200,12 +200,12 @@ bool FormationSet::FinishBufferUpload()
 	// inform the regulator that following frame information 
 	// will relate to a mesh of this number of quaterna.
 	form::RegulatorNumQuaternaMessage message;
-	message._num_quaterna = _pending_mesh->GetProperties()._num_quaterna;
+	message._num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
 	form::FormationManager::Daemon::SendMessage(message);
 	
 	// state number of polygons/quaterna
 	STAT_SET (num_polys, _pending_mesh->GetNumPolys());
-	STAT_SET (num_quats_used, message._num_quaterna);
+	STAT_SET (num_quats_used, message._num_quaterne);
 	
 	// release the pending mesh back to the formation manager
 	ReturnMesh(* _pending_mesh);

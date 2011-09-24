@@ -35,14 +35,14 @@ form::Regulator::Regulator()
 void form::Regulator::Reset()
 {
 	reset_time = sys::GetTime();
-	_num_quaterna = -1;
+	_num_quaterne = -1;
 	frame_ratio_max = 0;
 	mesh_generation_period = 0;
 }
 
-void form::Regulator::SetNumQuaterna(int num_quaterna)
+void form::Regulator::SetNumQuaterna(int num_quaterne)
 {
-	_num_quaterna = num_quaterna;
+	_num_quaterne = num_quaterne;
 }
 
 // Take a sample of the frame ratio and apply it to the stored
@@ -61,26 +61,26 @@ void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 
 int form::Regulator::GetRecommendedNumQuaterna()
 {
-	if ((frame_ratio_max == 0 && mesh_generation_period == 0) || _num_quaterna == -1)
+	if ((frame_ratio_max == 0 && mesh_generation_period == 0) || _num_quaterne == -1)
 	{
-		return _num_quaterna;
+		return _num_quaterne;
 	}
 	
 	sys::TimeType sim_time = sys::GetTime() - reset_time;
 
 	// Come up with two accounts of how many quaterna we should have.
-	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(_num_quaterna, sim_time);
-	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterna);
+	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(_num_quaterne, sim_time);
+	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterne);
 
 	// Pick the more conservative of the two numbers.
 	int recommended_num_quaternia = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
 	
 #if ! defined(NDEBUG) && 0
-	if (recommended_num_quaternia < _num_quaterna)
+	if (recommended_num_quaternia < _num_quaterne)
 	{
 		int less_nodes = 1;
 	}
-	else if (recommended_num_quaternia > _num_quaterna)
+	else if (recommended_num_quaternia > _num_quaterne)
 	{
 		int more_nodes = 1;
 	}

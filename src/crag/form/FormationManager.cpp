@@ -124,7 +124,7 @@ void form::FormationManager::OnMessage(RegulatorResetMessage const & message)
 
 void form::FormationManager::OnMessage(RegulatorNumQuaternaMessage const & message)
 {
-	_regulator.SetNumQuaterna(message._num_quaterna);
+	_regulator.SetNumQuaterna(message._num_quaterne);
 }
 
 void form::FormationManager::OnMessage(RegulatorFrameMessage const & message)
@@ -292,12 +292,12 @@ void form::FormationManager::AdjustNumQuaterna()
 	}
 	
 	// Calculate the regulator output.
-	int recommended_num_quaterna = _regulator.GetRecommendedNumQuaterna();
-	Clamp(recommended_num_quaterna, int(NodeBuffer::min_num_quaterna), int(NodeBuffer::max_num_quaterna));
+	int recommended_num_quaterne = _regulator.GetRecommendedNumQuaterna();
+	Clamp(recommended_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
 	
 	// Apply the regulator output.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	active_buffer.SetNumQuaternaUsedTarget(recommended_num_quaterna);
+	active_buffer.SetNumQuaternaUsedTarget(recommended_num_quaterne);
 }
 
 void form::FormationManager::GenerateMesh()
@@ -361,10 +361,10 @@ void form::FormationManager::BeginReset()
 	
 	// Transfer the quaterna count from the old buffer to the new one.
 	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
-	int current_num_quaterna = visible_node_buffer.GetNumQuaternaUsed();
+	int current_num_quaterne = visible_node_buffer.GetNumQuaternaUsed();
 	
 	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
-	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterna);
+	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterne);
 }
 
 void form::FormationManager::EndReset()

@@ -68,7 +68,7 @@ namespace form
 	// tell the regulator how many nodes the currently rendered mesh consists of.
 	struct RegulatorNumQuaternaMessage
 	{
-		int _num_quaterna;
+		int _num_quaterne;
 	};
 	
 	// send the regulator the result of the last frame.

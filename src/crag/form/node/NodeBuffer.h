@@ -53,18 +53,18 @@ namespace form
 		// Constants
 		enum {
 			// tweakables
-			portion_num_quaterna = 1,	// TODO: Cannot increase above 1
+			portion_num_quaterne = 1,	// TODO: Cannot increase above 1
 			min_num_portions = 64,
 			max_num_portions = 65536,
 
 			// derivations
 			num_nodes_per_quaterna = 4,
-			portion_num_nodes = portion_num_quaterna * num_nodes_per_quaterna,
+			portion_num_nodes = portion_num_quaterne * num_nodes_per_quaterna,
 			
-			min_num_quaterna = min_num_portions * portion_num_quaterna,
-			max_num_quaterna = max_num_portions * portion_num_quaterna,
+			min_num_quaterne = min_num_portions * portion_num_quaterne,
+			max_num_quaterne = max_num_portions * portion_num_quaterne,
 
-			max_num_nodes = max_num_quaterna * num_nodes_per_quaterna,
+			max_num_nodes = max_num_quaterne * num_nodes_per_quaterna,
 			max_num_verts = max_num_nodes * 2,
 			max_num_indices = max_num_verts * 3
 		};
@@ -137,11 +137,11 @@ namespace form
 		static void SubstituteChildren(Node * substitute, Node * children);
 		static void RepairChild(Node & child);
 
-		void IncreaseNodes(Quaterna * new_quaterna_used_end);
-		void DecreaseNodes(Quaterna * new_quaterna_used_end);
+		void IncreaseNodes(Quaterna * new_quaterne_used_end);
+		void DecreaseNodes(Quaterna * new_quaterne_used_end);
 		
-		void DecreaseQuaterna(Quaterna * new_quaterna_used_end);
-		void FixUpDecreasedNodes(Quaterna * old_quaterna_used_end);
+		void DecreaseQuaterna(Quaterna * new_quaterne_used_end);
+		void FixUpDecreasedNodes(Quaterna * old_quaterne_used_end);
 
 		template <typename FUNCTOR> 
 		void ForEachNode(FUNCTOR f, size_t step_size, bool parallel = false);
@@ -158,15 +158,12 @@ namespace form
 		Node const * const nodes_end;
 		
 		// An array of used nodes in ascending order of score.
-		// TODO: Plural of quaterna is quaterne. Maybe quaterna is just quadruplet in forin languich. 
-		// TODO: quadrisection: The action of dividing something into four parts.
-		// TODO: Maybe store nodes in sets of four and make them the Qua...whatevers and the quaterna something with sorted in the title.
-		Quaterna * const quaterna;		// [max_num_quaterna]
+		Quaterna * const quaterne;		// [max_num_quaterne]
 
-		Quaterna * quaterna_sorted_end;			// end of the range the we know is sorted
-		Quaterna * quaterna_used_end;			// end of buffer of actually used quaterna
-		Quaterna * quaterna_used_end_target;	// where we'd like quaterna_used_end to be; cannot be less than used_end
-		Quaterna const * const quaterna_end;
+		Quaterna * quaterne_sorted_end;			// end of the range the we know is sorted
+		Quaterna * quaterne_used_end;			// end of buffer of actually used quaterna
+		Quaterna * quaterne_used_end_target;	// where we'd like quaterne_used_end to be; cannot be less than used_end
+		Quaterna const * const quaterne_end;
 		
 		// Pool of vertices from which to take the corners of nodes.
 		// TODO: NodeBuffer and PointBuffer could maybe be owned by the same, parent class. 

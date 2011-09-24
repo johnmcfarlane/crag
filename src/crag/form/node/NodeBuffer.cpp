@@ -31,9 +31,9 @@ CONFIG_DECLARE (profile_mode, bool);
 namespace 
 {
 
-	// If profile_mode==true, this number of quaterna is enforced always (with reason).
-	// It is useful for eliminating the adaptive quaterna count algorithm during debugging.
-	CONFIG_DEFINE (profile_num_quaterna, int, 6400);
+	// If profile_mode==true, this number of quaterne is enforced always (with reason).
+	// It is useful for eliminating the adaptive quaterne count algorithm during debugging.
+	CONFIG_DEFINE (profile_num_quaterne, int, 6400);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -65,17 +65,17 @@ form::NodeBuffer::NodeBuffer()
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_nodes)
-, quaterna(new Quaterna [max_num_quaterna])
-, quaterna_sorted_end(quaterna)
-, quaterna_used_end(quaterna)
-, quaterna_used_end_target(quaterna + Min(profile_mode ? profile_num_quaterna : 0, static_cast<int>(max_num_quaterna)))
-, quaterna_end(quaterna + max_num_quaterna)
+, quaterne(new Quaterna [max_num_quaterne])
+, quaterne_sorted_end(quaterne)
+, quaterne_used_end(quaterne)
+, quaterne_used_end_target(quaterne + Min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
+, quaterne_end(quaterne + max_num_quaterne)
 , point_buffer(max_num_verts)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
 {
 	ZeroArray(nodes, max_num_nodes);
 
-	InitQuaterna(quaterna_end);
+	InitQuaterna(quaterne_end);
 
 	VerifyObject(* this);
 }
@@ -85,7 +85,7 @@ form::NodeBuffer::~NodeBuffer()
 	VerifyObject(* this);
 
 #if ! defined(NDEBUG)
-	for (Quaterna const * i = quaterna; i != quaterna_used_end; ++ i)
+	for (Quaterna const * i = quaterne; i != quaterne_used_end; ++ i)
 	{
 		Assert(! i->HasGrandChildren());
 		Assert(! i->nodes[0].IsInUse());
@@ -95,7 +95,7 @@ form::NodeBuffer::~NodeBuffer()
 	}
 #endif
 	
-	delete quaterna;
+	delete quaterne;
 
 	//delete nodes;
 	Free(nodes);
@@ -106,41 +106,41 @@ void form::NodeBuffer::Verify() const
 {
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
 	
-	VerifyArrayElement(quaterna_sorted_end, quaterna);
-	VerifyArrayElement(quaterna_used_end, quaterna);
-	VerifyArrayElement(quaterna_used_end_target, quaterna);
-	VerifyArrayElement(quaterna_end, quaterna);
+	VerifyArrayElement(quaterne_sorted_end, quaterne);
+	VerifyArrayElement(quaterne_used_end, quaterne);
+	VerifyArrayElement(quaterne_used_end_target, quaterne);
+	VerifyArrayElement(quaterne_end, quaterne);
 	
-	VerifyTrue(quaterna_sorted_end >= quaterna);
-	VerifyTrue(quaterna_used_end >= quaterna_sorted_end);
-	VerifyTrue(quaterna_used_end_target >= quaterna_used_end);
-	VerifyTrue(quaterna_end >= quaterna_used_end_target);
+	VerifyTrue(quaterne_sorted_end >= quaterne);
+	VerifyTrue(quaterne_used_end >= quaterne_sorted_end);
+	VerifyTrue(quaterne_used_end_target >= quaterne_used_end);
+	VerifyTrue(quaterne_end >= quaterne_used_end_target);
 
 	int num_nodes_used = nodes_used_end - nodes;
 	VerifyTrue((num_nodes_used % portion_num_nodes) == 0);
 	
-	int num_quaterna_used = quaterna_used_end - quaterna;
-	VerifyTrue((num_quaterna_used % portion_num_quaterna) == 0);
+	int num_quaterne_used = quaterne_used_end - quaterne;
+	VerifyTrue((num_quaterne_used % portion_num_quaterne) == 0);
 	
-	int num_quaterna_used_target = quaterna_used_end_target - quaterna;
-	VerifyTrue((num_quaterna_used_target % portion_num_quaterna) == 0);
+	int num_quaterne_used_target = quaterne_used_end_target - quaterne;
+	VerifyTrue((num_quaterne_used_target % portion_num_quaterne) == 0);
 	
-	VerifyTrue(num_nodes_used == num_quaterna_used * 4);
+	VerifyTrue(num_nodes_used == num_quaterne_used * 4);
 	
 	VerifyObject(point_buffer);
 	
-	/*for (Quaterna const * q = quaterna; q < quaterna_used_end; ++ q) 
+	/*for (Quaterna const * q = quaterne; q < quaterne_used_end; ++ q) 
 	{
 		VerifyUsed(* q);
 	}*/
 	
 	// Rarely cause a problem and they are often the majority.
-	/*for (Quaterna const * q = quaterna_used_end; q < quaterna_end; ++ q) 
+	/*for (Quaterna const * q = quaterne_used_end; q < quaterne_end; ++ q) 
 	{
 		VerifyUnused(* q);
 	}
 	
-	for (Quaterna const * q2 = quaterna + 1; q2 < quaterna_sorted_end; ++ q2) 
+	for (Quaterna const * q2 = quaterne + 1; q2 < quaterne_sorted_end; ++ q2) 
 	{
 		Quaterna const * q1 = q2 - 1;
 		VerifyTrue(q2->parent_score <= q1->parent_score);
@@ -179,7 +179,7 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 	VerifyTrue(q.parent_score == -1);
 	
 	Node const * n = q.nodes;
-	VerifyTrue(n - nodes == (& q - quaterna) * 4);
+	VerifyTrue(n - nodes == (& q - quaterne) * 4);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
@@ -197,7 +197,7 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 #if defined(DUMP)
 DUMP_OPERATOR_DEFINITION(form, NodeBuffer)
 {
-	for (Quaterna * r = rhs.quaterna; r != rhs.quaterna_used_end; ++ r) {
+	for (Quaterna * r = rhs.quaterne; r != rhs.quaterne_used_end; ++ r) {
 		lhs << lhs.NewLine() << "p_score:" << r->parent_score << "; children:" << r->nodes;
 		DumpStream indented = lhs;
 		DumpStream indented_more = indented;
@@ -219,19 +219,19 @@ int form::NodeBuffer::GetNumNodesUsed() const
 
 int form::NodeBuffer::GetNumQuaternaUsed() const
 {
-	return quaterna_used_end - quaterna;
+	return quaterne_used_end - quaterne;
 }
 
 int form::NodeBuffer::GetNumQuaternaUsedTarget() const
 {
-	return quaterna_used_end_target - quaterna;
+	return quaterne_used_end_target - quaterne;
 }
 
 float form::NodeBuffer::GetMinParentScore() const
 {
-	if (quaterna_used_end > quaterna)
+	if (quaterne_used_end > quaterne)
 	{
-		Quaterna last_quaterna = quaterna_used_end [-1];
+		Quaterna last_quaterna = quaterne_used_end [-1];
 		return last_quaterna.parent_score;
 	}
 	else
@@ -247,22 +247,22 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 		return;
 	}
 
-	Quaterna * new_quaterna_used_end = quaterna + n;
-	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_end + 1);
+	Quaterna * new_quaterne_used_end = quaterne + n;
+	VerifyArrayElement(new_quaterne_used_end, quaterne, quaterne_end + 1);
 	
-	if (new_quaterna_used_end == quaterna_used_end) 
+	if (new_quaterne_used_end == quaterne_used_end) 
 	{
 		// No change. Just make sure the target is the same
-		quaterna_used_end_target = new_quaterna_used_end;
+		quaterne_used_end_target = new_quaterne_used_end;
 	}
-	else if (new_quaterna_used_end > quaterna_used_end) 
+	else if (new_quaterne_used_end > quaterne_used_end) 
 	{
-		IncreaseNodes(new_quaterna_used_end);
+		IncreaseNodes(new_quaterne_used_end);
 	}
-	else if (new_quaterna_used_end < quaterna_used_end)
+	else if (new_quaterne_used_end < quaterne_used_end)
 	{
 		LockTree();
-		DecreaseNodes(new_quaterna_used_end);
+		DecreaseNodes(new_quaterne_used_end);
 		UnlockTree();
 	}
 	
@@ -304,14 +304,14 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 void form::NodeBuffer::OnReset()
 {
 	point_buffer.FastClear();
-	InitQuaterna(quaterna_used_end);
+	InitQuaterna(quaterne_used_end);
 
 	nodes_used_end = nodes;
-	quaterna_sorted_end = quaterna_used_end = quaterna;
+	quaterne_sorted_end = quaterne_used_end = quaterne;
 	
 	// Half the target number of nodes.
 	// Probably not a smart idea.
-	//quaterna_used_end_target -= (quaterna_used_end_target - quaterna) >> 1;
+	//quaterne_used_end_target -= (quaterne_used_end_target - quaterne) >> 1;
 	VerifyObject(* this);
 }
 
@@ -343,7 +343,7 @@ void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
 void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 {
 	Node * n = nodes;
-	for (Quaterna * iterator = quaterna; iterator < end; n += 4, ++ iterator) {
+	for (Quaterna * iterator = quaterne; iterator < end; n += 4, ++ iterator) {
 		iterator->parent_score = -1;
 		iterator->nodes = n;
 	}
@@ -355,7 +355,7 @@ void form::NodeBuffer::UpdateNodes()
 	{
 		UpdateQuaterna();
 		
-		// Finally, using the quaterna,
+		// Finally, using the quaterne,
 		// replace nodes whose parent's scores have dropped enough
 		// with ones whose score have increased enough.
 		if (! ChurnNodes())
@@ -374,10 +374,10 @@ void form::NodeBuffer::UpdateNodeScores()
 
 void form::NodeBuffer::UpdateQuaterna()
 {
-	// Reflect the new scores in the quaterna.
+	// Reflect the new scores in the quaterne.
 	UpdateQuaternaScores();
 	
-	// Now resort the quaterna so they are in order again.
+	// Now resort the quaterne so they are in order again.
 	SortQuaterna();
 }
 
@@ -385,22 +385,22 @@ void form::NodeBuffer::UpdateQuaternaScores()
 {
 	ForEachQuaterna(UpdateQuaternaScore, 1024, true);
 	
-	// This basically says: "as far as I know, none of the quaterna are sorted."
-	quaterna_sorted_end = quaterna;
+	// This basically says: "as far as I know, none of the quaterne are sorted."
+	quaterne_sorted_end = quaterne;
 }
 
 // Algorithm to sort nodes array. 
 void form::NodeBuffer::SortQuaterna()
 {
-	if (quaterna_sorted_end == quaterna_used_end)
+	if (quaterne_sorted_end == quaterne_used_end)
 	{
 		VerifyObject(* this);
 		return;
 	}
 	
 	// Sure and steady ... and slow!
-	std::sort(quaterna, quaterna_used_end, QuaternaSortUsed);
-	quaterna_sorted_end = quaterna_used_end;
+	std::sort(quaterne, quaterne_used_end, QuaternaSortUsed);
+	quaterne_sorted_end = quaterne_used_end;
 }
 
 bool form::NodeBuffer::ChurnNodes()
@@ -430,8 +430,8 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 
 float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
 {
-	// See if there are unused quaterna.
-	if (quaterna_used_end != quaterna_used_end_target)
+	// See if there are unused quaterne.
+	if (quaterne_used_end != quaterne_used_end_target)
 	{
 		// As any used quaterna could replace an unused quaterna,
 		// we ought to aim pretty low. 
@@ -439,10 +439,10 @@ float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
 	}
 	
 	// Find the (known) lowest-scoring quaterna in used.
-	if (quaterna_sorted_end > quaterna) 
+	if (quaterne_sorted_end > quaterne) 
 	{
-		// Ok, lets try the end of the sequence of sorted quaterna...
-		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];
+		// Ok, lets try the end of the sequence of sorted quaterne...
+		Quaterna & reusable_quaterna = quaterne_sorted_end [- 1];
 		return reusable_quaterna.parent_score;
 	}
 	
@@ -458,11 +458,11 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	Assert(node.IsExpandable());
 
 	// Try and get an unused quaterna.
-	if (quaterna_used_end != quaterna_used_end_target)
+	if (quaterne_used_end != quaterne_used_end_target)
 	{
-		// We currently wish to expand the number of nodes/quaterna used,
+		// We currently wish to expand the number of nodes/quaterne used,
 		// so attempt to use the next unused quaterna in the array.
-		Quaterna & unused_quaterna = * quaterna_used_end;
+		Quaterna & unused_quaterna = * quaterne_used_end;
 
 		if (! ExpandNode(node, unused_quaterna))
 		{
@@ -470,12 +470,12 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		}
 		
 		nodes_used_end += 4;
-		++ quaterna_used_end;
+		++ quaterne_used_end;
 		return true;
 	}
 	
 	// Find the lowest-scoring quaterna in used and attempt to reuse it.
-	if (quaterna_sorted_end > quaterna) 
+	if (quaterne_sorted_end > quaterne) 
 	{
 		// Get the score to use to find the 'worst' Quaterna.
 		// We don't want to nuke a quaterna with a worse one, hence using the node score.
@@ -484,8 +484,8 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 		// because that would cause a time paradox in the fabric of space.
 		float score = node.score;
 		
-		// Ok, lets try the end of the sequence of sorted quaterna...
-		Quaterna & reusable_quaterna = quaterna_sorted_end [- 1];			
+		// Ok, lets try the end of the sequence of sorted quaterne...
+		Quaterna & reusable_quaterna = quaterne_sorted_end [- 1];			
 		
 		if (! reusable_quaterna.IsSuitableReplacement(score)) 
 		{
@@ -506,7 +506,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 			return false;
 		}
 		
-		-- quaterna_sorted_end;
+		-- quaterne_sorted_end;
 		return true;
 	}
 
@@ -588,21 +588,21 @@ void form::NodeBuffer::CollapseNodes(Node & root)
 	UpdateQuaterna();
 	
 	// ... except there may still be unused nodes in the used area.
-	Quaterna * old_quaterna_used_end = quaterna_used_end;
+	Quaterna * old_quaterne_used_end = quaterne_used_end;
 
-	// Roll back to the start of the unused quaterna.
+	// Roll back to the start of the unused quaterne.
 	do
-		-- quaterna_used_end;
-	while (quaterna_used_end >= quaterna && ! quaterna_used_end->IsInUse());
-	++ quaterna_used_end;
+		-- quaterne_used_end;
+	while (quaterne_used_end >= quaterne && ! quaterne_used_end->IsInUse());
+	++ quaterne_used_end;
 	
-	if (quaterna_sorted_end > quaterna_used_end)
+	if (quaterne_sorted_end > quaterne_used_end)
 	{
-		quaterna_sorted_end = quaterna_used_end;
+		quaterne_sorted_end = quaterne_used_end;
 	}
 	
 	// Swap used nodes in unused range with unused nodes in used range.
-	FixUpDecreasedNodes(old_quaterna_used_end);
+	FixUpDecreasedNodes(old_quaterne_used_end);
 }
 
 void form::NodeBuffer::CollapseNode(Node & node)
@@ -777,52 +777,52 @@ void form::NodeBuffer::RepairChild(Node & child)
 	}
 }
 
-void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterna_used_end)
+void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterne_used_end)
 {
 	// Verify that the input is indeed a decrease.
-	VerifyArrayElement(new_quaterna_used_end, quaterna_used_end, quaterna_end + 1);
+	VerifyArrayElement(new_quaterne_used_end, quaterne_used_end, quaterne_end + 1);
 	
 	// Increasing the target number of nodes is simply a matter of setting a value. 
-	// The target pointer now point_buffer into the range of unused quaterna at the end of the array.
-	quaterna_used_end_target = new_quaterna_used_end;
+	// The target pointer now point_buffer into the range of unused quaterne at the end of the array.
+	quaterne_used_end_target = new_quaterne_used_end;
 	
 	VerifyObject(* this);
 }
 
-// Reduce the number of used nodes and, accordingly, the number of used quaterna.
+// Reduce the number of used nodes and, accordingly, the number of used quaterne.
 // This is quite an involved and painful process which sometimes fails half-way through.
-void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterna_used_end)
+void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterne_used_end)
 {
-	Quaterna * old_quaterna_used_end = quaterna_used_end;
+	Quaterna * old_quaterne_used_end = quaterne_used_end;
 
-	// First decrease the number of quaterna. This is the bit that sometimes fails.
-	DecreaseQuaterna(new_quaterna_used_end);
+	// First decrease the number of quaterne. This is the bit that sometimes fails.
+	DecreaseQuaterna(new_quaterne_used_end);
 	
 	// Was there any decrease at all?
-	if (old_quaterna_used_end == quaterna_used_end)
+	if (old_quaterne_used_end == quaterne_used_end)
 	{
 		//Assert(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
 		return;
 	}
 	
 	// Because the nodes aren't in the correct order, decreasing them is somewhat more tricky.
-	FixUpDecreasedNodes(old_quaterna_used_end);
+	FixUpDecreasedNodes(old_quaterne_used_end);
 	
 	VerifyObject (* this);
 }
 
-void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
+void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
 {
 	// Verify that the input is indeed a decrease.
-	VerifyArrayElement(new_quaterna_used_end, quaterna, quaterna_used_end + 1);
+	VerifyArrayElement(new_quaterne_used_end, quaterne, quaterne_used_end + 1);
 	
 	// Loop through used quats backwards from far end.
 	do 
 	{
-		Quaterna & q = quaterna_used_end [- 1];
+		Quaterna & q = quaterne_used_end [- 1];
 		Node * quaterna_nodes = q.nodes;
 		
-		// Is the quaterna is being used?
+		// Is the quaterna being used?
 		if (q.IsInUse()) 
 		{
 			// Is it a leaf, i.e. it is the quaterna associated with a grandparent?
@@ -845,43 +845,43 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterna_used_end)
 		Assert(! quaterna_nodes[2].HasChildren());
 		Assert(! quaterna_nodes[3].HasChildren());
 		
-		-- quaterna_used_end;
+		-- quaterne_used_end;
 	}	
-	while (quaterna_used_end > new_quaterna_used_end);
+	while (quaterne_used_end > new_quaterne_used_end);
 	
-	// Both quaterna_sorted_end and quaterna_used_end_target 
-	// must be equal to quaterna_used_end at this point. 
-	if (quaterna_sorted_end > quaterna_used_end)
+	// Both quaterne_sorted_end and quaterne_used_end_target 
+	// must be equal to quaterne_used_end at this point. 
+	if (quaterne_sorted_end > quaterne_used_end)
 	{
-		quaterna_sorted_end = quaterna_used_end;
+		quaterne_sorted_end = quaterne_used_end;
 	}
 	
 	// Target is really for increasing the target during churn.
-	quaterna_used_end_target = quaterna_used_end;
+	quaterne_used_end_target = quaterne_used_end;
 }
 
 #define WIP 0
-void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
+void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 {
 	// From the new used quaterna value, figure out new used node value.
 #if (WIP == 0)
-	int new_num_quaterna_used = quaterna_used_end - quaterna;
-	int new_num_nodes_used = new_num_quaterna_used << 2;	// 4 nodes per quaterna
+	int new_num_quaterne_used = quaterne_used_end - quaterne;
+	int new_num_nodes_used = new_num_quaterne_used << 2;	// 4 nodes per quaterna
 	nodes_used_end = nodes + new_num_nodes_used;
 #endif
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);
 	
-	// Use this pointer to walk down the used quaterna array.
-	Quaterna * used_quaterna = quaterna_used_end;
+	// Use this pointer to walk down the used quaterne array.
+	Quaterna * used_quaterna = quaterne_used_end;
 	
-	// For all the quaterna that have been freed up by the reduction...
-	for (Quaterna * unused_quaterna = old_quaterna_used_end - 1; unused_quaterna >= quaterna_used_end; -- unused_quaterna)
+	// For all the quaterne that have been freed up by the reduction...
+	for (Quaterna * unused_quaterna = old_quaterne_used_end - 1; unused_quaterna >= quaterne_used_end; -- unused_quaterna)
 	{
 		Assert(! unused_quaterna->IsInUse());
 		
 		Node * unused_nodes = unused_quaterna->nodes;
 		
-		// Is a quatern past the end of used quaterna
+		// Is a quatern past the end of used quaterne
 		// pointing to a node before the end of used nodes?
 		if (unused_nodes < nodes_used_end)
 		{
@@ -889,12 +889,12 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 			// There must be a corresponding quad of nodes in such a position that is in use.
 			// They must be swapped.
 			
-			// Find the used quaterna whose nodes are past the end of the used range.
+			// Find the used quaterne whose nodes are past the end of the used range.
 			Node * substitute_nodes;
 			do
 			{
 				-- used_quaterna;
-				Assert(used_quaterna >= quaterna);
+				Assert(used_quaterna >= quaterne);
 				substitute_nodes = used_quaterna->nodes;
 			}
 			while (substitute_nodes < nodes_used_end);
@@ -905,15 +905,15 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterna_used_end)
 		
 #if (WIP == 1)
 		// Finally steam-roll over whatever the nodes pointer was because 
-		// we want unused quaterna to point to their equivalent in the node array;
+		// we want unused quaterne to point to their equivalent in the node array;
 		nodes_used_end -= 4;
 		unused_quaterna->nodes = nodes_used_end;
 #endif
 	}
 
 	// Finally, the nodes were swapped between used and unused quats in any old order.
-	// But the unused nodes need to line up with the unused quaterna.
-	std::sort(quaterna_used_end, old_quaterna_used_end, QuaternaSortUnused);
+	// But the unused nodes need to line up with the unused quaterne.
+	std::sort(quaterne_used_end, old_quaterne_used_end, QuaternaSortUnused);
 	
 	VerifyObject(* this);
 }
@@ -928,28 +928,28 @@ void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 	
 	if (! parallel)
 	{
-		core::for_each <form::Node *, FUNCTOR, portion_num_quaterna> (nodes, nodes_used_end, f);
+		core::for_each <form::Node *, FUNCTOR, portion_num_quaterne> (nodes, nodes_used_end, f);
 	}
 	else 
 	{
-		smp::for_each <form::Node *, FUNCTOR, portion_num_quaterna>(nodes, nodes_used_end, f, step_size, -1);
+		smp::for_each <form::Node *, FUNCTOR, portion_num_quaterne>(nodes, nodes_used_end, f, step_size, -1);
 	}
 }
 
 template <typename FUNCTOR> 
 void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool parallel)
 {
-	if (quaterna_used_end == quaterna)
+	if (quaterne_used_end == quaterne)
 	{
 		return;
 	}
 
 	if (! parallel && step_size == 1)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, f);
+		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterne>(quaterne, quaterne_used_end, f);
 	}
 	else
 	{
-		smp::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterna>(quaterna, quaterna_used_end, f, step_size, -1);
+		smp::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterne>(quaterne, quaterne_used_end, f, step_size, -1);
 	}
 }

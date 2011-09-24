@@ -28,7 +28,7 @@ namespace form
 		
 		void Reset();
 		
-		void SetNumQuaterna(int num_quaterna);
+		void SetNumQuaterna(int num_quaterne);
 		void SampleFrameFitness(float fitness);
 		void SampleMeshGenerationPeriod(sys::TimeType mgp);
 		
@@ -42,7 +42,7 @@ namespace form
 		
 		sys::TimeType reset_time;
 		
-		int _num_quaterna;
+		int _num_quaterne;
 		float frame_ratio_max;	// ~ (actual frame time / ideal frame time), i.e. greater is worse		
 		float mesh_generation_period;	// again, greater is worse
 	};
