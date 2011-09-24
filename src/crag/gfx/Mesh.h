@@ -10,16 +10,17 @@
 
 #pragma once
 
-#include "Vbo.h"
-#include "Ibo.h"
+#include "glpp/Vbo.h"
+#include "glpp/Ibo.h"
 
 
-namespace gl
+namespace gfx
 {
 	// TODO: This doesn't belong here.
-	template<typename Vertex, BufferDataUsage Usage> class Mesh
+	template<typename Vertex, gl::BufferDataUsage Usage> class Mesh
 	{
-		typedef Vbo<Vertex> Vbo;
+		typedef gl::Vbo<Vertex> Vbo;
+		typedef gl::Ibo Ibo;
 	public:
 		void Init()
 		{
@@ -45,7 +46,7 @@ namespace gl
 			UnbindBuffer(ibo);
 		}
 		
-		void Resize(int num_verts, int num_indices, BufferDataUsage usage)
+		void Resize(int num_verts, int num_indices, gl::BufferDataUsage usage)
 		{
 			BufferData(vbo, num_verts, usage);
 			BufferData(ibo, num_indices, usage);

@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "glpp/Mesh.h"
+#include "gfx/Mesh.h"
+
 #include "glpp/Vbo_Types.h"
 
 
@@ -22,7 +23,7 @@ namespace gfx
 		// types
 		typedef Vector3f Vector3;
 		typedef gl::Vertex3dNorm Vertex;
-		typedef gl::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
+		typedef gfx::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
 		typedef gl::VertexRgba Color;
 		typedef std::vector<Vertex> VertexVector;
 	public:
