@@ -12,7 +12,8 @@
 
 #include "Color.h"
 
-#include "geom/Matrix4.h"
+#include "geom/Matrix33.h"
+#include "geom/Matrix44.h"
 #include "geom/Vector4.h"
 
 #if defined(PROFILE) || ! defined(NDEBUG)
@@ -35,7 +36,8 @@ namespace gfx
 		// forward declarations
 		typedef ::Vector<double, 3> Vector3;
 		typedef ::Vector<double, 4> Vector4;
-		typedef ::Matrix4<double> Matrix4;
+		typedef ::Matrix<double, 3, 3> Matrix33;
+		typedef ::Matrix<double, 4, 4> Matrix44;
 
 		class ColorPair
 		{
@@ -68,7 +70,7 @@ namespace gfx
 		void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b);
 		void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1));
 		void AddBasis(Vector3 const & center, double scale);
-		void AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale);
+		void AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale);
 		void AddFrustum(Pov const & pov);
 		
 		void Draw(Vector3 const & camera_pos);
@@ -86,7 +88,7 @@ namespace gfx
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b) { }
 		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
 		inline void AddBasis(Vector3 const & center, double scale) { }
-		inline void AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale) { }
+		inline void AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale) { }
 		inline void AddFrustum(Pov const & pov) { }
 		inline void Draw(Vector3 const &) { }
 		inline void DrawText(char const * text, Vector2i const & position) { }

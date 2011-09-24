@@ -16,7 +16,9 @@
 namespace physics
 {
 	class Engine;
-	
+
+	// TODO: Rename this to Sphere and give it a comment.
+	// TODO: Repeat for BoxBody and PlanetaryBody.
 	class SphericalBody : public Body
 	{
 	public:
@@ -25,7 +27,7 @@ namespace physics
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;
 		
-		virtual void SetDensity(Scalar density);
+		virtual void SetDensity(Scalar density) override;
 		
 	protected:
 		virtual void OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const;

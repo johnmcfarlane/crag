@@ -11,7 +11,8 @@
 #pragma once
 
 #include "geom/Vector3.h"
-#include "geom/Matrix4.h"
+#include "geom/Matrix33.h"
+#include "geom/Matrix44.h"
 
 // Notes on installing ODE on OS X:
 //	Download the version-numbered release from from source forge.
@@ -36,5 +37,6 @@ namespace physics
 #endif
 	
 	typedef Vector<Scalar, 3> Vector3;
-	typedef Matrix4<Scalar> Matrix4;
+	typedef Matrix<Scalar, 3, 3> Matrix33;
+	typedef Matrix<Scalar, 4, 4> Matrix44;
 }

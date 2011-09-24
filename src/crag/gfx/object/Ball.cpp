@@ -16,13 +16,15 @@
 
 #include "glpp/glpp.h"
 
+#include "geom/Transformation.h"
+
 
 using namespace gfx;
 
 
 Ball::Ball(Scalar radius)
 : _position(Vector::Zero())
-, _rotation(Matrix::Identity()) 
+, _rotation(Matrix33::Identity()) 
 , _radius(radius)
 {
 }
@@ -53,12 +55,12 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 	unsigned lod = CalculateLod(pov.GetPosition());
 	
 	// Set the matrix.
-	pov.SetModelView(_position, _rotation);
+	pov.SetModelView(Transformation(_position, _rotation, _radius));
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	gfx::Sphere const & sphere = scene.GetSphere();
-	sphere.Draw(float(_radius), lod);
+	sphere.Draw(lod);
 	
 	GLPP_VERIFY;
 }

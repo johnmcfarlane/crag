@@ -21,6 +21,8 @@
 #include "gfx/object/Box.h"
 #include "gfx/Renderer.h"
 
+#include "geom/Transformation.h"
+
 
 namespace 
 {
@@ -112,8 +114,7 @@ void Box::Tick(Simulation & simulation)
 void Box::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Box> message(ref(_model));
-	message._params._position = _body->GetPosition();
-	_body->GetRotation(message._params._rotation);
+	message._params.transformation = Transformation(_body->GetPosition(), _body->GetRotation(), _body->GetDimensions());
 	
 	gfx::Renderer::Daemon::SendMessage(message);
 }

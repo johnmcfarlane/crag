@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include "geom/Matrix4.h"
-#include "geom/MatrixOps.h"
+#include "geom/Matrix44.h"
+#include "geom/Transformation.h"
 #include "geom/Ray.h"
 
 
@@ -26,39 +26,36 @@ namespace axes
 	};
 	
 	// Returns the given axis from the given matrix.
-	template<typename S> inline Vector<S, 3> const & GetAxis(Matrix4<S> const & m, Axis axis)
+	template<typename S> inline Vector<S, 3> const & GetAxis(Matrix<S, 3, 3> const & rotation, Axis axis)
 	{
-		return reinterpret_cast<Vector<S, 3> const &> (m.GetRow(axis));
-	}
-	
-	// Returns the versor for the given axis.
-	template<typename S> inline Vector<S, 3> GetVersor(Axis axis)
-	{
-		Assert(axis >= 0 && axis < NUM_AXES);
-		
-		Vector<S, 3> const versors[NUM_AXES] = 
-		{
-			{ 1, 0, 0 },
-			{ 0, 1, 0 },
-			{ 0, 0, 1 },
-		};
-		
-		return versors[axis];
+		return reinterpret_cast<Vector<S, 3> const &> (rotation.GetRow(axis));
 	}
 	
 	// As opposed to Gl (apparently). 
-	template<typename S> inline Matrix4<S> SimToOpenGl()
+	template<typename S> inline Matrix<S, 4, 4> SimToOpenGl()
 	{
-		return Matrix4<S>(1, 0,  0, 0, 
-						  0, 0, -1, 0, 
-						  0, 1,  0, 0, 
-						  0, 0,  0, 1);
+		return Matrix<S, 4, 4>(1, 0,  0, 0, 
+							   0, 0, -1, 0, 
+							   0, 1,  0, 0, 
+							   0, 0,  0, 1);
 	}
 	
 	// Converts position/matrix combo to a Ray.
-	template<typename S> Ray<S, 3> GetCameraRay(Matrix4<S> const & transformation)
+	template<typename S> 
+	Ray<S, 3> GetCameraRay(Transformation<S> const & transformation)
 	{
-		return Ray<S, 3>(TranslationVector(transformation), GetAxis(transformation, FORWARD));
+		return Ray<S, 3>(transformation.GetTranslation(), GetAxis(transformation.GetRotation(), FORWARD));
 	}
 	
+	// converts forward and up vectors into rotation matrix
+	template<typename S>
+	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward, Vector<S, 3> const & up = Vector<S, 3>(0, 0, 1))
+	{
+		Vector<S, 3> right = Normalized(CrossProduct(forward, up));
+		Vector<S, 3> matrix_up = CrossProduct(right, forward);
+		
+		return Matrix<S, 3, 3>(right.x, right.y, right.z,
+							   forward.x, forward.y, forward.z,
+							   matrix_up.x, matrix_up.y, matrix_up.z);
+	}
 }

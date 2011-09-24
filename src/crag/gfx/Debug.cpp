@@ -24,7 +24,7 @@
 
 #include "glpp/glpp.h"
 
-#include "geom/Vector3.h"
+#include "geom/MatrixOps.h"
 
 #include "smp/Mutex.h"
 
@@ -259,10 +259,10 @@ void Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c,
 
 void Debug::AddBasis(Vector3 const & center, double scale)
 {
-	AddBasis(center, Matrix4::Identity(), scale);
+	AddBasis(center, Matrix33::Identity(), scale);
 }
 
-void Debug::AddBasis(Vector3 const & center, Matrix4 const & rotation, double scale)
+void Debug::AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale)
 {
 	using namespace axes;
 	
@@ -295,7 +295,7 @@ void Debug::AddFrustum(Pov const & pov)
 		}
 		
 		{
-			Matrix4 m = pov.GetTransformation();
+			Matrix44 m = pov.GetTransformation();
 			
 			for (int z_index = 0; z_index < 2; ++ z_index) {
 				for (int y_index = 0; y_index < 2; ++ y_index) {

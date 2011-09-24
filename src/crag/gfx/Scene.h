@@ -39,7 +39,7 @@ namespace gfx
 		ObjectSet const & GetObjects(Layer::type layer) const;
 		
 		void SetResolution(Vector2i const & r);
-		void SetCameraTransformation(sim::Matrix4 const & transformation);
+		void SetCameraTransformation(sim::Transformation const & transformation);
 		
 		Pov & GetPov();
 		Pov const & GetPov() const;

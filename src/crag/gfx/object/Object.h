@@ -12,7 +12,9 @@
 #include "gfx/defs.h"
 
 #include "geom/Ray.h"
-#include "geom/Matrix4.h"
+#include "geom/Matrix33.h"
+#include "geom/Matrix44.h"
+#include "geom/Transformation.h"
 
 
 namespace gfx
@@ -27,7 +29,9 @@ namespace gfx
 		// types
 		typedef double Scalar;
 		typedef Vector<Scalar, 3> Vector;
-		typedef Matrix4<Scalar> Matrix;
+		typedef Matrix<Scalar, 3, 3> Matrix33;
+		typedef Matrix<Scalar, 4, 4> Matrix44;
+		typedef Transformation<Scalar> Transformation;
 		typedef Ray<Scalar, 3> Ray;
 		
 		// functions

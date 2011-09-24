@@ -651,8 +651,9 @@ void Renderer::DebugDraw() const
 	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
-	sim::Vector3 pos = pov.GetPosition();
-	pov.SetModelView(pos);
+	Pov::Transformation const & transformation = pov.GetTransformation();
+	sim::Vector3 pos = transformation.GetTranslation();
+	pov.SetModelView(Pov::Transformation(pos));
 	Debug::Draw(pos);
 	
 #if defined (GATHER_STATS)

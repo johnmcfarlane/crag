@@ -237,7 +237,7 @@ void form::FormationManager::ToggleFlatShaded()
 	flat_shaded_flag = ! flat_shaded_flag;
 }
 
-void form::FormationManager::SetCamera(sim::Matrix4 const & transformation)
+void form::FormationManager::SetCamera(sim::Transformation const & transformation)
 {
 	_camera_pos = axes::GetCameraRay(transformation);
 }

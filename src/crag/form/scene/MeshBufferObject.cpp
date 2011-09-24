@@ -18,6 +18,8 @@
 #include "gfx/Color.h"
 #include "gfx/Pov.h"
 
+#include "geom/Transformation.h"
+
 
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
@@ -39,7 +41,7 @@ int form::MeshBufferObject::GetNumPolys() const
 	return max_index / 3;
 }
 
-form::MeshProperties::Vector3 const & form::MeshBufferObject::GetOrigin() const
+form::MeshProperties::Vector const & form::MeshBufferObject::GetOrigin() const
 {
 	return properties._origin;
 }
@@ -48,7 +50,7 @@ void form::MeshBufferObject::Activate(gfx::Pov pov) const
 {
 	Assert (max_index > 0);
 	
-	pov.SetModelView(properties._origin);
+	pov.SetModelView(sim::Transformation(properties._origin));
 	
 	if (properties._flat_shaded) 
 	{

@@ -34,9 +34,10 @@ namespace physics
 		Scalar GetMass() const;	// -ve means infinite
 		
 		Vector3 const & GetPosition() const;
-		void SetPosition(Vector3 const &) const;		
-		void GetRotation(Matrix4 & rot) const;
-		void SetRotation(Matrix4 const & matrix);
+		void SetPosition(Vector3 const &) const;
+		
+		Matrix33 const & GetRotation() const;
+		void SetRotation(Matrix33 const & matrix);
 		
 		bool IsMovable() const;
 		void SetLinearDamping(Scalar linear_damping);

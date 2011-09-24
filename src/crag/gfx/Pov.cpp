@@ -27,11 +27,11 @@ using namespace gfx;
 // gfx::Frustum member definitions
 
 // This matrix is ready-transposed for OpenGL.
-sim::Matrix4 Frustum::CalcProjectionMatrix() const
+sim::Matrix44 Frustum::CalcProjectionMatrix() const
 {
 	double aspect = static_cast<double>(resolution.x) / resolution.y;
 	double f = 1. / Tan(fov * .5);
-	return sim::Matrix4(static_cast<float>(f / aspect), 0, 0, 0, 
+	return sim::Matrix44(static_cast<float>(f / aspect), 0, 0, 0, 
 						0, static_cast<float>(f), 0, 0, 
 						0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,
 						0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
@@ -41,7 +41,7 @@ void Frustum::SetProjectionMatrix() const
 {
 	gl::Viewport(0, 0, resolution.x, resolution.y);
 	
-	sim::Matrix4 const & projection_matrix = CalcProjectionMatrix();
+	sim::Matrix44 const & projection_matrix = CalcProjectionMatrix();
 	
 	gl::MatrixMode(GL_PROJECTION);
 	gl::LoadMatrix(projection_matrix.GetArray());
@@ -53,7 +53,6 @@ void Frustum::SetProjectionMatrix() const
 // gfx::Pov member definitions
 
 Pov::Pov()
-: _transformation(Matrix::Identity())
 {
 }
 
@@ -67,19 +66,19 @@ Frustum const & Pov::GetFrustum() const
 	return _frustum;
 }
 
-void Pov::SetTransformation(sim::Matrix4 const & transformation)
+void Pov::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
 }
 
-Pov::Matrix const & Pov::GetTransformation() const
+Pov::Transformation const & Pov::GetTransformation() const
 {
 	return _transformation;
 }
 
 Pov::Vector Pov::GetPosition() const
 {
-	return TranslationVector(_transformation);
+	return _transformation.GetTranslation();
 }
 
 #if defined(NOT_DEPRECATED)
@@ -102,23 +101,15 @@ void Pov::LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector c
 }
 #endif
 
-void Pov::SetModelView(Vector const & model_position) const
+void Pov::SetModelView(Transformation const & model_transformation) const
 {
-	SetModelView(TranslationMatrix(model_position));
-}
-
-void Pov::SetModelView(Vector const & model_position, Matrix const & model_rotation) const
-{
-	SetModelView(Transformation(model_position, model_rotation));
-}
-
-void Pov::SetModelView(Matrix const & model_transformation) const
-{
-	Matrix camera_transform = Inverse(_transformation);
+	typedef sim::Matrix44 Matrix;
 	
-	Matrix model_view_matrix = camera_transform * model_transformation;
+	Matrix camera_transform = Inverse(_transformation.GetMatrix());
 	
-	Matrix gl_model_view_matrix = Transpose(model_view_matrix) * axes::SimToOpenGl<sim::Scalar>();	
+	Matrix model_view_matrix = camera_transform * model_transformation.GetMatrix();
+	
+	Matrix gl_model_view_matrix = Transposition(model_view_matrix) * axes::SimToOpenGl<sim::Scalar>();	
 	
 	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
 	gl::LoadMatrix(gl_model_view_matrix.GetArray());	

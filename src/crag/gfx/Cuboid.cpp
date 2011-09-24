@@ -74,10 +74,8 @@ gfx::Cuboid::~Cuboid()
 	_mesh.Deinit();
 }
 
-void gfx::Cuboid::Draw(Vector3 const & dimensions) const
+void gfx::Cuboid::Draw() const
 {
-	gl::Scale(dimensions.x, dimensions.y, dimensions.z);
-	
 	// Perform the draw calls.
 	_mesh.Bind();
 	_mesh.Activate();

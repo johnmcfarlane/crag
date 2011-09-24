@@ -20,7 +20,7 @@
 
 #include "gfx/Color.h"
 
-#include "geom/Matrix4.h"
+#include "geom/Matrix44.h"
 
 #include <cstdio>
 
@@ -156,8 +156,8 @@ template<> int Config<Vector3d>::StringToValue(Vector3d & value, char const * st
 	return sscanf(string, "%lg,%lg,%lg", & value.x, & value.y, & value.z) == 1;
 }
 
-// Matrix4f
-template<> int Config<Matrix4f>::ValueToString(char * string, Matrix4f const & value)
+// Matrix44f
+template<> int Config<Matrix44f>::ValueToString(char * string, Matrix44f const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -166,7 +166,7 @@ template<> int Config<Matrix4f>::ValueToString(char * string, Matrix4f const & v
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<Matrix4f>::StringToValue(Matrix4f & value, char const * string)
+template<> int Config<Matrix44f>::StringToValue(Matrix44f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
@@ -175,8 +175,8 @@ template<> int Config<Matrix4f>::StringToValue(Matrix4f & value, char const * st
 				  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 1;
 }
 
-// Matrix4d
-template<> int Config<Matrix4d>::ValueToString(char * string, Matrix4d const & value)
+// Matrix44d
+template<> int Config<Matrix44d>::ValueToString(char * string, Matrix44d const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -185,7 +185,7 @@ template<> int Config<Matrix4d>::ValueToString(char * string, Matrix4d const & v
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<Matrix4d>::StringToValue(Matrix4d & value, char const * string)
+template<> int Config<Matrix44d>::StringToValue(Matrix44d & value, char const * string)
 {
 	return sscanf(string, "%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 

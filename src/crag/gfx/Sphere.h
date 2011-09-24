@@ -35,7 +35,7 @@ namespace gfx
 		Sphere();
 		~Sphere();
 		
-		void Draw(float radius, int lod = num_sphere_lods - 1) const;
+		void Draw(int lod = num_sphere_lods - 1) const;
 	private:
 		void InitColors(VertexVector const & vertex_positions);
 		void ActivateColors() const;

@@ -15,7 +15,7 @@
 #include "physics/SphericalBody.h"
 
 #include "geom/Vector3.h"
-#include "geom/Matrix4.h"
+#include "geom/Matrix44.h"
 
 
 namespace physics

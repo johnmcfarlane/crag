@@ -20,7 +20,7 @@
 #include "geom/Vector4.h"
 #include "geom/Ray.h"
 #include "geom/Sphere3.h"
-#include "geom/Matrix4.h"
+#include "geom/Transformation.h"
 
 
 namespace sim
@@ -37,12 +37,14 @@ namespace sim
 	typedef ::Vector<Scalar, 2> Vector2;
 	typedef ::Vector<Scalar, 3> Vector3;
 	typedef ::Vector<Scalar, 4> Vector4;
-	typedef ::Ray<Scalar, 3>	Ray3;
+	typedef ::Ray<Scalar, 3> Ray3;
 	typedef ::Sphere<Scalar, 3> Sphere3;
-	typedef ::Matrix4<Scalar> Matrix4;
+	typedef ::Matrix<Scalar, 3, 3> Matrix33;
+	typedef ::Matrix<Scalar, 4, 4> Matrix44;
+	typedef ::Transformation<Scalar> Transformation;
 	
 	struct SetCameraMessage
 	{
-		Matrix4 transformation;
+		Transformation transformation;
 	};
 }

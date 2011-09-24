@@ -24,6 +24,8 @@
 #include "form/node/NodeBuffer.h"
 #include "form/scene/ForEachIntersection.h"
 
+#include "geom/MatrixOps.h"
+
 
 namespace
 {
@@ -92,28 +94,26 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
-	Vector3 dimensions = box.GetDimensions();
-	Matrix4 rotation;
-	box.GetRotation(rotation);
+	Vector3 extents = box.GetDimensions() * .5;
+	sim::Matrix33 const & rotation = box.GetRotation();
 	
 	// Initialise the PointCloud.
 	form::PointCloud shape;
 	
 	// bounding sphere
 	shape.sphere.center = form::SimToScene(box.GetPosition(), origin);
-	shape.sphere.radius = form::Scalar(Length(dimensions));
+	shape.sphere.radius = form::Scalar(Length(extents));
 	
 	// points
 	int const num_corners = 8;
 	shape.points.resize(num_corners);
 	for (int corner_index = 0; corner_index != num_corners; ++ corner_index)
 	{
-		sim::Vector4 corner;
-		corner.x = ((corner_index & 1) ? dimensions.x : - dimensions.x) * .5;
-		corner.y = ((corner_index & 2) ? dimensions.y : - dimensions.y) * .5;
-		corner.z = ((corner_index & 4) ? dimensions.z : - dimensions.z) * .5;
-		corner.w = 0;
-		sim::Vector4 rotated_corner = rotation * corner;
+		sim::Vector3 corner;
+		corner.x = ((corner_index & 1) ? extents.x : - extents.x);
+		corner.y = ((corner_index & 2) ? extents.y : - extents.y);
+		corner.z = ((corner_index & 4) ? extents.z : - extents.z);
+		sim::Vector3 rotated_corner = rotation * corner;
 		shape.points[corner_index].x = float(rotated_corner.x + shape.sphere.center.x);
 		shape.points[corner_index].y = float(rotated_corner.y + shape.sphere.center.y);
 		shape.points[corner_index].z = float(rotated_corner.z + shape.sphere.center.z);

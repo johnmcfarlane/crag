@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "sim/defs.h"
+
 
 namespace form 
 {
@@ -17,23 +19,23 @@ namespace form
 	// Common info shared between Mesh and MeshBufferObject.
 	struct MeshProperties
 	{
-		typedef Vector3d Vector3;
+		typedef sim::Vector3 Vector;
 		
 		MeshProperties() 
-		: _origin(Vector3::Zero())
+		: _origin(Vector::Zero())
 		, _num_quaterna(0)
 		, _flat_shaded(false)
 		{
 		}
 		
-		MeshProperties(Vector3 origin, int num_quaterna, bool flat_shaded) 
+		MeshProperties(Vector origin, int num_quaterna, bool flat_shaded) 
 		: _origin(origin)
 		, _num_quaterna(num_quaterna)
 		, _flat_shaded(flat_shaded)
 		{
 		}
 		
-		Vector3 _origin;
+		Vector _origin;
 		int _num_quaterna;
 		bool _flat_shaded;
 	};

@@ -10,41 +10,127 @@
 
 #pragma once
 
-#include "Matrix4.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// Matrix multiplication
 
-// TODO: Rename this file
-
-
-template<typename S> Matrix4<S> TranslationMatrix(Vector<S, 3> const & translation)
+// matrix * matrix = matrix
+template <typename S, int R, int C> 
+Matrix<S, R, C> operator * (Matrix<S, R, C> const & lhs, Matrix<S, R, C> const & rhs)
 {
-	return Matrix4<S>(1, 0, 0, translation.x,
-					  0, 1, 0, translation.y, 
-					  0, 0, 1, translation.z,
-					  0, 0, 0, 1);
+	Matrix<S, R, C> result;
+	for (int row = 0; row < R; ++ row)
+	{
+		for (int column = 0; column < C; ++ column)
+		{
+			result[row][column] = (lhs[row][0]*rhs[0][column] + 
+								   lhs[row][1]*rhs[1][column] + 
+								   lhs[row][2]*rhs[2][column] + 
+								   lhs[row][3]*rhs[3][column]);
+		}
+	}
+	return result;
 }
 
-template<typename S> Vector<S, 3> TranslationVector(Matrix4<S> const & matrix)
-{
-	return Vector<S, 3>(matrix[0][3], matrix[1][3], matrix[2][3]);
+// matrix * vector = vector
+template<typename S, int R, int C> 
+Vector<S, R> operator * (Matrix<S, R, C> const & lhs, const Vector<S, C> & rhs) 
+{ 
+	Vector<S, R> result;
+	for (int row = 0; row < R; ++ row)
+	{
+		result[row] = DotProduct(lhs.GetRow(row), rhs);
+	}
+	return result;
 }
 
-template<typename S> Matrix4<S> DirectionMatrix(Vector<S, 3> const & forward, Vector<S, 3> const & up = Vector<S, 3>(0, 0, 1))
-{
-	Vector<S, 3> right = Normalized(CrossProduct(forward, up));
-	Vector<S, 3> matrix_up = CrossProduct(right, forward);
-
-	return Matrix4<S>(right.x, right.y, right.z, 0,	// T
-					forward.x, forward.y, forward.z, 0,	// OD
-					matrix_up.x, matrix_up.y, matrix_up.z, 0,	// O
-					0, 0, 0, 1);
+// vector * matrix = vector
+template<typename S, int R, int C> 
+Vector<S, C> operator * (const Vector<S, R> & lhs, Matrix<S, R, C> const & rhs) 
+{ 
+	Vector<S, C> result;
+	for (int column = 0; column < C; ++ column)
+	{
+		result[column] = DotProduct(lhs, rhs.GetColumn(column)); 
+	}
+	return result;
 }
 
-template<typename S> Matrix4<S> Transformation(Vector<S, 3> const & translation, Matrix4<S> const & rotation)
+
+////////////////////////////////////////////////////////////////////////////////
+// Miscellaneous Matrix operations
+
+template<typename S, int R, int C> 
+Matrix<S, R, C> Transposition(Matrix<S, R, C> const & matrix)
 {
-	// This is equivalent to TranslationMatrix(translation) * rotation
-	return Matrix4<S>(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
-					  rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
-					  rotation[2][0], rotation[2][1], rotation[2][2], translation[2],
-					  0, 0, 0, 1);
+	Matrix<S, R, C> transposition;
+	
+	for (int row = 0; row < R; ++ row) 
+	{
+		for (int column = 0; column < C; ++ column) 
+		{
+			transposition[column][row] = matrix[row][column];
+		}
+	}
+	
+	return transposition;
+}
+
+template <typename S, int R, int C> 
+Matrix<S, R, C> Inverse(Matrix<S, R, C> const & matrix)
+{
+	Matrix<S, R, C> inverse;
+	
+	S det = matrix.Determinant();
+	if(Abs(det) < std::numeric_limits<S>::min()) 
+	{
+		return matrix;		// The matrix is not invertible! Singular case!
+	}
+	
+	S inv_det = Inverse(det);
+	
+	for (int row = 0; row < R; ++ row) 
+	{
+		for (int column = 0; column < C; ++ column) 
+		{
+			inverse[column][row] = matrix.CoFactor(row,column) * inv_det;
+		}
+	}
+	
+	return inverse;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// I/O
+
+template <typename S, int R, int C> 
+std::ostream & operator << (std::ostream & out, Matrix<S, R, C> const & m)
+{
+	out << '[';
+	for (int row = 0; row < R; ++ row) 
+	{
+		out << '[';
+		for (int column = 0; column < C; ++ column) 
+		{
+			out << m[row][column] << ((column == (C - 1)) ? ']' : ',');
+		}
+	}
+	return out << ']';
+}
+
+template <typename S, int R, int C> 
+std::istream & operator >> (std::istream & in, Matrix<S, R, C> & m)
+{
+	char dummy;
+	in >> dummy;
+	for (int row = 0; row < R; ++ row) 
+	{
+		in >> dummy;
+		for (int column = 0; column < C; ++ column) 
+		{
+			in >> m[row][column] >> dummy;
+		}
+	}
+	return in >> dummy;
 }

@@ -75,19 +75,14 @@ void physics::Body::SetPosition(Vector3 const & position) const
 	dGeomSetPosition(geom_id, position.x, position.y, position.z);
 }
 
-void physics::Body::GetRotation(Matrix4 & rot) const
+physics::Matrix33 const & physics::Body::GetRotation() const
 {
-	dReal const * array = dGeomGetRotation(geom_id);
-	BitwiseCopyArray(rot.GetArray(), array, 12);
-	rot[3][0] = 0;
-	rot[3][1] = 0;
-	rot[3][2] = 0;
-	rot[3][3] = 1;
+	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
 }
 
-void physics::Body::SetRotation(Matrix4 const & matrix)
+void physics::Body::SetRotation(Matrix33 const & matrix)
 {
-	dGeomSetRotation(geom_id, matrix.GetArray());
+	dGeomSetRotation(geom_id, reinterpret_cast<Scalar const *>(matrix.GetArray()));
 }
 
 bool physics::Body::IsMovable() const

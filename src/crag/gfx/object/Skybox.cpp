@@ -18,6 +18,8 @@
 
 #include "core/Random.h"
 
+#include "geom/Transformation.h"
+
 
 using namespace gfx;
 
@@ -59,7 +61,7 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	skybox_frustum.SetProjectionMatrix();
 	
 	// Set model view matrix (with zero translation).
-	pov.SetModelView(pov.GetPosition());
+	pov.SetModelView(Transformation(pov.GetPosition()));
 	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));

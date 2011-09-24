@@ -31,7 +31,7 @@ namespace gfx
 		Cuboid();
 		~Cuboid();
 		
-		void Draw(Vector3 const & dimensions) const;
+		void Draw() const;
 	private:
 		
 		// variables

@@ -23,8 +23,7 @@ namespace gfx
 		// types
 		struct UpdateParams
 		{
-			Vector _position;
-			Matrix _rotation;
+			Transformation transformation;
 		};
 		
 		// functions
@@ -37,8 +36,6 @@ namespace gfx
 		
 	private:
 		// variables
-		Vector _position;
-		Matrix _rotation;
-		Vector _size;
+		Transformation _transformation;
 	};
 }

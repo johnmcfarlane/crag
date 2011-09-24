@@ -77,7 +77,7 @@ PyObject * set_camera(PyObject * /*self*/, PyObject * args)
 	else
 	{
 		sim::SetCameraMessage message;
-		message.transformation = TranslationMatrix(position);
+		message.transformation = sim::Transformation(position);
 		gfx::Renderer::Daemon::SendMessage(message);
 	}
 	

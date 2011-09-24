@@ -113,7 +113,7 @@ void Ball::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
 	message._params._position = _body->GetPosition();
-	_body->GetRotation(message._params._rotation);
+	message._params._rotation = _body->GetRotation();
 	
 	gfx::Renderer::Daemon::SendMessage(message);
 }

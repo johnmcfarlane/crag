@@ -125,7 +125,7 @@ void gfx::Scene::SetResolution(Vector2i const & r)
 	pov.GetFrustum().resolution = r;
 }
 
-void gfx::Scene::SetCameraTransformation(sim::Matrix4 const & transformation)
+void gfx::Scene::SetCameraTransformation(sim::Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
 }

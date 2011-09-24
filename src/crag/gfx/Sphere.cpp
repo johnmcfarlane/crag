@@ -47,9 +47,9 @@ gfx::Sphere::~Sphere()
 	_mesh.Deinit();
 }
 
-void gfx::Sphere::Draw(float radius, int lod) const
+void gfx::Sphere::Draw(int lod) const
 {
-	float scale = _lod_coefficients[lod] * radius;
+	float scale = _lod_coefficients[lod];
 	gl::Scale(scale, scale, scale);
 	
 	// Select the correct range of indices, given the LoD.

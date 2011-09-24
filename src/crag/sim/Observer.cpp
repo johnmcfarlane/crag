@@ -16,7 +16,7 @@
 
 #include "physics/SphericalBody.h"
 
-#include "geom/MatrixOps.h"
+#include "geom/Transformation.h"
 #include "geom/Vector4.h"
 
 #include "core/ConfigEntry.h"
@@ -26,6 +26,8 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/object/Light.h"
+
+#include "geom/MatrixOps.h"
 
 
 CONFIG_DECLARE (profile_mode, bool);
@@ -218,9 +220,8 @@ void sim::Observer::Tick(Simulation & simulation)
 void sim::Observer::UpdateModels() const
 {
 	// Set simulation camera.
-	Vector3 position = body->GetPosition();
-	Matrix4 rotation;
-	body->GetRotation(rotation);
+	Vector3 const & position = body->GetPosition();
+	Matrix33 const & rotation = body->GetRotation();
 
 	// Give renderer the new camera position.
 	{

@@ -24,7 +24,7 @@ namespace gfx
 		struct UpdateParams
 		{
 			Vector _position;
-			Matrix _rotation;
+			Matrix33 _rotation;
 		};
 		
 		// functions
@@ -40,7 +40,7 @@ namespace gfx
 		
 		// variables
 		Vector _position;
-		Matrix _rotation;
+		Matrix33 _rotation;
 		Scalar _radius;
 	};
 }
