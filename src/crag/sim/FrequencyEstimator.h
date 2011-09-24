@@ -12,8 +12,6 @@
 
 #include "core/debug.h"
 
-// TODO: Add time_delta to AddSample.
-
 
 class Estimator
 {

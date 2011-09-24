@@ -8,8 +8,6 @@
  *
  */
 
-// TODO: This is all very poorly defined.
-
 #pragma once
 
 #include "Controller.h"

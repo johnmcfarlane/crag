@@ -56,7 +56,6 @@ namespace gfx
 		form::Mesh * _pending_mesh;
 		
 		// buffer object upload fence
-		// TODO: array range extension may improve performance
 		gl::Fence _fence;
 		
 		// front buffer is drawable, back buffer is being written iff pending is non-null

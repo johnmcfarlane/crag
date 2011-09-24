@@ -180,7 +180,7 @@ void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
 			if (t.mid_point != nullptr)
 			{
 				Node & cousin = ref(t.cousin);
-				if (& cousin > this)	// TODO: Uncomment this if it works.
+				if (& cousin > this)
 				{
 					Point & mid_point = ref(t.mid_point);
 					shader.InitMidPoint(mid_point, * this, cousin, triplet_index);

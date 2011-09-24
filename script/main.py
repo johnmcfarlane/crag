@@ -65,7 +65,7 @@ def main_loop():
 				shapes.pop(0)
 			next_drop = now + drop_period
 		stackless.schedule()
-  
+
 main_loop()
 
 # Give entities a chance to be destroyed.
