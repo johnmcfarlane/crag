@@ -275,6 +275,7 @@ void Debug::AddBasis(Vector3 const & center, Matrix33 const & rotation, double s
 	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Yellow()));
 }
 
+#if 0
 void Debug::AddFrustum(Pov const & pov)
 {
 	Vector3 corners[2][2][2];
@@ -366,6 +367,7 @@ void Debug::AddFrustum(Pov const & pov)
 	 }
 	 }*/
 }
+#endif
 
 void Debug::Draw(Vector3 const & camera_pos)
 {
