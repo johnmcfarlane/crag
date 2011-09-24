@@ -10,6 +10,19 @@
 #pragma once
 
 
+// DEFINE_INTRUSIVE_LIST_TYPE macro can be used to define a list type for a listed class.
+// This works around a peculiarity of VC++ compiler.
+#if defined(WIN32)
+	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
+		template <typename CLASS> struct _ListTypeDefinitionHelper { \
+		typedef core::intrusive::list<CLASS, & CLASS::_hook> list_type; }; \
+		typedef _ListTypeDefinitionHelper<LISTED_CLASS>::list_type list_type;
+#else
+	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
+		typedef core::intrusive::list<LISTED_CLASS, & LISTED_CLASS::HOOK_MEMBER> LIST_TYPE;
+#endif
+
+
 namespace core
 {
 	
@@ -122,8 +135,6 @@ namespace core
 			////////////////////////////////////////////////////////////////////////////////
 			// iterators
 			
-			// TODO: Add parameters, value_type * hook_type::*Next, value_type * hook_type::*Previous.
-			// TODO: This will allow iterators to become reverse_iterators easily.
 			template <hook_type Class::*Member>
 			class const_iterator
 			{
@@ -350,7 +361,6 @@ namespace core
 				h.init();
 			}
 			
-			// TODO: Can't these just in list and maybe succeed in making list a friend of hook?
 			template <hook_type Class::* Member>
 			static hook_type & get_hook(Class & o)
 			{

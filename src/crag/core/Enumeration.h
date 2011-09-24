@@ -30,13 +30,7 @@ namespace core
 		typedef intrusive::hook<Enumeration> hook_type;
 		hook_type _hook;
 
-		// VC++ hack
-		template <typename CLASS> 
-		struct ListTypeDefinitionHelper
-		{
-			typedef intrusive::list<CLASS, & CLASS::_hook> list_type;
-		};
-		typedef typename ListTypeDefinitionHelper<Enumeration>::list_type list_type;
+		DEFINE_INTRUSIVE_LIST_TYPE(Enumeration, _hook, list_type);
 	public:
 		typedef typename list_type::const_iterator const_iterator;
 		typedef typename list_type::iterator iterator;

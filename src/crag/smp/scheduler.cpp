@@ -134,15 +134,7 @@ namespace smp
 				Semaphore * _num_complete;
 				
 			public:
-				// TODO: Consider resorting to a macro for this.
-				template <typename CLASS> 
-				struct ListTypeDefinitionHelper
-				{
-					typedef core::intrusive::list<CLASS, & CLASS::_hook> list_type;
-				};
-
-				// type of the list in which these are stored
-				typedef ListTypeDefinitionHelper<Task>::list_type list_type;
+				DEFINE_INTRUSIVE_LIST_TYPE(Task, _hook, list_type);
 			};
 			
 			
