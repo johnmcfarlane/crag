@@ -48,8 +48,6 @@ FormationSet::FormationSet()
 
 void FormationSet::Init()
 {
-	gl::GenFence(_fence);
-
 	for (int index = 0; index < 2; ++ index)
 	{
 		// initialize mesh buffer
@@ -68,8 +66,6 @@ void FormationSet::Deinit()
 		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Deinit();
 	}
-	
-	gl::DeleteFence(_fence);
 	
 #if ! defined(NDEBUG)
 	std::cout << "FormationSet has " << (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr) << " meshes." << std::endl;
@@ -168,15 +164,11 @@ bool FormationSet::BeginBufferUpload()
 	
 	back_buffer.Bind();
 	back_buffer.Set(* _queued_mesh);
-	if (_fence.IsInitialized())
-	{
-		gl::SetFence(_fence);
-	}
 	back_buffer.Unbind();
 	
 	_pending_mesh = _queued_mesh;
 	_queued_mesh = nullptr;
-	//std::cout << "set\n";
+
 	return true;
 }
 
@@ -185,12 +177,6 @@ bool FormationSet::FinishBufferUpload()
 	if (_pending_mesh == nullptr)
 	{
 		// not currently uploading a mesh
-		return false;
-	}
-	
-	if (_fence.IsInitialized() && ! gl::TestFence(_fence))
-	{
-		// mesh is not finished uploading
 		return false;
 	}
 	
@@ -210,7 +196,6 @@ bool FormationSet::FinishBufferUpload()
 	// release the pending mesh back to the formation manager
 	ReturnMesh(* _pending_mesh);
 	_pending_mesh = nullptr;
-	//std::cout << "flip\n";
 	
 	return true;
 }

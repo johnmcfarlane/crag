@@ -13,8 +13,6 @@
 
 #include "form/scene/MeshBufferObject.h"
 
-#include "glpp/Fence.h"
-
 #include "core/double_buffer.h"
 
 
@@ -54,9 +52,6 @@ namespace gfx
 		
 		// mesh that is being uploaded to a buffer object
 		form::Mesh * _pending_mesh;
-		
-		// buffer object upload fence
-		gl::Fence _fence;
 		
 		// front buffer is drawable, back buffer is being written iff pending is non-null
 		MboDoubleBuffer mbo_buffers;
