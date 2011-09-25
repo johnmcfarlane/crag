@@ -32,7 +32,9 @@ namespace smp
 		void RestartAll();	// Restarts all callers of Wait
 		
 	private:
-		
+
+		// WIN32: Support for this type may be missing from the SDL project.
+		// To fix this, add thread/generic/SDL_syscond.c to the SDL project.
 		SDL_cond * sdl_condition;
 	};
 	
