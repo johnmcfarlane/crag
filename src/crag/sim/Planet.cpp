@@ -175,6 +175,7 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 void sim::Planet::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Planet> message(ref(_model));
+	message._params._position = GetPosition();
 	message._params._radius_min = _radius_min;
 	message._params._radius_max = _radius_max;
 	gfx::Renderer::Daemon::SendMessage(message);
