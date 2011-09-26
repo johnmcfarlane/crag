@@ -173,7 +173,6 @@ namespace form
 		bool enable_mesh_generation;
 		bool flat_shaded_flag;
 		
-		//MeshDoubleBuffer meshes;
 		Mesh::list_type _meshes;
 		
 		sys::TimeType mesh_generation_time;
@@ -186,9 +185,6 @@ namespace form
 		// It's the active scene which is reshaped for LODding purposes (churned).
 		SceneDoubleBuffer scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
-		
-		// TODO: This is pre-messages. Perhaps there's a better way now?
-		smp::Semaphore suspend_semaphore;		
 		
 		static Daemon * singleton;
 	};

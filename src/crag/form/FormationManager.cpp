@@ -51,7 +51,6 @@ form::FormationManager::FormationManager()
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , flat_shaded_flag(false)
-, suspend_semaphore(1)
 , mesh_generation_time(sys::GetTime())
 , _camera_pos(sim::Ray3::Zero())
 {
@@ -142,26 +141,17 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 		gfx::Renderer::Daemon::SendMessage(message);
 	}
 	
-	while (true) 
+	while (! quit_flag) 
 	{
 		message_queue.DispatchMessages(* this);
-		
-		suspend_semaphore.Decrement();
-		if (quit_flag)
+
+		if (! suspend_flag)
 		{
-			break;
-		}
-		
-		Tick();
-		
-		message_queue.DispatchMessages(* this);
-		
-		GenerateMesh();
-		
-		suspend_semaphore.Increment();
-		if (quit_flag)
-		{
-			break;
+			Tick();
+			
+			message_queue.DispatchMessages(* this);
+			
+			GenerateMesh();
 		}
 	}
 	
@@ -172,7 +162,6 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	}
 }
 
-// TODO: Paralellize scenes[n].AddFormation/RemoveFormation
 void form::FormationManager::AddFormation(form::Formation & formation)
 {
 	Assert(formation_set.find(& formation) == formation_set.end());
@@ -211,15 +200,6 @@ form::Scene const & form::FormationManager::OnTreeQuery() const
 void form::FormationManager::ToggleSuspended()
 {
 	suspend_flag = ! suspend_flag;
-	
-	if (suspend_flag)
-	{
-		suspend_semaphore.Decrement();
-	}
-	else
-	{
-		suspend_semaphore.Increment();
-	}
 }
 
 void form::FormationManager::ToggleMeshGeneration()
