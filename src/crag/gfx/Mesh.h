@@ -16,7 +16,6 @@
 
 namespace gfx
 {
-	// TODO: This doesn't belong here.
 	template<typename Vertex, gl::BufferDataUsage Usage> class Mesh
 	{
 		typedef gl::Vbo<Vertex> Vbo;
