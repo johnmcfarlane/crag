@@ -57,7 +57,13 @@ namespace smp
 	void for_each(ITERATOR first, ITERATOR last, FUNCTOR functor, size_t unit_size, int priority)
 	{
 		ChunkedJob<ITERATOR, FUNCTOR, UNROLL_PITCH> chunk_functor(first, last, functor, unit_size);
-
+		
 		scheduler::Complete(chunk_functor, chunk_functor.NumUnits(), priority);
+	}
+	
+	template <typename ITERATOR, typename FUNCTOR> 
+	void for_each(ITERATOR first, ITERATOR last, FUNCTOR functor, size_t unit_size, int priority)
+	{
+		for_each <ITERATOR, FUNCTOR, 1> (first, last, functor, unit_size, priority);
 	}
 }

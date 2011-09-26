@@ -36,5 +36,11 @@ namespace core
 		
 		return f;
 	}
+	
+	template <typename ITERATOR, typename ITEM_FUNCTOR>
+	ITEM_FUNCTOR for_each (ITERATOR first, ITERATOR last, ITEM_FUNCTOR f)
+	{
+		return for_each <ITERATOR, ITEM_FUNCTOR, 1> (first, last, f);
+	}
 
 }
