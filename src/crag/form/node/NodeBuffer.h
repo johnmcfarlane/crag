@@ -53,16 +53,15 @@ namespace form
 		// Constants
 		enum {
 			// tweakables
-			portion_num_quaterne = 1,	// TODO: Cannot increase above 1
 			min_num_portions = 64,
 			max_num_portions = 65536,
 
 			// derivations
 			num_nodes_per_quaterna = 4,
-			portion_num_nodes = portion_num_quaterne * num_nodes_per_quaterna,
+			portion_num_nodes = num_nodes_per_quaterna,
 			
-			min_num_quaterne = min_num_portions * portion_num_quaterne,
-			max_num_quaterne = max_num_portions * portion_num_quaterne,
+			min_num_quaterne = min_num_portions,
+			max_num_quaterne = max_num_portions,
 
 			max_num_nodes = max_num_quaterne * num_nodes_per_quaterna,
 			max_num_verts = max_num_nodes * 2,
@@ -117,7 +116,6 @@ namespace form
 		bool IsChildNode(Node const & node) const;
 		bool IsValidNodePointer(Node const * node) const;
 		int GetNodeIndex(Node const & node) const;
-		//bool IsAvailable(class Ranking const * ranking) const;
 		
 		///////////////////////////////////////////////////////
 		// Node-related members.
@@ -166,12 +164,10 @@ namespace form
 		Quaterna const * const quaterne_end;
 		
 		// Pool of vertices from which to take the corners of nodes.
-		// TODO: NodeBuffer and PointBuffer could maybe be owned by the same, parent class. 
 		PointBuffer point_buffer;
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
-		// TODO: Spin lock instead?
 		mutable smp::Mutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;

@@ -131,7 +131,6 @@ bool sim::Observer::Init(Simulation & simulation, PyObject & args)
 	Vector<double, 3> center;
 	if (! PyArg_ParseTuple(& args, "ddd", &center.x, &center.y, &center.z))
 	{
-		// TODO: Deal with this more gracefully.
 		return false;
 	}
 	
@@ -185,7 +184,6 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 
 void sim::Observer::SetSpeedFactor(int _speed_factor)
 {
-	// TODO: Specify a range in config.
 	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
@@ -230,7 +228,6 @@ void sim::Observer::UpdateModels() const
 	}
 
 	// Give renderer the new light position.
-	// TODO: This light doesn't appear to be working currently.
 	{
 		gfx::UpdateObjectMessage<gfx::Light> message(_light);
 		message._params = position;

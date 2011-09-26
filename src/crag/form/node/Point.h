@@ -20,7 +20,6 @@ namespace form
 	// This class stores the position of corners/mid-points in Nodes.
 	// They also remember their vertex in the currently generated mesh.
 	
-	// TODO: form/defs.f with Vector3.
 	class Point
 	{
 	public:
@@ -28,7 +27,6 @@ namespace form
 		
 		// Attributes
 		Vector3 pos;
-		gfx::Color4b col;
 		Vertex * vert;
 	};
 }

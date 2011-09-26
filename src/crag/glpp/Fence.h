@@ -99,7 +99,6 @@ namespace gl
 	{
 		assert(! f.IsInitialized());
 
-		// TODO: GLEW_ARB_sync might just work one day...
 		if (! GLEW_NV_fence)
 		{
 			return false;

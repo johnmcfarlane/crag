@@ -24,7 +24,6 @@ namespace sim
 	
 	
 	// A class which governs how the edges of individual polys of a planet's surface are sub-divided.
-	// TODO: Once this code it more mature, re-merge it with the moon code.
 	class PlanetShader : public form::Shader
 	{
 	public:

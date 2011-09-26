@@ -218,12 +218,10 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 	if (depth >= planet_shader_depth_medium)
 	{
 		CalcMidPointPos_SimpleInterp(result, params);
-		mid_point.col = gfx::Color4b::Blue();
 	}
 	else 
 	{
 		CalcMidPointPos_Random(result, params);
-		mid_point.col = gfx::Color4b::Green();
 	}
 	
 #if ! defined(NDEBUG)
@@ -240,7 +238,7 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 #endif
 	
 	mid_point.pos = result;
-	mid_point.col = gfx::Color4b::White();
+//	mid_point.col = gfx::Color4b::White();
 
 	debug::MarkNodePoint(a, mid_point, 0, 0);
 	debug::MarkNodePoint(b, mid_point, 3, 3);

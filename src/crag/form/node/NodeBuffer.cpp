@@ -17,7 +17,6 @@
 #include "Quaterna.h"
 #include "Shader.h"
 
-// TODO: Remove dependency on Polyhedron
 #include "form/scene/Polyhedron.h"
 
 #include "smp/for_each.h"
@@ -120,10 +119,6 @@ void form::NodeBuffer::Verify() const
 	VerifyTrue((num_nodes_used % portion_num_nodes) == 0);
 	
 	int num_quaterne_used = quaterne_used_end - quaterne;
-	VerifyTrue((num_quaterne_used % portion_num_quaterne) == 0);
-	
-	int num_quaterne_used_target = quaterne_used_end_target - quaterne;
-	VerifyTrue((num_quaterne_used_target % portion_num_quaterne) == 0);
 	
 	VerifyTrue(num_nodes_used == num_quaterne_used * 4);
 	
@@ -269,7 +264,6 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 	VerifyObject(* this);
 }
 
-// TODO: Are these needed now?
 void form::NodeBuffer::LockTree() const
 {
 	tree_mutex.Lock();
@@ -368,7 +362,6 @@ void form::NodeBuffer::UpdateNodes()
 
 void form::NodeBuffer::UpdateNodeScores()
 {
-	// TODO: Try ForEachQuaterna. Faster?
 	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 }
 
@@ -928,11 +921,11 @@ void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 	
 	if (! parallel)
 	{
-		core::for_each <form::Node *, FUNCTOR, portion_num_quaterne> (nodes, nodes_used_end, f);
+		core::for_each <form::Node *, FUNCTOR> (nodes, nodes_used_end, f);
 	}
 	else 
 	{
-		smp::for_each <form::Node *, FUNCTOR, portion_num_quaterne>(nodes, nodes_used_end, f, step_size, -1);
+		smp::for_each <form::Node *, FUNCTOR>(nodes, nodes_used_end, f, step_size, -1);
 	}
 }
 
@@ -946,10 +939,10 @@ void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool paralle
 
 	if (! parallel && step_size == 1)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterne>(quaterne, quaterne_used_end, f);
+		core::for_each<form::Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f);
 	}
 	else
 	{
-		smp::for_each<form::Quaterna *, FUNCTOR, portion_num_quaterne>(quaterne, quaterne_used_end, f, step_size, -1);
+		smp::for_each<form::Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f, step_size, -1);
 	}
 }

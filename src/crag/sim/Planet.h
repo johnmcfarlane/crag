@@ -30,7 +30,6 @@ namespace sim
 	
 	
 	// A planet is a celestial body which is represented using formation.
-	// TODO: The moon is of class, planet. As such, Planet needs a better name. 
 	class Planet : public Entity
 	{
 		DECLARE_SCRIPT_CLASS(Planet, Entity);
