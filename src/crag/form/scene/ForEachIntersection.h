@@ -17,25 +17,14 @@ namespace form
 {
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// ForEachIntersection implementation
+	// ForEachIntersection forward-declaration
 	
-	// general
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
-	{
-		IntersectionNodeFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, shape, functor, min_area);
-		
-		form::RootNode const & root_node = polyhedron.root_node;
-		form::Node const * children = root_node.GetChildren();
-		if (children != nullptr)
-		{
-			GatherPoints(node_functor, children[0]);
-			GatherPoints(node_functor, children[1]);
-			GatherPoints(node_functor, children[2]);
-			GatherPoints(node_functor, children[3]);
-		}
-	}
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_area);
+
 	
+	////////////////////////////////////////////////////////////////////////////////
+	// ForEachIntersection implementation
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// ForEachIntersection helper classes and functions
@@ -274,4 +263,24 @@ namespace form
 		}
 	}
 	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// ForEachIntersection implementation
+	
+	template <typename SHAPE, typename FUNCTOR>
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
+	{
+		IntersectionNodeFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, shape, functor, min_area);
+		
+		form::RootNode const & root_node = polyhedron.root_node;
+		form::Node const * children = root_node.GetChildren();
+		if (children != nullptr)
+		{
+			GatherPoints(node_functor, children[0]);
+			GatherPoints(node_functor, children[1]);
+			GatherPoints(node_functor, children[2]);
+			GatherPoints(node_functor, children[3]);
+		}
+	}
+
 }
