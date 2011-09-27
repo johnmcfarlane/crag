@@ -146,24 +146,21 @@ gfx::Pov const & gfx::Scene::GetPov() const
 // something that gives and near and far plane value instead. 
 void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
 {
-	for (ObjectSet const * vector_iterator = _objects; vector_iterator != _objects + Layer::num; ++ vector_iterator) 
+	ObjectSet const & objects = _objects[Layer::foreground];
+	for (ObjectSet::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
 	{
-		ObjectSet objects = * vector_iterator;
-		for (ObjectSet::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
+		Object const & object = * * object_iterator;
+		double object_range[2];
+		if (object.GetRenderRange(camera_ray, object_range, wireframe))
 		{
-			Object const & object = * * object_iterator;
-			double object_range[2];
-			if (object.GetRenderRange(camera_ray, object_range, wireframe))
+			if (object_range[0] < range_min)
 			{
-				if (object_range[0] < range_min)
-				{
-					range_min = object_range[0];
-				}
-				
-				if (object_range[1] > range_max)
-				{
-					range_max = object_range[1];
-				}
+				range_min = object_range[0];
+			}
+			
+			if (object_range[1] > range_max)
+			{
+				range_max = object_range[1];
 			}
 		}
 	}
