@@ -15,7 +15,6 @@
 #include "Formation.h"
 
 #include "form/node/NodeBuffer.h"
-#include "form/scene/ForEachIntersection.h"
 
 #include "sim/axes.h"
 
