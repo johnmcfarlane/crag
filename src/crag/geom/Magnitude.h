@@ -117,6 +117,14 @@ template<typename S, typename V> S TriangleArea(V const & a, V const & b, V cons
 	return TriangleArea(ab, bc, ca);
 }
 
+// Given the dimensions of a rectangular cuboid, returns the surface area.
+template<typename S> S CuboidArea(class Vector<S, 3> const & dimensions)
+{
+	return (dimensions.x * dimensions.y + 
+			dimensions.y * dimensions.z + 
+			dimensions.z * dimensions.x) * S(2);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Volume
