@@ -60,6 +60,12 @@ namespace
 		}
 		
 		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
+
+		if (! GL_ARB_vertex_buffer_object)
+		{
+			std::cerr << "GL implementation doesn't support vertex buffers." << std::endl;
+			return false;
+		}
 #endif
 		
 		return true;
