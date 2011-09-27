@@ -120,13 +120,20 @@ void Renderer::OnMessage(AddObjectMessage const & message)
 {
 	Object & object = message._object;
 	object.Init();
-	scene->AddObject(object);
+
+	if (scene != nullptr)
+	{
+		scene->AddObject(object);
+	}
 }
 
 void Renderer::OnMessage(RemoveObjectMessage const & message)
 {
 	Object & object = message._object;
-	scene->RemoveObject(object);
+	if (scene != nullptr)
+	{
+		scene->RemoveObject(object);
+	}
 	object.Deinit();
 	delete & object;
 }
@@ -168,8 +175,11 @@ void Renderer::OnMessage(ToggleCaptureMessage const & message)
 // TODO: Make camera an object so that positional messages are the same as for other objects.
 void Renderer::OnMessage(sim::SetCameraMessage const & message)
 {
-	scene->SetCameraTransformation(message.transformation);
-	
+	if (scene != nullptr)
+	{
+		scene->SetCameraTransformation(message.transformation);
+	}
+
 	// pass this on to the formation manager to update the node scores
 	form::FormationManager::Daemon::SendMessage(message);
 }
@@ -244,6 +254,7 @@ bool Renderer::Init()
 	
 	if (! sys::InitGl())
 	{
+		scene = nullptr;
 		return false;
 	}
 	
@@ -261,6 +272,11 @@ bool Renderer::Init()
 
 void Renderer::Deinit()
 {
+	if (scene == nullptr)
+	{
+		return;
+	}
+
 	Debug::Deinit();
 	
 	init_culling = culling;
