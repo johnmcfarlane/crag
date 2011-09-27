@@ -58,15 +58,19 @@ void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
 void sim::Simulation::OnMessage(AddEntityMessage const & message)
 {
 	Entity & entity = message.entity;
-	if (! entity.Init(* this, message.args))
-	{
-		std::cerr << "Bad input parameters to entity" << std::endl;
-		DEBUG_BREAK();
-	}
-	
+
+	bool initialized = entity.Init(* this, message.args);
+
 	// Let go of arguments object.
 	// (Incremented in script::MetaClass::NewObject.)
 	Py_DECREF(& message.args);
+	
+	if (! initialized)
+	{
+		std::cerr << "Bad input parameters to entity" << std::endl;
+		DEBUG_BREAK();
+		return;
+	}
 	
 	universe->AddEntity(entity);
 	entity.UpdateModels();
