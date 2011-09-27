@@ -33,8 +33,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 10.f);
-	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 5);
+	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, .1f);
+	CONFIG_DEFINE (formation_box_collision_detail_factor, float, .1f);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
-	Vector3 extents = box.GetDimensions() * .5;
+	Vector3 dimensions = box.GetDimensions();
+	Vector3 extents = dimensions * .5;
 	sim::Matrix33 const & rotation = box.GetRotation();
 	
 	// Initialise the PointCloud.
@@ -128,10 +129,10 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	}
 	
 	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
-	form::NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	float min_parent_score = node_buffer.GetMinParentScore() * formation_box_collision_detail_factor;
+	float box_area = float(CuboidArea(dimensions));
+	float min_parent_area = box_area * formation_box_collision_detail_factor;
 	
-	form::ForEachIntersection(* polyhedron, relative_formation_position, shape, origin, functor, min_parent_score);
+	form::ForEachIntersection(* polyhedron, relative_formation_position, shape, origin, functor, min_parent_area);
 }
 
 void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const
@@ -141,7 +142,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	form::Scene const & scene = formation_manager.OnTreeQuery();
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
-	form::Sphere3 relative_sphere(form::SimToScene(sphere.GetPosition(), origin), form::Scalar(sphere.GetRadius()));
+	form::Scalar radius = float(sphere.GetRadius());
+	form::Sphere3 relative_sphere(form::SimToScene(sphere.GetPosition(), origin), radius);
 	
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
@@ -151,8 +153,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	}
 	
 	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
-	form::NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	float min_parent_score = node_buffer.GetMinParentScore() * formation_sphere_collision_detail_factor;
+	float sphere_area(Area(relative_sphere));
+	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 	
-	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_score);
+	form::ForEachIntersection(* polyhedron, relative_formation_position, relative_sphere, origin, functor, min_parent_area);
 }

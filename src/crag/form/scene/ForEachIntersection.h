@@ -15,122 +15,56 @@
 
 namespace form
 {
-	////////////////////////////////////////////////////////////////////////////////
-	// ForEachIntersection functions
-	//
-	// For the given polyhedron, calls functor for all faces which intersect with shape.
 	
-	// forward-declaration
+	////////////////////////////////////////////////////////////////////////////////
+	// ForEachIntersection implementation
+	
+	// general
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, SHAPE const & shape, FUNCTOR const & functor);
+	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
+	{
+		IntersectionNodeFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, shape, functor, min_area);
+		
+		form::RootNode const & root_node = polyhedron.root_node;
+		form::Node const * children = root_node.GetChildren();
+		if (children != nullptr)
+		{
+			GatherPoints(node_functor, children[0]);
+			GatherPoints(node_functor, children[1]);
+			GatherPoints(node_functor, children[2]);
+			GatherPoints(node_functor, children[3]);
+		}
+	}
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// ForEachIntersection helpers
+	// ForEachIntersection helper classes and functions
 	
 	// Scene-relative coordinates describing the 4-sided pyramid
-	// made up of the polyhedron center and the surface face.
+	// made up of the polyhedron center and one of its surface faces.
 	struct Pyramid
 	{
 		Vector3 center;
 		Vector3 a, b, c;
 	};
-	
-	struct PointCloud
-	{
-		// types
-		typedef std::vector<Vector3> Vector;
-		
-		// variables
-		Sphere3 sphere;	// bounding sphere
-		Vector points;	// point cloud
-	};
-	
-	inline bool TouchesInfinitePyramid(Vector3 const & point, Pyramid const & pyramid) 
-	{
-		return FastContains(pyramid.center, pyramid.a, pyramid.c, point) 
-		&& FastContains(pyramid.center, pyramid.b, pyramid.a, point) 
-		&& FastContains(pyramid.center, pyramid.c, pyramid.b, point);
-	}
-	
-	inline bool TouchesInfinitePyramid(Sphere3 const & sphere, Pyramid const & pyramid) 
-	{
-		return FastContains(pyramid.center, pyramid.a, pyramid.c, sphere) 
-		&& FastContains(pyramid.center, pyramid.b, pyramid.a, sphere) 
-		&& FastContains(pyramid.center, pyramid.c, pyramid.b, sphere);
-	}
-	
-	inline bool TouchesInfinitePyramid(PointCloud const & shape, Pyramid const & pyramid) 
-	{
-		return FastContains(pyramid.center, pyramid.a, pyramid.c, shape.sphere) 
-		&& FastContains(pyramid.center, pyramid.b, pyramid.a, shape.sphere) 
-		&& FastContains(pyramid.center, pyramid.c, pyramid.b, shape.sphere);
-	}
-	
-	template <typename SHAPE, typename FUNCTOR> class Traveler;
-	
-	// Get the details of the actual collision between a face and the shape.
-	template <typename FUNCTOR>
-	void TestCollisions(Traveler<Sphere3, FUNCTOR> const & traveler,
-						Pyramid const & pyramid, 
-						Vector3 const & face_norm);
 
-	template <typename FUNCTOR>
-	void TestCollisions(Traveler<PointCloud, FUNCTOR> const & traveler,
-						Pyramid const & pyramid, 
-						Vector3 const & face_norm);
-	
-	// This class holds all the data necessary to test the shape for intersection 
-	// against nodes, and mines down through the nodes, calling the functor on them. 
+	// This class is a hold-all for data needed throughout the intersection process.
+	// Doubles as a functor which receives results from the ForEachNodeFace function.
 	template <typename SHAPE, typename FUNCTOR>
-	class Traveler
+	class IntersectionNodeFunctor
 	{
 	public:
 		// types
 		typedef SHAPE ShapeType;
 		
 		// functions
-		Traveler(Vector3 const & polyhedron_center, ShapeType const & shape, sim::Vector3 const & origin, FUNCTOR & functor, Scalar min_score)
-		: _shape(shape)
-		, _origin(origin)
+		IntersectionNodeFunctor(Vector3 const & polyhedron_center, sim::Vector3 const & origin, ShapeType const & shape, FUNCTOR & functor, Scalar min_area)
+		: _origin(origin)
+		, _shape(shape)
 		, _functor(functor)
-		, _min_score(min_score)
+		, _min_area(min_area)
 		{
 			_pyramid.center = polyhedron_center;
-		}
-		
-		void GatherPoints(Node const & node) 
-		{
-			_pyramid.a = node.GetCorner(0).pos;
-			_pyramid.b = node.GetCorner(1).pos;
-			_pyramid.c = node.GetCorner(2).pos;
-			
-			// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
-			if (TouchesInfinitePyramid(_shape, _pyramid))
-			{
-				// If we're as far into the tree as we're going to get,
-				if (node.score < _min_score)
-				{
-					// process node as a single face.
-					TestCollisions(* this, _pyramid, node.normal);
-					return;
-				}
-
-				// We're at a leaf node and haven't reached the min score,
-				form::Node const * const children = node.GetChildren();
-				if (children == nullptr)
-				{
-					// try and go a bit deeper by calling ForEachNodeFace.
-					ForEachNodeFace(node, * this);
-					return;
-				}
-
-				// Keep recurring into the tree.
-				GatherPoints(children[0]);
-				GatherPoints(children[1]);
-				GatherPoints(children[2]);
-				GatherPoints(children[3]);
-			}
 		}
 		
 		// the ForEachNodeFace callback
@@ -144,23 +78,34 @@ namespace form
 		}
 		
 		// data
-		sim::Vector3 const _origin;
 		Pyramid _pyramid;
+		sim::Vector3 const _origin;
 		ShapeType const & _shape;
 		FUNCTOR & _functor;
 		
-		// After an arbitrarily chosen triangle edge becomes shorter than this,
-		// recursion ends. This prevents expensive, exhaustive searches.
-		Scalar _min_score;
+		// After the node area becomes less than this, recursion ends. 
+		// This prevents expensive exhaustive searches.
+		Scalar _min_area;
 	};
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Sphere Intersection support
+	
+	inline bool TouchesInfinitePyramid(Sphere3 const & sphere, Pyramid const & pyramid) 
+	{
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, sphere) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, sphere) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, sphere);
+	}
 	
 	// Get the details of the actual collision between a face and the sphere.
-	template <typename FUNCTOR>
-	inline void TestCollisions(Traveler<Sphere3, FUNCTOR> const & traveler,
+	template <typename INTERSECTION_FUNCTOR>
+	inline void TestCollisions(IntersectionNodeFunctor<Sphere3, INTERSECTION_FUNCTOR> const & node_functor,
 												Pyramid const & pyramid, 
 												Vector3 const & face_norm) 
 	{
-		Sphere3 const & sphere = traveler._shape;
+		Sphere3 const & sphere = node_functor._shape;
 		
 		// the distance from the center of the sphere to the surface. 
 		Scalar distance = DistanceToSurface(pyramid.a, face_norm, sphere.center);
@@ -192,11 +137,11 @@ namespace form
 			}
 			
 			// Note: collision_pos is in global coordinates
-			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center, traveler._origin);
+			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center, node_functor._origin);
 			sim::Vector3 sim_collision_normal = face_norm;
 			sim::Scalar sim_collision_depth = sphere.radius - distance;
 			
-			traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+			node_functor._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
 			return;
 		}
 		
@@ -208,22 +153,51 @@ namespace form
 			// TODO: Triangle-line intersection. (Might already have this somewhere.)
 			// because sphere.center is the wrong position!
 			// Note: collision_pos is in global coordinates
-			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center + Vector3(face_norm) * (intersection_depth - sphere.radius), traveler._origin);
+			sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(sphere.center + Vector3(face_norm) * (intersection_depth - sphere.radius), node_functor._origin);
 			sim::Vector3 sim_collision_normal = face_norm;
 			sim::Scalar sim_collision_depth = intersection_depth;
 			
-			traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+			node_functor._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
 			return;
 		}
 	}
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Point-Cloud Intersection support
+	
+	// cheap'n'dirty way of representing a convex hull
+	struct PointCloud
+	{
+		// types
+		typedef std::vector<Vector3> Vector;
+		
+		// variables
+		Sphere3 sphere;	// bounding sphere
+		Vector points;	// point cloud
+	};
+	
+	inline bool TouchesInfinitePyramid(PointCloud const & shape, Pyramid const & pyramid) 
+	{
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, shape.sphere) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, shape.sphere) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, shape.sphere);
+	}
+	
+	inline bool TouchesInfinitePyramid(Vector3 const & point, Pyramid const & pyramid) 
+	{
+		return FastContains(pyramid.center, pyramid.a, pyramid.c, point) 
+		&& FastContains(pyramid.center, pyramid.b, pyramid.a, point) 
+		&& FastContains(pyramid.center, pyramid.c, pyramid.b, point);
+	}
 	
 	// Get the details of the actual collision between a face and a point cloud.
-	template <typename FUNCTOR>
-	inline void TestCollisions(Traveler<PointCloud, FUNCTOR> const & traveler,
+	template <typename INTERSECTION_FUNCTOR>
+	inline void TestCollisions(IntersectionNodeFunctor<PointCloud, INTERSECTION_FUNCTOR> const & node_functor,
 								Pyramid const & pyramid, 
 								Vector3 const & face_norm) 
 	{
-		PointCloud const & shape = traveler._shape;
+		PointCloud const & shape = node_functor._shape;
 		
 		// the distance from the center of the sphere to the surface. 
 		Scalar sphere_distance = DistanceToSurface(pyramid.a, face_norm, shape.sphere.center);
@@ -250,34 +224,53 @@ namespace form
 			{
 				if (TouchesInfinitePyramid(point, pyramid))
 				{
-					sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(point - face_norm * distance, traveler._origin);
+					sim::Vector3 sim_collision_pos = form::SceneToSim<Vector3>(point - face_norm * distance, node_functor._origin);
 					sim::Vector3 sim_collision_normal = face_norm;
 					sim::Scalar sim_collision_depth = - distance;
 					
-					traveler._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
+					node_functor._functor(sim_collision_pos, sim_collision_normal, sim_collision_depth);
 				}
 			}
 		}
 	}
 	
-	
+
 	////////////////////////////////////////////////////////////////////////////////
-	// ForEachIntersection implementation
+	// Recursive node tree search 
 	
-	// general
-	template <typename SHAPE, typename FUNCTOR>
-	void ForEachIntersection(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, SHAPE const & shape, sim::Vector3 const & origin, FUNCTOR & functor, float min_score)
+	template <typename NODE_FUNCTOR>
+	void GatherPoints (NODE_FUNCTOR & node_functor, Node const & node) 
 	{
-		Traveler<SHAPE, FUNCTOR> traveler(polyhedron_center, shape, origin, functor, min_score);
+		node_functor._pyramid.a = node.GetCorner(0).pos;
+		node_functor._pyramid.b = node.GetCorner(1).pos;
+		node_functor._pyramid.c = node.GetCorner(2).pos;
 		
-		form::RootNode const & root_node = polyhedron.root_node;
-		form::Node const * children = root_node.GetChildren();
-		if (children != nullptr)
+		// TODO: The same borders will be being tested many times. Should be able to cut down on them quite a bit.
+		if (TouchesInfinitePyramid(node_functor._shape, node_functor._pyramid))
 		{
-			traveler.GatherPoints(children[0]);
-			traveler.GatherPoints(children[1]);
-			traveler.GatherPoints(children[2]);
-			traveler.GatherPoints(children[3]);
+			// If we're as far into the tree as we're going to get,
+			// TODO: Return to pruning based on area.
+			if (node.area < node_functor._min_area)
+			{
+				// process node as a single face.
+				TestCollisions(node_functor, node_functor._pyramid, node.normal);
+				return;
+			}
+
+			// We're at a leaf node and haven't reached the min score,
+			form::Node const * const children = node.GetChildren();
+			if (children == nullptr)
+			{
+				// try and go a bit deeper by calling ForEachNodeFace.
+				ForEachNodeFace(node, node_functor);
+				return;
+			}
+
+			// Keep recurring into the tree.
+			GatherPoints(node_functor, children[0]);
+			GatherPoints(node_functor, children[1]);
+			GatherPoints(node_functor, children[2]);
+			GatherPoints(node_functor, children[3]);
 		}
 	}
 	
