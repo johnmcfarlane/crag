@@ -431,7 +431,7 @@ namespace smp
 		
 		void Complete(Job & job, int num_units, int priority)
 		{
-			for (size_t unit_index = 0; unit_index < num_units; ++ unit_index)
+			for (int unit_index = 0; unit_index < num_units; ++ unit_index)
 			{
 				job(unit_index);
 			}
@@ -439,7 +439,7 @@ namespace smp
 		
 		void Complete(Batch & batch, int priority)
 		{
-			for (Batch::iterator i = batch.begin(); i != batch.end(); ++ i)
+			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ i)
 			{
 				Complete(* i, 1, priority);
 			}
