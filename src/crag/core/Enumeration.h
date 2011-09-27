@@ -30,7 +30,7 @@ namespace core
 		typedef intrusive::hook<Enumeration> hook_type;
 		hook_type _hook;
 
-		DEFINE_INTRUSIVE_LIST_TYPE(Enumeration, _hook, list_type);
+		DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(Enumeration, _hook, list_type);
 	public:
 		typedef typename list_type::const_iterator const_iterator;
 		typedef typename list_type::iterator iterator;
