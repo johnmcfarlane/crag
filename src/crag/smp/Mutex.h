@@ -20,8 +20,6 @@ namespace smp
 	
 	class Mutex
 	{
-		friend class ThreadCondition;
-		
 		OBJECT_NO_COPY(Mutex);
 
 	public:

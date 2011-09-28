@@ -1128,14 +1128,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\ThreadCondition.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\ThreadCondition.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\crag\smp\vector.h"
 					>
 				</File>
