@@ -196,7 +196,7 @@ bool sys::GlSupportsFences()
 #if defined(APPLE)
 	return true;
 #else
-	return GLEW_NV_fence;
+	return GLEW_NV_fence != GL_FALSE;
 #endif
 }
 
@@ -284,8 +284,7 @@ sys::TimeType sys::GetTime()
 {
 #if defined(__APPLE__)
 	return CFAbsoluteTimeGetCurrent ();
-#elif defined(WIN32) && 0
-	// TODO: Test this
+#elif defined(WIN32)
 	LARGE_INTEGER performance_count;
 	if (QueryPerformanceCounter(& performance_count) == FALSE)
 	{
