@@ -77,8 +77,9 @@ namespace sys
 	char const * GetProgramPath();
 	void ReportSdlError(char const * message);
 	
-	bool InitGl();
-	void DeinitGl();
+	bool GlInit(bool vsync);
+	void GlDeinit();
+	bool GlSupportsFences();
 	
 	// input
 	bool IsKeyDown(KeyCode key_code);

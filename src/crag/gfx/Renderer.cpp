@@ -61,8 +61,8 @@ namespace
 	//CONFIG_DEFINE (capture, bool, false);
 	//CONFIG_DEFINE (record_playback_skip, int, 1);
 
-	STAT (idle, double, .18f);
-	STAT (frame_time, double, .18f);
+	STAT (vsync_time, double, .18f);
+	STAT (frame_duration, double, .18f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
 	
@@ -89,6 +89,7 @@ namespace
 Renderer::Renderer()
 : last_frame_time(sys::GetTime())
 , quit_flag(false)
+, vsync(false)
 , ready(true)
 , culling(init_culling)
 , lighting(init_lighting)
@@ -252,7 +253,26 @@ bool Renderer::Init()
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
-	if (! sys::InitGl())
+	if (profile_mode)
+	{
+		vsync = false;
+	}
+	else
+	{
+		if (sys::GlSupportsFences())
+		{
+			gl::GenFence(_fence1);
+			gl::GenFence(_fence2);
+
+			vsync = _fence1.IsInitialized() && _fence2.IsInitialized();
+		}
+		else
+		{
+			vsync = false;
+		}
+	}
+
+	if (! sys::GlInit(vsync))
 	{
 		scene = nullptr;
 		return false;
@@ -260,9 +280,6 @@ bool Renderer::Init()
 	
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
-	
-	gl::GenFence(_fence1);
-	gl::GenFence(_fence2);
 	
 	InitRenderState();
 	
@@ -295,7 +312,7 @@ void Renderer::Deinit()
 
 	delete scene;
 
-	sys::DeinitGl();
+	sys::GlDeinit();
 }
 
 void Renderer::InitRenderState()
@@ -395,34 +412,8 @@ void Renderer::Render()
 	SetFence(_fence1);
 	sys::SwapBuffers();
 	SetFence(_fence2);
-	
-	// Get timing information from the fences.
-	FinishFence(_fence1);
-	TimeType pre_sync = sys::GetTime();
-	FinishFence(_fence2);
-	TimeType post_sync = sys::GetTime();
-	TimeType idle = post_sync - pre_sync;
-	STAT_SET(idle, idle);
-	
-	// Use it to figure out just how much work was done.
-	TimeType frame_time = (post_sync - last_frame_time) - idle;
-	last_frame_time = post_sync;
-	STAT_SET(frame_time, frame_time);
-	
-#if ! defined(NDEBUG)
-	// update fps
-	memmove(_fps_history, _fps_history + 1, sizeof(* _fps_history) * (_fps_history_size - 1));
-	_fps_history[_fps_history_size - 1] = sys::GetTime();
-	STAT_SET (fps, float(_fps_history_size - 1) / float(_fps_history[_fps_history_size - 1] - _fps_history[0]));
-#endif
-	
-	// Regulator feedback.
-	TimeType target_frame_time = sim::Simulation::target_frame_seconds;
-	target_frame_time *= target_work_proportion;
-	
-	form::RegulatorFrameMessage message;
-	message._fitness = float(target_frame_time / frame_time);
-	form::FormationManager::Daemon::SendMessage(message);
+
+	ProcessRenderTiming();
 }
 
 void Renderer::RenderScene() const
@@ -693,6 +684,53 @@ void Renderer::DebugDraw() const
 #endif
 }
 
+void Renderer::ProcessRenderTiming()
+{
+	TimeType pre_sync, post_sync;
+
+	if (vsync)
+	{
+		// Get timing information from the fences.
+		FinishFence(_fence1);
+		pre_sync = sys::GetTime();
+		FinishFence(_fence2);
+		post_sync = sys::GetTime();
+	}
+	else
+	{
+		// There is no sync.
+		pre_sync = post_sync = sys::GetTime();
+	}
+	TimeType vsync_time = post_sync - pre_sync;
+	STAT_SET(vsync_time, vsync_time);
+
+	// Use it to figure out just how much work was done.
+	TimeType frame_time = post_sync;
+	TimeType frame_duration = frame_time - last_frame_time;
+	last_frame_time = frame_time;
+	STAT_SET(frame_duration, frame_duration);
+
+	TimeType busy_time = frame_duration - vsync_time;
+	
+#if ! defined(NDEBUG)
+	// update fps
+	memmove(_fps_history, _fps_history + 1, sizeof(* _fps_history) * (_fps_history_size - 1));
+	_fps_history[_fps_history_size - 1] = frame_time;
+	STAT_SET (fps, float(_fps_history_size - 1) / float(_fps_history[_fps_history_size - 1] - _fps_history[0]));
+#endif
+	
+	// Regulator feedback.
+	TimeType target_frame_duration = sim::Simulation::target_frame_seconds * 2;
+	if (vsync)
+	{
+		target_frame_duration *= target_work_proportion;
+	}
+
+	form::RegulatorFrameMessage message;
+	message._fitness = float(target_frame_duration / busy_time);
+	form::FormationManager::Daemon::SendMessage(message);
+}
+
 void Renderer::Capture()
 {
 	if (! capture_enable)
@@ -723,14 +761,6 @@ void Renderer::SetFence(gl::Fence & fence)
 	if (fence.IsInitialized())
 	{
 		gl::SetFence(fence);
-	}
-}
-
-void Renderer::FinishFence(gl::Fence & fence)
-{
-	if (fence.IsInitialized())
-	{
-		gl::FinishFence(fence);
 	}
 }
 

@@ -118,10 +118,10 @@ namespace gfx
 		void RenderLayer(Layer::type layer) const;
 		
 		void DebugDraw() const;
+		void ProcessRenderTiming();
 		void Capture();
-		
+
 		static void SetFence(gl::Fence & fence);
-		static void FinishFence(gl::Fence & fence);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
@@ -135,6 +135,7 @@ namespace gfx
 		
 		bool quit_flag;
 		bool ready;
+		bool vsync;
 		bool culling;
 		bool lighting;
 		bool wireframe;

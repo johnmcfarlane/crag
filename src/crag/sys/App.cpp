@@ -23,7 +23,6 @@
 
 // defined in Renderer.cpp
 CONFIG_DECLARE (multisample, bool);
-CONFIG_DECLARE (profile_mode, bool);
 
 
 namespace 
@@ -51,7 +50,7 @@ namespace
 	
 	bool InitGlew()
 	{
-#if defined(GLEW_STATIC )
+#if defined(GLEW_STATIC)
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
@@ -61,7 +60,7 @@ namespace
 		
 		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-		if (! GL_ARB_vertex_buffer_object)
+		if (! GLEW_ARB_vertex_buffer_object)
 		{
 			std::cerr << "GL implementation doesn't support vertex buffers." << std::endl;
 			return false;
@@ -158,7 +157,7 @@ void sys::ReportSdlError(char const * message)
 	std::cerr << message << ": " << SDL_GetError() << std::endl;
 }
 
-bool sys::InitGl()
+bool sys::GlInit(bool vsync)
 {
 	Assert(context == nullptr);
 	context = SDL_GL_CreateContext(window);
@@ -174,7 +173,7 @@ bool sys::InitGl()
 		return false;
 	}
 
-	int swap_interval = profile_mode ? 0 : 1;
+	int swap_interval = vsync ? 1 : 0;
 	if (SDL_GL_SetSwapInterval(swap_interval))
 	{
 		ReportSdlError("Hardware doesn't support vsync");
@@ -184,12 +183,21 @@ bool sys::InitGl()
 	return true;
 }
 
-void sys::DeinitGl()
+void sys::GlDeinit()
 {
 	Assert(context != nullptr);
 
 	SDL_GL_DeleteContext(context);
 	context = nullptr;
+}
+
+bool sys::GlSupportsFences()
+{
+#if defined(APPLE)
+	return true;
+#else
+	return GLEW_NV_fence;
+#endif
 }
 
 bool sys::IsKeyDown(KeyCode key_code)
