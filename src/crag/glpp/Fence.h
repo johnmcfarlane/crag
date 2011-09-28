@@ -98,12 +98,6 @@ namespace gl
 	inline bool GenFence(Fence & f)
 	{
 		assert(! f.IsInitialized());
-
-		if (! GLEW_NV_fence)
-		{
-			return false;
-		}
-
 		GLPP_CALL(glGenFencesNV(1, & f._id));
 		return true;
 	}
