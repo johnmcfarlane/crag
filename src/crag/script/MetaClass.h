@@ -76,12 +76,7 @@ namespace script
 			return _type_object.tp_name != nullptr;
 		}
 		
-		////////////////////////////////////////////////////////////////////////////////
-		// Cast functions
-		//
-		// Guide: Basically when casting, use reference versions 
-		// when you're sure of the result. Otherwise, use pointers.
-		
+	
 		static void InitTypeObjectBase(PyTypeObject & type_object)
 		{
 			type_object.tp_base = & _type_object;
@@ -187,12 +182,13 @@ namespace script
 
 		////////////////////////////////////////////////////////////////////////////////
 		// MetaClassPoly overrides
-		
+
+		// Initialize this metaclass WRT the given module.
 		virtual void Init(PyObject & module, char const * module_name, char const * documentation)
 		{
 			MetaClass<BASE_CLASS>::InitTypeObjectBase(super::_type_object);
 			
-			super::_type_object.tp_dealloc = DeleteObject;
+			super::_type_object.tp_dealloc = DeallocObject;
 			super::_type_object.tp_flags = Py_TPFLAGS_DEFAULT;
 			super::_type_object.tp_alloc = Alloc;
 			super::_type_object.tp_new = NewObject;
@@ -203,10 +199,15 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// Python callbacks
 		
-		static PyObject * Alloc(PyTypeObject *self, Py_ssize_t nitems)
+		// Return a pointer to enough memory to hold an instance of class, CLASS.
+		static PyObject * Alloc(PyTypeObject * type, Py_ssize_t nitems)
 		{
+			Assert(type == & _type_object);
+			Assert(nitems == 0);
+			Assert(type->tp_basicsize == sizeof(CLASS));
+
 			// Allocate the pre-constructed.
-			char * memory = new char [sizeof(CLASS)];
+			void * memory = Allocate(sizeof(CLASS));
 			CLASS & uninitialized_object = * reinterpret_cast<CLASS *>(memory);
 			
 			// Initialize the memory (this is prior to a constructor being called).
@@ -219,6 +220,7 @@ namespace script
 			return & uninitialized_object.ob_base;
 		}
 		
+		// Allocate and construct a new instance of class, CLASS.
 		static PyObject * NewObject(PyTypeObject * type, PyObject * args, PyObject * kwds)
 		{
 			PyObject * po = type->tp_alloc(type, 0);
@@ -235,18 +237,19 @@ namespace script
 				Py_INCREF(args);
 				
 				CLASS::Create(object, * args); 
+
+				//Py_INCREF(po);
 			}
 			
 			// Return the result.
 			return po;
 		}
 		
-		static void DeleteObject(PyObject * po)
+		static void DeallocObject(PyObject * po)
 		{
 			CLASS & object = CLASS::GetRef(po);
 			CLASS::Destroy(object);
 		}
-		
 	};
 	
 	
@@ -262,7 +265,10 @@ namespace script
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Functions to cast from PyObject to native objects.
-	
+	//
+	// Guide: Basically when casting, use reference versions 
+	// when you're sure of the result. Otherwise, use pointers.
+		
 	template <typename CLASS> CLASS & GetRef(PyObject & self)
 	{
 		// Trying to cast to the wrong type of class?
