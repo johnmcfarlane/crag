@@ -193,7 +193,7 @@ void sys::GlDeinit()
 
 bool sys::GlSupportsFences()
 {
-#if defined(APPLE)
+#if defined(__APPLE__)
 	return true;
 #else
 	return GLEW_NV_fence != GL_FALSE;
