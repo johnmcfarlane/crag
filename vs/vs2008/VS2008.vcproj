@@ -59,10 +59,11 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ode_double.lib SDL.lib SDLmain.lib glew32s.lib GlU32.Lib OpenGL32.Lib"
+				AdditionalDependencies="..\..\dependencies\ode\lib\DebugDoubleLib\ode_doubled.lib ..\..\dependencies\SDL\VisualC\SDL\Debug\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Debug\SDLmain.lib ..\..\dependencies\glew\lib\glew32s.lib ..\..\dependencies\python\PCbuild\python31_d.lib GlU32.Lib OpenGL32.Lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -138,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ode_double.lib SDL.lib SDLmain.lib glew32s.lib GlU32.Lib OpenGL32.Lib"
+				AdditionalDependencies="..\..\dependencies\ode\lib\ReleaseDoubleLib\ode_double.lib ..\..\dependencies\SDL\VisualC\SDL\Release\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Release\SDLmain.lib ..\..\dependencies\glew\lib\glew32s.lib ..\..\dependencies\python\PCbuild\python31.lib GlU32.Lib OpenGL32.Lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -475,11 +476,31 @@
 				Name="geom"
 				>
 				<File
+					RelativePath="..\..\src\crag\geom\Distance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\geom\Intersection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\geom\Magnitude.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\crag\geom\Matrix.h"
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\crag\geom\Matrix33.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\crag\geom\Matrix4.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\geom\Matrix44.h"
 					>
 				</File>
 				<File
@@ -504,6 +525,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\geom\SphereOps.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\geom\Transformation.h"
 					>
 				</File>
 				<File
@@ -592,6 +617,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\gfx\IndexBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\gfx\Mesh.h"
 					>
 				</File>
 				<File
@@ -756,10 +785,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\glpp\Ibo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Mesh.h"
 					>
 				</File>
 				<File
@@ -941,6 +966,22 @@
 				<File
 					RelativePath="..\..\src\crag\sim\Planet.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Planet.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Planet.obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\crag\sim\Planet.h"
