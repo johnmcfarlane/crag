@@ -88,7 +88,6 @@ namespace sys
 	// window
 	Vector2i GetWindowSize();
 	Vector2i GetWindowPosition();
-	//SDL_Surface & GetVideoSurface();
 	void SwapBuffers();
 	
 	bool GetEvent(Event & event, bool block);
