@@ -104,7 +104,9 @@ template<typename LHS_S, typename RHS_S> Vector<LHS_S, 2> & operator *= (Vector<
 
 template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, S rhs)
 {
-	return lhs *= (static_cast<S>(1) / rhs);
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	return lhs;
 }
 
 template<typename S> Vector<S, 2> operator - (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
@@ -129,6 +131,12 @@ template<typename S> Vector<S, 2> operator * (Vector<S, 2> const & lhs, S rhs)
 {
 	Vector<S, 2> result = lhs;
 	return result *= rhs;
+}
+
+template<typename S> Vector<S, 2> operator / (Vector<S, 2> const & lhs, S rhs)
+{
+	Vector<S, 2> result = lhs;
+	return result /= rhs;
 }
 
 template<typename S> S LengthSq(Vector<S, 2> const & v)

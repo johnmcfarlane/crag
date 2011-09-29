@@ -120,7 +120,10 @@ template<typename S> inline Vector<S, 3> & operator *= (Vector<S, 3> & lhs, S rh
 
 template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
 {
-	return lhs *= (static_cast<S>(1) / rhs);
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	lhs.z /= rhs;
+	return lhs;
 }
 
 template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & rhs)
