@@ -408,7 +408,6 @@ void Renderer::Render()
 	RenderScene();
 
 	// Flip the front and back buffers and set fences.
-	// TODO: These are costly. Try and eliminate one.
 	SetFence(_fence1);
 	sys::SwapBuffers();
 	SetFence(_fence2);
