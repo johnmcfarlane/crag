@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\dependencies\ode\lib\DebugDoubleLib\ode_doubled.lib ..\..\dependencies\SDL\VisualC\SDL\Debug\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Debug\SDLmain.lib ..\..\dependencies\glew\lib\glew32s.lib ..\..\dependencies\python\PCbuild\python31_d.lib GlU32.Lib OpenGL32.Lib"
+				AdditionalDependencies="..\..\dependencies\ode\lib\DebugDoubleLib\ode_doubled.lib ..\..\dependencies\SDL\VisualC\SDL\Debug\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Debug\SDLmain.lib ..\..\dependencies\glew\lib\glew32sd.lib ..\..\dependencies\python\PCbuild\python31_d.lib GlU32.Lib OpenGL32.Lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
