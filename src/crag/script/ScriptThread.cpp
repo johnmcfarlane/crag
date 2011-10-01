@@ -176,7 +176,7 @@ script::ScriptThread::ScriptThread()
 	mbstowcs(program_path, sys::GetProgramPath(), FILENAME_MAX);
 	Py_SetProgramName(program_path);
 	
-	Py_Initialize();
+	Py_InitializeEx(0);
 }
 
 script::ScriptThread::~ScriptThread()
@@ -241,7 +241,7 @@ PyObject * script::ScriptThread::PollEvent()
 
 bool script::ScriptThread::RedirectPythonOutput()
 {
-#if defined(WIN32)
+#if defined(WIN32) && 0
 	PyObject* sys = PyImport_ImportModule("sys");
 	PyObject* io = PyImport_ImportModule("io");
 
