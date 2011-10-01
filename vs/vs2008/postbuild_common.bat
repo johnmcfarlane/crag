@@ -1,3 +1,9 @@
+REM Crag build root folder
+mkdir crag
+cd crag
+xcopy ..\crag.exe /D /Y
+xcopy ..\..\..\..\font_bitmap.bmp /D /Y
+
 mkdir Lib
 cd Lib
 
@@ -41,12 +47,6 @@ xcopy ..\..\..\..\..\..\dependencies\python\Lib\encodings\latin_1.py /D /Y
 xcopy ..\..\..\..\..\..\dependencies\python\Lib\encodings\utf_8.py /D /Y
 xcopy ..\..\..\..\..\..\dependencies\python\Lib\encodings\utf_32_be.pyc /D /Y
 cd ..
-
-REM mkdir site-packages
-REM cd site-packages
-REM xcopy ..\..\..\..\..\..\dependencies\python\Lib\site-packages\sitecustomize.pyc /D /Y
-REM xcopy ..\..\..\..\..\..\dependencies\python\Lib\site-packages\usercustomize.pyc /D /Y
-REM cd ..
 
 xcopy ..\..\..\..\..\dependencies\python\LICENSE /D /Y
 cd ..
