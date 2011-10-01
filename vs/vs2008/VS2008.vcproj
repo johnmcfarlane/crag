@@ -89,6 +89,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="debug_postbuild.bat"
 			/>
 		</Configuration>
 		<Configuration
@@ -261,10 +262,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\core\for_each.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\core\for_each_chunk.h"
 					>
 				</File>
 				<File
@@ -1040,10 +1037,6 @@
 				Name="smp"
 				>
 				<File
-					RelativePath="..\..\src\crag\smp\Actor.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\crag\smp\atomic.h"
 					>
 				</File>
@@ -1073,10 +1066,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\smp\Mutex.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\ObjectThread.h"
 					>
 				</File>
 				<File
