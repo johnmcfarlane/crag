@@ -20,7 +20,9 @@
 #include "core/intrusive_list.h"
 #include "core/ring_buffer.h"
 
+#if ! defined(WIN32)	// TODO
 #define ENABLE_SCHEDULER
+#endif
 
 
 namespace smp
