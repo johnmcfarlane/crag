@@ -6,8 +6,3 @@ call ..\postbuild_common.bat
 REM Copy configuration-specific files into Crag build root folder
 xcopy ..\..\..\..\dependencies\SDL\VisualC\SDL\Release\SDL.dll /D /Y
 xcopy ..\..\..\..\dependencies\python\PCbuild\python31.dll /D /Y
-
-REM Copy Python script files into crag\script folder
-mkdir script
-cd script
-xcopy ..\..\..\..\..\script /D /Y

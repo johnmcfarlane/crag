@@ -888,6 +888,22 @@
 				<File
 					RelativePath="..\..\src\crag\sim\Ball.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Ball"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Ball"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\crag\sim\Ball.h"
@@ -898,6 +914,14 @@
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Box"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -1149,14 +1173,79 @@
 			<File
 				RelativePath="..\..\script\main.py"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying script file"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying script file"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\script\observer.py"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying script file"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\script\utility.py"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying script file"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying script file"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						AdditionalDependencies="$(InputPath)"
+						Outputs="$(OutDir)\crag\script\$(InputFileName)"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
