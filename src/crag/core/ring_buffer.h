@@ -11,6 +11,11 @@
 #include <algorithm>
 
 
+#if ! defined(NDEBUG)
+//#define CORE_RING_BUFFER_VERFICATION
+#endif
+
+
 namespace core
 {
 	// A sequence container which stores variable-sized objects of base class, BASE_CLASS.
@@ -397,7 +402,7 @@ namespace core
 		
 		void verify() const
 		{
-#if ! defined(NDEBUG)
+#if defined(CORE_RING_BUFFER_VERFICATION)
 			if (empty())
 			{
 				assert(_data_end == & _data_begin);
