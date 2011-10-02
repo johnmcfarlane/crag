@@ -212,8 +212,7 @@ namespace script
 			
 			// Initialize the memory (this is prior to a constructor being called).
 			ZeroObject(uninitialized_object);
-			uninitialized_object.ob_base.ob_refcnt = 1;
-			uninitialized_object.ob_base.ob_type = & super::_type_object;
+			PyObject_Init(& uninitialized_object.ob_base, & super::_type_object);
 			
 			// Note that the start of the allocation is NOT being returned.
 			// Our objects need vtables so that's just not possible.
@@ -237,8 +236,6 @@ namespace script
 				Py_INCREF(args);
 				
 				CLASS::Create(object, * args); 
-
-				//Py_INCREF(po);
 			}
 			
 			// Return the result.

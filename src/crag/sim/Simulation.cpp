@@ -80,7 +80,9 @@ void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
 {
 	universe->RemoveEntity(message.entity);
 	
-	delete & message.entity;
+	// TODO: This code is sensitive to object-lifetime issues. More reason for UIDs.
+	message.entity.~Entity();
+	Free(& message.entity);
 }
 
 void sim::Simulation::OnMessage(TogglePauseMessage const & message)
