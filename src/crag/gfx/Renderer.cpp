@@ -220,7 +220,7 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	if (! vsync)
+	if (vsync)
 	{
 		ready = false;
 	}
