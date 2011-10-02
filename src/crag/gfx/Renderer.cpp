@@ -48,7 +48,7 @@ namespace
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
-	CONFIG_DEFINE (init_wireframe, bool, true);
+	CONFIG_DEFINE (init_wireframe, bool, false);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
@@ -220,7 +220,7 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	if (! profile_mode)
+	if (! vsync)
 	{
 		ready = false;
 	}
