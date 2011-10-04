@@ -65,7 +65,6 @@
 		52642405135F49FB00C00EFE /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423B5135F49FB00C00EFE /* Semaphore.cpp */; };
 		52642406135F49FB00C00EFE /* SharedMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423B7135F49FB00C00EFE /* SharedMutex.cpp */; };
 		52642408135F49FB00C00EFE /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423BC135F49FB00C00EFE /* smp.cpp */; };
-		52642409135F49FB00C00EFE /* ThreadCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423BF135F49FB00C00EFE /* ThreadCondition.cpp */; };
 		5264240A135F49FB00C00EFE /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C3135F49FB00C00EFE /* App.cpp */; };
 		5264240B135F49FB00C00EFE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526423C5135F49FB00C00EFE /* memory.cpp */; };
 		5264240C135F49FB00C00EFE /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 526423C9135F49FB00C00EFE /* SDLMain.m */; };
@@ -79,8 +78,6 @@
 		5288E52C140E141100192F72 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E525140E141100192F72 /* Planet.cpp */; };
 		5288E52D140E141100192F72 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E527140E141100192F72 /* Skybox.cpp */; };
 		528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528BF6FB140E1A9F0032E31F /* FormationSet.cpp */; };
-		528C20C11403708700B203E8 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
-		528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528C20C01403708700B203E8 /* SDL.framework */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
 		529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
@@ -100,7 +97,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				528C20C41403715C00B203E8 /* SDL.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,8 +274,6 @@
 		526423BC135F49FB00C00EFE /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
 		526423BD135F49FB00C00EFE /* smp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smp.h; sourceTree = "<group>"; };
 		526423BE135F49FB00C00EFE /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
-		526423BF135F49FB00C00EFE /* ThreadCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadCondition.cpp; sourceTree = "<group>"; };
-		526423C0135F49FB00C00EFE /* ThreadCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCondition.h; sourceTree = "<group>"; };
 		526423C1135F49FB00C00EFE /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		526423C3135F49FB00C00EFE /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
 		526423C4135F49FB00C00EFE /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
@@ -313,7 +307,6 @@
 		5288E528140E141100192F72 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		528BF6FB140E1A9F0032E31F /* FormationSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationSet.cpp; sourceTree = "<group>"; };
 		528BF6FC140E1A9F0032E31F /* FormationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationSet.h; sourceTree = "<group>"; };
-		528C20C01403708700B203E8 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		528C9AE7142C076C007A012F /* Transformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transformation.h; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
@@ -348,7 +341,6 @@
 			files = (
 				52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */,
 				5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */,
-				528C20C11403708700B203E8 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,7 +370,6 @@
 		52055D61132DE312000C6578 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				528C20C01403708700B203E8 /* SDL.framework */,
 				5213C8D4132DE39A0021EA91 /* OpenGL.framework */,
 				52055D62132DE312000C6578 /* Cocoa.framework */,
 				52055D64132DE312000C6578 /* Other Frameworks */,
@@ -418,7 +409,6 @@
 		526422FF135F49FA00C00EFE /* crag */ = {
 			isa = PBXGroup;
 			children = (
-				52642300135F49FA00C00EFE /* cl */,
 				52642301135F49FA00C00EFE /* COPYING */,
 				52642302135F49FA00C00EFE /* core */,
 				5264231B135F49FA00C00EFE /* form */,
@@ -436,13 +426,6 @@
 				526423C2135F49FB00C00EFE /* sys */,
 			);
 			path = crag;
-			sourceTree = "<group>";
-		};
-		52642300135F49FA00C00EFE /* cl */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = cl;
 			sourceTree = "<group>";
 		};
 		52642302135F49FA00C00EFE /* core */ = {
@@ -698,8 +681,6 @@
 				526423BC135F49FB00C00EFE /* smp.cpp */,
 				526423BD135F49FB00C00EFE /* smp.h */,
 				526423BE135F49FB00C00EFE /* Thread.h */,
-				526423BF135F49FB00C00EFE /* ThreadCondition.cpp */,
-				526423C0135F49FB00C00EFE /* ThreadCondition.h */,
 				526423C1135F49FB00C00EFE /* vector.h */,
 				527FA6C013F0486000284F6A /* MessageQueue.h */,
 				5283EFCF13F2D4EA00BEC592 /* scheduler.cpp */,
@@ -874,7 +855,6 @@
 				52642405135F49FB00C00EFE /* Semaphore.cpp in Sources */,
 				52642406135F49FB00C00EFE /* SharedMutex.cpp in Sources */,
 				52642408135F49FB00C00EFE /* smp.cpp in Sources */,
-				52642409135F49FB00C00EFE /* ThreadCondition.cpp in Sources */,
 				5264240A135F49FB00C00EFE /* App.cpp in Sources */,
 				5264240B135F49FB00C00EFE /* memory.cpp in Sources */,
 				5264240C135F49FB00C00EFE /* SDLMain.m in Sources */,
@@ -975,10 +955,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(HOME)/Library/Frameworks\"",
-					"$(inherited)",
-				);
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -999,14 +975,15 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				HEADER_SEARCH_PATHS = (
-					"~/include",
-					"~/include/python3.1",
+					../include,
+					../include/python3.1,
 				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
-				LIBRARY_SEARCH_PATHS = "~/lib";
+				LIBRARY_SEARCH_PATHS = ../lib;
 				OTHER_LDFLAGS = (
 					"-lode",
 					"-lpython3.1",
+					"-lSDL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
@@ -1022,10 +999,6 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(HOME)/Library/Frameworks\"",
-					"$(inherited)",
-				);
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1046,15 +1019,16 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
-					"~/include",
-					"~/include/python3.1",
+					../include,
+					../include/python3.1,
 				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
-				LIBRARY_SEARCH_PATHS = "~/lib";
+				LIBRARY_SEARCH_PATHS = ../lib;
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-lode",
 					"-lpython3.1",
+					"-lSDL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
