@@ -210,6 +210,14 @@ void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 		std::cerr << "Failed to redirect python output" << std::endl;
 	}
 #endif
+
+#if ! defined(NDEBUG)
+	{
+		char const * fn = "./script/build_py_deps.py";
+		FILE * f = fopen(fn, "r");
+		PyRun_SimpleFileEx(f, fn, true);
+	}
+#endif
 	
 	PyRun_SimpleFileEx(_source_file, _source_filename, true);
 	
