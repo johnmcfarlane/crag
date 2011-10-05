@@ -12,6 +12,11 @@
 		5245CB1D1415487100999BAC /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5245CB1B1415487100999BAC /* Box.cpp */; };
 		5245CB211415498400999BAC /* BoxBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5245CB1F1415498400999BAC /* BoxBody.cpp */; };
 		5245CB2414154AEA00999BAC /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5245CB2214154AEA00999BAC /* Box.cpp */; };
+		52483975143BEAE300195337 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483974143BEAE300195337 /* Carbon.framework */; };
+		52483977143BEB0200195337 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483976143BEB0200195337 /* IOKit.framework */; };
+		52483979143BED0900195337 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483978143BED0900195337 /* CoreAudio.framework */; };
+		52483A3A143C057400195337 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A39143C057400195337 /* ForceFeedback.framework */; };
+		52483A3C143C05BC00195337 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A3B143C05BB00195337 /* AudioUnit.framework */; };
 		524EA30A13D1401000664A2F /* utility.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		525056B11415B6210077BE8A /* Cuboid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 525056AF1415B6210077BE8A /* Cuboid.cpp */; };
 		526423CA135F49FB00C00EFE /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 52642301135F49FA00C00EFE /* COPYING */; };
@@ -80,10 +85,7 @@
 		528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528BF6FB140E1A9F0032E31F /* FormationSet.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
-		529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
-		52F819A3132DF0A60045C3A8 /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
-		52F819A4132DF0A60045C3A8 /* observer.py in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
 		52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */; };
@@ -91,11 +93,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		528C20C31403715300B203E8 /* CopyFiles */ = {
+		528F862B143BDF40000DD482 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolderSpec = 7;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,6 +129,11 @@
 		5245CB201415498400999BAC /* BoxBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxBody.h; sourceTree = "<group>"; };
 		5245CB2214154AEA00999BAC /* Box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Box.cpp; sourceTree = "<group>"; };
 		5245CB2314154AEA00999BAC /* Box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box.h; sourceTree = "<group>"; };
+		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
+		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
+		52483978143BED0900195337 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = ../../../../../../System/Library/Frameworks/CoreAudio.framework; sourceTree = "<group>"; };
+		52483A39143C057400195337 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = ../../../../../../System/Library/Frameworks/ForceFeedback.framework; sourceTree = "<group>"; };
+		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = ../../../../../../System/Library/Frameworks/AudioUnit.framework; sourceTree = "<group>"; };
 		525056AF1415B6210077BE8A /* Cuboid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuboid.cpp; sourceTree = "<group>"; };
 		525056B01415B6210077BE8A /* Cuboid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cuboid.h; sourceTree = "<group>"; };
 		52642301135F49FA00C00EFE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
@@ -341,6 +348,11 @@
 			files = (
 				52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */,
 				5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */,
+				52483975143BEAE300195337 /* Carbon.framework in Frameworks */,
+				52483977143BEB0200195337 /* IOKit.framework in Frameworks */,
+				52483979143BED0900195337 /* CoreAudio.framework in Frameworks */,
+				52483A3A143C057400195337 /* ForceFeedback.framework in Frameworks */,
+				52483A3C143C05BC00195337 /* AudioUnit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +362,7 @@
 		52055D53132DE312000C6578 = {
 			isa = PBXGroup;
 			children = (
+				52483A3B143C05BB00195337 /* AudioUnit.framework */,
 				526422FE135F49FA00C00EFE /* src */,
 				52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */,
 				52F819A0132DF0A60045C3A8 /* script */,
@@ -370,6 +383,7 @@
 		52055D61132DE312000C6578 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52483972143BEA6200195337 /* SDL Frameworks */,
 				5213C8D4132DE39A0021EA91 /* OpenGL.framework */,
 				52055D62132DE312000C6578 /* Cocoa.framework */,
 				52055D64132DE312000C6578 /* Other Frameworks */,
@@ -394,6 +408,17 @@
 				52F819AA132DF13C0045C3A8 /* InfoPlist.strings */,
 			);
 			path = crag;
+			sourceTree = "<group>";
+		};
+		52483972143BEA6200195337 /* SDL Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				52483A39143C057400195337 /* ForceFeedback.framework */,
+				52483978143BED0900195337 /* CoreAudio.framework */,
+				52483976143BEB0200195337 /* IOKit.framework */,
+				52483974143BEAE300195337 /* Carbon.framework */,
+			);
+			name = "SDL Frameworks";
 			sourceTree = "<group>";
 		};
 		526422FE135F49FA00C00EFE /* src */ = {
@@ -751,7 +776,8 @@
 				52055D5B132DE312000C6578 /* Frameworks */,
 				52055D5C132DE312000C6578 /* Resources */,
 				52F8199E132DF0940045C3A8 /* CopyFiles */,
-				528C20C31403715300B203E8 /* CopyFiles */,
+				5286CFE6143AE1C500A95623 /* ShellScript */,
+				528F862B143BDF40000DD482 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -790,16 +816,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */,
-				52F819A3132DF0A60045C3A8 /* main.py in Resources */,
-				52F819A4132DF0A60045C3A8 /* observer.py in Resources */,
 				52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */,
 				526423CA135F49FB00C00EFE /* COPYING in Resources */,
 				526423F1135F49FB00C00EFE /* readme.html in Resources */,
-				529D2BBD13D1277F00B0EEE2 /* utility.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5286CFE6143AE1C500A95623 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../bin/python3.1 $PROJECT_DIR/../../build_py_deps.py $PROJECT_DIR/../.. $TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		52055D5A132DE312000C6578 /* Sources */ = {
@@ -977,13 +1016,18 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../include/python3.1,
+					/usr/include,
 				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
-				LIBRARY_SEARCH_PATHS = ../lib;
+				LIBRARY_SEARCH_PATHS = (
+					../lib,
+					/usr/lib,
+				);
 				OTHER_LDFLAGS = (
 					"-lode",
 					"-lpython3.1",
 					"-lSDL",
+					"-liconv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
@@ -1021,14 +1065,19 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../include/python3.1,
+					/usr/include,
 				);
 				INFOPLIST_FILE = "crag/crag-Info.plist";
-				LIBRARY_SEARCH_PATHS = ../lib;
+				LIBRARY_SEARCH_PATHS = (
+					../lib,
+					/usr/lib,
+				);
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-lode",
 					"-lpython3.1",
 					"-lSDL",
+					"-liconv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
