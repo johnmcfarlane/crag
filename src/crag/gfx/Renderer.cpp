@@ -253,6 +253,12 @@ bool Renderer::Init()
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
+	if (! sys::GlInit())
+	{
+		scene = nullptr;
+		return false;
+	}
+	
 	if (profile_mode)
 	{
 		vsync = false;
@@ -272,9 +278,10 @@ bool Renderer::Init()
 		}
 	}
 
-	if (! sys::GlInit(vsync))
+	int swap_interval = vsync ? 1 : 0;
+	if (SDL_GL_SetSwapInterval(swap_interval))
 	{
-		scene = nullptr;
+        sys::ReportSdlError("Hardware doesn't support vsync");
 		return false;
 	}
 	

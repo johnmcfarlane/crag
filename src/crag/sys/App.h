@@ -77,7 +77,7 @@ namespace sys
 	char const * GetProgramPath();
 	void ReportSdlError(char const * message);
 	
-	bool GlInit(bool vsync);
+	bool GlInit();
 	void GlDeinit();
 	bool GlSupportsFences();
 	

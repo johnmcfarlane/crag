@@ -157,7 +157,7 @@ void sys::ReportSdlError(char const * message)
 	std::cerr << message << ": " << SDL_GetError() << std::endl;
 }
 
-bool sys::GlInit(bool vsync)
+bool sys::GlInit()
 {
 	Assert(context == nullptr);
 	context = SDL_GL_CreateContext(window);
@@ -173,13 +173,6 @@ bool sys::GlInit(bool vsync)
 		return false;
 	}
 
-	int swap_interval = vsync ? 1 : 0;
-	if (SDL_GL_SetSwapInterval(swap_interval))
-	{
-		ReportSdlError("Hardware doesn't support vsync");
-		return false;
-	}
-	
 	return true;
 }
 
