@@ -202,7 +202,7 @@ namespace script
 		// Return a pointer to enough memory to hold an instance of class, CLASS.
 		static PyObject * Alloc(PyTypeObject * type, Py_ssize_t nitems)
 		{
-			Assert(type == & _type_object);
+			Assert(type == & super::_type_object);
 			Assert(nitems == 0);
 			Assert(type->tp_basicsize == sizeof(CLASS));
 
