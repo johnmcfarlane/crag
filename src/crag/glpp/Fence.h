@@ -44,7 +44,6 @@ namespace gl
 		
 		bool IsInitialized() const
 		{
-			assert(_id == 0 || glIsFenceAPPLE(_id));
 			return _id != 0;
 		}
 		
