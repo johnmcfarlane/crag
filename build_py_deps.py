@@ -1,5 +1,3 @@
-#!./xcode4/bin/python3.1
-
 #  build_py_deps.py
 #  crag
 #
@@ -14,29 +12,28 @@ import shutil
 import sys
 
 
-def process_file(filename, src_dir, dst_dir):
+def process_file(filename, find_dir, replace_dir):
     if not filename:
         return True
-        
-    left = filename.find(src_dir)
+
+    left = filename.find(find_dir)
     if left < 0:
         return False
+        
+    right = left + len(find_dir)
     
-    right = left + len(src_dir)
+    dest_filename = filename[:left] + replace_dir + filename[right:]
 
     try:
-        os.makedirs(dst_dir)
+        dest_dir = os.path.dirname(dest_filename)
+        os.makedirs(dest_dir)
     except OSError:
         pass
 
-    src = filename
-    dst = dst_dir + filename[right :]
-    #print("...")
-    #print(dst_dir)
-    print(src, '->', dst)
+    destination = dest_dir + filename[right :]
 
     try:
-        shutil.copyfile(src, dst)
+        shutil.copyfile(filename, dest_filename)
     except IOError:
         return False
 
@@ -44,8 +41,7 @@ def process_file(filename, src_dir, dst_dir):
 
 
 # project_directory means the whole project - not just ./xcode/crag
-def process_files(project_directory, target_directory):
-    script = project_directory + '/script/main.py'
+def process_files(script, source_dir, target_dir):
     print('scanning',script)
     
     finder = ModuleFinder()
@@ -53,20 +49,24 @@ def process_files(project_directory, target_directory):
     #finder.report()
 
     # Print modules found
-    keys = sorted(finder.modules.keys())
+    keys = finder.modules.keys()
     for key in keys:
         m = finder.modules[key]
-        process_file(m.__file__, 'lib/python3.1/', target_directory + '/lib/python3.1/') or process_file(m.__file__, 'lib/python3.1/encodings/', target_directory + '/lib/python3.1/encodings/') or process_file(m.__file__, 'lib/python3.1/lib-dynload/', target_directory + '/lib/python3.1/lib-dynload/')
-    
+        process_file(m.__file__, source_dir, target_dir) 
+
+	# Get any old filename
+    m = finder.modules['encodings.aliases']
+    aliases_filename = m.__file__
+    encodings_dir = aliases_filename[:aliases_filename.rfind('\\')]
 
     # This is the list of necessary modules which ModduleFinder fails to find.
-    shutil.copyfile(project_directory + '/xcode4/lib/python3.1/encodings/utf_8.py', target_directory + '/lib/python3.1/encodings/utf_8.py')
-    shutil.copyfile(project_directory + '/xcode4/lib/python3.1/encodings/latin_1.py', target_directory + '/lib/python3.1/encodings/latin_1.py')
-    shutil.copyfile(project_directory + '/xcode4/lib/python3.1/encodings/ascii.py', target_directory + '/lib/python3.1/encodings/ascii.py')
-    shutil.copyfile(project_directory + '/xcode4/lib/python3.1/encodings/utf_32_be.py', target_directory + '/lib/python3.1/encodings/utf_32_be.py')
+    process_file(encodings_dir + '/utf_8.py', source_dir, target_dir)
+    process_file(encodings_dir + '/latin_1.py', source_dir, target_dir)
+    process_file(encodings_dir + '/ascii.py', source_dir, target_dir)
+    process_file(encodings_dir + '/utf_32_be.py', source_dir, target_dir)
 
 
-process_files(sys.argv[1], sys.argv[2])
+process_files(sys.argv[1], sys.argv[2], sys.argv[3])
 
 
 #finder.report()
