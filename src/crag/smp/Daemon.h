@@ -179,13 +179,13 @@ namespace smp
 			_state = acknowledge_flush_begin;
 			while (_state == acknowledge_flush_begin)
 			{
-				FlushMessages();
+				FlushMessagesOrYield();
 			}
 			
 			Assert(_state == request_flush_end);
 			while (! _envelopes.IsEmpty())
 			{
-				FlushMessages();
+				FlushMessagesOrYield();
 			}
 			
 			_state = acknowledge_flush_end;
@@ -212,6 +212,16 @@ namespace smp
 			return true;
 		}
 		
+		// Polite call to FlushMessages 
+		// for when thread has nothing better to do
+		void FlushMessagesOrYield()
+		{
+			if (! FlushMessages())
+			{
+				Yield();
+			}
+		}
+
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
