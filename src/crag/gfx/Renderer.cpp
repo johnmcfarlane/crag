@@ -258,32 +258,8 @@ bool Renderer::Init()
 		scene = nullptr;
 		return false;
 	}
-	
-	if (profile_mode)
-	{
-		vsync = false;
-	}
-	else
-	{
-		if (sys::GlSupportsFences())
-		{
-			gl::GenFence(_fence1);
-			gl::GenFence(_fence2);
 
-			vsync = _fence1.IsInitialized() && _fence2.IsInitialized();
-		}
-		else
-		{
-			vsync = false;
-		}
-	}
-
-	int swap_interval = vsync ? 1 : 0;
-	if (SDL_GL_SetSwapInterval(swap_interval))
-	{
-        sys::ReportSdlError("Hardware doesn't support vsync");
-		return false;
-	}
+	InitVSync();
 	
 	scene = new Scene;
 	scene->SetResolution(sys::GetWindowSize());
@@ -320,6 +296,69 @@ void Renderer::Deinit()
 	delete scene;
 
 	sys::GlDeinit();
+}
+
+// Decide whether to use vsync and initialize GL state accordingly.
+void Renderer::InitVSync()
+{
+	if (profile_mode)
+	{
+		vsync = false;
+	}
+	else
+	{
+		if (sys::GlSupportsFences())
+		{
+			gl::GenFence(_fence1);
+			gl::GenFence(_fence2);
+
+			vsync = _fence1.IsInitialized() && _fence2.IsInitialized();
+		}
+		else
+		{
+			vsync = false;
+		}
+	}
+
+	int desired_swap_interval = vsync ? 1 : 0;
+
+	if (SDL_GL_SetSwapInterval(desired_swap_interval) != 0)
+	{
+		sys::ReportSdlError("Failed to set vsync");
+	}
+	else
+	{
+		// Note: Oddly, when vsync is forced on in NVidia Control Panel,
+		// it still gets turned off by call to SDL_GL_SetSwapInterval.
+		int actual_swap_interval = SDL_GL_GetSwapInterval();
+		if (actual_swap_interval == desired_swap_interval)
+		{
+			// success
+			return;
+		}
+
+		switch (actual_swap_interval)
+		{
+		case 0:
+			break;
+
+		case 1:
+			std::cerr << "Crag cannot run when vsync is forced on AND OpenGL feature, fences, are not supported." << std::endl;
+			exit(1);
+
+		default:
+			Assert(false);
+		}
+	}
+
+	Assert(vsync);
+
+	// Something went wrong if we get to here.
+	// We need to remove the fences and forgo vsync.
+
+	vsync = false;
+	gl::DeleteFence(_fence1);
+	gl::DeleteFence(_fence2);
 }
 
 void Renderer::InitRenderState()
