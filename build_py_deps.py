@@ -57,7 +57,7 @@ def process_files(script, source_dir, target_dir):
 	# Get any old filename
     m = finder.modules['encodings.aliases']
     aliases_filename = m.__file__
-    encodings_dir = aliases_filename[:aliases_filename.rfind('\\')]
+    encodings_dir = os.path.dirname(aliases_filename)
 
     # This is the list of necessary modules which ModduleFinder fails to find.
     process_file(encodings_dir + '/utf_8.py', source_dir, target_dir)
@@ -66,7 +66,7 @@ def process_files(script, source_dir, target_dir):
     process_file(encodings_dir + '/utf_32_be.py', source_dir, target_dir)
 
 
-process_files(sys.argv[1], sys.argv[2], sys.argv[3])
+process_files(os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2]), os.path.abspath(sys.argv[3]))
 
 
 #finder.report()

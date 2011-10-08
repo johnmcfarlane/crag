@@ -85,6 +85,7 @@
 		528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528BF6FB140E1A9F0032E31F /* FormationSet.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
+		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52D79F2313608A04001063D2 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D79F2113608A04001063D2 /* Engine.cpp */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
@@ -133,7 +134,7 @@
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
 		52483978143BED0900195337 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = ../../../../../../System/Library/Frameworks/CoreAudio.framework; sourceTree = "<group>"; };
 		52483A39143C057400195337 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = ../../../../../../System/Library/Frameworks/ForceFeedback.framework; sourceTree = "<group>"; };
-		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = ../../../../../../System/Library/Frameworks/AudioUnit.framework; sourceTree = "<group>"; };
+		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		525056AF1415B6210077BE8A /* Cuboid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuboid.cpp; sourceTree = "<group>"; };
 		525056B01415B6210077BE8A /* Cuboid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cuboid.h; sourceTree = "<group>"; };
 		52642301135F49FA00C00EFE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
@@ -328,6 +329,7 @@
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52A02F7813C215F8003F5705 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		52B6A5FA136A81CD00ECDEA9 /* intrusive_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intrusive_list.h; sourceTree = "<group>"; };
+		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
 		52CCFBE013F12A67000C2B29 /* Daemon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Daemon.h; sourceTree = "<group>"; };
 		52D79F2113608A04001063D2 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		52D79F2213608A04001063D2 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
@@ -362,7 +364,7 @@
 		52055D53132DE312000C6578 = {
 			isa = PBXGroup;
 			children = (
-				52483A3B143C05BB00195337 /* AudioUnit.framework */,
+				52BEEF55143EA73500E98056 /* build_py_deps.py */,
 				526422FE135F49FA00C00EFE /* src */,
 				52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */,
 				52F819A0132DF0A60045C3A8 /* script */,
@@ -413,6 +415,7 @@
 		52483972143BEA6200195337 /* SDL Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52483A3B143C05BB00195337 /* AudioUnit.framework */,
 				52483A39143C057400195337 /* ForceFeedback.framework */,
 				52483978143BED0900195337 /* CoreAudio.framework */,
 				52483976143BEB0200195337 /* IOKit.framework */,
@@ -819,6 +822,7 @@
 				52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */,
 				526423CA135F49FB00C00EFE /* COPYING in Resources */,
 				526423F1135F49FB00C00EFE /* readme.html in Resources */,
+				52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,7 +840,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$PROJECT_DIR/../bin/python3.1 $PROJECT_DIR/../../build_py_deps.py $PROJECT_DIR/../.. $TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH";
+			shellScript = "$PROJECT_DIR/../bin/python3 $PROJECT_DIR/../../build_py_deps.py $PROJECT_DIR/../../script/main.py $PROJECT_DIR/../lib/python3.1 $TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/lib/python3.1";
 		};
 /* End PBXShellScriptBuildPhase section */
 
