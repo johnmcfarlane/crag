@@ -167,6 +167,8 @@ namespace script
 			super::_type_object.tp_base = nullptr;
 			
 			InitTypeObject(super::_type_object, GetName(), module, documentation);
+            
+            return true;
 		}
 	};
 	
@@ -188,7 +190,7 @@ namespace script
 
 		static bool ReadyAsBaseClass() 
 		{
-			return IsInitialized();
+			return super::IsInitialized();
 		}
 
 	private:
@@ -196,7 +198,7 @@ namespace script
 		// Initialize this metaclass WRT the given module.
 		bool Init(PyObject & module, char const * documentation) override
 		{
-			if (IsInitialized())
+			if (super::IsInitialized())
 			{
 				// This happens often as a result of the way InitModule operates.
 				return true;

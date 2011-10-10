@@ -25,17 +25,6 @@
 		typedef BASE_CLASS super; \
 		static script::MetaClass<CLASS> _meta
 
-#define DECLARE_SCRIPT_BASE_CLASS(CLASS) \
-	public: \
-		static CLASS & GetRef(PyObject & self); \
-		static CLASS & GetRef(PyObject * self); \
-		static CLASS * GetPtr(PyObject & self); \
-		static CLASS * GetPtr(PyObject * self); \
-	private: \
-		friend class script::MetaClass<CLASS>; \
-		typedef script::MetaClass<CLASS> MetaClass; \
-		static script::MetaClass<CLASS> _meta
-
 #define DEFINE_SCRIPT_CLASS_BEGIN(NAMESPACE, CLASS) \
 	NAMESPACE::CLASS & NAMESPACE::CLASS::GetRef(PyObject & self) { return script::GetRef<NAMESPACE::CLASS>(self); } \
 	NAMESPACE::CLASS & NAMESPACE::CLASS::GetRef(PyObject * self) { return script::GetRef<NAMESPACE::CLASS>(self); } \
@@ -66,7 +55,6 @@ namespace script
 	
 	class Object
 	{
-		DECLARE_SCRIPT_BASE_CLASS(Object);
 	public:
 		PyObject_HEAD;
 	};

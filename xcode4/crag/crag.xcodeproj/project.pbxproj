@@ -83,6 +83,7 @@
 		5288E52C140E141100192F72 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E525140E141100192F72 /* Planet.cpp */; };
 		5288E52D140E141100192F72 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5288E527140E141100192F72 /* Skybox.cpp */; };
 		528BF6FD140E1AA00032E31F /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528BF6FB140E1A9F0032E31F /* FormationSet.cpp */; };
+		528EDC6D1442B346002033DA /* MetaClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528EDC6B1442B346002033DA /* MetaClass.cpp */; };
 		528FFD9413A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */; };
 		5293538713C8FD1900B5218B /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5293538513C8FD1900B5218B /* Sphere.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
@@ -316,6 +317,7 @@
 		528BF6FB140E1A9F0032E31F /* FormationSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationSet.cpp; sourceTree = "<group>"; };
 		528BF6FC140E1A9F0032E31F /* FormationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationSet.h; sourceTree = "<group>"; };
 		528C9AE7142C076C007A012F /* Transformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transformation.h; sourceTree = "<group>"; };
+		528EDC6B1442B346002033DA /* MetaClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaClass.cpp; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		528FFD9313A4114700A45CB7 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		52903BD71420E9B800F86C54 /* Magnitude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Magnitude.h; sourceTree = "<group>"; };
@@ -642,6 +644,7 @@
 		52642385135F49FA00C00EFE /* script */ = {
 			isa = PBXGroup;
 			children = (
+				528EDC6B1442B346002033DA /* MetaClass.cpp */,
 				5282AAA0139E007B0076E4F4 /* Object.h */,
 				52E12AE81399339700711F95 /* MetaClass.h */,
 				52642389135F49FA00C00EFE /* ScriptThread.cpp */,
@@ -918,6 +921,7 @@
 				5245CB2414154AEA00999BAC /* Box.cpp in Sources */,
 				525056B11415B6210077BE8A /* Cuboid.cpp in Sources */,
 				528282F2141F6FA90015F9A8 /* IntersectionFunctor.cpp in Sources */,
+				528EDC6D1442B346002033DA /* MetaClass.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
