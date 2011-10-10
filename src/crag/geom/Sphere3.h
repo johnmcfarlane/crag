@@ -31,6 +31,18 @@ public:
 		, radius(r)
 	{ }
 	
+	template <typename RHS_S>
+	Sphere(::Vector<RHS_S, 3> const & c, RHS_S r) 
+		: center(c)
+		, radius(r)
+	{ }
+
+	template <typename RHS_S>
+	Sphere(Sphere<RHS_S, 3> const & rhs) 
+		: center(rhs.center)
+		, radius(rhs.radius)
+	{ }
+
 	Vector center;
 	Scalar radius;
 };
