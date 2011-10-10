@@ -529,6 +529,14 @@ namespace core
 			{
 				super::template insert_detached<Member>(* position, insertion);
 			}
+
+			iterator erase(iterator position)
+			{
+				value_type & element = * position;
+				++ position;
+				remove(element);
+				return position;
+			}
 			
 			void clear()
 			{
