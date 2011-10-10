@@ -11,20 +11,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Minimal definitions / declarations necessary 
-// to declare a class with Python bindings.
-
-namespace script
-{
-	template <typename CLASS> class MetaClass;
-	
-	class Object
-	{
-	public:
-		PyObject_HEAD;
-	};
-}
-
+// Script class macros
 
 #define DECLARE_SCRIPT_CLASS(CLASS, BASE_CLASS) \
 	public: \
@@ -36,7 +23,18 @@ namespace script
 		friend class script::MetaClass<CLASS>; \
 		typedef script::MetaClass<CLASS> MetaClass; \
 		typedef BASE_CLASS super; \
-		static script::MetaClass<CLASS> _meta;
+		static script::MetaClass<CLASS> _meta
+
+#define DECLARE_SCRIPT_BASE_CLASS(CLASS) \
+	public: \
+		static CLASS & GetRef(PyObject & self); \
+		static CLASS & GetRef(PyObject * self); \
+		static CLASS * GetPtr(PyObject & self); \
+		static CLASS * GetPtr(PyObject * self); \
+	private: \
+		friend class script::MetaClass<CLASS>; \
+		typedef script::MetaClass<CLASS> MetaClass; \
+		static script::MetaClass<CLASS> _meta
 
 #define DEFINE_SCRIPT_CLASS_BEGIN(NAMESPACE, CLASS) \
 	NAMESPACE::CLASS & NAMESPACE::CLASS::GetRef(PyObject & self) { return script::GetRef<NAMESPACE::CLASS>(self); } \
@@ -57,3 +55,19 @@ namespace script
 #define SCRIPT_CLASS_METHOD(NAME, FUNCTION, DESCRIPTION) \
 	{NAME, (PyCFunction)FUNCTION, METH_VARARGS, DESCRIPTION},
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Minimal definitions / declarations necessary 
+// to declare a class with Python bindings.
+
+namespace script
+{
+	template <typename CLASS> class MetaClass;
+	
+	class Object
+	{
+		DECLARE_SCRIPT_BASE_CLASS(Object);
+	public:
+		PyObject_HEAD;
+	};
+}

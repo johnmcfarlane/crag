@@ -50,6 +50,9 @@ namespace sim
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		
 		virtual void UpdateModels() const;
+
+		virtual void SetIsCollidable(bool collision);
+		virtual bool GetCollision() const;
 		
 		// Verification
 	#if defined(VERIFY)

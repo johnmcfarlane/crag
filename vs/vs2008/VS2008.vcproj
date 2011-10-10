@@ -862,7 +862,15 @@
 				Name="script"
 				>
 				<File
+					RelativePath="..\..\src\crag\script\MetaClass.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\crag\script\MetaClass.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\crag\script\Object.cpp"
 					>
 				</File>
 				<File
@@ -1179,7 +1187,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
@@ -1190,7 +1198,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
@@ -1205,7 +1213,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
@@ -1215,7 +1223,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
@@ -1230,7 +1238,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
@@ -1241,7 +1249,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y"
+						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath)"
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
