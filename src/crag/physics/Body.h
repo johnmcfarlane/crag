@@ -38,6 +38,9 @@ namespace physics
 		
 		Matrix33 const & GetRotation() const;
 		void SetRotation(Matrix33 const & matrix);
+
+		bool GetIsCollidable() const;
+		void SetIsCollidable(bool collidable);
 		
 		bool IsMovable() const;
 		void SetLinearDamping(Scalar linear_damping);

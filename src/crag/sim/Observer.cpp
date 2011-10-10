@@ -30,6 +30,9 @@
 #include "geom/MatrixOps.h"
 
 
+using namespace sim;
+
+
 CONFIG_DECLARE (profile_mode, bool);
 
 
@@ -39,7 +42,7 @@ namespace
 	CONFIG_DEFINE (observer_density, double, 1);
 	
 	CONFIG_DEFINE (observer_speed_factor, double, 631);
-	CONFIG_DEFINE (observer_gravity_center, sim::Vector3, sim::Vector3(0., 0., -.025));
+	CONFIG_DEFINE (observer_gravity_center, Vector3, Vector3(0., 0., -.5));
 
 	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
 	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);
@@ -54,19 +57,19 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::Observer script binding
+// Observer script binding
 
 namespace 
 {
 	PyObject * observer_add_rotation(PyObject * self, PyObject * args)
 	{
-		sim::Vector3 rotations;
+		Vector3 rotations;
 		if (! PyArg_ParseTuple(args, "ddd", & rotations.x, & rotations.y, & rotations.z))
 		{
 			return nullptr;
 		}
 		
-		sim::Observer & observer = sim::Observer::GetRef(self);
+		Observer & observer = Observer::GetRef(self);
 		observer.AddRotation(rotations);
 		
 		Py_RETURN_NONE;
@@ -80,7 +83,7 @@ namespace
 			return nullptr;
 		}
 		
-		sim::Observer & observer = sim::Observer::GetRef(self);
+		Observer & observer = Observer::GetRef(self);
 		observer.SetSpeedFactor(speed_factor);
 		
 		Py_RETURN_NONE;
@@ -96,7 +99,8 @@ DEFINE_SCRIPT_CLASS_END
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-sim::Observer::Observer()
+
+Observer::Observer()
 : Entity()
 , speed(0)
 , speed_factor(observer_speed_factor)
@@ -104,7 +108,7 @@ sim::Observer::Observer()
 {
 }
 
-sim::Observer::~Observer()
+Observer::~Observer()
 {
 	// un-register with the renderer
 	{
@@ -115,7 +119,7 @@ sim::Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-void sim::Observer::Create(Observer & observer, PyObject & args)
+void Observer::Create(Observer & observer, PyObject & args)
 {
 	// construct observer
 	new (& observer) Observer;
@@ -125,7 +129,7 @@ void sim::Observer::Create(Observer & observer, PyObject & args)
 	Simulation::Daemon::SendMessage(message);
 }
 
-bool sim::Observer::Init(Simulation & simulation, PyObject & args)
+bool Observer::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
 	Vector<double, 3> center;
@@ -155,12 +159,12 @@ bool sim::Observer::Init(Simulation & simulation, PyObject & args)
 	return true;
 }
 
-void sim::Observer::AddRotation(Vector3 const & angles)
+void Observer::AddRotation(Vector3 const & angles)
 {
 	impulses[1] += angles;
 }
 
-void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
+void Observer::UpdateInput(Controller::Impulse const & impulse)
 {
 	Scalar velocity_impulse = observer_velocity_impulse * speed_factor;
 	Vector3 const impulse_factors[2] = 
@@ -182,12 +186,12 @@ void sim::Observer::UpdateInput(Controller::Impulse const & impulse)
 	}
 }
 
-void sim::Observer::SetSpeedFactor(int _speed_factor)
+void Observer::SetSpeedFactor(int _speed_factor)
 {
 	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
-void sim::Observer::Tick(Simulation & simulation)
+void Observer::Tick(Simulation & simulation)
 {
 	// Camera input.
 	if (sys::HasFocus()) 
@@ -215,7 +219,7 @@ void sim::Observer::Tick(Simulation & simulation)
 	}
 }
 
-void sim::Observer::UpdateModels() const
+void Observer::UpdateModels() const
 {
 	// Set simulation camera.
 	Vector3 const & position = body->GetPosition();
@@ -236,17 +240,27 @@ void sim::Observer::UpdateModels() const
 	}
 }
 
-sim::Vector3 const & sim::Observer::GetPosition() const
+void Observer::SetIsCollidable(bool collision)
+{
+	body->SetIsCollidable(collision);
+}
+
+bool Observer::GetCollision() const
+{
+	return body->GetIsCollidable();
+}
+
+Vector3 const & Observer::GetPosition() const
 {
 	return body->GetPosition();
 }
 
-void sim::Observer::SetPosition(sim::Vector3 const & pos) 
+void Observer::SetPosition(Vector3 const & pos) 
 {
 	body->SetPosition(pos);
 }
 
-void sim::Observer::ApplyImpulse()
+void Observer::ApplyImpulse()
 {
 	body->AddRelForce(impulses [0]);
 	impulses[0] = Vector3::Zero();

@@ -16,12 +16,14 @@ SDLK_ESCAPE = 27
 SDLK_0 = 48
 SDLK_1 = 49
 SDLK_9 = 57
+SDLK_c = 99
 
 
 class observer:
 	def __init__(self):
 		self.__observer = crag.Observer(0, 10000580, 0)
 		self.__is_done = False
+		self.__collision = True
 	
 	def run(self):
 		while True:
@@ -48,6 +50,9 @@ class observer:
 				self.__observer.set_speed(10)
 			elif keysym >= SDLK_1 and keysym <= SDLK_9:
 				self.__observer.set_speed(keysym + 1 - SDLK_1)
+			elif keysym == SDLK_c:
+				self.__collision = not self.__collision
+				self.__observer.set_collidable(self.__collision)
 		return False
 
 	# returns True if an event was handled

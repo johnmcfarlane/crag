@@ -52,6 +52,9 @@ namespace sim
 		virtual void Tick(Simulation & simulation);
 		virtual void UpdateModels() const;
 		
+		void SetIsCollidable(bool collision) override;
+		bool GetCollision() const override;
+
 		virtual Vector3 const & GetPosition() const;
 		virtual void SetPosition(Vector3 const & pos);
 

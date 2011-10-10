@@ -115,14 +115,14 @@ namespace
 						sim::Simulation::Daemon::SendMessage(message);
 						return true;
 					}
-						
-					case SDLK_c:
+					
+					case SDLK_b:
 					{
 						gfx::ToggleCullingMessage message;
 						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
 					}
-						
+					
 					case SDLK_f:
 						form::FormationManager::Daemon::Ref().ToggleFlatShaded();
 						return true;
@@ -175,7 +175,7 @@ namespace
 						sim::Simulation::Daemon::SendMessage(message);
 						return true;
 					}
-						
+					
 					case SDLK_i:
 						form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
 						return true;
