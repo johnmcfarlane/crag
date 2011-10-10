@@ -84,7 +84,7 @@ void Entity::UpdateModels() const
 
 void Entity::SetIsCollidable(bool collision)
 {
-	Assert(! collision)
+	Assert(! collision);
 }
 
 bool Entity::GetCollision() const
