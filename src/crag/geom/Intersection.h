@@ -96,24 +96,87 @@ template<typename V> bool IsInBetween(V const & a, V const & b, V const & c)
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Intersection tests
 
+////////////////////////////////////////////////////////////////////////////////
+// Line / Line
+
+// Returns true iff lines a and b intersect with one another.
+template<typename S, int N> 
+bool Intersects(Ray<S, N> const & a, Ray<S, N> const & b)
+{
+	// In other words, are they not parallel? 
+	return DotProduct(a.direction, b.direction) != 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Plane / Line
+
+// TODO: New type for plane.
+
+// Returns projection along a at which intersection occurs.
+template<typename S, int N> 
+S GetIntersection(Ray<S, N> const & plane, Ray<S, N> const & line)
+{
+	S n = DotProduct(plane.position - line.position, plane.direction);
+	if (n == 0)
+	{
+		return 0;
+	}
+	
+	S d = DotProduct(line.direction, plane.direction);
+
+	return n / d;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Sphere / Sphere
+
 // Returns true iff a and b intersect with one another.
-template<typename S, int N> bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
+template<typename S, int N> 
+bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
 	S center_distance_squared = LengthSquared(a.center - b.center);
 	return center_distance_squared < Square(a.radius + b.radius);
 }
 
-// Returns true iff sphere and ray intersect with one another.
-// The ray is represented by ray.position + ray.direction * t.
+////////////////////////////////////////////////////////////////////////////////
+// Sphere / Line
+
+// Returns true iff sphere and line intersect with one another.
+// The line is represented by line.position + line.direction * t.
+// This is the first half of the following GetIntersection test.
+template<typename S, int N> 
+bool Intersects(Sphere<S, N> const & sphere, Ray<S, N> const & line)
+{
+	Vector<S, N> sphere_to_start = line.position - sphere.center;
+	S a = LengthSq(line.direction);
+	S half_b = DotProduct(line.direction, sphere_to_start);
+	S c = LengthSq(sphere_to_start) - Square(sphere.radius);
+	
+	// (Slightly reduced) Quadratic:
+	// t = (- half_b (+/-) Sqrt(Square(half_b) - (a * c))) / a
+	
+	S root = Square(half_b) - a * c;
+	if (root < 0)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+// Returns true iff sphere and line intersect with one another.
+// The line is represented by line.position + line.direction * t.
 // The two possible intersection points are t1 and t2.
 // If single-point intersection, t1 == t2.
-template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & ray, S & t1, S & t2)
+template<typename S, int N> 
+bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & line, S & t1, S & t2)
 {
-	Vector<S, N> sphere_to_start = ray.position - sphere.center;
-	S a = LengthSq(ray.direction);
-	S half_b = DotProduct(ray.direction, sphere_to_start);
+	Vector<S, N> sphere_to_start = line.position - sphere.center;
+	S a = LengthSq(line.direction);
+	S half_b = DotProduct(line.direction, sphere_to_start);
 	S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 	
 	// (Slightly reduced) Quadratic:
@@ -136,6 +199,81 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ra
 	Assert(t1 <= t2);
 	return true;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Convex Polyhedron / Line
+
+// Gets the intersection of a line against a set of planes describing the 
+// half-spaces of a convex shape. Iff intersection takes place, returns
+// the entry and exit points on the line.
+template<typename I, typename S, int N> 
+bool GetIntersection(I begin, I end, Ray<S, N> const & line, S & t1, S & t2)
+{
+	typedef Vector<S, N> Vector;
+	typedef Ray<S, N> Ray;
+	
+	// this is the exit point
+	t1 = - std::numeric_limits<S>::max();
+	
+	// this is the entry point
+	t2 = + std::numeric_limits<S>::max();
+	
+	for (; begin != end; ++ begin)
+	{
+		Ray const & plane = * begin;
+		
+		S dp = DotProduct(line.direction, plane.direction);
+		if (dp > 0)
+		{
+			// ray exits shape through plane
+			S distance = GetIntersection(plane, line);
+			
+			if (distance < t2)
+			{
+				t2 = distance;
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else if (dp < 0)
+		{
+			// ray enters shape through plane
+			S distance = GetIntersection(plane, line);
+			
+			if (distance > t1)
+			{
+				t1 = distance;
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else 
+		{
+			// algorithm is optimized for general case of lines rarely being
+			// paralell to planes.
+			continue;
+		}
+		
+		// t1 or t2 have been modified so test intersection holds
+		if (t1 < t2)
+		{
+			continue;
+		}
+		
+		// the ray does not intersect the shape
+		return false;
+	}
+	
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Sphere / Triangle
 
 // Returns true iff sphere and triangle intersect with one another.
 // Original code by David Eberly in Magic. via OPCODE collision library distributed with ODE
