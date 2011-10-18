@@ -29,17 +29,17 @@ namespace form
 	
 	typedef ::Vector<Scalar, 3>	Vector3;
 	typedef ::Vector<Scalar, 4>	Vector4;
-	typedef ::Ray<Scalar, 3>	Ray3;
+	typedef ::Ray<Scalar, 3> Ray3;
 	typedef ::Sphere<Scalar, 3>	Sphere3;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
-	template <typename V> V SimToScene(V const & sim, V const & scene_origin)
+	inline Vector3 SimToScene(::Vector3d const & sim, ::Vector3d const & scene_origin)
 	{
 		return sim - scene_origin;
 	}
-	template <typename V> V SceneToSim(V const & scene, V const & scene_origin)
+	inline Vector3d SceneToSim(Vector3 const & scene, Vector3d const & scene_origin)
 	{
-		return scene + scene_origin;
+		return Vector3d(scene) + scene_origin;
 	}
 	
 	// Vertex
