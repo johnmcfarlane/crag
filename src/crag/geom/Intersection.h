@@ -51,25 +51,25 @@ template<typename S, int N> bool ContainsSmaller(Sphere<S, N> const & a, Sphere<
 	return center_distance_squared <= Square(a.radius - b.radius);
 }
 
-// Returns true iff plane, abc, contains point, p.
+// Returns true iff half-space represented by plane, abc, contains point, p.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
 {
 	return DistanceToSurface<S>(a, b, c, p) < 0;
 }
 
-// Returns true iff plane, abc, contains point, p.
+// Returns true iff half-space represented by plane, abc, contains point, p.
 template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
 {
 	return FastDistanceToSurface<S>(a, b, c, p) < 0;
 }
 
-// Returns true iff plane, abc, contains sphere, s.
+// Returns true iff half-space represented by plane, abc, contains sphere, s.
 template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
 }
 
-// Returns true iff plane, abc, contains sphere, s.
+// Returns true iff half-space represented by plane, abc, contains sphere, s.
 template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
 {
 	return FastDistanceToSurface<S>(a, b, c, s.center) < s.radius;
