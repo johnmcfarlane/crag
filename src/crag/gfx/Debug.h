@@ -33,11 +33,13 @@ namespace gfx
 
 	namespace Debug
 	{
-		// forward declarations
-		typedef ::Vector<double, 3> Vector3;
-		typedef ::Vector<double, 4> Vector4;
-		typedef ::Matrix<double, 3, 3> Matrix33;
-		typedef ::Matrix<double, 4, 4> Matrix44;
+		// typedefs
+        // TODO: Add Color4f to these.
+		typedef double Scalar;
+		typedef ::Vector<Scalar, 3> Vector3;
+		typedef ::Vector<Scalar, 4> Vector4;
+		typedef ::Matrix<Scalar, 3, 3> Matrix33;
+		typedef ::Matrix<Scalar, 4, 4> Matrix44;
 
 		class ColorPair
 		{
@@ -69,8 +71,7 @@ namespace gfx
 		void AddPoint(Vector3 const & a, ColorPair const & colors = ColorPair(1, 1));
 		void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b);
 		void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1));
-		void AddBasis(Vector3 const & center, double scale);
-		void AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale);
+		void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity());
 		void AddFrustum(Pov const & pov);
 		
 		void Draw(Vector3 const & camera_pos);
@@ -87,8 +88,7 @@ namespace gfx
 		inline void AddPoint(Vector3 const & a, ColorPair const & colors = ColorPair(1, 1)) { }
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b) { }
 		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
-		inline void AddBasis(Vector3 const & center, double scale) { }
-		inline void AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale) { }
+		inline void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity()) { }
 		inline void AddFrustum(Pov const & pov) { }
 		inline void Draw(Vector3 const &) { }
 		inline void DrawText(char const * text, Vector2i const & position) { }
@@ -97,6 +97,10 @@ namespace gfx
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors = ColorPair(1, 1))
 		{
 			AddLine(a, b, colors, colors);
+		}
+		inline void AddBasis(Vector3 const & center, Scalar scale, Matrix33 const & rotation = Matrix33::Identity()) 
+		{ 
+			AddBasis(center, Vector3(scale, scale, scale), rotation);
 		}
 	}
 }

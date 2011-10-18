@@ -257,22 +257,17 @@ void Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c,
 	mutex.Unlock();
 }
 
-void Debug::AddBasis(Vector3 const & center, double scale)
-{
-	AddBasis(center, Matrix33::Identity(), scale);
-}
-
-void Debug::AddBasis(Vector3 const & center, Matrix33 const & rotation, double scale)
+void Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
 {
 	using namespace axes;
 	
-	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale, Debug::ColorPair(Color4f::Red()));
-	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale, Debug::ColorPair(Color4f::Green()));
-	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Blue()));
+	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color4f::Red()));
+	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color4f::Green()));
+	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color4f::Blue()));
 	
-	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale, Debug::ColorPair(Color4f::Cyan()));
-	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale, Debug::ColorPair(Color4f::Magenta()));
-	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale, Debug::ColorPair(Color4f::Yellow()));
+	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color4f::Cyan()));
+	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color4f::Magenta()));
+	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color4f::Yellow()));
 }
 
 #if 0
