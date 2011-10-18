@@ -45,22 +45,23 @@ def main_loop():
 	drop_period = .5
 	next_drop = crag.time() + drop_period
 	shapes = []
-	ball = True
 	while stackless.runcount > 1:
 		now = crag.time()
 		if now > next_drop and len(shapes) < 100:
 			x = random.random() - .5
 			y = 10000580
 			z = -4.5 + random.random()
-			if ball:
+			r = random.choice(['ball','box'])
+			if r == 'ball':
+				print('ball')
 				r = math.exp(- random.random() * 2)
 				shapes.append(crag.Ball(x, y, z, r))
-			else:
-				w = math.exp(- random.random() * 2)
-				l = math.exp(- random.random() * 2)
-				h = math.exp(- random.random() * 2)
+			elif r == 'box':
+				print('box')
+				w = math.exp(random.uniform(0, -2))
+				l = math.exp(random.uniform(0, -2))
+				h = math.exp(random.uniform(0, -2))
 				shapes.append(crag.Box(x, y, z, w, l, h))
-			ball = not ball
 			if len(shapes) > 50:
 				shapes.pop(0)
 			next_drop = now + drop_period
