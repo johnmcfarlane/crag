@@ -144,6 +144,11 @@ template<typename S> S LengthSq(Vector<S, 2> const & v)
 	return v.x * v.x + v.y * v.y;
 }
 
+template<typename S> S DotProduct(Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
+{
+	return lhs.x * rhs.x + lhs.y * rhs.y;
+}
+
 
 //////////////////////////////////////////////////////////////////
 // specializations of Vector2
