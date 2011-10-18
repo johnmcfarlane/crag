@@ -42,7 +42,7 @@ namespace
 	CONFIG_DEFINE (observer_density, double, 1);
 	
 	CONFIG_DEFINE (observer_speed_factor, double, 631);
-	CONFIG_DEFINE (observer_gravity_center, Vector3, Vector3(0., 0., -.5));
+	CONFIG_DEFINE (observer_gravity_center, Vector3, Vector3(0., 0., -.1));
 
 	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
 	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);
@@ -242,7 +242,10 @@ void Observer::UpdateModels() const
 
 void Observer::SetIsCollidable(bool collision)
 {
-	body->SetIsCollidable(collision);
+	if (body != nullptr)
+	{
+		body->SetIsCollidable(collision);
+	}
 }
 
 bool Observer::GetCollision() const
