@@ -199,8 +199,6 @@
 		5264234A135F49FA00C00EFE /* MatrixOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatrixOps.h; sourceTree = "<group>"; };
 		5264234B135F49FA00C00EFE /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		5264234D135F49FA00C00EFE /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
-		5264234E135F49FA00C00EFE /* Sphere2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere2.h; sourceTree = "<group>"; };
-		5264234F135F49FA00C00EFE /* Sphere3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere3.h; sourceTree = "<group>"; };
 		52642351135F49FA00C00EFE /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		52642352135F49FA00C00EFE /* Vector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2.h; sourceTree = "<group>"; };
 		52642353135F49FA00C00EFE /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
@@ -290,7 +288,6 @@
 		526423C6135F49FB00C00EFE /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		526423C8135F49FB00C00EFE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		526423C9135F49FB00C00EFE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
-		52678A1613B0853C0024F060 /* ForEachIntersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForEachIntersection.h; sourceTree = "<group>"; };
 		527FA6C013F0486000284F6A /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
 		527FEA4F142B7EF80019F068 /* Matrix33.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix33.h; sourceTree = "<group>"; };
 		5280DD3A13E4AA220091287D /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
@@ -316,6 +313,8 @@
 		5288E528140E141100192F72 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		528BF6FB140E1A9F0032E31F /* FormationSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationSet.cpp; sourceTree = "<group>"; };
 		528BF6FC140E1A9F0032E31F /* FormationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationSet.h; sourceTree = "<group>"; };
+		528C821E144DE02F006A5263 /* collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collision.h; sourceTree = "<group>"; };
+		528C821F144DE043006A5263 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		528C9AE7142C076C007A012F /* Transformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transformation.h; sourceTree = "<group>"; };
 		528EDC6B1442B346002033DA /* MetaClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaClass.cpp; sourceTree = "<group>"; };
 		528FFD9213A4114700A45CB7 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
@@ -461,6 +460,7 @@
 		52642302135F49FA00C00EFE /* core */ = {
 			isa = PBXGroup;
 			children = (
+				528C821F144DE043006A5263 /* array.h */,
 				52822C8613F3B405000066DC /* for_each.h */,
 				52642303135F49FA00C00EFE /* chunk_functor.h */,
 				52642304135F49FA00C00EFE /* ConfigEntry.cpp */,
@@ -531,7 +531,7 @@
 		52642332135F49FA00C00EFE /* scene */ = {
 			isa = PBXGroup;
 			children = (
-				52678A1613B0853C0024F060 /* ForEachIntersection.h */,
+				528C821E144DE02F006A5263 /* collision.h */,
 				52642333135F49FA00C00EFE /* Mesh.cpp */,
 				52642334135F49FA00C00EFE /* Mesh.h */,
 				52642335135F49FA00C00EFE /* MeshBufferObject.cpp */,
@@ -557,8 +557,6 @@
 				5264234A135F49FA00C00EFE /* MatrixOps.h */,
 				5264234B135F49FA00C00EFE /* Ray.h */,
 				5264234D135F49FA00C00EFE /* Sphere.h */,
-				5264234E135F49FA00C00EFE /* Sphere2.h */,
-				5264234F135F49FA00C00EFE /* Sphere3.h */,
 				52642351135F49FA00C00EFE /* Vector.h */,
 				52642352135F49FA00C00EFE /* Vector2.h */,
 				52642353135F49FA00C00EFE /* Vector3.h */,

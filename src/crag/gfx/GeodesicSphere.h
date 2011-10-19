@@ -11,7 +11,7 @@
 
 #include "icosahedron.h"
 
-#include "geom/Sphere3.h"
+#include "geom/Sphere.h"
 
 
 namespace gfx

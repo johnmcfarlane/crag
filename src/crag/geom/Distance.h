@@ -12,16 +12,18 @@
 #pragma once
 
 
+// TODO: Plane class instead of all this a, b, c nonsense.
+// TODO: Relational.h
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Surfaces
 
 // Distance from given surface, to point, p.
-// Result is signed. 
-template<typename S, int N> S DistanceToSurface(Vector<S, N> const & surface_point, Vector<S, N> const & surface_normal, Vector<S, N> const & p) 
+// Result is signed. If surface.direction isn't unit, result will be proportional.
+template<typename S, int N> S DistanceToSurface(Ray<S, N> const & surface, Vector<S, N> const & p) 
 {
-	//assert(NearEqual(LengthSq(surface_normal), S(1), S(0.001)));
-	
-	return DotProduct(surface_normal, p - surface_point);
+	return DotProduct(surface.direction, p - surface.position);
 }
 
 // Distance from triangle, abc to point, p.
@@ -31,7 +33,7 @@ template<typename S, int N> S DistanceToSurface(Vector<S, N> const & a, Vector<S
 	Vector<S, N> normal = TriangleNormal(a, b, c);
 	Normalize(normal);
 	
-	return DistanceToSurface(b, normal, p);
+	return DistanceToSurface(Ray<S, N>(c, normal), p);
 }
 
 // Distance from triangle, abc to point, p.
@@ -41,5 +43,5 @@ template<typename S, int N> S FastDistanceToSurface(Vector<S, N> const & a, Vect
 	Vector<S, N> normal = TriangleNormal(a, b, c);
 	FastNormalize(normal);
 	
-	return DistanceToSurface(b, normal, p);
+	return DistanceToSurface(Ray<S, N>(c, normal), p);
 }

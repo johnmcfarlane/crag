@@ -15,7 +15,7 @@
 #include "sim/axes.h"
 
 #include "geom/MatrixOps.h"
-#include "geom/Sphere3.h"
+#include "geom/Sphere.h"
 
 #include "glpp/glpp.h"
 

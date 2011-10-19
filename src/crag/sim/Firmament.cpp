@@ -16,7 +16,7 @@
 #include "gfx/Color.h"
 
 #include "core/Random.h"
-#include "geom/Sphere3.h"
+#include "geom/Sphere.h"
 
 
 void Firmament::Init()
