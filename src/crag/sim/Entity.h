@@ -15,9 +15,9 @@
 #include "script/Object.h"
 
 
-namespace gfx
+namespace physics
 {
-	class Scene;
+	class Body;
 }
 
 
@@ -33,6 +33,11 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Entity, script::Object);
 		
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		typedef physics::Body Body;
+
+		// functions
 		Entity();
 		virtual ~Entity();
 		
@@ -51,15 +56,20 @@ namespace sim
 		
 		virtual void UpdateModels() const;
 
-		virtual void SetIsCollidable(bool collision);
-		virtual bool GetCollision() const;
-		
+		void SetBody(Body * body);
+		Body * GetBody();
+		Body const * GetBody() const;
+
 		// Verification
 	#if defined(VERIFY)
 		void Verify(Entity const & entity);
 	#endif
-	
-		//DUMP_OPERATOR_DECLARATION(Entity);
+
+	private:
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
+		Body * _body;
 	};
 	
 	

@@ -12,11 +12,6 @@
 #include "Entity.h"
 
 
-namespace physics
-{
-	class SphericalBody;
-}
-
 namespace gfx
 {
 	class Ball;
@@ -42,10 +37,8 @@ namespace sim
 		void Tick(Simulation & simulation);
 		void UpdateModels() const;
 	private:
-		virtual Vector3 const & GetPosition() const;
 		
 		// variables
-		physics::SphericalBody * _body;
 		gfx::Ball * _model;
 	};
 }

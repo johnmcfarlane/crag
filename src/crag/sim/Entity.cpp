@@ -14,6 +14,8 @@
 
 #include "Simulation.h"
 
+#include "physics/Body.h"
+
 #include "script/MetaClass.h"
 
 
@@ -30,9 +32,19 @@ namespace
 			return nullptr;
 		}
 		
-		sim::Entity & entity = Entity::GetRef(self);
-		entity.SetIsCollidable(collision != 0);
-		
+		using sim::Entity;
+		Entity & entity = Entity::GetRef(self);
+		Entity::Body * body = entity.GetBody();
+		if (body != nullptr)
+		{
+			body->SetIsCollidable(collision != 0);
+		}
+		else
+		{
+			// TODO: Start throwing exceptions.
+			std::cerr << "set_collidable called on entity with no body" << std::endl;
+		}
+
 		Py_RETURN_NONE;
 	}
 }
@@ -48,11 +60,13 @@ DEFINE_SCRIPT_CLASS_END
 
 
 Entity::Entity()
+: _body(nullptr)
 {
 }
 
 Entity::~Entity()
 {
+	delete _body;
 }
 
 void Entity::Create(Entity & entity, PyObject & args)
@@ -82,12 +96,18 @@ void Entity::UpdateModels() const
 {
 }
 
-void Entity::SetIsCollidable(bool collision)
+void Entity::SetBody(Body * body)
 {
-	Assert(! collision);
+	Assert(_body == nullptr);
+	_body = body;
 }
 
-bool Entity::GetCollision() const
+Entity::Body * Entity::GetBody()
 {
-	return false;
+	return _body;
+}
+
+Entity::Body const * Entity::GetBody() const
+{
+	return _body;
 }

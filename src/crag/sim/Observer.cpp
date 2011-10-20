@@ -139,16 +139,17 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	}
 	
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
-	body = new physics::SphericalBody(physics_engine, true, observer_radius);
+	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
 	SetSpeedFactor(1);
 	
 	body->SetDensity(observer_density);
 	body->SetLinearDamping(observer_linear_damping);
 	body->SetAngularDamping(observer_angular_damping);
+	body->SetPosition(center);
+
+	SetBody(body);
 	
 	impulses[0] = impulses[1] = Vector3::Zero();
-	
-	SetPosition(center);
 	
 	// register with the renderer
 	{
@@ -206,7 +207,8 @@ void Observer::Tick(Simulation & simulation)
 	// Gravity
 	if (! profile_mode)
 	{
-		Vector3 const & position = GetPosition();
+		physics::SphericalBody * body = static_cast<physics::SphericalBody *>(GetBody());
+		Vector3 const & position = body->GetPosition();
 		Scalar mass = body->GetMass();
 		
 		Universe & universe = simulation.GetUniverse();
@@ -222,6 +224,7 @@ void Observer::Tick(Simulation & simulation)
 void Observer::UpdateModels() const
 {
 	// Set simulation camera.
+	Body const * body = GetBody();
 	Vector3 const & position = body->GetPosition();
 	Matrix33 const & rotation = body->GetRotation();
 
@@ -240,31 +243,10 @@ void Observer::UpdateModels() const
 	}
 }
 
-void Observer::SetIsCollidable(bool collision)
-{
-	if (body != nullptr)
-	{
-		body->SetIsCollidable(collision);
-	}
-}
-
-bool Observer::GetCollision() const
-{
-	return body->GetIsCollidable();
-}
-
-Vector3 const & Observer::GetPosition() const
-{
-	return body->GetPosition();
-}
-
-void Observer::SetPosition(Vector3 const & pos) 
-{
-	body->SetPosition(pos);
-}
-
 void Observer::ApplyImpulse()
 {
+	Body * body = GetBody();
+
 	body->AddRelForce(impulses [0]);
 	impulses[0] = Vector3::Zero();
 	

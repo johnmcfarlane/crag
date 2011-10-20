@@ -47,19 +47,14 @@ using namespace sim;
 
 
 Ball::Ball()
-: _body(nullptr)
-, _model(nullptr)
+: _model(nullptr)
 {
 }
 
 Ball::~Ball()
 {
-	delete _body;
-	
-	{
-		gfx::RemoveObjectMessage message = { ref(_model) };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	gfx::RemoveObjectMessage message = { ref(_model) };
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -87,11 +82,12 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	
 	// physics
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
-	_body = new physics::SphericalBody(physics_engine, true, radius);
-	_body->SetPosition(center);
-	_body->SetDensity(ball_density);
-	_body->SetLinearDamping(ball_linear_damping);
-	_body->SetAngularDamping(ball_angular_damping);
+	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, radius);
+	body->SetPosition(center);
+	body->SetDensity(ball_density);
+	body->SetLinearDamping(ball_linear_damping);
+	body->SetAngularDamping(ball_angular_damping);
+	SetBody(body);
 	
 	{
 		_model = new gfx::Ball(radius);
@@ -106,19 +102,17 @@ void Ball::Tick(Simulation & simulation)
 {
 	// Gravity
 	Universe const & universe = simulation.GetUniverse();
-	universe.ApplyGravity(* _body);
+	Body * body = GetBody();
+	universe.ApplyGravity(* body);
 }
 
 void Ball::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
-	message._params._position = _body->GetPosition();
-	message._params._rotation = _body->GetRotation();
+
+	physics::SphericalBody const * body = static_cast<physics::SphericalBody const *>(GetBody());
+	message._params._position = body->GetPosition();
+	message._params._rotation = body->GetRotation();
 	
 	gfx::Renderer::Daemon::SendMessage(message);
-}
-
-Vector3 const & Ball::GetPosition() const
-{
-	return _body->GetPosition();
 }

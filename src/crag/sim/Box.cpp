@@ -49,19 +49,14 @@ using namespace sim;
 
 
 Box::Box()
-: _body(nullptr)
-, _model(nullptr)
+: _model(nullptr)
 {
 }
 
 Box::~Box()
 {
-	delete _body;
-	
-	{
-		gfx::RemoveObjectMessage message = { ref(_model) };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	gfx::RemoveObjectMessage message = { ref(_model) };
+	gfx::Renderer::Daemon::SendMessage(message);
 }
 
 void Box::Create(Box & box, PyObject & args)
@@ -89,11 +84,12 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	
 	// physics
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
-	_body = new physics::BoxBody(physics_engine, true, size);
-	_body->SetPosition(center);
-	_body->SetDensity(box_density);
-	_body->SetLinearDamping(box_linear_damping);
-	_body->SetAngularDamping(box_angular_damping);
+	physics::BoxBody * body = new physics::BoxBody(physics_engine, true, size);
+	body->SetPosition(center);
+	body->SetDensity(box_density);
+	body->SetLinearDamping(box_linear_damping);
+	body->SetAngularDamping(box_angular_damping);
+	SetBody(body);
 	
 	{
 		_model = new gfx::Box(size);
@@ -108,18 +104,15 @@ void Box::Tick(Simulation & simulation)
 {
 	// Gravity
 	Universe const & universe = simulation.GetUniverse();
-	universe.ApplyGravity(* _body);
+	universe.ApplyGravity(* GetBody());
 }
 
 void Box::UpdateModels() const
 {
 	gfx::UpdateObjectMessage<gfx::Box> message(ref(_model));
-	message._params.transformation = Transformation(_body->GetPosition(), _body->GetRotation(), _body->GetDimensions());
+
+	physics::BoxBody const * body = static_cast<physics::BoxBody const *>(GetBody());
+	message._params.transformation = Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions());
 	
 	gfx::Renderer::Daemon::SendMessage(message);
-}
-
-Vector3 const & Box::GetPosition() const
-{
-	return _body->GetPosition();
 }

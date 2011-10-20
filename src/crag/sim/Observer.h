@@ -52,17 +52,10 @@ namespace sim
 		virtual void Tick(Simulation & simulation);
 		virtual void UpdateModels() const;
 		
-		void SetIsCollidable(bool collision) override;
-		bool GetCollision() const override;
-
-		virtual Vector3 const & GetPosition() const;
-		virtual void SetPosition(Vector3 const & pos);
-
 	private:
 		void ApplyImpulse();
 		
 		Vector3 impulses[2];	// [pos/rot]
-		physics::SphericalBody * body;
 		Scalar speed;
 		Scalar speed_factor;
 		gfx::Light & _light;

@@ -42,10 +42,8 @@ namespace sim
 		void Tick(Simulation & simulation);
 		void UpdateModels() const;
 	private:
-		virtual Vector3 const & GetPosition() const;
 		
 		// variables
-		physics::BoxBody * _body;
 		gfx::Box * _model;
 	};
 }
