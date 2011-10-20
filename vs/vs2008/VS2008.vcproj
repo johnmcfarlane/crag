@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\src\crag;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PROFILE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PROFILE;dDOUBLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -121,7 +121,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\src\crag;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;dDOUBLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -413,7 +413,7 @@
 					Name="scene"
 					>
 					<File
-						RelativePath="..\..\src\crag\form\scene\ForEachIntersection.h"
+						RelativePath="..\..\src\crag\form\scene\collision.h"
 						>
 					</File>
 					<File
@@ -511,14 +511,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\crag\geom\Sphere.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Sphere2.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Sphere3.h"
 					>
 				</File>
 				<File
