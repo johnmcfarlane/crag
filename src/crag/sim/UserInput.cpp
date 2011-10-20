@@ -23,8 +23,10 @@ namespace
 
 	template<typename IM> void MapInputs(IM const * mappings, sim::Controller::Impulse & impulse)
 	{
-		for (IM const * i = mappings; i->affector.type != sim::Controller::Impulse::NUM_TYPES; ++ i) {
-			if (i->IsActive()) {
+		for (IM const * i = mappings; i->affector.type != sim::Controller::Impulse::NUM_TYPES; ++ i) 
+		{
+			if (i->IsActive()) 
+			{
 				impulse.factors[i->affector.type][i->affector.axis] += i->affector.delta;
 			}
 		}
@@ -88,7 +90,7 @@ namespace
 		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_COMMA },
 		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_PERIOD },
 		
-		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, -1 }
+		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, SDL_SCANCODE_UNKNOWN }
 	};
 
 
@@ -122,12 +124,6 @@ sim::UserInput::UserInput()
 sim::Controller::Impulse sim::UserInput::GetImpulse()
 {
 	Impulse impulse;
-	
-	// Early out for screen capture.
-	/*if (capture) {
-		impulse.factors[FORCE][2] = 1;
-		return;
-	}*/
 	
 	// keyboard
 	MapInputs(keys, impulse);

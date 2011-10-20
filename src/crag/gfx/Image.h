@@ -53,7 +53,6 @@ namespace gfx
 		// pixel access
 		Color4b GetPixel(Vector2i const & pos) const;
 		void SetPixel(Vector2i const & pos, Color4b const & color);
-		//void const * GetPixelsPtr() const;	// use with caution
 		bool CreateTexture(gl::TextureRgba8 & texture) const;
 
 		// misc
@@ -62,7 +61,6 @@ namespace gfx
 		bool Save(char const * filename);
 		bool CaptureScreen();
 		bool Reformat(SDL_PixelFormat const & desired_format);
-		bool FormatForScreen();
 		bool FormatForOpenGl();
 
 		static bool CopyVFlip(Image & dst, Image const & src);

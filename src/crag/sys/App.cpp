@@ -43,9 +43,6 @@ namespace
 	void SetFocus(bool gained_focus)
 	{
 		has_focus = gained_focus;
-		SDL_SetWindowGrab(window, gained_focus ? SDL_TRUE : SDL_FALSE);
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-		SDL_ShowCursor(has_focus ? SDL_DISABLE : SDL_ENABLE);
 	}
 	
 	bool InitGlew()
@@ -103,20 +100,20 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 	}
 	
-	// Get existing video info.
-	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
-	if (video_info == nullptr)
-	{
-		ReportSdlError("Failed to get video info");
-		return false;
-	}
-	
 	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	
 	if (full_screen)
 	{
-		resolution.x = video_info->current_w;
-		resolution.y = video_info->current_h;
+		// Get existing video info.
+		SDL_DisplayMode desktop_display_mode;
+		if(SDL_GetDesktopDisplayMode(0, & desktop_display_mode) != 0)
+		{
+			ReportSdlError("Failed to get desktop display mode.");
+			return false;
+		}
+		
+		resolution.x = desktop_display_mode.w;
+		resolution.y = desktop_display_mode.h;
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
@@ -124,9 +121,13 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
 							  flags);
+	if (window == 0)
+	{
+		ReportSdlError("Failed to initialize display.");
+		return false;
+	}
 	
 	SetFocus(true);
-	SDL_WarpMouseInWindow(window, resolution.x >> 1, resolution.y >> 1);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	ZeroObject(button_down);
@@ -193,7 +194,7 @@ bool sys::GlSupportsFences()
 #endif
 }
 
-bool sys::IsKeyDown(KeyCode key_code)
+bool sys::IsKeyDown(SDL_Scancode key_code)
 {
 	if (key_code >= 0)
 	{

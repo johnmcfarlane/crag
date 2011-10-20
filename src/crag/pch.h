@@ -55,6 +55,8 @@
 //////////////////////////////////////////////////////////////////////
 // SDL includes.
 
+#define SDL_NO_COMPAT
+
 #if defined(WIN32)
 #include <SDL.h>
 #else

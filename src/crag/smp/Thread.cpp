@@ -53,20 +53,6 @@ void Thread::Launch(Function callback, void * data)
 	sdl_thread = SDL_CreateThread(callback, data);
 }
 
-// Terminates the thread. Risks losing data the thread is working on.
-// If possible, try and use Join instead. 
-void Thread::Kill()
-{
-	// Shouldn't be called from within the thread.
-	Assert (! IsCurrent());
-			
-	if (sdl_thread != nullptr)
-	{
-		SDL_KillThread(sdl_thread);
-		sdl_thread = nullptr;
-	}
-}
-		
 // Waits for thread to return from FUNCTION.
 void Thread::Join()
 {

@@ -246,12 +246,6 @@ bool gfx::Image::Reformat(SDL_PixelFormat const & desired_format)
 	return false;
 }
 
-bool gfx::Image::FormatForScreen()
-{
-	SDL_PixelFormat const & video_format = * SDL_GetVideoSurface()->format;
-	return Reformat(video_format);
-}
-
 bool gfx::Image::FormatForOpenGl()
 {
 	if (surface != nullptr)

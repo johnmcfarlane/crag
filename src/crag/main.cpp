@@ -75,84 +75,58 @@ namespace
 	// Local Function Definitions
 	
 	// returns false iff the program should quit.
-	bool OnKeyPress(sys::KeyCode key_code)
+	bool OnKeyPress(SDL_Keysym keysym)
 	{
-		enum ModifierCombo 
+		switch (keysym.mod) 
 		{
-			COMBO_NONE,
-			COMBO_SHIFT,
-			COMBO_CTRL,
-			COMBO_CTRL_SHIFT,
-			COMBO_ALT,
-			COMBO_ALT_SHIFT,
-			COMBO_ALT_CTRL,
-			COMBO_ALT_CTRL_SHIFT,
-		};
-		
-		int combo_map = COMBO_NONE;	
-		if (sys::IsKeyDown(KEY_LSHIFT) || sys::IsKeyDown(KEY_RSHIFT))
-		{
-			combo_map |= COMBO_SHIFT;
-		}
-		if (sys::IsKeyDown(KEY_LCTRL) || sys::IsKeyDown(KEY_RCTRL))
-		{
-			combo_map |= COMBO_CTRL;
-		}
-		if (sys::IsKeyDown(KEY_LALT) || sys::IsKeyDown(KEY_RALT))
-		{
-			combo_map |= COMBO_ALT;
-		}
-		
-		switch (combo_map) 
-		{
-			case COMBO_NONE:
+			case KMOD_NONE:
 			{
-				switch (key_code)
+				switch (keysym.scancode)
 				{
-					case SDLK_RETURN:
+					case SDL_SCANCODE_RETURN:
 					{
 						sim::TogglePauseMessage message;
 						sim::Simulation::Daemon::SendMessage(message);
 						return true;
 					}
 					
-					case SDLK_b:
+					case SDL_SCANCODE_B:
 					{
 						gfx::ToggleCullingMessage message;
 						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
 					}
 					
-					case SDLK_f:
+					case SDL_SCANCODE_F:
 						form::FormationManager::Daemon::Ref().ToggleFlatShaded();
 						return true;
 						
-					case SDLK_g:
+					case SDL_SCANCODE_G:
 					{
 						sim::ToggleGravityMessage message;
 						sim::Simulation::Daemon::SendMessage(message);
 						return true;
 					}
 						
-					case SDLK_i:
+					case SDL_SCANCODE_I:
 						form::FormationManager::Daemon::Ref().ToggleSuspended();
 						return true;
 						
-					case SDLK_l:
+					case SDL_SCANCODE_L:
 					{
 						gfx::ToggleLightingMessage message;
 						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
 					}
 						
-					case SDLK_o:
+					case SDL_SCANCODE_O:
 					{
 						gfx::ToggleCaptureMessage message;
 						gfx::Renderer::Daemon::SendMessage(message);
 						return true;
 					}
 						
-					case SDLK_p:
+					case SDL_SCANCODE_P:
 					{
 						gfx::ToggleWireframeMessage message;
 						gfx::Renderer::Daemon::SendMessage(message);
@@ -165,18 +139,19 @@ namespace
 				break;
 			}
 				
-			case COMBO_SHIFT:
+			case KMOD_LSHIFT:
+			case KMOD_RSHIFT:
 			{
-				switch (key_code)
+				switch (keysym.scancode)
 				{
-					case SDLK_c:
+					case SDL_SCANCODE_C:
 					{
 						sim::ToggleCollisionMessage message;
 						sim::Simulation::Daemon::SendMessage(message);
 						return true;
 					}
 					
-					case SDLK_i:
+					case SDL_SCANCODE_I:
 						form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
 						return true;
 						
@@ -186,11 +161,12 @@ namespace
 				break;
 			}
 				
-			case COMBO_CTRL:
+			case KMOD_LCTRL:
+			case KMOD_RCTRL:
 			{
-				switch (key_code)
+				switch (keysym.scancode)
 				{
-					case SDLK_i:
+					case SDL_SCANCODE_I:
 						form::FormationManager::Daemon::Ref().ToggleDynamicOrigin();
 						return true;
 						
@@ -220,27 +196,38 @@ namespace
 		
 		switch (event_message.event.type)
 		{
-			case SDL_VIDEORESIZE:
+			case SDL_WINDOWEVENT:
 			{
-				gfx::ResizeMessage message = { Vector2i(event_message.event.resize.w, event_message.event.resize.h) };
-				gfx::Renderer::Daemon::SendMessage(message);
-				return true;
-			}
-				
-			case SDL_KEYDOWN:
-			{
-				if (OnKeyPress(event_message.event.key.keysym.sym))
+				SDL_WindowEvent const & window_event = event_message.event.window;
+				switch (window_event.event)
 				{
-					return true;
+					case SDL_WINDOWEVENT_RESIZED:
+					{
+						// TODO: Check it's the right window?
+						gfx::ResizeMessage message = { Vector2i(window_event.data1, window_event.data2) };
+						gfx::Renderer::Daemon::SendMessage(message);
+						return true;
+					}
+					
+					default:
+					{
+						// Most window events represent some sort of disruption to the window
+						// so reset the regulator.
+						form::RegulatorResetMessage message;
+						form::FormationManager::Daemon::SendMessage(message);			
+						return true;
+					}
 				}
 				break;
 			}
 				
-			case SDL_ACTIVEEVENT:
+			case SDL_KEYDOWN:
 			{
-				form::RegulatorResetMessage message;
-				form::FormationManager::Daemon::SendMessage(message);			
-				return true;
+				if (OnKeyPress(event_message.event.key.keysym))
+				{
+					return true;
+				}
+				break;
 			}
 				
 			default:

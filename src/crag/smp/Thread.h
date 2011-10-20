@@ -53,10 +53,6 @@ namespace smp
 			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object);
 		}
 		
-		// Terminates the thread. Risks losing data the thread is working on.
-		// If possible, try and use Join instead. 
-		void Kill();
-		
 		// Waits for thread to return from FUNCTION.
 		void Join();
 

@@ -60,7 +60,7 @@ namespace sys
 {
 	// types
 	typedef SDL_Event Event;
-	typedef SDLKey KeyCode;
+	typedef SDL_Scancode KeyCode;
 	typedef double TimeType;	// 1 unit = 1 second
 	
 	enum MouseButton
