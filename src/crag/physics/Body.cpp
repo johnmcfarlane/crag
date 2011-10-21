@@ -54,7 +54,7 @@ dGeomID Body::GetGeomId() const
 	return geom_id;
 }
 
-physics::Scalar Body::GetMass() const
+Scalar Body::GetMass() const
 {
 	if (body_id == 0)
 	{
@@ -68,7 +68,7 @@ physics::Scalar Body::GetMass() const
 	return m.mass;
 }
 
-physics::Vector3 const & Body::GetPosition() const
+Vector3 const & Body::GetPosition() const
 {
 	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
 }
@@ -78,7 +78,19 @@ void Body::SetPosition(Vector3 const & position) const
 	dGeomSetPosition(geom_id, position.x, position.y, position.z);
 }
 
-physics::Matrix33 const & Body::GetRotation() const
+Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
+{
+	Vector3 velocity;
+	dBodyGetRelPointVel (body_id, point.x, point.y, point.z, velocity.GetAxes());
+	return velocity;
+}
+
+Vector3 Body::GetVelocity() const
+{
+	return GetRelativePointVelocity(Vector3::Zero());
+}
+
+Matrix33 const & Body::GetRotation() const
 {
 	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
 }

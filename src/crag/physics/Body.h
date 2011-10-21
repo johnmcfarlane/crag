@@ -36,6 +36,9 @@ namespace physics
 		Vector3 const & GetPosition() const;
 		void SetPosition(Vector3 const &) const;
 		
+		Vector3 GetRelativePointVelocity(Vector3 const & point) const;
+		Vector3 GetVelocity() const;
+		
 		Matrix33 const & GetRotation() const;
 		void SetRotation(Matrix33 const & matrix);
 
