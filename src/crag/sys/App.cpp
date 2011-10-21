@@ -27,7 +27,8 @@ CONFIG_DECLARE (multisample, bool);
 
 namespace 
 {
-	bool has_focus = true;
+	bool _has_focus = true;
+	bool _relative_mouse_mode = true;
 	
 	bool button_down [sys::BUTTON_MAX];
 	
@@ -40,9 +41,9 @@ namespace
 	
 	char const * _program_path;
 
-	void SetFocus(bool gained_focus)
+	void SetFocus(bool has_focus)
 	{
-		has_focus = gained_focus;
+		_has_focus = has_focus;
 	}
 	
 	bool InitGlew()
@@ -128,7 +129,16 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 	}
 	
 	SetFocus(true);
-	SDL_SetRelativeMouseMode(SDL_TRUE);
+	if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+	{
+		_relative_mouse_mode = true;
+	}
+	else
+	{
+		_relative_mouse_mode = false;
+		SDL_SetWindowGrab(window, SDL_TRUE);
+		SDL_ShowCursor(SDL_FALSE);
+	}
 
 	ZeroObject(button_down);
 	
@@ -264,6 +274,49 @@ bool sys::GetEvent(Event & event, bool block)
 		case SDL_MOUSEBUTTONUP:
 			button_down [event.button.button] = false;
 			break;
+
+		case SDL_MOUSEMOTION:
+			{
+				if (_relative_mouse_mode)
+				{
+					// if relative mouse mode is working, 
+					// let ScriptThread take care of this properly
+					break;
+				}
+
+				if (! _has_focus)
+				{
+					return false;
+				}
+
+				// intercept message and fake relative mouse movement correctly.
+				Vector2i window_size(sys::GetWindowSize());
+				Vector2i center(window_size.x >> 1, window_size.y >> 1);
+				Vector2i cursor;
+				SDL_GetMouseState(& cursor.x, & cursor.y);
+				SDL_WarpMouseInWindow(window, center.x, center.y);
+				Vector2i delta = (cursor - center);
+				if (delta.x == 0 && delta.y == 0)
+				{
+					return false;
+				}
+
+				// fake a mouse motion event
+				event.type = SDL_MOUSEMOTION;
+				event.motion.x = cursor.x;
+				event.motion.y = cursor.y;
+				event.motion.xrel = delta.x;
+				event.motion.yrel = delta.y;
+				return true;
+
+				/*Vector2f mouse_input = Vector2f(delta) * 0.3f;
+				if (Length(mouse_input) > 0) {
+						impulse.factors[sim::Controller::Impulse::TORQUE][axes::UP] -= mouse_input.x;
+						impulse.factors[sim::Controller::Impulse::TORQUE][axes::RIGHT] -= mouse_input.y;
+				}*/
+				// Note: OS X API provides CGGetLastMouseDelta (& delta.x, & delta.y);
+			}
+		break;
 	}
 	
 	return true;
@@ -271,7 +324,7 @@ bool sys::GetEvent(Event & event, bool block)
 
 bool sys::HasFocus()
 {
-	return has_focus;
+	return _has_focus;
 }
 
 sys::TimeType sys::GetTime()
