@@ -213,7 +213,7 @@ namespace form { namespace collision
 		}
 		else if (collision_info.t2 >= 0)
 		{
-			// The sphere is touching the surface.
+			// The sphere is part-way embedded within the surface.
 			collision_info.depth = - collision_info.t1;
 		}
 		else
