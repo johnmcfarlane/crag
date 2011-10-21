@@ -42,7 +42,6 @@
 #undef OUT
 
 // Avoid some annoying warnings.
-//#pragma warning(disable : 4355)
 #pragma warning(disable : 4530)
 #pragma warning(disable : 4200)
 
@@ -107,8 +106,12 @@
 // which means double-precision ODE
 // which means defining dDOUBLE.
 
-#if ! defined(dSINGLE) && ! defined(dDOUBLE)
-#define dDOUBLE
+#if defined(dSINGLE)
+#error dSINGLE defined; ODE needs to be double-precision.
+#endif
+
+#if ! defined(dDOUBLE)
+#error dDOUBLE not defined; ODE needs to be double-precision.
 #endif
 
 
