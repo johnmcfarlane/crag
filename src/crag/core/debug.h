@@ -64,7 +64,7 @@
 #endif
 
 
-#define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__
+#define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__ << ':' << __FUNCTION__
 
 
 #define DEBUG_BREAK_VERBOSE(MESSAGE) \
@@ -77,6 +77,14 @@
 #define Assert(CONDITION) DO_NOTHING
 #else
 #define Assert(CONDITION) DO_STATEMENT (if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } )
+#endif
+
+
+// SDL Error Reporter
+#if defined(NDEBUG)
+#define DEBUG_BREAK_SDL() DO_NOTHING
+#else
+#define DEBUG_BREAK_SDL() DEBUG_BREAK_VERBOSE(SDL_GetError())
 #endif
 
 

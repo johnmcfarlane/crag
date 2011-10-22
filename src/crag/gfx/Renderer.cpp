@@ -324,7 +324,7 @@ void Renderer::InitVSync()
 
 	if (SDL_GL_SetSwapInterval(desired_swap_interval) != 0)
 	{
-		sys::ReportSdlError("Failed to set vsync");
+		DEBUG_BREAK_SDL();
 	}
 	else
 	{

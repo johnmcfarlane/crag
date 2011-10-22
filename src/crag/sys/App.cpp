@@ -86,7 +86,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
-		ReportSdlError("Failed to initialize SDL");
+		DEBUG_BREAK_SDL();
 		return false;
 	}
 	
@@ -109,7 +109,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		SDL_DisplayMode desktop_display_mode;
 		if(SDL_GetDesktopDisplayMode(0, & desktop_display_mode) != 0)
 		{
-			ReportSdlError("Failed to get desktop display mode.");
+			DEBUG_BREAK_SDL();
 			return false;
 		}
 		
@@ -124,7 +124,7 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 							  flags);
 	if (window == 0)
 	{
-		ReportSdlError("Failed to initialize display.");
+		DEBUG_BREAK_SDL();
 		return false;
 	}
 	
@@ -163,11 +163,6 @@ char const * sys::GetProgramPath()
 	return _program_path;
 }
 
-void sys::ReportSdlError(char const * message)
-{
-	std::cerr << message << ": " << SDL_GetError() << std::endl;
-}
-
 bool sys::GlInit()
 {
 	Assert(context == nullptr);
@@ -175,7 +170,7 @@ bool sys::GlInit()
 	
 	if (SDL_GL_MakeCurrent(window, context) != 0)
 	{
-		ReportSdlError("Failed to get GL context");
+		DEBUG_BREAK_SDL();
 		return false;
 	}
 

@@ -75,7 +75,6 @@ namespace sys
 	void Deinit();
 	
 	char const * GetProgramPath();
-	void ReportSdlError(char const * message);
 	
 	bool GlInit();
 	void GlDeinit();

@@ -199,7 +199,7 @@ bool gfx::Image::Save(char const * filename)
 {
 	if (SDL_SaveBMP(surface, filename) != 0)
 	{
-		sys::ReportSdlError("Failed to save bitmap");
+		DEBUG_BREAK_SDL();
 		return false;
 	}
 	
