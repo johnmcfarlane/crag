@@ -12,60 +12,132 @@
 
 #include "Semaphore.h"
 
+#include "atomic.h"
+#include "smp.h"
+
 // core
 #include "core/debug.h"
 
 
-smp::Semaphore::Semaphore(ValueType initial_value)
-: sdl_semaphore(SDL_CreateSemaphore(initial_value))
-{
-	Assert(sdl_semaphore != nullptr);
-}
-
-smp::Semaphore::~Semaphore()
-{
-	Assert(sdl_semaphore != nullptr);
-	SDL_DestroySemaphore(sdl_semaphore);
-}
-
-smp::Semaphore::ValueType smp::Semaphore::GetValue() const
-{
-	return SDL_SemValue(sdl_semaphore);
-}
-
-void smp::Semaphore::Decrement()
-{
-	if (SDL_SemWait(sdl_semaphore) != 0)
+namespace smp 
+{ 
+	namespace 
 	{
-		// Unknown error.
-		Assert(false);
-	}
-}
+		// Version for when SDL Semaphores are working properly.
+		// This should hopefully block efficiently.
+		class EfficientSemaphore : public Semaphore
+		{
+		public:
+			EfficientSemaphore(SDL_sem & sdl_semaphore)
+			: _sdl_semaphore(sdl_semaphore)
+			{
+			}
+			
+			~EfficientSemaphore()
+			{
+				SDL_DestroySemaphore(& _sdl_semaphore);
+			}
+			
+			ValueType GetValue() const override
+			{
+				return SDL_SemValue(& _sdl_semaphore);
+			}
+			
+			void Decrement() override
+			{
+				if (SDL_SemWait(& _sdl_semaphore) != 0)
+				{
+					DEBUG_BREAK_SDL();
+				}
+			}
+			
+			bool TryDecrement() override
+			{
+				int result = SDL_SemTryWait(& _sdl_semaphore);
+				
+				switch (result)
+				{
+					case 0:
+						return true;
+						
+					case SDL_MUTEX_TIMEDOUT:
+						return false;
+						
+					default:
+						DEBUG_BREAK_SDL();
+						return false;
+				}
+			}
+			
+			void Increment() override
+			{
+				if (SDL_SemPost(& _sdl_semaphore) != 0)
+				{
+					DEBUG_BREAK_SDL();
+				}
+			}
+			
+		private:
+			// A semaphore - not a SDL_Thread - is necessary for TryLock
+			SDL_sem & _sdl_semaphore;
+		};
 
-bool smp::Semaphore::TryDecrement()
-{
-	int result = SDL_SemTryWait(sdl_semaphore);
+
+		// Behaves exactly like a semaphore but uses loops for its locks.
+		class CompatibleSemaphore : public Semaphore
+		{
+		public:
+			CompatibleSemaphore(ValueType initial_value)
+			: _value(initial_value)
+			{
+			}
+			
+			ValueType GetValue() const override
+			{
+				return _value;
+			}
+			
+			void Decrement() override
+			{
+				while (! TryDecrement())
+				{
+					Yield();
+				}
+			}
+			
+			bool TryDecrement() override
+			{
+				ValueType old_value = AtomicFetchAndAdd(_value, -1);
+				if (old_value > 0)
+				{
+					return true;
+				}
+				
+				AtomicFetchAndAdd(_value, 1);
+				return false;
+			}
+			
+			void Increment() override
+			{
+				AtomicFetchAndAdd(_value, 1);
+			}
+			
+		private:
+			// A semaphore - not a SDL_Thread - is necessary for TryLock
+			ValueType _value;
+		};
+	}
 	
-	switch (result)
+	// The semaphore makerer.
+	Semaphore & Semaphore::Create(ValueType initial_value)
 	{
-		case 0:
-			return true;
-			
-		case SDL_MUTEX_TIMEDOUT:
-			return false;
-			
-		default:
-			// Unknown error.
-			Assert(false);
-			return false;
-	}
-}
-
-void smp::Semaphore::Increment()
-{
-	if (SDL_SemPost(sdl_semaphore) != 0)
-	{
-		// Unknown error.
-		Assert(false);
+#if ! defined(WIN32)
+		SDL_sem * sdl_semaphore = SDL_CreateSemaphore(initial_value);
+		if (sdl_semaphore != nullptr)
+		{
+			return * new EfficientSemaphore(* sdl_semaphore);
+		}
+#endif
+		return * new CompatibleSemaphore(initial_value);
 	}
 }

@@ -17,20 +17,20 @@ namespace smp
 	{
 		OBJECT_NO_COPY(Semaphore);
 		
+	protected:
+		Semaphore() { }
 	public:
-		typedef unsigned int ValueType;
+		// Should be uint32_t but documentation is full of references to negative values.
+		typedef int32_t ValueType;
 		
-		Semaphore(ValueType initial_value = 1);
-		~Semaphore();
+		static Semaphore & Create(ValueType initial_value);
 		
-		ValueType GetValue() const;
+		virtual ~Semaphore() { }
 		
-		void Decrement();
-		bool TryDecrement();
-		void Increment();
+		virtual ValueType GetValue() const = 0;
 		
-	private:
-		// A semaphore - not a SDL_Thread - is necessary for TryLock
-		SDL_sem * sdl_semaphore;
+		virtual void Decrement() = 0;
+		virtual bool TryDecrement() = 0;
+		virtual void Increment() = 0;
 	};
 }

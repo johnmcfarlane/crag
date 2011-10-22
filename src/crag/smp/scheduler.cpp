@@ -397,11 +397,14 @@ namespace smp
 			TaskManager & task_manager = singleton->GetTaskManager();
 
 			// contains a count of the jobs completed
-			Semaphore num_complete(0);
+			Semaphore & num_complete(Semaphore::Create(0));
 
 			task_manager.Submit(job, num_units, priority, false, & num_complete);
 			
 			num_complete.Decrement();
+			
+			Assert(num_complete.GetValue() == 0);
+			delete & num_complete;
 		}
 		
 		void Complete(Batch & batch, int priority)
@@ -409,17 +412,21 @@ namespace smp
 			TaskManager & task_manager = singleton->GetTaskManager();
 			
 			int num_jobs = 0;
-			Semaphore num_complete(0);
+			Semaphore & num_complete(Semaphore::Create(0));
 			
 			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ num_jobs, ++ i)
 			{
-				task_manager.Submit(* i, 1, priority, false, & num_complete);
+				Job & job = * i;
+				task_manager.Submit(job, 1, priority, false, & num_complete);
 			}
 			
 			for (; num_jobs > 0; -- num_jobs)
 			{
 				num_complete.Decrement();
 			}
+			
+			Assert(num_complete.GetValue() == 0);
+			delete & num_complete;
 		}		
 #else
 		////////////////////////////////////////////////////////////////////////////////
