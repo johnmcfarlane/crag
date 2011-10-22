@@ -124,7 +124,7 @@ namespace smp
 			
 		private:
 			// A semaphore - not a SDL_Thread - is necessary for TryLock
-			ValueType _value;
+			volatile ValueType _value;
 		};
 	}
 	
