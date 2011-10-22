@@ -803,54 +803,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="physics"
-				>
-				<File
-					RelativePath="..\..\src\crag\physics\Body.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\Body.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\BoxBody.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\BoxBody.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\defs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\Engine.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\Engine.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\IntersectionFunctor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\IntersectionFunctor.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\SphericalBody.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\physics\SphericalBody.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="script"
 				>
 				<File
@@ -877,6 +829,54 @@
 					RelativePath="..\..\src\crag\script\ScriptThread.h"
 					>
 				</File>
+				<Filter
+					Name="physics"
+					>
+					<File
+						RelativePath="..\..\src\crag\physics\Body.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\Body.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\BoxBody.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\BoxBody.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\defs.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\Engine.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\Engine.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\IntersectionFunctor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\IntersectionFunctor.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\SphericalBody.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\crag\physics\SphericalBody.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="sim"
