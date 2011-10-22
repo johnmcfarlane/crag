@@ -20,6 +20,14 @@
 
 #include "core/ConfigEntry.h"
 
+#if ! defined(NDEBUG)
+//#define DEBUG_CONTACT
+#endif
+
+#if defined(DEBUG_CONTACT)
+#include "gfx/Debug.h"
+#endif
+
 
 using namespace physics;
 
@@ -214,6 +222,15 @@ void physics::Engine::OnContact(dContact const & contact)
 	// geometry sanity tests
 	Assert(contact.geom.g1 != contact.geom.g2);
 	Assert(contact.geom.depth >= 0);
-	
+
+	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
+
+#if defined(DEBUG_CONTACT)
+	Vector3 pos(contact.geom.pos[0], contact.geom.pos[1], contact.geom.pos[2]);
+	Vector3 normal(contact.geom.normal[0], contact.geom.normal[1], contact.geom.normal[2]);
+	gfx::Debug::AddLine(pos, pos + normal * contact.geom.depth * 100.);
+	std::cout << pos << ' ' << normal << ' ' << contact.geom.depth << '\n';
+#endif
+
 	_contacts.push_back(contact);
 }
