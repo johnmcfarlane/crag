@@ -102,9 +102,16 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 
 void Box::Tick(Simulation & simulation)
 {
+	Body * body = GetBody();
+	if (body == nullptr)
+	{
+		return;
+	}
+
 	// Gravity
+	// TODO: Body is now a 'component' this can doesn't have to happen here.
 	Universe const & universe = simulation.GetUniverse();
-	universe.ApplyGravity(* GetBody());
+	universe.ApplyGravity(* body);
 }
 
 void Box::UpdateModels() const
@@ -112,7 +119,12 @@ void Box::UpdateModels() const
 	gfx::UpdateObjectMessage<gfx::Box> message(ref(_model));
 
 	physics::BoxBody const * body = static_cast<physics::BoxBody const *>(GetBody());
+	if (body == nullptr)
+	{
+		return;
+	}
+
 	message._params.transformation = Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions());
-	
+
 	gfx::Renderer::Daemon::SendMessage(message);
 }

@@ -118,6 +118,29 @@ void Universe::ApplyGravity(physics::Body & body, Vector3 const & center_of_mass
 	body.AddRelForceAtRelPos(gravity, center_of_mass);
 }
 
+void Universe::Purge()
+{
+	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	{
+		Entity & e = * * it;
+		physics::Body const * body = e.GetBody();
+		if (body == nullptr)
+		{
+			continue;
+		}
+
+		Vector3 position = body->GetPosition();
+		if (position == position)
+		{
+			continue;
+		}
+
+		std::cerr << "purging entity with bad position" << std::endl;
+		delete body;
+		e.SetBody(nullptr);
+	}
+}
+
 void Universe::UpdateModels() const
 {
 	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 

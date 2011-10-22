@@ -111,6 +111,11 @@ void Ball::UpdateModels() const
 	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
 
 	physics::SphericalBody const * body = static_cast<physics::SphericalBody const *>(GetBody());
+	if (body == nullptr)
+	{
+		return;
+	}
+
 	message._params._position = body->GetPosition();
 	message._params._rotation = body->GetRotation();
 	

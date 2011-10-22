@@ -170,7 +170,9 @@ void sim::Simulation::Tick()
 		universe->Tick(* this, target_frame_seconds);
 
 		// Run physics/collisions.
-		physics_engine->Tick(target_frame_seconds);		
+		physics_engine->Tick(target_frame_seconds);
+
+		universe->Purge();
 		
 		// Tell renderer about changes.
 		UpdateRenderer();

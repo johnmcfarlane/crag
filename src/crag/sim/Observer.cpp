@@ -223,8 +223,12 @@ void Observer::Tick(Simulation & simulation)
 
 void Observer::UpdateModels() const
 {
-	// Set simulation camera.
 	Body const * body = GetBody();
+	if (body == nullptr)
+	{
+		return;
+	}
+
 	Vector3 const & position = body->GetPosition();
 	Matrix33 const & rotation = body->GetRotation();
 
