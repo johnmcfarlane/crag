@@ -64,7 +64,7 @@
 #endif
 
 
-#define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__ << ':' << __FUNCTION__
+#define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__ << ':' << '[' << __FUNCTION__ << ']'
 
 
 #define DEBUG_BREAK_VERBOSE(MESSAGE) \
