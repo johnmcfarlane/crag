@@ -63,6 +63,24 @@ namespace
 			std::cerr << "GL implementation doesn't support vertex buffers." << std::endl;
 			return false;
 		}
+		
+		// print GL version
+		GLboolean version[5] = 
+		{
+			GLEW_VERSION_1_1,
+			GLEW_VERSION_1_2,
+			GLEW_VERSION_1_3,
+			GLEW_VERSION_1_4,
+			GLEW_VERSION_1_5
+		};
+		for (int i = 4; i >= 0; -- i)
+		{
+			if (version[i])
+			{
+				std::cout << "GL version 1." << (i + 1) << std::endl;
+				break;
+			}
+		}
 #endif
 		
 		return true;
