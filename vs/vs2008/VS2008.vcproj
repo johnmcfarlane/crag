@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src\crag;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PROFILE;dDOUBLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\src\crag;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;dDOUBLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -179,15 +179,15 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\..\src\crag\COPYING"
+				RelativePath="..\..\src\COPYING"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\crag\main.cpp"
+				RelativePath="..\..\src\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\crag\pch.cpp"
+				RelativePath="..\..\src\pch.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -207,110 +207,178 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\crag\pch.h"
+				RelativePath="..\..\src\pch.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\crag\readme.html"
+				RelativePath="..\..\src\readme.html"
 				>
 			</File>
 			<Filter
 				Name="core"
 				>
 				<File
-					RelativePath="..\..\src\crag\core\chunk_functor.h"
+					RelativePath="..\..\src\core\array.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\ConfigEntry.cpp"
+					RelativePath="..\..\src\core\chunk_functor.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\ConfigEntry.h"
+					RelativePath="..\..\src\core\ConfigEntry.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\ConfigManager.cpp"
+					RelativePath="..\..\src\core\ConfigEntry.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\ConfigManager.h"
+					RelativePath="..\..\src\core\ConfigManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\core.h"
+					RelativePath="..\..\src\core\ConfigManager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\debug.cpp"
+					RelativePath="..\..\src\core\core.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\debug.h"
+					RelativePath="..\..\src\core\debug.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\double_buffer.h"
+					RelativePath="..\..\src\core\debug.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Enumeration.h"
+					RelativePath="..\..\src\core\double_buffer.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\floatOps.h"
+					RelativePath="..\..\src\core\Enumeration.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\for_each.h"
+					RelativePath="..\..\src\core\floatOps.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\intOps.h"
+					RelativePath="..\..\src\core\for_each.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\intrusive_list.h"
+					RelativePath="..\..\src\core\intOps.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Pool.h"
+					RelativePath="..\..\src\core\intrusive_list.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\profile.cpp"
+					RelativePath="..\..\src\core\Pool.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\profile.h"
+					RelativePath="..\..\src\core\profile.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Random.cpp"
+					RelativePath="..\..\src\core\profile.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Random.h"
+					RelativePath="..\..\src\core\Random.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Singleton.h"
+					RelativePath="..\..\src\core\Random.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Statistics.cpp"
+					RelativePath="..\..\src\core\ring_buffer.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\Statistics.h"
+					RelativePath="..\..\src\core\Singleton.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\TextureMapper.cpp"
+					RelativePath="..\..\src\core\Statistics.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\core\TextureMapper.h"
+					RelativePath="..\..\src\core\Statistics.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\core\TextureMapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\core\TextureMapper.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="geom"
+				>
+				<File
+					RelativePath="..\..\src\geom\Distance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Intersection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Magnitude.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Matrix.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Matrix33.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Matrix44.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\MatrixOps.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Ray.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Sphere.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Transformation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Vector.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Vector2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Vector3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\geom\Vector4.h"
 					>
 				</File>
 			</Filter>
@@ -318,94 +386,94 @@
 				Name="form"
 				>
 				<File
-					RelativePath="..\..\src\crag\form\defs.h"
+					RelativePath="..\..\src\form\defs.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\form\Formation.cpp"
+					RelativePath="..\..\src\form\Formation.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\form\Formation.h"
+					RelativePath="..\..\src\form\Formation.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\form\FormationManager.cpp"
+					RelativePath="..\..\src\form\FormationManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\form\FormationManager.h"
+					RelativePath="..\..\src\form\FormationManager.h"
 					>
 				</File>
 				<Filter
 					Name="node"
 					>
 					<File
-						RelativePath="..\..\src\crag\form\node\CalculateNodeScoreFunctor.cpp"
+						RelativePath="..\..\src\form\node\CalculateNodeScoreFunctor.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\CalculateNodeScoreFunctor.h"
+						RelativePath="..\..\src\form\node\CalculateNodeScoreFunctor.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\ExpandNodeFunctor.h"
+						RelativePath="..\..\src\form\node\ExpandNodeFunctor.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\ForEachNodeFace.h"
+						RelativePath="..\..\src\form\node\ForEachNodeFace.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\GenerateMeshFunctor.h"
+						RelativePath="..\..\src\form\node\GenerateMeshFunctor.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Node.cpp"
+						RelativePath="..\..\src\form\node\Node.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Node.h"
+						RelativePath="..\..\src\form\node\Node.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\NodeBuffer.cpp"
+						RelativePath="..\..\src\form\node\NodeBuffer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\NodeBuffer.h"
+						RelativePath="..\..\src\form\node\NodeBuffer.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Point.cpp"
+						RelativePath="..\..\src\form\node\Point.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Point.h"
+						RelativePath="..\..\src\form\node\Point.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\PointBuffer.cpp"
+						RelativePath="..\..\src\form\node\PointBuffer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\PointBuffer.h"
+						RelativePath="..\..\src\form\node\PointBuffer.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Quaterna.h"
+						RelativePath="..\..\src\form\node\Quaterna.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\RootNode.cpp"
+						RelativePath="..\..\src\form\node\RootNode.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\RootNode.h"
+						RelativePath="..\..\src\form\node\RootNode.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\node\Shader.h"
+						RelativePath="..\..\src\form\node\Shader.h"
 						>
 					</File>
 				</Filter>
@@ -413,467 +481,59 @@
 					Name="scene"
 					>
 					<File
-						RelativePath="..\..\src\crag\form\scene\collision.h"
+						RelativePath="..\..\src\form\scene\collision.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Mesh.cpp"
+						RelativePath="..\..\src\form\scene\Mesh.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Mesh.h"
+						RelativePath="..\..\src\form\scene\Mesh.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\MeshBufferObject.cpp"
+						RelativePath="..\..\src\form\scene\MeshBufferObject.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\MeshBufferObject.h"
+						RelativePath="..\..\src\form\scene\MeshBufferObject.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\MeshProperties.h"
+						RelativePath="..\..\src\form\scene\MeshProperties.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Polyhedron.cpp"
+						RelativePath="..\..\src\form\scene\Polyhedron.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Polyhedron.h"
+						RelativePath="..\..\src\form\scene\Polyhedron.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Regulator.cpp"
+						RelativePath="..\..\src\form\scene\Regulator.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Regulator.h"
+						RelativePath="..\..\src\form\scene\Regulator.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Scene.cpp"
+						RelativePath="..\..\src\form\scene\Scene.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\Scene.h"
+						RelativePath="..\..\src\form\scene\Scene.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\VertexBuffer.cpp"
+						RelativePath="..\..\src\form\scene\VertexBuffer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\crag\form\scene\VertexBuffer.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="geom"
-				>
-				<File
-					RelativePath="..\..\src\crag\geom\Distance.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Intersection.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Magnitude.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Matrix.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Matrix33.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Matrix4.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Matrix44.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\MatrixOps.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Ray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Sphere.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\SphereOps.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Transformation.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Vector.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Vector2.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Vector3.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\Vector4.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\geom\VectorOps.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="gfx"
-				>
-				<File
-					RelativePath="..\..\src\crag\gfx\Color.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Cuboid.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Cuboid.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Debug.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\gfx_Debug"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Debug.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\defs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Font.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Font.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\GeodesicSphere.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\icosahedron.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Image.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Image.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\IndexBuffer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\IndexBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Mesh.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Pov.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Pov.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Renderer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Renderer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Scene.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\gfx_Scene"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\gfx_Scene"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Scene.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Sphere.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\gfx\Sphere.h"
-					>
-				</File>
-				<Filter
-					Name="object"
-					>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Ball.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\gfx_Ball"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Ball.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Box.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\gfx_Box"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Box.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\FormationSet.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\FormationSet.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Light.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Light.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Object.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Object.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Planet.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\gfx_Planet"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Planet.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Skybox.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\gfx\object\Skybox.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="glpp"
-				>
-				<File
-					RelativePath="..\..\src\crag\glpp\BufferObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\debug.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Fence.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\FrameBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\gl.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\glpp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Ibo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Name.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\RenderBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Texture.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Vbo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Vbo_Types.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\glpp\Vertex.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="script"
-				>
-				<File
-					RelativePath="..\..\src\crag\script\MetaClass.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\script\MetaClass.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\script\Object.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\script\Object.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\script\ScriptThread.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\script\ScriptThread.h"
-					>
-				</File>
-				<Filter
-					Name="physics"
-					>
-					<File
-						RelativePath="..\..\src\crag\physics\Body.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\Body.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\BoxBody.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\BoxBody.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\defs.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\Engine.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\Engine.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\IntersectionFunctor.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\IntersectionFunctor.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\SphericalBody.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\crag\physics\SphericalBody.h"
+						RelativePath="..\..\src\form\scene\VertexBuffer.h"
 						>
 					</File>
 				</Filter>
@@ -882,267 +542,131 @@
 				Name="sim"
 				>
 				<File
-					RelativePath="..\..\src\crag\sim\axes.h"
+					RelativePath="..\..\src\sim\axes.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Ball.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Ball"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Ball"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\sim\Ball.h"
+					RelativePath="..\..\src\sim\Ball.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Box.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Box"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Box"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\sim\Box.h"
+					RelativePath="..\..\src\sim\Ball.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Controller.cpp"
+					RelativePath="..\..\src\sim\Box.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Controller.h"
+					RelativePath="..\..\src\sim\Box.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\defs.h"
+					RelativePath="..\..\src\sim\Controller.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Entity.cpp"
+					RelativePath="..\..\src\sim\Controller.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Entity.h"
+					RelativePath="..\..\src\sim\defs.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Firmament.cpp"
+					RelativePath="..\..\src\sim\Entity.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Firmament.h"
+					RelativePath="..\..\src\sim\Entity.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\FrequencyEstimator.cpp"
+					RelativePath="..\..\src\sim\Firmament.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\FrequencyEstimator.h"
+					RelativePath="..\..\src\sim\Firmament.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\MoonShader.cpp"
+					RelativePath="..\..\src\sim\FrequencyEstimator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\MoonShader.h"
+					RelativePath="..\..\src\sim\FrequencyEstimator.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Observer.cpp"
+					RelativePath="..\..\src\sim\MoonShader.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Observer.h"
+					RelativePath="..\..\src\sim\MoonShader.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Planet.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Planet.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\sim_Planet.obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\sim\Planet.h"
+					RelativePath="..\..\src\sim\Observer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\PlanetaryBody.cpp"
+					RelativePath="..\..\src\sim\Observer.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\PlanetaryBody.h"
+					RelativePath="..\..\src\sim\Planet.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\PlanetShader.cpp"
+					RelativePath="..\..\src\sim\Planet.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\PlanetShader.h"
+					RelativePath="..\..\src\sim\PlanetaryBody.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Simulation.cpp"
+					RelativePath="..\..\src\sim\PlanetaryBody.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Simulation.h"
+					RelativePath="..\..\src\sim\PlanetShader.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Star.cpp"
+					RelativePath="..\..\src\sim\PlanetShader.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Star.h"
+					RelativePath="..\..\src\sim\Simulation.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Universe.cpp"
+					RelativePath="..\..\src\sim\Simulation.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\Universe.h"
+					RelativePath="..\..\src\sim\Star.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\UserInput.cpp"
+					RelativePath="..\..\src\sim\Star.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sim\UserInput.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="smp"
-				>
-				<File
-					RelativePath="..\..\src\crag\smp\atomic.h"
+					RelativePath="..\..\src\sim\Universe.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\Daemon.h"
+					RelativePath="..\..\src\sim\Universe.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\for_each.h"
+					RelativePath="..\..\src\sim\UserInput.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\smp\Lock.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Message.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\MessageQueue.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Mutex.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Mutex.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\ring_buffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\scheduler.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\scheduler.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Semaphore.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Semaphore.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\SharedMutex.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\SharedMutex.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\SimpleMutex.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\smp.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\smp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Thread.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\Thread.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\crag\smp\vector.h"
+					RelativePath="..\..\src\sim\UserInput.h"
 					>
 				</File>
 			</Filter>
@@ -1150,19 +674,459 @@
 				Name="sys"
 				>
 				<File
-					RelativePath="..\..\src\crag\sys\App.cpp"
+					RelativePath="..\..\src\sys\App.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sys\App.h"
+					RelativePath="..\..\src\sys\App.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sys\memory.cpp"
+					RelativePath="..\..\src\sys\memory.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\crag\sys\memory.h"
+					RelativePath="..\..\src\sys\memory.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="smp"
+				>
+				<File
+					RelativePath="..\..\src\smp\atomic.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Daemon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\for_each.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Lock.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Message.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\MessageQueue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Mutex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Mutex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\scheduler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\scheduler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Semaphore.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Semaphore.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\SharedMutex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\SharedMutex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\SimpleMutex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\smp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\smp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Thread.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Thread.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\vector.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="gfx"
+				>
+				<File
+					RelativePath="..\..\src\gfx\Color.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Cuboid.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Cuboid.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Debug.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\gfx_Debug.obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Debug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\defs.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Font.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Font.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\GeodesicSphere.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\icosahedron.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Image.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Image.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\IndexBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\IndexBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Mesh.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Pov.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Pov.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Renderer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Renderer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Scene.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\gfx_Scene.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\gfx_Scene.obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Scene.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Sphere.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Sphere.h"
+					>
+				</File>
+				<Filter
+					Name="object"
+					>
+					<File
+						RelativePath="..\..\src\gfx\object\Ball.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Ball.obj"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Ball.obj"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Ball.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Box.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Box.obj"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Box.obj"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Box.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\FormationSet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\FormationSet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Light.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Light.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Object.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Object.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Planet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Planet.obj"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\gfx_Planet.obj"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Planet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Skybox.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Skybox.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="physics"
+				>
+				<File
+					RelativePath="..\..\src\physics\Body.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\Body.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\BoxBody.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\BoxBody.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\defs.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\Engine.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\Engine.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\IntersectionFunctor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\IntersectionFunctor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\SphericalBody.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\physics\SphericalBody.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="script"
+				>
+				<File
+					RelativePath="..\..\src\script\MetaClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\MetaClass.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\Object.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\ScriptThread.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\ScriptThread.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="glpp"
+				>
+				<File
+					RelativePath="..\..\src\glpp\BufferObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\debug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Fence.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\FrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\gl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\glpp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Ibo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Name.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\RenderBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Texture.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Vbo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Vbo_Types.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\glpp\Vertex.h"
 					>
 				</File>
 			</Filter>
