@@ -18,7 +18,7 @@ namespace gl
 {
 	
 #if defined(WIN32)
-#define GLPP_USE_ARB
+//#define GLPP_USE_ARB
 #endif
 	
 #if defined(GLPP_USE_ARB)
