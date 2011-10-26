@@ -58,12 +58,14 @@ namespace
 		
 		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
 
+#if defined(GLPP_USE_ARB)
 		if (! GLEW_ARB_vertex_buffer_object)
 		{
 			std::cerr << "GL implementation doesn't support vertex buffers." << std::endl;
 			return false;
 		}
-		
+#endif
+
 		// print GL version
 		GLboolean version[5] = 
 		{
