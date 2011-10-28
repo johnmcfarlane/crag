@@ -119,6 +119,11 @@ void Renderer::OnMessage(smp::TerminateMessage const & message)
 
 void Renderer::OnMessage(AddObjectMessage const & message)
 {
+	if (quit_flag)
+	{
+		return;
+	}
+
 	Object & object = message._object;
 	object.Init();
 
@@ -134,8 +139,8 @@ void Renderer::OnMessage(RemoveObjectMessage const & message)
 	if (scene != nullptr)
 	{
 		scene->RemoveObject(object);
+		object.Deinit();
 	}
-	object.Deinit();
 	delete & object;
 }
 
@@ -325,6 +330,10 @@ void Renderer::InitVSync()
 	if (SDL_GL_SetSwapInterval(desired_swap_interval) != 0)
 	{
 		DEBUG_BREAK_SDL();
+
+		// It's hard to tell whether vsync is enabled or not at this point.
+		// Assume that it's not.
+		vsync = false;
 	}
 	else
 	{
@@ -349,16 +358,22 @@ void Renderer::InitVSync()
 		default:
 			Assert(false);
 		}
-	}
 
-	Assert(vsync);
+		Assert(vsync);
+	}
 
 	// Something went wrong if we get to here.
 	// We need to remove the fences and forgo vsync.
 
 	vsync = false;
-	gl::DeleteFence(_fence1);
-	gl::DeleteFence(_fence2);
+	if (_fence1.IsInitialized())
+	{
+		gl::DeleteFence(_fence1);
+	}
+	if (_fence2.IsInitialized())
+	{
+		gl::DeleteFence(_fence2);
+	}
 }
 
 void Renderer::InitRenderState()
