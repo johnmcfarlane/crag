@@ -193,6 +193,7 @@ void script::ScriptThread::OnMessage(EventMessage const & message)
 
 void script::ScriptThread::OnMessage(smp::TerminateMessage const & message)
 {
+	_events.push(Py_BuildValue("si", "exit", 0));
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
