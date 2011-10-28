@@ -54,13 +54,13 @@ namespace gl
 	template <typename ELEMENT, GLenum TARGET> void GenBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(! bo.IsInitialized());
-		GLPP_CALL_FUNCTION_ARB(GenBuffers, (1, & bo.id));
+		glGenBuffers(1, & bo.id);
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void DeleteBuffer(BufferObject<ELEMENT, TARGET> & bo)
 	{
 		assert(bo.IsInitialized());
-		GLPP_CALL_FUNCTION_ARB(DeleteBuffers, (1, & bo.id));
+		glDeleteBuffers(1, & bo.id);
 		bo.id = 0;
 	}
 	
@@ -68,14 +68,14 @@ namespace gl
 	{
 		assert(bo.IsInitialized());
 		assert(! bo.IsBound());
-		GLPP_CALL_FUNCTION_ARB(BindBuffer, (TARGET, bo.id));
+		glBindBuffer(TARGET, bo.id);
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void UnbindBuffer(BufferObject<ELEMENT, TARGET> const & bo)
 	{
 		assert(bo.IsBound());
 #if ! defined(NDEBUG)
-		GLPP_CALL_FUNCTION_ARB(BindBuffer, (TARGET, 0)); 
+		glBindBuffer(TARGET, 0); 
 #endif
 	}
 	
@@ -83,7 +83,7 @@ namespace gl
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-		GLPP_CALL_FUNCTION_ARB(BufferData, (TARGET, size, array, usage));
+		glBufferData(TARGET, size, array, usage);
 	}
 	
 	template <typename ELEMENT, GLenum TARGET> void BufferData(BufferObject<ELEMENT, TARGET> & bo, GLsizeiptr num, BufferDataUsage usage)
@@ -95,6 +95,6 @@ namespace gl
 	{
 		assert(bo.IsBound());
 		GLsizeiptr size = sizeof(ELEMENT) * num;
-		GLPP_CALL_FUNCTION_ARB(BufferSubData, (TARGET, 0, size, array));
+		glBufferSubData(TARGET, 0, size, array);
 	}
 }
