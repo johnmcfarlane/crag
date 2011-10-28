@@ -58,31 +58,14 @@ namespace
 		
 		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-#if defined(GLPP_USE_ARB)
-		if (! GLEW_ARB_vertex_buffer_object)
+#if ! defined(__APPLE__)
+		if (! GLEW_VERSION_1_5)
 		{
-			std::cerr << "GL implementation doesn't support vertex buffers." << std::endl;
+			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
 			return false;
 		}
 #endif
 
-		// print GL version
-		GLboolean version[5] = 
-		{
-			GLEW_VERSION_1_1,
-			GLEW_VERSION_1_2,
-			GLEW_VERSION_1_3,
-			GLEW_VERSION_1_4,
-			GLEW_VERSION_1_5
-		};
-		for (int i = 4; i >= 0; -- i)
-		{
-			if (version[i])
-			{
-				std::cout << "GL version 1." << (i + 1) << std::endl;
-				break;
-			}
-		}
 #endif
 		
 		return true;
