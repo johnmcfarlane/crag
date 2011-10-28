@@ -67,25 +67,25 @@
 #define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__ << ':' << '[' << __FUNCTION__ << ']'
 
 
-#define DEBUG_BREAK_VERBOSE(MESSAGE) \
-	::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << MESSAGE << "\"" << std::endl; \
-	DEBUG_BREAK()
-
-
 // Assert
 #if defined(NDEBUG)
 #define Assert(CONDITION) DO_NOTHING
 #else
-#define Assert(CONDITION) DO_STATEMENT (if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } )
+#define Assert(CONDITION) \
+	DO_STATEMENT ( \
+		if (! (CONDITION)) { \
+			::std::cerr << DEBUG_PRINT_SOURCE << ": assert: \"" << #CONDITION << "\"" << std::endl; \
+			DEBUG_BREAK(); \
+		} \
+	)
 #endif
 
 
 // SDL Error Reporter
-#if defined(NDEBUG)
-#define DEBUG_BREAK_SDL() DO_NOTHING
-#else
-#define DEBUG_BREAK_SDL() DEBUG_BREAK_VERBOSE(SDL_GetError())
-#endif
+#define DEBUG_BREAK_SDL() \
+	DO_STATEMENT ( \
+		::std::cerr << DEBUG_PRINT_SOURCE << ": SDL error: \"" << SDL_GetError() << "\"" << std::endl; \
+	)
 
 
 //////////////////////////////////////////////////////////////////////
@@ -109,11 +109,17 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 
 #if defined(VERIFY)
 
-#define VerifyTrue(CONDITION) do { if (! (CONDITION)) { DEBUG_BREAK_VERBOSE(#CONDITION); } } while (false)
+#define VerifyTrue(CONDITION) \
+	DO_STATEMENT( \
+		if (! (CONDITION)) { \
+			::std::cerr << DEBUG_PRINT_SOURCE << ": Verify: \"" << #CONDITION << "\"" << std::endl; \
+			DEBUG_BREAK(); \
+		} \
+	)
 
 #define VerifyEqual(A, B, EPSILON) \
 	if (! NearEqual(A, B, EPSILON)) { \
-		::std::cerr << DEBUG_PRINT_SOURCE << ": break: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"" << std::endl; \
+		::std::cerr << DEBUG_PRINT_SOURCE << ": VerifyEqual: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"" << std::endl; \
 		DEBUG_BREAK(); \
 	}
 
