@@ -1,5 +1,5 @@
 //
-// Crag.cpp
+// main.cpp
 // Crag
 //
 // Created by john on 6/13/09.
@@ -28,7 +28,7 @@
 
 namespace 
 {
-	bool Crag(char const * program_path);
+	bool CragMain(char const * program_path);
 }
 
 
@@ -48,7 +48,7 @@ int SDL_main(int /*argc*/, char * * argv)
 	std::cout << "Crag Demo" << std::endl;
 	std::cout << "Copyright 2010 John McFarlane" << std::endl;
 	
-	return Crag(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -240,8 +240,9 @@ namespace
 		script::ScriptThread::Daemon::SendMessage(event_message);
 		return true;
 	}
-	
-	bool Crag(char const * program_path)
+
+	// The main program function.
+	bool CragMain(char const * program_path)
 	{
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
@@ -260,6 +261,7 @@ namespace
 		smp::scheduler::Init();
 		
 		{
+			// TODO: Find a way to make these common; writing everything out four times is not good.
 			// Instanciate the four daemons
 			gfx::Renderer::Daemon renderer(0x8000);
 			form::FormationManager::Daemon formation_manager(0x8000);
@@ -272,8 +274,29 @@ namespace
 			renderer.Start();
 			script_daemon.Start();
 			
-			while (script_daemon.IsRunning())
+			while (true)
 			{
+				if (! formation_manager.IsRunning())
+				{
+					std::cout << "formation_manager initiating shutdown" << std::endl;
+					break;
+				}
+				if (! simulation.IsRunning())
+				{
+					std::cout << "simulation initiating shutdown" << std::endl;
+					break;
+				}
+				if (! renderer.IsRunning())
+				{
+					std::cout << "renderer initiating shutdown" << std::endl;
+					break;
+				}
+				if (! script_daemon.IsRunning())
+				{
+					std::cout << "script_daemon initiating shutdown" << std::endl;
+					break;
+				}
+
 				if (! HandleEvent())
 				{
 					smp::Yield();
