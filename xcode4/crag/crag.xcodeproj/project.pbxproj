@@ -87,6 +87,7 @@
 		528164B41454F5DC0017E868 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646B1454F5DB0017E868 /* App.cpp */; };
 		528164B51454F5DC0017E868 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646D1454F5DB0017E868 /* memory.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
+		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
@@ -336,6 +337,8 @@
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
+		52ACC2B0145AFB230060DE93 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
+		52ACC2B1145AFB230060DE93 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
 		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
@@ -846,6 +849,8 @@
 				528164671454F5DB0017E868 /* Thread.cpp */,
 				528164681454F5DB0017E868 /* Thread.h */,
 				528164691454F5DB0017E868 /* vector.h */,
+				52ACC2B0145AFB230060DE93 /* Uid.cpp */,
+				52ACC2B1145AFB230060DE93 /* Uid.h */,
 			);
 			path = smp;
 			sourceTree = "<group>";
@@ -1032,6 +1037,7 @@
 				528164B41454F5DC0017E868 /* App.cpp in Sources */,
 				528164B51454F5DC0017E868 /* memory.cpp in Sources */,
 				528164B91454F6200017E868 /* SDLMain.m in Sources */,
+				52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
