@@ -53,11 +53,9 @@ def main_loop():
 			z = -4.5 + random.random()
 			r = random.choice(['ball','box'])
 			if r == 'ball':
-				print('ball')
 				r = math.exp(- random.random() * 2)
 				shapes.append(crag.Ball(x, y, z, r))
 			elif r == 'box':
-				print('box')
 				w = math.exp(random.uniform(0, -2))
 				l = math.exp(random.uniform(0, -2))
 				h = math.exp(random.uniform(0, -2))
