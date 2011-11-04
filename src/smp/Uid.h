@@ -27,7 +27,9 @@ namespace smp
 		
 		bool operator == (Uid const & rhs) const { return _value == rhs._value; }
 		bool operator != (Uid const & rhs) const { return _value != rhs._value; }
-		
+
+		friend std::ostream & operator << (std::ostream & out, Uid const & uid);
+
 		// create a new unique object
 		static Uid Create();
 		

@@ -16,6 +16,12 @@
 #include "core/intOps.h"
 
 
+std::ostream & smp::operator << (std::ostream & out, smp::Uid const & uid)
+{
+	return out << uid._value;
+}
+
+
 smp::Uid smp::Uid::Create()
 {
 	static volatile ValueType _counter = 1;
