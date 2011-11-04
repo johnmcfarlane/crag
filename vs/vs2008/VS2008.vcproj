@@ -770,6 +770,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\smp\Uid.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\smp\Uid.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\smp\vector.h"
 					>
 				</File>
@@ -945,11 +953,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\gfx\object\FormationSet.cpp"
+						RelativePath="..\..\src\gfx\object\FormationMesh.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\gfx\object\FormationSet.h"
+						RelativePath="..\..\src\gfx\object\FormationMesh.h"
 						>
 					</File>
 					<File
