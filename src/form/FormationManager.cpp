@@ -20,7 +20,7 @@
 
 #include "gfx/Color.h"
 #include "gfx/Renderer.h"
-#include "gfx/object/FormationSet.h"
+#include "gfx/object/FormationMesh.h"
 
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
@@ -45,7 +45,7 @@ namespace
 // FormationManager member definitions
 
 form::FormationManager::FormationManager()
-: _model(ref(new gfx::FormationSet))
+: _model(ref(new gfx::FormationMesh))
 , quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
@@ -78,7 +78,7 @@ form::FormationManager::~FormationManager()
 		delete & mesh;
 	}
 	
-	Assert(formation_set.empty());
+	Assert(_formations.empty());
 }
 
 #if defined(VERIFY)
@@ -96,16 +96,16 @@ void form::FormationManager::OnQuit()
 
 void form::FormationManager::OnAddFormation(form::Formation * const & formation)
 {
-	Assert(formation_set.find(formation) == formation_set.end());
-	formation_set.insert(formation);
+	Assert(_formations.find(formation) == _formations.end());
+	_formations.insert(formation);
 	scenes[0].AddFormation(* formation);
 	scenes[1].AddFormation(* formation);
 }
 
 void form::FormationManager::OnRemoveFormation(form::Formation * const & formation)
 {
-	Assert(formation_set.find(formation) != formation_set.end());
-	formation_set.erase(formation);
+	Assert(_formations.find(formation) != _formations.end());
+	_formations.erase(formation);
 	scenes[0].RemoveFormation(* formation);
 	scenes[1].RemoveFormation(* formation);
 	
@@ -156,6 +156,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 			message_queue.DispatchMessages(* this);
 			
 			GenerateMesh();
+			BroadcastFormationUpdates();
 		}
 	}
 	
@@ -286,11 +287,11 @@ void form::FormationManager::GenerateMesh()
 	visible_scene.GenerateMesh(* mesh);
 	
 	// sent it to the FormationSet object
-	gfx::FormationSet::UpdateParams params = 
+	gfx::FormationMesh::UpdateParams params = 
 	{
 		mesh
 	};
-	gfx::Daemon::Call(& _model, params, & gfx::Renderer::OnUpdateObject<gfx::FormationSet>);
+	gfx::Daemon::Call(& _model, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
 	
 	// record timing information
 	sys::TimeType t = sys::GetTime();
@@ -302,6 +303,15 @@ void form::FormationManager::GenerateMesh()
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();
+}
+
+void form::FormationManager::BroadcastFormationUpdates()
+{
+	for (FormationSet::const_iterator i = _formations.begin(); i != _formations.end(); ++ i)
+	{
+		Formation const & formation = * * i;
+		formation.SendRadiusUpdateMessage();
+	}
 }
 
 form::Mesh * form::FormationManager::PopMesh()

@@ -17,6 +17,7 @@ namespace form
 {
 	class Node;
 	class Point;
+	class Polyhedron;
 	
 	// As with most things called shader, has absolutely FA to do with shade.
 	// Tesselates a shape given two/four surrounding points.
@@ -25,19 +26,7 @@ namespace form
 	class Shader
 	{
 	public:	
-		virtual ~Shader() { }
-		
-		virtual void SetOrigin(Vector3d const & origin) = 0;
-		virtual void InitRootPoints(form::Point * points[]) = 0;
-		virtual bool InitMidPoint(Point & mid_point, Node const & a, Node const & b, int index) = 0;
-	};
-	
-	// TODO: This pattern is probably over-complicated.
-	class ShaderFactory
-	{
-	public:
-		virtual ~ShaderFactory() { }
-		
-		virtual Shader * Create(class Formation const & formation) const = 0;
+		virtual void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const = 0;
+		virtual bool InitMidPoint(Polyhedron & polyhedron, Node const & a, Node const & b, int index, Point & mid_point) const = 0;
 	};
 }

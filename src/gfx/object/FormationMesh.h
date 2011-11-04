@@ -1,5 +1,5 @@
 //
-//  gfx/object/FormationSet.h
+//  gfx/object/FormationMesh.h
 //  crag
 //
 //  Created by John McFarlane on 8/31/11.
@@ -19,7 +19,7 @@
 namespace gfx
 {
 	// the graphical representation of all the formations
-	class FormationSet : public Object
+	class FormationMesh : public Object
 	{
 		// types
 		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
@@ -28,7 +28,7 @@ namespace gfx
 		typedef form::Mesh * UpdateParams;
 		
 		// functions
-		FormationSet();
+		FormationMesh();
 		
 		virtual void Init();
 		virtual void Deinit();

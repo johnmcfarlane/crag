@@ -12,11 +12,15 @@
 
 #include "sim/defs.h"
 
+#include "smp/Uid.h"
+
 
 namespace form 
 {
+	// forward-declarations
 	class Mesh;
 	class Node;
+	class Shader;
 	
 
 	// A formation is an individual element of the formation system.
@@ -24,28 +28,23 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(class ShaderFactory const & init_shader_factory);	
-		virtual ~Formation();
+		Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Uid uid);
+		~Formation();
+
+		Shader const & GetShader() const;
+		sim::Sphere3 const & GetShape() const;	// global coordinate
+		int GetSeed() const;
 		
-		// heavy lifting
-		void SetPosition(Vector3f const & init_position);
-		void SetCameraPos(Vector3f const & camera_pos, Vector3f const & camera_dir);
-		
-		// collision
-		void GenerateCollisionMesh(Mesh & mesh, sim::Sphere3 const & sphere) const;
-		
-		//DUMP_OPERATOR_DECLARATION(Formation);
-		
-#if defined(VERIFY)
-		void Verify() const;
-		void VerifyNode(class Node const & r) const;
-		int CountNumNodes(Node const * node) const;
-#endif
-		
-		Vector3d position;
-		ShaderFactory const & shader_factory;
-		int seed;
+		void SendRadiusUpdateMessage() const;		
+		void SampleRadius(sim::Scalar sample_radius);
+
+	private:
+		int _seed;	// TODO: This needs its own type.
+		Shader const & _shader;
+		sim::Sphere3 _shape;
+		smp::Uid _uid;
+		sim::Scalar _radius_min;
+		sim::Scalar _radius_max;
 	};
 
 }
-

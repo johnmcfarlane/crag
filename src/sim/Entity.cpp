@@ -60,13 +60,19 @@ DEFINE_SCRIPT_CLASS_END
 
 
 Entity::Entity()
-: _body(nullptr)
+: _uid(Uid::Create())
+, _body(nullptr)
 {
 }
 
 Entity::~Entity()
 {
 	delete _body;
+}
+
+Entity::Uid Entity::GetUid() const
+{
+	return _uid;
 }
 
 void Entity::Create(Entity & entity, PyObject & args)

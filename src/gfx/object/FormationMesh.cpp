@@ -1,5 +1,5 @@
 //
-//  gfx/object/FormationSet.cpp
+//  gfx/object/FormationMesh.cpp
 //  crag
 //
 //  Created by John McFarlane on 8/31/11.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "FormationSet.h"
+#include "FormationMesh.h"
 
 #include "gfx/Debug.h"
 #include "gfx/Scene.h"
@@ -38,15 +38,15 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::FormationSet member definitions
+// gfx::FormationMesh member definitions
 
-FormationSet::FormationSet()
+FormationMesh::FormationMesh()
 : _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
 }
 
-void FormationSet::Init()
+void FormationMesh::Init()
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -59,7 +59,7 @@ void FormationSet::Init()
 	}
 }
 
-void FormationSet::Deinit()
+void FormationMesh::Deinit()
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -68,14 +68,14 @@ void FormationSet::Deinit()
 	}
 	
 #if ! defined(NDEBUG)
-	std::cout << "FormationSet has " << (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr) << " meshes." << std::endl;
+	std::cout << "FormationMesh has " << (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr) << " meshes." << std::endl;
 #endif
 	
 	delete _queued_mesh;
 	delete _pending_mesh;
 }
 
-void FormationSet::Update(UpdateParams const & params)
+void FormationMesh::Update(UpdateParams const & params)
 {
 	form::Mesh * mesh = params;
 	
@@ -92,7 +92,7 @@ void FormationSet::Update(UpdateParams const & params)
 	_queued_mesh = mesh;
 }
 
-void FormationSet::PreRender()
+void FormationMesh::PreRender()
 {
 	FinishBufferUpload();
 	BeginBufferUpload();
@@ -103,7 +103,7 @@ void FormationSet::PreRender()
 #endif
 }
 
-void FormationSet::Render(Layer::type layer, Scene const & scene) const
+void FormationMesh::Render(Layer::type layer, Scene const & scene) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)
@@ -136,13 +136,13 @@ void FormationSet::Render(Layer::type layer, Scene const & scene) const
 	GLPP_VERIFY;
 }
 
-bool FormationSet::IsInLayer(Layer::type layer) const
+bool FormationMesh::IsInLayer(Layer::type layer) const
 {
 	return layer == Layer::pre_render
 	|| layer == Layer::foreground;
 }
 
-bool FormationSet::BeginBufferUpload()
+bool FormationMesh::BeginBufferUpload()
 {
 	if (_pending_mesh != nullptr)
 	{
@@ -168,7 +168,7 @@ bool FormationSet::BeginBufferUpload()
 	return true;
 }
 
-bool FormationSet::FinishBufferUpload()
+bool FormationMesh::FinishBufferUpload()
 {
 	if (_pending_mesh == nullptr)
 	{
@@ -195,8 +195,7 @@ bool FormationSet::FinishBufferUpload()
 	return true;
 }
 
-// TODO: Why not called everywhere in class?
-void FormationSet::ReturnMesh(form::Mesh & mesh)
+void FormationMesh::ReturnMesh(form::Mesh & mesh)
 {
 	form::Daemon::Call(& mesh, & form::FormationManager::OnSetMesh);
 }

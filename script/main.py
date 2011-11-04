@@ -21,7 +21,10 @@ stackless.run()
 
 def main_loop():
 	# Set camera position
-	crag.set_camera(0, 10000580, 0)
+	observer_x = 0
+	observer_y = 9999400
+	observer_z = 0
+	crag.set_camera(observer_x, observer_y, observer_z)
 
 	# Create planets
 	planet_radius = 10000000
@@ -38,7 +41,7 @@ def main_loop():
 	
 	# Create observer (after formations have had time to expand)
 	crag.sleep(.5)
-	o = observer()
+	o = observer(observer_x, observer_y, observer_z)
 	observer_tasklet = stackless.tasklet(o.run)()
 	
 	# Main loop
@@ -49,7 +52,7 @@ def main_loop():
 		now = crag.time()
 		if now > next_drop and len(shapes) < 100:
 			x = random.random() - .5
-			y = 10000580
+			y = observer_y
 			z = -4.5 + random.random()
 			r = random.choice(['ball','box'])
 			if r == 'ball':

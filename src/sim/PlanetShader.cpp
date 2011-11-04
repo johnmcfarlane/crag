@@ -17,6 +17,7 @@
 #include "form/Formation.h"
 #include "form/node/Node.h"
 #include "form/node/Point.h"
+#include "form/scene/Polyhedron.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
@@ -145,7 +146,7 @@ namespace debug
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::PlanetShader::PlanetShader
+// sim::PlanetShader::Params
 
 class sim::PlanetShader::Params
 {
@@ -170,38 +171,29 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader
 
-sim::PlanetShader::PlanetShader(Planet & init_planet)
-: center(Vector3::Zero())
-, planet(init_planet)
+void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
 {
-}
-
-void sim::PlanetShader::SetOrigin(Vector3d const & origin)
-{
-	center = planet.GetPosition() - origin;
-}
-
-void sim::PlanetShader::InitRootPoints(form::Point * points[])
-{
-	int seed = planet.GetFormation().seed;
+	int seed = polyhedron.GetFormation().GetSeed();
 	
 	// This one progresses with each iteration.
 	Random point_randomizer(seed + 1);
 	
 	// This one is the same each time.
-	Random crater_randomizer(seed + 2);
-	
+	//Random crater_randomizer(seed + 2);
+
+	Sphere3 shape = polyhedron.GetShape();
 	Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
 		Vector3 position = root_corners[i] * inverse_root_corner_length;
 		CalcRootPointPos(point_randomizer, position);
-		position += center;
+		position *= shape.radius;
+		position += shape.center;
 		points[i]->pos = position;
 	}
 }
 
-bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index) 
+bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
 {
 	int max_depth = std::numeric_limits<int>::max();
 	int depth = MeasureDepth(& a, max_depth);
@@ -217,25 +209,12 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 	Vector3 result;
 	if (depth >= planet_shader_depth_medium)
 	{
-		CalcMidPointPos_SimpleInterp(result, params);
+		CalcMidPointPos_SimpleInterp(polyhedron, result, params);
 	}
 	else 
 	{
-		CalcMidPointPos_Random(result, params);
+		CalcMidPointPos_Random(polyhedron, result, params);
 	}
-	
-#if ! defined(NDEBUG)
-	// Check that resultant point is within the [min, max] range.
-	Scalar altitude = Length(result - center);
-	if (altitude < planet.GetRadiusMin() * .99999f)
-	{
-		Assert(false);
-	}
-	if (altitude > planet.GetRadiusMax() * 1.00001f)
-	{
-		Assert(false);
-	}
-#endif
 	
 	mid_point.pos = result;
 //	mid_point.col = gfx::Color4b::White();
@@ -250,38 +229,41 @@ bool sim::PlanetShader::InitMidPoint(form::Point & mid_point, form::Node const &
 // Comes in normalized. Is then given the correct length.
 void sim::PlanetShader::CalcRootPointPos(Random & rnd, sim::Vector3 & position) const
 {
-	Scalar radius = GetRandomHeight(rnd);
+	Scalar radius = GetRandomHeightCoefficient(rnd);
 	position *= radius;
 }
 
-sim::Scalar sim::PlanetShader::GetRandomHeight(Random & rnd) const
+sim::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
-	Scalar radius_mean = planet.GetRadiusMean();
 	Scalar random_exponent = (.5 - rnd.GetUnitInclusive<Scalar>()) * planet_shader_random_range;
-	Scalar radius = radius_mean * Exp(random_exponent);
-	return radius;
+	Scalar coefficient = Exp(random_exponent);
+	return coefficient;
 }
 
 // At shallow depth, heigh is highly random.
-bool sim::PlanetShader::CalcMidPointPos_Random(sim::Vector3 & result, Params & params) const
+bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, sim::Vector3 & result, Params & params) const
 {
-	Scalar radius = GetRandomHeight(params.rnd);
-	planet.SampleRadius(radius);
+	Sphere3 const & shape = polyhedron.GetShape();
+	
+	Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
+	polyhedron.GetFormation().SampleRadius(radius);
 
-	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos);
-	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos);
+	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
 	result = near_a + near_b;
 	Scalar length = Length(result);
 	result *= (radius / length);
-	result += center;
+	result += shape.center;
 	
 	return true;
 }
 
-bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Params & params) const 
+bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, sim::Vector3 & result, Params & params) const 
 {
-	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos);
-	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos);
+	Sphere3 const & shape = polyhedron.GetShape();
+	
+	Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
 	result = near_a + near_b;
 	Scalar result_length = Length(result);
 	
@@ -301,52 +283,38 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(sim::Vector3 & result, Para
 	Scalar lod_variation_cycler = Sin(0.1 * Max(0, params.depth - planet_shader_depth_medium));
 	altitude_variance_coefficient *= lod_variation_cycler;
 	
-	altitude_variance_coefficient *= planet.GetRadiusMean();
+	altitude_variance_coefficient *= shape.radius;
 	
 	altitude += rnd_x * altitude_variance_coefficient;
-	planet.SampleRadius(altitude);
+	polyhedron.GetFormation().SampleRadius(altitude);
 	
 	result *= (altitude / result_length);
-	result += center;
+	result += shape.center;
 	
 	return true;
 }
 
-sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point) const
+sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point, Vector3 const & center) const
 {
-	return GetLocalPosition(point.pos);
+	return GetLocalPosition(point.pos, center);
 }
 
-sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos) const
+sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, Vector3 const & center) const
 {
 	return sim::Vector3(point_pos) - center;
 }
 
-sim::Scalar sim::PlanetShader::GetAltitude(form::Point const & point) const
+sim::Scalar sim::PlanetShader::GetAltitude(form::Point const & point, Vector3 const & center) const
 {
-	return GetAltitude(point.pos);
+	return GetAltitude(point.pos, center);
 }
 
-sim::Scalar sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos) const
+sim::Scalar sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos, Vector3 const & center) const
 {
-	return GetAltitude(GetLocalPosition(point_pos));
+	return GetAltitude(GetLocalPosition(point_pos, center));
 }
 
 sim::Scalar sim::PlanetShader::GetAltitude(sim::Vector3 const & local_pos) const
 {
 	return Length(local_pos);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// PlanetShaderFactory
-
-sim::PlanetShaderFactory::PlanetShaderFactory(Planet & init_planet)
-: planet(init_planet)
-{
-}
-
-form::Shader * sim::PlanetShaderFactory::Create(form::Formation const & formation) const
-{
-	return new PlanetShader(planet);
 }

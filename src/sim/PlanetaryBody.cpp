@@ -33,7 +33,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 2.5f);
+	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, .5f);
 	CONFIG_DEFINE (formation_box_collision_detail_factor, float, .5f);
 	
 	
@@ -148,7 +148,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 		return;
 	}
 	
-	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
+	form::Vector3 relative_formation_position(form::SimToScene(_formation.GetShape().center, origin));
 	float min_box_edge = Min(float(dimensions.x), Min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
@@ -178,7 +178,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	
 	collision_object.shape = collision_object.bounding_sphere;
 	
-	form::Vector3 relative_formation_position(form::SimToScene(_formation.position, origin));
+	form::Vector3 relative_formation_position(form::SimToScene(_formation.GetShape().center, origin));
 	float sphere_area(Area(collision_object.shape));
 	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 

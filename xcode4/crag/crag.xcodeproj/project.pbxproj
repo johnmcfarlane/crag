@@ -44,7 +44,7 @@
 		528164891454F5DB0017E868 /* IndexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163F51454F5DB0017E868 /* IndexBuffer.cpp */; };
 		5281648A1454F5DB0017E868 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163F91454F5DB0017E868 /* Ball.cpp */; };
 		5281648B1454F5DB0017E868 /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163FB1454F5DB0017E868 /* Box.cpp */; };
-		5281648C1454F5DB0017E868 /* FormationSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163FD1454F5DB0017E868 /* FormationSet.cpp */; };
+		5281648C1454F5DB0017E868 /* FormationMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163FD1454F5DB0017E868 /* FormationMesh.cpp */; };
 		5281648D1454F5DB0017E868 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163FF1454F5DB0017E868 /* Light.cpp */; };
 		5281648E1454F5DB0017E868 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164011454F5DB0017E868 /* Object.cpp */; };
 		5281648F1454F5DB0017E868 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164031454F5DB0017E868 /* Planet.cpp */; };
@@ -227,8 +227,8 @@
 		528163FA1454F5DB0017E868 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		528163FB1454F5DB0017E868 /* Box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Box.cpp; sourceTree = "<group>"; };
 		528163FC1454F5DB0017E868 /* Box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box.h; sourceTree = "<group>"; };
-		528163FD1454F5DB0017E868 /* FormationSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationSet.cpp; sourceTree = "<group>"; };
-		528163FE1454F5DB0017E868 /* FormationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationSet.h; sourceTree = "<group>"; };
+		528163FD1454F5DB0017E868 /* FormationMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationMesh.cpp; sourceTree = "<group>"; };
+		528163FE1454F5DB0017E868 /* FormationMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; path = FormationMesh.h; sourceTree = "<group>"; };
 		528163FF1454F5DB0017E868 /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		528164001454F5DB0017E868 /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		528164011454F5DB0017E868 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
@@ -617,8 +617,8 @@
 			children = (
 				528163B91454F5DB0017E868 /* CalculateNodeScoreFunctor.cpp */,
 				528163BA1454F5DB0017E868 /* CalculateNodeScoreFunctor.h */,
-				528163BB1454F5DB0017E868 /* ExpandNodeFunctor.h */,
 				528163BC1454F5DB0017E868 /* ForEachNodeFace.h */,
+				528163BB1454F5DB0017E868 /* ExpandNodeFunctor.h */,
 				528163BD1454F5DB0017E868 /* GenerateMeshFunctor.h */,
 				528163BE1454F5DB0017E868 /* Node.cpp */,
 				528163BF1454F5DB0017E868 /* Node.h */,
@@ -716,8 +716,8 @@
 				528163FA1454F5DB0017E868 /* Ball.h */,
 				528163FB1454F5DB0017E868 /* Box.cpp */,
 				528163FC1454F5DB0017E868 /* Box.h */,
-				528163FD1454F5DB0017E868 /* FormationSet.cpp */,
-				528163FE1454F5DB0017E868 /* FormationSet.h */,
+				528163FD1454F5DB0017E868 /* FormationMesh.cpp */,
+				528163FE1454F5DB0017E868 /* FormationMesh.h */,
 				528163FF1454F5DB0017E868 /* Light.cpp */,
 				528164001454F5DB0017E868 /* Light.h */,
 				528164011454F5DB0017E868 /* Object.cpp */,
@@ -995,7 +995,7 @@
 				528164891454F5DB0017E868 /* IndexBuffer.cpp in Sources */,
 				5281648A1454F5DB0017E868 /* Ball.cpp in Sources */,
 				5281648B1454F5DB0017E868 /* Box.cpp in Sources */,
-				5281648C1454F5DB0017E868 /* FormationSet.cpp in Sources */,
+				5281648C1454F5DB0017E868 /* FormationMesh.cpp in Sources */,
 				5281648D1454F5DB0017E868 /* Light.cpp in Sources */,
 				5281648E1454F5DB0017E868 /* Object.cpp in Sources */,
 				5281648F1454F5DB0017E868 /* Planet.cpp in Sources */,

@@ -14,6 +14,8 @@
 
 #include "script/Object.h"
 
+#include "smp/Uid.h"
+
 
 namespace physics
 {
@@ -35,11 +37,14 @@ namespace sim
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
+		typedef smp::Uid Uid;
 		typedef physics::Body Body;
 
 		// functions
 		Entity();
 		virtual ~Entity();
+		
+		Uid GetUid() const;
 		
 		// Type-specific allocation via script. DO NOT CALL.
 		static void Create(Entity & entity, PyObject & args);
@@ -69,6 +74,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
+		Uid _uid;
 		Body * _body;
 	};
 	

@@ -14,6 +14,10 @@
 #include "form/node/PointBuffer.h"
 #include "form/node/Shader.h"
 
+#include "form/Formation.h"
+
+#include "form/scene/Polyhedron.h"
+
 #include "core/Random.h"
 
 #include "geom/Intersection.h"
@@ -55,10 +59,12 @@ form::Node::~Node()
 }
 
 // Makes sure node's three mid-points are non-null or returns false.
-bool form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
+bool form::Node::InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buffer)
 {
 	// success
 	bool success = true;
+	
+	Shader const & shader = polyhedron.GetFormation().GetShader();
 	
 	// Make sure all mid-points exist.
 	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
@@ -82,7 +88,7 @@ bool form::Node::InitMidPoints(PointBuffer & point_buffer, Shader & shader)
 			}
 
 			// Try and set its value.
-			if (! shader.InitMidPoint(ref(new_point), ref(this), ref(t.cousin), triplet_index))
+			if (! shader.InitMidPoint(polyhedron, ref(this), ref(t.cousin), triplet_index, ref(new_point)))
 			{
 				// If this failed, free it up and return.
 				
@@ -169,8 +175,10 @@ bool form::Node::InitChildCorners(Node const & parent, Node * children)
 
 // This gets called when the local origin is changed.
 // It recalculates all positional data, i.e. the mid-points and the center. 
-void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
+void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 {
+	Shader const & shader = polyhedron.GetFormation().GetShader();
+	
 	// Make sure all mid-points exist.
 	for (int triplet_index = 0; triplet_index < 3; ++ triplet_index)
 	{
@@ -183,7 +191,7 @@ void form::Node::Reinit(Shader & shader, PointBuffer & point_buffer)
 				if (& cousin > this)
 				{
 					Point & mid_point = ref(t.mid_point);
-					shader.InitMidPoint(mid_point, * this, cousin, triplet_index);
+					shader.InitMidPoint(polyhedron, * this, cousin, triplet_index, mid_point);
 				}
 			}
 		}

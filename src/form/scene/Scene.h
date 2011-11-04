@@ -15,19 +15,13 @@
 #include <map>
 
 
-class ProcessNodeFunctor;
-
-
 namespace form
 {
 	class Formation;
 	class Polyhedron;
-	class FormationFunctor;
 	class Mesh;
 	class NodeBuffer;
 	
-	typedef std::set<class Formation *> FormationSet;
-		
 	// A representation (view?) of all the existing formations.
 	// The scene is relative to a point in space which becomes the local origin for the scene.
 	// The reason for the class is that the coordinate space of even a single large formation
@@ -35,8 +29,6 @@ namespace form
 	class Scene
 	{
 		OBJECT_NO_COPY (Scene);
-		
-		friend class ::ProcessNodeFunctor;
 		
 		// Types for keeping track of a formation using a model.
 		typedef std::map<Formation const *, Polyhedron> FormationMap;
@@ -69,7 +61,7 @@ namespace form
 		void SetOrigin(sim::Vector3 const & o);
 		bool IsOriginOk() const;
 		
-		void AddFormation(Formation const & formation);
+		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation const & formation);
 		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		

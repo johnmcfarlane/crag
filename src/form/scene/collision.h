@@ -412,7 +412,7 @@ namespace form { namespace collision
 	{
 		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, object, functor, min_area);
 		
-		form::RootNode const & root_node = polyhedron.root_node;
+		form::RootNode const & root_node = polyhedron.GetRootNode();
 		ForEachCollision(node_functor, root_node);
 	}
     

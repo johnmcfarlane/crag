@@ -12,6 +12,8 @@
 
 #include "sim/defs.h"
 
+#include "smp/Uid.h"
+
 #include "sys/App.h"
 
 #include "core/ConfigEntry.h"
@@ -48,6 +50,8 @@ namespace sim
 
 		void AddEntity(Entity & entity);
 		void RemoveEntity(Entity & entity);
+		
+		Entity * GetEntity(smp::Uid uid);
 
 		void Tick(Simulation & simulation, sys::TimeType target_frame_seconds);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;

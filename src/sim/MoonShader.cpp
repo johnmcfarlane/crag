@@ -17,6 +17,8 @@
 #include "form/node/Node.h"
 #include "form/node/Point.h"
 
+#include "form/scene/Polyhedron.h"
+
 #include "core/ConfigEntry.h"
 
 #include "geom/Intersection.h"
@@ -43,12 +45,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // MoonShader
 
-sim::MoonShader::MoonShader(Planet const & init_moon, int num_craters)
-: center(Vector3::Zero())
-, moon(init_moon)
+sim::MoonShader::MoonShader(int seed, int num_craters, Scalar radius)
 {
-	int seed = moon.GetFormation().seed;
-	
 	// This one is the same each time.
 	Random crater_randomizer(seed + 2);
 	
@@ -60,7 +58,7 @@ sim::MoonShader::MoonShader(Planet const & init_moon, int num_craters)
 		for (int timeout = 10; timeout > 0; -- timeout)
 		{
 			// Make a random crater.
-			GenerateCreater(crater_randomizer, crater);
+			GenerateCreater(crater_randomizer, crater, radius);
 			
 			// And for all the previously-created craters ...
 			bool contained = false;
@@ -86,49 +84,38 @@ sim::MoonShader::MoonShader(Planet const & init_moon, int num_craters)
 	}
 }
 
-void sim::MoonShader::SetOrigin(Vector3d const & origin)
+void sim::MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
 {
-	center = moon.GetPosition() - origin;
-}
-
-void sim::MoonShader::InitRootPoints(form::Point * points[])
-{
-	int seed = moon.GetFormation().seed;
-	
-	// This one progresses with each iteration.
-	Random point_randomizer(seed + 1);
+	Scalar radius = polyhedron.GetShape().radius;
 	
 	Scalar root_corner_length = root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
 		Vector3 position = root_corners[i] / root_corner_length;
-		CalcPointPos(position);
-		position += center;
+		position *= radius;
+		position += polyhedron.GetShape().center;
 		points[i]->pos = position;
 	}
 }
 
-bool sim::MoonShader::InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index) 
+bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
 {
+	form::Formation const & formation = polyhedron.GetFormation();
+	
+	sim::Sphere3 const & shape = polyhedron.GetShape();
+	Vector3 center = shape.center;
 	Vector3 near_a = Vector3(a.GetCorner(TriMod(index + 1)).pos) - center;
 	Vector3 near_b = Vector3(b.GetCorner(TriMod(index + 1)).pos) - center;	
 	Vector3 near_mid = near_a + near_b;
-	near_mid *= moon.GetRadiusMean() / Length(near_mid);
+	near_mid *= shape.radius / Length(near_mid);
 	
-	Random crater_randomizer(moon.GetFormation().seed + 2);
+	Random crater_randomizer(formation.GetSeed() + 2);
 	ApplyCraters(crater_randomizer, near_mid);
 	
 	near_mid += center;
 	mid_point.pos = near_mid;
 	
 	return true;
-}
-
-// Comes in normalized. Is then given the correct length.
-void sim::MoonShader::CalcPointPos(sim::Vector3 & position) const
-{
-	Scalar radius = moon.GetRadiusMean();
-	position *= radius;
 }
 
 void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
@@ -167,10 +154,9 @@ void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
 	position *= t;
 }
 
-void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater) const
+void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moon_radius) const
 {
-	Scalar moon_radius = moon.GetRadiusMean();
-	//Scalar min_crater_distance = moon_radius * 1.05f;	// center to center
+	//Scalar min_crater_distance = radius * 1.05f;	// center to center
 	Scalar max_crater_radius = moon_radius * .25;
 	
 	// First off, decide radius.
@@ -190,19 +176,4 @@ void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater) const
 	Scalar crater_elevation_coefficient = .85;
 	Scalar desired_crater_center = moon_radius + crater_elevation_coefficient * crater.radius;
 	crater.center *= desired_crater_center / Sqrt(crater_center_squared);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// MoonShaderFactory
-
-sim::MoonShaderFactory::MoonShaderFactory(Planet const & init_moon, int init_num_craters)
-: moon(init_moon)
-, num_craters(init_num_craters)
-{
-}
-
-form::Shader * sim::MoonShaderFactory::Create(form::Formation const & formation) const
-{
-	return new MoonShader(moon, num_craters);
 }

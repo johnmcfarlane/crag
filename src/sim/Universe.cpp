@@ -62,6 +62,20 @@ void Universe::RemoveEntity(Entity & entity)
 	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
 }
 
+Entity * Universe::GetEntity(smp::Uid uid)
+{
+	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
+	{
+		Entity & e = * * it;
+		if (e.GetUid() == uid)
+		{
+			return & e;
+		}
+	}
+	
+	return nullptr;
+}
+
 // Perform a step in the simulation. 
 void Universe::Tick(Simulation & simulation, sys::TimeType target_frame_seconds)
 {

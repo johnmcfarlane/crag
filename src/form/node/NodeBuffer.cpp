@@ -519,8 +519,8 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	Assert(worst_children + 3 != & node);
 	
 	// Note that after this point, expansion may fail but the node may have new mid-points.
-	Shader & shader = GetPolyhedron(node).GetShader();
-	if (! node.InitMidPoints(point_buffer, shader))
+	Polyhedron & polyhedron = GetPolyhedron(node);
+	if (! node.InitMidPoints(polyhedron, point_buffer))
 	{
 		return false;
 	}

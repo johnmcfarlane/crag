@@ -27,37 +27,16 @@ namespace sim
 	class MoonShader : public form::Shader
 	{
 	public:
-		MoonShader(Planet const & init_moon, int num_craters);
+		MoonShader(int seed, int num_craters, Scalar radius);
 		
 	private:
-		virtual void SetOrigin(Vector3d const & origin);
-		virtual void InitRootPoints(form::Point * points[]);
-		virtual bool InitMidPoint(form::Point & mid_point, form::Node const & a, form::Node const & b, int index);
-		
-		void CalcPointPos(Vector3 & position) const;
+		void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const override;
+		bool InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const override;
 		
 		void ApplyCraters(Random rnd, Vector3 & position) const;
-		void GenerateCreater(Random & rnd, Sphere3 & crater) const;
-		
-		Vector3 center;		// relative to origin
-		Planet const & moon;
+		void GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moon_radius) const;
 		
 		typedef std::vector<Sphere3> CraterVector;
 		CraterVector craters;
-	};
-	
-	
-	// The factory for making PlanetShader objects.
-	// Each object will be assigned to a specific polyhedron.
-	class MoonShaderFactory : public form::ShaderFactory
-	{
-	public:
-		MoonShaderFactory(Planet const & init_moon, int num_craters);
-		
-		virtual form::Shader * Create(form::Formation const & formation) const;
-		
-	private:
-		Planet const & moon;
-		int num_craters;
 	};
 }

@@ -52,13 +52,6 @@ form::Scene::~Scene()
 void form::Scene::Verify() const
 {
 	VerifyObject(* node_buffer);
-	
-	//	int count_num_nodes = CountChildNodes();
-	//	int buffer_num_nodes = node_buffer.GetNumNodes();
-	
-	//	Assert(count_num_nodes == buffer_num_nodes);
-	
-	//	node_buffer.Verify();
 }
 
 /*void form::SceneVerifyTrue(Mesh const & m) const
@@ -83,7 +76,7 @@ DUMP_OPERATOR_DEFINITION(form, Scene)
 	for (form::Scene::FormationMap::const_iterator it = rhs.formation_map.begin(); it != rhs.formation_map.end(); ++ it) {
 		form::Scene::FormationPair const & pair = * it;
 		lhs << lhs.NewLine() << "root_node:";
-		indented << pair.second.root_node;
+		indented << pair.second._root_node;
 	}
 
 	lhs << lhs.NewLine() << "node_buffer:";
@@ -152,10 +145,10 @@ bool form::Scene::IsOriginOk() const
 	return observer_position_length < max_observer_position_length;
 }
 
-void form::Scene::AddFormation(Formation const & formation)
+void form::Scene::AddFormation(Formation & formation)
 {
 	Assert(formation_map.find(& formation) == formation_map.end());
-	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron()));
+	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
 	InitPolyhedron(* i);
 }
 
@@ -212,7 +205,7 @@ void form::Scene::ResetPolyhedronOrigins()
 	{
 		FormationPair & pair = * i;
 		Polyhedron & polyhedron = pair.second;
-		polyhedron.SetOrigin(origin, node_buffer->GetPoints());
+		polyhedron.SetOrigin(origin);
 	}
 }
 
@@ -236,7 +229,7 @@ void form::Scene::ResetFormations()
 
 void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 {
-	form::RootNode & root_node = polyhedron.root_node;
+	form::RootNode & root_node = polyhedron._root_node;
 	
 	if (root_node.IsExpandable()) 
 	{
@@ -249,12 +242,11 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 // The given pair contains a formation and a polyhedron.
 void form::Scene::InitPolyhedron(FormationPair & pair)
 {
-	Formation const & formation = ref(pair.first);
 	Polyhedron & polyhedron = pair.second;
 
 	PointBuffer & points = node_buffer->GetPoints();
 	
-	polyhedron.Init(formation, origin, points);
+	polyhedron.Init(origin, points);
 }
 
 void form::Scene::DeinitPolyhedron(FormationPair & pair)
@@ -262,7 +254,7 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	Polyhedron & polyhedron = pair.second;
 	
 	// Collapse the root node by fair means or foul.
-	RootNode & root_node = polyhedron.root_node;
+	RootNode & root_node = polyhedron._root_node;
 	
 	node_buffer->CollapseNodes(root_node);
 	

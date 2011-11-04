@@ -29,7 +29,7 @@
 namespace gfx
 {
 	class Pov;
-	class FormationSet;
+	class FormationMesh;
 }
 
 
@@ -114,6 +114,7 @@ namespace form
 		void Tick();
 		void TickActiveScene();
 		void GenerateMesh();
+		void BroadcastFormationUpdates();
 		Mesh * PopMesh();
 		
 		void AdjustNumQuaterna();
@@ -134,10 +135,10 @@ namespace form
 		// types
 		
 		typedef core::double_buffer<Scene> SceneDoubleBuffer;
-		gfx::FormationSet & _model;
+		gfx::FormationMesh & _model;
 		
 		// attributes
-		FormationSet formation_set;
+		FormationSet _formations;
 		
 		bool quit_flag;
 		bool suspend_flag;

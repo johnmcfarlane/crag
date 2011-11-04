@@ -20,8 +20,8 @@ SDLK_c = 99
 
 
 class observer:
-	def __init__(self):
-		self.__observer = crag.Observer(0, 10000580, 0)
+	def __init__(self, x, y, z):
+		self.__observer = crag.Observer(x, y, z)
 		self.__is_done = False
 		self.__collision = True
 	

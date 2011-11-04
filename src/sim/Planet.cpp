@@ -27,6 +27,9 @@
 #include "script/MetaClass.h"
 
 
+using namespace sim;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Planet script binding
 
@@ -37,14 +40,17 @@ DEFINE_SCRIPT_CLASS(sim, Planet)
 // Planet
 
 
-sim::Planet::Planet()
+Planet::Planet()
 : _formation(nullptr)
 , _body(nullptr)
 , _model(nullptr)
+, _radius_mean(0)
+, _radius_min(0)
+, _radius_max(0)
 {
 }
 
-sim::Planet::~Planet()
+Planet::~Planet()
 {
 	// unregister with renderer
 	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
@@ -58,7 +64,7 @@ sim::Planet::~Planet()
 	_body = nullptr;
 }
 
-void sim::Planet::Create(Planet & planet, PyObject & args)
+void Planet::Create(Planet & planet, PyObject & args)
 {	
 	// construct planet
 	new (& planet) Planet;
@@ -67,46 +73,49 @@ void sim::Planet::Create(Planet & planet, PyObject & args)
 	sim::Daemon::Call<Entity *>(& planet, & args, & sim::Simulation::OnAddEntity);
 }
 
-bool sim::Planet::Init(Simulation & simulation, PyObject & args)
+bool Planet::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
-	sim::Vector3 center;
+	Sphere3 sphere;
 	int random_seed;
 	int num_craters;
-	if (! PyArg_ParseTuple(& args, "ddddii", & center.x, & center.y, & center.z, & _radius_mean, & random_seed, & num_craters))
+	if (! PyArg_ParseTuple(& args, "ddddii", & sphere.center.x, & sphere.center.y, & sphere.center.z, & sphere.radius, & random_seed, & num_craters))
 	{
 		return false;
 	}
 
-	Assert(_radius_mean > 0);
-	_radius_min = _radius_mean;
-	_radius_max = _radius_mean;
+	Assert(sphere.radius > 0);
+	_radius_mean = sphere.radius;
+	_radius_min = sphere.radius;
+	_radius_max = sphere.radius;
 	
 	// allocations
 	{
+		Random random(random_seed);
+		
 		// factory
-		form::ShaderFactory * factory;
+		form::Shader * shader;
 		if (num_craters > 0)
 		{
-			factory = new MoonShaderFactory(* this, num_craters);
+			int random_seed_shader = random.GetInt();
+			shader = new MoonShader(random_seed_shader, num_craters, _radius_mean);
 		}
 		else 
 		{
-			factory = new PlanetShaderFactory(* this);
+			shader = new PlanetShader();
 		}
-			
+		
 		// formation
-		_formation = new form::Formation(* factory);
-		_formation->seed = random_seed;
-		_formation->SetPosition(center);
+		int random_seed_formation = random.GetInt();
+		_formation = new form::Formation(random_seed_formation, * shader, sphere, GetUid());
 		
 		// body
 		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
-		_body->SetPosition(center);
+		_body->SetPosition(sphere.center);
 
 		// model
-		_model = new gfx::Planet(center);
+		_model = new gfx::Planet(sphere.center);
 	}
 
 	// messages
@@ -121,29 +130,29 @@ bool sim::Planet::Init(Simulation & simulation, PyObject & args)
 	return true;
 }
 
-void sim::Planet::Tick(Simulation & simulation)
+void Planet::Tick(Simulation & simulation)
 {
 	_body->SetRadius(_radius_max);
 }
 
-void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
+void Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
 	Vector3 const & center = _body->GetPosition();
 	Vector3 to_center = center - pos;
-	sim::Scalar distance = Length(to_center);
+	Scalar distance = Length(to_center);
 	
 	// Calculate the direction of the pull.
 	Vector3 direction = to_center / distance;
 
 	// Calculate the mass.
-	sim::Scalar density = 1;
-	sim::Scalar radius = GetRadiusMean();
-	sim::Scalar volume = Cube(radius);
-	sim::Scalar mass = volume * density;
+	Scalar density = 1;
+	Scalar radius = GetRadiusMean();
+	Scalar volume = Cube(radius);
+	Scalar mass = volume * density;
 
 	// Calculate the force. Actually, this isn't really the force;
 	// It's the potential. Until we know what we're pulling we can't know the force.
-	sim::Scalar force;
+	Scalar force;
 	if (distance < radius)
 	{
 		force = mass * distance / Cube(radius);
@@ -157,7 +166,7 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 	gravity += contribution;
 }
 
-void sim::Planet::UpdateModels() const
+void Planet::UpdateModels() const
 {
 	gfx::Planet::UpdateParams params = 
 	{
@@ -169,24 +178,36 @@ void sim::Planet::UpdateModels() const
 	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
 }
 
-void sim::Planet::SampleRadius(Scalar r)
-{
-	if (_radius_max < r)
-	{
-		_radius_max = r;
-	}
-	else if (_radius_min > r)
-	{
-		_radius_min = r;
-	}
+Scalar Planet::GetRadiusMean() const 
+{ 
+	return _radius_mean; 
 }
 
-form::Formation const & sim::Planet::GetFormation() const
+Scalar Planet::GetRadiusMin() const 
+{ 
+	return _radius_min; 
+}
+
+Scalar Planet::GetRadiusMax() const 
+{ 
+	return _radius_max; 
+}
+
+void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
+{
+	Assert(radius_min <= _radius_min);
+	_radius_min = radius_min;
+
+	Assert(radius_max >= _radius_max);
+	_radius_max = radius_max;
+}
+
+form::Formation const & Planet::GetFormation() const
 {
 	return ref(_formation);
 }
 
-sim::Vector3 const & sim::Planet::GetPosition() const
+Vector3 const & Planet::GetPosition() const
 {
 	return _body->GetPosition();
 }

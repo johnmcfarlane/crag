@@ -19,7 +19,7 @@ namespace form
 {
 	class Node;
 	class PointBuffer;
-	class Shader;
+	class Polyhedron;
 	
 	DUMP_OPERATOR_DECLARATION(Node);
 
@@ -39,11 +39,11 @@ namespace form
 		~Node();
 
 		// Ensures all three mid-points are allocated and calculated.
-		bool InitMidPoints(PointBuffer & point_buffer, Shader & shader);
+		bool InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buffer);
 		static bool InitChildCorners(Node const & parent, Node * children);
 
 		// Calls InitMidPoints and recalcs the center position.
-		void Reinit(Shader & shader, PointBuffer & point_buffer);
+		void Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer);
 		
 		bool InitScoreParameters();
 		

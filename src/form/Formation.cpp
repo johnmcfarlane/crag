@@ -15,6 +15,12 @@
 #include "form/node/Shader.h"
 #include "form/scene/Mesh.h"
 
+#include "sim/Planet.h"
+#include "sim/Simulation.h"
+#include "sim/Universe.h"
+
+#include "smp/Message.h"
+
 
 #if defined(GFX_DEBUG)
 #define DEBUG_NORMALS 0
@@ -23,87 +29,88 @@
 #endif
 
 
-form::Formation::Formation(ShaderFactory const & init_shader_factory)
-: shader_factory(init_shader_factory)
-, seed(-1)
-{
-	VerifyObject(* this);
-}
+using namespace form;
 
-form::Formation::~Formation()
-{
-	VerifyObject(* this);
-	delete & shader_factory;
-}
 
-void form::Formation::SetPosition(Vector3f const & init_position)
+namespace 
 {
-	position = init_position;
-}
-
-void form::Formation::GenerateCollisionMesh(form::Mesh & mesh, sim::Sphere3 const & sphere) const
-{
-/*	Assert(mesh.GetNumPolys() == 0);
-	
-	CollideSphereFunctor collide(mesh, sphere);
-	NodeStub root_stub = default_root_stub;
-	root_stub.node = const_cast<Node *>(& root_node);
-	
-	ForEachPoly(root_stub, collide);*/
-}
-
-/*#if defined(DUMP)
-void form::Formation::Dump() const
-{
-	for (IteratorConst it (& root_node); it; ++ it)
+	class SetRadiusFunctor : public smp::Message<sim::Simulation>
 	{
-		for (int n = it.GetDepth(); n >= 0; -- n)
+	public:
+		SetRadiusFunctor(sim::Entity::Uid uid, sim::Scalar radius_min, sim::Scalar radius_max)
+		: _uid(uid)
+		, _radius_min(radius_min)
+		, _radius_max(radius_max)
 		{
-			putchar(' ');
 		}
-		Node const * node = * it;
-		node->Dump();
-	}
-}
-#endif*/
-
-#if defined(VERIFY)
-void form::Formation::Verify() const
-{
-	//VerifyNode(root_node);
-	
-	//int functor_count = CountNumNodes();
-	//int recursive_count = CountNumNodes(& root_node);
-	//Assert(functor_count == recursive_count);
-}
-
-/*void form::Formation::VerifyNode(Node const & r) const
-{
-	r.Verify();
-	
-	for (int i = 0; i < NUM_ROOT_NODES; ++ i)
-	{
-		Node const * child = r.GetChild(i);
-		if (child != nullptr)
+		
+	private:
+		void operator() (sim::Simulation & simulation) const
 		{
-			child->Verify();
+			sim::Universe & universe = simulation.GetUniverse();
+			
+			sim::Entity * entity = universe.GetEntity(_uid);
+			if (entity == nullptr)
+			{
+				// presumably already destroyed
+				return;
+			}
+			
+			sim::Planet & planet = static_cast<sim::Planet &>(* entity);
+			planet.SetRadiusMinMax(_radius_min, _radius_max);
 		}
-	}
-}*/
+		
+		sim::Entity::Uid _uid;
+		sim::Scalar _radius_min;
+		sim::Scalar _radius_max;
+	};
+}
 
-/*int form::Formation::CountNumNodes(form::Node const * node) const
+
+Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Uid uid)
+: _seed(seed)
+, _shader(shader)
+, _shape(shape)
+, _uid(uid)
 {
-	if (node == nullptr)
-	{
-		return 0;
-	}
-	
-	NodeStub const * child_stubs = node->GetChildStubs();
-	return 1
-		+ CountNumNodes(child_stubs[0].node)
-		+ CountNumNodes(child_stubs[1].node)
-		+ CountNumNodes(child_stubs[2].node)
-		+ CountNumNodes(child_stubs[3].node);
-}*/
-#endif
+	_radius_min = _shape.radius;
+	_radius_max = _shape.radius;
+}
 
+Formation::~Formation()
+{
+	delete & _shader;
+}
+
+Shader const & Formation::GetShader() const
+{
+	return _shader;
+}
+
+sim::Sphere3 const & Formation::GetShape() const
+{
+	return _shape;
+}
+
+int Formation::GetSeed() const
+{
+	return _seed;
+}
+
+void Formation::SendRadiusUpdateMessage() const
+{
+	SetRadiusFunctor message(_uid, _radius_min, _radius_max);
+	sim::Daemon::SendMessage(message);
+}
+
+void Formation::SampleRadius(sim::Scalar sample_radius)
+{
+	if (sample_radius < _radius_min)
+	{
+		_radius_min = sample_radius;
+	}
+	if (sample_radius > _radius_max)
+	{
+		_radius_max = sample_radius;
+	}
+}

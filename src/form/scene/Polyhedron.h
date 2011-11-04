@@ -18,7 +18,6 @@
 namespace form
 {
 	// Forward-declarations
-	class Shader;
 	class Formation;
 	
 	// Helper function; Given a decendant node, find it's root, and then its polyhedron.
@@ -32,27 +31,29 @@ namespace form
 	{
 		friend Polyhedron & GetPolyhedron(Node & node);
 	public:
-		Polyhedron();
+		Polyhedron(Formation & formation);
 		Polyhedron(Polyhedron const & rhs);
-		~Polyhedron();
 		
-		//RootNode const & GetRootNode() const;
-		Shader & GetShader();
-		
-		void Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer);
+		void Init(sim::Vector3 const & origin, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
 
-		void SetOrigin(sim::Vector3 const & origin, PointBuffer & point_buffer);
+		sim::Sphere3 const & GetShape() const;
+		Formation & GetFormation();
+		Formation const & GetFormation() const;
+		RootNode const & GetRootNode() const;
+		
+		void SetOrigin(sim::Vector3 const & origin);
 	private:
 		bool ResetOrigin(Node & node, PointBuffer & point_buffer, int depth);
-
+		
 		enum 
 		{
 			NUM_ROOT_VERTICES = 4
 		};
 		
 	public:
-		RootNode root_node;	// Exists purely so that all 'real' nodes have a parent.
-		Shader * shader;
+		sim::Sphere3 _shape;
+		Formation & _formation;
+		RootNode _root_node;	// Exists purely so that all 'real' nodes have a parent.
 	};
 }

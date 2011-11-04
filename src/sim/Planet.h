@@ -48,21 +48,21 @@ namespace sim
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual void UpdateModels() const;
 		
-		Scalar GetRadiusMean() const { return _radius_mean; }
-		Scalar GetRadiusMin() const { return _radius_min; }
-		Scalar GetRadiusMax() const { return _radius_max; }
-		void SampleRadius(Scalar r);
+		Scalar GetRadiusMean() const;
+		Scalar GetRadiusMin() const;
+		Scalar GetRadiusMax() const;
+		
+		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 		
 		form::Formation const & GetFormation() const;
 		virtual Vector3 const & GetPosition() const;
-
-		//DUMP_OPERATOR_DECLARATION(Entity);
 
 	private:
 		form::Formation * _formation;
 		PlanetaryBody * _body;
 		gfx::Planet * _model;
 		Scalar _radius_mean;
-		Scalar _radius_min, _radius_max;
+		Scalar _radius_min;
+		Scalar _radius_max;
 	};
 }

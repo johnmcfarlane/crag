@@ -30,7 +30,7 @@ form::Polyhedron & form::GetPolyhedron(Node & node)
 	RootNode & root_node = GetRootNode(node);
 	
 	Polyhedron & owner = root_node.GetOwner();
-	Assert(& owner.root_node == & root_node);
+	Assert(& owner._root_node == & root_node);
 	
 	return owner;
 }
@@ -39,37 +39,25 @@ form::Polyhedron & form::GetPolyhedron(Node & node)
 /////////////////////////////////////////////////////////////////
 // form::Polyhedron
 
-form::Polyhedron::Polyhedron()
-: shader(nullptr)
+form::Polyhedron::Polyhedron(Formation & formation)
+: _shape(formation.GetShape())
+, _formation(formation)
 {
-	root_node = RootNode(* this);
+	_root_node = RootNode(* this);
 }
 
 form::Polyhedron::Polyhedron(Polyhedron const & rhs)
-: shader(nullptr)
+: _shape(rhs._shape)
+, _formation(rhs._formation)
 {
-	root_node = RootNode(* this);
-	
-	// Can only copy default-state objects.
-	Assert(rhs.shader == nullptr);
+	_root_node = RootNode(* this);
 }
 
-form::Polyhedron::~Polyhedron()
-{
-	delete shader;
-}
-
-form::Shader & form::Polyhedron::GetShader()
-{
-	Assert(shader != nullptr);
-	return * shader;
-}
-
-void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & origin, PointBuffer & point_buffer)
+void form::Polyhedron::Init(sim::Vector3 const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
-	shader = formation.shader_factory.Create(formation);
-	shader->SetOrigin(origin);
+	_shape.center = form::SimToScene(_formation.GetShape().center, origin);
+	Shader const & shader = _formation.GetShader();
 	
 	// Create me some points.
 	// (These are the four points of the initial tetrahedron.
@@ -82,27 +70,48 @@ void form::Polyhedron::Init(Formation const & formation, sim::Vector3 const & or
 	};
 	
 	// Initialize the points using the shader.
-	shader->InitRootPoints(root_points);	
+	shader.InitRootPoints(* this, root_points);	
 
 	// Initialize the root node with the points
-	root_node.Init(formation.seed, root_points);
+	_root_node.Init(_formation.GetSeed(), root_points);
 }
 
 void form::Polyhedron::Deinit(PointBuffer & point_buffer)
 {
-	root_node.Deinit(point_buffer);
-	
-	delete shader;
-	shader = nullptr;
+	_root_node.Deinit(point_buffer);
 }
 
-void form::Polyhedron::SetOrigin(sim::Vector3 const & origin, PointBuffer & point_buffer)
+sim::Sphere3 const & form::Polyhedron::GetShape() const
 {
-	shader->SetOrigin(origin);
+	return _shape;
+}
+
+form::Formation & form::Polyhedron::GetFormation()
+{
+	return _formation;
+}
+
+form::Formation const & form::Polyhedron::GetFormation() const
+{
+	return _formation;
+}
+
+form::RootNode const & form::Polyhedron::GetRootNode() const
+{
+	return _root_node;
+}
+
+void form::Polyhedron::SetOrigin(sim::Vector3 const & origin)
+{
+	sim::Sphere3 const & shape = _formation.GetShape();
+	_shape.center = form::SimToScene(shape.center, origin);
+	_shape.radius = shape.radius;
 	
 	Point * root_points[4];
-	root_node.GetPoints(root_points);
-	shader->InitRootPoints(root_points);
+	_root_node.GetPoints(root_points);
+
+	Shader const & shader = _formation.GetShader();
+	shader.InitRootPoints(* this, root_points);
 }
 
 bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
@@ -115,10 +124,10 @@ bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int 
 	
 	if (depth == 0)
 	{
-		children[0].Reinit(* shader, point_buffer);
-		children[1].Reinit(* shader, point_buffer);
-		children[2].Reinit(* shader, point_buffer);
-		children[3].Reinit(* shader, point_buffer);
+		children[0].Reinit(* this, point_buffer);
+		children[1].Reinit(* this, point_buffer);
+		children[2].Reinit(* this, point_buffer);
+		children[3].Reinit(* this, point_buffer);
 		return true;
 	}
 	else 
