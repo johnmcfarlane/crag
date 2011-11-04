@@ -237,7 +237,7 @@ void Observer::UpdateModels() const
 		{
 			position
 		};
-		gfx::Daemon::Call(& _light, params, & gfx::Renderer::OnUpdateObject);
+		gfx::Daemon::Call(& _light, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
 	}
 }
 
