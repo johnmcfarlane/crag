@@ -61,7 +61,7 @@ void sim::Simulation::OnAddEntity(Entity * const & entity, PyObject * const & ar
 
 	// Let go of arguments object.
 	// (Incremented in script::MetaClass::NewObject.)
-	Py_DECREF(& args);
+	Py_DECREF(args);
 	
 	if (! initialized)
 	{
