@@ -47,35 +47,9 @@ namespace form
 	typedef std::set<Formation *> FormationSet;
 	
 	
-	////////////////////////////////////////////////////////////////////////////////
-	// FormationManager message classes
-	
-	struct AddFormationMessage
-	{
-		Formation & formation;
-	};
-	
-	struct RemoveFormationMessage
-	{
-		Formation & formation;
-	};
-	
-	// tell the regulator to reset its counters
-	struct RegulatorResetMessage
-	{
-	};
-	
-	// tell the regulator how many nodes the currently rendered mesh consists of.
-	struct RegulatorNumQuaternaMessage
-	{
-		int _num_quaterne;
-	};
-	
-	// send the regulator the result of the last frame.
-	struct RegulatorFrameMessage
-	{
-		float _fitness;
-	};
+	// form::Daemon type
+	class FormationManager;
+	typedef smp::Daemon<FormationManager> Daemon;
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -89,8 +63,7 @@ namespace form
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		typedef smp::Daemon<FormationManager> Daemon;
-		
+
 		struct TreeQueryFunctor
 		{
 			virtual ~TreeQueryFunctor() { }
@@ -111,20 +84,18 @@ namespace form
 		void Verify() const;
 #endif
 		
-		void OnMessage(smp::TerminateMessage const & message);
-		void OnMessage(AddFormationMessage const & message);
-		void OnMessage(RemoveFormationMessage const & message);
-		void OnMessage(MeshMessage const & message);
-		void OnMessage(sim::SetCameraMessage const & message);
+		// message interface
+		void OnQuit();
+		void OnAddFormation(Formation * const & formation);
+		void OnRemoveFormation(Formation * const & formation);
+		void OnSetMesh(Mesh * const & mesh);
+		void OnSetCamera(sim::Transformation const & transformation);
 		
-		void OnMessage(RegulatorResetMessage const & message);
-		void OnMessage(RegulatorNumQuaternaMessage const & message);
-		void OnMessage(RegulatorFrameMessage const & message);
+		void OnRegulatorReset();
+		void OnRegulatorSetNumQuaterna(int const & num_quaterne);
+		void OnRegulatorSetFrame(float const & fitness);
 		
 		void Run(Daemon::MessageQueue & message_queue);
-	private:		
-		void AddFormation(Formation & formation);
-		void RemoveFormation(Formation & formation);
 	public:
 		
 		// intersection support

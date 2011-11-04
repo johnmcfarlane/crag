@@ -111,10 +111,7 @@ Observer::Observer()
 Observer::~Observer()
 {
 	// un-register with the renderer
-	{
-		gfx::RemoveObjectMessage message = { _light };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	gfx::Daemon::Call<gfx::Object *>(& _light, & gfx::Renderer::OnRemoveObject);
 
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
@@ -125,8 +122,7 @@ void Observer::Create(Observer & observer, PyObject & args)
 	new (& observer) Observer;
 	
 	// send creation message
-	AddEntityMessage message = { observer, args };
-	Simulation::Daemon::SendMessage(message);
+	sim::Daemon::Call<sim::Entity *>(& observer, & args, & sim::Simulation::OnAddEntity);
 }
 
 bool Observer::Init(Simulation & simulation, PyObject & args)
@@ -151,11 +147,8 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	
 	impulses[0] = impulses[1] = Vector3::Zero();
 	
-	// register with the renderer
-	{
-		gfx::AddObjectMessage message = { _light };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	// register light with the renderer
+	gfx::Daemon::Call<gfx::Object *>(& _light, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -234,16 +227,17 @@ void Observer::UpdateModels() const
 
 	// Give renderer the new camera position.
 	{
-		SetCameraMessage message = { Transformation(position, rotation) };
-		gfx::Renderer::Daemon::SendMessage(message);
+		Transformation transformation (position, rotation);
+		gfx::Daemon::Call(transformation, & gfx::Renderer::OnSetCamera);
 	}
 
 	// Give renderer the new light position.
 	{
-		gfx::UpdateObjectMessage<gfx::Light> message(_light);
-		message._params = position;
-		
-		gfx::Renderer::Daemon::SendMessage(message);
+		gfx::Light::UpdateParams params = 
+		{
+			position
+		};
+		gfx::Daemon::Call(& _light, params, & gfx::Renderer::OnUpdateObject);
 	}
 }
 

@@ -53,34 +53,4 @@ namespace gfx
 		// currently must remain invariant
 		virtual bool IsInLayer(Layer::type) const = 0;
 	};
-	
-	// messages
-	struct AddObjectMessage
-	{
-		Object & _object;
-	};
-	
-	struct RemoveObjectMessage
-	{
-		Object & _object;
-	};
-	
-	template <typename OBJECT>
-	class UpdateObjectMessage
-	{
-		// types
-		typedef OBJECT ObjectType;
-		typedef typename ObjectType::UpdateParams UpdateParams;
-		
-	public:
-		// functions
-		UpdateObjectMessage(ObjectType & object)
-		: _object(object)
-		{ 
-		}
-		
-		// variables
-		ObjectType & _object;
-		UpdateParams _params;
-	};
 }

@@ -41,11 +41,11 @@ namespace smp
 		};
 
 		typedef CLASS Class;
-		typedef MessageEnvelope<Class> MessageEnvelope;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 	public:
-		typedef MessageQueue<Class, MessageEnvelope> MessageQueue;
+		typedef Message<Class> Message;
+		typedef MessageQueue<Class, Message> MessageQueue;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ namespace smp
 		
 		Daemon(size_t ring_buffer_size)
 		: _object(nullptr)
-		, _envelopes(ring_buffer_size)
+		, _messages(ring_buffer_size)
 		, _state(initialized)
 		{
 			Assert(singleton == nullptr);
@@ -76,7 +76,7 @@ namespace smp
 			// Must call Stop from the outside thread first.
 			Assert(! _thread.IsLaunched());
 			
-			Assert(_envelopes.IsEmpty());
+			Assert(_messages.IsEmpty());
 			
 			Assert(_object == nullptr);
 		}
@@ -95,7 +95,7 @@ namespace smp
 		
 		size_t GetQueueCapacity() const
 		{
-			return _envelopes.capacity();
+			return _messages.capacity();
 		}
 		
 		void Start()
@@ -120,8 +120,7 @@ namespace smp
 			// Never called from within the thread.
 			Assert(! _thread.IsCurrent());
 			
-			smp::TerminateMessage message;
-			SendMessage(message);
+			Call(& Class::OnQuit);
 		}
 		
 		// Wait until it has stopped working.
@@ -149,7 +148,7 @@ namespace smp
 			}
 			Assert(acknowledge_flush_end);
 			
-			Assert(_envelopes.IsEmpty());
+			Assert(_messages.IsEmpty());
 		}
 		
 		template <typename MESSAGE>
@@ -158,7 +157,88 @@ namespace smp
 			singleton->PushMessage(message);
 		}
 		
+		////////////////////////////////////////////////////////////////////////////////
+		// Call - generates a deferred function call to the thread-safe object
+		
+		// 0-parameter version
+		static void Call (void (Class::* function)())
+		{
+			DerivedMessage0 message(function);
+			SendMessage(message);
+		}
+		
+		// 1-parameter version
+		template <typename PARAMETER1>
+		static void Call (PARAMETER1 const & parameter1, void (Class::* function)(PARAMETER1 const &))
+		{
+			DerivedMessage1<PARAMETER1> message(function, parameter1);
+			SendMessage(message);
+		}
+		
+		// 2-parameter version
+		template <typename PARAMETER1, typename PARAMETER2>
+		static void Call (PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &))
+		{
+			DerivedMessage2<PARAMETER1, PARAMETER2> message(function, parameter1, parameter2);
+			SendMessage(message);
+		}
+		
 	private:
+		// 0-parameter Call helper
+		class DerivedMessage0 : public Message
+		{
+		public:
+			typedef void (Class::* FunctionType)();
+			DerivedMessage0(FunctionType function)
+			: _function(function)
+			{
+			}
+		private:
+			void operator () (Class & object) const
+			{
+				(object.*_function)();
+			}
+			FunctionType _function;
+		};
+		
+		// 1-parameter Call helper
+		template <typename PARAMETER1>
+		class DerivedMessage1 : public Message
+		{
+		public:
+			typedef void (Class::* FunctionType)(PARAMETER1 const &);
+			DerivedMessage1(FunctionType function, PARAMETER1 const & __parameter1) 
+			: _function(function)
+			, _parameter1(__parameter1) { 
+			}
+		private:
+			void operator () (Class & object) const {
+				(object.*_function)(_parameter1);
+			}
+			FunctionType _function;
+			PARAMETER1 _parameter1;
+		};
+		
+		// 2-parameter Call helper
+		template <typename PARAMETER1, typename PARAMETER2>
+		class DerivedMessage2 : public Message
+		{
+		public:
+			typedef void (Class::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &);
+			DerivedMessage2(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
+			: _function(function)
+			, _parameter1(__parameter1)
+			, _parameter2(__parameter2) { 
+			}
+		private:
+			void operator () (Class & object) const {
+				(object.*_function)(_parameter1, _parameter2);
+			}
+			FunctionType _function;
+			PARAMETER1 _parameter1;
+			PARAMETER2 _parameter2;
+		};
+		
 		void Run()
 		{
 			FUNCTION_NO_REENTRY;
@@ -173,7 +253,7 @@ namespace smp
 			Class object;
 			_object = & object;
 			
-			object.Run(_envelopes);
+			object.Run(_messages);
 		
 			// Acknowledge that this won't be sending any more.
 			_state = acknowledge_flush_begin;
@@ -183,7 +263,7 @@ namespace smp
 			}
 			
 			Assert(_state == request_flush_end);
-			while (! _envelopes.IsEmpty())
+			while (! _messages.IsEmpty())
 			{
 				FlushMessagesOrYield();
 			}
@@ -197,14 +277,12 @@ namespace smp
 		template <typename MESSAGE>
 		void PushMessage(MESSAGE const & message)
 		{
-			SpecializedMessageEnvelope<CLASS, MESSAGE> envelope (message);
-			
-			_envelopes.PushBack(envelope);
+			_messages.PushBack(message);
 		}
 		
 		bool FlushMessages()
 		{
-			if (! _envelopes.DispatchMessages(* _object))
+			if (! _messages.DispatchMessages(* _object))
 			{
 				return false;
 			}
@@ -227,7 +305,7 @@ namespace smp
 		// variables
 		
 		Class * _object;
-		MessageQueue _envelopes;
+		MessageQueue _messages;
 		Thread _thread;
 		State _state;
 		

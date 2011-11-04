@@ -23,7 +23,10 @@ namespace gfx
 	{
 	public:
 		// types
-		typedef Vector UpdateParams;
+		struct UpdateParams
+		{
+			Vector position;
+		};
 		
 		// functions
 		Light(Vector3f const & pos, Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);

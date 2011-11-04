@@ -55,8 +55,7 @@ Box::Box()
 
 Box::~Box()
 {
-	gfx::RemoveObjectMessage message = { ref(_model) };
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
 }
 
 void Box::Create(Box & box, PyObject & args)
@@ -64,11 +63,8 @@ void Box::Create(Box & box, PyObject & args)
 	// construct box
 	new (& box) Box;
 	
-	// create message
-	AddEntityMessage message = { box, args };
-	
 	// send
-	Simulation::Daemon::SendMessage(message);
+	Daemon::Call<Entity *, PyObject *>(& box, & args, & Simulation::OnAddEntity);
 }
 
 bool Box::Init(Simulation & simulation, PyObject & args)
@@ -91,11 +87,8 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	body->SetAngularDamping(box_angular_damping);
 	SetBody(body);
 	
-	{
-		_model = new gfx::Box(size);
-		gfx::AddObjectMessage message = { ref(_model) };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	_model = new gfx::Box(size);
+	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -116,15 +109,16 @@ void Box::Tick(Simulation & simulation)
 
 void Box::UpdateModels() const
 {
-	gfx::UpdateObjectMessage<gfx::Box> message(ref(_model));
-
 	physics::BoxBody const * body = static_cast<physics::BoxBody const *>(GetBody());
 	if (body == nullptr)
 	{
 		return;
 	}
 
-	message._params.transformation = Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions());
+	gfx::Box::UpdateParams params = 
+	{
+		Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions())
+	};
 
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Box>);
 }

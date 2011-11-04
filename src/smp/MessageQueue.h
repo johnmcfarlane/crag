@@ -45,8 +45,8 @@ namespace smp
 			// TODO: Look into ways to prevent locking of the buffer.
 			Lock critical_section(_mutex);
 			
-			MessageEnvelope<Class> const & envelope = _buffer.front();
-			envelope.Dispatch(object);
+			Message<Class> const & envelope = _buffer.front();
+			envelope(object);
 			
 			_buffer.pop_front();
 			return true;

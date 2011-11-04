@@ -86,11 +86,7 @@ void FormationSet::Update(UpdateParams const & params)
 	if (_queued_mesh != nullptr)
 	{
 		// send it back because it's not the newest anymore.
-		form::MeshMessage message = 
-		{
-			* _queued_mesh
-		};
-		form::FormationManager::Daemon::SendMessage(message);
+		ReturnMesh(* _queued_mesh);
 	}
 	
 	_queued_mesh = mesh;
@@ -185,13 +181,12 @@ bool FormationSet::FinishBufferUpload()
 	
 	// inform the regulator that following frame information 
 	// will relate to a mesh of this number of quaterna.
-	form::RegulatorNumQuaternaMessage message;
-	message._num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
-	form::FormationManager::Daemon::SendMessage(message);
+	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
+	form::Daemon::Call<int>(num_quaterne, & form::FormationManager::OnRegulatorSetNumQuaterna);
 	
 	// state number of polygons/quaterna
 	STAT_SET (num_polys, _pending_mesh->GetNumPolys());
-	STAT_SET (num_quats_used, message._num_quaterne);
+	STAT_SET (num_quats_used, num_quaterne);
 	
 	// release the pending mesh back to the formation manager
 	ReturnMesh(* _pending_mesh);
@@ -200,8 +195,8 @@ bool FormationSet::FinishBufferUpload()
 	return true;
 }
 
+// TODO: Why not called everywhere in class?
 void FormationSet::ReturnMesh(form::Mesh & mesh)
 {
-	form::MeshMessage message = { mesh };
-	form::FormationManager::Daemon::SendMessage(message);
+	form::Daemon::Call(& mesh, & form::FormationManager::OnSetMesh);
 }

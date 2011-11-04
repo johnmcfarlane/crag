@@ -20,10 +20,10 @@
 namespace script
 {
 	
-	struct EventMessage
-	{
-		sys::Event event;
-	};
+	// script::Daemon type
+	class ScriptThread;
+	typedef smp::Daemon<ScriptThread> Daemon;
+
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
@@ -40,8 +40,8 @@ namespace script
 		ScriptThread();
 		~ScriptThread();
 		
-		void OnMessage(EventMessage const & message);
-		void OnMessage(smp::TerminateMessage const & message);
+		void OnQuit();
+		void OnEvent(sys::Event const & event);
 
 		// thread entry point
 		void Run(Daemon::MessageQueue & message_queue);

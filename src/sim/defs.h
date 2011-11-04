@@ -42,9 +42,4 @@ namespace sim
 	typedef ::Matrix<Scalar, 3, 3> Matrix33;
 	typedef ::Matrix<Scalar, 4, 4> Matrix44;
 	typedef ::Transformation<Scalar> Transformation;
-	
-	struct SetCameraMessage
-	{
-		Transformation transformation;
-	};
 }

@@ -37,7 +37,7 @@ FILE_LOCAL_BEGIN
 
 PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
-	sim::Simulation & simulation = sim::Simulation::Daemon::Ref();
+	sim::Simulation & simulation = sim::Daemon::Ref();
 	
 	sys::TimeType time = simulation.GetTime();
 	return Py_BuildValue("d", time);
@@ -76,9 +76,8 @@ PyObject * set_camera(PyObject * /*self*/, PyObject * args)
 	}
 	else
 	{
-		sim::SetCameraMessage message;
-		message.transformation = sim::Transformation(position);
-		gfx::Renderer::Daemon::SendMessage(message);
+		sim::Transformation transformation(position);
+		gfx::Daemon::Call(transformation, & gfx::Renderer::OnSetCamera);
 	}
 	
 	Py_RETURN_NONE;
@@ -180,20 +179,20 @@ script::ScriptThread::~ScriptThread()
 	Py_Finalize();
 }
 
-void script::ScriptThread::OnMessage(EventMessage const & message)
+void script::ScriptThread::OnQuit()
 {
-	PyObject * event_object = create_event_object(message.event);
+	_events.push(Py_BuildValue("si", "exit", 0));
+}
+
+void script::ScriptThread::OnEvent(sys::Event const & event)
+{
+	PyObject * event_object = create_event_object(event);
 	if (event_object == nullptr)
 	{
 		return;
 	}
 	
 	_events.push(event_object);
-}
-
-void script::ScriptThread::OnMessage(smp::TerminateMessage const & message)
-{
-	_events.push(Py_BuildValue("si", "exit", 0));
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.

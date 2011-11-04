@@ -89,45 +89,53 @@ void form::FormationManager::Verify() const
 }
 #endif
 
-void form::FormationManager::OnMessage(smp::TerminateMessage const & message)
+void form::FormationManager::OnQuit()
 {
 	quit_flag = true;
 }
 
-void form::FormationManager::OnMessage(AddFormationMessage const & message)
+void form::FormationManager::OnAddFormation(form::Formation * const & formation)
 {
-	AddFormation(message.formation);
+	Assert(formation_set.find(formation) == formation_set.end());
+	formation_set.insert(formation);
+	scenes[0].AddFormation(* formation);
+	scenes[1].AddFormation(* formation);
 }
 
-void form::FormationManager::OnMessage(RemoveFormationMessage const & message)
+void form::FormationManager::OnRemoveFormation(form::Formation * const & formation)
 {
-	RemoveFormation(message.formation);
-	delete & message.formation;
+	Assert(formation_set.find(formation) != formation_set.end());
+	formation_set.erase(formation);
+	scenes[0].RemoveFormation(* formation);
+	scenes[1].RemoveFormation(* formation);
+	
+	delete formation;
 }
 
-void form::FormationManager::OnMessage(MeshMessage const & message)
+void form::FormationManager::OnSetMesh(Mesh * const & mesh)
 {
-	_meshes.push_back(message._mesh);
+	_meshes.push_back(* mesh);
 }
 
-void form::FormationManager::OnMessage(sim::SetCameraMessage const & message)
+void form::FormationManager::OnSetCamera(sim::Transformation const & transformation)
 {
-	SetCamera(message.transformation);
+	SetCamera(transformation);
 }
 
-void form::FormationManager::OnMessage(RegulatorResetMessage const & message)
+void form::FormationManager::OnRegulatorReset()
 {
+	// TODO: replace Reset with Start and Stop.
 	_regulator.Reset();
 }
 
-void form::FormationManager::OnMessage(RegulatorNumQuaternaMessage const & message)
+void form::FormationManager::OnRegulatorSetNumQuaterna(int const & num_quaterne)
 {
-	_regulator.SetNumQuaterna(message._num_quaterne);
+	_regulator.SetNumQuaterna(num_quaterne);
 }
 
-void form::FormationManager::OnMessage(RegulatorFrameMessage const & message)
+void form::FormationManager::OnRegulatorSetFrame(float const & fitness)
 {
-	_regulator.SampleFrameFitness(message._fitness);
+	_regulator.SampleFrameFitness(fitness);
 }
 
 void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
@@ -135,10 +143,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	{
-		gfx::AddObjectMessage message = { _model };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	gfx::Daemon::Call<gfx::Object *>(& _model, & gfx::Renderer::OnAddObject);
 	
 	while (! quit_flag) 
 	{
@@ -155,26 +160,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	}
 	
 	// un-register with the renderer
-	{
-		gfx::RemoveObjectMessage message = { _model };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
-}
-
-void form::FormationManager::AddFormation(form::Formation & formation)
-{
-	Assert(formation_set.find(& formation) == formation_set.end());
-	formation_set.insert(& formation);
-	scenes[0].AddFormation(formation);
-	scenes[1].AddFormation(formation);
-}
-
-void form::FormationManager::RemoveFormation(form::Formation & formation)
-{
-	Assert(formation_set.find(& formation) != formation_set.end());
-	formation_set.erase(& formation);
-	scenes[0].RemoveFormation(formation);
-	scenes[1].RemoveFormation(formation);
+	gfx::Daemon::Call<gfx::Object *>(& _model, & gfx::Renderer::OnRemoveObject);
 }
 
 void form::FormationManager::LockTree()
@@ -300,9 +286,11 @@ void form::FormationManager::GenerateMesh()
 	visible_scene.GenerateMesh(* mesh);
 	
 	// sent it to the FormationSet object
-	gfx::UpdateObjectMessage<gfx::FormationSet> message(_model);
-	message._params = mesh;
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::FormationSet::UpdateParams params = 
+	{
+		mesh
+	};
+	gfx::Daemon::Call(& _model, params, & gfx::Renderer::OnUpdateObject<gfx::FormationSet>);
 	
 	// record timing information
 	sys::TimeType t = sys::GetTime();
@@ -412,4 +400,4 @@ bool form::FormationManager::IsResetting() const
 }
 
 
-form::FormationManager::Daemon * form::FormationManager::singleton = nullptr;
+form::Daemon * form::FormationManager::singleton = nullptr;

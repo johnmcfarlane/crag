@@ -91,7 +91,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	using namespace form::collision;
 
 	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
-	form::FormationManager const & formation_manager = form::FormationManager::Daemon::Ref();
+	form::FormationManager const & formation_manager = form::Daemon::Ref();
 	form::Scene const & scene = formation_manager.OnTreeQuery();
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
@@ -160,7 +160,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	using namespace form::collision;
 
 	physics::SphericalBody const & sphere = static_cast<physics::SphericalBody const &>(body);
-	form::FormationManager const & formation_manager = form::FormationManager::Daemon::Ref();
+	form::FormationManager const & formation_manager = form::Daemon::Ref();
 	form::Scene const & scene = formation_manager.OnTreeQuery();
 
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);

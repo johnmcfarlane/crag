@@ -46,7 +46,7 @@ bool Light::GenerateShadowMaps() const
 
 void Light::Update(UpdateParams const & params)
 {
-	_position = params;
+	_position = params.position;
 }
 
 void Light::Render(Layer::type layer, Scene const & scene) const

@@ -50,20 +50,18 @@ sim::Simulation::~Simulation()
 	physics_engine = nullptr;
 }
 
-void sim::Simulation::OnMessage(smp::TerminateMessage const & message)
+void sim::Simulation::OnQuit()
 {
 	quit_flag = true;
 }
 
-void sim::Simulation::OnMessage(AddEntityMessage const & message)
+void sim::Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 {
-	Entity & entity = message.entity;
-
-	bool initialized = entity.Init(* this, message.args);
+	bool initialized = entity->Init(* this, * args);
 
 	// Let go of arguments object.
 	// (Incremented in script::MetaClass::NewObject.)
-	Py_DECREF(& message.args);
+	Py_DECREF(& args);
 	
 	if (! initialized)
 	{
@@ -72,37 +70,32 @@ void sim::Simulation::OnMessage(AddEntityMessage const & message)
 		return;
 	}
 	
-	universe->AddEntity(entity);
-	entity.UpdateModels();
+	universe->AddEntity(* entity);
+	entity->UpdateModels();
 }
 
-void sim::Simulation::OnMessage(RemoveEntityMessage const & message)
+void sim::Simulation::OnRemoveEntity(Entity * const & entity)
 {
-	universe->RemoveEntity(message.entity);
+	universe->RemoveEntity(* entity);
 	
 	// TODO: This code is sensitive to object-lifetime issues. More reason for UIDs.
-	message.entity.~Entity();
-	Free(& message.entity);
+	entity->~Entity();
+	Free(entity);
 }
 
-void sim::Simulation::OnMessage(TogglePauseMessage const & message)
+void sim::Simulation::OnTogglePause()
 {
 	paused = ! paused;
 }
 
-void sim::Simulation::OnMessage(ToggleGravityMessage const & message)
+void sim::Simulation::OnToggleGravity()
 {
 	universe->ToggleGravity();
 }
 
-void sim::Simulation::OnMessage(ToggleCollisionMessage const & message)
+void sim::Simulation::OnToggleCollision()
 {
 	physics_engine->ToggleCollisions();
-}
-
-void sim::Simulation::OnMessage(gfx::RendererReadyMessage const & message)
-{
-	Assert(false);
 }
 
 sys::TimeType sim::Simulation::GetTime() const
@@ -127,8 +120,9 @@ void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 	smp::SetThreadPriority(0);
 	smp::SetThreadName("Simulation");
 
-	gfx::AddObjectMessage add_skybox_message = { ref(new Firmament) };
-	gfx::Renderer::Daemon::SendMessage(add_skybox_message);
+	// Add the skybox.
+	Firmament * skybox = new Firmament;
+	gfx::Daemon::Call<gfx::Object *>(skybox, & gfx::Renderer::OnAddObject);
 	
 	sys::TimeType next_tick_time = sys::GetTime();
 	
@@ -156,9 +150,9 @@ void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 			}
 		}
 	}
-	
-	gfx::RemoveObjectMessage remove_skybox_message = { add_skybox_message._object };
-	gfx::Renderer::Daemon::SendMessage(remove_skybox_message);
+
+	// remove skybox
+	gfx::Daemon::Call<gfx::Object *>(skybox, & gfx::Renderer::OnRemoveObject);
 }
 
 void sim::Simulation::Tick()
@@ -181,13 +175,10 @@ void sim::Simulation::Tick()
 
 void sim::Simulation::UpdateRenderer() const
 {
-	gfx::RenderReadyMessage message;
-	message.ready = false;
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	
 	universe->UpdateModels();
 	
-	message.ready = true;
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
 }
 

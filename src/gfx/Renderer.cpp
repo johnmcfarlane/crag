@@ -90,7 +90,7 @@ Renderer::Renderer()
 : last_frame_time(sys::GetTime())
 , quit_flag(false)
 , vsync(false)
-, ready(true)
+, _ready(true)
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
@@ -111,83 +111,80 @@ Renderer::~Renderer()
 	Deinit();
 }
 
-void Renderer::OnMessage(smp::TerminateMessage const & message)
+void Renderer::OnQuit()
 {
 	quit_flag = true;
-	ready = true;
+	_ready = true;
 }
 
-void Renderer::OnMessage(AddObjectMessage const & message)
+void Renderer::OnAddObject(Object * const & object)
 {
 	if (quit_flag)
 	{
 		return;
 	}
 
-	Object & object = message._object;
-	object.Init();
+	object->Init();
 
 	if (scene != nullptr)
 	{
-		scene->AddObject(object);
+		scene->AddObject(* object);
 	}
 }
 
-void Renderer::OnMessage(RemoveObjectMessage const & message)
+void Renderer::OnRemoveObject(Object * const & object)
 {
-	Object & object = message._object;
 	if (scene != nullptr)
 	{
-		scene->RemoveObject(object);
-		object.Deinit();
+		scene->RemoveObject(* object);
+		object->Deinit();
 	}
-	delete & object;
+	delete object;
 }
 
-void Renderer::OnMessage(RenderReadyMessage const & message)
+void Renderer::OnSetReady(bool const & ready)
 {
-	ready = message.ready;
+	_ready = ready;
 }
 
-void Renderer::OnMessage(ResizeMessage const & resize_message)
+void Renderer::OnResize(Vector2i const & size)
 {
-	scene->SetResolution(resize_message.size);
+	scene->SetResolution(size);
 
-	form::RegulatorResetMessage reset_message;
-	form::FormationManager::Daemon::SendMessage(reset_message);			
+	form::Daemon::Call(& form::FormationManager::OnRegulatorReset);
 }
 
 
-void Renderer::OnMessage(ToggleCullingMessage const & message)
+void Renderer::OnToggleCulling()
 {
 	culling = ! culling;
 }
 
-void Renderer::OnMessage(ToggleLightingMessage const & message)
+void Renderer::OnToggleLighting()
 {
 	lighting = ! lighting;
 }
 
-void Renderer::OnMessage(ToggleWireframeMessage const & message)
+void Renderer::OnToggleWireframe()
 {
 	wireframe = ! wireframe;
 }
 
-void Renderer::OnMessage(ToggleCaptureMessage const & message)
+void Renderer::OnToggleCapture()
 {
 	capture_enable = ! capture_enable;
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void Renderer::OnMessage(sim::SetCameraMessage const & message)
+void Renderer::OnSetCamera(Transformation<double> const & transformation)
 {
 	if (scene != nullptr)
 	{
-		scene->SetCameraTransformation(message.transformation);
+		scene->SetCameraTransformation(transformation);
 	}
 
 	// pass this on to the formation manager to update the node scores
-	form::FormationManager::Daemon::SendMessage(message);
+	form::Daemon::Call(transformation, & form::FormationManager::OnSetCamera);
 }
 
 #if defined(NDEBUG)
@@ -227,7 +224,7 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
 	if (vsync)
 	{
-		ready = false;
+		_ready = false;
 	}
 	
 	int frames_to_skip;
@@ -243,7 +240,7 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 	
 	for (int frame = 0; frame <= capture_skip; ++ frame)
 	{
-		while (! ready)
+		while (! _ready)
 		{
 			if (! message_queue.DispatchMessage(* this))
 			{
@@ -786,9 +783,8 @@ void Renderer::ProcessRenderTiming()
 		target_frame_duration *= target_work_proportion;
 	}
 
-	form::RegulatorFrameMessage message;
-	message._fitness = float(target_frame_duration / busy_time);
-	form::FormationManager::Daemon::SendMessage(message);
+	float fitness = float(target_frame_duration / busy_time);
+	form::Daemon::Call(fitness, & form::FormationManager::OnRegulatorSetFrame);
 }
 
 void Renderer::Capture()
@@ -825,4 +821,4 @@ void Renderer::SetFence(gl::Fence & fence)
 }
 
 
-Renderer::Daemon * Renderer::singleton = nullptr;
+Daemon * Renderer::singleton = nullptr;

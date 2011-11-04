@@ -15,59 +15,24 @@
 namespace smp
 {
 	
-	// Tells the Actor to terminate execution.
-	struct TerminateMessage
-	{
-	};
-	
-	
 	////////////////////////////////////////////////////////////////////////////////
-	// MessageEnvelope classes
+	// Message base class
 	//
-	// Store copies of messages in an Actor's message queue.
-	
-	// forward-declaration
-	template <typename CLASS> class Actor;
+	// Functors derived from this class are invoked upon an instance of CLASS
+	// in a thread-safe manner.
 	
 	
 	// Polymorphic base class for message wrapper.
 	// Required so that messages can be listed in Actor.
 	template <typename CLASS>
-	class MessageEnvelope
+	class Message
 	{
 	public:
-		virtual ~MessageEnvelope() 
+		virtual ~Message() 
 		{ 
 		}
 		
-		// returns false if the Actor should quit
-		virtual void Dispatch(CLASS & destination) const = 0;
-		
-	private:
-		// friends
-		friend class Actor<CLASS>;
-	};
-	
-	
-	// Message-type-specific message wrapper class.
-	template <typename CLASS, typename MESSAGE>
-	class SpecializedMessageEnvelope : public MessageEnvelope<CLASS>
-	{
-		typedef MessageEnvelope<CLASS> super;
-	public:
-		SpecializedMessageEnvelope(MESSAGE const & message)
-		: _message(message) 
-		{ 
-		}
-		
-		// returns true if the Actor should continue (false=terminate)
-		virtual void Dispatch(CLASS & destination) const
-		{
-			destination.OnMessage(_message);
-		}
-		
-	private:
-		MESSAGE _message;
+		virtual void operator() (CLASS & daemon) const = 0;
 	};
 	
 }

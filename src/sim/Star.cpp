@@ -40,8 +40,7 @@ sim::Star::Star()
 
 sim::Star::~Star()
 {
-	gfx::RemoveObjectMessage message = { ref(light) };
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call<gfx::Object *>(light, & gfx::Renderer::OnRemoveObject);
 }
 
 void sim::Star::Create(Star & star, PyObject & args)
@@ -49,11 +48,8 @@ void sim::Star::Create(Star & star, PyObject & args)
 	// construct star
 	new (& star) Star;
 	
-	// create message
-	AddEntityMessage message = { star, args };
-	
 	// send
-	Simulation::Daemon::SendMessage(message);
+	Daemon::Call<Entity *, PyObject *>(& star, & args, & Simulation::OnAddEntity);
 }
 
 bool sim::Star::Init(Simulation & simulation, PyObject & args)
@@ -68,8 +64,7 @@ bool sim::Star::Init(Simulation & simulation, PyObject & args)
 	light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
 	
 	// pass to the renderer
-	gfx::AddObjectMessage message = { ref(light) };
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call<gfx::Object *>(light, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -83,11 +78,12 @@ void sim::Star::Tick(Simulation & simulation)
 
 void sim::Star::UpdateModels() const
 {
-	gfx::UpdateObjectMessage<gfx::Light> message(ref(light));
+	gfx::Light::UpdateParams params = 
+	{
+		GetPosition()
+	};
 	
-	message._params = GetPosition();
-	
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call(light, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

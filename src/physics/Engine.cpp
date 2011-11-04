@@ -136,7 +136,7 @@ void physics::Engine::ProcessDeferredCollisions()
 		return;
 	}
 	
-	form::FormationManager & formation_manager = form::FormationManager::Daemon::Ref();
+	form::FormationManager & formation_manager = form::Daemon::Ref();
 	
 	formation_manager.LockTree();
 	smp::scheduler::Complete(_deferred_collisions, 1);

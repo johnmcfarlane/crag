@@ -76,12 +76,5 @@ namespace form
 		// list type
 		DEFINE_INTRUSIVE_LIST_TYPE(Mesh, _hook, list_type);
 	};
-
-
-	// used to return an unused mesh back to the formation manager
-	struct MeshMessage
-	{
-		Mesh & _mesh;
-	};
 	
 }

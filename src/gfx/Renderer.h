@@ -22,7 +22,7 @@
 
 #include "sys/App.h"
 
-#include "geom/Matrix44.h"
+#include "geom/Transformation.h"
 
 #include "core/double_buffer.h"
 
@@ -39,19 +39,11 @@ namespace gfx
 	// forward-declarations
 	class Scene;
 	
-	struct AddObjectMessage;
-	struct RemoveObjectMessage;
-	struct RenderReadyMessage { bool ready; };
-	struct ToggleCullingMessage { };
-	struct ToggleLightingMessage { };
-	struct ToggleWireframeMessage { };
-	struct ToggleCaptureMessage { };
+
+	// gfx::Daemon type
+	class Renderer;
+	typedef smp::Daemon<Renderer> Daemon;
 	
-	
-	struct ResizeMessage
-	{
-		Vector2i size;
-	};
 	
 	// The Renderer class. 
 	// Does all the donkey-work of bullying OpenGL 
@@ -69,25 +61,25 @@ namespace gfx
 		};
 		
 	public:
-		typedef smp::Daemon<Renderer> Daemon;
-		
 		Renderer();
 		~Renderer();
 		
-		void OnMessage(smp::TerminateMessage const & message);
-		void OnMessage(AddObjectMessage const & message);
-		void OnMessage(RemoveObjectMessage const & message);
-		template <typename OBJECT> void OnMessage(UpdateObjectMessage<OBJECT> const & message)
+		// message interface
+		void OnQuit();
+		void OnAddObject(Object * const & object);
+		void OnRemoveObject(Object * const & object);
+		template <typename OBJECT> 
+		void OnUpdateObject(OBJECT * const & object, typename OBJECT::UpdateParams const & params)
 		{
-			message._object.Update(message._params);
+			object->Update(params);
 		}
-		void OnMessage(RenderReadyMessage const & message);
-		void OnMessage(ResizeMessage const & message);
-		void OnMessage(ToggleCullingMessage const & message);
-		void OnMessage(ToggleLightingMessage const & message);
-		void OnMessage(ToggleWireframeMessage const & message);
-		void OnMessage(ToggleCaptureMessage const & message);
-		void OnMessage(sim::SetCameraMessage const & message);
+		void OnSetReady(bool const & ready);
+		void OnResize(Vector2i const & size);
+		void OnToggleCulling();
+		void OnToggleLighting();
+		void OnToggleWireframe();
+		void OnToggleCapture();
+		void OnSetCamera(Transformation<double> const & transformation);
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -135,7 +127,7 @@ namespace gfx
 		sys::TimeType last_frame_time;
 		
 		bool quit_flag;
-		bool ready;
+		bool _ready;
 		bool vsync;
 		bool culling;
 		bool lighting;

@@ -53,8 +53,7 @@ Ball::Ball()
 
 Ball::~Ball()
 {
-	gfx::RemoveObjectMessage message = { ref(_model) };
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -62,11 +61,8 @@ void Ball::Create(Ball & ball, PyObject & args)
 	// construct ball
 	new (& ball) Ball;
 	
-	// create message
-	AddEntityMessage message = { ball, args };
-	
 	// send
-	Simulation::Daemon::SendMessage(message);
+	Daemon::Call<Entity *>(& ball, & args, & Simulation::OnAddEntity);
 }
 
 bool Ball::Init(Simulation & simulation, PyObject & args)
@@ -89,11 +85,8 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	body->SetAngularDamping(ball_angular_damping);
 	SetBody(body);
 	
-	{
-		_model = new gfx::Ball(radius);
-		gfx::AddObjectMessage message = { ref(_model) };
-		gfx::Renderer::Daemon::SendMessage(message);
-	}
+	_model = new gfx::Ball(radius);
+	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -108,16 +101,17 @@ void Ball::Tick(Simulation & simulation)
 
 void Ball::UpdateModels() const
 {
-	gfx::UpdateObjectMessage<gfx::Ball> message(ref(_model));
-
 	physics::SphericalBody const * body = static_cast<physics::SphericalBody const *>(GetBody());
 	if (body == nullptr)
 	{
 		return;
 	}
 
-	message._params._position = body->GetPosition();
-	message._params._rotation = body->GetRotation();
+	gfx::Ball::UpdateParams params = 
+	{
+		body->GetPosition(),
+		body->GetRotation()
+	};
 	
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Ball>);
 }

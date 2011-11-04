@@ -85,51 +85,45 @@ namespace
 				{
 					case SDL_SCANCODE_RETURN:
 					{
-						sim::TogglePauseMessage message;
-						sim::Simulation::Daemon::SendMessage(message);
+						sim::Daemon::Call(& sim::Simulation::OnTogglePause);
 						return true;
 					}
 					
 					case SDL_SCANCODE_B:
 					{
-						gfx::ToggleCullingMessage message;
-						gfx::Renderer::Daemon::SendMessage(message);
+						gfx::Daemon::Call(& gfx::Renderer::OnToggleCulling);
 						return true;
 					}
 					
 					case SDL_SCANCODE_F:
-						form::FormationManager::Daemon::Ref().ToggleFlatShaded();
+						form::Daemon::Ref().ToggleFlatShaded();
 						return true;
 						
 					case SDL_SCANCODE_G:
 					{
-						sim::ToggleGravityMessage message;
-						sim::Simulation::Daemon::SendMessage(message);
+						sim::Daemon::Call(& sim::Simulation::OnToggleGravity);
 						return true;
 					}
 						
 					case SDL_SCANCODE_I:
-						form::FormationManager::Daemon::Ref().ToggleSuspended();
+						form::Daemon::Ref().ToggleSuspended();
 						return true;
 						
 					case SDL_SCANCODE_L:
 					{
-						gfx::ToggleLightingMessage message;
-						gfx::Renderer::Daemon::SendMessage(message);
+						gfx::Daemon::Call(& gfx::Renderer::OnToggleLighting);
 						return true;
 					}
 						
 					case SDL_SCANCODE_O:
 					{
-						gfx::ToggleCaptureMessage message;
-						gfx::Renderer::Daemon::SendMessage(message);
+						gfx::Daemon::Call(& gfx::Renderer::OnToggleCapture);
 						return true;
 					}
 						
 					case SDL_SCANCODE_P:
 					{
-						gfx::ToggleWireframeMessage message;
-						gfx::Renderer::Daemon::SendMessage(message);
+						gfx::Daemon::Call(& gfx::Renderer::OnToggleWireframe);
 						return true;
 					}
 						
@@ -146,13 +140,12 @@ namespace
 				{
 					case SDL_SCANCODE_C:
 					{
-						sim::ToggleCollisionMessage message;
-						sim::Simulation::Daemon::SendMessage(message);
+						sim::Daemon::Call(& sim::Simulation::OnToggleCollision);
 						return true;
 					}
 					
 					case SDL_SCANCODE_I:
-						form::FormationManager::Daemon::Ref().ToggleMeshGeneration();
+						form::Daemon::Ref().ToggleMeshGeneration();
 						return true;
 						
 					default:
@@ -167,7 +160,7 @@ namespace
 				switch (keysym.scancode)
 				{
 					case SDL_SCANCODE_I:
-						form::FormationManager::Daemon::Ref().ToggleDynamicOrigin();
+						form::Daemon::Ref().ToggleDynamicOrigin();
 						return true;
 						
 					default:
@@ -185,27 +178,27 @@ namespace
 	
 	bool HandleEvent()
 	{
-		script::EventMessage event_message;
+		sys::Event event;
 		
 		// If no events are pending,
-		if (! sys::GetEvent(event_message.event, false))
+		if (! sys::GetEvent(event, false))
 		{
 			// then nothing's happening event-wise.
 			return false;
 		}
 		
-		switch (event_message.event.type)
+		switch (event.type)
 		{
 			case SDL_WINDOWEVENT:
 			{
-				SDL_WindowEvent const & window_event = event_message.event.window;
+				SDL_WindowEvent const & window_event = event.window;
 				switch (window_event.event)
 				{
 					case SDL_WINDOWEVENT_RESIZED:
 					{
 						// TODO: Check it's the right window?
-						gfx::ResizeMessage message = { Vector2i(window_event.data1, window_event.data2) };
-						gfx::Renderer::Daemon::SendMessage(message);
+						Vector2i size(window_event.data1, window_event.data2);
+						gfx::Daemon::Call(size, & gfx::Renderer::OnResize);
 						return true;
 					}
 					
@@ -213,8 +206,7 @@ namespace
 					{
 						// Most window events represent some sort of disruption to the window
 						// so reset the regulator.
-						form::RegulatorResetMessage message;
-						form::FormationManager::Daemon::SendMessage(message);			
+						form::Daemon::Call(& form::FormationManager::OnRegulatorReset);			
 						return true;
 					}
 				}
@@ -223,7 +215,7 @@ namespace
 				
 			case SDL_KEYDOWN:
 			{
-				if (OnKeyPress(event_message.event.key.keysym))
+				if (OnKeyPress(event.key.keysym))
 				{
 					return true;
 				}
@@ -237,7 +229,7 @@ namespace
 		}
 
 		// If not caught here, then send it to the script thread.
-		script::ScriptThread::Daemon::SendMessage(event_message);
+		script::Daemon::Call(event, & script::ScriptThread::OnEvent);
 		return true;
 	}
 
@@ -263,9 +255,9 @@ namespace
 		{
 			// TODO: Find a way to make these common; writing everything out four times is not good.
 			// Instanciate the four daemons
-			gfx::Renderer::Daemon renderer(0x8000);
-			form::FormationManager::Daemon formation_manager(0x8000);
-			sim::Simulation::Daemon simulation(0x400);
+			gfx::Daemon renderer(0x8000);
+			form::Daemon formation_manager(0x8000);
+			sim::Daemon simulation(0x400);
 			script::ScriptThread::Daemon script_daemon(0x400);
 			
 			// start thread the daemons

@@ -29,7 +29,7 @@ using namespace physics;
 
 
 IntersectionFunctor::IntersectionFunctor(dGeomID object_geom, dGeomID planet_geom)
-: _physics_engine(sim::Simulation::Daemon::Ref().GetPhysicsEngine())
+: _physics_engine(sim::Daemon::Ref().GetPhysicsEngine())
 {
 	ZeroObject(_contact);
 	

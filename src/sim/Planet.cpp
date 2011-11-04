@@ -46,19 +46,13 @@ sim::Planet::Planet()
 
 sim::Planet::~Planet()
 {
-	{
-		// unregister with renderer
-		gfx::RemoveObjectMessage message = { ref(_model) };
-		gfx::Renderer::Daemon::SendMessage(message);
-		_model = nullptr;
-	}
+	// unregister with renderer
+	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
+	_model = nullptr;
 	
-	{
-		// unregister with formation manager
-		form::RemoveFormationMessage message = { ref(_formation) };
-		form::FormationManager::Daemon::SendMessage(message);
-		_formation = nullptr;
-	}
+	// unregister with formation manager
+	form::Daemon::Call<form::Formation *>(_formation, & form::FormationManager::OnRemoveFormation);
+	_formation = nullptr;
 
 	delete _body;
 	_body = nullptr;
@@ -69,11 +63,8 @@ void sim::Planet::Create(Planet & planet, PyObject & args)
 	// construct planet
 	new (& planet) Planet;
 
-	// create message
-	AddEntityMessage message = { planet, args };
-	
-	// send
-	Simulation::Daemon::SendMessage(message);
+	// register with simulation
+	sim::Daemon::Call<Entity *>(& planet, & args, & sim::Simulation::OnAddEntity);
 }
 
 bool sim::Planet::Init(Simulation & simulation, PyObject & args)
@@ -121,16 +112,10 @@ bool sim::Planet::Init(Simulation & simulation, PyObject & args)
 	// messages
 	{
 		// register with formation manager
-		{
-			form::AddFormationMessage message = { ref(_formation) };
-			form::FormationManager::Daemon::SendMessage(message);
-		}
+		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
 		
 		// register with the renderer
-		{
-			gfx::AddObjectMessage message = { ref(_model) };
-			gfx::Renderer::Daemon::SendMessage(message);
-		}
+		gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
 	}
 	
 	return true;
@@ -174,11 +159,14 @@ void sim::Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) 
 
 void sim::Planet::UpdateModels() const
 {
-	gfx::UpdateObjectMessage<gfx::Planet> message(ref(_model));
-	message._params._position = GetPosition();
-	message._params._radius_min = _radius_min;
-	message._params._radius_max = _radius_max;
-	gfx::Renderer::Daemon::SendMessage(message);
+	gfx::Planet::UpdateParams params = 
+	{
+		GetPosition(),
+		_radius_min,
+		_radius_max
+	};
+	
+	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
 }
 
 void sim::Planet::SampleRadius(Scalar r)

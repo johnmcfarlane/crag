@@ -34,36 +34,34 @@ namespace gfx
 namespace sim
 {
 	
+	// forward declarations
+	class Entity;
 	class Simulation;
 	class Universe;
 	
-	struct AddEntityMessage;
-	struct RemoveEntityMessage;
-	struct TogglePauseMessage { };
-	struct ToggleCaptureMessage { };
-	struct ToggleGravityMessage { };
-	struct ToggleCollisionMessage { };
+
+	// daemon type
+	typedef smp::Daemon<Simulation> Daemon;
 	
 	
+	// Simulation - main object of simulation thread
 	class Simulation
 	{
 		OBJECT_SINGLETON(Simulation);
 
 	public:
-		typedef smp::Daemon<Simulation> Daemon;
-
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
 
 		Simulation();
 		~Simulation();
 		
-		void OnMessage(smp::TerminateMessage const & message);
-		void OnMessage(AddEntityMessage const & message);
-		void OnMessage(RemoveEntityMessage const & message);
-		void OnMessage(TogglePauseMessage const & message);
-		void OnMessage(ToggleGravityMessage const & message);
-		void OnMessage(ToggleCollisionMessage const & message);
-		void OnMessage(gfx::RendererReadyMessage const & message);
+		// message interface
+		void OnQuit();
+		void OnAddEntity(Entity * const & entity, PyObject * const & args);
+		void OnRemoveEntity(Entity * const & entity);
+		void OnTogglePause();
+		void OnToggleGravity();
+		void OnToggleCollision();
 		
 	private:
 		void Init();

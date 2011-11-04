@@ -72,17 +72,4 @@ namespace sim
 		Body * _body;
 	};
 	
-	
-	// Entity-related messages
-	struct AddEntityMessage
-	{
-		Entity & entity;
-		PyObject & args;
-	};
-	
-	struct RemoveEntityMessage
-	{
-		Entity & entity;
-	};
-	
 }
