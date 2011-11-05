@@ -29,8 +29,6 @@ def main_loop():
 	# Create planets
 	planet_radius = 10000000
 	planet = crag.Planet(0, 0, 0, planet_radius, 3634, 0)
-	crag.sleep(.1)
-
 	moon1 = crag.Planet(planet_radius * 1.5, planet_radius * 2.5, planet_radius * 1., 1500000, 10, 250)
 	moon2 = crag.Planet(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1., 2500000, 13, 0)
 	
@@ -71,5 +69,4 @@ def main_loop():
 main_loop()
 
 # Give entities a chance to be destroyed.
-crag.sleep(0)
 print('end main script function')
