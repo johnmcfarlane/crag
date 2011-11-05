@@ -91,7 +91,7 @@ namespace form
 		void OnSetMesh(Mesh * const & mesh);
 		void OnSetCamera(sim::Transformation const & transformation);
 		
-		void OnRegulatorReset();
+		void OnRegulatorSetEnabled(bool const & enabled);
 		void OnRegulatorSetNumQuaterna(int const & num_quaterne);
 		void OnRegulatorSetFrame(float const & fitness);
 		

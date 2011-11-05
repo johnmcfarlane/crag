@@ -77,6 +77,8 @@ namespace
 	// returns false iff the program should quit.
 	bool OnKeyPress(SDL_Keysym keysym)
 	{
+		keysym.mod &= ~ (KMOD_LGUI | KMOD_RGUI);
+
 		switch (keysym.mod) 
 		{
 			case KMOD_NONE:
@@ -114,19 +116,13 @@ namespace
 						gfx::Daemon::Call(& gfx::Renderer::OnToggleLighting);
 						return true;
 					}
-						
-					case SDL_SCANCODE_O:
-					{
-						gfx::Daemon::Call(& gfx::Renderer::OnToggleCapture);
-						return true;
-					}
-						
+					
 					case SDL_SCANCODE_P:
 					{
 						gfx::Daemon::Call(& gfx::Renderer::OnToggleWireframe);
 						return true;
 					}
-						
+					
 					default:
 						break;
 				}
@@ -163,6 +159,12 @@ namespace
 						form::Daemon::Ref().ToggleDynamicOrigin();
 						return true;
 						
+					case SDL_SCANCODE_O:
+					{
+						gfx::Daemon::Call(& gfx::Renderer::OnToggleCapture);
+						return true;
+					}
+					
 					default:
 						break;
 				}
@@ -202,11 +204,23 @@ namespace
 						return true;
 					}
 					
-					default:
+					case SDL_WINDOWEVENT_SHOWN:
+					case SDL_WINDOWEVENT_EXPOSED:
+					case SDL_WINDOWEVENT_MAXIMIZED:
+					case SDL_WINDOWEVENT_RESTORED:
+					case SDL_WINDOWEVENT_ENTER:
+					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
-						// Most window events represent some sort of disruption to the window
-						// so reset the regulator.
-						form::Daemon::Call(& form::FormationManager::OnRegulatorReset);			
+						form::Daemon::Call(true, & form::FormationManager::OnRegulatorSetEnabled);
+						return true;
+					}
+					
+					case SDL_WINDOWEVENT_HIDDEN:
+					case SDL_WINDOWEVENT_MINIMIZED:
+					case SDL_WINDOWEVENT_LEAVE:
+					case SDL_WINDOWEVENT_FOCUS_LOST:
+					{
+						form::Daemon::Call(false, & form::FormationManager::OnRegulatorSetEnabled);
 						return true;
 					}
 				}

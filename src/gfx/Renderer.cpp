@@ -150,8 +150,6 @@ void Renderer::OnSetReady(bool const & ready)
 void Renderer::OnResize(Vector2i const & size)
 {
 	scene->SetResolution(size);
-
-	form::Daemon::Call(& form::FormationManager::OnRegulatorReset);
 }
 
 

@@ -122,10 +122,10 @@ void form::FormationManager::OnSetCamera(sim::Transformation const & transformat
 	SetCamera(transformation);
 }
 
-void form::FormationManager::OnRegulatorReset()
+void form::FormationManager::OnRegulatorSetEnabled(bool const & enabled)
 {
 	// TODO: replace Reset with Start and Stop.
-	_regulator.Reset();
+	_regulator.SetEnabled(enabled);
 }
 
 void form::FormationManager::OnRegulatorSetNumQuaterna(int const & num_quaterne)

@@ -27,6 +27,7 @@ namespace form
 		Regulator();
 		
 		void Reset();
+		void SetEnabled(bool enabled);
 		
 		void SetNumQuaterna(int num_quaterne);
 		void SampleFrameFitness(float fitness);
@@ -41,7 +42,8 @@ namespace form
 		static float CalculateFrameRateReactionCoefficient(sys::TimeType sim_time);
 		
 		sys::TimeType reset_time;
-		
+
+		bool _enabled;
 		int _num_quaterne;
 		float frame_ratio_max;	// ~ (actual frame time / ideal frame time), i.e. greater is worse		
 		float mesh_generation_period;	// again, greater is worse

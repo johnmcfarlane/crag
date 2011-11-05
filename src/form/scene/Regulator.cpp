@@ -28,6 +28,7 @@ namespace
 
 
 form::Regulator::Regulator()
+: _enabled(true)
 {
 	Reset();
 }
@@ -40,6 +41,11 @@ void form::Regulator::Reset()
 	mesh_generation_period = 0;
 }
 
+void form::Regulator::SetEnabled(bool enabled)
+{
+	_enabled = enabled;
+}
+
 void form::Regulator::SetNumQuaterna(int num_quaterne)
 {
 	_num_quaterne = num_quaterne;
@@ -49,12 +55,22 @@ void form::Regulator::SetNumQuaterna(int num_quaterne)
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameFitness(float fitness)
 {
+	if (! _enabled)
+	{
+		return;
+	}
+
 	Assert(fitness >= 0);
 	frame_ratio_max = Max(frame_ratio_max, 1.f / fitness);
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::TimeType mgp)
 {
+	if (! _enabled)
+	{
+		return;
+	}
+
 	Assert(mgp >= 0);
 	mesh_generation_period = Max(static_cast<float>(mgp), mesh_generation_period);
 }
