@@ -11,6 +11,7 @@ import gc
 import math
 import random
 import stackless
+import traceback
 
 exec(open("script/observer.py").read())
 
@@ -19,11 +20,37 @@ print('begin main script function')
 gc.disable()
 stackless.run()
 
+
+observer_x = 0
+observer_y = 9999400
+observer_z = 0
+max_shapes = 50
+cleanup_shapes = True
+
+
+def spawn_shape(shapes):
+	if len(shapes) >= max_shapes:
+		if cleanup_shapes:
+			shapes.pop(0)
+		else:
+			return
+	
+	x = random.random() - .5
+	y = observer_y
+	z = -4.5 + random.random()
+	r = random.choice(['ball','box'])
+	if r == 'ball':
+		r = math.exp(- random.random() * 2)
+		shapes.append(crag.Ball(x, y, z, r))
+	elif r == 'box':
+		w = math.exp(random.uniform(0, -2))
+		l = math.exp(random.uniform(0, -2))
+		h = math.exp(random.uniform(0, -2))
+		shapes.append(crag.Box(x, y, z, w, l, h))
+
+
 def main_loop():
 	# Set camera position
-	observer_x = 0
-	observer_y = 9999400
-	observer_z = 0
 	crag.set_camera(observer_x, observer_y, observer_z)
 
 	# Create planets
@@ -46,25 +73,20 @@ def main_loop():
 	drop_period = .5
 	next_drop = crag.time() + drop_period
 	shapes = []
+	
 	while stackless.runcount > 1:
-		now = crag.time()
-		if now > next_drop and len(shapes) < 100:
-			x = random.random() - .5
-			y = observer_y
-			z = -4.5 + random.random()
-			r = random.choice(['ball','box'])
-			if r == 'ball':
-				r = math.exp(- random.random() * 2)
-				shapes.append(crag.Ball(x, y, z, r))
-			elif r == 'box':
-				w = math.exp(random.uniform(0, -2))
-				l = math.exp(random.uniform(0, -2))
-				h = math.exp(random.uniform(0, -2))
-				shapes.append(crag.Box(x, y, z, w, l, h))
-			if len(shapes) > 50:
-				shapes.pop(0)
-			next_drop = now + drop_period
 		stackless.schedule()
+		try:
+			now = crag.time()
+			if now > next_drop:
+				spawn_shape(shapes)
+				next_drop = now + drop_period
+		except Exception as e: 
+			traceback.print_exc()
+			print('error in main loop:', str(e))
+			observer_tasklet.kill()
+			break
+
 
 main_loop()
 
