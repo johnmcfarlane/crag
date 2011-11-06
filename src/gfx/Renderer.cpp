@@ -31,7 +31,7 @@
 #include <sstream>
 
 
-using sys::TimeType;
+using sys::Time;
 using namespace gfx;
 
 
@@ -741,7 +741,7 @@ void Renderer::DebugDraw() const
 
 void Renderer::ProcessRenderTiming()
 {
-	TimeType pre_sync, post_sync;
+	Time pre_sync, post_sync;
 
 	if (vsync)
 	{
@@ -756,16 +756,16 @@ void Renderer::ProcessRenderTiming()
 		// There is no sync.
 		pre_sync = post_sync = sys::GetTime();
 	}
-	TimeType vsync_time = post_sync - pre_sync;
+	Time vsync_time = post_sync - pre_sync;
 	STAT_SET(vsync_time, vsync_time);
 
 	// Use it to figure out just how much work was done.
-	TimeType frame_time = post_sync;
-	TimeType frame_duration = frame_time - last_frame_time;
+	Time frame_time = post_sync;
+	Time frame_duration = frame_time - last_frame_time;
 	last_frame_time = frame_time;
 	STAT_SET(frame_duration, frame_duration);
 
-	TimeType busy_time = frame_duration - vsync_time;
+	Time busy_time = frame_duration - vsync_time;
 	
 #if ! defined(NDEBUG)
 	// update fps
@@ -775,7 +775,7 @@ void Renderer::ProcessRenderTiming()
 #endif
 	
 	// Regulator feedback.
-	TimeType target_frame_duration = sim::Simulation::target_frame_seconds * 2;
+	Time target_frame_duration = sim::Simulation::target_frame_seconds * 2;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;

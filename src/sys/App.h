@@ -61,7 +61,7 @@ namespace sys
 	// types
 	typedef SDL_Event Event;
 	typedef SDL_Scancode KeyCode;
-	typedef double TimeType;	// 1 unit = 1 second
+	typedef double Time;	// 1 unit = 1 second
 	
 	enum MouseButton
 	{
@@ -93,5 +93,5 @@ namespace sys
 	bool HasFocus();
 	
 	// time
-	TimeType GetTime();
+	Time GetTime();
 }

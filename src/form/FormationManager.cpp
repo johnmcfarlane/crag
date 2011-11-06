@@ -294,8 +294,8 @@ void form::FormationManager::GenerateMesh()
 	gfx::Daemon::Call(& _model, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
 	
 	// record timing information
-	sys::TimeType t = sys::GetTime();
-	sys::TimeType last_mesh_generation_period = t - mesh_generation_time;
+	sys::Time t = sys::GetTime();
+	sys::Time last_mesh_generation_period = t - mesh_generation_time;
 	_regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
 	

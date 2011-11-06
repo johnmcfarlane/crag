@@ -44,7 +44,7 @@ namespace profile
 		operator Scalar () const;
 		
 	private:
-		sys::TimeType start_time;
+		sys::Time start_time;
 	};
 	
 }

@@ -36,7 +36,7 @@ namespace
 	SDL_GLContext context = nullptr;
 		
 #if defined(WIN32)
-	sys::TimeType inv_query_performance_frequency = 0;
+	sys::Time inv_query_performance_frequency = 0;
 #endif
 	
 	char const * _program_path;
@@ -325,7 +325,7 @@ bool sys::HasFocus()
 	return _has_focus;
 }
 
-sys::TimeType sys::GetTime()
+sys::Time sys::GetTime()
 {
 #if defined(__APPLE__)
 	return CFAbsoluteTimeGetCurrent ();

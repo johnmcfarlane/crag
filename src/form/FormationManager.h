@@ -147,7 +147,7 @@ namespace form
 		
 		Mesh::list_type _meshes;
 		
-		sys::TimeType mesh_generation_time;
+		sys::Time mesh_generation_time;
 		
 		Regulator _regulator;
 		sim::Ray3 _camera_pos;

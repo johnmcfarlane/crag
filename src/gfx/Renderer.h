@@ -124,7 +124,7 @@ namespace gfx
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
 		
-		sys::TimeType last_frame_time;
+		sys::Time last_frame_time;
 		
 		bool quit_flag;
 		bool _ready;
@@ -150,7 +150,7 @@ namespace gfx
 #if ! defined(NDEBUG)
 		// fps counter
 		static int const _fps_history_size = 60;
-		sys::TimeType _fps_history[_fps_history_size];
+		sys::Time _fps_history[_fps_history_size];
 #endif
 		
 		gl::Fence _fence1, _fence2;

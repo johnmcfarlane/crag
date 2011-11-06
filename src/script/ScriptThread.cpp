@@ -46,7 +46,7 @@ PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 PyObject * sleep(PyObject * /*self*/, PyObject * args)
 {
 	// Get the time parameter.
-	sys::TimeType delay;
+	sys::Time delay;
 	if (! PyArg_ParseTuple(args, "d", & delay))
 	{
 		delay = 0;

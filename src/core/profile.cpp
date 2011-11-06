@@ -57,8 +57,8 @@ profile::Timer::Timer()
 
 profile::Timer::operator profile::Scalar () const
 {
-	sys::TimeType now = sys::GetTime();
-	sys::TimeType duration = now - start_time;
+	sys::Time now = sys::GetTime();
+	sys::Time duration = now - start_time;
 	return profile::Scalar(duration);
 }
 

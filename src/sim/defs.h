@@ -34,7 +34,7 @@ namespace sim
 	typedef double Scalar;
 #endif
 	
-	// mirrors sys::TimeType
+	// mirrors sys::Time
 	typedef double Time;
 	
 	typedef ::Vector<Scalar, 2> Vector2;
