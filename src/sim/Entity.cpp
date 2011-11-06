@@ -67,6 +67,7 @@ Entity::Entity()
 
 Entity::~Entity()
 {
+	Assert(Py_REFCNT(& ob_base) == 0);
 	delete _body;
 }
 
