@@ -50,7 +50,7 @@ namespace sim
 		OBJECT_SINGLETON(Simulation);
 
 	public:
-		CONFIG_DECLARE_MEMBER (target_frame_seconds, sys::TimeType);
+		CONFIG_DECLARE_MEMBER (target_frame_seconds, Time);
 
 		Simulation();
 		~Simulation();
@@ -67,7 +67,7 @@ namespace sim
 		void Init();
 		
 	public:
-		sys::TimeType GetTime() const;
+		Time GetTime() const;
 		
 		Universe & GetUniverse();
 
@@ -82,6 +82,8 @@ namespace sim
 		bool quit_flag;
 		bool paused;
 		
+		Time _time;
+
 		Universe * universe;
 		physics::Engine * physics_engine;
 	};

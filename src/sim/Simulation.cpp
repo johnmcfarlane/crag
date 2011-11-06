@@ -31,17 +31,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Simulation
 
-CONFIG_DEFINE_MEMBER (sim::Simulation, target_frame_seconds, double, 1.f / 60.f);
 
-sim::Simulation::Simulation()
+using namespace sim;
+
+
+CONFIG_DEFINE_MEMBER (Simulation, target_frame_seconds, Time, 1.f / 60.f);
+
+Simulation::Simulation()
 : quit_flag(false)
 , paused(false)
+, _time(0)
 , universe(new Universe)
 , physics_engine(new physics::Engine)
 {
 }
 
-sim::Simulation::~Simulation()
+Simulation::~Simulation()
 {
 	delete universe;
 	universe = nullptr;
@@ -50,12 +55,12 @@ sim::Simulation::~Simulation()
 	physics_engine = nullptr;
 }
 
-void sim::Simulation::OnQuit()
+void Simulation::OnQuit()
 {
 	quit_flag = true;
 }
 
-void sim::Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
+void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 {
 	bool initialized = entity->Init(* this, * args);
 
@@ -74,7 +79,7 @@ void sim::Simulation::OnAddEntity(Entity * const & entity, PyObject * const & ar
 	entity->UpdateModels();
 }
 
-void sim::Simulation::OnRemoveEntity(Entity * const & entity)
+void Simulation::OnRemoveEntity(Entity * const & entity)
 {
 	universe->RemoveEntity(* entity);
 	
@@ -83,37 +88,37 @@ void sim::Simulation::OnRemoveEntity(Entity * const & entity)
 	Free(entity);
 }
 
-void sim::Simulation::OnTogglePause()
+void Simulation::OnTogglePause()
 {
 	paused = ! paused;
 }
 
-void sim::Simulation::OnToggleGravity()
+void Simulation::OnToggleGravity()
 {
 	universe->ToggleGravity();
 }
 
-void sim::Simulation::OnToggleCollision()
+void Simulation::OnToggleCollision()
 {
 	physics_engine->ToggleCollisions();
 }
 
-sys::TimeType sim::Simulation::GetTime() const
+Time Simulation::GetTime() const
 {
-	return universe->GetTime();
+	return _time;
 }
 
-sim::Universe & sim::Simulation::GetUniverse() 
+Universe & Simulation::GetUniverse() 
 {
 	return ref(universe);
 }
 
-physics::Engine & sim::Simulation::GetPhysicsEngine()
+physics::Engine & Simulation::GetPhysicsEngine()
 {
 	return ref(physics_engine);
 }
 
-void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
+void Simulation::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
@@ -155,13 +160,15 @@ void sim::Simulation::Run(Daemon::MessageQueue & message_queue)
 	gfx::Daemon::Call<gfx::Object *>(skybox, & gfx::Renderer::OnRemoveObject);
 }
 
-void sim::Simulation::Tick()
+void Simulation::Tick()
 {
 	// Tick the entities.
 	if (! paused) 
 	{
+		_time += target_frame_seconds;
+		
 		// Perform the Entity-specific simulation.
-		universe->Tick(* this, target_frame_seconds);
+		universe->Tick(* this);
 
 		// Run physics/collisions.
 		physics_engine->Tick(target_frame_seconds);
@@ -173,7 +180,7 @@ void sim::Simulation::Tick()
 	}
 }
 
-void sim::Simulation::UpdateRenderer() const
+void Simulation::UpdateRenderer() const
 {
 	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	

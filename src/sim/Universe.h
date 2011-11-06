@@ -14,8 +14,6 @@
 
 #include "smp/Uid.h"
 
-#include "sys/App.h"
-
 #include "core/ConfigEntry.h"
 #include "core/Singleton.h"
 
@@ -44,8 +42,6 @@ namespace sim
 		Universe();
 		~Universe();
 
-		sys::TimeType GetTime() const;
-		
 		void ToggleGravity();
 
 		void AddEntity(Entity & entity);
@@ -53,7 +49,7 @@ namespace sim
 		
 		Entity * GetEntity(smp::Uid uid);
 
-		void Tick(Simulation & simulation, sys::TimeType target_frame_seconds);
+		void Tick(Simulation & simulation);
 		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
 		void ApplyGravity(physics::Body & body) const;
 		void ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const;
@@ -62,8 +58,6 @@ namespace sim
 
 		void UpdateModels() const;
 	private:
-		// attributes
-		sys::TimeType time;
 		
 		typedef std::vector<Entity *> EntityVector;
 		EntityVector entities;

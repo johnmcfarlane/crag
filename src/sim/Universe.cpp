@@ -28,18 +28,13 @@ CONFIG_DEFINE_MEMBER (Universe, apply_gravity, bool, true);
 
 
 Universe::Universe()
-: time(0)
 {
 }
 
 Universe::~Universe()
 {
+	// it's likely that the script failed really badly and didn't clean up
 	Assert(entities.empty());
-}
-
-sys::TimeType Universe::GetTime() const
-{
-	return time;
 }
 
 void Universe::ToggleGravity()
@@ -77,10 +72,8 @@ Entity * Universe::GetEntity(smp::Uid uid)
 }
 
 // Perform a step in the simulation. 
-void Universe::Tick(Simulation & simulation, sys::TimeType target_frame_seconds)
+void Universe::Tick(Simulation & simulation)
 {
-	time += target_frame_seconds;
-	
 	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
 		Entity & e = * * it;

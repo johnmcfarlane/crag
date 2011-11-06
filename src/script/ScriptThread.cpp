@@ -39,7 +39,7 @@ PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
 	sim::Simulation & simulation = sim::Daemon::Ref();
 	
-	sys::TimeType time = simulation.GetTime();
+	sim::Time time = simulation.GetTime();
 	return Py_BuildValue("d", time);
 }
 
