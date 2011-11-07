@@ -11,7 +11,7 @@
 #include "pch.h"
 
 #include "Engine.h"
-#include "SphericalBody.h"
+#include "Body.h"
 
 #include "form/FormationManager.h"
 

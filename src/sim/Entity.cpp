@@ -85,7 +85,7 @@ void Entity::Create(Entity & entity, PyObject & args)
 void Entity::Destroy(Entity & entity)
 {
 	// set message
-	sim::Daemon::Call<Entity *>(& entity, & Simulation::OnRemoveEntity);
+	sim::Daemon::Call(entity.GetUid(), & Simulation::OnRemoveEntity);
 }
 
 void Entity::Tick(Simulation & simulation)

@@ -79,8 +79,15 @@ void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 	entity->UpdateModels();
 }
 
-void Simulation::OnRemoveEntity(Entity * const & entity)
+void Simulation::OnRemoveEntity(Uid const & uid)
 {
+	Entity * entity = _entity_set.GetEntity(uid);
+	if (entity == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
 	_entity_set.Remove(* entity);
 	
 	// TODO: This code is sensitive to object-lifetime issues. More reason for UIDs.
