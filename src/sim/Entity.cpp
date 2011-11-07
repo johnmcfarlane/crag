@@ -71,7 +71,7 @@ Entity::~Entity()
 	delete _body;
 }
 
-Entity::Uid Entity::GetUid() const
+Uid Entity::GetUid() const
 {
 	return _uid;
 }

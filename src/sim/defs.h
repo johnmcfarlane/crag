@@ -23,6 +23,12 @@
 #include "geom/Transformation.h"
 
 
+namespace smp
+{
+	class Uid;
+}
+
+
 namespace sim
 {
 	// dSINGLE and dDOUBLE are mutually excludive macros required by ODE.
@@ -45,4 +51,6 @@ namespace sim
 	typedef ::Matrix<Scalar, 3, 3> Matrix33;
 	typedef ::Matrix<Scalar, 4, 4> Matrix44;
 	typedef ::Transformation<Scalar> Transformation;
+	
+	typedef smp::Uid Uid;
 }

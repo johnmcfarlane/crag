@@ -37,7 +37,7 @@ namespace
 	class SetRadiusFunctor : public smp::Message<sim::Simulation>
 	{
 	public:
-		SetRadiusFunctor(sim::Entity::Uid uid, sim::Scalar radius_min, sim::Scalar radius_max)
+		SetRadiusFunctor(sim::Uid uid, sim::Scalar radius_min, sim::Scalar radius_max)
 		: _uid(uid)
 		, _radius_min(radius_min)
 		, _radius_max(radius_max)
@@ -60,7 +60,7 @@ namespace
 			planet.SetRadiusMinMax(_radius_min, _radius_max);
 		}
 		
-		sim::Entity::Uid _uid;
+		sim::Uid _uid;
 		sim::Scalar _radius_min;
 		sim::Scalar _radius_max;
 	};

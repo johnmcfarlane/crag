@@ -45,7 +45,6 @@ namespace sim
 		typedef List::const_iterator const_iterator;
 		typedef List::iterator iterator;
 
-		typedef smp::Uid Uid;
 		typedef physics::Body Body;
 
 		////////////////////////////////////////////////////////////////////////////////
