@@ -12,7 +12,6 @@
 #include "Ball.h"
 
 #include "Simulation.h"
-#include "Universe.h"
 
 #include "physics/SphericalBody.h"
 
@@ -89,14 +88,6 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
 	
 	return true;
-}
-
-void Ball::Tick(Simulation & simulation)
-{
-	// Gravity
-	Universe const & universe = simulation.GetUniverse();
-	Body * body = GetBody();
-	universe.ApplyGravity(* body);
 }
 
 void Ball::UpdateModels() const

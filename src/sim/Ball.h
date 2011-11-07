@@ -34,7 +34,6 @@ namespace sim
 		// Called from the simulation thread.
 		bool Init(Simulation & simulation, PyObject & args);
 		
-		void Tick(Simulation & simulation);
 		void UpdateModels() const;
 	private:
 		

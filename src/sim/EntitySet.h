@@ -1,5 +1,5 @@
 /*
- *  Universe.h
+ *  EntitySet.h
  *  Crag
  *
  *  Created by john on 4/14/09.
@@ -32,34 +32,26 @@ namespace sim
 	
 	
 	// Currently deals with simulation time, entity managment and physics ticking.
-	class Universe
+	class EntitySet
 	{
 	public:
-		CONFIG_DECLARE_MEMBER (gravitational_force, float);
-		CONFIG_DECLARE_MEMBER (apply_gravity, bool);
-
 		// methods
-		Universe();
-		~Universe();
+		~EntitySet();
 
-		void ToggleGravity();
-
-		void AddEntity(Entity & entity);
-		void RemoveEntity(Entity & entity);
+		void Add(Entity & entity);
+		void Remove(Entity & entity);
 		
+		// given a UID, return the corresponding entity
 		Entity * GetEntity(smp::Uid uid);
-
-		void Tick(Simulation & simulation);
-		Vector3 Weight(Vector3 const & pos, Scalar mass) const;
-		void ApplyGravity(physics::Body & body) const;
-		void ApplyGravity(physics::Body & body, Vector3 const & center_of_mass) const;
+		
+		// return all entities
+		EntityVector & GetEntities();
+		EntityVector const & GetEntities() const;
 
 		void Purge();
 
-		void UpdateModels() const;
 	private:
-		
-		typedef std::vector<Entity *> EntityVector;
+		// variables
 		EntityVector entities;
 	};
 }

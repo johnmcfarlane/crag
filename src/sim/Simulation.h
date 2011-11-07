@@ -37,7 +37,7 @@ namespace sim
 	// forward declarations
 	class Entity;
 	class Simulation;
-	class Universe;
+	class EntitySet;
 	
 
 	// daemon type
@@ -51,6 +51,7 @@ namespace sim
 
 	public:
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, Time);
+		CONFIG_DECLARE_MEMBER (apply_gravity, bool);
 
 		Simulation();
 		~Simulation();
@@ -69,7 +70,7 @@ namespace sim
 	public:
 		Time GetTime() const;
 		
-		Universe & GetUniverse();
+		EntitySet & GetEntities();
 
 		physics::Engine & GetPhysicsEngine();		
 		
@@ -78,14 +79,17 @@ namespace sim
 		void Tick();
 		void UpdateRenderer() const;
 		
+		void TickEntities();
+		void UpdateModels() const;
+		
 		// Attributes
 		bool quit_flag;
 		bool paused;
 		
 		Time _time;
 
-		Universe * universe;
-		physics::Engine * physics_engine;
+		EntitySet & _entity_set;
+		physics::Engine & _physics_engine;
 	};
 	
 }

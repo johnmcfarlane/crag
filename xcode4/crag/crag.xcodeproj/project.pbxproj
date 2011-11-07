@@ -76,7 +76,7 @@
 		528164A91454F5DC0017E868 /* PlanetShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281644B1454F5DB0017E868 /* PlanetShader.cpp */; };
 		528164AA1454F5DC0017E868 /* Simulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281644D1454F5DB0017E868 /* Simulation.cpp */; };
 		528164AB1454F5DC0017E868 /* Star.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281644F1454F5DB0017E868 /* Star.cpp */; };
-		528164AC1454F5DC0017E868 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164511454F5DB0017E868 /* Universe.cpp */; };
+		528164AC1454F5DC0017E868 /* EntitySet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164511454F5DB0017E868 /* EntitySet.cpp */; };
 		528164AD1454F5DC0017E868 /* UserInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164531454F5DB0017E868 /* UserInput.cpp */; };
 		528164AE1454F5DC0017E868 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281645C1454F5DB0017E868 /* Mutex.cpp */; };
 		528164AF1454F5DC0017E868 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281645E1454F5DB0017E868 /* scheduler.cpp */; };
@@ -87,6 +87,7 @@
 		528164B41454F5DC0017E868 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646B1454F5DB0017E868 /* App.cpp */; };
 		528164B51454F5DC0017E868 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646D1454F5DB0017E868 /* memory.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
+		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
@@ -228,7 +229,7 @@
 		528163FB1454F5DB0017E868 /* Box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Box.cpp; sourceTree = "<group>"; };
 		528163FC1454F5DB0017E868 /* Box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box.h; sourceTree = "<group>"; };
 		528163FD1454F5DB0017E868 /* FormationMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationMesh.cpp; sourceTree = "<group>"; };
-		528163FE1454F5DB0017E868 /* FormationMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; path = FormationMesh.h; sourceTree = "<group>"; };
+		528163FE1454F5DB0017E868 /* FormationMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationMesh.h; sourceTree = "<group>"; };
 		528163FF1454F5DB0017E868 /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		528164001454F5DB0017E868 /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		528164011454F5DB0017E868 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
@@ -306,8 +307,8 @@
 		5281644E1454F5DB0017E868 /* Simulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Simulation.h; sourceTree = "<group>"; };
 		5281644F1454F5DB0017E868 /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Star.cpp; sourceTree = "<group>"; };
 		528164501454F5DB0017E868 /* Star.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Star.h; sourceTree = "<group>"; };
-		528164511454F5DB0017E868 /* Universe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Universe.cpp; sourceTree = "<group>"; };
-		528164521454F5DB0017E868 /* Universe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Universe.h; sourceTree = "<group>"; };
+		528164511454F5DB0017E868 /* EntitySet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntitySet.cpp; sourceTree = "<group>"; };
+		528164521454F5DB0017E868 /* EntitySet.h */ = {isa = PBXFileReference; fileEncoding = 4; path = EntitySet.h; sourceTree = "<group>"; };
 		528164531454F5DB0017E868 /* UserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserInput.cpp; sourceTree = "<group>"; };
 		528164541454F5DB0017E868 /* UserInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInput.h; sourceTree = "<group>"; };
 		528164561454F5DB0017E868 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
@@ -336,6 +337,8 @@
 		5281646E1454F5DB0017E868 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		528ACFF814674B40004167BF /* gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gravity.cpp; sourceTree = "<group>"; };
+		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52ACC2B0145AFB230060DE93 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		52ACC2B1145AFB230060DE93 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
@@ -818,10 +821,12 @@
 				5281644E1454F5DB0017E868 /* Simulation.h */,
 				5281644F1454F5DB0017E868 /* Star.cpp */,
 				528164501454F5DB0017E868 /* Star.h */,
-				528164511454F5DB0017E868 /* Universe.cpp */,
-				528164521454F5DB0017E868 /* Universe.h */,
+				528164511454F5DB0017E868 /* EntitySet.cpp */,
+				528164521454F5DB0017E868 /* EntitySet.h */,
 				528164531454F5DB0017E868 /* UserInput.cpp */,
 				528164541454F5DB0017E868 /* UserInput.h */,
+				528ACFF814674B40004167BF /* gravity.cpp */,
+				528ACFF914674B41004167BF /* gravity.h */,
 			);
 			path = sim;
 			sourceTree = "<group>";
@@ -1026,7 +1031,7 @@
 				528164A91454F5DC0017E868 /* PlanetShader.cpp in Sources */,
 				528164AA1454F5DC0017E868 /* Simulation.cpp in Sources */,
 				528164AB1454F5DC0017E868 /* Star.cpp in Sources */,
-				528164AC1454F5DC0017E868 /* Universe.cpp in Sources */,
+				528164AC1454F5DC0017E868 /* EntitySet.cpp in Sources */,
 				528164AD1454F5DC0017E868 /* UserInput.cpp in Sources */,
 				528164AE1454F5DC0017E868 /* Mutex.cpp in Sources */,
 				528164AF1454F5DC0017E868 /* scheduler.cpp in Sources */,
@@ -1038,6 +1043,7 @@
 				528164B51454F5DC0017E868 /* memory.cpp in Sources */,
 				528164B91454F6200017E868 /* SDLMain.m in Sources */,
 				52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */,
+				528ACFFA14674B42004167BF /* gravity.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

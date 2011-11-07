@@ -13,7 +13,6 @@
 #include "Star.h"
 
 #include "Simulation.h"
-#include "Universe.h"
 
 #include "gfx/object/Light.h"
 #include "gfx/Renderer.h"

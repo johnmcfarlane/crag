@@ -17,7 +17,7 @@
 
 #include "sim/Planet.h"
 #include "sim/Simulation.h"
-#include "sim/Universe.h"
+#include "sim/EntitySet.h"
 
 #include "smp/Message.h"
 
@@ -47,9 +47,9 @@ namespace
 	private:
 		void operator() (sim::Simulation & simulation) const
 		{
-			sim::Universe & universe = simulation.GetUniverse();
+			sim::EntitySet & entity_set = simulation.GetEntities();
 			
-			sim::Entity * entity = universe.GetEntity(_uid);
+			sim::Entity * entity = entity_set.GetEntity(_uid);
 			if (entity == nullptr)
 			{
 				// presumably already destroyed

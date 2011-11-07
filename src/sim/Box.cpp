@@ -12,7 +12,6 @@
 #include "Box.h"
 
 #include "Simulation.h"
-#include "Universe.h"
 
 #include "physics/BoxBody.h"
 
@@ -91,20 +90,6 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
 	
 	return true;
-}
-
-void Box::Tick(Simulation & simulation)
-{
-	Body * body = GetBody();
-	if (body == nullptr)
-	{
-		return;
-	}
-
-	// Gravity
-	// TODO: Body is now a 'component' this can doesn't have to happen here.
-	Universe const & universe = simulation.GetUniverse();
-	universe.ApplyGravity(* body);
 }
 
 void Box::UpdateModels() const

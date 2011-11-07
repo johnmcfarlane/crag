@@ -12,7 +12,6 @@
 
 #include "Observer.h"
 #include "Simulation.h"
-#include "Universe.h"
 
 #include "physics/SphericalBody.h"
 
@@ -33,16 +32,12 @@
 using namespace sim;
 
 
-CONFIG_DECLARE (profile_mode, bool);
-
-
 namespace 
 {
 	CONFIG_DEFINE (observer_radius, double, .5);
 	CONFIG_DEFINE (observer_density, double, 1);
 	
 	CONFIG_DEFINE (observer_speed_factor, double, 631);
-	CONFIG_DEFINE (observer_gravity_center, Vector3, Vector3(0., 0., -.1));
 
 	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
 	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);
@@ -196,22 +191,6 @@ void Observer::Tick(Simulation & simulation)
 	}
 	
 	ApplyImpulse();
-
-	// Gravity
-	if (! profile_mode)
-	{
-		physics::SphericalBody * body = static_cast<physics::SphericalBody *>(GetBody());
-		Vector3 const & position = body->GetPosition();
-		Scalar mass = body->GetMass();
-		
-		Universe & universe = simulation.GetUniverse();
-		
-		Vector3 gravitational_force_per_second = universe.Weight(position, mass);
-		Vector3 gravitational_force = gravitational_force_per_second / Simulation::target_frame_seconds;
-
-		Vector3 scaled_observer_gravity_center = observer_gravity_center * body->GetRadius();
-		body->AddRelForceAtRelPos(gravitational_force, scaled_observer_gravity_center);
-	}
 }
 
 void Observer::UpdateModels() const

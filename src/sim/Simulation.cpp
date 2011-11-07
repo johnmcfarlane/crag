@@ -13,9 +13,10 @@
 #include "Simulation.h"
 
 #include "axes.h"
-#include "Firmament.h"
 #include "Entity.h"
-#include "Universe.h"
+#include "Firmament.h"
+#include "gravity.h"
+#include "EntitySet.h"
 
 #include "physics/Engine.h"
 
@@ -36,23 +37,22 @@ using namespace sim;
 
 
 CONFIG_DEFINE_MEMBER (Simulation, target_frame_seconds, Time, 1.f / 60.f);
+CONFIG_DEFINE_MEMBER (Simulation, apply_gravity, bool, true);
+
 
 Simulation::Simulation()
 : quit_flag(false)
 , paused(false)
 , _time(0)
-, universe(new Universe)
-, physics_engine(new physics::Engine)
+, _entity_set(ref(new EntitySet))
+, _physics_engine(ref(new physics::Engine))
 {
 }
 
 Simulation::~Simulation()
 {
-	delete universe;
-	universe = nullptr;
-
-	delete physics_engine;
-	physics_engine = nullptr;
+	delete & _entity_set;
+	delete & _physics_engine;
 }
 
 void Simulation::OnQuit()
@@ -75,13 +75,13 @@ void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 		return;
 	}
 	
-	universe->AddEntity(* entity);
+	_entity_set.Add(* entity);
 	entity->UpdateModels();
 }
 
 void Simulation::OnRemoveEntity(Entity * const & entity)
 {
-	universe->RemoveEntity(* entity);
+	_entity_set.Remove(* entity);
 	
 	// TODO: This code is sensitive to object-lifetime issues. More reason for UIDs.
 	entity->~Entity();
@@ -95,12 +95,12 @@ void Simulation::OnTogglePause()
 
 void Simulation::OnToggleGravity()
 {
-	universe->ToggleGravity();
+	apply_gravity = ! apply_gravity;
 }
 
 void Simulation::OnToggleCollision()
 {
-	physics_engine->ToggleCollisions();
+	_physics_engine.ToggleCollisions();
 }
 
 Time Simulation::GetTime() const
@@ -108,14 +108,14 @@ Time Simulation::GetTime() const
 	return _time;
 }
 
-Universe & Simulation::GetUniverse() 
+EntitySet & Simulation::GetEntities() 
 {
-	return ref(universe);
+	return _entity_set;
 }
 
 physics::Engine & Simulation::GetPhysicsEngine()
 {
-	return ref(physics_engine);
+	return _physics_engine;
 }
 
 void Simulation::Run(Daemon::MessageQueue & message_queue)
@@ -168,12 +168,18 @@ void Simulation::Tick()
 		_time += target_frame_seconds;
 		
 		// Perform the Entity-specific simulation.
-		universe->Tick(* this);
+		TickEntities();
+		
+		if (apply_gravity)
+		{
+			EntityVector & entities = _entity_set.GetEntities();
+			ApplyGravity(entities, target_frame_seconds);
+		}
 
 		// Run physics/collisions.
-		physics_engine->Tick(target_frame_seconds);
+		_physics_engine.Tick(target_frame_seconds);
 
-		universe->Purge();
+		_entity_set.Purge();
 		
 		// Tell renderer about changes.
 		UpdateRenderer();
@@ -184,8 +190,28 @@ void Simulation::UpdateRenderer() const
 {
 	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	
-	universe->UpdateModels();
+	UpdateModels();
 	
 	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
 }
 
+// Perform a step in the simulation. 
+void Simulation::TickEntities()
+{
+	EntityVector & entities = _entity_set.GetEntities();
+	for (EntityVector::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	{
+		Entity & e = * * it;
+		e.Tick(* this);
+	}
+}
+
+void Simulation::UpdateModels() const
+{
+	EntityVector const & entities = _entity_set.GetEntities();
+	for (EntityVector::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	{
+		Entity & e = * * it;
+		e.UpdateModels();
+	}
+}
