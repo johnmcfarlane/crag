@@ -404,7 +404,7 @@ namespace core
 		// before being added to another.
 		
 		template<typename Class, hook<Class> Class::* Member>
-		class list : public list_base<Class>
+		class list : private list_base<Class>
 		{
 			////////////////////////////////////////////////////////////////////////////////
 			// types
@@ -497,6 +497,11 @@ namespace core
 			{
 				Assert(! empty());
 				return super::_head._previous;
+			}
+			
+			bool contains(value_type const & element) const
+			{
+				return super::template contains<Member>(element);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
