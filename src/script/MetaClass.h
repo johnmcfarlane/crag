@@ -320,7 +320,7 @@ namespace script
 	
 	template <typename CLASS> CLASS * GetPtr(PyObject & self)
 	{
-		if (& MetaClass<CLASS>::_type_object != self.ob_type)
+		if (! IsA(* self.ob_type, MetaClass<CLASS>::_type_object))
 		{
 			return nullptr;
 		}
