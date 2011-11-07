@@ -26,13 +26,13 @@ namespace
 
 	// Given a position and a mass at that position, returns a 
 	// reasonable approximation of the weight vector at that position.
-	Vector3 Weight(EntityVector const & entities, Vector3 const & pos, Scalar mass)
+	Vector3 Weight(Entity::List const & entities, Vector3 const & pos, Scalar mass)
 	{
 		Vector3 force = Vector3::Zero();
 		
-		for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+		for (Entity::List::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
 		{
-			Entity & e = * * it;
+			Entity const & e = * it;
 			e.GetGravitationalForce(pos, force);
 		}
 		
@@ -40,7 +40,7 @@ namespace
 	}
 
 	
-	void ApplyGravity(EntityVector const & entities, Time delta, physics::Body & body) 
+	void ApplyGravity(Entity::List const & entities, Time delta, physics::Body & body) 
 	{
 		Vector3 const & position = body.GetPosition();
 		Scalar mass = body.GetMass();
@@ -53,13 +53,13 @@ namespace
 	
 }
 
-void sim::ApplyGravity(EntityVector & entities, Time delta)
+void sim::ApplyGravity(Entity::List & entities, Time delta)
 {
-	for (EntityVector::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
+	for (Entity::List::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
 	{
-		Entity * entity = * i;
+		Entity & entity = * i;
 		
-		physics::Body * body = entity->GetBody();
+		physics::Body * body = entity.GetBody();
 		if (body == nullptr)
 		{
 			continue;

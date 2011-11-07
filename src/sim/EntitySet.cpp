@@ -32,24 +32,21 @@ EntitySet::~EntitySet()
 
 void EntitySet::Add(Entity & entity)
 {
-	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
-	entities.push_back(& entity);
+	Assert(! entities.contains(entity));
+	entities.push_back(entity);
 }
 
 void EntitySet::Remove(Entity & entity)
 {
-	EntityVector::iterator i = std::find(entities.begin(), entities.end(), & entity);
-	Assert(i != entities.end());
-	entities.erase(i);
-	
-	Assert(std::find(entities.begin(), entities.end(), & entity) == entities.end());
+	Assert(entities.contains(entity));
+	entities.remove(entity);
 }
 
 Entity * EntitySet::GetEntity(smp::Uid uid)
 {
-	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it)
+	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
-		Entity & e = * * it;
+		Entity & e = * it;
 		if (e.GetUid() == uid)
 		{
 			return & e;
@@ -59,21 +56,21 @@ Entity * EntitySet::GetEntity(smp::Uid uid)
 	return nullptr;
 }
 
-EntityVector & EntitySet::GetEntities()
+Entity::List & EntitySet::GetEntities()
 {
 	return entities;
 }
 
-EntityVector const & EntitySet::GetEntities() const
+Entity::List const & EntitySet::GetEntities() const
 {
 	return entities;
 }
 
 void EntitySet::Purge()
 {
-	for (EntityVector::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it) 
 	{
-		Entity & e = * * it;
+		Entity & e = * it;
 		physics::Body const * body = e.GetBody();
 		if (body == nullptr)
 		{

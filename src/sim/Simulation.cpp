@@ -172,7 +172,7 @@ void Simulation::Tick()
 		
 		if (apply_gravity)
 		{
-			EntityVector & entities = _entity_set.GetEntities();
+			Entity::List & entities = _entity_set.GetEntities();
 			ApplyGravity(entities, target_frame_seconds);
 		}
 
@@ -198,20 +198,20 @@ void Simulation::UpdateRenderer() const
 // Perform a step in the simulation. 
 void Simulation::TickEntities()
 {
-	EntityVector & entities = _entity_set.GetEntities();
-	for (EntityVector::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	Entity::List & entities = _entity_set.GetEntities();
+	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 	{
-		Entity & e = * * it;
+		Entity & e = * it;
 		e.Tick(* this);
 	}
 }
 
 void Simulation::UpdateModels() const
 {
-	EntityVector const & entities = _entity_set.GetEntities();
-	for (EntityVector::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	Entity::List const & entities = _entity_set.GetEntities();
+	for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 	{
-		Entity & e = * * it;
+		Entity const & e = * it;
 		e.UpdateModels();
 	}
 }

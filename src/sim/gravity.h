@@ -14,5 +14,5 @@
 namespace sim
 {
 	// simulates gravitational interactions between the given entities
-	void ApplyGravity(EntityVector & entities, Time delta);
+	void ApplyGravity(Entity::List & entities, Time delta);
 }

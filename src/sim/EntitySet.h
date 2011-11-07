@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "sim/defs.h"
+#include "sim/Entity.h"
 
 #include "smp/Uid.h"
 
@@ -45,13 +45,13 @@ namespace sim
 		Entity * GetEntity(smp::Uid uid);
 		
 		// return all entities
-		EntityVector & GetEntities();
-		EntityVector const & GetEntities() const;
+		Entity::List & GetEntities();
+		Entity::List const & GetEntities() const;
 
 		void Purge();
 
 	private:
 		// variables
-		EntityVector entities;
+		Entity::List entities;
 	};
 }
