@@ -15,11 +15,8 @@
 #include "form/node/Shader.h"
 #include "form/scene/Mesh.h"
 
+#include "sim/EntityMessage.h"
 #include "sim/Planet.h"
-#include "sim/Simulation.h"
-#include "sim/EntitySet.h"
-
-#include "smp/Message.h"
 
 
 #if defined(GFX_DEBUG)
@@ -34,33 +31,26 @@ using namespace form;
 
 namespace 
 {
-	class SetRadiusFunctor : public smp::Message<sim::Simulation>
+	class SetRadiusFunctor : public sim::EntityMessage<sim::Planet>
 	{
+		// types
+		typedef sim::EntityMessage<sim::Planet> super;
 	public:
+		
+		// functions
 		SetRadiusFunctor(sim::Uid uid, sim::Scalar radius_min, sim::Scalar radius_max)
-		: _uid(uid)
+		: super(uid)
 		, _radius_min(radius_min)
 		, _radius_max(radius_max)
 		{
 		}
 		
 	private:
-		void operator() (sim::Simulation & simulation) const
+		void operator() (sim::Planet & planet) const
 		{
-			sim::EntitySet & entity_set = simulation.GetEntities();
-			
-			sim::Entity * entity = entity_set.GetEntity(_uid);
-			if (entity == nullptr)
-			{
-				// presumably already destroyed
-				return;
-			}
-			
-			sim::Planet & planet = static_cast<sim::Planet &>(* entity);
 			planet.SetRadiusMinMax(_radius_min, _radius_max);
 		}
 		
-		sim::Uid _uid;
 		sim::Scalar _radius_min;
 		sim::Scalar _radius_max;
 	};

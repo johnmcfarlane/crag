@@ -308,7 +308,7 @@
 		5281644F1454F5DB0017E868 /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Star.cpp; sourceTree = "<group>"; };
 		528164501454F5DB0017E868 /* Star.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Star.h; sourceTree = "<group>"; };
 		528164511454F5DB0017E868 /* EntitySet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntitySet.cpp; sourceTree = "<group>"; };
-		528164521454F5DB0017E868 /* EntitySet.h */ = {isa = PBXFileReference; fileEncoding = 4; path = EntitySet.h; sourceTree = "<group>"; };
+		528164521454F5DB0017E868 /* EntitySet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntitySet.h; sourceTree = "<group>"; };
 		528164531454F5DB0017E868 /* UserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserInput.cpp; sourceTree = "<group>"; };
 		528164541454F5DB0017E868 /* UserInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInput.h; sourceTree = "<group>"; };
 		528164561454F5DB0017E868 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
@@ -337,6 +337,7 @@
 		5281646E1454F5DB0017E868 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
 		528ACFF814674B40004167BF /* gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gravity.cpp; sourceTree = "<group>"; };
 		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
@@ -827,6 +828,7 @@
 				528164541454F5DB0017E868 /* UserInput.h */,
 				528ACFF814674B40004167BF /* gravity.cpp */,
 				528ACFF914674B41004167BF /* gravity.h */,
+				52867662146C04C8002D581F /* EntityMessage.h */,
 			);
 			path = sim;
 			sourceTree = "<group>";
