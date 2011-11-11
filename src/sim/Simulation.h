@@ -30,6 +30,11 @@ namespace gfx
 	struct RendererReadyMessage;
 }
 
+namespace smp
+{
+	class Uid;
+}
+
 
 namespace sim
 {
@@ -60,6 +65,7 @@ namespace sim
 		void OnQuit();
 		void OnAddEntity(Entity * const & entity, PyObject * const & args);
 		void OnRemoveEntity(Uid const & uid);
+		void OnAttachEntities(Uid const & uid1, Uid const & uid2);
 		void OnTogglePause();
 		void OnToggleGravity();
 		void OnToggleCollision();

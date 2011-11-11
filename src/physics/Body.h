@@ -18,8 +18,12 @@
 namespace physics
 {
 	// forward-declarations
+	class Body;
 	class Engine;
 	class IntersectionFunctor;
+	
+	void Attach(dJointID joint, Body const & body1, Body const & body2);
+	bool IsAttached(Body const & body1, Body const & body2);
 	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body
@@ -58,6 +62,9 @@ namespace physics
 		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
+		
+		friend void Attach(dJointID joint, Body const & body1, Body const & body2);
+		friend bool IsAttached(Body const & body1, Body const & body2);
 		
 	protected:
 		dGeomID geom_id;	// the collision info

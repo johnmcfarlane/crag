@@ -74,6 +74,19 @@ dGeomID physics::Engine::CreateSphere(Scalar radius) const
 	return dCreateSphere(space, radius);
 }
 
+void physics::Engine::Attach(Body const & body1, Body const & body2)
+{
+	dJointID joint_id = dJointCreateBall(world, 0);
+	if (joint_id == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	physics::Attach(joint_id, body1, body2);
+	dJointSetFixed (joint_id);
+}
+
 void physics::Engine::Tick(double delta_time)
 {
 	if (collisions)

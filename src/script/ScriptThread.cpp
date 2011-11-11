@@ -14,6 +14,7 @@
 #include "MetaClass.h"
 
 #include "sim/axes.h"
+#include "sim/Entity.h"
 #include "sim/Simulation.h"
 
 #include "gfx/Renderer.h"
@@ -83,6 +84,35 @@ PyObject * set_camera(PyObject * /*self*/, PyObject * args)
 	Py_RETURN_NONE;
 }
 
+PyObject * attach_bodies(PyObject * /*self*/, PyObject * args)
+{
+	// Get the objects.
+	PyObject * o1, * o2;
+	if (! PyArg_ParseTuple(args, "OO", & o1, & o2))
+	{
+		std::cout << "attach_bodies error: invalid inputs. Must be two entities." << std::endl;
+		Py_RETURN_NONE;
+	}
+	
+	sim::Entity * entity1 = script::GetPtr<sim::Entity>(* o1);
+	if (entity1 == nullptr)
+	{
+		std::cout << "attach_bodies error: first parameter isn't an Entity." << std::endl;
+		Py_RETURN_NONE;
+		
+	}
+	
+	sim::Entity * entity2 = script::GetPtr<sim::Entity>(* o2);
+	if (entity2 == nullptr)
+	{
+		std::cout << "attach_bodies error: second parameter isn't an Entity." << std::endl;
+		Py_RETURN_NONE;
+	}
+	
+	sim::Daemon::Call(entity1->GetUid(), entity2->GetUid(), & sim::Simulation::OnAttachEntities);
+	Py_RETURN_NONE;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // support functions
@@ -120,6 +150,7 @@ PyMethodDef crag_methods[] =
 	{"sleep", sleep, METH_VARARGS, "Sleeps the scripting thread without global-locking."},
 	{"get_event", get_event, METH_VARARGS, "Returns the next event in the event queue."},
 	{"set_camera", set_camera, METH_VARARGS, "Sets the origin to the given (x,y,z) position."},
+	{"attach_bodies", attach_bodies, METH_VARARGS, "Afixes the two bodes together."},
 	{NULL, NULL, 0, NULL}
 };
 

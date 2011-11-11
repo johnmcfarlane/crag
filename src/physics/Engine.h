@@ -40,6 +40,8 @@ namespace physics
 		dGeomID CreateBox(Vector3 const & dimensions) const;
 		dGeomID CreateSphere(Scalar radius) const;
 		
+		void Attach(Body const & body1, Body const & body2);
+		
 		void Tick(double delta_time);
 		
 		void ToggleCollisions();

@@ -95,6 +95,31 @@ void Simulation::OnRemoveEntity(Uid const & uid)
 	Free(entity);
 }
 
+void Simulation::OnAttachEntities(Uid const & uid1, Uid const & uid2)
+{
+	Uid uids[2] = { uid1, uid2 };
+	physics::Body * bodies[2];
+	
+	for (int index = 0; index < 2; ++ index)
+	{
+		Entity * entity = _entity_set.GetEntity(uids[index]);
+		if (entity == nullptr)
+		{
+			return;
+		}
+
+		physics::Body * body = entity->GetBody();
+		if (body == nullptr)
+		{
+			return;
+		}
+		
+		bodies[index] = body;
+	}
+	
+	_physics_engine.Attach(ref(bodies[0]), ref(bodies[1]));
+}
+
 void Simulation::OnTogglePause()
 {
 	paused = ! paused;

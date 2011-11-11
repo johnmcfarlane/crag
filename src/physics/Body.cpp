@@ -41,11 +41,20 @@ Body::~Body()
 {
 	if (body_id != 0)
 	{
+		// destroy all joints associated with the body
+		int num_joints = dBodyGetNumJoints (body_id);
+		while (num_joints --)
+		{
+			dJointID joint_id = dBodyGetJoint (body_id, num_joints);
+			dJointDestroy(joint_id);
+		}
+		
+		// destroy the body
 		dBodyDestroy(body_id);
 	}
 	
+	// destroy the geom
 	Assert(geom_id != 0);
-	
 	dGeomDestroy(geom_id);
 }
 
@@ -172,4 +181,52 @@ void Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor 
 void Body::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
 {
 	Assert(false);
+}
+
+void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
+{
+	Assert(body1.body_id != nullptr);
+	Assert(body2.body_id != nullptr);
+
+	dJointAttach(joint_id, body1.body_id, body2.body_id);
+	
+	Vector3 position1 = body1.GetPosition();
+	Vector3 position2 = body2.GetPosition();
+	Vector3 center = (position1 + position2) * .5;
+	
+	switch (dJointGetType(joint_id))
+	{
+		case dJointTypeUniversal:
+		{
+			dJointSetUniversalAnchor (joint_id, center.x, center.y, center.z);
+			
+			Vector3 between = Normalized(position1 - position2);
+			Vector3 axis1 = CrossProduct(between, Vector3(1, 0, 0));
+			Vector3 axis2 = CrossProduct(between, axis1);
+			
+			dJointSetUniversalAxis1 (joint_id, axis1.x, axis1.y, axis1.z);
+			dJointSetUniversalAxis2 (joint_id, axis2.x, axis2.y, axis2.z);
+			break;
+		}
+			
+		case dJointTypeBall:
+		{
+			dJointSetBallAnchor (joint_id, position1.x, position1.y, position1.z);
+			break;
+		}
+			
+		default:
+			// Not yet implemented.
+			Assert(false);
+	}
+}
+
+bool physics::IsAttached(Body const & body1, Body const & body2)
+{
+	if (body1.body_id == nullptr || body2.body_id == nullptr)
+	{
+		return false;
+	}
+	
+	return dAreConnected(body1.body_id, body2.body_id) != 0;
 }
