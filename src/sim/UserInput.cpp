@@ -53,42 +53,42 @@ namespace
 		}
 		
 		InpulseAffector affector;
-		sys::KeyCode key;
+		SDL_Scancode key;
 	};
 
 	InputKeyMapping const keys[] = 
 	{
 		// Arrow keys
-		{ { sim::Controller::Impulse::TORQUE, axes::UP, +1 }, KEY_LEFT },
-		{ { sim::Controller::Impulse::TORQUE, axes::UP, -1 }, KEY_RIGHT },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, KEY_UP },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, KEY_DOWN },
+		{ { sim::Controller::Impulse::TORQUE, axes::UP, +1 }, SDL_SCANCODE_LEFT },
+		{ { sim::Controller::Impulse::TORQUE, axes::UP, -1 }, SDL_SCANCODE_RIGHT },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, SDL_SCANCODE_UP },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, SDL_SCANCODE_DOWN },
 		
-		// Above arrow keys (3x2)
-		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, -1 }, KEY_INSERT },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_DELETE },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, KEY_HOME },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, KEY_END },
-		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, +1 }, KEY_PAGEUP },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_PAGEDOWN },
+		// Above arrow SDL_SCANCODEs (3x2)
+		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, -1 }, SDL_SCANCODE_INSERT },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, SDL_SCANCODE_DELETE },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, SDL_SCANCODE_HOME },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, SDL_SCANCODE_END },
+		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, +1 }, SDL_SCANCODE_PAGEUP },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, SDL_SCANCODE_PAGEDOWN },
 		
 		// FPS standard
-		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, -1 }, KEY_Q },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_A },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, KEY_W },
-		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, KEY_S },
-		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, +1 }, KEY_E },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_D },
+		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, -1 }, SDL_SCANCODE_Q },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, SDL_SCANCODE_A },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, +1 }, SDL_SCANCODE_W },
+		{ { sim::Controller::Impulse::FORCE, axes::FORWARD, -1 }, SDL_SCANCODE_S },
+		{ { sim::Controller::Impulse::TORQUE, axes::FORWARD, +1 }, SDL_SCANCODE_E },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, SDL_SCANCODE_D },
 		
 		// Lots of up/down options
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_SPACE },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_RSHIFT },
-		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, KEY_LSHIFT },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_RCTRL },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, KEY_LCTRL },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_SPACE },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_RSHIFT },
+		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_LSHIFT },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_RCTRL },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_LCTRL },
 		
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, KEY_COMMA },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, KEY_PERIOD },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, SDL_SCANCODE_COMMA },
+		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, SDL_SCANCODE_PERIOD },
 		
 		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, SDL_SCANCODE_UNKNOWN }
 	};
