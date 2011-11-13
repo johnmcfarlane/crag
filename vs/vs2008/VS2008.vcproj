@@ -582,6 +582,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\sim\EntityMessage.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\EntitySet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\EntitySet.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\sim\Firmament.cpp"
 					>
 				</File>
@@ -595,6 +607,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\sim\FrequencyEstimator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\gravity.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\gravity.h"
 					>
 				</File>
 				<File
@@ -651,14 +671,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\sim\Star.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\sim\Universe.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\sim\Universe.h"
 					>
 				</File>
 				<File
