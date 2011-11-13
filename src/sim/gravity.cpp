@@ -32,8 +32,10 @@ namespace
 		
 		for (Entity::List::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
 		{
-			Entity const & e = * it;
-			e.GetGravitationalForce(pos, force);
+			script::Object const & object = * it;
+			Entity const & entity = static_cast<Entity const &>(object);
+
+			entity.GetGravitationalForce(pos, force);
 		}
 		
 		return force * static_cast<Scalar>(mass) * static_cast<Scalar>(gravitational_force);
@@ -57,7 +59,8 @@ void sim::ApplyGravity(Entity::List & entities, Time delta)
 {
 	for (Entity::List::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
 	{
-		Entity & entity = * i;
+		script::Object & object = * i;
+		Entity & entity = static_cast<Entity &>(object);
 		
 		physics::Body * body = entity.GetBody();
 		if (body == nullptr)

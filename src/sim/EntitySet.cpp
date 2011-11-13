@@ -46,10 +46,12 @@ Entity * EntitySet::GetEntity(smp::Uid uid)
 {
 	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
-		Entity & e = * it;
-		if (e.GetUid() == uid)
+		script::Object & object = * it;
+		Entity & entity = static_cast<Entity &>(object);
+
+		if (entity.GetUid() == uid)
 		{
-			return & e;
+			return & entity;
 		}
 	}
 	
@@ -70,8 +72,10 @@ void EntitySet::Purge()
 {
 	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it) 
 	{
-		Entity & e = * it;
-		physics::Body const * body = e.GetBody();
+		script::Object & object = * it;
+		Entity & entity = static_cast<Entity &>(object);
+
+		physics::Body const * body = entity.GetBody();
 		if (body == nullptr)
 		{
 			continue;
@@ -85,6 +89,6 @@ void EntitySet::Purge()
 
 		std::cerr << "purging entity with bad position" << std::endl;
 		delete body;
-		e.SetBody(nullptr);
+		entity.SetBody(nullptr);
 	}
 }

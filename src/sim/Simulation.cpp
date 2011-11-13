@@ -233,8 +233,10 @@ void Simulation::TickEntities()
 	Entity::List & entities = _entity_set.GetEntities();
 	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 	{
-		Entity & e = * it;
-		e.Tick(* this);
+		script::Object & object = * it;
+		Entity & entity = static_cast<Entity &>(object);
+
+		entity.Tick(* this);
 	}
 }
 
@@ -243,7 +245,8 @@ void Simulation::UpdateModels() const
 	Entity::List const & entities = _entity_set.GetEntities();
 	for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 	{
-		Entity const & e = * it;
-		e.UpdateModels();
+		script::Object const & object = * it;
+		Entity const & entity = static_cast<Entity const &>(object);
+		entity.UpdateModels();
 	}
 }

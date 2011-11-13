@@ -16,8 +16,6 @@
 
 #include "smp/Uid.h"
 
-#include "core/intrusive_list.h"
-
 
 namespace physics
 {
@@ -35,15 +33,10 @@ namespace sim
 	class Entity : public script::Object
 	{
 		DECLARE_SCRIPT_CLASS(Entity, script::Object);
-		
+
+	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		typedef core::intrusive::hook<Entity> HookType;
-		HookType _hook;
-	public:
-		DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(Entity, _hook, List);
-		typedef List::const_iterator const_iterator;
-		typedef List::iterator iterator;
 
 		typedef physics::Body Body;
 

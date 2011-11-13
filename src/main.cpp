@@ -152,6 +152,7 @@ namespace
 				
 			case KMOD_LCTRL:
 			case KMOD_RCTRL:
+			case KMOD_LCTRL | KMOD_RCTRL:
 			{
 				switch (keysym.scancode)
 				{
