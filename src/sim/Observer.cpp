@@ -61,6 +61,8 @@ namespace
 		Vector3 rotations;
 		if (! PyArg_ParseTuple(args, "ddd", & rotations.x, & rotations.y, & rotations.z))
 		{
+			// TODO: This is probably wront; use Py_RETURN_NONE instead.
+			// TODO: In general, start throwing exceptions.
 			return nullptr;
 		}
 		
