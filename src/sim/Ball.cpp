@@ -40,7 +40,7 @@ DEFINE_SCRIPT_CLASS(sim, Ball);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::Ball script binding
+// sim::Ball member definitions
 
 using namespace sim;
 

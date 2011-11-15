@@ -65,6 +65,13 @@ def main_loop():
 	sun_year = 30000.
 	sun = crag.Star(sun_orbit_distance, sun_year)
 	
+	## Create vehicle
+	#v = crag.Vehicle(observer_x, observer_y + 10, observer_z, 1)
+	#v.add_rocket(.5, .5, .5, 0, -1, 0, SDL_SCANCODE_SPACE)
+	#v.add_rocket(.5, .5, -.5, 0, -1, 0, SDL_SCANCODE_SPACE)
+	#v.add_rocket(-.5, .5, .5, 0, -1, 0, SDL_SCANCODE_SPACE)
+	#v.add_rocket(-.5, .5, -.5, 0, -1, 0, SDL_SCANCODE_SPACE)
+	
 	# Create observer (after formations have had time to expand)
 	crag.sleep(.5)
 	o = observer(observer_x, observer_y, observer_z)
@@ -76,6 +83,7 @@ def main_loop():
 	try:
 		# Tasklets don't get cleaned up following exceptions
 		observer_tasklet = stackless.tasklet(o.run)()
+		#crag.attach_bodies(v, o.get_entity())
 		
 		while stackless.runcount > 1:
 			stackless.schedule()

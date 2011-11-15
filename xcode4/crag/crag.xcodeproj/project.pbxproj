@@ -91,6 +91,7 @@
 		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D832431472D692005FE380 /* EntityFunctions.cpp */; };
+		52D8326114730599005FE380 /* Vehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D8325F14730599005FE380 /* Vehicle.cpp */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
 		52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */; };
@@ -347,6 +348,8 @@
 		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
 		52D832431472D692005FE380 /* EntityFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityFunctions.cpp; sourceTree = "<group>"; };
 		52D832441472D692005FE380 /* EntityFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityFunctions.h; sourceTree = "<group>"; };
+		52D8325F14730599005FE380 /* Vehicle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vehicle.cpp; sourceTree = "<group>"; };
+		52D8326014730599005FE380 /* Vehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vehicle.h; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
@@ -797,6 +800,8 @@
 		528164341454F5DB0017E868 /* sim */ = {
 			isa = PBXGroup;
 			children = (
+				52D8325F14730599005FE380 /* Vehicle.cpp */,
+				52D8326014730599005FE380 /* Vehicle.h */,
 				528164351454F5DB0017E868 /* axes.h */,
 				528164361454F5DB0017E868 /* Ball.cpp */,
 				528164371454F5DB0017E868 /* Ball.h */,
@@ -1052,6 +1057,7 @@
 				52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */,
 				528ACFFA14674B42004167BF /* gravity.cpp in Sources */,
 				52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */,
+				52D8326114730599005FE380 /* Vehicle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
