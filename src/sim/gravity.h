@@ -11,8 +11,12 @@
 
 #include "defs.h"
 
+
 namespace sim
 {
+	// forward-declarations
+	class EntitySet;
+	
 	// simulates gravitational interactions between the given entities
-	void ApplyGravity(Entity::List & entities, Time delta);
+	void ApplyGravity(EntitySet & entity_set, Time delta);
 }

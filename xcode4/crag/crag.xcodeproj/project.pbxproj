@@ -90,6 +90,7 @@
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
+		52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D832431472D692005FE380 /* EntityFunctions.cpp */; };
 		52F819A5132DF0AE0045C3A8 /* main.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A1132DF0A60045C3A8 /* main.py */; };
 		52F819A6132DF0B10045C3A8 /* observer.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52F819A2132DF0A60045C3A8 /* observer.py */; };
 		52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */; };
@@ -344,6 +345,8 @@
 		52ACC2B0145AFB230060DE93 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		52ACC2B1145AFB230060DE93 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
 		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
+		52D832431472D692005FE380 /* EntityFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityFunctions.cpp; sourceTree = "<group>"; };
+		52D832441472D692005FE380 /* EntityFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityFunctions.h; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
@@ -829,6 +832,8 @@
 				528ACFF814674B40004167BF /* gravity.cpp */,
 				528ACFF914674B41004167BF /* gravity.h */,
 				52867662146C04C8002D581F /* EntityMessage.h */,
+				52D832431472D692005FE380 /* EntityFunctions.cpp */,
+				52D832441472D692005FE380 /* EntityFunctions.h */,
 			);
 			path = sim;
 			sourceTree = "<group>";
@@ -1046,6 +1051,7 @@
 				528164B91454F6200017E868 /* SDLMain.m in Sources */,
 				52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */,
 				528ACFFA14674B42004167BF /* gravity.cpp in Sources */,
+				52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

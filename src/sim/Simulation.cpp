@@ -16,6 +16,7 @@
 #include "Entity.h"
 #include "Firmament.h"
 #include "gravity.h"
+#include "EntityFunctions.h"
 #include "EntitySet.h"
 
 #include "physics/Engine.h"
@@ -97,27 +98,7 @@ void Simulation::OnRemoveEntity(Uid const & uid)
 
 void Simulation::OnAttachEntities(Uid const & uid1, Uid const & uid2)
 {
-	Uid uids[2] = { uid1, uid2 };
-	physics::Body * bodies[2];
-	
-	for (int index = 0; index < 2; ++ index)
-	{
-		Entity * entity = _entity_set.GetEntity(uids[index]);
-		if (entity == nullptr)
-		{
-			return;
-		}
-
-		physics::Body * body = entity->GetBody();
-		if (body == nullptr)
-		{
-			return;
-		}
-		
-		bodies[index] = body;
-	}
-	
-	_physics_engine.Attach(ref(bodies[0]), ref(bodies[1]));
+	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
 }
 
 void Simulation::OnTogglePause()
@@ -200,12 +181,11 @@ void Simulation::Tick()
 		_time += target_frame_seconds;
 		
 		// Perform the Entity-specific simulation.
-		TickEntities();
+		TickEntities(* this);
 		
 		if (apply_gravity)
 		{
-			Entity::List & entities = _entity_set.GetEntities();
-			ApplyGravity(entities, target_frame_seconds);
+			ApplyGravity(_entity_set, target_frame_seconds);
 		}
 
 		// Run physics/collisions.
@@ -222,31 +202,7 @@ void Simulation::UpdateRenderer() const
 {
 	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	
-	UpdateModels();
+	UpdateModels(_entity_set);
 	
 	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
-}
-
-// Perform a step in the simulation. 
-void Simulation::TickEntities()
-{
-	Entity::List & entities = _entity_set.GetEntities();
-	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
-	{
-		script::Object & object = * it;
-		Entity & entity = static_cast<Entity &>(object);
-
-		entity.Tick(* this);
-	}
-}
-
-void Simulation::UpdateModels() const
-{
-	Entity::List const & entities = _entity_set.GetEntities();
-	for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
-	{
-		script::Object const & object = * it;
-		Entity const & entity = static_cast<Entity const &>(object);
-		entity.UpdateModels();
-	}
 }

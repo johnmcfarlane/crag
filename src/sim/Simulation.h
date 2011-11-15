@@ -58,6 +58,9 @@ namespace sim
 		CONFIG_DECLARE_MEMBER (target_frame_seconds, Time);
 		CONFIG_DECLARE_MEMBER (apply_gravity, bool);
 
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
 		Simulation();
 		~Simulation();
 		
@@ -69,26 +72,21 @@ namespace sim
 		void OnTogglePause();
 		void OnToggleGravity();
 		void OnToggleCollision();
-		
-	private:
-		void Init();
-		
-	public:
-		Time GetTime() const;
-		
-		EntitySet & GetEntities();
 
+		// accessors
+		Time GetTime() const;
+		EntitySet & GetEntities();
 		physics::Engine & GetPhysicsEngine();		
 		
+		// called be Daemon when simulation thread starts
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void Tick();
 		void UpdateRenderer() const;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// attributes
 		
-		void TickEntities();
-		void UpdateModels() const;
-		
-		// Attributes
 		bool quit_flag;
 		bool paused;
 		

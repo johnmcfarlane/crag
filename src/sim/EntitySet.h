@@ -12,11 +12,6 @@
 
 #include "sim/Entity.h"
 
-#include "smp/Uid.h"
-
-#include "core/ConfigEntry.h"
-#include "core/Singleton.h"
-
 
 namespace physics 
 {

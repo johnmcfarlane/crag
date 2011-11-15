@@ -9,8 +9,9 @@
 
 #include "pch.h"
 
-#include "Entity.h"
 #include "gravity.h"
+
+#include "EntitySet.h"
 
 #include "physics/Body.h"
 
@@ -55,8 +56,10 @@ namespace
 	
 }
 
-void sim::ApplyGravity(Entity::List & entities, Time delta)
+void sim::ApplyGravity(EntitySet & entity_set, Time delta)
 {
+	Entity::List & entities = entity_set.GetEntities();
+
 	for (Entity::List::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
 	{
 		script::Object & object = * i;
