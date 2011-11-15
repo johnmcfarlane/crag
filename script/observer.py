@@ -63,6 +63,9 @@ class observer:
 		self.__is_done = False
 		self.__collision = True
 	
+	def get_entity(self):
+		return self.__observer
+	
 	def run(self):
 		while True:
 			event = get_event()
