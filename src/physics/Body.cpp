@@ -160,7 +160,7 @@ void Body::AddRelForce(Vector3 const & force)
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
 	Assert(body_id != 0);
-	dBodyAddForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+	dBodyAddRelForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
 bool Body::OnCollision(Engine & engine, Body const & that_body) const
