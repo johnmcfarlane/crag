@@ -25,6 +25,7 @@ observer_x = 0
 observer_y = 9999400
 observer_z = 0
 max_shapes = 50
+shape_drop_period = .5
 cleanup_shapes = True
 
 
@@ -67,28 +68,32 @@ def main_loop():
 	# Create observer (after formations have had time to expand)
 	crag.sleep(.5)
 	o = observer(observer_x, observer_y, observer_z)
-	observer_tasklet = stackless.tasklet(o.run)()
 	
 	# Main loop
-	drop_period = .5
-	next_drop = crag.time() + drop_period
+	next_drop = crag.time() + shape_drop_period
 	shapes = []
 	
-	while stackless.runcount > 1:
-		stackless.schedule()
-		try:
+	try:
+		# Tasklets don't get cleaned up following exceptions
+		observer_tasklet = stackless.tasklet(o.run)()
+		
+		while stackless.runcount > 1:
+			stackless.schedule()
 			now = crag.time()
 			if now > next_drop:
 				spawn_shape(shapes)
-				next_drop = now + drop_period
-		except Exception as e: 
-			traceback.print_exc()
-			print('error in main loop:', str(e))
-			observer_tasklet.kill()
-			break
+				next_drop = now + shape_drop_period
+	except Exception as e: 
+		print('error in main loop:')
+		traceback.print_exc()
+		observer_tasklet.kill()
 
 
-main_loop()
+try:
+	main_loop()
+except Exception as e: 
+	print('error in main_loop function:')
+	traceback.print_exc()
 
 # Give entities a chance to be destroyed.
 print('end main script function')
