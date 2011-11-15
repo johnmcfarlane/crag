@@ -125,10 +125,10 @@ PyObject * create_event_object(sys::Event const & event)
 			return Py_BuildValue("si", "exit", 0);
 			
 		case SDL_KEYDOWN:
-			return Py_BuildValue("sii", "key", event.key.keysym.sym, 1);
+			return Py_BuildValue("sii", "key", event.key.keysym.scancode, 1);
 			
 		case SDL_KEYUP:
-			return Py_BuildValue("sii", "key", event.key.keysym.sym, 0);
+			return Py_BuildValue("sii", "key", event.key.keysym.scancode, 0);
 			
 		case SDL_MOUSEBUTTONDOWN:
 			return Py_BuildValue("si", "mousebutton", event.button.button, 1);
