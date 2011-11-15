@@ -10,7 +10,8 @@
 #pragma once
 
 #include "Simulation.h"
-#include "EntitySet.h"
+
+#include "Entity.h"
 
 #include "smp/Message.h"
 
@@ -38,10 +39,8 @@ namespace sim
 	private:
 		void operator() (sim::Simulation & simulation) const final
 		{
-			sim::EntitySet & entity_set = simulation.GetEntities();
-			
 			// Find the entity which matches the UID.
-			sim::Entity * entity = entity_set.GetEntity(_uid);
+			sim::Entity * entity = simulation.GetEntity(_uid);
 			if (entity == nullptr)
 			{
 				// presumably already destroyed

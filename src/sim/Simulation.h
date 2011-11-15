@@ -75,7 +75,7 @@ namespace sim
 
 		// accessors
 		Time GetTime() const;
-		EntitySet & GetEntities();
+		Entity * GetEntity(Uid uid);
 		physics::Engine & GetPhysicsEngine();		
 		
 		// called be Daemon when simulation thread starts
@@ -84,6 +84,9 @@ namespace sim
 		void Tick();
 		void UpdateRenderer() const;
 
+		// call Tick on entities in the given object
+		void TickEntities();
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// attributes
 		

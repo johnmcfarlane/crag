@@ -19,21 +19,6 @@
 
 namespace sim
 {
-	
-	// Perform a step in the simulation. 
-	void TickEntities(Simulation & simulation)
-	{
-		EntitySet & entity_set = simulation.GetEntities();
-		Entity::List & entities = entity_set.GetEntities();
-		for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
-		{
-			script::Object & object = * it;
-			Entity & entity = static_cast<Entity &>(object);
-			
-			entity.Tick(simulation);
-		}
-	}
-
 	void UpdateModels(EntitySet const & entity_set)
 	{
 		Entity::List const & entities = entity_set.GetEntities();

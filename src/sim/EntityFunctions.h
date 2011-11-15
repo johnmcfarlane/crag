@@ -29,9 +29,6 @@ namespace sim
 	////////////////////////////////////////////////////////////////////////////////
 	// function declarations
 	
-	// call Tick on entities in the given object
-	void TickEntities(Simulation & simulation);
-	
 	// sends render info from simulation to renderer
 	void UpdateModels(EntitySet const & entity_set);
 	

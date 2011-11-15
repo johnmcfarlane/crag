@@ -121,9 +121,10 @@ Time Simulation::GetTime() const
 	return _time;
 }
 
-EntitySet & Simulation::GetEntities() 
+Entity * Simulation::GetEntity(Uid uid) 
 {
-	return _entity_set;
+	Entity * entity = _entity_set.GetEntity(uid);
+	return entity;
 }
 
 physics::Engine & Simulation::GetPhysicsEngine()
@@ -181,7 +182,7 @@ void Simulation::Tick()
 		_time += target_frame_seconds;
 		
 		// Perform the Entity-specific simulation.
-		TickEntities(* this);
+		TickEntities();
 		
 		if (apply_gravity)
 		{
@@ -205,4 +206,17 @@ void Simulation::UpdateRenderer() const
 	UpdateModels(_entity_set);
 	
 	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
+}
+
+// Perform a step in the simulation. 
+void Simulation::TickEntities()
+{
+	Entity::List & entities = _entity_set.GetEntities();
+	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	{
+		script::Object & object = * it;
+		Entity & entity = static_cast<Entity &>(object);
+		
+		entity.Tick(* this);
+	}
 }
