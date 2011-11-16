@@ -582,6 +582,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\sim\EntityFunctions.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\EntityFunctions.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\sim\EntityMessage.h"
 					>
 				</File>
@@ -679,6 +687,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\sim\UserInput.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\Vehicle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\sim\Vehicle.h"
 					>
 				</File>
 			</Filter>
