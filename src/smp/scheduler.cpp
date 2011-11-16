@@ -299,7 +299,7 @@ namespace smp
 					// Launch them all.
 					for (Thread * it = _threads, * end = _threads + num_threads; it != end; ++ it)
 					{
-						it->Launch(RunThread, nullptr);
+						it->Launch(RunThread, nullptr, "worker");
 					}
 					
 					std::cout << "scheduler using " << num_threads << " threads." << std::endl;
@@ -344,7 +344,6 @@ namespace smp
 			int RunThread(void *)
 			{
 				SetThreadName("worker");
-				
 				// Sleep until after the singleton is full constructed.
 				while (singleton == nullptr)
 				{

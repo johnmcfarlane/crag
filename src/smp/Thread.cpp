@@ -44,13 +44,13 @@ bool Thread::IsCurrent() const
 	return running_thread_id == member_thread_id;
 }
 
-void Thread::Launch(Function callback, void * data)
+void Thread::Launch(Function callback, void * data, char const * name)
 {
 	// If launched already, wait to stop being launched.
 	Join();
 			
 	// Call the given FUNCTION, passing given object, in a new thread. 
-	sdl_thread = SDL_CreateThread(callback, data);
+	sdl_thread = SDL_CreateThread(callback, name, data);
 }
 
 // Waits for thread to return from FUNCTION.

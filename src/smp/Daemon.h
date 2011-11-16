@@ -98,11 +98,11 @@ namespace smp
 			return _messages.capacity();
 		}
 		
-		void Start()
+		void Start(char const * name)
 		{
 			Assert(! singleton->_thread.IsCurrent());
 
-			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this);
+			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this, name);
 			
 			while (_object == nullptr)
 			{

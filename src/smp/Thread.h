@@ -39,18 +39,18 @@ namespace smp
 		bool IsCurrent() const;
 
 		// Creates and launches a new thread.
-		void Launch(Function callback, void * data);
+		void Launch(Function callback, void * data, char const * name);
 		
 		// Object-oriented thread launch.
 		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
-		static void Launch(CLASS & object)
+		static void Launch(CLASS & object, char const * name)
 		{
 			Thread & thread = object.*THREAD;
 			
 			// Never called from within the thread.
 			Assert(! thread.IsCurrent());
 			
-			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object);
+			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object, name);
 		}
 		
 		// Waits for thread to return from FUNCTION.

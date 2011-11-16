@@ -297,10 +297,10 @@ namespace
 			script::ScriptThread::Daemon script_daemon(0x400);
 			
 			// start thread the daemons
-			formation_manager.Start();
-			simulation.Start();
-			renderer.Start();
-			script_daemon.Start();
+			formation_manager.Start("form");
+			simulation.Start("sim");
+			renderer.Start("gfx");
+			script_daemon.Start("script");
 			
 			while (true)
 			{
