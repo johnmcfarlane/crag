@@ -109,6 +109,9 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	Deinit();
+
+	// must be turned on by key input or by cfg edit
+	capture_enable = false;
 }
 
 void Renderer::OnQuit()
