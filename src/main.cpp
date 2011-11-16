@@ -77,9 +77,23 @@ namespace
 	// returns false iff the program should quit.
 	bool OnKeyPress(SDL_Keysym keysym)
 	{
-		keysym.mod &= ~ (KMOD_LGUI | KMOD_RGUI);
+		// group the mod keys
+		Uint16 keys_mods = KMOD_NONE;
+		if (keysym.mod & KMOD_SHIFT)
+		{
+			keys_mods |= KMOD_SHIFT;
+		}
+		if (keysym.mod & KMOD_CTRL)
+		{
+			keys_mods |= KMOD_CTRL;
+		}
+		if (keysym.mod & KMOD_ALT)
+		{
+			keys_mods |= KMOD_ALT;
+		}
 
-		switch (keysym.mod) 
+		// interpret scancode based on grouped modifiers
+		switch (keys_mods)
 		{
 			case KMOD_NONE:
 			{
@@ -129,8 +143,7 @@ namespace
 				break;
 			}
 				
-			case KMOD_LSHIFT:
-			case KMOD_RSHIFT:
+			case KMOD_SHIFT:
 			{
 				switch (keysym.scancode)
 				{
@@ -150,16 +163,24 @@ namespace
 				break;
 			}
 				
-			case KMOD_LCTRL:
-			case KMOD_RCTRL:
-			case KMOD_LCTRL | KMOD_RCTRL:
+			case KMOD_CTRL:
 			{
 				switch (keysym.scancode)
 				{
 					case SDL_SCANCODE_I:
 						form::Daemon::Ref().ToggleDynamicOrigin();
 						return true;
-						
+					
+					default:
+						break;
+				}
+				break;
+			}
+				
+			case KMOD_CTRL | KMOD_SHIFT:
+			{
+				switch (keysym.scancode)
+				{
 					case SDL_SCANCODE_O:
 					{
 						gfx::Daemon::Call(& gfx::Renderer::OnToggleCapture);
@@ -171,7 +192,7 @@ namespace
 				}
 				break;
 			}
-				
+			
 			default:
 				break;
 		}
