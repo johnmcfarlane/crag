@@ -54,6 +54,7 @@
 //////////////////////////////////////////////////////////////////////
 // SDL includes.
 
+// Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
 
 #if defined(WIN32)
