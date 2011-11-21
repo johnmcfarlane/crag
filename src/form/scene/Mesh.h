@@ -31,9 +31,6 @@ namespace form
 	class Mesh
 	{
 	public:
-		// types
-		typedef core::intrusive::hook<Mesh> hook_type;
-
 		// functions
 		Mesh(int max_num_verts, int max_num_tris);
 		
@@ -65,16 +62,14 @@ namespace form
 		
 		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
 		
-	private:
 		// variables
+	private:
 		VertexBuffer vertices;
 		gfx::IndexBuffer indices;
 		MeshProperties properties;
-		hook_type _hook;
 		
 	public:
-		// list type
-		DEFINE_INTRUSIVE_LIST_TYPE(Mesh, _hook, list_type);
+		DEFINE_INTRUSIVE_LIST(Mesh, list_type);
 	};
 	
 }

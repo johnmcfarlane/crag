@@ -40,9 +40,6 @@ namespace smp
 			
 			class Task
 			{
-				// types
-				typedef core::intrusive::hook<Task> hook_type;
-				
 			public:
 				// functions
 				Task(Job & job, int num_units, int priority, bool automatic, Semaphore * num_complete)
@@ -58,7 +55,7 @@ namespace smp
 				
 				~Task()
 				{
-					Assert(_hook.is_detached());
+					Assert(! list_type::is_contained(* this));
 					
 					// If task is blocking, deletion is up to
 					// the caller of scheduler::Submit
@@ -122,9 +119,9 @@ namespace smp
 					return _completed_units == _num_units;
 				}
 				
-			private:
 				// variables
-				hook_type _hook;
+				DEFINE_INTRUSIVE_LIST(Task, list_type);
+			private:
 				Job & _job;
 				int _num_units;
 				int _next_unit;
@@ -132,9 +129,6 @@ namespace smp
 				int _priority;
 				bool _automatic;
 				Semaphore * _num_complete;
-				
-			public:
-				DEFINE_INTRUSIVE_LIST_TYPE(Task, _hook, list_type);
 			};
 			
 			

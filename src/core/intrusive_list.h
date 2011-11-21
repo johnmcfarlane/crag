@@ -10,9 +10,27 @@
 #pragma once
 
 
+// DEFINE_INTRUSIVE_LIST macro takes care of ensuring that a class is intrusive-listable.
+// Prefer over DEFINE_INTRUSIVE_LIST_HOOK and DEFINE_INTRUSIVE_LIST_TYPE.
+// Insert into public section of listed class.
+#define DEFINE_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
+	private: \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+	public: \
+		DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
+
+
+// DEFINE_INTRUSIVE_LIST_HOOK macro can be used to define a list hook & type for a listed class.
+// Insert into private section of listed class.
+#define DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, HOOK_TYPE, HOOK_MEMBER) \
+	typedef core::intrusive::hook<LISTED_CLASS> HOOK_TYPE; \
+	HOOK_TYPE HOOK_MEMBER;
+
+
 // DEFINE_INTRUSIVE_LIST_TYPE macro can be used to define a list type for a listed class.
-// This works around a peculiarity of VC++ compiler.
+// Insert into public section of listed class.
 #if defined(WIN32)
+	// This works around a peculiarity of VC++ compiler.
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		template <typename CLASS> struct _ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::_hook> LIST_TYPE; }; \
@@ -64,36 +82,15 @@ namespace core
 			
 			~hook() 
 			{ 
-				// Must call list::remove before attached hook is destroyed.
+				// Must call list::remove before attached hook is destroyed
+				// (assuming this is a node, and not the list head).
 				Assert(_next == _previous);
 			}
 			
+		private:
 			bool is_attached() const 
 			{ 
 				return _next != nullptr; 
-			}
-			
-			bool is_detached() const 
-			{ 
-				return _next == nullptr; 
-			}
-			
-			value_type * get_next()
-			{
-				return _next;
-			}
-			value_type const * get_next() const
-			{
-				return _next;
-			}
-			
-			value_type * get_previous()
-			{
-				return _previous;
-			}
-			value_type const * get_previous() const
-			{
-				return _previous;
 			}
 			
 			// not to be called on a list node
@@ -107,12 +104,11 @@ namespace core
 #endif
 			}
 			
-		protected:
 			void init()
 			{
 				_next = _previous = nullptr;
 				
-				Assert(is_detached());
+				Assert(! is_attached());
 				verify();
 			}
 
@@ -243,12 +239,12 @@ namespace core
 			template <hook_type Class::*Member>
 			iterator<Member> begin()
 			{
-				return iterator<Member>(_head.get_next());
+				return iterator<Member>(_head._next);
 			}
 			template <hook_type Class::*Member>
 			const_iterator<Member> begin() const
 			{
-				return const_iterator<Member>(_head.get_next());
+				return const_iterator<Member>(_head._next);
 			}
 			
 			template <hook_type Class::*Member>
@@ -265,8 +261,37 @@ namespace core
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
+			// capacity
+			
+			template <hook_type Class::*Member>
+			bool empty() const
+			{
+				hook_type const & next_hook = _head._next->*Member;
+				return & next_hook == & _head;
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////
 			// access
 			
+			value_type & front()
+			{
+				return * _head._next;
+			}
+			
+			value_type const & front() const
+			{
+				return * _head._next;
+			}
+			
+			value_type & back()
+			{
+				return * _head._previous;
+			}
+			value_type const & back() const
+			{
+				return * _head._previous;
+			}
+
 			template <hook_type Class::*Member>
 			bool contains(value_type const & element) const
 			{
@@ -275,11 +300,19 @@ namespace core
 					value_type const & contained = * i;
 					if (& element == & contained)
 					{
+						Assert(is_contained<Member>(element));
 						return true;
 					}
 				}
 				
 				return false;
+			}
+			
+			template <hook_type Class::*Member>
+			static bool is_contained(value_type const & element)
+			{
+				hook_type const & h = element.*Member;
+				return h.is_attached();
 			}
 			
 			template <hook_type Class::*Member>
@@ -291,6 +324,21 @@ namespace core
 			
 			////////////////////////////////////////////////////////////////////////////////
 			////////////////////////////////////////////////////////////////////////////////
+			// modifiers
+			
+			template <hook_type Class::*Member>
+			void pop_front()
+			{
+				detach<Member>(* _head._next);
+			}
+			template <hook_type Class::*Member>
+			void pop_back()
+			{
+				detach<Member>(* _head._previous);
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////
 			// helpers
 			
 			template <hook_type Class::*Member>
@@ -298,7 +346,7 @@ namespace core
 			{
 				// Check that values of insertion's pointers are unimportant.
 				hook_type & insertion_hook = insertion.*Member;
-				Assert(insertion_hook.is_detached());
+				Assert(! insertion_hook.is_attached());
 				
 				// Check that insertion point is valid.
 				hook_type & next_hook = next.*Member;
@@ -457,9 +505,7 @@ namespace core
 			
 			bool empty() const
 			{
-				hook_type const & this_hook = super::_head;
-				hook_type const & next_hook = super::_head.get_next()->*Member;
-				return & next_hook == & this_hook;
+				return super::template empty<Member>();
 			}
 			
 			size_type size() const
@@ -478,30 +524,36 @@ namespace core
 			value_type & front()
 			{
 				Assert(! empty());
-				return * super::_head.get_next();
+				return super::front();
 			}
 			
 			value_type const & front() const
 			{
 				Assert(! empty());
-				return * super::_head.get_next();
+				return super::front();
 			}
 			
 			value_type & back()
 			{
 				Assert(! empty());
-				hook_type & h = super::_head;
-				return * h.get_previous();
+				return super::back();
 			}
 			value_type const & back() const
 			{
 				Assert(! empty());
-				return super::_head._previous;
+				return super::back();
 			}
 			
+			// true iff this list contains the given element
 			bool contains(value_type const & element) const
 			{
 				return super::template contains<Member>(element);
+			}
+			
+			// true iff any list contains the given element
+			static bool is_contained(value_type const & element)
+			{
+				return super::template is_contained<Member>(element);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
@@ -509,7 +561,7 @@ namespace core
 			
 			void push_front(value_type & n)
 			{
-				value_type & previous = * super::_head.get_next();
+				value_type & previous = * super::_head._next;
 				super::template insert_detached<Member>(previous, n);
 			}
 			void push_back(value_type & n)
@@ -521,12 +573,12 @@ namespace core
 			void pop_front()
 			{
 				Assert(! empty());
-				super::template detach<Member>(* super::_head.get_next());
+				super::template pop_front<Member>();
 			}
 			void pop_back()
 			{
 				Assert(! empty());
-				super::template detach<Member>(* super::_head.get_previous());
+				super::template pop_back<Member>();
 			}
 			
 			// insert insertion before position

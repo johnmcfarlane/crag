@@ -57,18 +57,11 @@ namespace script
 	
 	class Object
 	{
-		// types
-		typedef core::intrusive::hook<Object> HookType;
-
 	public:
 		// variables
 		PyObject_HEAD;
-	private:
-		HookType _hook;
-
-		// more types
-	public:
-		DEFINE_INTRUSIVE_LIST_TYPE(Object, _hook, List);
+		
+		DEFINE_INTRUSIVE_LIST(Object, List);
 		typedef List::const_iterator const_iterator;
 		typedef List::iterator iterator;
 	};
