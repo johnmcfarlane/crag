@@ -183,6 +183,14 @@ namespace smp
 			SendMessage(message);
 		}
 		
+		// 3-parameter version
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+		static void Call (PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3, void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &))
+		{
+			DerivedMessage3<PARAMETER1, PARAMETER2, PARAMETER3> message(function, parameter1, parameter2, parameter3);
+			SendMessage(message);
+		}
+		
 	private:
 		// 0-parameter Call helper
 		class DerivedMessage0 : public Message
@@ -237,6 +245,28 @@ namespace smp
 			FunctionType _function;
 			PARAMETER1 _parameter1;
 			PARAMETER2 _parameter2;
+		};
+		
+		// 3-parameter Call helper
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+		class DerivedMessage3 : public Message
+		{
+		public:
+			typedef void (Class::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &);
+			DerivedMessage3(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
+			: _function(function)
+			, _parameter1(__parameter1)
+			, _parameter2(__parameter2)
+			, _parameter3(__parameter3) { 
+			}
+		private:
+			void operator () (Class & object) const {
+				(object.*_function)(_parameter1, _parameter2, _parameter3);
+			}
+			FunctionType _function;
+			PARAMETER1 _parameter1;
+			PARAMETER2 _parameter2;
+			PARAMETER3 _parameter3;
 		};
 		
 		void Run()
