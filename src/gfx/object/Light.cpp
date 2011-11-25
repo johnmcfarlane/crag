@@ -25,7 +25,8 @@ using namespace gfx;
 
 
 Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float c, bool init_shadows)
-: _position(pos)
+: LeafNode(Layer::light)
+, _position(pos)
 , color(col)
 , attenuation_a(a)
 , attenuation_b(b)
@@ -53,12 +54,21 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 {
 	Assert (layer == Layer::light);
 	
-	ObjectSet const & lights = scene.GetObjects(Layer::light);
+	ObjectMap const & lights = scene.GetObjectMap();
 	int light_index = 0;
-	for (ObjectSet::const_iterator vector_position = lights.begin(); * vector_position != this; ++ light_index)
+	for (ObjectMap::const_iterator vector_position = lights.begin(); ; ++ vector_position)
 	{
+		Object const * object = vector_position->second;
+		if (object == this)
+		{
+			break;
+		}
 		Assert(vector_position != lights.end());
-		++ vector_position;
+		
+		if (object->IsInLayer(Layer::light))
+		{
+			++ light_index;
+		}
 	}
 	
 	int light_id = GL_LIGHT0 + light_index;
@@ -80,9 +90,4 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 		1	// or is it this that makes it positional?
 	};
 	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));
-}
-
-bool Light::IsInLayer(Layer::type layer) const
-{
-	return layer == Layer::light;
 }

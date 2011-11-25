@@ -18,7 +18,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/object/Box.h"
-#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
 
 #include "geom/Transformation.h"
 
@@ -48,13 +48,12 @@ using namespace sim;
 
 
 Box::Box()
-: _model(nullptr)
 {
 }
 
 Box::~Box()
 {
-	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void Box::Create(Box & box, PyObject & args)
@@ -86,8 +85,10 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	body->SetAngularDamping(box_angular_damping);
 	SetBody(body);
 	
-	_model = new gfx::Box(size);
-	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
+	_model_uid = gfx::Uid::Create();
+	gfx::Box * model = new gfx::Box(size);
+	gfx::Uid parent_uid;
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -105,5 +106,5 @@ void Box::UpdateModels() const
 		Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions())
 	};
 
-	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Box>);
+	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Box>);
 }

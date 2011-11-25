@@ -19,7 +19,7 @@
 #include "sim/axes.h"
 
 #include "gfx/Color.h"
-#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
 #include "gfx/object/FormationMesh.h"
 
 #include "core/ConfigEntry.h"
@@ -45,8 +45,7 @@ namespace
 // FormationManager member definitions
 
 form::FormationManager::FormationManager()
-: _model(ref(new gfx::FormationMesh))
-, quit_flag(false)
+: quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , flat_shaded_flag(false)
@@ -143,7 +142,10 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	gfx::Daemon::Call<gfx::Object *>(& _model, & gfx::Renderer::OnAddObject);
+	_mesh_uid = gfx::Uid::Create();
+	gfx::FormationMesh * mesh = new gfx::FormationMesh;
+	gfx::Uid parent_uid;
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_mesh_uid, mesh, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	while (! quit_flag) 
 	{
@@ -161,7 +163,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	}
 	
 	// un-register with the renderer
-	gfx::Daemon::Call<gfx::Object *>(& _model, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_mesh_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void form::FormationManager::LockTree()
@@ -291,7 +293,7 @@ void form::FormationManager::GenerateMesh()
 	{
 		mesh
 	};
-	gfx::Daemon::Call(& _model, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
+	gfx::Daemon::Call(_mesh_uid, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
 	
 	// record timing information
 	sys::Time t = sys::GetTime();

@@ -11,6 +11,8 @@
 
 #include "Entity.h"
 
+#include "gfx/defs.h"
+
 
 namespace gfx
 {
@@ -38,6 +40,6 @@ namespace sim
 	private:
 		
 		// variables
-		gfx::Ball * _model;
+		gfx::Uid _model_uid;
 	};
 }

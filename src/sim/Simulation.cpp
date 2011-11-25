@@ -140,8 +140,10 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	smp::SetThreadName("Simulation");
 
 	// Add the skybox.
+	gfx::Uid skybox_uid = gfx::Uid::Create();
 	Firmament * skybox = new Firmament;
-	gfx::Daemon::Call<gfx::Object *>(skybox, & gfx::Renderer::OnAddObject);
+	gfx::Uid parent_uid;
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(skybox_uid, skybox, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	sys::Time next_tick_time = sys::GetTime();
 	
@@ -171,7 +173,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	}
 
 	// remove skybox
-	gfx::Daemon::Call<gfx::Object *>(skybox, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(skybox_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void Simulation::Tick()

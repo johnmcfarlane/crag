@@ -11,7 +11,7 @@
 #pragma once
 
 #include "defs.h"
-
+#include "Layer.h"
 #include "Image.h"
 
 #include "glpp/Fence.h"
@@ -66,13 +66,17 @@ namespace gfx
 		
 		// message interface
 		void OnQuit();
-		void OnAddObject(Object * const & object);
-		void OnRemoveObject(Object * const & object);
+		void OnAddObject(Uid const & uid, Object * const & object, Uid const & parent_uid);
+		void OnRemoveObject(Uid const & uid);
 		template <typename OBJECT> 
-		void OnUpdateObject(OBJECT * const & object, typename OBJECT::UpdateParams const & params)
-		{
-			object->Update(params);
-		}
+		void OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params)
+		/*{
+			if (scene != nullptr)
+			{
+				// Need to include Scene.h wherever this is referred to.
+				scene->UpdateObject(uid, params);
+			}
+		}*/;
 		void OnSetReady(bool const & ready);
 		void OnResize(Vector2i const & size);
 		void OnToggleCulling();
@@ -108,7 +112,7 @@ namespace gfx
 		
 		void EnableLights(bool enabled) const;
 		
-		void RenderLayer(Layer::type layer) const;
+		int RenderLayer(Layer::type layer) const;
 		
 		void DebugDraw() const;
 		void ProcessRenderTiming();

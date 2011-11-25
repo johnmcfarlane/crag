@@ -9,13 +9,13 @@
 
 #pragma once
 
-#include "gfx/object/Object.h"
+#include "LeafNode.h"
 
 
 namespace gfx
 {
 	// graphical representation of a Planet
-	class Planet : public Object
+	class Planet : public LeafNode
 	{
 	public:
 		// types
@@ -33,7 +33,6 @@ namespace gfx
 	private:
 		virtual bool GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const;
 		virtual void Render(Layer::type layer, gfx::Scene const & scene) const;
-		virtual bool IsInLayer(Layer::type layer) const;
 		
 		// variables
 		UpdateParams _salient;

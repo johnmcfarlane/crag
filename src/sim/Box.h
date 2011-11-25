@@ -11,15 +11,12 @@
 
 #include "Entity.h"
 
+#include "gfx/defs.h"
+
 
 namespace physics
 {
 	class BoxBody;
-}
-
-namespace gfx
-{
-	class Box;
 }
 
 
@@ -43,6 +40,6 @@ namespace sim
 	private:
 		
 		// variables
-		gfx::Box * _model;
+		gfx::Uid _model_uid;
 	};
 }

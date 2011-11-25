@@ -20,7 +20,7 @@
 #include "form/Formation.h"
 #include "form/FormationManager.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
 
 #include "gfx/object/Planet.h"
 
@@ -43,7 +43,6 @@ DEFINE_SCRIPT_CLASS(sim, Planet)
 Planet::Planet()
 : _formation(nullptr)
 , _body(nullptr)
-, _model(nullptr)
 , _radius_mean(0)
 , _radius_min(0)
 , _radius_max(0)
@@ -53,8 +52,7 @@ Planet::Planet()
 Planet::~Planet()
 {
 	// unregister with renderer
-	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
-	_model = nullptr;
+	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
 	
 	// unregister with formation manager
 	form::Daemon::Call<form::Formation *>(_formation, & form::FormationManager::OnRemoveFormation);
@@ -113,9 +111,6 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
 		_body->SetPosition(sphere.center);
-
-		// model
-		_model = new gfx::Planet(sphere.center);
 	}
 
 	// messages
@@ -124,7 +119,11 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
 		
 		// register with the renderer
-		gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
+		_model_uid = gfx::Uid::Create();
+		gfx::Planet * model = new gfx::Planet(sphere.center);
+		gfx::Uid parent_uid;
+		
+		gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
 	}
 	
 	return true;
@@ -175,7 +174,7 @@ void Planet::UpdateModels() const
 		_radius_max
 	};
 	
-	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
+	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
 }
 
 Scalar Planet::GetRadiusMean() const 

@@ -14,10 +14,12 @@
 
 #include "Color.h"
 #include "Debug.h"
+#include "for_each_leaf.h"
 #include "Image.h"
 #include "Pov.h"
 #include "Scene.h"
-#include "object/Object.h"
+#include "object/BranchNode.h"
+#include "object/LeafNode.h"
 
 #include "form/FormationManager.h"
 #include "form/node/NodeBuffer.h"
@@ -66,21 +68,70 @@ namespace
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
 	
+	// Given a camera position/direction, conservatively estimates 
+	// the minimum and maximum distances at which rendering occurs.
+	// TODO: Long-term, this function needs to be replaced with 
+	// something that gives and near and far plane value instead. 
+	class RenderRangeFunctor
+	{
+		OBJECT_NO_COPY(RenderRangeFunctor);
+	public:
+		RenderRangeFunctor(Pov const & pov, bool wireframe)
+		: _pov_frustum(pov.GetFrustum())
+		, _wireframe(wireframe)
+		, _adjusted_frustum(_pov_frustum)
+		, _camera_ray(axes::GetCameraRay(pov.GetTransformation()))
+		{
+			_adjusted_frustum.near_z = std::numeric_limits<float>::max();
+		}
+		
+		~RenderRangeFunctor()
+		{
+			_adjusted_frustum.near_z = Max(_adjusted_frustum.near_z * .5, _pov_frustum.near_z);
+			_adjusted_frustum.SetProjectionMatrix();
+		}
+		
+		bool operator() (Object const & object) const
+		{
+			return object.IsInLayer(Layer::foreground);
+		}
+		
+		void operator() (LeafNode const & leaf_node)
+		{
+			double render_range[2];
+			if (leaf_node.GetRenderRange(_camera_ray, render_range, _wireframe))
+			{
+				// If an object is completely behind the camera, does the near plane get set to zero?
+				// This is inefficient and is not allowed. 
+				Assert(render_range[1] > 0);
+				
+				if (render_range[0] < _adjusted_frustum.near_z)
+				{
+					_adjusted_frustum.near_z = render_range[0];
+				}
+				
+				if (render_range[1] > _adjusted_frustum.far_z)
+				{
+					_adjusted_frustum.far_z = render_range[1];
+				}
+			}
+		}
+		
+	private:
+		Frustum const & _pov_frustum;
+		bool _wireframe;
+		Frustum _adjusted_frustum;
+		sim::Ray3 _camera_ray;
+	};
+	
 	// Given the scene (including frustum), creates an adjusted frustum
 	// with suitable near/far z values and applies it to the projection matrix.
 	void SetForegroundFrustum(Scene const & scene, bool wireframe)
 	{
+		BranchNode const & root = scene.GetRoot();
 		Pov const & pov = scene.GetPov();
-		Frustum const & pov_frustum = pov.GetFrustum();
-		Frustum adjusted_frustum = pov_frustum;
-		adjusted_frustum.near_z = std::numeric_limits<float>::max();
-
-		sim::Ray3 camera_ray = axes::GetCameraRay(pov.GetTransformation());
-		
-		scene.GetRenderRange(camera_ray, adjusted_frustum.near_z, adjusted_frustum.far_z, wireframe);
-		
-		adjusted_frustum.near_z = Max(adjusted_frustum.near_z * .5, pov_frustum.near_z);
-		adjusted_frustum.SetProjectionMatrix();
+		RenderRangeFunctor functor(pov, wireframe);
+		for_each_leaf<RenderRangeFunctor &>(root, functor);
 	}
 	
 }	// namespace
@@ -120,7 +171,7 @@ void Renderer::OnQuit()
 	_ready = true;
 }
 
-void Renderer::OnAddObject(Object * const & object)
+void Renderer::OnAddObject(Uid const & uid, Object * const & object, Uid const & parent_uid)
 {
 	if (quit_flag)
 	{
@@ -131,18 +182,16 @@ void Renderer::OnAddObject(Object * const & object)
 
 	if (scene != nullptr)
 	{
-		scene->AddObject(* object);
+		scene->AddObject(uid, * object, parent_uid);
 	}
 }
 
-void Renderer::OnRemoveObject(Object * const & object)
+void Renderer::OnRemoveObject(Uid const & uid)
 {
 	if (scene != nullptr)
 	{
-		scene->RemoveObject(* object);
-		object->Deinit();
+		scene->RemoveObject(uid);
 	}
-	delete object;
 }
 
 void Renderer::OnSetReady(bool const & ready)
@@ -449,17 +498,32 @@ bool Renderer::HasShadowSupport() const
 	return true;
 }
 
+namespace
+{
+	class PreRenderFunctor
+	{
+	public:
+		PreRenderFunctor() 
+		{
+		}
+		
+		bool operator() (Object const & object) const
+		{
+			return object.IsInLayer(Layer::pre_render);
+		}
+		
+		void operator() (LeafNode & leaf_node) const
+		{
+			leaf_node.PreRender();
+		}
+	};
+}
+
 void Renderer::PreRender()
 {
-	ObjectSet & objects = scene->GetObjects(Layer::pre_render);
-	for (ObjectSet::iterator i = objects.begin(); i != objects.end(); ++ i)
-	{
-		Object & object = ref(* i);
-		
-		Assert(object.IsInLayer(Layer::pre_render));
-		
-		object.PreRender();
-	}
+	PreRenderFunctor functor;
+	BranchNode & branch_node = scene->GetRoot();
+	for_each_leaf<PreRenderFunctor const>(branch_node, functor);
 }
 
 void Renderer::Render()
@@ -492,20 +556,13 @@ void Renderer::RenderScene() const
 
 void Renderer::RenderBackground() const
 {
-	ObjectSet const & objects = scene->GetObjects(Layer::background);
-
-	// Basically, if we have a skybox yet,
-	if (objects.size() > 0)
+	// basically draw the skybox
+	int background_render_count = RenderLayer(Layer::background);
+	
+	// and if we have no skybox yet,
+	if (background_render_count < 1)
 	{
-		// only clear the depth buffer
-		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-		
-		// and draw the skybox
-		RenderLayer(Layer::background);
-	}
-	else
-	{
-		// else, clear the screen to black.
+		// clear the screen.
 		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
 }
@@ -651,58 +708,115 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	gl::SetDepthFunc(GL_LEQUAL);
 }
 
+namespace
+{
+	class EnableLightsFunctor
+	{
+	public:
+		EnableLightsFunctor(bool enabled, Scene const & scene)
+		: _enabled(enabled)
+		, _scene(scene)
+		, _light_id(GL_LIGHT0)
+		{
+			if (enabled)
+			{
+				// TODO: Move this out of Render routine.
+				GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
+				GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
+				GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
+			}
+		}
+		
+		~EnableLightsFunctor()
+		{
+			while (_light_id <= GL_LIGHT7) 
+			{
+				Assert(! gl::IsEnabled(_light_id));
+				++ _light_id;
+			}
+		}
+		
+		bool operator() (Object const & object) const
+		{
+			return object.IsInLayer(Layer::light);
+		}
+		
+		void operator() (LeafNode const & leaf_node)
+		{
+			if (_light_id > GL_LIGHT7) 
+			{
+				Assert(false);	// too many lights
+				return;
+			}
+			
+			if (_enabled)
+			{
+				gl::Enable(_light_id);
+				leaf_node.Render(Layer::light, _scene);
+			}
+			else
+			{
+				gl::Disable(_light_id);
+			}
+			
+			++ _light_id;
+		}
+		
+	private:
+		bool _enabled;
+		Scene const & _scene;
+		int _light_id;
+	};
+}
+
 // Nothing to do with shadow maps; sets/unsets the lights in the main scene.
 void Renderer::EnableLights(bool enabled) const
 {
-	if (enabled)
-	{
-		// TODO: Move this out of Render routine.
-		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-		GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-		GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
-	}
-	
-	ObjectSet lights = scene->GetObjects(Layer::light);
-	int light_id = GL_LIGHT0; 
-	for (ObjectSet::const_iterator it = lights.begin(); it != lights.end(); ++ it) 
-	{
-		Object const & light = ref(* it);
-		Assert(light.IsInLayer(Layer::light));
-		
-		if (enabled)
-		{
-			gl::Enable(light_id);
-			light.Render(Layer::light, * scene);
-		}
-		else
-		{
-			gl::Disable(light_id);
-		}
-		
-		++ light_id;
-		if (light_id > GL_LIGHT7) {
-			Assert(false);	// too many lights
-			break;
-		}
-	}
-	
-	while (light_id <= GL_LIGHT7) {
-		Assert(! gl::IsEnabled(light_id));
-		++ light_id;
-	}
+	EnableLightsFunctor functor(enabled, * scene);
+	for_each_leaf<EnableLightsFunctor &>(scene->GetRoot(), functor);
 }
 
-void Renderer::RenderLayer(Layer::type layer) const
+namespace
 {
-	ObjectSet const & objects = scene->GetObjects(layer);
-	for (ObjectSet::const_iterator i = objects.begin(); i != objects.end(); ++ i)
+	class RenderFunctor
 	{
-		Object const & object = ref(* i);
+	public:
+		RenderFunctor(Layer::type layer, Scene const & scene)
+		: _layer(layer)
+		, _scene(scene)
+		, _num_rendered_objects(0)
+		{
+		}
 		
-		Assert(object.IsInLayer(layer));
+		int GetNumRenderedObjects() const
+		{
+			return _num_rendered_objects;
+		}
 		
-		object.Render(layer, * scene);
-	}
+		bool operator() (Object const & object) const
+		{
+			return object.IsInLayer(_layer);
+		}
+		
+		void operator() (LeafNode const & leaf_node)
+		{
+			leaf_node.Render(_layer, _scene);
+			++ _num_rendered_objects;
+		}
+		
+	private:
+		Layer::type _layer;
+		Scene const & _scene;
+		int _num_rendered_objects;
+	};
+}
+
+int Renderer::RenderLayer(Layer::type layer) const
+{
+	RenderFunctor functor(layer, * scene);
+	BranchNode const & branch_node = scene->GetRoot();
+	for_each_leaf<RenderFunctor &>(branch_node, functor);
+	return functor.GetNumRenderedObjects();
 }
 
 void Renderer::DebugDraw() const

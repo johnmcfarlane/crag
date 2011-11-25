@@ -12,15 +12,12 @@
 
 #include "Entity.h"
 
+#include "gfx/defs.h"
+
 
 namespace form
 {
 	class Formation;
-}
-
-namespace gfx
-{
-	class Planet;
 }
 
 
@@ -60,7 +57,7 @@ namespace sim
 	private:
 		form::Formation * _formation;
 		PlanetaryBody * _body;
-		gfx::Planet * _model;
+		gfx::Uid _model_uid;
 		Scalar _radius_mean;
 		Scalar _radius_min;
 		Scalar _radius_max;

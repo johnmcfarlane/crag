@@ -41,7 +41,8 @@ namespace
 // gfx::FormationMesh member definitions
 
 FormationMesh::FormationMesh()
-: _queued_mesh(nullptr)
+: LeafNode(Layer::pre_render | Layer::foreground)
+, _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
 }
@@ -134,12 +135,6 @@ void FormationMesh::Render(Layer::type layer, Scene const & scene) const
 	front_buffer.Draw();
 	front_buffer.Deactivate();
 	GLPP_VERIFY;
-}
-
-bool FormationMesh::IsInLayer(Layer::type layer) const
-{
-	return layer == Layer::pre_render
-	|| layer == Layer::foreground;
 }
 
 bool FormationMesh::BeginBufferUpload()

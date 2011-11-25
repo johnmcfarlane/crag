@@ -22,8 +22,7 @@
 
 #include "script/MetaClass.h"
 
-#include "gfx/Renderer.h"
-#include "gfx/Scene.h"
+#include "gfx/Renderer.inl"
 #include "gfx/object/Light.h"
 
 #include "geom/MatrixOps.h"
@@ -101,14 +100,13 @@ Observer::Observer()
 : Entity()
 , speed(0)
 , speed_factor(observer_speed_factor)
-, _light(ref(new gfx::Light(Vector3::Zero(), observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c)))
 {
 }
 
 Observer::~Observer()
 {
 	// un-register with the renderer
-	gfx::Daemon::Call<gfx::Object *>(& _light, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
 
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
@@ -145,7 +143,11 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	impulses[0] = impulses[1] = Vector3::Zero();
 	
 	// register light with the renderer
-	gfx::Daemon::Call<gfx::Object *>(& _light, & gfx::Renderer::OnAddObject);
+	_light_uid = gfx::Uid::Create();
+	gfx::Light * light = new gfx::Light(center, observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
+	gfx::Uid parent_uid;	// no parent. TODO: This should end up better represented in the scene graph.
+
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -218,7 +220,7 @@ void Observer::UpdateModels() const
 		{
 			position
 		};
-		gfx::Daemon::Call(& _light, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
+		gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
 	}
 }
 

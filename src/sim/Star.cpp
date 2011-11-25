@@ -15,7 +15,7 @@
 #include "Simulation.h"
 
 #include "gfx/object/Light.h"
-#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
 
 #include "script/MetaClass.h"
 
@@ -31,7 +31,6 @@ DEFINE_SCRIPT_CLASS(sim, Star)
 
 sim::Star::Star()
 : Entity()
-, light(nullptr)
 , radius(-1)
 , year(-1)
 {
@@ -39,7 +38,7 @@ sim::Star::Star()
 
 sim::Star::~Star()
 {
-	gfx::Daemon::Call<gfx::Object *>(light, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void sim::Star::Create(Star & star, PyObject & args)
@@ -60,10 +59,12 @@ bool sim::Star::Init(Simulation & simulation, PyObject & args)
 	}
 
 	// initialize light
-	light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
+	_light_uid = gfx::Uid::Create();
+	gfx::Light * light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
+	gfx::Uid parent_uid;
 	
 	// pass to the renderer
-	gfx::Daemon::Call<gfx::Object *>(light, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -82,7 +83,7 @@ void sim::Star::UpdateModels() const
 		GetPosition()
 	};
 	
-	gfx::Daemon::Call(light, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
+	gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

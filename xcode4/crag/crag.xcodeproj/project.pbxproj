@@ -88,6 +88,9 @@
 		528164B51454F5DC0017E868 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646D1454F5DB0017E868 /* memory.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
+		52928AC8147C358800731B77 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52928AC6147C358800731B77 /* Layer.cpp */; };
+		52A50C9D147DF0D80061A909 /* BranchNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C98147DF0D70061A909 /* BranchNode.cpp */; };
+		52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C9B147DF0D70061A909 /* LeafNode.cpp */; };
 		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D832431472D692005FE380 /* EntityFunctions.cpp */; };
@@ -342,7 +345,15 @@
 		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
 		528ACFF814674B40004167BF /* gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gravity.cpp; sourceTree = "<group>"; };
 		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
+		52928AC6147C358800731B77 /* Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layer.cpp; sourceTree = "<group>"; };
+		52928AC7147C358800731B77 /* Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layer.h; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
+		52A50C98147DF0D70061A909 /* BranchNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchNode.cpp; sourceTree = "<group>"; };
+		52A50C99147DF0D70061A909 /* BranchNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNode.h; sourceTree = "<group>"; };
+		52A50C9A147DF0D70061A909 /* for_each_leaf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_leaf.h; sourceTree = "<group>"; };
+		52A50C9B147DF0D70061A909 /* LeafNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LeafNode.cpp; sourceTree = "<group>"; };
+		52A50C9C147DF0D70061A909 /* LeafNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeafNode.h; sourceTree = "<group>"; };
+		52A50CA7147F763F0061A909 /* Renderer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Renderer.inl; sourceTree = "<group>"; };
 		52ACC2B0145AFB230060DE93 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		52ACC2B1145AFB230060DE93 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
 		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
@@ -715,6 +726,9 @@
 				5281640C1454F5DB0017E868 /* Scene.h */,
 				5281640D1454F5DB0017E868 /* Sphere.cpp */,
 				5281640E1454F5DB0017E868 /* Sphere.h */,
+				52928AC6147C358800731B77 /* Layer.cpp */,
+				52928AC7147C358800731B77 /* Layer.h */,
+				52A50CA7147F763F0061A909 /* Renderer.inl */,
 			);
 			path = gfx;
 			sourceTree = "<group>";
@@ -722,6 +736,11 @@
 		528163F81454F5DB0017E868 /* object */ = {
 			isa = PBXGroup;
 			children = (
+				52A50C98147DF0D70061A909 /* BranchNode.cpp */,
+				52A50C99147DF0D70061A909 /* BranchNode.h */,
+				52A50C9A147DF0D70061A909 /* for_each_leaf.h */,
+				52A50C9B147DF0D70061A909 /* LeafNode.cpp */,
+				52A50C9C147DF0D70061A909 /* LeafNode.h */,
 				528163F91454F5DB0017E868 /* Ball.cpp */,
 				528163FA1454F5DB0017E868 /* Ball.h */,
 				528163FB1454F5DB0017E868 /* Box.cpp */,
@@ -1058,6 +1077,9 @@
 				528ACFFA14674B42004167BF /* gravity.cpp in Sources */,
 				52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */,
 				52D8326114730599005FE380 /* Vehicle.cpp in Sources */,
+				52928AC8147C358800731B77 /* Layer.cpp in Sources */,
+				52A50C9D147DF0D80061A909 /* BranchNode.cpp in Sources */,
+				52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

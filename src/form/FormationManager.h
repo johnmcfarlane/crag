@@ -16,6 +16,8 @@
 
 #include "sim/defs.h"
 
+#include "gfx/defs.h"
+
 #include "core/double_buffer.h"
 #include "core/Singleton.h"
 
@@ -24,13 +26,6 @@
 #include "smp/Semaphore.h"
 
 #include "sys/App.h"
-
-
-namespace gfx
-{
-	class Pov;
-	class FormationMesh;
-}
 
 
 namespace form 
@@ -135,9 +130,11 @@ namespace form
 		// types
 		
 		typedef core::double_buffer<Scene> SceneDoubleBuffer;
-		gfx::FormationMesh & _model;
 		
-		// attributes
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		
+		gfx::Uid _mesh_uid;
 		FormationSet _formations;
 		
 		bool quit_flag;

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "LeafNode.h"
 
 #include "glpp/Vbo_Types.h"
 #include "glpp/Texture.h"
@@ -21,7 +21,7 @@ namespace gfx
 	class Image;
 	class Scene;
 	
-	class Skybox : public Object
+	class Skybox : public LeafNode
 	{
 		// Types
 		typedef gl::Vbo3dTex Vbo;
@@ -29,13 +29,14 @@ namespace gfx
 		
 		// Methods
 	public:
+		Skybox();
+		
 		virtual void Init();
 		virtual void Deinit();
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
 		virtual void Render(Layer::type layer, Scene const & scene) const;
-		virtual bool IsInLayer(Layer::type layer) const;
 		
 	private:
 		void InitVerts();

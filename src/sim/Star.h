@@ -12,11 +12,7 @@
 
 #include "Entity.h"
 
-
-namespace gfx
-{
-	class Light;
-}
+#include "gfx/defs.h"
 
 
 namespace sim
@@ -44,7 +40,7 @@ namespace sim
 		virtual Vector3 const & GetPosition() const;
 	
 	private:
-		gfx::Light * light;
+		gfx::Uid _light_uid;
 		Vector3 position;
 		Scalar radius;
 		Scalar year;

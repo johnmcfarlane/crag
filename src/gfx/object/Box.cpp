@@ -21,6 +21,7 @@ using namespace gfx;
 
 
 Box::Box(Vector const & size)
+: LeafNode(Layer::foreground)
 {
 }
 
@@ -60,9 +61,4 @@ void Box::Render(Layer::type layer, gfx::Scene const & scene) const
 	cuboid.Draw();
 	
 	GLPP_VERIFY;
-}
-
-bool Box::IsInLayer(Layer::type layer) const 
-{ 
-	return layer == Layer::foreground; 
 }

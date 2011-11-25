@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "gfx/object/Object.h"
+#include "gfx/object/LeafNode.h"
+
 
 namespace gfx
 {
@@ -17,7 +18,7 @@ namespace gfx
 	class Pov;
 	
 	// Ball class
-	class Ball : public Object
+	class Ball : public LeafNode
 	{
 	public:
 		// types
@@ -33,7 +34,6 @@ namespace gfx
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
 		virtual void Update(UpdateParams const & params);
 		virtual void Render(Layer::type layer, Scene const & scene) const;
-		virtual bool IsInLayer(Layer::type) const;
 		
 	private:
 		unsigned CalculateLod(Vector const & camera_position) const;		

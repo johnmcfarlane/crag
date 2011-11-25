@@ -18,7 +18,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/object/Ball.h"
-#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
 
 
 namespace 
@@ -46,13 +46,12 @@ using namespace sim;
 
 
 Ball::Ball()
-: _model(nullptr)
 {
 }
 
 Ball::~Ball()
 {
-	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -84,8 +83,11 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	body->SetAngularDamping(ball_angular_damping);
 	SetBody(body);
 	
-	_model = new gfx::Ball(radius);
-	gfx::Daemon::Call<gfx::Object *>(_model, & gfx::Renderer::OnAddObject);
+	_model_uid = gfx::Uid::Create();
+	gfx::Ball * model = new gfx::Ball(radius);
+	gfx::Uid parent_uid;
+	
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }
@@ -104,5 +106,5 @@ void Ball::UpdateModels() const
 		body->GetRotation()
 	};
 	
-	gfx::Daemon::Call(_model, params, & gfx::Renderer::OnUpdateObject<gfx::Ball>);
+	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Ball>);
 }

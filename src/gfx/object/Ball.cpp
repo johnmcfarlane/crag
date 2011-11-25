@@ -23,7 +23,8 @@ using namespace gfx;
 
 
 Ball::Ball(Scalar radius)
-: _position(Vector::Zero())
+: LeafNode(Layer::foreground)
+, _position(Vector::Zero())
 , _rotation(Matrix33::Identity()) 
 , _radius(radius)
 {
@@ -63,11 +64,6 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 	sphere.Draw(lod);
 	
 	GLPP_VERIFY;
-}
-
-bool Ball::IsInLayer(Layer::type layer) const 
-{ 
-	return layer == Layer::foreground; 
 }
 
 unsigned Ball::CalculateLod(Vector const & camera_position) const

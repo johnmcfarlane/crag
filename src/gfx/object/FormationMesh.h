@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "gfx/object/Object.h"
+#include "gfx/object/LeafNode.h"
 
 #include "form/scene/MeshBufferObject.h"
 
@@ -19,7 +19,7 @@
 namespace gfx
 {
 	// the graphical representation of all the formations
-	class FormationMesh : public Object
+	class FormationMesh : public LeafNode
 	{
 		// types
 		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
@@ -38,7 +38,6 @@ namespace gfx
 	private:
 		virtual void PreRender();		
 		virtual void Render(Layer::type layer, Scene const & scene) const;
-		virtual bool IsInLayer(Layer::type layer) const;
 		
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();

@@ -22,6 +22,9 @@
 #include <algorithm>
 
 
+using namespace gfx;
+
+
 // used in CalculateNodeScoreFunctor.cpp
 CONFIG_DEFINE (camera_near, float, .25f);
 
@@ -30,15 +33,13 @@ namespace
 {
 	CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
 	CONFIG_DEFINE (camera_far, float, 10);
-
-	gfx::Layer::type operator++(gfx::Layer::type & layer_index)
-	{
-		return layer_index = gfx::Layer::type(int(layer_index) + 1);
-	}
 }
 
 
-gfx::Scene::Scene()
+////////////////////////////////////////////////////////////////////////////////
+//
+
+Scene::Scene()
 : _cuboid(* new Cuboid)
 , _sphere(* new Sphere)
 {
@@ -49,15 +50,10 @@ gfx::Scene::Scene()
 	frustum.far_z = static_cast<double>(camera_far);
 }
 
-gfx::Scene::~Scene()
+Scene::~Scene()
 {
-#if ! defined(NDEBUG)
-	for (Layer::type index = Layer::begin; index != Layer::end; ++ index)
-	{
-		ObjectSet & objects = _objects[index];
-		Assert(objects.empty());
-	}
-#endif
+	Assert(_objects.empty());
+	Assert(_root.IsEmpty());
 	
 	Frustum const & frustum = pov.GetFrustum();
 	
@@ -69,109 +65,98 @@ gfx::Scene::~Scene()
 	delete & _cuboid;
 }
 
-bool gfx::Scene::Empty() const
+void Scene::AddObject(Uid uid, Object & object, Uid parent_uid)
 {
-	for (Layer::type index = Layer::begin; index != Layer::end; ++ index)
+	// object with matching id already lives in map
+	Assert(_objects.count(uid) == 0);
+	
+	// add to tree
+	if (parent_uid == Uid())
 	{
-		if (! _objects[index].empty())
+		_root.AddChild(object);
+	}
+	else
+	{
+		ObjectMap::iterator i = _objects.find(parent_uid);
+		if (i == _objects.end())
 		{
-			return false;
+			// Parent already removed? If so, ok.
+			Assert(false);
+			return;
 		}
+		
+		BranchNode & parent = static_cast<BranchNode &>(* i->second);
+		VerifyObject(parent);
+	}
+
+	// add to map
+	ObjectMap::value_type addition(uid, & object);
+	_objects.insert(addition);
+}
+
+void Scene::RemoveObject(Uid uid)
+{
+	ObjectMap::iterator i = _objects.find(uid);
+	if (i == _objects.end())
+	{
+		Assert(false);
+		return;
 	}
 	
-	return true;
+	Object * object = i->second;
+
+	_objects.erase(uid);
+
+	object->Deinit();
+	delete object;
 }
 
-void gfx::Scene::AddObject(Object & object)
+ObjectMap & Scene::GetObjectMap()
 {
-	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
-	{
-		if (object.IsInLayer(layer))
-		{
-			ObjectSet & objects = _objects[layer];
-			
-			Assert(objects.count(& object) == 0);
-			objects.insert(& object);
-		}
-	}
+	return _objects;
 }
 
-void gfx::Scene::RemoveObject(Object & object)
+ObjectMap const & Scene::GetObjectMap() const
 {
-	for (Layer::type layer = Layer::begin; layer < Layer::end; ++ layer)
-	{
-		if (object.IsInLayer(layer))
-		{
-			ObjectSet & objects = _objects[layer];
-			
-			Assert(objects.count(& object) == 1);
-			objects.erase(& object);
-		}
-	}
+	return _objects;
 }
 
-gfx::ObjectSet & gfx::Scene::GetObjects(Layer::type layer)
+BranchNode & Scene::GetRoot()
 {
-	return _objects[layer];
+	return _root;
 }
 
-gfx::ObjectSet const & gfx::Scene::GetObjects(Layer::type layer) const
+BranchNode const & Scene::GetRoot() const
 {
-	return _objects[layer];
+	return _root;
 }
 
-void gfx::Scene::SetResolution(Vector2i const & r)
+void Scene::SetResolution(Vector2i const & r)
 {
 	pov.GetFrustum().resolution = r;
 }
 
-void gfx::Scene::SetCameraTransformation(sim::Transformation const & transformation)
+void Scene::SetCameraTransformation(sim::Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
 }
 
-gfx::Pov & gfx::Scene::GetPov()
+Pov & Scene::GetPov()
 {
 	return pov;
 }
 
-gfx::Pov const & gfx::Scene::GetPov() const
+Pov const & Scene::GetPov() const
 {
 	return pov;
 }
 
-// Given a camera position/direction, conservatively estimates 
-// the minimum and maximum distances at which rendering occurs.
-// TODO: Long-term, this function needs to be replaced with 
-// something that gives and near and far plane value instead. 
-void gfx::Scene::GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const
-{
-	ObjectSet const & objects = _objects[Layer::foreground];
-	for (ObjectSet::const_iterator object_iterator = objects.begin(); object_iterator != objects.end(); ++ object_iterator) 
-	{
-		Object const & object = * * object_iterator;
-		double object_range[2];
-		if (object.GetRenderRange(camera_ray, object_range, wireframe))
-		{
-			if (object_range[0] < range_min)
-			{
-				range_min = object_range[0];
-			}
-			
-			if (object_range[1] > range_max)
-			{
-				range_max = object_range[1];
-			}
-		}
-	}
-}
-
-gfx::Sphere const & gfx::Scene::GetSphere() const
+gfx::Sphere const & Scene::GetSphere() const
 {
 	return _sphere;
 }
 
-gfx::Cuboid const & gfx::Scene::GetCuboid() const
+Cuboid const & Scene::GetCuboid() const
 {
 	return _cuboid;
 }

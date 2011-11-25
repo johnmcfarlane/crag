@@ -24,6 +24,11 @@
 using namespace gfx;
 
 
+Skybox::Skybox()
+: LeafNode(Layer::background)
+{
+}
+
 void Skybox::Init()
 {
 	InitVerts();
@@ -52,6 +57,9 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 
 void Skybox::Render(Layer::type layer, Scene const & scene) const
 {
+	// clear the depth buffer
+	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
+
 	Pov const & pov = scene.GetPov();
 	
 	// Set projection matrix within relatively tight bounds.
@@ -99,11 +107,6 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	gl::SetDepthMask(true);
 	gl::Disable(GL_TEXTURE_2D);
 	gl::Enable(GL_CULL_FACE);
-}
-
-bool Skybox::IsInLayer(Layer::type layer) const
-{
-	return layer == Layer::background;
 }
 
 void Skybox::InitVerts()

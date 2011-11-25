@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "LeafNode.h"
 
 #include "gfx/Color.h"
 
@@ -19,7 +19,7 @@
 
 namespace gfx
 {
-	class Light : public Object
+	class Light : public LeafNode
 	{
 	public:
 		// types
@@ -36,8 +36,6 @@ namespace gfx
 		
 		virtual void Update(UpdateParams const & params);
 		virtual void Render(Layer::type layer, Scene const & scene) const;
-		
-		virtual bool IsInLayer(Layer::type) const;
 		
 		// variables
 	private:		

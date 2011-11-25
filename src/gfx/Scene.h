@@ -12,6 +12,7 @@
 
 #include "defs.h"
 
+#include "BranchNode.h"
 #include "Pov.h"
 
 #include "sim/defs.h"
@@ -30,13 +31,28 @@ namespace gfx
 		Scene();
 		~Scene();
 		
-		bool Empty() const;
+		void AddObject(Uid uid, Object & object, Uid parent_uid);
+		void RemoveObject(Uid uid);
 		
-		void AddObject(Object & object);
-		void RemoveObject(Object & object);
+		template <typename OBJECT> 
+		void UpdateObject(Uid uid, typename OBJECT::UpdateParams const & params)
+		{
+			ObjectMap::iterator i = _objects.find(uid);
+			if (i == _objects.end())
+			{
+				Assert(false);
+				return;
+			}
+			
+			OBJECT & object = static_cast<OBJECT &>(* i->second);
+			object.Update(params);
+		}
 		
-		ObjectSet & GetObjects(Layer::type layer);
-		ObjectSet const & GetObjects(Layer::type layer) const;
+		ObjectMap & GetObjectMap();
+		ObjectMap const & GetObjectMap() const;
+		
+		BranchNode & GetRoot();
+		BranchNode const & GetRoot() const;
 		
 		void SetResolution(Vector2i const & r);
 		void SetCameraTransformation(sim::Transformation const & transformation);
@@ -47,13 +63,13 @@ namespace gfx
 		Cuboid const & GetCuboid() const;
 		Sphere const & GetSphere() const;
 		
-		void GetRenderRange(sim::Ray3 const & camera_ray, double & range_min, double & range_max, bool wireframe) const;
-		
 	private:
 		// attributes
 		Pov pov;
 		
-		ObjectSet _objects[Layer::num];
+		ObjectMap _objects;	// fast-access container of all objects
+		BranchNode _root;	// root of object heirachy
+		
 		Cuboid const & _cuboid;
 		Sphere const & _sphere;
 	};

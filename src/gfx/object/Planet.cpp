@@ -19,6 +19,7 @@ using namespace gfx;
 // gfx::Planet member definitions
 
 Planet::Planet(Vector const & position)
+: LeafNode(Layer::foreground)
 {
 	_salient._position = position;
 }
@@ -77,9 +78,4 @@ bool Planet::GetRenderRange(Ray const & camera_ray, double * range, bool wirefra
 void Planet::Render(Layer::type layer, gfx::Scene const & scene) const 
 { 
 	// actual drawing is taken care of by the formation manager
-}
-
-bool Planet::IsInLayer(Layer::type layer) const 
-{ 
-	return layer == Layer::foreground; 
 }
