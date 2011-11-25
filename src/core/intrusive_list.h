@@ -93,23 +93,11 @@ namespace core
 				return _next != nullptr; 
 			}
 			
-			// not to be called on a list node
-			void verify() const
-			{
-#if defined(VERIFY)
-				VerifyTrue((_next == nullptr) == (_previous == nullptr));
-				VerifyTrue((_next == nullptr) == (_previous == _next));
-				VerifyPtr(_next);
-				VerifyPtr(_previous);
-#endif
-			}
-			
 			void init()
 			{
 				_next = _previous = nullptr;
 				
 				Assert(! is_attached());
-				verify();
 			}
 
 			// variables
@@ -313,6 +301,18 @@ namespace core
 			{
 				hook_type const & h = element.*Member;
 				return h.is_attached();
+			}
+			
+			template <hook_type Class::*Member>
+			static void verify(value_type const & element)
+			{
+#if defined(VERIFY)
+				hook_type const & h = element.*Member;
+				VerifyTrue((h._next == nullptr) == (h._previous == nullptr));
+				VerifyTrue((h._next == nullptr) == (h._previous == h._next));
+				VerifyPtr(h._next);
+				VerifyPtr(h._previous);
+#endif
 			}
 			
 			template <hook_type Class::*Member>
@@ -554,6 +554,23 @@ namespace core
 			static bool is_contained(value_type const & element)
 			{
 				return super::template is_contained<Member>(element);
+			}
+			
+			// throws a fit if something is wrong about the given element
+			void verify() const
+			{
+#if defined(VERIFY)
+				for (const_iterator i = begin(), __end = end(); i != __end; ++ i)
+				{
+					verify(* i);
+				}
+#endif
+			}
+			
+			// throws a fit if something is wrong about the given element
+			static void verify(value_type const & element)
+			{
+				return super::template verify<Member>(element);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
