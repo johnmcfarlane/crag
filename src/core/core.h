@@ -57,10 +57,8 @@ private: \
 // Put at top of class definition. 
 
 #define OBJECT_NO_INSTANCE(CLASS) \
-private: \
-	void operator=(const CLASS &); \
-	CLASS(); \
-	CLASS(const CLASS &) 
+	OBJECT_NO_COPY(CLASS); \
+	CLASS()
 
 
 //////////////////////////////////////////////////////////////////////
