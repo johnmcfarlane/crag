@@ -25,8 +25,11 @@ namespace smp
 		Uid() : _value(0) { }
 		Uid(Uid const & rhs) : _value(rhs._value) { }
 		
-		bool operator == (Uid const & rhs) const { return _value == rhs._value; }
-		bool operator != (Uid const & rhs) const { return _value != rhs._value; }
+		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
+		
+		friend bool operator == (Uid const & lhs, Uid const & rhs) { return lhs._value == rhs._value; }
+		friend bool operator != (Uid const & lhs, Uid const & rhs) { return lhs._value != rhs._value; }
+		friend bool operator < (Uid const & lhs, Uid const & rhs) { return lhs._value < rhs._value; }
 
 		friend std::ostream & operator << (std::ostream & out, Uid const & uid);
 
