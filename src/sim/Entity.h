@@ -14,8 +14,6 @@
 
 #include "script/Object.h"
 
-#include "smp/Uid.h"
-
 
 namespace physics
 {

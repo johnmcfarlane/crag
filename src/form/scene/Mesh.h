@@ -16,7 +16,6 @@
 #include "gfx/IndexBuffer.h"
 
 #include "core/debug.h"
-#include "core/intrusive_list.h"
 
 #include "glpp/Vbo_Types.h"
 

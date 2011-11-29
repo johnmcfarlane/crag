@@ -12,8 +12,6 @@
 
 #include "sim/defs.h"
 
-#include "smp/Uid.h"
-
 
 namespace form 
 {

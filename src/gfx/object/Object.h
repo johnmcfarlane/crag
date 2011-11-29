@@ -16,8 +16,6 @@
 #include "geom/Matrix44.h"
 #include "geom/Transformation.h"
 
-#include "core/intrusive_list.h"
-
 
 namespace gfx
 {

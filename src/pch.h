@@ -90,13 +90,16 @@
 #include "core/core.h"
 #include "core/debug.h"
 #include "core/floatOps.h"
-
-#include "sys/memory.h"
+#include "core/intrusive_list.h"
 
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
 #include "geom/Magnitude.h"
+
+#include "smp/Uid.h"
+
+#include "sys/memory.h"
 
 
 //////////////////////////////////////////////////////////////////////

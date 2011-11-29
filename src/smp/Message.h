@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "core/intrusive_list.h"
-
 
 namespace smp
 {

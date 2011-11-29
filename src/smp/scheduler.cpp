@@ -17,7 +17,6 @@
 #include "SimpleMutex.h"
 #include "Thread.h"
 
-#include "core/intrusive_list.h"
 #include "core/ring_buffer.h"
 
 #define ENABLE_SCHEDULER

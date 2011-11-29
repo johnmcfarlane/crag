@@ -76,3 +76,38 @@ private: \
 private: \
     core::Singleton<CLASS> _singleton
 #endif
+
+
+//////////////////////////////////////////////////////////////////////
+// get_owner - inverse pointer to member
+
+// TODO: sys stuff belongs in core anyway.
+namespace core
+{
+	
+	// Given an instance of TYPE which is contained in CLASS as MEMBER,
+	// returns the containing object of CLASS.
+	template <typename CLASS, typename TYPE, TYPE CLASS::*MEMBER>
+	CLASS & get_owner(TYPE & constituent)
+	{
+		// Get byte pointer to constituent.
+		char * hook_cptr = (char *)& constituent;
+		
+		// Get byte counter to where constituent would be in a null object.
+		CLASS * const null_object_ptr = nullptr;
+		char * null_hook_cptr = (char *)&(null_object_ptr->*MEMBER);
+		
+		// Get the difference between the two pointers.
+		// This is equal to the byte pointer of the object of which h is a part.
+		// (Hopefully, this is the first line that actually makes machine code.)
+		size_t owner_offset = hook_cptr - null_hook_cptr;
+		
+		// Cast back to type CLASS.
+		CLASS & owner = * reinterpret_cast<CLASS *>(owner_offset);
+		
+		// Sanity check - go back the other way.
+		assert(& (owner.*MEMBER) == & constituent);
+		
+		return owner;
+	}
+}
