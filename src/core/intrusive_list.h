@@ -99,7 +99,7 @@ namespace core
 				
 				Assert(! is_attached());
 			}
-
+			
 			// variables
 			value_type * _next;
 			value_type * _previous;
@@ -279,7 +279,7 @@ namespace core
 			{
 				return * _head._previous;
 			}
-
+			
 			template <hook_type Class::*Member>
 			bool contains(value_type const & element) const
 			{
@@ -436,8 +436,10 @@ namespace core
 			////////////////////////////////////////////////////////////////////////////////
 			// data
 			
-			// Note: detachment/attachment are different on this object.
-			// is_detached/is_attached should not be used on this object.
+			// Despite being of hook type, _head is not embedded in an element. 
+			// So when the list is empty, _head's next and previous pointers, are not valid.
+			// When the list size is zero or one, next and previous are equal.
+			// And when the size is zero, next->next is equal to next.
 			hook_type _head;
 		};
 		
@@ -490,7 +492,7 @@ namespace core
 			{
 				return super::template begin<Member>();
 			}
-
+			
 			iterator end()
 			{
 				return super::template end<Member>();
@@ -603,7 +605,7 @@ namespace core
 			{
 				super::template insert_detached<Member>(* position, insertion);
 			}
-
+			
 			iterator erase(iterator position)
 			{
 				value_type & element = * position;
