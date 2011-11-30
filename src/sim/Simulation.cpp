@@ -142,8 +142,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	// Add the skybox.
 	gfx::Uid skybox_uid = gfx::Uid::Create();
 	Firmament * skybox = new Firmament;
-	gfx::Uid parent_uid;
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(skybox_uid, skybox, parent_uid, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(skybox_uid, skybox, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	sys::Time next_tick_time = sys::GetTime();
 	

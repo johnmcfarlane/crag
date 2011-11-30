@@ -9,23 +9,24 @@
 
 #include "pch.h"
 
-#include "Uid.h"
-
 #include "atomic.h"
 
 #include "core/intOps.h"
 
 
-std::ostream & smp::operator << (std::ostream & out, smp::Uid const & uid)
+using namespace smp;
+
+
+std::ostream & smp::operator << (std::ostream & out, Uid const & uid)
 {
 	return out << uid._value;
 }
 
 
-smp::Uid smp::Uid::Create()
+Uid Uid::Create()
 {
 	static volatile ValueType _counter = 1;
-
+	
 #if ! defined(NDEBUG)
 	// check that we've still got lots of capacity
 	Assert(_counter <= ValueType(-1) >> 8);
@@ -39,13 +40,15 @@ smp::Uid smp::Uid::Create()
 		std::cout << "Uid " << _counter << std::endl;
 	}
 #endif
-
+	
 	// Instantiate a Uid (with _invalid_value).
 	Uid creation;
 	
 	// Overwrite its _value with a unique value.
 	creation._value = AtomicFetchAndAdd(_counter, 1);
-
+	
 	// Return unique Uid.
 	return creation;
 }
+
+Uid const Uid::null;

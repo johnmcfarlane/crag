@@ -144,8 +144,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	// register with the renderer
 	_mesh_uid = gfx::Uid::Create();
 	gfx::FormationMesh * mesh = new gfx::FormationMesh;
-	gfx::Uid parent_uid;
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_mesh_uid, mesh, parent_uid, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_mesh_uid, mesh, gfx::Uid(), & gfx::Renderer::OnAddObject);
 	
 	while (! quit_flag) 
 	{

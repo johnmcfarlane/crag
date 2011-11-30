@@ -121,9 +121,7 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		// register with the renderer
 		_model_uid = gfx::Uid::Create();
 		gfx::Planet * model = new gfx::Planet(sphere.center);
-		gfx::Uid parent_uid;
-		
-		gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
+		gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	}
 	
 	return true;

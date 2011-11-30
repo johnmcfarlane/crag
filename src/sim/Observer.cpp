@@ -145,9 +145,7 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	// register light with the renderer
 	_light_uid = gfx::Uid::Create();
 	gfx::Light * light = new gfx::Light(center, observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
-	gfx::Uid parent_uid;	// no parent. TODO: This should end up better represented in the scene graph.
-
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, parent_uid, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }

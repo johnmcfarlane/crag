@@ -47,10 +47,6 @@ DEFINE_SCRIPT_CLASS(sim, Box);
 using namespace sim;
 
 
-Box::Box()
-{
-}
-
 Box::~Box()
 {
 	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
@@ -87,8 +83,7 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	
 	_model_uid = gfx::Uid::Create();
 	gfx::Box * model = new gfx::Box(size);
-	gfx::Uid parent_uid;
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }

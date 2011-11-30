@@ -45,10 +45,6 @@ DEFINE_SCRIPT_CLASS(sim, Ball);
 using namespace sim;
 
 
-Ball::Ball()
-{
-}
-
 Ball::~Ball()
 {
 	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
@@ -85,9 +81,7 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	
 	_model_uid = gfx::Uid::Create();
 	gfx::Ball * model = new gfx::Ball(radius);
-	gfx::Uid parent_uid;
-	
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, parent_uid, & gfx::Renderer::OnAddObject);
+	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_model_uid, model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }

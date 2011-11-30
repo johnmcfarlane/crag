@@ -23,21 +23,22 @@ namespace smp
 	public:
 		// functions
 		Uid() : _value(0) { }
-		Uid(Uid const & rhs) : _value(rhs._value) { }
 		
 		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
 		
 		friend bool operator == (Uid const & lhs, Uid const & rhs) { return lhs._value == rhs._value; }
 		friend bool operator != (Uid const & lhs, Uid const & rhs) { return lhs._value != rhs._value; }
 		friend bool operator < (Uid const & lhs, Uid const & rhs) { return lhs._value < rhs._value; }
-
+		
 		friend std::ostream & operator << (std::ostream & out, Uid const & uid);
-
+		
 		// create a new unique object
 		static Uid Create();
 		
+		static const Uid null;
+		
 	private:
 		// variables
-		volatile ValueType _value;
+		ValueType _value;
 	};
 }

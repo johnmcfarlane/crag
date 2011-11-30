@@ -27,7 +27,6 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Ball, Entity);
 		
 	public:
-		Ball();
 		~Ball();
 		
 		// Type-specific allocation via script.

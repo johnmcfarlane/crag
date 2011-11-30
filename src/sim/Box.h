@@ -27,7 +27,6 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Box, Entity);
 		
 	public:
-		Box();
 		~Box();
 		
 		// Type-specific allocation via script.
