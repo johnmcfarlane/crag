@@ -307,9 +307,9 @@ namespace core
 			static void verify(value_type const & element)
 			{
 #if defined(VERIFY)
+				hook_type const & h = element.*Member;
 				VerifyPtr(h._next);
 				VerifyPtr(h._previous);
-				hook_type const & h = element.*Member;
 				VerifyTrue((h._next == nullptr) == (h._previous == nullptr));
 #endif
 			}
