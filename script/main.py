@@ -30,10 +30,11 @@ cleanup_shapes = True
 
 
 def spawn_shape(shapes):
-	if len(shapes) >= max_shapes:
-		if cleanup_shapes:
+	if cleanup_shapes:
+		if len(shapes) > max_shapes:
 			shapes.pop(0)
-		else:
+	else:
+		if len(shapes) >= max_shapes:
 			return
 	
 	x = random.random() - .5
