@@ -20,7 +20,7 @@ using namespace gfx;
 
 
 BranchNode::BranchNode()
-: Object(Layer::Map::none, branch)
+: Object(branch, Layer::Map::none)
 {
 }
 

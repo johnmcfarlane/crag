@@ -31,7 +31,7 @@ namespace gfx
 		Scene();
 		~Scene();
 		
-		void AddObject(Uid uid, Object & object, Uid parent_uid);
+		void AddObject(Object & object, Uid parent_uid);
 		void RemoveObject(Uid uid);
 		
 		template <typename OBJECT> 

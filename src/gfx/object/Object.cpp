@@ -18,10 +18,11 @@
 using namespace gfx;
 
 
-Object::Object(Layer::Map::type layers, NodeType node_type)
+Object::Object(NodeType node_type, Layer::Map::type layers)
 : _parent(nullptr)
-, _layers(layers)
+, _uid(Uid::Create())
 , _node_type(node_type)
+, _layers(layers)
 { 
 }
 
@@ -49,6 +50,11 @@ void Object::Init()
 
 void Object::Deinit()
 {
+}
+
+Uid Object::GetUid() const
+{
+	return _uid;
 }
 
 bool Object::IsInLayer(Layer::type layer) const

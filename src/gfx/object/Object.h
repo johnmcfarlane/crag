@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "Layer.h"
+#include "gfx/defs.h"
+#include "gfx/Layer.h"
 
 #include "geom/Ray.h"
 #include "geom/Matrix33.h"
@@ -50,7 +51,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(Layer::Map::type layers, NodeType node_type);
+		Object(NodeType node_type, Layer::Map::type layers = Layer::Map::none);
 		virtual ~Object();
 		
 #if defined(VERIFY)
@@ -59,6 +60,8 @@ namespace gfx
 		
 		virtual void Init();	// called on arrival in render thread 
 		virtual void Deinit();
+		
+		Uid GetUid() const;
 		
 		// returns true iff this object belongs in the given render layer;
 		// currently must remain invariant
@@ -69,8 +72,6 @@ namespace gfx
 		void AddToLayer(Layer::type layer);
 		
 		// scene graph types/variables/functions
-		DEFINE_INTRUSIVE_LIST(Object, ChildList);
-
 		NodeType GetNodeType() const;
 		
 		LeafNode & GetLeafNodeRef();
@@ -88,12 +89,13 @@ namespace gfx
 		
 		void SetParent(BranchNode * parent);
 	private:
-		BranchNode * _parent;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
+		BranchNode * _parent;
+		DEFINE_INTRUSIVE_LIST(Object, ChildList);
 		
+		Uid const _uid;
+		NodeType const _node_type;
 		Layer::Map::type _layers;
-		NodeType _node_type;
 	};
 }

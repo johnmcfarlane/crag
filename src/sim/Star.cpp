@@ -59,9 +59,9 @@ bool sim::Star::Init(Simulation & simulation, PyObject & args)
 	}
 
 	// initialize light
-	_light_uid = gfx::Uid::Create();
 	gfx::Light * light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	_light_uid = light->GetUid();
+	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }

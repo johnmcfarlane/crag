@@ -143,9 +143,9 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	impulses[0] = impulses[1] = Vector3::Zero();
 	
 	// register light with the renderer
-	_light_uid = gfx::Uid::Create();
 	gfx::Light * light = new gfx::Light(center, observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
-	gfx::Daemon::Call<gfx::Uid, gfx::Object *, gfx::Uid>(_light_uid, light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	_light_uid = light->GetUid();
+	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
 	return true;
 }

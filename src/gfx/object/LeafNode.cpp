@@ -19,12 +19,12 @@ using namespace gfx;
 // gfx::LeafNode member definitions
 
 LeafNode::LeafNode(Layer::type layer)
-: Object(ToMap(layer), leaf)
+: Object(leaf, ToMap(layer))
 {
 }
 
 LeafNode::LeafNode(Layer::Map::type layers)
-: Object(layers, leaf)
+: Object(leaf, layers)
 {
 }
 

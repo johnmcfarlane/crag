@@ -66,7 +66,7 @@ namespace gfx
 		
 		// message interface
 		void OnQuit();
-		void OnAddObject(Uid const & uid, Object * const & object, Uid const & parent_uid);
+		void OnAddObject(Object * const & object, Uid const & parent_uid);
 		void OnRemoveObject(Uid const & uid);
 		template <typename OBJECT> 
 		void OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params)

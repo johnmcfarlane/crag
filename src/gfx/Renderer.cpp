@@ -171,18 +171,18 @@ void Renderer::OnQuit()
 	_ready = true;
 }
 
-void Renderer::OnAddObject(Uid const & uid, Object * const & object, Uid const & parent_uid)
+void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
 {
 	if (quit_flag)
 	{
 		return;
 	}
-
+	
 	object->Init();
-
+	
 	if (scene != nullptr)
 	{
-		scene->AddObject(uid, * object, parent_uid);
+		scene->AddObject(* object, parent_uid);
 	}
 }
 

@@ -65,13 +65,10 @@ Scene::~Scene()
 	delete & _cuboid;
 }
 
-void Scene::AddObject(Uid uid, Object & object, Uid parent_uid)
+void Scene::AddObject(Object & object, Uid parent_uid)
 {
-	// object with matching id already lives in map
-	Assert(_objects.count(uid) == 0);
-	
 	// add to tree
-	if (parent_uid == Uid())
+	if (parent_uid == Uid::null)
 	{
 		_root.AddChild(object);
 	}
@@ -80,7 +77,6 @@ void Scene::AddObject(Uid uid, Object & object, Uid parent_uid)
 		ObjectMap::iterator i = _objects.find(parent_uid);
 		if (i == _objects.end())
 		{
-			// Parent already removed? If so, ok.
 			Assert(false);
 			return;
 		}
@@ -88,10 +84,13 @@ void Scene::AddObject(Uid uid, Object & object, Uid parent_uid)
 		BranchNode & parent = static_cast<BranchNode &>(* i->second);
 		VerifyObject(parent);
 	}
-
+	
 	// add to map
+	Uid uid = object.GetUid();
+	Assert(_objects.count(uid) == 0);	// object with matching id already lives in map
 	ObjectMap::value_type addition(uid, & object);
 	_objects.insert(addition);
+	Assert(_objects.count(uid) == 1);	// insertion failed somehow
 }
 
 void Scene::RemoveObject(Uid uid)
