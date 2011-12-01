@@ -44,29 +44,6 @@ namespace gfx
 			return layer_index = type(int(layer_index) + 1);
 		}
 		
-		inline Map::type operator |= (Map::type & lhs, Map::type const & rhs)
-		{
-			lhs = static_cast<Map::type>(static_cast<int>(lhs) | static_cast<int>(rhs));
-			return lhs;
-		}
-		
-		inline Map::type operator |= (Map::type & lhs, type const & rhs)
-		{
-			return lhs |= ToMap(rhs);
-		}
-		
-		inline Map::type operator | (Map::type const & lhs, Map::type const & rhs)
-		{
-			Map::type result = static_cast<Map::type>(static_cast<int>(lhs) | static_cast<int>(rhs));
-			return result;
-		}
-		
-		inline Map::type operator | (type const & lhs, type const & rhs)
-		{
-			Map::type result = ToMap(lhs) | ToMap(rhs);
-			return result;
-		}
-		
 #if defined(VERIFY)
 		void Verify(type layer);
 		void Verify(Map::type map);
@@ -74,5 +51,28 @@ namespace gfx
 		inline void Verify(type layer) { }
 		inline void Verify(Map::type map) { }
 #endif
+	}
+	
+	inline Layer::Map::type operator |= (Layer::Map::type & lhs, Layer::Map::type const & rhs)
+	{
+		lhs = static_cast<Layer::Map::type>(static_cast<int>(lhs) | static_cast<int>(rhs));
+		return lhs;
+	}
+	
+	inline Layer::Map::type operator |= (Layer::Map::type & lhs, Layer::type const & rhs)
+	{
+		return lhs |= Layer::ToMap(rhs);
+	}
+	
+	inline Layer::Map::type operator | (Layer::Map::type const & lhs, Layer::Map::type const & rhs)
+	{
+		Layer::Map::type result = static_cast<Layer::Map::type>(static_cast<int>(lhs) | static_cast<int>(rhs));
+		return result;
+	}
+	
+	inline Layer::Map::type operator | (Layer::type const & lhs, Layer::type const & rhs)
+	{
+		Layer::Map::type result = ToMap(lhs) | ToMap(rhs);
+		return result;
 	}
 }
