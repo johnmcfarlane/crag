@@ -12,11 +12,6 @@
 #include "gfx/defs.h"
 #include "gfx/Layer.h"
 
-#include "geom/Ray.h"
-#include "geom/Matrix33.h"
-#include "geom/Matrix44.h"
-#include "geom/Transformation.h"
-
 
 namespace gfx
 {
@@ -34,13 +29,6 @@ namespace gfx
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		
-		typedef double Scalar;
-		typedef Vector<Scalar, 3> Vector;
-		typedef Matrix<Scalar, 3, 3> Matrix33;
-		typedef Matrix<Scalar, 4, 4> Matrix44;
-		typedef Transformation<Scalar> Transformation;
-		typedef Ray<Scalar, 3> Ray;
 		
 		enum NodeType
 		{

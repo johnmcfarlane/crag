@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "sim/defs.h"
+#include "defs.h"
 
 #include "geom/Transformation.h"
 
@@ -20,7 +20,7 @@ namespace gfx
 	class Frustum
 	{
 	public:
-		sim::Matrix44 CalcProjectionMatrix() const;
+		Matrix44 CalcProjectionMatrix() const;
 		void SetProjectionMatrix() const;
 		
 		Vector2i resolution;
@@ -33,10 +33,6 @@ namespace gfx
 	class Pov
 	{
 	public:
-		// types
-		typedef sim::Vector3 Vector;
-		typedef sim::Transformation Transformation;
-		
 		// functions
 		Pov();
 		
@@ -44,12 +40,12 @@ namespace gfx
 		Frustum const & GetFrustum() const;
 
 		// set/get the camera position/rotation
-		void SetTransformation(sim::Transformation const & transformation);
+		void SetTransformation(Transformation const & transformation);
 		Transformation const & GetTransformation() const;
 		
 		Vector GetPosition() const;
 		
-		//void LookAtSphere(Vector const & eye, sim::Sphere3 const & sphere, Vector const & up);
+		//void LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const & up);
 		
 		// set the OpenGl model view matrix for the given model
 		void SetModelView(Transformation const & model_transformation) const;

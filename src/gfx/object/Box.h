@@ -11,6 +11,9 @@
 
 #include "gfx/object/LeafNode.h"
 
+#include "geom/Transformation.h"
+
+
 namespace gfx
 {
 	// forward-declarations

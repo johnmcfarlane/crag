@@ -11,6 +11,8 @@
 
 #include "gfx/object/LeafNode.h"
 
+#include "geom/Matrix33.h"
+
 
 namespace gfx
 {

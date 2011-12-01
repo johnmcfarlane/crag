@@ -226,7 +226,7 @@ void Renderer::OnToggleCapture()
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void Renderer::OnSetCamera(Transformation<double> const & transformation)
+void Renderer::OnSetCamera(Transformation const & transformation)
 {
 	if (scene != nullptr)
 	{
@@ -830,9 +830,9 @@ void Renderer::DebugDraw() const
 	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
-	Pov::Transformation const & transformation = pov.GetTransformation();
+	Transformation const & transformation = pov.GetTransformation();
 	sim::Vector3 pos = transformation.GetTranslation();
-	pov.SetModelView(Pov::Transformation(pos));
+	pov.SetModelView(Transformation(pos));
 	Debug::Draw(pos);
 	
 #if defined (GATHER_STATS)

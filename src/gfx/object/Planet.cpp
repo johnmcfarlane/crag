@@ -11,6 +11,8 @@
 
 #include "Planet.h"
 
+#include "geom/Ray.h"
+
 
 using namespace gfx;
 

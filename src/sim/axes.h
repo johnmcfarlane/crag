@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "geom/Matrix44.h"
 #include "geom/Transformation.h"
 #include "geom/Ray.h"
 
@@ -29,15 +28,6 @@ namespace axes
 	template<typename S> inline Vector<S, 3> const & GetAxis(Matrix<S, 3, 3> const & rotation, Axis axis)
 	{
 		return reinterpret_cast<Vector<S, 3> const &> (rotation.GetRow(axis));
-	}
-	
-	// As opposed to Gl (apparently). 
-	template<typename S> inline Matrix<S, 4, 4> SimToOpenGl()
-	{
-		return Matrix<S, 4, 4>(1, 0,  0, 0, 
-							   0, 0, -1, 0, 
-							   0, 1,  0, 0, 
-							   0, 0,  0, 1);
 	}
 	
 	// Converts position/matrix combo to a Ray.

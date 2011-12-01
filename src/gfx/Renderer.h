@@ -83,7 +83,7 @@ namespace gfx
 		void OnToggleLighting();
 		void OnToggleWireframe();
 		void OnToggleCapture();
-		void OnSetCamera(Transformation<double> const & transformation);
+		void OnSetCamera(Transformation const & transformation);
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
