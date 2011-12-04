@@ -63,15 +63,15 @@ namespace gfx
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;
 		
-		LeafNode & GetLeafNodeRef();
-		LeafNode const & GetLeafNodeRef() const;
-		LeafNode * GetLeafNodePtr();
-		LeafNode const * GetLeafNodePtr() const;
+		LeafNode & CastLeafNodeRef();
+		LeafNode const & CastLeafNodeRef() const;
+		LeafNode * CastLeafNodePtr();
+		LeafNode const * CastLeafNodePtr() const;
 		
-		BranchNode & GetBranchNodeRef();
-		BranchNode const & GetBranchNodeRef() const;
-		BranchNode * GetBranchNodePtr();
-		BranchNode const * GetBranchNodePtr() const;
+		BranchNode & CastBranchNodeRef();
+		BranchNode const & CastBranchNodeRef() const;
+		BranchNode * CastBranchNodePtr();
+		BranchNode const * CastBranchNodePtr() const;
 		
 		BranchNode * GetParent();
 		BranchNode const * GetParent() const;

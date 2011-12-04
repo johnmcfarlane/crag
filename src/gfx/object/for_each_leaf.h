@@ -13,35 +13,14 @@
 
 namespace gfx
 {
-	template <typename FUNCTOR, typename OBJECT, typename LEAF_NODE, typename BRANCH_NODE, typename LIST_OBJECT, typename CHILD_LIST_ITERATOR>
-	void for_each_leaf(BRANCH_NODE & branch_node, FUNCTOR functor)
-	{
-		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; ++ i)
-		{
-			OBJECT & child = * i;
-			if (! functor(child))
-			{
-				continue;
-			}
-			
-			if (child.GetNodeType() == Object::leaf)
-			{
-				LEAF_NODE & leaf = child.GetLeafNodeRef();
-				functor(leaf);
-			}
-			else
-			{
-				Assert(child.GetNodeType() == Object::branch);
-
-				BRANCH_NODE & branch = child.GetBranchNodeRef();
-				if (functor(branch))
-				{
-					for_each_leaf<FUNCTOR, OBJECT, LEAF_NODE, BRANCH_NODE, LIST_OBJECT, CHILD_LIST_ITERATOR>(branch, functor);
-				}
-			}
-		}
-	}
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// for_each_leaf - scene graph traversal
 	
+	////////////////////////////////////////////////////////////////////////////////
+	// simplified helper functions; call these with root node
+	
+	// non-matrix versions
 	template <typename FUNCTOR>
 	void for_each_leaf(BranchNode & branch_node, FUNCTOR functor)
 	{
@@ -52,5 +31,82 @@ namespace gfx
 	void for_each_leaf(BranchNode const & branch_node, FUNCTOR functor)
 	{
 		for_each_leaf<FUNCTOR, Object const, LeafNode const, BranchNode const, Object::ChildList const, Object::ChildList::const_iterator>(branch_node, functor);
+	}
+	
+	// matrix versions; pass in identity (TODO: Or inverse camera?)
+	template <typename FUNCTOR>
+	void for_each_leaf(BranchNode & branch_node, FUNCTOR functor, Transformation const & transformation)
+	{
+		for_each_leaf<FUNCTOR, Object, LeafNode, BranchNode, Object::ChildList, Object::ChildList::iterator>(branch_node, functor, transformation);
+	}
+	
+	template <typename FUNCTOR>
+	void for_each_leaf(BranchNode const & branch_node, FUNCTOR functor, Transformation const & transformation)
+	{
+		for_each_leaf<FUNCTOR, Object const, LeafNode const, BranchNode const, Object::ChildList const, Object::ChildList::const_iterator>(branch_node, functor, transformation);
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// main recursive functions; do not call directly
+	
+	template <typename FUNCTOR, typename OBJECT, typename LEAF_NODE, typename BRANCH_NODE, typename LIST_OBJECT, typename CHILD_LIST_ITERATOR>
+	void for_each_leaf(BRANCH_NODE & branch_node, FUNCTOR functor)
+	{
+		//static_assert(& static_cast<NodeFunctor>(functor) != nullptr, "Functor passed into for_each_leaf must be derived from NodeFunctor");
+		
+		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; ++ i)
+		{
+			OBJECT & child = * i;
+			if (! functor(child))
+			{
+				continue;
+			}
+			
+			if (child.GetNodeType() == Object::leaf)
+			{
+				LEAF_NODE & leaf = child.CastLeafNodeRef();
+				functor(leaf);
+			}
+			else
+			{
+				Assert(child.GetNodeType() == Object::branch);
+				
+				BRANCH_NODE & branch = child.CastBranchNodeRef();
+				if (functor(branch))
+				{
+					for_each_leaf<FUNCTOR, OBJECT, LEAF_NODE, BRANCH_NODE, LIST_OBJECT, CHILD_LIST_ITERATOR>(branch, functor);
+				}
+			}
+		}
+	}
+	
+	template <typename FUNCTOR, typename OBJECT, typename LEAF_NODE, typename BRANCH_NODE, typename LIST_OBJECT, typename CHILD_LIST_ITERATOR>
+	void for_each_leaf(BRANCH_NODE & branch_node, FUNCTOR functor, Transformation const & parent_transformation)
+	{
+		//static_assert(& static_cast<NodeFunctor>(functor) != nullptr, "Functor passed into for_each_leaf must be derived from NodeFunctor");
+		
+		Transformation child_transformation = parent_transformation * branch_node.GetTransformation();
+		
+		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; ++ i)
+		{
+			OBJECT & child = * i;
+			if (! functor(child))
+			{
+				continue;
+			}
+			
+			if (child.GetNodeType() == Object::leaf)
+			{
+				LEAF_NODE & leaf = child.CastLeafNodeRef();
+				functor(leaf, child_transformation);
+			}
+			else
+			{
+				Assert(child.GetNodeType() == Object::branch);
+				
+				BRANCH_NODE & child_branch = child.CastBranchNodeRef();
+				for_each_leaf<FUNCTOR, OBJECT, LEAF_NODE, BRANCH_NODE, LIST_OBJECT, CHILD_LIST_ITERATOR>(child_branch, functor, child_transformation);
+			}
+		}
 	}
 }

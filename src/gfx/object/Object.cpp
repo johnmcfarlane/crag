@@ -89,52 +89,52 @@ Object::NodeType Object::GetNodeType() const
 	return _node_type;
 }
 
-LeafNode & Object::GetLeafNodeRef()
+LeafNode & Object::CastLeafNodeRef()
 {
 	Assert(GetNodeType() == leaf);
 	return static_cast<LeafNode &>(* this);
 }
 
-LeafNode const & Object::GetLeafNodeRef() const
+LeafNode const & Object::CastLeafNodeRef() const
 {
 	Assert(GetNodeType() == leaf);
 	return static_cast<LeafNode const &>(* this);
 }
 
-LeafNode * Object::GetLeafNodePtr()
+LeafNode * Object::CastLeafNodePtr()
 {
 	return (GetNodeType() == leaf)
 	? static_cast<LeafNode *>(this)
 	: nullptr;
 }
 
-LeafNode const * Object::GetLeafNodePtr() const
+LeafNode const * Object::CastLeafNodePtr() const
 {
 	return (GetNodeType() == leaf)
 	? static_cast<LeafNode const *>(this)
 	: nullptr;
 }
 
-BranchNode & Object::GetBranchNodeRef()
+BranchNode & Object::CastBranchNodeRef()
 {
 	Assert(GetNodeType() == branch);
 	return static_cast<BranchNode &>(* this);
 }
 
-BranchNode const & Object::GetBranchNodeRef() const
+BranchNode const & Object::CastBranchNodeRef() const
 {
 	Assert(GetNodeType() == branch);
 	return static_cast<BranchNode const &>(* this);
 }
 
-BranchNode * Object::GetBranchNodePtr()
+BranchNode * Object::CastBranchNodePtr()
 {
 	return (GetNodeType() == branch)
 	? static_cast<BranchNode *>(this)
 	: nullptr;
 }
 
-BranchNode const * Object::GetBranchNodePtr() const
+BranchNode const * Object::CastBranchNodePtr() const
 {
 	return (GetNodeType() == branch)
 	? static_cast<BranchNode const *>(this)
