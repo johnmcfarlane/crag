@@ -168,6 +168,31 @@ private:
 };
 
 
+template <typename S> 
+Matrix<S, 4, 4> Inverse(Matrix<S, 4, 4> const & matrix)
+{
+	Matrix<S, 4, 4> inverse;
+	
+	S det = matrix.Determinant();
+	if(Abs(det) < std::numeric_limits<S>::min()) 
+	{
+		return matrix;		// The matrix is not invertible! Singular case!
+	}
+	
+	S inv_det = Inverse(det);
+	
+	for (int row = 0; row < 4; ++ row) 
+	{
+		for (int column = 0; column < 4; ++ column) 
+		{
+			inverse[column][row] = matrix.CoFactor(row,column) * inv_det;
+		}
+	}
+	
+	return inverse;
+}
+
+
 // single-precision floating-point specialization
 typedef Matrix<float, 4, 4> Matrix44f;
 

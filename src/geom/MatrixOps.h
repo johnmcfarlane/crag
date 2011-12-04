@@ -76,30 +76,6 @@ Matrix<S, R, C> Transposition(Matrix<S, R, C> const & matrix)
 	return transposition;
 }
 
-template <typename S, int R, int C> 
-Matrix<S, R, C> Inverse(Matrix<S, R, C> const & matrix)
-{
-	Matrix<S, R, C> inverse;
-	
-	S det = matrix.Determinant();
-	if(Abs(det) < std::numeric_limits<S>::min()) 
-	{
-		return matrix;		// The matrix is not invertible! Singular case!
-	}
-	
-	S inv_det = Inverse(det);
-	
-	for (int row = 0; row < R; ++ row) 
-	{
-		for (int column = 0; column < C; ++ column) 
-		{
-			inverse[column][row] = matrix.CoFactor(row,column) * inv_det;
-		}
-	}
-	
-	return inverse;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // I/O

@@ -109,6 +109,16 @@ public:
 		return Row(rows[0][i], rows[1][i], rows[2][i]); 
 	}
 	
+	S Determinant() const
+	{
+		return (rows[0][0]*rows[1][1]*rows[2][2] 
+				+ rows[0][1]*rows[1][2]*rows[2][0] 
+				+ rows[0][2]*rows[1][0]*rows[2][1])
+			-  (rows[2][0]*rows[1][1]*rows[0][2] 
+				+ rows[2][1]*rows[1][2]*rows[0][0] 
+				+ rows[2][2]*rows[1][0]*rows[0][1]);
+	}
+	
 	static Matrix Identity() 
 	{
 		return Matrix(Row(1, 0, 0),
@@ -127,6 +137,33 @@ private:
 	// variables
 	_Row rows [3];
 };
+
+
+template <typename S>
+Matrix<S, 3, 3> Inverse(Matrix<S, 3, 3> const & matrix)
+{
+	Matrix<S, 3, 3> inverse;
+	
+	S det = matrix.Determinant();
+	if(Abs(det) < std::numeric_limits<S>::min()) 
+	{
+		return matrix;		// The matrix is not invertible! Singular case!
+	}
+	
+	S inv_det = Inverse(det);
+	
+	inverse[0][0] = +(matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2]) * inv_det;
+	inverse[1][0] = -(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]) * inv_det;
+	inverse[2][0] = +(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]) * inv_det;
+	inverse[0][1] = -(matrix[0][1] * matrix[2][2] - matrix[2][1] * matrix[0][2]) * inv_det;
+	inverse[1][1] = +(matrix[0][0] * matrix[2][2] - matrix[2][0] * matrix[0][2]) * inv_det;
+	inverse[2][1] = -(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]) * inv_det;
+	inverse[0][2] = +(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]) * inv_det;
+	inverse[1][2] = -(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]) * inv_det;
+	inverse[2][2] = +(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]) * inv_det;
+	
+	return inverse;
+}
 
 
 // single-precision floating-point specialization
