@@ -16,9 +16,22 @@
 
 #include "physics/Engine.h"
 
+#include "gfx/object/BranchNode.h"
+#include "gfx/Renderer.h"
+
 
 namespace sim
 {
+	gfx::Uid AddModelWithTransform(gfx::Object & object)
+	{
+		gfx::Object * branch_node = new gfx::BranchNode;
+		gfx::Uid parent_uid = branch_node->GetUid();
+		gfx::Daemon::Call(branch_node, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+		
+		gfx::Daemon::Call(& object, parent_uid, & gfx::Renderer::OnAddObject);
+		return parent_uid;
+	}
+	
 	void UpdateModels(EntitySet const & entity_set)
 	{
 		Entity::List const & entities = entity_set.GetEntities();

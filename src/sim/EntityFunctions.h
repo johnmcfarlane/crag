@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "gfx/defs.h"
+
 
 namespace physics
 {
@@ -28,6 +30,8 @@ namespace sim
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// function declarations
+	
+	gfx::Uid AddModelWithTransform(gfx::Object & object);
 	
 	// sends render info from simulation to renderer
 	void UpdateModels(EntitySet const & entity_set);
