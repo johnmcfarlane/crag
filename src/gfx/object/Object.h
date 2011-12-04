@@ -18,6 +18,7 @@ namespace gfx
 	// forward-declarations
 	class BranchNode;
 	class LeafNode;
+	class Pov;
 	class Scene;
 	
 	// Base class for drawable things.
@@ -46,7 +47,7 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		virtual void Init();	// called on arrival in render thread 
+		virtual void Init(Scene const & scene);	// called on arrival in render thread 
 		virtual void Deinit();
 		
 		Uid GetUid() const;

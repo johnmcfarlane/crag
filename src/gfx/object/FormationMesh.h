@@ -30,14 +30,14 @@ namespace gfx
 		// functions
 		FormationMesh();
 		
-		virtual void Init();
-		virtual void Deinit();
+		void Init(Scene const & scene) override;
+		void Deinit() override;
 
 		void Update(UpdateParams const & params);
 		
 	private:
 		virtual void PreRender();		
-		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();

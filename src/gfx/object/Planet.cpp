@@ -77,7 +77,7 @@ bool Planet::GetRenderRange(Ray const & camera_ray, double * range, bool wirefra
 	return true;
 }
 
-void Planet::Render(Layer::type layer, gfx::Scene const & scene) const 
+void Planet::Render(Layer::type layer, Pov const & pov) const 
 { 
 	// actual drawing is taken care of by the formation manager
 }

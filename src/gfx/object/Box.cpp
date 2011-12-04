@@ -22,7 +22,13 @@ using namespace gfx;
 
 Box::Box(Vector const & size)
 : LeafNode(Layer::foreground)
+, _cuboid(nullptr)
 {
+}
+
+void Box::Init(Scene const & scene)
+{
+	_cuboid = & scene.GetCuboid();
 }
 
 bool Box::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
@@ -46,19 +52,16 @@ void Box::Update(UpdateParams const & params)
 	_transformation = params.transformation;
 }
 
-void Box::Render(Layer::type layer, gfx::Scene const & scene) const
+void Box::Render(Layer::type layer, Pov const & pov) const
 {
 	GLPP_VERIFY;
-	
-	gfx::Pov const & pov = scene.GetPov();
 	
 	// Set the matrix.
 	pov.SetModelView(_transformation);
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	gfx::Cuboid const & cuboid = scene.GetCuboid();
-	cuboid.Draw();
+	_cuboid->Draw();
 	
 	GLPP_VERIFY;
 }

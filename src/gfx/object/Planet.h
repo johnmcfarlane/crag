@@ -32,7 +32,7 @@ namespace gfx
 		virtual void Update(UpdateParams const & params);
 	private:
 		virtual bool GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const;
-		virtual void Render(Layer::type layer, gfx::Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 		// variables
 		UpdateParams _salient;

@@ -35,7 +35,7 @@ Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float 
 {
 }
 
-void Light::Init()
+void Light::Init(Scene const & scene)
 {
 	for (int light_index = 0; light_index < 8; ++ light_index)
 	{
@@ -83,7 +83,7 @@ void Light::Update(UpdateParams const & params)
 	_position = params.position;
 }
 
-void Light::Render(Layer::type layer, Scene const & scene) const
+void Light::Render(Layer::type layer, Pov const & pov) const
 {
 	Assert (layer == Layer::light);
 	Assert(gl::IsEnabled(light_id));
@@ -96,7 +96,7 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 	GLPP_CALL(glLightfv(light_id, GL_LINEAR_ATTENUATION, & attenuation_b));
 	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
 	
-	Vector pos = _position - scene.GetPov().GetPosition();
+	Vector pos = _position - pov.GetPosition();
 	float l[4] = {
 		float(pos.x),
 		float(pos.y),

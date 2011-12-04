@@ -29,7 +29,7 @@ Skybox::Skybox()
 {
 }
 
-void Skybox::Init()
+void Skybox::Init(Scene const & scene)
 {
 	InitVerts();
 }
@@ -55,13 +55,11 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-void Skybox::Render(Layer::type layer, Scene const & scene) const
+void Skybox::Render(Layer::type layer, Pov const & pov) const
 {
 	// clear the depth buffer
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 
-	Pov const & pov = scene.GetPov();
-	
 	// Set projection matrix within relatively tight bounds.
 	Frustum skybox_frustum = pov.GetFrustum();
 	skybox_frustum.near_z = .1f;

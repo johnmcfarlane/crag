@@ -17,7 +17,7 @@
 namespace gfx
 {
 	// forward-declarations
-	class Pov;
+	class Cuboid;
 	
 	// Box class
 	class Box : public LeafNode
@@ -32,12 +32,15 @@ namespace gfx
 		// functions
 		Box(Vector const & size);
 		
+		void Init(Scene const & scene) override;
+		
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
 		virtual void Update(UpdateParams const & params);
-		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 	private:
 		// variables
 		Transformation _transformation;
+		Cuboid const * _cuboid;
 	};
 }

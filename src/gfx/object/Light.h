@@ -38,13 +38,13 @@ namespace gfx
 		// functions
 		Light(Vector3f const & pos, Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
 		
-		void Init() override;
+		void Init(Scene const & scene) override;
 		void Deinit() override;
 
 		bool IsActive() const;
 		
 		virtual void Update(UpdateParams const & params);
-		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

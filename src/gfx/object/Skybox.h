@@ -31,12 +31,12 @@ namespace gfx
 	public:
 		Skybox();
 		
-		virtual void Init();
-		virtual void Deinit();
+		void Init(Scene const & scene) override;
+		void Deinit() override;
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
-		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 	private:
 		void InitVerts();

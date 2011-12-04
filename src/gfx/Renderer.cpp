@@ -178,11 +178,17 @@ void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
 		return;
 	}
 	
-	object->Init();
-	
 	if (scene != nullptr)
 	{
+		object->Init(* scene);
+		
 		scene->AddObject(* object, parent_uid);
+	}
+	else
+	{
+		// This is probably ok during shut-down but would like to see it happen.
+		Assert(false);
+		delete scene;
 	}
 }
 
@@ -716,9 +722,9 @@ namespace
 	class RenderFunctor
 	{
 	public:
-		RenderFunctor(Layer::type layer, Scene const & scene)
+		RenderFunctor(Layer::type layer, Pov const & pov)
 		: _layer(layer)
-		, _scene(scene)
+		, _pov(pov)
 		, _num_rendered_objects(0)
 		{
 		}
@@ -735,20 +741,20 @@ namespace
 		
 		void operator() (LeafNode const & leaf_node)
 		{
-			leaf_node.Render(_layer, _scene);
+			leaf_node.Render(_layer, _pov);
 			++ _num_rendered_objects;
 		}
 		
 	private:
 		Layer::type _layer;
-		Scene const & _scene;
+		Pov const & _pov;
 		int _num_rendered_objects;
 	};
 }
 
 int Renderer::RenderLayer(Layer::type layer) const
 {
-	RenderFunctor functor(layer, * scene);
+	RenderFunctor functor(layer, scene->GetPov());
 	BranchNode const & branch_node = scene->GetRoot();
 	for_each_leaf<RenderFunctor &>(branch_node, functor);
 	return functor.GetNumRenderedObjects();

@@ -27,7 +27,13 @@ Ball::Ball(Scalar radius)
 , _position(Vector::Zero())
 , _rotation(Matrix33::Identity()) 
 , _radius(radius)
+, _sphere(nullptr)
 {
+}
+
+void Ball::Init(Scene const & scene)
+{
+	_sphere = & scene.GetSphere();
 }
 
 bool Ball::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
@@ -46,11 +52,9 @@ void Ball::Update(UpdateParams const & params)
 	_rotation = params._rotation;
 }
 
-void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
+void Ball::Render(Layer::type layer, Pov const & pov) const
 {
 	GLPP_VERIFY;
-	
-	gfx::Pov const & pov = scene.GetPov();
 	
 	// Calculate the LoD.
 	unsigned lod = CalculateLod(pov.GetPosition());
@@ -60,8 +64,7 @@ void Ball::Render(Layer::type layer, gfx::Scene const & scene) const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	gfx::Sphere const & sphere = scene.GetSphere();
-	sphere.Draw(lod);
+	_sphere->Draw(lod);
 	
 	GLPP_VERIFY;
 }

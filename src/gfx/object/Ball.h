@@ -17,7 +17,7 @@
 namespace gfx
 {
 	// forward-declarations
-	class Pov;
+	class Sphere;
 	
 	// Ball class
 	class Ball : public LeafNode
@@ -33,9 +33,11 @@ namespace gfx
 		// functions
 		Ball(Scalar radius);
 		
+		void Init(Scene const & scene) override;
+		
 		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
 		virtual void Update(UpdateParams const & params);
-		virtual void Render(Layer::type layer, Scene const & scene) const;
+		virtual void Render(Layer::type layer, Pov const & pov) const;
 		
 	private:
 		unsigned CalculateLod(Vector const & camera_position) const;		
@@ -44,5 +46,6 @@ namespace gfx
 		Vector _position;
 		Matrix33 _rotation;
 		Scalar _radius;
+		Sphere const * _sphere;
 	};
 }
