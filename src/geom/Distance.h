@@ -11,9 +11,26 @@
 
 #pragma once
 
+#include "Magnitude.h"
+#include "Ray.h"
+
 
 // TODO: Plane class instead of all this a, b, c nonsense.
-// TODO: Relational.h
+// TODO: Relational.h - operator<() and all that.
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Points
+
+template<typename S, int N> S Distance(Vector<S, N> const & a, Vector<S, N> const & b)
+{
+	return Length(a - b);
+}
+
+template<typename S, int N> S DistanceSq(Vector<S, N> const & a, Vector<S, N> const & b)
+{
+	return LengthSq(a - b);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

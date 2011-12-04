@@ -33,8 +33,7 @@ void Planet::Update(UpdateParams const & params)
 
 bool Planet::GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const 
 {
-	Scalar distance_squared = LengthSq(camera_ray.position - _salient._position);
-	Scalar distance = Sqrt(distance_squared);
+	Scalar distance = Distance(camera_ray.position, _salient._position);
 	
 	// Is camera inside the planet?
 	if (distance < _salient._radius_min)

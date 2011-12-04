@@ -38,7 +38,7 @@ void Ball::Init(Scene const & scene)
 
 bool Ball::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
 { 
-	Scalar distance = Length(camera_ray.position - _position);
+	Scalar distance = Distance(camera_ray.position, _position);
 	
 	range[0] = distance - _radius;
 	range[1] = distance + _radius;

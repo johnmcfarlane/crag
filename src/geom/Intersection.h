@@ -20,7 +20,7 @@
 // Returns true iff sphere contains point.
 template<typename S, int N> bool Contains(Sphere<S, N> const & sphere, Vector<S, N> const & point)
 {
-	S center_distance_squared = LengthSq(sphere.center - point);
+	S center_distance_squared = DistanceSq(sphere.center, point);
 	return center_distance_squared <= Square(sphere.radius);
 }
 
@@ -34,7 +34,7 @@ template<typename S, int N> bool Contains(Sphere<S, N> const & a, Sphere<S, N> c
 	}
 	else
 	{
-		S center_distance_squared = LengthSq(a.center - b.center);
+		S center_distance_squared = DistanceSq(a.center, b.center);
 		return center_distance_squared <= Square(a.radius - b.radius);
 	}
 }
@@ -47,7 +47,7 @@ template<typename S, int N> bool ContainsSmaller(Sphere<S, N> const & a, Sphere<
 	// There's no point running this test is a isn't big enough to contain b in the first place!
 	assert(a.radius > b.radius);
 	
-	S center_distance_squared = LengthSq(a.center - b.center);
+	S center_distance_squared = DistanceSq(a.center, b.center);
 	return center_distance_squared <= Square(a.radius - b.radius);
 }
 
@@ -137,7 +137,7 @@ S GetIntersection(Ray<S, N> const & plane, Ray<S, N> const & line)
 template<typename S, int N> 
 bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
 {
-	S center_distance_squared = LengthSquared(a.center - b.center);
+	S center_distance_squared = DistanceSq(a.center, b.center);
 	return center_distance_squared < Square(a.radius + b.radius);
 }
 

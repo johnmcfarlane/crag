@@ -11,11 +11,13 @@
 
 #pragma once
 
+#include "Vector.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Length
 
-template<typename S, int N> S Length(class Vector<S, N> const & v)
+template<typename S, int N> S Length(Vector<S, N> const & v)
 {
 	S length_sqaured = LengthSq(v);
 	return Sqrt(length_sqaured);

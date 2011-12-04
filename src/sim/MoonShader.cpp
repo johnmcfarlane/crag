@@ -129,8 +129,7 @@ void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
 	{
 		Sphere3 const & crater = * i;
 		
-		Vector3 crater_to_pos = position - crater.center;
-		Scalar crater_to_pos_distance_squared = LengthSq(crater_to_pos);
+		Scalar crater_to_pos_distance_squared = DistanceSq(position, crater.center);
 		
 		if (crater_to_pos_distance_squared < Square(crater.radius))
 		{

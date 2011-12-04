@@ -46,7 +46,7 @@ form::Ray3 form::CalculateNodeScoreFunctor::GetInvalidRay()
 
 bool form::CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
 {
-	Scalar distance_squared = LengthSq(other_camera_ray.position - camera_ray.position);
+	Scalar distance_squared = DistanceSq(other_camera_ray.position, camera_ray.position);
 	return distance_squared >= min_recalc_distance_squared;
 }
 

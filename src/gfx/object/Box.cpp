@@ -36,7 +36,7 @@ bool Box::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe)
 	Vector center = _transformation.GetTranslation();
 	Vector size = _transformation.GetScale();
 	
-	Scalar distance = Length(camera_ray.position - center);
+	Scalar distance = Distance(camera_ray.position, center);
 	
 	// This could be improved by sampling each of the 8 corners of the box
 	// but it probably isn't worth the clock cycles to do that.
