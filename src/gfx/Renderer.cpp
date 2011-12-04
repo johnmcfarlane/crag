@@ -249,7 +249,6 @@ Renderer::StateParam const Renderer::init_state[] =
 	INIT(GL_TEXTURE_2D, false),
 	INIT(GL_NORMALIZE, true),
 	INIT(GL_CULL_FACE, true),
-	INIT(GL_LIGHT0, false),
 	INIT(GL_LIGHTING, false),
 	INIT(GL_DEPTH_TEST, false),
 	INIT(GL_BLEND, false),
@@ -450,6 +449,10 @@ void Renderer::InitRenderState()
 
 	gl::MatrixMode(GL_MODELVIEW);
 	
+	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
+	GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
+	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
+	
 	VerifyRenderState();
 }
 
@@ -634,7 +637,8 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 	if (lighting && pass != WireframePass2)
 	{
 		gl::Enable(GL_LIGHTING);
-		EnableLights(true);
+
+		RenderLayer(Layer::light);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
@@ -663,7 +667,6 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	// Reset state
 	if (lighting && pass != WireframePass2)
 	{
-		EnableLights(false);
 		gl::Disable(GL_LIGHTING);
 	}
 	gl::Disable(GL_DEPTH_TEST);
@@ -706,74 +709,6 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 			Assert(false);
 	}
 	gl::SetDepthFunc(GL_LEQUAL);
-}
-
-namespace
-{
-	class EnableLightsFunctor
-	{
-	public:
-		EnableLightsFunctor(bool enabled, Scene const & scene)
-		: _enabled(enabled)
-		, _scene(scene)
-		, _light_id(GL_LIGHT0)
-		{
-			if (enabled)
-			{
-				// TODO: Move this out of Render routine.
-				GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-				GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-				GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
-			}
-		}
-		
-		~EnableLightsFunctor()
-		{
-			while (_light_id <= GL_LIGHT7) 
-			{
-				Assert(! gl::IsEnabled(_light_id));
-				++ _light_id;
-			}
-		}
-		
-		bool operator() (Object const & object) const
-		{
-			return object.IsInLayer(Layer::light);
-		}
-		
-		void operator() (LeafNode const & leaf_node)
-		{
-			if (_light_id > GL_LIGHT7) 
-			{
-				Assert(false);	// too many lights
-				return;
-			}
-			
-			if (_enabled)
-			{
-				gl::Enable(_light_id);
-				leaf_node.Render(Layer::light, _scene);
-			}
-			else
-			{
-				gl::Disable(_light_id);
-			}
-			
-			++ _light_id;
-		}
-		
-	private:
-		bool _enabled;
-		Scene const & _scene;
-		int _light_id;
-	};
-}
-
-// Nothing to do with shadow maps; sets/unsets the lights in the main scene.
-void Renderer::EnableLights(bool enabled) const
-{
-	EnableLightsFunctor functor(enabled, * scene);
-	for_each_leaf<EnableLightsFunctor &>(scene->GetRoot(), functor);
 }
 
 namespace

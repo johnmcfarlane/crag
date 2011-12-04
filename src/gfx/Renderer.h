@@ -110,8 +110,6 @@ namespace gfx
 		void RenderForegroundPass(ForegroundRenderPass pass) const;
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
-		void EnableLights(bool enabled) const;
-		
 		int RenderLayer(Layer::type layer) const;
 		
 		void DebugDraw() const;

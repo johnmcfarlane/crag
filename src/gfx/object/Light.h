@@ -16,27 +16,37 @@
 
 #include "sim/defs.h"
 
+#include "glpp/glpp.h"
+
 
 namespace gfx
 {
 	class Light : public LeafNode
 	{
-	public:
+		////////////////////////////////////////////////////////////////////////////////
 		// types
+		
+		// map of the available 8 OpenGL light slots
+		typedef uint8_t SlotMap;
+	public:
 		struct UpdateParams
 		{
 			Vector position;
 		};
 		
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Light(Vector3f const & pos, Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
 		
+		void Init() override;
+		void Deinit() override;
+
 		bool IsActive() const;
-		bool GenerateShadowMaps() const;
 		
 		virtual void Update(UpdateParams const & params);
 		virtual void Render(Layer::type layer, Scene const & scene) const;
 		
+		////////////////////////////////////////////////////////////////////////////////
 		// variables
 	private:		
 		Vector _position;
@@ -44,6 +54,8 @@ namespace gfx
 		float attenuation_a;
 		float attenuation_b;
 		float attenuation_c;
-		bool shadows;
+		GLenum light_id;
+		
+		static SlotMap _used_slots;
 	};
 }

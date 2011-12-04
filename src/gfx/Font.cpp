@@ -113,7 +113,6 @@ void gfx::Font::RenderVerts() const
 	// State
 	Assert(! gl::IsEnabled(GL_LIGHTING));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	Assert(! gl::IsEnabled(GL_LIGHT0));
 	gl::Enable(GL_TEXTURE_2D);
 	gl::Disable(GL_CULL_FACE);
 	gl::Enable(GL_BLEND);

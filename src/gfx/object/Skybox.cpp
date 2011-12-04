@@ -79,7 +79,6 @@ void Skybox::Render(Layer::type layer, Scene const & scene) const
 	
 	Assert(! gl::IsEnabled(GL_LIGHTING));
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	Assert(! gl::IsEnabled(GL_LIGHT0));
 	Assert(gl::IsEnabled(GL_TEXTURE_2D));
 	Assert(! gl::IsEnabled(GL_CULL_FACE));
 	Assert(! gl::IsEnabled(GL_DEPTH_TEST));

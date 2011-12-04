@@ -31,18 +31,51 @@ Light::Light(Vector3f const & pos, Color4f const & col, float a, float b, float 
 , attenuation_a(a)
 , attenuation_b(b)
 , attenuation_c(c)
-, shadows(init_shadows)
+, light_id(GL_NONE)
 {
+}
+
+void Light::Init()
+{
+	for (int light_index = 0; light_index < 8; ++ light_index)
+	{
+		SlotMap bit = 1 << light_index;
+		bool currently_used = (_used_slots & bit) != 0;
+		Assert(currently_used == gl::IsEnabled(GL_LIGHT0 + light_index));
+		
+		if (! currently_used)
+		{
+			_used_slots |= bit;
+			light_id = GL_LIGHT0 + light_index;
+
+			Assert(! gl::IsEnabled(light_id));
+			GLPP_CALL(gl::Enable(light_id));
+			return;
+		}
+	}
+
+	// Currently, we're only using two lights. The limit is eight.
+	Assert(false);
+}
+
+void Light::Deinit()
+{
+	// Get the corresponding bit in the used slot map.
+	int light_index = light_id - GL_LIGHT0;
+	SlotMap bit = 1 << light_index;
+
+	// Unset it.
+	Assert((_used_slots & bit) != 0);
+	_used_slots &= ~ bit;
+
+	// Update the GL state.
+	Assert(gl::IsEnabled(light_id));
+	GLPP_CALL(gl::Disable(light_id));
 }
 
 bool Light::IsActive() const 
 { 
 	return true; 
-}
-
-bool Light::GenerateShadowMaps() const
-{
-	return shadows;
 }
 
 void Light::Update(UpdateParams const & params)
@@ -53,26 +86,7 @@ void Light::Update(UpdateParams const & params)
 void Light::Render(Layer::type layer, Scene const & scene) const
 {
 	Assert (layer == Layer::light);
-	
-	ObjectMap const & lights = scene.GetObjectMap();
-	int light_index = 0;
-	for (ObjectMap::const_iterator vector_position = lights.begin(); ; ++ vector_position)
-	{
-		Object const * object = vector_position->second;
-		if (object == this)
-		{
-			break;
-		}
-		Assert(vector_position != lights.end());
-		
-		if (object->IsInLayer(Layer::light))
-		{
-			++ light_index;
-		}
-	}
-	
-	int light_id = GL_LIGHT0 + light_index;
-	Assert(light_id <= GL_LIGHT7);
+	Assert(gl::IsEnabled(light_id));
 	
 	GLPP_CALL(glLightfv(light_id, GL_AMBIENT, Color4f(0, 0, 0)));
 	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, color));
@@ -91,3 +105,6 @@ void Light::Render(Layer::type layer, Scene const & scene) const
 	};
 	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));
 }
+
+
+Light::SlotMap Light::_used_slots = 0;

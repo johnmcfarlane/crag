@@ -373,7 +373,6 @@ void Debug::Draw(Vector3 const & camera_pos)
 
 	// Set state
 	gl::Disable(GL_CULL_FACE);
-	Assert(! gl::IsEnabled(GL_LIGHT0));
 	Assert(! gl::IsEnabled(GL_LIGHTING));
 	gl::Enable(GL_DEPTH_TEST);
 	
