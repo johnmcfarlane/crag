@@ -104,12 +104,12 @@ namespace gfx
 
 		Comp Min() const
 		{
-			return ::Min(::Min(r, g), ::Min(b, a));
+			return min(min(r, g), min(b, a));
 		}
 
 		Comp Max() const
 		{
-			return ::Max(::Max(r, g), ::Max(b, a));
+			return max(max(r, g), max(b, a));
 		}
 
 	private:

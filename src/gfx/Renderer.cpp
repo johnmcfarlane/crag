@@ -87,7 +87,7 @@ namespace
 		
 		~RenderRangeFunctor()
 		{
-			_adjusted_frustum.near_z = Max(_adjusted_frustum.near_z * .5, _pov_frustum.near_z);
+			_adjusted_frustum.near_z = std::max(_adjusted_frustum.near_z * .5, _pov_frustum.near_z);
 			_adjusted_frustum.SetProjectionMatrix();
 		}
 		

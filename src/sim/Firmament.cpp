@@ -91,7 +91,7 @@ void Firmament::DrawStarsClevur()
 						intensity += (double)star.radius / (double)a_sq;
 					}
 
-					float comp = static_cast<float>(Min(1., .00002 * intensity));
+					float comp = static_cast<float>(std::min(1., .00002 * intensity));
 					gfx::Color4f c (comp);
 					side.SetPixel(pos, c);
 				}
@@ -157,7 +157,7 @@ void Firmament::DrawStar(gfx::Image & side, Vector2f const & uv, float r)
 		return;
 	}
 	
-	float comp = Min(1.f, r);
+	float comp = std::min(1.f, r);
 	gfx::Color4f c (comp);
 	side.SetPixel(pos, c);
 }

@@ -280,7 +280,7 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedr
 	// And do the clipping based on how far the variance /might/ go.
 	Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / static_cast<Scalar>(1 << params.depth);
 	
-	Scalar lod_variation_cycler = Sin(0.1 * Max(0, params.depth - planet_shader_depth_medium));
+	Scalar lod_variation_cycler = Sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
 	altitude_variance_coefficient *= lod_variation_cycler;
 	
 	altitude_variance_coefficient *= shape.radius;

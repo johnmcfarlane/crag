@@ -61,7 +61,7 @@ void form::Regulator::SampleFrameFitness(float fitness)
 	}
 
 	Assert(fitness >= 0);
-	frame_ratio_max = Max(frame_ratio_max, 1.f / fitness);
+	frame_ratio_max = std::max(frame_ratio_max, 1.f / fitness);
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(sys::Time mgp)
@@ -72,7 +72,7 @@ void form::Regulator::SampleMeshGenerationPeriod(sys::Time mgp)
 	}
 
 	Assert(mgp >= 0);
-	mesh_generation_period = Max(static_cast<float>(mgp), mesh_generation_period);
+	mesh_generation_period = std::max(static_cast<float>(mgp), mesh_generation_period);
 }
 
 int form::Regulator::GetRecommendedNumQuaterna()
@@ -89,7 +89,7 @@ int form::Regulator::GetRecommendedNumQuaterna()
 	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterne);
 
 	// Pick the more conservative of the two numbers.
-	int recommended_num_quaternia = Min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
+	int recommended_num_quaternia = std::min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
 	
 #if ! defined(NDEBUG) && 0
 	if (recommended_num_quaternia < _num_quaterne)

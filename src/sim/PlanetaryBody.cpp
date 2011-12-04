@@ -149,7 +149,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	}
 	
 	form::Vector3 relative_formation_position(form::SimToScene(_formation.GetShape().center, origin));
-	float min_box_edge = Min(float(dimensions.x), Min(float(dimensions.y), float(dimensions.z)));
+	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
 	ForEachCollision(* polyhedron, relative_formation_position, collision_object, origin, functor, min_parent_area);

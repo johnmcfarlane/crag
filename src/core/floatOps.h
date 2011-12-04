@@ -36,16 +36,6 @@
 //////////////////////////////////////////////////////////////////////
 // Basic Math
 
-template<typename T> T Min(T const & a, T const & b)
-{
-	return (a <= b) ? a : b;
-}
-
-template<typename T> T Max(T const & a, T const & b)
-{
-	return (a >= b) ? a : b;
-}
-
 template<typename T> T Clamped(T const & val, T const & min, T const & max)
 {
 	Assert(min <= max);
