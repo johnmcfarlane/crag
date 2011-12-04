@@ -20,11 +20,14 @@
 
 namespace gfx
 {
-	class Object;
+	// forward-declarations
 	class Cuboid;
+	class Object;
 	class Sphere;
 	
-	
+	// Scene class definition
+	// Stores graphical representation of the simulation
+	// including point-of-view info needed to render.
 	class Scene
 	{
 	public:
@@ -40,7 +43,8 @@ namespace gfx
 			ObjectMap::iterator i = _objects.find(uid);
 			if (i == _objects.end())
 			{
-				Assert(false);
+				// Presumably, the object was removed by script thread
+				// but a pending update message came in from simulation.
 				return;
 			}
 			
