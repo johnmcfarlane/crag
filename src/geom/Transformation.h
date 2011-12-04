@@ -11,8 +11,10 @@
 
 #include "Matrix33.h"
 #include "Matrix44.h"
+#include "MatrixOps.h"
 
 
+// Handy wrapper around Matrix44 for performing afine transformation operations.
 template<typename S>
 class Transformation
 {
@@ -64,16 +66,31 @@ public:
 	{
 	}
 	
+	Transformation(Matrix const & matrix)
+	: _matrix(matrix)
+	{
+	}
+	
 	Transformation & operator=(Transformation const & rhs)
 	{
 		_matrix = rhs._matrix;
 		return * this;
 	}
 	
+	friend Transformation operator * (Transformation const & lhs, Transformation const & rhs)
+	{
+		return Transformation(lhs._matrix * rhs._matrix);
+	}
+	
 	// return the translation from the transformation
 	Matrix const & GetMatrix() const
 	{
 		return _matrix;
+	}
+	
+	Matrix GetInverse() const
+	{
+		return Inverse(_matrix);
 	}
 	
 	Vector GetTranslation() const
@@ -93,11 +110,8 @@ public:
 					  Length(rotation.GetColumn(1)), 
 					  Length(rotation.GetColumn(2)));
 	}
-	
+
 private:
 	// variables
 	Matrix _matrix;
 };
-
-
-
