@@ -104,7 +104,7 @@ void FormationMesh::PreRender()
 #endif
 }
 
-void FormationMesh::Render(Layer::type layer, Pov const & pov) const
+void FormationMesh::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)
@@ -129,9 +129,11 @@ void FormationMesh::Render(Layer::type layer, Pov const & pov) const
 	
 	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
 	
+	Pov::SetModelViewMatrix(transformation * sim::Transformation(front_buffer.GetOrigin()));
+	
 	// Draw the mesh!
 	front_buffer.Bind();
-	front_buffer.Activate(pov);
+	front_buffer.Activate();
 	front_buffer.Draw();
 	front_buffer.Deactivate();
 	GLPP_VERIFY;

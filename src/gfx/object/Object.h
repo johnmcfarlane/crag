@@ -56,9 +56,10 @@ namespace gfx
 		// currently must remain invariant
 		bool IsInLayer(Layer::type layer) const;
 		bool IsInLayers(Layer::Map::type layers) const;
+		Layer::Map::type GetLayers() const;
 		
 		// typically called by derived class
-		void AddToLayer(Layer::type layer);
+		void AddToLayers(Layer::Map::type layers);
 		
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;
@@ -77,6 +78,7 @@ namespace gfx
 		BranchNode const * GetParent() const;
 		
 		void SetParent(BranchNode * parent);
+
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

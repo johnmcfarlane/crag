@@ -10,6 +10,7 @@
 
 #include "pch.h"
 
+#include "EntityFunctions.h"
 #include "Observer.h"
 #include "Simulation.h"
 
@@ -143,9 +144,8 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	impulses[0] = impulses[1] = Vector3::Zero();
 	
 	// register light with the renderer
-	gfx::Light * light = new gfx::Light(center, observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
-	_light_uid = light->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	gfx::Light * light = new gfx::Light(observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
+	_light_uid = AddModelWithTransform(* light);
 	
 	return true;
 }
@@ -214,11 +214,11 @@ void Observer::UpdateModels() const
 
 	// Give renderer the new light position.
 	{
-		gfx::Light::UpdateParams params = 
+		gfx::BranchNode::UpdateParams params = 
 		{
-			position
+			Transformation(position)
 		};
-		gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
+		gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 	}
 }
 

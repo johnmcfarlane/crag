@@ -22,11 +22,8 @@
 using namespace gfx;
 
 
-Ball::Ball(Scalar radius)
+Ball::Ball()
 : LeafNode(Layer::foreground)
-, _position(Vector::Zero())
-, _rotation(Matrix33::Identity()) 
-, _radius(radius)
 , _sphere(nullptr)
 {
 }
@@ -36,31 +33,34 @@ void Ball::Init(Scene const & scene)
 	_sphere = & scene.GetSphere();
 }
 
-bool Ball::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
+bool Ball::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
 { 
-	Scalar distance = Distance(camera_ray.position, _position);
+	Scalar distance;
+	{
+		Vector position = transformation.GetTranslation();
+		distance = Distance(camera_ray.position, position);
+	}
 	
-	range[0] = distance - _radius;
-	range[1] = distance + _radius;
+	Scalar radius = CalculateRadius(transformation);
+	
+	range[0] = distance - radius;
+	range[1] = distance + radius;
 	
 	return true;
 }
 
-void Ball::Update(UpdateParams const & params)
-{
-	_position = params._position;
-	_rotation = params._rotation;
-}
-
-void Ball::Render(Layer::type layer, Pov const & pov) const
+void Ball::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
 {
 	GLPP_VERIFY;
 	
 	// Calculate the LoD.
-	unsigned lod = CalculateLod(pov.GetPosition());
+	Scalar radius = CalculateRadius(transformation);
+	Vector relative_position = transformation.GetTranslation();
+	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
+	unsigned lod = CalculateLod(radius, inv_distance);
 	
 	// Set the matrix.
-	pov.SetModelView(Transformation(_position, _rotation, _radius));
+	Pov::SetModelViewMatrix(transformation);
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
@@ -69,15 +69,19 @@ void Ball::Render(Layer::type layer, Pov const & pov) const
 	GLPP_VERIFY;
 }
 
-unsigned Ball::CalculateLod(Vector const & camera_position) const
+unsigned Ball::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
 {
-	Vector relative_position = camera_position - _position;
-	
 	Scalar mn1 = 1500;
-	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
-	int lod = int(Power(mn1 * _radius * inv_distance, .3));
+	int lod = int(Power(mn1 * radius * inv_distance_to_camera, .3));
 	Clamp(lod, 1, 5);
 	-- lod;
 	
 	return lod;
+}
+
+Scalar Ball::CalculateRadius(Transformation const & transformation)
+{
+	Vector size = transformation.GetScale();
+	Scalar radius = Length(size) * .5;
+	return radius;
 }

@@ -11,6 +11,7 @@
 
 #include "Ball.h"
 
+#include "EntityFunctions.h"
 #include "Simulation.h"
 
 #include "physics/SphericalBody.h"
@@ -18,6 +19,7 @@
 #include "script/MetaClass.h"
 
 #include "gfx/object/Ball.h"
+#include "gfx/object/BranchNode.h"
 #include "gfx/Renderer.inl"
 
 
@@ -47,7 +49,7 @@ using namespace sim;
 
 Ball::~Ball()
 {
-	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void Ball::Create(Ball & ball, PyObject & args)
@@ -62,28 +64,36 @@ void Ball::Create(Ball & ball, PyObject & args)
 bool Ball::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
-	Vector<double, 3> center;
-	double radius;
+	Sphere3 sphere;
 	
-	if (! PyArg_ParseTuple(& args, "dddd", & center.x, & center.y, & center.z, & radius))
+	if (! PyArg_ParseTuple(& args, "dddd", & sphere.center.x, & sphere.center.y, & sphere.center.z, & sphere.radius))
 	{
 		return false;
 	}
 	
+	InitPhysics(simulation, sphere);
+
+	InitGraphics(sphere);
+	
+	return true;
+}
+
+void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
+{
 	// physics
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
-	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, radius);
-	body->SetPosition(center);
+	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, sphere.radius);
+	body->SetPosition(sphere.center);
 	body->SetDensity(ball_density);
 	body->SetLinearDamping(ball_linear_damping);
 	body->SetAngularDamping(ball_angular_damping);
 	SetBody(body);
-	
-	gfx::Ball * model = new gfx::Ball(radius);
-	_model_uid = model->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
-	
-	return true;
+}
+
+void Ball::InitGraphics(Sphere3 const & sphere)
+{
+	gfx::Object * ball = new gfx::Ball();
+	_gfx_uid = AddModelWithTransform(* ball);
 }
 
 void Ball::UpdateModels() const
@@ -94,11 +104,12 @@ void Ball::UpdateModels() const
 		return;
 	}
 
-	gfx::Ball::UpdateParams params = 
+	Scalar radius = body->GetRadius();
+	Vector3 scale(radius, radius, radius);
+	gfx::BranchNode::UpdateParams params = 
 	{
-		body->GetPosition(),
-		body->GetRotation()
+		Transformation(body->GetPosition(), body->GetRotation(), scale)
 	};
 	
-	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Ball>);
+	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 }

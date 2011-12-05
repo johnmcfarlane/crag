@@ -55,7 +55,7 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-void Skybox::Render(Layer::type layer, Pov const & pov) const
+void Skybox::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
 {
 	// clear the depth buffer
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
@@ -67,7 +67,9 @@ void Skybox::Render(Layer::type layer, Pov const & pov) const
 	skybox_frustum.SetProjectionMatrix();
 	
 	// Set model view matrix (with zero translation).
-	pov.SetModelView(Transformation(pov.GetPosition()));
+	Matrix33 rotation = transformation.GetRotation();
+	Transformation untranslated_transformation(Vector::Zero(), rotation);
+	Pov::SetModelViewMatrix(untranslated_transformation);
 	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));

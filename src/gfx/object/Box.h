@@ -23,24 +23,16 @@ namespace gfx
 	class Box : public LeafNode
 	{
 	public:
-		// types
-		struct UpdateParams
-		{
-			Transformation transformation;
-		};
-		
 		// functions
-		Box(Vector const & size);
+		Box();
 		
 		void Init(Scene const & scene) override;
 		
-		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
-		virtual void Update(UpdateParams const & params);
-		virtual void Render(Layer::type layer, Pov const & pov) const;
+		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
 		
 	private:
 		// variables
-		Transformation _transformation;
 		Cuboid const * _cuboid;
 	};
 }

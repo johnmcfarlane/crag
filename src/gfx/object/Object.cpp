@@ -71,17 +71,17 @@ bool Object::IsInLayers(Layer::Map::type layers) const
 	return (_layers & layers) != 0;
 }
 
-// typically called by derived class
-void Object::AddToLayer(Layer::type layer)
+Layer::Map::type Object::GetLayers() const
 {
-	Layer::Verify(layer);
+	return _layers;
+}
+
+// typically called by derived class
+void Object::AddToLayers(Layer::Map::type layers)
+{
+	Layer::Verify(layers);
 	
-	_layers |= layer;
-	
-	if (_parent != nullptr)
-	{
-		_parent->AddToLayer(layer);
-	}
+	_layers |= layers;
 }
 
 Object::NodeType Object::GetNodeType() const

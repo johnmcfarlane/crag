@@ -48,7 +48,7 @@ namespace gfx
 		//void LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const & up);
 		
 		// set the OpenGl model view matrix for the given model
-		void SetModelView(Transformation const & model_transformation) const;
+		static void SetModelViewMatrix(Transformation const & model_view_matrix);
 		
 	private:
 		// variables

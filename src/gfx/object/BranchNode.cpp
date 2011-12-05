@@ -45,6 +45,12 @@ bool BranchNode::IsEmpty() const
 
 void BranchNode::AddChild(Object & child)
 {
+	Layer::Map::type child_map = child.GetLayers();
+	for (BranchNode * ancestor = this; ancestor != nullptr; ancestor = ancestor->GetParent())
+	{
+		ancestor->AddToLayers(child_map);
+	}	
+	
 	Assert(child.GetParent() == nullptr);
 	child.SetParent(this);
 	
@@ -74,6 +80,16 @@ BranchNode::ChildList::iterator BranchNode::End()
 BranchNode::ChildList::const_iterator BranchNode::End() const
 {
 	return _children.end();
+}
+
+gfx::Transformation const & BranchNode::GetTransformation() const
+{
+	return _transformation;
+}
+
+void BranchNode::Update(UpdateParams const & params)
+{
+	_transformation = params.transformation;
 }
 
 BranchNode * BranchNode::CastListObject()

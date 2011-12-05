@@ -21,8 +21,7 @@
 
 namespace gfx 
 { 
-	class IndexBuffer; 
-	class Pov;
+	class IndexBuffer;
 }
 
 
@@ -44,7 +43,7 @@ namespace form
 		int GetNumPolys() const;
 		MeshProperties::Vector const & GetOrigin() const;
 		
-		void Activate(gfx::Pov pov) const;
+		void Activate() const;
 		void Deactivate() const;
 		
 		void Draw() const;

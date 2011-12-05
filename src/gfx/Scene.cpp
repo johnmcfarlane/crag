@@ -67,10 +67,11 @@ Scene::~Scene()
 
 void Scene::AddObject(Object & object, Uid parent_uid)
 {
-	// add to tree
+	// determine the parent from the parent_uid
+	BranchNode * parent;
 	if (parent_uid == Uid::null)
 	{
-		_root.AddChild(object);
+		parent = & _root;
 	}
 	else
 	{
@@ -81,11 +82,14 @@ void Scene::AddObject(Object & object, Uid parent_uid)
 			return;
 		}
 		
-		BranchNode & parent = static_cast<BranchNode &>(* i->second);
-		VerifyObject(parent);
+		parent = static_cast<BranchNode *>(i->second);
 	}
 	
-	// add to map
+	// add object to its parent's list
+	VerifyObject(* parent);
+	parent->AddChild(object);
+	
+	// add object to map
 	Uid uid = object.GetUid();
 	Assert(_objects.count(uid) == 0);	// object with matching id already lives in map
 	ObjectMap::value_type addition(uid, & object);
@@ -95,18 +99,50 @@ void Scene::AddObject(Object & object, Uid parent_uid)
 
 void Scene::RemoveObject(Uid uid)
 {
-	ObjectMap::iterator i = _objects.find(uid);
-	if (i == _objects.end())
+	// Given the UID, get the object.
+	Object * object;
 	{
-		Assert(false);
-		return;
+		ObjectMap::iterator i = _objects.find(uid);
+		if (i == _objects.end())
+		{
+			Assert(false);
+			return;
+		}
+		object = i->second;
+
+		// And remove from the map.
+		_objects.erase(i);
+		Assert(_objects.count(uid) == 0);	// erasure failed
 	}
 	
-	Object * object = i->second;
-
-	_objects.erase(uid);
-
+	// If it's a branch,
+	BranchNode * branch_node = object->CastBranchNodePtr();
+	if (branch_node != nullptr)
+	{
+		// then for all the children,
+		Object::ChildList::iterator end = branch_node->End();
+		while (true)
+		{
+			Object::ChildList::iterator last = end;
+			-- last;
+			if (last == end)
+			{
+				break;
+			}
+			
+			// remove them first.
+			Object & child_object = * last;
+			Uid child_uid = child_object.GetUid();
+			RemoveObject(child_uid);
+		}
+		
+		Assert(branch_node->IsEmpty());
+	}
+	
+	// Finally, deinitialize ...
 	object->Deinit();
+
+	// and delete. (Object removes itself from parent list here.)
 	delete object;
 }
 

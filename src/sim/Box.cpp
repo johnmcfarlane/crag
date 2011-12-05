@@ -11,6 +11,7 @@
 
 #include "Box.h"
 
+#include "EntityFunctions.h"
 #include "Simulation.h"
 
 #include "physics/BoxBody.h"
@@ -49,7 +50,7 @@ using namespace sim;
 
 Box::~Box()
 {
-	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
 }
 
 void Box::Create(Box & box, PyObject & args)
@@ -64,14 +65,22 @@ void Box::Create(Box & box, PyObject & args)
 bool Box::Init(Simulation & simulation, PyObject & args)
 {
 	// Parse planet creation parameters
-	Vector<double, 3> center;
-	Vector<double, 3> size;
+	Vector3 center;
+	Vector3 size;
 	
 	if (! PyArg_ParseTuple(& args, "dddddd", & center.x, & center.y, & center.z, & size.x, & size.y, & size.z))
 	{
 		return false;
 	}
+
+	InitPhysics(simulation, center, size);
+	InitGraphics();
 	
+	return true;
+}
+
+void Box::InitPhysics(Simulation & simulation, Vector3 center, Vector3 size)
+{
 	// physics
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
 	physics::BoxBody * body = new physics::BoxBody(physics_engine, true, size);
@@ -80,12 +89,12 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	body->SetLinearDamping(box_linear_damping);
 	body->SetAngularDamping(box_angular_damping);
 	SetBody(body);
-	
-	gfx::Box * model = new gfx::Box(size);
-	_model_uid = model->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
-	
-	return true;
+}
+
+void Box::InitGraphics()
+{
+	gfx::Object * box = new gfx::Box();
+	_gfx_uid = AddModelWithTransform(* box);
 }
 
 void Box::UpdateModels() const
@@ -96,10 +105,10 @@ void Box::UpdateModels() const
 		return;
 	}
 
-	gfx::Box::UpdateParams params = 
+	gfx::BranchNode::UpdateParams params = 
 	{
 		Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions())
 	};
 
-	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Box>);
+	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 }

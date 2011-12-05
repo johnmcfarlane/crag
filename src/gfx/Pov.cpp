@@ -112,13 +112,9 @@ void Pov::LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const 
 }
 #endif
 
-void Pov::SetModelView(Transformation const & model_transformation) const
+void Pov::SetModelViewMatrix(Transformation const & model_view_matrix)
 {
-	Matrix44 camera_transform = Inverse(_transformation.GetMatrix());
-	
-	Matrix44 model_view_matrix = camera_transform * model_transformation.GetMatrix();
-	
-	Matrix44 gl_model_view_matrix = Transposition(model_view_matrix) * InternalToOpenGl<Scalar>();	
+	Matrix44 gl_model_view_matrix = Transposition(model_view_matrix.GetMatrix()) * InternalToOpenGl<Scalar>();	
 	
 	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
 	gl::LoadMatrix(gl_model_view_matrix.GetArray());	

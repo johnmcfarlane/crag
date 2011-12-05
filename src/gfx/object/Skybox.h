@@ -36,7 +36,7 @@ namespace gfx
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
-		virtual void Render(Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
 		
 	private:
 		void InitVerts();

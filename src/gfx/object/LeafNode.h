@@ -21,13 +21,13 @@ namespace gfx
 		LeafNode(Layer::Map::type layers);
 		
 		// Return the necessary z-clipping range required to render this object through the given camera.
-		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
+		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const;
 		
 		// Perform any necessary preparation for rendering.
 		virtual void PreRender();
 		
 		// Draw the object.
-		virtual void Render(Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
 		
 	};
 }

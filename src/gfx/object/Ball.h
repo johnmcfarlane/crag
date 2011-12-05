@@ -23,29 +23,19 @@ namespace gfx
 	class Ball : public LeafNode
 	{
 	public:
-		// types
-		struct UpdateParams
-		{
-			Vector _position;
-			Matrix33 _rotation;
-		};
-		
 		// functions
-		Ball(Scalar radius);
+		Ball();
 		
 		void Init(Scene const & scene) override;
 		
-		virtual bool GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const;
-		virtual void Update(UpdateParams const & params);
-		virtual void Render(Layer::type layer, Pov const & pov) const;
+		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
 		
 	private:
-		unsigned CalculateLod(Vector const & camera_position) const;		
+		unsigned CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const;
+		static Scalar CalculateRadius(Transformation const & transformation);
 		
 		// variables
-		Vector _position;
-		Matrix33 _rotation;
-		Scalar _radius;
 		Sphere const * _sphere;
 	};
 }

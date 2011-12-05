@@ -46,11 +46,9 @@ form::MeshProperties::Vector const & form::MeshBufferObject::GetOrigin() const
 	return properties._origin;
 }
 
-void form::MeshBufferObject::Activate(gfx::Pov pov) const
+void form::MeshBufferObject::Activate() const
 {
 	Assert (max_index > 0);
-	
-	pov.SetModelView(sim::Transformation(properties._origin));
 	
 	if (properties._flat_shaded) 
 	{

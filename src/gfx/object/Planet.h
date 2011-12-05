@@ -22,17 +22,16 @@ namespace gfx
 		class UpdateParams
 		{
 		public:
-			Vector _position;
 			Scalar _radius_min, _radius_max;
 		};
 		
 		// functions
-		Planet(Vector const & position);
+		Planet();
 		
 		virtual void Update(UpdateParams const & params);
 	private:
-		virtual bool GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const;
-		virtual void Render(Layer::type layer, Pov const & pov) const;
+		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
 		
 		// variables
 		UpdateParams _salient;

@@ -28,7 +28,7 @@ LeafNode::LeafNode(Layer::Map::type layers)
 {
 }
 
-bool LeafNode::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
+bool LeafNode::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
 { 
 	return false;
 }
@@ -38,7 +38,7 @@ void LeafNode::PreRender()
 	Assert(false);
 }
 
-void LeafNode::Render(Layer::type layer, Pov const & pov) const
+void LeafNode::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
 {
 	Assert(false);
 }

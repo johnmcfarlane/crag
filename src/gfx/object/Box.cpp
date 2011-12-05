@@ -20,7 +20,7 @@
 using namespace gfx;
 
 
-Box::Box(Vector const & size)
+Box::Box()
 : LeafNode(Layer::foreground)
 , _cuboid(nullptr)
 {
@@ -31,33 +31,34 @@ void Box::Init(Scene const & scene)
 	_cuboid = & scene.GetCuboid();
 }
 
-bool Box::GetRenderRange(Ray const & camera_ray, Scalar * range, bool wireframe) const 
+bool Box::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
 { 
-	Vector center = _transformation.GetTranslation();
-	Vector size = _transformation.GetScale();
-	
-	Scalar distance = Distance(camera_ray.position, center);
-	
 	// This could be improved by sampling each of the 8 corners of the box
 	// but it probably isn't worth the clock cycles to do that.
-	float radius = float(Length(size) * .5);
+	float radius;
+	{
+		Vector size = transformation.GetScale();
+		radius = float(Length(size) * .5);
+	}
+
+	Scalar distance;
+	{
+		Vector center = transformation.GetTranslation();
+		distance = Distance(camera_ray.position, center);
+	}
+	
 	range[0] = distance - radius;
 	range[1] = distance + radius;
 	
 	return true;
 }
 
-void Box::Update(UpdateParams const & params)
-{
-	_transformation = params.transformation;
-}
-
-void Box::Render(Layer::type layer, Pov const & pov) const
+void Box::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
 {
 	GLPP_VERIFY;
 	
 	// Set the matrix.
-	pov.SetModelView(_transformation);
+	Pov::SetModelViewMatrix(transformation);
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.

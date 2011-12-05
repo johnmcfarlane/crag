@@ -57,6 +57,7 @@ namespace sim
 	private:
 		form::Formation * _formation;
 		PlanetaryBody * _body;
+		gfx::Uid _transformation_uid;
 		gfx::Uid _model_uid;
 		Scalar _radius_mean;
 		Scalar _radius_min;

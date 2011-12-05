@@ -34,11 +34,15 @@ namespace sim
 		
 		// Called from the simulation thread.
 		bool Init(Simulation & simulation, PyObject & args);
+	private:
+		void InitPhysics(Simulation & simulation, Vector3 center, Vector3 size);
+		void InitGraphics();
 		
+	public:
 		void UpdateModels() const;
 	private:
 		
 		// variables
-		gfx::Uid _model_uid;
+		gfx::Uid _gfx_uid;
 	};
 }

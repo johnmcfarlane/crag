@@ -12,6 +12,7 @@
 
 #include "Star.h"
 
+#include "EntityFunctions.h"
 #include "Simulation.h"
 
 #include "gfx/object/Light.h"
@@ -59,9 +60,8 @@ bool sim::Star::Init(Simulation & simulation, PyObject & args)
 	}
 
 	// initialize light
-	gfx::Light * light = new gfx::Light(Vector3f::Zero(), gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
-	_light_uid = light->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(light, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	gfx::Light * light = new gfx::Light(gfx::Color4f(.85f, .85f, .85f), 0, 0, 1, true);
+	_light_uid = AddModelWithTransform(* light);
 	
 	return true;
 }
@@ -75,12 +75,12 @@ void sim::Star::Tick(Simulation & simulation)
 
 void sim::Star::UpdateModels() const
 {
-	gfx::Light::UpdateParams params = 
+	gfx::BranchNode::UpdateParams params = 
 	{
-		GetPosition()
+		Transformation(GetPosition())
 	};
 	
-	gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Light>);
+	gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

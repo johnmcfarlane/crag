@@ -12,6 +12,7 @@
 
 #include "Planet.h"
 
+#include "EntityFunctions.h"
 #include "MoonShader.h"
 #include "PlanetaryBody.h"
 #include "PlanetShader.h"
@@ -52,7 +53,7 @@ Planet::Planet()
 Planet::~Planet()
 {
 	// unregister with renderer
-	gfx::Daemon::Call<gfx::Uid>(_model_uid, & gfx::Renderer::OnRemoveObject);
+	gfx::Daemon::Call<gfx::Uid>(_transformation_uid, & gfx::Renderer::OnRemoveObject);
 	
 	// unregister with formation manager
 	form::Daemon::Call<form::Formation *>(_formation, & form::FormationManager::OnRemoveFormation);
@@ -119,9 +120,9 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
 		
 		// register with the renderer
-		gfx::Planet * model = new gfx::Planet(sphere.center);
+		gfx::Planet * model = new gfx::Planet();
 		_model_uid = model->GetUid();
-		gfx::Daemon::Call<gfx::Object *, gfx::Uid>(model, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+		_transformation_uid = AddModelWithTransform(* model);
 	}
 	
 	return true;
@@ -165,14 +166,26 @@ void Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 
 void Planet::UpdateModels() const
 {
-	gfx::Planet::UpdateParams params = 
 	{
-		GetPosition(),
-		_radius_min,
-		_radius_max
-	};
-	
-	gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
+		// update planet params
+		gfx::BranchNode::UpdateParams params = 
+		{
+			Transformation(GetPosition())
+		};
+		
+		gfx::Daemon::Call(_transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	}
+
+	{
+		// update planet params
+		gfx::Planet::UpdateParams params = 
+		{
+			_radius_min,
+			_radius_max
+		};
+		
+		gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
+	}
 }
 
 Scalar Planet::GetRadiusMean() const 

@@ -96,10 +96,10 @@ namespace
 			return object.IsInLayer(Layer::foreground);
 		}
 		
-		void operator() (LeafNode const & leaf_node)
+		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
 			double render_range[2];
-			if (leaf_node.GetRenderRange(_camera_ray, render_range, _wireframe))
+			if (leaf_node.GetRenderRange(transformation, _camera_ray, _wireframe, render_range))
 			{
 				// If an object is completely behind the camera, does the near plane get set to zero?
 				// This is inefficient and is not allowed. 
@@ -131,7 +131,10 @@ namespace
 		BranchNode const & root = scene.GetRoot();
 		Pov const & pov = scene.GetPov();
 		RenderRangeFunctor functor(pov, wireframe);
-		for_each_leaf<RenderRangeFunctor &>(root, functor);
+		gfx::Transformation const & camera_transformation = scene.GetPov().GetTransformation();
+		gfx::Transformation view_transformation = camera_transformation.GetInverse();
+
+		for_each_leaf<RenderRangeFunctor &>(root, functor, view_transformation);
 	}
 	
 }	// namespace
@@ -722,16 +725,11 @@ namespace
 	class RenderFunctor
 	{
 	public:
-		RenderFunctor(Layer::type layer, Pov const & pov)
+		RenderFunctor(Layer::type layer, Pov const & pov, int & num_rendered_objects)
 		: _layer(layer)
 		, _pov(pov)
-		, _num_rendered_objects(0)
+		, _num_rendered_objects(num_rendered_objects)
 		{
-		}
-		
-		int GetNumRenderedObjects() const
-		{
-			return _num_rendered_objects;
 		}
 		
 		bool operator() (Object const & object) const
@@ -739,25 +737,31 @@ namespace
 			return object.IsInLayer(_layer);
 		}
 		
-		void operator() (LeafNode const & leaf_node)
+		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
-			leaf_node.Render(_layer, _pov);
+			leaf_node.Render(transformation, _layer, _pov);
 			++ _num_rendered_objects;
 		}
 		
 	private:
 		Layer::type _layer;
 		Pov const & _pov;
-		int _num_rendered_objects;
+		int & _num_rendered_objects;
 	};
 }
 
 int Renderer::RenderLayer(Layer::type layer) const
 {
-	RenderFunctor functor(layer, scene->GetPov());
+	int num_rendered_objects = 0;
+
 	BranchNode const & branch_node = scene->GetRoot();
-	for_each_leaf<RenderFunctor &>(branch_node, functor);
-	return functor.GetNumRenderedObjects();
+	RenderFunctor functor(layer, scene->GetPov(), num_rendered_objects);
+	Transformation const & camera_transformation = scene->GetPov().GetTransformation();
+	Transformation view_transformation = camera_transformation.GetInverse();
+	
+	for_each_leaf<RenderFunctor>(branch_node, functor, view_transformation);
+
+	return num_rendered_objects;
 }
 
 void Renderer::DebugDraw() const
@@ -772,12 +776,20 @@ void Renderer::DebugDraw() const
 	
 	Pov const & pov = scene->GetPov();
 	Transformation const & transformation = pov.GetTransformation();
-	sim::Vector3 pos = transformation.GetTranslation();
-	pov.SetModelView(Transformation(pos));
-	Debug::Draw(pos);
+
+	// Set the model view to the regular global view but at the origin
+	Vector translation = transformation.GetTranslation();
+	Matrix33 rotation = transformation.GetRotation();
+	Matrix33 inverse_rotation = Inverse(rotation);
+	Transformation model_view(Vector::Zero(), inverse_rotation);
+	Pov::SetModelViewMatrix(model_view);
+	
+	// then pass the missing translation into the draw function.
+	// It corrects all the verts accordingly (avoids a precision issue).
+	Debug::Draw(translation);
 	
 #if defined (GATHER_STATS)
-	STAT_SET (pos, pos);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
+	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
 	
 	// The string into which is written Debug text.
 	std::stringstream out_stream;

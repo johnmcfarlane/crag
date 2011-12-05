@@ -12,6 +12,7 @@
 #include "Planet.h"
 
 #include "geom/Ray.h"
+#include "geom/Transformation.h"
 
 
 using namespace gfx;
@@ -20,20 +21,19 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-Planet::Planet(Vector const & position)
+Planet::Planet()
 : LeafNode(Layer::foreground)
 {
-	_salient._position = position;
 }
-		
+
 void Planet::Update(UpdateParams const & params)
 {
 	_salient = params;
 }
 
-bool Planet::GetRenderRange(Ray const & camera_ray, double * range, bool wireframe) const 
+bool Planet::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
 {
-	Scalar distance = Distance(camera_ray.position, _salient._position);
+	Scalar distance = Length(transformation.GetTranslation());
 	
 	// Is camera inside the planet?
 	if (distance < _salient._radius_min)
@@ -76,7 +76,7 @@ bool Planet::GetRenderRange(Ray const & camera_ray, double * range, bool wirefra
 	return true;
 }
 
-void Planet::Render(Layer::type layer, Pov const & pov) const 
+void Planet::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const 
 { 
 	// actual drawing is taken care of by the formation manager
 }

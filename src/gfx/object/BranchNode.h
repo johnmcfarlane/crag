@@ -11,6 +11,8 @@
 
 #include "Object.h"
 
+#include "geom/Transformation.h"
+
 
 namespace gfx
 {
@@ -22,10 +24,15 @@ namespace gfx
 		
 		typedef Object super;
 		
+	public:
+		struct UpdateParams
+		{
+			Transformation transformation;
+		};
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-
-	public:
+		
 		BranchNode();
 		~BranchNode();
 		
@@ -44,13 +51,17 @@ namespace gfx
 		ChildList::iterator End();
 		ChildList::const_iterator End() const;
 		
+		Transformation const & GetTransformation() const;
+		void Update(UpdateParams const & params);
+		
 	private:
 		BranchNode * CastListObject() override;
 		BranchNode const * CastListObject() const override;
-
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Object::ChildList _children;
+		Transformation _transformation;
 	};
 }
