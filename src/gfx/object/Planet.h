@@ -31,7 +31,7 @@ namespace gfx
 		virtual void Update(UpdateParams const & params);
 	private:
 		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const;
-		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer) const;
 		
 		// variables
 		UpdateParams _salient;

@@ -55,17 +55,11 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-void Skybox::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void Skybox::Render(Transformation const & transformation, Layer::type layer) const
 {
 	// clear the depth buffer
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 
-	// Set projection matrix within relatively tight bounds.
-	Frustum skybox_frustum = pov.GetFrustum();
-	skybox_frustum.near_z = .1f;
-	skybox_frustum.far_z = 10.f;
-	skybox_frustum.SetProjectionMatrix();
-	
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = transformation.GetRotation();
 	Transformation untranslated_transformation(Vector::Zero(), rotation);

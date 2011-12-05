@@ -43,7 +43,9 @@ CONFIG_DECLARE (profile_mode, bool);
 
 namespace 
 {
-
+	////////////////////////////////////////////////////////////////////////////////
+	// File-local Variables
+	
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
@@ -67,6 +69,20 @@ namespace
 	STAT (frame_duration, double, .18f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// File-local functions
+	
+	// Creates a frustum with sensible defaults for rendering a background.
+	void SetBackgroundFrustum(Pov const & pov)
+	{
+		// Set projection matrix within relatively tight bounds.
+		Frustum background_frustum = pov.GetFrustum();
+		background_frustum.near_z = .1f;
+		background_frustum.far_z = 10.f;
+		background_frustum.SetProjectionMatrix();
+	}
 	
 	// Given a camera position/direction, conservatively estimates 
 	// the minimum and maximum distances at which rendering occurs.
@@ -568,6 +584,8 @@ void Renderer::RenderScene() const
 
 void Renderer::RenderBackground() const
 {
+	SetBackgroundFrustum(scene->GetPov());
+
 	// basically draw the skybox
 	int background_render_count = RenderLayer(Layer::background);
 	
@@ -725,9 +743,8 @@ namespace
 	class RenderFunctor
 	{
 	public:
-		RenderFunctor(Layer::type layer, Pov const & pov, int & num_rendered_objects)
+		RenderFunctor(Layer::type layer, int & num_rendered_objects)
 		: _layer(layer)
-		, _pov(pov)
 		, _num_rendered_objects(num_rendered_objects)
 		{
 		}
@@ -739,13 +756,12 @@ namespace
 		
 		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
-			leaf_node.Render(transformation, _layer, _pov);
+			leaf_node.Render(transformation, _layer);
 			++ _num_rendered_objects;
 		}
 		
 	private:
 		Layer::type _layer;
-		Pov const & _pov;
 		int & _num_rendered_objects;
 	};
 }
@@ -755,7 +771,7 @@ int Renderer::RenderLayer(Layer::type layer) const
 	int num_rendered_objects = 0;
 
 	BranchNode const & branch_node = scene->GetRoot();
-	RenderFunctor functor(layer, scene->GetPov(), num_rendered_objects);
+	RenderFunctor functor(layer, num_rendered_objects);
 	Transformation const & camera_transformation = scene->GetPov().GetTransformation();
 	Transformation view_transformation = camera_transformation.GetInverse();
 	

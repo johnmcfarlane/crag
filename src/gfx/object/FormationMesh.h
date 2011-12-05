@@ -37,7 +37,7 @@ namespace gfx
 		
 	private:
 		virtual void PreRender();		
-		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer) const;
 		
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();

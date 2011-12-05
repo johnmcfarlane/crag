@@ -27,7 +27,7 @@ namespace gfx
 		virtual void PreRender();
 		
 		// Draw the object.
-		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer) const;
 		
 	};
 }

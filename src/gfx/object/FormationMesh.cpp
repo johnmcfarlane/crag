@@ -104,7 +104,7 @@ void FormationMesh::PreRender()
 #endif
 }
 
-void FormationMesh::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void FormationMesh::Render(Transformation const & transformation, Layer::type layer) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)

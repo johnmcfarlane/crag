@@ -49,7 +49,7 @@ bool Ball::GetRenderRange(Transformation const & transformation, Ray const & cam
 	return true;
 }
 
-void Ball::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void Ball::Render(Transformation const & transformation, Layer::type layer) const
 {
 	GLPP_VERIFY;
 	

@@ -72,7 +72,7 @@ void Light::Deinit()
 	GLPP_CALL(gl::Disable(light_id));
 }
 
-void Light::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void Light::Render(Transformation const & transformation, Layer::type layer) const
 {
 	Assert (layer == Layer::light);
 	

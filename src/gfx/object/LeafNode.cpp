@@ -38,7 +38,7 @@ void LeafNode::PreRender()
 	Assert(false);
 }
 
-void LeafNode::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void LeafNode::Render(Transformation const & transformation, Layer::type layer) const
 {
 	Assert(false);
 }

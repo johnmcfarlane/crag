@@ -41,7 +41,7 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		void Deinit() override;
 		
-		virtual void Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const;
+		virtual void Render(Transformation const & transformation, Layer::type layer) const;
 		
 		// variables
 	private:

@@ -53,7 +53,7 @@ bool Box::GetRenderRange(Transformation const & transformation, Ray const & came
 	return true;
 }
 
-void Box::Render(Transformation const & transformation, Layer::type layer, Pov const & pov) const
+void Box::Render(Transformation const & transformation, Layer::type layer) const
 {
 	GLPP_VERIFY;
 	
