@@ -13,7 +13,6 @@
 #include "ScriptThread.h"
 #include "MetaClass.h"
 
-#include "sim/axes.h"
 #include "sim/Entity.h"
 #include "sim/Simulation.h"
 

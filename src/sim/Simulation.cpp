@@ -12,7 +12,6 @@
 
 #include "Simulation.h"
 
-#include "axes.h"
 #include "Entity.h"
 #include "Firmament.h"
 #include "gravity.h"
