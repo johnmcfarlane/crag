@@ -11,13 +11,31 @@
 
 #include "Vehicle.h"
 
+#include "axes.h"
+#include "EntityFunctions.h"
+#include "EntityMessage.h"
 #include "Simulation.h"
 
 #include "physics/Body.h"
 
+#include "gfx/object/BranchNode.h"
+#include "gfx/object/Thruster.h"
+#include "gfx/Renderer.h"
+#include "gfx/Renderer.inl"
+
 #include "script/MetaClass.h"
 
 using namespace sim;
+
+
+struct Vehicle::Thruster
+{
+	Vector3 position;	// position of Thruster relative to vehicle
+	Vector3 direction;	// direction of thrust relative to vehicle rotation
+	SDL_Scancode key;
+	gfx::Uid gfx_uid;
+	float thrust;
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,26 +43,52 @@ using namespace sim;
 
 namespace
 {
+	class AddRotationFunctor : public sim::EntityMessage<sim::Vehicle>
+	{
+		// types
+		typedef sim::EntityMessage<sim::Vehicle> super;
+	public:
+		
+		// functions
+		AddRotationFunctor(sim::Uid vehicle_uid, Vehicle::Thruster thruster)
+		: super(vehicle_uid)
+		, _thruster(thruster)
+		{
+			Assert(_thruster.gfx_uid == gfx::Uid::null);
+		}
+		
+	private:
+		void operator() (sim::Vehicle & vehicle) const
+		{
+			vehicle.AddThruster(_thruster);
+		}
+		
+		Vehicle::Thruster _thruster;
+	};
+	
 	PyObject * vehicle_add_rotation(PyObject * self, PyObject * args)
 	{
-		sim::Vehicle::Rocket rocket;
+		Vehicle::Thruster thruster;
+		
 		if (! PyArg_ParseTuple(args, "ddddddi", 
-							   & rocket.position.x, & rocket.position.y, & rocket.position.z, 
-							   & rocket.direction.x, & rocket.direction.y, & rocket.direction.z,
-							   & rocket.key))
+							   & thruster.position.x, & thruster.position.y, & thruster.position.z, 
+							   & thruster.direction.x, & thruster.direction.y, & thruster.direction.z,
+							   & thruster.key))
 		{
 			Py_RETURN_NONE;
 		}
 		
 		Vehicle & vehicle = Vehicle::GetRef(self);
-		vehicle.AddRocket(rocket);
+		sim::Uid vehicle_uid = vehicle.GetUid();
+		AddRotationFunctor message(vehicle_uid, thruster);
+		sim::Daemon::SendMessage(message);
 		
 		Py_RETURN_NONE;
 	}
 }
 
 DEFINE_SCRIPT_CLASS_BEGIN(sim, Vehicle)
-	SCRIPT_CLASS_METHOD("add_rocket", vehicle_add_rotation, "Add a rocket (x,y,z,p,q,r,key)")
+SCRIPT_CLASS_METHOD("add_thruster", vehicle_add_rotation, "Add a Thruster (x,y,z,p,q,r,key)")
 DEFINE_SCRIPT_CLASS_END
 
 
@@ -52,9 +96,31 @@ DEFINE_SCRIPT_CLASS_END
 // sim::Vehicle member functions
 
 
-void Vehicle::AddRocket(Rocket const & rocket)
+void Vehicle::AddThruster(Thruster const & thruster)
 {
-	_rockets.push_back(rocket);
+	Assert(thruster.gfx_uid == gfx::Uid::null);
+	
+	// Create sim-side thruster object and get ref to it for writing.
+	_thrusters.push_back(thruster);
+	Thruster & _thruster = _thrusters.back();
+	
+	// Create graphical representation of thruster.
+	gfx::Object * gfx_thruster = new gfx::Thruster;
+	gfx::Uid parent_uid = GetGfxUid();
+	gfx::Uid transformation_uid = AddModelWithTransform(* gfx_thruster, parent_uid);
+	gfx::Uid thruster_uid = gfx_thruster->GetUid();
+	
+	// Position graphical representation.
+	gfx::BranchNode::UpdateParams params = 
+	{
+		Transformation(_thruster.position, axes::Rotation(_thruster.direction))
+	};
+	
+	gfx::Daemon::Call(transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	
+	// Initialize the rest of the sim-side data for the new thruster.
+	_thruster.gfx_uid = thruster_uid;
+	_thruster.thrust = 0;
 }
 
 void Vehicle::Create(Vehicle & vehicle, PyObject & args)
@@ -73,7 +139,21 @@ bool Vehicle::Init(Simulation & simulation, PyObject & args)
 
 void Vehicle::UpdateModels() const
 {
-	return super::UpdateModels();
+	super::UpdateModels();
+	
+	// For each thruster,
+	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
+	{
+		Thruster const & thruster = * i;
+		
+		// send the amount of thrust to the graphical representation.
+		gfx::Thruster::UpdateParams params = 
+		{
+			thruster.thrust
+		};
+		
+		gfx::Daemon::Call(thruster.gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Thruster>);
+	}
 }
 
 void Vehicle::Tick(Simulation & simulation) override
@@ -85,17 +165,17 @@ void Vehicle::Tick(Simulation & simulation) override
 		return;
 	}
 	
-	for (RocketVector::const_iterator i = _rockets.begin(), end = _rockets.end(); i != end; ++ i)
+	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
-		Rocket const & rocket = * i;
-		ApplyForce(rocket, * body);
+		Thruster const & Thruster = * i;
+		ApplyForce(Thruster, * body);
 	}
 }
 
-void Vehicle::ApplyForce(Rocket const & rocket, Body & body)
+void Vehicle::ApplyForce(Thruster const & Thruster, Body & body)
 {
-	if (sys::IsKeyDown(rocket.key))
+	if (sys::IsKeyDown(Thruster.key))
 	{
-		body.AddRelForceAtRelPos(rocket.direction, rocket.position);
+		body.AddRelForceAtRelPos(Thruster.direction, Thruster.position);
 	}
 }

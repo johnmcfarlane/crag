@@ -68,15 +68,6 @@ namespace gfx
 		void OnQuit();
 		void OnAddObject(Object * const & object, Uid const & parent_uid);
 		void OnRemoveObject(Uid const & uid);
-		template <typename OBJECT> 
-		void OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params)
-		/*{
-			if (scene != nullptr)
-			{
-				// Need to include Scene.h wherever this is referred to.
-				scene->UpdateObject(uid, params);
-			}
-		}*/;
 		void OnSetReady(bool const & ready);
 		void OnResize(Vector2i const & size);
 		void OnToggleCulling();
@@ -84,6 +75,10 @@ namespace gfx
 		void OnToggleWireframe();
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
+
+		// defined in Renderer.inl
+		template <typename OBJECT> 
+		void OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params);
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:

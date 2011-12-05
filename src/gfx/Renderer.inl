@@ -1,5 +1,5 @@
 //
-//  Renderer.inl.h
+//  Renderer.inl
 //  crag
 //
 //  Created by John on 2011-11-25.

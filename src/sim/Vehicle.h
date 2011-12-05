@@ -12,6 +12,12 @@
 #include "Ball.h"
 
 
+namespace gfx 
+{
+	class Thruster;
+}
+
+
 namespace sim
 {
 	// An entity with its own locomotion.
@@ -19,23 +25,18 @@ namespace sim
 	{
 		DECLARE_SCRIPT_CLASS(Vehicle, Ball);
 		
-	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		struct Rocket
-		{
-			Vector3 position;	// position of rocket relative to vehicle
-			Vector3 direction;	// direction of thrust relative to vehicle rotation
-			SDL_Scancode key;
-		};
-		
-		typedef std::vector<Rocket> RocketVector;
+
+	public:
+		struct Thruster;
+		typedef std::vector<Thruster> ThrusterVector;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		// Add a rocket
-		void AddRocket(Rocket const & rocket);
+		// Add a Thruster
+		void AddThruster(Thruster const & thruster);
 
 		// Called to create a bare object.
 		static void Create(Vehicle & vehicle, PyObject & args);
@@ -50,11 +51,11 @@ namespace sim
 		// Called whenever the simulation ticks.
 		void Tick(Simulation & simulation) override;
 
-		// Add force from an individual rocket to the vehicle's body.
-		static void ApplyForce(Rocket const & rocket, Body & body);
+		// Add force from an individual Thruster to the vehicle's body.
+		static void ApplyForce(Thruster const & Thruster, Body & body);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data
-		RocketVector _rockets;
+		ThrusterVector _thrusters;
 	};
 }
