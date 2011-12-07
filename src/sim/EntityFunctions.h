@@ -31,7 +31,7 @@ namespace sim
 	////////////////////////////////////////////////////////////////////////////////
 	// function declarations
 	
-	gfx::Uid AddModelWithTransform(gfx::Object & object);
+	gfx::Uid AddModelWithTransform(gfx::Object & object, gfx::Uid parent = gfx::Uid::null);
 	
 	// sends render info from simulation to renderer
 	void UpdateModels(EntitySet const & entity_set);

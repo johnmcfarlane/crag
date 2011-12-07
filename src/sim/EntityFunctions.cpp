@@ -22,11 +22,11 @@
 
 namespace sim
 {
-	gfx::Uid AddModelWithTransform(gfx::Object & object)
+	gfx::Uid AddModelWithTransform(gfx::Object & object, gfx::Uid parent)
 	{
 		gfx::Object * branch_node = new gfx::BranchNode;
 		gfx::Uid parent_uid = branch_node->GetUid();
-		gfx::Daemon::Call(branch_node, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+		gfx::Daemon::Call(branch_node, parent, & gfx::Renderer::OnAddObject);
 		
 		gfx::Daemon::Call(& object, parent_uid, & gfx::Renderer::OnAddObject);
 		return parent_uid;
