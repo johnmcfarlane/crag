@@ -40,6 +40,9 @@ namespace sim
 		
 	public:
 		void UpdateModels() const;
+		
+	protected:
+		gfx::Uid GetGfxUid() const;
 
 	private:
 		// variables

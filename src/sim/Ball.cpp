@@ -113,3 +113,8 @@ void Ball::UpdateModels() const
 	
 	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 }
+
+gfx::Uid Ball::GetGfxUid() const
+{
+	return _gfx_uid;
+}
