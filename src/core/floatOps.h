@@ -206,20 +206,6 @@ inline float Tan(float a) { return tanf(a); }
 inline double Tan(double a) { return tan(a); }
 
 
-// Trigonometry - inverse
-
-inline float Asin(float x) { return asinf(x); }
-inline double Asin(double x) { return asin(x); }
-
-inline float Acos(float x) { return acosf(x); }
-inline double Acos(double x) { return acos(x); }
-
-inline float Atan(float x) { return atanf(x); }
-inline double Atan(double x) { return atan(x); }
-inline float Atan2(float x, float y) { return atan2f(x, y); }
-inline double Atan2(double x, double y) { return atan2(x, y); }
-
-
 //////////////////////////////////////////////////////////////////////
 // Bicubic Interpolation
 //
