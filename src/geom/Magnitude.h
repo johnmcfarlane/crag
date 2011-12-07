@@ -20,7 +20,7 @@
 template<typename S, int N> S Length(Vector<S, N> const & v)
 {
 	S length_sqaured = LengthSq(v);
-	return Sqrt(length_sqaured);
+	return sqrt(length_sqaured);
 }
 
 // Returns a copy of v with unit length. 
@@ -106,7 +106,7 @@ template<typename S, int N> bool FastSafeNormalize(Vector<S, N> & v)
 template<typename S> S TriangleArea(S a, S b, S c)
 {
 	S p = (a + b + c) * static_cast<S> (.5);	// half perimeter
-	S area = Sqrt(p * (p - a) * (p - b) * (p - c));
+	S area = sqrt(p * (p - a) * (p - b) * (p - c));
 	return area;
 }
 

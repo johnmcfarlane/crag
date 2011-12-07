@@ -72,7 +72,7 @@ void Ball::Render(Transformation const & transformation, Layer::type layer) cons
 unsigned Ball::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
 {
 	Scalar mn1 = 1500;
-	int lod = int(Power(mn1 * radius * inv_distance_to_camera, .3));
+	int lod = int(pow(mn1 * radius * inv_distance_to_camera, .3));
 	Clamp(lod, 1, 5);
 	-- lod;
 	

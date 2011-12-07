@@ -156,7 +156,7 @@ bool Intersects(Sphere<S, N> const & sphere, Ray<S, N> const & line)
 	S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 	
 	// (Slightly reduced) Quadratic:
-	// t = (- half_b (+/-) Sqrt(Square(half_b) - (a * c))) / a
+	// t = (- half_b (+/-) sqrt(Square(half_b) - (a * c))) / a
 	
 	S root = Square(half_b) - a * c;
 	if (root < 0)
@@ -180,14 +180,14 @@ bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & line, S & t1
 	S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 	
 	// (Slightly reduced) Quadratic:
-	// t = (- half_b (+/-) Sqrt(Square(half_b) - (a * c))) / a
+	// t = (- half_b (+/-) sqrt(Square(half_b) - (a * c))) / a
 	
 	S root = Square(half_b) - a * c;
 	if (root < 0)
 	{
 		return false;
 	}
-	root = Sqrt(root);
+	root = sqrt(root);
 	S inverse_a = Inverse(a);
 	
 	S p = (- half_b) * inverse_a;
@@ -470,7 +470,7 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ve
 	{
 		if (depth != nullptr)
 		{
-			* depth = sphere.radius - Sqrt(AbsSqrDist);
+			* depth = sphere.radius - sqrt(AbsSqrDist);
 		}
 		return true;
 	}

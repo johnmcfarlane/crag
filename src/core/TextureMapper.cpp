@@ -15,7 +15,7 @@
 
 namespace 
 {
-	float equalateral_triangle_height = Sqrt(.75f);
+	float equalateral_triangle_height = sqrt(.75f);
 	float equalateral_triangle_[3][2] = {
 		{ -.5f, 0 },
 		{ .5f, 0 },

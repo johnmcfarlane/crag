@@ -69,8 +69,8 @@ bool Planet::GetRenderRange(Transformation const & transformation, Ray const & c
 	// and then hits the sphere of _radius_max.
 	// For some reason, those two distances appear to be very easy to calculate. 
 	// (Famous last words.)
-	Scalar a = Sqrt(Square(distance) - Square(_salient._radius_min));
-	Scalar b = Sqrt(Square(_salient._radius_max) - Square(_salient._radius_min));
+	Scalar a = sqrt(Square(distance) - Square(_salient._radius_min));
+	Scalar b = sqrt(Square(_salient._radius_max) - Square(_salient._radius_min));
 	range[1] = a + b;
 	
 	return true;

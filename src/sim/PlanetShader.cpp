@@ -34,7 +34,7 @@ namespace
 	CONFIG_DEFINE (planet_shader_random_range, sim::Scalar, 0.002);
 	CONFIG_DEFINE (planet_shader_medium_coefficient, sim::Scalar, .35);
 	
-	sim::Scalar root_three = Sqrt(3.);
+	sim::Scalar root_three = sqrt(3.);
 	
 	// RootNode initialization data. A tetrahedron.
 	sim::Vector3 root_corners[4] = 

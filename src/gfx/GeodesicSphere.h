@@ -239,7 +239,7 @@ namespace gfx
 			
 			double ideal_volume = SphereVolume<double, 3>(1);
 			double volume_adjust = ideal_volume / actual_volume;
-			double coefficient = Power(volume_adjust, 1. / 3.);
+			double coefficient = pow(volume_adjust, 1. / 3.);
 			
 			return float(coefficient);
 		}

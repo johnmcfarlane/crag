@@ -90,26 +90,6 @@ template<typename T> T Cube(T a)
 	return a * a * a;
 }
 
-inline float Power(float x, float y)
-{
-	return powf(x, y);
-}
-
-inline double Power(double x, double y)
-{
-	return pow(x, y);
-}
-
-inline float Sqrt(float square)
-{
-	return sqrtf(square);
-}
-
-inline double Sqrt(double square)
-{
-	return sqrt(square);
-}
-
 template<typename T> T Inverse (T a)
 {
 	return static_cast<T>(1) / a;
@@ -117,7 +97,7 @@ template<typename T> T Inverse (T a)
 
 template<typename T> T InvSqrt (T a)
 {
-	return Inverse (Sqrt (a));
+	return Inverse (sqrt (a));
 }
 
 #if defined(__ppc__)
@@ -164,7 +144,7 @@ inline double FastInvSqrt ( double x )
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
 {
-	return Inv(Sqrt(a));
+	return Inv(sqrt(a));
 }
 
 #endif

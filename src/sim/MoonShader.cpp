@@ -27,7 +27,7 @@
 namespace 
 {
 	
-	sim::Scalar root_three = Sqrt(3.);
+	sim::Scalar root_three = sqrt(3.);
 	
 
 	// RootNode initialization data, i.e. a tetrahedron.
@@ -159,7 +159,7 @@ void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moo
 	Scalar max_crater_radius = moon_radius * .25;
 	
 	// First off, decide radius.
-	Scalar crater_radius_coefficient = Power(rnd.GetUnitInclusive<float>(), 1.75f);
+	Scalar crater_radius_coefficient = pow(rnd.GetUnitInclusive<float>(), 1.75f);
 	crater.radius = max_crater_radius * crater_radius_coefficient;
 	
 	// Get a position which is within a radius=.5 sphere with even distribution.
@@ -174,5 +174,5 @@ void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moo
 	// Push it to moon max radius and then out a [non]random amount up until crater.radius in distance.
 	Scalar crater_elevation_coefficient = .85;
 	Scalar desired_crater_center = moon_radius + crater_elevation_coefficient * crater.radius;
-	crater.center *= desired_crater_center / Sqrt(crater_center_squared);
+	crater.center *= desired_crater_center / sqrt(crater_center_squared);
 }

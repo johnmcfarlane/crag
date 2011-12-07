@@ -181,7 +181,7 @@ int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load)
 // Thus the reaction coefficient is given a boost which decays over time. 
 float form::Regulator::CalculateFrameRateReactionCoefficient(sys::Time sim_time)
 {
-	float boost_factor = Power(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
+	float boost_factor = pow(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
 	float boost_summand = frame_rate_reaction_coefficient_boost * boost_factor;
 	float base_summand = frame_rate_reaction_coefficient_base;
 	return boost_summand + base_summand;

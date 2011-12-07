@@ -103,7 +103,7 @@ void Pov::LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const 
 	rot = Transposition(DirectionMatrix(forward, up));
 	
 	Scalar distance = Length(observer_to_center);	// hypotenuse
-	Scalar adjacent = Sqrt(Square(distance) - Square(sphere.radius));
+	Scalar adjacent = sqrt(Square(distance) - Square(sphere.radius));
 	Scalar angle = Atan2(sphere.radius, adjacent);
 	frustum.fov = 2. * angle;
 	

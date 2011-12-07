@@ -179,7 +179,7 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 
 void Observer::SetSpeedFactor(int _speed_factor)
 {
-	speed_factor = static_cast<double>(Power(Power(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
+	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
 }
 
 void Observer::Tick(Simulation & simulation)
