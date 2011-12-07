@@ -70,7 +70,7 @@ void sim::Star::Tick(Simulation & simulation)
 {
 	Time t = simulation.GetTime();
 	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
-	position = Vector3(- Sin(angle) * radius, - Cos(angle) * radius, static_cast<Scalar>(0));
+	position = Vector3(- sin(angle) * radius, - cos(angle) * radius, static_cast<Scalar>(0));
 }
 
 void sim::Star::UpdateModels() const

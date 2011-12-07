@@ -194,18 +194,6 @@ inline bool IsInf(float n)
 }
 
 
-// Trigonometry
-
-inline float Sin(float a) { return sinf(a); }
-inline double Sin(double a) { return sin(a); }
-
-inline float Cos(float a) { return cosf(a); }
-inline double Cos(double a) { return cos(a); }
-
-inline float Tan(float a) { return tanf(a); }
-inline double Tan(double a) { return tan(a); }
-
-
 //////////////////////////////////////////////////////////////////////
 // Bicubic Interpolation
 //

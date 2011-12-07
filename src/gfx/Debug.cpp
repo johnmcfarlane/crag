@@ -283,7 +283,7 @@ void Debug::AddFrustum(Pov const & pov)
 			Frustum const & frustum = pov.GetFrustum();
 			
 			double aspect = static_cast<float>(frustum.resolution.x) / frustum.resolution.y;
-			double y_factor = static_cast<float>(Sin(frustum.fov * .5));
+			double y_factor = static_cast<float>(sin(frustum.fov * .5));
 			double x_factor = y_factor * aspect;
 			
 			extent_factors[0] = Vector3(- x_factor, - y_factor, static_cast<double>(frustum.near_z));

@@ -41,7 +41,7 @@ namespace
 Matrix44 Frustum::CalcProjectionMatrix() const
 {
 	double aspect = static_cast<double>(resolution.x) / resolution.y;
-	double f = 1. / Tan(fov * .5);
+	double f = 1. / tan(fov * .5);
 	return Matrix44(static_cast<float>(f / aspect), 0, 0, 0, 
 						0, static_cast<float>(f), 0, 0, 
 						0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,

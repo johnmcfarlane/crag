@@ -73,8 +73,8 @@ public:
 		//S x2 = GetUnitInclusive<S>();
 		//S d = sqrt(-two * Log(x1));
 		//S a = two * static_cast<S>(PI) * x2;
-		//y1 = d * Cos(a);
-		//y2 = d * Sin(a);
+		//y1 = d * cos(a);
+		//y2 = d * sin(a);
 	}
 	
 	// constants
