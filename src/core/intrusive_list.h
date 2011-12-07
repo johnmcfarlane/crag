@@ -24,7 +24,7 @@
 // Insert into private section of listed class.
 #define DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, HOOK_TYPE, HOOK_MEMBER) \
 	typedef core::intrusive::hook<LISTED_CLASS> HOOK_TYPE; \
-	HOOK_TYPE HOOK_MEMBER;
+	HOOK_TYPE HOOK_MEMBER
 
 
 // DEFINE_INTRUSIVE_LIST_TYPE macro can be used to define a list type for a listed class.
@@ -34,14 +34,14 @@
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		template <typename CLASS> struct _ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::_hook> LIST_TYPE; }; \
-		typedef _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE;
+		typedef _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 	#define DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		template <typename CLASS> struct _ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::_hook> LIST_TYPE; }; \
-		typedef typename _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE;
+		typedef typename _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 #else
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
-		typedef core::intrusive::list<LISTED_CLASS, & LISTED_CLASS::HOOK_MEMBER> LIST_TYPE;
+		typedef core::intrusive::list<LISTED_CLASS, & LISTED_CLASS::HOOK_MEMBER> LIST_TYPE
 	#define DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE)
 #endif

@@ -57,7 +57,7 @@ namespace script
 	{
 	public:
 		// variables
-		PyObject_HEAD;
+		PyObject_HEAD
 		
 		DEFINE_INTRUSIVE_LIST(Object, List);
 		typedef List::const_iterator const_iterator;

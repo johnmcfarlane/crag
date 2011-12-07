@@ -35,7 +35,7 @@ namespace gl
 		DYNAMIC_READ = GL_DYNAMIC_READ, 
 		STREAM_COPY  = GL_STREAM_COPY,
 		STATIC_COPY  = GL_STATIC_COPY, 
-		DYNAMIC_COPY = GL_DYNAMIC_COPY, 
+		DYNAMIC_COPY = GL_DYNAMIC_COPY
 	};
 	
 	////////////////////////////////////////////////////////////////////////////////
