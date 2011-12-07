@@ -174,7 +174,7 @@ Matrix<S, 4, 4> Inverse(Matrix<S, 4, 4> const & matrix)
 	Matrix<S, 4, 4> inverse;
 	
 	S det = matrix.Determinant();
-	if(abs(det) < std::numeric_limits<S>::min()) 
+	if(Abs(det) < std::numeric_limits<S>::min()) 
 	{
 		return matrix;		// The matrix is not invertible! Singular case!
 	}

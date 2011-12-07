@@ -145,7 +145,7 @@ Matrix<S, 3, 3> Inverse(Matrix<S, 3, 3> const & matrix)
 	Matrix<S, 3, 3> inverse;
 	
 	S det = matrix.Determinant();
-	if(abs(det) < std::numeric_limits<S>::min()) 
+	if(Abs(det) < std::numeric_limits<S>::min()) 
 	{
 		return matrix;		// The matrix is not invertible! Singular case!
 	}

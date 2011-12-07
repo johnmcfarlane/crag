@@ -60,7 +60,7 @@ template<typename T> inline void ZeroObject(T & object)
 template<typename T> inline void BitwiseCopyArray(T * lhs, T const * rhs, int count)
 {
 	// Make sure this isn't a job for memmove.
-	assert(abs(lhs - rhs) >= count);
+	assert(Abs(lhs - rhs) >= count);
 	
 	size_t num_bytes = sizeof(T) * count;
 	

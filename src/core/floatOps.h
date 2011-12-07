@@ -55,14 +55,14 @@ template<typename T> void Clamp(T & val, T const & min, T const & max)
 	}
 }
 
-template<typename T> T abs(T const & val)
+template<typename T> T Abs(T const & val)
 {
-	return (val >= 0) ? val : - val;
+	return std::abs(val);
 }
 
 template<typename T> T Diff(T const & a, T const & b)
 {
-	return abs(a - b);
+	return Abs(a - b);
 }
 
 template<typename T> bool NearEqual(T const & a, T const & b, T const & error)
