@@ -133,6 +133,6 @@ template<typename S> S CuboidArea(class Vector<S, 3> const & dimensions)
 
 template<typename S, typename V> S TetrahedronVolume(V const & a, V const & b, V const & c, V const & d)
 {
-	return Abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
+	return abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
 }
 

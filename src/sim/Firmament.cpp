@@ -118,7 +118,7 @@ void Firmament::DrawStarsSimple()
 				Sphere3f star;
 				//random.GetGaussians(star.center.x, star.center.y);
 				//random.GetGaussians(star.center.z, star.radius);
-				//star.radius = Abs(star.radius);
+				//star.radius = abs(star.radius);
 				star.center.x = random.GetUnitInclusive<float>() - .5f;
 				star.center.y = random.GetUnitInclusive<float>() - .5f;
 				star.center.z = random.GetUnitInclusive<float>() - .5f;
@@ -134,7 +134,7 @@ void Firmament::DrawStarsSimple()
 				float w_co = .5f / w;
 				
 				Vector2f uv(axes[TriMod(axis + 1)] * w_co, axes[TriMod(axis + 2)] * w_co);
-				float radius = star.radius * Abs(w_co);
+				float radius = star.radius * abs(w_co);
 				DrawStar(side, uv, radius);
 			}
 			

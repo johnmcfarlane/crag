@@ -317,7 +317,7 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ve
 	S fB0	= DotProduct(kDiff, TriEdge0);
 	S fB1	= DotProduct(kDiff, TriEdge1);
 	//S fC	= LengthSq(kDiff);
-	S fDet	= Abs(fA00*fA11 - fA01*fA01);
+	S fDet	= abs(fA00*fA11 - fA01*fA01);
 	S u		= fA01*fB1-fA11*fB0;
 	S v		= fA01*fB0-fA00*fB1;
 	S SqrDist;
@@ -465,7 +465,7 @@ template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Ve
 		}
 	}
 	
-	S AbsSqrDist = Abs(SqrDist);
+	S AbsSqrDist = abs(SqrDist);
 	if (AbsSqrDist < mRadius2)
 	{
 		if (depth != nullptr)
