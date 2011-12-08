@@ -35,12 +35,12 @@ public:
 	// Returns vector as a C-style array. Very unsafe. 
 	S const * GetAxes() const
 	{
-		static_cast<S const *>(this);
+		return reinterpret_cast<S const *>(this);
 	}	
 	S * GetAxes()
 	{
-		static_cast<S *>(this);
-	}	
+		return reinterpret_cast<S *>(this);
+	}
 	
 	S const & operator [] (int index) const
 	{
