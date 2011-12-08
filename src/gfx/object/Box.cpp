@@ -57,9 +57,6 @@ void Box::Render(Transformation const & transformation, Layer::type layer) const
 {
 	GLPP_VERIFY;
 	
-	// Set the matrix.
-	Pov::SetModelViewMatrix(transformation);
-	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	_cuboid->Draw();

@@ -84,7 +84,6 @@ void Light::Render(Transformation const & transformation, Layer::type layer) con
 	GLPP_CALL(glLightfv(light_id, GL_LINEAR_ATTENUATION, & attenuation_b));
 	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
 	
-	Pov::SetModelViewMatrix(transformation);
 	static float l[4] = {
 		0,
 		0,

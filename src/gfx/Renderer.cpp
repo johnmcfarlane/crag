@@ -747,6 +747,9 @@ namespace
 		
 		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
+			// Set the matrix.
+			Pov::SetModelViewMatrix(transformation);
+			
 			leaf_node.Render(transformation, _layer);
 			++ _num_rendered_objects;
 		}

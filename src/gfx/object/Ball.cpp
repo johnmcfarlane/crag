@@ -59,9 +59,6 @@ void Ball::Render(Transformation const & transformation, Layer::type layer) cons
 	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
 	unsigned lod = CalculateLod(radius, inv_distance);
 	
-	// Set the matrix.
-	Pov::SetModelViewMatrix(transformation);
-	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	_sphere->Draw(lod);
