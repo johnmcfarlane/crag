@@ -52,6 +52,9 @@ namespace gfx
 		ChildList::const_iterator End() const;
 		
 		Transformation const & GetTransformation() const;
+		void SetTransformation(Transformation const & transformation);
+		void GetAccumulatedTransformation(Transformation & transformation) const;
+		
 		void Update(UpdateParams const & params);
 		
 	private:

@@ -87,6 +87,23 @@ gfx::Transformation const & BranchNode::GetTransformation() const
 	return _transformation;
 }
 
+void BranchNode::SetTransformation(Transformation const & transformation)
+{
+	_transformation = transformation;
+}
+
+void BranchNode::GetAccumulatedTransformation(Transformation & transformation) const
+{
+	BranchNode const * ancestor = this;
+	do
+	{
+		Transformation const & ancestor_transformation = ancestor->GetTransformation();
+		transformation = ancestor_transformation * transformation;
+		
+		ancestor = ancestor->GetParent();
+	}	while (ancestor != nullptr);
+}
+
 void BranchNode::Update(UpdateParams const & params)
 {
 	_transformation = params.transformation;
