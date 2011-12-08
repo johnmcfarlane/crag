@@ -25,8 +25,7 @@ namespace gfx
 		
 		Vector2i resolution;
 		double fov;	// radians
-		double near_z;
-		double far_z;
+		RenderRange depth_range;
 	};
 	
 	// Point of view

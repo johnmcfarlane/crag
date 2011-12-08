@@ -31,7 +31,7 @@ void Planet::Update(UpdateParams const & params)
 	_salient = params;
 }
 
-bool Planet::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
+bool Planet::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
 {
 	Scalar distance = Length(transformation.GetTranslation());
 	

@@ -46,8 +46,8 @@ Scene::Scene()
 	Frustum & frustum = pov.GetFrustum();
 
 	frustum.fov = static_cast<double>(camera_fov);
-	frustum.near_z = static_cast<double>(camera_near);
-	frustum.far_z = static_cast<double>(camera_far);
+	frustum.depth_range[1] = static_cast<double>(camera_near);
+	frustum.depth_range[0] = static_cast<double>(camera_far);
 }
 
 Scene::~Scene()
@@ -58,8 +58,8 @@ Scene::~Scene()
 	Frustum const & frustum = pov.GetFrustum();
 	
 	camera_fov = static_cast<float>(frustum.fov);
-	camera_near = static_cast<float>(frustum.near_z);
-	camera_far = static_cast<float>(frustum.far_z);
+	camera_near = static_cast<float>(frustum.depth_range[1]);
+	camera_far = static_cast<float>(frustum.depth_range[0]);
 	
 	delete & _sphere;
 	delete & _cuboid;
@@ -174,6 +174,7 @@ void Scene::SetResolution(Vector2i const & r)
 void Scene::SetCameraTransformation(sim::Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
+	_root.SetTransformation(transformation.GetInverse());
 }
 
 Pov & Scene::GetPov()

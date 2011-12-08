@@ -31,7 +31,7 @@ void Box::Init(Scene const & scene)
 	_cuboid = & scene.GetCuboid();
 }
 
-bool Box::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
+bool Box::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
 { 
 	// This could be improved by sampling each of the 8 corners of the box
 	// but it probably isn't worth the clock cycles to do that.

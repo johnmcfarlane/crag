@@ -79,8 +79,8 @@ namespace
 	{
 		// Set projection matrix within relatively tight bounds.
 		Frustum background_frustum = pov.GetFrustum();
-		background_frustum.near_z = .1f;
-		background_frustum.far_z = 10.f;
+		background_frustum.depth_range[1] = .1f;
+		background_frustum.depth_range[0] = 10.f;
 		background_frustum.SetProjectionMatrix();
 	}
 	
@@ -98,12 +98,12 @@ namespace
 		, _adjusted_frustum(_pov_frustum)
 		, _camera_ray(axes::GetCameraRay(pov.GetTransformation()))
 		{
-			_adjusted_frustum.near_z = std::numeric_limits<float>::max();
+			_adjusted_frustum.depth_range[1] = std::numeric_limits<float>::max();
 		}
 		
 		~RenderRangeFunctor()
 		{
-			_adjusted_frustum.near_z = std::max(_adjusted_frustum.near_z * .5, _pov_frustum.near_z);
+			_adjusted_frustum.depth_range[1] = std::max(_adjusted_frustum.depth_range[1] * .5, _pov_frustum.depth_range[1]);
 			_adjusted_frustum.SetProjectionMatrix();
 		}
 		
@@ -114,21 +114,21 @@ namespace
 		
 		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
-			double render_range[2];
+			RenderRange render_range;
 			if (leaf_node.GetRenderRange(transformation, _camera_ray, _wireframe, render_range))
 			{
 				// If an object is completely behind the camera, does the near plane get set to zero?
 				// This is inefficient and is not allowed. 
 				Assert(render_range[1] > 0);
 				
-				if (render_range[0] < _adjusted_frustum.near_z)
+				if (render_range[0] < _adjusted_frustum.depth_range[1])
 				{
-					_adjusted_frustum.near_z = render_range[0];
+					_adjusted_frustum.depth_range[1] = render_range[0];
 				}
 				
-				if (render_range[1] > _adjusted_frustum.far_z)
+				if (render_range[1] > _adjusted_frustum.depth_range[0])
 				{
-					_adjusted_frustum.far_z = render_range[1];
+					_adjusted_frustum.depth_range[0] = render_range[1];
 				}
 			}
 		}
@@ -147,10 +147,8 @@ namespace
 		BranchNode const & root = scene.GetRoot();
 		Pov const & pov = scene.GetPov();
 		RenderRangeFunctor functor(pov, wireframe);
-		gfx::Transformation const & camera_transformation = scene.GetPov().GetTransformation();
-		gfx::Transformation view_transformation = camera_transformation.GetInverse();
 
-		for_each_leaf<RenderRangeFunctor &>(root, functor, view_transformation);
+		for_each_leaf<RenderRangeFunctor &>(root, functor);
 	}
 	
 }	// namespace
@@ -526,32 +524,25 @@ bool Renderer::HasShadowSupport() const
 	return true;
 }
 
-namespace
-{
-	class PreRenderFunctor
-	{
-	public:
-		PreRenderFunctor() 
-		{
-		}
-		
-		bool operator() (Object const & object) const
-		{
-			return object.IsInLayer(Layer::pre_render);
-		}
-		
-		void operator() (LeafNode & leaf_node) const
-		{
-			leaf_node.PreRender();
-		}
-	};
-}
-
 void Renderer::PreRender()
 {
-	PreRenderFunctor functor;
-	BranchNode & branch_node = scene->GetRoot();
-	for_each_leaf<PreRenderFunctor const>(branch_node, functor);
+	ObjectMap & objects = scene->GetObjectMap();
+	for (ObjectMap::iterator i = objects.begin(), end = objects.end(); i != end; ++ i)
+	{
+		Object & object = ref(i->second);
+		if (! object.IsInLayer(Layer::pre_render))
+		{
+			continue;
+		}
+		
+		LeafNode * leaf_node = object.CastLeafNodePtr();
+		if (leaf_node == nullptr)
+		{
+			continue;
+		}
+		
+		leaf_node->PreRender();
+	}
 }
 
 void Renderer::Render()
@@ -772,10 +763,8 @@ int Renderer::RenderLayer(Layer::type layer) const
 
 	BranchNode const & branch_node = scene->GetRoot();
 	RenderFunctor functor(layer, num_rendered_objects);
-	Transformation const & camera_transformation = scene->GetPov().GetTransformation();
-	Transformation view_transformation = camera_transformation.GetInverse();
 	
-	for_each_leaf<RenderFunctor>(branch_node, functor, view_transformation);
+	for_each_leaf<RenderFunctor>(branch_node, functor);
 
 	return num_rendered_objects;
 }

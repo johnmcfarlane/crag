@@ -44,8 +44,8 @@ Matrix44 Frustum::CalcProjectionMatrix() const
 	double f = 1. / tan(fov * .5);
 	return Matrix44(static_cast<float>(f / aspect), 0, 0, 0, 
 						0, static_cast<float>(f), 0, 0, 
-						0, 0, static_cast<float>((far_z + near_z) / (near_z - far_z)), -1,
-						0, 0, static_cast<float>(2. * far_z * near_z / (near_z - far_z)), 0);
+						0, 0, static_cast<float>((depth_range[0] + depth_range[1]) / (depth_range[1] - depth_range[0])), -1,
+						0, 0, static_cast<float>(2. * depth_range[0] * depth_range[1] / (depth_range[1] - depth_range[0])), 0);
 }
 
 void Frustum::SetProjectionMatrix() const
@@ -107,8 +107,8 @@ void Pov::LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const 
 	Scalar angle = Atan2(sphere.radius, adjacent);
 	frustum.fov = 2. * angle;
 	
-	frustum.near_z = distance - sphere.radius;
-	frustum.far_z = distance + sphere.radius;
+	frustum.depth_range.x = distance - sphere.radius;
+	frustum.depth_range.y = distance + sphere.radius;
 }
 #endif
 

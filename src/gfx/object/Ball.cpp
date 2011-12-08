@@ -33,7 +33,7 @@ void Ball::Init(Scene const & scene)
 	_sphere = & scene.GetSphere();
 }
 
-bool Ball::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, Scalar * range) const 
+bool Ball::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
 { 
 	Scalar distance;
 	{

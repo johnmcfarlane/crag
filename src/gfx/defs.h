@@ -23,6 +23,7 @@ namespace gfx
 	// inside - or close to - the graphics API.
 	typedef double Scalar;
 	typedef Vector<Scalar, 3> Vector;
+	typedef ::Vector<Scalar, 2> RenderRange;	// near/far z
 	typedef Matrix<Scalar, 3, 3> Matrix33;
 	typedef Matrix<Scalar, 4, 4> Matrix44;
 	typedef Transformation<Scalar> Transformation;
