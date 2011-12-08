@@ -101,6 +101,17 @@ template<> int Config<int>::StringToValue(int & value, char const * string)
 	return sscanf(string, "%d", & value) == 1;
 }
 
+// size_t
+template<> int Config<size_t>::ValueToString(char * string, size_t const & value)
+{
+	return sprintf(string, "%lu", value) > 0;
+}
+
+template<> int Config<size_t>::StringToValue(size_t & value, char const * string)
+{
+	return sscanf(string, "%lu", & value) == 1;
+}
+
 // float
 template<> int Config<float>::ValueToString(char * string, float const & value)
 {
