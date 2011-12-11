@@ -137,6 +137,26 @@ void form::FormationManager::OnRegulatorSetFrame(float const & fitness)
 	_regulator.SampleFrameFitness(fitness);
 }
 
+void form::FormationManager::OnToggleSuspended()
+{
+	suspend_flag = ! suspend_flag;
+}
+
+void form::FormationManager::OnToggleMeshGeneration()
+{
+	enable_mesh_generation = ! enable_mesh_generation;
+}
+
+void form::FormationManager::OnToggleDynamicOrigin()
+{
+	enable_dynamic_origin = ! enable_dynamic_origin;
+}
+
+void form::FormationManager::OnToggleFlatShaded()
+{
+	flat_shaded_flag = ! flat_shaded_flag;
+}
+
 void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
@@ -182,26 +202,6 @@ void form::FormationManager::UnlockTree()
 form::Scene const & form::FormationManager::OnTreeQuery() const
 {
 	return GetVisibleScene();
-}
-
-void form::FormationManager::ToggleSuspended()
-{
-	suspend_flag = ! suspend_flag;
-}
-
-void form::FormationManager::ToggleMeshGeneration()
-{
-	enable_mesh_generation = ! enable_mesh_generation;
-}
-
-void form::FormationManager::ToggleDynamicOrigin()
-{
-	enable_dynamic_origin = ! enable_dynamic_origin;
-}
-
-void form::FormationManager::ToggleFlatShaded()
-{
-	flat_shaded_flag = ! flat_shaded_flag;
 }
 
 void form::FormationManager::SetCamera(sim::Transformation const & transformation)

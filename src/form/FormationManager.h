@@ -90,18 +90,17 @@ namespace form
 		void OnRegulatorSetNumQuaterna(int const & num_quaterne);
 		void OnRegulatorSetFrame(float const & fitness);
 		
+		void OnToggleSuspended();
+		void OnToggleMeshGeneration();
+		void OnToggleDynamicOrigin();
+		void OnToggleFlatShaded();
+		
 		void Run(Daemon::MessageQueue & message_queue);
-	public:
 		
 		// intersection support
 		void LockTree();
 		void UnlockTree();
 		Scene const & OnTreeQuery() const;
-		
-		void ToggleSuspended();
-		void ToggleMeshGeneration();
-		void ToggleDynamicOrigin();
-		void ToggleFlatShaded();
 		
 	private:
 		void SetCamera(sim::Transformation const & transformation);

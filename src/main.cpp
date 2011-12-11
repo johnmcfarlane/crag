@@ -112,7 +112,7 @@ namespace
 					}
 					
 					case SDL_SCANCODE_F:
-						form::Daemon::Ref().ToggleFlatShaded();
+						form::Daemon::Call(& form::FormationManager::OnToggleFlatShaded);
 						return true;
 						
 					case SDL_SCANCODE_G:
@@ -122,7 +122,7 @@ namespace
 					}
 						
 					case SDL_SCANCODE_I:
-						form::Daemon::Ref().ToggleSuspended();
+						form::Daemon::Call(& form::FormationManager::OnToggleSuspended);
 						return true;
 						
 					case SDL_SCANCODE_L:
@@ -154,7 +154,7 @@ namespace
 					}
 					
 					case SDL_SCANCODE_I:
-						form::Daemon::Ref().ToggleMeshGeneration();
+						form::Daemon::Call(& form::FormationManager::OnToggleMeshGeneration);
 						return true;
 						
 					default:
@@ -168,7 +168,7 @@ namespace
 				switch (keysym.scancode)
 				{
 					case SDL_SCANCODE_I:
-						form::Daemon::Ref().ToggleDynamicOrigin();
+						form::Daemon::Call(& form::FormationManager::OnToggleDynamicOrigin);
 						return true;
 					
 					default:
