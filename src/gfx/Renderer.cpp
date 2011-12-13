@@ -182,6 +182,13 @@ Renderer::~Renderer()
 	capture_enable = false;
 }
 
+Scene const & Renderer::GetScene() const
+{
+	Assert(Daemon::IsCurrentThread());
+	
+	return ref(scene);
+}
+
 void Renderer::OnQuit()
 {
 	quit_flag = true;

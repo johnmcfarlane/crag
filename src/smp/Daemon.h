@@ -90,7 +90,13 @@ namespace smp
 		// specifically, the thread is still in the object's Run function
 		bool IsRunning() const
 		{
-			return _state <= running;
+			return singleton->_state <= running;
+		}
+		
+		// true iff called from the Daemon's own thread
+		static bool IsCurrentThread()
+		{
+			return singleton->_thread.IsCurrent();
 		}
 		
 		size_t GetQueueCapacity() const

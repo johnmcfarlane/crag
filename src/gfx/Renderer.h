@@ -64,6 +64,8 @@ namespace gfx
 		Renderer();
 		~Renderer();
 		
+		Scene const & GetScene() const;
+
 		// message interface
 		void OnQuit();
 		void OnAddObject(Object * const & object, Uid const & parent_uid);
