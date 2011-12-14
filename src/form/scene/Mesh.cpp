@@ -57,11 +57,11 @@ size_t form::Mesh::GetNumPolys() const
 	return indices.GetSize() / 3;
 }
 
-form::Vertex & form::Mesh::GetVertex(Point & point)
+form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)
 	{
-		point.vert = & AddVertex(point);
+		point.vert = & AddVertex(point, color);
 	}
 	
 	Assert(point.pos == point.vert->pos);
@@ -70,7 +70,7 @@ form::Vertex & form::Mesh::GetVertex(Point & point)
 	return * point.vert;
 }
 
-form::Vertex & form::Mesh::AddVertex(form::Point const & p)
+form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 {
 	Vertex & addition = vertices.PushBack();
 	
@@ -81,10 +81,11 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p)
 	addition.texture = p.texture_uv;
 #endif
 
-#if defined(FORM_VERTEX_COLOR)
 	//addition.color = gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
-	addition.color = p.col;
-#endif
+	addition.col.r = color.r;
+	addition.col.g = color.g;
+	addition.col.b = color.b;
+	addition.col.a = color.a;
 
 	return addition;
 }
@@ -105,11 +106,11 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 	c.norm += normal;
 }
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal)
+void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal, gfx::Color4b color)
 {
-	Vertex & vert_a = GetVertex(a);
-	Vertex & vert_b = GetVertex(b);
-	Vertex & vert_c = (! properties._flat_shaded) ? GetVertex(c) : AddVertex(c);
+	Vertex & vert_a = GetVertex(a, color);
+	Vertex & vert_b = GetVertex(b, color);
+	Vertex & vert_c = (! properties._flat_shaded) ? GetVertex(c, color) : AddVertex(c, color);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }

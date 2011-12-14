@@ -41,13 +41,13 @@ namespace form
 		size_t GetIndexCount() const;
 		size_t GetNumPolys() const;
 		
-		Vertex & GetVertex(Point & point);
+		Vertex & GetVertex(Point & point, Color color);
 	private:
-		Vertex & AddVertex(Point const & p);
+		Vertex & AddVertex(Point const & p, Color color);
 	public:
 		
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
-		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal);
+		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal, gfx::Color4b color);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;

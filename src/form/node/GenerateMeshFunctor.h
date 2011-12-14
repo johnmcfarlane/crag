@@ -29,8 +29,10 @@ namespace form
 		OBJECT_NO_COPY (GenerateMeshFunctor);
 
 	public:
-		GenerateMeshFunctor(Mesh & _mesh) 
-		: mesh(_mesh) 
+		GenerateMeshFunctor(Vector2f leaf_score_range, Mesh & mesh) 
+		: _leaf_score_range(leaf_score_range)
+		, _mesh(mesh) 
+		, _inv_range(255.99f / (leaf_score_range.y - leaf_score_range.x))
 		{ 
 		}
 		
@@ -44,14 +46,39 @@ namespace form
 		}
 		
 		// ForEachNodeFace functor
-		void operator()(Point & a, Point & b, Point & c, Vector3f const & normal)
+		void operator()(Point & a, Point & b, Point & c, Vector3f const & normal, float score)
 		{
-			mesh.AddFace(a, b, c, normal);
+			Color color;
+#if defined(NODE_SCORE_HEAT_MAP)
+			if (score < _leaf_score_range.x)
+			{
+				Assert(false);
+				color = Color::Red();
+			}
+			else if (score > _leaf_score_range.y)
+			{
+				color = Color::Green();
+			}
+			else
+			{
+				int t = static_cast<int>(_inv_range * (score - _leaf_score_range.x));
+				Assert(t >= 0 && t < 256);
+				color.r = 255 - t;
+				color.g = t;
+				color.b = t;
+				color.a = 255;
+			}
+#else
+			color = Color::White();
+#endif
+			
+			_mesh.AddFace(a, b, c, normal, color);
 		}
 		
 	private:
-		
-		Mesh & mesh;
+		Vector2f _leaf_score_range;
+		Mesh & _mesh;
+		float _inv_range;
 	};
 
 }

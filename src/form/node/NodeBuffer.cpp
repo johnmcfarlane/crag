@@ -362,6 +362,7 @@ void form::NodeBuffer::UpdateNodes()
 
 void form::NodeBuffer::UpdateNodeScores()
 {
+	node_score_functor.ResetLeafScoreRange();
 	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 }
 
@@ -413,7 +414,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 	point_buffer.Clear();
 	mesh.Clear();
 
-	GenerateMeshFunctor mesh_functor(mesh);
+	GenerateMeshFunctor mesh_functor(node_score_functor.GetLeafScoreRange(), mesh);
 
 	ForEachNode<GenerateMeshFunctor &>(mesh_functor, 1024, true);
 }

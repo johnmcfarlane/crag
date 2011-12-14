@@ -37,15 +37,20 @@ namespace form
 		// would yield significantly different scores.
 		bool IsSignificantlyDifferent(Ray3 const & other_camera_ray) const;
 		
+		void ResetLeafScoreRange();
+		Vector2f GetLeafScoreRange() const;
+		
 		void SetCameraRay(Ray3 const & new_camera_ray);
 
-		void operator() (Node & node) const;
+		void operator() (Node & node);
 
 	private:
 		Ray3 camera_ray;
 		Scalar min_recalc_distance_squared;
 		Scalar min_score_distance_squared;
 		Scalar inverse_min_score_distance_squared;
+		
+		Vector2f leaf_score_range;
 	};
 
 }	// form

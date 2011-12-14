@@ -53,8 +53,11 @@ namespace gl
 		GLubyte r, g, b, a;
 	};
 	
-	struct Vertex3dNormRgba : public Vertex3dNorm, VertexRgba
+	struct Vertex3dNormRgba
 	{
+		Vector3f pos;
+		Vector3f norm;
+		VertexRgba col;
 	};
 	
 	
@@ -93,8 +96,9 @@ namespace gl
 	}
 	template <> inline void EnableClientState<Vertex3dNormRgba>()
 	{
-		EnableClientState<Vertex3dNorm>();
-		EnableClientState<VertexRgba>();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 	}
 	
 	
@@ -133,8 +137,9 @@ namespace gl
 	}
 	template <> inline void DisableClientState<Vertex3dNormRgba>()
 	{
-		DisableClientState<Vertex3dNorm>();
-		DisableClientState<VertexRgba>();
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
 	
 	
@@ -182,7 +187,7 @@ namespace gl
 		const Vertex3dNormRgba * null_vert = 0;
 		glVertexPointer(3, GL_FLOAT, sizeof(Vertex3dNormRgba), & null_vert->pos);
 		glNormalPointer(GL_FLOAT, sizeof(Vertex3dNormRgba), & null_vert->norm);
-		glColorPointer(4, GL_UNSIGNED_BYTE, 0, & null_vert->r);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex3dNormRgba), & null_vert->col);
 	}
 	
 }

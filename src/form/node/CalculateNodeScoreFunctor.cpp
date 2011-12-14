@@ -17,6 +17,9 @@
 #include "core/ConfigEntry.h"
 
 
+using namespace form;
+
+
 extern float camera_near;
 
 
@@ -25,9 +28,9 @@ CONFIG_DEFINE(node_score_score_coefficient, double, 1.5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// form::CalculateNodeScoreFunctor definitions
+// CalculateNodeScoreFunctor definitions
 
-form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
+CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 {
 	// make sure that the initial ray is just plain wrong!
 	camera_ray = GetInvalidRay();
@@ -39,23 +42,34 @@ form::CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 	inverse_min_score_distance_squared = static_cast<Scalar>(1. / min_score_distance_squared_precise);
 }
 
-form::Ray3 form::CalculateNodeScoreFunctor::GetInvalidRay()
+Ray3 CalculateNodeScoreFunctor::GetInvalidRay()
 {
 	return Ray3(Vector3::Max(), Vector3::Max());
 }
 
-bool form::CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
+bool CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
 {
 	Scalar distance_squared = DistanceSq(other_camera_ray.position, camera_ray.position);
 	return distance_squared >= min_recalc_distance_squared;
 }
 
-void form::CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
+void CalculateNodeScoreFunctor::ResetLeafScoreRange()
+{
+	leaf_score_range[0] = std::numeric_limits<float>::max();
+	leaf_score_range[1] = std::numeric_limits<float>::min();
+}
+
+Vector2f CalculateNodeScoreFunctor::GetLeafScoreRange() const
+{
+	return leaf_score_range;
+}
+
+void CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
 {
 	camera_ray = new_camera_ray;
 }
 
-void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
+void CalculateNodeScoreFunctor::operator()(Node & node)
 {
 	Assert(node.IsInUse());
 	
@@ -93,4 +107,16 @@ void form::CalculateNodeScoreFunctor::operator()(form::Node & node) const
 	
 	Assert(score >= 0);
 	node.score = score;
+	
+	if (node.IsLeaf())
+	{
+		if (score < leaf_score_range.x)
+		{
+			leaf_score_range.x = score;
+		}
+		if (score > leaf_score_range.y)
+		{
+			leaf_score_range.y = score;
+		}
+	}
 }

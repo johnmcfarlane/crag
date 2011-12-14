@@ -15,10 +15,12 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 
+#include "gfx/Color.h"
+
 
 namespace gl
 {
-	struct Vertex3dNorm;
+	struct Vertex3dNormRgba;
 }
 
 
@@ -27,10 +29,11 @@ namespace form
 	// Vector Types
 	typedef float Scalar;
 	
-	typedef ::Vector<Scalar, 3>	Vector3;
-	typedef ::Vector<Scalar, 4>	Vector4;
+	typedef ::Vector<Scalar, 3> Vector3;
+	typedef ::Vector<Scalar, 4> Vector4;
 	typedef ::Ray<Scalar, 3> Ray3;
-	typedef ::Sphere<Scalar, 3>	Sphere3;
+	typedef ::Sphere<Scalar, 3> Sphere3;
+	typedef gfx::Color4b Color;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
 	inline Vector3 SimToScene(::Vector3d const & sim, ::Vector3d const & scene_origin)
@@ -43,5 +46,5 @@ namespace form
 	}
 	
 	// Vertex
-	typedef gl::Vertex3dNorm Vertex;
+	typedef gl::Vertex3dNormRgba Vertex;
 }

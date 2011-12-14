@@ -29,10 +29,10 @@ namespace form
 	
 	// Helper function for ForEachNodeFace function;
 	// Calculates normal for given face and passes it on to functor.
-	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, FaceFunctor & f)
+	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, float score, FaceFunctor & f)
 	{
 		Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
-		f (a, b, c, FastNormalize(normal));
+		f (a, b, c, FastNormalize(normal), score);
 	}
 	
 	
@@ -77,7 +77,7 @@ namespace form
 				assert(odd_one_out[1] == nullptr);
 
 				// Only the corners are available. Has the advantage that we know what the normal is.
-				f (* triple[0].corner, * triple[1].corner, * triple[2].corner, node.normal);
+				f (* triple[0].corner, * triple[1].corner, * triple[2].corner, node.normal, node.score);
 			}	break;
 				
 			case 1: 
@@ -90,8 +90,8 @@ namespace form
 				Point * midpoint_0 = midpoint_triplet_0->mid_point;
 				Point * corner_0 = midpoint_triplet_0->corner;
 
-				AddFace(* midpoint_0, * corner_0, * TripletMod(midpoint_triplet_0 + 1, t_last)->corner, f);
-				AddFace(* corner_0, * midpoint_0, * TripletMod(midpoint_triplet_0 + 2, t_last)->corner, f);
+				AddFace(* midpoint_0, * corner_0, * TripletMod(midpoint_triplet_0 + 1, t_last)->corner, node.score, f);
+				AddFace(* corner_0, * midpoint_0, * TripletMod(midpoint_triplet_0 + 2, t_last)->corner, node.score, f);
 			}	break;
 				
 			case 2: 
@@ -109,11 +109,11 @@ namespace form
 				Point * midpoint_2 = midpoint_triplet_2->mid_point;
 				
 				// Generate good triangle.
-				AddFace(* midpoint_triplet_0->corner, * midpoint_2, * midpoint_1, f);
+				AddFace(* midpoint_triplet_0->corner, * midpoint_2, * midpoint_1, node.score, f);
 				
 				// Generate wonky quad.
-				AddFace(* midpoint_triplet_1->corner, * midpoint_triplet_2->corner, * midpoint_triplet_2->mid_point, f);
-				AddFace(* midpoint_triplet_1->mid_point, * midpoint_triplet_2->mid_point, * midpoint_triplet_2->corner, f);
+				AddFace(* midpoint_triplet_1->corner, * midpoint_triplet_2->corner, * midpoint_triplet_2->mid_point, node.score, f);
+				AddFace(* midpoint_triplet_1->mid_point, * midpoint_triplet_2->mid_point, * midpoint_triplet_2->corner, node.score, f);
 			}	break;
 				
 			case 3: 
@@ -121,10 +121,10 @@ namespace form
 				assert(odd_one_out[0] == nullptr);
 				assert(odd_one_out[1] != nullptr);
 				
-				AddFace(* triple[0].corner, * triple[2].mid_point, * triple[1].mid_point, f);
-				AddFace(* triple[1].corner, * triple[0].mid_point, * triple[2].mid_point, f);
-				AddFace(* triple[2].corner, * triple[1].mid_point, * triple[0].mid_point, f);
-				AddFace(* triple[0].mid_point, * triple[1].mid_point, * triple[2].mid_point, f);
+				AddFace(* triple[0].corner, * triple[2].mid_point, * triple[1].mid_point, node.score, f);
+				AddFace(* triple[1].corner, * triple[0].mid_point, * triple[2].mid_point, node.score, f);
+				AddFace(* triple[2].corner, * triple[1].mid_point, * triple[0].mid_point, node.score, f);
+				AddFace(* triple[0].mid_point, * triple[1].mid_point, * triple[2].mid_point, node.score, f);
 			}	break;
 		}
 	}
