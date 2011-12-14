@@ -41,7 +41,7 @@ namespace
 // gfx::FormationMesh member definitions
 
 FormationMesh::FormationMesh()
-: LeafNode(Layer::pre_render | Layer::foreground)
+: LeafNode(Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {

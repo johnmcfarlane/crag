@@ -35,7 +35,6 @@ bool LeafNode::GetRenderRange(Transformation const & transformation, Ray const &
 
 LeafNode::PreRenderResult LeafNode::PreRender()
 {
-	Assert(false);
 	return ok;
 }
 

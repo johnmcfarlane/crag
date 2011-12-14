@@ -538,11 +538,6 @@ void Renderer::PreRender()
 	{
 		Object & object = ref(i->second);
 		++ i;
-
-		if (! object.IsInLayer(Layer::pre_render))
-		{
-			continue;
-		}
 		
 		LeafNode * leaf_node = object.CastLeafNodePtr();
 		if (leaf_node == nullptr)
