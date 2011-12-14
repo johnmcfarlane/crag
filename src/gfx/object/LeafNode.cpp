@@ -33,9 +33,10 @@ bool LeafNode::GetRenderRange(Transformation const & transformation, Ray const &
 	return false;
 }
 
-void LeafNode::PreRender()
+LeafNode::PreRenderResult LeafNode::PreRender()
 {
 	Assert(false);
+	return ok;
 }
 
 void LeafNode::Render(Transformation const & transformation, Layer::type layer) const

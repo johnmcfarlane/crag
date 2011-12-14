@@ -93,7 +93,7 @@ void FormationMesh::Update(UpdateParams const & params)
 	_queued_mesh = mesh;
 }
 
-void FormationMesh::PreRender()
+LeafNode::PreRenderResult FormationMesh::PreRender()
 {
 	FinishBufferUpload();
 	BeginBufferUpload();
@@ -102,6 +102,8 @@ void FormationMesh::PreRender()
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	Debug::AddBasis(front_buffer.GetOrigin(), 1.);
 #endif
+	
+	return ok;
 }
 
 void FormationMesh::Render(Transformation const & transformation, Layer::type layer) const

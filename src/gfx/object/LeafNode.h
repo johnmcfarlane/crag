@@ -17,6 +17,18 @@ namespace gfx
 	class LeafNode : public Object
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+
+		enum PreRenderResult
+		{
+			ok,
+			remove
+		};
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
 		LeafNode(Layer::type layer);
 		LeafNode(Layer::Map::type layers);
 		
@@ -24,10 +36,9 @@ namespace gfx
 		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const;
 		
 		// Perform any necessary preparation for rendering.
-		virtual void PreRender();
+		virtual PreRenderResult PreRender();
 		
 		// Draw the object.
 		virtual void Render(Transformation const & transformation, Layer::type layer) const;
-		
 	};
 }

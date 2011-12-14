@@ -36,7 +36,7 @@ namespace gfx
 		void Update(UpdateParams const & params);
 		
 	private:
-		virtual void PreRender();		
+		virtual PreRenderResult PreRender();		
 		virtual void Render(Transformation const & transformation, Layer::type layer) const;
 		
 		bool FinishBufferUpload();

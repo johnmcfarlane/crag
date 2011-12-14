@@ -68,6 +68,10 @@ namespace gfx
 		Sphere const & GetSphere() const;
 		
 	private:
+		// removes given object and its children; 
+		// iff successful, returns removed object's parent
+		BranchNode * RemoveObjectRecursive(Uid uid);
+		
 		// attributes
 		Pov pov;
 		

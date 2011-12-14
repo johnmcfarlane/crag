@@ -534,9 +534,11 @@ bool Renderer::HasShadowSupport() const
 void Renderer::PreRender()
 {
 	ObjectMap & objects = scene->GetObjectMap();
-	for (ObjectMap::iterator i = objects.begin(), end = objects.end(); i != end; ++ i)
+	for (ObjectMap::iterator i = objects.begin(), end = objects.end(); i != end; )
 	{
 		Object & object = ref(i->second);
+		++ i;
+
 		if (! object.IsInLayer(Layer::pre_render))
 		{
 			continue;
@@ -548,7 +550,19 @@ void Renderer::PreRender()
 			continue;
 		}
 		
-		leaf_node->PreRender();
+		LeafNode::PreRenderResult result = leaf_node->PreRender();
+		switch (result)
+		{
+			default:
+				Assert(false);
+			case LeafNode::ok:
+				break;
+			case LeafNode::remove:
+				Uid next_object = i->first;
+				scene->RemoveObject(object.GetUid());
+				i = objects.find(next_object);
+				break;
+		}
 	}
 }
 
