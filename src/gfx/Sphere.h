@@ -23,11 +23,8 @@ namespace gfx
 		// types
 	public:
 		typedef gl::Vertex3dNormHybrid Vertex;
-	private:
 		typedef gfx::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
-		typedef gl::VertexRgba Color;
 		typedef std::vector<Vertex> VertexVector;
-	public:
 
 		// constants
 		static int const num_sphere_lods = 5;
@@ -37,15 +34,10 @@ namespace gfx
 		~Sphere();
 		
 		void Draw(int lod = num_sphere_lods - 1) const;
+
 	private:
-		void InitColors(VertexVector const & vertex_positions);
-		void ActivateColors() const;
-		void DeactivateColors() const;
-	public:
-		
 		// variables
 		Mesh _mesh;
-		gl::VboRgba _color_vbo;
 		std::vector<float> _lod_coefficients;
 	};
 }
