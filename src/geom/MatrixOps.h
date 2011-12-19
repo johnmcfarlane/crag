@@ -34,7 +34,7 @@ Matrix<S, R, C> operator * (Matrix<S, R, C> const & lhs, Matrix<S, R, C> const &
 
 // matrix * vector = vector
 template<typename S, int R, int C> 
-Vector<S, R> operator * (Matrix<S, R, C> const & lhs, const Vector<S, C> & rhs) 
+Vector<S, R> operator * (Matrix<S, R, C> const & lhs, Vector<S, C> const & rhs) 
 { 
 	Vector<S, R> result;
 	for (int row = 0; row < R; ++ row)
@@ -46,7 +46,7 @@ Vector<S, R> operator * (Matrix<S, R, C> const & lhs, const Vector<S, C> & rhs)
 
 // vector * matrix = vector
 template<typename S, int R, int C> 
-Vector<S, C> operator * (const Vector<S, R> & lhs, Matrix<S, R, C> const & rhs) 
+Vector<S, C> operator * (Vector<S, R> const & lhs, Matrix<S, R, C> const & rhs) 
 { 
 	Vector<S, C> result;
 	for (int column = 0; column < C; ++ column)
@@ -54,6 +54,33 @@ Vector<S, C> operator * (const Vector<S, R> & lhs, Matrix<S, R, C> const & rhs)
 		result[column] = DotProduct(lhs, rhs.GetColumn(column)); 
 	}
 	return result;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Matrix relation operators
+
+template<typename S, int R, int C> 
+bool operator == (Matrix<S, R, C> const & lhs, Matrix<S, R, C> const & rhs) 
+{ 
+	for (int row = 0; row < R; ++ row)
+	{
+		for (int column = 0; column < C; ++ column)
+		{
+			if (lhs[row][column] != rhs[row][column])
+			{
+				return false;
+			}
+		}
+	}
+		
+	return true;
+}
+
+template<typename S, int R, int C> 
+bool operator != (Matrix<S, R, C> const & lhs, Matrix<S, R, C> const & rhs) 
+{
+	return ! (lhs == rhs);
 }
 
 
