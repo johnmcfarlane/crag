@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "memory.h"
+
 
 // DEFINE_INTRUSIVE_LIST macro takes care of ensuring that a class is intrusive-listable.
 // Prefer over DEFINE_INTRUSIVE_LIST_HOOK and DEFINE_INTRUSIVE_LIST_TYPE.
@@ -50,7 +52,7 @@
 namespace core
 {
 	
-	// Intrusive Double-Linked List class
+	// Intrusive Double-Linked List classes
 	namespace intrusive
 	{
 		
@@ -116,11 +118,22 @@ namespace core
 		template <typename Class>
 		class list_base
 		{
+			// Copying an intrusive list is somewhat futile 
+			// as each element cannot be in more than one list.
+			OBJECT_NO_COPY(list_base);
+			
 		public:
 			typedef ptrdiff_t difference_type;
 			typedef hook<Class> hook_type;
 			typedef size_t size_type;
 			typedef Class value_type;
+			
+			////////////////////////////////////////////////////////////////////////////////
+			// c'tor
+			
+			list_base()
+			{
+			}
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// iterators
@@ -254,8 +267,13 @@ namespace core
 			template <hook_type Class::*Member>
 			bool empty() const
 			{
-				hook_type const & next_hook = _head._next->*Member;
-				return & next_hook == & _head;
+				return empty<Member>(_head);
+			}
+			template <hook_type Class::*Member>
+			static bool empty(hook_type const & head)
+			{
+				hook_type const & next_hook = head._next->*Member;
+				return & next_hook == & head;
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
@@ -317,8 +335,13 @@ namespace core
 			template <hook_type Class::*Member>
 			void init()
 			{
-				value_type & sham = get_object<Member>(_head);
-				_head._next = _head._previous = & sham;
+				init<Member>(_head);
+			}
+			template <hook_type Class::*Member>
+			static void init(hook_type & head)
+			{
+				value_type & sham = get_object<Member>(head);
+				head._next = head._previous = & sham;
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
@@ -335,6 +358,45 @@ namespace core
 			{
 				detach<Member>(* _head._previous);
 			}
+			
+			template <hook_type Class::*Member>
+			static void swap(hook_type & lhs_head, hook_type & rhs_head)
+			{
+				bool lhs_empty = empty<Member>(lhs_head);
+				bool rhs_empty = empty<Member>(rhs_head);
+				
+				std::swap(lhs_head, rhs_head);
+				
+				if (rhs_empty)
+				{
+					init<Member>(lhs_head);
+				}
+				else
+				{
+					value_type & lhs_dummy = get_object<Member>(lhs_head);
+					(lhs_head._next->*Member)._previous = (lhs_head._previous->*Member)._next = & lhs_dummy;
+				}
+				
+				if (lhs_empty)
+				{
+					init<Member>(rhs_head);
+				}
+				else
+				{
+					value_type & rhs_dummy = get_object<Member>(rhs_head);
+					(rhs_head._next->*Member)._previous = (rhs_head._previous->*Member)._next = & rhs_dummy;
+				}
+			}
+			
+			template <hook_type Class::*Member>
+			static void move(hook_type & lhs_head, hook_type const & rhs_head)
+			{
+				if (empty(rhs_head))
+				{
+					init<Member>(lhs_head);
+				}
+			}
+			
 			
 			////////////////////////////////////////////////////////////////////////////////
 			////////////////////////////////////////////////////////////////////////////////
@@ -624,7 +686,21 @@ namespace core
 				Assert(super::template contains<Member>(element));
 				super::template detach<Member>(element);
 			}
+			
+			static void swap(list & lhs, list & rhs)
+			{
+				super::template swap<Member>(lhs._head, rhs._head);
+			}
 		};
 		
+	}
+}
+
+namespace std
+{
+	template<typename Class, core::intrusive::hook<Class> Class::* Member>
+	void swap(core::intrusive::list<Class, Member> & lhs, core::intrusive::list<Class, Member> & rhs)
+	{
+		core::intrusive::list<Class, Member>::swap(lhs, rhs);
 	}
 }
