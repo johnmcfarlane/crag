@@ -82,6 +82,16 @@ public:
 		return Transformation(lhs._matrix * rhs._matrix);
 	}
 	
+	friend bool operator == (Transformation const & lhs, Transformation const & rhs)
+	{
+		return lhs._matrix == rhs._matrix;
+	}
+	
+	friend bool operator != (Transformation const & lhs, Transformation const & rhs)
+	{
+		return lhs._matrix != rhs._matrix;
+	}
+	
 	// return the translation from the transformation
 	Matrix const & GetMatrix() const
 	{
