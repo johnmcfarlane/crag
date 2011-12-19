@@ -73,6 +73,18 @@ template<typename T> inline void BitwiseCopyObject(T & lhs, T const & rhs)
 }
 
 
+// Bitwise Swap
+
+template<typename T> inline void BitwiseSwapObject(T & lhs, T & rhs)
+{
+	char buffer [sizeof (T)];
+	T & tmp = * reinterpret_cast<T *>(buffer);
+	BitwiseCopyObject(tmp, lhs);
+	BitwiseCopyObject(lhs, rhs);
+	BitwiseCopyObject(rhs, tmp);
+}
+
+
 // Prefetch
 
 inline void PrefetchBlock(void const * ptr)
