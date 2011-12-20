@@ -38,8 +38,10 @@ namespace gfx
 	// main recursive functions; do not call directly
 	
 	template <typename FUNCTOR, typename OBJECT, typename LEAF_NODE, typename BRANCH_NODE, typename LIST_OBJECT, typename CHILD_LIST_ITERATOR>
-	void for_each_leaf(BRANCH_NODE & branch_node, FUNCTOR functor, Transformation const & accumulated_transformation)
+	void for_each_leaf(BRANCH_NODE & branch_node, FUNCTOR functor, Transformation const & model_view_transformation)
 	{
+		Transformation scratch;
+		
 		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; ++ i)
 		{
 			OBJECT & child = * i;
@@ -48,19 +50,27 @@ namespace gfx
 				continue;
 			}
 			
-			if (child.GetNodeType() == Object::leaf)
+			Transformation const & child_model_view_transformation = child.Transform(model_view_transformation, scratch);
+
+			switch (child.GetNodeType())
 			{
-				LEAF_NODE & leaf = child.CastLeafNodeRef();
-				functor(leaf, accumulated_transformation);
-			}
-			else
-			{
-				Assert(child.GetNodeType() == Object::branch);
-				BRANCH_NODE & child_branch = child.CastBranchNodeRef();
-				
-				Transformation further_accumulated_transformation = accumulated_transformation * child_branch.GetTransformation();
-				
-				for_each_leaf<FUNCTOR, OBJECT, LEAF_NODE, BRANCH_NODE, LIST_OBJECT, CHILD_LIST_ITERATOR>(child_branch, functor, further_accumulated_transformation);
+				default:
+					Assert(false);
+				case Object::leaf:
+				{
+					LEAF_NODE & child_leaf = child.CastLeafNodeRef();
+
+					functor(child_leaf, child_model_view_transformation);
+					break;
+				}
+					
+				case Object::branch:
+				{
+					BRANCH_NODE & child_branch = child.CastBranchNodeRef();
+					
+					for_each_leaf<FUNCTOR, OBJECT, LEAF_NODE, BRANCH_NODE, LIST_OBJECT, CHILD_LIST_ITERATOR>(child_branch, functor, child_model_view_transformation);
+					break;
+				}
 			}
 		}
 	}

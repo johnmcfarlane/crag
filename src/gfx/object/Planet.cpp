@@ -33,7 +33,12 @@ void Planet::Update(UpdateParams const & params)
 
 bool Planet::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
 {
-	Scalar distance = Length(transformation.GetTranslation());
+	// TODO: Either [0][3] or [1][3] or this transformation matrix
+	// contains the z-depth but it's signed. 
+	// This fn needs adjustments to make use of it.
+	// It is faster to get and more accurate than distance-to-camera.
+	Vector center = transformation.GetTranslation();
+	Scalar distance = Length(center);
 	
 	// Is camera inside the planet?
 	if (distance < _salient._radius_min)

@@ -30,7 +30,6 @@ public:
 	// functions 
 	
 	Transformation()
-	: _matrix(Matrix::Identity())
 	{
 	}
 	

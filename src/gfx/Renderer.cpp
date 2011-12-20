@@ -86,8 +86,6 @@ namespace
 	
 	// Given a camera position/direction, conservatively estimates 
 	// the minimum and maximum distances at which rendering occurs.
-	// TODO: Long-term, this function needs to be replaced with 
-	// something that gives and near and far plane value instead. 
 	class RenderRangeFunctor
 	{
 		OBJECT_NO_COPY(RenderRangeFunctor);

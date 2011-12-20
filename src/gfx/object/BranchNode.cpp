@@ -21,6 +21,7 @@ using namespace gfx;
 
 BranchNode::BranchNode()
 : Object(branch, Layer::Map::none)
+, _transformation(Transformation::Matrix::Identity())
 {
 }
 
@@ -82,6 +83,11 @@ BranchNode::ChildList::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
+gfx::Transformation const & BranchNode::Transform(Transformation const & model_view, Transformation & scratch) const override
+{
+	return scratch = model_view * _transformation;
+}
+
 gfx::Transformation const & BranchNode::GetTransformation() const
 {
 	return _transformation;
@@ -90,18 +96,6 @@ gfx::Transformation const & BranchNode::GetTransformation() const
 void BranchNode::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
-}
-
-void BranchNode::GetAccumulatedTransformation(Transformation & transformation) const
-{
-	BranchNode const * ancestor = this;
-	do
-	{
-		Transformation const & ancestor_transformation = ancestor->GetTransformation();
-		transformation = ancestor_transformation * transformation;
-		
-		ancestor = ancestor->GetParent();
-	}	while (ancestor != nullptr);
 }
 
 void BranchNode::Update(UpdateParams const & params)

@@ -77,6 +77,9 @@ void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 	
 	_entity_set.Add(* entity);
 	entity->UpdateModels();
+	// TODO: Between the calls to Init and UpdateModels,
+	// it's possible for render thread functions to be called
+	// which rely on the uninitialized data in gfx objects created in Init.
 }
 
 void Simulation::OnRemoveEntity(Uid const & uid)

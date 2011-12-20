@@ -51,9 +51,10 @@ namespace gfx
 		ChildList::iterator End();
 		ChildList::const_iterator End() const;
 		
+		// Model-view transformation
+		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
-		void GetAccumulatedTransformation(Transformation & transformation) const;
 		
 		void Update(UpdateParams const & params);
 		

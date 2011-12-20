@@ -52,6 +52,11 @@ void Object::Deinit()
 {
 }
 
+gfx::Transformation const & Object::Transform(Transformation const & model_view, Transformation & scratch) const
+{
+	return model_view;
+}
+
 Uid Object::GetUid() const
 {
 	return _uid;

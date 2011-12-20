@@ -50,6 +50,8 @@ namespace gfx
 		virtual void Init(Scene const & scene);	// called on arrival in render thread 
 		virtual void Deinit();
 		
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const;
+		
 		Uid GetUid() const;
 		
 		// returns true iff this object belongs in the given render layer;

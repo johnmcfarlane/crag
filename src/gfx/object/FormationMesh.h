@@ -33,6 +33,8 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		void Deinit() override;
 
+		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
+
 		void Update(UpdateParams const & params);
 		
 	private:
