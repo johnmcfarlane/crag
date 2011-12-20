@@ -30,7 +30,9 @@ cleanup_shapes = True
 
 
 def spawn_shape(shapes):
-	if cleanup_shapes:
+	if max_shapes == 0:
+		return
+	elif cleanup_shapes:
 		if len(shapes) > max_shapes:
 			shapes.pop(0)
 	else:
