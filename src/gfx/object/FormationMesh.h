@@ -38,8 +38,8 @@ namespace gfx
 		void Update(UpdateParams const & params);
 		
 	private:
-		virtual PreRenderResult PreRender();		
-		virtual void Render(Transformation const & transformation, Layer::type layer) const;
+		virtual PreRenderResult PreRender();
+		virtual void Render() const;
 		
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();

@@ -37,7 +37,7 @@ namespace gfx
 		void SetSide(int axis, int pole, Image const & image);
 		
 		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
-		virtual void Render(Transformation const & transformation, Layer::type layer) const;
+		virtual void Render() const;
 		
 	private:
 		void InitVerts();

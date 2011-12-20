@@ -15,6 +15,8 @@
 #include "BranchNode.h"
 #include "Pov.h"
 
+#include "object/LeafNode.h"
+
 #include "sim/defs.h"
 
 
@@ -36,6 +38,7 @@ namespace gfx
 		
 		void AddObject(Object & object, Uid parent_uid);
 		void RemoveObject(Uid uid);
+		void SortRenderList();
 		
 		template <typename OBJECT> 
 		void UpdateObject(Uid uid, typename OBJECT::UpdateParams const & params)
@@ -58,6 +61,9 @@ namespace gfx
 		BranchNode & GetRoot();
 		BranchNode const & GetRoot() const;
 		
+		LeafNode::RenderList & GetRenderList();
+		LeafNode::RenderList const & GetRenderList() const;
+		
 		void SetResolution(Vector2i const & r);
 		void SetCameraTransformation(sim::Transformation const & transformation);
 		
@@ -68,15 +74,12 @@ namespace gfx
 		Sphere const & GetSphere() const;
 		
 	private:
-		// removes given object and its children; 
-		// iff successful, returns removed object's parent
-		BranchNode * RemoveObjectRecursive(Uid uid);
-		
 		// attributes
 		Pov pov;
 		
 		ObjectMap _objects;	// fast-access container of all objects
 		BranchNode _root;	// root of object heirachy
+		LeafNode::RenderList _render_list;
 		
 		Cuboid const & _cuboid;
 		Sphere const & _sphere;

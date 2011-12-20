@@ -95,25 +95,98 @@ void Scene::AddObject(Object & object, Uid parent_uid)
 	ObjectMap::value_type addition(uid, & object);
 	_objects.insert(addition);
 	Assert(_objects.count(uid) == 1);	// insertion failed somehow
+	
+	// If object is a LeafNode,
+	LeafNode * leaf_node = object.CastLeafNodePtr();
+	if (leaf_node != nullptr)
+	{
+		// add it to the render list.
+		_render_list.push_back(* leaf_node);
+	}
 }
 
 void Scene::RemoveObject(Uid uid)
 {
-	BranchNode * parent = RemoveObjectRecursive(uid);
-
-	// If the removal succeeded,
-	if (parent != nullptr)
+	// Given the UID, get the object.
+	Object * object;
 	{
-		// and the removed object's parent is not the root branch,
-		if (parent != & _root)
+		ObjectMap::iterator i = _objects.find(uid);
+		if (i == _objects.end())
 		{
-			// and if it's empty,
-			if (parent->IsEmpty())
-			{
-				// then remove it also.
-				RemoveObject(parent->GetUid());
-			}
+			// Probably, the object was already removed. 
+			// (Children and sometimes parents are removed automatically.)
+			// Possibly, it was simply never added with AddObject.
+			Assert(false);
+			return;
 		}
+		object = i->second;
+		
+		// And remove from the map.
+		_objects.erase(i);
+		Assert(_objects.count(uid) == 0);	// erasure failed somehow
+	}
+	
+	switch (object->GetNodeType())
+	{
+		case Object::branch:
+		{
+			// If it's a branch,
+			BranchNode & branch_node = object->CastBranchNodeRef();
+
+			// then for all the children,
+			Object::ChildList::iterator end = branch_node.End();
+			while (true)
+			{
+				Object::ChildList::iterator last = end;
+				-- last;
+				if (last == end)
+				{
+					break;
+				}
+				
+				// remove them first.
+				Object & child_object = * last;
+				Uid child_uid = child_object.GetUid();
+				RemoveObject(child_uid);
+			}
+
+			Assert(branch_node.IsEmpty());
+			break;
+		}
+			
+		case Object::leaf:
+		{
+			LeafNode & leaf_node = object->CastLeafNodeRef();
+			_render_list.remove(leaf_node);
+			break;
+		}
+	}
+	
+	// Finally, deinitialize ...
+	object->Deinit();
+	
+	// and delete. (Object removes itself from parent list here.)
+	delete object;
+}
+
+void Scene::SortRenderList()
+{
+	typedef LeafNode::RenderList List;
+	List unsorted;
+	
+	std::swap(unsorted, _render_list);
+	
+	while (! unsorted.empty())
+	{
+		LeafNode & node = unsorted.front();
+		unsorted.pop_front();
+		
+		List::iterator i = _render_list.begin();
+		for (List::iterator end = _render_list.end(); i != end && node < * i; ++ i)
+		{
+		}
+		
+		_render_list.insert(i, node);
 	}
 }
 
@@ -135,6 +208,16 @@ BranchNode & Scene::GetRoot()
 BranchNode const & Scene::GetRoot() const
 {
 	return _root;
+}
+
+LeafNode::RenderList & Scene::GetRenderList()
+{
+	return _render_list;
+}
+
+LeafNode::RenderList const & Scene::GetRenderList() const
+{
+	return _render_list;
 }
 
 void Scene::SetResolution(Vector2i const & r)
@@ -166,62 +249,4 @@ gfx::Sphere const & Scene::GetSphere() const
 Cuboid const & Scene::GetCuboid() const
 {
 	return _cuboid;
-}
-
-BranchNode * Scene::RemoveObjectRecursive(Uid uid)
-{
-	// Given the UID, get the object.
-	Object * object;
-	{
-		ObjectMap::iterator i = _objects.find(uid);
-		if (i == _objects.end())
-		{
-			// Probably, the object was already removed. 
-			// (Children and sometimes parents are removed automatically.)
-			// Possibly, it was simply never added with AddObject.
-			Assert(false);
-			return nullptr;
-		}
-		object = i->second;
-		
-		// And remove from the map.
-		_objects.erase(i);
-		Assert(_objects.count(uid) == 0);	// erasure failed somehow
-	}
-	
-	// If it's a branch,
-	BranchNode * branch_node = object->CastBranchNodePtr();
-	if (branch_node != nullptr)
-	{
-		// then for all the children,
-		Object::ChildList::iterator end = branch_node->End();
-		while (true)
-		{
-			Object::ChildList::iterator last = end;
-			-- last;
-			if (last == end)
-			{
-				break;
-			}
-			
-			// remove them first.
-			Object & child_object = * last;
-			Uid child_uid = child_object.GetUid();
-			RemoveObjectRecursive(child_uid);
-		}
-		
-		Assert(branch_node->IsEmpty());
-	}
-	
-	// Finally, deinitialize ...
-	object->Deinit();
-	
-	// Remember the parent.
-	BranchNode * parent = object->GetParent();
-	Assert(parent != nullptr);
-	
-	// and delete. (Object removes itself from parent list here.)
-	delete object;
-	
-	return parent;
 }

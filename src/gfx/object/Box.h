@@ -9,7 +9,9 @@
 
 #pragma once
 
-#include "gfx/object/LeafNode.h"
+#include "LeafNode.h"
+
+#include "gfx/Color.h"
 
 #include "geom/Transformation.h"
 
@@ -29,10 +31,11 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		
 		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const;
-		virtual void Render(Transformation const & transformation, Layer::type layer) const;
+		virtual void Render() const;
 		
 	private:
 		// variables
 		Cuboid const * _cuboid;
+		Color4b _color;
 	};
 }

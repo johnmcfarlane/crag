@@ -18,6 +18,8 @@
 
 #include "geom/Transformation.h"
 
+#include "core/Random.h"
+
 
 using namespace gfx;
 
@@ -25,7 +27,9 @@ using namespace gfx;
 Ball::Ball()
 : LeafNode(Layer::foreground)
 , _sphere(nullptr)
+, _color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256))
 {
+	SetIsOpaque(_color.a == 255);
 }
 
 void Ball::Init(Scene const & scene)
@@ -49,13 +53,16 @@ bool Ball::GetRenderRange(Transformation const & transformation, Ray const & cam
 	return true;
 }
 
-void Ball::Render(Transformation const & transformation, Layer::type layer) const
+void Ball::Render() const
 {
 	GLPP_VERIFY;
 	
+	gl::SetColor(_color.GetArray());
+	
 	// Calculate the LoD.
-	Scalar radius = CalculateRadius(transformation);
-	Vector relative_position = transformation.GetTranslation();
+	Transformation model_view_transformation = GetModelViewTransformation();
+	Scalar radius = CalculateRadius(model_view_transformation);
+	Vector relative_position = model_view_transformation.GetTranslation();
 	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
 	unsigned lod = CalculateLod(radius, inv_distance);
 	

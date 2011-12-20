@@ -113,17 +113,13 @@ gfx::Transformation const & FormationMesh::Transform(Transformation const & mode
 	return scratch;
 }
 
-void FormationMesh::Render(Transformation const & transformation, Layer::type layer) const
+void FormationMesh::Render() const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)
 	{
 		return;
 	}
-	
-	// When asking the regulator to adjust the number of quaterna.
-	//			NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	//			rendered_num_quaternia = active_buffer.GetNumQuaternaUsed();
 	
 	// State
 	Assert(gl::IsEnabled(GL_DEPTH_TEST));

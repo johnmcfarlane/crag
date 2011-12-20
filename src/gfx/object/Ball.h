@@ -9,7 +9,9 @@
 
 #pragma once
 
-#include "gfx/object/LeafNode.h"
+#include "LeafNode.h"
+
+#include "gfx/Color.h"
 
 #include "geom/Matrix33.h"
 
@@ -29,7 +31,7 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		
 		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const;
-		virtual void Render(Transformation const & transformation, Layer::type layer) const;
+		virtual void Render() const;
 		
 	private:
 		unsigned CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const;
@@ -37,5 +39,6 @@ namespace gfx
 		
 		// variables
 		Sphere const * _sphere;
+		Color4b _color;
 	};
 }

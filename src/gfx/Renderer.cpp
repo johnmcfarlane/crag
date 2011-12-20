@@ -27,6 +27,8 @@
 #include "sim/axes.h"
 #include "sim/Simulation.h"
 
+#include "geom/MatrixOps.h"
+
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
@@ -466,6 +468,7 @@ void Renderer::InitRenderState()
 	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
 	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
 	GLPP_CALL(glClearDepth(1.0f));
+	gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -529,34 +532,52 @@ bool Renderer::HasShadowSupport() const
 	return true;
 }
 
+namespace
+{
+	class PreRenderFunctor
+	{
+	public:
+		PreRenderFunctor(Scene & scene)
+		: _scene(scene)
+		{
+		}
+		
+		bool operator() (Object const &) const
+		{
+			return true;
+		}
+		
+		void operator() (LeafNode & leaf_node, gfx::Transformation const & transformation)
+		{
+			leaf_node.SetModelViewTransformation(transformation);
+			
+			LeafNode::PreRenderResult result = leaf_node.PreRender();
+			
+			switch (result)
+			{
+				default:
+					Assert(false);
+				case LeafNode::ok:
+					break;
+				case LeafNode::remove:
+					_scene.RemoveObject(leaf_node.GetUid());
+					break;
+			}
+		}
+		
+	private:
+		Scene & _scene;
+	};
+}
+
 void Renderer::PreRender()
 {
-	ObjectMap & objects = scene->GetObjectMap();
-	for (ObjectMap::iterator i = objects.begin(), end = objects.end(); i != end; )
-	{
-		Object & object = ref(i->second);
-		++ i;
-		
-		LeafNode * leaf_node = object.CastLeafNodePtr();
-		if (leaf_node == nullptr)
-		{
-			continue;
-		}
-		
-		LeafNode::PreRenderResult result = leaf_node->PreRender();
-		switch (result)
-		{
-			default:
-				Assert(false);
-			case LeafNode::ok:
-				break;
-			case LeafNode::remove:
-				Uid next_object = i->first;
-				scene->RemoveObject(object.GetUid());
-				i = objects.find(next_object);
-				break;
-		}
-	}
+	BranchNode & branch_node = scene->GetRoot();
+	PreRenderFunctor functor(ref(scene));
+	
+	for_each_leaf<PreRenderFunctor>(branch_node, functor);
+	
+	scene->SortRenderList();
 }
 
 void Renderer::Render()
@@ -574,7 +595,7 @@ void Renderer::Render()
 void Renderer::RenderScene() const
 {
 	VerifyRenderState();
-
+	
 	// The skybox, basically.
 	RenderBackground();
 	
@@ -592,7 +613,7 @@ void Renderer::RenderBackground() const
 	SetBackgroundFrustum(scene->GetPov());
 
 	// basically draw the skybox
-	int background_render_count = RenderLayer(Layer::background);
+	int background_render_count = RenderLayerRecursive(Layer::background);
 	
 	// and if we have no skybox yet,
 	if (background_render_count < 1)
@@ -670,7 +691,7 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 	{
 		gl::Enable(GL_LIGHTING);
 
-		RenderLayer(Layer::light);
+		RenderLayerRecursive(Layer::light);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
@@ -682,16 +703,22 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 // unless wireframe mode is on. 
 void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 {
+	// begin
 	if (! BeginRenderForeground(pass))
 	{
 		return;
 	}
 	
-	RenderLayer(Layer::foreground);
-	
+	// render opaque objects
+	RenderLayerOrdered(Layer::foreground, true);
+
+	// render partially transparent objects
+	gl::Enable(GL_BLEND);
+	RenderLayerOrdered(Layer::foreground, false);
+	gl::Disable(GL_BLEND);
+
+	// end
 	EndRenderForeground(pass);
-	
-	VerifyRenderState();
 }
 
 void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
@@ -762,9 +789,13 @@ namespace
 		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
 		{
 			// Set the matrix.
+			Assert(transformation == leaf_node.GetModelViewTransformation());
 			Pov::SetModelViewMatrix(transformation);
 			
-			leaf_node.Render(transformation, _layer);
+			// See-through object MUST be rendered in order.
+			Assert(leaf_node.IsOpaque());
+			
+			leaf_node.Render();
 			++ _num_rendered_objects;
 		}
 		
@@ -774,7 +805,7 @@ namespace
 	};
 }
 
-int Renderer::RenderLayer(Layer::type layer) const
+int Renderer::RenderLayerRecursive(Layer::type layer) const
 {
 	int num_rendered_objects = 0;
 
@@ -783,6 +814,31 @@ int Renderer::RenderLayer(Layer::type layer) const
 	
 	for_each_leaf<RenderFunctor>(branch_node, functor);
 
+	return num_rendered_objects;
+}
+
+int Renderer::RenderLayerOrdered(Layer::type layer, bool opaque) const
+{
+	int num_rendered_objects = 0;
+	
+	typedef LeafNode::RenderList List;
+	List const & render_list = scene->GetRenderList();
+	
+	for (List::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+	{
+		LeafNode const & leaf_node = * i;
+		
+		if (leaf_node.IsInLayer(layer) && leaf_node.IsOpaque() == opaque)
+		{
+			// Set the matrix.
+			Transformation const & transformation = leaf_node.GetModelViewTransformation();
+			Pov::SetModelViewMatrix(transformation);
+
+			leaf_node.Render();
+			++ num_rendered_objects;
+		}
+	}
+	
 	return num_rendered_objects;
 }
 

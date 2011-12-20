@@ -81,7 +81,7 @@ bool Planet::GetRenderRange(Transformation const & transformation, Ray const & c
 	return true;
 }
 
-void Planet::Render(Transformation const & transformation, Layer::type layer) const 
+void Planet::Render() const 
 { 
 	// actual drawing is taken care of by the formation manager
 }

@@ -72,10 +72,8 @@ void Light::Deinit()
 	GLPP_CALL(gl::Disable(light_id));
 }
 
-void Light::Render(Transformation const & transformation, Layer::type layer) const
+void Light::Render() const
 {
-	Assert (layer == Layer::light);
-	
 	GLPP_CALL(glLightfv(light_id, GL_AMBIENT, Color4f(0, 0, 0)));
 	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, color));
 	GLPP_CALL(glLightfv(light_id, GL_SPECULAR, Color4f(0, 0, 0)));

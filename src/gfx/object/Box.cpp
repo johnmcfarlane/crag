@@ -16,6 +16,8 @@
 
 #include "glpp/glpp.h"
 
+#include "core/Random.h"
+
 
 using namespace gfx;
 
@@ -23,7 +25,9 @@ using namespace gfx;
 Box::Box()
 : LeafNode(Layer::foreground)
 , _cuboid(nullptr)
+, _color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256))
 {
+	SetIsOpaque(_color.a == 255);
 }
 
 void Box::Init(Scene const & scene)
@@ -53,9 +57,11 @@ bool Box::GetRenderRange(Transformation const & transformation, Ray const & came
 	return true;
 }
 
-void Box::Render(Transformation const & transformation, Layer::type layer) const
+void Box::Render() const
 {
 	GLPP_VERIFY;
+	
+	gl::SetColor(_color.GetArray());
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
