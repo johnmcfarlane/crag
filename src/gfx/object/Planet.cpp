@@ -37,7 +37,7 @@ bool Planet::GetRenderRange(Transformation const & transformation, Ray const & c
 	// contains the z-depth but it's signed. 
 	// This fn needs adjustments to make use of it.
 	// It is faster to get and more accurate than distance-to-camera.
-	Vector center = transformation.GetTranslation();
+	Vector3 center = transformation.GetTranslation();
 	Scalar distance = Length(center);
 	
 	// Is camera inside the planet?

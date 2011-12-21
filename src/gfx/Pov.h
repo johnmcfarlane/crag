@@ -42,7 +42,7 @@ namespace gfx
 		void SetTransformation(Transformation const & transformation);
 		Transformation const & GetTransformation() const;
 		
-		Vector GetPosition() const;
+		Vector3 GetPosition() const;
 		
 		//void LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const & up);
 		

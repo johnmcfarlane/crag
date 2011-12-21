@@ -59,7 +59,7 @@ gfx::Transformation const & Skybox::Transform(Transformation const & model_view,
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
-	scratch = Transformation(Vector::Zero(), rotation);
+	scratch = Transformation(Vector3::Zero(), rotation);
 	return scratch;
 }
 
@@ -71,7 +71,7 @@ void Skybox::Render() const
 	// Set model view matrix (with zero translation).
 	Transformation model_view_transformation = GetModelViewTransformation();
 	Matrix33 rotation = model_view_transformation.GetRotation();
-	Transformation untranslated_transformation(Vector::Zero(), rotation);
+	Transformation untranslated_transformation(Vector3::Zero(), rotation);
 	Pov::SetModelViewMatrix(untranslated_transformation);
 	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.

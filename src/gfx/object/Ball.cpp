@@ -41,7 +41,7 @@ bool Ball::GetRenderRange(Transformation const & transformation, Ray const & cam
 { 
 	Scalar distance;
 	{
-		Vector position = transformation.GetTranslation();
+		Vector3 position = transformation.GetTranslation();
 		distance = Distance(camera_ray.position, position);
 	}
 	
@@ -62,7 +62,7 @@ void Ball::Render() const
 	// Calculate the LoD.
 	Transformation model_view_transformation = GetModelViewTransformation();
 	Scalar radius = CalculateRadius(model_view_transformation);
-	Vector relative_position = model_view_transformation.GetTranslation();
+	Vector3 relative_position = model_view_transformation.GetTranslation();
 	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
 	unsigned lod = CalculateLod(radius, inv_distance);
 	
@@ -85,7 +85,7 @@ unsigned Ball::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
 
 Scalar Ball::CalculateRadius(Transformation const & transformation)
 {
-	Vector size = transformation.GetScale();
+	Vector3 size = transformation.GetScale();
 	Scalar radius = Length(size) * .5;
 	return radius;
 }

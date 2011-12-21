@@ -856,10 +856,10 @@ void Renderer::DebugDraw() const
 	Transformation const & transformation = pov.GetTransformation();
 
 	// Set the model view to the regular global view but at the origin
-	Vector translation = transformation.GetTranslation();
+	Vector3 translation = transformation.GetTranslation();
 	Matrix33 rotation = transformation.GetRotation();
 	Matrix33 inverse_rotation = Inverse(rotation);
-	Transformation model_view(Vector::Zero(), inverse_rotation);
+	Transformation model_view(Vector3::Zero(), inverse_rotation);
 	Pov::SetModelViewMatrix(model_view);
 	
 	// then pass the missing translation into the draw function.

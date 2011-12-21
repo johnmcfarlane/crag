@@ -31,7 +31,7 @@ namespace gfx
 	public:
 		struct UpdateParams
 		{
-			Vector position;
+			Vector3 position;
 		};
 		
 		////////////////////////////////////////////////////////////////////////////////

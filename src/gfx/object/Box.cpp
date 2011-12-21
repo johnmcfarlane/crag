@@ -41,13 +41,13 @@ bool Box::GetRenderRange(Transformation const & transformation, Ray const & came
 	// but it probably isn't worth the clock cycles to do that.
 	float radius;
 	{
-		Vector size = transformation.GetScale();
+		Vector3 size = transformation.GetScale();
 		radius = float(Length(size) * .5);
 	}
 
 	Scalar distance;
 	{
-		Vector center = transformation.GetTranslation();
+		Vector3 center = transformation.GetTranslation();
 		distance = Distance(camera_ray.position, center);
 	}
 	

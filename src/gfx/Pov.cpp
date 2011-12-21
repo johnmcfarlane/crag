@@ -87,7 +87,7 @@ gfx::Transformation const & Pov::GetTransformation() const
 	return _transformation;
 }
 
-gfx::Vector Pov::GetPosition() const
+gfx::Vector3 Pov::GetPosition() const
 {
 	return _transformation.GetTranslation();
 }
