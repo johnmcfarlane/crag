@@ -67,6 +67,7 @@ void Skybox::Render() const
 {
 	// clear the depth buffer
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
+	gl::SetColor(1.f, 1.f, 1.f);
 
 	// Set model view matrix (with zero translation).
 	Transformation model_view_transformation = GetModelViewTransformation();
