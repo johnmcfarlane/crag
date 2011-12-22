@@ -69,6 +69,7 @@ template<typename S, int N> S SphereDiameter(S radius)
 
 template<typename S, int N> S SphereArea(S radius);
 template<typename S, int N> S SphereVolume(S radius);
+template<typename S, int N> S SphereRadiusFromVolume(S volume);
 
 // Area
 template<typename S, int N> S Area(Sphere<S, N> const & s)
@@ -91,9 +92,14 @@ template<typename S, int N> S SphereArea<S, 3>(S radius)
 	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
 }
 
-template<typename S, int N> S SphereVolume(S radius)
+template<typename S, int N> S SphereVolume<S, 3>(S radius)
 {
 	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
+}
+
+template<typename S, int N> S SphereRadiusFromVolume<S, 3>(S volume)
+{
+	return cbrt(volume / static_cast<S>(PI * 4. / 3.));
 }
 
 
