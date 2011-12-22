@@ -34,31 +34,31 @@ namespace gfx
 	namespace Debug
 	{
 		// typedefs
-        // TODO: Add Color4f to these.
 		typedef double Scalar;
 		typedef ::Vector<Scalar, 3> Vector3;
 		typedef ::Vector<Scalar, 4> Vector4;
 		typedef ::Matrix<Scalar, 3, 3> Matrix33;
 		typedef ::Matrix<Scalar, 4, 4> Matrix44;
+		typedef Color4f Color;
 
 		class ColorPair
 		{
 		public:
-			ColorPair(Color4f const & color, Color4f const & hidden_color)
+			ColorPair(Color const & color, Color const & hidden_color)
 			: _color(color)
 			, _hidden_color(hidden_color)
 			{
 			}
 			
-			ColorPair(Color4f const & color, float hidden_alpha = .5f)
+			ColorPair(Color const & color, float hidden_alpha = .5f)
 			: _color(color)
 			, _hidden_color(color)
 			{
 				_hidden_color.a *= hidden_alpha;
 			}
 			
-			Color4f _color;	// Color to draw pixels that are visible, i.e. pass the z test.
-			Color4f _hidden_color;	// Color for failed pixels.
+			Color _color;	// Color to draw pixels that are visible, i.e. pass the z test.
+			Color _hidden_color;	// Color for failed pixels.
 		};
 
 #if defined(GFX_DEBUG)

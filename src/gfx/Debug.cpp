@@ -68,7 +68,7 @@ namespace
 			VerifyColor(colors._hidden_color);
 		}
 		
-		static void VerifyColor(Color4f const & col)
+		static void VerifyColor(Color const & col)
 		{
 			VerifyColorComp(col.r);
 			VerifyColorComp(col.g);
@@ -83,7 +83,7 @@ namespace
 		
 		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
-			Color4f const & color = hidden ? colors._hidden_color : colors._color;
+			Color const & color = hidden ? colors._hidden_color : colors._color;
 			gl::SetColor(color.r, color.g, color.b, color.a);
 			gl::Vertex3(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
 		}
@@ -261,13 +261,13 @@ void Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 con
 {
 	using namespace axes;
 	
-	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color4f::Red()));
-	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color4f::Green()));
-	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color4f::Blue()));
+	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color::Red()));
+	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color::Green()));
+	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color::Blue()));
 	
-	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color4f::Cyan()));
-	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color4f::Magenta()));
-	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color4f::Yellow()));
+	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color::Cyan()));
+	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color::Magenta()));
+	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color::Yellow()));
 }
 
 #if 0
@@ -340,10 +340,10 @@ void Debug::AddFrustum(Pov const & pov)
 				indices[axis] = 1;
 				b = & corners[indices[0]][indices[1]][indices[2]];
 				
-				Color4f visible = Color4f::Black();
+				Color visible = Color::Black();
 				visible[axis] = 1;
 				
-				Color4f invisible = visible;
+				Color invisible = visible;
 				invisible.a = .2f;
 				
 				AddLine(* a, * b, ColorPair(visible, invisible));
