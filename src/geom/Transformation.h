@@ -14,7 +14,7 @@
 #include "MatrixOps.h"
 
 
-// Handy wrapper around Matrix44 for performing afine transformation operations.
+// Affine transformation matrix
 template<typename S>
 class Transformation
 {
