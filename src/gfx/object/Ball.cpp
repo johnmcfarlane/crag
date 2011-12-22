@@ -45,7 +45,7 @@ bool Ball::GetRenderRange(Transformation const & transformation, Ray const & cam
 		distance = Distance(camera_ray.position, position);
 	}
 	
-	Scalar radius = CalculateRadius(transformation);
+	Scalar radius = Sphere::CalculateRadius(transformation);
 	
 	range[0] = distance - radius;
 	range[1] = distance + radius;
@@ -55,37 +55,8 @@ bool Ball::GetRenderRange(Transformation const & transformation, Ray const & cam
 
 void Ball::Render() const
 {
-	GLPP_VERIFY;
-	
 	gl::SetColor(_color.GetArray());
 	
-	// Calculate the LoD.
-	Transformation model_view_transformation = GetModelViewTransformation();
-	Scalar radius = CalculateRadius(model_view_transformation);
-	Vector3 relative_position = model_view_transformation.GetTranslation();
-	Scalar inv_distance = InvSqrt(LengthSq(relative_position));
-	unsigned lod = CalculateLod(radius, inv_distance);
-	
-	// Low-LoD meshes are smaller than the sphere they approximate.
-	// Apply a corrective scale to compensate.
-	_sphere->Draw(lod);
-	
-	GLPP_VERIFY;
-}
-
-unsigned Ball::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
-{
-	Scalar mn1 = 1500;
-	int lod = int(pow(mn1 * radius * inv_distance_to_camera, .3));
-	Clamp(lod, 1, 5);
-	-- lod;
-	
-	return lod;
-}
-
-Scalar Ball::CalculateRadius(Transformation const & transformation)
-{
-	Vector3 size = transformation.GetScale();
-	Scalar radius = Length(size) * .5;
-	return radius;
+	Transformation const & transformation = GetModelViewTransformation();
+	_sphere->Draw(transformation);
 }

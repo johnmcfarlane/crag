@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "gfx/object/LeafNode.h"
 
 #include "gfx/Color.h"
 
@@ -30,12 +30,9 @@ namespace gfx
 		
 		void Init(Scene const & scene) override;
 		
-		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const;
-		virtual void Render() const;
-		
 	private:
-		unsigned CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const;
-		static Scalar CalculateRadius(Transformation const & transformation);
+		bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const override;
+		void Render() const override;
 		
 		// variables
 		Sphere const * _sphere;
