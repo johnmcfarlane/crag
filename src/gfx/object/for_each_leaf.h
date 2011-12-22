@@ -42,9 +42,10 @@ namespace gfx
 	{
 		Transformation scratch;
 		
-		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; ++ i)
+		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; )
 		{
 			OBJECT & child = * i;
+			++ i;
 			if (! functor(child))
 			{
 				continue;
