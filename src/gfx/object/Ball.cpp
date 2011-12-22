@@ -24,10 +24,10 @@
 using namespace gfx;
 
 
-Ball::Ball()
+Ball::Ball(Color4b color)
 : LeafNode(Layer::foreground)
 , _sphere(nullptr)
-, _color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256))
+, _color(color)
 {
 	SetIsOpaque(_color.a == 255);
 }

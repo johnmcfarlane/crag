@@ -22,10 +22,10 @@
 using namespace gfx;
 
 
-Box::Box()
+Box::Box(Color4b color)
 : LeafNode(Layer::foreground)
 , _cuboid(nullptr)
-, _color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256))
+, _color(color)
 {
 	SetIsOpaque(_color.a == 255);
 }

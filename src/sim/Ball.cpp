@@ -22,6 +22,8 @@
 #include "gfx/object/BranchNode.h"
 #include "gfx/Renderer.inl"
 
+#include "core/Random.h"
+
 
 namespace 
 {
@@ -29,7 +31,7 @@ namespace
 	// Config values
 	
 	CONFIG_DEFINE (ball_density, double, 1);
-
+	
 	CONFIG_DEFINE (ball_linear_damping, double, 0.005f);
 	CONFIG_DEFINE (ball_angular_damping, double, 0.005f);
 }
@@ -72,7 +74,7 @@ bool Ball::Init(Simulation & simulation, PyObject & args)
 	}
 	
 	InitPhysics(simulation, sphere);
-
+	
 	InitGraphics(sphere);
 	
 	return true;
@@ -92,7 +94,8 @@ void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
 
 void Ball::InitGraphics(Sphere3 const & sphere)
 {
-	gfx::Object * ball = new gfx::Ball();
+	gfx::Color4b color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	gfx::Object * ball = new gfx::Ball(color);
 	_gfx_uid = AddModelWithTransform(* ball);
 }
 
@@ -103,7 +106,7 @@ void Ball::UpdateModels() const
 	{
 		return;
 	}
-
+	
 	Scalar radius = body->GetRadius();
 	Vector3 scale(radius, radius, radius);
 	gfx::BranchNode::UpdateParams params = 
@@ -116,5 +119,6 @@ void Ball::UpdateModels() const
 
 gfx::Uid Ball::GetGfxUid() const
 {
+	Assert(_gfx_uid != gfx::Uid::null);
 	return _gfx_uid;
 }

@@ -26,7 +26,7 @@ namespace gfx
 	{
 	public:
 		// functions
-		Ball();
+		Ball(Color4b color);
 		
 		void Init(Scene const & scene) override;
 		

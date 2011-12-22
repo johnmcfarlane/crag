@@ -23,6 +23,8 @@
 
 #include "geom/Transformation.h"
 
+#include "core/Random.h"
+
 
 namespace 
 {
@@ -72,7 +74,7 @@ bool Box::Init(Simulation & simulation, PyObject & args)
 	{
 		return false;
 	}
-
+	
 	InitPhysics(simulation, center, size);
 	InitGraphics();
 	
@@ -93,7 +95,8 @@ void Box::InitPhysics(Simulation & simulation, Vector3 center, Vector3 size)
 
 void Box::InitGraphics()
 {
-	gfx::Object * box = new gfx::Box();
+	gfx::Color4b color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	gfx::Object * box = new gfx::Box(color);
 	_gfx_uid = AddModelWithTransform(* box);
 }
 
@@ -104,11 +107,11 @@ void Box::UpdateModels() const
 	{
 		return;
 	}
-
+	
 	gfx::BranchNode::UpdateParams params = 
 	{
 		Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions())
 	};
-
+	
 	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 }
