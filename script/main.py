@@ -68,16 +68,19 @@ def main_loop():
 	sun_year = 30000.
 	sun = crag.Star(sun_orbit_distance, sun_year)
 	
-	## Create vehicle
-	#v = crag.Vehicle(observer_x, observer_y + 10, observer_z, 1)
-	#v.add_rocket(.5, .5, .5, 0, -1, 0, SDL_SCANCODE_SPACE)
-	#v.add_rocket(.5, .5, -.5, 0, -1, 0, SDL_SCANCODE_SPACE)
-	#v.add_rocket(-.5, .5, .5, 0, -1, 0, SDL_SCANCODE_SPACE)
-	#v.add_rocket(-.5, .5, -.5, 0, -1, 0, SDL_SCANCODE_SPACE)
-	
 	# Create observer (after formations have had time to expand)
 	crag.sleep(.5)
 	o = observer(observer_x, observer_y, observer_z)
+	
+	# Create vehicle
+	v = crag.Vehicle(observer_x, observer_y + 5, observer_z, 1)
+	if False:
+		v.add_thruster(0, 0, 0, 0, 10, 0, SDL_SCANCODE_H)
+	else:
+		v.add_thruster(.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
+		v.add_thruster(.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
+		v.add_thruster(-.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
+		v.add_thruster(-.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
 	
 	# Main loop
 	next_drop = crag.time() + shape_drop_period
