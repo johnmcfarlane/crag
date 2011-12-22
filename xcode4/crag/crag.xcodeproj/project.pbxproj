@@ -87,6 +87,7 @@
 		528164B41454F5DC0017E868 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646B1454F5DB0017E868 /* App.cpp */; };
 		528164B51454F5DC0017E868 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646D1454F5DB0017E868 /* memory.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
+		52882A3F149492FF00E68B4F /* Puff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52882A3D149492FF00E68B4F /* Puff.cpp */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52928AC8147C358800731B77 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52928AC6147C358800731B77 /* Layer.cpp */; };
 		52A50C9D147DF0D80061A909 /* BranchNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C98147DF0D70061A909 /* BranchNode.cpp */; };
@@ -344,6 +345,8 @@
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
+		52882A3D149492FF00E68B4F /* Puff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Puff.cpp; sourceTree = "<group>"; };
+		52882A3E149492FF00E68B4F /* Puff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puff.h; sourceTree = "<group>"; };
 		528ACFF814674B40004167BF /* gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gravity.cpp; sourceTree = "<group>"; };
 		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
 		52928AC6147C358800731B77 /* Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layer.cpp; sourceTree = "<group>"; };
@@ -760,6 +763,8 @@
 				528164041454F5DB0017E868 /* Planet.h */,
 				528164051454F5DB0017E868 /* Skybox.cpp */,
 				528164061454F5DB0017E868 /* Skybox.h */,
+				52882A3D149492FF00E68B4F /* Puff.cpp */,
+				52882A3E149492FF00E68B4F /* Puff.h */,
 			);
 			path = object;
 			sourceTree = "<group>";
@@ -1086,6 +1091,7 @@
 				52A50C9D147DF0D80061A909 /* BranchNode.cpp in Sources */,
 				52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */,
 				52A50CAE147F7B270061A909 /* Thruster.cpp in Sources */,
+				52882A3F149492FF00E68B4F /* Puff.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

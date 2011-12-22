@@ -11,6 +11,10 @@
 
 #include "LeafNode.h"
 
+#include "Puff.h"
+
+#include "sys/App.h"
+
 
 namespace gfx
 {
@@ -21,18 +25,17 @@ namespace gfx
 	class Thruster : public LeafNode
 	{
 	public:
+		// types
 		struct UpdateParams
 		{
-			float thrust;
+			float thrust_factor;
 		};
 		
 		// functions
 		Thruster();
 		
 		void Update(UpdateParams const & params);
-
 	private:
-		Sphere const * _sphere;
-		float _thrust;
+		void AddPuff(float thrust_factor);
 	};
 }
