@@ -123,7 +123,6 @@ void form::FormationManager::OnSetCamera(sim::Transformation const & transformat
 
 void form::FormationManager::OnRegulatorSetEnabled(bool const & enabled)
 {
-	// TODO: replace Reset with Start and Stop.
 	_regulator.SetEnabled(enabled);
 }
 
