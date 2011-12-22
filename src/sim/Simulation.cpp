@@ -204,11 +204,11 @@ void Simulation::Tick()
 
 void Simulation::UpdateRenderer() const
 {
-	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(false, _time, & gfx::Renderer::OnSetReady);
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(true, _time, & gfx::Renderer::OnSetReady);
 }
 
 // Perform a step in the simulation. 

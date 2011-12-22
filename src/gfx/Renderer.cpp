@@ -224,9 +224,10 @@ void Renderer::OnRemoveObject(Uid const & uid)
 	}
 }
 
-void Renderer::OnSetReady(bool const & ready)
+void Renderer::OnSetReady(bool const & ready, sys::Time const & time)
 {
 	_ready = ready;
+	scene->SetTime(time);
 }
 
 void Renderer::OnResize(Vector2i const & size)
@@ -542,8 +543,14 @@ namespace
 		{
 		}
 		
-		bool operator() (Object const &) const
+		bool operator() (Object & object) const
 		{
+			BranchNode * branch_node = object.CastBranchNodePtr();
+			if (branch_node != nullptr && branch_node->IsEmpty())
+			{
+				_scene.RemoveObject(branch_node->GetUid());
+				return false;
+			}
 			return true;
 		}
 		
@@ -714,8 +721,10 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 
 	// render partially transparent objects
 	gl::Enable(GL_BLEND);
+	gl::SetDepthMask(false);
 	RenderLayerOrdered(Layer::foreground, false);
 	gl::Disable(GL_BLEND);
+	gl::SetDepthMask(true);
 
 	// end
 	EndRenderForeground(pass);
@@ -750,7 +759,7 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 			break;
 			
 		case WireframePass2:
-			gl::SetColor<GLfloat>(1, 1, 1);
+			gl::SetColor<GLfloat>(0.f, 0.f, 0.f);
 			if (! culling) 
 			{
 				gl::Enable(GL_CULL_FACE);
@@ -767,7 +776,6 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 		default:
 			Assert(false);
 	}
-	gl::SetDepthFunc(GL_LEQUAL);
 }
 
 namespace

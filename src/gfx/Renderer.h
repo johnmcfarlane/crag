@@ -70,7 +70,7 @@ namespace gfx
 		void OnQuit();
 		void OnAddObject(Object * const & object, Uid const & parent_uid);
 		void OnRemoveObject(Uid const & uid);
-		void OnSetReady(bool const & ready);
+		void OnSetReady(bool const & ready, sys::Time const & time);
 		void OnResize(Vector2i const & size);
 		void OnToggleCulling();
 		void OnToggleLighting();
