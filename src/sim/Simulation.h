@@ -25,11 +25,6 @@ namespace physics
 	class Engine;
 }
 
-namespace gfx
-{
-	struct RendererReadyMessage;
-}
-
 namespace smp
 {
 	class Uid;
