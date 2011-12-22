@@ -1,5 +1,5 @@
 /*
- *  Space.h
+ *  axes.h
  *  Crag
  *
  *  Created by John on 1/24/10.
@@ -39,7 +39,7 @@ namespace axes
 	
 	// converts forward and up vectors into rotation matrix
 	template<typename S>
-	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward, Vector<S, 3> const & up = Vector<S, 3>(0, 0, 1))
+	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward, Vector<S, 3> const & up)
 	{
 		Vector<S, 3> right = Normalized(CrossProduct(forward, up));
 		Vector<S, 3> matrix_up = CrossProduct(right, forward);
@@ -47,5 +47,23 @@ namespace axes
 		return Matrix<S, 3, 3>(right.x, right.y, right.z,
 							   forward.x, forward.y, forward.z,
 							   matrix_up.x, matrix_up.y, matrix_up.z);
+	}
+	
+	// converts forward vector into rotation matrix
+	template<typename S>
+	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward)
+	{
+		typedef Vector<S, 3> Vector;
+		Vector up;
+		if (abs(forward.y) < S(0.99))
+		{
+			up = Vector(- forward.z, S(0), forward.x);
+		}
+		else
+		{
+			up = Vector(S(0), forward.z, - forward.y);
+		}
+		
+		return Rotation(forward, up);
 	}
 }
