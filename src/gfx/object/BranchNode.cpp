@@ -21,6 +21,7 @@ using namespace gfx;
 
 BranchNode::BranchNode()
 : Object(branch, Layer::Map::none)
+, _transformation(Transformation::Matrix::Identity())
 {
 }
 
