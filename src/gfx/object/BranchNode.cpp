@@ -21,7 +21,6 @@ using namespace gfx;
 
 BranchNode::BranchNode()
 : Object(branch, Layer::Map::none)
-, _transformation(Transformation::Matrix::Identity())
 {
 }
 
@@ -96,6 +95,33 @@ gfx::Transformation const & BranchNode::GetTransformation() const
 void BranchNode::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
+}
+
+gfx::Transformation BranchNode::GetModelTransformation() const
+{
+	BranchNode const * ancestor = GetParent();
+	
+	if (ancestor == nullptr)
+	{
+		// This is the root node; return the identity.
+		return Transformation();
+	}
+
+	Transformation model_transformation = GetTransformation();
+	while (true)
+	{
+		BranchNode const * parent = ancestor->GetParent();
+		if (parent == nullptr)
+		{
+			// Accumulate transformations up to - and excluding - the root node.
+			return model_transformation;
+		}
+
+		Transformation const & ancestor_transformation = ancestor->GetTransformation();
+		model_transformation = ancestor_transformation * model_transformation;
+		
+		ancestor = parent;
+	}
 }
 
 void BranchNode::Update(UpdateParams const & params)

@@ -56,6 +56,8 @@ namespace gfx
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		
+		Transformation GetModelTransformation() const;
+		
 		void Update(UpdateParams const & params);
 		
 	private:
