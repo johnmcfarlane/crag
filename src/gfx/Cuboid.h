@@ -24,8 +24,6 @@ namespace gfx
 		typedef Vector3f Vector3;
 		typedef gl::Vertex3dNorm Vertex;
 		typedef gfx::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
-		typedef gl::VertexRgba Color;
-		typedef std::vector<Vertex> VertexVector;
 	public:
 		
 		// functions
