@@ -45,6 +45,9 @@ namespace sim
 		// Called from the simulation thread to initialize the object.
 		bool Init(Simulation & simulation, PyObject & args) override;
 		
+		// Called from Ball when initializing the graphics object.
+		gfx::Color4b GetColor() const override;
+		
 		// Called when sending messages to the renderer thread.
 		void UpdateModels() const override;
 		
@@ -52,7 +55,7 @@ namespace sim
 		void Tick(Simulation & simulation) override;
 
 		// Add force from an individual Thruster to the vehicle's body.
-		static void ApplyForce(Thruster const & Thruster, Body & body);
+		static void TickThruster(Thruster & Thruster, Body & body);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data

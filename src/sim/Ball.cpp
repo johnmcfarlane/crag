@@ -94,9 +94,14 @@ void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
 
 void Ball::InitGraphics(Sphere3 const & sphere)
 {
-	gfx::Color4b color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	gfx::Color4b color = GetColor();
 	gfx::Object * ball = new gfx::Ball(color);
 	_gfx_uid = AddModelWithTransform(* ball);
+}
+
+gfx::Color4b Ball::GetColor() const
+{
+	return gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
 }
 
 void Ball::UpdateModels() const

@@ -137,6 +137,11 @@ bool Vehicle::Init(Simulation & simulation, PyObject & args)
 	return super::Init(simulation, args);
 }
 
+gfx::Color4b Vehicle::GetColor() const
+{
+	return gfx::Color4b::White();
+}
+
 void Vehicle::UpdateModels() const
 {
 	super::UpdateModels();
@@ -165,17 +170,22 @@ void Vehicle::Tick(Simulation & simulation) override
 		return;
 	}
 	
-	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
+	for (ThrusterVector::iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
-		Thruster const & Thruster = * i;
-		ApplyForce(Thruster, * body);
+		Thruster & Thruster = * i;
+		TickThruster(Thruster, * body);
 	}
 }
 
-void Vehicle::ApplyForce(Thruster const & Thruster, Body & body)
+void Vehicle::TickThruster(Thruster & Thruster, Body & body)
 {
 	if (sys::IsKeyDown(Thruster.key))
 	{
+		Thruster.thrust = 1;
 		body.AddRelForceAtRelPos(Thruster.direction, Thruster.position);
+	}
+	else
+	{
+		Thruster.thrust = 0;
 	}
 }
