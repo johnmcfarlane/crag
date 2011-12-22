@@ -113,8 +113,6 @@ bool Intersects(Ray<S, N> const & a, Ray<S, N> const & b)
 ////////////////////////////////////////////////////////////////////////////////
 // Plane / Line
 
-// TODO: New type for plane.
-
 // Returns projection along a at which intersection occurs.
 template<typename S, int N> 
 S GetIntersection(Ray<S, N> const & plane, Ray<S, N> const & line)
