@@ -12,6 +12,7 @@
 #include "icosahedron.h"
 
 #include "geom/Sphere.h"
+#include "geom/Vector.h"
 
 
 namespace gfx
@@ -29,7 +30,7 @@ namespace gfx
 		// types
 		typedef VERTEX Vertex;
 		typedef float Scalar;
-		typedef Vector<Scalar, 3> Vector;
+		typedef ::Vector<Scalar, 3> Vector;
 		
 		struct Face
 		{
