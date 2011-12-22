@@ -166,7 +166,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
-		Assert(false);
+		// This can happen if the PlanetaryBody has just been created 
+		// and the corresponding OnAddFormation message hasn't been read yet.
 		return;
 	}
 	
