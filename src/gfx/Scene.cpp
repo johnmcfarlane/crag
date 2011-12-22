@@ -40,7 +40,8 @@ namespace
 //
 
 Scene::Scene()
-: _cuboid(* new Cuboid)
+: _time(-1)
+, _cuboid(* new Cuboid)
 , _sphere(* new Sphere)
 {
 	Frustum & frustum = pov.GetFrustum();
@@ -52,6 +53,8 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	RemoveChildren(_root);
+
 	Assert(_objects.empty());
 	Assert(_root.IsEmpty());
 	
@@ -63,6 +66,16 @@ Scene::~Scene()
 	
 	delete & _sphere;
 	delete & _cuboid;
+}
+
+void Scene::SetTime(sys::Time t)
+{
+	_time = t;
+}
+
+sys::Time Scene::GetTime() const
+{
+	return _time;
 }
 
 void Scene::AddObject(Object & object, Uid parent_uid)
@@ -132,7 +145,7 @@ void Scene::RemoveObject(Uid uid)
 		{
 			// If it's a branch,
 			BranchNode & branch_node = object->CastBranchNodeRef();
-
+			
 			// then for all the children,
 			Object::ChildList::iterator end = branch_node.End();
 			while (true)
@@ -149,7 +162,7 @@ void Scene::RemoveObject(Uid uid)
 				Uid child_uid = child_object.GetUid();
 				RemoveObject(child_uid);
 			}
-
+			
 			Assert(branch_node.IsEmpty());
 			break;
 		}
@@ -249,4 +262,26 @@ gfx::Sphere const & Scene::GetSphere() const
 Cuboid const & Scene::GetCuboid() const
 {
 	return _cuboid;
+}
+
+void Scene::RemoveChildren(BranchNode & parent)
+{
+	// then for all the children,
+	Object::ChildList::iterator end = parent.End();
+	while (true)
+	{
+		Object::ChildList::iterator last = end;
+		-- last;
+		if (last == end)
+		{
+			break;
+		}
+		
+		// remove them first.
+		Object & child_object = * last;
+		Uid child_uid = child_object.GetUid();
+		RemoveObject(child_uid);
+	}
+	
+	Assert(parent.IsEmpty());
 }
