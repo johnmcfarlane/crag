@@ -12,7 +12,7 @@
 
 #include "defs.h"
 
-#include "BranchNode.h"
+#include "object/BranchNode.h"
 #include "Pov.h"
 
 #include "object/LeafNode.h"
