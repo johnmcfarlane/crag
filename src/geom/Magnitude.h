@@ -11,7 +11,8 @@
 
 #pragma once
 
-#include "Vector.h"
+// WARNING: Must include one of the VectorN.h headers before this.
+// WARNING: Do not directly include Vector.h.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +121,7 @@ template<typename S, typename V> S TriangleArea(V const & a, V const & b, V cons
 }
 
 // Given the dimensions of a rectangular cuboid, returns the surface area.
-template<typename S> S CuboidArea(class Vector<S, 3> const & dimensions)
+template<typename S> S CuboidArea(Vector<S, 3> const & dimensions)
 {
 	return (dimensions.x * dimensions.y + 
 			dimensions.y * dimensions.z + 
