@@ -77,7 +77,7 @@ Frustum const & Pov::GetFrustum() const
 	return _frustum;
 }
 
-void Pov::SetTransformation(Transformation const & transformation)
+void Pov::SetTransformation(gfx::Transformation const & transformation)
 {
 	_transformation = transformation;
 }
@@ -112,7 +112,7 @@ void Pov::LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const 
 }
 #endif
 
-void Pov::SetModelViewMatrix(Transformation const & model_view_matrix)
+void Pov::SetModelViewMatrix(gfx::Transformation const & model_view_matrix)
 {
 	Matrix44 gl_model_view_matrix = Transposition(model_view_matrix.GetMatrix()) * InternalToOpenGl<Scalar>();	
 	

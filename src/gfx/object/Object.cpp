@@ -52,7 +52,7 @@ void Object::Deinit()
 {
 }
 
-gfx::Transformation const & Object::Transform(Transformation const & model_view, Transformation & scratch) const
+gfx::Transformation const & Object::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	return model_view;
 }
