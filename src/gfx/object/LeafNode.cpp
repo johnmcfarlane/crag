@@ -31,14 +31,14 @@ LeafNode::LeafNode(Layer::Map::type layers)
 {
 }
 
-void LeafNode::SetModelViewTransformation(Transformation const & model_view_transformation)
+void LeafNode::SetModelViewTransformation(gfx::Transformation const & model_view_transformation)
 {
 	_model_view_transformation = model_view_transformation;
 	
 	Transformation::Matrix const & matrix = _model_view_transformation.GetMatrix();
 	Scalar depth = matrix[1][3];
 	
-	_render_sort_key = _is_opaque ? - depth : depth;
+	_render_sort_key = static_cast<float>(_is_opaque ? - depth : depth);
 }
 
 gfx::Transformation const & LeafNode::GetModelViewTransformation() const
@@ -61,7 +61,7 @@ void LeafNode::SetIsOpaque(bool is_opaque)
 	_is_opaque = is_opaque;
 }
 
-bool LeafNode::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
+bool LeafNode::GetRenderRange(gfx::Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const 
 { 
 	return false;
 }

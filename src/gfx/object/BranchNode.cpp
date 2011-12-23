@@ -83,7 +83,7 @@ BranchNode::ChildList::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
-gfx::Transformation const & BranchNode::Transform(Transformation const & model_view, Transformation & scratch) const override
+gfx::Transformation const & BranchNode::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
 	return scratch = model_view * _transformation;
 }
@@ -93,7 +93,7 @@ gfx::Transformation const & BranchNode::GetTransformation() const
 	return _transformation;
 }
 
-void BranchNode::SetTransformation(Transformation const & transformation)
+void BranchNode::SetTransformation(gfx::Transformation const & transformation)
 {
 	_transformation = transformation;
 }

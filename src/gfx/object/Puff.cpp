@@ -40,7 +40,7 @@ void Puff::Init(Scene const & scene)
 	_spawn_time = scene.GetTime() - (Random::sequence.GetUnit<double>() / 60.);
 }
 
-gfx::Transformation const & Puff::Transform(Transformation const & model_view, Transformation & scratch) const
+gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	sys::Time age = CalculateAge();
 	
