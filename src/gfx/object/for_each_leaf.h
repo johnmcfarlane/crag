@@ -24,14 +24,14 @@ namespace gfx
 	void for_each_leaf(BranchNode & branch_node, FUNCTOR functor)
 	{
 		Transformation const & root_transformation = branch_node.GetTransformation();
-		for_each_leaf<FUNCTOR, Object, LeafNode, BranchNode, Object::ChildList, Object::ChildList::iterator>(branch_node, functor, root_transformation);
+		for_each_leaf<FUNCTOR, Object, LeafNode, BranchNode, ObjectBase::ChildList, ObjectBase::ChildList::iterator>(branch_node, functor, root_transformation);
 	}
 	
 	template <typename FUNCTOR>
 	void for_each_leaf(BranchNode const & branch_node, FUNCTOR functor)
 	{
 		Transformation const & root_transformation = branch_node.GetTransformation();
-		for_each_leaf<FUNCTOR, Object const, LeafNode const, BranchNode const, Object::ChildList const, Object::ChildList::const_iterator>(branch_node, functor, root_transformation);
+		for_each_leaf<FUNCTOR, Object const, LeafNode const, BranchNode const, ObjectBase::ChildList const, ObjectBase::ChildList::const_iterator>(branch_node, functor, root_transformation);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace gfx
 		
 		for (CHILD_LIST_ITERATOR i = branch_node.Begin(), end = branch_node.End(); i != end; )
 		{
-			OBJECT & child = * i;
+			OBJECT & child = static_cast<OBJECT &>(* i);
 			++ i;
 			if (! functor(child))
 			{

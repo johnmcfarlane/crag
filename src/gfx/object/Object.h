@@ -20,11 +20,16 @@ namespace gfx
 	class LeafNode;
 	class Pov;
 	class Scene;
+
+	class ObjectBase
+	{
+		DEFINE_INTRUSIVE_LIST(ObjectBase, ChildList);
+	};
 	
 	// Base class for drawable things.
 	// Note that these have intrusive list/tree entries (esp. in BranchNode)
 	// meaning they effectively double as nodes in a hierachical scene graph.
-	class Object
+	class Object : public ObjectBase
 	{
 		OBJECT_NO_COPY(Object);
 	public:
@@ -84,9 +89,8 @@ namespace gfx
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
+
 		BranchNode * _parent;
-		DEFINE_INTRUSIVE_LIST(Object, ChildList);
-		
 		Uid const _uid;
 		NodeType const _node_type;
 		Layer::Map::type _layers;

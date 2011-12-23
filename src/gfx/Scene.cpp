@@ -147,10 +147,10 @@ void Scene::RemoveObject(Uid uid)
 			BranchNode & branch_node = object->CastBranchNodeRef();
 			
 			// then for all the children,
-			Object::ChildList::iterator end = branch_node.End();
+			ObjectBase::ChildList::iterator end = branch_node.End();
 			while (true)
 			{
-				Object::ChildList::iterator last = end;
+				ObjectBase::ChildList::iterator last = end;
 				-- last;
 				if (last == end)
 				{
@@ -158,7 +158,7 @@ void Scene::RemoveObject(Uid uid)
 				}
 				
 				// remove them first.
-				Object & child_object = * last;
+				Object & child_object = static_cast<Object &>(* last);
 				Uid child_uid = child_object.GetUid();
 				RemoveObject(child_uid);
 			}
@@ -267,10 +267,10 @@ Cuboid const & Scene::GetCuboid() const
 void Scene::RemoveChildren(BranchNode & parent)
 {
 	// then for all the children,
-	Object::ChildList::iterator end = parent.End();
+	ObjectBase::ChildList::iterator end = parent.End();
 	while (true)
 	{
-		Object::ChildList::iterator last = end;
+		ObjectBase::ChildList::iterator last = end;
 		-- last;
 		if (last == end)
 		{
@@ -278,7 +278,7 @@ void Scene::RemoveChildren(BranchNode & parent)
 		}
 		
 		// remove them first.
-		Object & child_object = * last;
+		Object & child_object = static_cast<Object &>(* last);
 		Uid child_uid = child_object.GetUid();
 		RemoveObject(child_uid);
 	}

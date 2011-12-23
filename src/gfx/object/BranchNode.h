@@ -67,7 +67,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Object::ChildList _children;
+		ObjectBase::ChildList _children;
 		Transformation _transformation;
 	};
 }
