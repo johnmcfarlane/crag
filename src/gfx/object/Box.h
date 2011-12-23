@@ -30,7 +30,7 @@ namespace gfx
 		
 		void Init(Scene const & scene) override;
 		
-		virtual bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const;
+		virtual bool GetRenderRange(Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const;
 		virtual void Render() const;
 		
 	private:

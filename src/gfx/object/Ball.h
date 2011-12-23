@@ -31,7 +31,7 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		
 	private:
-		bool GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const override;
+		bool GetRenderRange(Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const override;
 		void Render() const override;
 		
 		// variables

@@ -28,7 +28,7 @@ namespace gfx
 	typedef Matrix<Scalar, 3, 3> Matrix33;
 	typedef Matrix<Scalar, 4, 4> Matrix44;
 	typedef Transformation<Scalar> Transformation;
-	typedef Ray<Scalar, 3> Ray;
+	typedef Ray<Scalar, 3> Ray3;
 	
 	// unique identifier for gfx::Object;
 	// used when refering to objects from outside the render thread

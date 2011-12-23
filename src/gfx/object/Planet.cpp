@@ -31,7 +31,7 @@ void Planet::Update(UpdateParams const & params)
 	_salient = params;
 }
 
-bool Planet::GetRenderRange(Transformation const & transformation, Ray const & camera_ray, bool wireframe, RenderRange & range) const 
+bool Planet::GetRenderRange(gfx::Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const 
 {
 	// TODO: Either [0][3] or [1][3] or this transformation matrix
 	// contains the z-depth but it's signed. 

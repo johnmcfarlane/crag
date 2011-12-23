@@ -29,7 +29,8 @@
 #include "smp/Mutex.h"
 
 
-using namespace gfx;
+using namespace gfx::Debug;
+using gfx::Font;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,8 +38,6 @@ using namespace gfx;
 
 namespace
 {
-	using namespace Debug;
-
 	// Messages of below this verbosity value should get printed.
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
@@ -190,7 +189,7 @@ namespace
 
 
 // Start things up.
-void Debug::Init()
+void Init()
 {
 	Assert(font == nullptr);
 
@@ -205,7 +204,7 @@ void Debug::Init()
 
 
 // Close things down.
-void Debug::Deinit()
+void Deinit()
 {
 	Assert(font != nullptr);
 	delete font;
@@ -214,7 +213,7 @@ void Debug::Deinit()
 
 
 // Run any and all sanity checks.
-void Debug::Verify()
+void gfx::Debug::Verify()
 {
 	points.Verify();
 	lines.Verify();
@@ -223,7 +222,7 @@ void Debug::Verify()
 
 
 // Return a value indicating how much logging output gets printed to screen each frame.
-double Debug::GetVerbosity() 
+double GetVerbosity() 
 { 
 #if defined(NDEBUG)
 	return .25;
@@ -233,14 +232,14 @@ double Debug::GetVerbosity()
 }
 
 
-void Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
+void AddPoint(Vector3 const & a, ColorPair const & colors)
 {
 	mutex.Lock();
 	points.AddPoint(a, colors);
 	mutex.Unlock();
 }
 
-void Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
+void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
 	mutex.Lock();
 	lines.AddPoint(a, colors_a);
@@ -248,7 +247,7 @@ void Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colo
 	mutex.Unlock();
 }
 
-void Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
+void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
 	mutex.Lock();
 	tris.AddPoint(a, colors);
@@ -257,21 +256,21 @@ void Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c,
 	mutex.Unlock();
 }
 
-void Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
+void AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
 {
 	using namespace axes;
 	
-	Debug::AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color::Red()));
-	Debug::AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color::Green()));
-	Debug::AddLine(center, center + GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color::Blue()));
+	AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, ColorPair(Color::Red()));
+	AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, ColorPair(Color::Green()));
+	AddLine(center, center + GetAxis(rotation, UP) * scale.z, ColorPair(Color::Blue()));
 	
-	Debug::AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, Debug::ColorPair(Color::Cyan()));
-	Debug::AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, Debug::ColorPair(Color::Magenta()));
-	Debug::AddLine(center, center - GetAxis(rotation, UP) * scale.z, Debug::ColorPair(Color::Yellow()));
+	AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, ColorPair(Color::Cyan()));
+	AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, ColorPair(Color::Magenta()));
+	AddLine(center, center - GetAxis(rotation, UP) * scale.z, ColorPair(Color::Yellow()));
 }
 
 #if 0
-void Debug::AddFrustum(Pov const & pov)
+void AddFrustum(Pov const & pov)
 {
 	Vector3 corners[2][2][2];
 	Vector3 eye;
@@ -364,7 +363,7 @@ void Debug::AddFrustum(Pov const & pov)
 }
 #endif
 
-void Debug::Draw(Vector3 const & camera_pos)
+void Draw(Vector3 const & camera_pos)
 {
 	mutex.Lock();
 	
@@ -395,7 +394,7 @@ void Debug::Draw(Vector3 const & camera_pos)
 	mutex.Unlock();
 }
 
-void Debug::DrawText(char const * text, Vector2i const & position)
+void DrawText(char const * text, Vector2i const & position)
 {
 	if (! (* font))
 	{

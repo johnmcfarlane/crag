@@ -14,11 +14,11 @@
 
 #include "Color.h"
 #include "Debug.h"
-#include "for_each_leaf.h"
 #include "Image.h"
 #include "Pov.h"
 #include "Scene.h"
 #include "object/BranchNode.h"
+#include "object/for_each_leaf.h"
 #include "object/LeafNode.h"
 
 #include "form/FormationManager.h"
@@ -257,7 +257,7 @@ void Renderer::OnToggleCapture()
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void Renderer::OnSetCamera(Transformation const & transformation)
+void Renderer::OnSetCamera(gfx::Transformation const & transformation)
 {
 	if (scene != nullptr)
 	{
