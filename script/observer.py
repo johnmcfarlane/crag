@@ -1,4 +1,4 @@
-# main.py
+# observer.py
 # crag
 # All things related to the object housing the camera.
 #
