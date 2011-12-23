@@ -149,6 +149,17 @@ template<typename T> T FastInvSqrt(T a)
 
 #endif
 
+template <typename T>
+inline T CubeRoot(T a)
+{
+	assert(a > 0);
+#if defined(WIN32)
+	return pow(a, T(1. / 3.));
+#elif
+	return cbrt(a);
+#endif
+}
+
 inline float Log(float a) { return logf(a); }
 inline double Log(double a) { return log(a); }
 
