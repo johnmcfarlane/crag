@@ -11,7 +11,7 @@
 
 #include "LeafNode.h"
 
-#include "Color.h"
+#include "gfx/Color.h"
 
 #include "sys/App.h"
 
