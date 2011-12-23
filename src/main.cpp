@@ -66,6 +66,8 @@ namespace
 	
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
+#elif defined(WIN32)
+	CONFIG_DEFINE (video_full_screen, bool, true);
 #else
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
