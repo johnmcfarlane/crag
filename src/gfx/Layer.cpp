@@ -7,6 +7,8 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#include "pch.h"
+
 #include "Layer.h"
 
 using namespace gfx;
