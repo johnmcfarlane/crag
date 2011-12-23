@@ -92,10 +92,10 @@
 #include "core/floatOps.h"
 #include "core/intrusive_list.h"
 
-#include "geom/Distance.h"
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
 #include "geom/Vector4.h"
+#include "geom/Distance.h"
 #include "geom/Magnitude.h"
 
 #include "smp/Uid.h"
