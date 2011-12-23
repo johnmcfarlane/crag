@@ -878,6 +878,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\Layer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Layer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Mesh.h"
 					>
 				</File>
@@ -895,6 +903,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\Renderer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Renderer.inl"
 					>
 				</File>
 				<File
@@ -981,11 +993,31 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\gfx\object\BranchNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\BranchNode.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\for_each_leaf.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\gfx\object\FormationMesh.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\gfx\object\FormationMesh.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\LeafNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\LeafNode.h"
 						>
 					</File>
 					<File
@@ -1029,11 +1061,27 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\gfx\object\Puff.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Puff.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\gfx\object\Skybox.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\gfx\object\Skybox.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Thruster.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\gfx\object\Thruster.h"
 						>
 					</File>
 				</Filter>
