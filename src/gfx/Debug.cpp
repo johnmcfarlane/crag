@@ -189,7 +189,7 @@ namespace
 
 
 // Start things up.
-void Init()
+void gfx::Debug::Init()
 {
 	Assert(font == nullptr);
 
@@ -204,7 +204,7 @@ void Init()
 
 
 // Close things down.
-void Deinit()
+void gfx::Debug::Deinit()
 {
 	Assert(font != nullptr);
 	delete font;
@@ -222,7 +222,7 @@ void gfx::Debug::Verify()
 
 
 // Return a value indicating how much logging output gets printed to screen each frame.
-double GetVerbosity() 
+double gfx::Debug::GetVerbosity() 
 { 
 #if defined(NDEBUG)
 	return .25;
@@ -232,14 +232,14 @@ double GetVerbosity()
 }
 
 
-void AddPoint(Vector3 const & a, ColorPair const & colors)
+void gfx::Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
 {
 	mutex.Lock();
 	points.AddPoint(a, colors);
 	mutex.Unlock();
 }
 
-void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
+void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
 	mutex.Lock();
 	lines.AddPoint(a, colors_a);
@@ -247,7 +247,7 @@ void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, C
 	mutex.Unlock();
 }
 
-void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
+void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
 	mutex.Lock();
 	tris.AddPoint(a, colors);
@@ -256,7 +256,7 @@ void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorP
 	mutex.Unlock();
 }
 
-void AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
+void gfx::Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
 {
 	using namespace axes;
 	
@@ -363,7 +363,7 @@ void AddFrustum(Pov const & pov)
 }
 #endif
 
-void Draw(Vector3 const & camera_pos)
+void gfx::Debug::Draw(Vector3 const & camera_pos)
 {
 	mutex.Lock();
 	
@@ -394,7 +394,7 @@ void Draw(Vector3 const & camera_pos)
 	mutex.Unlock();
 }
 
-void DrawText(char const * text, Vector2i const & position)
+void gfx::Debug::DrawText(char const * text, Vector2i const & position)
 {
 	if (! (* font))
 	{
