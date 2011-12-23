@@ -99,7 +99,7 @@ template<typename S, int N> S SphereVolume<S, 3>(S radius)
 
 template<typename S, int N> S SphereRadiusFromVolume<S, 3>(S volume)
 {
-	return cbrt(volume / static_cast<S>(PI * 4. / 3.));
+	return CubeRoot(volume / static_cast<S>(PI * 4. / 3.));
 }
 
 
