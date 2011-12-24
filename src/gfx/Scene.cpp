@@ -47,8 +47,8 @@ Scene::Scene()
 	Frustum & frustum = pov.GetFrustum();
 
 	frustum.fov = static_cast<double>(camera_fov);
-	frustum.depth_range[1] = static_cast<double>(camera_near);
-	frustum.depth_range[0] = static_cast<double>(camera_far);
+	frustum.depth_range[0] = static_cast<double>(camera_near);
+	frustum.depth_range[1] = static_cast<double>(camera_far);
 }
 
 Scene::~Scene()
@@ -61,8 +61,8 @@ Scene::~Scene()
 	Frustum const & frustum = pov.GetFrustum();
 	
 	camera_fov = static_cast<float>(frustum.fov);
-	camera_near = static_cast<float>(frustum.depth_range[1]);
-	camera_far = static_cast<float>(frustum.depth_range[0]);
+	camera_near = static_cast<float>(frustum.depth_range[0]);
+	camera_far = static_cast<float>(frustum.depth_range[1]);
 	
 	delete & _sphere;
 	delete & _cuboid;

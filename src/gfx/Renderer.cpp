@@ -81,76 +81,66 @@ namespace
 	{
 		// Set projection matrix within relatively tight bounds.
 		Frustum background_frustum = pov.GetFrustum();
-		background_frustum.depth_range[1] = .1f;
-		background_frustum.depth_range[0] = 10.f;
+		background_frustum.depth_range[0] = .1f;
+		background_frustum.depth_range[1] = 10.f;
 		background_frustum.SetProjectionMatrix();
 	}
 	
-	// Given a camera position/direction, conservatively estimates 
-	// the minimum and maximum distances at which rendering occurs.
-	class RenderRangeFunctor
+	// Given the scene (including frustum), creates an adjusted frustum
+	// with suitable near/far z values and applies it to the projection matrix.
+	void SetForegroundFrustum(Scene const & scene)
 	{
-		OBJECT_NO_COPY(RenderRangeFunctor);
-	public:
-		RenderRangeFunctor(Pov const & pov, bool wireframe)
-		: _pov_frustum(pov.GetFrustum())
-		, _wireframe(wireframe)
-		, _adjusted_frustum(_pov_frustum)
-		, _camera_ray(axes::GetCameraRay(pov.GetTransformation()))
-		{
-			_adjusted_frustum.depth_range[1] = std::numeric_limits<float>::max();
-		}
+		Pov const & pov = scene.GetPov();
+		Frustum const & default_frustum = pov.GetFrustum();
 		
-		~RenderRangeFunctor()
-		{
-			_adjusted_frustum.depth_range[1] = std::max(_adjusted_frustum.depth_range[1] * .5, _pov_frustum.depth_range[1]);
-			_adjusted_frustum.SetProjectionMatrix();
-		}
+		Frustum adjusted_frustum = default_frustum;
+		adjusted_frustum.depth_range[0] = std::numeric_limits<float>::max();
+		adjusted_frustum.depth_range[1] = - std::numeric_limits<float>::max();
 		
-		bool operator() (Object const & object) const
-		{
-			return object.IsInLayer(Layer::foreground);
-		}
+		typedef LeafNode::RenderList List;
+		List const & render_list = scene.GetRenderList();
 		
-		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
+		// For all leaf nodes in the render list,
+		for (List::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 		{
-			RenderRange render_range;
-			if (leaf_node.GetRenderRange(transformation, _camera_ray, _wireframe, render_range))
+			LeafNode const & leaf_node = * i;
+			
+			// if in the foreground layer,
+			if (! leaf_node.IsInLayer(Layer::foreground))
 			{
-				// If an object is completely behind the camera, does the near plane get set to zero?
-				// This is inefficient and is not allowed. 
-				Assert(render_range[1] > 0);
-				
-				if (render_range[0] < _adjusted_frustum.depth_range[1])
-				{
-					_adjusted_frustum.depth_range[1] = render_range[0];
-				}
-				
-				if (render_range[1] > _adjusted_frustum.depth_range[0])
-				{
-					_adjusted_frustum.depth_range[0] = render_range[1];
-				}
+				continue;
+			}
+			
+			// and has a render range,
+			RenderRange depth_range;
+			if (! leaf_node.GetRenderRange(depth_range))
+			{
+				continue;
+			}
+			
+			// and it isn't behind the camera,
+			if (depth_range[1] <= default_frustum.depth_range[0])
+			{
+				continue;
+			}
+			
+			// then include it in adjusted frustum render range.
+			if (depth_range[0] < adjusted_frustum.depth_range[0])
+			{
+				adjusted_frustum.depth_range[0] = depth_range[0];
+			}
+			
+			if (depth_range[1] > adjusted_frustum.depth_range[1])
+			{
+				adjusted_frustum.depth_range[1] = depth_range[1];
 			}
 		}
 		
-	private:
-		Frustum const & _pov_frustum;
-		bool _wireframe;
-		Frustum _adjusted_frustum;
-		sim::Ray3 _camera_ray;
-	};
-	
-	// Given the scene (including frustum), creates an adjusted frustum
-	// with suitable near/far z values and applies it to the projection matrix.
-	void SetForegroundFrustum(Scene const & scene, bool wireframe)
-	{
-		BranchNode const & root = scene.GetRoot();
-		Pov const & pov = scene.GetPov();
-		RenderRangeFunctor functor(pov, wireframe);
-
-		for_each_leaf<RenderRangeFunctor &>(root, functor);
+		// Finally bind the near plane to the default frustum,
+		adjusted_frustum.depth_range[0] = std::max(adjusted_frustum.depth_range[0], default_frustum.depth_range[0]);
+		adjusted_frustum.SetProjectionMatrix();
 	}
-	
+
 }	// namespace
 
 
@@ -633,7 +623,7 @@ void Renderer::RenderBackground() const
 void Renderer::RenderForeground() const
 {
 	// Adjust near and far plane
-	SetForegroundFrustum(* scene, wireframe && false);
+	SetForegroundFrustum(* scene);
 	
 	if (wireframe)
 	{

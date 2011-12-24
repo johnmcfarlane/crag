@@ -44,8 +44,8 @@ Matrix44 Frustum::CalcProjectionMatrix() const
 	double f = 1. / tan(fov * .5);
 	return Matrix44(static_cast<float>(f / aspect), 0, 0, 0, 
 						0, static_cast<float>(f), 0, 0, 
-						0, 0, static_cast<float>((depth_range[0] + depth_range[1]) / (depth_range[1] - depth_range[0])), -1,
-						0, 0, static_cast<float>(2. * depth_range[0] * depth_range[1] / (depth_range[1] - depth_range[0])), 0);
+						0, 0, static_cast<float>((depth_range[1] + depth_range[0]) / (depth_range[0] - depth_range[1])), -1,
+						0, 0, static_cast<float>(2. * depth_range[1] * depth_range[0] / (depth_range[0] - depth_range[1])), 0);
 }
 
 void Frustum::SetProjectionMatrix() const

@@ -61,7 +61,7 @@ void LeafNode::SetIsOpaque(bool is_opaque)
 	_is_opaque = is_opaque;
 }
 
-bool LeafNode::GetRenderRange(gfx::Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const 
+bool LeafNode::GetRenderRange(RenderRange & range) const 
 { 
 	return false;
 }

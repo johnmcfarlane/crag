@@ -37,18 +37,16 @@ void Ball::Init(Scene const & scene)
 	_sphere = & scene.GetSphere();
 }
 
-bool Ball::GetRenderRange(gfx::Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const 
+bool Ball::GetRenderRange(RenderRange & range) const 
 { 
-	Scalar distance;
-	{
-		Vector3 position = transformation.GetTranslation();
-		distance = Distance(camera_ray.position, position);
-	}
-	
+	Transformation const & transformation = GetModelViewTransformation();
+	Transformation::Matrix const & transformation_matrix = transformation.GetMatrix();
+	Scalar depth = transformation_matrix[1][3];
+
 	Scalar radius = Sphere::CalculateRadius(transformation);
 	
-	range[0] = distance - radius;
-	range[1] = distance + radius;
+	range[0] = depth - radius;
+	range[1] = depth + radius;
 	
 	return true;
 }

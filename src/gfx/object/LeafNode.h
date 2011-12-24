@@ -43,7 +43,7 @@ namespace gfx
 		void SetIsOpaque(bool is_opaque);
 		
 		// Return the necessary z-clipping range required to render this object through the given camera.
-		virtual bool GetRenderRange(Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const;
+		virtual bool GetRenderRange(RenderRange & range) const;
 		
 		// Perform any necessary preparation for rendering.
 		virtual PreRenderResult PreRender();

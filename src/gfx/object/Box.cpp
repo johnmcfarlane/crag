@@ -35,8 +35,12 @@ void Box::Init(Scene const & scene)
 	_cuboid = & scene.GetCuboid();
 }
 
-bool Box::GetRenderRange(gfx::Transformation const & transformation, Ray3 const & camera_ray, bool wireframe, RenderRange & range) const 
+bool Box::GetRenderRange(RenderRange & range) const 
 { 
+	Transformation const & transformation = GetModelViewTransformation();
+	Transformation::Matrix const & transformation_matrix = transformation.GetMatrix();
+	Scalar depth = transformation_matrix[1][3];
+
 	// This could be improved by sampling each of the 8 corners of the box
 	// but it probably isn't worth the clock cycles to do that.
 	float radius;
@@ -45,14 +49,8 @@ bool Box::GetRenderRange(gfx::Transformation const & transformation, Ray3 const 
 		radius = float(Length(size) * .5);
 	}
 
-	Scalar distance;
-	{
-		Vector3 center = transformation.GetTranslation();
-		distance = Distance(camera_ray.position, center);
-	}
-	
-	range[0] = distance - radius;
-	range[1] = distance + radius;
+	range[0] = depth - radius;
+	range[1] = depth + radius;
 	
 	return true;
 }
