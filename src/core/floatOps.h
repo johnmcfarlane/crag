@@ -155,7 +155,7 @@ inline T CubeRoot(T a)
 	assert(a > 0);
 #if defined(WIN32)
 	return pow(a, T(1. / 3.));
-#elif
+#else
 	return cbrt(a);
 #endif
 }
