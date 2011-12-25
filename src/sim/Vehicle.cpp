@@ -166,7 +166,7 @@ void Vehicle::Tick(Simulation & simulation) override
 	physics::Body * body = GetBody();
 	if (body == nullptr)
 	{
-		Assert(false);
+		// vehicle is 'broken' because body was invalidated and destroyed.
 		return;
 	}
 	
