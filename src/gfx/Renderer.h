@@ -96,7 +96,8 @@ namespace gfx
 
 		bool HasShadowSupport() const;
 		
-		void PreRender();		
+		void PreRender();
+		void UpdateTransformations();
 		void Render();
 		void RenderScene() const;
 		

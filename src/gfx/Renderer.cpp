@@ -285,6 +285,7 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 	{
 		ProcessMessagesAndGetReady(message_queue);
 		PreRender();
+		UpdateTransformations();
 		Render();
 		Capture();
 	}
@@ -523,12 +524,37 @@ bool Renderer::HasShadowSupport() const
 	return true;
 }
 
+void Renderer::PreRender()
+{
+	typedef LeafNode::RenderList List;
+	
+	List const & render_list = scene->GetRenderList();
+	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; )
+	{
+		LeafNode & leaf_node = * i;
+		++ i;
+		
+		LeafNode::PreRenderResult result = leaf_node.PreRender();
+		
+		switch (result)
+		{
+			default:
+				Assert(false);
+			case LeafNode::ok:
+				break;
+			case LeafNode::remove:
+				scene->RemoveObject(leaf_node.GetUid());
+				break;
+		}
+	}
+}
+
 namespace
 {
-	class PreRenderFunctor
+	class UpdateTransformationsFunctor
 	{
 	public:
-		PreRenderFunctor(Scene & scene)
+		UpdateTransformationsFunctor(Scene & scene)
 		: _scene(scene)
 		{
 		}
@@ -547,19 +573,6 @@ namespace
 		void operator() (LeafNode & leaf_node, gfx::Transformation const & transformation)
 		{
 			leaf_node.SetModelViewTransformation(transformation);
-			
-			LeafNode::PreRenderResult result = leaf_node.PreRender();
-			
-			switch (result)
-			{
-				default:
-					Assert(false);
-				case LeafNode::ok:
-					break;
-				case LeafNode::remove:
-					_scene.RemoveObject(leaf_node.GetUid());
-					break;
-			}
 		}
 		
 	private:
@@ -567,12 +580,12 @@ namespace
 	};
 }
 
-void Renderer::PreRender()
+void Renderer::UpdateTransformations()
 {
 	BranchNode & branch_node = scene->GetRoot();
-	PreRenderFunctor functor(ref(scene));
+	UpdateTransformationsFunctor functor(ref(scene));
 	
-	for_each_leaf<PreRenderFunctor>(branch_node, functor);
+	for_each_leaf<UpdateTransformationsFunctor>(branch_node, functor);
 	
 	scene->SortRenderList();
 }
