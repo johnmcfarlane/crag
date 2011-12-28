@@ -258,7 +258,7 @@ namespace form { namespace collision
 		Scalar t = DotProduct(node.center - line.position, node.normal);
 		Vector3 nearest_point = node_functor._object.bounding_sphere.center + node.normal * t;
 		
-		// TODO: Is there a more efficient way to do this?
+		// Set the three bottom corners of the pyramid.
 		node_functor._pyramid.surface[0] = node.GetCorner(0).pos;
 		node_functor._pyramid.surface[1] = node.GetCorner(1).pos;
 		node_functor._pyramid.surface[2] = node.GetCorner(2).pos;

@@ -22,7 +22,6 @@ namespace form
 	// As with most things called shader, has absolutely FA to do with shade.
 	// Tesselates a shape given two/four surrounding points.
 	// Instance per form::Formation per form::Scene.
-	// TODO: tidy up interface / fns.
 	class Shader
 	{
 	public:	
