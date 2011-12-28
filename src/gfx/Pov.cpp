@@ -37,6 +37,13 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Frustum member definitions
 
+Frustum::Frustum()
+: resolution(-1, -1)
+, fov(-1)
+, depth_range(-1, -1)
+{
+}
+
 // This matrix is ready-transposed for OpenGL.
 Matrix44 Frustum::CalcProjectionMatrix() const
 {
@@ -50,9 +57,7 @@ Matrix44 Frustum::CalcProjectionMatrix() const
 
 void Frustum::SetProjectionMatrix() const
 {
-	gl::Viewport(0, 0, resolution.x, resolution.y);
-	
-	Matrix44 const & projection_matrix = CalcProjectionMatrix();
+	Matrix44 projection_matrix = CalcProjectionMatrix();
 	
 	gl::MatrixMode(GL_PROJECTION);
 	gl::LoadMatrix(projection_matrix.GetArray());

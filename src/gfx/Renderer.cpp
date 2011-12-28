@@ -222,6 +222,7 @@ void Renderer::OnSetReady(bool const & ready, sys::Time const & time)
 
 void Renderer::OnResize(Vector2i const & size)
 {
+	gl::Viewport(0, 0, size.x, size.y);
 	scene->SetResolution(size);
 }
 

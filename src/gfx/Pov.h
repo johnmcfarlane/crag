@@ -20,6 +20,8 @@ namespace gfx
 	class Frustum
 	{
 	public:
+		Frustum();
+		
 		Matrix44 CalcProjectionMatrix() const;
 		void SetProjectionMatrix() const;
 		
