@@ -116,7 +116,7 @@ PyObject * attach_bodies(PyObject * /*self*/, PyObject * args)
 ////////////////////////////////////////////////////////////////////////////////
 // support functions
 
-PyObject * create_event_object(sys::Event const & event)
+PyObject * create_event_object(SDL_Event const & event)
 {
 	switch (event.type)
 	{
@@ -214,7 +214,7 @@ void script::ScriptThread::OnQuit()
 	_events.push(Py_BuildValue("si", "exit", 0));
 }
 
-void script::ScriptThread::OnEvent(sys::Event const & event)
+void script::ScriptThread::OnEvent(SDL_Event const & event)
 {
 	PyObject * event_object = create_event_object(event);
 	if (event_object == nullptr)

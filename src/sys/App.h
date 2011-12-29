@@ -18,7 +18,6 @@
 namespace sys
 {
 	// types
-	typedef SDL_Event Event;
 	typedef double Time;	// 1 unit = 1 second
 	
 	enum MouseButton
@@ -47,7 +46,7 @@ namespace sys
 	Vector2i GetWindowPosition();
 	void SwapBuffers();
 	
-	bool GetEvent(Event & event, bool block);
+	bool GetEvent(SDL_Event & event, bool block);
 	bool HasFocus();
 	
 	// time

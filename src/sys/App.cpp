@@ -243,7 +243,7 @@ void sys::SwapBuffers()
 	SDL_GL_SwapWindow(window);
 }
 
-bool sys::GetEvent(Event & event, bool block)
+bool sys::GetEvent(SDL_Event & event, bool block)
 {
 	if ((block ? SDL_WaitEvent : SDL_PollEvent)(&event) <= 0)
 	{

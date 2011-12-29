@@ -204,7 +204,7 @@ namespace
 	
 	bool HandleEvent()
 	{
-		sys::Event event;
+		SDL_Event event;
 		
 		// If no events are pending,
 		if (! sys::GetEvent(event, false))

@@ -41,7 +41,7 @@ namespace script
 		~ScriptThread();
 		
 		void OnQuit();
-		void OnEvent(sys::Event const & event);
+		void OnEvent(SDL_Event const & event);
 
 		// thread entry point
 		void Run(Daemon::MessageQueue & message_queue);
