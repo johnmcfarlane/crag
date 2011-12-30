@@ -13,8 +13,6 @@
 
 #include "Puff.h"
 
-#include "sys/App.h"
-
 
 namespace gfx
 {

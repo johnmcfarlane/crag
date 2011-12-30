@@ -13,8 +13,6 @@
 
 #include "gfx/Color.h"
 
-#include "sys/App.h"
-
 
 namespace gfx
 {
@@ -37,12 +35,12 @@ namespace gfx
 		// Draw the object.
 		void Render() const override;
 		
-		sys::Time CalculateAge() const;
+		Time CalculateAge() const;
 		
 		// variables
 		Sphere const * _sphere;
 		Scalar _spawn_volume;
-		sys::Time _spawn_time;
+		Time _spawn_time;
 		Scalar _radius;
 		Color4b _color;
 	};

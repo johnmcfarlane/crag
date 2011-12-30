@@ -17,8 +17,6 @@
 #include "core/ConfigEntry.h"
 #include "core/Singleton.h"
 
-#include "sys/App.h"
-
 
 namespace physics 
 {

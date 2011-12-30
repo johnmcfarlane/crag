@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
+		521192DC14AD919D0061F899 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DA14AD919C0061F899 /* memory.cpp */; };
+		521192DF14AD97550061F899 /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DD14AD97540061F899 /* app.cpp */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
 		52483975143BEAE300195337 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483974143BEAE300195337 /* Carbon.framework */; };
 		52483977143BEB0200195337 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483976143BEB0200195337 /* IOKit.framework */; };
@@ -84,8 +86,6 @@
 		528164B11454F5DC0017E868 /* SharedMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164621454F5DB0017E868 /* SharedMutex.cpp */; };
 		528164B21454F5DC0017E868 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164651454F5DB0017E868 /* smp.cpp */; };
 		528164B31454F5DC0017E868 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164671454F5DB0017E868 /* Thread.cpp */; };
-		528164B41454F5DC0017E868 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646B1454F5DB0017E868 /* App.cpp */; };
-		528164B51454F5DC0017E868 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281646D1454F5DB0017E868 /* memory.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
 		52882A3F149492FF00E68B4F /* Puff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52882A3D149492FF00E68B4F /* Puff.cpp */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
@@ -133,6 +133,10 @@
 		52055D65132DE312000C6578 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		521192DA14AD919C0061F899 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
+		521192DB14AD919D0061F899 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		521192DD14AD97540061F899 /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = app.cpp; sourceTree = "<group>"; };
+		521192DE14AD97540061F899 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
@@ -338,10 +342,6 @@
 		528164671454F5DB0017E868 /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
 		528164681454F5DB0017E868 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
 		528164691454F5DB0017E868 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
-		5281646B1454F5DB0017E868 /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
-		5281646C1454F5DB0017E868 /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
-		5281646D1454F5DB0017E868 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
-		5281646E1454F5DB0017E868 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
@@ -475,7 +475,6 @@
 				528164331454F5DB0017E868 /* SDLmain */,
 				528164341454F5DB0017E868 /* sim */,
 				528164551454F5DB0017E868 /* smp */,
-				5281646A1454F5DB0017E868 /* sys */,
 			);
 			name = src;
 			path = ../../src;
@@ -484,6 +483,10 @@
 		528163891454F5DB0017E868 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				521192DD14AD97540061F899 /* app.cpp */,
+				521192DE14AD97540061F899 /* app.h */,
+				521192DA14AD919C0061F899 /* memory.cpp */,
+				521192DB14AD919D0061F899 /* memory.h */,
 				5281638A1454F5DB0017E868 /* array.h */,
 				5281638B1454F5DB0017E868 /* chunk_functor.h */,
 				5281638C1454F5DB0017E868 /* ConfigEntry.cpp */,
@@ -901,17 +904,6 @@
 			path = smp;
 			sourceTree = "<group>";
 		};
-		5281646A1454F5DB0017E868 /* sys */ = {
-			isa = PBXGroup;
-			children = (
-				5281646B1454F5DB0017E868 /* App.cpp */,
-				5281646C1454F5DB0017E868 /* App.h */,
-				5281646D1454F5DB0017E868 /* memory.cpp */,
-				5281646E1454F5DB0017E868 /* memory.h */,
-			);
-			path = sys;
-			sourceTree = "<group>";
-		};
 		528164B61454F6200017E868 /* SDLmain */ = {
 			isa = PBXGroup;
 			children = (
@@ -1080,8 +1072,6 @@
 				528164B11454F5DC0017E868 /* SharedMutex.cpp in Sources */,
 				528164B21454F5DC0017E868 /* smp.cpp in Sources */,
 				528164B31454F5DC0017E868 /* Thread.cpp in Sources */,
-				528164B41454F5DC0017E868 /* App.cpp in Sources */,
-				528164B51454F5DC0017E868 /* memory.cpp in Sources */,
 				528164B91454F6200017E868 /* SDLMain.m in Sources */,
 				52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */,
 				528ACFFA14674B42004167BF /* gravity.cpp in Sources */,
@@ -1092,6 +1082,8 @@
 				52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */,
 				52A50CAE147F7B270061A909 /* Thruster.cpp in Sources */,
 				52882A3F149492FF00E68B4F /* Puff.cpp in Sources */,
+				521192DC14AD919D0061F899 /* memory.cpp in Sources */,
+				521192DF14AD97550061F899 /* app.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

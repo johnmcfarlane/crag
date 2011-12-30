@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "sys/App.h"
-
 
 #if defined(PROFILE)
 
@@ -44,7 +42,7 @@ namespace profile
 		operator Scalar () const;
 		
 	private:
-		sys::Time start_time;
+		Time start_time;
 	};
 	
 }

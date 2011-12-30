@@ -10,7 +10,7 @@
 
 #include "pch.h"
 
-#include "App.h"
+#include "app.h"
 
 #include "core/ConfigEntry.h"
 
@@ -30,13 +30,10 @@ namespace
 	bool _has_focus = true;
 	bool _relative_mouse_mode = true;
 	
-	bool button_down [sys::BUTTON_MAX];
-	
 	SDL_Window * window = nullptr;
-	SDL_GLContext context = nullptr;
 		
 #if defined(WIN32)
-	sys::Time inv_query_performance_frequency = 0;
+	Time inv_query_performance_frequency = 0;
 #endif
 	
 	char const * _program_path;
@@ -45,35 +42,10 @@ namespace
 	{
 		_has_focus = has_focus;
 	}
-	
-	bool InitGlew()
-	{
-#if defined(GLEW_STATIC)
-		GLenum glew_err = glewInit();
-		if (glew_err != GLEW_OK)
-		{
-			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
-			return false;
-		}
-		
-		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
-
-#if ! defined(__APPLE__)
-		if (! GLEW_VERSION_1_5)
-		{
-			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
-			return false;
-		}
-#endif
-
-#endif
-		
-		return true;
-	}
 }
 
 
-bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
+bool app::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
 #if defined(WIN32)
 	LARGE_INTEGER query_performance_frequency;
@@ -143,14 +115,12 @@ bool sys::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		SDL_ShowCursor(SDL_FALSE);
 	}
 
-	ZeroObject(button_down);
-	
 	_program_path = program_path;
 	
 	return true;
 }
 
-void sys::Deinit()
+void app::Deinit()
 {
 	Assert(window != nullptr);
 
@@ -161,48 +131,12 @@ void sys::Deinit()
 
 }
 
-char const * sys::GetProgramPath()
+char const * app::GetProgramPath()
 {
 	return _program_path;
 }
 
-bool sys::GlInit()
-{
-	Assert(context == nullptr);
-	context = SDL_GL_CreateContext(window);
-	
-	if (SDL_GL_MakeCurrent(window, context) != 0)
-	{
-		DEBUG_BREAK_SDL();
-		return false;
-	}
-
-	if (! InitGlew())
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void sys::GlDeinit()
-{
-	Assert(context != nullptr);
-
-	SDL_GL_DeleteContext(context);
-	context = nullptr;
-}
-
-bool sys::GlSupportsFences()
-{
-#if defined(__APPLE__)
-	return true;
-#else
-	return GLEW_NV_fence != GL_FALSE;
-#endif
-}
-
-bool sys::IsKeyDown(SDL_Scancode key_code)
+bool app::IsKeyDown(SDL_Scancode key_code)
 {
 	if (key_code >= 0)
 	{
@@ -219,31 +153,25 @@ bool sys::IsKeyDown(SDL_Scancode key_code)
 	return false;
 }
 
-bool sys::IsButtonDown(MouseButton mouse_button)
+bool app::IsButtonDown(int mouse_button)
 {
-	return button_down[mouse_button];
+	Uint8 mouse_state = SDL_GetMouseState(NULL, NULL);
+	return (mouse_state & SDL_BUTTON(mouse_button)) != 0;
 }
 
-Vector2i sys::GetWindowSize()
+SDL_Window & app::GetWindow()
+{
+	return ref(window);
+}
+
+Vector2i app::GetWindowSize()
 {
 	Vector2i window_size;	
 	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
 	return window_size;
 }
 
-Vector2i sys::GetWindowPosition()
-{
-	Vector2i window_position;	
-	SDL_GetWindowPosition(window, & window_position.x, & window_position.y);
-	return window_position;
-}
-
-void sys::SwapBuffers()
-{
-	SDL_GL_SwapWindow(window);
-}
-
-bool sys::GetEvent(SDL_Event & event, bool block)
+bool app::GetEvent(SDL_Event & event, bool block)
 {
 	if ((block ? SDL_WaitEvent : SDL_PollEvent)(&event) <= 0)
 	{
@@ -266,11 +194,8 @@ bool sys::GetEvent(SDL_Event & event, bool block)
 			break;
 			
 		case SDL_MOUSEBUTTONDOWN:
-			button_down [event.button.button] = true;
-			break;
-			
 		case SDL_MOUSEBUTTONUP:
-			button_down [event.button.button] = false;
+			// event.button.button
 			break;
 
 		case SDL_MOUSEMOTION:
@@ -288,7 +213,8 @@ bool sys::GetEvent(SDL_Event & event, bool block)
 				}
 
 				// intercept message and fake relative mouse movement correctly.
-				Vector2i window_size(sys::GetWindowSize());
+				Vector2i window_size;
+				SDL_GetWindowSize(window, & window_size.x, & window_size.y);
 				Vector2i center(window_size.x >> 1, window_size.y >> 1);
 				Vector2i cursor;
 				SDL_GetMouseState(& cursor.x, & cursor.y);
@@ -320,12 +246,12 @@ bool sys::GetEvent(SDL_Event & event, bool block)
 	return true;
 }
 
-bool sys::HasFocus()
+bool app::HasFocus()
 {
 	return _has_focus;
 }
 
-sys::Time sys::GetTime()
+Time app::GetTime()
 {
 #if defined(__APPLE__)
 	return CFAbsoluteTimeGetCurrent ();

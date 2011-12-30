@@ -15,7 +15,7 @@
 
 #include "geom/Vector2.h"
 
-#include "sys/App.h"
+#include "core/app.h"
 
 
 namespace 
@@ -49,7 +49,7 @@ namespace
 	{
 		bool IsActive() const
 		{
-			return sys::IsKeyDown(key);
+			return app::IsKeyDown(key);
 		}
 		
 		InpulseAffector affector;
@@ -99,19 +99,19 @@ namespace
 	struct InputMouseMapping
 	{
 		bool IsActive() const {
-			return sys::IsButtonDown(button);
+			return app::IsButtonDown(button);
 		}
 		
 		InpulseAffector affector;
-		sys::MouseButton button;
+		int button;
 	};
 
 	InputMouseMapping buttons[] = 
 	{
-		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, sys::BUTTON_LEFT },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, sys::BUTTON_RIGHT },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, 1 },
+		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, 2 },
 		
-		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, sys::BUTTON_MAX }
+		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, -1 }
 	};
 
 }

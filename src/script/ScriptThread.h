@@ -12,8 +12,6 @@
 
 #include "smp/Daemon.h"
 
-#include "sys/App.h"
-
 #include "core/Singleton.h"
 
 

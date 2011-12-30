@@ -12,7 +12,7 @@
 
 #include "VertexBuffer.h"
 
-#include "sys/memory.h"
+#include "core/memory.h"
 
 #include "glpp/Vbo_Types.h"
 

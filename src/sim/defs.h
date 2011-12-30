@@ -40,9 +40,6 @@ namespace sim
 	typedef double Scalar;
 #endif
 	
-	// mirrors sys::Time
-	typedef double Time;
-	
 	typedef ::Vector<Scalar, 2> Vector2;
 	typedef ::Vector<Scalar, 3> Vector3;
 	typedef ::Vector<Scalar, 4> Vector4;

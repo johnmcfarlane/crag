@@ -14,6 +14,8 @@
 
 #include "profile.h"
 
+#include "core/app.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // profile::Meter member definitions
@@ -51,14 +53,14 @@ void profile::Meter::Submit (Scalar sample)
 // profile::Timer member definitions
 
 profile::Timer::Timer()
-: start_time(sys::GetTime())
+: start_time(app::GetTime())
 {
 }
 
 profile::Timer::operator profile::Scalar () const
 {
-	sys::Time now = sys::GetTime();
-	sys::Time duration = now - start_time;
+	Time now = app::GetTime();
+	Time duration = now - start_time;
 	return profile::Scalar(duration);
 }
 

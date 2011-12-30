@@ -19,6 +19,7 @@
 #include "geom/Transformation.h"
 #include "geom/Vector4.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 #include "script/MetaClass.h"
@@ -185,7 +186,7 @@ void Observer::SetSpeedFactor(int _speed_factor)
 void Observer::Tick(Simulation & simulation)
 {
 	// Camera input.
-	if (sys::HasFocus()) 
+	if (app::HasFocus()) 
 	{
 		UserInput ui;
 		Controller::Impulse impulse = ui.GetImpulse();

@@ -12,9 +12,9 @@
 
 #include "Image.h"
 
-#include "sys/App.h"
-
 #include "glpp/Texture.h"
+
+#include "core/app.h"
 
 
 namespace 
@@ -208,8 +208,7 @@ bool gfx::Image::Save(char const * filename)
 
 bool gfx::Image::CaptureScreen()
 {
-	Vector2i window_size = sys::GetWindowSize();
-	Vector2i window_position = sys::GetWindowPosition();
+	Vector2i window_size = app::GetWindowSize();
 	
 	if (! Create(window_size))
 	{

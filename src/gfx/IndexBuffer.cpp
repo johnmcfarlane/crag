@@ -12,7 +12,7 @@
 
 #include "gfx/IndexBuffer.h"
 
-#include "sys/memory.h"
+#include "core/memory.h"
 
 
 //////////////////////////////////////////////////////////////////////

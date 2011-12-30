@@ -17,7 +17,7 @@
 #include "form/node/PointBuffer.h"
 #include "form/node/Shader.h"
 
-#include "sys/memory.h"
+#include "core/memory.h"
 
 #include "glpp/Vbo_Types.h"
 

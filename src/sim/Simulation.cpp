@@ -26,6 +26,7 @@
 
 #include "gfx/Renderer.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 
@@ -146,14 +147,14 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	gfx::Uid skybox_uid = skybox->GetUid();
 	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(skybox, gfx::Uid::null, & gfx::Renderer::OnAddObject);
 	
-	sys::Time next_tick_time = sys::GetTime();
+	Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
 	{
 		message_queue.DispatchMessages(* this);
 		
-		sys::Time time = sys::GetTime();
-		sys::Time time_to_next_tick = next_tick_time - time;
+		Time time = app::GetTime();
+		Time time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
 			smp::Yield();

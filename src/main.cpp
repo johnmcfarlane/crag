@@ -10,6 +10,7 @@
 
 #include "pch.h"
 
+#include "core/app.h"
 #include "core/ConfigManager.h"
 
 #include "smp/scheduler.h"
@@ -207,7 +208,7 @@ namespace
 		SDL_Event event;
 		
 		// If no events are pending,
-		if (! sys::GetEvent(event, false))
+		if (! app::GetEvent(event, false))
 		{
 			// then nothing's happening event-wise.
 			return false;
@@ -279,7 +280,7 @@ namespace
 		
 		Vector2i video_resolution(video_resolution_x, video_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
-		if (! sys::Init(video_resolution, full_screen, "Crag", program_path))
+		if (! app::Init(video_resolution, full_screen, "Crag", program_path))
 		{
 			return false;
 		}
@@ -353,7 +354,7 @@ namespace
 		}
 		
 		smp::scheduler::Deinit();
-		sys::Deinit();
+		app::Deinit();
 
 		return true;
 	}

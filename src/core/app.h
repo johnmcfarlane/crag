@@ -12,39 +12,22 @@
 
 #include "geom/Vector2.h"
 
-#include "glpp/gl.h"
 
-
-namespace sys
+namespace app
 {
-	// types
-	typedef double Time;	// 1 unit = 1 second
-	
-	enum MouseButton
-	{
-		BUTTON_LEFT,
-		BUTTON_RIGHT,
-		BUTTON_MAX
-	};
-	
 	// init
 	bool Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path);
 	void Deinit();
 	
 	char const * GetProgramPath();
 	
-	bool GlInit();
-	void GlDeinit();
-	bool GlSupportsFences();
-	
 	// input
 	bool IsKeyDown(SDL_Scancode key_code);
-	bool IsButtonDown(MouseButton mouse_button);
+	bool IsButtonDown(int mouse_button);
 	
 	// window
+	SDL_Window & GetWindow();
 	Vector2i GetWindowSize();
-	Vector2i GetWindowPosition();
-	void SwapBuffers();
 	
 	bool GetEvent(SDL_Event & event, bool block);
 	bool HasFocus();

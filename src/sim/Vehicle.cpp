@@ -25,6 +25,9 @@
 
 #include "script/MetaClass.h"
 
+#include "core/app.h"
+
+
 using namespace sim;
 
 
@@ -179,7 +182,7 @@ void Vehicle::Tick(Simulation & simulation) override
 
 void Vehicle::TickThruster(Thruster & Thruster, Body & body)
 {
-	if (sys::IsKeyDown(Thruster.key))
+	if (app::IsKeyDown(Thruster.key))
 	{
 		Thruster.thrust = 1;
 		body.AddRelForceAtRelPos(Thruster.direction, Thruster.position);

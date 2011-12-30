@@ -81,10 +81,8 @@ private: \
 //////////////////////////////////////////////////////////////////////
 // get_owner - inverse pointer to member
 
-// TODO: sys stuff belongs in core anyway.
 namespace core
 {
-	
 	// Given an instance of TYPE which is contained in CLASS as MEMBER,
 	// returns the containing object of CLASS.
 	template <typename CLASS, typename TYPE, TYPE CLASS::*MEMBER>
@@ -111,3 +109,9 @@ namespace core
 		return owner;
 	}
 }
+
+
+//////////////////////////////////////////////////////////////////////
+// Time - in seconds
+
+typedef double Time;

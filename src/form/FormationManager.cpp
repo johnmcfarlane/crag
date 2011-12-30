@@ -22,6 +22,7 @@
 #include "gfx/Renderer.inl"
 #include "gfx/object/FormationMesh.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/profile.h"
 #include "core/Statistics.h"
@@ -49,7 +50,7 @@ form::FormationManager::FormationManager()
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , flat_shaded_flag(false)
-, mesh_generation_time(sys::GetTime())
+, mesh_generation_time(app::GetTime())
 , _camera_pos(sim::Ray3::Zero())
 {
 	smp::SetThreadPriority(-1);
@@ -294,8 +295,8 @@ void form::FormationManager::GenerateMesh()
 	gfx::Daemon::Call(_mesh_uid, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
 	
 	// record timing information
-	sys::Time t = sys::GetTime();
-	sys::Time last_mesh_generation_period = t - mesh_generation_time;
+	Time t = app::GetTime();
+	Time last_mesh_generation_period = t - mesh_generation_time;
 	_regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
 	

@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "sys/App.h"
-
 
 namespace form
 {
@@ -31,17 +29,17 @@ namespace form
 		
 		void SetNumQuaterna(int num_quaterne);
 		void SampleFrameFitness(float fitness);
-		void SampleMeshGenerationPeriod(sys::Time mgp);
+		void SampleMeshGenerationPeriod(Time mgp);
 		
 		// returns a recommended load given the current load, and resets sample counters.
 		int GetRecommendedNumQuaterna();
 		
 	private:
-		int CalculateFrameRateDirectedTargetLoad(int current_load, sys::Time sim_time) const;
+		int CalculateFrameRateDirectedTargetLoad(int current_load, Time sim_time) const;
 		int CalculateMeshGenerationDirectedTargetLoad(int current_load) const;
-		static float CalculateFrameRateReactionCoefficient(sys::Time sim_time);
+		static float CalculateFrameRateReactionCoefficient(Time sim_time);
 		
-		sys::Time reset_time;
+		Time reset_time;
 
 		bool _enabled;
 		int _num_quaterne;

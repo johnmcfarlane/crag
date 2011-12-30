@@ -29,13 +29,13 @@
 
 #include "geom/MatrixOps.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
 #include <sstream>
 
 
-using sys::Time;
 using namespace gfx;
 
 
@@ -75,6 +75,40 @@ namespace
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local functions
+	
+	bool InitGlew()
+	{
+#if defined(GLEW_STATIC)
+		GLenum glew_err = glewInit();
+		if (glew_err != GLEW_OK)
+		{
+			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+			return false;
+		}
+		
+		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
+		
+#if ! defined(__APPLE__)
+		if (! GLEW_VERSION_1_5)
+		{
+			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
+			return false;
+		}
+#endif
+		
+#endif
+		
+		return true;
+	}
+	
+	bool GlSupportsFences()
+	{
+#if defined(__APPLE__)
+		return true;
+#else
+		return GLEW_NV_fence != GL_FALSE;
+#endif
+	}
 	
 	// Creates a frustum with sensible defaults for rendering a background.
 	void SetBackgroundFrustum(Pov const & pov)
@@ -145,7 +179,9 @@ namespace
 
 
 Renderer::Renderer()
-: last_frame_time(sys::GetTime())
+: context(nullptr)
+, scene(nullptr)
+, last_frame_time(app::GetTime())
 , quit_flag(false)
 , vsync(false)
 , _ready(true)
@@ -214,7 +250,7 @@ void Renderer::OnRemoveObject(Uid const & uid)
 	}
 }
 
-void Renderer::OnSetReady(bool const & ready, sys::Time const & time)
+void Renderer::OnSetReady(bool const & ready, Time const & time)
 {
 	_ready = ready;
 	scene->SetTime(time);
@@ -327,16 +363,27 @@ bool Renderer::Init()
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
-	if (! sys::GlInit())
+	Assert(scene == nullptr);
+	Assert(context == nullptr);
+	SDL_Window & window = app::GetWindow();
+	context = SDL_GL_CreateContext(& window);
+	
+	if (SDL_GL_MakeCurrent(& window, context) != 0)
 	{
-		scene = nullptr;
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+	
+	if (! InitGlew())
+	{
 		return false;
 	}
 
 	InitVSync();
 	
 	scene = new Scene;
-	scene->SetResolution(sys::GetWindowSize());
+	Vector2i resolution = app::GetWindowSize();
+	scene->SetResolution(resolution);
 	
 	InitRenderState();
 	
@@ -369,7 +416,8 @@ void Renderer::Deinit()
 
 	delete scene;
 
-	sys::GlDeinit();
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.
@@ -381,7 +429,7 @@ void Renderer::InitVSync()
 	}
 	else
 	{
-		if (sys::GlSupportsFences())
+		if (GlSupportsFences())
 		{
 			gl::GenFence(_fence1);
 			gl::GenFence(_fence2);
@@ -597,7 +645,8 @@ void Renderer::Render()
 
 	// Flip the front and back buffers and set fences.
 	SetFence(_fence1);
-	sys::SwapBuffers();
+	SDL_Window & window = app::GetWindow();
+	SDL_GL_SwapWindow(& window);
 	SetFence(_fence2);
 
 	ProcessRenderTiming();
@@ -907,14 +956,14 @@ void Renderer::ProcessRenderTiming()
 	{
 		// Get timing information from the fences.
 		FinishFence(_fence1);
-		pre_sync = sys::GetTime();
+		pre_sync = app::GetTime();
 		FinishFence(_fence2);
-		post_sync = sys::GetTime();
+		post_sync = app::GetTime();
 	}
 	else
 	{
 		// There is no sync.
-		pre_sync = post_sync = sys::GetTime();
+		pre_sync = post_sync = app::GetTime();
 	}
 	Time vsync_time = post_sync - pre_sync;
 	STAT_SET(vsync_time, vsync_time);

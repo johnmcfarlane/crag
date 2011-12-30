@@ -42,7 +42,7 @@ void Puff::Init(Scene const & scene)
 
 gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
-	sys::Time age = CalculateAge();
+	Time age = CalculateAge();
 	
 	Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
 	
@@ -53,7 +53,7 @@ gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_vi
 
 LeafNode::PreRenderResult Puff::PreRender() override
 {
-	sys::Time age = CalculateAge();
+	Time age = CalculateAge();
 	
 	_radius = SphereRadiusFromVolume<Scalar, 3>(_spawn_volume);
 	_radius += 0.5 * age;
@@ -83,10 +83,10 @@ void Puff::Render() const
 	gl::Enable(GL_CULL_FACE);
 }
 
-sys::Time Puff::CalculateAge() const
+Time Puff::CalculateAge() const
 {
 	Renderer const & renderer = Daemon::Ref();
-	sys::Time time = renderer.GetScene().GetTime();
-	sys::Time age = time - _spawn_time;
+	Time time = renderer.GetScene().GetTime();
+	Time age = time - _spawn_time;
 	return age;
 }

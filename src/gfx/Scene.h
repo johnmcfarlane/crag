@@ -19,8 +19,6 @@
 
 #include "sim/defs.h"
 
-#include "sys/App.h"
-
 
 namespace gfx
 {
@@ -38,8 +36,8 @@ namespace gfx
 		Scene();
 		~Scene();
 		
-		void SetTime(sys::Time t);
-		sys::Time GetTime() const;
+		void SetTime(Time t);
+		Time GetTime() const;
 		
 		void AddObject(Object & object, Uid parent_uid);
 		void RemoveObject(Uid uid);
@@ -83,7 +81,7 @@ namespace gfx
 		void RemoveChildren(BranchNode & parent);
 
 		// attributes
-		sys::Time _time;
+		Time _time;
 		Pov pov;
 		
 		ObjectMap _objects;	// fast-access container of all objects

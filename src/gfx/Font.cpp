@@ -13,7 +13,7 @@
 #include "Font.h"
 #include "Image.h"
 
-#include "sys/App.h"
+#include "core/app.h"
 
 
 namespace 
@@ -123,7 +123,7 @@ void gfx::Font::RenderVerts() const
 	// Matrices
 	gl::MatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	Vector2i resolution = sys::GetWindowSize();
+	Vector2i resolution = app::GetWindowSize();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
 	gl::MatrixMode (GL_MODELVIEW); 

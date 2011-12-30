@@ -25,8 +25,6 @@
 #include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
-#include "sys/App.h"
-
 
 namespace form 
 {	
@@ -143,7 +141,7 @@ namespace form
 		
 		Mesh::list_type _meshes;
 		
-		sys::Time mesh_generation_time;
+		Time mesh_generation_time;
 		
 		Regulator _regulator;
 		sim::Ray3 _camera_pos;

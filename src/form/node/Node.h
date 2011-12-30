@@ -12,8 +12,6 @@
 
 #include "form/node/Point.h"
 
-#include "sys/memory.h"
-
 
 namespace form
 {

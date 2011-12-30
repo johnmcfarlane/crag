@@ -68,12 +68,12 @@ Scene::~Scene()
 	delete & _cuboid;
 }
 
-void Scene::SetTime(sys::Time t)
+void Scene::SetTime(Time t)
 {
 	_time = t;
 }
 
-sys::Time Scene::GetTime() const
+Time Scene::GetTime() const
 {
 	return _time;
 }

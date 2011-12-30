@@ -18,6 +18,8 @@
 
 #include "gfx/Renderer.h"
 
+#include "core/app.h"
+
 
 #if defined(NDEBUG)
 #define FILE_LOCAL_BEGIN namespace {
@@ -39,14 +41,14 @@ PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
 	sim::Simulation & simulation = sim::Daemon::Ref();
 	
-	sim::Time time = simulation.GetTime();
+	Time time = simulation.GetTime();
 	return Py_BuildValue("d", time);
 }
 
 PyObject * sleep(PyObject * /*self*/, PyObject * args)
 {
 	// Get the time parameter.
-	sys::Time delay;
+	Time delay;
 	if (! PyArg_ParseTuple(args, "d", & delay))
 	{
 		delay = 0;
@@ -198,7 +200,7 @@ script::ScriptThread::ScriptThread()
 	
 	// Set executable name so Python knows where to looks for libs.
 	wchar_t program_path[FILENAME_MAX + 1];
-	mbstowcs(program_path, sys::GetProgramPath(), FILENAME_MAX);
+	mbstowcs(program_path, app::GetProgramPath(), FILENAME_MAX);
 	Py_SetProgramName(program_path);
 	
 	Py_InitializeEx(0);

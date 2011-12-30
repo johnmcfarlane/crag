@@ -20,8 +20,6 @@
 
 #include "smp/Daemon.h"
 
-#include "sys/App.h"
-
 #include "geom/Transformation.h"
 
 #include "core/double_buffer.h"
@@ -70,7 +68,7 @@ namespace gfx
 		void OnQuit();
 		void OnAddObject(Object * const & object, Uid const & parent_uid);
 		void OnRemoveObject(Uid const & uid);
-		void OnSetReady(bool const & ready, sys::Time const & time);
+		void OnSetReady(bool const & ready, Time const & time);
 		void OnResize(Vector2i const & size);
 		void OnToggleCulling();
 		void OnToggleLighting();
@@ -120,12 +118,13 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
 		
+		SDL_GLContext context;
 		Scene * scene;
 
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
 		
-		sys::Time last_frame_time;
+		Time last_frame_time;
 		
 		bool quit_flag;
 		bool _ready;
@@ -151,7 +150,7 @@ namespace gfx
 #if ! defined(NDEBUG)
 		// fps counter
 		static int const _fps_history_size = 60;
-		sys::Time _fps_history[_fps_history_size];
+		Time _fps_history[_fps_history_size];
 #endif
 		
 		gl::Fence _fence1, _fence2;

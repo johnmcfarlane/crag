@@ -12,6 +12,7 @@
 
 #include "Regulator.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 
@@ -35,7 +36,7 @@ form::Regulator::Regulator()
 
 void form::Regulator::Reset()
 {
-	reset_time = sys::GetTime();
+	reset_time = app::GetTime();
 	_num_quaterne = -1;
 	frame_ratio_max = 0;
 	mesh_generation_period = 0;
@@ -64,7 +65,7 @@ void form::Regulator::SampleFrameFitness(float fitness)
 	frame_ratio_max = std::max(frame_ratio_max, 1.f / fitness);
 }
 
-void form::Regulator::SampleMeshGenerationPeriod(sys::Time mgp)
+void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
 {
 	if (! _enabled)
 	{
@@ -82,7 +83,7 @@ int form::Regulator::GetRecommendedNumQuaterna()
 		return _num_quaterne;
 	}
 	
-	sys::Time sim_time = sys::GetTime() - reset_time;
+	Time sim_time = app::GetTime() - reset_time;
 
 	// Come up with two accounts of how many quaterna we should have.
 	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(_num_quaterne, sim_time);
@@ -116,7 +117,7 @@ int form::Regulator::GetRecommendedNumQuaterna()
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
-int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, sys::Time sim_time) const
+int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, Time sim_time) const
 {
 	// No samples to measure from?
 	if (frame_ratio_max == 0)
@@ -179,7 +180,7 @@ int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load)
 // Plus large changes in the number of quaterna causes additional slowdown of its own 
 // which feeds back into the system in a way which causes yet more hunting-type behavior.
 // Thus the reaction coefficient is given a boost which decays over time. 
-float form::Regulator::CalculateFrameRateReactionCoefficient(sys::Time sim_time)
+float form::Regulator::CalculateFrameRateReactionCoefficient(Time sim_time)
 {
 	float boost_factor = pow(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
 	float boost_summand = frame_rate_reaction_coefficient_boost * boost_factor;
