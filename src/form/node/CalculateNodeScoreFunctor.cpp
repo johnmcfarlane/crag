@@ -92,7 +92,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	// towardness: -1=facing away, 1=facing towards
 	// purpose: favour polys which are facing towards the camera
 	float camera_dp = DotProduct(node_to_camera, node.normal);
-	float towardness_factor = Exp(camera_dp);
+	float towardness_factor = std::exp(camera_dp);
 	score *= towardness_factor;
 	
 	// Distance-based falloff.

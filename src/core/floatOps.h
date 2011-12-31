@@ -160,12 +160,6 @@ inline T CubeRoot(T a)
 #endif
 }
 
-inline float Log(float a) { return logf(a); }
-inline double Log(double a) { return log(a); }
-
-inline float Exp(float a) { return expf(a); }
-inline double Exp(double a) { return exp(a); }
-
 template<typename T> inline T DegToRad(T d) 
 {
 	return d * static_cast<T>(PI / 180.0); 

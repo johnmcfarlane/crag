@@ -236,7 +236,7 @@ void sim::PlanetShader::CalcRootPointPos(Random & rnd, sim::Vector3 & position) 
 sim::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
 	Scalar random_exponent = (.5 - rnd.GetUnitInclusive<Scalar>()) * planet_shader_random_range;
-	Scalar coefficient = Exp(random_exponent);
+	Scalar coefficient = std::exp(random_exponent);
 	return coefficient;
 }
 

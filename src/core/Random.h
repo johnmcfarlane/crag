@@ -64,14 +64,14 @@ public:
 			w = x1 * x1 + x2 * x2;
 		} while ( w >= one );
 
-		w = sqrt( (-two * Log( w ) ) / w );
+		w = sqrt( (-two * std::log( w ) ) / w );
 		y1 = x1 * w;
 		y2 = x2 * w;
 
 		//// might be faster for RISC chipsets
 		//S x1 = one - GetUnit<S>();
 		//S x2 = GetUnitInclusive<S>();
-		//S d = sqrt(-two * Log(x1));
+		//S d = sqrt(-two * std::log(x1));
 		//S a = two * static_cast<S>(PI) * x2;
 		//y1 = d * cos(a);
 		//y2 = d * sin(a);

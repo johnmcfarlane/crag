@@ -130,8 +130,8 @@ int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, Time
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
-	float frame_ratio_log = Log(frame_ratio_max);
-	float frame_ratio_exp = Exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
+	float frame_ratio_log = std::log(frame_ratio_max);
+	float frame_ratio_exp = std::exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
 	
 	float exact_target_load = static_cast<float>(current_load) * frame_ratio_exp;
 	int target_load = static_cast<int>(exact_target_load);
