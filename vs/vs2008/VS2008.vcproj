@@ -218,6 +218,14 @@
 				Name="core"
 				>
 				<File
+					RelativePath="..\..\src\core\app.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\core\app.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\core\array.h"
 					>
 				</File>
@@ -275,6 +283,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\core\intrusive_list.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\core\memory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\core\memory.h"
 					>
 				</File>
 				<File
@@ -695,26 +711,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\sim\Vehicle.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="sys"
-				>
-				<File
-					RelativePath="..\..\src\sys\App.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\sys\App.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\sys\memory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\sys\memory.h"
 					>
 				</File>
 			</Filter>
