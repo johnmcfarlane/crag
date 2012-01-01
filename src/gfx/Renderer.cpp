@@ -673,7 +673,7 @@ void Renderer::RenderBackground() const
 	SetBackgroundFrustum(scene->GetPov());
 
 	// basically draw the skybox
-	int background_render_count = RenderLayerRecursive(Layer::background);
+	int background_render_count = RenderLayer(Layer::background);
 	
 	// and if we have no skybox yet,
 	if (background_render_count < 1)
@@ -751,7 +751,7 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 	{
 		gl::Enable(GL_LIGHTING);
 
-		RenderLayerRecursive(Layer::light);
+		RenderLayer(Layer::light);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
@@ -770,12 +770,12 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 	}
 	
 	// render opaque objects
-	RenderLayerOrdered(Layer::foreground, true);
+	RenderLayer(Layer::foreground);
 
 	// render partially transparent objects
 	gl::Enable(GL_BLEND);
 	gl::SetDepthMask(false);
-	RenderLayerOrdered(Layer::foreground, false);
+	RenderLayer(Layer::foreground, false);
 	gl::Disable(GL_BLEND);
 	gl::SetDepthMask(true);
 
@@ -831,54 +831,7 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	}
 }
 
-namespace
-{
-	class RenderFunctor
-	{
-	public:
-		RenderFunctor(Layer::type layer, int & num_rendered_objects)
-		: _layer(layer)
-		, _num_rendered_objects(num_rendered_objects)
-		{
-		}
-		
-		bool operator() (Object const & object) const
-		{
-			return object.IsInLayer(_layer);
-		}
-		
-		void operator() (LeafNode const & leaf_node, gfx::Transformation const & transformation)
-		{
-			// Set the matrix.
-			Assert(transformation == leaf_node.GetModelViewTransformation());
-			Pov::SetModelViewMatrix(transformation);
-			
-			// See-through object MUST be rendered in order.
-			Assert(leaf_node.IsOpaque());
-			
-			leaf_node.Render();
-			++ _num_rendered_objects;
-		}
-		
-	private:
-		Layer::type _layer;
-		int & _num_rendered_objects;
-	};
-}
-
-int Renderer::RenderLayerRecursive(Layer::type layer) const
-{
-	int num_rendered_objects = 0;
-
-	BranchNode const & branch_node = scene->GetRoot();
-	RenderFunctor functor(layer, num_rendered_objects);
-	
-	for_each_leaf<RenderFunctor>(branch_node, functor);
-
-	return num_rendered_objects;
-}
-
-int Renderer::RenderLayerOrdered(Layer::type layer, bool opaque) const
+int Renderer::RenderLayer(Layer::type layer, bool opaque) const
 {
 	int num_rendered_objects = 0;
 	

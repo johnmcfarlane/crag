@@ -106,8 +106,7 @@ namespace gfx
 		void RenderForegroundPass(ForegroundRenderPass pass) const;
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
-		int RenderLayerRecursive(Layer::type layer) const;
-		int RenderLayerOrdered(Layer::type layer, bool opaque) const;
+		int RenderLayer(Layer::type layer, bool opaque = true) const;
 		
 		void DebugDraw() const;
 		void ProcessRenderTiming();
