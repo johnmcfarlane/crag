@@ -33,6 +33,12 @@ public:
 	{
 	}
 	
+	template <typename RHS_S>
+	Transformation(Transformation<RHS_S> const & rhs)
+	: _matrix(rhs.GetMatrix())
+	{
+	}
+
 	Transformation(Vector const & translation)
 	: _matrix(1, 0, 0, translation.x,
 			  0, 1, 0, translation.y, 
