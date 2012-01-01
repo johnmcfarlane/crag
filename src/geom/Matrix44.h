@@ -27,6 +27,15 @@ public:
 	{
 	}
 	
+	template <typename RHS_S>
+	Matrix(Matrix<RHS_S, 4, 4> const & rhs)
+	{
+		rows[0] = rhs[0];
+		rows[1] = rhs[1];
+		rows[2] = rhs[2];
+		rows[3] = rhs[3];
+	}
+	
 	Matrix(Row const & row0,
 			Row const & row1,
 			Row const & row2,
