@@ -31,7 +31,7 @@ LeafNode::LeafNode(Layer::Map::type layers)
 {
 }
 
-void LeafNode::SetModelViewTransformation(gfx::Transformation const & model_view_transformation)
+void LeafNode::SetModelViewTransformation(Transformation const & model_view_transformation)
 {
 	_model_view_transformation = model_view_transformation;
 	
@@ -41,7 +41,7 @@ void LeafNode::SetModelViewTransformation(gfx::Transformation const & model_view
 	_render_sort_key = static_cast<float>(_is_opaque ? - depth : depth);
 }
 
-gfx::Transformation const & LeafNode::GetModelViewTransformation() const
+LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
 {
 	return _model_view_transformation;
 }

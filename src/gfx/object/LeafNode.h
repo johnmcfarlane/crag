@@ -29,6 +29,8 @@ namespace gfx
 			remove
 		};
 		
+		typedef ::Transformation<float> Transformation;
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 

@@ -72,7 +72,7 @@ void Thruster::AddPuff(float thrust_factor)
 		Random::sequence.GetGaussians<Scalar>(g3, g4);
 		
 		// Get the transformation of the 
-		Transformation model_transformation = GetParent()->GetModelTransformation();
+		gfx::Transformation model_transformation = GetParent()->GetModelTransformation();
 		
 		// Extract the global thruster translation.
 		Vector3 translation = model_transformation.GetTranslation();
@@ -92,7 +92,7 @@ void Thruster::AddPuff(float thrust_factor)
 		// Set its position.
 		BranchNode::UpdateParams params = 
 		{
-			Transformation(translation, axes::Rotation<Scalar>(puff_direction))
+			gfx::Transformation(translation, axes::Rotation<Scalar>(puff_direction))
 		};
 		renderer.OnUpdateObject<BranchNode>(parent_uid, params);
 	}

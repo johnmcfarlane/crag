@@ -44,7 +44,7 @@ gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_vi
 {
 	Time age = CalculateAge();
 	
-	Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
+	gfx::Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
 	
 	scratch = model_view * scale;
 	

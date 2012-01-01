@@ -52,7 +52,7 @@ namespace gfx
 		ChildList::const_iterator End() const;
 		
 		// Model-view transformation
-		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		

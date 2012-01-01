@@ -59,7 +59,7 @@ gfx::Transformation const & Skybox::Transform(gfx::Transformation const & model_
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
-	scratch = Transformation(Vector3::Zero(), rotation);
+	scratch = gfx::Transformation(Vector3::Zero(), rotation);
 	return scratch;
 }
 
@@ -69,12 +69,6 @@ void Skybox::Render() const
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
 	gl::SetColor(1.f, 1.f, 1.f);
 
-	// Set model view matrix (with zero translation).
-	Transformation model_view_transformation = GetModelViewTransformation();
-	Matrix33 rotation = model_view_transformation.GetRotation();
-	Transformation untranslated_transformation(Vector3::Zero(), rotation);
-	Pov::SetModelViewMatrix(untranslated_transformation);
-	
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
 	gl::Enable(GL_TEXTURE_2D);

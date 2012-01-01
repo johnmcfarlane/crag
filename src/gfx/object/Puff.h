@@ -28,7 +28,7 @@ namespace gfx
 	private:
 		void Init(Scene const & scene) override;
 		
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
 		PreRenderResult PreRender() override;
 		

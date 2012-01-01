@@ -621,7 +621,8 @@ namespace
 		
 		void operator() (LeafNode & leaf_node, gfx::Transformation const & transformation)
 		{
-			leaf_node.SetModelViewTransformation(transformation);
+			LeafNode::Transformation model_view_transformation(transformation);
+			leaf_node.SetModelViewTransformation(model_view_transformation);
 		}
 		
 	private:
