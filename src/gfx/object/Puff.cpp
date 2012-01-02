@@ -12,7 +12,7 @@
 #include "Puff.h"
 
 #include "gfx/Scene.h"
-#include "gfx/Sphere.h"
+#include "gfx/SphereMesh.h"
 #include "gfx/Renderer.h"
 
 #include "glpp/glpp.h"

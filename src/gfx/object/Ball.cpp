@@ -12,7 +12,7 @@
 #include "Ball.h"
 
 #include "gfx/Scene.h"
-#include "gfx/Sphere.h"
+#include "gfx/SphereMesh.h"
 
 #include "glpp/glpp.h"
 
@@ -43,7 +43,7 @@ bool Ball::GetRenderRange(RenderRange & range) const
 	Transformation::Matrix const & transformation_matrix = transformation.GetMatrix();
 	Scalar depth = transformation_matrix[1][3];
 
-	Scalar radius = Sphere::CalculateRadius(transformation);
+	Scalar radius = SphereMesh::CalculateRadius(transformation);
 	
 	range[0] = depth - radius;
 	range[1] = depth + radius;

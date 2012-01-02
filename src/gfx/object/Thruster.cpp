@@ -15,7 +15,7 @@
 
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
-#include "gfx/Sphere.h"
+#include "gfx/SphereMesh.h"
 
 #include "sim/axes.h"
 

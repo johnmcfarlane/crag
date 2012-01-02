@@ -19,7 +19,7 @@ namespace gfx
 {
 	// Graphical representation of a sphere.
 	// Has a mesh containing tesselations of a sphere at multiple levels of detail.
-	class Sphere
+	class SphereMesh
 	{
 		// types
 	public:
@@ -33,8 +33,8 @@ namespace gfx
 		static int const num_sphere_lods = 5;
 		
 		// functions
-		Sphere();
-		~Sphere();
+		SphereMesh();
+		~SphereMesh();
 		
 		// Given a model transformation, calculate the radius at which the spherewould be drawn.
 		static Scalar CalculateRadius(Transformation const & transformation);

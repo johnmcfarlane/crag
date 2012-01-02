@@ -12,7 +12,7 @@
 
 #include "Scene.h"
 
-#include "Sphere.h"
+#include "SphereMesh.h"
 #include "Cuboid.h"
 
 #include "core/ConfigEntry.h"
@@ -42,7 +42,7 @@ namespace
 Scene::Scene()
 : _time(-1)
 , _cuboid(* new Cuboid)
-, _sphere(* new Sphere)
+, _sphere(* new SphereMesh)
 {
 	Frustum & frustum = pov.GetFrustum();
 
@@ -254,7 +254,7 @@ Pov const & Scene::GetPov() const
 	return pov;
 }
 
-gfx::Sphere const & Scene::GetSphere() const
+gfx::SphereMesh const & Scene::GetSphere() const
 {
 	return _sphere;
 }

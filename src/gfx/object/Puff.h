@@ -17,7 +17,7 @@
 namespace gfx
 {
 	// forward-declarations
-	class Sphere;
+	class SphereMesh;
 	
 	// Puff class
 	class Puff : public LeafNode
@@ -38,7 +38,7 @@ namespace gfx
 		Time CalculateAge() const;
 		
 		// variables
-		Sphere const * _sphere;
+		SphereMesh const * _sphere;
 		Scalar _spawn_volume;
 		Time _spawn_time;
 		Scalar _radius;

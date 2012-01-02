@@ -19,7 +19,7 @@
 namespace gfx
 {
 	// forward-declarations
-	class Sphere;
+	class SphereMesh;
 	
 	// Ball class
 	class Ball : public LeafNode
@@ -35,7 +35,7 @@ namespace gfx
 		void Render() const override;
 		
 		// variables
-		Sphere const * _sphere;
+		SphereMesh const * _sphere;
 		Color4b _color;
 	};
 }

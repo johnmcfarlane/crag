@@ -25,7 +25,7 @@ namespace gfx
 	// forward-declarations
 	class Cuboid;
 	class Object;
-	class Sphere;
+	class SphereMesh;
 	
 	// Scene class definition
 	// Stores graphical representation of the simulation
@@ -74,7 +74,7 @@ namespace gfx
 		Pov const & GetPov() const;
 		
 		Cuboid const & GetCuboid() const;
-		Sphere const & GetSphere() const;
+		SphereMesh const & GetSphere() const;
 		
 	private:
 		// remove the children of the given branch node
@@ -89,6 +89,6 @@ namespace gfx
 		LeafNode::RenderList _render_list;
 		
 		Cuboid const & _cuboid;
-		Sphere const & _sphere;
+		SphereMesh const & _sphere;
 	};
 }

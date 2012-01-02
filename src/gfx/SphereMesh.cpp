@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "Sphere.h"
+#include "SphereMesh.h"
 
 #include "GeodesicSphere.h"
 
@@ -18,10 +18,10 @@
 
 namespace gfx
 {
-	typedef GeodesicSphere<Sphere::Vertex> Geodesic;
+	typedef GeodesicSphere<SphereMesh::Vertex> Geodesic;
 	
 	
-	Sphere::Sphere()
+	SphereMesh::SphereMesh()
 	{
 		VertexVector verts;
 		Geodesic::FaceVector faces;
@@ -43,19 +43,19 @@ namespace gfx
 		_mesh.Unbind();
 	}
 	
-	Sphere::~Sphere()
+	SphereMesh::~SphereMesh()
 	{
 		_mesh.Deinit();
 	}
 	
-	Scalar Sphere::CalculateRadius(Transformation const & transformation)
+	Scalar SphereMesh::CalculateRadius(Transformation const & transformation)
 	{
 		Vector3 size = transformation.GetScale();
 		Scalar radius = Length(size) * .5;
 		return radius;
 	}
 	
-	void Sphere::Draw(Transformation const & transformation) const
+	void SphereMesh::Draw(Transformation const & transformation) const
 	{
 		// Calculate the inverse distnce)
 		Scalar radius = CalculateRadius(transformation);
@@ -66,7 +66,7 @@ namespace gfx
 		Draw(lod);
 	}
 	
-	void Sphere::Draw(int lod) const
+	void SphereMesh::Draw(int lod) const
 	{
 		float scale = _lod_coefficients[lod];
 		gl::Scale(scale, scale, scale);
@@ -87,7 +87,7 @@ namespace gfx
 		GLPP_VERIFY;
 	}
 	
-	unsigned Sphere::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
+	unsigned SphereMesh::CalculateLod(Scalar radius, Scalar inv_distance_to_camera) const
 	{
 		Scalar mn1 = 1500;
 		int lod = int(pow(mn1 * radius * inv_distance_to_camera, .3));

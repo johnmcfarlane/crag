@@ -54,7 +54,7 @@
 		528164911454F5DB0017E868 /* Pov.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164071454F5DB0017E868 /* Pov.cpp */; };
 		528164921454F5DB0017E868 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164091454F5DB0017E868 /* Renderer.cpp */; };
 		528164931454F5DB0017E868 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281640B1454F5DB0017E868 /* Scene.cpp */; };
-		528164941454F5DB0017E868 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281640D1454F5DB0017E868 /* Sphere.cpp */; };
+		528164941454F5DB0017E868 /* SphereMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281640D1454F5DB0017E868 /* SphereMesh.cpp */; };
 		528164951454F5DB0017E868 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281641D1454F5DB0017E868 /* main.cpp */; };
 		528164961454F5DB0017E868 /* pch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281641E1454F5DB0017E868 /* pch.cpp */; };
 		528164971454F5DB0017E868 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164211454F5DB0017E868 /* Body.cpp */; };
@@ -255,8 +255,8 @@
 		5281640A1454F5DB0017E868 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		5281640B1454F5DB0017E868 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		5281640C1454F5DB0017E868 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
-		5281640D1454F5DB0017E868 /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
-		5281640E1454F5DB0017E868 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
+		5281640D1454F5DB0017E868 /* SphereMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereMesh.cpp; sourceTree = "<group>"; };
+		5281640E1454F5DB0017E868 /* SphereMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SphereMesh.h; sourceTree = "<group>"; };
 		528164101454F5DB0017E868 /* BufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferObject.h; sourceTree = "<group>"; };
 		528164111454F5DB0017E868 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		528164121454F5DB0017E868 /* Fence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
@@ -733,8 +733,8 @@
 				5281640A1454F5DB0017E868 /* Renderer.h */,
 				5281640B1454F5DB0017E868 /* Scene.cpp */,
 				5281640C1454F5DB0017E868 /* Scene.h */,
-				5281640D1454F5DB0017E868 /* Sphere.cpp */,
-				5281640E1454F5DB0017E868 /* Sphere.h */,
+				5281640D1454F5DB0017E868 /* SphereMesh.cpp */,
+				5281640E1454F5DB0017E868 /* SphereMesh.h */,
 				52928AC6147C358800731B77 /* Layer.cpp */,
 				52928AC7147C358800731B77 /* Layer.h */,
 				52A50CA7147F763F0061A909 /* Renderer.inl */,
@@ -1041,7 +1041,7 @@
 				528164911454F5DB0017E868 /* Pov.cpp in Sources */,
 				528164921454F5DB0017E868 /* Renderer.cpp in Sources */,
 				528164931454F5DB0017E868 /* Scene.cpp in Sources */,
-				528164941454F5DB0017E868 /* Sphere.cpp in Sources */,
+				528164941454F5DB0017E868 /* SphereMesh.cpp in Sources */,
 				528164951454F5DB0017E868 /* main.cpp in Sources */,
 				528164961454F5DB0017E868 /* pch.cpp in Sources */,
 				528164971454F5DB0017E868 /* Body.cpp in Sources */,
