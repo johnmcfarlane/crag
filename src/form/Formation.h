@@ -12,6 +12,8 @@
 
 #include "sim/defs.h"
 
+#include "geom/Sphere.h"
+
 
 namespace form 
 {

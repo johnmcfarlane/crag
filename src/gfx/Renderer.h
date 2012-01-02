@@ -20,8 +20,6 @@
 
 #include "smp/Daemon.h"
 
-#include "geom/Transformation.h"
-
 #include "core/double_buffer.h"
 
 

@@ -15,13 +15,12 @@
 #error pch.h not included.
 #endif
 
-#include "geom/Vector2.h"
-#include "geom/Vector3.h"
-#include "geom/Vector4.h"
-#include "geom/Ray.h"
-#include "geom/Sphere.h"
-#include "geom/Transformation.h"
-
+// forward-declarations
+template <typename S, int D> class Vector;
+template <typename S, int R, int C> class Matrix;
+template <typename S, int D> class Sphere;
+template <typename S> class Transformation;
+template <typename S, int D> class Ray;
 
 namespace smp
 {

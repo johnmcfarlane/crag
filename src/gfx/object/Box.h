@@ -13,8 +13,6 @@
 
 #include "gfx/Color.h"
 
-#include "geom/Transformation.h"
-
 
 namespace gfx
 {

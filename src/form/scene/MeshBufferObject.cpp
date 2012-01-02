@@ -18,8 +18,6 @@
 #include "gfx/Color.h"
 #include "gfx/Pov.h"
 
-#include "geom/Transformation.h"
-
 
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
