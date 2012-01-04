@@ -45,7 +45,7 @@ namespace sim
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
 
-		void SetSpeedFactor(int _speed_factor);
+		void SetSpeed(int _speed);
 		virtual void Tick(Simulation & simulation);
 		virtual void UpdateModels() const;
 		
@@ -53,7 +53,6 @@ namespace sim
 		void ApplyImpulse();
 		
 		Vector3 impulses[2];	// [pos/rot]
-		Scalar speed;
 		Scalar speed_factor;
 		gfx::Uid _light_uid;
 	};

@@ -75,14 +75,14 @@ namespace
 	
 	PyObject * observer_set_speed(PyObject * self, PyObject * args)
 	{
-		int speed_factor;
-		if (! PyArg_ParseTuple(args, "i", & speed_factor))
+		int speed;
+		if (! PyArg_ParseTuple(args, "i", & speed))
 		{
 			return nullptr;
 		}
 		
 		Observer & observer = Observer::GetRef(self);
-		observer.SetSpeedFactor(speed_factor);
+		observer.SetSpeed(speed);
 		
 		Py_RETURN_NONE;
 	}
@@ -100,7 +100,6 @@ DEFINE_SCRIPT_CLASS_END
 
 Observer::Observer()
 : Entity()
-, speed(0)
 , speed_factor(observer_speed_factor)
 {
 }
@@ -133,7 +132,7 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
-	SetSpeedFactor(1);
+	SetSpeed(1);
 	
 	body->SetDensity(observer_density);
 	body->SetLinearDamping(observer_linear_damping);
@@ -178,9 +177,9 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 	}
 }
 
-void Observer::SetSpeedFactor(int _speed_factor)
+void Observer::SetSpeed(int speed)
 {
-	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((_speed_factor << 1) + 1)));
+	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((speed << 1) + 1)));
 }
 
 void Observer::Tick(Simulation & simulation)
