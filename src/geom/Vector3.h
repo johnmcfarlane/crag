@@ -177,6 +177,32 @@ template<typename S> Vector<S, 3> CrossProduct(Vector<S, 3> const & lhs, Vector<
 		lhs.x * rhs.y - lhs.y * rhs.x);
 }
 
+// returns v with all axes set to absolute values
+template <typename S> 
+Vector<S, 3> Abs(Vector<S, 3> const & v)
+{
+	return Vector<S, 3>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+}
+
+// selects a vector from the plane to which v is perpendicular
+template<typename S> Vector<S, 3> Perpendicular(Vector<S, 3> const & v)
+{
+	typedef Vector<S, 3> Vector;
+
+	Vector a = Abs(v);
+	unsigned uyx = std::signbit(a.x - a.y);
+	unsigned uzx = std::signbit(a.x - a.z);
+	unsigned uzy = std::signbit(a.y - a.z);
+
+	unsigned xm = uyx & uzx;
+	unsigned ym = (1^xm) & uzy;
+	unsigned zm = 1^(xm | ym);
+
+	Vector p = CrossProduct(v, Vector(xm, ym, zm));
+	return p;
+}
+
+
 template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 3> const & v)
 {
 	return out << v.x << ',' << v.y << ',' << v.z;
