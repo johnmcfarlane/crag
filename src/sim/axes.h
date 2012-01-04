@@ -41,6 +41,8 @@ namespace axes
 	template<typename S>
 	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward, Vector<S, 3> const & up)
 	{
+		Assert(NearEqual(Length(forward), S(1), S(0.0001)));
+		
 		Vector<S, 3> right = Normalized(CrossProduct(forward, up));
 		Vector<S, 3> matrix_up = CrossProduct(right, forward);
 		
@@ -53,17 +55,21 @@ namespace axes
 	template<typename S>
 	Matrix<S, 3, 3> Rotation(Vector<S, 3> const & forward)
 	{
-		typedef Vector<S, 3> Vector;
-		Vector up;
-		if (abs(forward.y) < S(0.99))
-		{
-			up = Vector(- forward.z, S(0), forward.x);
-		}
-		else
-		{
-			up = Vector(S(0), forward.z, - forward.y);
-		}
+		Assert(NearEqual(Length(forward), S(1), S(0.0001)));
+
+		Vector<S, 3> up = Perpendicular(forward);
+		Normalize(up);
 		
-		return Rotation(forward, up);
+		Vector<S, 3> right = CrossProduct(forward, up);
+		Assert(NearEqual(Length(right), S(1), S(0.0001)));
+		
+		// verify axes are perpendicular to one another
+		Assert(NearEqual(DotProduct(forward, right), S(0), S(0.0001)));
+		Assert(NearEqual(DotProduct(right, up), S(0), S(0.0001)));
+		Assert(NearEqual(DotProduct(up, forward), S(0), S(0.0001)));
+
+		return Matrix<S, 3, 3>(right.x, right.y, right.z,
+							   forward.x, forward.y, forward.z,
+							   up.x, up.y, up.z);
 	}
 }

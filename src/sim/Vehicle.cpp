@@ -37,7 +37,7 @@ struct Vehicle::Thruster
 	Vector3 direction;	// direction of thrust relative to vehicle rotation
 	SDL_Scancode key;
 	gfx::Uid gfx_uid;
-	float thrust;
+	float thrust_factor;
 };
 
 
@@ -114,16 +114,17 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	gfx::Uid thruster_uid = gfx_thruster->GetUid();
 	
 	// Position graphical representation.
+	Scalar thrust_scale = Length(_thruster.direction);
 	gfx::BranchNode::UpdateParams params = 
 	{
-		Transformation(_thruster.position, axes::Rotation(_thruster.direction))
+		Transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale)
 	};
 	
 	gfx::Daemon::Call(transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 	
 	// Initialize the rest of the sim-side data for the new thruster.
 	_thruster.gfx_uid = thruster_uid;
-	_thruster.thrust = 0;
+	_thruster.thrust_factor = 0;
 }
 
 void Vehicle::Create(Vehicle & vehicle, PyObject & args)
@@ -157,10 +158,13 @@ void Vehicle::UpdateModels() const
 		// send the amount of thrust to the graphical representation.
 		gfx::Thruster::UpdateParams params = 
 		{
-			thruster.thrust
+			thruster.thrust_factor
 		};
 		
-		gfx::Daemon::Call(thruster.gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Thruster>);
+		if (params.thrust_factor != 0)
+		{
+			gfx::Daemon::Call(thruster.gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Thruster>);
+		}
 	}
 }
 
@@ -184,11 +188,11 @@ void Vehicle::TickThruster(Thruster & Thruster, Body & body)
 {
 	if (app::IsKeyDown(Thruster.key))
 	{
-		Thruster.thrust = 1;
+		Thruster.thrust_factor = 1;
 		body.AddRelForceAtRelPos(Thruster.direction, Thruster.position);
 	}
 	else
 	{
-		Thruster.thrust = 0;
+		Thruster.thrust_factor = 0;
 	}
 }
