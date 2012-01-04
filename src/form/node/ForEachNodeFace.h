@@ -32,7 +32,8 @@ namespace form
 	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, float score, FaceFunctor & f)
 	{
 		Vector3f normal = TriangleNormal(a.pos, b.pos, c.pos);
-		f (a, b, c, FastNormalize(normal), score);
+		FastNormalize(normal);
+		f (a, b, c, normal, score);
 	}
 	
 	

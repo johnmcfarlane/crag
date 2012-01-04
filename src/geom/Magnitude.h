@@ -21,41 +21,55 @@
 template<typename S, int N> S Length(Vector<S, N> const & v)
 {
 	S length_sqaured = LengthSq(v);
-	return sqrt(length_sqaured);
+	return std::sqrt(length_sqaured);
 }
 
 // Returns a copy of v with unit length. 
 // Is undefined when input is zero length.
 // Slow but accurate. 
-template<typename V> V Normalized(V const & v)
+template<typename S, int N> Vector<S, N> Normalized(Vector<S, N> const & v)
 {
 	return v * InvSqrt(LengthSq(v));
 }
 
+// Returns a copy of v with given length. 
+// Is undefined when input is zero.
+// Slow but accurate. 
+template<typename S, int N> Vector<S, N> Resized(Vector<S, N> const & v, S length)
+{
+	return v * (InvSqrt(LengthSq(v)) * length);
+}
+
 // Returns a copy of v with unit length. 
 // Is undefined when input is zero length.
 // Fast but inaccurate. 
-template<typename V> V FastNormalized(V const & v)
+template<typename S, int N> Vector<S, N> FastNormalized(Vector<S, N> const & v)
 {
 	return v * FastInvSqrt(LengthSq(v));
 }
 
-// Converts v to unit vector and returns v. 
+// Converts v to unit vector. 
 // Is undefined when input is zero length.
 // Slow but accurate. 
-template<typename V> V & Normalize(V & v)
+template<typename S, int N> void Normalize(Vector<S, N> & v)
 {
 	v *= InvSqrt(LengthSq(v));
-	return v;
+}
+
+// Sets v to given length. 
+// Is undefined when length is zero.
+// Slow but accurate. 
+template<typename S, int N> void Resize(Vector<S, N> & v, S length)
+{
+	v *= (InvSqrt(LengthSq(v)) * length);
 }
 
 // Converts v to unit vector and returns v. 
 // Is undefined when input is zero length.
 // Fast but inaccurate. 
-template<typename V> V & FastNormalize(V & v)
+template<typename S, int N> void FastNormalize(Vector<S, N> & v)
 {
 	v *= FastInvSqrt(LengthSq(v));
-	return v;
 }
 
 // Converts v to unit vector and returns true. 
@@ -65,22 +79,15 @@ template<typename S, int N> bool SafeNormalize(Vector<S, N> & v)
 {
 	S coefficient = InvSqrt(LengthSq(v));
 	
-	if (coefficient > 0) {
+	if (coefficient > 0) 
+	{
 		v *= coefficient;
 		return true;
 	}
-	else {
+	else 
+	{
 		return false;
 	}
-}
-
-// Converts v to unit vector and returns true. 
-// Returns false when input is zero length.
-// Slow but accurate. 
-template<typename V> bool SafeNormalize(V & v)
-{
-	// For convenience, guesses what S should be.
-	return SafeNormalize<V, V::Scalar>(v);
 }
 
 // Converts v to unit vector and returns true. 
@@ -90,11 +97,13 @@ template<typename S, int N> bool FastSafeNormalize(Vector<S, N> & v)
 {
 	S coefficient = FastInvSqrt(LengthSq(v));
 	
-	if (coefficient > 0) {
+	if (coefficient > 0) 
+	{
 		v *= coefficient;
 		return true;
 	}
-	else {
+	else 
+	{
 		return false;
 	}
 }
@@ -107,7 +116,7 @@ template<typename S, int N> bool FastSafeNormalize(Vector<S, N> & v)
 template<typename S> S TriangleArea(S a, S b, S c)
 {
 	S p = (a + b + c) * static_cast<S> (.5);	// half perimeter
-	S area = sqrt(p * (p - a) * (p - b) * (p - c));
+	S area = std::sqrt(p * (p - a) * (p - b) * (p - c));
 	return area;
 }
 
