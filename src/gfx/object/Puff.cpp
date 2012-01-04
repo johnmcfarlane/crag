@@ -36,7 +36,6 @@ Puff::Puff(Scalar spawn_volume)
 
 void Puff::Init(Scene const & scene)
 {
-	_sphere = & scene.GetSphere();
 	_spawn_time = scene.GetTime() - (Random::sequence.GetUnit<double>() / 60.);
 }
 
@@ -77,8 +76,10 @@ void Puff::Render() const
 
 	gl::Disable(GL_CULL_FACE);
 	gl::SetColor(_color.GetArray());
-	
-	_sphere->Draw(0);
+
+	SphereMesh const & sphere_mesh = Daemon::Ref().GetScene().GetSphere();
+
+	sphere_mesh.Draw(0);
 
 	gl::Enable(GL_CULL_FACE);
 }

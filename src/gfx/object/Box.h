@@ -16,9 +16,6 @@
 
 namespace gfx
 {
-	// forward-declarations
-	class Cuboid;
-	
 	// Box class
 	class Box : public LeafNode
 	{
@@ -26,14 +23,11 @@ namespace gfx
 		// functions
 		Box(Color4b color);
 		
-		void Init(Scene const & scene) override;
-		
 		virtual bool GetRenderRange(RenderRange & range) const;
 		virtual void Render() const;
 		
 	private:
 		// variables
-		Cuboid const * _cuboid;
 		Color4b _color;
 	};
 }

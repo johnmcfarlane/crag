@@ -18,9 +18,6 @@
 
 namespace gfx
 {
-	// forward-declarations
-	class SphereMesh;
-	
 	// Ball class
 	class Ball : public LeafNode
 	{
@@ -28,14 +25,11 @@ namespace gfx
 		// functions
 		Ball(Color4b color);
 		
-		void Init(Scene const & scene) override;
-		
 	private:
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render() const override;
 		
 		// variables
-		SphereMesh const * _sphere;
 		Color4b _color;
 	};
 }

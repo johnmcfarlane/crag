@@ -11,8 +11,9 @@
 
 #include "Box.h"
 
-#include "gfx/Scene.h"
 #include "gfx/Cuboid.h"
+#include "gfx/Renderer.h"
+#include "gfx/Scene.h"
 
 #include "glpp/glpp.h"
 
@@ -24,15 +25,9 @@ using namespace gfx;
 
 Box::Box(Color4b color)
 : LeafNode(Layer::foreground)
-, _cuboid(nullptr)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);
-}
-
-void Box::Init(Scene const & scene)
-{
-	_cuboid = & scene.GetCuboid();
 }
 
 bool Box::GetRenderRange(RenderRange & range) const 
@@ -63,7 +58,8 @@ void Box::Render() const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	_cuboid->Draw();
+	Cuboid const & cuboid = Daemon::Ref().GetScene().GetCuboid();
+	cuboid.Draw();
 	
 	GLPP_VERIFY;
 }

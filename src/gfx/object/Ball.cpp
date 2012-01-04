@@ -11,6 +11,7 @@
 
 #include "Ball.h"
 
+#include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
 
@@ -26,15 +27,9 @@ using namespace gfx;
 
 Ball::Ball(Color4b color)
 : LeafNode(Layer::foreground)
-, _sphere(nullptr)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);
-}
-
-void Ball::Init(Scene const & scene)
-{
-	_sphere = & scene.GetSphere();
 }
 
 bool Ball::GetRenderRange(RenderRange & range) const 
@@ -55,6 +50,7 @@ void Ball::Render() const
 {
 	gl::SetColor(_color.GetArray());
 	
+	SphereMesh const & sphere_mesh = Daemon::Ref().GetScene().GetSphere();
 	Transformation const & transformation = GetModelViewTransformation();
-	_sphere->Draw(transformation);
+	sphere_mesh.Draw(transformation);
 }
