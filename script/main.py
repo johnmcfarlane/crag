@@ -27,6 +27,7 @@ observer_z = 0
 max_shapes = 50
 shape_drop_period = .5
 cleanup_shapes = True
+spawn_vehicle = True
 
 
 def spawn_shape(shapes):
@@ -42,7 +43,7 @@ def spawn_shape(shapes):
 	x = random.random() - .5
 	y = observer_y
 	z = -4.5 + random.random()
-	r = random.choice(['ball','box'])
+	r = random.choice(['ball','ball'])
 	if r == 'ball':
 		r = math.exp(- random.random() * 2)
 		shapes.append(crag.Ball(x, y, z, r))
@@ -73,19 +74,20 @@ def main_loop():
 	o = observer(observer_x, observer_y, observer_z)
 	
 	# Create vehicle
-	v = crag.Vehicle(observer_x, observer_y + 5, observer_z, 1)
-	if False:
-		v.add_thruster(0, 0, 0, 0, 10, 0, SDL_SCANCODE_H)
-	else:
-		v.add_thruster(.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
-		v.add_thruster(.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
-		v.add_thruster(-.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
-		v.add_thruster(-.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
+	if spawn_vehicle:
+		v = crag.Vehicle(observer_x, observer_y + 5, observer_z, 1)
+		if False:
+			v.add_thruster(0, 0, 0, 0, 10, 0, SDL_SCANCODE_H)
+		else:
+			v.add_thruster(.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
+			v.add_thruster(.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
+			v.add_thruster(-.5, .5, .5, 0, 5, 0, SDL_SCANCODE_H)
+			v.add_thruster(-.5, .5, -.5, 0, 5, 0, SDL_SCANCODE_H)
 	
 	# Main loop
 	next_drop = crag.time() + shape_drop_period
 	shapes = []
-	
+
 	try:
 		# Tasklets don't get cleaned up following exceptions
 		observer_tasklet = stackless.tasklet(o.run)()
