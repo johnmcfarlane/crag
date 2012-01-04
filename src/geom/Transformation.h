@@ -22,9 +22,10 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 	// types
 	
-	typedef Matrix<S, 3, 3> Rotation;
-	typedef Matrix<S, 4, 4> Matrix;
-	typedef Vector<S, 3> Vector;
+	typedef S Scalar;
+	typedef Matrix<Scalar, 3, 3> Rotation;
+	typedef Matrix<Scalar, 4, 4> Matrix;
+	typedef Vector<Scalar, 3> Vector;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions 
@@ -55,7 +56,7 @@ public:
 	{
 	}
 	
-	Transformation(Vector const & translation, Rotation const & rotation, S scale)
+	Transformation(Vector const & translation, Rotation const & rotation, Scalar scale)
 	: _matrix(rotation[0][0] * scale, rotation[0][1] * scale, rotation[0][2] * scale, translation[0],
 			  rotation[1][0] * scale, rotation[1][1] * scale, rotation[1][2] * scale, translation[1],
 			  rotation[2][0] * scale, rotation[2][1] * scale, rotation[2][2] * scale, translation[2],
@@ -97,7 +98,11 @@ public:
 		return lhs._matrix != rhs._matrix;
 	}
 	
-	// return the translation from the transformation
+	Matrix & GetMatrix()
+	{
+		return _matrix;
+	}
+	
 	Matrix const & GetMatrix() const
 	{
 		return _matrix;
@@ -124,6 +129,13 @@ public:
 		return Vector(Length(rotation.GetColumn(0)), 
 					  Length(rotation.GetColumn(1)), 
 					  Length(rotation.GetColumn(2)));
+	}
+	
+	Vector Transform(Vector const & point) const
+	{
+		::Vector<Scalar, 4> v(point.x, point.y, point.z, Scalar(1));
+		v = _matrix * v;
+		return Vector(v.x, v.y, v.z);
 	}
 
 private:
