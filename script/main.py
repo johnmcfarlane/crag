@@ -43,7 +43,7 @@ def spawn_shape(shapes):
 	x = random.random() - .5
 	y = observer_y
 	z = -4.5 + random.random()
-	r = random.choice(['ball','ball'])
+	r = random.choice(['ball','box'])
 	if r == 'ball':
 		r = math.exp(- random.random() * 2)
 		shapes.append(crag.Ball(x, y, z, r))
