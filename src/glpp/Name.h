@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "core/debug.h"
-
 #include "glpp.h"
 
 
