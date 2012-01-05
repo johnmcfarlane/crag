@@ -45,7 +45,10 @@ namespace script
 		
 		PyObject * PollEvent();
 		
-	private:		
+		Time GetTime() const;
+		void SetTime(Time const & time);
+		
+	private:
 		static bool RedirectPythonOutput();
 
 		// variables
@@ -53,6 +56,7 @@ namespace script
 		FILE * _source_file;
 		Daemon::MessageQueue * _message_queue;
 		EventQueue _events;
+		Time _time;
 	};
 	
 }

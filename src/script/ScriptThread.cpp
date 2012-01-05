@@ -30,19 +30,21 @@
 #define FILE_LOCAL_END 
 #endif
 
-// Compiling stackless python on OS X yourself? My preference:
-// CFLAGS="-arch i386" ./configure --with-universal-archs=intel --enable-universalsdk=/Developer/SDKs/MacOSX10.6.sdk --prefix=$HOME --enable-stacklessfewerregisters
+
+using namespace script;
+
 
 FILE_LOCAL_BEGIN
+
+// This wart reflects the fact that python callbacks have no pointer to the ScriptThread object.
+ScriptThread * singleton = nullptr;
 
 ////////////////////////////////////////////////////////////////////////////////
 // crag module Functions
 
 PyObject * time(PyObject * /*self*/, PyObject * /*args*/)
 {
-	sim::Simulation & simulation = sim::Daemon::Ref();
-	
-	Time time = simulation.GetTime();
+	Time time = singleton->GetTime();
 	return Py_BuildValue("d", time);
 }
 
@@ -62,8 +64,7 @@ PyObject * sleep(PyObject * /*self*/, PyObject * args)
 
 PyObject * get_event(PyObject * /*self*/, PyObject * /*args*/)
 {
-	script::ScriptThread & script_thread = script::ScriptThread::Daemon::Ref();
-	return script_thread.PollEvent();
+	return singleton->PollEvent();
 }
 
 PyObject * set_camera(PyObject * /*self*/, PyObject * args)
@@ -96,7 +97,7 @@ PyObject * attach_bodies(PyObject * /*self*/, PyObject * args)
 		Py_RETURN_NONE;
 	}
 	
-	sim::Entity * entity1 = script::GetPtr<sim::Entity>(* o1);
+	sim::Entity * entity1 = GetPtr<sim::Entity>(* o1);
 	if (entity1 == nullptr)
 	{
 		std::cout << "attach_bodies error: first parameter isn't an Entity." << std::endl;
@@ -104,7 +105,7 @@ PyObject * attach_bodies(PyObject * /*self*/, PyObject * args)
 		
 	}
 	
-	sim::Entity * entity2 = script::GetPtr<sim::Entity>(* o2);
+	sim::Entity * entity2 = GetPtr<sim::Entity>(* o2);
 	if (entity2 == nullptr)
 	{
 		std::cout << "attach_bodies error: second parameter isn't an Entity." << std::endl;
@@ -167,7 +168,7 @@ PyObject * create_crag_module()
     PyObject & crag_module = ref(PyModule_Create(& crag_module_def));
 	
 	// Register the classes
-	script::MetaClassPoly::InitModule(crag_module);
+	MetaClassPoly::InitModule(crag_module);
     
     return & crag_module;
 }
@@ -179,7 +180,7 @@ FILE_LOCAL_END
 ////////////////////////////////////////////////////////////////////////////////
 // ScriptThread member definitions
 
-script::ScriptThread::ScriptThread()
+ScriptThread::ScriptThread()
 : _source_file(nullptr)
 , _message_queue(nullptr)
 {
@@ -205,19 +206,25 @@ script::ScriptThread::ScriptThread()
 	Py_SetProgramName(program_path);
 	
 	Py_InitializeEx(0);
+	
+	Assert(singleton == nullptr);
+	singleton = this;
 }
 
-script::ScriptThread::~ScriptThread()
+ScriptThread::~ScriptThread()
 {
+	Assert(singleton == this);
+	singleton = nullptr;
+
 	Py_Finalize();
 }
 
-void script::ScriptThread::OnQuit()
+void ScriptThread::OnQuit()
 {
 	_events.push(Py_BuildValue("si", "exit", 0));
 }
 
-void script::ScriptThread::OnEvent(SDL_Event const & event)
+void ScriptThread::OnEvent(SDL_Event const & event)
 {
 	PyObject * event_object = create_event_object(event);
 	if (event_object == nullptr)
@@ -229,7 +236,7 @@ void script::ScriptThread::OnEvent(SDL_Event const & event)
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
-void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
+void ScriptThread::Run(Daemon::MessageQueue & message_queue)
 {
 	_message_queue = & message_queue;
 	
@@ -246,7 +253,7 @@ void script::ScriptThread::Run(Daemon::MessageQueue & message_queue)
 	_message_queue = nullptr;
 }
 
-PyObject * script::ScriptThread::PollEvent()
+PyObject * ScriptThread::PollEvent()
 {
 	bool idle = _message_queue->DispatchMessages(* this) == 0;
 	
@@ -268,7 +275,17 @@ PyObject * script::ScriptThread::PollEvent()
 	return event_object;
 }
 
-bool script::ScriptThread::RedirectPythonOutput()
+Time ScriptThread::GetTime() const
+{
+	return _time;
+}
+
+void ScriptThread::SetTime(Time const & time)
+{
+	_time = time;
+}
+
+bool ScriptThread::RedirectPythonOutput()
 {
 #if defined(WIN32)
 	PyObject* sys = PyImport_ImportModule("sys");
@@ -296,4 +313,4 @@ bool script::ScriptThread::RedirectPythonOutput()
 }
 
 
-char const * script::ScriptThread::_source_filename = "./script/main.py";
+char const * ScriptThread::_source_filename = "./script/main.py";
