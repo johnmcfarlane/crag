@@ -236,8 +236,7 @@ void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
 	else
 	{
 		// This is probably ok during shut-down but would like to see it happen.
-		Assert(false);
-		delete scene;
+		delete object;
 	}
 }
 
