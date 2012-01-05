@@ -230,10 +230,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\chunk_functor.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\core\ConfigEntry.cpp"
 					>
 				</File>
@@ -327,14 +323,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\core\Statistics.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\core\TextureMapper.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\core\TextureMapper.h"
 					>
 				</File>
 			</Filter>
@@ -930,11 +918,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\gfx\Sphere.cpp"
+					RelativePath="..\..\src\gfx\SphereMesh.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\gfx\Sphere.h"
+					RelativePath="..\..\src\gfx\SphereMesh.h"
 					>
 				</File>
 				<Filter
