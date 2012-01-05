@@ -77,7 +77,7 @@ bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body const & that
 {
 	dGeomID object_geom = that_body.GetGeomId();
 	dGeomID planet_geom = GetGeomId();
-	physics::IntersectionFunctor intersection_functor(object_geom, planet_geom);
+	physics::IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
 	
 	DeferredIntersectionFunctor deferred_functor(that_body, * this, intersection_functor);	
 	engine.DeferCollision(deferred_functor);

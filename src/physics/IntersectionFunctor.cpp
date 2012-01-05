@@ -28,8 +28,8 @@ namespace
 using namespace physics;
 
 
-IntersectionFunctor::IntersectionFunctor(dGeomID object_geom, dGeomID planet_geom)
-: _physics_engine(sim::Daemon::Ref().GetPhysicsEngine())
+IntersectionFunctor::IntersectionFunctor(physics::Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom)
+: _physics_engine(physics_engine)
 {
 	ZeroObject(_contact);
 	
