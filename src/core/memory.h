@@ -1,12 +1,11 @@
-/*
- *  MemoryUtils.h
- *  Crag
- *
- *  Created by John on 11/8/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  memory.h
+//  crag
+//
+//  Created by John on 11/8/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

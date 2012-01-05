@@ -1,12 +1,11 @@
-/*
- *  Renderer.h
- *  Crag
- *
- *  Created by John on 12/19/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Renderer.h
+//  crag
+//
+//  Created by John on 12/19/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

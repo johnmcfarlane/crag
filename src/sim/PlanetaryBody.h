@@ -1,12 +1,11 @@
-/*
- *  FormationBody.h
- *  crag
- *
- *  Created by John on 6/20/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  PlanetaryBody.h
+//  crag
+//
+//  Created by John on 6/20/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

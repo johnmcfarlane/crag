@@ -1,12 +1,11 @@
-/*
- *  Entity.h
- *  Crag
- *
- *  Created by john on 5/21/09.
- *  Copyright 2009-2011 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Entity.h
+//  crag
+//
+//  Created by john on 5/21/09.
+//  Copyright 2009-2011 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

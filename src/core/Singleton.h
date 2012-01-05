@@ -1,12 +1,11 @@
-/*
- *  Singleton.h
- *  Crag
- *
- *  Created by john on 9/30/09.
- *  Copyright 2009-2011 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Singleton.h
+//  crag
+//
+//  Created by john on 9/30/09.
+//  Copyright 2009-2011 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

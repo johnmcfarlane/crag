@@ -1,13 +1,11 @@
-/*
- *  TexVbo.h
- *  Crag
- *
- *  Created by John on 12/11/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  Specialization of a Vbo with a simple Position/Texture UV pairing
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Vbo_Types.h
+//  crag
+//
+//  Created by John on 12/11/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

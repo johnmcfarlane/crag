@@ -1,12 +1,11 @@
-/*
- *  GlUtils.h
- *  Crag
- *
- *  Created by John on 12/2/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  debug.h
+//  crag
+//
+//  Created by John on 12/2/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 // Utility fns/macros for the GLPP library.
 // (Nothing directly to do with GLUT or GLU.)

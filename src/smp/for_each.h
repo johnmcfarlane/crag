@@ -1,12 +1,11 @@
-/*
- *  Scheduler.h
- *  crag
- *
- *  Created by John on 8/23/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  for_each.h
+//  crag
+//
+//  Created by John on 8/23/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

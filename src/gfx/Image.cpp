@@ -1,12 +1,11 @@
-/*
- * 	gfx/Image.cpp
- *  Crag
- *
- *  Created by John on 12/3/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Image.cpp
+//  crag
+//
+//  Created by John on 12/3/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #include "pch.h"
 

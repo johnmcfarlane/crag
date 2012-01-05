@@ -1,12 +1,11 @@
-/*
- *  App.h
- *  Crag
- *
- *  Created by John on 1/24/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  app.h
+//  crag
+//
+//  Created by John on 1/24/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

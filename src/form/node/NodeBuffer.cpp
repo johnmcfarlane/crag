@@ -1,12 +1,11 @@
-/*
- *  NodeBuffer.cpp
- *  Crag
- *
- *  Created by John on 2/17/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  NodeBuffer.cpp
+//  crag
+//
+//  Created by John on 2/17/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #include "pch.h"
 

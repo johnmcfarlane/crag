@@ -1,12 +1,11 @@
-/*
- *  DoubleBuffer.h
- *  crag
- *
- *  Created by John on 9/17/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  double_buffer.h
+//  crag
+//
+//  Created by John on 9/17/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

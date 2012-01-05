@@ -1,12 +1,11 @@
-/*
- *  defs.h
- *  crag
- *
- *  Created by John on 6/25/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  defs.h
+//  crag
+//
+//  Created by John on 6/25/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 

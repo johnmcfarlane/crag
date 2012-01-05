@@ -1,6 +1,6 @@
 //
 //  Vector4.h
-//  Crag
+//  crag
 //
 //  Created by john on 5/14/09.
 //  Copyright 2009 - 2011 John McFarlane. All rights reserved.

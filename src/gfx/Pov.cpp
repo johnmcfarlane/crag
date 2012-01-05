@@ -1,12 +1,11 @@
-/*
- *  Pov.cpp
- *  Crag
- *
- *  Created by John on 1/7/10.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Pov.cpp
+//  crag
+//
+//  Created by John on 1/7/10.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #include "pch.h"
 

@@ -1,12 +1,11 @@
-/*
- *  gfx/Font.cpp
- *  Crag
- *
- *  Created by John on 04/17/2010.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Font.cpp
+//  crag
+//
+//  Created by John on 04/17/2010.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #include "pch.h"
 

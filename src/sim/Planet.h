@@ -1,12 +1,11 @@
-/*
- *  sim/Planet.h
- *  Crag
- *
- *  Created by john on 4/13/09.
- *  Copyright 2009, 2010 John McFarlane. All rights reserved.
- *  This program is distributed under the terms of the GNU General Public License.
- *
- */
+//
+//  Planet.h
+//  crag
+//
+//  Created by john on 4/13/09.
+//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
 
 #pragma once
 
