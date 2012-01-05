@@ -54,6 +54,16 @@ template<typename T> void Clamp(T & val, T const & min, T const & max)
 	}
 }
 
+template <typename T>
+bool Signbit(T value)
+{
+#if defined(WIN32)
+	return value < 0;
+#else
+	return std::signbit(value);
+#endif
+}
+
 template<typename T> T Abs(T const & val)
 {
 	return std::abs(val);
