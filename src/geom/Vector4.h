@@ -21,7 +21,15 @@ public:
 	//typedef S S;
 	
 	Vector() { }
-	template<typename RHS_S> Vector(Vector<RHS_S, 4> const & rhs) : x(rhs.x), y(rhs.y), z(rhs.z), w(rhs.w) { }
+
+	template<typename RHS_S> 
+	Vector(Vector<RHS_S, 4> const & rhs) 
+		: x(static_cast<S>(rhs.x))
+		, y(static_cast<S>(rhs.y))
+		, z(static_cast<S>(rhs.z))
+		, w(static_cast<S>(rhs.w)) 
+	{ 
+	}
 
 	template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) 
 		: x(static_cast<S>(rhs_x))
