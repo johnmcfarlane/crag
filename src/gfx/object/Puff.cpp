@@ -39,9 +39,9 @@ void Puff::Init(Scene const & scene)
 	_spawn_time = scene.GetTime() - (Random::sequence.GetUnit<double>() / 60.);
 }
 
-gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
 {
-	Time age = CalculateAge();
+	Time age = CalculateAge(time);
 	
 	gfx::Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
 	
@@ -50,9 +50,10 @@ gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_vi
 	return scratch;
 }
 
-LeafNode::PreRenderResult Puff::PreRender() override
+LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
 {
-	Time age = CalculateAge();
+	Time time = renderer.GetScene().GetTime();
+	Time age = CalculateAge(time);
 	
 	_radius = SphereRadiusFromVolume<Scalar, 3>(_spawn_volume);
 	_radius += 0.5 * age;
@@ -70,24 +71,22 @@ LeafNode::PreRenderResult Puff::PreRender() override
 	return ok;
 }
 
-void Puff::Render() const
+void Puff::Render(Renderer const & renderer) const
 {
 	//Transformation const & transformation = GetModelViewTransformation();
 
 	gl::Disable(GL_CULL_FACE);
 	gl::SetColor(_color.GetArray());
 
-	SphereMesh const & sphere_mesh = Daemon::Ref().GetScene().GetSphere();
+	SphereMesh const & sphere_mesh = renderer.GetScene().GetSphere();
 
 	sphere_mesh.Draw(0);
 
 	gl::Enable(GL_CULL_FACE);
 }
 
-Time Puff::CalculateAge() const
+Time Puff::CalculateAge(Time time) const
 {
-	Renderer const & renderer = Daemon::Ref();
-	Time time = renderer.GetScene().GetTime();
 	Time age = time - _spawn_time;
 	return age;
 }

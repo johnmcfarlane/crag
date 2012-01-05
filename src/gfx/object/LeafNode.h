@@ -16,6 +16,9 @@
 
 namespace gfx
 {
+	// forward-declaration
+	class Renderer;
+	
 	// An element of the scene which can be drawn.
 	class LeafNode : public Object
 	{
@@ -48,10 +51,10 @@ namespace gfx
 		virtual bool GetRenderRange(RenderRange & range) const;
 		
 		// Perform any necessary preparation for rendering.
-		virtual PreRenderResult PreRender();
+		virtual PreRenderResult PreRender(Renderer const & renderer);
 		
 		// Draw the object.
-		virtual void Render() const;
+		virtual void Render(Renderer const & renderer) const;
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

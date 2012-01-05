@@ -52,7 +52,7 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-gfx::Transformation const & Skybox::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Skybox::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
@@ -60,7 +60,7 @@ gfx::Transformation const & Skybox::Transform(gfx::Transformation const & model_
 	return scratch;
 }
 
-void Skybox::Render() const
+void Skybox::Render(Renderer const & renderer) const
 {
 	// clear the depth buffer
 	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));

@@ -27,7 +27,7 @@ namespace gfx
 		
 	private:
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render() const override;
+		void Render(Renderer const & renderer) const override;
 		
 		// variables
 		Color4b _color;

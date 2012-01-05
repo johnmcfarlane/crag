@@ -17,7 +17,6 @@
 #include "Pov.h"
 #include "Scene.h"
 #include "object/BranchNode.h"
-#include "object/for_each_leaf.h"
 #include "object/LeafNode.h"
 
 #include "form/FormationManager.h"
@@ -581,7 +580,7 @@ void Renderer::PreRender()
 		LeafNode & leaf_node = * i;
 		++ i;
 		
-		LeafNode::PreRenderResult result = leaf_node.PreRender();
+		LeafNode::PreRenderResult result = leaf_node.PreRender(* this);
 		
 		switch (result)
 		{
@@ -596,44 +595,51 @@ void Renderer::PreRender()
 	}
 }
 
-namespace
+void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transformation const & model_view_transformation)
 {
-	class UpdateTransformationsFunctor
+	Transformation scratch;
+	
+	for (ObjectBase::ChildList::iterator i = parent_branch.Begin(), end = parent_branch.End(); i != end; )
 	{
-	public:
-		UpdateTransformationsFunctor(Scene & scene)
-		: _scene(scene)
-		{
-		}
+		Object & child = static_cast<Object &>(* i);
+		++ i;
 		
-		bool operator() (Object & object) const
+		Transformation const & child_model_view_transformation = child.Transform(model_view_transformation, scratch, scene->GetTime());
+		
+		switch (child.GetNodeType())
 		{
-			BranchNode * branch_node = object.CastBranchNodePtr();
-			if (branch_node != nullptr && branch_node->IsEmpty())
+			default:
+				Assert(false);
+				
+			case Object::branch:
 			{
-				_scene.RemoveObject(branch_node->GetUid());
-				return false;
+				BranchNode & child_branch = child.CastBranchNodeRef();
+				if (child_branch.IsEmpty())
+				{
+					scene->RemoveObject(child_branch.GetUid());
+					continue;
+				}
+				
+				UpdateTransformations(child_branch, child_model_view_transformation);
+				break;
 			}
-			return true;
+				
+			case Object::leaf:
+			{
+				LeafNode & child_leaf = child.CastLeafNodeRef();
+				LeafNode::Transformation transformation(child_model_view_transformation);
+				child_leaf.SetModelViewTransformation(transformation);
+				break;
+			}
 		}
-		
-		void operator() (LeafNode & leaf_node, gfx::Transformation const & transformation)
-		{
-			LeafNode::Transformation model_view_transformation(transformation);
-			leaf_node.SetModelViewTransformation(model_view_transformation);
-		}
-		
-	private:
-		Scene & _scene;
-	};
+	}
 }
 
 void Renderer::UpdateTransformations()
 {
-	BranchNode & branch_node = scene->GetRoot();
-	UpdateTransformationsFunctor functor(ref(scene));
-	
-	for_each_leaf<UpdateTransformationsFunctor>(branch_node, functor);
+	BranchNode & root_node = scene->GetRoot();
+	Transformation const & root_transformation = root_node.GetTransformation();
+	UpdateTransformations(root_node, root_transformation);
 	
 	scene->SortRenderList();
 }
@@ -847,7 +853,7 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque) const
 			Transformation const & transformation = leaf_node.GetModelViewTransformation();
 			Pov::SetModelViewMatrix(transformation);
 
-			leaf_node.Render();
+			leaf_node.Render(* this);
 			++ num_rendered_objects;
 		}
 	}
@@ -984,6 +990,3 @@ void Renderer::SetFence(gl::Fence & fence)
 		gl::SetFence(fence);
 	}
 }
-
-
-Daemon * Renderer::singleton = nullptr;

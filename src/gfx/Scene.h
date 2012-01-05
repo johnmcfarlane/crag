@@ -42,21 +42,6 @@ namespace gfx
 		void RemoveObject(Uid uid);
 		void SortRenderList();
 		
-		template <typename OBJECT> 
-		void UpdateObject(Uid uid, typename OBJECT::UpdateParams const & params)
-		{
-			ObjectMap::iterator i = _objects.find(uid);
-			if (i == _objects.end())
-			{
-				// Presumably, the object was removed by script thread
-				// but a pending update message came in from simulation.
-				return;
-			}
-			
-			OBJECT & object = static_cast<OBJECT &>(* i->second);
-			object.Update(params);
-		}
-		
 		ObjectMap & GetObjectMap();
 		ObjectMap const & GetObjectMap() const;
 		

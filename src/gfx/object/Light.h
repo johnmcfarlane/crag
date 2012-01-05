@@ -40,7 +40,7 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		void Deinit() override;
 		
-		virtual void Render() const;
+		virtual void Render(Renderer const & renderer) const;
 		
 		// variables
 	private:

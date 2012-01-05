@@ -42,19 +42,17 @@ Thruster::Thruster()
 {
 }
 
-void Thruster::Update(UpdateParams const & params)
+void Thruster::Update(UpdateParams const & params, Renderer & renderer)
 {
 	float thrust_factor = params.thrust_factor;
 	if (thrust_factor != 0)
 	{
-		AddPuff(thrust_factor);
+		AddPuff(thrust_factor, renderer);
 	}
 }
 
-void Thruster::AddPuff(float thrust_factor)
+void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
 {
-	Renderer & renderer = Daemon::Ref();
-	
 	Uid parent_uid;
 	{
 		// Create BranchNode to store the positional information of the puff.

@@ -350,7 +350,6 @@
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52A50C98147DF0D70061A909 /* BranchNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchNode.cpp; sourceTree = "<group>"; };
 		52A50C99147DF0D70061A909 /* BranchNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNode.h; sourceTree = "<group>"; };
-		52A50C9A147DF0D70061A909 /* for_each_leaf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each_leaf.h; sourceTree = "<group>"; };
 		52A50C9B147DF0D70061A909 /* LeafNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LeafNode.cpp; sourceTree = "<group>"; };
 		52A50C9C147DF0D70061A909 /* LeafNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeafNode.h; sourceTree = "<group>"; };
 		52A50CA7147F763F0061A909 /* Renderer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Renderer.inl; sourceTree = "<group>"; };
@@ -742,7 +741,6 @@
 				52A50CAD147F7B270061A909 /* Thruster.h */,
 				52A50C98147DF0D70061A909 /* BranchNode.cpp */,
 				52A50C99147DF0D70061A909 /* BranchNode.h */,
-				52A50C9A147DF0D70061A909 /* for_each_leaf.h */,
 				52A50C9B147DF0D70061A909 /* LeafNode.cpp */,
 				52A50C9C147DF0D70061A909 /* LeafNode.h */,
 				528163F91454F5DB0017E868 /* Ball.cpp */,

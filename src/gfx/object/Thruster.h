@@ -32,8 +32,8 @@ namespace gfx
 		// functions
 		Thruster();
 		
-		void Update(UpdateParams const & params);
+		void Update(UpdateParams const & params, Renderer & renderer);
 	private:
-		void AddPuff(float thrust_factor);
+		void AddPuff(float thrust_factor, Renderer & renderer);
 	};
 }

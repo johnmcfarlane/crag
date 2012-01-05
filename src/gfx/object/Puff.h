@@ -25,14 +25,14 @@ namespace gfx
 	private:
 		void Init(Scene const & scene) override;
 		
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const override;
 		
-		PreRenderResult PreRender() override;
+		PreRenderResult PreRender(Renderer const & renderer) override;
 		
 		// Draw the object.
-		void Render() const override;
+		void Render(Renderer const & renderer) const override;
 		
-		Time CalculateAge() const;
+		Time CalculateAge(Time time) const;
 		
 		// variables
 		Scalar _spawn_volume;

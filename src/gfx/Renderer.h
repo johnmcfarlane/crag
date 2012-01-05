@@ -32,6 +32,7 @@ namespace sim
 namespace gfx
 {
 	// forward-declarations
+	class BranchNode;
 	class Scene;
 	
 
@@ -92,6 +93,7 @@ namespace gfx
 		bool HasShadowSupport() const;
 		
 		void PreRender();
+		void UpdateTransformations(BranchNode & node, gfx::Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
 		void RenderScene() const;
@@ -151,6 +153,6 @@ namespace gfx
 		
 		gl::Fence _fence1, _fence2;
 		
-		static Daemon * singleton;
+		//static Daemon * singleton;
 	};
 }

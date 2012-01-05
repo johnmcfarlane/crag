@@ -28,10 +28,10 @@ namespace gfx
 		// functions
 		Planet();
 		
-		virtual void Update(UpdateParams const & params);
+		virtual void Update(UpdateParams const & params, Renderer & renderer);
 	private:
 		virtual bool GetRenderRange(RenderRange & range) const;
-		virtual void Render() const;
+		virtual void Render(Renderer const & renderer) const;
 		
 		// variables
 		UpdateParams _salient;

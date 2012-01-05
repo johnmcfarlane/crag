@@ -13,9 +13,21 @@
 template <typename OBJECT> 
 void gfx::Renderer::OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params)
 {
-	if (scene != nullptr)
+	if (scene == nullptr)
 	{
-		// Need to include Scene.h wherever this is referred to.
-		scene->UpdateObject<OBJECT>(uid, params);
+		return;
 	}
+
+	// Need to include Scene.h wherever this is referred to.
+	ObjectMap & objects = scene->GetObjectMap();
+	ObjectMap::iterator i = objects.find(uid);
+	if (i == objects.end())
+	{
+		// Presumably, the object was removed by script thread
+		// but a pending update message came in from simulation.
+		return;
+	}
+
+	OBJECT & object = static_cast<OBJECT &>(* i->second);
+	object.Update(params, * this);
 }

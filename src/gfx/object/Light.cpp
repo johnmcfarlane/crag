@@ -71,7 +71,7 @@ void Light::Deinit()
 	GLPP_CALL(gl::Disable(light_id));
 }
 
-void Light::Render() const
+void Light::Render(Renderer const & renderer) const
 {
 	GLPP_CALL(glLightfv(light_id, GL_AMBIENT, Color4f(0, 0, 0)));
 	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, color));

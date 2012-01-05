@@ -23,8 +23,8 @@ namespace gfx
 		// functions
 		Box(Color4b color);
 		
-		virtual bool GetRenderRange(RenderRange & range) const;
-		virtual void Render() const;
+		bool GetRenderRange(RenderRange & range) const override;
+		void Render(Renderer const & renderer) const override;
 		
 	private:
 		// variables

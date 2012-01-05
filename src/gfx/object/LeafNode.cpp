@@ -66,12 +66,12 @@ bool LeafNode::GetRenderRange(RenderRange & range) const
 	return false;
 }
 
-LeafNode::PreRenderResult LeafNode::PreRender()
+LeafNode::PreRenderResult LeafNode::PreRender(Renderer const & renderer)
 {
 	return ok;
 }
 
-void LeafNode::Render() const
+void LeafNode::Render(Renderer const & renderer) const
 {
 	Assert(false);
 }

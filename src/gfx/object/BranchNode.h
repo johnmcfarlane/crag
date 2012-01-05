@@ -16,6 +16,9 @@
 
 namespace gfx
 {
+	// forward-declaration
+	class Renderer;
+	
 	// An object which contains sub-objects
 	class BranchNode : public Object
 	{
@@ -52,13 +55,13 @@ namespace gfx
 		ChildList::const_iterator End() const;
 		
 		// Model-view transformation
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const override;
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		
 		Transformation GetModelTransformation() const;
 		
-		void Update(UpdateParams const & params);
+		void Update(UpdateParams const & params, Renderer & renderer);
 		
 	private:
 		BranchNode * CastListObject() override;

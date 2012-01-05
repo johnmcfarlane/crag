@@ -46,11 +46,11 @@ bool Ball::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Ball::Render() const
+void Ball::Render(Renderer const & renderer) const
 {
 	gl::SetColor(_color.GetArray());
 	
-	SphereMesh const & sphere_mesh = Daemon::Ref().GetScene().GetSphere();
+	SphereMesh const & sphere_mesh = renderer.GetScene().GetSphere();
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_mesh.Draw(transformation);
 }

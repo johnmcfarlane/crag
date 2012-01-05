@@ -33,13 +33,13 @@ namespace gfx
 		void Init(Scene const & scene) override;
 		void Deinit() override;
 
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const override;
 
-		void Update(UpdateParams const & params);
+		void Update(UpdateParams const & params, Renderer & renderer);
 		
 	private:
-		virtual PreRenderResult PreRender();
-		virtual void Render() const;
+		PreRenderResult PreRender(Renderer const & renderer) override;
+		void Render(Renderer const & renderer) const override;
 		
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();

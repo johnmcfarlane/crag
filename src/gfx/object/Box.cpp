@@ -50,7 +50,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Box::Render() const
+void Box::Render(Renderer const & renderer) const
 {
 	GLPP_VERIFY;
 	
@@ -58,7 +58,7 @@ void Box::Render() const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	Cuboid const & cuboid = Daemon::Ref().GetScene().GetCuboid();
+	Cuboid const & cuboid = renderer.GetScene().GetCuboid();
 	cuboid.Draw();
 	
 	GLPP_VERIFY;

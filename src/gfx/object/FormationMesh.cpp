@@ -76,7 +76,7 @@ void FormationMesh::Deinit()
 	delete _pending_mesh;
 }
 
-void FormationMesh::Update(UpdateParams const & params)
+void FormationMesh::Update(UpdateParams const & params, Renderer & renderer)
 {
 	form::Mesh * mesh = params;
 	
@@ -93,7 +93,7 @@ void FormationMesh::Update(UpdateParams const & params)
 	_queued_mesh = mesh;
 }
 
-LeafNode::PreRenderResult FormationMesh::PreRender()
+LeafNode::PreRenderResult FormationMesh::PreRender(Renderer const & renderer)
 {
 	FinishBufferUpload();
 	BeginBufferUpload();
@@ -106,14 +106,14 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 	return ok;
 }
 
-gfx::Transformation const & FormationMesh::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & FormationMesh::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	scratch = model_view * sim::Transformation(front_buffer.GetOrigin());
 	return scratch;
 }
 
-void FormationMesh::Render() const
+void FormationMesh::Render(Renderer const & renderer) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)

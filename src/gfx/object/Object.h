@@ -55,7 +55,7 @@ namespace gfx
 		virtual void Init(Scene const & scene);	// called on arrival in render thread 
 		virtual void Deinit();
 		
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const;
+		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const;
 		
 		Uid GetUid() const;
 		

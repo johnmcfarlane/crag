@@ -26,7 +26,7 @@ Planet::Planet()
 {
 }
 
-void Planet::Update(UpdateParams const & params)
+void Planet::Update(UpdateParams const & params, Renderer & renderer)
 {
 	_salient = params;
 }
@@ -44,7 +44,7 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render() const 
+void Planet::Render(Renderer const & renderer) const 
 { 
 	// actual drawing is taken care of by the formation manager
 }
