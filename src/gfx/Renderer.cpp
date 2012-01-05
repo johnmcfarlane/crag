@@ -918,6 +918,10 @@ void Renderer::ProcessRenderTiming()
 		// There is no sync.
 		pre_sync = post_sync = app::GetTime();
 	}
+	
+	Assert(last_frame_time <= pre_sync);
+	Assert(pre_sync <= post_sync);
+	
 	Time vsync_time = post_sync - pre_sync;
 	STAT_SET(vsync_time, vsync_time);
 
@@ -944,6 +948,8 @@ void Renderer::ProcessRenderTiming()
 	}
 
 	float fitness = float(target_frame_duration / busy_time);
+	Assert(fitness >= 0);
+	
 	form::Daemon::Call(fitness, & form::FormationManager::OnRegulatorSetFrame);
 }
 
