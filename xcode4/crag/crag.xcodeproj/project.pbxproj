@@ -24,7 +24,6 @@
 		528164731454F5DB0017E868 /* profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281639A1454F5DB0017E868 /* profile.cpp */; };
 		528164741454F5DB0017E868 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281639C1454F5DB0017E868 /* Random.cpp */; };
 		528164751454F5DB0017E868 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163A01454F5DB0017E868 /* Statistics.cpp */; };
-		528164761454F5DB0017E868 /* TextureMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163A21454F5DB0017E868 /* TextureMapper.cpp */; };
 		528164771454F5DB0017E868 /* Formation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163B41454F5DB0017E868 /* Formation.cpp */; };
 		528164781454F5DB0017E868 /* FormationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163B61454F5DB0017E868 /* FormationManager.cpp */; };
 		528164791454F5DB0017E868 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528163B91454F5DB0017E868 /* CalculateNodeScoreFunctor.cpp */; };
@@ -145,7 +144,6 @@
 		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		528163881454F5DB0017E868 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		5281638A1454F5DB0017E868 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
-		5281638B1454F5DB0017E868 /* chunk_functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk_functor.h; sourceTree = "<group>"; };
 		5281638C1454F5DB0017E868 /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
 		5281638D1454F5DB0017E868 /* ConfigEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigEntry.h; sourceTree = "<group>"; };
 		5281638E1454F5DB0017E868 /* ConfigManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigManager.cpp; sourceTree = "<group>"; };
@@ -168,8 +166,6 @@
 		5281639F1454F5DB0017E868 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		528163A01454F5DB0017E868 /* Statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Statistics.cpp; sourceTree = "<group>"; };
 		528163A11454F5DB0017E868 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
-		528163A21454F5DB0017E868 /* TextureMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMapper.cpp; sourceTree = "<group>"; };
-		528163A31454F5DB0017E868 /* TextureMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureMapper.h; sourceTree = "<group>"; };
 		528163B31454F5DB0017E868 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		528163B41454F5DB0017E868 /* Formation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Formation.cpp; sourceTree = "<group>"; };
 		528163B51454F5DB0017E868 /* Formation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Formation.h; sourceTree = "<group>"; };
@@ -256,7 +252,7 @@
 		5281640B1454F5DB0017E868 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		5281640C1454F5DB0017E868 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		5281640D1454F5DB0017E868 /* SphereMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereMesh.cpp; sourceTree = "<group>"; };
-		5281640E1454F5DB0017E868 /* SphereMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SphereMesh.h; sourceTree = "<group>"; };
+		5281640E1454F5DB0017E868 /* SphereMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereMesh.h; sourceTree = "<group>"; };
 		528164101454F5DB0017E868 /* BufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferObject.h; sourceTree = "<group>"; };
 		528164111454F5DB0017E868 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		528164121454F5DB0017E868 /* Fence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
@@ -488,7 +484,6 @@
 				521192DA14AD919C0061F899 /* memory.cpp */,
 				521192DB14AD919D0061F899 /* memory.h */,
 				5281638A1454F5DB0017E868 /* array.h */,
-				5281638B1454F5DB0017E868 /* chunk_functor.h */,
 				5281638C1454F5DB0017E868 /* ConfigEntry.cpp */,
 				5281638D1454F5DB0017E868 /* ConfigEntry.h */,
 				5281638E1454F5DB0017E868 /* ConfigManager.cpp */,
@@ -511,8 +506,6 @@
 				5281639F1454F5DB0017E868 /* Singleton.h */,
 				528163A01454F5DB0017E868 /* Statistics.cpp */,
 				528163A11454F5DB0017E868 /* Statistics.h */,
-				528163A21454F5DB0017E868 /* TextureMapper.cpp */,
-				528163A31454F5DB0017E868 /* TextureMapper.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -1011,7 +1004,6 @@
 				528164731454F5DB0017E868 /* profile.cpp in Sources */,
 				528164741454F5DB0017E868 /* Random.cpp in Sources */,
 				528164751454F5DB0017E868 /* Statistics.cpp in Sources */,
-				528164761454F5DB0017E868 /* TextureMapper.cpp in Sources */,
 				528164771454F5DB0017E868 /* Formation.cpp in Sources */,
 				528164781454F5DB0017E868 /* FormationManager.cpp in Sources */,
 				528164791454F5DB0017E868 /* CalculateNodeScoreFunctor.cpp in Sources */,
