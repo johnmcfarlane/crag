@@ -60,6 +60,7 @@ namespace gl
 		
 		void DrawTris(GLint first, GLsizei count) const
 		{
+			assert((count % 3) == 0);
 			Draw(GL_TRIANGLES, first, count);
 		}
 		
