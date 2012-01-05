@@ -189,9 +189,9 @@ template<typename S> Vector<S, 3> Perpendicular(Vector<S, 3> const & v)
 	typedef Vector<S, 3> Vector;
 
 	Vector a = Abs(v);
-	unsigned uyx = std::signbit(a.x - a.y);
-	unsigned uzx = std::signbit(a.x - a.z);
-	unsigned uzy = std::signbit(a.y - a.z);
+	unsigned uyx = Signbit(a.x - a.y);
+	unsigned uzx = Signbit(a.x - a.z);
+	unsigned uzy = Signbit(a.y - a.z);
 
 	unsigned xm = uyx & uzx;
 	unsigned ym = (1^xm) & uzy;
