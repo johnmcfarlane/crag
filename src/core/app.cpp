@@ -253,7 +253,15 @@ bool app::HasFocus()
 Time app::GetTime()
 {
 #if defined(__APPLE__)
+#if defined(NDEBUG)
 	return CFAbsoluteTimeGetCurrent ();
+#else
+	static Time last_time = - std::numeric_limits<Time>::max();
+	Time time = CFAbsoluteTimeGetCurrent ();
+	Assert(! (last_time > time));
+	last_time = time;
+	return time;
+#endif
 #elif defined(WIN32)
 	LARGE_INTEGER performance_count;
 	if (QueryPerformanceCounter(& performance_count) == FALSE)
