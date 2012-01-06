@@ -693,10 +693,10 @@ void Renderer::RenderBackground() const
 
 void Renderer::RenderForeground() const
 {
-	// Adjust near and far plane
+	// Adjust near and far plane.
 	SetForegroundFrustum(* scene);
 	
-	// Set state
+	// Set up lights.
 	if (lighting)
 	{
 		gl::Enable(GL_LIGHTING);
@@ -704,6 +704,7 @@ void Renderer::RenderForeground() const
 		RenderLayer(Layer::light);
 	}
 	
+	// Draw material objects.
 	if (wireframe)
 	{
 		RenderForegroundPass(WireframePass1);
