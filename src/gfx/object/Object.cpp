@@ -44,12 +44,12 @@ void Object::Verify() const
 }
 #endif
 
-bool Object::Init(Renderer const & renderer)
+bool Object::Init(Scene & scene)
 {
 	return true;
 }
 
-void Object::Deinit()
+void Object::Deinit(Scene & scene)
 {
 }
 

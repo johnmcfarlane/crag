@@ -33,7 +33,7 @@ Light::Light(Color4f const & col, float a, float b, float c, bool init_shadows)
 {
 }
 
-bool Light::Init(Renderer const & renderer)
+bool Light::Init(Scene & scene)
 {
 	for (int light_index = 0; light_index < 8; ++ light_index)
 	{
@@ -56,7 +56,7 @@ bool Light::Init(Renderer const & renderer)
 	return false;
 }
 
-void Light::Deinit()
+void Light::Deinit(Scene & scene)
 {
 	// Get the corresponding bit in the used slot map.
 	int light_index = light_id - GL_LIGHT0;

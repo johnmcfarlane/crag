@@ -37,8 +37,8 @@ namespace gfx
 		// functions
 		Light(Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
 		
-		bool Init(Renderer const & renderer) override;
-		void Deinit() override;
+		bool Init(Scene & scene) override;
+		void Deinit(Scene & scene) override;
 		
 		virtual void Render(Renderer const & renderer) const;
 		

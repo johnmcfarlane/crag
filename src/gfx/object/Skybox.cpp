@@ -26,13 +26,13 @@ Skybox::Skybox()
 {
 }
 
-bool Skybox::Init(Renderer const & renderer)
+bool Skybox::Init(Scene & scene)
 {
 	InitVerts();
 	return true;
 }
 
-void Skybox::Deinit()
+void Skybox::Deinit(Scene & scene)
 {
 	gl::DeleteBuffer(vbo);
 	

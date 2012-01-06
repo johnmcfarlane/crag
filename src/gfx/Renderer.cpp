@@ -417,7 +417,7 @@ bool Renderer::InitObject(Object & object)
 		return false;
 	}
 	
-	return object.Init(* this);
+	return object.Init(* scene);
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.

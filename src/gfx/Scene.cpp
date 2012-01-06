@@ -175,7 +175,7 @@ void Scene::RemoveObject(Uid uid)
 	}
 	
 	// Finally, deinitialize ...
-	object->Deinit();
+	object->Deinit(* this);
 	
 	// and delete. (Object removes itself from parent list here.)
 	delete object;
