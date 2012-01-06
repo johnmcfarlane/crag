@@ -138,7 +138,7 @@ namespace
 			LeafNode const & leaf_node = * i;
 			
 			// if in the foreground layer,
-			if (! leaf_node.IsInLayer(Layer::foreground))
+			if (leaf_node.GetLayer() != Layer::foreground)
 			{
 				continue;
 			}
@@ -851,15 +851,22 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque) const
 	{
 		LeafNode const & leaf_node = * i;
 		
-		if (leaf_node.IsInLayer(layer) && leaf_node.IsOpaque() == opaque)
+		if (leaf_node.GetLayer() != layer)
 		{
-			// Set the matrix.
-			Transformation const & transformation = leaf_node.GetModelViewTransformation();
-			Pov::SetModelViewMatrix(transformation);
-
-			leaf_node.Render(* this);
-			++ num_rendered_objects;
+			continue;
 		}
+		
+		if (leaf_node.IsOpaque() != opaque)
+		{
+			continue;
+		}
+		
+		// Set the matrix.
+		Transformation const & transformation = leaf_node.GetModelViewTransformation();
+		Pov::SetModelViewMatrix(transformation);
+
+		leaf_node.Render(* this);
+		++ num_rendered_objects;
 	}
 	
 	return num_rendered_objects;

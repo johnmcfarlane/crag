@@ -25,15 +25,4 @@ void Layer::Verify(type layer)
 	Assert(layer < Layer::end);
 }
 
-void Layer::Verify(Map::type map)
-{
-	VerifyTrue((map & ~((1 << num) - 1)) == 0);
-}
-
 #endif
-
-Layer::Map::type Layer::ToMap(type layer)
-{
-	Verify(layer);
-	return static_cast<Map::type>(1 << layer);
-}

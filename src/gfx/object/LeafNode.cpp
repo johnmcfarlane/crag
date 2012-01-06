@@ -18,15 +18,9 @@
 using namespace gfx;
 
 LeafNode::LeafNode(Layer::type layer)
-: Object(leaf, ToMap(layer))
+: Object(leaf)
 , _render_sort_key(0)
-, _is_opaque(true)
-{
-}
-
-LeafNode::LeafNode(Layer::Map::type layers)
-: Object(leaf, layers)
-, _render_sort_key(0)
+, _layer(layer)
 , _is_opaque(true)
 {
 }
@@ -49,6 +43,11 @@ LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
 	return lhs._render_sort_key < rhs._render_sort_key;
+}
+
+Layer::type LeafNode::GetLayer() const
+{
+	return _layer;
 }
 
 bool LeafNode::IsOpaque() const

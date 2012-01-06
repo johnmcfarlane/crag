@@ -38,7 +38,7 @@ namespace
 // gfx::Thruster member definitions
 
 Thruster::Thruster()
-: LeafNode(Layer::Map::none)
+: LeafNode(Layer::none)
 {
 }
 

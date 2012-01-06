@@ -18,11 +18,10 @@
 using namespace gfx;
 
 
-Object::Object(NodeType node_type, Layer::Map::type layers)
+Object::Object(NodeType node_type)
 : _parent(nullptr)
 , _uid(Uid::Create())
 , _node_type(node_type)
-, _layers(layers)
 { 
 }
 
@@ -39,7 +38,6 @@ void Object::Verify() const
 {
 	ChildList::verify(* this);
 	
-	Layer::Verify(_layers);
 	VerifyTrue(_node_type == branch || _node_type == leaf);
 }
 #endif
@@ -61,33 +59,6 @@ gfx::Transformation const & Object::Transform(gfx::Transformation const & model_
 Uid Object::GetUid() const
 {
 	return _uid;
-}
-
-bool Object::IsInLayer(Layer::type layer) const
-{
-	Layer::Verify(layer);
-	
-	return (_layers & Layer::ToMap(layer)) != 0;
-}
-
-bool Object::IsInLayers(Layer::Map::type layers) const
-{
-	Layer::Verify(layers);
-	
-	return (_layers & layers) != 0;
-}
-
-Layer::Map::type Object::GetLayers() const
-{
-	return _layers;
-}
-
-// typically called by derived class
-void Object::AddToLayers(Layer::Map::type layers)
-{
-	Layer::Verify(layers);
-	
-	_layers |= layers;
 }
 
 Object::NodeType Object::GetNodeType() const

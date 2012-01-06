@@ -20,7 +20,7 @@ using namespace gfx;
 
 
 BranchNode::BranchNode()
-: Object(branch, Layer::Map::none)
+: Object(branch)
 , _transformation(Transformation::Matrix::Identity())
 {
 }
@@ -46,12 +46,6 @@ bool BranchNode::IsEmpty() const
 
 void BranchNode::AddChild(Object & child)
 {
-	Layer::Map::type child_map = child.GetLayers();
-	for (BranchNode * ancestor = this; ancestor != nullptr; ancestor = ancestor->GetParent())
-	{
-		ancestor->AddToLayers(child_map);
-	}	
-	
 	Assert(child.GetParent() == nullptr);
 	child.SetParent(this);
 	

@@ -11,6 +11,8 @@
 
 #include "Object.h"
 
+#include "gfx/Layer.h"
+
 #include "geom/Transformation.h"
 
 
@@ -38,11 +40,12 @@ namespace gfx
 		// functions
 
 		LeafNode(Layer::type layer);
-		LeafNode(Layer::Map::type layers);
 		
 		void SetModelViewTransformation(Transformation const & model_view_transformation);
 		Transformation const & GetModelViewTransformation() const;
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
+		
+		Layer::type GetLayer() const;
 		
 		bool IsOpaque() const;
 		void SetIsOpaque(bool is_opaque);
@@ -67,6 +70,7 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(LeafNode, RenderList);
 		
 		float _render_sort_key;
+		Layer::type _layer;
 		bool _is_opaque;
 	};
 }

@@ -10,7 +10,6 @@
 #pragma once
 
 #include "gfx/defs.h"
-#include "gfx/Layer.h"
 
 
 namespace gfx
@@ -45,7 +44,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(NodeType node_type, Layer::Map::type layers = Layer::Map::none);
+		Object(NodeType node_type);
 		virtual ~Object();
 		
 #if defined(VERIFY)
@@ -58,15 +57,6 @@ namespace gfx
 		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const;
 		
 		Uid GetUid() const;
-		
-		// returns true iff this object belongs in the given render layer;
-		// currently must remain invariant
-		bool IsInLayer(Layer::type layer) const;
-		bool IsInLayers(Layer::Map::type layers) const;
-		Layer::Map::type GetLayers() const;
-		
-		// typically called by derived class
-		void AddToLayers(Layer::Map::type layers);
 		
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;
@@ -93,6 +83,5 @@ namespace gfx
 		BranchNode * _parent;
 		Uid const _uid;
 		NodeType const _node_type;
-		Layer::Map::type _layers;
 	};
 }
