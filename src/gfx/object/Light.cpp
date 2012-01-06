@@ -33,7 +33,7 @@ Light::Light(Color4f const & col, float a, float b, float c, bool init_shadows)
 {
 }
 
-void Light::Init(Scene const & scene)
+bool Light::Init(Scene const & scene)
 {
 	for (int light_index = 0; light_index < 8; ++ light_index)
 	{
@@ -48,12 +48,12 @@ void Light::Init(Scene const & scene)
 			
 			Assert(! gl::IsEnabled(light_id));
 			GLPP_CALL(gl::Enable(light_id));
-			return;
+			return true;
 		}
 	}
 	
 	// Currently, we're only using two lights. The limit is eight.
-	Assert(false);
+	return false;
 }
 
 void Light::Deinit()

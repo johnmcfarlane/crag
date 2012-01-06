@@ -47,7 +47,7 @@ FormationMesh::FormationMesh()
 {
 }
 
-void FormationMesh::Init(Scene const & scene)
+bool FormationMesh::Init(Scene const & scene)
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -58,6 +58,8 @@ void FormationMesh::Init(Scene const & scene)
 		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices, gl::DYNAMIC_DRAW);
 		mbo.Unbind();
 	}
+	
+	return true;
 }
 
 void FormationMesh::Deinit()

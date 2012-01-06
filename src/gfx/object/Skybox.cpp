@@ -26,9 +26,10 @@ Skybox::Skybox()
 {
 }
 
-void Skybox::Init(Scene const & scene)
+bool Skybox::Init(Scene const & scene)
 {
 	InitVerts();
+	return true;
 }
 
 void Skybox::Deinit()

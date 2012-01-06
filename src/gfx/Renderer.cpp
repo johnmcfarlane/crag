@@ -221,22 +221,12 @@ void Renderer::OnQuit()
 
 void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
 {
-	if (quit_flag)
+	if (! InitObject(* object))
 	{
-		return;
-	}
-	
-	if (scene != nullptr)
-	{
-		object->Init(* scene);
-		
-		scene->AddObject(* object, parent_uid);
-	}
-	else
-	{
-		// This is probably ok during shut-down but would like to see it happen.
 		delete object;
 	}
+
+	scene->AddObject(* object, parent_uid);
 }
 
 void Renderer::OnRemoveObject(Uid const & uid)
@@ -415,6 +405,19 @@ void Renderer::Deinit()
 
 	SDL_GL_DeleteContext(context);
 	context = nullptr;
+}
+
+bool Renderer::InitObject(Object & object)
+{
+	if (quit_flag || scene == nullptr)
+	{
+		// This is probably ok during shut-down but would like to see it happen.
+		Assert(false);
+
+		return false;
+	}
+	
+	return object.Init(* scene);
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.

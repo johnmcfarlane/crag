@@ -34,9 +34,10 @@ Puff::Puff(Scalar spawn_volume)
 	SetIsOpaque(false);
 }
 
-void Puff::Init(Scene const & scene)
+bool Puff::Init(Scene const & scene)
 {
 	_spawn_time = scene.GetTime() - (Random::sequence.GetUnit<double>() / 60.);
+	return true;
 }
 
 gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const

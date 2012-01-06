@@ -18,11 +18,13 @@
 #include "geom/Sphere.h"
 
 
-void Firmament::Init(gfx::Scene const & scene)
+bool Firmament::Init(gfx::Scene const & scene)
 {
 	Skybox::Init(scene);
 	
 	DrawStarsSimple();
+	
+	return true;
 }
 
 void Firmament::DrawStarsClevur()

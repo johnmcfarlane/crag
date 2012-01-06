@@ -86,6 +86,8 @@ namespace gfx
 		bool Init();
 		void Deinit();
 		
+		bool InitObject(Object & object);
+		
 		void InitVSync();
 		void InitRenderState();
 		void VerifyRenderState() const;

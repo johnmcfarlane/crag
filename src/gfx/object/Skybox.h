@@ -30,7 +30,7 @@ namespace gfx
 	public:
 		Skybox();
 		
-		void Init(Scene const & scene) override;
+		bool Init(Scene const & scene) override;
 		void Deinit() override;
 		
 		void SetSide(int axis, int pole, Image const & image);
