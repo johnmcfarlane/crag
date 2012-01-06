@@ -696,6 +696,14 @@ void Renderer::RenderForeground() const
 	// Adjust near and far plane
 	SetForegroundFrustum(* scene);
 	
+	// Set state
+	if (lighting)
+	{
+		gl::Enable(GL_LIGHTING);
+		
+		RenderLayer(Layer::light);
+	}
+	
 	if (wireframe)
 	{
 		RenderForegroundPass(WireframePass1);
@@ -752,14 +760,6 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 			
 		default:
 			Assert(false);
-	}
-	
-	// Set state
-	if (lighting && pass != WireframePass2)
-	{
-		gl::Enable(GL_LIGHTING);
-
-		RenderLayer(Layer::light);
 	}
 	
 	gl::Enable(GL_DEPTH_TEST);
