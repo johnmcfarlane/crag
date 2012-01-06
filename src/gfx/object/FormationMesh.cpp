@@ -47,7 +47,7 @@ FormationMesh::FormationMesh()
 {
 }
 
-bool FormationMesh::Init(Scene const & scene)
+bool FormationMesh::Init(Renderer const & renderer)
 {
 	for (int index = 0; index < 2; ++ index)
 	{

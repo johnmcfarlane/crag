@@ -26,7 +26,7 @@ Skybox::Skybox()
 {
 }
 
-bool Skybox::Init(Scene const & scene)
+bool Skybox::Init(Renderer const & renderer)
 {
 	InitVerts();
 	return true;

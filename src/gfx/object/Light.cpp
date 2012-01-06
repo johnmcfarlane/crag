@@ -33,7 +33,7 @@ Light::Light(Color4f const & col, float a, float b, float c, bool init_shadows)
 {
 }
 
-bool Light::Init(Scene const & scene)
+bool Light::Init(Renderer const & renderer)
 {
 	for (int light_index = 0; light_index < 8; ++ light_index)
 	{

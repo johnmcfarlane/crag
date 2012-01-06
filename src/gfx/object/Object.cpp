@@ -44,7 +44,7 @@ void Object::Verify() const
 }
 #endif
 
-bool Object::Init(Scene const & scene)
+bool Object::Init(Renderer const & renderer)
 {
 	return true;
 }

@@ -467,7 +467,6 @@
 				528164201454F5DB0017E868 /* physics */,
 				5281642C1454F5DB0017E868 /* readme.html */,
 				5281642D1454F5DB0017E868 /* script */,
-				528164331454F5DB0017E868 /* SDLmain */,
 				528164341454F5DB0017E868 /* sim */,
 				528164551454F5DB0017E868 /* smp */,
 			);
@@ -811,13 +810,6 @@
 				528164321454F5DB0017E868 /* ScriptThread.h */,
 			);
 			path = script;
-			sourceTree = "<group>";
-		};
-		528164331454F5DB0017E868 /* SDLmain */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SDLmain;
 			sourceTree = "<group>";
 		};
 		528164341454F5DB0017E868 /* sim */ = {

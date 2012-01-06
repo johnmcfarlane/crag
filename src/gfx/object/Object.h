@@ -19,7 +19,7 @@ namespace gfx
 	class BranchNode;
 	class LeafNode;
 	class Pov;
-	class Scene;
+	class Renderer;
 
 	class ObjectBase
 	{
@@ -52,7 +52,7 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		virtual bool Init(Scene const & scene);	// called on arrival in render thread 
+		virtual bool Init(Renderer const & renderer);	// called on arrival in render thread 
 		virtual void Deinit();
 		
 		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const;

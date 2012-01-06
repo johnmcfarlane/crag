@@ -34,9 +34,10 @@ Puff::Puff(Scalar spawn_volume)
 	SetIsOpaque(false);
 }
 
-bool Puff::Init(Scene const & scene)
+bool Puff::Init(Renderer const & renderer)
 {
-	_spawn_time = scene.GetTime() - (Random::sequence.GetUnit<double>() / 60.);
+	Time time = renderer.GetScene().GetTime();
+	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
 	return true;
 }
 
