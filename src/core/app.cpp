@@ -142,10 +142,11 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
 	AssertErrno();
 	
-	FILE * source = fopen("filename", "r");
+	FILE * source = fopen(filename, "r");
 	if (source == nullptr)
 	{
-		AssertErrno();
+		Assert(errno == ENOENT);
+		errno = 0;
 		return false;
 	}
 	
