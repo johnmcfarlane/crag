@@ -80,6 +80,20 @@
 #endif
 
 
+// stdlib Error Reported
+#if defined(NDEBUG)
+#define AssertErrno() DO_NOTHING
+#else
+#define AssertErrno() \
+	DO_STATEMENT ( \
+		if (errno != 0) { \
+			::std::cerr << DEBUG_PRINT_SOURCE << ": errno: " << errno << " \"" << strerror(errno) << "\"" << std::endl; \
+			DEBUG_BREAK(); \
+		} \
+	)
+#endif
+
+
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
 	DO_STATEMENT ( \
