@@ -135,6 +135,35 @@ char const * app::GetProgramPath()
 	return _program_path;
 }
 
+bool app::LoadFile(char const * filename, std::vector<char> & buffer)
+{
+	Assert(errno == 0);
+	
+	FILE * source = fopen("filename", "r");
+	if (source == nullptr)
+	{
+		return false;
+	}
+	
+	fseek(source, 0, SEEK_END);
+	size_t length = ftell(source);
+	fseek(source, 0, SEEK_SET);
+
+	buffer.resize(length);
+	
+	fread(& buffer[0], 1, length, source);
+
+	fclose(source);
+	
+	if (errno != 0)
+	{
+		Assert(false);
+		return false;
+	}
+	
+	return true;
+}
+
 bool app::IsKeyDown(SDL_Scancode key_code)
 {
 	if (key_code >= 0)

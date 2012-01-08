@@ -19,6 +19,7 @@ namespace app
 	void Deinit();
 	
 	char const * GetProgramPath();
+	bool LoadFile(char const * filename, std::vector<char> & buffer);
 	
 	// input
 	bool IsKeyDown(SDL_Scancode key_code);
