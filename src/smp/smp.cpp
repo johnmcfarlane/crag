@@ -21,7 +21,9 @@
 
 void smp::Yield()
 {
+	AssertErrno();
 	SDL_Delay(1);
+	errno = 0;
 }
 
 void smp::Sleep(double seconds)

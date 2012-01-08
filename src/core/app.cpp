@@ -92,10 +92,13 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
+	AssertErrno();
 	window = SDL_CreateWindow("Crag", 
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
 							  flags);
+	errno = 0;
+	
 	if (window == 0)
 	{
 		DEBUG_BREAK_SDL();
@@ -137,11 +140,12 @@ char const * app::GetProgramPath()
 
 bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
-	Assert(errno == 0);
+	AssertErrno();
 	
 	FILE * source = fopen("filename", "r");
 	if (source == nullptr)
 	{
+		AssertErrno();
 		return false;
 	}
 	
@@ -155,11 +159,7 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 
 	fclose(source);
 	
-	if (errno != 0)
-	{
-		Assert(false);
-		return false;
-	}
+	AssertErrno();
 	
 	return true;
 }
@@ -201,7 +201,11 @@ Vector2i app::GetWindowSize()
 
 bool app::GetEvent(SDL_Event & event, bool block)
 {
-	if ((block ? SDL_WaitEvent : SDL_PollEvent)(&event) <= 0)
+	AssertErrno();
+	bool has_event = (block ? SDL_WaitEvent : SDL_PollEvent)(&event);
+	errno = 0;
+	
+	if (! has_event)
 	{
 		return false;
 	}
@@ -282,15 +286,7 @@ bool app::HasFocus()
 Time app::GetTime()
 {
 #if defined(__APPLE__)
-#if defined(NDEBUG)
 	return CFAbsoluteTimeGetCurrent ();
-#else
-	static Time last_time = - std::numeric_limits<Time>::max();
-	Time time = CFAbsoluteTimeGetCurrent ();
-	Assert(! (last_time > time));
-	last_time = time;
-	return time;
-#endif
 #elif defined(WIN32)
 	LARGE_INTEGER performance_count;
 	if (QueryPerformanceCounter(& performance_count) == FALSE)

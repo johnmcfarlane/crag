@@ -38,6 +38,8 @@ namespace
 
 int SDL_main(int /*argc*/, char * * argv)
 {
+	errno = 0;
+	
 #if defined(WIN32)
 	std::ofstream cout_filestr, cerr_filestr;
 	cout_filestr.open ("cout.txt");
@@ -49,7 +51,10 @@ int SDL_main(int /*argc*/, char * * argv)
 	std::cout << "Crag Demo" << std::endl;
 	std::cout << "Copyright 2010 John McFarlane" << std::endl;
 	
-	return CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
+	int exit_value = CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
+	
+	AssertErrno();
+	return exit_value;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -355,7 +360,7 @@ namespace
 		
 		smp::scheduler::Deinit();
 		app::Deinit();
-
+		
 		return true;
 	}
 }

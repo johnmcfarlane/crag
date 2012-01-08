@@ -30,7 +30,9 @@ namespace smp
 		
 		void Lock()
 		{
+			AssertErrno();
 			SDL_AtomicLock(& spin_lock);
+			errno = 0;
 		}
 		
 		void Unlock()
