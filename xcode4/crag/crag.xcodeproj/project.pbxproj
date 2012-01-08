@@ -1160,6 +1160,7 @@
 					PROFILE,
 				);
 				GCC_STRICT_ALIASING = YES;
+				GCC_THREADSAFE_STATICS = NO;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -1212,6 +1213,7 @@
 					NDEBUG,
 				);
 				GCC_STRICT_ALIASING = YES;
+				GCC_THREADSAFE_STATICS = NO;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
