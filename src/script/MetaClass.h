@@ -228,6 +228,8 @@ namespace script
 		
 		static int InitObject(PyObject * po, PyObject * args, PyObject * type)
 		{
+			errno = 0;
+			
 			// Allocate the object.
 			CLASS & object = CLASS::GetRef(po);
 			
@@ -238,6 +240,7 @@ namespace script
 			
 			CLASS::Create(object, * args); 
 
+			AssertErrno();
 			return 0;
 		}
 
