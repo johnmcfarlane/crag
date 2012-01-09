@@ -108,7 +108,7 @@ LeafNode::PreRenderResult FormationMesh::PreRender(Renderer const & renderer)
 	return ok;
 }
 
-gfx::Transformation const & FormationMesh::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
+gfx::Transformation const & FormationMesh::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	scratch = model_view * sim::Transformation(front_buffer.GetOrigin());

@@ -18,9 +18,6 @@
 
 namespace gfx
 {
-	// forward-declaration
-	class Renderer;
-	
 	// An element of the scene which can be drawn.
 	class LeafNode : public Object
 	{

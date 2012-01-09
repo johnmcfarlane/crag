@@ -610,7 +610,7 @@ void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transforma
 		Object & child = static_cast<Object &>(* i);
 		++ i;
 		
-		Transformation const & child_model_view_transformation = child.Transform(model_view_transformation, scratch, scene->GetTime());
+		Transformation const & child_model_view_transformation = child.Transform(* this, model_view_transformation, scratch);
 		
 		switch (child.GetNodeType())
 		{

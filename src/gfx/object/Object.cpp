@@ -51,7 +51,7 @@ void Object::Deinit(Scene & scene)
 {
 }
 
-gfx::Transformation const & Object::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
+gfx::Transformation const & Object::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	return model_view;
 }

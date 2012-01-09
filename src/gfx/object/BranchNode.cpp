@@ -77,7 +77,7 @@ BranchNode::ChildList::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
-gfx::Transformation const & BranchNode::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const override
+gfx::Transformation const & BranchNode::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
 	return scratch = model_view * _transformation;
 }

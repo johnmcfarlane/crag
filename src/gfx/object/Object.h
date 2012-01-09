@@ -18,6 +18,7 @@ namespace gfx
 	class BranchNode;
 	class LeafNode;
 	class Pov;
+	class Renderer;
 	class Scene;
 
 	class ObjectBase
@@ -54,7 +55,7 @@ namespace gfx
 		virtual bool Init(Scene & scene);	// called on arrival in render thread 
 		virtual void Deinit(Scene & scene);
 		
-		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const;
+		virtual Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
 		
 		Uid GetUid() const;
 		

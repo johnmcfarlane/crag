@@ -35,7 +35,7 @@ namespace gfx
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const override;
+		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		void Render(Renderer const & renderer) const override;
 		
 	private:

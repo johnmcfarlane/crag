@@ -41,8 +41,9 @@ bool Puff::Init(Scene & scene)
 	return true;
 }
 
-gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch, Time time) const
+gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
+	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
 	
 	gfx::Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
