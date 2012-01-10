@@ -18,16 +18,15 @@ void gfx::Renderer::OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParam
 		return;
 	}
 
-	// Need to include Scene.h wherever this is referred to.
-	ObjectMap & objects = scene->GetObjectMap();
-	ObjectMap::iterator i = objects.find(uid);
-	if (i == objects.end())
+	Object * base_object = scene->GetObject(uid);
+
+	if (base_object == nullptr)
 	{
 		// Presumably, the object was removed by script thread
 		// but a pending update message came in from simulation.
 		return;
 	}
 
-	OBJECT & object = static_cast<OBJECT &>(* i->second);
-	object.Update(params, * this);
+	OBJECT & derived_object = static_cast<OBJECT &>(* base_object);
+	derived_object.Update(params, * this);
 }

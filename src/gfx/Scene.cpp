@@ -77,29 +77,11 @@ Time Scene::GetTime() const
 	return _time;
 }
 
-void Scene::AddObject(Object & object, Uid parent_uid)
+void Scene::AddObject(Object & object, BranchNode & parent)
 {
-	// determine the parent from the parent_uid
-	BranchNode * parent;
-	if (parent_uid == Uid::null)
-	{
-		parent = & _root;
-	}
-	else
-	{
-		ObjectMap::iterator i = _objects.find(parent_uid);
-		if (i == _objects.end())
-		{
-			Assert(false);
-			return;
-		}
-		
-		parent = static_cast<BranchNode *>(i->second);
-	}
-	
 	// add object to its parent's list
-	VerifyObject(* parent);
-	parent->AddChild(object);
+	VerifyObject(parent);
+	parent.AddChild(object);
 	
 	// add object to map
 	Uid uid = object.GetUid();
@@ -202,14 +184,26 @@ void Scene::SortRenderList()
 	}
 }
 
-ObjectMap & Scene::GetObjectMap()
+Object * Scene::GetObject(Uid object_uid)
 {
-	return _objects;
+	ObjectMap::iterator i = _objects.find(object_uid);
+	if (i == _objects.end())
+	{
+		return nullptr;
+	}
+	
+	return i->second;
 }
 
-ObjectMap const & Scene::GetObjectMap() const
+Object const * Scene::GetObject(Uid object_uid) const
 {
-	return _objects;
+	ObjectMap::const_iterator i = _objects.find(object_uid);
+	if (i == _objects.end())
+	{
+		return nullptr;
+	}
+	
+	return i->second;
 }
 
 BranchNode & Scene::GetRoot()

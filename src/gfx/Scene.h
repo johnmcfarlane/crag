@@ -12,9 +12,8 @@
 #include "defs.h"
 
 #include "object/BranchNode.h"
-#include "Pov.h"
-
 #include "object/LeafNode.h"
+#include "Pov.h"
 
 #include "sim/defs.h"
 
@@ -38,12 +37,12 @@ namespace gfx
 		void SetTime(Time t);
 		Time GetTime() const;
 		
-		void AddObject(Object & object, Uid parent_uid);
+		void AddObject(Object & object, BranchNode & parent);
 		void RemoveObject(Uid uid);
 		void SortRenderList();
 		
-		ObjectMap & GetObjectMap();
-		ObjectMap const & GetObjectMap() const;
+		Object * GetObject(Uid object_uid);
+		Object const * GetObject(Uid object_uid) const;
 		
 		BranchNode & GetRoot();
 		BranchNode const & GetRoot() const;

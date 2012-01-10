@@ -173,6 +173,35 @@ namespace
 		adjusted_frustum.SetProjectionMatrix();
 	}
 
+	// Given a scene and the uid of a branc_node in that scene
+	// (or Uid::null for the scene's root node),
+	// returns a reference to that branch node.
+	BranchNode * GetBranchNode(Scene & scene, Uid branch_node_uid)
+	{
+		if (branch_node_uid == Uid::null)
+		{
+			return & scene.GetRoot();
+		}
+		
+		Object * parent_object = scene.GetObject(branch_node_uid);
+		if (parent_object == nullptr)
+		{
+			// The given parent was not found.
+			// The uid is bogus or the object has been removed.
+			return nullptr;
+		}
+		
+		if (parent_object->GetNodeType() != Object::branch)
+		{
+			// The given uid refers to an object which is not a BranchNode.
+			// The uid is bogus.
+			Assert(false);
+			return nullptr;
+		}
+		
+		return static_cast<BranchNode *>(parent_object);
+	}
+
 }	// namespace
 
 
@@ -221,12 +250,23 @@ void Renderer::OnQuit()
 
 void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
 {
-	if (! InitObject(* object))
+	if (InitObject(* object))
 	{
-		delete object;
+		BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
+		if (parent != nullptr)
+		{
+			// success!
+			scene->AddObject(* object, * parent);
+			return;
+		}
+		else
+		{
+			// The given parent was not found.
+			// The id may be bogus or the object may have been removed.
+			Assert(false);
+		}
 	}
-
-	scene->AddObject(* object, parent_uid);
+	delete object;
 }
 
 void Renderer::OnRemoveObject(Uid const & uid)
