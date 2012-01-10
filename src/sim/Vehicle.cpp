@@ -46,14 +46,14 @@ struct Vehicle::Thruster
 
 namespace
 {
-	class AddRotationFunctor : public sim::EntityMessage<sim::Vehicle>
+	class AddThrusterFunctor : public sim::EntityMessage<sim::Vehicle>
 	{
 		// types
 		typedef sim::EntityMessage<sim::Vehicle> super;
 	public:
 		
 		// functions
-		AddRotationFunctor(sim::Uid vehicle_uid, Vehicle::Thruster thruster)
+		AddThrusterFunctor(sim::Uid vehicle_uid, Vehicle::Thruster thruster)
 		: super(vehicle_uid)
 		, _thruster(thruster)
 		{
@@ -69,7 +69,7 @@ namespace
 		Vehicle::Thruster _thruster;
 	};
 	
-	PyObject * vehicle_add_rotation(PyObject * self, PyObject * args)
+	PyObject * vehicle_add_thruster(PyObject * self, PyObject * args)
 	{
 		Vehicle::Thruster thruster;
 		
@@ -83,7 +83,7 @@ namespace
 		
 		Vehicle & vehicle = Vehicle::GetRef(self);
 		sim::Uid vehicle_uid = vehicle.GetUid();
-		AddRotationFunctor message(vehicle_uid, thruster);
+		AddThrusterFunctor message(vehicle_uid, thruster);
 		sim::Daemon::SendMessage(message);
 		
 		Py_RETURN_NONE;
@@ -91,7 +91,7 @@ namespace
 }
 
 DEFINE_SCRIPT_CLASS_BEGIN(sim, Vehicle)
-SCRIPT_CLASS_METHOD("add_thruster", vehicle_add_rotation, "Add a Thruster (x,y,z,p,q,r,key)")
+SCRIPT_CLASS_METHOD("add_thruster", vehicle_add_thruster, "Add a Thruster (x,y,z,p,q,r,key)")
 DEFINE_SCRIPT_CLASS_END
 
 
