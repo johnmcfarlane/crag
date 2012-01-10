@@ -47,6 +47,7 @@ bool BranchNode::IsEmpty() const
 void BranchNode::AddChild(Object & child)
 {
 	Assert(child.GetParent() == nullptr);
+	Assert(! _children.contains(child));
 	child.SetParent(this);
 	
 	_children.push_back(child);
