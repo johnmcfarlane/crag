@@ -38,17 +38,26 @@ namespace
 // gfx::Thruster member definitions
 
 Thruster::Thruster()
-: LeafNode(Layer::none)
+: Light(Color4f(1.f, .5f, .25f), 0, 2., 0)
+, _thrust_factor(0)
 {
 }
 
 void Thruster::Update(UpdateParams const & params, Renderer & renderer)
 {
-	float thrust_factor = params.thrust_factor;
-	if (thrust_factor != 0)
+	_thrust_factor = params.thrust_factor;
+	if (_thrust_factor != 0)
 	{
-		AddPuff(thrust_factor, renderer);
+		AddPuff(_thrust_factor, renderer);
 	}
+}
+
+LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
+{
+	SetColor(Color4f(1.f, .5f, .25f) * _thrust_factor * Random::sequence.GetUnit<float>());
+	_thrust_factor = 0;
+	
+	return LeafNode::ok;
 }
 
 void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
@@ -76,7 +85,7 @@ void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
 		Vector3 translation = model_transformation.GetTranslation();
 		
 		// Calculate the thruster/puff direction.
-		Vector3 thruster_direction = - axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
+		Vector3 thruster_direction = axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
 		Scalar thruster_max = Length(thruster_direction);
 		thruster_direction *= (1. / thruster_max);
 		

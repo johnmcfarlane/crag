@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "Light.h"
 
 #include "Puff.h"
 
@@ -20,7 +20,7 @@ namespace gfx
 	class Sphere;
 	
 	// graphical representation of a sim::Vehicle::Thruster
-	class Thruster : public LeafNode
+	class Thruster : public Light
 	{
 	public:
 		// types
@@ -33,7 +33,12 @@ namespace gfx
 		Thruster();
 		
 		void Update(UpdateParams const & params, Renderer & renderer);
+
+		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
 	private:
 		void AddPuff(float thrust_factor, Renderer & renderer);
+		
+		// variables
+		float _thrust_factor;
 	};
 }
