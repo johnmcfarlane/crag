@@ -452,11 +452,17 @@ void Renderer::Deinit()
 
 bool Renderer::InitObject(Object & object)
 {
-	if (quit_flag || scene == nullptr)
+	if (quit_flag)
 	{
-		// This is probably ok during shut-down but would like to see it happen.
+		// don't want to add new objects during shutdown
+		return false;
+	}
+	
+	if (scene == nullptr)
+	{
+		// this has presumably occurred after shutdown
 		Assert(false);
-
+		
 		return false;
 	}
 	
