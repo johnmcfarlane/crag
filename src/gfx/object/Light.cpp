@@ -23,9 +23,9 @@ using gfx::Light;
 using namespace gfx;
 
 
-Light::Light(Color4f const & col, float a, float b, float c, bool init_shadows)
+Light::Light(Color4f const & color, float a, float b, float c, bool init_shadows)
 : LeafNode(Layer::light)
-, color(col)
+, _color(color)
 , attenuation_a(a)
 , attenuation_b(b)
 , attenuation_c(c)
@@ -71,10 +71,15 @@ void Light::Deinit(Scene & scene)
 	GLPP_CALL(gl::Disable(light_id));
 }
 
+void Light::SetColor(Color4f const & color)
+{
+	_color = color;
+}
+
 void Light::Render(Renderer const & renderer) const
 {
 	GLPP_CALL(glLightfv(light_id, GL_AMBIENT, Color4f(0, 0, 0)));
-	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, color));
+	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, _color));
 	GLPP_CALL(glLightfv(light_id, GL_SPECULAR, Color4f(0, 0, 0)));
 	
 	GLPP_CALL(glLightfv(light_id, GL_CONSTANT_ATTENUATION, & attenuation_c));

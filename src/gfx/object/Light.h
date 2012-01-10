@@ -35,16 +35,18 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Color4f const & col, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
+		Light(Color4f const & color, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
 		
 		bool Init(Scene & scene) override;
 		void Deinit(Scene & scene) override;
+		
+		void SetColor(Color4f const & color);
 		
 		virtual void Render(Renderer const & renderer) const;
 		
 		// variables
 	private:
-		Color4f color;
+		Color4f _color;
 		float attenuation_a;
 		float attenuation_b;
 		float attenuation_c;
