@@ -63,7 +63,7 @@ namespace gfx
 		// The resultant transformation.
 		Transformation _model_view_transformation;
 		
-		// This is the list which is sorted in order of 
+		// This is the list which is sorted in render order.
 		DEFINE_INTRUSIVE_LIST(LeafNode, RenderList);
 		
 		float _render_sort_key;
