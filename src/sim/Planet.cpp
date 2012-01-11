@@ -167,9 +167,10 @@ void Planet::UpdateModels() const
 {
 	{
 		// update planet params
+		Vector3 const & position = _body->GetPosition();
 		gfx::BranchNode::UpdateParams params = 
 		{
-			Transformation(GetPosition())
+			Transformation(position)
 		};
 		
 		gfx::Daemon::Call(_transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
@@ -214,9 +215,4 @@ void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 form::Formation const & Planet::GetFormation() const
 {
 	return ref(_formation);
-}
-
-Vector3 const & Planet::GetPosition() const
-{
-	return _body->GetPosition();
 }

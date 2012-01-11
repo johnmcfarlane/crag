@@ -76,7 +76,7 @@ void sim::Star::UpdateModels() const
 {
 	gfx::BranchNode::UpdateParams params = 
 	{
-		Transformation(GetPosition())
+		Transformation(position)
 	};
 	
 	gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
@@ -85,9 +85,4 @@ void sim::Star::UpdateModels() const
 sim::Scalar sim::Star::GetBoundingRadius() const
 {
 	return 0;	// really just a point light for now
-}
-
-sim::Vector3 const & sim::Star::GetPosition() const
-{
-	return position;
 }

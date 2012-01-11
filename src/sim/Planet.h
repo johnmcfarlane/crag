@@ -51,7 +51,6 @@ namespace sim
 		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 		
 		form::Formation const & GetFormation() const;
-		virtual Vector3 const & GetPosition() const;
 
 	private:
 		form::Formation * _formation;

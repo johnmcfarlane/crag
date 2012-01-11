@@ -35,9 +35,7 @@ namespace sim
 		void UpdateModels() const;
 	
 		Scalar GetBoundingRadius() const;
-		
-		virtual Vector3 const & GetPosition() const;
-	
+
 	private:
 		gfx::Uid _light_uid;
 		Vector3 position;
