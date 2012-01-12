@@ -171,6 +171,16 @@ template<typename S> S DotProduct(Vector<S, 4> const & lhs, Vector<S, 4> const &
 }
 
 
+template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 4> const & v)
+{
+	return out << v.x << ',' << v.y << ',' << v.z << ',' << v.w;
+}
+
+template<typename S> std::istream & operator >> (std::istream & in, Vector<S, 4> const & v)
+{
+	return in >> v.x >> ',' >> v.y >> ',' >> v.z >> ',' >> v.w;
+}
+
 //////////////////////////////////////////////////////////////////
 // specializations of Vector4
 
