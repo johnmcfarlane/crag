@@ -183,6 +183,7 @@ FILE_LOCAL_END
 ScriptThread::ScriptThread()
 : _source_file(nullptr)
 , _message_queue(nullptr)
+, _time(0)
 {
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Script");
