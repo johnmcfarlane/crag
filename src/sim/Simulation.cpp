@@ -75,11 +75,14 @@ void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
 		return;
 	}
 	
+	// Until the UpdateModels call is complete, 
+	// the data sent to the Renderer is in an incomplete state.
+	gfx::Daemon::Call(false, _time, & gfx::Renderer::OnSetReady);
+	
 	_entity_set.Add(* entity);
 	entity->UpdateModels();
-	// TODO: Between the calls to Init and UpdateModels,
-	// it's possible for render thread functions to be called
-	// which rely on the uninitialized data in gfx objects created in Init.
+	
+	gfx::Daemon::Call(true, _time, & gfx::Renderer::OnSetReady);
 }
 
 void Simulation::OnRemoveEntity(Uid const & uid)
