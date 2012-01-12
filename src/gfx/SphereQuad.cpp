@@ -21,7 +21,7 @@
 using gfx::SphereQuad;
 
 
-SphereQuad::SphereQuad(Program & program)
+SphereQuad::SphereQuad(gfx::Program & program)
 {
 	InitProgram(program);
 	InitQuad();
@@ -32,7 +32,7 @@ SphereQuad::~SphereQuad()
 	gl::DeleteBuffer(_quad);
 }
 
-gfx::Scalar SphereQuad::CalculateRadius(Transformation const & transformation)
+gfx::Scalar SphereQuad::CalculateRadius(gfx::Transformation const & transformation)
 {
 	Vector3 size = transformation.GetScale();
 	Assert(NearEqual(size.x / size.y, 1, 0.0001));
@@ -61,7 +61,7 @@ void SphereQuad::Draw(::Transformation<float> const & model_view) const
 	Vector4f center = Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
 	gl::Uniform<float, 3>(_center_location, center.GetAxes());
 
-	float radius = CalculateRadius(model_view);
+	float radius = static_cast<float>(CalculateRadius(model_view));
 	gl::Uniform(_radius_location, radius);
 
 	gl::BindBuffer(_quad);
@@ -75,7 +75,7 @@ void SphereQuad::Draw(::Transformation<float> const & model_view) const
 	GLPP_VERIFY;
 }
 
-void SphereQuad::InitProgram(Program & program)
+void SphereQuad::InitProgram(gfx::Program & program)
 {
 	program.Use();
 	

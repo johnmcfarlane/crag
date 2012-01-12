@@ -552,6 +552,22 @@
 				<File
 					RelativePath="..\..\src\sim\Ball.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Ball.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Ball.obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\sim\Ball.h"
@@ -560,6 +576,22 @@
 				<File
 					RelativePath="..\..\src\sim\Box.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Box.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\sim_Box.obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\sim\Box.h"
@@ -882,6 +914,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\Program.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Program.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Renderer.cpp"
 					>
 				</File>
@@ -923,6 +963,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\SphereMesh.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\SphereQuad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\SphereQuad.h"
 					>
 				</File>
 				<Filter
@@ -1182,6 +1230,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\glpp\Shader.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\glpp\Texture.h"
 					>
 				</File>
@@ -1278,6 +1330,30 @@
 						Outputs="$(OutDir)\crag\script\$(InputFileName)"
 					/>
 				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="glsl"
+			>
+			<File
+				RelativePath="..\..\glsl\light.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glsl\poly.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glsl\poly.vert"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glsl\sphere.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glsl\sphere.vert"
+				>
 			</File>
 		</Filter>
 	</Files>

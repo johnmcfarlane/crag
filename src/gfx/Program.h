@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Light.h"
+#include "gfx/object/Light.h"
 
 #include "glpp/Shader.h"
 

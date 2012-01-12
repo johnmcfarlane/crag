@@ -204,7 +204,7 @@ Vector2i app::GetWindowSize()
 bool app::GetEvent(SDL_Event & event, bool block)
 {
 	AssertErrno();
-	bool has_event = (block ? SDL_WaitEvent : SDL_PollEvent)(&event);
+	bool has_event = (block ? SDL_WaitEvent : SDL_PollEvent)(&event) != 0;
 	errno = 0;
 	
 	if (! has_event)

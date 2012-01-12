@@ -164,7 +164,7 @@ private:
 };
 
 template <typename S>
-typename Transformation<S>::Matrix const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0, 
+typename ::Transformation<S>::Matrix const ::Transformation<S>::_internal_to_open_gl(1, 0,  0, 0, 
 															0, 0, -1, 0, 
 															0, 1,  0, 0, 
 															0, 0,  0, 1);

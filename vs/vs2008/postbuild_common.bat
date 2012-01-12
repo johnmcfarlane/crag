@@ -8,3 +8,6 @@ xcopy ..\..\..\..\dependencies\SDL\README-SDL.txt /D /Y
 
 mkdir lib
 xcopy ..\..\..\..\dependencies\python\LICENSE lib /D /Y
+
+mkdir glsl
+xcopy ..\..\..\..\glsl\* glsl /D /Y

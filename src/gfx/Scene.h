@@ -11,9 +11,9 @@
 
 #include "defs.h"
 
-#include "Light.h"
 #include "object/BranchNode.h"
 #include "object/LeafNode.h"
+#include "object/Light.h"
 #include "Pov.h"
 
 #include "sim/defs.h"
