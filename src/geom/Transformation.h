@@ -15,7 +15,7 @@
 
 
 // Affine transformation matrix
-template<typename S>
+template <typename S>
 class Transformation
 {
 public:
@@ -108,6 +108,11 @@ public:
 		return _matrix;
 	}
 	
+	Matrix GetOpenGlMatrix() const
+	{
+		return Transposition(_matrix) * _internal_to_open_gl;
+	}
+
 	Matrix GetInverse() const
 	{
 		return Inverse(_matrix);
@@ -137,8 +142,29 @@ public:
 		v = _matrix * v;
 		return Vector(v.x, v.y, v.z);
 	}
+	
+#if defined(VERIFY)
+	void Verify() const
+	{
+		for (int row = 0; row != 4; ++ row)
+		{
+			for (int column = 0; column != 4; ++ column)
+			{
+				VerifyTrue(! IsInf(_matrix[row][column]));
+			}
+		}
+	}
+#endif
 
 private:
 	// variables
 	Matrix _matrix;
+	
+	static Matrix const _internal_to_open_gl;
 };
+
+template <typename S>
+typename Transformation<S>::Matrix const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0, 
+															0, 0, -1, 0, 
+															0, 1,  0, 0, 
+															0, 0,  0, 1);
