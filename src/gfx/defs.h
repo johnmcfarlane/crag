@@ -19,6 +19,17 @@ template <typename S, int D> class Ray;
 
 namespace gfx
 {
+	namespace ProgramIndex
+	{
+		enum type
+		{
+			poly,
+			sphere,
+			max,
+			none = max
+		};
+	}
+	
 	// Geometric types currently use double and are converted 
 	// inside - or close to - the graphics API.
 	typedef double Scalar;

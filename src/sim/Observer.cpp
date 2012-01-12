@@ -44,10 +44,7 @@ namespace
 	CONFIG_DEFINE (observer_velocity_impulse, float, 0.002f);
 	CONFIG_DEFINE (observer_torque_impulse, double, .0025f);
 
-	CONFIG_DEFINE (observer_light_color, gfx::Color4f, gfx::Color4f(0.8f, 0.8f, 1.0f));
-	CONFIG_DEFINE (observer_light_attenuation_a, float, 0.00000001f);
-	CONFIG_DEFINE (observer_light_attenuation_b, float, 0.000f);
-	CONFIG_DEFINE (observer_light_attenuation_c, float, 4.000f);
+	CONFIG_DEFINE (observer_light_color, Vector3f, Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
 }
 
 
@@ -105,8 +102,10 @@ Observer::Observer()
 
 Observer::~Observer()
 {
+#if defined(OBSERVER_LIGHT)
 	// un-register with the renderer
 	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
+#endif
 
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
@@ -142,9 +141,11 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	
 	impulses[0] = impulses[1] = Vector3::Zero();
 	
+#if defined(OBSERVER_LIGHT)
 	// register light with the renderer
-	gfx::Light * light = new gfx::Light(observer_light_color, observer_light_attenuation_a, observer_light_attenuation_b, observer_light_attenuation_c);
+	gfx::Light * light = new gfx::Light(observer_light_color);
 	_light_uid = AddModelWithTransform(* light);
+#endif
 	
 	return true;
 }
@@ -211,6 +212,7 @@ void Observer::UpdateModels() const
 		gfx::Daemon::Call(transformation, & gfx::Renderer::OnSetCamera);
 	}
 
+#if defined(OBSERVER_LIGHT)
 	// Give renderer the new light position.
 	{
 		gfx::BranchNode::UpdateParams params = 
@@ -219,6 +221,7 @@ void Observer::UpdateModels() const
 		};
 		gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
 	}
+#endif
 }
 
 void Observer::ApplyImpulse()

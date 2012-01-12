@@ -62,6 +62,7 @@ int SDL_main(int /*argc*/, char * * argv)
 
 
 CONFIG_DEFINE (profile_mode, bool, false);
+CONFIG_DEFINE (enable_sphere_shader, bool, false);
 
 
 namespace 
@@ -163,6 +164,10 @@ namespace
 					
 					case SDL_SCANCODE_I:
 						form::Daemon::Call(& form::FormationManager::OnToggleMeshGeneration);
+						return true;
+						
+					case SDL_SCANCODE_S:
+						enable_sphere_shader = ! enable_sphere_shader;
 						return true;
 						
 					default:

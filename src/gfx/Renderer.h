@@ -12,10 +12,11 @@
 #include "defs.h"
 #include "Layer.h"
 #include "Image.h"
+#include "Program.h"
 
 #include "glpp/Fence.h"
 #include "glpp/FrameBuffer.h"
-#include "glpp/RenderBuffer.h"
+#include "glpp/Shader.h"
 
 #include "smp/Daemon.h"
 
@@ -33,8 +34,10 @@ namespace gfx
 {
 	// forward-declarations
 	class BranchNode;
+	class Cuboid;
 	class Scene;
-	
+	class SphereMesh;
+	class SphereQuad;
 
 	// gfx::Daemon type
 	class Renderer;
@@ -61,6 +64,15 @@ namespace gfx
 		~Renderer();
 		
 		Scene const & GetScene() const;
+		
+		Program const * GetProgram() const;
+		Program * GetProgram(ProgramIndex::type index);
+		Program const * GetProgram(ProgramIndex::type index) const;
+		void SetProgram(Program * program);
+		
+		Cuboid const & GetCuboid() const;
+		SphereMesh const & GetSphereMesh() const;
+		SphereQuad const & GetSphereQuad() const;
 
 		// message interface
 		void OnQuit();
@@ -84,6 +96,8 @@ namespace gfx
 		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
 
 		bool Init();
+		bool InitShaders();
+		bool InitGeometry();
 		void Deinit();
 		
 		bool InitObject(Object & object);
@@ -98,18 +112,19 @@ namespace gfx
 		void UpdateTransformations(BranchNode & node, gfx::Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
-		void RenderScene() const;
+		void RenderScene();
 		
-		void RenderBackground() const;
+		void RenderBackground();
 		
-		void RenderForeground() const;
+		void RenderForeground();
+		void RenderLights();
 		bool BeginRenderForeground(ForegroundRenderPass pass) const;
-		void RenderForegroundPass(ForegroundRenderPass pass) const;
+		void RenderForegroundPass(ForegroundRenderPass pass);
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
-		int RenderLayer(Layer::type layer, bool opaque = true) const;
+		int RenderLayer(Layer::type layer, bool opaque = true);
 		
-		void DebugDraw() const;
+		void DebugDraw();
 		void ProcessRenderTiming();
 		void Capture();
 
@@ -155,6 +170,14 @@ namespace gfx
 		
 		gl::Fence _fence1, _fence2;
 		
-		//static Daemon * singleton;
+		// shaders and shader programs
+		gl::Shader _light_frag_shader;
+		Program _programs[ProgramIndex::max];
+		Program * _current_program;
+
+		// stock geometry
+		Cuboid * _cuboid;
+		SphereMesh * _sphere_mesh;
+		SphereQuad * _sphere_quad;
 	};
 }

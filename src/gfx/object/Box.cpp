@@ -24,7 +24,7 @@ using namespace gfx;
 
 
 Box::Box(Color4b color)
-: LeafNode(Layer::foreground)
+: LeafNode(Layer::foreground, ProgramIndex::poly)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);
@@ -58,7 +58,7 @@ void Box::Render(Renderer const & renderer) const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	Cuboid const & cuboid = renderer.GetScene().GetCuboid();
+	Cuboid const & cuboid = renderer.GetCuboid();
 	cuboid.Draw();
 	
 	GLPP_VERIFY;

@@ -20,19 +20,6 @@
 using namespace gfx;
 
 
-namespace
-{
-	// As opposed to Gl (apparently). 
-	template<typename S> inline Matrix<S, 4, 4> InternalToOpenGl()
-	{
-		return Matrix<S, 4, 4>(1, 0,  0, 0, 
-							   0, 0, -1, 0, 
-							   0, 1,  0, 0, 
-							   0, 0,  0, 1);
-	}
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Frustum member definitions
 
@@ -115,11 +102,3 @@ void Pov::LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const 
 	frustum.depth_range.y = distance + sphere.radius;
 }
 #endif
-
-void Pov::SetModelViewMatrix(gfx::Transformation const & model_view_matrix)
-{
-	Matrix44 gl_model_view_matrix = Transposition(model_view_matrix.GetMatrix()) * InternalToOpenGl<Scalar>();	
-	
-	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
-	gl::LoadMatrix(gl_model_view_matrix.GetArray());	
-}

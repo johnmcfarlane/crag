@@ -14,22 +14,53 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
+#include "gfx/SphereQuad.h"
 
 #include "glpp/glpp.h"
 
 #include "geom/Transformation.h"
 
-#include "core/Random.h"
+#include "core/app.h"
+#include "core/ConfigEntry.h"
+
+
+CONFIG_DECLARE (enable_sphere_shader, bool);
+
+
+namespace
+{
+	int Choose()
+	{
+		return enable_sphere_shader ? 1 : 0;
+	}
+}
 
 
 using namespace gfx;
 
 
 Ball::Ball(Color4b color)
-: LeafNode(Layer::foreground)
+: LeafNode(Layer::foreground, ProgramIndex::sphere)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);
+}
+
+gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
+{
+	switch (Choose())
+	{
+		default:
+			Assert(false);
+		case 0:
+			return model_view;
+			
+		case 1:
+		{
+			SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+			return sphere_quad.Transform(model_view, scratch);
+		}
+	}
 }
 
 bool Ball::GetRenderRange(RenderRange & range) const 
@@ -46,11 +77,50 @@ bool Ball::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
+// Perform any necessary preparation for rendering.
+LeafNode::PreRenderResult Ball::PreRender(Renderer const & renderer)
+{
+	switch (Choose())
+	{
+		default:
+			Assert(false);
+		case 0:
+		{
+			SetProgramIndex(ProgramIndex::poly);
+			break;
+		}
+			
+		case 1:
+		{
+			SetProgramIndex(ProgramIndex::sphere);
+			break;
+		}
+	}
+	
+	return ok;
+}
+
 void Ball::Render(Renderer const & renderer) const
 {
 	gl::SetColor(_color.GetArray());
 	
-	SphereMesh const & sphere_mesh = renderer.GetScene().GetSphere();
 	Transformation const & transformation = GetModelViewTransformation();
-	sphere_mesh.Draw(transformation);
+	switch (Choose())
+	{
+		default:
+			Assert(false);
+		case 0:
+		{
+			SphereMesh const & sphere_mesh = renderer.GetSphereMesh();
+			sphere_mesh.Draw(transformation);
+			break;
+		}
+		
+		case 1:
+		{
+			SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+			sphere_quad.Draw(transformation);
+			break;
+		}
+	}
 }

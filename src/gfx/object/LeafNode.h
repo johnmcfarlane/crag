@@ -36,13 +36,21 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Layer::type layer);
+		LeafNode(Layer::type layer, ProgramIndex::type shader_index);
+		
+#if defined(VERIFY)
+		//void VerifyRanking(Ranking const * ranking) const;
+		void Verify() const;
+#endif
 		
 		void SetModelViewTransformation(Transformation const & model_view_transformation);
 		Transformation const & GetModelViewTransformation() const;
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 		
 		Layer::type GetLayer() const;
+		
+		void SetProgramIndex(ProgramIndex::type program_index);
+		ProgramIndex::type GetProgramIndex() const;
 		
 		bool IsOpaque() const;
 		void SetIsOpaque(bool is_opaque);
@@ -66,8 +74,9 @@ namespace gfx
 		// This is the list which is sorted in render order.
 		DEFINE_INTRUSIVE_LIST(LeafNode, RenderList);
 		
-		float _render_sort_key;
+		float _render_depth;
 		Layer::type _layer;
+		ProgramIndex::type _program_index;
 		bool _is_opaque;
 	};
 }

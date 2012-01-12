@@ -12,12 +12,17 @@
 #include "Renderer.h"
 
 #include "Color.h"
+#include "Cuboid.h"
 #include "Debug.h"
 #include "Image.h"
 #include "Pov.h"
 #include "Scene.h"
+#include "SphereMesh.h"
+#include "SphereQuad.h"
+
 #include "object/BranchNode.h"
 #include "object/LeafNode.h"
+#include "object/Light.h"
 
 #include "form/FormationManager.h"
 #include "form/node/NodeBuffer.h"
@@ -108,6 +113,14 @@ namespace
 #endif
 	}
 	
+	void SetModelViewMatrix(gfx::Transformation const & model_view_transformation)
+	{
+		Assert(gl::GetMatrixMode() == GL_MODELVIEW);
+
+		Matrix44 gl_model_view_matrix = model_view_transformation.GetOpenGlMatrix();
+		gl::LoadMatrix(gl_model_view_matrix.GetArray());	
+	}
+	
 	// Creates a frustum with sensible defaults for rendering a background.
 	void SetBackgroundFrustum(Pov const & pov)
 	{
@@ -149,6 +162,9 @@ namespace
 			{
 				continue;
 			}
+			
+			Assert(! IsInf(depth_range[0]));
+			Assert(! IsInf(depth_range[1]));
 			
 			// and it isn't behind the camera,
 			if (depth_range[1] <= default_frustum.depth_range[0])
@@ -216,6 +232,10 @@ Renderer::Renderer()
 , lighting(init_lighting)
 , wireframe(init_wireframe)
 , capture_frame(0)
+, _current_program(nullptr)
+, _cuboid(nullptr)
+, _sphere_mesh(nullptr)
+, _sphere_quad(nullptr)
 {
 #if ! defined(NDEBUG)
 	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
@@ -229,6 +249,10 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	Assert(_current_program == nullptr || _current_program == _programs + ProgramIndex::poly || _current_program == _programs + ProgramIndex::sphere);
+	
+	SetProgram(nullptr);
+	
 	Deinit();
 
 	// must be turned on by key input or by cfg edit
@@ -240,6 +264,56 @@ Scene const & Renderer::GetScene() const
 	Assert(Daemon::IsCurrentThread());
 	
 	return ref(scene);
+}
+
+Program const * Renderer::GetProgram() const
+{
+	return _current_program;
+}
+
+Program * Renderer::GetProgram(ProgramIndex::type index)
+{
+	return (index == ProgramIndex::none) ? nullptr : _programs + index;
+}
+
+Program const * Renderer::GetProgram(ProgramIndex::type index) const
+{
+	return (index == ProgramIndex::none) ? nullptr : _programs + index;
+}
+
+void Renderer::SetProgram(Program * program)
+{
+	if (program == _current_program)
+	{
+		return;
+	}
+	
+	if (_current_program != nullptr)
+	{
+		_current_program->Disuse();
+	}
+	
+	_current_program = program;
+
+	if (_current_program != nullptr)
+	{
+		_current_program->Use();
+	}
+}
+
+Cuboid const & Renderer::GetCuboid() const
+{
+	return ref(_cuboid);
+}
+
+gfx::SphereMesh const & Renderer::GetSphereMesh() const
+{
+	return ref(_sphere_mesh);
+}
+
+gfx::SphereQuad const & Renderer::GetSphereQuad() const
+{
+	return ref(_sphere_quad);
 }
 
 void Renderer::OnQuit()
@@ -332,7 +406,7 @@ Renderer::StateParam const Renderer::init_state[] =
 {
 	INIT(GL_COLOR_MATERIAL, true),
 	INIT(GL_TEXTURE_2D, false),
-	INIT(GL_NORMALIZE, true),
+	INIT(GL_NORMALIZE, false),
 	INIT(GL_CULL_FACE, true),
 	INIT(GL_LIGHTING, false),
 	INIT(GL_DEPTH_TEST, false),
@@ -340,7 +414,8 @@ Renderer::StateParam const Renderer::init_state[] =
 	INIT(GL_INVALID_ENUM, false),
 	INIT(GL_MULTISAMPLE, false),
 	INIT(GL_LINE_SMOOTH, false),
-	INIT(GL_POLYGON_SMOOTH, false)
+	INIT(GL_POLYGON_SMOOTH, false),
+	INIT(GL_FOG, false)
 };
 
 void Renderer::Run(Daemon::MessageQueue & message_queue)
@@ -408,7 +483,17 @@ bool Renderer::Init()
 	{
 		return false;
 	}
+	
+	if (! InitShaders())
+	{
+		return false;
+	}
 
+	if (! InitGeometry())
+	{
+		return false;
+	}
+	
 	InitVSync();
 	
 	scene = new Scene;
@@ -421,13 +506,50 @@ bool Renderer::Init()
 	return true;
 }
 
+bool Renderer::InitShaders()
+{
+	InitShader(_light_frag_shader, "gpu/light.frag", GL_FRAGMENT_SHADER);
+
+	_programs[ProgramIndex::poly].Init("gpu/poly.vert", "gpu/poly.frag", _light_frag_shader);
+	_programs[ProgramIndex::sphere].Init("gpu/sphere.vert", "gpu/sphere.frag", _light_frag_shader);
+	
+	return true;
+}
+
+bool Renderer::InitGeometry()
+{
+	_cuboid = new Cuboid;
+	_sphere_mesh = new SphereMesh;
+	_sphere_quad = new SphereQuad(_programs[ProgramIndex::sphere]);
+	
+	return true;
+}
+
 void Renderer::Deinit()
 {
 	if (scene == nullptr)
 	{
+		Assert(false);
 		return;
 	}
 
+	delete _cuboid;
+	_cuboid = nullptr;
+	
+	delete _sphere_mesh;
+	_sphere_mesh = nullptr;
+	
+	delete _sphere_quad;
+	_sphere_quad = nullptr;
+	
+	for (int program_index = 0; program_index != ProgramIndex::max; ++ program_index)
+	{
+		Program & program = _programs[program_index];
+		program.Deinit(_light_frag_shader);
+	}
+	
+	gl::Delete(_light_frag_shader);
+	
 	Debug::Deinit();
 	
 	init_culling = culling;
@@ -443,8 +565,9 @@ void Renderer::Deinit()
 	{
 		gl::DeleteFence(_fence1);
 	}
-
+	
 	delete scene;
+	scene = nullptr;
 
 	SDL_GL_DeleteContext(context);
 	context = nullptr;
@@ -709,7 +832,7 @@ void Renderer::Render()
 	ProcessRenderTiming();
 }
 
-void Renderer::RenderScene() const
+void Renderer::RenderScene()
 {
 	VerifyRenderState();
 	
@@ -725,7 +848,7 @@ void Renderer::RenderScene() const
 	VerifyRenderState();
 }
 
-void Renderer::RenderBackground() const
+void Renderer::RenderBackground()
 {
 	SetBackgroundFrustum(scene->GetPov());
 
@@ -740,18 +863,13 @@ void Renderer::RenderBackground() const
 	}
 }
 
-void Renderer::RenderForeground() const
+void Renderer::RenderForeground()
 {
 	// Adjust near and far plane.
 	SetForegroundFrustum(* scene);
 	
 	// Set up lights.
-	if (lighting)
-	{
-		gl::Enable(GL_LIGHTING);
-		
-		RenderLayer(Layer::light);
-	}
+	RenderLights();
 	
 	// Draw material objects.
 	if (wireframe)
@@ -762,6 +880,23 @@ void Renderer::RenderForeground() const
 	else 
 	{
 		RenderForegroundPass(NormalPass);
+	}
+}
+
+void Renderer::RenderLights()
+{
+	if (! lighting)
+	{
+		return;
+	}
+	
+	Light::List const & lights = scene->GetLightList();
+
+	for (int program_index = 0; program_index != ProgramIndex::max; ++ program_index)
+	{
+		Program & program = _programs[program_index];
+		SetProgram(& program);
+		program.UpdateLights(lights);
 	}
 }
 
@@ -819,7 +954,7 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 
 // Each pass draws all the geometry. Typically, there is one per frame
 // unless wireframe mode is on. 
-void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
+void Renderer::RenderForegroundPass(ForegroundRenderPass pass)
 {
 	// begin
 	if (! BeginRenderForeground(pass))
@@ -844,10 +979,6 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass) const
 void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 {
 	// Reset state
-	if (lighting && pass != WireframePass2)
-	{
-		gl::Disable(GL_LIGHTING);
-	}
 	gl::Disable(GL_DEPTH_TEST);
 
 	switch (pass) 
@@ -889,7 +1020,7 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	}
 }
 
-int Renderer::RenderLayer(Layer::type layer, bool opaque) const
+int Renderer::RenderLayer(Layer::type layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	
@@ -912,8 +1043,10 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque) const
 		
 		// Set the matrix.
 		Transformation const & transformation = leaf_node.GetModelViewTransformation();
-		Pov::SetModelViewMatrix(transformation);
+		SetModelViewMatrix(transformation);
 
+		SetProgram(GetProgram(leaf_node.GetProgramIndex()));
+		
 		leaf_node.Render(* this);
 		++ num_rendered_objects;
 	}
@@ -921,7 +1054,7 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque) const
 	return num_rendered_objects;
 }
 
-void Renderer::DebugDraw() const
+void Renderer::DebugDraw()
 {
 #if defined(GFX_DEBUG)
 	if (capture_enable)
@@ -939,7 +1072,9 @@ void Renderer::DebugDraw() const
 	Matrix33 rotation = transformation.GetRotation();
 	Matrix33 inverse_rotation = Inverse(rotation);
 	Transformation model_view(Vector3::Zero(), inverse_rotation);
-	Pov::SetModelViewMatrix(model_view);
+	SetModelViewMatrix(model_view);
+	
+	SetProgram(GetProgram(ProgramIndex::none));
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).

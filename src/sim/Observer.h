@@ -20,6 +20,9 @@
 #include "geom/Matrix44.h"
 
 
+#define OBSERVER_LIGHT
+
+
 namespace physics
 {
 	class SphericalBody;
@@ -54,6 +57,8 @@ namespace sim
 		
 		Vector3 impulses[2];	// [pos/rot]
 		Scalar speed_factor;
+#if defined(OBSERVER_LIGHT)
 		gfx::Uid _light_uid;
+#endif
 	};
 }

@@ -17,22 +17,32 @@
 
 using namespace gfx;
 
-LeafNode::LeafNode(Layer::type layer)
+LeafNode::LeafNode(Layer::type layer, ProgramIndex::type shader_index)
 : Object(leaf)
-, _render_sort_key(0)
+, _render_depth(0)
 , _layer(layer)
+, _program_index(shader_index)
 , _is_opaque(true)
 {
 }
 
+#if defined(VERIFY)
+void LeafNode::Verify() const
+{
+	VerifyObject(_model_view_transformation);
+}
+#endif
+
 void LeafNode::SetModelViewTransformation(Transformation const & model_view_transformation)
 {
+	VerifyObject(* this);
+	
 	_model_view_transformation = model_view_transformation;
 	
 	Transformation::Matrix const & matrix = _model_view_transformation.GetMatrix();
-	Scalar depth = matrix[1][3];
-	
-	_render_sort_key = static_cast<float>(_is_opaque ? - depth : depth);
+	_render_depth = matrix[1][3];
+
+	VerifyObject(* this);
 }
 
 LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
@@ -42,12 +52,45 @@ LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
 
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
-	return lhs._render_sort_key < rhs._render_sort_key;
+	if (lhs._is_opaque)
+	{
+		if (rhs._is_opaque)
+		{
+			int shader_index_diff = lhs._program_index - rhs._program_index;
+			if (shader_index_diff == 0)
+			{
+				return lhs._render_depth < rhs._render_depth;
+			}
+			
+			return shader_index_diff < 0;
+		}
+
+		return true;
+	}
+	else
+	{
+		if (rhs._is_opaque)
+		{
+			return false;
+		}
+		
+		return lhs._render_depth > rhs._render_depth;
+	}
 }
 
 Layer::type LeafNode::GetLayer() const
 {
 	return _layer;
+}
+
+void LeafNode::SetProgramIndex(ProgramIndex::type program_index)
+{
+	_program_index = program_index;
+}
+
+ProgramIndex::type LeafNode::GetProgramIndex() const
+{
+	return _program_index;
 }
 
 bool LeafNode::IsOpaque() const

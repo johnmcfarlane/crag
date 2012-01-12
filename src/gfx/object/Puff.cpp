@@ -13,6 +13,7 @@
 
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
+#include "gfx/SphereQuad.h"
 #include "gfx/Renderer.h"
 
 #include "glpp/glpp.h"
@@ -26,7 +27,7 @@ using namespace gfx;
 
 
 Puff::Puff(Scalar spawn_volume)
-: LeafNode(Layer::foreground)
+: LeafNode(Layer::foreground, ProgramIndex::poly)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0, 0, 0, 0)
@@ -81,10 +82,15 @@ void Puff::Render(Renderer const & renderer) const
 	gl::Disable(GL_CULL_FACE);
 	gl::SetColor(_color.GetArray());
 
-	SphereMesh const & sphere_mesh = renderer.GetScene().GetSphere();
-
+#if 1
+	SphereMesh const & sphere_mesh = renderer.GetSphereMesh();
 	sphere_mesh.Draw(0);
-
+#else
+	// TODO
+	SphereQuad const & sphere_quad = Daemon::Ref().GetScene().GetSphereQuad();
+	sphere_quad.Draw(GetModelViewTransformation());
+#endif
+	
 	gl::Enable(GL_CULL_FACE);
 }
 

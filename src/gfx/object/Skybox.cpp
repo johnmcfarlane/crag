@@ -22,7 +22,7 @@ using namespace gfx;
 
 
 Skybox::Skybox()
-: LeafNode(Layer::background)
+: LeafNode(Layer::background, ProgramIndex::none)
 {
 }
 

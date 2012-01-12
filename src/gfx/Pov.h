@@ -46,11 +46,8 @@ namespace gfx
 		Vector3 GetPosition() const;
 		
 		//void LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const & up);
-		
-		// set the OpenGl model view matrix for the given model
-		static void SetModelViewMatrix(Transformation const & model_view_matrix);
-		
 	private:
+
 		// variables
 		Frustum _frustum;
 		Transformation _transformation;

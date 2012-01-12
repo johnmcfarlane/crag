@@ -11,6 +11,7 @@
 
 #include "defs.h"
 
+#include "Light.h"
 #include "object/BranchNode.h"
 #include "object/LeafNode.h"
 #include "Pov.h"
@@ -21,9 +22,7 @@
 namespace gfx
 {
 	// forward-declarations
-	class Cuboid;
 	class Object;
-	class SphereMesh;
 	
 	// Scene class definition
 	// Stores graphical representation of the simulation
@@ -49,15 +48,14 @@ namespace gfx
 		
 		LeafNode::RenderList & GetRenderList();
 		LeafNode::RenderList const & GetRenderList() const;
+
+		Light::List & GetLightList();
 		
 		void SetResolution(Vector2i const & r);
 		void SetCameraTransformation(sim::Transformation const & transformation);
 		
 		Pov & GetPov();
 		Pov const & GetPov() const;
-		
-		Cuboid const & GetCuboid() const;
-		SphereMesh const & GetSphere() const;
 		
 	private:
 		// remove the children of the given branch node
@@ -70,8 +68,6 @@ namespace gfx
 		ObjectMap _objects;	// fast-access container of all objects
 		BranchNode _root;	// root of object heirachy
 		LeafNode::RenderList _render_list;
-		
-		Cuboid const & _cuboid;
-		SphereMesh const & _sphere;
+		Light::List _light_list;
 	};
 }

@@ -11,9 +11,6 @@
 
 #include "Scene.h"
 
-#include "SphereMesh.h"
-#include "Cuboid.h"
-
 #include "core/ConfigEntry.h"
 
 #include "gfx/object/Object.h"
@@ -40,8 +37,6 @@ namespace
 
 Scene::Scene()
 : _time(-1)
-, _cuboid(* new Cuboid)
-, _sphere(* new SphereMesh)
 {
 	Frustum & frustum = pov.GetFrustum();
 
@@ -62,9 +57,6 @@ Scene::~Scene()
 	camera_fov = static_cast<float>(frustum.fov);
 	camera_near = static_cast<float>(frustum.depth_range[0]);
 	camera_far = static_cast<float>(frustum.depth_range[1]);
-	
-	delete & _sphere;
-	delete & _cuboid;
 }
 
 void Scene::SetTime(Time t)
@@ -226,6 +218,11 @@ LeafNode::RenderList const & Scene::GetRenderList() const
 	return _render_list;
 }
 
+Light::List & Scene::GetLightList()
+{
+	return _light_list;
+}
+
 void Scene::SetResolution(Vector2i const & r)
 {
 	pov.GetFrustum().resolution = r;
@@ -245,16 +242,6 @@ Pov & Scene::GetPov()
 Pov const & Scene::GetPov() const
 {
 	return pov;
-}
-
-gfx::SphereMesh const & Scene::GetSphere() const
-{
-	return _sphere;
-}
-
-Cuboid const & Scene::GetCuboid() const
-{
-	return _cuboid;
 }
 
 void Scene::RemoveChildren(BranchNode & parent)

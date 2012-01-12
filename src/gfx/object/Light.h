@@ -20,13 +20,14 @@
 
 namespace gfx
 {
+	// forward-declarations
+	struct LightInfo;
+	
+	// A gfx Object representing a light source.
 	class Light : public LeafNode
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		
-		// map of the available 8 OpenGL light slots
-		typedef uint8_t SlotMap;
 	public:
 		struct UpdateParams
 		{
@@ -35,23 +36,23 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Color4f const & color, float a = 0, float b = 0, float c = 1, bool init_shadows = false);
+		Light(Vector3f const & color);
 		
 		bool Init(Scene & scene) override;
 		void Deinit(Scene & scene) override;
 		
-		void SetColor(Color4f const & color);
+		void SetColor(Vector3f const & color);
+		Vector3f const & GetColor() const;
 		
-		virtual void Render(Renderer const & renderer) const;
+#if ! defined(NDEBUG)
+		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
+#endif
 		
 		// variables
 	private:
-		Color4f _color;
-		float attenuation_a;
-		float attenuation_b;
-		float attenuation_c;
-		GLenum light_id;
-		
-		static SlotMap _used_slots;
+		// This is the list which is sorted in order of 
+		DEFINE_INTRUSIVE_LIST(Light, List);
+
+		Vector3f _color;
 	};
 }

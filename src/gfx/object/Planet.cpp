@@ -22,7 +22,7 @@ using namespace gfx;
 // gfx::Planet member definitions
 
 Planet::Planet()
-: LeafNode(Layer::foreground)
+: LeafNode(Layer::foreground, ProgramIndex::poly)
 {
 }
 

@@ -12,6 +12,7 @@
 #include "Light.h"
 
 #include "gfx/Scene.h"
+#include "gfx/Debug.h"
 
 #include "glpp/glpp.h"
 
@@ -19,81 +20,45 @@
 #include "geom/Vector3.h"
 
 
-using gfx::Light;
 using namespace gfx;
 
 
-Light::Light(Color4f const & color, float a, float b, float c, bool init_shadows)
-: LeafNode(Layer::light)
-, _color(color)
-, attenuation_a(a)
-, attenuation_b(b)
-, attenuation_c(c)
-, light_id(GL_NONE)
+Light::Light(Vector3f const & color)
+: LeafNode(Layer::light, ProgramIndex::none)
+, _color(color.x, color.y, color.z)
 {
 }
 
 bool Light::Init(Scene & scene)
 {
-	for (int light_index = 0; light_index < 8; ++ light_index)
-	{
-		SlotMap bit = 1 << light_index;
-		bool currently_used = (_used_slots & bit) != 0;
-		Assert(currently_used == gl::IsEnabled(GL_LIGHT0 + light_index));
-		
-		if (! currently_used)
-		{
-			_used_slots |= bit;
-			light_id = GL_LIGHT0 + light_index;
-			
-			Assert(! gl::IsEnabled(light_id));
-			GLPP_CALL(gl::Enable(light_id));
-			return true;
-		}
-	}
+	Light::List & lights = scene.GetLightList();
+	lights.push_back(* this);
 	
-	// Currently, we're only using two lights. The limit is eight.
-	return false;
+	return true;
 }
 
 void Light::Deinit(Scene & scene)
 {
-	// Get the corresponding bit in the used slot map.
-	int light_index = light_id - GL_LIGHT0;
-	SlotMap bit = 1 << light_index;
-	
-	// Unset it.
-	Assert((_used_slots & bit) != 0);
-	_used_slots &= ~ bit;
-	
-	// Update the GL state.
-	Assert(gl::IsEnabled(light_id));
-	GLPP_CALL(gl::Disable(light_id));
+	Light::List & lights = scene.GetLightList();
+	lights.remove(* this);
 }
 
-void Light::SetColor(Color4f const & color)
+void Light::SetColor(Vector3f const & color)
 {
 	_color = color;
 }
 
-void Light::Render(Renderer const & renderer) const
+Vector3f const & Light::GetColor() const
 {
-	GLPP_CALL(glLightfv(light_id, GL_AMBIENT, Color4f(0, 0, 0)));
-	GLPP_CALL(glLightfv(light_id, GL_DIFFUSE, _color));
-	GLPP_CALL(glLightfv(light_id, GL_SPECULAR, Color4f(0, 0, 0)));
-	
-	GLPP_CALL(glLightfv(light_id, GL_CONSTANT_ATTENUATION, & attenuation_c));
-	GLPP_CALL(glLightfv(light_id, GL_LINEAR_ATTENUATION, & attenuation_b));
-	GLPP_CALL(glLightfv(light_id, GL_QUADRATIC_ATTENUATION, & attenuation_a));
-	
-	static float l[4] = {
-		0,
-		0,
-		0,
-		1	// or is it this that makes it positional?
-	};
-	GLPP_CALL(glLightfv(light_id, GL_POSITION, l));
+	return _color;
 }
 
-
-Light::SlotMap Light::_used_slots = 0;
+#if ! defined(NDEBUG)
+LeafNode::PreRenderResult Light::PreRender(Renderer const & renderer)
+{
+	Debug::Vector3 basis_position = GetParent()->GetModelTransformation().GetTranslation();
+	Debug::AddBasis(basis_position, 1000000.);
+	
+	return ok;
+}
+#endif
