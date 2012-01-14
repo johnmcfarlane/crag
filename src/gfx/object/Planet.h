@@ -26,14 +26,18 @@ namespace gfx
 		};
 		
 		// functions
-		Planet();
+		Planet(Scalar sea_level);
 		
-		virtual void Update(UpdateParams const & params, Renderer & renderer);
+		void Update(UpdateParams const & params, Renderer & renderer) override;
+
 	private:
-		virtual bool GetRenderRange(RenderRange & range) const;
-		virtual void Render(Renderer const & renderer) const;
+		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+
+		bool GetRenderRange(RenderRange & range) const override;
+		void Render(Renderer const & renderer) const override;
 		
 		// variables
+		Scalar _sea_level;
 		UpdateParams _salient;
 	};
 }

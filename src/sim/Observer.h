@@ -20,7 +20,7 @@
 #include "geom/Matrix44.h"
 
 
-#define OBSERVER_LIGHT
+//#define OBSERVER_LIGHT
 
 
 namespace physics

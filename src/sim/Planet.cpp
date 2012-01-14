@@ -119,7 +119,7 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
 		
 		// register with the renderer
-		gfx::Planet * model = new gfx::Planet();
+		gfx::Planet * model = new gfx::Planet(_radius_mean);
 		_model_uid = model->GetUid();
 		_transformation_uid = AddModelWithTransform(* model);
 	}
@@ -170,7 +170,7 @@ void Planet::UpdateModels() const
 		Vector3 const & position = _body->GetPosition();
 		gfx::BranchNode::UpdateParams params = 
 		{
-			Transformation(position)
+			Transformation(position, Transformation::Rotation::Identity(), _radius_mean)
 		};
 		
 		gfx::Daemon::Call(_transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);

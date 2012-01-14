@@ -11,6 +11,9 @@
 
 #include "Planet.h"
 
+#include "gfx/Renderer.h"
+#include "gfx/SphereQuad.h"
+
 #include "geom/Ray.h"
 #include "geom/Transformation.h"
 
@@ -21,14 +24,21 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-Planet::Planet()
-: LeafNode(Layer::foreground, ProgramIndex::poly)
+Planet::Planet(Scalar sea_level)
+: LeafNode(Layer::foreground, ProgramIndex::sphere)
+, _sea_level(sea_level)
 {
 }
 
 void Planet::Update(UpdateParams const & params, Renderer & renderer)
 {
 	_salient = params;
+}
+
+gfx::Transformation const & Planet::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
+{
+	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+	return sphere_quad.Transform(model_view, scratch);
 }
 
 bool Planet::GetRenderRange(RenderRange & range) const 
@@ -44,7 +54,11 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render(Renderer const & renderer) const 
-{ 
-	// actual drawing is taken care of by the formation manager
+void Planet::Render(Renderer const & renderer) const
+{
+	gl::SetColor(Color4f(.5f,.5f,.9f,.5f).GetArray());
+	
+	Transformation const & transformation = GetModelViewTransformation();
+	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+	sphere_quad.Draw(transformation);
 }
