@@ -27,6 +27,9 @@
 #include "script/MetaClass.h"
 
 
+//#define RENDER_SEA
+
+
 using namespace sim;
 
 
@@ -119,7 +122,12 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
 		
 		// register with the renderer
-		gfx::Planet * model = new gfx::Planet(_radius_mean);
+#if defined(RENDER_SEA)
+		float sea_level = _radius_mean;
+#else
+		float sea_level = 0;
+#endif
+		gfx::Planet * model = new gfx::Planet(sea_level);
 		_model_uid = model->GetUid();
 		_transformation_uid = AddModelWithTransform(* model);
 	}

@@ -56,6 +56,11 @@ bool Planet::GetRenderRange(RenderRange & range) const
 
 void Planet::Render(Renderer const & renderer) const
 {
+	if (_sea_level < _salient._radius_min)
+	{
+		return;
+	}
+	
 	gl::SetColor(Color4f(.5f,.5f,.9f,.5f).GetArray());
 	
 	Transformation const & transformation = GetModelViewTransformation();
