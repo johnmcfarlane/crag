@@ -12,15 +12,17 @@
 
 // light.frag function which calculates the lighting for the given fragment
 vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+void SetFragmentDepth(in vec4 view_position);
 
 
 // inputs from poly.vert
 varying vec3 normal;
-varying vec3 position;
+varying vec4 position;
 varying vec4 color;
 
 
 void main(void)
 {
-	gl_FragColor = color * vec4(LightFragment(position, normalize(normal)), color.a);
+	gl_FragColor = color * vec4(LightFragment(position.xyz, normalize(normal)), color.a);
+	SetFragmentDepth(position);
 }

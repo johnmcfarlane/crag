@@ -15,10 +15,11 @@
 
 // light.frag function which calculates the lighting for the given fragment
 vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+void SetFragmentDepth(in vec4 view_position);
 
 
 // inputs from sphere.vert
-varying vec3 quad_position;
+varying vec4 quad_position;
 varying vec4 color;
 
 // inputs from the renderer
@@ -54,7 +55,7 @@ bool GetIntersection(in vec3 ray, out float t1, out float t2)
 void main(void)
 {
 	float t1, t2;
-	if (! GetIntersection(quad_position, t1, t2))
+	if (! GetIntersection(quad_position.xyz, t1, t2))
 	{
 		gl_FragColor = vec4(1, 0, 0, 1);
 	}
@@ -65,8 +66,8 @@ void main(void)
 	else
 	{
 		float c = length(center);
-		float prop1 = (c - length(quad_position * t1)) / radius;
-		float prop2 = (length(quad_position * t2) - c) / radius;
+		float prop1 = (c - length(quad_position.xyz * t1)) / radius;
+		float prop2 = (length(quad_position.xyz * t2) - c) / radius;
 		gl_FragColor = vec4(0., prop1, prop2, 1.);
 	}
 }
@@ -76,15 +77,15 @@ void main(void)
 void main(void)
 {
 	float t1, t2;
-	if (! GetIntersection(quad_position, t1, t2) || t2 < 0)
+	if (! GetIntersection(quad_position.xyz, t1, t2) || t2 < 0)
 	{
 		discard;
 	}
 
-	vec3 frag_position = quad_position * t1;
-	vec3 frag_normal = normalize(frag_position - center);
+	vec4 frag_position = quad_position * t1;
+	vec3 frag_normal = normalize(frag_position.xyz - center);
 	
-	vec3 light = LightFragment(frag_position, frag_normal);
+	vec3 light = LightFragment(frag_position.xyz, frag_normal);
 
 	if (color.a == 1.)
 	{
@@ -93,11 +94,11 @@ void main(void)
 	else
 	{
 		// the distance our ray passes through the sphere
-		float depth = length(quad_position) * (t2 - t1);
+		float depth = length(quad_position.xyz) * (t2 - t1);
 		gl_FragColor = vec4(color.xyz * light.xyz, 1. - pow(1. - color.a, depth));
 	}
 	
-	gl_FragDepth = gl_FragCoord.z;
+	SetFragmentDepth(frag_position);
 }
 
 #endif

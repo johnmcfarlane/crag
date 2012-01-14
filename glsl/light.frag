@@ -52,3 +52,10 @@ vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal)
 
 	return color;
 }
+
+void SetFragmentDepth(in vec4 view_position)
+{
+	vec2 clipZW = view_position.z * gl_ProjectionMatrix[2].zw + gl_ProjectionMatrix[3].zw;
+
+	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
+}
