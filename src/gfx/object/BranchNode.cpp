@@ -91,6 +91,7 @@ gfx::Transformation const & BranchNode::GetTransformation() const
 void BranchNode::SetTransformation(gfx::Transformation const & transformation)
 {
 	_transformation = transformation;
+	VerifyObject(_transformation);
 }
 
 gfx::Transformation BranchNode::GetModelTransformation() const

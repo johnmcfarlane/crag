@@ -150,7 +150,11 @@ public:
 		{
 			for (int column = 0; column != 4; ++ column)
 			{
-				VerifyTrue(! IsInf(_matrix[row][column]));
+				Scalar c = _matrix[row][column];
+				VerifyTrue(! IsInf(c));
+				VerifyTrue(! IsNaN(c));
+				VerifyTrue(c < std::numeric_limits<float>::max());
+				VerifyTrue(c > - std::numeric_limits<float>::max());
 			}
 		}
 	}

@@ -44,6 +44,7 @@ using namespace gfx;
 
 CONFIG_DEFINE (multisample, bool, false);
 CONFIG_DECLARE (profile_mode, bool);
+CONFIG_DECLARE(camera_near, float);
 
 
 namespace 
@@ -131,22 +132,14 @@ namespace
 		background_frustum.SetProjectionMatrix();
 	}
 	
-	// Given the scene (including frustum), creates an adjusted frustum
-	// with suitable near/far z values and applies it to the projection matrix.
-	void SetForegroundFrustum(Scene const & scene)
+	// Given the list of objects to render, calculates suitable near/far z values.
+	RenderRange CalculateDepthRange(LeafNode::RenderList const & render_list)
 	{
-		Pov const & pov = scene.GetPov();
-		Frustum const & default_frustum = pov.GetFrustum();
-		
-		Frustum adjusted_frustum = default_frustum;
-		adjusted_frustum.depth_range[0] = std::numeric_limits<float>::max();
-		adjusted_frustum.depth_range[1] = - std::numeric_limits<float>::max();
-		
-		typedef LeafNode::RenderList List;
-		List const & render_list = scene.GetRenderList();
+		float float_max = std::numeric_limits<float>::max();
+		RenderRange frustum_depth_range (float_max, - float_max);
 		
 		// For all leaf nodes in the render list,
-		for (List::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+		for (LeafNode::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 		{
 			LeafNode const & leaf_node = * i;
 			
@@ -167,26 +160,47 @@ namespace
 			Assert(! IsInf(depth_range[1]));
 			
 			// and it isn't behind the camera,
-			if (depth_range[1] <= default_frustum.depth_range[0])
+			if (depth_range[1] <= camera_near)
 			{
 				continue;
 			}
 			
 			// then include it in adjusted frustum render range.
-			if (depth_range[0] < adjusted_frustum.depth_range[0])
+			if (depth_range[0] < frustum_depth_range[0])
 			{
-				adjusted_frustum.depth_range[0] = depth_range[0];
+				frustum_depth_range[0] = depth_range[0];
 			}
 			
-			if (depth_range[1] > adjusted_frustum.depth_range[1])
+			if (depth_range[1] > frustum_depth_range[1])
 			{
-				adjusted_frustum.depth_range[1] = depth_range[1];
+				frustum_depth_range[1] = depth_range[1];
 			}
 		}
+
+		// Bind the near plane to the default value,
+		frustum_depth_range[0] = std::max(frustum_depth_range[0], (double)camera_near);
 		
-		// Finally bind the near plane to the default frustum,
-		adjusted_frustum.depth_range[0] = std::max(adjusted_frustum.depth_range[0], default_frustum.depth_range[0]);
-		adjusted_frustum.SetProjectionMatrix();
+		if (frustum_depth_range[0] >= frustum_depth_range[1])
+		{
+			// with nothing to render, there is no valid depth range,
+			// so throw together some dummy values.
+			return RenderRange(camera_near, camera_near * 1024);
+		}
+		
+		return frustum_depth_range;
+	}
+	
+	// Given the scene, adjusts its frustum with suitable near/far z values 
+	// and applies it to the projection matrix.
+	void SetForegroundFrustum(Scene & scene)
+	{
+		Pov & pov = scene.GetPov();
+		LeafNode::RenderList const & render_list = scene.GetRenderList();
+		Frustum & frustum = pov.GetFrustum();
+
+		frustum.depth_range = CalculateDepthRange(render_list);
+		
+		frustum.SetProjectionMatrix();
 	}
 
 	// Given a scene and the uid of a branc_node in that scene
@@ -772,6 +786,7 @@ void Renderer::PreRender()
 
 void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transformation const & model_view_transformation)
 {
+	VerifyObject(model_view_transformation);
 	Transformation scratch;
 	
 	for (ObjectBase::ChildList::iterator i = parent_branch.Begin(), end = parent_branch.End(); i != end; )
@@ -780,6 +795,7 @@ void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transforma
 		++ i;
 		
 		Transformation const & child_model_view_transformation = child.Transform(* this, model_view_transformation, scratch);
+		VerifyObject(child_model_view_transformation);
 		
 		switch (child.GetNodeType())
 		{

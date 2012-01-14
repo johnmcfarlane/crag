@@ -19,6 +19,7 @@ using namespace gfx;
 
 LeafNode::LeafNode(Layer::type layer, ProgramIndex::type shader_index)
 : Object(leaf)
+//, _model_view_transformation(Transformation::Identity())
 , _render_depth(0)
 , _layer(layer)
 , _program_index(shader_index)
@@ -35,8 +36,6 @@ void LeafNode::Verify() const
 
 void LeafNode::SetModelViewTransformation(Transformation const & model_view_transformation)
 {
-	VerifyObject(* this);
-	
 	_model_view_transformation = model_view_transformation;
 	
 	Transformation::Matrix const & matrix = _model_view_transformation.GetMatrix();
