@@ -23,7 +23,7 @@
 using namespace gfx;
 
 
-Box::Box(Color4b color)
+Box::Box(Color4f color)
 : LeafNode(Layer::foreground, ProgramIndex::poly)
 , _color(color)
 {

@@ -23,7 +23,7 @@ namespace gfx
 	{
 	public:
 		// functions
-		Ball(Color4b color);
+		Ball(Color4f color);
 		
 	private:
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
@@ -33,6 +33,6 @@ namespace gfx
 		void Render(Renderer const & renderer) const override;
 		
 		// variables
-		Color4b _color;
+		Color4f _color;
 	};
 }

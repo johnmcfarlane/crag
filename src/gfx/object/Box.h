@@ -21,13 +21,13 @@ namespace gfx
 	{
 	public:
 		// functions
-		Box(Color4b color);
+		Box(Color4f color);
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Renderer const & renderer) const override;
 		
 	private:
 		// variables
-		Color4b _color;
+		Color4f _color;
 	};
 }

@@ -39,11 +39,11 @@ namespace
 using namespace gfx;
 
 
-Ball::Ball(Color4b color)
+Ball::Ball(Color4f color)
 : LeafNode(Layer::foreground, ProgramIndex::sphere)
 , _color(color)
 {
-	SetIsOpaque(_color.a == 255);
+	SetIsOpaque(_color.a == 1);
 }
 
 gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override

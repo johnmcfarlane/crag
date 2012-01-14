@@ -38,7 +38,7 @@ namespace sim
 	private:
 		void InitPhysics(Simulation & simulation, Sphere3 const & sphere);
 		void InitGraphics(Sphere3 const & sphere);
-		virtual gfx::Color4b GetColor() const;
+		virtual gfx::Color4f GetColor() const;
 		
 	public:
 		void UpdateModels() const;

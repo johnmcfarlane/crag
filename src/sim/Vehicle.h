@@ -46,7 +46,7 @@ namespace sim
 		bool Init(Simulation & simulation, PyObject & args) override;
 		
 		// Called from Ball when initializing the graphics object.
-		gfx::Color4b GetColor() const override;
+		gfx::Color4f GetColor() const override;
 		
 		// Called when sending messages to the renderer thread.
 		void UpdateModels() const override;

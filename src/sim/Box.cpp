@@ -95,7 +95,10 @@ void Box::InitPhysics(Simulation & simulation, Vector3 center, Vector3 size)
 
 void Box::InitGraphics()
 {
-	gfx::Color4b color(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
+	gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
+		Random::sequence.GetUnitInclusive<float>(), 
+		Random::sequence.GetUnitInclusive<float>(), 
+		Random::sequence.GetUnitInclusive<float>());
 	gfx::Object * box = new gfx::Box(color);
 	_gfx_uid = AddModelWithTransform(* box);
 }

@@ -141,9 +141,9 @@ bool Vehicle::Init(Simulation & simulation, PyObject & args)
 	return super::Init(simulation, args);
 }
 
-gfx::Color4b Vehicle::GetColor() const
+gfx::Color4f Vehicle::GetColor() const
 {
-	return gfx::Color4b::White();
+	return gfx::Color4f::White();
 }
 
 void Vehicle::UpdateModels() const
