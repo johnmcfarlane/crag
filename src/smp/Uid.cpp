@@ -35,7 +35,7 @@ Uid Uid::Create()
 	Assert(GetBitCount(ValueType(-1)) == sizeof(ValueType) * CHAR_BIT);
 	
 	// periodically report that uids are being used up
-	if (GetBitCount(_counter) == 1)
+	if (_counter > 1000000 && GetBitCount(_counter) == 1)
 	{
 		std::cout << "Uid " << _counter << std::endl;
 	}
