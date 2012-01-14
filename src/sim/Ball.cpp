@@ -94,7 +94,7 @@ void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
 
 void Ball::InitGraphics(Sphere3 const & sphere)
 {
-	gfx::Color4b color = GetColor();
+	gfx::Color4f color = GetColor();
 	gfx::Object * ball = new gfx::Ball(color);
 	_gfx_uid = AddModelWithTransform(* ball);
 }
