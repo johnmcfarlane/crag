@@ -136,19 +136,10 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 		DEBUG_BREAK(); \
 	}
 
-
+// Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
 { 
-#if defined(__APPLE__)
-	// 64bit
-	//Assert(& ref < reinterpret_cast<T *>(0x120000000));
-#elif defined(WIN32)
-	// Wish there was a way to get this. 
-#else
-	// Error in Win32 builds.
-	//Assert(& ref < reinterpret_cast<T *>(0x800000000000));
-#endif
-	Assert(& ref >= reinterpret_cast<T *>(0xd0000)); 
+	Assert(& ref >= reinterpret_cast<T *>(0x10000)); 
 }
 
 // Additionally, pointers may be null.
