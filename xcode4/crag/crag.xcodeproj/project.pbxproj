@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
-		520FECE614ADA67A006A7E02 /* sphere.frag in Sources */ = {isa = PBXBuildFile; fileRef = 520FECE514ADA67A006A7E02 /* sphere.frag */; };
-		520FECE814ADA851006A7E02 /* sphere.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 520FECE514ADA67A006A7E02 /* sphere.frag */; };
 		521192DC14AD919D0061F899 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DA14AD919C0061F899 /* memory.cpp */; };
 		521192DF14AD97550061F899 /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DD14AD97540061F899 /* app.cpp */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
@@ -19,9 +17,16 @@
 		52483A3A143C057400195337 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A39143C057400195337 /* ForceFeedback.framework */; };
 		52483A3C143C05BC00195337 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A3B143C05BB00195337 /* AudioUnit.framework */; };
 		524EA30A13D1401000664A2F /* utility.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529D2BBC13D1277F00B0EEE2 /* utility.py */; };
-		52612B7814B82A5900029C69 /* light.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52612B7714B82A5900029C69 /* light.frag */; };
-		526B950414BBEB54002FC0DE /* sphere.vert in Sources */ = {isa = PBXBuildFile; fileRef = 526B950314BBEB54002FC0DE /* sphere.vert */; };
-		526B950614BC5F80002FC0DE /* sphere.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 526B950314BBEB54002FC0DE /* sphere.vert */; };
+		5270CC4614C0A64100146D09 /* light.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4114C0A64100146D09 /* light.frag */; };
+		5270CC4714C0A64100146D09 /* poly.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4214C0A64100146D09 /* poly.frag */; };
+		5270CC4814C0A64100146D09 /* poly.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4314C0A64100146D09 /* poly.vert */; };
+		5270CC4914C0A64100146D09 /* sphere.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4414C0A64100146D09 /* sphere.frag */; };
+		5270CC4A14C0A64100146D09 /* sphere.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4514C0A64100146D09 /* sphere.vert */; };
+		5270CC4B14C1469700146D09 /* light.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4114C0A64100146D09 /* light.frag */; };
+		5270CC4C14C1469700146D09 /* poly.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4214C0A64100146D09 /* poly.frag */; };
+		5270CC4D14C1469700146D09 /* poly.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4314C0A64100146D09 /* poly.vert */; };
+		5270CC4E14C1469700146D09 /* sphere.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4414C0A64100146D09 /* sphere.frag */; };
+		5270CC4F14C1469700146D09 /* sphere.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4514C0A64100146D09 /* sphere.vert */; };
 		5281646F1454F5DB0017E868 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 528163881454F5DB0017E868 /* COPYING */; };
 		528164701454F5DB0017E868 /* ConfigEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281638C1454F5DB0017E868 /* ConfigEntry.cpp */; };
 		528164711454F5DB0017E868 /* ConfigManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5281638E1454F5DB0017E868 /* ConfigManager.cpp */; };
@@ -91,11 +96,6 @@
 		528164B21454F5DC0017E868 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164651454F5DB0017E868 /* smp.cpp */; };
 		528164B31454F5DC0017E868 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164671454F5DB0017E868 /* Thread.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
-		528645B414BA504000AA7994 /* light.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52612B7714B82A5900029C69 /* light.frag */; };
-		528645B714BA512600AA7994 /* poly.frag in Sources */ = {isa = PBXBuildFile; fileRef = 528645B614BA512600AA7994 /* poly.frag */; };
-		528645B814BA513500AA7994 /* poly.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528645B614BA512600AA7994 /* poly.frag */; };
-		528645C314BAC88000AA7994 /* poly.vert in Sources */ = {isa = PBXBuildFile; fileRef = 528645C114BAC87F00AA7994 /* poly.vert */; };
-		528645C414BAC91F00AA7994 /* poly.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528645C114BAC87F00AA7994 /* poly.vert */; };
 		52882A3F149492FF00E68B4F /* Puff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52882A3D149492FF00E68B4F /* Puff.cpp */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52928AC8147C358800731B77 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52928AC6147C358800731B77 /* Layer.cpp */; };
@@ -118,14 +118,14 @@
 		520FECE714ADA6E5006A7E02 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = gpu;
+			dstPath = glsl;
 			dstSubfolderSpec = 7;
 			files = (
-				520FECE814ADA851006A7E02 /* sphere.frag in CopyFiles */,
-				526B950614BC5F80002FC0DE /* sphere.vert in CopyFiles */,
-				528645B414BA504000AA7994 /* light.frag in CopyFiles */,
-				528645B814BA513500AA7994 /* poly.frag in CopyFiles */,
-				528645C414BAC91F00AA7994 /* poly.vert in CopyFiles */,
+				5270CC4B14C1469700146D09 /* light.frag in CopyFiles */,
+				5270CC4C14C1469700146D09 /* poly.frag in CopyFiles */,
+				5270CC4D14C1469700146D09 /* poly.vert in CopyFiles */,
+				5270CC4E14C1469700146D09 /* sphere.frag in CopyFiles */,
+				5270CC4F14C1469700146D09 /* sphere.vert in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +158,6 @@
 		52055D65132DE312000C6578 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		520FECE514ADA67A006A7E02 /* sphere.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = sphere.frag; path = ../../gpu/sphere.frag; sourceTree = "<group>"; };
 		520FECE914ADB540006A7E02 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		521192DA14AD919C0061F899 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		521192DB14AD919D0061F899 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
@@ -170,8 +169,11 @@
 		52483978143BED0900195337 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = ../../../../../../System/Library/Frameworks/CoreAudio.framework; sourceTree = "<group>"; };
 		52483A39143C057400195337 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = ../../../../../../System/Library/Frameworks/ForceFeedback.framework; sourceTree = "<group>"; };
 		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
-		52612B7714B82A5900029C69 /* light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = light.frag; path = ../../gpu/light.frag; sourceTree = "<group>"; };
-		526B950314BBEB54002FC0DE /* sphere.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = sphere.vert; path = ../../gpu/sphere.vert; sourceTree = "<group>"; };
+		5270CC4114C0A64100146D09 /* light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.frag; sourceTree = "<group>"; };
+		5270CC4214C0A64100146D09 /* poly.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = poly.frag; sourceTree = "<group>"; };
+		5270CC4314C0A64100146D09 /* poly.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = poly.vert; sourceTree = "<group>"; };
+		5270CC4414C0A64100146D09 /* sphere.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = sphere.frag; sourceTree = "<group>"; };
+		5270CC4514C0A64100146D09 /* sphere.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = sphere.vert; sourceTree = "<group>"; };
 		528163881454F5DB0017E868 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		5281638A1454F5DB0017E868 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		5281638C1454F5DB0017E868 /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
@@ -370,8 +372,6 @@
 		528164691454F5DB0017E868 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
-		528645B614BA512600AA7994 /* poly.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = poly.frag; path = ../../gpu/poly.frag; sourceTree = "<group>"; };
-		528645C114BAC87F00AA7994 /* poly.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = poly.vert; path = ../../gpu/poly.vert; sourceTree = "<group>"; };
 		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
 		52882A3D149492FF00E68B4F /* Puff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Puff.cpp; sourceTree = "<group>"; };
 		52882A3E149492FF00E68B4F /* Puff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puff.h; sourceTree = "<group>"; };
@@ -426,7 +426,7 @@
 		52055D53132DE312000C6578 = {
 			isa = PBXGroup;
 			children = (
-				520FECE314ADA65F006A7E02 /* gpu */,
+				5270CC4014C0A64100146D09 /* glsl */,
 				528164B61454F6200017E868 /* SDLmain */,
 				528163871454F5DB0017E868 /* src */,
 				52BEEF55143EA73500E98056 /* build_py_deps.py */,
@@ -476,18 +476,6 @@
 			path = crag;
 			sourceTree = "<group>";
 		};
-		520FECE314ADA65F006A7E02 /* gpu */ = {
-			isa = PBXGroup;
-			children = (
-				52612B7714B82A5900029C69 /* light.frag */,
-				528645B614BA512600AA7994 /* poly.frag */,
-				528645C114BAC87F00AA7994 /* poly.vert */,
-				520FECE514ADA67A006A7E02 /* sphere.frag */,
-				526B950314BBEB54002FC0DE /* sphere.vert */,
-			);
-			name = gpu;
-			sourceTree = "<group>";
-		};
 		52483972143BEA6200195337 /* SDL Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -498,6 +486,19 @@
 				52483974143BEAE300195337 /* Carbon.framework */,
 			);
 			name = "SDL Frameworks";
+			sourceTree = "<group>";
+		};
+		5270CC4014C0A64100146D09 /* glsl */ = {
+			isa = PBXGroup;
+			children = (
+				5270CC4114C0A64100146D09 /* light.frag */,
+				5270CC4214C0A64100146D09 /* poly.frag */,
+				5270CC4314C0A64100146D09 /* poly.vert */,
+				5270CC4414C0A64100146D09 /* sphere.frag */,
+				5270CC4514C0A64100146D09 /* sphere.vert */,
+			);
+			name = glsl;
+			path = ../../glsl;
 			sourceTree = "<group>";
 		};
 		528163871454F5DB0017E868 /* src */ = {
@@ -1121,13 +1122,13 @@
 				52882A3F149492FF00E68B4F /* Puff.cpp in Sources */,
 				521192DC14AD919D0061F899 /* memory.cpp in Sources */,
 				521192DF14AD97550061F899 /* app.cpp in Sources */,
-				520FECE614ADA67A006A7E02 /* sphere.frag in Sources */,
 				52982A6914B189A600449DC0 /* SphereQuad.cpp in Sources */,
-				52612B7814B82A5900029C69 /* light.frag in Sources */,
-				528645B714BA512600AA7994 /* poly.frag in Sources */,
-				528645C314BAC88000AA7994 /* poly.vert in Sources */,
 				52C2EE5D14BB62D600FC3853 /* Program.cpp in Sources */,
-				526B950414BBEB54002FC0DE /* sphere.vert in Sources */,
+				5270CC4614C0A64100146D09 /* light.frag in Sources */,
+				5270CC4714C0A64100146D09 /* poly.frag in Sources */,
+				5270CC4814C0A64100146D09 /* poly.vert in Sources */,
+				5270CC4914C0A64100146D09 /* sphere.frag in Sources */,
+				5270CC4A14C0A64100146D09 /* sphere.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
