@@ -59,7 +59,7 @@ bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 			int shader_index_diff = lhs._program_index - rhs._program_index;
 			if (shader_index_diff == 0)
 			{
-				return lhs._render_depth < rhs._render_depth;
+				return lhs._render_depth > rhs._render_depth;
 			}
 			
 			return shader_index_diff < 0;
@@ -74,7 +74,7 @@ bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 			return false;
 		}
 		
-		return lhs._render_depth > rhs._render_depth;
+		return lhs._render_depth < rhs._render_depth;
 	}
 }
 
