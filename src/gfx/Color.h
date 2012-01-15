@@ -50,7 +50,7 @@ namespace gfx
 			return GetArray() [i];
 		}
 
-		Comp operator [] (int i) const
+		Comp const & operator [] (int i) const
 		{
 			Assert(i >= 0 && i < 4);
 			return GetArray() [i];

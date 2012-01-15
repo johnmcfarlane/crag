@@ -38,7 +38,7 @@ namespace
 // gfx::Thruster member definitions
 
 Thruster::Thruster()
-: Light(Vector3f(1.f, .5f, .25f))
+: Light(Color4f(1.f, .5f, .25f))
 , _thrust_factor(0)
 {
 }
@@ -54,7 +54,7 @@ void Thruster::Update(UpdateParams const & params, Renderer & renderer)
 
 LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
 {
-	SetColor(Vector3f(1.f, .5f, .25f) * _thrust_factor * Random::sequence.GetUnit<float>());
+	SetColor(Color4f(1.f, .5f, .25f) * _thrust_factor * Random::sequence.GetUnit<float>());
 	_thrust_factor = 0;
 	
 	return LeafNode::ok;

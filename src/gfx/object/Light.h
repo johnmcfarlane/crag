@@ -36,13 +36,13 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Vector3f const & color);
+		Light(Color4f const & color);
 		
 		bool Init(Scene & scene) override;
 		void Deinit(Scene & scene) override;
 		
-		void SetColor(Vector3f const & color);
-		Vector3f const & GetColor() const;
+		void SetColor(Color4f const & color);
+		Color4f const & GetColor() const;
 		
 #if ! defined(NDEBUG)
 		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
@@ -53,6 +53,6 @@ namespace gfx
 		// This is the list which is sorted in order of 
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
-		Vector3f _color;
+		Color4f _color;
 	};
 }

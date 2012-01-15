@@ -123,16 +123,16 @@ void gfx::Program::UpdateLights(Light::List const & lights) const
 		}
 		
 		Vector4f position = Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
-		Vector3f const & color = light.GetColor();
+		Color4f const & color = light.GetColor();
 		
 		gl::Uniform<float, 3>(uniforms->position, position.GetAxes());
-		gl::Uniform<float, 3>(uniforms->color, color.GetAxes());
+		gl::Uniform<float, 3>(uniforms->color, color.GetArray());
 	}
 	
 	// Make sure any unused light uniforms are blacked out.
 	while (uniforms != uniforms_end)
 	{
-		gl::Uniform<float, 3>(uniforms->color, Vector3f::Zero().GetAxes());
+		gl::Uniform<float, 3>(uniforms->color, Color4f::Black().GetArray());
 		++ uniforms;
 	}
 }

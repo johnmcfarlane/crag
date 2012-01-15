@@ -39,7 +39,7 @@ namespace
 using namespace gfx;
 
 
-Ball::Ball(Color4f color)
+Ball::Ball(Color4f const & color)
 : LeafNode(Layer::foreground, ProgramIndex::sphere)
 , _color(color)
 {

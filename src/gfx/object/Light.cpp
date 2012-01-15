@@ -17,15 +17,14 @@
 #include "glpp/glpp.h"
 
 #include "core/ConfigEntry.h"
-#include "geom/Vector3.h"
 
 
 using namespace gfx;
 
 
-Light::Light(Vector3f const & color)
+Light::Light(Color4f const & color)
 : LeafNode(Layer::light, ProgramIndex::none)
-, _color(color.x, color.y, color.z)
+, _color(color)
 {
 }
 
@@ -43,12 +42,12 @@ void Light::Deinit(Scene & scene)
 	lights.remove(* this);
 }
 
-void Light::SetColor(Vector3f const & color)
+void Light::SetColor(Color4f const & color)
 {
 	_color = color;
 }
 
-Vector3f const & Light::GetColor() const
+Color4f const & Light::GetColor() const
 {
 	return _color;
 }

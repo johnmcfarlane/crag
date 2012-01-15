@@ -59,7 +59,7 @@ bool sim::Star::Init(Simulation & simulation, PyObject & args)
 	}
 
 	// initialize light
-	gfx::Light * light = new gfx::Light(Vector3f(1.,.95,.9) * 7500000000000000.f);
+	gfx::Light * light = new gfx::Light(gfx::Color4f(1.,.95,.9) * 7500000000000000.f);
 	_light_uid = AddModelWithTransform(* light);
 	
 	return true;
