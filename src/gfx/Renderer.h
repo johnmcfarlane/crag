@@ -126,7 +126,13 @@ namespace gfx
 		int RenderLayer(Layer::type layer, bool opaque = true);
 		
 		void DebugDraw();
+
 		void ProcessRenderTiming();
+		void GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position);
+		void ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration);
+		void UpdateRegulator(Time busy_duration) const;
+		void UpdateFpsCounter(Time frame_start_position);
+		
 		void Capture();
 
 		static void SetFence(gl::Fence & fence);
@@ -140,7 +146,7 @@ namespace gfx
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
 		
-		Time last_frame_time;
+		Time last_frame_end_position;
 		
 		bool quit_flag;
 		bool _ready;
@@ -165,8 +171,8 @@ namespace gfx
 		
 #if ! defined(NDEBUG)
 		// fps counter
-		static int const _fps_history_size = 60;
-		Time _fps_history[_fps_history_size];
+		static int const _frame_time_history_size = 60;
+		Time _frame_time_history[_frame_time_history_size];
 #endif
 		
 		gl::Fence _fence1, _fence2;

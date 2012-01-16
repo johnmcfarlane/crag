@@ -63,7 +63,7 @@ namespace
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
-	CONFIG_DEFINE (capture_skip, int, 1);
+	CONFIG_DEFINE (capture_skip, int, 0);
 	
 	// TODO
 	//CONFIG_DEFINE (record_enable, bool, false);
@@ -71,8 +71,9 @@ namespace
 	//CONFIG_DEFINE (capture, bool, false);
 	//CONFIG_DEFINE (record_playback_skip, int, 1);
 
-	STAT (vsync_time, double, .18f);
-	STAT (frame_duration, double, .18f);
+	STAT (frame_1_busy_duration, double, .15f);
+	STAT (frame_2_vsync_duration, double, .18f);
+	STAT (frame_3_total_duration, double, .18f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
 	
@@ -238,7 +239,7 @@ namespace
 Renderer::Renderer()
 : context(nullptr)
 , scene(nullptr)
-, last_frame_time(app::GetTime())
+, last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , vsync(false)
 , _ready(true)
@@ -253,7 +254,7 @@ Renderer::Renderer()
 , _disk_quad(nullptr)
 {
 #if ! defined(NDEBUG)
-	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
+	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
 #endif
 	
 	if (! Init())
@@ -474,7 +475,8 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 		{
 			if (! message_queue.DispatchMessage(* this))
 			{
-				smp::Yield();
+				// We could possibly call smp::Yield() here,
+				// but simulation ready signals and critical.
 			}
 		}
 	}
@@ -1142,59 +1144,81 @@ void Renderer::DebugDraw()
 
 void Renderer::ProcessRenderTiming()
 {
-	Time pre_sync, post_sync;
+	Time frame_start_position, pre_sync_position, post_sync_position;
+	GetRenderTiming(frame_start_position, pre_sync_position, post_sync_position);
+	
+	Time frame_duration, busy_duration;
+	ConvertRenderTiming(frame_start_position, pre_sync_position, post_sync_position, frame_duration, busy_duration);
+	
+	UpdateFpsCounter(frame_start_position);
+	
+	UpdateRegulator(busy_duration);
+}
 
+void Renderer::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
+{
+	frame_start_position = last_frame_end_position;
+	
 	if (vsync)
 	{
 		// Get timing information from the fences.
-		FinishFence(_fence1);
-		pre_sync = app::GetTime();
-		FinishFence(_fence2);
-		post_sync = app::GetTime();
+		gl::FinishFence(_fence1);
+		pre_sync_position = app::GetTime();
+
+		gl::FinishFence(_fence2);
+		post_sync_position = app::GetTime();
 	}
 	else
 	{
 		// There is no sync.
-		pre_sync = post_sync = app::GetTime();
+		pre_sync_position = post_sync_position = app::GetTime();
 	}
-	
-	if (last_frame_time > pre_sync)
-	{
-#if ! defined(NDEBUG)
-		Assert(last_frame_time < pre_sync + 1);
-		std::cerr << "Bad time values: " << last_frame_time << " followed by " << pre_sync << '.' << std::endl;
-#endif
-		return;
-	}
-	
-	Assert(pre_sync <= post_sync);
-	
-	Time vsync_time = post_sync - pre_sync;
-	STAT_SET(vsync_time, vsync_time);
 
-	// Use it to figure out just how much work was done.
-	Time frame_time = post_sync;
-	Time frame_duration = frame_time - last_frame_time;
-	last_frame_time = frame_time;
-	STAT_SET(frame_duration, frame_duration);
+	Assert(pre_sync_position >= frame_start_position);
+	Assert(post_sync_position >= pre_sync_position);
 
-	Time busy_time = frame_duration - vsync_time;
+	last_frame_end_position = post_sync_position;
+}
+
+void Renderer::ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration)
+{
+	Time vsync_duration = post_sync_position - pre_sync_position;
+	Time frame_end_position = post_sync_position;
 	
+	frame_duration = frame_end_position - frame_start_position;
+	busy_duration = frame_duration - vsync_duration;
+	
+	STAT_SET(frame_1_busy_duration, busy_duration);
+	STAT_SET(frame_2_vsync_duration, vsync_duration);
+	STAT_SET(frame_3_total_duration, frame_duration);
+}
+
+void Renderer::UpdateFpsCounter(Time frame_start_position)
+{
 #if ! defined(NDEBUG)
-	// update fps
-	memmove(_fps_history, _fps_history + 1, sizeof(* _fps_history) * (_fps_history_size - 1));
-	_fps_history[_fps_history_size - 1] = frame_time;
-	STAT_SET (fps, float(_fps_history_size - 1) / float(_fps_history[_fps_history_size - 1] - _fps_history[0]));
-#endif
+	// update the history
+	memmove(_frame_time_history, _frame_time_history + 1, sizeof(* _frame_time_history) * (_frame_time_history_size - 1));
+	Time first_entry = _frame_time_history[0];
+	Time & last_entry = _frame_time_history[_frame_time_history_size - 1];
+	last_entry = frame_start_position;
 	
+	// average it
+	float history_duration = _frame_time_history_size - 1;
+	float average_frame_duration = float(last_entry - first_entry) / history_duration;
+	STAT_SET (fps, 1. / average_frame_duration);
+#endif
+}
+
+void Renderer::UpdateRegulator(Time busy_duration) const
+{
 	// Regulator feedback.
 	Time target_frame_duration = sim::Simulation::target_frame_seconds * 2;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;
 	}
-
-	float fitness = float(target_frame_duration / busy_time);
+	
+	float fitness = float(target_frame_duration / busy_duration);
 	Assert(fitness >= 0);
 	
 	form::Daemon::Call(fitness, & form::FormationManager::OnRegulatorSetFrame);
