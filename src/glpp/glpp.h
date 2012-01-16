@@ -261,7 +261,10 @@ namespace gl
 	template <> inline void SetColor(GLushort red, GLushort green, GLushort blue, GLushort alpha)	{ /*GLPP_CALL*/(glColor4us(red, green, blue, alpha)); }
 	
 	// set current red, green, blue and alpha from an array.
+	template<typename COMPONENT> void SetColor(COMPONENT const rgba[4]);
+	
 	template<typename COMPONENT> void SetColor(COMPONENT const * rgba)					{ SetColor(rgba[0], rgba[1], rgba[2], rgba[3]); }
+	template<> inline void SetColor<float>(float const rgba[4]) { glColor4fv(rgba); }
 	
 	// get current color
 	inline void GetColor(GLdouble rgba [4])	{ GLPP_CALL(glGetDoublev(GL_CURRENT_COLOR, rgba)); }
