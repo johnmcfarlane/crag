@@ -12,7 +12,7 @@
 #include "Planet.h"
 
 #include "gfx/Renderer.h"
-#include "gfx/SphereQuad.h"
+#include "gfx/Quad.h"
 
 #include "geom/Ray.h"
 #include "geom/Transformation.h"
@@ -37,7 +37,7 @@ void Planet::Update(UpdateParams const & params, Renderer & renderer)
 
 gfx::Transformation const & Planet::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
-	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+	Quad const & sphere_quad = renderer.GetSphereQuad();
 	return sphere_quad.Transform(model_view, scratch);
 }
 
@@ -67,6 +67,6 @@ void Planet::Render(Renderer const & renderer) const
 //	FogProgram const & fog_program = static_cast<FogProgram const &>(renderer.GetProgram());
 //
 //	Transformation const & transformation = GetModelViewTransformation();
-//	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+//	Quad const & sphere_quad = renderer.GetQuad();
 //	sphere_quad.DrawFog(transformation, color, 0.01);
 }

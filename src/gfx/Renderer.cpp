@@ -18,7 +18,7 @@
 #include "Pov.h"
 #include "Scene.h"
 #include "SphereMesh.h"
-#include "SphereQuad.h"
+#include "Quad.h"
 
 #include "object/BranchNode.h"
 #include "object/LeafNode.h"
@@ -326,12 +326,12 @@ gfx::SphereMesh const & Renderer::GetSphereMesh() const
 	return ref(_sphere_mesh);
 }
 
-gfx::SphereQuad const & Renderer::GetSphereQuad() const
+gfx::Quad const & Renderer::GetSphereQuad() const
 {
 	return ref(_sphere_quad);
 }
 
-gfx::SphereQuad const & Renderer::GetDiskQuad() const
+gfx::Quad const & Renderer::GetDiskQuad() const
 {
 	return ref(_disk_quad);
 }
@@ -551,8 +551,8 @@ bool Renderer::InitGeometry()
 {
 	_cuboid = new Cuboid;
 	_sphere_mesh = new SphereMesh;
-	_sphere_quad = new SphereQuad(-1);
-	_disk_quad = new SphereQuad(0);
+	_sphere_quad = new Quad(-1);
+	_disk_quad = new Quad(0);
 	
 	return true;
 }

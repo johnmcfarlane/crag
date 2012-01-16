@@ -37,7 +37,7 @@ namespace gfx
 	class Cuboid;
 	class Scene;
 	class SphereMesh;
-	class SphereQuad;
+	class Quad;
 
 	// gfx::Daemon type
 	class Renderer;
@@ -72,8 +72,8 @@ namespace gfx
 		
 		Cuboid const & GetCuboid() const;
 		SphereMesh const & GetSphereMesh() const;
-		SphereQuad const & GetSphereQuad() const;
-		SphereQuad const & GetDiskQuad() const;
+		Quad const & GetSphereQuad() const;
+		Quad const & GetDiskQuad() const;
 
 		// message interface
 		void OnQuit();
@@ -179,7 +179,7 @@ namespace gfx
 		// stock geometry
 		Cuboid * _cuboid;
 		SphereMesh * _sphere_mesh;
-		SphereQuad * _sphere_quad;
-		SphereQuad * _disk_quad;
+		Quad * _sphere_quad;
+		Quad * _disk_quad;
 	};
 }

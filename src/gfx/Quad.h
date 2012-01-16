@@ -1,5 +1,5 @@
 //
-//  SphereQuad.h
+//  Quad.h
 //  crag
 //
 //  Created by John McFarlane on 2012-01-01.
@@ -18,16 +18,16 @@ namespace gfx
 {
 	// Graphical representation of a sphere.
 	// Draws a quad in front of the sphere and has a specialized shader draw a sphere upon it.
-	class SphereQuad
+	class Quad
 	{
 		// types
 		typedef gl::Vertex3d QuadVertex;
-		typedef gl::Vbo<QuadVertex> Quad;
+		typedef gl::Vbo<QuadVertex> VertexBuffer;
 	public:
 		
 		// functions
-		SphereQuad(Scalar depth_offset);
-		~SphereQuad();
+		Quad(Scalar depth_offset);
+		~Quad();
 		
 		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
 
@@ -36,6 +36,6 @@ namespace gfx
 	private:
 		
 		// variables
-		Quad _quad;
+		VertexBuffer _quad;
 	};
 }

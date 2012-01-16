@@ -100,7 +100,7 @@
 		52882A3F149492FF00E68B4F /* Puff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52882A3D149492FF00E68B4F /* Puff.cpp */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52928AC8147C358800731B77 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52928AC6147C358800731B77 /* Layer.cpp */; };
-		52982A6914B189A600449DC0 /* SphereQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52982A6714B189A300449DC0 /* SphereQuad.cpp */; };
+		52982A6914B189A600449DC0 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52982A6714B189A300449DC0 /* Quad.cpp */; };
 		52A50C9D147DF0D80061A909 /* BranchNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C98147DF0D70061A909 /* BranchNode.cpp */; };
 		52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C9B147DF0D70061A909 /* LeafNode.cpp */; };
 		52A50CAE147F7B270061A909 /* Thruster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50CAC147F7B270061A909 /* Thruster.cpp */; };
@@ -386,8 +386,8 @@
 		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
 		52928AC6147C358800731B77 /* Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layer.cpp; sourceTree = "<group>"; };
 		52928AC7147C358800731B77 /* Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layer.h; sourceTree = "<group>"; };
-		52982A6714B189A300449DC0 /* SphereQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereQuad.cpp; sourceTree = "<group>"; };
-		52982A6814B189A400449DC0 /* SphereQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereQuad.h; sourceTree = "<group>"; };
+		52982A6714B189A300449DC0 /* Quad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quad.cpp; sourceTree = "<group>"; };
+		52982A6814B189A400449DC0 /* Quad.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Quad.h; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52A50C98147DF0D70061A909 /* BranchNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchNode.cpp; sourceTree = "<group>"; };
 		52A50C99147DF0D70061A909 /* BranchNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNode.h; sourceTree = "<group>"; };
@@ -789,8 +789,8 @@
 				52928AC6147C358800731B77 /* Layer.cpp */,
 				52928AC7147C358800731B77 /* Layer.h */,
 				52A50CA7147F763F0061A909 /* Renderer.inl */,
-				52982A6714B189A300449DC0 /* SphereQuad.cpp */,
-				52982A6814B189A400449DC0 /* SphereQuad.h */,
+				52982A6714B189A300449DC0 /* Quad.cpp */,
+				52982A6814B189A400449DC0 /* Quad.h */,
 				52C2EE5B14BB62D600FC3853 /* Program.cpp */,
 				52C2EE5C14BB62D600FC3853 /* Program.h */,
 			);
@@ -1132,7 +1132,7 @@
 				52882A3F149492FF00E68B4F /* Puff.cpp in Sources */,
 				521192DC14AD919D0061F899 /* memory.cpp in Sources */,
 				521192DF14AD97550061F899 /* app.cpp in Sources */,
-				52982A6914B189A600449DC0 /* SphereQuad.cpp in Sources */,
+				52982A6914B189A600449DC0 /* Quad.cpp in Sources */,
 				52C2EE5D14BB62D600FC3853 /* Program.cpp in Sources */,
 				5270CC4614C0A64100146D09 /* light.frag in Sources */,
 				5270CC4714C0A64100146D09 /* poly.frag in Sources */,

@@ -15,7 +15,7 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
-#include "gfx/SphereQuad.h"
+#include "gfx/Quad.h"
 
 #include "glpp/glpp.h"
 
@@ -57,7 +57,7 @@ gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transforma
 			
 		case 1:
 		{
-			SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+			Quad const & sphere_quad = renderer.GetSphereQuad();
 			return sphere_quad.Transform(model_view, scratch);
 		}
 	}
@@ -120,7 +120,7 @@ void Ball::Render(Renderer const & renderer) const
 			SphereProgram const & sphere_program = static_cast<SphereProgram const &>(ref(renderer.GetProgram()));
 			sphere_program.SetUniforms(transformation, _color);
 			
-			SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+			Quad const & sphere_quad = renderer.GetSphereQuad();
 			sphere_quad.Draw();
 			
 			break;

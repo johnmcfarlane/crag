@@ -1,5 +1,5 @@
 //
-//  SphereQuad.cpp
+//  Quad.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-01-01.
@@ -9,17 +9,17 @@
 
 #include "pch.h"
 
-#include "SphereQuad.h"
+#include "Quad.h"
 
 #include "sim/axes.h"
 
 #include "geom/Transformation.h"
 
 
-using gfx::SphereQuad;
+using gfx::Quad;
 
 
-SphereQuad::SphereQuad(Scalar depth_offset)
+Quad::Quad(Scalar depth_offset)
 {
 	float const y = depth_offset;
 	float const xz0 = -1, xz1 = 1;
@@ -43,12 +43,12 @@ SphereQuad::SphereQuad(Scalar depth_offset)
 	gl::UnbindBuffer(_quad);
 }
 
-SphereQuad::~SphereQuad()
+Quad::~Quad()
 {
 	gl::DeleteBuffer(_quad);
 }
 
-gfx::Transformation const & SphereQuad::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Transformation::Vector translation = model_view.GetTranslation();
 
@@ -62,7 +62,7 @@ gfx::Transformation const & SphereQuad::Transform(gfx::Transformation const & mo
 	return scratch;
 }
 
-void SphereQuad::Draw() const
+void Quad::Draw() const
 {
 	gl::BindBuffer(_quad);
 	_quad.Activate();

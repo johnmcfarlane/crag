@@ -15,7 +15,7 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
-#include "gfx/SphereQuad.h"
+#include "gfx/Quad.h"
 
 #include "glpp/glpp.h"
 
@@ -91,7 +91,7 @@ void Puff::Render(Renderer const & renderer) const
 	Transformation const & model_view = GetModelViewTransformation();
 	disk_program.SetUniforms(model_view, _color);
 	
-	SphereQuad const & disk_quad = renderer.GetDiskQuad();
+	Quad const & disk_quad = renderer.GetDiskQuad();
 	disk_quad.Draw();
 #endif
 	
