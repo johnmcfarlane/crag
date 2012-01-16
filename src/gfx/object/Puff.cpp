@@ -11,10 +11,11 @@
 
 #include "Puff.h"
 
+#include "gfx/Program.h"
+#include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
 #include "gfx/SphereQuad.h"
-#include "gfx/Renderer.h"
 
 #include "glpp/glpp.h"
 
@@ -27,7 +28,7 @@ using namespace gfx;
 
 
 Puff::Puff(Scalar spawn_volume)
-: LeafNode(Layer::foreground, ProgramIndex::poly)
+: LeafNode(Layer::foreground, ProgramIndex::disk)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0, 0, 0, 0)
@@ -60,14 +61,14 @@ LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
 	Time age = CalculateAge(time);
 	
 	_radius = SphereRadiusFromVolume<Scalar, 3>(_spawn_volume);
-	_radius += 0.5 * age;
+	_radius += 0.75 * age;
 	
-	_color.r = static_cast<uint8_t>(255.99 * exp(- _radius * 0.01f));
-	_color.g = static_cast<uint8_t>(255.99 * exp(- _radius * 0.10f));
-	_color.b = static_cast<uint8_t>(255.99 * exp(- _radius * 1.00f));
-	_color.a = static_cast<uint8_t>(255.99 * exp(- _radius * 8.00f));
+	_color.r = 1.f;
+	_color.g = 1.f;
+	_color.b = 1.f;
+	_color.a = std::min(1. / Square(_radius * 10.f), 1.);
 	
-	if (_color.a == 0)
+	if (_color.a < 0.01f)
 	{
 		return remove;
 	}
@@ -80,15 +81,18 @@ void Puff::Render(Renderer const & renderer) const
 	//Transformation const & transformation = GetModelViewTransformation();
 
 	gl::Disable(GL_CULL_FACE);
-	gl::SetColor(_color.GetArray());
 
-#if 1
+#if 0
+	gl::SetColor(_color.GetArray());
 	SphereMesh const & sphere_mesh = renderer.GetSphereMesh();
 	sphere_mesh.Draw(0);
 #else
-	// TODO
-	SphereQuad const & sphere_quad = Daemon::Ref().GetScene().GetSphereQuad();
-	sphere_quad.Draw(GetModelViewTransformation());
+	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(renderer.GetProgram(ProgramIndex::disk)));
+	Transformation const & model_view = GetModelViewTransformation();
+	disk_program.SetUniforms(model_view, _color);
+	
+	SphereQuad const & disk_quad = renderer.GetDiskQuad();
+	disk_quad.Draw();
 #endif
 	
 	gl::Enable(GL_CULL_FACE);

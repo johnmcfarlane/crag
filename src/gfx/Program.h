@@ -13,6 +13,8 @@
 
 #include "glpp/Shader.h"
 
+#include "geom/Transformation.h"
+
 
 namespace gfx
 {
@@ -41,7 +43,7 @@ namespace gfx
 	class Program : public gl::Program
 	{
 	public:
-		void Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader);
+		virtual void Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader);
 		void Deinit(gl::Shader & light_shader);
 		
 		void Use() const;
@@ -50,8 +52,44 @@ namespace gfx
 		void UpdateLights(Light::List const & lights) const;
 		
 	private:
+		virtual void InitUniforms();
+		
 		gl::Shader _vert_shader;
 		gl::Shader _frag_shader;
 		LightBlock _light_block;
+	};
+	
+	class SphereProgram : public Program
+	{
+	public:
+		SphereProgram();
+		
+		void SetUniforms(::Transformation<float> const & transformation, Color4f const & color) const;
+	private:
+		void InitUniforms() override;
+		static Scalar CalculateRadius(::Transformation<float> const & transformation);
+
+		// variables
+		GLint _color_location;
+		GLint _center_location;
+		GLint _radius_location;
+	};
+	
+	class FogProgram : public SphereProgram
+	{
+	public:
+		FogProgram();
+		
+		void SetUniforms(::Transformation<float> const & transformation, Color4f const & color, float density) const;
+	private:
+		void InitUniforms() override;
+		
+		// variables
+		GLint _density_location;
+	};
+	
+	class DiskProgram : public SphereProgram
+	{
+	public:
 	};
 }

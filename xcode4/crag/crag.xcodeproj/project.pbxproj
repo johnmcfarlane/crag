@@ -11,6 +11,7 @@
 		521192DC14AD919D0061F899 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DA14AD919C0061F899 /* memory.cpp */; };
 		521192DF14AD97550061F899 /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521192DD14AD97540061F899 /* app.cpp */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
+		52394D5714C33EB9008EF2DC /* fog.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52394D5614C33EB9008EF2DC /* fog.frag */; };
 		52483975143BEAE300195337 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483974143BEAE300195337 /* Carbon.framework */; };
 		52483977143BEB0200195337 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483976143BEB0200195337 /* IOKit.framework */; };
 		52483979143BED0900195337 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483978143BED0900195337 /* CoreAudio.framework */; };
@@ -104,6 +105,9 @@
 		52A50C9E147DF0D80061A909 /* LeafNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50C9B147DF0D70061A909 /* LeafNode.cpp */; };
 		52A50CAE147F7B270061A909 /* Thruster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A50CAC147F7B270061A909 /* Thruster.cpp */; };
 		52ACC2B2145AFB230060DE93 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52ACC2B0145AFB230060DE93 /* Uid.cpp */; };
+		52B4604814C342D40078083B /* disk.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
+		52B4604A14C344230078083B /* fog.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52394D5614C33EB9008EF2DC /* fog.frag */; };
+		52B4604B14C344260078083B /* disk.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
 		52BEEF56143EA73500E98056 /* build_py_deps.py in Resources */ = {isa = PBXBuildFile; fileRef = 52BEEF55143EA73500E98056 /* build_py_deps.py */; };
 		52C2EE5D14BB62D600FC3853 /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C2EE5B14BB62D600FC3853 /* Program.cpp */; };
 		52D832451472D693005FE380 /* EntityFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D832431472D692005FE380 /* EntityFunctions.cpp */; };
@@ -121,8 +125,10 @@
 			dstPath = glsl;
 			dstSubfolderSpec = 7;
 			files = (
+				52B4604A14C344230078083B /* fog.frag in CopyFiles */,
 				5270CC4B14C1469700146D09 /* light.frag in CopyFiles */,
 				5270CC4C14C1469700146D09 /* poly.frag in CopyFiles */,
+				52B4604B14C344260078083B /* disk.frag in CopyFiles */,
 				5270CC4D14C1469700146D09 /* poly.vert in CopyFiles */,
 				5270CC4E14C1469700146D09 /* sphere.frag in CopyFiles */,
 				5270CC4F14C1469700146D09 /* sphere.vert in CopyFiles */,
@@ -164,6 +170,7 @@
 		521192DD14AD97540061F899 /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = app.cpp; sourceTree = "<group>"; };
 		521192DE14AD97540061F899 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
+		52394D5614C33EB9008EF2DC /* fog.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fog.frag; sourceTree = "<group>"; };
 		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
 		52483978143BED0900195337 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = ../../../../../../System/Library/Frameworks/CoreAudio.framework; sourceTree = "<group>"; };
@@ -391,6 +398,7 @@
 		52A50CAD147F7B270061A909 /* Thruster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thruster.h; sourceTree = "<group>"; };
 		52ACC2B0145AFB230060DE93 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		52ACC2B1145AFB230060DE93 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
+		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
 		52BEEF55143EA73500E98056 /* build_py_deps.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = build_py_deps.py; path = ../../build_py_deps.py; sourceTree = "<group>"; };
 		52C2EE5B14BB62D600FC3853 /* Program.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Program.cpp; sourceTree = "<group>"; };
 		52C2EE5C14BB62D600FC3853 /* Program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Program.h; sourceTree = "<group>"; };
@@ -496,6 +504,8 @@
 				5270CC4314C0A64100146D09 /* poly.vert */,
 				5270CC4414C0A64100146D09 /* sphere.frag */,
 				5270CC4514C0A64100146D09 /* sphere.vert */,
+				52394D5614C33EB9008EF2DC /* fog.frag */,
+				52B4604714C342D40078083B /* disk.frag */,
 			);
 			name = glsl;
 			path = ../../glsl;
@@ -1129,6 +1139,8 @@
 				5270CC4814C0A64100146D09 /* poly.vert in Sources */,
 				5270CC4914C0A64100146D09 /* sphere.frag in Sources */,
 				5270CC4A14C0A64100146D09 /* sphere.vert in Sources */,
+				52394D5714C33EB9008EF2DC /* fog.frag in Sources */,
+				52B4604814C342D40078083B /* disk.frag in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

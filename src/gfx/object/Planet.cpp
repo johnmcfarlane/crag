@@ -25,7 +25,7 @@ using namespace gfx;
 // gfx::Planet member definitions
 
 Planet::Planet(Scalar sea_level)
-: LeafNode(Layer::foreground, ProgramIndex::sphere)
+: LeafNode(Layer::foreground, ProgramIndex::fog)
 , _sea_level(sea_level)
 {
 }
@@ -61,9 +61,12 @@ void Planet::Render(Renderer const & renderer) const
 		return;
 	}
 	
-	gl::SetColor(Color4f(.5f,.5f,.9f,.5f).GetArray());
-	
-	Transformation const & transformation = GetModelViewTransformation();
-	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
-	sphere_quad.Draw(transformation);
+//	// TODO:
+//	Vector3f color(.5f,.5f,.9f);
+//	
+//	FogProgram const & fog_program = static_cast<FogProgram const &>(renderer.GetProgram());
+//
+//	Transformation const & transformation = GetModelViewTransformation();
+//	SphereQuad const & sphere_quad = renderer.GetSphereQuad();
+//	sphere_quad.DrawFog(transformation, color, 0.01);
 }

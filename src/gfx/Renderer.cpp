@@ -250,6 +250,7 @@ Renderer::Renderer()
 , _cuboid(nullptr)
 , _sphere_mesh(nullptr)
 , _sphere_quad(nullptr)
+, _disk_quad(nullptr)
 {
 #if ! defined(NDEBUG)
 	std::fill(_fps_history, _fps_history + _fps_history_size, 0);
@@ -263,8 +264,6 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	Assert(_current_program == nullptr || _current_program == _programs + ProgramIndex::poly || _current_program == _programs + ProgramIndex::sphere);
-	
 	SetProgram(nullptr);
 	
 	Deinit();
@@ -287,12 +286,14 @@ Program const * Renderer::GetProgram() const
 
 Program * Renderer::GetProgram(ProgramIndex::type index)
 {
-	return (index == ProgramIndex::none) ? nullptr : _programs + index;
+	Assert(index >= 0 && index < ProgramIndex::max);
+	return _programs[index];
 }
 
 Program const * Renderer::GetProgram(ProgramIndex::type index) const
 {
-	return (index == ProgramIndex::none) ? nullptr : _programs + index;
+	Assert(index >= 0 && index < ProgramIndex::max);
+	return _programs[index];
 }
 
 void Renderer::SetProgram(Program * program)
@@ -328,6 +329,11 @@ gfx::SphereMesh const & Renderer::GetSphereMesh() const
 gfx::SphereQuad const & Renderer::GetSphereQuad() const
 {
 	return ref(_sphere_quad);
+}
+
+gfx::SphereQuad const & Renderer::GetDiskQuad() const
+{
+	return ref(_disk_quad);
 }
 
 void Renderer::OnQuit()
@@ -524,8 +530,19 @@ bool Renderer::InitShaders()
 {
 	InitShader(_light_frag_shader, "glsl/light.frag", GL_FRAGMENT_SHADER);
 
-	_programs[ProgramIndex::poly].Init("glsl/poly.vert", "glsl/poly.frag", _light_frag_shader);
-	_programs[ProgramIndex::sphere].Init("glsl/sphere.vert", "glsl/sphere.frag", _light_frag_shader);
+	_programs[ProgramIndex::none] = nullptr;
+	
+	_programs[ProgramIndex::poly] = new Program;
+	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", _light_frag_shader);
+
+	_programs[ProgramIndex::sphere] = new SphereProgram;
+	_programs[ProgramIndex::sphere]->Init("glsl/sphere.vert", "glsl/sphere.frag", _light_frag_shader);
+	
+	_programs[ProgramIndex::fog] = new FogProgram;
+	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", _light_frag_shader);
+	
+	_programs[ProgramIndex::disk] = new SphereProgram;
+	_programs[ProgramIndex::disk]->Init("glsl/sphere.vert", "glsl/disk.frag", _light_frag_shader);
 	
 	return true;
 }
@@ -534,7 +551,8 @@ bool Renderer::InitGeometry()
 {
 	_cuboid = new Cuboid;
 	_sphere_mesh = new SphereMesh;
-	_sphere_quad = new SphereQuad(_programs[ProgramIndex::sphere]);
+	_sphere_quad = new SphereQuad(-1);
+	_disk_quad = new SphereQuad(0);
 	
 	return true;
 }
@@ -546,20 +564,25 @@ void Renderer::Deinit()
 		Assert(false);
 		return;
 	}
-
-	delete _cuboid;
-	_cuboid = nullptr;
 	
-	delete _sphere_mesh;
-	_sphere_mesh = nullptr;
+	delete _disk_quad;
+	_disk_quad = nullptr;
 	
 	delete _sphere_quad;
 	_sphere_quad = nullptr;
 	
-	for (int program_index = 0; program_index != ProgramIndex::max; ++ program_index)
+	delete _sphere_mesh;
+	_sphere_mesh = nullptr;
+	
+	delete _cuboid;
+	_cuboid = nullptr;
+	
+	for (int program_index = 1; program_index != ProgramIndex::max; ++ program_index)
 	{
-		Program & program = _programs[program_index];
-		program.Deinit(_light_frag_shader);
+		Program * & program = _programs[program_index];
+		program->Deinit(_light_frag_shader);
+		delete program;
+		program = nullptr;
 	}
 	
 	gl::Delete(_light_frag_shader);
@@ -908,9 +931,9 @@ void Renderer::RenderLights()
 	
 	Light::List const & lights = scene->GetLightList();
 
-	for (int program_index = 0; program_index != ProgramIndex::max; ++ program_index)
+	for (int program_index = 1; program_index != ProgramIndex::max; ++ program_index)
 	{
-		Program & program = _programs[program_index];
+		Program & program = ref(_programs[program_index]);
 		SetProgram(& program);
 		program.UpdateLights(lights);
 	}
@@ -1135,7 +1158,15 @@ void Renderer::ProcessRenderTiming()
 		pre_sync = post_sync = app::GetTime();
 	}
 	
-	Assert(last_frame_time <= pre_sync);
+	if (last_frame_time > pre_sync)
+	{
+#if ! defined(NDEBUG)
+		Assert(last_frame_time < pre_sync + 1);
+		std::cerr << "Bad time values: " << last_frame_time << " followed by " << pre_sync << '.' << std::endl;
+#endif
+		return;
+	}
+	
 	Assert(pre_sync <= post_sync);
 	
 	Time vsync_time = post_sync - pre_sync;

@@ -37,7 +37,7 @@ namespace gfx
 		// variables
 		Scalar _spawn_volume;
 		Time _spawn_time;
-		Scalar _radius;
-		Color4b _color;
+		float _radius;
+		Color4f _color;
 	};
 }

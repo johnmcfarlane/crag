@@ -11,6 +11,7 @@
 
 #include "Ball.h"
 
+#include "gfx/Program.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 #include "gfx/SphereMesh.h"
@@ -43,7 +44,6 @@ Ball::Ball(Color4f const & color)
 : LeafNode(Layer::foreground, ProgramIndex::sphere)
 , _color(color)
 {
-	SetIsOpaque(_color.a == 1);
 }
 
 gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
@@ -102,8 +102,6 @@ LeafNode::PreRenderResult Ball::PreRender(Renderer const & renderer)
 
 void Ball::Render(Renderer const & renderer) const
 {
-	gl::SetColor(_color.GetArray());
-	
 	Transformation const & transformation = GetModelViewTransformation();
 	switch (Choose())
 	{
@@ -111,6 +109,7 @@ void Ball::Render(Renderer const & renderer) const
 			Assert(false);
 		case 0:
 		{
+			gl::SetColor(_color.r, _color.g, _color.b);
 			SphereMesh const & sphere_mesh = renderer.GetSphereMesh();
 			sphere_mesh.Draw(transformation);
 			break;
@@ -118,8 +117,12 @@ void Ball::Render(Renderer const & renderer) const
 		
 		case 1:
 		{
+			SphereProgram const & sphere_program = static_cast<SphereProgram const &>(ref(renderer.GetProgram()));
+			sphere_program.SetUniforms(transformation, _color);
+			
 			SphereQuad const & sphere_quad = renderer.GetSphereQuad();
-			sphere_quad.Draw(transformation);
+			sphere_quad.Draw();
+			
 			break;
 		}
 	}

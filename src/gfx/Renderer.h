@@ -73,6 +73,7 @@ namespace gfx
 		Cuboid const & GetCuboid() const;
 		SphereMesh const & GetSphereMesh() const;
 		SphereQuad const & GetSphereQuad() const;
+		SphereQuad const & GetDiskQuad() const;
 
 		// message interface
 		void OnQuit();
@@ -172,12 +173,13 @@ namespace gfx
 		
 		// shaders and shader programs
 		gl::Shader _light_frag_shader;
-		Program _programs[ProgramIndex::max];
+		Program * _programs[ProgramIndex::max + 1];
 		Program * _current_program;
 
 		// stock geometry
 		Cuboid * _cuboid;
 		SphereMesh * _sphere_mesh;
 		SphereQuad * _sphere_quad;
+		SphereQuad * _disk_quad;
 	};
 }

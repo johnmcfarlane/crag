@@ -12,12 +12,10 @@
 
 // outputs to sphere.frag
 varying vec4 quad_position;
-varying vec4 color;
 
 
 void main(void)
 {
 	quad_position = gl_ModelViewMatrix * gl_Vertex;
-	color = gl_Color;
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

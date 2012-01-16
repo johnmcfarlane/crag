@@ -23,10 +23,12 @@ namespace gfx
 	{
 		enum type
 		{
+			none,
 			poly,
 			sphere,
+			fog,
+			disk,
 			max,
-			none = max
 		};
 	}
 	
@@ -35,7 +37,7 @@ namespace gfx
 	typedef double Scalar;
 	typedef Vector<Scalar, 3> Vector3;
 	typedef Vector<Scalar, 4> Vector4;
-	typedef ::Vector<Scalar, 2> RenderRange;	// near/far z
+	typedef Vector<Scalar, 2> RenderRange;	// near/far z
 	typedef Matrix<Scalar, 3, 3> Matrix33;
 	typedef Matrix<Scalar, 4, 4> Matrix44;
 	typedef Transformation<Scalar> Transformation;

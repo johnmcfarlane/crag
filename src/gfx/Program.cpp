@@ -14,6 +14,9 @@
 #include "core/app.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Globals
+
 bool gfx::InitShader(gl::Shader & shader, char const * filename, GLenum shader_type)
 {
 	std::vector<char> sphere_shader_source;
@@ -48,6 +51,9 @@ bool gfx::InitShader(gl::Shader & shader, char const * filename, GLenum shader_t
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Program member definitions
+
 void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader)
 {
 	InitShader(_vert_shader, vert_source, GL_VERTEX_SHADER);
@@ -73,6 +79,8 @@ void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::
 #endif
 	
 	gl::Use(* this);
+	
+	InitUniforms();
 	
 	for (int i = 0; i < MAX_LIGHTS; ++ i)
 	{
@@ -135,4 +143,68 @@ void gfx::Program::UpdateLights(Light::List const & lights) const
 		gl::Uniform<float, 3>(uniforms->color, Color4f::Black().GetArray());
 		++ uniforms;
 	}
+}
+
+void gfx::Program::InitUniforms()
+{
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::SphereProgram member definitions
+
+gfx::SphereProgram::SphereProgram()
+: _color_location(-1)
+, _center_location(-1)
+, _radius_location(-1)
+{
+}
+
+void gfx::SphereProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color) const
+{
+	gl::Uniform<float, 4>(_color_location, & color[0]);
+	
+	Vector4f center = Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
+	gl::Uniform<float, 3>(_center_location, center.GetAxes());
+	
+	float radius = static_cast<float>(CalculateRadius(model_view));
+	gl::Uniform(_radius_location, radius);
+}
+
+void gfx::SphereProgram::InitUniforms() override
+{
+	_color_location = gl::GetUniformLocation(* this, "color");
+	_center_location = gl::GetUniformLocation(* this, "center");
+	_radius_location = gl::GetUniformLocation(* this, "radius");
+}
+
+gfx::Scalar gfx::SphereProgram::CalculateRadius(::Transformation<float> const & transformation)
+{
+	Vector3 size = transformation.GetScale();
+	Assert(NearEqual(size.x / size.y, 1, 0.0001));
+	Assert(NearEqual(size.y / size.z, 1, 0.0001));
+	Assert(NearEqual(size.z / size.x, 1, 0.0001));
+	Scalar radius = size.x;
+	return radius;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::FogProgram member definitions
+
+gfx::FogProgram::FogProgram()
+: _density_location(-1)
+{
+}
+
+void gfx::FogProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color, float density) const
+{
+	SphereProgram::SetUniforms(model_view, color);
+	
+	gl::Uniform(_density_location, density);
+}
+
+void gfx::FogProgram::InitUniforms() override
+{
+	_density_location = gl::GetUniformLocation(* this, "density");
 }
