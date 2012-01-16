@@ -31,7 +31,7 @@ Puff::Puff(Scalar spawn_volume)
 : LeafNode(Layer::foreground, ProgramIndex::disk)
 , _spawn_volume(spawn_volume)
 , _radius(0)
-, _color(0, 0, 0, 0)
+, _color(0.75, 0.75, 0.75, 1)
 {
 	SetIsOpaque(false);
 }
@@ -62,9 +62,6 @@ LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
 	_radius = SphereRadiusFromVolume<Scalar, 3>(_spawn_volume);
 	_radius += 0.75 * age;
 	
-	_color.r = 1.f;
-	_color.g = 1.f;
-	_color.b = 1.f;
 	_color.a = std::min(1. / Square(_radius * 10.f), 1.);
 	
 	if (_color.a < 0.01f)
