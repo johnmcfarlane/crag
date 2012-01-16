@@ -48,11 +48,10 @@ gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transforma
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
 	
-	gfx::Transformation scale(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
+	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * 0.75, 0., 0.), Matrix33::Identity(), _radius);
 	
-	scratch = model_view * scale;
-	
-	return scratch;
+	Quad const & disk_quad = renderer.GetDiskQuad();
+	return disk_quad.Transform(scale, scratch);
 }
 
 LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
