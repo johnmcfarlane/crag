@@ -28,12 +28,6 @@
 using namespace gfx;
 
 
-namespace
-{
-	CONFIG_DEFINE (max_thruster_puffs, size_t, 20);
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
