@@ -53,10 +53,7 @@ Scene::~Scene()
 	Assert(_root.IsEmpty());
 	
 	Frustum const & frustum = pov.GetFrustum();
-	
 	camera_fov = static_cast<float>(frustum.fov);
-	camera_near = static_cast<float>(frustum.depth_range[0]);
-	camera_far = static_cast<float>(frustum.depth_range[1]);
 }
 
 void Scene::SetTime(Time t)
