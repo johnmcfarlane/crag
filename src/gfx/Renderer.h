@@ -36,7 +36,6 @@ namespace gfx
 	class BranchNode;
 	class Cuboid;
 	class Scene;
-	class SphereMesh;
 	class Quad;
 
 	// gfx::Daemon type
@@ -71,7 +70,6 @@ namespace gfx
 		void SetProgram(Program * program);
 		
 		Cuboid const & GetCuboid() const;
-		SphereMesh const & GetSphereMesh() const;
 		Quad const & GetSphereQuad() const;
 		Quad const & GetDiskQuad() const;
 
@@ -184,7 +182,6 @@ namespace gfx
 
 		// stock geometry
 		Cuboid * _cuboid;
-		SphereMesh * _sphere_mesh;
 		Quad * _sphere_quad;
 		Quad * _disk_quad;
 	};

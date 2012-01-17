@@ -14,7 +14,6 @@
 #include "gfx/Program.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
-#include "gfx/SphereMesh.h"
 #include "gfx/Quad.h"
 
 #include "glpp/glpp.h"

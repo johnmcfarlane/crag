@@ -17,7 +17,6 @@
 #include "Image.h"
 #include "Pov.h"
 #include "Scene.h"
-#include "SphereMesh.h"
 #include "Quad.h"
 
 #include "object/BranchNode.h"
@@ -249,7 +248,6 @@ Renderer::Renderer()
 , capture_frame(0)
 , _current_program(nullptr)
 , _cuboid(nullptr)
-, _sphere_mesh(nullptr)
 , _sphere_quad(nullptr)
 , _disk_quad(nullptr)
 {
@@ -320,11 +318,6 @@ void Renderer::SetProgram(Program * program)
 Cuboid const & Renderer::GetCuboid() const
 {
 	return ref(_cuboid);
-}
-
-gfx::SphereMesh const & Renderer::GetSphereMesh() const
-{
-	return ref(_sphere_mesh);
 }
 
 gfx::Quad const & Renderer::GetSphereQuad() const
@@ -552,7 +545,6 @@ bool Renderer::InitShaders()
 bool Renderer::InitGeometry()
 {
 	_cuboid = new Cuboid;
-	_sphere_mesh = new SphereMesh;
 	_sphere_quad = new Quad(-1);
 	_disk_quad = new Quad(0);
 	
@@ -572,9 +564,6 @@ void Renderer::Deinit()
 	
 	delete _sphere_quad;
 	_sphere_quad = nullptr;
-	
-	delete _sphere_mesh;
-	_sphere_mesh = nullptr;
 	
 	delete _cuboid;
 	_cuboid = nullptr;

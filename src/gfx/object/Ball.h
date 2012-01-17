@@ -29,7 +29,6 @@ namespace gfx
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
 		bool GetRenderRange(RenderRange & range) const override;
-		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
 		void Render(Renderer const & renderer) const override;
 		
 		// variables
