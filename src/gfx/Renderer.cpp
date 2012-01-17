@@ -1212,7 +1212,7 @@ void Renderer::UpdateFpsCounter(Time frame_start_position)
 void Renderer::UpdateRegulator(Time busy_duration) const
 {
 	// Regulator feedback.
-	Time target_frame_duration = sim::Simulation::target_frame_seconds * 2;
+	Time target_frame_duration = sim::Simulation::target_frame_seconds;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;
