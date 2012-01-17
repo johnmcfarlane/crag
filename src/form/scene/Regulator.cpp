@@ -37,7 +37,7 @@ void form::Regulator::Reset()
 {
 	reset_time = app::GetTime();
 	_num_quaterne = -1;
-	frame_ratio_max = 0;
+	_frame_rate_num_quaterne = -1;
 	mesh_generation_period = 0;
 }
 
@@ -55,13 +55,20 @@ void form::Regulator::SetNumQuaterna(int num_quaterne)
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameFitness(float fitness)
 {
-	if (! _enabled)
+	if (! _enabled || _num_quaterne == -1)
 	{
 		return;
 	}
 
 	Assert(fitness >= 0);
-	frame_ratio_max = std::max(frame_ratio_max, 1.f / fitness);
+	
+	float frame_ratio = 1.f / fitness;
+	Time sim_time = app::GetTime() - reset_time;
+	int recommended_this_frame = CalculateFrameRateDirectedTargetLoad(_num_quaterne, frame_ratio, sim_time);
+	if (_frame_rate_num_quaterne == -1 || recommended_this_frame < _frame_rate_num_quaterne)
+	{
+		_frame_rate_num_quaterne = recommended_this_frame;
+	}
 }
 
 void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
@@ -77,38 +84,54 @@ void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
 
 int form::Regulator::GetRecommendedNumQuaterna()
 {
-	if ((frame_ratio_max == 0 && mesh_generation_period == 0) || _num_quaterne == -1)
+	if (_num_quaterne == -1)
 	{
 		return _num_quaterne;
 	}
 	
-	Time sim_time = app::GetTime() - reset_time;
-
-	// Come up with two accounts of how many quaterna we should have.
-	int frame_ratio_directed_target_load = CalculateFrameRateDirectedTargetLoad(_num_quaterne, sim_time);
+	// The recommended num comes from two sources: frame ratio,
+	int recommended_num_quaternia = _frame_rate_num_quaterne;
+	
+	// and mesh generation time.
 	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterne);
-
-	// Pick the more conservative of the two numbers.
-	int recommended_num_quaternia = std::min(mesh_generation_directed_target_load, frame_ratio_directed_target_load);
+	if (mesh_generation_directed_target_load != -1)
+	{
+		if (recommended_num_quaternia == -1 || mesh_generation_directed_target_load < recommended_num_quaternia)
+		{
+			recommended_num_quaternia = mesh_generation_directed_target_load;
+		}
+	}
+	
+	// If neither source had an 'opinion', don't change anything.
+	if (recommended_num_quaternia < 0)
+	{
+		recommended_num_quaternia = _num_quaterne;
+	}
 	
 #if ! defined(NDEBUG) && 0
+	static int fewer = 0, more = 0, no_change = 0;
 	if (recommended_num_quaternia < _num_quaterne)
 	{
-		int less_nodes = 1;
+		++ fewer;
 	}
 	else if (recommended_num_quaternia > _num_quaterne)
 	{
-		int more_nodes = 1;
+		++ more;
 	}
 	else
 	{
-		int no_change = 1;
+		++ no_change;
+	}
+	if (fewer + more + no_change == 1000)
+	{
+		std::cout << '[' << fewer << ' ' << no_change << ' ' << more << ']' << std::endl;
+		fewer = more = no_change = 0;
 	}
 #endif
 	
 	// Reset the parameters used to come to a decision so
 	// we don't just keep acting on them over and over. 
-	frame_ratio_max = 0;
+	_frame_rate_num_quaterne = -1;
 	mesh_generation_period = 0;
 	
 	// return the result
@@ -116,20 +139,13 @@ int form::Regulator::GetRecommendedNumQuaterna()
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
-int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, Time sim_time) const
+int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_ratio, Time sim_time) const
 {
-	// No samples to measure from?
-	if (frame_ratio_max == 0)
-	{
-		// Don't recommend any change.
-		return current_load;
-	}
-	
 	// Attenuate/invert the frame_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
-	float frame_ratio_log = std::log(frame_ratio_max);
+	float frame_ratio_log = std::log(frame_ratio);
 	float frame_ratio_exp = std::exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
 	
 	float exact_target_load = static_cast<float>(current_load) * frame_ratio_exp;
@@ -160,7 +176,7 @@ int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load)
 	if (mesh_generation_period <= 0 || mesh_generation_period < max_mesh_generation_period)
 	{
 		// As far as this function's concerned, increase the count to anything you like (within reason).
-		return std::numeric_limits<int>::max();
+		return -1;
 	}
 	
 	// Reset this so there isn't a continuous decrease in node-count before the next recording.

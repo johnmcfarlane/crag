@@ -15,7 +15,6 @@ namespace form
 
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
-	// TODO: Keep results as target num quaterna
 	class Regulator
 	{
 		OBJECT_NO_COPY(Regulator);
@@ -34,7 +33,7 @@ namespace form
 		int GetRecommendedNumQuaterna();
 		
 	private:
-		int CalculateFrameRateDirectedTargetLoad(int current_load, Time sim_time) const;
+		int CalculateFrameRateDirectedTargetLoad(int current_load, float frame_ratio, Time sim_time) const;
 		int CalculateMeshGenerationDirectedTargetLoad(int current_load) const;
 		static float CalculateFrameRateReactionCoefficient(Time sim_time);
 		
@@ -42,7 +41,7 @@ namespace form
 
 		bool _enabled;
 		int _num_quaterne;
-		float frame_ratio_max;	// ~ (actual frame time / ideal frame time), i.e. greater is worse		
+		int _frame_rate_num_quaterne;	// running frame rate-influenced recommendation
 		float mesh_generation_period;	// again, greater is worse
 	};
 
