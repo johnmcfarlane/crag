@@ -98,6 +98,8 @@
 		528164B31454F5DC0017E868 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528164671454F5DB0017E868 /* Thread.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
 		52882A3F149492FF00E68B4F /* Puff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52882A3D149492FF00E68B4F /* Puff.cpp */; };
+		528AC51414C488E300C1B738 /* disk.vert in Sources */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
+		528AC51514C48AA400C1B738 /* disk.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		528ACFFA14674B42004167BF /* gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528ACFF814674B40004167BF /* gravity.cpp */; };
 		52928AC8147C358800731B77 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52928AC6147C358800731B77 /* Layer.cpp */; };
 		52982A6914B189A600449DC0 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52982A6714B189A300449DC0 /* Quad.cpp */; };
@@ -127,6 +129,7 @@
 			files = (
 				52B4604A14C344230078083B /* fog.frag in CopyFiles */,
 				5270CC4B14C1469700146D09 /* light.frag in CopyFiles */,
+				528AC51514C48AA400C1B738 /* disk.vert in CopyFiles */,
 				5270CC4C14C1469700146D09 /* poly.frag in CopyFiles */,
 				52B4604B14C344260078083B /* disk.frag in CopyFiles */,
 				5270CC4D14C1469700146D09 /* poly.vert in CopyFiles */,
@@ -382,12 +385,13 @@
 		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
 		52882A3D149492FF00E68B4F /* Puff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Puff.cpp; sourceTree = "<group>"; };
 		52882A3E149492FF00E68B4F /* Puff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puff.h; sourceTree = "<group>"; };
+		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		528ACFF814674B40004167BF /* gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gravity.cpp; sourceTree = "<group>"; };
 		528ACFF914674B41004167BF /* gravity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gravity.h; sourceTree = "<group>"; };
 		52928AC6147C358800731B77 /* Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layer.cpp; sourceTree = "<group>"; };
 		52928AC7147C358800731B77 /* Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layer.h; sourceTree = "<group>"; };
 		52982A6714B189A300449DC0 /* Quad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quad.cpp; sourceTree = "<group>"; };
-		52982A6814B189A400449DC0 /* Quad.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Quad.h; sourceTree = "<group>"; };
+		52982A6814B189A400449DC0 /* Quad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quad.h; sourceTree = "<group>"; };
 		529D2BBC13D1277F00B0EEE2 /* utility.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utility.py; sourceTree = "<group>"; };
 		52A50C98147DF0D70061A909 /* BranchNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchNode.cpp; sourceTree = "<group>"; };
 		52A50C99147DF0D70061A909 /* BranchNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNode.h; sourceTree = "<group>"; };
@@ -506,6 +510,7 @@
 				5270CC4514C0A64100146D09 /* sphere.vert */,
 				52394D5614C33EB9008EF2DC /* fog.frag */,
 				52B4604714C342D40078083B /* disk.frag */,
+				528AC51314C488E300C1B738 /* disk.vert */,
 			);
 			name = glsl;
 			path = ../../glsl;
@@ -1141,6 +1146,7 @@
 				5270CC4A14C0A64100146D09 /* sphere.vert in Sources */,
 				52394D5714C33EB9008EF2DC /* fog.frag in Sources */,
 				52B4604814C342D40078083B /* disk.frag in Sources */,
+				528AC51414C488E300C1B738 /* disk.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

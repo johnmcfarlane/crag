@@ -10,17 +10,13 @@
 //
 
 
-// light.frag function which calculates the lighting for the given fragment
-vec3 LightFragment(in vec3 frag_position);
-
-
-// inputs from sphere.vert
-varying vec4 quad_position;
-
 // inputs from the renderer
-uniform vec4 color;
 uniform vec3 center;
 uniform float radius;
+
+// inputs from disk.vert
+varying vec4 quad_position;
+varying vec4 lit_color;
 
 
 void main(void)
@@ -30,7 +26,5 @@ void main(void)
 		discard;
 	}
 	
-	// TODO: Put this in a vert shader.
-	vec3 light = LightFragment(center);
-	gl_FragColor = color * vec4(light, 1.);
+	gl_FragColor = lit_color;
 }

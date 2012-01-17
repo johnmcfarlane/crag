@@ -544,7 +544,7 @@ bool Renderer::InitShaders()
 	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", _light_frag_shader);
 	
 	_programs[ProgramIndex::disk] = new SphereProgram;
-	_programs[ProgramIndex::disk]->Init("glsl/sphere.vert", "glsl/disk.frag", _light_frag_shader);
+	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", _light_frag_shader);
 	
 	return true;
 }
