@@ -287,7 +287,7 @@ bool app::HasFocus()
 
 Time app::GetTime()
 {
-#if defined(__APPLE__)
+#if defined(__APPLE__) && 0
 	return CFAbsoluteTimeGetCurrent ();
 #elif defined(WIN32)
 	LARGE_INTEGER performance_count;
