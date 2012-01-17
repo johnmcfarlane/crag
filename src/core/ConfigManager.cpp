@@ -52,6 +52,8 @@ ConfigManager::ConfigManager()
 		// Make sure we always have a config file handy.
 		Save();
 	}
+
+	errno = 0;
 }
 
 ConfigManager::~ConfigManager()
