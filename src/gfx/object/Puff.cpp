@@ -58,10 +58,10 @@ LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
 	
-	_radius = SphereRadiusFromVolume<Scalar, 3>(_spawn_volume);
-	_radius += 0.75 * age;
+	_radius = static_cast<float>(SphereRadiusFromVolume<Scalar, 3>(_spawn_volume));
+	_radius += 0.75f * static_cast<float>(age);
 	
-	_color.a = std::min(1. / Square(_radius * 10.f), 1.);
+	_color.a = std::min(1.f / Square(_radius * 10.f), 1.f);
 	
 	if (_color.a < 0.01f)
 	{

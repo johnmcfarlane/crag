@@ -26,7 +26,7 @@ namespace gfx
 	public:
 		
 		// functions
-		Quad(Scalar depth_offset);
+		Quad(float depth_offset);
 		~Quad();
 		
 		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const;

@@ -1194,7 +1194,7 @@ void Renderer::UpdateFpsCounter(Time frame_start_position)
 	// average it
 	float history_duration = _frame_time_history_size - 1;
 	float average_frame_duration = float(last_entry - first_entry) / history_duration;
-	STAT_SET (fps, 1. / average_frame_duration);
+	STAT_SET (fps, 1.f / average_frame_duration);
 #endif
 }
 

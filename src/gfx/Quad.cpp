@@ -16,10 +16,10 @@
 #include "geom/Transformation.h"
 
 
-using gfx::Quad;
+using namespace gfx;
 
 
-Quad::Quad(Scalar depth_offset)
+Quad::Quad(float depth_offset)
 {
 	float const y = depth_offset;
 	float const xz0 = -1, xz1 = 1;

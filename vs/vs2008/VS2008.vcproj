@@ -870,14 +870,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\gfx\GeodesicSphere.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\gfx\icosahedron.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\gfx\Image.cpp"
 					>
 				</File>
@@ -922,6 +914,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\Quad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Quad.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Renderer.cpp"
 					>
 				</File>
@@ -955,22 +955,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\Scene.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\gfx\SphereMesh.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\gfx\SphereMesh.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\gfx\SphereQuad.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\gfx\SphereQuad.h"
 					>
 				</File>
 				<Filter
