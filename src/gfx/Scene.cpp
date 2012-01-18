@@ -28,7 +28,6 @@ CONFIG_DEFINE (camera_near, float, .25f);
 namespace
 {
 	CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
-	CONFIG_DEFINE (camera_far, float, 10);
 }
 
 
@@ -41,8 +40,7 @@ Scene::Scene()
 	Frustum & frustum = pov.GetFrustum();
 
 	frustum.fov = static_cast<double>(camera_fov);
-	frustum.depth_range[0] = static_cast<double>(camera_near);
-	frustum.depth_range[1] = static_cast<double>(camera_far);
+	frustum.depth_range[0] = frustum.depth_range[1] = -1;
 }
 
 Scene::~Scene()
@@ -51,9 +49,6 @@ Scene::~Scene()
 
 	Assert(_objects.empty());
 	Assert(_root.IsEmpty());
-	
-	Frustum const & frustum = pov.GetFrustum();
-	camera_fov = static_cast<float>(frustum.fov);
 }
 
 #if defined(VERIFY)
