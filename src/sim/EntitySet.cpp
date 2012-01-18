@@ -16,8 +16,18 @@
 
 #include "physics/Body.h"
 
+#include "core/ConfigEntry.h"
+
 
 using namespace sim;
+
+
+namespace
+{
+	// TODO: This could cause the Observer to be destroyed
+	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // EntitySet definitions
@@ -81,7 +91,7 @@ void EntitySet::Purge()
 		}
 
 		Vector3 position = body->GetPosition();
-		if (position == position)
+		if (Length(position) < purge_distance)
 		{
 			continue;
 		}
