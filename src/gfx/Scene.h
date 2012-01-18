@@ -33,6 +33,10 @@ namespace gfx
 		Scene();
 		~Scene();
 		
+#if defined(VERIFY)
+		void Verify() const;
+#endif
+		
 		void SetTime(Time t);
 		Time GetTime() const;
 		

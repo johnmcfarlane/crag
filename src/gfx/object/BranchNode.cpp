@@ -36,6 +36,14 @@ void BranchNode::Verify() const
 	super::Verify();
 	
 	_children.verify();
+	
+	for (ChildList::const_iterator i = _children.begin(), end = _children.begin(); i != end; ++ i)
+	{
+		Object const & child = static_cast<Object const &>(* i);
+		VerifyObject(child);
+	}
+	
+	VerifyObject(_transformation);
 }
 #endif
 
@@ -80,7 +88,9 @@ BranchNode::ChildList::const_iterator BranchNode::End() const
 
 gfx::Transformation const & BranchNode::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
-	return scratch = model_view * _transformation;
+	scratch = model_view * _transformation;
+	VerifyObject(scratch);
+	return scratch;
 }
 
 gfx::Transformation const & BranchNode::GetTransformation() const

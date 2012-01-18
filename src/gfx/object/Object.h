@@ -49,7 +49,7 @@ namespace gfx
 		virtual ~Object();
 		
 #if defined(VERIFY)
-		void Verify() const;
+		virtual void Verify() const;
 #endif
 		
 		virtual bool Init(Scene & scene);	// called on arrival in render thread 

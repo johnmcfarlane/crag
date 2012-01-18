@@ -56,6 +56,13 @@ Scene::~Scene()
 	camera_fov = static_cast<float>(frustum.fov);
 }
 
+#if defined(VERIFY)
+void Scene::Verify() const
+{
+	VerifyObject(_root);
+}
+#endif
+
 void Scene::SetTime(Time t)
 {
 	_time = t;

@@ -71,6 +71,7 @@ Frustum const & Pov::GetFrustum() const
 void Pov::SetTransformation(gfx::Transformation const & transformation)
 {
 	_transformation = transformation;
+	VerifyObject(_transformation);
 }
 
 gfx::Transformation const & Pov::GetTransformation() const
