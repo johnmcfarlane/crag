@@ -56,7 +56,7 @@ bool Ball::GetRenderRange(RenderRange & range) const
 void Ball::Render(Renderer const & renderer) const
 {
 	// Pass rendering details to the shader program.
-	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(ref(renderer.GetProgram()));
+	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(ref(renderer.GetCurrentProgram()));
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_program.SetUniforms(transformation, _color);
 	

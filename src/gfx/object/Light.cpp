@@ -23,7 +23,7 @@ using namespace gfx;
 
 
 Light::Light(Color4f const & color)
-: LeafNode(Layer::light, ProgramIndex::none)
+: LeafNode(Layer::light, ProgramIndex::dont_care)
 , _color(color)
 {
 }

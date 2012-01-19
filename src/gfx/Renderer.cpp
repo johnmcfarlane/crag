@@ -263,7 +263,7 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	SetProgram(nullptr);
+	SetCurrentProgram(nullptr);
 	
 	Deinit();
 
@@ -278,24 +278,19 @@ Scene const & Renderer::GetScene() const
 	return ref(scene);
 }
 
-Program const * Renderer::GetProgram() const
-{
-	return _current_program;
-}
-
 Program * Renderer::GetProgram(ProgramIndex::type index)
 {
-	Assert(index >= 0 && index < ProgramIndex::max);
+	Assert(index >= 0 && index < ProgramIndex::max_index);
 	return _programs[index];
 }
 
 Program const * Renderer::GetProgram(ProgramIndex::type index) const
 {
-	Assert(index >= 0 && index < ProgramIndex::max);
+	Assert(index >= 0 && index < ProgramIndex::max_shader);
 	return _programs[index];
 }
 
-void Renderer::SetProgram(Program * program)
+void Renderer::SetCurrentProgram(Program * program)
 {
 	if (program == _current_program)
 	{
@@ -313,6 +308,11 @@ void Renderer::SetProgram(Program * program)
 	{
 		_current_program->Use();
 	}
+}
+
+Program const * Renderer::GetCurrentProgram() const
+{
+	return _current_program;
 }
 
 Cuboid const & Renderer::GetCuboid() const
@@ -525,8 +525,6 @@ bool Renderer::InitShaders()
 {
 	InitShader(_light_frag_shader, "glsl/light.frag", GL_FRAGMENT_SHADER);
 
-	_programs[ProgramIndex::none] = nullptr;
-	
 	_programs[ProgramIndex::poly] = new Program;
 	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", _light_frag_shader);
 
@@ -538,6 +536,8 @@ bool Renderer::InitShaders()
 	
 	_programs[ProgramIndex::disk] = new SphereProgram;
 	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", _light_frag_shader);
+	
+	_programs[ProgramIndex::fixed] = nullptr;
 	
 	return true;
 }
@@ -568,7 +568,7 @@ void Renderer::Deinit()
 	delete _cuboid;
 	_cuboid = nullptr;
 	
-	for (int program_index = 1; program_index != ProgramIndex::max; ++ program_index)
+	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
 		Program * & program = _programs[program_index];
 		program->Deinit(_light_frag_shader);
@@ -922,10 +922,10 @@ void Renderer::RenderLights()
 	
 	Light::List const & lights = scene->GetLightList();
 
-	for (int program_index = 1; program_index != ProgramIndex::max; ++ program_index)
+	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
 		Program & program = ref(_programs[program_index]);
-		SetProgram(& program);
+		SetCurrentProgram(& program);
 		program.UpdateLights(lights);
 	}
 }
@@ -1075,7 +1075,12 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 		Transformation const & transformation = leaf_node.GetModelViewTransformation();
 		SetModelViewMatrix(transformation);
 
-		SetProgram(GetProgram(leaf_node.GetProgramIndex()));
+		ProgramIndex::type program_index = leaf_node.GetProgramIndex();
+		if (program_index != ProgramIndex::dont_care)
+		{
+			Program * required_program = GetProgram(program_index);
+			SetCurrentProgram(required_program);
+		}
 		
 		leaf_node.Render(* this);
 		++ num_rendered_objects;
@@ -1104,7 +1109,8 @@ void Renderer::DebugDraw()
 	Transformation model_view(Vector3::Zero(), inverse_rotation);
 	SetModelViewMatrix(model_view);
 	
-	SetProgram(GetProgram(ProgramIndex::none));
+	Program * required_program = GetProgram(ProgramIndex::fixed);
+	SetCurrentProgram(required_program);
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).

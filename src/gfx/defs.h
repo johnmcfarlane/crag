@@ -23,12 +23,14 @@ namespace gfx
 	{
 		enum type
 		{
-			none,
 			poly,
 			sphere,
 			fog,
 			disk,
-			max,
+			fixed,
+			dont_care,
+			max_shader = fixed,
+			max_index = dont_care
 		};
 	}
 	

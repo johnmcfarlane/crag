@@ -64,10 +64,11 @@ namespace gfx
 		
 		Scene const & GetScene() const;
 		
-		Program const * GetProgram() const;
 		Program * GetProgram(ProgramIndex::type index);
 		Program const * GetProgram(ProgramIndex::type index) const;
-		void SetProgram(Program * program);
+		
+		void SetCurrentProgram(Program * program);
+		Program const * GetCurrentProgram() const;
 		
 		Cuboid const & GetCuboid() const;
 		Quad const & GetSphereQuad() const;
@@ -177,7 +178,7 @@ namespace gfx
 		
 		// shaders and shader programs
 		gl::Shader _light_frag_shader;
-		Program * _programs[ProgramIndex::max + 1];
+		Program * _programs[ProgramIndex::max_index];
 		Program * _current_program;
 
 		// stock geometry
