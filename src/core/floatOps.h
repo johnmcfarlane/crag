@@ -161,7 +161,7 @@ template<typename T> T FastInvSqrt(T a)
 template <typename T>
 inline T CubeRoot(T a)
 {
-	assert(a > 0);
+	assert(a >= 0);
 #if defined(WIN32)
 	return pow(a, T(1. / 3.));
 #else
