@@ -24,8 +24,8 @@ using namespace gfx;
 
 Light::Light(Color4f const & color)
 : LeafNode(Layer::light, ProgramIndex::dont_care)
-, _color(color)
 {
+	SetColor(color);
 }
 
 bool Light::Init(Scene & scene)
@@ -44,7 +44,7 @@ void Light::Deinit(Scene & scene)
 
 void Light::SetColor(Color4f const & color)
 {
-	_color = color;
+	_color = Color4f(color.r, color.g, color.b, 1.f);
 }
 
 Color4f const & Light::GetColor() const
