@@ -64,6 +64,7 @@ gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_vi
 
 void Quad::Draw() const
 {
+	// TODO: Sort objects by buffer object to avoid most of the gl calls here.
 	gl::BindBuffer(_quad);
 	_quad.Activate();
 	
