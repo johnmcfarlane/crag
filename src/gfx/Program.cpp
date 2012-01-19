@@ -54,6 +54,11 @@ bool gfx::InitShader(gl::Shader & shader, char const * filename, GLenum shader_t
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Program member definitions
 
+gfx::Program::Program()
+: _lights_changed(true)
+{
+}
+
 void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader)
 {
 	InitShader(_vert_shader, vert_source, GL_VERTEX_SHADER);
@@ -116,8 +121,20 @@ void gfx::Program::Disuse() const
 	gl::Disuse(* this);
 }
 
-void gfx::Program::UpdateLights(Light::List const & lights) const
+void gfx::Program::OnLightsChanged()
 {
+	_lights_changed = true;
+}
+
+void gfx::Program::UpdateLights(Light::List const & lights)
+{
+	if (! _lights_changed)
+	{
+		return;
+	}
+	
+	_lights_changed = true;
+	
 	LightBlock const & light_block = _light_block;
 	LightBlock::Light const * uniforms = light_block.lights, * uniforms_end = uniforms + MAX_LIGHTS;
 	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ uniforms, ++ i)

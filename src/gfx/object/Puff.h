@@ -21,6 +21,7 @@ namespace gfx
 	{
 	public:
 		Puff(Scalar spawn_volume);
+		~Puff();
 		
 	private:
 		bool Init(Scene & scene) override;

@@ -27,11 +27,21 @@
 using namespace gfx;
 
 
+namespace
+{
+	CONFIG_DEFINE(puff_probability, float, .25f);
+	CONFIG_DEFINE(thruster_color, Color4f, Color4f(1.f, .5f, .25f));
+	CONFIG_DEFINE(puff_drift_coefficient, Scalar, .75);
+	CONFIG_DEFINE(puff_volume_variance, Scalar, 1.);
+	CONFIG_DEFINE(puff_volume_median, Scalar, 0.0005);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
 Thruster::Thruster()
-: Light(Color4f(1.f, .5f, .25f))
+: Light(thruster_color)
 , _thrust_factor(0)
 {
 }
@@ -41,13 +51,16 @@ void Thruster::Update(UpdateParams const & params, Renderer & renderer)
 	_thrust_factor = params.thrust_factor;
 	if (_thrust_factor != 0)
 	{
-		AddPuff(_thrust_factor, renderer);
+		if (Random::sequence.GetUnit<float>() < puff_probability)
+		{
+			AddPuff(_thrust_factor, renderer);
+		}
 	}
 }
 
 LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
 {
-	SetColor(Color4f(1.f, .5f, .25f) * _thrust_factor * Random::sequence.GetUnit<float>());
+	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
 	_thrust_factor = 0;
 	
 	return LeafNode::ok;
@@ -82,12 +95,11 @@ void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
 		Scalar thruster_max = Length(thruster_direction);
 		thruster_direction *= (1. / thruster_max);
 		
-		static const double puff_drift_coefficient = .75;
 		Vector3 puff_direction = (thruster_direction * (1. - puff_drift_coefficient)) + (Vector3(g1, g2, g3) * puff_drift_coefficient);
 		Normalize(puff_direction);
 
 		Scalar thrust = thruster_max * thrust_factor;
-		spawn_volume = exp(g4 * 1.5) * thrust * 0.00005;
+		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
 
 		// Set its position.
 		BranchNode::UpdateParams params = 

@@ -73,6 +73,8 @@ namespace gfx
 		Cuboid const & GetCuboid() const;
 		Quad const & GetSphereQuad() const;
 		Quad const & GetDiskQuad() const;
+		
+		Color4f CalculateLighting(Vector3 const & position) const;
 
 		// message interface
 		void OnQuit();

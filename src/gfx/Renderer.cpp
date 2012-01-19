@@ -307,6 +307,9 @@ void Renderer::SetCurrentProgram(Program * program)
 	if (_current_program != nullptr)
 	{
 		_current_program->Use();
+
+		Light::List const & lights = scene->GetLightList();
+		_current_program->UpdateLights(lights);
 	}
 }
 
@@ -328,6 +331,33 @@ gfx::Quad const & Renderer::GetSphereQuad() const
 gfx::Quad const & Renderer::GetDiskQuad() const
 {
 	return ref(_disk_quad);
+}
+
+Color4f Renderer::CalculateLighting(Vector3 const & position) const
+{
+	Color4f lighting_color = Color4f::Black();
+	
+	Light::List const & lights = scene->GetLightList();
+	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ i)
+	{
+		Light const & light = * i;
+
+		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
+		
+		Vector3 frag_to_light = light_position - position;
+		float distance_squared = LengthSq(frag_to_light);
+		
+		float attenuation = Clamped(1.f / distance_squared, 0.f, 1.f);
+		
+		Color4f const & color = light.GetColor();
+		Assert(color.a == 1.f);
+		Color4f diffuse = color * attenuation;
+		
+		lighting_color += diffuse;
+	}
+	
+	lighting_color.a = 1.f;
+	return lighting_color;
 }
 
 void Renderer::OnQuit()
@@ -920,13 +950,10 @@ void Renderer::RenderLights()
 		return;
 	}
 	
-	Light::List const & lights = scene->GetLightList();
-
 	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
 		Program & program = ref(_programs[program_index]);
-		SetCurrentProgram(& program);
-		program.UpdateLights(lights);
+		program.OnLightsChanged();
 	}
 }
 

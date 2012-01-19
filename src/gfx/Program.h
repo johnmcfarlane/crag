@@ -43,13 +43,16 @@ namespace gfx
 	class Program : public gl::Program
 	{
 	public:
+		Program();
+		
 		virtual void Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader);
 		void Deinit(gl::Shader & light_shader);
 		
 		void Use() const;
 		void Disuse() const;
 		
-		void UpdateLights(Light::List const & lights) const;
+		void OnLightsChanged();
+		void UpdateLights(Light::List const & lights);
 		
 	private:
 		virtual void InitUniforms();
@@ -57,6 +60,7 @@ namespace gfx
 		gl::Shader _vert_shader;
 		gl::Shader _frag_shader;
 		LightBlock _light_block;
+		bool _lights_changed;
 	};
 	
 	class SphereProgram : public Program

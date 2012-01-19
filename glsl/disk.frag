@@ -12,19 +12,22 @@
 
 // inputs from the renderer
 uniform vec3 center;
-uniform float radius;
+uniform float radius;	// TODO: use inverse radius instead
+uniform vec4 color;
 
 // inputs from disk.vert
 varying vec4 quad_position;
-varying vec4 lit_color;
 
 
 void main(void)
 {
-	if (distance(quad_position.xyz, center) > radius)
+	float d = distance(quad_position.xyz, center) / radius;
+	if (d > 1)
 	{
-		discard;
+		//discard;
 	}
-	
-	gl_FragColor = lit_color;
+
+	d *= d * d;
+	d = 1. - d;
+	gl_FragColor = vec4(color.xyz, color.a * d);
 }
