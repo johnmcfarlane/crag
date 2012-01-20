@@ -27,15 +27,16 @@ namespace gfx
 			none = num
 		};
 		
-		inline type operator ++ (type & layer_index)
-		{
-			return layer_index = type(int(layer_index) + 1);
-		}
-		
 #if defined(VERIFY)
 		void Verify(type layer);
 #else
 		inline void Verify(type layer) { }
 #endif
+		
+		inline type operator ++ (type & layer_index)
+		{
+			Verify (layer_index);
+			return layer_index = type(int(layer_index) + 1);
+		}
 	}
 }
