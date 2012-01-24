@@ -533,6 +533,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\form\scene\Vertex.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\form\scene\Vertex.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\form\scene\VertexBuffer.cpp"
 						>
 					</File>
@@ -830,6 +838,10 @@
 				Name="gfx"
 				>
 				<File
+					RelativePath="..\..\src\gfx\BufferObject.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Color.h"
 					>
 				</File>
@@ -862,11 +874,35 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\Fence.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Fence.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Font.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\Font.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\FrameBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\FrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\glHelpers.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\glHelpers.h"
 					>
 				</File>
 				<File
@@ -883,6 +919,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\IndexBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\IndexBufferObject.h"
 					>
 				</File>
 				<File
@@ -922,6 +962,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\RenderBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\RenderBuffer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Renderer.cpp"
 					>
 				</File>
@@ -955,6 +1003,26 @@
 				</File>
 				<File
 					RelativePath="..\..\src\gfx\Scene.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Shader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Shader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Texture.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\Texture.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\VertexBufferObject.h"
 					>
 				</File>
 				<Filter
@@ -1171,66 +1239,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\script\ScriptThread.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="glpp"
-				>
-				<File
-					RelativePath="..\..\src\glpp\BufferObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\debug.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Fence.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\FrameBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\gl.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\glpp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Ibo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Name.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\RenderBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Shader.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Texture.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Vbo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Vbo_Types.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\glpp\Vertex.h"
 					>
 				</File>
 			</Filter>
