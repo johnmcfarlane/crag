@@ -345,7 +345,7 @@ Color4f Renderer::CalculateLighting(Vector3 const & position) const
 		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
 		
 		Vector3 frag_to_light = light_position - position;
-		float distance_squared = LengthSq(frag_to_light);
+		float distance_squared = static_cast<float>(LengthSq(frag_to_light));
 		
 		float attenuation = Clamped(1.f / distance_squared, 0.f, 1.f);
 		

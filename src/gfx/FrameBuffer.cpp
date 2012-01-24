@@ -7,8 +7,9 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "FrameBuffer.h"
+#include "pch.h"
 
+#include "FrameBuffer.h"
 #include "glHelpers.h"
 
 

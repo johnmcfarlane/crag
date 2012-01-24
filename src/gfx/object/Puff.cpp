@@ -33,7 +33,7 @@ namespace
 	CONFIG_DEFINE(puff_radius_coefficient, float, 3.5);
 	CONFIG_DEFINE(puff_min_alpha, float, .01f);
 	
-	STAT(num_puffs, int, .1);
+	STAT(num_puffs, int, .1f);
 }
 
 

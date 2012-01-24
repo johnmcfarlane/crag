@@ -81,7 +81,9 @@ namespace
 		{
 			Color const & color = hidden ? colors._hidden_color : colors._color;
 			glColor4fv(color.GetArray());
-			glVertex3f(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
+
+			Vector3f relative_pos = pos - camera_pos;
+			glVertex3f(relative_pos.x, relative_pos.y, relative_pos.z);
 		}
 		
 		Vector3 pos;

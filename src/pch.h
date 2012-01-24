@@ -74,8 +74,8 @@
 #else
 #define GLEW_STATIC
 #define GL_GLEXT_PROTOTYPES
+#include <GL/glew.h>	 // must be included before gl.h 
 #include <GL/gl.h>
-#include <GL/glew.h>
 //#include <GL/glext.h>
 #include <GL/glu.h>
 #endif

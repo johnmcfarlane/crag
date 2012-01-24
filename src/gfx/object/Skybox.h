@@ -11,8 +11,8 @@
 
 #include "LeafNode.h"
 
-#include "Texture.h"
-#include "VertexBufferObject.h"
+#include "gfx/Texture.h"
+#include "gfx/VertexBufferObject.h"
 
 
 namespace gfx
