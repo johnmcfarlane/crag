@@ -13,8 +13,6 @@
 
 #include "core/memory.h"
 
-#include "glpp/Vbo_Types.h"
-
 
 form::VertexBuffer::VertexBuffer(int max_num_verts) 
 : _verts(max_num_verts)

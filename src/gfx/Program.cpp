@@ -11,44 +11,12 @@
 
 #include "Program.h"
 
+#include "glHelpers.h"
+
 #include "core/app.h"
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Globals
-
-bool gfx::InitShader(gl::Shader & shader, char const * filename, GLenum shader_type)
-{
-	std::vector<char> sphere_shader_source;
-
-	if (! app::LoadFile(filename, sphere_shader_source))
-	{
-		AssertErrno();
-		return false;
-	}
-
-	int sphere_shader_source_size = sphere_shader_source.size();
-	
-	// Create the shader.
-	gl::Create(shader, shader_type);
-	gl::Source(shader, & sphere_shader_source[0], & sphere_shader_source_size);
-	gl::Compile(shader);
-	
-	// Check for errors in the source code.
-#if ! defined(NDEBUG)
-	if (! shader.IsCompiled())
-	{
-		std::cerr << "Failed to compile shader, \"" << filename << "\":" << std::endl;
-		
-		std::string info_log;
-		shader.GetInfoLog(info_log);
-		std::cerr << info_log;
-		assert(false);
-	}
-#endif
-	
-	return true;
-}
+using namespace gfx;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,20 +24,45 @@ bool gfx::InitShader(gl::Shader & shader, char const * filename, GLenum shader_t
 
 gfx::Program::Program()
 : _lights_changed(true)
+, _id(0)
 {
 }
 
-void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader)
+Program::~Program()
 {
-	InitShader(_vert_shader, vert_source, GL_VERTEX_SHADER);
-	InitShader(_frag_shader, frag_source, GL_FRAGMENT_SHADER);
+	Assert(! IsInitialized());
+}
+
+bool Program::IsInitialized() const
+{
+	return _id != 0;
+}
+
+bool Program::IsLinked() const
+{
+	assert(IsInitialized());
+	
+	GLint params;
+	GL_CALL(glGetProgramiv(_id, GL_LINK_STATUS, & params));
+	
+	return params != GL_FALSE;
+}
+
+void Program::Init(char const * vert_source, char const * frag_source, Shader & light_shader)
+{
+	assert(! IsInitialized());
 
 	// Create the program.
-	gl::Create(* this);
-	gl::Attach(* this, _vert_shader);
-	gl::Attach(* this, _frag_shader);
-	gl::Attach(* this, light_shader);
-	gl::Link(* this);
+	_id = glCreateProgram();
+
+	// Create the main vert and frag shaders.
+	_vert_shader.Init(vert_source, GL_VERTEX_SHADER);
+	_frag_shader.Init(frag_source, GL_FRAGMENT_SHADER);
+	
+	glAttachShader(_id, _vert_shader._id);
+	glAttachShader(_id, _frag_shader._id);
+	glAttachShader(_id, light_shader._id);
+	glLinkProgram(_id);
 	
 #if ! defined(NDEBUG)
 	if (! IsLinked())
@@ -83,7 +76,7 @@ void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::
 	}
 #endif
 	
-	gl::Use(* this);
+	Bind();
 	
 	InitUniforms();
 	
@@ -92,41 +85,46 @@ void gfx::Program::Init(char const * vert_source, char const * frag_source, gl::
 		char name[40];
 		
 		sprintf(name, "lights[%d].position", i);
-		_light_block.lights[i].position = gl::GetUniformLocation(* this, name);
+		_light_block.lights[i].position = glGetUniformLocation(_id, name);
 		
 		sprintf(name, "lights[%d].color", i);
-		_light_block.lights[i].color = gl::GetUniformLocation(* this, name);
+		_light_block.lights[i].color = glGetUniformLocation(_id, name);
 	}
 	
-	gl::Disuse(* this);
+	Unbind();
 }
 
-void gfx::Program::Deinit(gl::Shader & light_shader)
+void Program::Deinit(Shader & light_shader)
 {
-	gl::Detach(* this, light_shader);
-	gl::Detach(* this, _frag_shader);
-	gl::Detach(* this, _vert_shader);
-	gl::Delete(* this);
-	gl::Delete(_vert_shader);
-	gl::Delete(_frag_shader);
+	glDetachShader(_id, light_shader._id);
+	glDetachShader(_id, _frag_shader._id);
+	glDetachShader(_id, _vert_shader._id);
+	
+	_frag_shader.Deinit();
+	_vert_shader.Deinit();
+	
+	glDeleteProgram(_id);
+	_id = 0;
 }
 
-void gfx::Program::Use() const
+void Program::Bind() const
 {
-	gl::Use(* this);
+	Assert(GetInt<GL_CURRENT_PROGRAM>() == 0);
+	GL_CALL(glUseProgram(_id));
 }
 
-void gfx::Program::Disuse() const
+void Program::Unbind() const
 {
-	gl::Disuse(* this);
+	Assert(GetInt<GL_CURRENT_PROGRAM>() == static_cast<int>(_id));
+	GL_CALL(glUseProgram(0));
 }
 
-void gfx::Program::OnLightsChanged()
+void Program::OnLightsChanged()
 {
 	_lights_changed = true;
 }
 
-void gfx::Program::UpdateLights(Light::List const & lights)
+void Program::UpdateLights(Light::List const & lights)
 {
 	if (! _lights_changed)
 	{
@@ -150,52 +148,83 @@ void gfx::Program::UpdateLights(Light::List const & lights)
 		Vector4f position = Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
 		Color4f const & color = light.GetColor();
 		
-		gl::Uniform<float, 3>(uniforms->position, position.GetAxes());
-		gl::Uniform<float, 3>(uniforms->color, color.GetArray());
+		glUniform3f(uniforms->position, position.x, position.y, position.z);
+		glUniform3f(uniforms->color, color.r, color.g, color.b);
 	}
 	
 	// Make sure any unused light uniforms are blacked out.
 	while (uniforms != uniforms_end)
 	{
-		gl::Uniform<float, 3>(uniforms->color, Color4f::Black().GetArray());
+		glUniform3f(uniforms->color, 0, 0, 0);
 		++ uniforms;
 	}
 }
 
-void gfx::Program::InitUniforms()
+GLint Program::GetUniformLocation(char const * name) const
 {
+	return glGetUniformLocation(_id, name);
+}
+
+void Program::InitUniforms()
+{
+}
+
+void Program::GetInfoLog(std::string & info_log) const
+{
+	GLint length;
+	GL_CALL(glGetProgramiv(_id, GL_INFO_LOG_LENGTH, & length));
+	
+	if (length == 0)
+	{
+		info_log.clear();
+	}
+	else
+	{
+		info_log.resize(length);
+		glGetProgramInfoLog(_id, length, NULL, & info_log[0]);
+	}
+}
+
+void Program::Verify() const
+{
+	if (_id == 0)
+	{
+		return;
+	}
+	
+	assert(glIsProgram(_id));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::SphereProgram member definitions
+// SphereProgram member definitions
 
-gfx::SphereProgram::SphereProgram()
+SphereProgram::SphereProgram()
 : _color_location(-1)
 , _center_location(-1)
 , _radius_location(-1)
 {
 }
 
-void gfx::SphereProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color) const
+void SphereProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color) const
 {
-	gl::Uniform<float, 4>(_color_location, & color[0]);
+	glUniform4f(_color_location, color.r, color.g, color.b, color.a);
 	
 	Vector4f center = Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
-	gl::Uniform<float, 3>(_center_location, center.GetAxes());
+	glUniform3f(_center_location, center.x, center.y, center.z);
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));
-	gl::Uniform(_radius_location, radius);
+	glUniform1f(_radius_location, radius);
 }
 
-void gfx::SphereProgram::InitUniforms() override
+void SphereProgram::InitUniforms() override
 {
-	_color_location = gl::GetUniformLocation(* this, "color");
-	_center_location = gl::GetUniformLocation(* this, "center");
-	_radius_location = gl::GetUniformLocation(* this, "radius");
+	_color_location = GetUniformLocation("color");
+	_center_location = GetUniformLocation("center");
+	_radius_location = GetUniformLocation("radius");
 }
 
-gfx::Scalar gfx::SphereProgram::CalculateRadius(::Transformation<float> const & transformation)
+Scalar SphereProgram::CalculateRadius(::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
 	Assert(NearEqual(size.x / size.y, 1, 0.0001));
@@ -207,21 +236,21 @@ gfx::Scalar gfx::SphereProgram::CalculateRadius(::Transformation<float> const & 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::FogProgram member definitions
+// FogProgram member definitions
 
-gfx::FogProgram::FogProgram()
+FogProgram::FogProgram()
 : _density_location(-1)
 {
 }
 
-void gfx::FogProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color, float density) const
+void FogProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color, float density) const
 {
 	SphereProgram::SetUniforms(model_view, color);
 	
-	gl::Uniform(_density_location, density);
+	glUniform1f(_density_location, density);
 }
 
-void gfx::FogProgram::InitUniforms() override
+void FogProgram::InitUniforms() override
 {
-	_density_location = gl::GetUniformLocation(* this, "density");
+	_density_location = GetUniformLocation("density");
 }

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/defs.h"
+#include "Vertex.h"
 
 #include "smp/vector.h"
 
@@ -30,6 +30,7 @@ namespace form
 
 		int GetIndex(Vertex const & v) const;
 		
+	private:
 		// variables
 		smp::vector<Vertex> _verts;
 	};

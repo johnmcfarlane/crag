@@ -15,8 +15,6 @@
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
 
-#include "glpp/glpp.h"
-
 #include "core/Random.h"
 
 
@@ -52,14 +50,14 @@ bool Box::GetRenderRange(RenderRange & range) const
 
 void Box::Render(Renderer const & renderer) const
 {
-	GLPP_VERIFY;
+	GL_VERIFY;
 	
-	gl::SetColor(_color.GetArray());
+	glColor4fv(_color.GetArray());
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
 	Cuboid const & cuboid = renderer.GetCuboid();
 	cuboid.Draw();
 	
-	GLPP_VERIFY;
+	GL_VERIFY;
 }

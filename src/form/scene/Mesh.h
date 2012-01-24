@@ -9,14 +9,12 @@
 
 #pragma once
 
+#include "defs.h"
+
 #include "MeshProperties.h"
 #include "VertexBuffer.h"
 
 #include "gfx/IndexBuffer.h"
-
-#include "core/debug.h"
-
-#include "glpp/Vbo_Types.h"
 
 
 namespace form

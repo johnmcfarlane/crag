@@ -55,7 +55,7 @@ bool FormationMesh::Init(Scene & scene)
 		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Init();
 		mbo.Bind();
-		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices, gl::DYNAMIC_DRAW);
+		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
 		mbo.Unbind();
 	}
 	
@@ -124,24 +124,24 @@ void FormationMesh::Render(Renderer const & renderer) const
 	}
 	
 	// State
-	Assert(gl::IsEnabled(GL_DEPTH_TEST));
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
+	Assert(IsEnabled(GL_DEPTH_TEST));
+	Assert(IsEnabled(GL_COLOR_MATERIAL));
 	
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular)));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
-	GLPP_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
-	GLPP_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular)));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
+	GL_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
 	
-	Assert(! gl::IsEnabled(GL_TEXTURE_2D));
+	Assert(! IsEnabled(GL_TEXTURE_2D));
 	
 	// Draw the mesh!
 	front_buffer.Bind();
 	front_buffer.Activate();
 	front_buffer.Draw();
 	front_buffer.Deactivate();
-	GLPP_VERIFY;
+	GL_VERIFY;
 }
 
 bool FormationMesh::BeginBufferUpload()

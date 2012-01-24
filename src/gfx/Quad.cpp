@@ -19,6 +19,31 @@
 using namespace gfx;
 
 
+////////////////////////////////////////////////////////////////////////////////
+// vertex helper functions
+
+template <>
+void EnableClientState<Quad::Vertex>()
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+}
+
+template <>
+void DisableClientState<Quad::Vertex>()
+{
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+template <>
+void Pointer<Quad::Vertex>()
+{
+	gfx::VertexPointer<Quad::Vertex, 3, & Quad::Vertex::pos>();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Quad member definitions
+
 Quad::Quad(float depth_offset)
 {
 	float const y = depth_offset;
@@ -27,7 +52,7 @@ Quad::Quad(float depth_offset)
 	float const x0 = xz0, x1 = xz1;
 	float const z0 = xz0, z1 = xz1;
 	
-	QuadVertex verts[6] = 
+	Vertex verts[6] = 
 	{
 		{ Vector3f(x0, y, z0) },
 		{ Vector3f(x0, y, z1) },
@@ -37,15 +62,15 @@ Quad::Quad(float depth_offset)
 		{ Vector3f(x1, y, z1) }
 	};
 	
-	gl::GenBuffer(_quad);
-	gl::BindBuffer(_quad);
-	BufferData(_quad, 6, verts, gl::STATIC_DRAW);	// !? compiles !?
-	gl::UnbindBuffer(_quad);
+	_quad.Init();
+	_quad.Bind();
+	_quad.BufferData(6, verts, GL_STATIC_DRAW);	// !? compiles !?
+	_quad.Unbind();
 }
 
 Quad::~Quad()
 {
-	gl::DeleteBuffer(_quad);
+	_quad.Deinit();
 }
 
 gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
@@ -65,13 +90,13 @@ gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_vi
 void Quad::Draw() const
 {
 	// TODO: Sort objects by buffer object to avoid most of the gl calls here.
-	gl::BindBuffer(_quad);
+	_quad.Bind();
 	_quad.Activate();
 	
 	_quad.DrawTris(0, 6);
 	
 	_quad.Deactivate();
-	gl::UnbindBuffer(_quad);
+	_quad.Unbind();
 	
-	GLPP_VERIFY;
+	GL_VERIFY;
 }

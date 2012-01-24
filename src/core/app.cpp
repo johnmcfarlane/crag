@@ -13,8 +13,6 @@
 
 #include "core/ConfigEntry.h"
 
-#include "glpp/glpp.h"
-
 #if defined(__APPLE__)
 #include <CoreFoundation/CFDate.h>
 #endif

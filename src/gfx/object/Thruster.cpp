@@ -18,8 +18,6 @@
 
 #include "sim/axes.h"
 
-#include "glpp/glpp.h"
-
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 

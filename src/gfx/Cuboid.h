@@ -11,8 +11,6 @@
 
 #include "gfx/Mesh.h"
 
-#include "glpp/Vbo_Types.h"
-
 
 namespace gfx
 {
@@ -20,11 +18,16 @@ namespace gfx
 	// Has a mesh containing tesselations of a sphere at multiple levels of detail.
 	class Cuboid
 	{
-		// types
-		typedef Vector3f Vector3;
-		typedef gl::Vertex3dNorm Vertex;
-		typedef gfx::Mesh<Vertex, gl::STATIC_DRAW> Mesh;
 	public:
+		// types
+		struct Vertex
+		{
+			Vector3f pos;
+			Vector3f norm;
+		};
+		
+		typedef Vector3f Vector3;
+		typedef gfx::Mesh<Vertex, GL_STATIC_DRAW> Mesh;
 		
 		// functions
 		Cuboid();

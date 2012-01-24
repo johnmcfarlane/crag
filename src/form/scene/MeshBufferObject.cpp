@@ -18,6 +18,9 @@
 #include "gfx/Pov.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// MeshBufferObject member definitions
+
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
 {
@@ -47,7 +50,7 @@ void form::MeshBufferObject::Activate() const
 	
 	if (properties._flat_shaded) 
 	{
-		gl::ShadeModel(GL_FLAT);
+		glShadeModel(GL_FLAT);
 	}
 
 	super::Activate();
@@ -62,7 +65,7 @@ void form::MeshBufferObject::Deactivate() const
 	
 	if (properties._flat_shaded) 
 	{
-		gl::ShadeModel(GL_SMOOTH);
+		glShadeModel(GL_SMOOTH);
 	}
 }
 

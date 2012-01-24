@@ -18,14 +18,12 @@ struct SDL_PixelFormat;
 struct SDL_Surface;
 
 
-namespace gl
-{
-	class TextureRgba8;
-}
-
-
 namespace gfx 
 {
+	// forward-declaration
+	class Texture;
+
+	// Basic bitmap class / wrapper for SDL surface.
 	class Image
 	{
 	public:
@@ -52,7 +50,7 @@ namespace gfx
 		// pixel access
 		Color4b GetPixel(Vector2i const & pos) const;
 		void SetPixel(Vector2i const & pos, Color4b const & color);
-		bool CreateTexture(gl::TextureRgba8 & texture) const;
+		bool CreateTexture(Texture & texture) const;
 
 		// misc
 		void Clear(Color4b const & color);

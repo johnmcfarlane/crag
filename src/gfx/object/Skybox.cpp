@@ -21,6 +21,34 @@
 using namespace gfx;
 
 
+////////////////////////////////////////////////////////////////////////////////
+// vertex helper functions
+
+template <>
+void EnableClientState<Skybox::Vertex>()
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+template <>
+void DisableClientState<Skybox::Vertex>()
+{
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+template <>
+void Pointer<Skybox::Vertex>()
+{
+	gfx::VertexPointer<Skybox::Vertex, 3, & Skybox::Vertex::pos>();
+	gfx::TexCoordPointer<Skybox::Vertex, 2, & Skybox::Vertex::tex>();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Skybox member definitions
+
 Skybox::Skybox()
 : LeafNode(Layer::background, ProgramIndex::fixed)
 {
@@ -34,14 +62,14 @@ bool Skybox::Init(Scene & scene)
 
 void Skybox::Deinit(Scene & scene)
 {
-	gl::DeleteBuffer(vbo);
+	vbo.Deinit();
 	
 	for (int axis = 0; axis < 3; ++ axis)
 	{
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			Texture & side = sides[axis][pole];
-			gl::DeleteTexture(side);
+			side.Deinit();
 		}
 	}
 }
@@ -64,23 +92,23 @@ gfx::Transformation const & Skybox::Transform(Renderer & renderer, gfx::Transfor
 void Skybox::Render(Renderer const & renderer) const
 {
 	// clear the depth buffer
-	GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-	gl::SetColor(1.f, 1.f, 1.f);
+	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT));
+	glColor3f(1.f, 1.f, 1.f);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	gl::Enable(GL_TEXTURE_2D);
-	gl::Disable(GL_CULL_FACE);
-	gl::SetDepthMask(false);
+	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	Enable(GL_TEXTURE_2D);
+	Disable(GL_CULL_FACE);
+	glDepthMask(false);
 	
-	Assert(! gl::IsEnabled(GL_LIGHTING));
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	Assert(gl::IsEnabled(GL_TEXTURE_2D));
-	Assert(! gl::IsEnabled(GL_CULL_FACE));
-	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
+	Assert(! IsEnabled(GL_LIGHTING));
+	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	Assert(IsEnabled(GL_TEXTURE_2D));
+	Assert(! IsEnabled(GL_CULL_FACE));
+	Assert(! IsEnabled(GL_DEPTH_TEST));
 	
 	// Draw VBO
-	gl::BindBuffer(vbo);
+	vbo.Bind();
 	vbo.Activate();
 	
 	int index = 0;
@@ -89,25 +117,25 @@ void Skybox::Render(Renderer const & renderer) const
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			Texture const & side = sides[axis][pole];
-			gl::BindTexture(side);
+			side.Bind();
 			vbo.DrawStrip(index, 4);
-			gl::UnbindTexture(side);
+			side.Unbind();
 			index += 4;
 		}
 	}
 	
 	vbo.Deactivate();
-	gl::UnbindBuffer(vbo);
+	vbo.Unbind();
 	
-	gl::SetDepthMask(true);
-	gl::Disable(GL_TEXTURE_2D);
-	gl::Enable(GL_CULL_FACE);
+	glDepthMask(true);
+	Disable(GL_TEXTURE_2D);
+	Enable(GL_CULL_FACE);
 }
 
 void Skybox::InitVerts()
 {
-	gl::GenBuffer(vbo);
-	gl::Vertex3dTex verts[3][2][4];
+	vbo.Init();
+	Vertex verts[3][2][4];
 	
 	for (int axis = 0; axis < 3; ++ axis)
 	{
@@ -117,7 +145,7 @@ void Skybox::InitVerts()
 		
 		for (int pole = 0; pole < 2; ++ pole)
 		{
-			gl::Vertex3dTex * side_verts = verts[axis][pole];
+			Vertex * side_verts = verts[axis][pole];
 			
 			for (int u = 0; u < 2; ++ u)
 			{
@@ -135,7 +163,7 @@ void Skybox::InitVerts()
 		}
 	}
 	
-	gl::BindBuffer(vbo);
-	gl::BufferData(vbo, 3 * 2 * 4, verts[0][0], gl::STATIC_DRAW);
-	gl::UnbindBuffer(vbo);
+	vbo.Bind();
+	vbo.BufferData(3 * 2 * 4, verts[0][0], GL_STATIC_DRAW);
+	vbo.Unbind();
 }

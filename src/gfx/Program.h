@@ -11,7 +11,7 @@
 
 #include "gfx/object/Light.h"
 
-#include "glpp/Shader.h"
+#include "Shader.h"
 
 #include "geom/Transformation.h"
 
@@ -19,7 +19,7 @@
 namespace gfx
 {
 	// function declarations
-	bool InitShader(gl::Shader & shader, char const * filename, GLenum shader_type);
+	GLuint InitShader(char const * filename, GLenum shader_type);
 
 	// GPUs were invented by people who can't bare to see macros phased out.
 	enum
@@ -39,26 +39,39 @@ namespace gfx
 		Light lights [MAX_LIGHTS];
 	};
 	
+	
 	// an application-specific shader program that manages its shaders
-	class Program : public gl::Program
+	class Program
 	{
 	public:
 		Program();
+		~Program();
 		
-		virtual void Init(char const * vert_source, char const * frag_source, gl::Shader & light_shader);
-		void Deinit(gl::Shader & light_shader);
+		bool IsInitialized() const;
+		bool IsLinked() const;
 		
-		void Use() const;
-		void Disuse() const;
+		virtual void Init(char const * vert_source, char const * frag_source, Shader & light_shader);
+		void Deinit(Shader & light_shader);
+		
+		void Bind() const;
+		void Unbind() const;
 		
 		void OnLightsChanged();
 		void UpdateLights(Light::List const & lights);
 		
+	protected:
+		GLint GetUniformLocation(char const * name) const;
+
 	private:
 		virtual void InitUniforms();
 		
-		gl::Shader _vert_shader;
-		gl::Shader _frag_shader;
+		void GetInfoLog(std::string & info_log) const;
+		void Verify() const;
+
+		// variables
+		GLuint _id;
+		Shader _vert_shader;
+		Shader _frag_shader;
 		LightBlock _light_block;
 		bool _lights_changed;
 	};

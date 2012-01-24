@@ -11,7 +11,7 @@
 
 #include "Image.h"
 
-#include "glpp/Texture.h"
+#include "Texture.h"
 
 #include "core/app.h"
 
@@ -145,7 +145,7 @@ void gfx::Image::SetPixel(Vector2i const & pos, Color4b const & color)
 	* pixel = pixel_value;
 }
 
-bool gfx::Image::CreateTexture(gl::TextureRgba8 & texture) const
+bool gfx::Image::CreateTexture(Texture & texture) const
 {
 	if (surface == nullptr)
 	{
@@ -161,12 +161,12 @@ bool gfx::Image::CreateTexture(gl::TextureRgba8 & texture) const
 		return converted_image.CreateTexture(texture);
 	}
 	
-	gl::GenTexture(texture);
-	gl::BindTexture(texture);
-	gl::TexImage(texture, GetWidth(), GetHeight(), surface->pixels);
+	texture.Init();
+	texture.Bind();
+	texture.SetImage(GetWidth(), GetHeight(), surface->pixels);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	gl::UnbindTexture(texture);
+	texture.Unbind();
 	
 	return true;
 }
@@ -214,7 +214,7 @@ bool gfx::Image::CaptureScreen()
 		return false;
 	}
 	
-	GLPP_CALL(glReadPixels(0, 0,
+	GL_CALL(glReadPixels(0, 0,
 						   window_size.x, window_size.y, 
 						   GL_RGBA, GL_UNSIGNED_BYTE,
 						   surface->pixels));

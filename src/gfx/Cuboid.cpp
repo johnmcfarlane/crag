@@ -12,6 +12,34 @@
 #include "Cuboid.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// vertex helper functions
+
+template <>
+void EnableClientState<gfx::Cuboid::Vertex>()
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+}
+
+template <>
+void DisableClientState<gfx::Cuboid::Vertex>()
+{
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+}
+
+template <>
+void Pointer<gfx::Cuboid::Vertex>()
+{
+	gfx::VertexPointer<gfx::Cuboid::Vertex, 3, & gfx::Cuboid::Vertex::pos>();
+	gfx::NormalPointer<gfx::Cuboid::Vertex, & gfx::Cuboid::Vertex::norm>();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Cuboid member definitions
+
 gfx::Cuboid::Cuboid()
 {
 	Vertex verts[3][2][4];
@@ -61,7 +89,7 @@ gfx::Cuboid::Cuboid()
 	_mesh.Init();
 	_mesh.Bind();
 	
-	_mesh.Resize(num_verts, num_indices, gl::STATIC_DRAW);
+	_mesh.Resize(num_verts, num_indices);
 	_mesh.SetIbo(num_indices, * * * indices);
 	_mesh.SetVbo(num_verts, * * verts);
 	

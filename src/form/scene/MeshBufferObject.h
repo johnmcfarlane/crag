@@ -9,13 +9,10 @@
 
 #pragma once
 
-#include "form/defs.h"
-
 #include "MeshProperties.h"
+#include "Vertex.h"
 
 #include "gfx/Mesh.h"
-
-#include "glpp/Vertex.h"
 
 
 namespace gfx 
@@ -32,9 +29,9 @@ namespace form
 	
 	
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
-	class MeshBufferObject : public gfx::Mesh<Vertex, gl::DYNAMIC_DRAW>
+	class MeshBufferObject : public gfx::Mesh<Vertex, GL_DYNAMIC_DRAW>
 	{
-		typedef gfx::Mesh<Vertex, gl::DYNAMIC_DRAW> super;
+		typedef gfx::Mesh<Vertex, GL_DYNAMIC_DRAW> super;
 	public:
 		MeshBufferObject();
 		

@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "geom/Vector2.h"
+#include "Texture.h"
+#include "VertexBufferObject.h"
 
-#include "glpp/Texture.h"
-#include "glpp/Vbo_Types.h"
+#include "geom/Vector2.h"
 
 
 namespace gfx
@@ -20,6 +20,16 @@ namespace gfx
 	class Font
 	{
 	public:
+		// types
+		struct Vertex
+		{
+			Vector2f pos;
+			Vector2f tex;
+		};
+		
+		typedef VertexBufferObject<Vertex> VertexBufferObject;
+		
+		// functions
 		Font(char const * filename, float scale = 1.f);
 		~Font();
 		
@@ -36,7 +46,7 @@ namespace gfx
 		Vector2i character_size;
 		Vector2f inv_scale;
 		float scale_factor;
-		gl::TextureRgba8 texture;
-		mutable gl::Vbo2dTex vbo;
+		Texture texture;
+		mutable VertexBufferObject vbo;
 	};
 }

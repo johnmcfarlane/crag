@@ -18,11 +18,39 @@
 namespace 
 {
 	// TODO: All a big hack.
-	::std::vector<gl::Vertex2dTex> vertex_buffer;
+	::std::vector<gfx::Font::Vertex> vertex_buffer;
 	
 	int margin_hack[2] = { 8, 8 };
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// vertex helper functions
+
+template <>
+void EnableClientState<gfx::Font::Vertex>()
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+template <>
+void DisableClientState<gfx::Font::Vertex>()
+{
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+template <>
+void Pointer<gfx::Font::Vertex>()
+{
+	gfx::VertexPointer<gfx::Font::Vertex, 2, & gfx::Font::Vertex::pos>();
+	gfx::TexCoordPointer<gfx::Font::Vertex, 2, & gfx::Font::Vertex::tex>();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Font member definitions
 
 gfx::Font::Font(char const * filename, float scale)
 {
@@ -45,13 +73,13 @@ gfx::Font::Font(char const * filename, float scale)
 
 	image.CreateTexture(texture);
 	
-	gl::GenBuffer(vbo);
+	vbo.Init();
 }
 
 gfx::Font::~Font()
 {
-	gl::DeleteBuffer(vbo);
-	gl::DeleteTexture(texture);
+	vbo.Deinit();
+	texture.Deinit();
 }
 
 gfx::Font::operator bool() const
@@ -68,15 +96,15 @@ void gfx::Font::Print(char const * text, Vector2f const & position) const
 		return;
 	}
 
-	BindTexture(texture);
+	texture.Bind();
 
-	BindBuffer(vbo);
+	vbo.Bind();
 	vertex_buffer.resize(0);
 	GenerateVerts(text, position);
 	RenderVerts();
-	UnbindBuffer(vbo);
+	vbo.Unbind();
 
-	UnbindTexture(texture);
+	texture.Unbind();
 }
 
 void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) const
@@ -102,33 +130,33 @@ void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) cons
 	}
 	
 	size_t num_verts = vertex_buffer.size();
-	gl::BufferData(vbo, num_verts, & vertex_buffer.front(), gl::STATIC_DRAW);
+	vbo.BufferData(num_verts, & vertex_buffer.front(), GL_STATIC_DRAW);
 }
 
 void gfx::Font::RenderVerts() const
 {
-	GLPP_VERIFY;
+	GL_VERIFY;
 
 	// State
-	Assert(! gl::IsEnabled(GL_LIGHTING));
-	Assert(gl::IsEnabled(GL_COLOR_MATERIAL));
-	gl::Enable(GL_TEXTURE_2D);
-	gl::Disable(GL_CULL_FACE);
-	gl::Enable(GL_BLEND);
-	GLPP_CALL(glBlendEquation(GL_FUNC_ADD));
-	Assert(! gl::IsEnabled(GL_DEPTH_TEST));
-	gl::SetDepthMask(false);
+	Assert(! IsEnabled(GL_LIGHTING));
+	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	Enable(GL_TEXTURE_2D);
+	Disable(GL_CULL_FACE);
+	Enable(GL_BLEND);
+	GL_CALL(glBlendEquation(GL_FUNC_ADD));
+	Assert(! IsEnabled(GL_DEPTH_TEST));
+	glDepthMask(false);
 	
 	// Matrices
-	gl::MatrixMode (GL_PROJECTION);
+	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	Vector2i resolution = app::GetWindowSize();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
-	gl::MatrixMode (GL_MODELVIEW); 
+	glMatrixMode (GL_MODELVIEW); 
 	glLoadIdentity (); 
 	glTranslatef (0.375f, 0.375f, 0.f);
-	GLPP_VERIFY;
+	GL_VERIFY;
 	
 	// Draw VBO
 	vbo.Activate();
@@ -136,10 +164,10 @@ void gfx::Font::RenderVerts() const
 	vbo.DrawQuads(0, num_verts);
 	vbo.Deactivate();
 	
-	gl::SetDepthMask(true);
-	gl::Disable(GL_TEXTURE_2D);
-	gl::Enable(GL_CULL_FACE);
-	gl::Disable(GL_BLEND);
+	glDepthMask(true);
+	Disable(GL_TEXTURE_2D);
+	Enable(GL_CULL_FACE);
+	Disable(GL_BLEND);
 }
 
 void gfx::Font::PrintChar(char c, Vector2f & position) const
@@ -169,14 +197,14 @@ void gfx::Font::PrintChar(char c, Vector2f & position) const
 		Vector2i(0, 1)
 	};
 	
-	gl::Vertex2dTex vert;
+	Vertex v;
 	for (Vector2i const * it = sin_cos_table; it != sin_cos_table + 4; ++ it)
 	{
-		vert.pos.x = pos[it->x].x;
-		vert.pos.y = pos[it->y].y;
-		vert.tex.x = tex[it->x].x;
-		vert.tex.y = tex[it->y].y;
-		vertex_buffer.push_back(vert);
+		v.pos.x = pos[it->x].x;
+		v.pos.y = pos[it->y].y;
+		v.tex.x = tex[it->x].x;
+		v.tex.y = tex[it->y].y;
+		vertex_buffer.push_back(v);
 	}
 	
 	position.x = pos[1].x;

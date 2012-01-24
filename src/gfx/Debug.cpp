@@ -21,8 +21,6 @@
 
 #include "sim/axes.h"
 
-#include "glpp/glpp.h"
-
 #include "geom/MatrixOps.h"
 
 #include "smp/Mutex.h"
@@ -82,8 +80,8 @@ namespace
 		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
 			Color const & color = hidden ? colors._hidden_color : colors._color;
-			gl::SetColor(color.r, color.g, color.b, color.a);
-			gl::Vertex3(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
+			glColor4fv(color.GetArray());
+			glVertex3f(pos.x - camera_pos.x, pos.y - camera_pos.y, pos.z - camera_pos.z);
 		}
 		
 		Vector3 pos;
@@ -136,13 +134,13 @@ namespace
 		
 		void Draw(Vector3 const & camera_pos, bool hidden) const
 		{
-			gl::Begin(mode);
+			glBegin(mode);
 			for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
 			{
 				Point const & point = * it;
 				point.Draw(camera_pos, hidden);
 			}
-			gl::End();
+			glEnd();
 		}
 		
 	private:
@@ -160,7 +158,7 @@ namespace
 	void DrawPrimatives(Vector3 const & camera_pos, bool hidden)
 	{
 		if (hidden) {
-			gl::SetDepthFunc(GL_GREATER);
+			glDepthFunc(GL_GREATER);
 		}
 
 		points.Draw(camera_pos, hidden);
@@ -168,7 +166,7 @@ namespace
 		tris.Draw(camera_pos, hidden);
 
 		if (hidden) {
-			gl::SetDepthFunc(GL_LEQUAL);
+			glDepthFunc(GL_LEQUAL);
 		}
 	}
 
@@ -366,30 +364,30 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 {
 	mutex.Lock();
 	
-	GLPP_VERIFY;
+	GL_VERIFY;
 	Verify();
 
 	// Set state
-	gl::Disable(GL_CULL_FACE);
-	Assert(! gl::IsEnabled(GL_LIGHTING));
-	gl::Enable(GL_DEPTH_TEST);
+	Disable(GL_CULL_FACE);
+	Assert(! IsEnabled(GL_LIGHTING));
+	Enable(GL_DEPTH_TEST);
 	
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	gl::Enable(GL_BLEND);
+	Enable(GL_BLEND);
 	
 	DrawPrimatives(camera_pos, false);
 	DrawPrimatives(camera_pos, true);
 	ClearPrimatives();
 	
 	// Unset state
-	gl::Enable(GL_CULL_FACE);
-	gl::Disable(GL_DEPTH_TEST);
-	gl::Disable(GL_BLEND);
-	gl::SetColor<GLfloat>(1,1,1);
+	Enable(GL_CULL_FACE);
+	Disable(GL_DEPTH_TEST);
+	Disable(GL_BLEND);
+	glColor3f(1,1,1);
 
 	Verify();
-	GLPP_VERIFY;
+	GL_VERIFY;
 	mutex.Unlock();
 }
 

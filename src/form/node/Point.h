@@ -11,7 +11,7 @@
 
 #include "form/defs.h"
 
-#include "gfx/Color.h"
+#include "Vertex.h"
 
 
 namespace form

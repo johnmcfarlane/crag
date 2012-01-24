@@ -10,8 +10,7 @@
 #pragma once
 
 #include "defs.h"
-
-#include "glpp/Vbo_Types.h"
+#include "VertexBufferObject.h"
 
 
 namespace gfx
@@ -20,10 +19,14 @@ namespace gfx
 	// Draws a quad in front of the sphere and has a specialized shader draw a sphere upon it.
 	class Quad
 	{
-		// types
-		typedef gl::Vertex3d QuadVertex;
-		typedef gl::Vbo<QuadVertex> VertexBuffer;
 	public:
+		// types
+		struct Vertex
+		{
+			Vector3f pos;
+		};
+
+		typedef VertexBufferObject<Vertex> VertexBufferObject;
 		
 		// functions
 		Quad(float depth_offset);
@@ -36,6 +39,6 @@ namespace gfx
 	private:
 		
 		// variables
-		VertexBuffer _quad;
+		VertexBufferObject _quad;
 	};
 }

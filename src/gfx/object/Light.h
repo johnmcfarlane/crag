@@ -15,8 +15,6 @@
 
 #include "sim/defs.h"
 
-#include "glpp/glpp.h"
-
 
 namespace gfx
 {

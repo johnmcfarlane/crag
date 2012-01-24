@@ -14,8 +14,6 @@
 #include "gfx/Scene.h"
 #include "gfx/Debug.h"
 
-#include "glpp/glpp.h"
-
 #include "core/ConfigEntry.h"
 
 

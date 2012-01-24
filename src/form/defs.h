@@ -17,12 +17,6 @@
 #include "gfx/Color.h"
 
 
-namespace gl
-{
-	struct Vertex3dNormRgba;
-}
-
-
 namespace form
 {
 	// Vector Types
@@ -43,7 +37,4 @@ namespace form
 	{
 		return Vector3d(scene) + scene_origin;
 	}
-	
-	// Vertex
-	typedef gl::Vertex3dNormRgba Vertex;
 }

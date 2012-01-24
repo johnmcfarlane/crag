@@ -10,13 +10,11 @@
 #pragma once
 
 #include "defs.h"
+#include "Fence.h"
+#include "FrameBuffer.h"
 #include "Layer.h"
 #include "Image.h"
 #include "Program.h"
-
-#include "glpp/Fence.h"
-#include "glpp/FrameBuffer.h"
-#include "glpp/Shader.h"
 
 #include "smp/Daemon.h"
 
@@ -136,7 +134,7 @@ namespace gfx
 		
 		void Capture();
 
-		static void SetFence(gl::Fence & fence);
+		static void SetFence(Fence & fence);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Attributes
@@ -176,10 +174,10 @@ namespace gfx
 		Time _frame_time_history[_frame_time_history_size];
 #endif
 		
-		gl::Fence _fence1, _fence2;
+		Fence _fence1, _fence2;
 		
 		// shaders and shader programs
-		gl::Shader _light_frag_shader;
+		Shader _light_frag_shader;
 		Program * _programs[ProgramIndex::max_index];
 		Program * _current_program;
 

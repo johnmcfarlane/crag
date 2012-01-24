@@ -16,8 +16,6 @@
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
-#include "glpp/glpp.h"
-
 #include "geom/Sphere.h"
 
 #include "core/ConfigEntry.h"
@@ -94,7 +92,7 @@ void Puff::Render(Renderer const & renderer) const
 {
 	//Transformation const & transformation = GetModelViewTransformation();
 
-	gl::Disable(GL_CULL_FACE);
+	Disable(GL_CULL_FACE);
 
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(renderer.GetProgram(ProgramIndex::disk)));
 	Transformation const & model_view = GetModelViewTransformation();
@@ -105,7 +103,7 @@ void Puff::Render(Renderer const & renderer) const
 	Quad const & disk_quad = renderer.GetDiskQuad();
 	disk_quad.Draw();
 	
-	gl::Enable(GL_CULL_FACE);
+	Enable(GL_CULL_FACE);
 }
 
 Time Puff::CalculateAge(Time time) const

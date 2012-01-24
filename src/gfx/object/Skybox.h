@@ -11,8 +11,8 @@
 
 #include "LeafNode.h"
 
-#include "glpp/Vbo_Types.h"
-#include "glpp/Texture.h"
+#include "Texture.h"
+#include "VertexBufferObject.h"
 
 
 namespace gfx
@@ -22,12 +22,17 @@ namespace gfx
 	
 	class Skybox : public LeafNode
 	{
+	public:
 		// Types
-		typedef gl::Vbo3dTex Vbo;
-		typedef gl::TextureRgba8 Texture;
+		struct Vertex
+		{
+			Vector3f pos;
+			Vector2f tex;
+		};
+		
+		typedef VertexBufferObject<Vertex> Vbo;
 		
 		// Methods
-	public:
 		Skybox();
 		
 		bool Init(Scene & scene) override;

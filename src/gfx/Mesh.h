@@ -9,55 +9,58 @@
 
 #pragma once
 
-#include "glpp/Vbo.h"
-#include "glpp/Ibo.h"
+#include "VertexBufferObject.h"
+#include "IndexBufferObject.h"
 
 
 namespace gfx
 {
-	template<typename Vertex, gl::BufferDataUsage Usage> class Mesh
+	template<typename VERTEX, GLenum USAGE> class Mesh
 	{
-		typedef gl::Vbo<Vertex> Vbo;
-		typedef gl::Ibo Ibo;
 	public:
+		// types
+		typedef VERTEX Vertex;
+		typedef VertexBufferObject<Vertex> VertexBufferObject;
+		
+		// functions
 		void Init()
 		{
-			GenBuffer(vbo);
-			GenBuffer(ibo);
+			vbo.Init();
+			ibo.Init();
 		}
 		
 		void Deinit()
 		{
-			DeleteBuffer(ibo);
-			DeleteBuffer(vbo);
+			ibo.Deinit();
+			vbo.Deinit();
 		}
 		
 		void Bind() const
 		{
-			BindBuffer(vbo);
-			BindBuffer(ibo);
+			vbo.Bind();
+			ibo.Bind();
 		}
 		
 		void Unbind() const
 		{
-			UnbindBuffer(vbo);
-			UnbindBuffer(ibo);
+			vbo.Unbind();
+			ibo.Unbind();
 		}
 		
-		void Resize(int num_verts, int num_indices, gl::BufferDataUsage usage)
+		void Resize(int num_verts, int num_indices)
 		{
-			BufferData(vbo, num_verts, usage);
-			BufferData(ibo, num_indices, usage);
+			vbo.BufferData(num_verts, USAGE);
+			ibo.BufferData(num_indices, USAGE);
 		}
 		
 		void SetVbo(int num, Vertex const * array)
 		{
-			BufferSubData(vbo, num, array);
+			vbo.BufferSubData(num, array);
 		}
 		
 		void SetIbo(int num, GLuint const * array)
 		{
-			BufferSubData(ibo, num, array);
+			ibo.BufferSubData(num, array);
 		}
 		
 		void Activate() const
@@ -75,7 +78,7 @@ namespace gfx
 		void Draw(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
 			assert(mode == GL_TRIANGLES);
-			DrawElements(ibo, mode, count, first);
+			ibo.DrawElements(mode, count, first);
 		}
 		
 		bool IsBound() const
@@ -91,8 +94,21 @@ namespace gfx
 	#endif
 		
 	protected:
-		Vbo vbo;	// verts
-		Ibo ibo;	// indices
+#if defined(VERIFY)
+		void Verify() const
+		{
+			Assert(vbo.IsInitialized() == ibo.IsInitialized());
+			if (! vbo.IsInitialized())
+			{
+				return;
+			}
+			
+			Assert(vbo.IsBound() == ibo.IsBound());
+		}
+#endif
+		
+		VertexBufferObject vbo;	// verts
+		IndexBufferObject ibo;	// indices
 	};
 
 }

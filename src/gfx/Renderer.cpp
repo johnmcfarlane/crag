@@ -116,10 +116,10 @@ namespace
 	
 	void SetModelViewMatrix(gfx::Transformation const & model_view_transformation)
 	{
-		Assert(gl::GetMatrixMode() == GL_MODELVIEW);
+		Assert(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 
 		Matrix44 gl_model_view_matrix = model_view_transformation.GetOpenGlMatrix();
-		gl::LoadMatrix(gl_model_view_matrix.GetArray());	
+		glLoadMatrixd(gl_model_view_matrix.GetArray());	
 	}
 	
 	// Creates a frustum with sensible defaults for rendering a background.
@@ -299,14 +299,14 @@ void Renderer::SetCurrentProgram(Program * program)
 	
 	if (_current_program != nullptr)
 	{
-		_current_program->Disuse();
+		_current_program->Unbind();
 	}
 	
 	_current_program = program;
 
 	if (_current_program != nullptr)
 	{
-		_current_program->Use();
+		_current_program->Bind();
 
 		Light::List const & lights = scene->GetLightList();
 		_current_program->UpdateLights(lights);
@@ -403,7 +403,7 @@ void Renderer::OnSetReady(bool const & ready, Time const & time)
 
 void Renderer::OnResize(Vector2i const & size)
 {
-	gl::Viewport(0, 0, size.x, size.y);
+	glViewport(0, 0, size.x, size.y);
 	scene->SetResolution(size);
 }
 
@@ -553,7 +553,7 @@ bool Renderer::Init()
 
 bool Renderer::InitShaders()
 {
-	InitShader(_light_frag_shader, "glsl/light.frag", GL_FRAGMENT_SHADER);
+	_light_frag_shader.Init("glsl/light.frag", GL_FRAGMENT_SHADER);
 
 	_programs[ProgramIndex::poly] = new Program;
 	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", _light_frag_shader);
@@ -606,7 +606,7 @@ void Renderer::Deinit()
 		program = nullptr;
 	}
 	
-	gl::Delete(_light_frag_shader);
+	_light_frag_shader.Deinit();
 	
 	Debug::Deinit();
 	
@@ -616,12 +616,12 @@ void Renderer::Deinit()
 	
 	if (_fence2.IsInitialized())
 	{
-		gl::DeleteFence(_fence2);
+		_fence2.Deinit();
 	}
 
 	if (_fence1.IsInitialized())
 	{
-		gl::DeleteFence(_fence1);
+		_fence1.Deinit();
 	}
 	
 	delete scene;
@@ -661,8 +661,8 @@ void Renderer::InitVSync()
 	{
 		if (GlSupportsFences())
 		{
-			gl::GenFence(_fence1);
-			gl::GenFence(_fence2);
+			_fence1.Init();
+			_fence2.Init();
 
 			vsync = _fence1.IsInitialized() && _fence2.IsInitialized();
 		}
@@ -715,11 +715,11 @@ void Renderer::InitVSync()
 	vsync = false;
 	if (_fence1.IsInitialized())
 	{
-		gl::DeleteFence(_fence1);
+		_fence1.Deinit();
 	}
 	if (_fence2.IsInitialized())
 	{
-		gl::DeleteFence(_fence2);
+		_fence2.Deinit();
 	}
 }
 
@@ -728,18 +728,18 @@ void Renderer::InitRenderState()
 	StateParam const * param = init_state;
 	while (param->cap != GL_INVALID_ENUM)
 	{
-		GLPP_CALL((param->enabled ? glEnable : glDisable)(param->cap));
+		GL_CALL((param->enabled ? glEnable : glDisable)(param->cap));
 		++ param;
 	}
 
-	GLPP_CALL(glFrontFace(GL_CW));
-	GLPP_CALL(glCullFace(GL_BACK));
-	GLPP_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
-	gl::SetDepthFunc(GL_LEQUAL);
-	GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-	GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
-	GLPP_CALL(glClearDepth(1.0f));
-	gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
+	GL_CALL(glFrontFace(GL_CW));
+	GL_CALL(glCullFace(GL_BACK));
+	GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
+	glDepthFunc(GL_LEQUAL);
+	GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
+	GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
+	GL_CALL(glClearDepth(1.0f));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -749,11 +749,11 @@ void Renderer::InitRenderState()
 	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
-	gl::MatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	
-	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-	GLPP_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-	GLPP_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
+	GL_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
+	GL_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
+	GL_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
 	
 	VerifyRenderState();
 }
@@ -765,7 +765,7 @@ void Renderer::VerifyRenderState() const
 	while (param->cap != GL_INVALID_ENUM)
 	{
 #if ! defined(NDEBUG)
-		if (param->enabled != gl::IsEnabled(param->cap))
+		if (param->enabled != IsEnabled(param->cap))
 		{
 			std::cerr << "Bad render state: " << param->name << std::endl;
 			Assert(false);
@@ -775,9 +775,9 @@ void Renderer::VerifyRenderState() const
 	}
 	
 	// TODO: Write equivalent functions for all state in GL. :S
-	Assert(gl::GetDepthFunc() == GL_LEQUAL);
+	Assert(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 	
-	Assert(gl::GetMatrixMode() == GL_MODELVIEW);
+	Assert(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 #endif	// NDEBUG
 }
 
@@ -919,7 +919,7 @@ void Renderer::RenderBackground()
 	if (background_render_count < 1)
 	{
 		// clear the screen.
-		GLPP_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+		GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	}
 }
 
@@ -959,19 +959,19 @@ void Renderer::RenderLights()
 
 bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 {
-	Assert(gl::GetDepthFunc() == GL_LEQUAL);
+	Assert(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 		
 	switch (pass) 
 	{
 		case NormalPass:
 			if (! culling) 
 			{
-				gl::Disable(GL_CULL_FACE);
+				Disable(GL_CULL_FACE);
 			}
 			if (multisample)
 			{
-				gl::Enable(GL_MULTISAMPLE);
-				gl::Enable(GL_POLYGON_SMOOTH);
+				Enable(GL_MULTISAMPLE);
+				Enable(GL_POLYGON_SMOOTH);
 			}
 			break;
 			
@@ -980,31 +980,31 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 			{
 				return false;
 			}
-			gl::Enable(GL_POLYGON_OFFSET_FILL);
-			GLPP_CALL(glPolygonOffset(1,1));
-			gl::SetColor<GLfloat>(1.f, 1.f, 1.f);
+			Enable(GL_POLYGON_OFFSET_FILL);
+			GL_CALL(glPolygonOffset(1,1));
+			glColor3f(1.f, 1.f, 1.f);
 			break;
 			
 		case WireframePass2:
 			if (! culling) 
 			{
-				gl::Disable(GL_CULL_FACE);
+				Disable(GL_CULL_FACE);
 			}
 			if (multisample)
 			{
-				gl::Enable(GL_MULTISAMPLE);
-				gl::Enable(GL_LINE_SMOOTH);
+				Enable(GL_MULTISAMPLE);
+				Enable(GL_LINE_SMOOTH);
 			}
-			GLPP_CALL(glPolygonMode(GL_FRONT, GL_LINE));
-			GLPP_CALL(glPolygonMode(GL_BACK, GL_LINE));
-			gl::SetColor<GLfloat>(0.f, 0.f, 0.f);
+			GL_CALL(glPolygonMode(GL_FRONT, GL_LINE));
+			GL_CALL(glPolygonMode(GL_BACK, GL_LINE));
+			glColor3f(0.f, 0.f, 0.f);
 			break;
 			
 		default:
 			Assert(false);
 	}
 	
-	gl::Enable(GL_DEPTH_TEST);
+	Enable(GL_DEPTH_TEST);
 	
 	return true;
 }
@@ -1023,11 +1023,11 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass)
 	RenderLayer(Layer::foreground);
 
 	// render partially transparent objects
-	gl::Enable(GL_BLEND);
-	gl::SetDepthMask(false);
+	Enable(GL_BLEND);
+	glDepthMask(false);
 	RenderLayer(Layer::foreground, false);
-	gl::Disable(GL_BLEND);
-	gl::SetDepthMask(true);
+	Disable(GL_BLEND);
+	glDepthMask(true);
 
 	// end
 	EndRenderForeground(pass);
@@ -1036,40 +1036,40 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass)
 void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 {
 	// Reset state
-	gl::Disable(GL_DEPTH_TEST);
+	Disable(GL_DEPTH_TEST);
 
 	switch (pass) 
 	{
 		case NormalPass:
 			if (! culling) 
 			{
-				gl::Enable(GL_CULL_FACE);
+				Enable(GL_CULL_FACE);
 			}
 			if (multisample)
 			{
-				gl::Disable(GL_POLYGON_SMOOTH);
-				gl::Disable(GL_MULTISAMPLE);
+				Disable(GL_POLYGON_SMOOTH);
+				Disable(GL_MULTISAMPLE);
 			}
 			break;
 			
 		case WireframePass1:
-			GLPP_CALL(glCullFace(GL_BACK));
-			gl::Disable(GL_POLYGON_OFFSET_FILL);
+			GL_CALL(glCullFace(GL_BACK));
+			Disable(GL_POLYGON_OFFSET_FILL);
 			break;
 			
 		case WireframePass2:
-			gl::SetColor<GLfloat>(0.f, 0.f, 0.f);
+			glColor3f(0.f, 0.f, 0.f);
 			if (! culling) 
 			{
-				gl::Enable(GL_CULL_FACE);
+				Enable(GL_CULL_FACE);
 			}
 			if (multisample)
 			{
-				gl::Disable(GL_LINE_SMOOTH);
-				gl::Disable(GL_MULTISAMPLE);
+				Disable(GL_LINE_SMOOTH);
+				Disable(GL_MULTISAMPLE);
 			}
-			GLPP_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-			GLPP_CALL(glPolygonMode(GL_BACK, GL_FILL));
+			GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
+			GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
 			break;
 			
 		default:
@@ -1184,10 +1184,10 @@ void Renderer::GetRenderTiming(Time & frame_start_position, Time & pre_sync_posi
 	if (vsync)
 	{
 		// Get timing information from the fences.
-		gl::FinishFence(_fence1);
+		_fence1.Finish();
 		pre_sync_position = app::GetTime();
 
-		gl::FinishFence(_fence2);
+		_fence2.Finish();
 		post_sync_position = app::GetTime();
 	}
 	else
@@ -1271,10 +1271,10 @@ void Renderer::Capture()
 	++ capture_frame;
 }
 
-void Renderer::SetFence(gl::Fence & fence)
+void Renderer::SetFence(Fence & fence)
 {
 	if (fence.IsInitialized())
 	{
-		gl::SetFence(fence);
+		fence.Set();
 	}
 }

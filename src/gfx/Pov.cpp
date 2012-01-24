@@ -14,8 +14,6 @@
 #include "geom/MatrixOps.h"
 #include "geom/Sphere.h"
 
-#include "glpp/glpp.h"
-
 
 using namespace gfx;
 
@@ -45,9 +43,9 @@ void Frustum::SetProjectionMatrix() const
 {
 	Matrix44 projection_matrix = CalcProjectionMatrix();
 	
-	gl::MatrixMode(GL_PROJECTION);
-	gl::LoadMatrix(projection_matrix.GetArray());
-	gl::MatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixd(projection_matrix.GetArray());
+	glMatrixMode(GL_MODELVIEW);
 }
 
 

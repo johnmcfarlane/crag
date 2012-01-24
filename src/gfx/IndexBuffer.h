@@ -9,8 +9,6 @@
  
 #pragma once
 
-#include "glpp/glpp.h"
-
 #include "smp/vector.h"
 
 

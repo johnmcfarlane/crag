@@ -64,6 +64,24 @@
 
 
 //////////////////////////////////////////////////////////////////////
+// OpenGl includes
+
+// TODO: Re-evaluate "SDL_opengl.h"
+#if defined(__APPLE__)
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/CGLCurrent.h>
+#include <OpenGL/glu.h>
+#else
+#define GLEW_STATIC
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glew.h>
+//#include <GL/glext.h>
+#include <GL/glu.h>
+#endif
+
+
+//////////////////////////////////////////////////////////////////////
 // standard includes.
 
 // C standard library

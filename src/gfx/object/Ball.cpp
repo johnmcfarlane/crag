@@ -16,8 +16,6 @@
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
-#include "glpp/glpp.h"
-
 #include "geom/Transformation.h"
 
 #include "core/app.h"
