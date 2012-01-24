@@ -18,12 +18,12 @@
 gfx::Shader::Shader() 
 : _id(0)
 { 
-	Verify();
+	VerifyObject(* this);
 }
 
 gfx::Shader::~Shader()
 {
-	Verify();
+	VerifyObject(* this);
 	assert(! IsInitialized());
 }
 
@@ -64,7 +64,7 @@ bool gfx::Shader::Init(char const * filename, GLenum shader_type)
 
 bool gfx::Shader::IsInitialized() const
 {
-	Verify();
+	VerifyObject(* this);
 	return _id != 0;
 }
 
@@ -96,7 +96,7 @@ void gfx::Shader::GetInfoLog(std::string & info_log) const
 
 void gfx::Shader::Deinit()
 {
-	Verify();
+	VerifyObject(* this);
 	
 	GL_CALL(glDeleteShader(_id));
 	_id = 0;
