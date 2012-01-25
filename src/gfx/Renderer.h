@@ -14,7 +14,6 @@
 #include "FrameBuffer.h"
 #include "Layer.h"
 #include "Image.h"
-#include "Program.h"
 
 #include "smp/Daemon.h"
 
@@ -32,9 +31,8 @@ namespace gfx
 {
 	// forward-declarations
 	class BranchNode;
-	class Cuboid;
+	class ResourceManager;
 	class Scene;
-	class Quad;
 
 	// gfx::Daemon type
 	class Renderer;
@@ -61,16 +59,7 @@ namespace gfx
 		~Renderer();
 		
 		Scene const & GetScene() const;
-		
-		Program * GetProgram(ProgramIndex::type index);
-		Program const * GetProgram(ProgramIndex::type index) const;
-		
-		void SetCurrentProgram(Program * program);
-		Program const * GetCurrentProgram() const;
-		
-		Cuboid const & GetCuboid() const;
-		Quad const & GetSphereQuad() const;
-		Quad const & GetDiskQuad() const;
+		ResourceManager const & GetResourceManager() const;
 		
 		Color4f CalculateLighting(Vector3 const & position) const;
 
@@ -96,8 +85,6 @@ namespace gfx
 		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
 
 		bool Init();
-		bool InitShaders();
-		bool InitGeometry();
 		void Deinit();
 		
 		bool InitObject(Object & object);
@@ -141,6 +128,7 @@ namespace gfx
 		
 		SDL_GLContext context;
 		Scene * scene;
+		ResourceManager * _resource_manager;
 
 		//gl::FrameBuffer frame_buffer;
 		//gl::RenderBuffer depth_buffer;
@@ -175,15 +163,5 @@ namespace gfx
 #endif
 		
 		Fence _fence1, _fence2;
-		
-		// shaders and shader programs
-		Shader _light_frag_shader;
-		Program * _programs[ProgramIndex::max_index];
-		Program * _current_program;
-
-		// stock geometry
-		Cuboid * _cuboid;
-		Quad * _sphere_quad;
-		Quad * _disk_quad;
 	};
 }

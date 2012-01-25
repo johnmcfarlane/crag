@@ -13,6 +13,7 @@
 
 #include "gfx/Cuboid.h"
 #include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
 #include "core/Random.h"
@@ -56,7 +57,8 @@ void Box::Render(Renderer const & renderer) const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	Cuboid const & cuboid = renderer.GetCuboid();
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	Cuboid const & cuboid = resource_manager.GetCuboid();
 	cuboid.Draw();
 	
 	GL_VERIFY;

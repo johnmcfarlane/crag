@@ -12,6 +12,7 @@
 #include "Planet.h"
 
 #include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Quad.h"
 
 #include "geom/Ray.h"
@@ -37,7 +38,8 @@ void Planet::Update(UpdateParams const & params, Renderer & renderer)
 
 gfx::Transformation const & Planet::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
-	Quad const & sphere_quad = renderer.GetSphereQuad();
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	Quad const & sphere_quad = resource_manager.GetSphereQuad();
 	return sphere_quad.Transform(model_view, scratch);
 }
 

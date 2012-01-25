@@ -11,25 +11,15 @@
 
 #include "Renderer.h"
 
-#include "Color.h"
-#include "Cuboid.h"
 #include "Debug.h"
-#include "Image.h"
-#include "Pov.h"
+#include "glHelpers.h"
+#include "Program.h"
+#include "ResourceManager.h"
 #include "Scene.h"
-#include "Quad.h"
-
-#include "object/BranchNode.h"
-#include "object/LeafNode.h"
-#include "object/Light.h"
 
 #include "form/FormationManager.h"
-#include "form/node/NodeBuffer.h"
 
-#include "sim/axes.h"
 #include "sim/Simulation.h"
-
-#include "geom/MatrixOps.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -246,10 +236,6 @@ Renderer::Renderer()
 , lighting(init_lighting)
 , wireframe(init_wireframe)
 , capture_frame(0)
-, _current_program(nullptr)
-, _cuboid(nullptr)
-, _sphere_quad(nullptr)
-, _disk_quad(nullptr)
 {
 #if ! defined(NDEBUG)
 	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
@@ -263,8 +249,6 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	SetCurrentProgram(nullptr);
-	
 	Deinit();
 
 	// must be turned on by key input or by cfg edit
@@ -278,59 +262,9 @@ Scene const & Renderer::GetScene() const
 	return ref(scene);
 }
 
-Program * Renderer::GetProgram(ProgramIndex::type index)
+ResourceManager const & Renderer::GetResourceManager() const
 {
-	Assert(index >= 0 && index < ProgramIndex::max_index);
-	return _programs[index];
-}
-
-Program const * Renderer::GetProgram(ProgramIndex::type index) const
-{
-	Assert(index >= 0 && index < ProgramIndex::max_shader);
-	return _programs[index];
-}
-
-void Renderer::SetCurrentProgram(Program * program)
-{
-	if (program == _current_program)
-	{
-		return;
-	}
-	
-	if (_current_program != nullptr)
-	{
-		_current_program->Unbind();
-	}
-	
-	_current_program = program;
-
-	if (_current_program != nullptr)
-	{
-		_current_program->Bind();
-
-		Light::List const & lights = scene->GetLightList();
-		_current_program->UpdateLights(lights);
-	}
-}
-
-Program const * Renderer::GetCurrentProgram() const
-{
-	return _current_program;
-}
-
-Cuboid const & Renderer::GetCuboid() const
-{
-	return ref(_cuboid);
-}
-
-gfx::Quad const & Renderer::GetSphereQuad() const
-{
-	return ref(_sphere_quad);
-}
-
-gfx::Quad const & Renderer::GetDiskQuad() const
-{
-	return ref(_disk_quad);
+	return ref(_resource_manager);
 }
 
 Color4f Renderer::CalculateLighting(Vector3 const & position) const
@@ -529,15 +463,7 @@ bool Renderer::Init()
 		return false;
 	}
 	
-	if (! InitShaders())
-	{
-		return false;
-	}
-
-	if (! InitGeometry())
-	{
-		return false;
-	}
+	_resource_manager = new ResourceManager;
 	
 	InitVSync();
 	
@@ -551,36 +477,6 @@ bool Renderer::Init()
 	return true;
 }
 
-bool Renderer::InitShaders()
-{
-	_light_frag_shader.Init("glsl/light.frag", GL_FRAGMENT_SHADER);
-
-	_programs[ProgramIndex::poly] = new Program;
-	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", _light_frag_shader);
-
-	_programs[ProgramIndex::sphere] = new SphereProgram;
-	_programs[ProgramIndex::sphere]->Init("glsl/sphere.vert", "glsl/sphere.frag", _light_frag_shader);
-	
-	_programs[ProgramIndex::fog] = new FogProgram;
-	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", _light_frag_shader);
-	
-	_programs[ProgramIndex::disk] = new SphereProgram;
-	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", _light_frag_shader);
-	
-	_programs[ProgramIndex::fixed] = nullptr;
-	
-	return true;
-}
-
-bool Renderer::InitGeometry()
-{
-	_cuboid = new Cuboid;
-	_sphere_quad = new Quad(-1);
-	_disk_quad = new Quad(0);
-	
-	return true;
-}
-
 void Renderer::Deinit()
 {
 	if (scene == nullptr)
@@ -589,24 +485,8 @@ void Renderer::Deinit()
 		return;
 	}
 	
-	delete _disk_quad;
-	_disk_quad = nullptr;
-	
-	delete _sphere_quad;
-	_sphere_quad = nullptr;
-	
-	delete _cuboid;
-	_cuboid = nullptr;
-	
-	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
-	{
-		Program * & program = _programs[program_index];
-		program->Deinit(_light_frag_shader);
-		delete program;
-		program = nullptr;
-	}
-	
-	_light_frag_shader.Deinit();
+	delete _resource_manager;
+	_resource_manager = nullptr;
 	
 	Debug::Deinit();
 	
@@ -952,8 +832,8 @@ void Renderer::RenderLights()
 	
 	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
-		Program & program = ref(_programs[program_index]);
-		program.OnLightsChanged();
+		Program * program = _resource_manager->GetProgram(static_cast<ProgramIndex::type>(program_index));
+		program->OnLightsChanged();
 	}
 }
 
@@ -1081,6 +961,8 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	
+	Light::List const & lights = scene->GetLightList();
+
 	typedef LeafNode::RenderList List;
 	List const & render_list = scene->GetRenderList();
 	
@@ -1105,8 +987,15 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 		ProgramIndex::type program_index = leaf_node.GetProgramIndex();
 		if (program_index != ProgramIndex::dont_care)
 		{
-			Program * required_program = GetProgram(program_index);
-			SetCurrentProgram(required_program);
+			Program * required_program = _resource_manager->GetProgram(program_index);
+			_resource_manager->SetCurrentProgram(required_program);
+			
+			if (required_program != nullptr)
+			{
+				// In case this is the first time in this frame that the program has been set active,
+				// set the lights while it's active now.
+				required_program->UpdateLights(lights);
+			}
 		}
 		
 		leaf_node.Render(* this);
@@ -1136,8 +1025,8 @@ void Renderer::DebugDraw()
 	Transformation model_view(Vector3::Zero(), inverse_rotation);
 	SetModelViewMatrix(model_view);
 	
-	Program * required_program = GetProgram(ProgramIndex::fixed);
-	SetCurrentProgram(required_program);
+	Program * required_program = _resource_manager->GetProgram(ProgramIndex::fixed);
+	_resource_manager->SetCurrentProgram(required_program);
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
@@ -1234,6 +1123,9 @@ void Renderer::UpdateFpsCounter(Time frame_start_position)
 void Renderer::UpdateRegulator(Time busy_duration) const
 {
 	// Regulator feedback.
+	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
+	// TODO: Decouple these two, use frame-rate of video mode for this one 
+	// and rename the other to something more appropriate.
 	Time target_frame_duration = sim::Simulation::target_frame_seconds;
 	if (vsync)
 	{

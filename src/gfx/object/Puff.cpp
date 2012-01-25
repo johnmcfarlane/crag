@@ -13,6 +13,7 @@
 
 #include "gfx/Program.h"
 #include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
@@ -66,7 +67,8 @@ gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transforma
 	
 	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), _radius);
 	
-	Quad const & disk_quad = renderer.GetDiskQuad();
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	Quad const & disk_quad = resource_manager.GetDiskQuad();
 	return disk_quad.Transform(scale, scratch);
 }
 
@@ -94,13 +96,15 @@ void Puff::Render(Renderer const & renderer) const
 
 	Disable(GL_CULL_FACE);
 
-	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(renderer.GetProgram(ProgramIndex::disk)));
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+
+	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(resource_manager.GetProgram(ProgramIndex::disk)));
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
 	Color4f lighting = renderer.CalculateLighting(translation);
 	disk_program.SetUniforms(model_view, _color * lighting);
 	
-	Quad const & disk_quad = renderer.GetDiskQuad();
+	Quad const & disk_quad = resource_manager.GetDiskQuad();
 	disk_quad.Draw();
 	
 	Enable(GL_CULL_FACE);

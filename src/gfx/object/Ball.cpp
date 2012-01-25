@@ -13,6 +13,7 @@
 
 #include "gfx/Program.h"
 #include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
@@ -33,7 +34,8 @@ Ball::Ball(Color4f const & color)
 
 gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
-	Quad const & sphere_quad = renderer.GetSphereQuad();
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	Quad const & sphere_quad = resource_manager.GetSphereQuad();
 	return sphere_quad.Transform(model_view, scratch);
 }
 
@@ -53,12 +55,15 @@ bool Ball::GetRenderRange(RenderRange & range) const
 
 void Ball::Render(Renderer const & renderer) const
 {
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+
 	// Pass rendering details to the shader program.
-	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(ref(renderer.GetCurrentProgram()));
+	Program const & program = ref(resource_manager.GetCurrentProgram());
+	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(program);
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_program.SetUniforms(transformation, _color);
 	
 	// Draw the quad.
-	Quad const & sphere_quad = renderer.GetSphereQuad();
+	Quad const & sphere_quad = resource_manager.GetSphereQuad();
 	sphere_quad.Draw();
 }
