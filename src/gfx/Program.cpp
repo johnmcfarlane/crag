@@ -131,7 +131,7 @@ void Program::UpdateLights(Light::List const & lights)
 		return;
 	}
 	
-	_lights_changed = true;
+	_lights_changed = false;
 	
 	LightBlock const & light_block = _light_block;
 	LightBlock::Light const * uniforms = light_block.lights, * uniforms_end = uniforms + MAX_LIGHTS;
