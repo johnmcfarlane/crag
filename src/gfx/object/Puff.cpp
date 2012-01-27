@@ -53,8 +53,9 @@ Puff::~Puff()
 	STAT_INC(num_puffs, -1);
 }
 
-bool Puff::Init(Scene & scene)
+bool Puff::Init(Renderer & renderer)
 {
+	Scene const & scene = renderer.GetScene();
 	Time time = scene.GetTime();
 	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
 	return true;

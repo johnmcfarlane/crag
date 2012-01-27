@@ -30,7 +30,7 @@ namespace gfx
 		// functions
 		FormationMesh();
 		
-		bool Init(Scene & scene) override;
+		bool Init(Renderer & renderer) override;
 		void Deinit(Scene & scene) override;
 
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;

@@ -52,7 +52,7 @@ namespace gfx
 		virtual void Verify() const;
 #endif
 		
-		virtual bool Init(Scene & scene);	// called on arrival in render thread 
+		virtual bool Init(Renderer & renderer);	// called on arrival in render thread 
 		virtual void Deinit(Scene & scene);
 		
 		virtual Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;

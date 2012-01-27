@@ -11,8 +11,9 @@
 
 #include "Light.h"
 
-#include "gfx/Scene.h"
 #include "gfx/Debug.h"
+#include "gfx/Renderer.h"
+#include "gfx/Scene.h"
 
 #include "core/ConfigEntry.h"
 
@@ -26,8 +27,9 @@ Light::Light(Color4f const & color)
 	SetColor(color);
 }
 
-bool Light::Init(Scene & scene)
+bool Light::Init(Renderer & renderer)
 {
+	Scene & scene = renderer.GetScene();
 	Light::List & lights = scene.GetLightList();
 	lights.push_back(* this);
 	

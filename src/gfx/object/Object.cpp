@@ -42,7 +42,7 @@ void Object::Verify() const
 }
 #endif
 
-bool Object::Init(Scene & scene)
+bool Object::Init(Renderer & renderer)
 {
 	return true;
 }

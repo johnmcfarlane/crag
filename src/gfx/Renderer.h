@@ -58,6 +58,7 @@ namespace gfx
 		Renderer();
 		~Renderer();
 		
+		Scene & GetScene();
 		Scene const & GetScene() const;
 		ResourceManager const & GetResourceManager() const;
 		

@@ -36,7 +36,7 @@ namespace gfx
 		// functions
 		Light(Color4f const & color);
 		
-		bool Init(Scene & scene) override;
+		bool Init(Renderer & renderer) override;
 		void Deinit(Scene & scene) override;
 		
 		void SetColor(Color4f const & color);

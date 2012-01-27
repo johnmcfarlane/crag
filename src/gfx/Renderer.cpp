@@ -255,6 +255,13 @@ Renderer::~Renderer()
 	capture_enable = false;
 }
 
+Scene & Renderer::GetScene()
+{
+	Assert(Daemon::IsCurrentThread());
+	
+	return ref(scene);
+}
+
 Scene const & Renderer::GetScene() const
 {
 	Assert(Daemon::IsCurrentThread());
@@ -527,7 +534,7 @@ bool Renderer::InitObject(Object & object)
 		return false;
 	}
 	
-	return object.Init(* scene);
+	return object.Init(* this);
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.

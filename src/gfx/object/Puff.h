@@ -24,7 +24,7 @@ namespace gfx
 		~Puff();
 		
 	private:
-		bool Init(Scene & scene) override;
+		bool Init(Renderer & renderer) override;
 		
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		

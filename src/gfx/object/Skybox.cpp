@@ -54,7 +54,7 @@ Skybox::Skybox()
 {
 }
 
-bool Skybox::Init(Scene & scene)
+bool Skybox::Init(Renderer & renderer)
 {
 	InitVerts();
 	return true;

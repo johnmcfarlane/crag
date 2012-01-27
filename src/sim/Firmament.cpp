@@ -18,9 +18,9 @@
 #include "geom/Sphere.h"
 
 
-bool Firmament::Init(gfx::Scene & scene)
+bool Firmament::Init(gfx::Renderer & renderer)
 {
-	Skybox::Init(scene);
+	Skybox::Init(renderer);
 	
 	DrawStarsSimple();
 	
