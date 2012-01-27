@@ -55,7 +55,7 @@ void form::Regulator::SetNumQuaterna(int num_quaterne)
 // running maximum since the last adjustment.
 void form::Regulator::SampleFrameDuration(float frame_duration_ratio)
 {
-	if (! _enabled || _num_quaterne == -1)
+	if (! _enabled || _num_quaterne == -1 || frame_duration_ratio == 0)
 	{
 		return;
 	}
