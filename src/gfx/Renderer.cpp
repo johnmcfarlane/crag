@@ -1132,10 +1132,10 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 		target_frame_duration *= target_work_proportion;
 	}
 	
-	float fitness = float(target_frame_duration / busy_duration);
-	Assert(fitness >= 0);
+	float frame_duration_ratio = float(busy_duration / target_frame_duration);
+	Assert(frame_duration_ratio >= 0);
 	
-	form::Daemon::Call(fitness, & form::FormationManager::OnRegulatorSetFrame);
+	form::Daemon::Call(frame_duration_ratio, & form::FormationManager::OnRegulatorSampleFrameDuration);
 }
 
 void Renderer::Capture()

@@ -53,18 +53,18 @@ void form::Regulator::SetNumQuaterna(int num_quaterne)
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void form::Regulator::SampleFrameFitness(float fitness)
+void form::Regulator::SampleFrameDuration(float frame_duration_ratio)
 {
 	if (! _enabled || _num_quaterne == -1)
 	{
 		return;
 	}
 
-	Assert(fitness >= 0);
+	Assert(frame_duration_ratio >= 0);
+	Assert(! IsInf(frame_duration_ratio));
 	
-	float frame_ratio = 1.f / fitness;
 	Time sim_time = app::GetTime() - reset_time;
-	int recommended_this_frame = CalculateFrameRateDirectedTargetLoad(_num_quaterne, frame_ratio, sim_time);
+	int recommended_this_frame = CalculateFrameRateDirectedTargetLoad(_num_quaterne, frame_duration_ratio, sim_time);
 	if (_frame_rate_num_quaterne == -1 || recommended_this_frame < _frame_rate_num_quaterne)
 	{
 		_frame_rate_num_quaterne = recommended_this_frame;
@@ -139,16 +139,16 @@ int form::Regulator::GetRecommendedNumQuaterna()
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
-int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_ratio, Time sim_time) const
+int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_rate_ratio, Time sim_time) const
 {
-	// Attenuate/invert the frame_ratio.
+	// Attenuate/invert the frame_rate_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
 	// A worse frame rate translates into a lower number of nodes
 	// and hopefully, things improve. 
-	float frame_ratio_log = std::log(frame_ratio);
-	float frame_ratio_exp = std::exp(frame_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
+	float frame_rate_ratio_log = std::log(frame_rate_ratio);
+	float frame_rate_ratio_exp = std::exp(frame_rate_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
 	
-	float exact_target_load = static_cast<float>(current_load) * frame_ratio_exp;
+	float exact_target_load = static_cast<float>(current_load) * frame_rate_ratio_exp;
 	int target_load = static_cast<int>(exact_target_load);
 	
 	if (target_load == current_load)

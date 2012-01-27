@@ -85,7 +85,7 @@ namespace form
 		
 		void OnRegulatorSetEnabled(bool const & enabled);
 		void OnRegulatorSetNumQuaterna(int const & num_quaterne);
-		void OnRegulatorSetFrame(float const & fitness);
+		void OnRegulatorSampleFrameDuration(float const & frame_duration_ratio);
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();

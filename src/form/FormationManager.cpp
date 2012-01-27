@@ -132,9 +132,9 @@ void form::FormationManager::OnRegulatorSetNumQuaterna(int const & num_quaterne)
 	_regulator.SetNumQuaterna(num_quaterne);
 }
 
-void form::FormationManager::OnRegulatorSetFrame(float const & fitness)
+void form::FormationManager::OnRegulatorSampleFrameDuration(float const & frame_duration_ratio)
 {
-	_regulator.SampleFrameFitness(fitness);
+	_regulator.SampleFrameDuration(frame_duration_ratio);
 }
 
 void form::FormationManager::OnToggleSuspended()

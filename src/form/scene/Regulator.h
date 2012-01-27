@@ -26,7 +26,7 @@ namespace form
 		void SetEnabled(bool enabled);
 		
 		void SetNumQuaterna(int num_quaterne);
-		void SampleFrameFitness(float fitness);
+		void SampleFrameDuration(float frame_duration_ratio);
 		void SampleMeshGenerationPeriod(Time mgp);
 		
 		// returns a recommended load given the current load, and resets sample counters.
