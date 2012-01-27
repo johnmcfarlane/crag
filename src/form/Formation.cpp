@@ -18,13 +18,6 @@
 #include "sim/Planet.h"
 
 
-#if defined(GFX_DEBUG)
-#define DEBUG_NORMALS 0
-#else
-#define DEBUG_NORMALS 0
-#endif
-
-
 using namespace form;
 
 
