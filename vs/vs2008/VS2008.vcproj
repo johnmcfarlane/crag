@@ -982,6 +982,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\ResourceManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\gfx\ResourceManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Scene.cpp"
 					>
 					<FileConfiguration
