@@ -16,7 +16,7 @@ namespace smp
 	void Yield();
 	
 	// Sleep the thread for at least the given amount of time.
-	void Sleep(double seconds);
+	void Sleep(Time duration);
 	
 	// Set scheduling priority for current thread.
 	// Pass in +ve/0/-ve for high/normal/low priority.

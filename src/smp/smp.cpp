@@ -22,14 +22,51 @@
 void smp::Yield()
 {
 	AssertErrno();
-	SDL_Delay(1);
-	errno = 0;
+	
+#if defined(WIN32)
+	SleepEx(0, 0);
+#else
+	sched_yield();
+#endif
+	
+	AssertErrno();
 }
 
-void smp::Sleep(double seconds)
+void smp::Sleep(Time duration)
 {
-	Uint32 ms = Uint32(seconds * 1000);
+	Assert(duration >= 0);
+	AssertErrno();
+
+#if defined(WIN32)
+	Uint32 ms = static_cast<Uint32>(duration * 1000);
 	SDL_Delay(ms);
+	errno = 0;
+#else
+	// convert input to format used by nanosleep
+	timespec required;
+	required.tv_sec = static_cast<time_t>(duration);
+	required.tv_nsec = static_cast<long>(1000000000. * (duration - required.tv_sec));
+	Assert(NearEqual(.000000001 * required.tv_nsec + required.tv_sec, duration, 0.000001));
+
+	// keep sleeping until the desired period is through
+	timespec remaining;
+	while (nanosleep(& required, & remaining))
+	{
+		// handle error returns
+		if (errno != EINTR)
+		{
+			AssertErrno();
+			break;
+		}
+		errno = 0;
+		
+		// we require the thread to sleep for the remaining amount of time
+		required = remaining;
+	}
+	
+	Assert(errno == ETIMEDOUT);
+	errno = 0;
+#endif
 }
 
 void smp::SetThreadPriority(int priority)
