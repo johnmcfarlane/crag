@@ -63,6 +63,10 @@ ResourceManager::~ResourceManager()
 	_light_frag_shader->Deinit();
 	delete _light_frag_shader;
 	_light_frag_shader = nullptr;
+	
+	_light_vert_shader->Deinit();
+	delete _light_vert_shader;
+	_light_vert_shader = nullptr;
 }
 
 Program * ResourceManager::GetProgram(ProgramIndex::type index)
