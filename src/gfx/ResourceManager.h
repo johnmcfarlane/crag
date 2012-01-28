@@ -46,6 +46,7 @@ namespace gfx
 		bool InitGeometry();
 
 		// shaders and shader programs
+		Shader * _light_vert_shader;
 		Shader * _light_frag_shader;
 		Program * _programs[ProgramIndex::max_index];
 		Program * _current_program;

@@ -21,7 +21,8 @@ using namespace gfx;
 
 
 ResourceManager::ResourceManager()
-: _light_frag_shader(nullptr)
+: _light_vert_shader(nullptr)
+, _light_frag_shader(nullptr)
 , _current_program(nullptr)
 , _cuboid(nullptr)
 , _sphere_quad(nullptr)
@@ -54,7 +55,7 @@ ResourceManager::~ResourceManager()
 	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
 		Program * & program = _programs[program_index];
-		program->Deinit(* _light_frag_shader);
+		program->Deinit(* _light_vert_shader, * _light_frag_shader);
 		delete program;
 		program = nullptr;
 	}
@@ -118,20 +119,23 @@ gfx::Quad const & ResourceManager::GetDiskQuad() const
 
 bool ResourceManager::InitShaders()
 {
+	_light_vert_shader = new Shader;
+	_light_vert_shader->Init("glsl/light.frag", GL_VERTEX_SHADER);
+
 	_light_frag_shader = new Shader;
 	_light_frag_shader->Init("glsl/light.frag", GL_FRAGMENT_SHADER);
 	
 	_programs[ProgramIndex::poly] = new Program;
-	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", * _light_frag_shader);
+	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", * _light_vert_shader, * _light_frag_shader);
 	
 	_programs[ProgramIndex::sphere] = new SphereProgram;
-	_programs[ProgramIndex::sphere]->Init("glsl/sphere.vert", "glsl/sphere.frag", * _light_frag_shader);
+	_programs[ProgramIndex::sphere]->Init("glsl/sphere.vert", "glsl/sphere.frag", * _light_vert_shader, * _light_frag_shader);
 	
 	_programs[ProgramIndex::fog] = new FogProgram;
-	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", * _light_frag_shader);
+	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", * _light_vert_shader, * _light_frag_shader);
 	
 	_programs[ProgramIndex::disk] = new SphereProgram;
-	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", * _light_frag_shader);
+	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", * _light_vert_shader, * _light_frag_shader);
 	
 	_programs[ProgramIndex::fixed] = nullptr;
 	

@@ -48,7 +48,7 @@ bool Program::IsLinked() const
 	return params != GL_FALSE;
 }
 
-void Program::Init(char const * vert_source, char const * frag_source, Shader & light_shader)
+void Program::Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader)
 {
 	assert(! IsInitialized());
 
@@ -61,7 +61,8 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	
 	glAttachShader(_id, _vert_shader._id);
 	glAttachShader(_id, _frag_shader._id);
-	glAttachShader(_id, light_shader._id);
+	glAttachShader(_id, light_vert_shader._id);
+	glAttachShader(_id, light_frag_shader._id);
 	glLinkProgram(_id);
 	
 #if ! defined(NDEBUG)
@@ -94,9 +95,10 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	Unbind();
 }
 
-void Program::Deinit(Shader & light_shader)
+void Program::Deinit(Shader & light_vert_shader, Shader & light_frag_shader)
 {
-	glDetachShader(_id, light_shader._id);
+	glDetachShader(_id, light_vert_shader._id);
+	glDetachShader(_id, light_frag_shader._id);
 	glDetachShader(_id, _frag_shader._id);
 	glDetachShader(_id, _vert_shader._id);
 	
