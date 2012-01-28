@@ -18,8 +18,8 @@
 namespace 
 {
 	CONFIG_DEFINE (frame_rate_reaction_coefficient_base, float, 0.025f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost, float, 0.05f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 5.f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost, float, 0.225f);
+	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 10.f);
 	
 	// TODO: Base it on full scene thread cycle.
 	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
