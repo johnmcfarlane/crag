@@ -159,7 +159,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 		Time time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
-			smp::Yield();
+			smp::Sleep(time_to_next_tick);
 		}
 		else
 		{
