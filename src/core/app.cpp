@@ -241,7 +241,7 @@ bool app::GetEvent(SDL_Event & event, bool block)
 
 				if (! _has_focus)
 				{
-					return false;
+					return true;
 				}
 
 				// intercept message and fake relative mouse movement correctly.
@@ -254,7 +254,7 @@ bool app::GetEvent(SDL_Event & event, bool block)
 				Vector2i delta = (cursor - center);
 				if (delta.x == 0 && delta.y == 0)
 				{
-					return false;
+					return true;
 				}
 
 				// fake a mouse motion event
