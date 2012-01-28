@@ -213,8 +213,10 @@ namespace
 		SDL_Event event;
 		
 		// If no events are pending,
-		if (! app::GetEvent(event, false))
+		if (! app::GetEvent(event, true))
 		{
+			Assert(false);
+			
 			// then nothing's happening event-wise.
 			return false;
 		}
@@ -333,10 +335,7 @@ namespace
 					break;
 				}
 
-				if (! HandleEvent())
-				{
-					smp::Yield();
-				}
+				HandleEvent();
 			}
 			
 			// Tell the daemons to wind down.
