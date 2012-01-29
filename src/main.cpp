@@ -335,7 +335,11 @@ namespace
 					break;
 				}
 
-				HandleEvent();
+				if (! HandleEvent())
+				{
+					// TODO: This call is costly and shouldn't be necessary with a few fixes to shut-down code. 
+					smp::Yield();
+				}
 			}
 			
 			// Tell the daemons to wind down.
