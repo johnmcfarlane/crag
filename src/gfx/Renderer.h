@@ -84,6 +84,7 @@ namespace gfx
 	private:
 		void MainLoop();
 		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
+		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
 		bool Init();
 		void Deinit();

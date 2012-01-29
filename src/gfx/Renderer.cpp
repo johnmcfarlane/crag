@@ -417,33 +417,25 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 
 void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
-	if (vsync)
+	// Process all pending messages.
+	while (ProcessMessage(message_queue))
 	{
-		_ready = false;
 	}
 	
-	int frames_to_skip;
-	if (capture_enable)
+	// If we're mid-way through an uninterruptible set of messages,
+	while (! _ready)
 	{
-		frames_to_skip = capture_skip;
-	}
-	else 
-	{
-		frames_to_skip = 0;
-		message_queue.DispatchMessages(* this);
-	}
-	
-	for (int frame = 0; frame <= capture_skip; ++ frame)
-	{
-		while (! _ready)
+		// keep processing
+		if (! ProcessMessage(message_queue))
 		{
-			if (! message_queue.DispatchMessage(* this))
-			{
-				// We could possibly call smp::Yield() here,
-				// but simulation ready signals and critical.
-			}
+			smp::Yield();
 		}
 	}
+}
+
+bool Renderer::ProcessMessage(Daemon::MessageQueue & message_queue)
+{
+	return message_queue.DispatchMessage(* this);
 }
 
 bool Renderer::Init()
