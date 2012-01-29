@@ -51,17 +51,19 @@ LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
 
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
+	Assert(& lhs != & rhs);
+	
 	if (lhs._is_opaque)
 	{
 		if (rhs._is_opaque)
 		{
 			int shader_index_diff = lhs._program_index - rhs._program_index;
-			if (shader_index_diff == 0)
+			if (shader_index_diff != 0)
 			{
-				return lhs._render_depth > rhs._render_depth;
+				return shader_index_diff < 0;
 			}
 			
-			return shader_index_diff < 0;
+			return lhs._render_depth > rhs._render_depth;
 		}
 
 		return true;
