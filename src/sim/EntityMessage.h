@@ -33,10 +33,9 @@ namespace sim
 		{
 		}
 		
-		// overload this
+	private:
 		virtual void operator() (DERIVED_TYPE & derived) const = 0;
 		
-	private:
 		void operator() (sim::Simulation & simulation) const final
 		{
 			// Find the entity which matches the UID.
