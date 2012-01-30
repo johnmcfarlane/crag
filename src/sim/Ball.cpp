@@ -44,40 +44,52 @@ DEFINE_SCRIPT_CLASS(sim, Ball)
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// sim::InitData<Ball> struct specialization
+
+namespace sim
+{
+	template <>
+	struct InitData<Ball>
+	{
+		Sphere3 sphere;
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // sim::Ball member definitions
 
 using namespace sim;
 
+
+// seems to be required by MetaClass::InitObject
+Ball::Ball()
+{
+}
 
 Ball::~Ball()
 {
 	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
 }
 
-void Ball::Create(Ball & ball, PyObject & args)
-{
-	// construct ball
-	new (& ball) Ball;
-	
-	// send
-	Daemon::Call<Entity *>(& ball, & args, & Simulation::OnAddEntity);
-}
-
-bool Ball::Init(Simulation & simulation, PyObject & args)
+bool Ball::Create(Ball & ball, PyObject & args)
 {
 	// Parse planet creation parameters
-	Sphere3 sphere;
-	
-	if (! PyArg_ParseTuple(& args, "dddd", & sphere.center.x, & sphere.center.y, & sphere.center.z, & sphere.radius))
+	InitData<Ball> init_data;
+	if (! PyArg_ParseTuple(& args, "dddd", & init_data.sphere.center.x, & init_data.sphere.center.y, & init_data.sphere.center.z, & init_data.sphere.radius))
 	{
 		return false;
 	}
 	
-	InitPhysics(simulation, sphere);
-	
-	InitGraphics(sphere);
-	
+	Daemon::Call(& ball, init_data, & Simulation::OnNewEntity);
 	return true;
+}
+
+void Ball::Init(Simulation & simulation, InitData<Ball> const & init_data)
+{
+	InitPhysics(simulation, init_data.sphere);
+	
+	InitGraphics(init_data.sphere);
 }
 
 void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)

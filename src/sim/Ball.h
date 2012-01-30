@@ -28,13 +28,14 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Ball, Entity);
 		
 	public:
+		Ball();
 		~Ball();
 		
 		// Type-specific allocation via script.
-		static void Create(Ball & ball, PyObject & args);
+		static bool Create(Ball & ball, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(Simulation & simulation, PyObject & args);
+		void Init(Simulation & simulation, InitData<Ball> const & init_data);
 	private:
 		void InitPhysics(Simulation & simulation, Sphere3 const & sphere);
 		void InitGraphics(Sphere3 const & sphere);

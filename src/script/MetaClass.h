@@ -226,19 +226,22 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// Python callbacks
 		
-		static int InitObject(PyObject * po, PyObject * args, PyObject * type)
+		static int InitObject(PyObject * po, PyObject * args, PyObject * kwds)
 		{
 			errno = 0;
 			
 			// Allocate the object.
 			CLASS & object = CLASS::GetRef(po);
 			
-			// Hold on to arguments object.
-			// It will be put on a thread message queue.
-			// (Decremented in sim::Simulation::OnMessage.)
-			Py_INCREF(args);
+			// Call the c'tor on the object.
+			new (& object) CLASS;
 			
-			CLASS::Create(object, * args); 
+			if (! CLASS::Create(object, * args))
+			{
+				std::cerr << "Bad input parameters to entity of type \"" << super::_type_object.tp_name << '\"' << std::endl;
+				DEBUG_BREAK();
+				return -1;
+			}
 
 			AssertErrno();
 			return 0;

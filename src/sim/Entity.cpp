@@ -75,9 +75,8 @@ Uid Entity::GetUid() const
 	return _uid;
 }
 
-void Entity::Create(Entity & entity, PyObject & args)
+bool Entity::Create(Entity & entity, PyObject & args)
 {
-	// TODO: Make it so this function isn't even defined.
 	Assert(false);
 }
 

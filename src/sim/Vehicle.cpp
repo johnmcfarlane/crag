@@ -98,6 +98,10 @@ DEFINE_SCRIPT_CLASS_END
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Vehicle member functions
 
+// seems to be required by MetaClass::InitObject
+Vehicle::Vehicle()
+{
+}
 
 void Vehicle::AddThruster(Thruster const & thruster)
 {
@@ -125,20 +129,6 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	// Initialize the rest of the sim-side data for the new thruster.
 	_thruster.gfx_uid = thruster_uid;
 	_thruster.thrust_factor = 0;
-}
-
-void Vehicle::Create(Vehicle & vehicle, PyObject & args)
-{
-	// construct vehicle
-	new (& vehicle) Vehicle;
-	
-	// send
-	Daemon::Call<Entity *>(& vehicle, & args, & Simulation::OnAddEntity);
-}
-
-bool Vehicle::Init(Simulation & simulation, PyObject & args)
-{
-	return super::Init(simulation, args);
 }
 
 gfx::Color4f Vehicle::GetColor() const

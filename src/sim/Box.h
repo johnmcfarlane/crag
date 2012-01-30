@@ -27,13 +27,14 @@ namespace sim
 		DECLARE_SCRIPT_CLASS(Box, Entity);
 		
 	public:
+		Box();
 		~Box();
 		
 		// Type-specific allocation via script.
-		static void Create(Box & box, PyObject & args);
+		static bool Create(Box & box, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(Simulation & simulation, PyObject & args);
+		void Init(Simulation & simulation, InitData<Box> const & init_data);
 	private:
 		void InitPhysics(Simulation & simulation, Vector3 center, Vector3 size);
 		void InitGraphics();

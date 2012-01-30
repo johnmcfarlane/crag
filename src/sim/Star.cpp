@@ -27,6 +27,20 @@ DEFINE_SCRIPT_CLASS(sim, Star)
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// sim::InitData<Star> struct specialization
+
+namespace sim
+{
+	template <>
+	struct InitData <Star>
+	{
+		Scalar radius;
+		Scalar year;
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
 
 sim::Star::Star()
@@ -41,28 +55,28 @@ sim::Star::~Star()
 	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
 }
 
-void sim::Star::Create(Star & star, PyObject & args)
-{
-	// construct star
-	new (& star) Star;
-	
-	// send
-	Daemon::Call<Entity *, PyObject *>(& star, & args, & Simulation::OnAddEntity);
-}
-
-bool sim::Star::Init(Simulation & simulation, PyObject & args)
+bool sim::Star::Create(Star & star, PyObject & args)
 {
 	// Parse planet creation parameters
-	if (! PyArg_ParseTuple(& args, "dd", & radius, & year))
+	InitData<Star> init_data;
+	if (! PyArg_ParseTuple(& args, "dd", & init_data.radius, & init_data.year))
 	{
 		return false;
 	}
 
+	// send
+	Daemon::Call(& star, init_data, & Simulation::OnNewEntity);
+	return true;
+}
+
+void sim::Star::Init(Simulation & simulation, InitData<Star> const & init_data)
+{
+	radius = init_data.radius;
+	year = init_data.year;
+	
 	// initialize light
 	gfx::Light * light = new gfx::Light(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
 	_light_uid = AddModelWithTransform(* light);
-	
-	return true;
 }
 
 void sim::Star::Tick(Simulation & simulation)

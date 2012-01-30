@@ -35,16 +35,12 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
+		Vehicle();
+		
 		// Add a Thruster
 		void AddThruster(Thruster const & thruster);
-
-		// Called to create a bare object.
-		static void Create(Vehicle & vehicle, PyObject & args);
 		
 	private:
-		// Called from the simulation thread to initialize the object.
-		bool Init(Simulation & simulation, PyObject & args) override;
-		
 		// Called from Ball when initializing the graphics object.
 		gfx::Color4f GetColor() const override;
 		

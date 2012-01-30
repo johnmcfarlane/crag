@@ -40,10 +40,10 @@ namespace sim
 		~Observer();
 		
 		// Type-specific allocation via script.
-		static void Create(Observer & observer, PyObject & args);
+		static bool Create(Observer & observer, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(Simulation & simulation, PyObject & args);
+		void Init(Simulation & simulation, InitData<Observer> const & init_data);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);

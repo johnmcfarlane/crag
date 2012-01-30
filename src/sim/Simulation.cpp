@@ -60,27 +60,14 @@ void Simulation::OnQuit()
 	quit_flag = true;
 }
 
-void Simulation::OnAddEntity(Entity * const & entity, PyObject * const & args)
+void Simulation::OnAddEntity(Entity & entity)
 {
-	bool initialized = entity->Init(* this, * args);
-
-	// Let go of arguments object.
-	// (Incremented in script::MetaClass::NewObject.)
-	Py_DECREF(args);
-	
-	if (! initialized)
-	{
-		std::cerr << "Bad input parameters to entity" << std::endl;
-		DEBUG_BREAK();
-		return;
-	}
-	
 	// Until the UpdateModels call is complete, 
 	// the data sent to the Renderer is in an incomplete state.
 	gfx::Daemon::Call(false, _time, & gfx::Renderer::OnSetReady);
 	
-	_entity_set.Add(* entity);
-	entity->UpdateModels();
+	_entity_set.Add(entity);
+	entity.UpdateModels();
 	
 	gfx::Daemon::Call(true, _time, & gfx::Renderer::OnSetReady);
 }

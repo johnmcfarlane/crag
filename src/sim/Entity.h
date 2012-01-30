@@ -45,14 +45,11 @@ namespace sim
 		Uid GetUid() const;
 		
 		// Type-specific allocation via script. DO NOT CALL.
-		static void Create(Entity & entity, PyObject & args);
+		static bool Create(Entity & entity, PyObject & args);
 
 		// Type-specific allocation via script.
 		static void Destroy(Entity & entity);
 		
-		// Called from the simulation thread.
-		virtual bool Init(Simulation & simulation, PyObject & args) = 0;
-
 		// general callbacks
 		virtual void Tick(Simulation & simulation);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;

@@ -25,10 +25,10 @@ namespace sim
 		~Star();
 
 		// Type-specific allocation via script.
-		static void Create(Star & star, PyObject & args);
+		static bool Create(Star & star, PyObject & args);
 		
 		// Called from the simulation thread.
-		bool Init(Simulation & simulation, PyObject & args);
+		void Init(Simulation & simulation, InitData<Star> const & init);
 		
 		void Tick(Simulation & simulation);
 		

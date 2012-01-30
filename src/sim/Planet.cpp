@@ -40,7 +40,22 @@ DEFINE_SCRIPT_CLASS(sim, Planet)
 
 
 //////////////////////////////////////////////////////////////////////
-// Planet
+// sim::InitData<Planet> struct specialization
+
+namespace sim
+{
+	template <>
+	struct InitData<Planet>
+	{
+		Sphere3 sphere;
+		int random_seed;
+		int num_craters;
+	};
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// sim::Planet member definitions
 
 
 Planet::Planet()
@@ -65,41 +80,37 @@ Planet::~Planet()
 	_body = nullptr;
 }
 
-void Planet::Create(Planet & planet, PyObject & args)
+bool Planet::Create(Planet & planet, PyObject & args)
 {	
-	// construct planet
-	new (& planet) Planet;
-
-	// register with simulation
-	sim::Daemon::Call<Entity *>(& planet, & args, & sim::Simulation::OnAddEntity);
-}
-
-bool Planet::Init(Simulation & simulation, PyObject & args)
-{
 	// Parse planet creation parameters
-	Sphere3 sphere;
-	int random_seed;
-	int num_craters;
-	if (! PyArg_ParseTuple(& args, "ddddii", & sphere.center.x, & sphere.center.y, & sphere.center.z, & sphere.radius, & random_seed, & num_craters))
+	InitData<Planet> init_data;
+	if (! PyArg_ParseTuple(& args, "ddddii", & init_data.sphere.center.x, & init_data.sphere.center.y, & init_data.sphere.center.z, & init_data.sphere.radius, & init_data.random_seed, & init_data.num_craters))
 	{
 		return false;
 	}
 
-	Assert(sphere.radius > 0);
-	_radius_mean = sphere.radius;
-	_radius_min = sphere.radius;
-	_radius_max = sphere.radius;
+	// register with simulation
+	sim::Daemon::Call(& planet, init_data, & sim::Simulation::OnNewEntity);
+	return true;
+}
+
+void Planet::Init(Simulation & simulation, InitData<Planet> const & init_data)
+{
+	Assert(init_data.sphere.radius > 0);
+	_radius_mean = init_data.sphere.radius;
+	_radius_min = init_data.sphere.radius;
+	_radius_max = init_data.sphere.radius;
 	
 	// allocations
 	{
-		Random random(random_seed);
+		Random random(init_data.random_seed);
 		
 		// factory
 		form::Shader * shader;
-		if (num_craters > 0)
+		if (init_data.num_craters > 0)
 		{
 			int random_seed_shader = random.GetInt();
-			shader = new MoonShader(random_seed_shader, num_craters, _radius_mean);
+			shader = new MoonShader(random_seed_shader, init_data.num_craters, _radius_mean);
 		}
 		else 
 		{
@@ -108,12 +119,12 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		
 		// formation
 		int random_seed_formation = random.GetInt();
-		_formation = new form::Formation(random_seed_formation, * shader, sphere, GetUid());
+		_formation = new form::Formation(random_seed_formation, * shader, init_data.sphere, GetUid());
 		
 		// body
 		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
-		_body->SetPosition(sphere.center);
+		_body->SetPosition(init_data.sphere.center);
 	}
 
 	// messages
@@ -131,8 +142,6 @@ bool Planet::Init(Simulation & simulation, PyObject & args)
 		_model_uid = model->GetUid();
 		_transformation_uid = AddModelWithTransform(* model);
 	}
-	
-	return true;
 }
 
 void Planet::Tick(Simulation & simulation)

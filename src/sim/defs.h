@@ -48,4 +48,7 @@ namespace sim
 	typedef ::Transformation<Scalar> Transformation;
 	
 	typedef smp::Uid Uid;
+
+	// Entity initialization type.
+	template <typename ENTITY_TYPE> struct InitData;
 }

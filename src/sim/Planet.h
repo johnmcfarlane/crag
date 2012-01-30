@@ -35,10 +35,10 @@ namespace sim
 		~Planet();
 
 		// Type-specific allocation via script.
-		static void Create(Planet & planet, PyObject & args);
+		static bool Create(Planet & planet, PyObject & args);
 
 		// Called from the simulation thread.
-		virtual bool Init(Simulation & simulation, PyObject & args);
+		virtual void Init(Simulation & simulation, InitData<Planet> const & init_data);
 
 		virtual void Tick(Simulation & simulation);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;

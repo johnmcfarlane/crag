@@ -91,6 +91,19 @@ DEFINE_SCRIPT_CLASS_END
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// sim::InitData<Observer> struct specialization
+
+namespace sim
+{
+	template <>
+	struct InitData<Observer>
+	{
+		Vector3 center;
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
 
@@ -110,24 +123,23 @@ Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-void Observer::Create(Observer & observer, PyObject & args)
-{
-	// construct observer
-	new (& observer) Observer;
-	
-	// send creation message
-	sim::Daemon::Call<sim::Entity *>(& observer, & args, & sim::Simulation::OnAddEntity);
-}
-
-bool Observer::Init(Simulation & simulation, PyObject & args)
+bool Observer::Create(Observer & observer, PyObject & args)
 {
 	// Parse planet creation parameters
-	Vector<double, 3> center;
-	if (! PyArg_ParseTuple(& args, "ddd", &center.x, &center.y, &center.z))
+	InitData<Observer> init_data;
+	if (! PyArg_ParseTuple(& args, "ddd", & init_data.center.x, & init_data.center.y, & init_data.center.z))
 	{
 		return false;
 	}
 	
+	// send creation message
+	Daemon::Call(& observer, init_data, & Simulation::OnNewEntity);
+	
+	return true;
+}
+
+void Observer::Init(Simulation & simulation, InitData<Observer> const & init_data)
+{
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
 	SetSpeed(1);
@@ -135,7 +147,7 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	body->SetDensity(observer_density);
 	body->SetLinearDamping(observer_linear_damping);
 	body->SetAngularDamping(observer_angular_damping);
-	body->SetPosition(center);
+	body->SetPosition(init_data.center);
 
 	SetBody(body);
 	
@@ -146,8 +158,6 @@ bool Observer::Init(Simulation & simulation, PyObject & args)
 	gfx::Light * light = new gfx::Light(observer_light_color);
 	_light_uid = AddModelWithTransform(* light);
 #endif
-	
-	return true;
 }
 
 void Observer::AddRotation(Vector3 const & angles)

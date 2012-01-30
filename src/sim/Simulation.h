@@ -58,9 +58,18 @@ namespace sim
 		
 		// message interface
 		void OnQuit();
-		void OnAddEntity(Entity * const & entity, PyObject * const & args);
+		
+		template <typename ENTITY_TYPE>
+		void OnNewEntity(ENTITY_TYPE * const & entity, InitData<ENTITY_TYPE> const & init_data)
+		{
+			entity->Init(* this, init_data);
+			OnAddEntity(* entity);
+		}
+	
+		void OnAddEntity(Entity & entity);
 		void OnRemoveEntity(Uid const & uid);
 		void OnAttachEntities(Uid const & uid1, Uid const & uid2);
+		
 		void OnTogglePause();
 		void OnToggleGravity();
 		void OnToggleCollision();
