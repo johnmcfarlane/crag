@@ -102,12 +102,19 @@ gfx::Cuboid::~Cuboid()
 	_mesh.Deinit();
 }
 
-void gfx::Cuboid::Draw() const
+void gfx::Cuboid::Activate() const
 {
-	// Perform the draw calls.
 	_mesh.Bind();
 	_mesh.Activate();
-	_mesh.Draw(GL_TRIANGLES, 48, 0);
+}
+
+void gfx::Cuboid::Deactivate() const
+{
 	_mesh.Deactivate();
 	_mesh.Unbind();
+}
+
+void gfx::Cuboid::Draw() const
+{
+	_mesh.Draw(GL_TRIANGLES, 48, 0);
 }

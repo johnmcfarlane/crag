@@ -18,6 +18,10 @@
 
 namespace gfx
 {
+	// forward-declarations
+	class Program;
+	class MeshResource;
+
 	// An element of the scene which can be drawn.
 	class LeafNode : public Object
 	{
@@ -36,10 +40,9 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Layer::type layer, ProgramIndex::type shader_index);
+		LeafNode(Layer::type layer);
 		
 #if defined(VERIFY)
-		//void VerifyRanking(Ranking const * ranking) const;
 		void Verify() const;
 #endif
 		
@@ -49,8 +52,11 @@ namespace gfx
 		
 		Layer::type GetLayer() const;
 		
-		void SetProgramIndex(ProgramIndex::type program_index);
-		ProgramIndex::type GetProgramIndex() const;
+		Program const * GetProgram() const;
+		void SetProgram(Program const  * program);
+		
+		MeshResource const * GetMeshResource() const;
+		void SetMeshResource(MeshResource const * mesh_resource);
 		
 		bool IsOpaque() const;
 		void SetIsOpaque(bool is_opaque);
@@ -76,7 +82,8 @@ namespace gfx
 		
 		float _render_depth;
 		Layer::type _layer;
-		ProgramIndex::type _program_index;
+		Program const * _program;
+		MeshResource const * _mesh_resource;
 		bool _is_opaque;
 	};
 }

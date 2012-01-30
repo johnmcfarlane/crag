@@ -10,6 +10,8 @@
 #include "pch.h"
 
 #include "FormationMesh.h"
+#include "Renderer.h"
+#include "ResourceManager.h"
 
 #include "gfx/Debug.h"
 #include "gfx/Scene.h"
@@ -41,11 +43,18 @@ namespace
 // gfx::FormationMesh member definitions
 
 FormationMesh::FormationMesh()
-: LeafNode(Layer::foreground, ProgramIndex::poly)
+: LeafNode(Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
 }
+
+#if defined(VERIFY)
+void FormationMesh::Verify() const
+{
+	Assert(! mbo_buffers.back().IsBound());
+}
+#endif
 
 bool FormationMesh::Init(Renderer & renderer)
 {
@@ -58,6 +67,12 @@ bool FormationMesh::Init(Renderer & renderer)
 		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
 		mbo.Unbind();
 	}
+	
+	OnMeshResourceChange();
+
+	ResourceManager & resource_manager = renderer.GetResourceManager();
+	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
+	SetProgram(poly_program);
 	
 	return true;
 }
@@ -97,6 +112,8 @@ void FormationMesh::Update(UpdateParams const & params, Renderer & renderer)
 
 LeafNode::PreRenderResult FormationMesh::PreRender(Renderer const & renderer)
 {
+	VerifyObject(* this);
+	
 	FinishBufferUpload();
 	BeginBufferUpload();
 
@@ -137,15 +154,13 @@ void FormationMesh::Render(Renderer const & renderer) const
 	Assert(! IsEnabled(GL_TEXTURE_2D));
 	
 	// Draw the mesh!
-	front_buffer.Bind();
-	front_buffer.Activate();
 	front_buffer.Draw();
-	front_buffer.Deactivate();
-	GL_VERIFY;
 }
 
 bool FormationMesh::BeginBufferUpload()
 {
+	VerifyObject(* this);
+
 	if (_pending_mesh != nullptr)
 	{
 		// an upload is already in progress
@@ -159,6 +174,7 @@ bool FormationMesh::BeginBufferUpload()
 	}
 	
 	form::MeshBufferObject & back_buffer = mbo_buffers.back();
+	VerifyObject(* this);
 	
 	back_buffer.Bind();
 	back_buffer.Set(* _queued_mesh);
@@ -168,6 +184,13 @@ bool FormationMesh::BeginBufferUpload()
 	_queued_mesh = nullptr;
 
 	return true;
+}
+
+void FormationMesh::OnMeshResourceChange()
+{
+	form::MeshBufferObject & front_buffer = mbo_buffers.front();
+	Assert(! front_buffer.IsBound());
+	SetMeshResource(& front_buffer);
 }
 
 bool FormationMesh::FinishBufferUpload()
@@ -180,6 +203,8 @@ bool FormationMesh::FinishBufferUpload()
 	
 	// set the newly uploaded mbo as the front one
 	mbo_buffers.flip();
+
+	OnMeshResourceChange();
 	
 	// inform the regulator that following frame information 
 	// will relate to a mesh of this number of quaterna.

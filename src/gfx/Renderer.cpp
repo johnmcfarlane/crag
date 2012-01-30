@@ -13,6 +13,7 @@
 
 #include "Debug.h"
 #include "glHelpers.h"
+#include "MeshResource.h"
 #include "Program.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -236,6 +237,8 @@ Renderer::Renderer()
 , lighting(init_lighting)
 , wireframe(init_wireframe)
 , capture_frame(0)
+, _current_program(nullptr)
+, _current_mesh(nullptr)
 {
 #if ! defined(NDEBUG)
 	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
@@ -269,9 +272,73 @@ Scene const & Renderer::GetScene() const
 	return ref(scene);
 }
 
+ResourceManager & Renderer::GetResourceManager()
+{
+	return ref(_resource_manager);
+}
+
 ResourceManager const & Renderer::GetResourceManager() const
 {
 	return ref(_resource_manager);
+}
+
+Program const * Renderer::GetCurrentProgram() const
+{
+	return _current_program;
+}
+
+void Renderer::SetCurrentProgram(Program const * program)
+{
+	if (program == _current_program)
+	{
+		return;
+	}
+	
+	if (_current_program != nullptr)
+	{
+		_current_program->Unbind();
+	}
+	
+	_current_program = program;
+	
+	if (_current_program != nullptr)
+	{
+		Assert(_current_program->IsInitialized());
+		
+		_current_program->Bind();
+		
+		// In case this is the first time in this frame that the program has been set active,
+		// set the lights while it's active now.
+		Light::List const & lights = scene->GetLightList();
+		_current_program->UpdateLights(lights);
+	}
+	
+	GL_VERIFY;
+}
+
+MeshResource const * Renderer::GetCurrentMesh() const
+{
+	return _current_mesh;
+}
+
+void Renderer::SetCurrentMesh(MeshResource const * mesh)
+{
+	if (mesh == _current_mesh)
+	{
+		return;
+	}
+	
+	if (_current_mesh != nullptr)
+	{
+		_current_mesh->Deactivate();
+	}
+	
+	_current_mesh = mesh;
+
+	if (_current_mesh != nullptr)
+	{
+		_current_mesh->Activate();
+	}
 }
 
 Color4f Renderer::CalculateLighting(Vector3 const & position) const
@@ -781,6 +848,9 @@ void Renderer::RenderScene()
 	
 	// Crap you generally don't want.
 	DebugDraw();
+	
+	// Ensures that FormationMesh::PreRender functions correctly.
+	SetCurrentMesh(nullptr);
 
 	VerifyRenderState();
 }
@@ -829,7 +899,7 @@ void Renderer::RenderLights()
 	
 	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
-		Program * program = _resource_manager->GetProgram(static_cast<ProgramIndex::type>(program_index));
+		Program const * program = _resource_manager->GetProgram(static_cast<ProgramIndex::type>(program_index));
 		program->OnLightsChanged();
 	}
 }
@@ -958,14 +1028,12 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	
-	Light::List const & lights = scene->GetLightList();
-
 	typedef LeafNode::RenderList List;
-	List const & render_list = scene->GetRenderList();
+	List & render_list = scene->GetRenderList();
 	
-	for (List::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 	{
-		LeafNode const & leaf_node = * i;
+		LeafNode & leaf_node = * i;
 		
 		if (leaf_node.GetLayer() != layer)
 		{
@@ -981,18 +1049,23 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 		Transformation const & transformation = leaf_node.GetModelViewTransformation();
 		SetModelViewMatrix(transformation);
 
-		ProgramIndex::type program_index = leaf_node.GetProgramIndex();
-		if (program_index != ProgramIndex::dont_care)
+		Program const * required_program = leaf_node.GetProgram();
+		if (required_program != nullptr)
 		{
-			Program * required_program = _resource_manager->GetProgram(program_index);
-			_resource_manager->SetCurrentProgram(required_program);
-			
-			if (required_program != nullptr)
+			if (required_program->IsInitialized())
 			{
-				// In case this is the first time in this frame that the program has been set active,
-				// set the lights while it's active now.
-				required_program->UpdateLights(lights);
+				SetCurrentProgram(required_program);
 			}
+			else
+			{
+				SetCurrentProgram(nullptr);
+			}
+		}
+		
+		MeshResource const * required_mesh = leaf_node.GetMeshResource();
+		if (required_mesh != nullptr)
+		{
+			SetCurrentMesh(required_mesh);
 		}
 		
 		leaf_node.Render(* this);
@@ -1022,8 +1095,8 @@ void Renderer::DebugDraw()
 	Transformation model_view(Vector3::Zero(), inverse_rotation);
 	SetModelViewMatrix(model_view);
 	
-	Program * required_program = _resource_manager->GetProgram(ProgramIndex::fixed);
-	_resource_manager->SetCurrentProgram(required_program);
+	SetCurrentProgram(nullptr);
+	SetCurrentMesh(nullptr);
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
@@ -1131,6 +1204,7 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	
 	float frame_duration_ratio = float(busy_duration / target_frame_duration);
 	Assert(frame_duration_ratio >= 0);
+	Assert(! IsInf(frame_duration_ratio));
 	
 	form::Daemon::Call(frame_duration_ratio, & form::FormationManager::OnRegulatorSampleFrameDuration);
 }

@@ -33,7 +33,6 @@ namespace form
 	
 	class FormationFunctor;
 	class Formation;
-	class MeshBufferObject;
 	class Scene;
 	
 	typedef std::set<Formation *> FormationSet;

@@ -418,6 +418,7 @@
 		52D8326014730599005FE380 /* Vehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vehicle.h; sourceTree = "<group>"; };
 		52F0F8DE14CFD71A00ABD560 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceManager.cpp; sourceTree = "<group>"; };
 		52F0F8DF14CFD71A00ABD560 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceManager.h; sourceTree = "<group>"; };
+		52F0F8EA14D0DCBA00ABD560 /* MeshResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshResource.h; sourceTree = "<group>"; };
 		52F819A1132DF0A60045C3A8 /* main.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = main.py; sourceTree = "<group>"; };
 		52F819A2132DF0A60045C3A8 /* observer.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = observer.py; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
@@ -820,6 +821,7 @@
 				522876D114CE24FF00999470 /* RenderBuffer.cpp */,
 				52F0F8DE14CFD71A00ABD560 /* ResourceManager.cpp */,
 				52F0F8DF14CFD71A00ABD560 /* ResourceManager.h */,
+				52F0F8EA14D0DCBA00ABD560 /* MeshResource.h */,
 			);
 			path = gfx;
 			sourceTree = "<group>";

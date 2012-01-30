@@ -26,9 +26,18 @@ using namespace gfx;
 // gfx::Planet member definitions
 
 Planet::Planet(Scalar sea_level)
-: LeafNode(Layer::foreground, ProgramIndex::fog)
+: LeafNode(Layer::foreground)
 , _sea_level(sea_level)
 {
+}
+
+bool Planet::Init(Renderer & renderer)
+{
+	ResourceManager & resource_manager = renderer.GetResourceManager();
+	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
+	SetProgram(sphere_program);
+	
+	return true;
 }
 
 void Planet::Update(UpdateParams const & params, Renderer & renderer)
@@ -38,8 +47,7 @@ void Planet::Update(UpdateParams const & params, Renderer & renderer)
 
 gfx::Transformation const & Planet::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
 {
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
-	Quad const & sphere_quad = resource_manager.GetSphereQuad();
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);
 }
 

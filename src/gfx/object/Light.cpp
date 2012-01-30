@@ -11,9 +11,9 @@
 
 #include "Light.h"
 
-#include "gfx/Debug.h"
 #include "gfx/Renderer.h"
 #include "gfx/Scene.h"
+#include "gfx/Debug.h"
 
 #include "core/ConfigEntry.h"
 
@@ -22,7 +22,7 @@ using namespace gfx;
 
 
 Light::Light(Color4f const & color)
-: LeafNode(Layer::light, ProgramIndex::dont_care)
+: LeafNode(Layer::light)
 {
 	SetColor(color);
 }

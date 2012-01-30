@@ -23,6 +23,8 @@ namespace gfx
 		// functions
 		Box(Color4f color);
 		
+		bool Init(Renderer & renderer) override;
+
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Renderer const & renderer) const override;
 		

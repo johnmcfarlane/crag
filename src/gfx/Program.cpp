@@ -121,12 +121,12 @@ void Program::Unbind() const
 	GL_CALL(glUseProgram(0));
 }
 
-void Program::OnLightsChanged()
+void Program::OnLightsChanged() const
 {
 	_lights_changed = true;
 }
 
-void Program::UpdateLights(Light::List const & lights)
+void Program::UpdateLights(Light::List const & lights) const
 {
 	if (! _lights_changed)
 	{

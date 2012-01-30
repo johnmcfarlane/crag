@@ -13,6 +13,7 @@
 #include "Vertex.h"
 
 #include "gfx/Mesh.h"
+#include "gfx/MeshResource.h"
 
 
 namespace gfx 
@@ -29,7 +30,9 @@ namespace form
 	
 	
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
-	class MeshBufferObject : public gfx::Mesh<Vertex, GL_DYNAMIC_DRAW>
+	// TODO: Does this class belong in gfx?
+	// TODO: Clean up inheritance. Also maybe rename this class.
+	class MeshBufferObject : public gfx::Mesh<Vertex, GL_DYNAMIC_DRAW>, public gfx::MeshResource
 	{
 		typedef gfx::Mesh<Vertex, GL_DYNAMIC_DRAW> super;
 	public:

@@ -23,7 +23,6 @@ using namespace gfx;
 ResourceManager::ResourceManager()
 : _light_vert_shader(nullptr)
 , _light_frag_shader(nullptr)
-, _current_program(nullptr)
 , _cuboid(nullptr)
 , _sphere_quad(nullptr)
 , _disk_quad(nullptr)
@@ -41,8 +40,6 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-	SetCurrentProgram(nullptr);
-
 	delete _disk_quad;
 	_disk_quad = nullptr;
 	
@@ -54,8 +51,13 @@ ResourceManager::~ResourceManager()
 	
 	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
 	{
+		Program & program = * _programs[program_index];
+		program.Deinit(* _light_vert_shader, * _light_frag_shader);
+	}
+	
+	for (int program_index = 0; program_index != ProgramIndex::max_index; ++ program_index)
+	{
 		Program * & program = _programs[program_index];
-		program->Deinit(* _light_vert_shader, * _light_frag_shader);
 		delete program;
 		program = nullptr;
 	}
@@ -69,41 +71,10 @@ ResourceManager::~ResourceManager()
 	_light_vert_shader = nullptr;
 }
 
-Program * ResourceManager::GetProgram(ProgramIndex::type index)
+Program const * ResourceManager::GetProgram(ProgramIndex::type index) const
 {
 	Assert(index >= 0 && index < ProgramIndex::max_index);
 	return _programs[index];
-}
-
-Program const * ResourceManager::GetProgram(ProgramIndex::type index) const
-{
-	Assert(index >= 0 && index < ProgramIndex::max_shader);
-	return _programs[index];
-}
-
-void ResourceManager::SetCurrentProgram(Program * program)
-{
-	if (program == _current_program)
-	{
-		return;
-	}
-	
-	if (_current_program != nullptr)
-	{
-		_current_program->Unbind();
-	}
-	
-	_current_program = program;
-	
-	if (_current_program != nullptr)
-	{
-		_current_program->Bind();
-	}
-}
-
-Program const * ResourceManager::GetCurrentProgram() const
-{
-	return _current_program;
 }
 
 Cuboid const & ResourceManager::GetCuboid() const
@@ -138,10 +109,10 @@ bool ResourceManager::InitShaders()
 	_programs[ProgramIndex::fog] = new FogProgram;
 	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", * _light_vert_shader, * _light_frag_shader);
 	
-	_programs[ProgramIndex::disk] = new SphereProgram;
+	_programs[ProgramIndex::disk] = new DiskProgram;
 	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", * _light_vert_shader, * _light_frag_shader);
 	
-	_programs[ProgramIndex::fixed] = nullptr;
+	_programs[ProgramIndex::fixed] = new Program;
 	
 	return true;
 }

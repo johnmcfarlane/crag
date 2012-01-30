@@ -56,8 +56,8 @@ namespace gfx
 		void Bind() const;
 		void Unbind() const;
 		
-		void OnLightsChanged();
-		void UpdateLights(Light::List const & lights);
+		void OnLightsChanged() const;
+		void UpdateLights(Light::List const & lights) const;
 		
 	protected:
 		GLint GetUniformLocation(char const * name) const;
@@ -73,7 +73,7 @@ namespace gfx
 		Shader _vert_shader;
 		Shader _frag_shader;
 		LightBlock _light_block;
-		bool _lights_changed;
+		mutable bool _lights_changed;
 	};
 	
 	class SphereProgram : public Program

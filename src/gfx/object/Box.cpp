@@ -23,10 +23,23 @@ using namespace gfx;
 
 
 Box::Box(Color4f color)
-: LeafNode(Layer::foreground, ProgramIndex::poly)
+: LeafNode(Layer::foreground)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);
+}
+
+bool Box::Init(Renderer & renderer)
+{
+	ResourceManager & resource_manager = renderer.GetResourceManager();
+	
+	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
+	SetProgram(poly_program);
+	
+	MeshResource const & cuboid_mesh = resource_manager.GetCuboid();
+	SetMeshResource(& cuboid_mesh);
+	
+	return true;
 }
 
 bool Box::GetRenderRange(RenderRange & range) const 
@@ -57,8 +70,7 @@ void Box::Render(Renderer const & renderer) const
 	
 	// Low-LoD meshes are smaller than the sphere they approximate.
 	// Apply a corrective scale to compensate.
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
-	Cuboid const & cuboid = resource_manager.GetCuboid();
+	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetMeshResource());
 	cuboid.Draw();
 	
 	GL_VERIFY;

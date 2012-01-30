@@ -9,14 +9,15 @@
 
 #pragma once
 
-#include "gfx/Mesh.h"
+#include "Mesh.h"
+#include "MeshResource.h"
 
 
 namespace gfx
 {
 	// Graphical representation of a sphere.
 	// Has a mesh containing tesselations of a sphere at multiple levels of detail.
-	class Cuboid
+	class Cuboid : public MeshResource
 	{
 	public:
 		// types
@@ -32,6 +33,9 @@ namespace gfx
 		// functions
 		Cuboid();
 		~Cuboid();
+		
+		void Activate() const override;
+		void Deactivate() const override;
 		
 		void Draw() const;
 	private:

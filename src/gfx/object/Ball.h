@@ -25,6 +25,7 @@ namespace gfx
 		// functions
 		Ball(Color4f const & color);
 		
+		bool Init(Renderer & renderer) override;
 	private:
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		

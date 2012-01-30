@@ -28,6 +28,8 @@ namespace gfx
 		// functions
 		Planet(Scalar sea_level);
 		
+		bool Init(Renderer & renderer) override;
+		
 		void Update(UpdateParams const & params, Renderer & renderer) override;
 
 	private:

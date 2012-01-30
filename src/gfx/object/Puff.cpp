@@ -39,7 +39,7 @@ namespace
 
 
 Puff::Puff(Scalar spawn_volume)
-: LeafNode(Layer::foreground, ProgramIndex::disk)
+: LeafNode(Layer::foreground)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
@@ -55,6 +55,14 @@ Puff::~Puff()
 
 bool Puff::Init(Renderer & renderer)
 {
+	ResourceManager & resource_manager = renderer.GetResourceManager();
+	
+	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
+	SetProgram(poly_program);
+	
+	MeshResource const & disk_quad = resource_manager.GetDiskQuad();
+	SetMeshResource(& disk_quad);
+
 	Scene const & scene = renderer.GetScene();
 	Time time = scene.GetTime();
 	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
@@ -68,8 +76,7 @@ gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transforma
 	
 	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), _radius);
 	
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
-	Quad const & disk_quad = resource_manager.GetDiskQuad();
+	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
 	return disk_quad.Transform(scale, scratch);
 }
 
@@ -93,22 +100,14 @@ LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
 
 void Puff::Render(Renderer const & renderer) const
 {
-	//Transformation const & transformation = GetModelViewTransformation();
-
-	Disable(GL_CULL_FACE);
-
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
-
-	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(resource_manager.GetProgram(ProgramIndex::disk)));
+	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
 	Color4f lighting = renderer.CalculateLighting(translation);
 	disk_program.SetUniforms(model_view, _color * lighting);
 	
-	Quad const & disk_quad = resource_manager.GetDiskQuad();
+	Quad const & disk_quad = static_cast<Quad const &>(ref(GetMeshResource()));
 	disk_quad.Draw();
-	
-	Enable(GL_CULL_FACE);
 }
 
 Time Puff::CalculateAge(Time time) const

@@ -30,6 +30,10 @@ namespace gfx
 		// functions
 		FormationMesh();
 		
+#if defined(VERIFY)
+		void Verify() const;
+#endif
+		
 		bool Init(Renderer & renderer) override;
 		void Deinit(Scene & scene) override;
 
@@ -41,6 +45,7 @@ namespace gfx
 		PreRenderResult PreRender(Renderer const & renderer) override;
 		void Render(Renderer const & renderer) const override;
 		
+		void OnMeshResourceChange();
 		bool FinishBufferUpload();
 		bool BeginBufferUpload();
 		void ReturnMesh(form::Mesh & mesh);

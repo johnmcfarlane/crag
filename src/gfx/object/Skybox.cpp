@@ -13,6 +13,8 @@
 
 #include "gfx/Image.h"
 #include "gfx/Pov.h"
+#include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
 #include "core/Random.h"
@@ -50,13 +52,19 @@ void Pointer<Skybox::Vertex>()
 // gfx::Skybox member definitions
 
 Skybox::Skybox()
-: LeafNode(Layer::background, ProgramIndex::fixed)
+: LeafNode(Layer::background)
 {
 }
 
 bool Skybox::Init(Renderer & renderer)
 {
 	InitVerts();
+
+	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	
+	Program const * fixed_program = resource_manager.GetProgram(ProgramIndex::fixed);
+	SetProgram(fixed_program);
+	
 	return true;
 }
 

@@ -87,16 +87,19 @@ gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_vi
 	return scratch;
 }
 
-void Quad::Draw() const
+void Quad::Activate() const
 {
-	// TODO: Sort objects by buffer object to avoid most of the gl calls here.
 	_quad.Bind();
 	_quad.Activate();
-	
-	_quad.DrawTris(0, 6);
-	
+}
+
+void Quad::Deactivate() const
+{
 	_quad.Deactivate();
 	_quad.Unbind();
-	
-	GL_VERIFY;
+}
+
+void Quad::Draw() const
+{
+	_quad.DrawTris(0, 6);
 }

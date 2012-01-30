@@ -27,15 +27,27 @@ using namespace gfx;
 
 
 Ball::Ball(Color4f const & color)
-: LeafNode(Layer::foreground, ProgramIndex::sphere)
+: LeafNode(Layer::foreground)
 , _color(color)
 {
 }
 
-gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
+bool Ball::Init(Renderer & renderer)
 {
 	ResourceManager const & resource_manager = renderer.GetResourceManager();
-	Quad const & sphere_quad = resource_manager.GetSphereQuad();
+
+	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
+	SetProgram(sphere_program);
+	
+	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();
+	SetMeshResource(& sphere_quad);
+	
+	return true;
+}
+
+gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
+{
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);
 }
 
@@ -55,15 +67,13 @@ bool Ball::GetRenderRange(RenderRange & range) const
 
 void Ball::Render(Renderer const & renderer) const
 {
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
-
 	// Pass rendering details to the shader program.
-	Program const & program = ref(resource_manager.GetCurrentProgram());
+	Program const & program = ref(renderer.GetCurrentProgram());
 	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(program);
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_program.SetUniforms(transformation, _color);
 	
 	// Draw the quad.
-	Quad const & sphere_quad = resource_manager.GetSphereQuad();
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	sphere_quad.Draw();
 }

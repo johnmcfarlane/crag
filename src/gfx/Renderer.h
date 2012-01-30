@@ -31,6 +31,8 @@ namespace gfx
 {
 	// forward-declarations
 	class BranchNode;
+	class MeshResource;
+	class Program;
 	class ResourceManager;
 	class Scene;
 
@@ -60,7 +62,15 @@ namespace gfx
 		
 		Scene & GetScene();
 		Scene const & GetScene() const;
+		
+		ResourceManager & GetResourceManager();
 		ResourceManager const & GetResourceManager() const;
+		
+		Program const * GetCurrentProgram() const;
+		void SetCurrentProgram(Program const * program);
+		
+		MeshResource const * GetCurrentMesh() const;
+		void SetCurrentMesh(MeshResource const * mesh);
 		
 		Color4f CalculateLighting(Vector3 const & position) const;
 
@@ -160,10 +170,13 @@ namespace gfx
 		
 #if ! defined(NDEBUG)
 		// fps counter
-		static int const _frame_time_history_size = 60;
+		static int const _frame_time_history_size = 360;
 		Time _frame_time_history[_frame_time_history_size];
 #endif
 		
 		Fence _fence1, _fence2;
+
+		Program const * _current_program;
+		MeshResource const * _current_mesh;
 	};
 }

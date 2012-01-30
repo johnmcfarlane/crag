@@ -17,12 +17,13 @@
 
 using namespace gfx;
 
-LeafNode::LeafNode(Layer::type layer, ProgramIndex::type shader_index)
+LeafNode::LeafNode(Layer::type layer)
 : Object(leaf)
 //, _model_view_transformation(Transformation::Identity())
 , _render_depth(0)
 , _layer(layer)
-, _program_index(shader_index)
+, _program(nullptr)
+, _mesh_resource(nullptr)
 , _is_opaque(true)
 {
 }
@@ -51,13 +52,17 @@ LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
 
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
-	Assert(& lhs != & rhs);
-	
 	if (lhs._is_opaque)
 	{
 		if (rhs._is_opaque)
 		{
-			int shader_index_diff = lhs._program_index - rhs._program_index;
+			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._mesh_resource) - reinterpret_cast<char const *>(rhs._mesh_resource);
+			if (mesh_index_diff != 0)
+			{
+				return mesh_index_diff < 0;
+			}
+			
+			ptrdiff_t shader_index_diff = reinterpret_cast<char const *>(lhs._program) - reinterpret_cast<char const *>(rhs._program);
 			if (shader_index_diff != 0)
 			{
 				return shader_index_diff < 0;
@@ -84,14 +89,24 @@ Layer::type LeafNode::GetLayer() const
 	return _layer;
 }
 
-void LeafNode::SetProgramIndex(ProgramIndex::type program_index)
+Program const * LeafNode::GetProgram() const
 {
-	_program_index = program_index;
+	return _program;
 }
 
-ProgramIndex::type LeafNode::GetProgramIndex() const
+void LeafNode::SetProgram(Program const * program)
 {
-	return _program_index;
+	_program = program;
+}
+
+MeshResource const * LeafNode::GetMeshResource() const
+{
+	return _mesh_resource;
+}
+
+void LeafNode::SetMeshResource(MeshResource const * mesh_resource)
+{
+	_mesh_resource = mesh_resource;
 }
 
 bool LeafNode::IsOpaque() const

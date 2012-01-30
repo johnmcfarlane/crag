@@ -46,20 +46,17 @@ form::MeshProperties::Vector const & form::MeshBufferObject::GetOrigin() const
 
 void form::MeshBufferObject::Activate() const
 {
-	Assert (max_index > 0);
-	
 	if (properties._flat_shaded) 
 	{
 		glShadeModel(GL_FLAT);
 	}
 
+	super::Bind();
 	super::Activate();
 }
 
 void form::MeshBufferObject::Deactivate() const
 {
-	Assert (max_index > 0);
-
 	super::Deactivate();
 	super::Unbind();
 	
