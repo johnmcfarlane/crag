@@ -21,26 +21,20 @@
 
 void smp::Yield()
 {
-	AssertErrno();
-	
 #if defined(WIN32)
 	SleepEx(0, 0);
 #else
 	sched_yield();
 #endif
-	
-	AssertErrno();
 }
 
 void smp::Sleep(Time duration)
 {
 	Assert(duration >= 0);
-	AssertErrno();
 
 #if defined(WIN32)
 	Uint32 ms = static_cast<Uint32>(duration * 1000);
 	SDL_Delay(ms);
-	errno = 0;
 #else
 	// convert input to format used by nanosleep
 	timespec required;
@@ -52,20 +46,9 @@ void smp::Sleep(Time duration)
 	timespec remaining;
 	while (nanosleep(& required, & remaining))
 	{
-		// handle error returns
-		if (errno != EINTR)
-		{
-			AssertErrno();
-			break;
-		}
-		errno = 0;
-		
 		// we require the thread to sleep for the remaining amount of time
 		required = remaining;
 	}
-	
-	Assert(errno == ETIMEDOUT);
-	errno = 0;
 #endif
 }
 

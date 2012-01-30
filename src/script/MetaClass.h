@@ -228,8 +228,6 @@ namespace script
 		
 		static int InitObject(PyObject * po, PyObject * args, PyObject * kwds)
 		{
-			errno = 0;
-			
 			// Allocate the object.
 			CLASS & object = CLASS::GetRef(po);
 			
@@ -243,7 +241,6 @@ namespace script
 				return -1;
 			}
 
-			AssertErrno();
 			return 0;
 		}
 

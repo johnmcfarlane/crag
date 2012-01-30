@@ -96,15 +96,8 @@ void EntitySet::Purge()
 			continue;
 		}
 
-		// Invalid values of position, e.g. -1.#IND, will cause errno to become set.
-		// Those sorts of errors are exactly what we're looking for in this function.
-		errno = 0;
-
 		std::cerr << "purging entity with bad position" << std::endl;
 		delete body;
 		entity.SetBody(nullptr);
 	}
-
-	// Make sure errno was unset by the end of this function.
-	AssertErrno();
 }

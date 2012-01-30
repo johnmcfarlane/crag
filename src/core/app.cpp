@@ -90,12 +90,10 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
-	AssertErrno();
 	window = SDL_CreateWindow("Crag", 
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
 							  flags);
-	errno = 0;
 	
 	if (window == 0)
 	{
@@ -138,14 +136,11 @@ char const * app::GetProgramPath()
 
 bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
-	AssertErrno();
-	
 	FILE * source = fopen(filename, "r");
 	if (source == nullptr)
 	{
 		Assert(errno == ENOENT);
 		std::cerr << DEBUG_PRINT_SOURCE << ": file not found \"" << filename << "\"" << std::endl;
-		errno = 0;
 		return false;
 	}
 	
@@ -158,8 +153,6 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 	fread(& buffer[0], 1, length, source);
 
 	fclose(source);
-	
-	AssertErrno();
 	
 	return true;
 }
@@ -201,9 +194,7 @@ Vector2i app::GetWindowSize()
 
 bool app::GetEvent(SDL_Event & event, bool block)
 {
-	AssertErrno();
 	bool has_event = (block ? SDL_WaitEvent : SDL_PollEvent)(&event) != 0;
-	errno = 0;
 	
 	if (! has_event)
 	{

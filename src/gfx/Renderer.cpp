@@ -447,9 +447,7 @@ bool Renderer::Init()
 	Assert(context == nullptr);
 	SDL_Window & window = app::GetWindow();
 	
-	AssertErrno();
 	context = SDL_GL_CreateContext(& window);
-	errno = 0;
 	
 	if (SDL_GL_MakeCurrent(& window, context) != 0)
 	{

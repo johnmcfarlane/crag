@@ -38,8 +38,6 @@ namespace
 
 int SDL_main(int /*argc*/, char * * argv)
 {
-	errno = 0;
-	
 #if defined(WIN32)
 	std::ofstream cout_filestr, cerr_filestr;
 	cout_filestr.open ("cout.txt");
@@ -53,7 +51,6 @@ int SDL_main(int /*argc*/, char * * argv)
 	
 	int exit_value = CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 	
-	AssertErrno();
 	return exit_value;
 }
 
