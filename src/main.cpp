@@ -64,8 +64,13 @@ CONFIG_DEFINE (profile_mode, bool, false);
 namespace 
 {
 
+#if ! defined(WIN32)
 	CONFIG_DEFINE (video_resolution_x, int, 800);
 	CONFIG_DEFINE (video_resolution_y, int, 600);
+#else
+	CONFIG_DEFINE (video_resolution_x, int, 1536);
+	CONFIG_DEFINE (video_resolution_y, int, 864);
+#endif
 	
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
