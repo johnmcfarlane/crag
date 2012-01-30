@@ -65,7 +65,7 @@ bool sim::Star::Create(Star & star, PyObject & args)
 	}
 
 	// send
-	Daemon::Call(& star, init_data, & Simulation::OnNewEntity);
+	Daemon::Call<Star *, InitData<Star>>(& star, init_data, & Simulation::OnNewEntity);
 	return true;
 }
 

@@ -78,6 +78,7 @@ Uid Entity::GetUid() const
 bool Entity::Create(Entity & entity, PyObject & args)
 {
 	Assert(false);
+	return false;
 }
 
 void Entity::Destroy(Entity & entity)

@@ -81,7 +81,7 @@ bool Ball::Create(Ball & ball, PyObject & args)
 		return false;
 	}
 	
-	Daemon::Call(& ball, init_data, & Simulation::OnNewEntity);
+	Daemon::Call<Ball *, InitData<Ball>>(& ball, init_data, & Simulation::OnNewEntity);
 	return true;
 }
 

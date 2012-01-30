@@ -90,7 +90,7 @@ bool Planet::Create(Planet & planet, PyObject & args)
 	}
 
 	// register with simulation
-	sim::Daemon::Call(& planet, init_data, & sim::Simulation::OnNewEntity);
+	sim::Daemon::Call<Planet *, InitData<Planet>>(& planet, init_data, & sim::Simulation::OnNewEntity);
 	return true;
 }
 

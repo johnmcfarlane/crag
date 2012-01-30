@@ -133,7 +133,7 @@ bool Observer::Create(Observer & observer, PyObject & args)
 	}
 	
 	// send creation message
-	Daemon::Call(& observer, init_data, & Simulation::OnNewEntity);
+	Daemon::Call<Observer *, InitData<Observer>>(& observer, init_data, & Simulation::OnNewEntity);
 	
 	return true;
 }
