@@ -59,7 +59,7 @@ namespace gfx
 		void Bind() const
 		{
 			assert(IsInitialized());
-			assert(! IsBound());
+			assert(GetBinding<TARGET>() == 0);
 			glBindBuffer(TARGET, _name);
 		}
 		

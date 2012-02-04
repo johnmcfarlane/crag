@@ -83,6 +83,7 @@ namespace gfx
 		
 		bool IsBound() const
 		{
+			VerifyObject(* this);
 			return vbo.IsBound() && ibo.IsBound();
 		}
 
