@@ -83,7 +83,7 @@ bool Box::Create(Box & box, PyObject & args)
 	}
 
 	// send
-	Daemon::Call<Box *, InitData<Box>>(& box, init_data, & Simulation::OnNewEntity);
+	Daemon::Call< Box *, InitData<Box> >(& box, init_data, & Simulation::OnNewEntity);
 	return true;
 }
 
