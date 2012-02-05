@@ -127,6 +127,18 @@
 		52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 52F819AA132DF13C0045C3A8 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		528934AB14DE4C1100F174E9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.glsl;
+			isEditable = 1;
+			outputFiles = (
+				"",
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		520FECE714ADA6E5006A7E02 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -996,6 +1008,7 @@
 				528F862B143BDF40000DD482 /* CopyFiles */,
 			);
 			buildRules = (
+				528934AB14DE4C1100F174E9 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
