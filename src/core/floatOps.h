@@ -12,8 +12,6 @@
 
 #include "core/debug.h"
 
-#include <cmath>
-
 
 #if defined(WIN32) && (_M_IX86_FP > 0)
 #define __SSE__

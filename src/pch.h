@@ -84,6 +84,8 @@
 //////////////////////////////////////////////////////////////////////
 // standard includes.
 
+#include <errno.h>
+
 // C standard library
 #include <cassert>
 #include <cmath>
@@ -93,11 +95,13 @@
 
 // C++ standard library
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <map>
 #include <queue>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -15,8 +15,6 @@
 
 #include "gfx/object/Object.h"
 
-#include <algorithm>
-
 
 using namespace gfx;
 

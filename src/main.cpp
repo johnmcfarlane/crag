@@ -21,8 +21,6 @@
 
 #include "script/ScriptThread.h"
 
-#include <fstream>
-
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations

@@ -21,8 +21,6 @@
 
 #include "geom/Matrix44.h"
 
-#include <cstdio>
-
 
 namespace core {
 

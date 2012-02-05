@@ -26,8 +26,6 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-#include <sstream>
-
 
 using namespace gfx;
 

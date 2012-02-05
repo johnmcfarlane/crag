@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 
 #if ! defined(NDEBUG)
 //#define CORE_RING_BUFFER_VERFICATION

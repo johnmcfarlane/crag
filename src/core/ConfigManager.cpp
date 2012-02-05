@@ -16,8 +16,6 @@
 
 #include "core/debug.h"
 
-#include <fstream>
-
 
 #if ! defined(NDEBUG) || ! defined(PROFILE)
 #define ENABLE_CONFIG_LOAD_SAVE

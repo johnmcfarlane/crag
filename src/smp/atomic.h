@@ -17,7 +17,6 @@
 
 #elif defined(WIN32)
 
-//#include <intrin.h>
 #define AtomicFetchAndAdd(AUGEND, ADDEND) _InterlockedExchangeAdd(& reinterpret_cast<volatile long &>(AUGEND), ADDEND)
 #define AtomicMemoryBarrier MemoryBarrier
 
