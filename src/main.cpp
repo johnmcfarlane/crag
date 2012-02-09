@@ -45,7 +45,7 @@ int SDL_main(int /*argc*/, char * * argv)
 #endif
 
 	std::cout << "Crag Demo" << std::endl;
-	std::cout << "Copyright 2010 John McFarlane" << std::endl;
+	std::cout << "Copyright 2010-2012 John McFarlane" << std::endl;
 	
 	int exit_value = CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 	
