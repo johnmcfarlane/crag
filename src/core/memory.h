@@ -14,6 +14,11 @@
 #endif
 
 
+// This definition indicates whether stack frame addresses increase or decrease as the stack grows.
+#if defined(__ppc__) || defined(__ppc64__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
+#define STACK_GROWTH_DIRECTION -1
+#endif
+
 // This definition is highly questionable. Double check it works if compiling on a new platform.
 // I'm assuming that addresses don't need to be aligned for calls to __builtin_prefetch.
 #if defined(__ppc__)
