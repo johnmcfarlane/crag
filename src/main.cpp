@@ -213,10 +213,8 @@ namespace
 		SDL_Event event;
 		
 		// If no events are pending,
-		if (! app::GetEvent(event, true))
+		if (! app::GetEvent(event, false))
 		{
-			Assert(false);
-			
 			// then nothing's happening event-wise.
 			return false;
 		}
