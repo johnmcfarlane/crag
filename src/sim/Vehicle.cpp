@@ -13,7 +13,7 @@
 
 #include "axes.h"
 #include "EntityFunctions.h"
-#include "EntityMessage.h"
+#include "CallEntity.h"
 #include "Simulation.h"
 
 #include "physics/Body.h"
@@ -46,26 +46,23 @@ struct Vehicle::Thruster
 
 namespace
 {
-	class AddThrusterFunctor : public sim::EntityMessage<sim::Vehicle>
+	class AddThrusterFunctor
 	{
-		// types
-		typedef sim::EntityMessage<sim::Vehicle> super;
 	public:
-		
 		// functions
-		AddThrusterFunctor(sim::Uid vehicle_uid, Vehicle::Thruster thruster)
-		: super(vehicle_uid)
-		, _thruster(thruster)
+		AddThrusterFunctor(Vehicle::Thruster thruster)
+		: _thruster(thruster)
 		{
 			Assert(_thruster.gfx_uid == gfx::Uid::null);
 		}
 		
-	private:
-		void operator() (sim::Vehicle & vehicle) const
+		void operator() (sim::Vehicle * vehicle) const
 		{
-			vehicle.AddThruster(_thruster);
+			Assert(vehicle != nullptr);
+			vehicle->AddThruster(_thruster);
 		}
 		
+	private:
 		Vehicle::Thruster _thruster;
 	};
 	
@@ -83,8 +80,9 @@ namespace
 		
 		Vehicle & vehicle = Vehicle::GetRef(self);
 		sim::Uid vehicle_uid = vehicle.GetUid();
-		AddThrusterFunctor message(vehicle_uid, thruster);
-		sim::Daemon::SendMessage(message);
+		
+		AddThrusterFunctor functor(thruster);
+		sim::CallEntity<sim::Vehicle>(vehicle_uid, functor);
 		
 		Py_RETURN_NONE;
 	}

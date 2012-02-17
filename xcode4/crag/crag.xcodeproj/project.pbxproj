@@ -392,7 +392,7 @@
 		528164691454F5DB0017E868 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
-		52867662146C04C8002D581F /* EntityMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityMessage.h; sourceTree = "<group>"; };
+		52867662146C04C8002D581F /* CallEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; path = CallEntity.h; sourceTree = "<group>"; };
 		52882A3D149492FF00E68B4F /* Puff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Puff.cpp; sourceTree = "<group>"; };
 		52882A3E149492FF00E68B4F /* Puff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puff.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
@@ -936,7 +936,7 @@
 				528164541454F5DB0017E868 /* UserInput.h */,
 				528ACFF814674B40004167BF /* gravity.cpp */,
 				528ACFF914674B41004167BF /* gravity.h */,
-				52867662146C04C8002D581F /* EntityMessage.h */,
+				52867662146C04C8002D581F /* CallEntity.h */,
 				52D832431472D692005FE380 /* EntityFunctions.cpp */,
 				52D832441472D692005FE380 /* EntityFunctions.h */,
 			);

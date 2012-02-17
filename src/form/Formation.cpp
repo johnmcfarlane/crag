@@ -14,7 +14,7 @@
 #include "form/node/Shader.h"
 #include "form/scene/Mesh.h"
 
-#include "sim/EntityMessage.h"
+#include "sim/CallEntity.h"
 #include "sim/Planet.h"
 
 
@@ -23,26 +23,26 @@ using namespace form;
 
 namespace 
 {
-	class SetRadiusFunctor : public sim::EntityMessage<sim::Planet>
+	class SetRadiusFunctor
 	{
-		// types
-		typedef sim::EntityMessage<sim::Planet> super;
 	public:
 		
 		// functions
-		SetRadiusFunctor(sim::Uid uid, sim::Scalar radius_min, sim::Scalar radius_max)
-		: super(uid)
-		, _radius_min(radius_min)
+		SetRadiusFunctor(sim::Scalar radius_min, sim::Scalar radius_max)
+		: _radius_min(radius_min)
 		, _radius_max(radius_max)
 		{
 		}
 		
-	private:
-		void operator() (sim::Planet & planet) const
+		void operator() (sim::Planet * planet) const
 		{
-			planet.SetRadiusMinMax(_radius_min, _radius_max);
+			if (planet != nullptr)
+			{
+				planet->SetRadiusMinMax(_radius_min, _radius_max);
+			}
 		}
 		
+	private:
 		sim::Scalar _radius_min;
 		sim::Scalar _radius_max;
 	};
@@ -81,8 +81,8 @@ int Formation::GetSeed() const
 
 void Formation::SendRadiusUpdateMessage() const
 {
-	SetRadiusFunctor message(_uid, _radius_min, _radius_max);
-	sim::Daemon::SendMessage(message);
+	SetRadiusFunctor functor(_radius_min, _radius_max);
+	sim::CallEntity<sim::Planet>(_uid, functor);
 }
 
 void Formation::SampleRadius(sim::Scalar sample_radius)
