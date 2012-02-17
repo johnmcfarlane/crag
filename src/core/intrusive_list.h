@@ -641,8 +641,8 @@ namespace core
 			
 			void push_front(value_type & n)
 			{
-				value_type & previous = * super::_head._next;
-				super::template insert_detached<Member>(previous, n);
+				value_type & next = super::front();
+				super::template insert_detached<Member>(next, n);
 			}
 			void push_back(value_type & n)
 			{
