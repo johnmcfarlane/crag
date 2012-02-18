@@ -16,17 +16,13 @@
 
 namespace sim
 {
+	// rotating solar light source
 	class Star : public Entity
 	{
-		DECLARE_SCRIPT_CLASS(Star, Entity);
-		
 	public:
 		Star();
 		~Star();
 
-		// Type-specific allocation via script.
-		static bool Create(Star & star, PyObject & args);
-		
 		// Called from the simulation thread.
 		void Init(Simulation & simulation, InitData<Star> const & init);
 		
@@ -39,6 +35,14 @@ namespace sim
 	private:
 		gfx::Uid _light_uid;
 		Vector3 position;
+		Scalar radius;
+		Scalar year;
+	};
+
+	// InitData struct specialization for Box
+	template <>
+	struct InitData <Star>
+	{
 		Scalar radius;
 		Scalar year;
 	};

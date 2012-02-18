@@ -33,14 +33,9 @@ namespace sim
 {
 	class Observer : public Entity
 	{
-		DECLARE_SCRIPT_CLASS(Observer, Entity);
-
 	public:
 		Observer();
 		~Observer();
-		
-		// Type-specific allocation via script.
-		static bool Create(Observer & observer, PyObject & args);
 		
 		// Called from the simulation thread.
 		void Init(Simulation & simulation, InitData<Observer> const & init_data);
@@ -60,5 +55,12 @@ namespace sim
 #if defined(OBSERVER_LIGHT)
 		gfx::Uid _light_uid;
 #endif
+	};
+	
+	// InitData struct specialization for Observer
+	template <>
+	struct InitData<Observer>
+	{
+		Vector3 center;
 	};
 }

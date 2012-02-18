@@ -16,8 +16,6 @@
 
 #include "physics/SphericalBody.h"
 
-#include "script/MetaClass.h"
-
 #include "gfx/object/Ball.h"
 #include "gfx/object/BranchNode.h"
 #include "gfx/Renderer.inl"
@@ -38,25 +36,6 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::Ball script binding
-
-DEFINE_SCRIPT_CLASS(sim, Ball)
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::InitData<Ball> struct specialization
-
-namespace sim
-{
-	template <>
-	struct InitData<Ball>
-	{
-		Sphere3 sphere;
-	};
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // sim::Ball member definitions
 
 using namespace sim;
@@ -70,19 +49,6 @@ Ball::Ball()
 Ball::~Ball()
 {
 	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
-}
-
-bool Ball::Create(Ball & ball, PyObject & args)
-{
-	// Parse planet creation parameters
-	InitData<Ball> init_data;
-	if (! PyArg_ParseTuple(& args, "dddd", & init_data.sphere.center.x, & init_data.sphere.center.y, & init_data.sphere.center.z, & init_data.sphere.radius))
-	{
-		return false;
-	}
-	
-	Daemon::Call< Ball *, InitData<Ball> >(& ball, init_data, & Simulation::OnNewEntity);
-	return true;
 }
 
 void Ball::Init(Simulation & simulation, InitData<Ball> const & init_data)

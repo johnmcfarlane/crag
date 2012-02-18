@@ -16,8 +16,6 @@
 
 #include "physics/BoxBody.h"
 
-#include "script/MetaClass.h"
-
 #include "gfx/object/Box.h"
 #include "gfx/Renderer.inl"
 
@@ -41,26 +39,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Box script binding
 
-DEFINE_SCRIPT_CLASS(sim, Box)
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::InitData<Box> struct specialization
-
-namespace sim
-{
-	template <>
-	struct InitData<Box>
-	{
-		Vector3 center;
-		Vector3 size;
-	};
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::Box script binding
-
 using namespace sim;
 
 
@@ -71,20 +49,6 @@ Box::Box()
 Box::~Box()
 {
 	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
-}
-
-bool Box::Create(Box & box, PyObject & args)
-{
-	// Parse planet creation parameters
-	InitData<Box> init_data;
-	if (! PyArg_ParseTuple(& args, "dddddd", & init_data.center.x, & init_data.center.y, & init_data.center.z, & init_data.size.x, & init_data.size.y, & init_data.size.z))
-	{
-		return false;
-	}
-
-	// send
-	Daemon::Call< Box *, InitData<Box> >(& box, init_data, & Simulation::OnNewEntity);
-	return true;
 }
 
 void Box::Init(Simulation & simulation, InitData<Box> const & init_data)

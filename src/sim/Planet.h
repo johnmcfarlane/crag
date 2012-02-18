@@ -13,6 +13,8 @@
 
 #include "gfx/defs.h"
 
+#include "geom/Sphere.h"
+
 
 namespace form
 {
@@ -24,18 +26,12 @@ namespace sim
 {
 	class PlanetaryBody;
 	
-	
-	// A planet is a celestial body which is represented using formation.
+	// A planet is a celestial body which is represented using the formation system.
 	class Planet : public Entity
 	{
-		DECLARE_SCRIPT_CLASS(Planet, Entity);
-		
 	public:
 		Planet();
 		~Planet();
-
-		// Type-specific allocation via script.
-		static bool Create(Planet & planet, PyObject & args);
 
 		// Called from the simulation thread.
 		virtual void Init(Simulation & simulation, InitData<Planet> const & init_data);
@@ -60,5 +56,14 @@ namespace sim
 		Scalar _radius_mean;
 		Scalar _radius_min;
 		Scalar _radius_max;
+	};
+
+	// InitData struct specialization for Box
+	template <>
+	struct InitData<Planet>
+	{
+		Sphere3 sphere;
+		int random_seed;
+		int num_craters;
 	};
 }

@@ -23,13 +23,21 @@ namespace sim
 	// An entity with its own locomotion.
 	class Vehicle : public Ball
 	{
-		DECLARE_SCRIPT_CLASS(Vehicle, Ball);
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
+		typedef Ball super;
 	public:
-		struct Thruster;
+		
+		struct Thruster
+		{
+			Vector3 position;	// position of Thruster relative to vehicle
+			Vector3 direction;	// direction of thrust relative to vehicle rotation
+			SDL_Scancode key;
+			gfx::Uid gfx_uid;
+			float thrust_factor;
+		};
+		
 		typedef std::vector<Thruster> ThrusterVector;
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -56,5 +64,11 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// data
 		ThrusterVector _thrusters;
+	};
+	
+	// InitData struct specialization for Ball
+	template <>
+	struct InitData<Vehicle> : public InitData<Ball>
+	{
 	};
 }

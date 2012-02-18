@@ -22,16 +22,12 @@ namespace physics
 
 namespace sim
 {
+	// a cuboid-shaped entity
 	class Box : public Entity
 	{
-		DECLARE_SCRIPT_CLASS(Box, Entity);
-		
 	public:
 		Box();
 		~Box();
-		
-		// Type-specific allocation via script.
-		static bool Create(Box & box, PyObject & args);
 		
 		// Called from the simulation thread.
 		void Init(Simulation & simulation, InitData<Box> const & init_data);
@@ -45,5 +41,13 @@ namespace sim
 		
 		// variables
 		gfx::Uid _gfx_uid;
+	};
+
+	// InitData struct specialization for Box
+	template <>
+	struct InitData<Box>
+	{
+		Vector3 center;
+		Vector3 size;
 	};
 }

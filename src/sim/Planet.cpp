@@ -24,34 +24,11 @@
 
 #include "gfx/object/Planet.h"
 
-#include "script/MetaClass.h"
-
 
 //#define RENDER_SEA
 
 
 using namespace sim;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Planet script binding
-
-DEFINE_SCRIPT_CLASS(sim, Planet)
-
-
-//////////////////////////////////////////////////////////////////////
-// sim::InitData<Planet> struct specialization
-
-namespace sim
-{
-	template <>
-	struct InitData<Planet>
-	{
-		Sphere3 sphere;
-		int random_seed;
-		int num_craters;
-	};
-}
 
 
 //////////////////////////////////////////////////////////////////////
@@ -78,20 +55,6 @@ Planet::~Planet()
 
 	delete _body;
 	_body = nullptr;
-}
-
-bool Planet::Create(Planet & planet, PyObject & args)
-{	
-	// Parse planet creation parameters
-	InitData<Planet> init_data;
-	if (! PyArg_ParseTuple(& args, "ddddii", & init_data.sphere.center.x, & init_data.sphere.center.y, & init_data.sphere.center.z, & init_data.sphere.radius, & init_data.random_seed, & init_data.num_craters))
-	{
-		return false;
-	}
-
-	// register with simulation
-	sim::Daemon::Call< Planet *, InitData<Planet> >(& planet, init_data, & sim::Simulation::OnNewEntity);
-	return true;
 }
 
 void Planet::Init(Simulation & simulation, InitData<Planet> const & init_data)

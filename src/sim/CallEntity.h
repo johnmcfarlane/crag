@@ -15,8 +15,6 @@
 
 #include "smp/Message.h"
 
-#include "script/MetaClass.h"
-
 
 namespace sim
 {

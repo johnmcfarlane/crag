@@ -13,7 +13,6 @@
 
 #include "axes.h"
 #include "EntityFunctions.h"
-#include "CallEntity.h"
 #include "Simulation.h"
 
 #include "physics/Body.h"
@@ -23,74 +22,10 @@
 #include "gfx/Renderer.h"
 #include "gfx/Renderer.inl"
 
-#include "script/MetaClass.h"
-
 #include "core/app.h"
 
 
 using namespace sim;
-
-
-struct Vehicle::Thruster
-{
-	Vector3 position;	// position of Thruster relative to vehicle
-	Vector3 direction;	// direction of thrust relative to vehicle rotation
-	SDL_Scancode key;
-	gfx::Uid gfx_uid;
-	float thrust_factor;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::Vehicle script binding
-
-namespace
-{
-	class AddThrusterFunctor
-	{
-	public:
-		// functions
-		AddThrusterFunctor(Vehicle::Thruster thruster)
-		: _thruster(thruster)
-		{
-			Assert(_thruster.gfx_uid == gfx::Uid::null);
-		}
-		
-		void operator() (sim::Vehicle * vehicle) const
-		{
-			Assert(vehicle != nullptr);
-			vehicle->AddThruster(_thruster);
-		}
-		
-	private:
-		Vehicle::Thruster _thruster;
-	};
-	
-	PyObject * vehicle_add_thruster(PyObject * self, PyObject * args)
-	{
-		Vehicle::Thruster thruster;
-		
-		if (! PyArg_ParseTuple(args, "ddddddi", 
-							   & thruster.position.x, & thruster.position.y, & thruster.position.z, 
-							   & thruster.direction.x, & thruster.direction.y, & thruster.direction.z,
-							   & thruster.key))
-		{
-			Py_RETURN_NONE;
-		}
-		
-		Vehicle & vehicle = Vehicle::GetRef(self);
-		sim::Uid vehicle_uid = vehicle.GetUid();
-		
-		AddThrusterFunctor functor(thruster);
-		sim::CallEntity<sim::Vehicle>(vehicle_uid, functor);
-		
-		Py_RETURN_NONE;
-	}
-}
-
-DEFINE_SCRIPT_CLASS_BEGIN(sim, Vehicle)
-SCRIPT_CLASS_METHOD("add_thruster", vehicle_add_thruster, "Add a Thruster (x,y,z,p,q,r,key)")
-DEFINE_SCRIPT_CLASS_END
 
 
 ////////////////////////////////////////////////////////////////////////////////

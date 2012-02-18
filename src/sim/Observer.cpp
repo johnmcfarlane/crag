@@ -21,8 +21,6 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
-#include "script/MetaClass.h"
-
 #include "gfx/Renderer.inl"
 #include "gfx/object/Light.h"
 
@@ -49,61 +47,6 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Observer script binding
-
-namespace 
-{
-	PyObject * observer_add_rotation(PyObject * self, PyObject * args)
-	{
-		Vector3 rotations;
-		if (! PyArg_ParseTuple(args, "ddd", & rotations.x, & rotations.y, & rotations.z))
-		{
-			// TODO: This is probably wront; use Py_RETURN_NONE instead.
-			// TODO: In general, start throwing exceptions.
-			return nullptr;
-		}
-		
-		Observer & observer = Observer::GetRef(self);
-		observer.AddRotation(rotations);
-		
-		Py_RETURN_NONE;
-	}
-	
-	PyObject * observer_set_speed(PyObject * self, PyObject * args)
-	{
-		int speed;
-		if (! PyArg_ParseTuple(args, "i", & speed))
-		{
-			return nullptr;
-		}
-		
-		Observer & observer = Observer::GetRef(self);
-		observer.SetSpeed(speed);
-		
-		Py_RETURN_NONE;
-	}
-}
-
-DEFINE_SCRIPT_CLASS_BEGIN(sim, Observer)
-	SCRIPT_CLASS_METHOD("add_rotation", observer_add_rotation, "Add some rotational impulse to the observer")
-	SCRIPT_CLASS_METHOD("set_speed", observer_set_speed, "Set the impulse speed of the observer")
-DEFINE_SCRIPT_CLASS_END
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::InitData<Observer> struct specialization
-
-namespace sim
-{
-	template <>
-	struct InitData<Observer>
-	{
-		Vector3 center;
-	};
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
 
@@ -121,21 +64,6 @@ Observer::~Observer()
 #endif
 
 	observer_speed_factor = static_cast<double>(speed_factor);
-}
-
-bool Observer::Create(Observer & observer, PyObject & args)
-{
-	// Parse planet creation parameters
-	InitData<Observer> init_data;
-	if (! PyArg_ParseTuple(& args, "ddd", & init_data.center.x, & init_data.center.y, & init_data.center.z))
-	{
-		return false;
-	}
-	
-	// send creation message
-	Daemon::Call< Observer *, InitData<Observer> >(& observer, init_data, & Simulation::OnNewEntity);
-	
-	return true;
 }
 
 void Observer::Init(Simulation & simulation, InitData<Observer> const & init_data)

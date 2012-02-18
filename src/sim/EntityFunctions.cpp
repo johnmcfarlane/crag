@@ -14,6 +14,7 @@
 #include "EntitySet.h"
 #include "Simulation.h"
 
+#include "physics/Body.h"
 #include "physics/Engine.h"
 
 #include "gfx/object/BranchNode.h"
@@ -66,5 +67,18 @@ namespace sim
 		}
 		
 		physics_engine.Attach(ref(bodies[0]), ref(bodies[1]));
+	}
+
+	void SetCollidable(Entity & entity, bool collidable)
+	{
+		Entity::Body * body = entity.GetBody();
+		if (body != nullptr)
+		{
+			body->SetIsCollidable(collidable != 0);
+		}
+		else
+		{
+			std::cerr << "SetCollidable called on entity with no body" << std::endl;
+		}
 	}
 }

@@ -15,43 +15,8 @@
 
 #include "physics/Body.h"
 
-#include "script/MetaClass.h"
-
 
 using namespace sim;
-
-
-namespace
-{
-	PyObject * entity_set_collidable(PyObject * self, PyObject * args)
-	{
-		int collision;
-		if (! PyArg_ParseTuple(args, "i", & collision))
-		{
-			return nullptr;
-		}
-		
-		using sim::Entity;
-		Entity & entity = Entity::GetRef(self);
-		Entity::Body * body = entity.GetBody();
-		if (body != nullptr)
-		{
-			body->SetIsCollidable(collision != 0);
-		}
-		else
-		{
-			// TODO: Start throwing exceptions.
-			std::cerr << "set_collidable called on entity with no body" << std::endl;
-		}
-
-		Py_RETURN_NONE;
-	}
-}
-
-
-DEFINE_SCRIPT_CLASS_BEGIN(sim, Entity)
-	SCRIPT_CLASS_METHOD("set_collidable", entity_set_collidable, "Set whether entity collides with other entities")
-DEFINE_SCRIPT_CLASS_END
 
 
 //////////////////////////////////////////////////////////////////////
@@ -66,25 +31,12 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-	Assert(Py_REFCNT(& ob_base) == 0);
 	delete _body;
 }
 
 Uid Entity::GetUid() const
 {
 	return _uid;
-}
-
-bool Entity::Create(Entity & entity, PyObject & args)
-{
-	Assert(false);
-	return false;
-}
-
-void Entity::Destroy(Entity & entity)
-{
-	// set message
-	sim::Daemon::Call(entity.GetUid(), & Simulation::OnRemoveEntity);
 }
 
 void Entity::Tick(Simulation & simulation)

@@ -24,6 +24,7 @@ namespace sim
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
+	class Entity;
 	class EntitySet;
 	class Simulation;
 	
@@ -38,4 +39,7 @@ namespace sim
 	
 	// physically attaches the given entities to one another
 	void AttachEntities(Uid const & uid1, Uid const & uid2, EntitySet & entity_set, physics::Engine & physics_engine);
+	
+	// sets physical property of being collidable
+	void SetCollidable(Entity & entity, bool collidable);
 }

@@ -29,8 +29,6 @@ namespace sim
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public script::Object
 	{
-		DECLARE_SCRIPT_CLASS(Entity, script::Object);
-
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -43,12 +41,6 @@ namespace sim
 		virtual ~Entity();
 		
 		Uid GetUid() const;
-		
-		// Type-specific allocation via script. DO NOT CALL.
-		static bool Create(Entity & entity, PyObject & args);
-
-		// Type-specific allocation via script.
-		static void Destroy(Entity & entity);
 		
 		// general callbacks
 		virtual void Tick(Simulation & simulation);

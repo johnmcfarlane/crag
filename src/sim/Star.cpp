@@ -17,28 +17,6 @@
 #include "gfx/object/Light.h"
 #include "gfx/Renderer.inl"
 
-#include "script/MetaClass.h"
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::Star script binding
-
-DEFINE_SCRIPT_CLASS(sim, Star)
-
-
-////////////////////////////////////////////////////////////////////////////////
-// sim::InitData<Star> struct specialization
-
-namespace sim
-{
-	template <>
-	struct InitData <Star>
-	{
-		Scalar radius;
-		Scalar year;
-	};
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
@@ -53,20 +31,6 @@ sim::Star::Star()
 sim::Star::~Star()
 {
 	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
-}
-
-bool sim::Star::Create(Star & star, PyObject & args)
-{
-	// Parse planet creation parameters
-	InitData<Star> init_data;
-	if (! PyArg_ParseTuple(& args, "dd", & init_data.radius, & init_data.year))
-	{
-		return false;
-	}
-
-	// send
-	Daemon::Call< Star *, InitData<Star> >(& star, init_data, & Simulation::OnNewEntity);
-	return true;
 }
 
 void sim::Star::Init(Simulation & simulation, InitData<Star> const & init_data)

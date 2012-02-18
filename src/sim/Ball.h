@@ -14,6 +14,8 @@
 #include "gfx/Color.h"
 #include "gfx/defs.h"
 
+#include "geom/Sphere.h"
+
 
 namespace gfx
 {
@@ -23,16 +25,12 @@ namespace gfx
 
 namespace sim
 {
+	// a round entity
 	class Ball : public Entity
 	{
-		DECLARE_SCRIPT_CLASS(Ball, Entity);
-		
 	public:
 		Ball();
 		~Ball();
-		
-		// Type-specific allocation via script.
-		static bool Create(Ball & ball, PyObject & args);
 		
 		// Called from the simulation thread.
 		void Init(Simulation & simulation, InitData<Ball> const & init_data);
@@ -50,5 +48,12 @@ namespace sim
 	private:
 		// variables
 		gfx::Uid _gfx_uid;
+	};
+
+	// InitData struct specialization for Ball
+	template <>
+	struct InitData<Ball>
+	{
+		Sphere3 sphere;
 	};
 }
