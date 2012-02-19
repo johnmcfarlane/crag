@@ -30,21 +30,21 @@ namespace script
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-
+		
 		typedef std::queue<SDL_Event> EventQueue;
 	public:
 		typedef smp::Daemon<ScriptThread> Daemon;
-
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-
+		
 		ScriptThread();
 		~ScriptThread();
 		
 		// daemon messages
 		void OnQuit();
 		void OnEvent(SDL_Event const & event);
-
+		
 		bool GetQuitFlag() const;
 		void SetQuitFlag();
 		
@@ -61,13 +61,15 @@ namespace script
 	private:
 		bool HasFibersActive() const;
 		
-		void ContinueTask();
-
+		bool ProcessTasks();
+		bool StartTask();
+		bool ContinueTask();
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
-
+		
 		EventQueue _events;
-
+		
 		// Simulation time.
 		Time _time;
 		

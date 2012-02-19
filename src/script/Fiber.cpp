@@ -54,11 +54,9 @@ bool Fiber::IsComplete() const
 	return _complete;
 }
 
-bool Fiber::TestCondition(ScriptThread & script_thread) const
+Condition * Fiber::GetCondition()
 {
-	Assert(_condition != nullptr);
-	
-	return (* _condition)(script_thread);
+	return _condition;
 }
 
 bool Fiber::GetQuitFlag() const

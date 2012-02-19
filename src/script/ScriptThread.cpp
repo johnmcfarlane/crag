@@ -94,12 +94,15 @@ void ScriptThread::Run(Daemon::MessageQueue & message_queue)
 	FiberEntry<MainFunctor> & main_fiber = ref(new FiberEntry<MainFunctor>(main_functor));
 	Launch(main_fiber);
 
-	// 
+	// Main script loop.
 	while (HasFibersActive())
 	{
-		ContinueTask();
-
-		message_queue.DispatchMessages(* this);
+		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
+		bool processed_tasks = ProcessTasks();
+		if (! (dispatched_messages | processed_tasks))
+		{
+			smp::Yield();
+		}
 	}
 	
 	message_queue.DispatchMessages(* this);
@@ -128,36 +131,64 @@ bool ScriptThread::HasFibersActive() const
 	return _unlaunched_fiber != nullptr || ! _fibers.empty();
 }
 
-void ScriptThread::ContinueTask()
+bool ScriptThread::ProcessTasks()
 {
 	Assert(HasFibersActive());
 	
+	return StartTask() || ContinueTask();
+}
+
+bool ScriptThread::StartTask()
+{
 	// pick the next fiber to process
-	Fiber * fiber;
-	if (_unlaunched_fiber != nullptr)
+	if (_unlaunched_fiber == nullptr)
 	{
-		Assert(! _fibers.contains(* _unlaunched_fiber));
-		
-		fiber = _unlaunched_fiber;
-		_unlaunched_fiber = nullptr;
-		fiber->Start(* this);
-	}
-	else if (! _fibers.empty())
-	{
-		fiber = & _fibers.front();
-		_fibers.pop_front();
-		
-		if (fiber->IsComplete())
-		{
-			delete fiber;
-			return;
-		}
-		
-		if (fiber->TestCondition(* this))
-		{
-			fiber->Continue();
-		}
+		return false;
 	}
 	
+	Assert(! _fibers.contains(* _unlaunched_fiber));
+	
+	Fiber * fiber = _unlaunched_fiber;
+	_unlaunched_fiber = nullptr;
+	fiber->Start(* this);
+	
 	_fibers.push_back(* fiber);
+		
+	return true;
+}
+
+bool ScriptThread::ContinueTask()
+{
+	if (_fibers.empty())
+	{
+		return false;
+	}
+	
+	Fiber & first = _fibers.front();
+	Fiber * fiber = & first;
+	do
+	{
+		Assert(! fiber->IsComplete());
+
+		_fibers.pop_front();
+		_fibers.push_back(* fiber);
+		
+		Condition & condition = ref(fiber->GetCondition());
+		if (condition(* this))
+		{
+			fiber->Continue();
+
+			if (fiber->IsComplete())
+			{
+				_fibers.remove(* fiber);
+				delete fiber;
+			}
+			
+			return true;
+		}
+
+		fiber = & _fibers.front();
+	}	while (fiber != & first);
+	
+	return false;
 }

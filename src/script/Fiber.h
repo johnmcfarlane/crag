@@ -31,7 +31,7 @@ namespace script
 		~Fiber();
 		
 		bool IsComplete() const;
-		bool TestCondition(ScriptThread & scrip_thread) const;
+		Condition * GetCondition();
 
 		void Continue();
 		void Start(ScriptThread & script_thread);
