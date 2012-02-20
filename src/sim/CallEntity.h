@@ -50,7 +50,7 @@ namespace sim
 	// Thread-safe call to an entity by its UID.
 	// Takes functor of type, void f(ENTITY_TYPE * entity).
 	template <typename ENTITY_TYPE, typename FUNCTOR>
-	void CallEntity(Uid uid, FUNCTOR const const & functor)
+	void CallEntity(Uid uid, FUNCTOR const & functor)
 	{
 		EntityMessage<ENTITY_TYPE, FUNCTOR> message(uid, functor);
 		sim::Daemon::SendMessage(message);

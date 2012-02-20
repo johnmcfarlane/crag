@@ -37,13 +37,13 @@ namespace script
 		
 		// A multiplier which accounts for the fact that more stack is used in debug builds.
 		// The size of the cushion in bytes.
-		static const size_t _cushion_size = 1024 * sizeof(void *);
+		static size_t const _cushion_size = 1024 * sizeof(void *);
 		
 		// The size of the area of the cushion intended to remain untouched.
-		static const size_t _safe_margin_size = _cushion_size >> 1;
+		static size_t const _safe_margin_size = _cushion_size >> 1;
 		
 		// The value written into the safe margin.
-		static const char _marker_value = 0x9d;
+		static char const _marker_value = (char)(0x9d);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

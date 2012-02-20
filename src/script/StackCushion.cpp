@@ -7,6 +7,8 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#include "pch.h"
+
 #include "StackCushion.h"
 
 
@@ -78,4 +80,4 @@ static const size_t _cushion_size = 128 * sizeof(void *) * _debug_factor;
 static const size_t _safe_margin_size = _cushion_size >> 2;
 
 // The value written into the safe margin.
-static const char _marker_value = 0x9d;
+static const char _marker_value = (char)0x9d;

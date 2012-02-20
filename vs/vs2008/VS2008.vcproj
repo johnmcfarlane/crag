@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\ode\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PROFILE;dDOUBLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\dependencies\ode\lib\DebugDoubleLib\ode_doubled.lib ..\..\dependencies\SDL\VisualC\SDL\Debug\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Debug\SDLmain.lib ..\..\dependencies\glew\lib\glew32sd.lib ..\..\dependencies\python\PCbuild\python31_d.lib GlU32.Lib OpenGL32.Lib"
+				AdditionalDependencies="..\..\dependencies\ode\lib\DebugDoubleLib\ode_doubled.lib ..\..\dependencies\SDL\VisualC\SDL\Debug\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Debug\SDLmain.lib ..\..\dependencies\glew\lib\glew32sd.lib GlU32.Lib OpenGL32.Lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\Python\Include;..\..\dependencies\Python\PC;..\..\dependencies\Python\Stackless;..\..\dependencies\ode\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\dependencies\glew\include;..\..\dependencies\SDL\include;..\..\dependencies\ode\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;dDOUBLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\dependencies\ode\lib\ReleaseDoubleLib\ode_double.lib ..\..\dependencies\SDL\VisualC\SDL\Release\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Release\SDLmain.lib ..\..\dependencies\glew\lib\glew32s.lib ..\..\dependencies\python\PCbuild\python31.lib GlU32.Lib OpenGL32.Lib"
+				AdditionalDependencies="..\..\dependencies\ode\lib\ReleaseDoubleLib\ode_double.lib ..\..\dependencies\SDL\VisualC\SDL\Release\SDL.lib ..\..\dependencies\SDL\VisualC\SDLmain\Release\SDLmain.lib ..\..\dependencies\glew\lib\glew32s.lib GlU32.Lib OpenGL32.Lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -938,6 +938,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\gfx\MeshResource.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\gfx\Pov.cpp"
 					>
 				</File>
@@ -1230,15 +1234,55 @@
 				Name="script"
 				>
 				<File
-					RelativePath="..\..\src\script\MetaClass.cpp"
+					RelativePath="..\..\src\script\Condition.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\script\MetaClass.h"
+					RelativePath="..\..\src\script\EntityHandle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\EntityHandle.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\EventCondition.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\EventCondition.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\Fiber.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\Fiber.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\FiberInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\MainFunctor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\MainFunctor.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\script\Object.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\ObserverFunctor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\ObserverFunctor.h"
 					>
 				</File>
 				<File
@@ -1249,88 +1293,31 @@
 					RelativePath="..\..\src\script\ScriptThread.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\src\script\StackCushion.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\StackCushion.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\StackFrameBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\StackFrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\TimeCondition.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\script\TimeCondition.h"
+					>
+				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="script"
-			>
-			<File
-				RelativePath="..\..\script\main.py"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\script\observer.py"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\script\utility.py"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Copying script file"
-						CommandLine="xcopy &quot;$(InputPath)&quot; &quot;$(OutDir)\crag\script\&quot; /D /Y&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
-						Outputs="$(OutDir)\crag\script\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="glsl"

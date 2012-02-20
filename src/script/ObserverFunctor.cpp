@@ -118,9 +118,11 @@ bool ObserverFunctor::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 				return false;
 				
 			case SDL_SCANCODE_C:
-				_collidable = ! _collidable;
-				SetCollidableFunctor functor(_collidable);
-				_observer.Call(functor);
+				{
+					_collidable = ! _collidable;
+					SetCollidableFunctor functor(_collidable);
+					_observer.Call(functor);
+				}
 				return true;
 
 			case SDL_SCANCODE_0:
@@ -172,7 +174,7 @@ namespace
 
 bool ObserverFunctor::HandleMouseMove(int x_delta, int y_delta)
 {
-	float sensitivity = 0.1;
+	float sensitivity = 0.1f;
 	
 	Vector3f rotation;
 	rotation.x = - y_delta * sensitivity;

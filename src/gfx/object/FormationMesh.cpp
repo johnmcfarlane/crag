@@ -10,10 +10,10 @@
 #include "pch.h"
 
 #include "FormationMesh.h"
-#include "Renderer.h"
-#include "ResourceManager.h"
 
 #include "gfx/Debug.h"
+#include "gfx/Renderer.h"
+#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
 #include "form/FormationManager.h"
