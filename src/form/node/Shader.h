@@ -24,6 +24,7 @@ namespace form
 	class Shader
 	{
 	public:	
+		virtual ~Shader() { }
 		virtual void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const = 0;
 		virtual bool InitMidPoint(Polyhedron & polyhedron, Node const & a, Node const & b, int index, Point & mid_point) const = 0;
 	};

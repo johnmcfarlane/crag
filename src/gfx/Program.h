@@ -45,7 +45,7 @@ namespace gfx
 	{
 	public:
 		Program();
-		~Program();
+		virtual ~Program();
 		
 		bool IsInitialized() const;
 		bool IsLinked() const;

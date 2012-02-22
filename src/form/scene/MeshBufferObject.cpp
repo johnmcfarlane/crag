@@ -26,6 +26,10 @@ form::MeshBufferObject::MeshBufferObject()
 {
 }
 
+form::MeshBufferObject::~MeshBufferObject()
+{
+}
+
 void form::MeshBufferObject::Set(form::Mesh const & mesh)
 {
 	SetVbo(mesh.GetVertices());

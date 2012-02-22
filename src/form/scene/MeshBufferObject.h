@@ -37,6 +37,7 @@ namespace form
 		typedef gfx::Mesh<Vertex, GL_DYNAMIC_DRAW> super;
 	public:
 		MeshBufferObject();
+		virtual ~MeshBufferObject();
 		
 		void Set(form::Mesh const & mesh);
 		int GetNumPolys() const;

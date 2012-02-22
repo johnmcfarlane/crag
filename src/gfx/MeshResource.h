@@ -17,7 +17,7 @@ namespace gfx
 	class MeshResource
 	{
 	public:
-		~MeshResource() { }
+		virtual ~MeshResource() { }
 		virtual void Activate() const { }
 		virtual void Deactivate() const { }
 	};
