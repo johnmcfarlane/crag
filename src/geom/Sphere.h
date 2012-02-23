@@ -10,15 +10,69 @@
 #pragma once
 
 
-// Base class for circles and spheres, i.e. n-spheres.
-template<typename S, int N> class Sphere
+////////////////////////////////////////////////////////////////////////////////
+// SphereProperties class definition/specializations
+
+template <typename S, int N>
+class SphereProperties
+{
+};
+
+template <typename S>
+class SphereProperties<S, 2>
 {
 public:
+	static S Circumference(S radius)
+	{
+		return static_cast<S>(PI * 2.) * radius;
+	}
+	
+	static S Area(S radius)
+	{
+		return static_cast<S>(PI) * Square(radius);
+	}
+};
+
+template <typename S>
+class SphereProperties<S, 3>
+{
+public:
+	static S Area(S radius)
+	{
+		return static_cast<S>(PI * 4.) * Square(radius);
+	}
+	
+	static S Volume(S radius)
+	{
+		return static_cast<S>(PI * 4. / 3.) * Cube(radius);
+	}
+	
+	static S RadiusFromVolume(S volume)
+	{
+		return CubeRoot(volume / static_cast<S>(PI * 4. / 3.));
+	}
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Sphere class definition
+
+// Base class for circles and spheres, i.e. n-spheres.
+template <typename S, int N> 
+class Sphere
+{
+public:
+	////////////////////////////////////////////////////////////////////////////////
 	// types
+	
 	typedef S Scalar;
 	typedef Vector<Scalar, N> Vector;
+	typedef SphereProperties<Scalar, N> Properties;
 	
+	////////////////////////////////////////////////////////////////////////////////
 	// functions
+	
+	// c'tors
 	Sphere() 
 	{ }
 	
@@ -39,7 +93,9 @@ public:
 	, radius(rhs.radius)
 	{ }
 
+	////////////////////////////////////////////////////////////////////////////////
 	// variables
+	
 	Vector center;
 	Scalar radius;
 };
@@ -56,63 +112,31 @@ bool operator==(Sphere<S, N> const & lhs, Sphere<S, N> const & rhs)
 template <typename S, int N>
 bool operator!=(Sphere<S, N> const & lhs, Sphere<S, N> const & rhs)
 {
-	return lhs.center != rhs.center && lhs.radius != rhs.radius;
+	return lhs.center != rhs.center || lhs.radius != rhs.radius;
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
 // Sphere properties
-template<typename S, int N> S SphereDiameter(S radius)
+
+template<typename S, int N> S Diameter(Sphere<S, N> const & s)
 {
-	return radius * 2;
+	return s.radius * 2.;
 }
 
-template<typename S, int N> S SphereArea(S radius);
-template<typename S, int N> S SphereVolume(S radius);
-template<typename S, int N> S SphereRadiusFromVolume(S volume);
-
-// Area
 template<typename S, int N> S Area(Sphere<S, N> const & s)
 {
-	return SphereArea<S, N>(s.radius);
+	return Sphere<S, N>::Properties::Area(s.radius);
 }
 
-// Volume
 template<typename S, int N> S Volume(Sphere<S, N> const & s)
 {
-	return SphereVolume<S, N>(s.radius);
+	return Sphere<S, N>::Properties::Volume(s.radius);
 }
 
-
-//////////////////////////////////////////////////////////////////
-// 3D Sphere property specializations
-
-template<typename S, int N> S SphereArea<S, 3>(S radius)
+template<typename S, int N> S RadiusFromVolume(Sphere<S, N> const & s)
 {
-	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
-}
-
-template<typename S, int N> S SphereVolume<S, 3>(S radius)
-{
-	return static_cast<S>(PI * 4. / 3.) * Cube(radius);
-}
-
-template<typename S, int N> S SphereRadiusFromVolume<S, 3>(S volume)
-{
-	return CubeRoot(volume / static_cast<S>(PI * 4. / 3.));
-}
-
-
-//////////////////////////////////////////////////////////////////
-// 2D Sphere property specializations
-
-template<typename S> S Circumference(Sphere<S, 2> const & s)
-{
-	return static_cast<S>(PI * 2.) * s.radius;
-}
-
-template<typename S> S Area(Sphere<S, 2> const & s)
-{
-	return static_cast<S>(PI) * Square(s.radius);
+	return Sphere<S, N>::Properties::RadiusFromVolume(s.radius);
 }
 
 
