@@ -133,7 +133,7 @@ namespace core
 				}
 				
 				// Finally perform the bitwise copy.
-				memcpy(object_copy, & object, object_size);
+				memcpy(reinterpret_cast<void *>(object_copy), reinterpret_cast<void const *>(& object), object_size);
 			}
 			// Now, copy has bitwise copy of this buffer.
 			
