@@ -61,9 +61,6 @@ namespace gfx
 		void Update(UpdateParams const & params, Renderer & renderer);
 		
 	private:
-		BranchNode * CastListObject() override;
-		BranchNode const * CastListObject() const override;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		

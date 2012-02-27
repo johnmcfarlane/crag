@@ -30,7 +30,7 @@ namespace gfx
 		
 		bool Init(Renderer & renderer) override;
 		
-		void Update(UpdateParams const & params, Renderer & renderer) override;
+		void Update(UpdateParams const & params, Renderer & renderer);
 
 	private:
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;

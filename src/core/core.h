@@ -11,42 +11,15 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// !0
-
-// c++0x-friendly NULL.
-#define nullptr 0
-
-
-//////////////////////////////////////////////////////////////////////
-// other recent C++ shenanigans
-
-#define override
-#define final
-
-
-//////////////////////////////////////////////////////////////////////
-// static_assert
-
-// provides some of the functionality of c++0x compile-time asserts.
-#define static_assert(pred, message) switch(0){case 0:case pred:;}
-
-
-//////////////////////////////////////////////////////////////////////
 // OBJECT_NO_COPY
 // 
 // Prevent object from being copied. 
 // Put at top of class definition. 
 
 // Ready for C++0x
-//#define OBJECT_NO_COPY(CLASS) \
-//	CLASS & operator=(const CLASS&) = delete; \
-//	CLASS(const CLASS&) = delete; \
-//	CLASS() = default
-
 #define OBJECT_NO_COPY(CLASS) \
-private: \
-	void operator=(const CLASS &); \
-	CLASS(const CLASS &) 
+	CLASS & operator=(const CLASS&) = delete; \
+	CLASS(const CLASS&) = delete;
 
 
 //////////////////////////////////////////////////////////////////////

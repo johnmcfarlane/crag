@@ -91,7 +91,7 @@ void Vehicle::UpdateModels() const
 	}
 }
 
-void Vehicle::Tick(Simulation & simulation) override
+void Vehicle::Tick(Simulation & simulation)
 {
 	physics::Body * body = GetBody();
 	if (body == nullptr)

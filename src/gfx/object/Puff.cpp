@@ -80,7 +80,7 @@ gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transforma
 	return disk_quad.Transform(scale, scratch);
 }
 
-LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer) override
+LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer)
 {
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);

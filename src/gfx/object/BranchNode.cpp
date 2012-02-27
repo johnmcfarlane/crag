@@ -86,7 +86,7 @@ BranchNode::ChildList::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
-gfx::Transformation const & BranchNode::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override
+gfx::Transformation const & BranchNode::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	scratch = model_view * _transformation;
 	VerifyObject(scratch);
@@ -134,14 +134,4 @@ gfx::Transformation BranchNode::GetModelTransformation() const
 void BranchNode::Update(UpdateParams const & params, Renderer & renderer)
 {
 	_transformation = params.transformation;
-}
-
-BranchNode * BranchNode::CastListObject()
-{
-	return this;
-}
-
-BranchNode const * BranchNode::CastListObject() const
-{
-	return this;
 }

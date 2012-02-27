@@ -219,7 +219,7 @@ void SphereProgram::SetUniforms(::Transformation<float> const & model_view, Colo
 	glUniform1f(_radius_location, radius);
 }
 
-void SphereProgram::InitUniforms() override
+void SphereProgram::InitUniforms()
 {
 	_color_location = GetUniformLocation("color");
 	_center_location = GetUniformLocation("center");
@@ -252,7 +252,7 @@ void FogProgram::SetUniforms(::Transformation<float> const & model_view, Color4f
 	glUniform1f(_density_location, density);
 }
 
-void FogProgram::InitUniforms() override
+void FogProgram::InitUniforms()
 {
 	_density_location = GetUniformLocation("density");
 }
