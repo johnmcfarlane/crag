@@ -60,19 +60,19 @@ void Simulation::OnQuit()
 	quit_flag = true;
 }
 
-void Simulation::OnAddEntity(Entity & entity)
+void Simulation::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the Renderer is in an incomplete state.
-	gfx::Daemon::Call(false, _time, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	
 	_entity_set.Add(entity);
-	entity.UpdateModels();
 	
-	gfx::Daemon::Call(true, _time, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(_time, & gfx::Renderer::OnSetTime);
+	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
 }
 
-void Simulation::OnRemoveEntity(Uid const & uid)
+void Simulation::OnRemoveObject(Uid const & uid)
 {
 	Entity * entity = _entity_set.GetEntity(uid);
 	if (entity == nullptr)
@@ -113,8 +113,9 @@ Time Simulation::GetTime() const
 	return _time;
 }
 
-Entity * Simulation::GetEntity(Uid uid) 
+Entity * Simulation::GetObject(Uid uid) 
 {
+	Assert(uid != Uid::null);
 	Entity * entity = _entity_set.GetEntity(uid);
 	return entity;
 }
@@ -132,9 +133,9 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	smp::SetThreadName("Simulation");
 
 	// Add the skybox.
-	Firmament * skybox = new Firmament;
-	gfx::Uid skybox_uid = skybox->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(skybox, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	smp::Handle<Firmament> skybox;
+	skybox.Create<void *>(nullptr);
+	gfx::Daemon::Call(skybox.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
 	
 	Time next_tick_time = app::GetTime();
 	
@@ -164,7 +165,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	}
 
 	// remove skybox
-	gfx::Daemon::Call<gfx::Uid>(skybox_uid, & gfx::Renderer::OnRemoveObject);
+	skybox.Destroy();
 }
 
 void Simulation::Tick()
@@ -197,11 +198,12 @@ void Simulation::Tick()
 
 void Simulation::UpdateRenderer() const
 {
-	gfx::Daemon::Call(false, _time, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(true, _time, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(_time, & gfx::Renderer::OnSetTime);
+	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
 }
 
 // Perform a step in the simulation. 
@@ -210,8 +212,7 @@ void Simulation::TickEntities()
 	Entity::List & entities = _entity_set.GetEntities();
 	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 	{
-		script::Object & object = * it;
-		Entity & entity = static_cast<Entity &>(object);
+		Entity & entity = * it;
 		
 		entity.Tick(* this);
 	}

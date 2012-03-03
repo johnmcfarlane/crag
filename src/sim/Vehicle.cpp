@@ -20,7 +20,6 @@
 #include "gfx/object/BranchNode.h"
 #include "gfx/object/Thruster.h"
 #include "gfx/Renderer.h"
-#include "gfx/Renderer.inl"
 
 #include "core/app.h"
 
@@ -38,29 +37,30 @@ Vehicle::Vehicle()
 
 void Vehicle::AddThruster(Thruster const & thruster)
 {
-	Assert(thruster.gfx_uid == gfx::Uid::null);
+	Assert(thruster.model == ThrusterHandle::null);
 	
 	// Create sim-side thruster object and get ref to it for writing.
 	_thrusters.push_back(thruster);
 	Thruster & _thruster = _thrusters.back();
 	
-	// Create graphical representation of thruster.
-	gfx::Object * gfx_thruster = new gfx::Thruster;
-	gfx::Uid parent_uid = GetGfxUid();
-	gfx::Uid transformation_uid = AddModelWithTransform(* gfx_thruster, parent_uid);
-	gfx::Uid thruster_uid = gfx_thruster->GetUid();
-	
-	// Position graphical representation.
+	// create gfx-side branch node
+	gfx::BranchNodeHandle branch_node;
 	Scalar thrust_scale = Length(_thruster.direction);
-	gfx::BranchNode::UpdateParams params = 
-	{
-		Transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale)
-	};
+	Transformation transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale);
+	branch_node.Create(transformation);
 	
-	gfx::Daemon::Call(transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	// branch node's parent is vehicle's branch node
+	smp::Handle<gfx::Object> const & parent_model = GetModel();
+	gfx::Daemon::Call(branch_node.GetUid(), parent_model.GetUid(), & gfx::Renderer::OnSetParent);
 	
-	// Initialize the rest of the sim-side data for the new thruster.
-	_thruster.gfx_uid = thruster_uid;
+	// create actual thruster graphics
+	void const * dummy = nullptr;
+	_thruster.model.Create(dummy);
+	
+	// its parent is the branch node
+	gfx::Daemon::Call(_thruster.model.GetUid(), branch_node.GetUid(), & gfx::Renderer::OnSetParent);
+	
+	// initialize thrust factor
 	_thruster.thrust_factor = 0;
 }
 
@@ -76,17 +76,10 @@ void Vehicle::UpdateModels() const
 	// For each thruster,
 	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
-		Thruster const & thruster = * i;
-		
-		// send the amount of thrust to the graphical representation.
-		gfx::Thruster::UpdateParams params = 
+		Thruster const & thruster = * i;		
+		if (thruster.thrust_factor != 0)
 		{
-			thruster.thrust_factor
-		};
-		
-		if (params.thrust_factor != 0)
-		{
-			gfx::Daemon::Call(thruster.gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Thruster>);
+			thruster.model.Call<float>(& gfx::Thruster::Update, thruster.thrust_factor);
 		}
 	}
 }

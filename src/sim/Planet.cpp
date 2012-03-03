@@ -20,7 +20,6 @@
 #include "form/Formation.h"
 #include "form/FormationManager.h"
 
-#include "gfx/Renderer.inl"
 
 #include "gfx/object/Planet.h"
 
@@ -47,7 +46,7 @@ Planet::Planet()
 Planet::~Planet()
 {
 	// unregister with renderer
-	gfx::Daemon::Call<gfx::Uid>(_transformation_uid, & gfx::Renderer::OnRemoveObject);
+	_branch_node.Destroy();
 	
 	// unregister with formation manager
 	form::Daemon::Call<form::Formation *>(_formation, & form::FormationManager::OnRemoveFormation);
@@ -82,7 +81,7 @@ void Planet::Init(Simulation & simulation, InitData<Planet> const & init_data)
 		
 		// formation
 		int random_seed_formation = random.GetInt();
-		_formation = new form::Formation(random_seed_formation, * shader, init_data.sphere, GetUid());
+		_formation = new form::Formation(random_seed_formation, * shader, init_data.sphere, * this);
 		
 		// body
 		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
@@ -97,13 +96,15 @@ void Planet::Init(Simulation & simulation, InitData<Planet> const & init_data)
 		
 		// register with the renderer
 #if defined(RENDER_SEA)
-		float sea_level = _radius_mean;
+		gfx::Scalar sea_level = _radius_mean;
 #else
-		float sea_level = 0;
+		gfx::Scalar sea_level = 0;
 #endif
-		gfx::Planet * model = new gfx::Planet(sea_level);
-		_model_uid = model->GetUid();
-		_transformation_uid = AddModelWithTransform(* model);
+		
+		_branch_node.Create(gfx::Transformation::Matrix::Identity());
+		_model.Create(gfx::Scalar(sea_level));
+		gfx::Daemon::Call(_model.GetUid(), _branch_node.GetUid(), & gfx::Renderer::OnSetParent);
+		UpdateModels();
 	}
 }
 
@@ -148,12 +149,8 @@ void Planet::UpdateModels() const
 	{
 		// update planet params
 		Vector3 const & position = _body->GetPosition();
-		gfx::BranchNode::UpdateParams params = 
-		{
-			Transformation(position, Transformation::Rotation::Identity(), _radius_mean)
-		};
-		
-		gfx::Daemon::Call(_transformation_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+		gfx::Transformation transformation(position, Transformation::Rotation::Identity(), _radius_mean);
+		_branch_node.Call(& gfx::BranchNode::SetTransformation, transformation);
 	}
 
 	{
@@ -163,8 +160,7 @@ void Planet::UpdateModels() const
 			_radius_min,
 			_radius_max
 		};
-		
-		gfx::Daemon::Call(_model_uid, params, & gfx::Renderer::OnUpdateObject<gfx::Planet>);
+		_model.Call(& gfx::Planet::Update, params);
 	}
 }
 

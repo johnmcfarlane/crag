@@ -14,6 +14,12 @@
 #include "geom/Sphere.h"
 
 
+namespace sim
+{
+	class Planet;
+}
+
+
 namespace form 
 {
 	// forward-declarations
@@ -27,7 +33,7 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Uid uid);
+		Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Handle<sim::Planet> const & planet);
 		~Formation();
 
 		Shader const & GetShader() const;
@@ -41,7 +47,7 @@ namespace form
 		int _seed;	// TODO: This needs its own type.
 		Shader const & _shader;
 		sim::Sphere3 _shape;
-		smp::Uid _uid;
+		smp::Handle<sim::Planet> _planet;
 		sim::Scalar _radius_min;
 		sim::Scalar _radius_max;
 	};

@@ -11,23 +11,23 @@
 
 #include "defs.h"
 
-#include "script/Object.h"
-
 
 namespace physics
 {
 	class Body;
 }
 
+namespace gfx
+{
+	class BranchNode;
+	typedef smp::Handle<BranchNode> BranchNodeHandle;
+}
+
 
 namespace sim
 {
-	// forward-declaration
-	class Simulation;
-	
-	
 	// The base class for 'things' that exist in the simulation.
-	class Entity : public script::Object
+	class Entity : public smp::ObjectBase<Entity, Simulation>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +39,6 @@ namespace sim
 		// functions
 		Entity();
 		virtual ~Entity();
-		
-		Uid GetUid() const;
 		
 		// general callbacks
 		virtual void Tick(Simulation & simulation);
@@ -54,13 +52,12 @@ namespace sim
 
 		// Verification
 	#if defined(VERIFY)
-		void Verify(Entity const & entity);
+		//virtual void Verify() override;
 	#endif
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		Uid _uid;
 		Body * _body;
 	};
 }

@@ -21,14 +21,24 @@
 using namespace gfx;
 
 
-Light::Light(Color4f const & color)
+Light::Light()
 : LeafNode(Layer::light)
 {
-	SetColor(color);
 }
 
-bool Light::Init(Renderer & renderer)
+#if defined(VERIFY)
+void Light::Verify() const
 {
+	super::Verify();
+
+	VerifyTrue(Light::List::is_contained(* this));
+}
+#endif
+
+bool Light::Init(Renderer & renderer, Color4f const & color)
+{
+	SetColor(color);
+
 	Scene & scene = renderer.GetScene();
 	Light::List & lights = scene.GetLightList();
 	lights.push_back(* this);

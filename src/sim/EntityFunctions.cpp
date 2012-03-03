@@ -23,23 +23,12 @@
 
 namespace sim
 {
-	gfx::Uid AddModelWithTransform(gfx::Object & object, gfx::Uid parent)
-	{
-		gfx::Object * branch_node = new gfx::BranchNode;
-		gfx::Uid parent_uid = branch_node->GetUid();
-		gfx::Daemon::Call(branch_node, parent, & gfx::Renderer::OnAddObject);
-		
-		gfx::Daemon::Call(& object, parent_uid, & gfx::Renderer::OnAddObject);
-		return parent_uid;
-	}
-	
 	void UpdateModels(EntitySet const & entity_set)
 	{
 		Entity::List const & entities = entity_set.GetEntities();
 		for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
 		{
-			script::Object const & object = * it;
-			Entity const & entity = static_cast<Entity const &>(object);
+			Entity const & entity = * it;
 			entity.UpdateModels();
 		}
 	}

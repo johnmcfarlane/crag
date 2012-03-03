@@ -28,6 +28,11 @@ namespace physics
 	class SphericalBody;
 }
 
+namespace gfx
+{
+	class Light;
+}
+
 
 namespace sim
 {
@@ -53,7 +58,7 @@ namespace sim
 		Vector3 impulses[2];	// [pos/rot]
 		Scalar speed_factor;
 #if defined(OBSERVER_LIGHT)
-		gfx::Uid _light_uid;
+		smp::Handle<gfx::Light> _model;
 #endif
 	};
 	

@@ -40,10 +40,10 @@ namespace smp
 			request_destroy
 		};
 
-		typedef CLASS Class;
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 	public:
+		typedef CLASS Class;
 		typedef Message<Class> Message;
 		typedef MessageQueue<Class, Message> MessageQueue;
 		

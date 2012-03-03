@@ -17,7 +17,6 @@
 #include "physics/BoxBody.h"
 
 #include "gfx/object/Box.h"
-#include "gfx/Renderer.inl"
 
 #include "geom/Transformation.h"
 
@@ -48,7 +47,7 @@ Box::Box()
 
 Box::~Box()
 {
-	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
+	_model.Destroy();
 }
 
 void Box::Init(Simulation & simulation, InitData<Box> const & init_data)
@@ -72,11 +71,12 @@ void Box::InitPhysics(Simulation & simulation, Vector3 center, Vector3 size)
 void Box::InitGraphics()
 {
 	gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
-		Random::sequence.GetUnitInclusive<float>(), 
-		Random::sequence.GetUnitInclusive<float>(), 
-		Random::sequence.GetUnitInclusive<float>());
-	gfx::Object * box = new gfx::Box(color);
-	_gfx_uid = AddModelWithTransform(* box);
+					Random::sequence.GetUnitInclusive<float>(), 
+					Random::sequence.GetUnitInclusive<float>(), 
+					Random::sequence.GetUnitInclusive<float>());
+
+	_model = AddModelWithTransform<gfx::Box>(color);
+	UpdateModels();
 }
 
 void Box::UpdateModels() const
@@ -87,10 +87,7 @@ void Box::UpdateModels() const
 		return;
 	}
 	
-	gfx::BranchNode::UpdateParams params = 
-	{
-		Transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions())
-	};
+	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions());
 	
-	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
 }

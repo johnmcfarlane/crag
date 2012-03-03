@@ -15,7 +15,6 @@
 #include "Simulation.h"
 
 #include "gfx/object/Light.h"
-#include "gfx/Renderer.inl"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,7 @@ sim::Star::Star()
 
 sim::Star::~Star()
 {
-	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
+	_model.Destroy();
 }
 
 void sim::Star::Init(Simulation & simulation, InitData<Star> const & init_data)
@@ -39,8 +38,8 @@ void sim::Star::Init(Simulation & simulation, InitData<Star> const & init_data)
 	year = init_data.year;
 	
 	// initialize light
-	gfx::Light * light = new gfx::Light(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	_light_uid = AddModelWithTransform(* light);
+	gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
+	_model = AddModelWithTransform<gfx::Light>(color);
 }
 
 void sim::Star::Tick(Simulation & simulation)
@@ -52,12 +51,8 @@ void sim::Star::Tick(Simulation & simulation)
 
 void sim::Star::UpdateModels() const
 {
-	gfx::BranchNode::UpdateParams params = 
-	{
-		Transformation(position)
-	};
-	
-	gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	gfx::Transformation transformation(position);	
+	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

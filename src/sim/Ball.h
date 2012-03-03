@@ -17,18 +17,13 @@
 #include "geom/Sphere.h"
 
 
-namespace gfx
-{
-	class Ball;
-}
-
-
 namespace sim
 {
 	// a round entity
 	class Ball : public Entity
 	{
 	public:
+		// functions
 		Ball();
 		~Ball();
 		
@@ -42,12 +37,11 @@ namespace sim
 	public:
 		void UpdateModels() const;
 		
-	protected:
-		gfx::Uid GetGfxUid() const;
+		gfx::BranchNodeHandle const & GetModel() const;
 
 	private:
 		// variables
-		gfx::Uid _gfx_uid;
+		gfx::BranchNodeHandle _model;
 	};
 
 	// InitData struct specialization for Ball

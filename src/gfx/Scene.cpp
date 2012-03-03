@@ -39,6 +39,8 @@ Scene::Scene()
 
 	frustum.fov = static_cast<double>(camera_fov);
 	frustum.depth_range[0] = frustum.depth_range[1] = -1;
+	
+	_root.SetUid(Uid::Create());
 }
 
 Scene::~Scene()
@@ -53,6 +55,13 @@ Scene::~Scene()
 void Scene::Verify() const
 {
 	VerifyObject(_root);
+	
+	for (ObjectMap::const_iterator i = _objects.begin(), end = _objects.end(); i != end; ++ i)
+	{
+		Object const & object = * i->second;
+		VerifyObjectRef(object);
+		VerifyTrue(object.GetParent() != nullptr);
+	}
 }
 #endif
 
@@ -66,14 +75,17 @@ Time Scene::GetTime() const
 	return _time;
 }
 
-void Scene::AddObject(Object & object, BranchNode & parent)
+void Scene::AddObject(Object & object)
 {
-	// add object to its parent's list
-	VerifyObject(parent);
-	parent.AddChild(object);
-	
 	// add object to map
 	Uid uid = object.GetUid();
+	if (uid == Uid::null)
+	{
+		// Means that this object was created locally
+		// with no need of a thread-safe id.
+		object.SetUid(uid = Uid::Create());
+	}
+
 	Assert(_objects.count(uid) == 0);	// object with matching id already lives in map
 	ObjectMap::value_type addition(uid, & object);
 	_objects.insert(addition);
@@ -117,10 +129,10 @@ void Scene::RemoveObject(Uid uid)
 			BranchNode & branch_node = object->CastBranchNodeRef();
 			
 			// then for all the children,
-			ObjectBase::ChildList::iterator end = branch_node.End();
+			Object::List::iterator end = branch_node.End();
 			while (true)
 			{
-				ObjectBase::ChildList::iterator last = end;
+				Object::List::iterator last = end;
 				-- last;
 				if (last == end)
 				{
@@ -244,10 +256,10 @@ Pov const & Scene::GetPov() const
 void Scene::RemoveChildren(BranchNode & parent)
 {
 	// then for all the children,
-	ObjectBase::ChildList::iterator end = parent.End();
+	Object::List::iterator end = parent.End();
 	while (true)
 	{
-		ObjectBase::ChildList::iterator last = end;
+		Object::List::iterator last = end;
 		-- last;
 		if (last == end)
 		{

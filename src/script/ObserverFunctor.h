@@ -11,9 +11,9 @@
 
 #include "Fiber.h"
 
-#include "EntityHandle.h"
 #include "EventCondition.h"
 
+#include "sim/Simulation.h"
 #include "sim/Observer.h"
 
 
@@ -37,7 +37,7 @@ namespace script
 		void SetSpeed(int speed);
 		
 		// variables
-		EntityHandle<sim::Observer> _observer;
+		smp::Handle<sim::Observer> _observer;
 		EventCondition _event_condition;
 		bool _collidable;
 	};

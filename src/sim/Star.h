@@ -33,7 +33,7 @@ namespace sim
 		Scalar GetBoundingRadius() const;
 
 	private:
-		gfx::Uid _light_uid;
+		gfx::BranchNodeHandle _model;
 		Vector3 position;
 		Scalar radius;
 		Scalar year;

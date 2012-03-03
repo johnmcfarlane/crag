@@ -36,10 +36,6 @@ namespace sim
 	class Simulation;
 	class EntitySet;
 	
-
-	// daemon type
-	typedef smp::Daemon<Simulation> Daemon;
-	
 	
 	// Simulation - main object of simulation thread
 	class Simulation
@@ -59,15 +55,17 @@ namespace sim
 		// message interface
 		void OnQuit();
 		
-		template <typename ENTITY_TYPE>
-		void OnNewEntity(ENTITY_TYPE * const & entity, InitData<ENTITY_TYPE> const & init_data)
+		template <typename OBJECT_TYPE, typename INIT_DATA>
+		void OnCreateObject(Uid const & uid, INIT_DATA const & init_data)
 		{
-			entity->Init(* this, init_data);
-			OnAddEntity(* entity);
+			OBJECT_TYPE * object = new OBJECT_TYPE;
+			object->SetUid(uid);
+			object->Init(* this, init_data);
+			OnAddObject(* object);
 		}
-	
-		void OnAddEntity(Entity & entity);
-		void OnRemoveEntity(Uid const & uid);
+		
+		void OnAddObject(Entity & entity);
+		void OnRemoveObject(Uid const & uid);
 		void OnAttachEntities(Uid const & uid1, Uid const & uid2);
 		
 		void OnTogglePause();
@@ -76,7 +74,7 @@ namespace sim
 
 		// accessors
 		Time GetTime() const;
-		Entity * GetEntity(Uid uid);
+		Entity * GetObject(Uid uid);
 		physics::Engine & GetPhysicsEngine();		
 		
 		// called be Daemon when simulation thread starts

@@ -12,9 +12,10 @@
 
 class Firmament : public gfx::Skybox
 {
-private:
-	bool Init(gfx::Renderer & renderer) override;
+public:
+	bool Init(gfx::Renderer & renderer, void *);
 	
+private:
 	void DrawStarsClevur();
 
 	void DrawStarsSimple();

@@ -9,7 +9,7 @@
 
 #include "Fiber.h"
 
-#include "EntityHandle.h"
+#include "sim/Simulation.h"
 
 
 namespace sim
@@ -26,7 +26,7 @@ namespace script
 	{
 	public:
 		// types
-		typedef std::vector<EntityHandleBase> EntityVector;
+		typedef std::vector<smp::Handle <sim::Vehicle> > EntityVector;
 		
 		// functions
 		void operator() (FiberInterface & fiber);
@@ -36,9 +36,9 @@ namespace script
 		void SpawnShapes();
 
 		// variables
-		EntityHandle<sim::Planet> _planet, _moon1, _moon2;
-		EntityHandle<sim::Star> _sun;
-		EntityHandle<sim::Vehicle> _vehicle;
+		smp::Handle<sim::Planet> _planet, _moon1, _moon2;
+		smp::Handle<sim::Star> _sun;
+		smp::Handle<sim::Vehicle> _vehicle;
 		EntityVector _shapes;
 	};
 }

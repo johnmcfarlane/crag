@@ -19,7 +19,7 @@
 #include "sim/axes.h"
 
 #include "gfx/Color.h"
-#include "gfx/Renderer.inl"
+#include "gfx/Renderer.h"
 #include "gfx/object/FormationMesh.h"
 
 #include "core/app.h"
@@ -162,9 +162,8 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	gfx::FormationMesh * mesh = new gfx::FormationMesh;
-	_mesh_uid = mesh->GetUid();
-	gfx::Daemon::Call<gfx::Object *, gfx::Uid>(mesh, gfx::Uid::null, & gfx::Renderer::OnAddObject);
+	_mesh.Create(gfx::FormationMesh::InitData());
+	gfx::Daemon::Call(_mesh.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
 	
 	while (! quit_flag) 
 	{
@@ -182,7 +181,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	}
 	
 	// un-register with the renderer
-	gfx::Daemon::Call<gfx::Uid>(_mesh_uid, & gfx::Renderer::OnRemoveObject);
+	_mesh.Destroy();
 }
 
 void form::FormationManager::LockTree()
@@ -288,11 +287,7 @@ void form::FormationManager::GenerateMesh()
 	visible_scene.GenerateMesh(* mesh);
 	
 	// sent it to the FormationSet object
-	gfx::FormationMesh::UpdateParams params = 
-	{
-		mesh
-	};
-	gfx::Daemon::Call(_mesh_uid, params, & gfx::Renderer::OnUpdateObject<gfx::FormationMesh>);
+	_mesh.Call(& gfx::FormationMesh::SetMesh, mesh);
 	
 	// record timing information
 	Time t = app::GetTime();

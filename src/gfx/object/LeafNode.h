@@ -28,6 +28,7 @@ namespace gfx
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
+		typedef Object super;
 
 		enum PreRenderResult
 		{
@@ -43,7 +44,7 @@ namespace gfx
 		LeafNode(Layer::type layer);
 		
 #if defined(VERIFY)
-		void Verify() const;
+		virtual void Verify() const override;
 #endif
 		
 		void SetModelViewTransformation(Transformation const & model_view_transformation);

@@ -16,6 +16,8 @@
 
 namespace gfx
 {
+	typedef smp::Handle<class BranchNode> BranchNodeHandle;
+
 	// An object which contains sub-objects
 	class BranchNode : public Object
 	{
@@ -37,19 +39,24 @@ namespace gfx
 		~BranchNode();
 		
 #if defined(VERIFY)
-		void Verify() const;
+		virtual void Verify() const override;
 #endif
+		
+		void Init(Renderer const & renderer, Transformation const & transformation);
 		
 		bool IsEmpty() const;
 		
-		void AddChild(Object & child);
-		void RemoveChild(Object & child);
+		bool IsChild(Object const & child) const;
 		
-		ChildList::iterator Begin();
-		ChildList::const_iterator Begin() const;
+		friend void AdoptChild(Object & child, BranchNode & parent);
+		friend void OrphanChild(Object & child, BranchNode & parent);
+		friend void OrphanChild(Object & child);
 		
-		ChildList::iterator End();
-		ChildList::const_iterator End() const;
+		List::iterator Begin();
+		List::const_iterator Begin() const;
+		
+		List::iterator End();
+		List::const_iterator End() const;
 		
 		// Model-view transformation
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
@@ -58,13 +65,11 @@ namespace gfx
 		
 		Transformation GetModelTransformation() const;
 		
-		void Update(UpdateParams const & params, Renderer & renderer);
-		
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		ChildList _children;
+		List _children;
 		Transformation _transformation;
 	};
 }

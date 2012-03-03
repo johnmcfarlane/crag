@@ -23,12 +23,20 @@ template <typename S, int D> class Ray;
 
 namespace smp
 {
+	template <typename CLASS>
+	class Daemon;
+	
 	class Uid;
 }
 
 
 namespace sim
 {
+	class Simulation;
+	
+	// daemon type
+	typedef smp::Daemon<Simulation> Daemon;
+
 	// dSINGLE and dDOUBLE are mutually excludive macros required by ODE.
 #if defined(dSINGLE)
 	typedef float Scalar;

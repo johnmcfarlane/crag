@@ -19,7 +19,7 @@ using namespace gfx;
 
 LeafNode::LeafNode(Layer::type layer)
 : Object(leaf)
-//, _model_view_transformation(Transformation::Identity())
+, _model_view_transformation(Transformation::Matrix::Identity())
 , _render_depth(0)
 , _layer(layer)
 , _program(nullptr)
@@ -31,6 +31,8 @@ LeafNode::LeafNode(Layer::type layer)
 #if defined(VERIFY)
 void LeafNode::Verify() const
 {
+	super::Verify();
+	
 	VerifyObject(_model_view_transformation);
 }
 #endif

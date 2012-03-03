@@ -14,7 +14,7 @@
 #include "form/node/Shader.h"
 #include "form/scene/Mesh.h"
 
-#include "sim/CallEntity.h"
+#include "sim/Simulation.h"
 #include "sim/Planet.h"
 
 
@@ -49,11 +49,11 @@ namespace
 }
 
 
-Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Uid uid)
+Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Handle<sim::Planet> const & planet)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
-, _uid(uid)
+, _planet(planet)
 {
 	_radius_min = _shape.radius;
 	_radius_max = _shape.radius;
@@ -82,7 +82,7 @@ int Formation::GetSeed() const
 void Formation::SendRadiusUpdateMessage() const
 {
 	SetRadiusFunctor functor(_radius_min, _radius_max);
-	sim::CallEntity<sim::Planet>(_uid, functor);
+	_planet.Call(functor);
 }
 
 void Formation::SampleRadius(sim::Scalar sample_radius)

@@ -21,7 +21,6 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
-#include "gfx/Renderer.inl"
 #include "gfx/object/Light.h"
 
 #include "geom/MatrixOps.h"
@@ -59,8 +58,7 @@ Observer::Observer()
 Observer::~Observer()
 {
 #if defined(OBSERVER_LIGHT)
-	// un-register with the renderer
-	gfx::Daemon::Call<gfx::Uid>(_light_uid, & gfx::Renderer::OnRemoveObject);
+	_model.Destroy();
 #endif
 
 	observer_speed_factor = static_cast<double>(speed_factor);

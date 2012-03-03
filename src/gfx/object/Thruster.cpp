@@ -39,19 +39,26 @@ namespace
 // gfx::Thruster member definitions
 
 Thruster::Thruster()
-: Light(thruster_color)
+: _renderer(nullptr)
 , _thrust_factor(0)
 {
 }
 
-void Thruster::Update(UpdateParams const & params, Renderer & renderer)
+void Thruster::Init(Renderer & renderer, void const *)
 {
-	_thrust_factor = params.thrust_factor;
+	super::Init(renderer, thruster_color);
+	
+	_renderer = & renderer;
+}
+
+void Thruster::Update(float const & thrust_factor)
+{
+	_thrust_factor = thrust_factor;
 	if (_thrust_factor != 0)
 	{
 		if (Random::sequence.GetUnit<float>() < puff_probability)
 		{
-			AddPuff(_thrust_factor, renderer);
+			AddPuff(_thrust_factor, ref(_renderer));
 		}
 	}
 }
@@ -59,6 +66,8 @@ void Thruster::Update(UpdateParams const & params, Renderer & renderer)
 LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
 {
 	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
+	
+	// TODO: Resetting this here is wrong. (What happens if sim stalls?)
 	_thrust_factor = 0;
 	
 	return LeafNode::ok;
@@ -66,11 +75,11 @@ LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
 
 void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
 {
+	BranchNode * branch_node = new BranchNode;
 	Uid parent_uid;
 	{
 		// Create BranchNode to store the positional information of the puff.
-		Object * branch_node = new BranchNode;
-		renderer.OnAddObject(branch_node, Uid::null);
+		renderer.OnAddObject(* branch_node);
 		parent_uid = branch_node->GetUid();
 	}
 	
@@ -100,13 +109,12 @@ void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
 		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
 
 		// Set its position.
-		BranchNode::UpdateParams params = 
-		{
-			gfx::Transformation(translation, axes::Rotation<Scalar>(puff_direction))
-		};
-		renderer.OnUpdateObject<BranchNode>(parent_uid, params);
+		gfx::Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
+		branch_node->SetTransformation(transformation);
 	}
 	
-	Object * model = new Puff(spawn_volume);
-	renderer.OnAddObject(model, parent_uid);
+	Puff * model = new Puff(spawn_volume);
+	renderer.OnAddObject(* model);
+	model->Init(renderer);
+	renderer.OnSetParent(* model, * branch_node);
 }

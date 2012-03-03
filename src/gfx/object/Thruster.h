@@ -24,21 +24,21 @@ namespace gfx
 	{
 	public:
 		// types
-		struct UpdateParams
-		{
-			float thrust_factor;
-		};
+		typedef Light super;
 		
 		// functions
 		Thruster();
 		
-		void Update(UpdateParams const & params, Renderer & renderer);
+		void Init(Renderer & renderer, void const *);
+		
+		void Update(float const & thrust_factor);
 
 		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
 	private:
 		void AddPuff(float thrust_factor, Renderer & renderer);
 		
 		// variables
+		Renderer * _renderer;
 		float _thrust_factor;
 	};
 }

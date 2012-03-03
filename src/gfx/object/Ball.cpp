@@ -26,14 +26,16 @@
 using namespace gfx;
 
 
-Ball::Ball(Color4f const & color)
+Ball::Ball()
 : LeafNode(Layer::foreground)
-, _color(color)
+, _color(Color4f::Black())
 {
 }
 
-bool Ball::Init(Renderer & renderer)
+bool Ball::Init(Renderer & renderer, Color4f const & color)
 {
+	_color = color;
+	
 	ResourceManager const & resource_manager = renderer.GetResourceManager();
 
 	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);

@@ -18,7 +18,6 @@
 
 #include "gfx/object/Ball.h"
 #include "gfx/object/BranchNode.h"
-#include "gfx/Renderer.inl"
 
 #include "core/Random.h"
 
@@ -48,7 +47,7 @@ Ball::Ball()
 
 Ball::~Ball()
 {
-	gfx::Daemon::Call<gfx::Uid>(_gfx_uid, & gfx::Renderer::OnRemoveObject);
+	_model.Destroy();
 }
 
 void Ball::Init(Simulation & simulation, InitData<Ball> const & init_data)
@@ -72,9 +71,13 @@ void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
 
 void Ball::InitGraphics(Sphere3 const & sphere)
 {
-	gfx::Color4f color = GetColor();
-	gfx::Object * ball = new gfx::Ball(color);
-	_gfx_uid = AddModelWithTransform(* ball);
+	// Create ball model.
+	gfx::Color4f color(GetColor());
+
+	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
+	_model = AddModelWithTransform<gfx::Ball>(color);
+	UpdateModels();
+	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
 }
 
 gfx::Color4f Ball::GetColor() const
@@ -96,16 +99,12 @@ void Ball::UpdateModels() const
 	
 	Scalar radius = body->GetRadius();
 	Vector3 scale(radius, radius, radius);
-	gfx::BranchNode::UpdateParams params = 
-	{
-		Transformation(body->GetPosition(), body->GetRotation(), scale)
-	};
-	
-	gfx::Daemon::Call(_gfx_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), scale);
+
+	_model.Call<gfx::Transformation>(& gfx::BranchNode::SetTransformation, transformation);
 }
 
-gfx::Uid Ball::GetGfxUid() const
+gfx::BranchNodeHandle const & Ball::GetModel() const
 {
-	Assert(_gfx_uid != gfx::Uid::null);
-	return _gfx_uid;
+	return _model;
 }

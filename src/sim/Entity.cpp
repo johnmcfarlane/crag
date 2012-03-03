@@ -24,19 +24,13 @@ using namespace sim;
 
 
 Entity::Entity()
-: _uid(Uid::Create())
-, _body(nullptr)
+: _body(nullptr)
 {
 }
 
 Entity::~Entity()
 {
 	delete _body;
-}
-
-Uid Entity::GetUid() const
-{
-	return _uid;
 }
 
 void Entity::Tick(Simulation & simulation)

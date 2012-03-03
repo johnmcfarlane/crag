@@ -31,10 +31,9 @@ namespace
 	{
 		Vector3 force = Vector3::Zero();
 		
-		for (Entity::List::const_iterator it = entities.begin(); it != entities.end(); ++ it) 
+		for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it) 
 		{
-			script::Object const & object = * it;
-			Entity const & entity = static_cast<Entity const &>(object);
+			Entity const & entity = * it;
 
 			entity.GetGravitationalForce(pos, force);
 		}
@@ -62,8 +61,7 @@ void sim::ApplyGravity(EntitySet & entity_set, Time delta)
 
 	for (Entity::List::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
 	{
-		script::Object & object = * i;
-		Entity & entity = static_cast<Entity &>(object);
+		Entity & entity = * i;
 		
 		physics::Body * body = entity.GetBody();
 		if (body == nullptr)

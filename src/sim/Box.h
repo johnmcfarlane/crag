@@ -40,7 +40,7 @@ namespace sim
 	private:
 		
 		// variables
-		gfx::Uid _gfx_uid;
+		gfx::BranchNodeHandle _model;
 	};
 
 	// InitData struct specialization for Box

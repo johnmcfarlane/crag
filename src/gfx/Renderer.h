@@ -59,6 +59,9 @@ namespace gfx
 	public:
 		Renderer();
 		~Renderer();
+
+		Object * GetObject(Uid const & uid);
+		Object const * GetObject(Uid const & uid) const;
 		
 		Scene & GetScene();
 		Scene const & GetScene() const;
@@ -76,9 +79,13 @@ namespace gfx
 
 		// message interface
 		void OnQuit();
-		void OnAddObject(Object * const & object, Uid const & parent_uid);
+		void OnAddObject(Object & object);
 		void OnRemoveObject(Uid const & uid);
-		void OnSetReady(bool const & ready, Time const & time);
+		void OnSetParent(Uid const & child_uid, Uid const & parent_uid);
+		void OnSetParent(Object & child, Uid const & parent_uid);
+		void OnSetParent(Object & child, BranchNode & parent);
+		void OnSetTime(Time const & time);
+		void OnSetReady(bool const & ready);
 		void OnResize(Vector2i const & size);
 		void OnToggleCulling();
 		void OnToggleLighting();
@@ -86,10 +93,15 @@ namespace gfx
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
 
-		// defined in Renderer.inl
-		template <typename OBJECT> 
-		void OnUpdateObject(Uid const & uid, typename OBJECT::UpdateParams const & params);
-
+		template <typename OBJECT_TYPE, typename INIT_DATA>
+		void OnCreateObject(Uid const & uid, INIT_DATA const & init_data)
+		{
+			OBJECT_TYPE * object = new OBJECT_TYPE;
+			object->SetUid(uid);
+			object->Init(* this, init_data);
+			OnAddObject(* object);
+		}
+		
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
@@ -98,8 +110,6 @@ namespace gfx
 
 		bool Init();
 		void Deinit();
-		
-		bool InitObject(Object & object);
 		
 		void InitVSync();
 		void InitRenderState();

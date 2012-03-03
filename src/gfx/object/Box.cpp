@@ -22,15 +22,17 @@
 using namespace gfx;
 
 
-Box::Box(Color4f color)
+Box::Box()
 : LeafNode(Layer::foreground)
-, _color(color)
+, _color(Color4f::Black())
 {
 	SetIsOpaque(_color.a == 255);
 }
 
-bool Box::Init(Renderer & renderer)
+bool Box::Init(Renderer & renderer, Color4f const & color)
 {
+	_color = color;
+	
 	ResourceManager & resource_manager = renderer.GetResourceManager();
 	
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);

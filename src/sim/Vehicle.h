@@ -28,13 +28,14 @@ namespace sim
 
 		typedef Ball super;
 	public:
+		typedef smp::Handle<gfx::Thruster> ThrusterHandle;
 		
 		struct Thruster
 		{
 			Vector3 position;	// position of Thruster relative to vehicle
 			Vector3 direction;	// direction of thrust relative to vehicle rotation
 			SDL_Scancode key;
-			gfx::Uid gfx_uid;
+			ThrusterHandle model;
 			float thrust_factor;
 		};
 		

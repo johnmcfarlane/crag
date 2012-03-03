@@ -40,7 +40,7 @@ namespace gfx
 		void SetTime(Time t);
 		Time GetTime() const;
 		
-		void AddObject(Object & object, BranchNode & parent);
+		void AddObject(Object & object);
 		void RemoveObject(Uid uid);
 		void SortRenderList();
 		

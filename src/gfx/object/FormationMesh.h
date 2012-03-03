@@ -22,10 +22,14 @@ namespace gfx
 	class FormationMesh : public LeafNode
 	{
 		// types
+		typedef LeafNode super;
 		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
 		
 	public:
-		typedef form::Mesh * UpdateParams;
+		// TODO: Take Init call out of Renderer/Simulation altogether.
+		struct InitData
+		{
+		};
 		
 		// functions
 		FormationMesh();
@@ -34,12 +38,12 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		bool Init(Renderer & renderer) override;
+		bool Init(Renderer & renderer, InitData const & init_data);
 		void Deinit(Scene & scene) override;
 
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 
-		void Update(UpdateParams const & params, Renderer & renderer);
+		void SetMesh(form::Mesh * const & mesh);
 		
 	private:
 		PreRenderResult PreRender(Renderer const & renderer) override;

@@ -20,7 +20,6 @@ using namespace gfx;
 
 Object::Object(NodeType node_type)
 : _parent(nullptr)
-, _uid(Uid::Create())
 , _node_type(node_type)
 { 
 }
@@ -29,23 +28,25 @@ Object::~Object()
 {
 	if (_parent != nullptr)
 	{
-		_parent->RemoveChild(* this);
+		OrphanChild(* this);
 	}
 }
 
 #if defined(VERIFY)
 void Object::Verify() const
 {
-	ChildList::verify(* this);
+	super::Verify();
 	
+	List::verify(* this);
+	
+	VerifyPtr(_parent);
 	VerifyTrue(_node_type == branch || _node_type == leaf);
+	if (_parent != nullptr)
+	{
+		VerifyTrue(_parent->IsChild(* this));
+	}
 }
 #endif
-
-bool Object::Init(Renderer & renderer)
-{
-	return true;
-}
 
 void Object::Deinit(Scene & scene)
 {
@@ -54,11 +55,6 @@ void Object::Deinit(Scene & scene)
 gfx::Transformation const & Object::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	return model_view;
-}
-
-Uid Object::GetUid() const
-{
-	return _uid;
 }
 
 Object::NodeType Object::GetNodeType() const
@@ -126,9 +122,4 @@ BranchNode * Object::GetParent()
 BranchNode const * Object::GetParent() const
 {
 	return _parent;
-}
-
-void Object::SetParent(BranchNode * parent)
-{
-	_parent = parent;
 }

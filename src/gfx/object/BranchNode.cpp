@@ -37,51 +37,74 @@ void BranchNode::Verify() const
 	
 	_children.verify();
 	
-	for (ChildList::const_iterator i = _children.begin(), end = _children.begin(); i != end; ++ i)
+	for (List::const_iterator i = _children.begin(), end = _children.begin(); i != end; ++ i)
 	{
 		Object const & child = static_cast<Object const &>(* i);
-		VerifyObject(child);
+		VerifyTrue(child.GetParent() == this);
 	}
 	
 	VerifyObject(_transformation);
 }
 #endif
 
+void BranchNode::Init(Renderer const & renderer, Transformation const & transformation)
+{
+	_transformation = transformation;
+}
+
 bool BranchNode::IsEmpty() const
 {
 	return _children.empty();
 }
 
-void BranchNode::AddChild(Object & child)
+bool BranchNode::IsChild(Object const & child) const
 {
-	Assert(child.GetParent() == nullptr);
-	Assert(! _children.contains(child));
-	child.SetParent(this);
+	return _children.contains(child);
+}
+
+void gfx::AdoptChild(Object & child, BranchNode & parent)
+{
+	Assert(child._parent == nullptr);
+	child._parent = & parent;
 	
-	_children.push_back(child);
+	Assert(! parent._children.contains(child));
+	parent._children.push_back(child);
 }
 
-void BranchNode::RemoveChild(Object & child)
+void gfx::OrphanChild(Object & child, BranchNode & parent)
 {
-	_children.remove(child);
+	Assert(child._parent == & parent);
+	child._parent = nullptr;
+	
+	Assert(parent._children.contains(child));
+	parent._children.remove(child);
 }
 
-BranchNode::ChildList::iterator BranchNode::Begin()
+void gfx::OrphanChild(Object & child)
+{
+	BranchNode * parent = child._parent;
+	if (parent != nullptr)
+	{
+		OrphanChild(child, * parent);
+	}
+}
+
+BranchNode::List::iterator BranchNode::Begin()
 {
 	return _children.begin();
 }
 
-BranchNode::ChildList::const_iterator BranchNode::Begin() const
+BranchNode::List::const_iterator BranchNode::Begin() const
 {
 	return _children.begin();
 }
 
-BranchNode::ChildList::iterator BranchNode::End()
+BranchNode::List::iterator BranchNode::End()
 {
 	return _children.end();
 }
 
-BranchNode::ChildList::const_iterator BranchNode::End() const
+BranchNode::List::const_iterator BranchNode::End() const
 {
 	return _children.end();
 }
@@ -129,9 +152,4 @@ gfx::Transformation BranchNode::GetModelTransformation() const
 		
 		ancestor = parent;
 	}
-}
-
-void BranchNode::Update(UpdateParams const & params, Renderer & renderer)
-{
-	_transformation = params.transformation;
 }

@@ -26,11 +26,11 @@ namespace gfx
 		};
 		
 		// functions
-		Planet(Scalar sea_level);
+		Planet();
 		
-		bool Init(Renderer & renderer) override;
+		bool Init(Renderer & renderer, Scalar sea_level);
 		
-		void Update(UpdateParams const & params, Renderer & renderer);
+		void Update(UpdateParams const & params);
 
 	private:
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;

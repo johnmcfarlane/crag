@@ -55,8 +55,7 @@ Entity * EntitySet::GetEntity(smp::Uid uid)
 {
 	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it)
 	{
-		script::Object & object = * it;
-		Entity & entity = static_cast<Entity &>(object);
+		Entity & entity = * it;
 
 		if (entity.GetUid() == uid)
 		{
@@ -81,8 +80,7 @@ void EntitySet::Purge()
 {
 	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it) 
 	{
-		script::Object & object = * it;
-		Entity & entity = static_cast<Entity &>(object);
+		Entity & entity = * it;
 
 		physics::Body const * body = entity.GetBody();
 		if (body == nullptr)

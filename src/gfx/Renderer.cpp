@@ -256,6 +256,16 @@ Renderer::~Renderer()
 	capture_enable = false;
 }
 
+Object * Renderer::GetObject(Uid const & uid)
+{
+	return scene->GetObject(uid);
+}
+
+Object const * Renderer::GetObject(Uid const & uid) const
+{
+	return scene->GetObject(uid);
+}
+
 Scene & Renderer::GetScene()
 {
 	Assert(Daemon::IsCurrentThread());
@@ -372,25 +382,17 @@ void Renderer::OnQuit()
 	_ready = true;
 }
 
-void Renderer::OnAddObject(Object * const & object, Uid const & parent_uid)
+void Renderer::OnAddObject(Object & object)
 {
-	if (InitObject(* object))
+	if (scene == nullptr)
 	{
-		BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
-		if (parent != nullptr)
-		{
-			// success!
-			scene->AddObject(* object, * parent);
-			return;
-		}
-		else
-		{
-			// The given parent was not found.
-			// The id may be bogus or the object may have been removed.
-			Assert(false);
-		}
+		delete & object;
+		return;
 	}
-	delete object;
+
+	// success!
+	scene->AddObject(object);
+	OnSetParent(object, Uid::null);
 }
 
 void Renderer::OnRemoveObject(Uid const & uid)
@@ -401,10 +403,44 @@ void Renderer::OnRemoveObject(Uid const & uid)
 	}
 }
 
-void Renderer::OnSetReady(bool const & ready, Time const & time)
+void Renderer::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
+{
+	Object * child = GetObject(child_uid);
+	if (child == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	OnSetParent(ref(child), parent_uid);
+}
+
+void Renderer::OnSetParent(Object & child, Uid const & parent_uid)
+{
+	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
+	if (parent == nullptr)
+	{
+		Assert(false);
+		return;
+	}
+	
+	OnSetParent(child, * parent);
+}
+
+void Renderer::OnSetParent(Object & child, BranchNode & parent)
+{
+	OrphanChild(child);
+	AdoptChild(child, parent);
+}
+
+void Renderer::OnSetTime(Time const & time)
+{
+	scene->SetTime(time);
+}
+
+void Renderer::OnSetReady(bool const & ready)
 {
 	_ready = ready;
-	scene->SetTime(time);
 }
 
 void Renderer::OnResize(Vector2i const & size)
@@ -473,6 +509,8 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 	while (! quit_flag)
 	{
 		ProcessMessagesAndGetReady(message_queue);
+		VerifyObjectRef(* scene);
+		
 		PreRender();
 		UpdateTransformations();
 		Render();
@@ -571,25 +609,6 @@ void Renderer::Deinit()
 
 	SDL_GL_DeleteContext(context);
 	context = nullptr;
-}
-
-bool Renderer::InitObject(Object & object)
-{
-	if (quit_flag)
-	{
-		// don't want to add new objects during shutdown
-		return false;
-	}
-	
-	if (scene == nullptr)
-	{
-		// this has presumably occurred after shutdown
-		Assert(false);
-		
-		return false;
-	}
-	
-	return object.Init(* this);
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.
@@ -775,9 +794,9 @@ void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transforma
 	VerifyObject(model_view_transformation);
 	Transformation scratch;
 	
-	for (ObjectBase::ChildList::iterator i = parent_branch.Begin(), end = parent_branch.End(); i != end; )
+	for (Object::List::iterator i = parent_branch.Begin(), end = parent_branch.End(); i != end; )
 	{
-		Object & child = static_cast<Object &>(* i);
+		Object & child = * i;
 		++ i;
 		
 		Transformation const & child_model_view_transformation = child.Transform(* this, model_view_transformation, scratch);

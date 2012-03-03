@@ -25,14 +25,16 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-Planet::Planet(Scalar sea_level)
+Planet::Planet()
 : LeafNode(Layer::foreground)
-, _sea_level(sea_level)
+, _sea_level(0)
 {
 }
 
-bool Planet::Init(Renderer & renderer)
+bool Planet::Init(Renderer & renderer, Scalar sea_level)
 {
+	_sea_level = sea_level;
+	
 	ResourceManager & resource_manager = renderer.GetResourceManager();
 	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
 	SetProgram(sphere_program);
@@ -40,7 +42,7 @@ bool Planet::Init(Renderer & renderer)
 	return true;
 }
 
-void Planet::Update(UpdateParams const & params, Renderer & renderer)
+void Planet::Update(UpdateParams const & params)
 {
 	_salient = params;
 }

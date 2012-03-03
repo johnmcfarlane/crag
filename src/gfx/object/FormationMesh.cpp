@@ -52,11 +52,12 @@ FormationMesh::FormationMesh()
 #if defined(VERIFY)
 void FormationMesh::Verify() const
 {
+	super::Verify();
 	Assert(! mbo_buffers.back().IsBound());
 }
 #endif
 
-bool FormationMesh::Init(Renderer & renderer)
+bool FormationMesh::Init(Renderer & renderer, InitData const & init_data)
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -93,10 +94,8 @@ void FormationMesh::Deinit(Scene & scene)
 	delete _pending_mesh;
 }
 
-void FormationMesh::Update(UpdateParams const & params, Renderer & renderer)
+void FormationMesh::SetMesh(form::Mesh * const & mesh)
 {
-	form::Mesh * mesh = params;
-	
 	Assert(mesh != _queued_mesh);
 	Assert(mesh != _pending_mesh);
 	

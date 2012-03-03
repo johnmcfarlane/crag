@@ -62,12 +62,12 @@ namespace
 	class AddThrusterFunctor
 	{
 	public:
-		
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		AddThrusterFunctor(sim::Vehicle::Thruster const & thruster)
 		: _thruster(thruster)
 		{
-			Assert(_thruster.gfx_uid == gfx::Uid::null);
+			Assert(_thruster.model.GetUid() == gfx::Uid::null);
 		}
 		
 		void operator() (sim::Vehicle * vehicle) const
@@ -88,7 +88,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
-	void add_thruster(EntityHandle<sim::Vehicle> & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void add_thruster(smp::Handle<sim::Vehicle> & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
 		sim::Vehicle::Thruster thruster;
 		thruster.position = position;
@@ -195,12 +195,12 @@ void MainFunctor::SpawnVehicle()
 		init_data.sphere.radius = 1.;
 
 		_vehicle.Create(init_data);
+		
+		add_thruster(_vehicle, sim::Vector3(.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, sim::Vector3(.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, sim::Vector3(-.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, sim::Vector3(-.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 	}
-	
-	add_thruster(_vehicle, sim::Vector3(.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-	add_thruster(_vehicle, sim::Vector3(.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-	add_thruster(_vehicle, sim::Vector3(-.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-	add_thruster(_vehicle, sim::Vector3(-.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 }
 
 void MainFunctor::SpawnShapes()
@@ -234,7 +234,7 @@ void MainFunctor::SpawnShapes()
 					sim::Sphere3(spawn_pos, std::exp(- GetRandomUnit() * 2))
 				};
 				
-				EntityHandle<sim::Ball> ball;
+				smp::Handle<sim::Ball> ball;
 				ball.Create(init_data);
 				_shapes.push_back(ball);
 				break;
@@ -251,7 +251,7 @@ void MainFunctor::SpawnShapes()
 							 std::exp(GetRandomUnit() * -2.))
 				};
 				
-				EntityHandle<sim::Box> box;
+				smp::Handle<sim::Box> box;
 				box.Create(init_data);
 				_shapes.push_back(box);
 				break;

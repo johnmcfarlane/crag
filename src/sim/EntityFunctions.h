@@ -11,7 +11,9 @@
 
 #include "defs.h"
 
-#include "gfx/defs.h"
+#include "gfx/Object/BranchNode.h"
+
+#include "gfx/Renderer.h"
 
 
 namespace physics
@@ -32,7 +34,35 @@ namespace sim
 	////////////////////////////////////////////////////////////////////////////////
 	// function declarations
 	
-	gfx::Uid AddModelWithTransform(gfx::Object & object, gfx::Uid parent = gfx::Uid::null);
+	template <typename GFX_TYPE, typename INIT_DATA>
+	gfx::BranchNodeHandle AddModelWithTransform(INIT_DATA & init_data, gfx::BranchNodeHandle const & parent, gfx::Transformation const & transformation)
+	{
+		// create branch node and place it as a child of the given parent
+		gfx::BranchNodeHandle branch_node;
+		branch_node.Create(transformation);
+		gfx::Daemon::Call(branch_node.GetUid(), parent.GetUid(), & gfx::Renderer::OnSetParent);
+		
+		// create the leaf node and place it as a child of the branch node
+		smp::Handle<GFX_TYPE> model;
+		model.Create(init_data);
+		gfx::Daemon::Call(model.GetUid(), branch_node.GetUid(), & gfx::Renderer::OnSetParent);
+
+		// return the branch node - the one needed to move the pair through space
+		return branch_node;
+	}
+	
+	template <typename GFX_TYPE, typename INIT_DATA>
+	gfx::BranchNodeHandle AddModelWithTransform(INIT_DATA & init_data, gfx::BranchNodeHandle const & parent)
+	{
+		return AddModelWithTransform<GFX_TYPE>(init_data, parent, Transformation::Matrix::Identity());
+	}
+	
+	template <typename GFX_TYPE, typename INIT_DATA>
+	gfx::BranchNodeHandle AddModelWithTransform(INIT_DATA & init_data)
+	{
+		gfx::BranchNodeHandle parent;
+		return AddModelWithTransform<GFX_TYPE>(init_data, parent);
+	}
 	
 	// sends render info from simulation to renderer
 	void UpdateModels(EntitySet const & entity_set);

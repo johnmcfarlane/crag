@@ -23,9 +23,9 @@ namespace gfx
 		Puff(Scalar spawn_volume);
 		~Puff();
 		
-	private:
-		bool Init(Renderer & renderer) override;
+		bool Init(Renderer & renderer);
 		
+	private:
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
 		PreRenderResult PreRender(Renderer const & renderer) override;
