@@ -22,11 +22,6 @@ namespace physics
 	class Engine;
 }
 
-namespace smp
-{
-	class Uid;
-}
-
 
 namespace sim
 {
