@@ -124,32 +124,32 @@ namespace smp
 		// 0-parameter version
 		void Call (void (Type::* function)()) const
 		{
-			CallMessage0 message(_uid, function);
-			Type::Daemon::SendMessage(message);
+			CallMessage0 message(function);
+			Call(message);
 		}
 		
 		// 1-parameter version
 		template <typename PARAMETER1>
 		void Call (void (Type::* function)(PARAMETER1 const &), PARAMETER1 const & parameter1) const
 		{
-			CallMessage1<PARAMETER1> message(_uid, function, parameter1);
-			Type::Daemon::SendMessage(message);
+			CallMessage1<PARAMETER1> message(function, parameter1);
+			Call(message);
 		}
 		
 		// 2-parameter version
 		template <typename PARAMETER1, typename PARAMETER2>
 		void Call (void (Type::* function)(PARAMETER1 const &, PARAMETER2 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2) const
 		{
-			CallMessage2<PARAMETER1, PARAMETER2> message(_uid, function, parameter1, parameter2);
-			Type::Daemon::SendMessage(message);
+			CallMessage2<PARAMETER1, PARAMETER2> message(function, parameter1, parameter2);
+			Call(message);
 		}
 		
 		// 3-parameter version
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
 		void Call (PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3, void (Type::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &)) const
 		{
-			CallMessage3<PARAMETER1, PARAMETER2, PARAMETER3> message(_uid, function, parameter1, parameter2, parameter3);
-			Type::Daemon::SendMessage(message);
+			CallMessage3<PARAMETER1, PARAMETER2, PARAMETER3> message(function, parameter1, parameter2, parameter3);
+			Call(message);
 		}
 		
 	private:
@@ -175,79 +175,71 @@ namespace smp
 		};
 		
 		// 0-parameter Call helper
-		class CallMessage0 : public smp::Message<typename Type::DaemonClass>
+		class CallMessage0
 		{
 		public:
 			typedef void (Type::* FunctionType)();
-			CallMessage0(Uid const & uid, FunctionType function)
-			: _uid(uid)
-			, _function(function)
+			CallMessage0(FunctionType function)
+			: _function(function)
 			{
-				Assert(_uid != Uid::null);
 			}
-		private:
-			virtual void operator () (typename Type::DaemonClass & daemon_class) const override
+			
+			void operator () (Type * derived) const
 			{
-				Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
 				if (derived != nullptr)
 				{
 					(derived->*_function)();
 				}
 			}
-			Uid _uid;
+		private:
 			FunctionType _function;
 		};
 		
 		// 1-parameter Call helper
 		template <typename PARAMETER1>
-		class CallMessage1 : public smp::Message<typename Type::DaemonClass>
+		class CallMessage1
 		{
 		public:
 			typedef void (Type::* FunctionType)(PARAMETER1 const &);
-			CallMessage1(Uid const & uid, FunctionType function, PARAMETER1 const & __parameter1) 
-			: _uid(uid)
-			, _function(function)
+			CallMessage1(FunctionType function, PARAMETER1 const & __parameter1) 
+			: _function(function)
 			, _parameter1(__parameter1) 
 			{ 
-				Assert(_uid != Uid::null);
 			}
-		private:
-			virtual void operator () (typename Type::DaemonClass & daemon_class) const override 
+			
+			void operator () (Type * derived) const 
 			{
-				Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
 				if (derived != nullptr)
 				{
 					(derived->*_function)(_parameter1);
 				}
 			}
-			Uid _uid; 
+		private:
 			FunctionType _function;
 			PARAMETER1 _parameter1;
 		};
 		
 		// 2-parameter Call helper
 		template <typename PARAMETER1, typename PARAMETER2>
-		class CallMessage2 : public smp::Message<typename Type::DaemonClass>
+		class CallMessage2
 		{
 		public:
 			typedef void (Type::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &);
-			CallMessage2(Uid const & uid, FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
-			: _uid(uid)
-			, _function(function)
+			CallMessage2(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
+			: _function(function)
 			, _parameter1(__parameter1)
 			, _parameter2(__parameter2) 
 			{ 
-				Assert(_uid != Uid::null);
 			}
-		private:
-			virtual void operator () (typename Type::DaemonClass & daemon_class) const override {
-				Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
+			
+			void operator () (Type * derived) const 
+			{
 				if (derived != nullptr)
 				{
 					(derived->*_function)(_parameter1, _parameter2);
 				}
 			}
-			Uid _uid; 
+		private:
 			FunctionType _function;
 			PARAMETER1 _parameter1;
 			PARAMETER2 _parameter2;
@@ -255,28 +247,26 @@ namespace smp
 		
 		// 3-parameter Call helper
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		class CallMessage3 : public smp::Message<typename Type::DaemonClass>
+		class CallMessage3
 		{
 		public:
 			typedef void (Type::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &);
-			CallMessage3(Uid const & uid, FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
-			: _uid(uid)
-			, _function(function)
+			CallMessage3(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
+			: _function(function)
 			, _parameter1(__parameter1)
 			, _parameter2(__parameter2)
 			, _parameter3(__parameter3) 
 			{ 
-				Assert(_uid != Uid::null);
 			}
-		private:
-			virtual void operator () (typename Type::DaemonClass & daemon_class) const override {
-				Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
+
+			void operator () (Type * derived) const 
+			{
 				if (derived != nullptr)
 				{
 					(derived->*_function)(_parameter1, _parameter2, _parameter3);
 				}
 			}
-			Uid _uid; 
+		private:
 			FunctionType _function;
 			PARAMETER1 _parameter1;
 			PARAMETER2 _parameter2;
