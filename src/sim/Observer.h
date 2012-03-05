@@ -43,7 +43,7 @@ namespace sim
 		~Observer();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, InitData<Observer> const & init_data);
+		void Init(Simulation & simulation, Vector3 const & center);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
@@ -60,12 +60,5 @@ namespace sim
 #if defined(OBSERVER_LIGHT)
 		smp::Handle<gfx::Light> _model;
 #endif
-	};
-	
-	// InitData struct specialization for Observer
-	template <>
-	struct InitData<Observer>
-	{
-		Vector3 center;
 	};
 }

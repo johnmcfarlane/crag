@@ -50,11 +50,11 @@ Ball::~Ball()
 	_model.Destroy();
 }
 
-void Ball::Init(Simulation & simulation, InitData<Ball> const & init_data)
+void Ball::Init(Simulation & simulation, Sphere3 const & sphere)
 {
-	InitPhysics(simulation, init_data.sphere);
+	InitPhysics(simulation, sphere);
 	
-	InitGraphics(init_data.sphere);
+	InitGraphics(sphere);
 }
 
 void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)

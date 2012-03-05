@@ -26,11 +26,19 @@ namespace sim
 	class Box : public Entity
 	{
 	public:
+		// types
+		struct InitData
+		{
+			Vector3 center;
+			Vector3 size;
+		};
+		
+		// functions
 		Box();
 		~Box();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, InitData<Box> const & init_data);
+		void Init(Simulation & simulation, InitData const & init_data);
 	private:
 		void InitPhysics(Simulation & simulation, Vector3 center, Vector3 size);
 		void InitGraphics();
@@ -41,13 +49,5 @@ namespace sim
 		
 		// variables
 		gfx::BranchNodeHandle _model;
-	};
-
-	// InitData struct specialization for Box
-	template <>
-	struct InitData<Box>
-	{
-		Vector3 center;
-		Vector3 size;
 	};
 }

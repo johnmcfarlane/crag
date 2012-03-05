@@ -26,11 +26,6 @@ namespace gfx
 		typedef core::double_buffer<form::MeshBufferObject> MboDoubleBuffer;
 		
 	public:
-		// TODO: Take Init call out of Renderer/Simulation altogether.
-		struct InitData
-		{
-		};
-		
 		// functions
 		FormationMesh();
 		
@@ -38,7 +33,7 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		bool Init(Renderer & renderer, InitData const & init_data);
+		bool Init(Renderer & renderer, void *);
 		void Deinit(Scene & scene) override;
 
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;

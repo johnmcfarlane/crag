@@ -148,7 +148,7 @@ void MainFunctor::SpawnUniverse()
 	// Create planets
 	{
 		double planet_radius = 10000000;
-		sim::InitData<sim::Planet> init_data;
+		sim::Planet::InitData init_data;
 		
 		init_data.sphere.center = Vector3d::Zero();
 		init_data.sphere.radius = planet_radius;
@@ -175,7 +175,7 @@ void MainFunctor::SpawnUniverse()
 	
 	// Create sun. 
 	{
-		sim::InitData<sim::Star> init_data =
+		sim::Star::InitData init_data =
 		{
 			100000000.,	// sun_orbit_distance
 			30000.	// sun_year
@@ -190,11 +190,11 @@ void MainFunctor::SpawnVehicle()
 	// Create vehicle
 	if (spawn_vehicle)
 	{
-		sim::InitData<sim::Vehicle> init_data;
-		init_data.sphere.center = observer_start_pos + sim::Vector3(0, 5, 0);
-		init_data.sphere.radius = 1.;
+		sim::Sphere3 sphere;
+		sphere.center = observer_start_pos + sim::Vector3(0, 5, 0);
+		sphere.radius = 1.;
 
-		_vehicle.Create(init_data);
+		_vehicle.Create(sphere);
 		
 		add_thruster(_vehicle, sim::Vector3(.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		add_thruster(_vehicle, sim::Vector3(.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
@@ -229,13 +229,9 @@ void MainFunctor::SpawnShapes()
 			case 0:
 			{
 				// ball
-				sim::InitData<sim::Ball> init_data = 
-				{
-					sim::Sphere3(spawn_pos, std::exp(- GetRandomUnit() * 2))
-				};
-				
 				smp::Handle<sim::Ball> ball;
-				ball.Create(init_data);
+				sim::Sphere3 sphere(spawn_pos, std::exp(- GetRandomUnit() * 2));
+				ball.Create(sphere);
 				_shapes.push_back(ball);
 				break;
 			}
@@ -243,7 +239,7 @@ void MainFunctor::SpawnShapes()
 			case 1:
 			{
 				// box
-				sim::InitData<sim::Box> init_data = 
+				sim::Box::InitData init_data = 
 				{
 					spawn_pos, 
 					Vector3d(std::exp(GetRandomUnit() * -2.),

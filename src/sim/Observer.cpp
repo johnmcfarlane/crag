@@ -64,7 +64,7 @@ Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-void Observer::Init(Simulation & simulation, InitData<Observer> const & init_data)
+void Observer::Init(Simulation & simulation, Vector3 const & center)
 {
 	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
@@ -73,7 +73,7 @@ void Observer::Init(Simulation & simulation, InitData<Observer> const & init_dat
 	body->SetDensity(observer_density);
 	body->SetLinearDamping(observer_linear_damping);
 	body->SetAngularDamping(observer_angular_damping);
-	body->SetPosition(init_data.center);
+	body->SetPosition(center);
 
 	SetBody(body);
 	

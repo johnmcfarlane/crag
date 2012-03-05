@@ -66,10 +66,4 @@ namespace sim
 		// data
 		ThrusterVector _thrusters;
 	};
-	
-	// InitData struct specialization for Ball
-	template <>
-	struct InitData<Vehicle> : public InitData<Ball>
-	{
-	};
 }

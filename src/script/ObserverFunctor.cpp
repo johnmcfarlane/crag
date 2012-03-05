@@ -25,9 +25,7 @@ using namespace script;
 ObserverFunctor::ObserverFunctor(sim::Vector3 const & spawn_position)
 : _collidable(true)
 {
-	sim::InitData<sim::Observer> init_data;
-	init_data.center = spawn_position;
-	_observer.Create(init_data);
+	_observer.Create(spawn_position);
 };
 
 ObserverFunctor::~ObserverFunctor()

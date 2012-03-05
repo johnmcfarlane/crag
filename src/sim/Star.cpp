@@ -32,7 +32,7 @@ sim::Star::~Star()
 	_model.Destroy();
 }
 
-void sim::Star::Init(Simulation & simulation, InitData<Star> const & init_data)
+void sim::Star::Init(Simulation & simulation, InitData const & init_data)
 {
 	radius = init_data.radius;
 	year = init_data.year;

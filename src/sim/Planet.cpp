@@ -56,7 +56,7 @@ Planet::~Planet()
 	_body = nullptr;
 }
 
-void Planet::Init(Simulation & simulation, InitData<Planet> const & init_data)
+void Planet::Init(Simulation & simulation, InitData const & init_data)
 {
 	Assert(init_data.sphere.radius > 0);
 	_radius_mean = init_data.sphere.radius;

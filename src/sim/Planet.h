@@ -33,11 +33,19 @@ namespace sim
 	class Planet : public Entity
 	{
 	public:
+		// types
+		struct InitData
+		{
+			Sphere3 sphere;
+			int random_seed;
+			int num_craters;
+		};
+
+		// functions
 		Planet();
 		~Planet();
 
-		// Called from the simulation thread.
-		virtual void Init(Simulation & simulation, InitData<Planet> const & init_data);
+		virtual void Init(Simulation & simulation, InitData const & init_data);
 
 		virtual void Tick(Simulation & simulation);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
@@ -59,14 +67,5 @@ namespace sim
 		Scalar _radius_mean;
 		Scalar _radius_min;
 		Scalar _radius_max;
-	};
-
-	// InitData struct specialization for Box
-	template <>
-	struct InitData<Planet>
-	{
-		Sphere3 sphere;
-		int random_seed;
-		int num_craters;
 	};
 }

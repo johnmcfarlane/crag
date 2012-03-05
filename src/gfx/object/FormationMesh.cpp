@@ -57,7 +57,7 @@ void FormationMesh::Verify() const
 }
 #endif
 
-bool FormationMesh::Init(Renderer & renderer, InitData const & init_data)
+bool FormationMesh::Init(Renderer & renderer, void *)
 {
 	for (int index = 0; index < 2; ++ index)
 	{

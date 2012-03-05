@@ -162,7 +162,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	_mesh.Create(gfx::FormationMesh::InitData());
+	_mesh.Create(nullptr);
 	gfx::Daemon::Call(_mesh.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
 	
 	while (! quit_flag) 

@@ -28,7 +28,7 @@ namespace sim
 		~Ball();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, InitData<Ball> const & init_data);
+		void Init(Simulation & simulation, Sphere3 const & sphere);
 	private:
 		void InitPhysics(Simulation & simulation, Sphere3 const & sphere);
 		void InitGraphics(Sphere3 const & sphere);
@@ -42,12 +42,5 @@ namespace sim
 	private:
 		// variables
 		gfx::BranchNodeHandle _model;
-	};
-
-	// InitData struct specialization for Ball
-	template <>
-	struct InitData<Ball>
-	{
-		Sphere3 sphere;
 	};
 }

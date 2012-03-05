@@ -50,7 +50,7 @@ Box::~Box()
 	_model.Destroy();
 }
 
-void Box::Init(Simulation & simulation, InitData<Box> const & init_data)
+void Box::Init(Simulation & simulation, InitData const & init_data)
 {
 	InitPhysics(simulation, init_data.center, init_data.size);
 	InitGraphics();
