@@ -29,15 +29,20 @@
 #include "core/ConfigEntry.h"
 
 
+CONFIG_DEFINE (sim_tick_duration, Time, 1.f / 60.f);
+
+
+namespace
+{
+	CONFIG_DEFINE (apply_gravity, bool, true);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Simulation
 
 
 using namespace sim;
-
-
-CONFIG_DEFINE_MEMBER (Simulation, target_frame_seconds, Time, 1.f / 60.f);
-CONFIG_DEFINE_MEMBER (Simulation, apply_gravity, bool, true);
 
 
 Simulation::Simulation()
@@ -159,7 +164,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 			}
 			else
 			{
-				next_tick_time += target_frame_seconds;
+				next_tick_time += sim_tick_duration;
 			}
 		}
 	}
@@ -173,7 +178,7 @@ void Simulation::Tick()
 	// Tick the entities.
 	if (! paused) 
 	{
-		_time += target_frame_seconds;
+		_time += sim_tick_duration;
 		
 		// Update the script thread's time variable.
 		script::Daemon::Call<Time>(_time, & script::ScriptThread::SetTime);
@@ -183,11 +188,11 @@ void Simulation::Tick()
 		
 		if (apply_gravity)
 		{
-			ApplyGravity(_entity_set, target_frame_seconds);
+			ApplyGravity(_entity_set, sim_tick_duration);
 		}
 
 		// Run physics/collisions.
-		_physics_engine.Tick(target_frame_seconds);
+		_physics_engine.Tick(sim_tick_duration);
 
 		_entity_set.Purge();
 		

@@ -29,6 +29,8 @@
 using namespace sim;
 
 
+CONFIG_DECLARE (sim_tick_duration, Time);
+
 namespace 
 {
 	CONFIG_DEFINE (observer_radius, double, .5);
@@ -100,7 +102,7 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 		Vector3(observer_torque_impulse, observer_torque_impulse, observer_torque_impulse),
 	};
 	
-	Scalar inv_t = 1.f / Simulation::target_frame_seconds;
+	Scalar inv_t = 1.f / sim_tick_duration;
 
 	for (int d = 0; d < 2; ++ d)
 	{

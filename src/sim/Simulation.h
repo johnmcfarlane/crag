@@ -38,9 +38,6 @@ namespace sim
 		OBJECT_SINGLETON(Simulation);
 
 	public:
-		CONFIG_DECLARE_MEMBER (target_frame_seconds, Time);
-		CONFIG_DECLARE_MEMBER (apply_gravity, bool);
-
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		

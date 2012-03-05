@@ -40,6 +40,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
+	CONFIG_DEFINE (gfx_frame_duration, Time, 1.f / 60.f);
+
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
@@ -1213,7 +1215,7 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
 	// TODO: Decouple these two, use frame-rate of video mode for this one 
 	// and rename the other to something more appropriate.
-	Time target_frame_duration = sim::Simulation::target_frame_seconds;
+	Time target_frame_duration = gfx_frame_duration;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;
