@@ -94,21 +94,14 @@ namespace core
 
 
 #define CONFIG_DEFINE(name, type, default) type name = default; core::Config<type> name##config (name, #name)
-#define CONFIG_DEFINE_MEMBER(class, name, type, default) type class::name = default; core::Config<type> name##config (class::name, #name)
-
 #define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default); core::ConfigAngle<type> name##config (name, #name)
-#define CONFIG_DEFINE_ANGLE_MEMBER(class, name, type, default) type class::name = DegToRad(default); core::ConfigAngle<type> name##config (class::name, #name)
 
 #else
 
 #define CONFIG_DEFINE(name, type, default) type name = default
-#define CONFIG_DEFINE_MEMBER(class, name, type, default) type class::name = default
-
 #define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default)
-#define CONFIG_DEFINE_ANGLE_MEMBER(class, name, type, default) type class::name = DegToRad(default)
 
 #endif
 
 #define CONFIG_DECLARE(name, type) extern type name
-#define CONFIG_DECLARE_MEMBER(name, type) static type name
 
