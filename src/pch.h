@@ -64,7 +64,7 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// OpenGl includes
+// OpenGL includes
 
 // TODO: Re-evaluate "SDL_opengl.h"
 #if defined(__APPLE__)
