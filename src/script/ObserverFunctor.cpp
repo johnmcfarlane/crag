@@ -14,6 +14,7 @@
 #include "ScriptThread.h"
 
 #include "sim/EntityFunctions.h"
+#include "sim/Observer.h"
 
 
 using namespace script;

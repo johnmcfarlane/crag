@@ -14,10 +14,7 @@
 #include "gfx/defs.h"
 
 
-namespace physics
-{
-	class BoxBody;
-}
+DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
 
 
 namespace sim

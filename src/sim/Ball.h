@@ -17,6 +17,9 @@
 #include "geom/Sphere.h"
 
 
+DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
+
+
 namespace sim
 {
 	// a round entity

@@ -22,7 +22,6 @@
 
 namespace sim
 {
-	class Entity;
 	struct SetCameraMessage;
 }
 

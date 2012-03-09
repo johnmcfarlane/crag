@@ -14,10 +14,11 @@
 #include "geom/Transformation.h"
 
 
+DECLARE_CLASS_HANDLE(gfx, BranchNode);	// gfx::BranchNodeHandle
+
+
 namespace gfx
 {
-	typedef smp::Handle<class BranchNode> BranchNodeHandle;
-
 	// An object which contains sub-objects
 	class BranchNode : public Object
 	{

@@ -12,10 +12,7 @@
 #include "Ball.h"
 
 
-namespace gfx 
-{
-	class Thruster;
-}
+DECLARE_CLASS_HANDLE(gfx, Thruster)	// gfx::ThrusterHandle
 
 
 namespace sim
@@ -28,7 +25,7 @@ namespace sim
 
 		typedef Ball super;
 	public:
-		typedef smp::Handle<gfx::Thruster> ThrusterHandle;
+		typedef gfx::ThrusterHandle ThrusterHandle;
 		
 		struct Thruster
 		{

@@ -14,7 +14,9 @@
 #include "EventCondition.h"
 
 #include "sim/Simulation.h"
-#include "sim/Observer.h"
+
+
+DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
 
 
 namespace script
@@ -37,7 +39,7 @@ namespace script
 		void SetSpeed(int speed);
 		
 		// variables
-		smp::Handle<sim::Observer> _observer;
+		sim::ObserverHandle _observer;
 		EventCondition _event_condition;
 		bool _collidable;
 	};

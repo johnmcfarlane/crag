@@ -14,10 +14,7 @@
 #include "geom/Sphere.h"
 
 
-namespace sim
-{
-	class Planet;
-}
+DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
 
 
 namespace form 
@@ -33,7 +30,7 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Handle<sim::Planet> const & planet);
+		Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, sim::PlanetHandle const & planet);
 		~Formation();
 
 		Shader const & GetShader() const;
@@ -47,7 +44,7 @@ namespace form
 		int _seed;	// TODO: This needs its own type.
 		Shader const & _shader;
 		sim::Sphere3 _shape;
-		smp::Handle<sim::Planet> _planet;
+		sim::PlanetHandle _planet;
 		sim::Scalar _radius_min;
 		sim::Scalar _radius_max;
 	};

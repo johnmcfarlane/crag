@@ -11,6 +11,10 @@
 
 #include "gfx/defs.h"
 
+
+DECLARE_CLASS_HANDLE(gfx, Object)	// gfx::ObjectHandle
+
+
 namespace gfx
 {
 	// forward-declarations

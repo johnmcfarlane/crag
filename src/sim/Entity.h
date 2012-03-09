@@ -17,12 +17,6 @@ namespace physics
 	class Body;
 }
 
-namespace gfx
-{
-	class BranchNode;
-	typedef smp::Handle<BranchNode> BranchNodeHandle;
-}
-
 
 namespace sim
 {

@@ -24,3 +24,5 @@ private:
 	static const int box_edge_size = 512;
 	static const int num_stars = 5000;
 };
+
+typedef smp::Handle<Firmament> FirmamentHandle;

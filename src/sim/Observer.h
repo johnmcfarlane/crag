@@ -19,6 +19,7 @@
 #include "geom/Vector3.h"
 #include "geom/Matrix44.h"
 
+DECLARE_CLASS_HANDLE(gfx, Light)	// gfx::LightHandle
 
 //#define OBSERVER_LIGHT
 
@@ -26,11 +27,6 @@
 namespace physics
 {
 	class SphericalBody;
-}
-
-namespace gfx
-{
-	class Light;
 }
 
 
@@ -58,7 +54,7 @@ namespace sim
 		Vector3 impulses[2];	// [pos/rot]
 		Scalar speed_factor;
 #if defined(OBSERVER_LIGHT)
-		smp::Handle<gfx::Light> _model;
+		gfx::LightHandle _model;
 #endif
 	};
 }

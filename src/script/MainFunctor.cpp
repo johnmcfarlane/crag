@@ -25,6 +25,10 @@
 #include "core/Random.h"
 
 
+DECLARE_CLASS_HANDLE(sim, Ball)	// sim::BallHandle
+DECLARE_CLASS_HANDLE(sim, Box)	// sim::BoxHandle
+
+
 using namespace script;
 
 
@@ -88,7 +92,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
-	void add_thruster(smp::Handle<sim::Vehicle> & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void add_thruster(sim::VehicleHandle & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
 		sim::Vehicle::Thruster thruster;
 		thruster.position = position;
@@ -229,7 +233,7 @@ void MainFunctor::SpawnShapes()
 			case 0:
 			{
 				// ball
-				smp::Handle<sim::Ball> ball;
+				sim::BallHandle ball;
 				sim::Sphere3 sphere(spawn_pos, std::exp(- GetRandomUnit() * 2));
 				ball.Create(sphere);
 				_shapes.push_back(ball);
@@ -247,7 +251,7 @@ void MainFunctor::SpawnShapes()
 							 std::exp(GetRandomUnit() * -2.))
 				};
 				
-				smp::Handle<sim::Box> box;
+				sim::BoxHandle box;
 				box.Create(init_data);
 				_shapes.push_back(box);
 				break;

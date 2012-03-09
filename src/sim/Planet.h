@@ -13,15 +13,13 @@
 
 #include "geom/Sphere.h"
 
+DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
+DECLARE_CLASS_HANDLE(gfx, Planet)	// gfx::PlanetHandle
+
 
 namespace form
 {
 	class Formation;
-}
-
-namespace gfx
-{
-	class Planet;
 }
 
 
@@ -63,7 +61,7 @@ namespace sim
 		form::Formation * _formation;
 		PlanetaryBody * _body;
 		gfx::BranchNodeHandle _branch_node;
-		smp::Handle<gfx::Planet> _model;
+		gfx::PlanetHandle _model;
 		Scalar _radius_mean;
 		Scalar _radius_min;
 		Scalar _radius_max;

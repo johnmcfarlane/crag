@@ -14,6 +14,9 @@
 #include "gfx/defs.h"
 
 
+DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
+
+
 namespace sim
 {
 	// rotating solar light source

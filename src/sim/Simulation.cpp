@@ -138,7 +138,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	smp::SetThreadName("Simulation");
 
 	// Add the skybox.
-	smp::Handle<Firmament> skybox;
+	FirmamentHandle skybox;
 	skybox.Create<void *>(nullptr);
 	gfx::Daemon::Call(skybox.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
 	

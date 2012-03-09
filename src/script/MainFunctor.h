@@ -12,12 +12,10 @@
 #include "sim/Simulation.h"
 
 
-namespace sim
-{
-	class Planet;
-	class Star;
-	class Vehicle;
-}
+DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
+DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
+DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
+
 
 namespace script
 {
@@ -26,7 +24,7 @@ namespace script
 	{
 	public:
 		// types
-		typedef std::vector<smp::Handle <sim::Vehicle> > EntityVector;
+		typedef std::vector<sim::VehicleHandle> EntityVector;
 		
 		// functions
 		void operator() (FiberInterface & fiber);
@@ -36,9 +34,9 @@ namespace script
 		void SpawnShapes();
 
 		// variables
-		smp::Handle<sim::Planet> _planet, _moon1, _moon2;
-		smp::Handle<sim::Star> _sun;
-		smp::Handle<sim::Vehicle> _vehicle;
+		sim::PlanetHandle _planet, _moon1, _moon2;
+		sim::StarHandle _sun;
+		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
 	};
 }

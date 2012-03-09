@@ -23,14 +23,12 @@
 #include "smp/Semaphore.h"
 
 
-namespace gfx
-{
-	class FormationMesh;
-}
+DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
+DECLARE_CLASS_HANDLE(gfx, FormationMesh)	// gfx::FormationMeshHandle
+
 
 namespace form 
 {	
-	
 	////////////////////////////////////////////////////////////////////////////////
 	// forward declarations
 	
@@ -132,7 +130,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		smp::Handle<gfx::FormationMesh> _mesh;
+		gfx::FormationMeshHandle _mesh;
 		FormationSet _formations;
 		
 		bool quit_flag;

@@ -50,7 +50,7 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	branch_node.Create(transformation);
 	
 	// branch node's parent is vehicle's branch node
-	smp::Handle<gfx::Object> const & parent_model = GetModel();
+	gfx::ObjectHandle const & parent_model = GetModel();
 	gfx::Daemon::Call(branch_node.GetUid(), parent_model.GetUid(), & gfx::Renderer::OnSetParent);
 	
 	// create actual thruster graphics

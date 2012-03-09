@@ -49,7 +49,7 @@ namespace
 }
 
 
-Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, smp::Handle<sim::Planet> const & planet)
+Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, sim::PlanetHandle const & planet)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
