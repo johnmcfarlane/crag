@@ -216,9 +216,11 @@ void MainFunctor::SpawnShapes()
 	
 	if (cleanup_shapes)
 	{
-		if (_shapes.size() > max_shapes)
+		if (_shapes.size() >= max_shapes)
 		{
-			_shapes.erase(_shapes.begin());
+			EntityVector::iterator first = _shapes.begin();
+			first->Destroy();
+			_shapes.erase(first);
 		}
 	}
 	
