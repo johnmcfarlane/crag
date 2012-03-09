@@ -1,5 +1,5 @@
 //
-//  SharedMutex.cpp
+//  ReadersWriterMutex.cpp
 //  crag
 //
 //  Created by John on 2011-03-17.
@@ -9,18 +9,18 @@
 
 #include "pch.h"
 
-#include "SharedMutex.h"
+#include "ReadersWriterMutex.h"
 
 #include "atomic.h"
 
 
-smp::SharedMutex::SharedMutex()
+smp::ReadersWriterMutex::ReadersWriterMutex()
 : read_count(0)
 , write_count(0)
 {
 }
 
-void smp::SharedMutex::ReadLock()
+void smp::ReadersWriterMutex::ReadLock()
 {
 	read_entry_lock.Lock();
 	read_lock.Lock();
@@ -32,7 +32,7 @@ void smp::SharedMutex::ReadLock()
 	read_entry_lock.Unlock();
 }
 
-void smp::SharedMutex::ReadUnlock()
+void smp::ReadersWriterMutex::ReadUnlock()
 {
 	if (AtomicFetchAndAdd(read_count, -1) == 1)
 	{
@@ -40,7 +40,7 @@ void smp::SharedMutex::ReadUnlock()
 	}
 }
 
-void smp::SharedMutex::WriteLock()
+void smp::ReadersWriterMutex::WriteLock()
 {
 	if (AtomicFetchAndAdd(write_count, 1) == 0)
 	{
@@ -50,7 +50,7 @@ void smp::SharedMutex::WriteLock()
 	write_lock.Lock();
 }
 
-void smp::SharedMutex::WriteUnlock()
+void smp::ReadersWriterMutex::WriteUnlock()
 {
 	write_lock.Unlock();
 	

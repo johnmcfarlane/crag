@@ -98,7 +98,7 @@
 		5230578A14F1D95F0024D4A8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572114F1D95F0024D4A8 /* Mutex.cpp */; };
 		5230578B14F1D95F0024D4A8 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572314F1D95F0024D4A8 /* scheduler.cpp */; };
 		5230578C14F1D95F0024D4A8 /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572514F1D95F0024D4A8 /* Semaphore.cpp */; };
-		5230578D14F1D95F0024D4A8 /* SharedMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572714F1D95F0024D4A8 /* SharedMutex.cpp */; };
+		5230578D14F1D95F0024D4A8 /* ReadersWriterMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572714F1D95F0024D4A8 /* ReadersWriterMutex.cpp */; };
 		5230578E14F1D95F0024D4A8 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572A14F1D95F0024D4A8 /* smp.cpp */; };
 		5230578F14F1D95F0024D4A8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572C14F1D95F0024D4A8 /* Thread.cpp */; };
 		5230579014F1D95F0024D4A8 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572E14F1D95F0024D4A8 /* Uid.cpp */; };
@@ -396,8 +396,8 @@
 		5230572414F1D95F0024D4A8 /* scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
 		5230572514F1D95F0024D4A8 /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
 		5230572614F1D95F0024D4A8 /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
-		5230572714F1D95F0024D4A8 /* SharedMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMutex.cpp; sourceTree = "<group>"; };
-		5230572814F1D95F0024D4A8 /* SharedMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMutex.h; sourceTree = "<group>"; };
+		5230572714F1D95F0024D4A8 /* ReadersWriterMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadersWriterMutex.cpp; sourceTree = "<group>"; };
+		5230572814F1D95F0024D4A8 /* ReadersWriterMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ReadersWriterMutex.h; sourceTree = "<group>"; };
 		5230572914F1D95F0024D4A8 /* SimpleMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMutex.h; sourceTree = "<group>"; };
 		5230572A14F1D95F0024D4A8 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
 		5230572B14F1D95F0024D4A8 /* smp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smp.h; sourceTree = "<group>"; };
@@ -819,8 +819,8 @@
 				5230572414F1D95F0024D4A8 /* scheduler.h */,
 				5230572514F1D95F0024D4A8 /* Semaphore.cpp */,
 				5230572614F1D95F0024D4A8 /* Semaphore.h */,
-				5230572714F1D95F0024D4A8 /* SharedMutex.cpp */,
-				5230572814F1D95F0024D4A8 /* SharedMutex.h */,
+				5230572714F1D95F0024D4A8 /* ReadersWriterMutex.cpp */,
+				5230572814F1D95F0024D4A8 /* ReadersWriterMutex.h */,
 				5230572914F1D95F0024D4A8 /* SimpleMutex.h */,
 				5230572A14F1D95F0024D4A8 /* smp.cpp */,
 				5230572B14F1D95F0024D4A8 /* smp.h */,
@@ -1032,7 +1032,7 @@
 				5230578A14F1D95F0024D4A8 /* Mutex.cpp in Sources */,
 				5230578B14F1D95F0024D4A8 /* scheduler.cpp in Sources */,
 				5230578C14F1D95F0024D4A8 /* Semaphore.cpp in Sources */,
-				5230578D14F1D95F0024D4A8 /* SharedMutex.cpp in Sources */,
+				5230578D14F1D95F0024D4A8 /* ReadersWriterMutex.cpp in Sources */,
 				5230578E14F1D95F0024D4A8 /* smp.cpp in Sources */,
 				5230578F14F1D95F0024D4A8 /* Thread.cpp in Sources */,
 				5230579014F1D95F0024D4A8 /* Uid.cpp in Sources */,

@@ -1,5 +1,5 @@
 //
-//  SharedMutex.h
+//  ReadersWriterMutex.h
 //  crag
 //
 //  Created by John on 2011-03-17.
@@ -21,12 +21,12 @@ namespace smp
 	// but allows unlimited reading.
 	// source: http://www.thegrumpyprogrammer.com/node/16
 	
-	class SharedMutex
+	class ReadersWriterMutex
 	{
-		OBJECT_NO_COPY(SharedMutex);
+		OBJECT_NO_COPY(ReadersWriterMutex);
 		
 	public:
-		SharedMutex();
+		ReadersWriterMutex();
 		
 		void ReadLock();
 		void ReadUnlock();
