@@ -222,10 +222,9 @@ bool form::Node::InitScoreParameters()
 	Vector3f const & c = ref(triple[2].corner).pos;
 	
 	normal = TriangleNormal(a, b, c);
-	if (! FastSafeNormalize(normal)) 
-	{
-		return false;
-	}
+	ASSERT(normal == normal);
+	ASSERT(LengthSq(normal) > 0);
+	FastNormalize(normal);
 	
 	area = TriangleArea<float>(a, b, c);
 	if (area == 0) 
