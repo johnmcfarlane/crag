@@ -82,7 +82,6 @@ namespace smp
 		}
 		
 		// Usually represents failure to completely encapsulate the object.
-		// TODO: Get serious about removing this!
 		static Class & Ref()
 		{
 			return ref(singleton->_object);
