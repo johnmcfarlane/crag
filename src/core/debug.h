@@ -53,42 +53,59 @@
 // Misc debug helpers
 
 
-// Break
+// ERROR_MESSAGE macro - printf-style error logging
+#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT, __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+
+
+// BREAK - interrupt execution
 #if defined(WIN32)
-#define DEBUG_BREAK() __debugbreak()
+#define BREAK() __debugbreak()
 #elif defined(__GNUC__)
-#define DEBUG_BREAK() __builtin_trap()
+#if defined(__i386__)
+#define BREAK() asm("int3")
 #else
-#define DEBUG_BREAK() assert(false)
+#include <signal.h>
+#define BREAK() raise(SIGTRAP)
+// NB: __builtin_trap() is another possability
+#endif
+#else
+#define BREAK() assert(false)
 #endif
 
 
-#define DEBUG_PRINT_SOURCE __FILE__ << ':' << __LINE__ << ':' << '[' << __FUNCTION__ << ']'
+// DEBUG_BREAK - interrupt execution in debug build and print an error message
+#if defined(NDEBUG)
+#define DEBUG_BREAK(...) DO_NOTHING
+#else
+#define DEBUG_BREAK(...) \
+	DO_STATEMENT ( \
+		ERROR_MESSAGE(__VA_ARGS__); \
+		BREAK(); \
+	)
+#endif
 
 
-// Assert
+// Assert - interrupt execution in a debug build iff given condition fails
 #if defined(NDEBUG)
 #define Assert(CONDITION) DO_NOTHING
 #else
 #define Assert(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
-			::std::cerr << DEBUG_PRINT_SOURCE << ": assert: \"" << #CONDITION << "\"" << std::endl; \
-			DEBUG_BREAK(); \
+			DEBUG_BREAK("Assert: \"%s\"\n", #CONDITION); \
 		} \
 	)
 #endif
 
 
-// stdlib Error Reported
+// standard library error reporter
 #if defined(NDEBUG)
 #define AssertErrno() DO_NOTHING
 #else
 #define AssertErrno() \
 	DO_STATEMENT ( \
 		if (errno != 0) { \
-			::std::cerr << DEBUG_PRINT_SOURCE << ": errno: " << errno << " \"" << strerror(errno) << "\"" << std::endl; \
-			DEBUG_BREAK(); \
+			DEBUG_BREAK("errno: %d \"%s\"\n", errno, strerror(errno)); \
 		} \
 	)
 #endif
@@ -97,7 +114,7 @@
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
 	DO_STATEMENT ( \
-		::std::cerr << DEBUG_PRINT_SOURCE << ": SDL error: \"" << SDL_GetError() << "\"" << std::endl; \
+		DEBUG_BREAK("SDL error: \"%s\"\n", SDL_GetError()); \
 	)
 
 
@@ -125,16 +142,17 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 #define VerifyTrue(CONDITION) \
 	DO_STATEMENT( \
 		if (! (CONDITION)) { \
-			::std::cerr << DEBUG_PRINT_SOURCE << ": Verify: \"" << #CONDITION << "\"" << std::endl; \
-			DEBUG_BREAK(); \
+			DEBUG_BREAK("Verify: \"%s\"\n", #CONDITION); \
 		} \
 	)
 
 #define VerifyEqual(A, B, EPSILON) \
-	if (! NearEqual(A, B, EPSILON)) { \
-		::std::cerr << DEBUG_PRINT_SOURCE << ": VerifyEqual: \"" << #A << " != " << #B << "; " << A << " != " << B << "\"" << std::endl; \
-		DEBUG_BREAK(); \
-	}
+	DO_STATEMENT( \
+		if (! NearEqual(A, B, EPSILON)) { \
+			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
+			DEBUG_BREAK("Verify: \"%s\" != \"%s\"\n", #A, #B); \
+		} \
+	)
 
 // Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
