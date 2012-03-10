@@ -72,42 +72,6 @@ template<typename S, int N> void FastNormalize(Vector<S, N> & v)
 	v *= FastInvSqrt(LengthSq(v));
 }
 
-// Converts v to unit vector and returns true. 
-// Returns false when input is zero length.
-// Slow but accurate. 
-template<typename S, int N> bool SafeNormalize(Vector<S, N> & v)
-{
-	S coefficient = InvSqrt(LengthSq(v));
-	
-	if (coefficient > 0) 
-	{
-		v *= coefficient;
-		return true;
-	}
-	else 
-	{
-		return false;
-	}
-}
-
-// Converts v to unit vector and returns true. 
-// Returns false when input is zero length.
-// Fast but inaccurate. 
-template<typename S, int N> bool FastSafeNormalize(Vector<S, N> & v)
-{
-	S coefficient = FastInvSqrt(LengthSq(v));
-	
-	if (coefficient > 0) 
-	{
-		v *= coefficient;
-		return true;
-	}
-	else 
-	{
-		return false;
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Area
