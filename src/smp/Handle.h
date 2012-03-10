@@ -36,11 +36,6 @@ namespace smp
 
 	public:
 		////////////////////////////////////////////////////////////////////////////////
-		// constants
-		
-		static Handle const null;
-		
-		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
 		Handle()
@@ -61,7 +56,6 @@ namespace smp
 		
 		~Handle()
 		{
-			//ASSERT(_uid == Uid::null);
 		}
 		
 		template <typename BASE_TYPE>
@@ -76,6 +70,11 @@ namespace smp
 		{
 			ASSERT((BASE_TYPE *)((Type *)nullptr) == nullptr);
 			return reinterpret_cast<Handle <BASE_TYPE> const &>(* this);
+		}
+		
+		operator bool () const
+		{
+			return _uid != Uid::null;
 		}
 
 		// Returns the UID of the entity being handled.
@@ -288,9 +287,6 @@ namespace smp
 		
 		Uid _uid;
 	};
-	
-	template <typename TYPE>
-	Handle<TYPE> const Handle<TYPE>::null;
 	
 	template <typename TYPE>
 	bool operator==(Handle<TYPE> const & lhs, Handle<TYPE> const & rhs)
