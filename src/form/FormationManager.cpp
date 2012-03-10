@@ -184,18 +184,20 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	_mesh.Destroy();
 }
 
+// lock visible node tree for reading
 void form::FormationManager::LockTree()
 {
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.LockTree();
+	node_buffer.ReadLockTree();
 }
 
+// unlock visible node tree for reading
 void form::FormationManager::UnlockTree()
 {
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.UnlockTree();
+	node_buffer.ReadUnlockTree();
 }
 
 form::Scene const & form::FormationManager::OnTreeQuery() const
@@ -348,11 +350,11 @@ void form::FormationManager::EndReset()
 	
 	Scene const & scene = GetVisibleScene();
 	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.LockTree();
+	node_buffer.WriteLockTree();
 
 	scenes.flip();
 
-	node_buffer.UnlockTree();
+	node_buffer.WriteUnlockTree();
 
 	VerifyObject(* this);
 }

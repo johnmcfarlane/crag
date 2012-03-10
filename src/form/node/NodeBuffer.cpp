@@ -255,22 +255,32 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 	}
 	else if (new_quaterne_used_end < quaterne_used_end)
 	{
-		LockTree();
+		WriteLockTree();
 		DecreaseNodes(new_quaterne_used_end);
-		UnlockTree();
+		WriteUnlockTree();
 	}
 	
 	VerifyObject(* this);
 }
 
-void form::NodeBuffer::LockTree() const
+void form::NodeBuffer::ReadLockTree() const
 {
-	tree_mutex.Lock();
+	tree_mutex.ReadLock();
 }
 
-void form::NodeBuffer::UnlockTree() const
+void form::NodeBuffer::ReadUnlockTree() const
 {
-	tree_mutex.Unlock();
+	tree_mutex.ReadUnlock();
+}
+
+void form::NodeBuffer::WriteLockTree() const
+{
+	tree_mutex.WriteLock();
+}
+
+void form::NodeBuffer::WriteUnlockTree() const
+{
+	tree_mutex.WriteUnlock();
 }
 
 // This is the main tick function for all things 'nodey'.
@@ -533,7 +543,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 		return false;
 	}
 	
-	LockTree();
+	WriteLockTree();
 	
 	// Deinit children.
 	bool is_in_use = children_quaterna.IsInUse();
@@ -554,7 +564,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	node.SetChildren(worst_children);
 	InitChildPointers(node);
 	
-	UnlockTree();
+	WriteUnlockTree();
 	
 	children_quaterna.parent_score = node.score;
 	

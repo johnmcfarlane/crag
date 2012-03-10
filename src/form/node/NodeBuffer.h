@@ -13,7 +13,7 @@
 
 #include "core/debug.h"
 
-#include "smp/Mutex.h"
+#include "smp/ReadersWriterMutex.h"
 #include "smp/Vector.h"
 
 #include "geom/Vector3.h"
@@ -93,8 +93,10 @@ namespace form
 		// Must be a multiple of four.
 		void SetNumQuaternaUsedTarget(int n);	
 		
-		void LockTree() const;
-		void UnlockTree() const;
+		void ReadLockTree() const;
+		void ReadUnlockTree() const;
+		void WriteLockTree() const;
+		void WriteUnlockTree() const;
 		
 		void Tick(Ray3 const & new_camera_ray);
 		void OnReset();
@@ -167,7 +169,7 @@ namespace form
 		
 		// When locked, the structure of the node trees cannot be changed;
 		// No new children can be added and no old ones removed.
-		mutable smp::Mutex tree_mutex;
+		mutable smp::ReadersWriterMutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
