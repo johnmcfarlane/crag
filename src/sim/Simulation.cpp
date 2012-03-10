@@ -120,7 +120,7 @@ Time Simulation::GetTime() const
 
 Entity * Simulation::GetObject(Uid uid) 
 {
-	ASSERT(uid != Uid::null);
+	ASSERT(uid);
 	Entity * entity = _entity_set.GetEntity(uid);
 	return entity;
 }
@@ -140,7 +140,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	// Add the skybox.
 	FirmamentHandle skybox;
 	skybox.Create<void *>(nullptr);
-	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, skybox.GetUid(), gfx::Uid::null);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, skybox.GetUid(), gfx::Uid());
 	
 	Time next_tick_time = app::GetTime();
 	

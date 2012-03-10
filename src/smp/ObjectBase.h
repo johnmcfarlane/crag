@@ -28,27 +28,31 @@ namespace smp
 		typedef Daemon<DaemonClass> Daemon;
 		
 		// functions
-		ObjectBase(Uid uid = Uid::null)
+		ObjectBase()
+		{
+		}
+		
+		ObjectBase(Uid uid)
 		: _uid(uid)
 		{
 		}
 		
 		virtual ~ObjectBase()
 		{ 
-			ASSERT(_uid != Uid::null);
+			ASSERT(_uid);
 		}
 		
 #if defined(VERIFY)
 		virtual void Verify() const
 		{
-			ASSERT(_uid != Uid::null);
+			ASSERT(_uid);
 		}
 #endif
 		
 		void SetUid(Uid uid)
 		{
-			ASSERT(_uid == Uid::null);
-			ASSERT(uid != Uid::null);
+			ASSERT(! _uid);
+			ASSERT(uid);
 			
 			_uid = uid;
 		}

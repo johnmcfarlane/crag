@@ -50,5 +50,3 @@ Uid Uid::Create()
 	// Return unique Uid.
 	return creation;
 }
-
-Uid const Uid::null;

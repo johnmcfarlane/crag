@@ -79,7 +79,7 @@ void Scene::AddObject(Object & object)
 {
 	// add object to map
 	Uid uid = object.GetUid();
-	if (uid == Uid::null)
+	if (! uid)
 	{
 		// Means that this object was created locally
 		// with no need of a thread-safe id.

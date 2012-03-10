@@ -71,7 +71,7 @@ namespace
 		AddThrusterFunctor(sim::Vehicle::Thruster const & thruster)
 		: _thruster(thruster)
 		{
-			ASSERT(_thruster.model.GetUid() == gfx::Uid::null);
+			ASSERT(_thruster.model.GetUid() == gfx::Uid());
 		}
 		
 		void operator() (sim::Vehicle * vehicle) const

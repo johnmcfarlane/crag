@@ -24,6 +24,8 @@ namespace smp
 		// functions
 		Uid() : _value(0) { }
 		
+		operator bool () const { return _value != 0; }
+		
 		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
 		
 		friend bool operator == (Uid const & lhs, Uid const & rhs) { return lhs._value == rhs._value; }
@@ -34,8 +36,6 @@ namespace smp
 		
 		// create a new unique object
 		static Uid Create();
-		
-		static const Uid null;
 		
 	private:
 		// variables

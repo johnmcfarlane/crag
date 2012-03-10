@@ -39,7 +39,6 @@ namespace smp
 		// functions
 		
 		Handle()
-		: _uid(Uid::null)
 		{
 		}
 		
@@ -74,7 +73,7 @@ namespace smp
 		
 		operator bool () const
 		{
-			return _uid != Uid::null;
+			return _uid;
 		}
 
 		// Returns the UID of the entity being handled.
@@ -109,11 +108,11 @@ namespace smp
 			typedef typename Daemon::Class DaemonClass;
 
 			// If not already destroyed,
-			if (_uid != Uid::null)
+			if (_uid)
 			{
 				// set message.
 				Daemon::Call(& DaemonClass::OnRemoveObject, _uid);
-				_uid = Uid::null;
+				_uid = Uid();
 			}
 		}
 		
@@ -170,7 +169,7 @@ namespace smp
 			: _uid(uid)
 			, _functor(functor)
 			{
-				ASSERT(_uid != Uid::null);
+				ASSERT(_uid);
 			}
 		private:
 			virtual void operator () (typename Type::DaemonClass & daemon_class) const override

@@ -199,7 +199,7 @@ namespace
 	// returns a reference to that branch node.
 	BranchNode * GetBranchNode(Scene & scene, Uid branch_node_uid)
 	{
-		if (branch_node_uid == Uid::null)
+		if (! branch_node_uid)
 		{
 			return & scene.GetRoot();
 		}
@@ -394,7 +394,7 @@ void Renderer::OnAddObject(Object & object)
 
 	// success!
 	scene->AddObject(object);
-	OnSetParent(object, Uid::null);
+	OnSetParent(object, Uid());
 }
 
 void Renderer::OnRemoveObject(Uid const & uid)
