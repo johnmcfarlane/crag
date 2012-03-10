@@ -163,7 +163,7 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	
 	// register with the renderer
 	_mesh.Create(nullptr);
-	gfx::Daemon::Call(_mesh.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _mesh.GetUid(), gfx::Uid());
 	
 	while (! quit_flag) 
 	{

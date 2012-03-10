@@ -230,7 +230,7 @@ namespace
 					{
 						// TODO: Check it's the right window?
 						Vector2i size(window_event.data1, window_event.data2);
-						gfx::Daemon::Call(size, & gfx::Renderer::OnResize);
+						gfx::Daemon::Call(& gfx::Renderer::OnResize, size);
 						return true;
 					}
 					
@@ -241,7 +241,7 @@ namespace
 					case SDL_WINDOWEVENT_ENTER:
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
-						form::Daemon::Call(true, & form::FormationManager::OnRegulatorSetEnabled);
+						form::Daemon::Call(& form::FormationManager::OnRegulatorSetEnabled, true);
 						return true;
 					}
 					
@@ -250,7 +250,7 @@ namespace
 					case SDL_WINDOWEVENT_LEAVE:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 					{
-						form::Daemon::Call(false, & form::FormationManager::OnRegulatorSetEnabled);
+						form::Daemon::Call(& form::FormationManager::OnRegulatorSetEnabled, false);
 						return true;
 					}
 				}
@@ -273,7 +273,7 @@ namespace
 		}
 
 		// If not caught here, then send it to the script thread.
-		script::Daemon::Call(event, & script::ScriptThread::OnEvent);
+		script::Daemon::Call(& script::ScriptThread::OnEvent, event);
 		return true;
 	}
 

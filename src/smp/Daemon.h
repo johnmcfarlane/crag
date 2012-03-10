@@ -176,7 +176,7 @@ namespace smp
 		
 		// 1-parameter version
 		template <typename PARAMETER1>
-		static void Call (PARAMETER1 const & parameter1, void (Class::* function)(PARAMETER1 const &))
+		static void Call (void (Class::* function)(PARAMETER1 const &), PARAMETER1 const & parameter1)
 		{
 			DerivedMessage1<PARAMETER1> message(function, parameter1);
 			SendMessage(message);
@@ -184,7 +184,7 @@ namespace smp
 		
 		// 2-parameter version
 		template <typename PARAMETER1, typename PARAMETER2>
-		static void Call (PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &))
+		static void Call (void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2)
 		{
 			DerivedMessage2<PARAMETER1, PARAMETER2> message(function, parameter1, parameter2);
 			SendMessage(message);
@@ -192,7 +192,7 @@ namespace smp
 		
 		// 3-parameter version
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		static void Call (PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3, void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &))
+		static void Call (void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3)
 		{
 			DerivedMessage3<PARAMETER1, PARAMETER2, PARAMETER3> message(function, parameter1, parameter2, parameter3);
 			SendMessage(message);

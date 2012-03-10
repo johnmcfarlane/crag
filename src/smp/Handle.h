@@ -99,7 +99,7 @@ namespace smp
 			Destroy();
 			Uid uid = Uid::Create();
 			SetUid(uid);
-			Daemon::Call(uid, init_data, & DaemonClass::template OnCreateObject<Type, INIT_DATA>);
+			Daemon::Call(& DaemonClass::template OnCreateObject<Type, INIT_DATA>, uid, init_data);
 		}
 
 		// Tells simulation to destroy the object.
@@ -112,7 +112,7 @@ namespace smp
 			if (_uid != Uid::null)
 			{
 				// set message.
-				Daemon::Call(_uid, & DaemonClass::OnRemoveObject);
+				Daemon::Call(& DaemonClass::OnRemoveObject, _uid);
 				_uid = Uid::null;
 			}
 		}

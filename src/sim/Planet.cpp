@@ -49,7 +49,7 @@ Planet::~Planet()
 	_branch_node.Destroy();
 	
 	// unregister with formation manager
-	form::Daemon::Call<form::Formation *>(_formation, & form::FormationManager::OnRemoveFormation);
+	form::Daemon::Call<form::Formation *>(& form::FormationManager::OnRemoveFormation, _formation);
 	_formation = nullptr;
 
 	delete _body;
@@ -92,7 +92,7 @@ void Planet::Init(Simulation & simulation, InitData const & init_data)
 	// messages
 	{
 		// register with formation manager
-		form::Daemon::Call(_formation, & form::FormationManager::OnAddFormation);
+		form::Daemon::Call(& form::FormationManager::OnAddFormation, _formation);
 		
 		// register with the renderer
 #if defined(RENDER_SEA)
@@ -103,7 +103,7 @@ void Planet::Init(Simulation & simulation, InitData const & init_data)
 		
 		_branch_node.Create(gfx::Transformation::Matrix::Identity());
 		_model.Create(gfx::Scalar(sea_level));
-		gfx::Daemon::Call(_model.GetUid(), _branch_node.GetUid(), & gfx::Renderer::OnSetParent);
+		gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _model.GetUid(), _branch_node.GetUid());
 		UpdateModels();
 	}
 }

@@ -69,12 +69,12 @@ void Simulation::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the Renderer is in an incomplete state.
-	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
 	
 	_entity_set.Add(entity);
 	
-	gfx::Daemon::Call(_time, & gfx::Renderer::OnSetTime);
-	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetTime, _time);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
 }
 
 void Simulation::OnRemoveObject(Uid const & uid)
@@ -140,7 +140,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	// Add the skybox.
 	FirmamentHandle skybox;
 	skybox.Create<void *>(nullptr);
-	gfx::Daemon::Call(skybox.GetUid(), gfx::Uid::null, & gfx::Renderer::OnSetParent);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, skybox.GetUid(), gfx::Uid::null);
 	
 	Time next_tick_time = app::GetTime();
 	
@@ -181,7 +181,7 @@ void Simulation::Tick()
 		_time += sim_tick_duration;
 		
 		// Update the script thread's time variable.
-		script::Daemon::Call<Time>(_time, & script::ScriptThread::SetTime);
+		script::Daemon::Call<Time>(& script::ScriptThread::SetTime, _time);
 		
 		// Perform the Entity-specific simulation.
 		TickEntities();
@@ -203,12 +203,12 @@ void Simulation::Tick()
 
 void Simulation::UpdateRenderer() const
 {
-	gfx::Daemon::Call(false, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(_time, & gfx::Renderer::OnSetTime);
-	gfx::Daemon::Call(true, & gfx::Renderer::OnSetReady);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetTime, _time);
+	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
 }
 
 // Perform a step in the simulation. 

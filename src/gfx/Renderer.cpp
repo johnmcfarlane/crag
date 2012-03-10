@@ -481,7 +481,7 @@ void Renderer::OnSetCamera(gfx::Transformation const & transformation)
 	}
 
 	// pass this on to the formation manager to update the node scores
-	form::Daemon::Call(transformation, & form::FormationManager::OnSetCamera);
+	form::Daemon::Call(& form::FormationManager::OnSetCamera, transformation);
 }
 
 #if defined(NDEBUG)
@@ -1225,7 +1225,7 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	ASSERT(frame_duration_ratio >= 0);
 	ASSERT(! IsInf(frame_duration_ratio));
 	
-	form::Daemon::Call(frame_duration_ratio, & form::FormationManager::OnRegulatorSampleFrameDuration);
+	form::Daemon::Call(& form::FormationManager::OnRegulatorSampleFrameDuration, frame_duration_ratio);
 }
 
 void Renderer::Capture()

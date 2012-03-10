@@ -112,7 +112,7 @@ void MainFunctor::operator() (FiberInterface & fiber)
 	// Set camera position
 	{
 		sim::Transformation transformation(observer_start_pos);
-		gfx::Daemon::Call(transformation, & gfx::Renderer::OnSetCamera);
+		gfx::Daemon::Call(& gfx::Renderer::OnSetCamera, transformation);
 	}
 	
 	SpawnUniverse();
