@@ -24,7 +24,7 @@ RenderBuffer::RenderBuffer()
 
 RenderBuffer::~RenderBuffer()
 {
-	Assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool RenderBuffer::IsInitialized() const
@@ -34,7 +34,7 @@ bool RenderBuffer::IsInitialized() const
 
 bool RenderBuffer::IsBound() const
 {
-	Assert(IsInitialized());
+	ASSERT(IsInitialized());
 	return GetBinding<GL_RENDERBUFFER>() == _id;
 }
 

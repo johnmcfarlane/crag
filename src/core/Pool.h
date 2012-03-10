@@ -54,7 +54,7 @@ public:
 	
 	void FastClear()
 	{
-		Assert(IsEmpty());
+		ASSERT(IsEmpty());
 		InitFreeList();
 	}
 	
@@ -66,7 +66,7 @@ public:
 			T * element = reinterpret_cast<T *>(free_list);
 			free_list = free_list->next;
 
-			Assert(IsValidElement(element));
+			ASSERT(IsValidElement(element));
 
 			if (element >= end_used)
 			{
@@ -81,7 +81,7 @@ public:
 	
 	void Free(T * ptr)
 	{
-		Assert (ptr != nullptr);
+		ASSERT (ptr != nullptr);
 
 #if defined(VERIFY)
 		T const * element = reinterpret_cast<T *>(ptr);
@@ -90,7 +90,7 @@ public:
 		VerifyTrue(IsValidElement(element));
 		
 		// Check this isn't a double-free.
-///////////////////////////////////		Assert(! IsFree(element));
+///////////////////////////////////		ASSERT(! IsFree(element));
 #endif
 
 		Node * n = reinterpret_cast<Node *>(ptr);
@@ -103,22 +103,22 @@ public:
 	// Element Access
 	T & operator [] (size_type i)
 	{
-		Assert(i >= 0);
-		Assert(i < GetCapacity());
+		ASSERT(i >= 0);
+		ASSERT(i < GetCapacity());
 		return array[i];
 	}
 	
 	T const & operator [] (size_type i) const
 	{
-		Assert(i >= 0);
-		Assert(i < GetCapacity());
+		ASSERT(i >= 0);
+		ASSERT(i < GetCapacity());
 		return array[i];
 	}
 	
 	size_type GetIndex(T const & element) const
 	{
-		Assert(& element >= array);
-		Assert(& element < end);
+		ASSERT(& element >= array);
+		ASSERT(& element < end);
 		return & element - array;
 	}
 	
@@ -232,7 +232,7 @@ private:
 	{
 		if (max_num_elements != 0)
 		{
-			Assert(max_num_elements > 0);
+			ASSERT(max_num_elements > 0);
 			
 			size_type buffer_size_bytes = max_num_elements * sizeof(T);
 			array = reinterpret_cast<T *>(new char [buffer_size_bytes]);
@@ -279,7 +279,7 @@ private:
 		size_type list_size = 0;
 		while (node != 0)
 		{
-			//Assert (IsValidElement(* reinterpret_cast<T const *>(node)));
+			//ASSERT (IsValidElement(* reinterpret_cast<T const *>(node)));
 			node = node->next;
 			++ list_size;
 		}

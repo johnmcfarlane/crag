@@ -135,12 +135,12 @@ void sim::MoonShader::ApplyCraters(Random rnd, Vector3 & position) const
 			if (! GetIntersection(crater, ray, t1, t2))
 			{
 				// If this happens only very rarely, it's probably just a precision thing.
-				Assert(false);
+				ASSERT(false);
 				continue;
 			}
 			
-			Assert (t2 >= 1);
-			Assert (t1 <= 1);
+			ASSERT (t2 >= 1);
+			ASSERT (t1 <= 1);
 			
 			if (t1 < t)
 			{

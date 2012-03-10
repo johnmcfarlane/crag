@@ -35,13 +35,13 @@
 
 template<typename T> T Clamped(T const & val, T const & min, T const & max)
 {
-	Assert(min <= max);
+	ASSERT(min <= max);
 	return (val <= max) ? (val >= min) ? val : min : max;
 }
 
 template<typename T> void Clamp(T & val, T const & min, T const & max)
 {
-	Assert(min <= max);
+	ASSERT(min <= max);
 	if (val > max)
 	{
 		val = max;
@@ -250,7 +250,7 @@ inline bool IsInf(float n)
 
 template<typename T> T CubicInterpolation(T a, T b, T c, T d, T x)
 {
-	Assert(x >= 0 && x <= 1);
+	ASSERT(x >= 0 && x <= 1);
 	
 	T p = (d - c) - (a - b);
 	T q = (a - b) - p;
@@ -263,7 +263,7 @@ template<typename T> T CubicInterpolation(T a, T b, T c, T d, T x)
 
 template<typename T> T CubicInterpolation(T samples [4], T x)
 {
-	Assert(x >= 0 && x <= 1);
+	ASSERT(x >= 0 && x <= 1);
 	
 	T p = (samples[3] - samples[2]) - (samples[0] - samples[1]);
 	T q = (samples[0] - samples[1]) - p;

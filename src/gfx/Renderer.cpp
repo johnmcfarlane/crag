@@ -107,7 +107,7 @@ namespace
 	
 	void SetModelViewMatrix(gfx::Transformation const & model_view_transformation)
 	{
-		Assert(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
+		ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 
 		Matrix44 gl_model_view_matrix = model_view_transformation.GetOpenGlMatrix();
 		glLoadMatrixd(gl_model_view_matrix.GetArray());	
@@ -147,8 +147,8 @@ namespace
 				continue;
 			}
 			
-			Assert(! IsInf(depth_range[0]));
-			Assert(! IsInf(depth_range[1]));
+			ASSERT(! IsInf(depth_range[0]));
+			ASSERT(! IsInf(depth_range[1]));
 			
 			// and it isn't behind the camera,
 			if (depth_range[1] <= camera_near)
@@ -216,7 +216,7 @@ namespace
 		{
 			// The given uid refers to an object which is not a BranchNode.
 			// The uid is bogus.
-			Assert(false);
+			ASSERT(false);
 			return nullptr;
 		}
 		
@@ -270,14 +270,14 @@ Object const * Renderer::GetObject(Uid const & uid) const
 
 Scene & Renderer::GetScene()
 {
-	Assert(Daemon::IsCurrentThread());
+	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
 }
 
 Scene const & Renderer::GetScene() const
 {
-	Assert(Daemon::IsCurrentThread());
+	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
 }
@@ -313,7 +313,7 @@ void Renderer::SetCurrentProgram(Program const * program)
 	
 	if (_current_program != nullptr)
 	{
-		Assert(_current_program->IsInitialized());
+		ASSERT(_current_program->IsInitialized());
 		
 		_current_program->Bind();
 		
@@ -368,7 +368,7 @@ Color4f Renderer::CalculateLighting(Vector3 const & position) const
 		float attenuation = Clamped(1.f / distance_squared, 0.f, 1.f);
 		
 		Color4f const & color = light.GetColor();
-		Assert(color.a == 1.f);
+		ASSERT(color.a == 1.f);
 		Color4f diffuse = color * attenuation;
 		
 		lighting_color += diffuse;
@@ -410,7 +410,7 @@ void Renderer::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
 	Object * child = GetObject(child_uid);
 	if (child == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	
@@ -422,7 +422,7 @@ void Renderer::OnSetParent(Object & child, Uid const & parent_uid)
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	
@@ -548,8 +548,8 @@ bool Renderer::Init()
 	smp::SetThreadPriority(1);
 	smp::SetThreadName("Renderer");
 	
-	Assert(scene == nullptr);
-	Assert(context == nullptr);
+	ASSERT(scene == nullptr);
+	ASSERT(context == nullptr);
 	SDL_Window & window = app::GetWindow();
 	
 	context = SDL_GL_CreateContext(& window);
@@ -583,7 +583,7 @@ void Renderer::Deinit()
 {
 	if (scene == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	
@@ -666,10 +666,10 @@ void Renderer::InitVSync()
 			exit(1);
 
 		default:
-			Assert(false);
+			ASSERT(false);
 		}
 
-		Assert(vsync);
+		ASSERT(vsync);
 	}
 
 	// Something went wrong if we get to here.
@@ -731,16 +731,16 @@ void Renderer::VerifyRenderState() const
 		if (param->enabled != IsEnabled(param->cap))
 		{
 			std::cerr << "Bad render state: " << param->name << std::endl;
-			Assert(false);
+			ASSERT(false);
 		}
 #endif
 		++ param;
 	}
 	
 	// TODO: Write equivalent functions for all state in GL. :S
-	Assert(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
+	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 	
-	Assert(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
+	ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 #endif	// NDEBUG
 }
 
@@ -781,7 +781,7 @@ void Renderer::PreRender()
 		switch (result)
 		{
 			default:
-				Assert(false);
+				ASSERT(false);
 			case LeafNode::ok:
 				break;
 			case LeafNode::remove:
@@ -807,7 +807,7 @@ void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transforma
 		switch (child.GetNodeType())
 		{
 			default:
-				Assert(false);
+				ASSERT(false);
 				
 			case Object::branch:
 			{
@@ -925,7 +925,7 @@ void Renderer::RenderLights()
 
 bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 {
-	Assert(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
+	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 		
 	switch (pass) 
 	{
@@ -967,7 +967,7 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 			break;
 			
 		default:
-			Assert(false);
+			ASSERT(false);
 	}
 	
 	Enable(GL_DEPTH_TEST);
@@ -1039,7 +1039,7 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 			break;
 			
 		default:
-			Assert(false);
+			ASSERT(false);
 	}
 }
 
@@ -1174,8 +1174,8 @@ void Renderer::GetRenderTiming(Time & frame_start_position, Time & pre_sync_posi
 		pre_sync_position = post_sync_position = app::GetTime();
 	}
 
-	Assert(pre_sync_position >= frame_start_position);
-	Assert(post_sync_position >= pre_sync_position);
+	ASSERT(pre_sync_position >= frame_start_position);
+	ASSERT(post_sync_position >= pre_sync_position);
 
 	last_frame_end_position = post_sync_position;
 }
@@ -1222,8 +1222,8 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	}
 	
 	float frame_duration_ratio = float(busy_duration / target_frame_duration);
-	Assert(frame_duration_ratio >= 0);
-	Assert(! IsInf(frame_duration_ratio));
+	ASSERT(frame_duration_ratio >= 0);
+	ASSERT(! IsInf(frame_duration_ratio));
 	
 	form::Daemon::Call(frame_duration_ratio, & form::FormationManager::OnRegulatorSampleFrameDuration);
 }

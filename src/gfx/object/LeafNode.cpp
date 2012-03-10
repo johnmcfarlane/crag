@@ -133,5 +133,5 @@ LeafNode::PreRenderResult LeafNode::PreRender(Renderer const & renderer)
 
 void LeafNode::Render(Renderer const & renderer) const
 {
-	Assert(false);
+	ASSERT(false);
 }

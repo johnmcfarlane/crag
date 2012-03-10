@@ -58,7 +58,7 @@ namespace form
 
 		bool IsExpandable() const
 		{
-			Assert(score > 0);
+			ASSERT(score > 0);
 			return ! HasChildren() && HasAllCousins() /*&& score != 0*/;
 		}
 		

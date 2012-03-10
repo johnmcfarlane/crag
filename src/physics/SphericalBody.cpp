@@ -34,7 +34,7 @@ physics::Scalar physics::SphericalBody::GetRadius() const
 
 void physics::SphericalBody::SetDensity(Scalar density)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	
 	dMass m;
 	Scalar radius = GetRadius();

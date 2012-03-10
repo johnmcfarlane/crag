@@ -65,7 +65,7 @@ namespace core
 				return false;
 			}
 			
-			Assert(default_value == variable);
+			ASSERT(default_value == variable);
 			return true;
 		}
 		

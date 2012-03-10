@@ -196,7 +196,7 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 {
 	int max_depth = std::numeric_limits<int>::max();
 	int depth = MeasureDepth(& a, max_depth);
-	Assert(depth == MeasureDepth(& b, max_depth));
+	ASSERT(depth == MeasureDepth(& b, max_depth));
 
 	int seed_1 = Random(Random(a.seed).GetInt() + index).GetInt();
 	int seed_2 = Random(Random(b.seed).GetInt() + index).GetInt();

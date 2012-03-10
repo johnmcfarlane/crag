@@ -135,8 +135,8 @@ int gfx::Image::GetHeight() const
 
 void gfx::Image::SetPixel(Vector2i const & pos, Color4b const & color)
 {
-	Assert(pos.x >= 0 && pos.x < surface->w);
-	Assert(pos.y >= 0 && pos.x < surface->h);
+	ASSERT(pos.x >= 0 && pos.x < surface->w);
+	ASSERT(pos.y >= 0 && pos.x < surface->h);
 
 	char * line = reinterpret_cast<char *>(surface->pixels) + pos.y * surface->pitch;
 	Uint32 * pixel = reinterpret_cast<Uint32 *>(line) + pos.x;
@@ -157,7 +157,7 @@ bool gfx::Image::CreateTexture(Texture & texture) const
 	{
 		Image converted_image;
 		converted_image.Convert(* this, opengl_rgba8_format);
-		Assert (converted_image.surface == nullptr || (* converted_image.surface->format) == opengl_rgba8_format);
+		ASSERT (converted_image.surface == nullptr || (* converted_image.surface->format) == opengl_rgba8_format);
 		return converted_image.CreateTexture(texture);
 	}
 	
@@ -256,7 +256,7 @@ bool gfx::Image::FormatForOpenGl()
 				
 			default:
 				// not yet implemented
-				Assert(false);
+				ASSERT(false);
 		}
 	}
 	
@@ -277,7 +277,7 @@ bool gfx::Image::CopyVFlip(Image & dst, Image const & src)
 	{
 		if (SDL_BlitSurface(src.surface, & srcrect, dst.surface, & dstrect) != 0)
 		{
-			Assert(false);
+			ASSERT(false);
 		}
 		
 		++ srcrect.y;

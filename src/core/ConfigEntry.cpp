@@ -46,7 +46,7 @@ namespace
 					return that_char == 0 || isspace(that_char);
 				}
 				
-				Assert(! isupper(this_char));
+				ASSERT(! isupper(this_char));
 			}	while (tolower(that_char) == this_char);
 			
 			return false;

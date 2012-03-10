@@ -29,12 +29,12 @@ ResourceManager::ResourceManager()
 {
 	if (! InitShaders())
 	{
-		Assert(false);
+		ASSERT(false);
 	}
 	
 	if (! InitGeometry())
 	{
-		Assert(false);
+		ASSERT(false);
 	}
 }
 
@@ -73,7 +73,7 @@ ResourceManager::~ResourceManager()
 
 Program const * ResourceManager::GetProgram(ProgramIndex::type index) const
 {
-	Assert(index >= 0 && index < ProgramIndex::max_index);
+	ASSERT(index >= 0 && index < ProgramIndex::max_index);
 	return _programs[index];
 }
 

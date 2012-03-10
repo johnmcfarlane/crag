@@ -46,13 +46,13 @@ namespace gfx
 
 		Comp & operator [] (int i)
 		{
-			Assert(i >= 0 && i < 4);
+			ASSERT(i >= 0 && i < 4);
 			return GetArray() [i];
 		}
 
 		Comp const & operator [] (int i) const
 		{
-			Assert(i >= 0 && i < 4);
+			ASSERT(i >= 0 && i < 4);
 			return GetArray() [i];
 		}
 

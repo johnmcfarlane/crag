@@ -70,14 +70,14 @@ void CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
 
 void CalculateNodeScoreFunctor::operator()(Node & node)
 {
-	Assert(node.IsInUse());
+	ASSERT(node.IsInUse());
 	
 	float score = node.area;
 	
 	// distance	
 	Vector3f node_to_camera = camera_ray.position - node.center;
 	float distance_squared = LengthSq(node_to_camera);
-	Assert(distance_squared < std::numeric_limits<float>::max());
+	ASSERT(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
 	{
 		node_to_camera *= FastInvSqrt(distance_squared);
@@ -86,7 +86,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	{
 		node_to_camera = Vector3f(1,0,0);
 	}
-	Assert(NearEqual(LengthSq(node_to_camera), 1.f, 1.02f));
+	ASSERT(NearEqual(LengthSq(node_to_camera), 1.f, 1.02f));
 	
 	// towardness: -1=facing away, 1=facing towards
 	// purpose: favour polys which are facing towards the camera
@@ -104,7 +104,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 		score *= inverse_min_score_distance_squared;
 	}
 	
-	Assert(score >= 0);
+	ASSERT(score >= 0);
 	node.score = score;
 	
 	if (node.IsLeaf())

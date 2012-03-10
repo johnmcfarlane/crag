@@ -57,7 +57,7 @@ void Thread::Launch(Function callback, void * data, char const * name)
 void Thread::Join()
 {
 	// Shouldn't be called from within the thread.
-	Assert (! IsCurrent());
+	ASSERT (! IsCurrent());
 	
 	if (sdl_thread != nullptr)
 	{

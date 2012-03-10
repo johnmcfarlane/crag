@@ -62,7 +62,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		return false;
 	}
 	
-	Assert(window == nullptr);
+	ASSERT(window == nullptr);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -120,7 +120,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 
 void app::Deinit()
 {
-	Assert(window != nullptr);
+	ASSERT(window != nullptr);
 
 	SDL_DestroyWindow(window);
 	window = nullptr;
@@ -139,7 +139,7 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 	FILE * source = fopen(filename, "r");
 	if (source == nullptr)
 	{
-		Assert(errno == ENOENT);
+		ASSERT(errno == ENOENT);
 		ERROR_MESSAGE("file not found \"%s\"\n", filename);
 		return false;
 	}
@@ -170,7 +170,7 @@ bool app::IsKeyDown(SDL_Scancode key_code)
 		}
 	}
 	
-	Assert(false);
+	ASSERT(false);
 	return false;
 }
 
@@ -282,7 +282,7 @@ Time app::GetTime()
 	LARGE_INTEGER performance_count;
 	if (QueryPerformanceCounter(& performance_count) == FALSE)
 	{
-		Assert(false);
+		ASSERT(false);
 	}
 	return inv_query_performance_frequency * performance_count.QuadPart;
 #else

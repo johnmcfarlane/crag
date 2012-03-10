@@ -65,13 +65,13 @@ namespace gfx
 		
 		void Activate() const
 		{
-			Assert(IsBound());
+			ASSERT(IsBound());
 			vbo.Activate();
 		}
 		
 		void Deactivate() const
 		{
-			Assert(IsBound());
+			ASSERT(IsBound());
 			vbo.Deactivate();
 		}
 		
@@ -98,13 +98,13 @@ namespace gfx
 #if defined(VERIFY)
 		void Verify() const
 		{
-			Assert(vbo.IsInitialized() == ibo.IsInitialized());
+			ASSERT(vbo.IsInitialized() == ibo.IsInitialized());
 			if (! vbo.IsInitialized())
 			{
 				return;
 			}
 			
-			Assert(vbo.IsBound() == ibo.IsBound());
+			ASSERT(vbo.IsBound() == ibo.IsBound());
 		}
 #endif
 		

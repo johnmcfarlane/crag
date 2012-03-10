@@ -21,7 +21,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	Assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool Texture::IsInitialized() const

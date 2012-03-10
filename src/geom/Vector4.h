@@ -41,15 +41,15 @@ public:
 	// Returns vector as a C-style array. Very unsafe. 
 	S const & operator[](int index) const 
 	{
-		Assert(index >= 0);
-		Assert(index < 4);
+		ASSERT(index >= 0);
+		ASSERT(index < 4);
 		return GetAxes() [index];
 	} 
 	
 	S & operator[](int index) 
 	{
-		Assert(index >= 0);
-		Assert(index < 4);
+		ASSERT(index >= 0);
+		ASSERT(index < 4);
 		return GetAxes() [index];
 	} 
 	

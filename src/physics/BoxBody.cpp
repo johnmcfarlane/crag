@@ -37,7 +37,7 @@ physics::Vector3 physics::BoxBody::GetDimensions() const
 
 void physics::BoxBody::SetDensity(Scalar density)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	
 	dMass m;
 	Vector3 dimensions = GetDimensions();

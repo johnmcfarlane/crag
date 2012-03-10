@@ -37,7 +37,7 @@ Vehicle::Vehicle()
 
 void Vehicle::AddThruster(Thruster const & thruster)
 {
-	Assert(thruster.model == ThrusterHandle::null);
+	ASSERT(thruster.model == ThrusterHandle::null);
 	
 	// Create sim-side thruster object and get ref to it for writing.
 	_thrusters.push_back(thruster);

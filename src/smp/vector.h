@@ -138,25 +138,25 @@ namespace smp
 		
 		T & operator [] (size_type index)
 		{
-			Assert(index < size());
+			ASSERT(index < size());
 			return first [index];
 		}
 		
 		T const & operator [] (size_type index) const
 		{
-			Assert(index < size());
+			ASSERT(index < size());
 			return first [index];
 		}
 		
 		T & front() const
 		{
-			Assert(first != 0);
+			ASSERT(first != 0);
 			return * first;
 		}
 		
 		T & back() const
 		{
-			Assert(last > first);
+			ASSERT(last > first);
 			return * (last - 1);
 		}
 		
@@ -245,16 +245,16 @@ namespace smp
 		void verify() const
 		{
 			// Either all members are null or non-null; no mix and match.
-			Assert((first == nullptr) == (last == nullptr));
-			Assert((first == nullptr) == (everything == nullptr));
+			ASSERT((first == nullptr) == (last == nullptr));
+			ASSERT((first == nullptr) == (everything == nullptr));
 			
 			// First, last and everything are in ascending order.
-			Assert(first <= last);
-			Assert(last <= everything);
+			ASSERT(first <= last);
+			ASSERT(last <= everything);
 			
 			// Points are correctly lined up and add up.
-			Assert(first + (last - first) == last);
-			Assert(first + (everything - first) == everything);
+			ASSERT(first + (last - first) == last);
+			ASSERT(first + (everything - first) == everything);
 		}
 
 		T * first;

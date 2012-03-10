@@ -21,8 +21,8 @@ using namespace gfx;
 
 void Layer::Verify(type layer)
 {
-	Assert(layer >= Layer::begin);
-	Assert(layer < Layer::end);
+	ASSERT(layer >= Layer::begin);
+	ASSERT(layer < Layer::end);
 }
 
 #endif

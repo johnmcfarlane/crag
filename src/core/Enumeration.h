@@ -37,13 +37,13 @@ namespace core
 		: _name(name)
 		{
 			// note: asserts may fail horribly before main begins.
-			Assert(find(_name) == nullptr);	// entries must be unique
-			Assert(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
+			ASSERT(find(_name) == nullptr);	// entries must be unique
+			ASSERT(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
 			
 			iterator insertion = std::upper_bound(begin(), end(), * this);
 			get_values().insert(insertion, * this);
 			
-			Assert(find(_name) != nullptr);
+			ASSERT(find(_name) != nullptr);
 		}
 		
 		~Enumeration()

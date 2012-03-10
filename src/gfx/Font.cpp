@@ -64,7 +64,7 @@ gfx::Font::Font(char const * filename, float scale)
 	
 	character_size.x = image.GetWidth() >> 4;
 	character_size.y = image.GetHeight() >> 4;	
-	Assert(character_size * 16 == image.GetSize());
+	ASSERT(character_size * 16 == image.GetSize());
 	
 	inv_scale.x = 1.f / image.GetWidth();
 	inv_scale.y = 1.f / image.GetHeight();
@@ -138,13 +138,13 @@ void gfx::Font::RenderVerts() const
 	GL_VERIFY;
 
 	// State
-	Assert(! IsEnabled(GL_LIGHTING));
-	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	ASSERT(! IsEnabled(GL_LIGHTING));
+	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	Enable(GL_BLEND);
 	GL_CALL(glBlendEquation(GL_FUNC_ADD));
-	Assert(! IsEnabled(GL_DEPTH_TEST));
+	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	glDepthMask(false);
 	
 	// Matrices

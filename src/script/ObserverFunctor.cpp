@@ -94,7 +94,7 @@ namespace
 		{
 			if (entity == nullptr)
 			{
-				Assert(false);
+				ASSERT(false);
 				return;
 			}
 			
@@ -159,7 +159,7 @@ namespace
 		{
 			if (observer == nullptr)
 			{
-				Assert(false);
+				ASSERT(false);
 				return;
 			}
 			
@@ -198,7 +198,7 @@ public:
 	{
 		if (observer == nullptr)
 		{
-			Assert(false);
+			ASSERT(false);
 			return;
 		}
 		

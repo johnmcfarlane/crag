@@ -48,7 +48,7 @@ namespace smp
 			Thread & thread = object.*THREAD;
 			
 			// Never called from within the thread.
-			Assert(! thread.IsCurrent());
+			ASSERT(! thread.IsCurrent());
 			
 			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object, name);
 		}
@@ -60,7 +60,7 @@ namespace smp
 		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
 		static int Callback(void * data)
 		{
-			Assert(data != nullptr);
+			ASSERT(data != nullptr);
 			CLASS & object = * reinterpret_cast<CLASS *>(data);
 			
 			// Ensure that the Thread::sdl_thread gets set before progressing.

@@ -25,7 +25,7 @@ StackCushion::StackCushion()
 		* i = _marker_value;
 	}
 	
-	Assert(IsSafe());
+	ASSERT(IsSafe());
 }
 
 bool StackCushion::IsSafe() const

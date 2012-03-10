@@ -60,8 +60,8 @@ void form::Regulator::SampleFrameDuration(float frame_duration_ratio)
 		return;
 	}
 
-	Assert(frame_duration_ratio >= 0);
-	Assert(! IsInf(frame_duration_ratio));
+	ASSERT(frame_duration_ratio >= 0);
+	ASSERT(! IsInf(frame_duration_ratio));
 	
 	Time sim_time = app::GetTime() - reset_time;
 	int recommended_this_frame = CalculateFrameRateDirectedTargetLoad(_num_quaterne, frame_duration_ratio, sim_time);
@@ -78,7 +78,7 @@ void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
 		return;
 	}
 
-	Assert(mgp >= 0);
+	ASSERT(mgp >= 0);
 	mesh_generation_period = std::max(static_cast<float>(mgp), mesh_generation_period);
 }
 
@@ -164,7 +164,7 @@ int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, floa
 	}
 	
 	// Ensure the value is suitably clamped. 
-	Assert(target_load >= 0);
+	ASSERT(target_load >= 0);
 	
 	return target_load;
 }

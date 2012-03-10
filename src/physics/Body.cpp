@@ -53,7 +53,7 @@ Body::~Body()
 	}
 	
 	// destroy the geom
-	Assert(geom_id != 0);
+	ASSERT(geom_id != 0);
 	dGeomDestroy(geom_id);
 }
 
@@ -71,7 +71,7 @@ Scalar Body::GetMass() const
 	
 	dMass m;
 	dBodyGetMass(body_id, & m);
-	Assert(m.mass >= 0);
+	ASSERT(m.mass >= 0);
 	
 	return m.mass;
 }
@@ -128,37 +128,37 @@ bool Body::IsMovable() const
 
 void Body::SetLinearDamping(Scalar linear_damping)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodySetLinearDamping(body_id, linear_damping);
 }
 
 void Body::SetAngularDamping(Scalar angular_damping)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodySetAngularDamping(body_id, angular_damping);
 }
 
 void Body::AddRelTorque(Vector3 const & torque)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodyAddRelTorque(body_id, torque.x, torque.y, torque.z);
 }
 
 void Body::AddForce(Vector3 const & force)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodyAddForce(body_id, force.x, force.y, force.z);
 }
 
 void Body::AddRelForce(Vector3 const & force)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodyAddRelForce(body_id, force.x, force.y, force.z);
 }
 
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
-	Assert(body_id != 0);
+	ASSERT(body_id != 0);
 	dBodyAddRelForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
@@ -169,23 +169,23 @@ bool Body::OnCollision(Engine & engine, Body const & that_body) const
 
 void Body::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const
 {
-	Assert(false);
+	ASSERT(false);
 }
 
 void Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const
 {
-	Assert(false);
+	ASSERT(false);
 }
 
 void Body::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
 {
-	Assert(false);
+	ASSERT(false);
 }
 
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 {
-	Assert(body1.body_id != nullptr);
-	Assert(body2.body_id != nullptr);
+	ASSERT(body1.body_id != nullptr);
+	ASSERT(body2.body_id != nullptr);
 
 	dJointAttach(joint_id, body1.body_id, body2.body_id);
 	
@@ -216,7 +216,7 @@ void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 			
 		default:
 			// Not yet implemented.
-			Assert(false);
+			ASSERT(false);
 	}
 }
 

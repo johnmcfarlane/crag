@@ -82,7 +82,7 @@ void Simulation::OnRemoveObject(Uid const & uid)
 	Entity * entity = _entity_set.GetEntity(uid);
 	if (entity == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	
@@ -120,7 +120,7 @@ Time Simulation::GetTime() const
 
 Entity * Simulation::GetObject(Uid uid) 
 {
-	Assert(uid != Uid::null);
+	ASSERT(uid != Uid::null);
 	Entity * entity = _entity_set.GetEntity(uid);
 	return entity;
 }

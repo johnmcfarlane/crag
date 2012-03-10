@@ -66,7 +66,7 @@ namespace physics
 				size_t capacity = _deferred_collisions.capacity();
 				if (! _deferred_collisions.reserve(capacity * 2))
 				{
-					Assert(false);
+					ASSERT(false);
 				}
 			}
 		}

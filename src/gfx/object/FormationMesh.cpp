@@ -53,7 +53,7 @@ FormationMesh::FormationMesh()
 void FormationMesh::Verify() const
 {
 	super::Verify();
-	Assert(! mbo_buffers.back().IsBound());
+	ASSERT(! mbo_buffers.back().IsBound());
 }
 #endif
 
@@ -96,8 +96,8 @@ void FormationMesh::Deinit(Scene & scene)
 
 void FormationMesh::SetMesh(form::Mesh * const & mesh)
 {
-	Assert(mesh != _queued_mesh);
-	Assert(mesh != _pending_mesh);
+	ASSERT(mesh != _queued_mesh);
+	ASSERT(mesh != _pending_mesh);
 	
 	// If there's already a mesh queued up,
 	if (_queued_mesh != nullptr)
@@ -140,8 +140,8 @@ void FormationMesh::Render(Renderer const & renderer) const
 	}
 	
 	// State
-	Assert(IsEnabled(GL_DEPTH_TEST));
-	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	ASSERT(IsEnabled(GL_DEPTH_TEST));
+	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
@@ -150,7 +150,7 @@ void FormationMesh::Render(Renderer const & renderer) const
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
 	GL_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
 	
-	Assert(! IsEnabled(GL_TEXTURE_2D));
+	ASSERT(! IsEnabled(GL_TEXTURE_2D));
 	
 	// Draw the mesh!
 	front_buffer.Draw();
@@ -188,7 +188,7 @@ bool FormationMesh::BeginBufferUpload()
 void FormationMesh::OnMeshResourceChange()
 {
 	form::MeshBufferObject & front_buffer = mbo_buffers.front();
-	Assert(! front_buffer.IsBound());
+	ASSERT(! front_buffer.IsBound());
 	SetMeshResource(& front_buffer);
 }
 

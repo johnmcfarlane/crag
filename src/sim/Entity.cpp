@@ -47,7 +47,7 @@ void Entity::UpdateModels() const
 
 void Entity::SetBody(Body * body)
 {
-	Assert((_body == nullptr) != (body == nullptr));
+	ASSERT((_body == nullptr) != (body == nullptr));
 	_body = body;
 }
 

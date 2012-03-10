@@ -71,14 +71,14 @@ namespace
 		AddThrusterFunctor(sim::Vehicle::Thruster const & thruster)
 		: _thruster(thruster)
 		{
-			Assert(_thruster.model.GetUid() == gfx::Uid::null);
+			ASSERT(_thruster.model.GetUid() == gfx::Uid::null);
 		}
 		
 		void operator() (sim::Vehicle * vehicle) const
 		{
 			if (vehicle == nullptr)
 			{
-				Assert(false);
+				ASSERT(false);
 				return;
 			}
 			
@@ -260,7 +260,7 @@ void MainFunctor::SpawnShapes()
 			}
 				
 			default:
-				Assert(false);
+				ASSERT(false);
 		}
 	}
 }

@@ -85,11 +85,11 @@ form::NodeBuffer::~NodeBuffer()
 #if ! defined(NDEBUG)
 	for (Quaterna const * i = quaterne; i != quaterne_used_end; ++ i)
 	{
-		Assert(! i->HasGrandChildren());
-		Assert(! i->nodes[0].IsInUse());
-		Assert(! i->nodes[1].IsInUse());
-		Assert(! i->nodes[2].IsInUse());
-		Assert(! i->nodes[3].IsInUse());
+		ASSERT(! i->HasGrandChildren());
+		ASSERT(! i->nodes[0].IsInUse());
+		ASSERT(! i->nodes[1].IsInUse());
+		ASSERT(! i->nodes[2].IsInUse());
+		ASSERT(! i->nodes[3].IsInUse());
 	}
 #endif
 	
@@ -458,7 +458,7 @@ float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
 
 bool form::NodeBuffer::ExpandNode(Node & node) 
 {
-	Assert(node.IsExpandable());
+	ASSERT(node.IsExpandable());
 
 	// Try and get an unused quaterna.
 	if (quaterne_used_end != quaterne_used_end_target)
@@ -523,10 +523,10 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
 {
 	Node * worst_children = children_quaterna.nodes;
-	Assert(worst_children + 0 != & node);
-	Assert(worst_children + 1 != & node);
-	Assert(worst_children + 2 != & node);
-	Assert(worst_children + 3 != & node);
+	ASSERT(worst_children + 0 != & node);
+	ASSERT(worst_children + 1 != & node);
+	ASSERT(worst_children + 2 != & node);
+	ASSERT(worst_children + 3 != & node);
 	
 	// Note that after this point, expansion may fail but the node may have new mid-points.
 	Polyhedron & polyhedron = GetPolyhedron(node);
@@ -551,10 +551,10 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	{
 		DeinitChildren(worst_children);
 	}
-	Assert(worst_children[0].score == 0);
-	Assert(worst_children[1].score == 0);
-	Assert(worst_children[2].score == 0);
-	Assert(worst_children[3].score == 0);
+	ASSERT(worst_children[0].score == 0);
+	ASSERT(worst_children[1].score == 0);
+	ASSERT(worst_children[2].score == 0);
+	ASSERT(worst_children[3].score == 0);
 	
 	worst_children[0] = children_copy[0];
 	worst_children[1] = children_copy[1];
@@ -631,8 +631,8 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 
 		// This is the side which the child shares with its sibling in the center.
 		// anteroposterior
-		Assert(node.triple[i].corner == parent_triple[i].corner);
-		Assert(node.triple[i].mid_point == nullptr);
+		ASSERT(node.triple[i].corner == parent_triple[i].corner);
+		ASSERT(node.triple[i].mid_point == nullptr);
 		node.SetCousin(i, center);
 		
 		int j = TriMod(i + 1);
@@ -641,7 +641,7 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 		// The other two corners are shared with children of the parent's children.
 
 		// dextrosinister #1
-		Assert(node.triple[j].corner == parent_triple[k].mid_point);
+		ASSERT(node.triple[j].corner == parent_triple[k].mid_point);
 		Node * parent_cousin_j = parent_triple[j].cousin;
 		if (parent_cousin_j != nullptr) {
 			Node * parent_cousin_children_j = parent_cousin_j->GetChildren();
@@ -651,7 +651,7 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 		}
 		
 		// dextrosinister #2
-		Assert(node.triple[k].corner == parent_triple[j].mid_point);
+		ASSERT(node.triple[k].corner == parent_triple[j].mid_point);
 		Node * parent_cousin_k = parent_triple[k].cousin;
 		if (parent_cousin_k != nullptr) {
 			Node * parent_cousin_children_k = parent_cousin_k->GetChildren();
@@ -670,7 +670,7 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 
 void form::NodeBuffer::DeinitChildren(Node * children)
 {
-	Assert(children->GetParent()->GetChildren() == children);
+	ASSERT(children->GetParent()->GetChildren() == children);
 	children->GetParent()->SetChildren(nullptr);
 	
 	DeinitNode(children[0]);
@@ -693,8 +693,8 @@ void form::NodeBuffer::DeinitNode(Node & node)
 		if (t.cousin != nullptr)
 		{
 			Node::Triplet & mirror = t.cousin->triple[i];
-			Assert(mirror.cousin == & node);
-			Assert(mirror.mid_point == t.mid_point);
+			ASSERT(mirror.cousin == & node);
+			ASSERT(mirror.mid_point == t.mid_point);
 			
 			t.cousin = nullptr;
 			t.mid_point = nullptr;
@@ -712,7 +712,7 @@ void form::NodeBuffer::DeinitNode(Node & node)
 			}
 		}
 		
-		Assert(t.mid_point == nullptr);
+		ASSERT(t.mid_point == nullptr);
 	}
 	
 	node.SetParent(nullptr);
@@ -725,7 +725,7 @@ void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 	
 	if (parent != nullptr) 
 	{
-		Assert(parent->GetChildren() == original);
+		ASSERT(parent->GetChildren() == original);
 		parent->SetChildren(substitute);
 		
 		substitute[0] = original[0];
@@ -762,7 +762,7 @@ void form::NodeBuffer::RepairChild(Node & child)
 	if (node_it != nullptr) {
 		Node * node_end = node_it + 4;
 		do {
-			Assert(node_it->GetParent() != & child);
+			ASSERT(node_it->GetParent() != & child);
 			node_it->SetParent(& child);
 			++ node_it;
 		}	while (node_it < node_end);
@@ -773,8 +773,8 @@ void form::NodeBuffer::RepairChild(Node & child)
 	for (int i = 0; i < 3; ++ i) {
 		Node * cousin = triple[i].cousin;
 		if (cousin != nullptr) {
-			Assert(cousin->triple[i].cousin != nullptr);
-			Assert(cousin->triple[i].cousin != & child);
+			ASSERT(cousin->triple[i].cousin != nullptr);
+			ASSERT(cousin->triple[i].cousin != & child);
 			cousin->triple[i].cousin = & child;
 		}
 	}
@@ -804,7 +804,7 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterne_used_end)
 	// Was there any decrease at all?
 	if (old_quaterne_used_end == quaterne_used_end)
 	{
-		//Assert(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
+		//ASSERT(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
 		return;
 	}
 	
@@ -843,10 +843,10 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
 		}
 
 		// Either way, there should be no children.
-		Assert(! quaterna_nodes[0].HasChildren());
-		Assert(! quaterna_nodes[1].HasChildren());
-		Assert(! quaterna_nodes[2].HasChildren());
-		Assert(! quaterna_nodes[3].HasChildren());
+		ASSERT(! quaterna_nodes[0].HasChildren());
+		ASSERT(! quaterna_nodes[1].HasChildren());
+		ASSERT(! quaterna_nodes[2].HasChildren());
+		ASSERT(! quaterna_nodes[3].HasChildren());
 		
 		-- quaterne_used_end;
 	}	
@@ -880,7 +880,7 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 	// For all the quaterne that have been freed up by the reduction...
 	for (Quaterna * unused_quaterna = old_quaterne_used_end - 1; unused_quaterna >= quaterne_used_end; -- unused_quaterna)
 	{
-		Assert(! unused_quaterna->IsInUse());
+		ASSERT(! unused_quaterna->IsInUse());
 		
 		Node * unused_nodes = unused_quaterna->nodes;
 		
@@ -897,7 +897,7 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 			do
 			{
 				-- used_quaterna;
-				Assert(used_quaterna >= quaterne);
+				ASSERT(used_quaterna >= quaterne);
 				substitute_nodes = used_quaterna->nodes;
 			}
 			while (substitute_nodes < nodes_used_end);

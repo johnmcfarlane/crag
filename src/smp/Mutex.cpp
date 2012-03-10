@@ -20,12 +20,12 @@
 smp::Mutex::Mutex()
 : sdl_mutex(SDL_CreateMutex())
 {
-	Assert(sdl_mutex != nullptr);
+	ASSERT(sdl_mutex != nullptr);
 }
 
 smp::Mutex::~Mutex()
 {
-	Assert(sdl_mutex != nullptr);
+	ASSERT(sdl_mutex != nullptr);
 	SDL_DestroyMutex(sdl_mutex);
 }
 
@@ -34,7 +34,7 @@ void smp::Mutex::Lock()
 	if (SDL_LockMutex(sdl_mutex) != 0)
 	{
 		// Unknown error.
-		Assert(false);
+		ASSERT(false);
 	}
 }
 
@@ -43,6 +43,6 @@ void smp::Mutex::Unlock()
 	if (SDL_UnlockMutex(sdl_mutex) != 0)
 	{
 		// Unknown error.
-		Assert(false);
+		ASSERT(false);
 	}
 }

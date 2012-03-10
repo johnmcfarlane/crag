@@ -86,7 +86,7 @@ namespace core
 			{ 
 				// Must call list::remove before attached hook is destroyed
 				// (assuming this is a node, and not the list head).
-				Assert(_next == _previous);
+				ASSERT(_next == _previous);
 			}
 			
 		private:
@@ -99,7 +99,7 @@ namespace core
 			{
 				_next = _previous = nullptr;
 				
-				Assert(! is_attached());
+				ASSERT(! is_attached());
 			}
 			
 			// variables
@@ -306,7 +306,7 @@ namespace core
 					value_type const & contained = * i;
 					if (& element == & contained)
 					{
-						Assert(is_contained<Member>(element));
+						ASSERT(is_contained<Member>(element));
 						return true;
 					}
 				}
@@ -407,12 +407,12 @@ namespace core
 			{
 				// Check that values of insertion's pointers are unimportant.
 				hook_type & insertion_hook = insertion.*Member;
-				Assert(! insertion_hook.is_attached());
+				ASSERT(! insertion_hook.is_attached());
 				
 				// Check that insertion point is valid.
 				hook_type & next_hook = next.*Member;
-				Assert(next_hook._previous != nullptr);
-				Assert(next_hook._next != nullptr);
+				ASSERT(next_hook._previous != nullptr);
+				ASSERT(next_hook._next != nullptr);
 				
 				// Get the element that belongs before the insertion point.
 				value_type & previous = * next_hook._previous;
@@ -453,7 +453,7 @@ namespace core
 			static void unlink(value_type & attached)
 			{
 				hook_type & attached_hook = attached.*Member;
-				Assert(attached_hook.is_attached());
+				ASSERT(attached_hook.is_attached());
 				
 				value_type & next = * attached_hook._next;
 				value_type & previous = * attached_hook._previous;
@@ -586,24 +586,24 @@ namespace core
 			
 			value_type & front()
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				return super::front();
 			}
 			
 			value_type const & front() const
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				return super::front();
 			}
 			
 			value_type & back()
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				return super::back();
 			}
 			value_type const & back() const
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				return super::back();
 			}
 			
@@ -652,12 +652,12 @@ namespace core
 			
 			void pop_front()
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				super::template pop_front<Member>();
 			}
 			void pop_back()
 			{
-				Assert(! empty());
+				ASSERT(! empty());
 				super::template pop_back<Member>();
 			}
 			
@@ -683,7 +683,7 @@ namespace core
 			
 			void remove(value_type & element)
 			{
-				Assert(super::template contains<Member>(element));
+				ASSERT(super::template contains<Member>(element));
 				super::template detach<Member>(element);
 			}
 			

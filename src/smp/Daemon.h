@@ -56,29 +56,29 @@ namespace smp
 		, _messages(ring_buffer_size)
 		, _state(initialized)
 		{
-			Assert(singleton == nullptr);
+			ASSERT(singleton == nullptr);
 			singleton = this;
 		}
 		
 		~Daemon() 
 		{ 
-			Assert(_state == acknowledge_flush_end);
+			ASSERT(_state == acknowledge_flush_end);
 			_state = request_destroy;
 			
-			Assert(singleton == this);
+			ASSERT(singleton == this);
 			singleton = nullptr;
 			
 			_thread.Join();
 
 			// Never called from within the thread.
-			Assert(! _thread.IsCurrent());
+			ASSERT(! _thread.IsCurrent());
 			
 			// Must call Stop from the outside thread first.
-			Assert(! _thread.IsLaunched());
+			ASSERT(! _thread.IsLaunched());
 			
-			Assert(_messages.IsEmpty());
+			ASSERT(_messages.IsEmpty());
 			
-			Assert(_object == nullptr);
+			ASSERT(_object == nullptr);
 		}
 		
 		// Usually represents failure to completely encapsulate the object.
@@ -107,7 +107,7 @@ namespace smp
 		
 		void Start(char const * name)
 		{
-			Assert(! singleton->_thread.IsCurrent());
+			ASSERT(! singleton->_thread.IsCurrent());
 
 			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this, name);
 			
@@ -121,11 +121,11 @@ namespace smp
 		// Tell the daemon to wind down.
 		void BeginFlush()
 		{
-			Assert(! singleton->_thread.IsCurrent());
-			Assert(_state <= acknowledge_flush_begin);
+			ASSERT(! singleton->_thread.IsCurrent());
+			ASSERT(_state <= acknowledge_flush_begin);
 			
 			// Never called from within the thread.
-			Assert(! _thread.IsCurrent());
+			ASSERT(! _thread.IsCurrent());
 			
 			Call(& Class::OnQuit);
 		}
@@ -133,8 +133,8 @@ namespace smp
 		// Wait until it has stopped working.
 		void Synchronize()
 		{
-			Assert(! singleton->_thread.IsCurrent());
-			Assert(_state <= acknowledge_flush_begin);
+			ASSERT(! singleton->_thread.IsCurrent());
+			ASSERT(_state <= acknowledge_flush_begin);
 			
 			while (_state < acknowledge_flush_begin)
 			{
@@ -145,17 +145,17 @@ namespace smp
 		// Wait until it has finished flushing.
 		void EndFlush()
 		{
-			Assert(! singleton->_thread.IsCurrent());			
-			Assert(_state == acknowledge_flush_begin);
+			ASSERT(! singleton->_thread.IsCurrent());			
+			ASSERT(_state == acknowledge_flush_begin);
 			
 			_state = request_flush_end;
 			while (_state < acknowledge_flush_end)
 			{
 				Yield();
 			}
-			Assert(acknowledge_flush_end);
+			ASSERT(acknowledge_flush_end);
 			
-			Assert(_messages.IsEmpty());
+			ASSERT(_messages.IsEmpty());
 		}
 		
 		template <typename MESSAGE>
@@ -280,10 +280,10 @@ namespace smp
 		{
 			FUNCTION_NO_REENTRY;
 			
-			Assert(this == singleton);
-			Assert(_thread.IsCurrent());
+			ASSERT(this == singleton);
+			ASSERT(_thread.IsCurrent());
 			
-			Assert(_state == initialized);
+			ASSERT(_state == initialized);
 			_state = running;
 			
 			// create object
@@ -299,7 +299,7 @@ namespace smp
 				FlushMessagesOrYield();
 			}
 			
-			Assert(_state == request_flush_end);
+			ASSERT(_state == request_flush_end);
 			while (! _messages.IsEmpty())
 			{
 				FlushMessagesOrYield();

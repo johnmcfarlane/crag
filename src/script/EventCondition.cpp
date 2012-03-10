@@ -28,6 +28,6 @@ bool EventCondition::operator() (ScriptThread & script_thread)
 
 SDL_Event const & EventCondition::GetEvent() const
 {
-	Assert(_event.type != 0);
+	ASSERT(_event.type != 0);
 	return _event;
 }

@@ -34,8 +34,8 @@ void profile::Meter::Submit (Scalar sample)
 {
 	if (! IsNaN(sample) && ! IsInf(sample))
 	{
-		Assert(sample != std::numeric_limits<Scalar>::infinity());
-		Assert(change_coefficient > 0 && change_coefficient < 1);
+		ASSERT(sample != std::numeric_limits<Scalar>::infinity());
+		ASSERT(change_coefficient > 0 && change_coefficient < 1);
 		if (store >= 0)
 		{
 			store = store * (static_cast<Scalar>(1) - change_coefficient) + sample * change_coefficient;

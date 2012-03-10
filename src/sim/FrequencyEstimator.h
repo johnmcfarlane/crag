@@ -26,13 +26,13 @@ public:
 	
 	// Undefined if HasSamples is false.
 	float GetEstimatedAverage() const {
-		Assert(HasSamples());
+		ASSERT(HasSamples());
 		return estimated_average;
 	}
 	
 	// Undefined if HasSamples is false.
 	float GetLastValue() const {
-		Assert(HasSamples());
+		ASSERT(HasSamples());
 		return last_value;
 	}
 	

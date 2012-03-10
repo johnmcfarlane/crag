@@ -35,20 +35,20 @@ namespace smp
 		
 		virtual ~ObjectBase()
 		{ 
-			Assert(_uid != Uid::null);
+			ASSERT(_uid != Uid::null);
 		}
 		
 #if defined(VERIFY)
 		virtual void Verify() const
 		{
-			Assert(_uid != Uid::null);
+			ASSERT(_uid != Uid::null);
 		}
 #endif
 		
 		void SetUid(Uid uid)
 		{
-			Assert(_uid == Uid::null);
-			Assert(uid != Uid::null);
+			ASSERT(_uid == Uid::null);
+			ASSERT(uid != Uid::null);
 			
 			_uid = uid;
 		}
@@ -65,7 +65,7 @@ namespace smp
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
 			ObjectBase & reverse = t;
-			Assert(& reverse == this);
+			ASSERT(& reverse == this);
 #endif
 			
 			return t;
@@ -78,7 +78,7 @@ namespace smp
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
 			ObjectBase const & reverse = t;
-			Assert(& reverse == this);
+			ASSERT(& reverse == this);
 #endif
 			
 			return t;

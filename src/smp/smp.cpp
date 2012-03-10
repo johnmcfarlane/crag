@@ -30,7 +30,7 @@ void smp::Yield()
 
 void smp::Sleep(Time duration)
 {
-	Assert(duration >= 0);
+	ASSERT(duration >= 0);
 
 #if defined(WIN32)
 	Uint32 ms = static_cast<Uint32>(duration * 1000);
@@ -40,7 +40,7 @@ void smp::Sleep(Time duration)
 	timespec required;
 	required.tv_sec = static_cast<time_t>(duration);
 	required.tv_nsec = static_cast<long>(1000000000. * (duration - required.tv_sec));
-	Assert(NearEqual(.000000001 * required.tv_nsec + required.tv_sec, duration, 0.000001));
+	ASSERT(NearEqual(.000000001 * required.tv_nsec + required.tv_sec, duration, 0.000001));
 
 	// keep sleeping until the desired period is through
 	timespec remaining;

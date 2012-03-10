@@ -30,7 +30,7 @@ gfx::Program::Program()
 
 Program::~Program()
 {
-	Assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool Program::IsInitialized() const
@@ -111,13 +111,13 @@ void Program::Deinit(Shader & light_vert_shader, Shader & light_frag_shader)
 
 void Program::Bind() const
 {
-	Assert(GetInt<GL_CURRENT_PROGRAM>() == 0);
+	ASSERT(GetInt<GL_CURRENT_PROGRAM>() == 0);
 	GL_CALL(glUseProgram(_id));
 }
 
 void Program::Unbind() const
 {
-	Assert(GetInt<GL_CURRENT_PROGRAM>() == static_cast<int>(_id));
+	ASSERT(GetInt<GL_CURRENT_PROGRAM>() == static_cast<int>(_id));
 	GL_CALL(glUseProgram(0));
 }
 
@@ -143,7 +143,7 @@ void Program::UpdateLights(Light::List const & lights) const
 		if (uniforms == uniforms_end)
 		{
 			// We're out of light uniforms. Time to start prioritizing perhaps.
-			Assert(false);
+			ASSERT(false);
 			break;
 		}
 		
@@ -229,9 +229,9 @@ void SphereProgram::InitUniforms()
 Scalar SphereProgram::CalculateRadius(::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
-	Assert(NearEqual(size.x / size.y, 1, 0.0001));
-	Assert(NearEqual(size.y / size.z, 1, 0.0001));
-	Assert(NearEqual(size.z / size.x, 1, 0.0001));
+	ASSERT(NearEqual(size.x / size.y, 1, 0.0001));
+	ASSERT(NearEqual(size.y / size.z, 1, 0.0001));
+	ASSERT(NearEqual(size.z / size.x, 1, 0.0001));
 	Scalar radius = size.x;
 	return radius;
 }

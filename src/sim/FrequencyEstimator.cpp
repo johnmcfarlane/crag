@@ -23,8 +23,8 @@ Estimator::Estimator(float init_dampening_coefficient)
 , estimated_average(0)
 , has_samples(false)
 {
-	Assert(dampening_coefficient >= 0);	// At zero, this simply measures the frequency of the last tick.
-	Assert(dampening_coefficient < 1);	// At one, this never takes new ticks into account at all.
+	ASSERT(dampening_coefficient >= 0);	// At zero, this simply measures the frequency of the last tick.
+	ASSERT(dampening_coefficient < 1);	// At one, this never takes new ticks into account at all.
 }
 
 void Estimator::AddSample(float value)
@@ -54,8 +54,8 @@ FrequencyEstimator::FrequencyEstimator(float init_dampening_coefficient)
 // The input.
 void FrequencyEstimator::OnTick(float time)
 {
-	Assert(time >= 0);
-	//Assert(time >= last_tick);
+	ASSERT(time >= 0);
+	//ASSERT(time >= last_tick);
 	
 	if (last_tick > 0)
 	{

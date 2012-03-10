@@ -74,8 +74,8 @@ void form::RootNode::Init(int init_seed, Point * root_points[4])
 	normal = Vector3f::Zero();
 	score = std::numeric_limits<float>::max();
 	
-	//Assert(sizeof(* this) == 44 * 4);
-	Assert(GetParent() == nullptr);
+	//ASSERT(sizeof(* this) == 44 * 4);
+	ASSERT(GetParent() == nullptr);
 	seed = init_seed;
 	
 	for (int i = 0; i < 3; ++ i)
@@ -99,7 +99,7 @@ void form::RootNode::GetPoints(Point * points[4])
 
 void form::RootNode::Deinit(PointBuffer & points)
 {
-	Assert(! HasChildren());
+	ASSERT(! HasChildren());
 	
 	points.Free(triple[0].corner);
 	

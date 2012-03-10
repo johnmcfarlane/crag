@@ -38,7 +38,7 @@ StackFrameBuffer::~StackFrameBuffer()
 void StackFrameBuffer::SetBottom(char * bottom)
 {
 	VerifyObject(* this);
-	Assert(_range[top_index] == null);
+	ASSERT(_range[top_index] == null);
 	
 	_range[bottom_index] = bottom;
 	VerifyObject(* this);
@@ -47,7 +47,7 @@ void StackFrameBuffer::SetBottom(char * bottom)
 void StackFrameBuffer::SetTop(char * top)
 {
 	VerifyObject(* this);
-	Assert(_range[bottom_index] != null);
+	ASSERT(_range[bottom_index] != null);
 	
 	_range[top_index] = top;
 	VerifyObject(* this);
@@ -69,7 +69,7 @@ void StackFrameBuffer::Copy()
 	
 	std::size_t buffer_size = GetRangeBytes();
 	_buffer.resize(buffer_size);
-	Assert(_buffer.size() == buffer_size);
+	ASSERT(_buffer.size() == buffer_size);
 	
 	std::memcpy(& _buffer.front(), _range[0], buffer_size);
 }
@@ -80,18 +80,18 @@ void StackFrameBuffer::Restore() const
 	VerifyObject(* this);
 	
 	std::size_t buffer_size = _buffer.size();
-	Assert(buffer_size == GetRangeBytes());
+	ASSERT(buffer_size == GetRangeBytes());
 	
 	std::memcpy(_range[0], & _buffer.front(), buffer_size);
 }
 
 bool StackFrameBuffer::IsPersistent(ConstPointerRange const & data) const
 {
-	Assert(data[0] < data[1]);
+	ASSERT(data[0] < data[1]);
 	
 	VerifyObject(* this);
-	Assert(_range[0] != nullptr);
-	Assert(_range[1] != nullptr);
+	ASSERT(_range[0] != nullptr);
+	ASSERT(_range[1] != nullptr);
 
 	if (_range[0] >= data[1])
 	{
@@ -120,14 +120,14 @@ void StackFrameBuffer::Verify() const
 
 std::size_t StackFrameBuffer::GetRangeBytes() const
 {
-	Assert(_range[0] != nullptr);
+	ASSERT(_range[0] != nullptr);
 	char const * minimum = static_cast<char const *>(_range[0]);
 	
-	Assert(_range[1] != nullptr);
+	ASSERT(_range[1] != nullptr);
 	char const * maximum = static_cast<char const *>(_range[1]);
 	
 	std::ptrdiff_t difference = maximum - minimum;
-	Assert(difference > 0);
+	ASSERT(difference > 0);
 	
 	return static_cast<std::size_t>(difference);
 }

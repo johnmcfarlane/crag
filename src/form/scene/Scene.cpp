@@ -147,7 +147,7 @@ bool form::Scene::IsOriginOk() const
 
 void form::Scene::AddFormation(Formation & formation)
 {
-	Assert(formation_map.find(& formation) == formation_map.end());
+	ASSERT(formation_map.find(& formation) == formation_map.end());
 	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
 	InitPolyhedron(* i);
 }
@@ -155,7 +155,7 @@ void form::Scene::AddFormation(Formation & formation)
 void form::Scene::RemoveFormation(Formation const & formation)
 {
 	FormationMap::iterator i = formation_map.find(& formation);
-	Assert(i != formation_map.end());
+	ASSERT(i != formation_map.end());
 	
 	DeinitPolyhedron(* i);
 	formation_map.erase(i);

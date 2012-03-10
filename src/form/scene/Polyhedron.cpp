@@ -27,7 +27,7 @@ form::Polyhedron & form::GetPolyhedron(Node & node)
 	RootNode & root_node = GetRootNode(node);
 	
 	Polyhedron & owner = root_node.GetOwner();
-	Assert(& owner._root_node == & root_node);
+	ASSERT(& owner._root_node == & root_node);
 	
 	return owner;
 }

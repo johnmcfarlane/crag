@@ -71,13 +71,13 @@ namespace core
 		// index accessors
 		value_type & operator [] (int n)
 		{
-			Assert(n == 0 || n == 1);
+			ASSERT(n == 0 || n == 1);
 			return buffers [n];
 		}
 		
 		value_type const & operator [] (int n) const
 		{
-			Assert(n == 0 || n == 1);
+			ASSERT(n == 0 || n == 1);
 			return buffers [n];
 		}
 		

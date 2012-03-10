@@ -78,7 +78,7 @@ void physics::Engine::Attach(Body const & body1, Body const & body2)
 	dJointID joint_id = dJointCreateBall(world, 0);
 	if (joint_id == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	
@@ -132,9 +132,9 @@ void physics::Engine::CreateJoints()
 		dBodyID body2 = dGeomGetBody(contact.geom.g2);
 		
 		// body sanity tests
-		Assert(body1 != body2);
-		Assert(body1 == nullptr || dBodyGetWorld(body1) == world);
-		Assert(body2 == nullptr || dBodyGetWorld(body2) == world);	
+		ASSERT(body1 != body2);
+		ASSERT(body1 == nullptr || dBodyGetWorld(body1) == world);
+		ASSERT(body2 == nullptr || dBodyGetWorld(body2) == world);	
 		
 		dJointID c = dJointCreateContact (world, contact_joints, & contact);
 		dJointAttach (c, body1, body2);
@@ -206,7 +206,7 @@ void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 	}
 	
 	// Time to increase max_num_contacts?
-	Assert (num_contacts <= max_contacts_per_collision);
+	ASSERT (num_contacts <= max_contacts_per_collision);
 	
 	dContact * contacts = _contacts.grow(num_contacts);
 	
@@ -232,8 +232,8 @@ void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 void physics::Engine::OnContact(dContact const & contact)
 {
 	// geometry sanity tests
-	Assert(contact.geom.g1 != contact.geom.g2);
-	Assert(contact.geom.depth >= 0);
+	ASSERT(contact.geom.g1 != contact.geom.g2);
+	ASSERT(contact.geom.depth >= 0);
 
 	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 

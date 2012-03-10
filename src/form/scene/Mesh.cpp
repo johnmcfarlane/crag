@@ -63,8 +63,8 @@ form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
 		point.vert = & AddVertex(point, color);
 	}
 	
-	Assert(point.pos == point.vert->pos);
-	//Assert(texture == point.vert->texture);
+	ASSERT(point.pos == point.vert->pos);
+	//ASSERT(texture == point.vert->texture);
 	
 	return * point.vert;
 }
@@ -91,7 +91,7 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 
 void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal)
 {
-	Assert(NearEqual(LengthSq(normal), 1.f, 0.01f));
+	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
 	gfx::IndexBuffer::value_type * corner_indices = & indices.PushBack();
 	corner_indices [0] = vertices.GetIndex(a);

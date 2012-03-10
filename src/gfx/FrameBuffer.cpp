@@ -23,7 +23,7 @@ FrameBuffer::FrameBuffer()
 
 FrameBuffer::~FrameBuffer()
 {
-	Assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool FrameBuffer::IsInitialized() const

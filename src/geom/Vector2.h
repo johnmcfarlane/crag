@@ -43,12 +43,12 @@ public:
 	
 	S const & operator [] (int index) const
 	{
-		Assert(index >= 0 && index < N);
+		ASSERT(index >= 0 && index < N);
 		return GetAxes() [index];
 	}
 	S & operator [] (int index)
 	{
-		Assert(index >= 0 && index < N);
+		ASSERT(index >= 0 && index < N);
 		return GetAxes() [index];
 	}
 	

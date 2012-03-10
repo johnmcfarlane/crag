@@ -61,20 +61,20 @@ namespace smp
 		
 		~Handle()
 		{
-			//Assert(_uid == Uid::null);
+			//ASSERT(_uid == Uid::null);
 		}
 		
 		template <typename BASE_TYPE>
 		operator Handle<BASE_TYPE> & ()
 		{
-			Assert((BASE_TYPE *)((Type *)nullptr) == nullptr);
+			ASSERT((BASE_TYPE *)((Type *)nullptr) == nullptr);
 			return reinterpret_cast<Handle <BASE_TYPE> &>(* this);
 		}
 		
 		template <typename BASE_TYPE>
 		operator Handle<BASE_TYPE> const & () const
 		{
-			Assert((BASE_TYPE *)((Type *)nullptr) == nullptr);
+			ASSERT((BASE_TYPE *)((Type *)nullptr) == nullptr);
 			return reinterpret_cast<Handle <BASE_TYPE> const &>(* this);
 		}
 
@@ -171,7 +171,7 @@ namespace smp
 			: _uid(uid)
 			, _functor(functor)
 			{
-				Assert(_uid != Uid::null);
+				ASSERT(_uid != Uid::null);
 			}
 		private:
 			virtual void operator () (typename Type::DaemonClass & daemon_class) const override

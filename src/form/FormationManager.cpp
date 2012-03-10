@@ -78,7 +78,7 @@ form::FormationManager::~FormationManager()
 		delete & mesh;
 	}
 	
-	Assert(_formations.empty());
+	ASSERT(_formations.empty());
 }
 
 #if defined(VERIFY)
@@ -96,7 +96,7 @@ void form::FormationManager::OnQuit()
 
 void form::FormationManager::OnAddFormation(form::Formation * const & formation)
 {
-	Assert(_formations.find(formation) == _formations.end());
+	ASSERT(_formations.find(formation) == _formations.end());
 	_formations.insert(formation);
 	scenes[0].AddFormation(* formation);
 	scenes[1].AddFormation(* formation);
@@ -104,7 +104,7 @@ void form::FormationManager::OnAddFormation(form::Formation * const & formation)
 
 void form::FormationManager::OnRemoveFormation(form::Formation * const & formation)
 {
-	Assert(_formations.find(formation) != _formations.end());
+	ASSERT(_formations.find(formation) != _formations.end());
 	_formations.erase(formation);
 	scenes[0].RemoveFormation(* formation);
 	scenes[1].RemoveFormation(* formation);
@@ -326,7 +326,7 @@ form::Mesh * form::FormationManager::PopMesh()
 
 void form::FormationManager::BeginReset()
 {
-	Assert(! IsResetting());
+	ASSERT(! IsResetting());
 	is_in_reset_mode = true;
 	
 	// Transfer the origin from the old scene to the new one.

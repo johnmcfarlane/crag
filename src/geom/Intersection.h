@@ -194,7 +194,7 @@ bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & line, S & t1
 	t1 = p - q;
 	t2 = p + q;
 	
-	Assert(t1 <= t2);
+	ASSERT(t1 <= t2);
 	return true;
 }
 

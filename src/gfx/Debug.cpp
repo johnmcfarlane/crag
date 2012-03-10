@@ -74,7 +74,7 @@ namespace
 		
 		static void VerifyColorComp(float c)
 		{
-			Assert(c >= 0 && c <= 1);
+			ASSERT(c >= 0 && c <= 1);
 		}
 		
 		void Draw(Vector3 const & camera_pos, bool hidden) const
@@ -105,18 +105,18 @@ namespace
 					break;
 					
 				case GL_LINES:
-					Assert((points.size() % 2) == 0);
+					ASSERT((points.size() % 2) == 0);
 					break;
 					
 				case GL_TRIANGLES:
-					Assert((points.size() % 3) == 0);
+					ASSERT((points.size() % 3) == 0);
 					break;
 					
 				default:
-					Assert(false);
+					ASSERT(false);
 			}
 
-			Assert(points.size() >= 0 && points.size() < 1000000);
+			ASSERT(points.size() >= 0 && points.size() < 1000000);
 			for (point_vector::const_iterator i = points.begin(); i != points.end(); ++ i)
 			{
 				Point const & p = * i;
@@ -190,7 +190,7 @@ namespace
 // Start things up.
 void gfx::Debug::Init()
 {
-	Assert(font == nullptr);
+	ASSERT(font == nullptr);
 
 	// Some font sources:
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
@@ -205,7 +205,7 @@ void gfx::Debug::Init()
 // Close things down.
 void gfx::Debug::Deinit()
 {
-	Assert(font != nullptr);
+	ASSERT(font != nullptr);
 	delete font;
 	font = nullptr;
 }
@@ -371,7 +371,7 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 
 	// Set state
 	Disable(GL_CULL_FACE);
-	Assert(! IsEnabled(GL_LIGHTING));
+	ASSERT(! IsEnabled(GL_LIGHTING));
 	Enable(GL_DEPTH_TEST);
 	
 	glBlendEquation(GL_FUNC_ADD);

@@ -54,7 +54,7 @@ namespace smp
 				
 				~Task()
 				{
-					Assert(! list_type::is_contained(* this));
+					ASSERT(! list_type::is_contained(* this));
 					
 					// If task is blocking, deletion is up to
 					// the caller of scheduler::Submit
@@ -108,7 +108,7 @@ namespace smp
 					if (AtomicFetchAndAdd(_completed_units, 1) >= _num_units)
 					{
 						// should never exceed _num_units
-						Assert(false);
+						ASSERT(false);
 					}
 				}
 				
@@ -368,7 +368,7 @@ namespace smp
 		
 		void Init()
 		{
-			Assert(singleton == nullptr);
+			ASSERT(singleton == nullptr);
 			singleton = new Singleton;
 		}
 		
@@ -393,7 +393,7 @@ namespace smp
 			
 			num_complete.Decrement();
 			
-			Assert(num_complete.GetValue() == 0);
+			ASSERT(num_complete.GetValue() == 0);
 			delete & num_complete;
 		}
 		
@@ -415,7 +415,7 @@ namespace smp
 				num_complete.Decrement();
 			}
 			
-			Assert(num_complete.GetValue() == 0);
+			ASSERT(num_complete.GetValue() == 0);
 			delete & num_complete;
 		}		
 #else

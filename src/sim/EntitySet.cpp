@@ -36,18 +36,18 @@ namespace
 EntitySet::~EntitySet()
 {
 	// it's likely that the script failed really badly and didn't clean up
-	Assert(entities.empty());
+	ASSERT(entities.empty());
 }
 
 void EntitySet::Add(Entity & entity)
 {
-	Assert(! entities.contains(entity));
+	ASSERT(! entities.contains(entity));
 	entities.push_back(entity);
 }
 
 void EntitySet::Remove(Entity & entity)
 {
-	Assert(entities.contains(entity));
+	ASSERT(entities.contains(entity));
 	entities.remove(entity);
 }
 

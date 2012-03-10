@@ -26,7 +26,7 @@ namespace core
 		// Singleton is useless on its own so c'tor/d'tor are protected.
 		Singleton()
 		{
-			Assert(the_instance == nullptr);
+			ASSERT(the_instance == nullptr);
 			
 			// If S is not derived from Singleton<S>, singleton will be buggy here.
 			the_instance = reinterpret_cast<S *>(this);
@@ -34,7 +34,7 @@ namespace core
 		
 		virtual ~Singleton()
 		{
-			Assert(the_instance == reinterpret_cast<S *>(this));
+			ASSERT(the_instance == reinterpret_cast<S *>(this));
 			the_instance = nullptr;
 		}
 		

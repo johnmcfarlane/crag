@@ -58,7 +58,7 @@ Planet::~Planet()
 
 void Planet::Init(Simulation & simulation, InitData const & init_data)
 {
-	Assert(init_data.sphere.radius > 0);
+	ASSERT(init_data.sphere.radius > 0);
 	_radius_mean = init_data.sphere.radius;
 	_radius_min = init_data.sphere.radius;
 	_radius_max = init_data.sphere.radius;
@@ -181,10 +181,10 @@ Scalar Planet::GetRadiusMax() const
 
 void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 {
-	Assert(radius_min <= _radius_min);
+	ASSERT(radius_min <= _radius_min);
 	_radius_min = radius_min;
 
-	Assert(radius_max >= _radius_max);
+	ASSERT(radius_max >= _radius_max);
 	_radius_max = radius_max;
 }
 

@@ -23,7 +23,7 @@ namespace core
 	ITEM_FUNCTOR for_each (ITERATOR first, ITERATOR last, ITEM_FUNCTOR f)
 	{
 		// UNROLL_HINT must be divisible by (last - first).
-		Assert (((last - first) % UNROLL_PITCH) == 0);
+		ASSERT (((last - first) % UNROLL_PITCH) == 0);
 		
 		while (first != last)
 		{

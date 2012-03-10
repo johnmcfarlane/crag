@@ -45,13 +45,13 @@ public:
 	// Returns vector as a C-style array. Very unsafe. 
 	S const & operator[](int index) const 
 	{
-		Assert(index >= 0 && index < N);
+		ASSERT(index >= 0 && index < N);
 		return GetAxes() [index];
 	} 
 	
 	S & operator[](int index) 
 	{
-		Assert(index >= 0 && index < N);
+		ASSERT(index >= 0 && index < N);
 		return GetAxes() [index];
 	} 
 
@@ -226,7 +226,7 @@ typedef Vector <int, 3> Vector3i;
 
 inline int TriMod(int i)
 {
-	Assert(i >= 0 && i < 6);
+	ASSERT(i >= 0 && i < 6);
 	
 	// Alternative 1
 	//	return i % 3;

@@ -85,14 +85,14 @@
 #endif
 
 
-// Assert - interrupt execution in a debug build iff given condition fails
+// ASSERT - interrupt execution in a debug build iff given condition fails
 #if defined(NDEBUG)
-#define Assert(CONDITION) DO_NOTHING
+#define ASSERT(CONDITION) DO_NOTHING
 #else
-#define Assert(CONDITION) \
+#define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("Assert: \"%s\"\n", #CONDITION); \
+			DEBUG_BREAK("ASSERT: \"%s\"\n", #CONDITION); \
 		} \
 	)
 #endif
@@ -157,7 +157,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 // Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
 { 
-	Assert(& ref >= reinterpret_cast<T *>(0x10000)); 
+	ASSERT(& ref >= reinterpret_cast<T *>(0x10000)); 
 }
 
 // Additionally, pointers may be null.
@@ -181,15 +181,15 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin)
 { 
 	VerifyRef(* begin);								// null check
 	VerifyRef(* element);							// null check
-	Assert(begin <= element);						// in range
-	Assert(begin + (element - begin) == element);	// alignment
+	ASSERT(begin <= element);						// in range
+	ASSERT(begin + (element - begin) == element);	// alignment
 }
 
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) 
 { 
 	VerifyArrayElement(end, begin);		// valid end pointer
 	VerifyArrayElement(element, begin);	// valid element pointer
-	Assert(element < end);	// element inside top end of range
+	ASSERT(element < end);	// element inside top end of range
 }
 
 #else

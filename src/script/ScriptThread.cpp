@@ -48,10 +48,10 @@ ScriptThread::ScriptThread()
 
 ScriptThread::~ScriptThread()
 {
-	Assert(_fibers.empty());
-	Assert(_unlaunched_fiber == nullptr);
+	ASSERT(_fibers.empty());
+	ASSERT(_unlaunched_fiber == nullptr);
 	
-	Assert(_quit_flag);
+	ASSERT(_quit_flag);
 }
 
 void ScriptThread::OnQuit()
@@ -122,7 +122,7 @@ void ScriptThread::GetEvent(SDL_Event & event)
 
 void ScriptThread::Launch(Fiber & fiber)
 {
-	Assert(_unlaunched_fiber == nullptr);
+	ASSERT(_unlaunched_fiber == nullptr);
 	_unlaunched_fiber = & fiber;
 }
 
@@ -133,7 +133,7 @@ bool ScriptThread::HasFibersActive() const
 
 bool ScriptThread::ProcessTasks()
 {
-	Assert(HasFibersActive());
+	ASSERT(HasFibersActive());
 	
 	return StartTask() || ContinueTask();
 }
@@ -146,7 +146,7 @@ bool ScriptThread::StartTask()
 		return false;
 	}
 	
-	Assert(! _fibers.contains(* _unlaunched_fiber));
+	ASSERT(! _fibers.contains(* _unlaunched_fiber));
 	
 	Fiber * fiber = _unlaunched_fiber;
 	_unlaunched_fiber = nullptr;
@@ -168,7 +168,7 @@ bool ScriptThread::ContinueTask()
 	Fiber * fiber = & first;
 	do
 	{
-		Assert(! fiber->IsComplete());
+		ASSERT(! fiber->IsComplete());
 
 		_fibers.pop_front();
 		_fibers.push_back(* fiber);

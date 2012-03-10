@@ -34,9 +34,9 @@ form::Node::Triplet::Triplet()
 
 form::Node::Triplet::~Triplet()
 {
-	//Assert(corner == nullptr);	// fails on account of the nodes scoped in NodeBuffer::ExpandNode
-	Assert(mid_point == nullptr);
-	Assert(cousin == nullptr);
+	//ASSERT(corner == nullptr);	// fails on account of the nodes scoped in NodeBuffer::ExpandNode
+	ASSERT(mid_point == nullptr);
+	ASSERT(cousin == nullptr);
 }
 
 
@@ -53,8 +53,8 @@ form::Node::Node()
 
 form::Node::~Node()
 {
-	Assert(GetChildren() == nullptr);
-	Assert(_parent == nullptr);
+	ASSERT(GetChildren() == nullptr);
+	ASSERT(_parent == nullptr);
 }
 
 // Makes sure node's three mid-points are non-null or returns false.
@@ -80,7 +80,7 @@ bool form::Node::InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buff
 			if (new_point == nullptr)
 			{
 				// We should always have enough points in the buffer.
-				Assert(false);
+				ASSERT(false);
 				
 				success = false;
 				continue;
@@ -118,7 +118,7 @@ bool form::Node::InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buff
 // before it is determined that the node can be expanded.
 bool form::Node::InitChildCorners(Node const & parent, Node * children)
 {
-	Assert(parent.GetChildren() == nullptr);
+	ASSERT(parent.GetChildren() == nullptr);
 	
 	Node::Triplet const * parent_triple = parent.triple;
 	
@@ -167,7 +167,7 @@ bool form::Node::InitChildCorners(Node const & parent, Node * children)
 		return false;
 	}
 	
-	Assert(parent.triple[0].corner == children[0].triple[0].corner);
+	ASSERT(parent.triple[0].corner == children[0].triple[0].corner);
 	
 	return true;
 }
@@ -204,7 +204,7 @@ void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 				point_buffer.Free(t.mid_point);
 				t.mid_point = nullptr;
 				
-				Assert(GetChildren() == nullptr);
+				ASSERT(GetChildren() == nullptr);
 			}
 		}
 	}
@@ -239,14 +239,14 @@ bool form::Node::InitScoreParameters()
 
 void form::Node::SetFlags(flag_type f) 
 {
-	Assert ((f & pointer_mask) == 0);
+	ASSERT ((f & pointer_mask) == 0);
 	flags_and_children &= pointer_mask;
 	flags_and_children |= f; 
 }
 
 void form::Node::SetChildren(Node * c) 
 { 
-	Assert ((reinterpret_cast<flag_type>(c) & flag_mask) == 0);
+	ASSERT ((reinterpret_cast<flag_type>(c) & flag_mask) == 0);
 	flags_and_children &= flag_mask;
 	flags_and_children |= reinterpret_cast<flag_type>(c); 
 }
@@ -261,8 +261,8 @@ void form::Node::SetCousin(int index, Node & cousin)
 	Triplet & this_triplet = triple[index];
 	Triplet & that_triplet = cousin.triple[index];
 
-	Assert((this_triplet.cousin == nullptr && that_triplet.cousin == nullptr) || (this_triplet.cousin->triple[index].cousin == this));
-	Assert(this_triplet.mid_point == nullptr);
+	ASSERT((this_triplet.cousin == nullptr && that_triplet.cousin == nullptr) || (this_triplet.cousin->triple[index].cousin == this));
+	ASSERT(this_triplet.mid_point == nullptr);
 	
 	this_triplet.cousin = & cousin;
 	that_triplet.cousin = this;
@@ -294,9 +294,9 @@ void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) cons
 		child_corners[2] = triple[2].mid_point;
 	}
 	
-	Assert(child_corners[0] != nullptr);
-	Assert(child_corners[1] != nullptr);
-	Assert(child_corners[2] != nullptr);
+	ASSERT(child_corners[0] != nullptr);
+	ASSERT(child_corners[1] != nullptr);
+	ASSERT(child_corners[2] != nullptr);
 }
 
 #if defined(VERIFY)

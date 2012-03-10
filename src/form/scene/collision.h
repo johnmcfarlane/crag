@@ -135,7 +135,7 @@ namespace form { namespace collision
 	inline bool TestShapeCollision(CollisionFunctor<Sphere3, COLLISION_FUNCTOR> const & node_functor, CollisionInfo const & collision_info)
 	{
 		// In the case of Sphere3, where the bounding_sphere IS the shape, shape becomes a placeholder.
-		Assert(node_functor._object.bounding_sphere == node_functor._object.shape);
+		ASSERT(node_functor._object.bounding_sphere == node_functor._object.shape);
 
 		Vector3 contact_point = Project(collision_info.ray, collision_info.t1);
 		Vector3 contact_normal = Normalized(node_functor._object.bounding_sphere.center - contact_point);

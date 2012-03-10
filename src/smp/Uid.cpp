@@ -29,10 +29,10 @@ Uid Uid::Create()
 	
 #if ! defined(NDEBUG)
 	// check that we've still got lots of capacity
-	Assert(_counter <= ValueType(-1) >> 8);
+	ASSERT(_counter <= ValueType(-1) >> 8);
 	
 	// check that GetBitCount is reliable
-	Assert(GetBitCount(ValueType(-1)) == sizeof(ValueType) * CHAR_BIT);
+	ASSERT(GetBitCount(ValueType(-1)) == sizeof(ValueType) * CHAR_BIT);
 	
 	// periodically report that uids are being used up
 	if (_counter > 1000000 && GetBitCount(_counter) == 1)

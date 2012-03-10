@@ -27,7 +27,7 @@ BranchNode::BranchNode()
 
 BranchNode::~BranchNode()
 {
-	Assert(IsEmpty());
+	ASSERT(IsEmpty());
 }
 
 #if defined(VERIFY)
@@ -64,19 +64,19 @@ bool BranchNode::IsChild(Object const & child) const
 
 void gfx::AdoptChild(Object & child, BranchNode & parent)
 {
-	Assert(child._parent == nullptr);
+	ASSERT(child._parent == nullptr);
 	child._parent = & parent;
 	
-	Assert(! parent._children.contains(child));
+	ASSERT(! parent._children.contains(child));
 	parent._children.push_back(child);
 }
 
 void gfx::OrphanChild(Object & child, BranchNode & parent)
 {
-	Assert(child._parent == & parent);
+	ASSERT(child._parent == & parent);
 	child._parent = nullptr;
 	
-	Assert(parent._children.contains(child));
+	ASSERT(parent._children.contains(child));
 	parent._children.remove(child);
 }
 

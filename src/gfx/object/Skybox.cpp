@@ -104,16 +104,16 @@ void Skybox::Render(Renderer const & renderer) const
 	glColor3f(1.f, 1.f, 1.f);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	Assert(IsEnabled(GL_COLOR_MATERIAL));
+	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	glDepthMask(false);
 	
-	Assert(! IsEnabled(GL_LIGHTING));
-	Assert(IsEnabled(GL_COLOR_MATERIAL));
-	Assert(IsEnabled(GL_TEXTURE_2D));
-	Assert(! IsEnabled(GL_CULL_FACE));
-	Assert(! IsEnabled(GL_DEPTH_TEST));
+	ASSERT(! IsEnabled(GL_LIGHTING));
+	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
+	ASSERT(IsEnabled(GL_TEXTURE_2D));
+	ASSERT(! IsEnabled(GL_CULL_FACE));
+	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	
 	// Draw VBO
 	vbo.Bind();

@@ -51,7 +51,7 @@ namespace form
 #if defined(NODE_SCORE_HEAT_MAP)
 			if (score < _leaf_score_range.x)
 			{
-				Assert(false);
+				ASSERT(false);
 				color = Color::Red();
 			}
 			else if (score > _leaf_score_range.y)
@@ -61,7 +61,7 @@ namespace form
 			else
 			{
 				int t = static_cast<int>(_inv_range * (score - _leaf_score_range.x));
-				Assert(t >= 0 && t < 256);
+				ASSERT(t >= 0 && t < 256);
 				color.r = 255 - t;
 				color.g = t;
 				color.b = t;

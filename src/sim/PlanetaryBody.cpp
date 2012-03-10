@@ -52,7 +52,7 @@ namespace
 	private:
 		virtual void operator () (size_type unit_index)
 		{
-			Assert(unit_index == 0);
+			ASSERT(unit_index == 0);
 			
 			_body.OnDeferredCollisionWithPlanet(_planetary_body, _intersection_functor);
 		}
@@ -136,14 +136,14 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 				++ i;
             }
         }
-		Assert(i = collision_object.shape.faces.end());
+		ASSERT(i = collision_object.shape.faces.end());
     }
  	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
-		Assert(false);
+		ASSERT(false);
 		return;
 	}
 	

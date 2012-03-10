@@ -47,8 +47,8 @@ Scene::~Scene()
 {
 	RemoveChildren(_root);
 
-	Assert(_objects.empty());
-	Assert(_root.IsEmpty());
+	ASSERT(_objects.empty());
+	ASSERT(_root.IsEmpty());
 }
 
 #if defined(VERIFY)
@@ -86,10 +86,10 @@ void Scene::AddObject(Object & object)
 		object.SetUid(uid = Uid::Create());
 	}
 
-	Assert(_objects.count(uid) == 0);	// object with matching id already lives in map
+	ASSERT(_objects.count(uid) == 0);	// object with matching id already lives in map
 	ObjectMap::value_type addition(uid, & object);
 	_objects.insert(addition);
-	Assert(_objects.count(uid) == 1);	// insertion failed somehow
+	ASSERT(_objects.count(uid) == 1);	// insertion failed somehow
 	
 	// If object is a LeafNode,
 	LeafNode * leaf_node = object.CastLeafNodePtr();
@@ -111,14 +111,14 @@ void Scene::RemoveObject(Uid uid)
 			// Probably, the object was already removed. 
 			// (Children and sometimes parents are removed automatically.)
 			// Possibly, it was simply never added with AddObject.
-			Assert(false);
+			ASSERT(false);
 			return;
 		}
 		object = i->second;
 		
 		// And remove from the map.
 		_objects.erase(i);
-		Assert(_objects.count(uid) == 0);	// erasure failed somehow
+		ASSERT(_objects.count(uid) == 0);	// erasure failed somehow
 	}
 	
 	switch (object->GetNodeType())
@@ -145,7 +145,7 @@ void Scene::RemoveObject(Uid uid)
 				RemoveObject(child_uid);
 			}
 			
-			Assert(branch_node.IsEmpty());
+			ASSERT(branch_node.IsEmpty());
 			break;
 		}
 			
@@ -272,5 +272,5 @@ void Scene::RemoveChildren(BranchNode & parent)
 		RemoveObject(child_uid);
 	}
 	
-	Assert(parent.IsEmpty());
+	ASSERT(parent.IsEmpty());
 }

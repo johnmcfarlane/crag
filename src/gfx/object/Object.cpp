@@ -64,13 +64,13 @@ Object::NodeType Object::GetNodeType() const
 
 LeafNode & Object::CastLeafNodeRef()
 {
-	Assert(GetNodeType() == leaf);
+	ASSERT(GetNodeType() == leaf);
 	return static_cast<LeafNode &>(* this);
 }
 
 LeafNode const & Object::CastLeafNodeRef() const
 {
-	Assert(GetNodeType() == leaf);
+	ASSERT(GetNodeType() == leaf);
 	return static_cast<LeafNode const &>(* this);
 }
 
@@ -90,13 +90,13 @@ LeafNode const * Object::CastLeafNodePtr() const
 
 BranchNode & Object::CastBranchNodeRef()
 {
-	Assert(GetNodeType() == branch);
+	ASSERT(GetNodeType() == branch);
 	return static_cast<BranchNode &>(* this);
 }
 
 BranchNode const & Object::CastBranchNodeRef() const
 {
-	Assert(GetNodeType() == branch);
+	ASSERT(GetNodeType() == branch);
 	return static_cast<BranchNode const &>(* this);
 }
 

@@ -46,7 +46,7 @@ Fiber::Fiber()
 
 Fiber::~Fiber()
 {
-	Assert(_complete == true);
+	ASSERT(_complete == true);
 }
 
 bool Fiber::IsComplete() const
@@ -82,7 +82,7 @@ void Fiber::Sleep(Time duration)
 
 void Fiber::Wait(Condition & condition)
 {
-	Assert(_condition == nullptr);
+	ASSERT(_condition == nullptr);
 	_condition = & condition;
 
 	// TODO: Marker may need to be higher than stack frame - rather than within it.
@@ -97,7 +97,7 @@ void Fiber::Wait(Condition & condition)
 		longjmp(_source_state, 1);
 		
 		// Should never return...
-		Assert(false);
+		ASSERT(false);
 	}
 	else
 	{
@@ -107,7 +107,7 @@ void Fiber::Wait(Condition & condition)
 	// For safety's sake un-set the top pointer.
 	_stack_frame_buffer.SetTop(StackFrameBuffer::null);
 	
-	Assert(_condition == & condition);
+	ASSERT(_condition == & condition);
 	_condition = nullptr;
 }
 
@@ -128,7 +128,7 @@ void Fiber::Continue()
 		longjmp(_dest_state, 1);
 		
 		// Should never return...
-		Assert(false);
+		ASSERT(false);
 	}
 	else
 	{
@@ -138,7 +138,7 @@ void Fiber::Continue()
 
 void Fiber::Start(ScriptThread & script_thread)
 {
-	Assert(_script_thread == nullptr);
+	ASSERT(_script_thread == nullptr);
 	_script_thread = & script_thread;
 	
 	if (! setjmp(_source_state))
@@ -146,7 +146,7 @@ void Fiber::Start(ScriptThread & script_thread)
 		InternalStart();
 		
 		// Should never return.
-		Assert(false);
+		ASSERT(false);
 	}
 	else
 	{
@@ -170,14 +170,14 @@ void Fiber::InternalStart()
 	if (! cushion.IsSafe())
 	{
 		std::cerr << "Warning: Evidence of fiber stack corruption detected." << std::endl;
-		Assert(false);
+		ASSERT(false);
 	}
 	
 	// Yield for the last time.
 	Yield();
 	
 	// Should not come back from that yield.
-	Assert(false);
+	ASSERT(false);
 }
 
 template <typename OBJECT>
