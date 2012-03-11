@@ -135,7 +135,9 @@ namespace core
 				// Finally perform the bitwise copy.
 				memcpy(reinterpret_cast<void *>(object_copy), reinterpret_cast<void const *>(& object), object_size);
 			}
-			// Now, copy has bitwise copy of this buffer.
+
+			// Now, copy has bitwise copy of this buffer. Free this one.
+			deallocate();
 			
 			// Finally, copy the pointers of the new copy back to this,
 			_buffer_begin = copy._buffer_begin;
