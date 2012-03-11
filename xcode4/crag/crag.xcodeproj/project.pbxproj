@@ -397,7 +397,7 @@
 		5230572514F1D95F0024D4A8 /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
 		5230572614F1D95F0024D4A8 /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
 		5230572714F1D95F0024D4A8 /* ReadersWriterMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadersWriterMutex.cpp; sourceTree = "<group>"; };
-		5230572814F1D95F0024D4A8 /* ReadersWriterMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ReadersWriterMutex.h; sourceTree = "<group>"; };
+		5230572814F1D95F0024D4A8 /* ReadersWriterMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadersWriterMutex.h; sourceTree = "<group>"; };
 		5230572914F1D95F0024D4A8 /* SimpleMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMutex.h; sourceTree = "<group>"; };
 		5230572A14F1D95F0024D4A8 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
 		5230572B14F1D95F0024D4A8 /* smp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smp.h; sourceTree = "<group>"; };
@@ -1153,7 +1153,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-lode",
-					"-lSDL",
+					"-lSDL2",
 					"-liconv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1207,7 +1207,7 @@
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-lode",
-					"-lSDL",
+					"-lSDL2",
 					"-liconv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
