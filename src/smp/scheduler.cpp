@@ -370,6 +370,7 @@ namespace smp
 		{
 			ASSERT(singleton == nullptr);
 			singleton = new Singleton;
+			Yield();
 		}
 		
 		void Deinit()
