@@ -140,7 +140,7 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 	if (source == nullptr)
 	{
 		ASSERT(errno == ENOENT);
-		ERROR_MESSAGE("file not found \"%s\"\n", filename);
+		ERROR_MESSAGE("file not found \"%s\"", filename);
 		return false;
 	}
 	

@@ -54,7 +54,7 @@
 
 
 // ERROR_MESSAGE macro - printf-style error logging
-#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT, __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT "\n", __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
 
 
 // BREAK - interrupt execution
@@ -92,7 +92,7 @@
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("ASSERT: \"%s\"\n", #CONDITION); \
+			DEBUG_BREAK("ASSERT: \"%s\"", #CONDITION); \
 		} \
 	)
 #endif
@@ -105,7 +105,7 @@
 #define AssertErrno() \
 	DO_STATEMENT ( \
 		if (errno != 0) { \
-			DEBUG_BREAK("errno: %d \"%s\"\n", errno, strerror(errno)); \
+			DEBUG_BREAK("errno: %d \"%s\"", errno, strerror(errno)); \
 		} \
 	)
 #endif
@@ -114,7 +114,7 @@
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
 	DO_STATEMENT ( \
-		DEBUG_BREAK("SDL error: \"%s\"\n", SDL_GetError()); \
+		DEBUG_BREAK("SDL error: \"%s\"", SDL_GetError()); \
 	)
 
 
@@ -142,7 +142,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 #define VerifyTrue(CONDITION) \
 	DO_STATEMENT( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("Verify: \"%s\"\n", #CONDITION); \
+			DEBUG_BREAK("Verify: \"%s\"", #CONDITION); \
 		} \
 	)
 
@@ -150,7 +150,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
 			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
-			DEBUG_BREAK("Verify: \"%s\" != \"%s\"\n", #A, #B); \
+			DEBUG_BREAK("Verify: \"%s\" != \"%s\"", #A, #B); \
 		} \
 	)
 
