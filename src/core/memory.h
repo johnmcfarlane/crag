@@ -148,5 +148,7 @@ inline size_t CalculateAlignment(size_t type_size)
 }
 
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
-
 void Free(void * allocation);
+
+void InitAllocationCounters();
+void DeinitAllocationCounters();
