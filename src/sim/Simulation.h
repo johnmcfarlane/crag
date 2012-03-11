@@ -47,6 +47,14 @@ namespace sim
 		// message interface
 		void OnQuit();
 		
+		template <typename OBJECT_TYPE>
+		void OnCreateObject(Uid const & uid)
+		{
+			OBJECT_TYPE * object = new OBJECT_TYPE;
+			object->SetUid(uid);
+			object->Init(* this);
+			OnAddObject(* object);
+		}
 		template <typename OBJECT_TYPE, typename INIT_DATA>
 		void OnCreateObject(Uid const & uid, INIT_DATA const & init_data)
 		{

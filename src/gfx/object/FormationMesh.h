@@ -33,7 +33,7 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		bool Init(Renderer & renderer, void *);
+		bool Init(Renderer & renderer);
 		void Deinit(Scene & scene) override;
 
 		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;

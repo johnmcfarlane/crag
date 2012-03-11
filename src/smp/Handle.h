@@ -89,6 +89,16 @@ namespace smp
 			_uid = uid;
 		}
 		
+		void Create()
+		{
+			typedef typename Type::Daemon Daemon;
+			typedef typename Daemon::Class DaemonClass;
+			
+			Destroy();
+			Uid uid = Uid::Create();
+			SetUid(uid);
+			Daemon::Call(& DaemonClass::template OnCreateObject<Type>, uid);
+		}
 		template <typename INIT_DATA>
 		void Create(INIT_DATA const & init_data)
 		{

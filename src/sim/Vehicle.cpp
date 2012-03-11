@@ -54,8 +54,7 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, branch_node.GetUid(), parent_model.GetUid());
 	
 	// create actual thruster graphics
-	void const * dummy = nullptr;
-	_thruster.model.Create(dummy);
+	_thruster.model.Create();
 	
 	// its parent is the branch node
 	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _thruster.model.GetUid(), branch_node.GetUid());

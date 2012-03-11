@@ -44,7 +44,7 @@ Thruster::Thruster()
 {
 }
 
-void Thruster::Init(Renderer & renderer, void const *)
+void Thruster::Init(Renderer & renderer)
 {
 	super::Init(renderer, thruster_color);
 	

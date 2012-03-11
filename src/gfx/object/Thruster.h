@@ -29,7 +29,7 @@ namespace gfx
 		// functions
 		Thruster();
 		
-		void Init(Renderer & renderer, void const *);
+		void Init(Renderer & renderer);
 		
 		void Update(float const & thrust_factor);
 

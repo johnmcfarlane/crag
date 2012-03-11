@@ -139,7 +139,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 
 	// Add the skybox.
 	FirmamentHandle skybox;
-	skybox.Create<void *>(nullptr);
+	skybox.Create();
 	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, skybox.GetUid(), gfx::Uid());
 	
 	Time next_tick_time = app::GetTime();
