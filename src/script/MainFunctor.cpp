@@ -42,6 +42,7 @@ namespace
 	Time shape_drop_period = .5;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
+	bool spawn_planets = true;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// random number generation
@@ -150,6 +151,7 @@ void MainFunctor::operator() (FiberInterface & fiber)
 void MainFunctor::SpawnUniverse()
 {
 	// Create planets
+	if (spawn_planets)
 	{
 		double planet_radius = 10000000;
 		sim::Planet::InitData init_data;
