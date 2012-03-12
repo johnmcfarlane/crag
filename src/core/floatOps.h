@@ -99,11 +99,13 @@ template<typename T> T Cube(T a)
 
 template<typename T> T Inverse (T a)
 {
+	ASSERT(a != 0);
 	return static_cast<T>(1) / a;
 }
 
 template<typename T> T InvSqrt (T a)
 {
+	ASSERT(a != 0);
 	return Inverse (sqrt (a));
 }
 
@@ -111,11 +113,13 @@ template<typename T> T InvSqrt (T a)
 
 inline float FastInvSqrt(float a)
 {
+	ASSERT(a != 0);
 	return __frsqrtes(a);
 }
 
 inline double FastInvSqrt(double a)
 {
+	ASSERT(a != 0);
 	return __frsqrte(a);
 }
 
@@ -123,6 +127,7 @@ inline double FastInvSqrt(double a)
 
 inline float FastInvSqrt ( float f )
 {
+	ASSERT(f != 0);
 	__m128 x = _mm_load_ss( &f );
 	float result;
 	x = _mm_rsqrt_ss( x ); // x = _mm_rsqrt_ss( x, x ) on some compilers
@@ -130,16 +135,17 @@ inline float FastInvSqrt ( float f )
 	return result;
 }
 
-inline double FastInvSqrt ( double x )
+inline double FastInvSqrt (double d)
 {
-    float arg = static_cast<float>(x);
+	ASSERT(d != 0);
+    float arg = static_cast<float>(d);
 	
     _mm_store_ss( & arg, _mm_rsqrt_ss( _mm_load_ss( & arg ) ) );
 	
     double  r = arg;
     
-    r *= ((3.0 - r * r * x) * 0.5);
-    r *= ((3.0 - r * r * x) * 0.5);
+    r *= ((3.0 - r * r * d) * 0.5);
+    r *= ((3.0 - r * r * d) * 0.5);
 	
     return r;
 }
@@ -151,6 +157,7 @@ inline double FastInvSqrt ( double x )
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
 {
+	ASSERT(a != 0);
 	return Inv(sqrt(a));
 }
 
