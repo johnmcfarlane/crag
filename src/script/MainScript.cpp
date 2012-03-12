@@ -1,5 +1,5 @@
 //
-//  main.cpp
+//  MainScript.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-02-09.
@@ -9,9 +9,9 @@
 
 #include "pch.h"
 
-#include "MainFunctor.h"
+#include "MainScript.h"
 
-#include "ObserverFunctor.h"
+#include "ObserverScript.h"
 
 #include "sim/Box.h"
 #include "sim/Planet.h"
@@ -106,7 +106,7 @@ namespace
 	}
 }
 
-void MainFunctor::operator() (FiberInterface & fiber)
+void MainScript::operator() (FiberInterface & fiber)
 {
 	std::cout << "-> Main script" << std::endl;
 	
@@ -122,7 +122,7 @@ void MainFunctor::operator() (FiberInterface & fiber)
 	fiber.Sleep(2);
 
 	// Create observer and vehicle.
-	fiber.Launch(ref(new ObserverFunctor(observer_start_pos)));
+	fiber.Launch(ref(new ObserverScript(observer_start_pos)));
 	
 	SpawnVehicle();
 	
@@ -148,7 +148,7 @@ void MainFunctor::operator() (FiberInterface & fiber)
 	std::cout << "<- Main script" << std::endl;
 }
 
-void MainFunctor::SpawnUniverse()
+void MainScript::SpawnUniverse()
 {
 	// Create planets
 	if (spawn_planets)
@@ -191,7 +191,7 @@ void MainFunctor::SpawnUniverse()
 	}
 }
 
-void MainFunctor::SpawnVehicle()
+void MainScript::SpawnVehicle()
 {
 	// Create vehicle
 	if (spawn_vehicle)
@@ -209,7 +209,7 @@ void MainFunctor::SpawnVehicle()
 	}
 }
 
-void MainFunctor::SpawnShapes()
+void MainScript::SpawnShapes()
 {
 	if (max_shapes == 0)
 	{

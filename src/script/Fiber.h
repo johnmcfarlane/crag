@@ -27,28 +27,29 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber();
+		Fiber(Script & script);	// takes ownership of this script
 		~Fiber();
 		
 		bool IsComplete() const;
+		Script & GetScript();
 		Condition * GetCondition();
-
+		
 		void Continue();
 		void Start(ScriptThread & script_thread);
 	private:
 		void InternalStart();
-
+		
 		// FiberInterface 
-		bool GetQuitFlag() const override;
-		void SetQuitFlag() override;
-
-		void Yield() override;
-		void Sleep(Time duration) override;
-		void Wait(Condition & condition) override;
+		virtual bool GetQuitFlag() const override;
+		virtual void SetQuitFlag() override;
 		
-		void LaunchFiber(Fiber & fiber);
+		virtual void Yield() override;
+		virtual void Sleep(Time duration) override;
+		virtual void Wait(Condition & condition) override;
 		
-		virtual void Run() = 0;
+		virtual void Launch(Script & script) override;
+		
+		void Run();
 		
 		// true iff it's safe to access this object when fiber is paused
 		template <typename OBJECT>
@@ -64,32 +65,7 @@ namespace script
 		StackFrameBuffer _stack_frame_buffer;
 		TimeCondition _time_condition;	// used often enough to warrant its own instance
 		Condition * _condition;
+		Script & _script;
 		bool _complete;
 	};
-	
-	// class which binds a fiber and its functor
-	template <typename FUNCTOR>
-	class FiberEntry : public Fiber
-	{
-	public:
-		FiberEntry(FUNCTOR const & functor)
-		: _functor(functor)
-		{
-		}
-		
-	private:
-		void Run() override
-		{
-			_functor(* this);
-		}
-		
-		FUNCTOR _functor;
-	};
-	
-	// definition of FiberInterface function requiring defition of FiberEntry
-	template <typename FUNCTOR>
-	void FiberInterface::Launch(FUNCTOR const & functor)
-	{
-		LaunchFiber(ref(new FiberEntry<FUNCTOR>(functor)));
-	}
 }

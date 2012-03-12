@@ -1,5 +1,5 @@
 //
-//  ObserverFunctor.h
+//  ObserverScript.h
 //  crag
 //
 //  Created by John McFarlane on 2012-02-11.
@@ -13,6 +13,8 @@
 
 #include "EventCondition.h"
 
+#include "Script.h"
+
 #include "sim/Simulation.h"
 
 
@@ -21,14 +23,14 @@ DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
 
 namespace script
 {
-	class ObserverFunctor
+	class ObserverScript : public Script
 	{
 	public:
 		// functions
-		ObserverFunctor(sim::Vector3 const & spawn_position);
-		~ObserverFunctor();
+		ObserverScript(sim::Vector3 const & spawn_position);
+		~ObserverScript();
 		
-		void operator() (FiberInterface & fiber);
+		virtual void operator() (FiberInterface & fiber) override;
 		
 	private:
 		bool HandleEvent(SDL_Event const & event);

@@ -12,6 +12,7 @@ namespace script
 {
 	// forward-declare
 	class Condition;
+	class Script;
 	
 	// Interface to the Fiber class;
 	// This interface is passed to a Fiber's function object.
@@ -29,12 +30,8 @@ namespace script
 		virtual void Yield() = 0;
 		virtual void Sleep(Time duration) = 0;
 		virtual void Wait(Condition & condition) = 0;
-
-		// launch another fiber
-		template <typename FUNCTOR>
-		void Launch(FUNCTOR const & functor);
 		
-	private:
-		virtual void LaunchFiber(class Fiber & fiber) = 0;
+		// launch another fiber (and deletes the script afterwards)
+		virtual void Launch(Script & script) = 0;
 	};
 }

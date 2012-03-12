@@ -18,6 +18,9 @@
 
 namespace script
 {
+	typedef smp::Uid Uid;
+	class Script;
+	
 	// script::Daemon type
 	class ScriptThread;
 	typedef smp::Daemon<ScriptThread> Daemon;
@@ -40,10 +43,24 @@ namespace script
 		
 		ScriptThread();
 		~ScriptThread();
+
+		// given a UID, returns the script associated with it
+		Script * GetObject(Uid uid);
 		
 		// daemon messages
 		void OnQuit();
 		void OnEvent(SDL_Event const & event);
+		
+		template <typename SCRIPT_TYPE>
+		void OnCreateObject(Uid const & uid)
+		{
+			SCRIPT_TYPE * script = new SCRIPT_TYPE ();
+			script->SetUid(uid);
+			OnAddObject(* script);
+		}
+		
+		void OnAddObject(Script & entity);
+		void OnRemoveObject(Uid const & uid);
 		
 		bool GetQuitFlag() const;
 		void SetQuitFlag();
@@ -55,8 +72,6 @@ namespace script
 		void Run(Daemon::MessageQueue & message_queue);
 		
 		void GetEvent(SDL_Event & event);
-		
-		void Launch(Fiber & fiber_entry);
 		
 	private:
 		bool HasFibersActive() const;
@@ -77,7 +92,7 @@ namespace script
 		Fiber::List _fibers;
 		
 		// A new fiber to be launched next.
-		Fiber * _unlaunched_fiber;
+		Fiber::List _unlaunched_fibers;
 		
 		bool _quit_flag;
 	};

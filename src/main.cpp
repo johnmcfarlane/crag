@@ -20,6 +20,7 @@
 #include "gfx/Renderer.h"
 
 #include "script/ScriptThread.h"
+#include "script/MainScript.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -309,6 +310,10 @@ namespace
 			simulation.Start("sim");
 			renderer.Start("gfx");
 			script_daemon.Start("script");
+			
+			// launch the main script
+			script::MainScriptHandle main_script;
+			main_script.Create();
 			
 			while (true)
 			{

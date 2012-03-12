@@ -11,6 +11,7 @@
 
 #include "Fiber.h"
 
+#include "Script.h"
 #include "ScriptThread.h"
 
 
@@ -37,9 +38,10 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // script::Fiber member definitions
 
-Fiber::Fiber()
+Fiber::Fiber(Script & script)
 : _script_thread(nullptr)
 , _condition(nullptr)
+, _script(script)
 , _complete(false)
 {
 }
@@ -47,6 +49,7 @@ Fiber::Fiber()
 Fiber::~Fiber()
 {
 	ASSERT(_complete == true);
+	delete & _script;
 }
 
 bool Fiber::IsComplete() const
@@ -54,67 +57,14 @@ bool Fiber::IsComplete() const
 	return _complete;
 }
 
+Script & Fiber::GetScript()
+{
+	return _script;
+}
+
 Condition * Fiber::GetCondition()
 {
 	return _condition;
-}
-
-bool Fiber::GetQuitFlag() const
-{
-	return _script_thread->GetQuitFlag();
-}
-
-void Fiber::SetQuitFlag()
-{
-	_script_thread->SetQuitFlag();
-}
-
-void Fiber::Yield()
-{
-	Wait(null_condition);
-}
-
-void Fiber::Sleep(Time duration)
-{
-	_time_condition.SetWakePosition(_script_thread->GetTime() + duration);
-	Wait(_time_condition);
-}
-
-void Fiber::Wait(Condition & condition)
-{
-	ASSERT(_condition == nullptr);
-	_condition = & condition;
-
-	// TODO: Marker may need to be higher than stack frame - rather than within it.
-	_stack_frame_buffer.SetTop(StackFrameBuffer::CalculateTop());
-	
-	if (! setjmp(_dest_state))
-	{
-		// Make a copy of the vulnerable part of the stack.
-		_stack_frame_buffer.Copy();
-		
-		// Jump back to caller.
-		longjmp(_source_state, 1);
-		
-		// Should never return...
-		ASSERT(false);
-	}
-	else
-	{
-		// ... but passes through here when yield is complete.
-	}
-	
-	// For safety's sake un-set the top pointer.
-	_stack_frame_buffer.SetTop(StackFrameBuffer::null);
-	
-	ASSERT(_condition == & condition);
-	_condition = nullptr;
-}
-
-void Fiber::LaunchFiber(Fiber & fiber)
-{
-	_script_thread->Launch(fiber);
-	Yield();
 }
 
 void Fiber::Continue()
@@ -178,6 +128,69 @@ void Fiber::InternalStart()
 	
 	// Should not come back from that yield.
 	ASSERT(false);
+}
+
+bool Fiber::GetQuitFlag() const
+{
+	return _script_thread->GetQuitFlag();
+}
+
+void Fiber::SetQuitFlag()
+{
+	_script_thread->SetQuitFlag();
+}
+
+void Fiber::Yield()
+{
+	Wait(null_condition);
+}
+
+void Fiber::Sleep(Time duration)
+{
+	_time_condition.SetWakePosition(_script_thread->GetTime() + duration);
+	Wait(_time_condition);
+}
+
+void Fiber::Wait(Condition & condition)
+{
+	ASSERT(_condition == nullptr);
+	_condition = & condition;
+
+	// TODO: Marker may need to be higher than stack frame - rather than within it.
+	_stack_frame_buffer.SetTop(StackFrameBuffer::CalculateTop());
+	
+	if (! setjmp(_dest_state))
+	{
+		// Make a copy of the vulnerable part of the stack.
+		_stack_frame_buffer.Copy();
+		
+		// Jump back to caller.
+		longjmp(_source_state, 1);
+		
+		// Should never return...
+		ASSERT(false);
+	}
+	else
+	{
+		// ... but passes through here when yield is complete.
+	}
+	
+	// For safety's sake un-set the top pointer.
+	_stack_frame_buffer.SetTop(StackFrameBuffer::null);
+	
+	ASSERT(_condition == & condition);
+	_condition = nullptr;
+}
+
+void Fiber::Launch(Script & script)
+{
+	_script_thread->OnAddObject(script);
+	Yield();
+}
+
+void Fiber::Run()
+{
+	_script(* this);
 }
 
 template <typename OBJECT>

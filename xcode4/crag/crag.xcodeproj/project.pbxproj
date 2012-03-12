@@ -72,8 +72,8 @@
 		5230576E14F1D95F0024D4A8 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = 523056DB14F1D95F0024D4A8 /* readme.html */; };
 		5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E014F1D95F0024D4A8 /* EventCondition.cpp */; };
 		5230577114F1D95F0024D4A8 /* Fiber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E214F1D95F0024D4A8 /* Fiber.cpp */; };
-		5230577214F1D95F0024D4A8 /* MainFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E514F1D95F0024D4A8 /* MainFunctor.cpp */; };
-		5230577314F1D95F0024D4A8 /* ObserverFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E814F1D95F0024D4A8 /* ObserverFunctor.cpp */; };
+		5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E514F1D95F0024D4A8 /* MainScript.cpp */; };
+		5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E814F1D95F0024D4A8 /* ObserverScript.cpp */; };
 		5230577414F1D95F0024D4A8 /* ScriptThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */; };
 		5230577514F1D95F0024D4A8 /* StackCushion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EC14F1D95F0024D4A8 /* StackCushion.cpp */; };
 		5230577614F1D95F0024D4A8 /* StackFrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EE14F1D95F0024D4A8 /* StackFrameBuffer.cpp */; };
@@ -336,10 +336,10 @@
 		523056E214F1D95F0024D4A8 /* Fiber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fiber.cpp; sourceTree = "<group>"; };
 		523056E314F1D95F0024D4A8 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; };
 		523056E414F1D95F0024D4A8 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
-		523056E514F1D95F0024D4A8 /* MainFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainFunctor.cpp; sourceTree = "<group>"; };
-		523056E614F1D95F0024D4A8 /* MainFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainFunctor.h; sourceTree = "<group>"; };
-		523056E814F1D95F0024D4A8 /* ObserverFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverFunctor.cpp; sourceTree = "<group>"; };
-		523056E914F1D95F0024D4A8 /* ObserverFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverFunctor.h; sourceTree = "<group>"; };
+		523056E514F1D95F0024D4A8 /* MainScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainScript.cpp; sourceTree = "<group>"; };
+		523056E614F1D95F0024D4A8 /* MainScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = MainScript.h; sourceTree = "<group>"; };
+		523056E814F1D95F0024D4A8 /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
+		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ObserverScript.h; sourceTree = "<group>"; };
 		523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; };
 		523056EB14F1D95F0024D4A8 /* ScriptThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptThread.h; sourceTree = "<group>"; };
 		523056EC14F1D95F0024D4A8 /* StackCushion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackCushion.cpp; sourceTree = "<group>"; };
@@ -421,6 +421,7 @@
 		5276D1E314FF67C8008D69FF /* EntitySet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntitySet.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		5284BC93150D5BE900332A47 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
@@ -741,10 +742,10 @@
 				523056E214F1D95F0024D4A8 /* Fiber.cpp */,
 				523056E314F1D95F0024D4A8 /* Fiber.h */,
 				523056E414F1D95F0024D4A8 /* FiberInterface.h */,
-				523056E514F1D95F0024D4A8 /* MainFunctor.cpp */,
-				523056E614F1D95F0024D4A8 /* MainFunctor.h */,
-				523056E814F1D95F0024D4A8 /* ObserverFunctor.cpp */,
-				523056E914F1D95F0024D4A8 /* ObserverFunctor.h */,
+				523056E514F1D95F0024D4A8 /* MainScript.cpp */,
+				523056E614F1D95F0024D4A8 /* MainScript.h */,
+				523056E814F1D95F0024D4A8 /* ObserverScript.cpp */,
+				523056E914F1D95F0024D4A8 /* ObserverScript.h */,
 				523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */,
 				523056EB14F1D95F0024D4A8 /* ScriptThread.h */,
 				523056EC14F1D95F0024D4A8 /* StackCushion.cpp */,
@@ -753,6 +754,7 @@
 				523056EF14F1D95F0024D4A8 /* StackFrameBuffer.h */,
 				523056F014F1D95F0024D4A8 /* TimeCondition.cpp */,
 				523056F114F1D95F0024D4A8 /* TimeCondition.h */,
+				5284BC93150D5BE900332A47 /* Script.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -1006,8 +1008,8 @@
 				5230576D14F1D95F0024D4A8 /* SphericalBody.cpp in Sources */,
 				5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */,
 				5230577114F1D95F0024D4A8 /* Fiber.cpp in Sources */,
-				5230577214F1D95F0024D4A8 /* MainFunctor.cpp in Sources */,
-				5230577314F1D95F0024D4A8 /* ObserverFunctor.cpp in Sources */,
+				5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */,
+				5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */,
 				5230577414F1D95F0024D4A8 /* ScriptThread.cpp in Sources */,
 				5230577514F1D95F0024D4A8 /* StackCushion.cpp in Sources */,
 				5230577614F1D95F0024D4A8 /* StackFrameBuffer.cpp in Sources */,

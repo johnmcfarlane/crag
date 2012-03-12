@@ -1,5 +1,5 @@
 //
-//  main.h
+//  MainScript.h
 //  crag
 //
 //  Created by John McFarlane on 2012-02-09.
@@ -9,8 +9,12 @@
 
 #include "Fiber.h"
 
+#include "Script.h"
+
 #include "sim/Simulation.h"
 
+
+DECLARE_CLASS_HANDLE(script, MainScript);	// script::MainScriptHandle
 
 DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
 DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
@@ -20,14 +24,14 @@ DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
 namespace script
 {
 	// the entry point for all scripts
-	class MainFunctor
+	class MainScript : public Script
 	{
 	public:
 		// types
 		typedef std::vector<sim::VehicleHandle> EntityVector;
 		
 		// functions
-		void operator() (FiberInterface & fiber);
+		virtual void operator() (FiberInterface & fiber) override;
 	private:
 		void SpawnUniverse();
 		void SpawnVehicle();

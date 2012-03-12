@@ -10,16 +10,8 @@
 #include "pch.h"
 
 #include "ScriptThread.h"
-#include "MainFunctor.h"
 
-#include "sim/Entity.h"
-#include "sim/Simulation.h"
-
-#include "gfx/Renderer.h"
-
-#include "geom/Transformation.h"
-
-#include "core/app.h"
+#include "Script.h"
 
 
 #if defined(NDEBUG)
@@ -34,12 +26,33 @@
 using namespace script;
 
 
+namespace
+{
+	Fiber * FindFiber(Uid uid, Fiber::List & list)
+	{
+		for (auto i = list.begin(), end = list.end(); i != end; ++ i)
+		{
+			Fiber & fiber = * i;
+			
+			Script & script = fiber.GetScript();
+			if (script.GetUid() != uid)
+			{
+				continue;
+			}
+			
+			return & fiber;
+		}
+		
+		return nullptr;	
+	}
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // ScriptThread member definitions
 
 ScriptThread::ScriptThread()
 : _time(0)
-, _unlaunched_fiber(nullptr)
 , _quit_flag(false)
 {
 	smp::SetThreadPriority(1);
@@ -49,9 +62,26 @@ ScriptThread::ScriptThread()
 ScriptThread::~ScriptThread()
 {
 	ASSERT(_fibers.empty());
-	ASSERT(_unlaunched_fiber == nullptr);
+	ASSERT(_unlaunched_fibers.empty());
 	
 	ASSERT(_quit_flag);
+}
+
+Script * ScriptThread::GetObject(Uid uid)
+{
+	Fiber * fiber;
+	
+	fiber = FindFiber(uid, _fibers);
+	if (fiber == nullptr)
+	{
+		fiber = FindFiber(uid, _unlaunched_fibers);
+		if (fiber == nullptr)
+		{
+			return nullptr;
+		}
+	}
+	
+	return & fiber->GetScript();
 }
 
 void ScriptThread::OnQuit()
@@ -64,6 +94,44 @@ void ScriptThread::OnQuit()
 void ScriptThread::OnEvent(SDL_Event const & event)
 {
 	_events.push(event);
+}
+
+void ScriptThread::OnAddObject(Script & script)
+{
+	if (! script.GetUid())
+	{
+		script.SetUid(Uid::Create());
+	}
+	
+	Fiber * fiber = new Fiber(script);
+	_unlaunched_fibers.push_back(ref(fiber));
+}
+
+void ScriptThread::OnRemoveObject(Uid const & uid)
+{
+	Fiber * fiber;
+	
+	fiber = FindFiber(uid, _fibers);
+	if (fiber != nullptr)
+	{
+		_fibers.remove(* fiber);
+	}
+	else
+	{
+		fiber = FindFiber(uid, _unlaunched_fibers);
+		if (fiber != nullptr)
+		{
+			_unlaunched_fibers.remove(* fiber);
+		}
+		else
+		{
+			DEBUG_BREAK("Object not found. uid:%u", (unsigned)uid.GetValue());
+			return;
+		}
+	}
+
+	ASSERT(fiber->IsComplete());
+	delete fiber;
 }
 
 bool ScriptThread::GetQuitFlag() const
@@ -89,11 +157,15 @@ void ScriptThread::SetTime(Time const & time)
 // Note: Run should be called from same thread as c'tor/d'tor.
 void ScriptThread::Run(Daemon::MessageQueue & message_queue)
 {
-	// Launch the main script.
-	MainFunctor main_functor;
-	FiberEntry<MainFunctor> & main_fiber = ref(new FiberEntry<MainFunctor>(main_functor));
-	Launch(main_fiber);
-
+	// Wait around until there are scripts to run.
+	while (! HasFibersActive())
+	{
+		if (message_queue.DispatchMessages(* this) == 0)
+		{
+			smp::Yield();
+		}
+	}
+	
 	// Main script loop.
 	while (HasFibersActive())
 	{
@@ -120,15 +192,9 @@ void ScriptThread::GetEvent(SDL_Event & event)
 	_events.pop();
 }
 
-void ScriptThread::Launch(Fiber & fiber)
-{
-	ASSERT(_unlaunched_fiber == nullptr);
-	_unlaunched_fiber = & fiber;
-}
-
 bool ScriptThread::HasFibersActive() const
 {
-	return _unlaunched_fiber != nullptr || ! _fibers.empty();
+	return ! _fibers.empty() || ! _unlaunched_fibers.empty();
 }
 
 bool ScriptThread::ProcessTasks()
@@ -141,19 +207,19 @@ bool ScriptThread::ProcessTasks()
 bool ScriptThread::StartTask()
 {
 	// pick the next fiber to process
-	if (_unlaunched_fiber == nullptr)
+	if (_unlaunched_fibers.empty())
 	{
 		return false;
 	}
 	
-	ASSERT(! _fibers.contains(* _unlaunched_fiber));
+	Fiber & fiber = _unlaunched_fibers.front();
+	_unlaunched_fibers.pop_front();
+
+	fiber.Start(* this);
 	
-	Fiber * fiber = _unlaunched_fiber;
-	_unlaunched_fiber = nullptr;
-	fiber->Start(* this);
+	ASSERT(! _fibers.contains(fiber));
+	_fibers.push_back(fiber);
 	
-	_fibers.push_back(* fiber);
-		
 	return true;
 }
 
@@ -186,7 +252,7 @@ bool ScriptThread::ContinueTask()
 			
 			return true;
 		}
-
+		
 		fiber = & _fibers.front();
 	}	while (fiber != & first);
 	

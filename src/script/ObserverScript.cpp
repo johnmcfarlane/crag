@@ -1,5 +1,5 @@
 //
-//  ObserverFunctor.cpp
+//  ObserverScript.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-02-11.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "ObserverFunctor.h"
+#include "ObserverScript.h"
 
 #include "ScriptThread.h"
 
@@ -21,22 +21,22 @@ using namespace script;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::ObserverFunctor member definitions
+// script::ObserverScript member definitions
 
-ObserverFunctor::ObserverFunctor(sim::Vector3 const & spawn_position)
+ObserverScript::ObserverScript(sim::Vector3 const & spawn_position)
 : _collidable(true)
 {
 	_observer.Create(spawn_position);
 };
 
-ObserverFunctor::~ObserverFunctor()
+ObserverScript::~ObserverScript()
 {
 	_observer.Destroy();
 }
 
-void ObserverFunctor::operator() (FiberInterface & fiber)
+void ObserverScript::operator() (FiberInterface & fiber)
 {
-	std::cout << "-> ObserverFunctor" << std::endl;
+	std::cout << "-> ObserverScript" << std::endl;
 	
 	while (! fiber.GetQuitFlag())
 	{
@@ -49,11 +49,11 @@ void ObserverFunctor::operator() (FiberInterface & fiber)
 		}
 	}
 
-	std::cout << "<- ObserverFunctor" << std::endl;
+	std::cout << "<- ObserverScript" << std::endl;
 }
 
 // returns false if it's time to quit
-bool ObserverFunctor::HandleEvent(SDL_Event const & event)
+bool ObserverScript::HandleEvent(SDL_Event const & event)
 {
 	switch (event.type)
 	{
@@ -107,7 +107,7 @@ namespace
 }
 
 // returns false if it's time to quit
-bool ObserverFunctor::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
+bool ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 {
 	if (down)
 	{
@@ -140,7 +140,7 @@ bool ObserverFunctor::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 	return true;
 }
 
-bool ObserverFunctor::HandleMouseButton(Uint8 button, bool down)
+bool ObserverScript::HandleMouseButton(Uint8 button, bool down)
 {
 	return true;
 }
@@ -171,7 +171,7 @@ namespace
 	};
 }
 
-bool ObserverFunctor::HandleMouseMove(int x_delta, int y_delta)
+bool ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
 	float sensitivity = 0.1f;
 	
@@ -209,7 +209,7 @@ private:
 	int _speed;
 };
 
-void ObserverFunctor::SetSpeed(int speed)
+void ObserverScript::SetSpeed(int speed)
 {
 	SetSpeedFunctor functor(speed);
 	_observer.Call(functor);
