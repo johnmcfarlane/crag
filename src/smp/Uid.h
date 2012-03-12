@@ -24,6 +24,10 @@ namespace smp
 		// functions
 		Uid() : _value(0) { }
 		
+#if ! defined(NDEBUG)
+		ValueType GetValue() const { return _value; }
+#endif
+		
 		operator bool () const { return _value != 0; }
 		
 		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
