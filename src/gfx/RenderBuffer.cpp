@@ -57,7 +57,7 @@ void RenderBuffer::Bind()
 void RenderBuffer::ResizeForDepth(GLsizei width, GLsizei height)
 {
 	assert(IsBound());
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	GL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
 }
 
 //void gfx::AttachToFrameBuffer(RenderBuffer * render_buffer) 
