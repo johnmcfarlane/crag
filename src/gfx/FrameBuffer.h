@@ -12,6 +12,9 @@
 
 namespace gfx
 {
+	// forward-declarations
+	class Texture;
+	
 	// Wrapper for OpenGL frame buffer object
 	class FrameBuffer
 	{
@@ -25,7 +28,9 @@ namespace gfx
 		void Init();
 		void Deinit();
 		
-		void Bind(GLuint id);
+		void Bind();
+		
+		friend void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
 		
 	private:
 		GLuint _id;

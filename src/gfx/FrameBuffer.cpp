@@ -11,6 +11,7 @@
 
 #include "FrameBuffer.h"
 #include "glHelpers.h"
+#include "Texture.h"
 
 
 using namespace gfx;
@@ -33,6 +34,7 @@ bool FrameBuffer::IsInitialized() const
 
 bool FrameBuffer::IsBound() const
 {
+	ASSERT(IsInitialized());
 	return GetBinding<GL_FRAMEBUFFER>() == _id;
 }
 
@@ -48,7 +50,7 @@ void FrameBuffer::Deinit()
 	_id = 0;
 }
 
-void FrameBuffer::Bind(GLuint id)
+void FrameBuffer::Bind()
 {
-	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _id));
 }
