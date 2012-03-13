@@ -11,6 +11,9 @@
 
 #include "glHelpers.h"
 
+#include "FrameBuffer.h"
+#include "Texture.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // OpenGl error checking function
@@ -41,6 +44,7 @@ void VerifyGlCall(char const * file, int line, char const * statement)
 
 #endif
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Binding
 
@@ -70,4 +74,14 @@ namespace gfx
 	{ 
 		return GetInt<GL_TEXTURE_BINDING_2D>(); 
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Misc
+
+void gfx::Attach(FrameBuffer const & frame_buffer, Texture const & texture)
+{
+	ASSERT(frame_buffer.IsBound());
+	GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture._name, 0));
 }

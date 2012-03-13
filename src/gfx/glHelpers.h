@@ -25,6 +25,13 @@ void VerifyGlCall(char const * file, int line, char const * statement = nullptr)
 
 namespace gfx
 {
+	// forward-declarations
+	class FrameBuffer;
+	class Texture;
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// State / Capability
+	
 	// Poll OpenGL for an int-type parameter value.
 	template<GLenum PNAME> int GetInt()
 	{
@@ -33,15 +40,11 @@ namespace gfx
 		return result;
 	}
 	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// Capability
-	
 	// Returns true if the given OpenGL parameter is true. 
 	inline bool IsEnabled(GLenum cap)
 	{
-		bool enabled = (glIsEnabled(cap) == GL_TRUE);
-		GL_VERIFY;
+		bool enabled;
+		GL_CALL(enabled = (glIsEnabled(cap) != GL_FALSE));
 		return enabled;
 	}
 	
@@ -64,4 +67,10 @@ namespace gfx
 	// Binding
 
 	template <GLenum TARGET> GLuint GetBinding();
+	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Misc
+	
+	void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
 }
