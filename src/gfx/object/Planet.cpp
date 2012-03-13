@@ -11,9 +11,10 @@
 
 #include "Planet.h"
 
+#include "gfx/Program.h"
+#include "gfx/Quad.h"
 #include "gfx/Renderer.h"
 #include "gfx/ResourceManager.h"
-#include "gfx/Quad.h"
 
 #include "geom/Ray.h"
 #include "geom/Transformation.h"
@@ -73,12 +74,11 @@ void Planet::Render(Renderer const & renderer) const
 		return;
 	}
 	
-//	// TODO:
-//	Vector3f color(.5f,.5f,.9f);
-//	
-//	FogProgram const & fog_program = static_cast<FogProgram const &>(renderer.GetProgram());
-//
+//	FogProgram const & fog_program = static_cast<FogProgram const &>(ref(GetProgram()));
 //	Transformation const & transformation = GetModelViewTransformation();
-//	Quad const & sphere_quad = renderer.GetQuad();
-//	sphere_quad.DrawFog(transformation, color, 0.01);
+//	Color4f color(.5f,.5f,.9f);
+//	fog_program.SetUniforms(transformation, color, .5f);
+//
+//	Quad const & sphere_quad = static_cast<Quad const &>(ref(GetMeshResource()));
+//	sphere_quad.Draw();
 }
