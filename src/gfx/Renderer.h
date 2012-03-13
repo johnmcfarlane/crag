@@ -14,6 +14,8 @@
 #include "FrameBuffer.h"
 #include "Layer.h"
 #include "Image.h"
+#include "RenderBuffer.h"
+#include "Texture.h"
 
 #include "smp/Daemon.h"
 
@@ -115,6 +117,7 @@ namespace gfx
 
 		bool Init();
 		void Deinit();
+		bool InitFrameBuffer();
 		
 		void InitVSync();
 		void InitRenderState();
@@ -157,8 +160,9 @@ namespace gfx
 		Scene * scene;
 		ResourceManager * _resource_manager;
 
-		//gl::FrameBuffer frame_buffer;
-		//gl::RenderBuffer depth_buffer;
+		//FrameBuffer frame_buffer;
+		//RenderBuffer depth_buffer;
+		//Texture depth_texture;
 		
 		Time last_frame_end_position;
 		

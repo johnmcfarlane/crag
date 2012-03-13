@@ -574,6 +574,11 @@ bool Renderer::Init()
 		return false;
 	}
 	
+	if (! InitFrameBuffer())
+	{
+		return false;
+	}
+	
 	_resource_manager = new ResourceManager;
 	
 	InitVSync();
@@ -585,6 +590,25 @@ bool Renderer::Init()
 	InitRenderState();
 	
 	Debug::Init();
+	return true;
+}
+
+bool Renderer::InitFrameBuffer()
+{
+//	frame_buffer.Init();
+//	frame_buffer.Bind();
+//	
+//	depth_buffer.Init();
+//	depth_buffer.Bind();
+//	Vector2i resolution = app::GetWindowSize();
+//	depth_buffer.ResizeForDepth(resolution.x, resolution.y);
+//	
+//	depth_texture.Init();
+//	depth_texture.Bind();
+//	depth_texture.SetImage(resolution.x, resolution.y, NULL); 
+//	
+//	Attach(frame_buffer, depth_texture);
+	
 	return true;
 }
 
