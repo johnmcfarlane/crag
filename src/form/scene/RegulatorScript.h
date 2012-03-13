@@ -1,13 +1,15 @@
 //
-//  Regulator.h
+//  RegulatorScript.h
 //  crag
 //
 //  Created by John on 10/23/10.
-//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  Copyright 2009 - 2012 John McFarlane. All rights reserved.
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
 #pragma once
+
+#include "script/Script.h"
 
 
 namespace form
@@ -15,24 +17,24 @@ namespace form
 
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
-	class Regulator
+	class RegulatorScript : public script::Script
 	{
-		OBJECT_NO_COPY(Regulator);
-
 	public:
-		Regulator();
+		RegulatorScript();
+		
+		virtual void operator() (script::FiberInterface & fiber) override;
 		
 		void Reset();
 		void SetEnabled(bool enabled);
 		
-		void SetNumQuaterna(int num_quaterne);
-		void SampleFrameDuration(float frame_duration_ratio);
-		void SampleMeshGenerationPeriod(Time mgp);
+		void SetNumQuaterne(int const & num_quaterne);
+		void SampleFrameDuration(float const & frame_duration_ratio);
+		void SampleMeshGenerationPeriod(Time const & mgp);
 		
+	private:
 		// returns a recommended load given the current load, and resets sample counters.
 		int GetRecommendedNumQuaterna();
 		
-	private:
 		int CalculateFrameRateDirectedTargetLoad(int current_load, float frame_ratio, Time sim_time) const;
 		int CalculateMeshGenerationDirectedTargetLoad(int current_load) const;
 		static float CalculateFrameRateReactionCoefficient(Time sim_time);

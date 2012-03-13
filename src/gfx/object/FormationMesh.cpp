@@ -18,6 +18,9 @@
 
 #include "form/FormationManager.h"
 #include "form/node/NodeBuffer.h"
+#include "form/scene/RegulatorScript.h"
+
+#include "script/ScriptThread.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
@@ -57,7 +60,7 @@ void FormationMesh::Verify() const
 }
 #endif
 
-bool FormationMesh::Init(Renderer & renderer)
+bool FormationMesh::Init(Renderer & renderer, smp::Handle<form::RegulatorScript> const & regulator_handle)
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -74,6 +77,8 @@ bool FormationMesh::Init(Renderer & renderer)
 	ResourceManager & resource_manager = renderer.GetResourceManager();
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
+	
+	_regulator_handle = regulator_handle;
 	
 	return true;
 }
@@ -208,7 +213,10 @@ bool FormationMesh::FinishBufferUpload()
 	// inform the regulator that following frame information 
 	// will relate to a mesh of this number of quaterna.
 	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
-	form::Daemon::Call(& form::FormationManager::OnRegulatorSetNumQuaterna, num_quaterne);
+	if (_regulator_handle)
+	{
+		_regulator_handle.Call<int>(& form::RegulatorScript::SetNumQuaterne, num_quaterne);
+	}
 	
 	// state number of polygons/quaterna
 	STAT_SET (num_polys, _pending_mesh->GetNumPolys());

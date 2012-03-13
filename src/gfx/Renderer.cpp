@@ -19,8 +19,11 @@
 #include "Scene.h"
 
 #include "form/FormationManager.h"
+#include "form/scene/RegulatorScript.h"
 
 #include "sim/Simulation.h"
+
+#include "script/ScriptThread.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -195,7 +198,7 @@ namespace
 	}
 
 	// Given a scene and the uid of a branc_node in that scene
-	// (or Uid::null for the scene's root node),
+	// (or Uid() for the scene's root node),
 	// returns a reference to that branch node.
 	BranchNode * GetBranchNode(Scene & scene, Uid branch_node_uid)
 	{
@@ -482,6 +485,12 @@ void Renderer::OnSetCamera(gfx::Transformation const & transformation)
 
 	// pass this on to the formation manager to update the node scores
 	form::Daemon::Call(& form::FormationManager::OnSetCamera, transformation);
+}
+
+void Renderer::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
+{
+	ASSERT(regulator_handle);
+	_regulator_handle = regulator_handle;
 }
 
 #if defined(NDEBUG)
@@ -1225,7 +1234,10 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	ASSERT(frame_duration_ratio >= 0);
 	ASSERT(! IsInf(frame_duration_ratio));
 	
-	form::Daemon::Call(& form::FormationManager::OnRegulatorSampleFrameDuration, frame_duration_ratio);
+	if (_regulator_handle)
+	{
+		_regulator_handle.Call(& form::RegulatorScript::SampleFrameDuration, frame_duration_ratio);
+	}
 }
 
 void Renderer::Capture()

@@ -1,5 +1,5 @@
 //
-//  Regulator.cpp
+//  RegulatorScript.cpp
 //  crag
 //
 //  Created by John on 10/23/10.
@@ -9,7 +9,13 @@
 
 #include "pch.h"
 
-#include "Regulator.h"
+#include "RegulatorScript.h"
+
+#include "ScriptThread.h"
+
+#include "gfx/Renderer.h"
+
+#include "form/FormationManager.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -27,13 +33,31 @@ namespace
 }
 
 
-form::Regulator::Regulator()
+form::RegulatorScript::RegulatorScript()
 : _enabled(true)
 {
 	Reset();
 }
 
-void form::Regulator::Reset()
+void form::RegulatorScript::operator() (script::FiberInterface & fiber)
+{
+	// Introduce self to renderer.
+	smp::Handle<RegulatorScript> handle(GetUid());
+	gfx::Daemon::Call(& gfx::Renderer::OnSetRegulatorHandle, handle);
+
+	while (! fiber.GetQuitFlag())
+	{
+		int recommended_num_quaternia = GetRecommendedNumQuaterna();
+		if (recommended_num_quaternia > 0)
+		{
+			form::Daemon::Call(& form::FormationManager::OnSetRecommendedNumQuaterne, recommended_num_quaternia);
+		}
+		
+		fiber.Sleep(0.1);
+	}
+}
+
+void form::RegulatorScript::Reset()
 {
 	reset_time = app::GetTime();
 	_num_quaterne = -1;
@@ -41,19 +65,19 @@ void form::Regulator::Reset()
 	mesh_generation_period = 0;
 }
 
-void form::Regulator::SetEnabled(bool enabled)
+void form::RegulatorScript::SetEnabled(bool enabled)
 {
 	_enabled = enabled;
 }
 
-void form::Regulator::SetNumQuaterna(int num_quaterne)
+void form::RegulatorScript::SetNumQuaterne(int const & num_quaterne)
 {
 	_num_quaterne = num_quaterne;
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void form::Regulator::SampleFrameDuration(float frame_duration_ratio)
+void form::RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
 {
 	if (! _enabled || _num_quaterne == -1 || frame_duration_ratio == 0)
 	{
@@ -71,7 +95,7 @@ void form::Regulator::SampleFrameDuration(float frame_duration_ratio)
 	}
 }
 
-void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
+void form::RegulatorScript::SampleMeshGenerationPeriod(Time const & mgp)
 {
 	if (! _enabled)
 	{
@@ -82,7 +106,7 @@ void form::Regulator::SampleMeshGenerationPeriod(Time mgp)
 	mesh_generation_period = std::max(static_cast<float>(mgp), mesh_generation_period);
 }
 
-int form::Regulator::GetRecommendedNumQuaterna()
+int form::RegulatorScript::GetRecommendedNumQuaterna()
 {
 	if (_num_quaterne == -1)
 	{
@@ -139,7 +163,7 @@ int form::Regulator::GetRecommendedNumQuaterna()
 }
 
 // Taking into account the framerate ratio, come up with a quaterna count.
-int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_rate_ratio, Time sim_time) const
+int form::RegulatorScript::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_rate_ratio, Time sim_time) const
 {
 	// Attenuate/invert the frame_rate_ratio.
 	// Thus is becomes a multiplier on the new number of nodes.
@@ -170,7 +194,7 @@ int form::Regulator::CalculateFrameRateDirectedTargetLoad(int current_load, floa
 }
 
 // Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
-int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load) const
+int form::RegulatorScript::CalculateMeshGenerationDirectedTargetLoad(int current_load) const
 {
 	// If we don't have a current reading or we're under budget everything's ok.
 	if (mesh_generation_period <= 0 || mesh_generation_period < max_mesh_generation_period)
@@ -195,7 +219,7 @@ int form::Regulator::CalculateMeshGenerationDirectedTargetLoad(int current_load)
 // Plus large changes in the number of quaterna causes additional slowdown of its own 
 // which feeds back into the system in a way which causes yet more hunting-type behavior.
 // Thus the reaction coefficient is given a boost which decays over time. 
-float form::Regulator::CalculateFrameRateReactionCoefficient(Time sim_time)
+float form::RegulatorScript::CalculateFrameRateReactionCoefficient(Time sim_time)
 {
 	float boost_factor = pow(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
 	float boost_summand = frame_rate_reaction_coefficient_boost * boost_factor;

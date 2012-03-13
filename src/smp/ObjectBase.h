@@ -21,6 +21,8 @@ namespace smp
 	template <typename OBJECT, typename DAEMON_CLASS>
 	class ObjectBase
 	{
+		OBJECT_NO_COPY(ObjectBase);
+		
 	public:
 		// types
 		typedef OBJECT ObjectType;

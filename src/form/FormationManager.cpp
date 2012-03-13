@@ -15,12 +15,15 @@
 #include "Formation.h"
 
 #include "form/node/NodeBuffer.h"
+#include "form/scene/RegulatorScript.h"
 
 #include "sim/axes.h"
 
 #include "gfx/Color.h"
 #include "gfx/Renderer.h"
 #include "gfx/object/FormationMesh.h"
+
+#include "script/ScriptThread.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -51,6 +54,8 @@ form::FormationManager::FormationManager()
 , enable_mesh_generation(true)
 , flat_shaded_flag(false)
 , mesh_generation_time(app::GetTime())
+, _regulator_enabled(true)
+, _recommented_num_quaterne(0)
 , _camera_pos(sim::Ray3::Zero())
 {
 	smp::SetThreadPriority(-1);
@@ -124,17 +129,12 @@ void form::FormationManager::OnSetCamera(sim::Transformation const & transformat
 
 void form::FormationManager::OnRegulatorSetEnabled(bool const & enabled)
 {
-	_regulator.SetEnabled(enabled);
+	_regulator_enabled = enabled;
 }
 
-void form::FormationManager::OnRegulatorSetNumQuaterna(int const & num_quaterne)
+void form::FormationManager::OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne)
 {
-	_regulator.SetNumQuaterna(num_quaterne);
-}
-
-void form::FormationManager::OnRegulatorSampleFrameDuration(float const & frame_duration_ratio)
-{
-	_regulator.SampleFrameDuration(frame_duration_ratio);
+	_recommented_num_quaterne = recommented_num_quaterne;
 }
 
 void form::FormationManager::OnToggleSuspended()
@@ -161,8 +161,10 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
+	_regulator_handle.Create();
+	
 	// register with the renderer
-	_mesh.Create();
+	_mesh.Create(_regulator_handle);
 	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _mesh.GetUid(), gfx::Uid());
 	
 	while (! quit_flag) 
@@ -182,6 +184,9 @@ void form::FormationManager::Run(Daemon::MessageQueue & message_queue)
 	
 	// un-register with the renderer
 	_mesh.Destroy();
+	
+	// destroy regulator
+	_regulator_handle.Destroy();
 }
 
 // lock visible node tree for reading
@@ -254,18 +259,17 @@ void form::FormationManager::TickActiveScene()
 
 void form::FormationManager::AdjustNumQuaterna()
 {
-	if (IsResetting())
+	if (! _regulator_enabled || IsResetting())
 	{
 		return;
 	}
 	
 	// Calculate the regulator output.
-	int recommended_num_quaterne = _regulator.GetRecommendedNumQuaterna();
-	Clamp(recommended_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
+	Clamp(_recommented_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
 	
 	// Apply the regulator output.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	active_buffer.SetNumQuaternaUsedTarget(recommended_num_quaterne);
+	active_buffer.SetNumQuaternaUsedTarget(_recommented_num_quaterne);
 }
 
 void form::FormationManager::GenerateMesh()
@@ -294,9 +298,12 @@ void form::FormationManager::GenerateMesh()
 	// record timing information
 	Time t = app::GetTime();
 	Time last_mesh_generation_period = t - mesh_generation_time;
-	_regulator.SampleMeshGenerationPeriod(last_mesh_generation_period);
 	mesh_generation_time = t;
+
+	// Pass timing information on to the regulator.
+	_regulator_handle.Call<Time>(& form::RegulatorScript::SampleMeshGenerationPeriod, last_mesh_generation_period);
 	
+	// Sample the information for statistical output.
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	

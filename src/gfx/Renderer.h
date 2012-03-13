@@ -20,10 +20,7 @@
 #include "core/double_buffer.h"
 
 
-namespace sim
-{
-	struct SetCameraMessage;
-}
+DECLARE_CLASS_HANDLE(form, RegulatorScript);
 
 
 namespace gfx
@@ -91,6 +88,7 @@ namespace gfx
 		void OnToggleWireframe();
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
+		void OnSetRegulatorHandle(form::RegulatorScriptHandle const & regulator_handle);
 
 		template <typename OBJECT_TYPE>
 		void OnCreateObject(Uid const & uid)
@@ -195,5 +193,6 @@ namespace gfx
 
 		Program const * _current_program;
 		MeshResource const * _current_mesh;
+		smp::Handle<form::RegulatorScript> _regulator_handle;
 	};
 }

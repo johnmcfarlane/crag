@@ -125,7 +125,8 @@ void ScriptThread::OnRemoveObject(Uid const & uid)
 		}
 		else
 		{
-			DEBUG_BREAK("Object not found. uid:%u", (unsigned)uid.GetValue());
+			// Presumably, the object has already been removed.
+			// This could happen during shutdown for instance.
 			return;
 		}
 	}

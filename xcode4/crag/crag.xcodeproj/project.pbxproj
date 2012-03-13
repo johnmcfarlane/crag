@@ -29,7 +29,6 @@
 		5230574214F1D95F0024D4A8 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230566A14F1D95F0024D4A8 /* Mesh.cpp */; };
 		5230574314F1D95F0024D4A8 /* MeshBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230566C14F1D95F0024D4A8 /* MeshBufferObject.cpp */; };
 		5230574414F1D95F0024D4A8 /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230566F14F1D95F0024D4A8 /* Polyhedron.cpp */; };
-		5230574514F1D95F0024D4A8 /* Regulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230567114F1D95F0024D4A8 /* Regulator.cpp */; };
 		5230574614F1D95F0024D4A8 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230567314F1D95F0024D4A8 /* Scene.cpp */; };
 		5230574714F1D95F0024D4A8 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230567514F1D95F0024D4A8 /* Vertex.cpp */; };
 		5230574814F1D95F0024D4A8 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230567714F1D95F0024D4A8 /* VertexBuffer.cpp */; };
@@ -120,6 +119,7 @@
 		5270CC4F14C1469700146D09 /* sphere.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5270CC4514C0A64100146D09 /* sphere.vert */; };
 		5276D1E414FF67C8008D69FF /* EntitySet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5276D1E214FF67C8008D69FF /* EntitySet.cpp */; };
 		528164B91454F6200017E868 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 528164B81454F6200017E868 /* SDLMain.m */; };
+		52849CB6150ED849007AA818 /* RegulatorScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52849CB4150ED849007AA818 /* RegulatorScript.cpp */; };
 		528AC51414C488E300C1B738 /* disk.vert in Sources */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		528AC51514C48AA400C1B738 /* disk.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		52B4604814C342D40078083B /* disk.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
@@ -228,8 +228,6 @@
 		5230566E14F1D95F0024D4A8 /* MeshProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshProperties.h; sourceTree = "<group>"; };
 		5230566F14F1D95F0024D4A8 /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
 		5230567014F1D95F0024D4A8 /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
-		5230567114F1D95F0024D4A8 /* Regulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Regulator.cpp; sourceTree = "<group>"; };
-		5230567214F1D95F0024D4A8 /* Regulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Regulator.h; sourceTree = "<group>"; };
 		5230567314F1D95F0024D4A8 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		5230567414F1D95F0024D4A8 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		5230567514F1D95F0024D4A8 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
@@ -337,9 +335,9 @@
 		523056E314F1D95F0024D4A8 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; };
 		523056E414F1D95F0024D4A8 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
 		523056E514F1D95F0024D4A8 /* MainScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainScript.cpp; sourceTree = "<group>"; };
-		523056E614F1D95F0024D4A8 /* MainScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = MainScript.h; sourceTree = "<group>"; };
+		523056E614F1D95F0024D4A8 /* MainScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainScript.h; sourceTree = "<group>"; };
 		523056E814F1D95F0024D4A8 /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
-		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ObserverScript.h; sourceTree = "<group>"; };
+		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
 		523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; };
 		523056EB14F1D95F0024D4A8 /* ScriptThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptThread.h; sourceTree = "<group>"; };
 		523056EC14F1D95F0024D4A8 /* StackCushion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackCushion.cpp; sourceTree = "<group>"; };
@@ -421,6 +419,8 @@
 		5276D1E314FF67C8008D69FF /* EntitySet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntitySet.h; sourceTree = "<group>"; };
 		528164B71454F6200017E868 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		528164B81454F6200017E868 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		52849CB4150ED849007AA818 /* RegulatorScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegulatorScript.cpp; sourceTree = "<group>"; };
+		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		5284BC93150D5BE900332A47 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
@@ -602,8 +602,8 @@
 				5230566E14F1D95F0024D4A8 /* MeshProperties.h */,
 				5230566F14F1D95F0024D4A8 /* Polyhedron.cpp */,
 				5230567014F1D95F0024D4A8 /* Polyhedron.h */,
-				5230567114F1D95F0024D4A8 /* Regulator.cpp */,
-				5230567214F1D95F0024D4A8 /* Regulator.h */,
+				52849CB4150ED849007AA818 /* RegulatorScript.cpp */,
+				52849CB5150ED849007AA818 /* RegulatorScript.h */,
 				5230567314F1D95F0024D4A8 /* Scene.cpp */,
 				5230567414F1D95F0024D4A8 /* Scene.h */,
 				5230567514F1D95F0024D4A8 /* Vertex.cpp */,
@@ -966,7 +966,6 @@
 				5230574214F1D95F0024D4A8 /* Mesh.cpp in Sources */,
 				5230574314F1D95F0024D4A8 /* MeshBufferObject.cpp in Sources */,
 				5230574414F1D95F0024D4A8 /* Polyhedron.cpp in Sources */,
-				5230574514F1D95F0024D4A8 /* Regulator.cpp in Sources */,
 				5230574614F1D95F0024D4A8 /* Scene.cpp in Sources */,
 				5230574714F1D95F0024D4A8 /* Vertex.cpp in Sources */,
 				5230574814F1D95F0024D4A8 /* VertexBuffer.cpp in Sources */,
@@ -1039,6 +1038,7 @@
 				5230578F14F1D95F0024D4A8 /* Thread.cpp in Sources */,
 				5230579014F1D95F0024D4A8 /* Uid.cpp in Sources */,
 				5276D1E414FF67C8008D69FF /* EntitySet.cpp in Sources */,
+				52849CB6150ED849007AA818 /* RegulatorScript.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

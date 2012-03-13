@@ -10,7 +10,6 @@
 #pragma once
 
 #include "form/scene/Mesh.h"
-#include "form/scene/Regulator.h"
 #include "form/scene/Scene.h"
 
 #include "sim/defs.h"
@@ -23,8 +22,8 @@
 #include "smp/Semaphore.h"
 
 
-DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
 DECLARE_CLASS_HANDLE(gfx, FormationMesh)	// gfx::FormationMeshHandle
+DECLARE_CLASS_HANDLE(form, RegulatorScript)
 
 
 namespace form 
@@ -84,8 +83,7 @@ namespace form
 		void OnSetCamera(sim::Transformation const & transformation);
 		
 		void OnRegulatorSetEnabled(bool const & enabled);
-		void OnRegulatorSetNumQuaterna(int const & num_quaterne);
-		void OnRegulatorSampleFrameDuration(float const & frame_duration_ratio);
+		void OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne);
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
@@ -142,7 +140,9 @@ namespace form
 		
 		Time mesh_generation_time;
 		
-		Regulator _regulator;
+		bool _regulator_enabled;
+		form::RegulatorScriptHandle _regulator_handle;
+		int _recommented_num_quaterne;	// recommended by the regulator
 		sim::Ray3 _camera_pos;
 		
 		// The front scene is always the one being displayed and is usually the 'active' scene.
