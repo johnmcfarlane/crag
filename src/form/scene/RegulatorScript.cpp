@@ -23,206 +23,305 @@
 
 namespace 
 {
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_base, float, 0.025f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost, float, 0.225f);
-	CONFIG_DEFINE (frame_rate_reaction_coefficient_boost_half_life, float, 10.f);
+	CONFIG_DEFINE (frame_duration_reaction_coefficient_base, float, 0.025f);
+	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost, float, 0.225f);
+	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost_half_life, float, 10.f);
 	
 	// TODO: Base it on full scene thread cycle.
 	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
+	
+	typedef form::RegulatorScript::QuaterneCount QuaterneCount;
 }
 
 
-form::RegulatorScript::RegulatorScript()
-: _enabled(true)
+////////////////////////////////////////////////////////////////////////////////
+// form::RegulatorScript::QuaterneCount member definitions
+
+QuaterneCount::QuaterneCount() : _num(invalid().GetNumber()) 
+{ 
+	VerifyObject(* this);
+}
+
+QuaterneCount::QuaterneCount(int num_quaterne) : _num(num_quaterne) 
+{ 
+	VerifyObject(* this);
+}
+
+#if defined(VERIFY)
+void QuaterneCount::Verify() const
 {
+	VerifyTrue(_num > 0);
+}
+#endif
+
+QuaterneCount & QuaterneCount::operator=(QuaterneCount rhs)
+{
+	_num = rhs._num;
+	
+	VerifyObject(* this);
+	return * this;
+}
+
+bool QuaterneCount::operator < (QuaterneCount const & rhs) const
+{
+	return GetNumber() < rhs.GetNumber(); 
+}
+
+int QuaterneCount::GetNumber() const 
+{ 
+	return _num; 
+}
+
+QuaterneCount QuaterneCount::max() 
+{ 
+	return QuaterneCount(std::numeric_limits<int>::max()); 
+}
+
+QuaterneCount QuaterneCount::invalid() 
+{ 
+	return QuaterneCount(std::numeric_limits<int>::max()); 
+}
+
+QuaterneCount min(QuaterneCount lhs, QuaterneCount rhs) 
+{ 
+	return (lhs.GetNumber() < rhs.GetNumber()) ? lhs : rhs; 
+}
+
+QuaterneCount & QuaterneCount::operator ++ () 
+{
+	++ _num;
+	return * this; 
+}
+
+QuaterneCount & QuaterneCount::operator -- () 
+{
+	-- _num;
+	return * this; 
+}
+
+bool operator == (QuaterneCount lhs, QuaterneCount rhs) 
+{
+	return lhs.GetNumber() == rhs.GetNumber(); 
+}
+
+bool operator != (QuaterneCount lhs, QuaterneCount rhs) 
+{
+	return lhs.GetNumber() != rhs.GetNumber(); 
+}
+
+std::ostream & operator << (std::ostream & out, QuaterneCount const & rhs)
+{
+	return out << rhs.GetNumber();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// form::RegulatorScript::Unit class definitions
+
+class form::RegulatorScript::Unit
+{
+public:
+	virtual ~Unit() { }
+	virtual void Reset() = 0;
+	virtual QuaterneCount GetRecommendedNumQuaterna() const = 0;
+};
+
+namespace
+{
+	////////////////////////////////////////////////////////////////////////////////
+	// FrameRateUnit definition
+	
+	class FrameRateUnit : public form::RegulatorScript::Unit
+	{
+	public:
+		FrameRateUnit() 
+		: _startup_time(app::GetTime())
+		{
+		}
+
+		void SampleFrameDuration(float const & frame_duration_ratio, QuaterneCount num_quaterne)
+		{
+			QuaterneCount recommended_num_quaterne = MakeRecommendation(frame_duration_ratio, num_quaterne);
+			_min_recommended_num_quaterne = std::min(_min_recommended_num_quaterne, recommended_num_quaterne);
+		}
+		
+	private:
+		virtual void Reset() override
+		{
+			_min_recommended_num_quaterne = QuaterneCount::invalid();
+		}
+		
+		virtual QuaterneCount GetRecommendedNumQuaterna() const override
+		{
+			return _min_recommended_num_quaterne;
+		}
+		
+		QuaterneCount MakeRecommendation(float const & frame_duration_ratio, QuaterneCount num_quaterne)
+		{
+			ASSERT(frame_duration_ratio >= 0);
+			ASSERT(! IsInf(frame_duration_ratio));
+			
+			float frame_duration_ratio_log = std::log(frame_duration_ratio);
+			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient());
+			
+			float raw_recommended_num_quaterne = static_cast<float>(num_quaterne.GetNumber());
+			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
+			QuaterneCount recommended_num_quaterne(static_cast<int>(raw_recommended_num_quaterne));
+			
+			if (recommended_num_quaterne == num_quaterne)
+			{
+				if (raw_recommended_num_quaterne >= 0)
+				{
+					++ recommended_num_quaterne;
+				}
+				else 
+				{
+					-- recommended_num_quaterne;
+				}
+			}
+			
+			return recommended_num_quaterne;
+		}
+		
+		// Annealing stage where changes to num quaterne are relatively high.
+		float CalculateFrameRateReactionCoefficient() const
+		{
+			Time sim_time = app::GetTime() - _startup_time;
+			float boost_factor = std::pow(.5f, static_cast<float>(sim_time) / frame_duration_reaction_coefficient_boost_half_life);
+			float boost_summand = frame_duration_reaction_coefficient_boost * boost_factor;
+			float base_summand = frame_duration_reaction_coefficient_base;
+			return boost_summand + base_summand;
+		}
+		
+	private:
+		// variables
+		QuaterneCount _min_recommended_num_quaterne;
+		Time _startup_time = app::GetTime();
+	};
+	
+	class MeshGenerationUnit : public form::RegulatorScript::Unit
+	{
+		// functions
+		virtual void Reset() override
+		{
+			_min_recommended_num_quaterne = QuaterneCount::invalid();
+		}
+		
+		virtual QuaterneCount GetRecommendedNumQuaterna() const override
+		{
+			return _min_recommended_num_quaterne;
+		}
+		
+	public:
+		void SampleMeshGenerationPeriod(Time const & mesh_generation_period, QuaterneCount num_quaterne)
+		{
+			if (mesh_generation_period < max_mesh_generation_period)
+			{
+				return;
+			}
+			
+			QuaterneCount recommended_num_quaterne(static_cast<int>(num_quaterne.GetNumber() * max_mesh_generation_reaction_coefficient) - 1);
+			if (recommended_num_quaterne < _min_recommended_num_quaterne)
+			{
+				_min_recommended_num_quaterne = recommended_num_quaterne;
+			}
+		}
+		
+	private:
+		// variables
+		QuaterneCount _min_recommended_num_quaterne;
+	};
+}
+
+using namespace form;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// form::RegulatorScript member definitions
+
+RegulatorScript::RegulatorScript()
+{
+	_units[frame_rate] = new FrameRateUnit;
+	_units[mesh_generation] = new MeshGenerationUnit;
+	
 	Reset();
 }
 
-void form::RegulatorScript::operator() (script::FiberInterface & fiber)
+void RegulatorScript::operator() (script::FiberInterface & fiber)
 {
 	// Introduce self to renderer.
 	smp::Handle<RegulatorScript> handle(GetUid());
 	gfx::Daemon::Call(& gfx::Renderer::OnSetRegulatorHandle, handle);
-
+	
 	while (! fiber.GetQuitFlag())
 	{
-		int recommended_num_quaternia = GetRecommendedNumQuaterna();
-		if (recommended_num_quaternia > 0)
+		QuaterneCount recommended_num_quaterne = GetRecommendedNumQuaterna();
+		if (recommended_num_quaterne != QuaterneCount::invalid())
 		{
-			form::Daemon::Call(& form::FormationManager::OnSetRecommendedNumQuaterne, recommended_num_quaternia);
+			std::cout << "current:" << _current_num_quaterne.GetNumber() << " recommended:" << recommended_num_quaterne.GetNumber() << std::endl;
+			form::Daemon::Call(& form::FormationManager::OnSetRecommendedNumQuaterne, recommended_num_quaterne.GetNumber());
+			Reset();
 		}
 		
-		fiber.Sleep(0.1);
+		fiber.Sleep(0.25);
 	}
 }
 
-void form::RegulatorScript::Reset()
+void RegulatorScript::SetNumQuaterne(int const & num_quaterne)
 {
-	reset_time = app::GetTime();
-	_num_quaterne = -1;
-	_frame_rate_num_quaterne = -1;
-	mesh_generation_period = 0;
-}
-
-void form::RegulatorScript::SetEnabled(bool enabled)
-{
-	_enabled = enabled;
-}
-
-void form::RegulatorScript::SetNumQuaterne(int const & num_quaterne)
-{
-	_num_quaterne = num_quaterne;
+	_current_num_quaterne = QuaterneCount(num_quaterne);
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void form::RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
+void RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
 {
-	if (! _enabled || _num_quaterne == -1 || frame_duration_ratio == 0)
-	{
-		return;
-	}
-
-	ASSERT(frame_duration_ratio >= 0);
-	ASSERT(! IsInf(frame_duration_ratio));
+	// Validate input
+	ASSERT(frame_duration_ratio == frame_duration_ratio);
+	ASSERT(frame_duration_ratio > 0);
 	
-	Time sim_time = app::GetTime() - reset_time;
-	int recommended_this_frame = CalculateFrameRateDirectedTargetLoad(_num_quaterne, frame_duration_ratio, sim_time);
-	if (_frame_rate_num_quaterne == -1 || recommended_this_frame < _frame_rate_num_quaterne)
+	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
-		_frame_rate_num_quaterne = recommended_this_frame;
+		FrameRateUnit & frame_rate_unit = * static_cast<FrameRateUnit *>(_units[frame_rate]);
+		frame_rate_unit.SampleFrameDuration(frame_duration_ratio, _current_num_quaterne);
 	}
 }
 
-void form::RegulatorScript::SampleMeshGenerationPeriod(Time const & mgp)
+void RegulatorScript::SampleMeshGenerationPeriod(Time const & mesh_generation_period)
 {
-	if (! _enabled)
+	// Validate input
+	ASSERT(mesh_generation_period == mesh_generation_period);
+	ASSERT(mesh_generation_period > 0);
+	
+	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
-		return;
+		MeshGenerationUnit & mesh_generation_unit = * static_cast<MeshGenerationUnit *>(_units[mesh_generation]);
+		mesh_generation_unit.SampleMeshGenerationPeriod(mesh_generation_period, _current_num_quaterne);
 	}
-
-	ASSERT(mgp >= 0);
-	mesh_generation_period = std::max(static_cast<float>(mgp), mesh_generation_period);
 }
 
-int form::RegulatorScript::GetRecommendedNumQuaterna()
+QuaterneCount RegulatorScript::GetRecommendedNumQuaterna() const
 {
-	if (_num_quaterne == -1)
-	{
-		return _num_quaterne;
-	}
+	// max also means invalid
+	QuaterneCount min_recommended_num_quaterne = QuaterneCount::max();
 	
-	// The recommended num comes from two sources: frame ratio,
-	int recommended_num_quaternia = _frame_rate_num_quaterne;
-	
-	// and mesh generation time.
-	int mesh_generation_directed_target_load = CalculateMeshGenerationDirectedTargetLoad(_num_quaterne);
-	if (mesh_generation_directed_target_load != -1)
+	for (int i = 0; i != num_units; ++ i)
 	{
-		if (recommended_num_quaternia == -1 || mesh_generation_directed_target_load < recommended_num_quaternia)
+		Unit & unit = ref(_units[i]);
+		QuaterneCount recommended_num_quaterne = unit.GetRecommendedNumQuaterna();
+		if (recommended_num_quaterne < min_recommended_num_quaterne)
 		{
-			recommended_num_quaternia = mesh_generation_directed_target_load;
+			min_recommended_num_quaterne = recommended_num_quaterne;
 		}
 	}
 	
-	// If neither source had an 'opinion', don't change anything.
-	if (recommended_num_quaternia < 0)
-	{
-		recommended_num_quaternia = _num_quaterne;
-	}
-	
-#if ! defined(NDEBUG) && 0
-	static int fewer = 0, more = 0, no_change = 0;
-	if (recommended_num_quaternia < _num_quaterne)
-	{
-		++ fewer;
-	}
-	else if (recommended_num_quaternia > _num_quaterne)
-	{
-		++ more;
-	}
-	else
-	{
-		++ no_change;
-	}
-	if (fewer + more + no_change == 1000)
-	{
-		std::cout << '[' << fewer << ' ' << no_change << ' ' << more << ']' << std::endl;
-		fewer = more = no_change = 0;
-	}
-#endif
-	
-	// Reset the parameters used to come to a decision so
-	// we don't just keep acting on them over and over. 
-	_frame_rate_num_quaterne = -1;
-	mesh_generation_period = 0;
-	
-	// return the result
-	return recommended_num_quaternia;
+	return min_recommended_num_quaterne;
 }
 
-// Taking into account the framerate ratio, come up with a quaterna count.
-int form::RegulatorScript::CalculateFrameRateDirectedTargetLoad(int current_load, float frame_rate_ratio, Time sim_time) const
+void RegulatorScript::Reset()
 {
-	// Attenuate/invert the frame_rate_ratio.
-	// Thus is becomes a multiplier on the new number of nodes.
-	// A worse frame rate translates into a lower number of nodes
-	// and hopefully, things improve. 
-	float frame_rate_ratio_log = std::log(frame_rate_ratio);
-	float frame_rate_ratio_exp = std::exp(frame_rate_ratio_log * - CalculateFrameRateReactionCoefficient(sim_time));
-	
-	float exact_target_load = static_cast<float>(current_load) * frame_rate_ratio_exp;
-	int target_load = static_cast<int>(exact_target_load);
-	
-	if (target_load == current_load)
-	{
-		if (exact_target_load >= 0)
-		{
-			++ target_load;
-		}
-		else 
-		{
-			-- target_load;
-		}
-	}
-	
-	// Ensure the value is suitably clamped. 
-	ASSERT(target_load >= 0);
-	
-	return target_load;
-}
-
-// Taking into account how long it took to generate the last mesh for the renderer, come up with a quaterna count.
-int form::RegulatorScript::CalculateMeshGenerationDirectedTargetLoad(int current_load) const
-{
-	// If we don't have a current reading or we're under budget everything's ok.
-	if (mesh_generation_period <= 0 || mesh_generation_period < max_mesh_generation_period)
-	{
-		// As far as this function's concerned, increase the count to anything you like (within reason).
-		return -1;
-	}
-	
-	// Reset this so there isn't a continuous decrease in node-count before the next recording.
-	int mesh_generation_directed_target_load = static_cast<int>(current_load * max_mesh_generation_reaction_coefficient) - 1;
-	if (mesh_generation_directed_target_load < 0)
-	{
-		mesh_generation_directed_target_load = 0;
-	}
-	
-	return mesh_generation_directed_target_load;
-}
-
-// When the simulation first fires up, we want the number of quaterna to quickly adapt to the
-// abilities of the hardware, which means a high frame_rate_reaction_coefficient.
-// However, a highly reactionary regulatory system can cause hunting. 
-// Plus large changes in the number of quaterna causes additional slowdown of its own 
-// which feeds back into the system in a way which causes yet more hunting-type behavior.
-// Thus the reaction coefficient is given a boost which decays over time. 
-float form::RegulatorScript::CalculateFrameRateReactionCoefficient(Time sim_time)
-{
-	float boost_factor = pow(.5f, static_cast<float>(sim_time) / frame_rate_reaction_coefficient_boost_half_life);
-	float boost_summand = frame_rate_reaction_coefficient_boost * boost_factor;
-	float base_summand = frame_rate_reaction_coefficient_base;
-	return boost_summand + base_summand;
+	_current_num_quaterne = QuaterneCount::invalid();
+	_units[0]->Reset();
+	_units[1]->Reset();
 }

@@ -19,32 +19,67 @@ namespace form
 	// and uses them to determine whether the load on the system should be increased or decreased.
 	class RegulatorScript : public script::Script
 	{
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
+		enum UnitType
+		{
+			frame_rate,
+			mesh_generation,
+			num_units
+		};
 	public:
+		class Unit;
+		
+		class QuaterneCount
+		{
+		public:
+			////////////////////////////////////////////////////////////////////////////////
+			// functions
+			QuaterneCount();
+			QuaterneCount(int num_quaterne);
+			
+#if defined(VERIFY)
+			void Verify() const;
+#endif
+			QuaterneCount & operator=(QuaterneCount rhs);
+			
+			bool operator < (QuaterneCount const & rhs) const;
+			
+			QuaterneCount & operator ++ ();
+			QuaterneCount & operator -- ();
+
+			int GetNumber() const;
+			
+			static QuaterneCount max();
+			static QuaterneCount invalid();
+			
+		private:
+			////////////////////////////////////////////////////////////////////////////////
+			// variables
+			int _num;
+		};
+
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
 		RegulatorScript();
 		
+		// script entry point
 		virtual void operator() (script::FiberInterface & fiber) override;
 		
-		void Reset();
-		void SetEnabled(bool enabled);
-		
+		// inputs - typically called from form/gfx threads
 		void SetNumQuaterne(int const & num_quaterne);
 		void SampleFrameDuration(float const & frame_duration_ratio);
-		void SampleMeshGenerationPeriod(Time const & mgp);
+		void SampleMeshGenerationPeriod(Time const & mesh_generation_period);
 		
 	private:
-		// returns a recommended load given the current load, and resets sample counters.
-		int GetRecommendedNumQuaterna();
+		QuaterneCount GetRecommendedNumQuaterna() const;
 		
-		int CalculateFrameRateDirectedTargetLoad(int current_load, float frame_ratio, Time sim_time) const;
-		int CalculateMeshGenerationDirectedTargetLoad(int current_load) const;
-		static float CalculateFrameRateReactionCoefficient(Time sim_time);
+		void Reset();
 		
-		Time reset_time;
-
-		bool _enabled;
-		int _num_quaterne;
-		int _frame_rate_num_quaterne;	// running frame rate-influenced recommendation
-		float mesh_generation_period;	// again, greater is worse
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		Unit * _units[num_units];
+		QuaterneCount _current_num_quaterne;
 	};
-
 }
