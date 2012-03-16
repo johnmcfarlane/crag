@@ -213,7 +213,7 @@ bool FormationMesh::FinishBufferUpload()
 	// inform the regulator that following frame information 
 	// will relate to a mesh of this number of quaterna.
 	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
-	if (_regulator_handle)
+	if (_regulator_handle && num_quaterne > 0)
 	{
 		_regulator_handle.Call<int>(& form::RegulatorScript::SetNumQuaterne, num_quaterne);
 	}
