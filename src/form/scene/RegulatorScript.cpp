@@ -292,7 +292,7 @@ void RegulatorScript::SampleMeshGenerationPeriod(Time const & mesh_generation_pe
 {
 	// Validate input
 	ASSERT(mesh_generation_period == mesh_generation_period);
-	ASSERT(mesh_generation_period > 0);
+	ASSERT(mesh_generation_period >= 0);
 	
 	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
