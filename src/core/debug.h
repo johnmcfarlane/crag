@@ -54,8 +54,20 @@
 // Misc debug helpers
 
 
-// ERROR_MESSAGE macro - printf-style error logging
-#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT "\n", __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+// MESSAGE - general purpose console output macro
+#define MESSAGE(OUT, FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT "\n", __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+
+
+// DEBUG_MESSAGE - debug build-only stdout output for useful development information
+#if defined(NDEBUG)
+#define DEBUG_MESSAGE(...) DO_NOTHING
+#else
+#define DEBUG_MESSAGE(...) MESSAGE(stdout, __VA_ARGS__)
+#endif
+
+
+// ERROR_MESSAGE - output serious error messages to stderr in all builds
+#define ERROR_MESSAGE(...) MESSAGE(stderr, __VA_ARGS__)
 
 
 // BREAK - interrupt execution
@@ -74,7 +86,7 @@
 #endif
 
 
-// DEBUG_BREAK - interrupt execution in debug build and print an error message
+// DEBUG_BREAK - debug build-only execution interruption with error message
 #if defined(NDEBUG)
 #define DEBUG_BREAK(...) DO_NOTHING
 #else
