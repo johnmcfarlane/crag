@@ -18,8 +18,6 @@ namespace form
 	class PointBuffer;
 	class Polyhedron;
 	
-	DUMP_OPERATOR_DECLARATION(Node);
-
 	
 	// This is easily one of the most important classes in the formation system. 
 	// You can think of it as a triangle with corners represented by the three corner instances.
@@ -96,8 +94,6 @@ namespace form
 #if defined(VERIFY)
 		void Verify() const;
 #endif
-		DUMP_OPERATOR_FRIEND_DECLARATION(Node);
-		
 	private:
 		flag_type flags_and_children;	//  4	/	8
 		Node * _parent;			//  4	/	8

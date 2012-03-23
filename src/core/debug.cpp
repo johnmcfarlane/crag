@@ -11,29 +11,3 @@
 
 #include "core/debug.h"
 
-
-////////////////////////////////////////////////////////////////////////////////
-// DumpStream members
-
-#if defined(DUMP)
-
-DumpStream::DumpStream(std::ostream & _out)
-: out(_out)
-{
-	strcpy(indent, "\n");
-	ASSERT(strlen(indent) + 1 < max_indent);
-}
-
-DumpStream::DumpStream(DumpStream & previous)
-: out(previous.out)
-{
-	sprintf(indent, "%s\t", previous.indent);
-	ASSERT(strlen(indent) + 1 < max_indent);
-}
-
-char const * DumpStream::NewLine() const
-{
-	return indent;
-}
-
-#endif

@@ -79,8 +79,6 @@ namespace form
 		void VerifyUsed(Quaterna const & q) const;
 		void VerifyUnused(Quaterna const & q) const;
 #endif
-		DUMP_OPERATOR_FRIEND_DECLARATION(NodeBuffer);
-		
 		PointBuffer & GetPoints() { return point_buffer; }
 		
 		int GetNumNodesUsed() const;

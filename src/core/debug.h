@@ -30,9 +30,8 @@
 
 #if ! defined (NDEBUG)
 #define VERIFY
-#define DUMP
-#elif defined(VERIFY) || defined(DUMP)
-#error VERIFY or DUMP defined but NDEBUG is not
+#elif defined(VERIFY)
+#error VERIFY defined but NDEBUG is not
 #endif
 
 
@@ -228,47 +227,6 @@ template<typename T> void VerifyObjectRef(T const & ref) { }
 template<typename T> void VerifyObjectPtr(T const * ptr) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) { }
-
-#endif
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Dump helper functions
-
-#if defined(DUMP)
-
-class DumpStream
-{
-public:
-	DumpStream(std::ostream & _out = std::cerr);
-	DumpStream(DumpStream & previous);
-	
-	template <typename F> friend DumpStream & operator << (DumpStream & stream, F const & f)
-	{
-		stream.out << f;
-		return stream;
-	}
-	
-	char const * NewLine() const;
-		
-private:
-	enum { max_indent = 30 };
-	
-	std::ostream & out;
-	char indent [max_indent];
-};
-
-#define DUMP_OBJECT(OBJECT, STREAM) DumpStream(STREAM) << OBJECT;
-#define DUMP_OPERATOR_DECLARATION(CLASS) ::DumpStream & operator << (::DumpStream & lhs, class CLASS const & rhs)
-#define DUMP_OPERATOR_FRIEND_DECLARATION(CLASS) friend ::DumpStream & operator << (::DumpStream & lhs, class CLASS const & rhs)
-#define DUMP_OPERATOR_DEFINITION(NAMESPACE, CLASS) ::DumpStream & NAMESPACE::operator << (::DumpStream & lhs, NAMESPACE::CLASS const & rhs)
-#define DUMP_OPERATOR_DEFINITION_GLOBAL(CLASS) ::DumpStream & operator << (::DumpStream & lhs, CLASS const & rhs)
-
-#else
-
-#define DUMP_OBJECT(OBJECT, STREAM) DO_NOTHING
-#define DUMP_OPERATOR_DECLARATION(CLASS) enum { DUMMY_ENUM }
-#define DUMP_OPERATOR_FRIEND_DECLARATION(CLASS) enum { DUMMY_ENUM }
 
 #endif
 

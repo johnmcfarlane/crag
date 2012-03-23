@@ -87,13 +87,6 @@ namespace gfx
 			return vbo.IsBound() && ibo.IsBound();
 		}
 
-	#if defined(DUMP)
-		friend std::ostream & operator << (std::ostream &out, Mesh const & mesh)
-		{
-			return out << "mesh:{" << mesh.vbo << ';' << mesh.ibo << '}';
-		}	
-	#endif
-		
 	protected:
 #if defined(VERIFY)
 		void Verify() const
