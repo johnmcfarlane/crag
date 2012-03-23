@@ -16,36 +16,6 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// OpenGl error checking function
-
-#if ! defined(NDEBUG)
-
-void VerifyGlCall(char const * file, int line, char const * statement)
-{
-	GLenum error = glGetError(); 
-	if (error == GL_NO_ERROR) 
-	{
-		return;
-	}
-	
-	std::cerr	<< file << ':' 
-	<< std::dec << line 
-	<< ": error 0x" << std::hex << error << ": " 
-	<< gluErrorString(error); 
-	
-	if (statement != nullptr)
-	{
-		std::cerr << ", \"" << statement << '"';
-	}
-	
-	std::cerr << std::endl;
-	assert(false);
-}
-
-#endif
-
-
-////////////////////////////////////////////////////////////////////////////////
 // Binding
 
 namespace gfx

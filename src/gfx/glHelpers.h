@@ -17,9 +17,16 @@
 #define GL_VERIFY DO_NOTHING
 #define GL_CALL(statement) statement;
 #else
-void VerifyGlCall(char const * file, int line, char const * statement = nullptr);
-#define GL_VERIFY VerifyGlCall(__FILE__, __LINE__)
-#define GL_CALL(statement) DO_STATEMENT(statement; VerifyGlCall(__FILE__, __LINE__, #statement);)
+#define GL_VERIFY DO_STATEMENT(\
+	GLenum error = glGetError(); \
+	if (error != GL_NO_ERROR) { \
+		DEBUG_BREAK("GL error %X (%s)", error, gluErrorString(error)); } )
+
+#define GL_CALL(statement) DO_STATEMENT(\
+	statement; \
+	GLenum error = glGetError(); \
+	if (error != GL_NO_ERROR) { \
+		DEBUG_BREAK("GL error %X (%s): '%s'", error, gluErrorString(error), #statement); } )
 #endif
 
 

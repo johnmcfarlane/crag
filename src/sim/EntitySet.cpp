@@ -94,7 +94,7 @@ void EntitySet::Purge()
 			continue;
 		}
 
-		std::cerr << "purging entity with bad position" << std::endl;
+		ERROR_MESSAGE("purging entity with bad position");
 		delete body;
 		entity.SetBody(nullptr);
 	}

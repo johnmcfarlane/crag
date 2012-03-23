@@ -36,7 +36,7 @@ ObserverScript::~ObserverScript()
 
 void ObserverScript::operator() (FiberInterface & fiber)
 {
-	std::cout << "-> ObserverScript" << std::endl;
+	DEBUG_MESSAGE("-> ObserverScript");
 	
 	while (! fiber.GetQuitFlag())
 	{
@@ -49,7 +49,7 @@ void ObserverScript::operator() (FiberInterface & fiber)
 		}
 	}
 
-	std::cout << "<- ObserverScript" << std::endl;
+	DEBUG_MESSAGE("<- ObserverScript");
 }
 
 // returns false if it's time to quit

@@ -65,17 +65,16 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	glAttachShader(_id, light_frag_shader._id);
 	glLinkProgram(_id);
 	
-#if ! defined(NDEBUG)
 	if (! IsLinked())
 	{
-		std::cerr << "Failed to link program including vert shader " << vert_source << '.' << std::endl;
+		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_source);
 		
+#if ! defined(NDEBUG)
 		std::string info_log;
 		GetInfoLog(info_log);
-		std::cerr << info_log;
-		assert(false);
-	}
+		DEBUG_BREAK("Shader info log: \n%s", info_log.c_str());
 #endif
+	}
 	
 	Bind();
 	
