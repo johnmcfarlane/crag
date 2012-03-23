@@ -37,7 +37,7 @@ Uid Uid::Create()
 	// periodically report that uids are being used up
 	if (_counter > 1000000 && GetBitCount(_counter) == 1)
 	{
-		std::cout << "Uid " << _counter << std::endl;
+		DEBUG_MESSAGE("Uid %lf", static_cast<double>(_counter));
 	}
 #endif
 	

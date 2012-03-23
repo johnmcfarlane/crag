@@ -295,7 +295,7 @@ namespace smp
 						it->Launch(RunThread, nullptr, "worker");
 					}
 					
-					std::cout << "scheduler using " << num_threads << " threads." << std::endl;
+					DEBUG_MESSAGE("scheduler using %d threads.", num_threads);
 				}
 				
 				~ThreadBuffer()

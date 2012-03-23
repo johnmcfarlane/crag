@@ -72,9 +72,7 @@ form::FormationManager::FormationManager()
 
 form::FormationManager::~FormationManager()
 {
-#if ! defined(NDEBUG)
-	std::cout << "FormationManager has " << _meshes.size() << " meshes." << std::endl;
-#endif
+	DEBUG_MESSAGE("FormationManager has %d meshes.", (int)_meshes.size());
 	
 	while (! _meshes.empty())
 	{

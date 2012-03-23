@@ -67,7 +67,7 @@ namespace sim
 		}
 		else
 		{
-			std::cerr << "SetCollidable called on entity with no body" << std::endl;
+			ERROR_MESSAGE("SetCollidable called on entity with no body");
 		}
 	}
 }

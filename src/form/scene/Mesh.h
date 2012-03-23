@@ -56,8 +56,6 @@ namespace form
 		void Verify() const;
 #endif
 		
-		DUMP_OPERATOR_FRIEND_DECLARATION(Mesh);
-		
 		// variables
 	private:
 		VertexBuffer vertices;

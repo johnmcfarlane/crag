@@ -259,7 +259,7 @@ void RegulatorScript::operator() (script::FiberInterface & fiber)
 		QuaterneCount recommended_num_quaterne = GetRecommendedNumQuaterna();
 		if (recommended_num_quaterne != QuaterneCount::invalid())
 		{
-			std::cout << "current:" << _current_num_quaterne.GetNumber() << " recommended:" << recommended_num_quaterne.GetNumber() << std::endl;
+			//DEBUG_MESSAGE("current:%d recommended:%d", _current_num_quaterne.GetNumber(), recommended_num_quaterne.GetNumber());
 			form::Daemon::Call(& form::FormationManager::OnSetRecommendedNumQuaterne, recommended_num_quaterne.GetNumber());
 			Reset();
 		}

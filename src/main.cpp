@@ -45,8 +45,8 @@ int SDL_main(int /*argc*/, char * * argv)
 	std::cerr.rdbuf(cerr_filestr.rdbuf());
 #endif
 
-	std::cout << "Crag Demo" << std::endl;
-	std::cout << "Copyright 2010-2012 John McFarlane" << std::endl;
+	printf("Crag Demo\n"
+		   "Copyright 2010-2012 John McFarlane\n");
 	
 	int exit_value = CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 	
@@ -319,22 +319,22 @@ namespace
 			{
 				if (! formation_manager.IsRunning())
 				{
-					std::cout << "formation_manager initiating shutdown" << std::endl;
+					DEBUG_MESSAGE("formation_manager initiating shutdown");
 					break;
 				}
 				if (! simulation.IsRunning())
 				{
-					std::cout << "simulation initiating shutdown" << std::endl;
+					DEBUG_MESSAGE("simulation initiating shutdown");
 					break;
 				}
 				if (! renderer.IsRunning())
 				{
-					std::cout << "renderer initiating shutdown" << std::endl;
+					DEBUG_MESSAGE("renderer initiating shutdown");
 					break;
 				}
 				if (! script_daemon.IsRunning())
 				{
-					std::cout << "script_daemon initiating shutdown" << std::endl;
+					DEBUG_MESSAGE("script_daemon initiating shutdown");
 					break;
 				}
 

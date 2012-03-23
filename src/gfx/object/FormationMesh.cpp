@@ -91,9 +91,7 @@ void FormationMesh::Deinit(Scene & scene)
 		mbo.Deinit();
 	}
 	
-#if ! defined(NDEBUG)
-	std::cout << "FormationMesh has " << (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr) << " meshes." << std::endl;
-#endif
+	DEBUG_MESSAGE("FormationMesh has %d meshes.", (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr));
 	
 	delete _queued_mesh;
 	delete _pending_mesh;

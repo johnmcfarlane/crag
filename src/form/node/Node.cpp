@@ -344,31 +344,3 @@ void form::Node::Verify() const
 
 }
 #endif
-
-#if defined(DUMP)
-DUMP_OPERATOR_DEFINITION(form, Node)
-{
-	lhs << lhs.NewLine() << "children:" << rhs.GetChildren();
-	if (rhs.GetChildren() != nullptr) {
-		lhs << "(" << ',' << (rhs.GetChildren() + 1) << ',' << (rhs.GetChildren() + 2) << ',' << (rhs.GetChildren() + 3) << ')';
-	}
-	lhs << "; parent:" << rhs._parent;
-	lhs << "; seed:" << rhs.seed << ';';
-	
-	DumpStream indented(lhs);
-	for (int i = 0; i < 3; ++ i) {
-		indented << indented.NewLine() << "triplet[" << i << "]:(";
-		indented << "corner:" << rhs.triple[i].corner;
-		indented << "; mid_point:" << rhs.triple[i].mid_point;
-		indented << "; cousin:" << rhs.triple[i].cousin;
-		indented << ");";
-	}
-	
-	lhs << lhs.NewLine() << "center:" << rhs.center;
-	lhs << ";area:" << rhs.area;
-	lhs << ";normal:" << rhs.normal;
-	lhs << ";score:" << rhs.score;
-	
-	return lhs;
-}
-#endif

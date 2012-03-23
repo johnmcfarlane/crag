@@ -108,7 +108,7 @@ namespace
 
 void MainScript::operator() (FiberInterface & fiber)
 {
-	std::cout << "-> Main script" << std::endl;
+	DEBUG_MESSAGE("-> Main script");
 	
 	// Set camera position
 	{
@@ -145,7 +145,7 @@ void MainScript::operator() (FiberInterface & fiber)
 	_moon2.Destroy();
 	_moon1.Destroy();
 	_planet.Destroy();
-	std::cout << "<- Main script" << std::endl;
+	DEBUG_MESSAGE("<- Main script");
 }
 
 void MainScript::SpawnUniverse()

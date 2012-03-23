@@ -43,8 +43,6 @@ namespace form
 		void Verify() const;
 		//void Verify(Mesh const & m) const;
 #endif
-		DUMP_OPERATOR_FRIEND_DECLARATION(Scene);
-		
 		void Clear();
 		
 		// Accessors for nodes/quaterna.

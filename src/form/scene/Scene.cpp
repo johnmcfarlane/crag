@@ -68,24 +68,6 @@ void form::Scene::Verify() const
 }*/
 #endif
 
-#if defined(DUMP)
-DUMP_OPERATOR_DEFINITION(form, Scene)
-{
-	DumpStream indented = lhs;
-
-	for (form::Scene::FormationMap::const_iterator it = rhs.formation_map.begin(); it != rhs.formation_map.end(); ++ it) {
-		form::Scene::FormationPair const & pair = * it;
-		lhs << lhs.NewLine() << "root_node:";
-		indented << pair.second._root_node;
-	}
-
-	lhs << lhs.NewLine() << "node_buffer:";
-	indented << rhs.node_buffer;
-	
-	return lhs;
-}
-#endif
-
 void form::Scene::Clear()
 {
 	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {

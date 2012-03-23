@@ -53,14 +53,6 @@ form::RootNode::RootNode(RootNode const & rhs)
 {
 }
 
-#if defined(DUMP)
-DUMP_OPERATOR_DEFINITION(form, RootNode)
-{
-	lhs << dynamic_cast<Node const &> (rhs);
-	return lhs;
-}
-#endif
-
 void form::RootNode::Init(int init_seed, Point * root_points[4])
 {
 	Point * corner = root_points[0];

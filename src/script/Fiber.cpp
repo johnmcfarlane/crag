@@ -119,7 +119,7 @@ void Fiber::InternalStart()
 	
 	if (! cushion.IsSafe())
 	{
-		std::cerr << "Warning: Evidence of fiber stack corruption detected." << std::endl;
+		ERROR_MESSAGE("Warning: Evidence of fiber stack corruption detected.");
 		ASSERT(false);
 	}
 	

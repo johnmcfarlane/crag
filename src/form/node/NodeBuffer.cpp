@@ -188,24 +188,6 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
-#if defined(DUMP)
-DUMP_OPERATOR_DEFINITION(form, NodeBuffer)
-{
-	for (Quaterna * r = rhs.quaterne; r != rhs.quaterne_used_end; ++ r) {
-		lhs << lhs.NewLine() << "p_score:" << r->parent_score << "; children:" << r->nodes;
-		DumpStream indented = lhs;
-		DumpStream indented_more = indented;
-		for (int i = 0; i < 4; ++ i) {
-			Node * n = r->nodes + i;
-			indented << indented.NewLine() << "node" << i << ":" << n;
-			indented_more << * n;
-		}
-	}
-	
-	return lhs;
-}
-#endif
-
 int form::NodeBuffer::GetNumNodesUsed() const
 {
 	return nodes_used_end - nodes;

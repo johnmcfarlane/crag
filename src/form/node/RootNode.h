@@ -26,8 +26,6 @@ namespace form
 		RootNode(Polyhedron & _owner);
 		RootNode(RootNode const & rhs);
 		
-		DUMP_OPERATOR_FRIEND_DECLARATION(RootNode);
-
 		void Init(int init_seed, Point * points[4]);
 		void GetPoints(Point * points[4]);
 		void Deinit(PointBuffer & points);

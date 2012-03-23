@@ -695,7 +695,7 @@ void Renderer::InitVSync()
 			break;
 
 		case 1:
-			std::cerr << "Crag cannot run when vsync is forced on AND OpenGL feature, fences, are not supported." << std::endl;
+			ERROR_MESSAGE("Crag cannot run when vsync is forced on AND OpenGL feature, fences, are not supported.");
 			exit(1);
 
 		default:
@@ -763,8 +763,7 @@ void Renderer::VerifyRenderState() const
 #if ! defined(NDEBUG)
 		if (param->enabled != IsEnabled(param->cap))
 		{
-			std::cerr << "Bad render state: " << param->name << std::endl;
-			ASSERT(false);
+			DEBUG_BREAK("Bad render state: %s.", param->name);
 		}
 #endif
 		++ param;

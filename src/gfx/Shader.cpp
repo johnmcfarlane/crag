@@ -48,17 +48,19 @@ bool gfx::Shader::Init(char const * filename, GLenum shader_type)
 	GL_CALL(glCompileShader(_id));
 	
 	// Check for errors in the source code.
-#if ! defined(NDEBUG)
 	if (! IsCompiled())
 	{
-		std::cerr << "Failed to compile shader, \"" << filename << "\":" << std::endl;
-		
+		ERROR_MESSAGE("Failed to compile shader, '%s'.", filename);
+
+#if ! defined(NDEBUG)
 		std::string info_log;
 		GetInfoLog(info_log);
-		std::cerr << info_log;
-		assert(false);
-	}
+		DEBUG_BREAK("Shader info log: \n%s", info_log.c_str());
 #endif
+		
+		Deinit();
+		return false;
+	}
 	
 	return true;
 }

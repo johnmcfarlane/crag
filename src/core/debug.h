@@ -30,9 +30,8 @@
 
 #if ! defined (NDEBUG)
 #define VERIFY
-#define DUMP
-#elif defined(VERIFY) || defined(DUMP)
-#error VERIFY or DUMP defined but NDEBUG is not
+#elif defined(VERIFY)
+#error VERIFY defined but NDEBUG is not
 #endif
 
 
@@ -54,15 +53,29 @@
 // Misc debug helpers
 
 
+// FUNCTION_SIGNATURE - a string containing the signature of the current function
+#if defined(__GNUC__)
+#define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
+#elif defined(WIN32)
+#define FUNCTION_SIGNATURE __FUNCSIG__
+#else
+#define FUNCTION_SIGNATURE __func__
+#endif
+
+
+// TRUNCATE_STRING
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING + std::max(0, (int)strlen(STRING) - TARGET_LENGTH)
+
+
 // MESSAGE - general purpose console output macro
-#define MESSAGE(OUT, FORMAT, ...) fprintf(stderr, "%s:%d:[%s]: " FORMAT "\n", __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#define MESSAGE(OUT, FORMAT, ...) fprintf(stderr, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
 
 
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#define DEBUG_MESSAGE(...) MESSAGE(stdout, __VA_ARGS__)
+#define DEBUG_MESSAGE(FORMAT, ...) MESSAGE(stdout, "%16s: " FORMAT, MESSAGE_TRUNCATE(__func__, 16), ## __VA_ARGS__)
 #endif
 
 
@@ -90,9 +103,9 @@
 #if defined(NDEBUG)
 #define DEBUG_BREAK(...) DO_NOTHING
 #else
-#define DEBUG_BREAK(...) \
+#define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
-		ERROR_MESSAGE(__VA_ARGS__); \
+		ERROR_MESSAGE(FORMAT "  [%s]", ## __VA_ARGS__, FUNCTION_SIGNATURE); \
 		BREAK(); \
 	)
 #endif
@@ -105,7 +118,7 @@
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("ASSERT: \"%s\"", #CONDITION); \
+			DEBUG_BREAK("ASSERT: '%s'", #CONDITION); \
 		} \
 	)
 #endif
@@ -118,7 +131,7 @@
 #define AssertErrno() \
 	DO_STATEMENT ( \
 		if (errno != 0) { \
-			DEBUG_BREAK("errno: %d \"%s\"", errno, strerror(errno)); \
+			DEBUG_BREAK("errno: %d '%s'", errno, strerror(errno)); \
 		} \
 	)
 #endif
@@ -127,7 +140,7 @@
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
 	DO_STATEMENT ( \
-		DEBUG_BREAK("SDL error: \"%s\"", SDL_GetError()); \
+		DEBUG_BREAK("SDL error: '%s'", SDL_GetError()); \
 	)
 
 
@@ -155,7 +168,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 #define VerifyTrue(CONDITION) \
 	DO_STATEMENT( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("Verify: \"%s\"", #CONDITION); \
+			DEBUG_BREAK("Verify: '%s'", #CONDITION); \
 		} \
 	)
 
@@ -163,7 +176,7 @@ struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } 
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
 			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
-			DEBUG_BREAK("Verify: \"%s\" != \"%s\"", #A, #B); \
+			DEBUG_BREAK("Verify: '%s' != '%s'", #A, #B); \
 		} \
 	)
 
@@ -214,47 +227,6 @@ template<typename T> void VerifyObjectRef(T const & ref) { }
 template<typename T> void VerifyObjectPtr(T const * ptr) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) { }
-
-#endif
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Dump helper functions
-
-#if defined(DUMP)
-
-class DumpStream
-{
-public:
-	DumpStream(std::ostream & _out = std::cerr);
-	DumpStream(DumpStream & previous);
-	
-	template <typename F> friend DumpStream & operator << (DumpStream & stream, F const & f)
-	{
-		stream.out << f;
-		return stream;
-	}
-	
-	char const * NewLine() const;
-		
-private:
-	enum { max_indent = 30 };
-	
-	std::ostream & out;
-	char indent [max_indent];
-};
-
-#define DUMP_OBJECT(OBJECT, STREAM) DumpStream(STREAM) << OBJECT;
-#define DUMP_OPERATOR_DECLARATION(CLASS) ::DumpStream & operator << (::DumpStream & lhs, class CLASS const & rhs)
-#define DUMP_OPERATOR_FRIEND_DECLARATION(CLASS) friend ::DumpStream & operator << (::DumpStream & lhs, class CLASS const & rhs)
-#define DUMP_OPERATOR_DEFINITION(NAMESPACE, CLASS) ::DumpStream & NAMESPACE::operator << (::DumpStream & lhs, NAMESPACE::CLASS const & rhs)
-#define DUMP_OPERATOR_DEFINITION_GLOBAL(CLASS) ::DumpStream & operator << (::DumpStream & lhs, CLASS const & rhs)
-
-#else
-
-#define DUMP_OBJECT(OBJECT, STREAM) DO_NOTHING
-#define DUMP_OPERATOR_DECLARATION(CLASS) enum { DUMMY_ENUM }
-#define DUMP_OPERATOR_FRIEND_DECLARATION(CLASS) enum { DUMMY_ENUM }
 
 #endif
 
