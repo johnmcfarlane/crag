@@ -336,7 +336,6 @@ namespace smp
 			
 			int RunThread(void *)
 			{
-				SetThreadName("worker");
 				// Sleep until after the singleton is full constructed.
 				while (singleton == nullptr)
 				{

@@ -308,7 +308,7 @@ namespace
 			// start thread the daemons
 			formation_manager.Start("form");
 			simulation.Start("sim");
-			renderer.Start("gfx");
+			renderer.Start("render");
 			script_daemon.Start("script");
 			
 			// launch the main script

@@ -135,7 +135,6 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	smp::SetThreadPriority(0);
-	smp::SetThreadName("Simulation");
 
 	// Add the skybox.
 	FirmamentHandle skybox;

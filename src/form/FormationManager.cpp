@@ -59,7 +59,6 @@ form::FormationManager::FormationManager()
 , _camera_pos(sim::Ray3::Zero())
 {
 	smp::SetThreadPriority(-1);
-	smp::SetThreadName("Formation");
 	
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{

@@ -56,7 +56,6 @@ ScriptThread::ScriptThread()
 , _quit_flag(false)
 {
 	smp::SetThreadPriority(1);
-	smp::SetThreadName("Script");
 }
 
 ScriptThread::~ScriptThread()

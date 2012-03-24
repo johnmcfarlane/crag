@@ -555,7 +555,6 @@ bool Renderer::ProcessMessage(Daemon::MessageQueue & message_queue)
 bool Renderer::Init()
 {
 	smp::SetThreadPriority(1);
-	smp::SetThreadName("Renderer");
 	
 	ASSERT(scene == nullptr);
 	ASSERT(context == nullptr);
