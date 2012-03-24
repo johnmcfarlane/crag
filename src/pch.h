@@ -6,19 +6,9 @@
 //  Copyright 2009, 2010 John McFarlane. All rights reserved.
 //  This program is distributed under the terms of the GNU General Public License.
 //
+//	The pre-compiled header for the crag project
+//
 
-
-//////////////////////////////////////////////////////////////////////
-// The PCH should be included once at the top of every .cpp file.
-
-#if defined(CRAG_PCH) && ! defined(__APPLE__)
-#error pch.h included multiple times
-#else
-
-#define CRAG_PCH
-
-
-// Currently, the entire project is C++.
 #if defined(__cplusplus)
 
 
@@ -128,11 +118,8 @@
 //////////////////////////////////////////////////////////////////////
 // ODE
 
-// ODE is built with either double or single precision.
-// Because of the large space which this program simulates,
-// double precision is recommended
-// which means double-precision ODE
-// which means defining dDOUBLE.
+// Crag currently requires ODE to be built with double precision
+// and for dDOUBLE to be defined.
 
 #if defined(dSINGLE)
 #error dSINGLE defined; ODE needs to be double-precision.
@@ -146,5 +133,3 @@
 //////////////////////////////////////////////////////////////////////
 
 #endif // defined(__cplusplus)
-
-#endif	// CRAG_PCH
