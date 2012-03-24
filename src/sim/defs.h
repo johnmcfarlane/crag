@@ -7,12 +7,8 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-
 #pragma once
 
-#if ! defined(CRAG_PCH)
-#error pch.h not included.
-#endif
 
 // forward-declarations
 template <typename S, int D> class Vector;
