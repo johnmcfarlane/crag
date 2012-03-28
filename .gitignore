@@ -5,3 +5,5 @@ xcode4/include
 xcode4/lib
 xcode4/share
 .DS_Store
+dependencies/SDL
+dependencies/ode
