@@ -11,7 +11,7 @@
 
 #include "form/defs.h"
 
-#include "form/Scene/Vertex.h"
+#include "form/scene/Vertex.h"
 
 
 namespace form

@@ -14,7 +14,7 @@
 #include "core/debug.h"
 
 #include "smp/ReadersWriterMutex.h"
-#include "smp/Vector.h"
+#include "smp/vector.h"
 
 #include "geom/Vector3.h"
 

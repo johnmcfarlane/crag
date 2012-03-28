@@ -11,7 +11,7 @@
 
 #include "defs.h"
 
-#include "gfx/Object/BranchNode.h"
+#include "gfx/object/BranchNode.h"
 
 #include "gfx/Renderer.h"
 
