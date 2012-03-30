@@ -93,7 +93,7 @@ void gfx::Shader::GetInfoLog(std::string & info_log) const
 	else
 	{
 		info_log.resize(length);
-		glGetShaderInfoLog(_id, length, NULL, & info_log[0]);
+		glGetShaderInfoLog(_id, length, nullptr, & info_log[0]);
 	}
 }
 

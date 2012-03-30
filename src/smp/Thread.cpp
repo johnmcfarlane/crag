@@ -61,7 +61,7 @@ void Thread::Join()
 	
 	if (sdl_thread != nullptr)
 	{
-		SDL_WaitThread(sdl_thread, NULL);
+		SDL_WaitThread(sdl_thread, nullptr);
 		sdl_thread = nullptr;
 	}
 }

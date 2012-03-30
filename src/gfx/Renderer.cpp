@@ -604,7 +604,7 @@ bool Renderer::InitFrameBuffer()
 //	
 //	depth_texture.Init();
 //	depth_texture.Bind();
-//	depth_texture.SetImage(resolution.x, resolution.y, NULL); 
+//	depth_texture.SetImage(resolution.x, resolution.y, nullptr); 
 //	
 //	Attach(frame_buffer, depth_texture);
 	

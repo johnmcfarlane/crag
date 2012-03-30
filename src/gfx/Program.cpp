@@ -182,7 +182,7 @@ void Program::GetInfoLog(std::string & info_log) const
 	else
 	{
 		info_log.resize(length);
-		glGetProgramInfoLog(_id, length, NULL, & info_log[0]);
+		glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);
 	}
 }
 
