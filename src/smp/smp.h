@@ -10,6 +10,7 @@
 #pragma once
 
 
+// general purpose functions related to Symmetric MultiProcessing
 namespace smp
 {
 	// Move on to another thread.
