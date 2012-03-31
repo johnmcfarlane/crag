@@ -12,10 +12,13 @@
 #if defined(__cplusplus)
 
 
-//////////////////////////////////////////////////////////////////////
-// Clean inclusion of <windows.h>.
+////////////////////////////////////////////////////////////////////////////////
+// WIN32 specifics
 
 #if defined(WIN32)
+
+//////////////////////////////////////////////////////////////////////
+// Clean inclusion of <windows.h>.
 
 // Set minimum Windows version
 #define _WIN32_WINNT _WIN32_WINNT_WIN2K
@@ -37,6 +40,14 @@
 // warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead...
 #pragma warning(disable : 4996)	// ... except that strcpy_s is not yet a standard.
 
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////
+// __APPLE__ specifics
+
+#if defined (__APPLE__)
+#define _XOPEN_SOURCE
 #endif
 
 

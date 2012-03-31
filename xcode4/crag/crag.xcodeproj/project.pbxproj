@@ -123,6 +123,7 @@
 		528AC51414C488E300C1B738 /* disk.vert in Sources */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		528AC51514C48AA400C1B738 /* disk.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		52AF04A015235BF600EBAA15 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 52AF049F15235BF600EBAA15 /* icon.icns */; };
+		52AF04AC152362AB00EBAA15 /* Fiber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52AF04AB152362AB00EBAA15 /* Fiber.cpp */; };
 		52B4604814C342D40078083B /* disk.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
 		52B4604A14C344230078083B /* fog.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52394D5614C33EB9008EF2DC /* fog.frag */; };
 		52B4604B14C344260078083B /* disk.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
@@ -423,8 +424,11 @@
 		52849CB4150ED849007AA818 /* RegulatorScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegulatorScript.cpp; sourceTree = "<group>"; };
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		5284BC93150D5BE900332A47 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
+		5288C51B1527019700A12864 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
+		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
+		52AF04AB152362AB00EBAA15 /* Fiber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fiber.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
 		52F819A9132DF13C0045C3A8 /* crag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "crag-Info.plist"; sourceTree = "<group>"; };
@@ -834,6 +838,9 @@
 				5230572E14F1D95F0024D4A8 /* Uid.cpp */,
 				5230572F14F1D95F0024D4A8 /* Uid.h */,
 				5230573014F1D95F0024D4A8 /* vector.h */,
+				52AF04A9152362A100EBAA15 /* Fiber.h */,
+				52AF04AB152362AB00EBAA15 /* Fiber.cpp */,
+				5288C51B1527019700A12864 /* FiberInterface.h */,
 			);
 			path = smp;
 			sourceTree = "<group>";
@@ -1043,6 +1050,7 @@
 				5230579014F1D95F0024D4A8 /* Uid.cpp in Sources */,
 				5276D1E414FF67C8008D69FF /* EntitySet.cpp in Sources */,
 				52849CB6150ED849007AA818 /* RegulatorScript.cpp in Sources */,
+				52AF04AC152362AB00EBAA15 /* Fiber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
