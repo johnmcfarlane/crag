@@ -86,12 +86,11 @@ static NSString *getApplicationName(void)
 {
     if (shouldChdir || true)
     {
-		int result;
         char parentdir[MAXPATHLEN];
         CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 		if (CFURLGetFileSystemRepresentation(url, 1, (UInt8 *)parentdir, MAXPATHLEN)) {
 			strcat(parentdir, "/Contents/Resources");
-            result = chdir(parentdir);   /* chdir to the binary app's parent */
+            chdir(parentdir);   /* chdir to the binary app's parent */
         }
         CFRelease(url);
     }
