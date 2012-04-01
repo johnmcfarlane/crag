@@ -11,7 +11,7 @@
 
 #include "geom/Intersection.h"
 
-#include "core/array.h"
+#include <tr1/array>
 
 
 #if ! defined(NDEBUG)
@@ -153,7 +153,7 @@ namespace form { namespace collision
 	{
 		// types
         typedef Ray3 Face;
-		typedef core::array<Face, 6> Vector;
+		typedef std::tr1::array<Face, 6> Vector;
 		
 		// variables
 		Vector faces;	// point cloud

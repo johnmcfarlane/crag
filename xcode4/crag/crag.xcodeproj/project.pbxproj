@@ -175,7 +175,6 @@
 		5230563314F1D95F0024D4A8 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		5230563514F1D95F0024D4A8 /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = app.cpp; sourceTree = "<group>"; };
 		5230563614F1D95F0024D4A8 /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
-		5230563714F1D95F0024D4A8 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		5230563814F1D95F0024D4A8 /* ConfigEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigEntry.cpp; sourceTree = "<group>"; };
 		5230563914F1D95F0024D4A8 /* ConfigEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigEntry.h; sourceTree = "<group>"; };
 		5230563A14F1D95F0024D4A8 /* ConfigManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigManager.cpp; sourceTree = "<group>"; };
@@ -531,7 +530,6 @@
 			children = (
 				5230563514F1D95F0024D4A8 /* app.cpp */,
 				5230563614F1D95F0024D4A8 /* app.h */,
-				5230563714F1D95F0024D4A8 /* array.h */,
 				5230563814F1D95F0024D4A8 /* ConfigEntry.cpp */,
 				5230563914F1D95F0024D4A8 /* ConfigEntry.h */,
 				5230563A14F1D95F0024D4A8 /* ConfigManager.cpp */,
