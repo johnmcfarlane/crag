@@ -19,7 +19,7 @@
 #include "sim/Simulation.h"
 #include "gfx/Renderer.h"
 
-#include "script/ScriptThread.h"
+#include "script/Engine.h"
 #include "script/MainScript.h"
 
 
@@ -274,7 +274,7 @@ namespace
 		}
 
 		// If not caught here, then send it to the script thread.
-		script::Daemon::Call(& script::ScriptThread::OnEvent, event);
+		script::Daemon::Call(& script::Engine::OnEvent, event);
 		return true;
 	}
 
@@ -303,7 +303,7 @@ namespace
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation_manager(0x8000);
 			sim::Daemon simulation(0x400);
-			script::ScriptThread::Daemon script_daemon(0x400);
+			script::Engine::Daemon script_daemon(0x400);
 			
 			// start thread the daemons
 			formation_manager.Start("form");

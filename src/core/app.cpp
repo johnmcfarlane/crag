@@ -226,7 +226,7 @@ bool app::GetEvent(SDL_Event & event, bool block)
 				if (_relative_mouse_mode)
 				{
 					// if relative mouse mode is working, 
-					// let ScriptThread take care of this properly
+					// let script::Engine take care of this properly
 					break;
 				}
 

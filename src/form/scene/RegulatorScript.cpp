@@ -11,7 +11,7 @@
 
 #include "RegulatorScript.h"
 
-#include "ScriptThread.h"
+#include "Engine.h"
 
 #include "gfx/Renderer.h"
 

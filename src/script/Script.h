@@ -23,10 +23,10 @@ namespace smp
 namespace script
 {
 	// forward-declarations
-	class ScriptThread;
+	class Engine;
 	
 	// Base class for scripts, which are run in fibers.
-	class Script : public smp::ObjectBase<Script, ScriptThread>, public FiberInterface
+	class Script : public smp::ObjectBase<Script, Engine>, public FiberInterface
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace script
 		Condition * GetCondition();
 		
 		// called on initialization
-		void SetScriptThread(ScriptThread & script_thread);
+		void SetScriptThread(Engine & engine);
 		
 		// continue execution
 		void Continue();
@@ -66,7 +66,7 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		ScriptThread * _script_thread;
+		Engine * _engine;
 		smp::Fiber & _fiber;
 		Condition * _condition;
 	};

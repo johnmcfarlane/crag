@@ -21,7 +21,7 @@ namespace script
 	public:
 		TimeCondition(Time wake_position);
 	private:
-		bool operator() (ScriptThread & script_thread);
+		bool operator() (script::Engine & script_thread);
 		
 		// variables
 		Time _wake_position;

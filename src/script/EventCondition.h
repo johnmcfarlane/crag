@@ -14,12 +14,12 @@
 
 namespace script
 {
-	// Condition that an event has not arrived in the ScriptThread.
+	// Condition that an event has not arrived in the script::Engine.
 	class EventCondition : public Condition
 	{
 	public:
 		// functions
-		bool operator() (ScriptThread & script_thread);
+		bool operator() (Engine & engine);
 		SDL_Event const & GetEvent() const;
 		
 	private:

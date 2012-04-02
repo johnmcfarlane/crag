@@ -10,7 +10,7 @@
 
 #include "Script.h"
 
-#include "ScriptThread.h"
+#include "Engine.h"
 #include "TimeCondition.h"
 
 #include "smp/Fiber.h"
@@ -25,7 +25,7 @@ namespace
 	// used by Yield to return ASAP;
 	class NullCondition : public Condition
 	{
-		bool operator() (ScriptThread & script_thread)
+		bool operator() (script::Engine & script_thread)
 		{
 			return true;
 		}
@@ -39,7 +39,7 @@ namespace
 // script::Script member definitions
 
 Script::Script()
-: _script_thread(nullptr)
+: _engine(nullptr)
 , _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
 {
@@ -61,11 +61,11 @@ Condition * Script::GetCondition()
 	return _condition;
 }
 
-void Script::SetScriptThread(ScriptThread & script_thread)
+void Script::SetScriptThread(script::Engine & script_thread)
 {
-	ASSERT(_script_thread == nullptr);
-	_script_thread = & script_thread;
-	ASSERT(_script_thread != nullptr);
+	ASSERT(_engine == nullptr);
+	_engine = & script_thread;
+	ASSERT(_engine != nullptr);
 }
 
 void Script::Continue()
@@ -75,7 +75,7 @@ void Script::Continue()
 
 void Script::operator() (smp::FiberInterface & fiber)
 {
-	ASSERT(_script_thread != nullptr);
+	ASSERT(_engine != nullptr);
 	ASSERT(& fiber == & _fiber);
 	ASSERT(_condition == & null_condition);
 	_condition = nullptr;
@@ -87,12 +87,12 @@ void Script::operator() (smp::FiberInterface & fiber)
 
 bool Script::GetQuitFlag() const
 {
-	return _script_thread->GetQuitFlag();
+	return _engine->GetQuitFlag();
 }
 
 void Script::SetQuitFlag()
 {
-	_script_thread->SetQuitFlag();
+	_engine->SetQuitFlag();
 }
 
 // TODO: Should probably not be needed.
@@ -103,7 +103,7 @@ void Script::Yield()
 
 void Script::Sleep(Time duration)
 {
-	TimeCondition time_condition(_script_thread->GetTime() + duration);
+	TimeCondition time_condition(_engine->GetTime() + duration);
 	Wait(time_condition);
 }
 
@@ -119,6 +119,6 @@ void Script::Wait(Condition & condition)
 
 void Script::Launch(Script & script)
 {
-	ASSERT(script._script_thread == nullptr);
-	_script_thread->OnAddObject(script);
+	ASSERT(script._engine == nullptr);
+	_engine->OnAddObject(script);
 }

@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // BoxBody
 
-physics::BoxBody::BoxBody(physics::Engine & engine, bool movable, Vector3 const & dimensions)
+physics::BoxBody::BoxBody(Engine & engine, bool movable, Vector3 const & dimensions)
 : Body(engine, engine.CreateBox(dimensions), movable)
 {
 }

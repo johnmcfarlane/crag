@@ -23,7 +23,7 @@
 
 #include "sim/Simulation.h"
 
-#include "script/ScriptThread.h"
+#include "script/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"

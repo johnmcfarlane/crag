@@ -16,7 +16,7 @@
 using namespace physics;
 
 
-Body::Body(physics::Engine & engine, dGeomID init_geom_id, bool movable)
+Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 : geom_id(init_geom_id)
 {
 	// body_id
@@ -162,7 +162,7 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	dBodyAddRelForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool Body::OnCollision(physics::Engine & engine, Body const & that_body) const
+bool Body::OnCollision(Engine & engine, Body const & that_body) const
 {
 	return false;
 }

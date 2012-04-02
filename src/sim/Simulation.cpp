@@ -21,7 +21,7 @@
 
 #include "form/FormationManager.h"
 
-#include "script/ScriptThread.h"
+#include "script/Engine.h"
 
 #include "gfx/Renderer.h"
 
@@ -180,7 +180,7 @@ void Simulation::Tick()
 		_time += sim_tick_duration;
 		
 		// Update the script thread's time variable.
-		script::Daemon::Call<Time>(& script::ScriptThread::SetTime, _time);
+		script::Daemon::Call<Time>(& script::Engine::SetTime, _time);
 		
 		// Perform the Entity-specific simulation.
 		TickEntities();

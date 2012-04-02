@@ -11,7 +11,7 @@
 
 #include "ObserverScript.h"
 
-#include "ScriptThread.h"
+#include "Engine.h"
 
 #include "sim/EntityFunctions.h"
 #include "sim/Observer.h"

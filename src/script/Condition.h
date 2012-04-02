@@ -13,7 +13,7 @@
 namespace script
 {
 	// forward-declarations
-	class ScriptThread;
+	class Engine;
 	
 	// Somewhat like a thread condition applied, instead, to a fiber.
 	// The fiber is paused until its associated condition tests true.
@@ -21,6 +21,6 @@ namespace script
 	{
 	public:
 		virtual ~Condition() { }
-		virtual bool operator() (ScriptThread & script_thread) = 0;
+		virtual bool operator() (Engine & engine) = 0;
 	};
 }

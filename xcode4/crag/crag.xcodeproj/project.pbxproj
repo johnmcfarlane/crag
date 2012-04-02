@@ -72,7 +72,7 @@
 		5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E014F1D95F0024D4A8 /* EventCondition.cpp */; };
 		5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E514F1D95F0024D4A8 /* MainScript.cpp */; };
 		5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E814F1D95F0024D4A8 /* ObserverScript.cpp */; };
-		5230577414F1D95F0024D4A8 /* ScriptThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */; };
+		5230577414F1D95F0024D4A8 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EA14F1D95F0024D4A8 /* Engine.cpp */; };
 		5230577714F1D95F0024D4A8 /* TimeCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056F014F1D95F0024D4A8 /* TimeCondition.cpp */; };
 		5230577814F1D95F0024D4A8 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056F414F1D95F0024D4A8 /* Ball.cpp */; };
 		5230577914F1D95F0024D4A8 /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056F614F1D95F0024D4A8 /* Box.cpp */; };
@@ -335,8 +335,8 @@
 		523056E614F1D95F0024D4A8 /* MainScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainScript.h; sourceTree = "<group>"; };
 		523056E814F1D95F0024D4A8 /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
 		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
-		523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptThread.cpp; sourceTree = "<group>"; };
-		523056EB14F1D95F0024D4A8 /* ScriptThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptThread.h; sourceTree = "<group>"; };
+		523056EA14F1D95F0024D4A8 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
+		523056EB14F1D95F0024D4A8 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Engine.h; sourceTree = "<group>"; };
 		523056F014F1D95F0024D4A8 /* TimeCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeCondition.cpp; sourceTree = "<group>"; };
 		523056F114F1D95F0024D4A8 /* TimeCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeCondition.h; sourceTree = "<group>"; };
 		523056F314F1D95F0024D4A8 /* axes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = axes.h; sourceTree = "<group>"; };
@@ -744,8 +744,8 @@
 				523056E914F1D95F0024D4A8 /* ObserverScript.h */,
 				5284BC93150D5BE900332A47 /* Script.h */,
 				52FC3D291527D7D9000D6621 /* Script.cpp */,
-				523056EA14F1D95F0024D4A8 /* ScriptThread.cpp */,
-				523056EB14F1D95F0024D4A8 /* ScriptThread.h */,
+				523056EA14F1D95F0024D4A8 /* Engine.cpp */,
+				523056EB14F1D95F0024D4A8 /* Engine.h */,
 				523056F014F1D95F0024D4A8 /* TimeCondition.cpp */,
 				523056F114F1D95F0024D4A8 /* TimeCondition.h */,
 			);
@@ -1005,7 +1005,7 @@
 				5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */,
 				5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */,
 				5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */,
-				5230577414F1D95F0024D4A8 /* ScriptThread.cpp in Sources */,
+				5230577414F1D95F0024D4A8 /* Engine.cpp in Sources */,
 				5230577714F1D95F0024D4A8 /* TimeCondition.cpp in Sources */,
 				5230577814F1D95F0024D4A8 /* Ball.cpp in Sources */,
 				5230577914F1D95F0024D4A8 /* Box.cpp in Sources */,

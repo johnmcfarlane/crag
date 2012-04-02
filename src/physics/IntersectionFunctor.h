@@ -23,13 +23,13 @@ namespace physics
 	class IntersectionFunctor
 	{
 	public:
-		IntersectionFunctor(physics::Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom);
+		IntersectionFunctor(Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom);
 		
 		void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth);		
 		
 	private:
 		// variables
-		physics::Engine & _physics_engine;
+		Engine & _engine;
 		dContact _contact;
 	};
 }

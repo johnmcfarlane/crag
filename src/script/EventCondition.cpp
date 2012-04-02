@@ -11,7 +11,7 @@
 
 #include "EventCondition.h"
 
-#include "ScriptThread.h"
+#include "Engine.h"
 
 
 using namespace script;
@@ -20,9 +20,9 @@ using namespace script;
 ////////////////////////////////////////////////////////////////////////////////
 // script::EventCondition member definitions
 
-bool EventCondition::operator() (ScriptThread & script_thread)
+bool EventCondition::operator() (Engine & engine)
 {
-	script_thread.GetEvent(_event);
+	engine.GetEvent(_event);
 	return _event.type != 0;
 }
 

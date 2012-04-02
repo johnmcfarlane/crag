@@ -28,8 +28,8 @@ namespace
 using namespace physics;
 
 
-IntersectionFunctor::IntersectionFunctor(physics::Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom)
-: _physics_engine(physics_engine)
+IntersectionFunctor::IntersectionFunctor(Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom)
+: _engine(physics_engine)
 {
 	ZeroObject(_contact);
 	
@@ -52,5 +52,5 @@ void IntersectionFunctor::operator()(sim::Vector3 const & pos, sim::Vector3 cons
 	_contact.geom.normal[2] = normal.z;
 	_contact.geom.depth = depth;
 	
-	_physics_engine.OnContact(_contact);
+	_engine.OnContact(_contact);
 }
