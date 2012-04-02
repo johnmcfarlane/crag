@@ -22,7 +22,7 @@ namespace script
 		// functions
 		virtual ~FiberInterface() { }
 		
-		// quit flag get/setter
+		// script thread quit flag get/setter
 		virtual bool GetQuitFlag() const = 0;
 		virtual void SetQuitFlag() = 0;
 
