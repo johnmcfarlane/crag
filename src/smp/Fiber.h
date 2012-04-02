@@ -31,8 +31,12 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber(std::size_t stack_size = SIGSTKSZ - MINSIGSTKSZ);
+		Fiber(std::size_t stack_size = MINSIGSTKSZ);
 		~Fiber();
+		
+#if defined(VERIFY)
+		void Verify() const;
+#endif
 		
 		// true iff the fiber has been launched and had not quit or been killed 
 		bool IsRunning() const;
@@ -57,9 +61,13 @@ namespace smp
 		virtual void Yield() override;
 		virtual void Kill() override;
 		
+		void InitStack();
+		std::size_t EstimateStackUse() const;
+		
         ////////////////////////////////////////////////////////////////////////////////
 		// variables
 		ucontext_t _context;
+		std::size_t _stack_size;	// the given stack size plus MINSIGSTKSZ
 		void * _stack;
 		FunctorWrapperBase * _functor_wrapper;
     };
