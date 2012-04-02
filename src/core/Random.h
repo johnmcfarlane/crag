@@ -14,22 +14,22 @@
 class Random
 {
 public:
-	Random(unsigned long iseed = 1) : seed(iseed) { }
+	Random(uint32_t iseed = 1) : seed(iseed) { }
 	
 	// returns pseudo-random whole number in the range [0, maximum]
-	int GetInt()
+	uint32_t GetInt()
 	{
 		seed = seed * 1103515245 + 12345;
-		return(static_cast<unsigned>(seed >> (num_bits + 1)) & maximum);
+		return(static_cast<uint32_t>(seed >> (num_bits + 1)) & maximum);
 	}
 	
 	// returns pseudo-random whole number in the range [0, n)
-	int GetInt(int n)
+	uint32_t GetInt(uint32_t n)
 	{
-		int64_t r = GetInt();
+		uint64_t r = GetInt();
 		r *= n;
 		r >>= num_bits;
-		return static_cast<int>(r);
+		return static_cast<uint32_t>(r);
 	}
 	
 	// returns pseudo-random number in the range [0, 1)
@@ -89,6 +89,6 @@ public:
 	
 private:
 	
-	unsigned long seed;
+	uint32_t seed;
 };
 
