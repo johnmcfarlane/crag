@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Fiber.h"
+#include "Script.h"
 
 #include "smp/Daemon.h"
 
@@ -19,7 +19,6 @@
 namespace script
 {
 	typedef smp::Uid Uid;
-	class Script;
 	
 	// script::Daemon type
 	class ScriptThread;
@@ -27,6 +26,8 @@ namespace script
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
+	// TODO: Rename to Engine (along with Simulation, Renderer and FormationManager)
+	// and be careful to differentiate from the scheme/call-cc meaning).
 	class ScriptThread
 	{
 		OBJECT_SINGLETON(ScriptThread);
@@ -77,8 +78,6 @@ namespace script
 		bool HasFibersActive() const;
 		
 		bool ProcessTasks();
-		bool StartTask();
-		bool ContinueTask();
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
@@ -88,11 +87,8 @@ namespace script
 		// Simulation time.
 		Time _time;
 		
-		// Collection of all active fibers
-		Fiber::List _fibers;
-		
-		// A new fiber to be launched next.
-		Fiber::List _unlaunched_fibers;
+		// Collection of all active scripts
+		Script::List _scripts;
 		
 		bool _quit_flag;
 	};

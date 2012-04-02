@@ -19,8 +19,7 @@ namespace script
 	{
 		// functions
 	public:
-		TimeCondition();
-		void SetWakePosition(Time wake_position);
+		TimeCondition(Time wake_position);
 	private:
 		bool operator() (ScriptThread & script_thread);
 		

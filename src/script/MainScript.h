@@ -7,8 +7,6 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "Fiber.h"
-
 #include "Script.h"
 
 #include "sim/Simulation.h"
@@ -20,6 +18,10 @@ DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
 DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
 DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
 
+namespace smp
+{
+	class FiebrInterface;
+}
 
 namespace script
 {

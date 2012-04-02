@@ -11,7 +11,7 @@
 
 #include "ScriptThread.h"
 
-#include "Script.h"
+#include "Condition.h"
 
 
 #if defined(NDEBUG)
@@ -26,28 +26,6 @@
 using namespace script;
 
 
-namespace
-{
-	Fiber * FindFiber(Uid uid, Fiber::List & list)
-	{
-		for (auto i = list.begin(), end = list.end(); i != end; ++ i)
-		{
-			Fiber & fiber = * i;
-			
-			Script & script = fiber.GetScript();
-			if (script.GetUid() != uid)
-			{
-				continue;
-			}
-			
-			return & fiber;
-		}
-		
-		return nullptr;	
-	}
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // ScriptThread member definitions
 
@@ -60,27 +38,23 @@ ScriptThread::ScriptThread()
 
 ScriptThread::~ScriptThread()
 {
-	ASSERT(_fibers.empty());
-	ASSERT(_unlaunched_fibers.empty());
+	ASSERT(_scripts.empty());
 	
 	ASSERT(_quit_flag);
 }
 
 Script * ScriptThread::GetObject(Uid uid)
 {
-	Fiber * fiber;
-	
-	fiber = FindFiber(uid, _fibers);
-	if (fiber == nullptr)
+	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
 	{
-		fiber = FindFiber(uid, _unlaunched_fibers);
-		if (fiber == nullptr)
+		Script & script = * i;
+		if (script.GetUid() == uid)
 		{
-			return nullptr;
+			return & script;
 		}
 	}
 	
-	return & fiber->GetScript();
+	return nullptr;
 }
 
 void ScriptThread::OnQuit()
@@ -102,36 +76,20 @@ void ScriptThread::OnAddObject(Script & script)
 		script.SetUid(Uid::Create());
 	}
 	
-	Fiber * fiber = new Fiber(script);
-	_unlaunched_fibers.push_back(ref(fiber));
+	_scripts.push_back(script);
+	script.SetScriptThread(* this);
 }
 
 void ScriptThread::OnRemoveObject(Uid const & uid)
 {
-	Fiber * fiber;
+	Script * script = GetObject(uid);
 	
-	fiber = FindFiber(uid, _fibers);
-	if (fiber != nullptr)
+	if (script != nullptr)
 	{
-		_fibers.remove(* fiber);
+		ASSERT(! script->IsRunning());
+		_scripts.remove(* script);
+		delete script;
 	}
-	else
-	{
-		fiber = FindFiber(uid, _unlaunched_fibers);
-		if (fiber != nullptr)
-		{
-			_unlaunched_fibers.remove(* fiber);
-		}
-		else
-		{
-			// Presumably, the object has already been removed.
-			// This could happen during shutdown for instance.
-			return;
-		}
-	}
-
-	ASSERT(fiber->IsComplete());
-	delete fiber;
 }
 
 bool ScriptThread::GetQuitFlag() const
@@ -194,67 +152,43 @@ void ScriptThread::GetEvent(SDL_Event & event)
 
 bool ScriptThread::HasFibersActive() const
 {
-	return ! _fibers.empty() || ! _unlaunched_fibers.empty();
+	return ! _scripts.empty();
 }
 
 bool ScriptThread::ProcessTasks()
 {
 	ASSERT(HasFibersActive());
 	
-	return StartTask() || ContinueTask();
-}
-
-bool ScriptThread::StartTask()
-{
-	// pick the next fiber to process
-	if (_unlaunched_fibers.empty())
+	if (_scripts.empty())
 	{
 		return false;
 	}
 	
-	Fiber & fiber = _unlaunched_fibers.front();
-	_unlaunched_fibers.pop_front();
-
-	fiber.Start(* this);
-	
-	ASSERT(! _fibers.contains(fiber));
-	_fibers.push_back(fiber);
-	
-	return true;
-}
-
-bool ScriptThread::ContinueTask()
-{
-	if (_fibers.empty())
-	{
-		return false;
-	}
-	
-	Fiber & first = _fibers.front();
-	Fiber * fiber = & first;
+	Script & first = _scripts.front();
+	Script * script = & first;
 	do
 	{
-		ASSERT(! fiber->IsComplete());
+		ASSERT(script->IsRunning());
 
-		_fibers.pop_front();
-		_fibers.push_back(* fiber);
+		_scripts.pop_front();
+		_scripts.push_back(* script);
 		
-		Condition & condition = ref(fiber->GetCondition());
+		Condition & condition = ref(script->GetCondition());
 		if (condition(* this))
 		{
-			fiber->Continue();
+			script->Continue();
 
-			if (fiber->IsComplete())
+			if (! script->IsRunning())
 			{
-				_fibers.remove(* fiber);
-				delete fiber;
+				_scripts.remove(* script);
+				delete script;
 			}
 			
 			return true;
 		}
 		
-		fiber = & _fibers.front();
-	}	while (fiber != & first);
+		script = & static_cast<Script &>(_scripts.front());
+	}	while (script != & first);
 	
 	return false;
 }
