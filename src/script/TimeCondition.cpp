@@ -20,14 +20,9 @@ using namespace script;
 ////////////////////////////////////////////////////////////////////////////////
 // script::TimeCondition member definitions
 
-TimeCondition::TimeCondition()
-: _wake_position(0)
+TimeCondition::TimeCondition(Time wake_position)
+: _wake_position(wake_position)
 {
-}
-
-void TimeCondition::SetWakePosition(Time wake_position)
-{
-	_wake_position = wake_position;
 }
 
 bool TimeCondition::operator() (ScriptThread & script_thread)

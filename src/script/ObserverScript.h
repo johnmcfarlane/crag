@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "Fiber.h"
-
 #include "EventCondition.h"
 
 #include "Script.h"
