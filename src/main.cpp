@@ -303,7 +303,7 @@ namespace
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation_manager(0x8000);
 			sim::Daemon simulation(0x400);
-			script::ScriptThread::Daemon script_daemon(0x400);
+			script::Daemon script_daemon(0x400);
 			
 			// start thread the daemons
 			formation_manager.Start("form");
