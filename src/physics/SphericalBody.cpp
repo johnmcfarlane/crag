@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // SphericalBody
 
-physics::SphericalBody::SphericalBody(Engine & engine, bool movable, Scalar radius)
+physics::SphericalBody::SphericalBody(physics::Engine & engine, bool movable, Scalar radius)
 : Body(engine, engine.CreateSphere(radius), movable)
 {
 }

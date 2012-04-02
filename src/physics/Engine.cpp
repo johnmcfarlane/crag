@@ -1,5 +1,5 @@
 //
-//  Engine.cpp
+//  physics::Engine.cpp
 //  crag
 //
 //  Created by John on 6/19/10.
@@ -40,7 +40,7 @@ CONFIG_DEFINE (collisions_parallelization, bool, true);
 //////////////////////////////////////////////////////////////////////
 // physics::Engine members
 
-physics::Engine::Engine()
+Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
@@ -50,7 +50,7 @@ physics::Engine::Engine()
 	dInitODE2(0);
 }
 
-physics::Engine::~Engine()
+Engine::~Engine()
 {
 	dSpaceDestroy(space);
 	dWorldDestroy(world);
@@ -58,22 +58,22 @@ physics::Engine::~Engine()
 	dCloseODE();
 }
 
-dBodyID physics::Engine::CreateBody() const
+dBodyID Engine::CreateBody() const
 {
 	return dBodyCreate(world);
 }
 
-dGeomID physics::Engine::CreateBox(Vector3 const & dimensions) const
+dGeomID Engine::CreateBox(Vector3 const & dimensions) const
 {
 	return dCreateBox(space, dimensions.x, dimensions.y, dimensions.z);
 }
 
-dGeomID physics::Engine::CreateSphere(Scalar radius) const
+dGeomID Engine::CreateSphere(Scalar radius) const
 {
 	return dCreateSphere(space, radius);
 }
 
-void physics::Engine::Attach(Body const & body1, Body const & body2)
+void Engine::Attach(Body const & body1, Body const & body2)
 {
 	dJointID joint_id = dJointCreateBall(world, 0);
 	if (joint_id == nullptr)
@@ -86,7 +86,7 @@ void physics::Engine::Attach(Body const & body1, Body const & body2)
 	dJointSetFixed (joint_id);
 }
 
-void physics::Engine::Tick(double delta_time)
+void Engine::Tick(double delta_time)
 {
 	if (collisions)
 	{
@@ -109,12 +109,12 @@ void physics::Engine::Tick(double delta_time)
 	}
 }
 
-void physics::Engine::ToggleCollisions()
+void Engine::ToggleCollisions()
 {
 	collisions = ! collisions;
 }
 
-void physics::Engine::CreateCollisions()
+void Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
@@ -122,7 +122,7 @@ void physics::Engine::CreateCollisions()
 	ProcessDeferredCollisions();	
 }
 
-void physics::Engine::CreateJoints()
+void Engine::CreateJoints()
 {
 	for (ContactVector::const_iterator i = _contacts.begin(); i != _contacts.end(); ++ i)
 	{
@@ -141,7 +141,7 @@ void physics::Engine::CreateJoints()
 	}
 }
 
-void physics::Engine::ProcessDeferredCollisions()
+void Engine::ProcessDeferredCollisions()
 {
 	if (_deferred_collisions.empty())
 	{
@@ -157,21 +157,21 @@ void physics::Engine::ProcessDeferredCollisions()
 	_deferred_collisions.clear();
 }
 
-void physics::Engine::DestroyJoints()
+void Engine::DestroyJoints()
 {
 	dJointGroupEmpty(contact_joints);
 }
 
-void physics::Engine::DestroyCollisions()
+void Engine::DestroyCollisions()
 {
 	_contacts.clear();
 }
 
 // Called by ODE when geometry collides. In the case of planets, 
 // this means the outer shell of the planet.
-void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
+void Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
 {
-	Engine & engine = * reinterpret_cast<Engine *>(data);
+	physics::Engine & engine = * reinterpret_cast<physics::Engine *>(data);
 	
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
@@ -193,7 +193,7 @@ void physics::Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomI
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
-void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
+void Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
 	int const max_contacts_per_collision = 1;
@@ -229,7 +229,7 @@ void physics::Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
 	}
 }
 
-void physics::Engine::OnContact(dContact const & contact)
+void Engine::OnContact(dContact const & contact)
 {
 	// geometry sanity tests
 	ASSERT(contact.geom.g1 != contact.geom.g2);

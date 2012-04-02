@@ -26,7 +26,7 @@ namespace script
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
-	// TODO: Rename to Engine (along with Simulation, Renderer and FormationManager)
+	// TODO: Rename to physics::Engine (along with Simulation, Renderer and FormationManager)
 	// and be careful to differentiate from the scheme/call-cc meaning).
 	class ScriptThread
 	{
