@@ -1,5 +1,5 @@
 //
-//  Simulation.h
+//  Engine.h
 //  crag
 //
 //  Created by John on 10/19/09.
@@ -28,21 +28,21 @@ namespace sim
 	
 	// forward declarations
 	class Entity;
-	class Simulation;
+	class Engine;
 	class EntitySet;
 	
 	
-	// Simulation - main object of simulation thread
-	class Simulation
+	// Engine - main object of simulation thread
+	class Engine
 	{
-		OBJECT_SINGLETON(Simulation);
+		OBJECT_SINGLETON(Engine);
 
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Simulation();
-		~Simulation();
+		Engine();
+		~Engine();
 		
 		// message interface
 		void OnQuit();

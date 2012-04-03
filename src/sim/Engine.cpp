@@ -1,5 +1,5 @@
 //
-//  Simulation.cpp
+//  Engine.cpp
 //  crag
 //
 //  Created by John on 10/19/09.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "Entity.h"
 #include "Firmament.h"
@@ -39,13 +39,13 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::Simulation
+// sim::Engine
 
 
 using namespace sim;
 
 
-Simulation::Simulation()
+Engine::Engine()
 : quit_flag(false)
 , paused(false)
 , _time(0)
@@ -54,18 +54,18 @@ Simulation::Simulation()
 {
 }
 
-Simulation::~Simulation()
+Engine::~Engine()
 {
 	delete & _entity_set;
 	delete & _physics_engine;
 }
 
-void Simulation::OnQuit()
+void Engine::OnQuit()
 {
 	quit_flag = true;
 }
 
-void Simulation::OnAddObject(Entity & entity)
+void Engine::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the Renderer is in an incomplete state.
@@ -77,7 +77,7 @@ void Simulation::OnAddObject(Entity & entity)
 	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
 }
 
-void Simulation::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid const & uid)
 {
 	Entity * entity = _entity_set.GetEntity(uid);
 	if (entity == nullptr)
@@ -93,44 +93,44 @@ void Simulation::OnRemoveObject(Uid const & uid)
 	Free(entity);
 }
 
-void Simulation::OnAttachEntities(Uid const & uid1, Uid const & uid2)
+void Engine::OnAttachEntities(Uid const & uid1, Uid const & uid2)
 {
 	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
 }
 
-void Simulation::OnTogglePause()
+void Engine::OnTogglePause()
 {
 	paused = ! paused;
 }
 
-void Simulation::OnToggleGravity()
+void Engine::OnToggleGravity()
 {
 	apply_gravity = ! apply_gravity;
 }
 
-void Simulation::OnToggleCollision()
+void Engine::OnToggleCollision()
 {
 	_physics_engine.ToggleCollisions();
 }
 
-Time Simulation::GetTime() const
+Time Engine::GetTime() const
 {
 	return _time;
 }
 
-Entity * Simulation::GetObject(Uid uid) 
+Entity * Engine::GetObject(Uid uid) 
 {
 	ASSERT(uid);
 	Entity * entity = _entity_set.GetEntity(uid);
 	return entity;
 }
 
-physics::Engine & Simulation::GetPhysicsEngine()
+physics::Engine & Engine::GetPhysicsEngine()
 {
 	return _physics_engine;
 }
 
-void Simulation::Run(Daemon::MessageQueue & message_queue)
+void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
@@ -172,7 +172,7 @@ void Simulation::Run(Daemon::MessageQueue & message_queue)
 	skybox.Destroy();
 }
 
-void Simulation::Tick()
+void Engine::Tick()
 {
 	// Tick the entities.
 	if (! paused) 
@@ -200,7 +200,7 @@ void Simulation::Tick()
 	}
 }
 
-void Simulation::UpdateRenderer() const
+void Engine::UpdateRenderer() const
 {
 	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
 	
@@ -211,7 +211,7 @@ void Simulation::UpdateRenderer() const
 }
 
 // Perform a step in the simulation. 
-void Simulation::TickEntities()
+void Engine::TickEntities()
 {
 	Entity::List & entities = _entity_set.GetEntities();
 	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
