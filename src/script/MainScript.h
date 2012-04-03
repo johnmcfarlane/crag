@@ -9,7 +9,7 @@
 
 #include "Script.h"
 
-#include "sim/Simulation.h"
+#include "sim/Engine.h"
 
 
 DECLARE_CLASS_HANDLE(script, MainScript);	// script::MainScriptHandle

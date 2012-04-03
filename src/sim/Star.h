@@ -35,9 +35,9 @@ namespace sim
 		~Star();
 
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, InitData const & init);
+		void Init(sim::Engine & simulation_engine, InitData const & init);
 		
-		void Tick(Simulation & simulation);
+		void Tick(sim::Engine & simulation_engine);
 		
 		void UpdateModels() const;
 	

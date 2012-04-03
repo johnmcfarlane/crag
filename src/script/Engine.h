@@ -26,8 +26,8 @@ namespace script
 	
 	// The scripting support is centered here.
 	// When Run finished, the program is done.
-	// TODO: Rename to physics::Engine (along with Simulation, Renderer and FormationManager)
-	// and be careful to differentiate from the scheme/call-cc meaning).
+	// Note: unrelated to Scheme engine:
+	// [http://en.wikipedia.org/wiki/Engine_(computer_science)]
 	class Engine
 	{
 		OBJECT_SINGLETON(Engine);
@@ -84,7 +84,7 @@ namespace script
 		
 		EventQueue _events;
 		
-		// Simulation time.
+		// sim::Engine time.
 		Time _time;
 		
 		// Collection of all active scripts

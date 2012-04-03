@@ -12,7 +12,7 @@
 #include "Star.h"
 
 #include "EntityFunctions.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "gfx/object/Light.h"
 
@@ -32,7 +32,7 @@ sim::Star::~Star()
 	_model.Destroy();
 }
 
-void sim::Star::Init(Simulation & simulation, InitData const & init_data)
+void sim::Star::Init(sim::Engine & simulation_engine, InitData const & init_data)
 {
 	radius = init_data.radius;
 	year = init_data.year;
@@ -42,9 +42,9 @@ void sim::Star::Init(Simulation & simulation, InitData const & init_data)
 	_model = AddModelWithTransform<gfx::Light>(color);
 }
 
-void sim::Star::Tick(Simulation & simulation)
+void sim::Star::Tick(sim::Engine & simulation_engine)
 {
-	Time t = simulation.GetTime();
+	Time t = simulation_engine.GetTime();
 	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
 	position = Vector3(- sin(angle) * radius, - cos(angle) * radius, static_cast<Scalar>(0));
 }

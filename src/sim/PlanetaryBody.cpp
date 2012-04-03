@@ -12,7 +12,7 @@
 #include "PlanetaryBody.h"
 
 #include "defs.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"

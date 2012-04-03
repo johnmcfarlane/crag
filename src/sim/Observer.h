@@ -39,13 +39,13 @@ namespace sim
 		~Observer();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, Vector3 const & center);
+		void Init(sim::Engine & simulation_engine, Vector3 const & center);
 
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeed(int _speed);
-		virtual void Tick(Simulation & simulation);
+		virtual void Tick(sim::Engine & simulation_engine);
 		virtual void UpdateModels() const;
 		
 	private:

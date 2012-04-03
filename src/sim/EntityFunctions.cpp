@@ -12,7 +12,7 @@
 #include "EntityFunctions.h"
 
 #include "EntitySet.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/Body.h"
 #include "physics/Engine.h"

@@ -13,7 +13,7 @@
 
 #include "axes.h"
 #include "EntityFunctions.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/Body.h"
 
@@ -83,7 +83,7 @@ void Vehicle::UpdateModels() const
 	}
 }
 
-void Vehicle::Tick(Simulation & simulation)
+void Vehicle::Tick(sim::Engine & simulation_engine)
 {
 	physics::Body * body = GetBody();
 	if (body == nullptr)

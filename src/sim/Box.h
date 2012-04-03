@@ -35,9 +35,9 @@ namespace sim
 		~Box();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, InitData const & init_data);
+		void Init(sim::Engine & simulation_engine, InitData const & init_data);
 	private:
-		void InitPhysics(Simulation & simulation, Vector3 center, Vector3 size);
+		void InitPhysics(sim::Engine & simulation_engine, Vector3 center, Vector3 size);
 		void InitGraphics();
 		
 	public:

@@ -43,9 +43,9 @@ namespace sim
 		Planet();
 		~Planet();
 
-		virtual void Init(Simulation & simulation, InitData const & init_data);
+		virtual void Init(sim::Engine & simulation_engine, InitData const & init_data);
 
-		virtual void Tick(Simulation & simulation);
+		virtual void Tick(sim::Engine & simulation_engine);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		virtual void UpdateModels() const;
 		

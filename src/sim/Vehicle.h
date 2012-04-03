@@ -54,7 +54,7 @@ namespace sim
 		void UpdateModels() const override;
 		
 		// Called whenever the simulation ticks.
-		void Tick(Simulation & simulation) override;
+		void Tick(sim::Engine & simulation_engine) override;
 
 		// Add force from an individual Thruster to the vehicle's body.
 		static void TickThruster(Thruster & Thruster, Body & body);

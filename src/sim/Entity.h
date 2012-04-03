@@ -21,7 +21,7 @@ namespace physics
 namespace sim
 {
 	// The base class for 'things' that exist in the simulation.
-	class Entity : public smp::ObjectBase<Entity, Simulation>
+	class Entity : public smp::ObjectBase<Entity, sim::Engine>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ namespace sim
 		virtual ~Entity();
 		
 		// general callbacks
-		virtual void Tick(Simulation & simulation);
+		virtual void Tick(sim::Engine & simulation_engine);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		
 		virtual void UpdateModels() const;

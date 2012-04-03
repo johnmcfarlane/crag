@@ -16,7 +16,7 @@
 #include "smp/scheduler.h"
 
 #include "form/FormationManager.h"
-#include "sim/Simulation.h"
+#include "sim/Engine.h"
 #include "gfx/Renderer.h"
 
 #include "script/Engine.h"
@@ -110,7 +110,7 @@ namespace
 				{
 					case SDL_SCANCODE_RETURN:
 					{
-						sim::Daemon::Call(& sim::Simulation::OnTogglePause);
+						sim::Daemon::Call(& sim::Engine::OnTogglePause);
 						return true;
 					}
 					
@@ -126,7 +126,7 @@ namespace
 						
 					case SDL_SCANCODE_G:
 					{
-						sim::Daemon::Call(& sim::Simulation::OnToggleGravity);
+						sim::Daemon::Call(& sim::Engine::OnToggleGravity);
 						return true;
 					}
 						
@@ -158,7 +158,7 @@ namespace
 				{
 					case SDL_SCANCODE_C:
 					{
-						sim::Daemon::Call(& sim::Simulation::OnToggleCollision);
+						sim::Daemon::Call(& sim::Engine::OnToggleCollision);
 						return true;
 					}
 					

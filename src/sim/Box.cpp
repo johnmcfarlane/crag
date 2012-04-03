@@ -12,7 +12,7 @@
 #include "Box.h"
 
 #include "EntityFunctions.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/BoxBody.h"
 
@@ -50,16 +50,16 @@ Box::~Box()
 	_model.Destroy();
 }
 
-void Box::Init(Simulation & simulation, InitData const & init_data)
+void Box::Init(sim::Engine & simulation_engine, InitData const & init_data)
 {
-	InitPhysics(simulation, init_data.center, init_data.size);
+	InitPhysics(simulation_engine, init_data.center, init_data.size);
 	InitGraphics();
 }
 
-void Box::InitPhysics(Simulation & simulation, Vector3 center, Vector3 size)
+void Box::InitPhysics(sim::Engine & simulation_engine, Vector3 center, Vector3 size)
 {
 	// physics
-	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
+	physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();	
 	physics::BoxBody * body = new physics::BoxBody(physics_engine, true, size);
 	body->SetPosition(center);
 	body->SetDensity(box_density);

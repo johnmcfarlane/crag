@@ -15,7 +15,7 @@
 #include "MoonShader.h"
 #include "PlanetaryBody.h"
 #include "PlanetShader.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "form/Formation.h"
 #include "form/FormationManager.h"
@@ -56,7 +56,7 @@ Planet::~Planet()
 	_body = nullptr;
 }
 
-void Planet::Init(Simulation & simulation, InitData const & init_data)
+void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
 {
 	ASSERT(init_data.sphere.radius > 0);
 	_radius_mean = init_data.sphere.radius;
@@ -84,7 +84,7 @@ void Planet::Init(Simulation & simulation, InitData const & init_data)
 		_formation = new form::Formation(random_seed_formation, * shader, init_data.sphere, * this);
 		
 		// body
-		physics::Engine & physics_engine = simulation.GetPhysicsEngine();
+		physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
 		_body->SetPosition(init_data.sphere.center);
 	}
@@ -108,7 +108,7 @@ void Planet::Init(Simulation & simulation, InitData const & init_data)
 	}
 }
 
-void Planet::Tick(Simulation & simulation)
+void Planet::Tick(sim::Engine & simulation_engine)
 {
 	_body->SetRadius(_radius_max);
 }

@@ -11,7 +11,7 @@
 
 #include "EntitySet.h"
 
-#include "Simulation.h"
+#include "Engine.h"
 #include "Entity.h"
 
 #include "physics/Body.h"

@@ -21,7 +21,7 @@
 #include "form/FormationManager.h"
 #include "form/scene/RegulatorScript.h"
 
-#include "sim/Simulation.h"
+#include "sim/Engine.h"
 
 #include "script/Engine.h"
 

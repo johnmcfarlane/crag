@@ -28,10 +28,10 @@ namespace smp
 
 namespace sim
 {
-	class Simulation;
+	class Engine;
 	
 	// daemon type
-	typedef smp::Daemon<Simulation> Daemon;
+	typedef smp::Daemon<Engine> Daemon;
 
 	// dSINGLE and dDOUBLE are mutually excludive macros required by ODE.
 #if defined(dSINGLE)

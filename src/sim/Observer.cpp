@@ -11,7 +11,7 @@
 
 #include "EntityFunctions.h"
 #include "Observer.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/SphericalBody.h"
 
@@ -66,9 +66,9 @@ Observer::~Observer()
 	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
-void Observer::Init(Simulation & simulation, Vector3 const & center)
+void Observer::Init(sim::Engine & simulation_engine, Vector3 const & center)
 {
-	physics::Engine & physics_engine = simulation.GetPhysicsEngine();
+	physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
 	SetSpeed(1);
 	
@@ -120,7 +120,7 @@ void Observer::SetSpeed(int speed)
 	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((speed << 1) + 1)));
 }
 
-void Observer::Tick(Simulation & simulation)
+void Observer::Tick(sim::Engine & simulation_engine)
 {
 	// Camera input.
 	if (app::HasFocus()) 

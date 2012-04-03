@@ -12,7 +12,7 @@
 #include "Ball.h"
 
 #include "EntityFunctions.h"
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/SphericalBody.h"
 
@@ -50,17 +50,17 @@ Ball::~Ball()
 	_model.Destroy();
 }
 
-void Ball::Init(Simulation & simulation, Sphere3 const & sphere)
+void Ball::Init(sim::Engine & simulation_engine, Sphere3 const & sphere)
 {
-	InitPhysics(simulation, sphere);
+	InitPhysics(simulation_engine, sphere);
 	
 	InitGraphics(sphere);
 }
 
-void Ball::InitPhysics(Simulation & simulation, Sphere3 const & sphere)
+void Ball::InitPhysics(sim::Engine & simulation_engine, Sphere3 const & sphere)
 {
 	// physics
-	physics::Engine & physics_engine = simulation.GetPhysicsEngine();	
+	physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();	
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, sphere.radius);
 	body->SetPosition(sphere.center);
 	body->SetDensity(ball_density);

@@ -13,7 +13,7 @@
 
 #include "Script.h"
 
-#include "sim/Simulation.h"
+#include "sim/Engine.h"
 
 
 DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle

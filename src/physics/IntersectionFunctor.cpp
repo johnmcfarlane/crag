@@ -13,7 +13,7 @@
 
 #include "Engine.h"
 
-#include "sim/Simulation.h"
+#include "sim/Engine.h"
 
 #include "core/ConfigEntry.h"
 

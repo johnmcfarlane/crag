@@ -11,7 +11,7 @@
 
 #include "Entity.h"
 
-#include "Simulation.h"
+#include "Engine.h"
 
 #include "physics/Body.h"
 
@@ -33,7 +33,7 @@ Entity::~Entity()
 	delete _body;
 }
 
-void Entity::Tick(Simulation & simulation)
+void Entity::Tick(sim::Engine & simulation_engine)
 {
 }
 

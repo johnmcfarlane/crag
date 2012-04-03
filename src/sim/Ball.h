@@ -31,9 +31,9 @@ namespace sim
 		~Ball();
 		
 		// Called from the simulation thread.
-		void Init(Simulation & simulation, Sphere3 const & sphere);
+		void Init(sim::Engine & simulation_engine, Sphere3 const & sphere);
 	private:
-		void InitPhysics(Simulation & simulation, Sphere3 const & sphere);
+		void InitPhysics(sim::Engine & simulation_engine, Sphere3 const & sphere);
 		void InitGraphics(Sphere3 const & sphere);
 		virtual gfx::Color4f GetColor() const;
 		
