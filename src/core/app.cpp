@@ -18,7 +18,7 @@
 #endif
 
 
-// defined in Renderer.cpp
+// defined in gfx::Engine.cpp
 CONFIG_DECLARE (multisample, bool);
 
 

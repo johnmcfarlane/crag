@@ -126,12 +126,12 @@ bool LeafNode::GetRenderRange(RenderRange & range) const
 	return false;
 }
 
-LeafNode::PreRenderResult LeafNode::PreRender(Renderer const & renderer)
+LeafNode::PreRenderResult LeafNode::PreRender(gfx::Engine const & renderer)
 {
 	return ok;
 }
 
-void LeafNode::Render(Renderer const & renderer) const
+void LeafNode::Render(gfx::Engine const & renderer) const
 {
 	ASSERT(false);
 }

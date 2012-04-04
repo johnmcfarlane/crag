@@ -20,7 +20,7 @@
 #include "sim/axes.h"
 
 #include "gfx/Color.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/object/FormationMesh.h"
 
 #include "script/Engine.h"
@@ -162,7 +162,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	// register with the renderer
 	_mesh.Create(_regulator_handle);
-	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _mesh.GetUid(), gfx::Uid());
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _mesh.GetUid(), gfx::Uid());
 	
 	while (! quit_flag) 
 	{

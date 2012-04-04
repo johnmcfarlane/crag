@@ -12,7 +12,7 @@
 #include "Box.h"
 
 #include "gfx/Cuboid.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
@@ -29,7 +29,7 @@ Box::Box()
 	SetIsOpaque(_color.a == 255);
 }
 
-bool Box::Init(Renderer & renderer, Color4f const & color)
+bool Box::Init(gfx::Engine & renderer, Color4f const & color)
 {
 	_color = color;
 	
@@ -64,7 +64,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Box::Render(Renderer const & renderer) const
+void Box::Render(gfx::Engine const & renderer) const
 {
 	GL_VERIFY;
 	

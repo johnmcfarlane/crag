@@ -12,7 +12,7 @@
 #include "Ball.h"
 
 #include "gfx/Program.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
@@ -32,7 +32,7 @@ Ball::Ball()
 {
 }
 
-bool Ball::Init(Renderer & renderer, Color4f const & color)
+bool Ball::Init(gfx::Engine & renderer, Color4f const & color)
 {
 	_color = color;
 	
@@ -47,7 +47,7 @@ bool Ball::Init(Renderer & renderer, Color4f const & color)
 	return true;
 }
 
-gfx::Transformation const & Ball::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Ball::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);
@@ -67,7 +67,7 @@ bool Ball::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Ball::Render(Renderer const & renderer) const
+void Ball::Render(gfx::Engine const & renderer) const
 {
 	// Pass rendering details to the shader program.
 	Program const & program = ref(renderer.GetCurrentProgram());

@@ -47,7 +47,7 @@ void BranchNode::Verify() const
 }
 #endif
 
-void BranchNode::Init(Renderer const & renderer, Transformation const & transformation)
+void BranchNode::Init(gfx::Engine const & renderer, Transformation const & transformation)
 {
 	_transformation = transformation;
 }
@@ -109,7 +109,7 @@ BranchNode::List::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
-gfx::Transformation const & BranchNode::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & BranchNode::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	scratch = model_view * _transformation;
 	VerifyObject(scratch);

@@ -13,7 +13,7 @@
 class Firmament : public gfx::Skybox
 {
 public:
-	bool Init(gfx::Renderer & renderer);
+	bool Init(gfx::Engine & renderer);
 	
 private:
 	void DrawStarsClevur();

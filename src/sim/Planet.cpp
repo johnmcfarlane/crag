@@ -103,7 +103,7 @@ void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
 		
 		_branch_node.Create(gfx::Transformation::Matrix::Identity());
 		_model.Create(gfx::Scalar(sea_level));
-		gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _model.GetUid(), _branch_node.GetUid());
+		gfx::Daemon::Call(& gfx::Engine::OnSetParent, _model.GetUid(), _branch_node.GetUid());
 		UpdateModels();
 	}
 }

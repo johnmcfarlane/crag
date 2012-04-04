@@ -1,5 +1,5 @@
 //
-//  Renderer.h
+//  Engine.h
 //  crag
 //
 //  Created by John on 12/19/09.
@@ -35,17 +35,17 @@ namespace gfx
 	class Scene;
 
 	// gfx::Daemon type
-	class Renderer;
-	typedef smp::Daemon<Renderer> Daemon;
+	class Engine;
+	typedef smp::Daemon<Engine> Daemon;
 	
 	
-	// The Renderer class. 
+	// The graphics Engine class. 
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Renderer
+	class Engine
 	{
-		OBJECT_NO_COPY(Renderer);
+		OBJECT_NO_COPY(Engine);
 		
 		enum ForegroundRenderPass
 		{
@@ -55,8 +55,8 @@ namespace gfx
 		};
 		
 	public:
-		Renderer();
-		~Renderer();
+		Engine();
+		~Engine();
 
 		Object * GetObject(Uid const & uid);
 		Object const * GetObject(Uid const & uid) const;

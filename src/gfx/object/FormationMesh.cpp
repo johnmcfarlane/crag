@@ -12,7 +12,7 @@
 #include "FormationMesh.h"
 
 #include "gfx/Debug.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
@@ -60,7 +60,7 @@ void FormationMesh::Verify() const
 }
 #endif
 
-bool FormationMesh::Init(Renderer & renderer, smp::Handle<form::RegulatorScript> const & regulator_handle)
+bool FormationMesh::Init(gfx::Engine & renderer, smp::Handle<form::RegulatorScript> const & regulator_handle)
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -112,7 +112,7 @@ void FormationMesh::SetMesh(form::Mesh * const & mesh)
 	_queued_mesh = mesh;
 }
 
-LeafNode::PreRenderResult FormationMesh::PreRender(Renderer const & renderer)
+LeafNode::PreRenderResult FormationMesh::PreRender(gfx::Engine const & renderer)
 {
 	VerifyObject(* this);
 	
@@ -127,14 +127,14 @@ LeafNode::PreRenderResult FormationMesh::PreRender(Renderer const & renderer)
 	return ok;
 }
 
-gfx::Transformation const & FormationMesh::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & FormationMesh::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	scratch = model_view * sim::Transformation(front_buffer.GetOrigin());
 	return scratch;
 }
 
-void FormationMesh::Render(Renderer const & renderer) const
+void FormationMesh::Render(gfx::Engine const & renderer) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)

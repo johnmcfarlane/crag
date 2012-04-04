@@ -28,15 +28,15 @@ namespace gfx
 		// functions
 		Planet();
 		
-		bool Init(Renderer & renderer, Scalar sea_level);
+		bool Init(gfx::Engine & renderer, Scalar sea_level);
 		
 		void Update(UpdateParams const & params);
 
 	private:
-		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render(Renderer const & renderer) const override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 		// variables
 		Scalar _sea_level;

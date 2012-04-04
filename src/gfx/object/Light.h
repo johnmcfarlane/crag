@@ -40,14 +40,14 @@ namespace gfx
 		virtual void Verify() const override;
 #endif
 		
-		bool Init(Renderer & renderer, Color4f const & color);
+		bool Init(gfx::Engine & renderer, Color4f const & color);
 		void Deinit(Scene & scene) override;
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
 		
 #if ! defined(NDEBUG)
-		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
+		LeafNode::PreRenderResult PreRender(gfx::Engine const & renderer) override;
 #endif
 		
 		// variables

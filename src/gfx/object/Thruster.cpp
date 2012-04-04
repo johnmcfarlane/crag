@@ -13,7 +13,7 @@
 
 #include "Puff.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/Scene.h"
 
 #include "sim/axes.h"
@@ -44,7 +44,7 @@ Thruster::Thruster()
 {
 }
 
-void Thruster::Init(Renderer & renderer)
+void Thruster::Init(gfx::Engine & renderer)
 {
 	super::Init(renderer, thruster_color);
 	
@@ -63,7 +63,7 @@ void Thruster::Update(float const & thrust_factor)
 	}
 }
 
-LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
+LeafNode::PreRenderResult Thruster::PreRender(gfx::Engine const & renderer)
 {
 	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
 	
@@ -73,7 +73,7 @@ LeafNode::PreRenderResult Thruster::PreRender(Renderer const & renderer)
 	return LeafNode::ok;
 }
 
-void Thruster::AddPuff(float thrust_factor, Renderer & renderer)
+void Thruster::AddPuff(float thrust_factor, gfx::Engine & renderer)
 {
 	BranchNode * branch_node = new BranchNode;
 	Uid parent_uid;

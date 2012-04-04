@@ -21,20 +21,20 @@ namespace gfx
 	class BranchNode;
 	class LeafNode;
 	class Pov;
-	class Renderer;
+	class Engine;
 	class Scene;
 
 	// Base class for drawable things.
 	// Note that these have intrusive list/tree entries (esp. in BranchNode)
 	// meaning they effectively double as nodes in a hierachical scene graph.
-	class Object : public smp::ObjectBase<Object, Renderer>
+	class Object : public smp::ObjectBase<Object, gfx::Engine>
 	{
 		OBJECT_NO_COPY(Object);
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef smp::ObjectBase<Object, Renderer> super;
+		typedef smp::ObjectBase<Object, gfx::Engine> super;
 		
 		enum NodeType
 		{
@@ -54,7 +54,7 @@ namespace gfx
 		
 		virtual void Deinit(Scene & scene);
 		
-		virtual Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
+		virtual Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
 		
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;

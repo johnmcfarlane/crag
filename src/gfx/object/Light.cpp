@@ -11,7 +11,7 @@
 
 #include "Light.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/Scene.h"
 #include "gfx/Debug.h"
 
@@ -35,7 +35,7 @@ void Light::Verify() const
 }
 #endif
 
-bool Light::Init(Renderer & renderer, Color4f const & color)
+bool Light::Init(gfx::Engine & renderer, Color4f const & color)
 {
 	SetColor(color);
 
@@ -63,7 +63,7 @@ Color4f const & Light::GetColor() const
 }
 
 #if ! defined(NDEBUG)
-LeafNode::PreRenderResult Light::PreRender(Renderer const & renderer)
+LeafNode::PreRenderResult Light::PreRender(gfx::Engine const & renderer)
 {
 	Debug::Vector3 basis_position = GetParent()->GetModelTransformation().GetTranslation();
 	Debug::AddBasis(basis_position, 1000000.);

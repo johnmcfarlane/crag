@@ -13,7 +13,7 @@
 
 #include "gfx/Program.h"
 #include "gfx/Quad.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 
 #include "geom/Ray.h"
@@ -32,7 +32,7 @@ Planet::Planet()
 {
 }
 
-bool Planet::Init(Renderer & renderer, Scalar sea_level)
+bool Planet::Init(gfx::Engine & renderer, Scalar sea_level)
 {
 	_sea_level = sea_level;
 	
@@ -48,7 +48,7 @@ void Planet::Update(UpdateParams const & params)
 	_salient = params;
 }
 
-gfx::Transformation const & Planet::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Planet::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);
@@ -67,7 +67,7 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render(Renderer const & renderer) const
+void Planet::Render(gfx::Engine const & renderer) const
 {
 	if (_sea_level < _salient._radius_min)
 	{

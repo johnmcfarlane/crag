@@ -17,7 +17,7 @@
 
 #include "form/Engine.h"
 #include "sim/Engine.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 #include "script/Engine.h"
 #include "script/MainScript.h"
@@ -116,7 +116,7 @@ namespace
 					
 					case SDL_SCANCODE_B:
 					{
-						gfx::Daemon::Call(& gfx::Renderer::OnToggleCulling);
+						gfx::Daemon::Call(& gfx::Engine::OnToggleCulling);
 						return true;
 					}
 					
@@ -136,13 +136,13 @@ namespace
 						
 					case SDL_SCANCODE_L:
 					{
-						gfx::Daemon::Call(& gfx::Renderer::OnToggleLighting);
+						gfx::Daemon::Call(& gfx::Engine::OnToggleLighting);
 						return true;
 					}
 					
 					case SDL_SCANCODE_P:
 					{
-						gfx::Daemon::Call(& gfx::Renderer::OnToggleWireframe);
+						gfx::Daemon::Call(& gfx::Engine::OnToggleWireframe);
 						return true;
 					}
 					
@@ -192,7 +192,7 @@ namespace
 				{
 					case SDL_SCANCODE_O:
 					{
-						gfx::Daemon::Call(& gfx::Renderer::OnToggleCapture);
+						gfx::Daemon::Call(& gfx::Engine::OnToggleCapture);
 						return true;
 					}
 					
@@ -231,7 +231,7 @@ namespace
 					{
 						// TODO: Check it's the right window?
 						Vector2i size(window_event.data1, window_event.data2);
-						gfx::Daemon::Call(& gfx::Renderer::OnResize, size);
+						gfx::Daemon::Call(& gfx::Engine::OnResize, size);
 						return true;
 					}
 					

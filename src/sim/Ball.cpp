@@ -74,10 +74,10 @@ void Ball::InitGraphics(Sphere3 const & sphere)
 	// Create ball model.
 	gfx::Color4f color(GetColor());
 
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
 	_model = AddModelWithTransform<gfx::Ball>(color);
 	UpdateModels();
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
 }
 
 gfx::Color4f Ball::GetColor() const

@@ -1,5 +1,5 @@
 //
-//  Renderer.cpp
+//  Engine.cpp
 //  crag
 //
 //  Created by John on 12/19/09.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "Renderer.h"
+#include "Engine.h"
 
 #include "Debug.h"
 #include "glHelpers.h"
@@ -229,7 +229,7 @@ namespace
 }	// namespace
 
 
-Renderer::Renderer()
+Engine::Engine()
 : context(nullptr)
 , scene(nullptr)
 , last_frame_end_position(app::GetTime())
@@ -253,7 +253,7 @@ Renderer::Renderer()
 	}
 }
 
-Renderer::~Renderer()
+Engine::~Engine()
 {
 	Deinit();
 
@@ -261,46 +261,46 @@ Renderer::~Renderer()
 	capture_enable = false;
 }
 
-Object * Renderer::GetObject(Uid const & uid)
+Object * Engine::GetObject(Uid const & uid)
 {
 	return scene->GetObject(uid);
 }
 
-Object const * Renderer::GetObject(Uid const & uid) const
+Object const * Engine::GetObject(Uid const & uid) const
 {
 	return scene->GetObject(uid);
 }
 
-Scene & Renderer::GetScene()
+Scene & Engine::GetScene()
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
 }
 
-Scene const & Renderer::GetScene() const
+Scene const & Engine::GetScene() const
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
 }
 
-ResourceManager & Renderer::GetResourceManager()
+ResourceManager & Engine::GetResourceManager()
 {
 	return ref(_resource_manager);
 }
 
-ResourceManager const & Renderer::GetResourceManager() const
+ResourceManager const & Engine::GetResourceManager() const
 {
 	return ref(_resource_manager);
 }
 
-Program const * Renderer::GetCurrentProgram() const
+Program const * Engine::GetCurrentProgram() const
 {
 	return _current_program;
 }
 
-void Renderer::SetCurrentProgram(Program const * program)
+void Engine::SetCurrentProgram(Program const * program)
 {
 	if (program == _current_program)
 	{
@@ -329,12 +329,12 @@ void Renderer::SetCurrentProgram(Program const * program)
 	GL_VERIFY;
 }
 
-MeshResource const * Renderer::GetCurrentMesh() const
+MeshResource const * Engine::GetCurrentMesh() const
 {
 	return _current_mesh;
 }
 
-void Renderer::SetCurrentMesh(MeshResource const * mesh)
+void Engine::SetCurrentMesh(MeshResource const * mesh)
 {
 	if (mesh == _current_mesh)
 	{
@@ -354,7 +354,7 @@ void Renderer::SetCurrentMesh(MeshResource const * mesh)
 	}
 }
 
-Color4f Renderer::CalculateLighting(Vector3 const & position) const
+Color4f Engine::CalculateLighting(Vector3 const & position) const
 {
 	Color4f lighting_color = Color4f::Black();
 	
@@ -381,13 +381,13 @@ Color4f Renderer::CalculateLighting(Vector3 const & position) const
 	return lighting_color;
 }
 
-void Renderer::OnQuit()
+void Engine::OnQuit()
 {
 	quit_flag = true;
 	_ready = true;
 }
 
-void Renderer::OnAddObject(Object & object)
+void Engine::OnAddObject(Object & object)
 {
 	if (scene == nullptr)
 	{
@@ -400,7 +400,7 @@ void Renderer::OnAddObject(Object & object)
 	OnSetParent(object, Uid());
 }
 
-void Renderer::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid const & uid)
 {
 	if (scene != nullptr)
 	{
@@ -408,7 +408,7 @@ void Renderer::OnRemoveObject(Uid const & uid)
 	}
 }
 
-void Renderer::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
+void Engine::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
 {
 	Object * child = GetObject(child_uid);
 	if (child == nullptr)
@@ -420,7 +420,7 @@ void Renderer::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
 	OnSetParent(ref(child), parent_uid);
 }
 
-void Renderer::OnSetParent(Object & child, Uid const & parent_uid)
+void Engine::OnSetParent(Object & child, Uid const & parent_uid)
 {
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
@@ -432,51 +432,51 @@ void Renderer::OnSetParent(Object & child, Uid const & parent_uid)
 	OnSetParent(child, * parent);
 }
 
-void Renderer::OnSetParent(Object & child, BranchNode & parent)
+void Engine::OnSetParent(Object & child, BranchNode & parent)
 {
 	OrphanChild(child);
 	AdoptChild(child, parent);
 }
 
-void Renderer::OnSetTime(Time const & time)
+void Engine::OnSetTime(Time const & time)
 {
 	scene->SetTime(time);
 }
 
-void Renderer::OnSetReady(bool const & ready)
+void Engine::OnSetReady(bool const & ready)
 {
 	_ready = ready;
 }
 
-void Renderer::OnResize(Vector2i const & size)
+void Engine::OnResize(Vector2i const & size)
 {
 	glViewport(0, 0, size.x, size.y);
 	scene->SetResolution(size);
 }
 
 
-void Renderer::OnToggleCulling()
+void Engine::OnToggleCulling()
 {
 	culling = ! culling;
 }
 
-void Renderer::OnToggleLighting()
+void Engine::OnToggleLighting()
 {
 	lighting = ! lighting;
 }
 
-void Renderer::OnToggleWireframe()
+void Engine::OnToggleWireframe()
 {
 	wireframe = ! wireframe;
 }
 
-void Renderer::OnToggleCapture()
+void Engine::OnToggleCapture()
 {
 	capture_enable = ! capture_enable;
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void Renderer::OnSetCamera(gfx::Transformation const & transformation)
+void Engine::OnSetCamera(gfx::Transformation const & transformation)
 {
 	if (scene != nullptr)
 	{
@@ -487,7 +487,7 @@ void Renderer::OnSetCamera(gfx::Transformation const & transformation)
 	form::Daemon::Call(& form::Engine::OnSetCamera, transformation);
 }
 
-void Renderer::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
+void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
 {
 	ASSERT(regulator_handle);
 	_regulator_handle = regulator_handle;
@@ -499,7 +499,7 @@ void Renderer::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & r
 #define INIT(CAP,ENABLED) { CAP,ENABLED,#CAP }
 #endif
 
-Renderer::StateParam const Renderer::init_state[] =
+Engine::StateParam const Engine::init_state[] =
 {
 	INIT(GL_COLOR_MATERIAL, true),
 	INIT(GL_TEXTURE_2D, false),
@@ -515,7 +515,7 @@ Renderer::StateParam const Renderer::init_state[] =
 	INIT(GL_FOG, false)
 };
 
-void Renderer::Run(Daemon::MessageQueue & message_queue)
+void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	while (! quit_flag)
 	{
@@ -529,7 +529,7 @@ void Renderer::Run(Daemon::MessageQueue & message_queue)
 	}
 }
 
-void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
+void Engine::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 {
 	// Process all pending messages.
 	while (ProcessMessage(message_queue))
@@ -547,12 +547,12 @@ void Renderer::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
 	}
 }
 
-bool Renderer::ProcessMessage(Daemon::MessageQueue & message_queue)
+bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 {
 	return message_queue.DispatchMessage(* this);
 }
 
-bool Renderer::Init()
+bool Engine::Init()
 {
 	smp::SetThreadPriority(1);
 	
@@ -592,7 +592,7 @@ bool Renderer::Init()
 	return true;
 }
 
-bool Renderer::InitFrameBuffer()
+bool Engine::InitFrameBuffer()
 {
 //	frame_buffer.Init();
 //	frame_buffer.Bind();
@@ -611,7 +611,7 @@ bool Renderer::InitFrameBuffer()
 	return true;
 }
 
-void Renderer::Deinit()
+void Engine::Deinit()
 {
 	if (scene == nullptr)
 	{
@@ -646,7 +646,7 @@ void Renderer::Deinit()
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.
-void Renderer::InitVSync()
+void Engine::InitVSync()
 {
 	if (profile_mode)
 	{
@@ -718,7 +718,7 @@ void Renderer::InitVSync()
 	}
 }
 
-void Renderer::InitRenderState()
+void Engine::InitRenderState()
 {
 	StateParam const * param = init_state;
 	while (param->cap != GL_INVALID_ENUM)
@@ -753,7 +753,7 @@ void Renderer::InitRenderState()
 	VerifyRenderState();
 }
 
-void Renderer::VerifyRenderState() const
+void Engine::VerifyRenderState() const
 {
 #if ! defined(NDEBUG)
 	StateParam const * param = init_state;
@@ -776,7 +776,7 @@ void Renderer::VerifyRenderState() const
 }
 
 // TODO: Remove?
-bool Renderer::HasShadowSupport() const
+bool Engine::HasShadowSupport() const
 {
 	if (! enable_shadow_mapping) {
 		return false;
@@ -797,7 +797,7 @@ bool Renderer::HasShadowSupport() const
 	return true;
 }
 
-void Renderer::PreRender()
+void Engine::PreRender()
 {
 	typedef LeafNode::RenderList List;
 	
@@ -822,7 +822,7 @@ void Renderer::PreRender()
 	}
 }
 
-void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transformation const & model_view_transformation)
+void Engine::UpdateTransformations(BranchNode & parent_branch, gfx::Transformation const & model_view_transformation)
 {
 	VerifyObject(model_view_transformation);
 	Transformation scratch;
@@ -864,7 +864,7 @@ void Renderer::UpdateTransformations(BranchNode & parent_branch, gfx::Transforma
 	}
 }
 
-void Renderer::UpdateTransformations()
+void Engine::UpdateTransformations()
 {
 	BranchNode & root_node = scene->GetRoot();
 	Transformation const & root_transformation = root_node.GetTransformation();
@@ -873,7 +873,7 @@ void Renderer::UpdateTransformations()
 	scene->SortRenderList();
 }
 
-void Renderer::Render()
+void Engine::Render()
 {
 	RenderScene();
 
@@ -886,7 +886,7 @@ void Renderer::Render()
 	ProcessRenderTiming();
 }
 
-void Renderer::RenderScene()
+void Engine::RenderScene()
 {
 	VerifyRenderState();
 	
@@ -905,7 +905,7 @@ void Renderer::RenderScene()
 	VerifyRenderState();
 }
 
-void Renderer::RenderBackground()
+void Engine::RenderBackground()
 {
 	SetBackgroundFrustum(scene->GetPov());
 
@@ -920,7 +920,7 @@ void Renderer::RenderBackground()
 	}
 }
 
-void Renderer::RenderForeground()
+void Engine::RenderForeground()
 {
 	// Adjust near and far plane.
 	SetForegroundFrustum(* scene);
@@ -940,7 +940,7 @@ void Renderer::RenderForeground()
 	}
 }
 
-void Renderer::RenderLights()
+void Engine::RenderLights()
 {
 	if (! lighting)
 	{
@@ -954,7 +954,7 @@ void Renderer::RenderLights()
 	}
 }
 
-bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
+bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
 {
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 		
@@ -1008,7 +1008,7 @@ bool Renderer::BeginRenderForeground(ForegroundRenderPass pass) const
 
 // Each pass draws all the geometry. Typically, there is one per frame
 // unless wireframe mode is on. 
-void Renderer::RenderForegroundPass(ForegroundRenderPass pass)
+void Engine::RenderForegroundPass(ForegroundRenderPass pass)
 {
 	// begin
 	if (! BeginRenderForeground(pass))
@@ -1030,7 +1030,7 @@ void Renderer::RenderForegroundPass(ForegroundRenderPass pass)
 	EndRenderForeground(pass);
 }
 
-void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
+void Engine::EndRenderForeground(ForegroundRenderPass pass) const
 {
 	// Reset state
 	Disable(GL_DEPTH_TEST);
@@ -1074,7 +1074,7 @@ void Renderer::EndRenderForeground(ForegroundRenderPass pass) const
 	}
 }
 
-int Renderer::RenderLayer(Layer::type layer, bool opaque)
+int Engine::RenderLayer(Layer::type layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	
@@ -1125,7 +1125,7 @@ int Renderer::RenderLayer(Layer::type layer, bool opaque)
 	return num_rendered_objects;
 }
 
-void Renderer::DebugDraw()
+void Engine::DebugDraw()
 {
 #if defined(GFX_DEBUG)
 	if (capture_enable)
@@ -1173,7 +1173,7 @@ void Renderer::DebugDraw()
 #endif
 }
 
-void Renderer::ProcessRenderTiming()
+void Engine::ProcessRenderTiming()
 {
 	Time frame_start_position, pre_sync_position, post_sync_position;
 	GetRenderTiming(frame_start_position, pre_sync_position, post_sync_position);
@@ -1186,7 +1186,7 @@ void Renderer::ProcessRenderTiming()
 	UpdateRegulator(busy_duration);
 }
 
-void Renderer::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
+void Engine::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
 {
 	frame_start_position = last_frame_end_position;
 	
@@ -1211,7 +1211,7 @@ void Renderer::GetRenderTiming(Time & frame_start_position, Time & pre_sync_posi
 	last_frame_end_position = post_sync_position;
 }
 
-void Renderer::ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration)
+void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration)
 {
 	Time vsync_duration = post_sync_position - pre_sync_position;
 	Time frame_end_position = post_sync_position;
@@ -1224,7 +1224,7 @@ void Renderer::ConvertRenderTiming(Time frame_start_position, Time pre_sync_posi
 	STAT_SET(frame_3_total_duration, frame_duration);
 }
 
-void Renderer::UpdateFpsCounter(Time frame_start_position)
+void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 #if ! defined(NDEBUG)
 	// update the history
@@ -1240,7 +1240,7 @@ void Renderer::UpdateFpsCounter(Time frame_start_position)
 #endif
 }
 
-void Renderer::UpdateRegulator(Time busy_duration) const
+void Engine::UpdateRegulator(Time busy_duration) const
 {
 	// Regulator feedback.
 	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
@@ -1262,7 +1262,7 @@ void Renderer::UpdateRegulator(Time busy_duration) const
 	}
 }
 
-void Renderer::Capture()
+void Engine::Capture()
 {
 	if (! capture_enable)
 	{
@@ -1287,7 +1287,7 @@ void Renderer::Capture()
 	++ capture_frame;
 }
 
-void Renderer::SetFence(Fence & fence)
+void Engine::SetFence(Fence & fence)
 {
 	if (fence.IsInitialized())
 	{

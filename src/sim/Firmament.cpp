@@ -18,7 +18,7 @@
 #include "geom/Sphere.h"
 
 
-bool Firmament::Init(gfx::Renderer & renderer)
+bool Firmament::Init(gfx::Engine & renderer)
 {
 	Skybox::Init(renderer);
 	

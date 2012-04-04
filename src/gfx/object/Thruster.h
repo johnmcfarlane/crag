@@ -29,16 +29,16 @@ namespace gfx
 		// functions
 		Thruster();
 		
-		void Init(Renderer & renderer);
+		void Init(gfx::Engine & renderer);
 		
 		void Update(float const & thrust_factor);
 
-		LeafNode::PreRenderResult PreRender(Renderer const & renderer) override;
+		LeafNode::PreRenderResult PreRender(gfx::Engine const & renderer) override;
 	private:
-		void AddPuff(float thrust_factor, Renderer & renderer);
+		void AddPuff(float thrust_factor, gfx::Engine & renderer);
 		
 		// variables
-		Renderer * _renderer;
+		gfx::Engine * _renderer;
 		float _thrust_factor;
 	};
 }

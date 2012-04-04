@@ -23,7 +23,7 @@
 
 #include "script/Engine.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -68,13 +68,13 @@ void Engine::OnQuit()
 void Engine::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
-	// the data sent to the Renderer is in an incomplete state.
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
+	// the data sent to the gfx::Engine is in an incomplete state.
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
 	
 	_entity_set.Add(entity);
 	
-	gfx::Daemon::Call(& gfx::Renderer::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
+	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
 }
 
 void Engine::OnRemoveObject(Uid const & uid)
@@ -139,7 +139,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	// Add the skybox.
 	FirmamentHandle skybox;
 	skybox.Create();
-	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, skybox.GetUid(), gfx::Uid());
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, skybox.GetUid(), gfx::Uid());
 	
 	Time next_tick_time = app::GetTime();
 	
@@ -202,12 +202,12 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, false);
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(& gfx::Renderer::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Renderer::OnSetReady, true);
+	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
+	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
 }
 
 // Perform a step in the simulation. 

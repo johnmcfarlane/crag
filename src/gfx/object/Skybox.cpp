@@ -13,7 +13,7 @@
 
 #include "gfx/Image.h"
 #include "gfx/Pov.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
@@ -56,7 +56,7 @@ Skybox::Skybox()
 {
 }
 
-bool Skybox::Init(Renderer & renderer)
+bool Skybox::Init(gfx::Engine & renderer)
 {
 	InitVerts();
 
@@ -89,7 +89,7 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-gfx::Transformation const & Skybox::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Skybox::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
@@ -97,7 +97,7 @@ gfx::Transformation const & Skybox::Transform(Renderer & renderer, gfx::Transfor
 	return scratch;
 }
 
-void Skybox::Render(Renderer const & renderer) const
+void Skybox::Render(gfx::Engine const & renderer) const
 {
 	// clear the depth buffer
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT));

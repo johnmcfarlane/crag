@@ -23,15 +23,15 @@ namespace gfx
 		Puff(Scalar spawn_volume);
 		~Puff();
 		
-		bool Init(Renderer & renderer);
+		bool Init(gfx::Engine & renderer);
 		
 	private:
-		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
-		PreRenderResult PreRender(Renderer const & renderer) override;
+		PreRenderResult PreRender(gfx::Engine const & renderer) override;
 		
 		// Draw the object.
-		void Render(Renderer const & renderer) const override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 		Time CalculateAge(Time time) const;
 		

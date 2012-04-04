@@ -19,7 +19,7 @@
 
 #include "gfx/object/BranchNode.h"
 #include "gfx/object/Thruster.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 #include "core/app.h"
 
@@ -51,13 +51,13 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	
 	// branch node's parent is vehicle's branch node
 	gfx::ObjectHandle const & parent_model = GetModel();
-	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, branch_node.GetUid(), parent_model.GetUid());
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, branch_node.GetUid(), parent_model.GetUid());
 	
 	// create actual thruster graphics
 	_thruster.model.Create();
 	
 	// its parent is the branch node
-	gfx::Daemon::Call(& gfx::Renderer::OnSetParent, _thruster.model.GetUid(), branch_node.GetUid());
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _thruster.model.GetUid(), branch_node.GetUid());
 	
 	// initialize thrust factor
 	_thruster.thrust_factor = 0;

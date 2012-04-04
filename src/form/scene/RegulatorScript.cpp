@@ -13,7 +13,7 @@
 
 #include "Engine.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 #include "form/Engine.h"
 
@@ -252,7 +252,7 @@ void RegulatorScript::operator() (script::FiberInterface & fiber)
 {
 	// Introduce self to renderer.
 	smp::Handle<RegulatorScript> handle(GetUid());
-	gfx::Daemon::Call(& gfx::Renderer::OnSetRegulatorHandle, handle);
+	gfx::Daemon::Call(& gfx::Engine::OnSetRegulatorHandle, handle);
 	
 	while (! fiber.GetQuitFlag())
 	{

@@ -12,7 +12,7 @@
 #include "Puff.h"
 
 #include "gfx/Program.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
@@ -53,7 +53,7 @@ Puff::~Puff()
 	STAT_INC(num_puffs, -1);
 }
 
-bool Puff::Init(Renderer & renderer)
+bool Puff::Init(gfx::Engine & renderer)
 {
 	ResourceManager & resource_manager = renderer.GetResourceManager();
 	
@@ -69,7 +69,7 @@ bool Puff::Init(Renderer & renderer)
 	return true;
 }
 
-gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
@@ -80,7 +80,7 @@ gfx::Transformation const & Puff::Transform(Renderer & renderer, gfx::Transforma
 	return disk_quad.Transform(scale, scratch);
 }
 
-LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer)
+LeafNode::PreRenderResult Puff::PreRender(gfx::Engine const & renderer)
 {
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
@@ -98,7 +98,7 @@ LeafNode::PreRenderResult Puff::PreRender(Renderer const & renderer)
 	return ok;
 }
 
-void Puff::Render(Renderer const & renderer) const
+void Puff::Render(gfx::Engine const & renderer) const
 {
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();

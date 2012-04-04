@@ -18,7 +18,7 @@
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
 
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 #include "geom/Transformation.h"
 
@@ -113,7 +113,7 @@ void MainScript::operator() (FiberInterface & fiber)
 	// Set camera position
 	{
 		sim::Transformation transformation(observer_start_pos);
-		gfx::Daemon::Call(& gfx::Renderer::OnSetCamera, transformation);
+		gfx::Daemon::Call(& gfx::Engine::OnSetCamera, transformation);
 	}
 	
 	SpawnUniverse();

@@ -25,12 +25,12 @@ namespace gfx
 		// functions
 		Ball();
 		
-		bool Init(Renderer & renderer, Color4f const & color);
+		bool Init(gfx::Engine & renderer, Color4f const & color);
 	private:
-		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render(Renderer const & renderer) const override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 		// variables
 		Color4f _color;

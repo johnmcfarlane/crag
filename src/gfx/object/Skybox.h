@@ -35,13 +35,13 @@ namespace gfx
 		// Methods
 		Skybox();
 		
-		bool Init(Renderer & renderer);
+		bool Init(gfx::Engine & renderer);
 		void Deinit(Scene & scene) override;
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
-		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
-		void Render(Renderer const & renderer) const override;
+		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 	private:
 		void InitVerts();

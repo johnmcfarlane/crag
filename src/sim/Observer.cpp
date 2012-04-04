@@ -147,7 +147,7 @@ void Observer::UpdateModels() const
 	// Give renderer the new camera position.
 	{
 		Transformation transformation (position, rotation);
-		gfx::Daemon::Call(& gfx::Renderer::OnSetCamera, transformation);
+		gfx::Daemon::Call(& gfx::Engine::OnSetCamera, transformation);
 	}
 
 #if defined(OBSERVER_LIGHT)
@@ -157,7 +157,7 @@ void Observer::UpdateModels() const
 		{
 			Transformation(position)
 		};
-		gfx::Daemon::Call(_light_uid, params, & gfx::Renderer::OnUpdateObject<gfx::BranchNode>);
+		gfx::Daemon::Call(_light_uid, params, & gfx::Engine::OnUpdateObject<gfx::BranchNode>);
 	}
 #endif
 }

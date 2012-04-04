@@ -23,10 +23,10 @@ namespace gfx
 		// functions
 		Box();
 		
-		bool Init(Renderer & renderer, Color4f const & color);
+		bool Init(gfx::Engine & renderer, Color4f const & color);
 
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render(Renderer const & renderer) const override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 	private:
 		// variables

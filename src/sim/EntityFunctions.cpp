@@ -18,7 +18,7 @@
 #include "physics/Engine.h"
 
 #include "gfx/object/BranchNode.h"
-#include "gfx/Renderer.h"
+#include "gfx/Engine.h"
 
 
 namespace sim

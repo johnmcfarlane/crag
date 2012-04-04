@@ -36,16 +36,16 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		bool Init(Renderer & renderer, form::RegulatorScriptHandle const & regulator_handle);
+		bool Init(gfx::Engine & renderer, form::RegulatorScriptHandle const & regulator_handle);
 		void Deinit(Scene & scene) override;
 
-		gfx::Transformation const & Transform(Renderer & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 
 		void SetMesh(form::Mesh * const & mesh);
 		
 	private:
-		PreRenderResult PreRender(Renderer const & renderer) override;
-		void Render(Renderer const & renderer) const override;
+		PreRenderResult PreRender(gfx::Engine const & renderer) override;
+		void Render(gfx::Engine const & renderer) const override;
 		
 		void OnMeshResourceChange();
 		bool FinishBufferUpload();
