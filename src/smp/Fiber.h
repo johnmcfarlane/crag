@@ -91,7 +91,10 @@ namespace smp
 	public:
 		FunctorWrapper(FUNCTOR & functor) : _functor(functor) { }
 	private:
-		virtual void OnLaunch (FiberInterface & fiber_interface) { _functor(fiber_interface); }
+		virtual void OnLaunch (FiberInterface & fiber_interface) override
+		{ 
+			_functor(fiber_interface); 
+		}
 		FUNCTOR _functor;
 	};
 	
