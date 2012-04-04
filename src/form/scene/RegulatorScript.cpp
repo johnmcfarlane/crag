@@ -15,7 +15,7 @@
 
 #include "gfx/Renderer.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -260,7 +260,7 @@ void RegulatorScript::operator() (script::FiberInterface & fiber)
 		if (recommended_num_quaterne != QuaterneCount::invalid())
 		{
 			//DEBUG_MESSAGE("current:%d recommended:%d", _current_num_quaterne.GetNumber(), recommended_num_quaterne.GetNumber());
-			form::Daemon::Call(& form::FormationManager::OnSetRecommendedNumQuaterne, recommended_num_quaterne.GetNumber());
+			form::Daemon::Call(& form::Engine::OnSetRecommendedNumQuaterne, recommended_num_quaterne.GetNumber());
 			Reset();
 		}
 		

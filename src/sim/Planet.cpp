@@ -18,7 +18,7 @@
 #include "Engine.h"
 
 #include "form/Formation.h"
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 
 
 #include "gfx/object/Planet.h"
@@ -49,7 +49,7 @@ Planet::~Planet()
 	_branch_node.Destroy();
 	
 	// unregister with formation manager
-	form::Daemon::Call<form::Formation *>(& form::FormationManager::OnRemoveFormation, _formation);
+	form::Daemon::Call<form::Formation *>(& form::Engine::OnRemoveFormation, _formation);
 	_formation = nullptr;
 
 	delete _body;
@@ -92,7 +92,7 @@ void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
 	// messages
 	{
 		// register with formation manager
-		form::Daemon::Call(& form::FormationManager::OnAddFormation, _formation);
+		form::Daemon::Call(& form::Engine::OnAddFormation, _formation);
 		
 		// register with the renderer
 #if defined(RENDER_SEA)

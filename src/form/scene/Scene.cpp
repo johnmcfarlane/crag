@@ -15,7 +15,7 @@
 #include "Mesh.h"
 
 #include "form/Formation.h"
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 
 #include "form/node/NodeBuffer.h"
 #include "form/node/Shader.h"

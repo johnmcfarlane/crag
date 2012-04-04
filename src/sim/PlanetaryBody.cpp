@@ -19,7 +19,7 @@
 #include "physics/IntersectionFunctor.h"
 
 #include "form/Formation.h"
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 #include "form/scene/collision.h"
 
@@ -90,8 +90,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	using namespace form::collision;
 
 	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
-	form::FormationManager const & formation_manager = form::Daemon::Ref();
-	form::Scene const & scene = formation_manager.OnTreeQuery();
+	form::Engine const & formation_engine = form::Daemon::Ref();
+	form::Scene const & scene = formation_engine.OnTreeQuery();
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
@@ -159,8 +159,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	using namespace form::collision;
 
 	physics::SphericalBody const & sphere = static_cast<physics::SphericalBody const &>(body);
-	form::FormationManager const & formation_manager = form::Daemon::Ref();
-	form::Scene const & scene = formation_manager.OnTreeQuery();
+	form::Engine const & formation_engine = form::Daemon::Ref();
+	form::Scene const & scene = formation_engine.OnTreeQuery();
 
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)

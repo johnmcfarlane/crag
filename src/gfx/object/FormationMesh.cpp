@@ -16,7 +16,7 @@
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 #include "form/scene/RegulatorScript.h"
 
@@ -229,5 +229,5 @@ bool FormationMesh::FinishBufferUpload()
 
 void FormationMesh::ReturnMesh(form::Mesh & mesh)
 {
-	form::Daemon::Call(& form::FormationManager::OnSetMesh, & mesh);
+	form::Daemon::Call(& form::Engine::OnSetMesh, & mesh);
 }

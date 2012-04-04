@@ -12,7 +12,7 @@
 #include "Engine.h"
 #include "Body.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 
 #include "smp/for_each.h"
 #include "smp/Lock.h"
@@ -148,11 +148,11 @@ void Engine::ProcessDeferredCollisions()
 		return;
 	}
 	
-	form::FormationManager & formation_manager = form::Daemon::Ref();
+	form::Engine & formation_engine = form::Daemon::Ref();
 	
-	formation_manager.LockTree();
+	formation_engine.LockTree();
 	smp::scheduler::Complete(_deferred_collisions, 1);
-	formation_manager.UnlockTree();
+	formation_engine.UnlockTree();
 	
 	_deferred_collisions.clear();
 }

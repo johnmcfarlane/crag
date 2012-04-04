@@ -19,7 +19,7 @@
 
 #include "physics/Engine.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 
 #include "script/Engine.h"
 

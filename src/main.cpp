@@ -15,7 +15,7 @@
 
 #include "smp/scheduler.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 #include "sim/Engine.h"
 #include "gfx/Renderer.h"
 
@@ -121,7 +121,7 @@ namespace
 					}
 					
 					case SDL_SCANCODE_F:
-						form::Daemon::Call(& form::FormationManager::OnToggleFlatShaded);
+						form::Daemon::Call(& form::Engine::OnToggleFlatShaded);
 						return true;
 						
 					case SDL_SCANCODE_G:
@@ -131,7 +131,7 @@ namespace
 					}
 						
 					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::FormationManager::OnToggleSuspended);
+						form::Daemon::Call(& form::Engine::OnToggleSuspended);
 						return true;
 						
 					case SDL_SCANCODE_L:
@@ -163,7 +163,7 @@ namespace
 					}
 					
 					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::FormationManager::OnToggleMeshGeneration);
+						form::Daemon::Call(& form::Engine::OnToggleMeshGeneration);
 						return true;
 						
 					default:
@@ -177,7 +177,7 @@ namespace
 				switch (keysym.scancode)
 				{
 					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::FormationManager::OnToggleDynamicOrigin);
+						form::Daemon::Call(& form::Engine::OnToggleDynamicOrigin);
 						return true;
 					
 					default:
@@ -242,7 +242,7 @@ namespace
 					case SDL_WINDOWEVENT_ENTER:
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
-						form::Daemon::Call(& form::FormationManager::OnRegulatorSetEnabled, true);
+						form::Daemon::Call(& form::Engine::OnRegulatorSetEnabled, true);
 						return true;
 					}
 					
@@ -251,7 +251,7 @@ namespace
 					case SDL_WINDOWEVENT_LEAVE:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 					{
-						form::Daemon::Call(& form::FormationManager::OnRegulatorSetEnabled, false);
+						form::Daemon::Call(& form::Engine::OnRegulatorSetEnabled, false);
 						return true;
 					}
 				}
@@ -299,14 +299,14 @@ namespace
 		
 		{
 			// TODO: Find a way to make these common; writing everything out four times is not good.
-			// Instanciate the four daemons
+			// Instantiate the four daemons
 			gfx::Daemon renderer(0x8000);
-			form::Daemon formation_manager(0x8000);
+			form::Daemon formation(0x8000);
 			sim::Daemon simulation(0x400);
 			script::Engine::Daemon script_daemon(0x400);
 			
 			// start thread the daemons
-			formation_manager.Start("form");
+			formation.Start("form");
 			simulation.Start("sim");
 			renderer.Start("render");
 			script_daemon.Start("script");
@@ -317,9 +317,9 @@ namespace
 			
 			while (true)
 			{
-				if (! formation_manager.IsRunning())
+				if (! formation.IsRunning())
 				{
-					DEBUG_MESSAGE("formation_manager initiating shutdown");
+					DEBUG_MESSAGE("formation initiating shutdown");
 					break;
 				}
 				if (! simulation.IsRunning())
@@ -349,19 +349,19 @@ namespace
 			script_daemon.BeginFlush();
 			simulation.BeginFlush();
 			renderer.BeginFlush();
-			formation_manager.BeginFlush();
+			formation.BeginFlush();
 			
 			// Wait until they have all stopped working.
 			script_daemon.Synchronize();
 			simulation.Synchronize();
 			renderer.Synchronize();
-			formation_manager.Synchronize();
+			formation.Synchronize();
 			
 			// Wait until they have all finished flushing.
 			script_daemon.EndFlush();
 			simulation.EndFlush();
 			renderer.EndFlush();
-			formation_manager.EndFlush();
+			formation.EndFlush();
 		}
 		
 		smp::scheduler::Deinit();

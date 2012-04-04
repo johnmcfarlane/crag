@@ -19,7 +19,7 @@
 		5230573814F1D95F0024D4A8 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230564A14F1D95F0024D4A8 /* Random.cpp */; };
 		5230573914F1D95F0024D4A8 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230564E14F1D95F0024D4A8 /* Statistics.cpp */; };
 		5230573A14F1D95F0024D4A8 /* Formation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565214F1D95F0024D4A8 /* Formation.cpp */; };
-		5230573B14F1D95F0024D4A8 /* FormationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565414F1D95F0024D4A8 /* FormationManager.cpp */; };
+		5230573B14F1D95F0024D4A8 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565414F1D95F0024D4A8 /* Engine.cpp */; };
 		5230573C14F1D95F0024D4A8 /* CalculateNodeScoreFunctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565714F1D95F0024D4A8 /* CalculateNodeScoreFunctor.cpp */; };
 		5230573D14F1D95F0024D4A8 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565C14F1D95F0024D4A8 /* Node.cpp */; };
 		5230573E14F1D95F0024D4A8 /* NodeBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230565E14F1D95F0024D4A8 /* NodeBuffer.cpp */; };
@@ -200,8 +200,8 @@
 		5230565114F1D95F0024D4A8 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defs.h; sourceTree = "<group>"; };
 		5230565214F1D95F0024D4A8 /* Formation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Formation.cpp; sourceTree = "<group>"; };
 		5230565314F1D95F0024D4A8 /* Formation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Formation.h; sourceTree = "<group>"; };
-		5230565414F1D95F0024D4A8 /* FormationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormationManager.cpp; sourceTree = "<group>"; };
-		5230565514F1D95F0024D4A8 /* FormationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormationManager.h; sourceTree = "<group>"; };
+		5230565414F1D95F0024D4A8 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
+		5230565514F1D95F0024D4A8 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Engine.h; sourceTree = "<group>"; };
 		5230565714F1D95F0024D4A8 /* CalculateNodeScoreFunctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculateNodeScoreFunctor.cpp; sourceTree = "<group>"; };
 		5230565814F1D95F0024D4A8 /* CalculateNodeScoreFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateNodeScoreFunctor.h; sourceTree = "<group>"; };
 		5230565914F1D95F0024D4A8 /* ExpandNodeFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandNodeFunctor.h; sourceTree = "<group>"; };
@@ -557,8 +557,8 @@
 				5230565114F1D95F0024D4A8 /* defs.h */,
 				5230565214F1D95F0024D4A8 /* Formation.cpp */,
 				5230565314F1D95F0024D4A8 /* Formation.h */,
-				5230565414F1D95F0024D4A8 /* FormationManager.cpp */,
-				5230565514F1D95F0024D4A8 /* FormationManager.h */,
+				5230565414F1D95F0024D4A8 /* Engine.cpp */,
+				5230565514F1D95F0024D4A8 /* Engine.h */,
 				5230565614F1D95F0024D4A8 /* node */,
 				5230566814F1D95F0024D4A8 /* scene */,
 			);
@@ -953,7 +953,7 @@
 				5230573814F1D95F0024D4A8 /* Random.cpp in Sources */,
 				5230573914F1D95F0024D4A8 /* Statistics.cpp in Sources */,
 				5230573A14F1D95F0024D4A8 /* Formation.cpp in Sources */,
-				5230573B14F1D95F0024D4A8 /* FormationManager.cpp in Sources */,
+				5230573B14F1D95F0024D4A8 /* Engine.cpp in Sources */,
 				5230573C14F1D95F0024D4A8 /* CalculateNodeScoreFunctor.cpp in Sources */,
 				5230573D14F1D95F0024D4A8 /* Node.cpp in Sources */,
 				5230573E14F1D95F0024D4A8 /* NodeBuffer.cpp in Sources */,

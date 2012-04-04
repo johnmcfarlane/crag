@@ -18,7 +18,7 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 
-#include "form/FormationManager.h"
+#include "form/Engine.h"
 #include "form/scene/RegulatorScript.h"
 
 #include "sim/Engine.h"
@@ -484,7 +484,7 @@ void Renderer::OnSetCamera(gfx::Transformation const & transformation)
 	}
 
 	// pass this on to the formation manager to update the node scores
-	form::Daemon::Call(& form::FormationManager::OnSetCamera, transformation);
+	form::Daemon::Call(& form::Engine::OnSetCamera, transformation);
 }
 
 void Renderer::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
