@@ -303,13 +303,13 @@ namespace
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation(0x8000);
 			sim::Daemon simulation(0x400);
-			script::Engine::Daemon script_daemon(0x400);
+			script::Daemon scripting(0x400);
 			
 			// start thread the daemons
 			formation.Start("form");
 			simulation.Start("sim");
 			renderer.Start("render");
-			script_daemon.Start("script");
+			scripting.Start("script");
 			
 			// launch the main script
 			script::MainScriptHandle main_script;
@@ -332,9 +332,9 @@ namespace
 					DEBUG_MESSAGE("renderer initiating shutdown");
 					break;
 				}
-				if (! script_daemon.IsRunning())
+				if (! scripting.IsRunning())
 				{
-					DEBUG_MESSAGE("script_daemon initiating shutdown");
+					DEBUG_MESSAGE("scripting initiating shutdown");
 					break;
 				}
 
@@ -346,19 +346,19 @@ namespace
 			}
 			
 			// Tell the daemons to wind down.
-			script_daemon.BeginFlush();
+			scripting.BeginFlush();
 			simulation.BeginFlush();
 			renderer.BeginFlush();
 			formation.BeginFlush();
 			
 			// Wait until they have all stopped working.
-			script_daemon.Synchronize();
+			scripting.Synchronize();
 			simulation.Synchronize();
 			renderer.Synchronize();
 			formation.Synchronize();
 			
 			// Wait until they have all finished flushing.
-			script_daemon.EndFlush();
+			scripting.EndFlush();
 			simulation.EndFlush();
 			renderer.EndFlush();
 			formation.EndFlush();
