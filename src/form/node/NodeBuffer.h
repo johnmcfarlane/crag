@@ -52,16 +52,13 @@ namespace form
 		// Constants
 		enum {
 			// tweakables
-			min_num_portions = 64,
-			max_num_portions = 65536,
-
+			min_num_quaterne = 1024,
+			max_num_quaterne = 65536,
+			
 			// derivations
 			num_nodes_per_quaterna = 4,
 			portion_num_nodes = num_nodes_per_quaterna,
 			
-			min_num_quaterne = min_num_portions,
-			max_num_quaterne = max_num_portions,
-
 			max_num_nodes = max_num_quaterne * num_nodes_per_quaterna,
 			max_num_verts = max_num_nodes * 2,
 			max_num_indices = max_num_verts * 3
