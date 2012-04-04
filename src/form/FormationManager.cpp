@@ -55,7 +55,7 @@ form::FormationManager::FormationManager()
 , flat_shaded_flag(false)
 , mesh_generation_time(app::GetTime())
 , _regulator_enabled(true)
-, _recommented_num_quaterne(0)
+, _recommended_num_quaterne(0)
 , _camera_pos(sim::Ray3::Zero())
 {
 	smp::SetThreadPriority(-1);
@@ -131,7 +131,7 @@ void form::FormationManager::OnRegulatorSetEnabled(bool const & enabled)
 
 void form::FormationManager::OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne)
 {
-	_recommented_num_quaterne = recommented_num_quaterne;
+	_recommended_num_quaterne = recommented_num_quaterne;
 }
 
 void form::FormationManager::OnToggleSuspended()
@@ -262,11 +262,11 @@ void form::FormationManager::AdjustNumQuaterna()
 	}
 	
 	// Calculate the regulator output.
-	Clamp(_recommented_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
+	Clamp(_recommended_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
 	
 	// Apply the regulator output.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
-	active_buffer.SetNumQuaternaUsedTarget(_recommented_num_quaterne);
+	active_buffer.SetNumQuaternaUsedTarget(_recommended_num_quaterne);
 }
 
 void form::FormationManager::GenerateMesh()

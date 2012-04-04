@@ -142,7 +142,7 @@ namespace form
 		
 		bool _regulator_enabled;
 		form::RegulatorScriptHandle _regulator_handle;
-		int _recommented_num_quaterne;	// recommended by the regulator
+		int _recommended_num_quaterne;	// recommended by the regulator
 		sim::Ray3 _camera_pos;
 		
 		// The front scene is always the one being displayed and is usually the 'active' scene.
