@@ -20,7 +20,7 @@
 #include "gfx/Engine.h"
 
 #include "script/Engine.h"
-#include "script/MainScript.h"
+#include "script/TestScript.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -312,8 +312,8 @@ namespace
 			scripting.Start("script");
 			
 			// launch the main script
-			script::MainScriptHandle main_script;
-			main_script.Create();
+			script::TestScriptHandle test_script;
+			test_script.Create();
 			
 			while (true)
 			{
