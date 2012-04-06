@@ -41,9 +41,6 @@ namespace script
 		// the condition which must test true before the script can continue
 		Condition * GetCondition();
 		
-		// called on initialization
-		void SetScriptThread(Engine & engine);
-		
 		// continue execution
 		void Continue();
 
@@ -66,8 +63,8 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Engine * _engine;
 		smp::Fiber & _fiber;
 		Condition * _condition;
+		bool _quit_flag;
 	};
 }

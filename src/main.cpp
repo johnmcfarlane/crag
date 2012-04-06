@@ -214,7 +214,7 @@ namespace
 		SDL_Event event;
 		
 		// If no events are pending,
-		if (! app::GetEvent(event, false))
+		if (! app::GetEvent(event))
 		{
 			// then nothing's happening event-wise.
 			return false;
@@ -273,8 +273,8 @@ namespace
 			}
 		}
 
-		// If not caught here, then send it to the script thread.
-		script::Daemon::Call(& script::Engine::OnEvent, event);
+		// If not caught here, then send it to the application event queue.
+		app::PushEvent(event);
 		return true;
 	}
 

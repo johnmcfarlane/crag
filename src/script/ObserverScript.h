@@ -9,11 +9,9 @@
 
 #pragma once
 
-#include "EventCondition.h"
-
 #include "Script.h"
 
-#include "sim/Engine.h"
+#include "sim/defs.h"
 
 
 DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
@@ -40,7 +38,6 @@ namespace script
 		
 		// variables
 		sim::ObserverHandle _observer;
-		EventCondition _event_condition;
 		bool _collidable;
 	};
 }

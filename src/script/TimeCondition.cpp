@@ -11,7 +11,7 @@
 
 #include "TimeCondition.h"
 
-#include "Engine.h"
+#include "core/app.h"
 
 
 using namespace script;
@@ -20,12 +20,12 @@ using namespace script;
 ////////////////////////////////////////////////////////////////////////////////
 // script::TimeCondition member definitions
 
-TimeCondition::TimeCondition(Time wake_position)
-: _wake_position(wake_position)
+TimeCondition::TimeCondition(Time duration)
+: _wake_position(app::GetTime() + duration)
 {
 }
 
-bool TimeCondition::operator() (script::Engine & script_thread)
+bool TimeCondition::operator() ()
 {
-	return script_thread.GetTime() >= _wake_position;
+	return app::GetTime() >= _wake_position;
 }

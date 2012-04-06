@@ -25,7 +25,7 @@ namespace
 	// used by Yield to return ASAP;
 	class NullCondition : public Condition
 	{
-		bool operator() (script::Engine & script_thread)
+		bool operator() ()
 		{
 			return true;
 		}
@@ -39,9 +39,9 @@ namespace
 // script::Script member definitions
 
 Script::Script()
-: _engine(nullptr)
-, _fiber(ref(new smp::Fiber))
+: _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
+, _quit_flag(false)
 {
 	_fiber.Launch<Script &>(* this);
 }
@@ -61,13 +61,6 @@ Condition * Script::GetCondition()
 	return _condition;
 }
 
-void Script::SetScriptThread(script::Engine & script_thread)
-{
-	ASSERT(_engine == nullptr);
-	_engine = & script_thread;
-	ASSERT(_engine != nullptr);
-}
-
 void Script::Continue()
 {
 	_fiber.Continue();
@@ -75,7 +68,6 @@ void Script::Continue()
 
 void Script::operator() (smp::FiberInterface & fiber)
 {
-	ASSERT(_engine != nullptr);
 	ASSERT(& fiber == & _fiber);
 	ASSERT(_condition == & null_condition);
 	_condition = nullptr;
@@ -87,12 +79,12 @@ void Script::operator() (smp::FiberInterface & fiber)
 
 bool Script::GetQuitFlag() const
 {
-	return _engine->GetQuitFlag();
+	return _quit_flag;
 }
 
 void Script::SetQuitFlag()
 {
-	_engine->SetQuitFlag();
+	_quit_flag = true;
 }
 
 // TODO: Should probably not be needed.
@@ -103,7 +95,7 @@ void Script::Yield()
 
 void Script::Sleep(Time duration)
 {
-	TimeCondition time_condition(_engine->GetTime() + duration);
+	TimeCondition time_condition(duration);
 	Wait(time_condition);
 }
 
@@ -119,6 +111,5 @@ void Script::Wait(Condition & condition)
 
 void Script::Launch(Script & script)
 {
-	ASSERT(script._engine == nullptr);
-	_engine->OnAddObject(script);
+	script::Daemon::Call<Script *>(& Engine::OnAddObject, & script);
 }
