@@ -126,7 +126,7 @@
 		52B4604B14C344260078083B /* disk.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
 		52F819A8132DF0D20045C3A8 /* font_bitmap.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */; };
 		52F819AD132DF13C0045C3A8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 52F819AA132DF13C0045C3A8 /* InfoPlist.strings */; };
-		52FC3D2A1527D7D9000D6621 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52FC3D291527D7D9000D6621 /* Script.cpp */; };
+		52FC3D2A1527D7D9000D6621 /* ScriptBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52FC3D291527D7D9000D6621 /* ScriptBase.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -332,7 +332,7 @@
 		523056E114F1D95F0024D4A8 /* EventCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCondition.h; sourceTree = "<group>"; };
 		523056E414F1D95F0024D4A8 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
 		523056E514F1D95F0024D4A8 /* TestScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestScript.cpp; sourceTree = "<group>"; };
-		523056E614F1D95F0024D4A8 /* TestScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TestScript.h; sourceTree = "<group>"; };
+		523056E614F1D95F0024D4A8 /* TestScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestScript.h; sourceTree = "<group>"; };
 		523056E814F1D95F0024D4A8 /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
 		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
 		523056EA14F1D95F0024D4A8 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
@@ -414,7 +414,7 @@
 		52834BB6152B4D9100CB25AE /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		52849CB4150ED849007AA818 /* RegulatorScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegulatorScript.cpp; sourceTree = "<group>"; };
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
-		5284BC93150D5BE900332A47 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
+		5284BC93150D5BE900332A47 /* ScriptBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBase.h; sourceTree = "<group>"; };
 		5288C51B1527019700A12864 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
@@ -424,7 +424,7 @@
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
 		52F819A9132DF13C0045C3A8 /* crag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "crag-Info.plist"; sourceTree = "<group>"; };
 		52F819AB132DF13C0045C3A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		52FC3D291527D7D9000D6621 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
+		52FC3D291527D7D9000D6621 /* ScriptBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptBase.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -742,8 +742,8 @@
 				523056E614F1D95F0024D4A8 /* TestScript.h */,
 				523056E814F1D95F0024D4A8 /* ObserverScript.cpp */,
 				523056E914F1D95F0024D4A8 /* ObserverScript.h */,
-				5284BC93150D5BE900332A47 /* Script.h */,
-				52FC3D291527D7D9000D6621 /* Script.cpp */,
+				5284BC93150D5BE900332A47 /* ScriptBase.h */,
+				52FC3D291527D7D9000D6621 /* ScriptBase.cpp */,
 				523056EA14F1D95F0024D4A8 /* Engine.cpp */,
 				523056EB14F1D95F0024D4A8 /* Engine.h */,
 				523056F014F1D95F0024D4A8 /* TimeCondition.cpp */,
@@ -1033,7 +1033,7 @@
 				5276D1E414FF67C8008D69FF /* EntitySet.cpp in Sources */,
 				52849CB6150ED849007AA818 /* RegulatorScript.cpp in Sources */,
 				52AF04AC152362AB00EBAA15 /* Fiber.cpp in Sources */,
-				52FC3D2A1527D7D9000D6621 /* Script.cpp in Sources */,
+				52FC3D2A1527D7D9000D6621 /* ScriptBase.cpp in Sources */,
 				52834BB7152B4D9100CB25AE /* Engine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

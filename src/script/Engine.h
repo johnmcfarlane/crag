@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Script.h"
+#include "ScriptBase.h"
 
 #include "smp/Daemon.h"
 
@@ -45,7 +45,7 @@ namespace script
 		~Engine();
 
 		// given a UID, returns the script associated with it
-		Script * GetObject(Uid uid);
+		ScriptBase * GetObject(Uid uid);
 		
 		// daemon messages
 		void OnQuit();
@@ -58,7 +58,7 @@ namespace script
 			OnAddObject(script);
 		}
 		
-		void OnAddObject(Script * const & entity);
+		void OnAddObject(ScriptBase * const & entity);
 		void OnRemoveObject(Uid const & uid);
 		
 		void SetQuitFlag();
@@ -78,7 +78,7 @@ namespace script
 		Time _time;
 		
 		// Collection of all active scripts
-		Script::List _scripts;
+		ScriptBase::List _scripts;
 		
 		bool _quit_flag;
 	};

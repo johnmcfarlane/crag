@@ -12,7 +12,7 @@ namespace script
 {
 	// forward-declare
 	class Condition;
-	class Script;
+	class ScriptBase;
 	
 	// Interface to the Fiber class;
 	// This interface is passed to a Fiber's function object.
@@ -32,6 +32,6 @@ namespace script
 		virtual void Wait(Condition & condition) = 0;
 		
 		// launch another fiber (and deletes the script afterwards)
-		virtual void Launch(Script & script) = 0;
+		virtual void Launch(ScriptBase & script) = 0;
 	};
 }

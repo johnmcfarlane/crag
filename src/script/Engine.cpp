@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 #include "Condition.h"
-#include "Script.h"
+#include "ScriptBase.h"
 
 
 #if defined(NDEBUG)
@@ -44,11 +44,11 @@ Engine::~Engine()
 	ASSERT(_quit_flag);
 }
 
-Script * Engine::GetObject(Uid uid)
+ScriptBase * Engine::GetObject(Uid uid)
 {
 	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
 	{
-		Script & script = * i;
+		ScriptBase & script = * i;
 		if (script.GetUid() == uid)
 		{
 			return & script;
@@ -63,7 +63,7 @@ void Engine::OnQuit()
 	SetQuitFlag();
 }
 
-void Engine::OnAddObject(Script * const & script)
+void Engine::OnAddObject(ScriptBase * const & script)
 {
 	if (! script->GetUid())
 	{
@@ -75,7 +75,7 @@ void Engine::OnAddObject(Script * const & script)
 
 void Engine::OnRemoveObject(Uid const & uid)
 {
-	Script * script = GetObject(uid);
+	ScriptBase * script = GetObject(uid);
 	
 	if (script != nullptr)
 	{
@@ -136,8 +136,8 @@ bool Engine::ProcessTasks()
 		return false;
 	}
 	
-	Script & first = _scripts.front();
-	Script * script = & first;
+	ScriptBase & first = _scripts.front();
+	ScriptBase * script = & first;
 	do
 	{
 		ASSERT(script->IsRunning());
@@ -159,7 +159,7 @@ bool Engine::ProcessTasks()
 			return true;
 		}
 		
-		script = & static_cast<Script &>(_scripts.front());
+		script = & static_cast<ScriptBase &>(_scripts.front());
 	}	while (script != & first);
 	
 	return false;

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "script/Script.h"
+#include "script/ScriptBase.h"
 
 
 namespace form
@@ -17,7 +17,7 @@ namespace form
 
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
-	class RegulatorScript : public script::Script
+	class RegulatorScript : public script::ScriptBase
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types

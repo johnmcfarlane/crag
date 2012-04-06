@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Script.h"
+#include "ScriptBase.h"
 
 #include "sim/defs.h"
 
@@ -19,7 +19,7 @@ DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
 
 namespace script
 {
-	class ObserverScript : public Script
+	class ObserverScript : public ScriptBase
 	{
 	public:
 		// functions

@@ -7,7 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "Script.h"
+#include "ScriptBase.h"
 
 #include "sim/Engine.h"
 
@@ -26,7 +26,7 @@ namespace smp
 namespace script
 {
 	// the entry point for all scripts
-	class TestScript : public Script
+	class TestScript : public ScriptBase
 	{
 	public:
 		// types
