@@ -12,6 +12,7 @@
 #include "Engine.h"
 
 #include "Condition.h"
+#include "Script.h"
 
 
 #if defined(NDEBUG)
@@ -60,24 +61,16 @@ Script * Engine::GetObject(Uid uid)
 void Engine::OnQuit()
 {
 	SetQuitFlag();
-	SDL_Event quit_event = { SDL_QUIT };
-	OnEvent(quit_event);
 }
 
-void Engine::OnEvent(SDL_Event const & event)
+void Engine::OnAddObject(Script * const & script)
 {
-	_events.push(event);
-}
-
-void Engine::OnAddObject(Script & script)
-{
-	if (! script.GetUid())
+	if (! script->GetUid())
 	{
-		script.SetUid(Uid::Create());
+		script->SetUid(Uid::Create());
 	}
 	
-	_scripts.push_back(script);
-	script.SetScriptThread(* this);
+	_scripts.push_back(* script);
 }
 
 void Engine::OnRemoveObject(Uid const & uid)
@@ -92,24 +85,15 @@ void Engine::OnRemoveObject(Uid const & uid)
 	}
 }
 
-bool Engine::GetQuitFlag() const
-{
-	return _quit_flag;
-}
-
 void Engine::SetQuitFlag()
 {
 	_quit_flag = true;
-}
-
-Time Engine::GetTime() const
-{
-	return _time;
-}
-
-void Engine::SetTime(Time const & time)
-{
-	_time = time;
+	
+	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
+	{
+		FiberInterface & script = * i;
+		script.SetQuitFlag();
+	}
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
@@ -138,18 +122,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	message_queue.DispatchMessages(* this);
 }
 
-void Engine::GetEvent(SDL_Event & event)
-{
-	if (_events.empty())
-	{
-		event.type = 0;
-		return;
-	}
-	
-	event = _events.front();
-	_events.pop();
-}
-
 bool Engine::HasFibersActive() const
 {
 	return ! _scripts.empty();
@@ -174,7 +146,7 @@ bool Engine::ProcessTasks()
 		_scripts.push_back(* script);
 		
 		Condition & condition = ref(script->GetCondition());
-		if (condition(* this))
+		if (condition())
 		{
 			script->Continue();
 

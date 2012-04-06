@@ -21,6 +21,6 @@ namespace script
 	{
 	public:
 		virtual ~Condition() { }
-		virtual bool operator() (Engine & engine) = 0;
+		virtual bool operator() (/*Engine & engine*/) = 0;
 	};
 }

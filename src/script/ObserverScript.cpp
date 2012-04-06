@@ -11,6 +11,9 @@
 
 #include "ObserverScript.h"
 
+#include "Engine.h"
+#include "EventCondition.h"
+
 #include "sim/Engine.h"
 #include "sim/EntityFunctions.h"
 #include "sim/Observer.h"
@@ -39,11 +42,13 @@ void ObserverScript::operator() (FiberInterface & fiber)
 	
 	while (! fiber.GetQuitFlag())
 	{
-		fiber.Wait(_event_condition);
-		SDL_Event const & event = _event_condition.GetEvent();
+		EventCondition event_condition;
+		fiber.Wait(event_condition);
+		SDL_Event const & event = event_condition.GetEvent();
 		
 		if (! HandleEvent(event))
 		{
+			Daemon::Call(& Engine::OnQuit);
 			fiber.SetQuitFlag();
 		}
 	}

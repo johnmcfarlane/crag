@@ -179,9 +179,6 @@ void Engine::Tick()
 	{
 		_time += sim_tick_duration;
 		
-		// Update the script thread's time variable.
-		script::Daemon::Call<Time>(& script::Engine::SetTime, _time);
-		
 		// Perform the Entity-specific simulation.
 		TickEntities();
 		

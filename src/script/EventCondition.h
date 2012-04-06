@@ -19,7 +19,8 @@ namespace script
 	{
 	public:
 		// functions
-		bool operator() (Engine & engine);
+		EventCondition();
+		virtual bool operator() (/*Engine & engine*/) override;
 		SDL_Event const & GetEvent() const;
 		
 	private:

@@ -19,9 +19,9 @@ namespace script
 	{
 		// functions
 	public:
-		TimeCondition(Time wake_position);
+		TimeCondition(Time duration);
 	private:
-		bool operator() (script::Engine & script_thread);
+		bool operator() ();
 		
 		// variables
 		Time _wake_position;

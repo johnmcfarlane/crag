@@ -34,8 +34,7 @@ namespace script
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		
-		typedef std::queue<SDL_Event> EventQueue;
+
 	public:
 		typedef smp::Daemon<Engine> Daemon;
 		
@@ -50,29 +49,22 @@ namespace script
 		
 		// daemon messages
 		void OnQuit();
-		void OnEvent(SDL_Event const & event);
 		
 		template <typename SCRIPT_TYPE>
 		void OnCreateObject(Uid const & uid)
 		{
 			SCRIPT_TYPE * script = new SCRIPT_TYPE ();
 			script->SetUid(uid);
-			OnAddObject(* script);
+			OnAddObject(script);
 		}
 		
-		void OnAddObject(Script & entity);
+		void OnAddObject(Script * const & entity);
 		void OnRemoveObject(Uid const & uid);
 		
-		bool GetQuitFlag() const;
 		void SetQuitFlag();
-		
-		Time GetTime() const;
-		void SetTime(Time const & time);
 		
 		// thread entry point
 		void Run(Daemon::MessageQueue & message_queue);
-		
-		void GetEvent(SDL_Event & event);
 		
 	private:
 		bool HasFibersActive() const;
@@ -81,8 +73,6 @@ namespace script
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		
-		EventQueue _events;
 		
 		// sim::Engine time.
 		Time _time;
