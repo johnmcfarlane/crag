@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <tr1/memory>
+
 
 // This definition indicates whether stack frame addresses increase or decrease as the stack grows.
 #if defined(__ppc__) || defined(__ppc64__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
@@ -30,6 +32,12 @@
 
 // Array size
 #define ARRAY_SIZE(ARRAY) (sizeof(ARRAY)/sizeof(*ARRAY))
+
+
+//////////////////////////////////////////////////////////////////////
+// shared_ptr
+
+using std::tr1::shared_ptr;
 
 
 //////////////////////////////////////////////////////////////////////
