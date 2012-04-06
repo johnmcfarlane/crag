@@ -70,7 +70,7 @@
 		5230576D14F1D95F0024D4A8 /* SphericalBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056D914F1D95F0024D4A8 /* SphericalBody.cpp */; };
 		5230576E14F1D95F0024D4A8 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = 523056DB14F1D95F0024D4A8 /* readme.html */; };
 		5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E014F1D95F0024D4A8 /* EventCondition.cpp */; };
-		5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E514F1D95F0024D4A8 /* MainScript.cpp */; };
+		5230577214F1D95F0024D4A8 /* TestScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E514F1D95F0024D4A8 /* TestScript.cpp */; };
 		5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056E814F1D95F0024D4A8 /* ObserverScript.cpp */; };
 		5230577414F1D95F0024D4A8 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056EA14F1D95F0024D4A8 /* Engine.cpp */; };
 		5230577714F1D95F0024D4A8 /* TimeCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523056F014F1D95F0024D4A8 /* TimeCondition.cpp */; };
@@ -302,7 +302,7 @@
 		523056BE14F1D95F0024D4A8 /* RenderBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBuffer.cpp; sourceTree = "<group>"; };
 		523056BF14F1D95F0024D4A8 /* RenderBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBuffer.h; sourceTree = "<group>"; };
 		523056C014F1D95F0024D4A8 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
-		523056C114F1D95F0024D4A8 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Engine.h; sourceTree = "<group>"; };
+		523056C114F1D95F0024D4A8 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		523056C314F1D95F0024D4A8 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceManager.cpp; sourceTree = "<group>"; };
 		523056C414F1D95F0024D4A8 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceManager.h; sourceTree = "<group>"; };
 		523056C514F1D95F0024D4A8 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
@@ -331,8 +331,8 @@
 		523056E014F1D95F0024D4A8 /* EventCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventCondition.cpp; sourceTree = "<group>"; };
 		523056E114F1D95F0024D4A8 /* EventCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCondition.h; sourceTree = "<group>"; };
 		523056E414F1D95F0024D4A8 /* FiberInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiberInterface.h; sourceTree = "<group>"; };
-		523056E514F1D95F0024D4A8 /* MainScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainScript.cpp; sourceTree = "<group>"; };
-		523056E614F1D95F0024D4A8 /* MainScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainScript.h; sourceTree = "<group>"; };
+		523056E514F1D95F0024D4A8 /* TestScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestScript.cpp; sourceTree = "<group>"; };
+		523056E614F1D95F0024D4A8 /* TestScript.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TestScript.h; sourceTree = "<group>"; };
 		523056E814F1D95F0024D4A8 /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
 		523056E914F1D95F0024D4A8 /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
 		523056EA14F1D95F0024D4A8 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
@@ -738,8 +738,8 @@
 				523056E014F1D95F0024D4A8 /* EventCondition.cpp */,
 				523056E114F1D95F0024D4A8 /* EventCondition.h */,
 				523056E414F1D95F0024D4A8 /* FiberInterface.h */,
-				523056E514F1D95F0024D4A8 /* MainScript.cpp */,
-				523056E614F1D95F0024D4A8 /* MainScript.h */,
+				523056E514F1D95F0024D4A8 /* TestScript.cpp */,
+				523056E614F1D95F0024D4A8 /* TestScript.h */,
 				523056E814F1D95F0024D4A8 /* ObserverScript.cpp */,
 				523056E914F1D95F0024D4A8 /* ObserverScript.h */,
 				5284BC93150D5BE900332A47 /* Script.h */,
@@ -1003,7 +1003,7 @@
 				5230576C14F1D95F0024D4A8 /* IntersectionFunctor.cpp in Sources */,
 				5230576D14F1D95F0024D4A8 /* SphericalBody.cpp in Sources */,
 				5230577014F1D95F0024D4A8 /* EventCondition.cpp in Sources */,
-				5230577214F1D95F0024D4A8 /* MainScript.cpp in Sources */,
+				5230577214F1D95F0024D4A8 /* TestScript.cpp in Sources */,
 				5230577314F1D95F0024D4A8 /* ObserverScript.cpp in Sources */,
 				5230577414F1D95F0024D4A8 /* Engine.cpp in Sources */,
 				5230577714F1D95F0024D4A8 /* TimeCondition.cpp in Sources */,
