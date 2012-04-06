@@ -9,8 +9,6 @@
 
 #include "Script.h"
 
-#include "sim/Engine.h"
-
 
 DECLARE_CLASS_HANDLE(script, TestScript);	// script::TestScriptHandle
 

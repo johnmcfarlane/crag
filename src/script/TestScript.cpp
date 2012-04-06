@@ -14,6 +14,7 @@
 #include "ObserverScript.h"
 
 #include "sim/Box.h"
+#include "sim/Engine.h"
 #include "sim/Planet.h"
 #include "sim/Star.h"
 #include "sim/Vehicle.h"

@@ -21,8 +21,6 @@
 #include "form/Engine.h"
 #include "form/scene/RegulatorScript.h"
 
-#include "sim/Engine.h"
-
 #include "script/Engine.h"
 
 #include "core/app.h"
