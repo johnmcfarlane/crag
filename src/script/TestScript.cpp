@@ -88,32 +88,6 @@ namespace
 		EntityVector _shapes;
 	};
 
-	class AddThrusterFunctor
-	{
-	public:
-		////////////////////////////////////////////////////////////////////////////////
-		// functions
-		AddThrusterFunctor(sim::Vehicle::Thruster const & thruster)
-		: _thruster(thruster)
-		{
-			ASSERT(_thruster.model.GetUid() == gfx::Uid());
-		}
-		
-		void operator() (sim::Vehicle * vehicle) const
-		{
-			if (vehicle == nullptr)
-			{
-				ASSERT(false);
-				return;
-			}
-			
-			vehicle->AddThruster(_thruster);
-		}
-		
-	private:
-		sim::Vehicle::Thruster _thruster;
-	};
-	
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
@@ -125,8 +99,7 @@ namespace
 		thruster.key = SDL_SCANCODE_H;
 		thruster.thrust_factor = 1.;
 		
-		AddThrusterFunctor functor(thruster);
-		vehicle.Call<AddThrusterFunctor>(functor);
+		vehicle.Call(& sim::Vehicle::AddThruster, thruster);
 	}
 }
 
