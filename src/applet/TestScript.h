@@ -10,8 +10,8 @@
 namespace script
 {
 	// forward-declaration
-	class FiberInterface;
+	class AppletInterface;
 	
 	// Run a script which puts the simulation through its paces.
-	void Test (FiberInterface & fiber);
+	void Test (AppletInterface & applet_interface);
 }

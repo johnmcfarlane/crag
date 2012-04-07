@@ -19,9 +19,9 @@
 #include "sim/Engine.h"
 #include "gfx/Engine.h"
 
-#include "script/Engine.h"
-#include "script/Script.h"
-#include "script/TestScript.h"
+#include "applet/Engine.h"
+#include "applet/Applet.h"
+#include "applet/TestScript.h"
 
 
 //////////////////////////////////////////////////////////////////////

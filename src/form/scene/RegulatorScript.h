@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "script/ScriptBase.h"
+#include "applet/AppletBase.h"
 
 
 namespace form
@@ -17,7 +17,7 @@ namespace form
 
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
-	class RegulatorScript : public script::ScriptBase
+	class RegulatorScript : public script::AppletBase
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -65,7 +65,7 @@ namespace form
 		RegulatorScript();
 		
 		// script entry point
-		virtual void operator() (script::FiberInterface & fiber) override;
+		virtual void operator() (script::AppletInterface & applet_interface) override;
 		
 		// inputs - typically called from form/gfx threads
 		void SetNumQuaterne(int const & num_quaterne);

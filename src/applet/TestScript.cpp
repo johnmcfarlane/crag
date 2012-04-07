@@ -75,7 +75,7 @@ namespace
 		typedef std::vector<sim::VehicleHandle> EntityVector;
 		
 		// functions
-		void operator() (FiberInterface & fiber);
+		void operator() (AppletInterface & applet_interface);
 	private:
 		void SpawnUniverse();
 		void SpawnVehicle();
@@ -106,7 +106,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // TestScript member definitions
 
-void TestScript::operator() (FiberInterface & fiber)
+void TestScript::operator() (AppletInterface & applet_interface)
 {
 	// TODO: Take a good look at the callstack that gets you here
 	// TODO: and have long think about what you've done.
@@ -121,17 +121,17 @@ void TestScript::operator() (FiberInterface & fiber)
 	SpawnUniverse();
 
 	// Give formations time to expand.
-	fiber.Sleep(2);
+	applet_interface.Sleep(2);
 
 	// Create observer and vehicle.
-	fiber.Launch(ref(new ObserverScript(observer_start_pos)));
+	applet_interface.Launch(ref(new ObserverScript(observer_start_pos)));
 	
 	SpawnVehicle();
 	
 	// main loop
-	while (! fiber.GetQuitFlag())
+	while (! applet_interface.GetQuitFlag())
 	{
-		fiber.Sleep(shape_drop_period);
+		applet_interface.Sleep(shape_drop_period);
 		
 		SpawnShapes();
 	}
@@ -270,8 +270,8 @@ void TestScript::SpawnShapes()
 }
 
 
-void script::Test (FiberInterface & fiber)
+void script::Test (AppletInterface & applet_interface)
 {
 	TestScript test_script;
-	test_script(fiber);
+	test_script(applet_interface);
 }

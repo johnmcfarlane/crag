@@ -1,5 +1,5 @@
 //
-//  ScriptBase.h
+//  AppletBase.h
 //  crag
 //
 //  Created by John McFarlane on 2012-03-07.
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "FiberInterface.h"
+#include "AppletInterface.h"
 
 #include "smp/ObjectBase.h"
 
@@ -28,14 +28,14 @@ namespace script
 	// Base class for scripts, which are run in fibers.
 	// If your script is sufficiently complex that it deserves its own class,
 	// derive that class from this one. Alternatively, specialize the Script class.
-	class ScriptBase : public smp::ObjectBase<ScriptBase, Engine>, public FiberInterface
+	class AppletBase : public smp::ObjectBase<AppletBase, Engine>, public AppletInterface
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		ScriptBase();
-		~ScriptBase();
+		AppletBase();
+		~AppletBase();
 		
 		// true iff the script has not yet returned
 		bool IsRunning() const;
@@ -57,10 +57,10 @@ namespace script
 		virtual void Yield() override;
 		virtual void Sleep(Time duration) override;
 		virtual void Wait(Condition & condition) override;
-		virtual void Launch(ScriptBase & script) override;
+		virtual void Launch(AppletBase & script) override;
 
-		// overridden by the concrete script class
-		virtual void operator() (FiberInterface & script_interface) = 0;
+		// overridden by the concrete applet class
+		virtual void operator() (AppletInterface & applet_interface) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

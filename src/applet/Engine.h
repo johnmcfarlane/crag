@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ScriptBase.h"
+#include "AppletBase.h"
 
 #include "smp/Daemon.h"
 
@@ -21,7 +21,7 @@ namespace script
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
 	
-	template <typename FUNCTOR> class Script;
+	template <typename FUNCTOR> class Applet;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// definitions
@@ -53,13 +53,13 @@ namespace script
 		~Engine();
 
 		// given a UID, returns the script associated with it
-		ScriptBase * GetObject(Uid uid);
+		AppletBase * GetObject(Uid uid);
 		
 		// daemon messages
-		template <typename FUNCTOR = void (*) (FiberInterface & fiber)>
+		template <typename FUNCTOR = void (*) (AppletInterface & applet_interface)>
 		void Launch(FUNCTOR & functor)
 		{
-			ScriptBase * object = new Script<FUNCTOR> (functor);
+			AppletBase * object = new Applet<FUNCTOR> (functor);
 			OnAddObject(object);
 		}
 		
@@ -73,7 +73,7 @@ namespace script
 			OnAddObject(script);
 		}
 		
-		void OnAddObject(ScriptBase * const & entity);
+		void OnAddObject(AppletBase * const & entity);
 		void OnRemoveObject(Uid const & uid);
 		
 		void SetQuitFlag();
@@ -93,7 +93,7 @@ namespace script
 		Time _time;
 		
 		// Collection of all active scripts
-		ScriptBase::List _scripts;
+		AppletBase::List _scripts;
 		
 		bool _quit_flag;
 	};

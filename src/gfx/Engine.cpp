@@ -23,7 +23,7 @@
 
 #include "sim/Engine.h"
 
-#include "script/Engine.h"
+#include "applet/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"

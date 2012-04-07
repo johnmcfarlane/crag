@@ -1,5 +1,5 @@
 //
-//  Script.h
+//  Applet.h
 //  crag
 //
 //  Created by John McFarlane on 2012-04-06.
@@ -9,36 +9,36 @@
 
 #pragma once
 
-#include "ScriptBase.h"
+#include "AppletBase.h"
 
 
 namespace script
 {
 	// A templated script class. 
 	// Handy for providing a function to be launched in its own fiber.
-	template <typename FUNCTOR = void (*)(FiberInterface &)>
-	class Script : public ScriptBase
+	template <typename FUNCTOR = void (*)(AppletInterface &)>
+	class Applet : public AppletBase
 	{
 	public:
 		// types
 		typedef FUNCTOR Functor;
 		
 		// functions
-		Script(Functor functor)
+		Applet(Functor functor)
 		: _functor(functor)
 		{
 		}
 		
 	private:
-		// ScriptBase overrides
-		virtual void operator() (FiberInterface & script_interface) override
+		// AppletBase overrides
+		virtual void operator() (AppletInterface & applet_interface) override
 		{
-			_functor(script_interface);
+			_functor(applet_interface);
 		}
 
 		// variables
 		Functor _functor;
 	};
 	
-	typedef smp::Handle< Script<> > ScriptHandle;
+	typedef smp::Handle< Applet<> > ScriptHandle;
 }

@@ -1,5 +1,5 @@
 //
-//  ScriptBase.cpp
+//  AppletBase.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-03-31.
@@ -8,7 +8,7 @@
 
 #include "pch.h"
 
-#include "ScriptBase.h"
+#include "AppletBase.h"
 
 #include "Engine.h"
 #include "TimeCondition.h"
@@ -36,37 +36,37 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::ScriptBase member definitions
+// script::AppletBase member definitions
 
-ScriptBase::ScriptBase()
+AppletBase::AppletBase()
 : _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
 , _quit_flag(false)
 {
-	_fiber.Launch<ScriptBase &>(* this);
+	_fiber.Launch<AppletBase &>(* this);
 }
 
-ScriptBase::~ScriptBase()
+AppletBase::~AppletBase()
 {
 	delete & _fiber;
 }
 
-bool ScriptBase::IsRunning() const
+bool AppletBase::IsRunning() const
 {
 	return _fiber.IsRunning();
 }
 
-Condition * ScriptBase::GetCondition()
+Condition * AppletBase::GetCondition()
 {
 	return _condition;
 }
 
-void ScriptBase::Continue()
+void AppletBase::Continue()
 {
 	_fiber.Continue();
 }
 
-void ScriptBase::operator() (smp::FiberInterface & fiber)
+void AppletBase::operator() (smp::FiberInterface & fiber)
 {
 	ASSERT(& fiber == & _fiber);
 	ASSERT(_condition == & null_condition);
@@ -77,29 +77,29 @@ void ScriptBase::operator() (smp::FiberInterface & fiber)
 	ASSERT(_condition == nullptr);
 }
 
-bool ScriptBase::GetQuitFlag() const
+bool AppletBase::GetQuitFlag() const
 {
 	return _quit_flag;
 }
 
-void ScriptBase::SetQuitFlag()
+void AppletBase::SetQuitFlag()
 {
 	_quit_flag = true;
 }
 
 // TODO: Should probably not be needed.
-void ScriptBase::Yield()
+void AppletBase::Yield()
 {
 	Wait(null_condition);
 }
 
-void ScriptBase::Sleep(Time duration)
+void AppletBase::Sleep(Time duration)
 {
 	TimeCondition time_condition(duration);
 	Wait(time_condition);
 }
 
-void ScriptBase::Wait(Condition & condition)
+void AppletBase::Wait(Condition & condition)
 {
 	ASSERT(_condition == nullptr);
 	_condition = & condition;
@@ -109,7 +109,7 @@ void ScriptBase::Wait(Condition & condition)
 	_condition = nullptr;
 }
 
-void ScriptBase::Launch(ScriptBase & script)
+void AppletBase::Launch(AppletBase & script)
 {
-	script::Daemon::Call<ScriptBase *>(& Engine::OnAddObject, & script);
+	script::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & script);
 }

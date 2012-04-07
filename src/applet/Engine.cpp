@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 #include "Condition.h"
-#include "ScriptBase.h"
+#include "AppletBase.h"
 
 
 #if defined(NDEBUG)
@@ -44,11 +44,11 @@ Engine::~Engine()
 	ASSERT(_quit_flag);
 }
 
-ScriptBase * Engine::GetObject(Uid uid)
+AppletBase * Engine::GetObject(Uid uid)
 {
 	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
 	{
-		ScriptBase & script = * i;
+		AppletBase & script = * i;
 		if (script.GetUid() == uid)
 		{
 			return & script;
@@ -63,7 +63,7 @@ void Engine::OnQuit()
 	SetQuitFlag();
 }
 
-void Engine::OnAddObject(ScriptBase * const & script)
+void Engine::OnAddObject(AppletBase * const & script)
 {
 	if (! script->GetUid())
 	{
@@ -75,7 +75,7 @@ void Engine::OnAddObject(ScriptBase * const & script)
 
 void Engine::OnRemoveObject(Uid const & uid)
 {
-	ScriptBase * script = GetObject(uid);
+	AppletBase * script = GetObject(uid);
 	
 	if (script != nullptr)
 	{
@@ -91,8 +91,8 @@ void Engine::SetQuitFlag()
 	
 	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
 	{
-		FiberInterface & script = * i;
-		script.SetQuitFlag();
+		AppletInterface & applet = * i;
+		applet.SetQuitFlag();
 	}
 }
 
@@ -136,8 +136,8 @@ bool Engine::ProcessTasks()
 		return false;
 	}
 	
-	ScriptBase & first = _scripts.front();
-	ScriptBase * script = & first;
+	AppletBase & first = _scripts.front();
+	AppletBase * script = & first;
 	do
 	{
 		ASSERT(script->IsRunning());
@@ -159,7 +159,7 @@ bool Engine::ProcessTasks()
 			return true;
 		}
 		
-		script = & static_cast<ScriptBase &>(_scripts.front());
+		script = & static_cast<AppletBase &>(_scripts.front());
 	}	while (script != & first);
 	
 	return false;
