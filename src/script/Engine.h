@@ -18,6 +18,14 @@
 
 namespace script
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// forward-declarations
+	
+	template <typename FUNCTOR> class Script;
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// definitions
+
 	typedef smp::Uid Uid;
 	
 	// script::Daemon type
@@ -48,6 +56,13 @@ namespace script
 		ScriptBase * GetObject(Uid uid);
 		
 		// daemon messages
+		template <typename FUNCTOR = void (*) (FiberInterface & fiber)>
+		void Launch(FUNCTOR & functor)
+		{
+			ScriptBase * object = new Script<FUNCTOR> (functor);
+			OnAddObject(object);
+		}
+		
 		void OnQuit();
 		
 		template <typename SCRIPT_TYPE>

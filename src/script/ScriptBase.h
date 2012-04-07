@@ -26,6 +26,8 @@ namespace script
 	class Engine;
 	
 	// Base class for scripts, which are run in fibers.
+	// If your script is sufficiently complex that it deserves its own class,
+	// derive that class from this one. Alternatively, specialize the Script class.
 	class ScriptBase : public smp::ObjectBase<ScriptBase, Engine>, public FiberInterface
 	{
 	public:

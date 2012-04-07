@@ -14,6 +14,7 @@
 #include "ObserverScript.h"
 
 #include "sim/Box.h"
+#include "sim/Engine.h"
 #include "sim/Planet.h"
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
@@ -25,8 +26,11 @@
 #include "core/Random.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Ball)	// sim::BallHandle
-DECLARE_CLASS_HANDLE(sim, Box)	// sim::BoxHandle
+DECLARE_CLASS_HANDLE(sim, Ball);	// sim::BallHandle
+DECLARE_CLASS_HANDLE(sim, Box);		// sim::BoxHandle
+DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
+DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
+DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
 
 
 using namespace script;
@@ -64,6 +68,26 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local types
 	
+	class TestScript
+	{
+	public:
+		// types
+		typedef std::vector<sim::VehicleHandle> EntityVector;
+		
+		// functions
+		void operator() (FiberInterface & fiber);
+	private:
+		void SpawnUniverse();
+		void SpawnVehicle();
+		void SpawnShapes();
+		
+		// variables
+		sim::PlanetHandle _planet, _moon1, _moon2;
+		sim::StarHandle _sun;
+		sim::VehicleHandle _vehicle;
+		EntityVector _shapes;
+	};
+
 	class AddThrusterFunctor
 	{
 	public:
@@ -106,8 +130,13 @@ namespace
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// TestScript member definitions
+
 void TestScript::operator() (FiberInterface & fiber)
 {
+	// TODO: Take a good look at the callstack that gets you here
+	// TODO: and have long think about what you've done.
 	DEBUG_MESSAGE("-> Main script");
 	
 	// Set camera position
@@ -265,4 +294,11 @@ void TestScript::SpawnShapes()
 				ASSERT(false);
 		}
 	}
+}
+
+
+void script::Test (FiberInterface & fiber)
+{
+	TestScript test_script;
+	test_script(fiber);
 }

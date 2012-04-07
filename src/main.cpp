@@ -20,6 +20,7 @@
 #include "gfx/Engine.h"
 
 #include "script/Engine.h"
+#include "script/Script.h"
 #include "script/TestScript.h"
 
 
@@ -312,8 +313,7 @@ namespace
 			scripting.Start("script");
 			
 			// launch the main script
-			script::TestScriptHandle test_script;
-			test_script.Create();
+			script::Daemon::Call(& script::Engine::Launch, & script::Test);
 			
 			while (true)
 			{
