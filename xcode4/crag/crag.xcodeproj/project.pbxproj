@@ -383,6 +383,7 @@
 		5230572E14F1D95F0024D4A8 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		5230572F14F1D95F0024D4A8 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
 		5230573014F1D95F0024D4A8 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
+		523688181531DF390096D112 /* GatherExpandableNodesFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatherExpandableNodesFunctor.h; sourceTree = "<group>"; };
 		52394D5614C33EB9008EF2DC /* fog.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fog.frag; sourceTree = "<group>"; };
 		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
@@ -394,12 +395,12 @@
 		5249C5E91530D6DE000FF6AB /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventCondition.cpp; sourceTree = "<group>"; };
 		5249C5EB1530D6DE000FF6AB /* EventCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCondition.h; sourceTree = "<group>"; };
-		5249C5EC1530D6DE000FF6AB /* AppletInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; path = AppletInterface.h; sourceTree = "<group>"; };
+		5249C5EC1530D6DE000FF6AB /* AppletInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletInterface.h; sourceTree = "<group>"; };
 		5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
 		5249C5EE1530D6DE000FF6AB /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
 		5249C5EF1530D6DE000FF6AB /* Applet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Applet.h; sourceTree = "<group>"; };
 		5249C5F01530D6DE000FF6AB /* AppletBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppletBase.cpp; sourceTree = "<group>"; };
-		5249C5F11530D6DE000FF6AB /* AppletBase.h */ = {isa = PBXFileReference; fileEncoding = 4; path = AppletBase.h; sourceTree = "<group>"; };
+		5249C5F11530D6DE000FF6AB /* AppletBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletBase.h; sourceTree = "<group>"; };
 		5249C5F21530D6DE000FF6AB /* TestScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestScript.cpp; sourceTree = "<group>"; };
 		5249C5F31530D6DE000FF6AB /* TestScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestScript.h; sourceTree = "<group>"; };
 		5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeCondition.cpp; sourceTree = "<group>"; };
@@ -573,6 +574,7 @@
 				5230565814F1D95F0024D4A8 /* CalculateNodeScoreFunctor.h */,
 				5230565914F1D95F0024D4A8 /* ExpandNodeFunctor.h */,
 				5230565A14F1D95F0024D4A8 /* ForEachNodeFace.h */,
+				523688181531DF390096D112 /* GatherExpandableNodesFunctor.h */,
 				5230565B14F1D95F0024D4A8 /* GenerateMeshFunctor.h */,
 				5230565C14F1D95F0024D4A8 /* Node.cpp */,
 				5230565D14F1D95F0024D4A8 /* Node.h */,

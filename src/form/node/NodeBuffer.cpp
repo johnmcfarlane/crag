@@ -12,6 +12,7 @@
 #include "NodeBuffer.h"
 
 #include "ExpandNodeFunctor.h"
+#include "GatherExpandableNodesFunctor.h"
 #include "GenerateMeshFunctor.h"
 #include "Quaterna.h"
 #include "Shader.h"
@@ -70,6 +71,7 @@ form::NodeBuffer::NodeBuffer()
 , quaterne_end(quaterne + max_num_quaterne)
 , point_buffer(max_num_verts)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
+, _expandable_nodes(max_num_nodes)
 {
 	ZeroArray(nodes, max_num_nodes);
 
@@ -390,12 +392,19 @@ void form::NodeBuffer::SortQuaterna()
 
 bool form::NodeBuffer::ChurnNodes()
 {
-	ExpandNodeFunctor f(* this);
-
-	ForEachQuaterna<ExpandNodeFunctor &>(f, 1);
-	//ForEachNode<ExpandNodeFunctor &> (f, 1);
+	ASSERT(_expandable_nodes.size() == 0);
 	
-	return f.GetNumExpanded() > 0;
+	// Populate vector with nodes which might want expanding.
+	GatherExpandableNodesFunctor gather_functor(* this, _expandable_nodes);
+	ForEachQuaterna<GatherExpandableNodesFunctor &>(gather_functor);
+
+	// Traverse the vector and try and expand the nodes.
+	ExpandNodeFunctor expand_functor(* this);
+	core::for_each <SmpNodeVector::iterator, ExpandNodeFunctor &>(_expandable_nodes.begin(), _expandable_nodes.end(), expand_functor);
+	
+	_expandable_nodes.clear();
+	
+	return expand_functor.GetNumExpanded() > 0;
 }
 
 void form::NodeBuffer::GenerateMesh(Mesh & mesh) 
