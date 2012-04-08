@@ -49,10 +49,11 @@ namespace applet
 		// called on fiber startup
 		virtual void operator() (smp::FiberInterface & fiber);
 
+		void SetQuitFlag();
 	private:
+		
 		// AppletInterface overrides
 		virtual bool GetQuitFlag() const override;
-		virtual void SetQuitFlag() override;
 		
 		virtual void Yield() override;
 		virtual void Sleep(Time duration) override;

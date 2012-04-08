@@ -7,6 +7,8 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#pragma once
+
 
 namespace applet
 {
@@ -24,7 +26,6 @@ namespace applet
 		
 		// applet thread quit flag get/setter
 		virtual bool GetQuitFlag() const = 0;
-		virtual void SetQuitFlag() = 0;
 
 		// pause execution in various ways
 		virtual void Yield() = 0;
