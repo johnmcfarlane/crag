@@ -12,6 +12,7 @@
 #include "TestScript.h"
 
 #include "ObserverScript.h"
+#include "Engine.h"
 
 #include "sim/Box.h"
 #include "sim/Engine.h"
@@ -124,8 +125,12 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	applet_interface.Sleep(2);
 
 	// Create observer and vehicle.
-	applet_interface.Launch(ref(new ObserverScript(observer_start_pos)));
+	{
+		AppletBase * observer_script = new ObserverScript(observer_start_pos);
+		Daemon::Call(& Engine::OnAddObject, observer_script);
+	}
 	
+	// Create vehicle.
 	SpawnVehicle();
 	
 	// main loop

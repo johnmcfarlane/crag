@@ -30,8 +30,5 @@ namespace applet
 		virtual void Yield() = 0;
 		virtual void Sleep(Time duration) = 0;
 		virtual void Wait(Condition & condition) = 0;
-		
-		// launch another applet
-		virtual void Launch(AppletBase & applet) = 0;
 	};
 }

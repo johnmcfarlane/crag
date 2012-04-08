@@ -57,7 +57,6 @@ namespace applet
 		virtual void Yield() override;
 		virtual void Sleep(Time duration) override;
 		virtual void Wait(Condition & condition) override;
-		virtual void Launch(AppletBase & applet) override;
 
 		// overridden by the concrete applet class
 		virtual void operator() (AppletInterface & applet_interface) = 0;

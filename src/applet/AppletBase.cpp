@@ -10,7 +10,6 @@
 
 #include "AppletBase.h"
 
-#include "Engine.h"
 #include "TimeCondition.h"
 
 #include "smp/Fiber.h"
@@ -107,9 +106,4 @@ void AppletBase::Wait(Condition & condition)
 	static_cast<smp::FiberInterface &>(_fiber).Yield();
 	
 	_condition = nullptr;
-}
-
-void AppletBase::Launch(AppletBase & applet)
-{
-	applet::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & applet);
 }
