@@ -140,8 +140,9 @@ namespace
 		{
 		}
 
-		void SampleFrameDuration(float const & frame_duration_ratio, QuaterneCount num_quaterne)
+		void SampleFrameDuration(float frame_duration_ratio, QuaterneCount num_quaterne)
 		{
+			frame_duration_ratio = std::max(frame_duration_ratio, std::numeric_limits<float>::min());
 			QuaterneCount recommended_num_quaterne = MakeRecommendation(frame_duration_ratio, num_quaterne);
 			_min_recommended_num_quaterne = std::min(_min_recommended_num_quaterne, recommended_num_quaterne);
 		}
@@ -279,7 +280,7 @@ void RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
 {
 	// Validate input
 	ASSERT(frame_duration_ratio == frame_duration_ratio);
-	ASSERT(frame_duration_ratio > 0);
+	ASSERT(frame_duration_ratio >= 0);
 	
 	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
