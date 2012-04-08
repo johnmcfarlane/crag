@@ -168,7 +168,10 @@ namespace
 			
 			float raw_recommended_num_quaterne = static_cast<float>(num_quaterne.GetNumber());
 			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
-			QuaterneCount recommended_num_quaterne(static_cast<int>(raw_recommended_num_quaterne));
+			ASSERT(raw_recommended_num_quaterne > 0);
+			
+			int rounded_recommended_num_quaterne = std::max(0, static_cast<int>(raw_recommended_num_quaterne));
+			QuaterneCount recommended_num_quaterne(rounded_recommended_num_quaterne);
 			
 			if (recommended_num_quaterne == num_quaterne)
 			{
