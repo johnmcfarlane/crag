@@ -9,15 +9,13 @@
 
 #pragma once
 
+#include "Node.h"
+#include "NodeBuffer.h"
 #include "Quaterna.h"
 
 
 namespace form 
 {
-	// forward-declarations
-	class NodeBuffer;
-	
-	
 	// Called on each node to (conditionally) expand it
 	// such that newly allocated nodes are assigned as children of it. 
 	class ExpandNodeFunctor
