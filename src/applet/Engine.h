@@ -9,33 +9,38 @@
 
 #pragma once
 
-#include "Script.h"
+#include "AppletBase.h"
 
 #include "smp/Daemon.h"
 
 #include "core/Singleton.h"
 
 
-namespace script
+namespace applet
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// forward-declarations
+	
+	template <typename FUNCTOR> class Applet;
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// definitions
+
 	typedef smp::Uid Uid;
 	
-	// script::Daemon type
+	// applet::Daemon type
 	class Engine;
 	typedef smp::Daemon<Engine> Daemon;
 	
-	// The scripting support is centered here.
-	// When Run finished, the program is done.
-	// Note: unrelated to Scheme engine:
-	// [http://en.wikipedia.org/wiki/Engine_(computer_science)]
+	// The applet scheduling is coordinated from here.
+	// When Run finishes, the program is done.
 	class Engine
 	{
 		OBJECT_SINGLETON(Engine);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-		
-		typedef std::queue<SDL_Event> EventQueue;
+
 	public:
 		typedef smp::Daemon<Engine> Daemon;
 		
@@ -45,34 +50,34 @@ namespace script
 		Engine();
 		~Engine();
 
-		// given a UID, returns the script associated with it
-		Script * GetObject(Uid uid);
+		// given a UID, returns the applet associated with it
+		AppletBase * GetObject(Uid uid);
 		
 		// daemon messages
-		void OnQuit();
-		void OnEvent(SDL_Event const & event);
-		
-		template <typename SCRIPT_TYPE>
-		void OnCreateObject(Uid const & uid)
+		template <typename FUNCTOR = void (*) (AppletInterface & applet_interface)>
+		void Launch(FUNCTOR & functor)
 		{
-			SCRIPT_TYPE * script = new SCRIPT_TYPE ();
-			script->SetUid(uid);
-			OnAddObject(* script);
+			AppletBase * object = new Applet<FUNCTOR> (functor);
+			OnAddObject(object);
 		}
 		
-		void OnAddObject(Script & entity);
+		void OnQuit();
+		
+		template <typename OBJECT_TYPE>
+		void OnCreateObject(Uid const & uid)
+		{
+			OBJECT_TYPE * object = new OBJECT_TYPE ();
+			object->SetUid(uid);
+			OnAddObject(object);
+		}
+		
+		void OnAddObject(AppletBase * const & entity);
 		void OnRemoveObject(Uid const & uid);
 		
-		bool GetQuitFlag() const;
 		void SetQuitFlag();
-		
-		Time GetTime() const;
-		void SetTime(Time const & time);
 		
 		// thread entry point
 		void Run(Daemon::MessageQueue & message_queue);
-		
-		void GetEvent(SDL_Event & event);
 		
 	private:
 		bool HasFibersActive() const;
@@ -82,13 +87,11 @@ namespace script
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		EventQueue _events;
-		
 		// sim::Engine time.
 		Time _time;
 		
-		// Collection of all active scripts
-		Script::List _scripts;
+		// Collection of all active applets
+		AppletBase::List _applets;
 		
 		bool _quit_flag;
 	};

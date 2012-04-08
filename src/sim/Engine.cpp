@@ -21,7 +21,7 @@
 
 #include "form/Engine.h"
 
-#include "script/Engine.h"
+#include "applet/Engine.h"
 
 #include "gfx/Engine.h"
 
@@ -178,9 +178,6 @@ void Engine::Tick()
 	if (! paused) 
 	{
 		_time += sim_tick_duration;
-		
-		// Update the script thread's time variable.
-		script::Daemon::Call<Time>(& script::Engine::SetTime, _time);
 		
 		// Perform the Entity-specific simulation.
 		TickEntities();

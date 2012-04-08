@@ -12,16 +12,16 @@
 #include "Condition.h"
 
 
-namespace script
+namespace applet
 {
 	// Condition that passes on, or after, a position in time.
 	class TimeCondition : public Condition
 	{
 		// functions
 	public:
-		TimeCondition(Time wake_position);
+		TimeCondition(Time duration);
 	private:
-		bool operator() (script::Engine & script_thread);
+		bool operator() ();
 		
 		// variables
 		Time _wake_position;

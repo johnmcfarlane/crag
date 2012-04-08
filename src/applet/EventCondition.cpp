@@ -11,19 +11,24 @@
 
 #include "EventCondition.h"
 
-#include "Engine.h"
+#include "core/app.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::EventCondition member definitions
+// applet::EventCondition member definitions
 
-bool EventCondition::operator() (Engine & engine)
+EventCondition::EventCondition()
 {
-	engine.GetEvent(_event);
-	return _event.type != 0;
+	_event.type = 0;
+}
+
+bool EventCondition::operator() (/*Engine & engine*/)
+{
+	ASSERT(_event.type == 0);
+	return app::PopEvent(_event);
 }
 
 SDL_Event const & EventCondition::GetEvent() const

@@ -11,6 +11,9 @@
 
 #include "app.h"
 
+#include "smp/Lock.h"
+#include "smp/SimpleMutex.h"
+
 #include "core/ConfigEntry.h"
 
 #if defined(__APPLE__)
@@ -34,6 +37,9 @@ namespace
 #endif
 	
 	char const * _program_path;
+	
+	smp::SimpleMutex _event_mutex;
+	std::vector<SDL_Event> _events;
 
 	void SetFocus(bool has_focus)
 	{
@@ -192,9 +198,9 @@ Vector2i app::GetWindowSize()
 	return window_size;
 }
 
-bool app::GetEvent(SDL_Event & event, bool block)
+bool app::GetEvent(SDL_Event & event)
 {
-	bool has_event = (block ? SDL_WaitEvent : SDL_PollEvent)(&event) != 0;
+	bool has_event = SDL_PollEvent(& event) != 0;
 	
 	if (! has_event)
 	{
@@ -226,7 +232,7 @@ bool app::GetEvent(SDL_Event & event, bool block)
 				if (_relative_mouse_mode)
 				{
 					// if relative mouse mode is working, 
-					// let script::Engine take care of this properly
+					// let applet::Engine take care of this properly
 					break;
 				}
 
@@ -266,6 +272,25 @@ bool app::GetEvent(SDL_Event & event, bool block)
 		break;
 	}
 	
+	return true;
+}
+
+void app::PushEvent(SDL_Event const & event)
+{
+	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
+	_events.push_back(event);
+}
+
+bool app::PopEvent(SDL_Event & event)
+{
+	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
+	if (_events.empty())
+	{
+		return false;
+	}
+	
+	event = _events.back();
+	_events.pop_back();
 	return true;
 }
 

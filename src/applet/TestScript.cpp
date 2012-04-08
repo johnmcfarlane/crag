@@ -12,6 +12,7 @@
 #include "TestScript.h"
 
 #include "ObserverScript.h"
+#include "Engine.h"
 
 #include "sim/Box.h"
 #include "sim/Engine.h"
@@ -26,11 +27,14 @@
 #include "core/Random.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Ball)	// sim::BallHandle
-DECLARE_CLASS_HANDLE(sim, Box)	// sim::BoxHandle
+DECLARE_CLASS_HANDLE(sim, Ball);	// sim::BallHandle
+DECLARE_CLASS_HANDLE(sim, Box);		// sim::BoxHandle
+DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
+DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
+DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
 
 
-using namespace script;
+using namespace applet;
 
 
 namespace
@@ -65,32 +69,26 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local types
 	
-	class AddThrusterFunctor
+	class TestScript
 	{
 	public:
-		////////////////////////////////////////////////////////////////////////////////
+		// types
+		typedef std::vector<sim::VehicleHandle> EntityVector;
+		
 		// functions
-		AddThrusterFunctor(sim::Vehicle::Thruster const & thruster)
-		: _thruster(thruster)
-		{
-			ASSERT(_thruster.model.GetUid() == gfx::Uid());
-		}
-		
-		void operator() (sim::Vehicle * vehicle) const
-		{
-			if (vehicle == nullptr)
-			{
-				ASSERT(false);
-				return;
-			}
-			
-			vehicle->AddThruster(_thruster);
-		}
-		
+		void operator() (AppletInterface & applet_interface);
 	private:
-		sim::Vehicle::Thruster _thruster;
+		void SpawnUniverse();
+		void SpawnVehicle();
+		void SpawnShapes();
+		
+		// variables
+		sim::PlanetHandle _planet, _moon1, _moon2;
+		sim::StarHandle _sun;
+		sim::VehicleHandle _vehicle;
+		EntityVector _shapes;
 	};
-	
+
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
@@ -102,13 +100,17 @@ namespace
 		thruster.key = SDL_SCANCODE_H;
 		thruster.thrust_factor = 1.;
 		
-		AddThrusterFunctor functor(thruster);
-		vehicle.Call<AddThrusterFunctor>(functor);
+		vehicle.Call(& sim::Vehicle::AddThruster, thruster);
 	}
 }
 
-void TestScript::operator() (FiberInterface & fiber)
+////////////////////////////////////////////////////////////////////////////////
+// TestScript member definitions
+
+void TestScript::operator() (AppletInterface & applet_interface)
 {
+	// TODO: Take a good look at the callstack that gets you here
+	// TODO: and have long think about what you've done.
 	DEBUG_MESSAGE("-> Main script");
 	
 	// Set camera position
@@ -120,17 +122,21 @@ void TestScript::operator() (FiberInterface & fiber)
 	SpawnUniverse();
 
 	// Give formations time to expand.
-	fiber.Sleep(2);
+	applet_interface.Sleep(2);
 
 	// Create observer and vehicle.
-	fiber.Launch(ref(new ObserverScript(observer_start_pos)));
+	{
+		AppletBase * observer_script = new ObserverScript(observer_start_pos);
+		Daemon::Call(& Engine::OnAddObject, observer_script);
+	}
 	
+	// Create vehicle.
 	SpawnVehicle();
 	
 	// main loop
-	while (! fiber.GetQuitFlag())
+	while (! applet_interface.GetQuitFlag())
 	{
-		fiber.Sleep(shape_drop_period);
+		applet_interface.Sleep(shape_drop_period);
 		
 		SpawnShapes();
 	}
@@ -266,4 +272,11 @@ void TestScript::SpawnShapes()
 				ASSERT(false);
 		}
 	}
+}
+
+
+void applet::Test (AppletInterface & applet_interface)
+{
+	TestScript test_script;
+	test_script(applet_interface);
 }

@@ -1,5 +1,5 @@
 //
-//  Script.h
+//  AppletBase.h
 //  crag
 //
 //  Created by John McFarlane on 2012-03-07.
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "FiberInterface.h"
+#include "AppletInterface.h"
 
 #include "smp/ObjectBase.h"
 
@@ -20,29 +20,28 @@ namespace smp
 	class FiberInterface;
 }
 
-namespace script
+namespace applet
 {
 	// forward-declarations
 	class Engine;
 	
-	// Base class for scripts, which are run in fibers.
-	class Script : public smp::ObjectBase<Script, Engine>, public FiberInterface
+	// Base class for applets, which are run in fibers.
+	// If your applet is sufficiently complex that it deserves its own class,
+	// derive that class from this one. Alternatively, specialize the Applet class.
+	class AppletBase : public smp::ObjectBase<AppletBase, Engine>, public AppletInterface
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Script();
-		~Script();
+		AppletBase();
+		~AppletBase();
 		
-		// true iff the script has not yet returned
+		// true iff the applet has not yet returned
 		bool IsRunning() const;
 		
-		// the condition which must test true before the script can continue
+		// the condition which must test true before the applet can continue
 		Condition * GetCondition();
-		
-		// called on initialization
-		void SetScriptThread(Engine & engine);
 		
 		// continue execution
 		void Continue();
@@ -51,23 +50,22 @@ namespace script
 		virtual void operator() (smp::FiberInterface & fiber);
 
 	private:
-		// ScriptInterface overrides
+		// AppletInterface overrides
 		virtual bool GetQuitFlag() const override;
 		virtual void SetQuitFlag() override;
 		
 		virtual void Yield() override;
 		virtual void Sleep(Time duration) override;
 		virtual void Wait(Condition & condition) override;
-		virtual void Launch(Script & script) override;
 
-		// overridden by the concrete script class
-		virtual void operator() (FiberInterface & script_interface) = 0;
+		// overridden by the concrete applet class
+		virtual void operator() (AppletInterface & applet_interface) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Engine * _engine;
 		smp::Fiber & _fiber;
 		Condition * _condition;
+		bool _quit_flag;
 	};
 }

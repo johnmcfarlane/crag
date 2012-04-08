@@ -12,14 +12,15 @@
 #include "Condition.h"
 
 
-namespace script
+namespace applet
 {
-	// Condition that an event has not arrived in the script::Engine.
+	// Condition that an event has not arrived in the applet::Engine.
 	class EventCondition : public Condition
 	{
 	public:
 		// functions
-		bool operator() (Engine & engine);
+		EventCondition();
+		virtual bool operator() (/*Engine & engine*/) override;
 		SDL_Event const & GetEvent() const;
 		
 	private:

@@ -1,5 +1,5 @@
 //
-//  script/Engine.cpp
+//  applet/Engine.cpp
 //  crag
 //
 //  Created by John McFarlane on 1/19/11.
@@ -12,6 +12,7 @@
 #include "Engine.h"
 
 #include "Condition.h"
+#include "AppletBase.h"
 
 
 #if defined(NDEBUG)
@@ -23,7 +24,7 @@
 #endif
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,19 +39,19 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	ASSERT(_scripts.empty());
+	ASSERT(_applets.empty());
 	
 	ASSERT(_quit_flag);
 }
 
-Script * Engine::GetObject(Uid uid)
+AppletBase * Engine::GetObject(Uid uid)
 {
-	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
-		Script & script = * i;
-		if (script.GetUid() == uid)
+		AppletBase & applet = * i;
+		if (applet.GetUid() == uid)
 		{
-			return & script;
+			return & applet;
 		}
 	}
 	
@@ -60,62 +61,45 @@ Script * Engine::GetObject(Uid uid)
 void Engine::OnQuit()
 {
 	SetQuitFlag();
-	SDL_Event quit_event = { SDL_QUIT };
-	OnEvent(quit_event);
 }
 
-void Engine::OnEvent(SDL_Event const & event)
+void Engine::OnAddObject(AppletBase * const & applet)
 {
-	_events.push(event);
-}
-
-void Engine::OnAddObject(Script & script)
-{
-	if (! script.GetUid())
+	if (! applet->GetUid())
 	{
-		script.SetUid(Uid::Create());
+		applet->SetUid(Uid::Create());
 	}
 	
-	_scripts.push_back(script);
-	script.SetScriptThread(* this);
+	_applets.push_back(* applet);
 }
 
 void Engine::OnRemoveObject(Uid const & uid)
 {
-	Script * script = GetObject(uid);
+	AppletBase * applet = GetObject(uid);
 	
-	if (script != nullptr)
+	if (applet != nullptr)
 	{
-		ASSERT(! script->IsRunning());
-		_scripts.remove(* script);
-		delete script;
+		ASSERT(! applet->IsRunning());
+		_applets.remove(* applet);
+		delete applet;
 	}
-}
-
-bool Engine::GetQuitFlag() const
-{
-	return _quit_flag;
 }
 
 void Engine::SetQuitFlag()
 {
 	_quit_flag = true;
-}
-
-Time Engine::GetTime() const
-{
-	return _time;
-}
-
-void Engine::SetTime(Time const & time)
-{
-	_time = time;
+	
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
+	{
+		AppletInterface & applet = * i;
+		applet.SetQuitFlag();
+	}
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	// Wait around until there are scripts to run.
+	// Wait around until there are applets to run.
 	while (! HasFibersActive())
 	{
 		if (message_queue.DispatchMessages(* this) == 0)
@@ -124,7 +108,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		}
 	}
 	
-	// Main script loop.
+	// Main loop.
 	while (HasFibersActive())
 	{
 		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
@@ -138,57 +122,45 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	message_queue.DispatchMessages(* this);
 }
 
-void Engine::GetEvent(SDL_Event & event)
-{
-	if (_events.empty())
-	{
-		event.type = 0;
-		return;
-	}
-	
-	event = _events.front();
-	_events.pop();
-}
-
 bool Engine::HasFibersActive() const
 {
-	return ! _scripts.empty();
+	return ! _applets.empty();
 }
 
 bool Engine::ProcessTasks()
 {
 	ASSERT(HasFibersActive());
 	
-	if (_scripts.empty())
+	if (_applets.empty())
 	{
 		return false;
 	}
 	
-	Script & first = _scripts.front();
-	Script * script = & first;
+	AppletBase & first = _applets.front();
+	AppletBase * applet = & first;
 	do
 	{
-		ASSERT(script->IsRunning());
+		ASSERT(applet->IsRunning());
 
-		_scripts.pop_front();
-		_scripts.push_back(* script);
+		_applets.pop_front();
+		_applets.push_back(* applet);
 		
-		Condition & condition = ref(script->GetCondition());
-		if (condition(* this))
+		Condition & condition = ref(applet->GetCondition());
+		if (condition())
 		{
-			script->Continue();
+			applet->Continue();
 
-			if (! script->IsRunning())
+			if (! applet->IsRunning())
 			{
-				_scripts.remove(* script);
-				delete script;
+				_applets.remove(* applet);
+				delete applet;
 			}
 			
 			return true;
 		}
 		
-		script = & static_cast<Script &>(_scripts.front());
-	}	while (script != & first);
+		applet = & static_cast<AppletBase &>(_applets.front());
+	}	while (applet != & first);
 	
 	return false;
 }

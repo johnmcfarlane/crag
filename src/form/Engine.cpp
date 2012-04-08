@@ -23,7 +23,7 @@
 #include "gfx/Engine.h"
 #include "gfx/object/FormationMesh.h"
 
-#include "script/Engine.h"
+#include "applet/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"

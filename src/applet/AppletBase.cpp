@@ -1,5 +1,5 @@
 //
-//  Script.cpp
+//  AppletBase.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-03-31.
@@ -8,15 +8,14 @@
 
 #include "pch.h"
 
-#include "Script.h"
+#include "AppletBase.h"
 
-#include "Engine.h"
 #include "TimeCondition.h"
 
 #include "smp/Fiber.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 namespace
@@ -25,7 +24,7 @@ namespace
 	// used by Yield to return ASAP;
 	class NullCondition : public Condition
 	{
-		bool operator() (script::Engine & script_thread)
+		bool operator() ()
 		{
 			return true;
 		}
@@ -36,46 +35,38 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::Script member definitions
+// applet::AppletBase member definitions
 
-Script::Script()
-: _engine(nullptr)
-, _fiber(ref(new smp::Fiber))
+AppletBase::AppletBase()
+: _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
+, _quit_flag(false)
 {
-	_fiber.Launch<Script &>(* this);
+	_fiber.Launch<AppletBase &>(* this);
 }
 
-Script::~Script()
+AppletBase::~AppletBase()
 {
 	delete & _fiber;
 }
 
-bool Script::IsRunning() const
+bool AppletBase::IsRunning() const
 {
 	return _fiber.IsRunning();
 }
 
-Condition * Script::GetCondition()
+Condition * AppletBase::GetCondition()
 {
 	return _condition;
 }
 
-void Script::SetScriptThread(script::Engine & script_thread)
-{
-	ASSERT(_engine == nullptr);
-	_engine = & script_thread;
-	ASSERT(_engine != nullptr);
-}
-
-void Script::Continue()
+void AppletBase::Continue()
 {
 	_fiber.Continue();
 }
 
-void Script::operator() (smp::FiberInterface & fiber)
+void AppletBase::operator() (smp::FiberInterface & fiber)
 {
-	ASSERT(_engine != nullptr);
 	ASSERT(& fiber == & _fiber);
 	ASSERT(_condition == & null_condition);
 	_condition = nullptr;
@@ -85,29 +76,29 @@ void Script::operator() (smp::FiberInterface & fiber)
 	ASSERT(_condition == nullptr);
 }
 
-bool Script::GetQuitFlag() const
+bool AppletBase::GetQuitFlag() const
 {
-	return _engine->GetQuitFlag();
+	return _quit_flag;
 }
 
-void Script::SetQuitFlag()
+void AppletBase::SetQuitFlag()
 {
-	_engine->SetQuitFlag();
+	_quit_flag = true;
 }
 
 // TODO: Should probably not be needed.
-void Script::Yield()
+void AppletBase::Yield()
 {
 	Wait(null_condition);
 }
 
-void Script::Sleep(Time duration)
+void AppletBase::Sleep(Time duration)
 {
-	TimeCondition time_condition(_engine->GetTime() + duration);
+	TimeCondition time_condition(duration);
 	Wait(time_condition);
 }
 
-void Script::Wait(Condition & condition)
+void AppletBase::Wait(Condition & condition)
 {
 	ASSERT(_condition == nullptr);
 	_condition = & condition;
@@ -115,10 +106,4 @@ void Script::Wait(Condition & condition)
 	static_cast<smp::FiberInterface &>(_fiber).Yield();
 	
 	_condition = nullptr;
-}
-
-void Script::Launch(Script & script)
-{
-	ASSERT(script._engine == nullptr);
-	_engine->OnAddObject(script);
 }
