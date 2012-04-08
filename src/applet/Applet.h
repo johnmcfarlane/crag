@@ -14,7 +14,7 @@
 
 namespace applet
 {
-	// A templated script class. 
+	// A templated applet class. 
 	// Handy for providing a function to be launched in its own fiber.
 	template <typename FUNCTOR = void (*)(AppletInterface &)>
 	class Applet : public AppletBase
@@ -39,6 +39,4 @@ namespace applet
 		// variables
 		Functor _functor;
 	};
-	
-	typedef smp::Handle< Applet<> > ScriptHandle;
 }

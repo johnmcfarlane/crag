@@ -32,10 +32,8 @@ namespace applet
 	class Engine;
 	typedef smp::Daemon<Engine> Daemon;
 	
-	// The scripting support is centered here.
-	// When Run finished, the program is done.
-	// Note: unrelated to Scheme engine:
-	// [http://en.wikipedia.org/wiki/Engine_(computer_science)]
+	// The applet scheduling is coordinated from here.
+	// When Run finishes, the program is done.
 	class Engine
 	{
 		OBJECT_SINGLETON(Engine);
@@ -52,7 +50,7 @@ namespace applet
 		Engine();
 		~Engine();
 
-		// given a UID, returns the script associated with it
+		// given a UID, returns the applet associated with it
 		AppletBase * GetObject(Uid uid);
 		
 		// daemon messages
@@ -65,12 +63,12 @@ namespace applet
 		
 		void OnQuit();
 		
-		template <typename SCRIPT_TYPE>
+		template <typename OBJECT_TYPE>
 		void OnCreateObject(Uid const & uid)
 		{
-			SCRIPT_TYPE * script = new SCRIPT_TYPE ();
-			script->SetUid(uid);
-			OnAddObject(script);
+			OBJECT_TYPE * object = new OBJECT_TYPE ();
+			object->SetUid(uid);
+			OnAddObject(object);
 		}
 		
 		void OnAddObject(AppletBase * const & entity);
@@ -92,8 +90,8 @@ namespace applet
 		// sim::Engine time.
 		Time _time;
 		
-		// Collection of all active scripts
-		AppletBase::List _scripts;
+		// Collection of all active applets
+		AppletBase::List _applets;
 		
 		bool _quit_flag;
 	};

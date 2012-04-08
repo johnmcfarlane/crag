@@ -22,7 +22,7 @@ namespace applet
 		// functions
 		virtual ~AppletInterface() { }
 		
-		// script thread quit flag get/setter
+		// applet thread quit flag get/setter
 		virtual bool GetQuitFlag() const = 0;
 		virtual void SetQuitFlag() = 0;
 
@@ -31,7 +31,7 @@ namespace applet
 		virtual void Sleep(Time duration) = 0;
 		virtual void Wait(Condition & condition) = 0;
 		
-		// launch another fiber (and deletes the script afterwards)
-		virtual void Launch(AppletBase & script) = 0;
+		// launch another applet
+		virtual void Launch(AppletBase & applet) = 0;
 	};
 }

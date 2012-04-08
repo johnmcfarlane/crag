@@ -1,5 +1,5 @@
 //
-//  script/Engine.cpp
+//  applet/Engine.cpp
 //  crag
 //
 //  Created by John McFarlane on 1/19/11.
@@ -39,19 +39,19 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	ASSERT(_scripts.empty());
+	ASSERT(_applets.empty());
 	
 	ASSERT(_quit_flag);
 }
 
 AppletBase * Engine::GetObject(Uid uid)
 {
-	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
-		AppletBase & script = * i;
-		if (script.GetUid() == uid)
+		AppletBase & applet = * i;
+		if (applet.GetUid() == uid)
 		{
-			return & script;
+			return & applet;
 		}
 	}
 	
@@ -63,25 +63,25 @@ void Engine::OnQuit()
 	SetQuitFlag();
 }
 
-void Engine::OnAddObject(AppletBase * const & script)
+void Engine::OnAddObject(AppletBase * const & applet)
 {
-	if (! script->GetUid())
+	if (! applet->GetUid())
 	{
-		script->SetUid(Uid::Create());
+		applet->SetUid(Uid::Create());
 	}
 	
-	_scripts.push_back(* script);
+	_applets.push_back(* applet);
 }
 
 void Engine::OnRemoveObject(Uid const & uid)
 {
-	AppletBase * script = GetObject(uid);
+	AppletBase * applet = GetObject(uid);
 	
-	if (script != nullptr)
+	if (applet != nullptr)
 	{
-		ASSERT(! script->IsRunning());
-		_scripts.remove(* script);
-		delete script;
+		ASSERT(! applet->IsRunning());
+		_applets.remove(* applet);
+		delete applet;
 	}
 }
 
@@ -89,7 +89,7 @@ void Engine::SetQuitFlag()
 {
 	_quit_flag = true;
 	
-	for (auto i = _scripts.begin(), end = _scripts.end(); i != end; ++ i)
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
 		AppletInterface & applet = * i;
 		applet.SetQuitFlag();
@@ -99,7 +99,7 @@ void Engine::SetQuitFlag()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	// Wait around until there are scripts to run.
+	// Wait around until there are applets to run.
 	while (! HasFibersActive())
 	{
 		if (message_queue.DispatchMessages(* this) == 0)
@@ -108,7 +108,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		}
 	}
 	
-	// Main script loop.
+	// Main loop.
 	while (HasFibersActive())
 	{
 		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
@@ -124,43 +124,43 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 bool Engine::HasFibersActive() const
 {
-	return ! _scripts.empty();
+	return ! _applets.empty();
 }
 
 bool Engine::ProcessTasks()
 {
 	ASSERT(HasFibersActive());
 	
-	if (_scripts.empty())
+	if (_applets.empty())
 	{
 		return false;
 	}
 	
-	AppletBase & first = _scripts.front();
-	AppletBase * script = & first;
+	AppletBase & first = _applets.front();
+	AppletBase * applet = & first;
 	do
 	{
-		ASSERT(script->IsRunning());
+		ASSERT(applet->IsRunning());
 
-		_scripts.pop_front();
-		_scripts.push_back(* script);
+		_applets.pop_front();
+		_applets.push_back(* applet);
 		
-		Condition & condition = ref(script->GetCondition());
+		Condition & condition = ref(applet->GetCondition());
 		if (condition())
 		{
-			script->Continue();
+			applet->Continue();
 
-			if (! script->IsRunning())
+			if (! applet->IsRunning())
 			{
-				_scripts.remove(* script);
-				delete script;
+				_applets.remove(* applet);
+				delete applet;
 			}
 			
 			return true;
 		}
 		
-		script = & static_cast<AppletBase &>(_scripts.front());
-	}	while (script != & first);
+		applet = & static_cast<AppletBase &>(_applets.front());
+	}	while (applet != & first);
 	
 	return false;
 }

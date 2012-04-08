@@ -35,7 +35,7 @@ namespace
 
 EntitySet::~EntitySet()
 {
-	// it's likely that the script failed really badly and didn't clean up
+	// it's likely that the main applet failed really badly and didn't clean up
 	ASSERT(entities.empty());
 }
 

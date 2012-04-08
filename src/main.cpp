@@ -304,13 +304,13 @@ namespace
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation(0x8000);
 			sim::Daemon simulation(0x400);
-			applet::Daemon scripting(0x400);
+			applet::Daemon applets(0x400);
 			
 			// start thread the daemons
 			formation.Start("form");
 			simulation.Start("sim");
 			renderer.Start("render");
-			scripting.Start("script");
+			applets.Start("applet");
 			
 			// launch the main script
 			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
@@ -332,9 +332,9 @@ namespace
 					DEBUG_MESSAGE("renderer initiating shutdown");
 					break;
 				}
-				if (! scripting.IsRunning())
+				if (! applets.IsRunning())
 				{
-					DEBUG_MESSAGE("scripting initiating shutdown");
+					DEBUG_MESSAGE("applets initiating shutdown");
 					break;
 				}
 
@@ -346,19 +346,19 @@ namespace
 			}
 			
 			// Tell the daemons to wind down.
-			scripting.BeginFlush();
+			applets.BeginFlush();
 			simulation.BeginFlush();
 			renderer.BeginFlush();
 			formation.BeginFlush();
 			
 			// Wait until they have all stopped working.
-			scripting.Synchronize();
+			applets.Synchronize();
 			simulation.Synchronize();
 			renderer.Synchronize();
 			formation.Synchronize();
 			
 			// Wait until they have all finished flushing.
-			scripting.EndFlush();
+			applets.EndFlush();
 			simulation.EndFlush();
 			renderer.EndFlush();
 			formation.EndFlush();

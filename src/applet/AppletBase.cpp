@@ -109,7 +109,7 @@ void AppletBase::Wait(Condition & condition)
 	_condition = nullptr;
 }
 
-void AppletBase::Launch(AppletBase & script)
+void AppletBase::Launch(AppletBase & applet)
 {
-	applet::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & script);
+	applet::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & applet);
 }
