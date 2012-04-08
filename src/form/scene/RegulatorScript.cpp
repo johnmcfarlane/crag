@@ -248,7 +248,7 @@ RegulatorScript::RegulatorScript()
 	Reset();
 }
 
-void RegulatorScript::operator() (script::AppletInterface & applet_interface)
+void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
 	// Introduce self to renderer.
 	smp::Handle<RegulatorScript> handle(GetUid());

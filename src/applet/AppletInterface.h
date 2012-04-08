@@ -8,7 +8,7 @@
 //
 
 
-namespace script
+namespace applet
 {
 	// forward-declare
 	class Condition;

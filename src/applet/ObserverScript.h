@@ -17,7 +17,7 @@
 DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
 
 
-namespace script
+namespace applet
 {
 	class ObserverScript : public AppletBase
 	{

@@ -16,7 +16,7 @@
 #include "core/Singleton.h"
 
 
-namespace script
+namespace applet
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
@@ -28,7 +28,7 @@ namespace script
 
 	typedef smp::Uid Uid;
 	
-	// script::Daemon type
+	// applet::Daemon type
 	class Engine;
 	typedef smp::Daemon<Engine> Daemon;
 	

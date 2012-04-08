@@ -16,7 +16,7 @@
 #include "smp/Fiber.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 namespace
@@ -36,7 +36,7 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::AppletBase member definitions
+// applet::AppletBase member definitions
 
 AppletBase::AppletBase()
 : _fiber(ref(new smp::Fiber))
@@ -111,5 +111,5 @@ void AppletBase::Wait(Condition & condition)
 
 void AppletBase::Launch(AppletBase & script)
 {
-	script::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & script);
+	applet::Daemon::Call<AppletBase *>(& Engine::OnAddObject, & script);
 }

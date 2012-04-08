@@ -14,11 +14,11 @@
 #include "core/app.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::EventCondition member definitions
+// applet::EventCondition member definitions
 
 EventCondition::EventCondition()
 {

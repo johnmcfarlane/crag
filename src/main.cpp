@@ -304,7 +304,7 @@ namespace
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation(0x8000);
 			sim::Daemon simulation(0x400);
-			script::Daemon scripting(0x400);
+			applet::Daemon scripting(0x400);
 			
 			// start thread the daemons
 			formation.Start("form");
@@ -313,7 +313,7 @@ namespace
 			scripting.Start("script");
 			
 			// launch the main script
-			script::Daemon::Call(& script::Engine::Launch, & script::Test);
+			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
 			
 			while (true)
 			{

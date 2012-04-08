@@ -20,7 +20,7 @@ namespace smp
 	class FiberInterface;
 }
 
-namespace script
+namespace applet
 {
 	// forward-declarations
 	class Engine;

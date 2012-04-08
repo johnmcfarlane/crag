@@ -12,9 +12,9 @@
 #include "Condition.h"
 
 
-namespace script
+namespace applet
 {
-	// Condition that an event has not arrived in the script::Engine.
+	// Condition that an event has not arrived in the applet::Engine.
 	class EventCondition : public Condition
 	{
 	public:

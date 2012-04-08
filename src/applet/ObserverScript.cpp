@@ -19,11 +19,11 @@
 #include "sim/Observer.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::ObserverScript member definitions
+// applet::ObserverScript member definitions
 
 ObserverScript::ObserverScript(sim::Vector3 const & spawn_position)
 : _collidable(true)

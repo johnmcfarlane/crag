@@ -33,7 +33,7 @@ DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
 DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
 
 
-using namespace script;
+using namespace applet;
 
 
 namespace
@@ -270,7 +270,7 @@ void TestScript::SpawnShapes()
 }
 
 
-void script::Test (AppletInterface & applet_interface)
+void applet::Test (AppletInterface & applet_interface)
 {
 	TestScript test_script;
 	test_script(applet_interface);

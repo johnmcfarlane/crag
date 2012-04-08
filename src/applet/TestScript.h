@@ -7,7 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-namespace script
+namespace applet
 {
 	// forward-declaration
 	class AppletInterface;

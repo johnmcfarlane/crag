@@ -14,11 +14,11 @@
 #include "core/app.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::TimeCondition member definitions
+// applet::TimeCondition member definitions
 
 TimeCondition::TimeCondition(Time duration)
 : _wake_position(app::GetTime() + duration)

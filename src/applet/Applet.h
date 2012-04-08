@@ -12,7 +12,7 @@
 #include "AppletBase.h"
 
 
-namespace script
+namespace applet
 {
 	// A templated script class. 
 	// Handy for providing a function to be launched in its own fiber.
