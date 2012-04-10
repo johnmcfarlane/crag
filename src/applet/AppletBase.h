@@ -46,9 +46,6 @@ namespace applet
 		// continue execution
 		void Continue();
 
-		// called on fiber startup
-		virtual void operator() (smp::FiberInterface & fiber);
-
 		void SetQuitFlag();
 	private:
 		
@@ -62,11 +59,15 @@ namespace applet
 		// overridden by the concrete applet class
 		virtual void operator() (AppletInterface & applet_interface) = 0;
 
+		// called on fiber startup
+		static void OnLaunch (void *);
+
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		smp::Fiber & _fiber;
 		Condition * _condition;
 		bool _quit_flag;
+		bool _finished_flag;
 	};
 }
