@@ -170,7 +170,7 @@ namespace
 			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
 			ASSERT(raw_recommended_num_quaterne > 0);
 			
-			int rounded_recommended_num_quaterne = std::max(0, static_cast<int>(raw_recommended_num_quaterne));
+			int rounded_recommended_num_quaterne = std::max(1, static_cast<int>(raw_recommended_num_quaterne));
 			QuaterneCount recommended_num_quaterne(rounded_recommended_num_quaterne);
 			
 			if (recommended_num_quaterne == num_quaterne)
