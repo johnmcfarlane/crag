@@ -91,7 +91,7 @@ void Engine::SetQuitFlag()
 	
 	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
-		AppletInterface & applet = * i;
+		AppletBase & applet = * i;
 		applet.SetQuitFlag();
 	}
 }
