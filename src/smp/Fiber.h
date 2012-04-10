@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "FiberInterface.h"
-
 #include <ucontext.h>
 
 
@@ -21,12 +19,12 @@ namespace smp
 	////////////////////////////////////////////////////////////////////////////////
 	// Fiber - lightweight thread
 	
-	class Fiber : public FiberInterface
+	class Fiber
     {
         ////////////////////////////////////////////////////////////////////////////////
 		// types
 	public:
-		typedef int (* Function)(void * data);
+		typedef void (Callback)(void * data);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -38,29 +36,17 @@ namespace smp
 		void Verify() const;
 #endif
 		
-		// true iff the fiber has been launched and had not quit or been killed 
-		bool IsRunning() const;
-        
-		// Launches the fiber with the given functor;
-		// Functor takes a FiberInterface as its sole input parameter.
-		template <typename FUNCTOR> void Launch(FUNCTOR functor);
-
 		// Continues execution of the fiber.
 		void Continue();
-        
-	private:
-        class FunctorWrapperBase;
-        template <typename FUNCTOR> class FunctorWrapper;
 
 		// Creates and launches a new fiber.
-		void Launch(FunctorWrapperBase & functor_wrapper);
+		void Launch(Callback * callback, void * data);
 		
-		static void OnLaunch(Fiber * fiber);
+		// Pauses execution until the next call to Continue.
+		// Must be called from within the fiber.
+		void Yield();
 		
-		// FiberInterface overrides
-		virtual void Yield() override;
-		virtual void Kill() override;
-		
+	private:
 		void InitStack();
 		std::size_t EstimateStackUse() const;
 		
@@ -69,36 +55,5 @@ namespace smp
 		ucontext_t _context;
 		std::size_t _stack_size;	// the given stack size plus MINSIGSTKSZ
 		void * _stack;
-		FunctorWrapperBase * _functor_wrapper;
     };
-	
-
-	////////////////////////////////////////////////////////////////////////////////
-	// Fiber member definitions
-	
-	// polymorphic class of things to be called on fiber launch
-	class Fiber::FunctorWrapperBase
-	{
-	public:
-		virtual ~FunctorWrapperBase() = default;
-		virtual void OnLaunch (FiberInterface &) = 0;
-	};
-
-	// templatized class of thing to be called on fiber launch
-	template <typename FUNCTOR>
-	class Fiber::FunctorWrapper : public Fiber::FunctorWrapperBase
-	{
-	public:
-		FunctorWrapper(FUNCTOR & functor) : _functor(functor) { }
-	private:
-		virtual void OnLaunch (FiberInterface & fiber_interface) { _functor(fiber_interface); }
-		FUNCTOR _functor;
-	};
-	
-	template <typename FUNCTOR>
-	void Fiber::Launch(FUNCTOR functor)
-	{
-		FunctorWrapperBase * functor_wrapper = new FunctorWrapper<FUNCTOR>(functor);
-		Launch(ref(functor_wrapper));
-	}
 }

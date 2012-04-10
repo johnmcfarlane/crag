@@ -49,7 +49,6 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 		if (! HandleEvent(event))
 		{
 			Daemon::Call(& Engine::OnQuit);
-			applet_interface.SetQuitFlag();
 		}
 	}
 
