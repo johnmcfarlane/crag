@@ -12,7 +12,7 @@
 #include "Condition.h"
 
 
-namespace script
+namespace applet
 {
 	// Condition that passes on, or after, a position in time.
 	class TimeCondition : public Condition

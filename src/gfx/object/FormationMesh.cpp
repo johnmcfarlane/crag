@@ -20,7 +20,7 @@
 #include "form/node/NodeBuffer.h"
 #include "form/scene/RegulatorScript.h"
 
-#include "script/Engine.h"
+#include "applet/Engine.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"

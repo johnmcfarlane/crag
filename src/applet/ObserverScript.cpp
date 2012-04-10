@@ -19,11 +19,11 @@
 #include "sim/Observer.h"
 
 
-using namespace script;
+using namespace applet;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// script::ObserverScript member definitions
+// applet::ObserverScript member definitions
 
 ObserverScript::ObserverScript(sim::Vector3 const & spawn_position)
 : _collidable(true)
@@ -36,20 +36,19 @@ ObserverScript::~ObserverScript()
 	_observer.Destroy();
 }
 
-void ObserverScript::operator() (FiberInterface & fiber)
+void ObserverScript::operator() (AppletInterface & applet_interface)
 {
 	DEBUG_MESSAGE("-> ObserverScript");
 	
-	while (! fiber.GetQuitFlag())
+	while (! applet_interface.GetQuitFlag())
 	{
 		EventCondition event_condition;
-		fiber.Wait(event_condition);
+		applet_interface.Wait(event_condition);
 		SDL_Event const & event = event_condition.GetEvent();
 		
 		if (! HandleEvent(event))
 		{
 			Daemon::Call(& Engine::OnQuit);
-			fiber.SetQuitFlag();
 		}
 	}
 

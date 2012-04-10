@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Script.h"
+#include "AppletBase.h"
 
 #include "sim/defs.h"
 
@@ -17,16 +17,16 @@
 DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
 
 
-namespace script
+namespace applet
 {
-	class ObserverScript : public Script
+	class ObserverScript : public AppletBase
 	{
 	public:
 		// functions
 		ObserverScript(sim::Vector3 const & spawn_position);
 		~ObserverScript();
 		
-		virtual void operator() (FiberInterface & fiber) override;
+		virtual void operator() (AppletInterface & applet_interface) override;
 		
 	private:
 		bool HandleEvent(SDL_Event const & event);

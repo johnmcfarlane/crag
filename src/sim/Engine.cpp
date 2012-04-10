@@ -21,7 +21,7 @@
 
 #include "form/Engine.h"
 
-#include "script/Engine.h"
+#include "applet/Engine.h"
 
 #include "gfx/Engine.h"
 

@@ -10,7 +10,7 @@
 #pragma once
 
 
-namespace script
+namespace applet
 {
 	// forward-declarations
 	class Engine;

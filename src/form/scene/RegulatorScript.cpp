@@ -248,13 +248,13 @@ RegulatorScript::RegulatorScript()
 	Reset();
 }
 
-void RegulatorScript::operator() (script::FiberInterface & fiber)
+void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
 	// Introduce self to renderer.
 	smp::Handle<RegulatorScript> handle(GetUid());
 	gfx::Daemon::Call(& gfx::Engine::OnSetRegulatorHandle, handle);
 	
-	while (! fiber.GetQuitFlag())
+	while (! applet_interface.GetQuitFlag())
 	{
 		QuaterneCount recommended_num_quaterne = GetRecommendedNumQuaterna();
 		if (recommended_num_quaterne != QuaterneCount::invalid())
@@ -264,7 +264,7 @@ void RegulatorScript::operator() (script::FiberInterface & fiber)
 			Reset();
 		}
 		
-		fiber.Sleep(0.25);
+		applet_interface.Sleep(0.25);
 	}
 }
 

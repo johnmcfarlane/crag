@@ -16,7 +16,7 @@ namespace smp
 	template <typename CLASS>
 	class Daemon;
 	
-	// Base class for objects used by the script daemon.
+	// Base class for objects used by the engines.
 	// OBJECT derives directly from ObjectBase.
 	template <typename OBJECT, typename DAEMON_CLASS>
 	class ObjectBase

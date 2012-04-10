@@ -21,7 +21,9 @@
 #include "form/Engine.h"
 #include "form/scene/RegulatorScript.h"
 
-#include "script/Engine.h"
+#include "sim/Engine.h"
+
+#include "applet/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
