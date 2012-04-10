@@ -20,9 +20,8 @@ using namespace smp;
 // smp::Fiber member definitions
 
 Fiber::Fiber(std::size_t stack_size)
-: _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
-, _stack(Allocate(stack_size, 1024))
-, _functor_wrapper(nullptr)
+: _stack(Allocate(stack_size, 1024))
+, _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
 {
     if (getcontext(& _context) != 0) 
 	{
@@ -48,12 +47,6 @@ Fiber::~Fiber()
 				  static_cast<unsigned>(_stack_size - stack_use));
 #endif
 
-	if (IsRunning())
-	{
-		DEBUG_BREAK("Forcing shutdown of Fiber");
-		Kill();
-	}
-	
 	Free(_stack);
 }
 
@@ -64,35 +57,20 @@ void Fiber::Verify() const
 	ASSERT(_context.uc_stack.ss_size >= MINSIGSTKSZ);
 	std::size_t stack_use = EstimateStackUse();
 	ASSERT(stack_use < _stack_size - 1024);
-	
-	if (! IsRunning())
-	{
-		ASSERT(_context.uc_link == nullptr);
-	}
 }
 #endif
 
-bool Fiber::IsRunning() const
+void Fiber::Launch(Callback * callback, void * data)
 {
-	return _functor_wrapper != nullptr;
-}
-
-void Fiber::Launch(FunctorWrapperBase & functor_wrapper)
-{
-    ASSERT(! IsRunning());
 	ASSERT(_context.uc_link == nullptr);
 
-	_functor_wrapper = & functor_wrapper;
-	makecontext(& _context, (void (*)()) OnLaunch, 1, this);
+	static_assert(sizeof(data) == sizeof(int), "Bad parameter size. (See wikipedia entry for setcontext.)");	// a minor wart in makecontext
+	makecontext(& _context, (void (*)())callback, 1, data);
 }
 
 void Fiber::Continue()
 {
 	ASSERT(_context.uc_link == nullptr);
-	if (! IsRunning())
-	{
-		return;
-	}
 	
 	ucontext_t return_context;
 	_context.uc_link = & return_context;
@@ -101,20 +79,6 @@ void Fiber::Continue()
 	
 	ASSERT(_context.uc_link != nullptr);
 	_context.uc_link = nullptr;
-}
-
-// entry point for fiber
-void Fiber::OnLaunch(Fiber * fiber)
-{
-	ASSERT(fiber != nullptr);
-	ASSERT(fiber->_context.uc_link != nullptr);
-	ASSERT(fiber->_functor_wrapper != nullptr);
-	
-	fiber->_functor_wrapper->OnLaunch(* fiber);
-	fiber->Kill();
-
-	ASSERT(fiber->_context.uc_link != nullptr);
-	ASSERT(fiber->_functor_wrapper == nullptr);
 }
 
 void Fiber::Yield()
@@ -126,18 +90,6 @@ void Fiber::Yield()
 
 	ASSERT(_context.uc_link != nullptr);
 	VerifyObject(* this);
-}
-
-void Fiber::Kill()
-{
-	if (_functor_wrapper == nullptr) 
-	{
-		DEBUG_BREAK("_functor_wrapper=%p", _functor_wrapper);
-		return;
-	}
-
-	delete _functor_wrapper;
-	_functor_wrapper = nullptr;
 }
 
 void Fiber::InitStack()

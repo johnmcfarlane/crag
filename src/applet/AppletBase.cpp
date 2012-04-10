@@ -41,8 +41,9 @@ AppletBase::AppletBase()
 : _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
 , _quit_flag(false)
+, _finished_flag(false)
 {
-	_fiber.Launch<AppletBase &>(* this);
+	_fiber.Launch(& OnLaunch, this);
 }
 
 AppletBase::~AppletBase()
@@ -52,7 +53,7 @@ AppletBase::~AppletBase()
 
 bool AppletBase::IsRunning() const
 {
-	return _fiber.IsRunning();
+	return ! _finished_flag;
 }
 
 Condition * AppletBase::GetCondition()
@@ -63,17 +64,6 @@ Condition * AppletBase::GetCondition()
 void AppletBase::Continue()
 {
 	_fiber.Continue();
-}
-
-void AppletBase::operator() (smp::FiberInterface & fiber)
-{
-	ASSERT(& fiber == & _fiber);
-	ASSERT(_condition == & null_condition);
-	_condition = nullptr;
-
-	(* this)(* this);
-
-	ASSERT(_condition == nullptr);
 }
 
 bool AppletBase::GetQuitFlag() const
@@ -103,7 +93,23 @@ void AppletBase::Wait(Condition & condition)
 	ASSERT(_condition == nullptr);
 	_condition = & condition;
 	
-	static_cast<smp::FiberInterface &>(_fiber).Yield();
+	_fiber.Yield();
 	
 	_condition = nullptr;
+}
+
+void AppletBase::OnLaunch(void * data)
+{
+	AppletBase & applet = ref(reinterpret_cast<AppletBase *>(data));
+	ASSERT(applet._finished_flag == false);
+	
+	ASSERT(applet._condition == & null_condition);
+	applet._condition = nullptr;
+	
+	applet(applet);
+	
+	ASSERT(applet._finished_flag == false);
+	applet._finished_flag = true;
+	
+	ASSERT(applet._condition == nullptr);
 }
