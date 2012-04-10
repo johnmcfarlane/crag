@@ -252,6 +252,12 @@ RegulatorScript::RegulatorScript()
 	Reset();
 }
 
+RegulatorScript::~RegulatorScript()
+{
+	delete _units[mesh_generation];
+	delete _units[frame_rate];
+}
+
 void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
 	// Introduce self to renderer.
