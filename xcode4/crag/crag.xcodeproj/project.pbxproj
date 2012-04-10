@@ -92,6 +92,7 @@
 		5230578E14F1D95F0024D4A8 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572A14F1D95F0024D4A8 /* smp.cpp */; };
 		5230578F14F1D95F0024D4A8 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572C14F1D95F0024D4A8 /* Thread.cpp */; };
 		5230579014F1D95F0024D4A8 /* Uid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572E14F1D95F0024D4A8 /* Uid.cpp */; };
+		5238885D1533F0C8004F79ED /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5238885B1533F0C8004F79ED /* main.cpp */; };
 		52394D5714C33EB9008EF2DC /* fog.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52394D5614C33EB9008EF2DC /* fog.frag */; };
 		52483975143BEAE300195337 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483974143BEAE300195337 /* Carbon.framework */; };
 		52483977143BEB0200195337 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483976143BEB0200195337 /* IOKit.framework */; };
@@ -383,6 +384,8 @@
 		5230572E14F1D95F0024D4A8 /* Uid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uid.cpp; sourceTree = "<group>"; };
 		5230572F14F1D95F0024D4A8 /* Uid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uid.h; sourceTree = "<group>"; };
 		5230573014F1D95F0024D4A8 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
+		5238885B1533F0C8004F79ED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5238885C1533F0C8004F79ED /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		52394D5614C33EB9008EF2DC /* fog.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fog.frag; sourceTree = "<group>"; };
 		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
@@ -504,6 +507,7 @@
 				5230563314F1D95F0024D4A8 /* COPYING */,
 				5230563414F1D95F0024D4A8 /* core */,
 				5230565014F1D95F0024D4A8 /* form */,
+				5238885A1533F0C8004F79ED /* ga */,
 				5230567914F1D95F0024D4A8 /* geom */,
 				5230568814F1D95F0024D4A8 /* gfx */,
 				523056CC14F1D95F0024D4A8 /* main.cpp */,
@@ -809,6 +813,15 @@
 			path = smp;
 			sourceTree = "<group>";
 		};
+		5238885A1533F0C8004F79ED /* ga */ = {
+			isa = PBXGroup;
+			children = (
+				5238885B1533F0C8004F79ED /* main.cpp */,
+				5238885C1533F0C8004F79ED /* main.h */,
+			);
+			path = ga;
+			sourceTree = "<group>";
+		};
 		52483972143BEA6200195337 /* SDL Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1035,6 +1048,7 @@
 				5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */,
 				5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */,
 				5249C5FB1530D6DE000FF6AB /* TimeCondition.cpp in Sources */,
+				5238885D1533F0C8004F79ED /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

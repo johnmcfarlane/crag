@@ -15,6 +15,8 @@
 
 #include "smp/scheduler.h"
 
+#include "ga/main.h"
+
 #include "form/Engine.h"
 #include "sim/Engine.h"
 #include "gfx/Engine.h"
@@ -313,7 +315,8 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
+			//applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
+			applet::Daemon::Call(& applet::Engine::Launch, & ga::main);
 			
 			while (true)
 			{
