@@ -21,6 +21,8 @@
 
 #define ENABLE_SCHEDULER
 
+#define NUM_RESERVED_CPUS 1
+
 
 namespace smp
 {
@@ -112,6 +114,11 @@ namespace smp
 					}
 				}
 				
+				int GetNumUnits() const
+				{
+					return _num_units;
+				}
+				
 				// Returns true iff all the units are completed.
 				bool IsCompleted() const
 				{
@@ -147,6 +154,11 @@ namespace smp
 				////////////////////////////////////////////////////////////////////////////////
 				// functions
 				
+				TaskManager()
+				: _semaphore(Semaphore::Create(0))
+				{
+				}
+				
 				~TaskManager()
 				{
 					while (true)
@@ -162,6 +174,8 @@ namespace smp
 
 						Yield();
 					}
+					
+					delete & _semaphore;
 				}
 				
 				// called from a thread requesting work
@@ -177,10 +191,22 @@ namespace smp
 				
 				// "Make yourself useful."
 				// Called from a thread volunteering to do work.
-				bool ExecuteUnit()
+				bool ExecuteUnit(bool block)
 				{
 					Task * task;
 					int unit_index;
+					
+					if (block)
+					{
+						_semaphore.Decrement();
+					}
+					else
+					{
+						if (! _semaphore.TryDecrement())
+						{
+							return false;
+						}
+					}
 					
 					// If a unit of work cannot be acquired,
 					if (! SolicitUnit(task, unit_index))
@@ -195,12 +221,20 @@ namespace smp
 					// Wrap up the work.
 					if (OnUnitComplete(* task))
 					{
-						// If the task is completely done, delet it.
+						// If the task is completely done, delete it.
 						delete task;
 					}
 					
 					// return success: work was done.
 					return true;
+				}
+				
+				void Unblock(int num_threads)
+				{
+					while ((-- num_threads) >= 0)
+					{
+						_semaphore.Increment();
+					}
 				}
 				
 			private:
@@ -221,6 +255,8 @@ namespace smp
 					
 					// insert task at that position
 					_tasks.insert(position, task);
+					
+					Unblock(task.GetNumUnits());
 				}
 				
 				// Try and get a unit of work to do.
@@ -271,6 +307,7 @@ namespace smp
 				// variables
 				TaskList _tasks;
 				Mutex _mutex;
+				Semaphore & _semaphore;
 			};
 			
 			
@@ -281,12 +318,9 @@ namespace smp
 			class ThreadBuffer
 			{
 			public:
-				ThreadBuffer()
+				ThreadBuffer(int num_threads)
 				{
 					// Create a thread for each CPU (except one).
-					// TODO: once non-blocking tasks are used, re-add the extra thread and
-					// num_complete should be a semaphore and this thread should idle.
-					int num_threads = GetNumCpus();
 					_threads = new Thread [num_threads];
 					
 					// Launch them all.
@@ -316,7 +350,18 @@ namespace smp
 			class Singleton
 			{
 			public:
-				// function
+				// functions
+				Singleton()
+				: _num_threads(GetNumCpus() - NUM_RESERVED_CPUS)
+				, _workforce(_num_threads)
+				{
+				}
+				
+				~Singleton()
+				{
+					_task_manager.Unblock(_num_threads);
+				}
+				
 				TaskManager & GetTaskManager()
 				{
 					return _task_manager;
@@ -324,6 +369,7 @@ namespace smp
 				
 			private:
 				// variables
+				int _num_threads;
 				TaskManager _task_manager;
 				ThreadBuffer _workforce;
 			};
@@ -345,16 +391,10 @@ namespace smp
 				// Singleton & task manager don't ever change until shutdown.
 				TaskManager & task_manager = singleton->GetTaskManager();
 				
-				// Until we're all done,
-				while (singleton != nullptr)
+				// Keep working until there's no more work.
+				while (task_manager.ExecuteUnit(true))
 				{
-					// do work
-					if (! task_manager.ExecuteUnit())
-					{
-						// or sleep.
-						// TODO: Start using semaphores again.
-						Yield();
-					}
+					ASSERT(singleton != nullptr);
 				}
 				
 				return 0;
