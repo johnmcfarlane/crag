@@ -49,6 +49,7 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 		HandleEvent(event);
 	}
 
+	Daemon::Call(& Engine::SetQuitFlag);
 	DEBUG_MESSAGE("<- ObserverScript");
 }
 
@@ -219,5 +220,5 @@ void ObserverScript::SetSpeed(int speed)
 
 void ObserverScript::InitiateShutdown()
 {
-	Daemon::Call(& Engine::SetQuitFlag);
+	SetQuitFlag();
 }
