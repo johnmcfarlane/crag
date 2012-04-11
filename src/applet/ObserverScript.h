@@ -29,12 +29,13 @@ namespace applet
 		virtual void operator() (AppletInterface & applet_interface) override;
 		
 	private:
-		bool HandleEvent(SDL_Event const & event);
-		bool HandleKeyboardEvent(SDL_Scancode scancode, bool down);
-		bool HandleMouseButton(Uint8 button, bool down);
-		bool HandleMouseMove(int x_delta, int y_delta);
+		void HandleEvent(SDL_Event const & event);
+		void HandleKeyboardEvent(SDL_Scancode scancode, bool down);
+		void HandleMouseButton(Uint8 button, bool down);
+		void HandleMouseMove(int x_delta, int y_delta);
 		
 		void SetSpeed(int speed);
+		static void InitiateShutdown();
 		
 		// variables
 		sim::ObserverHandle _observer;

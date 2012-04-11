@@ -46,40 +46,43 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 		applet_interface.Wait(event_condition);
 		SDL_Event const & event = event_condition.GetEvent();
 		
-		if (! HandleEvent(event))
-		{
-			Daemon::Call(& Engine::OnQuit);
-		}
+		HandleEvent(event);
 	}
 
 	DEBUG_MESSAGE("<- ObserverScript");
 }
 
 // returns false if it's time to quit
-bool ObserverScript::HandleEvent(SDL_Event const & event)
+void ObserverScript::HandleEvent(SDL_Event const & event)
 {
 	switch (event.type)
 	{
 		case SDL_QUIT:
-			return false;
+			InitiateShutdown();
+			break;
 			
 		case SDL_KEYDOWN:
-			return HandleKeyboardEvent(event.key.keysym.scancode, 1);
+			HandleKeyboardEvent(event.key.keysym.scancode, 1);
+			break;
 			
 		case SDL_KEYUP:
-			return HandleKeyboardEvent(event.key.keysym.scancode, 0);
+			HandleKeyboardEvent(event.key.keysym.scancode, 0);
+			break;
 			
 		case SDL_MOUSEBUTTONDOWN:
-			return HandleMouseButton(event.button.button, 1);
+			HandleMouseButton(event.button.button, 1);
+			break;
 			
 		case SDL_MOUSEBUTTONUP:
-			return HandleMouseButton(event.button.button, 0);
+			HandleMouseButton(event.button.button, 0);
+			break;
 			
 		case SDL_MOUSEMOTION:
-			return HandleMouseMove(event.motion.xrel, event.motion.yrel);
+			HandleMouseMove(event.motion.xrel, event.motion.yrel);
+			break;
 			
 		default:
-			return true;
+			break;
 	}
 }
 
@@ -110,14 +113,15 @@ namespace
 }
 
 // returns false if it's time to quit
-bool ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
+void ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 {
 	if (down)
 	{
 		switch (scancode)
 		{
 			case SDL_SCANCODE_ESCAPE:
-				return false;
+				InitiateShutdown();
+				break;
 				
 			case SDL_SCANCODE_C:
 				{
@@ -125,27 +129,24 @@ bool ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 					SetCollidableFunctor functor(_collidable);
 					_observer.Call(functor);
 				}
-				return true;
+				break;
 
 			case SDL_SCANCODE_0:
 				SetSpeed(10);
-				return true;
+				break;
 				
 			default:
 				if (scancode >= SDL_SCANCODE_1 && scancode <= SDL_SCANCODE_9)
 				{
 					SetSpeed(scancode + 1 - SDL_SCANCODE_1);
 				}
-				return true;
+				break;
 		}
 	}
-	
-	return true;
 }
 
-bool ObserverScript::HandleMouseButton(Uint8 button, bool down)
+void ObserverScript::HandleMouseButton(Uint8 button, bool down)
 {
-	return true;
 }
 
 namespace
@@ -174,7 +175,7 @@ namespace
 	};
 }
 
-bool ObserverScript::HandleMouseMove(int x_delta, int y_delta)
+void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
 	float sensitivity = 0.1f;
 	
@@ -184,9 +185,7 @@ bool ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 	rotation.z = - x_delta * sensitivity;
 
 	AddRotationFunctor functor(rotation);
-	_observer.Call(functor);	
-	
-	return true;
+	_observer.Call(functor);
 }
 
 class SetSpeedFunctor
@@ -216,4 +215,9 @@ void ObserverScript::SetSpeed(int speed)
 {
 	SetSpeedFunctor functor(speed);
 	_observer.Call(functor);
+}
+
+void ObserverScript::InitiateShutdown()
+{
+	Daemon::Call(& Engine::SetQuitFlag);
 }
