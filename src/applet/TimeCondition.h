@@ -21,7 +21,8 @@ namespace applet
 	public:
 		TimeCondition(Time duration);
 	private:
-		bool operator() ();
+		// true iff the time has elapsed (or this was hurried)
+		virtual bool operator() (bool hurry) final;
 		
 		// variables
 		Time _wake_position;

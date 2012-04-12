@@ -35,7 +35,6 @@ namespace applet
 		void HandleMouseMove(int x_delta, int y_delta);
 		
 		void SetSpeed(int speed);
-		void InitiateShutdown();
 		
 		// variables
 		sim::ObserverHandle _observer;

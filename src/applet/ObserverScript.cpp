@@ -49,7 +49,6 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 		HandleEvent(event);
 	}
 
-	Daemon::Call(& Engine::SetQuitFlag);
 	DEBUG_MESSAGE("<- ObserverScript");
 }
 
@@ -58,10 +57,6 @@ void ObserverScript::HandleEvent(SDL_Event const & event)
 {
 	switch (event.type)
 	{
-		case SDL_QUIT:
-			InitiateShutdown();
-			break;
-			
 		case SDL_KEYDOWN:
 			HandleKeyboardEvent(event.key.keysym.scancode, 1);
 			break;
@@ -120,10 +115,6 @@ void ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 	{
 		switch (scancode)
 		{
-			case SDL_SCANCODE_ESCAPE:
-				InitiateShutdown();
-				break;
-				
 			case SDL_SCANCODE_C:
 				{
 					_collidable = ! _collidable;
@@ -216,9 +207,4 @@ void ObserverScript::SetSpeed(int speed)
 {
 	SetSpeedFunctor functor(speed);
 	_observer.Call(functor);
-}
-
-void ObserverScript::InitiateShutdown()
-{
-	SetQuitFlag();
 }

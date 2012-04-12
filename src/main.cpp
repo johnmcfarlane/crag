@@ -109,6 +109,17 @@ namespace
 			{
 				switch (keysym.scancode)
 				{
+					case SDL_SCANCODE_ESCAPE:
+					{
+						SDL_Event quit_event;
+						quit_event.type = SDL_QUIT;
+						if (SDL_PushEvent(& quit_event) != 1)
+						{
+							DEBUG_BREAK("SDL_PushEvent returned error");
+						}
+						return true;
+					}
+						
 					case SDL_SCANCODE_RETURN:
 					{
 						sim::Daemon::Call(& sim::Engine::OnTogglePause);
@@ -210,16 +221,12 @@ namespace
 		return false;
 	}
 	
+	// Returns false if it's time to quit.
 	bool HandleEvent()
 	{
 		SDL_Event event;
 		
-		// If no events are pending,
-		if (! app::GetEvent(event))
-		{
-			// then nothing's happening event-wise.
-			return false;
-		}
+		app::GetEvent(event);
 		
 		switch (event.type)
 		{
@@ -276,7 +283,7 @@ namespace
 
 		// If not caught here, then send it to the application event queue.
 		app::PushEvent(event);
-		return true;
+		return event.type != SDL_QUIT;
 	}
 
 	// The main program function.
@@ -315,7 +322,7 @@ namespace
 			// launch the main script
 			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
 			
-			while (true)
+			while (HandleEvent())
 			{
 				if (! formation.IsRunning())
 				{
@@ -336,12 +343,6 @@ namespace
 				{
 					DEBUG_MESSAGE("applets initiating shutdown");
 					break;
-				}
-
-				if (! HandleEvent())
-				{
-					// TODO: This call is costly and shouldn't be necessary with a few fixes to shut-down code. 
-					smp::Yield();
 				}
 			}
 			

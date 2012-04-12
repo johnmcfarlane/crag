@@ -30,6 +30,7 @@ namespace
 		
 	char const * _program_path;
 	
+	// TODO: Use SDL_AddEventWatch
 	smp::SimpleMutex _event_mutex;
 	std::vector<SDL_Event> _events;
 
@@ -179,13 +180,14 @@ Vector2i app::GetWindowSize()
 	return window_size;
 }
 
-bool app::GetEvent(SDL_Event & event)
+void app::GetEvent(SDL_Event & event)
 {
-	bool has_event = SDL_PollEvent(& event) != 0;
+	bool has_event = SDL_WaitEvent(& event) != 0;
 	
 	if (! has_event)
 	{
-		return false;
+		DEBUG_BREAK("SDL_WaitEvent failed");
+		return;
 	}
 	
 	switch (event.type)
@@ -219,7 +221,7 @@ bool app::GetEvent(SDL_Event & event)
 
 				if (! _has_focus)
 				{
-					return true;
+					break;
 				}
 
 				// intercept message and fake relative mouse movement correctly.
@@ -232,7 +234,7 @@ bool app::GetEvent(SDL_Event & event)
 				Vector2i delta = (cursor - center);
 				if (delta.x == 0 && delta.y == 0)
 				{
-					return true;
+					break;
 				}
 
 				// fake a mouse motion event
@@ -241,7 +243,7 @@ bool app::GetEvent(SDL_Event & event)
 				event.motion.y = cursor.y;
 				event.motion.xrel = delta.x;
 				event.motion.yrel = delta.y;
-				return true;
+				break;
 
 				/*Vector2f mouse_input = Vector2f(delta) * 0.3f;
 				if (Length(mouse_input) > 0) {
@@ -252,8 +254,6 @@ bool app::GetEvent(SDL_Event & event)
 			}
 		break;
 	}
-	
-	return true;
 }
 
 void app::PushEvent(SDL_Event const & event)
