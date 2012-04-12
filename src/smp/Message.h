@@ -16,13 +16,13 @@ namespace smp
 	////////////////////////////////////////////////////////////////////////////////
 	// Message base class
 	//
-	// Functors derived from this class are invoked upon an instance of CLASS
+	// Functors derived from this class are invoked upon an instance of ENGINE
 	// in a thread-safe manner.
 	
 	
 	// Polymorphic base class for message wrapper.
 	// Required so that messages can be listed in Actor.
-	template <typename CLASS>
+	template <typename ENGINE>
 	class Message
 	{
 	public:
@@ -30,7 +30,7 @@ namespace smp
 		{ 
 		}
 		
-		virtual void operator() (CLASS & daemon) const = 0;
+		virtual void operator() (ENGINE & engine) const = 0;
 	};
 	
 }

@@ -92,36 +92,36 @@ namespace smp
 		void Create()
 		{
 			typedef typename Type::Daemon Daemon;
-			typedef typename Daemon::Class DaemonClass;
+			typedef typename Type::Engine Engine;
 			
 			Destroy();
 			Uid uid = Uid::Create();
 			SetUid(uid);
-			Daemon::Call(& DaemonClass::template OnCreateObject<Type>, uid);
+			Daemon::Call(& Engine::template OnCreateObject<Type>, uid);
 		}
 		template <typename INIT_DATA>
 		void Create(INIT_DATA const & init_data)
 		{
 			typedef typename Type::Daemon Daemon;
-			typedef typename Daemon::Class DaemonClass;
+			typedef typename Type::Engine Engine;
 
 			Destroy();
 			Uid uid = Uid::Create();
 			SetUid(uid);
-			Daemon::Call(& DaemonClass::template OnCreateObject<Type, INIT_DATA>, uid, init_data);
+			Daemon::Call(& Engine::template OnCreateObject<Type, INIT_DATA>, uid, init_data);
 		}
 
 		// Tells simulation to destroy the object.
 		void Destroy()
 		{
 			typedef typename Type::Daemon Daemon;
-			typedef typename Daemon::Class DaemonClass;
+			typedef typename Type::Engine Engine;
 
 			// If not already destroyed,
 			if (_uid)
 			{
 				// set message.
-				Daemon::Call(& DaemonClass::OnRemoveObject, _uid);
+				Daemon::Call(& Engine::OnRemoveObject, _uid);
 				_uid = Uid();
 			}
 		}
@@ -171,7 +171,7 @@ namespace smp
 		
 	private:
 		template <typename FUNCTOR>
-		class CallMessageFunctor : public smp::Message<typename Type::DaemonClass>
+		class CallMessageFunctor : public smp::Message<typename Type::Engine>
 		{
 		public:
 			typedef FUNCTOR Functor;
@@ -182,7 +182,7 @@ namespace smp
 				ASSERT(_uid);
 			}
 		private:
-			virtual void operator () (typename Type::DaemonClass & daemon_class) const override
+			virtual void operator () (typename Type::Engine & daemon_class) const override
 			{
 				Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
 				_functor(derived);

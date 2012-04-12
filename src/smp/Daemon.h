@@ -20,9 +20,9 @@
 namespace smp
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// thread-safe wrapper for a service/sub-system 
+	// thread-safe wrapper for a service/sub-system (engine)
 	
-	template <typename CLASS>
+	template <typename ENGINE>
 	class Daemon
 	{
 		OBJECT_NO_COPY(Daemon);
@@ -43,16 +43,16 @@ namespace smp
 		typedef SimpleMutex Mutex;
 		typedef Lock<Mutex> Lock;
 	public:
-		typedef CLASS Class;
-		typedef Message<Class> Message;
-		typedef MessageQueue<Class, Message> MessageQueue;
+		typedef ENGINE Engine;
+		typedef Message<Engine> Message;
+		typedef MessageQueue<Engine, Message> MessageQueue;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
 		Daemon(size_t ring_buffer_size)
-		: _object(nullptr)
+		: _engine(nullptr)
 		, _messages(ring_buffer_size)
 		, _state(initialized)
 		{
@@ -78,16 +78,16 @@ namespace smp
 			
 			ASSERT(_messages.IsEmpty());
 			
-			ASSERT(_object == nullptr);
+			ASSERT(_engine == nullptr);
 		}
 		
-		// Usually represents failure to completely encapsulate the object.
-		static Class & Ref()
+		// Usually represents failure to completely encapsulate the engine.
+		static Engine & Ref()
 		{
-			return ref(singleton->_object);
+			return ref(singleton->_engine);
 		}
 		
-		// specifically, the thread is still in the object's Run function
+		// specifically, the thread is still in the engine's Run function
 		bool IsRunning() const
 		{
 			return singleton->_state <= running;
@@ -110,9 +110,9 @@ namespace smp
 
 			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this, name);
 			
-			while (_object == nullptr)
+			while (_engine == nullptr)
 			{
-				// block until the the object is constructed and assigned
+				// block until the the engine is constructed and assigned
 				Yield();
 			}
 		}
@@ -126,7 +126,7 @@ namespace smp
 			// Never called from within the thread.
 			ASSERT(! _thread.IsCurrent());
 			
-			Call(& Class::OnQuit);
+			Call(& Engine::OnQuit);
 		}
 		
 		// Wait until it has stopped working.
@@ -164,70 +164,70 @@ namespace smp
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
-		// Call - generates a deferred function call to the thread-safe object
+		// Call - generates a deferred function call to the thread-safe engine
 		
 		// 0-parameter version
-		static void Call (void (Class::* function)())
+		static void Call (void (Engine::* function)())
 		{
-			DerivedMessage0 message(function);
-			SendMessage(message);
+			Command0 command(function);
+			SendMessage(command);
 		}
 		
 		// 1-parameter version
 		template <typename PARAMETER1>
-		static void Call (void (Class::* function)(PARAMETER1 const &), PARAMETER1 const & parameter1)
+		static void Call (void (Engine::* function)(PARAMETER1 const &), PARAMETER1 const & parameter1)
 		{
-			DerivedMessage1<PARAMETER1> message(function, parameter1);
-			SendMessage(message);
+			Command1<PARAMETER1> command(function, parameter1);
+			SendMessage(command);
 		}
 		
 		// 2-parameter version
 		template <typename PARAMETER1, typename PARAMETER2>
-		static void Call (void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2)
+		static void Call (void (Engine::* function)(PARAMETER1 const &, PARAMETER2 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2)
 		{
-			DerivedMessage2<PARAMETER1, PARAMETER2> message(function, parameter1, parameter2);
-			SendMessage(message);
+			Command2<PARAMETER1, PARAMETER2> command(function, parameter1, parameter2);
+			SendMessage(command);
 		}
 		
 		// 3-parameter version
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		static void Call (void (Class::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3)
+		static void Call (void (Engine::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3)
 		{
-			DerivedMessage3<PARAMETER1, PARAMETER2, PARAMETER3> message(function, parameter1, parameter2, parameter3);
-			SendMessage(message);
+			Command3<PARAMETER1, PARAMETER2, PARAMETER3> command(function, parameter1, parameter2, parameter3);
+			SendMessage(command);
 		}
 		
 	private:
 		// 0-parameter Call helper
-		class DerivedMessage0 : public Message
+		class Command0 : public Message
 		{
 		public:
-			typedef void (Class::* FunctionType)();
-			DerivedMessage0(FunctionType function)
+			typedef void (Engine::* FunctionType)();
+			Command0(FunctionType function)
 			: _function(function)
 			{
 			}
 		private:
-			void operator () (Class & object) const
+			void operator () (Engine & engine) const
 			{
-				(object.*_function)();
+				(engine.*_function)();
 			}
 			FunctionType _function;
 		};
 		
 		// 1-parameter Call helper
 		template <typename PARAMETER1>
-		class DerivedMessage1 : public Message
+		class Command1 : public Message
 		{
 		public:
-			typedef void (Class::* FunctionType)(PARAMETER1 const &);
-			DerivedMessage1(FunctionType function, PARAMETER1 const & __parameter1) 
+			typedef void (Engine::* FunctionType)(PARAMETER1 const &);
+			Command1(FunctionType function, PARAMETER1 const & __parameter1) 
 			: _function(function)
 			, _parameter1(__parameter1) { 
 			}
 		private:
-			void operator () (Class & object) const {
-				(object.*_function)(_parameter1);
+			void operator () (Engine & engine) const {
+				(engine.*_function)(_parameter1);
 			}
 			FunctionType _function;
 			PARAMETER1 _parameter1;
@@ -235,18 +235,18 @@ namespace smp
 		
 		// 2-parameter Call helper
 		template <typename PARAMETER1, typename PARAMETER2>
-		class DerivedMessage2 : public Message
+		class Command2 : public Message
 		{
 		public:
-			typedef void (Class::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &);
-			DerivedMessage2(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
+			typedef void (Engine::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &);
+			Command2(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
 			: _function(function)
 			, _parameter1(__parameter1)
 			, _parameter2(__parameter2) { 
 			}
 		private:
-			void operator () (Class & object) const {
-				(object.*_function)(_parameter1, _parameter2);
+			void operator () (Engine & engine) const {
+				(engine.*_function)(_parameter1, _parameter2);
 			}
 			FunctionType _function;
 			PARAMETER1 _parameter1;
@@ -255,19 +255,19 @@ namespace smp
 		
 		// 3-parameter Call helper
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		class DerivedMessage3 : public Message
+		class Command3 : public Message
 		{
 		public:
-			typedef void (Class::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &);
-			DerivedMessage3(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
+			typedef void (Engine::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &);
+			Command3(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
 			: _function(function)
 			, _parameter1(__parameter1)
 			, _parameter2(__parameter2)
 			, _parameter3(__parameter3) { 
 			}
 		private:
-			void operator () (Class & object) const {
-				(object.*_function)(_parameter1, _parameter2, _parameter3);
+			void operator () (Engine & engine) const {
+				(engine.*_function)(_parameter1, _parameter2, _parameter3);
 			}
 			FunctionType _function;
 			PARAMETER1 _parameter1;
@@ -285,11 +285,11 @@ namespace smp
 			ASSERT(_state == initialized);
 			_state = running;
 			
-			// create object
-			Class object;
-			_object = & object;
+			// create engine
+			Engine engine;
+			_engine = & engine;
 			
-			object.Run(_messages);
+			engine.Run(_messages);
 		
 			// Acknowledge that this won't be sending any more.
 			_state = acknowledge_flush_begin;
@@ -306,8 +306,8 @@ namespace smp
 			
 			_state = acknowledge_flush_end;
 		
-			// destroy object
-			_object = nullptr;
+			// destroy engine
+			_engine = nullptr;
 		}
 		
 		template <typename MESSAGE>
@@ -318,7 +318,7 @@ namespace smp
 		
 		bool FlushMessages()
 		{
-			if (! _messages.DispatchMessages(* _object))
+			if (! _messages.DispatchMessages(* _engine))
 			{
 				return false;
 			}
@@ -340,7 +340,7 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Class * _object;
+		Engine * _engine;
 		MessageQueue _messages;
 		Thread _thread;
 		State _state;
@@ -349,6 +349,6 @@ namespace smp
 	};
 	
 	// the singleton
-	template <typename CLASS>
-	Daemon<CLASS> * Daemon<CLASS>::singleton = nullptr;
+	template <typename ENGINE>
+	Daemon<ENGINE> * Daemon<ENGINE>::singleton = nullptr;
 }

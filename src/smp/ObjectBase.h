@@ -18,7 +18,7 @@ namespace smp
 	
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from ObjectBase.
-	template <typename OBJECT, typename DAEMON_CLASS>
+	template <typename OBJECT, typename ENGINE>
 	class ObjectBase
 	{
 		OBJECT_NO_COPY(ObjectBase);
@@ -26,8 +26,8 @@ namespace smp
 	public:
 		// types
 		typedef OBJECT ObjectType;
-		typedef DAEMON_CLASS DaemonClass;
-		typedef Daemon<DaemonClass> Daemon;
+		typedef ENGINE Engine;
+		typedef Daemon<Engine> Daemon;
 		
 		// functions
 		ObjectBase()
