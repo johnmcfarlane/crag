@@ -1186,6 +1186,7 @@ void Engine::ProcessRenderTiming()
 	UpdateRegulator(busy_duration);
 }
 
+// TODO: Consider SDL_GetPerformanceCounter / SDL_GetPerformanceFrequency
 void Engine::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
 {
 	frame_start_position = last_frame_end_position;
