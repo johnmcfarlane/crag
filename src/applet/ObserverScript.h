@@ -29,6 +29,7 @@ namespace applet
 		virtual void operator() (AppletInterface & applet_interface) override;
 		
 	private:
+		void HandleEvents(AppletInterface & applet_interface);
 		void HandleEvent(SDL_Event const & event);
 		void HandleKeyboardEvent(SDL_Scancode scancode, bool down);
 		void HandleMouseButton(Uint8 button, bool down);

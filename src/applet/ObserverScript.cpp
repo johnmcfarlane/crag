@@ -42,17 +42,21 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 	
 	while (! applet_interface.GetQuitFlag())
 	{
-		EventCondition event_condition;
-		applet_interface.Wait(event_condition);
-		SDL_Event const & event = event_condition.GetEvent();
-		
-		HandleEvent(event);
+		HandleEvents(applet_interface);
 	}
 
 	DEBUG_MESSAGE("<- ObserverScript");
 }
 
-// returns false if it's time to quit
+void ObserverScript::HandleEvents(AppletInterface & applet_interface)
+{
+	EventCondition event_condition;
+	applet_interface.Wait(event_condition);
+	
+	SDL_Event const & event = event_condition.GetEvent();
+	HandleEvent(event);
+}
+
 void ObserverScript::HandleEvent(SDL_Event const & event)
 {
 	switch (event.type)
