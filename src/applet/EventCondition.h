@@ -20,7 +20,9 @@ namespace applet
 	public:
 		// functions
 		EventCondition();
-		virtual bool operator() (/*Engine & engine*/) override;
+		
+		virtual bool operator() (bool hurry) override;
+		
 		SDL_Event const & GetEvent() const;
 		
 	private:

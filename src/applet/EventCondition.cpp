@@ -25,10 +25,22 @@ EventCondition::EventCondition()
 	_event.type = 0;
 }
 
-bool EventCondition::operator() (/*Engine & engine*/)
+bool EventCondition::operator() (bool hurry)
 {
 	ASSERT(_event.type == 0);
-	return app::PopEvent(_event);
+	
+	if (app::PopEvent(_event))
+	{
+		return true;
+	}
+	
+	if (hurry)
+	{
+		_event.type = SDL_QUIT;
+		return true;
+	}
+	
+	return false;
 }
 
 SDL_Event const & EventCondition::GetEvent() const

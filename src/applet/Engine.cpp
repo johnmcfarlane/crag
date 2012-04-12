@@ -70,6 +70,16 @@ void Engine::OnAddObject(AppletBase * const & applet)
 		applet->SetUid(Uid::Create());
 	}
 	
+	// If engine's quit flag is set,
+	if (_quit_flag)
+	{
+		DEBUG_MESSAGE("quit flag already set; deleting applet");
+		
+		// delete it.
+		delete applet;
+		return;
+	}
+
 	_applets.push_back(* applet);
 }
 
@@ -146,7 +156,7 @@ bool Engine::ProcessTasks()
 		_applets.push_back(* applet);
 		
 		Condition & condition = ref(applet->GetCondition());
-		if (condition())
+		if (condition(_quit_flag))
 		{
 			applet->Continue();
 

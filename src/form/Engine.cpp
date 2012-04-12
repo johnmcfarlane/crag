@@ -181,9 +181,6 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	// un-register with the renderer
 	_mesh.Destroy();
-	
-	// destroy regulator
-	_regulator_handle.Destroy();
 }
 
 // lock visible node tree for reading
