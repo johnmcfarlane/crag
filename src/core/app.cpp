@@ -16,10 +16,6 @@
 
 #include "core/ConfigEntry.h"
 
-#if defined(__APPLE__)
-#include <CoreFoundation/CFDate.h>
-#endif
-
 
 // defined in gfx::Engine.cpp
 CONFIG_DECLARE (multisample, bool);
@@ -32,10 +28,6 @@ namespace
 	
 	SDL_Window * window = nullptr;
 		
-#if defined(WIN32)
-	Time inv_query_performance_frequency = 0;
-#endif
-	
 	char const * _program_path;
 	
 	smp::SimpleMutex _event_mutex;
@@ -50,17 +42,6 @@ namespace
 
 bool app::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
-#if defined(WIN32)
-	LARGE_INTEGER query_performance_frequency;
-	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency.QuadPart == 0)
-	{
-		std::cerr << "Failed to read QueryPerformanceFrequency." << std::endl;
-		return false;
-	}
-	
-	inv_query_performance_frequency = 1. / query_performance_frequency.QuadPart;
-#endif
-
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
@@ -301,17 +282,8 @@ bool app::HasFocus()
 
 Time app::GetTime()
 {
-#if defined(__APPLE__) && 0
-	return CFAbsoluteTimeGetCurrent ();
-#elif defined(WIN32)
-	LARGE_INTEGER performance_count;
-	if (QueryPerformanceCounter(& performance_count) == FALSE)
-	{
-		ASSERT(false);
-	}
-	return inv_query_performance_frequency * performance_count.QuadPart;
-#else
-	// Might want to try CLOCK_MONOTONIC clock using POSIX clock_gettime.
+	// Possible alternatives:
+	// __APPLE__: CFAbsoluteTimeGetCurrent ()
+	// POSIX: CLOCK_MONOTONIC clock using POSIX clock_gettime.
 	return .001 * SDL_GetTicks();
-#endif
 }
