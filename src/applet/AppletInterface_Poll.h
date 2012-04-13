@@ -45,30 +45,12 @@ namespace applet
 	
 	// blocking engine call
 	template <typename RETURN_TYPE, typename ENGINE>
-	RETURN_TYPE AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)() const)
+	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)() const)
 	{
+		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+		
 		// local stack storage for result
-		RETURN_TYPE result;
-		
-		// flag to say we're complete;
-		PollCondition condition;
-		
-		// ask daemon to send the poll command to the engine
-		ENGINE::Daemon::Poll(function, condition, result);
-		
-		// result tests the flag upon which applet continuation is condition
-		Wait(condition);
-		
-		// at which time, the result is valid
-		return result;
-	}
-	
-	// blocking engine call
-	template <typename RETURN_TYPE, typename ENGINE>
-	RETURN_TYPE AppletInterface::Poll(RETURN_TYPE const& (ENGINE::* function)() const)
-	{
-		// local stack storage for result
-		RETURN_TYPE result;
+		ValueType result;
 		
 		// flag to say we're complete;
 		PollCondition condition;

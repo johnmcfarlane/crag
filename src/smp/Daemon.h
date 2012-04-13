@@ -202,18 +202,11 @@ namespace smp
 		// Poll - generates a deferred function call to the thread-safe engine
 		
 		template <typename RETURN_TYPE>
-		static void Poll(RETURN_TYPE (ENGINE::* function)() const, bool & complete, RETURN_TYPE & result)
+		static void Poll(RETURN_TYPE (ENGINE::* function)() const, bool & complete, typename core::raw_type<RETURN_TYPE>::type & result)
 		{
 			// functor is sent to ENGINE's thread to call function and retrieve result
-			PollCommand0<RETURN_TYPE, RETURN_TYPE> command(function, complete, result);
-			ENGINE::Daemon::SendMessage(command);
-		}
-		
-		template <typename RETURN_TYPE>
-		static void Poll(RETURN_TYPE const & (ENGINE::* function)() const, bool & complete, RETURN_TYPE & result)
-		{
-			// functor is sent to ENGINE's thread to call function and retrieve result
-			PollCommand0<RETURN_TYPE, RETURN_TYPE const &> command(function, complete, result);
+			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+			PollCommand0<ValueType, RETURN_TYPE> command(function, complete, result);
 			ENGINE::Daemon::SendMessage(command);
 		}
 		
@@ -296,14 +289,14 @@ namespace smp
 		};
 		
 		// calls an ENGINE function which returns a RETURN_TYPE and
-		// assigns it (via a reference) to an object ot type, RESULT
-		template <typename RESULT, typename RETURN>
+		// assigns it (via a reference) to an object ot type, VALUE_TYPE
+		template <typename VALUE_TYPE, typename RETURN_TYPE>
 		class PollCommand0 : public Message
 		{
-			typedef RETURN (ENGINE::* FUNCTION)() const;
+			typedef RETURN_TYPE (ENGINE::* FUNCTION)() const;
 		public:
 			// functions
-			PollCommand0(FUNCTION function, bool & complete, RESULT & result)
+			PollCommand0(FUNCTION function, bool & complete, VALUE_TYPE & result)
 			: _function(function)
 			, _complete(complete)
 			, _result(result)
@@ -319,7 +312,7 @@ namespace smp
 			}
 			FUNCTION _function;
 			bool & _complete;
-			RESULT & _result;
+			VALUE_TYPE & _result;
 		};
 		
 		void Run()

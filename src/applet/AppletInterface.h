@@ -36,10 +36,7 @@ namespace applet
 		// and blocks until it can return the result. 
 		// (Defined in AppletInterface_Poll.h.)
 		template <typename RETURN_TYPE, typename ENGINE>
-		RETURN_TYPE Poll(RETURN_TYPE (ENGINE::* function)() const);
-		
-		template <typename RETURN_TYPE, typename ENGINE>
-		RETURN_TYPE Poll(RETURN_TYPE const& (ENGINE::* function)() const);
+		typename core::raw_type<RETURN_TYPE>::type Poll(RETURN_TYPE (ENGINE::* function)() const);
 		
 	private:
 		class PollCondition;
