@@ -137,40 +137,41 @@ bool Engine::HasFibersActive() const
 	return ! _applets.empty();
 }
 
+// Give all applets an opportunity to run.
 bool Engine::ProcessTasks()
 {
-	ASSERT(HasFibersActive());
+	bool did_work = false;
 	
-	if (_applets.empty())
+	// Step through all applets,
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
-		return false;
-	}
-	
-	AppletBase & first = _applets.front();
-	AppletBase * applet = & first;
-	do
-	{
-		ASSERT(applet->IsRunning());
+		AppletBase & applet = * i;
 
-		_applets.pop_front();
-		_applets.push_back(* applet);
-		
-		Condition & condition = ref(applet->GetCondition());
+		ASSERT(applet.IsRunning());
+
+		// and if applet's continue condition is met,
+		Condition & condition = ref(applet.GetCondition());
 		if (condition(_quit_flag))
 		{
-			applet->Continue();
-
-			if (! applet->IsRunning())
-			{
-				_applets.remove(* applet);
-				delete applet;
-			}
+			// then continue!
+			applet.Continue();
 			
-			return true;
+			// When it pauses again, 
+			did_work = true;
+
+			// And if it's all done, 
+			if (! applet.IsRunning())
+			{
+				// take a step back,
+				-- i;
+				
+				// and remove the applet.
+				_applets.remove(applet);
+				delete & applet;
+			}
 		}
-		
-		applet = & static_cast<AppletBase &>(_applets.front());
-	}	while (applet != & first);
+	}
 	
-	return false;
+	// Return true iff any happened.
+	return did_work;
 }
