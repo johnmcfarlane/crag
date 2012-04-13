@@ -827,22 +827,22 @@
 		5249C5E61530D6DE000FF6AB /* applet */ = {
 			isa = PBXGroup;
 			children = (
+				5249C5EF1530D6DE000FF6AB /* Applet.h */,
+				5249C5EC1530D6DE000FF6AB /* AppletInterface.h */,
+				52B06095153728EE0006D4BD /* AppletInterface_Poll.h */,
+				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
+				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
 				5249C5E71530D6DE000FF6AB /* Condition.h */,
 				5249C5E81530D6DE000FF6AB /* Engine.cpp */,
 				5249C5E91530D6DE000FF6AB /* Engine.h */,
 				5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */,
 				5249C5EB1530D6DE000FF6AB /* EventCondition.h */,
-				5249C5EC1530D6DE000FF6AB /* AppletInterface.h */,
 				5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */,
 				5249C5EE1530D6DE000FF6AB /* ObserverScript.h */,
-				5249C5EF1530D6DE000FF6AB /* Applet.h */,
-				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
-				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
 				5249C5F21530D6DE000FF6AB /* TestScript.cpp */,
 				5249C5F31530D6DE000FF6AB /* TestScript.h */,
 				5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */,
 				5249C5F51530D6DE000FF6AB /* TimeCondition.h */,
-				52B06095153728EE0006D4BD /* AppletInterface_Poll.h */,
 			);
 			path = applet;
 			sourceTree = "<group>";
