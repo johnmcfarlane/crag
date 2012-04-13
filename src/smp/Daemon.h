@@ -205,7 +205,15 @@ namespace smp
 		static void Poll(RETURN_TYPE (ENGINE::* function)() const, bool & complete, RETURN_TYPE & result)
 		{
 			// functor is sent to ENGINE's thread to call function and retrieve result
-			PollCommand0<RETURN_TYPE> command(function, complete, result);
+			PollCommand0<RETURN_TYPE, RETURN_TYPE> command(function, complete, result);
+			ENGINE::Daemon::SendMessage(command);
+		}
+		
+		template <typename RETURN_TYPE>
+		static void Poll(RETURN_TYPE const & (ENGINE::* function)() const, bool & complete, RETURN_TYPE & result)
+		{
+			// functor is sent to ENGINE's thread to call function and retrieve result
+			PollCommand0<RETURN_TYPE, RETURN_TYPE const &> command(function, complete, result);
 			ENGINE::Daemon::SendMessage(command);
 		}
 		
@@ -289,10 +297,10 @@ namespace smp
 		
 		// calls an ENGINE function which returns a RETURN_TYPE and
 		// assigns it (via a reference) to an object ot type, RESULT
-		template <typename RESULT>
+		template <typename RESULT, typename RETURN>
 		class PollCommand0 : public Message
 		{
-			typedef RESULT (ENGINE::* FUNCTION)() const;
+			typedef RETURN (ENGINE::* FUNCTION)() const;
 		public:
 			// functions
 			PollCommand0(FUNCTION function, bool & complete, RESULT & result)

@@ -38,6 +38,9 @@ namespace applet
 		template <typename RETURN_TYPE, typename ENGINE>
 		RETURN_TYPE Poll(RETURN_TYPE (ENGINE::* function)() const);
 		
+		template <typename RETURN_TYPE, typename ENGINE>
+		RETURN_TYPE Poll(RETURN_TYPE const& (ENGINE::* function)() const);
+		
 	private:
 		class PollCondition;
 	};
