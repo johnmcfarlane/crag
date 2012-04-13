@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "atomic.h"
 #include "Lock.h"
 #include "Message.h"
 #include "MessageQueue.h"
@@ -197,6 +198,17 @@ namespace smp
 			SendMessage(command);
 		}
 		
+		////////////////////////////////////////////////////////////////////////////////
+		// Poll - generates a deferred function call to the thread-safe engine
+		
+		template <typename RETURN_TYPE>
+		static void Poll(RETURN_TYPE (ENGINE::* function)() const, bool & complete, RETURN_TYPE & result)
+		{
+			// functor is sent to ENGINE's thread to call function and retrieve result
+			PollCommand0<RETURN_TYPE> command(function, complete, result);
+			ENGINE::Daemon::SendMessage(command);
+		}
+		
 	private:
 		// 0-parameter Call helper
 		class Command0 : public Message
@@ -273,6 +285,33 @@ namespace smp
 			PARAMETER1 _parameter1;
 			PARAMETER2 _parameter2;
 			PARAMETER3 _parameter3;
+		};
+		
+		// calls an ENGINE function which returns a RETURN_TYPE and
+		// assigns it (via a reference) to an object ot type, RESULT
+		template <typename RESULT>
+		class PollCommand0 : public Message
+		{
+			typedef RESULT (ENGINE::* FUNCTION)() const;
+		public:
+			// functions
+			PollCommand0(FUNCTION function, bool & complete, RESULT & result)
+			: _function(function)
+			, _complete(complete)
+			, _result(result)
+			{
+			}
+		private:
+			virtual void operator() (ENGINE & engine) const final
+			{
+				ASSERT(_complete == false);
+				_result = (engine.*_function)();
+				AtomicCompilerBarrier();
+				_complete = true;
+			}
+			FUNCTION _function;
+			bool & _complete;
+			RESULT & _result;
 		};
 		
 		void Run()
