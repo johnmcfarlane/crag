@@ -167,152 +167,78 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe engine
 		
-		// 0-parameter version
-		static void Call (void (Engine::* function)())
+		template <typename... PARAMETERS>
+		static void Call (void (Engine::* function)(PARAMETERS const & ... parameters), PARAMETERS const &... parameters)
 		{
-			Command0 command(function);
-			SendMessage(command);
-		}
-		
-		// 1-parameter version
-		template <typename PARAMETER1>
-		static void Call (void (Engine::* function)(PARAMETER1 const &), PARAMETER1 const & parameter1)
-		{
-			Command1<PARAMETER1> command(function, parameter1);
-			SendMessage(command);
-		}
-		
-		// 2-parameter version
-		template <typename PARAMETER1, typename PARAMETER2>
-		static void Call (void (Engine::* function)(PARAMETER1 const &, PARAMETER2 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2)
-		{
-			Command2<PARAMETER1, PARAMETER2> command(function, parameter1, parameter2);
-			SendMessage(command);
-		}
-		
-		// 3-parameter version
-		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		static void Call (void (Engine::* function)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &), PARAMETER1 const & parameter1, PARAMETER2 const & parameter2, PARAMETER3 const & parameter3)
-		{
-			Command3<PARAMETER1, PARAMETER2, PARAMETER3> command(function, parameter1, parameter2, parameter3);
+			CallCommand<PARAMETERS...> command(function, parameters...);
 			SendMessage(command);
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// Poll - generates a deferred function call to the thread-safe engine
 		
-		template <typename RETURN_TYPE>
-		static void Poll(RETURN_TYPE (ENGINE::* function)() const, bool & complete, typename core::raw_type<RETURN_TYPE>::type & result)
+		template <typename RETURN_TYPE, typename... PARAMETERS>
+		static void Poll(typename core::raw_type<RETURN_TYPE>::type & result, bool & complete, RETURN_TYPE (Engine::* function)(PARAMETERS const & ... parameters) const, PARAMETERS const &... parameters)
 		{
-			// functor is sent to ENGINE's thread to call function and retrieve result
+			// functor is sent to Engine's thread to call function and retrieve result
 			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-			PollCommand0<ValueType, RETURN_TYPE> command(function, complete, result);
-			ENGINE::Daemon::SendMessage(command);
+			PollCommand<ValueType, RETURN_TYPE, PARAMETERS...> command(result, complete, function, parameters...);
+			Engine::Daemon::SendMessage(command);
 		}
 		
 	private:
-		// 0-parameter Call helper
-		class Command0 : public Message
+		template <typename... PARAMETERS>
+		class CallCommand : public Message
 		{
-		public:
-			typedef void (Engine::* FunctionType)();
-			Command0(FunctionType function)
-			: _function(function)
-			{
-			}
-		private:
-			void operator () (Engine & engine) const
-			{
-				(engine.*_function)();
-			}
-			FunctionType _function;
-		};
-		
-		// 1-parameter Call helper
-		template <typename PARAMETER1>
-		class Command1 : public Message
-		{
-		public:
-			typedef void (Engine::* FunctionType)(PARAMETER1 const &);
-			Command1(FunctionType function, PARAMETER1 const & __parameter1) 
-			: _function(function)
-			, _parameter1(__parameter1) { 
-			}
-		private:
-			void operator () (Engine & engine) const {
-				(engine.*_function)(_parameter1);
-			}
-			FunctionType _function;
-			PARAMETER1 _parameter1;
-		};
-		
-		// 2-parameter Call helper
-		template <typename PARAMETER1, typename PARAMETER2>
-		class Command2 : public Message
-		{
-		public:
-			typedef void (Engine::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &);
-			Command2(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2) 
-			: _function(function)
-			, _parameter1(__parameter1)
-			, _parameter2(__parameter2) { 
-			}
-		private:
-			void operator () (Engine & engine) const {
-				(engine.*_function)(_parameter1, _parameter2);
-			}
-			FunctionType _function;
-			PARAMETER1 _parameter1;
-			PARAMETER2 _parameter2;
-		};
-		
-		// 3-parameter Call helper
-		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		class Command3 : public Message
-		{
-		public:
-			typedef void (Engine::* FunctionType)(PARAMETER1 const &, PARAMETER2 const &, PARAMETER3 const &);
-			Command3(FunctionType function, PARAMETER1 const & __parameter1, PARAMETER2 const & __parameter2, PARAMETER3 const & __parameter3) 
-			: _function(function)
-			, _parameter1(__parameter1)
-			, _parameter2(__parameter2)
-			, _parameter3(__parameter3) { 
-			}
-		private:
-			void operator () (Engine & engine) const {
-				(engine.*_function)(_parameter1, _parameter2, _parameter3);
-			}
-			FunctionType _function;
-			PARAMETER1 _parameter1;
-			PARAMETER2 _parameter2;
-			PARAMETER3 _parameter3;
-		};
-		
-		// calls an ENGINE function which returns a RETURN_TYPE and
-		// assigns it (via a reference) to an object ot type, VALUE_TYPE
-		template <typename VALUE_TYPE, typename RETURN_TYPE>
-		class PollCommand0 : public Message
-		{
-			typedef RETURN_TYPE (ENGINE::* FUNCTION)() const;
+			// types
+			typedef void (Engine::* FunctionType)(PARAMETERS const & ...);
+			typedef std::tr1::tuple<PARAMETERS...> Tuple;
 		public:
 			// functions
-			PollCommand0(FUNCTION function, bool & complete, VALUE_TYPE & result)
+			CallCommand(FunctionType function, PARAMETERS const & ... parameters) 
 			: _function(function)
-			, _complete(complete)
-			, _result(result)
-			{
+			, _parameters(parameters...)
+			{ 
 			}
 		private:
-			virtual void operator() (ENGINE & engine) const final
+			virtual void operator () (Engine & engine) const final
+			{
+				core::call(engine, _function, _parameters);
+			}
+			// variables
+			FunctionType _function;
+			Tuple _parameters;
+		};
+		
+		template <typename VALUE_TYPE, typename RETURN_TYPE, typename... PARAMETERS>
+		class PollCommand : public Message
+		{
+			// types
+			typedef RETURN_TYPE (Engine::* FunctionType)(PARAMETERS const & ...) const;
+			typedef std::tr1::tuple<PARAMETERS...> Tuple;
+		public:
+			// functions
+			PollCommand(VALUE_TYPE & result, bool & complete, FunctionType function, PARAMETERS const & ... parameters) 
+			: _result(result)
+			, _complete(complete)
+			, _function(function)
+			, _parameters(parameters...)
+			{ 
+			}
+		private:
+			virtual void operator () (Engine & engine) const final
 			{
 				ASSERT(_complete == false);
-				_result = (engine.*_function)();
+				std::tr1::tuple<> t;
+				_result = core::call(engine, _function, _parameters);
 				AtomicCompilerBarrier();
 				_complete = true;
 			}
-			FUNCTION _function;
-			bool & _complete;
+			// variables
 			VALUE_TYPE & _result;
+			bool & _complete;
+			FunctionType _function;
+			Tuple _parameters;
 		};
 		
 		void Run()
