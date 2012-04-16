@@ -56,7 +56,7 @@ namespace applet
 		PollCondition condition;
 		
 		// ask daemon to send the poll command to the engine
-		ENGINE::Daemon::Poll(function, condition, result);
+		ENGINE::Daemon::Poll(result, condition, function);
 		
 		// result tests the flag upon which applet continuation is condition
 		Wait(condition);
