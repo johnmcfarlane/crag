@@ -50,11 +50,15 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 
 void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 {
-	EventCondition event_condition;
-	applet_interface.Wait(event_condition);
-	
-	SDL_Event const & event = event_condition.GetEvent();
-	HandleEvent(event);
+	SDL_Event event;
+	if (! _event_condition.PopEvent(event))
+	{
+		applet_interface.Wait(_event_condition);
+	}
+	else
+	{
+		HandleEvent(event);
+	}
 }
 
 void ObserverScript::HandleEvent(SDL_Event const & event)

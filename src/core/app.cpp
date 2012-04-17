@@ -11,9 +11,6 @@
 
 #include "app.h"
 
-#include "smp/Lock.h"
-#include "smp/SimpleMutex.h"
-
 #include "core/ConfigEntry.h"
 
 
@@ -29,15 +26,6 @@ namespace
 	SDL_Window * window = nullptr;
 		
 	char const * _program_path;
-	
-	// TODO: Use SDL_AddEventWatch
-	smp::SimpleMutex _event_mutex;
-	std::vector<SDL_Event> _events;
-
-	void SetFocus(bool has_focus)
-	{
-		_has_focus = has_focus;
-	}
 }
 
 
@@ -89,7 +77,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		return false;
 	}
 	
-	SetFocus(true);
+	_has_focus = true;
 	if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 	{
 		_relative_mouse_mode = true;
@@ -196,11 +184,11 @@ void app::GetEvent(SDL_Event & event)
 			switch (event.window.event)
 			{
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					SetFocus(true);
+					_has_focus = true;
 					break;
 					
 				case SDL_WINDOWEVENT_FOCUS_LOST:
-					SetFocus(false);
+					_has_focus = false;
 					break;
 			}
 			break;
@@ -244,40 +232,9 @@ void app::GetEvent(SDL_Event & event)
 				event.motion.xrel = delta.x;
 				event.motion.yrel = delta.y;
 				break;
-
-				/*Vector2f mouse_input = Vector2f(delta) * 0.3f;
-				if (Length(mouse_input) > 0) {
-						impulse.factors[sim::Controller::Impulse::TORQUE][axes::UP] -= mouse_input.x;
-						impulse.factors[sim::Controller::Impulse::TORQUE][axes::RIGHT] -= mouse_input.y;
-				}*/
-				// Note: OS X API provides CGGetLastMouseDelta (& delta.x, & delta.y);
 			}
 		break;
 	}
-}
-
-void app::PushEvent(SDL_Event const & event)
-{
-	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
-	_events.push_back(event);
-}
-
-bool app::PopEvent(SDL_Event & event)
-{
-	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
-	if (_events.empty())
-	{
-		return false;
-	}
-	
-	event = _events.back();
-	_events.pop_back();
-	return true;
-}
-
-bool app::HasFocus()
-{
-	return _has_focus;
 }
 
 Time app::GetTime()

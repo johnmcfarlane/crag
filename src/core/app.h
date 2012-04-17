@@ -32,12 +32,6 @@ namespace app
 	// called from main thread
 	void GetEvent(SDL_Event & event);
 	
-	// thread safe
-	void PushEvent(SDL_Event const & event);
-	bool PopEvent(SDL_Event & event);
-	
-	bool HasFocus();
-	
 	// time
 	Time GetTime();
 }

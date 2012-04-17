@@ -282,8 +282,27 @@ namespace
 		}
 
 		// If not caught here, then send it to the application event queue.
-		app::PushEvent(event);
 		return event.type != SDL_QUIT;
+	}
+	
+	int EventFilter(void * userdata, SDL_Event * event)
+	{
+		ASSERT(userdata == nullptr);
+		
+		switch (event->type) 
+		{
+			case SDL_QUIT:
+			case SDL_WINDOWEVENT:
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				return 1;
+				
+			default:
+				return 0;
+		}
 	}
 
 	// The main program function.
@@ -298,6 +317,8 @@ namespace
 		{
 			return false;
 		}
+		
+		SDL_SetEventFilter(EventFilter, nullptr);
 		
 #if defined (GATHER_STATS)
 		core::Statistics stat_manager;

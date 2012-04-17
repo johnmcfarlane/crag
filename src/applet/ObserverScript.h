@@ -11,6 +11,8 @@
 
 #include "AppletBase.h"
 
+#include "EventCondition.h"
+
 #include "sim/defs.h"
 
 
@@ -40,5 +42,6 @@ namespace applet
 		// variables
 		sim::ObserverHandle _observer;
 		bool _collidable;
+		EventCondition _event_condition;
 	};
 }

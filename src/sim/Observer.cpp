@@ -123,12 +123,9 @@ void Observer::SetSpeed(int speed)
 void Observer::Tick(sim::Engine & simulation_engine)
 {
 	// Camera input.
-	if (app::HasFocus()) 
-	{
-		UserInput ui;
-		Controller::Impulse impulse = ui.GetImpulse();
-		UpdateInput(impulse);
-	}
+	UserInput ui;
+	Controller::Impulse impulse = ui.GetImpulse();
+	UpdateInput(impulse);
 	
 	ApplyImpulse();
 }
