@@ -109,23 +109,14 @@ void Engine::SetQuitFlag()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	// Wait around until there are applets to run.
-	while (! HasFibersActive())
-	{
-		if (message_queue.DispatchMessages(* this) == 0)
-		{
-			smp::Yield();
-		}
-	}
-	
 	// Main loop.
-	while (HasFibersActive())
+	while (! _quit_flag | HasFibersActive())
 	{
 		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
 		bool processed_tasks = ProcessTasks();
 		if (! (dispatched_messages | processed_tasks))
 		{
-			smp::Yield();
+			smp::Sleep(0.01);
 		}
 	}
 	
