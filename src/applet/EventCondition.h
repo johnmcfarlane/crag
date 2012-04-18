@@ -26,6 +26,9 @@ namespace applet
 
 		bool PopEvent(SDL_Event & event);
 	private:
+		// can be overridden to allow specific events through
+		virtual bool Filter(SDL_Event const & event) const;
+		
 		// Condition override
 		virtual bool operator() (bool hurry) override;
 		
