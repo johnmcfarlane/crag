@@ -425,7 +425,7 @@ void Engine::OnSetParent(Object & child, Uid const & parent_uid)
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
 	{
-		ASSERT(false);
+		DEBUG_BREAK("Given parent, %u, not found", unsigned(parent_uid.GetValue()));
 		return;
 	}
 	
@@ -485,6 +485,11 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 
 	// pass this on to the formation manager to update the node scores
 	form::Daemon::Call(& form::Engine::OnSetCamera, transformation);
+}
+
+gfx::Transformation const& Engine::GetCamera() const
+{
+	return scene->GetPov().GetTransformation();
 }
 
 void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
