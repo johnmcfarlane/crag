@@ -138,7 +138,16 @@ namespace form { namespace collision
 		ASSERT(node_functor._object.bounding_sphere == node_functor._object.shape);
 
 		Vector3 contact_point = Project(collision_info.ray, collision_info.t1);
-		Vector3 contact_normal = Normalized(node_functor._object.bounding_sphere.center - contact_point);
+		Vector3 contact_normal = node_functor._object.bounding_sphere.center - contact_point;
+		Scalar contact_normal_distance_sq = LengthSq(contact_normal);
+		if (contact_normal_distance_sq > 0)
+		{
+			contact_normal *= InvSqrt(contact_normal_distance_sq);
+		}
+		else
+		{
+			contact_normal = collision_info.ray.direction;
+		}
 		node_functor._functor(form::SceneToSim(contact_point, node_functor._origin), contact_normal, collision_info.depth);
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
