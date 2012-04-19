@@ -168,7 +168,7 @@ namespace smp
 		// Call - generates a deferred function call to the thread-safe engine
 		
 		template <typename... PARAMETERS>
-		static void Call (void (Engine::* function)(PARAMETERS const & ... parameters), PARAMETERS const &... parameters)
+		static void Call(void (Engine::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 		{
 			CallCommand<PARAMETERS...> command(function, parameters...);
 			SendMessage(command);
@@ -177,12 +177,11 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Poll - generates a deferred function call to the thread-safe engine
 		
-		template <typename RETURN_TYPE, typename... PARAMETERS>
-		static void Poll(typename core::raw_type<RETURN_TYPE>::type & result, bool & complete, RETURN_TYPE (Engine::* function)(PARAMETERS const & ... parameters) const, PARAMETERS const &... parameters)
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
+		static void Poll(VALUE_TYPE & result, bool & complete, FUNCTION_TYPE function, PARAMETERS const &... parameters)
 		{
 			// functor is sent to Engine's thread to call function and retrieve result
-			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-			PollCommand<ValueType, RETURN_TYPE, PARAMETERS...> command(result, complete, function, parameters...);
+			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS...> command(result, complete, function, parameters...);
 			Engine::Daemon::SendMessage(command);
 		}
 		
@@ -210,15 +209,12 @@ namespace smp
 			Tuple _parameters;
 		};
 		
-		template <typename VALUE_TYPE, typename RETURN_TYPE, typename... PARAMETERS>
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
 		class PollCommand : public Message
 		{
-			// types
-			typedef RETURN_TYPE (Engine::* FunctionType)(PARAMETERS const & ...) const;
-			typedef std::tr1::tuple<PARAMETERS...> Tuple;
 		public:
 			// functions
-			PollCommand(VALUE_TYPE & result, bool & complete, FunctionType function, PARAMETERS const & ... parameters) 
+			PollCommand(VALUE_TYPE & result, bool & complete, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
 			: _result(result)
 			, _complete(complete)
 			, _function(function)
@@ -237,8 +233,8 @@ namespace smp
 			// variables
 			VALUE_TYPE & _result;
 			bool & _complete;
-			FunctionType _function;
-			Tuple _parameters;
+			FUNCTION_TYPE _function;
+			std::tr1::tuple<PARAMETERS...> _parameters;
 		};
 		
 		void Run()

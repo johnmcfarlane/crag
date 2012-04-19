@@ -35,8 +35,11 @@ namespace applet
 		// Calls a cross-thread engine function 
 		// and blocks until it can return the result. 
 		// (Defined in AppletInterface_Poll.h.)
-		template <typename RETURN_TYPE, typename ENGINE>
-		typename core::raw_type<RETURN_TYPE>::type Poll(RETURN_TYPE (ENGINE::* function)() const);
+		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
+		typename core::raw_type<RETURN_TYPE>::type Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters);
+		
+		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
+		typename core::raw_type<RETURN_TYPE>::type Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters);
 		
 	private:
 		class PollCondition;

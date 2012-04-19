@@ -44,10 +44,11 @@ namespace applet
 	};
 	
 	// blocking engine call
-	template <typename RETURN_TYPE, typename ENGINE>
-	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)() const)
+	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
+	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 	{
 		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+		typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...);
 		
 		// local stack storage for result
 		ValueType result;
@@ -56,7 +57,30 @@ namespace applet
 		PollCondition condition;
 		
 		// ask daemon to send the poll command to the engine
-		ENGINE::Daemon::Poll(result, condition, function);
+		ENGINE::Daemon::template Poll(result, condition, function, parameters...);
+		
+		// result tests the flag upon which applet continuation is condition
+		Wait(condition);
+		
+		// at which time, the result is valid
+		return result;
+	}
+	
+	// blocking engine call
+	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
+	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
+	{
+		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+		typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...) const;
+		
+		// local stack storage for result
+		ValueType result;
+		
+		// flag to say we're complete;
+		PollCondition condition;
+		
+		// ask daemon to send the poll command to the engine
+		ENGINE::Daemon::template Poll(result, condition, function, parameters...);
 		
 		// result tests the flag upon which applet continuation is condition
 		Wait(condition);
