@@ -16,6 +16,7 @@
 
 #include "sim/Box.h"
 #include "sim/Engine.h"
+#include "sim/Firmament.h"
 #include "sim/Planet.h"
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
@@ -42,7 +43,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 observer_start_pos(0, 9999400, 0);
+	sim::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	Time shape_drop_period = .5;
 	bool cleanup_shapes = true;
@@ -78,6 +79,7 @@ namespace
 		// functions
 		void operator() (AppletInterface & applet_interface);
 	private:
+		void SpawnPlanets();
 		void SpawnUniverse();
 		void SpawnVehicle();
 		void SpawnShapes();
@@ -85,6 +87,7 @@ namespace
 		// variables
 		sim::PlanetHandle _planet, _moon1, _moon2;
 		sim::StarHandle _sun;
+		sim::FirmamentHandle _skybox;
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
 	};
@@ -119,8 +122,12 @@ void TestScript::operator() (AppletInterface & applet_interface)
 		gfx::Daemon::Call(& gfx::Engine::OnSetCamera, transformation);
 	}
 	
-	SpawnUniverse();
-
+	// Create planets
+	if (spawn_planets)
+	{
+		SpawnPlanets();
+	}
+	
 	// Give formations time to expand.
 	applet_interface.Sleep(2);
 
@@ -129,6 +136,8 @@ void TestScript::operator() (AppletInterface & applet_interface)
 		AppletBase * observer_script = new ObserverScript(observer_start_pos);
 		Daemon::Call(& Engine::OnAddObject, observer_script);
 	}
+	
+	SpawnUniverse();
 	
 	// Create vehicle.
 	SpawnVehicle();
@@ -152,39 +161,45 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	_moon2.Destroy();
 	_moon1.Destroy();
 	_planet.Destroy();
+	
+	// remove skybox
+	_skybox.Destroy();
 	DEBUG_MESSAGE("<- Main script");
+}
+
+void TestScript::SpawnPlanets()
+{
+	double planet_radius = 10000000;
+	sim::Planet::InitData init_data;
+	
+	init_data.sphere.center = Vector3d::Zero();
+	init_data.sphere.radius = planet_radius;
+	init_data.random_seed = 3634;
+	init_data.num_craters = 0;
+	_planet.Create(init_data);
+	
+	init_data.sphere.center.x = planet_radius * 1.5;
+	init_data.sphere.center.y = planet_radius * 2.5;
+	init_data.sphere.center.z = planet_radius * 1.;
+	init_data.sphere.radius = 1500000;
+	init_data.random_seed = 10;
+	init_data.num_craters = 250;
+	_moon1.Create(init_data);
+	
+	init_data.sphere.center.x = planet_radius * -2.5;
+	init_data.sphere.center.y = planet_radius * 0.5;
+	init_data.sphere.center.z = planet_radius * -1.;
+	init_data.sphere.radius = 2500000;
+	init_data.random_seed = 13;
+	init_data.num_craters = 0;
+	_moon2.Create(init_data);
 }
 
 void TestScript::SpawnUniverse()
 {
-	// Create planets
-	if (spawn_planets)
-	{
-		double planet_radius = 10000000;
-		sim::Planet::InitData init_data;
-		
-		init_data.sphere.center = Vector3d::Zero();
-		init_data.sphere.radius = planet_radius;
-		init_data.random_seed = 3634;
-		init_data.num_craters = 0;
-		_planet.Create(init_data);
-		
-		init_data.sphere.center.x = planet_radius * 1.5;
-		init_data.sphere.center.y = planet_radius * 2.5;
-		init_data.sphere.center.z = planet_radius * 1.;
-		init_data.sphere.radius = 1500000;
-		init_data.random_seed = 10;
-		init_data.num_craters = 250;
-		_moon1.Create(init_data);
-		
-		init_data.sphere.center.x = planet_radius * -2.5;
-		init_data.sphere.center.y = planet_radius * 0.5;
-		init_data.sphere.center.z = planet_radius * -1.;
-		init_data.sphere.radius = 2500000;
-		init_data.random_seed = 13;
-		init_data.num_craters = 0;
-		_moon2.Create(init_data);
-	}
+	// Add the skybox.
+	_skybox.Create();
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _skybox.GetUid(), gfx::Uid());
 	
 	// Create sun. 
 	{
@@ -204,7 +219,7 @@ void TestScript::SpawnVehicle()
 	if (spawn_vehicle)
 	{
 		sim::Sphere3 sphere;
-		sphere.center = observer_start_pos + sim::Vector3(0, 5, 0);
+		sphere.center = observer_start_pos + sim::Vector3(0, 5, +5);
 		sphere.radius = 1.;
 
 		_vehicle.Create(sphere);

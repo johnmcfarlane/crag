@@ -11,22 +11,15 @@
 
 #include "Engine.h"
 
-#include "Entity.h"
-#include "Firmament.h"
 #include "gravity.h"
 #include "EntityFunctions.h"
 #include "EntitySet.h"
 
 #include "physics/Engine.h"
 
-#include "form/Engine.h"
-
-#include "applet/Engine.h"
-
 #include "gfx/Engine.h"
 
 #include "core/app.h"
-#include "core/ConfigEntry.h"
 
 
 CONFIG_DEFINE (sim_tick_duration, Time, 1.f / 60.f);
@@ -136,11 +129,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	smp::SetThreadPriority(0);
 
-	// Add the skybox.
-	FirmamentHandle skybox;
-	skybox.Create();
-	gfx::Daemon::Call(& gfx::Engine::OnSetParent, skybox.GetUid(), gfx::Uid());
-	
 	Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
@@ -167,9 +155,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			}
 		}
 	}
-
-	// remove skybox
-	skybox.Destroy();
 }
 
 void Engine::Tick()
