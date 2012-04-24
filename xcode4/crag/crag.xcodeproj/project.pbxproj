@@ -423,7 +423,7 @@
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
 		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
 		52AF04AB152362AB00EBAA15 /* Fiber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fiber.cpp; sourceTree = "<group>"; usesTabs = 1; };
-		52B06095153728EE0006D4BD /* AppletInterface_Poll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletInterface_Poll.h; sourceTree = "<group>"; };
+		52B06095153728EE0006D4BD /* AppletInterface_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; path = AppletInterface_Impl.h; sourceTree = "<group>"; };
 		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
 		52F819A9132DF13C0045C3A8 /* crag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "crag-Info.plist"; sourceTree = "<group>"; };
@@ -830,7 +830,7 @@
 			children = (
 				5249C5EF1530D6DE000FF6AB /* Applet.h */,
 				5249C5EC1530D6DE000FF6AB /* AppletInterface.h */,
-				52B06095153728EE0006D4BD /* AppletInterface_Poll.h */,
+				52B06095153728EE0006D4BD /* AppletInterface_Impl.h */,
 				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
 				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
 				5249C5E71530D6DE000FF6AB /* Condition.h */,

@@ -11,7 +11,7 @@
 
 #include "TestScript.h"
 
-#include "AppletInterface_Poll.h"
+#include "AppletInterface_Impl.h"
 #include "EventCondition.h"
 #include "ObserverScript.h"
 #include "Engine.h"
