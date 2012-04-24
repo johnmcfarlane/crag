@@ -14,21 +14,9 @@
 
 #include "Mesh.h"
 
-#include "form/Formation.h"
-#include "form/Engine.h"
-
 #include "form/node/NodeBuffer.h"
-#include "form/node/Shader.h"
 
 #include "form/scene/Polyhedron.h"
-
-#include "core/ConfigEntry.h"
-
-
-namespace
-{
-	CONFIG_DEFINE (max_observer_position_length, sim::Scalar, 2500);
-}
 
 
 /////////////////////////////////////////////////////////////////
@@ -117,14 +105,6 @@ void form::Scene::SetOrigin(sim::Vector3 const & o)
 		// The difficult bit: fix all our data which relied on the old origin.
 		ResetFormations();
 	}
-}
-
-bool form::Scene::IsOriginOk() const
-{
-	// The real test: Is the observer not far enough away from the 
-	// current origin that visible inaccuracies might become apparent?
-	double observer_position_length = Length(camera_ray_relative.position);
-	return observer_position_length < max_observer_position_length;
 }
 
 void form::Scene::AddFormation(Formation & formation)

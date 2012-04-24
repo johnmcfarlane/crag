@@ -11,6 +11,8 @@
 
 #include "TestScript.h"
 
+#include "AppletInterface_Poll.h"
+#include "EventCondition.h"
 #include "ObserverScript.h"
 #include "Engine.h"
 
@@ -21,11 +23,15 @@
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
 
+#include "form/Engine.h"
+
 #include "gfx/Engine.h"
 
 #include "geom/Transformation.h"
 
 #include "core/Random.h"
+
+#include <fstream>
 
 
 DECLARE_CLASS_HANDLE(sim, Ball);	// sim::BallHandle
@@ -40,6 +46,8 @@ using namespace applet;
 
 namespace
 {
+	CONFIG_DEFINE (max_distance_from_origin, sim::Scalar, 2500);
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
@@ -70,6 +78,31 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local types
 	
+	// EventCondition which blocks until Ctrl-I is pressed.
+	// But you can just call PopEvent to get any existing Ctrl-I events.
+	class KeyPressEventCondition : public EventCondition
+	{
+		virtual bool Filter(SDL_Event const & event) const final
+		{
+			if (event.type != SDL_KEYDOWN || event.key.keysym.scancode != SDL_SCANCODE_I)
+			{
+				return false;
+			}
+			
+			if ((event.key.keysym.mod & KMOD_CTRL) == 0)
+			{
+				return false;
+			}
+			
+			if ((event.key.keysym.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL)) != 0)
+			{
+				return false;
+			}
+			
+			return true;
+		}
+	};
+	
 	class TestScript
 	{
 	public:
@@ -83,6 +116,8 @@ namespace
 		void SpawnUniverse();
 		void SpawnVehicle();
 		void SpawnShapes();
+		void HandleEvents();
+		void UpdateOrigin(AppletInterface & applet_interface);
 		
 		// variables
 		sim::PlanetHandle _planet, _moon1, _moon2;
@@ -90,6 +125,9 @@ namespace
 		sim::FirmamentHandle _skybox;
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
+		sim::Vector3 _origin = sim::Vector3::Zero();
+		KeyPressEventCondition _key_press_events;
+		bool _enable_dynamic_origin = true;
 	};
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +144,7 @@ namespace
 		vehicle.Call(& sim::Vehicle::AddThruster, thruster);
 	}
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // TestScript member definitions
@@ -148,6 +187,13 @@ void TestScript::operator() (AppletInterface & applet_interface)
 		applet_interface.Sleep(shape_drop_period);
 		
 		SpawnShapes();
+		
+		HandleEvents();
+		
+		if (_enable_dynamic_origin)
+		{
+			UpdateOrigin(applet_interface);
+		}
 	}
 	
 	while (! _shapes.empty())
@@ -289,6 +335,28 @@ void TestScript::SpawnShapes()
 	}
 }
 
+void TestScript::HandleEvents()
+{
+	SDL_Event event;
+	while (_key_press_events.PopEvent(event))
+	{
+		_enable_dynamic_origin = ! _enable_dynamic_origin;
+	}
+}
+
+void TestScript::UpdateOrigin(AppletInterface & applet_interface)
+{
+	auto camera_transformation = applet_interface.Poll(& gfx::Engine::GetCamera);
+	auto camera_pos = camera_transformation.GetTranslation();
+	auto origin_to_camera = _origin - camera_pos;
+	
+	auto distance_from_origin = Length(origin_to_camera);
+	if (distance_from_origin > max_distance_from_origin)
+	{
+		applet_interface.Call<form::Engine, sim::Vector3>(& form::Engine::SetOrigin, camera_pos);
+		_origin = camera_pos;
+	}
+}
 
 void applet::Test (AppletInterface & applet_interface)
 {

@@ -184,20 +184,6 @@ namespace
 				break;
 			}
 				
-			case KMOD_CTRL:
-			{
-				switch (keysym.scancode)
-				{
-					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::Engine::OnToggleDynamicOrigin);
-						return true;
-					
-					default:
-						break;
-				}
-				break;
-			}
-				
 			case KMOD_CTRL | KMOD_SHIFT:
 			{
 				switch (keysym.scancode)

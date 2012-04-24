@@ -54,7 +54,6 @@ namespace form
 		
 		sim::Vector3 const & GetOrigin() const;
 		void SetOrigin(sim::Vector3 const & o);
-		bool IsOriginOk() const;
 		
 		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation const & formation);

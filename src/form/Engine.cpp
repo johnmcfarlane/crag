@@ -19,14 +19,12 @@
 
 #include "sim/axes.h"
 
-#include "gfx/Color.h"
 #include "gfx/Engine.h"
 #include "gfx/object/FormationMesh.h"
 
 #include "applet/Engine.h"
 
 #include "core/app.h"
-#include "core/ConfigEntry.h"
 #include "core/profile.h"
 #include "core/Statistics.h"
 
@@ -37,8 +35,6 @@ namespace
 	PROFILE_DEFINE (scene_tick_per_quaterna, .0025f);
 	PROFILE_DEFINE (mesh_generation_period, .01f);	
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01f);
-	
-	CONFIG_DEFINE (enable_dynamic_origin, bool, true);
 	
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
@@ -57,6 +53,7 @@ form::Engine::Engine()
 , _regulator_enabled(true)
 , _recommended_num_quaterne(0)
 , _camera_pos(sim::Ray3::Zero())
+, _has_reset_request(false)
 {
 	smp::SetThreadPriority(-1);
 	
@@ -121,7 +118,13 @@ void form::Engine::OnSetMesh(Mesh * const & mesh)
 
 void form::Engine::OnSetCamera(sim::Transformation const & transformation)
 {
-	SetCamera(transformation);
+	_camera_pos = axes::GetCameraRay(transformation);
+}
+
+void form::Engine::SetOrigin(sim::Vector3 const & origin)
+{
+	_has_reset_request = true;
+	_requested_origin = origin;
 }
 
 void form::Engine::OnRegulatorSetEnabled(bool const & enabled)
@@ -142,11 +145,6 @@ void form::Engine::OnToggleSuspended()
 void form::Engine::OnToggleMeshGeneration()
 {
 	enable_mesh_generation = ! enable_mesh_generation;
-}
-
-void form::Engine::OnToggleDynamicOrigin()
-{
-	enable_dynamic_origin = ! enable_dynamic_origin;
 }
 
 void form::Engine::OnToggleFlatShaded()
@@ -204,17 +202,14 @@ form::Scene const & form::Engine::OnTreeQuery() const
 	return GetVisibleScene();
 }
 
-void form::Engine::SetCamera(sim::Transformation const & transformation)
-{
-	_camera_pos = axes::GetCameraRay(transformation);
-}
-
 // The tick function of the scene thread. 
 // This functions gets called repeatedly either in the scene thread - if there is on -
 // or in the main thread as part of the main render/simulation iteration.
 void form::Engine::Tick()
 {
-	bool reset_origin_flag = enable_dynamic_origin && ! IsOriginOk();
+	AdjustNumQuaterna();
+	
+	bool reset_origin_flag = ! IsOriginOk();
 	
 	if (reset_origin_flag) 
 	{
@@ -333,7 +328,8 @@ void form::Engine::BeginReset()
 	// Transfer the origin from the old scene to the new one.
 	Scene & active_scene = GetActiveScene();
 	Scene & visible_scene = GetVisibleScene();
-	active_scene.SetOrigin(_camera_pos.position);
+	active_scene.SetOrigin(_requested_origin);
+	_has_reset_request = false;
 	
 	// Transfer the quaterna count from the old buffer to the new one.
 	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
@@ -389,7 +385,7 @@ bool form::Engine::IsOriginOk() const
 		return true;
 	}
 	
-	return scenes.front().IsOriginOk();
+	return ! _has_reset_request;
 }
 
 bool form::Engine::IsGrowing() const
