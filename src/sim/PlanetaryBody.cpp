@@ -32,8 +32,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, .5f);
-	CONFIG_DEFINE (formation_box_collision_detail_factor, float, .5f);
+	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 1.f);
+	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 1.5f);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
