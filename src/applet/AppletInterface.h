@@ -32,6 +32,9 @@ namespace applet
 		virtual void Sleep(Time duration) = 0;
 		virtual void Wait(Condition & condition) = 0;
 		
+		template <typename FUNCTOR>
+		void WaitFor(FUNCTOR functor);
+		
 		// Calls a cross-thread engine function 
 		// and blocks until it can return the result. 
 		// (Defined in AppletInterface_Poll.h.)

@@ -11,7 +11,7 @@
 
 #include "AppletInterface.h"
 
-#include "Condition.h"
+#include "FunctorCondition.h"
 
 #include "smp/Message.h"
 
@@ -43,6 +43,14 @@ namespace applet
 		bool _complete = false;
 	};
 	
+	// blocking functor call
+	template <typename FUNCTOR>
+	void AppletInterface::WaitFor(FUNCTOR functor)
+	{
+		FunctorCondition<FUNCTOR> condition(functor);
+		Wait(condition);
+	}
+
 	// blocking engine call
 	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
 	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
