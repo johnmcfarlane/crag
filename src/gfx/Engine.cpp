@@ -12,7 +12,6 @@
 #include "Engine.h"
 
 #include "Debug.h"
-#include "glHelpers.h"
 #include "MeshResource.h"
 #include "Program.h"
 #include "ResourceManager.h"
@@ -1264,6 +1263,7 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	
 	if (_regulator_handle)
 	{
+		//DEBUG_MESSAGE("bd:%f fdr:%f", busy_duration, frame_duration_ratio);
 		_regulator_handle.Call(& form::RegulatorScript::SampleFrameDuration, frame_duration_ratio);
 	}
 }

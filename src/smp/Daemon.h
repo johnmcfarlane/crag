@@ -182,7 +182,7 @@ namespace smp
 		{
 			// functor is sent to Engine's thread to call function and retrieve result
 			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS...> command(result, complete, function, parameters...);
-			Engine::Daemon::SendMessage(command);
+			SendMessage(command);
 		}
 		
 	private:
