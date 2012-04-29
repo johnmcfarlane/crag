@@ -63,6 +63,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		RegulatorScript();
+		~RegulatorScript();
 		
 		// script entry point
 		virtual void operator() (applet::AppletInterface & applet_interface) override;

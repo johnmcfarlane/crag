@@ -23,7 +23,7 @@
 
 
 DECLARE_CLASS_HANDLE(gfx, FormationMesh)	// gfx::FormationMeshHandle
-DECLARE_CLASS_HANDLE(form, RegulatorScript)
+DECLARE_CLASS_HANDLE(form, RegulatorScript)	// form::RegulatorScriptHandle
 
 
 namespace form 
@@ -55,6 +55,8 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
+		typedef smp::Daemon<Engine> Daemon;
+
 		struct TreeQueryFunctor
 		{
 			virtual ~TreeQueryFunctor() { }
@@ -81,13 +83,13 @@ namespace form
 		void OnRemoveFormation(Formation * const & formation);
 		void OnSetMesh(Mesh * const & mesh);
 		void OnSetCamera(sim::Transformation const & transformation);
+		void SetOrigin(sim::Vector3 const & origin);
 		
 		void OnRegulatorSetEnabled(bool const & enabled);
 		void OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne);
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
-		void OnToggleDynamicOrigin();
 		void OnToggleFlatShaded();
 		
 		void Run(Daemon::MessageQueue & message_queue);
@@ -98,8 +100,6 @@ namespace form
 		Scene const & OnTreeQuery() const;
 		
 	private:
-		void SetCamera(sim::Transformation const & transformation);
-		
 		void Tick();
 		void TickActiveScene();
 		void GenerateMesh();
@@ -150,6 +150,9 @@ namespace form
 		// It's the active scene which is reshaped for LODding purposes (churned).
 		SceneDoubleBuffer scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
+		
+		bool _has_reset_request;
+		sim::Vector3 _requested_origin;
 		
 		static Daemon * singleton;
 	};

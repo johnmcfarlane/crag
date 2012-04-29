@@ -9,15 +9,13 @@
 
 #pragma once
 
+#include "Node.h"
+#include "NodeBuffer.h"
 #include "Quaterna.h"
 
 
 namespace form 
 {
-	// forward-declarations
-	class NodeBuffer;
-	
-	
 	// Called on each node to (conditionally) expand it
 	// such that newly allocated nodes are assigned as children of it. 
 	class ExpandNodeFunctor
@@ -25,6 +23,7 @@ namespace form
 		OBJECT_NO_COPY (ExpandNodeFunctor);
 		
 	public:
+		// functions
 		ExpandNodeFunctor (NodeBuffer & init_node_buffer)
 		: node_buffer (init_node_buffer)
 		, num_expanded (0)
@@ -43,13 +42,13 @@ namespace form
 		}
 		
 		// The node version. 
-		void operator() (Node & node)
+		void operator() (Node * node)
 		{
-			if (node.score > min_score)
+			if (node->score > min_score)
 			{
-				if (node.IsExpandable()) 
+				if (node->IsExpandable()) 
 				{
-					if (node_buffer.ExpandNode(node)) 
+					if (node_buffer.ExpandNode(* node)) 
 					{
 						RecalculateMinScore();
 						++ num_expanded;
@@ -58,17 +57,8 @@ namespace form
 			}
 		}
 		
-		// The quaterna version.
-		void operator() (Quaterna & quaterna)
-		{
-			operator() (quaterna.nodes[0]);
-			operator() (quaterna.nodes[1]);
-			operator() (quaterna.nodes[2]);
-			operator() (quaterna.nodes[3]);
-		}
-		
 	private:
-		
+		// variables
 		NodeBuffer & node_buffer;
 		int num_expanded;
 		float min_score;

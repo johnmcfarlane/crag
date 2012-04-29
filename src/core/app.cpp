@@ -11,14 +11,7 @@
 
 #include "app.h"
 
-#include "smp/Lock.h"
-#include "smp/SimpleMutex.h"
-
 #include "core/ConfigEntry.h"
-
-#if defined(__APPLE__)
-#include <CoreFoundation/CFDate.h>
-#endif
 
 
 // defined in gfx::Engine.cpp
@@ -32,35 +25,12 @@ namespace
 	
 	SDL_Window * window = nullptr;
 		
-#if defined(WIN32)
-	Time inv_query_performance_frequency = 0;
-#endif
-	
 	char const * _program_path;
-	
-	smp::SimpleMutex _event_mutex;
-	std::vector<SDL_Event> _events;
-
-	void SetFocus(bool has_focus)
-	{
-		_has_focus = has_focus;
-	}
 }
 
 
 bool app::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
-#if defined(WIN32)
-	LARGE_INTEGER query_performance_frequency;
-	if (QueryPerformanceFrequency(& query_performance_frequency) == FALSE || query_performance_frequency.QuadPart == 0)
-	{
-		std::cerr << "Failed to read QueryPerformanceFrequency." << std::endl;
-		return false;
-	}
-	
-	inv_query_performance_frequency = 1. / query_performance_frequency.QuadPart;
-#endif
-
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
@@ -107,7 +77,7 @@ bool app::Init(Vector2i resolution, bool full_screen, char const * title, char c
 		return false;
 	}
 	
-	SetFocus(true);
+	_has_focus = true;
 	if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 	{
 		_relative_mouse_mode = true;
@@ -198,13 +168,14 @@ Vector2i app::GetWindowSize()
 	return window_size;
 }
 
-bool app::GetEvent(SDL_Event & event)
+void app::GetEvent(SDL_Event & event)
 {
-	bool has_event = SDL_PollEvent(& event) != 0;
+	bool has_event = SDL_WaitEvent(& event) != 0;
 	
 	if (! has_event)
 	{
-		return false;
+		DEBUG_BREAK("SDL_WaitEvent failed");
+		return;
 	}
 	
 	switch (event.type)
@@ -213,11 +184,11 @@ bool app::GetEvent(SDL_Event & event)
 			switch (event.window.event)
 			{
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					SetFocus(true);
+					_has_focus = true;
 					break;
 					
 				case SDL_WINDOWEVENT_FOCUS_LOST:
-					SetFocus(false);
+					_has_focus = false;
 					break;
 			}
 			break;
@@ -238,7 +209,7 @@ bool app::GetEvent(SDL_Event & event)
 
 				if (! _has_focus)
 				{
-					return true;
+					break;
 				}
 
 				// intercept message and fake relative mouse movement correctly.
@@ -251,7 +222,7 @@ bool app::GetEvent(SDL_Event & event)
 				Vector2i delta = (cursor - center);
 				if (delta.x == 0 && delta.y == 0)
 				{
-					return true;
+					break;
 				}
 
 				// fake a mouse motion event
@@ -260,58 +231,16 @@ bool app::GetEvent(SDL_Event & event)
 				event.motion.y = cursor.y;
 				event.motion.xrel = delta.x;
 				event.motion.yrel = delta.y;
-				return true;
-
-				/*Vector2f mouse_input = Vector2f(delta) * 0.3f;
-				if (Length(mouse_input) > 0) {
-						impulse.factors[sim::Controller::Impulse::TORQUE][axes::UP] -= mouse_input.x;
-						impulse.factors[sim::Controller::Impulse::TORQUE][axes::RIGHT] -= mouse_input.y;
-				}*/
-				// Note: OS X API provides CGGetLastMouseDelta (& delta.x, & delta.y);
+				break;
 			}
 		break;
 	}
-	
-	return true;
-}
-
-void app::PushEvent(SDL_Event const & event)
-{
-	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
-	_events.push_back(event);
-}
-
-bool app::PopEvent(SDL_Event & event)
-{
-	smp::Lock<smp::SimpleMutex> lock(_event_mutex);
-	if (_events.empty())
-	{
-		return false;
-	}
-	
-	event = _events.back();
-	_events.pop_back();
-	return true;
-}
-
-bool app::HasFocus()
-{
-	return _has_focus;
 }
 
 Time app::GetTime()
 {
-#if defined(__APPLE__) && 0
-	return CFAbsoluteTimeGetCurrent ();
-#elif defined(WIN32)
-	LARGE_INTEGER performance_count;
-	if (QueryPerformanceCounter(& performance_count) == FALSE)
-	{
-		ASSERT(false);
-	}
-	return inv_query_performance_frequency * performance_count.QuadPart;
-#else
-	// Might want to try CLOCK_MONOTONIC clock using POSIX clock_gettime.
+	// Possible alternatives:
+	// __APPLE__: CFAbsoluteTimeGetCurrent ()
+	// POSIX: CLOCK_MONOTONIC clock using POSIX clock_gettime.
 	return .001 * SDL_GetTicks();
-#endif
 }

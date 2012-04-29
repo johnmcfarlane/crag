@@ -12,7 +12,6 @@
 #include "Engine.h"
 
 #include "Debug.h"
-#include "glHelpers.h"
 #include "MeshResource.h"
 #include "Program.h"
 #include "ResourceManager.h"
@@ -425,7 +424,7 @@ void Engine::OnSetParent(Object & child, Uid const & parent_uid)
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
 	{
-		ASSERT(false);
+		DEBUG_BREAK("Given parent, %u, not found", unsigned(parent_uid.GetValue()));
 		return;
 	}
 	
@@ -485,6 +484,11 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 
 	// pass this on to the formation manager to update the node scores
 	form::Daemon::Call(& form::Engine::OnSetCamera, transformation);
+}
+
+gfx::Transformation const& Engine::GetCamera() const
+{
+	return scene->GetPov().GetTransformation();
 }
 
 void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
@@ -1186,6 +1190,7 @@ void Engine::ProcessRenderTiming()
 	UpdateRegulator(busy_duration);
 }
 
+// TODO: Consider SDL_GetPerformanceCounter / SDL_GetPerformanceFrequency
 void Engine::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
 {
 	frame_start_position = last_frame_end_position;
@@ -1258,6 +1263,7 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	
 	if (_regulator_handle)
 	{
+		//DEBUG_MESSAGE("bd:%f fdr:%f", busy_duration, frame_duration_ratio);
 		_regulator_handle.Call(& form::RegulatorScript::SampleFrameDuration, frame_duration_ratio);
 	}
 }

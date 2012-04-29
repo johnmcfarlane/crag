@@ -168,6 +168,9 @@ namespace form
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
+		
+		// used by ChurnNodes
+		SmpNodeVector _expandable_nodes;
 	};
 	
 }

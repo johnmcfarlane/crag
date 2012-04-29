@@ -21,6 +21,8 @@ namespace applet
 	{
 	public:
 		virtual ~Condition() { }
-		virtual bool operator() (/*Engine & engine*/) = 0;
+		
+		// true iff the condition is satisfied and the fiber can continue
+		virtual bool operator() (bool hurry) = 0;
 	};
 }

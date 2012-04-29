@@ -18,6 +18,11 @@
 #include "geom/Sphere.h"
 
 
+using namespace sim;
+
+////////////////////////////////////////////////////////////////////////////////
+// sim::Firmament member definitions
+
 bool Firmament::Init(gfx::Engine & renderer)
 {
 	Skybox::Init(renderer);

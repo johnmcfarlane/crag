@@ -25,7 +25,7 @@ TimeCondition::TimeCondition(Time duration)
 {
 }
 
-bool TimeCondition::operator() ()
+bool TimeCondition::operator() (bool hurry)
 {
-	return app::GetTime() >= _wake_position;
+	return hurry || app::GetTime() >= _wake_position;
 }

@@ -70,6 +70,16 @@ void Engine::OnAddObject(AppletBase * const & applet)
 		applet->SetUid(Uid::Create());
 	}
 	
+	// If engine's quit flag is set,
+	if (_quit_flag)
+	{
+		DEBUG_MESSAGE("quit flag already set; deleting applet");
+		
+		// delete it.
+		delete applet;
+		return;
+	}
+
 	_applets.push_back(* applet);
 }
 
@@ -99,23 +109,14 @@ void Engine::SetQuitFlag()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	// Wait around until there are applets to run.
-	while (! HasFibersActive())
-	{
-		if (message_queue.DispatchMessages(* this) == 0)
-		{
-			smp::Yield();
-		}
-	}
-	
 	// Main loop.
-	while (HasFibersActive())
+	while (! _quit_flag | HasFibersActive())
 	{
 		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
 		bool processed_tasks = ProcessTasks();
 		if (! (dispatched_messages | processed_tasks))
 		{
-			smp::Yield();
+			smp::Sleep(0.01);
 		}
 	}
 	
@@ -127,40 +128,41 @@ bool Engine::HasFibersActive() const
 	return ! _applets.empty();
 }
 
+// Give all applets an opportunity to run.
 bool Engine::ProcessTasks()
 {
-	ASSERT(HasFibersActive());
+	bool did_work = false;
 	
-	if (_applets.empty())
+	// Step through all applets,
+	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
-		return false;
+		AppletBase & applet = * i;
+
+		ASSERT(applet.IsRunning());
+
+		// and if applet's continue condition is met,
+		Condition & condition = ref(applet.GetCondition());
+		if (condition(_quit_flag))
+		{
+			// then continue!
+			applet.Continue();
+			
+			// When it pauses again, 
+			did_work = true;
+
+			// And if it's all done, 
+			if (! applet.IsRunning())
+			{
+				// take a step back,
+				-- i;
+				
+				// and remove the applet.
+				_applets.remove(applet);
+				delete & applet;
+			}
+		}
 	}
 	
-	AppletBase & first = _applets.front();
-	AppletBase * applet = & first;
-	do
-	{
-		ASSERT(applet->IsRunning());
-
-		_applets.pop_front();
-		_applets.push_back(* applet);
-		
-		Condition & condition = ref(applet->GetCondition());
-		if (condition())
-		{
-			applet->Continue();
-
-			if (! applet->IsRunning())
-			{
-				_applets.remove(* applet);
-				delete applet;
-			}
-			
-			return true;
-		}
-		
-		applet = & static_cast<AppletBase &>(_applets.front());
-	}	while (applet != & first);
-	
-	return false;
+	// Return true iff any happened.
+	return did_work;
 }

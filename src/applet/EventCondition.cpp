@@ -11,6 +11,9 @@
 
 #include "EventCondition.h"
 
+#include "smp/smp.h"
+#include "smp/Lock.h"
+
 #include "core/app.h"
 
 
@@ -22,17 +25,49 @@ using namespace applet;
 
 EventCondition::EventCondition()
 {
-	_event.type = 0;
+	SDL_AddEventWatch(OnEvent, this);
 }
 
-bool EventCondition::operator() (/*Engine & engine*/)
+EventCondition::~EventCondition()
 {
-	ASSERT(_event.type == 0);
-	return app::PopEvent(_event);
+	SDL_DelEventWatch(OnEvent, this);
+	smp::Yield();	// fingers crossed!
 }
 
-SDL_Event const & EventCondition::GetEvent() const
+bool EventCondition::PopEvent(SDL_Event & event)
 {
-	ASSERT(_event.type != 0);
-	return _event;
+	smp::Lock<smp::SimpleMutex> lock(_mutex);
+	if (_events.empty())
+	{
+		return false;
+	}
+	
+	event = _events.back();
+	_events.pop_back();
+	return true;
+}
+
+bool EventCondition::Filter(SDL_Event const & event) const
+{
+	return true;
+}
+
+bool EventCondition::operator() (bool hurry)
+{
+	smp::Lock<smp::SimpleMutex> lock(_mutex);
+
+	return hurry | (! _events.empty());
+}
+
+int EventCondition::OnEvent(void *userdata, SDL_Event * event)
+{
+	EventCondition & event_condition = ref(reinterpret_cast<EventCondition *>(userdata));
+	
+	if (event_condition.Filter(* event))
+	{
+		smp::Lock<smp::SimpleMutex> lock(event_condition._mutex);
+		event_condition._events.push_back(* event);
+	}
+	
+	return 0;
 }

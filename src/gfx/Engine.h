@@ -47,6 +47,9 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Engine);
 		
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
 		enum ForegroundRenderPass
 		{
 			NormalPass,
@@ -55,6 +58,11 @@ namespace gfx
 		};
 		
 	public:
+		typedef smp::Daemon<Engine> Daemon;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
 		Engine();
 		~Engine();
 
@@ -90,6 +98,7 @@ namespace gfx
 		void OnToggleWireframe();
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
+		Transformation const& GetCamera() const;
 		void OnSetRegulatorHandle(form::RegulatorScriptHandle const & regulator_handle);
 
 		template <typename OBJECT_TYPE>
@@ -154,7 +163,7 @@ namespace gfx
 		static void SetFence(Fence & fence);
 
 		////////////////////////////////////////////////////////////////////////////////
-		// Attributes
+		// variables
 		
 		SDL_GLContext context;
 		Scene * scene;

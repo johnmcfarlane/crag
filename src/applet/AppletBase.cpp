@@ -24,7 +24,7 @@ namespace
 	// used by Yield to return ASAP;
 	class NullCondition : public Condition
 	{
-		bool operator() ()
+		bool operator() (bool hurry)
 		{
 			return true;
 		}

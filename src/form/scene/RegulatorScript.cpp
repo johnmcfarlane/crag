@@ -140,8 +140,9 @@ namespace
 		{
 		}
 
-		void SampleFrameDuration(float const & frame_duration_ratio, QuaterneCount num_quaterne)
+		void SampleFrameDuration(float frame_duration_ratio, QuaterneCount num_quaterne)
 		{
+			frame_duration_ratio = std::max(frame_duration_ratio, std::numeric_limits<float>::min());
 			QuaterneCount recommended_num_quaterne = MakeRecommendation(frame_duration_ratio, num_quaterne);
 			_min_recommended_num_quaterne = std::min(_min_recommended_num_quaterne, recommended_num_quaterne);
 		}
@@ -167,7 +168,10 @@ namespace
 			
 			float raw_recommended_num_quaterne = static_cast<float>(num_quaterne.GetNumber());
 			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
-			QuaterneCount recommended_num_quaterne(static_cast<int>(raw_recommended_num_quaterne));
+			ASSERT(raw_recommended_num_quaterne > 0);
+			
+			int rounded_recommended_num_quaterne = std::max(1, static_cast<int>(raw_recommended_num_quaterne));
+			QuaterneCount recommended_num_quaterne(rounded_recommended_num_quaterne);
 			
 			if (recommended_num_quaterne == num_quaterne)
 			{
@@ -248,6 +252,12 @@ RegulatorScript::RegulatorScript()
 	Reset();
 }
 
+RegulatorScript::~RegulatorScript()
+{
+	delete _units[mesh_generation];
+	delete _units[frame_rate];
+}
+
 void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
 	// Introduce self to renderer.
@@ -279,7 +289,7 @@ void RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
 {
 	// Validate input
 	ASSERT(frame_duration_ratio == frame_duration_ratio);
-	ASSERT(frame_duration_ratio > 0);
+	ASSERT(frame_duration_ratio >= 0);
 	
 	if (_current_num_quaterne != QuaterneCount::invalid())
 	{

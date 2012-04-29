@@ -10,19 +10,22 @@
 #include "gfx/object/Skybox.h"
 
 
-class Firmament : public gfx::Skybox
+DECLARE_CLASS_HANDLE(sim, Firmament);
+
+namespace sim 
 {
-public:
-	bool Init(gfx::Engine & renderer);
-	
-private:
-	void DrawStarsClevur();
-
-	void DrawStarsSimple();
-	static void DrawStar(gfx::Image & side, Vector2f const & uv, float r);
-
-	static const int box_edge_size = 512;
-	static const int num_stars = 5000;
-};
-
-typedef smp::Handle<Firmament> FirmamentHandle;
+	class Firmament : public gfx::Skybox
+	{
+	public:
+		bool Init(gfx::Engine & renderer);
+		
+	private:
+		void DrawStarsClevur();
+		
+		void DrawStarsSimple();
+		static void DrawStar(gfx::Image & side, Vector2f const & uv, float r);
+		
+		static const int box_edge_size = 512;
+		static const int num_stars = 5000;
+	};
+}

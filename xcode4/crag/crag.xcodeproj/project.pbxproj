@@ -386,6 +386,7 @@
 		5230573014F1D95F0024D4A8 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		5238885B1533F0C8004F79ED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5238885C1533F0C8004F79ED /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		523688181531DF390096D112 /* GatherExpandableNodesFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatherExpandableNodesFunctor.h; sourceTree = "<group>"; };
 		52394D5614C33EB9008EF2DC /* fog.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fog.frag; sourceTree = "<group>"; };
 		52483974143BEAE300195337 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = ../../../../../../System/Library/Frameworks/Carbon.framework; sourceTree = "<group>"; };
 		52483976143BEB0200195337 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
@@ -421,9 +422,13 @@
 		52849CB4150ED849007AA818 /* RegulatorScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegulatorScript.cpp; sourceTree = "<group>"; };
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
+		52933D661546FBBD00767FFE /* FunctorCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctorCondition.h; sourceTree = "<group>"; };
+		52933D6815470A0E00767FFE /* Future.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Future.h; sourceTree = "<group>"; };
+		5296FB41154D8A8D00FAA706 /* PollCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollCondition.h; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
 		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
 		52AF04AB152362AB00EBAA15 /* Fiber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fiber.cpp; sourceTree = "<group>"; usesTabs = 1; };
+		52B06095153728EE0006D4BD /* AppletInterface_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletInterface_Impl.h; sourceTree = "<group>"; };
 		52B4604714C342D40078083B /* disk.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.frag; sourceTree = "<group>"; };
 		52F819A7132DF0D20045C3A8 /* font_bitmap.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = font_bitmap.bmp; path = ../../font_bitmap.bmp; sourceTree = "<group>"; };
 		52F819A9132DF13C0045C3A8 /* crag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "crag-Info.plist"; sourceTree = "<group>"; };
@@ -576,6 +581,7 @@
 				5230565814F1D95F0024D4A8 /* CalculateNodeScoreFunctor.h */,
 				5230565914F1D95F0024D4A8 /* ExpandNodeFunctor.h */,
 				5230565A14F1D95F0024D4A8 /* ForEachNodeFace.h */,
+				523688181531DF390096D112 /* GatherExpandableNodesFunctor.h */,
 				5230565B14F1D95F0024D4A8 /* GenerateMeshFunctor.h */,
 				5230565C14F1D95F0024D4A8 /* Node.cpp */,
 				5230565D14F1D95F0024D4A8 /* Node.h */,
@@ -837,21 +843,25 @@
 		5249C5E61530D6DE000FF6AB /* applet */ = {
 			isa = PBXGroup;
 			children = (
+				5249C5EF1530D6DE000FF6AB /* Applet.h */,
+				5249C5EC1530D6DE000FF6AB /* AppletInterface.h */,
+				52B06095153728EE0006D4BD /* AppletInterface_Impl.h */,
+				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
+				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
 				5249C5E71530D6DE000FF6AB /* Condition.h */,
 				5249C5E81530D6DE000FF6AB /* Engine.cpp */,
 				5249C5E91530D6DE000FF6AB /* Engine.h */,
 				5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */,
 				5249C5EB1530D6DE000FF6AB /* EventCondition.h */,
-				5249C5EC1530D6DE000FF6AB /* AppletInterface.h */,
+				52933D661546FBBD00767FFE /* FunctorCondition.h */,
+				52933D6815470A0E00767FFE /* Future.h */,
 				5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */,
 				5249C5EE1530D6DE000FF6AB /* ObserverScript.h */,
-				5249C5EF1530D6DE000FF6AB /* Applet.h */,
-				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
-				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
 				5249C5F21530D6DE000FF6AB /* TestScript.cpp */,
 				5249C5F31530D6DE000FF6AB /* TestScript.h */,
 				5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */,
 				5249C5F51530D6DE000FF6AB /* TimeCondition.h */,
+				5296FB41154D8A8D00FAA706 /* PollCondition.h */,
 			);
 			path = applet;
 			sourceTree = "<group>";

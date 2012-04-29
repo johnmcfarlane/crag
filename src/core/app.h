@@ -30,13 +30,7 @@ namespace app
 	Vector2i GetWindowSize();
 	
 	// called from main thread
-	bool GetEvent(SDL_Event & event);
-	
-	// thread safe
-	void PushEvent(SDL_Event const & event);
-	bool PopEvent(SDL_Event & event);
-	
-	bool HasFocus();
+	void GetEvent(SDL_Event & event);
 	
 	// time
 	Time GetTime();

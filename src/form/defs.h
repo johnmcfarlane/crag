@@ -16,9 +16,14 @@
 
 #include "gfx/Color.h"
 
+#include "smp/vector.h"
+
 
 namespace form
 {
+	// forward-delcares
+	class Node;
+	
 	// Vector Types
 	typedef float Scalar;
 	
@@ -27,6 +32,9 @@ namespace form
 	typedef ::Ray<Scalar, 3> Ray3;
 	typedef ::Sphere<Scalar, 3> Sphere3;
 	typedef gfx::Color4b Color;
+	
+	// thread-safe node vector
+	typedef smp::vector<Node *> SmpNodeVector;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
 	inline Vector3 SimToScene(::Vector3d const & sim, ::Vector3d const & scene_origin)

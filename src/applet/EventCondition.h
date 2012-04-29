@@ -11,6 +11,8 @@
 
 #include "Condition.h"
 
+#include "smp/SimpleMutex.h"
+
 
 namespace applet
 {
@@ -20,11 +22,21 @@ namespace applet
 	public:
 		// functions
 		EventCondition();
-		virtual bool operator() (/*Engine & engine*/) override;
-		SDL_Event const & GetEvent() const;
-		
+		~EventCondition();
+
+		bool PopEvent(SDL_Event & event);
 	private:
+		// can be overridden to allow specific events through
+		virtual bool Filter(SDL_Event const & event) const;
+		
+		// Condition override
+		virtual bool operator() (bool hurry) override;
+		
+		// SDL callback
+		static int OnEvent(void *userdata, SDL_Event * event);
+		
 		// variables
-		SDL_Event _event;
+		std::vector<SDL_Event> _events;
+		smp::SimpleMutex _mutex;
 	};
 }

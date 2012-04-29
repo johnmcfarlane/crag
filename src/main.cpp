@@ -111,6 +111,17 @@ namespace
 			{
 				switch (keysym.scancode)
 				{
+					case SDL_SCANCODE_ESCAPE:
+					{
+						SDL_Event quit_event;
+						quit_event.type = SDL_QUIT;
+						if (SDL_PushEvent(& quit_event) != 1)
+						{
+							DEBUG_BREAK("SDL_PushEvent returned error");
+						}
+						return true;
+					}
+						
 					case SDL_SCANCODE_RETURN:
 					{
 						sim::Daemon::Call(& sim::Engine::OnTogglePause);
@@ -175,20 +186,6 @@ namespace
 				break;
 			}
 				
-			case KMOD_CTRL:
-			{
-				switch (keysym.scancode)
-				{
-					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::Engine::OnToggleDynamicOrigin);
-						return true;
-					
-					default:
-						break;
-				}
-				break;
-			}
-				
 			case KMOD_CTRL | KMOD_SHIFT:
 			{
 				switch (keysym.scancode)
@@ -212,16 +209,12 @@ namespace
 		return false;
 	}
 	
+	// Returns false if it's time to quit.
 	bool HandleEvent()
 	{
 		SDL_Event event;
 		
-		// If no events are pending,
-		if (! app::GetEvent(event))
-		{
-			// then nothing's happening event-wise.
-			return false;
-		}
+		app::GetEvent(event);
 		
 		switch (event.type)
 		{
@@ -277,8 +270,27 @@ namespace
 		}
 
 		// If not caught here, then send it to the application event queue.
-		app::PushEvent(event);
-		return true;
+		return event.type != SDL_QUIT;
+	}
+	
+	int EventFilter(void * userdata, SDL_Event * event)
+	{
+		ASSERT(userdata == nullptr);
+		
+		switch (event->type) 
+		{
+			case SDL_QUIT:
+			case SDL_WINDOWEVENT:
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				return 1;
+				
+			default:
+				return 0;
+		}
 	}
 
 	// The main program function.
@@ -293,6 +305,8 @@ namespace
 		{
 			return false;
 		}
+		
+		SDL_SetEventFilter(EventFilter, nullptr);
 		
 #if defined (GATHER_STATS)
 		core::Statistics stat_manager;
@@ -318,7 +332,7 @@ namespace
 			//applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
 			applet::Daemon::Call(& applet::Engine::Launch, & ga::main);
 			
-			while (true)
+			while (HandleEvent())
 			{
 				if (! formation.IsRunning())
 				{
@@ -339,12 +353,6 @@ namespace
 				{
 					DEBUG_MESSAGE("applets initiating shutdown");
 					break;
-				}
-
-				if (! HandleEvent())
-				{
-					// TODO: This call is costly and shouldn't be necessary with a few fixes to shut-down code. 
-					smp::Yield();
 				}
 			}
 			
