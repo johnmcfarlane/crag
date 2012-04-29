@@ -12,6 +12,7 @@
 #include "AppletInterface.h"
 
 #include "FunctorCondition.h"
+#include "Future.h"
 
 #include "smp/Message.h"
 
@@ -20,28 +21,6 @@ namespace applet
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// AppletInterface member definitions
-	
-	// condition type used by AppletInterface::Poll
-	class AppletInterface::PollCondition : public Condition
-	{
-	public:
-		~PollCondition()
-		{
-			ASSERT(_complete);
-		}
-		operator bool & ()
-		{
-			return _complete;
-		}
-	private:
-		virtual bool operator() (bool hurry) final
-		{
-			return _complete;
-		}
-		
-		// variables
-		bool _complete = false;
-	};
 	
 	// blocking functor call
 	template <typename FUNCTOR>
@@ -56,22 +35,12 @@ namespace applet
 	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 	{
 		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-		typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...);
 		
 		// local stack storage for result
-		ValueType result;
-		
-		// flag to say we're complete;
-		PollCondition condition;
-		
-		// ask daemon to send the poll command to the engine
-		ENGINE::Daemon::template Poll(result, condition, function, parameters...);
-		
-		// result tests the flag upon which applet continuation is condition
-		Wait(condition);
+		Future<ValueType> future(* this, function, parameters...);
 		
 		// at which time, the result is valid
-		return result;
+		return future.get();
 	}
 	
 	// blocking engine call
@@ -79,21 +48,11 @@ namespace applet
 	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
 	{
 		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-		typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...) const;
 		
 		// local stack storage for result
-		ValueType result;
-		
-		// flag to say we're complete;
-		PollCondition condition;
-		
-		// ask daemon to send the poll command to the engine
-		ENGINE::Daemon::template Poll(result, condition, function, parameters...);
-		
-		// result tests the flag upon which applet continuation is condition
-		Wait(condition);
+		Future<ValueType> future(* this, function, parameters...);
 		
 		// at which time, the result is valid
-		return result;
+		return future.get();
 	}
 }

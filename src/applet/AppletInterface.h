@@ -50,8 +50,5 @@ namespace applet
 		{
 			ENGINE::Daemon::Call(function, parameters...);
 		}
-		
-	private:
-		class PollCondition;
 	};
 }
