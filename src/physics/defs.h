@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "geom/Vector3.h"
 #include "geom/Matrix33.h"
 #include "geom/Matrix44.h"
 
@@ -35,7 +34,7 @@ namespace physics
 	typedef double Scalar;
 #endif
 	
-	typedef Vector<Scalar, 3> Vector3;
-	typedef Matrix<Scalar, 3, 3> Matrix33;
-	typedef Matrix<Scalar, 4, 4> Matrix44;
+	typedef geom::Vector<Scalar, 3> Vector3;
+	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
+	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 }

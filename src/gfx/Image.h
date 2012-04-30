@@ -11,8 +11,6 @@
 
 #include "Color.h"
 
-#include "geom/Vector2.h"
-
 
 struct SDL_PixelFormat;
 struct SDL_Surface;
@@ -38,18 +36,18 @@ namespace gfx
 		static Format const & GetOpenGlRgba8Format();
 
 		// init
-		bool Create(Vector2i const & size, Format const & format = GetOpenGlRgba8Format());
+		bool Create(geom::Vector2i const & size, Format const & format = GetOpenGlRgba8Format());
 		bool Convert(Image const & source, Format const & format = GetOpenGlRgba8Format());
 		void Destroy();
 
 		// size info
-		Vector2i GetSize() const { return Vector2i(GetWidth(), GetHeight()); }
+		geom::Vector2i GetSize() const { return geom::Vector2i(GetWidth(), GetHeight()); }
 		int GetWidth() const;
 		int GetHeight() const;
 
 		// pixel access
-		Color4b GetPixel(Vector2i const & pos) const;
-		void SetPixel(Vector2i const & pos, Color4b const & color);
+		Color4b GetPixel(geom::Vector2i const & pos) const;
+		void SetPixel(geom::Vector2i const & pos, Color4b const & color);
 		bool CreateTexture(Texture & texture) const;
 
 		// misc
@@ -67,7 +65,7 @@ namespace gfx
 		SDL_Surface * surface;
 	};
 
-	bool Blit(Image * dst, Vector2i const & dst_pos, Image const & src, Vector2i const & src_pos, Vector2i const & size);
+	bool Blit(Image * dst, geom::Vector2i const & dst_pos, Image const & src, geom::Vector2i const & src_pos, geom::Vector2i const & size);
 }
 
 

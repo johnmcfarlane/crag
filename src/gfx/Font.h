@@ -12,8 +12,6 @@
 #include "Texture.h"
 #include "VertexBufferObject.h"
 
-#include "geom/Vector2.h"
-
 
 namespace gfx
 {
@@ -23,8 +21,8 @@ namespace gfx
 		// types
 		struct Vertex
 		{
-			Vector2f pos;
-			Vector2f tex;
+			geom::Vector2f pos;
+			geom::Vector2f tex;
 		};
 		
 		typedef VertexBufferObject<Vertex> VertexBufferObject;
@@ -35,16 +33,16 @@ namespace gfx
 		
 		operator bool() const;
 
-		void Print(char const * text, Vector2f const & position) const;
+		void Print(char const * text, geom::Vector2f const & position) const;
 
 	private:
-		void GenerateVerts(char const * text, Vector2f const & position) const;
+		void GenerateVerts(char const * text, geom::Vector2f const & position) const;
 		void RenderVerts() const;
 		
-		void PrintChar(char c, Vector2f & position) const;
+		void PrintChar(char c, geom::Vector2f & position) const;
 
-		Vector2i character_size;
-		Vector2f inv_scale;
+		geom::Vector2i character_size;
+		geom::Vector2f inv_scale;
 		float scale_factor;
 		Texture texture;
 		mutable VertexBufferObject vbo;

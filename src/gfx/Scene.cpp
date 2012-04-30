@@ -232,7 +232,7 @@ Light::List & Scene::GetLightList()
 	return _light_list;
 }
 
-void Scene::SetResolution(Vector2i const & r)
+void Scene::SetResolution(geom::Vector2i const & r)
 {
 	pov.GetFrustum().resolution = r;
 }

@@ -447,7 +447,7 @@ void Engine::OnSetReady(bool const & ready)
 	_ready = ready;
 }
 
-void Engine::OnResize(Vector2i const & size)
+void Engine::OnResize(geom::Vector2i const & size)
 {
 	glViewport(0, 0, size.x, size.y);
 	scene->SetResolution(size);
@@ -587,7 +587,7 @@ bool Engine::Init()
 	InitVSync();
 	
 	scene = new Scene;
-	Vector2i resolution = app::GetWindowSize();
+	geom::Vector2i resolution = app::GetWindowSize();
 	scene->SetResolution(resolution);
 	
 	InitRenderState();
@@ -603,7 +603,7 @@ bool Engine::InitFrameBuffer()
 //	
 //	depth_buffer.Init();
 //	depth_buffer.Bind();
-//	Vector2i resolution = app::GetWindowSize();
+//	geom::Vector2i resolution = app::GetWindowSize();
 //	depth_buffer.ResizeForDepth(resolution.x, resolution.y);
 //	
 //	depth_texture.Init();
@@ -1171,7 +1171,7 @@ void Engine::DebugDraw()
 		}
 	}
 	
-	Debug::DrawText(out_stream.str().c_str(), Vector2i::Zero());
+	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i::Zero());
 #endif
 	
 #endif

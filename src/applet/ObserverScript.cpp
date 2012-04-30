@@ -154,7 +154,7 @@ namespace
 	class AddRotationFunctor
 	{
 	public:
-		AddRotationFunctor(Vector3f const & rotation)
+		AddRotationFunctor(geom::Vector3f const & rotation)
 		: _rotation(rotation)
 		{
 		}
@@ -171,7 +171,7 @@ namespace
 		}
 		
 	private:
-		Vector3f _rotation;
+		geom::Vector3f _rotation;
 	};
 }
 
@@ -179,7 +179,7 @@ void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
 	float sensitivity = 0.1f;
 	
-	Vector3f rotation;
+	geom::Vector3f rotation;
 	rotation.x = - y_delta * sensitivity;
 	rotation.y = 0;
 	rotation.z = - x_delta * sensitivity;

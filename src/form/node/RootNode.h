@@ -31,10 +31,8 @@ namespace form
 		void Deinit(PointBuffer & points);
 		
 		Polyhedron & GetOwner() const;
-
-		//void SetCenter(Vector3d const & _center, double scale);
 	private:
-		static void SetPointCenter(Vector3f & point, Vector3d const & relative_pos, Vector3d const & point_center, double scale);
+		static void SetPointCenter(geom::Vector3f & point, geom::Vector3d const & relative_pos, geom::Vector3d const & point_center, double scale);
 		
 		Polyhedron * owner;
 	};

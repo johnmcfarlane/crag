@@ -92,7 +92,7 @@ namespace gfx
 		void OnSetParent(Object & child, BranchNode & parent);
 		void OnSetTime(Time const & time);
 		void OnSetReady(bool const & ready);
-		void OnResize(Vector2i const & size);
+		void OnResize(geom::Vector2i const & size);
 		void OnToggleCulling();
 		void OnToggleLighting();
 		void OnToggleWireframe();

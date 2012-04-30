@@ -114,6 +114,7 @@
 #include "core/core.h"
 #include "core/debug.h"
 #include "core/floatOps.h"
+#include "core/intOps.h"
 #include "core/intrusive_list.h"
 #include "core/memory.h"
 

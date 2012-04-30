@@ -18,6 +18,6 @@ sim::Controller::~Controller()
 
 sim::Controller::Impulse::Impulse()
 {
-	factors[FORCE] = Vector3f::Zero();
-	factors[TORQUE] = Vector3f::Zero();
+	factors[FORCE] = geom::Vector3f::Zero();
+	factors[TORQUE] = geom::Vector3f::Zero();
 }

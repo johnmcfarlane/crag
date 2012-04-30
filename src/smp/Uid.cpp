@@ -11,8 +11,6 @@
 
 #include "atomic.h"
 
-#include "core/intOps.h"
-
 
 using namespace smp;
 

@@ -54,12 +54,12 @@ Quad::Quad(float depth_offset)
 	
 	Vertex verts[6] = 
 	{
-		{ Vector3f(x0, y, z0) },
-		{ Vector3f(x0, y, z1) },
-		{ Vector3f(x1, y, z0) },
-		{ Vector3f(x1, y, z0) },
-		{ Vector3f(x0, y, z1) },
-		{ Vector3f(x1, y, z1) }
+		{ geom::Vector3f(x0, y, z0) },
+		{ geom::Vector3f(x0, y, z1) },
+		{ geom::Vector3f(x1, y, z0) },
+		{ geom::Vector3f(x1, y, z0) },
+		{ geom::Vector3f(x0, y, z1) },
+		{ geom::Vector3f(x1, y, z1) }
 	};
 	
 	_quad.Init();

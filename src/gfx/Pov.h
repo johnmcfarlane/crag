@@ -24,7 +24,7 @@ namespace gfx
 		Matrix44 CalcProjectionMatrix() const;
 		void SetProjectionMatrix() const;
 		
-		Vector2i resolution;
+		geom::Vector2i resolution;
 		double fov;	// radians
 		RenderRange depth_range;
 	};

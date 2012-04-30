@@ -23,7 +23,7 @@ namespace sim
 		void DrawStarsClevur();
 		
 		void DrawStarsSimple();
-		static void DrawStar(gfx::Image & side, Vector2f const & uv, float r);
+		static void DrawStar(gfx::Image & side, geom::Vector2f const & uv, float r);
 		
 		static const int box_edge_size = 512;
 		static const int num_stars = 5000;

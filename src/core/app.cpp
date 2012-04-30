@@ -29,7 +29,7 @@ namespace
 }
 
 
-bool app::Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path)
+bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -161,9 +161,9 @@ SDL_Window & app::GetWindow()
 	return ref(window);
 }
 
-Vector2i app::GetWindowSize()
+geom::Vector2i app::GetWindowSize()
 {
-	Vector2i window_size;	
+	geom::Vector2i window_size;	
 	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
 	return window_size;
 }
@@ -213,13 +213,13 @@ void app::GetEvent(SDL_Event & event)
 				}
 
 				// intercept message and fake relative mouse movement correctly.
-				Vector2i window_size;
+				geom::Vector2i window_size;
 				SDL_GetWindowSize(window, & window_size.x, & window_size.y);
-				Vector2i center(window_size.x >> 1, window_size.y >> 1);
-				Vector2i cursor;
+				geom::Vector2i center(window_size.x >> 1, window_size.y >> 1);
+				geom::Vector2i cursor;
 				SDL_GetMouseState(& cursor.x, & cursor.y);
 				SDL_WarpMouseInWindow(window, center.x, center.y);
-				Vector2i delta = (cursor - center);
+				geom::Vector2i delta = (cursor - center);
 				if (delta.x == 0 && delta.y == 0)
 				{
 					break;

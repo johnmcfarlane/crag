@@ -81,10 +81,10 @@ namespace gfx
 	public:
 		SphereProgram();
 		
-		void SetUniforms(::Transformation<float> const & transformation, Color4f const & color) const;
+		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color) const;
 	private:
 		void InitUniforms() override;
-		static Scalar CalculateRadius(::Transformation<float> const & transformation);
+		static Scalar CalculateRadius(geom::Transformation<float> const & transformation);
 
 		// variables
 		GLint _color_location;
@@ -97,7 +97,7 @@ namespace gfx
 	public:
 		FogProgram();
 		
-		void SetUniforms(::Transformation<float> const & transformation, Color4f const & color, float density) const;
+		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color, float density) const;
 	private:
 		void InitUniforms() override;
 		

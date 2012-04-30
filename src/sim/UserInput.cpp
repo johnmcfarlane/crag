@@ -12,8 +12,6 @@
 #include "axes.h"
 #include "UserInput.h"
 
-#include "geom/Vector2.h"
-
 #include "core/app.h"
 
 
