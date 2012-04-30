@@ -89,7 +89,7 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 	return addition;
 }
 
-void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal)
+void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal)
 {
 	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
@@ -105,7 +105,7 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & no
 	c.norm += normal;
 }
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c, Vector3f const & normal, gfx::Color4b color)
+void form::Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color)
 {
 	Vertex & vert_a = GetVertex(a, color);
 	Vertex & vert_b = GetVertex(b, color);

@@ -146,7 +146,7 @@ void Program::UpdateLights(Light::List const & lights) const
 			break;
 		}
 		
-		Vector4f position = Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
+		geom::Vector4f position = geom::Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
 		Color4f const & color = light.GetColor();
 		
 		glUniform3f(uniforms->position, position.x, position.y, position.z);
@@ -207,11 +207,11 @@ SphereProgram::SphereProgram()
 {
 }
 
-void SphereProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color) const
+void SphereProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
 {
 	glUniform4f(_color_location, color.r, color.g, color.b, color.a);
 	
-	Vector4f center = Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
+	geom::Vector4f center = geom::Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
 	glUniform3f(_center_location, center.x, center.y, center.z);
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));
@@ -225,7 +225,7 @@ void SphereProgram::InitUniforms()
 	_radius_location = GetUniformLocation("radius");
 }
 
-Scalar SphereProgram::CalculateRadius(::Transformation<float> const & transformation)
+Scalar SphereProgram::CalculateRadius(geom::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
 	ASSERT(NearEqual(size.x / size.y, 1, 0.0001));
@@ -244,7 +244,7 @@ FogProgram::FogProgram()
 {
 }
 
-void FogProgram::SetUniforms(::Transformation<float> const & model_view, Color4f const & color, float density) const
+void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const
 {
 	SphereProgram::SetUniforms(model_view, color);
 	

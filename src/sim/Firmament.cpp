@@ -42,11 +42,11 @@ void Firmament::DrawStarsClevur()
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			gfx::Image side;
-			side.Create(Vector2i(box_edge_size, box_edge_size));
+			side.Create(geom::Vector2i(box_edge_size, box_edge_size));
 			side.Clear(gfx::Color4b::Black());
 
-			Vector2i pos;
-			Vector2f f_pos;
+			geom::Vector2i pos;
+			geom::Vector2f f_pos;
 			for (pos.x = 0; pos.x < box_edge_size; ++ pos.x)
 			{
 				f_pos.x = ((static_cast<float>(pos.x) + .5f) / (static_cast<float>(box_edge_size) - .0f)) - .5f;
@@ -58,13 +58,13 @@ void Firmament::DrawStarsClevur()
 					double intensity = 0;
 					Random random (1);
 
-					Sphere3f star;
+					geom::Sphere<float, 3> star;
 					float const * axes = star.center.GetAxes();
 //					float & star_x = axes[x_axis];
 //					float & star_y = axes[y_axis];
 					float const & star_z = axes[z_axis];
 
-					Vector3f line_direction;
+					geom::Vector3f line_direction;
 					float * line_axes = line_direction.GetAxes();
 					float & line_x = line_axes[x_axis];
 					float & line_y = line_axes[y_axis];
@@ -84,7 +84,7 @@ void Firmament::DrawStarsClevur()
 						}
 
 						//float w_co = .5f / w;
-						//Vector2f uv(star_x * w_co, star_y * w_co);
+						//geom::Vector2f uv(star_x * w_co, star_y * w_co);
 
 						line_x = f_pos.x;
 						line_y = f_pos.y;
@@ -115,13 +115,13 @@ void Firmament::DrawStarsSimple()
 		for (int pole = 0; pole < 2; ++ pole)
 		{
 			gfx::Image side;
-			side.Create(Vector2i(box_edge_size, box_edge_size));
+			side.Create(geom::Vector2i(box_edge_size, box_edge_size));
 			side.Clear(gfx::Color4b::Black());
 			
 			Random random (1);
 			for (int i = num_stars; i; -- i)
 			{
-				Sphere3f star;
+				geom::Sphere<float, 3> star;
 				//random.GetGaussians(star.center.x, star.center.y);
 				//random.GetGaussians(star.center.z, star.radius);
 				//star.radius = Abs(star.radius);
@@ -139,7 +139,7 @@ void Firmament::DrawStarsSimple()
 				
 				float w_co = .5f / w;
 				
-				Vector2f uv(axes[TriMod(axis + 1)] * w_co, axes[TriMod(axis + 2)] * w_co);
+				geom::Vector2f uv(axes[TriMod(axis + 1)] * w_co, axes[TriMod(axis + 2)] * w_co);
 				float radius = star.radius * Abs(w_co);
 				DrawStar(side, uv, radius);
 			}
@@ -149,9 +149,9 @@ void Firmament::DrawStarsSimple()
 	}
 }
 
-void Firmament::DrawStar(gfx::Image & side, Vector2f const & uv, float r)
+void Firmament::DrawStar(gfx::Image & side, geom::Vector2f const & uv, float r)
 {
-	Vector2i pos;
+	geom::Vector2i pos;
 
 	pos.x = static_cast<int>((uv.x + .5f) * box_edge_size);
 	if (pos.x < 0 || pos.x >= box_edge_size) {

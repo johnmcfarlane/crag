@@ -28,7 +28,7 @@ namespace form
 		OBJECT_NO_COPY (GenerateMeshFunctor);
 
 	public:
-		GenerateMeshFunctor(Vector2f leaf_score_range, Mesh & mesh) 
+		GenerateMeshFunctor(geom::Vector2f leaf_score_range, Mesh & mesh) 
 		: _leaf_score_range(leaf_score_range)
 		, _mesh(mesh) 
 		, _inv_range(255.99f / (leaf_score_range.y - leaf_score_range.x))
@@ -45,7 +45,7 @@ namespace form
 		}
 		
 		// ForEachNodeFace functor
-		void operator()(Point & a, Point & b, Point & c, Vector3f const & normal, float score)
+		void operator()(Point & a, Point & b, Point & c, geom::Vector3f const & normal, float score)
 		{
 			Color color;
 #if defined(NODE_SCORE_HEAT_MAP)
@@ -75,7 +75,7 @@ namespace form
 		}
 		
 	private:
-		Vector2f _leaf_score_range;
+		geom::Vector2f _leaf_score_range;
 		Mesh & _mesh;
 		float _inv_range;
 	};

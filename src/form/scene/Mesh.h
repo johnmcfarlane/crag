@@ -43,8 +43,8 @@ namespace form
 		Vertex & AddVertex(Point const & p, Color color);
 	public:
 		
-		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vector3f const & normal);
-		void AddFace(Point & a, Point & b, Point & c, Vector3f const & normal, gfx::Color4b color);
+		void AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal);
+		void AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;

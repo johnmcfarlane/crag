@@ -26,8 +26,8 @@ namespace gfx
 		// Types
 		struct Vertex
 		{
-			Vector3f pos;
-			Vector2f tex;
+			geom::Vector3f pos;
+			geom::Vector2f tex;
 		};
 		
 		typedef VertexBufferObject<Vertex> Vbo;

@@ -58,7 +58,7 @@ void CalculateNodeScoreFunctor::ResetLeafScoreRange()
 	leaf_score_range[1] = std::numeric_limits<float>::min();
 }
 
-Vector2f CalculateNodeScoreFunctor::GetLeafScoreRange() const
+geom::Vector2f CalculateNodeScoreFunctor::GetLeafScoreRange() const
 {
 	return leaf_score_range;
 }
@@ -75,7 +75,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	float score = node.area;
 	
 	// distance	
-	Vector3f node_to_camera = camera_ray.position - node.center;
+	geom::Vector3f node_to_camera = camera_ray.position - node.center;
 	float distance_squared = LengthSq(node_to_camera);
 	ASSERT(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
@@ -84,7 +84,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	}
 	else 
 	{
-		node_to_camera = Vector3f(1,0,0);
+		node_to_camera = geom::Vector3f(1,0,0);
 	}
 	ASSERT(NearEqual(LengthSq(node_to_camera), 1.f, 1.02f));
 	

@@ -36,7 +36,7 @@ namespace gfx
 			remove
 		};
 		
-		typedef ::Transformation<float> Transformation;
+		typedef geom::Transformation<float> Transformation;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

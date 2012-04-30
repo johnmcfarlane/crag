@@ -218,7 +218,7 @@ void TestScript::SpawnPlanets()
 	double planet_radius = 10000000;
 	sim::Planet::InitData init_data;
 	
-	init_data.sphere.center = Vector3d::Zero();
+	init_data.sphere.center = geom::Vector3d::Zero();
 	init_data.sphere.radius = planet_radius;
 	init_data.random_seed = 3634;
 	init_data.num_craters = 0;
@@ -296,7 +296,7 @@ void TestScript::SpawnShapes()
 	
 	if (_shapes.size() < max_shapes)
 	{
-		Vector3d spawn_pos(GetRandomUnitInclusive() - .5,
+		geom::Vector3d spawn_pos(GetRandomUnitInclusive() - .5,
 						   observer_start_pos.y,
 						   -4.5 + GetRandomUnit());
 		
@@ -318,7 +318,7 @@ void TestScript::SpawnShapes()
 				sim::Box::InitData init_data = 
 				{
 					spawn_pos, 
-					Vector3d(std::exp(GetRandomUnit() * -2.),
+					geom::Vector3d(std::exp(GetRandomUnit() * -2.),
 							 std::exp(GetRandomUnit() * -2.),
 							 std::exp(GetRandomUnit() * -2.))
 				};

@@ -16,7 +16,6 @@
 #include "physics/SphericalBody.h"
 
 #include "geom/Transformation.h"
-#include "geom/Vector4.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -43,7 +42,7 @@ namespace
 	CONFIG_DEFINE (observer_velocity_impulse, float, 0.002f);
 	CONFIG_DEFINE (observer_torque_impulse, double, .0025f);
 
-	CONFIG_DEFINE (observer_light_color, Vector3f, Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
+	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
 }
 
 

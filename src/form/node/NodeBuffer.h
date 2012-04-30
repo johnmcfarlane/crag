@@ -16,8 +16,6 @@
 #include "smp/ReadersWriterMutex.h"
 #include "smp/vector.h"
 
-#include "geom/Vector3.h"
-
 #include "form/node/CalculateNodeScoreFunctor.h"
 
 

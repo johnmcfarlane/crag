@@ -13,8 +13,6 @@
 
 #include "PointBuffer.h"
 
-#include "geom/Vector3.h"
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessor
@@ -61,9 +59,9 @@ void form::RootNode::Init(int init_seed, Point * root_points[4])
 	triple[1].corner = corner;
 	triple[2].corner = corner;
 		
-	center = Vector3f::Zero();
+	center = geom::Vector3f::Zero();
 	area = 0;
-	normal = Vector3f::Zero();
+	normal = geom::Vector3f::Zero();
 	score = std::numeric_limits<float>::max();
 	
 	//ASSERT(sizeof(* this) == 44 * 4);

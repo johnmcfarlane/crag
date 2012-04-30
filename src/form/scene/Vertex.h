@@ -17,8 +17,8 @@ namespace form
 	// Vertex type used by formation system to generate OpenGL mesh.
 	struct Vertex
 	{
-		Vector3f pos;
-		Vector3f norm;
+		geom::Vector3f pos;
+		geom::Vector3f norm;
 		gfx::Color4b col;
 	};
 }

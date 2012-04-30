@@ -89,7 +89,7 @@ gfx::Font::operator bool() const
 
 // Warning: This function isn't thread-safe.
 // Fortunately, neither is the OpenGL it uses so it's neither here nor there.
-void gfx::Font::Print(char const * text, Vector2f const & position) const
+void gfx::Font::Print(char const * text, geom::Vector2f const & position) const
 {
 	if (! vbo.IsInitialized())
 	{
@@ -107,9 +107,9 @@ void gfx::Font::Print(char const * text, Vector2f const & position) const
 	texture.Unbind();
 }
 
-void gfx::Font::GenerateVerts(char const * text, Vector2f const & position) const
+void gfx::Font::GenerateVerts(char const * text, geom::Vector2f const & position) const
 {
-	Vector2f p = position;
+	geom::Vector2f p = position;
 	while (true)
 	{
 		char c = * (text ++);
@@ -150,7 +150,7 @@ void gfx::Font::RenderVerts() const
 	// Matrices
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	Vector2i resolution = app::GetWindowSize();
+	geom::Vector2i resolution = app::GetWindowSize();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
 	glMatrixMode (GL_MODELVIEW); 
@@ -170,13 +170,13 @@ void gfx::Font::RenderVerts() const
 	Disable(GL_BLEND);
 }
 
-void gfx::Font::PrintChar(char c, Vector2f & position) const
+void gfx::Font::PrintChar(char c, geom::Vector2f & position) const
 {
 	unsigned int char_index = static_cast<unsigned char>(c);
-	Vector2i map_pos = Vector2i(char_index & 15, char_index >> 4);
+	geom::Vector2i map_pos = geom::Vector2i(char_index & 15, char_index >> 4);
 	
-	Vector2f pos[2];
-	Vector2f tex[2];
+	geom::Vector2f pos[2];
+	geom::Vector2f tex[2];
 	for (int i = 0; i < 2; ++ i)
 	{
 		pos[i].x = position.x + scale_factor * static_cast<float>(character_size.x * i);
@@ -189,16 +189,16 @@ void gfx::Font::PrintChar(char c, Vector2f & position) const
 	tex[0].x += inv_scale.x * margin_hack[0];
 	tex[1].x -= inv_scale.x * margin_hack[1];
 	
-	Vector2i const sin_cos_table[4] = 
+	geom::Vector2i const sin_cos_table[4] = 
 	{
-		Vector2i(0, 0),
-		Vector2i(1, 0),
-		Vector2i(1, 1),
-		Vector2i(0, 1)
+		geom::Vector2i(0, 0),
+		geom::Vector2i(1, 0),
+		geom::Vector2i(1, 1),
+		geom::Vector2i(0, 1)
 	};
 	
 	Vertex v;
-	for (Vector2i const * it = sin_cos_table; it != sin_cos_table + 4; ++ it)
+	for (geom::Vector2i const * it = sin_cos_table; it != sin_cos_table + 4; ++ it)
 	{
 		v.pos.x = pos[it->x].x;
 		v.pos.y = pos[it->y].y;

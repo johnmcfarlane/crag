@@ -10,50 +10,44 @@
 #pragma once
 
 
-// A ray is a line with a start and a direction.
-template <typename S, int N> class Ray
+namespace geom
 {
-public:
-	typedef Vector<S, N> V;
-	
-	Ray() 
+	// A ray is a line with a start and a direction.
+	template <typename S, int N> class Ray
 	{
-	}
-	
-	Ray(Ray const & rhs) 
-	: position(rhs.position)
-	, direction(rhs.direction) 
-	{
-	}
-	
-	Ray(V const & pos, V const & dir) 
-	: position(pos)
-	, direction(dir) 
-	{
-	}
-	
-	static Ray Zero() 
-	{
-		return Ray(V::Zero(), V::Zero()); 
-	}
-	
-	// attributes
-	V position;
-	V direction;
-};
+	public:
+		typedef Vector<S, N> V;
+		
+		Ray() 
+		{
+		}
+		
+		Ray(Ray const & rhs) 
+		: position(rhs.position)
+		, direction(rhs.direction) 
+		{
+		}
+		
+		Ray(V const & pos, V const & dir) 
+		: position(pos)
+		, direction(dir) 
+		{
+		}
+		
+		static Ray Zero() 
+		{
+			return Ray(V::Zero(), V::Zero()); 
+		}
+		
+		// attributes
+		V position;
+		V direction;
+	};
 
-
-template <typename S, int N>
-Vector<S, N> Project(Ray<S, N> const & ray, S proportion)
-{
-	return ray.position + ray.direction * proportion;
+	// Get a position at some point along ray.
+	template <typename S, int N>
+	Vector<S, N> Project(Ray<S, N> const & ray, S proportion)
+	{
+		return ray.position + ray.direction * proportion;
+	}
 }
-
-
-//////////////////////////////////////////////////////////////////
-// specializations of Ray
-
-typedef Ray<float, 2> Ray2f;
-typedef Ray<double, 2> Ray2d;
-typedef Ray<float, 3> Ray3f;
-typedef Ray<double, 3> Ray3d;

@@ -96,7 +96,7 @@ gfx::Image::Format const & gfx::Image::GetOpenGlRgba8Format()
 	return opengl_rgba8_format;
 }
 
-bool gfx::Image::Create(Vector2i const & size, Format const & format)
+bool gfx::Image::Create(geom::Vector2i const & size, Format const & format)
 {
 	surface = SDL_CreateRGBSurface(0, 
 								   size.x, size.y, 
@@ -133,7 +133,7 @@ int gfx::Image::GetHeight() const
 	return surface ? surface->h : 0;
 }
 
-void gfx::Image::SetPixel(Vector2i const & pos, Color4b const & color)
+void gfx::Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
 {
 	ASSERT(pos.x >= 0 && pos.x < surface->w);
 	ASSERT(pos.y >= 0 && pos.x < surface->h);
@@ -207,7 +207,7 @@ bool gfx::Image::Save(char const * filename)
 
 bool gfx::Image::CaptureScreen()
 {
-	Vector2i window_size = app::GetWindowSize();
+	geom::Vector2i window_size = app::GetWindowSize();
 	
 	if (! Create(window_size))
 	{
@@ -265,7 +265,7 @@ bool gfx::Image::FormatForOpenGl()
 
 bool gfx::Image::CopyVFlip(Image & dst, Image const & src)
 {
-	Vector2i size = src.GetSize();
+	geom::Vector2i size = src.GetSize();
 	if (! dst.Create(size))
 	{
 		return false;

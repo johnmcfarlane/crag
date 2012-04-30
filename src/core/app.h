@@ -9,13 +9,10 @@
 
 #pragma once
 
-#include "geom/Vector2.h"
-
-
 namespace app
 {
 	// init
-	bool Init(Vector2i resolution, bool full_screen, char const * title, char const * program_path);
+	bool Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path);
 	void Deinit();
 	
 	char const * GetProgramPath();
@@ -27,7 +24,7 @@ namespace app
 	
 	// window
 	SDL_Window & GetWindow();
-	Vector2i GetWindowSize();
+	geom::Vector2i GetWindowSize();
 	
 	// called from main thread
 	void GetEvent(SDL_Event & event);

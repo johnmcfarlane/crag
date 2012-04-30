@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "geom/Vector3.h"
-
 
 namespace sim
 {
@@ -30,7 +28,7 @@ namespace sim
 				NUM_TYPES
 			};
 
-			Vector3f factors[NUM_TYPES];
+			geom::Vector3f factors[NUM_TYPES];
 		};
 		
 		virtual Impulse GetImpulse() = 0;

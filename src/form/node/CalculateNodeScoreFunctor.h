@@ -37,7 +37,7 @@ namespace form
 		bool IsSignificantlyDifferent(Ray3 const & other_camera_ray) const;
 		
 		void ResetLeafScoreRange();
-		Vector2f GetLeafScoreRange() const;
+		geom::Vector2f GetLeafScoreRange() const;
 		
 		void SetCameraRay(Ray3 const & new_camera_ray);
 
@@ -49,7 +49,7 @@ namespace form
 		Scalar min_score_distance_squared;
 		Scalar inverse_min_score_distance_squared;
 		
-		Vector2f leaf_score_range;
+		geom::Vector2f leaf_score_range;
 	};
 
 }	// form

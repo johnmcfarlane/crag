@@ -16,7 +16,6 @@
 
 #include "gfx/defs.h"
 
-#include "geom/Vector3.h"
 #include "geom/Matrix44.h"
 
 DECLARE_CLASS_HANDLE(gfx, Light)	// gfx::LightHandle

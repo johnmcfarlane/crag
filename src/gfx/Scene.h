@@ -55,7 +55,7 @@ namespace gfx
 
 		Light::List & GetLightList();
 		
-		void SetResolution(Vector2i const & r);
+		void SetResolution(geom::Vector2i const & r);
 		void SetCameraTransformation(sim::Transformation const & transformation);
 		
 		Pov & GetPov();

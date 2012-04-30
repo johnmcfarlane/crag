@@ -93,17 +93,14 @@ namespace core
 	template<typename T> struct raw_type<const T>	{ typedef typename raw_type<T>::type type; };
 	template<typename T> struct raw_type<T &>		{ typedef typename raw_type<T>::type type; };
 	template<typename T> struct raw_type<T *>		{ typedef typename raw_type<T>::type type; };
-}
 
 
-//////////////////////////////////////////////////////////////////////
-// core::call
-//
-// Given a tuple of parameters, calls a given member function.
-// http://stackoverflow.com/questions/4105002/pass-tuples-content-as-variadic-function-arguments
+	//////////////////////////////////////////////////////////////////////
+	// core::call
+	//
+	// Given a tuple of parameters, calls a given member function.
+	// http://stackoverflow.com/questions/4105002/pass-tuples-content-as-variadic-function-arguments
 
-namespace core
-{
 	namespace impl
 	{
 		template<int ...>

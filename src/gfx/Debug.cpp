@@ -82,7 +82,7 @@ namespace
 			Color const & color = hidden ? colors._hidden_color : colors._color;
 			glColor4fv(color.GetArray());
 
-			Vector3f relative_pos = pos - camera_pos;
+			geom::Vector3f relative_pos = pos - camera_pos;
 			glVertex3f(relative_pos.x, relative_pos.y, relative_pos.z);
 		}
 		
@@ -309,8 +309,8 @@ void AddFrustum(Pov const & pov)
 				}
 			}
 			
-			//eye = static_cast< sim::Vector3 >(m * sim::Vector4(0, 0, 0, 1));
-			eye = Vector3f::Zero();
+			//eye = static_cast< sim::Vector3 >(m * simgeom::Vector4(0, 0, 0, 1));
+			eye = geom::Vector3f::Zero();
 		}
 	}
 	
@@ -318,7 +318,7 @@ void AddFrustum(Pov const & pov)
 	for (int axis = 0; axis < 3; ++ axis) {
 		int perp_axis_1 = TriMod(axis + 1);
 		int perp_axis_2 = TriMod(axis + 2);
-		Vector3i indices;
+		geom::Vector3i indices;
 		
 		for (int p = 0; p < 2; ++ p) {
 			indices [perp_axis_1] = p;
@@ -350,7 +350,7 @@ void AddFrustum(Pov const & pov)
 	}
 	
 	// pyramid
-	/*Vector3f center = static_cast< Vector3<float> >(Vector4f(0, 0, - frustum.near_z, 0) * m);
+	/*geom::Vector3f center = static_cast< Vector3<float> >(geom::Vector4f(0, 0, - frustum.near_z, 0) * m);
 	 for (int p = 0; p < 2; ++ p) {
 	 for (int q = 0; q < 2; ++ q) {
 	 Vector3 const & a = corners[0][q][p];
@@ -393,7 +393,7 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 	mutex.Unlock();
 }
 
-void gfx::Debug::DrawText(char const * text, Vector2i const & position)
+void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)
 {
 	if (! (* font))
 	{

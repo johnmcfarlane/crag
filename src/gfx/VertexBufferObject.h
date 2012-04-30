@@ -80,14 +80,14 @@ namespace gfx
 	};
 
 	// Pointer helpers
-	template <typename VERTEX, int SIZE, Vector<float, SIZE> VERTEX::* MEMBER>
+	template <typename VERTEX, int SIZE, geom::Vector<float, SIZE> VERTEX::* MEMBER>
 	void VertexPointer()
 	{
 		VERTEX * null_vert = nullptr;
 		GL_CALL(glVertexPointer(SIZE, GL_FLOAT, sizeof(VERTEX), & (null_vert->* MEMBER)));
 	}
 	
-	template <typename VERTEX, Vector<float, 3> VERTEX::* MEMBER>
+	template <typename VERTEX, geom::Vector<float, 3> VERTEX::* MEMBER>
 	void NormalPointer()
 	{
 		VERTEX * null_vert = nullptr;
@@ -101,7 +101,7 @@ namespace gfx
 		GL_CALL(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VERTEX), & (null_vert->* MEMBER)));
 	}
 	
-	template <typename VERTEX, int SIZE, Vector<float, SIZE> VERTEX::* MEMBER>
+	template <typename VERTEX, int SIZE, geom::Vector<float, SIZE> VERTEX::* MEMBER>
 	void TexCoordPointer()
 	{
 		VERTEX * null_vert = nullptr;

@@ -39,7 +39,7 @@ namespace gfx
 		bool Init(gfx::Engine & renderer, form::RegulatorScriptHandle const & regulator_handle);
 		void Deinit(Scene & scene) override;
 
-		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		virtual gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 
 		void SetMesh(form::Mesh * const & mesh);
 		

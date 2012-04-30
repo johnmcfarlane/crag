@@ -15,8 +15,6 @@
 
 #include "ConfigManager.h"
 
-#include "geom/Vector3.h"
-
 #include "gfx/Color.h"
 
 #include "geom/Matrix44.h"
@@ -142,30 +140,30 @@ template<> int Config<gfx::Color4f>::StringToValue(gfx::Color4f & value, char co
 	return sscanf(string, "%g,%g,%g,%g", & value.r, & value.g, & value.b, & value.a) == 1;
 }
 
-// Vector3f
-template<> int Config<Vector3f>::ValueToString(char * string, Vector3f const & value)
+// geom::Vector3f
+template<> int Config<geom::Vector3f>::ValueToString(char * string, geom::Vector3f const & value)
 {
 	return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
 }
 
-template<> int Config<Vector3f>::StringToValue(Vector3f & value, char const * string)
+template<> int Config<geom::Vector3f>::StringToValue(geom::Vector3f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g", & value.x, & value.y, & value.z) == 1;
 }
 
-// Vector3d
-template<> int Config<Vector3d>::ValueToString(char * string, Vector3d const & value)
+// geom::Vector3d
+template<> int Config<geom::Vector3d>::ValueToString(char * string, geom::Vector3d const & value)
 {
 	return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
 }
 
-template<> int Config<Vector3d>::StringToValue(Vector3d & value, char const * string)
+template<> int Config<geom::Vector3d>::StringToValue(geom::Vector3d & value, char const * string)
 {
 	return sscanf(string, "%lg,%lg,%lg", & value.x, & value.y, & value.z) == 1;
 }
 
-// Matrix44f
-template<> int Config<Matrix44f>::ValueToString(char * string, Matrix44f const & value)
+// geom::Matrix44f
+template<> int Config<geom::Matrix44f>::ValueToString(char * string, geom::Matrix44f const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -174,7 +172,7 @@ template<> int Config<Matrix44f>::ValueToString(char * string, Matrix44f const &
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<Matrix44f>::StringToValue(Matrix44f & value, char const * string)
+template<> int Config<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
@@ -183,8 +181,8 @@ template<> int Config<Matrix44f>::StringToValue(Matrix44f & value, char const * 
 				  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 1;
 }
 
-// Matrix44d
-template<> int Config<Matrix44d>::ValueToString(char * string, Matrix44d const & value)
+// geom::Matrix44d
+template<> int Config<geom::Matrix44d>::ValueToString(char * string, geom::Matrix44d const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -193,7 +191,7 @@ template<> int Config<Matrix44d>::ValueToString(char * string, Matrix44d const &
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<Matrix44d>::StringToValue(Matrix44d & value, char const * string)
+template<> int Config<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, char const * string)
 {
 	return sscanf(string, "%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 

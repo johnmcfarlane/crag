@@ -10,12 +10,15 @@
 #pragma once
 
 
-// forward-declarations
-template <typename S, int D> class Vector;
-template <typename S, int R, int C> class Matrix;
-template <typename S, int D> class Sphere;
-template <typename S> class Transformation;
-template <typename S, int D> class Ray;
+namespace geom
+{
+	// forward-declarations
+	template <typename S, int D> class Vector;
+	template <typename S, int R, int C> class Matrix;
+	template <typename S, int D> class Sphere;
+	template <typename S> class Transformation;
+	template <typename S, int D> class Ray;
+}
 
 namespace smp
 {
@@ -42,14 +45,14 @@ namespace sim
 	typedef double Scalar;
 #endif
 	
-	typedef ::Vector<Scalar, 2> Vector2;
-	typedef ::Vector<Scalar, 3> Vector3;
-	typedef ::Vector<Scalar, 4> Vector4;
-	typedef ::Ray<Scalar, 3> Ray3;
-	typedef ::Sphere<Scalar, 3> Sphere3;
-	typedef ::Matrix<Scalar, 3, 3> Matrix33;
-	typedef ::Matrix<Scalar, 4, 4> Matrix44;
-	typedef ::Transformation<Scalar> Transformation;
+	typedef geom::Vector<Scalar, 2> Vector2;
+	typedef geom::Vector<Scalar, 3> Vector3;
+	typedef geom::Vector<Scalar, 4> Vector4;
+	typedef geom::Ray<Scalar, 3> Ray3;
+	typedef geom::Sphere<Scalar, 3> Sphere3;
+	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
+	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
+	typedef geom::Transformation<Scalar> Transformation;
 	
 	typedef smp::Uid Uid;
 }

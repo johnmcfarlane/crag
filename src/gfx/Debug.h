@@ -13,7 +13,6 @@
 
 #include "geom/Matrix33.h"
 #include "geom/Matrix44.h"
-#include "geom/Vector4.h"
 
 #if defined(PROFILE) || ! defined(NDEBUG)
 #define GFX_DEBUG
@@ -34,10 +33,10 @@ namespace gfx
 	{
 		// typedefs
 		typedef double Scalar;
-		typedef ::Vector<Scalar, 3> Vector3;
-		typedef ::Vector<Scalar, 4> Vector4;
-		typedef ::Matrix<Scalar, 3, 3> Matrix33;
-		typedef ::Matrix<Scalar, 4, 4> Matrix44;
+		typedef geom::Vector<Scalar, 3> Vector3;
+		typedef geom::Vector<Scalar, 4> Vector4;
+		typedef geom::Matrix<Scalar, 3, 3> Matrix33;
+		typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 		typedef Color4f Color;
 
 		class ColorPair
@@ -75,7 +74,7 @@ namespace gfx
 		
 		void Draw(Vector3 const & camera_pos);
 		
-		void DrawText(char const * text, Vector2i const & position);
+		void DrawText(char const * text, geom::Vector2i const & position);
 		
 #else
 		inline void Init() { }
@@ -90,7 +89,7 @@ namespace gfx
 		inline void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity()) { }
 		inline void AddFrustum(Pov const & pov) { }
 		inline void Draw(Vector3 const &) { }
-		inline void DrawText(char const * text, Vector2i const & position) { }
+		inline void DrawText(char const * text, geom::Vector2i const & position) { }
 #endif
 	
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors = ColorPair(1, 1))

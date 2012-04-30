@@ -209,24 +209,24 @@ void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 		}
 	}
 	
-	Vector3f const & a = ref(triple[0].corner).pos;
-	Vector3f const & b = ref(triple[1].corner).pos;
-	Vector3f const & c = ref(triple[2].corner).pos;
+	geom::Vector3f const & a = ref(triple[0].corner).pos;
+	geom::Vector3f const & b = ref(triple[1].corner).pos;
+	geom::Vector3f const & c = ref(triple[2].corner).pos;
 	center = (a + b + c) / 3.f;
 }
 
 bool form::Node::InitScoreParameters()
 {
-	Vector3f const & a = ref(triple[0].corner).pos;
-	Vector3f const & b = ref(triple[1].corner).pos;
-	Vector3f const & c = ref(triple[2].corner).pos;
+	geom::Vector3f const & a = ref(triple[0].corner).pos;
+	geom::Vector3f const & b = ref(triple[1].corner).pos;
+	geom::Vector3f const & c = ref(triple[2].corner).pos;
 	
 	normal = TriangleNormal(a, b, c);
 	ASSERT(normal == normal);
 	ASSERT(LengthSq(normal) > 0);
 	FastNormalize(normal);
 	
-	area = TriangleArea<float>(a, b, c);
+	area = geom::TriangleArea<float>(a, b, c);
 	if (area == 0) 
 	{
 		return false;

@@ -10,12 +10,14 @@
 #pragma once
 
 
-// forward-declarations
-template <typename S, int D> class Vector;
-template <typename S, int R, int C> class Matrix;
-template <typename S> class Transformation;
-template <typename S, int D> class Ray;
-
+namespace geom
+{
+	// forward-declarations
+	template <typename S, int D> class Vector;
+	template <typename S, int R, int C> class Matrix;
+	template <typename S> class Transformation;
+	template <typename S, int D> class Ray;
+}
 
 namespace gfx
 {
@@ -37,13 +39,13 @@ namespace gfx
 	// Geometric types currently use double and are converted 
 	// inside - or close to - the graphics API.
 	typedef double Scalar;
-	typedef Vector<Scalar, 3> Vector3;
-	typedef Vector<Scalar, 4> Vector4;
-	typedef Vector<Scalar, 2> RenderRange;	// near/far z
-	typedef Matrix<Scalar, 3, 3> Matrix33;
-	typedef Matrix<Scalar, 4, 4> Matrix44;
-	typedef Transformation<Scalar> Transformation;
-	typedef Ray<Scalar, 3> Ray3;
+	typedef geom::Vector<Scalar, 3> Vector3;
+	typedef geom::Vector<Scalar, 4> Vector4;
+	typedef geom::Vector<Scalar, 2> RenderRange;	// near/far z
+	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
+	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
+	typedef geom::Transformation<Scalar> Transformation;
+	typedef geom::Ray<Scalar, 3> Ray3;
 	
 	// unique identifier for gfx::Object;
 	// used when refering to objects from outside the render thread

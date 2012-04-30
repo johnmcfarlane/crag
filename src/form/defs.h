@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "geom/Vector3.h"
-#include "geom/Vector4.h"
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 
@@ -27,22 +25,22 @@ namespace form
 	// Vector Types
 	typedef float Scalar;
 	
-	typedef ::Vector<Scalar, 3> Vector3;
-	typedef ::Vector<Scalar, 4> Vector4;
-	typedef ::Ray<Scalar, 3> Ray3;
-	typedef ::Sphere<Scalar, 3> Sphere3;
+	typedef geom::Vector<Scalar, 3> Vector3;
+	typedef geom::Vector<Scalar, 4> Vector4;
+	typedef geom::Ray<Scalar, 3> Ray3;
+	typedef geom::Sphere<Scalar, 3> Sphere3;
 	typedef gfx::Color4b Color;
 	
 	// thread-safe node vector
 	typedef smp::vector<Node *> SmpNodeVector;
 	
 	// Conversions between supergalactic (sim) and observer (form) coordinate system.
-	inline Vector3 SimToScene(::Vector3d const & sim, ::Vector3d const & scene_origin)
+	inline Vector3 SimToScene(geom::Vector3d const & sim, geom::Vector3d const & scene_origin)
 	{
 		return sim - scene_origin;
 	}
-	inline Vector3d SceneToSim(Vector3 const & scene, Vector3d const & scene_origin)
+	inline geom::Vector3d SceneToSim(Vector3 const & scene, geom::Vector3d const & scene_origin)
 	{
-		return Vector3d(scene) + scene_origin;
+		return geom::Vector3d(scene) + scene_origin;
 	}
 }

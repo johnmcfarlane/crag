@@ -23,11 +23,11 @@ namespace gfx
 		// types
 		struct Vertex
 		{
-			Vector3f pos;
-			Vector3f norm;
+			geom::Vector3f pos;
+			geom::Vector3f norm;
 		};
 		
-		typedef Vector3f Vector3;
+		typedef geom::Vector3f Vector3;
 		typedef gfx::Mesh<Vertex, GL_STATIC_DRAW> Mesh;
 		
 		// functions

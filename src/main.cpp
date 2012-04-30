@@ -224,7 +224,7 @@ namespace
 					case SDL_WINDOWEVENT_RESIZED:
 					{
 						// TODO: Check it's the right window?
-						Vector2i size(window_event.data1, window_event.data2);
+						geom::Vector2i size(window_event.data1, window_event.data2);
 						gfx::Daemon::Call(& gfx::Engine::OnResize, size);
 						return true;
 					}
@@ -297,7 +297,7 @@ namespace
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		Vector2i video_resolution(video_resolution_x, video_resolution_y);
+		geom::Vector2i video_resolution(video_resolution_x, video_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
 		if (! app::Init(video_resolution, full_screen, "Crag", program_path))
 		{
