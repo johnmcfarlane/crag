@@ -25,51 +25,44 @@ namespace geom
 		typedef Vector<S, 4> Row;
 		
 		// functions
-		Matrix()
-		{
-		}
+		Matrix() = default;
 		
 		template <typename RHS_S>
 		Matrix(Matrix<RHS_S, 4, 4> const & rhs)
+		: rows({rhs[0], rhs[1], rhs[2], rhs[3]})
 		{
-			rows[0] = rhs[0];
-			rows[1] = rhs[1];
-			rows[2] = rhs[2];
-			rows[3] = rhs[3];
 		}
 		
 		Matrix(Row const & row0,
 				Row const & row1,
 				Row const & row2,
 				Row const & row3)
+		: rows({row0, row1, row2, row3})
 		{
-			rows[0] = row0;
-			rows[1] = row1;
-			rows[2] = row2;
-			rows[3] = row3;
+		}
+		
+		template <typename RHS_S>
+		Matrix(RHS_S const m[4][4])
+		: rows({
+			Row(m[0][0], m[0][1], m[0][2], m[0][3]),
+			Row(m[1][0], m[1][1], m[1][2], m[1][3]),
+			Row(m[2][0], m[2][1], m[2][2], m[2][3]),
+			Row(m[3][0], m[3][1], m[3][2], m[3][3]),
+		})
+		{
 		}
 		
 		Matrix(S m00, S m01, S m02, S m03, 
 				S m10, S m11, S m12, S m13, 
 				S m20, S m21, S m22, S m23, 
 				S m30, S m31, S m32, S m33) 
+		: rows({
+			Row(m00, m01, m02, m03),
+			Row(m10, m11, m12, m13),
+			Row(m20, m21, m22, m23),
+			Row(m30, m31, m32, m33),
+		})
 		{
-			rows[0][0] = m00;
-			rows[0][1] = m01; 
-			rows[0][2] = m02; 
-			rows[0][3] = m03; 
-			rows[1][0] = m10; 
-			rows[1][1] = m11; 
-			rows[1][2] = m12; 
-			rows[1][3] = m13; 
-			rows[2][0] = m20; 
-			rows[2][1] = m21; 
-			rows[2][2] = m22; 
-			rows[2][3] = m23; 
-			rows[3][0] = m30; 
-			rows[3][1] = m31; 
-			rows[3][2] = m32; 
-			rows[3][3] = m33; 
 		}
 		
 		friend inline bool operator == (Matrix const & lhs, Matrix const & rhs)
@@ -156,6 +149,17 @@ namespace geom
 					rows[0][3] * CoFactor(0, 3));
 		}
 		
+		void Fill(S value)
+		{
+			for (int r = 0; r != 4; ++ r)
+			{
+				for (int c = 0; c != 4; ++ c)
+				{
+					rows[r][c] = value;
+				}
+			}
+		}
+
 		static Matrix Identity() 
 		{
 			return Matrix(Row(1, 0, 0, 0),
@@ -171,6 +175,16 @@ namespace geom
 						  Row::Zero(), 
 						  Row::Zero());
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyObject(rows[0]);
+			VerifyObject(rows[1]);
+			VerifyObject(rows[2]);
+			VerifyObject(rows[3]);
+		}
+#endif
 		
 	private:
 

@@ -20,23 +20,33 @@ namespace geom
 	template<typename S> class Vector<S, 4>
 	{
 	public:
-		Vector() { }
-
-		template<typename RHS_S> 
-		Vector(Vector<RHS_S, 4> const & rhs) 
-			: x(static_cast<S>(rhs.x))
-			, y(static_cast<S>(rhs.y))
-			, z(static_cast<S>(rhs.z))
-			, w(static_cast<S>(rhs.w)) 
+		Vector() 
+#if ! defined(NDEBUG)
+		: x(std::numeric_limits<S>::signaling_NaN())
+		, y(std::numeric_limits<S>::signaling_NaN())
+		, z(std::numeric_limits<S>::signaling_NaN())
+		, w(std::numeric_limits<S>::signaling_NaN())
+#endif
 		{ 
 		}
-
-		template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) 
-			: x(static_cast<S>(rhs_x))
-			, y(static_cast<S>(rhs_y))
-			, z(static_cast<S>(rhs_z))
-			, w(static_cast<S>(rhs_w) )
-		{ }
+		
+		template<typename RHS_S> 
+		Vector(Vector<RHS_S, 4> const & rhs) 
+		: x(rhs.x)
+		, y(rhs.y)
+		, z(rhs.z) 
+		, w(rhs.w) 
+		{ 
+		}
+		
+		template<typename RHS_S> 
+		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) 
+		: x(rhs_x)
+		, y(rhs_y)
+		, z(rhs_z)
+		, w(rhs_w) 
+		{ 
+		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
 		S const & operator[](int index) const 
@@ -67,6 +77,16 @@ namespace geom
 		{
 			return Vector(0, 0, 0, 0); 
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyTrue(x == x);
+			VerifyTrue(y == y);
+			VerifyTrue(z == z);
+			VerifyTrue(w == w);
+		}
+#endif
 		
 		S x, y, z, w;
 	};

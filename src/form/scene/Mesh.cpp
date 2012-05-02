@@ -71,21 +71,15 @@ form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
 
 form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 {
-	Vertex & addition = vertices.PushBack();
+	Vertex & addition = vertices.PushBack(Vertex({ 
+		p.pos, 
+		Vector3::Zero(),
+		gfx::Color4b(color.r,
+					 color.g,
+					 color.b,
+					 color.a)
+	}));
 	
-	addition.pos = p.pos;
-	addition.norm = addition.norm.Zero();
-
-#if defined(FORM_VERTEX_TEXTURE)
-	addition.texture = p.texture_uv;
-#endif
-
-	//addition.color = gfx::Color4b(Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256), Random::sequence.GetInt(256));
-	addition.col.r = color.r;
-	addition.col.g = color.g;
-	addition.col.b = color.b;
-	addition.col.a = color.a;
-
 	return addition;
 }
 

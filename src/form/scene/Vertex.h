@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "form/defs.h"
 #include "gfx/Color.h"
 
 
@@ -17,8 +18,8 @@ namespace form
 	// Vertex type used by formation system to generate OpenGL mesh.
 	struct Vertex
 	{
-		geom::Vector3f pos;
-		geom::Vector3f norm;
+		Vector3 pos;
+		Vector3 norm;
 		gfx::Color4b col;
 	};
 }

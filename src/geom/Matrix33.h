@@ -40,6 +40,9 @@ namespace geom
 		Matrix()
 		{
 			static_assert(sizeof(Matrix) == sizeof(S) * 12, "Matrix<S, 3, 3> is improperly aligned.");
+#if ! defined(NDEBUG)
+			Fill(std::numeric_limits<S>::signaling_NaN());
+#endif
 		}
 		
 		Matrix(Row const & row0,
@@ -119,6 +122,17 @@ namespace geom
 				-  (rows[2][0]*rows[1][1]*rows[0][2] 
 					+ rows[2][1]*rows[1][2]*rows[0][0] 
 					+ rows[2][2]*rows[1][0]*rows[0][1]);
+		}
+		
+		void Fill(S value)
+		{
+			for (int r = 0; r != 3; ++ r)
+			{
+				for (int c = 0; c != 3; ++ c)
+				{
+					rows[r][c] = value;
+				}
+			}
 		}
 		
 		static Matrix Identity() 

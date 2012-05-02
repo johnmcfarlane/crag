@@ -30,13 +30,13 @@ namespace gfx
 		bool IsInitialized() const;
 		bool IsCompiled() const;
 		
-	private:
-		void GetInfoLog(std::string & info_log) const;		
-		
 #if defined(VERIFY)
 		void Verify() const;
 #endif
-	
+		
+	private:
+		void GetInfoLog(std::string & info_log) const;		
+		
 		// variables
 		GLuint _id;
 	};

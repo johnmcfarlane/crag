@@ -202,11 +202,12 @@ namespace form { namespace collision
 	template <typename SHAPE, typename COLLISION_FUNCTOR>
 	inline bool TestObjectPointCollision(CollisionFunctor<SHAPE, COLLISION_FUNCTOR> const & node_functor, Vector3 const & surface)
 	{
-		CollisionInfo collision_info;
-		
 		Vector3 center_to_surface = surface - node_functor._pyramid.center;
-		collision_info.ray.position = surface;
-		collision_info.ray.direction = Normalized(center_to_surface);
+		
+		CollisionInfo collision_info =
+		{
+			Ray3(surface, Normalized(center_to_surface))
+		};
 		
 		if (! GetIntersection(node_functor._object.bounding_sphere, collision_info.ray, collision_info.t1, collision_info.t2))
 		{

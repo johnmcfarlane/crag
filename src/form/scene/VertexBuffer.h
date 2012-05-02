@@ -24,7 +24,7 @@ namespace form
 
 		size_t Size() const { return _verts.size(); }
 		Vertex const * GetArray() const { return & _verts.front(); }
-		Vertex & PushBack();
+		Vertex & PushBack(Vertex const & element);
 		
 		void Clear();
 
