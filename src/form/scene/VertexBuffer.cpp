@@ -19,9 +19,9 @@ form::VertexBuffer::VertexBuffer(int max_num_verts)
 {
 }
 
-form::Vertex & form::VertexBuffer::PushBack()
+form::Vertex & form::VertexBuffer::PushBack(Vertex const & element)
 {
-	return * _verts.grow(1);
+	return _verts.push_back(element);
 }
 
 void form::VertexBuffer::Clear()

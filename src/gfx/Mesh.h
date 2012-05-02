@@ -87,7 +87,6 @@ namespace gfx
 			return vbo.IsBound() && ibo.IsBound();
 		}
 
-	protected:
 #if defined(VERIFY)
 		void Verify() const
 		{
@@ -101,6 +100,7 @@ namespace gfx
 		}
 #endif
 		
+	protected:
 		VertexBufferObject vbo;	// verts
 		IndexBufferObject ibo;	// indices
 	};

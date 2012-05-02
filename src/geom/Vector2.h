@@ -21,16 +21,27 @@ namespace geom
 	template<typename S> class Vector<S, 2>
 	{
 	public:
-		static int const N = 2;
+		Vector() 
+#if ! defined(NDEBUG)
+		: x(std::numeric_limits<S>::signaling_NaN())
+		, y(std::numeric_limits<S>::signaling_NaN())
+#endif
+		{ 
+		}
 		
-		Vector() { }
+		template<typename RHS_S> 
+		Vector(Vector<RHS_S, 2> const & rhs) 
+		: x(rhs.x)
+		, y(rhs.y)
+		{ 
+		}
 		
-		template<typename RHS_S> Vector(Vector<RHS_S, 2> const & rhs) 
-			: x(static_cast<S>(rhs.x))
-			, y(static_cast<S>(rhs.y)) 
-		{ }
-
-		template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y) : x(rhs_x), y(rhs_y) { }
+		template<typename RHS_S> 
+		Vector(RHS_S rhs_x, RHS_S rhs_y) 
+		: x(rhs_x)
+		, y(rhs_y)
+		{ 
+		}
 
 		// Returns vector as a C-style array. Very unsafe. 
 		S const * GetAxes() const
@@ -44,12 +55,12 @@ namespace geom
 		
 		S const & operator [] (int index) const
 		{
-			ASSERT(index >= 0 && index < N);
+			ASSERT(index >= 0 && index < 2);
 			return GetAxes() [index];
 		}
 		S & operator [] (int index)
 		{
-			ASSERT(index >= 0 && index < N);
+			ASSERT(index >= 0 && index < 2);
 			return GetAxes() [index];
 		}
 		
@@ -57,6 +68,14 @@ namespace geom
 		{
 			return Vector(0,0); 
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyTrue(x == x);
+			VerifyTrue(y == y);
+		}
+#endif
 		
 		S x, y;
 	};

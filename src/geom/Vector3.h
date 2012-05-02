@@ -21,27 +21,30 @@ namespace geom
 	{
 	public:
 		Vector() 
+#if ! defined(NDEBUG)
+		: x(std::numeric_limits<S>::signaling_NaN())
+		, y(std::numeric_limits<S>::signaling_NaN())
+		, z(std::numeric_limits<S>::signaling_NaN())
+#endif
 		{ 
 		}
 
-		template<typename RHS_S> Vector(Vector<RHS_S, 3> const & rhs) 
-		: x(static_cast<S>(rhs.x))
-		, y(static_cast<S>(rhs.y))
-		, z(static_cast<S>(rhs.z)) 
-		{ }
+		template<typename RHS_S> 
+		Vector(Vector<RHS_S, 3> const & rhs) 
+		: x(rhs.x)
+		, y(rhs.y)
+		, z(rhs.z) 
+		{ 
+		}
 		
-		template<typename RHS_S> Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
-		: x(static_cast<S>(rhs_x))
-		, y(static_cast<S>(rhs_y))
-		, z(static_cast<S>(rhs_z)) 
-		{ }
+		template<typename RHS_S> 
+		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
+		: x(rhs_x)
+		, y(rhs_y)
+		, z(rhs_z) 
+		{ 
+		}
 		
-		template<typename RHS_S> Vector(RHS_S const * rhs_array) 
-		: x(static_cast<S>(rhs_array[0]))
-		, y(static_cast<S>(rhs_array[1]))
-		, z(static_cast<S>(rhs_array[2])) 
-		{ }
-
 		// Returns vector as a C-style array. Very unsafe. 
 		S const & operator[](int index) const 
 		{
@@ -75,6 +78,15 @@ namespace geom
 			S max_value = std::numeric_limits<S>::max();
 			return Vector(max_value, max_value, max_value);
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyTrue(x == x);
+			VerifyTrue(y == y);
+			VerifyTrue(z == z);
+		}
+#endif
 		
 		S x, y, z;
 	};

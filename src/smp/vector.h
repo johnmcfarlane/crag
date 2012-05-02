@@ -165,9 +165,9 @@ namespace smp
 		// Element append functions - thread safe
 		// These are atomic fetch and push back operations.
 		
-		void push_back(T const & value)
+		T & push_back(T const & value)
 		{
-			* grow(1) = value;
+			return * grow(1, value);
 		}
 		
 		iterator grow(size_type num)
@@ -186,7 +186,7 @@ namespace smp
 			return pre_last;
 		}
 		
-		iterator grow(size_type num, T & filler)
+		iterator grow(size_type num, T const & filler)
 		{
 			// Increase the array.
 			T * pre_last = grow_uninit (num);

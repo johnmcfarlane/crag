@@ -16,18 +16,20 @@ namespace geom
 	// Matrix multiplication
 
 	// matrix * matrix = matrix
-	template <typename S, int R, int C> 
-	Matrix<S, R, C> operator * (Matrix<S, R, C> const & lhs, Matrix<S, R, C> const & rhs)
+	template <typename S, int N> 
+	Matrix<S, N, N> operator * (Matrix<S, N, N> const & lhs, Matrix<S, N, N> const & rhs)
 	{
-		Matrix<S, R, C> result;
-		for (int row = 0; row < R; ++ row)
+		S result[N][N];
+		for (int row = 0; row != N; ++ row)
 		{
-			for (int column = 0; column < C; ++ column)
+			for (int column = 0; column != N; ++ column)
 			{
-				result[row][column] = (lhs[row][0]*rhs[0][column] + 
-									   lhs[row][1]*rhs[1][column] + 
-									   lhs[row][2]*rhs[2][column] + 
-									   lhs[row][3]*rhs[3][column]);
+				S cell = 0;
+				for (int i = 0; i != N; ++ i)
+				{
+					cell += lhs[row][i] * rhs[i][column];
+				}
+				result[row][column] = cell;
 			}
 		}
 		return result;

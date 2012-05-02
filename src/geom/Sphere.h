@@ -76,24 +76,31 @@ namespace geom
 		
 		// c'tors
 		Sphere() 
-		{ }
+#if ! defined(NDEBUG)
+		: radius(std::numeric_limits<S>::signaling_NaN())
+#endif
+		{ 
+		}
 		
 		Sphere(Vector const & c, Scalar r) 
 		: center(c)
 		, radius(r)
-		{ }
+		{ 
+		}
 		
 		template <typename RHS_S>
 		Sphere(geom::Vector<RHS_S, N> const & c, RHS_S r) 
 		: center(c)
 		, radius(r)
-		{ }
+		{ 
+		}
 		
 		template <typename RHS_S>
 		Sphere(Sphere<RHS_S, N> const & rhs) 
 		: center(rhs.center)
 		, radius(rhs.radius)
-		{ }
+		{ 
+		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

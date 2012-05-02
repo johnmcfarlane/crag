@@ -193,11 +193,6 @@ void app::GetEvent(SDL_Event & event)
 			}
 			break;
 			
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
-			// event.button.button
-			break;
-
 		case SDL_MOUSEMOTION:
 			{
 				if (_relative_mouse_mode)

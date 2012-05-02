@@ -191,13 +191,29 @@ template<typename T> void VerifyPtr(T const * ptr)
 }
 
 // Run object's internal verification.
-#define VerifyObject(OBJECT) (OBJECT).Verify()
+template<typename T>
+void VerifyObject(const T & object)
+{
+	object.Verify();
+}
 
 // Verify address of object and run object's internal verification.
-#define VerifyObjectRef(REF) DO_STATEMENT(VerifyRef(REF); VerifyObject(REF);)
+template<typename T>
+void VerifyObjectRef(const T & ref)
+{
+	VerifyRef(ref);
+	VerifyObject(ref);
+}
 
 // Verify pointer to object and (if non-null) run object's internal verification.
-#define VerifyObjectPtr(PTR) DO_STATEMENT(if (PTR != nullptr) VerifyObjectRef((* PTR));)
+template<typename T>
+void VerifyObjectPtr(const T * ptr)
+{
+	if (ptr != nullptr) 
+	{
+		VerifyObjectRef(* ptr);
+	}
+}
 
 template<typename T> void VerifyArrayElement(T const * element, T const * begin) 
 { 
