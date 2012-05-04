@@ -32,7 +32,7 @@ namespace applet
 
 	// blocking engine call
 	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
+	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 	{
 		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
 		
@@ -45,7 +45,7 @@ namespace applet
 	
 	// blocking engine call
 	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Poll(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
+	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
 	{
 		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
 		
