@@ -346,7 +346,7 @@ void TestScript::HandleEvents()
 
 void TestScript::UpdateOrigin(AppletInterface & applet_interface)
 {
-	auto camera_transformation = applet_interface.Poll(& gfx::Engine::GetCamera);
+	auto camera_transformation = applet_interface.Call(& gfx::Engine::GetCamera);
 	auto camera_pos = camera_transformation.GetTranslation();
 	auto origin_to_camera = _origin - camera_pos;
 	
