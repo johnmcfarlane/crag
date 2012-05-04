@@ -43,6 +43,8 @@ namespace sim
 		void SetBody(Body * body);
 		Body * GetBody();
 		Body const * GetBody() const;
+		
+		Transformation GetTransformation() const;
 
 		// Verification
 	#if defined(VERIFY)

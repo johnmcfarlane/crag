@@ -15,6 +15,8 @@
 
 #include "physics/Body.h"
 
+#include "geom/Transformation.h"
+
 
 using namespace sim;
 
@@ -59,4 +61,10 @@ Entity::Body * Entity::GetBody()
 Entity::Body const * Entity::GetBody() const
 {
 	return _body;
+}
+
+Transformation Entity::GetTransformation() const
+{
+	ASSERT(_body != nullptr);
+	return Transformation(_body->GetPosition(), _body->GetRotation());
 }

@@ -25,6 +25,8 @@
 #include "applet/Applet.h"
 #include "applet/TestScript.h"
 
+#define RUN_TEST
+
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -329,8 +331,11 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			//applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
+#if defined(RUN_TEST)
+			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
+#else
 			applet::Daemon::Call(& applet::Engine::Launch, & ga::main);
+#endif
 			
 			while (HandleEvent())
 			{

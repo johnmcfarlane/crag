@@ -83,10 +83,7 @@ namespace
 		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_LSHIFT },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_RCTRL },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_LCTRL },
-		
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, -1 }, SDL_SCANCODE_COMMA },
-		{ { sim::Controller::Impulse::FORCE, axes::RIGHT, +1 }, SDL_SCANCODE_PERIOD },
-		
+
 		{ { sim::Controller::Impulse::NUM_TYPES, axes::NUM_AXES, 0 }, SDL_SCANCODE_UNKNOWN }
 	};
 
