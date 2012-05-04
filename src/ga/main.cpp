@@ -20,6 +20,7 @@
 #include "sim/defs.h"
 #include "sim/Engine.h"
 #include "sim/EntityFunctions.h"
+#include "sim/Firmament.h"
 #include "sim/Planet.h"
 
 #include "gfx/Engine.h"
@@ -39,11 +40,12 @@ void ga::main(applet::AppletInterface & applet_interface)
 	DEBUG_MESSAGE("ga::main");
 
 	Scalar planet_radius = 10000;
-	Scalar axis = planet_radius / sqrt(3.);
-	Vector3 surface(axis, axis, axis);
+	//Scalar axis = planet_radius / sqrt(3.);
+	//Vector3 surface(axis, axis, axis);
+	Vector3 surface(0., 0., planet_radius);
 
 	// origin
-	Vector3 origin = surface * .8;
+	Vector3 origin = surface * .8 * 0.;
 	applet_interface.Call<form::Engine, sim::Vector3>(& form::Engine::SetOrigin, origin);
 	
 	// planet
@@ -58,9 +60,12 @@ void ga::main(applet::AppletInterface & applet_interface)
 	// camera
 	Vector3 camera_pos = surface * 1.01;
 	Vector3 camera_forward = geom::Normalized(- camera_pos);
-	Vector3 camera_up = Vector3(1, -1, -1);
-	Matrix33 camera_dir(axes::Rotation(camera_forward, camera_up));
-	sim::Transformation transformation(camera_pos, camera_dir);
+	//Vector3 camera_up = geom::Normalized(Vector3(1, -1, -1));
+	//Vector3 camera_up = geom::Normalized(Vector3(0, 0, 1));
+	Matrix33 camera_dir(axes::Rotation(camera_forward/*, camera_up*/));
+	//sim::Transformation transformation(sim::Transformation::Matrix::Identity());
+	//sim::Transformation transformation(camera_pos, camera_dir);
+	sim::Transformation transformation(camera_pos);
 	gfx::Daemon::Call(& gfx::Engine::OnSetCamera, transformation);
 
 	applet_interface.Sleep(2.f);
@@ -71,6 +76,11 @@ void ga::main(applet::AppletInterface & applet_interface)
 	gfx::Transformation light_transformation(Vector3(0., 0., 10.) * planet_radius);
 	light.Call(& gfx::BranchNode::SetTransformation, light_transformation);
 
+	// Add the skybox.
+	sim::FirmamentHandle skybox;
+	skybox.Create();
+	gfx::Daemon::Call(& gfx::Engine::OnSetParent, skybox.GetUid(), gfx::Uid());
+	
 //	gfx::Light::InitData init_data =
 //	{
 //		100000000.,	// sun_orbit_distance

@@ -17,21 +17,21 @@ namespace applet
 	class PollCondition : public Condition
 	{
 	public:
-		PollCondition(bool & complete)
-		: _complete(complete)
+		PollCondition(smp::PollStatus const & status)
+		: _status(status)
 		{
 		}
 		~PollCondition()
 		{
-			ASSERT(_complete);
+			ASSERT(_status == smp::complete || _status == smp::failed);
 		}
 	private:
 		virtual bool operator() (bool hurry) final
 		{
-			return _complete;
+			return _status != smp::pending;
 		}
 		
 		// variables
-		bool & _complete;
+		smp::PollStatus const & _status;
 	};
 }

@@ -9,8 +9,10 @@
 
 #pragma once
 
-#include "smp/Message.h"
-#include "smp/Uid.h"
+#include "atomic.h"
+#include "Message.h"
+#include "PollStatus.h"
+#include "Uid.h"
 
 
 // Forward-declares class, CLASS, and creates shorthand version of its handle.
@@ -169,6 +171,13 @@ namespace smp
 			Call(message);
 		}
 		
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
+		void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters) const
+		{
+			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS ...> command(result, status, function, parameters ...);
+			Call(command);
+		}
+		
 	private:
 		template <typename FUNCTOR>
 		class CallMessageFunctor : public smp::Message<typename Type::Engine>
@@ -290,6 +299,39 @@ namespace smp
 			PARAMETER3 _parameter3;
 		};
 
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
+		class PollCommand
+		{
+		public:
+			// functions
+			PollCommand(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
+			: _result(result)
+			, _status(status)
+			, _function(function)
+			, _parameters(parameters...)
+			{ 
+			}
+			void operator () (Type * derived) const
+			{
+				ASSERT(_status == pending);
+				if (derived == nullptr)
+				{
+					_status = failed;
+				}
+				else
+				{
+					_result = core::call(* derived, _function, _parameters);
+					AtomicCompilerBarrier();
+					_status = complete;
+				}
+			}
+		private:
+			// variables
+			VALUE_TYPE & _result;
+			PollStatus & _status;
+			FUNCTION_TYPE _function;
+			std::tr1::tuple<PARAMETERS...> _parameters;
+		};
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
