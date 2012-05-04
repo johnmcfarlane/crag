@@ -20,28 +20,41 @@ namespace applet
 	class Future : public Condition
 	{
 	public:
-		// performs thread-safe call to the given function using the given AppletInterface
+		// performs thread-safe call to the given ENGINE function using the given AppletInterface
 		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
 		Future(AppletInterface & applet_interface, RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
 		: _applet_interface(applet_interface)
-		, _complete(false)
+		, _status(smp::pending)
 		{
 			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
 			typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...);
 			
 			// ask daemon to send the poll command to the engine
-			ENGINE::Daemon::template Poll(_value, _complete, function, parameters...);
+			ENGINE::Daemon::template Poll(_value, _status, function, parameters...);
+		}
+		
+		// performs thread-safe call to the given OBJECT function using the given AppletInterface
+		template <typename OBJECT, typename RETURN_TYPE, typename... PARAMETERS>
+		Future(AppletInterface & applet_interface, smp::Handle<OBJECT> const & handle, RETURN_TYPE (OBJECT::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
+		: _applet_interface(applet_interface)
+		, _status(smp::pending)
+		{
+			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+			typedef RETURN_TYPE (OBJECT::* FunctionType)(PARAMETERS const & ...);
+			
+			// ask daemon to send the poll command to the engine
+			handle.Poll(_value, _status, function, parameters...);
 		}
 		
 		~Future()
 		{
-			ASSERT(_complete);
+			ASSERT(_status == smp::complete || _status == smp::failed);
 		}
 		
 		// returns true iff the result
 		bool valid() const
 		{
-			return _complete;
+			return _status == smp::complete;
 		}
 		
 		// blocks until valid and then returns result of function call given in c'tor
@@ -54,22 +67,22 @@ namespace applet
 		// blocks until valid
 		void wait()
 		{
-			if (! _complete) 
+			if (_status == smp::pending) 
 			{
-				PollCondition condition(_complete);
+				PollCondition condition(_status);
 				_applet_interface.Wait(condition);
-				ASSERT(_complete);
+				ASSERT(_status == smp::complete || _status == smp::failed);
 			}
 		}
 	private:
 		virtual bool operator() (bool hurry) override
 		{
-			return _complete;
+			return _status != smp::pending;
 		}
 		
 		// variables
 		VALUE _value;
 		AppletInterface & _applet_interface;
-		bool _complete;
+		smp::PollStatus _status;
 	};
 }

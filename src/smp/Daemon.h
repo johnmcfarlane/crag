@@ -178,10 +178,10 @@ namespace smp
 		// Poll - generates a deferred function call to the thread-safe engine
 		
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-		static void Poll(VALUE_TYPE & result, bool & complete, FUNCTION_TYPE function, PARAMETERS const &... parameters)
+		static void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters)
 		{
 			// functor is sent to Engine's thread to call function and retrieve result
-			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS...> command(result, complete, function, parameters...);
+			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS...> command(result, status, function, parameters...);
 			SendMessage(command);
 		}
 		
@@ -214,9 +214,9 @@ namespace smp
 		{
 		public:
 			// functions
-			PollCommand(VALUE_TYPE & result, bool & complete, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
+			PollCommand(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
 			: _result(result)
-			, _complete(complete)
+			, _status(status)
 			, _function(function)
 			, _parameters(parameters...)
 			{ 
@@ -224,15 +224,14 @@ namespace smp
 		private:
 			virtual void operator () (Engine & engine) const final
 			{
-				ASSERT(_complete == false);
-				std::tr1::tuple<> t;
+				ASSERT(_status == pending);
 				_result = core::call(engine, _function, _parameters);
 				AtomicCompilerBarrier();
-				_complete = true;
+				_status = complete;
 			}
 			// variables
 			VALUE_TYPE & _result;
-			bool & _complete;
+			PollStatus & _status;
 			FUNCTION_TYPE _function;
 			std::tr1::tuple<PARAMETERS...> _parameters;
 		};
