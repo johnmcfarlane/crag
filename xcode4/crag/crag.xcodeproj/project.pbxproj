@@ -167,6 +167,7 @@
 		52055D65132DE312000C6578 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		52081E05155645A6000EB42E /* Handle_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle_Impl.h; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		521B601314F222BE0049EBD1 /* ObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectBase.h; sourceTree = "<group>"; };
 		521B602314F22F080049EBD1 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -420,7 +421,7 @@
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52933D661546FBBD00767FFE /* FunctorCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctorCondition.h; sourceTree = "<group>"; };
-		52933D6815470A0E00767FFE /* Future.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Future.h; sourceTree = "<group>"; };
+		52933D6815470A0E00767FFE /* Future.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Future.h; sourceTree = "<group>"; };
 		5296FB41154D8A8D00FAA706 /* PollCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollCondition.h; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
 		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -795,6 +796,7 @@
 				5230572214F1D95F0024D4A8 /* Mutex.h */,
 				521B601314F222BE0049EBD1 /* ObjectBase.h */,
 				521B602314F22F080049EBD1 /* Handle.h */,
+				52081E05155645A6000EB42E /* Handle_Impl.h */,
 				5230572314F1D95F0024D4A8 /* scheduler.cpp */,
 				5230572414F1D95F0024D4A8 /* scheduler.h */,
 				5230572514F1D95F0024D4A8 /* Semaphore.cpp */,

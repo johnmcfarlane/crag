@@ -124,7 +124,7 @@
 #include "geom/Distance.h"
 #include "geom/Magnitude.h"
 
-#include "smp/Handle.h"
+#include "smp/Handle_Impl.h"
 #include "smp/ObjectBase.h"
 
 
