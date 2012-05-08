@@ -71,7 +71,8 @@ namespace smp
 	}
 	
 	template <typename TYPE>
-	void Handle<TYPE>::Create()
+	template <typename ... PARAMETERS>
+	void Handle<TYPE>::Create(PARAMETERS const & ... parameters)
 	{
 		typedef typename Type::Daemon Daemon;
 		typedef typename Type::Engine Engine;
@@ -79,20 +80,7 @@ namespace smp
 		Destroy();
 		Uid uid = Uid::Create();
 		SetUid(uid);
-		Daemon::Call(& Engine::template OnCreateObject<Type>, uid);
-	}
-
-	template <typename TYPE>
-	template <typename INIT_DATA>
-	void Handle<TYPE>::Create(INIT_DATA const & init_data)
-	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
-		
-		Destroy();
-		Uid uid = Uid::Create();
-		SetUid(uid);
-		Daemon::Call(& Engine::template OnCreateObject<Type, INIT_DATA>, uid, init_data);
+		Daemon::Call(& Engine::template OnCreateObject<Type, PARAMETERS ...>, uid, parameters ...);
 	}
 	
 	// Tells simulation to destroy the object.
