@@ -30,7 +30,7 @@ namespace applet
 		Wait(condition);
 	}
 
-	// blocking engine call
+	// blocking engine call to const function
 	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
 	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 	{
@@ -43,7 +43,7 @@ namespace applet
 		return future.get();
 	}
 	
-	// blocking engine call
+	// blocking engine call to non-const function
 	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
 	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
 	{
