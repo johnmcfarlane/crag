@@ -19,9 +19,9 @@ using namespace gfx;
 // gfx::ListObejct definitions
 
 
-BranchNode::BranchNode()
-: Object(branch)
-, _transformation(Transformation::Matrix::Identity())
+BranchNode::BranchNode(super::Init const & init, Transformation const & transformation)
+: Object(init, branch)
+, _transformation(transformation)
 {
 }
 
@@ -46,11 +46,6 @@ void BranchNode::Verify() const
 	VerifyObject(_transformation);
 }
 #endif
-
-void BranchNode::Init(gfx::Engine const & renderer, Transformation const & transformation)
-{
-	_transformation = transformation;
-}
 
 bool BranchNode::IsEmpty() const
 {

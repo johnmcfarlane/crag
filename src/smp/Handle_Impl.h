@@ -80,7 +80,7 @@ namespace smp
 		Destroy();
 		Uid uid = Uid::Create();
 		SetUid(uid);
-		Daemon::Call(& Engine::template OnCreateObject<Type, PARAMETERS ...>, uid, parameters ...);
+		Daemon::Call(& Engine::template CreateObject<Type, PARAMETERS ...>, uid, parameters ...);
 	}
 	
 	// Tells simulation to destroy the object.

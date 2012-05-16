@@ -36,14 +36,12 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		BranchNode();
+		BranchNode(Init const & init, Transformation const & transformation);
 		~BranchNode();
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
 #endif
-		
-		void Init(gfx::Engine const & renderer, Transformation const & transformation);
 		
 		bool IsEmpty() const;
 		

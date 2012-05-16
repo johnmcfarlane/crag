@@ -20,11 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
 
-sim::Star::Star()
-: Entity()
-, radius(-1)
-, year(-1)
+sim::Star::Star(Entity::Init const & init, Scalar radius, Scalar year)
+: Entity(init)
+, _radius(radius)
+, _year(year)
 {
+	// initialize light
+	gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
+	color.a = 1.0f;
+	_model = AddModelWithTransform<gfx::Light>(color);
 }
 
 sim::Star::~Star()
@@ -32,21 +36,11 @@ sim::Star::~Star()
 	_model.Destroy();
 }
 
-void sim::Star::Init(sim::Engine & simulation_engine, InitData const & init_data)
-{
-	radius = init_data.radius;
-	year = init_data.year;
-	
-	// initialize light
-	gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	_model = AddModelWithTransform<gfx::Light>(color);
-}
-
 void sim::Star::Tick(sim::Engine & simulation_engine)
 {
 	Time t = simulation_engine.GetTime();
-	Scalar angle = static_cast<Scalar>(t * (2. * PI) / year) + 3.6;
-	position = Vector3(- sin(angle) * radius, - cos(angle) * radius, static_cast<Scalar>(0));
+	Scalar angle = static_cast<Scalar>(t * (2. * PI) / _year) + 3.6;
+	position = Vector3(- sin(angle) * _radius, - cos(angle) * _radius, static_cast<Scalar>(0));
 }
 
 void sim::Star::UpdateModels() const

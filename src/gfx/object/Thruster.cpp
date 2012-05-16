@@ -38,17 +38,9 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
-Thruster::Thruster()
-: _renderer(nullptr)
-, _thrust_factor(0)
+Thruster::Thruster(super::Init const & init)
+: super(init, thruster_color)
 {
-}
-
-void Thruster::Init(gfx::Engine & renderer)
-{
-	super::Init(renderer, thruster_color);
-	
-	_renderer = & renderer;
 }
 
 void Thruster::Update(float const & thrust_factor)
@@ -58,12 +50,12 @@ void Thruster::Update(float const & thrust_factor)
 	{
 		if (Random::sequence.GetUnit<float>() < puff_probability)
 		{
-			AddPuff(_thrust_factor, ref(_renderer));
+			AddPuff(_thrust_factor);
 		}
 	}
 }
 
-LeafNode::PreRenderResult Thruster::PreRender(gfx::Engine const & renderer)
+LeafNode::PreRenderResult Thruster::PreRender()
 {
 	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
 	
@@ -73,18 +65,14 @@ LeafNode::PreRenderResult Thruster::PreRender(gfx::Engine const & renderer)
 	return LeafNode::ok;
 }
 
-void Thruster::AddPuff(float thrust_factor, gfx::Engine & renderer)
+void Thruster::AddPuff(float thrust_factor)
 {
-	BranchNode * branch_node = new BranchNode;
-	Uid parent_uid;
-	{
-		// Create BranchNode to store the positional information of the puff.
-		renderer.OnAddObject(* branch_node);
-		parent_uid = branch_node->GetUid();
-	}
+	gfx::Engine & renderer = GetEngine();
+	Init branch_init { renderer, Uid::Create() };
 	
 	// Determine the position/direction etc. of the puff.
 	Scalar spawn_volume;
+	BranchNode * branch_node;
 	{
 		// Get some random numbers.
 		Scalar g1, g2, g3, g4;
@@ -110,11 +98,14 @@ void Thruster::AddPuff(float thrust_factor, gfx::Engine & renderer)
 
 		// Set its position.
 		gfx::Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
-		branch_node->SetTransformation(transformation);
+		branch_node = new BranchNode(branch_init, transformation);
+		renderer.OnAddObject(* branch_node);
 	}
 	
-	Puff * model = new Puff(spawn_volume);
-	renderer.OnAddObject(* model);
-	model->Init(renderer);
-	renderer.OnSetParent(* model, * branch_node);
+	{
+		Init puff_init { renderer, Uid::Create() };
+		Puff * model = new Puff(puff_init, spawn_volume);
+		renderer.OnAddObject(* model);
+		renderer.OnSetParent(* model, * branch_node);
+	}
 }

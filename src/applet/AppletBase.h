@@ -30,11 +30,12 @@ namespace applet
 	// derive that class from this one. Alternatively, specialize the Applet class.
 	class AppletBase : public smp::ObjectBase<AppletBase, Engine>, public AppletInterface
 	{
+		typedef smp::ObjectBase<AppletBase, Engine> super;
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		AppletBase();
+		AppletBase(Init const & init);
 		~AppletBase();
 		
 		// true iff the applet has not yet returned

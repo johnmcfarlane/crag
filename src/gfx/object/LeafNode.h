@@ -41,7 +41,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Layer::type layer);
+		LeafNode(Init const & init, Layer::type layer);
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
@@ -66,7 +66,7 @@ namespace gfx
 		virtual bool GetRenderRange(RenderRange & range) const;
 		
 		// Perform any necessary preparation for rendering.
-		virtual PreRenderResult PreRender(gfx::Engine const & renderer);
+		virtual PreRenderResult PreRender();
 		
 		// Draw the object.
 		virtual void Render(gfx::Engine const & renderer) const;

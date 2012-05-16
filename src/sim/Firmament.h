@@ -17,7 +17,7 @@ namespace sim
 	class Firmament : public gfx::Skybox
 	{
 	public:
-		bool Init(gfx::Engine & renderer);
+		Firmament(Init const & init);
 		
 	private:
 		void DrawStarsClevur();

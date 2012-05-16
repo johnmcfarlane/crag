@@ -102,14 +102,18 @@ namespace gfx
 		void OnSetRegulatorHandle(form::RegulatorScriptHandle const & regulator_handle);
 
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void OnCreateObject(Uid const & uid, PARAMETERS const & ... parameters)
+		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE;
-			object->SetUid(uid);
-			object->Init(* this, parameters ...);
+			smp::ObjectBaseInit<Engine>
+			init = 
+			{
+				* this,
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
 			OnAddObject(* object);
 		}
-		
+
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();

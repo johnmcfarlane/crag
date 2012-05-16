@@ -27,11 +27,9 @@ namespace sim
 	{
 	public:
 		// functions
-		Ball();
+		Ball(Init const & init, Sphere3 const & sphere);
 		~Ball();
 		
-		// Called from the simulation thread.
-		void Init(sim::Engine & simulation_engine, Sphere3 const & sphere);
 	private:
 		void InitPhysics(sim::Engine & simulation_engine, Sphere3 const & sphere);
 		void InitGraphics(Sphere3 const & sphere);

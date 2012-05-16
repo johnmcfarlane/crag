@@ -24,8 +24,9 @@ namespace applet
 		typedef FUNCTOR Functor;
 		
 		// functions
-		Applet(Functor functor)
-		: _functor(functor)
+		Applet(Init const & init, Functor functor)
+		: AppletBase(init)
+		, _functor(functor)
 		{
 		}
 		

@@ -25,8 +25,9 @@ using namespace applet;
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions
 
-ObserverScript::ObserverScript(sim::Vector3 const & spawn_position)
-: _collidable(true)
+ObserverScript::ObserverScript(AppletBase::Init const & init, sim::Vector3 const & spawn_position)
+: AppletBase(init)
+, _collidable(true)
 {
 	_observer.Create(spawn_position);
 };

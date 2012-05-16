@@ -48,11 +48,14 @@ namespace sim
 		void OnQuit();
 		
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void OnCreateObject(Uid const & uid, PARAMETERS const & ... parameters)
+		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE;
-			object->SetUid(uid);
-			object->Init(* this, parameters ...);
+			smp::ObjectBaseInit<Engine> init = 
+			{
+				* this,
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
 			OnAddObject(* object);
 		}
 		

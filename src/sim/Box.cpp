@@ -41,19 +41,16 @@ namespace
 using namespace sim;
 
 
-Box::Box()
+Box::Box(Entity::Init const & init, Vector3 center, Vector3 size)
+: Entity(init)
 {
+	InitPhysics(init.engine, center, size);
+	InitGraphics();
 }
 
 Box::~Box()
 {
 	_model.Destroy();
-}
-
-void Box::Init(sim::Engine & simulation_engine, InitData const & init_data)
-{
-	InitPhysics(simulation_engine, init_data.center, init_data.size);
-	InitGraphics();
 }
 
 void Box::InitPhysics(sim::Engine & simulation_engine, Vector3 center, Vector3 size)

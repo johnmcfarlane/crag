@@ -18,8 +18,9 @@
 using namespace gfx;
 
 
-Object::Object(NodeType node_type)
-: _parent(nullptr)
+Object::Object(Init const & init, NodeType node_type)
+: super(init)
+, _parent(nullptr)
 , _node_type(node_type)
 { 
 }

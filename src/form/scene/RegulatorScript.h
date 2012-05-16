@@ -62,7 +62,7 @@ namespace form
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		RegulatorScript();
+		RegulatorScript(Init const & init);
 		~RegulatorScript();
 		
 		// script entry point

@@ -33,9 +33,8 @@ namespace gfx
 		typedef VertexBufferObject<Vertex> Vbo;
 		
 		// Methods
-		Skybox();
+		Skybox(Init const & init);
 		
-		bool Init(gfx::Engine & renderer);
 		void Deinit(Scene & scene) override;
 		
 		void SetSide(int axis, int pole, Image const & image);

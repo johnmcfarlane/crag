@@ -20,15 +20,13 @@ namespace gfx
 	class Puff : public LeafNode
 	{
 	public:
-		Puff(Scalar spawn_volume);
+		Puff(Init const & init, Scalar spawn_volume);
 		~Puff();
-		
-		bool Init(gfx::Engine & renderer);
 		
 	private:
 		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		
-		PreRenderResult PreRender(gfx::Engine const & renderer) override;
+		PreRenderResult PreRender() override;
 		
 		// Draw the object.
 		void Render(gfx::Engine const & renderer) const override;

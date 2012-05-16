@@ -23,20 +23,10 @@ namespace sim
 	class Star : public Entity
 	{
 	public:
-		// types
-		struct InitData
-		{
-			Scalar radius;
-			Scalar year;
-		};
-		
 		// functions
-		Star();
+		Star(Init const & init, Scalar radius, Scalar year);
 		~Star();
 
-		// Called from the simulation thread.
-		void Init(sim::Engine & simulation_engine, InitData const & init);
-		
 		void Tick(sim::Engine & simulation_engine);
 		
 		void UpdateModels() const;
@@ -46,7 +36,7 @@ namespace sim
 	private:
 		gfx::BranchNodeHandle _model;
 		Vector3 position;
-		Scalar radius;
-		Scalar year;
+		Scalar _radius;
+		Scalar _year;
 	};
 }

@@ -34,12 +34,9 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
-		Observer();
+		Observer(Init const & init, Vector3 const & center);
 		~Observer();
 		
-		// Called from the simulation thread.
-		void Init(sim::Engine & simulation_engine, Vector3 const & center);
-
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
 

@@ -41,20 +41,17 @@ using namespace sim;
 
 
 // seems to be required by MetaClass::InitObject
-Ball::Ball()
+Ball::Ball(Entity::Init const & init, Sphere3 const & sphere)
+: Entity(init)
 {
+	InitPhysics(init.engine, sphere);
+	
+	InitGraphics(sphere);
 }
 
 Ball::~Ball()
 {
 	_model.Destroy();
-}
-
-void Ball::Init(sim::Engine & simulation_engine, Sphere3 const & sphere)
-{
-	InitPhysics(simulation_engine, sphere);
-	
-	InitGraphics(sphere);
 }
 
 void Ball::InitPhysics(sim::Engine & simulation_engine, Sphere3 const & sphere)

@@ -23,13 +23,10 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Firmament member definitions
 
-bool Firmament::Init(gfx::Engine & renderer)
+Firmament::Firmament(Init const & init)
+: Skybox(init)
 {
-	Skybox::Init(renderer);
-	
 	DrawStarsSimple();
-	
-	return true;
 }
 
 void Firmament::DrawStarsClevur()

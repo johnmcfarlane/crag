@@ -29,7 +29,6 @@ namespace gfx
 	// meaning they effectively double as nodes in a hierachical scene graph.
 	class Object : public smp::ObjectBase<Object, gfx::Engine>
 	{
-		OBJECT_NO_COPY(Object);
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -45,7 +44,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(NodeType node_type);
+		Object(Init const & init, NodeType node_type);
 		virtual ~Object();
 		
 #if defined(VERIFY)

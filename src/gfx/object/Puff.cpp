@@ -38,35 +38,31 @@ namespace
 }
 
 
-Puff::Puff(Scalar spawn_volume)
-: LeafNode(Layer::foreground)
+Puff::Puff(LeafNode::Init const & init, Scalar spawn_volume)
+: LeafNode(init, Layer::foreground)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
 {
 	SetIsOpaque(false);
 	STAT_INC(num_puffs, 1);
-}
 
-Puff::~Puff()
-{
-	STAT_INC(num_puffs, -1);
-}
-
-bool Puff::Init(gfx::Engine & renderer)
-{
-	ResourceManager & resource_manager = renderer.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
 	SetProgram(poly_program);
 	
 	MeshResource const & disk_quad = resource_manager.GetDiskQuad();
 	SetMeshResource(& disk_quad);
-
-	Scene const & scene = renderer.GetScene();
+	
+	Scene const & scene = init.engine.GetScene();
 	Time time = scene.GetTime();
 	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
-	return true;
+}
+
+Puff::~Puff()
+{
+	STAT_INC(num_puffs, -1);
 }
 
 gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
@@ -80,9 +76,9 @@ gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transfo
 	return disk_quad.Transform(scale, scratch);
 }
 
-LeafNode::PreRenderResult Puff::PreRender(gfx::Engine const & renderer)
+LeafNode::PreRenderResult Puff::PreRender()
 {
-	Time time = renderer.GetScene().GetTime();
+	Time time = GetEngine().GetScene().GetTime();
 	Time age = CalculateAge(time);
 	
 	_radius = static_cast<float>(geom::Sphere<Scalar, 3>::Properties::RadiusFromVolume(_spawn_volume));

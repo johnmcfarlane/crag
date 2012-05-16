@@ -26,25 +26,19 @@
 using namespace gfx;
 
 
-Ball::Ball()
-: LeafNode(Layer::foreground)
+Ball::Ball(LeafNode::Init const & init, Color4f const & color)
+: LeafNode(init, Layer::foreground)
 , _color(Color4f::Black())
-{
-}
-
-bool Ball::Init(gfx::Engine & renderer, Color4f const & color)
 {
 	_color = color;
 	
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	ResourceManager const & resource_manager = init.engine.GetResourceManager();
 
 	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
 	SetProgram(sphere_program);
 	
 	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();
 	SetMeshResource(& sphere_quad);
-	
-	return true;
 }
 
 gfx::Transformation const & Ball::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
