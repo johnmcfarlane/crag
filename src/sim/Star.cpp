@@ -27,7 +27,6 @@ sim::Star::Star(Entity::Init const & init, Scalar radius, Scalar year)
 {
 	// initialize light
 	gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	color.a = 1.0f;
 	_model = AddModelWithTransform<gfx::Light>(color);
 }
 

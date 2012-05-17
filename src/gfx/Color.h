@@ -85,7 +85,7 @@ namespace gfx
 			return Color4(lhs.r * rhs,
 						  lhs.g * rhs,
 						  lhs.b * rhs,
-						  lhs.a * rhs);
+						  lhs.a);
 		}
 		
 		friend Color4 operator * (Color4 const & lhs, Color4 const & rhs)
