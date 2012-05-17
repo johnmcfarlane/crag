@@ -21,9 +21,7 @@ namespace gfx
 	{
 	public:
 		// functions
-		Box();
-		
-		bool Init(gfx::Engine & renderer, Color4f const & color);
+		Box(Init const & init, Color4f const & color);
 
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(gfx::Engine const & renderer) const override;

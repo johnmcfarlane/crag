@@ -32,15 +32,14 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 //
 
-Scene::Scene()
+Scene::Scene(Engine & engine)
 : _time(-1)
+, _root(smp::ObjectBaseInit<Engine>(engine, Uid::Create()), Transformation::Matrix::Identity())
 {
 	Frustum & frustum = pov.GetFrustum();
 
 	frustum.fov = static_cast<double>(camera_fov);
 	frustum.depth_range[0] = frustum.depth_range[1] = -1;
-	
-	_root.SetUid(Uid::Create());
 }
 
 Scene::~Scene()
@@ -79,12 +78,7 @@ void Scene::AddObject(Object & object)
 {
 	// add object to map
 	Uid uid = object.GetUid();
-	if (! uid)
-	{
-		// Means that this object was created locally
-		// with no need of a thread-safe id.
-		object.SetUid(uid = Uid::Create());
-	}
+	ASSERT(uid);
 
 	ASSERT(_objects.count(uid) == 0);	// object with matching id already lives in map
 	ObjectMap::value_type addition(uid, & object);
@@ -156,9 +150,6 @@ void Scene::RemoveObject(Uid uid)
 			break;
 		}
 	}
-	
-	// Finally, deinitialize ...
-	object->Deinit(* this);
 	
 	// and delete. (Object removes itself from parent list here.)
 	delete object;

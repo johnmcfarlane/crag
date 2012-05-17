@@ -586,7 +586,7 @@ bool Engine::Init()
 	
 	InitVSync();
 	
-	scene = new Scene;
+	scene = new Scene(* this);
 	geom::Vector2i resolution = app::GetWindowSize();
 	scene->SetResolution(resolution);
 	
@@ -811,7 +811,7 @@ void Engine::PreRender()
 		LeafNode & leaf_node = * i;
 		++ i;
 		
-		LeafNode::PreRenderResult result = leaf_node.PreRender(* this);
+		LeafNode::PreRenderResult result = leaf_node.PreRender();
 		
 		switch (result)
 		{

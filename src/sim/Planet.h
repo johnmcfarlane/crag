@@ -31,19 +31,9 @@ namespace sim
 	class Planet : public Entity
 	{
 	public:
-		// types
-		struct InitData
-		{
-			Sphere3 sphere;
-			int random_seed;
-			int num_craters;
-		};
-
 		// functions
-		Planet();
+		Planet(Init const & init, Sphere3 sphere, int random_seed, int num_craters);
 		~Planet();
-
-		virtual void Init(sim::Engine & simulation_engine, InitData const & init_data);
 
 		virtual void Tick(sim::Engine & simulation_engine);
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;

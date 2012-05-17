@@ -27,18 +27,15 @@ namespace gfx
 		typedef Light super;
 		
 		// functions
-		Thruster();
-		
-		void Init(gfx::Engine & renderer);
+		Thruster(Init const & init);
 		
 		void Update(float const & thrust_factor);
 
-		LeafNode::PreRenderResult PreRender(gfx::Engine const & renderer) override;
+		LeafNode::PreRenderResult PreRender() override;
 	private:
-		void AddPuff(float thrust_factor, gfx::Engine & renderer);
+		void AddPuff(float thrust_factor);
 		
 		// variables
-		gfx::Engine * _renderer;
 		float _thrust_factor;
 	};
 }

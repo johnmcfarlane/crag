@@ -51,24 +51,18 @@ void Pointer<Skybox::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Skybox member definitions
 
-Skybox::Skybox()
-: LeafNode(Layer::background)
-{
-}
-
-bool Skybox::Init(gfx::Engine & renderer)
+Skybox::Skybox(LeafNode::Init const & init)
+: LeafNode(init, Layer::background)
 {
 	InitVerts();
 
-	ResourceManager const & resource_manager = renderer.GetResourceManager();
+	ResourceManager const & resource_manager = init.engine.GetResourceManager();
 	
 	Program const * fixed_program = resource_manager.GetProgram(ProgramIndex::fixed);
 	SetProgram(fixed_program);
-	
-	return true;
 }
 
-void Skybox::Deinit(Scene & scene)
+Skybox::~Skybox()
 {
 	vbo.Deinit();
 	

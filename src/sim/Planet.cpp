@@ -34,45 +34,26 @@ using namespace sim;
 // sim::Planet member definitions
 
 
-Planet::Planet()
-: _formation(nullptr)
+Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int num_craters)
+: Entity(init)
+, _formation(nullptr)
 , _body(nullptr)
-, _radius_mean(0)
-, _radius_min(0)
-, _radius_max(0)
+, _radius_mean(sphere.radius)
+, _radius_min(sphere.radius)
+, _radius_max(sphere.radius)
 {
-}
-
-Planet::~Planet()
-{
-	// unregister with renderer
-	_branch_node.Destroy();
-	
-	// unregister with formation manager
-	form::Daemon::Call<form::Formation *>(& form::Engine::OnRemoveFormation, _formation);
-	_formation = nullptr;
-
-	delete _body;
-	_body = nullptr;
-}
-
-void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
-{
-	ASSERT(init_data.sphere.radius > 0);
-	_radius_mean = init_data.sphere.radius;
-	_radius_min = init_data.sphere.radius;
-	_radius_max = init_data.sphere.radius;
+	ASSERT(sphere.radius > 0);
 	
 	// allocations
 	{
-		Random random(init_data.random_seed);
+		Random random(random_seed);
 		
 		// factory
 		form::Shader * shader;
-		if (init_data.num_craters > 0)
+		if (num_craters > 0)
 		{
 			int random_seed_shader = random.GetInt();
-			shader = new MoonShader(random_seed_shader, init_data.num_craters, _radius_mean);
+			shader = new MoonShader(random_seed_shader, num_craters, _radius_mean);
 		}
 		else 
 		{
@@ -81,14 +62,14 @@ void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
 		
 		// formation
 		int random_seed_formation = random.GetInt();
-		_formation = new form::Formation(random_seed_formation, * shader, init_data.sphere, * this);
+		_formation = new form::Formation(random_seed_formation, * shader, sphere, * this);
 		
 		// body
-		physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();
+		physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
 		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
-		_body->SetPosition(init_data.sphere.center);
+		_body->SetPosition(sphere.center);
 	}
-
+	
 	// messages
 	{
 		// register with formation manager
@@ -106,6 +87,19 @@ void Planet::Init(sim::Engine & simulation_engine, InitData const & init_data)
 		gfx::Daemon::Call(& gfx::Engine::OnSetParent, _model.GetUid(), _branch_node.GetUid());
 		UpdateModels();
 	}
+}
+
+Planet::~Planet()
+{
+	// unregister with renderer
+	_branch_node.Destroy();
+	
+	// unregister with formation manager
+	form::Daemon::Call<form::Formation *>(& form::Engine::OnRemoveFormation, _formation);
+	_formation = nullptr;
+
+	delete _body;
+	_body = nullptr;
 }
 
 void Planet::Tick(sim::Engine & simulation_engine)

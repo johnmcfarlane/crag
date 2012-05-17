@@ -25,8 +25,9 @@ using namespace applet;
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions
 
-ObserverScript::ObserverScript(sim::ObserverHandle observer)
-: _observer(observer)
+ObserverScript::ObserverScript(AppletBase::Init const & init, sim::ObserverHandle observer)
+: AppletBase(init)
+, _observer(observer)
 , _collidable(true)
 {
 };

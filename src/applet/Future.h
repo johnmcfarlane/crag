@@ -20,9 +20,22 @@ namespace applet
 	class Future : public Condition
 	{
 	public:
-		// performs thread-safe call to the given ENGINE function using the given AppletInterface
+		// performs thread-safe call to the given non-const ENGINE function using the given AppletInterface
 		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
 		Future(AppletInterface & applet_interface, RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
+		: _applet_interface(applet_interface)
+		, _status(smp::pending)
+		{
+			typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
+			typedef RETURN_TYPE (ENGINE::* FunctionType)(PARAMETERS const & ...);
+			
+			// ask daemon to send the poll command to the engine
+			ENGINE::Daemon::template Poll(_value, _status, function, parameters...);
+		}
+		
+		// performs thread-safe call to the given const ENGINE function using the given AppletInterface
+		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
+		Future(AppletInterface & applet_interface, RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
 		: _applet_interface(applet_interface)
 		, _status(smp::pending)
 		{

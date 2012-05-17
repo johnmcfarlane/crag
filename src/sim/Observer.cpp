@@ -49,25 +49,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-
-Observer::Observer()
-: Entity()
+Observer::Observer(Entity::Init const & init, Vector3 const & center)
+: Entity(init)
 , speed_factor(observer_speed_factor)
 {
-}
-
-Observer::~Observer()
-{
-#if defined(OBSERVER_LIGHT)
-	_model.Destroy();
-#endif
-
-	observer_speed_factor = static_cast<double>(speed_factor);
-}
-
-void Observer::Init(sim::Engine & simulation_engine, Vector3 const & center)
-{
-	physics::Engine & physics_engine = simulation_engine.GetPhysicsEngine();
+	physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
 	SetSpeed(1);
 	
@@ -85,6 +71,15 @@ void Observer::Init(sim::Engine & simulation_engine, Vector3 const & center)
 	gfx::Light * light = new gfx::Light(observer_light_color);
 	_light_uid = AddModelWithTransform(* light);
 #endif
+}
+
+Observer::~Observer()
+{
+#if defined(OBSERVER_LIGHT)
+	_model.Destroy();
+#endif
+
+	observer_speed_factor = static_cast<double>(speed_factor);
 }
 
 void Observer::AddRotation(Vector3 const & angles)

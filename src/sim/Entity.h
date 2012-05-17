@@ -23,15 +23,16 @@ namespace sim
 	// The base class for 'things' that exist in the simulation.
 	class Entity : public smp::ObjectBase<Entity, sim::Engine>
 	{
-	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
-
+		
+		typedef smp::ObjectBase<Entity, sim::Engine> super;
+	public:
 		typedef physics::Body Body;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Entity();
+		Entity(Init const & init);
 		virtual ~Entity();
 		
 		// general callbacks

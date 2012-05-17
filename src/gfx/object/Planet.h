@@ -26,9 +26,7 @@ namespace gfx
 		};
 		
 		// functions
-		Planet();
-		
-		bool Init(gfx::Engine & renderer, Scalar sea_level);
+		Planet(Init const & init, Scalar sea_level);
 		
 		void Update(UpdateParams const & params);
 

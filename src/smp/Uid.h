@@ -18,7 +18,7 @@ namespace smp
 	class Uid
 	{
 		// types
-		typedef std::size_t ValueType;
+		typedef uintptr_t ValueType;
         
 	public:
 		// functions

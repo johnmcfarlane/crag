@@ -21,9 +21,22 @@
 using namespace gfx;
 
 
-Light::Light()
-: LeafNode(Layer::light)
+Light::Light(LeafNode::Init const & init, Color4f const & color)
+: LeafNode(init, Layer::light)
+, _color(color)
 {
+	Scene & scene = init.engine.GetScene();
+	Light::List & lights = scene.GetLightList();
+	lights.push_back(* this);
+	
+	VerifyObject(* this);
+}
+
+Light::~Light()
+{
+	Scene & scene = GetEngine().GetScene();
+	Light::List & lights = scene.GetLightList();
+	lights.remove(* this);
 }
 
 #if defined(VERIFY)
@@ -32,25 +45,9 @@ void Light::Verify() const
 	super::Verify();
 
 	VerifyTrue(Light::List::is_contained(* this));
+	VerifyTrue(_color.a == 1.f);
 }
 #endif
-
-bool Light::Init(gfx::Engine & renderer, Color4f const & color)
-{
-	SetColor(color);
-
-	Scene & scene = renderer.GetScene();
-	Light::List & lights = scene.GetLightList();
-	lights.push_back(* this);
-	
-	return true;
-}
-
-void Light::Deinit(Scene & scene)
-{
-	Light::List & lights = scene.GetLightList();
-	lights.remove(* this);
-}
 
 void Light::SetColor(Color4f const & color)
 {
@@ -63,7 +60,7 @@ Color4f const & Light::GetColor() const
 }
 
 #if ! defined(NDEBUG)
-LeafNode::PreRenderResult Light::PreRender(gfx::Engine const & renderer)
+LeafNode::PreRenderResult Light::PreRender()
 {
 	Debug::Vector3 basis_position = GetParent()->GetModelTransformation().GetTranslation();
 	Debug::AddBasis(basis_position, 1000000.);

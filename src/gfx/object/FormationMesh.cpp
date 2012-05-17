@@ -45,22 +45,10 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::FormationMesh member definitions
 
-FormationMesh::FormationMesh()
-: LeafNode(Layer::foreground)
+FormationMesh::FormationMesh(LeafNode::Init const & init, smp::Handle<form::RegulatorScript> const & regulator_handle)
+: LeafNode(init, Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
-{
-}
-
-#if defined(VERIFY)
-void FormationMesh::Verify() const
-{
-	super::Verify();
-	ASSERT(! mbo_buffers.back().IsBound());
-}
-#endif
-
-bool FormationMesh::Init(gfx::Engine & renderer, smp::Handle<form::RegulatorScript> const & regulator_handle)
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -74,16 +62,14 @@ bool FormationMesh::Init(gfx::Engine & renderer, smp::Handle<form::RegulatorScri
 	
 	OnMeshResourceChange();
 
-	ResourceManager & resource_manager = renderer.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 	
 	_regulator_handle = regulator_handle;
-	
-	return true;
 }
 
-void FormationMesh::Deinit(Scene & scene)
+FormationMesh::~FormationMesh()
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -96,6 +82,14 @@ void FormationMesh::Deinit(Scene & scene)
 	delete _queued_mesh;
 	delete _pending_mesh;
 }
+
+#if defined(VERIFY)
+void FormationMesh::Verify() const
+{
+	super::Verify();
+	ASSERT(! mbo_buffers.back().IsBound());
+}
+#endif
 
 void FormationMesh::SetMesh(form::Mesh * const & mesh)
 {
@@ -112,7 +106,7 @@ void FormationMesh::SetMesh(form::Mesh * const & mesh)
 	_queued_mesh = mesh;
 }
 
-LeafNode::PreRenderResult FormationMesh::PreRender(gfx::Engine const & renderer)
+LeafNode::PreRenderResult FormationMesh::PreRender()
 {
 	VerifyObject(* this);
 	

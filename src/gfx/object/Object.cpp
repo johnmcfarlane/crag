@@ -18,8 +18,9 @@
 using namespace gfx;
 
 
-Object::Object(NodeType node_type)
-: _parent(nullptr)
+Object::Object(Init const & init, NodeType node_type)
+: super(init)
+, _parent(nullptr)
 , _node_type(node_type)
 { 
 }
@@ -47,10 +48,6 @@ void Object::Verify() const
 	}
 }
 #endif
-
-void Object::Deinit(Scene & scene)
-{
-}
 
 gfx::Transformation const & Object::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {

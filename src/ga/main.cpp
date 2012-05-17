@@ -50,12 +50,10 @@ void ga::main(applet::AppletInterface & applet_interface)
 	
 	// planet
 	sim::PlanetHandle planet_handle;
-	sim::Planet::InitData init_data;
-	init_data.sphere.center = Vector3::Zero();
-	init_data.sphere.radius = 10000;
-	init_data.random_seed = 3634;
-	init_data.num_craters = 0;
-	planet_handle.Create(init_data);
+	sim::Sphere3 planet_sphere(Vector3::Zero(), 10000);
+	int random_seed = 3634;
+	int num_craters = 0;
+	planet_handle.Create(planet_sphere, random_seed, num_craters);
 	
 	// camera
 	Vector3 camera_pos = surface * 1.01;

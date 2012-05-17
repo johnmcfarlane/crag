@@ -23,19 +23,10 @@ namespace sim
 	class Box : public Entity
 	{
 	public:
-		// types
-		struct InitData
-		{
-			Vector3 center;
-			Vector3 size;
-		};
-		
 		// functions
-		Box();
+		Box(Init const & init, Vector3 center, Vector3 size);
 		~Box();
-		
-		// Called from the simulation thread.
-		void Init(sim::Engine & simulation_engine, InitData const & init_data);
+
 	private:
 		void InitPhysics(sim::Engine & simulation_engine, Vector3 center, Vector3 size);
 		void InitGraphics();

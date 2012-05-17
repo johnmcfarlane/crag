@@ -37,8 +37,9 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // applet::AppletBase member definitions
 
-AppletBase::AppletBase()
-: _fiber(ref(new smp::Fiber))
+AppletBase::AppletBase(super::Init const & init)
+: super(init)
+, _fiber(ref(new smp::Fiber))
 , _condition(& null_condition)
 , _quit_flag(false)
 , _finished_flag(false)

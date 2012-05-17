@@ -41,7 +41,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Vehicle();
+		Vehicle(Init const & init, Sphere3 const & sphere);
 		
 		// Add a Thruster
 		void AddThruster(Thruster const & thruster);

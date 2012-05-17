@@ -159,8 +159,8 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	// Create observer and vehicle.
 	{
 		_observer.Create(observer_start_pos);
-		AppletBase * observer_script = new ObserverScript(_observer);
-		Daemon::Call(& Engine::OnAddObject, observer_script);
+		smp::Handle<ObserverScript> observer_script;
+		observer_script.Create(_observer);
 	}
 	
 	SpawnUniverse();
@@ -198,29 +198,10 @@ void TestScript::operator() (AppletInterface & applet_interface)
 void TestScript::SpawnPlanets()
 {
 	double planet_radius = 10000000;
-	sim::Planet::InitData init_data;
 	
-	init_data.sphere.center = geom::Vector3d::Zero();
-	init_data.sphere.radius = planet_radius;
-	init_data.random_seed = 3634;
-	init_data.num_craters = 0;
-	_planet.Create(init_data);
-	
-	init_data.sphere.center.x = planet_radius * 1.5;
-	init_data.sphere.center.y = planet_radius * 2.5;
-	init_data.sphere.center.z = planet_radius * 1.;
-	init_data.sphere.radius = 1500000;
-	init_data.random_seed = 10;
-	init_data.num_craters = 250;
-	_moon1.Create(init_data);
-	
-	init_data.sphere.center.x = planet_radius * -2.5;
-	init_data.sphere.center.y = planet_radius * 0.5;
-	init_data.sphere.center.z = planet_radius * -1.;
-	init_data.sphere.radius = 2500000;
-	init_data.random_seed = 13;
-	init_data.num_craters = 0;
-	_moon2.Create(init_data);
+	_planet.Create(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
+	_moon1.Create(sim::Sphere3(sim::Vector3(planet_radius * 1.5, planet_radius * 2.5, planet_radius * 1.), 1500000), 10, 250);
+	_moon2.Create(sim::Sphere3(sim::Vector3(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1.), 2500000), 13, 0);
 }
 
 void TestScript::SpawnUniverse()
@@ -230,15 +211,7 @@ void TestScript::SpawnUniverse()
 	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _skybox.GetUid(), gfx::Uid());
 	
 	// Create sun. 
-	{
-		sim::Star::InitData init_data =
-		{
-			100000000.,	// sun_orbit_distance
-			30000.	// sun_year
-		};
-
-		_sun.Create(init_data);
-	}
+	_sun.Create(100000000., 30000.);
 }
 
 void TestScript::SpawnVehicle()
@@ -299,16 +272,12 @@ void TestScript::SpawnShapes(int shape_num)
 			case 1:
 			{
 				// box
-				sim::Box::InitData init_data = 
-				{
-					spawn_pos, 
-					geom::Vector3d(std::exp(GetRandomUnit() * -2.),
+				sim::Vector3 size(std::exp(GetRandomUnit() * -2.),
 							 std::exp(GetRandomUnit() * -2.),
-							 std::exp(GetRandomUnit() * -2.))
-				};
+							 std::exp(GetRandomUnit() * -2.));
 				
 				sim::BoxHandle box;
-				box.Create(init_data);
+				box.Create(spawn_pos, size);
 				_shapes.push_back(box);
 				break;
 			}

@@ -65,11 +65,6 @@ void Engine::OnQuit()
 
 void Engine::OnAddObject(AppletBase * const & applet)
 {
-	if (! applet->GetUid())
-	{
-		applet->SetUid(Uid::Create());
-	}
-	
 	// If engine's quit flag is set,
 	if (_quit_flag)
 	{

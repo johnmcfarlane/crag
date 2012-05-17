@@ -34,20 +34,18 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light();
+		Light(Init const & init, Color4f const & color);
+		~Light();
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
 #endif
 		
-		bool Init(gfx::Engine & renderer, Color4f const & color);
-		void Deinit(Scene & scene) override;
-		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
 		
 #if ! defined(NDEBUG)
-		LeafNode::PreRenderResult PreRender(gfx::Engine const & renderer) override;
+		LeafNode::PreRenderResult PreRender() override;
 #endif
 		
 		// variables

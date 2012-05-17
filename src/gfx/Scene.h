@@ -30,7 +30,7 @@ namespace gfx
 	class Scene
 	{
 	public:
-		Scene();
+		Scene(Engine & engine);
 		~Scene();
 		
 #if defined(VERIFY)

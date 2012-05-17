@@ -16,6 +16,19 @@ namespace smp
 	template <typename CLASS>
 	class Daemon;
 	
+	template <typename ENGINE>
+	struct ObjectBaseInit
+	{
+		ObjectBaseInit(ENGINE & init_engine, Uid init_uid)
+		: engine(init_engine)
+		, uid(init_uid)
+		{
+		}
+		
+		ENGINE & engine;
+		Uid uid;
+	};
+	
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from ObjectBase.
 	template <typename OBJECT, typename ENGINE>
@@ -28,20 +41,18 @@ namespace smp
 		typedef OBJECT ObjectType;
 		typedef ENGINE Engine;
 		typedef Daemon<Engine> Daemon;
+		typedef ObjectBaseInit<Engine> Init;
 		
 		// functions
-		ObjectBase()
-		{
-		}
-		
-		ObjectBase(Uid uid)
-		: _uid(uid)
+		ObjectBase(Init const & init)
+		: _engine(init.engine)
+		, _uid(init.uid)
 		{
 		}
 		
 		virtual ~ObjectBase()
 		{ 
-			ASSERT(_uid);
+			VerifyObject(* this);
 		}
 		
 #if defined(VERIFY)
@@ -51,12 +62,9 @@ namespace smp
 		}
 #endif
 		
-		void SetUid(Uid uid)
+		Engine & GetEngine() const
 		{
-			ASSERT(! _uid);
-			ASSERT(uid);
-			
-			_uid = uid;
+			return _engine;
 		}
 		
 		Uid GetUid() const
@@ -92,8 +100,9 @@ namespace smp
 		
 	private:
 		// variables
-		Uid _uid;
+		Engine & _engine;
 		DEFINE_INTRUSIVE_LIST(ObjectBase, List);
+		Uid _uid;
 		
 		typedef typename List::const_iterator const_iterator;
 		typedef typename List::iterator iterator;

@@ -22,26 +22,19 @@
 using namespace gfx;
 
 
-Box::Box()
-: LeafNode(Layer::foreground)
-, _color(Color4f::Black())
+gfx::Box::Box(LeafNode::Init const & init, Color4f const & color)
+: LeafNode(init, Layer::foreground)
+, _color(color)
 {
 	SetIsOpaque(_color.a == 255);
-}
-
-bool Box::Init(gfx::Engine & renderer, Color4f const & color)
-{
-	_color = color;
 	
-	ResourceManager & resource_manager = renderer.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 	
 	MeshResource const & cuboid_mesh = resource_manager.GetCuboid();
 	SetMeshResource(& cuboid_mesh);
-	
-	return true;
 }
 
 bool Box::GetRenderRange(RenderRange & range) const 

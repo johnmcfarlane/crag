@@ -60,10 +60,8 @@ namespace smp
 		// Sets the UID of the entity being handled.
 		void SetUid(Uid uid);
 		
-		void Create();
-		
-		template <typename INIT_DATA>
-		void Create(INIT_DATA const & init_data);
+		template <typename ... PARAMETERS>
+		void Create(PARAMETERS const & ... parameters);
 		
 		// Tells simulation to destroy the object.
 		void Destroy();

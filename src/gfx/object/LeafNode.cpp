@@ -17,8 +17,8 @@
 
 using namespace gfx;
 
-LeafNode::LeafNode(Layer::type layer)
-: Object(leaf)
+LeafNode::LeafNode(Init const & init, Layer::type layer)
+: Object(init, leaf)
 , _model_view_transformation(Transformation::Matrix::Identity())
 , _render_depth(0)
 , _layer(layer)
@@ -126,7 +126,7 @@ bool LeafNode::GetRenderRange(RenderRange & range) const
 	return false;
 }
 
-LeafNode::PreRenderResult LeafNode::PreRender(gfx::Engine const & renderer)
+LeafNode::PreRenderResult LeafNode::PreRender()
 {
 	return ok;
 }

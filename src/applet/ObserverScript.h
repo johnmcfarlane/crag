@@ -25,7 +25,7 @@ namespace applet
 	{
 	public:
 		// functions
-		ObserverScript(sim::ObserverHandle observer);
+		ObserverScript(Init const & init, sim::ObserverHandle observer);
 		~ObserverScript();
 		
 		virtual void operator() (AppletInterface & applet_interface) override;

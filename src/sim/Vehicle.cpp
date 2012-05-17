@@ -31,7 +31,8 @@ using namespace sim;
 // sim::Vehicle member functions
 
 // seems to be required by MetaClass::InitObject
-Vehicle::Vehicle()
+Vehicle::Vehicle(Ball::Init const & init, Sphere3 const & sphere)
+: Ball(init, sphere)
 {
 }
 

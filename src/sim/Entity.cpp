@@ -25,8 +25,9 @@ using namespace sim;
 // Entity member definitions
 
 
-Entity::Entity()
-: _body(nullptr)
+Entity::Entity(super::Init const & init)
+: super(init)
+, _body(nullptr)
 {
 }
 

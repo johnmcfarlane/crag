@@ -220,6 +220,7 @@ namespace smp
 			, _function(function)
 			, _parameters(parameters...)
 			{ 
+				ASSERT(_status == pending);
 			}
 		private:
 			virtual void operator () (Engine & engine) const final

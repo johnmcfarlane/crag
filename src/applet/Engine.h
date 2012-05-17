@@ -57,17 +57,20 @@ namespace applet
 		template <typename FUNCTOR = void (*) (AppletInterface & applet_interface)>
 		void Launch(FUNCTOR & functor)
 		{
-			AppletBase * object = new Applet<FUNCTOR> (functor);
-			OnAddObject(object);
+			CreateObject<Applet<FUNCTOR>>(Uid::Create(), functor);
 		}
 		
 		void OnQuit();
 		
-		template <typename OBJECT_TYPE>
-		void OnCreateObject(Uid const & uid)
+		template <typename OBJECT_TYPE, typename ... PARAMETERS>
+		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE ();
-			object->SetUid(uid);
+			typename OBJECT_TYPE::Init init
+			{
+				* this,
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE (init, parameters ...);
 			OnAddObject(object);
 		}
 		
