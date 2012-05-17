@@ -49,7 +49,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-
 Observer::Observer(Entity::Init const & init, Vector3 const & center)
 : Entity(init)
 , speed_factor(observer_speed_factor)

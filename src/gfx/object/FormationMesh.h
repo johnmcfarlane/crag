@@ -31,13 +31,12 @@ namespace gfx
 	public:
 		// functions
 		FormationMesh(Init const & init, form::RegulatorScriptHandle const & regulator_handle);
+		~FormationMesh();
 		
 #if defined(VERIFY)
 		void Verify() const;
 #endif
 		
-		void Deinit(Scene & scene) override;
-
 		virtual gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 
 		void SetMesh(form::Mesh * const & mesh);

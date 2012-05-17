@@ -51,8 +51,6 @@ namespace gfx
 		virtual void Verify() const override;
 #endif
 		
-		virtual void Deinit(Scene & scene);
-		
 		virtual Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
 		
 		// scene graph types/variables/functions

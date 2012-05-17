@@ -32,6 +32,13 @@ Light::Light(LeafNode::Init const & init, Color4f const & color)
 	VerifyObject(* this);
 }
 
+Light::~Light()
+{
+	Scene & scene = GetEngine().GetScene();
+	Light::List & lights = scene.GetLightList();
+	lights.remove(* this);
+}
+
 #if defined(VERIFY)
 void Light::Verify() const
 {
@@ -41,12 +48,6 @@ void Light::Verify() const
 	VerifyTrue(_color.a == 1.f);
 }
 #endif
-
-void Light::Deinit(Scene & scene)
-{
-	Light::List & lights = scene.GetLightList();
-	lights.remove(* this);
-}
 
 void Light::SetColor(Color4f const & color)
 {

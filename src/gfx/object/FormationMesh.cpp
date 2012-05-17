@@ -69,15 +69,7 @@ FormationMesh::FormationMesh(LeafNode::Init const & init, smp::Handle<form::Regu
 	_regulator_handle = regulator_handle;
 }
 
-#if defined(VERIFY)
-void FormationMesh::Verify() const
-{
-	super::Verify();
-	ASSERT(! mbo_buffers.back().IsBound());
-}
-#endif
-
-void FormationMesh::Deinit(Scene & scene)
+FormationMesh::~FormationMesh()
 {
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -90,6 +82,14 @@ void FormationMesh::Deinit(Scene & scene)
 	delete _queued_mesh;
 	delete _pending_mesh;
 }
+
+#if defined(VERIFY)
+void FormationMesh::Verify() const
+{
+	super::Verify();
+	ASSERT(! mbo_buffers.back().IsBound());
+}
+#endif
 
 void FormationMesh::SetMesh(form::Mesh * const & mesh)
 {

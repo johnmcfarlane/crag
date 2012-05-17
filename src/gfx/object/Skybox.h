@@ -34,8 +34,7 @@ namespace gfx
 		
 		// Methods
 		Skybox(Init const & init);
-		
-		void Deinit(Scene & scene) override;
+		~Skybox();
 		
 		void SetSide(int axis, int pole, Image const & image);
 		

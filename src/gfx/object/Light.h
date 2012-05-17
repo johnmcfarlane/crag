@@ -35,11 +35,11 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Light(Init const & init, Color4f const & color);
+		~Light();
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
 #endif
-		void Deinit(Scene & scene) override;
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;

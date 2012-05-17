@@ -62,7 +62,7 @@ Skybox::Skybox(LeafNode::Init const & init)
 	SetProgram(fixed_program);
 }
 
-void Skybox::Deinit(Scene & scene)
+Skybox::~Skybox()
 {
 	vbo.Deinit();
 	
