@@ -16,6 +16,7 @@
 #include "ObserverScript.h"
 #include "Engine.h"
 
+#include "sim/axes.h"
 #include "sim/Box.h"
 #include "sim/Engine.h"
 #include "sim/Firmament.h"
@@ -67,10 +68,6 @@ namespace
 	double GetRandomUnit()
 	{
 		return random_sequence.GetUnit<double>();
-	}
-	double GetRandomUnitInclusive()
-	{
-		return random_sequence.GetUnitInclusive<double>();
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +236,12 @@ void TestScript::SpawnShapes(int shape_num)
 		return;
 	}
 	
-	Future<sim::Transformation> camera_pos(* _applet_interface, static_cast<sim::EntityHandle &>(_observer), & sim::Observer::GetTransformation);
+	Future<sim::Transformation> camera_transformation_future(* _applet_interface, static_cast<sim::EntityHandle &>(_observer), & sim::Observer::GetTransformation);
+	sim::Transformation camera_transformation = camera_transformation_future.get();
+	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
+	sim::Vector3 camera_pos = camera_transformation.GetTranslation();
+	sim::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
+	sim::Vector3 spawn_pos = camera_pos + camera_forward * 5.0;
 	
 	if (cleanup_shapes)
 	{
@@ -253,10 +255,6 @@ void TestScript::SpawnShapes(int shape_num)
 	
 	if (_shapes.size() < max_shapes)
 	{
-		geom::Vector3d spawn_pos(GetRandomUnitInclusive() - .5,
-						   observer_start_pos.y,
-						   -4.5 + GetRandomUnit());
-		
 		switch (shape_num)
 		{
 			case 0:
