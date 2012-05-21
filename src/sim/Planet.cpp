@@ -173,7 +173,7 @@ Scalar Planet::GetRadiusMax() const
 	return _radius_max; 
 }
 
-void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
+void Planet::SetRadiusMinMax(Scalar const & radius_min, Scalar const & radius_max)
 {
 	ASSERT(radius_min <= _radius_min);
 	_radius_min = radius_min;

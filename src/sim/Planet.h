@@ -43,7 +43,7 @@ namespace sim
 		Scalar GetRadiusMin() const;
 		Scalar GetRadiusMax() const;
 		
-		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
+		void SetRadiusMinMax(Scalar const & radius_min, Scalar const & radius_max);
 		
 		form::Formation const & GetFormation() const;
 
