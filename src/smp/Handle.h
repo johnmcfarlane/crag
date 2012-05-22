@@ -74,8 +74,8 @@ namespace smp
 		void Call(FUNCTOR const & functor) const;
 		
 		// calls the given function with the given parameters
-		template <typename... PARAMETERS>
-		void Call(void (Type::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters) const;
+		template <typename FUNCTION_TYPE, typename... PARAMETERS>
+		void Call(FUNCTION_TYPE function, PARAMETERS const &... parameters) const;
 		
 		// calls a function which returns a value
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
@@ -85,7 +85,7 @@ namespace smp
 		class CallMessageFunctor;
 		
 		// 1-parameter Call helper
-		template <typename ... PARAMETERS>
+		template <typename FUNCTION_TYPE, typename ... PARAMETERS>
 		class CallCommand;
 		
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename ... PARAMETERS>

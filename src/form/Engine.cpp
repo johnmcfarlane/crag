@@ -290,7 +290,7 @@ void form::Engine::GenerateMesh()
 	mesh_generation_time = t;
 
 	// Pass timing information on to the regulator.
-	_regulator_handle.Call<Time>(& form::RegulatorScript::SampleMeshGenerationPeriod, last_mesh_generation_period);
+	_regulator_handle.Call(& form::RegulatorScript::SampleMeshGenerationPeriod, last_mesh_generation_period);
 	
 	// Sample the information for statistical output.
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());

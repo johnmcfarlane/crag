@@ -110,10 +110,10 @@ namespace smp
 	
 	// calls the given function with the given parameters
 	template <typename TYPE>
-	template <typename... PARAMETERS>
-	void Handle<TYPE>::Call(void (Type::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters) const
+	template <typename FUNCTION_TYPE, typename... PARAMETERS>
+	void Handle<TYPE>::Call(FUNCTION_TYPE function, PARAMETERS const &... parameters) const
 	{
-		CallCommand<PARAMETERS ...> command(function, parameters ...);
+		CallCommand<FUNCTION_TYPE, PARAMETERS ...> command(function, parameters ...);
 		Call(command);
 	}
 	
@@ -150,11 +150,12 @@ namespace smp
 	
 	// 1-parameter Call helper
 	template <typename TYPE>
-	template <typename ... PARAMETERS>
+	template <typename FUNCTION_TYPE, typename ... PARAMETERS>
 	class Handle<TYPE>::CallCommand
 	{
 		// types
-		typedef void (Type::* FunctionType)(PARAMETERS const & ...);
+		//typedef void (Type::* FunctionType)(PARAMETERS const & ...);
+		typedef FUNCTION_TYPE FunctionType;
 	public:
 		// functions
 		CallCommand(FunctionType function, PARAMETERS const & ... parameters) 

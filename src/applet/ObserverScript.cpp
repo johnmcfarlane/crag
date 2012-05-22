@@ -150,70 +150,19 @@ void ObserverScript::HandleMouseButton(Uint8 button, bool down)
 {
 }
 
-namespace
-{
-	class AddRotationFunctor
-	{
-	public:
-		AddRotationFunctor(geom::Vector3f const & rotation)
-		: _rotation(rotation)
-		{
-		}
-		
-		void operator()(sim::Observer * observer) const
-		{
-			if (observer == nullptr)
-			{
-				ASSERT(false);
-				return;
-			}
-			
-			observer->AddRotation(_rotation);
-		}
-		
-	private:
-		geom::Vector3f _rotation;
-	};
-}
-
 void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
 	float sensitivity = 0.1f;
 	
-	geom::Vector3f rotation;
+	sim::Vector3 rotation;
 	rotation.x = - y_delta * sensitivity;
 	rotation.y = 0;
 	rotation.z = - x_delta * sensitivity;
 
-	AddRotationFunctor functor(rotation);
-	_observer.Call(functor);
+	_observer.Call(& sim::Observer::AddRotation, rotation);
 }
-
-class SetSpeedFunctor
-{
-public:
-	SetSpeedFunctor(int __speed)
-	: _speed(__speed)
-	{
-	}
-	
-	void operator()(sim::Observer * observer) const
-	{
-		if (observer == nullptr)
-		{
-			ASSERT(false);
-			return;
-		}
-		
-		observer->SetSpeed(_speed);
-	}
-	
-private:
-	int _speed;
-};
 
 void ObserverScript::SetSpeed(int speed)
 {
-	SetSpeedFunctor functor(speed);
-	_observer.Call(functor);
+	_observer.Call(& sim::Observer::SetSpeed, speed);
 }

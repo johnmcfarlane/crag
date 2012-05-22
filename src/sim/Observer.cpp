@@ -109,7 +109,7 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 	}
 }
 
-void Observer::SetSpeed(int speed)
+void Observer::SetSpeed(int const & speed)
 {
 	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((speed << 1) + 1)));
 }

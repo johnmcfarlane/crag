@@ -21,34 +21,6 @@
 using namespace form;
 
 
-namespace 
-{
-	class SetRadiusFunctor
-	{
-	public:
-		
-		// functions
-		SetRadiusFunctor(sim::Scalar radius_min, sim::Scalar radius_max)
-		: _radius_min(radius_min)
-		, _radius_max(radius_max)
-		{
-		}
-		
-		void operator() (sim::Planet * planet) const
-		{
-			if (planet != nullptr)
-			{
-				planet->SetRadiusMinMax(_radius_min, _radius_max);
-			}
-		}
-		
-	private:
-		sim::Scalar _radius_min;
-		sim::Scalar _radius_max;
-	};
-}
-
-
 Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, sim::PlanetHandle const & planet)
 : _seed(seed)
 , _shader(shader)
@@ -81,8 +53,7 @@ int Formation::GetSeed() const
 
 void Formation::SendRadiusUpdateMessage() const
 {
-	SetRadiusFunctor functor(_radius_min, _radius_max);
-	_planet.Call(functor);
+	_planet.Call(& sim::Planet::SetRadiusMinMax, _radius_min, _radius_max);
 }
 
 void Formation::SampleRadius(sim::Scalar sample_radius)

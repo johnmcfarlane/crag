@@ -79,7 +79,7 @@ void Vehicle::UpdateModels() const
 		Thruster const & thruster = * i;		
 		if (thruster.thrust_factor != 0)
 		{
-			thruster.model.Call<float>(& gfx::Thruster::Update, thruster.thrust_factor);
+			thruster.model.Call(& gfx::Thruster::Update, thruster.thrust_factor);
 		}
 	}
 }

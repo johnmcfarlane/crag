@@ -98,7 +98,7 @@ void Ball::UpdateModels() const
 	Vector3 scale(radius, radius, radius);
 	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), scale);
 
-	_model.Call<gfx::Transformation>(& gfx::BranchNode::SetTransformation, transformation);
+	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
 }
 
 gfx::BranchNodeHandle const & Ball::GetModel() const

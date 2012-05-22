@@ -40,7 +40,7 @@ namespace sim
 		void AddRotation(Vector3 const & angles);
 		void UpdateInput(Controller::Impulse const & impulse);
 
-		void SetSpeed(int _speed);
+		void SetSpeed(int const & speed);
 		virtual void Tick(sim::Engine & simulation_engine);
 		virtual void UpdateModels() const;
 		
