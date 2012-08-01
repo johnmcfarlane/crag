@@ -207,7 +207,9 @@ bool FormationMesh::FinishBufferUpload()
 	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
 	if (_regulator_handle && num_quaterne > 0)
 	{
-		_regulator_handle.Call(& form::RegulatorScript::SetNumQuaterne, num_quaterne);
+		_regulator_handle.Call([num_quaterne] (form::RegulatorScript & script) {
+			script.SetNumQuaterne(num_quaterne);
+		});
 	}
 	
 	// state number of polygons/quaterna
@@ -223,5 +225,7 @@ bool FormationMesh::FinishBufferUpload()
 
 void FormationMesh::ReturnMesh(form::Mesh & mesh)
 {
-	form::Daemon::Call(& form::Engine::OnSetMesh, & mesh);
+	form::Daemon::Call([&mesh] (form::Engine & engine) {
+		engine.OnSetMesh(&mesh);
+	});
 }

@@ -71,10 +71,14 @@ void Ball::InitGraphics(Sphere3 const & sphere)
 	// Create ball model.
 	gfx::Color4f color(GetColor());
 
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(true);
+	});
 	_model = AddModelWithTransform<gfx::Ball>(color);
 	UpdateModels();
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
 }
 
 gfx::Color4f Ball::GetColor() const
@@ -98,7 +102,9 @@ void Ball::UpdateModels() const
 	Vector3 scale(radius, radius, radius);
 	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), scale);
 
-	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
+	_model.Call([transformation] (gfx::BranchNode & node) {
+		node.SetTransformation(transformation);
+	});
 }
 
 gfx::BranchNodeHandle const & Ball::GetModel() const

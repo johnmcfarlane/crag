@@ -62,12 +62,17 @@ void Engine::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the gfx::Engine is in an incomplete state.
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
 	
 	_entity_set.Add(entity);
 	
-	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
+	auto time = _time;
+	gfx::Daemon::Call([time] (gfx::Engine & engine) {
+		engine.OnSetTime(time);
+		engine.OnSetReady(true);
+	});
 }
 
 void Engine::OnRemoveObject(Uid const & uid)
@@ -184,12 +189,17 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
+	auto time = _time;
+	gfx::Daemon::Call([time] (gfx::Engine & engine) {
+		engine.OnSetTime(time);
+		engine.OnSetReady(true);
+	});
 }
 
 // Perform a step in the simulation. 

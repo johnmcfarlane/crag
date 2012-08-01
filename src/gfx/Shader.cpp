@@ -42,7 +42,7 @@ bool gfx::Shader::Init(char const * filename, GLenum shader_type)
 	_id = glCreateShader(shader_type);
 
 	char const * sphere_shader_source_string[1] = { & sphere_shader_source[0] };
-	int sphere_shader_source_size[1] = { sphere_shader_source.size() };
+	int sphere_shader_source_size[1] = { int(sphere_shader_source.size()) };
 	GL_CALL(glShaderSource(_id, 1, sphere_shader_source_string, sphere_shader_source_size));
 
 	GL_CALL(glCompileShader(_id));

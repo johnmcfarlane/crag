@@ -38,17 +38,11 @@ namespace applet
 		// Calls a cross-thread engine function 
 		// and blocks until it can return the result. 
 		// (Defined in AppletInterface_Impl.h.)
-		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-		typename core::raw_type<RETURN_TYPE>::type Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters);	// calls a non-const function
+		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+		RESULT_TYPE Poll(FUNCTION_TYPE const & function);
 		
-		template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-		typename core::raw_type<RETURN_TYPE>::type Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters);	// calls a const function
-
 		// non-blocking caller
-		template <typename ENGINE, typename... PARAMETERS>
-		void Call(void (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
-		{
-			ENGINE::Daemon::Call(function, parameters...);
-		}
+		template <typename ENGINE, typename FUNCTION_TYPE>
+		void Call(FUNCTION_TYPE const & function);
 	};
 }

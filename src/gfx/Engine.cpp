@@ -483,7 +483,9 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 	}
 
 	// pass this on to the formation manager to update the node scores
-	form::Daemon::Call(& form::Engine::OnSetCamera, transformation);
+	form::Daemon::Call([transformation] (form::Engine & engine) {
+		engine.OnSetCamera(transformation);
+	});
 }
 
 gfx::Transformation const& Engine::GetCamera() const
@@ -1264,7 +1266,9 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	if (_regulator_handle)
 	{
 		//DEBUG_MESSAGE("bd:%f fdr:%f", busy_duration, frame_duration_ratio);
-		_regulator_handle.Call(& form::RegulatorScript::SampleFrameDuration, frame_duration_ratio);
+		_regulator_handle.Call([frame_duration_ratio] (form::RegulatorScript & script) {
+			script.SampleFrameDuration(frame_duration_ratio);
+		});
 	}
 }
 

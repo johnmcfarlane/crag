@@ -40,12 +40,16 @@ namespace sim
 		// create branch node and place it as a child of the given parent
 		gfx::BranchNodeHandle branch_node;
 		branch_node.Create(transformation);
-		gfx::Daemon::Call(& gfx::Engine::OnSetParent, branch_node.GetUid(), parent.GetUid());
+		gfx::Daemon::Call([branch_node, parent] (gfx::Engine & engine) {
+			engine.OnSetParent(branch_node.GetUid(), parent.GetUid());
+		});
 		
 		// create the leaf node and place it as a child of the branch node
 		smp::Handle<GFX_TYPE> model;
 		model.Create(init_data);
-		gfx::Daemon::Call(& gfx::Engine::OnSetParent, model.GetUid(), branch_node.GetUid());
+		gfx::Daemon::Call([model, branch_node] (gfx::Engine & engine) {
+			engine.OnSetParent(model.GetUid(), branch_node.GetUid());
+		});
 
 		// return the branch node - the one needed to move the pair through space
 		return branch_node;

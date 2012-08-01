@@ -127,8 +127,10 @@ void ObserverScript::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 			case SDL_SCANCODE_C:
 				{
 					_collidable = ! _collidable;
-					SetCollidableFunctor functor(_collidable);
-					_observer.Call(functor);
+					bool collidable = _collidable;
+					_observer.Call([collidable] (sim::Entity & entity) {
+						sim::SetCollidable(entity, collidable);
+					});
 				}
 				break;
 
@@ -159,10 +161,14 @@ void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 	rotation.y = 0;
 	rotation.z = - x_delta * sensitivity;
 
-	_observer.Call(& sim::Observer::AddRotation, rotation);
+	_observer.Call([rotation] (sim::Observer & observer) {
+		observer.AddRotation(rotation);
+	});
 }
 
 void ObserverScript::SetSpeed(int speed)
 {
-	_observer.Call(& sim::Observer::SetSpeed, speed);
+	_observer.Call([speed] (sim::Observer & observer) {
+		observer.SetSpeed(speed);
+	});
 }

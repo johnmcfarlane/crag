@@ -80,7 +80,9 @@ namespace smp
 		Destroy();
 		Uid uid = Uid::Create();
 		SetUid(uid);
-		Daemon::Call(& Engine::template CreateObject<Type, PARAMETERS ...>, uid, parameters ...);
+		Daemon::Call([uid, parameters ...] (Engine & engine) {
+			engine.template CreateObject<Type, PARAMETERS ...>(uid, parameters ...);
+		});
 	}
 	
 	// Tells simulation to destroy the object.
@@ -94,123 +96,37 @@ namespace smp
 		if (_uid)
 		{
 			// set message.
-			Daemon::Call(& Engine::OnRemoveObject, _uid);
+			Uid uid = _uid;
+			Daemon::Call([uid] (Engine & engine) {
+				engine.OnRemoveObject(uid);
+			});
 			_uid = Uid();
 		}
 	}
 	
-	// general purpose functor
-	template <typename TYPE>
-	template <typename FUNCTOR>
-	void Handle<TYPE>::Call(FUNCTOR const & functor) const
-	{
-		CallMessageFunctor<FUNCTOR> message(_uid, functor);
-		Type::Daemon::SendMessage(message);
-	}
-	
 	// calls the given function with the given parameters
 	template <typename TYPE>
-	template <typename FUNCTION_TYPE, typename... PARAMETERS>
-	void Handle<TYPE>::Call(FUNCTION_TYPE function, PARAMETERS const &... parameters) const
+	template <typename FUNCTION_TYPE>
+	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
 	{
-		CallCommand<FUNCTION_TYPE, PARAMETERS ...> command(function, parameters ...);
-		Call(command);
+		auto uid = _uid;
+		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
+			auto * derived = static_cast<Type *>(engine.GetObject(uid));
+			if (derived != nullptr) {
+				function(* derived);
+			}
+		});
 	}
 	
 	// calls a function which returns a value
 	template <typename TYPE>
-	template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-	void Handle<TYPE>::Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters) const
+	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
+	void Handle<TYPE>::Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function) const
 	{
-		PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS ...> command(result, status, function, parameters ...);
+		PollCommand<VALUE_TYPE, FUNCTION_TYPE> command(result, status, function);
 		Call(command);
 	}
 	
-	template <typename TYPE>
-	template <typename FUNCTOR>
-	class Handle<TYPE>::CallMessageFunctor : public smp::Message<typename Type::Engine>
-	{
-	public:
-		typedef FUNCTOR Functor;
-		CallMessageFunctor(Uid const & uid, Functor const & functor)
-		: _uid(uid)
-		, _functor(functor)
-		{
-			ASSERT(_uid);
-		}
-	private:
-		virtual void operator () (typename Type::Engine & daemon_class) const override
-		{
-			Type * derived = static_cast<Type *>(daemon_class.GetObject(_uid));
-			_functor(derived);
-		}
-		Uid _uid;
-		Functor _functor;
-	};
-	
-	// 1-parameter Call helper
-	template <typename TYPE>
-	template <typename FUNCTION_TYPE, typename ... PARAMETERS>
-	class Handle<TYPE>::CallCommand
-	{
-		// types
-		//typedef void (Type::* FunctionType)(PARAMETERS const & ...);
-		typedef FUNCTION_TYPE FunctionType;
-	public:
-		// functions
-		CallCommand(FunctionType function, PARAMETERS const & ... parameters) 
-		: _function(function)
-		, _parameters(parameters...)
-		{ 
-		}
-		void operator () (Type * derived) const 
-		{
-			if (derived != nullptr)
-			{
-				core::call(* derived, _function, _parameters);
-			}
-		}
-	private:
-		// variables
-		FunctionType _function;
-		std::tr1::tuple<PARAMETERS...> _parameters;
-	};
-	
-	template <typename TYPE>
-	template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename ... PARAMETERS>
-	class Handle<TYPE>::PollCommand
-	{
-	public:
-		// functions
-		PollCommand(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
-		: _result(result)
-		, _status(status)
-		, _function(function)
-		, _parameters(parameters...)
-		{ 
-		}
-		void operator () (Type * derived) const
-		{
-			ASSERT(_status == pending);
-			if (derived == nullptr)
-			{
-				_status = failed;
-			}
-			else
-			{
-				_result = core::call(* derived, _function, _parameters);
-				AtomicCompilerBarrier();
-				_status = complete;
-			}
-		}
-	private:
-		// variables
-		VALUE_TYPE & _result;
-		PollStatus & _status;
-		FUNCTION_TYPE _function;
-		std::tr1::tuple<PARAMETERS...> _parameters;
-	};
-
 	////////////////////////////////////////////////////////////////////////////////
 	// Handle helpers
 	

@@ -69,26 +69,19 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call/Poll - generates a deferred function call to the thread-safe object
 		
-		// general purpose functor
-		template <typename FUNCTOR> 
-		void Call(FUNCTOR const & functor) const;
-		
-		// calls the given function with the given parameters
-		template <typename FUNCTION_TYPE, typename... PARAMETERS>
-		void Call(FUNCTION_TYPE function, PARAMETERS const &... parameters) const;
+		// calls the given function and returns straight away
+		template <typename FUNCTION_TYPE>
+		void Call(FUNCTION_TYPE function) const;
 		
 		// calls a function which returns a value
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-		void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters) const;		
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
+		void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function) const;
 	private:
-		template <typename FUNCTOR>
-		class CallMessageFunctor;
-		
-		// 1-parameter Call helper
-		template <typename FUNCTION_TYPE, typename ... PARAMETERS>
+		// Call helpers
+		template <typename FUNCTION_TYPE>
 		class CallCommand;
 		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename ... PARAMETERS>
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 		class PollCommand;
 
 		////////////////////////////////////////////////////////////////////////////////

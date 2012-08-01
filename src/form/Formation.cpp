@@ -53,7 +53,11 @@ int Formation::GetSeed() const
 
 void Formation::SendRadiusUpdateMessage() const
 {
-	_planet.Call(& sim::Planet::SetRadiusMinMax, _radius_min, _radius_max);
+	auto radius_min = _radius_min;
+	auto radius_max = _radius_max;
+	_planet.Call([radius_min, radius_max] (sim::Planet & planet){
+		planet.SetRadiusMinMax(radius_min, radius_max);
+	});
 }
 
 void Formation::SampleRadius(sim::Scalar sample_radius)

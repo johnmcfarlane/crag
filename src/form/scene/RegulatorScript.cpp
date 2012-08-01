@@ -263,7 +263,9 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
 	// Introduce self to renderer.
 	smp::Handle<RegulatorScript> handle(GetUid());
-	gfx::Daemon::Call(& gfx::Engine::OnSetRegulatorHandle, handle);
+	gfx::Daemon::Call([handle] (gfx::Engine & engine) {
+		engine.OnSetRegulatorHandle(handle);
+	});
 	
 	while (! applet_interface.GetQuitFlag())
 	{
@@ -271,7 +273,9 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 		if (recommended_num_quaterne != QuaterneCount::invalid())
 		{
 			//DEBUG_MESSAGE("current:%d recommended:%d", _current_num_quaterne.GetNumber(), recommended_num_quaterne.GetNumber());
-			form::Daemon::Call(& form::Engine::OnSetRecommendedNumQuaterne, recommended_num_quaterne.GetNumber());
+			form::Daemon::Call([recommended_num_quaterne] (form::Engine & engine) {
+				engine.OnSetRecommendedNumQuaterne(recommended_num_quaterne.GetNumber());
+			});
 			Reset();
 		}
 		

@@ -31,28 +31,23 @@ namespace applet
 	}
 
 	// blocking engine call to const function
-	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
+	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+	RESULT_TYPE AppletInterface::Poll(FUNCTION_TYPE const & function)
 	{
-		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-		
-		// local stack storage for result
-		Future<ValueType> future(* this, function, parameters...);
-		
-		// at which time, the result is valid
-		return future.get();
+		RESULT_TYPE result;
+		smp::PollStatus status = smp::pending;
+		ENGINE::Daemon::Poll(result, status, function);
+		WaitFor([&status] () -> bool {
+			return status != smp::pending;
+		});
+		ASSERT(status == smp::complete);
+		return result;
 	}
 	
-	// blocking engine call to non-const function
-	template <typename ENGINE, typename RETURN_TYPE, typename... PARAMETERS>
-	typename core::raw_type<RETURN_TYPE>::type AppletInterface::Call(RETURN_TYPE (ENGINE::* function)(PARAMETERS const & ...) const, PARAMETERS const &... parameters)
+	// non-blocking caller
+	template <typename ENGINE, typename FUNCTION_TYPE>
+	void AppletInterface::Call(FUNCTION_TYPE const & function)
 	{
-		typedef typename core::raw_type<RETURN_TYPE>::type ValueType;
-		
-		// local stack storage for result
-		Future<ValueType> future(* this, function, parameters...);
-		
-		// at which time, the result is valid
-		return future.get();
+		ENGINE::Daemon::Call(function);
 	}
 }
