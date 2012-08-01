@@ -96,18 +96,20 @@
 
 // C++ standard library
 #include <algorithm>
+#include <array>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <limits>
 #include <map>
+#include <memory>
 #include <queue>
 #include <set>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <type_traits>
 #include <vector>
-
-#include <tr1/functional>
-#include <tr1/tuple>
 
 //////////////////////////////////////////////////////////////////////
 // core includes.

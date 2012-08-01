@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "form/scene/Polyhedron.h"
+
 #include "sim/defs.h"
 
 

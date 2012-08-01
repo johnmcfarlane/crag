@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <tr1/type_traits>
-
 #if ! defined(NDEBUG)
 //#define CORE_RING_BUFFER_VERFICATION
 #endif
@@ -191,7 +189,7 @@ namespace core
 			verify();
 			
 			// CLASS must be derived from BASE_CLASS.
-			static_assert(std::tr1::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
+			static_assert(std::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
 			
 			size_type source_size = round_up(sizeof(CLASS));
 			

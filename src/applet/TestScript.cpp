@@ -31,8 +31,6 @@
 
 #include "core/Random.h"
 
-#include <fstream>
-
 
 DECLARE_CLASS_HANDLE(sim, Ball);	// sim::BallHandle
 DECLARE_CLASS_HANDLE(sim, Box);		// sim::BoxHandle

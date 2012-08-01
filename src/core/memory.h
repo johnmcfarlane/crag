@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include <tr1/memory>
-
-
 // This definition indicates whether stack frame addresses increase or decrease as the stack grows.
 #if defined(__ppc__) || defined(__ppc64__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
 #define STACK_GROWTH_DIRECTION -1
@@ -37,7 +34,7 @@
 //////////////////////////////////////////////////////////////////////
 // shared_ptr
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 
 //////////////////////////////////////////////////////////////////////
