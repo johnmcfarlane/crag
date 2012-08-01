@@ -36,10 +36,17 @@ namespace applet
 	{
 		RESULT_TYPE result;
 		smp::PollStatus status = smp::pending;
-		ENGINE::Daemon::Poll(result, status, function);
-		WaitFor([&status] () -> bool {
+		ENGINE::Daemon::Call([& function, & result, & status] (ENGINE & engine) {
+			ASSERT(status == smp::pending);
+			result = function(engine);
+			AtomicCompilerBarrier();
+			status = smp::complete;
+		});
+		
+		WaitFor([& status] () -> bool {
 			return status != smp::pending;
 		});
+		
 		ASSERT(status == smp::complete);
 		return result;
 	}

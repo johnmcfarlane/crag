@@ -174,19 +174,6 @@ namespace smp
             SendMessage(command);
         }
 		
-		////////////////////////////////////////////////////////////////////////////////
-		// Poll - generates a deferred function call to the thread-safe engine
-		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
-		static void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function)
-		{
-			ASSERT(status == pending);
-			
-			// functor is sent to Engine's thread to call function and retrieve result
-			PollCommand<VALUE_TYPE, FUNCTION_TYPE> command(result, status, function);
-			SendMessage(command);
-		}
-		
 	private:
 		template <typename FUNCTION_TYPE>
 		class CallCommand : public Message
@@ -201,32 +188,6 @@ namespace smp
 			{
 				_function(engine);
 			}
-			FUNCTION_TYPE _function;
-		};
-		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
-		class PollCommand : public Message
-		{
-		public:
-			// functions
-			PollCommand(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE const & function)
-			: _result(result)
-			, _status(status)
-			, _function(function)
-			{ 
-				ASSERT(_status == pending);
-			}
-		private:
-			virtual void operator () (Engine & engine) const final
-			{
-				ASSERT(_status == pending);
-				_result = _function(engine);
-				AtomicCompilerBarrier();
-				_status = complete;
-			}
-			// variables
-			VALUE_TYPE & _result;
-			PollStatus & _status;
 			FUNCTION_TYPE _function;
 		};
 		
