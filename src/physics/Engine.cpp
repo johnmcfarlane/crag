@@ -176,9 +176,6 @@ void Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
 	
-	Vector3 p1 = body1.GetPosition();
-	Vector3 p2 = body2.GetPosition();
-	
 	if (body1.OnCollision(engine, body2))
 	{
 		return;
