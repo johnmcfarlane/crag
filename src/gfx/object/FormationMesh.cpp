@@ -226,6 +226,6 @@ bool FormationMesh::FinishBufferUpload()
 void FormationMesh::ReturnMesh(form::Mesh & mesh)
 {
 	form::Daemon::Call([&mesh] (form::Engine & engine) {
-		engine.OnSetMesh(&mesh);
+		engine.OnSetMesh(mesh);
 	});
 }

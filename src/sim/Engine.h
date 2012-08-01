@@ -48,7 +48,7 @@ namespace sim
 		void OnQuit();
 		
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
+		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
 			smp::ObjectBaseInit<Engine> init = 
 			{
@@ -60,8 +60,8 @@ namespace sim
 		}
 		
 		void OnAddObject(Entity & entity);
-		void OnRemoveObject(Uid const & uid);
-		void OnAttachEntities(Uid const & uid1, Uid const & uid2);
+		void OnRemoveObject(Uid uid);
+		void OnAttachEntities(Uid uid1, Uid uid2);
 		
 		void OnTogglePause();
 		void OnToggleGravity();

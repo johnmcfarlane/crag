@@ -93,27 +93,27 @@ void form::Engine::OnQuit()
 	quit_flag = true;
 }
 
-void form::Engine::OnAddFormation(form::Formation * const & formation)
+void form::Engine::OnAddFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(formation) == _formations.end());
-	_formations.insert(formation);
-	scenes[0].AddFormation(* formation);
-	scenes[1].AddFormation(* formation);
+	ASSERT(_formations.find(& formation) == _formations.end());
+	_formations.insert(& formation);
+	scenes[0].AddFormation(formation);
+	scenes[1].AddFormation(formation);
 }
 
-void form::Engine::OnRemoveFormation(form::Formation * const & formation)
+void form::Engine::OnRemoveFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(formation) != _formations.end());
-	_formations.erase(formation);
-	scenes[0].RemoveFormation(* formation);
-	scenes[1].RemoveFormation(* formation);
+	ASSERT(_formations.find(& formation) != _formations.end());
+	_formations.erase(& formation);
+	scenes[0].RemoveFormation(formation);
+	scenes[1].RemoveFormation(formation);
 	
-	delete formation;
+	delete & formation;
 }
 
-void form::Engine::OnSetMesh(Mesh * const & mesh)
+void form::Engine::OnSetMesh(Mesh & mesh)
 {
-	_meshes.push_back(* mesh);
+	_meshes.push_back(mesh);
 }
 
 void form::Engine::OnSetCamera(sim::Transformation const & transformation)
@@ -127,12 +127,12 @@ void form::Engine::SetOrigin(sim::Vector3 const & origin)
 	_requested_origin = origin;
 }
 
-void form::Engine::OnRegulatorSetEnabled(bool const & enabled)
+void form::Engine::OnRegulatorSetEnabled(bool enabled)
 {
 	_regulator_enabled = enabled;
 }
 
-void form::Engine::OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne)
+void form::Engine::OnSetRecommendedNumQuaterne(int recommented_num_quaterne)
 {
 	_recommended_num_quaterne = recommented_num_quaterne;
 }

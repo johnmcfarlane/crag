@@ -73,8 +73,8 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 	// messages
 	{
 		// register with formation manager
-		auto formation = _formation;
-		form::Daemon::Call([formation] (form::Engine & engine) {
+		auto & formation = * _formation;
+		form::Daemon::Call([& formation] (form::Engine & engine) {
 			engine.OnAddFormation(formation);
 		});
 		
@@ -102,8 +102,8 @@ Planet::~Planet()
 	_branch_node.Destroy();
 	
 	// unregister with formation manager
-	auto formation = _formation;
-	form::Daemon::Call([formation] (form::Engine & engine) {
+	auto & formation = * _formation;
+	form::Daemon::Call([& formation] (form::Engine & engine) {
 		engine.OnRemoveFormation(formation);
 	});
 	_formation = nullptr;

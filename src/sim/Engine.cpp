@@ -75,7 +75,7 @@ void Engine::OnAddObject(Entity & entity)
 	});
 }
 
-void Engine::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid uid)
 {
 	Entity * entity = _entity_set.GetEntity(uid);
 	if (entity == nullptr)
@@ -91,7 +91,7 @@ void Engine::OnRemoveObject(Uid const & uid)
 	Free(entity);
 }
 
-void Engine::OnAttachEntities(Uid const & uid1, Uid const & uid2)
+void Engine::OnAttachEntities(Uid uid1, Uid uid2)
 {
 	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
 }

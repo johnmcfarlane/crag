@@ -79,14 +79,14 @@ namespace form
 		
 		// message interface
 		void OnQuit();
-		void OnAddFormation(Formation * const & formation);
-		void OnRemoveFormation(Formation * const & formation);
-		void OnSetMesh(Mesh * const & mesh);
+		void OnAddFormation(Formation & formation);
+		void OnRemoveFormation(Formation & formation);
+		void OnSetMesh(Mesh & mesh);
 		void OnSetCamera(sim::Transformation const & transformation);
 		void SetOrigin(sim::Vector3 const & origin);
 		
-		void OnRegulatorSetEnabled(bool const & enabled);
-		void OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne);
+		void OnRegulatorSetEnabled(bool enabled);
+		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();

@@ -260,12 +260,12 @@ Engine::~Engine()
 	capture_enable = false;
 }
 
-Object * Engine::GetObject(Uid const & uid)
+Object * Engine::GetObject(Uid uid)
 {
 	return scene->GetObject(uid);
 }
 
-Object const * Engine::GetObject(Uid const & uid) const
+Object const * Engine::GetObject(Uid uid) const
 {
 	return scene->GetObject(uid);
 }
@@ -399,7 +399,7 @@ void Engine::OnAddObject(Object & object)
 	OnSetParent(object, Uid());
 }
 
-void Engine::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid uid)
 {
 	if (scene != nullptr)
 	{
@@ -407,7 +407,7 @@ void Engine::OnRemoveObject(Uid const & uid)
 	}
 }
 
-void Engine::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
+void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 {
 	Object * child = GetObject(child_uid);
 	if (child == nullptr)
@@ -419,7 +419,7 @@ void Engine::OnSetParent(Uid const & child_uid, Uid const & parent_uid)
 	OnSetParent(ref(child), parent_uid);
 }
 
-void Engine::OnSetParent(Object & child, Uid const & parent_uid)
+void Engine::OnSetParent(Object & child, Uid parent_uid)
 {
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
@@ -437,17 +437,17 @@ void Engine::OnSetParent(Object & child, BranchNode & parent)
 	AdoptChild(child, parent);
 }
 
-void Engine::OnSetTime(Time const & time)
+void Engine::OnSetTime(Time time)
 {
 	scene->SetTime(time);
 }
 
-void Engine::OnSetReady(bool const & ready)
+void Engine::OnSetReady(bool ready)
 {
 	_ready = ready;
 }
 
-void Engine::OnResize(geom::Vector2i const & size)
+void Engine::OnResize(geom::Vector2i size)
 {
 	glViewport(0, 0, size.x, size.y);
 	scene->SetResolution(size);
@@ -493,7 +493,7 @@ gfx::Transformation const& Engine::GetCamera() const
 	return scene->GetPov().GetTransformation();
 }
 
-void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> const & regulator_handle)
+void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> regulator_handle)
 {
 	ASSERT(regulator_handle);
 	_regulator_handle = regulator_handle;
