@@ -82,19 +82,6 @@ namespace core
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////
-// core::raw_type - strips const, ref and pointer from types
-
-namespace core
-{
-	template <typename T> struct raw_type;
-	template<typename T> struct raw_type			{ typedef T type; };
-	template<typename T> struct raw_type<const T>	{ typedef typename raw_type<T>::type type; };
-	template<typename T> struct raw_type<T &>		{ typedef typename raw_type<T>::type type; };
-	template<typename T> struct raw_type<T *>		{ typedef typename raw_type<T>::type type; };
-}
-
 //////////////////////////////////////////////////////////////////////
 // Time - in seconds
 

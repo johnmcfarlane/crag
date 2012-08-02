@@ -422,7 +422,6 @@
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		52933D661546FBBD00767FFE /* FunctorCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctorCondition.h; sourceTree = "<group>"; };
-		52933D6815470A0E00767FFE /* Future.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Future.h; sourceTree = "<group>"; };
 		5296FB41154D8A8D00FAA706 /* PollCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollCondition.h; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
 		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -845,7 +844,6 @@
 				5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */,
 				5249C5EB1530D6DE000FF6AB /* EventCondition.h */,
 				52933D661546FBBD00767FFE /* FunctorCondition.h */,
-				52933D6815470A0E00767FFE /* Future.h */,
 				5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */,
 				5249C5EE1530D6DE000FF6AB /* ObserverScript.h */,
 				5249C5F21530D6DE000FF6AB /* TestScript.cpp */,

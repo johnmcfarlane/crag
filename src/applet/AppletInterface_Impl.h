@@ -12,7 +12,6 @@
 #include "AppletInterface.h"
 
 #include "FunctorCondition.h"
-#include "Future.h"
 
 #include "smp/Message.h"
 
