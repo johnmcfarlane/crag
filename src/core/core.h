@@ -86,3 +86,30 @@ namespace core
 // Time - in seconds
 
 typedef double Time;
+
+// converts from std::chrono::duration to Time
+template <typename DURATION>
+Time DurationToSeconds(DURATION duration)
+{
+	typedef typename DURATION::period period;
+	
+	constexpr auto scale = Time(period::num) / period::den;
+	auto count = duration.count();
+	
+	Time seconds = Time(count) * scale;
+	return seconds;
+}
+
+// converts from Time to std::chrono::duration
+template <typename DURATION>
+DURATION SecondsToDuration(Time seconds)
+{
+	typedef typename DURATION::period period;
+	typedef typename DURATION::rep rep;
+
+	constexpr auto scale = Time(period::den) / period::num;
+	auto scaled = rep(seconds * scale);
+	
+	DURATION duration (scaled);
+	return duration;
+}
