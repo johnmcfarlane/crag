@@ -55,8 +55,6 @@ form::Engine::Engine()
 , _camera_pos(sim::Ray3::Zero())
 , _has_reset_request(false)
 {
-	smp::SetThreadPriority(-1);
-	
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
 		int max_num_verts = form::NodeBuffer::max_num_verts;

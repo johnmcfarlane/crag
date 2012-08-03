@@ -560,8 +560,6 @@ bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 
 bool Engine::Init()
 {
-	smp::SetThreadPriority(1);
-	
 	ASSERT(scene == nullptr);
 	ASSERT(context == nullptr);
 	SDL_Window & window = app::GetWindow();

@@ -34,7 +34,6 @@ Engine::Engine()
 : _time(0)
 , _quit_flag(false)
 {
-	smp::SetThreadPriority(1);
 }
 
 Engine::~Engine()

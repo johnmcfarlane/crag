@@ -132,8 +132,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	smp::SetThreadPriority(0);
-
 	Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
