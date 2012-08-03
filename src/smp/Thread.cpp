@@ -42,15 +42,6 @@ bool Thread::IsCurrent() const
 	return running_thread_id == member_thread_id;
 }
 
-//void Thread::Launch(Function callback, void * data, char const * name)
-//{
-//	// If launched already, wait to stop being launched.
-//	Join();
-//			
-//	// Call the given FUNCTION, passing given object, in a new thread. 
-//	_thread = ThreadType(callback, name, data);
-//}
-
 // Waits for thread to return from FUNCTION.
 void Thread::Join()
 {
