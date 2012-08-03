@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "atomic.h"
 #include "Message.h"
 #include "PollStatus.h"
 #include "Uid.h"

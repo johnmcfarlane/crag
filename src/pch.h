@@ -97,6 +97,7 @@
 // C++ standard library
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <fstream>
 #include <functional>
 #include <iostream>

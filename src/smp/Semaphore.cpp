@@ -11,7 +11,6 @@
 
 #include "Semaphore.h"
 
-#include "atomic.h"
 #include "smp.h"
 
 // core
@@ -106,24 +105,24 @@ namespace smp
 			
 			bool TryDecrement() override
 			{
-				ValueType old_value = AtomicFetchAndAdd(_value, -1);
+				ValueType old_value = std::atomic_fetch_sub(& _value, 1);
 				if (old_value > 0)
 				{
 					return true;
 				}
 				
-				AtomicFetchAndAdd(_value, 1);
+				std::atomic_fetch_add(& _value, 1);
 				return false;
 			}
 			
 			void Increment() override
 			{
-				AtomicFetchAndAdd(_value, 1);
+				std::atomic_fetch_add(& _value, 1);
 			}
 			
 		private:
 			// A semaphore - not a SDL_Thread - is necessary for TryLock
-			volatile ValueType _value;
+			std::atomic<ValueType> _value;
 		};
 	}
 	

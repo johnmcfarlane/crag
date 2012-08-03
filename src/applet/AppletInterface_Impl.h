@@ -38,7 +38,7 @@ namespace applet
 		ENGINE::Daemon::Call([& function, & result, & status] (ENGINE & engine) {
 			ASSERT(status == smp::pending);
 			result = function(engine);
-			AtomicCompilerBarrier();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
 			status = smp::complete;
 		});
 		

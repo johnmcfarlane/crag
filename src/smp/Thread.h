@@ -11,6 +11,7 @@
 
 #include "smp.h"
 
+#include <thread>
 
 namespace smp
 {
@@ -24,33 +25,30 @@ namespace smp
 	{
 		OBJECT_NO_COPY(Thread);
 		
-	public:
 		// types
-		typedef int (* Function)(void * data);
+		typedef std::thread::thread ThreadType;
+	public:
+		typedef void (* Function)(void * data);
 		
 		// functions
 		Thread();
 		~Thread();
 		
-		// Note: The thread may have quit but this will still return true until Kill or Join is called.
 		bool IsLaunched() const;
 		
 		// True if the calling thread is this thread.
 		bool IsCurrent() const;
 
 		// Creates and launches a new thread.
-		void Launch(Function callback, void * data, char const * name);
-		
-		// Object-oriented thread launch.
-		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
-		static void Launch(CLASS & object, char const * name)
+		template <typename FUNCTION_TYPE>
+		void Launch(FUNCTION_TYPE const & function)
 		{
-			Thread & thread = object.*THREAD;
-			
-			// Never called from within the thread.
-			ASSERT(! thread.IsCurrent());
-			
-			thread.Launch(& Callback<CLASS, THREAD, FUNCTION>, & object, name);
+			_thread = ThreadType([this, function] {
+				while (! IsCurrent()) {
+					Yield();
+				}
+				function();
+			});
 		}
 		
 		// Waits for thread to return from FUNCTION.
@@ -77,6 +75,6 @@ namespace smp
 			return 0;
 		}
 
-		SDL_Thread * sdl_thread;
+		ThreadType _thread;
 	};
 }

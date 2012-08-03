@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "atomic.h"
-
 
 namespace smp
 {
@@ -29,7 +27,9 @@ namespace smp
 		
 		typedef T value_type;
 		typedef size_t size_type;
-
+		
+		typedef value_type * ptr_type;
+		typedef std::atomic<ptr_type> atomic_ptr_type;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// c'tor/d'tor - obviously NOT thread safe
@@ -207,11 +207,8 @@ namespace smp
 		// Grows the vector but doesn't initialize the newcomers.
 		T * grow_uninit(size_type num)
 		{
-			typedef int atomic_type;
-            static_assert(sizeof(void *) == sizeof(atomic_type), "cannot cast pointer to int for fetch-add atomic");
-			atomic_type & last_bytes = reinterpret_cast<atomic_type &> (last);
-			atomic_type increment_bytes = sizeof(T) * num;
-			atomic_type fetched_bytes = AtomicFetchAndAdd (last_bytes, increment_bytes);
+			ASSERT(std::atomic_is_lock_free(& last));
+			ptr_type fetched_bytes = std::atomic_fetch_add(& last, num);
 			return reinterpret_cast<T *> (fetched_bytes);
 		}
 		
@@ -257,9 +254,9 @@ namespace smp
 			ASSERT(first + (everything - first) == everything);
 		}
 
-		T * first;
-		T * last;
-		T * everything;
+		ptr_type first;
+		atomic_ptr_type last;
+		ptr_type everything;
 	};
 	
 }

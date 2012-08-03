@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "atomic.h"
 #include "Lock.h"
 #include "Message.h"
 #include "MessageQueue.h"
@@ -109,7 +108,9 @@ namespace smp
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this, name);
+			_thread.Launch([this] () {
+				Run();
+			});
 			
 			while (_engine == nullptr)
 			{

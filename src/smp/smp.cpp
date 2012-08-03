@@ -11,68 +11,20 @@
 
 #include "smp.h"
 
-#if defined(WIN32)
-#include <WinBase.h>
-#elif defined(__APPLE__)
-#include <sys/sysctl.h>
-#else
-#endif
-
-
 void smp::Yield()
 {
-#if defined(WIN32)
-	SleepEx(0, 0);
-#else
-	sched_yield();
-#endif
+	std::this_thread::yield();
 }
 
-void smp::Sleep(Time duration)
+void smp::Sleep(Time seconds)
 {
-	ASSERT(duration >= 0);
+	ASSERT(seconds >= 0);
 
-#if defined(WIN32)
-	Uint32 ms = static_cast<Uint32>(duration * 1000);
-	SDL_Delay(ms);
-#else
-	// convert input to format used by nanosleep
-	timespec required;
-	required.tv_sec = static_cast<time_t>(duration);
-	required.tv_nsec = static_cast<long>(1000000000. * (duration - required.tv_sec));
-	ASSERT(NearEqual(.000000001 * required.tv_nsec + required.tv_sec, duration, 0.000001));
-
-	// keep sleeping until the desired period is through
-	timespec remaining;
-	while (nanosleep(& required, & remaining))
-	{
-		// we require the thread to sleep for the remaining amount of time
-		required = remaining;
-	}
-#endif
+	auto microseconds = SecondsToDuration<std::chrono::microseconds>(seconds);
+	std::this_thread::sleep_for(microseconds);
 }
 
-void smp::SetThreadPriority(int priority)
+unsigned smp::GetNumCpus()
 {
-	// Set thread priority.
-	SDL_ThreadPriority sdl_priority;
-	if (priority > 0)
-	{
-		sdl_priority = SDL_THREAD_PRIORITY_HIGH;
-	}
-	else if (priority == 0)
-	{
-		sdl_priority = SDL_THREAD_PRIORITY_NORMAL;
-	}
-	else
-	{
-		sdl_priority = SDL_THREAD_PRIORITY_LOW;
-	}
-	
-	SDL_SetThreadPriority(sdl_priority);
-}
-
-int smp::GetNumCpus()
-{
-	return SDL_GetCPUCount();
+	return std::thread::hardware_concurrency();
 }

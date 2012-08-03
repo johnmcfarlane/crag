@@ -363,7 +363,6 @@
 		5230571714F1D95F0024D4A8 /* UserInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInput.h; sourceTree = "<group>"; };
 		5230571814F1D95F0024D4A8 /* Vehicle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vehicle.cpp; sourceTree = "<group>"; };
 		5230571914F1D95F0024D4A8 /* Vehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vehicle.h; sourceTree = "<group>"; };
-		5230571B14F1D95F0024D4A8 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
 		5230571C14F1D95F0024D4A8 /* Daemon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Daemon.h; sourceTree = "<group>"; };
 		5230571D14F1D95F0024D4A8 /* for_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = for_each.h; sourceTree = "<group>"; };
 		5230571E14F1D95F0024D4A8 /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
@@ -787,7 +786,6 @@
 			isa = PBXGroup;
 			children = (
 				52081E4115571F69000EB42E /* PollStatus.h */,
-				5230571B14F1D95F0024D4A8 /* atomic.h */,
 				5230571C14F1D95F0024D4A8 /* Daemon.h */,
 				5230571D14F1D95F0024D4A8 /* for_each.h */,
 				5230571E14F1D95F0024D4A8 /* Lock.h */,

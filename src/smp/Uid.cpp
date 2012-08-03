@@ -9,8 +9,6 @@
 
 #include "pch.h"
 
-#include "atomic.h"
-
 
 using namespace smp;
 
@@ -23,7 +21,7 @@ std::ostream & smp::operator << (std::ostream & out, Uid const & uid)
 
 Uid Uid::Create()
 {
-	static volatile ValueType _counter = 1;
+	static std::atomic<ValueType> _counter(1u);
 	
 #if ! defined(NDEBUG)
 	// check that we've still got lots of capacity
@@ -33,7 +31,7 @@ Uid Uid::Create()
 	ASSERT(GetBitCount(ValueType(-1)) == sizeof(ValueType) * CHAR_BIT);
 	
 	// periodically report that uids are being used up
-	if (_counter > 1000000 && GetBitCount(_counter) == 1)
+	if (_counter > 1000000 && GetBitCount<ValueType>(_counter) == 1)
 	{
 		DEBUG_MESSAGE("Uid %lf", static_cast<double>(_counter));
 	}
@@ -43,7 +41,7 @@ Uid Uid::Create()
 	Uid creation;
 	
 	// Overwrite its _value with a unique value.
-	creation._value = AtomicFetchAndAdd(_counter, 1);
+	creation._value = std::atomic_fetch_add(& _counter, ValueType(1));
 	
 	// Return unique Uid.
 	return creation;
