@@ -20,7 +20,7 @@ namespace
 {
 	gfx::Image::Format opengl_rgba8_format = 
 	{
-		SDL_PIXELFORMAT_RGBA8888,	// Uint32 format;
+		static_cast<Uint32>(SDL_PIXELFORMAT_RGBA8888),	// Uint32 format;
 		nullptr,	// SDL_Palette *palette;
 		32,			// Uint8  BitsPerPixel;
 		4,			// Uint8  BytesPerPixel;
