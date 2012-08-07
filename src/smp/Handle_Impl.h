@@ -111,9 +111,10 @@ namespace smp
 	{
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
-			auto * derived = static_cast<Type *>(engine.GetObject(uid));
-			if (derived != nullptr) {
-				function(* derived);
+			auto base = engine.GetObject(uid);
+			if (base != nullptr) {
+				auto& derived = static_cast<Type &>(* base);
+				function(derived);
 			}
 		});
 	}
@@ -121,10 +122,23 @@ namespace smp
 	// calls a function which returns a value
 	template <typename TYPE>
 	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
-	void Handle<TYPE>::Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function) const
+	void Handle<TYPE>::Call(Future<VALUE_TYPE> & future, FUNCTION_TYPE function) const
 	{
-		PollCommand<VALUE_TYPE, FUNCTION_TYPE> command(result, status, function);
-		Call(command);
+		ASSERT(future.IsPendind());
+		
+		auto uid = _uid;
+		Type::Daemon::Call([& future, function, uid] (typename Type::Engine & engine) {
+			ASSERT(future.IsPendind());
+			
+			auto base = engine.GetObject(uid);
+			if (base == nullptr) {
+				future.OnFailure();
+				return;
+			}
+			
+			auto & derived = static_cast<Type &>(* base);
+			future.OnSuccess(function(derived));
+		});
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////

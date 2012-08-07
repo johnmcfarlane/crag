@@ -25,11 +25,11 @@ using namespace applet;
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions
 
-ObserverScript::ObserverScript(AppletBase::Init const & init, sim::Vector3 const & spawn_position)
+ObserverScript::ObserverScript(AppletBase::Init const & init, sim::ObserverHandle observer)
 : AppletBase(init)
+, _observer(observer)
 , _collidable(true)
 {
-	_observer.Create(spawn_position);
 };
 
 ObserverScript::~ObserverScript()

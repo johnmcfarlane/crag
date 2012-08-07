@@ -9,8 +9,8 @@
 
 #pragma once
 
+#include "Future.h"
 #include "Message.h"
-#include "PollStatus.h"
 #include "Uid.h"
 
 
@@ -25,7 +25,11 @@
 
 namespace smp
 {
-	// A handle to an object on a different thread 
+	// forward-declaration
+	template <typename RESULT_TYPE>
+	class Future;
+
+	// A handle to an object on a different thread
 	// which is of (or derived from) type, TYPE.
 	template <typename TYPE>
 	class Handle
@@ -66,15 +70,16 @@ namespace smp
 		void Destroy();
 		
 		////////////////////////////////////////////////////////////////////////////////
-		// Call/Poll - generates a deferred function call to the thread-safe object
+		// Call - generates a deferred function call to the thread-safe object
 		
-		// calls the given function and returns straight away
+		// calls a function on the object
 		template <typename FUNCTION_TYPE>
 		void Call(FUNCTION_TYPE function) const;
 		
-		// calls a function which returns a value
+		// calls a function on the object which returns a value
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
-		void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function) const;
+		void Call(Future<VALUE_TYPE> & result, FUNCTION_TYPE function) const;
+		
 	private:
 		// Call helpers
 		template <typename FUNCTION_TYPE>

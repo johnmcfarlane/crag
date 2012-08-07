@@ -15,6 +15,8 @@
 
 #include "smp/scheduler.h"
 
+#include "ga/main.h"
+
 #include "form/Engine.h"
 #include "sim/Engine.h"
 #include "gfx/Engine.h"
@@ -22,6 +24,8 @@
 #include "applet/Engine.h"
 #include "applet/Applet.h"
 #include "applet/TestScript.h"
+
+#define RUN_TEST
 
 
 //////////////////////////////////////////////////////////////////////
@@ -334,7 +338,11 @@ namespace
 			
 			// launch the main script
 			applet::Daemon::Call([] (applet::Engine & engine) {
+#if defined(RUN_TEST)
 				auto functor = & applet::Test;
+#else
+				auto functor = & ga::main;
+#endif
 				engine.Launch(functor);
 			});
 			

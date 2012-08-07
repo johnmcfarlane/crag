@@ -16,9 +16,11 @@
 #include "ObserverScript.h"
 #include "Engine.h"
 
+#include "sim/axes.h"
 #include "sim/Box.h"
 #include "sim/Engine.h"
 #include "sim/Firmament.h"
+#include "sim/Observer.h"
 #include "sim/Planet.h"
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
@@ -29,14 +31,18 @@
 
 #include "geom/Transformation.h"
 
+#include "smp/Future.h"
+
 #include "core/Random.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Ball);	// sim::BallHandle
-DECLARE_CLASS_HANDLE(sim, Box);		// sim::BoxHandle
-DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
-DECLARE_CLASS_HANDLE(sim, Star);	// sim::StarHandle
-DECLARE_CLASS_HANDLE(sim, Vehicle);	// sim::VehicleHandle
+DECLARE_CLASS_HANDLE(sim, Ball);		// sim::BallHandle
+DECLARE_CLASS_HANDLE(sim, Box);			// sim::BoxHandle
+DECLARE_CLASS_HANDLE(sim, Entity);		// sim::EntityHandle
+DECLARE_CLASS_HANDLE(sim, Observer);	// sim::ObserverHandle
+DECLARE_CLASS_HANDLE(sim, Planet);		// sim::PlanetHandle
+DECLARE_CLASS_HANDLE(sim, Star);		// sim::StarHandle
+DECLARE_CLASS_HANDLE(sim, Vehicle);		// sim::VehicleHandle
 
 
 using namespace applet;
@@ -51,7 +57,6 @@ namespace
 	
 	sim::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
-	Time shape_drop_period = .5;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
 	bool spawn_planets = true;
@@ -64,14 +69,6 @@ namespace
 	{
 		return random_sequence.GetUnit<double>();
 	}
-	double GetRandomUnitInclusive()
-	{
-		return random_sequence.GetUnitInclusive<double>();
-	}
-	int GetRandomInt(int n)
-	{
-		return random_sequence.GetInt(n);
-	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// local types
@@ -82,22 +79,7 @@ namespace
 	{
 		virtual bool Filter(SDL_Event const & event) const final
 		{
-			if (event.type != SDL_KEYDOWN || event.key.keysym.scancode != SDL_SCANCODE_I)
-			{
-				return false;
-			}
-			
-			if ((event.key.keysym.mod & KMOD_CTRL) == 0)
-			{
-				return false;
-			}
-			
-			if ((event.key.keysym.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL)) != 0)
-			{
-				return false;
-			}
-			
-			return true;
+			return event.type == SDL_KEYDOWN;
 		}
 	};
 	
@@ -113,14 +95,16 @@ namespace
 		void SpawnPlanets();
 		void SpawnUniverse();
 		void SpawnVehicle();
-		void SpawnShapes();
+		void SpawnShapes(int shape_num);
 		void HandleEvents();
-		void UpdateOrigin(AppletInterface & applet_interface);
+		void UpdateOrigin();
 		
 		// variables
+		AppletInterface * _applet_interface;
 		sim::PlanetHandle _planet, _moon1, _moon2;
 		sim::StarHandle _sun;
 		sim::FirmamentHandle _skybox;
+		sim::ObserverHandle _observer;
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
 		sim::Vector3 _origin = sim::Vector3::Zero();
@@ -149,11 +133,12 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // TestScript member definitions
 
+// TestScript entry point
 void TestScript::operator() (AppletInterface & applet_interface)
 {
-	// TODO: Take a good look at the callstack that gets you here
-	// TODO: and have long think about what you've done.
 	DEBUG_MESSAGE("-> Main script");
+	
+	_applet_interface = & applet_interface;
 	
 	// Set camera position
 	{
@@ -170,12 +155,13 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	}
 	
 	// Give formations time to expand.
-	applet_interface.Sleep(2);
+	_applet_interface->Sleep(2);
 
 	// Create observer and vehicle.
 	{
+		_observer.Create(observer_start_pos);
 		smp::Handle<ObserverScript> observer_script;
-		observer_script.Create(observer_start_pos);
+		observer_script.Create(_observer);
 	}
 	
 	SpawnUniverse();
@@ -184,18 +170,11 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	SpawnVehicle();
 	
 	// main loop
-	while (! applet_interface.GetQuitFlag())
+	while (! _applet_interface->GetQuitFlag())
 	{
-		applet_interface.Sleep(shape_drop_period);
-		
-		SpawnShapes();
-		
 		HandleEvents();
 		
-		if (_enable_dynamic_origin)
-		{
-			UpdateOrigin(applet_interface);
-		}
+		UpdateOrigin();
 	}
 	
 	while (! _shapes.empty())
@@ -212,6 +191,8 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	
 	// remove skybox
 	_skybox.Destroy();
+	
+	ASSERT(_applet_interface == & applet_interface);
 	DEBUG_MESSAGE("<- Main script");
 }
 
@@ -255,12 +236,22 @@ void TestScript::SpawnVehicle()
 	}
 }
 
-void TestScript::SpawnShapes()
+void TestScript::SpawnShapes(int shape_num)
 {
 	if (max_shapes == 0)
 	{
 		return;
 	}
+	
+	smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(_observer, [] (sim::Observer & observer) -> sim::Transformation {
+		return observer.GetTransformation();
+	});
+	
+	sim::Transformation camera_transformation = camera_transformation_future.Get();
+	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
+	sim::Vector3 camera_pos = camera_transformation.GetTranslation();
+	sim::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
+	sim::Vector3 spawn_pos = camera_pos + camera_forward * 5.0;
 	
 	if (cleanup_shapes)
 	{
@@ -274,11 +265,7 @@ void TestScript::SpawnShapes()
 	
 	if (_shapes.size() < max_shapes)
 	{
-		geom::Vector3d spawn_pos(GetRandomUnitInclusive() - .5,
-						   observer_start_pos.y,
-						   -4.5 + GetRandomUnit());
-		
-		switch (GetRandomInt(2))
+		switch (shape_num)
 		{
 			case 0:
 			{
@@ -314,13 +301,49 @@ void TestScript::HandleEvents()
 	SDL_Event event;
 	while (_key_press_events.PopEvent(event))
 	{
-		_enable_dynamic_origin = ! _enable_dynamic_origin;
+		if (event.type != SDL_KEYDOWN)
+		{
+			continue;
+		}
+
+		switch (event.key.keysym.scancode)
+		{
+			case SDL_SCANCODE_I:
+				if ((event.key.keysym.mod & KMOD_CTRL) == 0)
+				{
+					break;
+				}
+				
+				if ((event.key.keysym.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL)) != 0)
+				{
+					break;
+				}
+				
+				_enable_dynamic_origin = ! _enable_dynamic_origin;
+				break;
+				
+			case SDL_SCANCODE_COMMA:
+				SpawnShapes(0);
+				break;
+				
+			case SDL_SCANCODE_PERIOD:
+				SpawnShapes(1);
+				break;
+				
+			default:
+				break;
+		}
 	}
 }
 
-void TestScript::UpdateOrigin(AppletInterface & applet_interface)
+void TestScript::UpdateOrigin()
 {
-	auto camera_transformation = applet_interface.Poll<gfx::Engine, gfx::Transformation>([] (gfx::Engine & engine) {
+	if (! _enable_dynamic_origin)
+	{
+		return;
+	}
+	
+	auto camera_transformation = _applet_interface->Get<gfx::Engine, gfx::Transformation>([] (gfx::Engine & engine) {
 		return engine.GetCamera();
 	});
 	auto camera_pos = camera_transformation.GetTranslation();
@@ -329,7 +352,7 @@ void TestScript::UpdateOrigin(AppletInterface & applet_interface)
 	auto distance_from_origin = Length(origin_to_camera);
 	if (distance_from_origin > max_distance_from_origin)
 	{
-		applet_interface.Call<form::Engine>([camera_pos] (form::Engine & engine) {
+		form::Daemon::Call([camera_pos] (form::Engine & engine) {
 			engine.SetOrigin(camera_pos);
 		});
 		_origin = camera_pos;

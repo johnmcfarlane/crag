@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5201FF4E15D0FD9600529D05 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5201FF4C15D0FD9600529D05 /* main.cpp */; };
 		52055D63132DE312000C6578 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52055D62132DE312000C6578 /* Cocoa.framework */; };
 		5213C8D5132DE39A0021EA91 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5213C8D4132DE39A0021EA91 /* OpenGL.framework */; };
 		5230573114F1D95F0024D4A8 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 5230563314F1D95F0024D4A8 /* COPYING */; };
@@ -161,6 +162,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5201FF4C15D0FD9600529D05 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5201FF4D15D0FD9600529D05 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		52055D5E132DE312000C6578 /* crag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = crag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52055D62132DE312000C6578 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		52055D65132DE312000C6578 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -446,6 +449,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5201FF4B15D0FD9600529D05 /* ga */ = {
+			isa = PBXGroup;
+			children = (
+				5201FF4C15D0FD9600529D05 /* main.cpp */,
+				5201FF4D15D0FD9600529D05 /* main.h */,
+			);
+			path = ga;
+			sourceTree = "<group>";
+		};
 		52055D53132DE312000C6578 = {
 			isa = PBXGroup;
 			children = (
@@ -505,6 +517,7 @@
 				5230563314F1D95F0024D4A8 /* COPYING */,
 				5230563414F1D95F0024D4A8 /* core */,
 				5230565014F1D95F0024D4A8 /* form */,
+				5201FF4B15D0FD9600529D05 /* ga */,
 				5230567914F1D95F0024D4A8 /* geom */,
 				5230568814F1D95F0024D4A8 /* gfx */,
 				523056CC14F1D95F0024D4A8 /* main.cpp */,
@@ -1037,6 +1050,7 @@
 				5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */,
 				5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */,
 				5249C5FB1530D6DE000FF6AB /* TimeCondition.cpp in Sources */,
+				5201FF4E15D0FD9600529D05 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

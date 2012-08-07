@@ -38,6 +38,8 @@ namespace sim
 		OBJECT_SINGLETON(Engine);
 
 	public:
+		typedef smp::Daemon<Engine> Daemon;
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		

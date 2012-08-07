@@ -21,39 +21,72 @@ namespace applet
 	////////////////////////////////////////////////////////////////////////////////
 	// AppletInterface member definitions
 	
-	// blocking functor call
 	template <typename FUNCTOR>
 	void AppletInterface::WaitFor(FUNCTOR functor)
 	{
 		FunctorCondition<FUNCTOR> condition(functor);
 		Wait(condition);
 	}
-
-	// blocking engine call to const function
-	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
-	RESULT_TYPE AppletInterface::Poll(FUNCTION_TYPE const & function)
+	
+	template <typename RESULT_TYPE>
+	void AppletInterface::WaitFor(smp::Future<RESULT_TYPE> const & future)
 	{
-		RESULT_TYPE result;
-		smp::PollStatus status = smp::pending;
-		ENGINE::Daemon::Call([& function, & result, & status] (ENGINE & engine) {
-			ASSERT(status == smp::pending);
-			result = function(engine);
-			std::atomic_thread_fence(std::memory_order_seq_cst);
-			status = smp::complete;
+		WaitFor([& future] () -> bool {
+			return future.IsComplete();
 		});
 		
-		WaitFor([& status] () -> bool {
-			return status != smp::pending;
-		});
-		
-		ASSERT(status == smp::complete);
-		return result;
+		ASSERT(future.IsComplete());
 	}
 	
-	// non-blocking caller
-	template <typename ENGINE, typename FUNCTION_TYPE>
-	void AppletInterface::Call(FUNCTION_TYPE const & function)
+	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+	void AppletInterface::Call(smp::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function)
 	{
-		ENGINE::Daemon::Call(function);
+		ASSERT(future.IsPending());
+
+		ENGINE::Daemon::Call([& future, & function] (ENGINE & engine) {
+			ASSERT(future.IsPending());
+			future.OnSuccess(function(engine));
+		});
+	}
+	
+	template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
+	void AppletInterface::Call(smp::Future<RESULT_TYPE> & future, smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
+	{
+		ASSERT(future.IsPending());
+		
+		ENGINE::Daemon::Call([& future, object, & function] (ENGINE & engine) {
+			ASSERT(future.IsPending());
+			
+			auto * base = engine.GetObject(object.GetUid());
+			if (base == nullptr) {
+				future.OnFailure();
+				return;
+			}
+			
+			auto & derived = static_cast<OBJECT_TYPE &>(* base);
+			future.OnSuccess(function(derived));
+		});
+	}
+
+	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+	RESULT_TYPE AppletInterface::Get(FUNCTION_TYPE const & function)
+	{
+		smp::Future<RESULT_TYPE> future;
+		Call<ENGINE, RESULT_TYPE, FUNCTION_TYPE>(future, function);
+		
+		WaitFor(future);
+		
+		return future.Get();
+	}
+
+	template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
+	smp::Future<RESULT_TYPE> AppletInterface::Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
+	{
+		smp::Future<RESULT_TYPE> future;
+		Call<ENGINE, RESULT_TYPE, OBJECT_TYPE, FUNCTION_TYPE>(future, object, function);
+		
+		WaitFor(future);
+		
+		return future;
 	}
 }

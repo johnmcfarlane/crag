@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 namespace applet
 {
 	// forward-declare
@@ -32,17 +31,28 @@ namespace applet
 		virtual void Sleep(Time duration) = 0;
 		virtual void Wait(Condition & condition) = 0;
 		
+		// blocks until the given functor returns true
 		template <typename FUNCTOR>
 		void WaitFor(FUNCTOR functor);
 		
-		// Calls a cross-thread engine function 
-		// and blocks until it can return the result. 
-		// (Defined in AppletInterface_Impl.h.)
-		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
-		RESULT_TYPE Poll(FUNCTION_TYPE const & function);
+		// blocks until the given future is fulfilled
+		template <typename RESULT_TYPE>
+		void WaitFor(smp::Future<RESULT_TYPE> const & future);
 		
-		// non-blocking caller
-		template <typename ENGINE, typename FUNCTION_TYPE>
-		void Call(FUNCTION_TYPE const & function);
+		// non-blocking call to engine on separate thread
+		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+		void Call(smp::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function);
+		
+		// non-blocking call to object on separate thread
+		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
+		void Call(smp::Future<RESULT_TYPE> & future, smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
+		
+		// blocking call to engine on separate thread
+		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
+		RESULT_TYPE Get(FUNCTION_TYPE const & function);
+		
+		// blocking call to object on separate thread
+		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
+		smp::Future<RESULT_TYPE> Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
 	};
 }
