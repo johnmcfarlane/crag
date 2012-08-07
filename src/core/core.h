@@ -82,65 +82,34 @@ namespace core
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////
-// core::raw_type - strips const, ref and pointer from types
-
-namespace core
-{
-	template <typename T> struct raw_type;
-	template<typename T> struct raw_type			{ typedef T type; };
-	template<typename T> struct raw_type<const T>	{ typedef typename raw_type<T>::type type; };
-	template<typename T> struct raw_type<T &>		{ typedef typename raw_type<T>::type type; };
-	template<typename T> struct raw_type<T *>		{ typedef typename raw_type<T>::type type; };
-
-
-	//////////////////////////////////////////////////////////////////////
-	// core::call
-	//
-	// Given a tuple of parameters, calls a given member function.
-	// http://stackoverflow.com/questions/4105002/pass-tuples-content-as-variadic-function-arguments
-
-	namespace impl
-	{
-		template<int ...>
-		struct seq { };
-		
-		template<int N, int ...S>
-		struct gens : gens<N-1, N-1, S...> { };
-		
-		template<int ...S>
-		struct gens<0, S...> {
-			typedef seq<S...> type;
-		};
-		
-		template<typename RETURN, typename CLASS, typename... PARAMETERS, int ...S>
-		RETURN call(CLASS & object, RETURN (CLASS::* function)(PARAMETERS const & ...), std::tr1::tuple<PARAMETERS...> const &parameter_tuple, seq<S...>)
-		{
-			return (object.*function)(std::tr1::get<S>(parameter_tuple) ...);
-		}
-		
-		template<typename RETURN, typename CLASS, typename... PARAMETERS, int ...S>
-		RETURN call(CLASS const & object, RETURN (CLASS::* function)(PARAMETERS const & ...) const, std::tr1::tuple<PARAMETERS...> const &parameter_tuple, seq<S...>)
-		{
-			return (object.*function)(std::tr1::get<S>(parameter_tuple) ...);
-		}
-	}
-	
-	template <typename RETURN, typename CLASS, typename... PARAMETERS>
-	RETURN call (CLASS & object, RETURN (CLASS::* function)(PARAMETERS const & ...), std::tr1::tuple<PARAMETERS...> const & parameter_tuple)
-	{
-		return impl::call(object, function, parameter_tuple, typename impl::gens<sizeof...(PARAMETERS)>::type());
-	}
-	
-	template <typename RETURN, typename CLASS, typename... PARAMETERS>
-	RETURN call (CLASS const & object, RETURN (CLASS::* function)(PARAMETERS const & ...) const, std::tr1::tuple<PARAMETERS...> const & parameter_tuple)
-	{
-		return impl::call(object, function, parameter_tuple, typename impl::gens<sizeof...(PARAMETERS)>::type());
-	}
-}
-
 //////////////////////////////////////////////////////////////////////
 // Time - in seconds
 
 typedef double Time;
+
+// converts from std::chrono::duration to Time
+template <typename DURATION>
+Time DurationToSeconds(DURATION duration)
+{
+	typedef typename DURATION::period period;
+	
+	constexpr auto scale = Time(period::num) / period::den;
+	auto count = duration.count();
+	
+	Time seconds = Time(count) * scale;
+	return seconds;
+}
+
+// converts from Time to std::chrono::duration
+template <typename DURATION>
+DURATION SecondsToDuration(Time seconds)
+{
+	typedef typename DURATION::period period;
+	typedef typename DURATION::rep rep;
+
+	constexpr auto scale = Time(period::den) / period::num;
+	auto scaled = rep(seconds * scale);
+	
+	DURATION duration (scaled);
+	return duration;
+}

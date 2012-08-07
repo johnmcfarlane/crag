@@ -32,7 +32,7 @@ namespace
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
 	// Initialize SDL.
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
@@ -234,8 +234,8 @@ void app::GetEvent(SDL_Event & event)
 
 Time app::GetTime()
 {
-	// Possible alternatives:
-	// __APPLE__: CFAbsoluteTimeGetCurrent ()
-	// POSIX: CLOCK_MONOTONIC clock using POSIX clock_gettime.
-	return .001 * SDL_GetTicks();
+	auto now = std::chrono::steady_clock::now();
+	auto duration = now.time_since_epoch();
+	Time seconds = DurationToSeconds(duration);
+	return seconds;
 }

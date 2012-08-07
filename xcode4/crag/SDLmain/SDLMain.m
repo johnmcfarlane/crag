@@ -69,13 +69,13 @@ static NSString *getApplicationName(void)
 
 @implementation NSApplication (SDLApplication)
 /* Invoked from the Quit menu item */
-- (void)terminate:(id)sender
-{
-    /* Post a SDL_QUIT event */
-    SDL_Event event;
-    event.type = SDL_QUIT;
-    SDL_PushEvent(&event);
-}
+//- (void)terminate:(id)sender
+//{
+//    /* Post a SDL_QUIT event */
+//    SDL_Event event;
+//    event.type = SDL_QUIT;
+//    SDL_PushEvent(&event);
+//}
 @end
 
 /* The main class of the application, the application's delegate */

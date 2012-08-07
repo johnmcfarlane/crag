@@ -9,9 +9,8 @@
 
 #pragma once
 
-#include "atomic.h"
+#include "Future.h"
 #include "Message.h"
-#include "PollStatus.h"
 #include "Uid.h"
 
 
@@ -26,7 +25,11 @@
 
 namespace smp
 {
-	// A handle to an object on a different thread 
+	// forward-declaration
+	template <typename RESULT_TYPE>
+	class Future;
+
+	// A handle to an object on a different thread
 	// which is of (or derived from) type, TYPE.
 	template <typename TYPE>
 	class Handle
@@ -67,28 +70,22 @@ namespace smp
 		void Destroy();
 		
 		////////////////////////////////////////////////////////////////////////////////
-		// Call/Poll - generates a deferred function call to the thread-safe object
+		// Call - generates a deferred function call to the thread-safe object
 		
-		// general purpose functor
-		template <typename FUNCTOR> 
-		void Call(FUNCTOR const & functor) const;
+		// calls a function on the object
+		template <typename FUNCTION_TYPE>
+		void Call(FUNCTION_TYPE function) const;
 		
-		// calls the given function with the given parameters
-		template <typename FUNCTION_TYPE, typename... PARAMETERS>
-		void Call(FUNCTION_TYPE function, PARAMETERS const &... parameters) const;
+		// calls a function on the object which returns a value
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
+		void Call(Future<VALUE_TYPE> & result, FUNCTION_TYPE function) const;
 		
-		// calls a function which returns a value
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-		void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters) const;		
 	private:
-		template <typename FUNCTOR>
-		class CallMessageFunctor;
-		
-		// 1-parameter Call helper
-		template <typename FUNCTION_TYPE, typename ... PARAMETERS>
+		// Call helpers
+		template <typename FUNCTION_TYPE>
 		class CallCommand;
 		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename ... PARAMETERS>
+		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 		class PollCommand;
 
 		////////////////////////////////////////////////////////////////////////////////

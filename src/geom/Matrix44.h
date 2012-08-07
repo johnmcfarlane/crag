@@ -29,7 +29,7 @@ namespace geom
 		
 		template <typename RHS_S>
 		Matrix(Matrix<RHS_S, 4, 4> const & rhs)
-		: rows({rhs[0], rhs[1], rhs[2], rhs[3]})
+		: rows{rhs[0], rhs[1], rhs[2], rhs[3]}
 		{
 		}
 		
@@ -37,18 +37,18 @@ namespace geom
 				Row const & row1,
 				Row const & row2,
 				Row const & row3)
-		: rows({row0, row1, row2, row3})
+		: rows{row0, row1, row2, row3}
 		{
 		}
 		
 		template <typename RHS_S>
 		Matrix(RHS_S const m[4][4])
-		: rows({
+		: rows{
 			Row(m[0][0], m[0][1], m[0][2], m[0][3]),
 			Row(m[1][0], m[1][1], m[1][2], m[1][3]),
 			Row(m[2][0], m[2][1], m[2][2], m[2][3]),
-			Row(m[3][0], m[3][1], m[3][2], m[3][3]),
-		})
+			Row(m[3][0], m[3][1], m[3][2], m[3][3])
+		}
 		{
 		}
 		
@@ -56,12 +56,12 @@ namespace geom
 				S m10, S m11, S m12, S m13, 
 				S m20, S m21, S m22, S m23, 
 				S m30, S m31, S m32, S m33) 
-		: rows({
+		: rows{
 			Row(m00, m01, m02, m03),
 			Row(m10, m11, m12, m13),
 			Row(m20, m21, m22, m23),
-			Row(m30, m31, m32, m33),
-		})
+			Row(m30, m31, m32, m33)
+		}
 		{
 		}
 		

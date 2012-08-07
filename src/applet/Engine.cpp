@@ -34,7 +34,6 @@ Engine::Engine()
 : _time(0)
 , _quit_flag(false)
 {
-	smp::SetThreadPriority(1);
 }
 
 Engine::~Engine()
@@ -63,7 +62,7 @@ void Engine::OnQuit()
 	SetQuitFlag();
 }
 
-void Engine::OnAddObject(AppletBase * const & applet)
+void Engine::OnAddObject(AppletBase & applet)
 {
 	// If engine's quit flag is set,
 	if (_quit_flag)
@@ -71,14 +70,14 @@ void Engine::OnAddObject(AppletBase * const & applet)
 		DEBUG_MESSAGE("quit flag already set; deleting applet");
 		
 		// delete it.
-		delete applet;
+		delete & applet;
 		return;
 	}
 
-	_applets.push_back(* applet);
+	_applets.push_back(applet);
 }
 
-void Engine::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid uid)
 {
 	AppletBase * applet = GetObject(uid);
 	

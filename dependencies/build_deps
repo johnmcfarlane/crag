@@ -1,11 +1,7 @@
 cd ode
-CFLAGS="-arch i386 -fno-exceptions -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" CXXFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" ./configure --enable-double-precision --disable-demos --disable-asserts --prefix=$PWD/../../xcode4
-make
-make install
+./crag_build
 cd ..
 
 cd SDL
-./configure --prefix="$PWD/../../xcode4" --with-sdl-prefix="$PWD/../../xcode4" CFLAGS="-arch i386" CXXFLAGS="-arch i386" LDFLAGS="-arch i386" --enable-static --disable-shared
-make
-make install
+./crag_build
 cd ..

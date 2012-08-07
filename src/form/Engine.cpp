@@ -55,8 +55,6 @@ form::Engine::Engine()
 , _camera_pos(sim::Ray3::Zero())
 , _has_reset_request(false)
 {
-	smp::SetThreadPriority(-1);
-	
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
 		int max_num_verts = form::NodeBuffer::max_num_verts;
@@ -93,27 +91,27 @@ void form::Engine::OnQuit()
 	quit_flag = true;
 }
 
-void form::Engine::OnAddFormation(form::Formation * const & formation)
+void form::Engine::OnAddFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(formation) == _formations.end());
-	_formations.insert(formation);
-	scenes[0].AddFormation(* formation);
-	scenes[1].AddFormation(* formation);
+	ASSERT(_formations.find(& formation) == _formations.end());
+	_formations.insert(& formation);
+	scenes[0].AddFormation(formation);
+	scenes[1].AddFormation(formation);
 }
 
-void form::Engine::OnRemoveFormation(form::Formation * const & formation)
+void form::Engine::OnRemoveFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(formation) != _formations.end());
-	_formations.erase(formation);
-	scenes[0].RemoveFormation(* formation);
-	scenes[1].RemoveFormation(* formation);
+	ASSERT(_formations.find(& formation) != _formations.end());
+	_formations.erase(& formation);
+	scenes[0].RemoveFormation(formation);
+	scenes[1].RemoveFormation(formation);
 	
-	delete formation;
+	delete & formation;
 }
 
-void form::Engine::OnSetMesh(Mesh * const & mesh)
+void form::Engine::OnSetMesh(Mesh & mesh)
 {
-	_meshes.push_back(* mesh);
+	_meshes.push_back(mesh);
 }
 
 void form::Engine::OnSetCamera(sim::Transformation const & transformation)
@@ -127,12 +125,12 @@ void form::Engine::SetOrigin(sim::Vector3 const & origin)
 	_requested_origin = origin;
 }
 
-void form::Engine::OnRegulatorSetEnabled(bool const & enabled)
+void form::Engine::OnRegulatorSetEnabled(bool enabled)
 {
 	_regulator_enabled = enabled;
 }
 
-void form::Engine::OnSetRecommendedNumQuaterne(int const & recommented_num_quaterne)
+void form::Engine::OnSetRecommendedNumQuaterne(int recommented_num_quaterne)
 {
 	_recommended_num_quaterne = recommented_num_quaterne;
 }
@@ -160,7 +158,10 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	// register with the renderer
 	_mesh.Create(_regulator_handle);
-	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _mesh.GetUid(), gfx::Uid());
+	auto mesh_handle = _mesh;
+	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
+		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());
+	});
 	
 	while (! quit_flag) 
 	{
@@ -282,7 +283,9 @@ void form::Engine::GenerateMesh()
 	visible_scene.GenerateMesh(* mesh);
 	
 	// sent it to the FormationSet object
-	_mesh.Call(& gfx::FormationMesh::SetMesh, mesh);
+	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {
+		formation_mesh.SetMesh(mesh);
+	});
 	
 	// record timing information
 	Time t = app::GetTime();
@@ -290,7 +293,9 @@ void form::Engine::GenerateMesh()
 	mesh_generation_time = t;
 
 	// Pass timing information on to the regulator.
-	_regulator_handle.Call(& form::RegulatorScript::SampleMeshGenerationPeriod, last_mesh_generation_period);
+	_regulator_handle.Call([last_mesh_generation_period] (form::RegulatorScript & script) {
+		script.SampleMeshGenerationPeriod(last_mesh_generation_period);
+	});
 	
 	// Sample the information for statistical output.
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());

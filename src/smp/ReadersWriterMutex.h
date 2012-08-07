@@ -35,8 +35,8 @@ namespace smp
 		void WriteUnlock();
 		
 	private:
-        int read_count;
-        int write_count; 
+		std::atomic<unsigned> read_count;
+        std::atomic<unsigned> write_count;
 		
         SimpleMutex read_entry_lock;
         Mutex write_lock;

@@ -45,7 +45,9 @@ void sim::Star::Tick(sim::Engine & simulation_engine)
 void sim::Star::UpdateModels() const
 {
 	gfx::Transformation transformation(position);	
-	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
+	_model.Call([transformation] (gfx::BranchNode & node) {
+		node.SetTransformation(transformation);
+	});
 }
 
 sim::Scalar sim::Star::GetBoundingRadius() const

@@ -11,7 +11,6 @@
 
 #include "Scheduler.h"
 
-#include "atomic.h"
 #include "Lock.h"
 #include "Semaphore.h"
 #include "SimpleMutex.h"
@@ -34,7 +33,7 @@ namespace smp
 		{
 			
 			// forward-declaration
-			int RunThread(void *);
+			void RunThread();
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// Task - a Job and its progress
@@ -88,7 +87,7 @@ namespace smp
 				int SolicitUnit()
 				{
 					// Get value of _next_unit and increment it.
-					int assignment = AtomicFetchAndAdd(_next_unit, 1);
+					int assignment = std::atomic_fetch_add(& _next_unit, 1);
 					
 					// If it's within range,
 					if (assignment < _num_units)
@@ -98,7 +97,7 @@ namespace smp
 					}
 					
 					// discretely decrement it again
-					AtomicFetchAndAdd(_next_unit, -1);
+					std::atomic_fetch_sub(& _next_unit, 1);
 					
 					// and return failure value.
 					return -1;
@@ -107,7 +106,7 @@ namespace smp
 				// Register the fact that a unit of work is completed.
 				void OnUnitComplete()
 				{
-					if (AtomicFetchAndAdd(_completed_units, 1) >= _num_units)
+					if (std::atomic_fetch_add(& _completed_units, 1) >= _num_units)
 					{
 						// should never exceed _num_units
 						ASSERT(false);
@@ -130,8 +129,8 @@ namespace smp
 			private:
 				Job & _job;
 				int _num_units;
-				int _next_unit;
-				int _completed_units;
+				std::atomic<int> _next_unit;
+				std::atomic<int> _completed_units;
 				int _priority;
 				bool _automatic;
 				Semaphore * _num_complete;
@@ -326,7 +325,7 @@ namespace smp
 					// Launch them all.
 					for (Thread * it = _threads, * end = _threads + num_threads; it != end; ++ it)
 					{
-						it->Launch(RunThread, nullptr, "worker");
+						it->Launch(RunThread);
 					}
 					
 					DEBUG_MESSAGE("scheduler using %d threads.", num_threads);
@@ -380,7 +379,7 @@ namespace smp
 			////////////////////////////////////////////////////////////////////////////////
 			// RunThread - function of a worker thread
 			
-			int RunThread(void *)
+			void RunThread()
 			{
 				// Sleep until after the singleton is full constructed.
 				while (singleton == nullptr)
@@ -396,8 +395,6 @@ namespace smp
 				{
 					ASSERT(singleton != nullptr);
 				}
-				
-				return 0;
 			}
 		}
 		

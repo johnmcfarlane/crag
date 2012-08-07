@@ -31,9 +31,9 @@
 
 #include "geom/Transformation.h"
 
-#include "core/Random.h"
+#include "smp/Future.h"
 
-#include <fstream>
+#include "core/Random.h"
 
 
 DECLARE_CLASS_HANDLE(sim, Ball);		// sim::BallHandle
@@ -115,7 +115,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
-	void add_thruster(sim::VehicleHandle & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void add_thruster(sim::VehicleHandle & vehicle_handle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
 		sim::Vehicle::Thruster thruster;
 		thruster.position = position;
@@ -123,7 +123,9 @@ namespace
 		thruster.key = SDL_SCANCODE_H;
 		thruster.thrust_factor = 1.;
 		
-		vehicle.Call(& sim::Vehicle::AddThruster, thruster);
+		vehicle_handle.Call([thruster] (sim::Vehicle & vehicle) {
+			vehicle.AddThruster(thruster);
+		});
 	}
 }
 
@@ -141,7 +143,9 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	// Set camera position
 	{
 		sim::Transformation transformation(observer_start_pos);
-		gfx::Daemon::Call(& gfx::Engine::OnSetCamera, transformation);
+		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
+			engine.OnSetCamera(transformation);
+		});
 	}
 	
 	// Create planets
@@ -205,7 +209,10 @@ void TestScript::SpawnUniverse()
 {
 	// Add the skybox.
 	_skybox.Create();
-	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _skybox.GetUid(), gfx::Uid());
+	auto skybox = _skybox;
+	gfx::Daemon::Call([skybox] (gfx::Engine & engine) {
+		engine.OnSetParent(skybox.GetUid(), gfx::Uid());
+	});
 	
 	// Create sun. 
 	_sun.Create(100000000., 30000.);
@@ -236,8 +243,11 @@ void TestScript::SpawnShapes(int shape_num)
 		return;
 	}
 	
-	Future<sim::Transformation> camera_transformation_future(* _applet_interface, static_cast<sim::EntityHandle &>(_observer), & sim::Observer::GetTransformation);
-	sim::Transformation camera_transformation = camera_transformation_future.get();
+	smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(_observer, [] (sim::Observer & observer) -> sim::Transformation {
+		return observer.GetTransformation();
+	});
+	
+	sim::Transformation camera_transformation = camera_transformation_future.Get();
 	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
 	sim::Vector3 camera_pos = camera_transformation.GetTranslation();
 	sim::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
@@ -328,19 +338,23 @@ void TestScript::HandleEvents()
 
 void TestScript::UpdateOrigin()
 {
-	if (! _enable_dynamic_origin) 
+	if (! _enable_dynamic_origin)
 	{
 		return;
 	}
 	
-	auto camera_transformation = _applet_interface->Call(& gfx::Engine::GetCamera);
+	auto camera_transformation = _applet_interface->Get<gfx::Engine, gfx::Transformation>([] (gfx::Engine & engine) {
+		return engine.GetCamera();
+	});
 	auto camera_pos = camera_transformation.GetTranslation();
 	auto origin_to_camera = _origin - camera_pos;
 	
 	auto distance_from_origin = Length(origin_to_camera);
 	if (distance_from_origin > max_distance_from_origin)
 	{
-		_applet_interface->Call<form::Engine, sim::Vector3>(& form::Engine::SetOrigin, camera_pos);
+		form::Daemon::Call([camera_pos] (form::Engine & engine) {
+			engine.SetOrigin(camera_pos);
+		});
 		_origin = camera_pos;
 	}
 }

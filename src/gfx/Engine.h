@@ -66,8 +66,8 @@ namespace gfx
 		Engine();
 		~Engine();
 
-		Object * GetObject(Uid const & uid);
-		Object const * GetObject(Uid const & uid) const;
+		Object * GetObject(Uid uid);
+		Object const * GetObject(Uid uid) const;
 		
 		Scene & GetScene();
 		Scene const & GetScene() const;
@@ -86,23 +86,23 @@ namespace gfx
 		// message interface
 		void OnQuit();
 		void OnAddObject(Object & object);
-		void OnRemoveObject(Uid const & uid);
-		void OnSetParent(Uid const & child_uid, Uid const & parent_uid);
-		void OnSetParent(Object & child, Uid const & parent_uid);
+		void OnRemoveObject(Uid uid);
+		void OnSetParent(Uid child_uid, Uid parent_uid);
+		void OnSetParent(Object & child, Uid parent_uid);
 		void OnSetParent(Object & child, BranchNode & parent);
-		void OnSetTime(Time const & time);
-		void OnSetReady(bool const & ready);
-		void OnResize(geom::Vector2i const & size);
+		void OnSetTime(Time time);
+		void OnSetReady(bool ready);
+		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		void OnToggleLighting();
 		void OnToggleWireframe();
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
 		Transformation const& GetCamera() const;
-		void OnSetRegulatorHandle(form::RegulatorScriptHandle const & regulator_handle);
+		void OnSetRegulatorHandle(form::RegulatorScriptHandle regulator_handle);
 
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
+		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
 			smp::ObjectBaseInit<Engine>
 			init = 

@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 #if ! defined(NDEBUG)
 //#define CORE_RING_BUFFER_VERFICATION
 #endif
@@ -190,7 +189,7 @@ namespace core
 			verify();
 			
 			// CLASS must be derived from BASE_CLASS.
-			assert(static_cast<BASE_CLASS *>(static_cast<CLASS *>(nullptr)) == nullptr);
+			static_assert(std::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
 			
 			size_type source_size = round_up(sizeof(CLASS));
 			

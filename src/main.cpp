@@ -126,39 +126,39 @@ namespace
 						
 					case SDL_SCANCODE_RETURN:
 					{
-						sim::Daemon::Call(& sim::Engine::OnTogglePause);
+						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnTogglePause(); });
 						return true;
 					}
 					
 					case SDL_SCANCODE_B:
 					{
-						gfx::Daemon::Call(& gfx::Engine::OnToggleCulling);
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleCulling(); });
 						return true;
 					}
 					
 					case SDL_SCANCODE_F:
-						form::Daemon::Call(& form::Engine::OnToggleFlatShaded);
+						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleFlatShaded(); });
 						return true;
 						
 					case SDL_SCANCODE_G:
 					{
-						sim::Daemon::Call(& sim::Engine::OnToggleGravity);
+						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleGravity(); });
 						return true;
 					}
 						
 					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::Engine::OnToggleSuspended);
+						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleSuspended(); });
 						return true;
 						
 					case SDL_SCANCODE_L:
 					{
-						gfx::Daemon::Call(& gfx::Engine::OnToggleLighting);
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleLighting(); });
 						return true;
 					}
 					
 					case SDL_SCANCODE_P:
 					{
-						gfx::Daemon::Call(& gfx::Engine::OnToggleWireframe);
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleWireframe(); });
 						return true;
 					}
 					
@@ -174,12 +174,12 @@ namespace
 				{
 					case SDL_SCANCODE_C:
 					{
-						sim::Daemon::Call(& sim::Engine::OnToggleCollision);
+						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleCollision(); });
 						return true;
 					}
 					
 					case SDL_SCANCODE_I:
-						form::Daemon::Call(& form::Engine::OnToggleMeshGeneration);
+						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
 						return true;
 						
 					default:
@@ -194,7 +194,7 @@ namespace
 				{
 					case SDL_SCANCODE_O:
 					{
-						gfx::Daemon::Call(& gfx::Engine::OnToggleCapture);
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleCapture(); });
 						return true;
 					}
 					
@@ -229,7 +229,9 @@ namespace
 					{
 						// TODO: Check it's the right window?
 						geom::Vector2i size(window_event.data1, window_event.data2);
-						gfx::Daemon::Call(& gfx::Engine::OnResize, size);
+						gfx::Daemon::Call([size] (gfx::Engine & engine) {
+							engine.OnResize(size);
+						});
 						return true;
 					}
 					
@@ -240,7 +242,9 @@ namespace
 					case SDL_WINDOWEVENT_ENTER:
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
-						form::Daemon::Call(& form::Engine::OnRegulatorSetEnabled, true);
+						form::Daemon::Call([] (form::Engine & engine) {
+							engine.OnRegulatorSetEnabled(true);
+						});
 						return true;
 					}
 					
@@ -249,7 +253,9 @@ namespace
 					case SDL_WINDOWEVENT_LEAVE:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 					{
-						form::Daemon::Call(& form::Engine::OnRegulatorSetEnabled, false);
+						form::Daemon::Call([] (form::Engine & engine) {
+							engine.OnRegulatorSetEnabled(false);
+						});
 						return true;
 					}
 				}
@@ -331,11 +337,14 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
+			applet::Daemon::Call([] (applet::Engine & engine) {
 #if defined(RUN_TEST)
-			applet::Daemon::Call(& applet::Engine::Launch, & applet::Test);
+				auto functor = & applet::Test;
 #else
-			applet::Daemon::Call(& applet::Engine::Launch, & ga::main);
+				auto functor = & ga::main;
 #endif
+				engine.Launch(functor);
+			});
 			
 			while (HandleEvent())
 			{

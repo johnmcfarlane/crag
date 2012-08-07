@@ -63,7 +63,7 @@ namespace applet
 		void OnQuit();
 		
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid const & uid, PARAMETERS const & ... parameters)
+		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
 			typename OBJECT_TYPE::Init init
 			{
@@ -71,11 +71,11 @@ namespace applet
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE (init, parameters ...);
-			OnAddObject(object);
+			OnAddObject(* object);
 		}
 		
-		void OnAddObject(AppletBase * const & entity);
-		void OnRemoveObject(Uid const & uid);
+		void OnAddObject(AppletBase & entity);
+		void OnRemoveObject(Uid uid);
 		
 		void SetQuitFlag();
 		

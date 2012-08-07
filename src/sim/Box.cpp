@@ -86,5 +86,7 @@ void Box::UpdateModels() const
 	
 	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), body->GetDimensions());
 	
-	_model.Call(& gfx::BranchNode::SetTransformation, transformation);
+	_model.Call([transformation] (gfx::BranchNode & node) {
+		node.SetTransformation(transformation);
+	});
 }

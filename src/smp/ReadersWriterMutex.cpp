@@ -11,8 +11,6 @@
 
 #include "ReadersWriterMutex.h"
 
-#include "atomic.h"
-
 
 smp::ReadersWriterMutex::ReadersWriterMutex()
 : read_count(0)
@@ -24,7 +22,7 @@ void smp::ReadersWriterMutex::ReadLock()
 {
 	read_entry_lock.Lock();
 	read_lock.Lock();
-	if (AtomicFetchAndAdd(read_count, 1) == 0)
+	if (std::atomic_fetch_add(& read_count, 1u) == 0)
 	{
 		write_lock.Lock();
 	}
@@ -34,7 +32,7 @@ void smp::ReadersWriterMutex::ReadLock()
 
 void smp::ReadersWriterMutex::ReadUnlock()
 {
-	if (AtomicFetchAndAdd(read_count, -1) == 1)
+	if (std::atomic_fetch_sub(& read_count, 1u) == 1)
 	{
 		write_lock.Unlock();				
 	}
@@ -42,7 +40,7 @@ void smp::ReadersWriterMutex::ReadUnlock()
 
 void smp::ReadersWriterMutex::WriteLock()
 {
-	if (AtomicFetchAndAdd(write_count, 1) == 0)
+	if (std::atomic_fetch_add(& write_count, 1u) == 0)
 	{
 		read_lock.Lock();
 	}
@@ -54,7 +52,7 @@ void smp::ReadersWriterMutex::WriteUnlock()
 {
 	write_lock.Unlock();
 	
-	if (AtomicFetchAndAdd(write_count, -1) == 1) 
+	if (std::atomic_fetch_sub(& write_count, 1u) == 1)
 	{
 		read_lock.Unlock();	
 	}

@@ -62,15 +62,20 @@ void Engine::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the gfx::Engine is in an incomplete state.
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
 	
 	_entity_set.Add(entity);
 	
-	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
+	auto time = _time;
+	gfx::Daemon::Call([time] (gfx::Engine & engine) {
+		engine.OnSetTime(time);
+		engine.OnSetReady(true);
+	});
 }
 
-void Engine::OnRemoveObject(Uid const & uid)
+void Engine::OnRemoveObject(Uid uid)
 {
 	Entity * entity = _entity_set.GetEntity(uid);
 	if (entity == nullptr)
@@ -86,7 +91,7 @@ void Engine::OnRemoveObject(Uid const & uid)
 	Free(entity);
 }
 
-void Engine::OnAttachEntities(Uid const & uid1, Uid const & uid2)
+void Engine::OnAttachEntities(Uid uid1, Uid uid2)
 {
 	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
 }
@@ -127,8 +132,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	smp::SetThreadPriority(0);
-
 	Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
@@ -184,12 +187,17 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, false);
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
 	
 	UpdateModels(_entity_set);
 	
-	gfx::Daemon::Call(& gfx::Engine::OnSetTime, _time);
-	gfx::Daemon::Call(& gfx::Engine::OnSetReady, true);
+	auto time = _time;
+	gfx::Daemon::Call([time] (gfx::Engine & engine) {
+		engine.OnSetTime(time);
+		engine.OnSetReady(true);
+	});
 }
 
 // Perform a step in the simulation. 

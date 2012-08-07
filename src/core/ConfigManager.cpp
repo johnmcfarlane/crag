@@ -83,15 +83,18 @@ bool ConfigManager::Load()
 	
 	char config_line[max_string_size];
 	char default_line[max_string_size];
-	for (int line_num = 0; config_file.getline(config_line, max_string_size - 1) != nullptr; ++ line_num)
+	for (int line_num = 0; ! config_file.eof(); ++ line_num)
 	{
 		// read default value
-		if (defaults_file.getline(default_line, max_string_size - 1) == nullptr)
+		if (defaults_file.eof())
 		{
 			std::cerr << "ConfigManager: Unrecognised default parameter on line " << line_num << "." << std::endl;
 			std::cerr << "ConfigManager: Program defaults will be used for remainder of values." << std::endl;
 			break;
 		}
+		
+		config_file.getline(config_line, max_string_size - 1);
+		defaults_file.getline(default_line, max_string_size - 1);
 
 		// read name/value strings from config file
 		char * value_string = strchr(config_line, '=');

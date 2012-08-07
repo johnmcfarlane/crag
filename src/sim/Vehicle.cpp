@@ -52,13 +52,18 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	
 	// branch node's parent is vehicle's branch node
 	gfx::ObjectHandle const & parent_model = GetModel();
-	gfx::Daemon::Call(& gfx::Engine::OnSetParent, branch_node.GetUid(), parent_model.GetUid());
+	gfx::Daemon::Call([branch_node, parent_model] (gfx::Engine & engine) {
+		engine.OnSetParent(branch_node.GetUid(), parent_model.GetUid());
+	});
 	
 	// create actual thruster graphics
 	_thruster.model.Create();
+	auto thruster_uid = _thruster.model.GetUid();
 	
 	// its parent is the branch node
-	gfx::Daemon::Call(& gfx::Engine::OnSetParent, _thruster.model.GetUid(), branch_node.GetUid());
+	gfx::Daemon::Call([thruster_uid, branch_node] (gfx::Engine & engine) {
+		engine.OnSetParent(thruster_uid, branch_node.GetUid());
+	});
 	
 	// initialize thrust factor
 	_thruster.thrust_factor = 0;
@@ -76,10 +81,12 @@ void Vehicle::UpdateModels() const
 	// For each thruster,
 	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
-		Thruster const & thruster = * i;		
-		if (thruster.thrust_factor != 0)
+		auto thrust_factor = i->thrust_factor;
+		if (thrust_factor != 0)
 		{
-			thruster.model.Call(& gfx::Thruster::Update, thruster.thrust_factor);
+			i->model.Call([thrust_factor] (gfx::Thruster & thruster) {
+				thruster.Update(thrust_factor);
+			});
 		}
 	}
 }

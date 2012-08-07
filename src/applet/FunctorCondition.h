@@ -22,7 +22,7 @@ namespace applet
 		: _functor(functor) 
 		{ 
 		}
-		virtual bool operator() () override
+		virtual bool operator() (bool hurry) override
 		{
 			return _functor();
 		}

@@ -73,7 +73,10 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 	// messages
 	{
 		// register with formation manager
-		form::Daemon::Call(& form::Engine::OnAddFormation, _formation);
+		auto & formation = * _formation;
+		form::Daemon::Call([& formation] (form::Engine & engine) {
+			engine.OnAddFormation(formation);
+		});
 		
 		// register with the renderer
 #if defined(RENDER_SEA)
@@ -84,7 +87,11 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		
 		_branch_node.Create(gfx::Transformation::Matrix::Identity());
 		_model.Create(gfx::Scalar(sea_level));
-		gfx::Daemon::Call(& gfx::Engine::OnSetParent, _model.GetUid(), _branch_node.GetUid());
+		auto model = _model;
+		auto branch_node = _branch_node;
+		gfx::Daemon::Call([model, branch_node] (gfx::Engine & engine) {
+			engine.OnSetParent(model.GetUid(), branch_node.GetUid());
+		});
 		UpdateModels();
 	}
 }
@@ -95,7 +102,10 @@ Planet::~Planet()
 	_branch_node.Destroy();
 	
 	// unregister with formation manager
-	form::Daemon::Call<form::Formation *>(& form::Engine::OnRemoveFormation, _formation);
+	auto & formation = * _formation;
+	form::Daemon::Call([& formation] (form::Engine & engine) {
+		engine.OnRemoveFormation(formation);
+	});
 	_formation = nullptr;
 
 	delete _body;
@@ -144,7 +154,9 @@ void Planet::UpdateModels() const
 		// update planet params
 		Vector3 const & position = _body->GetPosition();
 		gfx::Transformation transformation(position, Transformation::Rotation::Identity(), _radius_mean);
-		_branch_node.Call(& gfx::BranchNode::SetTransformation, transformation);
+		_branch_node.Call([transformation] (gfx::BranchNode & node) {
+			node.SetTransformation(transformation);
+		});
 	}
 
 	{
@@ -154,7 +166,9 @@ void Planet::UpdateModels() const
 			_radius_min,
 			_radius_max
 		};
-		_model.Call(& gfx::Planet::Update, params);
+		_model.Call([params] (gfx::Planet & planet) {
+			planet.Update(params);
+		});
 	}
 }
 

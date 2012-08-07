@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "atomic.h"
 #include "Lock.h"
 #include "Message.h"
 #include "MessageQueue.h"
@@ -109,7 +108,9 @@ namespace smp
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			Thread::Launch<Daemon, & Daemon::_thread, & Daemon::Run>(* this, name);
+			_thread.Launch([this] () {
+				Run();
+			});
 			
 			while (_engine == nullptr)
 			{
@@ -127,7 +128,7 @@ namespace smp
 			// Never called from within the thread.
 			ASSERT(! _thread.IsCurrent());
 			
-			Call(& Engine::OnQuit);
+			Call([] (Engine & engine) { engine.OnQuit(); });
 		}
 		
 		// Wait until it has stopped working.
@@ -167,74 +168,28 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe engine
 		
-		template <typename... PARAMETERS>
-		static void Call(void (Engine::* function)(PARAMETERS const & ...), PARAMETERS const &... parameters)
-		{
-			CallCommand<PARAMETERS...> command(function, parameters...);
-			SendMessage(command);
-		}
-		
-		////////////////////////////////////////////////////////////////////////////////
-		// Poll - generates a deferred function call to the thread-safe engine
-		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-		static void Poll(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const &... parameters)
-		{
-			// functor is sent to Engine's thread to call function and retrieve result
-			PollCommand<VALUE_TYPE, FUNCTION_TYPE, PARAMETERS...> command(result, status, function, parameters...);
-			SendMessage(command);
-		}
+        template <typename FUNCTION_TYPE>
+        static void Call(FUNCTION_TYPE const & function)
+        {
+			CallCommand<FUNCTION_TYPE> command(function);
+            SendMessage(command);
+        }
 		
 	private:
-		template <typename... PARAMETERS>
+		template <typename FUNCTION_TYPE>
 		class CallCommand : public Message
 		{
-			// types
-			typedef void (Engine::* FunctionType)(PARAMETERS const & ...);
-			typedef std::tr1::tuple<PARAMETERS...> Tuple;
 		public:
-			// functions
-			CallCommand(FunctionType function, PARAMETERS const & ... parameters) 
+			CallCommand(FUNCTION_TYPE const & function)
 			: _function(function)
-			, _parameters(parameters...)
-			{ 
+			{
 			}
 		private:
 			virtual void operator () (Engine & engine) const final
 			{
-				core::call(engine, _function, _parameters);
+				_function(engine);
 			}
-			// variables
-			FunctionType _function;
-			Tuple _parameters;
-		};
-		
-		template <typename VALUE_TYPE, typename FUNCTION_TYPE, typename... PARAMETERS>
-		class PollCommand : public Message
-		{
-		public:
-			// functions
-			PollCommand(VALUE_TYPE & result, PollStatus & status, FUNCTION_TYPE function, PARAMETERS const & ... parameters) 
-			: _result(result)
-			, _status(status)
-			, _function(function)
-			, _parameters(parameters...)
-			{ 
-				ASSERT(_status == pending);
-			}
-		private:
-			virtual void operator () (Engine & engine) const final
-			{
-				ASSERT(_status == pending);
-				_result = core::call(engine, _function, _parameters);
-				AtomicCompilerBarrier();
-				_status = complete;
-			}
-			// variables
-			VALUE_TYPE & _result;
-			PollStatus & _status;
 			FUNCTION_TYPE _function;
-			std::tr1::tuple<PARAMETERS...> _parameters;
 		};
 		
 		void Run()

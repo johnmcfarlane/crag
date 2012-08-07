@@ -15,7 +15,6 @@
 using namespace smp;
 
 Thread::Thread()
-: sdl_thread(nullptr)
 {
 }
 
@@ -24,10 +23,9 @@ Thread::~Thread()
 	Join();
 }
 
-// Note: The thread may have quit but this will still return true until Kill or Join is called.
 bool Thread::IsLaunched() const
 {
-	return sdl_thread != nullptr;
+	return _thread.get_id() != ThreadType().get_id();
 }
 		
 // True if the calling thread is this thread.
@@ -39,18 +37,9 @@ bool Thread::IsCurrent() const
 		return false;
 	}
 	
-	SDL_threadID running_thread_id = SDL_ThreadID();
-	SDL_threadID member_thread_id = SDL_GetThreadID(sdl_thread);
+	std::thread::id running_thread_id = std::this_thread::get_id();
+	std::thread::id member_thread_id = _thread.get_id();
 	return running_thread_id == member_thread_id;
-}
-
-void Thread::Launch(Function callback, void * data, char const * name)
-{
-	// If launched already, wait to stop being launched.
-	Join();
-			
-	// Call the given FUNCTION, passing given object, in a new thread. 
-	sdl_thread = SDL_CreateThread(callback, name, data);
 }
 
 // Waits for thread to return from FUNCTION.
@@ -59,9 +48,9 @@ void Thread::Join()
 	// Shouldn't be called from within the thread.
 	ASSERT (! IsCurrent());
 	
-	if (sdl_thread != nullptr)
+	if (IsLaunched())
 	{
-		SDL_WaitThread(sdl_thread, nullptr);
-		sdl_thread = nullptr;
+		_thread.join();
+		_thread = ThreadType();
 	}
 }
