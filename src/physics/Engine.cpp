@@ -15,7 +15,6 @@
 #include "form/Engine.h"
 
 #include "smp/for_each.h"
-#include "smp/Lock.h"
 
 #include "core/ConfigEntry.h"
 

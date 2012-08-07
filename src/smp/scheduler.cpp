@@ -11,7 +11,6 @@
 
 #include "Scheduler.h"
 
-#include "Lock.h"
 #include "Semaphore.h"
 #include "SimpleMutex.h"
 #include "Thread.h"
@@ -145,7 +144,7 @@ namespace smp
 			{
 				// types
 				typedef SimpleMutex Mutex;
-				typedef Lock<Mutex> Lock;
+				typedef std::lock_guard<Mutex> Lock;
 				typedef Task::list_type TaskList;
 				typedef TaskList::iterator Iterator;
 			public:

@@ -23,7 +23,7 @@ namespace smp
 		typedef CLASS Class;
 		typedef core::ring_buffer<MESSAGE_BASE, true> Buffer;
 		typedef SimpleMutex Mutex;
-		typedef Lock<std::mutex> Lock;
+		typedef std::lock_guard<std::mutex> Lock;
 	public:
 		typedef typename Buffer::value_type value_type;
 		typedef typename Buffer::size_type size_type;

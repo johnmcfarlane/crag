@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "Lock.h"
 #include "Message.h"
 #include "MessageQueue.h"
 #include "Thread.h"
@@ -41,7 +40,7 @@ namespace smp
 		};
 
 		typedef SimpleMutex Mutex;
-		typedef Lock<Mutex> Lock;
+		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef ENGINE Engine;
 		typedef Message<Engine> Message;

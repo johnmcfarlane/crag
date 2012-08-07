@@ -18,7 +18,7 @@
 
 #if defined(POINT_BUFFER_MT_SAFE)
 #include "smp/Lock.h"
-#define POINT_BUFFER_LOCK smp::Lock lock(mutex)
+#define POINT_BUFFER_LOCK std::lock_guard lock(mutex)
 #else
 #define POINT_BUFFER_LOCK DO_NOTHING
 #endif

@@ -12,7 +12,6 @@
 #include "EventCondition.h"
 
 #include "smp/smp.h"
-#include "smp/Lock.h"
 
 #include "core/app.h"
 
@@ -36,7 +35,7 @@ EventCondition::~EventCondition()
 
 bool EventCondition::PopEvent(SDL_Event & event)
 {
-	smp::Lock<smp::SimpleMutex> lock(_mutex);
+	std::lock_guard<smp::SimpleMutex> lock(_mutex);
 	if (_events.empty())
 	{
 		return false;
@@ -54,7 +53,7 @@ bool EventCondition::Filter(SDL_Event const & event) const
 
 bool EventCondition::operator() (bool hurry)
 {
-	smp::Lock<smp::SimpleMutex> lock(_mutex);
+	std::lock_guard<smp::SimpleMutex> lock(_mutex);
 
 	return hurry | (! _events.empty());
 }
@@ -65,7 +64,7 @@ int EventCondition::OnEvent(void *userdata, SDL_Event * event)
 	
 	if (event_condition.Filter(* event))
 	{
-		smp::Lock<smp::SimpleMutex> lock(event_condition._mutex);
+		std::lock_guard<smp::SimpleMutex> lock(event_condition._mutex);
 		event_condition._events.push_back(* event);
 	}
 	
