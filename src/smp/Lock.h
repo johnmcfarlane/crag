@@ -25,12 +25,12 @@ namespace smp
 	public:
 		Lock(MUTEX & m) : _mutex(m)
 		{
-			_mutex.Lock();
+			_mutex.lock();
 		}
 		
 		~Lock()
 		{
-			_mutex.Unlock();
+			_mutex.unlock();
 		}
 		
 	private:

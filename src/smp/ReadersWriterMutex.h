@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "Mutex.h"
 #include "SimpleMutex.h"
-
 
 namespace smp
 {
@@ -39,8 +37,8 @@ namespace smp
         std::atomic<unsigned> write_count;
 		
         SimpleMutex read_entry_lock;
-        Mutex write_lock;
-        Mutex read_lock;
+		std::mutex write_lock;
+        std::mutex read_lock;
 	};
 	
 }

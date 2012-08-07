@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include "Mutex.h"
-
-
 namespace smp
 {
 	
@@ -28,12 +25,12 @@ namespace smp
 		{
 		}
 		
-		void Lock()
+		void lock()
 		{
 			SDL_AtomicLock(& spin_lock);
 		}
 		
-		void Unlock()
+		void unlock()
 		{
 			SDL_AtomicUnlock(& spin_lock);
 		}

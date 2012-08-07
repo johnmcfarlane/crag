@@ -23,8 +23,6 @@
 
 #include "geom/MatrixOps.h"
 
-#include "smp/Mutex.h"
-
 
 using namespace gfx::Debug;
 using gfx::Font;
@@ -39,7 +37,7 @@ namespace
 	CONFIG_DEFINE(debug_verbosity, double, .5);
 		
 	// Mutex for global functions.
-	smp::Mutex mutex;
+	std::mutex mutex;
 	
 	// The font used to print the string to screen.
 	Font * font = nullptr;
@@ -233,26 +231,26 @@ double gfx::Debug::GetVerbosity()
 
 void gfx::Debug::AddPoint(Vector3 const & a, ColorPair const & colors)
 {
-	mutex.Lock();
+	mutex.lock();
 	points.AddPoint(a, colors);
-	mutex.Unlock();
+	mutex.unlock();
 }
 
 void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b)
 {
-	mutex.Lock();
+	mutex.lock();
 	lines.AddPoint(a, colors_a);
 	lines.AddPoint(b, colors_b);
-	mutex.Unlock();
+	mutex.unlock();
 }
 
 void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
 {
-	mutex.Lock();
+	mutex.lock();
 	tris.AddPoint(a, colors);
 	tris.AddPoint(b, colors);
 	tris.AddPoint(c, colors);
-	mutex.Unlock();
+	mutex.unlock();
 }
 
 void gfx::Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
@@ -364,7 +362,7 @@ void AddFrustum(Pov const & pov)
 
 void gfx::Debug::Draw(Vector3 const & camera_pos)
 {
-	mutex.Lock();
+	mutex.lock();
 	
 	GL_VERIFY;
 	Verify();
@@ -390,7 +388,7 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 
 	Verify();
 	GL_VERIFY;
-	mutex.Unlock();
+	mutex.unlock();
 }
 
 void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)

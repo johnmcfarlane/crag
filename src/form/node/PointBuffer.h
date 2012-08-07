@@ -53,7 +53,7 @@ namespace form
 		
 	private:
 #if defined(POINT_BUFFER_MT_SAFE)
-		mutable smp::Mutex mutex;
+		mutable std::mutex mutex;
 #endif
 	};
 }

@@ -20,21 +20,21 @@ smp::ReadersWriterMutex::ReadersWriterMutex()
 
 void smp::ReadersWriterMutex::ReadLock()
 {
-	read_entry_lock.Lock();
-	read_lock.Lock();
+	read_entry_lock.lock();
+	read_lock.lock();
 	if (std::atomic_fetch_add(& read_count, 1u) == 0)
 	{
-		write_lock.Lock();
+		write_lock.lock();
 	}
-	read_lock.Unlock();
-	read_entry_lock.Unlock();
+	read_lock.unlock();
+	read_entry_lock.unlock();
 }
 
 void smp::ReadersWriterMutex::ReadUnlock()
 {
 	if (std::atomic_fetch_sub(& read_count, 1u) == 1)
 	{
-		write_lock.Unlock();				
+		write_lock.unlock();
 	}
 }
 
@@ -42,18 +42,18 @@ void smp::ReadersWriterMutex::WriteLock()
 {
 	if (std::atomic_fetch_add(& write_count, 1u) == 0)
 	{
-		read_lock.Lock();
+		read_lock.lock();
 	}
 	
-	write_lock.Lock();
+	write_lock.lock();
 }
 
 void smp::ReadersWriterMutex::WriteUnlock()
 {
-	write_lock.Unlock();
+	write_lock.unlock();
 	
 	if (std::atomic_fetch_sub(& write_count, 1u) == 1)
 	{
-		read_lock.Unlock();	
+		read_lock.unlock();
 	}
 }

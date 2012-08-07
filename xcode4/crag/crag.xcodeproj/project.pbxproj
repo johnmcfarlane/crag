@@ -85,7 +85,6 @@
 		5230578714F1D95F0024D4A8 /* Star.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230571414F1D95F0024D4A8 /* Star.cpp */; };
 		5230578814F1D95F0024D4A8 /* UserInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230571614F1D95F0024D4A8 /* UserInput.cpp */; };
 		5230578914F1D95F0024D4A8 /* Vehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230571814F1D95F0024D4A8 /* Vehicle.cpp */; };
-		5230578A14F1D95F0024D4A8 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572114F1D95F0024D4A8 /* Mutex.cpp */; };
 		5230578B14F1D95F0024D4A8 /* scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572314F1D95F0024D4A8 /* scheduler.cpp */; };
 		5230578C14F1D95F0024D4A8 /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572514F1D95F0024D4A8 /* Semaphore.cpp */; };
 		5230578D14F1D95F0024D4A8 /* ReadersWriterMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5230572714F1D95F0024D4A8 /* ReadersWriterMutex.cpp */; };
@@ -368,8 +367,6 @@
 		5230571E14F1D95F0024D4A8 /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
 		5230571F14F1D95F0024D4A8 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		5230572014F1D95F0024D4A8 /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
-		5230572114F1D95F0024D4A8 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mutex.cpp; sourceTree = "<group>"; };
-		5230572214F1D95F0024D4A8 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
 		5230572314F1D95F0024D4A8 /* scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scheduler.cpp; sourceTree = "<group>"; };
 		5230572414F1D95F0024D4A8 /* scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
 		5230572514F1D95F0024D4A8 /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
@@ -791,8 +788,6 @@
 				5230571E14F1D95F0024D4A8 /* Lock.h */,
 				5230571F14F1D95F0024D4A8 /* Message.h */,
 				5230572014F1D95F0024D4A8 /* MessageQueue.h */,
-				5230572114F1D95F0024D4A8 /* Mutex.cpp */,
-				5230572214F1D95F0024D4A8 /* Mutex.h */,
 				521B601314F222BE0049EBD1 /* ObjectBase.h */,
 				521B602314F22F080049EBD1 /* Handle.h */,
 				52081E05155645A6000EB42E /* Handle_Impl.h */,
@@ -1028,7 +1023,6 @@
 				5230578714F1D95F0024D4A8 /* Star.cpp in Sources */,
 				5230578814F1D95F0024D4A8 /* UserInput.cpp in Sources */,
 				5230578914F1D95F0024D4A8 /* Vehicle.cpp in Sources */,
-				5230578A14F1D95F0024D4A8 /* Mutex.cpp in Sources */,
 				5230578B14F1D95F0024D4A8 /* scheduler.cpp in Sources */,
 				5230578C14F1D95F0024D4A8 /* Semaphore.cpp in Sources */,
 				5230578D14F1D95F0024D4A8 /* ReadersWriterMutex.cpp in Sources */,

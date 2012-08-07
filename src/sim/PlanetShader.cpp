@@ -96,7 +96,7 @@ namespace debug
 	
 	typedef std::vector<Line> LineVector;
 	LineVector lines;
-	smp::Mutex m;
+	std::mutex m;
 	int count_down = 50000;
 	
 	void ClearNodePoints() 
