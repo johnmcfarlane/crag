@@ -24,9 +24,9 @@ namespace axes
 	};
 	
 	// Returns the given axis from the given matrix.
-	template<typename S> inline geom::Vector<S, 3> const & GetAxis(geom::Matrix<S, 3, 3> const & rotation, Axis axis)
+	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Axis axis)
 	{
-		return reinterpret_cast<geom::Vector<S, 3> const &> (rotation.GetRow(axis));
+		return geom::Vector<S, 3>(rotation[0][axis], rotation[1][axis], rotation[2][axis]);
 	}
 	
 	// Converts position/matrix combo to a Ray.

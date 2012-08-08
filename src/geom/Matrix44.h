@@ -15,8 +15,6 @@
 namespace geom
 {
 	// 4x4 matrix
-
-	// Column-major in line with OpenGL (and nothing else it would seem).
 	template<typename S> 
 	class Matrix<S, 4, 4>
 	{
