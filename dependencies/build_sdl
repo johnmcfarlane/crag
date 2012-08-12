@@ -1,0 +1,4 @@
+#!/bin/sh
+./configure --prefix="$PWD/../../xcode4" --with-sdl-prefix="$PWD/../../xcode4" CFLAGS="-arch i386" CXXFLAGS="-arch i386" LDFLAGS="-arch i386" --enable-static --disable-shared --with-x=no
+make
+make install

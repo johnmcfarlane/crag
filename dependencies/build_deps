@@ -1,7 +1,7 @@
 cd ode
-./crag_build
+../build_ode
 cd ..
 
 cd SDL
-./crag_build
+../build_sdl
 cd ..
