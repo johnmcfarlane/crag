@@ -1,5 +1,5 @@
 //
-//  EventCondition.h
+//  EventWatcher.h
 //  crag
 //
 //  Created by John McFarlane on 2/17/12.
@@ -9,29 +9,22 @@
 
 #pragma once
 
-#include "Condition.h"
-
 #include "smp/SimpleMutex.h"
 
 
-namespace applet
+namespace core
 {
 	// Condition that an event has not arrived in the applet::Engine.
-	class EventCondition : public Condition
+	class EventWatcher
 	{
 	public:
 		// functions
-		EventCondition();
-		~EventCondition();
+		EventWatcher();
+		~EventWatcher();
 
+		bool IsEmpty();
 		bool PopEvent(SDL_Event & event);
 	private:
-		// can be overridden to allow specific events through
-		virtual bool Filter(SDL_Event const & event) const;
-		
-		// Condition override
-		virtual bool operator() (bool hurry) override;
-		
 		// SDL callback
 		static int OnEvent(void *userdata, SDL_Event * event);
 		

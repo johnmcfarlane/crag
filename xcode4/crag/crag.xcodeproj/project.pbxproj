@@ -99,7 +99,6 @@
 		52483A3A143C057400195337 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A39143C057400195337 /* ForceFeedback.framework */; };
 		52483A3C143C05BC00195337 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52483A3B143C05BB00195337 /* AudioUnit.framework */; };
 		5249C5F61530D6DE000FF6AB /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5E81530D6DE000FF6AB /* Engine.cpp */; };
-		5249C5F71530D6DE000FF6AB /* EventCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */; };
 		5249C5F81530D6DE000FF6AB /* ObserverScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */; };
 		5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5F01530D6DE000FF6AB /* AppletBase.cpp */; };
 		5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5F21530D6DE000FF6AB /* TestScript.cpp */; };
@@ -120,6 +119,7 @@
 		52849CB6150ED849007AA818 /* RegulatorScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52849CB4150ED849007AA818 /* RegulatorScript.cpp */; };
 		528AC51414C488E300C1B738 /* disk.vert in Sources */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
 		528AC51514C48AA400C1B738 /* disk.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 528AC51314C488E300C1B738 /* disk.vert */; };
+		528FADB215DB6E1C0023E9EA /* EventWatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528FADB015DB6E1C0023E9EA /* EventWatcher.cpp */; };
 		52AF04A015235BF600EBAA15 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 52AF049F15235BF600EBAA15 /* icon.icns */; };
 		52AF04AC152362AB00EBAA15 /* Fiber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52AF04AB152362AB00EBAA15 /* Fiber.cpp */; };
 		52B4604814C342D40078083B /* disk.frag in Sources */ = {isa = PBXBuildFile; fileRef = 52B4604714C342D40078083B /* disk.frag */; };
@@ -393,8 +393,6 @@
 		5249C5E71530D6DE000FF6AB /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Condition.h; sourceTree = "<group>"; };
 		5249C5E81530D6DE000FF6AB /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		5249C5E91530D6DE000FF6AB /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
-		5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventCondition.cpp; sourceTree = "<group>"; };
-		5249C5EB1530D6DE000FF6AB /* EventCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCondition.h; sourceTree = "<group>"; };
 		5249C5EC1530D6DE000FF6AB /* AppletInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletInterface.h; sourceTree = "<group>"; };
 		5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObserverScript.cpp; sourceTree = "<group>"; };
 		5249C5EE1530D6DE000FF6AB /* ObserverScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverScript.h; sourceTree = "<group>"; };
@@ -419,6 +417,8 @@
 		52849CB4150ED849007AA818 /* RegulatorScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegulatorScript.cpp; sourceTree = "<group>"; };
 		52849CB5150ED849007AA818 /* RegulatorScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegulatorScript.h; sourceTree = "<group>"; };
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
+		528FADB015DB6E1C0023E9EA /* EventWatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventWatcher.cpp; sourceTree = "<group>"; };
+		528FADB115DB6E1C0023E9EA /* EventWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWatcher.h; sourceTree = "<group>"; };
 		52933D661546FBBD00767FFE /* FunctorCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctorCondition.h; sourceTree = "<group>"; };
 		5296FB41154D8A8D00FAA706 /* PollCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollCondition.h; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
@@ -546,6 +546,8 @@
 				5230563E14F1D95F0024D4A8 /* debug.h */,
 				5230563F14F1D95F0024D4A8 /* double_buffer.h */,
 				5230564014F1D95F0024D4A8 /* Enumeration.h */,
+				528FADB015DB6E1C0023E9EA /* EventWatcher.cpp */,
+				528FADB115DB6E1C0023E9EA /* EventWatcher.h */,
 				5230564114F1D95F0024D4A8 /* floatOps.h */,
 				5230564214F1D95F0024D4A8 /* for_each.h */,
 				5230564314F1D95F0024D4A8 /* intOps.h */,
@@ -845,8 +847,6 @@
 				5249C5E71530D6DE000FF6AB /* Condition.h */,
 				5249C5E81530D6DE000FF6AB /* Engine.cpp */,
 				5249C5E91530D6DE000FF6AB /* Engine.h */,
-				5249C5EA1530D6DE000FF6AB /* EventCondition.cpp */,
-				5249C5EB1530D6DE000FF6AB /* EventCondition.h */,
 				52933D661546FBBD00767FFE /* FunctorCondition.h */,
 				5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */,
 				5249C5EE1530D6DE000FF6AB /* ObserverScript.h */,
@@ -1045,12 +1045,12 @@
 				52AF04AC152362AB00EBAA15 /* Fiber.cpp in Sources */,
 				52834BB7152B4D9100CB25AE /* Engine.cpp in Sources */,
 				5249C5F61530D6DE000FF6AB /* Engine.cpp in Sources */,
-				5249C5F71530D6DE000FF6AB /* EventCondition.cpp in Sources */,
 				5249C5F81530D6DE000FF6AB /* ObserverScript.cpp in Sources */,
 				5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */,
 				5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */,
 				5249C5FB1530D6DE000FF6AB /* TimeCondition.cpp in Sources */,
 				5201FF4E15D0FD9600529D05 /* main.cpp in Sources */,
+				528FADB215DB6E1C0023E9EA /* EventWatcher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,7 +12,6 @@
 #include "TestScript.h"
 
 #include "AppletInterface_Impl.h"
-#include "EventCondition.h"
 #include "ObserverScript.h"
 #include "Engine.h"
 
@@ -73,16 +72,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local types
 	
-	// EventCondition which blocks until Ctrl-I is pressed.
-	// But you can just call PopEvent to get any existing Ctrl-I events.
-	class KeyPressEventCondition : public EventCondition
-	{
-		virtual bool Filter(SDL_Event const & event) const final
-		{
-			return event.type == SDL_KEYDOWN;
-		}
-	};
-	
 	class TestScript
 	{
 	public:
@@ -108,7 +97,7 @@ namespace
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
 		sim::Vector3 _origin = sim::Vector3::Zero();
-		KeyPressEventCondition _key_press_events;
+		core::EventWatcher _event_watcher;
 		bool _enable_dynamic_origin = true;
 	};
 
@@ -299,7 +288,7 @@ void TestScript::SpawnShapes(int shape_num)
 void TestScript::HandleEvents()
 {
 	SDL_Event event;
-	while (_key_press_events.PopEvent(event))
+	while (_event_watcher.PopEvent(event))
 	{
 		if (event.type != SDL_KEYDOWN)
 		{

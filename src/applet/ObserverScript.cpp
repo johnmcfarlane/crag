@@ -11,8 +11,8 @@
 
 #include "ObserverScript.h"
 
+#include "AppletInterface_Impl.h"
 #include "Engine.h"
-#include "EventCondition.h"
 
 #include "sim/Engine.h"
 #include "sim/EntityFunctions.h"
@@ -52,9 +52,11 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 {
 	SDL_Event event;
-	if (! _event_condition.PopEvent(event))
+	if (! _event_watcher.PopEvent(event))
 	{
-		applet_interface.Wait(_event_condition);
+		applet_interface.WaitFor([this] () {
+			return ! _event_watcher.IsEmpty();
+		});
 	}
 	else
 	{
