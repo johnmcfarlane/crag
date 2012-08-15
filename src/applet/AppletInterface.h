@@ -12,9 +12,12 @@
 namespace applet
 {
 	// forward-declare
-	class Condition;
 	class AppletBase;
-	
+
+	// condition on which to wake from a WaitFor call;
+	// input parameter is the quit flag.
+	typedef std::function<bool(bool)> Condition;
+
 	// Interface to the Applet class;
 	// This interface is passed to a Applet's function object.
 	class AppletInterface
@@ -29,7 +32,7 @@ namespace applet
 		// pause execution in various ways
 		virtual void Yield() = 0;
 		virtual void Sleep(Time duration) = 0;
-		virtual void Wait(Condition & condition) = 0;
+		virtual void WaitFor(Condition & condition) = 0;
 		
 		// blocks until the given functor returns true
 		template <typename FUNCTOR>

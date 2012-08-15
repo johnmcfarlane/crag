@@ -102,7 +102,6 @@
 		5249C5F81530D6DE000FF6AB /* ObserverScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */; };
 		5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5F01530D6DE000FF6AB /* AppletBase.cpp */; };
 		5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5F21530D6DE000FF6AB /* TestScript.cpp */; };
-		5249C5FB1530D6DE000FF6AB /* TimeCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */; };
 		5270CC4614C0A64100146D09 /* light.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4114C0A64100146D09 /* light.frag */; };
 		5270CC4714C0A64100146D09 /* poly.frag in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4214C0A64100146D09 /* poly.frag */; };
 		5270CC4814C0A64100146D09 /* poly.vert in Sources */ = {isa = PBXBuildFile; fileRef = 5270CC4314C0A64100146D09 /* poly.vert */; };
@@ -170,7 +169,6 @@
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		52081E05155645A6000EB42E /* Handle_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle_Impl.h; sourceTree = "<group>"; };
-		52081E4115571F69000EB42E /* PollStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollStatus.h; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		521B601314F222BE0049EBD1 /* ObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectBase.h; sourceTree = "<group>"; };
 		521B602314F22F080049EBD1 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -390,7 +388,6 @@
 		52483978143BED0900195337 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = ../../../../../../System/Library/Frameworks/CoreAudio.framework; sourceTree = "<group>"; };
 		52483A39143C057400195337 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = ../../../../../../System/Library/Frameworks/ForceFeedback.framework; sourceTree = "<group>"; };
 		52483A3B143C05BB00195337 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
-		5249C5E71530D6DE000FF6AB /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Condition.h; sourceTree = "<group>"; };
 		5249C5E81530D6DE000FF6AB /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		5249C5E91530D6DE000FF6AB /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		5249C5EC1530D6DE000FF6AB /* AppletInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletInterface.h; sourceTree = "<group>"; };
@@ -401,8 +398,6 @@
 		5249C5F11530D6DE000FF6AB /* AppletBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppletBase.h; sourceTree = "<group>"; };
 		5249C5F21530D6DE000FF6AB /* TestScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestScript.cpp; sourceTree = "<group>"; };
 		5249C5F31530D6DE000FF6AB /* TestScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestScript.h; sourceTree = "<group>"; };
-		5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeCondition.cpp; sourceTree = "<group>"; };
-		5249C5F51530D6DE000FF6AB /* TimeCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeCondition.h; sourceTree = "<group>"; };
 		5270CC4114C0A64100146D09 /* light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.frag; sourceTree = "<group>"; };
 		5270CC4214C0A64100146D09 /* poly.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = poly.frag; sourceTree = "<group>"; };
 		5270CC4314C0A64100146D09 /* poly.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = poly.vert; sourceTree = "<group>"; };
@@ -419,8 +414,6 @@
 		528AC51314C488E300C1B738 /* disk.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = disk.vert; sourceTree = "<group>"; };
 		528FADB015DB6E1C0023E9EA /* EventWatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventWatcher.cpp; sourceTree = "<group>"; };
 		528FADB115DB6E1C0023E9EA /* EventWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWatcher.h; sourceTree = "<group>"; };
-		52933D661546FBBD00767FFE /* FunctorCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctorCondition.h; sourceTree = "<group>"; };
-		5296FB41154D8A8D00FAA706 /* PollCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollCondition.h; sourceTree = "<group>"; };
 		52AF049F15235BF600EBAA15 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = SOURCE_ROOT; };
 		52AF04A9152362A100EBAA15 /* Fiber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fiber.h; sourceTree = "<group>"; usesTabs = 1; };
 		52AF04AB152362AB00EBAA15 /* Fiber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fiber.cpp; sourceTree = "<group>"; usesTabs = 1; };
@@ -796,7 +789,6 @@
 		5230571A14F1D95F0024D4A8 /* smp */ = {
 			isa = PBXGroup;
 			children = (
-				52081E4115571F69000EB42E /* PollStatus.h */,
 				5230571C14F1D95F0024D4A8 /* Daemon.h */,
 				5230571D14F1D95F0024D4A8 /* for_each.h */,
 				5230571F14F1D95F0024D4A8 /* Message.h */,
@@ -844,17 +836,12 @@
 				52B06095153728EE0006D4BD /* AppletInterface_Impl.h */,
 				5249C5F01530D6DE000FF6AB /* AppletBase.cpp */,
 				5249C5F11530D6DE000FF6AB /* AppletBase.h */,
-				5249C5E71530D6DE000FF6AB /* Condition.h */,
 				5249C5E81530D6DE000FF6AB /* Engine.cpp */,
 				5249C5E91530D6DE000FF6AB /* Engine.h */,
-				52933D661546FBBD00767FFE /* FunctorCondition.h */,
 				5249C5ED1530D6DE000FF6AB /* ObserverScript.cpp */,
 				5249C5EE1530D6DE000FF6AB /* ObserverScript.h */,
 				5249C5F21530D6DE000FF6AB /* TestScript.cpp */,
 				5249C5F31530D6DE000FF6AB /* TestScript.h */,
-				5249C5F41530D6DE000FF6AB /* TimeCondition.cpp */,
-				5249C5F51530D6DE000FF6AB /* TimeCondition.h */,
-				5296FB41154D8A8D00FAA706 /* PollCondition.h */,
 			);
 			path = applet;
 			sourceTree = "<group>";
@@ -1048,7 +1035,6 @@
 				5249C5F81530D6DE000FF6AB /* ObserverScript.cpp in Sources */,
 				5249C5F91530D6DE000FF6AB /* AppletBase.cpp in Sources */,
 				5249C5FA1530D6DE000FF6AB /* TestScript.cpp in Sources */,
-				5249C5FB1530D6DE000FF6AB /* TimeCondition.cpp in Sources */,
 				5201FF4E15D0FD9600529D05 /* main.cpp in Sources */,
 				528FADB215DB6E1C0023E9EA /* EventWatcher.cpp in Sources */,
 			);

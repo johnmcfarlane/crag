@@ -10,10 +10,11 @@
 
 #include "AppletBase.h"
 
-#include "TimeCondition.h"
+#include "AppletInterface_Impl.h"
 
 #include "smp/Fiber.h"
 
+#include "core/app.h"
 
 using namespace applet;
 
@@ -22,15 +23,9 @@ namespace
 {
 	// condition which never fails;
 	// used by Yield to return ASAP;
-	class NullCondition : public Condition
-	{
-		bool operator() (bool hurry)
-		{
-			return true;
-		}
-	};
-
-	NullCondition null_condition;
+	Condition null_condition([] (bool quit_flag) {
+		return true;
+	});
 }
 
 
@@ -80,16 +75,18 @@ void AppletBase::SetQuitFlag()
 // TODO: Should probably not be needed.
 void AppletBase::Yield()
 {
-	Wait(null_condition);
+	WaitFor(null_condition);
 }
 
 void AppletBase::Sleep(Time duration)
 {
-	TimeCondition time_condition(duration);
-	Wait(time_condition);
+	auto wake_position = duration + app::GetTime();
+	AppletInterface::WaitFor([wake_position] (bool quit_flag) {
+		return (app::GetTime() >= wake_position) | quit_flag;
+	});
 }
 
-void AppletBase::Wait(Condition & condition)
+void AppletBase::WaitFor(Condition & condition)
 {
 	ASSERT(_condition == nullptr);
 	_condition = & condition;

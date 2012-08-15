@@ -11,8 +11,6 @@
 
 #include "AppletInterface.h"
 
-#include "FunctorCondition.h"
-
 #include "smp/Message.h"
 
 
@@ -24,14 +22,14 @@ namespace applet
 	template <typename FUNCTOR>
 	void AppletInterface::WaitFor(FUNCTOR functor)
 	{
-		FunctorCondition<FUNCTOR> condition(functor);
-		Wait(condition);
+		Condition condition(functor);
+		WaitFor(condition);
 	}
 	
 	template <typename RESULT_TYPE>
 	void AppletInterface::WaitFor(smp::Future<RESULT_TYPE> const & future)
 	{
-		WaitFor([& future] () -> bool {
+		WaitFor([& future] (bool quit_flag) -> bool {
 			return future.IsComplete();
 		});
 		

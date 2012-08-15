@@ -54,8 +54,8 @@ void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 	SDL_Event event;
 	if (! _event_watcher.PopEvent(event))
 	{
-		applet_interface.WaitFor([this] () {
-			return ! _event_watcher.IsEmpty();
+		applet_interface.WaitFor([this] (bool quit_flag) {
+			return (! _event_watcher.IsEmpty()) | quit_flag;
 		});
 	}
 	else
