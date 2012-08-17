@@ -9,14 +9,16 @@
 
 #pragma once
 
+#include "core/function_ref.h"
+
+
 namespace applet
 {
 	// forward-declare
 	class AppletBase;
 
-	// condition on which to wake from a WaitFor call;
-	// input parameter is the quit flag.
-	typedef std::function<bool(bool)> Condition;
+	// condition on which to wake from a WaitFor call
+	typedef core::function_ref<bool(bool)> Condition;
 
 	// Interface to the Applet class;
 	// This interface is passed to a Applet's function object.

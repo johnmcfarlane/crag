@@ -23,9 +23,12 @@ namespace
 {
 	// condition which never fails;
 	// used by Yield to return ASAP;
-	Condition null_condition([] (bool quit_flag) {
+	bool null_condition_function(bool quit_flag)
+	{
 		return true;
-	});
+	};
+	
+	Condition null_condition(null_condition_function);
 }
 
 

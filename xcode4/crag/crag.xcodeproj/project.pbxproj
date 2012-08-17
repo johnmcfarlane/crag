@@ -169,6 +169,7 @@
 		52055D66132DE312000C6578 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		52055D67132DE312000C6578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		52081E05155645A6000EB42E /* Handle_Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle_Impl.h; sourceTree = "<group>"; };
+		521398E115DE3DB000DB2F0E /* function_ref.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = function_ref.h; sourceTree = "<group>"; };
 		5213C8D4132DE39A0021EA91 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		521B601314F222BE0049EBD1 /* ObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectBase.h; sourceTree = "<group>"; };
 		521B602314F22F080049EBD1 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -543,6 +544,7 @@
 				528FADB115DB6E1C0023E9EA /* EventWatcher.h */,
 				5230564114F1D95F0024D4A8 /* floatOps.h */,
 				5230564214F1D95F0024D4A8 /* for_each.h */,
+				521398E115DE3DB000DB2F0E /* function_ref.h */,
 				5230564314F1D95F0024D4A8 /* intOps.h */,
 				5230564414F1D95F0024D4A8 /* intrusive_list.h */,
 				5230564514F1D95F0024D4A8 /* memory.cpp */,
