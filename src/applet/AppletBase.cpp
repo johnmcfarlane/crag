@@ -38,7 +38,7 @@ namespace
 AppletBase::AppletBase(super::Init const & init)
 : super(init)
 , _fiber(ref(new smp::Fiber))
-, _condition(& null_condition)
+, _condition(null_condition)
 , _quit_flag(false)
 , _finished_flag(false)
 {
@@ -55,7 +55,7 @@ bool AppletBase::IsRunning() const
 	return ! _finished_flag;
 }
 
-Condition * AppletBase::GetCondition()
+const Condition & AppletBase::GetCondition() const
 {
 	return _condition;
 }
@@ -91,12 +91,12 @@ void AppletBase::Sleep(Time duration)
 
 void AppletBase::WaitFor(Condition & condition)
 {
-	ASSERT(_condition == nullptr);
-	_condition = & condition;
+	ASSERT(_condition == null_condition);
+	_condition = condition;
 	
 	_fiber.Yield();
 	
-	_condition = nullptr;
+	_condition = null_condition;
 }
 
 void AppletBase::OnLaunch(void * data)
@@ -104,13 +104,12 @@ void AppletBase::OnLaunch(void * data)
 	AppletBase & applet = ref(reinterpret_cast<AppletBase *>(data));
 	ASSERT(applet._finished_flag == false);
 	
-	ASSERT(applet._condition == & null_condition);
-	applet._condition = nullptr;
+	ASSERT(applet._condition == null_condition);
 	
 	applet(applet);
 	
 	ASSERT(applet._finished_flag == false);
 	applet._finished_flag = true;
 	
-	ASSERT(applet._condition == nullptr);
+	ASSERT(applet._condition == null_condition);
 }

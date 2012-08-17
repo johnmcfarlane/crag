@@ -134,7 +134,7 @@ bool Engine::ProcessTasks()
 		ASSERT(applet.IsRunning());
 
 		// and if applet's continue condition is met,
-		Condition & condition = ref(applet.GetCondition());
+		const Condition & condition = applet.GetCondition();
 		if (condition(_quit_flag))
 		{
 			// then continue!

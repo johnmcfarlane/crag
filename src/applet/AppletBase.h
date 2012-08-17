@@ -42,7 +42,7 @@ namespace applet
 		bool IsRunning() const;
 		
 		// the condition which must test true before the applet can continue
-		Condition * GetCondition();
+		const Condition & GetCondition() const;
 		
 		// continue execution
 		void Continue();
@@ -67,7 +67,7 @@ namespace applet
 		// variables
 		
 		smp::Fiber & _fiber;
-		Condition * _condition;
+		Condition _condition;
 		bool _quit_flag;
 		bool _finished_flag;
 	};

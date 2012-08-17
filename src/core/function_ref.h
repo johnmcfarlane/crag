@@ -29,12 +29,24 @@ namespace core
 
 	public:
 		// functions
-		template <typename FUNCTOR>
+		function_ref(function_ref const & rhs)
+		: _dispatch(rhs._dispatch)
+		, _functor_ptr(rhs._functor_ptr)
+		{
+		}
+		
+		template <typename FUNCTOR, typename std::enable_if<! std::is_same<FUNCTOR, function_ref>::value, FUNCTOR>::type* dummy = nullptr>
 		function_ref(FUNCTOR & functor)
 		: _dispatch(& dispatch<FUNCTOR>)
 		, _functor_ptr(reinterpret_cast<void *>(& functor))
 		{
 			static_assert(sizeof(& functor) == sizeof(& _functor_ptr), "implementation not supported");
+		}
+		
+		bool operator==(function_ref const & rhs) const
+		{
+			return _dispatch == rhs._dispatch
+				&& _functor_ptr == rhs._functor_ptr;
 		}
 		
 		RESULT operator()(PARAMETERS ... parameters) const
