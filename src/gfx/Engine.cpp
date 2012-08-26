@@ -112,7 +112,7 @@ namespace
 		ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 
 		Matrix44 gl_model_view_matrix = model_view_transformation.GetOpenGlMatrix();
-		glLoadMatrixd(gl_model_view_matrix.GetArray());	
+		LoadMatrix(gl_model_view_matrix);
 	}
 	
 	// Creates a frustum with sensible defaults for rendering a background.

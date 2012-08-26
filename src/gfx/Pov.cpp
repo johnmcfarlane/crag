@@ -11,6 +11,8 @@
 
 #include "Pov.h"
 
+#include "glHelpers.h"
+
 #include "geom/MatrixOps.h"
 #include "geom/Sphere.h"
 
@@ -44,7 +46,7 @@ void Frustum::SetProjectionMatrix() const
 	Matrix44 projection_matrix = CalcProjectionMatrix();
 	
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixd(projection_matrix.GetArray());
+	LoadMatrix(projection_matrix);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -53,7 +55,7 @@ void Frustum::SetProjectionMatrix() const
 // gfx::Pov member definitions
 
 Pov::Pov()
-: _transformation(Transformation::Matrix::Identity())
+: _transformation(Transformation::Matrix44::Identity())
 {
 }
 
