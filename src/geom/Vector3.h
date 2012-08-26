@@ -224,10 +224,10 @@ namespace geom
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 	}
 
-	
 	//////////////////////////////////////////////////////////////////
-	// specializations of Vector3
+	// Vector<T, 3> aliases
 	
-	typedef Vector <float, 3> Vector3f;
-	typedef Vector <double, 3> Vector3d;
+	typedef Vector<int, 3> Vector3i;
+	typedef Vector<float, 3> Vector3f;
+	typedef Vector<double, 3> Vector3d;
 }
