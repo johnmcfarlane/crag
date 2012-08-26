@@ -88,9 +88,9 @@ void Thruster::AddPuff(float thrust_factor)
 		// Calculate the thruster/puff direction.
 		Vector3 thruster_direction = axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
 		Scalar thruster_max = Length(thruster_direction);
-		thruster_direction *= (1. / thruster_max);
+		thruster_direction *= Scalar(1) / thruster_max;
 		
-		Vector3 puff_direction = (thruster_direction * (1. - puff_drift_coefficient)) + (Vector3(g1, g2, g3) * puff_drift_coefficient);
+		Vector3 puff_direction = (thruster_direction * (Scalar(1) - puff_drift_coefficient)) + (Vector3(g1, g2, g3) * puff_drift_coefficient);
 		Normalize(puff_direction);
 
 		Scalar thrust = thruster_max * thrust_factor;
