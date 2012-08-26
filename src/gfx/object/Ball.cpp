@@ -50,7 +50,7 @@ gfx::Transformation const & Ball::Transform(gfx::Engine & renderer, gfx::Transfo
 bool Ball::GetRenderRange(RenderRange & range) const 
 { 
 	Transformation const & transformation = GetModelViewTransformation();
-	Transformation::Matrix const & transformation_matrix = transformation.GetMatrix();
+	Transformation::Matrix44 const & transformation_matrix = transformation.GetMatrix();
 	Scalar depth = transformation_matrix[1][3];
 
 	Scalar radius = transformation.GetScale().x;

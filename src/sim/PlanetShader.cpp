@@ -277,7 +277,7 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedr
 	// and clip that variance based on the hard limits of the planet.
 	// Actually, clip it to half of that to make it look less like a hard limit.
 	// And do the clipping based on how far the variance /might/ go.
-	Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / static_cast<Scalar>(1 << params.depth);
+	Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / Scalar(1 << params.depth);
 	
 	Scalar lod_variation_cycler = sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
 	altitude_variance_coefficient *= lod_variation_cycler;

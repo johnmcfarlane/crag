@@ -70,7 +70,7 @@ gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transfo
 	Time time = renderer.GetScene().GetTime();
 	Time age = CalculateAge(time);
 	
-	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), _radius);
+	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
 	return disk_quad.Transform(scale, scratch);

@@ -240,7 +240,7 @@ void TestScript::SpawnShapes(int shape_num)
 	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
 	sim::Vector3 camera_pos = camera_transformation.GetTranslation();
 	sim::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
-	sim::Vector3 spawn_pos = camera_pos + camera_forward * 5.0;
+	sim::Vector3 spawn_pos = camera_pos + camera_forward * sim::Scalar(5.0);
 	
 	if (cleanup_shapes)
 	{

@@ -228,9 +228,9 @@ void SphereProgram::InitUniforms()
 Scalar SphereProgram::CalculateRadius(geom::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
-	ASSERT(NearEqual(size.x / size.y, 1, 0.0001));
-	ASSERT(NearEqual(size.y / size.z, 1, 0.0001));
-	ASSERT(NearEqual(size.z / size.x, 1, 0.0001));
+	ASSERT(NearEqual(size.x / size.y, 1, Scalar(0.0001)));
+	ASSERT(NearEqual(size.y / size.z, 1, Scalar(0.0001)));
+	ASSERT(NearEqual(size.z / size.x, 1, Scalar(0.0001)));
 	Scalar radius = size.x;
 	return radius;
 }

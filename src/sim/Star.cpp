@@ -38,8 +38,8 @@ sim::Star::~Star()
 void sim::Star::Tick(sim::Engine & simulation_engine)
 {
 	Time t = simulation_engine.GetTime();
-	Scalar angle = static_cast<Scalar>(t * (2. * PI) / _year) + 3.6;
-	position = Vector3(- sin(angle) * _radius, - cos(angle) * _radius, static_cast<Scalar>(0));
+	Scalar angle = Scalar(t * (2. * PI) / _year) + 3.6;
+	position = Vector3(- std::sin(angle) * _radius, - std::cos(angle) * _radius, Scalar(0));
 }
 
 void sim::Star::UpdateModels() const

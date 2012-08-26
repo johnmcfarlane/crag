@@ -35,10 +35,10 @@ CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 	camera_ray = GetInvalidRay();
 	
 	// Initialize all cached values used by the functor. Try and maintain a high degree of precision. 
-	min_recalc_distance_squared = static_cast<Scalar>(Square(node_score_recalc_coefficient * camera_near));
+	min_recalc_distance_squared = Scalar(Square(node_score_recalc_coefficient * camera_near));
 	double min_score_distance_squared_precise = Square(node_score_score_coefficient * camera_near);
-	min_score_distance_squared = static_cast<Scalar>(min_score_distance_squared_precise);
-	inverse_min_score_distance_squared = static_cast<Scalar>(1. / min_score_distance_squared_precise);
+	min_score_distance_squared = Scalar(min_score_distance_squared_precise);
+	inverse_min_score_distance_squared = Scalar(1. / min_score_distance_squared_precise);
 }
 
 Ray3 CalculateNodeScoreFunctor::GetInvalidRay()

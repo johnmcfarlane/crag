@@ -173,5 +173,5 @@ void sim::MoonShader::GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moo
 	// Push it to moon max radius and then out a [non]random amount up until crater.radius in distance.
 	Scalar crater_elevation_coefficient = .85;
 	Scalar desired_crater_center = moon_radius + crater_elevation_coefficient * crater.radius;
-	crater.center *= desired_crater_center / sqrt(crater_center_squared);
+	crater.center *= desired_crater_center / std::sqrt(crater_center_squared);
 }

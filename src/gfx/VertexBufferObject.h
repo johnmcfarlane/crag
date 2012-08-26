@@ -87,7 +87,7 @@ namespace gfx
 		GL_CALL(glVertexPointer(SIZE, GL_FLOAT, sizeof(VERTEX), & (null_vert->* MEMBER)));
 	}
 	
-	template <typename VERTEX, geom::Vector<float, 3> VERTEX::* MEMBER>
+	template <typename VERTEX, geom::Vector3f VERTEX::* MEMBER>
 	void NormalPointer()
 	{
 		VERTEX * null_vert = nullptr;

@@ -38,7 +38,7 @@ void profile::Meter::Submit (Scalar sample)
 		ASSERT(change_coefficient > 0 && change_coefficient < 1);
 		if (store >= 0)
 		{
-			store = store * (static_cast<Scalar>(1) - change_coefficient) + sample * change_coefficient;
+			store = store * (Scalar(1) - change_coefficient) + sample * change_coefficient;
 		}
 		else
 		{

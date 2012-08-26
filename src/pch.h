@@ -133,20 +133,5 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// ODE
-
-// Crag currently requires ODE to be built with double precision
-// and for dDOUBLE to be defined.
-
-#if defined(dSINGLE)
-#error dSINGLE defined; ODE needs to be double-precision.
-#endif
-
-#if ! defined(dDOUBLE)
-#error dDOUBLE not defined; ODE needs to be double-precision.
-#endif
-
-
-//////////////////////////////////////////////////////////////////////
 
 #endif // defined(__cplusplus)

@@ -38,7 +38,7 @@ namespace
 			entity.GetGravitationalForce(pos, force);
 		}
 		
-		return force * static_cast<Scalar>(mass) * static_cast<Scalar>(gravitational_force);
+		return force * Scalar(mass) * Scalar(gravitational_force);
 	}
 
 	
@@ -48,7 +48,7 @@ namespace
 		Scalar mass = body.GetMass();
 		
 		Vector3 gravitational_force_per_second = Weight(entities, position, mass);
-		Vector3 gravity = gravitational_force_per_second / delta;
+		Vector3 gravity = gravitational_force_per_second / Scalar(delta);
 		
 		body.AddForce(gravity);
 	}

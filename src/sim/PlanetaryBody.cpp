@@ -97,7 +97,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	// Get vital geometric information about the cuboid.
 	Vector3 position = box.GetPosition();
 	Vector3 dimensions = box.GetDimensions();
-	Vector3 extents = dimensions * .5;
+	Vector3 extents = dimensions * Scalar(.5f);
 	sim::Matrix33 const & rotation = box.GetRotation();
 	
 	// Initialise the PointCloud.

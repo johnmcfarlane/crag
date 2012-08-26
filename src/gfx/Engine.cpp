@@ -171,7 +171,7 @@ namespace
 		}
 
 		// Bind the near plane to the default value,
-		frustum_depth_range[0] = std::max(frustum_depth_range[0], (double)camera_near);
+		frustum_depth_range[0] = std::max(frustum_depth_range[0], (Scalar)camera_near);
 		
 		if (frustum_depth_range[0] >= frustum_depth_range[1])
 		{

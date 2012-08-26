@@ -191,7 +191,7 @@ void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 	
 	Vector3 position1 = body1.GetPosition();
 	Vector3 position2 = body2.GetPosition();
-	Vector3 center = (position1 + position2) * .5;
+	Vector3 center = (position1 + position2) * Scalar(.5);
 	
 	switch (dJointGetType(joint_id))
 	{

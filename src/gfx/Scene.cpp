@@ -34,7 +34,7 @@ namespace
 
 Scene::Scene(Engine & engine)
 : _time(-1)
-, _root(smp::ObjectBaseInit<Engine>(engine, Uid::Create()), Transformation::Matrix::Identity())
+, _root(smp::ObjectBaseInit<Engine>(engine, Uid::Create()), Transformation::Matrix44::Identity())
 {
 	Frustum & frustum = pov.GetFrustum();
 
@@ -228,7 +228,7 @@ void Scene::SetResolution(geom::Vector2i const & r)
 	pov.GetFrustum().resolution = r;
 }
 
-void Scene::SetCameraTransformation(sim::Transformation const & transformation)
+void Scene::SetCameraTransformation(gfx::Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
 	_root.SetTransformation(transformation.GetInverse());

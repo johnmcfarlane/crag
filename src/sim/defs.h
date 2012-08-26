@@ -36,14 +36,8 @@ namespace sim
 	// daemon type
 	typedef smp::Daemon<Engine> Daemon;
 
-	// dSINGLE and dDOUBLE are mutually excludive macros required by ODE.
-#if defined(dSINGLE)
-	typedef float Scalar;
-#endif
-
-#if defined(dDOUBLE)
+	// precision used by simulation
 	typedef double Scalar;
-#endif
 	
 	typedef geom::Vector<Scalar, 2> Vector2;
 	typedef geom::Vector<Scalar, 3> Vector3;

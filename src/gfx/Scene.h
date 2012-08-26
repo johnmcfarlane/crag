@@ -16,9 +16,6 @@
 #include "object/Light.h"
 #include "Pov.h"
 
-#include "sim/defs.h"
-
-
 namespace gfx
 {
 	// forward-declarations
@@ -56,7 +53,7 @@ namespace gfx
 		Light::List & GetLightList();
 		
 		void SetResolution(geom::Vector2i const & r);
-		void SetCameraTransformation(sim::Transformation const & transformation);
+		void SetCameraTransformation(gfx::Transformation const & transformation);
 		
 		Pov & GetPov();
 		Pov const & GetPov() const;

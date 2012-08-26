@@ -19,7 +19,7 @@ using namespace gfx;
 
 LeafNode::LeafNode(Init const & init, Layer::type layer)
 : Object(init, leaf)
-, _model_view_transformation(Transformation::Matrix::Identity())
+, _model_view_transformation(Transformation::Matrix44::Identity())
 , _render_depth(0)
 , _layer(layer)
 , _program(nullptr)
@@ -41,7 +41,7 @@ void LeafNode::SetModelViewTransformation(Transformation const & model_view_tran
 {
 	_model_view_transformation = model_view_transformation;
 	
-	Transformation::Matrix const & matrix = _model_view_transformation.GetMatrix();
+	Transformation::Matrix44 const & matrix = _model_view_transformation.GetMatrix();
 	_render_depth = matrix[1][3];
 
 	VerifyObject(* this);

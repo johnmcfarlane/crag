@@ -25,9 +25,10 @@ namespace geom
 		// types
 		
 		typedef S Scalar;
-		typedef Matrix<Scalar, 3, 3> Rotation;
-		typedef Matrix<Scalar, 4, 4> Matrix;
-		typedef Vector<Scalar, 3> Vector;
+		typedef Matrix<Scalar, 3, 3> Matrix33;
+		typedef Matrix<Scalar, 4, 4> Matrix44;
+		typedef Vector<Scalar, 3> Vector3;
+		typedef Vector<Scalar, 4> Vector4;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions 
@@ -42,7 +43,8 @@ namespace geom
 		{
 		}
 
-		Transformation(Vector const & translation)
+		template <typename RHS_S>
+		Transformation(geom::Vector<RHS_S, 3> const & translation)
 		: _matrix(1, 0, 0, translation.x,
 				  0, 1, 0, translation.y, 
 				  0, 0, 1, translation.z,
@@ -50,7 +52,8 @@ namespace geom
 		{
 		}
 		
-		Transformation(Vector const & translation, Rotation const & rotation)
+		template <typename RHS_S>
+		Transformation(geom::Vector<RHS_S, 3> const & translation, geom::Matrix<RHS_S, 3, 3> const & rotation)
 		: _matrix(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
 				  rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
 				  rotation[2][0], rotation[2][1], rotation[2][2], translation[2],
@@ -58,7 +61,8 @@ namespace geom
 		{
 		}
 		
-		Transformation(Vector const & translation, Rotation const & rotation, Scalar scale)
+		template <typename RHS_S>
+		Transformation(geom::Vector<RHS_S, 3> const & translation, geom::Matrix<RHS_S, 3, 3> const & rotation, RHS_S scale)
 		: _matrix(rotation[0][0] * scale, rotation[0][1] * scale, rotation[0][2] * scale, translation[0],
 				  rotation[1][0] * scale, rotation[1][1] * scale, rotation[1][2] * scale, translation[1],
 				  rotation[2][0] * scale, rotation[2][1] * scale, rotation[2][2] * scale, translation[2],
@@ -66,7 +70,8 @@ namespace geom
 		{
 		}
 		
-		Transformation(Vector const & translation, Rotation const & rotation, Vector const & scale)
+		template <typename RHS_S>
+		Transformation(geom::Vector<RHS_S, 3> const & translation, geom::Matrix<RHS_S, 3, 3> const & rotation, geom::Vector<RHS_S, 3> const & scale)
 		: _matrix(rotation[0][0] * scale[0], rotation[0][1] * scale[1], rotation[0][2] * scale[2], translation[0],
 				  rotation[1][0] * scale[0], rotation[1][1] * scale[1], rotation[1][2] * scale[2], translation[1],
 				  rotation[2][0] * scale[0], rotation[2][1] * scale[1], rotation[2][2] * scale[2], translation[2],
@@ -74,7 +79,8 @@ namespace geom
 		{
 		}
 		
-		Transformation(Matrix const & matrix)
+		template <typename RHS_S>
+		Transformation(geom::Matrix<RHS_S, 4, 4> const & matrix)
 		: _matrix(matrix)
 		{
 		}
@@ -100,49 +106,49 @@ namespace geom
 			return lhs._matrix != rhs._matrix;
 		}
 		
-		Matrix & GetMatrix()
+		Matrix44 & GetMatrix()
 		{
 			return _matrix;
 		}
 		
-		Matrix const & GetMatrix() const
+		Matrix44 const & GetMatrix() const
 		{
 			return _matrix;
 		}
 		
-		Matrix GetOpenGlMatrix() const
+		Matrix44 GetOpenGlMatrix() const
 		{
 			return Transposition(_matrix) * _internal_to_open_gl;
 		}
 
-		Matrix GetInverse() const
+		Matrix44 GetInverse() const
 		{
 			return Inverse(_matrix);
 		}
 		
-		Vector GetTranslation() const
+		Vector3 GetTranslation() const
 		{
-			return Vector(_matrix[0][3], _matrix[1][3], _matrix[2][3]);
+			return Vector3(_matrix[0][3], _matrix[1][3], _matrix[2][3]);
 		}
 		
-		Rotation const & GetRotation() const
+		Matrix33 const & GetRotation() const
 		{
-			return reinterpret_cast<Rotation const &>(* this);
+			return reinterpret_cast<Matrix33 const &>(* this);
 		}
 		
-		Vector GetScale() const
+		Vector3 GetScale() const
 		{
-			Rotation const & rotation = GetRotation();
-			return Vector(Length(rotation.GetColumn(0)), 
+			Matrix33 const & rotation = GetRotation();
+			return Vector3(Length(rotation.GetColumn(0)),
 						  Length(rotation.GetColumn(1)), 
 						  Length(rotation.GetColumn(2)));
 		}
 		
-		Vector Transform(Vector const & point) const
+		Vector3 Transform(Vector3 const & point) const
 		{
-			geom::Vector<Scalar, 4> v(point.x, point.y, point.z, Scalar(1));
+			Vector4 v(point.x, point.y, point.z, Scalar(1));
 			v = _matrix * v;
-			return Vector(v.x, v.y, v.z);
+			return Vector3(v.x, v.y, v.z);
 		}
 		
 	#if defined(VERIFY)
@@ -164,13 +170,13 @@ namespace geom
 
 	private:
 		// variables
-		Matrix _matrix;
+		Matrix44 _matrix;
 		
-		static Matrix const _internal_to_open_gl;
+		static Matrix44 const _internal_to_open_gl;
 	};
 
 	template <typename S>
-	typename Transformation<S>::Matrix const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0, 
+	typename Transformation<S>::Matrix44 const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0,
 																0, 0, -1, 0, 
 																0, 1,  0, 0, 
 																0, 0,  0, 1);
