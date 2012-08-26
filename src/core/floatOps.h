@@ -158,7 +158,7 @@ inline double FastInvSqrt (double d)
 template<typename T> T FastInvSqrt(T a)
 {
 	ASSERT(a != 0);
-	return Inv(sqrt(a));
+	return Inverse(sqrt(a));
 }
 
 #endif
