@@ -52,9 +52,10 @@ namespace geom
 			rows[2] = row2;
 		}
 		
-		Matrix(S m00, S m01, S m02, 
-			   S m10, S m11, S m12, 
-			   S m20, S m21, S m22) 
+		template <typename RHS_S>
+		Matrix(RHS_S m00, RHS_S m01, RHS_S m02,
+			   RHS_S m10, RHS_S m11, RHS_S m12,
+			   RHS_S m20, RHS_S m21, RHS_S m22) 
 		{
 			rows[0][0] = m00;
 			rows[0][1] = m01; 
