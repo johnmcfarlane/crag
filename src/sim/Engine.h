@@ -22,6 +22,10 @@ namespace physics
 	class Engine;
 }
 
+namespace form
+{
+	class Formation;
+}
 
 namespace sim
 {
@@ -64,6 +68,12 @@ namespace sim
 		void OnAddObject(Entity & entity);
 		void OnRemoveObject(Uid uid);
 		void OnAttachEntities(Uid uid1, Uid uid2);
+		
+		void AddFormation(form::Formation& formation);
+		void RemoveFormation(form::Formation& formation);
+		
+		void SetCamera(Ray3 const & camera_ray);
+		void SetOrigin(Vector3 const & origin);
 		
 		void OnTogglePause();
 		void OnToggleGravity();

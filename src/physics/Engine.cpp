@@ -43,7 +43,7 @@ Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, _deferred_collisions(4096)
+, _formation_scene(ref(new form::Scene(512, 512)))
 , _contacts(65536)
 {
 	dInitODE2(0);
@@ -51,10 +51,21 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	delete & _formation_scene;
 	dSpaceDestroy(space);
 	dWorldDestroy(world);
 	dJointGroupDestroy(contact_joints);
 	dCloseODE();
+}
+
+form::Scene & Engine::GetScene()
+{
+	return _formation_scene;
+}
+
+form::Scene const & Engine::GetScene() const
+{
+	return _formation_scene;
 }
 
 dBodyID Engine::CreateBody() const
@@ -87,6 +98,8 @@ void Engine::Attach(Body const & body1, Body const & body2)
 
 void Engine::Tick(double delta_time)
 {
+	_formation_scene.Tick();
+	
 	if (collisions)
 	{
 		// Detect / represent all collisions.
@@ -117,8 +130,6 @@ void Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
-	
-	ProcessDeferredCollisions();	
 }
 
 void Engine::CreateJoints()
@@ -138,22 +149,6 @@ void Engine::CreateJoints()
 		dJointID c = dJointCreateContact (world, contact_joints, & contact);
 		dJointAttach (c, body1, body2);
 	}
-}
-
-void Engine::ProcessDeferredCollisions()
-{
-	if (_deferred_collisions.empty())
-	{
-		return;
-	}
-	
-	form::Engine & formation_engine = form::Daemon::Ref();
-	
-	formation_engine.LockTree();
-	smp::scheduler::Complete(_deferred_collisions, 1);
-	formation_engine.UnlockTree();
-	
-	_deferred_collisions.clear();
 }
 
 void Engine::DestroyJoints()

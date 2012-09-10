@@ -40,6 +40,11 @@ IntersectionFunctor::IntersectionFunctor(Engine & physics_engine, dGeomID object
 	_contact.geom.g2 = planet_geom;
 }
 
+Engine const & IntersectionFunctor::GetEngine() const
+{
+	return _engine;
+}
+
 void IntersectionFunctor::operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth)
 {
 	_contact.geom.pos[0] = pos.x;

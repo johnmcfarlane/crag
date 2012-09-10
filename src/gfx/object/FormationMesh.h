@@ -30,7 +30,7 @@ namespace gfx
 		
 	public:
 		// functions
-		FormationMesh(Init const & init, form::RegulatorScriptHandle const & regulator_handle);
+		FormationMesh(Init const & init, size_t max_num_quaterne, form::RegulatorScriptHandle const & regulator_handle);
 		~FormationMesh();
 		
 #if defined(VERIFY)

@@ -45,18 +45,21 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::FormationMesh member definitions
 
-FormationMesh::FormationMesh(LeafNode::Init const & init, smp::Handle<form::RegulatorScript> const & regulator_handle)
+FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quaterne, smp::Handle<form::RegulatorScript> const & regulator_handle)
 : LeafNode(init, Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
+	size_t max_num_verts = max_num_quaterne * form::NodeBuffer::num_verts_per_quaterna;
+	size_t max_num_indices = max_num_quaterne * form::NodeBuffer::num_indices_per_quaterna;
+	
 	for (int index = 0; index < 2; ++ index)
 	{
 		// initialize mesh buffer
 		MboDoubleBuffer::value_type & mbo = mbo_buffers[index];
 		mbo.Init();
 		mbo.Bind();
-		mbo.Resize(form::NodeBuffer::max_num_verts, form::NodeBuffer::max_num_indices);
+		mbo.Resize(max_num_verts, max_num_indices);
 		mbo.Unbind();
 	}
 	

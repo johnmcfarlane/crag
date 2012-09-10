@@ -53,11 +53,12 @@ form::Engine::Engine()
 , _regulator_enabled(true)
 , _recommended_num_quaterne(0)
 , _camera_pos(sim::Ray3::Zero())
+, scenes(min_num_quaterne, max_num_quaterne)
 , _has_reset_request(false)
 {
+	int max_num_verts = max_num_quaterne * form::NodeBuffer::num_nodes_per_quaterna;
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		int max_num_verts = form::NodeBuffer::max_num_verts;
 		int max_num_tris = static_cast<int>(max_num_verts * 1.25f);
 		Mesh & mesh = ref(new Mesh (max_num_verts, max_num_tris));
 		_meshes.push_back(mesh);
@@ -157,7 +158,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	_regulator_handle.Create();
 	
 	// register with the renderer
-	_mesh.Create(_regulator_handle);
+	_mesh.Create(max_num_quaterne, _regulator_handle);
 	auto mesh_handle = _mesh;
 	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
 		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());
@@ -180,27 +181,6 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	// un-register with the renderer
 	_mesh.Destroy();
-}
-
-// lock visible node tree for reading
-void form::Engine::LockTree()
-{
-	Scene const & scene = GetVisibleScene();
-	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.ReadLockTree();
-}
-
-// unlock visible node tree for reading
-void form::Engine::UnlockTree()
-{
-	Scene const & scene = GetVisibleScene();
-	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.ReadUnlockTree();
-}
-
-form::Scene const & form::Engine::OnTreeQuery() const
-{
-	return GetVisibleScene();
 }
 
 // The tick function of the scene thread. 
@@ -255,7 +235,7 @@ void form::Engine::AdjustNumQuaterna()
 	}
 	
 	// Calculate the regulator output.
-	Clamp(_recommended_num_quaterne, int(NodeBuffer::min_num_quaterne), int(NodeBuffer::max_num_quaterne));
+	Clamp(_recommended_num_quaterne, int(min_num_quaterne), int(max_num_quaterne));
 	
 	// Apply the regulator output.
 	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
@@ -350,13 +330,7 @@ void form::Engine::EndReset()
 	
 	is_in_reset_mode = false;
 	
-	Scene const & scene = GetVisibleScene();
-	NodeBuffer const & node_buffer = scene.GetNodeBuffer();
-	node_buffer.WriteLockTree();
-
 	scenes.flip();
-
-	node_buffer.WriteUnlockTree();
 
 	VerifyObject(* this);
 }

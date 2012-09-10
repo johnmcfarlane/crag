@@ -80,12 +80,6 @@ namespace smp
 			ASSERT(_engine == nullptr);
 		}
 		
-		// Usually represents failure to completely encapsulate the engine.
-		static Engine & Ref()
-		{
-			return ref(singleton->_engine);
-		}
-		
 		// specifically, the thread is still in the engine's Run function
 		bool IsRunning() const
 		{

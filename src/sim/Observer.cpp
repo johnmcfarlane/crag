@@ -9,6 +9,7 @@
 
 #include "pch.h"
 
+#include "axes.h"
 #include "EntityFunctions.h"
 #include "Observer.h"
 #include "Engine.h"
@@ -140,6 +141,11 @@ void Observer::UpdateModels() const
 		Transformation transformation (position, rotation);
 		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 			engine.OnSetCamera(transformation);
+		});
+		
+		Ray3 camera_ray = axes::GetCameraRay(transformation);
+		sim::Daemon::Call([camera_ray] (sim::Engine & engine) {
+			engine.SetCamera(camera_ray);
 		});
 	}
 

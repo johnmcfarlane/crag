@@ -344,6 +344,9 @@ void TestScript::UpdateOrigin()
 		form::Daemon::Call([camera_pos] (form::Engine & engine) {
 			engine.SetOrigin(camera_pos);
 		});
+		sim::Daemon::Call([camera_pos] (sim::Engine & engine) {
+			engine.SetOrigin(camera_pos);
+		});
 		_origin = camera_pos;
 	}
 }

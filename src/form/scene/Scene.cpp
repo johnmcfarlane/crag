@@ -22,24 +22,25 @@
 /////////////////////////////////////////////////////////////////
 // form::Scene
 
-form::Scene::Scene()
-: node_buffer(new NodeBuffer)
+form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
+: _node_buffer(ref(new NodeBuffer(min_num_quaterne, max_num_quaterne)))
 , camera_ray(sim::Ray3::Zero())
 , camera_ray_relative(sim::Ray3::Zero())
 , origin(sim::Vector3::Zero())
 {
+	_node_buffer.SetNumQuaternaUsedTarget(min_num_quaterne);
 }
 
 form::Scene::~Scene()
 {
 	Clear();
-	delete node_buffer;
+	delete & _node_buffer;
 }
 
 #if defined(VERIFY)
 void form::Scene::Verify() const
 {
-	VerifyObject(* node_buffer);
+	VerifyObject(_node_buffer);
 }
 
 /*void form::SceneVerifyTrue(Mesh const & m) const
@@ -68,12 +69,12 @@ void form::Scene::Clear()
 
 form::NodeBuffer & form::Scene::GetNodeBuffer()
 {
-	return ref(node_buffer);
+	return _node_buffer;
 }
 
 form::NodeBuffer const & form::Scene::GetNodeBuffer() const
 {
-	return ref(node_buffer);
+	return _node_buffer;
 }
 
 sim::Ray3 const & form::Scene::GetCameraRay() const
@@ -139,17 +140,17 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 void form::Scene::Tick()
 {
 	form::Ray3 form_camera_ray(camera_ray_relative.position, camera_ray_relative.direction);
-	node_buffer->Tick(form_camera_ray);
+	_node_buffer.Tick(form_camera_ray);
 	TickModels();
 }
 
 void form::Scene::GenerateMesh(Mesh & mesh) const
 {
-	node_buffer->GenerateMesh(mesh);
+	_node_buffer.GenerateMesh(mesh);
 	
 	MeshProperties & properties = mesh.GetProperties();
 	properties._origin = origin;
-	properties._num_quaterne = node_buffer->GetNumQuaternaUsed();
+	properties._num_quaterne = _node_buffer.GetNumQuaternaUsed();
 }
 
 // Currently just updates the formation_map contents.
@@ -180,7 +181,7 @@ void form::Scene::ResetFormations()
 		DeinitPolyhedron(pair);
 	}
 	
-	node_buffer->OnReset();
+	_node_buffer.OnReset();
 
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
@@ -196,7 +197,7 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 	if (root_node.IsExpandable()) 
 	{
 		VerifyObject(* this);
-		node_buffer->ExpandNode(root_node);
+		_node_buffer.ExpandNode(root_node);
 		VerifyObject(* this);
 	}
 }
@@ -206,7 +207,7 @@ void form::Scene::InitPolyhedron(FormationPair & pair)
 {
 	Polyhedron & polyhedron = pair.second;
 
-	PointBuffer & points = node_buffer->GetPoints();
+	PointBuffer & points = _node_buffer.GetPoints();
 	
 	polyhedron.Init(origin, points);
 }
@@ -218,8 +219,8 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron._root_node;
 	
-	node_buffer->CollapseNodes(root_node);
+	_node_buffer.CollapseNodes(root_node);
 	
 	// Continue deinitialization somewhere a bit calmer.
-	polyhedron.Deinit(node_buffer->GetPoints());
+	polyhedron.Deinit(_node_buffer.GetPoints());
 }

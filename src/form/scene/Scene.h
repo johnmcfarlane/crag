@@ -38,7 +38,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// public interface
 		
-		Scene();
+		Scene(size_t min_num_quaterne, size_t max_num_quaterne);
 		~Scene();
 		
 #if defined(VERIFY)
@@ -81,7 +81,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Attributes
 		
-		NodeBuffer * node_buffer;
+		NodeBuffer & _node_buffer;
 		
 		FormationMap formation_map;		// The internal record of formations.
 		sim::Ray3 camera_ray;			// The observer position/direction in universal coordinates.

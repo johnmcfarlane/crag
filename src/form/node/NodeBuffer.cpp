@@ -1,3 +1,4 @@
+#include "core/app.h"
 //
 //  NodeBuffer.cpp
 //  crag
@@ -43,11 +44,6 @@ namespace
 		form::Node * parent = q.nodes[0].GetParent();
 		q.parent_score = (parent != nullptr) ? parent->score : -1;
 	}
-		
-	bool QuaternaSortUsed(form::Quaterna const & lhs, form::Quaterna const & rhs)
-	{
-		return lhs.parent_score > rhs.parent_score;
-	}
 	
 	bool QuaternaSortUnused(form::Quaterna const & lhs, form::Quaterna const & rhs)
 	{
@@ -60,20 +56,20 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // NodeBuffer functions
 
-form::NodeBuffer::NodeBuffer()
-: nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
+form::NodeBuffer::NodeBuffer(size_t min_num_quaterne, size_t max_num_quaterne)
+: nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_quaterne * num_nodes_per_quaterna, 128)))
 , nodes_used_end(nodes)
-, nodes_end(nodes + max_num_nodes)
+, nodes_end(nodes + max_num_quaterne * num_nodes_per_quaterna)
 , quaterne(new Quaterna [max_num_quaterne])
 , quaterne_sorted_end(quaterne)
 , quaterne_used_end(quaterne)
 , quaterne_used_end_target(quaterne + std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
 , quaterne_end(quaterne + max_num_quaterne)
-, point_buffer(max_num_verts)
+, point_buffer(max_num_quaterne * num_verts_per_quaterna)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
-, _expandable_nodes(max_num_nodes)
+, _expandable_nodes(max_num_quaterne * num_nodes_per_quaterna)
 {
-	ZeroArray(nodes, max_num_nodes);
+	ZeroArray(nodes, max_num_quaterne * num_nodes_per_quaterna);
 
 	InitQuaterna(quaterne_end);
 
@@ -117,7 +113,7 @@ void form::NodeBuffer::Verify() const
 	VerifyTrue(quaterne_end >= quaterne_used_end_target);
 
 	int num_nodes_used = nodes_used_end - nodes;
-	VerifyTrue((num_nodes_used % portion_num_nodes) == 0);
+	VerifyTrue((num_nodes_used % num_nodes_per_quaterna) == 0);
 	
 	int num_quaterne_used = quaterne_used_end - quaterne;
 	
@@ -239,32 +235,10 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 	}
 	else if (new_quaterne_used_end < quaterne_used_end)
 	{
-		WriteLockTree();
 		DecreaseNodes(new_quaterne_used_end);
-		WriteUnlockTree();
 	}
 	
 	VerifyObject(* this);
-}
-
-void form::NodeBuffer::ReadLockTree() const
-{
-	tree_mutex.ReadLock();
-}
-
-void form::NodeBuffer::ReadUnlockTree() const
-{
-	tree_mutex.ReadUnlock();
-}
-
-void form::NodeBuffer::WriteLockTree() const
-{
-	tree_mutex.WriteLock();
-}
-
-void form::NodeBuffer::WriteUnlockTree() const
-{
-	tree_mutex.WriteUnlock();
 }
 
 // This is the main tick function for all things 'nodey'.
@@ -272,6 +246,9 @@ void form::NodeBuffer::WriteUnlockTree() const
 void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
 	VerifyObject (* this);
+#if ! defined(NDEBUG)
+	auto t1 = app::GetTime();
+#endif
 
 	node_score_functor.SetCameraRay(new_camera_ray);
 
@@ -282,9 +259,18 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 		UpdateNodeScores();
 		cached_node_score_ray = new_camera_ray;
 	}
+#if ! defined(NDEBUG)
+	auto t2 = app::GetTime();
+#endif
 	
 	UpdateNodes();
 	
+#if 0
+	DEBUG_MESSAGE("%3d %3d", int(1000. * (t2 - t1)), int(1000. * (app::GetTime() - t2)));
+#else
+	if (t1 > t2)
+		exit(0);
+#endif
 	VerifyObject(* this);
 }
 
@@ -384,9 +370,184 @@ void form::NodeBuffer::SortQuaterna()
 		VerifyObject(* this);
 		return;
 	}
+
+	typedef geom::Vector<Quaterna *, 2> QuaternaRange;
+
+#if 0
+	QuaternaRange unsorted_range =
+	{
+		quaterne,
+		quaterne_used_end - 1
+	};
 	
+	int c = 1;
+	while (unsorted_range.x < unsorted_range.y)
+	{
+		QuaternaRange next_unsorted_range =
+		{
+			quaterne_used_end,
+			quaterne
+		};
+		
+		for (auto i = unsorted_range.x; i != unsorted_range.y; ++ i)
+		{
+			if (i[0].parent_score < i[1].parent_score)
+			{
+				std::swap(i[0], i[1]);
+				
+				if (i < next_unsorted_range.x)
+				{
+					next_unsorted_range.x = i - 1;
+					
+					if (next_unsorted_range.x < quaterne)
+					{
+						next_unsorted_range.x = quaterne;
+					}
+				}
+				
+				if (i > next_unsorted_range.y)
+				{
+					next_unsorted_range.y = i + 1;
+				}
+			}
+		}
+		
+		if ((-- c) == 0)
+		{
+			break;
+		}
+		
+		unsorted_range = next_unsorted_range;
+	}
+#elif 0
+	QuaternaRange unsorted_range =
+	{
+		quaterne,
+		quaterne_used_end - 1
+	};
+	//int c = 0;
+	
+	for (auto i = quaterne; i != quaterne_used_end; ++ i)
+	{
+		//DEBUG_MESSAGE("%d:%f", i - quaterne, i->parent_score);
+	}
+	
+	while (unsorted_range.x < unsorted_range.y)
+	{
+		QuaternaRange next_unsorted_range = unsorted_range;
+		Quaterna * i = unsorted_range.x;
+		
+		for (; i < unsorted_range.y; ++ i)
+		{
+			if (i[0].parent_score < i[1].parent_score)
+			{
+				break;
+			}
+		}
+		next_unsorted_range.x = std::max(i - 1, quaterne);
+		
+		next_unsorted_range.y = next_unsorted_range.x;
+		for (; i < unsorted_range.y; ++ i)
+		{
+			if (i[0].parent_score < i[1].parent_score)
+			{
+				std::swap(i[0].parent_score, i[1].parent_score);
+				next_unsorted_range.y = i;
+			}
+		}
+		
+		if (next_unsorted_range.y + 1 == i)
+		{
+			const Quaterna * end = quaterne_used_end - 1;
+			for (unsorted_range.y = i; unsorted_range.y < end; ++ unsorted_range.y)
+			{
+				if (unsorted_range.y[0].parent_score > unsorted_range.y[1].parent_score)
+				{
+					break;
+				}
+				
+				std::swap(unsorted_range.y[0], unsorted_range.y[1]);
+			}
+		}
+
+//		DEBUG_MESSAGE("%d [%d,%d) -> [%d,%d)", c ++,
+//					  unsorted_range.x - quaterne, unsorted_range.y - quaterne,
+//					  next_unsorted_range.x - quaterne, next_unsorted_range.y - quaterne);
+		
+		unsorted_range = next_unsorted_range;
+	}
+#elif 0
 	// Sure and steady ... and slow!
-	std::sort(quaterne, quaterne_used_end, QuaternaSortUsed);
+//	std::sort(quaterne_sorted_end, quaterne_used_end, [] (form::Quaterna const & lhs, form::Quaterna const & rhs) {
+//		return lhs.parent_score > rhs.parent_score;
+//	});
+
+	geom::Vector<Quaterna *, 2> range = { quaterne_sorted_end, quaterne_used_end - 1 };
+	int c = 0;
+	
+	while (range.x < range.y - 1)
+	{
+		geom::Vector<Quaterna *, 2> next_range =
+		{
+			quaterne_used_end,
+			quaterne_sorted_end
+		};
+		
+		for (size_t pass = 0; pass != 2; ++ pass)
+		{
+			for (Quaterna * i = range.x + pass; i < range.y; i += 2)
+			{
+				if (i[0].parent_score < i[1].parent_score)
+				{
+					std::swap(i[0], i[1]);
+					if (i <= next_range.x)
+					{
+						next_range.x = i - 1;
+					}
+					if (i >= next_range.y)
+					{
+						next_range.y = i + 2;
+					}
+				}
+			}
+			
+			range.x = std::max(next_range.x, quaterne);
+			range.y = std::min(next_range.y, quaterne_used_end - 1);
+			DEBUG_MESSAGE("%d:%d [%d,%d)", c ++, int(pass), range.x - quaterne, range.y - quaterne);
+		}
+	}
+	
+#elif 0
+	Quaterna * range_begin = quaterne;
+	while (true)
+	{
+		for (size_t pass = 0; pass != 2; ++ pass)
+		{
+			Quaterna * range_end = quaterne_sorted_end - 1;
+			for (Quaterna * i = range_begin + pass; i < range_end; i += 2)
+			{
+				if (i[0].parent_score < i[1].parent_score)
+				{
+					std::swap(i[0], i[1]);
+				}
+			}
+		}
+		
+		size_t range_size = quaterne_sorted_end - range_begin;
+		if (range_size < 128)
+		{
+			break;
+		}
+		
+		range_begin = range_begin + (range_size >> 1) + 1;
+	}
+#else
+	// Sure and steady ... and slow!
+	std::sort(quaterne, quaterne_used_end, [] (form::Quaterna const & lhs, form::Quaterna const & rhs) {
+		return lhs.parent_score > rhs.parent_score;
+	});
+#endif
+	
 	quaterne_sorted_end = quaterne_used_end;
 }
 
@@ -429,7 +590,7 @@ float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
 	{
 		// As any used quaterna could replace an unused quaterna,
 		// we ought to aim pretty low. 
-		return -1;
+		return std::numeric_limits<float>::min();
 	}
 	
 	// Find the (known) lowest-scoring quaterna in used.
@@ -534,8 +695,6 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 		return false;
 	}
 	
-	WriteLockTree();
-	
 	// Deinit children.
 	bool is_in_use = children_quaterna.IsInUse();
 	if (is_in_use) 
@@ -554,8 +713,6 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 
 	node.SetChildren(worst_children);
 	InitChildPointers(node);
-	
-	WriteUnlockTree();
 	
 	children_quaterna.parent_score = node.score;
 	

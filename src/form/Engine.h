@@ -51,6 +51,12 @@ namespace form
 	{
 		OBJECT_SINGLETON(Engine);
 		
+		enum {
+			// tweakables
+			min_num_quaterne = 1024,
+			max_num_quaterne = 65536
+		};
+		
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -93,12 +99,7 @@ namespace form
 		void OnToggleFlatShaded();
 		
 		void Run(Daemon::MessageQueue & message_queue);
-		
-		// intersection support
-		void LockTree();
-		void UnlockTree();
-		Scene const & OnTreeQuery() const;
-		
+
 	private:
 		void Tick();
 		void TickActiveScene();

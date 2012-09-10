@@ -25,6 +25,8 @@ namespace physics
 	public:
 		IntersectionFunctor(Engine & physics_engine, dGeomID object_geom, dGeomID planet_geom);
 		
+		Engine const & GetEngine() const;
+		
 		void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth);		
 		
 	private:

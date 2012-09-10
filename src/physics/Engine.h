@@ -16,8 +16,13 @@
 
 #include "core/ring_buffer.h"
 
-
 #include "sim/defs.h"
+
+namespace form
+{
+	class Scene;
+}
+
 namespace physics
 {
 	// forward-declarations
@@ -29,11 +34,13 @@ namespace physics
 		// types
 		typedef smp::vector<dContact> ContactVector;
 	public:
-		typedef smp::scheduler::Batch DeferredCollisionBuffer;
 		
 		// functions
 		Engine();
 		~Engine();
+		
+		form::Scene & GetScene();
+		form::Scene const & GetScene() const;
 		
 		dBodyID CreateBody() const;
 		dGeomID CreateBox(Vector3 const & dimensions) const;
@@ -48,7 +55,6 @@ namespace physics
 	private:
 		void CreateCollisions();
 		void CreateJoints();
-		void ProcessDeferredCollisions();
 		void DestroyJoints();
 		void DestroyCollisions();
 		static void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2);
@@ -57,20 +63,6 @@ namespace physics
 		void OnUnhandledCollision(dGeomID geom1, dGeomID geom2);
 		
 	public:
-		// Called by bodies whose collision may be costly and can be parallelized.
-		template <typename FUNCTOR>
-		void DeferCollision(FUNCTOR & collision_functor)
-		{
-			while (! _deferred_collisions.push_back(collision_functor))
-			{
-				size_t capacity = _deferred_collisions.capacity();
-				if (! _deferred_collisions.reserve(capacity * 2))
-				{
-					ASSERT(false);
-				}
-			}
-		}
-		
 		// Called once individual points of contact have been determined.
 		void OnContact(dContact const & contact);
 		
@@ -80,9 +72,7 @@ namespace physics
 		dSpaceID space;
 		dJointGroupID contact_joints;
 		
-		// collisions between formations and other objects;
-		// these get performed while the formation node tree is locked.
-		DeferredCollisionBuffer _deferred_collisions;
+		form::Scene & _formation_scene;
 		
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
 		ContactVector _contacts;

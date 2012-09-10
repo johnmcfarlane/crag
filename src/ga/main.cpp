@@ -32,6 +32,7 @@ DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
 using namespace ga;
 typedef double Scalar;
 typedef geom::Vector<Scalar, 3> Vector3;
+typedef geom::Ray<Scalar, 3> Ray3;
 typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 typedef geom::Transformation<Scalar> Transformation;
 
@@ -59,12 +60,17 @@ void ga::main(applet::AppletInterface & applet_interface)
 	
 	// camera
 	Vector3 camera_pos = surface * 1.01;
-	//Vector3 camera_forward = geom::Normalized(- camera_pos);
+	Vector3 camera_forward = geom::Normalized(- camera_pos);
+	Ray3 camera_ray(camera_pos, camera_forward);
 	//Vector3 camera_up = geom::Normalized(Vector3(1, -1, -1));
 	//Vector3 camera_up = geom::Normalized(Vector3(0, 0, 1));
 	//Matrix33 camera_dir(axes::Rotation(camera_forward/*, camera_up*/));
 	//sim::Transformation transformation(sim::Transformation::Matrix44::Identity());
 	//sim::Transformation transformation(camera_pos, camera_dir);
+	sim::Daemon::Call([camera_ray] (sim::Engine & engine) {
+		engine.SetCamera(camera_ray);
+	});
+	
 	sim::Transformation transformation(camera_pos);
 	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 		engine.OnSetCamera(transformation);

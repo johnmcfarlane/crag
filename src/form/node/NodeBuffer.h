@@ -13,7 +13,6 @@
 
 #include "core/debug.h"
 
-#include "smp/ReadersWriterMutex.h"
 #include "smp/vector.h"
 
 #include "form/node/CalculateNodeScoreFunctor.h"
@@ -31,9 +30,6 @@ namespace form
 	
 	struct Quaterna;
 	
-	template <size_t MAX_NUM_NODES> class ExpandNodeParallelFunctor;
-
-	
 	// There's no easy way to explain all the things this class does.
 	// Some of the most complicated code lives in this class.
 	// In short, this is a full set of nodes needed to describe all the formations in a scene. 
@@ -49,23 +45,14 @@ namespace form
 		
 		// Constants
 		enum {
-			// tweakables
-			min_num_quaterne = 1024,
-			max_num_quaterne = 65536,
-			
 			// derivations
 			num_nodes_per_quaterna = 4,
-			portion_num_nodes = num_nodes_per_quaterna,
-			
-			max_num_nodes = max_num_quaterne * num_nodes_per_quaterna,
-			max_num_verts = max_num_nodes * 2,
-			max_num_indices = max_num_verts * 3
+			num_verts_per_quaterna = num_nodes_per_quaterna * 2,
+			num_indices_per_quaterna = num_verts_per_quaterna * 3,
 		};
 
-		friend class ExpandNodeParallelFunctor <max_num_nodes>;
-
 		// Member functions
-		NodeBuffer();
+		NodeBuffer(size_t min_num_quaterne, size_t max_num_quaterne);
 		~NodeBuffer();
 		
 #if defined(VERIFY)
@@ -85,11 +72,6 @@ namespace form
 		
 		// Must be a multiple of four.
 		void SetNumQuaternaUsedTarget(int n);	
-		
-		void ReadLockTree() const;
-		void ReadUnlockTree() const;
-		void WriteLockTree() const;
-		void WriteUnlockTree() const;
 		
 		void Tick(Ray3 const & new_camera_ray);
 		void OnReset();
@@ -113,7 +95,7 @@ namespace form
 		
 		///////////////////////////////////////////////////////
 		// Node-related members.
-		static bool IsNodeChurnIntensive() { return true; }
+		static bool IsNodeChurnIntensive() { return false; }
 		float GetWorseReplacableQuaternaScore() const;
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
@@ -136,12 +118,13 @@ namespace form
 		void FixUpDecreasedNodes(Quaterna * old_quaterne_used_end);
 
 		template <typename FUNCTOR> 
-		void ForEachNode(FUNCTOR f, size_t step_size, bool parallel = false);
+		void ForEachNode(FUNCTOR f, size_t step_size = 1, bool parallel = false);
 		
 		template <typename FUNCTOR> 
 		void ForEachQuaterna(FUNCTOR f, size_t step_size = 1, bool parallel = false);
 
-		// Types
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
 
 		// The fixed-size array of node groups, used and unused.
 		Node * nodes;	// [max_num_nodes]
@@ -159,10 +142,6 @@ namespace form
 		
 		// Pool of vertices from which to take the corners of nodes.
 		PointBuffer point_buffer;
-		
-		// When locked, the structure of the node trees cannot be changed;
-		// No new children can be added and no old ones removed.
-		mutable smp::ReadersWriterMutex tree_mutex;
 		
 		CalculateNodeScoreFunctor node_score_functor;
 		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 

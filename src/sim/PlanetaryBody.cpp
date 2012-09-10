@@ -79,8 +79,7 @@ bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body const & that
 	dGeomID planet_geom = GetGeomId();
 	physics::IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
 	
-	DeferredIntersectionFunctor deferred_functor(that_body, * this, intersection_functor);	
-	engine.DeferCollision(deferred_functor);
+	that_body.OnDeferredCollisionWithPlanet(* this, intersection_functor);
 	
 	return true;
 }
@@ -90,8 +89,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	using namespace form::collision;
 
 	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
-	form::Engine const & formation_engine = form::Daemon::Ref();
-	form::Scene const & scene = formation_engine.OnTreeQuery();
+	physics::Engine const & physics_engine = functor.GetEngine();
+	form::Scene const & scene = physics_engine.GetScene();
 	sim::Vector3 const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
@@ -159,8 +158,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	using namespace form::collision;
 
 	physics::SphericalBody const & sphere = static_cast<physics::SphericalBody const &>(body);
-	form::Engine const & formation_engine = form::Daemon::Ref();
-	form::Scene const & scene = formation_engine.OnTreeQuery();
+	physics::Engine const & physics_engine = functor.GetEngine();
+	form::Scene const & scene = physics_engine.GetScene();
 
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)

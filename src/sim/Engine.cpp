@@ -15,6 +15,9 @@
 #include "EntityFunctions.h"
 #include "EntitySet.h"
 
+#include "form/Engine.h"
+#include "form/scene/Scene.h"
+
 #include "physics/Engine.h"
 
 #include "gfx/Engine.h"
@@ -94,6 +97,38 @@ void Engine::OnRemoveObject(Uid uid)
 void Engine::OnAttachEntities(Uid uid1, Uid uid2)
 {
 	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
+}
+
+void Engine::AddFormation(form::Formation& formation)
+{
+	form::Daemon::Call([& formation] (form::Engine & engine) {
+		engine.OnAddFormation(formation);
+	});
+
+	auto& scene = _physics_engine.GetScene();
+	scene.AddFormation(formation);
+}
+
+void Engine::RemoveFormation(form::Formation& formation)
+{
+	form::Daemon::Call([& formation] (form::Engine & engine) {
+		engine.OnRemoveFormation(formation);
+	});
+
+	auto& scene = _physics_engine.GetScene();
+	scene.RemoveFormation(formation);
+}
+
+void Engine::SetCamera(Ray3 const & camera_ray)
+{
+	auto& scene = _physics_engine.GetScene();
+	scene.SetCameraRay(camera_ray);
+}
+
+void Engine::SetOrigin(Vector3 const & origin)
+{
+	auto& scene = _physics_engine.GetScene();
+	scene.SetOrigin(origin);
 }
 
 void Engine::OnTogglePause()

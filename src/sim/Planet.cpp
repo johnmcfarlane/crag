@@ -63,6 +63,7 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		// formation
 		int random_seed_formation = random.GetInt();
 		_formation = new form::Formation(random_seed_formation, * shader, sphere, * this);
+		GetEngine().AddFormation(* _formation);
 		
 		// body
 		physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
@@ -72,12 +73,6 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 	
 	// messages
 	{
-		// register with formation manager
-		auto & formation = * _formation;
-		form::Daemon::Call([& formation] (form::Engine & engine) {
-			engine.OnAddFormation(formation);
-		});
-		
 		// register with the renderer
 #if defined(RENDER_SEA)
 		gfx::Scalar sea_level = _radius_mean;
@@ -102,10 +97,7 @@ Planet::~Planet()
 	_branch_node.Destroy();
 	
 	// unregister with formation manager
-	auto & formation = * _formation;
-	form::Daemon::Call([& formation] (form::Engine & engine) {
-		engine.OnRemoveFormation(formation);
-	});
+	GetEngine().RemoveFormation(* _formation);
 	_formation = nullptr;
 
 	delete _body;
