@@ -424,7 +424,7 @@ void Engine::OnSetParent(Object & child, Uid parent_uid)
 	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
 	if (parent == nullptr)
 	{
-		DEBUG_BREAK("Given parent, %u, not found", unsigned(parent_uid.GetValue()));
+		DEBUG_BREAK("Given parent, %tu, not found", parent_uid.GetValue());
 		return;
 	}
 	
