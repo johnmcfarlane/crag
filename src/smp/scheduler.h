@@ -44,11 +44,11 @@ namespace smp
 		// functions
 		
 		// init/deinit
-		void Init();
+		void Init(size_t num_reserved_cpus);
 		void Deinit();
 		
 		// blocking, parallel job execution
-		void Complete(Job & job, int num_units, int priority);
+		void Complete(Job & job, size_t num_units, int priority);
 		void Complete(Batch & batch, int priority);
 	}
 }

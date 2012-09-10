@@ -20,5 +20,5 @@ namespace smp
 	void Sleep(Time duration);
 	
 	// Return a best estimate at the number of cores/CPUs on the host system
-	unsigned GetNumCpus();
+	size_t GetNumCpus();
 }

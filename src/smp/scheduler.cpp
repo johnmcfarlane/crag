@@ -19,20 +19,38 @@
 
 #define ENABLE_SCHEDULER
 
-#define NUM_RESERVED_CPUS 1
-
-
 namespace smp
 {
 	namespace scheduler
 	{
-#if defined(ENABLE_SCHEDULER)
-		
 		namespace
 		{
 			
 			// forward-declaration
 			void RunThread();
+			
+			////////////////////////////////////////////////////////////////////////////////
+			// helper function
+			
+			size_t CalculateNumThreads(size_t num_reserved_cpus)
+			{
+#if defined(ENABLE_SCHEDULER)
+				size_t num_cpus = GetNumCpus();
+				if (num_cpus > num_reserved_cpus)
+				{
+					// The remainder of the CPUs after some have been reserved.
+					return num_cpus - num_reserved_cpus;
+				}
+				else
+				{
+					// There are not enough CPUs left over to justify a scheduler.
+					return 0;
+				}
+#else
+				// No threads.
+				return 0;
+#endif
+			}
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// Task - a Job and its progress
@@ -41,7 +59,7 @@ namespace smp
 			{
 			public:
 				// functions
-				Task(Job & job, int num_units, int priority, bool automatic, Semaphore * num_complete)
+				Task(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete)
 				: _job(job)
 				, _num_units(num_units)
 				, _next_unit(0)
@@ -70,7 +88,7 @@ namespace smp
 				}
 				
 				// Do the given unit of work on the task.
-				void ProcessUnit(int unit_index)
+				void ProcessUnit(size_t unit_index)
 				{
 					_job(unit_index);
 				}
@@ -81,38 +99,38 @@ namespace smp
 					return lhs._priority < rhs._priority;
 				}
 				
-				// Return a newly assigned unit index 
-				// (or -ve if none are unassigned).
-				int SolicitUnit()
+				// Get the index of the next unit to be processed
+				// or return false.
+				bool SolicitUnit(size_t & unit_index)
 				{
 					// Get value of _next_unit and increment it.
-					int assignment = std::atomic_fetch_add(& _next_unit, 1);
+					unit_index = _next_unit.fetch_add(1, std::memory_order_relaxed);
 					
 					// If it's within range,
-					if (assignment < _num_units)
+					if (unit_index < _num_units)
 					{
-						// return it.
-						return assignment;
+						// return success.
+						return true;
 					}
 					
-					// discretely decrement it again
-					std::atomic_fetch_sub(& _next_unit, 1);
+					// Otherwise, discretely decrement it again
+					_next_unit.fetch_sub(1, std::memory_order_relaxed);
 					
-					// and return failure value.
-					return -1;
+					// and return failure.
+					return false;
 				}
 				
 				// Register the fact that a unit of work is completed.
 				void OnUnitComplete()
 				{
-					if (std::atomic_fetch_add(& _completed_units, 1) >= _num_units)
+					if (_completed_units.fetch_add(1, std::memory_order_relaxed) >= _num_units)
 					{
 						// should never exceed _num_units
 						ASSERT(false);
 					}
 				}
 				
-				int GetNumUnits() const
+				size_t GetNumUnits() const
 				{
 					return _num_units;
 				}
@@ -127,9 +145,9 @@ namespace smp
 				DEFINE_INTRUSIVE_LIST(Task, list_type);
 			private:
 				Job & _job;
-				int _num_units;
-				std::atomic<int> _next_unit;
-				std::atomic<int> _completed_units;
+				size_t _num_units;
+				std::atomic<size_t> _next_unit;
+				std::atomic<size_t> _completed_units;
 				int _priority;
 				bool _automatic;
 				Semaphore * _num_complete;
@@ -139,8 +157,53 @@ namespace smp
 			////////////////////////////////////////////////////////////////////////////////
 			// TaskManager
 			
-			// Maintains a thread-safe list of tasks.
+			// store for tasks for scheduler to perform
 			class TaskManager
+			{
+			public:
+				virtual ~TaskManager()
+				{
+				}
+
+				// adds a job to be scheduled
+				virtual void Submit(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete) = 0;
+				virtual bool ExecuteUnit(bool block) = 0;
+				virtual void Unblock(size_t num_threads) { }
+			};
+			
+			// Maintains a thread-safe list of tasks.
+			class SimpleTaskManager : public TaskManager
+			{
+			public:
+				
+				////////////////////////////////////////////////////////////////////////////////
+				// functions
+				
+				// called from a thread requesting work
+				virtual void Submit(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete) override
+				{
+					for (size_t unit = 0; unit < num_units; ++ unit)
+					{
+						job(unit);
+					}
+					
+					if (num_complete)
+					{
+						num_complete->Increment();
+					}
+				}
+				
+				// "Make yourself useful."
+				// Called from a thread volunteering to do work.
+				virtual bool ExecuteUnit(bool block) override
+				{
+					DEBUG_BREAK("There's never work to do with SimpleTaskManager");
+					return false;
+				}
+			};
+			
+			// Maintains a thread-safe list of tasks.
+			class MultithreadedTaskManager : public TaskManager
 			{
 				// types
 				typedef SimpleMutex Mutex;
@@ -152,12 +215,12 @@ namespace smp
 				////////////////////////////////////////////////////////////////////////////////
 				// functions
 				
-				TaskManager()
+				MultithreadedTaskManager()
 				: _semaphore(Semaphore::Create(0))
 				{
 				}
 				
-				~TaskManager()
+				~MultithreadedTaskManager()
 				{
 					while (true)
 					{
@@ -177,7 +240,7 @@ namespace smp
 				}
 				
 				// called from a thread requesting work
-				void Submit(Job & job, int num_units, int priority, bool automatic, Semaphore * num_complete)
+				virtual void Submit(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete) override
 				{
 					// create a task to represent the given job
 					// TODO: Anyway to avoid this dynamic allocation?
@@ -189,10 +252,10 @@ namespace smp
 				
 				// "Make yourself useful."
 				// Called from a thread volunteering to do work.
-				bool ExecuteUnit(bool block)
+				virtual bool ExecuteUnit(bool block) override
 				{
 					Task * task;
-					int unit_index;
+					size_t unit_index;
 					
 					if (block)
 					{
@@ -227,12 +290,14 @@ namespace smp
 					return true;
 				}
 				
-				void Unblock(int num_threads)
+				virtual void Unblock(size_t num_threads) override
 				{
-					while ((-- num_threads) >= 0)
+					ASSERT(num_threads > 0);
+					do
 					{
+						-- num_threads;
 						_semaphore.Increment();
-					}
+					}	while (num_threads != 0);
 				}
 				
 			private:
@@ -258,7 +323,7 @@ namespace smp
 				}
 				
 				// Try and get a unit of work to do.
-				bool SolicitUnit(Task * & task, int & unit_index)
+				bool SolicitUnit(Task * & task, size_t & unit_index)
 				{
 					Lock l(_mutex);
 					
@@ -267,11 +332,8 @@ namespace smp
 					{
 						Task & t = * i;
 						
-						// Try and get a unit of work assigned from the task.
-						unit_index = t.SolicitUnit();
-						
-						// If a units to available,
-						if (unit_index >= 0)
+						// If a unit is available,
+						if (t.SolicitUnit(unit_index))
 						{
 							// return this task/unit.
 							task = & t;
@@ -315,29 +377,28 @@ namespace smp
 			// A simple array of threads.
 			class ThreadBuffer
 			{
+				// types
+				typedef std::vector<Thread> vector;
 			public:
-				ThreadBuffer(int num_threads)
+				
+				// functions
+				ThreadBuffer(size_t num_threads)
+				: _threads(num_threads)
 				{
-					// Create a thread for each CPU (except one).
-					_threads = new Thread [num_threads];
-					
-					// Launch them all.
-					for (Thread * it = _threads, * end = _threads + num_threads; it != end; ++ it)
+					for (auto & thread : _threads)
 					{
-						it->Launch(RunThread);
+						thread.Launch(RunThread);
 					}
-					
-					DEBUG_MESSAGE("scheduler using %d threads.", num_threads);
 				}
 				
-				~ThreadBuffer()
+				vector::size_type size() const
 				{
-					delete [] _threads;
+					return _threads.size();
 				}
 				
 			private:
-				// locks entire scheduler
-				Thread * _threads;
+				// variables
+				vector _threads;
 			};
 			
 			
@@ -349,15 +410,23 @@ namespace smp
 			{
 			public:
 				// functions
-				Singleton()
-				: _num_threads(GetNumCpus() - NUM_RESERVED_CPUS)
-				, _workforce(_num_threads)
+				Singleton(size_t num_threads)
+				: _task_manager(ref(num_threads
+									? static_cast<TaskManager*>(new MultithreadedTaskManager)
+									: static_cast<TaskManager*>(new SimpleTaskManager)))
+				, _thread_buffer(num_threads)
 				{
+					if (num_threads > 0)
+					{
+						Yield();
+					}
 				}
 				
 				~Singleton()
 				{
-					_task_manager.Unblock(_num_threads);
+					_task_manager.Unblock(_thread_buffer.size());
+
+					delete & _task_manager;
 				}
 				
 				TaskManager & GetTaskManager()
@@ -367,9 +436,9 @@ namespace smp
 				
 			private:
 				// variables
-				int _num_threads;
-				TaskManager _task_manager;
-				ThreadBuffer _workforce;
+				size_t _num_threads;
+				TaskManager & _task_manager;
+				ThreadBuffer _thread_buffer;
 			};
 			
 			Singleton * singleton = nullptr;
@@ -401,11 +470,14 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Threaded version of scheduler interface
 		
-		void Init()
+		void Init(size_t num_reserved_cpus)
 		{
 			ASSERT(singleton == nullptr);
-			singleton = new Singleton;
-			Yield();
+
+			size_t num_threads = CalculateNumThreads(num_reserved_cpus);
+			DEBUG_MESSAGE("scheduler using %zu threads.", num_threads);
+
+			singleton = new Singleton(num_threads);
 		}
 		
 		void Deinit()
@@ -418,7 +490,7 @@ namespace smp
 			delete & s;
 		}
 		
-		void Complete(Job & job, int num_units, int priority)
+		void Complete(Job & job, size_t num_units, int priority)
 		{
 			TaskManager & task_manager = singleton->GetTaskManager();
 
@@ -427,7 +499,10 @@ namespace smp
 
 			task_manager.Submit(job, num_units, priority, false, & num_complete);
 			
-			num_complete.Decrement();
+			while (! num_complete.TryDecrement())
+			{
+				task_manager.ExecuteUnit(false);
+			}
 			
 			ASSERT(num_complete.GetValue() == 0);
 			delete & num_complete;
@@ -437,7 +512,7 @@ namespace smp
 		{
 			TaskManager & task_manager = singleton->GetTaskManager();
 			
-			int num_jobs = 0;
+			size_t num_jobs = 0;
 			Semaphore & num_complete(Semaphore::Create(0));
 			
 			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ num_jobs, ++ i)
@@ -453,32 +528,6 @@ namespace smp
 			
 			ASSERT(num_complete.GetValue() == 0);
 			delete & num_complete;
-		}		
-#else
-		////////////////////////////////////////////////////////////////////////////////
-		// Non-threaded version of scheduler interface
-		//
-		// Handy for ruling out threading issues when debugging
-		
-		void Init() { }
-		
-		void Deinit() { }
-		
-		void Complete(Job & job, int num_units, int priority)
-		{
-			for (int unit_index = 0; unit_index < num_units; ++ unit_index)
-			{
-				job(unit_index);
-			}
 		}
-		
-		void Complete(Batch & batch, int priority)
-		{
-			for (Batch::const_iterator i = batch.begin(); i != batch.end(); ++ i)
-			{
-				Complete(* i, 1, priority);
-			}
-		}
-#endif
 	}
 }

@@ -320,7 +320,9 @@ namespace
 		core::Statistics stat_manager;
 #endif
 		
-		smp::scheduler::Init();
+		// sheduler and formation thread are always running
+		size_t num_reserved_cpus = 2;
+		smp::scheduler::Init(num_reserved_cpus);
 		
 		{
 			// TODO: Find a way to make these common; writing everything out four times is not good.

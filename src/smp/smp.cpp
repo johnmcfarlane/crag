@@ -24,7 +24,7 @@ void smp::Sleep(Time seconds)
 	std::this_thread::sleep_for(microseconds);
 }
 
-unsigned smp::GetNumCpus()
+size_t smp::GetNumCpus()
 {
 	return std::thread::hardware_concurrency();
 }
