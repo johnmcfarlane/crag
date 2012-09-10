@@ -20,83 +20,145 @@ namespace core
 	template <typename T> class double_buffer
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
 		typedef T value_type;
 		
-		// c'tor
-		double_buffer()
-		: front_buffer(buffers + 0)
-		, back_buffer(buffers + 1)
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
+		// general-purpose c'tor; given arguments are passed to c'tors of both elements
+		template <typename ... ARGS>
+		double_buffer(ARGS ... args)
 		{
+			new (data() + 0) value_type (args ...);
+			new (data() + 1) value_type (args ...);
+			front_buffer = data() + 0;
+			back_buffer = data() + 1;
+
+			VerifyObject(* this);
 		}
 		
+		// copy c'tor
 		double_buffer(double_buffer const & rhs)
-		: buffers(rhs.buffers)
 		{
-			set_pointers(rhs);
+			VerifyObjectRef(rhs);
+			
+			new (data() + 0) value_type (rhs[0]);
+			new (data() + 1) value_type (rhs[1]);
+			copy_polarity(rhs);
+			
+			VerifyObject(* this);
 		}
 		
-		// copy
+		// copy operator
 		double_buffer & operator = (double_buffer const & rhs)
 		{
-			buffers[0] = rhs.buffers[0];
-			buffers[1] = rhs.buffers[1];
+			VerifyObject(* this);
+			VerifyObjectRef(rhs);
 			
-			set_pointers(rhs);
+			data()[0] = rhs[0];
+			data()[1] = rhs[1];
+			copy_polarity(rhs);
 			
+			VerifyObject(* this);
 			return * this;
 		}
 		
 		// front buffer accessors
 		value_type & front()
 		{
+			VerifyObject(* this);
+			
 			return * front_buffer;
 		}
 		
 		value_type const & front() const
 		{
+			VerifyObject(* this);
+
 			return * front_buffer;
 		}
 		
 		// back buffer accessors
 		value_type & back()
 		{
+			VerifyObject(* this);
+
 			return * back_buffer;
 		}
 		
 		value_type const & back() const
 		{
+			VerifyObject(* this);
+
 			return * back_buffer;
 		}
 		
-		// index accessors
+		// subscript operator
 		value_type & operator [] (int n)
 		{
+			VerifyObject(* this);
 			ASSERT(n == 0 || n == 1);
-			return buffers [n];
+
+			return data()[n];
 		}
 		
 		value_type const & operator [] (int n) const
 		{
+			VerifyObject(* this);
 			ASSERT(n == 0 || n == 1);
-			return buffers [n];
+
+			return data()[n];
 		}
 		
-		// flip the front and back buffers
+		// raw data accessor
+		value_type * data()
+		{
+			return reinterpret_cast<value_type *>(storage);
+		}
+		
+		value_type const * data() const
+		{
+			return reinterpret_cast<value_type const *>(storage);
+		}
+		
+		// swaps the front and back buffers
 		void flip()
 		{
+			VerifyObject(* this);
+
 			std::swap(front_buffer, back_buffer);
 		}
 		
-	private:
-		
-		void set_pointers(double_buffer const & that)
+#if defined(VERIFY)
+		void Verify() const
 		{
-			int front_index = that.buffers - that.front_buffer;			
-			front_buffer = buffers + front_index;
-			back_buffer = buffers + (front_index ^ 1);
+			VerifyObject(data()[0]);
+			VerifyObject(data()[1]);
+			VerifyArrayElement(front_buffer, data() + 0, data() + 2);
+			VerifyArrayElement(back_buffer, data() + 0, data() + 2);
+			VerifyTrue(front_buffer != back_buffer);
 		}
+#endif
 		
-		value_type buffers[2];
+	private:
+		void copy_polarity(const double_buffer & rhs)
+		{
+			size_t front_buffer_index = rhs.front_buffer - rhs.data();
+			front_buffer = data() + front_buffer_index;
+			back_buffer = data() + (front_buffer_index ^ 1);
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
+		// enough bytes to store two objects
+		// TODO: Investigate initializer_list as way to replace char with value_type.
+		char storage [sizeof(value_type) * 2];
+		
+		// pointers to each of the two objects
 		value_type * front_buffer;
 		value_type * back_buffer;
 	};
