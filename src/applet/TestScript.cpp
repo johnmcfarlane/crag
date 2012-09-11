@@ -341,9 +341,6 @@ void TestScript::UpdateOrigin()
 	auto distance_from_origin = Length(origin_to_camera);
 	if (distance_from_origin > max_distance_from_origin)
 	{
-		form::Daemon::Call([camera_pos] (form::Engine & engine) {
-			engine.SetOrigin(camera_pos);
-		});
 		sim::Daemon::Call([camera_pos] (sim::Engine & engine) {
 			engine.SetOrigin(camera_pos);
 		});

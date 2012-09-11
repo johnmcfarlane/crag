@@ -127,6 +127,10 @@ void Engine::SetCamera(Ray3 const & camera_ray)
 
 void Engine::SetOrigin(Vector3 const & origin)
 {
+	form::Daemon::Call([origin] (form::Engine & engine) {
+		engine.SetOrigin(origin);
+	});
+	
 	auto& scene = _physics_engine.GetScene();
 	scene.SetOrigin(origin);
 }

@@ -47,7 +47,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 
 	// origin
 	Vector3 origin = surface * .8 * 0.;
-	form::Daemon::Call([origin] (form::Engine & engine) {
+	sim::Daemon::Call([origin] (sim::Engine & engine) {
 		engine.SetOrigin(origin);
 	});
 	
