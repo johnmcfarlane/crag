@@ -152,7 +152,7 @@ namespace form
 		SceneDoubleBuffer scenes;
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
 		
-		bool _has_reset_request;
+		bool _has_reset_request;	// TODO: do without
 		sim::Vector3 _requested_origin;
 		
 		static Daemon * singleton;
