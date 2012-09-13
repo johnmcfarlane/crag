@@ -25,7 +25,8 @@ namespace form
 	// This triangle is sub-divided by adding mid-points along its three edges. 
 	// These are the three min_point instances.
 	// Where all three mid-points are present, the Node can have four children. 
-	// Think of the four triangles or the Zelda Triforce, the forth (children[3]) being the upside-down center triangle.
+	// Think of the four triangles of the Zelda Triforce,
+	// the forth (children[3]) being the upside-down center triangle.
 	
 	class Node
 	{
