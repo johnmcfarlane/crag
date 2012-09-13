@@ -16,13 +16,13 @@
 #include "EntitySet.h"
 
 #include "form/Engine.h"
-#include "form/scene/Scene.h"
 
 #include "physics/Engine.h"
 
 #include "gfx/Engine.h"
 
 #include "core/app.h"
+#include "core/ConfigEntry.h"
 
 
 CONFIG_DEFINE (sim_tick_duration, Time, 1.f / 60.f);

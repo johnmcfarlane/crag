@@ -19,6 +19,7 @@
 #include "gfx/object/Ball.h"
 #include "gfx/object/BranchNode.h"
 
+#include "core/ConfigEntry.h"
 #include "core/Random.h"
 
 

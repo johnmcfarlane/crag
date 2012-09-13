@@ -13,7 +13,6 @@
 
 #include "smp/Daemon.h"
 
-#include "core/ConfigEntry.h"
 #include "core/Singleton.h"
 
 
@@ -32,7 +31,6 @@ namespace sim
 	
 	// forward declarations
 	class Entity;
-	class Engine;
 	class EntitySet;
 	
 	

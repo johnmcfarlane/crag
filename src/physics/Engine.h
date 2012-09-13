@@ -11,12 +11,7 @@
 
 #include "defs.h"
 
-#include "smp/scheduler.h"
 #include "smp/vector.h"
-
-#include "core/ring_buffer.h"
-
-#include "sim/defs.h"
 
 namespace form
 {

@@ -12,9 +12,7 @@
 #include "Engine.h"
 #include "Body.h"
 
-#include "form/Engine.h"
-
-#include "smp/for_each.h"
+#include "form/scene/Scene.h"
 
 #include "core/ConfigEntry.h"
 

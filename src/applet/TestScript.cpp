@@ -32,6 +32,7 @@
 
 #include "smp/Future.h"
 
+#include "core/ConfigEntry.h"
 #include "core/Random.h"
 
 

@@ -25,6 +25,7 @@
 
 #include "geom/MatrixOps.h"
 
+#include "core/ConfigEntry.h"
 
 namespace
 {
