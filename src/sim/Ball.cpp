@@ -73,12 +73,12 @@ void Ball::InitGraphics(Sphere3 const & sphere)
 	gfx::Color4f color(GetColor());
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(true);
+		engine.OnSetReady(false);
 	});
 	_model = AddModelWithTransform<gfx::Ball>(color);
 	UpdateModels();
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(false);
+		engine.OnSetReady(true);
 	});
 }
 

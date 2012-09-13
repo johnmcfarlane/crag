@@ -444,6 +444,7 @@ void Engine::OnSetTime(Time time)
 
 void Engine::OnSetReady(bool ready)
 {
+	ASSERT(ready != _ready);
 	_ready = ready;
 }
 
