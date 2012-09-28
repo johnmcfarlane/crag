@@ -19,6 +19,11 @@ DECLARE_CLASS_HANDLE(gfx, BranchNode);	// gfx::BranchNodeHandle
 
 namespace gfx
 {
+	// function declarations
+	void AdoptChild(Object & child, BranchNode & parent);
+	void OrphanChild(Object & child, BranchNode & parent);
+	void OrphanChild(Object & child);
+
 	// An object which contains sub-objects
 	class BranchNode : public Object
 	{

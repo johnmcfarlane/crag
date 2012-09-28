@@ -28,7 +28,7 @@ Uid Uid::Create()
 	ASSERT(_counter <= ValueType(-1) >> 8);
 	
 	// check that GetBitCount is reliable
-	ASSERT(GetBitCount(ValueType(-1)) == sizeof(ValueType) * CHAR_BIT);
+	ASSERT(GetBitCount(ValueType(-1)) == std::numeric_limits<ValueType>::digits);
 	
 	// periodically report that uids are being used up
 	if (_counter > 1000000 && GetBitCount<ValueType>(_counter) == 1)

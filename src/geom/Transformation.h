@@ -25,9 +25,9 @@ namespace geom
 		// types
 		
 		typedef S Scalar;
-		typedef Matrix<Scalar, 3, 3> Rotation;
-		typedef Matrix<Scalar, 4, 4> Matrix;
-		typedef Vector<Scalar, 3> Vector;
+		typedef typename ::geom::Matrix<Scalar, 3, 3> Rotation;
+		typedef typename ::geom::Matrix<Scalar, 4, 4> Matrix;
+		typedef typename ::geom::Vector<Scalar, 3> Vector;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions 

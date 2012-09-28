@@ -20,7 +20,10 @@ namespace gfx
 {
 	// forward-declarations
 	class Program;
+	class LeafNode;
 	class MeshResource;
+
+	bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 
 	// An element of the scene which can be drawn.
 	class LeafNode : public Object

@@ -11,8 +11,6 @@
 
 #include "smp.h"
 
-#include <thread>
-
 namespace smp
 {
 	// Use Thread to launch and manage a thread. 
@@ -26,7 +24,7 @@ namespace smp
 		OBJECT_NO_COPY(Thread);
 		
 		// types
-		typedef std::thread::thread ThreadType;
+		typedef std::thread ThreadType;
 	public:
 		typedef void (* Function)(void * data);
 		
@@ -41,7 +39,7 @@ namespace smp
 
 		// Creates and launches a new thread.
 		template <typename FUNCTION_TYPE>
-		void Launch(FUNCTION_TYPE const & function)
+		void Launch(FUNCTION_TYPE function)
 		{
 			_thread = ThreadType([this, function] {
 				while (! IsCurrent()) {
