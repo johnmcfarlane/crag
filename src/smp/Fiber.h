@@ -47,8 +47,10 @@ namespace smp
 		void Yield();
 		
 	private:
+#if defined(VERIFY)
 		void InitStack();
 		std::size_t EstimateStackUse() const;
+#endif
 		
         ////////////////////////////////////////////////////////////////////////////////
 		// variables

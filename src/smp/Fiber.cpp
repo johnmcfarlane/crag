@@ -32,13 +32,15 @@ Fiber::Fiber(std::size_t stack_size)
 	_context.uc_stack.ss_size = _stack_size;
 	_context.uc_link = nullptr;
 
+#if defined(VERIFY)
 	InitStack();
+#endif
 	VerifyObject(* this);
 }
 
 Fiber::~Fiber()
 {
-#if ! defined (NDEBUG)
+#if defined(VERIFY)
 	VerifyObject(* this);
 	std::size_t stack_use = EstimateStackUse();
 	ASSERT(stack_use > 0);
@@ -93,22 +95,23 @@ void Fiber::Yield()
 	VerifyObject(* this);
 }
 
+#if ! defined(NDEBUG)
 void Fiber::InitStack()
 {
-#if ! defined(NDEBUG)
 	// Write to each address in the stack and check these values in the d'tor.
-	Random sequence(reinterpret_cast<uint32_t>(_stack));
+	uintptr_t seed = reinterpret_cast<uintptr_t>(_stack);
+	Random sequence(seed);
 	for (uint8_t * i = reinterpret_cast<uint8_t *>(_stack), * end = i + _stack_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
 		(* i) = r;
 	}
-#endif
 }
 
 std::size_t Fiber::EstimateStackUse() const
 {
-	Random sequence(reinterpret_cast<uint32_t>(_stack));
+	uintptr_t seed = reinterpret_cast<uintptr_t>(_stack);
+	Random sequence(seed);
 	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_stack), * end = i + _stack_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
@@ -123,3 +126,5 @@ std::size_t Fiber::EstimateStackUse() const
 	
 	return 0;
 }
+#endif
+
