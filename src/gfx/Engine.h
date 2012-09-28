@@ -152,7 +152,9 @@ namespace gfx
 		void GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position);
 		void ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration);
 		void UpdateRegulator(Time busy_duration) const;
+#if defined(GATHER_STATS)
 		void UpdateFpsCounter(Time frame_start_position);
+#endif
 		
 		void Capture();
 
