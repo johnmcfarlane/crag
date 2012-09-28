@@ -40,7 +40,7 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
-int SDL_main(int /*argc*/, char * * argv)
+int main(int /*argc*/, char * * argv)
 {
 #if defined(WIN32)
 	std::ofstream cout_filestr, cerr_filestr;
