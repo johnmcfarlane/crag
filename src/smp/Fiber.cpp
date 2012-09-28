@@ -20,8 +20,8 @@ using namespace smp;
 // smp::Fiber member definitions
 
 Fiber::Fiber(std::size_t stack_size)
-: _stack(Allocate(stack_size, 1024))
-, _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
+: _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
+, _stack(Allocate(stack_size, 1024))
 {
     if (getcontext(& _context) != 0) 
 	{
