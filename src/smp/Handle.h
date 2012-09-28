@@ -63,8 +63,21 @@ namespace smp
 		// Sets the UID of the entity being handled.
 		void SetUid(Uid uid);
 		
+#if defined(__GNUC__)
+		void Create();
+
+		template <typename PARAMETER1>
+		void Create(PARAMETER1 parameter1);
+
+		template <typename PARAMETER1, typename PARAMETER2>
+		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
+#else
 		template <typename ... PARAMETERS>
-		void Create(PARAMETERS const & ... parameters);
+		void Create(PARAMETERS ... parameters);
+#endif
 		
 		// Tells simulation to destroy the object.
 		void Destroy();
