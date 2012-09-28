@@ -14,22 +14,30 @@
 class Random
 {
 public:
-	Random(uint32_t iseed = 1) : seed(iseed) { }
+	////////////////////////////////////////////////////////////////////////////
+	// types
+	
+	typedef uint32_t SeedType;
+	
+	////////////////////////////////////////////////////////////////////////////
+	// functions
+	
+	Random(SeedType iseed = 1) : seed(iseed) { }
 	
 	// returns pseudo-random whole number in the range [0, maximum]
-	uint32_t GetInt()
+	SeedType GetInt()
 	{
 		seed = seed * 1103515245 + 12345;
-		return(static_cast<uint32_t>(seed >> (num_bits + 1)) & maximum);
+		return(static_cast<SeedType>(seed >> (num_bits + 1)) & maximum);
 	}
 	
 	// returns pseudo-random whole number in the range [0, n)
-	uint32_t GetInt(uint32_t n)
+	SeedType GetInt(SeedType n)
 	{
 		uint64_t r = GetInt();
 		r *= n;
 		r >>= num_bits;
-		return static_cast<uint32_t>(r);
+		return static_cast<SeedType>(r);
 	}
 	
 	// returns pseudo-random number in the range [0, 1)
@@ -67,7 +75,7 @@ public:
 		y1 = x1 * w;
 		y2 = x2 * w;
 
-		//// might be faster for RISC chipsets
+		//// might be faster for non-RISC chipsets
 		//S x1 = one - GetUnit<S>();
 		//S x2 = GetUnitInclusive<S>();
 		//S d = sqrt(-two * std::log(x1));
@@ -88,7 +96,9 @@ public:
 	static Random sequence;
 	
 private:
-	
-	uint32_t seed;
+	////////////////////////////////////////////////////////////////////////////
+	// variables
+
+	SeedType seed;
 };
 
