@@ -43,8 +43,8 @@ namespace smp
 		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef ENGINE Engine;
-		typedef Message<Engine> Message;
-		typedef MessageQueue<Engine, Message> MessageQueue;
+		typedef ::smp::Message<Engine> Message;
+		typedef ::smp::MessageQueue<Engine, Message> MessageQueue;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ namespace smp
 			ASSERT(! singleton->_thread.IsCurrent());
 
 			_thread.Launch([this] () {
-				Run();
+				this->Run();
 			});
 			
 			while (_engine == nullptr)

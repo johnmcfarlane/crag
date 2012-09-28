@@ -22,8 +22,6 @@ namespace sim
 {
 	// forward-declarations
 	class Entity;
-	class sim::Engine;
-	
 	
 	// Currently deals with simulation time, entity managment and physics ticking.
 	class EntitySet

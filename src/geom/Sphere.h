@@ -68,7 +68,7 @@ namespace geom
 		// types
 		
 		typedef S Scalar;
-		typedef Vector<Scalar, N> Vector;
+		typedef ::geom::Vector<Scalar, N> Vector;
 		typedef SphereProperties<Scalar, N> Properties;
 		
 		////////////////////////////////////////////////////////////////////////////////

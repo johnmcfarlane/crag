@@ -20,7 +20,7 @@ namespace gfx
 	public:
 		// types
 		typedef VERTEX Vertex;
-		typedef VertexBufferObject<Vertex> VertexBufferObject;
+		typedef ::gfx::VertexBufferObject<Vertex> VertexBufferObject;
 		
 		// functions
 		void Init()

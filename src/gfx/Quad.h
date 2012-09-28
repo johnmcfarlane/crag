@@ -27,7 +27,7 @@ namespace gfx
 			geom::Vector3f pos;
 		};
 
-		typedef VertexBufferObject<Vertex> VertexBufferObject;
+		typedef ::gfx::VertexBufferObject<Vertex> VertexBufferObject;
 		
 		// functions
 		Quad(float depth_offset);
