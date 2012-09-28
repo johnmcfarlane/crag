@@ -150,9 +150,16 @@
 #if defined(NDEBUG) || defined(WIN32)
 #define FUNCTION_NO_REENTRY DO_NOTHING
 #else
+class ReentryGuard
+{
+	int & _counter;
+public:
+	ReentryGuard(int & counter);
+	~ReentryGuard();
+};
 #define FUNCTION_NO_REENTRY \
 static int counter = 0; \
-struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } R
+ReentryGuard reentry_guard(counter);
 #endif
 
 
