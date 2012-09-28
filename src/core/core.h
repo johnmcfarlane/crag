@@ -23,17 +23,6 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// OBJECT_NO_INSTANCE
-// 
-// Prevent object from being instanced. 
-// Put at top of class definition. 
-
-#define OBJECT_NO_INSTANCE(CLASS) \
-	OBJECT_NO_COPY(CLASS); \
-	CLASS()
-
-
-//////////////////////////////////////////////////////////////////////
 // OBJECT_SINGLETON
 // 
 // Prevent object from being instanced more than once.
