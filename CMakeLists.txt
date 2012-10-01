@@ -95,9 +95,9 @@ add_executable(crag
 
 include_directories("src" "dependencies/include")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.7")
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -DdDOUBLE -Wall -Wfatal-errors")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread -DdDOUBLE -Wall -Wfatal-errors")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
-target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "GLEW")
+target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "GLEW" "pthread")
 
