@@ -64,7 +64,7 @@
 
 
 // MESSAGE - general purpose console output macro
-#define MESSAGE(OUT, FORMAT, ...) fprintf(stderr, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
+#define MESSAGE(OUT, FORMAT, ...) fprintf(OUT, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
 
 
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
