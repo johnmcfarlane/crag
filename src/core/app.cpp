@@ -28,9 +28,15 @@ namespace
 	char const * _program_path;
 }
 
-
+#include <sys/resource.h>
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
+#if ! defined(NDEBUG)
+	rlimit rlim;
+	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
+	setrlimit(RLIMIT_CORE, &rlim);
+#endif
+	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
