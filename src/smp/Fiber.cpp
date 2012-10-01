@@ -13,8 +13,48 @@
 
 #include "core/Random.h"
 
-using namespace smp;
+#if defined(__LLP64__) || defined(__LP64__) || defined(WIN64)
+// These memory model do not readily support passing of pointers.
+// See [http://en.wikipedia.org/wiki/Setcontext#Example].
+#define MAKECONTEXT_SMALLER_INT 1
+#else
+#define MAKECONTEXT_SMALLER_INT 0
+#endif
 
+#if MAKECONTEXT_SMALLER_INT
+namespace
+{
+	// helps convert between integers and pointers
+	union HelperCallbackParameters
+	{
+		unsigned integers[4];
+		void * pointers[2];
+		
+		// On memory models where they are the same size, 
+		// the whole excercise is ... pointless.
+		static_assert(sizeof(integers) == sizeof(pointers), "This hack isn't going to work!");
+	};
+	
+	typedef void (* MakeContextCallback) ();
+	typedef void (* HelperCallback) (int, int, int, int);
+
+	// Passed into makecontext, this function lives at the bottom of the fiber's
+	// callstack. It reassembles the pointers and calls the function which was
+	// passed into Fiber::Launch.	
+	void helper_callback(int integer0, int integer1, int integer2, int integer3)
+	{
+		HelperCallbackParameters parameters;
+		parameters.integers[0] = integer0;
+		parameters.integers[1] = integer1;
+		parameters.integers[2] = integer2;
+		parameters.integers[3] = integer3;
+		Fiber::Callback callback = reinterpret_cast<Fiber::Callback>(parameters.pointers[0]);
+		(*callback)(parameters.pointers[1]);
+	}
+}
+#endif
+
+using namespace smp;
 
 ////////////////////////////////////////////////////////////////////////////////
 // smp::Fiber member definitions
@@ -66,9 +106,23 @@ void Fiber::Launch(Callback * callback, void * data)
 {
 	ASSERT(_context.uc_link == nullptr);
 
-	// Technically, makecontext, shouldn't work on 64-bit machines.
-	//static_assert(sizeof(data) == sizeof(int), "Bad parameter size. (See wikipedia entry for setcontext.)");      // a minor wart in makecontext
-	makecontext(& _context, (void (*)())callback, 1, data);
+#if MAKECONTEXT_SMALLER_INT
+	// makecontext only takes integers but the caller passes in a pointer
+	HelperCallbackParameters parameters; 
+	parameters.pointers[0] = reinterpret_cast<void *>(callback);
+	parameters.pointers[1] = data;
+	
+	makecontext(& _context, (MakeContextCallback *)helper_callback, 4, 
+			parameters.integers[0], parameters.integers[1], 
+			parameters.integers[2], parameters.integers[3]);
+#elif __LP64__
+	static_assert(sizeof(data) == sizeof(int), "Bad parameter size. (See wikipedia entry for setcontext.)");
+
+	makecontext(& _context, ((MakeContextCallback)callback, 1, data);
+#else
+// may not be too difficult to implement
+#error memory model unsupported by Fiber class
+#endif
 }
 
 void Fiber::Continue()
