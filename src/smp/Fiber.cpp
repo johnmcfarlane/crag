@@ -21,6 +21,8 @@
 #define MAKECONTEXT_SMALLER_INT 0
 #endif
 
+using namespace smp;
+
 #if MAKECONTEXT_SMALLER_INT
 namespace
 {
@@ -48,13 +50,11 @@ namespace
 		parameters.integers[1] = integer1;
 		parameters.integers[2] = integer2;
 		parameters.integers[3] = integer3;
-		Fiber::Callback callback = reinterpret_cast<Fiber::Callback>(parameters.pointers[0]);
+		Fiber::Callback * callback = reinterpret_cast<Fiber::Callback *>(parameters.pointers[0]);
 		(*callback)(parameters.pointers[1]);
 	}
 }
 #endif
-
-using namespace smp;
 
 ////////////////////////////////////////////////////////////////////////////////
 // smp::Fiber member definitions
@@ -112,7 +112,7 @@ void Fiber::Launch(Callback * callback, void * data)
 	parameters.pointers[0] = reinterpret_cast<void *>(callback);
 	parameters.pointers[1] = data;
 	
-	makecontext(& _context, (MakeContextCallback *)helper_callback, 4, 
+	makecontext(& _context, (MakeContextCallback)helper_callback, 4, 
 			parameters.integers[0], parameters.integers[1], 
 			parameters.integers[2], parameters.integers[3]);
 #elif __LP64__
