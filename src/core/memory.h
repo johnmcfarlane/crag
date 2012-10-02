@@ -145,7 +145,7 @@ inline size_t CalculateAlignment(size_t type_size)
 		alignment <<= 1;
 		type_size >>= 1;
 	}
-	return alignment;
+	return std::max(alignment, sizeof(void*));
 }
 
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
