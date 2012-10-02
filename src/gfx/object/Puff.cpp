@@ -56,7 +56,7 @@ Puff::Puff(LeafNode::Init const & init, Scalar spawn_volume)
 	SetMeshResource(& disk_quad);
 	
 	Scene const & scene = init.engine.GetScene();
-	Time time = scene.GetTime();
+	core::Time time = scene.GetTime();
 	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
 }
 
@@ -67,8 +67,8 @@ Puff::~Puff()
 
 gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
-	Time time = renderer.GetScene().GetTime();
-	Time age = CalculateAge(time);
+	core::Time time = renderer.GetScene().GetTime();
+	core::Time age = CalculateAge(time);
 	
 	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), _radius);
 	
@@ -78,8 +78,8 @@ gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transfo
 
 LeafNode::PreRenderResult Puff::PreRender()
 {
-	Time time = GetEngine().GetScene().GetTime();
-	Time age = CalculateAge(time);
+	core::Time time = GetEngine().GetScene().GetTime();
+	core::Time age = CalculateAge(time);
 	
 	_radius = static_cast<float>(geom::Sphere<Scalar, 3>::Properties::RadiusFromVolume(_spawn_volume));
 	_radius += puff_radius_growth_rate * static_cast<float>(age);
@@ -106,8 +106,8 @@ void Puff::Render(gfx::Engine const & renderer) const
 	disk_quad.Draw();
 }
 
-Time Puff::CalculateAge(Time time) const
+core::Time Puff::CalculateAge(core::Time time) const
 {
-	Time age = time - _spawn_time;
+	core::Time age = time - _spawn_time;
 	return age;
 }

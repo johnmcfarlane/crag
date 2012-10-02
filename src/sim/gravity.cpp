@@ -42,7 +42,7 @@ namespace
 	}
 
 	
-	void ApplyGravity(Entity::List const & entities, Time delta, physics::Body & body) 
+	void ApplyGravity(Entity::List const & entities, core::Time delta, physics::Body & body) 
 	{
 		Vector3 const & position = body.GetPosition();
 		Scalar mass = body.GetMass();
@@ -55,7 +55,7 @@ namespace
 	
 }
 
-void sim::ApplyGravity(EntitySet & entity_set, Time delta)
+void sim::ApplyGravity(EntitySet & entity_set, core::Time delta)
 {
 	Entity::List & entities = entity_set.GetEntities();
 

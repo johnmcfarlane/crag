@@ -81,7 +81,7 @@ void AppletBase::Yield()
 	WaitFor(null_condition);
 }
 
-void AppletBase::Sleep(Time duration)
+void AppletBase::Sleep(core::Time duration)
 {
 	auto wake_position = duration + app::GetTime();
 	AppletInterface::WaitFor([wake_position] (bool quit_flag) {

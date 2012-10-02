@@ -64,12 +64,12 @@ void Scene::Verify() const
 }
 #endif
 
-void Scene::SetTime(Time t)
+void Scene::SetTime(core::Time t)
 {
 	_time = t;
 }
 
-Time Scene::GetTime() const
+core::Time Scene::GetTime() const
 {
 	return _time;
 }

@@ -28,7 +28,7 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-
+using core::Time;
 using namespace gfx;
 
 

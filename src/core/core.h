@@ -38,12 +38,11 @@ private: \
     core::Singleton<CLASS> _singleton
 #endif
 
-
-//////////////////////////////////////////////////////////////////////
-// get_owner - inverse pointer to member
-
 namespace core
 {
+	//////////////////////////////////////////////////////////////////////
+	// get_owner - inverse pointer to member
+
 	// Given an instance of TYPE which is contained in CLASS as MEMBER,
 	// returns the containing object of CLASS.
 	template <typename CLASS, typename TYPE, TYPE CLASS::*MEMBER>
@@ -69,36 +68,37 @@ namespace core
 		
 		return owner;
 	}
+
+	//////////////////////////////////////////////////////////////////////
+	// Time - in seconds
+
+	typedef double Time;
+
+	// converts from std::chrono::duration to Time
+	template <typename DURATION>
+	Time DurationToSeconds(DURATION duration)
+	{
+		typedef typename DURATION::period period;
+	
+		constexpr auto scale = Time(period::num) / period::den;
+		auto count = duration.count();
+	
+		Time seconds = Time(count) * scale;
+		return seconds;
+	}
+
+	// converts from Time to std::chrono::duration
+	template <typename DURATION>
+	DURATION SecondsToDuration(Time seconds)
+	{
+		typedef typename DURATION::period period;
+		typedef typename DURATION::rep rep;
+
+		constexpr auto scale = Time(period::den) / period::num;
+		auto scaled = rep(seconds * scale);
+	
+		DURATION duration (scaled);
+		return duration;
+	}
 }
 
-//////////////////////////////////////////////////////////////////////
-// Time - in seconds
-
-typedef double Time;
-
-// converts from std::chrono::duration to Time
-template <typename DURATION>
-Time DurationToSeconds(DURATION duration)
-{
-	typedef typename DURATION::period period;
-	
-	constexpr auto scale = Time(period::num) / period::den;
-	auto count = duration.count();
-	
-	Time seconds = Time(count) * scale;
-	return seconds;
-}
-
-// converts from Time to std::chrono::duration
-template <typename DURATION>
-DURATION SecondsToDuration(Time seconds)
-{
-	typedef typename DURATION::period period;
-	typedef typename DURATION::rep rep;
-
-	constexpr auto scale = Time(period::den) / period::num;
-	auto scaled = rep(seconds * scale);
-	
-	DURATION duration (scaled);
-	return duration;
-}

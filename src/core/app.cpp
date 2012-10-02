@@ -13,6 +13,9 @@
 
 #include "core/ConfigEntry.h"
 
+#if ! defined(WIN32) && ! defined(__APPLE__)
+#include "X11/Xlib.h"
+#endif
 
 // defined in gfx::Engine.cpp
 CONFIG_DECLARE (multisample, bool);
@@ -31,7 +34,17 @@ namespace
 #include <sys/resource.h>
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
-#if ! defined(NDEBUG)
+	// X11 initialization
+#if defined(XlibSpecificationRelease)
+	Status xinit_status = XInitThreads();
+	if (! xinit_status)
+	{
+		DEBUG_MESSAGE("Call to XInitThreads failed with return value, %d", xinit_status);
+		return false;
+	}
+#endif
+	
+#if ! defined(WIN32) && ! defined(NDEBUG)
 	rlimit rlim;
 	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
 	setrlimit(RLIMIT_CORE, &rlim);
@@ -238,10 +251,10 @@ void app::GetEvent(SDL_Event & event)
 	}
 }
 
-Time app::GetTime()
+core::Time app::GetTime()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now.time_since_epoch();
-	Time seconds = DurationToSeconds(duration);
+	core::Time seconds = core::DurationToSeconds(duration);
 	return seconds;
 }

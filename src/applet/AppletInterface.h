@@ -33,7 +33,7 @@ namespace applet
 
 		// pause execution in various ways
 		virtual void Yield() = 0;
-		virtual void Sleep(Time duration) = 0;
+		virtual void Sleep(core::Time duration) = 0;
 		virtual void WaitFor(Condition & condition) = 0;
 		
 		// blocks until the given functor returns true

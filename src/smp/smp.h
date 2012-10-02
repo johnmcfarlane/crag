@@ -17,7 +17,7 @@ namespace smp
 	void Yield();
 	
 	// Sleep the thread for at least the given amount of time.
-	void Sleep(Time duration);
+	void Sleep(core::Time duration);
 	
 	// Return a best estimate at the number of cores/CPUs on the host system
 	unsigned GetNumCpus();

@@ -70,7 +70,7 @@ namespace sim
 		void OnToggleCollision();
 
 		// accessors
-		Time GetTime() const;
+		core::Time GetTime() const;
 		Entity * GetObject(Uid uid);
 		physics::Engine & GetPhysicsEngine();		
 		
@@ -89,7 +89,7 @@ namespace sim
 		bool quit_flag;
 		bool paused;
 		
-		Time _time;
+		core::Time _time;
 
 		EntitySet & _entity_set;
 		physics::Engine & _physics_engine;
