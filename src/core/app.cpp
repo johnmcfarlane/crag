@@ -214,41 +214,48 @@ void app::GetEvent(SDL_Event & event)
 			
 		case SDL_MOUSEMOTION:
 			{
-				if (_relative_mouse_mode)
-				{
-					// if relative mouse mode is working, 
-					// let applet::Engine take care of this properly
-					break;
-				}
-
-				if (! _has_focus)
-				{
-					break;
-				}
-
-				// intercept message and fake relative mouse movement correctly.
-				geom::Vector2i window_size;
-				SDL_GetWindowSize(window, & window_size.x, & window_size.y);
-				geom::Vector2i center(window_size.x >> 1, window_size.y >> 1);
-				geom::Vector2i cursor;
-				SDL_GetMouseState(& cursor.x, & cursor.y);
-				SDL_WarpMouseInWindow(window, center.x, center.y);
-				geom::Vector2i delta = (cursor - center);
-				if (delta.x == 0 && delta.y == 0)
-				{
-					break;
-				}
-
-				// fake a mouse motion event
-				event.type = SDL_MOUSEMOTION;
-				event.motion.x = cursor.x;
-				event.motion.y = cursor.y;
-				event.motion.xrel = delta.x;
-				event.motion.yrel = delta.y;
+				// TODO: Do we even use this any more?
+				CleanMotionEvent(event.motion);
 				break;
 			}
 		break;
 	}
+}
+
+bool app::CleanMotionEvent(SDL_MouseMotionEvent & motion)
+{
+	if (_relative_mouse_mode)
+	{
+		// if relative mouse mode is working, 
+		// let applet::Engine take care of this properly
+		return true;
+	}
+
+	if (! _has_focus)
+	{
+		return false;
+	}
+
+	// intercept message and fake relative mouse movement correctly.
+	geom::Vector2i window_size;
+	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
+	geom::Vector2i center(window_size.x >> 1, window_size.y >> 1);
+	geom::Vector2i cursor;
+	SDL_GetMouseState(& cursor.x, & cursor.y);
+	SDL_WarpMouseInWindow(window, center.x, center.y);
+	geom::Vector2i delta = (cursor - center);
+	if (delta.x == 0 && delta.y == 0)
+	{
+		return false;
+	}
+
+	// fake a mouse motion event
+	motion.x = cursor.x;
+	motion.y = cursor.y;
+	motion.xrel = delta.x;
+	motion.yrel = delta.y;
+	
+	return true;
 }
 
 core::Time app::GetTime()

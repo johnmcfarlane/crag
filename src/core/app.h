@@ -28,6 +28,7 @@ namespace app
 	
 	// called from main thread
 	void GetEvent(SDL_Event & event);
+	bool CleanMotionEvent(SDL_MouseMotionEvent & motion);
 	
 	// time
 	core::Time GetTime();
