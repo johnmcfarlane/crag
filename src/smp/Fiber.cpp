@@ -59,6 +59,12 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // smp::Fiber member definitions
 
+// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
+// in size. This is in case a signal is sent to the fiber and the system
+// requires space to deal with it. We assume this doesn't happen and treat
+// MINSIGSTKSZ as a limit - not an overhead.
+const std::size_t Fiber::default_stack_size;
+
 Fiber::Fiber(std::size_t stack_size)
 : _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
 , _stack(Allocate(stack_size, 1024))
