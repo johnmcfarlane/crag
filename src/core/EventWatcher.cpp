@@ -58,6 +58,11 @@ int EventWatcher::OnEvent(void * userdata, SDL_Event * event)
 	EventWatcher & event_condition = ref(reinterpret_cast<EventWatcher *>(userdata));
 	
 	std::lock_guard<smp::SimpleMutex> lock(event_condition._mutex);
+	if (event->type == SDL_MOUSEMOTION)
+	{
+		app::CleanMotionEvent(event->motion);
+	}
+
 	event_condition._events.push_back(* event);
 	
 	return 0;
