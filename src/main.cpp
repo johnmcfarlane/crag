@@ -316,10 +316,6 @@ namespace
 		
 		SDL_SetEventFilter(EventFilter, nullptr);
 		
-#if defined (GATHER_STATS)
-		core::Statistics stat_manager;
-#endif
-		
 		smp::scheduler::Init();
 		
 		{

@@ -20,7 +20,7 @@
 #include "smp/Daemon.h"
 
 #include "core/double_buffer.h"
-
+#include "core/Statistics.h"
 
 DECLARE_CLASS_HANDLE(form, RegulatorScript);
 

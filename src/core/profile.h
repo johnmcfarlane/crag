@@ -41,7 +41,7 @@ namespace profile
 		operator Scalar () const;
 		
 	private:
-		Time start_time;
+		core::Time start_time;
 	};
 	
 }

@@ -58,8 +58,8 @@ profile::Timer::Timer()
 
 profile::Timer::operator profile::Scalar () const
 {
-	Time now = app::GetTime();
-	Time duration = now - start_time;
+	core::Time now = app::GetTime();
+	core::Time duration = now - start_time;
 	return profile::Scalar(duration);
 }
 
