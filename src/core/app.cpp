@@ -145,7 +145,12 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 
 	buffer.resize(length);
 	
-	fread(& buffer[0], 1, length, source);
+	size_t read = fread(& buffer[0], 1, length, source);
+	if (read != length)
+	{
+		DEBUG_MESSAGE("error loading %s: length=%zd; read=%zd", filename, length, read);
+		return false;
+	}
 
 	fclose(source);
 	
