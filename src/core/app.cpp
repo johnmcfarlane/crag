@@ -24,7 +24,6 @@ CONFIG_DECLARE (multisample, bool);
 namespace 
 {
 	bool _has_focus = true;
-	bool _relative_mouse_mode = true;
 	
 	SDL_Window * window = nullptr;
 		
@@ -97,15 +96,12 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, 
 	}
 	
 	_has_focus = true;
-	if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+
+	// Linux requires libxi-dev to be installed for this.
+	if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
 	{
-		_relative_mouse_mode = true;
-	}
-	else
-	{
-		_relative_mouse_mode = false;
-		SDL_SetWindowGrab(window, SDL_TRUE);
-		SDL_ShowCursor(SDL_FALSE);
+		ERROR_MESSAGE("Failed to set relative mouse mode.");
+		return false;
 	}
 
 	_program_path = program_path;
@@ -216,51 +212,7 @@ void app::GetEvent(SDL_Event & event)
 					break;
 			}
 			break;
-			
-		case SDL_MOUSEMOTION:
-			{
-				// TODO: Do we even use this any more?
-				CleanMotionEvent(event.motion);
-				break;
-			}
-		break;
 	}
-}
-
-bool app::CleanMotionEvent(SDL_MouseMotionEvent & motion)
-{
-	if (_relative_mouse_mode)
-	{
-		// if relative mouse mode is working, 
-		// let applet::Engine take care of this properly
-		return true;
-	}
-
-	if (! _has_focus)
-	{
-		return false;
-	}
-
-	// intercept message and fake relative mouse movement correctly.
-	geom::Vector2i window_size;
-	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
-	geom::Vector2i center(window_size.x >> 1, window_size.y >> 1);
-	geom::Vector2i cursor;
-	SDL_GetMouseState(& cursor.x, & cursor.y);
-	SDL_WarpMouseInWindow(window, center.x, center.y);
-	geom::Vector2i delta = (cursor - center);
-	if (delta.x == 0 && delta.y == 0)
-	{
-		return false;
-	}
-
-	// fake a mouse motion event
-	motion.x = cursor.x;
-	motion.y = cursor.y;
-	motion.xrel = delta.x;
-	motion.yrel = delta.y;
-	
-	return true;
 }
 
 core::Time app::GetTime()
