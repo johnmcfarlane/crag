@@ -1,6 +1,6 @@
 #!/bin/sh
 cd SDL2
-./configure --prefix="$PWD/.." --with-sdl-prefix="$PWD/.." --enable-static --disable-shared
+./configure --prefix="$PWD/.." --enable-static --disable-shared
 make
 make install
 cd ..
