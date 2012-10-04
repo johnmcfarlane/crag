@@ -287,11 +287,14 @@ namespace
 		
 		switch (event->type) 
 		{
+			case SDL_MOUSEMOTION:
+				app::CleanMotionEvent(event->motion);
+				return 1;
+				
 			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-			case SDL_MOUSEMOTION:
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				return 1;
