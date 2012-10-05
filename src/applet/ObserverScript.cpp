@@ -21,6 +21,7 @@
 
 using namespace applet;
 
+CONFIG_DEFINE (mouse_sensitivity, float, 0.01f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions
@@ -156,12 +157,10 @@ void ObserverScript::HandleMouseButton(Uint8 button, bool down)
 
 void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
-	float sensitivity = 0.1f;
-	
 	sim::Vector3 rotation;
-	rotation.x = - y_delta * sensitivity;
+	rotation.x = - y_delta * mouse_sensitivity;
 	rotation.y = 0;
-	rotation.z = - x_delta * sensitivity;
+	rotation.z = - x_delta * mouse_sensitivity;
 
 	_observer.Call([rotation] (sim::Observer & observer) {
 		observer.AddRotation(rotation);
