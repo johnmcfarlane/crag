@@ -53,16 +53,14 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 {
 	SDL_Event event;
-	if (! _event_watcher.PopEvent(event))
+	while (! _event_watcher.PopEvent(event))
 	{
 		applet_interface.WaitFor([this] (bool quit_flag) {
 			return (! _event_watcher.IsEmpty()) | quit_flag;
 		});
 	}
-	else
-	{
-		HandleEvent(event);
-	}
+
+	HandleEvent(event);
 }
 
 void ObserverScript::HandleEvent(SDL_Event const & event)
@@ -92,32 +90,6 @@ void ObserverScript::HandleEvent(SDL_Event const & event)
 		default:
 			break;
 	}
-}
-
-namespace
-{
-	class SetCollidableFunctor
-	{
-	public:
-		SetCollidableFunctor(bool collidable)
-		: _collidable(collidable)
-		{
-		}
-		
-		void operator()(sim::Entity * entity) const
-		{
-			if (entity == nullptr)
-			{
-				ASSERT(false);
-				return;
-			}
-			
-			sim::SetCollidable(* entity, _collidable);
-		}
-		
-	private:
-		bool _collidable;
-	};
 }
 
 // returns false if it's time to quit
