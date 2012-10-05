@@ -4,6 +4,8 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
+crag
+crag.cfg
 dependencies/bin/
 dependencies/include/
 dependencies/lib/
