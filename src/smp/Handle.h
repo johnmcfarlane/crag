@@ -85,11 +85,17 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe object
 		
-		// calls a function on the object
+		// calls the given function with a reference to the handle's object
 		template <typename FUNCTION_TYPE>
 		void Call(FUNCTION_TYPE function) const;
 		
-		// calls a function on the object which returns a value
+		// calls the given function with a pointer to the handle's object
+		// (or nullptr if the handle does not reference a valid object)
+		template <typename FUNCTION_TYPE>
+		void CallPtr(FUNCTION_TYPE function) const;
+		
+		// calls the given function with a reference to the handle's object
+		// and stores result in given future
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 		void Call(Future<VALUE_TYPE> & result, FUNCTION_TYPE function) const;
 		

@@ -165,7 +165,7 @@ namespace smp
 		}
 	}
 	
-	// calls the given function with the given parameters
+	// calls the given function with a reference to the handle's object
 	template <typename TYPE>
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
@@ -180,7 +180,22 @@ namespace smp
 		});
 	}
 	
-	// calls a function which returns a value
+	// calls the given function with a pointer to the handle's object
+	// (or nullptr if the handle does not reference a valid object)
+	template <typename TYPE>
+	template <typename FUNCTION_TYPE>
+	void Handle<TYPE>::CallPtr(FUNCTION_TYPE function) const
+	{
+		auto uid = _uid;
+		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
+			auto base = engine.GetObject(uid);
+			auto derived = static_cast<Type *>(base);
+			function(derived);
+		});
+	}
+	
+	// calls the given function with a reference to the handle's object
+	// and stores result in given future
 	template <typename TYPE>
 	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(Future<VALUE_TYPE> & future, FUNCTION_TYPE function) const
