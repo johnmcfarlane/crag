@@ -173,10 +173,10 @@ namespace smp
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
-			if (base != nullptr) {
-				auto& derived = static_cast<Type &>(* base);
-				function(derived);
-			}
+			ASSERT (base != nullptr);
+
+			auto& derived = static_cast<Type &>(* base);
+			function(derived);
 		});
 	}
 	
