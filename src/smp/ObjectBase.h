@@ -40,7 +40,7 @@ namespace smp
 		// types
 		typedef OBJECT ObjectType;
 		typedef ENGINE Engine;
-		typedef Daemon<Engine> Daemon;
+		typedef ::smp::Daemon<Engine> Daemon;
 		typedef ObjectBaseInit<Engine> Init;
 		
 		// functions

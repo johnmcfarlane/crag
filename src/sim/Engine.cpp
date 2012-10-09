@@ -25,7 +25,7 @@
 #include "core/ConfigEntry.h"
 
 
-CONFIG_DEFINE (sim_tick_duration, Time, 1.f / 60.f);
+CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
 
 
 namespace
@@ -150,7 +150,7 @@ void Engine::OnToggleCollision()
 	_physics_engine.ToggleCollisions();
 }
 
-Time Engine::GetTime() const
+core::Time Engine::GetTime() const
 {
 	return _time;
 }
@@ -171,14 +171,14 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	Time next_tick_time = app::GetTime();
+	core::Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
 	{
 		message_queue.DispatchMessages(* this);
 		
-		Time time = app::GetTime();
-		Time time_to_next_tick = next_tick_time - time;
+		core::Time time = app::GetTime();
+		core::Time time_to_next_tick = next_tick_time - time;
 		if (time_to_next_tick > 0)
 		{
 			smp::Sleep(time_to_next_tick);

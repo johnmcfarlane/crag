@@ -16,11 +16,11 @@ void smp::Yield()
 	std::this_thread::yield();
 }
 
-void smp::Sleep(Time seconds)
+void smp::Sleep(core::Time seconds)
 {
 	ASSERT(seconds >= 0);
 
-	auto microseconds = SecondsToDuration<std::chrono::microseconds>(seconds);
+	auto microseconds = core::SecondsToDuration<std::chrono::microseconds>(seconds);
 	std::this_thread::sleep_for(microseconds);
 }
 

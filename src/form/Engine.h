@@ -139,7 +139,7 @@ namespace form
 		
 		Mesh::list_type _meshes;
 		
-		Time mesh_generation_time;
+		core::Time mesh_generation_time;
 		
 		bool _regulator_enabled;
 		RegulatorScriptHandle _regulator_handle;

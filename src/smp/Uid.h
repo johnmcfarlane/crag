@@ -12,6 +12,10 @@
 
 namespace smp
 {
+	// forward-declarations
+	class Uid;	
+	std::ostream & operator << (std::ostream & out, Uid const & uid);
+
 	// Unique identifier:
 	// - thread-safe generation through Uid::Create;
 	// - Used to refer to objects without referring to their memory address.

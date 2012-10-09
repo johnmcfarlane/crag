@@ -18,9 +18,11 @@
 #include "sim/EntityFunctions.h"
 #include "sim/Observer.h"
 
+#include "core/ConfigEntry.h"
 
 using namespace applet;
 
+CONFIG_DEFINE (mouse_sensitivity, float, 0.01f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions
@@ -52,16 +54,14 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 {
 	SDL_Event event;
-	if (! _event_watcher.PopEvent(event))
+	while (! _event_watcher.PopEvent(event))
 	{
 		applet_interface.WaitFor([this] (bool quit_flag) {
 			return (! _event_watcher.IsEmpty()) | quit_flag;
 		});
 	}
-	else
-	{
-		HandleEvent(event);
-	}
+
+	HandleEvent(event);
 }
 
 void ObserverScript::HandleEvent(SDL_Event const & event)
@@ -91,32 +91,6 @@ void ObserverScript::HandleEvent(SDL_Event const & event)
 		default:
 			break;
 	}
-}
-
-namespace
-{
-	class SetCollidableFunctor
-	{
-	public:
-		SetCollidableFunctor(bool collidable)
-		: _collidable(collidable)
-		{
-		}
-		
-		void operator()(sim::Entity * entity) const
-		{
-			if (entity == nullptr)
-			{
-				ASSERT(false);
-				return;
-			}
-			
-			sim::SetCollidable(* entity, _collidable);
-		}
-		
-	private:
-		bool _collidable;
-	};
 }
 
 // returns false if it's time to quit
@@ -156,12 +130,10 @@ void ObserverScript::HandleMouseButton(Uint8 button, bool down)
 
 void ObserverScript::HandleMouseMove(int x_delta, int y_delta)
 {
-	float sensitivity = 0.1f;
-	
 	sim::Vector3 rotation;
-	rotation.x = - y_delta * sensitivity;
+	rotation.x = - y_delta * mouse_sensitivity;
 	rotation.y = 0;
-	rotation.z = - x_delta * sensitivity;
+	rotation.z = - x_delta * mouse_sensitivity;
 
 	_observer.Call([rotation] (sim::Observer & observer) {
 		observer.AddRotation(rotation);

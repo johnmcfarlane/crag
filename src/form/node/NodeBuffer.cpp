@@ -1,4 +1,3 @@
-#include "core/app.h"
 //
 //  NodeBuffer.cpp
 //  crag
@@ -22,6 +21,7 @@
 
 #include "smp/for_each.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 

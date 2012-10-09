@@ -11,7 +11,7 @@
 
 #include "RegulatorScript.h"
 
-#include "Engine.h"
+#include "form/Engine.h"
 
 #include "gfx/Engine.h"
 
@@ -191,7 +191,7 @@ namespace
 		// Annealing stage where changes to num quaterne are relatively high.
 		float CalculateFrameRateReactionCoefficient() const
 		{
-			Time sim_time = app::GetTime() - _startup_time;
+			core::Time sim_time = app::GetTime() - _startup_time;
 			float boost_factor = std::pow(.5f, static_cast<float>(sim_time) / frame_duration_reaction_coefficient_boost_half_life);
 			float boost_summand = frame_duration_reaction_coefficient_boost * boost_factor;
 			float base_summand = frame_duration_reaction_coefficient_base;
@@ -201,7 +201,7 @@ namespace
 	private:
 		// variables
 		QuaterneCount _min_recommended_num_quaterne;
-		Time _startup_time = app::GetTime();
+		core::Time _startup_time = app::GetTime();
 	};
 	
 	class MeshGenerationUnit : public form::RegulatorScript::Unit
@@ -218,7 +218,7 @@ namespace
 		}
 		
 	public:
-		void SampleMeshGenerationPeriod(Time const & mesh_generation_period, QuaterneCount num_quaterne)
+		void SampleMeshGenerationPeriod(core::Time const & mesh_generation_period, QuaterneCount num_quaterne)
 		{
 			if (mesh_generation_period < max_mesh_generation_period)
 			{
@@ -303,7 +303,7 @@ void RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
 	}
 }
 
-void RegulatorScript::SampleMeshGenerationPeriod(Time const & mesh_generation_period)
+void RegulatorScript::SampleMeshGenerationPeriod(core::Time const & mesh_generation_period)
 {
 	// Validate input
 	ASSERT(mesh_generation_period == mesh_generation_period);

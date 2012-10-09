@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "Scheduler.h"
+#include "scheduler.h"
 
 #include "Semaphore.h"
 #include "SimpleMutex.h"

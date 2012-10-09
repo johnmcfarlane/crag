@@ -18,5 +18,5 @@ namespace sim
 	class EntitySet;
 	
 	// simulates gravitational interactions between the given entities
-	void ApplyGravity(EntitySet & entity_set, Time delta);
+	void ApplyGravity(EntitySet & entity_set, core::Time delta);
 }

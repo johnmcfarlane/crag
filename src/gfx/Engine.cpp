@@ -28,7 +28,7 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
-
+using core::Time;
 using namespace gfx;
 
 
@@ -233,8 +233,8 @@ Engine::Engine()
 , scene(nullptr)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
-, vsync(false)
 , _ready(true)
+, vsync(false)
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
@@ -1186,7 +1186,9 @@ void Engine::ProcessRenderTiming()
 	Time frame_duration, busy_duration;
 	ConvertRenderTiming(frame_start_position, pre_sync_position, post_sync_position, frame_duration, busy_duration);
 	
+#if defined(GATHER_STATS)
 	UpdateFpsCounter(frame_start_position);
+#endif
 	
 	UpdateRegulator(busy_duration);
 }
@@ -1230,9 +1232,9 @@ void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_positi
 	STAT_SET(frame_3_total_duration, frame_duration);
 }
 
+#if defined(GATHER_STATS)
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
-#if ! defined(NDEBUG)
 	// update the history
 	memmove(_frame_time_history, _frame_time_history + 1, sizeof(* _frame_time_history) * (_frame_time_history_size - 1));
 	Time first_entry = _frame_time_history[0];
@@ -1243,8 +1245,8 @@ void Engine::UpdateFpsCounter(Time frame_start_position)
 	float history_duration = _frame_time_history_size - 1;
 	float average_frame_duration = float(last_entry - first_entry) / history_duration;
 	STAT_SET (fps, 1.f / average_frame_duration);
-#endif
 }
+#endif
 
 void Engine::UpdateRegulator(Time busy_duration) const
 {

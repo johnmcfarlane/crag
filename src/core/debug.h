@@ -64,7 +64,7 @@
 
 
 // MESSAGE - general purpose console output macro
-#define MESSAGE(OUT, FORMAT, ...) fprintf(stderr, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
+#define MESSAGE(OUT, FORMAT, ...) fprintf(OUT, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
 
 
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
@@ -150,9 +150,16 @@
 #if defined(NDEBUG) || defined(WIN32)
 #define FUNCTION_NO_REENTRY DO_NOTHING
 #else
+class ReentryGuard
+{
+	int & _counter;
+public:
+	ReentryGuard(int & counter);
+	~ReentryGuard();
+};
 #define FUNCTION_NO_REENTRY \
 static int counter = 0; \
-struct r { r() { assert(++ counter == 1); } ~r() { assert(-- counter == 0); } } R
+ReentryGuard reentry_guard(counter);
 #endif
 
 

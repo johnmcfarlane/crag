@@ -13,6 +13,9 @@
 
 #include "core/ConfigEntry.h"
 
+#if ! defined(WIN32) && ! defined(__APPLE__)
+#include "X11/Xlib.h"
+#endif
 
 // defined in gfx::Engine.cpp
 CONFIG_DECLARE (multisample, bool);
@@ -21,16 +24,31 @@ CONFIG_DECLARE (multisample, bool);
 namespace 
 {
 	bool _has_focus = true;
-	bool _relative_mouse_mode = true;
 	
 	SDL_Window * window = nullptr;
 		
 	char const * _program_path;
 }
 
-
+#include <sys/resource.h>
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
 {
+	// X11 initialization
+#if defined(XlibSpecificationRelease)
+	Status xinit_status = XInitThreads();
+	if (! xinit_status)
+	{
+		DEBUG_MESSAGE("Call to XInitThreads failed with return value, %d", xinit_status);
+		return false;
+	}
+#endif
+	
+#if ! defined(WIN32) && ! defined(NDEBUG)
+	rlimit rlim;
+	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
+	setrlimit(RLIMIT_CORE, &rlim);
+#endif
+	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -78,15 +96,12 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, 
 	}
 	
 	_has_focus = true;
-	if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+
+	// Linux requires libxi-dev to be installed for this.
+	if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
 	{
-		_relative_mouse_mode = true;
-	}
-	else
-	{
-		_relative_mouse_mode = false;
-		SDL_SetWindowGrab(window, SDL_TRUE);
-		SDL_ShowCursor(SDL_FALSE);
+		ERROR_MESSAGE("Failed to set relative mouse mode.");
+		return false;
 	}
 
 	_program_path = program_path;
@@ -126,7 +141,12 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 
 	buffer.resize(length);
 	
-	fread(& buffer[0], 1, length, source);
+	size_t read = fread(& buffer[0], 1, length, source);
+	if (read != length)
+	{
+		DEBUG_MESSAGE("error loading %s: length=%zd; read=%zd", filename, length, read);
+		return false;
+	}
 
 	fclose(source);
 	
@@ -192,50 +212,13 @@ void app::GetEvent(SDL_Event & event)
 					break;
 			}
 			break;
-			
-		case SDL_MOUSEMOTION:
-			{
-				if (_relative_mouse_mode)
-				{
-					// if relative mouse mode is working, 
-					// let applet::Engine take care of this properly
-					break;
-				}
-
-				if (! _has_focus)
-				{
-					break;
-				}
-
-				// intercept message and fake relative mouse movement correctly.
-				geom::Vector2i window_size;
-				SDL_GetWindowSize(window, & window_size.x, & window_size.y);
-				geom::Vector2i center(window_size.x >> 1, window_size.y >> 1);
-				geom::Vector2i cursor;
-				SDL_GetMouseState(& cursor.x, & cursor.y);
-				SDL_WarpMouseInWindow(window, center.x, center.y);
-				geom::Vector2i delta = (cursor - center);
-				if (delta.x == 0 && delta.y == 0)
-				{
-					break;
-				}
-
-				// fake a mouse motion event
-				event.type = SDL_MOUSEMOTION;
-				event.motion.x = cursor.x;
-				event.motion.y = cursor.y;
-				event.motion.xrel = delta.x;
-				event.motion.yrel = delta.y;
-				break;
-			}
-		break;
 	}
 }
 
-Time app::GetTime()
+core::Time app::GetTime()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now.time_since_epoch();
-	Time seconds = DurationToSeconds(duration);
+	core::Time seconds = core::DurationToSeconds(duration);
 	return seconds;
 }

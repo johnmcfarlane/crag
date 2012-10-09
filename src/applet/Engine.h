@@ -91,7 +91,7 @@ namespace applet
 		// variables
 		
 		// sim::Engine time.
-		Time _time;
+		core::Time _time;
 		
 		// Collection of all active applets
 		AppletBase::List _applets;

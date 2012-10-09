@@ -63,8 +63,21 @@ namespace smp
 		// Sets the UID of the entity being handled.
 		void SetUid(Uid uid);
 		
+#if defined(__GNUC__)
+		void Create();
+
+		template <typename PARAMETER1>
+		void Create(PARAMETER1 parameter1);
+
+		template <typename PARAMETER1, typename PARAMETER2>
+		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
+#else
 		template <typename ... PARAMETERS>
-		void Create(PARAMETERS const & ... parameters);
+		void Create(PARAMETERS ... parameters);
+#endif
 		
 		// Tells simulation to destroy the object.
 		void Destroy();
@@ -72,11 +85,17 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe object
 		
-		// calls a function on the object
+		// calls the given function with a reference to the handle's object
 		template <typename FUNCTION_TYPE>
 		void Call(FUNCTION_TYPE function) const;
 		
-		// calls a function on the object which returns a value
+		// calls the given function with a pointer to the handle's object
+		// (or nullptr if the handle does not reference a valid object)
+		template <typename FUNCTION_TYPE>
+		void CallPtr(FUNCTION_TYPE function) const;
+		
+		// calls the given function with a reference to the handle's object
+		// and stores result in given future
 		template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 		void Call(Future<VALUE_TYPE> & result, FUNCTION_TYPE function) const;
 		

@@ -40,7 +40,7 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
-int SDL_main(int /*argc*/, char * * argv)
+int main(int /*argc*/, char * * argv)
 {
 #if defined(WIN32)
 	std::ofstream cout_filestr, cerr_filestr;
@@ -287,11 +287,11 @@ namespace
 		
 		switch (event->type) 
 		{
+			case SDL_MOUSEMOTION:
 			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-			case SDL_MOUSEMOTION:
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				return 1;
@@ -315,10 +315,6 @@ namespace
 		}
 		
 		SDL_SetEventFilter(EventFilter, nullptr);
-		
-#if defined (GATHER_STATS)
-		core::Statistics stat_manager;
-#endif
 		
 		// sheduler and formation thread are always running
 		size_t num_reserved_cpus = 2;

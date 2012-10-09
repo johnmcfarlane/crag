@@ -27,9 +27,15 @@ namespace smp
 		typedef void (Callback)(void * data);
 		
 		////////////////////////////////////////////////////////////////////////////////
+		// constants
+		
+		// actual stack sizes may vary
+		static const std::size_t default_stack_size = 4096;
+		
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber(std::size_t stack_size = MINSIGSTKSZ);
+		Fiber(std::size_t stack_size = default_stack_size);
 		~Fiber();
 		
 #if defined(VERIFY)
@@ -47,8 +53,10 @@ namespace smp
 		void Yield();
 		
 	private:
+#if defined(VERIFY)
 		void InitStack();
 		std::size_t EstimateStackUse() const;
+#endif
 		
         ////////////////////////////////////////////////////////////////////////////////
 		// variables

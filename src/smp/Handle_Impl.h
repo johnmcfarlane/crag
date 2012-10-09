@@ -70,20 +70,81 @@ namespace smp
 		_uid = uid;
 	}
 	
+#if defined(__GNUC__)
 	template <typename TYPE>
-	template <typename ... PARAMETERS>
-	void Handle<TYPE>::Create(PARAMETERS const & ... parameters)
+	void Handle<TYPE>::Create()
 	{
 		typedef typename Type::Daemon Daemon;
 		typedef typename Type::Engine Engine;
-		
+
 		Destroy();
 		Uid uid = Uid::Create();
+		Daemon::Call([uid] (Engine & engine) {
+			engine.template CreateObject<Type>(uid);
+		});
 		SetUid(uid);
+	}
+
+	template <typename TYPE>
+	template <typename PARAMETER1>
+	void Handle<TYPE>::Create(PARAMETER1 parameter1)
+	{
+		typedef typename Type::Daemon Daemon;
+		typedef typename Type::Engine Engine;
+
+		Destroy();
+		Uid uid = Uid::Create();
+		Daemon::Call([uid, parameter1] (Engine & engine) {
+			engine.template CreateObject<Type, PARAMETER1>(uid, parameter1);
+		});
+		SetUid(uid);
+	}
+
+	template <typename TYPE>
+	template <typename PARAMETER1, typename PARAMETER2>
+	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2)
+	{
+		typedef typename Type::Daemon Daemon;
+		typedef typename Type::Engine Engine;
+
+		Destroy();
+		Uid uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2] (Engine & engine) {
+			engine.template CreateObject<Type, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
+		});
+		SetUid(uid);
+	}
+
+	template <typename TYPE>
+	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
+	{
+		typedef typename Type::Daemon Daemon;
+		typedef typename Type::Engine Engine;
+
+		Destroy();
+		Uid uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
+			engine.template CreateObject<Type, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2, parameter3);
+		});
+		SetUid(uid);
+	}
+#else
+	template <typename TYPE>
+	template <typename ... PARAMETERS>
+	void Handle<TYPE>::Create(PARAMETERS ... parameters)
+	{
+		typedef typename Type::Daemon Daemon;
+		typedef typename Type::Engine Engine;
+
+		Destroy();
+		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameters ...] (Engine & engine) {
 			engine.template CreateObject<Type, PARAMETERS ...>(uid, parameters ...);
 		});
+		SetUid(uid);
 	}
+#endif
 	
 	// Tells simulation to destroy the object.
 	template <typename TYPE>
@@ -104,7 +165,7 @@ namespace smp
 		}
 	}
 	
-	// calls the given function with the given parameters
+	// calls the given function with a reference to the handle's object
 	template <typename TYPE>
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
@@ -112,14 +173,29 @@ namespace smp
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
-			if (base != nullptr) {
-				auto& derived = static_cast<Type &>(* base);
-				function(derived);
-			}
+			ASSERT (base != nullptr);
+
+			auto& derived = static_cast<Type &>(* base);
+			function(derived);
 		});
 	}
 	
-	// calls a function which returns a value
+	// calls the given function with a pointer to the handle's object
+	// (or nullptr if the handle does not reference a valid object)
+	template <typename TYPE>
+	template <typename FUNCTION_TYPE>
+	void Handle<TYPE>::CallPtr(FUNCTION_TYPE function) const
+	{
+		auto uid = _uid;
+		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
+			auto base = engine.GetObject(uid);
+			auto derived = static_cast<Type *>(base);
+			function(derived);
+		});
+	}
+	
+	// calls the given function with a reference to the handle's object
+	// and stores result in given future
 	template <typename TYPE>
 	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(Future<VALUE_TYPE> & future, FUNCTION_TYPE function) const

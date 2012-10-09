@@ -20,7 +20,7 @@
 #include "smp/Daemon.h"
 
 #include "core/double_buffer.h"
-
+#include "core/Statistics.h"
 
 DECLARE_CLASS_HANDLE(form, RegulatorScript);
 
@@ -90,7 +90,7 @@ namespace gfx
 		void OnSetParent(Uid child_uid, Uid parent_uid);
 		void OnSetParent(Object & child, Uid parent_uid);
 		void OnSetParent(Object & child, BranchNode & parent);
-		void OnSetTime(Time time);
+		void OnSetTime(core::Time time);
 		void OnSetReady(bool ready);
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
@@ -149,10 +149,12 @@ namespace gfx
 		void DebugDraw();
 
 		void ProcessRenderTiming();
-		void GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position);
-		void ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration);
-		void UpdateRegulator(Time busy_duration) const;
-		void UpdateFpsCounter(Time frame_start_position);
+		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);
+		void ConvertRenderTiming(core::Time frame_start_position, core::Time pre_sync_position, core::Time post_sync_position, core::Time & frame_duration, core::Time & busy_duration);
+		void UpdateRegulator(core::Time busy_duration) const;
+#if defined(GATHER_STATS)
+		void UpdateFpsCounter(core::Time frame_start_position);
+#endif
 		
 		void Capture();
 
@@ -169,7 +171,7 @@ namespace gfx
 		//RenderBuffer depth_buffer;
 		//Texture depth_texture;
 		
-		Time last_frame_end_position;
+		core::Time last_frame_end_position;
 		
 		bool quit_flag;
 		bool _ready;
@@ -195,7 +197,7 @@ namespace gfx
 #if ! defined(NDEBUG)
 		// fps counter
 		static int const _frame_time_history_size = 360;
-		Time _frame_time_history[_frame_time_history_size];
+		core::Time _frame_time_history[_frame_time_history_size];
 #endif
 		
 		Fence _fence1, _fence2;

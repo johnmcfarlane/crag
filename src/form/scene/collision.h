@@ -105,7 +105,7 @@ namespace form { namespace collision
 	public:
 		// types
 		typedef SHAPE ShapeType;
-		typedef Object<ShapeType> Object;
+		typedef ::form::collision::Object<ShapeType> Object;
 		
 		// functions
 		CollisionFunctor(Vector3 const & polyhedron_center, sim::Vector3 const & origin, Object const & object, FUNCTOR & functor, float min_area)

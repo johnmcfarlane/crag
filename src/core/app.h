@@ -30,5 +30,5 @@ namespace app
 	void GetEvent(SDL_Event & event);
 	
 	// time
-	Time GetTime();
+	core::Time GetTime();
 }

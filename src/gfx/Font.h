@@ -25,7 +25,7 @@ namespace gfx
 			geom::Vector2f tex;
 		};
 		
-		typedef VertexBufferObject<Vertex> VertexBufferObject;
+		typedef ::gfx::VertexBufferObject<Vertex> VertexBufferObject;
 		
 		// functions
 		Font(char const * filename, float scale = 1.f);

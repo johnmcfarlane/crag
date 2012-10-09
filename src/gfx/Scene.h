@@ -34,8 +34,8 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		void SetTime(Time t);
-		Time GetTime() const;
+		void SetTime(core::Time t);
+		core::Time GetTime() const;
 		
 		void AddObject(Object & object);
 		void RemoveObject(Uid uid);
@@ -63,7 +63,7 @@ namespace gfx
 		void RemoveChildren(BranchNode & parent);
 
 		// attributes
-		Time _time;
+		core::Time _time;
 		Pov pov;
 		
 		ObjectMap _objects;	// fast-access container of all objects

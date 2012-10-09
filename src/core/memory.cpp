@@ -26,18 +26,24 @@ void * Allocate(size_t num_bytes, size_t alignment)
 	return malloc(num_bytes);
 #else
 	void * allocation;
-	int error = posix_memalign(& allocation, 8, num_bytes);
-	if (error == 0)
+	int error = posix_memalign(& allocation, alignment, num_bytes);
+	switch (error)
 	{
+	case 0:
 		return allocation;
+		
+	case EINVAL:
+		DEBUG_BREAK("alignment, %ld, is not a power of two, or is less than minimum, %ld", alignment, sizeof(void*));
+		break;
+		
+	case ENOMEM:
+		break;
+		
+	default:
+		DEBUG_BREAK("bad value returned by posix_memalign");
 	}
-	else
-	{
-		// EINVAL means alignement isn't max(sizeof(void*), 2^n)
-		// ENOMEM means no memory
-		assert(false);
-		return nullptr;
-	}
+	
+	return nullptr;
 #endif
 }
 

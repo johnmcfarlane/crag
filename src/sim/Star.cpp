@@ -37,7 +37,7 @@ sim::Star::~Star()
 
 void sim::Star::Tick(sim::Engine & simulation_engine)
 {
-	Time t = simulation_engine.GetTime();
+	core::Time t = simulation_engine.GetTime();
 	Scalar angle = Scalar(t * (2. * PI) / _year) + 3.6;
 	position = Vector3(- std::sin(angle) * _radius, - std::cos(angle) * _radius, Scalar(0));
 }

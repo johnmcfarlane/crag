@@ -54,7 +54,7 @@ namespace applet
 		virtual bool GetQuitFlag() const override;
 		
 		virtual void Yield() override;
-		virtual void Sleep(Time duration) override;
+		virtual void Sleep(core::Time duration) override;
 		virtual void WaitFor(Condition & condition) override;
 
 		// overridden by the concrete applet class

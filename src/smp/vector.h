@@ -29,7 +29,8 @@ namespace smp
 		typedef size_t size_type;
 		
 		typedef value_type * ptr_type;
-		typedef std::atomic<ptr_type> atomic_ptr_type;
+		typedef std::uintptr_t atomic_type;
+		typedef std::atomic<atomic_type> atomic;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// c'tor/d'tor - obviously NOT thread safe
@@ -75,17 +76,21 @@ namespace smp
 		
 		iterator end()
 		{
-			return last;
+			atomic_type last_value = last;
+			ptr_type last_ptr = reinterpret_cast<ptr_type>(last_value);
+			return last_ptr;
 		}
 		
 		const_iterator end() const
 		{
-			return last;
+			atomic_type last_value = last;
+			ptr_type last_ptr = reinterpret_cast<ptr_type>(last_value);
+			return last_ptr;
 		}
 		
 		const_iterator cend() const
 		{
-			return last;
+			return iterator(last);
 		}
 		
 		
@@ -104,12 +109,12 @@ namespace smp
 			verify();
 
 			// Call the d'tor on all the deleted elements.
-			for (T * it = first; it != last; ++ it)
+			for (T& element : *this)
 			{
-				it->~T();
+				element.~T();
 			}
 			
-			last = first;
+			last = reinterpret_cast<atomic_type>(first);
 			
 			verify();
 		}
@@ -123,7 +128,7 @@ namespace smp
 		size_type size() const
 		{
 			verify();
-			return last - first;
+			return size_type(end() - begin());
 		}
 		
 		size_type capacity() const
@@ -157,7 +162,7 @@ namespace smp
 		T & back() const
 		{
 			ASSERT(last > first);
-			return * (last - 1);
+			return * (end() - 1);
 		}
 		
 		
@@ -208,7 +213,8 @@ namespace smp
 		T * grow_uninit(size_type num)
 		{
 			ASSERT(std::atomic_is_lock_free(& last));
-			ptr_type fetched_bytes = std::atomic_fetch_add(& last, num);
+			uintptr_t addend_byte = sizeof(value_type) * num;
+			atomic_type fetched_bytes = last.fetch_add(static_cast<atomic_type>(addend_byte));
 			return reinterpret_cast<T *> (fetched_bytes);
 		}
 		
@@ -219,7 +225,8 @@ namespace smp
 			
 			// Allocate the buffer and set first and last to the start of it.
 			char * buffer = reinterpret_cast<char *> (Allocate (c_bytes, CalculateAlignment(sizeof(T))));
-			first = last = reinterpret_cast<T *> (buffer);
+			first = reinterpret_cast<T *> (buffer);
+			last = reinterpret_cast<atomic_type> (buffer);
 			
 			// Set everything to end of buffer.
 			buffer += c_bytes;
@@ -242,21 +249,20 @@ namespace smp
 		void verify() const
 		{
 			// Either all members are null or non-null; no mix and match.
-			ASSERT((first == nullptr) == (last == nullptr));
-			ASSERT((first == nullptr) == (everything == nullptr));
+			ASSERT((begin() == nullptr) == (end() == nullptr));
+			ASSERT((begin() == nullptr) == (everything == nullptr));
 			
 			// First, last and everything are in ascending order.
-			ASSERT(first <= last);
-			ASSERT(last <= everything);
+			ASSERT(begin() <= end());
+			ASSERT(end() <= everything);
 			
 			// Points are correctly lined up and add up.
-			ASSERT(first + (last - first) == last);
-			ASSERT(first + (everything - first) == everything);
+			ASSERT(begin() + (end() - begin()) == end());
+			ASSERT(begin() + (everything - begin()) == everything);
 		}
 
 		ptr_type first;
-		atomic_ptr_type last;
+		atomic last;
 		ptr_type everything;
 	};
-	
 }

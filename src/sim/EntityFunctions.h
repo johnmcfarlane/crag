@@ -28,7 +28,7 @@ namespace sim
 	// forward-declarations
 	class Entity;
 	class EntitySet;
-	class sim::Engine;
+	class Engine;
 	
 	
 	////////////////////////////////////////////////////////////////////////////////

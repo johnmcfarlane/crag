@@ -71,7 +71,7 @@ namespace form
 		// inputs - typically called from form/gfx threads
 		void SetNumQuaterne(int const & num_quaterne);
 		void SampleFrameDuration(float const & frame_duration_ratio);
-		void SampleMeshGenerationPeriod(Time const & mesh_generation_period);
+		void SampleMeshGenerationPeriod(core::Time const & mesh_generation_period);
 		
 	private:
 		QuaterneCount GetRecommendedNumQuaterna() const;

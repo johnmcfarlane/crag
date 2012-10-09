@@ -31,11 +31,11 @@ namespace gfx
 		// Draw the object.
 		void Render(gfx::Engine const & renderer) const override;
 		
-		Time CalculateAge(Time time) const;
+		core::Time CalculateAge(core::Time time) const;
 		
 		// variables
 		Scalar _spawn_volume;
-		Time _spawn_time;
+		core::Time _spawn_time;
 		float _radius;
 		Color4f _color;
 	};

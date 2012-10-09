@@ -23,8 +23,8 @@ using namespace gfx;
 // gfx::Program member definitions
 
 gfx::Program::Program()
-: _lights_changed(true)
-, _id(0)
+: _id(0)
+, _lights_changed(true)
 {
 }
 

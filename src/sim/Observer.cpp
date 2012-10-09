@@ -29,7 +29,7 @@
 using namespace sim;
 
 
-CONFIG_DECLARE (sim_tick_duration, Time);
+CONFIG_DECLARE (sim_tick_duration, core::Time);
 
 namespace 
 {

@@ -11,3 +11,19 @@
 
 #include "core/debug.h"
 
+#if ! defined(NDEBUG) && ! defined(WIN32)
+
+ReentryGuard::ReentryGuard(int & counter)
+: _counter(counter) 
+{ 
+	assert(++ _counter == 1); 
+
+} 
+
+ReentryGuard::~ReentryGuard() 
+{ 
+	assert(-- _counter == 0); 
+}
+
+#endif
+
