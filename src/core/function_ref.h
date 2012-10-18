@@ -49,6 +49,11 @@ namespace core
 				&& _functor_ptr == rhs._functor_ptr;
 		}
 		
+		bool operator!=(function_ref const & rhs) const
+		{
+			return ! operator==(rhs);
+		}
+		
 		RESULT operator()(PARAMETERS ... parameters) const
 		{
 			return (*_dispatch)(_functor_ptr, parameters ...);
