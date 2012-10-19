@@ -166,6 +166,7 @@ namespace smp
 	}
 	
 	// calls the given function with a reference to the handle's object
+	// (unless the handle is not valid when call is put through) 
 	template <typename TYPE>
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
@@ -173,10 +174,11 @@ namespace smp
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
-			ASSERT (base != nullptr);
-
-			auto& derived = static_cast<Type &>(* base);
-			function(derived);
+			if (base != nullptr)
+			{
+				auto& derived = static_cast<Type &>(* base);
+				function(derived);
+			}
 		});
 	}
 	
