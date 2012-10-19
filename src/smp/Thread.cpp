@@ -20,6 +20,7 @@ Thread::Thread()
 
 Thread::~Thread()
 {
+	ASSERT(! IsLaunched());
 	Join();
 }
 

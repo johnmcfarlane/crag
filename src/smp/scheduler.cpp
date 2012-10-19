@@ -316,28 +316,33 @@ namespace smp
 			class ThreadBuffer
 			{
 			public:
-				ThreadBuffer(int num_threads)
+				ThreadBuffer(std::size_t num_threads)
+				: _threads(new Thread [num_threads])
+				, _threads_end(_threads + num_threads)
 				{
-					// Create a thread for each CPU (except one).
-					_threads = new Thread [num_threads];
-					
 					// Launch them all.
-					for (Thread * it = _threads, * end = _threads + num_threads; it != end; ++ it)
+					for (Thread * it = _threads; it != _threads_end; ++ it)
 					{
 						it->Launch(RunThread);
 					}
 					
-					DEBUG_MESSAGE("scheduler using %d threads.", num_threads);
+					DEBUG_MESSAGE("scheduler using %zd threads.", num_threads);
 				}
 				
 				~ThreadBuffer()
 				{
+					for (Thread * it = _threads; it != _threads_end; ++ it)
+					{
+						it->Join();
+					}
+					
 					delete [] _threads;
 				}
 				
 			private:
 				// locks entire scheduler
-				Thread * _threads;
+				Thread * const _threads;
+				Thread const * const _threads_end;
 			};
 			
 			

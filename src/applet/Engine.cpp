@@ -63,16 +63,6 @@ void Engine::OnQuit()
 
 void Engine::OnAddObject(AppletBase & applet)
 {
-	// If engine's quit flag is set,
-	if (_quit_flag)
-	{
-		DEBUG_MESSAGE("quit flag already set; deleting applet");
-		
-		// delete it.
-		delete & applet;
-		return;
-	}
-
 	_applets.push_back(applet);
 }
 
@@ -91,29 +81,19 @@ void Engine::OnRemoveObject(Uid uid)
 void Engine::SetQuitFlag()
 {
 	_quit_flag = true;
-	
-	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
-	{
-		AppletBase & applet = * i;
-		applet.SetQuitFlag();
-	}
 }
 
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	// Main loop.
-	while (! _quit_flag | HasFibersActive())
+	while (message_queue.DispatchMessages(* this) != 0 || HasFibersActive() || ! _quit_flag)
 	{
-		bool dispatched_messages = message_queue.DispatchMessages(* this) != 0;
-		bool processed_tasks = ProcessTasks();
-		if (! (dispatched_messages | processed_tasks))
+		if (! ProcessTasks())
 		{
 			smp::Sleep(0.01);
 		}
 	}
-	
-	message_queue.DispatchMessages(* this);
 }
 
 bool Engine::HasFibersActive() const
@@ -130,32 +110,56 @@ bool Engine::ProcessTasks()
 	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
 	{
 		AppletBase & applet = * i;
-
-		ASSERT(applet.IsRunning());
-
-		// and if applet's continue condition is met,
-		const Condition & condition = applet.GetCondition();
-		if (condition(_quit_flag))
+		if (! ProcessTask(applet))
 		{
-			// then continue!
-			applet.Continue();
-			
-			// When it pauses again, 
-			did_work = true;
+			continue;
+		}
+		
+		// If work was done, 
+		did_work = true;
 
-			// And if it's all done, 
-			if (! applet.IsRunning())
-			{
-				// take a step back,
-				-- i;
-				
-				// and remove the applet.
-				_applets.remove(applet);
-				delete & applet;
-			}
+		// And if it's all done, 
+		if (! applet.IsRunning())
+		{
+			// take a step back,
+			-- i;
+			
+			// and remove the applet.
+			_applets.remove(applet);
+			delete & applet;
+		}
+		else if (_quit_flag)
+		{
+			DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
 		}
 	}
 	
 	// Return true iff any happened.
 	return did_work;
+}
+
+bool Engine::ProcessTask(AppletBase & applet)
+{
+	ASSERT(applet.IsRunning());
+
+	if (_quit_flag)
+	{
+		applet.SetQuitFlag();
+	}
+	
+	const Condition & condition = applet.GetCondition();
+	if (! condition())
+	{
+		if (_quit_flag)
+		{
+			DEBUG_MESSAGE("Warning: %s told to quit but did not wake", applet.GetName());
+		}
+
+		return false;
+	}
+	
+	// and if applet's continue condition is met,
+	// then continue!
+	applet.Continue();
+	return true;
 }

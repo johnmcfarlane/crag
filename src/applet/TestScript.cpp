@@ -125,8 +125,6 @@ namespace
 // TestScript entry point
 void TestScript::operator() (AppletInterface & applet_interface)
 {
-	DEBUG_MESSAGE("-> Main script");
-	
 	_applet_interface = & applet_interface;
 	
 	// Set camera position
@@ -182,7 +180,6 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	_skybox.Destroy();
 	
 	ASSERT(_applet_interface == & applet_interface);
-	DEBUG_MESSAGE("<- Main script");
 }
 
 void TestScript::SpawnPlanets()

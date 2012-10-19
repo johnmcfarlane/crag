@@ -27,11 +27,11 @@ CONFIG_DEFINE (mouse_sensitivity, float, 0.01f);
 // applet::ObserverScript member definitions
 
 ObserverScript::ObserverScript(AppletBase::Init const & init, sim::ObserverHandle observer)
-: AppletBase(init)
+: AppletBase(init, 4096, "Observer")
 , _observer(observer)
 , _collidable(true)
 {
-};
+}
 
 ObserverScript::~ObserverScript()
 {
@@ -53,14 +53,16 @@ void ObserverScript::operator() (AppletInterface & applet_interface)
 void ObserverScript::HandleEvents(AppletInterface & applet_interface)
 {
 	SDL_Event event;
-	while (! _event_watcher.PopEvent(event))
+	if (_event_watcher.PopEvent(event))
 	{
-		applet_interface.WaitFor([this] (bool quit_flag) {
-			return (! _event_watcher.IsEmpty()) | quit_flag;
+		HandleEvent(event);
+	}
+	else
+	{
+		applet_interface.WaitFor([this, & applet_interface] () {
+			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 	}
-
-	HandleEvent(event);
 }
 
 void ObserverScript::HandleEvent(SDL_Event const & event)

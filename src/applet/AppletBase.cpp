@@ -23,7 +23,8 @@ namespace
 {
 	// condition which never fails;
 	// used by Yield to return ASAP;
-	bool null_condition_function(bool quit_flag)
+	// only needed before apple's first Yield call
+	bool null_condition_function()
 	{
 		return true;
 	};
@@ -35,24 +36,31 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // applet::AppletBase member definitions
 
-AppletBase::AppletBase(super::Init const & init)
+AppletBase::AppletBase(super::Init const & init, std::size_t stack_size, char const * name)
 : super(init)
-, _fiber(ref(new smp::Fiber))
+, _fiber(ref(new smp::Fiber(& OnLaunch, this, stack_size, name)))
 , _condition(null_condition)
 , _quit_flag(false)
-, _finished_flag(false)
 {
-	_fiber.Launch(& OnLaunch, this);
+	ASSERT(_fiber.IsRunning());
 }
 
 AppletBase::~AppletBase()
 {
+	ASSERT(! _fiber.IsRunning());
+	ASSERT(_quit_flag);
+	
 	delete & _fiber;
+}
+
+char const * AppletBase::GetName() const
+{
+	return _fiber.GetName();
 }
 
 bool AppletBase::IsRunning() const
 {
-	return ! _finished_flag;
+	return _fiber.IsRunning();
 }
 
 const Condition & AppletBase::GetCondition() const
@@ -67,30 +75,36 @@ void AppletBase::Continue()
 
 bool AppletBase::GetQuitFlag() const
 {
+	VerifyObject(* this);
 	return _quit_flag;
 }
 
 void AppletBase::SetQuitFlag()
 {
+	VerifyObject(* this);
 	_quit_flag = true;
 }
 
-// TODO: Should probably not be needed.
-void AppletBase::Yield()
+#if defined(VERIFY)
+void AppletBase::Verify() const
 {
-	WaitFor(null_condition);
+	VerifyObject(_fiber);
 }
+#endif
 
 void AppletBase::Sleep(core::Time duration)
 {
 	auto wake_position = duration + app::GetTime();
-	AppletInterface::WaitFor([wake_position] (bool quit_flag) {
-		return (app::GetTime() >= wake_position) | quit_flag;
+	AppletInterface::WaitFor([this, wake_position] () {
+		return (app::GetTime() >= wake_position) | _quit_flag;
 	});
 }
 
 void AppletBase::WaitFor(Condition & condition)
 {
+	ASSERT(condition != null_condition);
+	VerifyObject(* this);
+
 	ASSERT(_condition == null_condition);
 	_condition = condition;
 	
@@ -102,14 +116,13 @@ void AppletBase::WaitFor(Condition & condition)
 void AppletBase::OnLaunch(void * data)
 {
 	AppletBase & applet = ref(reinterpret_cast<AppletBase *>(data));
-	ASSERT(applet._finished_flag == false);
+	ASSERT(applet.IsRunning());
 	
 	ASSERT(applet._condition == null_condition);
 	
 	applet(applet);
-	
-	ASSERT(applet._finished_flag == false);
-	applet._finished_flag = true;
-	
+	VerifyObject(applet);
+
+	ASSERT(applet.IsRunning());
 	ASSERT(applet._condition == null_condition);
 }
