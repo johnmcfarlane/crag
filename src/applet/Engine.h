@@ -55,9 +55,9 @@ namespace applet
 		
 		// daemon messages
 		template <typename FUNCTOR = void (*) (AppletInterface & applet_interface)>
-		void Launch(FUNCTOR & functor)
+		void Launch(FUNCTOR & functor, std::size_t stack_size, char const * name)
 		{
-			CreateObject<Applet<FUNCTOR>>(Uid::Create(), functor);
+			CreateObject<Applet<FUNCTOR>>(Uid::Create(), functor, stack_size, name);
 		}
 		
 		void OnQuit();
@@ -86,6 +86,7 @@ namespace applet
 		bool HasFibersActive() const;
 		
 		bool ProcessTasks();
+		bool ProcessTask(AppletBase & applet);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

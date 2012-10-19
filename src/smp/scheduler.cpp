@@ -380,25 +380,38 @@ namespace smp
 				// types
 				typedef std::vector<Thread> vector;
 			public:
-				
-				// functions
-				ThreadBuffer(size_t num_threads)
-				: _threads(num_threads)
+				ThreadBuffer(std::size_t num_threads)
+				: _threads(new Thread [num_threads])
+				, _threads_end(_threads + num_threads)
 				{
-					for (auto & thread : _threads)
+					// Launch them all.
+					for (Thread * it = _threads; it != _threads_end; ++ it)
 					{
-						thread.Launch(RunThread);
+						it->Launch(RunThread);
 					}
+					
+					DEBUG_MESSAGE("scheduler using %zd threads.", num_threads);
 				}
 				
 				vector::size_type size() const
 				{
-					return _threads.size();
+					return _threads_end - _threads;
 				}
 				
+				~ThreadBuffer()
+				{
+					for (Thread * it = _threads; it != _threads_end; ++ it)
+					{
+						it->Join();
+					}
+					
+					delete [] _threads;
+				}	
+				
 			private:
-				// variables
-				vector _threads;
+				// locks entire scheduler
+				Thread * const _threads;
+				Thread const * const _threads_end;
 			};
 			
 			

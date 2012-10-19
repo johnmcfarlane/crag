@@ -13,89 +13,142 @@
 
 #include "core/Random.h"
 
-#if defined(__LLP64__) || defined(__LP64__) || defined(WIN64)
-// These memory model do not readily support passing of pointers.
-// See [http://en.wikipedia.org/wiki/Setcontext#Example].
-#define MAKECONTEXT_SMALLER_INT 1
-#else
-#define MAKECONTEXT_SMALLER_INT 0
-#endif
 
 using namespace smp;
 
-#if MAKECONTEXT_SMALLER_INT
 namespace
 {
+	////////////////////////////////////////////////////////////////////////////
+	// file-local types
+
+#if defined(MAKECONTEXT_SMALLER_INT)
 	// helps convert between integers and pointers
-	union HelperCallbackParameters
+	union HelperCallbackParameter
 	{
-		unsigned integers[4];
-		void * pointers[2];
+		unsigned integers[2];
+		void * pointer;
 		
 		// On memory models where they are the same size, 
 		// the whole excercise is ... pointless.
-		static_assert(sizeof(integers) == sizeof(pointers), "This hack isn't going to work!");
+		static_assert(sizeof(integers) == sizeof(pointer), "This block is only useful on systems where (int) and (void*) are different sizes.");
 	};
-	
-	typedef void (* MakeContextCallback) ();
-	typedef void (* HelperCallback) (int, int, int, int);
+#endif
 
-	// Passed into makecontext, this function lives at the bottom of the fiber's
-	// callstack. It reassembles the pointers and calls the function which was
-	// passed into Fiber::Launch.	
-	void helper_callback(int integer0, int integer1, int integer2, int integer3)
+	// function type accepted by makecontext	
+	typedef void (* MakeContextCallback) ();
+
+	////////////////////////////////////////////////////////////////////////////
+	// file-local functions
+
+	// figures out a sensible number of bytes to allocate for the fiber's stack
+	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
 	{
-		HelperCallbackParameters parameters;
-		parameters.integers[0] = integer0;
-		parameters.integers[1] = integer1;
-		parameters.integers[2] = integer2;
-		parameters.integers[3] = integer3;
-		Fiber::Callback * callback = reinterpret_cast<Fiber::Callback *>(parameters.pointers[0]);
-		(*callback)(parameters.pointers[1]);
+#if defined(VERIFY)
+		requested_stack_size = (requested_stack_size * 2) + 2048;
+#endif
+
+	// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
+	// in size. This is in case a signal is sent to the fiber and the system
+	// requires space to deal with it. We assume this doesn't happen and treat
+	// MINSIGSTKSZ as a limit - not an overhead.
+		return std::max(requested_stack_size, std::size_t(MINSIGSTKSZ));
 	}
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // smp::Fiber member definitions
 
-// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
-// in size. This is in case a signal is sent to the fiber and the system
-// requires space to deal with it. We assume this doesn't happen and treat
-// MINSIGSTKSZ as a limit - not an overhead.
-const std::size_t Fiber::default_stack_size;
-
-Fiber::Fiber(std::size_t stack_size)
-: _stack_size(std::max(stack_size, std::size_t(MINSIGSTKSZ)))
-, _stack(Allocate(stack_size, 1024))
+Fiber::Fiber(Callback * callback, void * data, std::size_t stack_size, char const * name)
+: _stack_size(stack_size)
+, _name(name)
+, _is_running(true)
 {
     if (getcontext(& _context) != 0) 
 	{
 		DEBUG_BREAK("getcontext returned non-zero");
 	}
-	
-	_context.uc_stack.ss_sp = _stack;
-	_context.uc_stack.ss_size = _stack_size;
-	_context.uc_link = nullptr;
+
+	InitContext();
 
 #if defined(VERIFY)
-	InitStack();
+	InitStackUseEstimator();
 #endif
-	VerifyObject(* this);
+
+	InitCallback(callback, data);
+
+	ASSERT(IsRunning());
+	ASSERT(! IsCurrent());
 }
 
 Fiber::~Fiber()
 {
-#if defined(VERIFY)
-	VerifyObject(* this);
+#if ! defined(NDEBUG)
+	ASSERT(! IsRunning());
+	ASSERT(! IsCurrent());
 	std::size_t stack_use = EstimateStackUse();
 	ASSERT(stack_use > 0);
-	DEBUG_MESSAGE("fiber stack exit status: used:unused=%u:%u", 
+	DEBUG_MESSAGE("%s stack exit status: used=%u/%u", GetName(),
 				  static_cast<unsigned>(stack_use),
-				  static_cast<unsigned>(_stack_size - stack_use));
+				  static_cast<unsigned>(_stack_size));
 #endif
 
-	Free(_stack);
+	Free(_context.uc_stack.ss_sp);
+}
+
+bool Fiber::IsCurrent() const
+{
+	VerifyObject(* this);
+	char * somewhereOnTheStack = reinterpret_cast<char *>(& somewhereOnTheStack);
+	char * bottomOfTheStack = reinterpret_cast<char *>(_context.uc_stack.ss_sp);
+	std::size_t height = somewhereOnTheStack - bottomOfTheStack;
+	return height < _context.uc_stack.ss_size;
+}
+
+bool Fiber::IsRunning() const
+{
+	VerifyObject(* this);
+	return _is_running;
+}
+
+char const * Fiber::GetName() const
+{
+	VerifyObject(* this);
+	return _name;
+}
+
+void Fiber::Continue()
+{
+	ASSERT(IsRunning());
+	ASSERT(! IsCurrent());
+	ASSERT(_context.uc_link == nullptr);
+	
+	ucontext_t return_context;
+	_context.uc_link = & return_context;
+	
+	if (swapcontext(_context.uc_link, & _context))
+	{
+		DEBUG_BREAK("swapcontext returned an error");
+	}
+	
+	ASSERT(_context.uc_link != nullptr);
+	_context.uc_link = nullptr;
+
+	ASSERT(! IsCurrent());
+}
+
+void Fiber::Yield()
+{
+	ASSERT(IsCurrent());
+	ASSERT(_context.uc_link != nullptr);
+	
+	if (swapcontext(& _context, _context.uc_link))
+	{
+		DEBUG_BREAK("swapcontext returned an error");
+	}
+
+	ASSERT(IsRunning());
+	ASSERT(IsCurrent());
+	ASSERT(_context.uc_link != nullptr);
 }
 
 #if defined(VERIFY)
@@ -103,76 +156,43 @@ void Fiber::Verify() const
 {
 	ASSERT(_context.uc_stack.ss_sp != nullptr);
 	ASSERT(_context.uc_stack.ss_size >= MINSIGSTKSZ);
+	ASSERT(_context.uc_stack.ss_size >= _stack_size);
+	ASSERT(_context.uc_stack.ss_size == calculate_stack_allocation(_stack_size));
+	
+	// _stack_size - and not the allocated stack size - is compared against 
+	// because this value doesn't change across platforms or build configs. 
+	// E.g. on OS X, allocated is always >= 32Ki so a Fiber with miniscule 
+	// stack would likely never trigger as assert.
 	std::size_t stack_use = EstimateStackUse();
-	ASSERT(stack_use < _stack_size - 1024);
-}
-#endif
-
-void Fiber::Launch(Callback * callback, void * data)
-{
-	ASSERT(_context.uc_link == nullptr);
-
-#if MAKECONTEXT_SMALLER_INT
-	// makecontext only takes integers but the caller passes in a pointer
-	HelperCallbackParameters parameters; 
-	parameters.pointers[0] = reinterpret_cast<void *>(callback);
-	parameters.pointers[1] = data;
-	
-	makecontext(& _context, (MakeContextCallback)helper_callback, 4, 
-			parameters.integers[0], parameters.integers[1], 
-			parameters.integers[2], parameters.integers[3]);
-#elif __LP64__
-	static_assert(sizeof(data) == sizeof(int), "Bad parameter size. (See wikipedia entry for setcontext.)");
-
-	makecontext(& _context, ((MakeContextCallback)callback, 1, data);
-#else
-// may not be too difficult to implement
-#error memory model unsupported by Fiber class
-#endif
+	if (stack_use >= _stack_size)
+	{
+		DEBUG_BREAK("%s stack overflow: used=%zd; requested:%zd", GetName(), stack_use, _stack_size);
+	}
+	else if (stack_use >= _stack_size - 1024)
+	{
+		DEBUG_MESSAGE("%s near stack overflow: used=%zd; requested:%zd", GetName(), stack_use, _stack_size);
+	}
 }
 
-void Fiber::Continue()
-{
-	ASSERT(_context.uc_link == nullptr);
-	
-	ucontext_t return_context;
-	_context.uc_link = & return_context;
-	
-	swapcontext(_context.uc_link, & _context);
-	
-	ASSERT(_context.uc_link != nullptr);
-	_context.uc_link = nullptr;
-}
-
-void Fiber::Yield()
-{
-	ASSERT(_context.uc_link != nullptr);
-	VerifyObject(* this);
-	
-	swapcontext(& _context, _context.uc_link);
-
-	ASSERT(_context.uc_link != nullptr);
-	VerifyObject(* this);
-}
-
-#if ! defined(NDEBUG)
-void Fiber::InitStack()
+void Fiber::InitStackUseEstimator()
 {
 	// Write to each address in the stack and check these values in the d'tor.
-	uintptr_t seed = reinterpret_cast<uintptr_t>(_stack);
+	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
 	Random sequence(seed);
-	for (uint8_t * i = reinterpret_cast<uint8_t *>(_stack), * end = i + _stack_size; i != end; ++ i)
+	for (uint8_t * i = reinterpret_cast<uint8_t *>(_context.uc_stack.ss_sp), * end = i +_context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
 		(* i) = r;
 	}
+
+	ASSERT(EstimateStackUse() == 0);
 }
 
 std::size_t Fiber::EstimateStackUse() const
 {
-	uintptr_t seed = reinterpret_cast<uintptr_t>(_stack);
+	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
 	Random sequence(seed);
-	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_stack), * end = i + _stack_size; i != end; ++ i)
+	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_context.uc_stack.ss_sp), * end = i + _context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
 		uint8_t stack_element = * i;
@@ -188,3 +208,71 @@ std::size_t Fiber::EstimateStackUse() const
 }
 #endif
 
+void Fiber::InitContext()
+{
+	std::size_t actual_stack_size = calculate_stack_allocation(_stack_size);
+	_context.uc_stack.ss_size = actual_stack_size;
+	_context.uc_stack.ss_sp = Allocate(actual_stack_size, 1024);
+	_context.uc_link = nullptr;
+}
+
+void Fiber::InitCallback(Callback * callback, void * data)
+{
+#if MAKECONTEXT_SMALLER_INT
+	static_assert(sizeof(data) == sizeof(int) * 2, "wrong platform");
+
+	// makecontext only takes integers but the caller passes in a pointer
+	HelperCallbackParameter parameters[3];
+	parameters[0].pointer = reinterpret_cast<void *>(this);
+	parameters[1].pointer = reinterpret_cast<void *>(callback);
+	parameters[2].pointer = data;
+	
+	makecontext(& _context, (MakeContextCallback)OnLaunchHelper, 6, 
+			parameters[0].integers[0], parameters[0].integers[1], 
+			parameters[1].integers[0], parameters[1].integers[1], 
+			parameters[2].integers[0], parameters[2].integers[1]);
+#else
+	static_assert(sizeof(data) == sizeof(int), "wrong platform");
+
+	int parameter0 = reinterpret_cast<int>(this);
+	int parameter1 = reinterpret_cast<int>(callback);
+	int parameter2 = reinterpret_cast<int>(data);
+	
+	makecontext(& _context, (MakeContextCallback)OnLaunch, 3, parameter0, parameter1, parameter2);
+#endif
+}
+
+#if MAKECONTEXT_SMALLER_INT
+void Fiber::OnLaunchHelper(unsigned i0, unsigned i1, unsigned i2, unsigned i3, unsigned i4, unsigned i5)
+{
+	HelperCallbackParameter parameters[3];
+	parameters[0].integers[0] = i0;
+	parameters[0].integers[1] = i1;
+	parameters[1].integers[0] = i2;
+	parameters[1].integers[1] = i3;
+	parameters[2].integers[0] = i4;
+	parameters[2].integers[1] = i5;
+	
+	Fiber & fiber = * reinterpret_cast<Fiber *>(parameters[0].pointer);
+	Callback * callback = reinterpret_cast<Callback *>(parameters[1].pointer);
+	void * data = reinterpret_cast<void *>(parameters[2].pointer);
+
+	OnLaunch(fiber, callback, data);
+}
+#endif
+
+void Fiber::OnLaunch(Fiber & fiber, Callback * callback, void * data)
+{
+	ASSERT(fiber.IsCurrent());
+	ASSERT(fiber.EstimateStackUse() > 0);
+	
+	(* callback)(data);
+	
+	ASSERT(fiber._is_running);
+
+	fiber._is_running = false;
+	fiber.Yield();
+	
+	// should not have come back from the Yield call
+	DEBUG_BREAK("reached end of OnLaunch for %s", fiber.GetName());
+}

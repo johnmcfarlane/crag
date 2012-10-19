@@ -17,7 +17,6 @@
 namespace smp 
 {
 	class Fiber;
-	class FiberInterface;
 }
 
 namespace applet
@@ -35,8 +34,10 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		AppletBase(Init const & init);
+		AppletBase(Init const & init, std::size_t stack_size, char const * name);
 		~AppletBase();
+		
+		char const * GetName() const;
 		
 		// true iff the applet has not yet returned
 		bool IsRunning() const;
@@ -48,12 +49,15 @@ namespace applet
 		void Continue();
 
 		void SetQuitFlag();
+		
+#if defined(VERIFY)
+		void Verify() const;
+#endif
 	private:
 		
 		// AppletInterface overrides
 		virtual bool GetQuitFlag() const override;
 		
-		virtual void Yield() override;
 		virtual void Sleep(core::Time duration) override;
 		virtual void WaitFor(Condition & condition) override;
 
@@ -69,6 +73,5 @@ namespace applet
 		smp::Fiber & _fiber;
 		Condition _condition;
 		bool _quit_flag;
-		bool _finished_flag;
 	};
 }

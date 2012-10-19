@@ -304,6 +304,8 @@ namespace
 	// The main program function.
 	bool CragMain(char const * program_path)
 	{
+		DEBUG_MESSAGE("-> CragMain");
+
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
@@ -341,7 +343,7 @@ namespace
 #else
 				auto functor = & ga::main;
 #endif
-				engine.Launch(functor);
+				engine.Launch(functor, 8192, "Main");
 			});
 			
 			while (HandleEvent())
@@ -390,6 +392,7 @@ namespace
 		smp::scheduler::Deinit();
 		app::Deinit();
 		
+		DEBUG_MESSAGE("<- CragMain");
 		return true;
 	}
 }

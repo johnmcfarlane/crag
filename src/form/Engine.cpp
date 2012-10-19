@@ -67,8 +67,6 @@ form::Engine::Engine()
 
 form::Engine::~Engine()
 {
-	DEBUG_MESSAGE("form::Engine has %d meshes.", (int)_meshes.size());
-	
 	while (! _meshes.empty())
 	{
 		Mesh & mesh = _meshes.front();

@@ -29,7 +29,7 @@ namespace applet
 	template <typename RESULT_TYPE>
 	void AppletInterface::WaitFor(smp::Future<RESULT_TYPE> const & future)
 	{
-		WaitFor([& future] (bool quit_flag) -> bool {
+		WaitFor([& future] () -> bool {
 			return future.IsComplete();
 		});
 		

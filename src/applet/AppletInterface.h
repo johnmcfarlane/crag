@@ -18,7 +18,7 @@ namespace applet
 	class AppletBase;
 
 	// condition on which to wake from a WaitFor call
-	typedef core::function_ref<bool(bool)> Condition;
+	typedef core::function_ref<bool()> Condition;
 
 	// Interface to the Applet class;
 	// This interface is passed to a Applet's function object.
@@ -28,11 +28,12 @@ namespace applet
 		// functions
 		virtual ~AppletInterface() { }
 		
+		virtual char const * GetName() const = 0;
+		
 		// applet thread quit flag get/setter
 		virtual bool GetQuitFlag() const = 0;
 
 		// pause execution in various ways
-		virtual void Yield() = 0;
 		virtual void Sleep(core::Time duration) = 0;
 		virtual void WaitFor(Condition & condition) = 0;
 		
