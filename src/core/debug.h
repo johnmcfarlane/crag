@@ -175,7 +175,15 @@ ReentryGuard reentry_guard(counter);
 		} \
 	)
 
-#define VerifyEqual(A, B, EPSILON) \
+#define VerifyEqual(A, B) \
+	DO_STATEMENT( \
+		if (! ((A) == (B))) { \
+			::std::cerr << A << " != " << B << std::endl; \
+			DEBUG_BREAK("Verify: '%s' != '%s'", #A, #B); \
+		} \
+	)
+
+#define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
 			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
