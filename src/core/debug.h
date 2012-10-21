@@ -175,7 +175,15 @@ ReentryGuard reentry_guard(counter);
 		} \
 	)
 
-#define VerifyEqual(A, B, EPSILON) \
+#define VerifyEqual(A, B) \
+	DO_STATEMENT( \
+		if (! ((A) == (B))) { \
+			::std::cerr << A << " != " << B << std::endl; \
+			DEBUG_BREAK("Verify: '%s' != '%s'", #A, #B); \
+		} \
+	)
+
+#define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
 			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
@@ -199,14 +207,14 @@ template<typename T> void VerifyPtr(T const * ptr)
 
 // Run object's internal verification.
 template<typename T>
-void VerifyObject(const T & object)
+void VerifyObject(T const & object)
 {
 	object.Verify();
 }
 
 // Verify address of object and run object's internal verification.
 template<typename T>
-void VerifyObjectRef(const T & ref)
+void VerifyObjectRef(T const & ref)
 {
 	VerifyRef(ref);
 	VerifyObject(ref);
@@ -214,7 +222,7 @@ void VerifyObjectRef(const T & ref)
 
 // Verify pointer to object and (if non-null) run object's internal verification.
 template<typename T>
-void VerifyObjectPtr(const T * ptr)
+void VerifyObjectPtr(T const * ptr)
 {
 	if (ptr != nullptr) 
 	{

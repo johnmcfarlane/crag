@@ -326,7 +326,7 @@ void form::Node::Verify() const
 		}
 		
 		VerifyTrue(area > 0);
-		VerifyEqual(LengthSq(normal), 1, 0.001f);
+		VerifyNearlyEqual(LengthSq(normal), 1, 0.001f);
 		VerifyTrue(score >= 0);
 	}
 	else {
