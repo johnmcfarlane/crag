@@ -154,10 +154,10 @@ void Fiber::Yield()
 #if defined(VERIFY)
 void Fiber::Verify() const
 {
-	ASSERT(_context.uc_stack.ss_sp != nullptr);
-	ASSERT(_context.uc_stack.ss_size >= MINSIGSTKSZ);
-	ASSERT(_context.uc_stack.ss_size >= _stack_size);
-	ASSERT(_context.uc_stack.ss_size == calculate_stack_allocation(_stack_size));
+	VerifyTrue(_context.uc_stack.ss_sp != nullptr);
+	VerifyTrue(_context.uc_stack.ss_size >= MINSIGSTKSZ);
+	VerifyTrue(_context.uc_stack.ss_size >= _stack_size);
+	VerifyEqual(_context.uc_stack.ss_size, calculate_stack_allocation(_stack_size));
 	
 	// _stack_size - and not the allocated stack size - is compared against 
 	// because this value doesn't change across platforms or build configs. 
@@ -166,11 +166,11 @@ void Fiber::Verify() const
 	std::size_t stack_use = EstimateStackUse();
 	if (stack_use >= _stack_size)
 	{
-		DEBUG_BREAK("%s stack overflow: used=%zd; requested:%zd", GetName(), stack_use, _stack_size);
+		DEBUG_BREAK("%s stack overflow: used=%zu; requested:%zu", _name, stack_use, _stack_size);
 	}
 	else if (stack_use >= _stack_size - 1024)
 	{
-		DEBUG_MESSAGE("%s near stack overflow: used=%zd; requested:%zd", GetName(), stack_use, _stack_size);
+		DEBUG_MESSAGE("%s near stack overflow: used=%zu; requested:%zu", _name, stack_use, _stack_size);
 	}
 }
 
