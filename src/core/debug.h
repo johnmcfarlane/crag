@@ -60,23 +60,23 @@
 
 
 // TRUNCATE_STRING
-#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING + std::max(0, (int)strlen(STRING) - TARGET_LENGTH)
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING + std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)
 
 
 // MESSAGE - general purpose console output macro
-#define MESSAGE(OUT, FORMAT, ...) fprintf(OUT, "%32s:%3d:" FORMAT "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__)
+#define MESSAGE(OUT, FORMAT, ...) fprintf(OUT, "%32s:%3d:" FORMAT " [%s]\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
 
 
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#define DEBUG_MESSAGE(FORMAT, ...) MESSAGE(stdout, "%16s: " FORMAT, MESSAGE_TRUNCATE(__func__, 16), ## __VA_ARGS__)
+#define DEBUG_MESSAGE(FORMAT, ...) MESSAGE(stdout, FORMAT, ## __VA_ARGS__)
 #endif
 
 
 // ERROR_MESSAGE - output serious error messages to stderr in all builds
-#define ERROR_MESSAGE(...) MESSAGE(stderr, __VA_ARGS__)
+#define ERROR_MESSAGE(...) fprintf(stderr, __VA_ARGS__)
 
 
 // BREAK - interrupt execution
@@ -101,7 +101,7 @@
 #else
 #define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
-		ERROR_MESSAGE(FORMAT "  [%s]", ## __VA_ARGS__, FUNCTION_SIGNATURE); \
+		DEBUG_MESSAGE(FORMAT, ## __VA_ARGS__); \
 		BREAK(); \
 	)
 #endif
@@ -171,23 +171,25 @@ ReentryGuard reentry_guard(counter);
 #define VerifyTrue(CONDITION) \
 	DO_STATEMENT( \
 		if (! (CONDITION)) { \
-			DEBUG_BREAK("Verify: '%s'", #CONDITION); \
+			DEBUG_BREAK("VerifyTrue(%s)", #CONDITION); \
 		} \
 	)
 
 #define VerifyEqual(A, B) \
 	DO_STATEMENT( \
-		if (! ((A) == (B))) { \
-			::std::cerr << A << " != " << B << std::endl; \
-			DEBUG_BREAK("Verify: '%s' != '%s'", #A, #B); \
+		if ((A) != (B)) { \
+			::std::cerr << #A << '=' << A << "; " #B << '=' << B << std::endl; \
+			DEBUG_BREAK("Not equal"); \
 		} \
 	)
 
 #define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
-			::std::cerr << A << " != " << B << " (" << EPSILON << ')' << std::endl; \
-			DEBUG_BREAK("Verify: '%s' != '%s'", #A, #B); \
+			::std::cerr << #A << '=' << A << "; " \
+						<< #B << '=' << B << "; " \
+						<< #EPSILON << '=' << EPSILON << std::endl; \
+			DEBUG_BREAK("Not nearly equal"); \
 		} \
 	)
 
