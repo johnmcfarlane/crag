@@ -79,16 +79,16 @@ namespace
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
-			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+			ERROR_MESSAGE("GLEW Error: %s", glewGetErrorString(glew_err));
 			return false;
 		}
 		
-		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
+		DEBUG_MESSAGE("GLEW Version: %s", glewGetString(GLEW_VERSION));
 		
 #if ! defined(__APPLE__)
 		if (! GLEW_VERSION_1_5)
 		{
-			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
+			ERROR_MESSAGE("Error: Crag requires OpenGL 1.5 or greater.");
 			return false;
 		}
 #endif

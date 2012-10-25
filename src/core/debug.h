@@ -76,7 +76,7 @@
 
 
 // ERROR_MESSAGE - output serious error messages to stderr in all builds
-#define ERROR_MESSAGE(...) fprintf(stderr, __VA_ARGS__)
+#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, FORMAT "\n", ## __VA_ARGS__)
 
 
 // BREAK - interrupt execution
@@ -178,18 +178,21 @@ ReentryGuard reentry_guard(counter);
 #define VerifyEqual(A, B) \
 	DO_STATEMENT( \
 		if ((A) != (B)) { \
-			::std::cerr << #A << '=' << A << "; " #B << '=' << B << std::endl; \
-			DEBUG_BREAK("Not equal"); \
+			::std::ostringstream message; \
+			message << #A "=" << A \
+					<< ", " #B "=" << B; \
+			DEBUG_BREAK("Not equal: %s", message.str().c_str()); \
 		} \
 	)
 
 #define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
 		if (! NearEqual(A, B, EPSILON)) { \
-			::std::cerr << #A << '=' << A << "; " \
-						<< #B << '=' << B << "; " \
-						<< #EPSILON << '=' << EPSILON << std::endl; \
-			DEBUG_BREAK("Not nearly equal"); \
+			::std::ostringstream message; \
+			message << #A "=" << A \
+					<< ", " #B "=" << B \
+					<< ", " #EPSILON "=" << EPSILON; \
+			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
 		} \
 	)
 

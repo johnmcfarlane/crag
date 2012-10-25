@@ -3,7 +3,9 @@
 CMakeCache.txt
 CMakeFiles/
 Makefile
+default.cfg
 cmake_install.cmake
+core
 crag
 crag.cfg
 dependencies/bin/
