@@ -51,7 +51,7 @@ namespace applet
 		void SetQuitFlag();
 		
 #if defined(VERIFY)
-		void Verify() const;
+		virtual void Verify() const override;
 #endif
 	private:
 		
