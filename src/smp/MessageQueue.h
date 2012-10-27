@@ -44,17 +44,13 @@ namespace smp
 			
 			// TODO: Look into ways to prevent locking of the buffer.
 			// TODO: Look into ways to prevent locking of the buffer while executing a command.
-			if (! _mutex.try_lock())
-			{
-				return false;
-			}
+			Lock critical_section(_mutex);
 			
 			Message<Class> const & envelope = _buffer.front();
 			envelope(object);
 			
 			_buffer.pop_front();
 			
-			_mutex.unlock();
 			return true;
 		}
 		

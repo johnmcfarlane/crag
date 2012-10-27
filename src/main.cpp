@@ -327,7 +327,7 @@ namespace
 			// Instantiate the four daemons
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation(0x8000);
-			sim::Daemon simulation(0x400);
+			sim::Daemon simulation(0x40000);	// TODO: Why so big?
 			applet::Daemon applets(0x400);
 			
 			// start thread the daemons

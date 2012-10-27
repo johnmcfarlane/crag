@@ -245,7 +245,7 @@ using namespace form;
 // form::RegulatorScript member definitions
 
 RegulatorScript::RegulatorScript(Init const & init)
-: applet::AppletBase(init, 2048, "Regulator")
+: applet::AppletBase(init, 8192, "Regulator")
 {
 	_units[frame_rate] = new FrameRateUnit;
 	_units[mesh_generation] = new MeshGenerationUnit;
