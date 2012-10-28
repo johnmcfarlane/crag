@@ -43,6 +43,18 @@ namespace geom
 #endif
 		}
 		
+		template <typename RHS_S>
+		Matrix(Matrix<RHS_S, 3, 3> const & rhs)
+		{
+			for (int m = 0; m != 3; ++ m)
+			{
+				for (int n = 0; n != 3; ++ n)
+				{
+					rows[m][n] = rhs[m][n];
+				}
+			}
+		}
+		
 		Matrix(Row const & row0,
 			   Row const & row1,
 			   Row const & row2)
