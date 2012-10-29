@@ -99,9 +99,11 @@ void Ball::UpdateModels() const
 		return;
 	}
 	
-	Scalar radius = body->GetRadius();
-	Vector3 scale(radius, radius, radius);
-	gfx::Transformation transformation(body->GetPosition(), body->GetRotation(), scale);
+	gfx::Vector3 position = body->GetPosition();
+	gfx::Matrix33 rotation = body->GetRotation();
+	gfx::Scalar radius = body->GetRadius();
+	gfx::Vector3 scale(radius, radius, radius);
+	gfx::Transformation transformation(position, rotation, scale);
 
 	_model.Call([transformation] (gfx::BranchNode & node) {
 		node.SetTransformation(transformation);

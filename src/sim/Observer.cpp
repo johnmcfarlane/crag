@@ -134,7 +134,7 @@ void Observer::UpdateModels() const
 	}
 
 	Vector3 const & position = body->GetPosition();
-	Matrix33 const & rotation = body->GetRotation();
+	Matrix33 rotation = body->GetRotation();
 
 	// Give renderer the new camera position.
 	{

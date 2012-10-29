@@ -98,7 +98,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	Vector3 position = box.GetPosition();
 	Vector3 dimensions = box.GetDimensions();
 	Vector3 extents = dimensions * Scalar(.5);
-	sim::Matrix33 const & rotation = box.GetRotation();
+	Matrix33 rotation = box.GetRotation();
 	
 	// Initialise the PointCloud.
 	typedef Object<ConvexHull> Object;
