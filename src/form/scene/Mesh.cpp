@@ -71,14 +71,17 @@ form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
 
 form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 {
-	Vertex & addition = vertices.PushBack(Vertex({ 
+	Vertex v = 
+	{ 
 		p.pos, 
 		Vector3::Zero(),
 		gfx::Color4b(color.r,
 					 color.g,
 					 color.b,
 					 color.a)
-	}));
+	};
+
+	Vertex & addition = vertices.PushBack(v);
 	
 	return addition;
 }

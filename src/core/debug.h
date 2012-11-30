@@ -15,7 +15,7 @@
 
 // Semicolon-friendly compound statement.
 // Useful for wrapping up macros to appear like a function call.
-#define DO_STATEMENT(STATEMENT) do { STATEMENT } while (false)
+#define DO_STATEMENT(...) do { __VA_ARGS__ } while (false)
 
 // Semicolon-friendly empty statement.
 #define DO_NOTHING DO_STATEMENT()
@@ -177,20 +177,24 @@ ReentryGuard reentry_guard(counter);
 
 #define VerifyEqual(A, B) \
 	DO_STATEMENT( \
-		if ((A) != (B)) { \
+		auto a = A; \
+		auto b = B; \
+		if (a != b) { \
 			::std::ostringstream message; \
-			message << #A "=" << A \
-					<< ", " #B "=" << B; \
+			message << #A "=" << a \
+					<< ", " #B "=" << b; \
 			DEBUG_BREAK("Not equal: %s", message.str().c_str()); \
 		} \
 	)
 
 #define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
-		if (! NearEqual(A, B, EPSILON)) { \
+		auto a = A; \
+		auto b = B; \
+		if (! NearEqual(a, b, EPSILON)) { \
 			::std::ostringstream message; \
-			message << #A "=" << A \
-					<< ", " #B "=" << B \
+			message << #A "=" << a \
+					<< ", " #B "=" << b \
 					<< ", " #EPSILON "=" << EPSILON; \
 			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
 		} \
@@ -252,10 +256,10 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 
 #else
 
-template<typename T> void VerifyRef(T const & ref) { }
-template<typename T> void VerifyPtr(T const * ptr) { }
-template<typename T> void VerifyObject(T const & obj) { }
-template<typename T> void VerifyObjectRef(T const & ref) { }
+template<typename T> void VerifyRef(T const &) { }
+template<typename T> void VerifyPtr(T const *) { }
+template<typename T> void VerifyObject(T const &) { }
+template<typename T> void VerifyObjectRef(T const &) { }
 template<typename T> void VerifyObjectPtr(T const * ptr) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin) { }
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) { }

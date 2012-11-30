@@ -315,6 +315,8 @@ namespace smp
 			// A simple array of threads.
 			class ThreadBuffer
 			{
+				OBJECT_NO_COPY(ThreadBuffer);
+
 			public:
 				ThreadBuffer(std::size_t num_threads)
 				: _threads(new Thread [num_threads])
@@ -326,7 +328,7 @@ namespace smp
 						it->Launch(RunThread);
 					}
 					
-					DEBUG_MESSAGE("scheduler using %zd threads.", num_threads);
+					DEBUG_MESSAGE("scheduler using " SIZE_T_FORMAT_SPEC " threads.", num_threads);
 				}
 				
 				~ThreadBuffer()

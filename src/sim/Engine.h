@@ -52,7 +52,7 @@ namespace sim
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
 		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
-			smp::ObjectBaseInit<Engine> init = 
+			smp::ObjectInit<Engine> init = 
 			{
 				* this,
 				uid

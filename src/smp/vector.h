@@ -29,7 +29,7 @@ namespace smp
 		typedef size_t size_type;
 		
 		typedef value_type * ptr_type;
-		typedef std::uintptr_t atomic_type;
+		typedef uintptr_t atomic_type;
 		typedef std::atomic<atomic_type> atomic;
 		
 		////////////////////////////////////////////////////////////////////////////////

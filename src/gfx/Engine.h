@@ -101,10 +101,25 @@ namespace gfx
 		Transformation const& GetCamera() const;
 		void OnSetRegulatorHandle(form::RegulatorScriptHandle regulator_handle);
 
+#if defined(WIN32)
+		template <typename OBJECT_TYPE>
+		void CreateObject(Uid uid)
+		{
+			smp::ObjectInit<Engine>
+			init = 
+			{
+				* this,
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE(init);
+			OnAddObject(* object);
+		}
+#endif
+
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
 		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
-			smp::ObjectBaseInit<Engine>
+			smp::ObjectInit<Engine>
 			init = 
 			{
 				* this,

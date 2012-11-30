@@ -86,9 +86,7 @@ void Engine::OnRemoveObject(Uid uid)
 	
 	_entity_set.Remove(* entity);
 	
-	// TODO: This code is sensitive to object-lifetime issues. More reason for UIDs.
-	entity->~Entity();
-	Free(entity);
+	delete entity;
 }
 
 void Engine::OnAttachEntities(Uid uid1, Uid uid2)

@@ -150,15 +150,6 @@ namespace debug
 class sim::PlanetShader::Params
 {
 public:
-	Params(form::Node const & init_a, form::Node const & init_b, int init_index, int init_depth, Random init_rnd)
-	: a(init_a)
-	, b(init_b)
-	, index(init_index)
-	, depth(init_depth)
-	, rnd(init_rnd)
-	{
-	}
-	
 	form::Node const & a;
 	form::Node const & b;
 	int const index;
@@ -203,7 +194,7 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 	int combined_seed(seed_1 + seed_2);
 	Random rnd(combined_seed);
 
-	Params params(a, b, index, depth, combined_seed);
+	Params params { a, b, index, depth, combined_seed };
 	
 	Vector3 result;
 	if (depth >= planet_shader_depth_medium)

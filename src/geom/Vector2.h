@@ -31,15 +31,14 @@ namespace geom
 		
 		template<typename RHS_S> 
 		Vector(Vector<RHS_S, 2> const & rhs) 
-		: x(rhs.x)
-		, y(rhs.y)
+		: Vector(rhs.x, rhs.y)
 		{ 
 		}
 		
 		template<typename RHS_S> 
 		Vector(RHS_S rhs_x, RHS_S rhs_y) 
-		: x(rhs_x)
-		, y(rhs_y)
+		: x(static_cast<S>(rhs_x))
+		, y(static_cast<S>(rhs_y))
 		{ 
 		}
 

@@ -79,16 +79,16 @@ namespace
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
-			ERROR_MESSAGE("GLEW Error: %s", glewGetErrorString(glew_err));
+			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
 			return false;
 		}
 		
-		DEBUG_MESSAGE("GLEW Version: %s", glewGetString(GLEW_VERSION));
+		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
 		
 #if ! defined(__APPLE__)
 		if (! GLEW_VERSION_1_5)
 		{
-			ERROR_MESSAGE("Error: Crag requires OpenGL 1.5 or greater.");
+			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
 			return false;
 		}
 #endif
@@ -836,7 +836,7 @@ void Engine::UpdateTransformations(BranchNode & parent_branch, gfx::Transformati
 		Object & child = * i;
 		++ i;
 		
-		Transformation const & child_model_view_transformation = child.Transform(* this, model_view_transformation, scratch);
+		Transformation const & child_model_view_transformation = child.Transform(model_view_transformation, scratch);
 		VerifyObject(child_model_view_transformation);
 		
 		switch (child.GetNodeType())

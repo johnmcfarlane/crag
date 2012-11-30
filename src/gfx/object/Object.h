@@ -27,13 +27,13 @@ namespace gfx
 	// Base class for drawable things.
 	// Note that these have intrusive list/tree entries (esp. in BranchNode)
 	// meaning they effectively double as nodes in a hierachical scene graph.
-	class Object : public smp::ObjectBase<Object, gfx::Engine>
+	class Object : public smp::Object<Object, gfx::Engine>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef smp::ObjectBase<Object, gfx::Engine> super;
+		typedef smp::Object<Object, gfx::Engine> super;
 		
 		enum NodeType
 		{
@@ -51,7 +51,7 @@ namespace gfx
 		virtual void Verify() const override;
 #endif
 		
-		virtual Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
+		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
 		
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;

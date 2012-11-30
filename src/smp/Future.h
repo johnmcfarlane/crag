@@ -25,6 +25,11 @@ namespace smp
 			failure		// target object did not exist
 		};
 
+		Future()
+			: _status(pending)
+		{
+		}
+
 		~Future()
 		{
 			ASSERT(IsComplete());
@@ -81,6 +86,6 @@ namespace smp
 		
 		// variables
 		VALUE _value;
-		Status _status = pending;
+		Status _status;
 	};
 }

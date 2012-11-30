@@ -201,7 +201,7 @@ namespace
 	private:
 		// variables
 		QuaterneCount _min_recommended_num_quaterne;
-		core::Time _startup_time = app::GetTime();
+		core::Time _startup_time;
 	};
 	
 	class MeshGenerationUnit : public form::RegulatorScript::Unit

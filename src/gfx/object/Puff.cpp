@@ -65,9 +65,9 @@ Puff::~Puff()
 	STAT_INC(num_puffs, -1);
 }
 
-gfx::Transformation const & Puff::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
-	core::Time time = renderer.GetScene().GetTime();
+	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
 	
 	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), _radius);

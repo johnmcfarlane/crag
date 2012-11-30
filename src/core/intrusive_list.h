@@ -22,6 +22,14 @@
 		DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
 
 
+// variant of DEFINE_INTRUSIVE_LIST which plays nicely with class templates.
+#define DEFINE_TEMPLATED_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
+	private: \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+	public: \
+		DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
+
+
 // DEFINE_INTRUSIVE_LIST_HOOK macro can be used to define a list hook & type for a listed class.
 // Insert into private section of listed class.
 #define DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, HOOK_TYPE, HOOK_MEMBER) \
@@ -491,7 +499,7 @@ namespace core
 			template <hook_type Class::* Member>
 			static value_type const & get_object(hook_type const & h)
 			{
-				return get_owner<Class, hook_type const, Member>(h);
+				return ::core::get_owner<Class, hook_type const, Member>(h);
 			}
 			
 			////////////////////////////////////////////////////////////////////////////////
@@ -530,7 +538,7 @@ namespace core
 			typedef typename ::core::intrusive::list_base<Class>::template iterator<Member> iterator;
 			
 			////////////////////////////////////////////////////////////////////////////////
-			// d'tor
+			// c'tor/d'tor
 			
 			list()
 			{

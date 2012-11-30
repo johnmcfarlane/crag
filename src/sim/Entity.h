@@ -21,12 +21,12 @@ namespace physics
 namespace sim
 {
 	// The base class for 'things' that exist in the simulation.
-	class Entity : public smp::ObjectBase<Entity, sim::Engine>
+	class Entity : public smp::Object<Entity, sim::Engine>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef smp::ObjectBase<Entity, sim::Engine> super;
+		typedef smp::Object<Entity, sim::Engine> super;
 	public:
 		typedef physics::Body Body;
 
