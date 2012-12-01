@@ -75,7 +75,7 @@ namespace smp
 		Engine & _engine;
 		Uid _uid;
 		
-		typedef typename List::const_iterator const_iterator;
-		typedef typename List::iterator iterator;
+		typedef typename ObjectBase<OBJECT>::List::const_iterator const_iterator;
+		typedef typename ObjectBase<OBJECT>::List::iterator iterator;
 	};
 }
