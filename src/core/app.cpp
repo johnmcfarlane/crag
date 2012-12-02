@@ -31,6 +31,12 @@ namespace
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 {
+#if ! defined(WIN32) && ! defined(NDEBUG)
+	rlimit rlim;
+	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
+	setrlimit(RLIMIT_CORE, &rlim);
+#endif
+	
 	// X11 initialization
 #if defined(XlibSpecificationRelease)
 	Status xinit_status = XInitThreads();
@@ -39,12 +45,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		DEBUG_MESSAGE("Call to XInitThreads failed with return value, %d", xinit_status);
 		return false;
 	}
-#endif
-	
-#if ! defined(WIN32) && ! defined(NDEBUG)
-	rlimit rlim;
-	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
-	setrlimit(RLIMIT_CORE, &rlim);
 #endif
 	
 	// Initialize SDL.
