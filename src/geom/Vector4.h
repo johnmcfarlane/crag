@@ -22,29 +22,33 @@ namespace geom
 	public:
 		Vector() 
 #if ! defined(NDEBUG)
-		: x(std::numeric_limits<S>::signaling_NaN())
-		, y(std::numeric_limits<S>::signaling_NaN())
-		, z(std::numeric_limits<S>::signaling_NaN())
-		, w(std::numeric_limits<S>::signaling_NaN())
+		: Vector(
+			std::numeric_limits<S>::signaling_NaN(),
+			std::numeric_limits<S>::signaling_NaN(),
+			std::numeric_limits<S>::signaling_NaN(),
+			std::numeric_limits<S>::signaling_NaN())
 #endif
-		{ 
+		{
 		}
 		
 		template<typename RHS_S> 
 		Vector(Vector<RHS_S, 4> const & rhs) 
-		: x(rhs.x)
-		, y(rhs.y)
-		, z(rhs.z) 
-		, w(rhs.w) 
+		: Vector(rhs.x, rhs.y, rhs.z, rhs.w)
 		{ 
 		}
 		
 		template<typename RHS_S> 
+		Vector(RHS_S const rhs[4]) 
+			: Vector(rhs[0], rhs[1], rhs[2], rhs[3])
+		{
+		}
+		
+		template<typename RHS_S> 
 		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) 
-		: x(rhs_x)
-		, y(rhs_y)
-		, z(rhs_z)
-		, w(rhs_w) 
+		: x(static_cast<S>(rhs_x))
+		, y(static_cast<S>(rhs_y))
+		, z(static_cast<S>(rhs_z))
+		, w(static_cast<S>(rhs_w)) 
 		{ 
 		}
 		

@@ -67,8 +67,8 @@ namespace gfx
 		Pov pov;
 		
 		ObjectMap _objects;	// fast-access container of all objects
-		BranchNode _root;	// root of object heirachy
-		LeafNode::RenderList _render_list;
+		BranchNode _root;	// root of object heirachy; uses list hook in Object
+		LeafNode::RenderList _render_list;	// flat list of drawable objects
 		Light::List _light_list;
 	};
 }

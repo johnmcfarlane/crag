@@ -62,6 +62,20 @@ namespace applet
 		
 		void OnQuit();
 		
+#if defined(WIN32)
+		template <typename OBJECT_TYPE>
+		void CreateObject(Uid uid)
+		{
+			typename OBJECT_TYPE::Init init
+			{
+				* this,
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE (init);
+			OnAddObject(* object);
+		}
+#endif
+
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
 		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{

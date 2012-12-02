@@ -49,7 +49,7 @@ void Object::Verify() const
 }
 #endif
 
-gfx::Transformation const & Object::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Object::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	return model_view;
 }

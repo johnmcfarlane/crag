@@ -41,7 +41,7 @@ Ball::Ball(LeafNode::Init const & init, Color4f const & color)
 	SetMeshResource(& sphere_quad);
 }
 
-gfx::Transformation const & Ball::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Ball::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);

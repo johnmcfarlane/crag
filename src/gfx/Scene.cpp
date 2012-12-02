@@ -34,7 +34,7 @@ namespace
 
 Scene::Scene(Engine & engine)
 : _time(-1)
-, _root(smp::ObjectBaseInit<Engine>(engine, Uid::Create()), Transformation::Matrix44::Identity())
+, _root(smp::ObjectInit<Engine>(engine, Uid::Create()), Transformation::Matrix44::Identity())
 {
 	Frustum & frustum = pov.GetFrustum();
 

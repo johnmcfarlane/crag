@@ -40,6 +40,12 @@
 // warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead...
 #pragma warning(disable : 4996)	// ... except that strcpy_s is not yet a standard.
 
+#define SIZE_T_FORMAT_SPEC "%Iu"
+
+#else
+
+#define SIZE_T_FORMAT_SPEC "%zu"
+
 #endif
 
 
@@ -139,7 +145,7 @@
 #include "geom/Magnitude.h"
 
 #include "smp/Handle_Impl.h"
-#include "smp/ObjectBase.h"
+#include "smp/Object.h"
 
 
 //////////////////////////////////////////////////////////////////////

@@ -13,6 +13,8 @@
 
 #include "AppletBase.h"
 
+#include "smp/Fiber.h"
+
 
 #if defined(NDEBUG)
 #define FILE_LOCAL_BEGIN namespace {
@@ -86,6 +88,8 @@ void Engine::SetQuitFlag()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
+	smp::Fiber::InitializeThread();
+
 	// Main loop.
 	while (message_queue.DispatchMessages(* this) != 0 || HasFibersActive() || ! _quit_flag)
 	{
@@ -158,8 +162,10 @@ bool Engine::ProcessTask(AppletBase & applet)
 		return false;
 	}
 	
-	// and if applet's continue condition is met,
-	// then continue!
+	// and if applet's continue condition is met, then continue!
+	// TODO: This uses as much as twice the number of context switches necessary 
+	// to visit all applets. One applet should be able to switch straight on 
+	// to the next.
 	applet.Continue();
 	return true;
 }

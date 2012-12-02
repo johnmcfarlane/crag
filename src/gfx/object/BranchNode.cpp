@@ -11,12 +11,11 @@
 
 #include "BranchNode.h"
 
-
 using namespace gfx;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::ListObejct definitions
+// gfx::BranchNode definitions
 
 
 BranchNode::BranchNode(super::Init const & init, Transformation const & transformation)
@@ -104,7 +103,7 @@ BranchNode::List::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
-gfx::Transformation const & BranchNode::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & BranchNode::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	scratch = model_view * _transformation;
 	VerifyObject(scratch);

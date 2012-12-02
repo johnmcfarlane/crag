@@ -33,30 +33,40 @@
 
 namespace 
 {
-	bool CragMain(char const * program_path);
+	bool CragMain();
 }
 
 
 //////////////////////////////////////////////////////////////////////
 // main
 
-int main(int /*argc*/, char * * argv)
-{
 #if defined(WIN32)
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+{
 	std::ofstream cout_filestr, cerr_filestr;
 	cout_filestr.open ("cout.txt");
 	cerr_filestr.open ("cerr.txt");
 	std::cout.rdbuf(cout_filestr.rdbuf());
 	std::cerr.rdbuf(cerr_filestr.rdbuf());
-#endif
 
-	printf("Crag Demo\n"
-		   "Copyright 2010-2012 John McFarlane\n");
-	
-	int exit_value = CragMain(* argv) ? EXIT_SUCCESS : EXIT_FAILURE;
-	
-	return exit_value;
+	// TODO: Return correct value.
+	CragMain();
+
+	return 0;
 }
+#else
+int main(int, char * *)
+{
+	if (CragMain())
+	{
+		return EXIT_SUCCESS;
+	}
+	else
+	{
+		return EXIT_FAILURE;
+	}
+}
+#endif	// ! WIN32
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
@@ -72,13 +82,13 @@ namespace
 	CONFIG_DEFINE (video_resolution_x, int, 800);
 	CONFIG_DEFINE (video_resolution_y, int, 600);
 #else
-	CONFIG_DEFINE (video_resolution_x, int, 1536);
-	CONFIG_DEFINE (video_resolution_y, int, 864);
+	CONFIG_DEFINE (video_resolution_x, int, 800);
+	CONFIG_DEFINE (video_resolution_y, int, 600);
 #endif
 	
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
-#elif defined(WIN32)
+#elif defined(NDEBUG)
 	CONFIG_DEFINE (video_full_screen, bool, true);
 #else
 	CONFIG_DEFINE (video_full_screen, bool, false);
@@ -302,8 +312,11 @@ namespace
 	}
 
 	// The main program function.
-	bool CragMain(char const * program_path)
+	bool CragMain()
 	{
+		printf("Crag Demo\n"
+			   "Copyright 2010-2012 John McFarlane\n");
+
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
@@ -311,7 +324,7 @@ namespace
 		
 		geom::Vector2i video_resolution(video_resolution_x, video_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
-		if (! app::Init(video_resolution, full_screen, "Crag", program_path))
+		if (! app::Init(video_resolution, full_screen, "Crag"))
 		{
 			return false;
 		}
@@ -327,7 +340,7 @@ namespace
 			// Instantiate the four daemons
 			gfx::Daemon renderer(0x8000);
 			form::Daemon formation(0x8000);
-			sim::Daemon simulation(0x40000);	// TODO: Why so big?
+			sim::Daemon simulation(0x400);
 			applet::Daemon applets(0x400);
 			
 			// start thread the daemons

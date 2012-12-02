@@ -136,7 +136,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 				++ i;
             }
         }
-		ASSERT(i = collision_object.shape.faces.end());
+		ASSERT(i == collision_object.shape.faces.end());
     }
  	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.

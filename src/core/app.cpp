@@ -14,7 +14,8 @@
 #include "core/ConfigEntry.h"
 
 #if ! defined(WIN32) && ! defined(__APPLE__)
-#include "X11/Xlib.h"
+#include <sys/resource.h>
+#include <X11/Xlib.h>
 #endif
 
 // defined in gfx::Engine.cpp
@@ -26,13 +27,16 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
-		
-	char const * _program_path;
 }
 
-#include <sys/resource.h>
-bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path)
+bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 {
+#if ! defined(WIN32) && ! defined(NDEBUG)
+	rlimit rlim;
+	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
+	setrlimit(RLIMIT_CORE, &rlim);
+#endif
+	
 	// X11 initialization
 #if defined(XlibSpecificationRelease)
 	Status xinit_status = XInitThreads();
@@ -41,12 +45,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, 
 		DEBUG_MESSAGE("Call to XInitThreads failed with return value, %d", xinit_status);
 		return false;
 	}
-#endif
-	
-#if ! defined(WIN32) && ! defined(NDEBUG)
-	rlimit rlim;
-	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
-	setrlimit(RLIMIT_CORE, &rlim);
 #endif
 	
 	// Initialize SDL.
@@ -103,8 +101,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title, 
 		ERROR_MESSAGE("Failed to set relative mouse mode.");
 		return false;
 	}
-
-	_program_path = program_path;
 	
 	return true;
 }
@@ -120,14 +116,9 @@ void app::Deinit()
 
 }
 
-char const * app::GetProgramPath()
-{
-	return _program_path;
-}
-
 bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
-	FILE * source = fopen(filename, "r");
+	FILE * source = fopen(filename, "rb");
 	if (source == nullptr)
 	{
 		ASSERT(errno == ENOENT);
@@ -144,7 +135,7 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 	size_t read = fread(& buffer[0], 1, length, source);
 	if (read != length)
 	{
-		DEBUG_MESSAGE("error loading %s: length=%zd; read=%zd", filename, length, read);
+		DEBUG_MESSAGE("error loading %s: length=" SIZE_T_FORMAT_SPEC "; read=" SIZE_T_FORMAT_SPEC, filename, length, read);
 		return false;
 	}
 

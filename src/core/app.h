@@ -12,10 +12,9 @@
 namespace app
 {
 	// init
-	bool Init(geom::Vector2i resolution, bool full_screen, char const * title, char const * program_path);
+	bool Init(geom::Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
 	
-	char const * GetProgramPath();
 	bool LoadFile(char const * filename, std::vector<char> & buffer);
 	
 	// input

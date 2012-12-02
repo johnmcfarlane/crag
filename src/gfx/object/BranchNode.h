@@ -63,7 +63,7 @@ namespace gfx
 		List::const_iterator End() const;
 		
 		// Model-view transformation
-		gfx::Transformation const & Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		

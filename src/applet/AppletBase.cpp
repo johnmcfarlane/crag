@@ -24,12 +24,10 @@ namespace
 	// condition which never fails;
 	// used by Yield to return ASAP;
 	// only needed before apple's first Yield call
-	bool null_condition_function()
+	bool null_condition()
 	{
 		return true;
 	};
-	
-	Condition null_condition(null_condition_function);
 }
 
 
@@ -38,7 +36,7 @@ namespace
 
 AppletBase::AppletBase(super::Init const & init, std::size_t stack_size, char const * name)
 : super(init)
-, _fiber(ref(new smp::Fiber(& OnLaunch, this, stack_size, name)))
+, _fiber(ref(new smp::Fiber(& OnLaunch, static_cast<void *>(this), stack_size, name)))
 , _condition(null_condition)
 , _quit_flag(false)
 {
@@ -96,7 +94,7 @@ void AppletBase::Sleep(core::Time duration)
 {
 	auto wake_position = duration + app::GetTime();
 	AppletInterface::WaitFor([this, wake_position] () {
-		return (app::GetTime() >= wake_position) | _quit_flag;
+		return (app::GetTime() >= wake_position) || _quit_flag;
 	});
 }
 

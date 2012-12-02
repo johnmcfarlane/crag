@@ -22,26 +22,27 @@ namespace geom
 	public:
 		Vector() 
 #if ! defined(NDEBUG)
-		: x(std::numeric_limits<S>::signaling_NaN())
-		, y(std::numeric_limits<S>::signaling_NaN())
-		, z(std::numeric_limits<S>::signaling_NaN())
+		: Vector(
+			std::numeric_limits<S>::signaling_NaN(),
+			std::numeric_limits<S>::signaling_NaN(),
+			std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 
 		}
 
+		// TODO: Remove all of these c'tor function templates 
+		// and replace with explicit operator Vector.
 		template<typename RHS_S> 
 		Vector(Vector<RHS_S, 3> const & rhs) 
-		: x(rhs.x)
-		, y(rhs.y)
-		, z(rhs.z) 
+		: Vector(rhs.x, rhs.y, rhs.z) 
 		{ 
 		}
 		
 		template<typename RHS_S> 
 		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
-		: x(rhs_x)
-		, y(rhs_y)
-		, z(rhs_z) 
+		: x(static_cast<S>(rhs_x))
+		, y(static_cast<S>(rhs_y))
+		, z(static_cast<S>(rhs_z)) 
 		{ 
 		}
 		

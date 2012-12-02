@@ -40,7 +40,7 @@ void Planet::Update(UpdateParams const & params)
 	_salient = params;
 }
 
-gfx::Transformation const & Planet::Transform(gfx::Engine & renderer, gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+gfx::Transformation const & Planet::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);

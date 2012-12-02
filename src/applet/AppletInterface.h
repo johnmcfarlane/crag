@@ -60,9 +60,5 @@ namespace applet
 		// blocking call to object on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
 		smp::Future<RESULT_TYPE> Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
-		
-#if defined(VERIFY)
-		virtual void Verify() const = 0;
-#endif
 	};
 }

@@ -270,11 +270,10 @@ namespace core
 				}	while (new_capacity < minimum_capacity);
 				
 				// If resizing the buffer to that capacity fails,
-				DEBUG_MESSAGE("increasing capacity of ring_buffer, %p, from %zu to %zu bytes", this, capacity(), new_capacity);
 				if (! reserve(new_capacity))
 				{
 					// then new_capacity was calculated incorrectly.
-					DEBUG_BREAK("failed to increase capacity of ring_buffer, %p, from %zu to %zu bytes", this, capacity(), new_capacity);
+					assert(false);
 					return nullptr;
 				}
 				

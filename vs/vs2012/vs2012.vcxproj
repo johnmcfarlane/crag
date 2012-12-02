@@ -1,0 +1,395 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0A313D9E-AD1D-43C2-BDDF-C6A672543859}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>vs2012</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\SDL2\VisualC\SDL\Win32\Debug;..\..\dependencies\ode\lib\DebugDoubleLib;..\..\dependencies\ode\lib\ReleaseDoubleLib;..\..\dependencies\glew\lib</LibraryPath>
+    <TargetName>crag</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\SDL2\VisualC\SDL\Win32\Release;..\..\dependencies\ode\lib\DebugDoubleLib;..\..\dependencies\ode\lib\ReleaseDoubleLib;..\..\dependencies\glew\lib</LibraryPath>
+    <TargetName>crag</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>dDOUBLE;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\src</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <ErrorReporting>Send</ErrorReporting>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Opengl32.lib;Glu32.lib;glew32sd.lib;SDL.lib;ode_doubled.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>dDOUBLE;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\src</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Opengl32.lib;Glu32.lib;glew32s.lib;SDL.lib;ode_double.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\applet\Applet.h" />
+    <ClInclude Include="..\..\src\applet\AppletBase.h" />
+    <ClInclude Include="..\..\src\applet\AppletInterface.h" />
+    <ClInclude Include="..\..\src\applet\AppletInterface_Impl.h" />
+    <ClInclude Include="..\..\src\applet\Engine.h" />
+    <ClInclude Include="..\..\src\applet\ObserverScript.h" />
+    <ClInclude Include="..\..\src\applet\TestScript.h" />
+    <ClInclude Include="..\..\src\core\app.h" />
+    <ClInclude Include="..\..\src\core\ConfigEntry.h" />
+    <ClInclude Include="..\..\src\core\ConfigManager.h" />
+    <ClInclude Include="..\..\src\core\core.h" />
+    <ClInclude Include="..\..\src\core\debug.h" />
+    <ClInclude Include="..\..\src\core\double_buffer.h" />
+    <ClInclude Include="..\..\src\core\Enumeration.h" />
+    <ClInclude Include="..\..\src\core\EventWatcher.h" />
+    <ClInclude Include="..\..\src\core\floatOps.h" />
+    <ClInclude Include="..\..\src\core\for_each.h" />
+    <ClInclude Include="..\..\src\core\function_ref.h" />
+    <ClInclude Include="..\..\src\core\intOps.h" />
+    <ClInclude Include="..\..\src\core\intrusive_list.h" />
+    <ClInclude Include="..\..\src\core\memory.h" />
+    <ClInclude Include="..\..\src\core\Pool.h" />
+    <ClInclude Include="..\..\src\core\profile.h" />
+    <ClInclude Include="..\..\src\core\Random.h" />
+    <ClInclude Include="..\..\src\core\ring_buffer.h" />
+    <ClInclude Include="..\..\src\core\Singleton.h" />
+    <ClInclude Include="..\..\src\core\Statistics.h" />
+    <ClInclude Include="..\..\src\form\defs.h" />
+    <ClInclude Include="..\..\src\form\Engine.h" />
+    <ClInclude Include="..\..\src\form\Formation.h" />
+    <ClInclude Include="..\..\src\form\node\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\ExpandNodeFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\ForEachNodeFace.h" />
+    <ClInclude Include="..\..\src\form\node\GatherExpandableNodesFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\GenerateMeshFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\Node.h" />
+    <ClInclude Include="..\..\src\form\node\NodeBuffer.h" />
+    <ClInclude Include="..\..\src\form\node\Point.h" />
+    <ClInclude Include="..\..\src\form\node\PointBuffer.h" />
+    <ClInclude Include="..\..\src\form\node\Quaterna.h" />
+    <ClInclude Include="..\..\src\form\node\RootNode.h" />
+    <ClInclude Include="..\..\src\form\node\Shader.h" />
+    <ClInclude Include="..\..\src\form\scene\collision.h" />
+    <ClInclude Include="..\..\src\form\scene\Mesh.h" />
+    <ClInclude Include="..\..\src\form\scene\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\form\scene\MeshProperties.h" />
+    <ClInclude Include="..\..\src\form\scene\Polyhedron.h" />
+    <ClInclude Include="..\..\src\form\scene\RegulatorScript.h" />
+    <ClInclude Include="..\..\src\form\scene\Scene.h" />
+    <ClInclude Include="..\..\src\form\scene\Vertex.h" />
+    <ClInclude Include="..\..\src\form\scene\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\ga\main.h" />
+    <ClInclude Include="..\..\src\geom\Distance.h" />
+    <ClInclude Include="..\..\src\geom\Intersection.h" />
+    <ClInclude Include="..\..\src\geom\Magnitude.h" />
+    <ClInclude Include="..\..\src\geom\Matrix.h" />
+    <ClInclude Include="..\..\src\geom\Matrix33.h" />
+    <ClInclude Include="..\..\src\geom\Matrix44.h" />
+    <ClInclude Include="..\..\src\geom\MatrixOps.h" />
+    <ClInclude Include="..\..\src\geom\Ray.h" />
+    <ClInclude Include="..\..\src\geom\Sphere.h" />
+    <ClInclude Include="..\..\src\geom\Transformation.h" />
+    <ClInclude Include="..\..\src\geom\Vector.h" />
+    <ClInclude Include="..\..\src\geom\Vector2.h" />
+    <ClInclude Include="..\..\src\geom\Vector3.h" />
+    <ClInclude Include="..\..\src\geom\Vector4.h" />
+    <ClInclude Include="..\..\src\gfx\BufferObject.h" />
+    <ClInclude Include="..\..\src\gfx\Color.h" />
+    <ClInclude Include="..\..\src\gfx\Cuboid.h" />
+    <ClInclude Include="..\..\src\gfx\Debug.h" />
+    <ClInclude Include="..\..\src\gfx\defs.h" />
+    <ClInclude Include="..\..\src\gfx\Engine.h" />
+    <ClInclude Include="..\..\src\gfx\Fence.h" />
+    <ClInclude Include="..\..\src\gfx\Font.h" />
+    <ClInclude Include="..\..\src\gfx\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\glHelpers.h" />
+    <ClInclude Include="..\..\src\gfx\Image.h" />
+    <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
+    <ClInclude Include="..\..\src\gfx\Layer.h" />
+    <ClInclude Include="..\..\src\gfx\Mesh.h" />
+    <ClInclude Include="..\..\src\gfx\MeshResource.h" />
+    <ClInclude Include="..\..\src\gfx\object\Ball.h" />
+    <ClInclude Include="..\..\src\gfx\object\Box.h" />
+    <ClInclude Include="..\..\src\gfx\object\BranchNode.h" />
+    <ClInclude Include="..\..\src\gfx\object\FormationMesh.h" />
+    <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
+    <ClInclude Include="..\..\src\gfx\object\Light.h" />
+    <ClInclude Include="..\..\src\gfx\object\Object.h" />
+    <ClInclude Include="..\..\src\gfx\object\Planet.h" />
+    <ClInclude Include="..\..\src\gfx\object\Puff.h" />
+    <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
+    <ClInclude Include="..\..\src\gfx\object\Thruster.h" />
+    <ClInclude Include="..\..\src\gfx\Pov.h" />
+    <ClInclude Include="..\..\src\gfx\Program.h" />
+    <ClInclude Include="..\..\src\gfx\Quad.h" />
+    <ClInclude Include="..\..\src\gfx\RenderBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\ResourceManager.h" />
+    <ClInclude Include="..\..\src\gfx\Scene.h" />
+    <ClInclude Include="..\..\src\gfx\Shader.h" />
+    <ClInclude Include="..\..\src\gfx\Texture.h" />
+    <ClInclude Include="..\..\src\gfx\VertexBufferObject.h" />
+    <ClInclude Include="..\..\src\pch.h" />
+    <ClInclude Include="..\..\src\physics\Body.h" />
+    <ClInclude Include="..\..\src\physics\BoxBody.h" />
+    <ClInclude Include="..\..\src\physics\defs.h" />
+    <ClInclude Include="..\..\src\physics\Engine.h" />
+    <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
+    <ClInclude Include="..\..\src\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\script\TestScript.h" />
+    <ClInclude Include="..\..\src\sim\axes.h" />
+    <ClInclude Include="..\..\src\sim\Ball.h" />
+    <ClInclude Include="..\..\src\sim\Box.h" />
+    <ClInclude Include="..\..\src\sim\Controller.h" />
+    <ClInclude Include="..\..\src\sim\defs.h" />
+    <ClInclude Include="..\..\src\sim\Engine.h" />
+    <ClInclude Include="..\..\src\sim\Entity.h" />
+    <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
+    <ClInclude Include="..\..\src\sim\EntitySet.h" />
+    <ClInclude Include="..\..\src\sim\Firmament.h" />
+    <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
+    <ClInclude Include="..\..\src\sim\gravity.h" />
+    <ClInclude Include="..\..\src\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\sim\Observer.h" />
+    <ClInclude Include="..\..\src\sim\Planet.h" />
+    <ClInclude Include="..\..\src\sim\PlanetaryBody.h" />
+    <ClInclude Include="..\..\src\sim\PlanetShader.h" />
+    <ClInclude Include="..\..\src\sim\Star.h" />
+    <ClInclude Include="..\..\src\sim\UserInput.h" />
+    <ClInclude Include="..\..\src\sim\Vehicle.h" />
+    <ClInclude Include="..\..\src\smp\Daemon.h" />
+    <ClInclude Include="..\..\src\smp\Fiber.h" />
+    <ClInclude Include="..\..\src\smp\FiberPosix.h" />
+    <ClInclude Include="..\..\src\smp\FiberWin.h" />
+    <ClInclude Include="..\..\src\smp\for_each.h" />
+    <ClInclude Include="..\..\src\smp\Future.h" />
+    <ClInclude Include="..\..\src\smp\Handle.h" />
+    <ClInclude Include="..\..\src\smp\Handle_Impl.h" />
+    <ClInclude Include="..\..\src\smp\Message.h" />
+    <ClInclude Include="..\..\src\smp\MessageQueue.h" />
+    <ClInclude Include="..\..\src\smp\Object.h" />
+    <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
+    <ClInclude Include="..\..\src\smp\scheduler.h" />
+    <ClInclude Include="..\..\src\smp\Semaphore.h" />
+    <ClInclude Include="..\..\src\smp\SimpleMutex.h" />
+    <ClInclude Include="..\..\src\smp\smp.h" />
+    <ClInclude Include="..\..\src\smp\Thread.h" />
+    <ClInclude Include="..\..\src\smp\Uid.h" />
+    <ClInclude Include="..\..\src\smp\vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\applet\AppletBase.cpp" />
+    <ClCompile Include="..\..\src\applet\Engine.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine2</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine2</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\applet\ObserverScript.cpp" />
+    <ClCompile Include="..\..\src\applet\TestScript.cpp" />
+    <ClCompile Include="..\..\src\core\app.cpp" />
+    <ClCompile Include="..\..\src\core\ConfigEntry.cpp" />
+    <ClCompile Include="..\..\src\core\ConfigManager.cpp" />
+    <ClCompile Include="..\..\src\core\debug.cpp" />
+    <ClCompile Include="..\..\src\core\EventWatcher.cpp" />
+    <ClCompile Include="..\..\src\core\memory.cpp" />
+    <ClCompile Include="..\..\src\core\profile.cpp" />
+    <ClCompile Include="..\..\src\core\Random.cpp" />
+    <ClCompile Include="..\..\src\core\Statistics.cpp" />
+    <ClCompile Include="..\..\src\form\Engine.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine3</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine3</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\form\Formation.cpp" />
+    <ClCompile Include="..\..\src\form\node\CalculateNodeScoreFunctor.cpp" />
+    <ClCompile Include="..\..\src\form\node\Node.cpp" />
+    <ClCompile Include="..\..\src\form\node\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\node\Point.cpp" />
+    <ClCompile Include="..\..\src\form\node\PointBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\node\RootNode.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Mesh.cpp" />
+    <ClCompile Include="..\..\src\form\scene\MeshBufferObject.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Polyhedron.cpp" />
+    <ClCompile Include="..\..\src\form\scene\RegulatorScript.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Scene.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Vertex.cpp" />
+    <ClCompile Include="..\..\src\form\scene\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\ga\main.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)main0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)main0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\Cuboid.cpp" />
+    <ClCompile Include="..\..\src\gfx\Debug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Debug0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Debug0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\Engine.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\Fence.cpp" />
+    <ClCompile Include="..\..\src\gfx\Font.cpp" />
+    <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
+    <ClCompile Include="..\..\src\gfx\Image.cpp" />
+    <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\Layer.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Ball.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Ball0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Ball0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\BranchNode.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Planet.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Puff.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Thruster.cpp" />
+    <ClCompile Include="..\..\src\gfx\Pov.cpp" />
+    <ClCompile Include="..\..\src\gfx\Program.cpp" />
+    <ClCompile Include="..\..\src\gfx\Quad.cpp" />
+    <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\ResourceManager.cpp" />
+    <ClCompile Include="..\..\src\gfx\Scene.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\Shader.cpp" />
+    <ClCompile Include="..\..\src\gfx\Texture.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../src;../../dependencies/SDL/include;../../dependencies/glew</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../src;../../dependencies/SDL/include;../../dependencies/glew</AdditionalIncludeDirectories>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\physics\Body.cpp" />
+    <ClCompile Include="..\..\src\physics\BoxBody.cpp" />
+    <ClCompile Include="..\..\src\physics\Engine.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine1</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine1</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
+    <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\sim\Ball.cpp" />
+    <ClCompile Include="..\..\src\sim\Box.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Box0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Box0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sim\Controller.cpp" />
+    <ClCompile Include="..\..\src\sim\Engine.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sim\Entity.cpp" />
+    <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
+    <ClCompile Include="..\..\src\sim\EntitySet.cpp" />
+    <ClCompile Include="..\..\src\sim\Firmament.cpp" />
+    <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
+    <ClCompile Include="..\..\src\sim\gravity.cpp" />
+    <ClCompile Include="..\..\src\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\sim\Observer.cpp" />
+    <ClCompile Include="..\..\src\sim\Planet.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Planet0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Planet0</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sim\PlanetaryBody.cpp" />
+    <ClCompile Include="..\..\src\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\sim\Star.cpp" />
+    <ClCompile Include="..\..\src\sim\UserInput.cpp" />
+    <ClCompile Include="..\..\src\sim\Vehicle.cpp" />
+    <ClCompile Include="..\..\src\smp\Fiber.cpp" />
+    <ClCompile Include="..\..\src\smp\FiberPosix.cpp" />
+    <ClCompile Include="..\..\src\smp\FiberWin.cpp" />
+    <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
+    <ClCompile Include="..\..\src\smp\scheduler.cpp" />
+    <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
+    <ClCompile Include="..\..\src\smp\smp.cpp" />
+    <ClCompile Include="..\..\src\smp\Thread.cpp" />
+    <ClCompile Include="..\..\src\smp\Uid.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

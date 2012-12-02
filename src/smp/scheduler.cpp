@@ -377,6 +377,8 @@ namespace smp
 			// A simple array of threads.
 			class ThreadBuffer
 			{
+				OBJECT_NO_COPY(ThreadBuffer);
+
 				// types
 				typedef std::vector<Thread> vector;
 			public:
@@ -390,7 +392,7 @@ namespace smp
 						it->Launch(RunThread);
 					}
 					
-					DEBUG_MESSAGE("scheduler using %zd threads.", num_threads);
+					DEBUG_MESSAGE("scheduler using " SIZE_T_FORMAT_SPEC " threads.", num_threads);
 				}
 				
 				vector::size_type size() const

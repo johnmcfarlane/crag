@@ -44,6 +44,8 @@ add_executable(crag
 	src/physics/BoxBody.cpp
 	src/physics/SphericalBody.cpp
 	src/smp/Fiber.cpp
+	src/smp/FiberPosix.cpp
+	src/smp/FiberWin.cpp
 	src/smp/Uid.cpp
 	src/smp/Semaphore.cpp
 	src/smp/Thread.cpp

@@ -80,6 +80,12 @@ namespace
 		typedef std::vector<sim::VehicleHandle> EntityVector;
 		
 		// functions
+		TestScript()
+			: _origin(sim::Vector3::Zero())
+			, _enable_dynamic_origin(true)
+		{
+		}
+
 		void operator() (AppletInterface & applet_interface);
 	private:
 		void SpawnPlanets();
@@ -97,9 +103,9 @@ namespace
 		sim::ObserverHandle _observer;
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
-		sim::Vector3 _origin = sim::Vector3::Zero();
+		sim::Vector3 _origin;
 		core::EventWatcher _event_watcher;
-		bool _enable_dynamic_origin = true;
+		bool _enable_dynamic_origin;
 	};
 
 	////////////////////////////////////////////////////////////////////////////////
