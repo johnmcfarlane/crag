@@ -22,10 +22,9 @@ namespace geom
 	public:
 		Vector() 
 #if ! defined(NDEBUG)
-		: Vector(
-			std::numeric_limits<S>::signaling_NaN(),
-			std::numeric_limits<S>::signaling_NaN(),
-			std::numeric_limits<S>::signaling_NaN())
+		: x(std::numeric_limits<S>::signaling_NaN())
+		, y(std::numeric_limits<S>::signaling_NaN())
+		, z(std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 
 		}
@@ -44,6 +43,7 @@ namespace geom
 		, y(static_cast<S>(rhs_y))
 		, z(static_cast<S>(rhs_z)) 
 		{ 
+			VerifyObject(* this);
 		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
