@@ -42,7 +42,8 @@ namespace core
 	template<typename S> class Config : protected ConfigEntry
 	{
 	public:
-		Config(S & var, char const * init_name) 
+		template <typename IN_S>
+		Config(IN_S & var, char const * init_name) 
 		: ConfigEntry(init_name)
 		, variable(var)
 		, default_value(var)
