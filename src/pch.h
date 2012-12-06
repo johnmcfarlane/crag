@@ -54,7 +54,14 @@
 
 #if defined (__APPLE__)
 #define _XOPEN_SOURCE
+#define _DARWIN_C_SOURCE
 #endif
+
+
+//////////////////////////////////////////////////////////////////////
+// ODE includes.
+
+#include <ode/ode.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -62,6 +69,7 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
+#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
 #if defined(WIN32)
 #include <SDL.h>
