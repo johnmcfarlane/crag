@@ -15,7 +15,6 @@
 
 #if ! defined(WIN32) && ! defined(__APPLE__)
 #include <sys/resource.h>
-#include <X11/Xlib.h>
 #endif
 
 // defined in gfx::Engine.cpp
@@ -35,16 +34,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	rlimit rlim;
 	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
 	setrlimit(RLIMIT_CORE, &rlim);
-#endif
-	
-	// X11 initialization
-#if defined(XlibSpecificationRelease)
-	Status xinit_status = XInitThreads();
-	if (! xinit_status)
-	{
-		DEBUG_MESSAGE("Call to XInitThreads failed with return value, %d", xinit_status);
-		return false;
-	}
 #endif
 	
 	// Initialize SDL.
