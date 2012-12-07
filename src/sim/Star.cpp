@@ -45,12 +45,7 @@ sim::Star::~Star()
 void sim::Star::Tick(sim::Engine & simulation_engine)
 {
 	core::Time t = simulation_engine.GetTime();
-<<<<<<< Updated upstream
-	Scalar angle = static_cast<Scalar>(t * (2. * PI) / _year) + 3.6;
-	position = Vector3(- sin(angle) * _radius, - cos(angle) * _radius, static_cast<Scalar>(0));
-=======
 	CalculatePosition(t);
->>>>>>> Stashed changes
 }
 
 void sim::Star::UpdateModels() const
