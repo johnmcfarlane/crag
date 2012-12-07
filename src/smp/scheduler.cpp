@@ -493,7 +493,7 @@ namespace smp
 			ASSERT(singleton == nullptr);
 
 			size_t num_threads = CalculateNumThreads(num_reserved_cpus);
-			DEBUG_MESSAGE("scheduler using %zu threads.", num_threads);
+			DEBUG_MESSAGE("scheduler using " SIZE_T_FORMAT_SPEC " threads.", num_threads);
 
 			singleton = new Singleton(num_threads);
 		}
