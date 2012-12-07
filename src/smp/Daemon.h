@@ -107,7 +107,8 @@ namespace smp
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			_thread.Launch([this] () {
+			_thread.Launch([this, name] () {
+				SetThreadName(name);
 				this->Run();
 			});
 			
