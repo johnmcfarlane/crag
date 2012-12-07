@@ -61,9 +61,6 @@
 //////////////////////////////////////////////////////////////////////
 // ODE includes.
 
-// Hack to skip warnings in <ode/misc.h>
-//#define _ODE_MISC_H_
-
 #include <ode/ode.h>
 
 
