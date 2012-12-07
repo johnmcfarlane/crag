@@ -54,6 +54,7 @@
 
 #if defined (__APPLE__)
 #define _XOPEN_SOURCE
+#define _DARWIN_C_SOURCE
 #endif
 
 
@@ -61,7 +62,7 @@
 // ODE includes.
 
 // Hack to skip warnings in <ode/misc.h>
-#define _ODE_MISC_H_
+//#define _ODE_MISC_H_
 
 #include <ode/ode.h>
 
@@ -71,6 +72,7 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
+#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
 #if defined(WIN32)
 #include <SDL.h>

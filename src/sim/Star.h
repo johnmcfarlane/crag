@@ -33,10 +33,16 @@ namespace sim
 	
 		Scalar GetBoundingRadius() const;
 
+#if defined(VERIFY)
+		void Verify() const;
+#endif
 	private:
+		void CalculatePosition(core::Time t);
+		
+		// variables
 		gfx::BranchNodeHandle _model;
 		Vector3 position;
 		Scalar _radius;
-		Scalar _year;
+		core::Time _year;
 	};
 }

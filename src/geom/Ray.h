@@ -50,4 +50,15 @@ namespace geom
 	{
 		return ray.position + ray.direction * proportion;
 	}
+
+	//////////////////////////////////////////////////////////////////
+	// Vector<S, N> aliases
+	
+	typedef Ray<int, 2> Ray2i;
+	typedef Ray<float, 2> Ray2f;
+	typedef Ray<double, 2> Ray2d;
+	
+	typedef Ray<int, 3> Ray3i;
+	typedef Ray<float, 3> Ray3f;
+	typedef Ray<double, 3> Ray3d;
 }
