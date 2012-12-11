@@ -79,6 +79,14 @@ namespace geom
 		S x, y;
 	};
 
+	// casts between 2d matrices of different scalar types
+	template <typename LHS_S, typename RHS_S>
+	Vector<LHS_S, 2> Cast(Vector<RHS_S, 2> const & rhs)
+	{
+		return Vector<LHS_S, 2>(
+			static_cast<LHS_S>(rhs.x),
+			static_cast<LHS_S>(rhs.y));
+	}
 
 	template<typename S> bool operator == (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 	{

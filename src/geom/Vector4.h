@@ -95,7 +95,16 @@ namespace geom
 		S x, y, z, w;
 	};
 
-
+	// casts between 4d matrices of different scalar types
+	template <typename LHS_S, typename RHS_S>
+	Vector<LHS_S, 4> Cast(Vector<RHS_S, 4> const & rhs)
+	{
+		return Vector<LHS_S, 4>(
+			static_cast<LHS_S>(rhs.x),
+			static_cast<LHS_S>(rhs.y),
+			static_cast<LHS_S>(rhs.z),
+			static_cast<LHS_S>(rhs.w));
+	}
 
 	template<typename S> bool operator == (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 	{

@@ -51,6 +51,12 @@ namespace geom
 		return ray.position + ray.direction * proportion;
 	}
 
+	template <typename LHS_S, typename RHS_S>
+	Ray<LHS_S, 3> Cast(Ray<RHS_S, 3> const & rhs)
+	{
+		return Ray<LHS_S, 3>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.direction));
+	}
+
 	//////////////////////////////////////////////////////////////////
 	// Vector<S, N> aliases
 	

@@ -92,6 +92,15 @@ namespace geom
 		S x, y, z;
 	};
 
+	// casts between 3d matrices of different scalar types
+	template <typename LHS_S, typename RHS_S>
+	Vector<LHS_S, 3> Cast(Vector<RHS_S, 3> const & rhs)
+	{
+		return Vector<LHS_S, 3>(
+			static_cast<LHS_S>(rhs.x),
+			static_cast<LHS_S>(rhs.y),
+			static_cast<LHS_S>(rhs.z));
+	}
 
 	template<typename S> bool operator == (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 	{
@@ -214,7 +223,6 @@ namespace geom
 		return p;
 	}
 
-
 	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 3> const & v)
 	{
 		return out << v.x << ',' << v.y << ',' << v.z;
@@ -225,10 +233,10 @@ namespace geom
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 	}
 
-	
 	//////////////////////////////////////////////////////////////////
-	// specializations of Vector3
+	// Vector<T, 3> aliases
 	
+	typedef Vector <int, 3> Vector3i;
 	typedef Vector <float, 3> Vector3f;
 	typedef Vector <double, 3> Vector3d;
 }

@@ -189,7 +189,17 @@ namespace geom
 		Row rows [4];
 	};
 
-
+	// casts between 4x4 matrices of different scalar types
+	template <typename LHS_S, typename RHS_S>
+	Matrix<LHS_S, 4, 4> Cast(Matrix<RHS_S, 4, 4> const & rhs)
+	{
+		return Matrix<LHS_S, 4, 4>(
+			geom::Cast<LHS_S>(rhs.GetRow(0)),
+			geom::Cast<LHS_S>(rhs.GetRow(1)),
+			geom::Cast<LHS_S>(rhs.GetRow(2)),
+			geom::Cast<LHS_S>(rhs.GetRow(3)));
+	}
+	
 	template <typename S> 
 	Matrix<S, 4, 4> Inverse(Matrix<S, 4, 4> const & matrix)
 	{
