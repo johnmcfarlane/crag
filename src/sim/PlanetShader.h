@@ -11,16 +11,15 @@
 
 #include "sim/defs.h"
 
+#include "form/defs.h"
 #include "form/node/Shader.h"
 
 #include "core/Random.h"
-
 
 namespace sim
 {
 	// forward declarations
 	class Planet;
-	
 	
 	// A class which governs how the edges of individual polys of a planet's surface are sub-divided.
 	class PlanetShader : public form::Shader

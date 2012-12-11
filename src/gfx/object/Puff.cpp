@@ -98,7 +98,7 @@ void Puff::Render(gfx::Engine const & renderer) const
 {
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();
-	Vector3 translation = model_view.GetTranslation();
+	Vector3 translation = geom::Cast<double>(model_view.GetTranslation());
 	Color4f lighting = renderer.CalculateLighting(translation);
 	disk_program.SetUniforms(model_view, _color * lighting);
 	

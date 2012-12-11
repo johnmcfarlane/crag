@@ -7,7 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "form/scene/Polyhedron.h"
+#include "Polyhedron.h"
 
 #include "geom/Intersection.h"
 
@@ -20,13 +20,13 @@
 #include "gfx/Debug.h"
 #define DEBUG_FEI_RAY(NODE_FUNCTOR, RAY, COLOR) \
 	DO_STATEMENT( \
-		sim::Vector3 debug_fei_start = form::SceneToSim(RAY.position, NODE_FUNCTOR._origin); \
+		sim::Vector3 debug_fei_start = axes::RelToAbs(RAY.position, NODE_FUNCTOR._origin); \
 		sim::Vector3 debug_fei_end = debug_fei_start + sim::Vector3(RAY.direction); \
 		gfx::Debug::AddLine(debug_fei_start, debug_fei_end, COLOR); \
 	)
 #define DEBUG_FEI_TRI(NODE_FUNCTOR, A, B, C, NORM, COLOR) \
 	DO_STATEMENT( \
-		sim::Vector3 debug_fei_start = form::SceneToSim((A + B + C) * (1.f / 3.f), NODE_FUNCTOR._origin); \
+		sim::Vector3 debug_fei_start = axes::RelToAbs((A + B + C) * (1.f / 3.f), NODE_FUNCTOR._origin); \
 		sim::Vector3 debug_fei_end = debug_fei_start + sim::Vector3(NORM); \
 		gfx::Debug::AddLine(debug_fei_start, debug_fei_end, COLOR); \
 	)
@@ -45,7 +45,7 @@ namespace form { namespace collision
 	class Object;
 
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area);
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area);
     
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ namespace form { namespace collision
 		{
 			contact_normal = collision_info.ray.direction;
 		}
-		node_functor._functor(form::SceneToSim(contact_point, node_functor._origin), contact_normal, collision_info.depth);
+		node_functor._functor(axes::RelToAbs(contact_point, node_functor._origin), geom::Cast<double>(contact_normal), collision_info.depth);
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
 	}
@@ -184,10 +184,10 @@ namespace form { namespace collision
 			return false;
 		}
 		
-		Vector3 contact_point = collision_info.ray.position + collision_info.ray.direction * collision_info.t1;
+		Vector3 contact_point = geom::Project(collision_info.ray, collision_info.t1);
 		Vector3 const & contact_normal = collision_info.ray.direction;
 
-		node_functor._functor(form::SceneToSim(contact_point, node_functor._origin), contact_normal, - collision_info.t1);
+		node_functor._functor(axes::RelToAbs(contact_point, node_functor._origin), geom::Cast<double>(contact_normal), - collision_info.t1);
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
 	}
@@ -416,7 +416,7 @@ namespace form { namespace collision
 	// ForEachCollision implementation
 	
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, sim::Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
 	{
 		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, object, functor, min_area);
 		

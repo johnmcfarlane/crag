@@ -179,7 +179,7 @@ void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Poin
 		CalcRootPointPos(point_randomizer, position);
 		position *= shape.radius;
 		position += shape.center;
-		points[i]->pos = position;
+		points[i]->pos = geom::Cast<float>(position);
 	}
 }
 
@@ -206,7 +206,7 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 		CalcMidPointPos_Random(polyhedron, result, params);
 	}
 	
-	mid_point.pos = result;
+	mid_point.pos = geom::Cast<float>(result);
 //	mid_point.col = gfx::Color4b::White();
 
 	debug::MarkNodePoint(a, mid_point, 0, 0);
@@ -291,7 +291,7 @@ sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point, Vect
 
 sim::Vector3 sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, Vector3 const & center) const
 {
-	return sim::Vector3(point_pos) - center;
+	return geom::Cast<double>(point_pos) - center;
 }
 
 sim::Scalar sim::PlanetShader::GetAltitude(form::Point const & point, Vector3 const & center) const

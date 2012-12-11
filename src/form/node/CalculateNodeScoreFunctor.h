@@ -11,12 +11,10 @@
 
 #include "form/defs.h"
 
-
 namespace form 
 {
 	// forward-declarations
 	class Node;
-	
 
 	// A functor for use primarily in NodeBuffer::ForEachNode_Paralell/Serial.
 	// An object of this class is a member of NodeBuffer and stores all data needed to score the buffer's nodes.

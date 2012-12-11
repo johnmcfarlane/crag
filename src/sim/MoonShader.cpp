@@ -93,7 +93,7 @@ void sim::MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point 
 		Vector3 position = root_corners[i] / root_corner_length;
 		position *= radius;
 		position += polyhedron.GetShape().center;
-		points[i]->pos = position;
+		points[i]->pos = geom::Cast<float>(position);
 	}
 }
 
@@ -103,8 +103,8 @@ bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node con
 	
 	sim::Sphere3 const & shape = polyhedron.GetShape();
 	Vector3 center = shape.center;
-	Vector3 near_a = Vector3(a.GetCorner(TriMod(index + 1)).pos) - center;
-	Vector3 near_b = Vector3(b.GetCorner(TriMod(index + 1)).pos) - center;	
+	Vector3 near_a = geom::Cast<Scalar>(a.GetCorner(TriMod(index + 1)).pos) - center;
+	Vector3 near_b = geom::Cast<Scalar>(b.GetCorner(TriMod(index + 1)).pos) - center;
 	Vector3 near_mid = near_a + near_b;
 	near_mid *= shape.radius / Length(near_mid);
 	
@@ -112,7 +112,7 @@ bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node con
 	ApplyCraters(crater_randomizer, near_mid);
 	
 	near_mid += center;
-	mid_point.pos = near_mid;
+	mid_point.pos = geom::Cast<float>(near_mid);
 	
 	return true;
 }

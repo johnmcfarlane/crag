@@ -80,7 +80,7 @@ namespace
 			Color const & color = hidden ? colors._hidden_color : colors._color;
 			glColor4fv(color.GetArray());
 
-			geom::Vector3f relative_pos = pos - camera_pos;
+			geom::Vector3f relative_pos = geom::Cast<float>(pos - camera_pos);
 			glVertex3f(relative_pos.x, relative_pos.y, relative_pos.z);
 		}
 		
@@ -398,7 +398,7 @@ void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)
 		return;
 	}
 	
-	font->Print(text, position);
+	font->Print(text, geom::Cast<float>(position));
 }
 
 #endif

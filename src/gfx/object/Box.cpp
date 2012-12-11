@@ -47,7 +47,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	// but it probably isn't worth the clock cycles to do that.
 	float radius;
 	{
-		Vector3 size = transformation.GetScale();
+		auto size = transformation.GetScale();
 		radius = float(Length(size) * .5);
 	}
 
