@@ -11,6 +11,7 @@
 
 #include "PlanetaryBody.h"
 
+#include "axes.h"
 #include "defs.h"
 #include "Engine.h"
 
@@ -105,7 +106,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	Object collision_object;
 	
 	// bounding sphere
-	collision_object.bounding_sphere.center = form::SimToScene(position, origin);
+	collision_object.bounding_sphere.center = axes::AbsToRel(position, origin);
 	collision_object.bounding_sphere.radius = form::Scalar(Length(extents));
 	
 	// points
@@ -121,13 +122,13 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 				plane.position = Vector3::Zero();
                 plane.position[axis] = pole_sign * extents[axis];
 				plane.position = rotation * plane.position;
-				i->position = plane.position;
+				i->position = geom::Cast<float>(plane.position);
 				i->position += collision_object.bounding_sphere.center;
 				
                 plane.direction = Vector3::Zero();
                 plane.direction[axis] = pole_sign;
 				plane.direction = rotation * plane.direction;
-				i->direction = plane.direction;
+				i->direction = geom::Cast<float>(plane.direction);
 				
 				//gfx::Debug::AddLine(form::SceneToSim(sim::Vector3(i->position), origin), 
 				//	form::SceneToSim(sim::Vector3(i->position + i->direction), origin),
@@ -147,7 +148,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 		return;
 	}
 	
-	form::Vector3 relative_formation_position(form::SimToScene(_formation.GetShape().center, origin));
+	form::Vector3 relative_formation_position(axes::AbsToRel(_formation.GetShape().center, origin));
 	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
@@ -173,12 +174,12 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	typedef Object<form::Sphere3> Object;
 	Object collision_object;
 	sim::Vector3 const & origin = scene.GetOrigin();
-	collision_object.bounding_sphere.center = form::SimToScene(sphere.GetPosition(), origin);
+	collision_object.bounding_sphere.center = axes::AbsToRel(sphere.GetPosition(), origin);
 	collision_object.bounding_sphere.radius = float(sphere.GetRadius());
 	
 	collision_object.shape = collision_object.bounding_sphere;
 	
-	form::Vector3 relative_formation_position(form::SimToScene(_formation.GetShape().center, origin));
+	form::Vector3 relative_formation_position(axes::AbsToRel(_formation.GetShape().center, origin));
 	float sphere_area(Area(collision_object.shape));
 	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 

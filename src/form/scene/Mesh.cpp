@@ -11,7 +11,6 @@
 
 #include "Mesh.h"
 
-#include "form/defs.h"
 #include "form/node/Point.h"
 
 #include "core/ConfigEntry.h"

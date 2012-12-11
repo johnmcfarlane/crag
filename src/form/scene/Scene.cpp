@@ -139,7 +139,7 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 
 void form::Scene::Tick()
 {
-	form::Ray3 form_camera_ray(camera_ray_relative.position, camera_ray_relative.direction);
+	form::Ray3 form_camera_ray(geom::Cast<Scalar>(camera_ray_relative));
 	_node_buffer.Tick(form_camera_ray);
 	TickModels();
 }

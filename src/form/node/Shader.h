@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include "form/defs.h"
-
-
 namespace form
 {
 	class Node;

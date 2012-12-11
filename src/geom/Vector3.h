@@ -29,19 +29,15 @@ namespace geom
 		{ 
 		}
 
-		// TODO: Remove all of these c'tor function templates 
-		// and replace with explicit operator Vector.
-		template<typename RHS_S> 
-		Vector(Vector<RHS_S, 3> const & rhs) 
+		Vector(Vector<S, 3> const & rhs) 
 		: Vector(rhs.x, rhs.y, rhs.z) 
 		{ 
 		}
 		
-		template<typename RHS_S> 
-		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
-		: x(static_cast<S>(rhs_x))
-		, y(static_cast<S>(rhs_y))
-		, z(static_cast<S>(rhs_z)) 
+		Vector(S rhs_x, S rhs_y, S rhs_z) 
+		: x(rhs_x)
+		, y(rhs_y)
+		, z(rhs_z) 
 		{ 
 			VerifyObject(* this);
 		}
@@ -92,6 +88,15 @@ namespace geom
 		S x, y, z;
 	};
 
+	// casts between 3d matrices of different scalar types
+	template <typename LHS_S, typename RHS_S>
+	Vector<LHS_S, 3> Cast(Vector<RHS_S, 3> const & rhs)
+	{
+		return Vector<LHS_S, 3>(
+			static_cast<LHS_S>(rhs.x),
+			static_cast<LHS_S>(rhs.y),
+			static_cast<LHS_S>(rhs.z));
+	}
 
 	template<typename S> bool operator == (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
 	{
@@ -214,7 +219,6 @@ namespace geom
 		return p;
 	}
 
-
 	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 3> const & v)
 	{
 		return out << v.x << ',' << v.y << ',' << v.z;
@@ -228,7 +232,7 @@ namespace geom
 	//////////////////////////////////////////////////////////////////
 	// Vector<T, 3> aliases
 	
-	typedef Vector<int, 3> Vector3i;
-	typedef Vector<float, 3> Vector3f;
-	typedef Vector<double, 3> Vector3d;
+	typedef Vector <int, 3> Vector3i;
+	typedef Vector <float, 3> Vector3f;
+	typedef Vector <double, 3> Vector3d;
 }

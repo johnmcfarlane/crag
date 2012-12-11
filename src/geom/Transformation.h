@@ -37,8 +37,7 @@ namespace geom
 		{
 		}
 		
-		template <typename RHS_S>
-		Transformation(Transformation<RHS_S> const & rhs)
+		Transformation(Transformation const & rhs)
 		: _matrix(rhs.GetMatrix())
 		{
 		}
@@ -174,6 +173,12 @@ namespace geom
 		
 		static Matrix44 const _internal_to_open_gl;
 	};
+
+	template <typename LHS_S, typename RHS_S>
+	Transformation<LHS_S> Cast(Transformation<RHS_S> const & rhs)
+	{
+		return Transformation<LHS_S>(Cast<LHS_S>(rhs.GetMatrix()));
+	}
 
 	template <typename S>
 	typename Transformation<S>::Matrix44 const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0,

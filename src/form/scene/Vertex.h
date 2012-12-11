@@ -12,7 +12,6 @@
 #include "form/defs.h"
 #include "gfx/Color.h"
 
-
 namespace form
 {
 	// Vertex type used by formation system to generate OpenGL mesh.

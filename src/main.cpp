@@ -116,6 +116,21 @@ namespace
 			keys_mods |= KMOD_ALT;
 		}
 
+		// mod-agnostic keys
+		switch (keysym.scancode)
+		{
+			case SDL_SCANCODE_ESCAPE:
+			{
+				SDL_Event quit_event;
+				quit_event.type = SDL_QUIT;
+				if (SDL_PushEvent(& quit_event) != 1)
+				{
+					DEBUG_BREAK("SDL_PushEvent returned error");
+				}
+				return true;
+			}
+		}
+
 		// interpret scancode based on grouped modifiers
 		switch (keys_mods)
 		{
@@ -123,17 +138,6 @@ namespace
 			{
 				switch (keysym.scancode)
 				{
-					case SDL_SCANCODE_ESCAPE:
-					{
-						SDL_Event quit_event;
-						quit_event.type = SDL_QUIT;
-						if (SDL_PushEvent(& quit_event) != 1)
-						{
-							DEBUG_BREAK("SDL_PushEvent returned error");
-						}
-						return true;
-					}
-						
 					case SDL_SCANCODE_RETURN:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnTogglePause(); });

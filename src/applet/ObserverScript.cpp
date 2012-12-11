@@ -22,7 +22,14 @@
 
 using namespace applet;
 
+// TODO: This value is likely sensitive to screen resolutions
+#if defined(__APPLE__)
+CONFIG_DEFINE (mouse_sensitivity, float, 0.1f);
+#elif defined(WIN32)
+CONFIG_DEFINE (mouse_sensitivity, float, 0.05f);
+#else
 CONFIG_DEFINE (mouse_sensitivity, float, 0.01f);
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // applet::ObserverScript member definitions

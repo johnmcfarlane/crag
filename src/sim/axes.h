@@ -11,7 +11,7 @@
 
 #include "geom/Transformation.h"
 #include "geom/Ray.h"
-
+#include "geom/Sphere.h"
 
 namespace axes 
 {
@@ -22,6 +22,40 @@ namespace axes
 		UP,
 		NUM_AXES
 	};
+	
+	// relative geometry
+	typedef ::geom::Vector<float, 3> VectorRel;
+	typedef ::geom::Ray<float, 3> RayRel;
+	
+	// absolute vectors
+	typedef ::geom::Vector<double, 3> VectorAbs;
+	typedef ::geom::Ray<double, 3> RayAbs;
+	typedef ::geom::Sphere<double, 3> SphereAbs;
+
+	// relative-absolute conversion
+	template <typename REL_S = float>
+	inline geom::Vector<REL_S, 3> AbsToRel(VectorAbs const & abs, VectorAbs const & origin)
+	{
+		return geom::Cast<REL_S>(abs - origin);
+	}
+	
+	template <typename REL_S = float>
+	inline geom::Ray<REL_S, 3> AbsToRel(RayAbs const & abs, VectorAbs const & origin)
+	{
+		return geom::Ray<REL_S, 3>(AbsToRel<REL_S>(abs.position, origin), geom::Cast<REL_S>(abs.direction));
+	}
+	
+	template <typename REL_S = float>
+	inline VectorAbs RelToAbs(geom::Vector<REL_S, 3> const & rel, VectorAbs const & origin)
+	{
+		return geom::Cast<double>(rel) + origin;
+	}
+	
+	template <typename REL_S = float>
+	inline RayAbs RelToAbs(RayRel const & rel, VectorAbs const & origin)
+	{
+		return RayAbs(RelToAbs(rel.position, origin), geom::Cast<double>(rel.direction));
+	}
 	
 	// Returns the given axis from the given matrix.
 	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Axis axis)

@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "form/defs.h"
-
 #include "MeshProperties.h"
 #include "VertexBuffer.h"
 

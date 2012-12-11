@@ -16,6 +16,8 @@
 #include "form/node/PointBuffer.h"
 #include "form/node/Shader.h"
 
+#include "sim/axes.h"
+
 #include "core/memory.h"
 
 
@@ -53,7 +55,7 @@ form::Polyhedron::Polyhedron(Polyhedron const & rhs)
 void form::Polyhedron::Init(sim::Vector3 const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
-	_shape.center = form::SimToScene(_formation.GetShape().center, origin);
+	_shape.center = axes::AbsToRel<double>(_formation.GetShape().center, origin);
 	Shader const & shader = _formation.GetShader();
 	
 	// Create me some points.
@@ -101,7 +103,7 @@ form::RootNode const & form::Polyhedron::GetRootNode() const
 void form::Polyhedron::SetOrigin(sim::Vector3 const & origin)
 {
 	sim::Sphere3 const & shape = _formation.GetShape();
-	_shape.center = form::SimToScene(shape.center, origin);
+	_shape.center = axes::AbsToRel<double>(shape.center, origin);
 	_shape.radius = shape.radius;
 	
 	Point * root_points[4];

@@ -362,7 +362,7 @@ Color4f Engine::CalculateLighting(Vector3 const & position) const
 	{
 		Light const & light = * i;
 
-		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
+		Vector3 light_position = geom::Cast<double>(light.GetModelViewTransformation().GetTranslation());
 		
 		Vector3 frag_to_light = light_position - position;
 		float distance_squared = static_cast<float>(LengthSq(frag_to_light));
@@ -861,7 +861,7 @@ void Engine::UpdateTransformations(BranchNode & parent_branch, gfx::Transformati
 			case Object::leaf:
 			{
 				LeafNode & child_leaf = child.CastLeafNodeRef();
-				LeafNode::Transformation transformation(child_model_view_transformation);
+				LeafNode::Transformation transformation(geom::Cast<float>(child_model_view_transformation));
 				child_leaf.SetModelViewTransformation(transformation);
 				break;
 			}
@@ -1101,7 +1101,7 @@ int Engine::RenderLayer(Layer::type layer, bool opaque)
 		}
 		
 		// Set the matrix.
-		Transformation const & transformation = leaf_node.GetModelViewTransformation();
+		Transformation const & transformation = geom::Cast<double>(leaf_node.GetModelViewTransformation());
 		SetModelViewMatrix(transformation);
 
 		Program const * required_program = leaf_node.GetProgram();

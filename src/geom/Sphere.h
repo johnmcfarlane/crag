@@ -88,15 +88,7 @@ namespace geom
 		{ 
 		}
 		
-		template <typename RHS_S>
-		Sphere(geom::Vector<RHS_S, N> const & c, RHS_S r) 
-		: center(c)
-		, radius(r)
-		{ 
-		}
-		
-		template <typename RHS_S>
-		Sphere(Sphere<RHS_S, N> const & rhs) 
+		Sphere(Sphere const & rhs) 
 		: center(rhs.center)
 		, radius(rhs.radius)
 		{ 
