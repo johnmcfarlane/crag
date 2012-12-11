@@ -33,14 +33,4 @@ namespace form
 	
 	// thread-safe node vector
 	typedef smp::vector<Node *> SmpNodeVector;
-	
-	// Conversions between supergalactic (sim) and observer (form) coordinate system.
-	inline Vector3 SimToScene(geom::Vector3d const & sim, geom::Vector3d const & scene_origin)
-	{
-		return sim - scene_origin;
-	}
-	inline geom::Vector3d SceneToSim(Vector3 const & scene, geom::Vector3d const & scene_origin)
-	{
-		return geom::Vector3d(scene) + scene_origin;
-	}
 }
