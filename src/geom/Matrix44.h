@@ -27,8 +27,7 @@ namespace geom
 		{
 		}
 
-		template <typename RHS_S>
-		Matrix(Matrix<RHS_S, 4, 4> const & rhs)
+		Matrix(Matrix const & rhs)
 		: Matrix(rhs[0], rhs[1], rhs[2], rhs[3])
 		{
 		}
@@ -44,8 +43,7 @@ namespace geom
 			rows[3] = row3;
 		}
 		
-		template <typename RHS_S>
-		Matrix(RHS_S const m[4][4])
+		Matrix(S const m[4][4])
 		: Matrix(Row(m[0]), Row(m[1]), Row(m[2]), Row(m[3]))
 		{
 		}
@@ -223,7 +221,6 @@ namespace geom
 		
 		return inverse;
 	}
-	
 	
 	// single-precision floating-point specialization
 	typedef Matrix<float, 4, 4> Matrix44f;

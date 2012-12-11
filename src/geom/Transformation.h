@@ -36,8 +36,7 @@ namespace geom
 		{
 		}
 		
-		template <typename RHS_S>
-		Transformation(Transformation<RHS_S> const & rhs)
+		Transformation(Transformation const & rhs)
 		: _matrix(rhs.GetMatrix())
 		{
 		}

@@ -29,19 +29,15 @@ namespace geom
 		{ 
 		}
 
-		// TODO: Remove all of these c'tor function templates 
-		// and replace with explicit operator Vector.
-		template<typename RHS_S> 
-		Vector(Vector<RHS_S, 3> const & rhs) 
+		Vector(Vector<S, 3> const & rhs) 
 		: Vector(rhs.x, rhs.y, rhs.z) 
 		{ 
 		}
 		
-		template<typename RHS_S> 
-		Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z) 
-		: x(static_cast<S>(rhs_x))
-		, y(static_cast<S>(rhs_y))
-		, z(static_cast<S>(rhs_z)) 
+		Vector(S rhs_x, S rhs_y, S rhs_z) 
+		: x(rhs_x)
+		, y(rhs_y)
+		, z(rhs_z) 
 		{ 
 			VerifyObject(* this);
 		}
