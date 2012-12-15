@@ -101,6 +101,19 @@ namespace geom
 		Scalar radius;
 	};
 
+	// catches pointless casts and bypasses them
+	template <typename S, int N>
+	Sphere<S, N> const & Cast(Sphere<S, N> const & rhs)
+	{
+		return rhs;
+	}
+
+	// casts between spheres of different scalar types
+	template <typename LHS_S, typename RHS_S, int N>
+	Sphere<LHS_S, N> Cast(Sphere<RHS_S, N> const & rhs)
+	{
+		return Sphere<LHS_S, 3>(Cast<LHS_S>(rhs.center), static_cast<LHS_S>(rhs.radius));
+	}
 
 	// equality operator
 	template <typename S, int N>
