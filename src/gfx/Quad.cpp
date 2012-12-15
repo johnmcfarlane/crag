@@ -75,12 +75,12 @@ Quad::~Quad()
 
 gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
-	Transformation::Vector translation = model_view.GetTranslation();
+	Transformation::Vector3 translation = model_view.GetTranslation();
 
-	Transformation::Vector camera_to_center = Normalized(translation);
-	Transformation::Rotation rotation = Inverse(axes::Rotation(camera_to_center));
+	Transformation::Vector3 camera_to_center = Normalized(translation);
+	Transformation::Matrix33 rotation = Inverse(axes::Rotation(camera_to_center));
 
-	Transformation::Vector scale = model_view.GetScale();
+	Transformation::Vector3 scale = model_view.GetScale();
 
 	scratch = Transformation(translation, rotation, scale);
 	

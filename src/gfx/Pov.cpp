@@ -53,7 +53,7 @@ void Frustum::SetProjectionMatrix() const
 // gfx::Pov member definitions
 
 Pov::Pov()
-: _transformation(Transformation::Matrix::Identity())
+: _transformation(Transformation::Matrix44::Identity())
 {
 }
 

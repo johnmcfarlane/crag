@@ -17,4 +17,11 @@ namespace geom
 	template<typename S, int R, int C> class Matrix
 	{
 	};
+
+	// catches pointless casts and bypasses them
+	template <typename S, int R, int C>
+	Matrix<S, R, C> const & Cast(Matrix<S, R, C> const & rhs)
+	{
+		return rhs;
+	}
 }

@@ -187,4 +187,10 @@ namespace geom
 		
 		return inverse;
 	}
+	
+	//////////////////////////////////////////////////////////////////
+	// Matrix<T, 3, 3> aliases
+	
+	typedef Matrix<float, 3, 3> Matrix33f;
+	typedef Matrix<double, 3, 3> Matrix33d;
 }

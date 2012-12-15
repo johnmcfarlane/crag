@@ -212,7 +212,9 @@ namespace geom
 	}
 	
 	//////////////////////////////////////////////////////////////////
-	// specializations of Vector4
+	// Vector<T, 4> aliases
 	
+	typedef Vector<int, 4> Vector4i;
 	typedef Vector<float, 4> Vector4f;
+	typedef Vector<double, 4> Vector4d;
 }

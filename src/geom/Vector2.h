@@ -173,10 +173,10 @@ namespace geom
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
 	
-	
 	//////////////////////////////////////////////////////////////////
-	// specializations of Vector2
+	// Vector<T, 2> aliases
 	
-	typedef Vector<float, 2> Vector2f;
 	typedef Vector<int, 2> Vector2i;
+	typedef Vector<float, 2> Vector2f;
+	typedef Vector<double, 2> Vector2d;
 }

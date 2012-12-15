@@ -58,7 +58,7 @@ namespace sim
 	template <typename GFX_TYPE, typename INIT_DATA>
 	gfx::BranchNodeHandle AddModelWithTransform(INIT_DATA & init_data, gfx::BranchNodeHandle const & parent)
 	{
-		return AddModelWithTransform<GFX_TYPE>(init_data, parent, Transformation::Matrix::Identity());
+		return AddModelWithTransform<GFX_TYPE>(init_data, parent, Transformation::Matrix44::Identity());
 	}
 	
 	template <typename GFX_TYPE, typename INIT_DATA>

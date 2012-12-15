@@ -90,7 +90,7 @@ namespace geom
 
 	// casts between 3d matrices of different scalar types
 	template <typename LHS_S, typename RHS_S>
-	Vector<LHS_S, 3> Cast(Vector<RHS_S, 3> const & rhs)
+	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
 	{
 		return Vector<LHS_S, 3>(
 			static_cast<LHS_S>(rhs.x),

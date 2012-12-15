@@ -63,7 +63,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 	//Vector3 camera_up = geom::Normalized(Vector3(1, -1, -1));
 	//Vector3 camera_up = geom::Normalized(Vector3(0, 0, 1));
 	//Matrix33 camera_dir(axes::Rotation(camera_forward/*, camera_up*/));
-	//sim::Transformation transformation(sim::Transformation::Matrix::Identity());
+	//sim::Transformation transformation(sim::Transformation::Matrix44::Identity());
 	//sim::Transformation transformation(camera_pos, camera_dir);
 	sim::Transformation transformation(camera_pos);
 	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {

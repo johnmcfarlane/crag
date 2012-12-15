@@ -85,7 +85,7 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		gfx::Scalar sea_level = 0;
 #endif
 		
-		_branch_node.Create(gfx::Transformation::Matrix::Identity());
+		_branch_node.Create(gfx::Transformation::Matrix44::Identity());
 		_model.Create(gfx::Scalar(sea_level));
 		auto model = _model;
 		auto branch_node = _branch_node;
@@ -153,7 +153,7 @@ void Planet::UpdateModels() const
 	{
 		// update planet params
 		Vector3 const & position = _body->GetPosition();
-		gfx::Transformation transformation(position, Transformation::Rotation::Identity(), _radius_mean);
+		gfx::Transformation transformation(position, Transformation::Matrix33::Identity(), _radius_mean);
 		_branch_node.Call([transformation] (gfx::BranchNode & node) {
 			node.SetTransformation(transformation);
 		});

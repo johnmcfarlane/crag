@@ -222,9 +222,9 @@ namespace geom
 		return inverse;
 	}
 	
-	// single-precision floating-point specialization
-	typedef Matrix<float, 4, 4> Matrix44f;
+	//////////////////////////////////////////////////////////////////
+	// Matrix<T, 4, 4> aliases
 	
-	// double-precision floating-point specialization
+	typedef Matrix<float, 4, 4> Matrix44f;
 	typedef Matrix<double, 4, 4> Matrix44d;
 }

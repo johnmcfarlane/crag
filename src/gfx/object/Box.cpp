@@ -40,7 +40,7 @@ gfx::Box::Box(LeafNode::Init const & init, Color4f const & color)
 bool Box::GetRenderRange(RenderRange & range) const 
 { 
 	Transformation const & transformation = GetModelViewTransformation();
-	Transformation::Matrix const & transformation_matrix = transformation.GetMatrix();
+	Transformation::Matrix44 const & transformation_matrix = transformation.GetMatrix();
 	Scalar depth = transformation_matrix[1][3];
 
 	// This could be improved by sampling each of the 8 corners of the box
