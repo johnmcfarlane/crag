@@ -48,23 +48,24 @@ void PrintMessage(FILE * out, char const * format, ...);
 
 
 // TRUNCATE_STRING
+#if defined(WIN32)
+// VS debugger requires complete file path for navigation features
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING
+#else
 #define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING + std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)
-
-
-// MESSAGE - general purpose console output macro
-#define MESSAGE(OUT, FORMAT, ...) fprintf(OUT, "%32s:%3d:" FORMAT " [%s]\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
+#endif
 
 
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#define DEBUG_MESSAGE(FORMAT, ...) MESSAGE(stdout, FORMAT, ## __VA_ARGS__)
+#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, "%32s(%3d):" FORMAT " [%s]\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
 #endif
 
 
 // ERROR_MESSAGE - output serious error messages to stderr in all builds
-#define ERROR_MESSAGE(FORMAT, ...) fprintf(stderr, FORMAT "\n", ## __VA_ARGS__)
+#define ERROR_MESSAGE(FORMAT, ...) PrintMessage(stderr, FORMAT "\n", ## __VA_ARGS__)
 
 
 // BREAK - interrupt execution
