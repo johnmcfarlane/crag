@@ -43,15 +43,9 @@ namespace
 #if defined(WIN32)
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	std::ofstream cout_filestr, cerr_filestr;
-	cout_filestr.open ("cout.txt");
-	cerr_filestr.open ("cerr.txt");
-	std::cout.rdbuf(cout_filestr.rdbuf());
-	std::cerr.rdbuf(cerr_filestr.rdbuf());
-
-	// TODO: Return correct value.
 	CragMain();
 
+	// WM_QUIT param should be returned here but it is lost
 	return 0;
 }
 #else
