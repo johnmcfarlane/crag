@@ -11,6 +11,63 @@
 
 #include "core/debug.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// PrintMessage definition
+
+namespace
+{
+#if defined(WIN32)
+
+	char * buffer = nullptr;
+	std::size_t buffer_size = 0u;
+
+	// redirects output to a string buffer and sends it to CRT debugging console
+	void VFPrintF(FILE * out, char const * format, va_list args)
+	{
+		ASSERT(out == stdout || out == stderr);
+
+		// attempt to print using existing buffer
+		std::size_t size = vsnprintf(buffer, buffer_size, format, args);
+
+		// resize buffer if it's too small
+		if (size >= buffer_size)
+		{
+			delete buffer;
+			buffer_size = (size + 128) * 2;
+			buffer = new char [buffer_size];
+
+			if (vsnprintf(buffer, buffer_size, format, args) != size)
+			{
+				// this should not happen
+				__debugbreak();
+			}
+		}
+
+		// send buffer to debugging console
+		OutputDebugStringA(buffer);
+	}
+
+#else
+
+	void VFPrintF(FILE * out, char const * format, va_list args)
+	{
+		vfprintf(out, format, args);
+	}
+
+#endif
+}
+
+void PrintMessage(FILE * out, char const * format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	VFPrintF(out, format, args);
+	va_end(args);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ReentryGuard member definitions
+
 #if ! defined(NDEBUG) && ! defined(WIN32)
 
 ReentryGuard::ReentryGuard(int & counter)
@@ -26,4 +83,3 @@ ReentryGuard::~ReentryGuard()
 }
 
 #endif
-
