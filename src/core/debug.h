@@ -34,6 +34,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Misc debug helpers
 
+// Console output
+void PrintMessage(FILE * out, char const * format, ...);
 
 // FUNCTION_SIGNATURE - a string containing the signature of the current function
 #if defined(__GNUC__)
