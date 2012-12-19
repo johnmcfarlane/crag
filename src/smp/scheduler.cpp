@@ -467,7 +467,7 @@ namespace smp
 				// sets the thread's name; (useful for debugging)
 				smp::SetThreadName("scheduler");
 
-				// Sleep until after the singleton is full constructed.
+				// Sleep until after the singleton is fully constructed.
 				while (singleton == nullptr)
 				{
 					Yield();
