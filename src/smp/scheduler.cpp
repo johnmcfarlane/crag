@@ -17,7 +17,7 @@
 
 #include "core/ring_buffer.h"
 
-#define ENABLE_SCHEDULER
+//#define ENABLE_SCHEDULER
 
 namespace smp
 {
