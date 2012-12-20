@@ -24,9 +24,9 @@
 
 form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _node_buffer(ref(new NodeBuffer(min_num_quaterne, max_num_quaterne)))
-, camera_ray(sim::Ray3::Zero())
-, camera_ray_relative(sim::Ray3::Zero())
-, origin(sim::Vector3::Zero())
+, camera_ray(axes::RayAbs::Zero())
+, camera_ray_relative(axes::RayRel::Zero())
+, origin(axes::VectorAbs::Zero())
 {
 	_node_buffer.SetNumQuaternaUsedTarget(min_num_quaterne);
 }
@@ -77,31 +77,37 @@ form::NodeBuffer const & form::Scene::GetNodeBuffer() const
 	return _node_buffer;
 }
 
-sim::Ray3 const & form::Scene::GetCameraRay() const
+axes::RayRel const & form::Scene::GetCameraRay() const
 {
-	return camera_ray;
+	return camera_ray_relative;
 }
 
-void form::Scene::SetCameraRay(sim::Ray3 const & cr) 
+void form::Scene::SetCameraRay(axes::RayRel const & cr) 
+{
+	camera_ray = axes::RelToAbs(cr, origin);
+	camera_ray_relative = cr;
+}
+
+void  form::Scene::SetCameraRay(axes::RayAbs const & cr)
 {
 	camera_ray = cr;
-	camera_ray_relative = sim::Ray3(cr.position - origin, cr.direction);
+	camera_ray_relative = axes::AbsToRel(cr, origin);
 }
 
-sim::Vector3 const & form::Scene::GetOrigin() const
+axes::VectorAbs const & form::Scene::GetOrigin() const
 {
 	return origin;
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void form::Scene::SetOrigin(sim::Vector3 const & o) 
+void form::Scene::SetOrigin(axes::VectorAbs const & o) 
 {
 	if (o != origin) 
 	{
 		origin = o;
 		
 		// Setting camera ray to itself cause the local camera ray to be recalculated.
-		SetCameraRay(camera_ray);
+		camera_ray_relative = axes::AbsToRel(camera_ray, origin);
 
 		// The difficult bit: fix all our data which relied on the old origin.
 		ResetFormations();
@@ -139,7 +145,7 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 
 void form::Scene::Tick()
 {
-	form::Ray3 form_camera_ray(geom::Cast<Scalar>(camera_ray_relative));
+	form::Ray3 form_camera_ray(camera_ray_relative);
 	_node_buffer.Tick(form_camera_ray);
 	TickModels();
 }

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "axes.h"
 #include "defs.h"
 
 #include "gfx/object/BranchNode.h"
@@ -76,4 +77,6 @@ namespace sim
 	
 	// sets physical property of being collidable
 	void SetCollidable(Entity & entity, bool collidable);
+	
+	void ResetOrigin(EntitySet & entity_set, axes::VectorRel const & delta);
 }

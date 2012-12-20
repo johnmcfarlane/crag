@@ -79,7 +79,7 @@ namespace core
 	
 }
 
-
+// TODO: Use TYPE() instead of 0 and decltype(DEFAULT) instead of TYPE
 #define STAT(NAME, TYPE, VERBOSITY) core::Stat<TYPE> NAME##_stat (#NAME, 0, VERBOSITY)
 #define STAT_DEFAULT(NAME, TYPE, VERBOSITY, DEFAULT) core::Stat<TYPE> NAME##_stat (#NAME, DEFAULT, VERBOSITY)
 #define STAT_EXTERN(NAME, TYPE) extern core::Stat<TYPE> NAME##_stat

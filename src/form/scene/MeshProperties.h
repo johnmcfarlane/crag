@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "sim/defs.h"
+#include "sim/axes.h"
 
 
 namespace form 
@@ -18,7 +18,8 @@ namespace form
 	// Common info shared between Mesh and MeshBufferObject.
 	struct MeshProperties
 	{
-		typedef sim::Vector3 Vector;
+		// TODO: Is high precision really needed everywhere there's an origin?
+		typedef axes::VectorAbs Vector;
 		
 		MeshProperties() 
 		: _origin(Vector::Zero())

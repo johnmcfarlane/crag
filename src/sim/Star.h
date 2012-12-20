@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "axes.h"
 #include "Entity.h"
 
 #include "gfx/defs.h"
@@ -24,7 +25,7 @@ namespace sim
 	{
 	public:
 		// functions
-		Star(Init const & init, Scalar radius, Scalar year);
+		Star(Init const & init, axes::ScalarAbs radius, core::Time year);
 		~Star();
 
 		void Tick(sim::Engine & simulation_engine);
@@ -41,8 +42,8 @@ namespace sim
 		
 		// variables
 		gfx::BranchNodeHandle _model;
-		Vector3 position;
-		Scalar _radius;
+		axes::VectorRel position;
+		axes::ScalarAbs _radius;
 		core::Time _year;
 	};
 }

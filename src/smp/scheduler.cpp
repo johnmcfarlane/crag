@@ -32,9 +32,9 @@ namespace smp
 			////////////////////////////////////////////////////////////////////////////////
 			// helper function
 			
+#if defined(ENABLE_SCHEDULER)
 			size_t CalculateNumThreads(size_t num_reserved_cpus)
 			{
-#if defined(ENABLE_SCHEDULER)
 				size_t num_cpus = GetNumCpus();
 				if (num_cpus > num_reserved_cpus)
 				{
@@ -46,12 +46,15 @@ namespace smp
 					// There are not enough CPUs left over to justify a scheduler.
 					return 0;
 				}
+			}
 #else
+			size_t CalculateNumThreads(size_t)
+			{
 				// No threads.
 				return 0;
-#endif
 			}
-			
+#endif
+
 			////////////////////////////////////////////////////////////////////////////////
 			// Task - a Job and its progress
 			
@@ -168,7 +171,7 @@ namespace smp
 				// adds a job to be scheduled
 				virtual void Submit(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete) = 0;
 				virtual bool ExecuteUnit(bool block) = 0;
-				virtual void Unblock(size_t num_threads) { }
+				virtual void Unblock(size_t /*num_threads*/) { }
 			};
 			
 			// Maintains a thread-safe list of tasks.
@@ -206,7 +209,7 @@ namespace smp
 			class MultithreadedTaskManager : public TaskManager
 			{
 				// types
-				typedef SimpleMutex Mutex;
+				typedef std::mutex Mutex;
 				typedef std::lock_guard<Mutex> Lock;
 				typedef Task::list_type TaskList;
 				typedef TaskList::iterator Iterator;
@@ -391,8 +394,6 @@ namespace smp
 					{
 						it->Launch(RunThread);
 					}
-					
-					DEBUG_MESSAGE("scheduler using " SIZE_T_FORMAT_SPEC " threads.", num_threads);
 				}
 				
 				vector::size_type size() const

@@ -17,6 +17,8 @@
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
+#include "sim/axes.h"
+
 #include "geom/Sphere.h"
 
 #include "core/ConfigEntry.h"
@@ -29,7 +31,7 @@ using namespace gfx;
 
 namespace
 {
-	CONFIG_DEFINE(puff_displacement, double, .75);	// m/s
+	CONFIG_DEFINE(puff_displacement, float, .75);	// m/s
 	CONFIG_DEFINE(puff_radius_growth_rate, float, 2.5f);	// m/s
 	CONFIG_DEFINE(puff_radius_coefficient, float, 3.5);
 	CONFIG_DEFINE(puff_min_alpha, float, .01f);
@@ -70,7 +72,7 @@ gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_vi
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
 	
-	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(age * puff_displacement, 0., 0.), Matrix33::Identity(), Scalar(_radius));
+	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(axes::ScalarRel(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
 	return disk_quad.Transform(scale, scratch);
@@ -98,7 +100,7 @@ void Puff::Render(gfx::Engine const & renderer) const
 {
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();
-	Vector3 translation = geom::Cast<double>(model_view.GetTranslation());
+	Vector3 translation = model_view.GetTranslation();
 	Color4f lighting = renderer.CalculateLighting(translation);
 	disk_program.SetUniforms(model_view, _color * lighting);
 	

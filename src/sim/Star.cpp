@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
 
-sim::Star::Star(Entity::Init const & init, Scalar radius, Scalar year)
+sim::Star::Star(Entity::Init const & init, axes::ScalarAbs radius, core::Time year)
 : Entity(init)
 , _radius(radius)
 , _year(year)
@@ -75,6 +75,8 @@ void sim::Star::Verify() const
 
 void sim::Star::CalculatePosition(core::Time t)
 {
-	Scalar angle = Scalar(t * (2. * PI) / _year) + 3.6;
-	position = Vector3(- std::sin(angle) * _radius, - std::cos(angle) * _radius, Scalar(0));
+	auto angle = (t * (2. * PI) / _year) + 3.6f;
+	axes::VectorAbs position_abs(- std::sin(angle) * _radius, - std::cos(angle) * _radius, 0);
+	axes::VectorAbs const & origin = GetEngine().GetOrigin();
+	position = axes::AbsToRel(position_abs, origin);
 }

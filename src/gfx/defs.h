@@ -36,9 +36,8 @@ namespace gfx
 		};
 	}
 	
-	// Geometric types currently use double and are converted 
-	// inside - or close to - the graphics API.
-	typedef double Scalar;
+	// geometric types
+	typedef float Scalar;
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Vector<Scalar, 4> Vector4;
 	typedef geom::Vector<Scalar, 2> RenderRange;	// near/far z

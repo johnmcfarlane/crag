@@ -11,7 +11,7 @@
 
 #include "form/scene/Polyhedron.h"
 
-#include "sim/defs.h"
+#include "sim/axes.h"
 
 
 namespace form
@@ -51,11 +51,12 @@ namespace form
 		NodeBuffer & GetNodeBuffer();
 		NodeBuffer const & GetNodeBuffer() const;
 		
-		sim::Ray3 const & GetCameraRay() const;
-		void SetCameraRay(sim::Ray3 const & camera_ray);
+		axes::RayRel const & GetCameraRay() const;
+		void SetCameraRay(axes::RayRel const & camera_ray);
+		void SetCameraRay(axes::RayAbs const & camera_ray);
 		
-		sim::Vector3 const & GetOrigin() const;
-		void SetOrigin(sim::Vector3 const & o);
+		axes::VectorAbs const & GetOrigin() const;
+		void SetOrigin(axes::VectorAbs const & o);
 		
 		void AddFormation(Formation & formation);
 		void RemoveFormation(Formation const & formation);
@@ -84,9 +85,9 @@ namespace form
 		NodeBuffer & _node_buffer;
 		
 		FormationMap formation_map;		// The internal record of formations.
-		sim::Ray3 camera_ray;			// The observer position/direction in universal coordinates.
-		sim::Ray3 camera_ray_relative;	// The observer position/direction relative to origin.
-		sim::Vector3 origin;			// The zero point in universal coordinates.
+		axes::RayAbs camera_ray;			// The observer position/direction in universal coordinates.
+		axes::RayRel camera_ray_relative;	// The observer position/direction relative to origin.
+		axes::VectorAbs origin;			// The zero point in universal coordinates.
 	};
 
 }

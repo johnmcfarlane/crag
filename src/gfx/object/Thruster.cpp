@@ -31,7 +31,7 @@ namespace
 	CONFIG_DEFINE(thruster_color, Color4f, Color4f(1.f, .5f, .25f));
 	CONFIG_DEFINE(puff_drift_coefficient, Scalar, .75);
 	CONFIG_DEFINE(puff_volume_variance, Scalar, 1.);
-	CONFIG_DEFINE(puff_volume_median, Scalar, 0.0005);
+	CONFIG_DEFINE(puff_volume_median, Scalar, 0.0005f);
 }
 
 

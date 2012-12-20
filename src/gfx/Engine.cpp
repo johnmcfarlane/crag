@@ -362,7 +362,7 @@ Color4f Engine::CalculateLighting(Vector3 const & position) const
 	{
 		Light const & light = * i;
 
-		Vector3 light_position = geom::Cast<double>(light.GetModelViewTransformation().GetTranslation());
+		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
 		
 		Vector3 frag_to_light = light_position - position;
 		float distance_squared = static_cast<float>(LengthSq(frag_to_light));
@@ -484,8 +484,9 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 	}
 
 	// pass this on to the formation manager to update the node scores
-	form::Daemon::Call([transformation] (form::Engine & engine) {
-		engine.OnSetCamera(transformation);
+	auto camera_pos = axes::GetCameraRay(transformation);
+	form::Daemon::Call([camera_pos] (form::Engine & engine) {
+		engine.OnSetCamera(camera_pos);
 	});
 }
 
@@ -1101,7 +1102,7 @@ int Engine::RenderLayer(Layer::type layer, bool opaque)
 		}
 		
 		// Set the matrix.
-		Transformation const & transformation = geom::Cast<double>(leaf_node.GetModelViewTransformation());
+		Transformation const & transformation = leaf_node.GetModelViewTransformation();
 		SetModelViewMatrix(transformation);
 
 		Program const * required_program = leaf_node.GetProgram();
@@ -1138,7 +1139,7 @@ void Engine::DebugDraw()
 		return;
 	}
 
-	Debug::AddBasis(sim::Vector3::Zero(), 1000000.);
+	Debug::AddBasis(axes::VectorAbs::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
 	Transformation const & transformation = pov.GetTransformation();
@@ -1155,7 +1156,7 @@ void Engine::DebugDraw()
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
-	Debug::Draw(translation);
+	Debug::Draw(geom::Cast<double>(translation));
 	
 #if defined (GATHER_STATS)
 	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);

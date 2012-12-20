@@ -67,7 +67,7 @@ void smp::SetThreadName(char const * thread_name)
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
 	info.szName = thread_name;
-	info.dwThreadID = -1;		// this thread
+	info.dwThreadID = 0xFFFFFFFF;	// this thread
 	info.dwFlags = 0;
 	
 	__try

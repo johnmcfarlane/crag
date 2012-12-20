@@ -18,7 +18,7 @@ namespace form
 
 	// A functor for use primarily in NodeBuffer::ForEachNode_Paralell/Serial.
 	// An object of this class is a member of NodeBuffer and stores all data needed to score the buffer's nodes.
-	
+	// TODO: It doesn't make sense for this to persist across multiple Tick calls.
 	class CalculateNodeScoreFunctor
 	{
 		OBJECT_NO_COPY (CalculateNodeScoreFunctor);
@@ -34,8 +34,9 @@ namespace form
 		// would yield significantly different scores.
 		bool IsSignificantlyDifferent(Ray3 const & other_camera_ray) const;
 		
-		void ResetLeafScoreRange();
+		void ResetCounters();
 		geom::Vector2f GetLeafScoreRange() const;
+		Scalar GetMinLeafDistanceSquared() const;
 		
 		void SetCameraRay(Ray3 const & new_camera_ray);
 
@@ -46,6 +47,7 @@ namespace form
 		Scalar min_recalc_distance_squared;
 		Scalar min_score_distance_squared;
 		Scalar inverse_min_score_distance_squared;
+		Scalar min_leaf_distance_squared;
 		
 		geom::Vector2f leaf_score_range;
 	};

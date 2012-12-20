@@ -45,7 +45,7 @@ namespace form { namespace collision
 	class Object;
 
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area);
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor, float min_area);
     
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -108,9 +108,8 @@ namespace form { namespace collision
 		typedef ::form::collision::Object<ShapeType> Object;
 		
 		// functions
-		CollisionFunctor(Vector3 const & polyhedron_center, sim::Vector3 const & origin, Object const & object, FUNCTOR & functor, float min_area)
+		CollisionFunctor(Vector3 const & polyhedron_center, Object const & object, FUNCTOR & functor, float min_area)
 		: _pyramid(polyhedron_center)
-		, _origin(origin)
 		, _object(object)
 		, _functor(functor)
 		, _min_area(min_area)
@@ -119,7 +118,6 @@ namespace form { namespace collision
 		
 		// data
 		Pyramid _pyramid;	// contains the center of the formation etc.
-		sim::Vector3 const _origin;	// the origin of the formation scene
 		Object const & _object;	// the object with which to collide the formation
 		FUNCTOR & _functor;	// thing to call when collision is detected
 		float _min_area;
@@ -146,7 +144,7 @@ namespace form { namespace collision
 		{
 			contact_normal = collision_info.ray.direction;
 		}
-		node_functor._functor(axes::RelToAbs(contact_point, node_functor._origin), geom::Cast<double>(contact_normal), collision_info.depth);
+		node_functor._functor(contact_point, contact_normal, collision_info.depth);
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
 	}
@@ -187,7 +185,7 @@ namespace form { namespace collision
 		Vector3 contact_point = geom::Project(collision_info.ray, collision_info.t1);
 		Vector3 const & contact_normal = collision_info.ray.direction;
 
-		node_functor._functor(axes::RelToAbs(contact_point, node_functor._origin), geom::Cast<double>(contact_normal), - collision_info.t1);
+		node_functor._functor(contact_point, contact_normal, - collision_info.t1);
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
 	}
@@ -416,9 +414,9 @@ namespace form { namespace collision
 	// ForEachCollision implementation
 	
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, sim::Vector3 const & origin, FUNCTOR & functor, float min_area)
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor, float min_area)
 	{
-		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, origin, object, functor, min_area);
+		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, object, functor, min_area);
 		
 		form::RootNode const & root_node = polyhedron.GetRootNode();
 		ForEachCollision(node_functor, root_node);

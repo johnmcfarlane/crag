@@ -28,10 +28,10 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
 	
-	CONFIG_DEFINE (ball_density, double, 1);
+	CONFIG_DEFINE (ball_density, float, 1);
 	
-	CONFIG_DEFINE (ball_linear_damping, double, 0.005f);
-	CONFIG_DEFINE (ball_angular_damping, double, 0.005f);
+	CONFIG_DEFINE (ball_linear_damping, float, 0.005f);
+	CONFIG_DEFINE (ball_angular_damping, float, 0.005f);
 }
 
 

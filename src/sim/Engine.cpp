@@ -1,5 +1,5 @@
 //
-//  Engine.cpp
+//  sim/Engine.cpp
 //  crag
 //
 //  Created by John on 10/19/09.
@@ -17,6 +17,7 @@
 
 #include "form/Engine.h"
 
+#include "physics/Body.h"
 #include "physics/Engine.h"
 
 #include "gfx/Engine.h"
@@ -31,6 +32,11 @@ CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
 namespace
 {
 	CONFIG_DEFINE (apply_gravity, bool, true);
+
+	// TODO: This could cause the Observer to be destroyed
+	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
+
+	STAT_DEFAULT(physics_origin, axes::VectorAbs, 0.3f, axes::VectorAbs::Zero());
 }
 
 
@@ -117,19 +123,55 @@ void Engine::RemoveFormation(form::Formation& formation)
 	scene.RemoveFormation(formation);
 }
 
-void Engine::SetCamera(Ray3 const & camera_ray)
+void Engine::SetCamera(axes::RayRel const & camera_ray)
 {
 	auto& scene = _physics_engine.GetScene();
 	scene.SetCameraRay(camera_ray);
 }
 
-void Engine::SetOrigin(Vector3 const & origin)
+void Engine::SetCamera(axes::RayAbs const & camera_ray)
 {
+	auto& scene = _physics_engine.GetScene();
+	scene.SetCameraRay(camera_ray);
+}
+
+axes::VectorAbs Engine::GetOrigin() const
+{
+	return _physics_engine.GetScene().GetOrigin();
+}
+
+void Engine::SetOrigin(axes::VectorAbs const & origin)
+{
+	// figure out the delta
+	auto& scene = _physics_engine.GetScene();
+	auto& previous_origin = scene.GetOrigin();
+	axes::VectorRel delta = geom::Cast<axes::ScalarRel>(origin - previous_origin);
+
+	// quit if there's no change
+	if (geom::LengthSq(delta) == 0)
+	{
+		return;
+	}
+	
+	// formation engine
 	form::Daemon::Call([origin] (form::Engine & engine) {
 		engine.SetOrigin(origin);
 	});
 	
-	auto& scene = _physics_engine.GetScene();
+	// render engine
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
+	
+	ResetOrigin(_entity_set, delta);
+
+	UpdateModels(_entity_set);
+	
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(true);
+	});
+
+	// local collision formation scene
 	scene.SetOrigin(origin);
 }
 
@@ -215,8 +257,6 @@ void Engine::Tick()
 		// Run physics/collisions.
 		_physics_engine.Tick(sim_tick_duration);
 
-		_entity_set.Purge();
-		
 		// Tell renderer about changes.
 		UpdateRenderer();
 	}
@@ -224,6 +264,8 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
+	STAT_SET(physics_origin, _physics_engine.GetScene().GetOrigin());
+
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(false);
 	});
@@ -241,10 +283,29 @@ void Engine::UpdateRenderer() const
 void Engine::TickEntities()
 {
 	Entity::List & entities = _entity_set.GetEntities();
-	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end;)
 	{
 		Entity & entity = * it;
 		
 		entity.Tick(* this);
+
+		physics::Body const * body = entity.GetBody();
+		if (body == nullptr)
+		{
+			++ it;
+			continue;
+		}
+		
+		Vector3 position = body->GetPosition();
+		if (Length(position) < purge_distance)
+		{
+			++ it;
+			continue;
+		}
+		
+		DEBUG_MESSAGE("Removing entity with bad position, %f,%f,%f", position.x, position.y, position.z);
+		
+		it = entities.erase(it);
+		delete & entity;
 	}
 }

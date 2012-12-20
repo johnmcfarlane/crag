@@ -33,15 +33,15 @@ CONFIG_DECLARE (sim_tick_duration, core::Time);
 
 namespace 
 {
-	CONFIG_DEFINE (observer_radius, double, .5);
-	CONFIG_DEFINE (observer_density, double, 1);
+	CONFIG_DEFINE (observer_radius, Scalar, .5);
+	CONFIG_DEFINE (observer_density, Scalar, 1);
 	
-	CONFIG_DEFINE (observer_speed_factor, double, 631);
+	CONFIG_DEFINE (observer_speed_factor, Scalar, 631);
 
-	CONFIG_DEFINE (observer_linear_damping, double, 0.025f);
-	CONFIG_DEFINE (observer_angular_damping, double, 0.05f);
-	CONFIG_DEFINE (observer_velocity_impulse, float, 0.002f);
-	CONFIG_DEFINE (observer_torque_impulse, double, .0025f);
+	CONFIG_DEFINE (observer_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (observer_angular_damping, physics::Scalar, 0.05f);
+	CONFIG_DEFINE (observer_velocity_impulse, physics::Scalar, 0.002f);
+	CONFIG_DEFINE (observer_torque_impulse, physics::Scalar, .0025f);
 
 	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
 }
@@ -50,18 +50,20 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-Observer::Observer(Entity::Init const & init, Vector3 const & center)
+Observer::Observer(Entity::Init const & init, axes::VectorAbs const & center)
 : Entity(init)
 , speed_factor(observer_speed_factor)
 {
-	physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
+	Engine& sim_engine = GetEngine();
+	physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
 	physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, observer_radius);
-	SetSpeed(1);
 	
 	body->SetDensity(observer_density);
 	body->SetLinearDamping(observer_linear_damping);
 	body->SetAngularDamping(observer_angular_damping);
-	body->SetPosition(center);
+
+	axes::VectorRel center_rel = axes::AbsToRel(center, sim_engine.GetOrigin());
+	body->SetPosition(center_rel);
 
 	SetBody(body);
 	
@@ -72,6 +74,8 @@ Observer::Observer(Entity::Init const & init, Vector3 const & center)
 	gfx::Light * light = new gfx::Light(observer_light_color);
 	_light_uid = AddModelWithTransform(* light);
 #endif
+
+	SetSpeed(1);
 }
 
 Observer::~Observer()
@@ -80,7 +84,7 @@ Observer::~Observer()
 	_model.Destroy();
 #endif
 
-	observer_speed_factor = static_cast<double>(speed_factor);
+	observer_speed_factor = speed_factor;
 }
 
 void Observer::AddRotation(Vector3 const & angles)
@@ -97,7 +101,7 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 		Vector3(observer_torque_impulse, observer_torque_impulse, observer_torque_impulse),
 	};
 	
-	Scalar inv_t = 1.f / sim_tick_duration;
+	Scalar inv_t = Scalar(1. / sim_tick_duration);
 
 	for (int d = 0; d < 2; ++ d)
 	{
@@ -112,7 +116,7 @@ void Observer::UpdateInput(Controller::Impulse const & impulse)
 
 void Observer::SetSpeed(int const & speed)
 {
-	speed_factor = static_cast<double>(pow(pow(10., .4), static_cast<double>((speed << 1) + 1)));
+	speed_factor = std::pow(std::pow(10.f, .4f), (speed << 1) + 1);
 }
 
 void Observer::Tick(sim::Engine & simulation_engine)
@@ -135,18 +139,18 @@ void Observer::UpdateModels() const
 
 	Vector3 const & position = body->GetPosition();
 	Matrix33 rotation = body->GetRotation();
+	Transformation transformation (position, rotation);
 
 	// Give renderer the new camera position.
+	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
+		engine.OnSetCamera(transformation);
+	});
+	
+	// Give simulation the new camera position.
 	{
-		Transformation transformation (position, rotation);
-		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
-			engine.OnSetCamera(transformation);
-		});
-		
 		Ray3 camera_ray = axes::GetCameraRay(transformation);
-		sim::Daemon::Call([camera_ray] (sim::Engine & engine) {
-			engine.SetCamera(camera_ray);
-		});
+		auto& engine = GetEngine();
+		engine.SetCamera(camera_ray);
 	}
 
 #if defined(OBSERVER_LIGHT)

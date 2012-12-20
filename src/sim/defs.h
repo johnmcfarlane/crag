@@ -37,7 +37,7 @@ namespace sim
 	typedef smp::Daemon<Engine> Daemon;
 
 	// precision used by simulation
-	typedef double Scalar;
+	typedef float Scalar;
 	
 	typedef geom::Vector<Scalar, 2> Vector2;
 	typedef geom::Vector<Scalar, 3> Vector3;

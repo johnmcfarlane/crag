@@ -14,12 +14,7 @@
 
 namespace physics
 {
-#if defined(dSINGLE)
-	typedef float Scalar;
-#elif defined(dDOUBLE)
-	typedef double Scalar;
-#endif
-	
+	typedef dReal Scalar;
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;

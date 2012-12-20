@@ -16,8 +16,6 @@
 #include "form/node/PointBuffer.h"
 #include "form/node/Shader.h"
 
-#include "sim/axes.h"
-
 #include "core/memory.h"
 
 
@@ -52,7 +50,7 @@ form::Polyhedron::Polyhedron(Polyhedron const & rhs)
 	_root_node = RootNode(* this);
 }
 
-void form::Polyhedron::Init(sim::Vector3 const & origin, PointBuffer & point_buffer)
+void form::Polyhedron::Init(axes::VectorAbs const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
 	_shape.center = axes::AbsToRel<double>(_formation.GetShape().center, origin);
@@ -80,7 +78,7 @@ void form::Polyhedron::Deinit(PointBuffer & point_buffer)
 	_root_node.Deinit(point_buffer);
 }
 
-sim::Sphere3 const & form::Polyhedron::GetShape() const
+axes::SphereAbs const & form::Polyhedron::GetShape() const
 {
 	return _shape;
 }
@@ -100,9 +98,9 @@ form::RootNode const & form::Polyhedron::GetRootNode() const
 	return _root_node;
 }
 
-void form::Polyhedron::SetOrigin(sim::Vector3 const & origin)
+void form::Polyhedron::SetOrigin(axes::VectorAbs const & origin)
 {
-	sim::Sphere3 const & shape = _formation.GetShape();
+	axes::SphereAbs const & shape = _formation.GetShape();
 	_shape.center = axes::AbsToRel<double>(shape.center, origin);
 	_shape.radius = shape.radius;
 	

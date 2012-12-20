@@ -214,6 +214,11 @@ float form::NodeBuffer::GetMinParentScore() const
 	}
 }
 
+form::Scalar form::NodeBuffer::GetMinLeafDistanceSquared()
+{
+	return node_score_functor.GetMinLeafDistanceSquared();
+}
+
 void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 {
 	if (profile_mode)
@@ -254,7 +259,9 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 
 	// Is the new camera ray significantly different to 
 	// the one used to last score the bulk of the node buffer?
-	if (node_score_functor.IsSignificantlyDifferent(cached_node_score_ray))
+	// TODO: Disabled. Causes complications, not least fluctuations in the frame-rate
+	// which in turn cause fluctuations in the node count.
+	if (node_score_functor.IsSignificantlyDifferent(cached_node_score_ray) || true)
 	{
 		UpdateNodeScores();
 		cached_node_score_ray = new_camera_ray;
@@ -341,7 +348,7 @@ void form::NodeBuffer::UpdateNodes()
 
 void form::NodeBuffer::UpdateNodeScores()
 {
-	node_score_functor.ResetLeafScoreRange();
+	node_score_functor.ResetCounters();
 	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 }
 

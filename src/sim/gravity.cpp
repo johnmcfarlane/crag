@@ -46,6 +46,10 @@ namespace
 	{
 		Vector3 const & position = body.GetPosition();
 		Scalar mass = body.GetMass();
+		if (mass <= 0)
+		{
+			return;
+		}
 		
 		Vector3 gravitational_force_per_second = Weight(entities, position, mass);
 		Vector3 gravity = gravitational_force_per_second / Scalar(delta);

@@ -215,7 +215,7 @@ namespace geom
 		unsigned ym = (1^xm) & uzy;
 		unsigned zm = 1^(xm | ym);
 
-		Vector p = CrossProduct(v, Vector(xm, ym, zm));
+		Vector p = CrossProduct(v, Vector(S(xm), S(ym), S(zm)));
 		return p;
 	}
 

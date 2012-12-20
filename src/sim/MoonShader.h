@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "defs.h"
+#include "axes.h"
 
 #include "form/node/Shader.h"
 
@@ -26,16 +26,16 @@ namespace sim
 	class MoonShader : public form::Shader
 	{
 	public:
-		MoonShader(int seed, int num_craters, Scalar radius);
+		MoonShader(int seed, int num_craters, axes::ScalarAbs radius);
 		
 	private:
 		void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const override;
 		bool InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const override;
 		
-		void ApplyCraters(Random rnd, Vector3 & position) const;
-		void GenerateCreater(Random & rnd, Sphere3 & crater, Scalar moon_radius) const;
+		void ApplyCraters(Random rnd, axes::VectorAbs & position) const;
+		void GenerateCreater(Random & rnd, axes::SphereAbs & crater, axes::ScalarAbs moon_radius) const;
 		
-		typedef std::vector<Sphere3> CraterVector;
+		typedef std::vector<axes::SphereAbs> CraterVector;
 		CraterVector craters;
 	};
 }

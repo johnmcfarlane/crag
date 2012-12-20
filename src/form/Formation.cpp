@@ -21,7 +21,7 @@
 using namespace form;
 
 
-Formation::Formation(int seed, Shader const & shader, sim::Sphere3 const & shape, sim::PlanetHandle const & planet)
+Formation::Formation(int seed, Shader const & shader, axes::SphereAbs const & shape, sim::PlanetHandle const & planet)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
@@ -41,7 +41,7 @@ Shader const & Formation::GetShader() const
 	return _shader;
 }
 
-sim::Sphere3 const & Formation::GetShape() const
+axes::SphereAbs const & Formation::GetShape() const
 {
 	return _shape;
 }
@@ -53,14 +53,14 @@ int Formation::GetSeed() const
 
 void Formation::SendRadiusUpdateMessage() const
 {
-	auto radius_min = _radius_min;
-	auto radius_max = _radius_max;
+	auto radius_min = sim::Scalar(_radius_min);
+	auto radius_max = sim::Scalar(_radius_max);
 	_planet.Call([radius_min, radius_max] (sim::Planet & planet){
 		planet.SetRadiusMinMax(radius_min, radius_max);
 	});
 }
 
-void Formation::SampleRadius(sim::Scalar sample_radius)
+void Formation::SampleRadius(axes::ScalarAbs sample_radius)
 {
 	if (sample_radius < _radius_min)
 	{

@@ -18,7 +18,7 @@
 
 namespace
 {
-	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1);	// coulomb friction coefficient
+	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1f);	// coulomb friction coefficient
 	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 }
 
@@ -45,7 +45,7 @@ Engine const & IntersectionFunctor::GetEngine() const
 	return _engine;
 }
 
-void IntersectionFunctor::operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth)
+void IntersectionFunctor::operator()(Vector3 const & pos, Vector3 const & normal, Scalar depth)
 {
 	_contact.geom.pos[0] = pos.x;
 	_contact.geom.pos[1] = pos.y;

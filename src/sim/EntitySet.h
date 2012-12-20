@@ -30,6 +30,16 @@ namespace sim
 		// methods
 		~EntitySet();
 
+		Entity::List::iterator begin()
+		{
+			return GetEntities().begin();
+		}
+
+		Entity::List::iterator end()
+		{
+			return GetEntities().end();
+		}
+		
 		void Add(Entity & entity);
 		void Remove(Entity & entity);
 		
@@ -39,8 +49,6 @@ namespace sim
 		// return all entities
 		Entity::List & GetEntities();
 		Entity::List const & GetEntities() const;
-
-		void Purge();
 
 	private:
 		// variables

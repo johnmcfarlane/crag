@@ -105,7 +105,7 @@ void Engine::Tick(double delta_time)
 		CreateJoints();
 		
 		// Tick physics (including acting upon collisions).
-		dWorldQuickStep (world, delta_time);
+		dWorldQuickStep (world, Scalar(delta_time));
 		//dWorldStep (world, delta_time);
 		
 		// Remove this tick's collision data.
@@ -115,7 +115,7 @@ void Engine::Tick(double delta_time)
 	else
 	{
 		// No collision checking, so just tick physics.
-		dWorldQuickStep (world, delta_time);
+		dWorldQuickStep (world, Scalar(delta_time));
 	}
 }
 

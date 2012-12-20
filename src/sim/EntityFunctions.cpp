@@ -26,9 +26,8 @@ namespace sim
 	void UpdateModels(EntitySet const & entity_set)
 	{
 		Entity::List const & entities = entity_set.GetEntities();
-		for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it)
+		for (Entity const & entity : entities)
 		{
-			Entity const & entity = * it;
 			entity.UpdateModels();
 		}
 	}
@@ -68,6 +67,19 @@ namespace sim
 		else
 		{
 			ERROR_MESSAGE("SetCollidable called on entity with no body");
+		}
+	}
+	
+	void ResetOrigin(EntitySet & entity_set, axes::VectorRel const & delta)
+	{
+		for (Entity & entity : entity_set.GetEntities())
+		{
+			auto body = entity.GetBody();
+			if (body != nullptr)
+			{
+				Vector3 bodyPosition = body->GetPosition();
+				body->SetPosition(bodyPosition - delta);
+			}
 		}
 	}
 }

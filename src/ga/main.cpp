@@ -40,7 +40,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 {
 	DEBUG_MESSAGE("ga::main");
 
-	Scalar planet_radius = 10000;
+	float planet_radius = 10000;
 	//Scalar axis = planet_radius / sqrt(3.);
 	//Vector3 surface(axis, axis, axis);
 	Vector3 surface(0., 0., planet_radius);
@@ -53,7 +53,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 	
 	// planet
 	sim::PlanetHandle planet_handle;
-	sim::Sphere3 planet_sphere(Vector3::Zero(), 10000);
+	sim::Sphere3 planet_sphere(sim::Vector3::Zero(), 10000);
 	int random_seed = 3634;
 	int num_craters = 0;
 	planet_handle.Create(planet_sphere, random_seed, num_craters);
@@ -71,7 +71,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 		engine.SetCamera(camera_ray);
 	});
 	
-	sim::Transformation transformation(camera_pos);
+	sim::Transformation transformation(geom::Cast<sim::Scalar>(camera_pos));
 	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 		engine.OnSetCamera(transformation);
 	});
@@ -81,7 +81,7 @@ void ga::main(applet::AppletInterface & applet_interface)
 	// light
 	gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 50000000000.f);
 	gfx::BranchNodeHandle light = sim::AddModelWithTransform<gfx::Light>(color);
-	gfx::Transformation light_transformation(Vector3(0., 0., 10.) * planet_radius);
+	gfx::Transformation light_transformation(gfx::Vector3(0., 0., 10.) * planet_radius);
 	light.Call([light_transformation] (gfx::BranchNode & branch_node) {
 		branch_node.SetTransformation(light_transformation);
 	});

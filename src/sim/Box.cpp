@@ -29,10 +29,10 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
 	
-	CONFIG_DEFINE (box_density, double, 1);
+	CONFIG_DEFINE (box_density, physics::Scalar, 1);
 	
-	CONFIG_DEFINE (box_linear_damping, double, 0.005f);
-	CONFIG_DEFINE (box_angular_damping, double, 0.005f);
+	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
+	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
 }
 
 

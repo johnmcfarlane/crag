@@ -22,7 +22,7 @@ using namespace form;
 extern float camera_near;
 
 
-CONFIG_DEFINE(node_score_recalc_coefficient, double, 0.25);
+CONFIG_DEFINE(node_score_recalc_coefficient, double, .1);
 CONFIG_DEFINE(node_score_score_coefficient, double, 1.5);
 
 
@@ -52,8 +52,9 @@ bool CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_came
 	return distance_squared >= min_recalc_distance_squared;
 }
 
-void CalculateNodeScoreFunctor::ResetLeafScoreRange()
+void CalculateNodeScoreFunctor::ResetCounters()
 {
+	min_leaf_distance_squared = std::numeric_limits<Scalar>::max();
 	leaf_score_range[0] = std::numeric_limits<float>::max();
 	leaf_score_range[1] = std::numeric_limits<float>::min();
 }
@@ -61,6 +62,11 @@ void CalculateNodeScoreFunctor::ResetLeafScoreRange()
 geom::Vector2f CalculateNodeScoreFunctor::GetLeafScoreRange() const
 {
 	return leaf_score_range;
+}
+
+Scalar CalculateNodeScoreFunctor::GetMinLeafDistanceSquared() const
+{
+	return min_leaf_distance_squared;
 }
 
 void CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
@@ -116,6 +122,11 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 		if (score > leaf_score_range.y)
 		{
 			leaf_score_range.y = score;
+		}
+		
+		if (distance_squared < min_leaf_distance_squared)
+		{
+			min_leaf_distance_squared = distance_squared;
 		}
 	}
 }

@@ -11,6 +11,7 @@
 
 #include "TestScript.h"
 
+#include "Applet.h"
 #include "AppletInterface_Impl.h"
 #include "ObserverScript.h"
 #include "Engine.h"
@@ -24,17 +25,15 @@
 #include "sim/Star.h"
 #include "sim/Vehicle.h"
 
+#include "physics/Engine.h"
+
 #include "form/Engine.h"
+#include "form/node/NodeBuffer.h"
 
 #include "gfx/Engine.h"
 
-#include "geom/Transformation.h"
-
-#include "smp/Future.h"
-
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
-
 
 DECLARE_CLASS_HANDLE(sim, Ball);		// sim::BallHandle
 DECLARE_CLASS_HANDLE(sim, Box);			// sim::BoxHandle
@@ -50,12 +49,12 @@ using namespace applet;
 
 namespace
 {
-	CONFIG_DEFINE (max_distance_from_origin, sim::Scalar, 2500);
+	CONFIG_DEFINE (min_precision_score, sim::Scalar, .001f);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 observer_start_pos(0, 9999400, -5);
+	axes::VectorAbs observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
@@ -81,19 +80,17 @@ namespace
 		
 		// functions
 		TestScript()
-			: _origin(sim::Vector3::Zero())
-			, _enable_dynamic_origin(true)
+			: _enable_dynamic_origin(true)
 		{
 		}
 
 		void operator() (AppletInterface & applet_interface);
 	private:
 		void SpawnPlanets();
-		void SpawnUniverse();
+		void SpawnSkybox();
 		void SpawnVehicle();
 		void SpawnShapes(int shape_num);
 		void HandleEvents();
-		void UpdateOrigin();
 		
 		// variables
 		AppletInterface * _applet_interface;
@@ -103,7 +100,6 @@ namespace
 		sim::ObserverHandle _observer;
 		sim::VehicleHandle _vehicle;
 		EntityVector _shapes;
-		sim::Vector3 _origin;
 		core::EventWatcher _event_watcher;
 		bool _enable_dynamic_origin;
 	};
@@ -111,7 +107,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
-	void add_thruster(sim::VehicleHandle & vehicle_handle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void add_thruster(sim::VehicleHandle & vehicle_handle, axes::VectorRel const & position, axes::VectorRel const & direction, SDL_Scancode key)
 	{
 		sim::Vehicle::Thruster thruster;
 		thruster.position = position;
@@ -122,6 +118,51 @@ namespace
 		vehicle_handle.Call([thruster] (sim::Vehicle & vehicle) {
 			vehicle.AddThruster(thruster);
 		});
+	}
+
+	// Given the camera position relative to the current origin
+	// and the distance to the closest bit of geometry,
+	// is the origin too far away to allow for precise, camera-centric calculations?
+	bool ShouldReviseOrigin(axes::VectorRel const & camera_pos, float min_leaf_distance_squared)
+	{
+		if (min_leaf_distance_squared == std::numeric_limits<decltype(min_leaf_distance_squared)>::max())
+		{
+			return true;
+		}
+		
+		ASSERT(min_leaf_distance_squared >= 0);
+		auto distance_from_surface = std::sqrt(min_leaf_distance_squared);
+
+		auto distance_from_origin = geom::Length(camera_pos);
+		auto accuracy_score = distance_from_surface / distance_from_origin;
+		
+		auto precision_score = distance_from_surface / distance_from_origin;
+		if (precision_score < min_precision_score)
+		{
+			return true;
+		}
+
+		return false;
+	}
+	
+	void ReviseOrigin(sim::Engine & engine)
+	{
+		auto& physics_engine = engine.GetPhysicsEngine();
+		auto& scene = physics_engine.GetScene();
+		auto& node_buffer = scene.GetNodeBuffer();
+
+		auto& camera_ray = scene.GetCameraRay();
+		auto& camera_pos = camera_ray.position;
+		auto min_leaf_distance_squared = node_buffer.GetMinLeafDistanceSquared();
+
+		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
+		{
+			auto origin = scene.GetOrigin();
+			auto new_origin = axes::RelToAbs(camera_pos, origin);
+
+			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
+			engine.SetOrigin(new_origin);
+		}
 	}
 }
 
@@ -136,11 +177,14 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		sim::Transformation transformation(observer_start_pos);
+		sim::Transformation transformation(geom::Cast<sim::Scalar>(observer_start_pos));
 		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 			engine.OnSetCamera(transformation);
 		});
 	}
+	
+	// Create sun. 
+	_sun.Create(100000000., 30000.);
 	
 	// Create planets
 	if (spawn_planets)
@@ -151,24 +195,43 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	// Give formations time to expand.
 	_applet_interface->Sleep(2);
 
-	// Create observer and vehicle.
+	// Create observer.
 	{
 		_observer.Create(observer_start_pos);
 		smp::Handle<ObserverScript> observer_script;
 		observer_script.Create(_observer);
 	}
 	
-	SpawnUniverse();
+	// Create origin controller.
+	{
+		Daemon::Call([] (Engine & engine) {
+			auto functor = [] (AppletInterface & applet_interface)
+			{
+				while (! applet_interface.GetQuitFlag())
+				{
+					applet_interface.Sleep(0.23432);
+					sim::Daemon::Call(& ReviseOrigin);
+				}
+			};
+			
+			engine.Launch(functor, 8192, "Main");
+		});
+	}
+	
+	
+	SpawnSkybox();
 	
 	// Create vehicle.
-	SpawnVehicle();
+	//SpawnVehicle();
 	
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
 	{
+		applet_interface.WaitFor([this, & applet_interface] () {
+			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
+		});
+
 		HandleEvents();
-		
-		UpdateOrigin();
 	}
 	
 	while (! _shapes.empty())
@@ -191,14 +254,14 @@ void TestScript::operator() (AppletInterface & applet_interface)
 
 void TestScript::SpawnPlanets()
 {
-	double planet_radius = 10000000;
+	sim::Scalar planet_radius = 10000000;
 	
 	_planet.Create(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
-	_moon1.Create(sim::Sphere3(sim::Vector3(planet_radius * 1.5, planet_radius * 2.5, planet_radius * 1.), 1500000), 10, 250);
-	_moon2.Create(sim::Sphere3(sim::Vector3(planet_radius * -2.5, planet_radius * 0.5, planet_radius * -1.), 2500000), 13, 0);
+	_moon1.Create(sim::Sphere3(sim::Vector3(planet_radius * 1.5f, planet_radius * 2.5f, planet_radius * 1.f), 1500000), 10, 250);
+	_moon2.Create(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 }
 
-void TestScript::SpawnUniverse()
+void TestScript::SpawnSkybox()
 {
 	// Add the skybox.
 	_skybox.Create();
@@ -206,9 +269,6 @@ void TestScript::SpawnUniverse()
 	gfx::Daemon::Call([skybox] (gfx::Engine & engine) {
 		engine.OnSetParent(skybox.GetUid(), gfx::Uid());
 	});
-	
-	// Create sun. 
-	_sun.Create(100000000., 30000.);
 }
 
 void TestScript::SpawnVehicle()
@@ -216,16 +276,16 @@ void TestScript::SpawnVehicle()
 	// Create vehicle
 	if (spawn_vehicle)
 	{
-		sim::Sphere3 sphere;
-		sphere.center = observer_start_pos + sim::Vector3(0, 5, +5);
+		axes::SphereRel sphere;
+		sphere.center = geom::Cast<float>(observer_start_pos + axes::VectorAbs(0, 5, +5));
 		sphere.radius = 1.;
 
 		_vehicle.Create(sphere);
 		
-		add_thruster(_vehicle, sim::Vector3(.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, sim::Vector3(.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, sim::Vector3(-.5, -.8, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, sim::Vector3(-.5, -.8, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, axes::VectorRel(.5, -.8f, .5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, axes::VectorRel(.5, -.8f, -.5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, axes::VectorRel(-.5, -.8f, .5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, axes::VectorRel(-.5, -.8f, -.5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
 	}
 }
 
@@ -242,9 +302,9 @@ void TestScript::SpawnShapes(int shape_num)
 	
 	sim::Transformation camera_transformation = camera_transformation_future.Get();
 	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
-	sim::Vector3 camera_pos = camera_transformation.GetTranslation();
-	sim::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
-	sim::Vector3 spawn_pos = camera_pos + camera_forward * sim::Scalar(5);
+	axes::VectorRel camera_pos = camera_transformation.GetTranslation();
+	axes::VectorRel camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
+	axes::VectorRel spawn_pos = camera_pos + camera_forward * axes::ScalarRel(5);
 	
 	if (cleanup_shapes)
 	{
@@ -264,7 +324,7 @@ void TestScript::SpawnShapes(int shape_num)
 			{
 				// ball
 				sim::BallHandle ball;
-				sim::Sphere3 sphere(spawn_pos, std::exp(- GetRandomUnit() * 2));
+				axes::SphereRel sphere(spawn_pos, axes::ScalarRel(std::exp(- GetRandomUnit() * 2)));
 				ball.Create(sphere);
 				_shapes.push_back(ball);
 				break;
@@ -273,9 +333,9 @@ void TestScript::SpawnShapes(int shape_num)
 			case 1:
 			{
 				// box
-				sim::Vector3 size(std::exp(GetRandomUnit() * -2.),
-							 std::exp(GetRandomUnit() * -2.),
-							 std::exp(GetRandomUnit() * -2.));
+				axes::VectorRel size(axes::ScalarRel(std::exp(GetRandomUnit() * -2.)),
+							 axes::ScalarRel(std::exp(GetRandomUnit() * -2.)),
+							 axes::ScalarRel(std::exp(GetRandomUnit() * -2.)));
 				
 				sim::BoxHandle box;
 				box.Create(spawn_pos, size);
@@ -291,9 +351,13 @@ void TestScript::SpawnShapes(int shape_num)
 
 void TestScript::HandleEvents()
 {
+	int num_events = 0;
+	
 	SDL_Event event;
 	while (_event_watcher.PopEvent(event))
 	{
+		++ num_events;
+		
 		if (event.type != SDL_KEYDOWN)
 		{
 			continue;
@@ -326,29 +390,6 @@ void TestScript::HandleEvents()
 			default:
 				break;
 		}
-	}
-}
-
-void TestScript::UpdateOrigin()
-{
-	if (! _enable_dynamic_origin)
-	{
-		return;
-	}
-	
-	auto camera_transformation = _applet_interface->Get<gfx::Engine, gfx::Transformation>([] (gfx::Engine & engine) {
-		return engine.GetCamera();
-	});
-	auto camera_pos = camera_transformation.GetTranslation();
-	auto origin_to_camera = _origin - camera_pos;
-	
-	auto distance_from_origin = Length(origin_to_camera);
-	if (distance_from_origin > max_distance_from_origin)
-	{
-		sim::Daemon::Call([camera_pos] (sim::Engine & engine) {
-			engine.SetOrigin(camera_pos);
-		});
-		_origin = camera_pos;
 	}
 }
 

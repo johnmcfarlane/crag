@@ -70,6 +70,9 @@ namespace form
 		// returns 0 if there are none
 		float GetMinParentScore() const;
 		
+		// returns max if there are none
+		Scalar GetMinLeafDistanceSquared();
+		
 		// Must be a multiple of four.
 		void SetNumQuaternaUsedTarget(int n);	
 		

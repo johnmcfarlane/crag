@@ -93,7 +93,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
 	physics::Engine const & physics_engine = functor.GetEngine();
 	form::Scene const & scene = physics_engine.GetScene();
-	sim::Vector3 const & origin = scene.GetOrigin();
+	axes::VectorAbs const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
 	Vector3 position = box.GetPosition();
@@ -106,8 +106,8 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	Object collision_object;
 	
 	// bounding sphere
-	collision_object.bounding_sphere.center = axes::AbsToRel(position, origin);
-	collision_object.bounding_sphere.radius = form::Scalar(Length(extents));
+	collision_object.bounding_sphere.center = position;
+	collision_object.bounding_sphere.radius = Length(extents);
 	
 	// points
     {
@@ -122,13 +122,13 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 				plane.position = Vector3::Zero();
                 plane.position[axis] = pole_sign * extents[axis];
 				plane.position = rotation * plane.position;
-				i->position = geom::Cast<float>(plane.position);
+				i->position = plane.position;
 				i->position += collision_object.bounding_sphere.center;
 				
                 plane.direction = Vector3::Zero();
                 plane.direction[axis] = pole_sign;
 				plane.direction = rotation * plane.direction;
-				i->direction = geom::Cast<float>(plane.direction);
+				i->direction = plane.direction;
 				
 				//gfx::Debug::AddLine(form::SceneToSim(sim::Vector3(i->position), origin), 
 				//	form::SceneToSim(sim::Vector3(i->position + i->direction), origin),
@@ -152,7 +152,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, origin, functor, min_parent_area);
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
 }
 
 void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const
@@ -173,9 +173,9 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	
 	typedef Object<form::Sphere3> Object;
 	Object collision_object;
-	sim::Vector3 const & origin = scene.GetOrigin();
-	collision_object.bounding_sphere.center = axes::AbsToRel(sphere.GetPosition(), origin);
-	collision_object.bounding_sphere.radius = float(sphere.GetRadius());
+	axes::VectorAbs const & origin = scene.GetOrigin();
+	collision_object.bounding_sphere.center = sphere.GetPosition();
+	collision_object.bounding_sphere.radius = sphere.GetRadius();
 	
 	collision_object.shape = collision_object.bounding_sphere;
 	
@@ -183,5 +183,5 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	float sphere_area(Area(collision_object.shape));
 	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, origin, functor, min_parent_area);
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
 }

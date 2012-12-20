@@ -34,7 +34,7 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
-		Observer(Init const & init, Vector3 const & center);
+		Observer(Init const & init, axes::VectorAbs const & center);
 		~Observer();
 		
 		void AddRotation(Vector3 const & angles);

@@ -11,8 +11,7 @@
 
 #include "form/node/RootNode.h"
 
-#include "sim/defs.h"
-
+#include "sim/axes.h"
 
 namespace form
 {
@@ -33,15 +32,15 @@ namespace form
 		Polyhedron(Formation & formation);
 		Polyhedron(Polyhedron const & rhs);
 		
-		void Init(sim::Vector3 const & origin, PointBuffer & point_buffer);
+		void Init(axes::VectorAbs const & origin, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
 
-		sim::Sphere3 const & GetShape() const;
+		axes::SphereAbs const & GetShape() const;
 		Formation & GetFormation();
 		Formation const & GetFormation() const;
 		RootNode const & GetRootNode() const;
 		
-		void SetOrigin(sim::Vector3 const & origin);
+		void SetOrigin(axes::VectorAbs const & origin);
 	private:
 		bool ResetOrigin(Node & node, PointBuffer & point_buffer, int depth);
 		
@@ -51,7 +50,7 @@ namespace form
 		};
 		
 	public:
-		sim::Sphere3 _shape;
+		axes::SphereAbs _shape;
 		Formation & _formation;
 		RootNode _root_node;	// Exists purely so that all 'real' nodes have a parent.
 	};

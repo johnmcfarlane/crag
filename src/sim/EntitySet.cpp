@@ -16,17 +16,8 @@
 
 #include "physics/Body.h"
 
-#include "core/ConfigEntry.h"
-
 
 using namespace sim;
-
-
-namespace
-{
-	// TODO: This could cause the Observer to be destroyed
-	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
-}
 
 
 //////////////////////////////////////////////////////////////////////
@@ -74,28 +65,4 @@ Entity::List & EntitySet::GetEntities()
 Entity::List const & EntitySet::GetEntities() const
 {
 	return entities;
-}
-
-void EntitySet::Purge()
-{
-	for (Entity::List::iterator it = entities.begin(); it != entities.end(); ++ it) 
-	{
-		Entity & entity = * it;
-
-		physics::Body const * body = entity.GetBody();
-		if (body == nullptr)
-		{
-			continue;
-		}
-
-		Vector3 position = body->GetPosition();
-		if (Length(position) < purge_distance)
-		{
-			continue;
-		}
-
-		ERROR_MESSAGE("purging entity with bad position");
-		delete body;
-		entity.SetBody(nullptr);
-	}
 }

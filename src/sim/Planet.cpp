@@ -37,7 +37,6 @@ using namespace sim;
 Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int num_craters)
 : Entity(init)
 , _formation(nullptr)
-, _body(nullptr)
 , _radius_mean(sphere.radius)
 , _radius_min(sphere.radius)
 , _radius_max(sphere.radius)
@@ -62,13 +61,15 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		
 		// formation
 		int random_seed_formation = random.GetInt();
-		_formation = new form::Formation(random_seed_formation, * shader, sphere, * this);
+		axes::SphereAbs formation_sphere = axes::RelToAbs(sphere, GetEngine().GetOrigin());
+		_formation = new form::Formation(random_seed_formation, * shader, formation_sphere, * this);
 		GetEngine().AddFormation(* _formation);
 		
 		// body
 		physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
-		_body = new PlanetaryBody(physics_engine, ref(_formation), _radius_mean);
-		_body->SetPosition(sphere.center);
+		auto body = new PlanetaryBody(physics_engine, ref(_formation), physics::Scalar(_radius_mean));
+		body->SetPosition(geom::Cast<physics::Scalar>(sphere.center));
+		SetBody(body);
 	}
 	
 	// messages
@@ -99,19 +100,18 @@ Planet::~Planet()
 	// unregister with formation manager
 	GetEngine().RemoveFormation(* _formation);
 	_formation = nullptr;
-
-	delete _body;
-	_body = nullptr;
 }
 
 void Planet::Tick(sim::Engine & simulation_engine)
 {
-	_body->SetRadius(_radius_max);
+	// TODO: This could be moved into SetRadiusMinMax.
+	PlanetaryBody & body = static_cast<PlanetaryBody &>(* GetBody());
+	body.SetRadius(physics::Scalar(_radius_max));
 }
 
 void Planet::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
-	Vector3 const & center = _body->GetPosition();
+	Vector3 const & center = GetBody()->GetPosition();
 	Vector3 to_center = center - pos;
 	Scalar distance = Length(to_center);
 	
@@ -144,8 +144,8 @@ void Planet::UpdateModels() const
 {
 	{
 		// update planet params
-		Vector3 const & position = _body->GetPosition();
-		gfx::Transformation transformation(position, Transformation::Matrix33::Identity(), _radius_mean);
+		Vector3 const & position = GetBody()->GetPosition();
+		gfx::Transformation transformation(position, Transformation::Matrix33::Identity(), physics::Scalar(_radius_mean));
 		_branch_node.Call([transformation] (gfx::BranchNode & node) {
 			node.SetTransformation(transformation);
 		});

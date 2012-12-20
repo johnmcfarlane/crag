@@ -11,9 +11,6 @@
 
 #include "defs.h"
 
-#include "sim/defs.h"
-
-
 namespace physics
 {
 	// forward-declarations
@@ -27,7 +24,7 @@ namespace physics
 		
 		Engine const & GetEngine() const;
 		
-		void operator()(sim::Vector3 const & pos, sim::Vector3 const & normal, sim::Scalar depth);		
+		void operator()(Vector3 const & pos, Vector3 const & normal, Scalar depth);		
 		
 	private:
 		// variables

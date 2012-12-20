@@ -52,7 +52,7 @@ form::Engine::Engine()
 , mesh_generation_time(app::GetTime())
 , _regulator_enabled(true)
 , _recommended_num_quaterne(0)
-, _camera_pos(sim::Ray3::Zero())
+, _camera_pos(axes::RayAbs::Zero())
 , scenes(min_num_quaterne, max_num_quaterne)
 , _has_reset_request(false)
 {
@@ -113,12 +113,19 @@ void form::Engine::OnSetMesh(Mesh & mesh)
 	_meshes.push_back(mesh);
 }
 
-void form::Engine::OnSetCamera(sim::Transformation const & transformation)
+void form::Engine::OnSetCamera(axes::RayRel const & camera_pos)
 {
-	_camera_pos = axes::GetCameraRay(transformation);
+	auto & active_scene = GetActiveScene();
+	auto & origin = active_scene.GetOrigin();
+	_camera_pos = axes::RelToAbs(camera_pos, origin);
 }
 
-void form::Engine::SetOrigin(sim::Vector3 const & origin)
+void form::Engine::OnSetCamera(axes::RayAbs const & camera_pos)
+{
+	_camera_pos = camera_pos;
+}
+
+void form::Engine::SetOrigin(axes::VectorAbs const & origin)
 {
 	_has_reset_request = true;
 	_requested_origin = origin;
@@ -313,6 +320,7 @@ void form::Engine::BeginReset()
 	Scene & visible_scene = GetVisibleScene();
 	active_scene.SetOrigin(_requested_origin);
 	_has_reset_request = false;
+	_requested_origin = axes::VectorAbs();
 	
 	// Transfer the quaterna count from the old buffer to the new one.
 	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();

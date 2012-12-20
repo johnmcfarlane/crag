@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "sim/axes.h"
 #include "Entity.h"
 
 #include "geom/Sphere.h"
@@ -49,7 +50,6 @@ namespace sim
 
 	private:
 		form::Formation * _formation;
-		PlanetaryBody * _body;
 		gfx::BranchNodeHandle _branch_node;
 		gfx::PlanetHandle _model;
 		Scalar _radius_mean;

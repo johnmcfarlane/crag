@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "axes.h"
+
 #include "smp/Daemon.h"
 
 #include "core/Singleton.h"
@@ -70,8 +72,11 @@ namespace sim
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);
 		
-		void SetCamera(Ray3 const & camera_ray);
-		void SetOrigin(Vector3 const & origin);
+		void SetCamera(axes::RayRel const & camera_ray);
+		void SetCamera(axes::RayAbs const & camera_ray);
+
+		axes::VectorAbs Engine::GetOrigin() const;
+		void SetOrigin(axes::VectorAbs const & origin);
 		
 		void OnTogglePause();
 		void OnToggleGravity();
