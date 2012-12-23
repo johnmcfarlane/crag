@@ -186,6 +186,7 @@ namespace gfx
 		//RenderBuffer depth_buffer;
 		//Texture depth_texture;
 		
+		core::Time _frame_duration;
 		core::Time last_frame_end_position;
 		
 		bool quit_flag;

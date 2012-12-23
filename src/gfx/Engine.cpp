@@ -42,8 +42,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
-	CONFIG_DEFINE (gfx_frame_duration, Time, 1.f / 60.f);
-
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
@@ -231,6 +229,7 @@ namespace
 Engine::Engine()
 : context(nullptr)
 , scene(nullptr)
+, _frame_duration(0)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
@@ -652,6 +651,8 @@ void Engine::Deinit()
 // Decide whether to use vsync and initialize GL state accordingly.
 void Engine::InitVSync()
 {
+	_frame_duration = 1.0f / app::GetRefreshRate();
+
 	if (profile_mode)
 	{
 		vsync = false;
@@ -1253,7 +1254,7 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
 	// TODO: Decouple these two, use frame-rate of video mode for this one 
 	// and rename the other to something more appropriate.
-	Time target_frame_duration = gfx_frame_duration;
+	Time target_frame_duration = _frame_duration;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;
