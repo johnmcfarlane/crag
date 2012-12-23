@@ -42,8 +42,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
-	CONFIG_DEFINE (gfx_frame_duration, Time, 1.f / 60.f);
-
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
@@ -79,16 +77,16 @@ namespace
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
-			std::cerr << "GLEW Error: " << glewGetErrorString(glew_err) << std::endl;
+			ERROR_MESSAGE("GLEW Error: %s", glewGetErrorString(glew_err));
 			return false;
 		}
-		
-		std::cout << "GLEW Version: " << glewGetString(GLEW_VERSION) << std::endl;
+
+		DEBUG_MESSAGE("GLEW Version: %s", glewGetString(GLEW_VERSION));
 		
 #if ! defined(__APPLE__)
 		if (! GLEW_VERSION_1_5)
 		{
-			std::cerr << "Error: Crag requires OpenGL 1.5 or greater." << std::endl;
+			ERROR_MESSAGE("Error: Crag requires OpenGL 1.5 or greater.");
 			return false;
 		}
 #endif
@@ -231,9 +229,11 @@ namespace
 Engine::Engine()
 : context(nullptr)
 , scene(nullptr)
+, _frame_duration(0)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
+, _dirty(true)
 , vsync(false)
 , culling(init_culling)
 , lighting(init_lighting)
@@ -384,6 +384,7 @@ void Engine::OnQuit()
 {
 	quit_flag = true;
 	_ready = true;
+	_dirty = true;
 }
 
 void Engine::OnAddObject(Object & object)
@@ -446,6 +447,7 @@ void Engine::OnSetReady(bool ready)
 {
 	ASSERT(ready != _ready);
 	_ready = ready;
+	_dirty = true;
 }
 
 void Engine::OnResize(geom::Vector2i size)
@@ -527,28 +529,17 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	while (! quit_flag)
 	{
-		ProcessMessagesAndGetReady(message_queue);
+		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);
 		
-		PreRender();
-		UpdateTransformations();
-		Render();
-		Capture();
-	}
-}
-
-void Engine::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
-{
-	// Process all pending messages.
-	while (ProcessMessage(message_queue))
-	{
-	}
-	
-	// If we're mid-way through an uninterruptible set of messages,
-	while (! _ready)
-	{
-		// keep processing
-		if (! ProcessMessage(message_queue))
+		if (_ready && _dirty)
+		{
+			PreRender();
+			UpdateTransformations();
+			Render();
+			Capture();
+		}
+		else
 		{
 			smp::Yield();
 		}
@@ -654,6 +645,8 @@ void Engine::Deinit()
 // Decide whether to use vsync and initialize GL state accordingly.
 void Engine::InitVSync()
 {
+	_frame_duration = 1.0f / app::GetRefreshRate();
+
 	if (profile_mode)
 	{
 		vsync = false;
@@ -1255,7 +1248,7 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
 	// TODO: Decouple these two, use frame-rate of video mode for this one 
 	// and rename the other to something more appropriate.
-	Time target_frame_duration = gfx_frame_duration;
+	Time target_frame_duration = _frame_duration;
 	if (vsync)
 	{
 		target_frame_duration *= target_work_proportion;

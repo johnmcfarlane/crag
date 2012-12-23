@@ -162,9 +162,9 @@ void form::Scene::GenerateMesh(Mesh & mesh) const
 // Currently just updates the formation_map contents.
 void form::Scene::TickModels()
 {
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i)
+	for (auto& pair : formation_map)
 	{
-		TickPolyhedron(i->second);
+		TickPolyhedron(pair.second);
 	}
 }
 

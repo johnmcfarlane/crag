@@ -26,6 +26,8 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
+
+	int refresh_rate = -1;
 }
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
@@ -54,18 +56,20 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 	}
 	
-	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	
+	// Get existing video info.
+	SDL_DisplayMode desktop_display_mode;
+	if(SDL_GetDesktopDisplayMode(0, & desktop_display_mode) != 0)
+	{
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+
+	refresh_rate = desktop_display_mode.refresh_rate;
 	
 	if (full_screen)
 	{
-		// Get existing video info.
-		SDL_DisplayMode desktop_display_mode;
-		if(SDL_GetDesktopDisplayMode(0, & desktop_display_mode) != 0)
-		{
-			DEBUG_BREAK_SDL();
-			return false;
-		}
-		
 		resolution.x = desktop_display_mode.w;
 		resolution.y = desktop_display_mode.h;
 		flags |= SDL_WINDOW_FULLSCREEN;
@@ -100,7 +104,8 @@ void app::Deinit()
 
 	SDL_DestroyWindow(window);
 	window = nullptr;
-	
+	refresh_rate = -1;
+
 	SDL_Quit();
 
 }
@@ -166,6 +171,11 @@ geom::Vector2i app::GetWindowSize()
 	geom::Vector2i window_size;	
 	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
 	return window_size;
+}
+
+int app::GetRefreshRate()
+{
+	return refresh_rate;
 }
 
 void app::GetEvent(SDL_Event & event)

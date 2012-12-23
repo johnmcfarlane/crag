@@ -132,7 +132,6 @@ namespace gfx
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
-		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
 		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
 		bool Init();
@@ -186,10 +185,12 @@ namespace gfx
 		//RenderBuffer depth_buffer;
 		//Texture depth_texture;
 		
+		core::Time _frame_duration;
 		core::Time last_frame_end_position;
 		
 		bool quit_flag;
 		bool _ready;
+		bool _dirty;
 		bool vsync;
 		bool culling;
 		bool lighting;
