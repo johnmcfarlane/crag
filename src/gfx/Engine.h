@@ -132,7 +132,6 @@ namespace gfx
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
-		void ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue);
 		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
 		bool Init();
@@ -191,6 +190,7 @@ namespace gfx
 		
 		bool quit_flag;
 		bool _ready;
+		bool _dirty;
 		bool vsync;
 		bool culling;
 		bool lighting;

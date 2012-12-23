@@ -233,6 +233,7 @@ Engine::Engine()
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
+, _dirty(true)
 , vsync(false)
 , culling(init_culling)
 , lighting(init_lighting)
@@ -383,6 +384,7 @@ void Engine::OnQuit()
 {
 	quit_flag = true;
 	_ready = true;
+	_dirty = true;
 }
 
 void Engine::OnAddObject(Object & object)
@@ -444,6 +446,7 @@ void Engine::OnSetTime(Time time)
 void Engine::OnSetReady(bool ready)
 {
 	_ready = ready;
+	_dirty = true;
 }
 
 void Engine::OnResize(geom::Vector2i size)
@@ -524,28 +527,17 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	while (! quit_flag)
 	{
-		ProcessMessagesAndGetReady(message_queue);
+		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);
 		
-		PreRender();
-		UpdateTransformations();
-		Render();
-		Capture();
-	}
-}
-
-void Engine::ProcessMessagesAndGetReady(Daemon::MessageQueue & message_queue)
-{
-	// Process all pending messages.
-	while (ProcessMessage(message_queue))
-	{
-	}
-	
-	// If we're mid-way through an uninterruptible set of messages,
-	while (! _ready)
-	{
-		// keep processing
-		if (! ProcessMessage(message_queue))
+		if (_ready && _dirty)
+		{
+			PreRender();
+			UpdateTransformations();
+			Render();
+			Capture();
+		}
+		else
 		{
 			smp::Yield();
 		}
