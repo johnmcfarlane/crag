@@ -61,7 +61,7 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		
 		// formation
 		int random_seed_formation = random.GetInt();
-		axes::SphereAbs formation_sphere = axes::RelToAbs(sphere, GetEngine().GetOrigin());
+		geom::abs::Sphere3 formation_sphere = geom::RelToAbs(sphere, GetEngine().GetOrigin());
 		_formation = new form::Formation(random_seed_formation, * shader, formation_sphere, * this);
 		GetEngine().AddFormation(* _formation);
 		

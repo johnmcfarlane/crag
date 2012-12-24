@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "sim/axes.h"
 #include "Entity.h"
 
 #include "geom/Sphere.h"

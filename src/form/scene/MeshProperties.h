@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "sim/axes.h"
-
+#include "geom/origin.h"
 
 namespace form 
 {
@@ -19,7 +18,7 @@ namespace form
 	struct MeshProperties
 	{
 		// TODO: Is high precision really needed everywhere there's an origin?
-		typedef axes::VectorAbs Vector;
+		typedef geom::abs::Vector3 Vector;
 		
 		MeshProperties() 
 		: _origin(Vector::Zero())

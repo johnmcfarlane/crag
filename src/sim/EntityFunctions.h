@@ -9,13 +9,13 @@
 
 #pragma once
 
-#include "axes.h"
 #include "defs.h"
 
 #include "gfx/object/BranchNode.h"
 
 #include "gfx/Engine.h"
 
+#include "geom/origin.h"
 
 namespace physics
 {
@@ -78,5 +78,5 @@ namespace sim
 	// sets physical property of being collidable
 	void SetCollidable(Entity & entity, bool collidable);
 	
-	void ResetOrigin(EntitySet & entity_set, axes::VectorRel const & delta);
+	void ResetOrigin(EntitySet & entity_set, geom::rel::Vector3 const & delta);
 }

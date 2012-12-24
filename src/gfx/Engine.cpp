@@ -20,6 +20,7 @@
 #include "form/Engine.h"
 #include "form/scene/RegulatorScript.h"
 
+#include "sim/axes.h"
 #include "sim/Engine.h"
 
 #include "applet/Engine.h"
@@ -1132,7 +1133,7 @@ void Engine::DebugDraw()
 		return;
 	}
 
-	Debug::AddBasis(axes::VectorAbs::Zero(), 1000000.);
+	Debug::AddBasis(geom::abs::Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
 	Transformation const & transformation = pov.GetTransformation();

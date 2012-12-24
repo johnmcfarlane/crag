@@ -142,6 +142,8 @@
 #include "geom/Vector4.h"
 #include "geom/Distance.h"
 #include "geom/Magnitude.h"
+#include "geom/Ray.h"
+#include "geom/Sphere.h"
 
 #include "smp/Handle_Impl.h"
 #include "smp/Object.h"

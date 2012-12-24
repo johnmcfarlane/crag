@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "axes.h"
 #include "Entity.h"
 
 #include "gfx/defs.h"
 
+#include "geom/origin.h"
 
 DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
 
@@ -25,7 +25,7 @@ namespace sim
 	{
 	public:
 		// functions
-		Star(Init const & init, axes::ScalarAbs radius, core::Time year);
+		Star(Init const & init, geom::abs::Scalar radius, core::Time year);
 		~Star();
 
 		void Tick(sim::Engine & simulation_engine);
@@ -42,8 +42,8 @@ namespace sim
 		
 		// variables
 		gfx::BranchNodeHandle _model;
-		axes::VectorRel position;
-		axes::ScalarAbs _radius;
+		geom::rel::Vector3 position;
+		geom::abs::Scalar _radius;
 		core::Time _year;
 	};
 }

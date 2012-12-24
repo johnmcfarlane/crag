@@ -17,8 +17,7 @@
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
-#include "sim/axes.h"
-
+#include "geom/origin.h"
 #include "geom/Sphere.h"
 
 #include "core/ConfigEntry.h"
@@ -72,7 +71,7 @@ gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_vi
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
 	
-	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(axes::ScalarRel(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
+	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
 	return disk_quad.Transform(scale, scratch);

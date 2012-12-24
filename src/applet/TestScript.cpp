@@ -54,7 +54,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	axes::VectorAbs observer_start_pos(0, 9999400, -5);
+	geom::abs::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
@@ -107,7 +107,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 	
-	void add_thruster(sim::VehicleHandle & vehicle_handle, axes::VectorRel const & position, axes::VectorRel const & direction, SDL_Scancode key)
+	void add_thruster(sim::VehicleHandle & vehicle_handle, geom::rel::Vector3 const & position, geom::rel::Vector3 const & direction, SDL_Scancode key)
 	{
 		sim::Vehicle::Thruster thruster;
 		thruster.position = position;
@@ -123,7 +123,7 @@ namespace
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
 	// is the origin too far away to allow for precise, camera-centric calculations?
-	bool ShouldReviseOrigin(axes::VectorRel const & camera_pos, float min_leaf_distance_squared)
+	bool ShouldReviseOrigin(geom::rel::Vector3 const & camera_pos, float min_leaf_distance_squared)
 	{
 		if (min_leaf_distance_squared == std::numeric_limits<decltype(min_leaf_distance_squared)>::max())
 		{
@@ -158,7 +158,7 @@ namespace
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
 		{
 			auto origin = scene.GetOrigin();
-			auto new_origin = axes::RelToAbs(camera_pos, origin);
+			auto new_origin = geom::RelToAbs(camera_pos, origin);
 
 			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
 			engine.SetOrigin(new_origin);
@@ -276,16 +276,16 @@ void TestScript::SpawnVehicle()
 	// Create vehicle
 	if (spawn_vehicle)
 	{
-		axes::SphereRel sphere;
-		sphere.center = geom::Cast<float>(observer_start_pos + axes::VectorAbs(0, 5, +5));
+		geom::rel::Sphere3 sphere;
+		sphere.center = geom::Cast<float>(observer_start_pos + geom::abs::Vector3(0, 5, +5));
 		sphere.radius = 1.;
 
 		_vehicle.Create(sphere);
 		
-		add_thruster(_vehicle, axes::VectorRel(.5, -.8f, .5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, axes::VectorRel(.5, -.8f, -.5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, axes::VectorRel(-.5, -.8f, .5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
-		add_thruster(_vehicle, axes::VectorRel(-.5, -.8f, -.5), axes::VectorRel(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, geom::rel::Vector3(.5, -.8f, .5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, geom::rel::Vector3(.5, -.8f, -.5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, geom::rel::Vector3(-.5, -.8f, .5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		add_thruster(_vehicle, geom::rel::Vector3(-.5, -.8f, -.5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
 	}
 }
 
@@ -302,9 +302,9 @@ void TestScript::SpawnShapes(int shape_num)
 	
 	sim::Transformation camera_transformation = camera_transformation_future.Get();
 	sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
-	axes::VectorRel camera_pos = camera_transformation.GetTranslation();
-	axes::VectorRel camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
-	axes::VectorRel spawn_pos = camera_pos + camera_forward * axes::ScalarRel(5);
+	geom::rel::Vector3 camera_pos = camera_transformation.GetTranslation();
+	geom::rel::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
+	geom::rel::Vector3 spawn_pos = camera_pos + camera_forward * geom::rel::Scalar(5);
 	
 	if (cleanup_shapes)
 	{
@@ -324,7 +324,7 @@ void TestScript::SpawnShapes(int shape_num)
 			{
 				// ball
 				sim::BallHandle ball;
-				axes::SphereRel sphere(spawn_pos, axes::ScalarRel(std::exp(- GetRandomUnit() * 2)));
+				geom::rel::Sphere3 sphere(spawn_pos, geom::rel::Scalar(std::exp(- GetRandomUnit() * 2)));
 				ball.Create(sphere);
 				_shapes.push_back(ball);
 				break;
@@ -333,9 +333,9 @@ void TestScript::SpawnShapes(int shape_num)
 			case 1:
 			{
 				// box
-				axes::VectorRel size(axes::ScalarRel(std::exp(GetRandomUnit() * -2.)),
-							 axes::ScalarRel(std::exp(GetRandomUnit() * -2.)),
-							 axes::ScalarRel(std::exp(GetRandomUnit() * -2.)));
+				geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
+							 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
+							 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
 				
 				sim::BoxHandle box;
 				box.Create(spawn_pos, size);

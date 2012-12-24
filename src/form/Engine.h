@@ -88,9 +88,9 @@ namespace form
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(Mesh & mesh);
-		void OnSetCamera(axes::RayRel const & camera_position);
-		void OnSetCamera(axes::RayAbs const & camera_position);
-		void SetOrigin(axes::VectorAbs const & origin);
+		void OnSetCamera(geom::rel::Ray3 const & camera_position);
+		void OnSetCamera(geom::abs::Ray3 const & camera_position);
+		void SetOrigin(geom::abs::Vector3 const & origin);
 		
 		void OnRegulatorSetEnabled(bool enabled);
 		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
@@ -145,7 +145,7 @@ namespace form
 		bool _regulator_enabled;
 		RegulatorScriptHandle _regulator_handle;
 		int _recommended_num_quaterne;	// recommended by the regulator
-		axes::RayAbs _camera_pos;
+		geom::abs::Ray3 _camera_pos;
 		
 		// The front scene is always the one being displayed and is usually the 'active' scene.
 		// During an origin reset, the back scene is the active one.
@@ -154,7 +154,7 @@ namespace form
 		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
 		
 		bool _has_reset_request;	// TODO: do without
-		axes::VectorAbs _requested_origin;
+		geom::abs::Vector3 _requested_origin;
 		
 		static Daemon * singleton;
 	};

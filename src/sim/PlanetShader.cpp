@@ -30,18 +30,18 @@ namespace
 	
 	// Config values
 	CONFIG_DEFINE (planet_shader_depth_medium, int, 2);
-	CONFIG_DEFINE (planet_shader_random_range, axes::ScalarAbs, 0.002);
-	CONFIG_DEFINE (planet_shader_medium_coefficient, axes::ScalarAbs, .35);
+	CONFIG_DEFINE (planet_shader_random_range, geom::abs::Scalar, 0.002);
+	CONFIG_DEFINE (planet_shader_medium_coefficient, geom::abs::Scalar, .35);
 	
-	axes::ScalarAbs root_three = sqrt(3.);
+	geom::abs::Scalar root_three = sqrt(3.);
 	
 	// RootNode initialization data. A tetrahedron.
-	axes::VectorAbs root_corners[4] = 
+	geom::abs::Vector3 root_corners[4] = 
 	{
-		axes::VectorAbs(-1,  1,  1),
-		axes::VectorAbs( 1, -1,  1),
-		axes::VectorAbs( 1,  1, -1),
-		axes::VectorAbs(-1, -1, -1)
+		geom::abs::Vector3(-1,  1,  1),
+		geom::abs::Vector3( 1, -1,  1),
+		geom::abs::Vector3( 1,  1, -1),
+		geom::abs::Vector3(-1, -1, -1)
 	};
 	
 	// InitMidPoint helper
@@ -171,11 +171,11 @@ void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Poin
 	// This one is the same each time.
 	//Random crater_randomizer(seed + 2);
 
-	axes::SphereAbs shape = polyhedron.GetShape();
-	axes::ScalarAbs inverse_root_corner_length = 1. / root_three;
+	geom::abs::Sphere3 shape = polyhedron.GetShape();
+	geom::abs::Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
-		axes::VectorAbs position = root_corners[i] * inverse_root_corner_length;
+		geom::abs::Vector3 position = root_corners[i] * inverse_root_corner_length;
 		CalcRootPointPos(point_randomizer, position);
 		position *= shape.radius;
 		position += shape.center;
@@ -199,7 +199,7 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 
 	Params params { a, b, index, depth, combined_seed };
 	
-	axes::VectorAbs result;
+	geom::abs::Vector3 result;
 	if (depth >= planet_shader_depth_medium)
 	{
 		CalcMidPointPos_SimpleInterp(polyhedron, result, params);
@@ -220,60 +220,60 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 }
 
 // Comes in normalized. Is then given the correct length.
-void sim::PlanetShader::CalcRootPointPos(Random & rnd, axes::VectorAbs & position) const
+void sim::PlanetShader::CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position) const
 {
-	axes::ScalarAbs radius = GetRandomHeightCoefficient(rnd);
+	geom::abs::Scalar radius = GetRandomHeightCoefficient(rnd);
 	position *= radius;
 }
 
-axes::ScalarAbs sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
+geom::abs::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
-	axes::ScalarAbs random_exponent = (.5 - rnd.GetUnitInclusive<axes::ScalarAbs>()) * planet_shader_random_range;
-	axes::ScalarAbs coefficient = std::exp(random_exponent);
+	geom::abs::Scalar random_exponent = (.5 - rnd.GetUnitInclusive<geom::abs::Scalar>()) * planet_shader_random_range;
+	geom::abs::Scalar coefficient = std::exp(random_exponent);
 	return coefficient;
 }
 
 // At shallow depth, heigh is highly random.
-bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, axes::VectorAbs & result, Params & params) const
+bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const
 {
-	axes::SphereAbs const & shape = polyhedron.GetShape();
+	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
 	
-	axes::ScalarAbs radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
+	geom::abs::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
 	polyhedron.GetFormation().SampleRadius(radius);
 
-	axes::VectorAbs near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
-	axes::VectorAbs near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
 	result = near_a + near_b;
-	axes::ScalarAbs length = Length(result);
+	geom::abs::Scalar length = Length(result);
 	result *= (radius / length);
 	result += shape.center;
 	
 	return true;
 }
 
-bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, axes::VectorAbs & result, Params & params) const 
+bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const 
 {
-	axes::SphereAbs const & shape = polyhedron.GetShape();
+	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
 	
-	axes::VectorAbs near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
-	axes::VectorAbs near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
 	result = near_a + near_b;
-	axes::ScalarAbs result_length = Length(result);
+	geom::abs::Scalar result_length = Length(result);
 	
-	axes::ScalarAbs near_a_altitude = GetAltitude(near_a);
-	axes::ScalarAbs near_b_altitude = GetAltitude(near_b);
-	axes::ScalarAbs altitude = (near_a_altitude + near_b_altitude) * .5;
+	geom::abs::Scalar near_a_altitude = GetAltitude(near_a);
+	geom::abs::Scalar near_b_altitude = GetAltitude(near_b);
+	geom::abs::Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
-	axes::ScalarAbs rnd_x = params.rnd.GetUnitInclusive<axes::ScalarAbs>() * 2. - 1.;
+	geom::abs::Scalar rnd_x = params.rnd.GetUnitInclusive<geom::abs::Scalar>() * 2. - 1.;
 	rnd_x *= Square(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,
 	// and clip that variance based on the hard limits of the planet.
 	// Actually, clip it to half of that to make it look less like a hard limit.
 	// And do the clipping based on how far the variance /might/ go.
-	axes::ScalarAbs altitude_variance_coefficient = planet_shader_medium_coefficient / axes::ScalarAbs(1 << params.depth);
+	geom::abs::Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / geom::abs::Scalar(1 << params.depth);
 	
-	axes::ScalarAbs lod_variation_cycler = sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
+	geom::abs::Scalar lod_variation_cycler = sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
 	altitude_variance_coefficient *= lod_variation_cycler;
 	
 	altitude_variance_coefficient *= shape.radius;
@@ -287,27 +287,27 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedr
 	return true;
 }
 
-axes::VectorAbs sim::PlanetShader::GetLocalPosition(form::Point const & point, axes::VectorAbs const & center) const
+geom::abs::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point, geom::abs::Vector3 const & center) const
 {
 	return GetLocalPosition(point.pos, center);
 }
 
-axes::VectorAbs sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, axes::VectorAbs const & center) const
+geom::abs::Vector3 sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
 {
 	return geom::Cast<double>(point_pos) - center;
 }
 
-axes::ScalarAbs sim::PlanetShader::GetAltitude(form::Point const & point, axes::VectorAbs const & center) const
+geom::abs::Scalar sim::PlanetShader::GetAltitude(form::Point const & point, geom::abs::Vector3 const & center) const
 {
 	return GetAltitude(point.pos, center);
 }
 
-axes::ScalarAbs sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos, axes::VectorAbs const & center) const
+geom::abs::Scalar sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
 {
 	return GetAltitude(GetLocalPosition(point_pos, center));
 }
 
-axes::ScalarAbs sim::PlanetShader::GetAltitude(axes::VectorAbs const & local_pos) const
+geom::abs::Scalar sim::PlanetShader::GetAltitude(geom::abs::Vector3 const & local_pos) const
 {
 	return Length(local_pos);
 }

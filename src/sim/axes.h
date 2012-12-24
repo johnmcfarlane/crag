@@ -23,55 +23,6 @@ namespace axes
 		NUM_AXES
 	};
 	
-	// relative geometry
-	typedef float ScalarRel;
-	typedef ::geom::Vector<ScalarRel, 3> VectorRel;
-	typedef ::geom::Ray<ScalarRel, 3> RayRel;
-	typedef ::geom::Sphere<ScalarRel, 3> SphereRel;
-	
-	// absolute vectors
-	typedef double ScalarAbs;
-	typedef ::geom::Vector<ScalarAbs, 3> VectorAbs;
-	typedef ::geom::Ray<ScalarAbs, 3> RayAbs;
-	typedef ::geom::Sphere<ScalarAbs, 3> SphereAbs;
-
-	// relative-absolute conversion
-	template <typename REL_S = ScalarRel>
-	inline geom::Vector<REL_S, 3> AbsToRel(VectorAbs const & abs, VectorAbs const & origin)
-	{
-		return geom::Cast<REL_S>(abs - origin);
-	}
-	
-	template <typename REL_S = ScalarRel>
-	inline geom::Ray<REL_S, 3> AbsToRel(RayAbs const & abs, VectorAbs const & origin)
-	{
-		return geom::Ray<REL_S, 3>(AbsToRel<REL_S>(abs.position, origin), geom::Cast<REL_S>(abs.direction));
-	}
-	
-	template <typename REL_S = ScalarRel>
-	inline geom::Sphere<REL_S, 3> AbsToRel(SphereAbs const & abs, VectorAbs const & origin)
-	{
-		return geom::Sphere<REL_S, 3>(AbsToRel<REL_S>(abs.center, origin), geom::Cast<REL_S>(abs.radius));
-	}
-	
-	template <typename REL_S = ScalarRel>
-	inline VectorAbs RelToAbs(geom::Vector<REL_S, 3> const & rel, VectorAbs const & origin)
-	{
-		return geom::Cast<ScalarAbs>(rel) + origin;
-	}
-	
-	template <typename REL_S = ScalarRel>
-	inline RayAbs RelToAbs(geom::Ray<REL_S, 3> const & rel, VectorAbs const & origin)
-	{
-		return RayAbs(RelToAbs<REL_S>(rel.position, origin), geom::Cast<ScalarAbs>(rel.direction));
-	}
-	
-	template <typename REL_S = ScalarRel>
-	inline SphereAbs RelToAbs(geom::Sphere<REL_S, 3> const & rel, VectorAbs const & origin)
-	{
-		return SphereAbs(RelToAbs<REL_S>(rel.center, origin), static_cast<ScalarAbs>(rel.radius));
-	}
-	
 	// Returns the given axis from the given matrix.
 	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Axis axis)
 	{

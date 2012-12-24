@@ -50,7 +50,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
-Observer::Observer(Entity::Init const & init, axes::VectorAbs const & center)
+Observer::Observer(Entity::Init const & init, geom::abs::Vector3 const & center)
 : Entity(init)
 , speed_factor(observer_speed_factor)
 {
@@ -62,7 +62,7 @@ Observer::Observer(Entity::Init const & init, axes::VectorAbs const & center)
 	body->SetLinearDamping(observer_linear_damping);
 	body->SetAngularDamping(observer_angular_damping);
 
-	axes::VectorRel center_rel = axes::AbsToRel(center, sim_engine.GetOrigin());
+	geom::rel::Vector3 center_rel = geom::AbsToRel(center, sim_engine.GetOrigin());
 	body->SetPosition(center_rel);
 
 	SetBody(body);

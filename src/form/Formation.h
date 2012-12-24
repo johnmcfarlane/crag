@@ -10,8 +10,8 @@
 #pragma once
 
 #include "sim/defs.h"
-#include "sim/axes.h"
 
+#include "geom/origin.h"
 #include "geom/Sphere.h"
 
 
@@ -31,23 +31,23 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(int seed, Shader const & shader, axes::SphereAbs const & shape, sim::PlanetHandle const & planet);
+		Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape, sim::PlanetHandle const & planet);
 		~Formation();
 
 		Shader const & GetShader() const;
-		axes::SphereAbs const & GetShape() const;	// global coordinate
+		geom::abs::Sphere3 const & GetShape() const;	// global coordinate
 		int GetSeed() const;
 		
 		void SendRadiusUpdateMessage() const;		
-		void SampleRadius(axes::ScalarAbs sample_radius);
+		void SampleRadius(geom::abs::Scalar sample_radius);
 
 	private:
 		int _seed;	// TODO: This needs its own type.
 		Shader const & _shader;
-		axes::SphereAbs _shape;
+		geom::abs::Sphere3 _shape;
 		sim::PlanetHandle _planet;
-		axes::ScalarAbs _radius_min;
-		axes::ScalarAbs _radius_max;
+		geom::abs::Scalar _radius_min;
+		geom::abs::Scalar _radius_max;
 	};
 
 }

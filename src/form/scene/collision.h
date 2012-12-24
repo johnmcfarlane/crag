@@ -20,13 +20,13 @@
 #include "gfx/Debug.h"
 #define DEBUG_FEI_RAY(NODE_FUNCTOR, RAY, COLOR) \
 	DO_STATEMENT( \
-		sim::Vector3 debug_fei_start = axes::RelToAbs(RAY.position, NODE_FUNCTOR._origin); \
+		sim::Vector3 debug_fei_start = geom::RelToAbs(RAY.position, NODE_FUNCTOR._origin); \
 		sim::Vector3 debug_fei_end = debug_fei_start + sim::Vector3(RAY.direction); \
 		gfx::Debug::AddLine(debug_fei_start, debug_fei_end, COLOR); \
 	)
 #define DEBUG_FEI_TRI(NODE_FUNCTOR, A, B, C, NORM, COLOR) \
 	DO_STATEMENT( \
-		sim::Vector3 debug_fei_start = axes::RelToAbs((A + B + C) * (1.f / 3.f), NODE_FUNCTOR._origin); \
+		sim::Vector3 debug_fei_start = geom::RelToAbs((A + B + C) * (1.f / 3.f), NODE_FUNCTOR._origin); \
 		sim::Vector3 debug_fei_end = debug_fei_start + sim::Vector3(NORM); \
 		gfx::Debug::AddLine(debug_fei_start, debug_fei_end, COLOR); \
 	)

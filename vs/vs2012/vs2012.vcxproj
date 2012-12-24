@@ -166,6 +166,7 @@
     <ClInclude Include="..\..\src\geom\Matrix33.h" />
     <ClInclude Include="..\..\src\geom\Matrix44.h" />
     <ClInclude Include="..\..\src\geom\MatrixOps.h" />
+    <ClInclude Include="..\..\src\geom\origin.h" />
     <ClInclude Include="..\..\src\geom\Ray.h" />
     <ClInclude Include="..\..\src\geom\Sphere.h" />
     <ClInclude Include="..\..\src\geom\Transformation.h" />

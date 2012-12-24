@@ -21,7 +21,7 @@
 using namespace form;
 
 
-Formation::Formation(int seed, Shader const & shader, axes::SphereAbs const & shape, sim::PlanetHandle const & planet)
+Formation::Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape, sim::PlanetHandle const & planet)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
@@ -41,7 +41,7 @@ Shader const & Formation::GetShader() const
 	return _shader;
 }
 
-axes::SphereAbs const & Formation::GetShape() const
+geom::abs::Sphere3 const & Formation::GetShape() const
 {
 	return _shape;
 }
@@ -60,7 +60,7 @@ void Formation::SendRadiusUpdateMessage() const
 	});
 }
 
-void Formation::SampleRadius(axes::ScalarAbs sample_radius)
+void Formation::SampleRadius(geom::abs::Scalar sample_radius)
 {
 	if (sample_radius < _radius_min)
 	{

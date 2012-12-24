@@ -50,10 +50,10 @@ form::Polyhedron::Polyhedron(Polyhedron const & rhs)
 	_root_node = RootNode(* this);
 }
 
-void form::Polyhedron::Init(axes::VectorAbs const & origin, PointBuffer & point_buffer)
+void form::Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
-	_shape.center = axes::AbsToRel<double>(_formation.GetShape().center, origin);
+	_shape.center = geom::AbsToRel<double>(_formation.GetShape().center, origin);
 	Shader const & shader = _formation.GetShader();
 	
 	// Create me some points.
@@ -78,7 +78,7 @@ void form::Polyhedron::Deinit(PointBuffer & point_buffer)
 	_root_node.Deinit(point_buffer);
 }
 
-axes::SphereAbs const & form::Polyhedron::GetShape() const
+geom::abs::Sphere3 const & form::Polyhedron::GetShape() const
 {
 	return _shape;
 }
@@ -98,10 +98,10 @@ form::RootNode const & form::Polyhedron::GetRootNode() const
 	return _root_node;
 }
 
-void form::Polyhedron::SetOrigin(axes::VectorAbs const & origin)
+void form::Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
 {
-	axes::SphereAbs const & shape = _formation.GetShape();
-	_shape.center = axes::AbsToRel<double>(shape.center, origin);
+	geom::abs::Sphere3 const & shape = _formation.GetShape();
+	_shape.center = geom::AbsToRel<double>(shape.center, origin);
 	_shape.radius = shape.radius;
 	
 	Point * root_points[4];

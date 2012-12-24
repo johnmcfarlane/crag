@@ -15,7 +15,7 @@
 #include "gfx/Scene.h"
 #include "gfx/Debug.h"
 
-#include "sim/axes.h"
+#include "geom/origin.h"
 
 #include "core/ConfigEntry.h"
 
@@ -64,7 +64,7 @@ Color4f const & Light::GetColor() const
 #if ! defined(NDEBUG)
 LeafNode::PreRenderResult Light::PreRender()
 {
-	axes::VectorRel light_position = GetParent()->GetModelTransformation().GetTranslation();
+	geom::rel::Vector3 light_position = GetParent()->GetModelTransformation().GetTranslation();
 	Debug::Vector3 basis_position = geom::Cast<double>(light_position);
 	Debug::AddBasis(basis_position, 1000000.);
 	

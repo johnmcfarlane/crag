@@ -462,6 +462,9 @@
     <ClInclude Include="..\..\src\smp\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\origin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\applet\AppletBase.cpp">

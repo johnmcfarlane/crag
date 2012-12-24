@@ -36,7 +36,7 @@ namespace
 	// TODO: This could cause the Observer to be destroyed
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
-	STAT_DEFAULT(physics_origin, axes::VectorAbs, 0.3f, axes::VectorAbs::Zero());
+	STAT_DEFAULT(physics_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
 }
 
 
@@ -123,29 +123,29 @@ void Engine::RemoveFormation(form::Formation& formation)
 	scene.RemoveFormation(formation);
 }
 
-void Engine::SetCamera(axes::RayRel const & camera_ray)
+void Engine::SetCamera(geom::rel::Ray3 const & camera_ray)
 {
 	auto& scene = _physics_engine.GetScene();
 	scene.SetCameraRay(camera_ray);
 }
 
-void Engine::SetCamera(axes::RayAbs const & camera_ray)
+void Engine::SetCamera(geom::abs::Ray3 const & camera_ray)
 {
 	auto& scene = _physics_engine.GetScene();
 	scene.SetCameraRay(camera_ray);
 }
 
-axes::VectorAbs Engine::GetOrigin() const
+geom::abs::Vector3 Engine::GetOrigin() const
 {
 	return _physics_engine.GetScene().GetOrigin();
 }
 
-void Engine::SetOrigin(axes::VectorAbs const & origin)
+void Engine::SetOrigin(geom::abs::Vector3 const & origin)
 {
 	// figure out the delta
 	auto& scene = _physics_engine.GetScene();
 	auto& previous_origin = scene.GetOrigin();
-	axes::VectorRel delta = geom::Cast<axes::ScalarRel>(origin - previous_origin);
+	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(origin - previous_origin);
 
 	// quit if there's no change
 	if (geom::LengthSq(delta) == 0)

@@ -24,9 +24,9 @@
 
 form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _node_buffer(ref(new NodeBuffer(min_num_quaterne, max_num_quaterne)))
-, camera_ray(axes::RayAbs::Zero())
-, camera_ray_relative(axes::RayRel::Zero())
-, origin(axes::VectorAbs::Zero())
+, camera_ray(geom::abs::Ray3::Zero())
+, camera_ray_relative(geom::rel::Ray3::Zero())
+, origin(geom::abs::Vector3::Zero())
 {
 	_node_buffer.SetNumQuaternaUsedTarget(min_num_quaterne);
 }
@@ -77,37 +77,37 @@ form::NodeBuffer const & form::Scene::GetNodeBuffer() const
 	return _node_buffer;
 }
 
-axes::RayRel const & form::Scene::GetCameraRay() const
+geom::rel::Ray3 const & form::Scene::GetCameraRay() const
 {
 	return camera_ray_relative;
 }
 
-void form::Scene::SetCameraRay(axes::RayRel const & cr) 
+void form::Scene::SetCameraRay(geom::rel::Ray3 const & cr) 
 {
-	camera_ray = axes::RelToAbs(cr, origin);
+	camera_ray = geom::RelToAbs(cr, origin);
 	camera_ray_relative = cr;
 }
 
-void  form::Scene::SetCameraRay(axes::RayAbs const & cr)
+void  form::Scene::SetCameraRay(geom::abs::Ray3 const & cr)
 {
 	camera_ray = cr;
-	camera_ray_relative = axes::AbsToRel(cr, origin);
+	camera_ray_relative = geom::AbsToRel(cr, origin);
 }
 
-axes::VectorAbs const & form::Scene::GetOrigin() const
+geom::abs::Vector3 const & form::Scene::GetOrigin() const
 {
 	return origin;
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void form::Scene::SetOrigin(axes::VectorAbs const & o) 
+void form::Scene::SetOrigin(geom::abs::Vector3 const & o) 
 {
 	if (o != origin) 
 	{
 		origin = o;
 		
 		// Setting camera ray to itself cause the local camera ray to be recalculated.
-		camera_ray_relative = axes::AbsToRel(camera_ray, origin);
+		camera_ray_relative = geom::AbsToRel(camera_ray, origin);
 
 		// The difficult bit: fix all our data which relied on the old origin.
 		ResetFormations();

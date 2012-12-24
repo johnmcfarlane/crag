@@ -70,7 +70,7 @@ namespace sim
 		}
 	}
 	
-	void ResetOrigin(EntitySet & entity_set, axes::VectorRel const & delta)
+	void ResetOrigin(EntitySet & entity_set, geom::rel::Vector3 const & delta)
 	{
 		for (Entity & entity : entity_set.GetEntities())
 		{
