@@ -250,6 +250,7 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
 // It is also where a considerable amount of the SceneThread's time is spent.
 void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
+	VerifyObjectRef(new_camera_ray);
 	VerifyObject (* this);
 #if ! defined(NDEBUG)
 	auto t1 = app::GetTime();
