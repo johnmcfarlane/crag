@@ -178,6 +178,13 @@ int app::GetRefreshRate()
 	return refresh_rate;
 }
 
+void app::Beep()
+{
+#if defined(WIN32)
+	MessageBeep(MB_ICONINFORMATION);
+#endif
+}
+
 void app::GetEvent(SDL_Event & event)
 {
 	bool has_event = SDL_WaitEvent(& event) != 0;

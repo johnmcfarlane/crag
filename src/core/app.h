@@ -25,6 +25,7 @@ namespace app
 	SDL_Window & GetWindow();
 	geom::Vector2i GetWindowSize();
 	int GetRefreshRate();
+	void Beep();
 	
 	// called from main thread
 	void GetEvent(SDL_Event & event);
