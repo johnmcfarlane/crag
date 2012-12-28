@@ -9,24 +9,34 @@
 
 #pragma once
 
+#include "Matrix33.h"
+#include "Matrix44.h"
+#include "Transformation.h"
+
 namespace geom
 {
 	// relative space types
 	namespace rel
 	{
 		typedef float Scalar;
-		typedef ::geom::Vector<Scalar, 3> Vector3;
-		typedef ::geom::Ray<Scalar, 3> Ray3;
-		typedef ::geom::Sphere<Scalar, 3> Sphere3;
+		typedef Vector<Scalar, 3> Vector3;
+		typedef Ray<Scalar, 3> Ray3;
+		typedef Sphere<Scalar, 3> Sphere3;
+		typedef Matrix<Scalar, 3, 3> Matrix33;
+		typedef Matrix<Scalar, 4, 4> Matrix44;
+		typedef Transformation<Scalar> Transformation;
 	}
 
 	// absolute space types
 	namespace abs
 	{
 		typedef double Scalar;
-		typedef ::geom::Vector<Scalar, 3> Vector3;
-		typedef ::geom::Ray<Scalar, 3> Ray3;
-		typedef ::geom::Sphere<Scalar, 3> Sphere3;
+		typedef Vector<Scalar, 3> Vector3;
+		typedef Ray<Scalar, 3> Ray3;
+		typedef Sphere<Scalar, 3> Sphere3;
+		typedef Matrix<Scalar, 3, 3> Matrix33;
+		typedef Matrix<Scalar, 4, 4> Matrix44;
+		typedef Transformation<Scalar> Transformation;
 	}
 
 	// relative-absolute conversion
