@@ -27,6 +27,8 @@ namespace form
 	// is that that have a different root_node and likely live in a different coordinate space.
 	class Polyhedron
 	{
+		// TODO: OBJECT_NO_COPY(Polyhedron);
+
 		friend Polyhedron & GetPolyhedron(Node & node);
 	public:
 		Polyhedron(Formation & formation);
