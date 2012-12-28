@@ -33,6 +33,14 @@ namespace geom
 		, direction(dir) 
 		{
 		}
+
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyObject(position);
+			VerifyObject(direction);
+		}
+#endif
 		
 		static Ray Zero() 
 		{
