@@ -12,8 +12,8 @@
 #include "Engine.h"
 
 #include "gravity.h"
+#include "Entity.h"
 #include "EntityFunctions.h"
-#include "EntitySet.h"
 
 #include "form/Engine.h"
 
@@ -36,7 +36,7 @@ namespace
 	// TODO: This could cause the Observer to be destroyed
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
-	STAT_DEFAULT(physics_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
+	STAT_DEFAULT(sim_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
 }
 
 
@@ -51,14 +51,13 @@ Engine::Engine()
 : quit_flag(false)
 , paused(false)
 , _time(0)
-, _entity_set(ref(new EntitySet))
+, _camera(geom::rel::Ray3::Zero())
 , _physics_engine(ref(new physics::Engine))
 {
 }
 
 Engine::~Engine()
 {
-	delete & _entity_set;
 	delete & _physics_engine;
 }
 
@@ -67,6 +66,7 @@ void Engine::OnQuit()
 	quit_flag = true;
 }
 
+// TODO: Really need this?
 void Engine::OnAddObject(Entity & entity)
 {
 	// Until the UpdateModels call is complete, 
@@ -75,8 +75,6 @@ void Engine::OnAddObject(Entity & entity)
 		engine.OnSetReady(false);
 	});
 	
-	_entity_set.Add(entity);
-	
 	auto time = _time;
 	gfx::Daemon::Call([time] (gfx::Engine & engine) {
 		engine.OnSetTime(time);
@@ -84,23 +82,11 @@ void Engine::OnAddObject(Entity & entity)
 	});
 }
 
-void Engine::OnRemoveObject(Uid uid)
-{
-	Entity * entity = _entity_set.GetEntity(uid);
-	if (entity == nullptr)
-	{
-		ASSERT(false);
-		return;
-	}
-	
-	_entity_set.Remove(* entity);
-	
-	delete entity;
-}
-
 void Engine::OnAttachEntities(Uid uid1, Uid uid2)
 {
-	AttachEntities(uid1, uid2, _entity_set, _physics_engine);
+	auto& entity1 = ref(GetObject(uid1));
+	auto& entity2 = ref(GetObject(uid2));
+	AttachEntities(entity1, entity2, _physics_engine);
 }
 
 void Engine::AddFormation(form::Formation& formation)
@@ -110,7 +96,7 @@ void Engine::AddFormation(form::Formation& formation)
 	});
 
 	auto& scene = _physics_engine.GetScene();
-	scene.AddFormation(formation);
+	scene.AddFormation(formation, GetOrigin());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
@@ -123,28 +109,31 @@ void Engine::RemoveFormation(form::Formation& formation)
 	scene.RemoveFormation(formation);
 }
 
-void Engine::SetCamera(geom::rel::Ray3 const & camera_ray)
+void Engine::SetCamera(geom::rel::Ray3 const & camera)
 {
-	auto& scene = _physics_engine.GetScene();
-	scene.SetCameraRay(camera_ray);
+	if (_camera == camera)
+	{
+		return;
+	}
+
+	_camera = camera;
+
+	// update form
+	form::Daemon::Call([camera] (form::Engine & engine) {
+		engine.SetCamera(camera);
+	});
 }
 
-void Engine::SetCamera(geom::abs::Ray3 const & camera_ray)
+geom::rel::Ray3 Engine::GetCamera() const
 {
-	auto& scene = _physics_engine.GetScene();
-	scene.SetCameraRay(camera_ray);
+	return _camera;
 }
 
-geom::abs::Vector3 Engine::GetOrigin() const
-{
-	return _physics_engine.GetScene().GetOrigin();
-}
-
-void Engine::SetOrigin(geom::abs::Vector3 const & origin)
+void Engine::OnSetOrigin(geom::abs::Vector3 const & origin)
 {
 	// figure out the delta
 	auto& scene = _physics_engine.GetScene();
-	auto& previous_origin = scene.GetOrigin();
+	auto& previous_origin = GetOrigin();
 	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(origin - previous_origin);
 
 	// quit if there's no change
@@ -158,21 +147,29 @@ void Engine::SetOrigin(geom::abs::Vector3 const & origin)
 		engine.SetOrigin(origin);
 	});
 	
+	ForEachObject([& delta] (Entity & entity) {
+		ResetOrigin(entity, delta);
+	});
+	
 	// render engine
+	gfx::Daemon::Call([origin] (gfx::Engine & engine) {
+		engine.SetOrigin(origin);
+	});
+
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(false);
 	});
 	
-	ResetOrigin(_entity_set, delta);
-
-	UpdateModels(_entity_set);
+	ForEachObject([] (Entity const & entity) {
+		entity.UpdateModels();
+	});
 	
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(true);
 	});
 
 	// local collision formation scene
-	scene.SetOrigin(origin);
+	scene.OnOriginReset(origin);
 }
 
 void Engine::OnTogglePause()
@@ -193,13 +190,6 @@ void Engine::OnToggleCollision()
 core::Time Engine::GetTime() const
 {
 	return _time;
-}
-
-Entity * Engine::GetObject(Uid uid) 
-{
-	ASSERT(uid);
-	Entity * entity = _entity_set.GetEntity(uid);
-	return entity;
 }
 
 physics::Engine & Engine::GetPhysicsEngine()
@@ -251,11 +241,11 @@ void Engine::Tick()
 		
 		if (apply_gravity)
 		{
-			ApplyGravity(_entity_set, sim_tick_duration);
+			ApplyGravity(* this, sim_tick_duration);
 		}
 
 		// Run physics/collisions.
-		_physics_engine.Tick(sim_tick_duration);
+		_physics_engine.Tick(sim_tick_duration, _camera);
 
 		// Tell renderer about changes.
 		UpdateRenderer();
@@ -264,14 +254,16 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
-	STAT_SET(physics_origin, _physics_engine.GetScene().GetOrigin());
+	STAT_SET(sim_origin, GetOrigin());
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(false);
 	});
 	
-	UpdateModels(_entity_set);
-	
+	ForEachObject([] (Entity const & entity) {
+		entity.UpdateModels();
+	});
+
 	auto time = _time;
 	gfx::Daemon::Call([time] (gfx::Engine & engine) {
 		engine.OnSetTime(time);
@@ -282,30 +274,30 @@ void Engine::UpdateRenderer() const
 // Perform a step in the simulation. 
 void Engine::TickEntities()
 {
-	Entity::List & entities = _entity_set.GetEntities();
-	for (Entity::List::iterator it = entities.begin(), end = entities.end(); it != end;)
-	{
-		Entity & entity = * it;
-		
-		entity.Tick(* this);
+	std::vector<Entity *> to_delete;
+
+	ForEachObject([& to_delete] (Entity & entity) {
+		entity.Tick();
 
 		physics::Body const * body = entity.GetBody();
 		if (body == nullptr)
 		{
-			++ it;
-			continue;
+			return;
 		}
 		
 		Vector3 position = body->GetPosition();
 		if (Length(position) < purge_distance)
 		{
-			++ it;
-			continue;
+			return;
 		}
 		
 		DEBUG_MESSAGE("Removing entity with bad position, %f,%f,%f", position.x, position.y, position.z);
-		
-		it = entities.erase(it);
-		delete & entity;
+
+		to_delete.push_back(& entity);
+	});
+
+	for (auto entity : to_delete)
+	{
+		DestroyObject(entity->GetUid());
 	}
 }

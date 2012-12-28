@@ -18,6 +18,7 @@
 #include "Texture.h"
 
 #include "smp/Daemon.h"
+#include "smp/EngineBase.h"
 
 #include "core/double_buffer.h"
 #include "core/Statistics.h"
@@ -43,7 +44,7 @@ namespace gfx
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Engine
+	class Engine : public smp::EngineBase<Engine, Object>
 	{
 		OBJECT_NO_COPY(Engine);
 		
@@ -58,6 +59,7 @@ namespace gfx
 		};
 		
 	public:
+		typedef smp::EngineBase<Engine, Object> super;
 		typedef smp::Daemon<Engine> Daemon;
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -66,9 +68,6 @@ namespace gfx
 		Engine();
 		~Engine();
 
-		Object * GetObject(Uid uid);
-		Object const * GetObject(Uid uid) const;
-		
 		Scene & GetScene();
 		Scene const & GetScene() const;
 		
@@ -85,8 +84,8 @@ namespace gfx
 
 		// message interface
 		void OnQuit();
-		void OnAddObject(Object & object);
-		void OnRemoveObject(Uid uid);
+		virtual void OnAddObject(Object & object) override final;
+		virtual void OnRemoveObject(Object & object) override final;
 		void OnSetParent(Uid child_uid, Uid parent_uid);
 		void OnSetParent(Object & child, Uid parent_uid);
 		void OnSetParent(Object & child, BranchNode & parent);
@@ -100,34 +99,6 @@ namespace gfx
 		void OnSetCamera(Transformation const & transformation);
 		Transformation const& GetCamera() const;
 		void OnSetRegulatorHandle(form::RegulatorScriptHandle regulator_handle);
-
-#if defined(WIN32)
-		template <typename OBJECT_TYPE>
-		void CreateObject(Uid uid)
-		{
-			smp::ObjectInit<Engine>
-			init = 
-			{
-				* this,
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE(init);
-			OnAddObject(* object);
-		}
-#endif
-
-		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
-		{
-			smp::ObjectInit<Engine>
-			init = 
-			{
-				* this,
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
-			OnAddObject(* object);
-		}
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -161,6 +132,9 @@ namespace gfx
 		int RenderLayer(Layer::type layer, bool opaque = true);
 		
 		void DebugDraw();
+#if defined(VERIFY)
+		virtual void Verify() const override;
+#endif
 
 		void ProcessRenderTiming();
 		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);

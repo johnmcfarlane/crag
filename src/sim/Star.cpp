@@ -42,9 +42,9 @@ sim::Star::~Star()
 	_model.Destroy();
 }
 
-void sim::Star::Tick(sim::Engine & simulation_engine)
+void sim::Star::Tick()
 {
-	core::Time t = simulation_engine.GetTime();
+	core::Time t = GetEngine().GetTime();
 	CalculatePosition(t);
 }
 

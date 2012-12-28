@@ -92,7 +92,6 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
 	physics::Engine const & physics_engine = functor.GetEngine();
 	form::Scene const & scene = physics_engine.GetScene();
-	geom::abs::Vector3 const & origin = scene.GetOrigin();
 	
 	// Get vital geometric information about the cuboid.
 	Vector3 position = box.GetPosition();
@@ -147,7 +146,7 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 		return;
 	}
 	
-	form::Vector3 relative_formation_position(geom::AbsToRel(_formation.GetShape().center, origin));
+	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
 	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
@@ -172,13 +171,12 @@ void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & bod
 	
 	typedef Object<form::Sphere3> Object;
 	Object collision_object;
-	geom::abs::Vector3 const & origin = scene.GetOrigin();
 	collision_object.bounding_sphere.center = sphere.GetPosition();
 	collision_object.bounding_sphere.radius = sphere.GetRadius();
 	
 	collision_object.shape = collision_object.bounding_sphere;
 	
-	form::Vector3 relative_formation_position(geom::AbsToRel(_formation.GetShape().center, origin));
+	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
 	float sphere_area(Area(collision_object.shape));
 	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 

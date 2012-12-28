@@ -50,9 +50,9 @@ form::Engine::Engine()
 , mesh_generation_time(app::GetTime())
 , _regulator_enabled(true)
 , _recommended_num_quaterne(0)
-, _camera_pos(geom::abs::Ray3::Zero())
-, scenes(min_num_quaterne, max_num_quaterne)
-, _has_reset_request(false)
+, _pending_origin_request(false)
+, _camera(Ray3::Zero())
+, _scene(min_num_quaterne, max_num_quaterne)
 {
 	int max_num_verts = max_num_quaterne * form::NodeBuffer::num_nodes_per_quaterna;
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
@@ -78,8 +78,7 @@ form::Engine::~Engine()
 #if defined(VERIFY)
 void form::Engine::Verify() const
 {
-	VerifyObject(scenes.front());
-	VerifyObject(scenes.back());
+	VerifyObject(_scene);
 }
 #endif
 
@@ -92,16 +91,14 @@ void form::Engine::OnAddFormation(form::Formation & formation)
 {
 	ASSERT(_formations.find(& formation) == _formations.end());
 	_formations.insert(& formation);
-	scenes[0].AddFormation(formation);
-	scenes[1].AddFormation(formation);
+	_scene.AddFormation(formation, GetOrigin());
 }
 
 void form::Engine::OnRemoveFormation(form::Formation & formation)
 {
 	ASSERT(_formations.find(& formation) != _formations.end());
 	_formations.erase(& formation);
-	scenes[0].RemoveFormation(formation);
-	scenes[1].RemoveFormation(formation);
+	_scene.RemoveFormation(formation);
 	
 	delete & formation;
 }
@@ -111,22 +108,17 @@ void form::Engine::OnSetMesh(Mesh & mesh)
 	_meshes.push_back(mesh);
 }
 
-void form::Engine::OnSetCamera(geom::rel::Ray3 const & camera_pos)
+void form::Engine::SetCamera(geom::rel::Ray3 const & camera)
 {
-	auto & active_scene = GetActiveScene();
-	auto & origin = active_scene.GetOrigin();
-	_camera_pos = geom::RelToAbs(camera_pos, origin);
+	_camera = camera;
 }
 
-void form::Engine::OnSetCamera(geom::abs::Ray3 const & camera_pos)
+void form::Engine::OnSetOrigin(geom::abs::Vector3 const & new_origin)
 {
-	_camera_pos = camera_pos;
-}
+	_pending_origin_request = true;
 
-void form::Engine::SetOrigin(geom::abs::Vector3 const & origin)
-{
-	_has_reset_request = true;
-	_requested_origin = origin;
+	geom::abs::Vector3 camera_pos = geom::RelToAbs(_camera.position, GetOrigin());
+	_camera.position = geom::AbsToRel(camera_pos, new_origin);
 }
 
 void form::Engine::OnRegulatorSetEnabled(bool enabled)
@@ -174,11 +166,6 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 		if (! suspend_flag)
 		{
 			Tick();
-			
-			message_queue.DispatchMessages(* this);
-			
-			GenerateMesh();
-			BroadcastFormationUpdates();
 		}
 	}
 	
@@ -191,48 +178,35 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 // or in the main thread as part of the main render/simulation iteration.
 void form::Engine::Tick()
 {
+	if (_pending_origin_request) 
+	{
+		OnOriginReset();
+		_pending_origin_request = false;
+	}
+
 	AdjustNumQuaterna();
 	
-	bool reset_origin_flag = ! IsOriginOk();
-	
-	if (reset_origin_flag) 
-	{
-		BeginReset();
-	}
-	
-	if (! reset_origin_flag)
-	{
-		AdjustNumQuaterna();
-	}
-	
-	TickActiveScene();
-	
-	if (IsResetting())
-	{
-		if (! IsGrowing())
-		{
-			EndReset();
-		}
-	}
-	
-	//VerifyObject(* this);
+	TickScene();
+				
+	GenerateMesh();
+	BroadcastFormationUpdates();
+
+	VerifyObject(* this);
 }
 
-void form::Engine::TickActiveScene()
+void form::Engine::TickScene()
 {
 	PROFILE_TIMER_BEGIN(t);
 	
-	Scene & active_scene = GetActiveScene();
-	active_scene.SetCameraRay(_camera_pos);
-	active_scene.Tick();
+	_scene.Tick(_camera);
 	
-	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / active_scene.GetNodeBuffer().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 }
 
 void form::Engine::AdjustNumQuaterna()
 {
-	if (! _regulator_enabled || IsResetting())
+	if (! _regulator_enabled)
 	{
 		return;
 	}
@@ -241,17 +215,12 @@ void form::Engine::AdjustNumQuaterna()
 	Clamp(_recommended_num_quaterne, int(min_num_quaterne), int(max_num_quaterne));
 	
 	// Apply the regulator output.
-	NodeBuffer & active_buffer = GetActiveScene().GetNodeBuffer();
+	NodeBuffer & active_buffer = _scene.GetNodeBuffer();
 	active_buffer.SetNumQuaternaUsedTarget(_recommended_num_quaterne);
 }
 
 void form::Engine::GenerateMesh()
 {
-	if (IsResetting())
-	{
-		return;
-	}
-	
 	// get an available mesh
 	Mesh * mesh = PopMesh();
 	if (mesh == nullptr)
@@ -259,11 +228,9 @@ void form::Engine::GenerateMesh()
 		return;
 	}
 	
-	Scene const & visible_scene = GetVisibleScene();
-	
 	// build it
 	mesh->GetProperties()._flat_shaded = flat_shaded_flag;
-	visible_scene.GenerateMesh(* mesh);
+	_scene.GenerateMesh(* mesh, GetOrigin());
 	
 	// sent it to the FormationSet object
 	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {
@@ -281,7 +248,7 @@ void form::Engine::GenerateMesh()
 	});
 	
 	// Sample the information for statistical output.
-	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / GetActiveScene().GetNodeBuffer().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / _scene.GetNodeBuffer().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();
@@ -308,84 +275,26 @@ form::Mesh * form::Engine::PopMesh()
 	return & mesh;
 }
 
-void form::Engine::BeginReset()
+void form::Engine::OnOriginReset()
 {
-	ASSERT(! IsResetting());
-	is_in_reset_mode = true;
-	
-	// Transfer the origin from the old scene to the new one.
-	Scene & active_scene = GetActiveScene();
-	Scene & visible_scene = GetVisibleScene();
-	active_scene.SetOrigin(_requested_origin);
-	_has_reset_request = false;
-	_requested_origin = geom::abs::Vector3();
-	
-	// Transfer the quaterna count from the old buffer to the new one.
-	NodeBuffer & visible_node_buffer = visible_scene.GetNodeBuffer();
-	int current_num_quaterne = visible_node_buffer.GetNumQuaternaUsed();
-	
-	NodeBuffer & active_node_buffer = active_scene.GetNodeBuffer();
-	active_node_buffer.SetNumQuaternaUsedTarget(current_num_quaterne);
-}
+	auto& node_buffer = _scene.GetNodeBuffer();
+	int num_quaterna = node_buffer.GetNumQuaternaUsed();
+	_scene.OnOriginReset(GetOrigin());
+	node_buffer.SetNumQuaternaUsedTarget(num_quaterna);
 
-void form::Engine::EndReset()
-{
-	VerifyObject(* this);
-	
-	is_in_reset_mode = false;
-	
-	scenes.flip();
-
-	VerifyObject(* this);
-}
-
-form::Scene & form::Engine::GetActiveScene()
-{
-	return IsResetting() ? scenes.back() : scenes.front();
-}
-
-form::Scene const & form::Engine::GetActiveScene() const
-{
-	return IsResetting() ? scenes.back() : scenes.front();
-}
-
-form::Scene & form::Engine::GetVisibleScene()
-{
-	return scenes.front();
-}
-
-form::Scene const & form::Engine::GetVisibleScene() const
-{
-	return scenes.front();
-}
-
-// Returns false if a new origin is needed.
-bool form::Engine::IsOriginOk() const
-{
-	if (IsGrowing() || IsResetting())
+	while (node_buffer.GetNumQuaternaUsed() < num_quaterna)
 	{
-		// Still making the last one
-		return true;
+		TickScene();
+		ASSERT(node_buffer.GetNumQuaternaUsedTarget() == num_quaterna);
 	}
-	
-	return ! _has_reset_request;
 }
 
 bool form::Engine::IsGrowing() const
 {
-	Scene const & active_scene = GetActiveScene();
-	NodeBuffer const & node_buffer = active_scene.GetNodeBuffer();
+	NodeBuffer const & node_buffer = _scene.GetNodeBuffer();
 	
 	int num_used = node_buffer.GetNumQuaternaUsed();
 	int num_used_target = node_buffer.GetNumQuaternaUsedTarget();
 	
 	return num_used < num_used_target;
 }
-
-bool form::Engine::IsResetting() const
-{
-	return is_in_reset_mode;
-}
-
-
-form::Daemon * form::Engine::singleton = nullptr;

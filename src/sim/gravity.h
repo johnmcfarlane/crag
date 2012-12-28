@@ -9,14 +9,10 @@
 
 #pragma once
 
-#include "defs.h"
-
+#include "Engine.h"
 
 namespace sim
 {
-	// forward-declarations
-	class EntitySet;
-	
 	// simulates gravitational interactions between the given entities
-	void ApplyGravity(EntitySet & entity_set, core::Time delta);
+	void ApplyGravity(Engine & engine, core::Time delta);
 }

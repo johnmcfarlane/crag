@@ -159,7 +159,7 @@ namespace smp
 			// set message.
 			Uid uid = _uid;
 			Daemon::Call([uid] (Engine & engine) {
-				engine.OnRemoveObject(uid);
+				engine.DestroyObject(uid);
 			});
 			_uid = Uid();
 		}

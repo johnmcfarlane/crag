@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "ObjectBase.h"
 #include "Uid.h"
 
 namespace smp
@@ -33,8 +32,10 @@ namespace smp
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from Object.
 	template <typename OBJECT, typename ENGINE>
-	class Object : public ObjectBase<OBJECT>
+	class Object
 	{
+		OBJECT_NO_COPY(Object);
+
 	public:
 		// types
 		typedef ENGINE Engine;
@@ -56,10 +57,37 @@ namespace smp
 #if defined(VERIFY)
 		virtual void Verify() const
 		{
+			VerifyRef(_engine);
 			ASSERT(_uid);
 		}
 #endif
 		
+		operator OBJECT & ()
+		{
+			OBJECT & t = * static_cast<OBJECT *>(this);
+			
+#if ! defined(NDEBUG)
+			// Check that this cast is valid.
+			Object & reverse = t;
+			ASSERT(& reverse == this);
+#endif
+			
+			return t;
+		}
+		
+		operator OBJECT const & () const
+		{
+			OBJECT const & t = * static_cast<OBJECT const *>(this);
+			
+#if ! defined(NDEBUG)
+			// Check that this cast is valid.
+			Object const & reverse = t;
+			ASSERT(& reverse == this);
+#endif
+			
+			return t;
+		}
+
 		Engine & GetEngine() const
 		{
 			return _engine;
@@ -74,8 +102,5 @@ namespace smp
 		// variables
 		Engine & _engine;
 		Uid _uid;
-		
-		typedef typename ObjectBase<OBJECT>::List::const_iterator const_iterator;
-		typedef typename ObjectBase<OBJECT>::List::iterator iterator;
 	};
 }

@@ -43,7 +43,7 @@ namespace physics
 		
 		void Attach(Body const & body1, Body const & body2);
 		
-		void Tick(double delta_time);
+		void Tick(double delta_time, Ray3 const & camera_ray);
 		
 		void ToggleCollisions();
 		

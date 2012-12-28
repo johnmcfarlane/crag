@@ -14,10 +14,10 @@
 
 #include "sim/defs.h"
 
-#include "core/double_buffer.h"
 #include "core/Singleton.h"
 
 #include "smp/Daemon.h"
+#include "smp/EngineBase.h"
 #include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
@@ -47,7 +47,7 @@ namespace form
 	// form::Engine class
 	
 	// The top-most formation management class.
-	class Engine
+	class Engine : public smp::EngineBase<Engine, Formation>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -88,9 +88,8 @@ namespace form
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(Mesh & mesh);
-		void OnSetCamera(geom::rel::Ray3 const & camera_position);
-		void OnSetCamera(geom::abs::Ray3 const & camera_position);
-		void SetOrigin(geom::abs::Vector3 const & origin);
+		void SetCamera(geom::rel::Ray3 const & camera_position);
+		void OnSetOrigin(geom::abs::Vector3 const & origin);
 		
 		void OnRegulatorSetEnabled(bool enabled);
 		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
@@ -103,29 +102,15 @@ namespace form
 
 	private:
 		void Tick();
-		void TickActiveScene();
+		void TickScene();
 		void GenerateMesh();
 		void BroadcastFormationUpdates();
 		Mesh * PopMesh();
 		
 		void AdjustNumQuaterna();
-		void BeginReset();
-		void EndReset();
 		
-		Scene & GetActiveScene();
-		Scene const & GetActiveScene() const;
-		
-		Scene & GetVisibleScene();
-		Scene const & GetVisibleScene() const;
-		
-		bool IsOriginOk() const;
+		void OnOriginReset();
 		bool IsGrowing() const;
-		bool IsResetting() const;
-		
-		////////////////////////////////////////////////////////////////////////////////
-		// types
-		
-		typedef core::double_buffer<Scene> SceneDoubleBuffer;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
@@ -145,18 +130,11 @@ namespace form
 		bool _regulator_enabled;
 		RegulatorScriptHandle _regulator_handle;
 		int _recommended_num_quaterne;	// recommended by the regulator
-		geom::abs::Ray3 _camera_pos;
 		
-		// The front scene is always the one being displayed and is usually the 'active' scene.
-		// During an origin reset, the back scene is the active one.
-		// It's the active scene which is reshaped for LODding purposes (churned).
-		SceneDoubleBuffer scenes;
-		bool is_in_reset_mode;	// the scene is being regenerated following an origin reset
-		
-		bool _has_reset_request;	// TODO: do without
-		geom::abs::Vector3 _requested_origin;
-		
-		static Daemon * singleton;
+		bool _pending_origin_request;
+
+		geom::rel::Ray3 _camera;
+		Scene _scene;
 	};
 	
 }

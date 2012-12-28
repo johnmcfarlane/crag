@@ -38,11 +38,8 @@ namespace gfx
 		core::Time GetTime() const;
 		
 		void AddObject(Object & object);
-		void RemoveObject(Uid uid);
+		void RemoveObject(Object & object);
 		void SortRenderList();
-		
-		Object * GetObject(Uid object_uid);
-		Object const * GetObject(Uid object_uid) const;
 		
 		BranchNode & GetRoot();
 		BranchNode const & GetRoot() const;
@@ -66,7 +63,6 @@ namespace gfx
 		core::Time _time;
 		Pov pov;
 		
-		ObjectMap _objects;	// fast-access container of all objects
 		BranchNode _root;	// root of object heirachy; uses list hook in Object
 		LeafNode::RenderList _render_list;	// flat list of drawable objects
 		Light::List _light_list;

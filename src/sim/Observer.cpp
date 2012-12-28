@@ -16,11 +16,14 @@
 
 #include "physics/SphericalBody.h"
 
+#include "form/Engine.h"
+
 #include "geom/Transformation.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
+#include "gfx/Engine.h"
 #include "gfx/object/Light.h"
 
 #include "geom/MatrixOps.h"
@@ -119,7 +122,7 @@ void Observer::SetSpeed(int const & speed)
 	speed_factor = std::pow(std::pow(10.f, .4f), (speed << 1) + 1);
 }
 
-void Observer::Tick(sim::Engine & simulation_engine)
+void Observer::Tick()
 {
 	// Camera input.
 	UserInput ui;
@@ -137,22 +140,22 @@ void Observer::UpdateModels() const
 		return;
 	}
 
-	Vector3 const & position = body->GetPosition();
-	Matrix33 rotation = body->GetRotation();
-	Transformation transformation (position, rotation);
+	auto& engine = GetEngine();
+	auto& origin = engine.GetOrigin();
 
-	// Give renderer the new camera position.
+	auto position = body->GetPosition();
+	auto rotation = body->GetRotation();
+	Transformation transformation (position, rotation);
+	auto camera_ray = axes::GetCameraRay(transformation);
+
+	// update sim (sends message to gfx)
+	engine.SetCamera(camera_ray);
+
+	// update gfx
 	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 		engine.OnSetCamera(transformation);
 	});
 	
-	// Give simulation the new camera position.
-	{
-		Ray3 camera_ray = axes::GetCameraRay(transformation);
-		auto& engine = GetEngine();
-		engine.SetCamera(camera_ray);
-	}
-
 #if defined(OBSERVER_LIGHT)
 	// Give renderer the new light position.
 	{

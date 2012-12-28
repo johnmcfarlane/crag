@@ -28,7 +28,7 @@ namespace sim
 		Star(Init const & init, geom::abs::Scalar radius, core::Time year);
 		~Star();
 
-		void Tick(sim::Engine & simulation_engine);
+		void Tick();
 		
 		void UpdateModels() const;
 	

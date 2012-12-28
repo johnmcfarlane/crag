@@ -11,7 +11,7 @@
 
 #include "EntityFunctions.h"
 
-#include "EntitySet.h"
+#include "Entity.h"
 #include "Engine.h"
 
 #include "physics/Body.h"
@@ -23,38 +23,21 @@
 
 namespace sim
 {
-	void UpdateModels(EntitySet const & entity_set)
+	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine)
 	{
-		Entity::List const & entities = entity_set.GetEntities();
-		for (Entity const & entity : entities)
+		auto body1 = entity1.GetBody();
+		if (body1 == nullptr)
 		{
-			entity.UpdateModels();
+			return;
 		}
-	}
 
-	void AttachEntities(Uid const & uid1, Uid const & uid2, EntitySet & entity_set, physics::Engine & physics_engine)
-	{
-		Uid const uids[2] = { uid1, uid2 };
-		physics::Body * bodies[2];
-		
-		for (int index = 0; index < 2; ++ index)
+		auto body2 = entity2.GetBody();
+		if (body2 == nullptr)
 		{
-			Entity * entity = entity_set.GetEntity(uids[index]);
-			if (entity == nullptr)
-			{
-				return;
-			}
-			
-			physics::Body * body = entity->GetBody();
-			if (body == nullptr)
-			{
-				return;
-			}
-			
-			bodies[index] = body;
+			return;
 		}
-		
-		physics_engine.Attach(ref(bodies[0]), ref(bodies[1]));
+
+		physics_engine.Attach(* body1, * body2);
 	}
 
 	void SetCollidable(Entity & entity, bool collidable)
@@ -70,16 +53,15 @@ namespace sim
 		}
 	}
 	
-	void ResetOrigin(EntitySet & entity_set, geom::rel::Vector3 const & delta)
+	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta)
 	{
-		for (Entity & entity : entity_set.GetEntities())
+		auto body = entity.GetBody();
+		if (body == nullptr)
 		{
-			auto body = entity.GetBody();
-			if (body != nullptr)
-			{
-				Vector3 bodyPosition = body->GetPosition();
-				body->SetPosition(bodyPosition - delta);
-			}
+			return;
 		}
+
+		Vector3 bodyPosition = body->GetPosition();
+		body->SetPosition(bodyPosition - delta);
 	}
 }

@@ -36,7 +36,7 @@ Entity::~Entity()
 	delete _body;
 }
 
-void Entity::Tick(sim::Engine & simulation_engine)
+void Entity::Tick()
 {
 }
 

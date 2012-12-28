@@ -63,12 +63,7 @@ void Engine::OnQuit()
 	SetQuitFlag();
 }
 
-void Engine::OnAddObject(AppletBase & applet)
-{
-	_applets.push_back(applet);
-}
-
-void Engine::OnRemoveObject(Uid uid)
+void Engine::DestroyObject(Uid uid)
 {
 	AppletBase * applet = GetObject(uid);
 	

@@ -102,7 +102,7 @@ Planet::~Planet()
 	_formation = nullptr;
 }
 
-void Planet::Tick(sim::Engine & simulation_engine)
+void Planet::Tick()
 {
 	// TODO: This could be moved into SetRadiusMinMax.
 	PlanetaryBody & body = static_cast<PlanetaryBody &>(* GetBody());

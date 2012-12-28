@@ -12,6 +12,7 @@
 #include "defs.h"
 
 #include "smp/Daemon.h"
+#include "smp/EngineBase.h"
 
 #include "geom/origin.h"
 
@@ -33,15 +34,14 @@ namespace sim
 	
 	// forward declarations
 	class Entity;
-	class EntitySet;
-	
 	
 	// Engine - main object of simulation thread
-	class Engine
+	class Engine : public smp::EngineBase<Engine, Entity>
 	{
 		OBJECT_SINGLETON(Engine);
 
 	public:
+		typedef smp::EngineBase<Engine, Entity> super;
 		typedef smp::Daemon<Engine> Daemon;
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -53,30 +53,16 @@ namespace sim
 		// message interface
 		void OnQuit();
 		
-		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
-		{
-			smp::ObjectInit<Engine> init = 
-			{
-				* this,
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
-			OnAddObject(* object);
-		}
-		
-		void OnAddObject(Entity & entity);
-		void OnRemoveObject(Uid uid);
+		virtual void OnAddObject(super::Object & entity) override final;
 		void OnAttachEntities(Uid uid1, Uid uid2);
 		
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);
 		
-		void SetCamera(geom::rel::Ray3 const & camera_ray);
-		void SetCamera(geom::abs::Ray3 const & camera_ray);
+		void SetCamera(geom::rel::Ray3 const & camera);
+		geom::rel::Ray3 GetCamera() const;
 
-		geom::abs::Vector3 Engine::GetOrigin() const;
-		void SetOrigin(geom::abs::Vector3 const & origin);
+		void OnSetOrigin(geom::abs::Vector3 const & origin);
 		
 		void OnTogglePause();
 		void OnToggleGravity();
@@ -84,7 +70,6 @@ namespace sim
 
 		// accessors
 		core::Time GetTime() const;
-		Entity * GetObject(Uid uid);
 		physics::Engine & GetPhysicsEngine();		
 		
 		// called be Daemon when simulation thread starts
@@ -104,7 +89,7 @@ namespace sim
 		
 		core::Time _time;
 
-		EntitySet & _entity_set;
+		Ray3 _camera;
 		physics::Engine & _physics_engine;
 	};
 	

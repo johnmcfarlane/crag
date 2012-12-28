@@ -94,9 +94,9 @@ void Engine::Attach(Body const & body1, Body const & body2)
 	dJointSetFixed (joint_id);
 }
 
-void Engine::Tick(double delta_time)
+void Engine::Tick(double delta_time, Ray3 const & camera_ray)
 {
-	_formation_scene.Tick();
+	_formation_scene.Tick(camera_ray);
 	
 	if (collisions)
 	{

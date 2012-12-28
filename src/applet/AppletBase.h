@@ -70,6 +70,7 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
+		DEFINE_INTRUSIVE_LIST(AppletBase, List);
 		smp::Fiber & _fiber;
 		Condition _condition;
 		bool _quit_flag;

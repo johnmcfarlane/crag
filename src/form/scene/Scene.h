@@ -50,31 +50,26 @@ namespace form
 		NodeBuffer & GetNodeBuffer();
 		NodeBuffer const & GetNodeBuffer() const;
 		
-		geom::rel::Ray3 const & GetCameraRay() const;
-		void SetCameraRay(geom::rel::Ray3 const & camera_ray);
-		void SetCameraRay(geom::abs::Ray3 const & camera_ray);
-		
-		geom::abs::Vector3 const & GetOrigin() const;
-		void SetOrigin(geom::abs::Vector3 const & o);
-		
-		void AddFormation(Formation & formation);
+		void OnOriginReset(geom::abs::Vector3 const & origin);
+
+		void AddFormation(Formation & formation, geom::abs::Vector3 const & origin);
 		void RemoveFormation(Formation const & formation);
 		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		
-		void Tick();
-		void GenerateMesh(Mesh & mesh) const;
+		void Tick(geom::rel::Ray3 const & camera_ray);
+		void GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const;
 	private:
 		
 		///////////////////////////////////////////////////////
 		// Formation-related members.
 		
 		void TickModels();
-		void ResetPolyhedronOrigins();
-		void ResetFormations();
+		void ResetPolyhedronOrigins(geom::abs::Vector3 const & origin);
+		void ResetFormations(geom::abs::Vector3 const & origin);
 
 		void TickPolyhedron(Polyhedron & model);
 
-		void InitPolyhedron(FormationPair & pair);
+		void InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin);
 		void DeinitPolyhedron(FormationPair & pair);
 		
 		
@@ -84,9 +79,6 @@ namespace form
 		NodeBuffer & _node_buffer;
 		
 		FormationMap formation_map;		// The internal record of formations.
-		geom::abs::Ray3 camera_ray;			// The observer position/direction in universal coordinates.
-		geom::rel::Ray3 camera_ray_relative;	// The observer position/direction relative to origin.
-		geom::abs::Vector3 origin;			// The zero point in universal coordinates.
 	};
 
 }

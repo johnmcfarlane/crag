@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\SDL2\VisualC\SDL\Win32\Release;..\..\dependencies\ode\lib\DebugDoubleLib;..\..\dependencies\ode\lib\ReleaseDoubleLib;..\..\dependencies\glew\lib</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\SDL2\VisualC\SDL\Win32\Release;..\..\dependencies\ode\lib\DebugSingleLib;..\..\dependencies\ode\lib\ReleaseSingleLib;..\..\dependencies\glew\lib</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -226,7 +226,6 @@
     <ClInclude Include="..\..\src\sim\Engine.h" />
     <ClInclude Include="..\..\src\sim\Entity.h" />
     <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
-    <ClInclude Include="..\..\src\sim\EntitySet.h" />
     <ClInclude Include="..\..\src\sim\Firmament.h" />
     <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
@@ -239,6 +238,7 @@
     <ClInclude Include="..\..\src\sim\UserInput.h" />
     <ClInclude Include="..\..\src\sim\Vehicle.h" />
     <ClInclude Include="..\..\src\smp\Daemon.h" />
+    <ClInclude Include="..\..\src\smp\EngineBase.h" />
     <ClInclude Include="..\..\src\smp\Fiber.h" />
     <ClInclude Include="..\..\src\smp\FiberPosix.h" />
     <ClInclude Include="..\..\src\smp\FiberWin.h" />
@@ -365,7 +365,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
-    <ClCompile Include="..\..\src\sim\EntitySet.cpp" />
     <ClCompile Include="..\..\src\sim\Firmament.cpp" />
     <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />

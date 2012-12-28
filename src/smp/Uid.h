@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 namespace smp
 {
 	// forward-declarations
@@ -22,15 +21,13 @@ namespace smp
 	class Uid
 	{
 		// types
-		typedef uintptr_t ValueType;
+		typedef std::size_t ValueType;
         
 	public:
 		// functions
 		Uid() : _value(0) { }
-		
-#if ! defined(NDEBUG)
-		ValueType GetValue() const { return _value; }
-#endif
+
+		std::size_t Hash() const { return _value; }
 		
 		operator bool () const { return _value != 0; }
 		
@@ -48,5 +45,18 @@ namespace smp
 	private:
 		// variables
 		ValueType _value;
+	};
+}
+
+namespace std
+{
+	template <>
+	struct hash <smp::Uid>
+	{
+		size_t operator() (smp::Uid uid) const
+		{
+			ASSERT(uid);
+			return uid.Hash();
+		}
 	};
 }

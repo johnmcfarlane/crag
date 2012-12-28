@@ -41,7 +41,7 @@ namespace sim
 		void UpdateInput(Controller::Impulse const & impulse);
 
 		void SetSpeed(int const & speed);
-		virtual void Tick(sim::Engine & simulation_engine);
+		virtual void Tick();
 		virtual void UpdateModels() const;
 		
 	private:

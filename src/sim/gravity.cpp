@@ -11,7 +11,7 @@
 
 #include "gravity.h"
 
-#include "EntitySet.h"
+#include "Entity.h"
 
 #include "physics/Body.h"
 
@@ -27,22 +27,19 @@ namespace
 
 	// Given a position and a mass at that position, returns a 
 	// reasonable approximation of the weight vector at that position.
-	Vector3 Weight(Entity::List const & entities, Vector3 const & pos, Scalar mass)
+	Vector3 Weight(Engine & engine, Vector3 pos, Scalar mass)
 	{
 		Vector3 force = Vector3::Zero();
 		
-		for (Entity::List::const_iterator it = entities.begin(), end = entities.end(); it != end; ++ it) 
-		{
-			Entity const & entity = * it;
-
+		engine.ForEachObject([& pos, & force] (Entity const & entity) {
 			entity.GetGravitationalForce(pos, force);
-		}
+		});
 		
 		return force * Scalar(mass) * Scalar(gravitational_force);
 	}
 
 	
-	void ApplyGravity(Entity::List const & entities, core::Time delta, physics::Body & body) 
+	void ApplyGravity(Engine & engine, core::Time delta, physics::Body & body) 
 	{
 		Vector3 const & position = body.GetPosition();
 		Scalar mass = body.GetMass();
@@ -51,7 +48,7 @@ namespace
 			return;
 		}
 		
-		Vector3 gravitational_force_per_second = Weight(entities, position, mass);
+		Vector3 gravitational_force_per_second = Weight(engine, position, mass);
 		Vector3 gravity = gravitational_force_per_second / Scalar(delta);
 		
 		body.AddForce(gravity);
@@ -59,21 +56,16 @@ namespace
 	
 }
 
-void sim::ApplyGravity(EntitySet & entity_set, core::Time delta)
+void sim::ApplyGravity(Engine & engine, core::Time delta)
 {
-	Entity::List & entities = entity_set.GetEntities();
-
-	for (Entity::List::iterator i = entities.begin(), end = entities.end(); i != end; ++ i)
-	{
-		Entity & entity = * i;
-		
+	engine.ForEachObject([&] (Entity & entity) {
 		physics::Body * body = entity.GetBody();
 		if (body == nullptr)
 		{
-			continue;
+			return;
 		}
 		
-		::ApplyGravity(entities, delta, * body);
-	}
+		::ApplyGravity(engine, delta, * body);
+	});
 }
 

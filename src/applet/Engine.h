@@ -72,7 +72,7 @@ namespace applet
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE (init);
-			OnAddObject(* object);
+			_applets.push_back(* object);
 		}
 #endif
 
@@ -85,11 +85,10 @@ namespace applet
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE (init, parameters ...);
-			OnAddObject(* object);
+			_applets.push_back(* object);
 		}
-		
-		void OnAddObject(AppletBase & entity);
-		void OnRemoveObject(Uid uid);
+
+		void DestroyObject(Uid uid);
 		
 		void SetQuitFlag();
 		

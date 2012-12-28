@@ -36,7 +36,7 @@ namespace sim
 		virtual ~Entity();
 		
 		// general callbacks
-		virtual void Tick(sim::Engine & simulation_engine);
+		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		
 		virtual void UpdateModels() const;

@@ -252,9 +252,6 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
 	VerifyObjectRef(new_camera_ray);
 	VerifyObject (* this);
-#if ! defined(NDEBUG)
-	auto t1 = app::GetTime();
-#endif
 
 	node_score_functor.SetCameraRay(new_camera_ray);
 
@@ -273,12 +270,6 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 	
 	UpdateNodes();
 	
-#if 0
-	DEBUG_MESSAGE("%3d %3d", int(1000. * (t2 - t1)), int(1000. * (app::GetTime() - t2)));
-#else
-	if (t1 > t2)
-		exit(0);
-#endif
 	VerifyObject(* this);
 }
 

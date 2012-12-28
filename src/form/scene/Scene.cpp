@@ -24,9 +24,6 @@
 
 form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _node_buffer(ref(new NodeBuffer(min_num_quaterne, max_num_quaterne)))
-, camera_ray(geom::abs::Ray3::Zero())
-, camera_ray_relative(geom::rel::Ray3::Zero())
-, origin(geom::abs::Vector3::Zero())
 {
 	_node_buffer.SetNumQuaternaUsedTarget(min_num_quaterne);
 }
@@ -77,48 +74,18 @@ form::NodeBuffer const & form::Scene::GetNodeBuffer() const
 	return _node_buffer;
 }
 
-geom::rel::Ray3 const & form::Scene::GetCameraRay() const
-{
-	return camera_ray_relative;
-}
-
-void form::Scene::SetCameraRay(geom::rel::Ray3 const & cr) 
-{
-	camera_ray = geom::RelToAbs(cr, origin);
-	camera_ray_relative = cr;
-}
-
-void  form::Scene::SetCameraRay(geom::abs::Ray3 const & cr)
-{
-	camera_ray = cr;
-	camera_ray_relative = geom::AbsToRel(cr, origin);
-}
-
-geom::abs::Vector3 const & form::Scene::GetOrigin() const
-{
-	return origin;
-}
-
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void form::Scene::SetOrigin(geom::abs::Vector3 const & o) 
+void form::Scene::OnOriginReset(geom::abs::Vector3 const & origin) 
 {
-	if (o != origin) 
-	{
-		origin = o;
-		
-		// Setting camera ray to itself cause the local camera ray to be recalculated.
-		camera_ray_relative = geom::AbsToRel(camera_ray, origin);
-
-		// The difficult bit: fix all our data which relied on the old origin.
-		ResetFormations();
-	}
+	// The difficult bit: fix all our data which relied on the old origin.
+	ResetFormations(origin);
 }
 
-void form::Scene::AddFormation(Formation & formation)
+void form::Scene::AddFormation(Formation & formation, geom::abs::Vector3 const & origin)
 {
 	ASSERT(formation_map.find(& formation) == formation_map.end());
 	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
-	InitPolyhedron(* i);
+	InitPolyhedron(* i, origin);
 }
 
 void form::Scene::RemoveFormation(Formation const & formation)
@@ -143,14 +110,13 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 	}
 }
 
-void form::Scene::Tick()
+void form::Scene::Tick(geom::rel::Ray3 const & camera_ray)
 {
-	form::Ray3 form_camera_ray(camera_ray_relative);
-	_node_buffer.Tick(form_camera_ray);
+	_node_buffer.Tick(camera_ray);
 	TickModels();
 }
 
-void form::Scene::GenerateMesh(Mesh & mesh) const
+void form::Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
 {
 	_node_buffer.GenerateMesh(mesh);
 	
@@ -168,7 +134,7 @@ void form::Scene::TickModels()
 	}
 }
 
-void form::Scene::ResetPolyhedronOrigins()
+void form::Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
 {
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
@@ -179,20 +145,18 @@ void form::Scene::ResetPolyhedronOrigins()
 }
 
 // TODO: Write an ungraceful/fast version of this.
-void form::Scene::ResetFormations()
+void form::Scene::ResetFormations(geom::abs::Vector3 const & origin)
 {
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	for (auto & pair : formation_map) 
 	{
-		FormationPair & pair = * i;
 		DeinitPolyhedron(pair);
 	}
 	
 	_node_buffer.OnReset();
 
-	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
+	for (auto & pair : formation_map) 
 	{
-		FormationPair & pair = * i;
-		InitPolyhedron(pair);
+		InitPolyhedron(pair, origin);
 	}
 }
 
@@ -209,7 +173,7 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 }
 
 // The given pair contains a formation and a polyhedron.
-void form::Scene::InitPolyhedron(FormationPair & pair)
+void form::Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin)
 {
 	Polyhedron & polyhedron = pair.second;
 

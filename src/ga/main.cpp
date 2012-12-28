@@ -61,13 +61,14 @@ void ga::main(applet::AppletInterface & applet_interface)
 	Vector3 camera_pos = surface * 1.01;
 	Vector3 camera_forward = geom::Normalized(- camera_pos);
 	Ray3 camera_ray(camera_pos, camera_forward);
+	auto camera_ray_rel = geom::AbsToRel(camera_ray, origin);
 	//Vector3 camera_up = geom::Normalized(Vector3(1, -1, -1));
 	//Vector3 camera_up = geom::Normalized(Vector3(0, 0, 1));
 	//Matrix33 camera_dir(axes::Rotation(camera_forward/*, camera_up*/));
 	//sim::Transformation transformation(sim::Transformation::Matrix44::Identity());
 	//sim::Transformation transformation(camera_pos, camera_dir);
-	sim::Daemon::Call([camera_ray] (sim::Engine & engine) {
-		engine.SetCamera(camera_ray);
+	sim::Daemon::Call([camera_ray_rel] (sim::Engine & engine) {
+		engine.SetCamera(camera_ray_rel);
 	});
 	
 	sim::Transformation transformation(geom::Cast<sim::Scalar>(camera_pos));

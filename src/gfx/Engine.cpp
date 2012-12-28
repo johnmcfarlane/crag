@@ -198,14 +198,15 @@ namespace
 	// Given a scene and the uid of a branc_node in that scene
 	// (or Uid() for the scene's root node),
 	// returns a reference to that branch node.
-	BranchNode * GetBranchNode(Scene & scene, Uid branch_node_uid)
+	BranchNode * GetBranchNode(Engine & engine, Uid branch_node_uid)
 	{
 		if (! branch_node_uid)
 		{
+			auto& scene = engine.GetScene();
 			return & scene.GetRoot();
 		}
 		
-		Object * parent_object = scene.GetObject(branch_node_uid);
+		Object * parent_object = engine.GetObject(branch_node_uid);
 		if (parent_object == nullptr)
 		{
 			// The given parent was not found.
@@ -259,16 +260,6 @@ Engine::~Engine()
 
 	// must be turned on by key input or by cfg edit
 	capture_enable = false;
-}
-
-Object * Engine::GetObject(Uid uid)
-{
-	return scene->GetObject(uid);
-}
-
-Object const * Engine::GetObject(Uid uid) const
-{
-	return scene->GetObject(uid);
 }
 
 Scene & Engine::GetScene()
@@ -390,23 +381,27 @@ void Engine::OnQuit()
 
 void Engine::OnAddObject(Object & object)
 {
-	if (scene == nullptr)
-	{
-		delete & object;
-		return;
-	}
+	ASSERT(scene != nullptr);
 
 	// success!
 	scene->AddObject(object);
 	OnSetParent(object, Uid());
 }
 
-void Engine::OnRemoveObject(Uid uid)
+void Engine::OnRemoveObject(Object & object)
 {
-	if (scene != nullptr)
+	BranchNode * branch_node = object.CastBranchNodePtr();
+	if (branch_node != nullptr)
 	{
-		scene->RemoveObject(uid);
+		while (! branch_node->IsEmpty())
+		{
+			auto& front = * branch_node->Begin();
+			DestroyObject(front.GetUid());
+		}
 	}
+
+	ASSERT(scene != nullptr);
+	scene->RemoveObject(object);
 }
 
 void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
@@ -423,10 +418,10 @@ void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 
 void Engine::OnSetParent(Object & child, Uid parent_uid)
 {
-	BranchNode * parent = GetBranchNode(ref(scene), parent_uid);
+	BranchNode * parent = GetBranchNode(* this, parent_uid);
 	if (parent == nullptr)
 	{
-		DEBUG_BREAK("Given parent, %tu, not found", parent_uid.GetValue());
+		DEBUG_BREAK("Given parent, " SIZE_T_FORMAT_SPEC ", not found", std::hash<Uid>()(parent_uid));
 		return;
 	}
 	
@@ -485,12 +480,6 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 	{
 		scene->SetCameraTransformation(transformation);
 	}
-
-	// pass this on to the formation manager to update the node scores
-	auto camera_pos = axes::GetCameraRay(transformation);
-	form::Daemon::Call([camera_pos] (form::Engine & engine) {
-		engine.OnSetCamera(camera_pos);
-	});
 }
 
 gfx::Transformation const& Engine::GetCamera() const
@@ -816,7 +805,7 @@ void Engine::PreRender()
 			case LeafNode::ok:
 				break;
 			case LeafNode::remove:
-				scene->RemoveObject(leaf_node.GetUid());
+				DestroyObject(leaf_node.GetUid());
 				break;
 		}
 	}
@@ -845,7 +834,7 @@ void Engine::UpdateTransformations(BranchNode & parent_branch, gfx::Transformati
 				BranchNode & child_branch = child.CastBranchNodeRef();
 				if (child_branch.IsEmpty())
 				{
-					scene->RemoveObject(child_branch.GetUid());
+					DestroyObject(child_branch.GetUid());
 					continue;
 				}
 				
@@ -1172,6 +1161,15 @@ void Engine::DebugDraw()
 	
 #endif
 }
+
+#if defined(VERIFY)
+void Engine::Verify() const
+{
+	super::Verify();
+
+	VerifyObjectPtr(scene);
+}
+#endif
 
 void Engine::ProcessRenderTiming()
 {

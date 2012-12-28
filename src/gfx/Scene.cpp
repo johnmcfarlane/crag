@@ -46,7 +46,6 @@ Scene::~Scene()
 {
 	RemoveChildren(_root);
 
-	ASSERT(_objects.empty());
 	ASSERT(_root.IsEmpty());
 }
 
@@ -54,13 +53,6 @@ Scene::~Scene()
 void Scene::Verify() const
 {
 	VerifyObject(_root);
-	
-	for (ObjectMap::const_iterator i = _objects.begin(), end = _objects.end(); i != end; ++ i)
-	{
-		Object const & object = * i->second;
-		VerifyObjectRef(object);
-		VerifyTrue(object.GetParent() != nullptr);
-	}
 }
 #endif
 
@@ -80,11 +72,6 @@ void Scene::AddObject(Object & object)
 	Uid uid = object.GetUid();
 	ASSERT(uid);
 
-	ASSERT(_objects.count(uid) == 0);	// object with matching id already lives in map
-	ObjectMap::value_type addition(uid, & object);
-	_objects.insert(addition);
-	ASSERT(_objects.count(uid) == 1);	// insertion failed somehow
-	
 	// If object is a LeafNode,
 	LeafNode * leaf_node = object.CastLeafNodePtr();
 	if (leaf_node != nullptr)
@@ -94,65 +81,15 @@ void Scene::AddObject(Object & object)
 	}
 }
 
-void Scene::RemoveObject(Uid uid)
+void Scene::RemoveObject(Object & object)
 {
-	// Given the UID, get the object.
-	Object * object;
+	LeafNode * leaf_node = object.CastLeafNodePtr();
+	if (leaf_node == nullptr)
 	{
-		ObjectMap::iterator i = _objects.find(uid);
-		if (i == _objects.end())
-		{
-			// Probably, the object was already removed. 
-			// (Children and sometimes parents are removed automatically.)
-			// Possibly, it was simply never added with AddObject.
-			ASSERT(false);
-			return;
-		}
-		object = i->second;
-		
-		// And remove from the map.
-		_objects.erase(i);
-		ASSERT(_objects.count(uid) == 0);	// erasure failed somehow
+		return;
 	}
-	
-	switch (object->GetNodeType())
-	{
-		case Object::branch:
-		{
-			// If it's a branch,
-			BranchNode & branch_node = object->CastBranchNodeRef();
-			
-			// then for all the children,
-			Object::List::iterator end = branch_node.End();
-			while (true)
-			{
-				Object::List::iterator last = end;
-				-- last;
-				if (last == end)
-				{
-					break;
-				}
-				
-				// remove them first.
-				Object & child_object = static_cast<Object &>(* last);
-				Uid child_uid = child_object.GetUid();
-				RemoveObject(child_uid);
-			}
-			
-			ASSERT(branch_node.IsEmpty());
-			break;
-		}
-			
-		case Object::leaf:
-		{
-			LeafNode & leaf_node = object->CastLeafNodeRef();
-			_render_list.remove(leaf_node);
-			break;
-		}
-	}
-	
-	// and delete. (Object removes itself from parent list here.)
-	delete object;
+
+	_render_list.remove(* leaf_node);
 }
 
 void Scene::SortRenderList()
@@ -174,28 +111,6 @@ void Scene::SortRenderList()
 		
 		_render_list.insert(i, node);
 	}
-}
-
-Object * Scene::GetObject(Uid object_uid)
-{
-	ObjectMap::iterator i = _objects.find(object_uid);
-	if (i == _objects.end())
-	{
-		return nullptr;
-	}
-	
-	return i->second;
-}
-
-Object const * Scene::GetObject(Uid object_uid) const
-{
-	ObjectMap::const_iterator i = _objects.find(object_uid);
-	if (i == _objects.end())
-	{
-		return nullptr;
-	}
-	
-	return i->second;
 }
 
 BranchNode & Scene::GetRoot()
@@ -259,8 +174,7 @@ void Scene::RemoveChildren(BranchNode & parent)
 		
 		// remove them first.
 		Object & child_object = static_cast<Object &>(* last);
-		Uid child_uid = child_object.GetUid();
-		RemoveObject(child_uid);
+		RemoveObject(child_object);
 	}
 	
 	ASSERT(parent.IsEmpty());

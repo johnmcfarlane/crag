@@ -91,7 +91,7 @@ void Vehicle::UpdateModels() const
 	}
 }
 
-void Vehicle::Tick(sim::Engine & simulation_engine)
+void Vehicle::Tick()
 {
 	physics::Body * body = GetBody();
 	if (body == nullptr)

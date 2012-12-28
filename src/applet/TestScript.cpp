@@ -32,6 +32,8 @@
 
 #include "gfx/Engine.h"
 
+#include "core/app.h"
+
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
@@ -151,13 +153,17 @@ namespace
 		auto& scene = physics_engine.GetScene();
 		auto& node_buffer = scene.GetNodeBuffer();
 
-		auto& camera_ray = scene.GetCameraRay();
+		auto& camera_ray = engine.GetCamera();
 		auto& camera_pos = camera_ray.position;
 		auto min_leaf_distance_squared = node_buffer.GetMinLeafDistanceSquared();
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
 		{
-			auto origin = scene.GetOrigin();
+#if defined(NDEBUG)
+			app::Beep();
+#endif
+
+			auto origin = engine.GetOrigin();
 			auto new_origin = geom::RelToAbs(camera_pos, origin);
 
 			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);

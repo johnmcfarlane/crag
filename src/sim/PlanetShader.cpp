@@ -236,7 +236,7 @@ geom::abs::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) co
 // At shallow depth, heigh is highly random.
 bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const
 {
-	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
+	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	
 	geom::abs::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
 	polyhedron.GetFormation().SampleRadius(radius);
@@ -253,7 +253,7 @@ bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, ge
 
 bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const 
 {
-	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
+	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	
 	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
 	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);

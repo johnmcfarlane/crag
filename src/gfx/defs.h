@@ -52,7 +52,4 @@ namespace gfx
 	
 	// base class of objects which are rendered
 	class Object;
-	
-	// storage type for Object
-	typedef std::map<Uid, Object *> ObjectMap;
 }

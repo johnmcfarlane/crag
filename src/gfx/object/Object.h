@@ -77,6 +77,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
+		DEFINE_INTRUSIVE_LIST(Object, List);
 		BranchNode * _parent;
 		NodeType const _node_type;
 	};

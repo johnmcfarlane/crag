@@ -27,10 +27,8 @@ namespace sim
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
-	class Entity;
-	class EntitySet;
 	class Engine;
-	
+	class Entity;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// function declarations
@@ -69,14 +67,11 @@ namespace sim
 		return AddModelWithTransform<GFX_TYPE>(init_data, parent);
 	}
 	
-	// sends render info from simulation to renderer
-	void UpdateModels(EntitySet const & entity_set);
-	
 	// physically attaches the given entities to one another
-	void AttachEntities(Uid const & uid1, Uid const & uid2, EntitySet & entity_set, physics::Engine & physics_engine);
+	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine);
 	
 	// sets physical property of being collidable
 	void SetCollidable(Entity & entity, bool collidable);
 	
-	void ResetOrigin(EntitySet & entity_set, geom::rel::Vector3 const & delta);
+	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta);
 }

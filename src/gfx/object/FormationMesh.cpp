@@ -126,17 +126,12 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 
 gfx::Transformation const & FormationMesh::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
-	// TODO: Presumably, there are moments where the front buffer's origin is different to the simulation's.
-	// At this point, the landscape will flicker for a second. The solution is to offset the fb's origin with the simulation's.
-	// However, we don't currently store that in the gfx::Engine object. Fix this when it becomes apparent.
-#if 0
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	auto& front_buffer_origin = front_buffer.GetOrigin();
-	scratch = model_view * gfx::Transformation(geom::Cast<float>(front_buffer_origin));
+	auto& gfx_origin = GetEngine().GetOrigin();
+	auto offset = front_buffer_origin - gfx_origin;
+	scratch = model_view * gfx::Transformation(geom::Cast<float>(offset));
 	return scratch;
-#else
-	return model_view;
-#endif
 }
 
 void FormationMesh::Render(gfx::Engine const & renderer) const

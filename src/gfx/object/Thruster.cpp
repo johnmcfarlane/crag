@@ -68,11 +68,10 @@ LeafNode::PreRenderResult Thruster::PreRender()
 void Thruster::AddPuff(float thrust_factor)
 {
 	gfx::Engine & renderer = GetEngine();
-	Init branch_init { renderer, Uid::Create() };
 	
 	// Determine the position/direction etc. of the puff.
 	Scalar spawn_volume;
-	BranchNode * branch_node;
+	BranchNodeHandle branch_node;
 	{
 		// Get some random numbers.
 		Scalar g1, g2, g3, g4;
@@ -98,14 +97,12 @@ void Thruster::AddPuff(float thrust_factor)
 
 		// Set its position.
 		gfx::Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
-		branch_node = new BranchNode(branch_init, transformation);
-		renderer.OnAddObject(* branch_node);
+		branch_node.Create(transformation);
 	}
 	
 	{
-		Init puff_init { renderer, Uid::Create() };
-		Puff * model = new Puff(puff_init, spawn_volume);
-		renderer.OnAddObject(* model);
-		renderer.OnSetParent(* model, * branch_node);
+		smp::Handle<Puff> puff;
+		puff.Create(spawn_volume);
+		renderer.OnSetParent(puff.GetUid(), branch_node.GetUid());
 	}
 }

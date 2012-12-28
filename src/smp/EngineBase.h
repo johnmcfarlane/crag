@@ -1,0 +1,191 @@
+//
+//  EngineBase.h
+//  crag
+//
+//  Created by John on 2012/12/23.
+//  Copyright 2012 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
+
+#pragma once
+
+#include "geom/origin.h"
+
+namespace smp
+{
+	// an optional base class for the Engine classes which are managed by Daemon
+	// with support for local coordinate origins and object lifetime management
+	template <typename ENGINE, typename OBJECT>
+	class EngineBase
+	{
+	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+
+		typedef ENGINE Engine;
+		typedef OBJECT Object;
+		typedef smp::Object<Object, ENGINE> SmpObject;
+		typedef std::unordered_map<Uid, SmpObject *> ObjectMap;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
+		EngineBase()
+			: _origin(geom::abs::Vector3::Zero())
+		{
+		}
+
+		// object management
+		Object * GetObject(Uid uid)
+		{
+			auto found = _objects.find(uid);
+			if (found == _objects.end())
+			{
+				return nullptr;
+			}
+
+			SmpObject & smp_object = ref(found->second);
+			Object & object = smp_object;
+			return & object;
+		}
+
+		Object const * GetObject() const
+		{
+			auto found = _objects.find(uid);
+			return (found == _objects.end())
+				? nullptr
+				: * found;
+		}
+
+		template <typename FUNCTION>
+		void ForEachPair(FUNCTION f)
+		{
+			for (auto pair : _objects)
+			{
+				f(pair);
+			}
+		}
+
+		template <typename FUNCTION>
+		void ForEachPair(FUNCTION f) const
+		{
+			for (auto pair : _objects)
+			{
+				f(pair);
+			}
+		}
+
+		template <typename FUNCTION>
+		void ForEachObject(FUNCTION f)
+		{
+			ForEachPair([& f] (ObjectMap::value_type pair) {
+				f(ref(pair.second));
+			});
+		}
+
+		template <typename FUNCTION>
+		void ForEachObject(FUNCTION f) const
+		{
+			ForEachPair([& f] (ObjectMap::value_type pair) {
+				f(ref(pair.second));
+			});
+		}
+
+#if defined(WIN32)
+		template <typename OBJECT_TYPE>
+		void CreateObject(Uid uid)
+		{
+			smp::ObjectInit<Engine>
+			init = 
+			{
+				static_cast<Engine &>(* this),
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE(init);
+			AddObject(* object);
+		}
+#endif
+
+		template <typename OBJECT_TYPE, typename ... PARAMETERS>
+		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
+		{
+			smp::ObjectInit<Engine>
+			init = 
+			{
+				static_cast<Engine &>(* this),
+				uid
+			};
+			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
+			AddObject(* object);
+		}
+
+		void DestroyObject(Uid uid)
+		{
+			VerifyObject(* this);
+
+			auto found = _objects.find(uid);
+			if (found == _objects.end())
+			{
+				DEBUG_BREAK("Object not found");
+				return;
+			}
+
+			SmpObject * object = found->second;
+			OnRemoveObject(* object);
+			_objects.erase(found);
+			delete object;
+		}
+
+	private:
+		virtual void OnAddObject(Object & object) { }
+		virtual void OnRemoveObject(Object & object) { }
+
+		void AddObject(Object & object)
+		{
+			Uid uid = object.GetUid();
+			ASSERT(_objects.find(uid) == _objects.end());
+			_objects[uid] = & object;
+			OnAddObject(object);
+		}
+	public:
+
+		// coordinate system
+		geom::abs::Vector3 const & GetOrigin() const
+		{
+			return _origin;
+		}
+
+		void SetOrigin(geom::abs::Vector3 const & origin)
+		{
+			OnSetOrigin(origin);
+
+			_origin = origin;
+		}
+
+	private:
+		virtual void OnSetOrigin(geom::abs::Vector3 const & origin)
+		{
+		}
+	public:
+
+#if defined(VERIFY)
+		virtual void Verify() const
+		{
+			ForEachPair([] (ObjectMap::value_type const & pair) {
+				SmpObject const & smp_object = ref(pair.second);
+				ASSERT(pair.first == smp_object.GetUid());
+				VerifyObject(smp_object);
+			});
+
+			VerifyObject(_origin);
+		}
+#endif
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
+	private:
+		ObjectMap _objects;
+		geom::abs::Vector3 _origin;
+	};
+}
