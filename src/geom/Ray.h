@@ -72,6 +72,18 @@ namespace geom
 	{
 		return Ray<LHS_S, N>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.direction));
 	}
+	
+	template <typename S, int N>
+	bool operator==(Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return lhs.position == rhs.position && lhs.direction == rhs.direction;
+	}
+
+	template <typename S, int N>
+	bool operator!=(Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return lhs.position != rhs.position || lhs.direction != rhs.direction;
+	}
 
 	//////////////////////////////////////////////////////////////////
 	// Vector<S, N> aliases
