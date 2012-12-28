@@ -159,7 +159,7 @@ namespace
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
 		{
-#if defined(NDEBUG)
+#if ! defined(NDEBUG)
 			app::Beep();
 #endif
 
