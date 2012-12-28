@@ -98,7 +98,7 @@ namespace form
 		
 		///////////////////////////////////////////////////////
 		// Node-related members.
-		static bool IsNodeChurnIntensive() { return false; }
+		static bool IsNodeChurnIntensive() { return true; }
 		float GetWorseReplacableQuaternaScore() const;
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
