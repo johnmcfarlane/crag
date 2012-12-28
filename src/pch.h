@@ -29,9 +29,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#undef Yield
+#undef ERROR
 #undef IN
 #undef OUT
+#undef GetObject
+#undef Yield
 
 // Avoid some annoying warnings.
 #pragma warning(disable : 4530)
@@ -125,6 +127,8 @@
 #include <string>
 #include <thread>
 #include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 //////////////////////////////////////////////////////////////////////
