@@ -110,7 +110,8 @@ namespace geom
 
 	// casts between spheres of different scalar types
 	template <typename LHS_S, typename RHS_S, int N>
-	Sphere<LHS_S, N> Cast(Sphere<RHS_S, N> const & rhs)
+	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Sphere<LHS_S, N>>::type
+	Cast(Sphere<RHS_S, N> const & rhs)
 	{
 		return Sphere<LHS_S, 3>(Cast<LHS_S>(rhs.center), static_cast<LHS_S>(rhs.radius));
 	}
