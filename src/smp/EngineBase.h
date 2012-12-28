@@ -49,12 +49,17 @@ namespace smp
 			return & object;
 		}
 
-		Object const * GetObject() const
+		Object const * GetObject(Uid uid) const
 		{
 			auto found = _objects.find(uid);
-			return (found == _objects.end())
-				? nullptr
-				: * found;
+			if (found == _objects.end())
+			{
+				return nullptr;
+			}
+
+			SmpObject & smp_object = ref(found->second);
+			Object & object = smp_object;
+			return & object;
 		}
 
 		template <typename FUNCTION>
@@ -78,7 +83,7 @@ namespace smp
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f)
 		{
-			ForEachPair([& f] (ObjectMap::value_type pair) {
+			ForEachPair([& f] (std::pair<Uid, SmpObject *> pair) {
 				f(ref(pair.second));
 			});
 		}
@@ -86,7 +91,7 @@ namespace smp
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f) const
 		{
-			ForEachPair([& f] (ObjectMap::value_type pair) {
+			ForEachPair([& f] (std::pair<Uid, SmpObject *> pair) {
 				f(ref(pair.second));
 			});
 		}
@@ -171,7 +176,7 @@ namespace smp
 #if defined(VERIFY)
 		virtual void Verify() const
 		{
-			ForEachPair([] (ObjectMap::value_type const & pair) {
+			ForEachPair([] (std::pair<Uid, SmpObject *> const & pair) {
 				SmpObject const & smp_object = ref(pair.second);
 				ASSERT(pair.first == smp_object.GetUid());
 				VerifyObject(smp_object);

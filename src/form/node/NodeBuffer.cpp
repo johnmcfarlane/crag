@@ -264,9 +264,6 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 		UpdateNodeScores();
 		cached_node_score_ray = new_camera_ray;
 	}
-#if ! defined(NDEBUG)
-	auto t2 = app::GetTime();
-#endif
 	
 	UpdateNodes();
 	

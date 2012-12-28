@@ -28,6 +28,7 @@ namespace geom
 		typedef Matrix<Scalar, 3, 3> Matrix33;
 		typedef Matrix<Scalar, 4, 4> Matrix44;
 		typedef Vector<Scalar, 3> Vector3;
+		typedef Vector<Scalar, 4> Vector4;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions 

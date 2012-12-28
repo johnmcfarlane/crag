@@ -60,7 +60,7 @@ namespace sim
 		void RemoveFormation(form::Formation& formation);
 		
 		void SetCamera(geom::rel::Ray3 const & camera);
-		geom::rel::Ray3 GetCamera() const;
+		geom::rel::Ray3 const & GetCamera() const;
 
 		void OnSetOrigin(geom::abs::Vector3 const & origin);
 		

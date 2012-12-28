@@ -123,6 +123,9 @@ namespace
 				}
 				return true;
 			}
+
+			default:
+				break;
 		}
 
 		// interpret scancode based on grouped modifiers

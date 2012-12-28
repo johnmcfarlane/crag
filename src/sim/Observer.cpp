@@ -140,15 +140,13 @@ void Observer::UpdateModels() const
 		return;
 	}
 
-	auto& engine = GetEngine();
-	auto& origin = engine.GetOrigin();
-
 	auto position = body->GetPosition();
 	auto rotation = body->GetRotation();
 	Transformation transformation (position, rotation);
 	auto camera_ray = axes::GetCameraRay(transformation);
 
 	// update sim (sends message to gfx)
+	auto& engine = GetEngine();
 	engine.SetCamera(camera_ray);
 
 	// update gfx

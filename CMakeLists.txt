@@ -53,7 +53,6 @@ add_executable(crag
 	src/smp/scheduler.cpp
 	src/smp/smp.cpp
 	src/sim/PlanetShader.cpp
-	src/sim/EntitySet.cpp
 	src/sim/Firmament.cpp
 	src/sim/Entity.cpp
 	src/sim/Observer.cpp

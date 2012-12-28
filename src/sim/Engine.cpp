@@ -124,7 +124,7 @@ void Engine::SetCamera(geom::rel::Ray3 const & camera)
 	});
 }
 
-geom::rel::Ray3 Engine::GetCamera() const
+geom::rel::Ray3 const & Engine::GetCamera() const
 {
 	return _camera;
 }

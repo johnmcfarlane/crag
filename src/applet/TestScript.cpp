@@ -136,7 +136,6 @@ namespace
 		auto distance_from_surface = std::sqrt(min_leaf_distance_squared);
 
 		auto distance_from_origin = geom::Length(camera_pos);
-		auto accuracy_score = distance_from_surface / distance_from_origin;
 		
 		auto precision_score = distance_from_surface / distance_from_origin;
 		if (precision_score < min_precision_score)
