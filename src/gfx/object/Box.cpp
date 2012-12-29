@@ -63,8 +63,6 @@ void Box::Render(gfx::Engine const & renderer) const
 	
 	glColor4fv(_color.GetArray());
 	
-	// Low-LoD meshes are smaller than the sphere they approximate.
-	// Apply a corrective scale to compensate.
 	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetMeshResource());
 	cuboid.Draw();
 	
