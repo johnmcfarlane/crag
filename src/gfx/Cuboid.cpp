@@ -116,5 +116,5 @@ void gfx::Cuboid::Deactivate() const
 
 void gfx::Cuboid::Draw() const
 {
-	_mesh.Draw(GL_TRIANGLES, 48, 0);
+	_mesh.Draw(GL_TRIANGLES, 36, 0);
 }
