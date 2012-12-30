@@ -227,7 +227,7 @@ void TestScript::operator() (AppletInterface & applet_interface)
 	SpawnSkybox();
 	
 	// Create vehicle.
-	//SpawnVehicle();
+	SpawnVehicle();
 	
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
