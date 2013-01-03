@@ -50,7 +50,7 @@ bool Program::IsLinked() const
 
 bool Program::IsBound() const
 {
-	return GetInt<GL_CURRENT_PROGRAM>() == _id;
+	return unsigned(GetInt<GL_CURRENT_PROGRAM>()) == _id;
 }
 
 void Program::Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader)
