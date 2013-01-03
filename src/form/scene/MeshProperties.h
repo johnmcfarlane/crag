@@ -23,20 +23,17 @@ namespace form
 		MeshProperties() 
 		: _origin(Vector::Zero())
 		, _num_quaterne(0)
-		, _flat_shaded(false)
 		{
 		}
 		
-		MeshProperties(Vector origin, int num_quaterne, bool flat_shaded) 
+		MeshProperties(Vector origin, int num_quaterne) 
 		: _origin(origin)
 		, _num_quaterne(num_quaterne)
-		, _flat_shaded(flat_shaded)
 		{
 		}
 		
 		Vector _origin;
 		int _num_quaterne;
-		bool _flat_shaded;
 	};
 	
 }

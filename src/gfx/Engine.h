@@ -95,6 +95,8 @@ namespace gfx
 		void OnToggleCulling();
 		void OnToggleLighting();
 		void OnToggleWireframe();
+		void OnToggleFlatShaded();
+		void OnToggleFragmentLighting();
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
 		Transformation const& GetCamera() const;
@@ -169,6 +171,8 @@ namespace gfx
 		bool culling;
 		bool lighting;
 		bool wireframe;
+		bool _flat_shaded;
+		bool _fragment_lighting;
 		int capture_frame;
 		
 		gfx::Image capture_image[2];

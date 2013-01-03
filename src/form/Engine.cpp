@@ -46,7 +46,6 @@ form::Engine::Engine()
 : quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
-, flat_shaded_flag(false)
 , mesh_generation_time(app::GetTime())
 , _regulator_enabled(true)
 , _recommended_num_quaterne(0)
@@ -141,11 +140,6 @@ void form::Engine::OnToggleMeshGeneration()
 	enable_mesh_generation = ! enable_mesh_generation;
 }
 
-void form::Engine::OnToggleFlatShaded()
-{
-	flat_shaded_flag = ! flat_shaded_flag;
-}
-
 void form::Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
@@ -229,7 +223,6 @@ void form::Engine::GenerateMesh()
 	}
 	
 	// build it
-	mesh->GetProperties()._flat_shaded = flat_shaded_flag;
 	_scene.GenerateMesh(* mesh, GetOrigin());
 	
 	// sent it to the FormationSet object

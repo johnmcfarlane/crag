@@ -83,7 +83,7 @@ namespace
 #if defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #elif defined(NDEBUG)
-	CONFIG_DEFINE (video_full_screen, bool, true);
+	CONFIG_DEFINE (video_full_screen, bool, false);
 #else
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
@@ -148,9 +148,9 @@ namespace
 					}
 					
 					case SDL_SCANCODE_F:
-						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleFlatShaded(); });
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFlatShaded(); });
 						return true;
-						
+
 					case SDL_SCANCODE_G:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleGravity(); });
@@ -191,6 +191,10 @@ namespace
 					
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
+						return true;
+						
+					case SDL_SCANCODE_F:
+						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFragmentLighting(); });
 						return true;
 						
 					default:

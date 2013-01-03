@@ -48,6 +48,11 @@ bool Program::IsLinked() const
 	return params != GL_FALSE;
 }
 
+bool Program::IsBound() const
+{
+	return GetInt<GL_CURRENT_PROGRAM>() == _id;
+}
+
 void Program::Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader)
 {
 	assert(! IsInitialized());
@@ -116,7 +121,7 @@ void Program::Bind() const
 
 void Program::Unbind() const
 {
-	ASSERT(GetInt<GL_CURRENT_PROGRAM>() == static_cast<int>(_id));
+	ASSERT(IsBound());
 	GL_CALL(glUseProgram(0));
 }
 
@@ -127,6 +132,7 @@ void Program::OnLightsChanged() const
 
 void Program::UpdateLights(Light::List const & lights) const
 {
+	ASSERT(IsBound());
 	if (! _lights_changed)
 	{
 		return;
@@ -196,6 +202,33 @@ void Program::Verify() const
 	assert(glIsProgram(_id));
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// PolyProgram member definitions
+
+PolyProgram::PolyProgram()
+: _fragment_lighting_location(-1)
+, _flat_shade_location(-1)
+{
+}
+
+void PolyProgram::SetUniforms(bool fragment_lighting, bool flat_shade) const
+{
+	ASSERT(IsBound());
+	GL_CALL(glUniform1f(_fragment_lighting_location, GLfloat(fragment_lighting)));
+	GL_CALL(glUniform1f(_flat_shade_location, GLfloat(flat_shade)));
+}
+
+void PolyProgram::InitUniforms()
+{
+	ASSERT(IsBound());
+	GL_VERIFY;
+
+	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
+	_flat_shade_location = GetUniformLocation("flat_shade");
+
+	GL_VERIFY;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // SphereProgram member definitions

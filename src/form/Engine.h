@@ -96,7 +96,6 @@ namespace form
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
-		void OnToggleFlatShaded();
 		
 		void Run(Daemon::MessageQueue & message_queue);
 
@@ -121,7 +120,6 @@ namespace form
 		bool quit_flag;
 		bool suspend_flag;
 		bool enable_mesh_generation;
-		bool flat_shaded_flag;
 		
 		Mesh::list_type _meshes;
 		

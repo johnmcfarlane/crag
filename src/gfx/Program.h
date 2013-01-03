@@ -49,6 +49,7 @@ namespace gfx
 		
 		bool IsInitialized() const;
 		bool IsLinked() const;
+		bool IsBound() const;
 		
 		virtual void Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader);
 		void Deinit(Shader & light_vert_shader, Shader & light_frag_shader);
@@ -74,6 +75,20 @@ namespace gfx
 		Shader _frag_shader;
 		LightBlock _light_block;
 		mutable bool _lights_changed;
+	};
+
+	class PolyProgram : public Program
+	{
+	public:
+		PolyProgram();
+		
+		void SetUniforms(bool fragment_lighting, bool flat_shade) const;
+	private:
+		void InitUniforms() override;
+		
+		// variables
+		GLint _fragment_lighting_location;
+		GLint _flat_shade_location;
 	};
 	
 	class SphereProgram : public Program

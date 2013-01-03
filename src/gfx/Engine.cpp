@@ -50,6 +50,8 @@ namespace
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
 	CONFIG_DEFINE (init_wireframe, bool, false);
+	CONFIG_DEFINE (init_flat_shaded, bool, false);
+	CONFIG_DEFINE (init_fragment_lighting, bool, true);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
@@ -240,6 +242,8 @@ Engine::Engine()
 , culling(init_culling)
 , lighting(init_lighting)
 , wireframe(init_wireframe)
+, _flat_shaded(init_flat_shaded)
+, _fragment_lighting(init_fragment_lighting)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_mesh(nullptr)
@@ -456,16 +460,31 @@ void Engine::OnResize(geom::Vector2i size)
 void Engine::OnToggleCulling()
 {
 	culling = ! culling;
+	_dirty = true;
 }
 
 void Engine::OnToggleLighting()
 {
 	lighting = ! lighting;
+	_dirty = true;
 }
 
 void Engine::OnToggleWireframe()
 {
 	wireframe = ! wireframe;
+	_dirty = true;
+}
+
+void Engine::OnToggleFlatShaded()
+{
+	_flat_shaded = ! _flat_shaded;
+	_dirty = true;
+}
+
+void Engine::OnToggleFragmentLighting()
+{
+	_fragment_lighting = ! _fragment_lighting;
+	_dirty = true;
 }
 
 void Engine::OnToggleCapture()
@@ -788,6 +807,12 @@ bool Engine::HasShadowSupport() const
 
 void Engine::PreRender()
 {
+	// set shader uniforms
+	PolyProgram const * poly_program = static_cast<PolyProgram const *>(_resource_manager->GetProgram(ProgramIndex::poly));
+	SetCurrentProgram(poly_program);
+	poly_program->SetUniforms(_fragment_lighting, _flat_shaded);
+
+	// purge objects
 	typedef LeafNode::RenderList List;
 	
 	List const & render_list = scene->GetRenderList();

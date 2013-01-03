@@ -50,11 +50,6 @@ form::MeshProperties::Vector const & form::MeshBufferObject::GetOrigin() const
 
 void form::MeshBufferObject::Activate() const
 {
-	if (properties._flat_shaded) 
-	{
-		glShadeModel(GL_FLAT);
-	}
-
 	super::Bind();
 	super::Activate();
 }
@@ -63,11 +58,6 @@ void form::MeshBufferObject::Deactivate() const
 {
 	super::Deactivate();
 	super::Unbind();
-	
-	if (properties._flat_shaded) 
-	{
-		glShadeModel(GL_SMOOTH);
-	}
 }
 
 void form::MeshBufferObject::Draw() const

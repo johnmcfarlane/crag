@@ -16,12 +16,8 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
-
-namespace  
-{
-	CONFIG_DEFINE (init_flat_shaded, bool, false);
-}
-
+////////////////////////////////////////////////////////////////////////////////
+// form::Mesh
 
 form::Mesh::Mesh(int max_num_verts, int max_num_tris)
 : vertices(max_num_verts)
@@ -105,7 +101,7 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const &
 {
 	Vertex & vert_a = GetVertex(a, color);
 	Vertex & vert_b = GetVertex(b, color);
-	Vertex & vert_c = (! properties._flat_shaded) ? GetVertex(c, color) : AddVertex(c, color);
+	Vertex & vert_c = GetVertex(c, color);
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }

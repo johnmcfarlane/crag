@@ -9,27 +9,31 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-
-//#define PER_FRAGMENT_LIGHTING
-
-
-#if defined(PER_FRAGMENT_LIGHTING)
 // light.frag function which calculates the lighting for the given fragment
 vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
-#endif
 
+// inputs from the renderer
+uniform bool fragment_lighting = true;
+uniform bool flat_shade = false;
 
 // inputs from poly.vert
 varying vec3 normal;
-varying vec4 position;
+varying vec3 position;
 varying vec4 color;
-
 
 void main(void)
 {
-#if defined(PER_FRAGMENT_LIGHTING)
-	gl_FragColor = color * vec4(LightFragment(position.xyz, normalize(normal)), color.a);
-#else
-	gl_FragColor = color;
-#endif
+	if (flat_shade)
+	{
+		vec3 n = normalize(cross(dFdy(position), dFdx(position)));
+		gl_FragColor = color * vec4(LightFragment(position.xyz, n), color.a);
+	}
+	else if (fragment_lighting)
+	{
+		gl_FragColor = color * vec4(LightFragment(position.xyz, normalize(normal)), color.a);
+	}
+	else
+	{
+		gl_FragColor = color;
+	}
 }

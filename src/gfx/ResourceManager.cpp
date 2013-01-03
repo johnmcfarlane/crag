@@ -100,7 +100,7 @@ bool ResourceManager::InitShaders()
 	_light_frag_shader = new Shader;
 	_light_frag_shader->Init("glsl/light.frag", GL_FRAGMENT_SHADER);
 	
-	_programs[ProgramIndex::poly] = new Program;
+	_programs[ProgramIndex::poly] = new PolyProgram;
 	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", * _light_vert_shader, * _light_frag_shader);
 	
 	_programs[ProgramIndex::sphere] = new SphereProgram;
