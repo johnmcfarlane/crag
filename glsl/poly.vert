@@ -14,6 +14,7 @@ vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
 
 // inputs from the renderer
 uniform bool fragment_lighting = true;
+uniform bool flat_shade = false;
 
 // outputs to poly.frag
 varying vec3 normal;
@@ -25,7 +26,7 @@ void main(void)
 	position = (gl_ModelViewMatrix * gl_Vertex).xyz;
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	if (fragment_lighting)
+	if (fragment_lighting || flat_shade)
 	{
 		color = gl_Color;
 	}
