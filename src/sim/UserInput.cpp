@@ -79,8 +79,6 @@ namespace
 		
 		// Lots of up/down options
 		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_SPACE },
-		{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_RSHIFT },
-		//{ { sim::Controller::Impulse::FORCE, axes::UP, +1 }, SDL_SCANCODE_LSHIFT },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_RCTRL },
 		{ { sim::Controller::Impulse::FORCE, axes::UP, -1 }, SDL_SCANCODE_LCTRL },
 
