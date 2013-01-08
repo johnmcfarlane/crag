@@ -164,17 +164,22 @@ ReentryGuard reentry_guard(counter);
 		} \
 	)
 
-#define VerifyEqual(A, B) \
+#define VerifyOp(A, OP, B) \
 	DO_STATEMENT( \
 		auto a = A; \
 		auto b = B; \
-		if (a != b) { \
+		if (!(a OP b)) { \
 			::std::ostringstream message; \
-			message << #A "=" << a \
-					<< ", " #B "=" << b; \
-			DEBUG_BREAK("Not equal: %s", message.str().c_str()); \
+			message \
+				<< #A "=" << a \
+				<< ' ' << #OP \
+				<< ' ' << #B "=" << b; \
+			DEBUG_BREAK("Failed: %s", message.str().c_str()); \
 		} \
 	)
+
+#define VerifyEqual(A, B) \
+	VerifyOp(A, ==, B)
 
 #define VerifyNearlyEqual(A, B, EPSILON) \
 	DO_STATEMENT( \
