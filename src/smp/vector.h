@@ -51,7 +51,26 @@ namespace smp
 		{
 			deinit();
 		}
+				
+		////////////////////////////////////////////////////////////////////////////////
+		// invariant verification
 		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			// Either all members are null or non-null; no mix and match.
+			VerifyEqual((begin() == nullptr), (end() == nullptr));
+			VerifyEqual((begin() == nullptr), (everything == nullptr));
+			
+			// First, last and everything are in ascending order.
+			VerifyOp(begin(), <=, end());
+			VerifyOp(end(), <=, everything);
+			
+			// Points are correctly lined up and add up.
+			VerifyEqual(begin() + (end() - begin()), end());
+			VerifyEqual(begin() + (everything - begin()), everything);
+		}
+#endif
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// Iterators - NOT thread safe
@@ -99,14 +118,14 @@ namespace smp
 		
 		void reserve(size_type c)
 		{
-			verify();
+			VerifyObject(* this);
 			deinit();
 			init(c);
 		}
 		
 		void clear()
 		{
-			verify();
+			VerifyObject(* this);
 
 			// Call the d'tor on all the deleted elements.
 			for (T& element : *this)
@@ -116,24 +135,24 @@ namespace smp
 			
 			last = reinterpret_cast<atomic_type>(first);
 			
-			verify();
+			VerifyObject(* this);
 		}
 		
 		bool empty() const
 		{
-			verify();
+			VerifyObject(* this);
 			return first == last;
 		}
 		
 		size_type size() const
 		{
-			verify();
+			VerifyObject(* this);
 			return size_type(end() - begin());
 		}
 		
 		size_type capacity() const
 		{
-			verify();
+			VerifyObject(* this);
 			return everything - first;
 		}
 		
@@ -187,6 +206,8 @@ namespace smp
 				new (it) T;
 			}
 			
+			VerifyObject(* this);
+
 			// Return the first of the new elements.
 			return pre_last;
 		}
@@ -203,6 +224,8 @@ namespace smp
 				new (it) T (filler);
 			}
 			
+			VerifyObject(* this);
+
 			// Return the first of the new elements.
 			return pre_last;
 		}
@@ -232,12 +255,12 @@ namespace smp
 			buffer += c_bytes;
 			everything = reinterpret_cast<T *> (buffer);
 
-			verify();
+			VerifyObject(* this);
 		}
 		
 		void deinit()
 		{
-			verify();
+			VerifyObject(* this);
 
 			// Erase all the allocated elements.
 			clear();
@@ -245,21 +268,9 @@ namespace smp
 			// Free up the memory.
 			Free(first);
 		}
-		
-		void verify() const
-		{
-			// Either all members are null or non-null; no mix and match.
-			ASSERT((begin() == nullptr) == (end() == nullptr));
-			ASSERT((begin() == nullptr) == (everything == nullptr));
-			
-			// First, last and everything are in ascending order.
-			ASSERT(begin() <= end());
-			ASSERT(end() <= everything);
-			
-			// Points are correctly lined up and add up.
-			ASSERT(begin() + (end() - begin()) == end());
-			ASSERT(begin() + (everything - begin()) == everything);
-		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
 
 		ptr_type first;
 		atomic last;
