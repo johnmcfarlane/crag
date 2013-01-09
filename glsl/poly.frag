@@ -25,7 +25,14 @@ void main(void)
 {
 	if (flat_shade)
 	{
-		vec3 n = normalize(cross(dFdy(position), dFdx(position)));
+		vec3 dx = dFdx(position);
+		vec3 dy = dFdy(position);
+		vec3 n = normalize(cross(dy, dx));
+
+		// TODO: argh!!
+		if (dot(n, normal) < 0)
+			n = - n;
+
 		gl_FragColor = color * vec4(LightFragment(position.xyz, n), color.a);
 	}
 	else if (fragment_lighting)
