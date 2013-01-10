@@ -46,6 +46,7 @@ namespace
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
+	CONFIG_DEFINE (default_refresh_rate, int, 50);
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_lighting, bool, true);
@@ -654,7 +655,14 @@ void Engine::Deinit()
 // Decide whether to use vsync and initialize GL state accordingly.
 void Engine::InitVSync()
 {
-	_frame_duration = 1.0f / app::GetRefreshRate();
+	auto refresh_rate = app::GetRefreshRate();
+	if (refresh_rate == 0)
+	{
+		DEBUG_MESSAGE("Unknown refresh rate; using default_refresh_rate of %dHz", default_refresh_rate);
+		refresh_rate = default_refresh_rate;
+	}
+
+	_frame_duration = 1.0f / refresh_rate;
 
 	if (profile_mode)
 	{
