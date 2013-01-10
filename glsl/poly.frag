@@ -30,8 +30,8 @@ void main(void)
 		vec3 n = normalize(cross(dy, dx));
 
 		// TODO: argh!!
-		if (dot(n, normal) < 0)
-			n = - n;
+		float d = dot(n, normal);
+		n *= d / abs(d);
 
 		gl_FragColor = color * vec4(LightFragment(position.xyz, n), color.a);
 	}
