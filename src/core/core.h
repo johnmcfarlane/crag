@@ -21,11 +21,19 @@
 	CLASS & operator=(const CLASS&); \
 	CLASS(const CLASS&);
 
-#define constexpr
 #else
 #define OBJECT_NO_COPY(CLASS) \
 	CLASS & operator=(const CLASS&) = delete; \
 	CLASS(const CLASS&) = delete;
+#endif
+
+
+//////////////////////////////////////////////////////////////////////
+// Missing keywords etc.
+
+#if defined(WIN32)
+#define constexpr
+#define alignof __alignof
 #endif
 
 
