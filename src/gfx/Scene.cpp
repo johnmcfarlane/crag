@@ -68,9 +68,7 @@ core::Time Scene::GetTime() const
 
 void Scene::AddObject(Object & object)
 {
-	// add object to map
-	Uid uid = object.GetUid();
-	ASSERT(uid);
+	VerifyObjectRef(object);
 
 	// If object is a LeafNode,
 	LeafNode * leaf_node = object.CastLeafNodePtr();
