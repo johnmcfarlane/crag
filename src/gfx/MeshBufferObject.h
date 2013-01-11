@@ -1,5 +1,5 @@
 //
-//  Mesh.h
+//  MeshBufferObject.h
 //  crag
 //
 //  Created by john on 10/7/09.
@@ -15,7 +15,9 @@
 
 namespace gfx
 {
-	template<typename VERTEX, GLenum USAGE> class Mesh
+	// convenience class combines VBO of given vertex type, IBO and a given USAGE value
+	template<typename VERTEX, GLenum USAGE> 
+	class MeshBufferObject
 	{
 	public:
 		// types

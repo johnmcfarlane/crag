@@ -12,7 +12,7 @@
 #include "MeshProperties.h"
 #include "Vertex.h"
 
-#include "gfx/Mesh.h"
+#include "gfx/MeshBufferObject.h"
 #include "gfx/MeshResource.h"
 
 
@@ -30,11 +30,10 @@ namespace form
 	
 	
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
-	// TODO: Does this class belong in gfx?
-	// TODO: Clean up inheritance. Also maybe rename this class.
-	class MeshBufferObject : public gfx::Mesh<Vertex, GL_DYNAMIC_DRAW>, public gfx::MeshResource
+	// TODO: Clean up inheritance.
+	class MeshBufferObject : public gfx::MeshBufferObject<Vertex, GL_DYNAMIC_DRAW>, public gfx::MeshResource
 	{
-		typedef gfx::Mesh<Vertex, GL_DYNAMIC_DRAW> super;
+		typedef gfx::MeshBufferObject<Vertex, GL_DYNAMIC_DRAW> super;
 	public:
 		MeshBufferObject();
 		virtual ~MeshBufferObject();

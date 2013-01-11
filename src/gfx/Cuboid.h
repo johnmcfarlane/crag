@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Mesh.h"
+#include "MeshBufferObject.h"
 #include "MeshResource.h"
 
 
@@ -28,7 +28,7 @@ namespace gfx
 		};
 		
 		typedef geom::Vector3f Vector3;
-		typedef gfx::Mesh<Vertex, GL_STATIC_DRAW> Mesh;
+		typedef gfx::MeshBufferObject<Vertex, GL_STATIC_DRAW> Mesh;
 		
 		// functions
 		Cuboid();

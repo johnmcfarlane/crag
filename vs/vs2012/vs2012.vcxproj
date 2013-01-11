@@ -188,7 +188,7 @@
     <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
     <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\Layer.h" />
-    <ClInclude Include="..\..\src\gfx\Mesh.h" />
+    <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
     <ClInclude Include="..\..\src\gfx\object\Box.h" />
