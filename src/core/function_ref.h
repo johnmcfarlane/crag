@@ -36,7 +36,7 @@ namespace core
 		}
 		
 #if defined(WIN32)
-		// TODO: bugs in VC++ compiler mean copy c'tor is skipped and function_ref is itself wrapped in a function_ref.
+		// differences in VC++ compiler mean copy c'tor is skipped and function_ref is itself wrapped in a function_ref.
 		template <typename FUNCTOR>
 #else
 		template <typename FUNCTOR, typename std::enable_if<! std::is_same<FUNCTOR, function_ref>::value, FUNCTOR>::type* dummy = nullptr>

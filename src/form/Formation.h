@@ -42,7 +42,7 @@ namespace form
 		void SampleRadius(geom::abs::Scalar sample_radius);
 
 	private:
-		int _seed;	// TODO: This needs its own type.
+		int _seed;
 		Shader const & _shader;
 		geom::abs::Sphere3 _shape;
 		sim::PlanetHandle _planet;

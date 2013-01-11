@@ -275,7 +275,6 @@ namespace form { namespace collision
 		}
 		
 		// Use the nearest point to perform an intersection test.
-		// TODO: Pass the pyramid into shape-specific fns instead.
 		TestObjectPointCollision(node_functor, nearest_point);
 	}
 	

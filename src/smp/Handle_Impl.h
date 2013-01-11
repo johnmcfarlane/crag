@@ -63,7 +63,6 @@ namespace smp
 	}
 	
 	// Sets the UID of the entity being handled.
-	// TODO: ... but then so is this.
 	template <typename TYPE>
 	void Handle<TYPE>::SetUid(Uid uid)
 	{

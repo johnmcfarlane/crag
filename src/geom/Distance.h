@@ -13,10 +13,6 @@
 
 #include "Ray.h"
 
-
-// TODO: Plane class instead of all this a, b, c nonsense.
-// TODO: Relational.h - operator<() and all that.
-
 namespace geom
 {
 	////////////////////////////////////////////////////////////////////////////////
