@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 namespace core
 {
 	
@@ -28,25 +27,31 @@ namespace core
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
+		double_buffer()
+			: _front_buffer(& _buffer[0])
+			, _back_buffer(& _buffer[1])
+		{
+			VerifyObject(* this);
+		}
+		
 		// general-purpose c'tor; given arguments are passed to c'tors of both elements
 		template <typename ... ARGS>
-		double_buffer(ARGS ... args)
+		double_buffer(std::initializer_list<ARGS ...> args)
+			: _buffer({args, args})
+			, _front_buffer(& _buffer[0])
+			, _back_buffer(& _buffer[1])
 		{
-			new (data() + 0) value_type (args ...);
-			new (data() + 1) value_type (args ...);
-			front_buffer = data() + 0;
-			back_buffer = data() + 1;
+			double_buffer();
 
 			VerifyObject(* this);
 		}
 		
 		// copy c'tor
 		double_buffer(double_buffer const & rhs)
+			: _buffer(rhs._buffer)
 		{
 			VerifyObjectRef(rhs);
 			
-			new (data() + 0) value_type (rhs[0]);
-			new (data() + 1) value_type (rhs[1]);
 			copy_polarity(rhs);
 			
 			VerifyObject(* this);
@@ -58,8 +63,8 @@ namespace core
 			VerifyObject(* this);
 			VerifyObjectRef(rhs);
 			
-			data()[0] = rhs[0];
-			data()[1] = rhs[1];
+			_buffer[0] = rhs[0];
+			_buffer[1] = rhs[1];
 			copy_polarity(rhs);
 			
 			VerifyObject(* this);
@@ -71,14 +76,14 @@ namespace core
 		{
 			VerifyObject(* this);
 			
-			return * front_buffer;
+			return * _front_buffer;
 		}
 		
 		value_type const & front() const
 		{
 			VerifyObject(* this);
 
-			return * front_buffer;
+			return * _front_buffer;
 		}
 		
 		// back buffer accessors
@@ -86,14 +91,14 @@ namespace core
 		{
 			VerifyObject(* this);
 
-			return * back_buffer;
+			return * _back_buffer;
 		}
 		
 		value_type const & back() const
 		{
 			VerifyObject(* this);
 
-			return * back_buffer;
+			return * _back_buffer;
 		}
 		
 		// subscript operator
@@ -102,7 +107,7 @@ namespace core
 			VerifyObject(* this);
 			ASSERT(n == 0 || n == 1);
 
-			return data()[n];
+			return _buffer[n];
 		}
 		
 		value_type const & operator [] (int n) const
@@ -110,18 +115,7 @@ namespace core
 			VerifyObject(* this);
 			ASSERT(n == 0 || n == 1);
 
-			return data()[n];
-		}
-		
-		// raw data accessor
-		value_type * data()
-		{
-			return reinterpret_cast<value_type *>(storage);
-		}
-		
-		value_type const * data() const
-		{
-			return reinterpret_cast<value_type const *>(storage);
+			return _buffer[n];
 		}
 		
 		// swaps the front and back buffers
@@ -129,38 +123,36 @@ namespace core
 		{
 			VerifyObject(* this);
 
-			std::swap(front_buffer, back_buffer);
+			std::swap(_front_buffer, _back_buffer);
 		}
 		
 #if defined(VERIFY)
 		void Verify() const
 		{
-			VerifyObject(data()[0]);
-			VerifyObject(data()[1]);
-			VerifyArrayElement(front_buffer, data() + 0, data() + 2);
-			VerifyArrayElement(back_buffer, data() + 0, data() + 2);
-			VerifyTrue(front_buffer != back_buffer);
+			VerifyObject(_buffer[0]);
+			VerifyObject(_buffer[1]);
+			VerifyArrayElement(_front_buffer, &_buffer[0], &_buffer[0]+2);
+			VerifyArrayElement(_back_buffer, &_buffer[0], &_buffer[0]+2);
+			VerifyTrue(_front_buffer != _back_buffer);
 		}
 #endif
 		
 	private:
 		void copy_polarity(const double_buffer & rhs)
 		{
-			size_t front_buffer_index = rhs.front_buffer - rhs.data();
-			front_buffer = data() + front_buffer_index;
-			back_buffer = data() + (front_buffer_index ^ 1);
+			size_t front_buffer_index = rhs._front_buffer - rhs._buffer;
+			_front_buffer = _buffer + front_buffer_index;
+			_back_buffer = _buffer + (front_buffer_index ^ 1);
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		// enough bytes to store two objects
-		// TODO: Investigate initializer_list as way to replace char with value_type.
-		char storage [sizeof(value_type) * 2];
+		std::array<value_type, 2> _buffer;
 		
-		// pointers to each of the two objects
-		value_type * front_buffer;
-		value_type * back_buffer;
+		// pointers to each of the two objects in _buffer
+		value_type * _front_buffer;
+		value_type * _back_buffer;
 	};
 	
 }
