@@ -88,6 +88,11 @@ void Body::SetPosition(Vector3 const & position) const
 
 Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
 {
+	if (body_id == nullptr)
+	{
+		return Vector3::Zero();
+	}
+
 	Vector3 velocity;
 	dBodyGetRelPointVel (body_id, point.x, point.y, point.z, velocity.GetAxes());
 	return velocity;
@@ -95,7 +100,14 @@ Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
 
 Vector3 Body::GetVelocity() const
 {
-	return GetRelativePointVelocity(Vector3::Zero());
+	if (body_id == nullptr)
+	{
+		return Vector3::Zero();
+	}
+
+	Vector3 velocity;
+	dBodyGetRelPointVel (body_id, 0, 0, 0, velocity.GetAxes());
+	return velocity;
 }
 
 Matrix33 const & Body::GetRotation() const
@@ -229,3 +241,14 @@ bool physics::IsAttached(Body const & body1, Body const & body2)
 	
 	return dAreConnected(body1.body_id, body2.body_id) != 0;
 }
+
+#if defined(VERIFY)
+void physics::Body::Verify() const
+{
+	VerifyObject(GetPosition());
+	VerifyObject(GetVelocity());
+	VerifyObject(GetRotation());
+	VerifyOp(geom::Length(GetPosition()), <, 4.0e+7);
+	VerifyOp(geom::Length(GetVelocity()), <, 1000);
+}
+#endif

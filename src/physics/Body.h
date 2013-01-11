@@ -62,6 +62,10 @@ namespace physics
 		friend void Attach(dJointID joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		
+#if defined(VERIFY)
+		virtual void Verify() const;
+#endif
+
 	protected:
 		dGeomID geom_id;	// the collision info
 		dBodyID body_id;	// the dynaical info
