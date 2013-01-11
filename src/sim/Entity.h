@@ -49,7 +49,7 @@ namespace sim
 
 		// Verification
 	#if defined(VERIFY)
-		//virtual void Verify() override;
+		virtual void Verify() const override;
 	#endif
 
 	private:

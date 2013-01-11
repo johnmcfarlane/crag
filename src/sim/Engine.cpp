@@ -245,6 +245,7 @@ void Engine::Tick()
 		}
 
 		// Run physics/collisions.
+		VerifyObject(* this);
 		_physics_engine.Tick(sim_tick_duration, _camera);
 
 		// Tell renderer about changes.

@@ -160,6 +160,15 @@ namespace geom
 						  Row::Zero());
 		}
 		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyObject(rows[0]);
+			VerifyObject(rows[1]);
+			VerifyObject(rows[2]);
+		}
+#endif
+
 	private:
 		// variables
 		_Row rows [3];

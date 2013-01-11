@@ -69,3 +69,12 @@ Transformation Entity::GetTransformation() const
 	ASSERT(_body != nullptr);
 	return Transformation(_body->GetPosition(), _body->GetRotation());
 }
+
+#if defined(VERIFY)
+void Entity::Verify() const
+{
+	super::Verify();
+
+	VerifyObjectPtr(_body);
+}
+#endif

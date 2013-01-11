@@ -35,7 +35,7 @@ namespace sim
 		Scalar GetBoundingRadius() const;
 
 #if defined(VERIFY)
-		void Verify() const;
+		virtual void Verify() const override;
 #endif
 	private:
 		void CalculatePosition(core::Time t);
