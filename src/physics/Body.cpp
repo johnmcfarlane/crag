@@ -249,6 +249,6 @@ void physics::Body::Verify() const
 	VerifyObject(GetVelocity());
 	VerifyObject(GetRotation());
 	VerifyOp(geom::Length(GetPosition()), <, 4.0e+7);
-	VerifyOp(geom::Length(GetVelocity()), <, 1000);
+//	VerifyOp(geom::Length(GetVelocity()), <, 1000);
 }
 #endif
