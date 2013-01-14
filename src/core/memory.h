@@ -9,33 +9,8 @@
 
 #pragma once
 
-// This definition indicates whether stack frame addresses increase or decrease as the stack grows.
-#if defined(__ppc__) || defined(__ppc64__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
-#define STACK_GROWTH_DIRECTION -1
-#endif
-
-// This definition is highly questionable. Double check it works if compiling on a new platform.
-// I'm assuming that addresses don't need to be aligned for calls to __builtin_prefetch.
-#if defined(__ppc__)
-#define CACHE_LINE_WIDTH 32
-#elif defined(__ppc64__) || defined(__i386__) || defined(__x86_64__)
-#define CACHE_LINE_WIDTH 128
-#elif defined(WIN32)
-#define CACHE_LINE_WIDTH 128
-#include <xmmintrin.h>
-#else
-#error Unidentified platform.
-#endif
-
 // Array size
-#define ARRAY_SIZE(ARRAY) (sizeof(ARRAY)/sizeof(*ARRAY))
-
-
-//////////////////////////////////////////////////////////////////////
-// shared_ptr
-
-using std::shared_ptr;
-
+#define ARRAY_SIZE(ARRAY) extent <decltype(ARRAY)>::value;
 
 //////////////////////////////////////////////////////////////////////
 // Low-level Memory Manipulation using templated parameters
@@ -59,97 +34,30 @@ template<typename T> inline void ZeroObject(T & object)
 	ZeroMemory(reinterpret_cast<char *>(& object), sizeof(object));
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Page Allocations
 
-// Bitwise Copy
+// size of system page size
+size_t RoundToPageSize(size_t num_bytes);
+size_t GetPageSize();
 
-template<typename T> inline void BitwiseCopyArray(T * lhs, T const * rhs, int count)
-{
-	// Make sure this isn't a job for memmove.
-	assert(Abs(lhs - rhs) >= count);
-	
-	size_t num_bytes = sizeof(T) * count;
-	
-	memcpy(lhs, rhs, num_bytes);
-}
-
-template<typename T> inline void BitwiseCopyObject(T & lhs, T const & rhs)
-{
-	BitwiseCopyArray(& lhs, & rhs, 1);
-}
-
-
-// Bitwise Swap
-
-template<typename T> inline void BitwiseSwapObject(T & lhs, T & rhs)
-{
-	char buffer [sizeof (T)];
-	T & tmp = * reinterpret_cast<T *>(buffer);
-	BitwiseCopyObject(tmp, lhs);
-	BitwiseCopyObject(lhs, rhs);
-	BitwiseCopyObject(rhs, tmp);
-}
-
-
-// Prefetch
-
-inline void PrefetchBlock(void const * ptr)
-{
-#if defined(__GNUC__)
-	__builtin_prefetch(ptr);
-#elif defined(WIN32)
-	_mm_prefetch(reinterpret_cast<char const *>(ptr), _MM_HINT_T0);
-#else
-#endif
-}
-
-inline void PrefetchMemory(char const * begin, char const * end)
-{
-	// End still means _after_ the last item.
-	// However, a zero-sized prefetch is wasteful enough that it is prohibited.
-	assert(end > begin);
-	
-	do
-	{
-		PrefetchBlock(begin);
-		begin += CACHE_LINE_WIDTH;
-	}	while (begin < end);
-}
-
-// Iterator should be random access for this algorithm to work efficiently.
-template<typename ITERATOR> inline void PrefetchArray(ITERATOR begin, ITERATOR end)
-{
-	PrefetchMemory(& reinterpret_cast<char const &>(* begin), & reinterpret_cast<char const &>(* end));
-}
-
-template<typename T> inline void PrefetchArray(T const * object_ptr, int count)
-{
-	PrefetchArray(object_ptr, object_ptr + count);
-}
-
-template<typename T> inline void PrefetchObject(T const & object)
-{
-	PrefetchArray((& object), (& object) + 1);
-}
-
+void * AllocatePage(size_t num_bytes);
+void FreePage(void * allocation);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
-// Given an element of size, type_size, 
-// calculate the optimum alignment for array allocation.
-inline size_t CalculateAlignment(size_t type_size)
-{
-	size_t alignment = 1;
-	while ((type_size & 1) == 0)
-	{
-		alignment <<= 1;
-		type_size >>= 1;
-	}
-	return std::max(alignment, sizeof(void*));
-}
-
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
 void Free(void * allocation);
+
+template <typename T>
+T* Allocate(size_t count)
+{
+	size_t num_bytes = count * sizeof(T);
+	size_t alignment = alignof(T);
+	void * buffer = Allocate(num_bytes, alignment);
+	return reinterpret_cast<T *>(buffer);
+}
 
 void InitAllocationCounters();
 void DeinitAllocationCounters();

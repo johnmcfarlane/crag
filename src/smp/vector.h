@@ -243,17 +243,12 @@ namespace smp
 		
 		void init(size_type c) 
 		{
-			// Calculate the size of the required memory buffer in bytes,
-			size_type c_bytes = sizeof(T) * c;
-			
 			// Allocate the buffer and set first and last to the start of it.
-			char * buffer = reinterpret_cast<char *> (Allocate (c_bytes, CalculateAlignment(sizeof(T))));
-			first = reinterpret_cast<T *> (buffer);
-			last = reinterpret_cast<atomic_type> (buffer);
+			first = Allocate<T>(c);
+			last = reinterpret_cast<atomic_type> (first);
 			
 			// Set everything to end of buffer.
-			buffer += c_bytes;
-			everything = reinterpret_cast<T *> (buffer);
+			everything = first + c;
 
 			VerifyObject(* this);
 		}

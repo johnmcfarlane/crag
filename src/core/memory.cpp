@@ -56,6 +56,55 @@ void Free(void * allocation)
 #endif
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Page Alignment - large chunks of memory
+
+size_t RoundToPageSize(size_t required_bytes)
+{
+	size_t page_mask = GetPageSize() - 1;
+	return (required_bytes + (page_mask - 1)) & ~ page_mask;
+}
+
+#if defined(WIN32)
+size_t GetPageSize()
+{
+	static size_t page_size = 0;
+	if (page_size == 0)
+	{
+		SYSTEM_INFO system_info;
+		GetSystemInfo(& system_info);
+		page_size = system_info.dwPageSize;
+	}
+	ASSERT(page_size > 0);
+
+	return page_size;
+}
+
+void * AllocatePage(size_t num_bytes)
+{
+	// check allocation size is rounded up correctly
+	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
+
+	// allocate
+	void * p = VirtualAlloc(nullptr, num_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	if (p == nullptr)
+	{
+		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
+	}
+
+	return p;
+}
+
+void FreePage(void * allocation)
+{
+	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
+
+	if (! VirtualFree(allocation, 0, MEM_RELEASE))
+	{
+		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
+	}
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global new/delete operators for measuring the number of leaks
