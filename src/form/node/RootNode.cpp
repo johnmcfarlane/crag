@@ -91,12 +91,12 @@ void form::RootNode::Deinit(PointBuffer & points)
 {
 	ASSERT(! HasChildren());
 	
-	points.Free(triple[0].corner);
+	points.Destroy(triple[0].corner);
 	
 	for (int i = 0; i < 3; ++ i) {
 		triple[i].corner = nullptr;
 		
-		points.Free(triple[i].mid_point);
+		points.Destroy(triple[i].mid_point);
 		triple[i].mid_point = nullptr;
 		
 		triple[i].cousin = nullptr;

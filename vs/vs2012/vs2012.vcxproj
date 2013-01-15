@@ -128,7 +128,7 @@
     <ClInclude Include="..\..\src\core\intOps.h" />
     <ClInclude Include="..\..\src\core\intrusive_list.h" />
     <ClInclude Include="..\..\src\core\memory.h" />
-    <ClInclude Include="..\..\src\core\Pool.h" />
+    <ClInclude Include="..\..\src\core\object_pool.h" />
     <ClInclude Include="..\..\src\core\profile.h" />
     <ClInclude Include="..\..\src\core\Random.h" />
     <ClInclude Include="..\..\src\core\ring_buffer.h" />

@@ -11,49 +11,29 @@
 
 #include "Point.h"
 
-#include "core/Pool.h"
-
-
-//#define POINT_BUFFER_MT_SAFE
-
-#if defined(POINT_BUFFER_MT_SAFE)
-#include "smp/Lock.h"
-#define POINT_BUFFER_LOCK std::lock_guard lock(mutex)
-#else
-#define POINT_BUFFER_LOCK DO_NOTHING
-#endif
-
-
 namespace form 
 {
-	class PointBuffer : private Pool<Point>
+	class PointBuffer : private core::object_pool<Point>
 	{
-		typedef Pool<Point> super;
+		typedef core::object_pool<Point> super;
 	public:
 		PointBuffer(int max_num_verts);
 		
 		void Clear();
 		void FastClear();
 		
-		Point * Alloc()
+		Point * Create()
 		{
-			POINT_BUFFER_LOCK;
-			return super::Alloc();
+			return super::create();
 		}
 		
-		void Free(Point * ptr)
+		void Destroy(Point * ptr)
 		{
-			POINT_BUFFER_LOCK;
-			super::Free(ptr);
+			super::destroy(ptr);
 		}
 		
 #if defined(VERIFY)
 		void Verify() const;
-#endif
-		
-	private:
-#if defined(POINT_BUFFER_MT_SAFE)
-		mutable std::mutex mutex;
 #endif
 	};
 }

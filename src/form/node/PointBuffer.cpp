@@ -12,33 +12,26 @@
 #include "PointBuffer.h"
 
 form::PointBuffer::PointBuffer(int max_num_verts) 
-: Pool<Point>(max_num_verts)
+: super(max_num_verts)
 {
 }
 
 void form::PointBuffer::Clear()
 {
-	POINT_BUFFER_LOCK;
-	
-	Point * begin = GetArray();
-	Point const * const used_end = begin + GetMaxUsed();
-	for (Point * i = begin; i != used_end; ++ i)
+	for (auto& point : * this)
 	{
-		Point & point = * i;
 		point.vert = nullptr;
 	}
 }
 
 void form::PointBuffer::FastClear()
 {
-	POINT_BUFFER_LOCK;
-	super::FastClear();
+	super::sort_free();
 }
 
 #if defined(VERIFY)
 void form::PointBuffer::Verify() const
 {
-	POINT_BUFFER_LOCK;
 	super::Verify();
 }
 #endif

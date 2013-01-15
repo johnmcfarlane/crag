@@ -60,10 +60,10 @@ void form::Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & poi
 	// (These are the four points of the initial tetrahedron.
 	Point * root_points[4] = 
 	{
-		point_buffer.Alloc(),
-		point_buffer.Alloc(),
-		point_buffer.Alloc(),
-		point_buffer.Alloc()
+		point_buffer.Create(),
+		point_buffer.Create(),
+		point_buffer.Create(),
+		point_buffer.Create()
 	};
 	
 	// Initialize the points using the shader.

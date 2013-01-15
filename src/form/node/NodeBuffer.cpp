@@ -851,7 +851,7 @@ void form::NodeBuffer::DeinitNode(Node & node)
 			if (t.mid_point != nullptr)
 			{
 				// and there is a mid-point, so delete it.
-				point_buffer.Free(t.mid_point);
+				point_buffer.Destroy(t.mid_point);
 				t.mid_point = nullptr;
 			}
 		}

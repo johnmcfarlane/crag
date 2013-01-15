@@ -76,7 +76,7 @@ bool form::Node::InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buff
 			Node & cousin = ref(t.cousin);
 
 			// Create the mid-point.
-			Point * new_point = point_buffer.Alloc();
+			Point * new_point = point_buffer.Create();
 			if (new_point == nullptr)
 			{
 				// We should always have enough points in the buffer.
@@ -96,7 +96,7 @@ bool form::Node::InitMidPoints(Polyhedron & polyhedron, PointBuffer & point_buff
 				// or neighboring nodes in the future. This is because sometimes, a
 				// cousin is destroyed. This makes it impossible to create the point, but
 				// the point is still valid. 
-				point_buffer.Free(new_point);
+				point_buffer.Destroy(new_point);
 				
 				// Because of this, we try and create all three mid-points - even after we
 				// know that failure is inevitable. 
@@ -201,7 +201,7 @@ void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 				// There's a mid-point but the cousin used to calculate it has since been destroyed.
 				// There's no easy way to calculate the new position (except maybe delta it).
 				// So just remove it instead.
-				point_buffer.Free(t.mid_point);
+				point_buffer.Destroy(t.mid_point);
 				t.mid_point = nullptr;
 				
 				ASSERT(GetChildren() == nullptr);

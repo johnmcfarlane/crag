@@ -140,7 +140,7 @@
 #include "core/floatOps.h"
 #include "core/intOps.h"
 #include "core/intrusive_list.h"
-#include "core/memory.h"
+#include "core/object_pool.h"
 
 #include "geom/Vector2.h"
 #include "geom/Vector3.h"
