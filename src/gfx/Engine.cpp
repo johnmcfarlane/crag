@@ -414,7 +414,6 @@ void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 	Object * child = GetObject(child_uid);
 	if (child == nullptr)
 	{
-		ASSERT(false);
 		return;
 	}
 	

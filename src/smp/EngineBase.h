@@ -107,7 +107,11 @@ namespace smp
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE(init);
-			AddObject(* object);
+
+			if (object != nullptr)
+			{
+				AddObject(* object);
+			}
 		}
 #endif
 
@@ -121,7 +125,11 @@ namespace smp
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
-			AddObject(* object);
+
+			if (object != nullptr)
+			{
+				AddObject(* object);
+			}
 		}
 
 		void DestroyObject(Uid uid)
@@ -131,7 +139,7 @@ namespace smp
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
-				DEBUG_BREAK("Object not found");
+				DEBUG_MESSAGE("Object not found");
 				return;
 			}
 

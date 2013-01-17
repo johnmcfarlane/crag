@@ -115,7 +115,7 @@ namespace core
 
 			if (_free_list == nullptr)
 			{
-				DEBUG_BREAK("pool is full");
+				DEBUG_MESSAGE("pool is full");
 				return nullptr;
 			}
 
