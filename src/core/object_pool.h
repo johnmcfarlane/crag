@@ -14,7 +14,10 @@
 //////////////////////////////////////////////////////////////////////
 // Object pool macros
 
-#define DEFINE_OBJECT_POOL(TYPE, MIN_OBJECTS) \
+// fixed-size pool allocation;
+// placed with class member definitions
+// and add DECLARE_ALLOCATOR to the class definition
+#define DEFINE_POOL_ALLOCATOR(TYPE, MIN_OBJECTS) \
 	static core::object_pool<TYPE> pool(MIN_OBJECTS); \
 	void* TYPE::operator new(size_t sz) \
 	{ \
@@ -35,12 +38,6 @@
 	{ \
 		DEBUG_BREAK("not supported"); \
 	}
-
-#define DECLARE_OBJECT_POOL(TYPE) \
-	void* operator new(size_t sz); \
-	void* operator new [](size_t sz); \
-	void operator delete(void* p); \
-	void operator delete [](void* p);
 
 namespace core
 {

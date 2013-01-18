@@ -61,3 +61,60 @@ T* Allocate(size_t count)
 
 void InitAllocationCounters();
 void DeinitAllocationCounters();
+
+////////////////////////////////////////////////////////////////////////////////
+// Object allocation macros
+
+// DECLARE_ALLOCATOR:
+//  placed in class definition, then add one of the three DEFINE macros: 
+//  DEFINE_DEFAULT_ALLOCATOR, DISABLE_ALLOCATOR or DEFINE_POOL_ALLOCATOR 
+//  in class' compilation unit.
+#define DECLARE_ALLOCATOR(TYPE) \
+	void* operator new(size_t sz); \
+	void* operator new [](size_t sz); \
+	void operator delete(void* p); \
+	void operator delete [](void* p);
+
+// regular, do-nothing implementation;
+// placed with class member definitions
+#define DEFINE_DEFAULT_ALLOCATOR(TYPE) \
+	void* TYPE::operator new(size_t sz) \
+	{ \
+		ASSERT(sz == sizeof(TYPE)); \
+		return ::Allocate(sz, alignof(TYPE)); \
+	} \
+	void* TYPE::operator new [](size_t sz) \
+	{ \
+		ASSERT(sz == sizeof(TYPE)); \
+		return ::Allocate(sz, alignof(TYPE)); \
+	} \
+	void TYPE::operator delete(void* p) \
+	{ \
+		::Free(p); \
+	} \
+	void TYPE::operator delete [](void* p) \
+	{ \
+		::Free(p); \
+	}
+
+// prevents class (or sub-classes) from being allocated;
+// placed with class member definitions
+#define DISABLE_ALLOCATOR(TYPE) \
+	void* TYPE::operator new(size_t sz) \
+	{ \
+		DEBUG_BREAK("disabled"); \
+		return ::Allocate(sz, alignof(TYPE)); \
+	} \
+	void* TYPE::operator new [](size_t sz) \
+	{ \
+		DEBUG_BREAK("disabled"); \
+		return ::Allocate(sz, alignof(TYPE)); \
+	} \
+	void TYPE::operator delete(void* p) \
+	{ \
+		::Free(p); \
+	} \
+	void TYPE::operator delete [](void* p) \
+	{ \
+		::Free(p); \
+	}
