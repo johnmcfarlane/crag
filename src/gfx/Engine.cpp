@@ -536,7 +536,7 @@ Engine::StateParam const Engine::init_state[] =
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	while (! quit_flag)
+	while (! quit_flag || ! scene->GetRoot().IsEmpty())
 	{
 		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);

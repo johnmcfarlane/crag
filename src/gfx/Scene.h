@@ -56,9 +56,6 @@ namespace gfx
 		Pov const & GetPov() const;
 		
 	private:
-		// remove the children of the given branch node
-		void RemoveChildren(BranchNode & parent);
-
 		// attributes
 		core::Time _time;
 		Pov pov;

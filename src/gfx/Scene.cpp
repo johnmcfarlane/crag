@@ -44,8 +44,6 @@ Scene::Scene(Engine & engine)
 
 Scene::~Scene()
 {
-	RemoveChildren(_root);
-
 	ASSERT(_root.IsEmpty());
 }
 
@@ -155,25 +153,4 @@ Pov & Scene::GetPov()
 Pov const & Scene::GetPov() const
 {
 	return pov;
-}
-
-void Scene::RemoveChildren(BranchNode & parent)
-{
-	// then for all the children,
-	Object::List::iterator end = parent.End();
-	while (true)
-	{
-		Object::List::iterator last = end;
-		-- last;
-		if (last == end)
-		{
-			break;
-		}
-		
-		// remove them first.
-		Object & child_object = static_cast<Object &>(* last);
-		RemoveObject(child_object);
-	}
-	
-	ASSERT(parent.IsEmpty());
 }

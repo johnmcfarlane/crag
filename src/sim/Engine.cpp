@@ -227,6 +227,10 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			}
 		}
 	}
+
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetTime(std::numeric_limits<core::Time>::max());
+	});
 }
 
 void Engine::Tick()
