@@ -38,6 +38,7 @@ namespace
 	STAT(num_puffs, int, .1f);
 }
 
+DEFINE_POOL_ALLOCATOR(Puff, 100);
 
 Puff::Puff(LeafNode::Init const & init, Scalar spawn_volume)
 : LeafNode(init, Layer::foreground)

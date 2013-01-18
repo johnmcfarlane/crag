@@ -41,6 +41,8 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
+		DECLARE_ALLOCATOR(Vehicle);
+
 		Vehicle(Init const & init, Sphere3 const & sphere);
 		
 		// Add a Thruster

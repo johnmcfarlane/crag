@@ -24,6 +24,8 @@ namespace sim
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Box);
+
 		Box(Init const & init, Vector3 center, Vector3 size);
 		~Box();
 

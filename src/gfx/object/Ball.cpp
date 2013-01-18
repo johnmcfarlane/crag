@@ -25,6 +25,7 @@
 
 using namespace gfx;
 
+DEFINE_POOL_ALLOCATOR(Ball, 10);
 
 Ball::Ball(LeafNode::Init const & init, Color4f const & color)
 : LeafNode(init, Layer::foreground)

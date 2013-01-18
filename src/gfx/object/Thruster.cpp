@@ -38,6 +38,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
+DEFINE_POOL_ALLOCATOR(Thruster, 4);
+
 Thruster::Thruster(super::Init const & init)
 : super(init, thruster_color)
 {

@@ -30,6 +30,8 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Vehicle member functions
 
+DEFINE_POOL_ALLOCATOR(Vehicle, 1);
+
 // seems to be required by MetaClass::InitObject
 Vehicle::Vehicle(Ball::Init const & init, Sphere3 const & sphere)
 : Ball(init, sphere)

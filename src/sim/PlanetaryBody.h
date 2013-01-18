@@ -27,6 +27,8 @@ namespace sim
 	class PlanetaryBody : public physics::SphericalBody
 	{
 	public:
+		DECLARE_ALLOCATOR(PlanetaryBody);
+
 		PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius);
 		
 	private:

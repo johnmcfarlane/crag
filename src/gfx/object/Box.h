@@ -21,6 +21,8 @@ namespace gfx
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Box);
+
 		Box(Init const & init, Color4f const & color);
 
 		bool GetRenderRange(RenderRange & range) const override;

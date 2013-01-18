@@ -26,6 +26,8 @@ namespace gfx
 		};
 		
 		// functions
+		DECLARE_ALLOCATOR(gfx::Planet);
+
 		Planet(Init const & init, Scalar sea_level);
 		
 		void Update(UpdateParams const & params);

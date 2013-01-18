@@ -23,6 +23,8 @@ namespace gfx
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Ball);
+
 		Ball(Init const & init, Color4f const & color);
 
 	private:

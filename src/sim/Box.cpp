@@ -41,6 +41,7 @@ namespace
 
 using namespace sim;
 
+DEFINE_POOL_ALLOCATOR(Box, 10);
 
 Box::Box(Entity::Init const & init, Vector3 center, Vector3 size)
 : Entity(init)

@@ -20,6 +20,8 @@ namespace gfx
 	class Puff : public LeafNode
 	{
 	public:
+		DECLARE_ALLOCATOR(Puff);
+
 		Puff(Init const & init, Scalar spawn_volume);
 		~Puff();
 		

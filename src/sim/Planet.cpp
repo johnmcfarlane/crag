@@ -33,6 +33,7 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // sim::Planet member definitions
 
+DEFINE_POOL_ALLOCATOR(Planet, 3);
 
 Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int num_craters)
 : Entity(init)

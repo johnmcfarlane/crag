@@ -40,7 +40,9 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		
+
+		DECLARE_ALLOCATOR(BranchNode);
+
 		BranchNode(Init const & init, Transformation const & transformation);
 		~BranchNode();
 		

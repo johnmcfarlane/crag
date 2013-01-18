@@ -17,6 +17,7 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::BranchNode definitions
 
+DEFINE_POOL_ALLOCATOR(BranchNode, 128);
 
 BranchNode::BranchNode(super::Init const & init, Transformation const & transformation)
 : Object(init, branch)

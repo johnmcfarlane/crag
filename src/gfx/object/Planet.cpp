@@ -26,6 +26,8 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
+DEFINE_POOL_ALLOCATOR(Planet, 3);
+
 Planet::Planet(LeafNode::Init const & init, Scalar sea_level)
 : LeafNode(init, Layer::foreground)
 , _sea_level(sea_level)

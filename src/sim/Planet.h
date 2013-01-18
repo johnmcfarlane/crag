@@ -32,6 +32,8 @@ namespace sim
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Planet);
+
 		Planet(Init const & init, Sphere3 sphere, int random_seed, int num_craters);
 		~Planet();
 

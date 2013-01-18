@@ -27,6 +27,8 @@ namespace sim
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Ball);
+
 		Ball(Init const & init, Sphere3 const & sphere);
 		~Ball();
 		

@@ -68,6 +68,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetaryBody members
 
+DEFINE_POOL_ALLOCATOR(sim::PlanetaryBody, 3);
+
 sim::PlanetaryBody::PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius)
 : physics::SphericalBody(physics_engine, false, radius)
 , _formation(formation)

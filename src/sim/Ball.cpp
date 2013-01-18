@@ -40,6 +40,7 @@ namespace
 
 using namespace sim;
 
+DEFINE_POOL_ALLOCATOR(Ball, 10);
 
 // seems to be required by MetaClass::InitObject
 Ball::Ball(Entity::Init const & init, Sphere3 const & sphere)
