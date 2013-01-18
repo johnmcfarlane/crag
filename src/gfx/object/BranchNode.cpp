@@ -104,6 +104,26 @@ BranchNode::List::const_iterator BranchNode::End() const
 	return _children.end();
 }
 
+Object & BranchNode::Front()
+{
+	return _children.front();
+}
+
+Object const & BranchNode::Front() const
+{
+	return _children.front();
+}
+		
+Object & BranchNode::Back()
+{
+	return _children.back();
+}
+
+Object const & BranchNode::Back() const
+{
+	return _children.back();
+}
+
 gfx::Transformation const & BranchNode::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
 {
 	scratch = model_view * _transformation;

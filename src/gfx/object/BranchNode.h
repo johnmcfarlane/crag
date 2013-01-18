@@ -64,6 +64,12 @@ namespace gfx
 		List::iterator End();
 		List::const_iterator End() const;
 		
+		Object & Front();
+		Object const & Front() const;
+		
+		Object & Back();
+		Object const & Back() const;
+		
 		// Model-view transformation
 		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
 		Transformation const & GetTransformation() const;

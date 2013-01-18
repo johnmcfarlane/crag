@@ -400,8 +400,8 @@ void Engine::OnRemoveObject(Object & object)
 	{
 		while (! branch_node->IsEmpty())
 		{
-			auto& front = * branch_node->Begin();
-			DestroyObject(front.GetUid());
+			auto& back = branch_node->Back();
+			DestroyObject(back.GetUid());
 		}
 	}
 
