@@ -62,6 +62,24 @@ namespace smp
 		}
 #endif
 		
+		// default allocation
+		void* operator new(size_t sz)
+		{
+			return ::Allocate(sz, 16);
+		}
+		void* operator new [](size_t sz)
+		{
+			return ::Allocate(sz, 16);
+		}
+		void operator delete(void* p)
+		{
+			::Free(p);
+		}
+		void operator delete [](void* p)
+		{
+			::Free(p);
+		}
+
 		operator OBJECT & ()
 		{
 			OBJECT & t = * static_cast<OBJECT *>(this);
