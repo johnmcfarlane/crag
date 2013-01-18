@@ -380,8 +380,6 @@ Color4f Engine::CalculateLighting(Vector3 const & position) const
 void Engine::OnQuit()
 {
 	quit_flag = true;
-	_ready = true;
-	_dirty = true;
 }
 
 void Engine::OnAddObject(Object & object)
