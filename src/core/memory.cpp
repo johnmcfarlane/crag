@@ -11,6 +11,10 @@
 
 #include "memory.h"
 
+#if ! defined(WIN32)
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Alignment-friendly allocation
@@ -33,7 +37,7 @@ void * Allocate(size_t num_bytes, size_t alignment)
 		return allocation;
 		
 	case EINVAL:
-		DEBUG_BREAK("alignment, %ld, is not a power of two, or is less than minimum, %ld", alignment, sizeof(void*));
+		DEBUG_BREAK("alignment, " SIZE_T_FORMAT_SPEC ", is not a power of two, or is less than minimum, " SIZE_T_FORMAT_SPEC, alignment, sizeof(void*));
 		break;
 		
 	case ENOMEM:
@@ -95,13 +99,43 @@ void * AllocatePage(size_t num_bytes)
 	return p;
 }
 
-void FreePage(void * allocation)
+void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
 	if (! VirtualFree(allocation, 0, MEM_RELEASE))
 	{
 		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
+	}
+}
+#else
+size_t GetPageSize()
+{
+	return sysconf (_SC_PAGE_SIZE);
+}
+
+void * AllocatePage(size_t num_bytes)
+{
+	// check allocation size is rounded up correctly
+	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
+
+	// allocate
+	void * p = mmap(nullptr, num_bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	if (p == nullptr)
+	{
+		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
+	}
+
+	return p;
+}
+
+void FreePage(void * allocation, size_t num_bytes)
+{
+	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
+
+	if (! munmap(allocation, num_bytes))
+	{
+		DEBUG_BREAK("munmap(%p, " SIZE_T_FORMAT_SPEC ") failed with error code, %d", allocation, num_bytes, errno);
 	}
 }
 #endif

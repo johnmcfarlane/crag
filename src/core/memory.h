@@ -42,7 +42,7 @@ size_t RoundToPageSize(size_t num_bytes);
 size_t GetPageSize();
 
 void * AllocatePage(size_t num_bytes);
-void FreePage(void * allocation);
+void FreePage(void * allocation, size_t num_bytes);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
@@ -54,7 +54,7 @@ template <typename T>
 T* Allocate(size_t count)
 {
 	size_t num_bytes = count * sizeof(T);
-	size_t alignment = alignof(T);
+	size_t alignment = std::max(alignof(T), sizeof(void*));
 	void * buffer = Allocate(num_bytes, alignment);
 	return reinterpret_cast<T *>(buffer);
 }
@@ -71,7 +71,7 @@ void DeinitAllocationCounters();
 //  in class' compilation unit.
 #define DECLARE_ALLOCATOR(TYPE) \
 	void* operator new(size_t sz); \
-	void* operator new [](size_t sz); \
+	void* operator new [](size_t sz) throw(); \
 	void operator delete(void* p); \
 	void operator delete [](void* p);
 
@@ -83,7 +83,7 @@ void DeinitAllocationCounters();
 		ASSERT(sz == sizeof(TYPE)); \
 		return ::Allocate(sz, alignof(TYPE)); \
 	} \
-	void* TYPE::operator new [](size_t sz) \
+	void* TYPE::operator new [](size_t sz) throw() \
 	{ \
 		ASSERT(sz == sizeof(TYPE)); \
 		return ::Allocate(sz, alignof(TYPE)); \
@@ -105,7 +105,7 @@ void DeinitAllocationCounters();
 		DEBUG_BREAK("disabled"); \
 		return ::Allocate(sz, alignof(TYPE)); \
 	} \
-	void* TYPE::operator new [](size_t sz) \
+	void* TYPE::operator new [](size_t sz) throw() \
 	{ \
 		DEBUG_BREAK("disabled"); \
 		return ::Allocate(sz, alignof(TYPE)); \

@@ -24,7 +24,7 @@
 		ASSERT(sz == sizeof(TYPE)); \
 		return pool.allocate(); \
 	} \
-	void* TYPE::operator new [](size_t sz) \
+	void* TYPE::operator new [](size_t sz) throw() \
 	{ \
 		ASSERT(sz == sizeof(TYPE)); \
 		DEBUG_BREAK("not supported"); \
@@ -208,7 +208,7 @@ namespace core
 #if defined(VERIFY)
 		void Verify() const
 		{
-			auto const loop_limit = 10u;
+			size_t const loop_limit = 10u;
 
 			auto free_list_size = 0u;
 			for (auto node_iterator = _free_list; free_list_size < loop_limit && node_iterator != nullptr; node_iterator = node_iterator->next)
