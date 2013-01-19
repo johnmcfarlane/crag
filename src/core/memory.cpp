@@ -133,7 +133,7 @@ void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
-	if (! munmap(allocation, num_bytes))
+	if (munmap(allocation, num_bytes) != 0)
 	{
 		DEBUG_BREAK("munmap(%p, " SIZE_T_FORMAT_SPEC ") failed with error code, %d", allocation, num_bytes, errno);
 	}
