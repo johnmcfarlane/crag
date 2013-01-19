@@ -65,15 +65,21 @@ namespace core
 		object_pool() 
 		{
 			init();
+
+			VerifyObject(* this);
 		}
 
 		object_pool(size_type max_elements) 
 		{
 			init(max_elements);
+
+			VerifyObject(* this);
 		}
 	
 		~object_pool()
 		{
+			VerifyObject(* this);
+
 			deinit();
 		}
 	
@@ -236,12 +242,14 @@ namespace core
 		{
 			ASSERT(max_num_elements != 0);
 
-			_array = Allocate<value_type>(max_num_elements);
+			// round capacity up to nearest page size
+			size_t required_num_bytes = RoundToPageSize(sizeof(value_type) * max_num_elements);
+			max_num_elements = required_num_bytes / sizeof(value_type);
+
+			_array = reinterpret_cast<value_type*>(AllocatePage(get_allocation_size(max_num_elements)));
 			_array_end = _array + max_num_elements;
 			init_free_list();
 			_num_allocated = 0;
-			
-			//Verify();
 		}
 	
 		void init_free_list()
@@ -267,7 +275,12 @@ namespace core
 		{
 			ASSERT(_num_allocated == 0);
 
-			Free(_array);
+			FreePage(_array, get_allocation_size(capacity()));
+		}
+
+		size_t get_allocation_size(size_t capacity) const
+		{
+			return RoundToPageSize(sizeof(value_type) * capacity);
 		}
 
 		////////////////////////////////////////////////////////////////////////
