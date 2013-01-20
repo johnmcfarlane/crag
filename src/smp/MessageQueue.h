@@ -17,80 +17,52 @@
 
 namespace smp
 {
-	template <typename CLASS, typename MESSAGE_BASE>
+	template <typename CLASS>
 	class MessageQueue
 	{
+		//////////////////////////////////////////////////////////////////////////////
+		// types
+
+		class EnvelopeBase;
+
+		template <typename MESSAGE>
+		class Envelope;
+	
 		typedef CLASS Class;
-		typedef core::ring_buffer<MESSAGE_BASE, true> Buffer;
+		typedef core::ring_buffer<EnvelopeBase, true> Buffer;
+
 		typedef SimpleMutex Mutex;
-		typedef std::lock_guard<std::mutex> Lock;
+		typedef std::lock_guard<Mutex> Lock;
 	public:
-		typedef typename Buffer::value_type value_type;
 		typedef typename Buffer::size_type size_type;
 		
-		MessageQueue(size_type capacity)
-		: _buffer(capacity)
-		{
-		}
+		//////////////////////////////////////////////////////////////////////////////
+		// functions
+
+		MessageQueue(size_type capacity);
+
+		bool IsEmpty() const;
+		
+		void Clear();
+		
+		// adds message to queue
+		template <typename MESSAGE>
+		void PushBack(MESSAGE const & object);
 		
 		// returns false iff the Daemon should quit
-		bool DispatchMessage(Class & object)
-		{
-			// Slightly risky, but I think we can avoid a lock here.
-			if (_buffer.empty())
-			{
-				return false;
-			}
-			
-			// TODO: Look into ways to prevent locking of the buffer.
-			Lock critical_section(_mutex);
-			
-			Message<Class> const & envelope = _buffer.front();
-			envelope(object);
-			
-			_buffer.pop_front();
-			return true;
-		}
+		bool DispatchMessage(Class & object);
 		
 		// returns number of messages process
-		int DispatchMessages(Class & object)
-		{
-			int num_messages = 0;
-			
-			while (DispatchMessage(object))
-			{
-				++ num_messages;
-			}
-			
-			return num_messages;
-		}
-		
-		template <typename MESSAGE>
-		void PushBack(MESSAGE const & object)
-		{
-			Lock critical_section(_mutex);
-			
-			if (! _buffer.push_back(object))
-			{
-				// may cause a lock-up, or buffer may clear
-				assert(false);
-				smp::Yield();
-			}
-		}
-		
-		bool IsEmpty() const
-		{
-			return _buffer.empty();
-		}
-		
-		void Clear()
-		{
-			Lock critical_section(_mutex);
-			_buffer.clear();
-		}
+		int DispatchMessages(Class & object);
 		
 	private:
-		std::mutex _mutex;
+		template <typename MESSAGE>
+		void CompleteDispatch(MESSAGE message, Class & object);
+		
+		//////////////////////////////////////////////////////////////////////////////
+		// variables
+
+		SimpleMutex _mutex;
 		Buffer _buffer;
 	};
 }

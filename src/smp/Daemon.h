@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "Message.h"
-#include "MessageQueue.h"
+#include "MessageQueue_Impl.h"
 #include "Thread.h"
 
 #include "core/ring_buffer.h"
@@ -43,8 +42,7 @@ namespace smp
 		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef ENGINE Engine;
-		typedef ::smp::Message<Engine> Message;
-		typedef ::smp::MessageQueue<Engine, Message> MessageQueue;
+		typedef ::smp::MessageQueue<Engine> MessageQueue;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -176,28 +174,11 @@ namespace smp
 			else
 			{
 				// otherwise, wrap up the function and send it over.
-				CallCommand<FUNCTION_TYPE> command(function);
-				SendMessage(command);
+				SendMessage(function);
 			}
         }
 		
 	private:
-		template <typename FUNCTION_TYPE>
-		class CallCommand : public Message
-		{
-		public:
-			CallCommand(FUNCTION_TYPE const & function)
-			: _function(function)
-			{
-			}
-		private:
-			virtual void operator () (Engine & engine) const final
-			{
-				_function(engine);
-			}
-			FUNCTION_TYPE _function;
-		};
-		
 		void Run()
 		{
 			FUNCTION_NO_REENTRY;
