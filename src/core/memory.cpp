@@ -69,15 +69,18 @@ size_t RoundToPageSize(size_t required_bytes)
 	return (required_bytes + (page_mask - 1)) & ~ page_mask;
 }
 
-#if defined(WIN32)
 size_t GetPageSize()
 {
 	static size_t page_size = 0;
 	if (page_size == 0)
 	{
+#if defined(WIN32)
 		SYSTEM_INFO system_info;
 		GetSystemInfo(& system_info);
 		page_size = system_info.dwPageSize;
+#else
+		page_size = sysconf (_SC_PAGE_SIZE)
+#endif
 	}
 	ASSERT(page_size > 0);
 
@@ -90,10 +93,19 @@ void * AllocatePage(size_t num_bytes)
 	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
 
 	// allocate
+#if defined(WIN32)
 	void * p = VirtualAlloc(nullptr, num_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+#else
+	void * p = mmap(nullptr, num_bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+#endif
+
 	if (p == nullptr)
 	{
+#if defined(WIN32)
 		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
+#else
+		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
+#endif
 	}
 
 	return p;
@@ -103,42 +115,18 @@ void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
+#if defined(WIN32)
 	if (! VirtualFree(allocation, 0, MEM_RELEASE))
 	{
 		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
 	}
-}
 #else
-size_t GetPageSize()
-{
-	return sysconf (_SC_PAGE_SIZE);
-}
-
-void * AllocatePage(size_t num_bytes)
-{
-	// check allocation size is rounded up correctly
-	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
-
-	// allocate
-	void * p = mmap(nullptr, num_bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-	if (p == nullptr)
-	{
-		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
-	}
-
-	return p;
-}
-
-void FreePage(void * allocation, size_t num_bytes)
-{
-	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
-
 	if (munmap(allocation, num_bytes) != 0)
 	{
 		DEBUG_BREAK("munmap(%p, " SIZE_T_FORMAT_SPEC ") failed with error code, %d", allocation, num_bytes, errno);
 	}
-}
 #endif
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global new/delete operators for measuring the number of leaks
