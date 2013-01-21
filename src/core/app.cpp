@@ -191,7 +191,7 @@ void app::GetEvent(SDL_Event & event)
 	
 	if (! has_event)
 	{
-		DEBUG_BREAK("SDL_WaitEvent failed");
+		DEBUG_BREAK_SDL();
 		return;
 	}
 	
