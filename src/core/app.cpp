@@ -110,6 +110,31 @@ void app::Deinit()
 
 }
 
+SDL_GLContext app::InitContext()
+{
+	ASSERT(window != nullptr);
+
+	SDL_GLContext context = SDL_GL_CreateContext(window);
+	if (context == nullptr)
+	{
+		DEBUG_BREAK_SDL();
+		return nullptr;
+	}
+	
+	if (SDL_GL_MakeCurrent(window, context) != 0)
+	{
+		DEBUG_BREAK_SDL();
+		return nullptr;
+	}
+	
+	return context;
+}
+
+void app::DeinitContext(SDL_GLContext context)
+{
+	SDL_GL_DeleteContext(context);
+}
+
 bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
 	FILE * source = fopen(filename, "rb");
@@ -138,6 +163,13 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 	return true;
 }
 
+void app::Beep()
+{
+#if defined(WIN32)
+	MessageBeep(MB_ICONINFORMATION);
+#endif
+}
+
 bool app::IsKeyDown(SDL_Scancode key_code)
 {
 	if (key_code >= 0)
@@ -161,12 +193,7 @@ bool app::IsButtonDown(int mouse_button)
 	return (mouse_state & SDL_BUTTON(mouse_button)) != 0;
 }
 
-SDL_Window & app::GetWindow()
-{
-	return ref(window);
-}
-
-geom::Vector2i app::GetWindowSize()
+geom::Vector2i app::GetResolution()
 {
 	geom::Vector2i window_size;	
 	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
@@ -178,11 +205,9 @@ int app::GetRefreshRate()
 	return refresh_rate;
 }
 
-void app::Beep()
+void app::SwapBuffers()
 {
-#if defined(WIN32)
-	MessageBeep(MB_ICONINFORMATION);
-#endif
+	SDL_GL_SwapWindow(window);
 }
 
 void app::GetEvent(SDL_Event & event)

@@ -562,13 +562,10 @@ bool Engine::Init()
 {
 	ASSERT(scene == nullptr);
 	ASSERT(context == nullptr);
-	SDL_Window & window = app::GetWindow();
-	
-	context = SDL_GL_CreateContext(& window);
-	
-	if (SDL_GL_MakeCurrent(& window, context) != 0)
+
+	context = app::InitContext();
+	if (context == nullptr)
 	{
-		DEBUG_BREAK_SDL();
 		return false;
 	}
 	
@@ -587,7 +584,7 @@ bool Engine::Init()
 	InitVSync();
 	
 	scene = new Scene(* this);
-	geom::Vector2i resolution = app::GetWindowSize();
+	geom::Vector2i resolution = app::GetResolution();
 	scene->SetResolution(resolution);
 	
 	InitRenderState();
@@ -603,7 +600,7 @@ bool Engine::InitFrameBuffer()
 //	
 //	depth_buffer.Init();
 //	depth_buffer.Bind();
-//	geom::Vector2i resolution = app::GetWindowSize();
+//	geom::Vector2i resolution = app::GetResolution();
 //	depth_buffer.ResizeForDepth(resolution.x, resolution.y);
 //	
 //	depth_texture.Init();
@@ -645,7 +642,7 @@ void Engine::Deinit()
 	delete scene;
 	scene = nullptr;
 
-	SDL_GL_DeleteContext(context);
+	app::DeinitContext(context);
 	context = nullptr;
 }
 
@@ -898,8 +895,7 @@ void Engine::Render()
 
 	// Flip the front and back buffers and set fences.
 	SetFence(_fence1);
-	SDL_Window & window = app::GetWindow();
-	SDL_GL_SwapWindow(& window);
+	app::SwapBuffers();
 	SetFence(_fence2);
 
 	ProcessRenderTiming();

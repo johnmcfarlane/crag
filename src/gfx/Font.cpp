@@ -150,7 +150,7 @@ void gfx::Font::RenderVerts() const
 	// Matrices
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	geom::Vector2i resolution = app::GetWindowSize();
+	geom::Vector2i resolution = app::GetResolution();
 	gluOrtho2D (0, resolution.x, resolution.y, 0);
 	
 	glMatrixMode (GL_MODELVIEW); 

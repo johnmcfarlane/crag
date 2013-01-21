@@ -207,7 +207,7 @@ bool gfx::Image::Save(char const * filename)
 
 bool gfx::Image::CaptureScreen()
 {
-	geom::Vector2i window_size = app::GetWindowSize();
+	geom::Vector2i window_size = app::GetResolution();
 	
 	if (! Create(window_size))
 	{

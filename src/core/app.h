@@ -11,22 +11,27 @@
 
 namespace app
 {
-	// init
+	// general init/deinit
 	bool Init(geom::Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
+
+	// render thread-specific init/deinit
+	SDL_GLContext InitContext();
+	void DeinitContext(SDL_GLContext context);
 	
+	// misc
 	bool LoadFile(char const * filename, std::vector<char> & buffer);
+	void Beep();
 	
 	// input
 	bool IsKeyDown(SDL_Scancode key_code);
 	bool IsButtonDown(int mouse_button);
 	
-	// window
-	SDL_Window & GetWindow();
-	geom::Vector2i GetWindowSize();
+	// video
+	geom::Vector2i GetResolution();
 	int GetRefreshRate();
-	void Beep();
-	
+	void SwapBuffers();
+
 	// called from main thread
 	void GetEvent(SDL_Event & event);
 	
