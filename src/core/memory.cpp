@@ -79,7 +79,7 @@ size_t GetPageSize()
 		GetSystemInfo(& system_info);
 		page_size = system_info.dwPageSize;
 #else
-		page_size = sysconf (_SC_PAGE_SIZE)
+		page_size = sysconf (_SC_PAGE_SIZE);
 #endif
 	}
 	ASSERT(page_size > 0);
