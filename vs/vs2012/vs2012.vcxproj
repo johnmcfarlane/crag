@@ -217,7 +217,6 @@
     <ClInclude Include="..\..\src\physics\Engine.h" />
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
-    <ClInclude Include="..\..\src\script\TestScript.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
     <ClInclude Include="..\..\src\sim\Ball.h" />
     <ClInclude Include="..\..\src\sim\Box.h" />
