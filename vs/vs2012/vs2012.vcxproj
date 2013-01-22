@@ -112,8 +112,6 @@
     <ClInclude Include="..\..\src\applet\AppletInterface.h" />
     <ClInclude Include="..\..\src\applet\AppletInterface_Impl.h" />
     <ClInclude Include="..\..\src\applet\Engine.h" />
-    <ClInclude Include="..\..\src\applet\ObserverScript.h" />
-    <ClInclude Include="..\..\src\applet\TestScript.h" />
     <ClInclude Include="..\..\src\core\app.h" />
     <ClInclude Include="..\..\src\core\ConfigEntry.h" />
     <ClInclude Include="..\..\src\core\ConfigManager.h" />
@@ -217,6 +215,8 @@
     <ClInclude Include="..\..\src\physics\Engine.h" />
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\scripts\ObserverScript.h" />
+    <ClInclude Include="..\..\src\scripts\TestScript.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
     <ClInclude Include="..\..\src\sim\Ball.h" />
     <ClInclude Include="..\..\src\sim\Box.h" />
@@ -263,8 +263,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine2</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine2</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src\applet\ObserverScript.cpp" />
-    <ClCompile Include="..\..\src\applet\TestScript.cpp" />
     <ClCompile Include="..\..\src\core\app.cpp" />
     <ClCompile Include="..\..\src\core\ConfigEntry.cpp" />
     <ClCompile Include="..\..\src\core\ConfigManager.cpp" />
@@ -352,6 +350,8 @@
     </ClCompile>
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\ObserverScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
     <ClCompile Include="..\..\src\sim\Ball.cpp" />
     <ClCompile Include="..\..\src\sim\Box.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Box0</ObjectFileName>

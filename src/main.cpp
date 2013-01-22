@@ -10,12 +10,8 @@
 
 #include "pch.h"
 
-#include "core/app.h"
-#include "core/ConfigManager.h"
-
-#include "smp/scheduler.h"
-
 #include "ga/main.h"
+#include "scripts/TestScript.h"
 
 #include "form/Engine.h"
 #include "sim/Engine.h"
@@ -23,7 +19,11 @@
 
 #include "applet/Engine.h"
 #include "applet/Applet.h"
-#include "applet/TestScript.h"
+
+#include "smp/scheduler.h"
+
+#include "core/app.h"
+#include "core/ConfigManager.h"
 
 #define RUN_TEST
 

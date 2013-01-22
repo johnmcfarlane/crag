@@ -11,12 +11,12 @@
 
 #include "ObserverScript.h"
 
-#include "AppletInterface_Impl.h"
-#include "Engine.h"
-
 #include "sim/Engine.h"
 #include "sim/EntityFunctions.h"
 #include "sim/Observer.h"
+
+#include "applet/AppletInterface_Impl.h"
+#include "applet/Engine.h"
 
 #include "core/ConfigEntry.h"
 

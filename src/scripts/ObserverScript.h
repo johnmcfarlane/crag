@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "AppletBase.h"
+#include "applet/AppletBase.h"
 
 #include "core/EventWatcher.h"
 

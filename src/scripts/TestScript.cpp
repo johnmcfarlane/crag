@@ -11,10 +11,11 @@
 
 #include "TestScript.h"
 
-#include "Applet.h"
-#include "AppletInterface_Impl.h"
 #include "ObserverScript.h"
-#include "Engine.h"
+
+#include "applet/Applet.h"
+#include "applet/AppletInterface_Impl.h"
+#include "applet/Engine.h"
 
 #include "sim/axes.h"
 #include "sim/Box.h"
