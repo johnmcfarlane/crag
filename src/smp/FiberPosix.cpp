@@ -60,9 +60,9 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // POSIX-specific smp::Fiber member definitions
 
-Fiber::Fiber(Callback * callback, void * data, std::size_t stack_size, char const * name)
-: _stack_size(stack_size)
-, _name(name)
+Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
+: _name(name)
+, _stack_size(stack_size)
 , _is_running(true)
 {
     if (getcontext(& _context) != 0) 

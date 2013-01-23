@@ -28,7 +28,7 @@ namespace smp
 	// and /should/ work on OS X with the right preprocessor macros defined.
 	
 	class Fiber
-    {
+	{
         ////////////////////////////////////////////////////////////////////////////////
 		// types
 	public:
@@ -37,7 +37,7 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber(Callback * callback, void * data, std::size_t stack_size, char const * name);
+		Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback);
 		~Fiber();
 
 		// must be called by any thread in advance of creating or continuing a fiber
@@ -74,10 +74,10 @@ namespace smp
 #endif
 		static void OnLaunch(Fiber & fiber, Callback * callback, void * data);
 		
-        ////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		std::size_t _stack_size;	// the requested stack size
 		char const * _name;	// human-readable name of the Fiber
+		std::size_t _stack_size;	// the requested stack size
 		bool _is_running;
 		ucontext_t _context;
     };

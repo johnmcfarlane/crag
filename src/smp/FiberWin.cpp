@@ -48,11 +48,11 @@ namespace
 // MS Windows-specific smp::Fiber member definitions
 
 Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
-: _callback(callback)
-, _data(data)
+: _name(name)
 , _stack_size(stack_size)
+, _data(data)
+, _callback(callback)
 , _allocated_stack_size(calculate_stack_allocation(stack_size))
-, _name(name)
 , _is_running(true)
 , _fiber(CreateFiberEx(_allocated_stack_size, _allocated_stack_size, FIBER_FLAG_FLOAT_SWITCH, * OnLaunch, this))
 , _calling_fiber(nullptr)

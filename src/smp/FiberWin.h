@@ -18,8 +18,8 @@ namespace smp
 	// and /should/ work on OS X with the right preprocessor macros defined.
 	
 	class Fiber
-    {
-        ////////////////////////////////////////////////////////////////////////////////
+	{
+		////////////////////////////////////////////////////////////////////////////////
 		// types
 	public:
 		typedef void (Callback)(void * data);
@@ -57,13 +57,13 @@ namespace smp
 	private:
 		static VOID WINAPI OnLaunch(LPVOID fiber_pointer);
 		
-        ////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		Callback * _callback;	// given function to call on fiber launch
-		void * _data;	// the pointer to pass to _callback
-		SIZE_T _stack_size;	// the requested stack size
-		SIZE_T _allocated_stack_size;	// amount that was actually requested
 		char const * _name;	// human-readable name of the Fiber
+		SIZE_T _stack_size;	// the requested stack size
+		void * _data;	// the pointer to pass to _callback
+		Callback * _callback;	// given function to call on fiber launch
+		SIZE_T _allocated_stack_size;	// amount that was actually requested
 		LPVOID _fiber;	// handle to system fiber
 		LPVOID _calling_fiber;	// when fiber is running, stores the fiber to which we'll be returning
 		bool _is_running;	// true if _callback has not yet exited
