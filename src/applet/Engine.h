@@ -54,8 +54,8 @@ namespace applet
 		AppletBase * GetObject(Uid uid);
 		
 		// daemon messages
-		template <typename FUNCTOR = void (*) (AppletInterface & applet_interface)>
-		void Launch(FUNCTOR & functor, std::size_t stack_size, char const * name)
+		template <typename FUNCTOR>
+		void Launch(FUNCTOR functor, std::size_t stack_size, char const * name)
 		{
 			CreateObject<Applet<FUNCTOR>>(Uid::Create(), functor, stack_size, name);
 		}
