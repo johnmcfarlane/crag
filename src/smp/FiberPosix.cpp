@@ -49,11 +49,11 @@ namespace
 		requested_stack_size = (requested_stack_size * 2) + 2048;
 #endif
 
-	// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
-	// in size. This is in case a signal is sent to the fiber and the system
-	// requires space to deal with it. We assume this doesn't happen and treat
-	// MINSIGSTKSZ as a limit - not an overhead.
-		return std::max(requested_stack_size, std::size_t(MINSIGSTKSZ));
+		// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
+		// in size. This is in case a signal is sent to the fiber and the system
+		// requires space to deal with it. We assume this doesn't happen and treat
+		// MINSIGSTKSZ as a limit - not an overhead.
+		return RoundToPageSize(std::max(requested_stack_size, std::size_t(MINSIGSTKSZ)));
 	}
 }
 
@@ -94,7 +94,8 @@ Fiber::~Fiber()
 				  static_cast<unsigned>(_stack_size));
 #endif
 
-	Free(_context.uc_stack.ss_sp);
+	std::size_t actual_stack_size = calculate_stack_allocation(_stack_size);
+	FreePage(_context.uc_stack.ss_sp, actual_stack_size);
 }
 
 void Fiber::InitializeThread()
@@ -206,7 +207,7 @@ void Fiber::InitContext()
 {
 	std::size_t actual_stack_size = calculate_stack_allocation(_stack_size);
 	_context.uc_stack.ss_size = actual_stack_size;
-	_context.uc_stack.ss_sp = Allocate(actual_stack_size, 1024);
+	_context.uc_stack.ss_sp = AllocatePage(actual_stack_size);
 	_context.uc_link = nullptr;
 }
 
