@@ -84,4 +84,11 @@ namespace applet
 		
 		return future;
 	}
+
+	template <typename FUNCTION_TYPE>
+	void AppletInterface::Launch(char const * name, std::size_t stack_size, FUNCTION_TYPE const & function)
+	{
+		auto& engine = GetEngine();
+		engine.Launch(name, stack_size, function);
+	}
 }

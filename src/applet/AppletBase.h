@@ -21,9 +21,6 @@ namespace smp
 
 namespace applet
 {
-	// forward-declarations
-	class Engine;
-	
 	// Base class for applets, which are run in fibers.
 	// If your applet is sufficiently complex that it deserves its own class,
 	// derive that class from this one. Alternatively, specialize the Applet class.
@@ -60,6 +57,8 @@ namespace applet
 		
 		virtual void Sleep(core::Time duration) override;
 		virtual void WaitFor(Condition & condition) override;
+
+		virtual Engine & GetEngine() override;
 
 		// overridden by the concrete applet class
 		virtual void operator() (AppletInterface & applet_interface) = 0;

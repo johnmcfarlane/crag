@@ -111,6 +111,11 @@ void AppletBase::WaitFor(Condition & condition)
 	_condition = null_condition;
 }
 
+Engine & AppletBase::GetEngine()
+{
+	return super::GetEngine();
+}
+
 void AppletBase::OnLaunch(void * data)
 {
 	AppletBase & applet = ref(reinterpret_cast<AppletBase *>(data));

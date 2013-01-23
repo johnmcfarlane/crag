@@ -16,6 +16,7 @@ namespace applet
 {
 	// forward-declare
 	class AppletBase;
+	class Engine;
 
 	// condition on which to wake from a WaitFor call
 	typedef core::function_ref<bool()> Condition;
@@ -60,5 +61,11 @@ namespace applet
 		// blocking call to object on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
 		smp::Future<RESULT_TYPE> Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
+
+		template <typename FUNCTION_TYPE>
+		void Launch(char const * name, std::size_t stack_size, FUNCTION_TYPE const & function);
+
+	private:
+		virtual Engine & GetEngine() = 0;
 	};
 }
