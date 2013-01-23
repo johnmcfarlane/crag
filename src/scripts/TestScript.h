@@ -11,7 +11,7 @@ namespace applet
 {
 	// forward-declaration
 	class AppletInterface;
-	
-	// Run a script which puts the simulation through its paces.
-	void Test (AppletInterface & applet_interface);
 }
+
+// Run a script which puts the simulation through its paces.
+void Test (applet::AppletInterface & applet_interface);

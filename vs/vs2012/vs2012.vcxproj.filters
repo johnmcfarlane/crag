@@ -462,6 +462,9 @@
     <ClInclude Include="..\..\src\scripts\RegulatorScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\scripts\MonitorOrigin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\applet\AppletBase.cpp">
@@ -735,6 +738,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

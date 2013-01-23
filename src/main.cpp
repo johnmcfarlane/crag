@@ -356,11 +356,7 @@ namespace
 			
 			// launch the main script
 			applet::Daemon::Call([] (applet::Engine & engine) {
-#if defined(RUN_TEST)
-				auto functor = & applet::Test;
-#else
-				auto functor = & ga::main;
-#endif
+				auto functor = & Test;
 				engine.Launch(functor, 8192, "Main");
 			});
 			

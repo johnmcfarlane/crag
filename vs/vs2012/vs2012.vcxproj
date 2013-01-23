@@ -215,6 +215,7 @@
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
     <ClInclude Include="..\..\src\scripts\ObserverScript.h" />
+    <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
     <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
@@ -349,6 +350,7 @@
     </ClCompile>
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
     <ClCompile Include="..\..\src\scripts\ObserverScript.cpp" />
     <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
     <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
