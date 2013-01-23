@@ -16,7 +16,7 @@
 #include "core/double_buffer.h"
 
 
-DECLARE_CLASS_HANDLE(form, RegulatorScript);
+namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
 
 
 namespace gfx

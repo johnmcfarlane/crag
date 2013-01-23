@@ -12,7 +12,7 @@
 #include "gfx/defs.h"
 
 
-DECLARE_CLASS_HANDLE(gfx, Object)	// gfx::ObjectHandle
+namespace gfx { DECLARE_CLASS_HANDLE(Object); }	// gfx::ObjectHandle
 
 
 namespace gfx

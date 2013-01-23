@@ -12,7 +12,7 @@
 #include "Ball.h"
 
 
-DECLARE_CLASS_HANDLE(gfx, Thruster)	// gfx::ThrusterHandle
+namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
 
 
 namespace sim

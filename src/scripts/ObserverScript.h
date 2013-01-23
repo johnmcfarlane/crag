@@ -16,7 +16,7 @@
 #include "sim/defs.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Observer)	// sim::ObserverHandle
+namespace sim { DECLARE_CLASS_HANDLE(Observer); }	// sim::ObserverHandle
 
 
 namespace applet

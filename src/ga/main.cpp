@@ -25,7 +25,7 @@
 #include "gfx/Engine.h"
 #include "gfx/object/Light.h"
 
-DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
+namespace sim { DECLARE_CLASS_HANDLE(Planet); }	// sim::PlanetHandle
 
 
 using namespace ga;

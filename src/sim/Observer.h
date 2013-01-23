@@ -18,7 +18,7 @@
 
 #include "geom/Matrix44.h"
 
-DECLARE_CLASS_HANDLE(gfx, Light)	// gfx::LightHandle
+namespace gfx { DECLARE_CLASS_HANDLE(Light); }	// gfx::LightHandle
 
 //#define OBSERVER_LIGHT
 

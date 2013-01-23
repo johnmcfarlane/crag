@@ -22,8 +22,7 @@
 
 #include "core/Statistics.h"
 
-DECLARE_CLASS_HANDLE(form, RegulatorScript);
-
+namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
 
 namespace gfx
 {

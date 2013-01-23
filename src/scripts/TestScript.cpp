@@ -38,13 +38,13 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
-DECLARE_CLASS_HANDLE(sim, Ball);		// sim::BallHandle
-DECLARE_CLASS_HANDLE(sim, Box);			// sim::BoxHandle
-DECLARE_CLASS_HANDLE(sim, Entity);		// sim::EntityHandle
-DECLARE_CLASS_HANDLE(sim, Observer);	// sim::ObserverHandle
-DECLARE_CLASS_HANDLE(sim, Planet);		// sim::PlanetHandle
-DECLARE_CLASS_HANDLE(sim, Star);		// sim::StarHandle
-DECLARE_CLASS_HANDLE(sim, Vehicle);		// sim::VehicleHandle
+namespace sim { DECLARE_CLASS_HANDLE(Ball);	}	// sim::BallHandle
+namespace sim { DECLARE_CLASS_HANDLE(Box); }	// sim::BoxHandle
+namespace sim { DECLARE_CLASS_HANDLE(Entity); }	// sim::EntityHandle
+namespace sim { DECLARE_CLASS_HANDLE(Observer);	}	// sim::ObserverHandle
+namespace sim { DECLARE_CLASS_HANDLE(Planet); }	// sim::PlanetHandle
+namespace sim { DECLARE_CLASS_HANDLE(Star); }	// sim::StarHandle
+namespace sim { DECLARE_CLASS_HANDLE(Vehicle); }	// sim::VehicleHandle
 
 
 using namespace applet;

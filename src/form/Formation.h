@@ -15,7 +15,7 @@
 #include "geom/Sphere.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Planet);	// sim::PlanetHandle
+namespace sim { DECLARE_CLASS_HANDLE(Planet); }	// sim::PlanetHandle
 
 
 namespace form 

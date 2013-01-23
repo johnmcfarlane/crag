@@ -22,8 +22,8 @@
 #include "smp/Semaphore.h"
 
 
-DECLARE_CLASS_HANDLE(gfx, FormationMesh)	// gfx::FormationMeshHandle
-DECLARE_CLASS_HANDLE(form, RegulatorScript)	// form::RegulatorScriptHandle
+namespace gfx { DECLARE_CLASS_HANDLE(FormationMesh); }	// gfx::FormationMeshHandle
+namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
 
 
 namespace form 

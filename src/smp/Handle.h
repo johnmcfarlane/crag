@@ -13,14 +13,11 @@
 #include "Uid.h"
 
 
-// Forward-declares class, CLASS, and creates shorthand version of its handle.
-// E.g. "smp::Handle<ns::MyObject>" becomes "ns::MyObjectHandle".
-#define DECLARE_CLASS_HANDLE(NAMESPACE, CLASS) \
-	namespace NAMESPACE { \
-		class CLASS; \
-		typedef smp::Handle<CLASS> CLASS##Handle; \
-	}
-
+// Forward-declares class, CLASS, and creates shorthand version of its handle,
+// E.g. "smp::Handle<MyClass>" becomes "MyClassHandle".
+#define DECLARE_CLASS_HANDLE(CLASS) \
+	class CLASS; \
+	typedef smp::Handle<CLASS> CLASS##Handle
 
 namespace smp
 {

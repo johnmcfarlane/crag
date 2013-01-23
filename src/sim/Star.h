@@ -15,7 +15,7 @@
 
 #include "geom/origin.h"
 
-DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
+namespace gfx { DECLARE_CLASS_HANDLE(BranchNode); }	// gfx::BranchNodeHandle
 
 
 namespace sim

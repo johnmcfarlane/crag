@@ -13,8 +13,8 @@
 
 #include "geom/Sphere.h"
 
-DECLARE_CLASS_HANDLE(gfx, BranchNode)	// gfx::BranchNodeHandle
-DECLARE_CLASS_HANDLE(gfx, Planet)	// gfx::PlanetHandle
+namespace gfx { DECLARE_CLASS_HANDLE(BranchNode); }	// gfx::BranchNodeHandle
+namespace gfx { DECLARE_CLASS_HANDLE(Planet); }	// gfx::PlanetHandle
 
 
 namespace form

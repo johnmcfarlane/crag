@@ -10,7 +10,7 @@
 #include "gfx/object/Skybox.h"
 
 
-DECLARE_CLASS_HANDLE(sim, Firmament);
+namespace sim { DECLARE_CLASS_HANDLE(Firmament); }	// sim::FirmamentHandle
 
 namespace sim 
 {
