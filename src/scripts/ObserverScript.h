@@ -9,39 +9,14 @@
 
 #pragma once
 
-#include "applet/AppletBase.h"
-
-#include "core/EventWatcher.h"
-
-#include "sim/defs.h"
-
-
-namespace sim { DECLARE_CLASS_HANDLE(Observer); }	// sim::ObserverHandle
-
-
 namespace applet
 {
-	class ObserverScript : public AppletBase
-	{
-	public:
-		// functions
-		ObserverScript(Init const & init, sim::ObserverHandle observer);
-		~ObserverScript();
-		
-		virtual void operator() (AppletInterface & applet_interface) override;
-		
-	private:
-		void HandleEvents(AppletInterface & applet_interface);
-		void HandleEvent(SDL_Event const & event);
-		void HandleKeyboardEvent(SDL_Scancode scancode, bool down);
-		void HandleMouseButton(Uint8 button, bool down);
-		void HandleMouseMove(int x_delta, int y_delta);
-		
-		void SetSpeed(int speed);
-		
-		// variables
-		sim::ObserverHandle _observer;
-		bool _collidable;
-		core::EventWatcher _event_watcher;
-	};
+	class AppletInterface;
 }
+
+namespace sim 
+{ 
+	DECLARE_CLASS_HANDLE(Observer);	// sim::ObserverHandle
+}
+
+void ObserverScript(applet::AppletInterface & applet_interface, sim::ObserverHandle observer);

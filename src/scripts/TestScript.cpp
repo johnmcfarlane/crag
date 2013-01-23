@@ -37,6 +37,7 @@
 #include "core/app.h"
 
 #include "core/ConfigEntry.h"
+#include "core/EventWatcher.h"
 #include "core/Random.h"
 
 namespace sim 
@@ -81,7 +82,6 @@ namespace
 	sim::PlanetHandle _planet, _moon1, _moon2;
 	sim::StarHandle _sun;
 	sim::FirmamentHandle _skybox;
-	sim::ObserverHandle _observer;
 	sim::VehicleHandle _vehicle;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
@@ -90,14 +90,14 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	void SpawnShapes(int shape_num)
+	void SpawnShapes(sim::ObserverHandle observer, int shape_num)
 	{
 		if (max_shapes == 0)
 		{
 			return;
 		}
 	
-		smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(_observer, [] (sim::Observer & observer) -> sim::Transformation {
+		smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Observer & observer) -> sim::Transformation {
 			return observer.GetTransformation();
 		});
 	
@@ -150,7 +150,7 @@ namespace
 		}
 	}
 
-	void HandleEvents()
+	void HandleEvents(sim::ObserverHandle observer)
 	{
 		int num_events = 0;
 	
@@ -181,11 +181,11 @@ namespace
 					break;
 				
 				case SDL_SCANCODE_COMMA:
-					SpawnShapes(0);
+					SpawnShapes(observer, 0);
 					break;
 				
 				case SDL_SCANCODE_PERIOD:
-					SpawnShapes(1);
+					SpawnShapes(observer, 1);
 					break;
 				
 				default:
@@ -273,18 +273,18 @@ void Test (applet::AppletInterface & applet_interface)
 	_applet_interface->Sleep(2);
 
 	// Create observer.
-	{
-		_observer.Create(observer_start_pos);
-		smp::Handle<applet::ObserverScript> observer_script;
-		observer_script.Create(_observer);
-	}
+	sim::ObserverHandle observer;
+	observer.Create(observer_start_pos);
+	applet::Daemon::Call([observer] (applet::Engine & engine) {
+		engine.Launch("ObserverScript", 4096, [observer] (applet::AppletInterface & applet_interface) {
+			ObserverScript(applet_interface, observer);
+		});
+	});
 	
 	// Create origin controller.
-	{
-		applet::Daemon::Call([] (applet::Engine & engine) {
-			engine.Launch("MonitorOrigin", 8192, &MonitorOrigin);
-		});
-	}
+	applet::Daemon::Call([] (applet::Engine & engine) {
+		engine.Launch("MonitorOrigin", 8192, &MonitorOrigin);
+	});
 	
 	
 	SpawnSkybox();
@@ -299,7 +299,7 @@ void Test (applet::AppletInterface & applet_interface)
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 
-		HandleEvents();
+		HandleEvents(observer);
 	}
 	
 	while (! _shapes.empty())
@@ -316,6 +316,8 @@ void Test (applet::AppletInterface & applet_interface)
 	
 	// remove skybox
 	_skybox.Destroy();
+
+	observer.Destroy();
 	
 	ASSERT(_applet_interface == & applet_interface);
 }
