@@ -275,17 +275,12 @@ void Test (applet::AppletInterface & applet_interface)
 	// Create observer.
 	sim::ObserverHandle observer;
 	observer.Create(observer_start_pos);
-	applet::Daemon::Call([observer] (applet::Engine & engine) {
-		engine.Launch("ObserverScript", 4096, [observer] (applet::AppletInterface & applet_interface) {
-			ObserverScript(applet_interface, observer);
-		});
+	applet_interface.Launch("ObserverScript", 4096, [observer] (applet::AppletInterface & applet_interface) {
+		ObserverScript(applet_interface, observer);
 	});
 	
 	// Create origin controller.
-	applet::Daemon::Call([] (applet::Engine & engine) {
-		engine.Launch("MonitorOrigin", 8192, &MonitorOrigin);
-	});
-	
+	applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
 	
 	SpawnSkybox();
 	
