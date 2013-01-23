@@ -17,6 +17,7 @@
 #include "gfx/defs.h"
 
 #include "geom/Matrix44.h"
+#include "geom/origin.h"
 
 namespace gfx { DECLARE_CLASS_HANDLE(Light); }	// gfx::LightHandle
 
