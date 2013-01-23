@@ -34,7 +34,7 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		AppletBase(Init const & init, std::size_t stack_size, char const * name);
+		AppletBase(Init const & init, char const * name, std::size_t stack_size);
 		~AppletBase();
 		
 		char const * GetName() const;

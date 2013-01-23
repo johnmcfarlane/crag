@@ -47,7 +47,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // MS Windows-specific smp::Fiber member definitions
 
-Fiber::Fiber(Callback * callback, void * data, std::size_t stack_size, char const * name)
+Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
 : _callback(callback)
 , _data(data)
 , _stack_size(stack_size)

@@ -34,9 +34,9 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // applet::AppletBase member definitions
 
-AppletBase::AppletBase(super::Init const & init, std::size_t stack_size, char const * name)
+AppletBase::AppletBase(super::Init const & init, char const * name, std::size_t stack_size)
 : super(init)
-, _fiber(ref(new smp::Fiber(& OnLaunch, static_cast<void *>(this), stack_size, name)))
+, _fiber(ref(new smp::Fiber(name, stack_size, static_cast<void *>(this), & OnLaunch)))
 , _condition(null_condition)
 , _quit_flag(false)
 {

@@ -35,7 +35,7 @@ CONFIG_DEFINE (mouse_sensitivity, float, 0.01f);
 // applet::ObserverScript member definitions
 
 ObserverScript::ObserverScript(AppletBase::Init const & init, sim::ObserverHandle observer)
-: AppletBase(init, 4096, "Observer")
+: AppletBase(init, "Observer", 4096)
 , _observer(observer)
 , _collidable(true)
 {

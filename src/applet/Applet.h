@@ -24,8 +24,8 @@ namespace applet
 		typedef FUNCTOR Functor;
 		
 		// functions
-		Applet(Init const & init, Functor functor, std::size_t stack_size, char const * name)
-		: AppletBase(init, stack_size, name)
+		Applet(Init const & init, char const * name, std::size_t stack_size, Functor functor)
+		: AppletBase(init, name, stack_size)
 		, _functor(functor)
 		{
 		}

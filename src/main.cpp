@@ -356,8 +356,7 @@ namespace
 			
 			// launch the main script
 			applet::Daemon::Call([] (applet::Engine & engine) {
-				auto functor = & Test;
-				engine.Launch(functor, 8192, "Main");
+				engine.Launch("Main", 8192, & Test);
 			});
 			
 			while (HandleEvent())

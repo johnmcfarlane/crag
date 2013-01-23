@@ -55,9 +55,9 @@ namespace applet
 		
 		// daemon messages
 		template <typename FUNCTOR>
-		void Launch(FUNCTOR functor, std::size_t stack_size, char const * name)
+		void Launch(char const * name, std::size_t stack_size, FUNCTOR functor)
 		{
-			CreateObject<Applet<FUNCTOR>>(Uid::Create(), functor, stack_size, name);
+			CreateObject<Applet<FUNCTOR>>(Uid::Create(), name, stack_size, functor);
 		}
 		
 		void OnQuit();

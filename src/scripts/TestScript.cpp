@@ -282,7 +282,7 @@ void Test (applet::AppletInterface & applet_interface)
 	// Create origin controller.
 	{
 		applet::Daemon::Call([] (applet::Engine & engine) {
-			engine.Launch(&MonitorOrigin, 8192, "MonitorOrigin");
+			engine.Launch("MonitorOrigin", 8192, &MonitorOrigin);
 		});
 	}
 	

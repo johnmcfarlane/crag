@@ -27,7 +27,7 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber(Callback * callback, void * data, std::size_t stack_size, char const * name);
+		Fiber(char const * name, std::size_t stack_size, void * data, Callback callback);
 		~Fiber();
 		
 		// must be called by any thread in advance of creating or continuing a fiber
