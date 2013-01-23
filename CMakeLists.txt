@@ -6,8 +6,6 @@ add_executable(crag
 	src/main.cpp
 	src/applet/AppletBase.cpp
 	src/applet/Engine.cpp
-	src/applet/TestScript.cpp
-	src/applet/ObserverScript.cpp
 	src/ga/main.cpp
 	src/gfx/Program.cpp
 	src/gfx/Shader.cpp
@@ -43,6 +41,10 @@ add_executable(crag
 	src/physics/Body.cpp
 	src/physics/BoxBody.cpp
 	src/physics/SphericalBody.cpp
+	src/scripts/MonitorOrigin.cpp
+	src/scripts/ObserverScript.cpp
+	src/scripts/RegulatorScript.cpp
+	src/scripts/TestScript.cpp
 	src/smp/Fiber.cpp
 	src/smp/FiberPosix.cpp
 	src/smp/FiberWin.cpp
@@ -79,7 +81,6 @@ add_executable(crag
 	src/core/EventWatcher.cpp
 	src/core/debug.cpp
 	src/form/scene/VertexBuffer.cpp
-	src/form/scene/RegulatorScript.cpp
 	src/form/scene/Scene.cpp
 	src/form/scene/Polyhedron.cpp
 	src/form/scene/MeshBufferObject.cpp
