@@ -15,7 +15,8 @@
 #include "Formation.h"
 
 #include "form/node/NodeBuffer.h"
-#include "form/scene/RegulatorScript.h"
+
+#include "scripts/RegulatorScript.h"
 
 #include "gfx/Engine.h"
 #include "gfx/object/FormationMesh.h"

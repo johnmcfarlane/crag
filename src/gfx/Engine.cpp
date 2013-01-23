@@ -18,7 +18,8 @@
 #include "Scene.h"
 
 #include "form/Engine.h"
-#include "form/scene/RegulatorScript.h"
+
+#include "scripts/RegulatorScript.h"
 
 #include "sim/axes.h"
 #include "sim/Engine.h"

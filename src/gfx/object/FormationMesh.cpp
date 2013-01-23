@@ -18,7 +18,8 @@
 
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
-#include "form/scene/RegulatorScript.h"
+
+#include "scripts/RegulatorScript.h"
 
 #include "applet/Engine.h"
 

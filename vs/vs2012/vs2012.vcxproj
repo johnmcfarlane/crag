@@ -152,7 +152,6 @@
     <ClInclude Include="..\..\src\form\scene\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\form\scene\MeshProperties.h" />
     <ClInclude Include="..\..\src\form\scene\Polyhedron.h" />
-    <ClInclude Include="..\..\src\form\scene\RegulatorScript.h" />
     <ClInclude Include="..\..\src\form\scene\Scene.h" />
     <ClInclude Include="..\..\src\form\scene\Vertex.h" />
     <ClInclude Include="..\..\src\form\scene\VertexBuffer.h" />
@@ -216,6 +215,7 @@
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
     <ClInclude Include="..\..\src\scripts\ObserverScript.h" />
+    <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
     <ClInclude Include="..\..\src\sim\Ball.h" />
@@ -286,7 +286,6 @@
     <ClCompile Include="..\..\src\form\scene\Mesh.cpp" />
     <ClCompile Include="..\..\src\form\scene\MeshBufferObject.cpp" />
     <ClCompile Include="..\..\src\form\scene\Polyhedron.cpp" />
-    <ClCompile Include="..\..\src\form\scene\RegulatorScript.cpp" />
     <ClCompile Include="..\..\src\form\scene\Scene.cpp" />
     <ClCompile Include="..\..\src\form\scene\Vertex.cpp" />
     <ClCompile Include="..\..\src\form\scene\VertexBuffer.cpp" />
@@ -351,6 +350,7 @@
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
     <ClCompile Include="..\..\src\scripts\ObserverScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
     <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
     <ClCompile Include="..\..\src\sim\Ball.cpp" />
     <ClCompile Include="..\..\src\sim\Box.cpp">
