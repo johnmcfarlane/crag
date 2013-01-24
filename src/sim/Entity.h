@@ -17,6 +17,10 @@ namespace physics
 	class Body;
 }
 
+namespace gfx
+{
+	DECLARE_CLASS_HANDLE(BranchNode);	// gfx::BranchNodeHandle
+}
 
 namespace sim
 {
@@ -32,6 +36,9 @@ namespace sim
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
+
+		DECLARE_ALLOCATOR(Vehicle);
+
 		Entity(Init const & init);
 		virtual ~Entity();
 		
@@ -39,13 +46,16 @@ namespace sim
 		virtual void Tick();
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 		
-		virtual void UpdateModels() const;
-
+		// physics
 		void SetBody(Body * body);
 		Body * GetBody();
 		Body const * GetBody() const;
-		
 		Transformation GetTransformation() const;
+
+		// graphics
+		gfx::BranchNodeHandle GetModel() const;
+		void SetModel(gfx::BranchNodeHandle model);
+		virtual void UpdateModels() const;
 
 		// Verification
 	#if defined(VERIFY)
@@ -56,5 +66,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		Body * _body;
+		gfx::BranchNodeHandle _model;
 	};
 }

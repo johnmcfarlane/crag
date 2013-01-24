@@ -35,6 +35,8 @@ namespace sim
 	class Observer : public Entity
 	{
 	public:
+		DECLARE_ALLOCATOR(Observer);
+
 		Observer(Init const & init, geom::abs::Vector3 const & center);
 		~Observer();
 		

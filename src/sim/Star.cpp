@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Star member definitions
 
+DEFINE_DEFAULT_ALLOCATOR(sim::Star);
+
 sim::Star::Star(Entity::Init const & init, geom::abs::Scalar radius, core::Time year)
 : Entity(init)
 , _radius(radius)

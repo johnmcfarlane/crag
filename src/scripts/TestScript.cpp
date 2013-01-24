@@ -19,8 +19,8 @@
 #include "applet/Engine.h"
 
 #include "sim/axes.h"
-#include "sim/Box.h"
 #include "sim/Engine.h"
+#include "sim/EntityFunctions.h"
 #include "sim/Firmament.h"
 #include "sim/Observer.h"
 #include "sim/Planet.h"
@@ -28,11 +28,14 @@
 #include "sim/Vehicle.h"
 
 #include "physics/Engine.h"
+#include "physics/BoxBody.h"
 
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 
 #include "gfx/Engine.h"
+#include "gfx/object/Ball.h"
+#include "gfx/object/Box.h"
 
 #include "core/app.h"
 
@@ -40,10 +43,10 @@
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
+using geom::Vector3f;
+
 namespace sim 
 { 
-	DECLARE_CLASS_HANDLE(Ball);	// sim::BallHandle
-	DECLARE_CLASS_HANDLE(Box);// sim::BoxHandle
 	DECLARE_CLASS_HANDLE(Entity);// sim::EntityHandle
 	DECLARE_CLASS_HANDLE(Observer);	// sim::ObserverHandle
 	DECLARE_CLASS_HANDLE(Planet);// sim::PlanetHandle
@@ -51,8 +54,19 @@ namespace sim
 	DECLARE_CLASS_HANDLE(Vehicle);// sim::VehicleHandle
 }
 
-namespace
+namespace 
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// Config values
+	
+	CONFIG_DEFINE (box_density, physics::Scalar, 1);
+	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
+	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
+
+	CONFIG_DEFINE (ball_density, float, 1);
+	CONFIG_DEFINE (ball_linear_damping, float, 0.005f);
+	CONFIG_DEFINE (ball_angular_damping, float, 0.005f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// types
 	typedef std::vector<sim::VehicleHandle> EntityVector;
@@ -90,6 +104,81 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
+	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, geom::rel::Vector3 size, gfx::Color4f color)
+	{
+		// physics
+		sim::Engine & engine = box.GetEngine();
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();	
+		physics::BoxBody * body = new physics::BoxBody(physics_engine, true, size);
+		body->SetPosition(spawn_pos);
+		body->SetDensity(box_density);
+		body->SetLinearDamping(box_linear_damping);
+		body->SetAngularDamping(box_angular_damping);
+		box.SetBody(body);
+
+		// graphics
+		auto model = sim::AddModelWithTransform<gfx::Box>(color);
+
+		box.SetModel(model);
+	}
+
+	void ConstructBall(sim::Entity & ball, geom::rel::Sphere3 sphere, gfx::Color4f color)
+	{
+		// physics
+		sim::Engine & engine = ball.GetEngine();
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();	
+		physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, sphere.radius);
+		body->SetPosition(sphere.center);
+		body->SetDensity(ball_density);
+		body->SetLinearDamping(ball_linear_damping);
+		body->SetAngularDamping(ball_angular_damping);
+		ball.SetBody(body);
+
+		// graphics
+		gfx::BranchNodeHandle model = sim::AddModelWithTransform<gfx::Ball>(color);
+		ball.SetModel(model);
+	}
+
+	void AddThruster(sim::Vehicle & vehicle, Vector3f const & position, Vector3f const & direction, SDL_Scancode key)
+	{
+		sim::Vehicle::Thruster thruster;
+		thruster.position = position;
+		thruster.direction = direction;
+		thruster.key = key;
+		thruster.thrust_factor = 1.;
+		
+		vehicle.AddThruster(thruster);
+	}
+
+	void ConstructVehicle(sim::Vehicle & vehicle, geom::rel::Sphere3 sphere)
+	{
+		ConstructBall(vehicle, sphere, gfx::Color4f::White());
+
+		AddThruster(vehicle, Vector3f(.5, -.8f, .5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(vehicle, Vector3f(.5, -.8f, -.5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(vehicle, Vector3f(-.5, -.8f, .5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(vehicle, Vector3f(-.5, -.8f, -.5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
+	}
+
+	void SpawnVehicle()
+	{
+		// Create vehicle
+		if (! spawn_vehicle)
+		{
+			return;
+		}
+
+		geom::rel::Sphere3 sphere;
+		sphere.center = geom::Cast<float>(observer_start_pos + geom::abs::Vector3(0, 5, +5));
+		sphere.radius = 1.;
+
+		ASSERT(! _vehicle);
+		_vehicle.Create();
+		_vehicle.Call([sphere] (sim::Vehicle & vehicle) {
+			ConstructVehicle(vehicle, sphere);
+		});
+	}
+
 	void SpawnShapes(sim::ObserverHandle observer, int shape_num)
 	{
 		if (max_shapes == 0)
@@ -101,12 +190,6 @@ namespace
 			return observer.GetTransformation();
 		});
 	
-		sim::Transformation camera_transformation = camera_transformation_future.Get();
-		sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
-		geom::rel::Vector3 camera_pos = camera_transformation.GetTranslation();
-		geom::rel::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
-		geom::rel::Vector3 spawn_pos = camera_pos + camera_forward * geom::rel::Scalar(5);
-	
 		if (cleanup_shapes)
 		{
 			if (_shapes.size() >= max_shapes)
@@ -117,36 +200,58 @@ namespace
 			}
 		}
 	
-		if (_shapes.size() < max_shapes)
+		if (_shapes.size() >= max_shapes)
 		{
-			switch (shape_num)
+			return;
+		}
+
+		sim::Transformation camera_transformation = camera_transformation_future.Get();
+		sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
+		geom::rel::Vector3 camera_pos = camera_transformation.GetTranslation();
+		geom::rel::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
+		geom::rel::Vector3 spawn_pos = camera_pos + camera_forward * geom::rel::Scalar(5);
+	
+		gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
+					Random::sequence.GetUnitInclusive<float>(), 
+					Random::sequence.GetUnitInclusive<float>(), 
+					Random::sequence.GetUnitInclusive<float>());
+
+		switch (shape_num)
+		{
+			case 0:
 			{
-				case 0:
-				{
-					// ball
-					sim::BallHandle ball;
+				// ball
+				sim::EntityHandle ball;
+				ball.Create();
+
+				ball.Call([spawn_pos, color] (sim::Entity & ball) {
 					geom::rel::Sphere3 sphere(spawn_pos, geom::rel::Scalar(std::exp(- GetRandomUnit() * 2)));
-					ball.Create(sphere);
-					_shapes.push_back(ball);
-					break;
-				}
-				
-				case 1:
-				{
-					// box
+					ConstructBall(ball, sphere, color);
+				});
+
+				_shapes.push_back(ball);
+				break;
+			}
+			
+			case 1:
+			{
+				// box
+				sim::EntityHandle box;
+				box.Create();
+
+				box.Call([spawn_pos, color] (sim::Entity & box) {
 					geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
 								 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
 								 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
-				
-					sim::BoxHandle box;
-					box.Create(spawn_pos, size);
-					_shapes.push_back(box);
-					break;
-				}
-				
-				default:
-					ASSERT(false);
+					ConstructBox(box, spawn_pos, size, color);
+				});
+
+				_shapes.push_back(box);
+				break;
 			}
+			
+			default:
+				ASSERT(false);
 		}
 	}
 
@@ -211,37 +316,6 @@ namespace
 		gfx::Daemon::Call([skybox] (gfx::Engine & engine) {
 			engine.OnSetParent(skybox.GetUid(), gfx::Uid());
 		});
-	}
-
-	void AddThruster(sim::VehicleHandle & vehicle_handle, geom::rel::Vector3 const & position, geom::rel::Vector3 const & direction, SDL_Scancode key)
-	{
-		sim::Vehicle::Thruster thruster;
-		thruster.position = position;
-		thruster.direction = direction;
-		thruster.key = SDL_SCANCODE_H;
-		thruster.thrust_factor = 1.;
-		
-		vehicle_handle.Call([thruster] (sim::Vehicle & vehicle) {
-			vehicle.AddThruster(thruster);
-		});
-	}
-
-	void SpawnVehicle()
-	{
-		// Create vehicle
-		if (spawn_vehicle)
-		{
-			geom::rel::Sphere3 sphere;
-			sphere.center = geom::Cast<float>(observer_start_pos + geom::abs::Vector3(0, 5, +5));
-			sphere.radius = 1.;
-
-			_vehicle.Create(sphere);
-		
-			AddThruster(_vehicle, geom::rel::Vector3(.5, -.8f, .5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
-			AddThruster(_vehicle, geom::rel::Vector3(.5, -.8f, -.5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
-			AddThruster(_vehicle, geom::rel::Vector3(-.5, -.8f, .5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
-			AddThruster(_vehicle, geom::rel::Vector3(-.5, -.8f, -.5), geom::rel::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		}
 	}
 }
 

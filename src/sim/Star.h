@@ -25,6 +25,8 @@ namespace sim
 	{
 	public:
 		// functions
+		DECLARE_ALLOCATOR(Star);
+
 		Star(Init const & init, geom::abs::Scalar radius, core::Time year);
 		~Star();
 

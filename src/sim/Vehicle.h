@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Ball.h"
+#include "Entity.h"
 
 
 namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
@@ -18,12 +18,12 @@ namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
 namespace sim
 {
 	// An entity with its own locomotion.
-	class Vehicle : public Ball
+	class Vehicle : public Entity
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef Ball super;
+		typedef Entity super;
 	public:
 		typedef gfx::ThrusterHandle ThrusterHandle;
 		
@@ -43,15 +43,12 @@ namespace sim
 		
 		DECLARE_ALLOCATOR(Vehicle);
 
-		Vehicle(Init const & init, Sphere3 const & sphere);
+		Vehicle(Init const & init);
 		
 		// Add a Thruster
 		void AddThruster(Thruster const & thruster);
 		
 	private:
-		// Called from Ball when initializing the graphics object.
-		gfx::Color4f GetColor() const override;
-		
 		// Called when sending messages to the renderer thread.
 		void UpdateModels() const override;
 		

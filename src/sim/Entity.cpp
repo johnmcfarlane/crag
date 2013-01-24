@@ -15,6 +15,9 @@
 
 #include "physics/Body.h"
 
+#include "gfx/Engine.h"
+#include "gfx/object/BranchNode.h"
+
 #include "geom/Transformation.h"
 
 
@@ -24,6 +27,7 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
+DEFINE_POOL_ALLOCATOR(Entity, 100);
 
 Entity::Entity(super::Init const & init)
 : super(init)
@@ -34,6 +38,7 @@ Entity::Entity(super::Init const & init)
 Entity::~Entity()
 {
 	delete _body;
+	_model.Destroy();
 }
 
 void Entity::Tick()
@@ -41,10 +46,6 @@ void Entity::Tick()
 }
 
 void Entity::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
-{
-}
-
-void Entity::UpdateModels() const
 {
 }
 
@@ -68,6 +69,40 @@ Transformation Entity::GetTransformation() const
 {
 	ASSERT(_body != nullptr);
 	return Transformation(_body->GetPosition(), _body->GetRotation());
+}
+
+gfx::BranchNodeHandle Entity::GetModel() const
+{
+	return _model;
+}
+
+void Entity::SetModel(gfx::BranchNodeHandle model)
+{
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(false);
+	});
+	_model = model;
+	UpdateModels();
+	gfx::Daemon::Call([] (gfx::Engine & engine) {
+		engine.OnSetReady(true);
+	});
+}
+	
+void Entity::UpdateModels() const
+{
+	if (_body == nullptr)
+	{
+		return;
+	}
+	
+	Vector3 position = _body->GetPosition();
+	Matrix33 rotation = _body->GetRotation();
+	Vector3 scale = _body->GetDimensions() * .5f;
+	Transformation transformation(position, rotation, scale);
+
+	_model.Call([transformation] (gfx::BranchNode & node) {
+		node.SetTransformation(transformation);
+	});
 }
 
 #if defined(VERIFY)

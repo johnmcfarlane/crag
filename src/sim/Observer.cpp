@@ -53,6 +53,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Observer	member definitions
 
+DEFINE_DEFAULT_ALLOCATOR(Observer);
+
 Observer::Observer(Entity::Init const & init, geom::abs::Vector3 const & center)
 : Entity(init)
 , speed_factor(observer_speed_factor)

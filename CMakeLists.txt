@@ -62,10 +62,8 @@ add_executable(crag
 	src/sim/UserInput.cpp
 	src/sim/FrequencyEstimator.cpp
 	src/sim/Engine.cpp
-	src/sim/Ball.cpp
 	src/sim/EntityFunctions.cpp
 	src/sim/Vehicle.cpp
-	src/sim/Box.cpp
 	src/sim/gravity.cpp
 	src/sim/Planet.cpp
 	src/sim/Star.cpp

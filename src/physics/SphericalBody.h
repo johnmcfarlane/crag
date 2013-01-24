@@ -23,6 +23,7 @@ namespace physics
 	public:
 		SphericalBody(physics::Engine & engine, bool movable, Scalar radius);
 		
+		virtual Vector3 GetDimensions() const override;
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;
 		

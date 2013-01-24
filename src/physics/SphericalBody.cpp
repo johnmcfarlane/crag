@@ -22,6 +22,12 @@ physics::SphericalBody::SphericalBody(physics::Engine & engine, bool movable, Sc
 {
 }
 
+physics::Vector3 physics::SphericalBody::GetDimensions() const
+{
+	Scalar diameter = GetRadius() * 2;
+	return Vector3(diameter, diameter, diameter);
+}
+
 void physics::SphericalBody::SetRadius(Scalar radius) const
 {
 	dGeomSphereSetRadius(geom_id, radius);

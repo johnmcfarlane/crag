@@ -30,6 +30,7 @@ namespace physics
 		virtual ~Body();
 		
 		dGeomID GetGeomId() const;
+		virtual Vector3 GetDimensions() const = 0;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		

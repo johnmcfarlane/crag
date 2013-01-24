@@ -33,8 +33,8 @@ using namespace sim;
 DEFINE_POOL_ALLOCATOR(Vehicle, 1);
 
 // seems to be required by MetaClass::InitObject
-Vehicle::Vehicle(Ball::Init const & init, Sphere3 const & sphere)
-: Ball(init, sphere)
+Vehicle::Vehicle(Init const & init)
+: super(init)
 {
 }
 
@@ -69,11 +69,6 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	
 	// initialize thrust factor
 	_thruster.thrust_factor = 0;
-}
-
-gfx::Color4f Vehicle::GetColor() const
-{
-	return gfx::Color4f::White();
 }
 
 void Vehicle::UpdateModels() const
