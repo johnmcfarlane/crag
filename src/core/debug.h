@@ -86,7 +86,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 
 // DEBUG_BREAK - debug build-only execution interruption with error message
 #if defined(NDEBUG)
-#define DEBUG_BREAK(...) DO_NOTHING
+#define DEBUG_BREAK(...) UNREACHABLE()
 #else
 #define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
@@ -102,7 +102,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 #else
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
-		if (! (CONDITION)) { \
+		if (! ASSUME(CONDITION)) { \
 			DEBUG_BREAK("ASSERT: '%s'", #CONDITION); \
 		} \
 	)

@@ -38,6 +38,26 @@
 
 
 //////////////////////////////////////////////////////////////////////
+// Optimization directives
+
+// EXPECT - tells compiler to expect EXP==C; returns EXP
+#if defined(__GNUC__)
+#define ASSUME(CONDITION) __builtin_expect(CONDITION, true)
+#elif defined(WIN32)
+#define ASSUME(CONDITION) __assume(CONDITION)
+#else
+#define ASSUME(CONDITION) (CONDITION)
+#endif
+
+// UNREACHABLE - tells the compiler, you can't get here
+#if defined(__GNUC__) || defined(__clang__)
+#define UNREACHABLE __builtin_unreachable
+#else
+#define UNREACHABLE __assume(false)
+#endif
+
+
+//////////////////////////////////////////////////////////////////////
 // OBJECT_SINGLETON
 // 
 // Prevent object from being instanced more than once.
