@@ -65,9 +65,9 @@ namespace
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
 		{
-	#if ! defined(NDEBUG)
+#if ! defined(NDEBUG)
 			app::Beep();
-	#endif
+#endif
 
 			auto origin = engine.GetOrigin();
 			auto new_origin = geom::RelToAbs(camera_pos, origin);

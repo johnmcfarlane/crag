@@ -184,10 +184,8 @@ namespace
 				switch (keysym.scancode)
 				{
 					case SDL_SCANCODE_C:
-					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleCollision(); });
 						return true;
-					}
 					
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
