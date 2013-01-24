@@ -242,9 +242,11 @@ namespace core
 		{
 			ASSERT(max_num_elements != 0);
 
+#if defined(NDEBUG)
 			// round capacity up to nearest page size
 			size_t required_num_bytes = RoundToPageSize(sizeof(value_type) * max_num_elements);
 			max_num_elements = required_num_bytes / sizeof(value_type);
+#endif
 
 			_array = reinterpret_cast<value_type*>(AllocatePage(get_allocation_size(max_num_elements)));
 			_array_end = _array + max_num_elements;
