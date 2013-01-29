@@ -44,35 +44,9 @@ Engine::~Engine()
 	ASSERT(_quit_flag);
 }
 
-AppletBase * Engine::GetObject(Uid uid)
-{
-	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
-	{
-		AppletBase & applet = * i;
-		if (applet.GetUid() == uid)
-		{
-			return & applet;
-		}
-	}
-	
-	return nullptr;
-}
-
 void Engine::OnQuit()
 {
 	SetQuitFlag();
-}
-
-void Engine::DestroyObject(Uid uid)
-{
-	AppletBase * applet = GetObject(uid);
-	
-	if (applet != nullptr)
-	{
-		ASSERT(! applet->IsRunning());
-		_applets.remove(* applet);
-		delete applet;
-	}
 }
 
 void Engine::SetQuitFlag()
@@ -97,7 +71,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 bool Engine::HasFibersActive() const
 {
-	return ! _applets.empty();
+	return GetNumObjects() != 0;
 }
 
 // Give all applets an opportunity to run.
@@ -106,32 +80,29 @@ bool Engine::ProcessTasks()
 	bool did_work = false;
 	
 	// Step through all applets,
-	for (auto i = _applets.begin(), end = _applets.end(); i != end; ++ i)
+	ForEachObject_Destroy([this, & did_work] (AppletBase & applet) -> bool 
 	{
-		AppletBase & applet = * i;
+		// If work was not done, 
 		if (! ProcessTask(applet))
 		{
-			continue;
+			return true;
 		}
-		
-		// If work was done, 
+
 		did_work = true;
 
 		// And if it's all done, 
 		if (! applet.IsRunning())
 		{
-			// take a step back,
-			-- i;
-			
-			// and remove the applet.
-			_applets.remove(applet);
-			delete & applet;
+			// destroy the applet.
+			return false;
 		}
 		else if (_quit_flag)
 		{
 			DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
 		}
-	}
+
+		return true;
+	});
 	
 	// Return true iff any happened.
 	return did_work;

@@ -12,6 +12,7 @@
 #include "AppletBase.h"
 
 #include "smp/Daemon.h"
+#include "smp/EngineBase.h"
 
 #include "core/Singleton.h"
 
@@ -34,7 +35,7 @@ namespace applet
 	
 	// The applet scheduling is coordinated from here.
 	// When Run finishes, the program is done.
-	class Engine
+	class Engine : public smp::EngineBase <Engine, AppletBase>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -43,6 +44,7 @@ namespace applet
 
 	public:
 		typedef smp::Daemon<Engine> Daemon;
+		typedef smp::EngineBase<Engine, AppletBase> super;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -50,9 +52,6 @@ namespace applet
 		Engine();
 		~Engine();
 
-		// given a UID, returns the applet associated with it
-		AppletBase * GetObject(Uid uid);
-		
 		// daemon messages
 		template <typename FUNCTOR>
 		void Launch(char const * name, std::size_t stack_size, FUNCTOR functor)
@@ -61,34 +60,6 @@ namespace applet
 		}
 		
 		void OnQuit();
-		
-#if defined(WIN32)
-		template <typename OBJECT_TYPE>
-		void CreateObject(Uid uid)
-		{
-			typename OBJECT_TYPE::Init init
-			{
-				* this,
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE (init);
-			_applets.push_back(* object);
-		}
-#endif
-
-		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
-		{
-			typename OBJECT_TYPE::Init init
-			{
-				* this,
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE (init, parameters ...);
-			_applets.push_back(* object);
-		}
-
-		void DestroyObject(Uid uid);
 		
 		void SetQuitFlag();
 		
@@ -106,9 +77,6 @@ namespace applet
 		
 		// sim::Engine time.
 		core::Time _time;
-		
-		// Collection of all active applets
-		AppletBase::List _applets;
 		
 		bool _quit_flag;
 	};
