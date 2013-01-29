@@ -95,8 +95,10 @@ add_executable(crag
 
 include_directories("src" "dependencies/include")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.7")
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread  -DdSINGLE -DPROFILE -Wall -Wfatal-errors -fno-rtti -fno-exceptions -fno-unwind-tables")
-#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -DdSINGLE -DNDEBUG -Wall -Wfatal-errors-fno-rtti -fno-exceptions -fno-unwind-tables")
+
+# TODO: -fno-exceptions -fno-unwind-tables
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread  -DdSINGLE -DPROFILE -Wall -Wfatal-errors -fno-rtti")
+#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -DdSINGLE -DNDEBUG -Wall -Wfatal-errors -fno-rtti")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
