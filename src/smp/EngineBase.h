@@ -26,6 +26,7 @@ namespace smp
 		typedef OBJECT Object;
 		typedef smp::Object<Object, ENGINE> SmpObject;
 		typedef std::unordered_map<Uid, SmpObject *> ObjectMap;
+		typedef typename ObjectMap::iterator Iterator;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -33,6 +34,11 @@ namespace smp
 		EngineBase()
 			: _origin(geom::abs::Vector3::Zero())
 		{
+		}
+
+		~EngineBase()
+		{
+			ASSERT(_objects.empty());
 		}
 
 		// object management
@@ -62,6 +68,7 @@ namespace smp
 			return & object;
 		}
 
+		// for each map pair
 		template <typename FUNCTION>
 		void ForEachPair(FUNCTION f)
 		{
@@ -71,6 +78,7 @@ namespace smp
 			}
 		}
 
+		// for each map pair
 		template <typename FUNCTION>
 		void ForEachPair(FUNCTION f) const
 		{
@@ -80,6 +88,7 @@ namespace smp
 			}
 		}
 
+		// for each object
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f)
 		{
@@ -94,6 +103,24 @@ namespace smp
 			ForEachPair([& f] (std::pair<Uid, SmpObject *> pair) {
 				f(ref(pair.second));
 			});
+		}
+
+		// for each object (f returns false if it is to be erased)
+		template <typename FUNCTION>
+		void ForEachObject_Destroy(FUNCTION f)
+		{
+			for (auto i = _objects.begin(); i != _objects.end();)
+			{
+				auto pair = * i;
+				if (! f(* pair.second))
+				{
+					i = DestroyObject(i);
+				}
+				else
+				{
+					++ i;
+				}
+			}
 		}
 
 #if defined(WIN32)
@@ -143,10 +170,21 @@ namespace smp
 				return;
 			}
 
-			SmpObject * object = found->second;
+			DestroyObject(found);
+		}
+
+		Iterator DestroyObject(Iterator destroyed)
+		{
+			VerifyObject(* this);
+
+			auto object = destroyed->second;
 			OnRemoveObject(* object);
-			_objects.erase(found);
+			auto next = _objects.erase(destroyed);
 			delete object;
+
+			VerifyObject(* this);
+
+			return next;
 		}
 
 	private:
