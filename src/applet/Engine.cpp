@@ -39,8 +39,6 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	ASSERT(_applets.empty());
-	
 	ASSERT(_quit_flag);
 }
 
@@ -71,7 +69,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 bool Engine::HasFibersActive() const
 {
-	return GetNumObjects() != 0;
+	return ! IsEmpty();
 }
 
 // Give all applets an opportunity to run.

@@ -38,7 +38,12 @@ namespace smp
 
 		~EngineBase()
 		{
-			ASSERT(_objects.empty());
+			ASSERT(IsEmpty());
+		}
+
+		bool IsEmpty() const
+		{
+			return _objects.empty();
 		}
 
 		// object management
