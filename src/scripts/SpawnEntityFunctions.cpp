@@ -202,7 +202,7 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 	return planet;
 }
 
-sim::EntityHandle SpawnSkybox()
+gfx::ObjectHandle SpawnSkybox()
 {
 	sim::FirmamentHandle skybox;
 

@@ -63,7 +63,7 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	sim::EntityHandle _planet, _moon1, _moon2;
 	sim::EntityHandle _sun;
-	sim::FirmamentHandle _skybox;	// TODO: This can be cast to an entity handle!!
+	gfx::ObjectHandle _skybox;
 	sim::EntityHandle _vehicle;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
