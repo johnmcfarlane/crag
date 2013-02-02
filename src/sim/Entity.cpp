@@ -11,9 +11,10 @@
 
 #include "Entity.h"
 
+#include "Controller.h"
 #include "Engine.h"
 
-#include "physics/Body.h"
+#include "physics/Location.h"
 
 #include "gfx/Engine.h"
 #include "gfx/object/BranchNode.h"
@@ -31,44 +32,70 @@ DEFINE_POOL_ALLOCATOR(Entity, 100);
 
 Entity::Entity(super::Init const & init)
 : super(init)
-, _body(nullptr)
+, _controller(nullptr)
+, _location(nullptr)
 {
 }
 
 Entity::~Entity()
 {
-	delete _body;
+	delete _controller;
+	delete _location;
 	_model.Destroy();
 }
 
 void Entity::Tick()
 {
+	if (_controller != nullptr)
+	{
+		_controller->Tick();
+	}
 }
 
 void Entity::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
 {
 }
 
-void Entity::SetBody(Body * body)
+void Entity::SetController(Controller * controller)
 {
-	ASSERT((_body == nullptr) != (body == nullptr));
-	_body = body;
+	ASSERT((_controller == nullptr) != (controller == nullptr));
+	_controller = controller;
 }
 
-Entity::Body * Entity::GetBody()
+void Entity::SetLocation(physics::Location * location)
 {
-	return _body;
+	ASSERT((_location == nullptr) != (location == nullptr));
+	_location = location;
 }
 
-Entity::Body const * Entity::GetBody() const
+physics::Location * Entity::GetLocation()
 {
-	return _body;
+	return _location;
 }
 
-Transformation Entity::GetTransformation() const
+physics::Location const * Entity::GetLocation() const
 {
-	ASSERT(_body != nullptr);
-	return Transformation(_body->GetPosition(), _body->GetRotation());
+	return _location;
+}
+
+physics::Body * Entity::GetBody()
+{
+	if (_location == nullptr)
+	{
+		return nullptr;
+	}
+
+	return _location->GetBody();
+}
+
+physics::Body const * Entity::GetBody() const
+{
+	if (_location == nullptr)
+	{
+		return nullptr;
+	}
+
+	return _location->GetBody();
 }
 
 gfx::BranchNodeHandle Entity::GetModel() const
@@ -90,14 +117,14 @@ void Entity::SetModel(gfx::BranchNodeHandle model)
 	
 void Entity::UpdateModels() const
 {
-	if (_body == nullptr)
+	if (_location == nullptr || ! _model)
 	{
 		return;
 	}
 	
-	Vector3 position = _body->GetPosition();
-	Matrix33 rotation = _body->GetRotation();
-	Vector3 scale = _body->GetDimensions() * .5f;
+	Vector3 position = _location->GetPosition();
+	Matrix33 rotation = _location->GetRotation();
+	Vector3 scale = _location->GetDimensions() * .5f;
 	Transformation transformation(position, rotation, scale);
 
 	_model.Call([transformation] (gfx::BranchNode & node) {
@@ -110,6 +137,6 @@ void Entity::Verify() const
 {
 	super::Verify();
 
-	VerifyObjectPtr(_body);
+	VerifyObjectPtr(_location);
 }
 #endif

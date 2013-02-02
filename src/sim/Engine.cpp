@@ -284,13 +284,13 @@ void Engine::TickEntities()
 	ForEachObject([& to_delete] (Entity & entity) {
 		entity.Tick();
 
-		physics::Body const * body = entity.GetBody();
-		if (body == nullptr)
+		physics::Location const * location = entity.GetLocation();
+		if (location == nullptr)
 		{
 			return;
 		}
 		
-		Vector3 position = body->GetPosition();
+		Vector3 position = location->GetPosition();
 		if (Length(position) < purge_distance)
 		{
 			return;

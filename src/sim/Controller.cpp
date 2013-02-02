@@ -2,8 +2,8 @@
 //  Controller.cpp
 //  crag
 //
-//  Created by John on 1/24/10.
-//  Copyright 2009, 2010 John McFarlane. All rights reserved.
+//  Created by John on 2013/02/01.
+//  Copyright 2009-2013 John McFarlane. All rights reserved.
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
@@ -11,13 +11,26 @@
 
 #include "Controller.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// sim::Controller member definitions
 
-sim::Controller::~Controller()
+using namespace sim;
+
+Controller::Controller(Entity & entity)
+: _entity(entity)
 {
 }
 
-sim::Controller::Impulse::Impulse()
+Controller::~Controller() 
+{ 
+}
+
+Entity & Controller::GetEntity()
 {
-	factors[FORCE] = geom::Vector3f::Zero();
-	factors[TORQUE] = geom::Vector3f::Zero();
+	return _entity;
+}
+
+Entity const & Controller::GetEntity() const
+{
+	return _entity;
 }

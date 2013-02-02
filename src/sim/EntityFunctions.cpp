@@ -40,19 +40,6 @@ namespace sim
 		physics_engine.Attach(* body1, * body2);
 	}
 
-	void SetCollidable(Entity & entity, bool collidable)
-	{
-		Entity::Body * body = entity.GetBody();
-		if (body != nullptr)
-		{
-			body->SetIsCollidable(collidable != 0);
-		}
-		else
-		{
-			ERROR_MESSAGE("SetCollidable called on entity with no body");
-		}
-	}
-	
 	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta)
 	{
 		auto body = entity.GetBody();

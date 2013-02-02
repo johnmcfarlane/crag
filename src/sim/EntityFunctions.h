@@ -70,8 +70,5 @@ namespace sim
 	// physically attaches the given entities to one another
 	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine);
 	
-	// sets physical property of being collidable
-	void SetCollidable(Entity & entity, bool collidable);
-	
 	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta);
 }

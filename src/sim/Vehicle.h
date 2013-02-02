@@ -14,6 +14,10 @@
 
 namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
 
+namespace physics
+{
+	class Body;
+}
 
 namespace sim
 {
@@ -56,7 +60,7 @@ namespace sim
 		void Tick() override;
 
 		// Add force from an individual Thruster to the vehicle's body.
-		static void TickThruster(Thruster & Thruster, Body & body);
+		static void TickThruster(Thruster & Thruster, physics::Body & body);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data

@@ -9,9 +9,8 @@
 
 #include "pch.h"
 
+#include "SpawnEntityFunctions.h"
 #include "TestScript.h"
-
-#include "ObserverScript.h"
 #include "MonitorOrigin.h"
 
 #include "applet/Applet.h"
@@ -20,26 +19,19 @@
 
 #include "sim/axes.h"
 #include "sim/Engine.h"
-#include "sim/EntityFunctions.h"
+#include "sim/Entity.h"
 #include "sim/Firmament.h"
-#include "sim/Observer.h"
-#include "sim/Planet.h"
-#include "sim/Star.h"
-#include "sim/Vehicle.h"
 
-#include "physics/Engine.h"
-#include "physics/BoxBody.h"
+#include "physics/Location.h"
 
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 
 #include "gfx/Engine.h"
-#include "gfx/object/Ball.h"
-#include "gfx/object/Box.h"
 
 #include "core/app.h"
 
-#include "core/ConfigEntry.h"
+#include "core/app.h"
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
@@ -48,55 +40,31 @@ using geom::Vector3f;
 namespace sim 
 { 
 	DECLARE_CLASS_HANDLE(Entity);// sim::EntityHandle
-	DECLARE_CLASS_HANDLE(Observer);	// sim::ObserverHandle
-	DECLARE_CLASS_HANDLE(Planet);// sim::PlanetHandle
-	DECLARE_CLASS_HANDLE(Star);// sim::StarHandle
-	DECLARE_CLASS_HANDLE(Vehicle);// sim::VehicleHandle
 }
 
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// Config values
-	
-	CONFIG_DEFINE (box_density, physics::Scalar, 1);
-	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
-	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
-
-	CONFIG_DEFINE (ball_density, float, 1);
-	CONFIG_DEFINE (ball_linear_damping, float, 0.005f);
-	CONFIG_DEFINE (ball_angular_damping, float, 0.005f);
-
-	////////////////////////////////////////////////////////////////////////////////
 	// types
-	typedef std::vector<sim::VehicleHandle> EntityVector;
+	typedef std::vector<sim::EntityHandle> EntityVector;
 		
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	geom::abs::Vector3 observer_start_pos(0, 9999400, -5);
+	geom::rel::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
 	bool spawn_planets = true;
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// random number generation
-	
-	Random random_sequence;
-	double GetRandomUnit()
-	{
-		return random_sequence.GetUnit<double>();
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////
 	// variables
 
 	applet::AppletInterface * _applet_interface;
-	sim::PlanetHandle _planet, _moon1, _moon2;
-	sim::StarHandle _sun;
-	sim::FirmamentHandle _skybox;
-	sim::VehicleHandle _vehicle;
+	sim::EntityHandle _planet, _moon1, _moon2;
+	sim::EntityHandle _sun;
+	sim::FirmamentHandle _skybox;	// TODO: This can be cast to an entity handle!!
+	sim::EntityHandle _vehicle;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
@@ -104,90 +72,16 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, geom::rel::Vector3 size, gfx::Color4f color)
-	{
-		// physics
-		sim::Engine & engine = box.GetEngine();
-		physics::Engine & physics_engine = engine.GetPhysicsEngine();	
-		physics::BoxBody * body = new physics::BoxBody(physics_engine, true, size);
-		body->SetPosition(spawn_pos);
-		body->SetDensity(box_density);
-		body->SetLinearDamping(box_linear_damping);
-		body->SetAngularDamping(box_angular_damping);
-		box.SetBody(body);
-
-		// graphics
-		auto model = sim::AddModelWithTransform<gfx::Box>(color);
-
-		box.SetModel(model);
-	}
-
-	void ConstructBall(sim::Entity & ball, geom::rel::Sphere3 sphere, gfx::Color4f color)
-	{
-		// physics
-		sim::Engine & engine = ball.GetEngine();
-		physics::Engine & physics_engine = engine.GetPhysicsEngine();	
-		physics::SphericalBody * body = new physics::SphericalBody(physics_engine, true, sphere.radius);
-		body->SetPosition(sphere.center);
-		body->SetDensity(ball_density);
-		body->SetLinearDamping(ball_linear_damping);
-		body->SetAngularDamping(ball_angular_damping);
-		ball.SetBody(body);
-
-		// graphics
-		gfx::BranchNodeHandle model = sim::AddModelWithTransform<gfx::Ball>(color);
-		ball.SetModel(model);
-	}
-
-	void AddThruster(sim::Vehicle & vehicle, Vector3f const & position, Vector3f const & direction, SDL_Scancode key)
-	{
-		sim::Vehicle::Thruster thruster;
-		thruster.position = position;
-		thruster.direction = direction;
-		thruster.key = key;
-		thruster.thrust_factor = 1.;
-		
-		vehicle.AddThruster(thruster);
-	}
-
-	void ConstructVehicle(sim::Vehicle & vehicle, geom::rel::Sphere3 sphere)
-	{
-		ConstructBall(vehicle, sphere, gfx::Color4f::White());
-
-		AddThruster(vehicle, Vector3f(.5, -.8f, .5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, Vector3f(.5, -.8f, -.5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, Vector3f(-.5, -.8f, .5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, Vector3f(-.5, -.8f, -.5), Vector3f(0, 5, 0), SDL_SCANCODE_H);
-	}
-
-	void SpawnVehicle()
-	{
-		// Create vehicle
-		if (! spawn_vehicle)
-		{
-			return;
-		}
-
-		geom::rel::Sphere3 sphere;
-		sphere.center = geom::Cast<float>(observer_start_pos + geom::abs::Vector3(0, 5, +5));
-		sphere.radius = 1.;
-
-		ASSERT(! _vehicle);
-		_vehicle.Create();
-		_vehicle.Call([sphere] (sim::Vehicle & vehicle) {
-			ConstructVehicle(vehicle, sphere);
-		});
-	}
-
-	void SpawnShapes(sim::ObserverHandle observer, int shape_num)
+	void SpawnShapes(sim::EntityHandle observer, int shape_num)
 	{
 		if (max_shapes == 0)
 		{
 			return;
 		}
 	
-		smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Observer & observer) -> sim::Transformation {
-			return observer.GetTransformation();
+		smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Entity & observer) -> sim::Transformation {
+			auto location = observer.GetLocation();
+			return location->GetTransformation();
 		});
 	
 		if (cleanup_shapes)
@@ -221,14 +115,7 @@ namespace
 			case 0:
 			{
 				// ball
-				sim::EntityHandle ball;
-				ball.Create();
-
-				ball.Call([spawn_pos, color] (sim::Entity & ball) {
-					geom::rel::Sphere3 sphere(spawn_pos, geom::rel::Scalar(std::exp(- GetRandomUnit() * 2)));
-					ConstructBall(ball, sphere, color);
-				});
-
+				sim::EntityHandle ball = SpawnBall(spawn_pos, color);
 				_shapes.push_back(ball);
 				break;
 			}
@@ -236,16 +123,7 @@ namespace
 			case 1:
 			{
 				// box
-				sim::EntityHandle box;
-				box.Create();
-
-				box.Call([spawn_pos, color] (sim::Entity & box) {
-					geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-								 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-								 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
-					ConstructBox(box, spawn_pos, size, color);
-				});
-
+				sim::EntityHandle box = SpawnBox(spawn_pos, color);
 				_shapes.push_back(box);
 				break;
 			}
@@ -255,7 +133,7 @@ namespace
 		}
 	}
 
-	void HandleEvents(sim::ObserverHandle observer)
+	void HandleEvents(sim::EntityHandle observer)
 	{
 		int num_events = 0;
 	
@@ -298,25 +176,6 @@ namespace
 			}
 		}
 	}
-
-	void SpawnPlanets()
-	{
-		sim::Scalar planet_radius = 10000000;
-	
-		_planet.Create(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
-		_moon1.Create(sim::Sphere3(sim::Vector3(planet_radius * 1.5f, planet_radius * 2.5f, planet_radius * 1.f), 1500000), 10, 250);
-		_moon2.Create(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
-	}
-
-	void SpawnSkybox()
-	{
-		// Add the skybox.
-		_skybox.Create();
-		auto skybox = _skybox;
-		gfx::Daemon::Call([skybox] (gfx::Engine & engine) {
-			engine.OnSetParent(skybox.GetUid(), gfx::Uid());
-		});
-	}
 }
 
 // main entry point
@@ -335,32 +194,35 @@ void Test (applet::AppletInterface & applet_interface)
 	}
 	
 	// Create sun. 
-	_sun.Create(100000000., 30000.);
+	_sun = SpawnStar();
 	
 	// Create planets
 	if (spawn_planets)
 	{
-		SpawnPlanets();
+		sim::Scalar planet_radius = 10000000;
+
+		_planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
+		_moon1 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * 1.5f, planet_radius * 2.5f, planet_radius * 1.f), 1500000), 10, 250);
+		_moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 	}
 	
 	// Give formations time to expand.
 	_applet_interface->Sleep(2);
 
 	// Create observer.
-	sim::ObserverHandle observer;
-	observer.Create(observer_start_pos);
-	applet_interface.Launch("ObserverScript", 4096, [observer] (applet::AppletInterface & applet_interface) {
-		ObserverScript(applet_interface, observer);
-	});
-	
+	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
+
 	// Create origin controller.
 	applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
 	
-	SpawnSkybox();
+	_skybox = SpawnSkybox();
 	
 	// Create vehicle.
-	SpawnVehicle();
-	
+	if (spawn_vehicle)
+	{
+		_vehicle = SpawnVehicle(observer_start_pos + geom::rel::Vector3(0, 5, +5));
+	}
+
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
 	{

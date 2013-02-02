@@ -104,7 +104,7 @@ void Vehicle::Tick()
 	}
 }
 
-void Vehicle::TickThruster(Thruster & Thruster, Body & body)
+void Vehicle::TickThruster(Thruster & Thruster, physics::Body & body)
 {
 	if (app::IsKeyDown(Thruster.key))
 	{

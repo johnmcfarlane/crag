@@ -9,28 +9,23 @@
 
 #pragma once
 
-
 namespace sim
 {
+	class Entity;
+
+	// a member of Entity which generates distinctive behavior
 	class Controller
 	{
 	public:
+		Controller(Entity & entity);
 		virtual ~Controller();
-		
-		struct Impulse
-		{
-			Impulse();
 
-			enum TYPE
-			{
-				FORCE,
-				TORQUE,
-				NUM_TYPES
-			};
-
-			geom::Vector3f factors[NUM_TYPES];
-		};
+		Entity & GetEntity();
+		Entity const & GetEntity() const;
 		
-		virtual Impulse GetImpulse() = 0;
+		virtual void Tick() = 0;
+
+	private:
+		Entity & _entity;
 	};
 }

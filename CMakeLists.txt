@@ -41,10 +41,12 @@ add_executable(crag
 	src/physics/Body.cpp
 	src/physics/BoxBody.cpp
 	src/physics/SphericalBody.cpp
+	src/physics/Location.cpp
+	src/physics/FixedLocation.cpp
 	src/scripts/MonitorOrigin.cpp
-	src/scripts/ObserverScript.cpp
 	src/scripts/RegulatorScript.cpp
 	src/scripts/TestScript.cpp
+	src/scripts/SpawnEntityFunctions.cpp
 	src/smp/Fiber.cpp
 	src/smp/FiberPosix.cpp
 	src/smp/FiberWin.cpp
@@ -57,18 +59,17 @@ add_executable(crag
 	src/sim/PlanetShader.cpp
 	src/sim/Firmament.cpp
 	src/sim/Entity.cpp
-	src/sim/Observer.cpp
 	src/sim/PlanetaryBody.cpp
-	src/sim/UserInput.cpp
+	src/sim/ObserverInput.cpp
 	src/sim/FrequencyEstimator.cpp
 	src/sim/Engine.cpp
 	src/sim/EntityFunctions.cpp
 	src/sim/Vehicle.cpp
 	src/sim/gravity.cpp
 	src/sim/Planet.cpp
-	src/sim/Star.cpp
 	src/sim/MoonShader.cpp
 	src/sim/Controller.cpp
+	src/sim/ObserverController.cpp
 	src/core/profile.cpp
 	src/core/ConfigManager.cpp
 	src/core/memory.cpp

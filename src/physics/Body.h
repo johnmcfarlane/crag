@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "defs.h"
+#include "Location.h"
 
 namespace physics
 {
@@ -22,25 +22,28 @@ namespace physics
 	bool IsAttached(Body const & body1, Body const & body2);
 	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
-	class Body
+	class Body : public Location
 	{
 	protected:
 		Body(Engine & engine, dGeomID init_geom_id, bool movable);
 	public:
-		virtual ~Body();
+		virtual ~Body() override;
 		
+		virtual Body * GetBody() final;
+		virtual Body const * GetBody() const final;
+
 		dGeomID GetGeomId() const;
 		virtual Vector3 GetDimensions() const = 0;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		
-		Vector3 const & GetPosition() const;
+		virtual Vector3 GetPosition() const final;
 		void SetPosition(Vector3 const &) const;
 		
 		Vector3 GetRelativePointVelocity(Vector3 const & point) const;
 		Vector3 GetVelocity() const;
 		
-		Matrix33 const & GetRotation() const;
+		virtual Matrix33 GetRotation() const final;
 		void SetRotation(Matrix33 const & matrix);
 
 		bool GetIsCollidable() const;

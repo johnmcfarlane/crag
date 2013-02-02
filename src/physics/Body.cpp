@@ -12,9 +12,12 @@
 #include "Body.h"
 #include "Engine.h"
 
+#include "geom/Matrix33.h"
 
 using namespace physics;
 
+////////////////////////////////////////////////////////////////////////////////
+// physics::Body member definitions
 
 Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 : geom_id(init_geom_id)
@@ -57,6 +60,16 @@ Body::~Body()
 	dGeomDestroy(geom_id);
 }
 
+Body * Body::GetBody()
+{
+	return this;
+}
+
+Body const * Body::GetBody() const
+{
+	return this;
+}
+
 dGeomID Body::GetGeomId() const
 {
 	return geom_id;
@@ -76,7 +89,7 @@ Scalar Body::GetMass() const
 	return m.mass;
 }
 
-Vector3 const & Body::GetPosition() const
+Vector3 Body::GetPosition() const
 {
 	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
 }
@@ -110,7 +123,7 @@ Vector3 Body::GetVelocity() const
 	return velocity;
 }
 
-Matrix33 const & Body::GetRotation() const
+Matrix33 Body::GetRotation() const
 {
 	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
 }

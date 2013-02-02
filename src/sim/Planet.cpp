@@ -70,7 +70,7 @@ Planet::Planet(Entity::Init const & init, Sphere3 sphere, int random_seed, int n
 		physics::Engine & physics_engine = init.engine.GetPhysicsEngine();
 		auto body = new PlanetaryBody(physics_engine, ref(_formation), physics::Scalar(_radius_mean));
 		body->SetPosition(geom::Cast<physics::Scalar>(sphere.center));
-		SetBody(body);
+		SetLocation(body);
 	}
 	
 	// messages
