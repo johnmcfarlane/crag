@@ -37,7 +37,7 @@ namespace smp
 	template <typename BASE_TYPE>
 	Handle<TYPE>::operator Handle<BASE_TYPE> & ()
 	{
-		ASSERT((BASE_TYPE *)((Type *)nullptr) == nullptr);
+		static_assert(std::is_base_of<BASE_TYPE, TYPE>::value, "invalid cast");
 		return reinterpret_cast<Handle <BASE_TYPE> &>(* this);
 	}
 	
@@ -45,7 +45,7 @@ namespace smp
 	template <typename BASE_TYPE>
 	Handle<TYPE>::operator Handle<BASE_TYPE> const & () const
 	{
-		ASSERT((BASE_TYPE *)((Type *)nullptr) == nullptr);
+		static_assert(std::is_base_of<BASE_TYPE, TYPE>::value, "invalid cast");
 		return reinterpret_cast<Handle <BASE_TYPE> const &>(* this);
 	}
 	
