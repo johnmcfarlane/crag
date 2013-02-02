@@ -170,6 +170,8 @@ namespace smp
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
 	{
+		ASSERT(_uid);
+
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
@@ -187,6 +189,8 @@ namespace smp
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::CallPtr(FUNCTION_TYPE function) const
 	{
+		ASSERT(_uid);
+
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
@@ -201,6 +205,7 @@ namespace smp
 	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(Future<VALUE_TYPE> & future, FUNCTION_TYPE function) const
 	{
+		ASSERT(_uid);
 		ASSERT(future.IsPendind());
 		
 		auto uid = _uid;
