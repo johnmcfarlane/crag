@@ -9,8 +9,13 @@
 
 #pragma once
 
-#include "geom/Matrix33.h"
-#include "geom/Matrix44.h"
+namespace geom
+{
+	template <typename S, int R, int C>
+	class Matrix;
+	template <typename S>
+	class Transformation;
+}
 
 namespace physics
 {
@@ -19,4 +24,5 @@ namespace physics
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
+	typedef geom::Transformation<Scalar> Transformation;
 }
