@@ -103,8 +103,7 @@ void Thruster::AddPuff(float thrust_factor)
 	}
 	
 	{
-		smp::Handle<Puff> puff;
-		puff.Create(spawn_volume);
+		auto puff = smp::Handle<Puff>::CreateHandle(spawn_volume);
 		renderer.OnSetParent(puff.GetUid(), branch_node.GetUid());
 	}
 }

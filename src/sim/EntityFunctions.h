@@ -37,15 +37,13 @@ namespace sim
 	gfx::BranchNodeHandle AddModelWithTransform(INIT_DATA & init_data, gfx::BranchNodeHandle const & parent, gfx::Transformation const & transformation)
 	{
 		// create branch node and place it as a child of the given parent
-		gfx::BranchNodeHandle branch_node;
-		branch_node.Create(transformation);
+		auto branch_node = gfx::BranchNodeHandle::CreateHandle(transformation);
 		gfx::Daemon::Call([branch_node, parent] (gfx::Engine & engine) {
 			engine.OnSetParent(branch_node.GetUid(), parent.GetUid());
 		});
 		
 		// create the leaf node and place it as a child of the branch node
-		smp::Handle<GFX_TYPE> model;
-		model.Create(init_data);
+		auto model = smp::Handle<GFX_TYPE>::CreateHandle(init_data);
 		gfx::Daemon::Call([model, branch_node] (gfx::Engine & engine) {
 			engine.OnSetParent(model.GetUid(), branch_node.GetUid());
 		});

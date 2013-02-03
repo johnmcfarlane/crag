@@ -155,8 +155,7 @@ namespace
 sim::EntityHandle SpawnBall(const sim::Vector3 & position, gfx::Color4f color)
 {
 	// ball
-	sim::EntityHandle ball;
-	ball.Create();
+	auto ball = sim::EntityHandle::CreateHandle();
 
 	ball.Call([position, color] (sim::Entity & ball) {
 		geom::rel::Sphere3 sphere(position, geom::rel::Scalar(std::exp(- GetRandomUnit() * 2)));
@@ -169,8 +168,7 @@ sim::EntityHandle SpawnBall(const sim::Vector3 & position, gfx::Color4f color)
 sim::EntityHandle SpawnBox(const sim::Vector3 & position, gfx::Color4f color)
 {
 	// box
-	sim::EntityHandle box;
-	box.Create();
+	auto box = sim::EntityHandle::CreateHandle();
 
 	box.Call([position, color] (sim::Entity & box) {
 		geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
@@ -184,8 +182,8 @@ sim::EntityHandle SpawnBox(const sim::Vector3 & position, gfx::Color4f color)
 
 sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 {
-	sim::EntityHandle observer;
-	observer.Create();
+	auto observer = sim::EntityHandle::CreateHandle();
+
 	observer.Call([position] (sim::Entity & observer) {
 		ConstructObserver(observer, position);
 	});
@@ -195,18 +193,15 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters)
 {
-	sim::PlanetHandle planet;
-
-	planet.Create(sphere, random_seed, num_craters);
+	auto planet = sim::PlanetHandle::CreateHandle(sphere, random_seed, num_craters);
 
 	return planet;
 }
 
 gfx::ObjectHandle SpawnSkybox()
 {
-	sim::FirmamentHandle skybox;
+	auto skybox = sim::FirmamentHandle::CreateHandle();
 
-	skybox.Create();
 	gfx::Daemon::Call([skybox] (gfx::Engine & engine) {
 		engine.OnSetParent(skybox.GetUid(), gfx::Uid());
 	});
@@ -216,9 +211,8 @@ gfx::ObjectHandle SpawnSkybox()
 
 sim::EntityHandle SpawnStar()
 {
-	sim::EntityHandle sun;
+	auto sun = sim::EntityHandle::CreateHandle();
 
-	sun.Create();
 	sun.Call([] (sim::Entity & sun) {
 		// physics
 		geom::rel::Vector3 position(65062512.f, 75939904.f, 0.f);
@@ -236,13 +230,12 @@ sim::EntityHandle SpawnStar()
 
 sim::EntityHandle SpawnVehicle(sim::Vector3 const & position)
 {
-	sim::VehicleHandle vehicle;
+	auto vehicle = sim::VehicleHandle::CreateHandle();
 
 	geom::rel::Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
-	vehicle.Create();
 	vehicle.Call([sphere] (sim::Vehicle & vehicle) {
 		ConstructVehicle(vehicle, sphere);
 	});

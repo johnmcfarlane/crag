@@ -47,10 +47,9 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	Thruster & _thruster = _thrusters.back();
 	
 	// create gfx-side branch node
-	gfx::BranchNodeHandle branch_node;
 	Scalar thrust_scale = Length(_thruster.direction);
 	Transformation transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale);
-	branch_node.Create(transformation);
+	auto branch_node = gfx::BranchNodeHandle::CreateHandle(transformation);
 	
 	// branch node's parent is vehicle's branch node
 	gfx::ObjectHandle const & parent_model = GetModel();
