@@ -6,7 +6,6 @@ add_executable(crag
 	src/main.cpp
 	src/applet/AppletBase.cpp
 	src/applet/Engine.cpp
-	src/ga/main.cpp
 	src/gfx/Program.cpp
 	src/gfx/Shader.cpp
 	src/gfx/object/Light.cpp
