@@ -59,6 +59,11 @@ namespace smp
 		// Sets the UID of the entity being handled.
 		void SetUid(Uid uid);
 		
+		// creates an object; passes parameters to c'tor;
+		// returns handle to object
+		template <typename ... PARAMETERS>
+		static Handle CreateHandle(PARAMETERS && ... parameters);
+		
 #if defined(__GNUC__)
 		void Create();
 

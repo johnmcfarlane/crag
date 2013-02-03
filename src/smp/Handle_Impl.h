@@ -69,6 +69,15 @@ namespace smp
 		_uid = uid;
 	}
 	
+	template <typename TYPE>
+	template <typename ... PARAMETERS>
+	Handle<TYPE> Handle<TYPE>::CreateHandle(PARAMETERS && ... parameters)
+	{
+		Handle creation;
+		creation.Create(std::forward<PARAMETERS>(parameters) ...); 
+		return creation;
+	}
+	
 #if defined(__GNUC__)
 	template <typename TYPE>
 	void Handle<TYPE>::Create()
