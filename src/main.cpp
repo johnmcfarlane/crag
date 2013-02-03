@@ -10,7 +10,6 @@
 
 #include "pch.h"
 
-#include "ga/main.h"
 #include "scripts/TestScript.h"
 
 #include "form/Engine.h"
