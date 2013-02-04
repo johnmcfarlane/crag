@@ -19,6 +19,7 @@ namespace geom
 	namespace rel
 	{
 		typedef float Scalar;
+		typedef Vector<Scalar, 2> Vector2;
 		typedef Vector<Scalar, 3> Vector3;
 		typedef Ray<Scalar, 3> Ray3;
 		typedef Sphere<Scalar, 3> Sphere3;
@@ -31,6 +32,7 @@ namespace geom
 	namespace abs
 	{
 		typedef double Scalar;
+		typedef Vector<Scalar, 2> Vector2;
 		typedef Vector<Scalar, 3> Vector3;
 		typedef Ray<Scalar, 3> Ray3;
 		typedef Sphere<Scalar, 3> Sphere3;
