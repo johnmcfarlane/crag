@@ -20,7 +20,7 @@
 #include "sim/EntityFunctions.h"
 #include "sim/Firmament.h"
 #include "sim/ObserverController.h"
-#include "sim/Vehicle.h"
+#include "sim/VehicleController.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
@@ -40,7 +40,6 @@
 namespace sim 
 { 
 	DECLARE_CLASS_HANDLE(Firmament); //FirmamentHandle
-	DECLARE_CLASS_HANDLE(Vehicle); // sim::VehicleHandle
 }
 
 namespace
@@ -132,25 +131,29 @@ namespace
 #endif
 	}
 
-	void AddThruster(sim::Vehicle & vehicle, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void AddThruster(sim::VehicleController & vehicle_controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
-		sim::Vehicle::Thruster thruster;
+		sim::VehicleController::Thruster thruster;
 		thruster.position = position;
 		thruster.direction = direction;
 		thruster.key = key;
 		thruster.thrust_factor = 1.;
 		
-		vehicle.AddThruster(thruster);
+		vehicle_controller.AddThruster(thruster);
 	}
 
-	void ConstructVehicle(sim::Vehicle & vehicle, geom::rel::Sphere3 const & sphere)
+	void ConstructVehicle(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
-		ConstructBall(vehicle, sphere, gfx::Color4f::White());
+		ConstructBall(entity, sphere, gfx::Color4f::White());
 
-		AddThruster(vehicle, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(vehicle, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		auto& controller = ref(new sim::VehicleController(entity));
+		entity.SetController(& controller);
+
+		AddThruster(controller, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+
 	}
 }
 
@@ -262,13 +265,13 @@ sim::EntityHandle SpawnStar()
 
 sim::EntityHandle SpawnVehicle(sim::Vector3 const & position)
 {
-	auto vehicle = sim::VehicleHandle::CreateHandle();
+	auto vehicle = sim::EntityHandle::CreateHandle();
 
 	geom::rel::Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
-	vehicle.Call([sphere] (sim::Vehicle & vehicle) {
+	vehicle.Call([sphere] (sim::Entity & vehicle) {
 		ConstructVehicle(vehicle, sphere);
 	});
 

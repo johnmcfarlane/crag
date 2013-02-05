@@ -1,5 +1,5 @@
 //
-//  Vehicle.cpp
+//  VehicleController.cpp
 //  crag
 //
 //  Created by John McFarlane on 11/9/11.
@@ -9,9 +9,10 @@
 
 #include "pch.h"
 
-#include "Vehicle.h"
+#include "VehicleController.h"
 
 #include "axes.h"
+#include "Entity.h"
 #include "EntityFunctions.h"
 #include "Engine.h"
 
@@ -28,17 +29,17 @@ using namespace sim;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::Vehicle member functions
+// sim::VehicleController member functions
 
-DEFINE_POOL_ALLOCATOR(Vehicle, 1);
+DEFINE_POOL_ALLOCATOR(VehicleController, 1);
 
 // seems to be required by MetaClass::InitObject
-Vehicle::Vehicle(Init const & init)
-: super(init)
+VehicleController::VehicleController(Entity & entity)
+: _super(entity)
 {
 }
 
-void Vehicle::AddThruster(Thruster const & thruster)
+void VehicleController::AddThruster(Thruster const & thruster)
 {
 	ASSERT(! thruster.model);
 	
@@ -52,7 +53,8 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	auto branch_node = gfx::BranchNodeHandle::CreateHandle(transformation);
 	
 	// branch node's parent is vehicle's branch node
-	gfx::ObjectHandle const & parent_model = GetModel();
+	sim::Entity const & entity = GetEntity();
+	gfx::ObjectHandle const & parent_model = entity.GetModel();
 	gfx::Daemon::Call([branch_node, parent_model] (gfx::Engine & engine) {
 		engine.OnSetParent(branch_node.GetUid(), parent_model.GetUid());
 	});
@@ -70,10 +72,8 @@ void Vehicle::AddThruster(Thruster const & thruster)
 	_thruster.thrust_factor = 0;
 }
 
-void Vehicle::UpdateModels() const
+void VehicleController::UpdateModels() const
 {
-	super::UpdateModels();
-	
 	// For each thruster,
 	for (ThrusterVector::const_iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
@@ -87,9 +87,10 @@ void Vehicle::UpdateModels() const
 	}
 }
 
-void Vehicle::Tick()
+void VehicleController::Tick()
 {
-	physics::Body * body = GetBody();
+	auto& entity = GetEntity();
+	physics::Body * body = entity.GetBody();
 	if (body == nullptr)
 	{
 		// vehicle is 'broken' because body was invalidated and destroyed.
@@ -101,9 +102,11 @@ void Vehicle::Tick()
 		Thruster & Thruster = * i;
 		TickThruster(Thruster, * body);
 	}
+
+	UpdateModels();
 }
 
-void Vehicle::TickThruster(Thruster & Thruster, physics::Body & body)
+void VehicleController::TickThruster(Thruster & Thruster, physics::Body & body)
 {
 	if (app::IsKeyDown(Thruster.key))
 	{

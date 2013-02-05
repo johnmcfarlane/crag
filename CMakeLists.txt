@@ -60,7 +60,7 @@ add_executable(crag
 	src/sim/FrequencyEstimator.cpp
 	src/sim/Engine.cpp
 	src/sim/EntityFunctions.cpp
-	src/sim/Vehicle.cpp
+	src/sim/VehicleController.cpp
 	src/sim/gravity.cpp
 	src/sim/Controller.cpp
 	src/sim/ObserverController.cpp

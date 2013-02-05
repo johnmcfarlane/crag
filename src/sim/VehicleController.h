@@ -1,5 +1,5 @@
 //
-//  Vehicle.h
+//  VehicleController.h
 //  crag
 //
 //  Created by John McFarlane on 11/9/11.
@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include "Entity.h"
+#include "defs.h"
 
+#include "Controller.h"
 
 namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
 
@@ -22,12 +23,12 @@ namespace physics
 namespace sim
 {
 	// An entity with its own locomotion.
-	class Vehicle : public Entity
+	class VehicleController : public Controller
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef Entity super;
+		typedef Controller _super;
 	public:
 		typedef gfx::ThrusterHandle ThrusterHandle;
 		
@@ -47,14 +48,14 @@ namespace sim
 		
 		DECLARE_ALLOCATOR(Vehicle);
 
-		Vehicle(Init const & init);
+		VehicleController(Entity & entity);
 		
 		// Add a Thruster
 		void AddThruster(Thruster const & thruster);
 		
 	private:
 		// Called when sending messages to the renderer thread.
-		void UpdateModels() const override;
+		void UpdateModels() const;
 		
 		// Called whenever the simulation ticks.
 		void Tick() override;
