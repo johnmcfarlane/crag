@@ -70,6 +70,10 @@ Body const * Body::GetBody() const
 	return this;
 }
 
+void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
+{
+}
+
 dGeomID Body::GetGeomId() const
 {
 	return geom_id;

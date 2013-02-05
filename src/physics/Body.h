@@ -32,6 +32,8 @@ namespace physics
 		virtual Body * GetBody() final;
 		virtual Body const * GetBody() const final;
 
+		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
+
 		dGeomID GetGeomId() const;
 		virtual Vector3 GetDimensions() const = 0;
 		virtual void SetDensity(Scalar density) = 0;

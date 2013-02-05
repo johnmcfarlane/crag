@@ -9,14 +9,8 @@
 
 #pragma once
 
-#include "sim/defs.h"
-
 #include "geom/origin.h"
 #include "geom/Sphere.h"
-
-
-namespace sim { DECLARE_CLASS_HANDLE(Planet); }	// sim::PlanetHandle
-
 
 namespace form 
 {
@@ -31,21 +25,20 @@ namespace form
 	class Formation
 	{
 	public:
-		Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape, sim::PlanetHandle const & planet);
+		Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape);
 		~Formation();
 
 		Shader const & GetShader() const;
 		geom::abs::Sphere3 const & GetShape() const;	// global coordinate
 		int GetSeed() const;
 		
-		void SendRadiusUpdateMessage() const;		
 		void SampleRadius(geom::abs::Scalar sample_radius);
+		geom::abs::Vector2 GetRadiusRange() const;		
 
 	private:
 		int _seed;
 		Shader const & _shader;
 		geom::abs::Sphere3 _shape;
-		sim::PlanetHandle _planet;
 		geom::abs::Scalar _radius_min;
 		geom::abs::Scalar _radius_max;
 	};

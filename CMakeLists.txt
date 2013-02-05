@@ -15,7 +15,6 @@ add_executable(crag
 	src/gfx/object/Object.cpp
 	src/gfx/object/Box.cpp
 	src/gfx/object/Skybox.cpp
-	src/gfx/object/Planet.cpp
 	src/gfx/object/BranchNode.cpp
 	src/gfx/object/Puff.cpp
 	src/gfx/object/LeafNode.cpp
@@ -55,18 +54,14 @@ add_executable(crag
 	src/smp/ReadersWriterMutex.cpp
 	src/smp/scheduler.cpp
 	src/smp/smp.cpp
-	src/sim/PlanetShader.cpp
 	src/sim/Firmament.cpp
 	src/sim/Entity.cpp
-	src/sim/PlanetaryBody.cpp
 	src/sim/ObserverInput.cpp
 	src/sim/FrequencyEstimator.cpp
 	src/sim/Engine.cpp
 	src/sim/EntityFunctions.cpp
 	src/sim/Vehicle.cpp
 	src/sim/gravity.cpp
-	src/sim/Planet.cpp
-	src/sim/MoonShader.cpp
 	src/sim/Controller.cpp
 	src/sim/ObserverController.cpp
 	src/core/profile.cpp
@@ -91,7 +86,12 @@ add_executable(crag
 	src/form/node/PointBuffer.cpp
 	src/form/node/RootNode.cpp
 	src/form/Engine.cpp
-	src/form/Formation.cpp)
+	src/form/Formation.cpp
+	src/scripts/planet/gfx/Planet.cpp
+	src/scripts/planet/sim/MoonShader.cpp
+	src/scripts/planet/sim/PlanetController.cpp
+	src/scripts/planet/sim/PlanetShader.cpp
+	src/scripts/planet/physics/PlanetBody.cpp)
 
 include_directories("src" "dependencies/include")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.7")

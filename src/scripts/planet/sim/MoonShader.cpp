@@ -10,7 +10,6 @@
 #include "pch.h"
 
 #include "MoonShader.h"
-#include "Planet.h"
 
 #include "form/Formation.h"
 #include "form/node/Node.h"

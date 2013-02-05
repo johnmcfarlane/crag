@@ -52,14 +52,15 @@ void Entity::Tick()
 	}
 }
 
-void Entity::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
-{
-}
-
 void Entity::SetController(Controller * controller)
 {
 	ASSERT((_controller == nullptr) != (controller == nullptr));
 	_controller = controller;
+}
+
+Controller * Entity::GetController()
+{
+	return _controller;
 }
 
 void Entity::SetLocation(physics::Location * location)

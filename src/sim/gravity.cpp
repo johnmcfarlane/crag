@@ -32,7 +32,19 @@ namespace
 		Vector3 force = Vector3::Zero();
 		
 		engine.ForEachObject([& pos, & force] (Entity const & entity) {
-			entity.GetGravitationalForce(pos, force);
+			auto location = entity.GetLocation();
+			if (location == nullptr)
+			{
+				return;
+			}
+
+			auto body = location->GetBody();
+			if (body == nullptr)
+			{
+				return;
+			}
+
+			body->GetGravitationalForce(pos, force);
 		});
 		
 		return force * Scalar(mass) * Scalar(gravitational_force);

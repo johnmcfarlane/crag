@@ -184,8 +184,7 @@ void form::Engine::Tick()
 	TickScene();
 				
 	GenerateMesh();
-	BroadcastFormationUpdates();
-
+	
 	VerifyObject(* this);
 }
 
@@ -246,15 +245,6 @@ void form::Engine::GenerateMesh()
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();
-}
-
-void form::Engine::BroadcastFormationUpdates()
-{
-	for (FormationSet::const_iterator i = _formations.begin(); i != _formations.end(); ++ i)
-	{
-		Formation const & formation = * * i;
-		formation.SendRadiusUpdateMessage();
-	}
 }
 
 form::Mesh * form::Engine::PopMesh()

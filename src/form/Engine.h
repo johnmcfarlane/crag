@@ -103,7 +103,6 @@ namespace form
 		void Tick();
 		void TickScene();
 		void GenerateMesh();
-		void BroadcastFormationUpdates();
 		Mesh * PopMesh();
 		
 		void AdjustNumQuaterna();

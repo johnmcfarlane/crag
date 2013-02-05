@@ -28,18 +28,19 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Planet, 3);
 
-Planet::Planet(LeafNode::Init const & init, Scalar sea_level)
+Planet::Planet(LeafNode::Init const & init, Scalar radius)
 : LeafNode(init, Layer::foreground)
-, _sea_level(sea_level)
+, _sea_level(radius)
 {
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
 	SetProgram(sphere_program);
 }
 
-void Planet::Update(UpdateParams const & params)
+void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 {
-	_salient = params;
+	_radius_min = radius_min;
+	_radius_max = radius_max;
 }
 
 gfx::Transformation const & Planet::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
@@ -55,15 +56,15 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	
 	Scalar depth = transformation_matrix[1][3];
 	
-	range.y = depth + _salient._radius_max;
-	range.x = depth - _salient._radius_max;
+	range.y = depth + _radius_max;
+	range.x = depth - _radius_max;
 	
 	return true;
 }
 
 void Planet::Render(gfx::Engine const & renderer) const
 {
-	if (_sea_level < _salient._radius_min)
+	if (_sea_level < _radius_min)
 	{
 		return;
 	}

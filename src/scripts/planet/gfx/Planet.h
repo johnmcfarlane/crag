@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
-
+#include "gfx/object/LeafNode.h"
 
 namespace gfx
 {
@@ -18,19 +17,12 @@ namespace gfx
 	class Planet : public LeafNode
 	{
 	public:
-		// types
-		class UpdateParams
-		{
-		public:
-			Scalar _radius_min, _radius_max;
-		};
-		
 		// functions
 		DECLARE_ALLOCATOR(gfx::Planet);
 
-		Planet(Init const & init, Scalar sea_level);
+		Planet(Init const & init, Scalar radius);
 		
-		void Update(UpdateParams const & params);
+		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 
 	private:
 		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
@@ -40,7 +32,8 @@ namespace gfx
 		
 		// variables
 		Scalar _sea_level;
-		UpdateParams _salient;
+		Scalar _radius_min;
+		Scalar _radius_max;
 	};
 }
 

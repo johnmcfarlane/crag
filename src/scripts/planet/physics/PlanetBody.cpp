@@ -1,5 +1,5 @@
 //
-//  PlanetaryBody.cpp
+//  PlanetBody.cpp
 //  crag
 //
 //  Created by John on 6/20/10.
@@ -9,10 +9,10 @@
 
 #include "pch.h"
 
-#include "PlanetaryBody.h"
+#include "PlanetBody.h"
 
-#include "defs.h"
-#include "Engine.h"
+#include "sim/defs.h"
+#include "sim/Engine.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
@@ -26,6 +26,8 @@
 #include "geom/MatrixOps.h"
 
 #include "core/ConfigEntry.h"
+
+using namespace physics;
 
 namespace
 {
@@ -43,9 +45,9 @@ namespace
 	class DeferredIntersectionFunctor : public smp::scheduler::Job
 	{
 	public:	
-		DeferredIntersectionFunctor(physics::Body const & body, sim::PlanetaryBody const & planetary_body, physics::IntersectionFunctor const & intersection_functor)
+		DeferredIntersectionFunctor(Body const & body, PlanetBody const & planet_body, IntersectionFunctor const & intersection_functor)
 		: _body(body)
-		, _planetary_body(planetary_body)
+		, _planet_body(planet_body)
 		, _intersection_functor(intersection_functor)
 		{
 		}
@@ -55,44 +57,75 @@ namespace
 		{
 			ASSERT(unit_index == 0);
 			
-			_body.OnDeferredCollisionWithPlanet(_planetary_body, _intersection_functor);
+			_body.OnDeferredCollisionWithPlanet(_planet_body, _intersection_functor);
 		}
 		
-		physics::Body const & _body;
-		sim::PlanetaryBody const & _planetary_body;
-		physics::IntersectionFunctor _intersection_functor;
+		Body const & _body;
+		PlanetBody const & _planet_body;
+		IntersectionFunctor _intersection_functor;
 	};
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// PlanetaryBody members
+// PlanetBody members
 
-DEFINE_POOL_ALLOCATOR(sim::PlanetaryBody, 3);
+DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
-sim::PlanetaryBody::PlanetaryBody(physics::Engine & physics_engine, form::Formation const & formation, physics::Scalar radius)
-: physics::SphericalBody(physics_engine, false, radius)
+PlanetBody::PlanetBody(Engine & physics_engine, form::Formation const & formation, Scalar radius)
+: SphericalBody(physics_engine, false, radius)
 , _formation(formation)
+, _mean_radius(radius)
 {
 }
 
-bool sim::PlanetaryBody::OnCollision(physics::Engine & engine, Body const & that_body) const
+void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
+{
+	Vector3 const & center = GetPosition();
+	Vector3 to_center = center - pos;
+	Scalar distance = Length(to_center);
+	
+	// Calculate the direction of the pull.
+	Vector3 direction = to_center / distance;
+
+	// Calculate the mass.
+	Scalar density = 1;
+	Scalar volume = Cube(_mean_radius);
+	Scalar mass = volume * density;
+
+	// Calculate the force. Actually, this isn't really the force;
+	// It's the potential. Until we know what we're pulling we can't know the force.
+	Scalar force;
+	if (distance < _mean_radius)
+	{
+		force = mass * distance / Cube(_mean_radius);
+	}
+	else
+	{
+		force = mass / Square(distance);
+	}
+
+	Vector3 contribution = direction * force;
+	gravity += contribution;
+}
+
+bool PlanetBody::OnCollision(Engine & engine, Body const & that_body) const
 {
 	dGeomID object_geom = that_body.GetGeomId();
 	dGeomID planet_geom = GetGeomId();
-	physics::IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
+	IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
 	
 	that_body.OnDeferredCollisionWithPlanet(* this, intersection_functor);
 	
 	return true;
 }
 
-void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, physics::IntersectionFunctor & functor) const
+void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const
 {
 	using namespace form::collision;
 
-	physics::BoxBody const & box = static_cast<physics::BoxBody const &>(body);
-	physics::Engine const & physics_engine = functor.GetEngine();
+	BoxBody const & box = static_cast<BoxBody const &>(body);
+	Engine const & physics_engine = functor.GetEngine();
 	form::Scene const & scene = physics_engine.GetScene();
 	
 	// Get vital geometric information about the cuboid.
@@ -155,18 +188,18 @@ void sim::PlanetaryBody::OnDeferredCollisionWithBox(physics::Body const & body, 
 	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
 }
 
-void sim::PlanetaryBody::OnDeferredCollisionWithSphere(physics::Body const & body, physics::IntersectionFunctor & functor) const
+void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
 {
 	using namespace form::collision;
 
-	physics::SphericalBody const & sphere = static_cast<physics::SphericalBody const &>(body);
-	physics::Engine const & physics_engine = functor.GetEngine();
+	SphericalBody const & sphere = static_cast<SphericalBody const &>(body);
+	Engine const & physics_engine = functor.GetEngine();
 	form::Scene const & scene = physics_engine.GetScene();
 
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
-		// This can happen if the PlanetaryBody has just been created 
+		// This can happen if the PlanetBody has just been created 
 		// and the corresponding OnAddFormation message hasn't been read yet.
 		return;
 	}

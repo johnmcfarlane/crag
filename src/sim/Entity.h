@@ -45,7 +45,6 @@ namespace sim
 		
 		// general callbacks
 		virtual void Tick();
-		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
 		// controller
 		void SetController(Controller * controller);

@@ -11,12 +11,15 @@
 
 #include "SpawnEntityFunctions.h"
 
+#include "planet/sim/PlanetController.h"
+#include "planet/physics/PlanetBody.h"
+#include "planet/gfx/Planet.h"
+
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
 #include "sim/Firmament.h"
 #include "sim/ObserverController.h"
-#include "sim/Planet.h"
 #include "sim/Vehicle.h"
 
 #include "physics/BoxBody.h"
@@ -37,7 +40,6 @@
 namespace sim 
 { 
 	DECLARE_CLASS_HANDLE(Firmament); //FirmamentHandle
-	DECLARE_CLASS_HANDLE(Planet); // sim::PlanetHandle
 	DECLARE_CLASS_HANDLE(Vehicle); // sim::VehicleHandle
 }
 
@@ -193,9 +195,39 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters)
 {
-	auto planet = sim::PlanetHandle::CreateHandle(sphere, random_seed, num_craters);
+	auto handle = sim::EntityHandle::CreateHandle();
 
-	return planet;
+	handle.Call([sphere, random_seed, num_craters] (sim::Entity & entity) {
+		auto & engine = entity.GetEngine();
+
+		// controller
+		auto& controller = ref(new sim::PlanetController(entity, sphere, random_seed, num_craters));
+		auto& formation = controller.GetFormation();
+		entity.SetController(& controller);
+
+		// body
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();
+		auto body = new physics::PlanetBody(physics_engine, formation, physics::Scalar(sphere.radius));
+		body->SetPosition(geom::Cast<physics::Scalar>(sphere.center));
+		entity.SetLocation(body);
+
+		// register with the renderer
+#if defined(RENDER_SEA)
+		gfx::Scalar sea_level = _radius_mean;
+#else
+		gfx::Scalar sea_level = 0;
+#endif
+		
+		auto branch_node = gfx::BranchNodeHandle::CreateHandle(gfx::Transformation::Matrix44::Identity());
+		auto model = gfx::PlanetHandle::CreateHandle(sea_level);
+		gfx::Daemon::Call([model, branch_node] (gfx::Engine & engine) {
+			engine.OnSetParent(model.GetUid(), branch_node.GetUid());
+		});
+		entity.SetModel(branch_node);
+		controller.SetModel(model);
+	});
+
+	return handle;
 }
 
 gfx::ObjectHandle SpawnSkybox()
