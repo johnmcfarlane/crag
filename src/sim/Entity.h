@@ -26,7 +26,7 @@ namespace sim
 {
 	class Controller;
 
-	// The base class for 'things' that exist in the simulation.
+	// A thing that exist in the simulation.
 	class Entity : public smp::Object<Entity, sim::Engine>
 	{
 		////////////////////////////////////////////////////////////////////////////////
@@ -41,10 +41,10 @@ namespace sim
 		DECLARE_ALLOCATOR(Vehicle);
 
 		Entity(Init const & init);
-		virtual ~Entity();
+		~Entity();
 		
 		// general callbacks
-		virtual void Tick();
+		void Tick();
 
 		// controller
 		void SetController(Controller * controller);
@@ -60,11 +60,11 @@ namespace sim
 		// graphics
 		gfx::BranchNodeHandle GetModel() const;
 		void SetModel(gfx::BranchNodeHandle model);
-		virtual void UpdateModels() const;
+		void UpdateModels() const;
 
 		// Verification
 	#if defined(VERIFY)
-		virtual void Verify() const override;
+		virtual void Verify() const final;
 	#endif
 
 	private:
