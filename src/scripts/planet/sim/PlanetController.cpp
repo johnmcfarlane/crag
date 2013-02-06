@@ -87,7 +87,7 @@ form::Formation const & PlanetController::GetFormation() const
 
 void PlanetController::Tick()
 {
-	auto radius_range = _formation->GetRadiusRange();
+	auto radius_range = geom::Cast<gfx::Scalar>(_formation->GetRadiusRange());
 
 	auto & entity = GetEntity();
 	auto & body = ref(entity.GetBody());
