@@ -31,9 +31,9 @@ CONFIG_DECLARE (sim_tick_duration, core::Time);
 
 namespace
 {
-	CONFIG_DEFINE (observer_speed, float, 1);
-	CONFIG_DEFINE (observer_translation_input, float, 0.003f);
-	CONFIG_DEFINE (observer_rotation_input, float, .0035f);
+	CONFIG_DEFINE (observer_speed, int, 1);
+	CONFIG_DEFINE (observer_translation_input, float, 10.08f);
+	CONFIG_DEFINE (observer_rotation_input, float, 12.6f);
 	CONFIG_DEFINE (observer_mouse_sensitivity, float, 0.35f);
 
 	// TODO: this value is likely sensitive to screen resolutions
@@ -145,11 +145,13 @@ void ObserverController::HandleMouseMove(ObserverInput & input, SDL_MouseMotionE
 
 void ObserverController::ScaleInput(ObserverInput & input) const
 {
-	float speed_factor = std::pow(std::pow(10.f, .4f), (_speed << 1) + 1);
-	Scalar translation_factor = observer_translation_input * speed_factor / sim_tick_duration;
+	Scalar dt = Scalar(sim_tick_duration);
+
+	Scalar speed_factor = std::pow(std::pow(10.f, .4f), (_speed << 1) + 1);
+	Scalar translation_factor = observer_translation_input * speed_factor * dt;
 	input[ObserverInput::translation] *= translation_factor;
 
-	Scalar rotation_factor = observer_rotation_input / sim_tick_duration;
+	Scalar rotation_factor = observer_rotation_input * dt;
 	input[ObserverInput::rotation] *= rotation_factor;
 }
 
