@@ -110,8 +110,9 @@ namespace
 }
 
 ObserverInput::ObserverInput()
-: super{{ value_type::Zero(), value_type::Zero() }}
 {
+	(*this)[0] = value_type::Zero();
+	(*this)[1] = value_type::Zero();
 }
 
 ObserverInput sim::GetObserverInput()
