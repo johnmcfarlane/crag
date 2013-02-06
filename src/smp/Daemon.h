@@ -146,7 +146,7 @@ namespace smp
 			{
 				Yield();
 			}
-			ASSERT(acknowledge_flush_end);
+			ASSERT(_state == acknowledge_flush_end);
 			
 			ASSERT(_messages.IsEmpty());
 		}

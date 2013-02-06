@@ -53,7 +53,7 @@
 #if defined(__GNUC__) || defined(__clang__)
 #define UNREACHABLE __builtin_unreachable
 #else
-#define UNREACHABLE __assume(false)
+#define UNREACHABLE() __assume(false)
 #endif
 
 
