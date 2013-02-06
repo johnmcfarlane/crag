@@ -94,7 +94,7 @@ namespace geom
 		
 		void SetArray(S const rhs [16])
 		{
-			BitwiseCopyArray(GetArray(), rhs, 16);
+			std::copy(rhs, rhs + 16, GetArray());
 		}
 		
 		// fast because matrix is row major
