@@ -98,11 +98,12 @@ void PrintMessage(FILE * out, char const * format, ...);
 
 // ASSERT - interrupt execution in a debug build iff given condition fails
 #if defined(NDEBUG)
-#define ASSERT(CONDITION) DO_NOTHING
+#define ASSERT(CONDITION) ASSUME(CONDITION)
 #else
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
-		if (! ASSUME(CONDITION)) { \
+		if (! (CONDITION)) { \
+			ASSUME(false); \
 			DEBUG_BREAK("ASSERT: '%s'", #CONDITION); \
 		} \
 	)
