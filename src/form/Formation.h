@@ -24,6 +24,7 @@ namespace form
 	// It contains all the data necessary to create a positioned polyhedron.
 	class Formation
 	{
+		OBJECT_NO_COPY(Formation);
 	public:
 		Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape);
 		~Formation();

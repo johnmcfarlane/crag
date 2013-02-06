@@ -16,6 +16,7 @@ namespace sim
 	// a member of Entity which generates distinctive behavior
 	class Controller
 	{
+		OBJECT_NO_COPY(Controller);
 	public:
 		Controller(Entity & entity);
 		virtual ~Controller();

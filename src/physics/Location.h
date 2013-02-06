@@ -18,7 +18,9 @@ namespace physics
 	// A locator which gets its location from a physics::Body
 	class Location
 	{
+		OBJECT_NO_COPY(Location);
 	public:
+		Location() = default;
 		virtual ~Location();
 
 		virtual Body * GetBody();
