@@ -194,7 +194,6 @@
     <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
-    <ClInclude Include="..\..\src\gfx\object\Planet.h" />
     <ClInclude Include="..\..\src\gfx\object\Puff.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
     <ClInclude Include="..\..\src\gfx\object\Thruster.h" />
@@ -212,15 +211,20 @@
     <ClInclude Include="..\..\src\physics\BoxBody.h" />
     <ClInclude Include="..\..\src\physics\defs.h" />
     <ClInclude Include="..\..\src\physics\Engine.h" />
+    <ClInclude Include="..\..\src\physics\FixedLocation.h" />
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
+    <ClInclude Include="..\..\src\physics\Location.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
-    <ClInclude Include="..\..\src\scripts\ObserverScript.h" />
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
+    <ClInclude Include="..\..\src\scripts\planet\gfx\Planet.h" />
+    <ClInclude Include="..\..\src\scripts\planet\physics\PlanetBody.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetController.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetShader.h" />
     <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
+    <ClInclude Include="..\..\src\scripts\SpawnEntityFunctions.h" />
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
-    <ClInclude Include="..\..\src\sim\Ball.h" />
-    <ClInclude Include="..\..\src\sim\Box.h" />
     <ClInclude Include="..\..\src\sim\Controller.h" />
     <ClInclude Include="..\..\src\sim\defs.h" />
     <ClInclude Include="..\..\src\sim\Engine.h" />
@@ -229,14 +233,9 @@
     <ClInclude Include="..\..\src\sim\Firmament.h" />
     <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
-    <ClInclude Include="..\..\src\sim\MoonShader.h" />
-    <ClInclude Include="..\..\src\sim\Observer.h" />
-    <ClInclude Include="..\..\src\sim\Planet.h" />
-    <ClInclude Include="..\..\src\sim\PlanetaryBody.h" />
-    <ClInclude Include="..\..\src\sim\PlanetShader.h" />
-    <ClInclude Include="..\..\src\sim\Star.h" />
-    <ClInclude Include="..\..\src\sim\UserInput.h" />
-    <ClInclude Include="..\..\src\sim\Vehicle.h" />
+    <ClInclude Include="..\..\src\sim\ObserverController.h" />
+    <ClInclude Include="..\..\src\sim\ObserverInput.h" />
+    <ClInclude Include="..\..\src\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\smp\Daemon.h" />
     <ClInclude Include="..\..\src\smp\EngineBase.h" />
     <ClInclude Include="..\..\src\smp\Fiber.h" />
@@ -290,10 +289,6 @@
     <ClCompile Include="..\..\src\form\scene\Scene.cpp" />
     <ClCompile Include="..\..\src\form\scene\Vertex.cpp" />
     <ClCompile Include="..\..\src\form\scene\VertexBuffer.cpp" />
-    <ClCompile Include="..\..\src\ga\main.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)main0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)main0</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\src\gfx\Cuboid.cpp" />
     <ClCompile Include="..\..\src\gfx\Debug.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Debug0</ObjectFileName>
@@ -310,17 +305,13 @@
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\Layer.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Ball.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Ball0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Ball0</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
     <ClCompile Include="..\..\src\gfx\object\BranchNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
     <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Planet.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Puff.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Thruster.cpp" />
@@ -348,17 +339,19 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine1</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine1</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\src\physics\FixedLocation.cpp" />
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
+    <ClCompile Include="..\..\src\physics\Location.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
-    <ClCompile Include="..\..\src\scripts\ObserverScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\gfx\Planet.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\physics\PlanetBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetController.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetShader.cpp" />
     <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\SpawnEntityFunctions.cpp" />
     <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
-    <ClCompile Include="..\..\src\sim\Ball.cpp" />
-    <ClCompile Include="..\..\src\sim\Box.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Box0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Box0</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\src\sim\Controller.cpp" />
     <ClCompile Include="..\..\src\sim\Engine.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine0</ObjectFileName>
@@ -369,17 +362,9 @@
     <ClCompile Include="..\..\src\sim\Firmament.cpp" />
     <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
-    <ClCompile Include="..\..\src\sim\MoonShader.cpp" />
-    <ClCompile Include="..\..\src\sim\Observer.cpp" />
-    <ClCompile Include="..\..\src\sim\Planet.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Planet0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Planet0</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\PlanetaryBody.cpp" />
-    <ClCompile Include="..\..\src\sim\PlanetShader.cpp" />
-    <ClCompile Include="..\..\src\sim\Star.cpp" />
-    <ClCompile Include="..\..\src\sim\UserInput.cpp" />
-    <ClCompile Include="..\..\src\sim\Vehicle.cpp" />
+    <ClCompile Include="..\..\src\sim\ObserverController.cpp" />
+    <ClCompile Include="..\..\src\sim\ObserverInput.cpp" />
+    <ClCompile Include="..\..\src\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\smp\Fiber.cpp" />
     <ClCompile Include="..\..\src\smp\FiberPosix.cpp" />
     <ClCompile Include="..\..\src\smp\FiberWin.cpp" />
