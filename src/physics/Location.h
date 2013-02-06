@@ -20,7 +20,7 @@ namespace physics
 	{
 		OBJECT_NO_COPY(Location);
 	public:
-		Location() = default;
+		Location();
 		virtual ~Location();
 
 		virtual Body * GetBody();

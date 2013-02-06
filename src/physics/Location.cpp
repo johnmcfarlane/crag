@@ -23,6 +23,10 @@ Location::~Location()
 { 
 }
 
+Location::Location() 
+{ 
+}
+
 Body * Location::GetBody()
 {
 	return nullptr;
