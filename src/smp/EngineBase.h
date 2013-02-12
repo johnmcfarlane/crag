@@ -166,8 +166,6 @@ namespace smp
 
 		void DestroyObject(Uid uid)
 		{
-			VerifyObject(* this);
-
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
@@ -180,14 +178,10 @@ namespace smp
 
 		Iterator DestroyObject(Iterator destroyed)
 		{
-			VerifyObject(* this);
-
 			auto object = destroyed->second;
 			OnRemoveObject(* object);
 			auto next = _objects.erase(destroyed);
 			delete object;
-
-			VerifyObject(* this);
 
 			return next;
 		}
