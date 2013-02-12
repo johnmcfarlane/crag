@@ -43,8 +43,8 @@ void DisableClientState<Skybox::Vertex>()
 template <>
 void Pointer<Skybox::Vertex>()
 {
-	gfx::VertexPointer<Skybox::Vertex, 3, & Skybox::Vertex::pos>();
-	gfx::TexCoordPointer<Skybox::Vertex, 2, & Skybox::Vertex::tex>();
+	VertexPointer<Skybox::Vertex, 3, & Skybox::Vertex::pos>();
+	TexCoordPointer<Skybox::Vertex, 2, & Skybox::Vertex::tex>();
 }
 
 
@@ -91,7 +91,7 @@ Transformation const & Skybox::Transform(Transformation const & model_view, Tran
 	return scratch;
 }
 
-void Skybox::Render(gfx::Engine const & renderer) const
+void Skybox::Render(Engine const & renderer) const
 {
 	// clear the depth buffer
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT));

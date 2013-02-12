@@ -13,16 +13,17 @@
 
 #include "core/memory.h"
 
+using namespace gfx;
 
 //////////////////////////////////////////////////////////////////////
 // IndexBuffer member definitions
 
-gfx::IndexBuffer::IndexBuffer(int buffer_capacity)
+IndexBuffer::IndexBuffer(int buffer_capacity)
 : Super(buffer_capacity)
 {
 }
 
-void gfx::IndexBuffer::Clear()
+void IndexBuffer::Clear()
 {
 	clear();
 
@@ -37,7 +38,7 @@ void gfx::IndexBuffer::Clear()
 #endif
 }
 
-gfx::IndexBuffer::value_type const * gfx::IndexBuffer::GetArray() const
+IndexBuffer::value_type const * IndexBuffer::GetArray() const
 {
 	return & front();
 }

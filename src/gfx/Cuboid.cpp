@@ -11,36 +11,37 @@
 
 #include "Cuboid.h"
 
+using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
 // vertex helper functions
 
 template <>
-void EnableClientState<gfx::Cuboid::Vertex>()
+void EnableClientState<Cuboid::Vertex>()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 }
 
 template <>
-void DisableClientState<gfx::Cuboid::Vertex>()
+void DisableClientState<Cuboid::Vertex>()
 {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 template <>
-void Pointer<gfx::Cuboid::Vertex>()
+void Pointer<Cuboid::Vertex>()
 {
-	gfx::VertexPointer<gfx::Cuboid::Vertex, 3, & gfx::Cuboid::Vertex::pos>();
-	gfx::NormalPointer<gfx::Cuboid::Vertex, & gfx::Cuboid::Vertex::norm>();
+	VertexPointer<Cuboid::Vertex, 3, & Cuboid::Vertex::pos>();
+	NormalPointer<Cuboid::Vertex, & Cuboid::Vertex::norm>();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Cuboid member definitions
 
-gfx::Cuboid::Cuboid()
+Cuboid::Cuboid()
 {
 	Vertex verts[3][2][4];
 	GLuint indices[3][2][2][3];
@@ -96,25 +97,25 @@ gfx::Cuboid::Cuboid()
 	_mesh.Unbind();
 }
 
-gfx::Cuboid::~Cuboid()
+Cuboid::~Cuboid()
 {
 	//gl::DeleteBuffer(_color_vbo);
 	_mesh.Deinit();
 }
 
-void gfx::Cuboid::Activate() const
+void Cuboid::Activate() const
 {
 	_mesh.Bind();
 	_mesh.Activate();
 }
 
-void gfx::Cuboid::Deactivate() const
+void Cuboid::Deactivate() const
 {
 	_mesh.Deactivate();
 	_mesh.Unbind();
 }
 
-void gfx::Cuboid::Draw() const
+void Cuboid::Draw() const
 {
 	_mesh.Draw(GL_TRIANGLES, 36, 0);
 }

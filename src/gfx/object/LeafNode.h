@@ -72,7 +72,7 @@ namespace gfx
 		virtual PreRenderResult PreRender();
 		
 		// Draw the object.
-		virtual void Render(gfx::Engine const & renderer) const;
+		virtual void Render(Engine const & renderer) const;
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

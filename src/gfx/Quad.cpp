@@ -38,7 +38,7 @@ void DisableClientState<Quad::Vertex>()
 template <>
 void Pointer<Quad::Vertex>()
 {
-	gfx::VertexPointer<Quad::Vertex, 3, & Quad::Vertex::pos>();
+	VertexPointer<Quad::Vertex, 3, & Quad::Vertex::pos>();
 }
 
 

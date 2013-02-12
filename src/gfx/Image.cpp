@@ -15,10 +15,11 @@
 
 #include "core/app.h"
 
+using namespace gfx;
 
 namespace 
 {
-	gfx::Image::Format opengl_rgba8_format = 
+	Image::Format opengl_rgba8_format = 
 	{
 		static_cast<Uint32>(SDL_PIXELFORMAT_RGBA8888),	// Uint32 format;
 		nullptr,	// SDL_Palette *palette;
@@ -81,22 +82,22 @@ static bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rh
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Image
 
-gfx::Image::Image()
+Image::Image()
 : surface(nullptr)
 {
 }
 
-gfx::Image::~Image()
+Image::~Image()
 {
 	Destroy();
 }
 
-gfx::Image::Format const & gfx::Image::GetOpenGlRgba8Format()
+Image::Format const & Image::GetOpenGlRgba8Format()
 {
 	return opengl_rgba8_format;
 }
 
-bool gfx::Image::Create(geom::Vector2i const & size, Format const & format)
+bool Image::Create(geom::Vector2i const & size, Format const & format)
 {
 	surface = SDL_CreateRGBSurface(0, 
 								   size.x, size.y, 
@@ -109,13 +110,13 @@ bool gfx::Image::Create(geom::Vector2i const & size, Format const & format)
 	return surface != nullptr;
 }
 
-bool gfx::Image::Convert(Image const & source, Format const & format)
+bool Image::Convert(Image const & source, Format const & format)
 {
 	surface = SDL_ConvertSurface(source.surface, & const_cast<SDL_PixelFormat &>(format), 0);
 	return surface != nullptr;
 }
 
-void gfx::Image::Destroy()
+void Image::Destroy()
 {
 	if (surface != nullptr)
 	{
@@ -123,17 +124,17 @@ void gfx::Image::Destroy()
 	}
 }
 
-int gfx::Image::GetWidth() const
+int Image::GetWidth() const
 {
 	return surface ? surface->w : 0;
 }
 
-int gfx::Image::GetHeight() const
+int Image::GetHeight() const
 {
 	return surface ? surface->h : 0;
 }
 
-void gfx::Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
+void Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
 {
 	ASSERT(pos.x >= 0 && pos.x < surface->w);
 	ASSERT(pos.y >= 0 && pos.x < surface->h);
@@ -145,7 +146,7 @@ void gfx::Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
 	* pixel = pixel_value;
 }
 
-bool gfx::Image::CreateTexture(Texture & texture) const
+bool Image::CreateTexture(Texture & texture) const
 {
 	if (surface == nullptr)
 	{
@@ -172,7 +173,7 @@ bool gfx::Image::CreateTexture(Texture & texture) const
 }
 
 
-void gfx::Image::Clear(Color4b const & color)
+void Image::Clear(Color4b const & color)
 {
 	if (surface != nullptr)
 	{
@@ -189,12 +190,12 @@ void gfx::Image::Clear(Color4b const & color)
 	}
 }
 
-void gfx::Image::Load(char const * filename)
+void Image::Load(char const * filename)
 {
 	surface = SDL_LoadBMP(filename);
 }
 
-bool gfx::Image::Save(char const * filename)
+bool Image::Save(char const * filename)
 {
 	if (SDL_SaveBMP(surface, filename) != 0)
 	{
@@ -205,7 +206,7 @@ bool gfx::Image::Save(char const * filename)
 	return true;
 }
 
-bool gfx::Image::CaptureScreen()
+bool Image::CaptureScreen()
 {
 	geom::Vector2i window_size = app::GetResolution();
 	
@@ -222,7 +223,7 @@ bool gfx::Image::CaptureScreen()
 	return true;
 }
 
-bool gfx::Image::Reformat(SDL_PixelFormat const & desired_format)
+bool Image::Reformat(SDL_PixelFormat const & desired_format)
 {
 	if (surface != nullptr)
 	{
@@ -244,7 +245,7 @@ bool gfx::Image::Reformat(SDL_PixelFormat const & desired_format)
 	return false;
 }
 
-bool gfx::Image::FormatForOpenGl()
+bool Image::FormatForOpenGl()
 {
 	if (surface != nullptr)
 	{
@@ -263,7 +264,7 @@ bool gfx::Image::FormatForOpenGl()
 	return false;
 }
 
-bool gfx::Image::CopyVFlip(Image & dst, Image const & src)
+bool Image::CopyVFlip(Image & dst, Image const & src)
 {
 	geom::Vector2i size = src.GetSize();
 	if (! dst.Create(size))

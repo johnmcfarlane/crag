@@ -69,7 +69,7 @@ LeafNode::PreRenderResult Thruster::PreRender()
 
 void Thruster::AddPuff(float thrust_factor)
 {
-	gfx::Engine & renderer = GetEngine();
+	Engine & renderer = GetEngine();
 	
 	// Determine the position/direction etc. of the puff.
 	Scalar spawn_volume;

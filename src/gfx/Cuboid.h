@@ -28,7 +28,7 @@ namespace gfx
 		};
 		
 		typedef geom::Vector3f Vector3;
-		typedef gfx::MeshBufferObject<Vertex, GL_STATIC_DRAW> Mesh;
+		typedef MeshBufferObject<Vertex, GL_STATIC_DRAW> Mesh;
 		
 		// functions
 		Cuboid();

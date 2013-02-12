@@ -173,7 +173,7 @@ namespace gfx
 		bool _fragment_lighting;
 		int capture_frame;
 		
-		gfx::Image capture_image[2];
+		Image capture_image[2];
 
 		struct StateParam
 		{

@@ -23,7 +23,7 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Box, 100);
 
-gfx::Box::Box(LeafNode::Init const & init, Color4f const & color)
+Box::Box(LeafNode::Init const & init, Color4f const & color)
 : LeafNode(init, Layer::foreground)
 , _color(color)
 {
@@ -58,7 +58,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Box::Render(gfx::Engine const & renderer) const
+void Box::Render(Engine const & renderer) const
 {
 	GL_VERIFY;
 	

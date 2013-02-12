@@ -31,7 +31,7 @@ namespace gfx
 		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
 		
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render(gfx::Engine const & renderer) const override;
+		void Render(Engine const & renderer) const override;
 		
 		// variables
 		Color4f _color;

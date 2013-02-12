@@ -27,7 +27,7 @@ namespace gfx
 		typedef Light super;
 		
 		// functions
-		DECLARE_ALLOCATOR(gfx::Thruster);
+		DECLARE_ALLOCATOR(Thruster);
 
 		Thruster(Init const & init);
 		

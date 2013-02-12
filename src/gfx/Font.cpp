@@ -14,11 +14,12 @@
 
 #include "core/app.h"
 
+using namespace gfx;
 
 namespace 
 {
 	// TODO: All a big hack.
-	::std::vector<gfx::Font::Vertex> vertex_buffer;
+	::std::vector<Font::Vertex> vertex_buffer;
 	
 	int margin_hack[2] = { 8, 8 };
 }
@@ -28,31 +29,31 @@ namespace
 // vertex helper functions
 
 template <>
-void EnableClientState<gfx::Font::Vertex>()
+void EnableClientState<Font::Vertex>()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 template <>
-void DisableClientState<gfx::Font::Vertex>()
+void DisableClientState<Font::Vertex>()
 {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 template <>
-void Pointer<gfx::Font::Vertex>()
+void Pointer<Font::Vertex>()
 {
-	gfx::VertexPointer<gfx::Font::Vertex, 2, & gfx::Font::Vertex::pos>();
-	gfx::TexCoordPointer<gfx::Font::Vertex, 2, & gfx::Font::Vertex::tex>();
+	VertexPointer<Font::Vertex, 2, & Font::Vertex::pos>();
+	TexCoordPointer<Font::Vertex, 2, & Font::Vertex::tex>();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Font member definitions
 
-gfx::Font::Font(char const * filename, float scale)
+Font::Font(char const * filename, float scale)
 {
 	Image image;
 	image.Load(filename);
@@ -76,20 +77,20 @@ gfx::Font::Font(char const * filename, float scale)
 	vbo.Init();
 }
 
-gfx::Font::~Font()
+Font::~Font()
 {
 	vbo.Deinit();
 	texture.Deinit();
 }
 
-gfx::Font::operator bool() const
+Font::operator bool() const
 {
 	return texture.IsInitialized();
 }
 
 // Warning: This function isn't thread-safe.
 // Fortunately, neither is the OpenGL it uses so it's neither here nor there.
-void gfx::Font::Print(char const * text, geom::Vector2f const & position) const
+void Font::Print(char const * text, geom::Vector2f const & position) const
 {
 	if (! vbo.IsInitialized())
 	{
@@ -107,7 +108,7 @@ void gfx::Font::Print(char const * text, geom::Vector2f const & position) const
 	texture.Unbind();
 }
 
-void gfx::Font::GenerateVerts(char const * text, geom::Vector2f const & position) const
+void Font::GenerateVerts(char const * text, geom::Vector2f const & position) const
 {
 	geom::Vector2f p = position;
 	while (true)
@@ -133,7 +134,7 @@ void gfx::Font::GenerateVerts(char const * text, geom::Vector2f const & position
 	vbo.BufferData(num_verts, & vertex_buffer.front(), GL_STATIC_DRAW);
 }
 
-void gfx::Font::RenderVerts() const
+void Font::RenderVerts() const
 {
 	GL_VERIFY;
 
@@ -170,7 +171,7 @@ void gfx::Font::RenderVerts() const
 	Disable(GL_BLEND);
 }
 
-void gfx::Font::PrintChar(char c, geom::Vector2f & position) const
+void Font::PrintChar(char c, geom::Vector2f & position) const
 {
 	unsigned int char_index = static_cast<unsigned char>(c);
 	geom::Vector2i map_pos = geom::Vector2i(char_index & 15, char_index >> 4);

@@ -96,7 +96,7 @@ LeafNode::PreRenderResult Puff::PreRender()
 	return ok;
 }
 
-void Puff::Render(gfx::Engine const & renderer) const
+void Puff::Render(Engine const & renderer) const
 {
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();

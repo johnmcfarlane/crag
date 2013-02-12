@@ -60,7 +60,7 @@ void RenderBuffer::ResizeForDepth(GLsizei width, GLsizei height)
 	GL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
 }
 
-//void gfx::AttachToFrameBuffer(RenderBuffer * render_buffer) 
+//void AttachToFrameBuffer(RenderBuffer * render_buffer) 
 //{
 //	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_buffer->id);
 //}

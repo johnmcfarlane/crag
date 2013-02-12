@@ -82,12 +82,12 @@ Cuboid const & ResourceManager::GetCuboid() const
 	return ref(_cuboid);
 }
 
-gfx::Quad const & ResourceManager::GetSphereQuad() const
+Quad const & ResourceManager::GetSphereQuad() const
 {
 	return ref(_sphere_quad);
 }
 
-gfx::Quad const & ResourceManager::GetDiskQuad() const
+Quad const & ResourceManager::GetDiskQuad() const
 {
 	return ref(_disk_quad);
 }

@@ -62,7 +62,7 @@ bool Ball::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Ball::Render(gfx::Engine const & renderer) const
+void Ball::Render(Engine const & renderer) const
 {
 	// Pass rendering details to the shader program.
 	Program const & program = ref(renderer.GetCurrentProgram());

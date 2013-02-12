@@ -11,11 +11,10 @@
 
 #include "LeafNode.h"
 
+using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::LeafNode member definitions
-
-using namespace gfx;
 
 LeafNode::LeafNode(Init const & init, Layer::type layer)
 : Object(init, leaf)
@@ -131,7 +130,7 @@ LeafNode::PreRenderResult LeafNode::PreRender()
 	return ok;
 }
 
-void LeafNode::Render(gfx::Engine const & renderer) const
+void LeafNode::Render(Engine const & renderer) const
 {
 	ASSERT(false);
 }

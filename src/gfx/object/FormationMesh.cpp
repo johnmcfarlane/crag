@@ -35,9 +35,9 @@ namespace
 	STAT (num_polys, int, .05f);
 	STAT (num_quats_used, int, 0.15f);
 	
-	CONFIG_DEFINE (formation_emission, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE (formation_ambient, gfx::Color4f, gfx::Color4f(0.05f));
-	CONFIG_DEFINE (formation_diffuse, gfx::Color4f, gfx::Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE (formation_emission, Color4f, Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE (formation_ambient, Color4f, Color4f(0.05f));
+	CONFIG_DEFINE (formation_diffuse, Color4f, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_specular, float, 0.0f);
 	CONFIG_DEFINE (formation_shininess, float, 0.0f);
 }
@@ -135,7 +135,7 @@ Transformation const & FormationMesh::Transform(Transformation const & model_vie
 	return scratch;
 }
 
-void FormationMesh::Render(gfx::Engine const & renderer) const
+void FormationMesh::Render(Engine const & renderer) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)
@@ -149,7 +149,7 @@ void FormationMesh::Render(gfx::Engine const & renderer) const
 	
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx::Color4f(formation_specular, formation_specular, formation_specular)));
+	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, Color4f(formation_specular, formation_specular, formation_specular)));
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
 	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
 	GL_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));

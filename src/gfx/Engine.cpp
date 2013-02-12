@@ -1306,7 +1306,7 @@ void Engine::Capture()
 	std::string filename_string = filename_stream.str();
 	
 	bool success = capture_image[0].CaptureScreen()
-		&& gfx::Image::CopyVFlip(capture_image[1], capture_image[0])
+		&& Image::CopyVFlip(capture_image[1], capture_image[0])
 		&& capture_image[1].Save(filename_string.c_str());
 	
 	if (! success)

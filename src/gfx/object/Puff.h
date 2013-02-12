@@ -31,7 +31,7 @@ namespace gfx
 		PreRenderResult PreRender() override;
 		
 		// Draw the object.
-		void Render(gfx::Engine const & renderer) const override;
+		void Render(Engine const & renderer) const override;
 		
 		core::Time CalculateAge(core::Time time) const;
 		

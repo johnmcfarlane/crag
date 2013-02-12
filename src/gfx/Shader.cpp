@@ -15,20 +15,24 @@
 
 #include "core/app.h"
 
+using namespace gfx;
 
-gfx::Shader::Shader() 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Shader member definitions
+
+Shader::Shader() 
 : _id(0)
 { 
 	VerifyObject(* this);
 }
 
-gfx::Shader::~Shader()
+Shader::~Shader()
 {
 	VerifyObject(* this);
 	assert(! IsInitialized());
 }
 
-bool gfx::Shader::Init(char const * filename, GLenum shader_type)
+bool Shader::Init(char const * filename, GLenum shader_type)
 {
 	std::vector<char> sphere_shader_source;
 	
@@ -65,13 +69,13 @@ bool gfx::Shader::Init(char const * filename, GLenum shader_type)
 	return true;
 }
 
-bool gfx::Shader::IsInitialized() const
+bool Shader::IsInitialized() const
 {
 	VerifyObject(* this);
 	return _id != 0;
 }
 
-bool gfx::Shader::IsCompiled() const
+bool Shader::IsCompiled() const
 {
 	assert(IsInitialized());
 	
@@ -81,7 +85,7 @@ bool gfx::Shader::IsCompiled() const
 	return params != GL_FALSE;
 }
 
-void gfx::Shader::GetInfoLog(std::string & info_log) const
+void Shader::GetInfoLog(std::string & info_log) const
 {
 	GLint length;
 	GL_CALL(glGetShaderiv(_id, GL_INFO_LOG_LENGTH, & length));
@@ -97,7 +101,7 @@ void gfx::Shader::GetInfoLog(std::string & info_log) const
 	}
 }
 
-void gfx::Shader::Deinit()
+void Shader::Deinit()
 {
 	VerifyObject(* this);
 	
@@ -106,7 +110,7 @@ void gfx::Shader::Deinit()
 }
 
 #if defined(VERIFY)
-void gfx::Shader::Verify() const
+void Shader::Verify() const
 {
 	if (_id == 0)
 	{
