@@ -125,13 +125,13 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 	return ok;
 }
 
-gfx::Transformation const & FormationMesh::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & FormationMesh::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	auto& front_buffer_origin = front_buffer.GetOrigin();
 	auto& gfx_origin = GetEngine().GetOrigin();
 	auto offset = front_buffer_origin - gfx_origin;
-	scratch = model_view * gfx::Transformation(geom::Cast<float>(offset));
+	scratch = model_view * Transformation(geom::Cast<float>(offset));
 	return scratch;
 }
 

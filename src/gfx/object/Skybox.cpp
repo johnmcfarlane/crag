@@ -83,11 +83,11 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-gfx::Transformation const & Skybox::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & Skybox::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
-	scratch = gfx::Transformation(Vector3::Zero(), rotation);
+	scratch = Transformation(Vector3::Zero(), rotation);
 	return scratch;
 }
 

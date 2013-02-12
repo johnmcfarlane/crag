@@ -124,25 +124,25 @@ Object const & BranchNode::Back() const
 	return _children.back();
 }
 
-gfx::Transformation const & BranchNode::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & BranchNode::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	scratch = model_view * _transformation;
 	VerifyObject(scratch);
 	return scratch;
 }
 
-gfx::Transformation const & BranchNode::GetTransformation() const
+Transformation const & BranchNode::GetTransformation() const
 {
 	return _transformation;
 }
 
-void BranchNode::SetTransformation(gfx::Transformation const & transformation)
+void BranchNode::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
 	VerifyObject(_transformation);
 }
 
-gfx::Transformation BranchNode::GetModelTransformation() const
+Transformation BranchNode::GetModelTransformation() const
 {
 	BranchNode const * ancestor = GetParent();
 	

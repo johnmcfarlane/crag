@@ -51,7 +51,7 @@ namespace gfx
 		virtual void Verify() const override;
 #endif
 		
-		virtual Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const;
 		
 		// scene graph types/variables/functions
 		NodeType GetNodeType() const;

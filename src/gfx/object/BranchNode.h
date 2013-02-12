@@ -71,7 +71,7 @@ namespace gfx
 		Object const & Back() const;
 		
 		// Model-view transformation
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
 		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		

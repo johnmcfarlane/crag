@@ -74,7 +74,7 @@ Quad::~Quad()
 	_quad.Deinit();
 }
 
-gfx::Transformation const & Quad::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & Quad::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	Transformation::Vector3 translation = model_view.GetTranslation();
 

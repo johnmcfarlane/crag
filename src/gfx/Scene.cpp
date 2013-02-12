@@ -139,7 +139,7 @@ void Scene::SetResolution(geom::Vector2i const & r)
 	pov.GetFrustum().resolution = r;
 }
 
-void Scene::SetCameraTransformation(gfx::Transformation const & transformation)
+void Scene::SetCameraTransformation(Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
 	_root.SetTransformation(transformation.GetInverse());

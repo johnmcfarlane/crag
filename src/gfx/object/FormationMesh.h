@@ -37,7 +37,7 @@ namespace gfx
 		void Verify() const;
 #endif
 		
-		virtual gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
 
 		void SetMesh(form::Mesh * const & mesh);
 		

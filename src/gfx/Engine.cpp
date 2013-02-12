@@ -110,7 +110,7 @@ namespace
 #endif
 	}
 	
-	void SetModelViewMatrix(gfx::Transformation const & model_view_transformation)
+	void SetModelViewMatrix(Transformation const & model_view_transformation)
 	{
 		ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 
@@ -492,7 +492,7 @@ void Engine::OnToggleCapture()
 }
 
 // TODO: Make camera an object so that positional messages are the same as for other objects.
-void Engine::OnSetCamera(gfx::Transformation const & transformation)
+void Engine::OnSetCamera(Transformation const & transformation)
 {
 	if (scene != nullptr)
 	{
@@ -500,7 +500,7 @@ void Engine::OnSetCamera(gfx::Transformation const & transformation)
 	}
 }
 
-gfx::Transformation const& Engine::GetCamera() const
+Transformation const& Engine::GetCamera() const
 {
 	return scene->GetPov().GetTransformation();
 }
@@ -839,7 +839,7 @@ void Engine::PreRender()
 	}
 }
 
-void Engine::UpdateTransformations(BranchNode & parent_branch, gfx::Transformation const & model_view_transformation)
+void Engine::UpdateTransformations(BranchNode & parent_branch, Transformation const & model_view_transformation)
 {
 	VerifyObject(model_view_transformation);
 	Transformation scratch;

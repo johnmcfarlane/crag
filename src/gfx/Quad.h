@@ -33,7 +33,7 @@ namespace gfx
 		Quad(float depth_offset);
 		~Quad();
 		
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const;
+		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const;
 
 		void Activate() const override;
 		void Deactivate() const override;

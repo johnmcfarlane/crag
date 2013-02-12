@@ -67,12 +67,12 @@ Puff::~Puff()
 	STAT_INC(num_puffs, -1);
 }
 
-gfx::Transformation const & Puff::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & Puff::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
 	
-	gfx::Transformation scale = model_view * gfx::Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
+	Transformation scale = model_view * Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
 	return disk_quad.Transform(scale, scratch);

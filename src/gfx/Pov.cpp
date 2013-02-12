@@ -69,13 +69,13 @@ Frustum const & Pov::GetFrustum() const
 	return _frustum;
 }
 
-void Pov::SetTransformation(gfx::Transformation const & transformation)
+void Pov::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
 	VerifyObject(_transformation);
 }
 
-gfx::Transformation const & Pov::GetTransformation() const
+Transformation const & Pov::GetTransformation() const
 {
 	return _transformation;
 }

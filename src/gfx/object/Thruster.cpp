@@ -81,7 +81,7 @@ void Thruster::AddPuff(float thrust_factor)
 		Random::sequence.GetGaussians<Scalar>(g3, g4);
 		
 		// Get the transformation of the 
-		gfx::Transformation model_transformation = GetParent()->GetModelTransformation();
+		Transformation model_transformation = GetParent()->GetModelTransformation();
 		
 		// Extract the global thruster translation.
 		Vector3 translation = model_transformation.GetTranslation();
@@ -98,7 +98,7 @@ void Thruster::AddPuff(float thrust_factor)
 		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
 
 		// Set its position.
-		gfx::Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
+		Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
 		branch_node.Create(transformation);
 	}
 	

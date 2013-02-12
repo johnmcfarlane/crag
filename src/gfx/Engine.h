@@ -116,7 +116,7 @@ namespace gfx
 		bool HasShadowSupport() const;
 		
 		void PreRender();
-		void UpdateTransformations(BranchNode & node, gfx::Transformation const & model_view_transformation);
+		void UpdateTransformations(BranchNode & node, Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
 		void RenderScene();
