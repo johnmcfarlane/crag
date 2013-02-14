@@ -43,7 +43,7 @@ void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 	_radius_max = radius_max;
 }
 
-gfx::Transformation const & Planet::Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const
+Transformation const & Planet::Transform(Transformation const & model_view, Transformation & scratch) const
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	return sphere_quad.Transform(model_view, scratch);
@@ -62,7 +62,7 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render(gfx::Engine const & renderer) const
+void Planet::Render(Engine const & renderer) const
 {
 	if (_sea_level < _radius_min)
 	{

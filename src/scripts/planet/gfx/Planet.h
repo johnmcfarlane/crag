@@ -18,17 +18,17 @@ namespace gfx
 	{
 	public:
 		// functions
-		DECLARE_ALLOCATOR(gfx::Planet);
+		DECLARE_ALLOCATOR(Planet);
 
 		Planet(Init const & init, Scalar radius);
 		
 		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 
 	private:
-		gfx::Transformation const & Transform(gfx::Transformation const & model_view, gfx::Transformation & scratch) const override;
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
 
 		bool GetRenderRange(RenderRange & range) const override;
-		void Render(gfx::Engine const & renderer) const override;
+		void Render(Engine const & renderer) const override;
 		
 		// variables
 		Scalar _sea_level;
@@ -36,4 +36,3 @@ namespace gfx
 		Scalar _radius_max;
 	};
 }
-
