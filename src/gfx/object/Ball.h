@@ -28,7 +28,7 @@ namespace gfx
 		Ball(Init const & init, Color4f const & color);
 
 	private:
-		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;

@@ -26,7 +26,7 @@ namespace gfx
 		~Puff();
 		
 	private:
-		Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const override;
+		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
 		
 		PreRenderResult PreRender() override;
 		
