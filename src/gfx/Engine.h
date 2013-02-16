@@ -27,7 +27,6 @@ namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScri
 namespace gfx
 {
 	// forward-declarations
-	class BranchNode;
 	class MeshResource;
 	class Program;
 	class ResourceManager;
@@ -86,7 +85,7 @@ namespace gfx
 		virtual void OnRemoveObject(Object & object) override final;
 		void OnSetParent(Uid child_uid, Uid parent_uid);
 		void OnSetParent(Object & child, Uid parent_uid);
-		void OnSetParent(Object & child, BranchNode & parent);
+		void OnSetParent(Object & child, Object & parent);
 		void OnSetTime(core::Time time);
 		void OnSetReady(bool ready);
 		void OnResize(geom::Vector2i size);
@@ -116,7 +115,7 @@ namespace gfx
 		bool HasShadowSupport() const;
 		
 		void PreRender();
-		void UpdateTransformations(BranchNode & node, Transformation const & model_view_transformation);
+		void UpdateTransformations(Object & node, Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
 		void RenderScene();

@@ -189,12 +189,12 @@
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
     <ClInclude Include="..\..\src\gfx\object\Box.h" />
-    <ClInclude Include="..\..\src\gfx\object\BranchNode.h" />
     <ClInclude Include="..\..\src\gfx\object\FormationMesh.h" />
     <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
     <ClInclude Include="..\..\src\gfx\object\Puff.h" />
+    <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
     <ClInclude Include="..\..\src\gfx\object\Thruster.h" />
     <ClInclude Include="..\..\src\gfx\Pov.h" />
@@ -282,7 +282,10 @@
     <ClCompile Include="..\..\src\form\node\NodeBuffer.cpp" />
     <ClCompile Include="..\..\src\form\node\Point.cpp" />
     <ClCompile Include="..\..\src\form\node\PointBuffer.cpp" />
-    <ClCompile Include="..\..\src\form\node\RootNode.cpp" />
+    <ClCompile Include="..\..\src\form\node\RootNode.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode1</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)RootNode1</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\form\scene\Mesh.cpp" />
     <ClCompile Include="..\..\src\form\scene\MeshBufferObject.cpp" />
     <ClCompile Include="..\..\src\form\scene\Polyhedron.cpp" />
@@ -307,12 +310,15 @@
     <ClCompile Include="..\..\src\gfx\Layer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\BranchNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
     <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Puff.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\RootNode.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)RootNode0</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Thruster.cpp" />
     <ClCompile Include="..\..\src\gfx\Pov.cpp" />

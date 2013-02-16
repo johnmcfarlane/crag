@@ -17,7 +17,7 @@
 #include "physics/Location.h"
 
 #include "gfx/Engine.h"
-#include "gfx/object/BranchNode.h"
+#include "gfx/object/Object.h"
 
 #include "geom/Transformation.h"
 
@@ -99,21 +99,14 @@ physics::Body const * Entity::GetBody() const
 	return _location->GetBody();
 }
 
-gfx::BranchNodeHandle Entity::GetModel() const
+gfx::ObjectHandle Entity::GetModel() const
 {
 	return _model;
 }
 
-void Entity::SetModel(gfx::BranchNodeHandle model)
+void Entity::SetModel(gfx::ObjectHandle model)
 {
-	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(false);
-	});
 	_model = model;
-	UpdateModels();
-	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(true);
-	});
 }
 	
 void Entity::UpdateModels() const
@@ -128,8 +121,8 @@ void Entity::UpdateModels() const
 	Vector3 scale = _location->GetDimensions() * .5f;
 	Transformation transformation(position, rotation, scale);
 
-	_model.Call([transformation] (gfx::BranchNode & node) {
-		node.SetTransformation(transformation);
+	_model.Call([transformation] (gfx::Object & node) {
+		node.SetLocalTransformation(transformation);
 	});
 }
 

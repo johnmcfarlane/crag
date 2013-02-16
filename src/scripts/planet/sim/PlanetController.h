@@ -36,7 +36,6 @@ namespace sim
 		PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters);
 		~PlanetController();
 
-		void SetModel(gfx::PlanetHandle _model);
 		form::Formation const & GetFormation() const;
 
 	private:
@@ -44,7 +43,6 @@ namespace sim
 		
 		// variables
 		form::Formation * _formation;	// TODO: form::FormationHandle
-		gfx::PlanetHandle _model;
 		Scalar _radius_mean;
 		Scalar _radius_min;
 		Scalar _radius_max;

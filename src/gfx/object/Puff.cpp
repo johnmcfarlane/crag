@@ -40,8 +40,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Puff, 100);
 
-Puff::Puff(LeafNode::Init const & init, Scalar spawn_volume)
-: LeafNode(init, Layer::foreground)
+Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
+: LeafNode(init, local_transformation, Layer::foreground)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
@@ -67,7 +67,7 @@ Puff::~Puff()
 	STAT_INC(num_puffs, -1);
 }
 
-Transformation const & Puff::Transform(Transformation const & model_view, Transformation & scratch) const
+void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
@@ -75,7 +75,7 @@ Transformation const & Puff::Transform(Transformation const & model_view, Transf
 	Transformation scale = model_view * Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
-	return disk_quad.Transform(scale, scratch);
+	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale));
 }
 
 LeafNode::PreRenderResult Puff::PreRender()

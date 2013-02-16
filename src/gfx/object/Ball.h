@@ -25,10 +25,10 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Ball);
 
-		Ball(Init const & init, Color4f const & color);
+		Ball(Init const & init, Transformation const & local_transformation, Color4f const & color);
 
 	private:
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
+		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation) final;
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;

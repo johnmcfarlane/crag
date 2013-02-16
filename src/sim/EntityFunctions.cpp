@@ -17,7 +17,6 @@
 #include "physics/Body.h"
 #include "physics/Engine.h"
 
-#include "gfx/object/BranchNode.h"
 #include "gfx/Engine.h"
 
 

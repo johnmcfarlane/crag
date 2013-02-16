@@ -23,7 +23,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Box);
 
-		Box(Init const & init, Color4f const & color);
+		Box(Init const & init, Transformation const & local_transformation, Color4f const & color);
 
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;

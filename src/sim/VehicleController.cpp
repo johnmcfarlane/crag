@@ -18,7 +18,6 @@
 
 #include "physics/Body.h"
 
-#include "gfx/object/BranchNode.h"
 #include "gfx/object/Thruster.h"
 #include "gfx/Engine.h"
 
@@ -45,27 +44,21 @@ void VehicleController::AddThruster(Thruster const & thruster)
 	
 	// Create sim-side thruster object and get ref to it for writing.
 	_thrusters.push_back(thruster);
-	Thruster & _thruster = _thrusters.back();
+	auto & _thruster = _thrusters.back();
 	
-	// create gfx-side branch node
-	Scalar thrust_scale = Length(_thruster.direction);
-	Transformation transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale);
-	auto branch_node = gfx::BranchNodeHandle::CreateHandle(transformation);
-	
-	// branch node's parent is vehicle's branch node
-	sim::Entity const & entity = GetEntity();
-	gfx::ObjectHandle const & parent_model = entity.GetModel();
-	gfx::Daemon::Call([branch_node, parent_model] (gfx::Engine & engine) {
-		engine.OnSetParent(branch_node.GetUid(), parent_model.GetUid());
-	});
-	
-	// create actual thruster graphics
-	_thruster.model.Create();
+	// calculate local transformation
+	auto thrust_scale = Length(_thruster.direction);
+	Transformation local_transformation(_thruster.position, axes::Rotation(_thruster.direction / thrust_scale), thrust_scale);
+
+	// create actual thruster
+	_thruster.model.Create(local_transformation);
 	auto thruster_uid = _thruster.model.GetUid();
 	
-	// its parent is the branch node
-	gfx::Daemon::Call([thruster_uid, branch_node] (gfx::Engine & engine) {
-		engine.OnSetParent(thruster_uid, branch_node.GetUid());
+	// thruster's parent is vehicle
+	auto & entity = GetEntity();
+	auto & parent_model = entity.GetModel();
+	gfx::Daemon::Call([thruster_uid, parent_model] (gfx::Engine & engine) {
+		engine.OnSetParent(thruster_uid, parent_model.GetUid());
 	});
 	
 	// initialize thrust factor

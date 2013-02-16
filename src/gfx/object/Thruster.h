@@ -29,7 +29,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Thruster);
 
-		Thruster(Init const & init);
+		Thruster(Init const & init, Transformation const & local_transformation);
 		
 		void Update(float const & thrust_factor);
 

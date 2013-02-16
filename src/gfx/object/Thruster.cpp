@@ -40,8 +40,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Thruster, 4);
 
-Thruster::Thruster(super::Init const & init)
-: super(init, thruster_color)
+Thruster::Thruster(super::Init const & init, Transformation const & local_transformation)
+: super(init, local_transformation, thruster_color)
 {
 }
 
@@ -70,40 +70,39 @@ LeafNode::PreRenderResult Thruster::PreRender()
 void Thruster::AddPuff(float thrust_factor)
 {
 	Engine & renderer = GetEngine();
+
+	// Get some random numbers.
+	Scalar g1, g2, g3, g4;
+	Random::sequence.GetGaussians<Scalar>(g1, g2);
+	Random::sequence.GetGaussians<Scalar>(g3, g4);
+		
+	// Get the transformation of the thruster 
+	auto model_transformation = GetModelTransformation();
+		
+	// Calculate the thruster/puff direction.
+	Vector3 thruster_direction = axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
+	Scalar thruster_max = Length(thruster_direction);
+	thruster_direction *= Scalar(1) / thruster_max;
 	
-	// Determine the position/direction etc. of the puff.
+	// decide how big the puff will be
 	Scalar spawn_volume;
-	BranchNodeHandle branch_node;
 	{
-		// Get some random numbers.
-		Scalar g1, g2, g3, g4;
-		Random::sequence.GetGaussians<Scalar>(g1, g2);
-		Random::sequence.GetGaussians<Scalar>(g3, g4);
-		
-		// Get the transformation of the 
-		Transformation model_transformation = GetParent()->GetModelTransformation();
-		
-		// Extract the global thruster translation.
-		Vector3 translation = model_transformation.GetTranslation();
-		
-		// Calculate the thruster/puff direction.
-		Vector3 thruster_direction = axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
-		Scalar thruster_max = Length(thruster_direction);
-		thruster_direction *= Scalar(1) / thruster_max;
-		
+		auto thrust = thruster_max * thrust_factor;
+
+		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
+	}
+
+	// Determine the position/direction etc. of the puff.
+	Transformation transformation;
+	{
 		Vector3 puff_direction = (thruster_direction * (Scalar(1) - puff_drift_coefficient)) + (Vector3(g1, g2, g3) * puff_drift_coefficient);
 		Normalize(puff_direction);
 
-		Scalar thrust = thruster_max * thrust_factor;
-		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
+		// Extract the global thruster translation.
+		auto translation = model_transformation.GetTranslation();
+		
+		transformation = Transformation(translation, axes::Rotation<Scalar>(puff_direction));
+	}
 
-		// Set its position.
-		Transformation transformation(translation, axes::Rotation<Scalar>(puff_direction));
-		branch_node.Create(transformation);
-	}
-	
-	{
-		auto puff = smp::Handle<Puff>::CreateHandle(spawn_volume);
-		renderer.OnSetParent(puff.GetUid(), branch_node.GetUid());
-	}
+	auto puff = smp::Handle<Puff>::CreateHandle(transformation, spawn_volume);
 }

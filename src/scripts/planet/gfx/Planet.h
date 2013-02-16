@@ -20,12 +20,12 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Planet);
 
-		Planet(Init const & init, Scalar radius);
+		Planet(Init const & init, Transformation const & local_transformation, Scalar radius);
 		
 		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 
 	private:
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
+		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
 
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;

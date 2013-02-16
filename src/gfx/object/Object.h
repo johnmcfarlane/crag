@@ -11,6 +11,7 @@
 
 #include "gfx/defs.h"
 
+#include "geom/Transformation.h"
 
 namespace gfx { DECLARE_CLASS_HANDLE(Object); }	// gfx::ObjectHandle
 
@@ -18,67 +19,84 @@ namespace gfx { DECLARE_CLASS_HANDLE(Object); }	// gfx::ObjectHandle
 namespace gfx
 {
 	// forward-declarations
-	class BranchNode;
 	class LeafNode;
 	class Pov;
 	class Engine;
 	class Scene;
 
+	// function declarations
+	bool IsChild(Object const & child, Object const & parent);
+	void AdoptChild(Object & child, Object & parent);
+	void OrphanChild(Object & child, Object & parent);
+	void OrphanChild(Object & child);
+
 	// Base class for drawable things.
-	// Note that these have intrusive list/tree entries (esp. in BranchNode)
 	// meaning they effectively double as nodes in a hierachical scene graph.
 	class Object : public smp::Object<Object, Engine>
 	{
-	public:
+	protected:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
 		typedef smp::Object<Object, Engine> super;
 		
-		enum NodeType
-		{
-			leaf,
-			branch
-		};
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(Init const & init, NodeType node_type);
+		Object(Init const & init, Transformation const & local_transformation);
+	public:
 		virtual ~Object();
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
 #endif
 		
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const;
-		
 		// scene graph types/variables/functions
-		NodeType GetNodeType() const;
+		virtual LeafNode & CastLeafNodeRef();
+		virtual LeafNode const & CastLeafNodeRef() const;
+		virtual LeafNode * CastLeafNodePtr();
+		virtual LeafNode const * CastLeafNodePtr() const;
 		
-		LeafNode & CastLeafNodeRef();
-		LeafNode const & CastLeafNodeRef() const;
-		LeafNode * CastLeafNodePtr();
-		LeafNode const * CastLeafNodePtr() const;
-		
-		BranchNode & CastBranchNodeRef();
-		BranchNode const & CastBranchNodeRef() const;
-		BranchNode * CastBranchNodePtr();
-		BranchNode const * CastBranchNodePtr() const;
-		
-		BranchNode * GetParent();
-		BranchNode const * GetParent() const;
-		
-		friend void AdoptChild(Object & child, BranchNode & parent);
-		friend void OrphanChild(Object & child, BranchNode & parent);
+		//////////////////////////////////////////////////////////////////////////////
+		// tree structure
+
+	private:
+		Object * _parent;
+		DEFINE_INTRUSIVE_LIST(Object, List);
+		List _children;
+
+	public:
+		friend bool IsChild(Object const & child, Object const & parent);
+		friend void AdoptChild(Object & child, Object & parent);
+		friend void OrphanChild(Object & child, Object & parent);
 		friend void OrphanChild(Object & child);
 		
-	private:
-		////////////////////////////////////////////////////////////////////////////////
-		// variables
+		Object * GetParent();
+		Object const * GetParent() const;
 
-		DEFINE_INTRUSIVE_LIST(Object, List);
-		BranchNode * _parent;
-		NodeType const _node_type;
+		bool IsEmpty() const;
+		
+		List::iterator Begin();
+		List::const_iterator Begin() const;
+		
+		List::iterator End();
+		List::const_iterator End() const;
+		
+		Object & Front();
+		Object const & Front() const;
+		
+		Object & Back();
+		Object const & Back() const;
+
+		//////////////////////////////////////////////////////////////////////////////
+		// transformation
+
+		Transformation const & GetLocalTransformation() const;
+		void SetLocalTransformation(Transformation const & local_transformation);
+		
+		Transformation GetModelTransformation() const;
+
+	private:
+		Transformation _local_transformation;
 	};
 }

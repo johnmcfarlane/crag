@@ -47,7 +47,7 @@ namespace
 // gfx::FormationMesh member definitions
 
 FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quaterne, smp::Handle<form::RegulatorScript> const & regulator_handle)
-: LeafNode(init, Layer::foreground)
+: LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
@@ -125,14 +125,14 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 	return ok;
 }
 
-Transformation const & FormationMesh::Transform(Transformation const & model_view, Transformation & scratch) const
+void FormationMesh::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	auto& front_buffer_origin = front_buffer.GetOrigin();
 	auto& gfx_origin = GetEngine().GetOrigin();
 	auto offset = front_buffer_origin - gfx_origin;
-	scratch = model_view * Transformation(geom::Cast<float>(offset));
-	return scratch;
+
+	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
 }
 
 void FormationMesh::Render(Engine const & renderer) const

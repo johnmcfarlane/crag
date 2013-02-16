@@ -23,8 +23,8 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Box, 100);
 
-Box::Box(LeafNode::Init const & init, Color4f const & color)
-: LeafNode(init, Layer::foreground)
+Box::Box(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+: LeafNode(init, local_transformation, Layer::foreground)
 , _color(color)
 {
 	SetIsOpaque(_color.a == 255);

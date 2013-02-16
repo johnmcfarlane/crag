@@ -13,7 +13,7 @@
 
 namespace gfx
 {
-	DECLARE_CLASS_HANDLE(BranchNode);	// gfx::BranchNodeHandle
+	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
 }
 
 namespace physics
@@ -58,8 +58,8 @@ namespace sim
 		physics::Body const * GetBody() const;
 
 		// graphics
-		gfx::BranchNodeHandle GetModel() const;
-		void SetModel(gfx::BranchNodeHandle model);
+		gfx::ObjectHandle GetModel() const;
+		void SetModel(gfx::ObjectHandle model);
 		void UpdateModels() const;
 
 		// Verification
@@ -72,6 +72,6 @@ namespace sim
 		// variables
 		Controller * _controller;
 		physics::Location * _location;
-		gfx::BranchNodeHandle _model;
+		gfx::ObjectHandle _model;
 	};
 }

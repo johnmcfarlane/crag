@@ -22,11 +22,11 @@ namespace gfx
 	public:
 		DECLARE_ALLOCATOR(Puff);
 
-		Puff(Init const & init, Scalar spawn_volume);
+		Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume);
 		~Puff();
 		
 	private:
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
+		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
 		
 		PreRenderResult PreRender() override;
 		

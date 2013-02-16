@@ -28,8 +28,8 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Planet, 3);
 
-Planet::Planet(LeafNode::Init const & init, Scalar radius)
-: LeafNode(init, Layer::foreground)
+Planet::Planet(LeafNode::Init const & init, Transformation const & local_transformation, Scalar radius)
+	: LeafNode(init, local_transformation, Layer::foreground)
 , _sea_level(radius)
 {
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
@@ -43,10 +43,10 @@ void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 	_radius_max = radius_max;
 }
 
-Transformation const & Planet::Transform(Transformation const & model_view, Transformation & scratch) const
+void Planet::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
-	return sphere_quad.Transform(model_view, scratch);
+	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view));
 }
 
 bool Planet::GetRenderRange(RenderRange & range) const 

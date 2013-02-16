@@ -39,19 +39,24 @@ namespace gfx
 			remove
 		};
 		
-		typedef geom::Transformation<float> Transformation;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Init const & init, Layer::type layer);
+		LeafNode(Init const & init, Transformation const & local_transformation, Layer::type layer);
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
 #endif
 		
+		virtual LeafNode & CastLeafNodeRef() final;
+		virtual LeafNode const & CastLeafNodeRef() const final;
+		virtual LeafNode * CastLeafNodePtr() final;
+		virtual LeafNode const * CastLeafNodePtr() const final;
+
+		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation);
 		void SetModelViewTransformation(Transformation const & model_view_transformation);
 		Transformation const & GetModelViewTransformation() const;
+
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 		
 		Layer::type GetLayer() const;

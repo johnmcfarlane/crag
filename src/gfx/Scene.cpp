@@ -30,7 +30,7 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// Scene member functions
 
 Scene::Scene(Engine & engine)
 : _time(-1)
@@ -75,6 +75,8 @@ void Scene::AddObject(Object & object)
 		// add it to the render list.
 		_render_list.push_back(* leaf_node);
 	}
+
+	AdoptChild(object, _root);
 }
 
 void Scene::RemoveObject(Object & object)
@@ -109,12 +111,12 @@ void Scene::SortRenderList()
 	}
 }
 
-BranchNode & Scene::GetRoot()
+Object & Scene::GetRoot()
 {
 	return _root;
 }
 
-BranchNode const & Scene::GetRoot() const
+Object const & Scene::GetRoot() const
 {
 	return _root;
 }
@@ -142,7 +144,7 @@ void Scene::SetResolution(geom::Vector2i const & r)
 void Scene::SetCameraTransformation(Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
-	_root.SetTransformation(transformation.GetInverse());
+	_root.SetLocalTransformation(transformation.GetInverse());
 }
 
 Pov & Scene::GetPov()

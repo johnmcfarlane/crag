@@ -33,12 +33,12 @@ namespace gfx
 		typedef VertexBufferObject<Vertex> Vbo;
 		
 		// Methods
-		Skybox(Init const & init);
+		Skybox(Init const & init, Transformation const & local_transformation);
 		~Skybox();
 		
 		void SetSide(int axis, int pole, Image const & image);
 		
-		virtual Transformation const & Transform(Transformation const & model_view, Transformation & scratch) const final;
+		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
 		void Render(Engine const & renderer) const override;
 		
 	private:

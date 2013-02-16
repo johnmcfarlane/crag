@@ -24,7 +24,7 @@ using namespace sim;
 // sim::Firmament member definitions
 
 Firmament::Firmament(Init const & init)
-: Skybox(init)
+: Skybox(init, gfx::Transformation::Matrix44::Identity())
 {
 	DrawStarsSimple();
 }

@@ -37,9 +37,16 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
+namespace gfx 
+{ 
+	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
+	DECLARE_CLASS_HANDLE(Box); // gfx::BoxHandle
+	DECLARE_CLASS_HANDLE(Light); // gfx::LightHandle
+}
+
 namespace sim 
 { 
-	DECLARE_CLASS_HANDLE(Firmament); //FirmamentHandle
+	DECLARE_CLASS_HANDLE(Firmament); // sim::FirmamentHandle
 }
 
 namespace
@@ -87,8 +94,8 @@ namespace
 		box.SetLocation(& body);
 
 		// graphics
-		auto model = sim::AddModelWithTransform<gfx::Box>(color);
-
+		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity(), size * .5f);
+		auto model = gfx::BoxHandle::CreateHandle(local_transformation, color);
 		box.SetModel(model);
 	}
 
@@ -111,7 +118,8 @@ namespace
 		ConstructSphericalBody(ball, sphere, ball_density, ball_linear_damping, ball_angular_damping);
 
 		// graphics
-		gfx::BranchNodeHandle model = sim::AddModelWithTransform<gfx::Ball>(color);
+		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
+		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, color);
 		ball.SetModel(model);
 	}
 
@@ -153,7 +161,6 @@ namespace
 		AddThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-
 	}
 }
 
@@ -221,13 +228,8 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 		gfx::Scalar sea_level = 0;
 #endif
 		
-		auto branch_node = gfx::BranchNodeHandle::CreateHandle(gfx::Transformation::Matrix44::Identity());
-		auto model = gfx::PlanetHandle::CreateHandle(sea_level);
-		gfx::Daemon::Call([model, branch_node] (gfx::Engine & engine) {
-			engine.OnSetParent(model.GetUid(), branch_node.GetUid());
-		});
-		entity.SetModel(branch_node);
-		controller.SetModel(model);
+		auto model = gfx::PlanetHandle::CreateHandle(gfx::Transformation(sphere.center), sea_level);
+		entity.SetModel(model);
 	});
 
 	return handle;
@@ -251,12 +253,13 @@ sim::EntityHandle SpawnStar()
 	sun.Call([] (sim::Entity & sun) {
 		// physics
 		geom::rel::Vector3 position(65062512.f, 75939904.f, 0.f);
-		auto location = new physics::FixedLocation(sim::Transformation(position));
+		sim::Transformation transformation(position);
+		auto location = new physics::FixedLocation(transformation);
 		sun.SetLocation(location);
 
 		// graphics
-	        gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	        auto light = sim::AddModelWithTransform<gfx::Light>(color);
+		gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
+		auto light = gfx::LightHandle::CreateHandle(transformation, color);
 		sun.SetModel(light);
 	});
 

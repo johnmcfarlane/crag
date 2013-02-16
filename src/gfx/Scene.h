@@ -11,7 +11,7 @@
 
 #include "defs.h"
 
-#include "object/BranchNode.h"
+#include "object/RootNode.h"
 #include "object/LeafNode.h"
 #include "object/Light.h"
 #include "Pov.h"
@@ -41,8 +41,8 @@ namespace gfx
 		void RemoveObject(Object & object);
 		void SortRenderList();
 		
-		BranchNode & GetRoot();
-		BranchNode const & GetRoot() const;
+		Object & GetRoot();
+		Object const & GetRoot() const;
 		
 		LeafNode::RenderList & GetRenderList();
 		LeafNode::RenderList const & GetRenderList() const;
@@ -60,7 +60,7 @@ namespace gfx
 		core::Time _time;
 		Pov pov;
 		
-		BranchNode _root;	// root of object heirachy; uses list hook in Object
+		RootNode _root;	// root of object heirachy; uses list hook in Object
 		LeafNode::RenderList _render_list;	// flat list of drawable objects
 		Light::List _light_list;
 	};

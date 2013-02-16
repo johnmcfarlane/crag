@@ -202,31 +202,22 @@ namespace
 	// Given a scene and the uid of a branc_node in that scene
 	// (or Uid() for the scene's root node),
 	// returns a reference to that branch node.
-	BranchNode * GetBranchNode(Engine & engine, Uid branch_node_uid)
+	Object * GetParent(Engine & engine, Uid parent_uid)
 	{
-		if (! branch_node_uid)
+		if (parent_uid)
 		{
-			auto& scene = engine.GetScene();
-			return & scene.GetRoot();
+			auto * parent = engine.GetObject(parent_uid);
+
+			if (parent != nullptr)
+			{
+				return parent;
+			}
+
+			DEBUG_BREAK("missing object");
 		}
-		
-		Object * parent_object = engine.GetObject(branch_node_uid);
-		if (parent_object == nullptr)
-		{
-			// The given parent was not found.
-			// The uid is bogus or the object has been removed.
-			return nullptr;
-		}
-		
-		if (parent_object->GetNodeType() != Object::branch)
-		{
-			// The given uid refers to an object which is not a BranchNode.
-			// The uid is bogus.
-			ASSERT(false);
-			return nullptr;
-		}
-		
-		return static_cast<BranchNode *>(parent_object);
+
+		auto & scene = engine.GetScene();
+		return & scene.GetRoot();
 	}
 
 }	// namespace
@@ -394,14 +385,10 @@ void Engine::OnAddObject(Object & object)
 
 void Engine::OnRemoveObject(Object & object)
 {
-	BranchNode * branch_node = object.CastBranchNodePtr();
-	if (branch_node != nullptr)
+	while (! object.IsEmpty())
 	{
-		while (! branch_node->IsEmpty())
-		{
-			auto& back = branch_node->Back();
-			DestroyObject(back.GetUid());
-		}
+		auto & back = object.Back();
+		DestroyObject(back.GetUid());
 	}
 
 	ASSERT(scene != nullptr);
@@ -410,7 +397,7 @@ void Engine::OnRemoveObject(Object & object)
 
 void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 {
-	Object * child = GetObject(child_uid);
+	auto * child = GetObject(child_uid);
 	if (child == nullptr)
 	{
 		return;
@@ -421,7 +408,7 @@ void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 
 void Engine::OnSetParent(Object & child, Uid parent_uid)
 {
-	BranchNode * parent = GetBranchNode(* this, parent_uid);
+	auto * parent = GetParent(* this, parent_uid);
 	if (parent == nullptr)
 	{
 		DEBUG_BREAK("Given parent, " SIZE_T_FORMAT_SPEC ", not found", std::hash<Uid>()(parent_uid));
@@ -431,7 +418,7 @@ void Engine::OnSetParent(Object & child, Uid parent_uid)
 	OnSetParent(child, * parent);
 }
 
-void Engine::OnSetParent(Object & child, BranchNode & parent)
+void Engine::OnSetParent(Object & child, Object & parent)
 {
 	OrphanChild(child);
 	AdoptChild(child, parent);
@@ -839,53 +826,45 @@ void Engine::PreRender()
 	}
 }
 
-void Engine::UpdateTransformations(BranchNode & parent_branch, Transformation const & model_view_transformation)
+void Engine::UpdateTransformations(Object & object, Transformation const & parent_model_view_transformation)
 {
+	// calculate model view transformation for this object
+	auto & object_transformation = object.GetLocalTransformation();
+	auto model_view_transformation = parent_model_view_transformation * object_transformation;
 	VerifyObject(model_view_transformation);
-	Transformation scratch;
-	
-	for (Object::List::iterator i = parent_branch.Begin(), end = parent_branch.End(); i != end; )
+
+	// if it's something that'll get drawn
+	auto * leaf = object.CastLeafNodePtr();
+	if (leaf != nullptr)
 	{
-		Object & child = * i;
-		++ i;
-		
-		Transformation const & child_model_view_transformation = child.Transform(model_view_transformation, scratch);
-		VerifyObject(child_model_view_transformation);
-		
-		switch (child.GetNodeType())
+		// set model view transformation (with whatever necessary rejiggering)
+		leaf->UpdateModelViewTransformation(model_view_transformation);
+	}
+	else
+	{
+		// if it's an empty branch,
+		if (object.IsEmpty())
 		{
-			default:
-				ASSERT(false);
-				
-			case Object::branch:
-			{
-				BranchNode & child_branch = child.CastBranchNodeRef();
-				if (child_branch.IsEmpty())
-				{
-					DestroyObject(child_branch.GetUid());
-					continue;
-				}
-				
-				UpdateTransformations(child_branch, child_model_view_transformation);
-				break;
-			}
-				
-			case Object::leaf:
-			{
-				LeafNode & child_leaf = child.CastLeafNodeRef();
-				LeafNode::Transformation transformation(geom::Cast<float>(child_model_view_transformation));
-				child_leaf.SetModelViewTransformation(transformation);
-				break;
-			}
+			// destroy it
+			DestroyObject(object.GetUid());
+			return;
 		}
+	}
+	
+	// propagate to children
+	for (auto i = object.Begin(), end = object.End(); i != end;)
+	{
+		auto & child = * i;
+		++ i;
+
+		UpdateTransformations(child, model_view_transformation);
 	}
 }
 
 void Engine::UpdateTransformations()
 {
-	BranchNode & root_node = scene->GetRoot();
-	Transformation const & root_transformation = root_node.GetTransformation();
-	UpdateTransformations(root_node, root_transformation);
+	Object & root_node = scene->GetRoot();
+	UpdateTransformations(root_node, Transformation::Matrix44::Identity());
 	
 	scene->SortRenderList();
 }

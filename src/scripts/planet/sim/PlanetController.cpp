@@ -75,11 +75,6 @@ PlanetController::~PlanetController()
 	_formation = nullptr;
 }
 
-void PlanetController::SetModel(gfx::PlanetHandle model)
-{
-	_model = model;
-}
-
 form::Formation const & PlanetController::GetFormation() const
 {
 	return ref(_formation);
@@ -95,7 +90,9 @@ void PlanetController::Tick()
 	planetary_body.SetRadius(physics::Scalar(radius_range[1]));
 
 	// update planet params
-	_model.Call([radius_range] (gfx::Planet & planet) {
+	auto model_handle = entity.GetModel();
+	model_handle.Call([radius_range] (gfx::Object & object) {
+		auto & planet = static_cast<gfx::Planet &>(object);
 		planet.SetRadiusMinMax(radius_range[0], radius_range[1]);
 	});
 }

@@ -34,7 +34,7 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Init const & init, Color4f const & color);
+		Light(Init const & init, Transformation const & local_transformation, Color4f const & color);
 		~Light();
 		
 #if defined(VERIFY)

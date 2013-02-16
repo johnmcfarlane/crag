@@ -27,8 +27,8 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Ball, 100);
 
-Ball::Ball(LeafNode::Init const & init, Color4f const & color)
-: LeafNode(init, Layer::foreground)
+Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+: LeafNode(init, local_transformation, Layer::foreground)
 , _color(Color4f::Black())
 {
 	_color = color;
@@ -42,10 +42,14 @@ Ball::Ball(LeafNode::Init const & init, Color4f const & color)
 	SetMeshResource(& sphere_quad);
 }
 
-Transformation const & Ball::Transform(Transformation const & model_view, Transformation & scratch) const
+void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 {
+	Transformation scratch;
+
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
-	return sphere_quad.Transform(model_view, scratch);
+	Transformation model_view_transformation = sphere_quad.CalculateModelViewTransformation(model_view);
+
+	SetModelViewTransformation(model_view_transformation);
 }
 
 bool Ball::GetRenderRange(RenderRange & range) const 

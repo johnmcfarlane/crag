@@ -51,8 +51,8 @@ void Pointer<Skybox::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Skybox member definitions
 
-Skybox::Skybox(LeafNode::Init const & init)
-: LeafNode(init, Layer::background)
+Skybox::Skybox(LeafNode::Init const & init, Transformation const & local_transformation)
+: LeafNode(init, local_transformation, Layer::background)
 {
 	InitVerts();
 
@@ -83,12 +83,11 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 	image.CreateTexture(side_tex);
 }
 
-Transformation const & Skybox::Transform(Transformation const & model_view, Transformation & scratch) const
+void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
-	scratch = Transformation(Vector3::Zero(), rotation);
-	return scratch;
+	SetModelViewTransformation(Transformation(Vector3::Zero(), rotation));
 }
 
 void Skybox::Render(Engine const & renderer) const

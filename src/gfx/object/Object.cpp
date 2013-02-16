@@ -11,22 +11,23 @@
 
 #include "Object.h"
 
-#include "BranchNode.h"
 #include "LeafNode.h"
-
 
 using namespace gfx;
 
 
-Object::Object(Init const & init, NodeType node_type)
+Object::Object(Init const & init, Transformation const & local_transformation)
 : super(init)
 , _parent(nullptr)
-, _node_type(node_type)
+, _local_transformation(local_transformation)
 { 
+	VerifyObject(* this);
 }
 
 Object::~Object() 
 {
+	ASSERT(IsEmpty());
+
 	if (_parent != nullptr)
 	{
 		OrphanChild(* this);
@@ -41,82 +42,167 @@ void Object::Verify() const
 	List::verify(* this);
 	
 	VerifyPtr(_parent);
-	VerifyTrue(_node_type == branch || _node_type == leaf);
+
 	if (_parent != nullptr)
 	{
-		VerifyTrue(_parent->IsChild(* this));
+		VerifyTrue(IsChild(* this, * _parent));
 	}
+
+	_children.verify();
+	
+	for (List::const_iterator i = _children.begin(), end = _children.begin(); i != end; ++ i)
+	{
+		Object const & child = static_cast<Object const &>(* i);
+		VerifyTrue(child.GetParent() == this);
+	}
+	
+	VerifyObject(_local_transformation);
 }
 #endif
 
-Transformation const & Object::Transform(Transformation const & model_view, Transformation & scratch) const
-{
-	return model_view;
-}
-
-Object::NodeType Object::GetNodeType() const
-{
-	return _node_type;
-}
-
 LeafNode & Object::CastLeafNodeRef()
 {
-	ASSERT(GetNodeType() == leaf);
+	ASSERT(false);
 	return static_cast<LeafNode &>(* this);
 }
 
 LeafNode const & Object::CastLeafNodeRef() const
 {
-	ASSERT(GetNodeType() == leaf);
+	ASSERT(false);
 	return static_cast<LeafNode const &>(* this);
 }
 
 LeafNode * Object::CastLeafNodePtr()
 {
-	return (GetNodeType() == leaf)
-	? static_cast<LeafNode *>(this)
-	: nullptr;
+	return nullptr;
 }
 
 LeafNode const * Object::CastLeafNodePtr() const
 {
-	return (GetNodeType() == leaf)
-	? static_cast<LeafNode const *>(this)
-	: nullptr;
+	return nullptr;
 }
 
-BranchNode & Object::CastBranchNodeRef()
+bool gfx::IsChild(Object const & child, Object const & parent)
 {
-	ASSERT(GetNodeType() == branch);
-	return static_cast<BranchNode &>(* this);
+	return parent._children.contains(child);
 }
 
-BranchNode const & Object::CastBranchNodeRef() const
+void gfx::AdoptChild(Object & child, Object & parent)
 {
-	ASSERT(GetNodeType() == branch);
-	return static_cast<BranchNode const &>(* this);
+	ASSERT(child._parent == nullptr);
+	child._parent = & parent;
+	
+	ASSERT(! parent._children.contains(child));
+	parent._children.push_back(child);
 }
 
-BranchNode * Object::CastBranchNodePtr()
+void gfx::OrphanChild(Object & child, Object & parent)
 {
-	return (GetNodeType() == branch)
-	? static_cast<BranchNode *>(this)
-	: nullptr;
+	ASSERT(child._parent == & parent);
+	child._parent = nullptr;
+	
+	ASSERT(parent._children.contains(child));
+	parent._children.remove(child);
 }
 
-BranchNode const * Object::CastBranchNodePtr() const
+void gfx::OrphanChild(Object & child)
 {
-	return (GetNodeType() == branch)
-	? static_cast<BranchNode const *>(this)
-	: nullptr;
+	Object * parent = child._parent;
+	if (parent != nullptr)
+	{
+		OrphanChild(child, * parent);
+	}
 }
 
-BranchNode * Object::GetParent()
+Object * Object::GetParent()
 {
 	return _parent;
 }
 
-BranchNode const * Object::GetParent() const
+Object const * Object::GetParent() const
 {
 	return _parent;
+}
+
+bool Object::IsEmpty() const
+{
+	return _children.empty();
+}
+
+Object::List::iterator Object::Begin()
+{
+	return _children.begin();
+}
+
+Object::List::const_iterator Object::Begin() const
+{
+	return _children.begin();
+}
+
+Object::List::iterator Object::End()
+{
+	return _children.end();
+}
+
+Object::List::const_iterator Object::End() const
+{
+	return _children.end();
+}
+
+Object & Object::Front()
+{
+	return _children.front();
+}
+
+Object const & Object::Front() const
+{
+	return _children.front();
+}
+		
+Object & Object::Back()
+{
+	return _children.back();
+}
+
+Object const & Object::Back() const
+{
+	return _children.back();
+}
+
+Transformation const & Object::GetLocalTransformation() const
+{
+	return _local_transformation;
+}
+
+void Object::SetLocalTransformation(Transformation const & local_transformation)
+{
+	_local_transformation = local_transformation;
+	VerifyObject(_local_transformation);
+}
+
+Transformation Object::GetModelTransformation() const
+{
+	Object const * ancestor = GetParent();
+	
+	if (ancestor == nullptr)
+	{
+		// This is the root node; return the identity.
+		return Matrix44::Identity();
+	}
+
+	Transformation model_transformation = GetLocalTransformation();
+	while (true)
+	{
+		Object const * parent = ancestor->GetParent();
+		if (parent == nullptr)
+		{
+			// Accumulate transformations up to - and excluding - the root node.
+			return model_transformation;
+		}
+
+		Transformation const & ancestor_transformation = ancestor->GetLocalTransformation();
+		model_transformation = ancestor_transformation * model_transformation;
+		
+		ancestor = parent;
+	}
 }

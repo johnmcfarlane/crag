@@ -16,13 +16,13 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::LeafNode member definitions
 
-LeafNode::LeafNode(Init const & init, Layer::type layer)
-: Object(init, leaf)
+LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer::type layer)
+: Object(init, local_transformation)
 , _model_view_transformation(Transformation::Matrix44::Identity())
-, _render_depth(0)
-, _layer(layer)
 , _program(nullptr)
 , _mesh_resource(nullptr)
+, _render_depth(0)
+, _layer(layer)
 , _is_opaque(true)
 {
 }
@@ -36,6 +36,31 @@ void LeafNode::Verify() const
 }
 #endif
 
+LeafNode & LeafNode::CastLeafNodeRef()
+{
+	return * this;
+}
+
+LeafNode const & LeafNode::CastLeafNodeRef() const
+{
+	return * this;
+}
+
+LeafNode * LeafNode::CastLeafNodePtr()
+{
+	return this;
+}
+
+LeafNode const * LeafNode::CastLeafNodePtr() const
+{
+	return this;
+}
+
+void LeafNode::UpdateModelViewTransformation(Transformation const & model_view_transformation)
+{
+	SetModelViewTransformation(model_view_transformation);
+}
+
 void LeafNode::SetModelViewTransformation(Transformation const & model_view_transformation)
 {
 	_model_view_transformation = model_view_transformation;
@@ -46,7 +71,7 @@ void LeafNode::SetModelViewTransformation(Transformation const & model_view_tran
 	VerifyObject(* this);
 }
 
-LeafNode::Transformation const & LeafNode::GetModelViewTransformation() const
+Transformation const & LeafNode::GetModelViewTransformation() const
 {
 	return _model_view_transformation;
 }

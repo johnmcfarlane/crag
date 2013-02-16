@@ -23,8 +23,8 @@
 using namespace gfx;
 
 
-Light::Light(LeafNode::Init const & init, Color4f const & color)
-: LeafNode(init, Layer::light)
+Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+: LeafNode(init, local_transformation, Layer::light)
 , _color(color)
 {
 	Scene & scene = init.engine.GetScene();
