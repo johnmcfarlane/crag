@@ -15,7 +15,7 @@ add_executable(crag
 	src/gfx/object/Object.cpp
 	src/gfx/object/Box.cpp
 	src/gfx/object/Skybox.cpp
-	src/gfx/object/BranchNode.cpp
+	src/gfx/object/RootNode.cpp
 	src/gfx/object/Puff.cpp
 	src/gfx/object/LeafNode.cpp
 	src/gfx/Texture.cpp
