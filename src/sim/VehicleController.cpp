@@ -56,7 +56,7 @@ void VehicleController::AddThruster(Thruster const & thruster)
 	
 	// thruster's parent is vehicle
 	auto & entity = GetEntity();
-	auto & parent_model = entity.GetModel();
+	auto parent_model = entity.GetModel();
 	gfx::Daemon::Call([thruster_uid, parent_model] (gfx::Engine & engine) {
 		engine.OnSetParent(thruster_uid, parent_model.GetUid());
 	});

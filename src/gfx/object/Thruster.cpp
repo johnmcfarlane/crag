@@ -104,5 +104,5 @@ void Thruster::AddPuff(float thrust_factor)
 		transformation = Transformation(translation, axes::Rotation<Scalar>(puff_direction));
 	}
 
-	auto puff = smp::Handle<Puff>::CreateHandle(transformation, spawn_volume);
+	smp::Handle<Puff>::CreateHandle(transformation, spawn_volume);
 }
