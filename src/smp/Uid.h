@@ -22,7 +22,7 @@ namespace smp
 	{
 		// types
 		typedef std::size_t ValueType;
-        
+		
 	public:
 		// functions
 		Uid() : _value(0) { }

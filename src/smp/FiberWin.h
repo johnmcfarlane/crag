@@ -67,5 +67,5 @@ namespace smp
 		LPVOID _fiber;	// handle to system fiber
 		LPVOID _calling_fiber;	// when fiber is running, stores the fiber to which we'll be returning
 		bool _is_running;	// true if _callback has not yet exited
-    };
+	};
 }

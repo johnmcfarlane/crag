@@ -162,9 +162,9 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe engine
 		
-        template <typename FUNCTION_TYPE>
-        static void Call(FUNCTION_TYPE const & function)
-        {
+		template <typename FUNCTION_TYPE>
+		static void Call(FUNCTION_TYPE const & function)
+		{
 		// If caller is on the same thread as the engine,
 		if (singleton->_thread.IsCurrent())
 		{
@@ -176,7 +176,7 @@ namespace smp
 			// otherwise, wrap up the function and send it over.
 			SendMessage(function);
 		}
-        }
+	}
 		
 	private:
 		void Run()

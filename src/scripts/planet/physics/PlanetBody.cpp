@@ -143,23 +143,23 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	collision_object.bounding_sphere.radius = Length(extents);
 	
 	// points
-    {
-        ConvexHull::Vector::iterator i = collision_object.shape.faces.begin();
+	{
+		ConvexHull::Vector::iterator i = collision_object.shape.faces.begin();
 		for (int axis = 0; axis < 3; ++ axis)
 		{
 			for (int pole = 0; pole < 2; ++ pole)
 			{
-                float pole_sign = pole ? 1.f : -1.f;
+				float pole_sign = pole ? 1.f : -1.f;
 				sim::Ray3 plane;
-                
+				
 				plane.position = Vector3::Zero();
-                plane.position[axis] = pole_sign * extents[axis];
+				plane.position[axis] = pole_sign * extents[axis];
 				plane.position = rotation * plane.position;
 				i->position = plane.position;
 				i->position += collision_object.bounding_sphere.center;
 				
-                plane.direction = Vector3::Zero();
-                plane.direction[axis] = pole_sign;
+				plane.direction = Vector3::Zero();
+				plane.direction[axis] = pole_sign;
 				plane.direction = rotation * plane.direction;
 				i->direction = plane.direction;
 				
@@ -168,10 +168,10 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 				//	gfx::Debug::ColorPair(gfx::Color4f::White(), 0.1f));
 				
 				++ i;
-            }
-        }
+			}
+		}
 		ASSERT(i == collision_object.shape.faces.end());
-    }
+	}
  	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
 	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);

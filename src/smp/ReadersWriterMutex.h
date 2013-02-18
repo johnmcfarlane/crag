@@ -34,11 +34,11 @@ namespace smp
 		
 	private:
 		std::atomic<unsigned> read_count;
-        std::atomic<unsigned> write_count;
+		std::atomic<unsigned> write_count;
 		
-        SimpleMutex read_entry_lock;
+		SimpleMutex read_entry_lock;
 		std::mutex write_lock;
-        std::mutex read_lock;
+		std::mutex read_lock;
 	};
 	
 }

@@ -46,7 +46,7 @@ namespace form { namespace collision
 
 	template <typename SHAPE, typename FUNCTOR>
 	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor, float min_area);
-    
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// helper classes and functions
@@ -122,8 +122,8 @@ namespace form { namespace collision
 		FUNCTOR & _functor;	// thing to call when collision is detected
 		float _min_area;
 	};
-    
-    
+	
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// Sphere Collision support
 	
@@ -148,8 +148,8 @@ namespace form { namespace collision
 		DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::White());
 		return true;
 	}
-    
-    
+	
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// Convex Hull Collision support
 	
@@ -157,7 +157,7 @@ namespace form { namespace collision
 	struct ConvexHull
 	{
 		// types
-        typedef Ray3 Face;
+		typedef Ray3 Face;
 		typedef std::array<Face, 6> Vector;
 		
 		// variables
@@ -190,7 +190,7 @@ namespace form { namespace collision
 		return true;
 	}
 	
-    
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// Recursive node tree search 
 	
@@ -210,7 +210,7 @@ namespace form { namespace collision
 			DEBUG_FEI_RAY(node_functor, collision_info.ray, gfx::Color4f::Black());
 			return false;
 		}
-        
+		
 		if (collision_info.t1 >= 0)
 		{
 			// The sphere's near distance is positive; it's not in contact.
@@ -239,7 +239,7 @@ namespace form { namespace collision
 		
 		return TestShapeCollision(node_functor, collision_info);
 	}
-    
+	
 	// leaf function
 	template <typename NODE_FUNCTOR>
 	void ForEachCollision_Leaf (NODE_FUNCTOR & node_functor, Node const & node) 
@@ -282,37 +282,37 @@ namespace form { namespace collision
 	template <typename NODE_FUNCTOR>
 	void ForEachCollision (NODE_FUNCTOR & node_functor, Node const & node) 
 	{
-        if (node.area < node_functor._min_area)
-        {
+		if (node.area < node_functor._min_area)
+		{
 			ForEachCollision_Leaf(node_functor, node);
 			return;
-        }
+		}
 		
 		Node const * children = node.GetChildren();
-        if (children == nullptr)
-        {
+		if (children == nullptr)
+		{
 			ForEachCollision_Leaf(node_functor, node);
 			return;
-        }
+		}
 		
-        Vector3 const * mid_points[3] = 
-        {
-            & ref(node.GetMidPoint(0)).pos,
-            & ref(node.GetMidPoint(1)).pos,
-            & ref(node.GetMidPoint(2)).pos
-        };
+		Vector3 const * mid_points[3] = 
+		{
+			& ref(node.GetMidPoint(0)).pos,
+			& ref(node.GetMidPoint(1)).pos,
+			& ref(node.GetMidPoint(2)).pos
+		};
 		
-        Vector3 const & a = node_functor._pyramid.center;
+		Vector3 const & a = node_functor._pyramid.center;
 
-        unsigned contact_mask = 0;
-        int center_counter = 0;
+		unsigned contact_mask = 0;
+		int center_counter = 0;
 		
 		// For each sub-dividing line that can drawn between node mid-points,
 		int sub_division_index = 0;
-        while (true)
-        {
-            Vector3 const & b = * mid_points[TriMod(sub_division_index + 2)];
-            Vector3 const & c = * mid_points[TriMod(sub_division_index + 1)];
+		while (true)
+		{
+			Vector3 const & b = * mid_points[TriMod(sub_division_index + 2)];
+			Vector3 const & c = * mid_points[TriMod(sub_division_index + 1)];
 			
 			// Test upon which side of the line the given shape lies.
 			Scalar d = FastDistanceToSurface(a, b, c, node_functor._object.bounding_sphere.center);
@@ -406,7 +406,7 @@ namespace form { namespace collision
 			}
 		}
 	}
-    
+	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
@@ -420,5 +420,5 @@ namespace form { namespace collision
 		form::RootNode const & root_node = polyhedron.GetRootNode();
 		ForEachCollision(node_functor, root_node);
 	}
-    
+
 } }

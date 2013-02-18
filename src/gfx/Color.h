@@ -123,17 +123,44 @@ namespace gfx
 		static Comp Half();
 		static Comp Full();
 
-		static Color4 Black()   { return Color4(0); }
-		static Color4 White()   { return Color4(Full()); }
-		static Color4 Grey()    { return Color4(Half); }
+		static Color4 Black() 
+		{
+			return Color4(0);
+		}
+		static Color4 White() 
+		{
+			return Color4(Full());
+		}
+		static Color4 Grey()	
+		{
+			return Color4(Half);
+		}
 
-		static Color4 Red()     { return Color4(Full(), 0, 0); }
-		static Color4 Green()   { return Color4(0, Full(), 0); }
-		static Color4 Blue()    { return Color4(0, 0, Full()); }
+		static Color4 Red()		
+		{
+			return Color4(Full(), 0, 0);
+		}
+		static Color4 Green() 
+		{
+			return Color4(0, Full(), 0);
+		}
+		static Color4 Blue()	
+		{
+			return Color4(0, 0, Full());
+		}
 
-		static Color4 Cyan()    { return Color4(0, Full(), Full()); }
-		static Color4 Magenta() { return Color4(Full(), 0, Full()); }
-		static Color4 Yellow()  { return Color4(Full(), Full(), 0); }
+		static Color4 Cyan()	
+		{
+			return Color4(0, Full(), Full());
+		}
+		static Color4 Magenta() 
+		{
+			return Color4(Full(), 0, Full());
+		}
+		static Color4 Yellow()
+		{
+			return Color4(Full(), Full(), 0);
+		}
 	
 		// Attributes.
 		Comp r, g, b, a;

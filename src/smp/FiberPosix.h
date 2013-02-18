@@ -29,7 +29,7 @@ namespace smp
 	
 	class Fiber
 	{
-        ////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 		// types
 	public:
 		typedef void (Callback)(void * data);
@@ -80,5 +80,5 @@ namespace smp
 		std::size_t _stack_size;	// the requested stack size
 		bool _is_running;
 		ucontext_t _context;
-    };
+	};
 }

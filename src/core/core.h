@@ -70,7 +70,7 @@
 #define OBJECT_SINGLETON(CLASS) \
 	OBJECT_NO_COPY(CLASS); \
 private: \
-    core::Singleton<CLASS> _singleton
+	core::Singleton<CLASS> _singleton
 #endif
 
 namespace core

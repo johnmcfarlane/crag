@@ -138,16 +138,16 @@ inline float FastInvSqrt ( float f )
 inline double FastInvSqrt (double d)
 {
 	ASSERT(d != 0);
-    float arg = static_cast<float>(d);
+	float arg = static_cast<float>(d);
 	
-    _mm_store_ss( & arg, _mm_rsqrt_ss( _mm_load_ss( & arg ) ) );
+	_mm_store_ss( & arg, _mm_rsqrt_ss( _mm_load_ss( & arg ) ) );
 	
-    double  r = arg;
-    
-    r *= ((3.0 - r * r * d) * 0.5);
-    r *= ((3.0 - r * r * d) * 0.5);
+	double  r = arg;
 	
-    return r;
+	r *= ((3.0 - r * r * d) * 0.5);
+	r *= ((3.0 - r * r * d) * 0.5);
+	
+	return r;
 }
 
 #else

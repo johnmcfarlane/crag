@@ -16,11 +16,11 @@
 namespace core
 {
 	
-    // A singleton simply asserts if it is instanced multiply.
+	// A singleton simply asserts if it is instanced multiply.
 	template <typename S> class Singleton
 	{
 		OBJECT_NO_COPY (Singleton);
-        
+		
 	public:
 		
 		// Singleton is useless on its own so c'tor/d'tor are protected.
@@ -39,7 +39,7 @@ namespace core
 		}
 		
 	private:
-        
+		
 		static S * the_instance;
 	};
 

@@ -57,7 +57,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 , _fiber(CreateFiberEx(_allocated_stack_size, _allocated_stack_size, FIBER_FLAG_FLOAT_SWITCH, * OnLaunch, this))
 , _calling_fiber(nullptr)
 {
-    if (_fiber == nullptr) 
+	if (_fiber == nullptr) 
 	{
 		DEBUG_BREAK("call to CreateFiberEx failed");
 	}

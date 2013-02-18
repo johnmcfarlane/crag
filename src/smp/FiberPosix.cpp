@@ -65,7 +65,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 , _stack_size(stack_size)
 , _is_running(true)
 {
-    if (getcontext(& _context) != 0) 
+	if (getcontext(& _context) != 0) 
 	{
 		DEBUG_BREAK("getcontext returned non-zero");
 	}
