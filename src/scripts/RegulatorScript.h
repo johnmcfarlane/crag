@@ -9,15 +9,26 @@
 
 #pragma once
 
-#include "applet/AppletBase.h"
+#include "applet/Engine.h"
 
+#include "gfx/Engine.h"
+#include "gfx/Messages.h"
 
-namespace form
+#include "smp/Listener.h"
+
+namespace applet
 {
+	class AppletInterface;
+}
 
+namespace script
+{
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
-	class RegulatorScript : public applet::AppletBase
+	class RegulatorScript 
+		: smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>
+		, smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>
+		, smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -62,16 +73,16 @@ namespace form
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		RegulatorScript(Init const & init);
+		RegulatorScript();
 		~RegulatorScript();
 		
 		// script entry point
-		virtual void operator() (applet::AppletInterface & applet_interface) override;
+		void operator() (applet::AppletInterface & applet_interface);
 		
-		// inputs - typically called from form/gfx threads
-		void SetNumQuaterne(int const & num_quaterne);
-		void SampleFrameDuration(float const & frame_duration_ratio);
-		void SampleMeshGenerationPeriod(core::Time const & mesh_generation_period);
+		// Listener callbacks
+		virtual void operator() (gfx::NumQuaterneSetMessage message) final;
+		virtual void operator() (gfx::FrameDurationSampledMessage message) final;
+		virtual void operator() (gfx::MeshGenerationPeriodSampledMessage message) final;
 		
 	private:
 		QuaterneCount GetRecommendedNumQuaterna() const;

@@ -255,7 +255,7 @@ namespace
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
 						form::Daemon::Call([] (form::Engine & engine) {
-							engine.OnRegulatorSetEnabled(true);
+							engine.EnableAdjustNumQuaterna(true);
 						});
 						return true;
 					}
@@ -266,7 +266,7 @@ namespace
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 					{
 						form::Daemon::Call([] (form::Engine & engine) {
-							engine.OnRegulatorSetEnabled(false);
+							engine.EnableAdjustNumQuaterna(false);
 						});
 						return true;
 					}
