@@ -1,0 +1,128 @@
+//
+//  Listener.h
+//  crag
+//
+//  Created by John on 2013-02-19.
+//  Copyright 2013 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
+
+#pragma once
+
+#include "ListenerInterface.h"
+
+namespace smp
+{
+	// derive from this class to receive calls broadcast with the given parameters;
+	// lives in the LISTENER_ENGINE thread and receives calls from SUBJECT_ENGINE
+	template <typename SUBJECT_ENGINE, typename OBSERVER_ENGINE, typename ... PARAMETERS>
+	class Listener : public ListenerInterface<SUBJECT_ENGINE, PARAMETERS ...>
+	{
+		enum State
+		{
+			normal,
+			releasing,
+			released
+		};
+
+		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS ...> Subject;
+		typedef OBSERVER_ENGINE ListenerEngine;
+		typedef smp::Daemon<ListenerEngine> ListenerDaemon;
+
+	public:
+		// function
+		Listener()
+		: _state(normal)
+		{
+		}
+
+		~Listener()
+		{
+			VerifyObject(* this);
+
+			if (_state == normal)
+			{
+				BeginRelease();
+			}
+
+			while (! IsReleased())
+			{
+				Yield();
+			}
+
+			ASSERT(_state == released);
+		}
+
+		void BeginRelease()
+		{
+			VerifyObject(* this);
+
+			ASSERT(_state == normal);
+			_state = releasing;
+
+			ListenerDaemon::Call([this] (ListenerEngine & engine) {
+				_listeners.remove(* this);
+
+				this->Acknowledge();
+			});
+
+			VerifyObject(* this);
+		}
+
+		bool IsReleased() const
+		{
+			VerifyObject(* this);
+
+			ASSERT(_state == releasing || _state == released);
+			return _state == released;
+		}
+
+#if defined(VERIFY)
+		virtual void Verify() const final
+		{
+			switch (_state)
+			{
+				case normal:
+				case releasing:
+				case released:
+					break;
+
+				default:
+					DEBUG_BREAK("bad enum value, %d", int(_state));
+					break;
+			}
+		}
+#endif
+
+	private:
+		virtual void Dispatch (PARAMETERS ... parameters) final
+		{
+			VerifyObject(* this);
+
+			ListenerDaemon::Call([this, parameters ...] (ListenerEngine &) {
+				(* this)(parameters ...);
+			});
+
+			VerifyObject(* this);
+		}
+
+		virtual void Acknowledge() final
+		{
+			VerifyObject(* this);
+			ASSERT(_state == releasing);
+
+			ListenerDaemon::Call([this] (ListenerEngine &) {
+				ASSERT(_state == releasing);
+				this->_state = released;
+			});
+
+			ASSERT(_state != released || _state != releasing);
+			VerifyObject(* this);
+		}
+
+		virtual void operator() (PARAMETERS ... parameters) = 0;
+
+		// variables
+		State _state;
+	};
+}

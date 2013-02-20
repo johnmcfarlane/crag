@@ -14,6 +14,7 @@
 
 #include "core/ring_buffer.h"
 
+#include "smp/ListenerInterface.h"
 
 namespace smp
 {
@@ -151,33 +152,31 @@ namespace smp
 			ASSERT(_messages.IsEmpty());
 		}
 		
-		template <typename MESSAGE>
-		static void SendMessage(MESSAGE const & message)
-		{
-			ASSERT(! singleton->_thread.IsCurrent());
-
-			singleton->PushMessage(message);
-		}
-		
-		////////////////////////////////////////////////////////////////////////////////
-		// Call - generates a deferred function call to the thread-safe engine
-		
+		// generates a deferred, thread-safe call to the engine
 		template <typename FUNCTION_TYPE>
 		static void Call(FUNCTION_TYPE const & function)
 		{
-		// If caller is on the same thread as the engine,
-		if (singleton->_thread.IsCurrent())
-		{
-			// make the call directly
-			function(ref(singleton->_engine));
+			// If caller is on the same thread as the engine,
+			if (singleton->_thread.IsCurrent())
+			{
+				// make the call directly
+				function(ref(singleton->_engine));
+			}
+			else
+			{
+				// otherwise, wrap up the function and send it over.
+				singleton->PushMessage(function);
+			}
 		}
-		else
+
+		// pass parameters to any Listener of matching parameters
+		template <typename ... PARAMETERS>
+		static void Broadcast(PARAMETERS ... parameters)
 		{
-			// otherwise, wrap up the function and send it over.
-			SendMessage(function);
+			typedef ListenerInterface<Engine, PARAMETERS ...> ListenerInterface;
+			ListenerInterface::Broadcast(parameters ...);
 		}
-	}
-		
+
 	private:
 		void Run()
 		{
