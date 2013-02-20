@@ -245,6 +245,8 @@
     <ClInclude Include="..\..\src\smp\Future.h" />
     <ClInclude Include="..\..\src\smp\Handle.h" />
     <ClInclude Include="..\..\src\smp\Handle_Impl.h" />
+    <ClInclude Include="..\..\src\smp\Listener.h" />
+    <ClInclude Include="..\..\src\smp\ListenerInterface.h" />
     <ClInclude Include="..\..\src\smp\MessageQueue.h" />
     <ClInclude Include="..\..\src\smp\MessageQueue_Impl.h" />
     <ClInclude Include="..\..\src\smp\Object.h" />
