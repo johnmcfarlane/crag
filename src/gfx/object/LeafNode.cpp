@@ -19,10 +19,10 @@ using namespace gfx;
 LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer::type layer)
 : Object(init, local_transformation)
 , _model_view_transformation(Transformation::Matrix44::Identity())
-, _program(nullptr)
-, _mesh_resource(nullptr)
 , _render_depth(0)
 , _layer(layer)
+, _program(nullptr)
+, _mesh_resource(nullptr)
 , _is_opaque(true)
 {
 }

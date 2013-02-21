@@ -69,8 +69,6 @@ LeafNode::PreRenderResult Thruster::PreRender()
 
 void Thruster::AddPuff(float thrust_factor)
 {
-	Engine & renderer = GetEngine();
-
 	// Get some random numbers.
 	Scalar g1, g2, g3, g4;
 	Random::sequence.GetGaussians<Scalar>(g1, g2);
