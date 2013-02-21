@@ -11,7 +11,7 @@
 
 #include "Engine.h"
 
-#include "AppletBase.h"
+#include "Applet.h"
 
 #include "smp/Fiber.h"
 
@@ -78,7 +78,7 @@ bool Engine::ProcessTasks()
 	bool did_work = false;
 	
 	// Step through all applets,
-	ForEachObject_Destroy([this, & did_work] (AppletBase & applet) -> bool 
+	ForEachObject_Destroy([this, & did_work] (Applet & applet) -> bool 
 	{
 		// If work was not done, 
 		if (! ProcessTask(applet))
@@ -106,7 +106,7 @@ bool Engine::ProcessTasks()
 	return did_work;
 }
 
-bool Engine::ProcessTask(AppletBase & applet)
+bool Engine::ProcessTask(Applet & applet)
 {
 	ASSERT(applet.IsRunning());
 

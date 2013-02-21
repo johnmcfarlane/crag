@@ -9,17 +9,12 @@
 
 #pragma once
 
-#include "core/function_ref.h"
-
+#include "defs.h"
 
 namespace applet
 {
 	// forward-declare
-	class AppletBase;
 	class Engine;
-
-	// condition on which to wake from a WaitFor call
-	typedef core::function_ref<bool()> Condition;
 
 	// Interface to the Applet class;
 	// This interface is passed to a Applet's function object.

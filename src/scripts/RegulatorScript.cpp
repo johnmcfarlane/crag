@@ -11,6 +11,8 @@
 
 #include "RegulatorScript.h"
 
+#include "applet/Applet.h"
+
 #include "form/Engine.h"
 
 #include "core/app.h"
