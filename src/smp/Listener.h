@@ -11,12 +11,18 @@
 
 #include "ListenerInterface.h"
 
+#if defined(__GNUC__)
+#define SMP_LISTENER_ELLIPSIS
+#else
+#define SMP_LISTENER_ELLIPSIS ...
+#endif
+
 namespace smp
 {
 	// derive from this class to receive calls broadcast with the given parameters;
 	// lives in the LISTENER_ENGINE thread and receives calls from SUBJECT_ENGINE
-	template <typename SUBJECT_ENGINE, typename OBSERVER_ENGINE, typename ... PARAMETERS>
-	class Listener : public ListenerInterface<SUBJECT_ENGINE, PARAMETERS ...>
+	template <typename SUBJECT_ENGINE, typename OBSERVER_ENGINE, typename SMP_LISTENER_ELLIPSIS PARAMETERS>
+	class Listener : public ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS>
 	{
 		enum State
 		{
@@ -25,7 +31,7 @@ namespace smp
 			released
 		};
 
-		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS ...> Subject;
+		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS> Subject;
 		typedef OBSERVER_ENGINE ListenerEngine;
 		typedef smp::Daemon<ListenerEngine> ListenerDaemon;
 
@@ -61,7 +67,7 @@ namespace smp
 			_state = releasing;
 
 			ListenerDaemon::Call([this] (ListenerEngine & engine) {
-				_listeners.remove(* this);
+				Listener::_listeners.remove(* this);
 
 				this->Acknowledge();
 			});
@@ -95,12 +101,12 @@ namespace smp
 #endif
 
 	private:
-		virtual void Dispatch (PARAMETERS ... parameters) final
+		virtual void Dispatch (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) final
 		{
 			VerifyObject(* this);
 
-			ListenerDaemon::Call([this, parameters ...] (ListenerEngine &) {
-				(* this)(parameters ...);
+			ListenerDaemon::Call([this, parameters SMP_LISTENER_ELLIPSIS] (ListenerEngine &) {
+				(* this)(parameters SMP_LISTENER_ELLIPSIS);
 			});
 
 			VerifyObject(* this);
@@ -120,7 +126,7 @@ namespace smp
 			VerifyObject(* this);
 		}
 
-		virtual void operator() (PARAMETERS ... parameters) = 0;
+		virtual void operator() (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) = 0;
 
 		// variables
 		State _state;
