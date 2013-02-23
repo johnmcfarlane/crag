@@ -81,8 +81,6 @@ FormationMesh::~FormationMesh()
 		mbo.Deinit();
 	}
 	
-	DEBUG_MESSAGE("FormationMesh has %d meshes.", (int)(_queued_mesh != nullptr) + (_pending_mesh != nullptr));
-	
 	delete _queued_mesh;
 	delete _pending_mesh;
 }
