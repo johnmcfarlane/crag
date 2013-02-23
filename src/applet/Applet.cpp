@@ -1,5 +1,5 @@
 //
-//  AppletBase.cpp
+//  Applet.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-03-31.
@@ -8,7 +8,7 @@
 
 #include "pch.h"
 
-#include "AppletBase.h"
+#include "Applet.h"
 
 #include "AppletInterface_Impl.h"
 
@@ -17,7 +17,6 @@
 #include "core/app.h"
 
 using namespace applet;
-
 
 namespace
 {
@@ -32,65 +31,64 @@ namespace
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// applet::AppletBase member definitions
+// applet::Applet member definitions
 
-AppletBase::AppletBase(super::Init const & init, char const * name, std::size_t stack_size)
+Applet::Applet(Init const & init, char const * name, std::size_t stack_size, LaunchFunction const & function)
 : super(init)
-, _fiber(ref(new smp::Fiber(name, stack_size, static_cast<void *>(this), & OnLaunch)))
+, _fiber(name, stack_size, static_cast<void *>(this), & OnLaunch)
+, _function(function)
 , _condition(null_condition)
 , _quit_flag(false)
 {
 	ASSERT(_fiber.IsRunning());
 }
 
-AppletBase::~AppletBase()
+Applet::~Applet()
 {
 	ASSERT(! _fiber.IsRunning());
 	ASSERT(_quit_flag);
-	
-	delete & _fiber;
 }
 
-char const * AppletBase::GetName() const
+char const * Applet::GetName() const
 {
 	return _fiber.GetName();
 }
 
-bool AppletBase::IsRunning() const
+bool Applet::IsRunning() const
 {
 	return _fiber.IsRunning();
 }
 
-const Condition & AppletBase::GetCondition() const
+const Condition & Applet::GetCondition() const
 {
 	return _condition;
 }
 
-void AppletBase::Continue()
+void Applet::Continue()
 {
 	_fiber.Continue();
 }
 
-bool AppletBase::GetQuitFlag() const
+bool Applet::GetQuitFlag() const
 {
 	VerifyObject(* this);
 	return _quit_flag;
 }
 
-void AppletBase::SetQuitFlag()
+void Applet::SetQuitFlag()
 {
 	VerifyObject(* this);
 	_quit_flag = true;
 }
 
 #if defined(VERIFY)
-void AppletBase::Verify() const
+void Applet::Verify() const
 {
 	VerifyObject(_fiber);
 }
 #endif
 
-void AppletBase::Sleep(core::Time duration)
+void Applet::Sleep(core::Time duration)
 {
 	auto wake_position = duration + app::GetTime();
 	AppletInterface::WaitFor([this, wake_position] () {
@@ -98,7 +96,7 @@ void AppletBase::Sleep(core::Time duration)
 	});
 }
 
-void AppletBase::WaitFor(Condition & condition)
+void Applet::WaitFor(Condition & condition)
 {
 	ASSERT(condition != null_condition);
 	VerifyObject(* this);
@@ -111,19 +109,19 @@ void AppletBase::WaitFor(Condition & condition)
 	_condition = null_condition;
 }
 
-Engine & AppletBase::GetEngine()
+Engine & Applet::GetEngine()
 {
 	return super::GetEngine();
 }
 
-void AppletBase::OnLaunch(void * data)
+void Applet::OnLaunch(void * data)
 {
-	AppletBase & applet = ref(reinterpret_cast<AppletBase *>(data));
+	Applet & applet = ref(reinterpret_cast<Applet *>(data));
 	ASSERT(applet.IsRunning());
 	
 	ASSERT(applet._condition == null_condition);
 	
-	applet(applet);
+	applet._function(applet);
 	VerifyObject(applet);
 
 	ASSERT(applet.IsRunning());

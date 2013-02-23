@@ -20,6 +20,7 @@
 
 #include "geom/origin.h"
 
+#include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
 #include "core/app.h"
