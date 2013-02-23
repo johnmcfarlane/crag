@@ -11,6 +11,8 @@
 
 #include "RegulatorScript.h"
 
+#include "applet/AppletInterface_Impl.h"
+
 #include "form/Engine.h"
 
 #include "core/app.h"
@@ -273,6 +275,12 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 	smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::BeginRelease();
 	smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::BeginRelease();
 	smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::BeginRelease();
+
+	applet_interface.WaitFor([this] () -> bool {
+		return smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::IsReleased()
+			&& smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::IsReleased()
+			&& smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsReleased();
+	});
 }
 
 void RegulatorScript::operator() (gfx::NumQuaterneSetMessage message)

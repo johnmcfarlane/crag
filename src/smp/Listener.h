@@ -26,7 +26,8 @@ namespace smp
 	{
 		enum State
 		{
-			normal,
+			initializing,
+			attached,
 			releasing,
 			released
 		};
@@ -36,40 +37,62 @@ namespace smp
 		typedef smp::Daemon<ListenerEngine> ListenerDaemon;
 
 	public:
-		// function
+		// functions
 		Listener()
-		: _state(normal)
+		: _state(initializing)
 		{
+			VerifyObject(* this);
+
+			SubjectDaemon::Call([this] (SubjectEngine & engine) {
+				VerifyObject(* this);
+				ASSERT(_state == initializing);
+
+				Add();
+
+				ListenerDaemon::Call([this] (ListenerEngine & engine) {
+					VerifyObject(* this);
+					ASSERT(_state == initializing);
+
+					SetState(attached);
+					VerifyObject(* this);
+				});
+			});
 		}
 
 		~Listener()
 		{
-			VerifyObject(* this);
-
-			if (_state == normal)
-			{
-				BeginRelease();
-			}
-
-			while (! IsReleased())
-			{
-				Yield();
-			}
-
-			ASSERT(_state == released);
+			VerifyObject(* this);			
+			ASSERT(IsListenerThread());
+			ASSERT(IsReleased());
 		}
 
 		void BeginRelease()
 		{
 			VerifyObject(* this);
+			ASSERT(IsListenerThread());
 
-			ASSERT(_state == normal);
-			_state = releasing;
+			ASSERT(_state == attached);
+			SetState(releasing);
 
-			ListenerDaemon::Call([this] (ListenerEngine & engine) {
-				Listener::_listeners.remove(* this);
+			SubjectDaemon::Call([this] (SubjectEngine & engine) {
+				VerifyObject(* this);
+				ASSERT(_state == releasing);
 
-				this->Acknowledge();
+				// remove this from the list of listeners
+				Remove();
+
+				// send acknowledge back to listener's thread
+				ListenerDaemon::Call([this] (ListenerEngine &) {
+					VerifyObject(* this);
+					ASSERT(_state == releasing);
+
+					SetState(released);
+
+					VerifyObject(* this);
+				});
+
+				ASSERT(_state != releasing || _state != released);
+				VerifyObject(* this);
 			});
 
 			VerifyObject(* this);
@@ -88,9 +111,18 @@ namespace smp
 		{
 			switch (_state)
 			{
-				case normal:
+				case initializing:
+					break;
+
+				case attached:
+					ASSERT(List::is_contained(* this));
+					break;
+
 				case releasing:
+					break;
+
 				case released:
+					ASSERT(! List::is_contained(* this));
 					break;
 
 				default:
@@ -101,28 +133,28 @@ namespace smp
 #endif
 
 	private:
+		static bool IsListenerThread()
+		{
+			return ListenerDaemon::IsCurrentThread();
+		}
+
+		void SetState(State state)
+		{
+			ASSERT(IsListenerThread());
+			ASSERT(state > initializing && state <= released);
+			ASSERT(int(state) == int(_state) + 1);
+			_state = state;
+		}
+
 		virtual void Dispatch (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) final
 		{
 			VerifyObject(* this);
+			ASSERT(SubjectDaemon::IsCurrentThread());
 
 			ListenerDaemon::Call([this, parameters SMP_LISTENER_ELLIPSIS] (ListenerEngine &) {
 				(* this)(parameters SMP_LISTENER_ELLIPSIS);
 			});
 
-			VerifyObject(* this);
-		}
-
-		virtual void Acknowledge() final
-		{
-			VerifyObject(* this);
-			ASSERT(_state == releasing);
-
-			ListenerDaemon::Call([this] (ListenerEngine &) {
-				ASSERT(_state == releasing);
-				this->_state = released;
-			});
-
-			ASSERT(_state != released || _state != releasing);
 			VerifyObject(* this);
 		}
 

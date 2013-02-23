@@ -29,18 +29,11 @@ namespace smp
 		typedef smp::Daemon<SubjectEngine> SubjectDaemon;
 
 		// functions
-		ListenerInterface()
-		{
-			SubjectDaemon::Call([this] (SubjectEngine & engine) {
-				_listeners.push_back(* this);
-			});
-		}
-
 		virtual ~ListenerInterface()
 		{
 #if defined(NDEBUG)
 			SubjectDaemon::Call([this] (SubjectEngine & engine) {
-				if (_listeners.erase(this) != 0)
+				if (_listeners.contains(this))
 				{
 					DEBUG_BREAK("Listener was still around!");
 				}
@@ -51,7 +44,7 @@ namespace smp
 		// call all Listener objects with the given parameters
 		static void Broadcast (PARAMETERS ... parameters)
 		{
-			ASSERT(SubjectDaemon::IsCurrentThread());
+			ASSERT(IsSubjectThread());
 			for (auto & listener_node : _listeners)
 			{
 				auto & listener = static_cast<ListenerInterface &>(listener_node);
@@ -66,8 +59,25 @@ namespace smp
 #endif
 
 	protected:
+		static bool IsSubjectThread()
+		{
+			return SubjectDaemon::IsCurrentThread();
+		}
+
+		void Add()
+		{
+			ASSERT(IsSubjectThread());
+			_listeners.push_back(* this);
+		}
+
+		void Remove()
+		{
+			ASSERT(IsSubjectThread());
+			_listeners.remove(* this);
+		}
+
+	private:
 		virtual void Dispatch(PARAMETERS ... parameters) = 0;
-		virtual void Acknowledge() = 0;
 
 		// variables
 		static List _listeners;
