@@ -112,12 +112,12 @@ namespace smp
 
 		// for each object (f returns false if it is to be erased)
 		template <typename FUNCTION>
-		void ForEachObject_Destroy(FUNCTION f)
+		void ForEachObject_DestroyIf(FUNCTION f)
 		{
 			for (auto i = _objects.begin(); i != _objects.end();)
 			{
 				auto pair = * i;
-				if (! f(* pair.second))
+				if (f(* pair.second))
 				{
 					i = DestroyObject(i);
 				}

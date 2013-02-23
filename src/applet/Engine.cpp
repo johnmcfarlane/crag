@@ -78,12 +78,13 @@ bool Engine::ProcessTasks()
 	bool did_work = false;
 	
 	// Step through all applets,
-	ForEachObject_Destroy([this, & did_work] (AppletBase & applet) -> bool 
+	ForEachObject_DestroyIf([this, & did_work] (AppletBase & applet) -> bool 
 	{
-		// If work was not done, 
+		// If processing was not done, 
 		if (! ProcessTask(applet))
 		{
-			return true;
+			// applet hasn't changed state.
+			return false;
 		}
 
 		did_work = true;
@@ -92,14 +93,14 @@ bool Engine::ProcessTasks()
 		if (! applet.IsRunning())
 		{
 			// destroy the applet.
-			return false;
+			return true;
 		}
 		else if (_quit_flag)
 		{
 			DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
 		}
 
-		return true;
+		return false;
 	});
 	
 	// Return true iff any happened.
