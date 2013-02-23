@@ -156,7 +156,7 @@ namespace smp
 		template <typename FUNCTION_TYPE>
 		static void Call(FUNCTION_TYPE const & function)
 		{
-			ASSERT(singleton->_state < acknowledge_flush_begin);
+			ASSERT(singleton->_state < acknowledge_flush_end);
 
 			// If caller is on the same thread as the engine,
 			if (singleton->_thread.IsCurrent())
