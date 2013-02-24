@@ -4,7 +4,6 @@ project(crag)
 add_executable(crag 
 	src/pch.cpp
 	src/main.cpp
-	src/applet/AppletBase.cpp
 	src/applet/Engine.cpp
 	src/gfx/Program.cpp
 	src/gfx/Shader.cpp
