@@ -47,13 +47,13 @@ namespace smp
 				VerifyObject(* this);
 				ASSERT(_state == initializing);
 
-				Add();
+				this->Add();
 
 				ListenerDaemon::Call([this] (ListenerEngine & engine) {
 					VerifyObject(* this);
-					ASSERT(_state == initializing);
+					ASSERT(this->_state == initializing);
 
-					SetState(attached);
+					this->SetState(attached);
 					VerifyObject(* this);
 				});
 			});
@@ -79,14 +79,14 @@ namespace smp
 				ASSERT(_state == releasing);
 
 				// remove this from the list of listeners
-				Remove();
+				this->Remove();
 
 				// send acknowledge back to listener's thread
 				ListenerDaemon::Call([this] (ListenerEngine &) {
 					VerifyObject(* this);
-					ASSERT(_state == releasing);
+					ASSERT(this->_state == releasing);
 
-					SetState(released);
+					this->SetState(released);
 
 					VerifyObject(* this);
 				});
@@ -115,14 +115,14 @@ namespace smp
 					break;
 
 				case attached:
-					ASSERT(List::is_contained(* this));
+					ASSERT(Subject::List::is_contained(* this));
 					break;
 
 				case releasing:
 					break;
 
 				case released:
-					ASSERT(! List::is_contained(* this));
+					ASSERT(! Subject::List::is_contained(* this));
 					break;
 
 				default:
