@@ -16,12 +16,9 @@
 
 #include "form/node/NodeBuffer.h"
 
-#include "scripts/RegulatorScript.h"
-
 #include "gfx/Engine.h"
+#include "gfx/Messages.h"
 #include "gfx/object/FormationMesh.h"
-
-#include "applet/Engine.h"
 
 #include "core/app.h"
 #include "core/profile.h"
@@ -48,8 +45,8 @@ form::Engine::Engine()
 , suspend_flag(false)
 , enable_mesh_generation(true)
 , mesh_generation_time(app::GetTime())
-, _regulator_enabled(true)
-, _recommended_num_quaterne(0)
+, _enable_adjust_num_quaterna(true)
+, _requested_num_quaterne(0)
 , _pending_origin_request(false)
 , _camera(Ray3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
@@ -121,14 +118,14 @@ void form::Engine::OnSetOrigin(geom::abs::Vector3 const & new_origin)
 	_camera.position = geom::AbsToRel(camera_pos, new_origin);
 }
 
-void form::Engine::OnRegulatorSetEnabled(bool enabled)
+void form::Engine::EnableAdjustNumQuaterna(bool enabled)
 {
-	_regulator_enabled = enabled;
+	_enable_adjust_num_quaterna = enabled;
 }
 
 void form::Engine::OnSetRecommendedNumQuaterne(int recommented_num_quaterne)
 {
-	_recommended_num_quaterne = recommented_num_quaterne;
+	_requested_num_quaterne = recommented_num_quaterne;
 }
 
 void form::Engine::OnToggleSuspended()
@@ -145,10 +142,8 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	_regulator_handle.Create();
-	
 	// register with the renderer
-	_mesh.Create(max_num_quaterne, _regulator_handle);
+	_mesh.Create(max_num_quaterne);
 	auto mesh_handle = _mesh;
 	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
 		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());
@@ -200,17 +195,17 @@ void form::Engine::TickScene()
 
 void form::Engine::AdjustNumQuaterna()
 {
-	if (! _regulator_enabled)
+	if (! _enable_adjust_num_quaterna)
 	{
 		return;
 	}
 	
-	// Calculate the regulator output.
-	Clamp(_recommended_num_quaterne, int(min_num_quaterne), int(max_num_quaterne));
+	// limit the range of quaterne counts
+	Clamp(_requested_num_quaterne, int(min_num_quaterne), int(max_num_quaterne));
 	
-	// Apply the regulator output.
+	// apply the recommended number
 	NodeBuffer & active_buffer = _scene.GetNodeBuffer();
-	active_buffer.SetNumQuaternaUsedTarget(_recommended_num_quaterne);
+	active_buffer.SetNumQuaternaUsedTarget(_requested_num_quaterne);
 }
 
 void form::Engine::GenerateMesh()
@@ -235,10 +230,9 @@ void form::Engine::GenerateMesh()
 	core::Time last_mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
 
-	// Pass timing information on to the regulator.
-	_regulator_handle.Call([last_mesh_generation_period] (form::RegulatorScript & script) {
-		script.SampleMeshGenerationPeriod(last_mesh_generation_period);
-	});
+	// broadcast timing information
+	gfx::MeshGenerationPeriodSampledMessage message = { last_mesh_generation_period };
+	Daemon::Broadcast(message);
 	
 	// Sample the information for statistical output.
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / _scene.GetNodeBuffer().GetNumQuaternaUsed());

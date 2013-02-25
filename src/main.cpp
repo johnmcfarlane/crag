@@ -10,7 +10,7 @@
 
 #include "pch.h"
 
-#include "scripts/TestScript.h"
+#include "scripts/MainScript.h"
 
 #include "form/Engine.h"
 #include "sim/Engine.h"
@@ -255,7 +255,7 @@ namespace
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					{
 						form::Daemon::Call([] (form::Engine & engine) {
-							engine.OnRegulatorSetEnabled(true);
+							engine.EnableAdjustNumQuaterna(true);
 						});
 						return true;
 					}
@@ -266,7 +266,7 @@ namespace
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 					{
 						form::Daemon::Call([] (form::Engine & engine) {
-							engine.OnRegulatorSetEnabled(false);
+							engine.EnableAdjustNumQuaterna(false);
 						});
 						return true;
 					}
@@ -352,9 +352,7 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::Daemon::Call([] (applet::Engine & engine) {
-				engine.Launch("Main", 8192, & Test);
-			});
+			applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
 			
 			while (HandleEvent())
 			{

@@ -11,9 +11,7 @@
 
 #include "RegulatorScript.h"
 
-#include "form/Engine.h"
-
-#include "gfx/Engine.h"
+#include "applet/AppletInterface_Impl.h"
 
 #include "form/Engine.h"
 
@@ -31,12 +29,12 @@ namespace
 	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 	
-	typedef form::RegulatorScript::QuaterneCount QuaterneCount;
+	typedef script::RegulatorScript::QuaterneCount QuaterneCount;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// form::RegulatorScript::QuaterneCount member definitions
+// script::RegulatorScript::QuaterneCount member definitions
 
 QuaterneCount::QuaterneCount() : _num(invalid().GetNumber()) 
 { 
@@ -117,9 +115,9 @@ std::ostream & operator << (std::ostream & out, QuaterneCount const & rhs)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// form::RegulatorScript::Unit class definitions
+// script::RegulatorScript::Unit class definitions
 
-class form::RegulatorScript::Unit
+class script::RegulatorScript::Unit
 {
 public:
 	virtual ~Unit() { }
@@ -132,7 +130,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// FrameRateUnit definition
 	
-	class FrameRateUnit : public form::RegulatorScript::Unit
+	class FrameRateUnit : public script::RegulatorScript::Unit
 	{
 	public:
 		FrameRateUnit() 
@@ -204,7 +202,7 @@ namespace
 		core::Time _startup_time;
 	};
 	
-	class MeshGenerationUnit : public form::RegulatorScript::Unit
+	class MeshGenerationUnit : public script::RegulatorScript::Unit
 	{
 		// functions
 		virtual void Reset() override
@@ -238,14 +236,12 @@ namespace
 	};
 }
 
-using namespace form;
-
+using namespace script;
 
 ////////////////////////////////////////////////////////////////////////////////
-// form::RegulatorScript member definitions
+// script::RegulatorScript member definitions
 
-RegulatorScript::RegulatorScript(Init const & init)
-: applet::AppletBase(init, "Regulator", 8192)
+RegulatorScript::RegulatorScript()
 {
 	_units[frame_rate] = new FrameRateUnit;
 	_units[mesh_generation] = new MeshGenerationUnit;
@@ -261,12 +257,6 @@ RegulatorScript::~RegulatorScript()
 
 void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 {
-	// Introduce self to renderer.
-	smp::Handle<RegulatorScript> handle(GetUid());
-	gfx::Daemon::Call([handle] (gfx::Engine & engine) {
-		engine.OnSetRegulatorHandle(handle);
-	});
-	
 	while (! applet_interface.GetQuitFlag())
 	{
 		QuaterneCount recommended_num_quaterne = GetRecommendedNumQuaterna();
@@ -281,38 +271,48 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 		
 		applet_interface.Sleep(0.25);
 	}
+
+	smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::BeginRelease();
+	smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::BeginRelease();
+	smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::BeginRelease();
+
+	applet_interface.WaitFor([this] () -> bool {
+		return smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::IsReleased()
+			&& smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::IsReleased()
+			&& smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsReleased();
+	});
 }
 
-void RegulatorScript::SetNumQuaterne(int const & num_quaterne)
+void RegulatorScript::operator() (gfx::NumQuaterneSetMessage message)
 {
-	_current_num_quaterne = QuaterneCount(num_quaterne);
+	_current_num_quaterne = QuaterneCount(message.num_quaterne);
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void RegulatorScript::SampleFrameDuration(float const & frame_duration_ratio)
+void RegulatorScript::operator() (gfx::FrameDurationSampledMessage message)
 {
 	// Validate input
-	ASSERT(frame_duration_ratio == frame_duration_ratio);
-	ASSERT(frame_duration_ratio >= 0);
+	ASSERT(message.frame_duration_ratio == message.frame_duration_ratio);
+	ASSERT(message.frame_duration_ratio >= 0);
 	
 	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
 		FrameRateUnit & frame_rate_unit = * static_cast<FrameRateUnit *>(_units[frame_rate]);
-		frame_rate_unit.SampleFrameDuration(frame_duration_ratio, _current_num_quaterne);
+		frame_rate_unit.SampleFrameDuration(message.frame_duration_ratio, _current_num_quaterne);
 	}
 }
 
-void RegulatorScript::SampleMeshGenerationPeriod(core::Time const & mesh_generation_period)
+void RegulatorScript::operator() (gfx::MeshGenerationPeriodSampledMessage message)
 {
 	// Validate input
-	ASSERT(mesh_generation_period == mesh_generation_period);
-	ASSERT(mesh_generation_period >= 0);
+	ASSERT(message.mesh_generation_period == message.mesh_generation_period);
+	ASSERT(message.mesh_generation_period >= 0);
 	
 	if (_current_num_quaterne != QuaterneCount::invalid())
 	{
 		MeshGenerationUnit & mesh_generation_unit = * static_cast<MeshGenerationUnit *>(_units[mesh_generation]);
-		mesh_generation_unit.SampleMeshGenerationPeriod(mesh_generation_period, _current_num_quaterne);
+		mesh_generation_unit.SampleMeshGenerationPeriod(message.mesh_generation_period, _current_num_quaterne);
 	}
 }
 

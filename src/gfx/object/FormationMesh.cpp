@@ -13,15 +13,12 @@
 
 #include "gfx/Debug.h"
 #include "gfx/Engine.h"
+#include "gfx/Messages.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
-
-#include "scripts/RegulatorScript.h"
-
-#include "applet/Engine.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
@@ -46,7 +43,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::FormationMesh member definitions
 
-FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quaterne, smp::Handle<form::RegulatorScript> const & regulator_handle)
+FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quaterne)
 : LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground)
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
@@ -69,8 +66,6 @@ FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quatern
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
-	
-	_regulator_handle = regulator_handle;
 }
 
 FormationMesh::~FormationMesh()
@@ -207,19 +202,18 @@ bool FormationMesh::FinishBufferUpload()
 
 	OnMeshResourceChange();
 	
-	// inform the regulator that following frame information 
-	// will relate to a mesh of this number of quaterna.
+	// broadcast that this is the current number of quaterne being displayed;
+	// means that any performance measurements are taken against this load
 	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
-	if (_regulator_handle && num_quaterne > 0)
+	if (num_quaterne > 0)
 	{
-		_regulator_handle.Call([num_quaterne] (form::RegulatorScript & script) {
-			script.SetNumQuaterne(num_quaterne);
-		});
+		gfx::NumQuaterneSetMessage message = { num_quaterne };
+		Daemon::Broadcast(message);
 	}
 	
 	// state number of polygons/quaterna
 	STAT_SET (num_polys, _pending_mesh->GetNumPolys());
-	STAT_SET (num_quats_used, num_quaterne);
+	STAT_SET (num_quats_used, _pending_mesh->GetProperties()._num_quaterne);
 	
 	// release the pending mesh back to the formation manager
 	ReturnMesh(* _pending_mesh);

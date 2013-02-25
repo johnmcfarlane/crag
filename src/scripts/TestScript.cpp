@@ -12,6 +12,7 @@
 #include "SpawnEntityFunctions.h"
 #include "TestScript.h"
 #include "MonitorOrigin.h"
+#include "RegulatorScript.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -214,6 +215,12 @@ void Test (applet::AppletInterface & applet_interface)
 
 	// Create origin controller.
 	applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
+	
+	// launch regulator
+	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & applet_interface) {
+		script::RegulatorScript regulator;
+		regulator(applet_interface);
+	});
 	
 	_skybox = SpawnSkybox();
 	

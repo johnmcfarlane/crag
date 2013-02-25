@@ -15,10 +15,6 @@
 
 #include "core/double_buffer.h"
 
-
-namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
-
-
 namespace gfx
 {
 	// the graphical representation of all the formations
@@ -30,7 +26,7 @@ namespace gfx
 		
 	public:
 		// functions
-		FormationMesh(Init const & init, size_t max_num_quaterne, form::RegulatorScriptHandle const & regulator_handle);
+		FormationMesh(Init const & init, size_t max_num_quaterne);
 		~FormationMesh();
 		
 #if defined(VERIFY)
@@ -61,9 +57,6 @@ namespace gfx
 		
 		// front buffer is drawable, back buffer is being written iff pending is non-null
 		MboDoubleBuffer mbo_buffers;
-		
-		// The formation mesh feeds performance-related information to the regulator.
-		form::RegulatorScriptHandle _regulator_handle;
 	};
 }
 

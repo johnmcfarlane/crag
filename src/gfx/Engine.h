@@ -22,8 +22,6 @@
 
 #include "core/Statistics.h"
 
-namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
-
 namespace gfx
 {
 	// forward-declarations
@@ -97,7 +95,6 @@ namespace gfx
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
 		Transformation const& GetCamera() const;
-		void OnSetRegulatorHandle(form::RegulatorScriptHandle regulator_handle);
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -138,7 +135,7 @@ namespace gfx
 		void ProcessRenderTiming();
 		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);
 		void ConvertRenderTiming(core::Time frame_start_position, core::Time pre_sync_position, core::Time post_sync_position, core::Time & frame_duration, core::Time & busy_duration);
-		void UpdateRegulator(core::Time busy_duration) const;
+		void SampleFrameDuration(core::Time busy_duration) const;
 #if defined(GATHER_STATS)
 		void UpdateFpsCounter(core::Time frame_start_position);
 #endif
@@ -195,6 +192,5 @@ namespace gfx
 
 		Program const * _current_program;
 		MeshResource const * _current_mesh;
-		smp::Handle<form::RegulatorScript> _regulator_handle;
 	};
 }

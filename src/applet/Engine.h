@@ -9,20 +9,19 @@
 
 #pragma once
 
-#include "AppletBase.h"
+#include "defs.h"
 
 #include "smp/Daemon.h"
 #include "smp/EngineBase.h"
 
 #include "core/Singleton.h"
 
-
 namespace applet
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
 	
-	template <typename FUNCTOR> class Applet;
+	DECLARE_CLASS_HANDLE(Applet);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// definitions
@@ -35,7 +34,7 @@ namespace applet
 	
 	// The applet scheduling is coordinated from here.
 	// When Run finishes, the program is done.
-	class Engine : public smp::EngineBase <Engine, AppletBase>
+	class Engine : public smp::EngineBase <Engine, Applet>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -44,7 +43,7 @@ namespace applet
 
 	public:
 		typedef smp::Daemon<Engine> Daemon;
-		typedef smp::EngineBase<Engine, AppletBase> super;
+		typedef smp::EngineBase<Engine, Applet> super;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -53,12 +52,6 @@ namespace applet
 		~Engine();
 
 		// daemon messages
-		template <typename FUNCTOR>
-		void Launch(char const * name, std::size_t stack_size, FUNCTOR functor)
-		{
-			CreateObject<Applet<FUNCTOR>>(Uid::Create(), name, stack_size, functor);
-		}
-		
 		void OnQuit();
 		
 		void SetQuitFlag();
@@ -70,7 +63,7 @@ namespace applet
 		bool HasFibersActive() const;
 		
 		bool ProcessTasks();
-		bool ProcessTask(AppletBase & applet);
+		bool ProcessTask(Applet & applet);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

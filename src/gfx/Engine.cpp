@@ -13,18 +13,15 @@
 
 #include "Debug.h"
 #include "MeshResource.h"
+#include "Messages.h"
 #include "Program.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 
 #include "form/Engine.h"
 
-#include "scripts/RegulatorScript.h"
-
 #include "sim/axes.h"
 #include "sim/Engine.h"
-
-#include "applet/Engine.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -490,12 +487,6 @@ void Engine::OnSetCamera(Transformation const & transformation)
 Transformation const& Engine::GetCamera() const
 {
 	return scene->GetPov().GetTransformation();
-}
-
-void Engine::OnSetRegulatorHandle(smp::Handle<form::RegulatorScript> regulator_handle)
-{
-	ASSERT(regulator_handle);
-	_regulator_handle = regulator_handle;
 }
 
 #if defined(NDEBUG)
@@ -1189,7 +1180,7 @@ void Engine::ProcessRenderTiming()
 	UpdateFpsCounter(frame_start_position);
 #endif
 	
-	UpdateRegulator(busy_duration);
+	SampleFrameDuration(busy_duration);
 }
 
 // TODO: Consider SDL_GetPerformanceCounter / SDL_GetPerformanceFrequency
@@ -1247,12 +1238,8 @@ void Engine::UpdateFpsCounter(Time frame_start_position)
 }
 #endif
 
-void Engine::UpdateRegulator(Time busy_duration) const
+void Engine::SampleFrameDuration(Time busy_duration) const
 {
-	// Regulator feedback.
-	// TODO: There's no reason why frame rate should be tied to simulation tick rate.
-	// TODO: Decouple these two, use frame-rate of video mode for this one 
-	// and rename the other to something more appropriate.
 	Time target_frame_duration = _frame_duration;
 	if (vsync)
 	{
@@ -1263,13 +1250,8 @@ void Engine::UpdateRegulator(Time busy_duration) const
 	ASSERT(frame_duration_ratio >= 0);
 	ASSERT(! IsInf(frame_duration_ratio));
 	
-	if (_regulator_handle)
-	{
-		//DEBUG_MESSAGE("bd:%f fdr:%f", busy_duration, frame_duration_ratio);
-		_regulator_handle.Call([frame_duration_ratio] (form::RegulatorScript & script) {
-			script.SampleFrameDuration(frame_duration_ratio);
-		});
-	}
+	gfx::FrameDurationSampledMessage message = { frame_duration_ratio };
+	Daemon::Broadcast(message);
 }
 
 void Engine::Capture()

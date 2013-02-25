@@ -23,8 +23,6 @@
 
 
 namespace gfx { DECLARE_CLASS_HANDLE(FormationMesh); }	// gfx::FormationMeshHandle
-namespace form { DECLARE_CLASS_HANDLE(RegulatorScript); }	// form::RegulatorScriptHandle
-
 
 namespace form 
 {	
@@ -91,7 +89,7 @@ namespace form
 		void SetCamera(geom::rel::Ray3 const & camera_position);
 		void OnSetOrigin(geom::abs::Vector3 const & origin);
 		
-		void OnRegulatorSetEnabled(bool enabled);
+		void EnableAdjustNumQuaterna(bool enabled);
 		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
 		
 		void OnToggleSuspended();
@@ -124,9 +122,8 @@ namespace form
 		
 		core::Time mesh_generation_time;
 		
-		bool _regulator_enabled;
-		RegulatorScriptHandle _regulator_handle;
-		int _recommended_num_quaterne;	// recommended by the regulator
+		bool _enable_adjust_num_quaterna;
+		int _requested_num_quaterne;
 		
 		bool _pending_origin_request;
 
