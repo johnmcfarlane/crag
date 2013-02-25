@@ -43,7 +43,7 @@ namespace smp
 		{
 			VerifyObject(* this);
 
-			SubjectDaemon::Call([this] (SubjectEngine & engine) {
+			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine & engine) {
 				VerifyObject(* this);
 				ASSERT(_state == initializing);
 
@@ -74,7 +74,7 @@ namespace smp
 			ASSERT(_state == attached);
 			SetState(releasing);
 
-			SubjectDaemon::Call([this] (SubjectEngine & engine) {
+			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine & engine) {
 				VerifyObject(* this);
 				ASSERT(_state == releasing);
 
@@ -149,7 +149,7 @@ namespace smp
 		virtual void Dispatch (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) final
 		{
 			VerifyObject(* this);
-			ASSERT(SubjectDaemon::IsCurrentThread());
+			ASSERT(Subject::SubjectDaemon::IsCurrentThread());
 
 			ListenerDaemon::Call([this, parameters SMP_LISTENER_ELLIPSIS] (ListenerEngine &) {
 				(* this)(parameters SMP_LISTENER_ELLIPSIS);
