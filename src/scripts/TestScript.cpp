@@ -38,11 +38,6 @@
 
 using geom::Vector3f;
 
-namespace sim 
-{ 
-	DECLARE_CLASS_HANDLE(Entity);// sim::EntityHandle
-}
-
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -62,9 +57,6 @@ namespace
 	// variables
 
 	applet::AppletInterface * _applet_interface;
-	sim::EntityHandle _planet, _moon1, _moon2;
-	sim::EntityHandle _sun;
-	gfx::ObjectHandle _skybox;
 	sim::EntityHandle _vehicle;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
@@ -195,16 +187,17 @@ void Test (applet::AppletInterface & applet_interface)
 	}
 	
 	// Create sun. 
-	_sun = SpawnStar();
+	sim::EntityHandle sun = SpawnStar();
 	
 	// Create planets
+	sim::EntityHandle planet, moon1, moon2;
 	if (spawn_planets)
 	{
 		sim::Scalar planet_radius = 10000000;
 
-		_planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
-		_moon1 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * 1.5f, planet_radius * 2.5f, planet_radius * 1.f), 1500000), 10, 250);
-		_moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
+		planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
+		moon1 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * 1.5f, planet_radius * 2.5f, planet_radius * 1.f), 1500000), 10, 250);
+		moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 	}
 	
 	// Give formations time to expand.
@@ -222,7 +215,7 @@ void Test (applet::AppletInterface & applet_interface)
 		regulator(applet_interface);
 	});
 	
-	_skybox = SpawnSkybox();
+	gfx::ObjectHandle skybox = SpawnSkybox();
 	
 	// Create vehicle.
 	if (spawn_vehicle)
@@ -247,13 +240,13 @@ void Test (applet::AppletInterface & applet_interface)
 	}
 	
 	_vehicle.Destroy();
-	_sun.Destroy();
-	_moon2.Destroy();
-	_moon1.Destroy();
-	_planet.Destroy();
+	sun.Destroy();
+	moon2.Destroy();
+	moon1.Destroy();
+	planet.Destroy();
 	
 	// remove skybox
-	_skybox.Destroy();
+	skybox.Destroy();
 
 	observer.Destroy();
 	
