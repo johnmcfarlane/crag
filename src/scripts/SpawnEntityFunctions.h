@@ -16,11 +16,6 @@ namespace gfx
 	DECLARE_CLASS_HANDLE(Object);// gfx::ObjectHandle
 }
 
-namespace sim
-{
-	DECLARE_CLASS_HANDLE(Entity);// sim::EntityHandle
-}
-
 sim::EntityHandle SpawnBall(const sim::Vector3 & position, gfx::Color4f color);
 sim::EntityHandle SpawnBox(const sim::Vector3 & position, gfx::Color4f color);
 sim::EntityHandle SpawnObserver(const sim::Vector3 & position);

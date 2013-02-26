@@ -32,6 +32,7 @@ namespace smp
 namespace sim
 {
 	class Engine;
+	DECLARE_CLASS_HANDLE(Entity);	// sim::EntityHandle
 	
 	// daemon type
 	typedef smp::Daemon<Engine> Daemon;
