@@ -124,6 +124,8 @@ void Applet::OnLaunch(void * data)
 	applet._function(applet);
 	VerifyObject(applet);
 
+	applet.SetQuitFlag();
+
 	ASSERT(applet.IsRunning());
 	ASSERT(applet._condition == null_condition);
 }
