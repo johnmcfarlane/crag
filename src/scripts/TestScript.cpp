@@ -126,7 +126,8 @@ namespace
 		}
 	}
 
-	void HandleEvents(sim::EntityHandle observer)
+	// returns true if the applet should NOT quit
+	bool HandleEvents(sim::EntityHandle observer)
 	{
 		int num_events = 0;
 	
@@ -142,6 +143,11 @@ namespace
 
 			switch (event.key.keysym.scancode)
 			{
+				case SDL_SCANCODE_ESCAPE:
+				{
+					return false;
+				}
+
 				case SDL_SCANCODE_I:
 					if ((event.key.keysym.mod & KMOD_CTRL) == 0)
 					{
@@ -168,6 +174,8 @@ namespace
 					break;
 			}
 		}
+
+		return true;
 	}
 }
 
@@ -230,7 +238,10 @@ void Test (applet::AppletInterface & applet_interface)
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 
-		HandleEvents(observer);
+		if (! HandleEvents(observer))
+		{
+			break;
+		}
 	}
 	
 	while (! _shapes.empty())

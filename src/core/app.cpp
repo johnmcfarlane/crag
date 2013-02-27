@@ -210,14 +210,13 @@ void app::SwapBuffers()
 	SDL_GL_SwapWindow(window);
 }
 
-void app::GetEvent(SDL_Event & event)
+bool app::GetEvent(SDL_Event & event)
 {
-	bool has_event = SDL_WaitEvent(& event) != 0;
+	bool has_event = SDL_PollEvent(& event) != 0;
 	
 	if (! has_event)
 	{
-		DEBUG_BREAK_SDL();
-		return;
+		return false;
 	}
 	
 	switch (event.type)
@@ -235,6 +234,8 @@ void app::GetEvent(SDL_Event & event)
 			}
 			break;
 	}
+
+	return true;
 }
 
 core::Time app::GetTime()

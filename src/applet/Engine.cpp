@@ -92,6 +92,10 @@ bool Engine::ProcessTasks()
 		// And if it's all done, 
 		if (! applet.IsRunning())
 		{
+			// the last applet quitting means it's time for the engine 
+			// (and subsequently the program) to quit also
+			_quit_flag = true;
+
 			// destroy the applet.
 			return true;
 		}
