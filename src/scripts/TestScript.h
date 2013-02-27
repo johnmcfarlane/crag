@@ -14,4 +14,4 @@ namespace applet
 }
 
 // Run a script which puts the simulation through its paces.
-void Test (applet::AppletInterface & applet_interface);
+void TestScript (applet::AppletInterface & applet_interface);
