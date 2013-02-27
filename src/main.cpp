@@ -11,6 +11,7 @@
 #include "pch.h"
 
 #include "scripts/MainScript.h"
+#include "scripts/TestScript.h"
 
 #include "form/Engine.h"
 #include "sim/Engine.h"
@@ -32,7 +33,7 @@
 
 namespace 
 {
-	bool CragMain();
+	bool CragMain(int, char const * const *);
 }
 
 
@@ -40,17 +41,48 @@ namespace
 // main
 
 #if defined(WIN32)
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+//int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int win_main(char * lpCmdLine)
 {
-	CragMain();
+	// copy command line
+	char * const buffer = lpCmdLine;
+	std::size_t buffer_size = strlen(buffer);
+	char const * const buffer_end = buffer + buffer_size;
+
+	// convert into main format
+	int argc = 1;
+	for (char * c = buffer; c != buffer_end; ++ c)
+	{
+		if (std::isspace(* c))
+		{
+			* c = '\0';
+			++ argc;
+		}
+	}
+	char const * * const argv = new char const * [argc];
+	
+	char const * * argv_iterator = argv;
+	for (char const * c = buffer; c != buffer_end; ++ c)
+	{
+		ASSERT(c < buffer_end);
+
+		* argv_iterator ++ = c;
+		c = strchr(c, '\0');
+	}
+	ASSERT(argv_iterator = argv + argc);
+
+	CragMain(argc, argv);
+
+	delete [] argv;
+	delete [] buffer;
 
 	// WM_QUIT param should be returned here but it is lost
 	return 0;
 }
 #else
-int main(int, char * *)
+int main(int argc, char * * argv)
 {
-	if (CragMain())
+	if (CragMain(argc - 1, argv + 1))
 	{
 		return EXIT_SUCCESS;
 	}
@@ -294,7 +326,7 @@ namespace
 	}
 
 	// The main program function.
-	bool CragMain()
+	bool CragMain(int argc, char const * const * argv)
 	{
 		printf("Crag Demo\n"
 			   "Copyright 2010-2012 John McFarlane\n");
@@ -325,14 +357,22 @@ namespace
 			sim::Daemon simulation(0x800);
 			applet::Daemon applets(0x400);
 			
-			// start thread the daemons
+			// start the daemons
 			formation.Start("form");
 			simulation.Start("sim");
 			renderer.Start("render");
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+			DEBUG_MESSAGE("%d %s", argc, argv[0]);
+			if (argc > 0 && std::strcmp(argv[0], "test") == 0)
+			{
+				applet::AppletHandle::CreateHandle("Main", 8192, & TestScript);
+			}
+			else
+			{
+				applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+			}
 			
 			while (HandleEvent())
 			{
