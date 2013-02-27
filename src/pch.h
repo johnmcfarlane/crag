@@ -105,6 +105,7 @@
 
 // C standard library
 #include <cassert>
+#include <cctype>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
