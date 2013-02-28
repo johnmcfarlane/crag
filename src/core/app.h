@@ -33,7 +33,7 @@ namespace app
 	void SwapBuffers();
 
 	// called from main thread
-	void GetEvent(SDL_Event & event);
+	bool GetEvent(SDL_Event & event);
 	
 	// time
 	core::Time GetTime();

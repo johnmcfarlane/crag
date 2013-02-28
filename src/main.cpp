@@ -92,7 +92,7 @@ namespace
 	// Local Function Definitions
 	
 	// returns false iff the program should quit.
-	bool OnKeyPress(SDL_Keysym keysym)
+	void OnKeyPress(SDL_Keysym keysym)
 	{
 		// group the mod keys
 		Uint16 keys_mods = KMOD_NONE;
@@ -109,24 +109,6 @@ namespace
 			keys_mods |= KMOD_ALT;
 		}
 
-		// mod-agnostic keys
-		switch (keysym.scancode)
-		{
-			case SDL_SCANCODE_ESCAPE:
-			{
-				SDL_Event quit_event;
-				quit_event.type = SDL_QUIT;
-				if (SDL_PushEvent(& quit_event) != 1)
-				{
-					DEBUG_BREAK("SDL_PushEvent returned error");
-				}
-				return true;
-			}
-
-			default:
-				break;
-		}
-
 		// interpret scancode based on grouped modifiers
 		switch (keys_mods)
 		{
@@ -137,39 +119,39 @@ namespace
 					case SDL_SCANCODE_RETURN:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnTogglePause(); });
-						return true;
+						break;
 					}
 					
 					case SDL_SCANCODE_B:
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleCulling(); });
-						return true;
+						break;
 					}
 					
 					case SDL_SCANCODE_F:
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFlatShaded(); });
-						return true;
+						break;
 
 					case SDL_SCANCODE_G:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleGravity(); });
-						return true;
+						break;
 					}
 						
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleSuspended(); });
-						return true;
+						break;
 						
 					case SDL_SCANCODE_L:
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleLighting(); });
-						return true;
+						break;
 					}
 					
 					case SDL_SCANCODE_P:
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleWireframe(); });
-						return true;
+						break;
 					}
 					
 					default:
@@ -184,15 +166,15 @@ namespace
 				{
 					case SDL_SCANCODE_C:
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleCollision(); });
-						return true;
+						break;
 					
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
-						return true;
+						break;
 						
 					case SDL_SCANCODE_F:
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFragmentLighting(); });
-						return true;
+						break;
 						
 					default:
 						break;
@@ -207,7 +189,7 @@ namespace
 					case SDL_SCANCODE_O:
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleCapture(); });
-						return true;
+						break;
 					}
 					
 					default:
@@ -219,8 +201,6 @@ namespace
 			default:
 				break;
 		}
-		
-		return false;
 	}
 	
 	// Returns false if it's time to quit.
@@ -228,7 +208,10 @@ namespace
 	{
 		SDL_Event event;
 		
-		app::GetEvent(event);
+		if (! app::GetEvent(event))
+		{
+			return true;
+		}
 		
 		switch (event.type)
 		{
@@ -244,7 +227,7 @@ namespace
 						gfx::Daemon::Call([size] (gfx::Engine & engine) {
 							engine.OnResize(size);
 						});
-						return true;
+						break;
 					}
 					
 					case SDL_WINDOWEVENT_SHOWN:
@@ -257,7 +240,7 @@ namespace
 						form::Daemon::Call([] (form::Engine & engine) {
 							engine.EnableAdjustNumQuaterna(true);
 						});
-						return true;
+						break;
 					}
 					
 					case SDL_WINDOWEVENT_HIDDEN:
@@ -268,7 +251,7 @@ namespace
 						form::Daemon::Call([] (form::Engine & engine) {
 							engine.EnableAdjustNumQuaterna(false);
 						});
-						return true;
+						break;
 					}
 				}
 				break;
@@ -276,21 +259,18 @@ namespace
 				
 			case SDL_KEYDOWN:
 			{
-				if (OnKeyPress(event.key.keysym))
-				{
-					return true;
-				}
+				OnKeyPress(event.key.keysym);
 				break;
 			}
-				
-			default:
+			
+			case SDL_QUIT:
 			{
-				break;
+				// it's time to quit
+				return false;
 			}
 		}
 
-		// If not caught here, then send it to the application event queue.
-		return event.type != SDL_QUIT;
+		return true;
 	}
 	
 	int EventFilter(void * userdata, SDL_Event * event)
