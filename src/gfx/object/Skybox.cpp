@@ -51,8 +51,8 @@ void Pointer<Skybox::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Skybox member definitions
 
-Skybox::Skybox(LeafNode::Init const & init, Transformation const & local_transformation)
-: LeafNode(init, local_transformation, Layer::background)
+Skybox::Skybox(LeafNode::Init const & init)
+: LeafNode(init, gfx::Transformation::Matrix44::Identity(), Layer::background)
 {
 	InitVerts();
 
