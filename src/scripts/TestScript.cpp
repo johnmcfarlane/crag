@@ -21,7 +21,6 @@
 #include "sim/axes.h"
 #include "sim/Engine.h"
 #include "sim/Entity.h"
-#include "sim/Firmament.h"
 
 #include "physics/Location.h"
 
@@ -29,6 +28,7 @@
 #include "form/node/NodeBuffer.h"
 
 #include "gfx/Engine.h"
+#include "gfx/object/Object.h"
 
 #include "core/app.h"
 

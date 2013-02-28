@@ -1,748 +1,248 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="..\..\src\applet\Applet.cpp" />
+    <ClCompile Include="..\..\src\applet\Engine.cpp" />
+    <ClCompile Include="..\..\src\core\app.cpp" />
+    <ClCompile Include="..\..\src\core\ConfigEntry.cpp" />
+    <ClCompile Include="..\..\src\core\ConfigManager.cpp" />
+    <ClCompile Include="..\..\src\core\debug.cpp" />
+    <ClCompile Include="..\..\src\core\EventWatcher.cpp" />
+    <ClCompile Include="..\..\src\core\memory.cpp" />
+    <ClCompile Include="..\..\src\core\profile.cpp" />
+    <ClCompile Include="..\..\src\core\Random.cpp" />
+    <ClCompile Include="..\..\src\core\Statistics.cpp" />
+    <ClCompile Include="..\..\src\form\Engine.cpp" />
+    <ClCompile Include="..\..\src\form\Formation.cpp" />
+    <ClCompile Include="..\..\src\form\node\CalculateNodeScoreFunctor.cpp" />
+    <ClCompile Include="..\..\src\form\node\Node.cpp" />
+    <ClCompile Include="..\..\src\form\node\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\node\Point.cpp" />
+    <ClCompile Include="..\..\src\form\node\PointBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\node\RootNode.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Mesh.cpp" />
+    <ClCompile Include="..\..\src\form\scene\MeshBufferObject.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Polyhedron.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Scene.cpp" />
+    <ClCompile Include="..\..\src\form\scene\Vertex.cpp" />
+    <ClCompile Include="..\..\src\form\scene\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\Cuboid.cpp" />
+    <ClCompile Include="..\..\src\gfx\Debug.cpp" />
+    <ClCompile Include="..\..\src\gfx\Engine.cpp" />
+    <ClCompile Include="..\..\src\gfx\Fence.cpp" />
+    <ClCompile Include="..\..\src\gfx\Font.cpp" />
+    <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
+    <ClCompile Include="..\..\src\gfx\Image.cpp" />
+    <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\Layer.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Puff.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\RootNode.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Thruster.cpp" />
+    <ClCompile Include="..\..\src\gfx\Pov.cpp" />
+    <ClCompile Include="..\..\src\gfx\Program.cpp" />
+    <ClCompile Include="..\..\src\gfx\Quad.cpp" />
+    <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp" />
+    <ClCompile Include="..\..\src\gfx\ResourceManager.cpp" />
+    <ClCompile Include="..\..\src\gfx\Scene.cpp" />
+    <ClCompile Include="..\..\src\gfx\Shader.cpp" />
+    <ClCompile Include="..\..\src\gfx\Texture.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\pch.cpp" />
+    <ClCompile Include="..\..\src\physics\Body.cpp" />
+    <ClCompile Include="..\..\src\physics\BoxBody.cpp" />
+    <ClCompile Include="..\..\src\physics\Engine.cpp" />
+    <ClCompile Include="..\..\src\physics\FixedLocation.cpp" />
+    <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
+    <ClCompile Include="..\..\src\physics\Location.cpp" />
+    <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\MainScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\gfx\Planet.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\physics\PlanetBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetController.cpp" />
+    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\SpawnEntityFunctions.cpp" />
+    <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
+    <ClCompile Include="..\..\src\sim\Controller.cpp" />
+    <ClCompile Include="..\..\src\sim\Engine.cpp" />
+    <ClCompile Include="..\..\src\sim\Entity.cpp" />
+    <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
+    <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
+    <ClCompile Include="..\..\src\sim\gravity.cpp" />
+    <ClCompile Include="..\..\src\sim\ObserverController.cpp" />
+    <ClCompile Include="..\..\src\sim\ObserverInput.cpp" />
+    <ClCompile Include="..\..\src\sim\VehicleController.cpp" />
+    <ClCompile Include="..\..\src\smp\Fiber.cpp" />
+    <ClCompile Include="..\..\src\smp\FiberPosix.cpp" />
+    <ClCompile Include="..\..\src\smp\FiberWin.cpp" />
+    <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
+    <ClCompile Include="..\..\src\smp\scheduler.cpp" />
+    <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
+    <ClCompile Include="..\..\src\smp\smp.cpp" />
+    <ClCompile Include="..\..\src\smp\Thread.cpp" />
+    <ClCompile Include="..\..\src\smp\Uid.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\applet\AppletInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\applet\AppletInterface_Impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\applet\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\app.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\ConfigEntry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\ConfigManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\double_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\Enumeration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\EventWatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\floatOps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\for_each.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\function_ref.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\intOps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\intrusive_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\memory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\profile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\ring_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\Singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\Statistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\Formation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\CalculateNodeScoreFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\ExpandNodeFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\ForEachNodeFace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\GatherExpandableNodesFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\GenerateMeshFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\NodeBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\Point.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\PointBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\Quaterna.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\RootNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\node\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\MeshBufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\MeshProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\Polyhedron.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\form\scene\VertexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ga\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Distance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Intersection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Magnitude.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Matrix33.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Matrix44.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\MatrixOps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Sphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Transformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\Vector4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\BufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Cuboid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Fence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\FrameBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\glHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\IndexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\IndexBufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\MeshResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Ball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Box.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\FormationMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\LeafNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Puff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Skybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\Thruster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Pov.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Program.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Quad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\RenderBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\VertexBufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\Body.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\BoxBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\IntersectionFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\SphericalBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\axes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\EntityFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\Firmament.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\FrequencyEstimator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\gravity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Daemon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Fiber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\FiberPosix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\FiberWin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\for_each.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Future.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Handle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Handle_Impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\MessageQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\scheduler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Semaphore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\SimpleMutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\smp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Thread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Uid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\geom\origin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\EngineBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\MeshBufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\core\object_pool.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\MessageQueue_Impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\TestScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\RegulatorScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\MonitorOrigin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\FixedLocation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\physics\Location.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\SpawnEntityFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\planet\sim\MoonShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\planet\gfx\Planet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\scripts\planet\physics\PlanetBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\ObserverController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\ObserverInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\sim\VehicleController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\gfx\object\RootNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\Listener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\smp\ListenerInterface.h">
-    <ClInclude Include="..\..\src\scripts\MainScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\applet\Applet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\applet\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\applet\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\app.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\ConfigEntry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\ConfigManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\EventWatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\memory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\profile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\Random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\Statistics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\Formation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\CalculateNodeScoreFunctor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\Node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\NodeBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\Point.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\PointBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\node\RootNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\MeshBufferObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\Polyhedron.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\Vertex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\form\scene\VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Cuboid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Fence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\glHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Box.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Puff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Skybox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Thruster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Pov.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Program.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Quad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\Body.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\BoxBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\SphericalBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\Controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\EntityFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\Firmament.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\gravity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\Fiber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\FiberPosix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\FiberWin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\scheduler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\Semaphore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\smp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\Thread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\smp\Uid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\TestScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\FixedLocation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\physics\Location.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\SpawnEntityFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\planet\sim\MoonShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\planet\sim\PlanetShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\planet\gfx\Planet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\planet\physics\PlanetBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\ObserverController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\ObserverInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sim\VehicleController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\Ball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gfx\object\RootNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scripts\MainScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\applet\Applet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="..\..\src\applet\Applet.h" />
+    <ClInclude Include="..\..\src\applet\AppletInterface.h" />
+    <ClInclude Include="..\..\src\applet\AppletInterface_Impl.h" />
+    <ClInclude Include="..\..\src\applet\defs.h" />
+    <ClInclude Include="..\..\src\applet\Engine.h" />
+    <ClInclude Include="..\..\src\core\app.h" />
+    <ClInclude Include="..\..\src\core\ConfigEntry.h" />
+    <ClInclude Include="..\..\src\core\ConfigManager.h" />
+    <ClInclude Include="..\..\src\core\core.h" />
+    <ClInclude Include="..\..\src\core\debug.h" />
+    <ClInclude Include="..\..\src\core\double_buffer.h" />
+    <ClInclude Include="..\..\src\core\Enumeration.h" />
+    <ClInclude Include="..\..\src\core\EventWatcher.h" />
+    <ClInclude Include="..\..\src\core\floatOps.h" />
+    <ClInclude Include="..\..\src\core\for_each.h" />
+    <ClInclude Include="..\..\src\core\function_ref.h" />
+    <ClInclude Include="..\..\src\core\intOps.h" />
+    <ClInclude Include="..\..\src\core\intrusive_list.h" />
+    <ClInclude Include="..\..\src\core\memory.h" />
+    <ClInclude Include="..\..\src\core\object_pool.h" />
+    <ClInclude Include="..\..\src\core\profile.h" />
+    <ClInclude Include="..\..\src\core\Random.h" />
+    <ClInclude Include="..\..\src\core\ring_buffer.h" />
+    <ClInclude Include="..\..\src\core\Singleton.h" />
+    <ClInclude Include="..\..\src\core\Statistics.h" />
+    <ClInclude Include="..\..\src\form\defs.h" />
+    <ClInclude Include="..\..\src\form\Engine.h" />
+    <ClInclude Include="..\..\src\form\Formation.h" />
+    <ClInclude Include="..\..\src\form\node\CalculateNodeScoreFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\ExpandNodeFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\ForEachNodeFace.h" />
+    <ClInclude Include="..\..\src\form\node\GatherExpandableNodesFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\GenerateMeshFunctor.h" />
+    <ClInclude Include="..\..\src\form\node\Node.h" />
+    <ClInclude Include="..\..\src\form\node\NodeBuffer.h" />
+    <ClInclude Include="..\..\src\form\node\Point.h" />
+    <ClInclude Include="..\..\src\form\node\PointBuffer.h" />
+    <ClInclude Include="..\..\src\form\node\Quaterna.h" />
+    <ClInclude Include="..\..\src\form\node\RootNode.h" />
+    <ClInclude Include="..\..\src\form\node\Shader.h" />
+    <ClInclude Include="..\..\src\form\scene\collision.h" />
+    <ClInclude Include="..\..\src\form\scene\Mesh.h" />
+    <ClInclude Include="..\..\src\form\scene\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\form\scene\MeshProperties.h" />
+    <ClInclude Include="..\..\src\form\scene\Polyhedron.h" />
+    <ClInclude Include="..\..\src\form\scene\Scene.h" />
+    <ClInclude Include="..\..\src\form\scene\Vertex.h" />
+    <ClInclude Include="..\..\src\form\scene\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\ga\main.h" />
+    <ClInclude Include="..\..\src\geom\Distance.h" />
+    <ClInclude Include="..\..\src\geom\Intersection.h" />
+    <ClInclude Include="..\..\src\geom\Magnitude.h" />
+    <ClInclude Include="..\..\src\geom\Matrix.h" />
+    <ClInclude Include="..\..\src\geom\Matrix33.h" />
+    <ClInclude Include="..\..\src\geom\Matrix44.h" />
+    <ClInclude Include="..\..\src\geom\MatrixOps.h" />
+    <ClInclude Include="..\..\src\geom\origin.h" />
+    <ClInclude Include="..\..\src\geom\Ray.h" />
+    <ClInclude Include="..\..\src\geom\Sphere.h" />
+    <ClInclude Include="..\..\src\geom\Transformation.h" />
+    <ClInclude Include="..\..\src\geom\Vector.h" />
+    <ClInclude Include="..\..\src\geom\Vector2.h" />
+    <ClInclude Include="..\..\src\geom\Vector3.h" />
+    <ClInclude Include="..\..\src\geom\Vector4.h" />
+    <ClInclude Include="..\..\src\gfx\BufferObject.h" />
+    <ClInclude Include="..\..\src\gfx\Color.h" />
+    <ClInclude Include="..\..\src\gfx\Cuboid.h" />
+    <ClInclude Include="..\..\src\gfx\Debug.h" />
+    <ClInclude Include="..\..\src\gfx\defs.h" />
+    <ClInclude Include="..\..\src\gfx\Engine.h" />
+    <ClInclude Include="..\..\src\gfx\Fence.h" />
+    <ClInclude Include="..\..\src\gfx\Font.h" />
+    <ClInclude Include="..\..\src\gfx\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\glHelpers.h" />
+    <ClInclude Include="..\..\src\gfx\Image.h" />
+    <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
+    <ClInclude Include="..\..\src\gfx\Layer.h" />
+    <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
+    <ClInclude Include="..\..\src\gfx\MeshResource.h" />
+    <ClInclude Include="..\..\src\gfx\object\Ball.h" />
+    <ClInclude Include="..\..\src\gfx\object\Box.h" />
+    <ClInclude Include="..\..\src\gfx\object\FormationMesh.h" />
+    <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
+    <ClInclude Include="..\..\src\gfx\object\Light.h" />
+    <ClInclude Include="..\..\src\gfx\object\Object.h" />
+    <ClInclude Include="..\..\src\gfx\object\Puff.h" />
+    <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
+    <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
+    <ClInclude Include="..\..\src\gfx\object\Thruster.h" />
+    <ClInclude Include="..\..\src\gfx\Pov.h" />
+    <ClInclude Include="..\..\src\gfx\Program.h" />
+    <ClInclude Include="..\..\src\gfx\Quad.h" />
+    <ClInclude Include="..\..\src\gfx\RenderBuffer.h" />
+    <ClInclude Include="..\..\src\gfx\ResourceManager.h" />
+    <ClInclude Include="..\..\src\gfx\Scene.h" />
+    <ClInclude Include="..\..\src\gfx\Shader.h" />
+    <ClInclude Include="..\..\src\gfx\Texture.h" />
+    <ClInclude Include="..\..\src\gfx\VertexBufferObject.h" />
+    <ClInclude Include="..\..\src\pch.h" />
+    <ClInclude Include="..\..\src\physics\Body.h" />
+    <ClInclude Include="..\..\src\physics\BoxBody.h" />
+    <ClInclude Include="..\..\src\physics\defs.h" />
+    <ClInclude Include="..\..\src\physics\Engine.h" />
+    <ClInclude Include="..\..\src\physics\FixedLocation.h" />
+    <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
+    <ClInclude Include="..\..\src\physics\Location.h" />
+    <ClInclude Include="..\..\src\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\scripts\MainScript.h" />
+    <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
+    <ClInclude Include="..\..\src\scripts\planet\gfx\Planet.h" />
+    <ClInclude Include="..\..\src\scripts\planet\physics\PlanetBody.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetController.h" />
+    <ClInclude Include="..\..\src\scripts\planet\sim\PlanetShader.h" />
+    <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
+    <ClInclude Include="..\..\src\scripts\SpawnEntityFunctions.h" />
+    <ClInclude Include="..\..\src\scripts\TestScript.h" />
+    <ClInclude Include="..\..\src\sim\axes.h" />
+    <ClInclude Include="..\..\src\sim\Controller.h" />
+    <ClInclude Include="..\..\src\sim\defs.h" />
+    <ClInclude Include="..\..\src\sim\Engine.h" />
+    <ClInclude Include="..\..\src\sim\Entity.h" />
+    <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
+    <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
+    <ClInclude Include="..\..\src\sim\gravity.h" />
+    <ClInclude Include="..\..\src\sim\ObserverController.h" />
+    <ClInclude Include="..\..\src\sim\ObserverInput.h" />
+    <ClInclude Include="..\..\src\sim\VehicleController.h" />
+    <ClInclude Include="..\..\src\smp\Daemon.h" />
+    <ClInclude Include="..\..\src\smp\EngineBase.h" />
+    <ClInclude Include="..\..\src\smp\Fiber.h" />
+    <ClInclude Include="..\..\src\smp\FiberPosix.h" />
+    <ClInclude Include="..\..\src\smp\FiberWin.h" />
+    <ClInclude Include="..\..\src\smp\for_each.h" />
+    <ClInclude Include="..\..\src\smp\Future.h" />
+    <ClInclude Include="..\..\src\smp\Handle.h" />
+    <ClInclude Include="..\..\src\smp\Handle_Impl.h" />
+    <ClInclude Include="..\..\src\smp\Listener.h" />
+    <ClInclude Include="..\..\src\smp\ListenerInterface.h" />
+    <ClInclude Include="..\..\src\smp\MessageQueue.h" />
+    <ClInclude Include="..\..\src\smp\MessageQueue_Impl.h" />
+    <ClInclude Include="..\..\src\smp\Object.h" />
+    <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
+    <ClInclude Include="..\..\src\smp\scheduler.h" />
+    <ClInclude Include="..\..\src\smp\Semaphore.h" />
+    <ClInclude Include="..\..\src\smp\SimpleMutex.h" />
+    <ClInclude Include="..\..\src\smp\smp.h" />
+    <ClInclude Include="..\..\src\smp\Thread.h" />
+    <ClInclude Include="..\..\src\smp\Uid.h" />
+    <ClInclude Include="..\..\src\smp\vector.h" />
   </ItemGroup>
 </Project>
