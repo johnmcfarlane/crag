@@ -16,25 +16,17 @@
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
-#include "applet/Engine.h"
 
 #include "sim/axes.h"
 #include "sim/Engine.h"
 #include "sim/Entity.h"
-#include "sim/Firmament.h"
-
-#include "physics/Location.h"
-
-#include "form/Engine.h"
-#include "form/node/NodeBuffer.h"
 
 #include "gfx/Engine.h"
+#include "gfx/object/Object.h"
 
-#include "core/app.h"
+#include "geom/origin.h"
 
-#include "core/app.h"
 #include "core/EventWatcher.h"
-#include "core/Random.h"
 
 using geom::Vector3f;
 
@@ -55,8 +47,8 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
-	auto num_animats = 10;
-	std::vector<sim::EntityHandle> animats(10);
+	constexpr auto num_animats = 10;
+	std::vector<sim::EntityHandle> animats(num_animats);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
@@ -128,7 +120,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		sim::Transformation transformation(geom::Cast<sim::Scalar>(observer_start_pos));
+		sim::Matrix33 rotation = axes::Rotation(Vector3f(0, 1, 0), Vector3f(1, 0, 0));
+		sim::Transformation transformation(geom::Cast<sim::Scalar>(observer_start_pos), rotation);
 		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
 			engine.OnSetCamera(transformation);
 		});
@@ -139,8 +132,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	
 	// Create planets
 	sim::EntityHandle planet;
-	sim::Scalar planet_radius = 10000000;
-	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3634, 0);
+	sim::Scalar planet_radius = 9999840;
+	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 	
 	// Give formations time to expand.
 	_applet_interface->Sleep(2);
