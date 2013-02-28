@@ -14,11 +14,11 @@
 #include "gfx/Texture.h"
 #include "gfx/VertexBufferObject.h"
 
-
 namespace gfx
 {
 	class Image;
 	class Scene;
+	DECLARE_CLASS_HANDLE(Skybox);
 	
 	class Skybox : public LeafNode
 	{
