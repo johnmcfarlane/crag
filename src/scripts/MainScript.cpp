@@ -22,7 +22,7 @@
 #include "sim/Entity.h"
 
 #include "gfx/Engine.h"
-#include "gfx/object/Object.h"
+#include "gfx/object/Skybox.h"
 
 #include "geom/origin.h"
 
@@ -53,6 +53,48 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
+	void DrawHolodeckSkybox(gfx::Skybox & skybox, int box_edge_size, int num_bars)
+	{
+		gfx::Image image;
+		image.Create(geom::Vector2i(box_edge_size, box_edge_size));
+		image.Clear(gfx::Color4b::Black());
+		auto square_size = box_edge_size / num_bars;
+		auto color = gfx::Color4f::Cyan();
+
+		geom::Vector2i position, alt_position;
+		for (position.x = 0; position.x < box_edge_size; position.x += square_size)
+		{
+			alt_position.x = position.x + square_size - 1;
+			for (position.y = 0; position.y < box_edge_size; ++ position.y)
+			{
+				alt_position.y = position.y;
+				image.SetPixel(position, color);
+				image.SetPixel(alt_position, color);
+				image.SetPixel(geom::Vector2i(position.y, position.x), color);
+				image.SetPixel(geom::Vector2i(alt_position.y, alt_position.x), color);
+			}
+		}
+	
+		for (int axis = 0; axis < 3; ++ axis)
+		{
+			for (int pole = 0; pole < 2; ++ pole)
+			{
+				skybox.SetSide(axis, pole, image);
+			}
+		}
+	}
+
+	gfx::ObjectHandle SpawnHolodeckSkybox()
+	{
+		auto skybox = gfx::SkyboxHandle::CreateHandle();
+		skybox.Call([] (gfx::Skybox & skybox) {
+			//DrawStarsSlow(skybox, 256, 100);
+			DrawHolodeckSkybox(skybox, 512, 16);
+		});
+
+		return skybox;
+	}
+
 	sim::EntityHandle SpawnAnimat(/*const sim::Vector3 & position*/)
 	{
 		return sim::EntityHandle();
@@ -150,7 +192,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 		regulator(applet_interface);
 	});
 	
-	gfx::ObjectHandle skybox = SpawnSkybox();
+	gfx::ObjectHandle skybox = SpawnHolodeckSkybox();
 	
 	SpawnAnimats(applet_interface);
 
