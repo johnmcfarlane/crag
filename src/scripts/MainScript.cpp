@@ -55,6 +55,8 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
+	auto num_animats = 10;
+	std::vector<sim::EntityHandle> animats(10);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
@@ -66,8 +68,6 @@ namespace
 
 	void SpawnAnimats(applet::AppletInterface & applet_interface)
 	{
-		auto num_animats = 10;
-		sim::EntityHandle animats[num_animats];
 		for (auto& animat : animats)
 		{
 			animat = SpawnAnimat();
