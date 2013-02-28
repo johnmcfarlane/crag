@@ -31,9 +31,9 @@ namespace smp
 		// functions
 		virtual ~ListenerInterface()
 		{
-#if defined(NDEBUG)
+#if ! defined(NDEBUG)
 			SubjectDaemon::Call([this] (SubjectEngine & engine) {
-				if (_listeners.contains(this))
+				if (_listeners.contains(* this))
 				{
 					DEBUG_BREAK("Listener was still around!");
 				}
