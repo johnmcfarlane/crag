@@ -215,6 +215,7 @@
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\Location.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\scripts\ga\AnimatController.h" />
     <ClInclude Include="..\..\src\scripts\MainScript.h" />
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
     <ClInclude Include="..\..\src\scripts\planet\gfx\Planet.h" />
@@ -351,6 +352,7 @@
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
     <ClCompile Include="..\..\src\physics\Location.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\scripts\ga\AnimatController.cpp" />
     <ClCompile Include="..\..\src\scripts\MainScript.cpp" />
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
     <ClCompile Include="..\..\src\scripts\planet\gfx\Planet.cpp" />

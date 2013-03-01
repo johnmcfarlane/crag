@@ -91,6 +91,7 @@
     <ClCompile Include="..\..\src\smp\smp.cpp" />
     <ClCompile Include="..\..\src\smp\Thread.cpp" />
     <ClCompile Include="..\..\src\smp\Uid.cpp" />
+    <ClCompile Include="..\..\src\scripts\ga\AnimatController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -244,5 +245,6 @@
     <ClInclude Include="..\..\src\smp\Thread.h" />
     <ClInclude Include="..\..\src\smp\Uid.h" />
     <ClInclude Include="..\..\src\smp\vector.h" />
+    <ClInclude Include="..\..\src\scripts\ga\AnimatController.h" />
   </ItemGroup>
 </Project>
