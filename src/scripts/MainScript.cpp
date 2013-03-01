@@ -14,6 +14,8 @@
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
+#include "ga/AnimatController.h"
+
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
@@ -21,12 +23,16 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
+#include "physics/SphericalBody.h"
+
 #include "gfx/Engine.h"
+#include "gfx/object/Ball.h"
 #include "gfx/object/Skybox.h"
 
 #include "geom/origin.h"
 
 #include "core/EventWatcher.h"
+#include "core/Random.h"
 
 using geom::Vector3f;
 
@@ -88,23 +94,56 @@ namespace
 	{
 		auto skybox = gfx::SkyboxHandle::CreateHandle();
 		skybox.Call([] (gfx::Skybox & skybox) {
-			//DrawStarsSlow(skybox, 256, 100);
 			DrawHolodeckSkybox(skybox, 512, 16);
 		});
 
 		return skybox;
 	}
 
-	sim::EntityHandle SpawnAnimat(/*const sim::Vector3 & position*/)
+	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
 	{
-		return sim::EntityHandle();
+		auto animat = sim::EntityHandle::CreateHandle();
+
+		sim::Sphere3 sphere(position, 1);
+		animat.Call([sphere] (sim::Entity & entity) 
+		{
+			sim::Engine & engine = entity.GetEngine();
+			physics::Engine & physics_engine = engine.GetPhysicsEngine();
+
+			// physics
+			auto & body = * new physics::SphericalBody(physics_engine, true, sphere.radius);
+			body.SetPosition(sphere.center);
+			body.SetDensity(1);
+			body.SetLinearDamping(0.005f);
+			body.SetAngularDamping(0.005f);
+			entity.SetLocation(& body);
+
+			// graphics
+			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
+			gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, gfx::Color4f::Green());
+			entity.SetModel(model);
+
+			// controller
+			auto controller = new sim::AnimatController(entity);
+			entity.SetController(controller);
+		});
+
+		return animat;
 	}
 
-	void SpawnAnimats(applet::AppletInterface & applet_interface)
+	void SpawnAnimats(Vector3f base_position)
 	{
 		for (auto& animat : animats)
 		{
-			animat = SpawnAnimat();
+			Vector3f offset;
+			float r;
+			Random::sequence.GetGaussians(offset.x, offset.y);
+			offset.y = std::abs(offset.y);
+			Random::sequence.GetGaussians(offset.z, r);
+
+			auto position = base_position + offset * 10.f;
+
+			animat = SpawnAnimat(position);
 		}
 	}
 
@@ -194,7 +233,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 	
 	gfx::ObjectHandle skybox = SpawnHolodeckSkybox();
 	
-	SpawnAnimats(applet_interface);
+	SpawnAnimats(observer_start_pos);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
@@ -216,6 +255,14 @@ void MainScript(applet::AppletInterface & applet_interface)
 	skybox.Destroy();
 
 	observer.Destroy();
+
+	sim::Daemon::Call([] (sim::Engine & engine) 
+	{
+		engine.ForEachObject_DestroyIf([] (sim::Entity &) 
+		{
+			return true;
+		});
+	});
 	
 	ASSERT(_applet_interface == & applet_interface);
 }
