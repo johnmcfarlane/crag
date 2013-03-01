@@ -33,13 +33,10 @@ namespace
 	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
 	{
 #if defined(VERIFY)
+		// add some headroom in non-release builds
 		requested_stack_size = (requested_stack_size * 2) + 2048;
 #endif
 
-	// Fiber is prevented from using stacks which are less than MINSIGSTKSZ bytes
-	// in size. This is in case a signal is sent to the fiber and the system
-	// requires space to deal with it. We assume this doesn't happen and treat
-	// MINSIGSTKSZ as a limit - not an overhead.
 		return requested_stack_size;
 	}
 }
