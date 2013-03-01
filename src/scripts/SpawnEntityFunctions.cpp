@@ -39,7 +39,6 @@
 
 namespace gfx 
 { 
-	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
 	DECLARE_CLASS_HANDLE(Box); // gfx::BoxHandle
 	DECLARE_CLASS_HANDLE(Light); // gfx::LightHandle
 }

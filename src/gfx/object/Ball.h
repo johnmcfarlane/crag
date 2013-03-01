@@ -18,6 +18,8 @@
 
 namespace gfx
 {
+	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
+
 	// Ball class
 	class Ball : public LeafNode
 	{
