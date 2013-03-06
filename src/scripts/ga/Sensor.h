@@ -14,7 +14,10 @@ namespace sim
 	class Sensor
 	{
 	public:
+		DISABLE_ALLOCATOR(Sensor);
+
 		Sensor(Ray3 const & position);
+
 	private:
 		Ray3 _ray;	// Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
