@@ -17,6 +17,8 @@ namespace sim
 	class AnimatController : public VehicleController
 	{
 	public:
+		DECLARE_ALLOCATOR(AnimatController);
+
 		AnimatController(Entity & entity);
 
 	private:

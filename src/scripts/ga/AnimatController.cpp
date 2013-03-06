@@ -16,6 +16,8 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
 
+DEFINE_POOL_ALLOCATOR(AnimatController, 10);
+
 AnimatController::AnimatController(Entity & entity)
 : VehicleController(entity)
 {
