@@ -43,10 +43,8 @@ add_executable(crag
 	src/gfx/object/LeafNode.cpp
 	src/gfx/object/Light.cpp
 	src/gfx/object/Object.cpp
-	src/gfx/object/Puff.cpp
 	src/gfx/object/RootNode.cpp
 	src/gfx/object/Skybox.cpp
-	src/gfx/object/Thruster.cpp
 	src/gfx/Pov.cpp
 	src/gfx/Program.cpp
 	src/gfx/Quad.cpp
@@ -75,6 +73,11 @@ add_executable(crag
 	src/scripts/RegulatorScript.cpp
 	src/scripts/SpawnEntityFunctions.cpp
 	src/scripts/TestScript.cpp
+	src/scripts/vehicle/gfx/Puff.cpp
+	src/scripts/vehicle/gfx/Thruster.cpp
+	src/scripts/vehicle/sim/RoverController.cpp
+	src/scripts/vehicle/sim/Thruster.cpp
+	src/scripts/vehicle/sim/VehicleController.cpp
 	src/sim/Controller.cpp
 	src/sim/Engine.cpp
 	src/sim/Entity.cpp
@@ -83,7 +86,6 @@ add_executable(crag
 	src/sim/gravity.cpp
 	src/sim/ObserverController.cpp
 	src/sim/ObserverInput.cpp
-	src/sim/VehicleController.cpp
 	src/smp/Fiber.cpp
 	src/smp/FiberPosix.cpp
 	src/smp/FiberWin.cpp
