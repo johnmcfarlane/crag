@@ -7,22 +7,15 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "scripts/vehicle/sim/VehicleController.h"
+#include "../vehicle/sim/VehicleController.h"
+
+#include "Sensor.h"
 
 namespace sim
 {
 	// governs the behevior of a sim::Entity which is an artificial animal
 	class AnimatController : public VehicleController
 	{
-		class Sensor
-		{
-		public:
-			Sensor(Ray3 const & position);
-		private:
-			Ray3 _ray;	// Project(_ray, 1) = average sensor tip
-			std::vector<float> _thruster_mapping;
-		};
-
 	public:
 		AnimatController(Entity & entity);
 

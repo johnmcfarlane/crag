@@ -11,17 +11,10 @@
 
 #include "AnimatController.h"
 
-#include "sim/defs.h"
-
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
-
-AnimatController::Sensor::Sensor(Ray3 const & ray)
-: _ray(ray)
-{
-}
 
 AnimatController::AnimatController(Entity & entity)
 : VehicleController(entity)
