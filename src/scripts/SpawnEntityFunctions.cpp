@@ -15,11 +15,13 @@
 #include "planet/physics/PlanetBody.h"
 #include "planet/gfx/Planet.h"
 
+#include "vehicle/sim/RoverController.h"
+#include "vehicle/sim/Thruster.h"
+
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
 #include "sim/ObserverController.h"
-#include "sim/VehicleController.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
@@ -133,22 +135,18 @@ namespace
 #endif
 	}
 
-	void AddThruster(sim::VehicleController & vehicle_controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void AddThruster(sim::RoverController & rover_controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
-		sim::VehicleController::Thruster thruster;
-		thruster.position = position;
-		thruster.direction = direction;
-		thruster.key = key;
-		thruster.thrust_factor = 1.;
+		sim::Ray3 ray(position, direction);
 		
-		vehicle_controller.AddThruster(thruster);
+		rover_controller.AddThruster(ray, key);
 	}
 
-	void ConstructVehicle(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
+	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
 		ConstructBall(entity, sphere, gfx::Color4f::White());
 
-		auto& controller = ref(new sim::VehicleController(entity));
+		auto& controller = ref(new sim::RoverController(entity));
 		entity.SetController(& controller);
 
 		AddThruster(controller, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
@@ -397,7 +395,7 @@ sim::EntityHandle SpawnStar()
 	return sun;
 }
 
-sim::EntityHandle SpawnVehicle(sim::Vector3 const & position)
+sim::EntityHandle SpawnRover(sim::Vector3 const & position)
 {
 	auto vehicle = sim::EntityHandle::CreateHandle();
 
@@ -406,7 +404,7 @@ sim::EntityHandle SpawnVehicle(sim::Vector3 const & position)
 	sphere.radius = 1.;
 
 	vehicle.Call([sphere] (sim::Entity & vehicle) {
-		ConstructVehicle(vehicle, sphere);
+		ConstructRover(vehicle, sphere);
 	});
 
 	return vehicle;

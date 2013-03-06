@@ -1,5 +1,5 @@
 //
-//  Thruster.cpp
+//  gfx/Thruster.cpp
 //  crag
 //
 //  Created by John McFarlane on 11/19/11.

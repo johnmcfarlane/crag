@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "gfx/object/LeafNode.h"
 
 #include "gfx/Color.h"
 

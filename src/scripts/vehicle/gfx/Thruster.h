@@ -1,5 +1,5 @@
 //
-//  Thruster.h
+//  gfx/Thruster.h
 //  crag
 //
 //  Created by John McFarlane on 2011-11-19.
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Light.h"
+#include "gfx/object/Light.h"
 
 #include "Puff.h"
 
