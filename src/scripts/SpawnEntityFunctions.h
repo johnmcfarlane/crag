@@ -22,5 +22,5 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position);
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters);
 gfx::ObjectHandle SpawnSkybox();
 sim::EntityHandle SpawnStar();
-sim::EntityHandle SpawnVehicle(sim::Vector3 const & position);
+sim::EntityHandle SpawnRover(sim::Vector3 const & position);
 

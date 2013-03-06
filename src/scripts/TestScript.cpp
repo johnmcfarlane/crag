@@ -228,7 +228,7 @@ void Test (applet::AppletInterface & applet_interface)
 	// Create vehicle.
 	if (spawn_vehicle)
 	{
-		_vehicle = SpawnVehicle(observer_start_pos + geom::rel::Vector3(0, 5, +5));
+		_vehicle = SpawnRover(observer_start_pos + geom::rel::Vector3(0, 5, +5));
 	}
 
 	// main loop
