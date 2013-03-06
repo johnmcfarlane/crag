@@ -193,10 +193,8 @@
     <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
-    <ClInclude Include="..\..\src\gfx\object\Puff.h" />
     <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
-    <ClInclude Include="..\..\src\gfx\object\Thruster.h" />
     <ClInclude Include="..\..\src\gfx\Pov.h" />
     <ClInclude Include="..\..\src\gfx\Program.h" />
     <ClInclude Include="..\..\src\gfx\Quad.h" />
@@ -225,6 +223,11 @@
     <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
     <ClInclude Include="..\..\src\scripts\SpawnEntityFunctions.h" />
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\gfx\Puff.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\gfx\Thruster.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverController.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\sim\Thruster.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
     <ClInclude Include="..\..\src\sim\Controller.h" />
     <ClInclude Include="..\..\src\sim\defs.h" />
@@ -235,7 +238,6 @@
     <ClInclude Include="..\..\src\sim\gravity.h" />
     <ClInclude Include="..\..\src\sim\ObserverController.h" />
     <ClInclude Include="..\..\src\sim\ObserverInput.h" />
-    <ClInclude Include="..\..\src\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\smp\Daemon.h" />
     <ClInclude Include="..\..\src\smp\EngineBase.h" />
     <ClInclude Include="..\..\src\smp\Fiber.h" />
@@ -316,13 +318,11 @@
     <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Puff.cpp" />
     <ClCompile Include="..\..\src\gfx\object\RootNode.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode0</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)RootNode0</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Thruster.cpp" />
     <ClCompile Include="..\..\src\gfx\Pov.cpp" />
     <ClCompile Include="..\..\src\gfx\Program.cpp" />
     <ClCompile Include="..\..\src\gfx\Quad.cpp" />
@@ -361,6 +361,15 @@
     <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
     <ClCompile Include="..\..\src\scripts\SpawnEntityFunctions.cpp" />
     <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
+    <ClCompile Include="..\..\src\scripts\vehicle\gfx\Puff.cpp" />
+    <ClCompile Include="..\..\src\scripts\vehicle\gfx\Thruster.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster1.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverController.cpp" />
+    <ClCompile Include="..\..\src\scripts\vehicle\sim\Thruster.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster2.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scripts\vehicle\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\sim\Controller.cpp" />
     <ClCompile Include="..\..\src\sim\Engine.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine0</ObjectFileName>
@@ -372,7 +381,6 @@
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
     <ClCompile Include="..\..\src\sim\ObserverController.cpp" />
     <ClCompile Include="..\..\src\sim\ObserverInput.cpp" />
-    <ClCompile Include="..\..\src\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\smp\Fiber.cpp" />
     <ClCompile Include="..\..\src\smp\FiberPosix.cpp" />
     <ClCompile Include="..\..\src\smp\FiberWin.cpp" />
