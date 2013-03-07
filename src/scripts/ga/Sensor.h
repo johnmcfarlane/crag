@@ -14,7 +14,7 @@ namespace sim
 	class Sensor
 	{
 	public:
-		DISABLE_ALLOCATOR(Sensor);
+		DECLARE_ALLOCATOR(Sensor);
 
 		Sensor(Ray3 const & position);
 
