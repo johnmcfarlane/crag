@@ -44,12 +44,10 @@ Entity::~Entity()
 	_model.Destroy();
 }
 
+// placeholder helps govern the order in which stuff gets called by _tick_roster
 void Entity::Tick()
 {
-	if (_controller != nullptr)
-	{
-		_controller->Tick();
-	}
+	ASSERT(FALSE);
 }
 
 void Entity::SetController(Controller * controller)

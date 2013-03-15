@@ -29,13 +29,14 @@ namespace sim
 		// functions
 		
 		VehicleController(Entity & entity);
+		~VehicleController();
 		
 		// Add a Thruster
 		ThrusterPtr AddThruster(Ray3 const & ray);
 		
 	private:
 		// Called whenever the simulation ticks.
-		virtual void Tick() override;
+		void Tick();
 
 		// provides an opportunity to update the thrust factor
 		virtual void TickThrusters() = 0;

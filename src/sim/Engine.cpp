@@ -24,7 +24,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
-
+#include "core/Roster.h"
 
 CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
 
@@ -53,11 +53,13 @@ Engine::Engine()
 , _time(0)
 , _camera(geom::rel::Ray3::Zero())
 , _physics_engine(ref(new physics::Engine))
+, _tick_roster(ref(new core::locality::Roster))
 {
 }
 
 Engine::~Engine()
 {
+	delete & _tick_roster;
 	delete & _physics_engine;
 }
 
@@ -197,6 +199,11 @@ physics::Engine & Engine::GetPhysicsEngine()
 	return _physics_engine;
 }
 
+core::locality::Roster & Engine::GetTickRoster()
+{
+	return _tick_roster;
+}
+
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
@@ -239,9 +246,12 @@ void Engine::Tick()
 	if (! paused) 
 	{
 		_time += sim_tick_duration;
-		
+
+		// tick everything
+		_tick_roster.Call();
+
 		// Perform the Entity-specific simulation.
-		TickEntities();
+		PurgeEntities();
 		
 		if (apply_gravity)
 		{
@@ -277,13 +287,11 @@ void Engine::UpdateRenderer() const
 }
 
 // Perform a step in the simulation. 
-void Engine::TickEntities()
+void Engine::PurgeEntities()
 {
 	std::vector<Entity *> to_delete;
 
 	ForEachObject([& to_delete] (Entity & entity) {
-		entity.Tick();
-
 		physics::Location const * location = entity.GetLocation();
 		if (location == nullptr)
 		{

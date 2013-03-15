@@ -26,6 +26,7 @@
 #include "geom/Transformation.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Roster.h"
 
 CONFIG_DECLARE (sim_tick_duration, core::Time);
 
@@ -55,10 +56,18 @@ ObserverController::ObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
 {
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.AddOrdering(& ObserverController::Tick, & Entity::Tick);
+	roster.AddCommand(* this, & ObserverController::Tick);
 }
 
 ObserverController::~ObserverController()
 {
+	// roster
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.RemoveCommand(* this, & ObserverController::Tick);
+
+	// record speed in config file
 	observer_speed = _speed;
 }
 
