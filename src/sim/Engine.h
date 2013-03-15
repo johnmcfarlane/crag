@@ -18,6 +18,13 @@
 
 #include "core/Singleton.h"
 
+namespace core
+{
+	namespace locality
+	{
+		class Roster;
+	}
+}
 
 namespace physics 
 {
@@ -71,7 +78,8 @@ namespace sim
 		// accessors
 		core::Time GetTime() const;
 		physics::Engine & GetPhysicsEngine();		
-		
+		core::locality::Roster & GetTickRoster();
+
 		// called be Daemon when simulation thread starts
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -91,6 +99,8 @@ namespace sim
 
 		Ray3 _camera;
 		physics::Engine & _physics_engine;
+
+		core::locality::Roster & _tick_roster;
 	};
 	
 }
