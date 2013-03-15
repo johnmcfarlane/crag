@@ -24,8 +24,6 @@ namespace sim
 		Entity & GetEntity();
 		Entity const & GetEntity() const;
 		
-		virtual void Tick() = 0;
-
 	private:
 		Entity & _entity;
 	};

@@ -87,7 +87,7 @@ namespace sim
 		void UpdateRenderer() const;
 
 		// call Tick on entities in the given object
-		void TickEntities();
+		void PurgeEntities();
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// attributes

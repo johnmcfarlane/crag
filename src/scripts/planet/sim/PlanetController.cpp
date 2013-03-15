@@ -25,6 +25,7 @@
 #include "scripts/planet/gfx/Planet.h"
 
 #include "core/Random.h"
+#include "core/Roster.h"
 
 //#define RENDER_SEA
 
@@ -64,13 +65,22 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	geom::abs::Sphere3 formation_sphere = geom::RelToAbs(sphere, engine.GetOrigin());
 	_formation = new form::Formation(random_seed_formation, * shader, formation_sphere);
 	engine.AddFormation(* _formation);
+
+	// roster
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.AddOrdering(& PlanetController::Tick, & Entity::Tick);
+	roster.AddCommand(* this, & PlanetController::Tick);
 }
 
 PlanetController::~PlanetController()
 {
+	auto& engine = GetEntity().GetEngine();
+
+	// roster
+	auto & roster = engine.GetTickRoster();
+	roster.RemoveCommand(* this, & PlanetController::Tick);
+
 	// unregister with formation manager
-	auto& entity = GetEntity();
-	auto& engine = entity.GetEngine();
 	engine.RemoveFormation(* _formation);
 	_formation = nullptr;
 }

@@ -33,7 +33,7 @@ namespace sim
 		virtual ~ObserverController();
 
 	private:		
-		virtual void Tick() final;
+		void Tick();
 
 		void HandleEvents(ObserverInput & input);
 		void HandleEvent(ObserverInput & input, SDL_Event const & event);

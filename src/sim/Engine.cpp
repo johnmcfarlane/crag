@@ -251,7 +251,7 @@ void Engine::Tick()
 		_tick_roster.Call();
 
 		// Perform the Entity-specific simulation.
-		TickEntities();
+		PurgeEntities();
 		
 		if (apply_gravity)
 		{
@@ -287,13 +287,11 @@ void Engine::UpdateRenderer() const
 }
 
 // Perform a step in the simulation. 
-void Engine::TickEntities()
+void Engine::PurgeEntities()
 {
 	std::vector<Entity *> to_delete;
 
 	ForEachObject([& to_delete] (Entity & entity) {
-		entity.Tick();
-
 		physics::Location const * location = entity.GetLocation();
 		if (location == nullptr)
 		{

@@ -15,18 +15,29 @@
 
 #include "sim/axes.h"
 #include "sim/Entity.h"
+#include "sim/Engine.h"
 
 #include "gfx/Engine.h"
+
+#include "core/Roster.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::VehicleController member functions
 
-// seems to be required by MetaClass::InitObject
 VehicleController::VehicleController(Entity & entity)
 : _super(entity)
 {
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.AddOrdering(& VehicleController::Tick, & Entity::Tick);
+	roster.AddCommand(* this, & VehicleController::Tick);
+}
+
+VehicleController::~VehicleController()
+{
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.RemoveCommand(* this, & VehicleController::Tick);
 }
 
 ThrusterPtr VehicleController::AddThruster(Ray3 const & ray)

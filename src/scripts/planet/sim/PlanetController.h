@@ -39,7 +39,7 @@ namespace sim
 		form::Formation const & GetFormation() const;
 
 	private:
-		virtual void Tick() final;
+		void Tick();
 		
 		// variables
 		form::Formation * _formation;	// TODO: form::FormationHandle
