@@ -93,6 +93,7 @@
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Thruster.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverController.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\Thruster.cpp" />
+    <ClCompile Include="..\..\src\core\Roster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -248,5 +249,9 @@
     <ClInclude Include="..\..\src\scripts\vehicle\gfx\Thruster.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverController.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\Thruster.h" />
+    <ClInclude Include="..\..\src\core\Roster.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\core" />
   </ItemGroup>
 </Project>

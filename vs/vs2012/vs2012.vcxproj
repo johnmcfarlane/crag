@@ -130,6 +130,7 @@
     <ClInclude Include="..\..\src\core\profile.h" />
     <ClInclude Include="..\..\src\core\Random.h" />
     <ClInclude Include="..\..\src\core\ring_buffer.h" />
+    <ClInclude Include="..\..\src\core\Roster.h" />
     <ClInclude Include="..\..\src\core\Singleton.h" />
     <ClInclude Include="..\..\src\core\Statistics.h" />
     <ClInclude Include="..\..\src\form\defs.h" />
@@ -275,6 +276,7 @@
     <ClCompile Include="..\..\src\core\memory.cpp" />
     <ClCompile Include="..\..\src\core\profile.cpp" />
     <ClCompile Include="..\..\src\core\Random.cpp" />
+    <ClCompile Include="..\..\src\core\Roster.cpp" />
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\form\Engine.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine3</ObjectFileName>
@@ -390,6 +392,9 @@
     <ClCompile Include="..\..\src\smp\smp.cpp" />
     <ClCompile Include="..\..\src\smp\Thread.cpp" />
     <ClCompile Include="..\..\src\smp\Uid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\core" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
