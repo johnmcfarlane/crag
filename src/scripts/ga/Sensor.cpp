@@ -16,6 +16,8 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
+DISABLE_ALLOCATOR(Sensor);
+
 Sensor::Sensor(Ray3 const & ray)
 : _ray(ray)
 {
