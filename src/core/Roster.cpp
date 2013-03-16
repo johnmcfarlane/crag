@@ -7,8 +7,6 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#pragma once
-
 #include "pch.h"
 
 #include "Roster.h"
@@ -16,7 +14,62 @@
 using namespace core::locality;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Ordering member definitions
+// core::locality::Function member definitions
+
+Function::Function()
+{
+	_function.array[0] = nullptr;
+	_function.array[1] = nullptr;
+}
+
+Function::Function(Function const & rhs)
+: _function(rhs._function)
+{
+}
+
+bool Function::operator == (std::nullptr_t) const
+{
+	return (* this) == Function();
+}
+
+bool Function::operator != (std::nullptr_t) const
+{
+	return (* this) != Function();
+}
+
+bool core::locality::operator == (Function lhs, Function rhs)
+{
+	return lhs._function.array[0] == rhs._function.array[0]
+	&&	lhs._function.array[1] == rhs._function.array[1];
+}
+
+bool core::locality::operator != (Function lhs, Function rhs)
+{
+	return lhs._function.array[0] != rhs._function.array[0]
+	||	lhs._function.array[1] != rhs._function.array[1];
+}
+
+bool core::locality::operator < (Function lhs, Function rhs)
+{
+	return lhs._function.array[0] < rhs._function.array[0]
+	|| (	lhs._function.array[0] > rhs._function.array[0] 
+	&&	lhs._function.array[1] < rhs._function.array[1]);
+}
+
+void Function::operator() (void * object) const
+{
+	static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(FunctionPointerBuffer), "this ain't gonna work...");
+
+	FunctionPointerTransmogrifier<ArbitraryMemberFunctionType> transmogrifier;
+	transmogrifier.buffer = _function;
+
+	ArbitraryClass & surrogate = * static_cast<ArbitraryClass *>(object);
+	ArbitraryMemberFunctionType member_function = transmogrifier.member_function;
+	(surrogate.*member_function)();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// core::locality::Ordering member definitions
 
 void Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison)
 {
@@ -50,7 +103,7 @@ void Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison co
 
 	// propagate the ordering to other pairs
 	auto& rhs_comparisons = _table[rhs].comparisons;
-	for (auto function_index = 0; function_index != size; ++ function_index)
+	for (FunctionIndex function_index = 0; function_index != size; ++ function_index)
 	{
 		if (function_index != lhs)
 		{
@@ -120,7 +173,7 @@ void Ordering::Verify() const
 		auto & row = _table[row_index].comparisons;
 		VerifyEqual(_table.size(), row.size());
 
-		for (auto column_index = 0; column_index != size; ++ column_index)
+		for (FunctionIndex column_index = 0; column_index != size; ++ column_index)
 		{
 			auto cell = row[column_index];
 			if (row_index == column_index)
@@ -138,7 +191,7 @@ void Ordering::Verify() const
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-// Roster member definitions
+// core::locality::Roster member definitions
 
 Roster::Roster()
 : _is_ordered(true)

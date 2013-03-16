@@ -47,7 +47,7 @@ Entity::~Entity()
 // placeholder helps govern the order in which stuff gets called by _tick_roster
 void Entity::Tick()
 {
-	ASSERT(FALSE);
+	ASSERT(false);
 }
 
 void Entity::SetController(Controller * controller)
