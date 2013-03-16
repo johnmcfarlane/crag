@@ -13,85 +13,56 @@ namespace core
 {
 	namespace locality
 	{
+		class Function;
+		bool operator == (Function lhs, Function rhs);
+		bool operator != (Function lhs, Function rhs);
+		bool operator < (Function lhs, Function rhs);
+
 		// the member function to be called for an object;
 		// WARNING: not particularly compliant
 		class Function
 		{
-		public:
-			Function()
-			: _function(nullptr)
-			{
-			}
+			////////////////////////////////////////////////////////
+			// types
 
-			Function(Function const & rhs)
-			: _function(rhs._function)
+			// the choice of Function here is entirely arbitrary;
+			// (it's the closest class to hand)
+			typedef Function ArbitraryClass;
+			typedef void (ArbitraryClass::* ArbitraryMemberFunctionType)();
+
+			struct FunctionPointerBuffer
 			{
-			}
+				void * array[2];
+			};
+
+			template <typename MemberFunctionType>
+			union FunctionPointerTransmogrifier
+			{
+				MemberFunctionType member_function;
+				FunctionPointerBuffer buffer;
+			};
+		public:
+			Function();
+			Function(Function const & rhs);
 
 			template <typename CLASS>
 			Function(void (CLASS::* member_function)())
 			{
-				static_assert(sizeof(member_function) == sizeof(void *), "this ain't gonna work...");
-				union
-				{
-					void (CLASS::* mf)();
-					void * vp;
-				} u;
-				u.mf = member_function;
-				_function = u.vp;
+				static_assert(sizeof(member_function) == sizeof(FunctionPointerBuffer), "this ain't gonna work...");
+				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
+				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
+				transmogrifier.member_function = member_function;
+				_function = transmogrifier.buffer;
 			}
 
-			bool operator == (std::nullptr_t) const
-			{
-				return _function == nullptr;
-			}
+			bool operator == (std::nullptr_t) const;
+			bool operator != (std::nullptr_t) const;
 
-			bool operator != (std::nullptr_t) const
-			{
-				return _function != nullptr;
-			}
+			friend bool operator == (Function lhs, Function rhs);
+			friend bool operator != (Function lhs, Function rhs);
 
-			friend bool operator == (Function lhs, Function rhs)
-			{
-				return lhs._function == rhs._function;
-			}
-
-			friend bool operator != (Function lhs, Function rhs)
-			{
-				return lhs._function != rhs._function;
-			}
-
-			friend bool operator < (Function lhs, Function rhs)
-			{
-				return lhs._function < rhs._function;
-			}
-
-			void operator() (void * object) const
-			{
-				VerifyObject(* this);
-
-				// the choice of Function here is entirely arbitrary
-				typedef Function ArbitraryClass;
-				typedef void (ArbitraryClass::* MemberFunctionType)();
-				static_assert(sizeof(MemberFunctionType) == sizeof(void *), "this ain't gonna work...");
-
-				union
-				{
-					MemberFunctionType mf;
-					void * vp;
-				} u;
-
-				u.vp = _function;
-				ArbitraryClass & surrogate = * static_cast<ArbitraryClass *>(object);
-				(surrogate.*u.mf)();
-			}
-
-#if defined(VERIFY)
-			void Verify() const
-			{
-				VerifyTrue(_function != nullptr);
-			}
-#endif
+			friend bool operator < (Function lhs, Function rhs);
+			void operator() (void * object) const;
 
 		private:
 			template <typename CLASS, void (CLASS::*FUNCTION)()>
@@ -100,7 +71,7 @@ namespace core
 				(object.*FUNCTION)();
 			}
 
-			void * _function;
+			FunctionPointerBuffer _function;
 		};
 
 		// remembers the relative order in which a collection of Functions should be 
