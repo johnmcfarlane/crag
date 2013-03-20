@@ -130,5 +130,11 @@ void Entity::Verify() const
 	super::Verify();
 
 	VerifyObjectPtr(_location);
+
+	if (_controller != nullptr)
+	{
+		VerifyObjectRef(* _controller);
+		VerifyEqual(& _controller->GetEntity(), this);
+	}
 }
 #endif

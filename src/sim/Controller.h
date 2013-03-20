@@ -21,6 +21,10 @@ namespace sim
 		Controller(Entity & entity);
 		virtual ~Controller();
 
+#if defined(VERIFY)
+		virtual void Verify() const;
+#endif
+
 		Entity & GetEntity();
 		Entity const & GetEntity() const;
 		
