@@ -202,7 +202,10 @@ Roster::Roster()
 Roster::~Roster()
 {
 	VerifyObject(* this);
-	ASSERT(_commands.empty());
+	if (! _commands.empty())
+	{
+		DEBUG_BREAK(SIZE_T_FORMAT_SPEC " commands remaining", _commands.size());
+	}
 }
 
 #if defined(VERIFY)
