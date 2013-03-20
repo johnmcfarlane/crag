@@ -63,6 +63,8 @@ Controller * Entity::GetController()
 
 void Entity::SetLocation(physics::Location * location)
 {
+	// TODO: exploit ODE fn, dBodySetMovedCallback(dBodyID, void (*)(dBodyID));
+	// TODO: in conjunction with dBodySetData
 	ASSERT((_location == nullptr) != (location == nullptr));
 	_location = location;
 }
@@ -130,5 +132,11 @@ void Entity::Verify() const
 	super::Verify();
 
 	VerifyObjectPtr(_location);
+
+	if (_controller != nullptr)
+	{
+		VerifyObjectRef(* _controller);
+		VerifyEqual(& _controller->GetEntity(), this);
+	}
 }
 #endif

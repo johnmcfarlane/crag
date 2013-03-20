@@ -243,28 +243,29 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 void Engine::Tick()
 {
 	// Tick the entities.
-	if (! paused) 
+	if (paused) 
 	{
-		_time += sim_tick_duration;
-
-		// tick everything
-		_tick_roster.Call();
-
-		// Perform the Entity-specific simulation.
-		PurgeEntities();
-		
-		if (apply_gravity)
-		{
-			ApplyGravity(* this, sim_tick_duration);
-		}
-
-		// Run physics/collisions.
-		VerifyObject(* this);
-		_physics_engine.Tick(sim_tick_duration, _camera);
-
-		// Tell renderer about changes.
-		UpdateRenderer();
+		return;
 	}
+
+	_time += sim_tick_duration;
+
+	// tick everything
+	_tick_roster.Call();
+
+	// Perform the Entity-specific simulation.
+	PurgeEntities();
+
+	if (apply_gravity)
+	{
+		ApplyGravity(* this, sim_tick_duration);
+	}
+
+	// Run physics/collisions.
+	_physics_engine.Tick(sim_tick_duration, _camera);
+
+	// Tell renderer about changes.
+	UpdateRenderer();
 }
 
 void Engine::UpdateRenderer() const

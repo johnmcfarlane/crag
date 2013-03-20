@@ -15,8 +15,8 @@
 #include "planet/physics/PlanetBody.h"
 #include "planet/gfx/Planet.h"
 
-#include "vehicle/sim/RoverController.h"
-#include "vehicle/sim/Thruster.h"
+#include "vehicle/sim/RoverThruster.h"
+#include "vehicle/sim/VehicleController.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -135,24 +135,25 @@ namespace
 #endif
 	}
 
-	void AddThruster(sim::RoverController & rover_controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void AddRoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
+		auto & entity = controller.GetEntity();
 		sim::Ray3 ray(position, direction);
-		
-		rover_controller.AddThruster(ray, key);
+		auto thruster = new sim::RoverThruster(entity, ray, key);
+		controller.AddThruster(thruster);
 	}
 
 	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
 		ConstructBall(entity, sphere, gfx::Color4f::White());
 
-		auto& controller = ref(new sim::RoverController(entity));
+		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddThruster(controller, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 	}
 
 	void DrawStarsSlow(gfx::Skybox & skybox, int box_edge_size, int num_stars)

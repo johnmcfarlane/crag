@@ -25,6 +25,12 @@ Controller::~Controller()
 { 
 }
 
+#if defined(VERIFY)
+void Controller::Verify() const
+{
+}
+#endif
+
 Entity & Controller::GetEntity()
 {
 	return _entity;

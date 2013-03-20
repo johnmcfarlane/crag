@@ -22,7 +22,7 @@ namespace sim
 		// types
 
 		typedef Controller _super;
-		typedef std::vector<ThrusterPtr> ThrusterVector;
+		typedef std::vector<Thruster *> ThrusterVector;
 		
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -30,16 +30,20 @@ namespace sim
 		
 		VehicleController(Entity & entity);
 		~VehicleController();
+
+#if defined(VERIFY)
+		virtual void Verify() const override;
+#endif
 		
 		// Add a Thruster
-		ThrusterPtr AddThruster(Ray3 const & ray);
-		
-	private:
+		void AddThruster(Thruster * thruster);
+	protected:
+		void PopThruster();
+
 		// Called whenever the simulation ticks.
 		void Tick();
 
-		// provides an opportunity to update the thrust factor
-		virtual void TickThrusters() = 0;
+	private:
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data

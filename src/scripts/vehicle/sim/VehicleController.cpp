@@ -11,13 +11,8 @@
 
 #include "VehicleController.h"
 
-#include "../gfx/Thruster.h"
-
-#include "sim/axes.h"
 #include "sim/Entity.h"
 #include "sim/Engine.h"
-
-#include "gfx/Engine.h"
 
 #include "core/Roster.h"
 
@@ -31,54 +26,73 @@ VehicleController::VehicleController(Entity & entity)
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.AddOrdering(& VehicleController::Tick, & Entity::Tick);
+	roster.AddOrdering(& Thruster::Tick, & VehicleController::Tick);
 	roster.AddCommand(* this, & VehicleController::Tick);
+
+	VerifyObject(* this);
 }
 
 VehicleController::~VehicleController()
 {
+	VerifyObject(* this);
+
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.RemoveCommand(* this, & VehicleController::Tick);
+
+	while (! _thrusters.empty())
+	{
+		PopThruster();
+	}
 }
 
-ThrusterPtr VehicleController::AddThruster(Ray3 const & ray)
+#if defined(VERIFY)
+void VehicleController::Verify() const
 {
-	// calculate local transformation
-	auto thrust_scale = Length(ray.direction);
-	Transformation local_transformation(ray.position, axes::Rotation(ray.direction / thrust_scale), thrust_scale);
+	for (auto & thruster : _thrusters)
+	{
+		VerifyRef(* thruster);
+		VerifyEqual(& thruster->GetEntity(), & GetEntity());
+	}
+}
+#endif
 
-	// create actual thruster
-	auto model = gfx::ThrusterHandle::CreateHandle(local_transformation);
-	auto thruster_uid = model.GetUid();
-	
-	// thruster's parent is vehicle
+void VehicleController::AddThruster(Thruster * thruster)
+{
+	VerifyObject(* this);
+
+	// model
 	auto & entity = GetEntity();
 	auto parent_model = entity.GetModel();
-	gfx::Daemon::Call([thruster_uid, parent_model] (gfx::Engine & engine) {
-		engine.OnSetParent(thruster_uid, parent_model.GetUid());
-	});
+	thruster->SetParentModel(parent_model);
 
-	// create/add thruster to vector
-	_thrusters.push_back(ThrusterPtr(new Thruster(ray, model)));
+	// add to vector
+	_thrusters.push_back(thruster);
 
-	return _thrusters.back();
+	VerifyObject(* this);
+}
+
+void VehicleController::PopThruster()
+{
+	VerifyObject(* this);
+	ASSERT(! _thrusters.empty());
+
+	// get last thruster
+	auto thruster = _thrusters.back();
+
+	// remove it from vector
+	_thrusters.pop_back();
+
+	// delete it
+	delete thruster;
+
+	VerifyObject(* this);
 }
 
 void VehicleController::Tick()
 {
-	auto& entity = GetEntity();
-	physics::Body * body = entity.GetBody();
-	if (body == nullptr)
-	{
-		// vehicle is 'broken' because body was invalidated and destroyed.
-		return;
-	}
-
-	TickThrusters();
-	
 	for (ThrusterVector::iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
 	{
 		auto & thruster = * * i;
-		thruster.ApplyThrust(* body);
 		thruster.UpdateModel();
 	}
 }
