@@ -11,7 +11,11 @@
 
 #include "sim/defs.h"
 
-namespace gfx { DECLARE_CLASS_HANDLE(Thruster); }	// gfx::ThrusterHandle
+namespace gfx 
+{ 
+	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
+	DECLARE_CLASS_HANDLE(Thruster);	// gfx::ThrusterHandle
+}
 
 namespace physics
 {
@@ -20,30 +24,39 @@ namespace physics
 
 namespace sim
 {
+	// applies force to an entity; is owned by a controller
 	struct Thruster
 	{
 	public:
-		Thruster(Ray3 const & ray, gfx::ThrusterHandle const & model);
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
 
+		Thruster(Entity & entity, Ray3 const & ray);
+		virtual ~Thruster();
+
+#if defined(VERIFY)
+		void Verify() const;
+#endif
+
+		void SetParentModel(gfx::ObjectHandle parent_model);
+
+		Entity & GetEntity();
+
+		// get/set the amount of thrust being applied to entity's body
 		float GetThrustFactor() const;
 		void SetThrustFactor(float thrust_factor);
 
 		// adds a puff of smoke
 		void UpdateModel() const;
 
-		// Add force from an individual Thruster to the vehicle's body.
-		void ApplyThrust(physics::Body & body) const;
-
-#if defined(VERIFY)
-		void Verify() const;
-#endif
-
+		void Tick();
 	private:
-		Ray3 const _ray;	// position/direction of Thruster relative to vehicle
-		gfx::ThrusterHandle const _model;
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
 
+		sim::Entity & _entity;
+		Ray3 const _ray;	// position/direction of Thruster relative to vehicle
+		gfx::ThrusterHandle _model;
 		float _thrust_factor;
 	};
-		
-	typedef std::shared_ptr<Thruster> ThrusterPtr;
 }

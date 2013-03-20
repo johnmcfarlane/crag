@@ -11,23 +11,75 @@
 
 #include "Thruster.h"
 
+#include "sim/axes.h"
+#include "sim/Entity.h"
+#include "sim/Engine.h"
+
 #include "../gfx/Thruster.h"
 
 #include "physics/Body.h"
 
 #include "gfx/Engine.h"
 
+#include "core/Roster.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
-Thruster::Thruster(Ray3 const & ray, gfx::ThrusterHandle const & model)
-	: _ray(ray)
-	, _model(model)
+Thruster::Thruster(Entity & entity, Ray3 const & ray)
+	: _entity(entity)
+	, _ray(ray)
 	, _thrust_factor(0)
 {
+	// calculate local transformation
+	auto thrust_scale = Length(ray.direction);
+	Transformation local_transformation(ray.position, axes::Rotation(ray.direction / thrust_scale), thrust_scale);
+
+	// create model
+	_model = gfx::ThrusterHandle::CreateHandle(local_transformation);
+	
+	// roster
+	auto& tick_roster = entity.GetEngine().GetTickRoster();
+	tick_roster.AddCommand(* this, & Thruster::Tick);
+
 	VerifyObject(* this);
+}
+
+Thruster::~Thruster()
+{
+	Verify();
+
+	// destroy model
+	_model.Destroy();
+
+	// roster
+	auto& tick_roster = GetEntity().GetEngine().GetTickRoster();
+	tick_roster.RemoveCommand(* this, & Thruster::Tick);
+}
+
+#if defined(VERIFY)
+void Thruster::Verify() const
+{
+	VerifyRef(_entity);
+	VerifyTrue(_model);
+	VerifyOp(_thrust_factor, >=, 0);
+}
+#endif
+
+void Thruster::SetParentModel(gfx::ObjectHandle parent_model)
+{
+	auto uid = _model.GetUid();
+	auto parent_uid = parent_model.GetUid();
+	gfx::Daemon::Call([uid, parent_uid] (gfx::Engine & engine) {
+		engine.OnSetParent(uid, parent_uid);
+	});
+}
+
+Entity & Thruster::GetEntity()
+{
+	return _entity;
 }
 
 float Thruster::GetThrustFactor() const
@@ -62,7 +114,7 @@ void Thruster::UpdateModel() const
 	});
 }
 
-void Thruster::ApplyThrust(physics::Body & body) const
+void Thruster::Tick()
 {
 	VerifyObject(* this);
 
@@ -71,13 +123,9 @@ void Thruster::ApplyThrust(physics::Body & body) const
 		return;
 	}
 
-	body.AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
+	auto body = GetEntity().GetBody();
+	if (body != nullptr)
+	{
+		body->AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
+	}
 }
-
-#if defined(VERIFY)
-void Thruster::Verify() const
-{
-	VerifyTrue(_model);
-	VerifyOp(_thrust_factor, >=, 0);
-}
-#endif

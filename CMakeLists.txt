@@ -75,7 +75,7 @@ add_executable(crag
 	src/scripts/TestScript.cpp
 	src/scripts/vehicle/gfx/Puff.cpp
 	src/scripts/vehicle/gfx/Thruster.cpp
-	src/scripts/vehicle/sim/RoverController.cpp
+	src/scripts/vehicle/sim/RoverThruster.cpp
 	src/scripts/vehicle/sim/Thruster.cpp
 	src/scripts/vehicle/sim/VehicleController.cpp
 	src/sim/Controller.cpp
