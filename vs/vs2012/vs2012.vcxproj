@@ -226,7 +226,7 @@
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\gfx\Puff.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\gfx\Thruster.h" />
-    <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverController.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverThruster.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\Thruster.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
@@ -367,7 +367,7 @@
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Thruster.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster1.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverController.cpp" />
+    <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverThruster.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\Thruster.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster2.obj</ObjectFileName>
     </ClCompile>
