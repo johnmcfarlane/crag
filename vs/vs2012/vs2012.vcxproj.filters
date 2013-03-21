@@ -92,10 +92,10 @@
     <ClCompile Include="..\..\src\scripts\vehicle\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Puff.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Thruster.cpp" />
-    <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverController.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\Thruster.cpp" />
     <ClCompile Include="..\..\src\scripts\ga\Sensor.cpp" />
     <ClCompile Include="..\..\src\core\Roster.cpp" />
+    <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverThruster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -250,9 +250,9 @@
     <ClInclude Include="..\..\src\scripts\vehicle\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\gfx\Puff.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\gfx\Thruster.h" />
-    <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverController.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\Thruster.h" />
     <ClInclude Include="..\..\src\core\Roster.h" />
+    <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverThruster.h" />
     <ClInclude Include="..\..\src\scripts\ga\Sensor.h" />
   </ItemGroup>
   <ItemGroup>
