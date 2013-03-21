@@ -58,7 +58,7 @@ bool core::locality::operator < (Function lhs, Function rhs)
 
 void Function::operator() (void * object) const
 {
-	static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(FunctionPointerBuffer), "this ain't gonna work...");
+	static_assert(sizeof(FunctionPointerBuffer) >= sizeof(ArbitraryMemberFunctionType), "this ain't gonna work...");
 
 	FunctionPointerTransmogrifier<ArbitraryMemberFunctionType> transmogrifier;
 	transmogrifier.buffer = _function;
@@ -193,8 +193,18 @@ void Ordering::Verify() const
 ////////////////////////////////////////////////////////////////////////////////
 // core::locality::Roster member definitions
 
+bool core::locality::Roster::Command::operator==(Command rhs) const
+{
+		return object == rhs.object
+		&& function_index == rhs.function_index;
+}
+
+bool core::locality::Roster::Command::operator!=(Command rhs) const
+{
+	return ! operator==(rhs);
+}
+
 Roster::Roster()
-: _is_ordered(true)
 {
 	VerifyObject(* this);
 }
@@ -202,6 +212,7 @@ Roster::Roster()
 Roster::~Roster()
 {
 	VerifyObject(* this);
+
 	if (! _commands.empty())
 	{
 		DEBUG_BREAK(SIZE_T_FORMAT_SPEC " commands remaining", _commands.size());
@@ -212,17 +223,14 @@ Roster::~Roster()
 void Roster::Verify() const
 {
 	// verify order
-	if (_is_ordered)
+	auto end = std::end(_commands);
+	for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
 	{
-		auto end = std::end(_commands);
-		for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
+		for (auto rhs = lhs; ++ rhs != end; )
 		{
-			for (auto rhs = lhs; ++ rhs != end; )
-			{
-				VerifyTrue(_ordering.GetComparison(rhs->function_index, lhs->function_index) <= 0);
-			}
-		};
-	}
+			VerifyTrue(! LessThan(* rhs, * lhs));
+		}
+	};
 
 	_ordering.Verify();
 }
@@ -230,6 +238,8 @@ void Roster::Verify() const
 
 void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 {
+	VerifyObject(* this);
+
 	ASSERT(lhs_function != rhs_function);
 
 	auto lhs_index = GetFunctionIndex(lhs_function);
@@ -237,16 +247,18 @@ void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 	ASSERT(lhs_index != rhs_index);
 
 	_ordering.SetComparison(lhs_index, rhs_index, -1);
+
+	Sort();
+
+	VerifyObject(* this);
 }
 
+// TODO: separate sorting into essential sorting and incremental sorting;
+// essential sorting would ensure function order; incremental sorting could
+// bubble sort for locality of reference during Call loop
 void Roster::Call()
 {
-	// make sure calls are ordered
-	if (! _is_ordered)
-	{
-		Sort();
-		_is_ordered = true;
-	}
+	VerifyObject(* this);
 
 	// perform all calls
 	for (auto command : _commands)
@@ -255,20 +267,27 @@ void Roster::Call()
 		auto function = GetFunction(command.function_index);
 		function(object);
 	}
+
+	VerifyObject(* this);
 }
 
 void Roster::AddCommand(Command command)
 {
-	_commands.push_back(command);
-	_is_ordered = false;
+	VerifyObject(* this);
+	ASSERT(Find(command) == _commands.end());
+
+	auto insertion_position = Search(command);
+	ASSERT(insertion_position == _commands.end() || * insertion_position != command);
+	ASSERT(insertion_position == _commands.end() || ! LessThan(* insertion_position, command));
+
+	_commands.insert(insertion_position, command);
+
+	VerifyObject(* this);
 }
 
 void Roster::RemoveCommand(Command command)
 {
-	auto found = std::find_if(_commands.begin(), _commands.end(), [command] (Command candidate) {
-		return command.object == candidate.object
-			&& command.function_index == candidate.function_index;
-	});
+	auto found = Find(command);
 	
 	if (found == _commands.end())
 	{
@@ -277,20 +296,66 @@ void Roster::RemoveCommand(Command command)
 	}
 
 	_commands.erase(found);
+
+	VerifyObject(* this);
+}
+
+Roster::CommandVector::iterator Roster::Search(Command command)
+{
+	VerifyObject(* this);
+
+	auto found = std::lower_bound(_commands.begin(), _commands.end(), command, [=] (Command lhs, Command rhs) {
+		return LessThan(lhs, rhs);
+	});
+
+	return found;
+}
+
+Roster::CommandVector::iterator Roster::Find(Command command)
+{
+	Roster::CommandVector::iterator found = Search(command);
+
+	Roster::CommandVector::iterator end = _commands.end();
+	if (found != end)
+	{
+		Command f = * found;
+		if (f != command)
+		{
+			found = end;
+		}
+	}
+
+#if ! defined(NDEBUG)
+	auto slow_found = std::find(_commands.begin(), _commands.end(), command);
+	ASSERT(found == slow_found);
+#endif
+
+	return found;
 }
 
 void Roster::Sort()
 {
-	VerifyObject(* this);
+	std::sort(_commands.begin(), _commands.end(), [=] (Command lhs, Command rhs) {
+		return LessThan(lhs, rhs);
+	});
+}
 
-	std::sort(_commands.begin(), _commands.end(), [this] (Command lhs, Command rhs) {
+bool Roster::LessThan(Command lhs, Command rhs) const
+{
 		auto lhs_index = lhs.function_index;
 		auto rhs_index = rhs.function_index;
 		auto comparison = _ordering.GetComparison(lhs_index, rhs_index);
-		return comparison < 0;
-	});
-
-	VerifyObject(* this);
+		switch (comparison)
+		{
+		case -1:
+			return true;
+		case 1:
+			return false;
+		default:
+			DEBUG_BREAK("invaid value, %d, returned by GetComparison", int(comparison));
+		case 0:
+			return lhs.object < rhs.object;
+		}
 }
 
 Roster::FunctionIndex Roster::GetFunctionIndex(Function function)

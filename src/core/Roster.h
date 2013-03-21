@@ -48,7 +48,8 @@ namespace core
 			template <typename CLASS>
 			Function(void (CLASS::* member_function)())
 			{
-				static_assert(sizeof(member_function) == sizeof(FunctionPointerBuffer), "this ain't gonna work...");
+				static_assert(sizeof(FunctionPointerBuffer) >= sizeof(member_function), "FunctionPointerBuffer isn't big enough to store given function pointer");
+				static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
 				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
 				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
 				transmogrifier.member_function = member_function;
@@ -80,6 +81,7 @@ namespace core
 		{
 			/////////////////////////////////////////////////////////////////////////////
 			// types
+
 			typedef signed char Comparison;
 			typedef std::vector<Comparison> ComparisonVector;
 
@@ -118,14 +120,24 @@ namespace core
 		{
 			OBJECT_NO_COPY(Roster);
 
+			////////////////////////////////////////////////////////////////////////////////
+			// types
+
 			typedef Ordering::FunctionIndex FunctionIndex;
 			struct Command
 			{
 				void * object;
 				FunctionIndex function_index;
+
+				bool operator==(Command rhs) const;
+				bool operator!=(Command rhs) const;
 			};
 
 			typedef std::vector<Command> CommandVector;
+
+			////////////////////////////////////////////////////////////////////////////////
+			// functions
+			
 		public:
 			Roster();
 			~Roster();
@@ -167,7 +179,11 @@ namespace core
 			void AddCommand(Command command);
 			void RemoveCommand(Command command);
 
+			CommandVector::iterator Search(Command command);
+			CommandVector::iterator Find(Command command);
+
 			void Sort();
+			bool LessThan(Command lhs, Command rhs) const;
 
 			FunctionIndex GetFunctionIndex(Function function);
 			Function GetFunction(FunctionIndex function_index) const;
@@ -175,15 +191,12 @@ namespace core
 			////////////////////////////////////////////////////////////////////
 			// variables
 
-			// ordered array of commands
-			CommandVector _commands;
-
 			// the pairs of functions which dictate the orderings;
 			// cannot contain circular references
 			Ordering _ordering;
 
-			// true iff _commands is no longer ordered
-			bool _is_ordered;
+			// ordered array of commands
+			CommandVector _commands;
 		};
 	}
 }
