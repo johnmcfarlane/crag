@@ -20,7 +20,7 @@
 
 #include "gfx/Engine.h"
 
-#include "smp/Daemon.h"
+#include "ipc/Daemon.h"
 
 #include "geom/Matrix33.h"
 #include "geom/Transformation.h"

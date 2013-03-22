@@ -19,7 +19,7 @@
 #define MAKECONTEXT_SMALLER_INT 0
 #endif
 
-namespace smp
+namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Fiber - lightweight thread

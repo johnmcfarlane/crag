@@ -48,7 +48,7 @@ namespace gfx
 	
 	// unique identifier for gfx::Object;
 	// used when refering to objects from outside the render thread
-	typedef smp::Uid Uid;
+	typedef ipc::Uid Uid;
 	
 	// base class of objects which are rendered
 	class Object;

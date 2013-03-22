@@ -14,12 +14,12 @@
 
 
 // Forward-declares class, CLASS, and creates shorthand version of its handle,
-// E.g. "smp::Handle<MyClass>" becomes "MyClassHandle".
+// E.g. "ipc::Handle<MyClass>" becomes "MyClassHandle".
 #define DECLARE_CLASS_HANDLE(CLASS) \
 	class CLASS; \
-	typedef smp::Handle<CLASS> CLASS##Handle
+	typedef ipc::Handle<CLASS> CLASS##Handle
 
-namespace smp
+namespace ipc
 {
 	// forward-declaration
 	template <typename RESULT_TYPE>

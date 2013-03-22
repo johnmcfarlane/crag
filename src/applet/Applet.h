@@ -11,8 +11,8 @@
 
 #include "AppletInterface.h"
 
-#include "smp/Fiber.h"
-#include "smp/Object.h"
+#include "ipc/Fiber.h"
+#include "ipc/Object.h"
 
 namespace smp 
 {
@@ -24,12 +24,12 @@ namespace applet
 	// Base class for applets, which are run in fibers.
 	// If your applet is sufficiently complex that it deserves its own class,
 	// derive that class from this one. Alternatively, specialize the Applet class.
-	class Applet : public smp::Object<Applet, Engine>, public AppletInterface
+	class Applet : public ipc::Object<Applet, Engine>, public AppletInterface
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef smp::Object<Applet, Engine> super;
+		typedef ipc::Object<Applet, Engine> super;
 	public:
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		smp::Fiber _fiber;
+		ipc::Fiber _fiber;
 		LaunchFunction _function;
 		Condition _condition;
 		bool _quit_flag;

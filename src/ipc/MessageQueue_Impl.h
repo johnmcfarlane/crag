@@ -16,7 +16,7 @@
 
 // base class for Envelope
 template <typename CLASS>
-class smp::MessageQueue<CLASS>::EnvelopeBase
+class ipc::MessageQueue<CLASS>::EnvelopeBase
 {
 public:
 	virtual ~EnvelopeBase() 
@@ -29,7 +29,7 @@ public:
 // containment for a message; contained, in turn, in MessageQueue's ring buffer
 template <typename CLASS>
 template <typename MESSAGE>
-class smp::MessageQueue<CLASS>::Envelope : public smp::MessageQueue<CLASS>::EnvelopeBase
+class ipc::MessageQueue<CLASS>::Envelope : public ipc::MessageQueue<CLASS>::EnvelopeBase
 {
 	MESSAGE _message;
 public:
@@ -46,19 +46,19 @@ public:
 };
 
 template <typename CLASS>
-smp::MessageQueue<CLASS>::MessageQueue(size_type capacity)
+ipc::MessageQueue<CLASS>::MessageQueue(size_type capacity)
 : _buffer(capacity)
 {
 }
 
 template <typename CLASS>
-bool smp::MessageQueue<CLASS>::IsEmpty() const
+bool ipc::MessageQueue<CLASS>::IsEmpty() const
 {
 	return _buffer.empty();
 }
 		
 template <typename CLASS>
-void smp::MessageQueue<CLASS>::Clear()
+void ipc::MessageQueue<CLASS>::Clear()
 {
 	Lock critical_section(_mutex);
 	_buffer.clear();
@@ -66,7 +66,7 @@ void smp::MessageQueue<CLASS>::Clear()
 
 template <typename CLASS>
 template <typename MESSAGE>
-void smp::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
+void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 {
 	Lock critical_section(_mutex);
 			
@@ -79,7 +79,7 @@ void smp::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 }
 
 template <typename CLASS>
-bool smp::MessageQueue<CLASS>::DispatchMessage(Class & object)
+bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
 {
 	// Slightly risky, but I think we can avoid a lock here.
 	if (_buffer.empty())
@@ -96,7 +96,7 @@ bool smp::MessageQueue<CLASS>::DispatchMessage(Class & object)
 }
 
 template <typename CLASS>
-int smp::MessageQueue<CLASS>::DispatchMessages(Class & object)
+int ipc::MessageQueue<CLASS>::DispatchMessages(Class & object)
 {
 	int num_messages = 0;
 			
@@ -110,7 +110,7 @@ int smp::MessageQueue<CLASS>::DispatchMessages(Class & object)
 		
 template <typename CLASS>
 template <typename MESSAGE>
-void smp::MessageQueue<CLASS>::CompleteDispatch(MESSAGE message, Class & object)
+void ipc::MessageQueue<CLASS>::CompleteDispatch(MESSAGE message, Class & object)
 {
 	// by copying EnvelopeBase::_message into message, the data is 'delivered';
 

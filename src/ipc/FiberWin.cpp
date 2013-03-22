@@ -16,7 +16,7 @@
 #include "core/Random.h"
 
 
-using namespace smp;
+using namespace ipc;
 
 namespace
 {
@@ -42,7 +42,7 @@ namespace
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// MS Windows-specific smp::Fiber member definitions
+// MS Windows-specific ipc::Fiber member definitions
 
 Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
 : _name(name)

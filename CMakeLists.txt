@@ -86,15 +86,15 @@ add_executable(crag
 	src/sim/gravity.cpp
 	src/sim/ObserverController.cpp
 	src/sim/ObserverInput.cpp
-	src/smp/Fiber.cpp
-	src/smp/FiberPosix.cpp
-	src/smp/FiberWin.cpp
+	src/ipc/Fiber.cpp
+	src/ipc/FiberPosix.cpp
+	src/ipc/FiberWin.cpp
 	src/smp/ReadersWriterMutex.cpp
 	src/smp/scheduler.cpp
 	src/smp/Semaphore.cpp
 	src/smp/smp.cpp
 	src/smp/Thread.cpp
-	src/smp/Uid.cpp)
+	src/ipc/Uid.cpp)
 
 include_directories("src" "dependencies/include")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.7")

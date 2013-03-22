@@ -12,7 +12,7 @@
 
 #include "AppletInterface_Impl.h"
 
-#include "smp/Fiber.h"
+#include "ipc/Fiber.h"
 
 #include "core/app.h"
 

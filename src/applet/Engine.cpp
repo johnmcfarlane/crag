@@ -13,7 +13,7 @@
 
 #include "Applet.h"
 
-#include "smp/Fiber.h"
+#include "ipc/Fiber.h"
 
 
 #if defined(NDEBUG)
@@ -55,7 +55,7 @@ void Engine::SetQuitFlag()
 // Note: Run should be called from same thread as c'tor/d'tor.
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	smp::Fiber::InitializeThread();
+	ipc::Fiber::InitializeThread();
 
 	// Main loop.
 	while (message_queue.DispatchMessages(* this) != 0 || HasFibersActive() || ! _quit_flag)

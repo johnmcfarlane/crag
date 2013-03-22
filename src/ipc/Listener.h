@@ -17,7 +17,7 @@
 #define SMP_LISTENER_ELLIPSIS ...
 #endif
 
-namespace smp
+namespace ipc
 {
 	// derive from this class to receive calls broadcast with the given parameters;
 	// lives in the LISTENER_ENGINE thread and receives calls from SUBJECT_ENGINE
@@ -34,7 +34,7 @@ namespace smp
 
 		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS> Subject;
 		typedef OBSERVER_ENGINE ListenerEngine;
-		typedef smp::Daemon<ListenerEngine> ListenerDaemon;
+		typedef ipc::Daemon<ListenerEngine> ListenerDaemon;
 
 	public:
 		// functions

@@ -151,8 +151,8 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 
-#include "smp/Handle_Impl.h"
-#include "smp/Object.h"
+#include "ipc/Handle_Impl.h"
+#include "ipc/Object.h"
 
 
 //////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace smp
+namespace ipc
 {
 	// hack to get around not being able to put nodes in virtual base classes
 	class ListenerNode
@@ -17,7 +17,7 @@ namespace smp
 		DEFINE_INTRUSIVE_LIST(ListenerNode, List);
 	};
 
-	// see smp::Listener and smp::Daemon::Broadcast for usage;
+	// see ipc::Listener and ipc::Daemon::Broadcast for usage;
 	// provides thread-agnostic interface to Listener class;
 	// keeps a list of instances for broadcasting to
 	template <typename ENGINE, typename ... PARAMETERS>
@@ -26,7 +26,7 @@ namespace smp
 	public:
 		// types
 		typedef ENGINE SubjectEngine;
-		typedef smp::Daemon<SubjectEngine> SubjectDaemon;
+		typedef ipc::Daemon<SubjectEngine> SubjectDaemon;
 
 		// functions
 		virtual ~ListenerInterface()

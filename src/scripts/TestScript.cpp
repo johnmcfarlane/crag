@@ -72,7 +72,7 @@ namespace
 			return;
 		}
 	
-		smp::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Entity & observer) -> sim::Transformation {
+		ipc::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Entity & observer) -> sim::Transformation {
 			auto location = observer.GetLocation();
 			return location->GetTransformation();
 		});

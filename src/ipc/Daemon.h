@@ -10,13 +10,13 @@
 #pragma once
 
 #include "MessageQueue_Impl.h"
-#include "Thread.h"
+#include "smp/Thread.h"
 
 #include "core/ring_buffer.h"
 
-#include "smp/ListenerInterface.h"
+#include "ipc/ListenerInterface.h"
 
-namespace smp
+namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// thread-safe wrapper for a service/sub-system (engine)
@@ -39,11 +39,11 @@ namespace smp
 			request_destroy
 		};
 
-		typedef SimpleMutex Mutex;
+		typedef smp::SimpleMutex Mutex;
 		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef ENGINE Engine;
-		typedef ::smp::MessageQueue<Engine> MessageQueue;
+		typedef ::ipc::MessageQueue<Engine> MessageQueue;
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -101,14 +101,14 @@ namespace smp
 			ASSERT(! singleton->_thread.IsCurrent());
 
 			_thread.Launch([this, name] () {
-				SetThreadName(name);
+				smp::SetThreadName(name);
 				this->Run();
 			});
 			
 			while (_engine == nullptr)
 			{
 				// block until the the engine is constructed and assigned
-				Yield();
+				smp::Yield();
 			}
 		}
 		
@@ -132,7 +132,7 @@ namespace smp
 			
 			while (_state < acknowledge_flush_begin)
 			{
-				Yield();
+				smp::Yield();
 			}
 		}
 		
@@ -145,7 +145,7 @@ namespace smp
 			_state = request_flush_end;
 			while (_state < acknowledge_flush_end)
 			{
-				Yield();
+				smp::Yield();
 			}
 			ASSERT(_state == acknowledge_flush_end);
 			
@@ -239,7 +239,7 @@ namespace smp
 		{
 			if (! FlushMessages())
 			{
-				Yield();
+				smp::Yield();
 			}
 		}
 
@@ -249,7 +249,7 @@ namespace smp
 		
 		Engine * _engine;
 		MessageQueue _messages;
-		Thread _thread;
+		smp::Thread _thread;
 		State _state;
 		
 		static Daemon * singleton;

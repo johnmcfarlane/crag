@@ -26,7 +26,7 @@ namespace applet
 	}
 	
 	template <typename RESULT_TYPE>
-	void AppletInterface::WaitFor(smp::Future<RESULT_TYPE> const & future)
+	void AppletInterface::WaitFor(ipc::Future<RESULT_TYPE> const & future)
 	{
 		WaitFor([& future] () -> bool {
 			return future.IsComplete();
@@ -36,7 +36,7 @@ namespace applet
 	}
 	
 	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
-	void AppletInterface::Call(smp::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function)
+	void AppletInterface::Call(ipc::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function)
 	{
 		ASSERT(future.IsPending());
 
@@ -47,7 +47,7 @@ namespace applet
 	}
 	
 	template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
-	void AppletInterface::Call(smp::Future<RESULT_TYPE> & future, smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
+	void AppletInterface::Call(ipc::Future<RESULT_TYPE> & future, ipc::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
 	{
 		ASSERT(future.IsPending());
 		
@@ -68,7 +68,7 @@ namespace applet
 	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
 	RESULT_TYPE AppletInterface::Get(FUNCTION_TYPE const & function)
 	{
-		smp::Future<RESULT_TYPE> future;
+		ipc::Future<RESULT_TYPE> future;
 		Call<ENGINE, RESULT_TYPE, FUNCTION_TYPE>(future, function);
 		
 		WaitFor(future);
@@ -77,9 +77,9 @@ namespace applet
 	}
 
 	template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
-	smp::Future<RESULT_TYPE> AppletInterface::Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
+	ipc::Future<RESULT_TYPE> AppletInterface::Get(ipc::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
 	{
-		smp::Future<RESULT_TYPE> future;
+		ipc::Future<RESULT_TYPE> future;
 		Call<ENGINE, RESULT_TYPE, OBJECT_TYPE, FUNCTION_TYPE>(future, object, function);
 		
 		WaitFor(future);

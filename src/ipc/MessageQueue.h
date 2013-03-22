@@ -9,13 +9,13 @@
 
 #pragma once
 
-#include "SimpleMutex.h"
-#include "smp.h"
+#include "smp/SimpleMutex.h"
+#include "smp/smp.h"
 
 #include "core/ring_buffer.h"
 
 
-namespace smp
+namespace ipc
 {
 	template <typename CLASS>
 	class MessageQueue
@@ -31,7 +31,7 @@ namespace smp
 		typedef CLASS Class;
 		typedef core::ring_buffer<EnvelopeBase, true> Buffer;
 
-		typedef SimpleMutex Mutex;
+		typedef smp::SimpleMutex Mutex;
 		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef typename Buffer::size_type size_type;
@@ -62,7 +62,7 @@ namespace smp
 		//////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		SimpleMutex _mutex;
+		Mutex _mutex;
 		Buffer _buffer;
 	};
 }
