@@ -68,7 +68,7 @@ namespace form
 			
 		};
 		
-		typedef core::ring_buffer<smp::scheduler::Job, true> BatchedFunctorBuffer;
+		typedef core::ring_buffer<smp::scheduler::Job> BatchedFunctorBuffer;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

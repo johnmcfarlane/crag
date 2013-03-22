@@ -29,7 +29,7 @@ namespace ipc
 		class Envelope;
 	
 		typedef CLASS Class;
-		typedef core::ring_buffer<EnvelopeBase, true> Buffer;
+		typedef core::ring_buffer<EnvelopeBase> Buffer;
 
 		typedef smp::SimpleMutex Mutex;
 		typedef std::lock_guard<Mutex> Lock;

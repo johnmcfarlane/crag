@@ -11,7 +11,7 @@
 
 namespace core
 {
-	template <typename BASE_CLASS, bool BITWISE_EXPANSION> class ring_buffer;
+	template <typename BASE_CLASS> class ring_buffer;
 }
 
 
@@ -38,7 +38,7 @@ namespace smp
 		};
 		
 		// heterogenic collection of single-unit jobs.
-		typedef core::ring_buffer<Job, true> Batch;
+		typedef core::ring_buffer<Job> Batch;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

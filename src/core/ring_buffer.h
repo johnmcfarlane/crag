@@ -17,8 +17,7 @@ namespace core
 {
 	// A sequence container which stores variable-sized objects of base class, BASE_CLASS.
 	// Designed to easily push_back and pop_front. Requires allocation only to adjust capacity.
-	// Iff BITWISE_EXPANSION, push_back will automatically use reserve if the buffer if full.
-	template <typename BASE_CLASS, bool BITWISE_EXPANSION = false>
+	template <typename BASE_CLASS>
 	class ring_buffer
 	{
 		OBJECT_NO_COPY(ring_buffer);
@@ -253,35 +252,8 @@ namespace core
 			// If there isn't space with the current buffer,
 			if (! locate_next_block(block_begin, block_end, block_size))
 			{
-				// and if bitwise expansion is not allowed,
-				if (! BITWISE_EXPANSION)
-				{
-					// then fail.
-					return nullptr;
-				}
-				
-				// Determine a new buffer capacity,
-				size_type new_capacity = capacity();
-				size_type minimum_capacity = new_capacity + block_size;
-				do 
-				{
-					// to be a power of two multiple.
-					new_capacity <<= 1;
-				}	while (new_capacity < minimum_capacity);
-				
-				// If resizing the buffer to that capacity fails,
-				DEBUG_MESSAGE("increasing capacity of ring_buffer, %p, from " SIZE_T_FORMAT_SPEC " to " SIZE_T_FORMAT_SPEC " bytes", this, capacity(), new_capacity);
-				if (! reserve(new_capacity))
-				{
-					// then new_capacity was calculated incorrectly.
-					DEBUG_BREAK("failed to increase capacity of ring_buffer, %p, from " SIZE_T_FORMAT_SPEC " to " SIZE_T_FORMAT_SPEC " bytes", this, capacity(), new_capacity);
-					return nullptr;
-				}
-				
-				// block extents are now easy to calculate
-				block_begin = * _data_end;
-				block_end = reinterpret_cast<block *>(reinterpret_cast<char *>(block_begin) + block_size);
-				assert(block_end <= _buffer_end);
+				// then fail.
+				return nullptr;
 			}
 			
 			// in case new block is not contiguous,
