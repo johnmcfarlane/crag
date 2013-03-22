@@ -90,68 +90,6 @@ namespace core
 			return size_type(_buffer_end) - size_type(_buffer_begin);
 		}
 		
-		// resizes the buffer or returns false
-		// Warning: performs bitwise copy on the contents of the buffer
-		bool reserve(size_type new_capacity)
-		{
-			verify();
-			
-			// the ring_buffer into which to copy the existing data
-			ring_buffer copy(new_capacity);
-
-			// For all objects stored in the existing buffer,
-			for (const_iterator i = begin(); i != end(); )
-			{
-				// get the object,
-				value_type & object = * i;
-				
-				// and get the object's size,
-				size_type object_size;
-				{
-					value_type & next_object = * ++ i;
-					ptrdiff_t diff = bytewise_sub(& next_object, & object) - block::header_size;
-					if (diff < 0)
-					{
-						diff += capacity();
-					}
-					object_size = diff;
-				}
-				
-				// and try and allocate enough space for a copy of the object.
-				value_type * object_copy = copy.allocate_object_memory(object_size);
-				
-				// If there wasn't enough space for the allocation,
-				if (object_copy == nullptr)
-				{
-					// nuke copy so that objects don't get their c'tors called,
-					copy.nuke();
-					
-					// and return failure.
-					return false;
-				}
-				
-				// Finally perform the bitwise copy.
-				memcpy(reinterpret_cast<void *>(object_copy), reinterpret_cast<void const *>(& object), object_size);
-			}
-
-			// Now, copy has bitwise copy of this buffer. Free this one.
-			deallocate();
-			
-			// Finally, copy the pointers of the new copy back to this,
-			_buffer_begin = copy._buffer_begin;
-			_buffer_end = copy._buffer_end;
-			_data_begin = copy._data_begin;
-			_data_end = (copy._data_end == & copy._data_begin) ? & _data_begin : copy._data_end;
-			
-			// nuke copy so that objects don't get their c'tors called,
-			copy.nuke();
-			
-			verify();
-			
-			// and return success.
-			return true;
-		}
-		
 		// access
 		value_type & front() 
 		{
