@@ -75,14 +75,13 @@ ipc::MessageQueue<CLASS>::~MessageQueue()
 	VerifyObject(* this);
 	ASSERT(IsEmpty());
 
-	auto * buffer = _buffers; 
-	do
+	while (! GetPopBuffer().empty())
 	{
-		auto * next = _buffers->next;
-		delete buffer;
-		buffer = next;
+		PopFront();
 	}
-	while (buffer != nullptr);
+	
+	ASSERT(_buffers->buffer.empty());
+	ASSERT(_buffers->next == nullptr);
 }
 
 #if defined(VERIFY)
@@ -225,6 +224,8 @@ void ipc::MessageQueue<CLASS>::PopFront()
 	ASSERT(! next->buffer.empty());
 
 	_buffers = next;
+	front.next = nullptr;
+
 	delete & front;
 }
 
