@@ -277,7 +277,7 @@ namespace core
 				
 				// wrap around
 				block_begin = _buffer_begin;
-				block_end = block_begin + block_size;
+				block_end = reinterpret_cast<block *>(reinterpret_cast<char *>(block_begin) + block_size);
 			}
 			// Either way, proposed destination now starts earlier than _data_begin.
 			
