@@ -157,16 +157,19 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 template <typename CLASS>
 bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
 {
-	Lock critical_section(_mutex);
+	_mutex.lock();
 	VerifyObject(* this);
 	
 	auto & pull_buffer = GetPopBuffer();
 	if (pull_buffer.empty())
 	{
+		_mutex.unlock();
 		return false;
 	}
-			
+	
 	EnvelopeBase const & message_wrapper = pull_buffer.front();
+
+	// calls complete dispatch with a (non-sliced) copy of object
 	message_wrapper(* this, object);
 
 	VerifyObject(* this);
