@@ -93,7 +93,7 @@ namespace core
 		// access
 		value_type & front() 
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -101,7 +101,7 @@ namespace core
 		
 		value_type const & front() const
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -109,13 +109,13 @@ namespace core
 		
 		const_iterator begin() const
 		{
-			verify();
+			VerifyObject(* this);
 			return const_iterator(_data_begin);
 		}
 		
 		const_iterator end() const
 		{
-			verify();
+			VerifyObject(* this);
 			return const_iterator(* _data_end);
 		}
 		
@@ -123,7 +123,7 @@ namespace core
 		template <typename CLASS>
 		bool push_back(CLASS const & source)
 		{
-			verify();
+			VerifyObject(* this);
 			
 			// CLASS must be derived from BASE_CLASS.
 			static_assert(std::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
@@ -140,13 +140,13 @@ namespace core
 			// copy-construct object
 			new (back) CLASS (source);
 			
-			verify();
+			VerifyObject(* this);
 			return true;
 		}
 		
 		void pop_front()
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			// get reference to the object to be deleted
@@ -164,7 +164,7 @@ namespace core
 			// call d'tor for object
 			object.~value_type();
 			
-			verify();
+			VerifyObject(* this);
 		}
 		
 		void clear()
@@ -174,8 +174,51 @@ namespace core
 				pop_front();
 			}
 			
-			verify();
+			VerifyObject(* this);
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			if (empty())
+			{
+				assert(_data_end == & _data_begin);
+			}
+			
+			if (_buffer_begin == nullptr)
+			{
+				assert(_buffer_end == nullptr);
+				assert(_data_begin == nullptr);
+				return;
+			}
+			
+			static int entry = 0;
+			if (entry > 0)
+			{
+				return;
+			}
+			++ entry;
+			
+			block const * data_end = * _data_end;
+			
+			verify_address(_buffer_begin);
+			verify_address(_buffer_end);
+			verify_address(_data_begin);
+			verify_address(data_end);
+			
+			assert(capacity() >= block::header_size + sizeof(value_type));
+			assert(_data_begin >= _buffer_begin);
+			assert(_data_begin <= _buffer_end);
+			assert(data_end >= _buffer_begin);
+			assert(data_end <= _buffer_end);
+			
+			for (const_iterator i = begin(); i != end(); ++ i)
+			{
+			}
+			
+			-- entry;
+		}
+#endif
 		
 	private:
 		// allocates memory for the object
@@ -204,7 +247,7 @@ namespace core
 			// expand data range
 			_data_end = & block_begin->_next;
 			
-			verify();
+			VerifyObject(* this);
 			return reinterpret_cast<value_type *>(block_begin->_buffer);
 		}
 		
@@ -289,7 +332,7 @@ namespace core
 			_data_begin = _buffer_begin;
 			_data_end = & _data_begin;
 			
-			verify();
+			VerifyObject(* this);
 		}
 		
 		// Null this object (except _data_end can never be null).
@@ -309,50 +352,6 @@ namespace core
 		{
 			verify_address(size_type(num_bytes));
 		}
-		
-		void verify() const
-		{
-#if defined(CORE_RING_BUFFER_VERFICATION)
-			if (empty())
-			{
-				assert(_data_end == & _data_begin);
-			}
-			
-			if (_buffer_begin == nullptr)
-			{
-				assert(_buffer_end == nullptr);
-				assert(_data_begin == nullptr);
-				return;
-			}
-			
-			static int entry = 0;
-			if (entry > 0)
-			{
-				return;
-			}
-			++ entry;
-			
-			block const * data_end = * _data_end;
-			
-			verify_address(_buffer_begin);
-			verify_address(_buffer_end);
-			verify_address(_data_begin);
-			verify_address(data_end);
-			
-			assert(capacity() >= block::header_size + sizeof(value_type));
-			assert(_data_begin >= _buffer_begin);
-			assert(_data_begin <= _buffer_end);
-			assert(data_end >= _buffer_begin);
-			assert(data_end <= _buffer_end);
-			
-			for (const_iterator i = begin(); i != end(); ++ i)
-			{
-			}
-			
-			-- entry;
-#endif
-		}
-		
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
