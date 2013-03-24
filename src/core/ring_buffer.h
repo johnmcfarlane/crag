@@ -212,7 +212,7 @@ namespace core
 			assert(data_end >= _buffer_begin);
 			assert(data_end <= _buffer_end);
 			
-			for (const_iterator i = begin(); i != end(); ++ i)
+			for (const_iterator i = const_iterator(_data_begin); i != const_iterator(* _data_end); ++ i)
 			{
 			}
 			
