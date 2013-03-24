@@ -225,6 +225,8 @@ void ipc::MessageQueue<CLASS>::PopFront()
 	ASSERT(! next->buffer.empty());
 
 	_buffers = next;
+	front.next = nullptr;
+
 	delete & front;
 }
 
