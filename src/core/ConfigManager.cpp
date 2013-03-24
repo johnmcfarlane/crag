@@ -113,7 +113,7 @@ bool ConfigManager::Load()
 		ConfigEntry * parameter = ConfigEntry::find(name_string);
 		if (parameter == nullptr)
 		{
-			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" on line %s.", name_string, line_num);
+			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" on line %d.", name_string, line_num);
 			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
 			break;
 		}
