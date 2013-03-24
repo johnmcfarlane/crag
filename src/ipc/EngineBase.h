@@ -11,7 +11,7 @@
 
 #include "geom/origin.h"
 
-namespace smp
+namespace ipc
 {
 	// an optional base class for the Engine classes which are managed by Daemon
 	// with support for local coordinate origins and object lifetime management
@@ -24,7 +24,7 @@ namespace smp
 
 		typedef ENGINE Engine;
 		typedef OBJECT Object;
-		typedef smp::Object<Object, ENGINE> SmpObject;
+		typedef ipc::Object<Object, ENGINE> SmpObject;
 		typedef std::unordered_map<Uid, SmpObject *> ObjectMap;
 		typedef typename ObjectMap::iterator Iterator;
 
@@ -132,7 +132,7 @@ namespace smp
 		template <typename OBJECT_TYPE>
 		void CreateObject(Uid uid)
 		{
-			smp::ObjectInit<Engine>
+			ipc::ObjectInit<Engine>
 			init = 
 			{
 				static_cast<Engine &>(* this),
@@ -150,7 +150,7 @@ namespace smp
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
 		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
-			smp::ObjectInit<Engine>
+			ipc::ObjectInit<Engine>
 			init = 
 			{
 				static_cast<Engine &>(* this),

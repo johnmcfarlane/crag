@@ -17,8 +17,7 @@ namespace core
 {
 	// A sequence container which stores variable-sized objects of base class, BASE_CLASS.
 	// Designed to easily push_back and pop_front. Requires allocation only to adjust capacity.
-	// Iff BITWISE_EXPANSION, push_back will automatically use reserve if the buffer if full.
-	template <typename BASE_CLASS, bool BITWISE_EXPANSION = false>
+	template <typename BASE_CLASS>
 	class ring_buffer
 	{
 		OBJECT_NO_COPY(ring_buffer);
@@ -91,72 +90,10 @@ namespace core
 			return size_type(_buffer_end) - size_type(_buffer_begin);
 		}
 		
-		// resizes the buffer or returns false
-		// Warning: performs bitwise copy on the contents of the buffer
-		bool reserve(size_type new_capacity)
-		{
-			verify();
-			
-			// the ring_buffer into which to copy the existing data
-			ring_buffer copy(new_capacity);
-
-			// For all objects stored in the existing buffer,
-			for (const_iterator i = begin(); i != end(); )
-			{
-				// get the object,
-				value_type & object = * i;
-				
-				// and get the object's size,
-				size_type object_size;
-				{
-					value_type & next_object = * ++ i;
-					ptrdiff_t diff = bytewise_sub(& next_object, & object) - block::header_size;
-					if (diff < 0)
-					{
-						diff += capacity();
-					}
-					object_size = diff;
-				}
-				
-				// and try and allocate enough space for a copy of the object.
-				value_type * object_copy = copy.allocate_object_memory(object_size);
-				
-				// If there wasn't enough space for the allocation,
-				if (object_copy == nullptr)
-				{
-					// nuke copy so that objects don't get their c'tors called,
-					copy.nuke();
-					
-					// and return failure.
-					return false;
-				}
-				
-				// Finally perform the bitwise copy.
-				memcpy(reinterpret_cast<void *>(object_copy), reinterpret_cast<void const *>(& object), object_size);
-			}
-
-			// Now, copy has bitwise copy of this buffer. Free this one.
-			deallocate();
-			
-			// Finally, copy the pointers of the new copy back to this,
-			_buffer_begin = copy._buffer_begin;
-			_buffer_end = copy._buffer_end;
-			_data_begin = copy._data_begin;
-			_data_end = (copy._data_end == & copy._data_begin) ? & _data_begin : copy._data_end;
-			
-			// nuke copy so that objects don't get their c'tors called,
-			copy.nuke();
-			
-			verify();
-			
-			// and return success.
-			return true;
-		}
-		
 		// access
 		value_type & front() 
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -164,7 +101,7 @@ namespace core
 		
 		value_type const & front() const
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -172,13 +109,13 @@ namespace core
 		
 		const_iterator begin() const
 		{
-			verify();
+			VerifyObject(* this);
 			return const_iterator(_data_begin);
 		}
 		
 		const_iterator end() const
 		{
-			verify();
+			VerifyObject(* this);
 			return const_iterator(* _data_end);
 		}
 		
@@ -186,7 +123,7 @@ namespace core
 		template <typename CLASS>
 		bool push_back(CLASS const & source)
 		{
-			verify();
+			VerifyObject(* this);
 			
 			// CLASS must be derived from BASE_CLASS.
 			static_assert(std::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
@@ -203,13 +140,13 @@ namespace core
 			// copy-construct object
 			new (back) CLASS (source);
 			
-			verify();
+			VerifyObject(* this);
 			return true;
 		}
 		
 		void pop_front()
 		{
-			verify();
+			VerifyObject(* this);
 			assert(! empty());
 			
 			// get reference to the object to be deleted
@@ -227,7 +164,7 @@ namespace core
 			// call d'tor for object
 			object.~value_type();
 			
-			verify();
+			VerifyObject(* this);
 		}
 		
 		void clear()
@@ -237,8 +174,51 @@ namespace core
 				pop_front();
 			}
 			
-			verify();
+			VerifyObject(* this);
 		}
+		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			if (empty())
+			{
+				assert(_data_end == & _data_begin);
+			}
+			
+			if (_buffer_begin == nullptr)
+			{
+				assert(_buffer_end == nullptr);
+				assert(_data_begin == nullptr);
+				return;
+			}
+			
+			static int entry = 0;
+			if (entry > 0)
+			{
+				return;
+			}
+			++ entry;
+			
+			block const * data_end = * _data_end;
+			
+			verify_address(_buffer_begin);
+			verify_address(_buffer_end);
+			verify_address(_data_begin);
+			verify_address(data_end);
+			
+			assert(capacity() >= block::header_size + sizeof(value_type));
+			assert(_data_begin >= _buffer_begin);
+			assert(_data_begin <= _buffer_end);
+			assert(data_end >= _buffer_begin);
+			assert(data_end <= _buffer_end);
+			
+			for (const_iterator i = const_iterator(_data_begin); i != const_iterator(* _data_end); ++ i)
+			{
+			}
+			
+			-- entry;
+		}
+#endif
 		
 	private:
 		// allocates memory for the object
@@ -253,35 +233,8 @@ namespace core
 			// If there isn't space with the current buffer,
 			if (! locate_next_block(block_begin, block_end, block_size))
 			{
-				// and if bitwise expansion is not allowed,
-				if (! BITWISE_EXPANSION)
-				{
-					// then fail.
-					return nullptr;
-				}
-				
-				// Determine a new buffer capacity,
-				size_type new_capacity = capacity();
-				size_type minimum_capacity = new_capacity + block_size;
-				do 
-				{
-					// to be a power of two multiple.
-					new_capacity <<= 1;
-				}	while (new_capacity < minimum_capacity);
-				
-				// If resizing the buffer to that capacity fails,
-				DEBUG_MESSAGE("increasing capacity of ring_buffer, %p, from " SIZE_T_FORMAT_SPEC " to " SIZE_T_FORMAT_SPEC " bytes", this, capacity(), new_capacity);
-				if (! reserve(new_capacity))
-				{
-					// then new_capacity was calculated incorrectly.
-					DEBUG_BREAK("failed to increase capacity of ring_buffer, %p, from " SIZE_T_FORMAT_SPEC " to " SIZE_T_FORMAT_SPEC " bytes", this, capacity(), new_capacity);
-					return nullptr;
-				}
-				
-				// block extents are now easy to calculate
-				block_begin = * _data_end;
-				block_end = reinterpret_cast<block *>(reinterpret_cast<char *>(block_begin) + block_size);
-				assert(block_end <= _buffer_end);
+				// then fail.
+				return nullptr;
 			}
 			
 			// in case new block is not contiguous,
@@ -294,7 +247,7 @@ namespace core
 			// expand data range
 			_data_end = & block_begin->_next;
 			
-			verify();
+			VerifyObject(* this);
 			return reinterpret_cast<value_type *>(block_begin->_buffer);
 		}
 		
@@ -324,7 +277,7 @@ namespace core
 				
 				// wrap around
 				block_begin = _buffer_begin;
-				block_end = block_begin + block_size;
+				block_end = reinterpret_cast<block *>(reinterpret_cast<char *>(block_begin) + block_size);
 			}
 			// Either way, proposed destination now starts earlier than _data_begin.
 			
@@ -379,7 +332,7 @@ namespace core
 			_data_begin = _buffer_begin;
 			_data_end = & _data_begin;
 			
-			verify();
+			VerifyObject(* this);
 		}
 		
 		// Null this object (except _data_end can never be null).
@@ -399,50 +352,6 @@ namespace core
 		{
 			verify_address(size_type(num_bytes));
 		}
-		
-		void verify() const
-		{
-#if defined(CORE_RING_BUFFER_VERFICATION)
-			if (empty())
-			{
-				assert(_data_end == & _data_begin);
-			}
-			
-			if (_buffer_begin == nullptr)
-			{
-				assert(_buffer_end == nullptr);
-				assert(_data_begin == nullptr);
-				return;
-			}
-			
-			static int entry = 0;
-			if (entry > 0)
-			{
-				return;
-			}
-			++ entry;
-			
-			block const * data_end = * _data_end;
-			
-			verify_address(_buffer_begin);
-			verify_address(_buffer_end);
-			verify_address(_data_begin);
-			verify_address(data_end);
-			
-			assert(capacity() >= block::header_size + sizeof(value_type));
-			assert(_data_begin >= _buffer_begin);
-			assert(_data_begin <= _buffer_end);
-			assert(data_end >= _buffer_begin);
-			assert(data_end <= _buffer_end);
-			
-			for (const_iterator i = begin(); i != end(); ++ i)
-			{
-			}
-			
-			-- entry;
-#endif
-		}
-		
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

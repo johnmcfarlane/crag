@@ -79,9 +79,6 @@
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
     <ClCompile Include="..\..\src\sim\ObserverController.cpp" />
     <ClCompile Include="..\..\src\sim\ObserverInput.cpp" />
-    <ClCompile Include="..\..\src\smp\Fiber.cpp" />
-    <ClCompile Include="..\..\src\smp\FiberPosix.cpp" />
-    <ClCompile Include="..\..\src\smp\FiberWin.cpp" />
     <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
     <ClCompile Include="..\..\src\smp\scheduler.cpp" />
     <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
@@ -96,6 +93,10 @@
     <ClCompile Include="..\..\src\scripts\ga\Sensor.cpp" />
     <ClCompile Include="..\..\src\core\Roster.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverThruster.cpp" />
+    <ClCompile Include="..\..\src\ipc\Fiber.cpp" />
+    <ClCompile Include="..\..\src\ipc\FiberPosix.cpp" />
+    <ClCompile Include="..\..\src\ipc\FiberWin.cpp" />
+    <ClCompile Include="..\..\src\ipc\Uid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -224,27 +225,14 @@
     <ClInclude Include="..\..\src\sim\gravity.h" />
     <ClInclude Include="..\..\src\sim\ObserverController.h" />
     <ClInclude Include="..\..\src\sim\ObserverInput.h" />
-    <ClInclude Include="..\..\src\smp\Daemon.h" />
-    <ClInclude Include="..\..\src\smp\EngineBase.h" />
-    <ClInclude Include="..\..\src\smp\Fiber.h" />
-    <ClInclude Include="..\..\src\smp\FiberPosix.h" />
-    <ClInclude Include="..\..\src\smp\FiberWin.h" />
     <ClInclude Include="..\..\src\smp\for_each.h" />
     <ClInclude Include="..\..\src\smp\Future.h" />
-    <ClInclude Include="..\..\src\smp\Handle.h" />
-    <ClInclude Include="..\..\src\smp\Handle_Impl.h" />
-    <ClInclude Include="..\..\src\smp\Listener.h" />
-    <ClInclude Include="..\..\src\smp\ListenerInterface.h" />
-    <ClInclude Include="..\..\src\smp\MessageQueue.h" />
-    <ClInclude Include="..\..\src\smp\MessageQueue_Impl.h" />
-    <ClInclude Include="..\..\src\smp\Object.h" />
     <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
     <ClInclude Include="..\..\src\smp\scheduler.h" />
     <ClInclude Include="..\..\src\smp\Semaphore.h" />
     <ClInclude Include="..\..\src\smp\SimpleMutex.h" />
     <ClInclude Include="..\..\src\smp\smp.h" />
     <ClInclude Include="..\..\src\smp\Thread.h" />
-    <ClInclude Include="..\..\src\smp\Uid.h" />
     <ClInclude Include="..\..\src\smp\vector.h" />
     <ClInclude Include="..\..\src\scripts\ga\AnimatController.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\VehicleController.h" />
@@ -254,6 +242,20 @@
     <ClInclude Include="..\..\src\core\Roster.h" />
     <ClInclude Include="..\..\src\scripts\vehicle\sim\RoverThruster.h" />
     <ClInclude Include="..\..\src\scripts\ga\Sensor.h" />
+    <ClInclude Include="..\..\src\ipc\Daemon.h" />
+    <ClInclude Include="..\..\src\ipc\EngineBase.h" />
+    <ClInclude Include="..\..\src\ipc\Fiber.h" />
+    <ClInclude Include="..\..\src\ipc\FiberPosix.h" />
+    <ClInclude Include="..\..\src\ipc\FiberWin.h" />
+    <ClInclude Include="..\..\src\ipc\Future.h" />
+    <ClInclude Include="..\..\src\ipc\Handle.h" />
+    <ClInclude Include="..\..\src\ipc\Handle_Impl.h" />
+    <ClInclude Include="..\..\src\ipc\Listener.h" />
+    <ClInclude Include="..\..\src\ipc\ListenerInterface.h" />
+    <ClInclude Include="..\..\src\ipc\MessageQueue.h" />
+    <ClInclude Include="..\..\src\ipc\MessageQueue_Impl.h" />
+    <ClInclude Include="..\..\src\ipc\Object.h" />
+    <ClInclude Include="..\..\src\ipc\Uid.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />

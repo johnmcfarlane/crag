@@ -17,8 +17,8 @@
 #include "RenderBuffer.h"
 #include "Texture.h"
 
-#include "smp/Daemon.h"
-#include "smp/EngineBase.h"
+#include "ipc/Daemon.h"
+#include "ipc/EngineBase.h"
 
 #include "core/Statistics.h"
 
@@ -32,14 +32,14 @@ namespace gfx
 
 	// gfx::Daemon type
 	class Engine;
-	typedef smp::Daemon<Engine> Daemon;
+	typedef ipc::Daemon<Engine> Daemon;
 	
 	
 	// The graphics Engine class. 
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Engine : public smp::EngineBase<Engine, Object>
+	class Engine : public ipc::EngineBase<Engine, Object>
 	{
 		OBJECT_NO_COPY(Engine);
 		
@@ -54,8 +54,8 @@ namespace gfx
 		};
 		
 	public:
-		typedef smp::EngineBase<Engine, Object> super;
-		typedef smp::Daemon<Engine> Daemon;
+		typedef ipc::EngineBase<Engine, Object> super;
+		typedef ipc::Daemon<Engine> Daemon;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

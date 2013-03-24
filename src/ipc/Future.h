@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace smp
+namespace ipc
 {
 	// A deferred result from a cross-thread function call.
 	// This is a good way to call a function which returns a value

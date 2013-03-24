@@ -39,15 +39,15 @@ namespace applet
 		
 		// blocks until the given future is fulfilled
 		template <typename RESULT_TYPE>
-		void WaitFor(smp::Future<RESULT_TYPE> const & future);
+		void WaitFor(ipc::Future<RESULT_TYPE> const & future);
 		
 		// non-blocking call to engine on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
-		void Call(smp::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function);
+		void Call(ipc::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function);
 		
 		// non-blocking call to object on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
-		void Call(smp::Future<RESULT_TYPE> & future, smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
+		void Call(ipc::Future<RESULT_TYPE> & future, ipc::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
 		
 		// blocking call to engine on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
@@ -55,7 +55,7 @@ namespace applet
 		
 		// blocking call to object on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
-		smp::Future<RESULT_TYPE> Get(smp::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
+		ipc::Future<RESULT_TYPE> Get(ipc::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function);
 
 		template <typename FUNCTION_TYPE>
 		void Launch(char const * name, std::size_t stack_size, FUNCTION_TYPE const & function);

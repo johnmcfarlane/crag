@@ -16,8 +16,8 @@
 
 #include "core/Singleton.h"
 
-#include "smp/Daemon.h"
-#include "smp/EngineBase.h"
+#include "ipc/Daemon.h"
+#include "ipc/EngineBase.h"
 #include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
@@ -38,14 +38,14 @@ namespace form
 	
 	// form::Daemon type
 	class Engine;
-	typedef smp::Daemon<Engine> Daemon;
+	typedef ipc::Daemon<Engine> Daemon;
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// form::Engine class
 	
 	// The top-most formation management class.
-	class Engine : public smp::EngineBase<Engine, Formation>
+	class Engine : public ipc::EngineBase<Engine, Formation>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -59,7 +59,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef smp::Daemon<Engine> Daemon;
+		typedef ipc::Daemon<Engine> Daemon;
 
 		struct TreeQueryFunctor
 		{
@@ -68,7 +68,7 @@ namespace form
 			
 		};
 		
-		typedef core::ring_buffer<smp::scheduler::Job, true> BatchedFunctorBuffer;
+		typedef core::ring_buffer<smp::scheduler::Job> BatchedFunctorBuffer;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

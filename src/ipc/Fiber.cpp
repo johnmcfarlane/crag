@@ -11,11 +11,11 @@
 
 #include "Fiber.h"
 
-using namespace smp;
+using namespace ipc;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Platform-independent smp::Fiber member definitions
+// Platform-independent ipc::Fiber member definitions
 
 bool Fiber::IsRunning() const
 {

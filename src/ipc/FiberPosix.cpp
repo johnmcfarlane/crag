@@ -16,7 +16,7 @@
 #include "core/Random.h"
 
 
-using namespace smp;
+using namespace ipc;
 
 namespace
 {
@@ -58,7 +58,7 @@ namespace
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// POSIX-specific smp::Fiber member definitions
+// POSIX-specific ipc::Fiber member definitions
 
 Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
 : _name(name)

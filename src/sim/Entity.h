@@ -27,12 +27,12 @@ namespace sim
 	class Controller;
 
 	// A thing that exist in the simulation.
-	class Entity : public smp::Object<Entity, sim::Engine>
+	class Entity : public ipc::Object<Entity, sim::Engine>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef smp::Object<Entity, sim::Engine> super;
+		typedef ipc::Object<Entity, sim::Engine> super;
 	public:
 
 		////////////////////////////////////////////////////////////////////////////////

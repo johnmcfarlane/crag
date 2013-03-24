@@ -11,8 +11,8 @@
 
 #include "defs.h"
 
-#include "smp/Daemon.h"
-#include "smp/EngineBase.h"
+#include "ipc/Daemon.h"
+#include "ipc/EngineBase.h"
 
 #include "core/Singleton.h"
 
@@ -26,15 +26,15 @@ namespace applet
 	////////////////////////////////////////////////////////////////////////////////
 	// definitions
 
-	typedef smp::Uid Uid;
+	typedef ipc::Uid Uid;
 	
 	// applet::Daemon type
 	class Engine;
-	typedef smp::Daemon<Engine> Daemon;
+	typedef ipc::Daemon<Engine> Daemon;
 	
 	// The applet scheduling is coordinated from here.
 	// When Run finishes, the program is done.
-	class Engine : public smp::EngineBase <Engine, Applet>
+	class Engine : public ipc::EngineBase <Engine, Applet>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -42,8 +42,8 @@ namespace applet
 		// types
 
 	public:
-		typedef smp::Daemon<Engine> Daemon;
-		typedef smp::EngineBase<Engine, Applet> super;
+		typedef ipc::Daemon<Engine> Daemon;
+		typedef ipc::EngineBase<Engine, Applet> super;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

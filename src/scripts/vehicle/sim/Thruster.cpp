@@ -49,7 +49,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray)
 
 Thruster::~Thruster()
 {
-	Verify();
+	VerifyObject(* this);
 
 	// destroy model
 	_model.Destroy();

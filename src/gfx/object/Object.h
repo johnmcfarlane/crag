@@ -32,13 +32,13 @@ namespace gfx
 
 	// Base class for drawable things.
 	// meaning they effectively double as nodes in a hierachical scene graph.
-	class Object : public smp::Object<Object, Engine>
+	class Object : public ipc::Object<Object, Engine>
 	{
 	protected:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef smp::Object<Object, Engine> super;
+		typedef ipc::Object<Object, Engine> super;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

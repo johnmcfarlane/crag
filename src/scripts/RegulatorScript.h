@@ -14,7 +14,7 @@
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 
-#include "smp/Listener.h"
+#include "ipc/Listener.h"
 
 namespace applet
 {
@@ -26,9 +26,9 @@ namespace script
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
 	class RegulatorScript 
-		: smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>
-		, smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>
-		, smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>
+		: ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>
+		, ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>
+		, ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types

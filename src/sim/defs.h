@@ -35,7 +35,7 @@ namespace sim
 	DECLARE_CLASS_HANDLE(Entity);	// sim::EntityHandle
 	
 	// daemon type
-	typedef smp::Daemon<Engine> Daemon;
+	typedef ipc::Daemon<Engine> Daemon;
 
 	// precision used by simulation
 	typedef float Scalar;
@@ -49,5 +49,5 @@ namespace sim
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 	typedef geom::Transformation<Scalar> Transformation;
 	
-	typedef smp::Uid Uid;
+	typedef ipc::Uid Uid;
 }

@@ -10,10 +10,10 @@
 #include "pch.h"
 
 
-using namespace smp;
+using namespace ipc;
 
 
-std::ostream & smp::operator << (std::ostream & out, Uid const & uid)
+std::ostream & ipc::operator << (std::ostream & out, Uid const & uid)
 {
 	return out << uid._value;
 }

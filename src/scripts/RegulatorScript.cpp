@@ -272,14 +272,14 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 		applet_interface.Sleep(0.25);
 	}
 
-	smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::BeginRelease();
-	smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::BeginRelease();
-	smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::BeginRelease();
+	ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::BeginRelease();
+	ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::BeginRelease();
+	ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::BeginRelease();
 
 	applet_interface.WaitFor([this] () -> bool {
-		return smp::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::IsReleased()
-			&& smp::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::IsReleased()
-			&& smp::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsReleased();
+		return ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::IsReleased()
+			&& ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::IsReleased()
+			&& ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsReleased();
 	});
 }
 

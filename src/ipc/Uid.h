@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace smp
+namespace ipc
 {
 	// forward-declarations
 	class Uid;	
@@ -51,9 +51,9 @@ namespace smp
 namespace std
 {
 	template <>
-	struct hash <smp::Uid>
+	struct hash <ipc::Uid>
 	{
-		size_t operator() (smp::Uid uid) const
+		size_t operator() (ipc::Uid uid) const
 		{
 			ASSERT(uid);
 			return uid.Hash();

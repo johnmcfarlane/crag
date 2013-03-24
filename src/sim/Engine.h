@@ -11,8 +11,8 @@
 
 #include "defs.h"
 
-#include "smp/Daemon.h"
-#include "smp/EngineBase.h"
+#include "ipc/Daemon.h"
+#include "ipc/EngineBase.h"
 
 #include "geom/origin.h"
 
@@ -43,13 +43,13 @@ namespace sim
 	class Entity;
 	
 	// Engine - main object of simulation thread
-	class Engine : public smp::EngineBase<Engine, Entity>
+	class Engine : public ipc::EngineBase<Engine, Entity>
 	{
 		OBJECT_SINGLETON(Engine);
 
 	public:
-		typedef smp::EngineBase<Engine, Entity> super;
-		typedef smp::Daemon<Engine> Daemon;
+		typedef ipc::EngineBase<Engine, Entity> super;
+		typedef ipc::Daemon<Engine> Daemon;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

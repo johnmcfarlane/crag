@@ -11,7 +11,7 @@
 
 #include "Uid.h"
 
-namespace smp
+namespace ipc
 {
 	template <typename CLASS>
 	class Daemon;
@@ -39,7 +39,7 @@ namespace smp
 	public:
 		// types
 		typedef ENGINE Engine;
-		typedef ::smp::Daemon<Engine> Daemon;
+		typedef ::ipc::Daemon<Engine> Daemon;
 		typedef ObjectInit<Engine> Init;
 		
 		// functions

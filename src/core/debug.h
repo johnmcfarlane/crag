@@ -60,7 +60,22 @@ void PrintMessage(FILE * out, char const * format, ...);
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, "%32s(%3d):" FORMAT " [%s]\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
+#if defined(WIN32)
+#define DEBUG_COLOR_FILE
+#define DEBUG_COLOR_LINE
+#define DEBUG_COLOR_TEXT
+#define DEBUG_COLOR_FUNC
+#define DEBUG_COLOR_PUNC
+#define DEBUG_COLOR_NORM
+#else
+#define DEBUG_COLOR_FILE "\x1B[32;1m"
+#define DEBUG_COLOR_LINE "\x1B[31;1m"
+#define DEBUG_COLOR_TEXT "\x1B[37;1m"
+#define DEBUG_COLOR_FUNC "\x1B[36;2m"
+#define DEBUG_COLOR_PUNC "\x1B[37;2m"
+#define DEBUG_COLOR_NORM "\x1B[0m"
+#endif
+#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "]\n" DEBUG_COLOR_NORM, MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
 #endif
 
 
@@ -98,7 +113,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 
 // ASSERT - interrupt execution in a debug build iff given condition fails
 #if defined(NDEBUG)
-#define ASSERT(CONDITION) ASSUME((CONDITION) == true)
+#define ASSERT(CONDITION) DO_NOTHING
 #else
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
