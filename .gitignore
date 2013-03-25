@@ -3,13 +3,13 @@
 CMakeCache.txt
 CMakeFiles/
 Makefile
-default.cfg
 cerr.txt
 cout.txt
 cmake_install.cmake
-./core
+core
 crag
 crag.cfg
+default.cfg
 dependencies/SDL*
 dependencies/bin/
 dependencies/glew
