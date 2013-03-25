@@ -1,0 +1,5 @@
+echo bt > bt.batch
+gdb crag core -batch -x bt.batch > backtrace
+rm bt.batch
+rm core
+less backtrace
