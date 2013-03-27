@@ -6,7 +6,7 @@ Makefile
 cerr.txt
 cout.txt
 cmake_install.cmake
-core
+./core
 crag
 crag.cfg
 default.cfg

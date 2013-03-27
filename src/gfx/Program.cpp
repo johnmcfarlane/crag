@@ -85,7 +85,7 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	
 	InitUniforms();
 	
-	for (int i = 0; i < MAX_LIGHTS; ++ i)
+	for (auto i = 0; i < MAX_LIGHTS; ++ i)
 	{
 		char name[40];
 		
@@ -148,7 +148,7 @@ void Program::UpdateLights(Light::List const & lights) const
 		if (uniforms == uniforms_end)
 		{
 			// We're out of light uniforms. Time to start prioritizing perhaps.
-			ASSERT(false);
+			DEBUG_BREAK("light limit, %d, exceeded", MAX_LIGHTS);
 			break;
 		}
 		

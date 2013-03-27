@@ -54,6 +54,7 @@ namespace ipc
 		operator bool () const;
 		
 		// Returns the UID of the entity being handled.
+		// TODO: Should be able to remove this.
 		Uid GetUid() const;
 		
 		// Sets the UID of the entity being handled.
