@@ -98,7 +98,8 @@ namespace core
 			/////////////////////////////////////////////////////////////////////////////
 			// functions
 
-			void SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison);
+			// returns true iff this changed
+			bool SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison);
 			Comparison GetComparison(FunctionIndex lhs, FunctionIndex rhs) const;
 
 			FunctionIndex GetFunctionIndex(Function function);

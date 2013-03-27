@@ -71,7 +71,7 @@ void Function::operator() (void * object) const
 ////////////////////////////////////////////////////////////////////////////////
 // core::locality::Ordering member definitions
 
-void Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison)
+bool Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison)
 {
 	VerifyObject(* this);
 
@@ -88,7 +88,7 @@ void Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison co
 	if (_comparison == comparison)
 	{
 		// fully expect duplicate calls
-		return;
+		return false;
 	}
 
 	// this pair should not already have been set to something different;
@@ -118,6 +118,7 @@ void Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison co
 	SetComparison(rhs, lhs, - comparison);
 
 	VerifyObject(* this);
+	return true;
 }
 
 Ordering::Comparison Ordering::GetComparison(FunctionIndex lhs, FunctionIndex rhs) const
@@ -176,15 +177,22 @@ void Ordering::Verify() const
 		for (FunctionIndex column_index = 0; column_index != size; ++ column_index)
 		{
 			auto cell = row[column_index];
+
+			// verify cell
+			VerifyOp(cell, >=, -1);
+			VerifyOp(cell, <=, 1);
+
+			// verify that c=r diagonal is clear
 			if (row_index == column_index)
 			{
 				VerifyEqual(cell, 0);
 				continue;
 			}
-
-			VerifyOp(cell, >=, -1);
-			VerifyOp(cell, <=, 1);
-			VerifyEqual(int(cell), int(- _table[column_index].comparisons[row_index]));
+			else
+			{
+				// verify that [c][r] == -[r][c]
+				VerifyEqual(int(cell), int(- _table[column_index].comparisons[row_index]));
+			}
 		}
 	}
 }
@@ -223,14 +231,10 @@ Roster::~Roster()
 void Roster::Verify() const
 {
 	// verify order
-	auto end = std::end(_commands);
-	for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
+	VerifyTrue(std::is_sorted(std::begin(_commands), std::end(_commands), [=] (Command lhs, Command rhs)
 	{
-		for (auto rhs = lhs; ++ rhs != end; )
-		{
-			VerifyTrue(! LessThan(* rhs, * lhs));
-		}
-	};
+		return LessThan(lhs, rhs);
+	}));
 
 	_ordering.Verify();
 }
@@ -239,18 +243,30 @@ void Roster::Verify() const
 void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 {
 	VerifyObject(* this);
-
 	ASSERT(lhs_function != rhs_function);
 
 	auto lhs_index = GetFunctionIndex(lhs_function);
 	auto rhs_index = GetFunctionIndex(rhs_function);
 	ASSERT(lhs_index != rhs_index);
 
-	_ordering.SetComparison(lhs_index, rhs_index, -1);
+	if (_ordering.SetComparison(lhs_index, rhs_index, -1))
+	{
+		Sort();
 
-	Sort();
+		VerifyObject(* this);
 
-	VerifyObject(* this);
+#if defined(VERIFY)
+	// exhaustive comparison ensures complete integrity of ordering
+	auto end = std::end(_commands);
+	for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
+	{
+		for (auto rhs = lhs; ++ rhs != end; )
+		{
+			VerifyTrue(! LessThan(* rhs, * lhs));
+		}
+	};
+#endif
+	}
 }
 
 // TODO: separate sorting into essential sorting and incremental sorting;
