@@ -38,7 +38,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(Vehicle);
+		DECLARE_ALLOCATOR(Entity);
 
 		Entity(Init const & init);
 		~Entity();
