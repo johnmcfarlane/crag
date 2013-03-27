@@ -63,19 +63,19 @@ namespace ipc
 #endif
 		
 		// default allocation
-		void* operator new(size_t sz)
+		void* operator new(size_t sz) noexcept
 		{
 			return ::Allocate(sz, 16);
 		}
-		void* operator new [](size_t sz)
+		void* operator new [](size_t sz) noexcept
 		{
 			return ::Allocate(sz, 16);
 		}
-		void operator delete(void* p)
+		void operator delete(void* p) noexcept
 		{
 			::Free(p);
 		}
-		void operator delete [](void* p)
+		void operator delete [](void* p) noexcept
 		{
 			::Free(p);
 		}
