@@ -107,3 +107,6 @@ find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
 target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "GLEW" "pthread")
 
+include (PrecompiledHeader.cmake)
+add_precompiled_header(crag src/pch.h)
+
