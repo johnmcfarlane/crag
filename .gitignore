@@ -17,6 +17,7 @@ dependencies/include/
 dependencies/lib/
 dependencies/ode
 dependencies/share/
+pch.h.gch/
 vs/vs2012/Debug
 vs/vs2012/Release
 vs/vs2012/ipch

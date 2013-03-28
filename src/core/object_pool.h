@@ -19,22 +19,27 @@
 // and add DECLARE_ALLOCATOR to the class definition
 #define DEFINE_POOL_ALLOCATOR(TYPE, MIN_OBJECTS) \
 	static core::object_pool<TYPE> pool(MIN_OBJECTS); \
-	void* TYPE::operator new(size_t sz) noexcept \
+	void * TYPE::operator new(size_t sz) noexcept \
 	{ \
 		ASSERT(sz == sizeof(TYPE)); \
-		return pool.allocate(); \
+		void * ptr = pool.allocate(); \
+		if (ptr == nullptr) \
+		{ \
+			DEBUG_BREAK("failed to allocate object of type " #TYPE); \
+		} \
+		return ptr; \
 	} \
-	void* TYPE::operator new [](size_t sz) noexcept \
+	void * TYPE::operator new [] (size_t sz) noexcept \
 	{ \
 		ASSERT(sz == sizeof(TYPE)); \
 		DEBUG_BREAK("not supported"); \
 		return nullptr; \
 	} \
-	void TYPE::operator delete(void* p) noexcept \
+	void TYPE::operator delete(void * p) noexcept \
 	{ \
 		pool.free(p); \
 	} \
-	void TYPE::operator delete [](void* p) noexcept \
+	void TYPE::operator delete [](void * p) noexcept \
 	{ \
 		DEBUG_BREAK("not supported"); \
 	}
@@ -118,7 +123,7 @@ namespace core
 
 			if (_free_list == nullptr)
 			{
-				DEBUG_BREAK("pool is full");
+				DEBUG_MESSAGE("object pool is full");
 				return nullptr;
 			}
 
