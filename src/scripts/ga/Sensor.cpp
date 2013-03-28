@@ -11,14 +11,43 @@
 
 #include "Sensor.h"
 
+#include "AnimatController.h"
+
+#include "sim/Engine.h"
+#include "sim/Entity.h"
+
+#include "gfx/Debug.h"
+
+#include "core/Roster.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
-DISABLE_ALLOCATOR(Sensor);
+DEFINE_POOL_ALLOCATOR(Sensor, 80);
 
-Sensor::Sensor(Ray3 const & ray)
-: _ray(ray)
+Sensor::Sensor(Controller & controller, Ray3 const & ray)
+: _controller(controller)
+, _ray(ray)
 {
+	auto & roster = GetTickRoster();
+	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
+	roster.AddCommand(* this, & Sensor::Tick);
+}
+
+Sensor::~Sensor()
+{
+	auto & roster = GetTickRoster();
+	roster.RemoveCommand(* this, & Sensor::Tick);
+}
+
+void Sensor::Tick()
+{
+//	gfx::Debug
+}
+
+core::locality::Roster & Sensor::GetTickRoster()
+{
+	return _controller.GetEntity().GetEngine().GetTickRoster();
 }

@@ -11,6 +11,13 @@
 
 #include "AnimatController.h"
 
+#include "AnimatThruster.h"
+
+#include "sim/Engine.h"
+#include "sim/Entity.h"
+
+#include "core/Roster.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +31,25 @@ AnimatController::AnimatController(Entity & entity)
 	CreateSensors();
 	CreateThrusters();
 	Connect();
+
+	auto & roster = entity.GetEngine().GetTickRoster();
+	roster.AddCommand(* this, & AnimatController::Tick);
+	roster.AddOrdering(& AnimatController::Tick, & Entity::Tick);
+}
+
+AnimatController::~AnimatController()
+{
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.RemoveCommand(* this, & AnimatController::Tick);
+
+	for (auto sensor : _sensors)
+	{
+		delete sensor;
+	}
+}
+
+void AnimatController::Tick()
+{
 }
 
 void AnimatController::CreateSensors()
@@ -55,6 +81,7 @@ void AnimatController::CreateSensors()
 
 void AnimatController::CreateThrusters()
 {
+	auto & entity = GetEntity();
 	auto root_third = static_cast<float>(std::sqrt(1. / 3.));
 	auto direction_scale = 5.f;
 
@@ -74,7 +101,7 @@ void AnimatController::CreateThrusters()
 				ray.position.x = x ? root_third : -root_third;
 				ray.direction.x = ray.position.x * direction_scale;
 
-				AddSensor(ray);
+				AddThruster(new AnimatThruster(entity, ray));
 			}
 		}
 	}
@@ -86,11 +113,7 @@ void AnimatController::Connect()
 
 void AnimatController::AddSensor(Ray3 const & ray)
 {
-	_sensors.emplace_back(ray);
-}
-
-void AnimatController::Tick()
-{
+	_sensors.push_back(new Sensor(* this, ray));
 }
 
 void AnimatController::TickThrusters()

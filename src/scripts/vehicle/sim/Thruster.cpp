@@ -28,7 +28,7 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
-Thruster::Thruster(Entity & entity, Ray3 const & ray)
+Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light)
 	: _entity(entity)
 	, _ray(ray)
 	, _thrust_factor(0)
@@ -38,8 +38,11 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray)
 	Transformation local_transformation(ray.position, axes::Rotation(ray.direction / thrust_scale), thrust_scale);
 
 	// create model
-	_model = gfx::ThrusterHandle::CreateHandle(local_transformation);
-	
+	if (light)
+	{
+		_model = gfx::ThrusterHandle::CreateHandle(local_transformation);
+	}
+
 	// roster
 	auto& tick_roster = entity.GetEngine().GetTickRoster();
 	tick_roster.AddCommand(* this, & Thruster::Tick);
@@ -63,13 +66,17 @@ Thruster::~Thruster()
 void Thruster::Verify() const
 {
 	VerifyRef(_entity);
-	VerifyTrue(_model);
 	VerifyOp(_thrust_factor, >=, 0);
 }
 #endif
 
 void Thruster::SetParentModel(gfx::ObjectHandle parent_model)
 {
+	if (! _model)
+	{
+		return;
+	}
+
 	auto uid = _model.GetUid();
 	auto parent_uid = parent_model.GetUid();
 	gfx::Daemon::Call([uid, parent_uid] (gfx::Engine & engine) {
@@ -104,6 +111,11 @@ void Thruster::UpdateModel() const
 
 	float thrust_factor = _thrust_factor;
 	if (thrust_factor <= 0)
+	{
+		return;
+	}
+
+	if ( !_model)
 	{
 		return;
 	}

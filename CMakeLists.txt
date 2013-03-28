@@ -66,6 +66,8 @@ add_executable(crag
 	src/scripts/MainScript.cpp
 	src/scripts/MonitorOrigin.cpp
 	src/scripts/ga/AnimatController.cpp
+	src/scripts/ga/AnimatThruster.cpp
+	src/scripts/ga/Genome.cpp
 	src/scripts/ga/Sensor.cpp
 	src/scripts/planet/gfx/Planet.cpp
 	src/scripts/planet/physics/PlanetBody.cpp

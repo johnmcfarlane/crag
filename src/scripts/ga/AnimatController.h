@@ -7,8 +7,10 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "../vehicle/sim/VehicleController.h"
+// TODO: directory structure clearly isn't nailed down yet
+#include "scripts/vehicle/sim/VehicleController.h"
 
+#include "Genome.h"
 #include "Sensor.h"
 
 namespace sim
@@ -17,9 +19,15 @@ namespace sim
 	class AnimatController : public VehicleController
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
 		DECLARE_ALLOCATOR(AnimatController);
 
 		AnimatController(Entity & entity);
+		~AnimatController();
+
+		virtual void Tick() final;
 
 	private:
 		void CreateSensors();
@@ -28,10 +36,12 @@ namespace sim
 
 		void AddSensor(Ray3 const & ray);
 
-		virtual void Tick() final;
-
 		virtual void TickThrusters() final;
 
-		std::vector<Sensor> _sensors;
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
+		std::vector<Sensor *> _sensors;
+		ga::Genome _genome;
 	};
 }
