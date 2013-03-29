@@ -65,8 +65,7 @@ Color4f const & Light::GetColor() const
 LeafNode::PreRenderResult Light::PreRender()
 {
 	geom::rel::Vector3 light_position = GetParent()->GetModelTransformation().GetTranslation();
-	Debug::Vector3 basis_position = geom::Cast<double>(light_position);
-	Debug::AddBasis(basis_position, 1000000.);
+	Debug::AddBasis(light_position, 1000000.);
 	
 	return ok;
 }

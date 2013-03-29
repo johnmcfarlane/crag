@@ -112,7 +112,7 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 
 #if ! defined(NDEBUG)
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	Debug::AddBasis(front_buffer.GetOrigin(), 1.);
+	Debug::AddBasis(geom::Cast<float>(front_buffer.GetOrigin()), 1.);
 #endif
 	
 	return ok;

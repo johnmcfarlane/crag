@@ -32,7 +32,7 @@ namespace gfx
 	namespace Debug
 	{
 		// typedefs
-		typedef double Scalar;
+		typedef float Scalar;
 		typedef geom::Vector<Scalar, 3> Vector3;
 		typedef geom::Vector<Scalar, 4> Vector4;
 		typedef geom::Matrix<Scalar, 3, 3> Matrix33;

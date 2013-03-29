@@ -1119,7 +1119,7 @@ void Engine::DebugDraw()
 		return;
 	}
 
-	Debug::AddBasis(geom::abs::Vector3::Zero(), 1000000.);
+	Debug::AddBasis(Vector3::Zero(), 1000000.);
 	
 	Pov const & pov = scene->GetPov();
 	Transformation const & transformation = pov.GetTransformation();
@@ -1136,7 +1136,7 @@ void Engine::DebugDraw()
 	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
-	Debug::Draw(geom::Cast<double>(translation));
+	Debug::Draw(translation);
 	
 #if defined (GATHER_STATS)
 	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
