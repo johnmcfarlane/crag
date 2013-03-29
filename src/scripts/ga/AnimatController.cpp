@@ -113,7 +113,7 @@ void AnimatController::Connect()
 
 void AnimatController::AddSensor(Ray3 const & ray)
 {
-	_sensors.push_back(new Sensor(* this, ray));
+	_sensors.push_back(new Sensor(GetEntity(), ray));
 }
 
 void AnimatController::TickThrusters()

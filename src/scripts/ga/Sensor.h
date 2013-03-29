@@ -21,7 +21,7 @@ namespace core
 
 namespace sim
 {
-	class Controller;
+	class Entity;
 
 	class Sensor
 	{
@@ -31,7 +31,7 @@ namespace sim
 
 		DECLARE_ALLOCATOR(Sensor);
 
-		Sensor(Controller & controller, Ray3 const & position);
+		Sensor(Entity & entity, Ray3 const & position);
 		~Sensor();
 
 	private:
@@ -42,7 +42,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		Controller & _controller;
+		Entity & _entity;
 		Ray3 _ray;	// Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
 	};

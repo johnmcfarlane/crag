@@ -27,8 +27,8 @@ using namespace sim;
 
 DEFINE_POOL_ALLOCATOR(Sensor, 80);
 
-Sensor::Sensor(Controller & controller, Ray3 const & ray)
-: _controller(controller)
+Sensor::Sensor(Entity & entity, Ray3 const & ray)
+: _entity(entity)
 , _ray(ray)
 {
 	auto & roster = GetTickRoster();
@@ -49,5 +49,5 @@ void Sensor::Tick()
 
 core::locality::Roster & Sensor::GetTickRoster()
 {
-	return _controller.GetEntity().GetEngine().GetTickRoster();
+	return _entity.GetEngine().GetTickRoster();
 }
