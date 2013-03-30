@@ -24,14 +24,14 @@ namespace sim
 
 		DECLARE_ALLOCATOR(AnimatController);
 
-		AnimatController(Entity & entity);
+		AnimatController(Entity & entity, float radius);
 		~AnimatController();
 
 		virtual void Tick() final;
 
 	private:
-		void CreateSensors();
-		void CreateThrusters();
+		void CreateSensors(float radius);
+		void CreateThrusters(float radius);
 		void Connect();
 
 		void AddSensor(Ray3 const & ray);

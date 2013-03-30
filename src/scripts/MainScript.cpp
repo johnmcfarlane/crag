@@ -124,7 +124,7 @@ namespace
 			entity.SetModel(model);
 
 			// controller
-			auto controller = new sim::AnimatController(entity);
+			auto controller = new sim::AnimatController(entity, sphere.radius);
 			entity.SetController(controller);
 		});
 

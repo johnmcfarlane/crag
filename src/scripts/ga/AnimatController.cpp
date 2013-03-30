@@ -25,11 +25,11 @@ using namespace sim;
 
 DEFINE_POOL_ALLOCATOR(AnimatController, 10);
 
-AnimatController::AnimatController(Entity & entity)
+AnimatController::AnimatController(Entity & entity, float radius)
 : VehicleController(entity)
 {
-	CreateSensors();
-	CreateThrusters();
+	CreateSensors(radius);
+	CreateThrusters(radius);
 	Connect();
 
 	auto & roster = entity.GetEngine().GetTickRoster();
@@ -52,9 +52,9 @@ void AnimatController::Tick()
 {
 }
 
-void AnimatController::CreateSensors()
+void AnimatController::CreateSensors(float radius)
 {
-	auto root_third = static_cast<float>(std::sqrt(1. / 3.));
+	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
 	auto direction_scale = 5.f;
 
 	Ray3 ray;
@@ -79,10 +79,10 @@ void AnimatController::CreateSensors()
 	}
 }
 
-void AnimatController::CreateThrusters()
+void AnimatController::CreateThrusters(float radius)
 {
 	auto & entity = GetEntity();
-	auto root_third = static_cast<float>(std::sqrt(1. / 3.));
+	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
 	auto direction_scale = 5.f;
 
 	Ray3 ray;
