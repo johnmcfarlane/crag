@@ -524,6 +524,8 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			UpdateTransformations();
 			Render();
 			Capture();
+			
+			_dirty = false;
 		}
 		else
 		{
@@ -1137,6 +1139,7 @@ void Engine::DebugDraw()
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
 	Debug::Draw(translation);
+	Debug::Clear();
 	
 #if defined (GATHER_STATS)
 	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);

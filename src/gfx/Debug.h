@@ -73,9 +73,8 @@ namespace gfx
 		void AddFrustum(Pov const & pov);
 		
 		void Draw(Vector3 const & camera_pos);
-		
 		void DrawText(char const * text, geom::Vector2i const & position);
-		
+		void Clear();
 #else
 		inline void Init() { }
 		inline void Deinit() { }
@@ -88,8 +87,10 @@ namespace gfx
 		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
 		inline void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity()) { }
 		inline void AddFrustum(Pov const & pov) { }
+
 		inline void Draw(Vector3 const &) { }
 		inline void DrawText(char const * text, geom::Vector2i const & position) { }
+		inline void Clear() { }
 #endif
 	
 		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors = ColorPair(1, 1))
