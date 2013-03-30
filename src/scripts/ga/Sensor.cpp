@@ -16,11 +16,23 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
+#include "physics/Location.h"
+
 #include "gfx/Debug.h"
 
 #include "core/Roster.h"
 
 using namespace sim;
+
+namespace
+{
+	// given a position which is relative to entity, returns simulation-relative position
+	Vector3 Transform(Vector3 local, Entity const & entity)
+	{
+		auto location = entity.GetLocation();
+		return location->Transform(local);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
@@ -44,7 +56,13 @@ Sensor::~Sensor()
 
 void Sensor::Tick()
 {
-//	gfx::Debug
+	auto & scanner = _ray;
+
+	auto start = Transform(scanner.position, _entity);
+	auto end = Transform(geom::Project(scanner, 1.0f), _entity);
+	gfx::Debug::ColorPair cp(gfx::Debug::Color::Red(), gfx::Debug::Color(0,0,0,0));
+
+	gfx::Debug::AddLine(start, end, cp);
 }
 
 core::locality::Roster & Sensor::GetTickRoster()
