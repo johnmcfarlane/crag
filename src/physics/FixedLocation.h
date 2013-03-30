@@ -21,7 +21,7 @@ namespace physics
 	public:
 		FixedLocation(Transformation const & transformation);
 
-		virtual Vector3 GetDimensions() const final;
+		virtual Vector3 GetScale() const final;
 		virtual Vector3 GetPosition() const final;
 		virtual Matrix33 GetRotation() const final;
 

@@ -22,10 +22,10 @@ physics::SphericalBody::SphericalBody(physics::Engine & engine, bool movable, Sc
 {
 }
 
-physics::Vector3 physics::SphericalBody::GetDimensions() const
+physics::Vector3 physics::SphericalBody::GetScale() const
 {
-	Scalar diameter = GetRadius() * 2;
-	return Vector3(diameter, diameter, diameter);
+	Scalar radius = GetRadius();
+	return Vector3(radius, radius, radius);
 }
 
 void physics::SphericalBody::SetRadius(Scalar radius) const

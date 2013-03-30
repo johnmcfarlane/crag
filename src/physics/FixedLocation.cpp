@@ -21,7 +21,7 @@ FixedLocation::FixedLocation(Transformation const & transformation)
 { 
 }
 
-Vector3 FixedLocation::GetDimensions() const
+Vector3 FixedLocation::GetScale() const
 {
 	return _transformation.GetScale();
 }

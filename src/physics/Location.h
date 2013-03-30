@@ -26,10 +26,12 @@ namespace physics
 		virtual Body * GetBody();
 		virtual Body const * GetBody() const;
 
-		virtual Vector3 GetDimensions() const;
+		virtual Vector3 GetScale() const;
 		virtual Vector3 GetPosition() const = 0;
 		virtual Matrix33 GetRotation() const;
 		virtual Transformation GetTransformation() const;
+
+		virtual Vector3 Transform(Vector3 local) const;
 
 #if defined(VERIFY)
 		virtual void Verify() const = 0;
