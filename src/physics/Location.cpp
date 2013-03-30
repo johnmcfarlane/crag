@@ -37,7 +37,7 @@ Body const * Location::GetBody() const
 	return nullptr;
 }
 
-Vector3 Location::GetDimensions() const
+Vector3 Location::GetScale() const
 {
 	return Vector3(1, 1, 1);
 }
@@ -50,5 +50,10 @@ Matrix33 Location::GetRotation() const
 
 Transformation Location::GetTransformation() const
 {
-	return Transformation(GetPosition(), GetRotation(), GetDimensions());
-}	
+	return Transformation(GetPosition(), GetRotation(), GetScale());
+}
+
+Vector3 Location::Transform(Vector3 local) const
+{
+	return GetTransformation().Transform(local);
+}

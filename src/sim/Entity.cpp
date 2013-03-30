@@ -118,7 +118,7 @@ void Entity::UpdateModels() const
 	
 	Vector3 position = _location->GetPosition();
 	Matrix33 rotation = _location->GetRotation();
-	Vector3 scale = _location->GetDimensions() * .5f;
+	Vector3 scale = _location->GetScale();
 	Transformation transformation(position, rotation, scale);
 
 	_model.Call([transformation] (gfx::Object & node) {

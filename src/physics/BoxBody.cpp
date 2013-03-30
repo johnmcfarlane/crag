@@ -28,7 +28,7 @@ void physics::BoxBody::SetDimensions(Vector3 const & dimensions) const
 	dGeomBoxSetLengths(geom_id, dimensions.x, dimensions.y, dimensions.z);
 }
 
-physics::Vector3 physics::BoxBody::GetDimensions() const
+physics::Vector3 physics::BoxBody::GetScale() const
 {
 	Vector3 dimensions;
 	dGeomBoxGetLengths(geom_id, dimensions.GetAxes());
@@ -40,8 +40,8 @@ void physics::BoxBody::SetDensity(Scalar density)
 	ASSERT(body_id != 0);
 	
 	dMass m;
-	Vector3 dimensions = GetDimensions();
-	dMassSetBox (& m, density, dimensions.x, dimensions.y, dimensions.z);
+	Vector3 scale = GetScale();
+	dMassSetBox (& m, density, scale.x, scale.y, scale.z);
 	dBodySetMass (body_id, & m);
 }
 
