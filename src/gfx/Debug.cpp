@@ -378,7 +378,6 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 	
 	DrawPrimatives(camera_pos, false);
 	DrawPrimatives(camera_pos, true);
-	ClearPrimatives();
 	
 	// Unset state
 	Enable(GL_CULL_FACE);
@@ -389,6 +388,11 @@ void gfx::Debug::Draw(Vector3 const & camera_pos)
 	Verify();
 	GL_VERIFY;
 	mutex.unlock();
+}
+
+void gfx::Debug::Clear()
+{
+	ClearPrimatives();
 }
 
 void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)
