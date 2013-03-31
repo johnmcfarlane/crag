@@ -79,6 +79,7 @@ namespace sim
 		core::Time GetTime() const;
 		physics::Engine & GetPhysicsEngine();		
 		core::locality::Roster & GetTickRoster();
+		core::locality::Roster & GetDrawRoster();
 
 		// called be Daemon when simulation thread starts
 		void Run(Daemon::MessageQueue & message_queue);
@@ -101,6 +102,7 @@ namespace sim
 		physics::Engine & _physics_engine;
 
 		core::locality::Roster & _tick_roster;
+		core::locality::Roster & _draw_roster;
 	};
 	
 }

@@ -14,8 +14,6 @@
 #include "sim/Entity.h"
 #include "sim/Engine.h"
 
-#include "core/Roster.h"
-
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,20 +22,12 @@ using namespace sim;
 VehicleController::VehicleController(Entity & entity)
 : _super(entity)
 {
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& VehicleController::Tick, & Entity::Tick);
-	roster.AddOrdering(& Thruster::Tick, & VehicleController::Tick);
-	roster.AddCommand(* this, & VehicleController::Tick);
-
 	VerifyObject(* this);
 }
 
 VehicleController::~VehicleController()
 {
 	VerifyObject(* this);
-
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & VehicleController::Tick);
 
 	while (! _thrusters.empty())
 	{
@@ -86,13 +76,4 @@ void VehicleController::PopThruster()
 	delete thruster;
 
 	VerifyObject(* this);
-}
-
-void VehicleController::Tick()
-{
-	for (ThrusterVector::iterator i = _thrusters.begin(), end = _thrusters.end(); i != end; ++ i)
-	{
-		auto & thruster = * * i;
-		thruster.UpdateModel();
-	}
 }
