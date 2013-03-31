@@ -40,9 +40,6 @@ namespace sim
 	protected:
 		void PopThruster();
 
-		// Called whenever the simulation ticks.
-		void Tick();
-
 	private:
 
 		////////////////////////////////////////////////////////////////////////////////

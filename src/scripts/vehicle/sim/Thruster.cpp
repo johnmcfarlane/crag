@@ -40,9 +40,14 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray)
 	// create model
 	_model = gfx::ThrusterHandle::CreateHandle(local_transformation);
 	
-	// roster
-	auto& tick_roster = entity.GetEngine().GetTickRoster();
+	// register tick
+	auto & tick_roster = entity.GetEngine().GetTickRoster();
+	tick_roster.AddOrdering(& Thruster::Tick, & Entity::Tick);
 	tick_roster.AddCommand(* this, & Thruster::Tick);
+	
+	// register draw
+	auto & draw_roster = entity.GetEngine().GetDrawRoster();
+	draw_roster.AddCommand(* this, & Thruster::UpdateModel);
 
 	VerifyObject(* this);
 }
@@ -54,8 +59,12 @@ Thruster::~Thruster()
 	// destroy model
 	_model.Destroy();
 
-	// roster
-	auto& tick_roster = GetEntity().GetEngine().GetTickRoster();
+	// unregister draw
+	auto & draw_roster = GetEntity().GetEngine().GetDrawRoster();
+	draw_roster.RemoveCommand(* this, & Thruster::UpdateModel);
+
+	// unregister tick
+	auto & tick_roster = GetEntity().GetEngine().GetTickRoster();
 	tick_roster.RemoveCommand(* this, & Thruster::Tick);
 }
 
@@ -98,22 +107,6 @@ void Thruster::SetThrustFactor(float thrust_factor)
 	VerifyObject(* this);
 }
 
-void Thruster::UpdateModel() const
-{
-	VerifyObject(* this);
-
-	float thrust_factor = _thrust_factor;
-	if (thrust_factor <= 0)
-	{
-		return;
-	}
-
-	_model.Call([thrust_factor] (gfx::Thruster & thruster) 
-	{
-		thruster.Update(thrust_factor);
-	});
-}
-
 void Thruster::Tick()
 {
 	VerifyObject(* this);
@@ -128,4 +121,20 @@ void Thruster::Tick()
 	{
 		body->AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
 	}
+}
+
+void Thruster::UpdateModel() const
+{
+	VerifyObject(* this);
+
+	float thrust_factor = _thrust_factor;
+	if (thrust_factor <= 0)
+	{
+		return;
+	}
+
+	_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+	{
+		thruster.Update(thrust_factor);
+	});
 }
