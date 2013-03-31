@@ -182,7 +182,7 @@ namespace core
 		{
 			if (empty())
 			{
-				assert(_data_end == & _data_begin);
+				VerifyEqual(* _data_end, _data_begin);
 			}
 			
 			if (_buffer_begin == nullptr)
