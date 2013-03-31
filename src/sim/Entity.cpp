@@ -21,6 +21,7 @@
 
 #include "geom/Transformation.h"
 
+#include "core/Roster.h"
 
 using namespace sim;
 
@@ -35,10 +36,15 @@ Entity::Entity(super::Init const & init)
 , _controller(nullptr)
 , _location(nullptr)
 {
+	auto & draw_roster = GetEngine().GetDrawRoster();
+	draw_roster.AddCommand(* this, & Entity::UpdateModels);
 }
 
 Entity::~Entity()
 {
+	auto & draw_roster = GetEngine().GetDrawRoster();
+	draw_roster.RemoveCommand(* this, & Entity::UpdateModels);
+
 	delete _controller;
 	delete _location;
 	_model.Destroy();
@@ -108,7 +114,7 @@ void Entity::SetModel(gfx::ObjectHandle model)
 {
 	_model = model;
 }
-	
+
 void Entity::UpdateModels() const
 {
 	if (_location == nullptr || ! _model)

@@ -54,6 +54,7 @@ Engine::Engine()
 , _camera(geom::rel::Ray3::Zero())
 , _physics_engine(ref(new physics::Engine))
 , _tick_roster(ref(new core::locality::Roster))
+, _draw_roster(ref(new core::locality::Roster))
 {
 }
 
@@ -134,8 +135,7 @@ geom::rel::Ray3 const & Engine::GetCamera() const
 void Engine::OnSetOrigin(geom::abs::Vector3 const & origin)
 {
 	// figure out the delta
-	auto& scene = _physics_engine.GetScene();
-	auto& previous_origin = GetOrigin();
+	auto & previous_origin = GetOrigin();
 	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(origin - previous_origin);
 
 	// quit if there's no change
@@ -158,19 +158,12 @@ void Engine::OnSetOrigin(geom::abs::Vector3 const & origin)
 		engine.SetOrigin(origin);
 	});
 
-	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(false);
-	});
-	
-	ForEachObject([] (Entity const & entity) {
-		entity.UpdateModels();
-	});
-	
-	gfx::Daemon::Call([] (gfx::Engine & engine) {
-		engine.OnSetReady(true);
-	});
+	// TODO: Is there a risk of a render between calls to SetOrigin and Draw?
+	// If so, could it result in a bad frame?
+	UpdateRenderer();
 
 	// local collision formation scene
+	auto & scene = _physics_engine.GetScene();
 	scene.OnOriginReset(origin);
 }
 
@@ -202,6 +195,11 @@ physics::Engine & Engine::GetPhysicsEngine()
 core::locality::Roster & Engine::GetTickRoster()
 {
 	return _tick_roster;
+}
+
+core::locality::Roster & Engine::GetDrawRoster()
+{
+	return _draw_roster;
 }
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
@@ -276,9 +274,7 @@ void Engine::UpdateRenderer() const
 		engine.OnSetReady(false);
 	});
 	
-	ForEachObject([] (Entity const & entity) {
-		entity.UpdateModels();
-	});
+	_draw_roster.Call();
 
 	auto time = _time;
 	gfx::Daemon::Call([time] (gfx::Engine & engine) {
