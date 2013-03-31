@@ -171,7 +171,6 @@ bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
 	// calls complete dispatch with a (non-sliced) copy of object
 	message_wrapper(* this, object);
 
-	VerifyObject(* this);
 	return true;
 }
 
@@ -206,6 +205,8 @@ void ipc::MessageQueue<CLASS>::CompleteDispatch(MESSAGE message, Class & object)
 template <typename CLASS>
 void ipc::MessageQueue<CLASS>::PopFront()
 {
+	VerifyObject(* this);
+
 	auto & front = * _buffers;
 	auto & pop_buffer = front.buffer;
 	pop_buffer.pop_front();
@@ -227,6 +228,8 @@ void ipc::MessageQueue<CLASS>::PopFront()
 	front.next = nullptr;
 
 	delete & front;
+
+	VerifyObject(* this);
 }
 
 template <typename CLASS>
