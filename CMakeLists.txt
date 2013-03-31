@@ -97,8 +97,8 @@ add_executable(crag
 	src/ipc/Uid.cpp)
 
 include_directories("src" "dependencies/include")
-#set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
+#set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 
 # TODO: -fno-exceptions -fno-unwind-tables
 set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread  -DdSINGLE -DPROFILE -Wall -Wfatal-errors -fno-rtti -fno-exceptions")
