@@ -48,12 +48,13 @@ namespace core
 			template <typename CLASS>
 			Function(void (CLASS::* member_function)())
 			{
-				static_assert(sizeof(FunctionPointerBuffer) >= sizeof(member_function), "FunctionPointerBuffer isn't big enough to store given function pointer");
-				static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
-				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
-				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
-				transmogrifier.member_function = member_function;
-				_function = transmogrifier.buffer;
+				Set<CLASS, decltype(member_function)>(member_function);
+			}
+
+			template <typename CLASS>
+			Function(void (CLASS::* member_function)() const)
+			{
+				Set<CLASS, decltype(member_function)>(member_function);
 			}
 
 			bool operator == (std::nullptr_t) const;
@@ -66,6 +67,17 @@ namespace core
 			void operator() (void * object) const;
 
 		private:
+			template <typename CLASS, typename FUNCTION>
+			void Set(FUNCTION member_function)
+			{
+				static_assert(sizeof(FunctionPointerBuffer) >= sizeof(member_function), "FunctionPointerBuffer isn't big enough to store given function pointer");
+				static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
+				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
+				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
+				transmogrifier.member_function = member_function;
+				_function = transmogrifier.buffer;
+			}
+
 			template <typename CLASS, void (CLASS::*FUNCTION)()>
 			static void CallMemberFunction(CLASS & object)
 			{
