@@ -44,7 +44,5 @@ namespace sim
 		// variables
 		form::Formation * _formation;	// TODO: form::FormationHandle
 		Scalar _radius_mean;
-		Scalar _radius_min;
-		Scalar _radius_max;
 	};
 }
