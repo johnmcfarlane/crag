@@ -12,18 +12,22 @@
 #include "MainScript.h"
 #include "TestScript.h"
 
+//#define GA
+
 namespace
 {
+#if defined(GA)
 	void RunGa(applet::AppletInterface & applet_interface)
 	{
 	}
+#endif
 }
 
 void MainScript(applet::AppletInterface & applet_interface)
 {
-#if 1
-	Test(applet_interface);
-#else
+#if defined(GA)
 	RunGa(applet_interface);
+#else
+	Test(applet_interface);
 #endif
 }

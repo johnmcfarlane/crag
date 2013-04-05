@@ -37,7 +37,7 @@ namespace smp
 		
 		vector()
 		: first(nullptr)
-		, last(nullptr)
+		, last(0)
 		, everything(nullptr)
 		{
 		}

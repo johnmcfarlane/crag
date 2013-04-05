@@ -452,7 +452,6 @@ namespace smp
 				
 			private:
 				// variables
-				size_t _num_threads;
 				TaskManager & _task_manager;
 				ThreadBuffer _thread_buffer;
 			};
