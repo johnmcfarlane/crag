@@ -1,6 +1,10 @@
 #!/bin/sh
-cd SDL2
-./configure --prefix="$PWD/.." --enable-static --disable-shared
+hg clone http://hg.libsdl.org/SDL
+cd SDL
+./autogen.sh
+mkdir build
+cd build
+../configure --prefix="$PWD/../.." --enable-static --disable-shared
 make
 make install
 cd ..

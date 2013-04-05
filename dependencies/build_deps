@@ -1,7 +1,3 @@
-cd ode
-../build_ode
-cd ..
+./build_sdl
+./build_ode
 
-cd SDL
-../build_sdl
-cd ..
