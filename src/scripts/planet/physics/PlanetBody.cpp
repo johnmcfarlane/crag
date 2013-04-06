@@ -111,9 +111,9 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 
 bool PlanetBody::OnCollision(Engine & engine, Body const & that_body) const
 {
-	dGeomID object_geom = that_body.GetGeomId();
-	dGeomID planet_geom = GetGeomId();
-	IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
+	CollisionHandle that_collision_handle = that_body.GetCollisionHandle();
+	CollisionHandle this_collision_handle = GetCollisionHandle();
+	IntersectionFunctor intersection_functor(engine, that_collision_handle, this_collision_handle);
 	
 	that_body.OnDeferredCollisionWithPlanet(* this, intersection_functor);
 	

@@ -61,9 +61,19 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// ODE includes.
+// physics includes.
 
+#define USE_ODE
+//#define USE_BULLET
+
+#if defined(USE_ODE)
 #include <ode/ode.h>
+#endif
+
+#if defined(USE_BULLET)
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
+#endif
 
 
 //////////////////////////////////////////////////////////////////////

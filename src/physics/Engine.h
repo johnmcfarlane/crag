@@ -27,7 +27,7 @@ namespace physics
 	class Engine
 	{
 		// types
-		typedef smp::vector<dContact> ContactVector;
+		typedef smp::vector<Contact> ContactVector;
 	public:
 		
 		// functions
@@ -37,9 +37,9 @@ namespace physics
 		form::Scene & GetScene();
 		form::Scene const & GetScene() const;
 		
-		dBodyID CreateBody() const;
-		dGeomID CreateBox(Vector3 const & dimensions) const;
-		dGeomID CreateSphere(Scalar radius) const;
+		BodyHandle CreateBody() const;
+		CollisionHandle CreateBox(Vector3 const & dimensions) const;
+		CollisionHandle CreateSphere(Scalar radius) const;
 		
 		void Attach(Body const & body1, Body const & body2);
 		
@@ -52,21 +52,25 @@ namespace physics
 		void CreateJoints();
 		void DestroyJoints();
 		void DestroyCollisions();
-		static void OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2);
+		static void OnNearCollisionCallback (void *data, CollisionHandle geom1, CollisionHandle geom2);
 		
 		// Called by bodies which don't handling their own.
-		void OnUnhandledCollision(dGeomID geom1, dGeomID geom2);
+		void OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2);
 		
 	public:
 		// Called once individual points of contact have been determined.
-		void OnContact(dContact const & contact);
+		void OnContact(Contact const & contact);
 		
 	private:		
 		// variables
+#if defined(USE_ODE)
 		dWorldID world;
 		dSpaceID space;
 		dJointGroupID contact_joints;
-		
+#endif
+
+#if defined(USE_BULLET)
+#endif		
 		form::Scene & _formation_scene;
 		
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
