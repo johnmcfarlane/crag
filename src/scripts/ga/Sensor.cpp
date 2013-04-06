@@ -20,6 +20,7 @@
 
 #include "gfx/Debug.h"
 
+#include "core/Random.h"
 #include "core/Roster.h"
 
 using namespace sim;
@@ -31,6 +32,28 @@ namespace
 	{
 		auto location = entity.GetLocation();
 		return location->Transform(local);
+	}
+	
+	Vector3 GetRandomDirection(Random & sequence)
+	{
+		Vector3 random_direction;
+		while (true)
+		{
+			random_direction.x = sequence.GetUnitInclusive<Scalar>() - 0.5;
+			random_direction.y = sequence.GetUnitInclusive<Scalar>() - 0.5;
+			random_direction.z = sequence.GetUnitInclusive<Scalar>() - 0.5;
+			auto length_squared = geom::LengthSq(random_direction);
+			if (length_squared > 1.0f)
+			{
+				continue;
+			}
+			
+			auto inverse_length = FastInvSqrt(length_squared);
+			random_direction *= inverse_length;
+			ASSERT(NearEqual(geom::Length(random_direction), 1.f, 0.001f));
+			
+			return random_direction;
+		}
 	}
 }
 
@@ -56,13 +79,24 @@ Sensor::~Sensor()
 
 void Sensor::Tick()
 {
-	auto & scanner = _ray;
+	Ray3 scan_ray = GenerateScanRay();
+	
+	gfx::Debug::ColorPair cp(gfx::Debug::Color::White(), gfx::Debug::Color(0,0,0,0));
+	gfx::Debug::AddLine(scan_ray.position, geom::Project(scan_ray, 1.f), cp);
+}
 
-	auto start = Transform(scanner.position, _entity);
-	auto end = Transform(geom::Project(scanner, 1.0f), _entity);
-	gfx::Debug::ColorPair cp(gfx::Debug::Color::Red(), gfx::Debug::Color(0,0,0,0));
+Ray3 Sensor::GenerateScanRay() const
+{
+	auto length = geom::Length(_ray.direction);
+	auto random_direction = GetRandomDirection(Random::sequence);
+	auto local_end = geom::Project(_ray, 1.f) + random_direction * length * 0.75f;
+	auto end = Transform(local_end, _entity);
 
-	gfx::Debug::AddLine(start, end, cp);
+	Ray3 scan_ray;
+	scan_ray.position = Transform(_ray.position, _entity);
+	scan_ray.direction = end - scan_ray.position;
+	
+	return scan_ray;
 }
 
 core::locality::Roster & Sensor::GetTickRoster()

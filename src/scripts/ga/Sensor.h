@@ -36,6 +36,7 @@ namespace sim
 
 	private:
 		void Tick();
+		Ray3 GenerateScanRay() const;
 
 		core::locality::Roster & GetTickRoster();
 
