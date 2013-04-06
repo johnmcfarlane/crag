@@ -101,16 +101,16 @@ add_executable(crag
 	src/ipc/Uid.cpp)
 
 include_directories("src" "dependencies/include")
-set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
+#set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 
 # TODO: -fno-exceptions -fno-unwind-tables
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread  -DdSINGLE -DPROFILE -Wall -Wfatal-errors -fno-rtti -fno-exceptions")
-#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -DdSINGLE -DNDEBUG -Wall -Wfatal-errors -fno-rtti")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wfatal-errors -fno-rtti -fno-exceptions")
+#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -D__STRICT_ANSI__ -DNDEBUG -Wall -Wfatal-errors -fno-rtti -fno-exceptions")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
-target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "GLEW" "pthread")
+target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "dl" "GLEW" "pthread")
 
 include (PrecompiledHeader.cmake)
 

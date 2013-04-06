@@ -367,10 +367,17 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 
 gfx::ObjectHandle SpawnSkybox()
 {
+	bool const fast = true;
 	auto skybox = gfx::SkyboxHandle::CreateHandle();
 	skybox.Call([] (gfx::Skybox & skybox) {
-		//DrawStarsSlow(skybox, 256, 100);
-		DrawStarsFast(skybox, 512, 20000);
+		if (fast)
+		{
+			DrawStarsFast(skybox, 512, 20000);
+		}
+		else
+		{
+			DrawStarsSlow(skybox, 256, 100);
+		}
 	});
 
 	return skybox;

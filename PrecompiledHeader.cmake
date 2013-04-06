@@ -33,6 +33,14 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# ----------------------------------------------------------------------- 
+# Check whether we compile with CLANG. 
+# ----------------------------------------------------------------------- 
+set (COMPILER_IS_CLANG FALSE) 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+  set (COMPILER_IS_CLANG TRUE) 
+endif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+
 MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
   GET_FILENAME_COMPONENT(_inputWe ${_input} NAME_WE)
   SET(pch_source ${_inputWe}.cpp)
@@ -68,7 +76,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
     ENDIF(NOT _sourceFound)
   ENDIF(MSVC)
 
-  IF(CMAKE_COMPILER_IS_GNUCXX)
+  IF(CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG)
     GET_FILENAME_COMPONENT(_name ${_input} NAME)
     SET(_source "${CMAKE_CURRENT_SOURCE_DIR}/${_input}")
     SET(_outdir "${CMAKE_CURRENT_BINARY_DIR}/${_name}.gch")
@@ -97,6 +105,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
     ADD_CUSTOM_TARGET(${_targetName}_gch DEPENDS ${_output})
     ADD_DEPENDENCIES(${_targetName} ${_targetName}_gch)
     SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name} -Winvalid-pch")
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+  ENDIF(CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG)
 ENDMACRO()
 

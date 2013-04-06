@@ -52,7 +52,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 // VS debugger requires complete file path for navigation features
 #define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING
 #else
-#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING + std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) (& STRING[std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)])
 #endif
 
 
@@ -118,7 +118,6 @@ void PrintMessage(FILE * out, char const * format, ...);
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
-			ASSUME(false); \
 			DEBUG_BREAK("ASSERT: '%s'", #CONDITION); \
 		} \
 	)

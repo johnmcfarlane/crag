@@ -1,4 +1,8 @@
 #!/bin/sh
-CFLAGS="-arch i386 -fno-exceptions -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" CXXFLAGS="-arch i386 -fno-exceptions -fno-rtti -O3 -funroll-loops -ffast-math -fstrict-aliasing -ftree-vectorize -msse3 -mssse3 -fvisibility=hidden -fvisibility-inlines-hidden" ./configure --enable-double-precision --disable-demos --disable-asserts --prefix=$PWD/../../xcode4
+svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+cd ode
+./bootstrap
+CFLAGS="-fno-exceptions -fno-rtti -O3" CXXFLAGS="-fno-exceptions -fno-rtti -O3" ./configure --enable-single-precision --disable-demos --disable-asserts --prefix=$PWD/../
 make
 make install
+cd ..

@@ -68,9 +68,6 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		// sim::Engine time.
-		core::Time _time;
-		
 		bool _quit_flag;
 	};
 }

@@ -1,12 +1,13 @@
 *~
 .DS_Store
+/backtrace
 CMakeCache.txt
 CMakeFiles/
 Makefile
 cerr.txt
 cout.txt
 cmake_install.cmake
-./core
+/core
 crag
 crag.cfg
 default.cfg

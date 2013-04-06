@@ -31,7 +31,9 @@ namespace form
 		GenerateMeshFunctor(geom::Vector2f leaf_score_range, Mesh & mesh) 
 		: _leaf_score_range(leaf_score_range)
 		, _mesh(mesh) 
+#if defined(NODE_SCORE_HEAT_MAP)
 		, _inv_range(255.99f / (leaf_score_range.y - leaf_score_range.x))
+#endif
 		{ 
 		}
 		
@@ -77,7 +79,9 @@ namespace form
 	private:
 		geom::Vector2f _leaf_score_range;
 		Mesh & _mesh;
+#if defined(NODE_SCORE_HEAT_MAP)
 		float _inv_range;
+#endif
 	};
 
 }
