@@ -96,7 +96,7 @@ add_executable(crag
 	src/smp/Thread.cpp
 	src/ipc/Uid.cpp)
 
-include_directories("src" "dependencies/include")
+include_directories("src" "dependencies/include" "/usr/local/include/bullet")
 #set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 
