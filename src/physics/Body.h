@@ -18,14 +18,14 @@ namespace physics
 	class Engine;
 	class IntersectionFunctor;
 	
-	void Attach(dJointID joint, Body const & body1, Body const & body2);
+	void Attach(JointHandle joint, Body const & body1, Body const & body2);
 	bool IsAttached(Body const & body1, Body const & body2);
 	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body : public Location
 	{
 	protected:
-		Body(Engine & engine, dGeomID init_geom_id, bool movable);
+		Body(Engine & engine, CollisionHandle collision_handle, bool movable);
 	public:
 		virtual ~Body() override;
 		
@@ -34,7 +34,7 @@ namespace physics
 
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
-		dGeomID GetGeomId() const;
+		CollisionHandle GetCollisionHandle() const;
 		virtual Vector3 GetScale() const = 0;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
@@ -65,7 +65,7 @@ namespace physics
 		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
 		
-		friend void Attach(dJointID joint, Body const & body1, Body const & body2);
+		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		
 #if defined(VERIFY)
@@ -73,7 +73,7 @@ namespace physics
 #endif
 
 	protected:
-		dGeomID geom_id;	// the collision info
-		dBodyID body_id;	// the dynaical info
+		CollisionHandle _collision_handle;	// the collision info
+		BodyHandle _body_handle;	// the dynaical info
 	};
 }

@@ -1,0 +1,7 @@
+svn checkout http://bullet.googlecode.com/svn/trunk/ bullet
+cd bullet
+cmake . -G "Unix Makefiles"
+cmake -DBUILD_EXTRAS=OFF -DBUILD_DEMOS=OFF
+make
+sudo make install
+cd ..

@@ -25,24 +25,42 @@ physics::BoxBody::BoxBody(Engine & engine, bool movable, Vector3 const & dimensi
 
 void physics::BoxBody::SetDimensions(Vector3 const & dimensions) const
 {
-	dGeomBoxSetLengths(geom_id, dimensions.x, dimensions.y, dimensions.z);
+#if defined(USE_ODE)
+	dGeomBoxSetLengths(_collision_handle, dimensions.x, dimensions.y, dimensions.z);
+#endif
+
+#if defined(USE_BULLET)
+	DEBUG_MESSAGE("not implemented");
+#endif
 }
 
 physics::Vector3 physics::BoxBody::GetScale() const
 {
+#if defined(USE_ODE)
 	Vector3 dimensions;
-	dGeomBoxGetLengths(geom_id, dimensions.GetAxes());
+	dGeomBoxGetLengths(_collision_handle, dimensions.GetAxes());
 	return dimensions;
+#endif
+
+#if defined(USE_BULLET)
+	DEBUG_MESSAGE("not implemented");
+#endif
 }
 
 void physics::BoxBody::SetDensity(Scalar density)
 {
-	ASSERT(body_id != 0);
+	ASSERT(_collision_handle != nullptr);
 	
+#if defined(USE_ODE)
 	dMass m;
 	Vector3 scale = GetScale();
 	dMassSetBox (& m, density, scale.x, scale.y, scale.z);
-	dBodySetMass (body_id, & m);
+	dBodySetMass (_body_handle, & m);
+#endif
+
+#if defined(USE_BULLET)
+	DEBUG_MESSAGE("not implemented");
+#endif
 }
 
 void physics::BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const
