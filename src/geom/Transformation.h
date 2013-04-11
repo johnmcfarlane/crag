@@ -145,6 +145,11 @@ namespace geom
 			return Vector3(v.x, v.y, v.z);
 		}
 		
+		Vector3 Rotate(Vector3 const & direction) const
+		{
+			return GetRotation() * direction;
+		}
+		
 	#if defined(VERIFY)
 		void Verify() const
 		{

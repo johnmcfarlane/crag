@@ -52,6 +52,13 @@ namespace geom
 		V direction;
 	};
 
+	// returns the length of the given ray
+	template<typename S, int N> 
+	S LengthSq(Ray<S, N> const & ray)
+	{
+		return LengthSq(ray.direction);
+	}
+
 	// Get a position at some point along ray.
 	template <typename S, int N>
 	Vector<S, N> Project(Ray<S, N> const & ray, S proportion)
@@ -86,7 +93,7 @@ namespace geom
 	}
 
 	//////////////////////////////////////////////////////////////////
-	// Vector<S, N> aliases
+	// Ray<S, N> aliases
 	
 	typedef Ray<int, 2> Ray2i;
 	typedef Ray<float, 2> Ray2f;
