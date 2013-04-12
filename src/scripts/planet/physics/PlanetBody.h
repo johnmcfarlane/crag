@@ -36,6 +36,7 @@ namespace physics
 		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
 
 		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
 
 		// variables

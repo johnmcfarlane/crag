@@ -17,6 +17,7 @@
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
 #include "physics/IntersectionFunctor.h"
+#include "physics/RayCast.h"
 
 #include "form/Formation.h"
 #include "form/Engine.h"
@@ -185,6 +186,43 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
 	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
+}
+
+void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctor & functor) const
+{
+	using namespace form::collision;
+
+	auto & ray_cast = static_cast<RayCast const &>(body);
+	auto & physics_engine = functor.GetEngine();
+	auto & scene = physics_engine.GetScene();
+
+	auto polyhedron = scene.GetPolyhedron(_formation);
+	if (polyhedron == nullptr)
+	{
+		// This can happen if the PlanetBody has just been created 
+		// and the corresponding OnAddFormation message hasn't been read yet.
+		return;
+	}
+	
+	auto ray = ray_cast.getRay();
+	
+	typedef Object<form::Ray3> Object;
+	Object collision_object;
+	collision_object.bounding_sphere.center = geom::Project(ray, .5f);
+	collision_object.bounding_sphere.radius = geom::Length(ray) * .5;
+	
+	collision_object.shape = ray;
+	
+	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
+	
+#if defined(NDEBUG)
+#error dont forget about this!
+#endif
+//	float sphere_area(Area(collision_object.shape));
+//	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
+	auto min_parent_area = 0.01f;
+
 	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
 }
 

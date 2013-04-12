@@ -105,6 +105,5 @@ void RayCast::SetDensity(Scalar density)
 
 void RayCast::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const
 {
-	DEBUG_BREAK("Not yet implemented");
-	//planet.OnDeferredCollisionWithRay(* this, functor);
+	planet.OnDeferredCollisionWithRay(* this, functor);
 }

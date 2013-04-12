@@ -63,6 +63,7 @@ namespace physics
 		
 		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctor & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
 		
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);

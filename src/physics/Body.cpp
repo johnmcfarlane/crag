@@ -312,6 +312,11 @@ void Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor 
 	ASSERT(false);
 }
 
+void Body::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctor & functor) const
+{
+	ASSERT(false);
+}
+
 void Body::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
 {
 	ASSERT(false);
