@@ -81,6 +81,11 @@ dGeomID Engine::CreateSphere(Scalar radius) const
 	return dCreateSphere(space, radius);
 }
 
+dGeomID Engine::CreateRay(Scalar length) const
+{
+	return dCreateRay(space, length);
+}
+
 void Engine::Attach(Body const & body1, Body const & body2)
 {
 	dJointID joint_id = dJointCreateBall(world, 0);

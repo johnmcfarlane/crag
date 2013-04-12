@@ -62,6 +62,7 @@ add_executable(crag
 	src/physics/FixedLocation.cpp
 	src/physics/IntersectionFunctor.cpp
 	src/physics/Location.cpp
+	src/physics/RayCast.cpp
 	src/physics/SphericalBody.cpp
 	src/scripts/MainScript.cpp
 	src/scripts/MonitorOrigin.cpp

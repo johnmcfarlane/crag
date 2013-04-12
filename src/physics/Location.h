@@ -31,7 +31,8 @@ namespace physics
 		virtual Matrix33 GetRotation() const;
 		virtual Transformation GetTransformation() const;
 
-		virtual Vector3 Transform(Vector3 local) const;
+		virtual Vector3 Transform(Vector3 local_position) const;
+		virtual Vector3 Rotate(Vector3 local_direction) const;
 
 #if defined(VERIFY)
 		virtual void Verify() const = 0;

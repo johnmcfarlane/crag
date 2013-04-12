@@ -53,7 +53,12 @@ Transformation Location::GetTransformation() const
 	return Transformation(GetPosition(), GetRotation(), GetScale());
 }
 
-Vector3 Location::Transform(Vector3 local) const
+Vector3 Location::Transform(Vector3 local_position) const
 {
-	return GetTransformation().Transform(local);
+	return GetTransformation().Transform(local_position);
+}
+
+Vector3 Location::Rotate(Vector3 local_rotation) const
+{
+	return GetTransformation().Rotate(local_rotation);
 }
