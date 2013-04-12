@@ -149,7 +149,7 @@ namespace geom
 	bool Intersects(Sphere<S, N> const & sphere, Ray<S, N> const & line)
 	{
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
-		S a = LengthSq(line.direction);
+		S a = LengthSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
 		S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 		
@@ -173,7 +173,7 @@ namespace geom
 	bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & line, S & t1, S & t2)
 	{
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
-		S a = LengthSq(line.direction);
+		S a = LengthSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
 		S c = LengthSq(sphere_to_start) - Square(sphere.radius);
 		

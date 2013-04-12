@@ -137,10 +137,8 @@ namespace geom
 
 	template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
 	{
-		lhs.x /= rhs;
-		lhs.y /= rhs;
-		lhs.z /= rhs;
-		return lhs;
+		auto inverse_rhs = Inverse(rhs);
+		return lhs *= inverse_rhs;
 	}
 
 	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & rhs)
@@ -148,32 +146,29 @@ namespace geom
 		return Vector<S, 3>(- rhs.x, - rhs.y, - rhs.z);
 	}
 
-	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
+	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> lhs, Vector<S, 3> const & rhs)
 	{
-		return Vector<S, 3>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+		return lhs -= rhs;
 	}
 
-	template<typename S> inline Vector<S, 3> operator + (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
+	template<typename S> inline Vector<S, 3> operator + (Vector<S, 3> lhs, Vector<S, 3> const & rhs)
 	{
-		return Vector<S, 3>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+		return lhs += rhs;
 	}
 
-	template<typename S> inline Vector<S, 3> operator * (Vector<S, 3> const & lhs, S rhs)
+	template<typename S> inline Vector<S, 3> operator * (Vector<S, 3> lhs, S rhs)
 	{
-		Vector<S, 3> result = lhs;
-		return result *= rhs;
+		return lhs *= rhs;
 	}
 
-	template<typename S> inline Vector<S, 3> operator * (S lhs, Vector<S, 3> const & rhs)
+	template<typename S> inline Vector<S, 3> operator * (S lhs, Vector<S, 3> rhs)
 	{
-		Vector<S, 3> result = rhs;
-		return result *= lhs;
+		return rhs *= lhs;
 	}
 
-	template<typename S> Vector<S, 3> operator / (Vector<S, 3> const & lhs, S rhs)
+	template<typename S> Vector<S, 3> operator / (Vector<S, 3> lhs, S rhs)
 	{
-		Vector<S, 3> result = lhs;
-		return result *= (1.f / rhs);
+		return lhs /= rhs;
 	}
 
 	template<typename S> inline S LengthSq(Vector<S, 3> const & v)

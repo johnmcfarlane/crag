@@ -14,16 +14,16 @@
 // WARNING: Must include one of the VectorN.h headers before this.
 // WARNING: Do not directly include Vector.h.
 
-
 namespace geom
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Length
 
-	template<typename S, int N> S Length(Vector<S, N> const & v)
+	template<typename T> 
+	auto Length(T const & o) -> decltype(LengthSq(o))
 	{
-		S length_sqaured = LengthSq(v);
-		return std::sqrt(length_sqaured);
+		auto length_squared = LengthSq(o);
+		return std::sqrt(length_squared);
 	}
 
 	// Returns a copy of v with unit length. 
