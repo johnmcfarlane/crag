@@ -11,6 +11,8 @@
 
 #include "sim/defs.h"
 
+#include "physics/RayCast.h"
+
 namespace core
 {
        namespace locality
@@ -36,6 +38,7 @@ namespace sim
 
 	private:
 		void Tick();
+		Ray3 GetGlobalRay() const;
 		Ray3 GenerateScanRay() const;
 
 		core::locality::Roster & GetTickRoster();
@@ -46,5 +49,6 @@ namespace sim
 		Entity & _entity;
 		Ray3 _ray;	// Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
+		physics::RayCast & _ray_cast;
 	};
 }
