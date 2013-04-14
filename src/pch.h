@@ -71,9 +71,9 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
-#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
+//#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(__ANDROID__)
 #include <SDL.h>
 #else
 #include <SDL2/SDL.h>
@@ -84,7 +84,9 @@
 // OpenGL includes
 
 // TODO: Re-evaluate "SDL_opengl.h"
-#if defined(__APPLE__)
+#if defined(__ANDROID__)
+#include <GLES2/gl2.h>
+#elif defined(__APPLE__)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
