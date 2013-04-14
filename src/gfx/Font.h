@@ -40,7 +40,8 @@ namespace gfx
 		void RenderVerts() const;
 		
 		void PrintChar(char c, geom::Vector2f & position) const;
-
+		void PrintNewLine(geom::Vector2f & position) const;
+		
 		geom::Vector2i character_size;
 		geom::Vector2f inv_scale;
 		float scale_factor;

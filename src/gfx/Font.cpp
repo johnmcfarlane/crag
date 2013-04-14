@@ -123,6 +123,7 @@ void Font::GenerateVerts(char const * text, geom::Vector2f const & position) con
 		{
 			p.x = position.x;
 			p.y += scale_factor * character_size.y;
+			PrintNewLine(p);
 		}
 		else
 		{
@@ -144,7 +145,6 @@ void Font::RenderVerts() const
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	Enable(GL_BLEND);
-	GL_CALL(glBlendEquation(GL_FUNC_ADD));
 	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	glDepthMask(false);
 	
@@ -152,7 +152,7 @@ void Font::RenderVerts() const
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	geom::Vector2i resolution = app::GetResolution();
-	gluOrtho2D (0, resolution.x, resolution.y, 0);
+	Ortho(0, resolution.x, resolution.y, 0);
 	
 	glMatrixMode (GL_MODELVIEW); 
 	glLoadIdentity (); 
@@ -162,7 +162,7 @@ void Font::RenderVerts() const
 	// Draw VBO
 	vbo.Activate();
 	int num_verts = vertex_buffer.size();
-	vbo.DrawQuads(0, num_verts);
+	vbo.DrawStrip(0, num_verts);
 	vbo.Deactivate();
 	
 	glDepthMask(true);
@@ -190,23 +190,24 @@ void Font::PrintChar(char c, geom::Vector2f & position) const
 	tex[0].x += inv_scale.x * margin_hack[0];
 	tex[1].x -= inv_scale.x * margin_hack[1];
 	
-	geom::Vector2i const sin_cos_table[4] = 
-	{
-		geom::Vector2i(0, 0),
-		geom::Vector2i(1, 0),
-		geom::Vector2i(1, 1),
-		geom::Vector2i(0, 1)
-	};
-	
 	Vertex v;
-	for (geom::Vector2i const * it = sin_cos_table; it != sin_cos_table + 4; ++ it)
+	for (auto x = 0; x != 2; ++ x)
 	{
-		v.pos.x = pos[it->x].x;
-		v.pos.y = pos[it->y].y;
-		v.tex.x = tex[it->x].x;
-		v.tex.y = tex[it->y].y;
-		vertex_buffer.push_back(v);
+		for (auto y = 0; y != 2; ++ y)
+		{
+			v.pos.x = pos[x].x;
+			v.pos.y = pos[y].y;
+			v.tex.x = tex[x].x;
+			v.tex.y = tex[y].y;
+			vertex_buffer.push_back(v);
+		}
 	}
 	
 	position.x = pos[1].x;
+}
+
+void Font::PrintNewLine(geom::Vector2f & position) const
+{
+	vertex_buffer.push_back(vertex_buffer.back());
+	vertex_buffer.push_back({position});
 }
