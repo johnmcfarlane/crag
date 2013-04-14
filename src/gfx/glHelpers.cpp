@@ -65,3 +65,12 @@ void gfx::LoadMatrix(const geom::Matrix44d& matrix)
 {
 	glLoadMatrixd(matrix.GetArray());
 }
+
+void gfx::Ortho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top)
+{
+#if defined(__ANDROID__)
+	glOrthof(left, right, bottom, top, -1, 1);
+#else
+	glOrtho(left, right, bottom, top, -1, 1);
+#endif
+}

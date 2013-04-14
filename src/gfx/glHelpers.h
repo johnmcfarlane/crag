@@ -83,4 +83,5 @@ namespace gfx
 	void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
 	void LoadMatrix(const geom::Matrix44f& matrix);
 	void LoadMatrix(const geom::Matrix44d& matrix);
+	void Ortho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top);
 }
