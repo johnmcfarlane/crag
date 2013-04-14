@@ -115,11 +115,9 @@ namespace gfx
 		void UpdateTransformations(Object & node, Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
+		void RenderFrame();
 		void RenderScene();
 		
-		void RenderBackground();
-		
-		void RenderForeground();
 		void RenderLights();
 		bool BeginRenderForeground(ForegroundRenderPass pass) const;
 		void RenderForegroundPass(ForegroundRenderPass pass);

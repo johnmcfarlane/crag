@@ -864,7 +864,7 @@ void Engine::UpdateTransformations()
 
 void Engine::Render()
 {
-	RenderScene();
+	RenderFrame();
 
 	// Flip the front and back buffers and set fences.
 	SetFence(_fence1);
@@ -874,7 +874,7 @@ void Engine::Render()
 	ProcessRenderTiming();
 }
 
-void Engine::RenderScene()
+void Engine::RenderFrame()
 {
 	VerifyRenderState();
 	
@@ -882,11 +882,8 @@ void Engine::RenderScene()
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	
 	// All the things.
-	RenderForeground();
+	RenderScene();
 	
-	// The skybox, basically.
-	RenderBackground();
-
 	// Crap you generally don't want.
 	DebugDraw();
 	
@@ -896,15 +893,7 @@ void Engine::RenderScene()
 	VerifyRenderState();
 }
 
-void Engine::RenderBackground()
-{
-	SetBackgroundFrustum(scene->GetPov());
-
-	// draw the skybox
-	RenderLayer(Layer::background);
-}
-
-void Engine::RenderForeground()
+void Engine::RenderScene()
 {
 	// Adjust near and far plane.
 	SetForegroundFrustum(* scene);
@@ -1002,6 +991,11 @@ void Engine::RenderForegroundPass(ForegroundRenderPass pass)
 	
 	// render opaque objects
 	RenderLayer(Layer::foreground);
+	
+	// render the background
+	SetBackgroundFrustum(scene->GetPov());
+	RenderLayer(Layer::background);
+	SetForegroundFrustum(* scene);
 
 	// render partially transparent objects
 	Enable(GL_BLEND);
