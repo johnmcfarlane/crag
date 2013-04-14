@@ -58,8 +58,8 @@ Skybox::Skybox(LeafNode::Init const & init)
 
 	ResourceManager const & resource_manager = init.engine.GetResourceManager();
 	
-	Program const * fixed_program = resource_manager.GetProgram(ProgramIndex::fixed);
-	SetProgram(fixed_program);
+	Program const * skybox_program = resource_manager.GetProgram(ProgramIndex::skybox);
+	SetProgram(skybox_program);
 }
 
 Skybox::~Skybox()
@@ -92,9 +92,8 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 
 void Skybox::Render(Engine const & renderer) const
 {
-	// clear the depth buffer
-	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-	glColor3f(1.f, 1.f, 1.f);
+	auto & engine = GetEngine();
+	engine.SetCurrentMesh(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
@@ -106,7 +105,7 @@ void Skybox::Render(Engine const & renderer) const
 	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
-	ASSERT(! IsEnabled(GL_DEPTH_TEST));
+	Enable(GL_DEPTH_TEST);
 	
 	// Draw VBO
 	vbo.Bind();
@@ -131,6 +130,7 @@ void Skybox::Render(Engine const & renderer) const
 	glDepthMask(true);
 	Disable(GL_TEXTURE_2D);
 	Enable(GL_CULL_FACE);
+	Disable(GL_DEPTH_TEST);
 }
 
 void Skybox::InitVerts()

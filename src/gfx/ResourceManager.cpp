@@ -112,6 +112,9 @@ bool ResourceManager::InitShaders()
 	_programs[ProgramIndex::disk] = new DiskProgram;
 	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", * _light_vert_shader, * _light_frag_shader);
 	
+	_programs[ProgramIndex::skybox] = new Program;
+	_programs[ProgramIndex::skybox]->Init("glsl/skybox.vert", "glsl/skybox.frag", * _light_vert_shader, * _light_frag_shader);
+
 	_programs[ProgramIndex::fixed] = new Program;
 	
 	return true;

@@ -29,6 +29,7 @@ namespace gfx
 			sphere,
 			fog,
 			disk,
+			skybox,
 			fixed,
 			dont_care,
 			max_shader = fixed,
