@@ -878,12 +878,15 @@ void Engine::RenderScene()
 {
 	VerifyRenderState();
 	
-	// The skybox, basically.
-	RenderBackground();
+	// clear the screen.
+	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	
 	// All the things.
 	RenderForeground();
 	
+	// The skybox, basically.
+	RenderBackground();
+
 	// Crap you generally don't want.
 	DebugDraw();
 	
@@ -897,15 +900,8 @@ void Engine::RenderBackground()
 {
 	SetBackgroundFrustum(scene->GetPov());
 
-	// basically draw the skybox
-	int background_render_count = RenderLayer(Layer::background);
-	
-	// and if we have no skybox yet,
-	if (background_render_count < 1)
-	{
-		// clear the screen.
-		GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
-	}
+	// draw the skybox
+	RenderLayer(Layer::background);
 }
 
 void Engine::RenderForeground()
