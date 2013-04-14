@@ -105,7 +105,6 @@ void Skybox::Render(Engine const & renderer) const
 	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
-	Enable(GL_DEPTH_TEST);
 	
 	// Draw VBO
 	vbo.Bind();
@@ -130,7 +129,6 @@ void Skybox::Render(Engine const & renderer) const
 	glDepthMask(true);
 	Disable(GL_TEXTURE_2D);
 	Enable(GL_CULL_FACE);
-	Disable(GL_DEPTH_TEST);
 }
 
 void Skybox::InitVerts()
