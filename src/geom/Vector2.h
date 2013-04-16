@@ -21,6 +21,8 @@ namespace geom
 	template<typename S> class Vector<S, 2>
 	{
 	public:
+		typedef S Scalar;
+		
 		Vector() 
 #if ! defined(NDEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
@@ -40,6 +42,11 @@ namespace geom
 		{ 
 		}
 
+		static constexpr std::size_t Size()
+		{
+			return 3;
+		}
+		
 		// Returns vector as a C-style array. Very unsafe. 
 		S const * GetAxes() const
 		{
