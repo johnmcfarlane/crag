@@ -93,10 +93,10 @@ namespace gfx
 		GLint _flat_shade_location;
 	};
 	
-	class SphereProgram : public Program
+	class DiskProgram : public Program
 	{
 	public:
-		SphereProgram();
+		DiskProgram();
 		
 		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color) const;
 	private:
@@ -110,7 +110,7 @@ namespace gfx
 		GLint _radius_location;
 	};
 	
-	class FogProgram : public SphereProgram
+	class FogProgram : public DiskProgram
 	{
 	public:
 		FogProgram();
@@ -122,11 +122,6 @@ namespace gfx
 		
 		// variables
 		GLint _density_location;
-	};
-	
-	class DiskProgram : public SphereProgram
-	{
-	public:
 	};
 	
 	class TexturedProgram : public Program

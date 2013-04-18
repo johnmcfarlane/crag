@@ -245,16 +245,16 @@ void PolyProgram::InitUniforms()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// SphereProgram member definitions
+// DiskProgram member definitions
 
-SphereProgram::SphereProgram()
+DiskProgram::DiskProgram()
 : _color_location(-1)
 , _center_location(-1)
 , _radius_location(-1)
 {
 }
 
-void SphereProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
+void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
 {
 	glUniform4f(_color_location, color.r, color.g, color.b, color.a);
 	
@@ -265,20 +265,20 @@ void SphereProgram::SetUniforms(geom::Transformation<float> const & model_view, 
 	glUniform1f(_radius_location, radius);
 }
 
-void SphereProgram::InitAttribs(GLuint id)
+void DiskProgram::InitAttribs(GLuint id)
 {
 	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
 }
 
-void SphereProgram::InitUniforms()
+void DiskProgram::InitUniforms()
 {
 	_color_location = GetUniformLocation("color");
 	_center_location = GetUniformLocation("center");
 	_radius_location = GetUniformLocation("radius");
 }
 
-Scalar SphereProgram::CalculateRadius(geom::Transformation<float> const & transformation)
+Scalar DiskProgram::CalculateRadius(geom::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
 	ASSERT(NearEqual(size.x / size.y, 1, Scalar(0.0001)));
@@ -299,7 +299,7 @@ FogProgram::FogProgram()
 
 void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const
 {
-	SphereProgram::SetUniforms(model_view, color);
+	DiskProgram::SetUniforms(model_view, color);
 	
 	glUniform1f(_density_location, density);
 }

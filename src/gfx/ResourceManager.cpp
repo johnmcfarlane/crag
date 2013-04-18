@@ -111,7 +111,7 @@ bool ResourceManager::InitShaders()
 	};
 
 	init_program(new PolyProgram, ProgramIndex::poly, "glsl/poly.vert", "glsl/poly.frag");
-	init_program(new SphereProgram, ProgramIndex::sphere, "glsl/disk.vert", "glsl/sphere.frag");
+	init_program(new DiskProgram, ProgramIndex::sphere, "glsl/disk.vert", "glsl/sphere.frag");
 	init_program(new FogProgram, ProgramIndex::fog, "glsl/disk.vert", "glsl/fog.frag");
 	init_program(new DiskProgram, ProgramIndex::disk, "glsl/disk.vert", "glsl/disk.frag");
 	init_program(new TexturedProgram, ProgramIndex::skybox, "glsl/skybox.vert", "glsl/skybox.frag");

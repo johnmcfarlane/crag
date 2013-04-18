@@ -70,7 +70,7 @@ void Ball::Render(Engine const & renderer) const
 {
 	// Pass rendering details to the shader program.
 	Program const & program = ref(renderer.GetCurrentProgram());
-	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(program);
+	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(program);
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_program.SetUniforms(transformation, _color);
 	
