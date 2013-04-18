@@ -24,6 +24,7 @@
 		DEBUG_BREAK("GL error %X (%s)", error, gluErrorString(error)); } )
 
 #define GL_CALL(statement) DO_STATEMENT(\
+	ASSERT(glGetError() == GL_NO_ERROR); \
 	statement; \
 	GLenum error = glGetError(); \
 	if (error != GL_NO_ERROR) { \
