@@ -9,21 +9,15 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+// per-vertex inputs from renderer
+attribute vec3 vertex_position;
 
-////////////////////////////////////////////////////////////////////////////////
-// outputs
-
+// outputs to poly.frag
 varying vec4 quad_position;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// functions
-
-
-
 
 void main(void)
 {
-	quad_position = gl_ModelViewMatrix * gl_Vertex;
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	vec4 vertex_position4 = vec4(vertex_position, 1.0f);
+	quad_position = gl_ModelViewMatrix * vertex_position4;
+	gl_Position = gl_ModelViewProjectionMatrix * vertex_position4;
 }

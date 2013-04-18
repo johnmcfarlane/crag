@@ -19,22 +19,22 @@ using namespace gfx;
 template <>
 void EnableClientState<Cuboid::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
+	GL_CALL(glEnableVertexAttribArray(2));
 }
 
 template <>
 void DisableClientState<Cuboid::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(2));
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<Cuboid::Vertex>()
 {
-	VertexPointer<Cuboid::Vertex, 3, & Cuboid::Vertex::pos>();
-	NormalPointer<Cuboid::Vertex, & Cuboid::Vertex::norm>();
+	gfx::VertexAttribPointer<1, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::pos>();
+	gfx::VertexAttribPointer<2, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::norm>();
 }
 
 

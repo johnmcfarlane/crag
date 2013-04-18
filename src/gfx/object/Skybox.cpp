@@ -29,22 +29,22 @@ using namespace gfx;
 template <>
 void EnableClientState<Skybox::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
+	GL_CALL(glEnableVertexAttribArray(2));
 }
 
 template <>
 void DisableClientState<Skybox::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(2));
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<Skybox::Vertex>()
 {
-	VertexPointer<Skybox::Vertex, 3, & Skybox::Vertex::pos>();
-	TexCoordPointer<Skybox::Vertex, 2, & Skybox::Vertex::tex>();
+	VertexAttribPointer<1, Skybox::Vertex, decltype(Skybox::Vertex::pos), & Skybox::Vertex::pos>();
+	VertexAttribPointer<2, Skybox::Vertex, decltype(Skybox::Vertex::tex), & Skybox::Vertex::tex>();
 }
 
 

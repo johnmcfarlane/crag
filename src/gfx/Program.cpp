@@ -68,6 +68,9 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	glAttachShader(_id, _frag_shader._id);
 	glAttachShader(_id, light_vert_shader._id);
 	glAttachShader(_id, light_frag_shader._id);
+	
+	InitAttribs(_id);
+	
 	glLinkProgram(_id);
 	
 	if (! IsLinked())
@@ -172,6 +175,11 @@ GLint Program::GetUniformLocation(char const * name) const
 	return glGetUniformLocation(_id, name);
 }
 
+void Program::InitAttribs(GLuint id)
+{
+	ASSERT(id == _id);
+}
+
 void Program::InitUniforms()
 {
 }
@@ -219,6 +227,12 @@ void PolyProgram::SetUniforms(bool fragment_lighting, bool flat_shade) const
 	GL_CALL(glUniform1f(_flat_shade_location, GLfloat(flat_shade)));
 }
 
+void PolyProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
+}
+
 void PolyProgram::InitUniforms()
 {
 	ASSERT(IsBound());
@@ -249,6 +263,12 @@ void SphereProgram::SetUniforms(geom::Transformation<float> const & model_view, 
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));
 	glUniform1f(_radius_location, radius);
+}
+
+void SphereProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
 }
 
 void SphereProgram::InitUniforms()
@@ -284,7 +304,22 @@ void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Col
 	glUniform1f(_density_location, density);
 }
 
+void FogProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
+}
+
 void FogProgram::InitUniforms()
 {
 	_density_location = GetUniformLocation("density");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TexturedProgram member definitions
+
+void TexturedProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	GL_CALL(glBindAttribLocation(id, 2, "vertex_tex_coord"));
 }

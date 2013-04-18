@@ -40,13 +40,13 @@ namespace gfx
 		void Init()
 		{
 			assert(! IsInitialized());
-			glGenBuffers(1, & _name);
+			GL_CALL(glGenBuffers(1, & _name));
 		}
 		
 		void Deinit()
 		{
 			assert(IsInitialized());
-			glDeleteBuffers(1, & _name);
+			GL_CALL(glDeleteBuffers(1, & _name));
 			_name = 0;
 		}
 		
@@ -60,14 +60,14 @@ namespace gfx
 		{
 			assert(IsInitialized());
 			assert(GetBinding<TARGET>() == 0);
-			glBindBuffer(TARGET, _name);
+			GL_CALL(glBindBuffer(TARGET, _name));
 		}
 		
 		void Unbind() const
 		{
 			assert(IsBound());
 #if ! defined(NDEBUG)
-			glBindBuffer(TARGET, 0); 
+			GL_CALL(glBindBuffer(TARGET, 0));
 #endif
 		}
 		
@@ -75,7 +75,7 @@ namespace gfx
 		{
 			assert(IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * num;
-			glBufferData(TARGET, size, array, usage);
+			GL_CALL(glBufferData(TARGET, size, array, usage));
 		}
 		
 		void BufferData(GLsizeiptr num, GLenum usage)
@@ -87,7 +87,7 @@ namespace gfx
 		{
 			assert(IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * num;
-			glBufferSubData(TARGET, 0, size, array);
+			GL_CALL(glBufferSubData(TARGET, 0, size, array));
 		}
 		
 	protected:

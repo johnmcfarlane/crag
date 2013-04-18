@@ -20,24 +20,24 @@
 template <>
 void EnableClientState<form::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
+	GL_CALL(glEnableVertexAttribArray(2));
+	GL_CALL(glEnableVertexAttribArray(3));
 }
 
 template <>
 void DisableClientState<form::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(3));
+	GL_CALL(glDisableVertexAttribArray(2));
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<form::Vertex>()
 {
-	gfx::VertexPointer<form::Vertex, 3, & form::Vertex::pos>();
-	gfx::NormalPointer<form::Vertex, & form::Vertex::norm>();
-	gfx::ColorPointer<form::Vertex, & form::Vertex::col>();
+	gfx::VertexAttribPointer<1, form::Vertex, geom::Vector<float, 3>, & form::Vertex::pos>();
+	gfx::VertexAttribPointer<2, form::Vertex, geom::Vector<float, 3>, & form::Vertex::norm>();
+	gfx::VertexAttribPointer<3, form::Vertex, gfx::Color4b, & form::Vertex::col>();
 }
 
