@@ -26,19 +26,19 @@ using namespace gfx;
 template <>
 void EnableClientState<Quad::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
 }
 
 template <>
 void DisableClientState<Quad::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<Quad::Vertex>()
 {
-	VertexPointer<Quad::Vertex, 3, & Quad::Vertex::pos>();
+	VertexAttribPointer<1, Quad::Vertex, decltype(Quad::Vertex::pos), & Quad::Vertex::pos>();
 }
 
 

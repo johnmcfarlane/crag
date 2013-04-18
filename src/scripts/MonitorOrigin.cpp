@@ -37,7 +37,7 @@ namespace
 	{
 		if (min_leaf_distance_squared == std::numeric_limits<decltype(min_leaf_distance_squared)>::max())
 		{
-			return true;
+			return false;
 		}
 		
 		ASSERT(min_leaf_distance_squared >= 0);

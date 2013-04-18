@@ -49,13 +49,13 @@ ResourceManager::~ResourceManager()
 	delete _cuboid;
 	_cuboid = nullptr;
 	
-	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
+	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
 		Program & program = * _programs[program_index];
 		program.Deinit(* _light_vert_shader, * _light_frag_shader);
 	}
 	
-	for (int program_index = 0; program_index != ProgramIndex::max_index; ++ program_index)
+	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
 		Program * & program = _programs[program_index];
 		delete program;
@@ -71,10 +71,10 @@ ResourceManager::~ResourceManager()
 	_light_vert_shader = nullptr;
 }
 
-Program const * ResourceManager::GetProgram(ProgramIndex::type index) const
+Program const * ResourceManager::GetProgram(ProgramIndex index) const
 {
-	ASSERT(index >= 0 && index < ProgramIndex::max_index);
-	return _programs[index];
+	ASSERT(index >= ProgramIndex(0) && index < ProgramIndex::size);
+	return _programs[int(index)];
 }
 
 Cuboid const & ResourceManager::GetCuboid() const
@@ -99,24 +99,24 @@ bool ResourceManager::InitShaders()
 
 	_light_frag_shader = new Shader;
 	_light_frag_shader->Init("glsl/light.frag", GL_FRAGMENT_SHADER);
-	
-	_programs[ProgramIndex::poly] = new PolyProgram;
-	_programs[ProgramIndex::poly]->Init("glsl/poly.vert", "glsl/poly.frag", * _light_vert_shader, * _light_frag_shader);
-	
-	_programs[ProgramIndex::sphere] = new SphereProgram;
-	_programs[ProgramIndex::sphere]->Init("glsl/sphere.vert", "glsl/sphere.frag", * _light_vert_shader, * _light_frag_shader);
-	
-	_programs[ProgramIndex::fog] = new FogProgram;
-	_programs[ProgramIndex::fog]->Init("glsl/sphere.vert", "glsl/fog.frag", * _light_vert_shader, * _light_frag_shader);
-	
-	_programs[ProgramIndex::disk] = new DiskProgram;
-	_programs[ProgramIndex::disk]->Init("glsl/disk.vert", "glsl/disk.frag", * _light_vert_shader, * _light_frag_shader);
-	
-	_programs[ProgramIndex::skybox] = new Program;
-	_programs[ProgramIndex::skybox]->Init("glsl/skybox.vert", "glsl/skybox.frag", * _light_vert_shader, * _light_frag_shader);
 
-	_programs[ProgramIndex::fixed] = new Program;
-	
+	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename)
+	{
+		if (program != nullptr)
+		{
+			program->Init(vert_filename, frag_filename, * _light_vert_shader, * _light_frag_shader);
+		}
+		
+		_programs[int(index)] = program;
+	};
+
+	init_program(new PolyProgram, ProgramIndex::poly, "glsl/poly.vert", "glsl/poly.frag");
+	init_program(new SphereProgram, ProgramIndex::sphere, "glsl/disk.vert", "glsl/sphere.frag");
+	init_program(new FogProgram, ProgramIndex::fog, "glsl/disk.vert", "glsl/fog.frag");
+	init_program(new DiskProgram, ProgramIndex::disk, "glsl/disk.vert", "glsl/disk.frag");
+	init_program(new TexturedProgram, ProgramIndex::skybox, "glsl/skybox.vert", "glsl/skybox.frag");
+	init_program(new TexturedProgram, ProgramIndex::textured, "glsl/textured.vert", "glsl/textured.frag");
+
 	return true;
 }
 

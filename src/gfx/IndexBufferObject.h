@@ -19,11 +19,6 @@ namespace gfx
 	{
 		typedef BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER> super;
 	public:
-//		bool IsBound() const
-//		{
-//			return super::IsBound();	// slightly silly
-//		}
-
 		void DrawElements(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
 			assert(IsBound());

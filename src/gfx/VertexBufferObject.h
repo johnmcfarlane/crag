@@ -24,6 +24,7 @@ template <typename VERTEX> void Pointer();
 
 namespace gfx
 {
+	////////////////////////////////////////////////////////////////////////////////
 	// Wrapper for OpenGL VBO.
 	template<typename VERTEX> 
 	class VertexBufferObject : public BufferObject<VERTEX, GL_ARRAY_BUFFER>
@@ -79,32 +80,43 @@ namespace gfx
 		}
 	};
 
-	// Pointer helpers
-	template <typename VERTEX, int SIZE, geom::Vector<float, SIZE> VERTEX::* MEMBER>
-	void VertexPointer()
-	{
-		VERTEX * null_vert = nullptr;
-		GL_CALL(glVertexPointer(SIZE, GL_FLOAT, sizeof(VERTEX), & (null_vert->* MEMBER)));
-	}
+	////////////////////////////////////////////////////////////////////////////////
+	// GL attribute helper types
 	
-	template <typename VERTEX, geom::Vector3f VERTEX::* MEMBER>
-	void NormalPointer()
+	template <typename S>
+	struct TypeInfo;
+
+	template <>
+	struct TypeInfo<float>
 	{
-		VERTEX * null_vert = nullptr;
-		glNormalPointer(GL_FLOAT, sizeof(VERTEX), & (null_vert->* MEMBER));
-	}
+		static constexpr GLenum type = GL_FLOAT;
+		static constexpr bool normalized = false;
+	};
+
+	template <>
+	struct TypeInfo<unsigned char>
+	{
+		static constexpr GLenum type = GL_UNSIGNED_BYTE;
+		static constexpr bool normalized = false;
+	};
 	
-	template <typename VERTEX, Color4b VERTEX::* MEMBER>
-	void ColorPointer()
-	{
-		VERTEX * null_vert = nullptr;
-		GL_CALL(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VERTEX), & (null_vert->* MEMBER)));
-	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// GL attribute helper functions
 	
-	template <typename VERTEX, int SIZE, geom::Vector<float, SIZE> VERTEX::* MEMBER>
-	void TexCoordPointer()
+	template <unsigned index, typename Vertex, typename Vector, Vector Vertex::* _member>
+	void VertexAttribPointer()
 	{
-		VERTEX * null_vert = nullptr;
-		GL_CALL(glTexCoordPointer(SIZE, GL_FLOAT, sizeof(VERTEX), & (null_vert->* MEMBER)));
+		typedef TypeInfo<typename Vector::Scalar> TypeInfo;
+
+		constexpr Vertex * null_vert = nullptr;
+		
+		auto constexpr size = Vector::Size();
+		auto constexpr type = TypeInfo::type;
+		auto constexpr normalized = TypeInfo::normalized;
+		auto constexpr stride = sizeof(Vertex);
+		auto constexpr pointer = & (null_vert->* _member);
+		
+		GL_CALL(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 	}
 }

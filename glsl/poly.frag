@@ -9,9 +9,6 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-// light.frag function which calculates the lighting for the given fragment
-vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
-
 // inputs from the renderer
 uniform bool fragment_lighting = true;
 uniform bool flat_shade = false;
@@ -21,8 +18,13 @@ varying vec3 normal;
 varying vec3 position;
 varying vec4 color;
 
+// light.frag function which calculates the lighting for the given fragment
+vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+
 void main(void)
 {
+	gl_FragColor = color;
+	
 	if (flat_shade)
 	{
 		vec3 dx = dFdx(position);
@@ -33,14 +35,10 @@ void main(void)
 		float d = dot(n, normal);
 		n *= d / abs(d);
 
-		gl_FragColor = color * vec4(LightFragment(position.xyz, n), color.a);
+		gl_FragColor *= vec4(LightFragment(position.xyz, n), color.a);
 	}
 	else if (fragment_lighting)
 	{
-		gl_FragColor = color * vec4(LightFragment(position.xyz, normalize(normal)), color.a);
-	}
-	else
-	{
-		gl_FragColor = color;
+		gl_FragColor *= vec4(LightFragment(position.xyz, normalize(normal)), color.a);
 	}
 }

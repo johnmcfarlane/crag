@@ -727,11 +727,6 @@ void Engine::InitRenderState()
 	GL_CALL(glClearDepth(1.0f));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
 	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
@@ -920,9 +915,9 @@ void Engine::RenderLights()
 		return;
 	}
 	
-	for (int program_index = 0; program_index != ProgramIndex::max_shader; ++ program_index)
+	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
-		Program const * program = _resource_manager->GetProgram(static_cast<ProgramIndex::type>(program_index));
+		Program const * program = _resource_manager->GetProgram(static_cast<ProgramIndex>(program_index));
 		program->OnLightsChanged();
 	}
 }
@@ -1146,6 +1141,9 @@ void Engine::DebugDraw()
 		}
 	}
 	
+	Program const * textured_program = _resource_manager->GetProgram(ProgramIndex::textured);
+	SetCurrentProgram(textured_program);
+
 	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i::Zero());
 #endif
 	

@@ -64,6 +64,7 @@ namespace gfx
 		GLint GetUniformLocation(char const * name) const;
 
 	private:
+		virtual void InitAttribs(GLuint id);
 		virtual void InitUniforms();
 		
 		void GetInfoLog(std::string & info_log) const;
@@ -84,7 +85,8 @@ namespace gfx
 		
 		void SetUniforms(bool fragment_lighting, bool flat_shade) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override;
+		virtual void InitUniforms() override final;
 		
 		// variables
 		GLint _fragment_lighting_location;
@@ -98,7 +100,8 @@ namespace gfx
 		
 		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override;
+		virtual void InitUniforms() override;
 		static Scalar CalculateRadius(geom::Transformation<float> const & transformation);
 
 		// variables
@@ -114,7 +117,8 @@ namespace gfx
 		
 		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color, float density) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override final;
+		virtual void InitUniforms() override final;
 		
 		// variables
 		GLint _density_location;
@@ -123,5 +127,12 @@ namespace gfx
 	class DiskProgram : public SphereProgram
 	{
 	public:
+	};
+	
+	class TexturedProgram : public Program
+	{
+	public:
+	private:
+		virtual void InitAttribs(GLuint id) override final;
 	};
 }

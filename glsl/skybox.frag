@@ -13,11 +13,9 @@
 uniform sampler2D texture;
 
 // inputs from skybox.vert
-varying vec4 tex_coord;
+varying vec2 fragment_tex_coord;
 
 void main(void)
 {
-//	gl_FragColor = texture2D(texture, tex_coord).rgba;
-//	gl_FragColor = texture2D(texture, tex_coord.xy);
-	gl_FragColor = texture2D(texture, gl_TexCoord[0].xy);
+	gl_FragColor = texture2D(texture, fragment_tex_coord);
 }
