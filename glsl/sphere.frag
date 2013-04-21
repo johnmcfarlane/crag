@@ -21,6 +21,7 @@ vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
 varying vec4 quad_position;
 
 // inputs from the renderer
+uniform mat4 projection_matrix;
 uniform vec4 color;
 uniform vec3 center;
 uniform float radius;
@@ -49,7 +50,7 @@ bool GetIntersection(in vec3 ray, out float t)
 
 void SetFragmentDepth(in vec4 view_position)
 {
-	vec2 clipZW = view_position.z * gl_ProjectionMatrix[2].zw + gl_ProjectionMatrix[3].zw;
+	vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
 	
 	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
 }

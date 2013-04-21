@@ -33,7 +33,7 @@ Planet::Planet(LeafNode::Init const & init, Transformation const & local_transfo
 , _sea_level(radius)
 {
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
-	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
+	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
 	SetProgram(sphere_program);
 }
 

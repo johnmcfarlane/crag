@@ -61,8 +61,9 @@ namespace gfx
 		
 		Layer::type GetLayer() const;
 		
+		Program * GetProgram();
 		Program const * GetProgram() const;
-		void SetProgram(Program const  * program);
+		void SetProgram(Program * program);
 		
 		MeshResource const * GetMeshResource() const;
 		void SetMeshResource(MeshResource const * mesh_resource);
@@ -91,7 +92,7 @@ namespace gfx
 		
 		float _render_depth;
 		Layer::type _layer;
-		Program const * _program;
+		Program * _program;
 		MeshResource const * _mesh_resource;
 		bool _is_opaque;
 	};

@@ -33,9 +33,9 @@ Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformat
 {
 	_color = color;
 	
-	ResourceManager const & resource_manager = init.engine.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 
-	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
+	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
 	SetProgram(sphere_program);
 	
 	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();

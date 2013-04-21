@@ -140,6 +140,13 @@ namespace geom
 		return lhs;
 	}
 
+	template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
+	{
+		lhs.x /= rhs.x;
+		lhs.y /= rhs.y;
+		return lhs;
+	}
+
 	template<typename S> Vector<S, 2> operator - (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 	{
 		Vector<S, 2> result = lhs;
@@ -168,6 +175,11 @@ namespace geom
 	{
 		Vector<S, 2> result = lhs;
 		return result /= rhs;
+	}
+
+	template<typename S> Vector<S, 2> operator / (Vector<S, 2> lhs, Vector<S, 2> const & rhs)
+	{
+		return lhs /= rhs;
 	}
 
 	template<typename S> S LengthSq(Vector<S, 2> const & v)

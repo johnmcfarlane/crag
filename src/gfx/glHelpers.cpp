@@ -55,13 +55,3 @@ void gfx::Attach(FrameBuffer const & frame_buffer, Texture const & texture)
 	ASSERT(frame_buffer.IsBound());
 	GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture._name, 0));
 }
-
-void gfx::LoadMatrix(const geom::Matrix44f& matrix)
-{
-	glLoadMatrixf(matrix.GetArray());
-}
-
-void gfx::LoadMatrix(const geom::Matrix44d& matrix)
-{
-	glLoadMatrixd(matrix.GetArray());
-}

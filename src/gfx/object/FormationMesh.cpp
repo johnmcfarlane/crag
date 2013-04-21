@@ -14,6 +14,7 @@
 #include "gfx/Debug.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
+#include "gfx/Program.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
@@ -64,7 +65,7 @@ FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quatern
 	OnMeshResourceChange();
 
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
-	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
+	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 }
 
@@ -136,18 +137,13 @@ void FormationMesh::Render(Engine const & renderer) const
 		return;
 	}
 	
-	// State
-	ASSERT(IsEnabled(GL_DEPTH_TEST));
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
-	
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, formation_ambient));
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, formation_diffuse));
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, Color4f(formation_specular, formation_specular, formation_specular)));
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, formation_emission));
-	GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, & formation_shininess));
-	GL_CALL(glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE));
-	
-	ASSERT(! IsEnabled(GL_TEXTURE_2D));
+	// Pass rendering details to the shader program.
+	Program const & program = ref(renderer.GetCurrentProgram());
+	PolyProgram const & poly_program = static_cast<PolyProgram const &>(program);
+
+	bool fragment_lighting = renderer.GetFragmentLighting();
+	bool flat_shaded = renderer.GetFlatShaded();
+	poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded);
 	
 	// Draw the mesh!
 	front_buffer.Draw();

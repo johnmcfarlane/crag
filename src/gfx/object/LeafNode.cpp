@@ -115,12 +115,17 @@ Layer::type LeafNode::GetLayer() const
 	return _layer;
 }
 
+Program * LeafNode::GetProgram()
+{
+	return _program;
+}
+
 Program const * LeafNode::GetProgram() const
 {
 	return _program;
 }
 
-void LeafNode::SetProgram(Program const * program)
+void LeafNode::SetProgram(Program * program)
 {
 	_program = program;
 }

@@ -47,7 +47,6 @@ namespace
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_lighting, bool, true);
 	CONFIG_DEFINE (init_wireframe, bool, false);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
@@ -105,24 +104,6 @@ namespace
 #else
 		return GLEW_NV_fence != GL_FALSE;
 #endif
-	}
-	
-	void SetModelViewMatrix(Transformation const & model_view_transformation)
-	{
-		ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
-
-		Matrix44 gl_model_view_matrix = model_view_transformation.GetOpenGlMatrix();
-		LoadMatrix(gl_model_view_matrix);
-	}
-	
-	// Creates a frustum with sensible defaults for rendering a background.
-	void SetBackgroundFrustum(Pov const & pov)
-	{
-		// Set projection matrix within relatively tight bounds.
-		Frustum background_frustum = pov.GetFrustum();
-		background_frustum.depth_range[0] = .1f;
-		background_frustum.depth_range[1] = 10.f;
-		background_frustum.SetProjectionMatrix();
 	}
 	
 	// Given the list of objects to render, calculates suitable near/far z values.
@@ -185,17 +166,35 @@ namespace
 	
 	// Given the scene, adjusts its frustum with suitable near/far z values 
 	// and applies it to the projection matrix.
-	void SetForegroundFrustum(Scene & scene)
+	// TODO: move this to a utils file; RenderRange -> DepthRange
+	Matrix44 CalcProjectionMatrix(Scene const & scene, RenderRange depth_range)
 	{
-		Pov & pov = scene.GetPov();
-		LeafNode::RenderList const & render_list = scene.GetRenderList();
-		Frustum & frustum = pov.GetFrustum();
-
-		frustum.depth_range = CalculateDepthRange(render_list);
+		Pov const & pov = scene.GetPov();
+		Frustum frustum = pov.GetFrustum();
+		frustum.depth_range = depth_range;
 		
-		frustum.SetProjectionMatrix();
+		return frustum.CalcProjectionMatrix();
 	}
 
+	// Given the scene, adjusts its frustum with suitable near/far z values 
+	// and applies it to the projection matrix.
+	// TODO: belongs with Scene; scene should be const
+	Matrix44 CalcForegroundProjectionMatrix(Scene const & scene)
+	{
+		LeafNode::RenderList const & render_list = scene.GetRenderList();
+
+		RenderRange depth_range = CalculateDepthRange(render_list);
+		return CalcProjectionMatrix(scene, depth_range);
+	}
+
+	// Creates a frustum with sensible defaults for rendering a background.
+	Matrix44 CalcBackgroundProjectionMatrix(Scene const & scene)
+	{
+		// Set projection matrix within relatively tight bounds.
+		RenderRange depth_range = { .1f, 10.f };
+		return CalcProjectionMatrix(scene, depth_range);
+	}
+	
 	// Given a scene and the uid of a branc_node in that scene
 	// (or Uid() for the scene's root node),
 	// returns a reference to that branch node.
@@ -230,7 +229,6 @@ Engine::Engine()
 , _dirty(true)
 , vsync(false)
 , culling(init_culling)
-, lighting(init_lighting)
 , wireframe(init_wireframe)
 , _flat_shaded(init_flat_shaded)
 , _fragment_lighting(init_fragment_lighting)
@@ -304,11 +302,6 @@ void Engine::SetCurrentProgram(Program const * program)
 		ASSERT(_current_program->IsInitialized());
 		
 		_current_program->Bind();
-		
-		// In case this is the first time in this frame that the program has been set active,
-		// set the lights while it's active now.
-		Light::List const & lights = scene->GetLightList();
-		_current_program->UpdateLights(lights);
 	}
 	
 	GL_VERIFY;
@@ -446,28 +439,32 @@ void Engine::OnToggleCulling()
 	_dirty = true;
 }
 
-void Engine::OnToggleLighting()
-{
-	lighting = ! lighting;
-	_dirty = true;
-}
-
 void Engine::OnToggleWireframe()
 {
 	wireframe = ! wireframe;
 	_dirty = true;
 }
 
-void Engine::OnToggleFlatShaded()
+void Engine::SetFlatShaded(bool flat_shaded)
 {
-	_flat_shaded = ! _flat_shaded;
-	_dirty = true;
+	_dirty = _flat_shaded != flat_shaded;
+	_flat_shaded = flat_shaded;
 }
 
-void Engine::OnToggleFragmentLighting()
+bool Engine::GetFlatShaded() const
 {
-	_fragment_lighting = ! _fragment_lighting;
-	_dirty = true;
+	return _flat_shaded;
+}
+
+void Engine::SetFragmentLighting(bool fragment_lighting)
+{
+	_dirty = _fragment_lighting != fragment_lighting;
+	_fragment_lighting = fragment_lighting;
+}
+
+bool Engine::GetFragmentLighting() const
+{
+	return _fragment_lighting;
 }
 
 void Engine::OnToggleCapture()
@@ -607,7 +604,6 @@ void Engine::Deinit()
 	Debug::Deinit();
 	
 	init_culling = culling;
-	init_lighting = lighting;
 	init_wireframe = wireframe;
 	
 	if (_fence2.IsInitialized())
@@ -730,8 +726,6 @@ void Engine::InitRenderState()
 	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
-	glMatrixMode(GL_MODELVIEW);
-	
 	GL_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
 	GL_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
 	GL_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
@@ -785,11 +779,6 @@ bool Engine::HasShadowSupport() const
 
 void Engine::PreRender()
 {
-	// set shader uniforms
-	PolyProgram const * poly_program = static_cast<PolyProgram const *>(_resource_manager->GetProgram(ProgramIndex::poly));
-	SetCurrentProgram(poly_program);
-	poly_program->SetUniforms(_fragment_lighting, _flat_shaded);
-
 	// purge objects
 	typedef LeafNode::RenderList List;
 	
@@ -876,6 +865,9 @@ void Engine::RenderFrame()
 	// clear the screen.
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	
+	// Set up lights.
+	InvalidateUniforms();
+	
 	// All the things.
 	RenderScene();
 	
@@ -891,34 +883,26 @@ void Engine::RenderFrame()
 void Engine::RenderScene()
 {
 	// Adjust near and far plane.
-	SetForegroundFrustum(* scene);
-	
-	// Set up lights.
-	RenderLights();
+	auto projection_matrix = CalcForegroundProjectionMatrix(* scene);
 	
 	// Draw material objects.
 	if (wireframe)
 	{
-		RenderForegroundPass(WireframePass1);
-		RenderForegroundPass(WireframePass2);
+		RenderForegroundPass(projection_matrix, WireframePass1);
+		RenderForegroundPass(projection_matrix, WireframePass2);
 	}
 	else 
 	{
-		RenderForegroundPass(NormalPass);
+		RenderForegroundPass(projection_matrix, NormalPass);
 	}
 }
 
-void Engine::RenderLights()
+void Engine::InvalidateUniforms()
 {
-	if (! lighting)
-	{
-		return;
-	}
-	
 	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
-		Program const * program = _resource_manager->GetProgram(static_cast<ProgramIndex>(program_index));
-		program->OnLightsChanged();
+		Program * program = _resource_manager->GetProgram(static_cast<ProgramIndex>(program_index));
+		program->SetUniformsValid(false);
 	}
 }
 
@@ -976,7 +960,7 @@ bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
 
 // Each pass draws all the geometry. Typically, there is one per frame
 // unless wireframe mode is on. 
-void Engine::RenderForegroundPass(ForegroundRenderPass pass)
+void Engine::RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass)
 {
 	// begin
 	if (! BeginRenderForeground(pass))
@@ -985,17 +969,16 @@ void Engine::RenderForegroundPass(ForegroundRenderPass pass)
 	}
 	
 	// render opaque objects
-	RenderLayer(Layer::foreground);
+	RenderLayer(projection_matrix, Layer::foreground);
 	
 	// render the background
-	SetBackgroundFrustum(scene->GetPov());
-	RenderLayer(Layer::background);
-	SetForegroundFrustum(* scene);
-
+	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* scene);
+	RenderLayer(background_projection_matrix, Layer::background);
+	
 	// render partially transparent objects
 	Enable(GL_BLEND);
 	glDepthMask(false);
-	RenderLayer(Layer::foreground, false);
+	RenderLayer(projection_matrix, Layer::foreground, false);
 	Disable(GL_BLEND);
 	glDepthMask(true);
 
@@ -1047,12 +1030,13 @@ void Engine::EndRenderForeground(ForegroundRenderPass pass) const
 	}
 }
 
-int Engine::RenderLayer(Layer::type layer, bool opaque)
+int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	
 	typedef LeafNode::RenderList List;
 	List & render_list = scene->GetRenderList();
+	auto & lights = scene->GetLightList();
 	
 	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 	{
@@ -1068,16 +1052,27 @@ int Engine::RenderLayer(Layer::type layer, bool opaque)
 			continue;
 		}
 		
-		// Set the matrix.
-		Transformation const & transformation = leaf_node.GetModelViewTransformation();
-		SetModelViewMatrix(transformation);
-
-		Program const * required_program = leaf_node.GetProgram();
+		Program * required_program = leaf_node.GetProgram();
 		if (required_program != nullptr)
 		{
 			if (required_program->IsInitialized())
 			{
 				SetCurrentProgram(required_program);
+				
+				// once per frame,
+				if (! required_program->GetUniformsValid())
+				{
+					required_program->SetUniformsValid(true);
+
+					// set the frame-constant uniforms while it's active
+					required_program->UpdateLights(lights);
+					required_program->SetProjectionMatrix(projection_matrix);
+				}
+				
+				// Set the model view matrix.
+				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
+				auto gl_model_view_projection_matrix = model_view_transformation.GetOpenGlMatrix();
+				required_program->SetModelViewMatrix(gl_model_view_projection_matrix);
 			}
 			else
 			{
@@ -1101,6 +1096,11 @@ int Engine::RenderLayer(Layer::type layer, bool opaque)
 void Engine::DebugDraw()
 {
 #if defined(GFX_DEBUG)
+
+	SetCurrentProgram(nullptr);
+	SetCurrentMesh(nullptr);
+	
+#if 0
 	if (capture_enable)
 	{
 		return;
@@ -1118,17 +1118,15 @@ void Engine::DebugDraw()
 	Transformation model_view(Vector3::Zero(), inverse_rotation);
 	SetModelViewMatrix(model_view);
 	
-	SetCurrentProgram(nullptr);
-	SetCurrentMesh(nullptr);
-	
 	// then pass the missing translation into the draw function.
 	// It corrects all the verts accordingly (avoids a precision issue).
 	Debug::Draw(translation);
 	Debug::Clear();
 	
-#if defined (GATHER_STATS)
 	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
+#endif
 	
+#if defined (GATHER_STATS)
 	// The string into which is written Debug text.
 	std::stringstream out_stream;
 	
@@ -1141,13 +1139,16 @@ void Engine::DebugDraw()
 		}
 	}
 	
-	Program const * textured_program = _resource_manager->GetProgram(ProgramIndex::textured);
-	SetCurrentProgram(textured_program);
-
-	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i::Zero());
-#endif
+	Program * sprite_program = _resource_manager->GetProgram(ProgramIndex::sprite);
+	if (sprite_program != nullptr)
+	{
+		SetCurrentProgram(sprite_program);
+		static_cast<SpriteProgram*>(sprite_program)->SetUniforms(app::GetResolution());
+		Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
+	}
+#endif	// defined (GATHER_STATS)
 	
-#endif
+#endif	// defined(GFX_DEBUG)
 }
 
 #if defined(VERIFY)
