@@ -51,7 +51,7 @@ Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformat
 
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
-	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
+	Program * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
 	SetProgram(poly_program);
 	
 	MeshResource const & disk_quad = resource_manager.GetDiskQuad();

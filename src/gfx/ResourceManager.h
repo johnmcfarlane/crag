@@ -30,6 +30,7 @@ namespace gfx
 		~ResourceManager();
 		
 		// program functions
+		Program * GetProgram(ProgramIndex index);
 		Program const * GetProgram(ProgramIndex index) const;
 		
 		// buffer object functions

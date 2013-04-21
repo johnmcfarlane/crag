@@ -10,6 +10,9 @@
 //
 
 // per-object inputs from the renderer
+uniform mat4 model_view_matrix;
+uniform mat4 projection_matrix;
+uniform vec4 color;
 uniform bool fragment_lighting = true;
 uniform bool flat_shade = false;
 
@@ -18,26 +21,28 @@ attribute vec3 vertex_position;
 attribute vec3 vertex_normal;
 
 // outputs to poly.frag
-varying vec3 normal;
-varying vec3 position;
-varying vec4 color;
+varying vec3 fragment_position;
+varying vec3 fragment_normal;
+varying vec4 fragment_color;
 
 // light.frag function which calculates the lighting for the given fragment
 vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
 
 void main(void)
 {
-	position = (gl_ModelViewMatrix * vec4(vertex_position, 1)).xyz;
-	normal = normalize(gl_NormalMatrix * vertex_normal);
+	vec4 position4 = model_view_matrix * vec4(vertex_position, 1);
+	fragment_position = position4.xyz;
+
+	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;
 
 	if (fragment_lighting || flat_shade)
 	{
-		color = gl_Color;
+		fragment_color = color;
 	}
 	else
 	{
-		color = gl_Color * vec4(LightFragment(position.xyz, normalize(normal)), gl_Color.a);
+		fragment_color = color * vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal)), color.a);
 	}
 
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(vertex_position, 1);
+	gl_Position = projection_matrix * position4;
 }

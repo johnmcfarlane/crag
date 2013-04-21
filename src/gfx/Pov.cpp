@@ -11,14 +11,7 @@
 
 #include "Pov.h"
 
-#include "glHelpers.h"
-
-#include "geom/MatrixOps.h"
-#include "geom/Sphere.h"
-
-
 using namespace gfx;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Frustum member definitions
@@ -40,16 +33,6 @@ Matrix44 Frustum::CalcProjectionMatrix() const
 						0, 0, static_cast<float>((depth_range[1] + depth_range[0]) / (depth_range[0] - depth_range[1])), -1,
 						0, 0, static_cast<float>(2. * depth_range[1] * depth_range[0] / (depth_range[0] - depth_range[1])), 0);
 }
-
-void Frustum::SetProjectionMatrix() const
-{
-	Matrix44 projection_matrix = CalcProjectionMatrix();
-	
-	glMatrixMode(GL_PROJECTION);
-	LoadMatrix(projection_matrix);
-	glMatrixMode(GL_MODELVIEW);
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Pov member definitions

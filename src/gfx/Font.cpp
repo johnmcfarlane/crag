@@ -148,17 +148,6 @@ void Font::RenderVerts() const
 	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	glDepthMask(false);
 	
-	// Matrices
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	geom::Vector2i resolution = app::GetResolution();
-	Ortho(0, resolution.x, resolution.y, 0);
-	
-	glMatrixMode (GL_MODELVIEW); 
-	glLoadIdentity (); 
-	glTranslatef (0.375f, 0.375f, 0.f);
-	GL_VERIFY;
-	
 	// Draw VBO
 	vbo.Activate();
 	int num_verts = vertex_buffer.size();

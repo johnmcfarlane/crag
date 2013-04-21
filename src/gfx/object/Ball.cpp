@@ -33,9 +33,9 @@ Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformat
 {
 	_color = color;
 	
-	ResourceManager const & resource_manager = init.engine.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 
-	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
+	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
 	SetProgram(sphere_program);
 	
 	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();
@@ -70,7 +70,7 @@ void Ball::Render(Engine const & renderer) const
 {
 	// Pass rendering details to the shader program.
 	Program const & program = ref(renderer.GetCurrentProgram());
-	SphereProgram const & sphere_program = static_cast<SphereProgram const &>(program);
+	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(program);
 	Transformation const & transformation = GetModelViewTransformation();
 	sphere_program.SetUniforms(transformation, _color);
 	

@@ -24,7 +24,7 @@ using namespace gfx;
 
 Program::Program()
 : _id(0)
-, _lights_changed(true)
+, _uniforms_valid(false)
 {
 }
 
@@ -86,6 +86,8 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	
 	Bind();
 	
+	_projection_matrix_location = GetUniformLocation("projection_matrix");
+	_model_view_matrix_location = GetUniformLocation("model_view_matrix");
 	InitUniforms();
 	
 	for (auto i = 0; i < MAX_LIGHTS; ++ i)
@@ -128,21 +130,20 @@ void Program::Unbind() const
 	GL_CALL(glUseProgram(0));
 }
 
-void Program::OnLightsChanged() const
+void Program::SetUniformsValid(bool uniforms_valid)
 {
-	_lights_changed = true;
+	_uniforms_valid = uniforms_valid;
+}
+
+bool Program::GetUniformsValid() const
+{
+	return _uniforms_valid;
 }
 
 void Program::UpdateLights(Light::List const & lights) const
 {
 	ASSERT(IsBound());
-	if (! _lights_changed)
-	{
-		return;
-	}
-	
-	_lights_changed = false;
-	
+
 	LightBlock const & light_block = _light_block;
 	LightBlock::Light const * uniforms = light_block.lights, * uniforms_end = uniforms + MAX_LIGHTS;
 	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ uniforms, ++ i)
@@ -168,6 +169,16 @@ void Program::UpdateLights(Light::List const & lights) const
 		glUniform3f(uniforms->color, 0, 0, 0);
 		++ uniforms;
 	}
+}
+
+void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
+{
+	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, projection_matrix.GetArray()));
+}
+
+void Program::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
+{
+	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, model_view_matrix.GetArray()));
 }
 
 GLint Program::GetUniformLocation(char const * name) const
@@ -220,11 +231,12 @@ PolyProgram::PolyProgram()
 {
 }
 
-void PolyProgram::SetUniforms(bool fragment_lighting, bool flat_shade) const
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const
 {
 	ASSERT(IsBound());
-	GL_CALL(glUniform1f(_fragment_lighting_location, GLfloat(fragment_lighting)));
-	GL_CALL(glUniform1f(_flat_shade_location, GLfloat(flat_shade)));
+	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
+	GL_CALL(glUniform1i(_fragment_lighting_location, fragment_lighting));
+	GL_CALL(glUniform1i(_flat_shade_location, flat_shade));
 }
 
 void PolyProgram::InitAttribs(GLuint id)
@@ -238,6 +250,7 @@ void PolyProgram::InitUniforms()
 	ASSERT(IsBound());
 	GL_VERIFY;
 
+	_color_location = GetUniformLocation("color");
 	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
 	_flat_shade_location = GetUniformLocation("flat_shade");
 
@@ -245,40 +258,40 @@ void PolyProgram::InitUniforms()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// SphereProgram member definitions
+// DiskProgram member definitions
 
-SphereProgram::SphereProgram()
+DiskProgram::DiskProgram()
 : _color_location(-1)
 , _center_location(-1)
 , _radius_location(-1)
 {
 }
 
-void SphereProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
+void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
 {
-	glUniform4f(_color_location, color.r, color.g, color.b, color.a);
+	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	
 	geom::Vector4f center = geom::Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
-	glUniform3f(_center_location, center.x, center.y, center.z);
+	GL_CALL(glUniform3f(_center_location, center.x, center.y, center.z));
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));
-	glUniform1f(_radius_location, radius);
+	GL_CALL(glUniform1f(_radius_location, radius));
 }
 
-void SphereProgram::InitAttribs(GLuint id)
+void DiskProgram::InitAttribs(GLuint id)
 {
 	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
 }
 
-void SphereProgram::InitUniforms()
+void DiskProgram::InitUniforms()
 {
 	_color_location = GetUniformLocation("color");
 	_center_location = GetUniformLocation("center");
 	_radius_location = GetUniformLocation("radius");
 }
 
-Scalar SphereProgram::CalculateRadius(geom::Transformation<float> const & transformation)
+Scalar DiskProgram::CalculateRadius(geom::Transformation<float> const & transformation)
 {
 	Vector3 size = transformation.GetScale();
 	ASSERT(NearEqual(size.x / size.y, 1, Scalar(0.0001)));
@@ -299,7 +312,7 @@ FogProgram::FogProgram()
 
 void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const
 {
-	SphereProgram::SetUniforms(model_view, color);
+	DiskProgram::SetUniforms(model_view, color);
 	
 	glUniform1f(_density_location, density);
 }
@@ -322,4 +335,26 @@ void TexturedProgram::InitAttribs(GLuint id)
 {
 	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 	GL_CALL(glBindAttribLocation(id, 2, "vertex_tex_coord"));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// SpriteProgram member definitions
+
+void SpriteProgram::SetUniforms(geom::Vector2i const & resolution) const
+{
+	auto resolution_f = geom::Cast<float>(resolution);
+	GL_CALL(glUniform2f(_position_scale_location, 1.f / resolution_f.x, - 1.f / resolution_f.y));
+	GL_CALL(glUniform2f(_position_offset_location, -.5f, .5f));
+}
+
+void SpriteProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	GL_CALL(glBindAttribLocation(id, 2, "vertex_tex_coord"));
+}
+
+void SpriteProgram::InitUniforms()
+{
+	_position_scale_location = GetUniformLocation("position_scale");
+	_position_offset_location = GetUniformLocation("position_offset");
 }

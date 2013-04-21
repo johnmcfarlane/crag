@@ -56,9 +56,9 @@ Skybox::Skybox(LeafNode::Init const & init)
 {
 	InitVerts();
 
-	ResourceManager const & resource_manager = init.engine.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
-	Program const * skybox_program = resource_manager.GetProgram(ProgramIndex::skybox);
+	Program * skybox_program = resource_manager.GetProgram(ProgramIndex::skybox);
 	SetProgram(skybox_program);
 }
 

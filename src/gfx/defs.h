@@ -28,13 +28,14 @@ namespace gfx
 		fog,
 		disk,
 		skybox,
-		textured,
+		sprite,
 		dont_care,
 		size = dont_care
 	};
 	
 	// geometric types
 	typedef float Scalar;
+	typedef geom::Vector<Scalar, 2> Vector2;
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Vector<Scalar, 4> Vector4;
 	typedef geom::Vector<Scalar, 2> RenderRange;	// near/far z

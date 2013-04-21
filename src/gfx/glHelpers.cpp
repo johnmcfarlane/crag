@@ -56,21 +56,3 @@ void gfx::Attach(FrameBuffer const & frame_buffer, Texture const & texture)
 	GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture._name, 0));
 }
 
-void gfx::LoadMatrix(const geom::Matrix44f& matrix)
-{
-	glLoadMatrixf(matrix.GetArray());
-}
-
-void gfx::LoadMatrix(const geom::Matrix44d& matrix)
-{
-	glLoadMatrixd(matrix.GetArray());
-}
-
-void gfx::Ortho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top)
-{
-#if defined(__ANDROID__)
-	glOrthof(left, right, bottom, top, -1, 1);
-#else
-	glOrtho(left, right, bottom, top, -1, 1);
-#endif
-}
