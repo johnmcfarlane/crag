@@ -17,10 +17,6 @@
 #include <sys/resource.h>
 #endif
 
-// defined in gfx::Engine.cpp
-CONFIG_DECLARE (multisample, bool);
-
-
 namespace 
 {
 	bool _has_focus = true;
@@ -49,12 +45,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	
-	if (multisample)
-	{
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-	}
 	
 	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	

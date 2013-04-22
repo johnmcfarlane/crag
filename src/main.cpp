@@ -39,6 +39,8 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
+// TODO: search source for WIN32, __APPLE__, __ANDROID__ etc. 
+// and try to simplify/reduce
 #if defined(WIN32)
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -151,12 +153,6 @@ namespace
 						{
 							engine.SetFragmentLighting(! engine.GetFragmentLighting());
 						});
-						break;
-					}
-					
-					case SDL_SCANCODE_P:
-					{
-						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleWireframe(); });
 						break;
 					}
 					

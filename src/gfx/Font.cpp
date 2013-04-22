@@ -141,7 +141,6 @@ void Font::RenderVerts() const
 
 	// State
 	ASSERT(! IsEnabled(GL_LIGHTING));
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	Enable(GL_BLEND);

@@ -1,5 +1,5 @@
 //
-//  FiberWin.h
+//  Fiber.h
 //  crag
 //
 //  Created by John McFarlane on 2012-03-28.
@@ -9,15 +9,14 @@
 
 #pragma once
 
-#if defined(WIN32)
+#if defined(__ANDROID__)
 
 namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Fiber - lightweight thread
 	//
-	// This version requires POSIX compatability and is tested under 64-bit linux
-	// and /should/ work on OS X with the right preprocessor macros defined.
+	// This version is used where no POSIX or Windows support is provided.
 	
 	class Fiber
 	{
@@ -31,9 +30,9 @@ namespace ipc
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Fiber(char const * name, std::size_t stack_size, void * data, Callback callback);
+		Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback);
 		~Fiber();
-		
+
 		// must be called by any thread in advance of creating or continuing a fiber
 		static void InitializeThread();
 		
@@ -46,32 +45,31 @@ namespace ipc
 		// Debug/user-friendly identifier.
 		char const * GetName() const;
 		
-		// continues execution of the fiber;
-		// must be called from outside the fiber
+		// Continues execution of the fiber.
 		void Continue();
 
-		// pauses execution until the next call to Continue;
-		// must be called from within the fiber
+		// Pauses execution until the next call to Continue.
+		// Must be called from within the fiber.
 		void Yield();
 		
 #if defined(VERIFY)
 		void Verify() const;
+	private:
+		void InitStackUseEstimator();
+		std::size_t EstimateStackUse() const;
 #endif
 
-	private:
-		static VOID WINAPI OnLaunch(LPVOID fiber_pointer);
+		void InitContext();
+		void InitCallback(Callback * callback, void * data);
+
+		static void OnLaunch(Fiber & fiber, Callback * callback, void * data);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		char const * _name;	// human-readable name of the Fiber
-		SIZE_T _stack_size;	// the requested stack size
-		void * _data;	// the pointer to pass to _callback
-		Callback * _callback;	// given function to call on fiber launch
-		SIZE_T _allocated_stack_size;	// amount that was actually requested
-		LPVOID _fiber;	// handle to system fiber
-		LPVOID _calling_fiber;	// when fiber is running, stores the fiber to which we'll be returning
-		bool _is_running;	// true if _callback has not yet exited
+		std::size_t _stack_size;	// the requested stack size
+		bool _is_running;
 	};
 }
 
-#endif	// defined(WIN32)
+#endif	// defined(__ANDROID__)

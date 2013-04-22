@@ -96,13 +96,11 @@ void Skybox::Render(Engine const & renderer) const
 	engine.SetCurrentMesh(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	glDepthMask(false);
 	
 	ASSERT(! IsEnabled(GL_LIGHTING));
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
 	

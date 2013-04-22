@@ -41,6 +41,8 @@ bool Fence::Init()
 
 #if defined(__APPLE__)
 	glGenFencesAPPLE(1, & _id);
+#elif defined(__ANDROID__)
+	DEBUG_BREAK("Not supported");
 #else
 	glGenFencesNV(1, & _id);
 #endif
@@ -54,6 +56,8 @@ void Fence::Deinit()
 
 #if defined(__APPLE__)
 	glDeleteFencesAPPLE(1, & _id);
+#elif defined(__ANDROID__)
+	DEBUG_BREAK("Not supported");
 #else
 	glDeleteFencesNV(1, & _id);
 #endif
@@ -67,6 +71,8 @@ void Fence::Set()
 
 #if defined(__APPLE__)
 	glSetFenceAPPLE(_id);
+#elif defined(__ANDROID__)
+	DEBUG_BREAK("Not supported");
 #else
 	glSetFenceNV(_id, GL_ALL_COMPLETED_NV);
 #endif
@@ -78,6 +84,9 @@ bool Fence::Test()
 
 #if defined(__APPLE__)
 	bool result = glTestFenceAPPLE(_id) != GL_FALSE;
+#elif defined(__ANDROID__)
+	DEBUG_BREAK("Not supported");
+	bool result = true;
 #else
 	bool result = glTestFenceNV(_id) != GL_FALSE;
 #endif
@@ -92,6 +101,8 @@ void Fence::Finish()
 
 #if defined(__APPLE__)
 	glFinishFenceAPPLE(_id);
+#elif defined(__ANDROID__)
+	DEBUG_BREAK("Not supported");
 #else
 	glFinishFenceNV(_id);
 #endif

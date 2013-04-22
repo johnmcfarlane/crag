@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#if ! defined(WIN32)
+#if ! defined(WIN32) && ! defined(__ANDROID__)
 
 #include "Fiber.h"
 

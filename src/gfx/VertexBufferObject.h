@@ -72,12 +72,6 @@ namespace gfx
 			assert(count >= 3);
 			Draw(GL_TRIANGLE_STRIP, first, count);
 		}
-		
-		void DrawQuads(GLint first, GLsizei count) const
-		{
-			assert((count % 4) == 0);
-			Draw(GL_QUADS, first, count);
-		}
 	};
 
 	////////////////////////////////////////////////////////////////////////////////

@@ -46,13 +46,6 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		enum ForegroundRenderPass
-		{
-			NormalPass,
-			WireframePass1,
-			WireframePass2
-		};
-		
 	public:
 		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Daemon<Engine> Daemon;
@@ -88,7 +81,6 @@ namespace gfx
 		void OnSetReady(bool ready);
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
-		void OnToggleWireframe();
 		
 		void SetFlatShaded(bool flat_shaded);
 		bool GetFlatShaded() const;
@@ -123,9 +115,9 @@ namespace gfx
 		void RenderScene();
 		
 		void InvalidateUniforms();
-		bool BeginRenderForeground(ForegroundRenderPass pass) const;
-		void RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass);
-		void EndRenderForeground(ForegroundRenderPass pass) const;
+		bool BeginRenderForeground() const;
+		void RenderForegroundPass(Matrix44 const & projection_matrix);
+		void EndRenderForeground() const;
 		
 		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
@@ -165,7 +157,6 @@ namespace gfx
 		bool _dirty;
 		bool vsync;
 		bool culling;
-		bool wireframe;
 		bool _flat_shaded;
 		bool _fragment_lighting;
 		int capture_frame;

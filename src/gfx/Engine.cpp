@@ -30,8 +30,6 @@
 using core::Time;
 using namespace gfx;
 
-
-CONFIG_DEFINE (multisample, bool, false);
 CONFIG_DECLARE (profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
 
@@ -47,7 +45,6 @@ namespace
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_wireframe, bool, false);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
 
@@ -101,6 +98,8 @@ namespace
 	{
 #if defined(__APPLE__)
 		return true;
+#elif defined(__ANDROID__)
+		return false;
 #else
 		return GLEW_NV_fence != GL_FALSE;
 #endif
@@ -229,7 +228,6 @@ Engine::Engine()
 , _dirty(true)
 , vsync(false)
 , culling(init_culling)
-, wireframe(init_wireframe)
 , _flat_shaded(init_flat_shaded)
 , _fragment_lighting(init_fragment_lighting)
 , capture_frame(0)
@@ -439,12 +437,6 @@ void Engine::OnToggleCulling()
 	_dirty = true;
 }
 
-void Engine::OnToggleWireframe()
-{
-	wireframe = ! wireframe;
-	_dirty = true;
-}
-
 void Engine::SetFlatShaded(bool flat_shaded)
 {
 	_dirty = _flat_shaded != flat_shaded;
@@ -494,18 +486,11 @@ Transformation const& Engine::GetCamera() const
 
 Engine::StateParam const Engine::init_state[] =
 {
-	INIT(GL_COLOR_MATERIAL, true),
 	INIT(GL_TEXTURE_2D, false),
-	INIT(GL_NORMALIZE, false),
 	INIT(GL_CULL_FACE, true),
-	INIT(GL_LIGHTING, false),
 	INIT(GL_DEPTH_TEST, false),
 	INIT(GL_BLEND, false),
 	INIT(GL_INVALID_ENUM, false),
-	INIT(GL_MULTISAMPLE, false),
-	INIT(GL_LINE_SMOOTH, false),
-	INIT(GL_POLYGON_SMOOTH, false),
-	INIT(GL_FOG, false)
 };
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
@@ -604,7 +589,6 @@ void Engine::Deinit()
 	Debug::Deinit();
 	
 	init_culling = culling;
-	init_wireframe = wireframe;
 	
 	if (_fence2.IsInitialized())
 	{
@@ -716,20 +700,10 @@ void Engine::InitRenderState()
 
 	GL_CALL(glFrontFace(GL_CW));
 	GL_CALL(glCullFace(GL_BACK));
-	GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 	glDepthFunc(GL_LEQUAL);
-	GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-	GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
-	GL_CALL(glClearDepth(1.0f));
+	GL_CALL(glClearDepthf(1.0f));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
-
-	GL_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-	GL_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-	GL_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
-	
 	VerifyRenderState();
 }
 
@@ -762,7 +736,11 @@ bool Engine::HasShadowSupport() const
 		return false;
 	}
 	
-#if ! defined(__APPLE__)
+#if defined(__ANDROID__)
+	return false;
+#elif defined(__APPLE__)
+	return true;
+#else
 	if (! GLEW_ARB_shadow) {
 		return false;
 	}
@@ -772,9 +750,9 @@ bool Engine::HasShadowSupport() const
 	if (! GLEW_EXT_framebuffer_object) {
 		return false;
 	}
-#endif
 	
 	return true;
+#endif
 }
 
 void Engine::PreRender()
@@ -886,15 +864,7 @@ void Engine::RenderScene()
 	auto projection_matrix = CalcForegroundProjectionMatrix(* scene);
 	
 	// Draw material objects.
-	if (wireframe)
-	{
-		RenderForegroundPass(projection_matrix, WireframePass1);
-		RenderForegroundPass(projection_matrix, WireframePass2);
-	}
-	else 
-	{
-		RenderForegroundPass(projection_matrix, NormalPass);
-	}
+	RenderForegroundPass(projection_matrix);
 }
 
 void Engine::InvalidateUniforms()
@@ -906,51 +876,13 @@ void Engine::InvalidateUniforms()
 	}
 }
 
-bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
+bool Engine::BeginRenderForeground() const
 {
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 		
-	switch (pass) 
+	if (! culling) 
 	{
-		case NormalPass:
-			if (! culling) 
-			{
-				Disable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Enable(GL_MULTISAMPLE);
-				Enable(GL_POLYGON_SMOOTH);
-			}
-			break;
-			
-		case WireframePass1:
-			if (! culling)
-			{
-				return false;
-			}
-			Enable(GL_POLYGON_OFFSET_FILL);
-			GL_CALL(glPolygonOffset(1,1));
-			glColor3f(1.f, 1.f, 1.f);
-			break;
-			
-		case WireframePass2:
-			if (! culling) 
-			{
-				Disable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Enable(GL_MULTISAMPLE);
-				Enable(GL_LINE_SMOOTH);
-			}
-			GL_CALL(glPolygonMode(GL_FRONT, GL_LINE));
-			GL_CALL(glPolygonMode(GL_BACK, GL_LINE));
-			glColor3f(0.f, 0.f, 0.f);
-			break;
-			
-		default:
-			ASSERT(false);
+		Disable(GL_CULL_FACE);
 	}
 	
 	Enable(GL_DEPTH_TEST);
@@ -958,12 +890,10 @@ bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
 	return true;
 }
 
-// Each pass draws all the geometry. Typically, there is one per frame
-// unless wireframe mode is on. 
-void Engine::RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass)
+void Engine::RenderForegroundPass(Matrix44 const & projection_matrix)
 {
 	// begin
-	if (! BeginRenderForeground(pass))
+	if (! BeginRenderForeground())
 	{
 		return;
 	}
@@ -983,50 +913,17 @@ void Engine::RenderForegroundPass(Matrix44 const & projection_matrix, Foreground
 	glDepthMask(true);
 
 	// end
-	EndRenderForeground(pass);
+	EndRenderForeground();
 }
 
-void Engine::EndRenderForeground(ForegroundRenderPass pass) const
+void Engine::EndRenderForeground() const
 {
 	// Reset state
 	Disable(GL_DEPTH_TEST);
 
-	switch (pass) 
+	if (! culling) 
 	{
-		case NormalPass:
-			if (! culling) 
-			{
-				Enable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Disable(GL_POLYGON_SMOOTH);
-				Disable(GL_MULTISAMPLE);
-			}
-			break;
-			
-		case WireframePass1:
-			GL_CALL(glCullFace(GL_BACK));
-			Disable(GL_POLYGON_OFFSET_FILL);
-			break;
-			
-		case WireframePass2:
-			glColor3f(0.f, 0.f, 0.f);
-			if (! culling) 
-			{
-				Enable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Disable(GL_LINE_SMOOTH);
-				Disable(GL_MULTISAMPLE);
-			}
-			GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-			GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
-			break;
-			
-		default:
-			ASSERT(false);
+		Enable(GL_CULL_FACE);
 	}
 }
 

@@ -83,21 +83,31 @@
 //////////////////////////////////////////////////////////////////////
 // OpenGL includes
 
+#define GL_GLEXT_PROTOTYPES 1
+
 // TODO: Re-evaluate "SDL_opengl.h"
 #if defined(__ANDROID__)
+
+#define CRAG_USE_GLES
 #include <GLES2/gl2.h>
-#elif defined(__APPLE__)
+#include <GLES2/gl2ext.h>
+
+#else	// defined(__ANDROID__)
+
+#define CRAG_USE_GL
+#if defined(__APPLE__)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
 #else
 #define GLEW_STATIC
-#define GL_GLEXT_PROTOTYPES
 #include <GL/glew.h>	 // must be included before gl.h 
 #include <GL/gl.h>
 //#include <GL/glext.h>
 #include <GL/glu.h>
 #endif
+
+#endif	// ! defined(__ANDROID__)
 
 
 //////////////////////////////////////////////////////////////////////

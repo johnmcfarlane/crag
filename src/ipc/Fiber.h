@@ -9,8 +9,7 @@
 
 #pragma once
 
-#if defined(WIN32)
 #include "FiberWin.h"
-#else
+#include "FiberAndroid.h" 
 #include "FiberPosix.h"
-#endif
+
