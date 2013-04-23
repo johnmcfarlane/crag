@@ -129,7 +129,7 @@ void FormationMesh::UpdateModelViewTransformation(Transformation const & model_v
 	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
 }
 
-void FormationMesh::Render(Engine const &) const
+void FormationMesh::Render(Engine const & renderer) const
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
 	if (front_buffer.GetNumPolys() == 0)

@@ -370,7 +370,7 @@ gfx::ObjectHandle SpawnSkybox()
 {
 	bool const fast = true;
 	auto skybox = gfx::SkyboxHandle::CreateHandle();
-	skybox.Call([] (gfx::Skybox & skybox) {
+	skybox.Call([fast] (gfx::Skybox & skybox) {
 		if (fast)
 		{
 			DrawStarsFast(skybox, 512, 20000);
