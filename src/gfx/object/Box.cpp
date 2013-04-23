@@ -58,7 +58,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Box::Render(Engine const & renderer) const
+void Box::Render(Engine const &) const
 {
 	GL_VERIFY;
 	

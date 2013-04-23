@@ -183,7 +183,7 @@ namespace smp
 				// functions
 				
 				// called from a thread requesting work
-				virtual void Submit(Job & job, size_t num_units, int priority, bool automatic, Semaphore * num_complete) override
+				virtual void Submit(Job & job, size_t num_units, int /*priority*/, bool /*automatic*/, Semaphore * num_complete) override
 				{
 					for (size_t unit = 0; unit < num_units; ++ unit)
 					{
@@ -198,7 +198,7 @@ namespace smp
 				
 				// "Make yourself useful."
 				// Called from a thread volunteering to do work.
-				virtual bool ExecuteUnit(bool block) override
+				virtual bool ExecuteUnit(bool /*block*/) override
 				{
 					DEBUG_BREAK("There's never work to do with SimpleTaskManager");
 					return false;

@@ -43,13 +43,13 @@ namespace ipc
 		{
 			VerifyObject(* this);
 
-			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine & engine) {
+			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
 				VerifyObject(* this);
 				ASSERT(_state == initializing);
 
 				this->Add();
 
-				ListenerDaemon::Call([this] (ListenerEngine & engine) {
+				ListenerDaemon::Call([this] (ListenerEngine &) {
 					VerifyObject(* this);
 					ASSERT(this->_state == initializing);
 
@@ -74,7 +74,7 @@ namespace ipc
 			ASSERT(_state == attached);
 			SetState(releasing);
 
-			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine & engine) {
+			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
 				VerifyObject(* this);
 				ASSERT(_state == releasing);
 

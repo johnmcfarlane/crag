@@ -39,7 +39,7 @@
 	{ \
 		pool.free(p); \
 	} \
-	void TYPE::operator delete [](void * p) noexcept \
+	void TYPE::operator delete [](void *) noexcept \
 	{ \
 		DEBUG_BREAK("not supported"); \
 	}

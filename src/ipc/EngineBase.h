@@ -187,8 +187,8 @@ namespace ipc
 		}
 
 	private:
-		virtual void OnAddObject(Object & object) { }
-		virtual void OnRemoveObject(Object & object) { }
+		virtual void OnAddObject(Object &) { }
+		virtual void OnRemoveObject(Object &) { }
 
 		void AddObject(Object & object)
 		{
@@ -213,7 +213,7 @@ namespace ipc
 		}
 
 	private:
-		virtual void OnSetOrigin(geom::abs::Vector3 const & origin)
+		virtual void OnSetOrigin(geom::abs::Vector3 const &)
 		{
 		}
 	public:
