@@ -96,7 +96,7 @@ void smp::SetThreadName(char const * thread_name)
 // smp::SetThreadName - Linux implementation
 void smp::SetThreadName(char const * thread_name)
 {
-	prctl(PR_SET_NAME, "thread_name", 0, 0, 0);
+	prctl(PR_SET_NAME, thread_name, 0, 0, 0);
 }
 
 #endif

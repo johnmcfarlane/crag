@@ -70,7 +70,7 @@ void Engine::OnQuit()
 }
 
 // TODO: Really need this?
-void Engine::OnAddObject(Entity & entity)
+void Engine::OnAddObject(Entity &)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the gfx::Engine is in an incomplete state.

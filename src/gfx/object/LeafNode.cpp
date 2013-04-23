@@ -150,7 +150,7 @@ void LeafNode::SetIsOpaque(bool is_opaque)
 	_is_opaque = is_opaque;
 }
 
-bool LeafNode::GetRenderRange(RenderRange & range) const 
+bool LeafNode::GetRenderRange(RenderRange &) const 
 { 
 	return false;
 }
@@ -160,7 +160,7 @@ LeafNode::PreRenderResult LeafNode::PreRender()
 	return ok;
 }
 
-void LeafNode::Render(Engine const & renderer) const
+void LeafNode::Render(Engine const &) const
 {
 	ASSERT(false);
 }

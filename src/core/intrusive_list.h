@@ -86,8 +86,10 @@ namespace core
 			
 			// functions
 			hook() 
+			: _next(nullptr)
+			, _previous(nullptr)
 			{ 
-				init(); 
+				ASSERT(! is_attached());
 			}
 			
 			~hook() 
@@ -101,13 +103,6 @@ namespace core
 			bool is_attached() const 
 			{ 
 				return _next != nullptr; 
-			}
-			
-			void init()
-			{
-				_next = _previous = nullptr;
-				
-				ASSERT(! is_attached());
 			}
 			
 			// variables
@@ -149,7 +144,6 @@ namespace core
 			template <hook_type Class::*Member>
 			class const_iterator
 			{
-				//friend class list;
 			public:	
 				typedef typename std::bidirectional_iterator_tag iterator_category;
 				typedef  Class value_type;
@@ -179,13 +173,13 @@ namespace core
 					return _pos != rhs._pos; 
 				}
 				
-				const_iterator operator++() 
+				const_iterator & operator++() 
 				{ 
 					hook_type & h = _pos->*Member;
 					_pos = h._next; 
 					return * this; 
 				}
-				const_iterator operator--() 
+				const_iterator & operator--() 
 				{ 
 					hook_type & h = _pos->*Member;
 					_pos = h._previous; 
@@ -210,7 +204,6 @@ namespace core
 			template <hook_type Class::*Member>
 			class iterator : public const_iterator<Member>
 			{
-				//friend class list;
 				typedef const_iterator<Member> super;
 			public:	
 				iterator(super const & rhs) 
@@ -222,13 +215,13 @@ namespace core
 				{ 
 				}
 				
-				iterator operator++() 
+				iterator & operator++() 
 				{ 
 					super::operator++(); 
 					return * this; 
 				}
 				
-				iterator operator--() 
+				iterator & operator--() 
 				{ 
 					super::operator--(); 
 					return * this; 
@@ -448,7 +441,7 @@ namespace core
 					}
 					
 					i = h._next;
-					h.init();
+					h = hook_type();
 				}
 				
 				// All removed elements are in a good state
@@ -481,7 +474,7 @@ namespace core
 				unlink<Member>(attached);
 				
 				hook_type & h = attached.*Member;
-				h.init();
+				h = hook_type();
 			}
 			
 			template <hook_type Class::* Member>

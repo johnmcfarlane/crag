@@ -74,7 +74,7 @@ namespace debug
 {
 #if defined(NDEBUG) || 1
 	void ClearNodePoints() { }
-	void MarkNodePoint(form::Node const & node, form::Point const & point, int row, int column) { }
+	void MarkNodePoint(form::Node const &, form::Point const &, int /*row*/, int /*column*/) { }
 	void DrawNodePoints() { }
 	void ClampNodePoints() { }
 #else

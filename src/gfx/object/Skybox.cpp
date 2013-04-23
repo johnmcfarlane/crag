@@ -90,7 +90,7 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 	SetModelViewTransformation(Transformation(Vector3::Zero(), rotation));
 }
 
-void Skybox::Render(Engine const & renderer) const
+void Skybox::Render(Engine const &) const
 {
 	auto & engine = GetEngine();
 	engine.SetCurrentMesh(nullptr);

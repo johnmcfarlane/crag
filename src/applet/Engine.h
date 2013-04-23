@@ -36,8 +36,6 @@ namespace applet
 	// When Run finishes, the program is done.
 	class Engine : public ipc::EngineBase <Engine, Applet>
 	{
-		OBJECT_SINGLETON(Engine);
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 

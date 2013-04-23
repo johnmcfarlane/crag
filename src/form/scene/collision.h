@@ -200,10 +200,8 @@ namespace form { namespace collision
 	{
 		Vector3 center_to_surface = surface - node_functor._pyramid.center;
 		
-		CollisionInfo collision_info =
-		{
-			Ray3(surface, Normalized(center_to_surface))
-		};
+		CollisionInfo collision_info;
+		collision_info.ray = Ray3(surface, Normalized(center_to_surface));
 		
 		if (! GetIntersection(node_functor._object.bounding_sphere, collision_info.ray, collision_info.t1, collision_info.t2))
 		{

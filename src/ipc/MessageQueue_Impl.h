@@ -48,6 +48,8 @@ public:
 template <typename CLASS>
 struct ipc::MessageQueue<CLASS>::BufferNode
 {
+	OBJECT_NO_COPY(BufferNode);
+
 	BufferNode(size_type capacity)
 	: buffer(capacity)
 	, next(nullptr)
