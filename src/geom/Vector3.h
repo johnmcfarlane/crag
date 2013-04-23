@@ -144,7 +144,7 @@ namespace geom
 
 	template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
 	{
-		auto inverse_rhs = Inverse(rhs);
+		auto inverse_rhs = ::Inverse(rhs);
 		return lhs *= inverse_rhs;
 	}
 
