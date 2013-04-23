@@ -20,6 +20,8 @@ namespace ipc
 	template <typename CLASS>
 	class MessageQueue
 	{
+		OBJECT_NO_COPY(MessageQueue);
+		
 		//////////////////////////////////////////////////////////////////////////////
 		// types
 

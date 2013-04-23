@@ -18,6 +18,8 @@ namespace ipc
 	template <typename ENGINE, typename OBJECT>
 	class EngineBase
 	{
+		OBJECT_NO_COPY(EngineBase);
+		
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -32,11 +34,12 @@ namespace ipc
 		// functions
 
 		EngineBase()
-			: _origin(geom::abs::Vector3::Zero())
+			: _objects()
+			, _origin(geom::abs::Vector3::Zero())
 		{
 		}
 
-		~EngineBase()
+		virtual ~EngineBase()
 		{
 			ASSERT(IsEmpty());
 		}
