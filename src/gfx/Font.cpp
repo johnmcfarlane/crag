@@ -197,5 +197,5 @@ void Font::PrintChar(char c, geom::Vector2f & position) const
 void Font::PrintNewLine(geom::Vector2f & position) const
 {
 	vertex_buffer.push_back(vertex_buffer.back());
-	vertex_buffer.push_back({position});
+	vertex_buffer.push_back({position, {0, 0}});
 }

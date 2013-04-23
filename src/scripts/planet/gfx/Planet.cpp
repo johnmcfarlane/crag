@@ -62,7 +62,7 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render(Engine const & renderer) const
+void Planet::Render(Engine const &) const
 {
 	if (_sea_level < _radius_min)
 	{

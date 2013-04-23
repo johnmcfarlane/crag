@@ -116,7 +116,7 @@ bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node con
 	return true;
 }
 
-void sim::MoonShader::ApplyCraters(Random rnd, geom::abs::Vector3 & position) const
+void sim::MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
 {
 	geom::abs::Scalar t1, t2;
 	geom::abs::Ray3 ray(geom::abs::Vector3::Zero(), position);

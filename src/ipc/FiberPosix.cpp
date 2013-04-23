@@ -89,9 +89,12 @@ Fiber::~Fiber()
 	ASSERT(! IsCurrent());
 	std::size_t stack_use = EstimateStackUse();
 	ASSERT(stack_use > 0);
-	DEBUG_MESSAGE("%s stack exit status: used=%u/%u", GetName(),
-				  static_cast<unsigned>(stack_use),
-				  static_cast<unsigned>(_stack_size));
+	if (stack_use * 2 > _stack_size)
+	{
+		DEBUG_MESSAGE("%s stack exit status: used=%u/%u", GetName(),
+					  static_cast<unsigned>(stack_use),
+					  static_cast<unsigned>(_stack_size));
+	}
 #endif
 
 	std::size_t actual_stack_size = calculate_stack_allocation(_stack_size);

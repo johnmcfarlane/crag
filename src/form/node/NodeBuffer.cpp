@@ -56,7 +56,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // NodeBuffer functions
 
-form::NodeBuffer::NodeBuffer(size_t min_num_quaterne, size_t max_num_quaterne)
+form::NodeBuffer::NodeBuffer(size_t max_num_quaterne)
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_quaterne * num_nodes_per_quaterna, 128)))
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_quaterne * num_nodes_per_quaterna)

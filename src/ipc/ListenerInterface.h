@@ -32,7 +32,7 @@ namespace ipc
 		virtual ~ListenerInterface()
 		{
 #if ! defined(NDEBUG)
-			SubjectDaemon::Call([this] (SubjectEngine & engine) {
+			SubjectDaemon::Call([this] (SubjectEngine &) {
 				if (_listeners.contains(* this))
 				{
 					DEBUG_BREAK("Listener was still around!");
