@@ -273,10 +273,8 @@ namespace
 		return true;
 	}
 	
-	int EventFilter(void * userdata, SDL_Event * event)
+	int EventFilter(void *, SDL_Event * event)
 	{
-		ASSERT(userdata == nullptr);
-		
 		switch (event->type) 
 		{
 			case SDL_MOUSEMOTION:

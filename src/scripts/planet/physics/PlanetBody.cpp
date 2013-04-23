@@ -55,7 +55,10 @@ namespace
 	private:
 		virtual void operator () (size_type unit_index)
 		{
-			ASSERT(unit_index == 0);
+			if (unit_index != 0)
+			{
+				DEBUG_BREAK("bad index, " SIZE_T_FORMAT_SPEC ".", unit_index);
+			}
 			
 			_body.OnDeferredCollisionWithPlanet(_planet_body, _intersection_functor);
 		}

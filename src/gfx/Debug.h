@@ -82,14 +82,14 @@ namespace gfx
 	
 		inline double GetVerbosity() { return 0; }
 	
-		inline void AddPoint(Vector3 const & a, ColorPair const & colors = ColorPair(1, 1)) { }
-		inline void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b) { }
-		inline void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors = ColorPair(1, 1)) { }
-		inline void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity()) { }
-		inline void AddFrustum(Pov const & pov) { }
+		inline void AddPoint(Vector3 const &, ColorPair const & = ColorPair(1, 1)) { }
+		inline void AddLine(Vector3 const &, Vector3 const &, ColorPair const &, ColorPair const &) { }
+		inline void AddTriangle(Vector3 const &, Vector3 const &, Vector3 const &, ColorPair const & = ColorPair(1, 1)) { }
+		inline void AddBasis(Vector3 const &, Vector3 const & = Vector3(1, 1, 1), Matrix33 const & = Matrix33::Identity()) { }
+		inline void AddFrustum(Pov const &) { }
 
 		inline void Draw(Vector3 const &) { }
-		inline void DrawText(char const * text, geom::Vector2i const & position) { }
+		inline void DrawText(char const *, geom::Vector2i const &) { }
 		inline void Clear() { }
 #endif
 	

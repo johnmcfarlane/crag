@@ -21,7 +21,10 @@
 	static core::object_pool<TYPE> pool(MIN_OBJECTS); \
 	void * TYPE::operator new(size_t sz) noexcept \
 	{ \
-		ASSERT(sz == sizeof(TYPE)); \
+		if (sz != sizeof(TYPE)) \
+		{ \
+			DEBUG_BREAK("allocator for object of type " #TYPE " and size " SIZE_T_FORMAT_SPEC "B asked to allocate " SIZE_T_FORMAT_SPEC "B.", sizeof(TYPE), sz); \
+		} \
 		void * ptr = pool.allocate(); \
 		if (ptr == nullptr) \
 		{ \
@@ -29,9 +32,8 @@
 		} \
 		return ptr; \
 	} \
-	void * TYPE::operator new [] (size_t sz) noexcept \
+	void * TYPE::operator new [] (size_t) noexcept \
 	{ \
-		ASSERT(sz == sizeof(TYPE)); \
 		DEBUG_BREAK("not supported"); \
 		return nullptr; \
 	} \
@@ -208,15 +210,13 @@ namespace core
 			return count() == 0;
 		}
 
+#if defined(VERIFY)
 		void VerifyElement(value_type const * element) const
 		{
-#if defined(VERIFY)
 			VerifyRef(* element);
 			VerifyArrayElement(element, begin(), end());
-#endif
 		}
 
-#if defined(VERIFY)
 		void Verify() const
 		{
 			size_t const loop_limit = 10u;
@@ -230,6 +230,10 @@ namespace core
 
 			auto num_free = std::min(capacity() - _num_allocated, loop_limit);
 			VerifyEqual(num_free, free_list_size);
+		}
+#else
+		void VerifyElement(value_type const *) const
+		{
 		}
 #endif
 	
