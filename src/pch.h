@@ -71,7 +71,7 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
-//#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
+#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
 #if defined(WIN32) || defined(__ANDROID__)
 #include <SDL.h>
