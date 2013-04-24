@@ -17,29 +17,6 @@
 
 using namespace ipc;
 
-namespace
-{
-	////////////////////////////////////////////////////////////////////////////
-	// file-local types
-
-	// function type accepted by makecontext	
-	typedef void (* MakeContextCallback) ();
-
-	////////////////////////////////////////////////////////////////////////////
-	// file-local functions
-
-	// figures out a sensible number of bytes to allocate for the fiber's stack
-	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
-	{
-#if defined(VERIFY)
-		// add some headroom in non-release builds
-		requested_stack_size = (requested_stack_size * 2) + 2048;
-#endif
-
-		return requested_stack_size;
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // MS Windows-specific ipc::Fiber member definitions
 
@@ -63,11 +40,6 @@ Fiber::~Fiber()
 
 void Fiber::InitializeThread()
 {
-	auto fiber = ConvertThreadToFiberEx(nullptr, FIBER_FLAG_FLOAT_SWITCH);
-	if (fiber == nullptr)
-	{
-		DEBUG_BREAK("call to ConvertThreadToFiberEx failed");
-	}
 }
 
 bool Fiber::IsCurrent() const
@@ -132,4 +104,4 @@ void Fiber::OnLaunch(Fiber * fiber)
 	DEBUG_BREAK("reached end of OnLaunch for %s", fiber->GetName());
 }
 
-#endif	// defined(WIN32)
+#endif	// defined(__ANDROID__)
