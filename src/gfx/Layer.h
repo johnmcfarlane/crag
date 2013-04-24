@@ -30,7 +30,7 @@ namespace gfx
 #if defined(VERIFY)
 		void Verify(type layer);
 #else
-		inline void Verify(type layer) { }
+		inline void Verify(type) { }
 #endif
 		
 		inline type operator ++ (type & layer_index)

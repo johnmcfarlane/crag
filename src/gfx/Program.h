@@ -57,13 +57,19 @@ namespace gfx
 		void Bind() const;
 		void Unbind() const;
 		
-		void OnLightsChanged() const;
+		// refers to the frame-invariant uniforms
+		void SetUniformsValid(bool uniforms_invalid);
+		bool GetUniformsValid() const;
+		
 		void UpdateLights(Light::List const & lights) const;
+		void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
+		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		
 	protected:
 		GLint GetUniformLocation(char const * name) const;
 
 	private:
+		virtual void InitAttribs(GLuint id);
 		virtual void InitUniforms();
 		
 		void GetInfoLog(std::string & info_log) const;
@@ -73,8 +79,10 @@ namespace gfx
 		GLuint _id;
 		Shader _vert_shader;
 		Shader _frag_shader;
+		GLint _projection_matrix_location;
+		GLint _model_view_matrix_location;
 		LightBlock _light_block;
-		mutable bool _lights_changed;
+		bool _uniforms_valid;
 	};
 
 	class PolyProgram : public Program
@@ -82,23 +90,26 @@ namespace gfx
 	public:
 		PolyProgram();
 		
-		void SetUniforms(bool fragment_lighting, bool flat_shade) const;
+		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override;
+		virtual void InitUniforms() override final;
 		
 		// variables
+		GLint _color_location;
 		GLint _fragment_lighting_location;
 		GLint _flat_shade_location;
 	};
 	
-	class SphereProgram : public Program
+	class DiskProgram : public Program
 	{
 	public:
-		SphereProgram();
+		DiskProgram();
 		
-		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color) const;
+		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override;
+		virtual void InitUniforms() override;
 		static Scalar CalculateRadius(geom::Transformation<float> const & transformation);
 
 		// variables
@@ -107,21 +118,36 @@ namespace gfx
 		GLint _radius_location;
 	};
 	
-	class FogProgram : public SphereProgram
+	class FogProgram : public DiskProgram
 	{
 	public:
 		FogProgram();
 		
-		void SetUniforms(geom::Transformation<float> const & transformation, Color4f const & color, float density) const;
+		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const;
 	private:
-		void InitUniforms() override;
+		virtual void InitAttribs(GLuint id) override final;
+		virtual void InitUniforms() override final;
 		
 		// variables
 		GLint _density_location;
 	};
 	
-	class DiskProgram : public SphereProgram
+	class TexturedProgram : public Program
+	{
+	private:
+		virtual void InitAttribs(GLuint id) override final;
+	};
+	
+	class SpriteProgram : public Program
 	{
 	public:
+		void SetUniforms(geom::Vector2i const & resolution) const;
+	private:
+		virtual void InitAttribs(GLuint id) override final;
+		virtual void InitUniforms() override final;
+		
+		// variables
+		GLint _position_scale_location;
+		GLint _position_offset_location;
 	};
 }

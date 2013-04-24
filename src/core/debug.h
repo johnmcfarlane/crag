@@ -267,9 +267,9 @@ template<typename T> void VerifyRef(T const &) { }
 template<typename T> void VerifyPtr(T const *) { }
 template<typename T> void VerifyObject(T const &) { }
 template<typename T> void VerifyObjectRef(T const &) { }
-template<typename T> void VerifyObjectPtr(T const * ptr) { }
-template<typename T> void VerifyArrayElement(T const * element, T const * begin) { }
-template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) { }
+template<typename T> void VerifyObjectPtr(T const *) { }
+template<typename T> void VerifyArrayElement(T const *, T const *) { }
+template<typename T> void VerifyArrayElement(T const *, T const *, T const *) { }
 
 #endif
 

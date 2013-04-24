@@ -47,7 +47,7 @@ namespace form
 		}
 		
 		// ForEachNodeFace functor
-		void operator()(Point & a, Point & b, Point & c, geom::Vector3f const & normal, float score)
+		void operator()(Point & a, Point & b, Point & c, geom::Vector3f const & normal, float /*score*/)
 		{
 			Color color;
 #if defined(NODE_SCORE_HEAT_MAP)

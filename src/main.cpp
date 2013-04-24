@@ -185,7 +185,10 @@ namespace
 					}
 					
 					case SDL_SCANCODE_F:
-						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFlatShaded(); });
+						gfx::Daemon::Call([] (gfx::Engine & engine) 
+						{ 
+							engine.SetFlatShaded(! engine.GetFlatShaded());
+						});
 						break;
 
 					case SDL_SCANCODE_G:
@@ -200,7 +203,10 @@ namespace
 						
 					case SDL_SCANCODE_L:
 					{
-						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleLighting(); });
+						gfx::Daemon::Call([] (gfx::Engine & engine) 
+						{
+							engine.SetFragmentLighting(! engine.GetFragmentLighting());
+						});
 						break;
 					}
 					
@@ -226,10 +232,6 @@ namespace
 					
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
-						break;
-						
-					case SDL_SCANCODE_F:
-						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleFragmentLighting(); });
 						break;
 						
 					default:
@@ -329,10 +331,8 @@ namespace
 		return true;
 	}
 	
-	int EventFilter(void * userdata, SDL_Event * event)
+	int EventFilter(void *, SDL_Event * event)
 	{
-		ASSERT(userdata == nullptr);
-		
 		switch (event->type) 
 		{
 			case SDL_MOUSEMOTION:

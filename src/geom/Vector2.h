@@ -21,6 +21,8 @@ namespace geom
 	template<typename S> class Vector<S, 2>
 	{
 	public:
+		typedef S Scalar;
+		
 		Vector() 
 #if ! defined(NDEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
@@ -40,6 +42,11 @@ namespace geom
 		{ 
 		}
 
+		static constexpr std::size_t Size()
+		{
+			return 3;
+		}
+		
 		// Returns vector as a C-style array. Very unsafe. 
 		S const * GetAxes() const
 		{
@@ -133,6 +140,13 @@ namespace geom
 		return lhs;
 	}
 
+	template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
+	{
+		lhs.x /= rhs.x;
+		lhs.y /= rhs.y;
+		return lhs;
+	}
+
 	template<typename S> Vector<S, 2> operator - (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 	{
 		Vector<S, 2> result = lhs;
@@ -161,6 +175,11 @@ namespace geom
 	{
 		Vector<S, 2> result = lhs;
 		return result /= rhs;
+	}
+
+	template<typename S> Vector<S, 2> operator / (Vector<S, 2> lhs, Vector<S, 2> const & rhs)
+	{
+		return lhs /= rhs;
 	}
 
 	template<typename S> S LengthSq(Vector<S, 2> const & v)

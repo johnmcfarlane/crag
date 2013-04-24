@@ -52,7 +52,7 @@ namespace form
 		};
 
 		// Member functions
-		NodeBuffer(size_t min_num_quaterne, size_t max_num_quaterne);
+		NodeBuffer(size_t max_num_quaterne);
 		~NodeBuffer();
 		
 #if defined(VERIFY)

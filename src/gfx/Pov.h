@@ -21,12 +21,12 @@ namespace gfx
 	public:
 		Frustum();
 		
+		// TODO: Move this to a utils file
 		Matrix44 CalcProjectionMatrix() const;
-		void SetProjectionMatrix() const;
 		
 		geom::Vector2i resolution;
 		double fov;	// radians
-		RenderRange depth_range;
+		RenderRange depth_range;	// does this really belong here?
 	};
 	
 	// Point of view

@@ -29,22 +29,22 @@ using namespace gfx;
 template <>
 void EnableClientState<Skybox::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
+	GL_CALL(glEnableVertexAttribArray(2));
 }
 
 template <>
 void DisableClientState<Skybox::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(2));
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<Skybox::Vertex>()
 {
-	VertexPointer<Skybox::Vertex, 3, & Skybox::Vertex::pos>();
-	TexCoordPointer<Skybox::Vertex, 2, & Skybox::Vertex::tex>();
+	VertexAttribPointer<1, Skybox::Vertex, decltype(Skybox::Vertex::pos), & Skybox::Vertex::pos>();
+	VertexAttribPointer<2, Skybox::Vertex, decltype(Skybox::Vertex::tex), & Skybox::Vertex::tex>();
 }
 
 
@@ -56,10 +56,10 @@ Skybox::Skybox(LeafNode::Init const & init)
 {
 	InitVerts();
 
-	ResourceManager const & resource_manager = init.engine.GetResourceManager();
+	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
-	Program const * fixed_program = resource_manager.GetProgram(ProgramIndex::fixed);
-	SetProgram(fixed_program);
+	Program * skybox_program = resource_manager.GetProgram(ProgramIndex::skybox);
+	SetProgram(skybox_program);
 }
 
 Skybox::~Skybox()
@@ -90,11 +90,10 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 	SetModelViewTransformation(Transformation(Vector3::Zero(), rotation));
 }
 
-void Skybox::Render(Engine const & renderer) const
+void Skybox::Render(Engine const &) const
 {
-	// clear the depth buffer
-	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT));
-	glColor3f(1.f, 1.f, 1.f);
+	auto & engine = GetEngine();
+	engine.SetCurrentMesh(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
@@ -106,7 +105,6 @@ void Skybox::Render(Engine const & renderer) const
 	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
 	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
-	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	
 	// Draw VBO
 	vbo.Bind();

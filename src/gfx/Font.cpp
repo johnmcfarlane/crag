@@ -31,22 +31,22 @@ namespace
 template <>
 void EnableClientState<Font::Vertex>()
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glEnableVertexAttribArray(1));
+	GL_CALL(glEnableVertexAttribArray(2));
 }
 
 template <>
 void DisableClientState<Font::Vertex>()
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	GL_CALL(glDisableVertexAttribArray(2));
+	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
 void Pointer<Font::Vertex>()
 {
-	VertexPointer<Font::Vertex, 2, & Font::Vertex::pos>();
-	TexCoordPointer<Font::Vertex, 2, & Font::Vertex::tex>();
+	VertexAttribPointer<1, Font::Vertex, decltype(Font::Vertex::pos), & Font::Vertex::pos>();
+	VertexAttribPointer<2, Font::Vertex, decltype(Font::Vertex::tex), & Font::Vertex::tex>();
 }
 
 
@@ -147,17 +147,6 @@ void Font::RenderVerts() const
 	GL_CALL(glBlendEquation(GL_FUNC_ADD));
 	ASSERT(! IsEnabled(GL_DEPTH_TEST));
 	glDepthMask(false);
-	
-	// Matrices
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	geom::Vector2i resolution = app::GetResolution();
-	gluOrtho2D (0, resolution.x, resolution.y, 0);
-	
-	glMatrixMode (GL_MODELVIEW); 
-	glLoadIdentity (); 
-	glTranslatef (0.375f, 0.375f, 0.f);
-	GL_VERIFY;
 	
 	// Draw VBO
 	vbo.Activate();

@@ -19,6 +19,8 @@ namespace gfx
 	template <typename Comp> class Color4
 	{
 	public:
+		typedef Comp Scalar;
+		
 		Color4() : r(0), g(0), b(0), a(Full()) { }
 		Color4(Color4 const & that) : r(that.r), g(that.g), b(that.b), a(that.a) { }
 		Color4(Comp red, Comp green, Comp blue, Comp alpha = Full()) : r(red), g(green), b(blue), a(alpha) { }
@@ -32,6 +34,11 @@ namespace gfx
 			, a(ConvertColorComponent<Comp>(that.a))
 		{
 
+		}
+		
+		static constexpr std::size_t Size()
+		{
+			return 4;
 		}
 		
 		Comp * GetArray()

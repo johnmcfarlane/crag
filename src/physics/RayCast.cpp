@@ -98,7 +98,7 @@ Vector3 RayCast::GetScale() const
 	return Vector3(GetLength(),0,0);
 }
 
-void RayCast::SetDensity(Scalar density)
+void RayCast::SetDensity(Scalar)
 {
 	ASSERT(false);
 }

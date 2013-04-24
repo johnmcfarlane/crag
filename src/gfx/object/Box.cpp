@@ -13,6 +13,7 @@
 
 #include "gfx/Cuboid.h"
 #include "gfx/Engine.h"
+#include "gfx/Program.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 
@@ -31,7 +32,7 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 	
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
-	Program const * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
+	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 	
 	MeshResource const & cuboid_mesh = resource_manager.GetCuboid();
@@ -62,7 +63,13 @@ void Box::Render(Engine const & renderer) const
 {
 	GL_VERIFY;
 	
-	glColor4fv(_color.GetArray());
+	// Pass rendering details to the shader program.
+	Program const & program = ref(renderer.GetCurrentProgram());
+	PolyProgram const & poly_program = static_cast<PolyProgram const &>(program);
+
+	bool fragment_lighting = renderer.GetFragmentLighting();
+	bool flat_shaded = renderer.GetFlatShaded();
+	poly_program.SetUniforms(_color, fragment_lighting, flat_shaded);
 	
 	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetMeshResource());
 	cuboid.Draw();

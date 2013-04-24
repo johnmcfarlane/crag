@@ -88,10 +88,14 @@ namespace gfx
 		void OnSetReady(bool ready);
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
-		void OnToggleLighting();
 		void OnToggleWireframe();
-		void OnToggleFlatShaded();
-		void OnToggleFragmentLighting();
+		
+		void SetFlatShaded(bool flat_shaded);
+		bool GetFlatShaded() const;
+
+		void SetFragmentLighting(bool flat_shaded);
+		bool GetFragmentLighting() const;
+
 		void OnToggleCapture();
 		void OnSetCamera(Transformation const & transformation);
 		Transformation const& GetCamera() const;
@@ -115,17 +119,15 @@ namespace gfx
 		void UpdateTransformations(Object & node, Transformation const & model_view_transformation);
 		void UpdateTransformations();
 		void Render();
+		void RenderFrame();
 		void RenderScene();
 		
-		void RenderBackground();
-		
-		void RenderForeground();
-		void RenderLights();
+		void InvalidateUniforms();
 		bool BeginRenderForeground(ForegroundRenderPass pass) const;
-		void RenderForegroundPass(ForegroundRenderPass pass);
+		void RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass);
 		void EndRenderForeground(ForegroundRenderPass pass) const;
 		
-		int RenderLayer(Layer::type layer, bool opaque = true);
+		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
 		void DebugDraw();
 #if defined(VERIFY)
@@ -163,7 +165,6 @@ namespace gfx
 		bool _dirty;
 		bool vsync;
 		bool culling;
-		bool lighting;
 		bool wireframe;
 		bool _flat_shaded;
 		bool _fragment_lighting;

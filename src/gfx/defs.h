@@ -21,23 +21,21 @@ namespace geom
 
 namespace gfx
 {
-	namespace ProgramIndex
+	enum class ProgramIndex
 	{
-		enum type
-		{
-			poly,
-			sphere,
-			fog,
-			disk,
-			fixed,
-			dont_care,
-			max_shader = fixed,
-			max_index = dont_care
-		};
-	}
+		poly,
+		sphere,
+		fog,
+		disk,
+		skybox,
+		sprite,
+		dont_care,
+		size = dont_care
+	};
 	
 	// geometric types
 	typedef float Scalar;
+	typedef geom::Vector<Scalar, 2> Vector2;
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Vector<Scalar, 4> Vector4;
 	typedef geom::Vector<Scalar, 2> RenderRange;	// near/far z

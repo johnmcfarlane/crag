@@ -33,7 +33,7 @@ Planet::Planet(LeafNode::Init const & init, Transformation const & local_transfo
 , _sea_level(radius)
 {
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
-	Program const * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
+	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
 	SetProgram(sphere_program);
 }
 
@@ -62,7 +62,7 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	return true;
 }
 
-void Planet::Render(Engine const & renderer) const
+void Planet::Render(Engine const &) const
 {
 	if (_sea_level < _radius_min)
 	{

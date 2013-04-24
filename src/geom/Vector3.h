@@ -20,6 +20,8 @@ namespace geom
 	template<typename S> class Vector<S, 3>
 	{
 	public:
+		typedef S Scalar;
+		
 		Vector() 
 #if ! defined(NDEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
@@ -40,6 +42,11 @@ namespace geom
 		, z(rhs_z) 
 		{ 
 			VerifyObject(* this);
+		}
+		
+		static constexpr std::size_t Size()
+		{
+			return 3;
 		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
@@ -137,7 +144,7 @@ namespace geom
 
 	template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
 	{
-		auto inverse_rhs = Inverse(rhs);
+		auto inverse_rhs = ::Inverse(rhs);
 		return lhs *= inverse_rhs;
 	}
 

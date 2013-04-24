@@ -75,7 +75,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
-	window = SDL_CreateWindow("Crag", 
+	window = SDL_CreateWindow(title, 
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
 							  flags);

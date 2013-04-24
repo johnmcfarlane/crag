@@ -30,7 +30,8 @@ namespace gfx
 		~ResourceManager();
 		
 		// program functions
-		Program const * GetProgram(ProgramIndex::type index) const;
+		Program * GetProgram(ProgramIndex index);
+		Program const * GetProgram(ProgramIndex index) const;
 		
 		// buffer object functions
 		Cuboid const & GetCuboid() const;
@@ -40,11 +41,14 @@ namespace gfx
 	private:
 		bool InitShaders();
 		bool InitGeometry();
+		
+		// constants
+		static constexpr std::size_t _num_programs = std::size_t(ProgramIndex::size);
 
 		// shaders and shader programs
 		Shader * _light_vert_shader;
 		Shader * _light_frag_shader;
-		Program * _programs[ProgramIndex::max_index];
+		Program * _programs[_num_programs];
 		
 		// stock geometry
 		Cuboid * _cuboid;

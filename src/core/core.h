@@ -32,8 +32,9 @@
 // Missing keywords etc.
 
 #if defined(WIN32)
-#define constexpr
+#define constexpr const
 #define alignof __alignof
+#define noexcept
 #endif
 
 

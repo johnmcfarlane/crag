@@ -297,27 +297,27 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool Body::OnCollision(Engine & engine, Body const & that_body_handle) const
+bool Body::OnCollision(Engine &, Body const &) const
 {
 	return false;
 }
 
-void Body::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const
+void Body::OnDeferredCollisionWithBox(Body const &, IntersectionFunctor &) const
 {
 	ASSERT(false);
 }
 
-void Body::OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const
+void Body::OnDeferredCollisionWithPlanet(Body const &, IntersectionFunctor &) const
 {
 	ASSERT(false);
 }
 
-void Body::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctor & functor) const
+void Body::OnDeferredCollisionWithRay(Body const &, IntersectionFunctor &) const
 {
 	ASSERT(false);
 }
 
-void Body::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
+void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctor &) const
 {
 	ASSERT(false);
 }

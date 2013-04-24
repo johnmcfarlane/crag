@@ -1,7 +1,7 @@
 #version 120
 
 //
-//  sphere.vert
+//  textured.frag
 //  crag
 //
 //  Created by John McFarlane on 2012-01-08.
@@ -9,13 +9,13 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+// inputs from the renderer
+uniform sampler2D texture;
 
-// outputs to sphere.frag
-varying vec4 quad_position;
-
+// inputs from skybox.vert
+varying vec2 fragment_tex_coord;
 
 void main(void)
 {
-	quad_position = gl_ModelViewMatrix * gl_Vertex;
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_FragColor = texture2D(texture, fragment_tex_coord);
 }

@@ -114,7 +114,7 @@ namespace
 					ASSERT(false);
 			}
 
-			ASSERT(points.size() >= 0 && points.size() < 1000000);
+			ASSERT(points.size() < 1000000);
 			for (point_vector::const_iterator i = points.begin(); i != points.end(); ++ i)
 			{
 				Point const & p = * i;

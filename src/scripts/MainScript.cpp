@@ -148,7 +148,7 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents(sim::EntityHandle observer)
+	bool HandleEvents()
 	{
 		int num_events = 0;
 	
@@ -242,7 +242,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 
-		if (! HandleEvents(observer))
+		if (! HandleEvents())
 		{
 			break;
 		}
