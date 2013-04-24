@@ -1,9 +1,9 @@
 //
-//  Fiber.h
+//  FiberAndroid.h
 //  crag
 //
-//  Created by John McFarlane on 2012-03-28.
-//  Copyright 2012 John McFarlane. All rights reserved.
+//  Created by John McFarlane on 2013-04-23.
+//  Copyright 2013 John McFarlane. All rights reserved.
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
@@ -62,12 +62,16 @@ namespace ipc
 		void InitContext();
 		void InitCallback(Callback * callback, void * data);
 
-		static void OnLaunch(Fiber & fiber, Callback * callback, void * data);
+		static void OnLaunch(Fiber * fiber);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		char const * _name;	// human-readable name of the Fiber
-		std::size_t _stack_size;	// the requested stack size
+		void * _data;	// the pointer to pass to _callback
+		Callback * _callback;	// given function to call on fiber launch
+		std::thread _thread;	// hack to deal with lack of ucontext support on Android
+		std::condition_variable _condition;	// pauses thread so it can pretend to be a fiber
+		std::mutex _condition_mutex;	// mutex used by _condition
 		bool _is_running;
 	};
 }
