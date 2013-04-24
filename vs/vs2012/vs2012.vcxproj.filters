@@ -94,6 +94,7 @@
     <ClCompile Include="..\..\src\ipc\FiberPosix.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberWin.cpp" />
     <ClCompile Include="..\..\src\ipc\Uid.cpp" />
+    <ClCompile Include="..\..\src\ipc\FiberAndroid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="..\..\src\ipc\MessageQueue_Impl.h" />
     <ClInclude Include="..\..\src\ipc\Object.h" />
     <ClInclude Include="..\..\src\ipc\Uid.h" />
+    <ClInclude Include="..\..\src\ipc\FiberAndroid.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
