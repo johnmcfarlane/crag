@@ -9,24 +9,23 @@
 
 #include "pch.h"
 
+#include "FiberAndroid.h"
+
 #if defined(__ANDROID__)
 
-#include "Fiber.h"
-
-#include "core/Random.h"
+#include "smp/smp.h"
 
 using namespace ipc;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MS Windows-specific ipc::Fiber member definitions
 
-Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * callback)
+Fiber::Fiber(char const * name, std::size_t /*stack_size*/, void * data, Callback * callback)
 : _name(name)
-, _data(data)
-, _callback(callback)
 , _is_running(true)
+, _is_yielded(true)
 {
-	_thread = std::thread(OnLaunch, this);
+	_thread = std::thread(OnLaunch, this, data, callback);
 
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
@@ -34,6 +33,8 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 
 Fiber::~Fiber()
 {
+	_thread.join();
+	
 	ASSERT(! IsRunning());
 	ASSERT(! IsCurrent());
 }
@@ -57,7 +58,11 @@ void Fiber::Continue()
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
 
+	_is_yielded = false;
 	_condition.notify_one();
+	
+	std::unique_lock<std::mutex> lock(_condition_mutex);
+	_condition.wait(lock, [&] () { return _is_yielded; });
 
 	ASSERT(! IsCurrent());
 	VerifyObject(* this);
@@ -67,11 +72,14 @@ void Fiber::Yield()
 {
 	VerifyObject(* this);
 	ASSERT(IsCurrent());
+	
+	_is_yielded = true;
+	_condition.notify_one();
 
 	// TODO: make sure that AppletInterface uses 
 	// the same terminology as the wait functions
 	std::unique_lock<std::mutex> lock(_condition_mutex);
-	_condition.wait(lock);
+	_condition.wait(lock, [&] () { return ! _is_yielded; });
 
 	ASSERT(IsRunning());
 	ASSERT(IsCurrent());
@@ -80,28 +88,38 @@ void Fiber::Yield()
 #if defined(VERIFY)
 void Fiber::Verify() const
 {
-	bool joinable = _thread.joinable();
-	bool is_running = IsRunning();
-	VerifyEqual(joinable, is_running);
+	VerifyTrue(_name != nullptr);
+	if (_is_yielded)
+	{
+		VerifyOp(_thread.get_id(), !=, std::this_thread::get_id());
+	}
+	else
+	{
+		if (! _is_running)
+		{
+			// means we're yielding for the last time
+			VerifyOp(_thread.get_id(), ==, std::this_thread::get_id());
+		}
+	}
 }
 #endif
 
-void Fiber::OnLaunch(Fiber * fiber)
+void Fiber::OnLaunch(Fiber * fiber, void * data, Callback * callback)
 {
 	ASSERT(fiber != nullptr);
+	ASSERT(data != nullptr);
+	ASSERT(callback != nullptr);
+	
+	fiber->_is_yielded = false;
 	ASSERT(fiber->IsCurrent());
 	
-	Callback * callback = fiber->_callback;
-	void * data = fiber->_data;
 	(* callback)(data);
 	
 	ASSERT(fiber->_is_running);
 
 	fiber->_is_running = false;
-	fiber->Yield();
-	
-	// should not have come back from the Yield call
-	DEBUG_BREAK("reached end of OnLaunch for %s", fiber->GetName());
+	fiber->_is_yielded = true;
+	fiber->_condition.notify_one();
 }
 
 #endif	// defined(__ANDROID__)

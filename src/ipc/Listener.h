@@ -61,15 +61,19 @@ namespace ipc
 
 		~Listener()
 		{
-			VerifyObject(* this);			
+			VerifyObject(* this);
+#if ! defined(__ANDROID__)
 			ASSERT(IsListenerThread());
+#endif
 			ASSERT(IsReleased());
 		}
 
 		void BeginRelease()
 		{
 			VerifyObject(* this);
+#if ! defined(__ANDROID__)
 			ASSERT(IsListenerThread());
+#endif
 
 			ASSERT(_state == attached);
 			SetState(releasing);
@@ -140,7 +144,9 @@ namespace ipc
 
 		void SetState(State state)
 		{
+#if ! defined(__ANDROID__)
 			ASSERT(IsListenerThread());
+#endif
 			ASSERT(state > initializing && state <= released);
 			ASSERT(int(state) == int(_state) + 1);
 			_state = state;

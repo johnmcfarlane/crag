@@ -62,17 +62,16 @@ namespace ipc
 		void InitContext();
 		void InitCallback(Callback * callback, void * data);
 
-		static void OnLaunch(Fiber * fiber);
+		static void OnLaunch(Fiber * fiber, void * data, Callback * callback);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		char const * _name;	// human-readable name of the Fiber
-		void * _data;	// the pointer to pass to _callback
-		Callback * _callback;	// given function to call on fiber launch
 		std::thread _thread;	// hack to deal with lack of ucontext support on Android
 		std::condition_variable _condition;	// pauses thread so it can pretend to be a fiber
 		std::mutex _condition_mutex;	// mutex used by _condition
 		bool _is_running;
+		bool _is_yielded;
 	};
 }
 
