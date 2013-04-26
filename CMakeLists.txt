@@ -87,6 +87,7 @@ add_executable(crag
 	src/sim/ObserverController.cpp
 	src/sim/ObserverInput.cpp
 	src/ipc/Fiber.cpp
+	src/ipc/FiberAndroid.cpp
 	src/ipc/FiberPosix.cpp
 	src/ipc/FiberWin.cpp
 	src/smp/ReadersWriterMutex.cpp
