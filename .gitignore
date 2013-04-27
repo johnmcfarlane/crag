@@ -23,6 +23,7 @@ crag.cfg
 default.cfg
 dependencies/SDL*
 dependencies/bin/
+dependencies/bullet
 dependencies/glew
 dependencies/include/
 dependencies/lib/
