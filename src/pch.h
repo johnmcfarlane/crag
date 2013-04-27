@@ -44,6 +44,10 @@
 
 #define SIZE_T_FORMAT_SPEC "%Iu"
 
+// happens to be defined in ODE with a very similar value;
+// causes a problem in VC++ project because of the way libs are built
+#define HAVE_M_PI
+
 #else
 
 #define SIZE_T_FORMAT_SPEC "%zu"
@@ -71,7 +75,6 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
-#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
 #if defined(WIN32) || defined(__ANDROID__)
 #include <SDL.h>
