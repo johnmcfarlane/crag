@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="org.libsdl.app"
+      package="com.jsam.crag"
       android:versionCode="1"
-      android:versionName="1.0">
+      android:versionName="1.0"
+      android:installLocation="auto">
 
-    <uses-sdk android:minSdkVersion="5" />
-
-    <application android:label="@string/app_name" android:icon="@drawable/icon">
-        <activity android:name="SDLActivity"
+    <application android:label="@string/app_name"
+                 android:icon="@drawable/ic_launcher"
+	         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <activity android:name="Crag"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -15,4 +16,13 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!-- Android 2.3.3 -->
+    <uses-sdk android:minSdkVersion="10" /> 
+
+    <!-- OpenGL ES 2.0 -->
+    <uses-feature android:glEsVersion="0x00020000" /> 
+
+    <!-- Allow writing to external storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
 </manifest> 
