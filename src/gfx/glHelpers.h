@@ -21,14 +21,14 @@
 #define GL_VERIFY DO_STATEMENT(\
 	GLenum error = glGetError(); \
 	if (error != GL_NO_ERROR) { \
-		DEBUG_BREAK("GL error %X (%s)", error, gluErrorString(error)); } )
+		DEBUG_BREAK("GL error %X (%s)", error, gfx::ErrorString(error)); } )
 
 #define GL_CALL(statement) DO_STATEMENT(\
 	ASSERT(glGetError() == GL_NO_ERROR); \
 	statement; \
 	GLenum error = glGetError(); \
 	if (error != GL_NO_ERROR) { \
-		DEBUG_BREAK("GL error %X (%s): '%s'", error, gluErrorString(error), #statement); } )
+		DEBUG_BREAK("GL error %X (%s): '%s'", error, gfx::ErrorString(error), #statement); } )
 #endif
 
 
@@ -37,7 +37,14 @@ namespace gfx
 	// forward-declarations
 	class FrameBuffer;
 	class Texture;
-	
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Debug output
+
+#if ! defined(NDEBUG)
+	char const * ErrorString(GLenum error);
+#endif
+
 	////////////////////////////////////////////////////////////////////////////////
 	// State / Capability
 	

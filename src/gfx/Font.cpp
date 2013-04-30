@@ -140,7 +140,6 @@ void Font::RenderVerts() const
 	GL_VERIFY;
 
 	// State
-	ASSERT(! IsEnabled(GL_LIGHTING));
 	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	Enable(GL_BLEND);

@@ -14,7 +14,7 @@
 #include "geom/Matrix33.h"
 #include "geom/Matrix44.h"
 
-#if defined(PROFILE) || ! defined(NDEBUG)
+#if ! defined(__ANDROID__) && (defined(PROFILE) || ! defined(NDEBUG))
 #define GFX_DEBUG
 #endif
 

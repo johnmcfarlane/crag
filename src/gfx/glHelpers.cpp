@@ -14,6 +14,25 @@
 #include "FrameBuffer.h"
 #include "Texture.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// Binding
+
+#if ! defined(NDEBUG)
+namespace gfx
+{
+#if defined(__ANDROID__)
+	char const * ErrorString(GLenum)
+	{
+		return "GL error";
+	}
+#else
+	char const * ErrorString(GLenum error)
+	{
+		return reinterpret_cast<char const *>(gluErrorString(error));
+	}
+#endif	// defined(__ANDROID__)
+}
+#endif	// ! defined(NDEBUG)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Binding

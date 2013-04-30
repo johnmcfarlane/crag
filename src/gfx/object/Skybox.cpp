@@ -100,7 +100,6 @@ void Skybox::Render(Engine const &) const
 	Disable(GL_CULL_FACE);
 	glDepthMask(false);
 	
-	ASSERT(! IsEnabled(GL_LIGHTING));
 	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
 	

@@ -724,8 +724,6 @@ void Engine::VerifyRenderState() const
 	
 	// TODO: Write equivalent functions for all state in GL. :S
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
-	
-	ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 #endif	// NDEBUG
 }
 
@@ -1111,7 +1109,7 @@ void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_positi
 	STAT_SET(frame_3_total_duration, frame_duration);
 }
 
-#if defined(GATHER_STATS)
+#if defined(GATHER_STATS) && ! defined(NDEBUG)
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 	// update the history
