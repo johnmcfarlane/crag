@@ -186,9 +186,8 @@ GLint Program::GetUniformLocation(char const * name) const
 	return glGetUniformLocation(_id, name);
 }
 
-void Program::InitAttribs(GLuint id)
+void Program::InitAttribs(GLuint /*id*/)
 {
-	ASSERT(id == _id);
 }
 
 void Program::InitUniforms()

@@ -102,8 +102,8 @@ include_directories("src" "dependencies/include")
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 
 # TODO: -Weffc++ -fno-unwind-tables
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
-#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
+#set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O1 -pthread -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
