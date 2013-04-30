@@ -23,11 +23,13 @@ void * Allocate(size_t num_bytes, size_t alignment)
 {
 #if defined(WIN32)
 	return _aligned_malloc(num_bytes, alignment);
-#elif defined(__APPLE__) || defined(__ANDROID__)
+#elif defined(__APPLE__)
 	// Apple deliberately prevent use of posix_memalign. 
 	// Malloc is guaranteed to be 16-byte aligned. 
 	// Anything requiring greater alignment can simply run slower on mac.
 	return malloc(num_bytes);
+#elif defined(__ANDROID__)
+	return memalign(num_bytes, alignment);
 #else
 	void * allocation;
 	int error = posix_memalign(& allocation, alignment, num_bytes);
