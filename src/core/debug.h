@@ -70,7 +70,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#if defined(WIN32)
+#if defined(WIN32) || defined(__ANDROID__)
 #define DEBUG_COLOR_FILE
 #define DEBUG_COLOR_LINE
 #define DEBUG_COLOR_TEXT

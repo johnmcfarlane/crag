@@ -11,6 +11,10 @@
 
 #include "core/debug.h"
 
+#if defined(__ANDROID__)
+#include  <android/log.h>
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // PrintMessage definition
 
@@ -45,6 +49,23 @@ namespace
 
 		// send buffer to debugging console
 		OutputDebugStringA(buffer);
+	}
+
+#elif defined(__ANDROID__)
+
+	void VFPrintF(FILE * out, char const * format, va_list args)
+	{
+		android_LogPriority priority;
+		if (out == stderr)
+		{
+			priority = ANDROID_LOG_ERROR;
+		}
+		else
+		{
+			priority = ANDROID_LOG_WARN;
+		}
+		
+		__android_log_vprint(priority, "crag_log", format, args);
 	}
 
 #else
