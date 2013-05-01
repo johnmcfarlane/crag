@@ -292,8 +292,8 @@ namespace
 	// The main program function.
 	bool CragMain()
 	{
-		printf("Crag Demo\n"
-			   "Copyright 2010-2012 John McFarlane\n");
+		PrintMessage(stdout,
+			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
 
 		DEBUG_MESSAGE("-> CragMain");
 
