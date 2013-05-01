@@ -25,9 +25,9 @@
 // Debug-only function parameter wrapper
 
 #if defined(NDEBUG)
-#define CRAG_DEBUG_ONLY(X)
+#define CRAG_DEBUG_PARAM(X)
 #else
-#define CRAG_DEBUG_ONLY(X) X
+#define CRAG_DEBUG_PARAM(X) X
 #endif
 
 
