@@ -11,10 +11,6 @@
 
 #include "core/debug.h"
 
-#if defined(__ANDROID__)
-#include  <android/log.h>
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 // PrintMessage definition
 

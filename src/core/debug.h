@@ -96,6 +96,9 @@ void PrintMessage(FILE * out, char const * format, ...);
 // BREAK - interrupt execution
 #if defined(WIN32)
 #define BREAK() __debugbreak()
+#elif defined(__ANDROID__)
+#include  <android/log.h>
+#define BREAK() __android_log_assert("error", "crag", "internal error");
 #elif defined(__GNUC__)
 #if defined(__i386__)
 #define BREAK() asm("int3")
