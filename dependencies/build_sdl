@@ -1,6 +1,8 @@
 #!/bin/sh
 hg clone http://hg.libsdl.org/SDL
 cd SDL
+hg pull http://hg.libsdl.org/SDL
+hg update
 ./autogen.sh
 mkdir build
 cd build
