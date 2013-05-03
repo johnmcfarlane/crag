@@ -129,7 +129,8 @@ void app::DeinitContext(SDL_GLContext context)
 
 bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 {
-	FILE * source = fopen(filename, "rb");
+	// open file
+	SDL_RWops * source = SDL_RWFromFile(filename, "rb");
 	if (source == nullptr)
 	{
 		ASSERT(errno == ENOENT);
@@ -137,20 +138,30 @@ bool app::LoadFile(char const * filename, std::vector<char> & buffer)
 		return false;
 	}
 	
-	fseek(source, 0, SEEK_END);
-	size_t length = ftell(source);
-	fseek(source, 0, SEEK_SET);
+	// determine length
+	size_t length = SDL_RWseek(source, 0, SEEK_END);
+	SDL_RWseek(source, 0, SEEK_SET);
 
+	// prepare buffer
 	buffer.resize(length);
 	
-	size_t read = fread(& buffer[0], 1, length, source);
+	// read file
+	size_t read = SDL_RWread(source, & buffer[0], 1, length);
 	if (read != length)
 	{
 		DEBUG_MESSAGE("error loading %s: length=" SIZE_T_FORMAT_SPEC "; read=" SIZE_T_FORMAT_SPEC, filename, length, read);
 		return false;
 	}
 
-	fclose(source);
+	// close file
+	if (SDL_RWclose(source) != 0)
+	{
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+	
+	// success!
+	DEBUG_MESSAGE("loaded " SIZE_T_FORMAT_SPEC "B from %s", length, filename);
 	
 	return true;
 }
