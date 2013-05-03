@@ -100,10 +100,9 @@ namespace ipc
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			_thread.Launch([this, name] () {
-				smp::SetThreadName(name);
+			_thread.Launch([this] () {
 				this->Run();
-			});
+			}, name);
 			
 			while (_engine == nullptr)
 			{

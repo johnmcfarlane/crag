@@ -11,6 +11,11 @@
 
 #include "smp.h"
 
+// use std::thread for smp::Thread implementation 
+// instead of SDL threadding support; both use pthreads on most systems
+// but SDL is a little more mature and claims to work better on Android
+//#define CRAG_USE_STL_THREAD
+
 namespace smp
 {
 	// Use Thread to launch and manage a thread. 
@@ -24,10 +29,15 @@ namespace smp
 		OBJECT_NO_COPY(Thread);
 		
 		// types
+#if defined(CRAG_USE_STL_THREAD)
 		typedef std::thread ThreadType;
+#else
+		typedef SDL_Thread * ThreadType;
+		typedef std::function<void ()> FunctionType;
+#endif
+
 	public:
-		typedef void (* Function)(void * data);
-		
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Thread();
 		~Thread();
@@ -37,42 +47,44 @@ namespace smp
 		// True if the calling thread is this thread.
 		bool IsCurrent() const;
 
-		// Creates and launches a new thread.
+		// creates and launches a new thread;
+		// name must immutable
 		template <typename FUNCTION_TYPE>
-		void Launch(FUNCTION_TYPE function)
+		void Launch(FUNCTION_TYPE function, char const * name)
 		{
-			_thread = ThreadType([this, function] {
+			ASSERT(! IsLaunched());
+			
+#if defined(CRAG_USE_STL_THREAD)
+			_thread = ThreadType([this, function, name] {
+				// sets the thread's name; (useful for debugging)
+				smp::SetThreadName(name);
+
 				while (! IsCurrent()) {
 					Yield();
 				}
 				function();
 			});
+#else
+			_launch_function = function;
+			_thread = SDL_CreateThread(Callback, name, this);
+#endif
 		}
 		
 		// Waits for thread to return from FUNCTION.
 		void Join();
 
 	private:
-		template <typename CLASS, Thread CLASS::*THREAD, void (CLASS::*FUNCTION)()>
-		static int Callback(void * data)
-		{
-			ASSERT(data != nullptr);
-			CLASS & object = * reinterpret_cast<CLASS *>(data);
-			
-			// Ensure that the Thread::sdl_thread gets set before progressing.
-			// This ensures that IsLaunched returns the correct result.
-			Thread const & object_thread = object.*THREAD;
-			while (! object_thread.IsLaunched())
-			{
-				Yield();
-			}
-			
-			// Call the class' member function.
-			(object.*FUNCTION)();
-			
-			return 0;
-		}
+#if ! defined(CRAG_USE_STL_THREAD)
+		static int Callback(void * data);
+#endif
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
 
 		ThreadType _thread;
+
+#if ! defined(CRAG_USE_STL_THREAD)
+		FunctionType _launch_function;
+#endif
 	};
 }
