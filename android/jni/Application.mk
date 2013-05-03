@@ -9,7 +9,7 @@ APP_STL := gnustl_static	# success?
 #APP_STL := none	# fails on <cassert>
 
 NDK_TOOLCHAIN_VERSION := 4.7
-APP_PLATFORM := android-10
+APP_PLATFORM := android-15
 APP_OPTIM := debug
 #APP_OPTIM := release
 
