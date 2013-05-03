@@ -110,8 +110,4 @@ find_library(SDL2_LIBRARY SDL2 dependencies/lib)
 target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "dl" "GLEW" "pthread" "stdc++" "m")
 
 include (PrecompiledHeader.cmake)
-
-# with: 24.336s
-# without: 63.250s
 add_precompiled_header(crag src/pch.h)
-
