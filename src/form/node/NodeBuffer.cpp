@@ -100,12 +100,12 @@ form::NodeBuffer::~NodeBuffer()
 #if defined(VERIFY)
 void form::NodeBuffer::Verify() const
 {
-	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
+	VerifyArrayPointer(nodes_used_end, nodes, nodes_end);
 	
-	VerifyArrayElement(quaterne_sorted_end, quaterne);
-	VerifyArrayElement(quaterne_used_end, quaterne);
-	VerifyArrayElement(quaterne_used_end_target, quaterne);
-	VerifyArrayElement(quaterne_end, quaterne);
+	VerifyArrayPointer(quaterne_sorted_end, quaterne);
+	VerifyArrayPointer(quaterne_used_end, quaterne);
+	VerifyArrayPointer(quaterne_used_end_target, quaterne);
+	VerifyArrayPointer(quaterne_end, quaterne);
 	
 	VerifyTrue(quaterne_sorted_end >= quaterne);
 	VerifyTrue(quaterne_used_end >= quaterne_sorted_end);
