@@ -14,6 +14,9 @@
 //////////////////////////////////////////////////////////////////////
 // Object pool macros
 
+// define this if you want everything to run slower
+//#define CRAG_CORE_OBJECT_POOL_DIAGNOSTICS
+
 // fixed-size pool allocation;
 // placed with class member definitions
 // and add DECLARE_ALLOCATOR to the class definition
@@ -69,13 +72,6 @@ namespace core
 		// functions
 
 		// c/d'tor
-		object_pool() 
-		{
-			init();
-
-			VerifyObject(* this);
-		}
-
 		object_pool(size_type max_elements) 
 		{
 			init(max_elements);
@@ -89,53 +85,60 @@ namespace core
 
 			deinit();
 		}
-	
-		value_type * begin()
-		{
-			return _array;
-		}
-	
-		value_type const * begin() const
-		{
-			return _array;
-		}
-	
-		value_type * end()
-		{
-			return _array_end;
-		}
-	
-		value_type const * end() const
-		{
-			return _array_end;
-		}
-	
-		void sort_free()
-		{
-			ASSERT(empty());
 
-			init_free_list();
+		// tl;dr: don't call this function!
+		// calls function on the range of elements which have been allocated since the 
+		// last free list reset; is useful because it includes the set of all currently
+		// allocated elements; care must be taken to not corrupt elements which are not
+		// currently allocated; it is non-trivial to tell which those are; debug-only
+		// checks are in place to catch this
+		template <typename Function>
+		void for_each_activated(Function function)
+		{
+#if defined(NDEBUG)
+			std::for_each(_array, reinterpret_cast<value_type *>(_unlinked_begin), function);
+#else
+			std::for_each(_array, reinterpret_cast<value_type *>(_unlinked_begin), [function] (value_type & element)
+			{
+				Node const & node = reinterpret_cast<Node const &>(element);
+				Node const * next = node.next;
+
+				function(element);
+
+				// did the given function corrupt a deallocated element?
+				ASSERT(next == node.next);
+			});
+#endif
 		}
 		
-		// returns uninitialized block of memory large enough to object of type, value_type
+		// returns uninitialized block of memory large enough to hold object of type, value_type
 		// or nullptr if the pool is full
 		void * allocate()
 		{
 			VerifyObject(* this);
 
-			if (_free_list == nullptr)
+			auto new_list_element = reinterpret_cast<value_type *>(_free_list_head);
+
+			if (_free_list_head == _unlinked_begin)
 			{
-				DEBUG_MESSAGE("object pool is full");
-				return nullptr;
+				if (new_list_element == _array_end)
+				{
+					DEBUG_MESSAGE("object pool is full");
+					return nullptr;
+				}
+
+				_free_list_head = reinterpret_cast<Node *>(new_list_element + 1);
+				_unlinked_begin = _free_list_head;
 			}
-
-			auto ptr = reinterpret_cast<void *>(_free_list);
-			_free_list = _free_list->next;
+			else
+			{
+				_free_list_head = _free_list_head->next;
+			}
 			
-			VerifyElement(reinterpret_cast<value_type *>(ptr));
 			++ _num_allocated;
-
-			return ptr;
+			
+			VerifyObject(* this);
+			return reinterpret_cast<void *>(new_list_element);
 		}
 	
 		// frees up memory returned from allocate
@@ -148,15 +151,21 @@ namespace core
 				return;
 			}
 
-			VerifyElement(reinterpret_cast<value_type *>(ptr));
+			VerifyAllocatedElement(* reinterpret_cast<value_type *>(ptr));
 
 			Node * n = reinterpret_cast<Node *>(ptr);
 		
 			// Add back into free list.
-			n->next = _free_list;
-			_free_list = n;
+			n->next = _free_list_head;
+			_free_list_head = n;
 
 			-- _num_allocated;
+			if (_num_allocated == 0)
+			{
+				init_free_list();
+			}
+
+			VerifyObject(* this);
 		}
 
 		// returns a new object constructed with given parameters
@@ -164,8 +173,6 @@ namespace core
 		template <typename ... PARAMETERS>
 		value_type * create(PARAMETERS && ... parameters)
 		{
-			VerifyObject(* this);
-
 			value_type * object = reinterpret_cast<value_type *>(allocate());
 			if (object != nullptr)
 			{
@@ -179,8 +186,6 @@ namespace core
 		// deletes an object returned by create
 		void destroy(value_type * ptr)
 		{
-			VerifyObject(* this);
-
 			if (ptr == nullptr)
 			{
 				return;
@@ -198,38 +203,54 @@ namespace core
 		{
 			return _array_end - _array;
 		}
-	
-		// returns the current number of allocated objects
-		size_type count() const
-		{
-			return _num_allocated;
-		}
-	
+		
 		bool empty() const
 		{
-			return count() == 0;
+			return _num_allocated == 0;
 		}
 
 #if defined(VERIFY)
-		void VerifyElement(value_type const * element) const
+		// element must be any member of the array
+		void VerifyElement(value_type const & element) const
 		{
-			VerifyRef(* element);
-			VerifyArrayElement(element, begin(), end());
+			VerifyArrayElement(& element, _array, _array_end);
+		}
+
+		// element must be any member of the array which is currently allocated
+		void VerifyAllocatedElement(value_type const & element) const
+		{
+			VerifyArrayElement(& element, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
+		}
+
+		// element must be any member of the array which is currently not allocated
+		void VerifyFreeElement(value_type const & element) const
+		{
+			VerifyElement(element);
+
+			auto & node = reinterpret_cast<Node const &>(element);
+			auto next = reinterpret_cast<value_type const *>(node.next);
+			VerifyArrayPointer(next, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 		}
 
 		void Verify() const
 		{
-			size_t const loop_limit = 10u;
-
-			auto free_list_size = 0u;
-			for (auto node_iterator = _free_list; free_list_size < loop_limit && node_iterator != nullptr; node_iterator = node_iterator->next)
+			VerifyArrayPointer(reinterpret_cast<value_type *>(_free_list_head), _array);
+			VerifyArrayPointer(reinterpret_cast<value_type *>(_unlinked_begin), reinterpret_cast<value_type *>(_free_list_head));
+			VerifyArrayPointer(_array_end, reinterpret_cast<value_type *>(_unlinked_begin));
+			VerifyOp(_array_end, >, _array);
+			
+#if defined(CRAG_CORE_OBJECT_POOL_DIAGNOSTICS)
+			std::size_t free_list_size = 0;
+			for (auto node_iterator = _free_list_head; node_iterator != _unlinked_begin; node_iterator = node_iterator->next)
 			{
-				VerifyElement(reinterpret_cast<value_type *>(node_iterator));
+				VerifyFreeElement(* reinterpret_cast<value_type *>(node_iterator));
 				++ free_list_size;
 			}
 
-			auto num_free = std::min(capacity() - _num_allocated, loop_limit);
-			VerifyEqual(num_free, free_list_size);
+			std::size_t max_free_list_size = reinterpret_cast<value_type *>(_unlinked_begin) - _array;
+			VerifyOp(free_list_size, <=, max_free_list_size);
+			VerifyEqual(_num_allocated, max_free_list_size - free_list_size);
+#endif
 		}
 #else
 		void VerifyElement(value_type const *) const
@@ -239,14 +260,6 @@ namespace core
 	
 	private:
 		// init/deinit
-		void init()
-		{
-			_array = nullptr;
-			_array_end = nullptr;
-			_free_list = nullptr;
-			_num_allocated = 0;
-		}
-	
 		void init(size_type max_num_elements)
 		{
 			ASSERT(max_num_elements != 0);
@@ -262,24 +275,11 @@ namespace core
 			init_free_list();
 			_num_allocated = 0;
 		}
-	
+		
 		void init_free_list()
 		{
-			_free_list = reinterpret_cast<Node *>(_array);
-		
-			for (value_type * it = _array; ; )
-			{
-				Node * & node_next = reinterpret_cast<Node *>(it)->next;
-				++ it;
-			
-				if (it == _array_end)
-				{
-					node_next = 0;	// Last element has a null next.
-					break;
-				}
-			
-				node_next = reinterpret_cast<Node *>(it);
-			}
+			_free_list_head = reinterpret_cast<Node *>(_array);
+			_unlinked_begin = reinterpret_cast<Node *>(_array);
 		}
 	
 		void deinit()
@@ -302,7 +302,11 @@ namespace core
 		value_type * _array_end;
 
 		// free List
-		Node * _free_list;
-		size_type _num_allocated;	// number allocated in the pool
+		Node * _free_list_head;
+		
+		// after last element in the free/used sets
+		Node * _unlinked_begin;
+		
+		size_type _num_allocated;
 	};
 }

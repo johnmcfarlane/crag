@@ -37,6 +37,11 @@ form::Scene::~Scene()
 #if defined(VERIFY)
 void form::Scene::Verify() const
 {
+	if (! _node_buffer.GetPoints().IsEmpty())
+	{
+		VerifyTrue(! formation_map.empty());
+	}
+
 	VerifyObject(_node_buffer);
 }
 

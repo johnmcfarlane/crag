@@ -11,27 +11,48 @@
 
 #include "PointBuffer.h"
 
-form::PointBuffer::PointBuffer(int max_num_verts) 
-: super(max_num_verts)
+using namespace form;
+
+////////////////////////////////////////////////////////////////////////////////
+// PointBuffer member definitions
+
+PointBuffer::PointBuffer(int max_num_verts) 
+: _pool(max_num_verts)
 {
 }
 
-void form::PointBuffer::Clear()
+bool PointBuffer::IsEmpty() const
 {
-	for (auto& point : * this)
+	return _pool.empty();
+}
+
+void form::PointBuffer::ClearPointers()
+{
+	_pool.for_each_activated([] (Point & point)
 	{
 		point.vert = nullptr;
-	}
+	});
 }
 
-void form::PointBuffer::FastClear()
+Point * PointBuffer::Create()
 {
-	super::sort_free();
+	auto creation = _pool.create();
+	return creation;
+}
+
+void PointBuffer::Destroy(Point * ptr)
+{
+	_pool.destroy(ptr);
 }
 
 #if defined(VERIFY)
-void form::PointBuffer::Verify() const
+void PointBuffer::VerifyAllocatedElement(Point const & element) const
 {
-	super::Verify();
+	_pool.VerifyAllocatedElement(element);
+}
+
+void PointBuffer::Verify() const
+{
+	_pool.Verify();
 }
 #endif
