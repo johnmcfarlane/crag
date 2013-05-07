@@ -151,7 +151,7 @@ namespace core
 				return;
 			}
 
-			VerifyAllocatedElement(* reinterpret_cast<value_type *>(ptr));
+			VerifyArrayElement(reinterpret_cast<value_type *>(ptr), _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 
 			Node * n = reinterpret_cast<Node *>(ptr);
 		
