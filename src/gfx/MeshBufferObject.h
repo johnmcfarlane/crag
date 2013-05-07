@@ -92,6 +92,9 @@ namespace gfx
 #if defined(VERIFY)
 		void Verify() const
 		{
+			VerifyObject(vbo);
+			VerifyObject(ibo);
+
 			ASSERT(vbo.IsInitialized() == ibo.IsInitialized());
 			if (! vbo.IsInitialized())
 			{

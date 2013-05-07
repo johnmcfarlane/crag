@@ -85,6 +85,8 @@ FormationMesh::~FormationMesh()
 void FormationMesh::Verify() const
 {
 	super::Verify();
+	VerifyObjectPtr(_queued_mesh);
+	VerifyObjectPtr(_pending_mesh);
 	ASSERT(! mbo_buffers.back().IsBound());
 }
 #endif
@@ -164,6 +166,8 @@ bool FormationMesh::BeginBufferUpload()
 		// a new mesh is not available to upload
 		return false;
 	}
+
+	VerifyObjectRef(* _queued_mesh);
 	
 	form::MeshBufferObject & back_buffer = mbo_buffers.back();
 	VerifyObject(* this);

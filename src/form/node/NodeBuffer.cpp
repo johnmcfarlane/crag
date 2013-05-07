@@ -100,12 +100,12 @@ form::NodeBuffer::~NodeBuffer()
 #if defined(VERIFY)
 void form::NodeBuffer::Verify() const
 {
-	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);	
+	VerifyArrayPointer(nodes_used_end, nodes, nodes_end);
 	
-	VerifyArrayElement(quaterne_sorted_end, quaterne);
-	VerifyArrayElement(quaterne_used_end, quaterne);
-	VerifyArrayElement(quaterne_used_end_target, quaterne);
-	VerifyArrayElement(quaterne_end, quaterne);
+	VerifyArrayPointer(quaterne_sorted_end, quaterne);
+	VerifyArrayPointer(quaterne_used_end, quaterne);
+	VerifyArrayPointer(quaterne_used_end_target, quaterne);
+	VerifyArrayPointer(quaterne_end, quaterne);
 	
 	VerifyTrue(quaterne_sorted_end >= quaterne);
 	VerifyTrue(quaterne_used_end >= quaterne_sorted_end);
@@ -160,6 +160,13 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 		if (children != nullptr)
 		{
 			VerifyArrayElement(children, nodes, nodes_used_end);
+		}
+
+		for (int i = 0; i < 3; ++ i)
+		{
+			Point const & point = sibling.GetCorner(i);
+			VerifyObjectRef(point);
+			point_buffer.VerifyAllocatedElement(point);
 		}
 	}
 	
@@ -272,7 +279,7 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 
 void form::NodeBuffer::OnReset()
 {
-	point_buffer.FastClear();
+	ASSERT(point_buffer.IsEmpty());
 	InitQuaterna(quaterne_used_end);
 
 	nodes_used_end = nodes;
@@ -568,7 +575,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 {
 	VerifyObject(* this);
 	
-	point_buffer.Clear();
+	point_buffer.ClearPointers();
 	mesh.Clear();
 
 	GenerateMeshFunctor mesh_functor(node_score_functor.GetLeafScoreRange(), mesh);

@@ -35,6 +35,10 @@ namespace form
 	{
 		typedef gfx::MeshBufferObject<Vertex, GL_DYNAMIC_DRAW> super;
 	public:
+#if defined(VERIFY)
+		void Verify() const;
+#endif
+
 		MeshBufferObject();
 		virtual ~MeshBufferObject();
 		

@@ -13,27 +13,24 @@
 
 namespace form 
 {
-	class PointBuffer : private core::object_pool<Point>
+	class PointBuffer
 	{
-		typedef core::object_pool<Point> super;
+		typedef core::object_pool<Point> Pool;
 	public:
 		PointBuffer(int max_num_verts);
 		
-		void Clear();
-		void FastClear();
+		bool IsEmpty() const;
+		void ClearPointers();
 		
-		Point * Create()
-		{
-			return super::create();
-		}
-		
-		void Destroy(Point * ptr)
-		{
-			super::destroy(ptr);
-		}
+		Point * Create();
+		void Destroy(Point * ptr);
 		
 #if defined(VERIFY)
+		void VerifyAllocatedElement(Point const & element) const;
 		void Verify() const;
 #endif
+
+private:
+		Pool _pool;
 	};
 }

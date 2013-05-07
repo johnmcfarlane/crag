@@ -22,6 +22,16 @@ namespace gfx
 	class BufferObject
 	{
 	public:
+#if defined(VERIFY)
+		void Verify() const
+		{
+			if (IsInitialized())
+			{
+				VerifyTrue(glIsBuffer(_name));
+			}
+		}
+#endif
+
 		BufferObject()
 		: _name(0)
 		{
