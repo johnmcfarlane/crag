@@ -13,6 +13,18 @@
 
 #include "gfx/VertexBufferObject.h"
 
+using namespace form;
+
+////////////////////////////////////////////////////////////////////////////////
+// form::Vertex helper functions
+
+#if defined(VERIFY)
+void Vertex::Verify() const
+{
+	VerifyObject(pos);
+	VerifyObject(norm);
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // form::Vertex helper functions

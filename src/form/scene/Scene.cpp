@@ -144,7 +144,6 @@ void form::Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
 	}
 }
 
-// TODO: Write an ungraceful/fast version of this.
 void form::Scene::ResetFormations(geom::abs::Vector3 const & origin)
 {
 	for (auto & pair : formation_map) 
@@ -188,9 +187,10 @@ void form::Scene::DeinitPolyhedron(FormationPair & pair)
 	
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron._root_node;
-	
+
 	_node_buffer.CollapseNodes(root_node);
-	
+	ASSERT(! root_node.HasChildren());
+
 	// Continue deinitialization somewhere a bit calmer.
 	polyhedron.Deinit(_node_buffer.GetPoints());
 }
