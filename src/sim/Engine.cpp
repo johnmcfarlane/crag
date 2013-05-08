@@ -204,8 +204,6 @@ core::locality::Roster & Engine::GetDrawRoster()
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	FUNCTION_NO_REENTRY;
-	
 	core::Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)

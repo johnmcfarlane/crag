@@ -464,6 +464,8 @@ namespace smp
 			
 			void RunThread()
 			{
+				core::DebugSetThreadName("schd");
+
 				// Sleep until after the singleton is fully constructed.
 				while (singleton == nullptr)
 				{

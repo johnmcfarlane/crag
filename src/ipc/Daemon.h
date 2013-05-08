@@ -100,7 +100,8 @@ namespace ipc
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			_thread.Launch([this] () {
+			_thread.Launch([this, name] () {
+				core::DebugSetThreadName(name);
 				this->Run();
 			}, name);
 			
