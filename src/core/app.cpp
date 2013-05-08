@@ -22,6 +22,7 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
+	SDL_Renderer * renderer = nullptr;
 
 	int refresh_rate = -1;
 }
@@ -65,12 +66,21 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
+	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
 	window = SDL_CreateWindow(title, 
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
 							  flags);
 	
 	if (window == 0)
+	{
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+	
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+	
+	if (renderer == 0)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
@@ -94,8 +104,12 @@ void app::Deinit()
 {
 	ASSERT(window != nullptr);
 
+	SDL_DestroyRenderer(renderer);
+	renderer = nullptr;
+	
 	SDL_DestroyWindow(window);
 	window = nullptr;
+	
 	refresh_rate = -1;
 
 	SDL_Quit();
