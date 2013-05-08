@@ -73,15 +73,17 @@ CONFIG_DEFINE (profile_mode, bool, false);
 namespace 
 {
 
-#if ! defined(WIN32)
-	CONFIG_DEFINE (video_resolution_x, int, 800);
-	CONFIG_DEFINE (video_resolution_y, int, 600);
+#if defined(WIN32)
+	CONFIG_DEFINE (window_resolution_x, int, 800);
+	CONFIG_DEFINE (window_resolution_y, int, 600);
 #else
-	CONFIG_DEFINE (video_resolution_x, int, 800);
-	CONFIG_DEFINE (video_resolution_y, int, 600);
+	CONFIG_DEFINE (window_resolution_x, int, 800);
+	CONFIG_DEFINE (window_resolution_y, int, 600);
 #endif
-	
-#if defined(PROFILE)
+
+#if defined(__ANDROID__)
+	CONFIG_DEFINE (video_full_screen, bool, true);
+#elif defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #elif defined(NDEBUG)
 	CONFIG_DEFINE (video_full_screen, bool, true);
@@ -302,9 +304,9 @@ namespace
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		geom::Vector2i video_resolution(video_resolution_x, video_resolution_y);
+		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
-		if (! app::Init(video_resolution, full_screen, "Crag"))
+		if (! app::Init(window_resolution, full_screen, "Crag"))
 		{
 			return false;
 		}
