@@ -295,6 +295,8 @@ namespace
 		PrintMessage(stdout,
 			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
 
+		core::DebugSetThreadName("main");
+
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
