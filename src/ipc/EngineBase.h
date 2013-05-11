@@ -224,9 +224,10 @@ namespace ipc
 #if defined(VERIFY)
 		virtual void Verify() const
 		{
-			ForEachPair([] (std::pair<Uid, SmpObject *> const & pair) {
+			ForEachPair([=] (std::pair<Uid, SmpObject *> const & pair) {
 				SmpObject const & smp_object = ref(pair.second);
 				ASSERT(pair.first == smp_object.GetUid());
+				ASSERT(this == & smp_object.GetEngine());
 				VerifyObject(smp_object);
 			});
 

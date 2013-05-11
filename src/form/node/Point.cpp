@@ -11,8 +11,21 @@
 
 #include "Point.h"
 
-form::Point::Point()
+using namespace form;
+
+////////////////////////////////////////////////////////////////////////////////
+// form::Point member definitions
+
+Point::Point()
 : pos(Vector3::Zero())
 , vert(nullptr)
 {
 }
+
+#if defined(VERIFY)
+void Point::Verify() const
+{
+	VerifyObject(pos);
+	VerifyObjectPtr(vert);
+}
+#endif

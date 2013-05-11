@@ -104,18 +104,15 @@ add_executable(crag
 include_directories("src" "dependencies/include" "/usr/local/include/bullet")
 #set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang")
 
 # TODO: -Weffc++ -fno-unwind-tables
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
-#set(CMAKE_CXX_FLAGS "-std=gnu++11 -O1 -pthread -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
+#set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O1 -pthread -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
-target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "dl" "GLEW" "pthread")
+target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "dl" "GLEW" "pthread" "stdc++" "m")
 
 include (PrecompiledHeader.cmake)
-
-# with: 24.336s
-# without: 63.250s
 add_precompiled_header(crag src/pch.h)
-

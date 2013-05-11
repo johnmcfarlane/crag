@@ -343,7 +343,7 @@ namespace core
 			init_data();
 		}
 		
-		static void verify_address(size_type num_bytes)
+		static void verify_address(size_type CRAG_DEBUG_PARAM(num_bytes))
 		{
 			assert(ring_buffer::round_down(num_bytes) == num_bytes);
 		}

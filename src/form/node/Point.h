@@ -21,6 +21,10 @@ namespace form
 	{
 	public:
 		Point();
+
+#if defined(VERIFY)
+		void Verify() const;
+#endif
 		
 		// Attributes
 		Vector3 pos;

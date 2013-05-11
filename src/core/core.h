@@ -34,7 +34,7 @@
 #if defined(WIN32)
 #define constexpr const
 #define alignof __alignof
-#define noexcept
+#define noexcept _NOEXCEPT
 #endif
 
 

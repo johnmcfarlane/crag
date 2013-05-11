@@ -22,6 +22,16 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Debug-only function parameter wrapper
+
+#if defined(NDEBUG)
+#define CRAG_DEBUG_PARAM(X)
+#else
+#define CRAG_DEBUG_PARAM(X) X
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Verify / Dump flags
 
 #if ! defined (NDEBUG)
@@ -179,14 +189,14 @@ ReentryGuard reentry_guard(counter);
 
 #define VerifyOp(A, OP, B) \
 	DO_STATEMENT( \
-		auto a = A; \
-		auto b = B; \
+		auto a = (A); \
+		auto b = (B); \
 		if (!(a OP b)) { \
 			::std::ostringstream message; \
 			message \
-				<< #A "=" << a \
+				<< '(' << #A "=" << a << ')' \
 				<< ' ' << #OP \
-				<< ' ' << #B "=" << b; \
+				<< " (" << #B "=" << b << ')'; \
 			DEBUG_BREAK("Failed: %s", message.str().c_str()); \
 		} \
 	)
@@ -246,21 +256,26 @@ void VerifyObjectPtr(T const * ptr)
 	}
 }
 
-template<typename T> void VerifyArrayElement(T const * element, T const * begin) 
+template<typename T> void VerifyArrayPointer(T const * element, T const * begin) 
 { 
-	VerifyRef(* begin);								// null check
-	VerifyRef(* element);							// null check
-	ASSERT(begin <= element);						// in range
-	ASSERT(begin + (element - begin) == element);	// alignment
+	VerifyRef(* begin);	// null check
+	VerifyOp(begin, <=, element);	// in range
+	VerifyEqual((reinterpret_cast<char const *>(element) - reinterpret_cast<char const *>(begin)) % sizeof(T), static_cast<std::size_t>(0));	// element alignment
+}
+
+template<typename T> void VerifyArrayPointer(T const * element, T const * begin, T const * end) 
+{ 
+	VerifyArrayPointer(end, begin);		// valid end pointer
+	VerifyArrayPointer(element, begin);	// valid element pointer
+	VerifyOp(element, <=, end);	// element no further than top end of range
 }
 
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) 
 { 
-	VerifyArrayElement(end, begin);		// valid end pointer
-	VerifyArrayElement(element, begin);	// valid element pointer
-	ASSERT(element < end);	// element inside top end of range
+	VerifyArrayPointer(end, begin);		// valid end pointer
+	VerifyArrayPointer(element, begin);	// valid element pointer
+	VerifyOp(element, <, end);	// element inside top end of range
 }
-
 #else
 
 template<typename T> void VerifyRef(T const &) { }
@@ -268,7 +283,8 @@ template<typename T> void VerifyPtr(T const *) { }
 template<typename T> void VerifyObject(T const &) { }
 template<typename T> void VerifyObjectRef(T const &) { }
 template<typename T> void VerifyObjectPtr(T const *) { }
-template<typename T> void VerifyArrayElement(T const *, T const *) { }
+template<typename T> void VerifyArrayPointer(T const *, T const *) { }
+template<typename T> void VerifyArrayPointer(T const *, T const *, T const *) { }
 template<typename T> void VerifyArrayElement(T const *, T const *, T const *) { }
 
 #endif

@@ -70,7 +70,7 @@ namespace
 			VerifyColorComp(col.a);
 		}
 		
-		static void VerifyColorComp(float c)
+		static void VerifyColorComp(float CRAG_DEBUG_PARAM(c))
 		{
 			ASSERT(c >= 0 && c <= 1);
 		}

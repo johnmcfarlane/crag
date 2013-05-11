@@ -322,16 +322,21 @@ namespace core
 				return h.is_attached();
 			}
 			
+#if defined(VERIFY)
 			template <hook_type Class::*Member>
 			static void verify(value_type const & element)
 			{
-#if defined(VERIFY)
 				hook_type const & h = element.*Member;
 				VerifyPtr(h._next);
 				VerifyPtr(h._previous);
 				VerifyTrue((h._next == nullptr) == (h._previous == nullptr));
-#endif
 			}
+#else
+			template <hook_type Class::*Member>
+			static void verify(value_type const &)
+			{
+			}
+#endif
 			
 			template <hook_type Class::*Member>
 			void init()

@@ -60,6 +60,10 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
+#if defined(VERIFY)
+		virtual void Verify() const override;
+#endif
+
 		Engine();
 		~Engine();
 
@@ -130,9 +134,6 @@ namespace gfx
 		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
 		void DebugDraw();
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
 
 		void ProcessRenderTiming();
 		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);

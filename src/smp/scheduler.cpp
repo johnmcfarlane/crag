@@ -392,7 +392,7 @@ namespace smp
 					// Launch them all.
 					for (Thread * it = _threads; it != _threads_end; ++ it)
 					{
-						it->Launch(RunThread);
+						it->Launch(RunThread, "scheduler");
 					}
 				}
 				
@@ -464,9 +464,6 @@ namespace smp
 			
 			void RunThread()
 			{
-				// sets the thread's name; (useful for debugging)
-				smp::SetThreadName("scheduler");
-
 				// Sleep until after the singleton is fully constructed.
 				while (singleton == nullptr)
 				{

@@ -109,13 +109,13 @@ namespace gfx
 	{
 		typedef TypeInfo<typename Vector::Scalar> TypeInfo;
 
-		constexpr Vertex * null_vert = nullptr;
+		Vertex const * null_vert = nullptr;
 		
 		auto constexpr size = Vector::Size();
 		auto constexpr type = TypeInfo::type;
 		auto constexpr normalized = TypeInfo::normalized;
 		auto constexpr stride = sizeof(Vertex);
-		auto constexpr pointer = & (null_vert->* _member);
+		auto pointer = & (null_vert->* _member);
 		
 		GL_CALL(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 	}

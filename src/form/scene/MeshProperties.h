@@ -20,6 +20,14 @@ namespace form
 		// TODO: Is high precision really needed everywhere there's an origin?
 		typedef geom::abs::Vector3 Vector;
 		
+#if defined(VERIFY)
+		void Verify() const
+		{
+			VerifyObject(_origin);
+			VerifyOp(_num_quaterne, >=, 0);
+		}
+#endif
+
 		MeshProperties() 
 		: _origin(Vector::Zero())
 		, _num_quaterne(0)

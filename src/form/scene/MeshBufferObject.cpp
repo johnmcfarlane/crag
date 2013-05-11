@@ -21,6 +21,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 // MeshBufferObject member definitions
 
+#if defined(VERIFY)
+void form::MeshBufferObject::Verify() const
+{
+	super::Verify();
+	VerifyOp(max_index, >=, 0);
+	VerifyObject(properties);
+}
+#endif
+
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
 {

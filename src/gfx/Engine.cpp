@@ -218,6 +218,17 @@ namespace
 
 }	// namespace
 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Engine member definitions
+
+#if defined(VERIFY)
+void Engine::Verify() const
+{
+	super::Verify();
+
+	VerifyObjectPtr(scene);
+}
+#endif
 
 Engine::Engine()
 : context(nullptr)
@@ -1150,15 +1161,6 @@ void Engine::DebugDraw()
 	
 #endif	// defined(GFX_DEBUG)
 }
-
-#if defined(VERIFY)
-void Engine::Verify() const
-{
-	super::Verify();
-
-	VerifyObjectPtr(scene);
-}
-#endif
 
 void Engine::ProcessRenderTiming()
 {

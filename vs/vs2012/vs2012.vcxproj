@@ -375,6 +375,7 @@
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Puff.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\gfx\Thruster.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thruster0</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\scripts\vehicle\sim\RoverThruster.cpp" />
     <ClCompile Include="..\..\src\scripts\vehicle\sim\Thruster.cpp">

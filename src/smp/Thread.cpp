@@ -15,6 +15,9 @@
 using namespace smp;
 
 Thread::Thread()
+#if ! defined(CRAG_USE_STL_THREAD)
+: _thread(nullptr)
+#endif
 {
 }
 
@@ -26,7 +29,11 @@ Thread::~Thread()
 
 bool Thread::IsLaunched() const
 {
+#if defined(CRAG_USE_STL_THREAD)
 	return _thread.get_id() != ThreadType().get_id();
+#else
+	return _thread != nullptr;
+#endif
 }
 		
 // True if the calling thread is this thread.
@@ -37,9 +44,15 @@ bool Thread::IsCurrent() const
 		// This can't be the current thread if that thread isn't running.
 		return false;
 	}
-	
-	std::thread::id running_thread_id = std::this_thread::get_id();
-	std::thread::id member_thread_id = _thread.get_id();
+
+#if defined(CRAG_USE_STL_THREAD)
+	auto running_thread_id = std::this_thread::get_id();
+	auto member_thread_id = _thread.get_id();
+#else
+	auto running_thread_id = SDL_ThreadID();
+	auto member_thread_id = SDL_GetThreadID(_thread);
+#endif
+
 	return running_thread_id == member_thread_id;
 }
 
@@ -51,7 +64,32 @@ void Thread::Join()
 	
 	if (IsLaunched())
 	{
+#if defined(CRAG_USE_STL_THREAD)
 		_thread.join();
 		_thread = ThreadType();
+#else
+		SDL_WaitThread(_thread, nullptr);
+		_thread = nullptr;
+#endif
 	}
 }
+
+#if ! defined(CRAG_USE_STL_THREAD)
+int Thread::Callback(void * data)
+{
+	ASSERT(data != nullptr);
+	Thread & thread = * reinterpret_cast<Thread *>(data);
+	
+	// Ensure that the Thread::_thread gets set before progressing.
+	// This ensures that IsLaunched returns the correct result.
+	while (! thread.IsLaunched())
+	{
+		Yield();
+	}
+	
+	thread._launch_function();
+	
+	return 0;
+}
+#endif
+
