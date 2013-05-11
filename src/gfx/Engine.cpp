@@ -230,8 +230,7 @@ void Engine::Verify() const
 #endif
 
 Engine::Engine()
-: context(nullptr)
-, scene(nullptr)
+: scene(nullptr)
 , _frame_duration(0)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -497,7 +496,6 @@ Transformation const& Engine::GetCamera() const
 
 Engine::StateParam const Engine::init_state[] =
 {
-	INIT(GL_TEXTURE_2D, false),
 	INIT(GL_CULL_FACE, true),
 	INIT(GL_DEPTH_TEST, false),
 	INIT(GL_BLEND, false),
@@ -535,10 +533,8 @@ bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 bool Engine::Init()
 {
 	ASSERT(scene == nullptr);
-	ASSERT(context == nullptr);
 
-	context = app::InitContext();
-	if (context == nullptr)
+	if (! app::InitContext())
 	{
 		return false;
 	}
@@ -614,8 +610,7 @@ void Engine::Deinit()
 	delete scene;
 	scene = nullptr;
 
-	app::DeinitContext(context);
-	context = nullptr;
+	app::DeinitContext();
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.

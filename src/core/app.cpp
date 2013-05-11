@@ -47,7 +47,11 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	
-	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+#if ! defined(__ANDROID__)
+	flags |= SDL_WINDOW_MOUSE_FOCUS;
+#endif
 	
 	// Get existing video info.
 	SDL_DisplayMode desktop_display_mode;
@@ -78,14 +82,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		return false;
 	}
 	
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
-	
-	if (renderer == 0)
-	{
-		DEBUG_BREAK_SDL();
-		return false;
-	}
-	
 	_has_focus = true;
 
 #if ! defined(__ANDROID__)
@@ -104,9 +100,6 @@ void app::Deinit()
 {
 	ASSERT(window != nullptr);
 
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
-	
 	SDL_DestroyWindow(window);
 	window = nullptr;
 	
@@ -116,29 +109,26 @@ void app::Deinit()
 
 }
 
-SDL_GLContext app::InitContext()
+bool app::InitContext()
 {
 	ASSERT(window != nullptr);
 
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-	if (context == nullptr)
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+	
+	if (renderer == nullptr)
 	{
 		DEBUG_BREAK_SDL();
-		return nullptr;
+		return false;
 	}
 	
-	if (SDL_GL_MakeCurrent(window, context) != 0)
-	{
-		DEBUG_BREAK_SDL();
-		return nullptr;
-	}
-	
-	return context;
+	return true;
 }
 
-void app::DeinitContext(SDL_GLContext context)
+void app::DeinitContext()
 {
-	SDL_GL_DeleteContext(context);
+	ASSERT(renderer != nullptr);
+	SDL_DestroyRenderer(renderer);
+	renderer = nullptr;
 }
 
 app::FileResource app::LoadFile(char const * filename, bool null_terminate)

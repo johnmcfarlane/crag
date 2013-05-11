@@ -16,8 +16,8 @@ namespace app
 	void Deinit();
 
 	// render thread-specific init/deinit
-	SDL_GLContext InitContext();
-	void DeinitContext(SDL_GLContext context);
+	bool InitContext();
+	void DeinitContext();
 	
 	// file access
 	typedef std::shared_ptr<std::vector<char>> FileResource;

@@ -142,7 +142,6 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		SDL_GLContext context;
 		Scene * scene;
 		ResourceManager * _resource_manager;
 
