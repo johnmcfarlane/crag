@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  fog.frag
 //  crag
@@ -28,7 +26,7 @@ uniform float radius;
 // a density of 1. blocks 50% of light across a unit of distance
 uniform float density;
 
-
+#if 0
 // given a ray cast from the origin (eye),
 // returns point at which it intersects the sphere given by center/radius.
 bool GetIntersection(in vec3 ray, out float t1, out float t2)
@@ -62,7 +60,7 @@ void SetFragmentDepth(in vec4 view_position)
 	
 	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
 }
-
+#endif
 
 #if defined(TEST_INTERSECTION)
 
@@ -91,14 +89,18 @@ void main(void)
 void main(void)
 {
 	float t1, t2;
-	if (! GetIntersection(quad_position.xyz, t1, t2) || t2 < 0)
+#if 0
+	if (! GetIntersection(quad_position.xyz, t1, t2) || t2 < 0.)
 	{
 		discard;
 	}
+#endif
 	t1 = max(t1, 0.);	// TODO: near plane?
 	
 	vec4 frag_position = quad_position * t1;
+#if 0
 	SetFragmentDepth(frag_position);
+#endif
 	vec3 frag_normal = normalize(frag_position.xyz - center);
 	
 	vec3 light = LightFragment(frag_position.xyz, frag_normal);
@@ -113,7 +115,9 @@ void main(void)
 		
 		frag_color += vec4(color.rgb, 1.) * absorption_alpha;
 		vec4 far_frag_position = quad_position * t2;
+#if 0
 		SetFragmentDepth(far_frag_position);
+#endif
 		vec3 far_frag_normal = normalize(center - far_frag_position.xyz);
 		
 		vec3 light = LightFragment(far_frag_normal.xyz, far_frag_normal);

@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  disk.frag
 //  crag
@@ -22,7 +20,7 @@ varying vec4 quad_position;
 void main(void)
 {
 	float d = distance(quad_position.xyz, center) / radius;
-	if (d > 1)
+	if (d > 1.)
 	{
 		//discard;
 	}

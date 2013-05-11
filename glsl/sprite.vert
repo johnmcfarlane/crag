@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  textured.vert
 //  crag

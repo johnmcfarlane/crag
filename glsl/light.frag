@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  light.frag
 //  crag

@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  poly.frag
 //  crag
@@ -9,9 +7,11 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+#extension GL_OES_standard_derivatives : enable
+
 // inputs from the renderer
-uniform bool fragment_lighting = true;
-uniform bool flat_shade = false;
+uniform bool fragment_lighting;
+uniform bool flat_shade;
 
 // inputs from poly.vert
 varying vec3 fragment_normal;

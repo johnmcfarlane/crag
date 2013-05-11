@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  sphere.frag
 //  crag
@@ -19,7 +17,7 @@ vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
 
 // inputs from sphere.vert
 varying vec4 quad_position;
-
+	
 // inputs from the renderer
 uniform mat4 projection_matrix;
 uniform vec4 color;
@@ -52,7 +50,7 @@ void SetFragmentDepth(in vec4 view_position)
 {
 	vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
 	
-	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
+	//gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
 }
 
 

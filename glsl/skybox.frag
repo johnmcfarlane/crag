@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  poly.frag
 //  crag

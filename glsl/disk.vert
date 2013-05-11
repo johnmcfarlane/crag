@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  disk.vert
 //  crag
@@ -21,7 +19,7 @@ varying vec4 quad_position;
 
 void main(void)
 {
-	vec4 vertex_position4 = vec4(vertex_position, 1.0f);
+	vec4 vertex_position4 = vec4(vertex_position, 1);
 	quad_position = model_view_matrix * vertex_position4;
 	gl_Position = projection_matrix * quad_position;
 }

@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  poly.vert
 //  crag
@@ -13,8 +11,8 @@
 uniform mat4 model_view_matrix;
 uniform mat4 projection_matrix;
 uniform vec4 color;
-uniform bool fragment_lighting = true;
-uniform bool flat_shade = false;
+uniform bool fragment_lighting;
+uniform bool flat_shade;
 
 // per-vertex inputs from renderer
 attribute vec3 vertex_position;
