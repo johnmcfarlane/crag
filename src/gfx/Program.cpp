@@ -53,7 +53,7 @@ bool Program::IsBound() const
 	return unsigned(GetInt<GL_CURRENT_PROGRAM>()) == _id;
 }
 
-void Program::Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader)
+void Program::Init(char const * const * vert_sources, char const * const * frag_sources)
 {
 	assert(! IsInitialized());
 
@@ -61,13 +61,11 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	_id = glCreateProgram();
 
 	// Create the main vert and frag shaders.
-	_vert_shader.Init(vert_source, GL_VERTEX_SHADER);
-	_frag_shader.Init(frag_source, GL_FRAGMENT_SHADER);
+	_vert_shader.Init(vert_sources, GL_VERTEX_SHADER);
+	_frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER);
 	
-	glAttachShader(_id, _vert_shader._id);
-	glAttachShader(_id, _frag_shader._id);
-	glAttachShader(_id, light_vert_shader._id);
-	glAttachShader(_id, light_frag_shader._id);
+	GL_CALL(glAttachShader(_id, _vert_shader._id));
+	GL_CALL(glAttachShader(_id, _frag_shader._id));
 	
 	InitAttribs(_id);
 	
@@ -75,7 +73,7 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	
 	if (! IsLinked())
 	{
-		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_source);
+		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_sources[0]);
 		
 #if ! defined(NDEBUG)
 		std::string info_log;
@@ -104,10 +102,8 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	Unbind();
 }
 
-void Program::Deinit(Shader & light_vert_shader, Shader & light_frag_shader)
+void Program::Deinit()
 {
-	glDetachShader(_id, light_vert_shader._id);
-	glDetachShader(_id, light_frag_shader._id);
 	glDetachShader(_id, _frag_shader._id);
 	glDetachShader(_id, _vert_shader._id);
 	

@@ -51,8 +51,8 @@ namespace gfx
 		bool IsLinked() const;
 		bool IsBound() const;
 		
-		virtual void Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader);
-		void Deinit(Shader & light_vert_shader, Shader & light_frag_shader);
+		void Init(char const * const * vert_sources, char const * const * frag_sources);
+		void Deinit();
 		
 		void Bind() const;
 		void Unbind() const;

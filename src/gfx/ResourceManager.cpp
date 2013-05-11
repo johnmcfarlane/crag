@@ -21,9 +21,7 @@ using namespace gfx;
 
 
 ResourceManager::ResourceManager()
-: _light_vert_shader(nullptr)
-, _light_frag_shader(nullptr)
-, _cuboid(nullptr)
+: _cuboid(nullptr)
 , _sphere_quad(nullptr)
 , _disk_quad(nullptr)
 {
@@ -51,24 +49,11 @@ ResourceManager::~ResourceManager()
 	
 	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
-		Program & program = * _programs[program_index];
-		program.Deinit(* _light_vert_shader, * _light_frag_shader);
+		auto & program = * _programs[program_index];
+		program.Deinit();
+		delete _programs[program_index];
+		_programs[program_index] = nullptr;
 	}
-	
-	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
-	{
-		Program * & program = _programs[program_index];
-		delete program;
-		program = nullptr;
-	}
-	
-	_light_frag_shader->Deinit();
-	delete _light_frag_shader;
-	_light_frag_shader = nullptr;
-	
-	_light_vert_shader->Deinit();
-	delete _light_vert_shader;
-	_light_vert_shader = nullptr;
 }
 
 Program * ResourceManager::GetProgram(ProgramIndex index)
@@ -100,17 +85,13 @@ Quad const & ResourceManager::GetDiskQuad() const
 
 bool ResourceManager::InitShaders()
 {
-	_light_vert_shader = new Shader;
-	_light_vert_shader->Init("glsl/light.frag", GL_VERTEX_SHADER);
-
-	_light_frag_shader = new Shader;
-	_light_frag_shader->Init("glsl/light.frag", GL_FRAGMENT_SHADER);
-
 	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename)
 	{
 		if (program != nullptr)
 		{
-			program->Init(vert_filename, frag_filename, * _light_vert_shader, * _light_frag_shader);
+			char const * vert_filenames[] = { vert_filename, "glsl/light.frag", nullptr };
+			char const * frag_filenames[] = { frag_filename, "glsl/light.frag", nullptr };
+			program->Init(vert_filenames, frag_filenames);
 		}
 		
 		_programs[int(index)] = program;

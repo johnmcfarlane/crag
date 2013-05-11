@@ -46,8 +46,6 @@ namespace gfx
 		static constexpr std::size_t _num_programs = std::size_t(ProgramIndex::size);
 
 		// shaders and shader programs
-		Shader * _light_vert_shader;
-		Shader * _light_frag_shader;
 		Program * _programs[_num_programs];
 		
 		// stock geometry
