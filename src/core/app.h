@@ -19,8 +19,11 @@ namespace app
 	SDL_GLContext InitContext();
 	void DeinitContext(SDL_GLContext context);
 	
+	// file access
+	typedef std::shared_ptr<std::vector<char>> FileResource;
+	FileResource LoadFile(char const * filename, bool null_terminate = false);
+	
 	// misc
-	bool LoadFile(char const * filename, std::vector<char> & buffer);
 	void Beep();
 	
 	// input
