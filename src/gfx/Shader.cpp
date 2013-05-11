@@ -34,20 +34,19 @@ Shader::~Shader()
 
 bool Shader::Init(char const * filename, GLenum shader_type)
 {
-	std::vector<char> sphere_shader_source;
-	
-	if (! app::LoadFile(filename, sphere_shader_source))
+	// don't necessarily need a null terminator as glShaderSource takes a size
+	app::FileResource shader_source = app::LoadFile(filename, true);
+	if (! shader_source)
 	{
-		AssertErrno();
 		return false;
 	}
 	
 	// Create the shader.
 	_id = glCreateShader(shader_type);
 
-	char const * sphere_shader_source_string[1] = { & sphere_shader_source[0] };
-	int sphere_shader_source_size[1] = { int(sphere_shader_source.size()) };
-	GL_CALL(glShaderSource(_id, 1, sphere_shader_source_string, sphere_shader_source_size));
+	char const * shader_source_string[1] = { shader_source->data() };
+	int shader_source_size[1] = { int(shader_source->size()) };
+	GL_CALL(glShaderSource(_id, 1, shader_source_string, shader_source_size));
 
 	GL_CALL(glCompileShader(_id));
 	

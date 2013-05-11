@@ -135,32 +135,52 @@ void app::DeinitContext(SDL_GLContext context)
 	SDL_GL_DeleteContext(context);
 }
 
-bool app::LoadFile(char const * filename, std::vector<char> & buffer)
+app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
-	FILE * source = fopen(filename, "rb");
+	// open file
+	SDL_RWops * source = SDL_RWFromFile(filename, "rb");
 	if (source == nullptr)
 	{
-		ASSERT(errno == ENOENT);
-		ERROR_MESSAGE("file not found '%s'", filename);
-		return false;
+		DEBUG_MESSAGE("failed to open file, '%s':", filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
 	}
 	
-	fseek(source, 0, SEEK_END);
-	size_t length = ftell(source);
-	fseek(source, 0, SEEK_SET);
+	// determine length
+	size_t length = SDL_RWseek(source, 0, SEEK_END);
+	SDL_RWseek(source, 0, SEEK_SET);
 
-	buffer.resize(length);
+	// prepare buffer
+	FileResource buffer(new app::FileResource::element_type(length + null_terminate));
 	
-	size_t read = fread(& buffer[0], 1, length, source);
+	// read file
+	size_t read = SDL_RWread(source, & buffer->front(), 1, length);
 	if (read != length)
 	{
-		DEBUG_MESSAGE("error loading %s: length=" SIZE_T_FORMAT_SPEC "; read=" SIZE_T_FORMAT_SPEC, filename, length, read);
-		return false;
+		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
 	}
 
-	fclose(source);
+	// close file
+	if (SDL_RWclose(source) != 0)
+	{
+		DEBUG_MESSAGE("failed to close file, '%s':", filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
+	}
 	
-	return true;
+	// append terminator
+	if (null_terminate)
+	{
+		(* buffer)[length] = '\0';
+		ASSERT(strlen(& buffer->front()) == length);
+	}
+	
+	// success!
+	DEBUG_MESSAGE("loaded " SIZE_T_FORMAT_SPEC "B from %s", length, filename);
+	
+	return buffer;
 }
 
 void app::Beep()
