@@ -36,38 +36,41 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 {
 	typedef app::FileResource::element_type Buffer;
 	typedef std::vector<app::FileResource> BufferArray;
-
-	// load individual shader files and count total number of bytes
-	BufferArray source_buffers;
-	auto total_bytes = 0;
-	for (auto filename_iterator = filenames; * filename_iterator != nullptr; ++ filename_iterator)
+	
+	auto filenames_end = filenames;
+	while (* filenames_end)
 	{
-		auto source_buffer = app::LoadFile(* filename_iterator);
-		source_buffers.emplace_back(source_buffer);
-		total_bytes += source_buffers.back()->size();
+		++ filenames_end;
 	}
 	
-	// combine buffers into one buffer of source code
-	Buffer source_buffer(total_bytes + 1);
+	auto num_strings = filenames_end - filenames;
+	
+	// load individual shader files
+	char const * string_array [num_strings];
+	BufferArray source_buffers(num_strings);
+	for (auto index = 0; index != num_strings; ++ index)
 	{
-		auto destination_iterator = source_buffer.begin();
-		for (auto source : source_buffers)
+		char const * filename = filenames[index];
+		
+		auto source_buffer = app::LoadFile(filename, true);
+		if (! source_buffer)
 		{
-			destination_iterator = std::copy(source->begin(), source->end(), destination_iterator);
+			return false;
 		}
-		ASSERT(& (* destination_iterator) == & source_buffer.back());
-
-		(* destination_iterator) = '\0';
-		ASSERT(source_buffer.size() == strlen(& source_buffer.front()) + 1);
+		
+		string_array[index] = source_buffer->data();
+		
+		source_buffers[index] = std::move(source_buffer);
 	}
 	
 	// Create the shader.
-	_id = glCreateShader(shader_type);
-
-	char const * source_buffer_string[1] = { source_buffer.data() };
-	int source_buffer_size[1] = { int(total_bytes) };
-	GL_CALL(glShaderSource(_id, 1, source_buffer_string, source_buffer_size));
-
+	GL_CALL(_id = glCreateShader(shader_type));
+	if (_id == 0)
+	{
+		return false;
+	}
+	
+	GL_CALL(glShaderSource(_id, num_strings, string_array, nullptr));
 	GL_CALL(glCompileShader(_id));
 	
 	// Check for errors in the source code.
@@ -77,7 +80,7 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 
 #if ! defined(NDEBUG)
 		std::vector<char> info_log = GetInfoLog();
-		DEBUG_BREAK("Shader info log: %s", & info_log.front());
+		DEBUG_BREAK("Shader info log: %s", info_log.data());
 #endif
 		
 		Deinit();
