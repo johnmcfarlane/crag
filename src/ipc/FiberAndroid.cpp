@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "FiberAndroid.h"
+#include "Fiber.h"
 
 #if defined(__ANDROID__)
 
@@ -25,7 +25,7 @@ Fiber::Fiber(char const * name, std::size_t /*stack_size*/, void * data, Callbac
 , _is_running(true)
 , _is_yielded(true)
 {
-	_thread = std::thread(OnLaunch, this, data, callback);
+	_thread.Launch([=] () { OnLaunch(this, data, callback); }, name);
 
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
@@ -33,7 +33,7 @@ Fiber::Fiber(char const * name, std::size_t /*stack_size*/, void * data, Callbac
 
 Fiber::~Fiber()
 {
-	_thread.join();
+	_thread.Join();
 	
 	ASSERT(! IsRunning());
 	ASSERT(! IsCurrent());
@@ -47,9 +47,7 @@ bool Fiber::IsCurrent() const
 {
 	VerifyObject(* this);
 
-	auto fiber_thread_id = _thread.get_id();
-	auto current_thread_id = std::this_thread::get_id();
-	return fiber_thread_id == current_thread_id;
+	return _thread.IsCurrent();
 }
 
 void Fiber::Continue()
@@ -91,14 +89,14 @@ void Fiber::Verify() const
 	VerifyTrue(_name != nullptr);
 	if (_is_yielded)
 	{
-		VerifyOp(_thread.get_id(), !=, std::this_thread::get_id());
+		VerifyTrue(! _thread.IsCurrent());
 	}
 	else
 	{
 		if (! _is_running)
 		{
 			// means we're yielding for the last time
-			VerifyOp(_thread.get_id(), ==, std::this_thread::get_id());
+			VerifyTrue(_thread.IsCurrent());
 		}
 	}
 }

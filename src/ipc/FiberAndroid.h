@@ -11,6 +11,8 @@
 
 #if defined(__ANDROID__)
 
+#include "smp/Thread.h"
+
 namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ namespace ipc
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		char const * _name;	// human-readable name of the Fiber
-		std::thread _thread;	// hack to deal with lack of ucontext support on Android
+		smp::Thread _thread;	// hack to deal with lack of ucontext support on Android
 		std::condition_variable _condition;	// pauses thread so it can pretend to be a fiber
 		std::mutex _condition_mutex;	// mutex used by _condition
 		bool _is_running;
