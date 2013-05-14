@@ -1,7 +1,7 @@
 #version 120
 
 //
-//  textured.frag
+//  sprite.frag
 //  crag
 //
 //  Created by John McFarlane on 2012-01-08.
