@@ -9,9 +9,9 @@
 
 #include "pch.h"
 
-#if ! defined(WIN32) && ! defined(__ANDROID__)
-
 #include "Fiber.h"
+
+#if defined(CRAG_USE_FIBER_POSIX)
 
 #include "core/Random.h"
 

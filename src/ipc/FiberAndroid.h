@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if defined(__ANDROID__)
+#if defined(CRAG_USE_FIBER_THREADED)
 
 #include "smp/Thread.h"
 

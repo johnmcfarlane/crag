@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if defined(WIN32)
+#if defined(CRAG_USE_FIBER_WIN)
 
 namespace ipc
 {
