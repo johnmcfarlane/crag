@@ -108,6 +108,7 @@ void app::Deinit()
 
 	SDL_Quit();
 
+	CRAG_DEBUG_CHECK_MEMORY();
 }
 
 SDL_GLContext app::InitContext()
