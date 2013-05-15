@@ -107,6 +107,7 @@ void app::Deinit()
 
 	SDL_Quit();
 
+	CRAG_DEBUG_CHECK_MEMORY();
 }
 
 bool app::InitContext()

@@ -12,6 +12,18 @@
 // Array size
 #define ARRAY_SIZE(ARRAY) extent <decltype(ARRAY)>::value;
 
+////////////////////////////////////////////////////////////////////////////////
+// heap error checking
+
+void DebugCheckMemory(int line, char const * filename);
+
+#if defined(NDEBUG)
+#define CRAG_DEBUG_CHECK_MEMORY() DO_NOTHING
+#else
+#define CRAG_DEBUG_CHECK_MEMORY() DebugCheckMemory(__LINE__, __FILE__)
+#endif
+
+
 //////////////////////////////////////////////////////////////////////
 // Low-level Memory Manipulation using templated parameters
 
@@ -35,20 +47,11 @@ template<typename T> inline void ZeroObject(T & object)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Page Allocations
-
-// size of system page size
-size_t RoundToPageSize(size_t num_bytes);
-size_t GetPageSize();
-
-void * AllocatePage(size_t num_bytes);
-void FreePage(void * allocation, size_t num_bytes);
-
-////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
 void Free(void * allocation);
+void CheckMemory();
 
 template <typename T>
 T* Allocate(size_t count)
@@ -59,8 +62,15 @@ T* Allocate(size_t count)
 	return reinterpret_cast<T *>(buffer);
 }
 
-void InitAllocationCounters();
-void DeinitAllocationCounters();
+////////////////////////////////////////////////////////////////////////////////
+// Page Allocations
+
+// size of system page size
+size_t RoundToPageSize(size_t num_bytes);
+size_t GetPageSize();
+
+void * AllocatePage(size_t num_bytes);
+void FreePage(void * allocation, size_t num_bytes);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Object allocation macros
@@ -118,3 +128,4 @@ void DeinitAllocationCounters();
 	{ \
 		::Free(p); \
 	}
+

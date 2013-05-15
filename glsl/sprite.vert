@@ -1,5 +1,5 @@
 //
-//  textured.vert
+//  sprite.vert
 //  crag
 //
 //  Created by John McFarlane on 2013-04-14.
