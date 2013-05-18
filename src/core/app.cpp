@@ -148,14 +148,14 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	}
 	
 	// determine length
-	size_t length = SDL_RWseek(source, 0, SEEK_END);
+	auto length = static_cast<std::size_t>(SDL_RWseek(source, 0, SEEK_END));
 	SDL_RWseek(source, 0, SEEK_SET);
 
 	// prepare buffer
 	FileResource buffer(new app::FileResource::element_type(length + null_terminate));
 	
 	// read file
-	size_t read = SDL_RWread(source, & buffer->front(), 1, length);
+	auto read = SDL_RWread(source, & buffer->front(), 1, length);
 	if (read != length)
 	{
 		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
