@@ -31,7 +31,7 @@ void smp::Sleep(core::Time seconds)
 	auto microseconds = core::SecondsToDuration<std::chrono::microseconds>(seconds);
 	std::this_thread::sleep_for(microseconds);
 #else
-	Uint32 ms = 1000 * seconds;
+	Uint32 ms = Uint32(1000. * seconds);
 	SDL_Delay(ms);
 #endif
 }

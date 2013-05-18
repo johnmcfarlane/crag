@@ -46,7 +46,11 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	auto num_strings = filenames_end - filenames;
 	
 	// load individual shader files
+#if defined(WIN32)
+	auto string_array = static_cast<char const * *>(_malloca(num_strings * sizeof(char const *)));
+#else
 	char const * string_array [num_strings];
+#endif
 	BufferArray source_buffers(num_strings);
 	for (auto index = 0; index != num_strings; ++ index)
 	{
@@ -71,6 +75,11 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	}
 	
 	GL_CALL(glShaderSource(_id, num_strings, string_array, nullptr));
+
+#if defined(WIN32)
+	_freea(string_array);
+#endif
+
 	GL_CALL(glCompileShader(_id));
 	
 	// Check for errors in the source code.
