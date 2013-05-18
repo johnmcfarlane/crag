@@ -20,7 +20,7 @@
 // heap error checking
 
 #if ! defined(NDEBUG)
-#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
+//#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
 #endif
 
 #if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
@@ -102,7 +102,7 @@ void * Allocate(size_t num_bytes, size_t alignment)
 	// Anything requiring greater alignment can simply run slower on mac.
 	return malloc(num_bytes);
 #elif defined(__ANDROID__)
-	return memalign(num_bytes, alignment);
+	return memalign(alignment, num_bytes);
 #else
 	void * allocation;
 	int error = posix_memalign(& allocation, alignment, num_bytes);
@@ -130,10 +130,12 @@ void Free(void * allocation)
 {
 #if defined(CRAG_USE_DLMALLOC)
 	return dlfree(allocation);
-#elif ! defined(WIN32)
+#elif defined(WIN32)
+	return _aligned_free(allocation);
+#elif defined(__ANDROID__)
 	return free(allocation);
 #else
-	return _aligned_free(allocation);
+	return free(allocation);
 #endif
 }
 
