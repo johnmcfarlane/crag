@@ -46,7 +46,11 @@ namespace
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
+#if defined(__ANDROID__)
+	CONFIG_DEFINE (init_fragment_lighting, bool, false);
+#else
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
+#endif
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
