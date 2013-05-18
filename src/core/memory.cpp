@@ -20,7 +20,7 @@
 // heap error checking
 
 #if ! defined(NDEBUG)
-//#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
+#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
 #endif
 
 #if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
@@ -41,6 +41,8 @@ namespace
 	}
 }
 
+#if ! defined(WIN32)
+#define CRAG_USE_DLMALLOC
 #if defined(DEBUG) || defined(USE_DL_PREFIX) || defined(USE_RECURSIVE_LOCKS) || defined(MALLOC_INSPECT_ALL)
 #error dlalloc macros already defined
 #endif
@@ -58,6 +60,7 @@ namespace
 #define USE_LOCKS 1
 
 #include "dlmalloc.c"
+#endif	// ! defined(WIN32)
 
 // called to initiate a walk of the heap in pursuit of memory corruptioN
 void DebugCheckMemory(int line, char const * filename)
@@ -65,7 +68,15 @@ void DebugCheckMemory(int line, char const * filename)
 	check_line = line;
 	check_file = filename;
 
+#if defined(WIN32)
+	HANDLE hHeap = GetProcessHeap();
+	if (! HeapValidate(hHeap, 0, nullptr))
+	{
+		OnMemoryError();
+	}
+#else
 	check_malloc_state(gm);
+#endif
 
 	check_line = -1;
 	check_file = "?";
@@ -81,7 +92,7 @@ void DebugCheckMemory(int, char const *)
 
 void * Allocate(size_t num_bytes, size_t alignment)
 {
-#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+#if defined(CRAG_USE_DLMALLOC)
 	return dlmemalign(alignment, num_bytes);
 #elif defined(WIN32)
 	return _aligned_malloc(num_bytes, alignment);
@@ -115,7 +126,7 @@ void * Allocate(size_t num_bytes, size_t alignment)
 
 void Free(void * allocation)
 {
-#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+#if defined(CRAG_USE_DLMALLOC)
 	return dlfree(allocation);
 #elif ! defined(WIN32)
 	return free(allocation);
@@ -157,7 +168,7 @@ void * AllocatePage(size_t num_bytes)
 	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
 
 	// allocate
-#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+#if defined(CRAG_USE_DLMALLOC)
 	void * p = dlvalloc(num_bytes);
 #elif defined(WIN32)
 	void * p = VirtualAlloc(nullptr, num_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -167,7 +178,7 @@ void * AllocatePage(size_t num_bytes)
 
 	if (p == nullptr)
 	{
-#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+#if defined(CRAG_USE_DLMALLOC)
 		DEBUG_BREAK("dlvalloc(" SIZE_T_FORMAT_SPEC ") failed with error code, %X", num_bytes, errno);
 #elif defined(WIN32)
 		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
@@ -183,7 +194,7 @@ void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
-#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+#if defined(CRAG_USE_DLMALLOC)
 	dlfree(allocation);
 #elif defined(WIN32)
 	if (! VirtualFree(allocation, 0, MEM_RELEASE))
@@ -201,6 +212,10 @@ void FreePage(void * allocation, size_t num_bytes)
 ////////////////////////////////////////////////////////////////////////////////
 // Global new/delete operators redirect to custom allocation routines
 
+// TODO: Make this stuff play nice on windows.
+// As well as not liking the exception, there is a mismatch somewhere 
+// which manifests itself as an assert deep within std::mutex
+#if ! defined(WIN32)
 void * operator new (std::size_t size) throw (std::bad_alloc)
 {
 	return Allocate(size);
@@ -236,4 +251,4 @@ void operator delete[] (void* ptr, const std::nothrow_t &) throw()
 {
 	Free(ptr);
 }
-
+#endif	// WIN32
