@@ -140,7 +140,6 @@ void Font::RenderVerts() const
 	GL_VERIFY;
 
 	// State
-	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	Enable(GL_BLEND);
 	ASSERT(! IsEnabled(GL_DEPTH_TEST));
@@ -153,7 +152,6 @@ void Font::RenderVerts() const
 	vbo.Deactivate();
 	
 	glDepthMask(true);
-	Disable(GL_TEXTURE_2D);
 	Enable(GL_CULL_FACE);
 	Disable(GL_BLEND);
 }

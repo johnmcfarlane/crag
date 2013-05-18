@@ -96,11 +96,9 @@ void Skybox::Render(Engine const &) const
 	engine.SetCurrentMesh(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	Enable(GL_TEXTURE_2D);
 	Disable(GL_CULL_FACE);
 	glDepthMask(false);
 	
-	ASSERT(IsEnabled(GL_TEXTURE_2D));
 	ASSERT(! IsEnabled(GL_CULL_FACE));
 	
 	// Draw VBO
@@ -124,7 +122,6 @@ void Skybox::Render(Engine const &) const
 	vbo.Unbind();
 	
 	glDepthMask(true);
-	Disable(GL_TEXTURE_2D);
 	Enable(GL_CULL_FACE);
 }
 
