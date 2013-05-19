@@ -265,6 +265,8 @@ namespace
 			
 			case SDL_QUIT:
 			{
+				DEBUG_MESSAGE("SDL_QUIT received on main thread loop");
+				
 				// it's time to quit
 				return false;
 			}
