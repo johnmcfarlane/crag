@@ -53,7 +53,7 @@ bool Program::IsBound() const
 	return unsigned(GetInt<GL_CURRENT_PROGRAM>()) == _id;
 }
 
-void Program::Init(char const * const * vert_sources, char const * const * frag_sources)
+bool Program::Init(char const * const * vert_sources, char const * const * frag_sources)
 {
 	assert(! IsInitialized());
 
@@ -61,8 +61,15 @@ void Program::Init(char const * const * vert_sources, char const * const * frag_
 	_id = glCreateProgram();
 
 	// Create the main vert and frag shaders.
-	_vert_shader.Init(vert_sources, GL_VERTEX_SHADER);
-	_frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER);
+	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
+	{
+		return false;
+	}
+	
+	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
+	{
+		return false;
+	}
 	
 	GL_CALL(glAttachShader(_id, _vert_shader._id));
 	GL_CALL(glAttachShader(_id, _frag_shader._id));
@@ -100,6 +107,7 @@ void Program::Init(char const * const * vert_sources, char const * const * frag_
 	}
 	
 	Unbind();
+	return true;
 }
 
 void Program::Deinit()

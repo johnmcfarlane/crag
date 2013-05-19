@@ -51,7 +51,7 @@ namespace gfx
 		bool IsLinked() const;
 		bool IsBound() const;
 		
-		void Init(char const * const * vert_sources, char const * const * frag_sources);
+		bool Init(char const * const * vert_sources, char const * const * frag_sources);
 		void Deinit();
 		
 		void Bind() const;
