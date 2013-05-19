@@ -46,7 +46,7 @@ namespace
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
-#if defined(__ANDROID__)
+#if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (init_fragment_lighting, bool, false);
 #else
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
