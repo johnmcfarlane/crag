@@ -17,6 +17,53 @@
 
 using namespace gfx;
 
+namespace
+{
+	std::size_t GetNumLines(char const * source)
+	{
+		std::size_t num_lines = 1;
+		while (true)
+		{
+			switch (* source)
+			{
+				case '\0':
+					return num_lines;
+					
+				case '\n':
+					++ num_lines;
+			}
+			
+			++ source;
+		}
+	}
+	
+	void EraseQualifier(char * source, char const * pattern)
+	{
+		ASSERT(source != nullptr);
+		ASSERT(pattern != nullptr);
+		
+		auto pattern_length = strlen(pattern);
+		if (pattern_length == 0)
+		{
+			DEBUG_BREAK("empty pattern string");
+			return;
+		}
+		
+		while (*source != '\0')
+		{
+			if (strncmp(source, pattern, pattern_length) == 0)
+			{
+				std::fill(source, source + pattern_length, ' ');
+				source += pattern_length;
+			}
+			else
+			{
+				++ source;
+			}
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Shader member definitions
 
@@ -62,6 +109,13 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 			return false;
 		}
 		
+#if ! defined(CRAG_USE_GLES)
+		// earlier version of desktop GLSL fail to ignore these
+		EraseQualifier(source_buffer->data(), "lowp");
+		EraseQualifier(source_buffer->data(), "mediump");
+		EraseQualifier(source_buffer->data(), "highp");
+#endif
+		
 		string_array[index] = source_buffer->data();
 		
 		source_buffers[index] = std::move(source_buffer);
@@ -85,11 +139,19 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	// Check for errors in the source code.
 	if (! IsCompiled())
 	{
-		ERROR_MESSAGE("Failed to compile shaders, '%s'.", filenames[0]);
+		ERROR_MESSAGE("Failed to compile shader:");
 
 #if ! defined(NDEBUG)
+		auto line_start = 0;
+		for (auto i = 0; i < num_strings; ++ i)
+		{
+			auto line_end = line_start + GetNumLines(string_array[i]) - 1;
+			DEBUG_MESSAGE("%s [%d,%d]'.", filenames[i], line_start, line_end);
+			line_start = line_end;
+		}
+
 		std::vector<char> info_log = GetInfoLog();
-		DEBUG_BREAK("Shader info log: %s", info_log.data());
+		DEBUG_MESSAGE("Shader info log: %s", info_log.data());
 #endif
 		
 		Deinit();
