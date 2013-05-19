@@ -78,7 +78,13 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 {
 	Transformation::Vector3 translation = leaf.GetTranslation();
 
-	Transformation::Vector3 camera_to_center = Normalized(translation);
+	auto distance_to_camera = Length(translation);
+	if (distance_to_camera == 0)
+	{
+		return leaf;
+	}
+	
+	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
 	Transformation::Matrix33 rotation = Inverse(axes::Rotation(camera_to_center));
 
 	Transformation::Vector3 scale = leaf.GetScale();
