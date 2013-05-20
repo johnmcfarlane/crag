@@ -24,11 +24,11 @@ varying vec3 fragment_normal;
 varying vec4 fragment_color;
 
 // light.frag function which calculates the lighting for the given fragment
-vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal);
 
 void main(void)
 {
-	vec4 position4 = model_view_matrix * vec4(vertex_position, 1);
+	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1);
 	fragment_position = position4.xyz;
 
 	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;

@@ -12,28 +12,28 @@
 
 
 // light.frag function which calculates the lighting for the given fragment
-vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal);
 
 
 // inputs from sphere.vert
-varying vec4 quad_position;
+varying highp vec4 quad_position;
 	
 // inputs from the renderer
-uniform mat4 projection_matrix;
-uniform vec4 color;
-uniform vec3 center;
-uniform float radius;
+uniform highp mat4 projection_matrix;
+uniform highp vec4 color;
+uniform highp vec3 center;
+uniform highp float radius;
 
 
 // given a ray cast from the origin (eye),
 // returns point at which it intersects the sphere given by center/radius.
-bool GetIntersection(in vec3 ray, out float t)
+bool GetIntersection(in highp vec3 ray, out highp float t)
 {
-	float a = dot(ray, ray);
-	float half_b = dot(ray, center);
-	float c = dot(center, center) - (radius * radius);
+	highp float a = dot(ray, ray);
+	highp float half_b = dot(ray, center);
+	highp float c = dot(center, center) - (radius * radius);
 	
-	float root = (half_b * half_b) - a * c;
+	highp float root = (half_b * half_b) - a * c;
 	if (root < 0.)
 	{
 		// no intersection
@@ -48,7 +48,7 @@ bool GetIntersection(in vec3 ray, out float t)
 
 void SetFragmentDepth(in vec4 view_position)
 {
-	vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
+	highp vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
 	
 	//gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
 }
@@ -75,18 +75,18 @@ void main(void)
 
 void main(void)
 {
-	float t;
+	highp float t;
 	if (! GetIntersection(quad_position.xyz, t))
 	{
 		discard;
 	}
 
-	vec4 frag_position = quad_position * t;
+	highp vec4 frag_position = quad_position * t;
 	SetFragmentDepth(frag_position);
 
-	vec3 frag_normal = normalize(frag_position.xyz - center);
+	highp vec3 frag_normal = normalize(frag_position.xyz - center);
 
-	vec3 light = LightFragment(frag_position.xyz, frag_normal);
+	highp vec3 light = LightFragment(frag_position.xyz, frag_normal);
 	gl_FragColor = color * vec4(light, 1.);
 }
 

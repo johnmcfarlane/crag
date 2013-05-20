@@ -12,19 +12,19 @@
 
 
 // light.frag function which calculates the lighting for the given fragment
-vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal);
+highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal);
 
 
 // inputs from sphere.vert
-varying vec4 quad_position;
+varying highp vec4 quad_position;
 
 // inputs from the renderer
-uniform vec4 color;
-uniform vec3 center;
-uniform float radius;
+uniform highp vec4 color;
+uniform highp vec3 center;
+uniform highp float radius;
 
 // a density of 1. blocks 50% of light across a unit of distance
-uniform float density;
+uniform highp float density;
 
 #if 0
 // given a ray cast from the origin (eye),
@@ -88,7 +88,7 @@ void main(void)
 
 void main(void)
 {
-	float t1, t2;
+	highp float t1, t2;
 #if 0
 	if (! GetIntersection(quad_position.xyz, t1, t2) || t2 < 0.)
 	{
@@ -97,31 +97,31 @@ void main(void)
 #endif
 	t1 = max(t1, 0.);	// TODO: near plane?
 	
-	vec4 frag_position = quad_position * t1;
+	highp vec4 frag_position = quad_position * t1;
 #if 0
 	SetFragmentDepth(frag_position);
 #endif
-	vec3 frag_normal = normalize(frag_position.xyz - center);
+	highp vec3 frag_normal = normalize(frag_position.xyz - center);
 	
-	vec3 light = LightFragment(frag_position.xyz, frag_normal);
-	vec4 frag_color = color * vec4(light, 1.);
+	highp vec3 light = LightFragment(frag_position.xyz, frag_normal);
+	highp vec4 frag_color = color * vec4(light, 1.);
 	
 	if (frag_color.a < 0.999)
 	{
 		// the distance our ray passes through the sphere
-		float collision_range = length(quad_position.xyz) * (t2 - t1);
-		float absorption = max(1. - pow(.5, density * collision_range), 0.);
-		float absorption_alpha = absorption * (1. - frag_color.a);
+		highp float collision_range = length(quad_position.xyz) * (t2 - t1);
+		highp float absorption = max(1. - pow(.5, density * collision_range), 0.);
+		highp float absorption_alpha = absorption * (1. - frag_color.a);
 		
 		frag_color += vec4(color.rgb, 1.) * absorption_alpha;
-		vec4 far_frag_position = quad_position * t2;
+		highp vec4 far_frag_position = quad_position * t2;
 #if 0
 		SetFragmentDepth(far_frag_position);
 #endif
-		vec3 far_frag_normal = normalize(center - far_frag_position.xyz);
+		highp vec3 far_frag_normal = normalize(center - far_frag_position.xyz);
 		
-		vec3 light = LightFragment(far_frag_normal.xyz, far_frag_normal);
-		float far_alpha = (1. - frag_color.a) * color.a;
+		highp vec3 light = LightFragment(far_frag_normal.xyz, far_frag_normal);
+		highp float far_alpha = (1. - frag_color.a) * color.a;
 		frag_color.a += far_alpha;
 		frag_color.rgb += (color.rgb * light.rgb) * far_alpha;
 	}

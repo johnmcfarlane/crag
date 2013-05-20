@@ -9,17 +9,17 @@
 
 
 // inputs from the renderer
-uniform vec3 center;
-uniform float radius;	// TODO: use inverse radius instead
-uniform vec4 color;
+uniform highp vec3 center;
+uniform highp float radius;	// TODO: use inverse radius instead
+uniform highp vec4 color;
 
 // inputs from disk.vert
-varying vec4 quad_position;
+varying highp vec4 quad_position;
 
 
 void main(void)
 {
-	float d = distance(quad_position.xyz, center) / radius;
+	highp float d = distance(quad_position.xyz, center) / radius;
 	if (d > 1.)
 	{
 		//discard;
