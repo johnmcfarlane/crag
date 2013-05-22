@@ -1,7 +1,5 @@
 #!/bin/sh
-# !!under construction!!
-
-#ln -s ../dependencies/SDL jni
+ln -s ../../dependencies/SDL jni
 cd ../dependencies/ode
 #./bootstrap
 sh autogen.sh
