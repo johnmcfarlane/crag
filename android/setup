@@ -1,0 +1,9 @@
+#!/bin/sh
+# !!under construction!!
+
+#ln -s ../dependencies/SDL jni
+cd ../dependencies/ode
+#./bootstrap
+sh autogen.sh
+./configure --host=arm-linux --enable-double-precision=no --disable-demos --disable-asserts --disable-libccd
+cd ../../android

@@ -1,5 +1,6 @@
 #!/bin/sh
-svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+#svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+svn checkout svn://svn.code.sf.net/p/opende/code/tags/0.12/ ode
 cd ode
 ./bootstrap
 CFLAGS="-fno-exceptions -fno-rtti -O3" CXXFLAGS="-fno-exceptions -fno-rtti -O3" ./configure --enable-single-precision --disable-demos --disable-asserts --prefix=$PWD/../
