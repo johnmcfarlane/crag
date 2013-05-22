@@ -6,8 +6,6 @@ android/gen
 android/jni/gen
 android/jni/SDL
 !android/jni/SDL/include/SDL_config.h
-android/jni/ode
-!android/jni/ode/Android.mk
 android/libs/
 android/obj
 
