@@ -21,7 +21,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
-#include "sim/ObserverController.h"
+#include "sim/MouseObserverController.h"
+#include "sim/TouchObserverController.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
@@ -36,6 +37,7 @@
 
 #include "geom/origin.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
@@ -123,10 +125,18 @@ namespace
 	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
 	{
 		// physics
+#if defined(CRAG_USE_MOUSE)
 		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), observer_density, observer_linear_damping, observer_angular_damping);
+#endif
 
 		// controller
-		auto controller = new sim::ObserverController(observer);
+#if defined(CRAG_USE_TOUCH)
+		auto controller = new sim::TouchObserverController(observer, position);
+#elif defined(CRAG_USE_MOUSE)
+		auto controller = new sim::MouseObserverController(observer);
+#else
+#error no controller strategy
+#endif
 		observer.SetController(controller);
 
 #if defined(OBSERVER_LIGHT)

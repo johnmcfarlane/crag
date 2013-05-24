@@ -9,6 +9,12 @@
 
 #pragma once
 
+#if defined(__ANDROID__)
+#define CRAG_USE_TOUCH
+#else
+#define CRAG_USE_MOUSE	// ... and keyboard
+#endif
+
 namespace app
 {
 	// general init/deinit

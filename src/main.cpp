@@ -263,6 +263,14 @@ namespace
 				break;
 			}
 			
+			case SDL_APP_LOWMEMORY:
+			{
+				DEBUG_MESSAGE("Received low memory warning");
+				
+				// without a resource manager, little to do but carry on
+				return true;
+			}
+			
 			case SDL_QUIT:
 			{
 				DEBUG_MESSAGE("SDL_QUIT received on main thread loop");
@@ -279,13 +287,20 @@ namespace
 	{
 		switch (event->type) 
 		{
-			case SDL_MOUSEMOTION:
+			case SDL_APP_LOWMEMORY:
 			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
+#if defined(CRAG_USE_TOUCH)
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_FINGERMOTION:
+#elif defined(CRAG_USE_MOUSE)
+			case SDL_MOUSEMOTION:
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
+#endif
 				return 1;
 				
 			default:

@@ -84,8 +84,9 @@ add_executable(crag
 	src/sim/EntityFunctions.cpp
 	src/sim/FrequencyEstimator.cpp
 	src/sim/gravity.cpp
-	src/sim/ObserverController.cpp
+	src/sim/MouseObserverController.cpp
 	src/sim/ObserverInput.cpp
+	src/sim/TouchObserverController.cpp
 	src/ipc/Fiber.cpp
 	src/ipc/FiberAndroid.cpp
 	src/ipc/FiberPosix.cpp
