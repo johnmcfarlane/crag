@@ -87,6 +87,7 @@ add_executable(crag
 	src/sim/MouseObserverController.cpp
 	src/sim/ObserverInput.cpp
 	src/sim/TouchObserverController.cpp
+	src/ipc/ListenerInterface.cpp
 	src/ipc/Fiber.cpp
 	src/ipc/FiberAndroid.cpp
 	src/ipc/FiberPosix.cpp

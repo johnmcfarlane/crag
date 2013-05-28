@@ -1,5 +1,5 @@
 //
-//  Listener.h
+//  ListenerInterface.h
 //  crag
 //
 //  Created by John on 2013-02-19.
@@ -12,16 +12,28 @@
 namespace ipc
 {
 	// hack to get around not being able to put nodes in virtual base classes
-	class ListenerNode
+	class ListenerBase
 	{
-		DEFINE_INTRUSIVE_LIST(ListenerNode, List);
-	};
+	public:
+		// true if it's currently safe to shut down from point of view of Listener system
+		static bool CanExit()
+		{
+			ASSERT(_counter >= 0);
+			
+			return _counter == 0;
+		}
 
+	protected:
+		DEFINE_INTRUSIVE_LIST(ListenerBase, List);
+		
+		static int _counter;
+	};
+	
 	// see ipc::Listener and ipc::Daemon::Broadcast for usage;
 	// provides thread-agnostic interface to Listener class;
 	// keeps a list of instances for broadcasting to
 	template <typename ENGINE, typename ... PARAMETERS>
-	class ListenerInterface : public ListenerNode
+	class ListenerInterface : public ListenerBase
 	{
 	public:
 		// types
