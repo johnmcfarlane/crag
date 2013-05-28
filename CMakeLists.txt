@@ -86,6 +86,7 @@ add_executable(crag
 	src/sim/gravity.cpp
 	src/sim/ObserverController.cpp
 	src/sim/ObserverInput.cpp
+	src/ipc/ListenerInterface.cpp
 	src/ipc/Fiber.cpp
 	src/ipc/FiberAndroid.cpp
 	src/ipc/FiberPosix.cpp

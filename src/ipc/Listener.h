@@ -24,14 +24,6 @@ namespace ipc
 	template <typename SUBJECT_ENGINE, typename OBSERVER_ENGINE, typename SMP_LISTENER_ELLIPSIS PARAMETERS>
 	class Listener : public ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS>
 	{
-		enum State
-		{
-			initializing,
-			attached,
-			releasing,
-			released
-		};
-
 		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS> Subject;
 		typedef OBSERVER_ENGINE ListenerEngine;
 		typedef ipc::Daemon<ListenerEngine> ListenerDaemon;
@@ -39,21 +31,27 @@ namespace ipc
 	public:
 		// functions
 		Listener()
-		: _state(initializing)
+		: _is_initialized(false)
+		, _is_released(false)
 		{
 			VerifyObject(* this);
 
+			++ Subject::_counter;
+
 			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
 				VerifyObject(* this);
-				ASSERT(_state == initializing);
+				ASSERT(! _is_initialized);
+				ASSERT(! _is_released);
 
 				this->Add();
 
 				ListenerDaemon::Call([this] (ListenerEngine &) {
 					VerifyObject(* this);
-					ASSERT(this->_state == initializing);
+					ASSERT(! this->_is_initialized);
+					ASSERT(! this->_is_released);
 
-					this->SetState(attached);
+					this->_is_initialized = true;
+
 					VerifyObject(* this);
 				});
 			});
@@ -65,22 +63,21 @@ namespace ipc
 #if ! defined(__ANDROID__)
 			ASSERT(IsListenerThread());
 #endif
-			ASSERT(IsReleased());
+			ASSERT(_is_released);
 		}
 
 		void BeginRelease()
 		{
-			VerifyObject(* this);
 #if ! defined(__ANDROID__)
 			ASSERT(IsListenerThread());
 #endif
 
-			ASSERT(_state == attached);
-			SetState(releasing);
+			VerifyObject(* this);
+			ASSERT(! _is_released);
 
 			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
 				VerifyObject(* this);
-				ASSERT(_state == releasing);
+				ASSERT(! _is_released);
 
 				// remove this from the list of listeners
 				this->Remove();
@@ -88,14 +85,15 @@ namespace ipc
 				// send acknowledge back to listener's thread
 				ListenerDaemon::Call([this] (ListenerEngine &) {
 					VerifyObject(* this);
-					ASSERT(this->_state == releasing);
-
-					this->SetState(released);
+					ASSERT(_is_initialized);
+					ASSERT(! _is_released);
+					
+					this->_is_released = true;
+					-- Subject::_counter;
 
 					VerifyObject(* this);
 				});
 
-				ASSERT(_state != releasing || _state != released);
 				VerifyObject(* this);
 			});
 
@@ -106,32 +104,20 @@ namespace ipc
 		{
 			VerifyObject(* this);
 
-			ASSERT(_state == releasing || _state == released);
-			return _state == released;
+			return _is_released;
 		}
-
+		
 #if defined(VERIFY)
 		virtual void Verify() const final
 		{
-			switch (_state)
+			VerifyOp(Subject::_counter, >=, 0);
+			
+			if (_is_initialized)
 			{
-				case initializing:
-					break;
-
-				case attached:
-					ASSERT(Subject::List::is_contained(* this));
-					break;
-
-				case releasing:
-					break;
-
-				case released:
-					ASSERT(! Subject::List::is_contained(* this));
-					break;
-
-				default:
-					DEBUG_BREAK("bad enum value, %d", int(_state));
-					break;
+				if (_is_released)
+				{
+					VerifyTrue(! Subject::List::is_contained(* this));
+				}
 			}
 		}
 #endif
@@ -141,17 +127,7 @@ namespace ipc
 		{
 			return ListenerDaemon::IsCurrentThread();
 		}
-
-		void SetState(State state)
-		{
-#if ! defined(__ANDROID__)
-			ASSERT(IsListenerThread());
-#endif
-			ASSERT(state > initializing && state <= released);
-			ASSERT(int(state) == int(_state) + 1);
-			_state = state;
-		}
-
+		
 		virtual void Dispatch (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) final
 		{
 			VerifyObject(* this);
@@ -167,6 +143,7 @@ namespace ipc
 		virtual void operator() (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) = 0;
 
 		// variables
-		State _state;
+		bool _is_initialized;
+		bool _is_released;
 	};
 }
