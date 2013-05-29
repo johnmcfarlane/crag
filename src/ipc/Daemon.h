@@ -171,14 +171,14 @@ namespace ipc
 			}
 		}
 
-		// pass parameters to any Listener of matching parameters
-		template <typename ... PARAMETERS>
-		static void Broadcast(PARAMETERS ... parameters)
+		// pass parameters to all Listeners of matching parameters
+		template <typename EVENT>
+		static void Broadcast(EVENT event)
 		{
 			ASSERT(singleton->_state < acknowledge_flush_begin);
 
-			typedef ListenerInterface<Engine, PARAMETERS ...> ListenerInterface;
-			ListenerInterface::Broadcast(parameters ...);
+			typedef ListenerInterface<EVENT> ListenerInterface;
+			ListenerInterface::Broadcast(event);
 		}
 
 	private:
@@ -200,13 +200,17 @@ namespace ipc
 		
 			// Acknowledge that this won't be sending any more.
 			_state = acknowledge_flush_begin;
-			while (_state == acknowledge_flush_begin)
+			while (_state != request_flush_end)
 			{
+				if (_state != acknowledge_flush_begin)
+				{
+					ASSERT(_state == request_flush_end);
+				}
+				
 				FlushMessagesOrYield();
 			}
 			
-			ASSERT(_state == request_flush_end);
-			while (! _messages.IsEmpty())
+			while (! _messages.IsEmpty() || ! ListenerBase::CanExit())
 			{
 				FlushMessagesOrYield();
 			}

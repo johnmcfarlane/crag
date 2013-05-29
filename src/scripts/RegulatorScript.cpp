@@ -272,25 +272,25 @@ void RegulatorScript::operator() (applet::AppletInterface & applet_interface)
 		applet_interface.Sleep(0.25);
 	}
 
-	ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::BeginRelease();
-	ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::BeginRelease();
-	ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::BeginRelease();
+	ipc::Listener<applet::Engine, gfx::NumQuaterneSetMessage>::SetIsListening(false);
+	ipc::Listener<applet::Engine, gfx::FrameDurationSampledMessage>::SetIsListening(false);
+	ipc::Listener<applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::SetIsListening(false);
 
 	applet_interface.WaitFor([this] () -> bool {
-		return ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>::IsReleased()
-			&& ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>::IsReleased()
-			&& ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsReleased();
+		return ! ipc::Listener<applet::Engine, gfx::NumQuaterneSetMessage>::IsBusy()
+			&& ! ipc::Listener<applet::Engine, gfx::FrameDurationSampledMessage>::IsBusy()
+			&& ! ipc::Listener<applet::Engine, gfx::MeshGenerationPeriodSampledMessage>::IsBusy();
 	});
 }
 
-void RegulatorScript::operator() (gfx::NumQuaterneSetMessage message)
+void RegulatorScript::operator() (gfx::NumQuaterneSetMessage const & message)
 {
 	_current_num_quaterne = QuaterneCount(message.num_quaterne);
 }
 
 // Take a sample of the frame ratio and apply it to the stored
 // running maximum since the last adjustment.
-void RegulatorScript::operator() (gfx::FrameDurationSampledMessage message)
+void RegulatorScript::operator() (gfx::FrameDurationSampledMessage const & message)
 {
 	// Validate input
 	ASSERT(message.frame_duration_ratio == message.frame_duration_ratio);
@@ -303,7 +303,7 @@ void RegulatorScript::operator() (gfx::FrameDurationSampledMessage message)
 	}
 }
 
-void RegulatorScript::operator() (gfx::MeshGenerationPeriodSampledMessage message)
+void RegulatorScript::operator() (gfx::MeshGenerationPeriodSampledMessage const & message)
 {
 	// Validate input
 	ASSERT(message.mesh_generation_period == message.mesh_generation_period);
