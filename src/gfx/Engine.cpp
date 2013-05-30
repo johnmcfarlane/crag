@@ -17,6 +17,7 @@
 #include "Program.h"
 #include "ResourceManager.h"
 #include "Scene.h"
+#include "SetCameraEvent.h"
 
 #include "form/Engine.h"
 
@@ -478,12 +479,11 @@ void Engine::OnToggleCapture()
 	capture_enable = ! capture_enable;
 }
 
-// TODO: Make camera an object so that positional messages are the same as for other objects.
-void Engine::OnSetCamera(Transformation const & transformation)
+void Engine::operator() (SetCameraEvent const & event)
 {
 	if (scene != nullptr)
 	{
-		scene->SetCameraTransformation(transformation);
+		scene->SetCameraTransformation(event.transformation);
 	}
 }
 
@@ -527,6 +527,8 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			smp::Yield();
 		}
 	}
+
+	SetIsListening(false);
 }
 
 bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)

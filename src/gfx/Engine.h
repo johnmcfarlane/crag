@@ -19,6 +19,7 @@
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
+#include "ipc/Listener.h"
 
 #include "core/Statistics.h"
 
@@ -28,6 +29,7 @@ namespace gfx
 	class MeshResource;
 	class Program;
 	class ResourceManager;
+	struct SetCameraEvent;
 	class Scene;
 
 	// gfx::Daemon type
@@ -39,13 +41,16 @@ namespace gfx
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Engine : public ipc::EngineBase<Engine, Object>
+	class Engine 
+	: public ipc::EngineBase<Engine, Object>
+	, private ipc::Listener<gfx::Engine, gfx::SetCameraEvent>
 	{
 		OBJECT_NO_COPY(Engine);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
+		typedef ipc::Listener<gfx::Engine, gfx::SetCameraEvent> Listener;
 	public:
 		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Daemon<Engine> Daemon;
@@ -93,7 +98,7 @@ namespace gfx
 		bool GetFragmentLighting() const;
 
 		void OnToggleCapture();
-		void OnSetCamera(Transformation const & transformation);
+		void operator() (const SetCameraEvent & event) final;
 		Transformation const& GetCamera() const;
 
 		void Run(Daemon::MessageQueue & message_queue);

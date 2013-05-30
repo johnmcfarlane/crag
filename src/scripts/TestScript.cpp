@@ -10,13 +10,11 @@
 #include "pch.h"
 
 #include "SpawnEntityFunctions.h"
-#include "TestScript.h"
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
-#include "applet/Engine.h"
 
 #include "sim/axes.h"
 #include "sim/Engine.h"
@@ -24,15 +22,13 @@
 
 #include "physics/Location.h"
 
-#include "form/Engine.h"
-#include "form/node/NodeBuffer.h"
-
+#include "gfx/Color.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
+#include "gfx/SetCameraEvent.h"
 
-#include "core/app.h"
+#include "geom/origin.h"
 
-#include "core/app.h"
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
@@ -188,10 +184,9 @@ void Test (applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		sim::Transformation transformation(geom::Cast<sim::Scalar>(observer_start_pos));
-		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
-			engine.OnSetCamera(transformation);
-		});
+		gfx::SetCameraEvent event;
+		event.transformation = geom::Cast<sim::Scalar>(observer_start_pos);
+		gfx::Daemon::Broadcast(event);
 	}
 	
 	// Create sun. 

@@ -13,6 +13,7 @@
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
+#include "ipc/Listener.h"
 
 #include "geom/origin.h"
 
@@ -24,6 +25,11 @@ namespace core
 	{
 		class Roster;
 	}
+}
+
+namespace gfx
+{
+	struct SetCameraEvent;
 }
 
 namespace physics 
@@ -43,7 +49,9 @@ namespace sim
 	class Entity;
 	
 	// Engine - main object of simulation thread
-	class Engine : public ipc::EngineBase<Engine, Entity>
+	class Engine 
+	: public ipc::EngineBase<Engine, Entity>
+	, private ipc::Listener<Engine, gfx::SetCameraEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 
@@ -66,7 +74,7 @@ namespace sim
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);
 		
-		void SetCamera(geom::rel::Ray3 const & camera);
+		void operator() (gfx::SetCameraEvent const & event) final;
 		geom::rel::Ray3 const & GetCamera() const;
 
 		void OnSetOrigin(geom::abs::Vector3 const & origin);

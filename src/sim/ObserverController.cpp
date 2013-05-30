@@ -18,7 +18,7 @@
 
 #include "physics/Body.h"
 
-#include "gfx/Engine.h"
+#include "gfx/SetCameraEvent.h"
 
 #include "ipc/Daemon.h"
 
@@ -177,17 +177,11 @@ void ObserverController::UpdateCamera() const
 	auto position = body.GetPosition();
 	auto rotation = body.GetRotation();
 	Transformation transformation (position, rotation);
-	auto camera_ray = axes::GetCameraRay(transformation);
 
-	// update sim (sends message to gfx)
-	auto& engine = GetEntity().GetEngine();
-	engine.SetCamera(camera_ray);
-
-	// update gfx
-	// TODO: communicate this through the Entity's branch node
-	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
-		engine.OnSetCamera(transformation);
-	});
+	// broadcast new camera position
+	gfx::SetCameraEvent event;
+	event.transformation = transformation;
+	Daemon::Broadcast(event);
 }
 
 physics::Body & ObserverController::GetBody()

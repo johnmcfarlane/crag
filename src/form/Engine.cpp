@@ -16,9 +16,12 @@
 
 #include "form/node/NodeBuffer.h"
 
+#include "sim/axes.h"
+
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/object/FormationMesh.h"
+#include "gfx/SetCameraEvent.h"
 
 #include "core/app.h"
 #include "core/profile.h"
@@ -105,9 +108,9 @@ void form::Engine::OnSetMesh(Mesh & mesh)
 	_meshes.push_back(mesh);
 }
 
-void form::Engine::SetCamera(geom::rel::Ray3 const & camera)
+void form::Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera = camera;
+	_camera = axes::GetCameraRay(event.transformation);
 }
 
 void form::Engine::OnSetOrigin(geom::abs::Vector3 const & new_origin)
@@ -161,6 +164,9 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	// un-register with the renderer
 	_mesh.Destroy();
+
+	// stop listening for SetCameraEvent
+	SetIsListening(false);
 }
 
 // The tick function of the scene thread. 
