@@ -42,9 +42,9 @@ Pov::Pov()
 {
 }
 
-Frustum & Pov::GetFrustum()
+void Pov::SetFrustum(Frustum const & frustum)
 {
-	return _frustum;
+	_frustum = frustum;
 }
 
 Frustum const & Pov::GetFrustum() const

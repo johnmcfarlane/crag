@@ -36,7 +36,7 @@ namespace gfx
 		// functions
 		Pov();
 		
-		Frustum & GetFrustum();
+		void SetFrustum(Frustum const & frustum);
 		Frustum const & GetFrustum() const;
 
 		// set/get the camera position/rotation
