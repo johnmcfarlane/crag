@@ -100,7 +100,12 @@ bool Engine::ProcessTasks()
 		}
 		else if (_quit_flag)
 		{
-			DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
+#if ! defined(NDEBUG)
+			if (ipc::ListenerBase::CanExit())
+			{
+				DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
+			}
+#endif
 		}
 
 		return false;
