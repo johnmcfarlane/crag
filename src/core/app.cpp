@@ -49,7 +49,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	
 	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
-#if ! defined(__ANDROID__)
+#if defined(CRAG_USE_MOUSE)
 	flags |= SDL_WINDOW_MOUSE_FOCUS;
 #endif
 	
@@ -84,15 +84,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	
 	_has_focus = true;
 
-#if ! defined(__ANDROID__)
-	// Linux requires libxi-dev to be installed for this.
-	if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
-	{
-		ERROR_MESSAGE("Failed to set relative mouse mode.");
-		return false;
-	}
-#endif
-	
 	return true;
 }
 

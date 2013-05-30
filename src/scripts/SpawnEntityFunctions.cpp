@@ -133,6 +133,13 @@ namespace
 #if defined(CRAG_USE_TOUCH)
 		auto controller = new sim::TouchObserverController(observer, position);
 #elif defined(CRAG_USE_MOUSE)
+		// Linux requires libxi-dev to be installed for this.
+		if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
+		{
+			DEBUG_MESSAGE("Failed to set relative mouse mode.");
+			DEBUG_BREAK_SDL();
+		}
+
 		auto controller = new sim::MouseObserverController(observer);
 #else
 #error no controller strategy
