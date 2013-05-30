@@ -11,5 +11,17 @@
 
 #include "ListenerInterface.h"
 
-int ipc::ListenerBase::_counter = 0;
+using namespace ipc;
 
+////////////////////////////////////////////////////////////////////////////////
+// ipc::ListenerBase member definitions
+
+bool ListenerBase::CanExit()
+{
+	ASSERT(_counter >= 0);
+	
+	return _counter == 0;
+}
+
+int ipc::ListenerBase::_counter = 0;
+ipc::ListenerBase::Mutex ipc::ListenerBase::_mutex;

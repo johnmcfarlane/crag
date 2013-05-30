@@ -18,11 +18,16 @@
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
+#include "ipc/Listener.h"
 #include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
 
-namespace gfx { DECLARE_CLASS_HANDLE(FormationMesh); }	// gfx::FormationMeshHandle
+namespace gfx 
+{
+	DECLARE_CLASS_HANDLE(FormationMesh);	// gfx::FormationMeshHandle
+	struct SetCameraEvent;
+}
 
 namespace form 
 {	
@@ -45,7 +50,9 @@ namespace form
 	// form::Engine class
 	
 	// The top-most formation management class.
-	class Engine : public ipc::EngineBase<Engine, Formation>
+	class Engine 
+	: public ipc::EngineBase<Engine, Formation>
+	, private ipc::Listener<Engine, gfx::SetCameraEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -86,7 +93,7 @@ namespace form
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(Mesh & mesh);
-		void SetCamera(geom::rel::Ray3 const & camera_position);
+		void operator() (gfx::SetCameraEvent const & event) final;
 		void OnSetOrigin(geom::abs::Vector3 const & origin);
 		
 		void EnableAdjustNumQuaterna(bool enabled);

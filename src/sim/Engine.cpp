@@ -11,6 +11,7 @@
 
 #include "Engine.h"
 
+#include "axes.h"
 #include "gravity.h"
 #include "Entity.h"
 #include "EntityFunctions.h"
@@ -21,6 +22,7 @@
 #include "physics/Engine.h"
 
 #include "gfx/Engine.h"
+#include "gfx/SetCameraEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -112,19 +114,9 @@ void Engine::RemoveFormation(form::Formation& formation)
 	scene.RemoveFormation(formation);
 }
 
-void Engine::SetCamera(geom::rel::Ray3 const & camera)
+void Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	if (_camera == camera)
-	{
-		return;
-	}
-
-	_camera = camera;
-
-	// update form
-	form::Daemon::Call([camera] (form::Engine & engine) {
-		engine.SetCamera(camera);
-	});
+	_camera = axes::GetCameraRay(event.transformation);
 }
 
 geom::rel::Ray3 const & Engine::GetCamera() const
@@ -230,6 +222,9 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			}
 		}
 	}
+
+	// stop listening for SetCameraEvent
+	SetIsListening(false);
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetTime(std::numeric_limits<core::Time>::max());
