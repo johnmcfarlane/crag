@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "gfx/SetCameraEvent.h"
+
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
@@ -25,11 +27,6 @@ namespace core
 	{
 		class Roster;
 	}
-}
-
-namespace gfx
-{
-	struct SetCameraEvent;
 }
 
 namespace physics 

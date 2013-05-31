@@ -95,6 +95,7 @@
     <ClCompile Include="..\..\src\ipc\FiberWin.cpp" />
     <ClCompile Include="..\..\src\ipc\Uid.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberAndroid.cpp" />
+    <ClCompile Include="..\..\src\ipc\ListenerInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
