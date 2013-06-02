@@ -66,7 +66,7 @@ namespace ipc
 		
 		~Daemon() 
 		{ 
-			ASSERT(_state == State::request_flush_end);
+			ASSERT(_state == State::acknowledge_flush_end);
 			SetState(State::request_destroy);
 			
 			ASSERT(singleton == this);
@@ -145,7 +145,7 @@ namespace ipc
 			{
 				if (IsTimedout())
 				{
-					DEBUG_MESSAGE("%s has spent too long in state, %d", _name, (int)_state);
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
 					return;
 				}
 				
@@ -167,7 +167,7 @@ namespace ipc
 			{
 				if (IsTimedout())
 				{
-					DEBUG_MESSAGE("%s has spent too long in state, %d", _name, (int)_state);
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
 					return;
 				}
 				
@@ -223,7 +223,7 @@ namespace ipc
 			_engine = & engine;
 			
 			engine.Run(_messages);
-			DEBUG_MESSAGE("%s returned", _name);
+			DEBUG_MESSAGE("Engine, %s, returned", _name);
 		
 			// Acknowledge that this won't be sending any more.
 			SetState(State::acknowledge_flush_begin);
@@ -236,7 +236,7 @@ namespace ipc
 				
 				if (IsTimedout())
 				{
-					DEBUG_MESSAGE("%s has spent too long in state, %d", _name, (int)_state);
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
 					break;
 				}
 				
@@ -247,7 +247,7 @@ namespace ipc
 			{
 				if (IsTimedout())
 				{
-					DEBUG_MESSAGE("%s has spent too long in state, %d", _name, (int)_state);
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
 					break;
 				}
 				
