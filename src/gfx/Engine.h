@@ -15,6 +15,7 @@
 #include "Layer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
+#include "SetCameraEvent.h"
 #include "Texture.h"
 
 #include "ipc/Daemon.h"
@@ -29,7 +30,6 @@ namespace gfx
 	class MeshResource;
 	class Program;
 	class ResourceManager;
-	struct SetCameraEvent;
 	class Scene;
 
 	// gfx::Daemon type

@@ -92,11 +92,11 @@ namespace ipc
 		virtual void Dispatch (EVENT event) final
 		{
 			VerifyObject(* this);
-			++ _dispatch_count;
+			_dispatch_count += 1;
 
 			ListenerDaemon::Call([this, event] (ListenerEngine &) {
 				(* this)(event);
-				-- _dispatch_count;
+				_dispatch_count -= 1;
 			});
 
 			VerifyObject(* this);

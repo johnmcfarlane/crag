@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "geom/Transformation.h"
+
 namespace gfx
 {
 	struct SetCameraEvent

@@ -342,6 +342,7 @@
     <ClCompile Include="..\..\src\ipc\FiberAndroid.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberPosix.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberWin.cpp" />
+    <ClCompile Include="..\..\src\ipc\ListenerInterface.cpp" />
     <ClCompile Include="..\..\src\ipc\Uid.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\pch.cpp">

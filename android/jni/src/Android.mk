@@ -103,6 +103,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \
 	$(CRAG_PATH)/ipc/FiberPosix.cpp \
 	$(CRAG_PATH)/ipc/FiberWin.cpp \
+	$(CRAG_PATH)/ipc/ListenerInterface.cpp \
 	$(CRAG_PATH)/smp/ReadersWriterMutex.cpp \
 	$(CRAG_PATH)/smp/scheduler.cpp \
 	$(CRAG_PATH)/smp/Semaphore.cpp \
