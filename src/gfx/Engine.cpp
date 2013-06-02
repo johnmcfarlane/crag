@@ -513,7 +513,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);
 		
-		if (_ready && _dirty)
+		if (_ready && _dirty || quit_flag)
 		{
 			PreRender();
 			UpdateTransformations();
