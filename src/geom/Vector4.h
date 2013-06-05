@@ -112,11 +112,6 @@ namespace geom
 		lhs.w == rhs.w;
 	}
 
-	template<typename S> bool operator != (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
-	{
-		return ! (lhs == rhs);
-	}
-
 	template<typename S> Vector<S, 4> & operator += (Vector<S, 4> & lhs, Vector<S, 4> const & rhs)
 	{
 		lhs.x += rhs.x;
@@ -144,62 +139,15 @@ namespace geom
 		return lhs;
 	}
 
-	template<typename S> Vector<S, 4> & operator /= (Vector<S, 4> & lhs, S rhs)
-	{
-		return lhs *= (static_cast<S>(1) / rhs);
-	}
-
 	template<typename S> Vector<S, 4> operator - (Vector<S, 4> const & rhs)
 	{
 		return Vector<S, 4>(- rhs.x, - rhs.y, - rhs.z, - rhs.w);
-	}
-
-	template<typename S> Vector<S, 4> operator - (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
-	{
-		Vector<S, 4> result = lhs;
-		return result -= rhs;
-	}
-
-	template<typename S> Vector<S, 4> operator + (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
-	{
-		Vector<S, 4> result = lhs;
-		return result += rhs;
-	}
-
-	template<typename S> Vector<S, 4> operator * (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
-	{
-		Vector<S, 4> result = lhs;
-		return result *= rhs;
-	}
-
-	template<typename S> Vector<S, 4> operator * (Vector<S, 4> const & lhs, S rhs)
-	{
-		Vector<S, 4> result = lhs;
-		return result *= rhs;
-	}
-
-	template<typename S> Vector<S, 4> operator * (S lhs, Vector<S, 4> const & rhs)
-	{
-		Vector<S, 4> result = rhs;
-		return result *= lhs;
-	}
-
-	template<typename S> Vector<S, 4> operator / (Vector<S, 4> const & lhs, S rhs)
-	{
-		Vector<S, 4> result = lhs;
-		return result *= (1.f / rhs);
-	}
-
-	template<typename S> S LengthSq(Vector<S, 4> const & v)
-	{
-		return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
 	}
 
 	template<typename S> S DotProduct(Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
-
 
 	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 4> const & v)
 	{
