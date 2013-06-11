@@ -52,6 +52,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
 
+	Random random_sequence;
 	applet::AppletInterface * _applet_interface;
 	sim::EntityHandle _vehicle;
 	EntityVector _shapes;
@@ -60,6 +61,12 @@ namespace
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
+	
+	// random number generation
+	double GetRandomUnit()
+	{
+		return random_sequence.GetUnit<double>();
+	}
 	
 	void SpawnShapes(sim::EntityHandle observer, int shape_num)
 	{
@@ -104,7 +111,8 @@ namespace
 			case 0:
 			{
 				// ball
-				sim::EntityHandle ball = SpawnBall(spawn_pos, color);
+				float radius = geom::rel::Scalar(std::exp(- GetRandomUnit() * 2));
+				sim::EntityHandle ball = SpawnBall(spawn_pos, radius, color);
 				_shapes.push_back(ball);
 				break;
 			}
@@ -112,7 +120,10 @@ namespace
 			case 1:
 			{
 				// box
-				sim::EntityHandle box = SpawnBox(spawn_pos, color);
+				geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
+					geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
+					geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
+				sim::EntityHandle box = SpawnBox(spawn_pos, size, color);
 				_shapes.push_back(box);
 				break;
 			}

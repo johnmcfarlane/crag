@@ -9,15 +9,16 @@
 
 #include "sim/defs.h"
 
-#include "gfx/Color.h"
-
 namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Object);// gfx::ObjectHandle
+	
+	template <typename> class Color4;
+	typedef Color4<float> Color4f;
 }
 
-sim::EntityHandle SpawnBall(const sim::Vector3 & position, gfx::Color4f color);
-sim::EntityHandle SpawnBox(const sim::Vector3 & position, gfx::Color4f color);
+sim::EntityHandle SpawnBall(const sim::Vector3 & position, sim::Scalar radius, gfx::Color4f color);
+sim::EntityHandle SpawnBox(const sim::Vector3 & position, sim::Vector3 const & size, gfx::Color4f color);
 sim::EntityHandle SpawnObserver(const sim::Vector3 & position);
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters);
 gfx::ObjectHandle SpawnSkybox();
