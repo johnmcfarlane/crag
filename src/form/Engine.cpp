@@ -16,8 +16,7 @@
 
 #include "form/node/NodeBuffer.h"
 
-#include "sim/axes.h"
-
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/object/FormationMesh.h"
@@ -110,7 +109,7 @@ void form::Engine::OnSetMesh(Mesh & mesh)
 
 void form::Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera = axes::GetCameraRay(event.transformation);
+	_camera = gfx::GetCameraRay(event.transformation);
 }
 
 void form::Engine::OnSetOrigin(geom::abs::Vector3 const & new_origin)

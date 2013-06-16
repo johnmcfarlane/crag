@@ -11,7 +11,6 @@
 
 #include "MouseObserverController.h"
 
-#include "axes.h"
 #include "Engine.h"
 #include "Entity.h"
 #include "ObserverInput.h"
@@ -148,8 +147,8 @@ void MouseObserverController::HandleKeyboardEvent(SDL_Scancode scancode, bool do
 
 void MouseObserverController::HandleMouseMove(ObserverInput & input, SDL_MouseMotionEvent const & motion) const
 {
-	input[ObserverInput::rotation].x -= motion.yrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
-	input[ObserverInput::rotation].z -= motion.xrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
+	input[ObserverInput::rotation].x += motion.yrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
+	input[ObserverInput::rotation].y += motion.xrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
 }
 
 void MouseObserverController::ScaleInput(ObserverInput & input) const

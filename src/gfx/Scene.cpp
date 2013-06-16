@@ -141,7 +141,7 @@ void Scene::SetResolution(geom::Vector2i const & r)
 void Scene::SetCameraTransformation(Transformation const & transformation)
 {
 	pov.SetTransformation(transformation);
-	_root.SetLocalTransformation(transformation.GetInverse());
+	_root.SetLocalTransformation(Inverse(transformation.GetMatrix()));
 }
 
 Pov & Scene::GetPov()

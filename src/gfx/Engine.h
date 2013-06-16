@@ -99,7 +99,6 @@ namespace gfx
 
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
-		Transformation const& GetCamera() const;
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:

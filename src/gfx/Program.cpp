@@ -11,6 +11,7 @@
 
 #include "Program.h"
 
+#include "axes.h"
 #include "glHelpers.h"
 
 #include "core/app.h"
@@ -160,7 +161,8 @@ void Program::UpdateLights(Light::List const & lights) const
 			break;
 		}
 		
-		geom::Vector4f position = geom::Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
+		auto & transformation = light.GetModelViewTransformation();
+		geom::Vector3f position = ToOpenGl(transformation.GetTranslation());
 		Color4f const & color = light.GetColor();
 		
 		glUniform3f(uniforms->position, position.x, position.y, position.z);
@@ -177,12 +179,12 @@ void Program::UpdateLights(Light::List const & lights) const
 
 void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
 {
-	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, projection_matrix.GetArray()));
+	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_TRUE, projection_matrix.GetArray()));
 }
 
 void Program::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
 {
-	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, model_view_matrix.GetArray()));
+	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_TRUE, ToOpenGl(model_view_matrix).GetArray()));
 }
 
 GLint Program::GetUniformLocation(char const * name) const
@@ -274,7 +276,7 @@ void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, Co
 {
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	
-	geom::Vector4f center = geom::Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
+	geom::Vector3f center = ToOpenGl(model_view.GetTranslation());
 	GL_CALL(glUniform3f(_center_location, center.x, center.y, center.z));
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));

@@ -11,7 +11,6 @@
 
 #include "Engine.h"
 
-#include "axes.h"
 #include "gravity.h"
 #include "Entity.h"
 #include "EntityFunctions.h"
@@ -21,6 +20,7 @@
 #include "physics/Body.h"
 #include "physics/Engine.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
 
@@ -116,7 +116,7 @@ void Engine::RemoveFormation(form::Formation& formation)
 
 void Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera = axes::GetCameraRay(event.transformation);
+	_camera = gfx::GetCameraRay(event.transformation);
 }
 
 geom::rel::Ray3 const & Engine::GetCamera() const

@@ -11,7 +11,6 @@
 
 #include "Thruster.h"
 
-#include "sim/axes.h"
 #include "sim/Entity.h"
 #include "sim/Engine.h"
 
@@ -19,6 +18,7 @@
 
 #include "physics/Body.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 
 #include "core/Roster.h"
@@ -35,7 +35,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray)
 {
 	// calculate local transformation
 	auto thrust_scale = Length(ray.direction);
-	Transformation local_transformation(ray.position, axes::Rotation(ray.direction / thrust_scale), thrust_scale);
+	Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_scale), thrust_scale);
 
 	// create model
 	_model = gfx::ThrusterHandle::CreateHandle(local_transformation);

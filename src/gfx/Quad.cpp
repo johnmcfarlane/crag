@@ -11,7 +11,7 @@
 
 #include "Quad.h"
 
-#include "sim/axes.h"
+#include "axes.h"
 
 #include "geom/origin.h"
 #include "geom/Transformation.h"
@@ -47,25 +47,25 @@ void Pointer<Quad::Vertex>()
 
 Quad::Quad(float depth_offset)
 {
-	float const y = depth_offset;
-	float const xz0 = -1, xz1 = 1;
+	float const z = depth_offset;
+	float const xy0 = -1, xy1 = 1;
 	
-	float const x0 = xz0, x1 = xz1;
-	float const z0 = xz0, z1 = xz1;
+	float const x0 = xy0, x1 = xy1;
+	float const y0 = xy0, y1 = xy1;
 	
 	Vertex verts[6] = 
 	{
-		{ geom::Vector3f(x0, y, z0) },
-		{ geom::Vector3f(x0, y, z1) },
-		{ geom::Vector3f(x1, y, z0) },
-		{ geom::Vector3f(x1, y, z0) },
-		{ geom::Vector3f(x0, y, z1) },
-		{ geom::Vector3f(x1, y, z1) }
+		{ geom::Vector3f(x0, y0, z) },
+		{ geom::Vector3f(x0, y1, z) },
+		{ geom::Vector3f(x1, y0, z) },
+		{ geom::Vector3f(x1, y0, z) },
+		{ geom::Vector3f(x0, y1, z) },
+		{ geom::Vector3f(x1, y1, z) }
 	};
 	
 	_quad.Init();
 	_quad.Bind();
-	_quad.BufferData(6, verts, GL_STATIC_DRAW);	// !? compiles !?
+	_quad.BufferData(6, verts, GL_STATIC_DRAW);
 	_quad.Unbind();
 }
 
@@ -85,7 +85,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 	}
 	
 	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
-	Transformation::Matrix33 rotation = Inverse(axes::Rotation(camera_to_center));
+	Transformation::Matrix33 rotation = Inverse(gfx::Rotation(camera_to_center));
 
 	Transformation::Vector3 scale = leaf.GetScale();
 

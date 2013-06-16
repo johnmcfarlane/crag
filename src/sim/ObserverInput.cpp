@@ -11,11 +11,12 @@
 
 #include "ObserverInput.h"
 
-#include "axes.h"
+#include "gfx/axes.h"
 
 #include "core/app.h"
 
 using namespace sim;
+using gfx::Direction;
 
 namespace 
 {
@@ -25,7 +26,12 @@ namespace
 		{
 			if (i->IsActive()) 
 			{
-				input[i->affector.type][ i->affector.axis] += i->affector.delta;
+				auto & affector = i->affector;
+				auto direction = affector.direction;
+				
+				int delta = (direction < Direction::negative) ? 1 : -1;
+				std::size_t axis_index = static_cast<std::size_t>(direction) % 3;
+				input[affector.type][axis_index] += delta;
 			}
 		}
 	}
@@ -36,8 +42,7 @@ namespace
 	struct InputAffector
 	{
 		ObserverInput::Index type;	// [pos/rot]
-		axes::Axis axis;	// [x/y/z]
-		float delta;
+		Direction direction;
 	};
 
 
@@ -57,33 +62,33 @@ namespace
 	InputKeyMapping const keys[] = 
 	{
 		// Arrow keys
-		{ { ObserverInput::rotation, axes::UP, +1 }, SDL_SCANCODE_LEFT },
-		{ { ObserverInput::rotation, axes::UP, -1 }, SDL_SCANCODE_RIGHT },
-		{ { ObserverInput::translation, axes::FORWARD, +1 }, SDL_SCANCODE_UP },
-		{ { ObserverInput::translation, axes::FORWARD, -1 }, SDL_SCANCODE_DOWN },
+		{ { ObserverInput::rotation, Direction::down }, SDL_SCANCODE_LEFT },
+		{ { ObserverInput::rotation, Direction::up }, SDL_SCANCODE_RIGHT },
+		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_UP },
+		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_DOWN },
 		
 		// Above arrow SDL_SCANCODEs (3x2)
-		{ { ObserverInput::rotation, axes::FORWARD, -1 }, SDL_SCANCODE_INSERT },
-		{ { ObserverInput::translation, axes::RIGHT, -1 }, SDL_SCANCODE_DELETE },
-		{ { ObserverInput::translation, axes::FORWARD, +1 }, SDL_SCANCODE_HOME },
-		{ { ObserverInput::translation, axes::FORWARD, -1 }, SDL_SCANCODE_END },
-		{ { ObserverInput::rotation, axes::FORWARD, +1 }, SDL_SCANCODE_PAGEUP },
-		{ { ObserverInput::translation, axes::RIGHT, +1 }, SDL_SCANCODE_PAGEDOWN },
+		{ { ObserverInput::rotation, Direction::backward }, SDL_SCANCODE_INSERT },
+		{ { ObserverInput::translation, Direction::left }, SDL_SCANCODE_DELETE },
+		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_HOME },
+		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_END },
+		{ { ObserverInput::rotation, Direction::forward }, SDL_SCANCODE_PAGEUP },
+		{ { ObserverInput::translation, Direction::right }, SDL_SCANCODE_PAGEDOWN },
 		
 		// FPS standard
-		{ { ObserverInput::rotation, axes::FORWARD, -1 }, SDL_SCANCODE_Q },
-		{ { ObserverInput::translation, axes::RIGHT, -1 }, SDL_SCANCODE_A },
-		{ { ObserverInput::translation, axes::FORWARD, +1 }, SDL_SCANCODE_W },
-		{ { ObserverInput::translation, axes::FORWARD, -1 }, SDL_SCANCODE_S },
-		{ { ObserverInput::rotation, axes::FORWARD, +1 }, SDL_SCANCODE_E },
-		{ { ObserverInput::translation, axes::RIGHT, +1 }, SDL_SCANCODE_D },
+		{ { ObserverInput::rotation, Direction::forward }, SDL_SCANCODE_Q },
+		{ { ObserverInput::translation, Direction::left }, SDL_SCANCODE_A },
+		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_W },
+		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_S },
+		{ { ObserverInput::rotation, Direction::backward }, SDL_SCANCODE_E },
+		{ { ObserverInput::translation, Direction::right }, SDL_SCANCODE_D },
 		
 		// Lots of up/down options
-		{ { ObserverInput::translation, axes::UP, +1 }, SDL_SCANCODE_SPACE },
-		{ { ObserverInput::translation, axes::UP, -1 }, SDL_SCANCODE_RCTRL },
-		{ { ObserverInput::translation, axes::UP, -1 }, SDL_SCANCODE_LCTRL },
+		{ { ObserverInput::translation, Direction::up }, SDL_SCANCODE_SPACE },
+		{ { ObserverInput::translation, Direction::down }, SDL_SCANCODE_RCTRL },
+		{ { ObserverInput::translation, Direction::down }, SDL_SCANCODE_LCTRL },
 
-		{ { ObserverInput::size, axes::NUM_AXES, 0 }, SDL_SCANCODE_UNKNOWN }
+		{ { ObserverInput::size, Direction::size }, SDL_SCANCODE_UNKNOWN }
 	};
 
 
@@ -101,10 +106,10 @@ namespace
 
 	InputMouseMapping buttons[] = 
 	{
-		{ { ObserverInput::translation, axes::UP, -1 }, 1 },
-		{ { ObserverInput::translation, axes::UP, +1 }, 2 },
+		{ { ObserverInput::translation, Direction::down }, 1 },
+		{ { ObserverInput::translation, Direction::up }, 2 },
 		
-		{ { ObserverInput::size, axes::NUM_AXES, 0 }, -1 }
+		{ { ObserverInput::size, Direction::size }, -1 }
 	};
 
 }

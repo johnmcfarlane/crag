@@ -11,6 +11,7 @@
 
 #include "Planet.h"
 
+#include "gfx/axes.h"
 #include "gfx/Program.h"
 #include "gfx/Quad.h"
 #include "gfx/Engine.h"
@@ -52,9 +53,7 @@ void Planet::UpdateModelViewTransformation(Transformation const & model_view)
 bool Planet::GetRenderRange(RenderRange & range) const 
 {
 	Transformation const & transformation = GetModelViewTransformation();
-	Transformation::Matrix44 const & transformation_matrix = transformation.GetMatrix();
-	
-	Scalar depth = transformation_matrix[1][3];
+	Scalar depth = GetDepth(transformation);
 	
 	range.y = depth + _radius_max;
 	range.x = depth - _radius_max;

@@ -311,7 +311,7 @@ namespace
 	}
 }
 
-sim::EntityHandle SpawnBall(const sim::Vector3 & position, sim::Scalar radius, gfx::Color4f color)
+sim::EntityHandle SpawnBall(sim::Vector3 const & position, sim::Scalar radius, gfx::Color4f color)
 {
 	// ball
 	auto ball = sim::EntityHandle::CreateHandle();
@@ -324,7 +324,7 @@ sim::EntityHandle SpawnBall(const sim::Vector3 & position, sim::Scalar radius, g
 	return ball;
 }
 
-sim::EntityHandle SpawnBox(const sim::Vector3 & position, sim::Vector3 const & size, gfx::Color4f color)
+sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & size, gfx::Color4f color)
 {
 	// box
 	auto box = sim::EntityHandle::CreateHandle();

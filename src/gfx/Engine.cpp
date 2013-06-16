@@ -21,7 +21,6 @@
 
 #include "form/Engine.h"
 
-#include "sim/axes.h"
 #include "sim/Engine.h"
 
 #include "core/app.h"
@@ -487,11 +486,6 @@ void Engine::operator() (SetCameraEvent const & event)
 	}
 }
 
-Transformation const& Engine::GetCamera() const
-{
-	return scene->GetPov().GetTransformation();
-}
-
 #if defined(NDEBUG)
 #define INIT(CAP,ENABLED) { CAP,ENABLED }
 #else
@@ -710,7 +704,7 @@ void Engine::InitRenderState()
 		++ param;
 	}
 
-	GL_CALL(glFrontFace(GL_CW));
+	GL_CALL(glFrontFace(GL_CCW));
 	GL_CALL(glCullFace(GL_BACK));
 	glDepthFunc(GL_LEQUAL);
 	GL_CALL(glClearDepthf(1.0f));
@@ -978,8 +972,8 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, b
 				
 				// Set the model view matrix.
 				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
-				auto gl_model_view_projection_matrix = model_view_transformation.GetOpenGlMatrix();
-				required_program->SetModelViewMatrix(gl_model_view_projection_matrix);
+				auto model_view_matrix = model_view_transformation.GetMatrix();
+				required_program->SetModelViewMatrix(model_view_matrix);
 			}
 			else
 			{

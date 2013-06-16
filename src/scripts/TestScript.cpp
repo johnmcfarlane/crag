@@ -16,12 +16,12 @@
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
-#include "sim/axes.h"
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
 #include "physics/Location.h"
 
+#include "gfx/axes.h"
 #include "gfx/Color.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
@@ -68,17 +68,12 @@ namespace
 		return random_sequence.GetUnit<double>();
 	}
 	
-	void SpawnShapes(sim::EntityHandle observer, int shape_num)
+	void SpawnShapes(int shape_num)
 	{
 		if (max_shapes == 0)
 		{
 			return;
 		}
-	
-		ipc::Future<sim::Transformation> camera_transformation_future = _applet_interface->Get<sim::Engine, sim::Transformation>(observer, [] (sim::Entity & observer) -> sim::Transformation {
-			auto location = observer.GetLocation();
-			return location->GetTransformation();
-		});
 	
 		if (cleanup_shapes)
 		{
@@ -95,11 +90,11 @@ namespace
 			return;
 		}
 
-		sim::Transformation camera_transformation = camera_transformation_future.Get();
-		sim::Matrix33 camera_rotation = camera_transformation.GetRotation();
-		geom::rel::Vector3 camera_pos = camera_transformation.GetTranslation();
-		geom::rel::Vector3 camera_forward = axes::GetAxis(camera_rotation, axes::FORWARD);
-		geom::rel::Vector3 spawn_pos = camera_pos + camera_forward * geom::rel::Scalar(5);
+		auto camera_ray = _applet_interface->Get<sim::Engine, sim::Ray3>([] (sim::Engine & engine) -> sim::Ray3 {
+			return engine.GetCamera();
+		});
+	
+		geom::rel::Vector3 spawn_pos = geom::Project(camera_ray, sim::Scalar(5));
 	
 		gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
 					Random::sequence.GetUnitInclusive<float>(), 
@@ -134,7 +129,7 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents(sim::EntityHandle observer)
+	bool HandleEvents()
 	{
 		int num_events = 0;
 	
@@ -170,11 +165,11 @@ namespace
 					break;
 				
 				case SDL_SCANCODE_COMMA:
-					SpawnShapes(observer, 0);
+					SpawnShapes(0);
 					break;
 				
 				case SDL_SCANCODE_PERIOD:
-					SpawnShapes(observer, 1);
+					SpawnShapes(1);
 					break;
 				
 				default:
@@ -195,8 +190,11 @@ void Test (applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event;
-		event.transformation = geom::Cast<sim::Scalar>(observer_start_pos);
+		gfx::SetCameraEvent event = {
+			gfx::Transformation(
+				geom::Cast<sim::Scalar>(observer_start_pos),
+				gfx::Rotation(sim::Vector3(0, 0, -1)))
+		};
 		gfx::Daemon::Broadcast(event);
 	}
 	
@@ -215,7 +213,7 @@ void Test (applet::AppletInterface & applet_interface)
 	}
 	
 	// Give formations time to expand.
-	_applet_interface->Sleep(2);
+	//_applet_interface->Sleep(2);	// (Currently doesn't work out so well.)
 
 	// Create observer.
 	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
@@ -244,7 +242,7 @@ void Test (applet::AppletInterface & applet_interface)
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 
-		if (! HandleEvents(observer))
+		if (! HandleEvents())
 		{
 			break;
 		}
