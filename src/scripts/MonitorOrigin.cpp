@@ -56,12 +56,12 @@ namespace
 	
 	void ReviseOrigin(sim::Engine & engine)
 	{
-		auto& physics_engine = engine.GetPhysicsEngine();
-		auto& scene = physics_engine.GetScene();
-		auto& node_buffer = scene.GetNodeBuffer();
+		auto & physics_engine = engine.GetPhysicsEngine();
+		auto & scene = physics_engine.GetScene();
+		auto & node_buffer = scene.GetNodeBuffer();
 
-		auto& camera_ray = engine.GetCamera();
-		auto& camera_pos = camera_ray.position;
+		auto & camera_ray = engine.GetCamera();
+		auto & camera_pos = camera_ray.position;
 		auto min_leaf_distance_squared = node_buffer.GetMinLeafDistanceSquared();
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
