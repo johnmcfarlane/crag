@@ -18,6 +18,7 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SetCameraEvent.h"
+#include "SetOriginEvent.h"
 
 #include "form/Engine.h"
 
@@ -235,6 +236,8 @@ void Engine::Verify() const
 
 Engine::Engine()
 : scene(nullptr)
+, _resource_manager(nullptr)
+, _origin(geom::abs::Vector3::Zero())
 , _frame_duration(0)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -486,6 +489,16 @@ void Engine::operator() (SetCameraEvent const & event)
 	}
 }
 
+void Engine::operator() (SetOriginEvent const & event)
+{
+	_origin = event.origin;
+}
+
+geom::abs::Vector3 const & Engine::GetOrigin() const
+{
+	return _origin;
+}
+
 #if defined(NDEBUG)
 #define INIT(CAP,ENABLED) { CAP,ENABLED }
 #else
@@ -522,7 +535,8 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		}
 	}
 
-	SetIsListening(false);
+	SetCameraListener::SetIsListening(false);
+	SetOriginListener::SetIsListening(false);
 }
 
 bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)

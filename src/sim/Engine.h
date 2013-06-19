@@ -11,8 +11,6 @@
 
 #include "defs.h"
 
-#include "gfx/SetCameraEvent.h"
-
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
@@ -39,6 +37,12 @@ namespace form
 	class Formation;
 }
 
+namespace gfx
+{
+	struct SetCameraEvent;
+	struct SetOriginEvent;
+}
+
 namespace sim
 {
 	
@@ -49,6 +53,7 @@ namespace sim
 	class Engine 
 	: public ipc::EngineBase<Engine, Entity>
 	, private ipc::Listener<Engine, gfx::SetCameraEvent>
+	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 
@@ -74,7 +79,8 @@ namespace sim
 		void operator() (gfx::SetCameraEvent const & event) final;
 		geom::rel::Ray3 const & GetCamera() const;
 
-		void OnSetOrigin(geom::abs::Vector3 const & origin);
+		void operator() (gfx::SetOriginEvent const & event) final;
+		geom::abs::Vector3 const & GetOrigin() const;
 		
 		void OnTogglePause();
 		void OnToggleGravity();
@@ -104,6 +110,7 @@ namespace sim
 		core::Time _time;
 
 		Ray3 _camera;
+		geom::abs::Vector3 _origin;
 		physics::Engine & _physics_engine;
 
 		core::locality::Roster & _tick_roster;

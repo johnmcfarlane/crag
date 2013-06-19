@@ -17,7 +17,6 @@ namespace form
 	// Common info shared between Mesh and MeshBufferObject.
 	struct MeshProperties
 	{
-		// TODO: Is high precision really needed everywhere there's an origin?
 		typedef geom::abs::Vector3 Vector;
 		
 #if defined(VERIFY)

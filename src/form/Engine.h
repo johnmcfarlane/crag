@@ -27,6 +27,7 @@ namespace gfx
 {
 	DECLARE_CLASS_HANDLE(FormationMesh);	// gfx::FormationMeshHandle
 	struct SetCameraEvent;
+	struct SetOriginEvent;
 }
 
 namespace form 
@@ -53,9 +54,16 @@ namespace form
 	class Engine 
 	: public ipc::EngineBase<Engine, Formation>
 	, private ipc::Listener<Engine, gfx::SetCameraEvent>
+	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 		
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+
+		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
+		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
+
 		enum {
 			// tweakables
 			min_num_quaterne = 1024,
@@ -63,9 +71,6 @@ namespace form
 		};
 		
 	public:
-		////////////////////////////////////////////////////////////////////////////////
-		// types
-
 		typedef ipc::Daemon<Engine> Daemon;
 
 		struct TreeQueryFunctor
@@ -94,7 +99,7 @@ namespace form
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(Mesh & mesh);
 		void operator() (gfx::SetCameraEvent const & event) final;
-		void OnSetOrigin(geom::abs::Vector3 const & origin);
+		void operator() (gfx::SetOriginEvent const & event) final;
 		
 		void EnableAdjustNumQuaterna(bool enabled);
 		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
@@ -135,6 +140,7 @@ namespace form
 		bool _pending_origin_request;
 
 		geom::rel::Ray3 _camera;
+		geom::abs::Vector3 _origin;
 		Scene _scene;
 	};
 	

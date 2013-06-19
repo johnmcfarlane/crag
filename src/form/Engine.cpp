@@ -21,6 +21,7 @@
 #include "gfx/Messages.h"
 #include "gfx/object/FormationMesh.h"
 #include "gfx/SetCameraEvent.h"
+#include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
 #include "core/profile.h"
@@ -50,7 +51,8 @@ form::Engine::Engine()
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
 , _pending_origin_request(false)
-, _camera(Ray3::Zero())
+, _camera(geom::rel::Ray3::Zero())
+, _origin(geom::abs::Vector3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
 {
 	int max_num_verts = max_num_quaterne * form::NodeBuffer::num_nodes_per_quaterna;
@@ -90,7 +92,7 @@ void form::Engine::OnAddFormation(form::Formation & formation)
 {
 	ASSERT(_formations.find(& formation) == _formations.end());
 	_formations.insert(& formation);
-	_scene.AddFormation(formation, GetOrigin());
+	_scene.AddFormation(formation, _origin);
 }
 
 void form::Engine::OnRemoveFormation(form::Formation & formation)
@@ -112,12 +114,13 @@ void form::Engine::operator() (gfx::SetCameraEvent const & event)
 	_camera = gfx::GetCameraRay(event.transformation);
 }
 
-void form::Engine::OnSetOrigin(geom::abs::Vector3 const & new_origin)
+void form::Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	_pending_origin_request = true;
 
-	geom::abs::Vector3 camera_pos = geom::RelToAbs(_camera.position, GetOrigin());
-	_camera.position = geom::AbsToRel(camera_pos, new_origin);
+	geom::abs::Vector3 camera_pos = geom::RelToAbs(_camera.position, _origin);
+	_origin = event.origin;
+	_camera.position = geom::AbsToRel(camera_pos, _origin);
 }
 
 void form::Engine::EnableAdjustNumQuaterna(bool enabled)
@@ -164,8 +167,9 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	// un-register with the renderer
 	_mesh.Destroy();
 
-	// stop listening for SetCameraEvent
-	SetIsListening(false);
+	// stop listening for events
+	SetCameraListener::SetIsListening(false);
+	SetOriginListener::SetIsListening(false);
 }
 
 // The tick function of the scene thread. 
@@ -223,7 +227,7 @@ void form::Engine::GenerateMesh()
 	}
 	
 	// build it
-	_scene.GenerateMesh(* mesh, GetOrigin());
+	_scene.GenerateMesh(* mesh, _origin);
 	
 	// sent it to the FormationSet object
 	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {
@@ -262,7 +266,7 @@ void form::Engine::OnOriginReset()
 {
 	auto& node_buffer = _scene.GetNodeBuffer();
 	int num_quaterna = node_buffer.GetNumQuaternaUsed();
-	_scene.OnOriginReset(GetOrigin());
+	_scene.OnOriginReset(_origin);
 	node_buffer.SetNumQuaternaUsedTarget(num_quaterna);
 
 	while (node_buffer.GetNumQuaternaUsed() < num_quaterna)

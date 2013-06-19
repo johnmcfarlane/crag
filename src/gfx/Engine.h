@@ -15,12 +15,13 @@
 #include "Layer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
-#include "SetCameraEvent.h"
 #include "Texture.h"
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
+
+#include "geom/origin.h"
 
 #include "core/Statistics.h"
 
@@ -31,11 +32,12 @@ namespace gfx
 	class Program;
 	class ResourceManager;
 	class Scene;
+	class SetCameraEvent;
+	class SetOriginEvent;
 
 	// gfx::Daemon type
 	class Engine;
 	typedef ipc::Daemon<Engine> Daemon;
-	
 	
 	// The graphics Engine class. 
 	// Does all the donkey-work of bullying OpenGL 
@@ -43,14 +45,16 @@ namespace gfx
 	// into an array of pixels.
 	class Engine 
 	: public ipc::EngineBase<Engine, Object>
-	, private ipc::Listener<gfx::Engine, gfx::SetCameraEvent>
+	, private ipc::Listener<Engine, SetCameraEvent>
+	, private ipc::Listener<Engine, SetOriginEvent>
 	{
 		OBJECT_NO_COPY(Engine);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef ipc::Listener<gfx::Engine, gfx::SetCameraEvent> Listener;
+		typedef ipc::Listener<gfx::Engine, gfx::SetCameraEvent> SetCameraListener;
+		typedef ipc::Listener<gfx::Engine, gfx::SetOriginEvent> SetOriginListener;
 	public:
 		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Daemon<Engine> Daemon;
@@ -100,6 +104,9 @@ namespace gfx
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
+		void operator() (const SetOriginEvent & event) final;
+		geom::abs::Vector3 const & GetOrigin() const;
+
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
@@ -148,6 +155,7 @@ namespace gfx
 		
 		Scene * scene;
 		ResourceManager * _resource_manager;
+		geom::abs::Vector3 _origin;
 
 		//FrameBuffer frame_buffer;
 		//RenderBuffer depth_buffer;

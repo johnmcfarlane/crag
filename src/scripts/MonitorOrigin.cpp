@@ -18,6 +18,8 @@
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 
+#include "gfx/SetOriginEvent.h"
+
 #include "geom/origin.h"
 
 #include "applet/Applet.h"
@@ -74,7 +76,8 @@ namespace
 			auto new_origin = geom::RelToAbs(camera_pos, origin);
 
 			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
-			engine.SetOrigin(new_origin);
+			gfx::SetOriginEvent event = { new_origin };
+			applet::Daemon::Broadcast(event);
 		}
 	}
 }
