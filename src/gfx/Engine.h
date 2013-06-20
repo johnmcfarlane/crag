@@ -32,8 +32,8 @@ namespace gfx
 	class Program;
 	class ResourceManager;
 	class Scene;
-	class SetCameraEvent;
-	class SetOriginEvent;
+	struct SetCameraEvent;
+	struct SetOriginEvent;
 
 	// gfx::Daemon type
 	class Engine;
