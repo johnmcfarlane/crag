@@ -93,7 +93,32 @@ namespace gfx
 			up.x, up.y, up.z,
 			forward.x, forward.y, forward.z);
 	}
-
+	
+	// generates rotation of given angle around given axis
+	template<typename S>
+	geom::Matrix<S, 3, 3> Rotation(Direction direction, S angle)
+	{
+		auto cos = std::cos(angle);
+		auto sin = std::sin(angle);
+		
+		auto index0 = static_cast<std::size_t>(direction);
+		auto index1 = TriMod(index0 + 1);
+		auto index2 = TriMod(index1 + 1);
+		
+		geom::Matrix<S, 3, 3> rotation;
+		rotation[index0][index0] = 1;
+		rotation[index0][index1] = 0;
+		rotation[index0][index2] = 0;
+		rotation[index1][index0] = 0;
+		rotation[index1][index1] = cos;
+		rotation[index1][index2] = - sin;
+		rotation[index2][index0] = 0;
+		rotation[index2][index1] = sin;
+		rotation[index2][index2] = cos;
+		
+		return rotation;
+	}
+	
 	// converts matrix from world space to OpenGL space
 	template<typename S>
 	geom::Matrix<S, 4, 4> ToOpenGl(geom::Matrix<S, 4, 4> const & matrix)
