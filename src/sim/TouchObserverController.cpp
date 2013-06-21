@@ -101,7 +101,6 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 #if defined(CRAG_USE_TOUCH)
 		case SDL_FINGERDOWN:
 		{
-			DEBUG_MESSAGE("DOWN");
 			auto direction = GetPixelDirection(GetScreenPosition(event.tfinger), _transformation);
 			HandleFingerDown(direction, event.tfinger.fingerId);
 			break;
@@ -109,7 +108,6 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 			
 		case SDL_FINGERUP:
 		{
-			DEBUG_MESSAGE("UP");
 			HandleFingerUp(event.tfinger.fingerId);
 			ASSERT(_fingers.empty());
 			break;
@@ -122,7 +120,6 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 				break;
 			}
 
-			DEBUG_MESSAGE("MOVE");
 			auto direction = GetPixelDirection(GetScreenPosition(event.tfinger), GetDownTransformation());
 			HandleFingerMotion(direction, event.tfinger.fingerId);
 			break;
