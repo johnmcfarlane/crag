@@ -189,7 +189,7 @@ void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
 void Program::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
 {
 #if defined(CRAG_USE_GLES)
-	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, geom::Transposition(ToOpenGl(model_view_matrix)).GetArray()));
+	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, geom::Transposition(ToOpenGl(model_view_matrix)).GetArray()));
 #elif defined(CRAG_USE_GL)
 	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_TRUE, ToOpenGl(model_view_matrix).GetArray()));
 #endif
