@@ -13,11 +13,21 @@
 
 #include "Controller.h"
 
+#include "ipc/Listener.h"
+
 #include "core/EventWatcher.h"
+
+#include "geom/origin.h"
+#include "geom/Transformation.h"
 
 namespace physics
 {
 	class Body;
+}
+
+namespace gfx
+{
+	struct SetOriginEvent;
 }
 
 namespace sim
@@ -26,43 +36,54 @@ namespace sim
 
 	// controls an entity whose job it is to translate touch-screen events into 
 	// camera movement
-	class TouchObserverController : public Controller
+	class TouchObserverController 
+	: public Controller
+	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		// types
-		struct Finger
-		{
-			Vector2 down_position;
-			Vector2 position;
-			SDL_FingerID id;
-		};
-		
+		struct Finger;
 		typedef std::vector<Finger> FingerVector;
 
 	public:
 		// functions
-		TouchObserverController(Entity & entity, Vector3 const & position);
+		TouchObserverController(Entity & entity, Transformation const & transformation);
 		virtual ~TouchObserverController();
 
 	private:
 		void Tick();
 
+		void operator() (gfx::SetOriginEvent const & event) final;
+
 		void HandleEvents();
 		void HandleEvent(SDL_Event const & event);
-		void HandleFingerDown(Vector2 const & normalized_position, SDL_FingerID id);
+		void HandleFingerDown(Vector3 const & direction, SDL_FingerID id);
 		void HandleFingerUp(SDL_FingerID id);
-		void HandleFingerMotion(Vector2 const & normalized_position, SDL_FingerID id);
+		void HandleFingerMotion(Vector3 const & direction, SDL_FingerID id);
+		
+		void UpdateCamera();
+		void UpdateCameraRotation(Finger const & finger);
+		void UpdateCameraTranslation(Finger const & finger1, Finger const & finger2);
+		void SetTransformation(Transformation const & transformation);
 
 		physics::Body & GetBody();
 		physics::Body const & GetBody() const;
 		
 		FingerVector::iterator FindFinger(SDL_FingerID id);
+		FingerVector::const_iterator FindFinger(SDL_FingerID id) const;
+		bool IsDown(SDL_FingerID id) const;
+		
+		Transformation const & GetDownTransformation() const;
+		
+		Vector2 GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const;
+		Vector2 GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const;
+		Vector2 GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const;
 
-		static Vector2 NormalizedToScreen(Vector2 normalized_position);
+		Vector3 GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const;
 		
 		// variables
-		Vector3 _position;
+		Transformation _transformation;
+		geom::abs::Vector3 _origin;
 		FingerVector _fingers;
 		core::EventWatcher _event_watcher;
-		bool _collidable;
 	};
 }
