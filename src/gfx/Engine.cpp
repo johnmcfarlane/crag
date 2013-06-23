@@ -721,7 +721,6 @@ void Engine::InitRenderState()
 	GL_CALL(glFrontFace(GL_CCW));
 	GL_CALL(glCullFace(GL_BACK));
 	glDepthFunc(GL_LEQUAL);
-	GL_CALL(glClearDepthf(1.0f));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	VerifyRenderState();

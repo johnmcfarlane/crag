@@ -17,6 +17,8 @@
 #include <sys/resource.h>
 #endif
 
+using namespace app;
+
 namespace 
 {
 	bool _has_focus = true;
@@ -25,6 +27,62 @@ namespace
 	SDL_Renderer * renderer = nullptr;
 
 	int refresh_rate = -1;
+
+	FileResource::element_type * LoadFile(FILE & file, bool null_terminate)
+	{
+		// determine length
+		if (fseek(& file, 0, SEEK_END) != 0)
+		{
+			return nullptr;
+		}
+
+		auto length = ftell(& file);
+		if (length < 0)
+		{
+			return nullptr;
+		}
+
+		if (fseek(& file, 0, SEEK_SET) != 0)
+		{
+			return nullptr;
+		}
+
+		// prepare buffer
+		std::size_t size = length + null_terminate;
+		FileResource::element_type * buffer = new FileResource::element_type(size);
+		if (! buffer || buffer->size() != size)
+		{
+			DEBUG_MESSAGE("failed to allocated file buffer of " SIZE_T_FORMAT_SPEC " bytes", size);
+			return nullptr;
+		}
+
+		// read file
+		auto read = fread(& buffer->front(), 1, length, & file);
+		if (read != length)
+		{
+			DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file", read, length);
+			return nullptr;
+		}
+
+		// close file
+		if (fclose(& file) != 0)
+		{
+			DEBUG_MESSAGE("failed to close file");
+			return nullptr;
+		}
+
+		// append terminator
+		if (null_terminate)
+		{
+			(* buffer)[length] = '\0';
+
+			// If this happens, it probably means that a null terminator was read from the file.
+			ASSERT(strlen(buffer->data()) == length);
+		}
+
+		// success!
+		return buffer;
+	}
 }
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
@@ -123,58 +181,36 @@ void app::DeinitContext()
 	renderer = nullptr;
 }
 
-app::FileResource app::LoadFile(char const * filename, bool null_terminate)
+FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
+	AssertErrno();
+
+#if defined(__ANDROID__)
+	char path [PATH_MAX];
+	snprintf(path, PATH_MAX, "%s/%s", SDL_AndroidGetInternalStoragePath(), filename);
+	filename = path;
+#endif
+
 	// open file
-	SDL_RWops * source = SDL_RWFromFile(filename, "rb");
+	FILE * source = fopen(filename, "rb");
 	if (source == nullptr)
 	{
 		DEBUG_MESSAGE("failed to open file, '%s':", filename);
-		DEBUG_BREAK_SDL();
-		return FileResource();
-	}
-	
-	// determine length
-	auto length = static_cast<std::size_t>(SDL_RWseek(source, 0, SEEK_END));
-	SDL_RWseek(source, 0, SEEK_SET);
-
-	// prepare buffer
-	std::size_t size = length + null_terminate;
-	FileResource buffer(new app::FileResource::element_type(size));
-	if (! buffer || buffer->size() != size)
-	{
-		DEBUG_MESSAGE("failed to allocated " SIZE_T_FORMAT_SPEC " bytes file, '%s':", size, filename);
-		return FileResource();
-	}
-	
-	// read file
-	auto read = SDL_RWread(source, & buffer->front(), 1, length);
-	if (read != length)
-	{
-		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
-		DEBUG_BREAK_SDL();
+		AssertErrno();
 		return FileResource();
 	}
 
-	// close file
-	if (SDL_RWclose(source) != 0)
+	// load file
+	auto buffer = ::LoadFile(* source, null_terminate);
+	if (buffer == nullptr)
 	{
-		DEBUG_MESSAGE("failed to close file, '%s':", filename);
-		DEBUG_BREAK_SDL();
+		DEBUG_MESSAGE("error loading file, '%s':", filename);
+		AssertErrno();
 		return FileResource();
 	}
-	
-	// append terminator
-	if (null_terminate)
-	{
-		(* buffer)[length] = '\0';
-		
-		// If this happens, it probably means that a null terminator was read from the file.
-		ASSERT(strlen(buffer->data()) == length);
-	}
-	
-	// success!
-	return buffer;
+
+	// return file contents
+	return FileResource(buffer);
 }
 
 void app::Beep()
