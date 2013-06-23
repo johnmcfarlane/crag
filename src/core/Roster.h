@@ -27,7 +27,13 @@ namespace core
 
 			// the choice of Function here is entirely arbitrary;
 			// (it's the closest class to hand)
+#if ! defined(WIN32)
 			typedef Function ArbitraryClass;
+#else
+			struct ArbitraryBaseClass1 { virtual ~ArbitraryBaseClass1() { } };
+			struct ArbitraryBaseClass2 { virtual ~ArbitraryBaseClass2() { } };
+			class ArbitraryClass : public ArbitraryBaseClass1, ArbitraryBaseClass2 { };
+#endif
 			typedef void (ArbitraryClass::* ArbitraryMemberFunctionType)();
 
 			struct FunctionPointerBuffer
@@ -71,7 +77,7 @@ namespace core
 			void Set(FUNCTION member_function)
 			{
 				static_assert(sizeof(FunctionPointerBuffer) >= sizeof(member_function), "FunctionPointerBuffer isn't big enough to store given function pointer");
-				static_assert(sizeof(ArbitraryMemberFunctionType) == sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
+				static_assert(sizeof(ArbitraryMemberFunctionType) >= sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
 				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
 				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
 				transmogrifier.member_function = member_function;

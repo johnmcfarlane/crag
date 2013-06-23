@@ -15,6 +15,11 @@
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
 
+#if defined(WIN32)
+#include "gfx/SetCameraEvent.h"
+#include "gfx/SetOriginEvent.h"
+#endif
+
 #include "geom/origin.h"
 
 #include "core/Singleton.h"

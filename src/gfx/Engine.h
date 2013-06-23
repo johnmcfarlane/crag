@@ -17,6 +17,11 @@
 #include "RenderBuffer.h"
 #include "Texture.h"
 
+#if defined(WIN32)
+#include "SetCameraEvent.h"
+#include "SetOriginEvent.h"
+#endif
+
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"

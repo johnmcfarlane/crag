@@ -252,8 +252,9 @@
     <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
     <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
-    <ClInclude Include="..\..\src\sim\ObserverController.h" />
+    <ClInclude Include="..\..\src\sim\MouseObserverController.h" />
     <ClInclude Include="..\..\src\sim\ObserverInput.h" />
+    <ClInclude Include="..\..\src\sim\TouchObserverController.h" />
     <ClInclude Include="..\..\src\smp\for_each.h" />
     <ClInclude Include="..\..\src\smp\Future.h" />
     <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
@@ -390,8 +391,9 @@
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
     <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
-    <ClCompile Include="..\..\src\sim\ObserverController.cpp" />
+    <ClCompile Include="..\..\src\sim\MouseObserverController.cpp" />
     <ClCompile Include="..\..\src\sim\ObserverInput.cpp" />
+    <ClCompile Include="..\..\src\sim\TouchObserverController.cpp" />
     <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
     <ClCompile Include="..\..\src\smp\scheduler.cpp" />
     <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
