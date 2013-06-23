@@ -53,7 +53,7 @@ namespace form
 		
 	public:
 		geom::abs::Sphere3 _shape;
-		Formation & _formation;
 		RootNode _root_node;	// Exists purely so that all 'real' nodes have a parent.
+		Formation & _formation;
 	};
 }

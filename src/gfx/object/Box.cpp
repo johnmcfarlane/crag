@@ -11,6 +11,7 @@
 
 #include "Box.h"
 
+#include "gfx/axes.h"
 #include "gfx/Cuboid.h"
 #include "gfx/Engine.h"
 #include "gfx/Program.h"
@@ -42,8 +43,7 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 bool Box::GetRenderRange(RenderRange & range) const 
 { 
 	Transformation const & transformation = GetModelViewTransformation();
-	Transformation::Matrix44 const & transformation_matrix = transformation.GetMatrix();
-	Scalar depth = transformation_matrix[1][3];
+	Scalar depth = GetDepth(transformation);
 
 	// This could be improved by sampling each of the 8 corners of the box
 	// but it probably isn't worth the clock cycles to do that.

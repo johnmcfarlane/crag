@@ -20,10 +20,10 @@
 
 #if defined(__ppc__)
 #include <ppc_intrinsics.h>
-#elif defined(__SSE__)
+#endif
+
+#if defined(__SSE__)
 #include <xmmintrin.h>
-#else
-#error Using intel chipset but __SSE__ not defined. (Hint: GCC uses -msse.)
 #endif
 
 
@@ -123,7 +123,9 @@ inline double FastInvSqrt(double a)
 	return __frsqrte(a);
 }
 
-#elif defined(__SSE__)
+#endif	// defined(__ppc__)
+
+#if defined(__SSE__)
 
 inline float FastInvSqrt ( float f )
 {
@@ -150,9 +152,9 @@ inline double FastInvSqrt (double d)
 	return r;
 }
 
-#else
+#endif	// defined(__SSE__)
 
-#error No sneaky inverse square root intrinsics discerned.
+#if defined(__ANDROID__)
 
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
@@ -160,8 +162,7 @@ template<typename T> T FastInvSqrt(T a)
 	ASSERT(a != 0);
 	return Inverse(sqrt(a));
 }
-
-#endif
+#endif	// defined(__ANDROID__))
 
 template <typename T>
 inline T CubeRoot(T a)

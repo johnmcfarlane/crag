@@ -17,17 +17,92 @@
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
+// heap error checking
+
+#if ! defined(NDEBUG)
+//#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
+#endif
+
+#if defined(CRAG_DEBUG_ENABLE_CHECK_MEMORY)
+
+namespace
+{
+	int check_line = -1;
+	char const * check_file = "unknown";
+	
+	// called when dlmalloc hits an error which doesn't crash it
+	void OnMemoryError()
+	{
+		size_t const check_memory_message_size = 4096;
+		char check_memory_message[check_memory_message_size];
+		snprintf(check_memory_message, check_memory_message_size, "memory corruption detected by %s:%d", check_file, check_line);
+		puts(check_memory_message);
+		abort();
+	}
+}
+
+#if ! defined(WIN32)
+#define CRAG_USE_DLMALLOC
+#if defined(DEBUG) || defined(USE_DL_PREFIX) || defined(USE_RECURSIVE_LOCKS) || defined(MALLOC_INSPECT_ALL)
+#error dlalloc macros already defined
+#endif
+
+#define ABORT OnMemoryError()
+
+#define ABORT_ON_ASSERT_FAILURE 1
+#define DEBUG 1
+#define FOOTERS 1
+#define INSECURE 1
+#define MALLOC_ALIGNMENT 8
+#define MALLOC_INSPECT_ALL 1
+#define PROCEED_ON_ERROR 0
+#define USE_DL_PREFIX 1
+#define USE_LOCKS 1
+
+#include "dlmalloc.c"
+#endif	// ! defined(WIN32)
+
+// called to initiate a walk of the heap in pursuit of memory corruptioN
+void DebugCheckMemory(int line, char const * filename)
+{
+	check_line = line;
+	check_file = filename;
+
+#if defined(WIN32)
+	HANDLE hHeap = GetProcessHeap();
+	if (! HeapValidate(hHeap, 0, nullptr))
+	{
+		OnMemoryError();
+	}
+#else
+	check_malloc_state(gm);
+#endif
+
+	check_line = -1;
+	check_file = "?";
+}
+#else
+void DebugCheckMemory(int, char const *)
+{
+}
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
 // Alignment-friendly allocation
 
 void * Allocate(size_t num_bytes, size_t alignment)
 {
-#if defined(WIN32)
+#if defined(CRAG_USE_DLMALLOC)
+	return dlmemalign(alignment, num_bytes);
+#elif defined(WIN32)
 	return _aligned_malloc(num_bytes, alignment);
 #elif defined(__APPLE__)
 	// Apple deliberately prevent use of posix_memalign. 
 	// Malloc is guaranteed to be 16-byte aligned. 
 	// Anything requiring greater alignment can simply run slower on mac.
 	return malloc(num_bytes);
+#elif defined(__ANDROID__)
+	return memalign(alignment, num_bytes);
 #else
 	void * allocation;
 	int error = posix_memalign(& allocation, alignment, num_bytes);
@@ -53,10 +128,14 @@ void * Allocate(size_t num_bytes, size_t alignment)
 
 void Free(void * allocation)
 {
-#if ! defined(WIN32)
+#if defined(CRAG_USE_DLMALLOC)
+	return dlfree(allocation);
+#elif defined(WIN32)
+	return _aligned_free(allocation);
+#elif defined(__ANDROID__)
 	return free(allocation);
 #else
-	return _aligned_free(allocation);
+	return free(allocation);
 #endif
 }
 
@@ -93,7 +172,9 @@ void * AllocatePage(size_t num_bytes)
 	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
 
 	// allocate
-#if defined(WIN32)
+#if defined(CRAG_USE_DLMALLOC)
+	void * p = dlvalloc(num_bytes);
+#elif defined(WIN32)
 	void * p = VirtualAlloc(nullptr, num_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
 	void * p = mmap(nullptr, num_bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
@@ -101,7 +182,9 @@ void * AllocatePage(size_t num_bytes)
 
 	if (p == nullptr)
 	{
-#if defined(WIN32)
+#if defined(CRAG_USE_DLMALLOC)
+		DEBUG_BREAK("dlvalloc(" SIZE_T_FORMAT_SPEC ") failed with error code, %X", num_bytes, errno);
+#elif defined(WIN32)
 		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
 #else
 		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
@@ -115,7 +198,9 @@ void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
-#if defined(WIN32)
+#if defined(CRAG_USE_DLMALLOC)
+	dlfree(allocation);
+#elif defined(WIN32)
 	if (! VirtualFree(allocation, 0, MEM_RELEASE))
 	{
 		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
@@ -129,125 +214,45 @@ void FreePage(void * allocation, size_t num_bytes)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Global new/delete operators for measuring the number of leaks
+// Global new/delete operators redirect to custom allocation routines
 
-#if ! defined(NDEBUG) && 0
-
-namespace
-{
-	int allocation_counter_throw;
-	int allocation_counter_nothrow;
-	int allocation_counter_throw_array;
-	int allocation_counter_nothrow_array;
-	bool allocation_counters_initialized = false;
-}
-
+// TODO: Make this stuff play nice on windows.
+// As well as not liking the exception, there is a mismatch somewhere 
+// which manifests itself as an assert deep within std::mutex
+#if ! defined(WIN32)
 void * operator new (std::size_t size) throw (std::bad_alloc)
 {
-	if (allocation_counters_initialized)
-	{
-		++ allocation_counter_throw;
-	}
-	
-	return Allocate(size, std::min(16ul, size));
+	return Allocate(size);
 }
 void operator delete (void* ptr) throw ()
 {
 	Free(ptr);
-	
-	if (allocation_counters_initialized)
-	{
-		-- allocation_counter_throw;
-	}
 }
 
-void * operator new (std::size_t size, const std::nothrow_t& nothrow_constant) throw()
+void * operator new (std::size_t size, const std::nothrow_t &) throw()
 {
-	if (allocation_counters_initialized)
-	{
-		++ allocation_counter_nothrow;
-	}
-	
-	return Allocate(size, std::min(16ul, size));
+	return Allocate(size);
 }
-void operator delete (void* ptr, const std::nothrow_t& nothrow_constant) throw()
+void operator delete (void* ptr, const std::nothrow_t &) throw()
 {
 	Free(ptr);
-	
-	if (allocation_counters_initialized)
-	{
-		-- allocation_counter_nothrow;
-	}
 }
 
 void * operator new[] (std::size_t size) throw (std::bad_alloc)
 {
-	void * ptr = Allocate(size, std::min(16ul, size));
-	
-	if (allocation_counters_initialized)
-	{
-		++ allocation_counter_throw_array;
-	}
-	
-	return ptr;
+	return Allocate(size);
 }
 void operator delete[] (void* ptr) throw ()
 {
 	Free(ptr);
-
-	if (allocation_counters_initialized)
-	{
-		-- allocation_counter_throw_array;
-	}
 }
 
-void * operator new[] (std::size_t size, const std::nothrow_t& nothrow_constant) throw()
+void * operator new[] (std::size_t size, const std::nothrow_t &) throw()
 {
-	if (allocation_counters_initialized)
-	{
-		++ allocation_counter_nothrow_array;
-	}
-	
-	return Allocate(size, std::min(16ul, size));
+	return Allocate(size);
 }
-void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant) throw()
+void operator delete[] (void* ptr, const std::nothrow_t &) throw()
 {
 	Free(ptr);
-	
-	if (allocation_counters_initialized)
-	{
-		-- allocation_counter_nothrow_array;
-	}
 }
-
-void InitAllocationCounters()
-{
-	ASSERT(! allocation_counters_initialized);
-	allocation_counter_throw = 0;
-	allocation_counter_nothrow = 0;
-	allocation_counter_throw_array = 0;
-	allocation_counter_nothrow_array = 0;
-	allocation_counters_initialized = true;
-}
-
-void DeinitAllocationCounters()
-{
-	ASSERT(allocation_counters_initialized);
-	ASSERT(allocation_counter_throw == 0);
-	ASSERT(allocation_counter_nothrow == 0);
-	ASSERT(allocation_counter_throw_array == 0);
-	ASSERT(allocation_counter_nothrow_array == 0);
-	allocation_counters_initialized = false;
-}
-
-#else
-
-void InitAllocationCounters()
-{
-}
-
-void DeinitAllocationCounters()
-{
-}
-
-#endif
+#endif	// WIN32

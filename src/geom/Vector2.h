@@ -100,11 +100,6 @@ namespace geom
 			lhs.y == rhs.y;
 	}
 
-	template<typename S> bool operator != (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
-	{
-		return ! (lhs == rhs);
-	}
-
 	template<typename S> Vector<S, 2> & operator += (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
 	{
 		lhs.x += rhs.x;
@@ -133,13 +128,6 @@ namespace geom
 		return lhs;
 	}
 
-	template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, S rhs)
-	{
-		lhs.x /= rhs;
-		lhs.y /= rhs;
-		return lhs;
-	}
-
 	template<typename S> Vector<S, 2> & operator /= (Vector<S, 2> & lhs, Vector<S, 2> const & rhs)
 	{
 		lhs.x /= rhs.x;
@@ -147,51 +135,21 @@ namespace geom
 		return lhs;
 	}
 
-	template<typename S> Vector<S, 2> operator - (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
-	{
-		Vector<S, 2> result = lhs;
-		return result -= rhs;
-	}
-
-	template<typename S> Vector<S, 2> operator + (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
-	{
-		Vector<S, 2> result = lhs;
-		return result += rhs;
-	}
-
-	template<typename S> Vector<S, 2> operator * (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
-	{
-		Vector<S, 2> result = lhs;
-		return result *= rhs;
-	}
-
-	template<typename S> Vector<S, 2> operator * (Vector<S, 2> const & lhs, S rhs)
-	{
-		Vector<S, 2> result = lhs;
-		return result *= rhs;
-	}
-
-	template<typename S> Vector<S, 2> operator / (Vector<S, 2> const & lhs, S rhs)
-	{
-		Vector<S, 2> result = lhs;
-		return result /= rhs;
-	}
-
-	template<typename S> Vector<S, 2> operator / (Vector<S, 2> lhs, Vector<S, 2> const & rhs)
-	{
-		return lhs /= rhs;
-	}
-
-	template<typename S> S LengthSq(Vector<S, 2> const & v)
-	{
-		return v.x * v.x + v.y * v.y;
-	}
-
 	template<typename S> S DotProduct(Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
 	
+	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 2> const & v)
+	{
+		return out << v.x << ',' << v.y;
+	}
+
+	template<typename S> std::istream & operator >> (std::istream & in, Vector<S, 2> const & v)
+	{
+		return in >> v.x >> ',' >> v.y;
+	}
+
 	//////////////////////////////////////////////////////////////////
 	// Vector<T, 2> aliases
 	

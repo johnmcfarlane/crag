@@ -9,6 +9,8 @@
 
 #pragma once
 
+#if defined(CRAG_USE_FIBER_POSIX)
+
 #include <ucontext.h>
 
 #if defined(__LLP64__) || defined(__LP64__)
@@ -84,3 +86,5 @@ namespace ipc
 		ucontext_t _context;
 	};
 }
+
+#endif	// ! defined(WIN32) && ! defined(__ANDROID__)

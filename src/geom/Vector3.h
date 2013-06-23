@@ -95,7 +95,7 @@ namespace geom
 		S x, y, z;
 	};
 
-	// casts between 3d matrices of different scalar types
+	// casts between 3d vector of different scalar types
 	template <typename LHS_S, typename RHS_S>
 	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
 	{
@@ -111,11 +111,6 @@ namespace geom
 			lhs.x == rhs.x && 
 			lhs.y == rhs.y && 
 			lhs.z == rhs.z;
-	}
-
-	template<typename S> bool operator != (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)
-	{
-		return ! (lhs == rhs);
 	}
 
 	template<typename S> inline Vector<S, 3> & operator += (Vector<S, 3> & lhs, Vector<S, 3> const & rhs)
@@ -142,45 +137,9 @@ namespace geom
 		return lhs;
 	}
 
-	template<typename S> Vector<S, 3> & operator /= (Vector<S, 3> & lhs, S rhs)
-	{
-		auto inverse_rhs = ::Inverse(rhs);
-		return lhs *= inverse_rhs;
-	}
-
 	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & rhs)
 	{
 		return Vector<S, 3>(- rhs.x, - rhs.y, - rhs.z);
-	}
-
-	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> lhs, Vector<S, 3> const & rhs)
-	{
-		return lhs -= rhs;
-	}
-
-	template<typename S> inline Vector<S, 3> operator + (Vector<S, 3> lhs, Vector<S, 3> const & rhs)
-	{
-		return lhs += rhs;
-	}
-
-	template<typename S> inline Vector<S, 3> operator * (Vector<S, 3> lhs, S rhs)
-	{
-		return lhs *= rhs;
-	}
-
-	template<typename S> inline Vector<S, 3> operator * (S lhs, Vector<S, 3> rhs)
-	{
-		return rhs *= lhs;
-	}
-
-	template<typename S> Vector<S, 3> operator / (Vector<S, 3> lhs, S rhs)
-	{
-		return lhs /= rhs;
-	}
-
-	template<typename S> inline S LengthSq(Vector<S, 3> const & v)
-	{
-		return v.x * v.x + v.y * v.y + v.z * v.z;
 	}
 
 	template<typename S> S DotProduct(Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)

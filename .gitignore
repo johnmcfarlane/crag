@@ -1,5 +1,14 @@
 *~
 .DS_Store
+
+android/bin
+android/gen
+android/jni/gen
+android/jni/SDL
+!android/jni/SDL/include/SDL_config.h
+android/libs/
+android/obj
+
 /backtrace
 CMakeCache.txt
 CMakeFiles/
@@ -8,7 +17,7 @@ cerr.txt
 cout.txt
 cmake_install.cmake
 /core
-crag
+/crag
 crag.cfg
 default.cfg
 dependencies/SDL*

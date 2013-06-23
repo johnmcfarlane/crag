@@ -62,7 +62,7 @@ namespace form
 		}
 		
 		typedef size_t flag_type;
-		static flag_type const flag_mask = 0x3f;
+		static flag_type const flag_mask = sizeof(void*) - 1;
 		static flag_type const pointer_mask = ~ flag_mask;
 		
 		flag_type GetFlags() const { return flags_and_children & flag_mask; }

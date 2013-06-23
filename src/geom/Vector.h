@@ -21,4 +21,59 @@ namespace geom
 	{
 		return rhs;
 	}
+
+	// common operations
+	template <typename S, int N> 
+	bool operator != (Vector<S, N> const & lhs, Vector<S, N> const & rhs)
+	{
+		return ! (lhs == rhs);
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> operator - (Vector<S, N> lhs, Vector<S, N> const & rhs)
+	{
+		return lhs -= rhs;
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> operator + (Vector<S, N> lhs, Vector<S, N> const & rhs)
+	{
+		return lhs += rhs;
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> operator * (Vector<S, N> lhs, Vector<S, N> const & rhs)
+	{
+		return lhs *= rhs;
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> operator * (Vector<S, N> lhs, S rhs)
+	{
+		return lhs *= rhs;
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> operator * (S lhs, Vector<S, N> rhs)
+	{
+		return rhs *= lhs;
+	}
+
+	template <typename S, int N> 
+	Vector<S, N> & operator /= (Vector<S, N> & lhs, S rhs)
+	{
+		return lhs *= (static_cast<S>(1) / rhs);
+	}
+
+	template <typename S, int N>
+	Vector<S, N> operator / (Vector<S, N> lhs, S rhs)
+	{
+		return lhs /= rhs;
+	}
+
+	template<typename S, int N>
+	S LengthSq(Vector<S, N> const & v)
+	{
+		return DotProduct(v, v);
+	}
 }

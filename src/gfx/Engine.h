@@ -15,10 +15,14 @@
 #include "Layer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
+#include "SetCameraEvent.h"
 #include "Texture.h"
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
+#include "ipc/Listener.h"
+
+#include "geom/origin.h"
 
 #include "core/Statistics.h"
 
@@ -29,30 +33,29 @@ namespace gfx
 	class Program;
 	class ResourceManager;
 	class Scene;
+	struct SetCameraEvent;
+	struct SetOriginEvent;
 
 	// gfx::Daemon type
 	class Engine;
 	typedef ipc::Daemon<Engine> Daemon;
 	
-	
 	// The graphics Engine class. 
 	// Does all the donkey-work of bullying OpenGL 
 	// into turning the simulated world
 	// into an array of pixels.
-	class Engine : public ipc::EngineBase<Engine, Object>
+	class Engine 
+	: public ipc::EngineBase<Engine, Object>
+	, private ipc::Listener<Engine, SetCameraEvent>
+	, private ipc::Listener<Engine, SetOriginEvent>
 	{
 		OBJECT_NO_COPY(Engine);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		enum ForegroundRenderPass
-		{
-			NormalPass,
-			WireframePass1,
-			WireframePass2
-		};
-		
+		typedef ipc::Listener<gfx::Engine, gfx::SetCameraEvent> SetCameraListener;
+		typedef ipc::Listener<gfx::Engine, gfx::SetOriginEvent> SetOriginListener;
 	public:
 		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Daemon<Engine> Daemon;
@@ -92,7 +95,6 @@ namespace gfx
 		void OnSetReady(bool ready);
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
-		void OnToggleWireframe();
 		
 		void SetFlatShaded(bool flat_shaded);
 		bool GetFlatShaded() const;
@@ -101,8 +103,10 @@ namespace gfx
 		bool GetFragmentLighting() const;
 
 		void OnToggleCapture();
-		void OnSetCamera(Transformation const & transformation);
-		Transformation const& GetCamera() const;
+		void operator() (const SetCameraEvent & event) final;
+
+		void operator() (const SetOriginEvent & event) final;
+		geom::abs::Vector3 const & GetOrigin() const;
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -127,9 +131,9 @@ namespace gfx
 		void RenderScene();
 		
 		void InvalidateUniforms();
-		bool BeginRenderForeground(ForegroundRenderPass pass) const;
-		void RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass);
-		void EndRenderForeground(ForegroundRenderPass pass) const;
+		bool BeginRenderForeground() const;
+		void RenderForegroundPass(Matrix44 const & projection_matrix);
+		void EndRenderForeground() const;
 		
 		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
@@ -150,9 +154,9 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		SDL_GLContext context;
 		Scene * scene;
 		ResourceManager * _resource_manager;
+		geom::abs::Vector3 _origin;
 
 		//FrameBuffer frame_buffer;
 		//RenderBuffer depth_buffer;
@@ -166,7 +170,6 @@ namespace gfx
 		bool _dirty;
 		bool vsync;
 		bool culling;
-		bool wireframe;
 		bool _flat_shaded;
 		bool _fragment_lighting;
 		int capture_frame;

@@ -18,6 +18,8 @@
 #include "form/Engine.h"
 #include "form/node/NodeBuffer.h"
 
+#include "gfx/SetOriginEvent.h"
+
 #include "geom/origin.h"
 
 #include "applet/Applet.h"
@@ -56,12 +58,12 @@ namespace
 	
 	void ReviseOrigin(sim::Engine & engine)
 	{
-		auto& physics_engine = engine.GetPhysicsEngine();
-		auto& scene = physics_engine.GetScene();
-		auto& node_buffer = scene.GetNodeBuffer();
+		auto & physics_engine = engine.GetPhysicsEngine();
+		auto & scene = physics_engine.GetScene();
+		auto & node_buffer = scene.GetNodeBuffer();
 
-		auto& camera_ray = engine.GetCamera();
-		auto& camera_pos = camera_ray.position;
+		auto & camera_ray = engine.GetCamera();
+		auto & camera_pos = camera_ray.position;
 		auto min_leaf_distance_squared = node_buffer.GetMinLeafDistanceSquared();
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
@@ -74,7 +76,8 @@ namespace
 			auto new_origin = geom::RelToAbs(camera_pos, origin);
 
 			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
-			engine.SetOrigin(new_origin);
+			gfx::SetOriginEvent event = { new_origin };
+			applet::Daemon::Broadcast(event);
 		}
 	}
 }

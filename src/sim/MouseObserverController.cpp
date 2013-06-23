@@ -9,16 +9,15 @@
 
 #include "pch.h"
 
-#include "ObserverController.h"
+#include "MouseObserverController.h"
 
-#include "axes.h"
 #include "Engine.h"
 #include "Entity.h"
 #include "ObserverInput.h"
 
 #include "physics/Body.h"
 
-#include "gfx/Engine.h"
+#include "gfx/SetCameraEvent.h"
 
 #include "ipc/Daemon.h"
 
@@ -48,30 +47,30 @@ namespace
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// ObserverController member definitions
+// MouseObserverController member definitions
 
 using namespace sim;
 
-ObserverController::ObserverController(Entity & entity)
+MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& ObserverController::Tick, & Entity::Tick);
-	roster.AddCommand(* this, & ObserverController::Tick);
+	roster.AddOrdering(& MouseObserverController::Tick, & Entity::Tick);
+	roster.AddCommand(* this, & MouseObserverController::Tick);
 }
 
-ObserverController::~ObserverController()
+MouseObserverController::~MouseObserverController()
 {
 	// roster
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & ObserverController::Tick);
+	roster.RemoveCommand(* this, & MouseObserverController::Tick);
 
 	// record speed in config file
 	observer_speed = _speed;
 }
 
-void ObserverController::Tick()
+void MouseObserverController::Tick()
 {
 	// send last location update to rendered etc.
 	UpdateCamera();
@@ -86,7 +85,7 @@ void ObserverController::Tick()
 	ApplyInput(input);
 }
 
-void ObserverController::HandleEvents(ObserverInput & input)
+void MouseObserverController::HandleEvents(ObserverInput & input)
 {
 	SDL_Event event;
 	while (_event_watcher.PopEvent(event))
@@ -95,7 +94,7 @@ void ObserverController::HandleEvents(ObserverInput & input)
 	}
 }
 
-void ObserverController::HandleEvent(ObserverInput & input, SDL_Event const & event)
+void MouseObserverController::HandleEvent(ObserverInput & input, SDL_Event const & event)
 {
 	switch (event.type)
 	{
@@ -117,7 +116,7 @@ void ObserverController::HandleEvent(ObserverInput & input, SDL_Event const & ev
 }
 
 // returns false if it's time to quit
-void ObserverController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
+void MouseObserverController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 {
 	if (! down)
 	{
@@ -146,13 +145,13 @@ void ObserverController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 	}
 }
 
-void ObserverController::HandleMouseMove(ObserverInput & input, SDL_MouseMotionEvent const & motion) const
+void MouseObserverController::HandleMouseMove(ObserverInput & input, SDL_MouseMotionEvent const & motion) const
 {
-	input[ObserverInput::rotation].x -= motion.yrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
-	input[ObserverInput::rotation].z -= motion.xrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
+	input[ObserverInput::rotation].x += motion.yrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
+	input[ObserverInput::rotation].y += motion.xrel * observer_mouse_sensitivity_platform_factor * observer_mouse_sensitivity;
 }
 
-void ObserverController::ScaleInput(ObserverInput & input) const
+void MouseObserverController::ScaleInput(ObserverInput & input) const
 {
 	Scalar dt = Scalar(sim_tick_duration);
 
@@ -164,40 +163,34 @@ void ObserverController::ScaleInput(ObserverInput & input) const
 	input[ObserverInput::rotation] *= rotation_factor;
 }
 
-void ObserverController::ApplyInput(ObserverInput const & input)
+void MouseObserverController::ApplyInput(ObserverInput const & input)
 {
 	auto& body = GetBody();
 	body.AddRelForce(input [ObserverInput::translation]);
 	body.AddRelTorque(input [ObserverInput::rotation]);
 }
 
-void ObserverController::UpdateCamera() const
+void MouseObserverController::UpdateCamera() const
 {
 	auto& body = GetBody();
 	auto position = body.GetPosition();
 	auto rotation = body.GetRotation();
 	Transformation transformation (position, rotation);
-	auto camera_ray = axes::GetCameraRay(transformation);
 
-	// update sim (sends message to gfx)
-	auto& engine = GetEntity().GetEngine();
-	engine.SetCamera(camera_ray);
-
-	// update gfx
-	// TODO: communicate this through the Entity's branch node
-	gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
-		engine.OnSetCamera(transformation);
-	});
+	// broadcast new camera position
+	gfx::SetCameraEvent event;
+	event.transformation = transformation;
+	Daemon::Broadcast(event);
 }
 
-physics::Body & ObserverController::GetBody()
+physics::Body & MouseObserverController::GetBody()
 {
 	auto& entity = GetEntity();
 	auto& location = ref(entity.GetLocation());
 	return ref(location.GetBody());
 }
 
-physics::Body const & ObserverController::GetBody() const
+physics::Body const & MouseObserverController::GetBody() const
 {
 	auto& entity = GetEntity();
 	auto& location = ref(entity.GetLocation());

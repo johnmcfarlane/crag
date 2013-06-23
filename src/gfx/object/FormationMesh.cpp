@@ -124,8 +124,8 @@ LeafNode::PreRenderResult FormationMesh::PreRender()
 void FormationMesh::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	form::MeshBufferObject const & front_buffer = mbo_buffers.front();
-	auto& front_buffer_origin = front_buffer.GetOrigin();
-	auto& gfx_origin = GetEngine().GetOrigin();
+	auto & front_buffer_origin = front_buffer.GetOrigin();
+	auto & gfx_origin = GetEngine().GetOrigin();
 	auto offset = front_buffer_origin - gfx_origin;
 
 	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));

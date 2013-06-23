@@ -19,15 +19,16 @@
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
-#include "sim/axes.h"
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
 #include "physics/SphericalBody.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Skybox.h"
+#include "gfx/SetCameraEvent.h"
 
 #include "geom/origin.h"
 
@@ -201,11 +202,10 @@ void MainScript(applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		sim::Matrix33 rotation = axes::Rotation(Vector3f(0, 1, 0), Vector3f(1, 0, 0));
-		sim::Transformation transformation(geom::Cast<sim::Scalar>(observer_start_pos), rotation);
-		gfx::Daemon::Call([transformation] (gfx::Engine & engine) {
-			engine.OnSetCamera(transformation);
-		});
+		sim::Matrix33 rotation = gfx::Rotation(Vector3f(0, 1, 0), Vector3f(1, 0, 0));
+		gfx::SetCameraEvent event;
+		event.transformation = sim::Transformation(geom::Cast<sim::Scalar>(observer_start_pos), rotation);
+		applet::Daemon::Broadcast(event);
 	}
 	
 	// Create sun. 

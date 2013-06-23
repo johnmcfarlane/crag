@@ -12,7 +12,29 @@
 #include "core/debug.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-// PrintMessage definition
+// core::DebugSetThreadName/DebugSetThreadName definitions
+
+#if ! defined(NDEBUG)
+namespace
+{
+	constexpr auto _thread_name_max_len = 16;
+	thread_local char _thread_name[_thread_name_max_len + 1] = "";
+}
+
+void core::DebugSetThreadName(char const * thread_name)
+{
+	strncpy(_thread_name, thread_name, _thread_name_max_len);
+	_thread_name[_thread_name_max_len] = '\0';
+}
+
+char const * core::DebugGetThreadName()
+{
+	return _thread_name;
+}
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+// core::PrintMessage definition
 
 namespace
 {
@@ -45,6 +67,23 @@ namespace
 
 		// send buffer to debugging console
 		OutputDebugStringA(buffer);
+	}
+
+#elif defined(__ANDROID__)
+
+	void VFPrintF(FILE * out, char const * format, va_list args)
+	{
+		android_LogPriority priority;
+		if (out == stderr)
+		{
+			priority = ANDROID_LOG_ERROR;
+		}
+		else
+		{
+			priority = ANDROID_LOG_WARN;
+		}
+		
+		__android_log_vprint(priority, "crag_log", format, args);
 	}
 
 #else

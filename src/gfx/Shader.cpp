@@ -17,6 +17,53 @@
 
 using namespace gfx;
 
+namespace
+{
+	std::size_t GetNumLines(char const * source)
+	{
+		std::size_t num_lines = 1;
+		while (true)
+		{
+			switch (* source)
+			{
+				case '\0':
+					return num_lines;
+					
+				case '\n':
+					++ num_lines;
+			}
+			
+			++ source;
+		}
+	}
+	
+	void EraseQualifier(char * source, char const * pattern)
+	{
+		ASSERT(source != nullptr);
+		ASSERT(pattern != nullptr);
+		
+		auto pattern_length = strlen(pattern);
+		if (pattern_length == 0)
+		{
+			DEBUG_BREAK("empty pattern string");
+			return;
+		}
+		
+		while (*source != '\0')
+		{
+			if (strncmp(source, pattern, pattern_length) == 0)
+			{
+				std::fill(source, source + pattern_length, ' ');
+				source += pattern_length;
+			}
+			else
+			{
+				++ source;
+			}
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Shader member definitions
 
@@ -32,34 +79,79 @@ Shader::~Shader()
 	assert(! IsInitialized());
 }
 
-bool Shader::Init(char const * filename, GLenum shader_type)
+bool Shader::Init(char const * const * filenames, GLenum shader_type)
 {
-	std::vector<char> sphere_shader_source;
+	typedef app::FileResource::element_type Buffer;
+	typedef std::vector<app::FileResource> BufferArray;
 	
-	if (! app::LoadFile(filename, sphere_shader_source))
+	auto filenames_end = filenames;
+	while (* filenames_end)
 	{
-		AssertErrno();
-		return false;
+		++ filenames_end;
+	}
+	
+	auto num_strings = filenames_end - filenames;
+	
+	// load individual shader files
+#if defined(WIN32)
+	auto string_array = static_cast<char const * *>(_malloca(num_strings * sizeof(char const *)));
+#else
+	char const * string_array [num_strings];
+#endif
+	BufferArray source_buffers(num_strings);
+	for (auto index = 0; index != num_strings; ++ index)
+	{
+		char const * filename = filenames[index];
+		
+		auto source_buffer = app::LoadFile(filename, true);
+		if (! source_buffer)
+		{
+			return false;
+		}
+		
+#if ! defined(CRAG_USE_GLES)
+		// earlier version of desktop GLSL fail to ignore these
+		EraseQualifier(source_buffer->data(), "lowp");
+		EraseQualifier(source_buffer->data(), "mediump");
+		EraseQualifier(source_buffer->data(), "highp");
+#endif
+		
+		string_array[index] = source_buffer->data();
+		
+		source_buffers[index] = std::move(source_buffer);
 	}
 	
 	// Create the shader.
-	_id = glCreateShader(shader_type);
+	GL_CALL(_id = glCreateShader(shader_type));
+	if (_id == 0)
+	{
+		return false;
+	}
+	
+	GL_CALL(glShaderSource(_id, num_strings, string_array, nullptr));
 
-	char const * sphere_shader_source_string[1] = { & sphere_shader_source[0] };
-	int sphere_shader_source_size[1] = { int(sphere_shader_source.size()) };
-	GL_CALL(glShaderSource(_id, 1, sphere_shader_source_string, sphere_shader_source_size));
+#if defined(WIN32)
+	_freea(string_array);
+#endif
 
 	GL_CALL(glCompileShader(_id));
 	
 	// Check for errors in the source code.
 	if (! IsCompiled())
 	{
-		ERROR_MESSAGE("Failed to compile shader, '%s'.", filename);
+		ERROR_MESSAGE("Failed to compile shader:");
 
 #if ! defined(NDEBUG)
-		std::string info_log;
-		GetInfoLog(info_log);
-		DEBUG_BREAK("Shader info log: \n%s", info_log.c_str());
+		auto line_start = 0;
+		for (auto i = 0; i < num_strings; ++ i)
+		{
+			auto line_end = line_start + GetNumLines(string_array[i]) - 1;
+			DEBUG_MESSAGE("%s [%d,%d]'.", filenames[i], line_start, line_end);
+			line_start = line_end;
+		}
+
+		std::vector<char> info_log = GetInfoLog();
+		DEBUG_MESSAGE("Shader info log: %s", info_log.data());
 #endif
 		
 		Deinit();
@@ -85,20 +177,30 @@ bool Shader::IsCompiled() const
 	return params != GL_FALSE;
 }
 
-void Shader::GetInfoLog(std::string & info_log) const
+std::vector<char> Shader::GetInfoLog() const
 {
-	GLint length;
-	GL_CALL(glGetShaderiv(_id, GL_INFO_LOG_LENGTH, & length));
+	std::vector<char> log_buffer;
 	
-	if (length == 0)
+	GLint size;
+	GL_CALL(glGetShaderiv(_id, GL_INFO_LOG_LENGTH, & size));
+
+	log_buffer.resize(size);
+	GLint length;
+	glGetShaderInfoLog(_id, size, & length, & log_buffer.front());
+	GLint real_size = length + 1;
+	
+	if (real_size != size)
 	{
-		info_log.clear();
+		DEBUG_MESSAGE("glGetShaderInfoLog buffer is %d bytes - not %d bytes", real_size, size);
+		size = real_size;
+		log_buffer.resize(size);
+		glGetShaderInfoLog(_id, size, & length, & log_buffer.front());
+		DEBUG_MESSAGE("second attempt: %d bytes", length + 1);
 	}
-	else
-	{
-		info_log.resize(length);
-		glGetShaderInfoLog(_id, length, nullptr, & info_log[0]);
-	}
+	
+	ASSERT(log_buffer.empty() || log_buffer.back() == '\0');
+	
+	return log_buffer;
 }
 
 void Shader::Deinit()

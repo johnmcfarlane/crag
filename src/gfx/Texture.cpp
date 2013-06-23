@@ -65,7 +65,7 @@ void Texture::Unbind() const
 void Texture::SetImage(GLsizei width, GLsizei height, GLvoid const * pixels)
 {
 	assert(IsBound());
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 						 width, height, 0, 
 						 GL_RGBA, GL_UNSIGNED_BYTE, pixels));	
 }

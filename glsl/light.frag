@@ -1,5 +1,3 @@
-#version 120
-
 //
 //  light.frag
 //  crag
@@ -30,23 +28,23 @@ uniform Light lights[max_lights];
 
 
 // support function to calculate the light seen on a given fragment
-vec3 LightFragment(in vec3 frag_position, in vec3 frag_normal)
+highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal)
 {
 #if defined(TEST_NORMALS)
 	return frag_normal;
 #endif
 
-	vec3 color = vec3(0,0,0);
+	highp vec3 color = vec3(0,0,0);
 	
 	for (int i = 0; i < max_lights; ++ i)
 	{
-		vec3 frag_to_light = lights[i].position - frag_position;
-		float distance = length(frag_to_light);
+		highp vec3 frag_to_light = lights[i].position - frag_position;
+		highp float distance = length(frag_to_light);
 		
-		float dp = dot(frag_to_light, frag_normal);
-		float attenuation = max(dp / (distance * distance * distance), 0.0);
+		highp float dp = dot(frag_to_light, frag_normal);
+		highp float attenuation = max(dp / (distance * distance * distance), 0.0);
 
-		vec3 diffuse = lights[i].color * attenuation;
+		highp vec3 diffuse = lights[i].color * attenuation;
 		
 		color += diffuse;
 	}

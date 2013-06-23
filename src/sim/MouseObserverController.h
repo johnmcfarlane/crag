@@ -1,5 +1,5 @@
 //
-//  ObserverController.h
+//  MouseObserverController.h
 //  crag
 //
 //  Created by John on 1/24/10.
@@ -24,13 +24,15 @@ namespace sim
 {
 	struct ObserverInput;
 
-	class ObserverController : public Controller
+	// controls an entity whose job it is to translate mouse and keyboard events 
+	// into camera impulses which are then appied to a physics body
+	class MouseObserverController : public Controller
 	{
 		typedef Controller _super;
 	public:
 		// functions
-		ObserverController(Entity & entity);
-		virtual ~ObserverController();
+		MouseObserverController(Entity & entity);
+		virtual ~MouseObserverController();
 
 	private:		
 		void Tick();

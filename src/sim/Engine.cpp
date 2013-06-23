@@ -20,7 +20,10 @@
 #include "physics/Body.h"
 #include "physics/Engine.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/SetCameraEvent.h"
+#include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -52,6 +55,7 @@ Engine::Engine()
 , paused(false)
 , _time(0)
 , _camera(geom::rel::Ray3::Zero())
+, _origin(geom::abs::Vector3::Zero())
 , _physics_engine(ref(new physics::Engine))
 , _tick_roster(ref(new core::locality::Roster))
 , _draw_roster(ref(new core::locality::Roster))
@@ -112,19 +116,9 @@ void Engine::RemoveFormation(form::Formation& formation)
 	scene.RemoveFormation(formation);
 }
 
-void Engine::SetCamera(geom::rel::Ray3 const & camera)
+void Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	if (_camera == camera)
-	{
-		return;
-	}
-
-	_camera = camera;
-
-	// update form
-	form::Daemon::Call([camera] (form::Engine & engine) {
-		engine.SetCamera(camera);
-	});
+	_camera = gfx::GetCameraRay(event.transformation);
 }
 
 geom::rel::Ray3 const & Engine::GetCamera() const
@@ -132,11 +126,10 @@ geom::rel::Ray3 const & Engine::GetCamera() const
 	return _camera;
 }
 
-void Engine::OnSetOrigin(geom::abs::Vector3 const & origin)
+void Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	// figure out the delta
-	auto & previous_origin = GetOrigin();
-	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(origin - previous_origin);
+	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(event.origin - _origin);
 
 	// quit if there's no change
 	if (geom::LengthSq(delta) == 0)
@@ -144,27 +137,24 @@ void Engine::OnSetOrigin(geom::abs::Vector3 const & origin)
 		return;
 	}
 	
-	// formation engine
-	form::Daemon::Call([origin] (form::Engine & engine) {
-		engine.SetOrigin(origin);
-	});
-	
 	ForEachObject([& delta] (Entity & entity) {
 		ResetOrigin(entity, delta);
 	});
 	
-	// render engine
-	gfx::Daemon::Call([origin] (gfx::Engine & engine) {
-		engine.SetOrigin(origin);
-	});
-
 	// TODO: Is there a risk of a render between calls to SetOrigin and Draw?
 	// If so, could it result in a bad frame?
 	UpdateRenderer();
 
 	// local collision formation scene
 	auto & scene = _physics_engine.GetScene();
-	scene.OnOriginReset(origin);
+	scene.OnOriginReset(event.origin);
+
+	_origin = event.origin;
+}
+
+geom::abs::Vector3 const & Engine::GetOrigin() const
+{
+	return _origin;
 }
 
 void Engine::OnTogglePause()
@@ -204,8 +194,6 @@ core::locality::Roster & Engine::GetDrawRoster()
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	FUNCTION_NO_REENTRY;
-	
 	core::Time next_tick_time = app::GetTime();
 	
 	while (! quit_flag)
@@ -232,6 +220,10 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			}
 		}
 	}
+
+	// stop listening for SetCameraEvent
+	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
+	ipc::Listener<Engine, gfx::SetOriginEvent>::SetIsListening(false);
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetTime(std::numeric_limits<core::Time>::max());

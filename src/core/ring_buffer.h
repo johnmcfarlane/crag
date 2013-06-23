@@ -307,14 +307,20 @@ namespace core
 		{
 			// Return enough room for one block containing a base class object
 			// plus the extra gap needed to avoid confusing begining and end.
-			return block::header_size * 2 + sizeof(value_type);
+			// Note: this doesn't even account for objects derived from 
+			// value_type being larger!
+			return block::header_size * 2 + round_up(sizeof(value_type));
 		}
 		
 		void allocate(size_type num_bytes)
 		{
-			num_bytes = std::max(round_up(num_bytes), get_min_buffer_size());
+			// round up to a working bare minimum
+			num_bytes = std::max(num_bytes, get_min_buffer_size());
 			
-			char * buffer = new char [num_bytes];
+			// round up to page size
+			num_bytes = RoundToPageSize(num_bytes);
+			
+			char * buffer = reinterpret_cast<char *>(AllocatePage(num_bytes));
 			_buffer_begin = reinterpret_cast<block *>(buffer);
 			_buffer_end = reinterpret_cast<block *>(buffer + num_bytes);
 			

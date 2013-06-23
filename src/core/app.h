@@ -9,6 +9,12 @@
 
 #pragma once
 
+#if defined(__ANDROID__)
+#define CRAG_USE_TOUCH
+#else
+#define CRAG_USE_MOUSE	// ... and keyboard
+#endif
+
 namespace app
 {
 	// general init/deinit
@@ -16,11 +22,14 @@ namespace app
 	void Deinit();
 
 	// render thread-specific init/deinit
-	SDL_GLContext InitContext();
-	void DeinitContext(SDL_GLContext context);
+	bool InitContext();
+	void DeinitContext();
+	
+	// file access
+	typedef std::shared_ptr<std::vector<char>> FileResource;
+	FileResource LoadFile(char const * filename, bool null_terminate = false);
 	
 	// misc
-	bool LoadFile(char const * filename, std::vector<char> & buffer);
 	void Beep();
 	
 	// input

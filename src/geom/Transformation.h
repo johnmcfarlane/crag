@@ -109,25 +109,38 @@ namespace geom
 		{
 			return _matrix;
 		}
-		
-		Matrix44 GetOpenGlMatrix() const
-		{
-			return Transposition(_matrix) * _internal_to_open_gl;
-		}
 
-		Matrix44 GetInverse() const
-		{
-			return Inverse(_matrix);
-		}
-		
 		Vector3 GetTranslation() const
 		{
 			return Vector3(_matrix[0][3], _matrix[1][3], _matrix[2][3]);
 		}
 		
+		Vector4 GetTranslation4() const
+		{
+			return Vector4(_matrix.GetColumn());
+		}
+		
+		void SetTranslation(Vector3 const & translation)
+		{
+			_matrix[0][3] = translation.x;
+			_matrix[1][3] = translation.y;
+			_matrix[2][3] = translation.z;
+		}
+		
 		Matrix33 const & GetRotation() const
 		{
 			return reinterpret_cast<Matrix33 const &>(* this);
+		}
+		
+		void SetRotation(Matrix33 const & rotation)
+		{
+			for (auto r = 0; r != 3; ++ r)
+			{
+				for (auto c = 0; c != 3; ++ c)
+				{
+					_matrix[r][c] = rotation[r][c];
+				}
+			}
 		}
 		
 		Vector3 GetScale() const
@@ -170,8 +183,6 @@ namespace geom
 	private:
 		// variables
 		Matrix44 _matrix;
-		
-		static Matrix44 const _internal_to_open_gl;
 	};
 
 	template <typename LHS_S, typename RHS_S>
@@ -179,11 +190,4 @@ namespace geom
 	{
 		return Transformation<LHS_S>(Cast<LHS_S>(rhs.GetMatrix()));
 	}
-
-	// TODO: Really needed?
-	template <typename S>
-	typename Transformation<S>::Matrix44 const Transformation<S>::_internal_to_open_gl(1, 0,  0, 0,
-																0, 0, -1, 0, 
-																0, 1,  0, 0, 
-																0, 0,  0, 1);
 }

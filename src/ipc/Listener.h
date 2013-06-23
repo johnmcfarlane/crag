@@ -11,124 +11,75 @@
 
 #include "ListenerInterface.h"
 
-#if defined(__GNUC__)
-#define SMP_LISTENER_ELLIPSIS
-#else
-#define SMP_LISTENER_ELLIPSIS ...
-#endif
-
 namespace ipc
 {
-	// derive from this class to receive calls broadcast with the given parameters;
-	// lives in the LISTENER_ENGINE thread and receives calls from SUBJECT_ENGINE
-	template <typename SUBJECT_ENGINE, typename OBSERVER_ENGINE, typename SMP_LISTENER_ELLIPSIS PARAMETERS>
-	class Listener : public ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS>
+	// derive from this class to receive calls broadcast with the given event;
+	// lives in the LISTENER_ENGINE thread
+	template <typename ENGINE, typename EVENT>
+	class Listener : public ListenerInterface<EVENT>
 	{
-		enum State
-		{
-			initializing,
-			attached,
-			releasing,
-			released
-		};
-
-		typedef ListenerInterface<SUBJECT_ENGINE, PARAMETERS SMP_LISTENER_ELLIPSIS> Subject;
-		typedef OBSERVER_ENGINE ListenerEngine;
+		typedef ListenerInterface<EVENT> _super;
+		typedef ENGINE ListenerEngine;
 		typedef ipc::Daemon<ListenerEngine> ListenerDaemon;
 
 	public:
 		// functions
 		Listener()
-		: _state(initializing)
+		: _is_listening(false)
+		, _dispatch_count(0)
 		{
-			VerifyObject(* this);
-
-			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
-				VerifyObject(* this);
-				ASSERT(_state == initializing);
-
-				this->Add();
-
-				ListenerDaemon::Call([this] (ListenerEngine &) {
-					VerifyObject(* this);
-					ASSERT(this->_state == initializing);
-
-					this->SetState(attached);
-					VerifyObject(* this);
-				});
-			});
+			SetIsListening(true);
 		}
 
 		~Listener()
 		{
-			VerifyObject(* this);			
-			ASSERT(IsListenerThread());
-			ASSERT(IsReleased());
+			ASSERT(! IsBusy());
+			
+			SetIsListening(false);
 		}
-
-		void BeginRelease()
+		
+		// busy objects should not be destroyed
+		bool IsBusy() const
 		{
 			VerifyObject(* this);
-			ASSERT(IsListenerThread());
-
-			ASSERT(_state == attached);
-			SetState(releasing);
-
-			Subject::SubjectDaemon::Call([this] (typename Subject::SubjectEngine &) {
-				VerifyObject(* this);
-				ASSERT(_state == releasing);
-
-				// remove this from the list of listeners
-				this->Remove();
-
-				// send acknowledge back to listener's thread
-				ListenerDaemon::Call([this] (ListenerEngine &) {
-					VerifyObject(* this);
-					ASSERT(this->_state == releasing);
-
-					this->SetState(released);
-
-					VerifyObject(* this);
-				});
-
-				ASSERT(_state != releasing || _state != released);
-				VerifyObject(* this);
-			});
-
-			VerifyObject(* this);
+			
+			return _is_listening || _dispatch_count > 0;
 		}
-
-		bool IsReleased() const
+		
+		bool IsListening() const
 		{
 			VerifyObject(* this);
-
-			ASSERT(_state == releasing || _state == released);
-			return _state == released;
+			
+			return _is_listening;
+		}
+		
+		void SetIsListening(bool is_listening)
+		{
+			VerifyObject(* this);
+			
+			if (_is_listening == is_listening)
+			{
+				return;
+			}
+			_is_listening = is_listening;
+			
+			if (is_listening)
+			{
+				_super::Add();
+			}
+			else			
+			{
+				_super::Remove();
+			}
+			
+			VerifyObject(* this);
 		}
 
 #if defined(VERIFY)
-		virtual void Verify() const final
+		void Verify() const
 		{
-			switch (_state)
-			{
-				case initializing:
-					break;
-
-				case attached:
-					ASSERT(Subject::List::is_contained(* this));
-					break;
-
-				case releasing:
-					break;
-
-				case released:
-					ASSERT(! Subject::List::is_contained(* this));
-					break;
-
-				default:
-					DEBUG_BREAK("bad enum value, %d", int(_state));
-					break;
-			}
+			//VerifyEqual(_super::IsContained(), _is_listening);
+			VerifyOp(_super::_counter, >=, 0);
 		}
 #endif
 
@@ -137,30 +88,24 @@ namespace ipc
 		{
 			return ListenerDaemon::IsCurrentThread();
 		}
-
-		void SetState(State state)
-		{
-			ASSERT(IsListenerThread());
-			ASSERT(state > initializing && state <= released);
-			ASSERT(int(state) == int(_state) + 1);
-			_state = state;
-		}
-
-		virtual void Dispatch (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) final
+		
+		virtual void Dispatch (EVENT event) final
 		{
 			VerifyObject(* this);
-			ASSERT(Subject::SubjectDaemon::IsCurrentThread());
+			_dispatch_count += 1;
 
-			ListenerDaemon::Call([this, parameters SMP_LISTENER_ELLIPSIS] (ListenerEngine &) {
-				(* this)(parameters SMP_LISTENER_ELLIPSIS);
+			ListenerDaemon::Call([this, event] (ListenerEngine &) {
+				(* this)(event);
+				_dispatch_count -= 1;
 			});
 
 			VerifyObject(* this);
 		}
 
-		virtual void operator() (PARAMETERS SMP_LISTENER_ELLIPSIS parameters) = 0;
-
+		virtual void operator() (EVENT const & event) = 0;
+		
 		// variables
-		State _state;
+		bool _is_listening;
+		std::atomic<unsigned> _dispatch_count;
 	};
 }

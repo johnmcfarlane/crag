@@ -18,11 +18,17 @@
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
+#include "ipc/Listener.h"
 #include "smp/scheduler.h"
 #include "smp/Semaphore.h"
 
 
-namespace gfx { DECLARE_CLASS_HANDLE(FormationMesh); }	// gfx::FormationMeshHandle
+namespace gfx 
+{
+	DECLARE_CLASS_HANDLE(FormationMesh);	// gfx::FormationMeshHandle
+	struct SetCameraEvent;
+	struct SetOriginEvent;
+}
 
 namespace form 
 {	
@@ -45,10 +51,19 @@ namespace form
 	// form::Engine class
 	
 	// The top-most formation management class.
-	class Engine : public ipc::EngineBase<Engine, Formation>
+	class Engine 
+	: public ipc::EngineBase<Engine, Formation>
+	, private ipc::Listener<Engine, gfx::SetCameraEvent>
+	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 		
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+
+		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
+		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
+
 		enum {
 			// tweakables
 			min_num_quaterne = 1024,
@@ -56,9 +71,6 @@ namespace form
 		};
 		
 	public:
-		////////////////////////////////////////////////////////////////////////////////
-		// types
-
 		typedef ipc::Daemon<Engine> Daemon;
 
 		struct TreeQueryFunctor
@@ -86,8 +98,8 @@ namespace form
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(Mesh & mesh);
-		void SetCamera(geom::rel::Ray3 const & camera_position);
-		void OnSetOrigin(geom::abs::Vector3 const & origin);
+		void operator() (gfx::SetCameraEvent const & event) final;
+		void operator() (gfx::SetOriginEvent const & event) final;
 		
 		void EnableAdjustNumQuaterna(bool enabled);
 		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
@@ -128,6 +140,7 @@ namespace form
 		bool _pending_origin_request;
 
 		geom::rel::Ray3 _camera;
+		geom::abs::Vector3 _origin;
 		Scene _scene;
 	};
 	

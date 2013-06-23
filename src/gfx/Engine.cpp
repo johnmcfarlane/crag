@@ -17,10 +17,11 @@
 #include "Program.h"
 #include "ResourceManager.h"
 #include "Scene.h"
+#include "SetCameraEvent.h"
+#include "SetOriginEvent.h"
 
 #include "form/Engine.h"
 
-#include "sim/axes.h"
 #include "sim/Engine.h"
 
 #include "core/app.h"
@@ -30,8 +31,6 @@
 using core::Time;
 using namespace gfx;
 
-
-CONFIG_DEFINE (multisample, bool, false);
 CONFIG_DECLARE (profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
 
@@ -47,9 +46,12 @@ namespace
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_wireframe, bool, false);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
+#if defined(CRAG_USE_GLES)
+	CONFIG_DEFINE (init_fragment_lighting, bool, false);
+#else
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
+#endif
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
@@ -101,6 +103,8 @@ namespace
 	{
 #if defined(__APPLE__)
 		return true;
+#elif defined(__ANDROID__)
+		return false;
 #else
 		return GLEW_NV_fence != GL_FALSE;
 #endif
@@ -231,8 +235,9 @@ void Engine::Verify() const
 #endif
 
 Engine::Engine()
-: context(nullptr)
-, scene(nullptr)
+: scene(nullptr)
+, _resource_manager(nullptr)
+, _origin(geom::abs::Vector3::Zero())
 , _frame_duration(0)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -240,7 +245,6 @@ Engine::Engine()
 , _dirty(true)
 , vsync(false)
 , culling(init_culling)
-, wireframe(init_wireframe)
 , _flat_shaded(init_flat_shaded)
 , _fragment_lighting(init_fragment_lighting)
 , capture_frame(0)
@@ -450,12 +454,6 @@ void Engine::OnToggleCulling()
 	_dirty = true;
 }
 
-void Engine::OnToggleWireframe()
-{
-	wireframe = ! wireframe;
-	_dirty = true;
-}
-
 void Engine::SetFlatShaded(bool flat_shaded)
 {
 	_dirty = _flat_shaded != flat_shaded;
@@ -483,18 +481,22 @@ void Engine::OnToggleCapture()
 	capture_enable = ! capture_enable;
 }
 
-// TODO: Make camera an object so that positional messages are the same as for other objects.
-void Engine::OnSetCamera(Transformation const & transformation)
+void Engine::operator() (SetCameraEvent const & event)
 {
 	if (scene != nullptr)
 	{
-		scene->SetCameraTransformation(transformation);
+		scene->SetCameraTransformation(event.transformation);
 	}
 }
 
-Transformation const& Engine::GetCamera() const
+void Engine::operator() (SetOriginEvent const & event)
 {
-	return scene->GetPov().GetTransformation();
+	_origin = event.origin;
+}
+
+geom::abs::Vector3 const & Engine::GetOrigin() const
+{
+	return _origin;
 }
 
 #if defined(NDEBUG)
@@ -505,18 +507,10 @@ Transformation const& Engine::GetCamera() const
 
 Engine::StateParam const Engine::init_state[] =
 {
-	INIT(GL_COLOR_MATERIAL, true),
-	INIT(GL_TEXTURE_2D, false),
-	INIT(GL_NORMALIZE, false),
 	INIT(GL_CULL_FACE, true),
-	INIT(GL_LIGHTING, false),
 	INIT(GL_DEPTH_TEST, false),
 	INIT(GL_BLEND, false),
 	INIT(GL_INVALID_ENUM, false),
-	INIT(GL_MULTISAMPLE, false),
-	INIT(GL_LINE_SMOOTH, false),
-	INIT(GL_POLYGON_SMOOTH, false),
-	INIT(GL_FOG, false)
 };
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
@@ -526,7 +520,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);
 		
-		if (_ready && _dirty)
+		if (_ready && (_dirty || quit_flag))
 		{
 			PreRender();
 			UpdateTransformations();
@@ -540,6 +534,9 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			smp::Yield();
 		}
 	}
+
+	SetCameraListener::SetIsListening(false);
+	SetOriginListener::SetIsListening(false);
 }
 
 bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
@@ -550,10 +547,8 @@ bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 bool Engine::Init()
 {
 	ASSERT(scene == nullptr);
-	ASSERT(context == nullptr);
 
-	context = app::InitContext();
-	if (context == nullptr)
+	if (! app::InitContext())
 	{
 		return false;
 	}
@@ -615,7 +610,6 @@ void Engine::Deinit()
 	Debug::Deinit();
 	
 	init_culling = culling;
-	init_wireframe = wireframe;
 	
 	if (_fence2.IsInitialized())
 	{
@@ -630,8 +624,7 @@ void Engine::Deinit()
 	delete scene;
 	scene = nullptr;
 
-	app::DeinitContext(context);
-	context = nullptr;
+	app::DeinitContext();
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.
@@ -725,22 +718,12 @@ void Engine::InitRenderState()
 		++ param;
 	}
 
-	GL_CALL(glFrontFace(GL_CW));
+	GL_CALL(glFrontFace(GL_CCW));
 	GL_CALL(glCullFace(GL_BACK));
-	GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 	glDepthFunc(GL_LEQUAL);
-	GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-	GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
-	GL_CALL(glClearDepth(1.0f));
+	GL_CALL(glClearDepthf(1.0f));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
-
-	GL_CALL(glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE));	// Separate view direction for each vert - rather than all parallel to z axis.
-	GL_CALL(glLightModelfv(GL_LIGHT_MODEL_AMBIENT, background_ambient_color));	// TODO: Broke!
-	GL_CALL(glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR));
-	
 	VerifyRenderState();
 }
 
@@ -761,8 +744,6 @@ void Engine::VerifyRenderState() const
 	
 	// TODO: Write equivalent functions for all state in GL. :S
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
-	
-	ASSERT(GetInt<GL_MATRIX_MODE>() == GL_MODELVIEW);
 #endif	// NDEBUG
 }
 
@@ -773,7 +754,11 @@ bool Engine::HasShadowSupport() const
 		return false;
 	}
 	
-#if ! defined(__APPLE__)
+#if defined(__ANDROID__)
+	return false;
+#elif defined(__APPLE__)
+	return true;
+#else
 	if (! GLEW_ARB_shadow) {
 		return false;
 	}
@@ -783,9 +768,9 @@ bool Engine::HasShadowSupport() const
 	if (! GLEW_EXT_framebuffer_object) {
 		return false;
 	}
-#endif
 	
 	return true;
+#endif
 }
 
 void Engine::PreRender()
@@ -897,15 +882,7 @@ void Engine::RenderScene()
 	auto projection_matrix = CalcForegroundProjectionMatrix(* scene);
 	
 	// Draw material objects.
-	if (wireframe)
-	{
-		RenderForegroundPass(projection_matrix, WireframePass1);
-		RenderForegroundPass(projection_matrix, WireframePass2);
-	}
-	else 
-	{
-		RenderForegroundPass(projection_matrix, NormalPass);
-	}
+	RenderForegroundPass(projection_matrix);
 }
 
 void Engine::InvalidateUniforms()
@@ -917,51 +894,13 @@ void Engine::InvalidateUniforms()
 	}
 }
 
-bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
+bool Engine::BeginRenderForeground() const
 {
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 		
-	switch (pass) 
+	if (! culling) 
 	{
-		case NormalPass:
-			if (! culling) 
-			{
-				Disable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Enable(GL_MULTISAMPLE);
-				Enable(GL_POLYGON_SMOOTH);
-			}
-			break;
-			
-		case WireframePass1:
-			if (! culling)
-			{
-				return false;
-			}
-			Enable(GL_POLYGON_OFFSET_FILL);
-			GL_CALL(glPolygonOffset(1,1));
-			glColor3f(1.f, 1.f, 1.f);
-			break;
-			
-		case WireframePass2:
-			if (! culling) 
-			{
-				Disable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Enable(GL_MULTISAMPLE);
-				Enable(GL_LINE_SMOOTH);
-			}
-			GL_CALL(glPolygonMode(GL_FRONT, GL_LINE));
-			GL_CALL(glPolygonMode(GL_BACK, GL_LINE));
-			glColor3f(0.f, 0.f, 0.f);
-			break;
-			
-		default:
-			ASSERT(false);
+		Disable(GL_CULL_FACE);
 	}
 	
 	Enable(GL_DEPTH_TEST);
@@ -969,12 +908,10 @@ bool Engine::BeginRenderForeground(ForegroundRenderPass pass) const
 	return true;
 }
 
-// Each pass draws all the geometry. Typically, there is one per frame
-// unless wireframe mode is on. 
-void Engine::RenderForegroundPass(Matrix44 const & projection_matrix, ForegroundRenderPass pass)
+void Engine::RenderForegroundPass(Matrix44 const & projection_matrix)
 {
 	// begin
-	if (! BeginRenderForeground(pass))
+	if (! BeginRenderForeground())
 	{
 		return;
 	}
@@ -994,50 +931,17 @@ void Engine::RenderForegroundPass(Matrix44 const & projection_matrix, Foreground
 	glDepthMask(true);
 
 	// end
-	EndRenderForeground(pass);
+	EndRenderForeground();
 }
 
-void Engine::EndRenderForeground(ForegroundRenderPass pass) const
+void Engine::EndRenderForeground() const
 {
 	// Reset state
 	Disable(GL_DEPTH_TEST);
 
-	switch (pass) 
+	if (! culling) 
 	{
-		case NormalPass:
-			if (! culling) 
-			{
-				Enable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Disable(GL_POLYGON_SMOOTH);
-				Disable(GL_MULTISAMPLE);
-			}
-			break;
-			
-		case WireframePass1:
-			GL_CALL(glCullFace(GL_BACK));
-			Disable(GL_POLYGON_OFFSET_FILL);
-			break;
-			
-		case WireframePass2:
-			glColor3f(0.f, 0.f, 0.f);
-			if (! culling) 
-			{
-				Enable(GL_CULL_FACE);
-			}
-			if (multisample)
-			{
-				Disable(GL_LINE_SMOOTH);
-				Disable(GL_MULTISAMPLE);
-			}
-			GL_CALL(glPolygonMode(GL_FRONT, GL_FILL));
-			GL_CALL(glPolygonMode(GL_BACK, GL_FILL));
-			break;
-			
-		default:
-			ASSERT(false);
+		Enable(GL_CULL_FACE);
 	}
 }
 
@@ -1082,8 +986,8 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, b
 				
 				// Set the model view matrix.
 				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
-				auto gl_model_view_projection_matrix = model_view_transformation.GetOpenGlMatrix();
-				required_program->SetModelViewMatrix(gl_model_view_projection_matrix);
+				auto model_view_matrix = model_view_transformation.GetMatrix();
+				required_program->SetModelViewMatrix(model_view_matrix);
 			}
 			else
 			{
@@ -1216,7 +1120,7 @@ void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_positi
 	STAT_SET(frame_3_total_duration, frame_duration);
 }
 
-#if defined(GATHER_STATS)
+#if defined(GATHER_STATS) && ! defined(NDEBUG)
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 	// update the history

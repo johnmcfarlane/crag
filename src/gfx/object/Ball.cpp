@@ -11,6 +11,7 @@
 
 #include "Ball.h"
 
+#include "gfx/axes.h"
 #include "gfx/Program.h"
 #include "gfx/Engine.h"
 #include "gfx/ResourceManager.h"
@@ -55,9 +56,7 @@ void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 bool Ball::GetRenderRange(RenderRange & range) const 
 { 
 	Transformation const & transformation = GetModelViewTransformation();
-	Transformation::Matrix44 const & transformation_matrix = transformation.GetMatrix();
-	Scalar depth = transformation_matrix[1][3];
-
+	Scalar depth = GetDepth(transformation);
 	Scalar radius = transformation.GetScale().x;
 	
 	range[0] = depth - radius;

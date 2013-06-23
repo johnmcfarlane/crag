@@ -26,9 +26,9 @@ namespace script
 	// The regulator class received performance-related samples from elsewhere in the simulation
 	// and uses them to determine whether the load on the system should be increased or decreased.
 	class RegulatorScript 
-		: ipc::Listener<gfx::Engine, applet::Engine, gfx::NumQuaterneSetMessage>
-		, ipc::Listener<gfx::Engine, applet::Engine, gfx::FrameDurationSampledMessage>
-		, ipc::Listener<gfx::Engine, applet::Engine, gfx::MeshGenerationPeriodSampledMessage>
+		: ipc::Listener<applet::Engine, gfx::NumQuaterneSetMessage>
+		, ipc::Listener<applet::Engine, gfx::FrameDurationSampledMessage>
+		, ipc::Listener<applet::Engine, gfx::MeshGenerationPeriodSampledMessage>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -80,9 +80,9 @@ namespace script
 		void operator() (applet::AppletInterface & applet_interface);
 		
 		// Listener callbacks
-		virtual void operator() (gfx::NumQuaterneSetMessage message) final;
-		virtual void operator() (gfx::FrameDurationSampledMessage message) final;
-		virtual void operator() (gfx::MeshGenerationPeriodSampledMessage message) final;
+		void operator() (gfx::NumQuaterneSetMessage const & message) final;
+		void operator() (gfx::FrameDurationSampledMessage const & message) final;
+		void operator() (gfx::MeshGenerationPeriodSampledMessage const & message) final;
 		
 	private:
 		QuaterneCount GetRecommendedNumQuaterna() const;

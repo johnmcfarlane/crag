@@ -96,15 +96,7 @@ void Skybox::Render(Engine const &) const
 	engine.SetCurrentMesh(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
-	Enable(GL_TEXTURE_2D);
-	Disable(GL_CULL_FACE);
 	glDepthMask(false);
-	
-	ASSERT(! IsEnabled(GL_LIGHTING));
-	ASSERT(IsEnabled(GL_COLOR_MATERIAL));
-	ASSERT(IsEnabled(GL_TEXTURE_2D));
-	ASSERT(! IsEnabled(GL_CULL_FACE));
 	
 	// Draw VBO
 	vbo.Bind();
@@ -127,8 +119,6 @@ void Skybox::Render(Engine const &) const
 	vbo.Unbind();
 	
 	glDepthMask(true);
-	Disable(GL_TEXTURE_2D);
-	Enable(GL_CULL_FACE);
 }
 
 void Skybox::InitVerts()
@@ -151,7 +141,7 @@ void Skybox::InitVerts()
 				for (int v = 0; v < 2; ++ v)
 				{
 					float * axes = side_verts->pos.GetAxes();
-					axes[x_axis] = (static_cast<float>(u) - .5f) * 2;
+					axes[x_axis] = (static_cast<float>(pole ^ u) - .5f) * 2;
 					axes[y_axis] = (static_cast<float>(v) - .5f) * 2;
 					axes[z_axis] = (static_cast<float>(pole) - .5f) * 2;
 					side_verts->tex.x = static_cast<float>(u);

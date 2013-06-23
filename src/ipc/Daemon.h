@@ -16,6 +16,8 @@
 
 #include "ipc/ListenerInterface.h"
 
+#include "core/app.h"
+
 namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +31,7 @@ namespace ipc
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		enum State
+		enum class State
 		{
 			initialized,
 			running,
@@ -52,7 +54,11 @@ namespace ipc
 		Daemon(size_t ring_buffer_size)
 		: _engine(nullptr)
 		, _messages(ring_buffer_size)
-		, _state(initialized)
+		, _state(State::initialized)
+		, _state_change_time(-1)
+#if ! defined(NDEBUG)
+		, _name(nullptr)
+#endif
 		{
 			ASSERT(singleton == nullptr);
 			singleton = this;
@@ -60,8 +66,8 @@ namespace ipc
 		
 		~Daemon() 
 		{ 
-			ASSERT(_state == acknowledge_flush_end);
-			_state = request_destroy;
+			ASSERT(_state == State::request_flush_end);
+			SetState(State::request_destroy);
 			
 			ASSERT(singleton == this);
 			singleton = nullptr;
@@ -82,7 +88,7 @@ namespace ipc
 		// specifically, the thread is still in the engine's Run function
 		bool IsRunning() const
 		{
-			return singleton->_state <= running;
+			return singleton->_state <= State::running;
 		}
 		
 		// true iff called from the Daemon's own thread
@@ -100,7 +106,13 @@ namespace ipc
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-			_thread.Launch([this] () {
+#if ! defined(NDEBUG)
+			ASSERT(_name == nullptr);
+			_name = name;
+#endif
+
+			_thread.Launch([this, name] () {
+				core::DebugSetThreadName(name);
 				this->Run();
 			}, name);
 			
@@ -115,7 +127,7 @@ namespace ipc
 		void BeginFlush()
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
-			ASSERT(_state <= acknowledge_flush_begin);
+			ASSERT(_state <= State::acknowledge_flush_begin);
 			
 			// Never called from within the thread.
 			ASSERT(! _thread.IsCurrent());
@@ -127,26 +139,41 @@ namespace ipc
 		void Synchronize()
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
-			ASSERT(_state <= acknowledge_flush_begin);
+			ASSERT(_state <= State::acknowledge_flush_end);
 			
-			while (_state < acknowledge_flush_begin)
+			while (_state < State::acknowledge_flush_begin)
 			{
+				if (IsTimedout())
+				{
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+					return;
+				}
+				
 				smp::Yield();
 			}
+
+			ASSERT(_state <= State::acknowledge_flush_end);
 		}
 		
 		// Wait until it has finished flushing.
 		void EndFlush()
 		{
 			ASSERT(! singleton->_thread.IsCurrent());			
-			ASSERT(_state == acknowledge_flush_begin);
+			ASSERT(_state == State::acknowledge_flush_begin);
 			
-			_state = request_flush_end;
-			while (_state < acknowledge_flush_end)
+			SetState(State::request_flush_end);
+
+			while (_state < State::acknowledge_flush_end)
 			{
+				if (IsTimedout())
+				{
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+					return;
+				}
+				
 				smp::Yield();
 			}
-			ASSERT(_state == acknowledge_flush_end);
+			ASSERT(_state == State::acknowledge_flush_end);
 			
 			ASSERT(_messages.IsEmpty());
 		}
@@ -155,7 +182,7 @@ namespace ipc
 		template <typename FUNCTION_TYPE>
 		static void Call(FUNCTION_TYPE const & function)
 		{
-			ASSERT(singleton->_state < acknowledge_flush_end);
+			ASSERT(singleton->_state < State::acknowledge_flush_end);
 
 			// If caller is on the same thread as the engine,
 			if (singleton->_thread.IsCurrent())
@@ -170,14 +197,14 @@ namespace ipc
 			}
 		}
 
-		// pass parameters to any Listener of matching parameters
-		template <typename ... PARAMETERS>
-		static void Broadcast(PARAMETERS ... parameters)
+		// pass parameters to all Listeners of matching parameters
+		template <typename EVENT>
+		static void Broadcast(EVENT event)
 		{
-			ASSERT(singleton->_state < acknowledge_flush_begin);
+			ASSERT(singleton->_state < State::acknowledge_flush_begin);
 
-			typedef ListenerInterface<Engine, PARAMETERS ...> ListenerInterface;
-			ListenerInterface::Broadcast(parameters ...);
+			typedef ListenerInterface<EVENT> ListenerInterface;
+			ListenerInterface::Broadcast(event);
 		}
 
 	private:
@@ -188,29 +215,46 @@ namespace ipc
 			ASSERT(this == singleton);
 			ASSERT(_thread.IsCurrent());
 			
-			ASSERT(_state == initialized);
-			_state = running;
+			ASSERT(_state == State::initialized);
+			SetState(State::running);
 			
 			// create engine
 			Engine engine;
 			_engine = & engine;
 			
 			engine.Run(_messages);
+			DEBUG_MESSAGE("Engine, %s, returned", _name);
 		
 			// Acknowledge that this won't be sending any more.
-			_state = acknowledge_flush_begin;
-			while (_state == acknowledge_flush_begin)
+			SetState(State::acknowledge_flush_begin);
+			while (_state < State::request_flush_end)
 			{
+				if (_state != State::acknowledge_flush_begin)
+				{
+					ASSERT(_state == State::request_flush_end);
+				}
+				
+				if (IsTimedout())
+				{
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+					break;
+				}
+				
 				FlushMessagesOrYield();
 			}
 			
-			ASSERT(_state == request_flush_end);
-			while (! _messages.IsEmpty())
+			while (! _messages.IsEmpty() || ! ListenerBase::CanExit())
 			{
+				if (IsTimedout())
+				{
+					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+					break;
+				}
+				
 				FlushMessagesOrYield();
 			}
 			
-			_state = acknowledge_flush_end;
+			SetState(State::acknowledge_flush_end);
 		
 			// destroy engine
 			_engine = nullptr;
@@ -241,7 +285,36 @@ namespace ipc
 				smp::Yield();
 			}
 		}
+		
+		void SetState(State state)
+		{
+			ASSERT(state > _state);
+			_state = state;
+			_state_change_time = app::GetTime();
+		}
+		
+		// true iff it's been too long since the last state change
+		bool IsTimedout() const
+		{
+			if (_state == State::running)
+			{
+				return false;
+			}
+			
+			auto time = app::GetTime();
+			auto duration = time - _state_change_time;
+			if (duration < ShutdownTimeout())
+			{
+				return false;
+			}
+			
+			return true;
+		}
 
+		static float ShutdownTimeout()
+		{
+			return .1;
+		}
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
@@ -250,6 +323,10 @@ namespace ipc
 		MessageQueue _messages;
 		smp::Thread _thread;
 		State _state;
+		core::Time _state_change_time;
+#if ! defined(NDEBUG)
+		char const * _name;
+#endif
 		
 		static Daemon * singleton;
 	};

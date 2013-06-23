@@ -15,11 +15,10 @@
 
 #if defined(GFX_DEBUG)
 
+#include "axes.h"
 #include "Color.h"
 #include "Font.h"
 #include "Pov.h"
-
-#include "sim/axes.h"
 
 #include "geom/MatrixOps.h"
 
@@ -255,15 +254,13 @@ void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const
 
 void gfx::Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
 {
-	using namespace axes;
+	AddLine(center, center + GetAxis(rotation, Direction::right) * scale.x, ColorPair(Color::Red()));
+	AddLine(center, center + GetAxis(rotation, Direction::forward) * scale.y, ColorPair(Color::Green()));
+	AddLine(center, center + GetAxis(rotation, Direction::up) * scale.z, ColorPair(Color::Blue()));
 	
-	AddLine(center, center + GetAxis(rotation, RIGHT) * scale.x, ColorPair(Color::Red()));
-	AddLine(center, center + GetAxis(rotation, FORWARD) * scale.y, ColorPair(Color::Green()));
-	AddLine(center, center + GetAxis(rotation, UP) * scale.z, ColorPair(Color::Blue()));
-	
-	AddLine(center, center - GetAxis(rotation, RIGHT) * scale.x, ColorPair(Color::Cyan()));
-	AddLine(center, center - GetAxis(rotation, FORWARD) * scale.y, ColorPair(Color::Magenta()));
-	AddLine(center, center - GetAxis(rotation, UP) * scale.z, ColorPair(Color::Yellow()));
+	AddLine(center, center - GetAxis(rotation, Direction::right) * scale.x, ColorPair(Color::Cyan()));
+	AddLine(center, center - GetAxis(rotation, Direction::forward) * scale.y, ColorPair(Color::Magenta()));
+	AddLine(center, center - GetAxis(rotation, Direction::up) * scale.z, ColorPair(Color::Yellow()));
 }
 
 #if 0

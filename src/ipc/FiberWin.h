@@ -9,6 +9,8 @@
 
 #pragma once
 
+#if defined(CRAG_USE_FIBER_WIN)
+
 namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -71,3 +73,5 @@ namespace ipc
 		bool _is_running;	// true if _callback has not yet exited
 	};
 }
+
+#endif	// defined(WIN32)

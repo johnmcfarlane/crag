@@ -44,6 +44,10 @@
 
 #define SIZE_T_FORMAT_SPEC "%Iu"
 
+// happens to be defined in ODE with a very similar value;
+// causes a problem in VC++ project because of the way libs are built
+#define HAVE_M_PI
+
 #else
 
 #define SIZE_T_FORMAT_SPEC "%zu"
@@ -81,9 +85,8 @@
 
 // Disable partial compatability with SDL 1.2.
 #define SDL_NO_COMPAT
-#define HAVE_M_PI	// happens to be defined in ODE with a very similar value
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(__ANDROID__)
 #include <SDL.h>
 #else
 #include <SDL2/SDL.h>
@@ -93,19 +96,31 @@
 //////////////////////////////////////////////////////////////////////
 // OpenGL includes
 
+#define GL_GLEXT_PROTOTYPES 1
+
 // TODO: Re-evaluate "SDL_opengl.h"
+#if defined(__ANDROID__)
+
+#define CRAG_USE_GLES
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+#else	// defined(__ANDROID__)
+
+#define CRAG_USE_GL
 #if defined(__APPLE__)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
 #else
 #define GLEW_STATIC
-#define GL_GLEXT_PROTOTYPES
 #include <GL/glew.h>	 // must be included before gl.h 
 #include <GL/gl.h>
 //#include <GL/glext.h>
 #include <GL/glu.h>
 #endif
+
+#endif	// ! defined(__ANDROID__)
 
 
 //////////////////////////////////////////////////////////////////////
@@ -125,6 +140,7 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <condition_variable>
 #include <fstream>
 #include <functional>
 #include <initializer_list>
@@ -137,7 +153,6 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <thread>
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>

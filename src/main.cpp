@@ -40,6 +40,8 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
+// TODO: search source for WIN32, __APPLE__, __ANDROID__ etc. 
+// and try to simplify/reduce
 #if defined(WIN32)
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -127,15 +129,17 @@ CONFIG_DEFINE (profile_mode, bool, false);
 namespace 
 {
 
-#if ! defined(WIN32)
-	CONFIG_DEFINE (video_resolution_x, int, 800);
-	CONFIG_DEFINE (video_resolution_y, int, 600);
+#if defined(WIN32)
+	CONFIG_DEFINE (window_resolution_x, int, 800);
+	CONFIG_DEFINE (window_resolution_y, int, 600);
 #else
-	CONFIG_DEFINE (video_resolution_x, int, 800);
-	CONFIG_DEFINE (video_resolution_y, int, 600);
+	CONFIG_DEFINE (window_resolution_x, int, 800);
+	CONFIG_DEFINE (window_resolution_y, int, 600);
 #endif
-	
-#if defined(PROFILE)
+
+#if defined(__ANDROID__)
+	CONFIG_DEFINE (video_full_screen, bool, true);
+#elif defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #elif defined(NDEBUG)
 	CONFIG_DEFINE (video_full_screen, bool, true);
@@ -207,12 +211,6 @@ namespace
 						{
 							engine.SetFragmentLighting(! engine.GetFragmentLighting());
 						});
-						break;
-					}
-					
-					case SDL_SCANCODE_P:
-					{
-						gfx::Daemon::Call([] (gfx::Engine & engine) { engine.OnToggleWireframe(); });
 						break;
 					}
 					
@@ -321,8 +319,18 @@ namespace
 				break;
 			}
 			
+			case SDL_APP_LOWMEMORY:
+			{
+				DEBUG_MESSAGE("Received low memory warning");
+				
+				// without a resource manager, little to do but carry on
+				return true;
+			}
+			
 			case SDL_QUIT:
 			{
+				DEBUG_MESSAGE("SDL_QUIT received on main thread loop");
+				
 				// it's time to quit
 				return false;
 			}
@@ -335,13 +343,20 @@ namespace
 	{
 		switch (event->type) 
 		{
-			case SDL_MOUSEMOTION:
+			case SDL_APP_LOWMEMORY:
 			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
+#if defined(CRAG_USE_TOUCH)
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_FINGERMOTION:
+#elif defined(CRAG_USE_MOUSE)
+			case SDL_MOUSEMOTION:
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
+#endif
 				return 1;
 				
 			default:
@@ -352,17 +367,19 @@ namespace
 	// The main program function.
 	bool CragMain(int argc, char const * const * argv)
 	{
-		printf("Crag Demo\n"
-			   "Copyright 2010-2012 John McFarlane\n");
+		PrintMessage(stdout,
+			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
+
+		core::DebugSetThreadName("main");
 
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
 		core::ConfigManager config_manager;
 		
-		geom::Vector2i video_resolution(video_resolution_x, video_resolution_y);
+		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
-		if (! app::Init(video_resolution, full_screen, "Crag"))
+		if (! app::Init(window_resolution, full_screen, "Crag"))
 		{
 			return false;
 		}

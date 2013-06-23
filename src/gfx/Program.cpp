@@ -11,6 +11,7 @@
 
 #include "Program.h"
 
+#include "axes.h"
 #include "glHelpers.h"
 
 #include "core/app.h"
@@ -53,7 +54,7 @@ bool Program::IsBound() const
 	return unsigned(GetInt<GL_CURRENT_PROGRAM>()) == _id;
 }
 
-void Program::Init(char const * vert_source, char const * frag_source, Shader & light_vert_shader, Shader & light_frag_shader)
+bool Program::Init(char const * const * vert_sources, char const * const * frag_sources)
 {
 	assert(! IsInitialized());
 
@@ -61,13 +62,18 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	_id = glCreateProgram();
 
 	// Create the main vert and frag shaders.
-	_vert_shader.Init(vert_source, GL_VERTEX_SHADER);
-	_frag_shader.Init(frag_source, GL_FRAGMENT_SHADER);
+	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
+	{
+		return false;
+	}
 	
-	glAttachShader(_id, _vert_shader._id);
-	glAttachShader(_id, _frag_shader._id);
-	glAttachShader(_id, light_vert_shader._id);
-	glAttachShader(_id, light_frag_shader._id);
+	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
+	{
+		return false;
+	}
+	
+	GL_CALL(glAttachShader(_id, _vert_shader._id));
+	GL_CALL(glAttachShader(_id, _frag_shader._id));
 	
 	InitAttribs(_id);
 	
@@ -75,7 +81,7 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	
 	if (! IsLinked())
 	{
-		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_source);
+		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_sources[0]);
 		
 #if ! defined(NDEBUG)
 		std::string info_log;
@@ -102,12 +108,11 @@ void Program::Init(char const * vert_source, char const * frag_source, Shader & 
 	}
 	
 	Unbind();
+	return true;
 }
 
-void Program::Deinit(Shader & light_vert_shader, Shader & light_frag_shader)
+void Program::Deinit()
 {
-	glDetachShader(_id, light_vert_shader._id);
-	glDetachShader(_id, light_frag_shader._id);
 	glDetachShader(_id, _frag_shader._id);
 	glDetachShader(_id, _vert_shader._id);
 	
@@ -156,7 +161,8 @@ void Program::UpdateLights(Light::List const & lights) const
 			break;
 		}
 		
-		geom::Vector4f position = geom::Vector4f(0,0,0,1) * light.GetModelViewTransformation().GetOpenGlMatrix();
+		auto & transformation = light.GetModelViewTransformation();
+		geom::Vector3f position = ToOpenGl(transformation.GetTranslation());
 		Color4f const & color = light.GetColor();
 		
 		glUniform3f(uniforms->position, position.x, position.y, position.z);
@@ -173,12 +179,20 @@ void Program::UpdateLights(Light::List const & lights) const
 
 void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
 {
-	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, projection_matrix.GetArray()));
+#if defined(CRAG_USE_GLES)
+	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, geom::Transposition(projection_matrix).GetArray()));
+#elif defined(CRAG_USE_GL)
+	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_TRUE, projection_matrix.GetArray()));
+#endif
 }
 
 void Program::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
 {
-	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, model_view_matrix.GetArray()));
+#if defined(CRAG_USE_GLES)
+	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, geom::Transposition(ToOpenGl(model_view_matrix)).GetArray()));
+#elif defined(CRAG_USE_GL)
+	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_TRUE, ToOpenGl(model_view_matrix).GetArray()));
+#endif
 }
 
 GLint Program::GetUniformLocation(char const * name) const
@@ -270,7 +284,7 @@ void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, Co
 {
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	
-	geom::Vector4f center = geom::Vector4f(0,0,0,1) * model_view.GetOpenGlMatrix();
+	geom::Vector3f center = ToOpenGl(model_view.GetTranslation());
 	GL_CALL(glUniform3f(_center_location, center.x, center.y, center.z));
 	
 	float radius = static_cast<float>(CalculateRadius(model_view));

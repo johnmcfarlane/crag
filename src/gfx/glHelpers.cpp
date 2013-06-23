@@ -14,12 +14,28 @@
 #include "FrameBuffer.h"
 #include "Texture.h"
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Binding
-
 namespace gfx
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// Debugging
+
+#if ! defined(NDEBUG)
+#if defined(__ANDROID__)
+	char const * ErrorString(GLenum)
+	{
+		return "GL error";
+	}
+#else
+	char const * ErrorString(GLenum error)
+	{
+		return reinterpret_cast<char const *>(gluErrorString(error));
+	}
+#endif	// defined(__ANDROID__)
+#endif	// ! defined(NDEBUG)
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Binding
+
 	template <> GLuint GetBinding<GL_ARRAY_BUFFER>() 
 	{ 
 		return GetInt<GL_ARRAY_BUFFER_BINDING>(); 
@@ -44,18 +60,18 @@ namespace gfx
 	{ 
 		return GetInt<GL_TEXTURE_BINDING_2D>(); 
 	}
-}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// Misc
 
-////////////////////////////////////////////////////////////////////////////////
-// Misc
-
-void gfx::Attach(FrameBuffer const & frame_buffer, Texture const & texture)
-{
-	if (! frame_buffer.IsBound())
+	void Attach(FrameBuffer const & frame_buffer, Texture const & texture)
 	{
-		DEBUG_BREAK("frame buffer is not bound");
-	}
+		if (! frame_buffer.IsBound())
+		{
+			DEBUG_BREAK("frame buffer is not bound");
+		}
 	
-	GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture._name, 0));
+		GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture._name, 0));
+	}
 }
+

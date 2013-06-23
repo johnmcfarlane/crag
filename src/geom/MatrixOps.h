@@ -19,7 +19,7 @@ namespace geom
 	template <typename S, int N> 
 	Matrix<S, N, N> operator * (Matrix<S, N, N> const & lhs, Matrix<S, N, N> const & rhs)
 	{
-		S result[N][N];
+		Matrix<S, N, N> result;
 		for (int row = 0; row != N; ++ row)
 		{
 			for (int column = 0; column != N; ++ column)
@@ -59,7 +59,13 @@ namespace geom
 		return result;
 	}
 
-
+	// matrix *= matrix * matrix
+	template <typename S, int N> 
+	Matrix<S, N, N> operator *= (Matrix<S, N, N> & lhs, Matrix<S, N, N> const & rhs)
+	{
+		return lhs = lhs * rhs;
+	}
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// Matrix relation operators
 

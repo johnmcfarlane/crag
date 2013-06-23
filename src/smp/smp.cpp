@@ -16,15 +16,24 @@
 
 void smp::Yield()
 {
+#if defined(CRAG_USE_STL_THREAD)
 	std::this_thread::yield();
+#else
+	SDL_Delay(1);
+#endif
 }
 
 void smp::Sleep(core::Time seconds)
 {
+#if defined(CRAG_USE_STL_THREAD)
 	ASSERT(seconds >= 0);
 
 	auto microseconds = core::SecondsToDuration<std::chrono::microseconds>(seconds);
 	std::this_thread::sleep_for(microseconds);
+#else
+	Uint32 ms = Uint32(1000. * seconds);
+	SDL_Delay(ms);
+#endif
 }
 
 void smp::SetThreadPriority(int priority)
@@ -103,5 +112,9 @@ void smp::SetThreadName(char const * thread_name)
 
 size_t smp::GetNumCpus()
 {
+#if defined(CRAG_USE_STL_THREAD)
 	return std::thread::hardware_concurrency();
+#else
+	return SDL_GetCPUCount();
+#endif
 }

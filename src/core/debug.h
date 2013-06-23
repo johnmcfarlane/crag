@@ -40,9 +40,19 @@
 #error VERIFY defined but NDEBUG is not
 #endif
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Misc debug helpers
+
+namespace core
+{
+	// thread identifier used in debug output
+#if ! defined(NDEBUG)
+	void DebugSetThreadName(char const * thread_name);
+	char const * DebugGetThreadName();
+#else
+	inline void DebugSetThreadName(char const *) { }
+#endif
+}
 
 // Console output
 void PrintMessage(FILE * out, char const * format, ...);
@@ -70,12 +80,13 @@ void PrintMessage(FILE * out, char const * format, ...);
 #if defined(NDEBUG)
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #else
-#if defined(WIN32)
+#if defined(WIN32) || defined(__ANDROID__)
 #define DEBUG_COLOR_FILE
 #define DEBUG_COLOR_LINE
 #define DEBUG_COLOR_TEXT
 #define DEBUG_COLOR_FUNC
 #define DEBUG_COLOR_PUNC
+#define DEBUG_COLOR_THREAD
 #define DEBUG_COLOR_NORM
 #else
 #define DEBUG_COLOR_FILE "\x1B[32;1m"
@@ -83,9 +94,10 @@ void PrintMessage(FILE * out, char const * format, ...);
 #define DEBUG_COLOR_TEXT "\x1B[37;1m"
 #define DEBUG_COLOR_FUNC "\x1B[36;2m"
 #define DEBUG_COLOR_PUNC "\x1B[37;2m"
+#define DEBUG_COLOR_THREAD "\x1B[31;2m"
 #define DEBUG_COLOR_NORM "\x1B[37;22m"
 #endif
-#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "]" DEBUG_COLOR_NORM "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE)
+#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "] " DEBUG_COLOR_THREAD "%s" DEBUG_COLOR_NORM "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE, core::DebugGetThreadName())
 #endif
 
 
@@ -96,6 +108,9 @@ void PrintMessage(FILE * out, char const * format, ...);
 // BREAK - interrupt execution
 #if defined(WIN32)
 #define BREAK() __debugbreak()
+#elif defined(__ANDROID__)
+#include  <android/log.h>
+#define BREAK() __android_log_assert("error", "crag", "internal error");
 #elif defined(__GNUC__)
 #if defined(__i386__)
 #define BREAK() asm("int3")

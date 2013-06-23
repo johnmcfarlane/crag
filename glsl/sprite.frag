@@ -1,7 +1,5 @@
-#version 120
-
 //
-//  textured.frag
+//  sprite.frag
 //  crag
 //
 //  Created by John McFarlane on 2012-01-08.
@@ -13,7 +11,7 @@
 uniform sampler2D texture;
 
 // inputs from skybox.vert
-varying vec2 fragment_tex_coord;
+varying lowp vec2 fragment_tex_coord;
 
 void main(void)
 {

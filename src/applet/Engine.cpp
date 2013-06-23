@@ -100,7 +100,12 @@ bool Engine::ProcessTasks()
 		}
 		else if (_quit_flag)
 		{
-			DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
+#if ! defined(NDEBUG)
+			if (ipc::ListenerBase::CanExit())
+			{
+				DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
+			}
+#endif
 		}
 
 		return false;
@@ -124,7 +129,12 @@ bool Engine::ProcessTask(Applet & applet)
 	{
 		if (_quit_flag)
 		{
-			DEBUG_MESSAGE("Warning: %s told to quit but did not wake", applet.GetName());
+#if ! defined(NDEBUG)
+			if (ipc::ListenerBase::CanExit())
+			{
+				DEBUG_BREAK("Warning: %s told to quit but did not wake", applet.GetName());
+			}
+#endif
 		}
 
 		return false;

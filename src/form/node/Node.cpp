@@ -49,6 +49,7 @@ form::Node::Node()
 , seed (0)
 , score (0)
 {
+	VerifyObject(* this);
 }
 
 form::Node::~Node()
@@ -303,6 +304,7 @@ void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) cons
 void form::Node::Verify() const
 {
 	VerifyTrue(sizeof(* this) == 80 || sizeof(* this) == 128);
+	VerifyEqual(reinterpret_cast<flag_type>(this) & flag_mask, static_cast<flag_type>(0));
 
 	if (_parent != nullptr) 
 	{

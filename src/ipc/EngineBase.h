@@ -9,12 +9,10 @@
 
 #pragma once
 
-#include "geom/origin.h"
-
 namespace ipc
 {
 	// an optional base class for the Engine classes which are managed by Daemon
-	// with support for local coordinate origins and object lifetime management
+	// with support for object lifetime management
 	template <typename ENGINE, typename OBJECT>
 	class EngineBase
 	{
@@ -35,7 +33,6 @@ namespace ipc
 
 		EngineBase()
 			: _objects()
-			, _origin(geom::abs::Vector3::Zero())
 		{
 		}
 
@@ -200,25 +197,7 @@ namespace ipc
 			_objects[uid] = & object;
 			OnAddObject(object);
 		}
-	public:
-
-		// coordinate system
-		geom::abs::Vector3 const & GetOrigin() const
-		{
-			return _origin;
-		}
-
-		void SetOrigin(geom::abs::Vector3 const & origin)
-		{
-			OnSetOrigin(origin);
-
-			_origin = origin;
-		}
-
-	private:
-		virtual void OnSetOrigin(geom::abs::Vector3 const &)
-		{
-		}
+		
 	public:
 
 #if defined(VERIFY)
@@ -230,8 +209,6 @@ namespace ipc
 				ASSERT(this == & smp_object.GetEngine());
 				VerifyObject(smp_object);
 			});
-
-			VerifyObject(_origin);
 		}
 #endif
 
@@ -240,6 +217,5 @@ namespace ipc
 
 	private:
 		ObjectMap _objects;
-		geom::abs::Vector3 _origin;
 	};
 }

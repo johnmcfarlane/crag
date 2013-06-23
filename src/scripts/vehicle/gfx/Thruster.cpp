@@ -13,10 +13,9 @@
 
 #include "Puff.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Scene.h"
-
-#include "sim/axes.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
@@ -78,7 +77,7 @@ void Thruster::AddPuff(float thrust_factor)
 	auto model_transformation = GetModelTransformation();
 		
 	// Calculate the thruster/puff direction.
-	Vector3 thruster_direction = axes::GetAxis(model_transformation.GetRotation(), axes::FORWARD);
+	Vector3 thruster_direction = GetAxis(model_transformation.GetRotation(), Direction::forward);
 	Scalar thruster_max = Length(thruster_direction);
 	thruster_direction *= Scalar(1) / thruster_max;
 	
@@ -99,7 +98,7 @@ void Thruster::AddPuff(float thrust_factor)
 		// Extract the global thruster translation.
 		auto translation = model_transformation.GetTranslation();
 		
-		transformation = Transformation(translation, axes::Rotation<Scalar>(puff_direction));
+		transformation = Transformation(translation, gfx::Rotation<Scalar>(puff_direction));
 	}
 
 	ipc::Handle<Puff>::CreateHandle(transformation, spawn_volume);

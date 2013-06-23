@@ -1,0 +1,1 @@
+adb logcat $1 $2 $3 $4 crag_log:* DEBUG:I *:E

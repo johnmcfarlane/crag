@@ -27,11 +27,7 @@
 #include "core/Random.h"
 #include "core/Roster.h"
 
-//#define RENDER_SEA
-
-
 using namespace sim;
-
 
 //////////////////////////////////////////////////////////////////////
 // sim::PlanetController member definitions
@@ -62,7 +58,7 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	// formation
 	auto & engine = entity.GetEngine();
 	int random_seed_formation = random.GetInt();
-	geom::abs::Sphere3 formation_sphere = geom::RelToAbs(sphere, engine.GetOrigin());
+	geom::abs::Sphere3 formation_sphere = geom::Cast<geom::abs::Scalar>(sphere);
 	_formation = new form::Formation(random_seed_formation, * shader, formation_sphere);
 	engine.AddFormation(* _formation);
 

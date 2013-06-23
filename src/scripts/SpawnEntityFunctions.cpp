@@ -21,7 +21,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
-#include "sim/ObserverController.h"
+#include "sim/MouseObserverController.h"
+#include "sim/TouchObserverController.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
@@ -36,8 +37,15 @@
 
 #include "geom/origin.h"
 
+#include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
+
+#if defined(CRAG_USE_MOUSE)
+#define OBSERVER_USE_MOUSE
+#else
+#define OBSERVER_USE_TOUCH
+#endif
 
 namespace gfx 
 { 
@@ -68,13 +76,6 @@ namespace
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
-	
-	// random number generation
-	Random random_sequence;
-	double GetRandomUnit()
-	{
-		return random_sequence.GetUnit<double>();
-	}
 	
 	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, geom::rel::Vector3 size, gfx::Color4f color)
 	{
@@ -122,10 +123,25 @@ namespace
 	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
 	{
 		// physics
+#if defined(OBSERVER_USE_MOUSE)
 		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), observer_density, observer_linear_damping, observer_angular_damping);
+#endif
 
 		// controller
-		auto controller = new sim::ObserverController(observer);
+#if defined(OBSERVER_USE_TOUCH)
+		auto controller = new sim::TouchObserverController(observer, position);
+#elif defined(OBSERVER_USE_MOUSE)
+		// Linux requires libxi-dev to be installed for this.
+		if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
+		{
+			DEBUG_MESSAGE("Failed to set relative mouse mode.");
+			DEBUG_BREAK_SDL();
+		}
+
+		auto controller = new sim::MouseObserverController(observer);
+#else
+#error no controller strategy
+#endif
 		observer.SetController(controller);
 
 #if defined(OBSERVER_LIGHT)
@@ -294,28 +310,25 @@ namespace
 	}
 }
 
-sim::EntityHandle SpawnBall(const sim::Vector3 & position, gfx::Color4f color)
+sim::EntityHandle SpawnBall(sim::Vector3 const & position, sim::Scalar radius, gfx::Color4f color)
 {
 	// ball
 	auto ball = sim::EntityHandle::CreateHandle();
 
-	ball.Call([position, color] (sim::Entity & ball) {
-		geom::rel::Sphere3 sphere(position, geom::rel::Scalar(std::exp(- GetRandomUnit() * 2)));
+	ball.Call([position, radius, color] (sim::Entity & ball) {
+		geom::rel::Sphere3 sphere(position, radius);
 		ConstructBall(ball, sphere, color);
 	});
 
 	return ball;
 }
 
-sim::EntityHandle SpawnBox(const sim::Vector3 & position, gfx::Color4f color)
+sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & size, gfx::Color4f color)
 {
 	// box
 	auto box = sim::EntityHandle::CreateHandle();
 
-	box.Call([position, color] (sim::Entity & box) {
-		geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-					 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-					 geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
+	box.Call([position, size, color] (sim::Entity & box) {
 		ConstructBox(box, position, size, color);
 	});
 

@@ -35,6 +35,10 @@
 #define constexpr const
 #define alignof __alignof
 #define noexcept _NOEXCEPT
+#define thread_local __declspec(thread)
+#define snprintf _snprintf
+#elif defined(__GNUC__)
+#define thread_local __thread
 #endif
 
 

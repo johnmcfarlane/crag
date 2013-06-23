@@ -13,7 +13,6 @@
 
 #include "geom/Transformation.h"
 
-
 namespace gfx
 {
 	class Frustum
@@ -25,8 +24,8 @@ namespace gfx
 		Matrix44 CalcProjectionMatrix() const;
 		
 		geom::Vector2i resolution;
-		double fov;	// radians
 		RenderRange depth_range;	// does this really belong here?
+		float fov;	// radians
 	};
 	
 	// Point of view
@@ -36,7 +35,7 @@ namespace gfx
 		// functions
 		Pov();
 		
-		Frustum & GetFrustum();
+		void SetFrustum(Frustum const & frustum);
 		Frustum const & GetFrustum() const;
 
 		// set/get the camera position/rotation
@@ -44,10 +43,11 @@ namespace gfx
 		Transformation const & GetTransformation() const;
 		
 		Vector3 GetPosition() const;
-		
-		//void LookAtSphere(Vector const & eye, Sphere3 const & sphere, Vector const & up);
-	private:
 
+		Vector2 WorldToScreen(Vector3 const & world_position) const;
+		Vector3 ScreenToWorld(Vector2 const & screen_position) const;
+
+	private:
 		// variables
 		Frustum _frustum;
 		Transformation _transformation;

@@ -9,9 +9,9 @@
 
 #include "pch.h"
 
-#if defined(WIN32)
-
 #include "Fiber.h"
+
+#if defined(CRAG_USE_FIBER_WIN)
 
 #include "core/Random.h"
 

@@ -24,7 +24,7 @@ namespace gfx
 		Shader();
 		~Shader();
 		
-		bool Init(char const * filename, GLenum shader_type);
+		bool Init(char const * const * filenames, GLenum shader_type);
 		void Deinit();
 		
 		bool IsInitialized() const;
@@ -35,7 +35,7 @@ namespace gfx
 #endif
 		
 	private:
-		void GetInfoLog(std::string & info_log) const;		
+		std::vector<char> GetInfoLog() const;		
 		
 		// variables
 		GLuint _id;

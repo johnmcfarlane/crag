@@ -15,9 +15,9 @@
 namespace gfx
 {
 	
-	class IndexBuffer : private smp::vector<GLuint>
+	class IndexBuffer : private smp::vector<GLushort>
 	{
-		typedef smp::vector<GLuint> Super;
+		typedef smp::vector<GLushort> Super;
 
 	public:
 		IndexBuffer(int capacity);

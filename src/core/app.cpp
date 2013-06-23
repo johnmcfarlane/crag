@@ -17,15 +17,12 @@
 #include <sys/resource.h>
 #endif
 
-// defined in gfx::Engine.cpp
-CONFIG_DECLARE (multisample, bool);
-
-
 namespace 
 {
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
+	SDL_Renderer * renderer = nullptr;
 
 	int refresh_rate = -1;
 }
@@ -50,13 +47,11 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	
-	if (multisample)
-	{
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-	}
-	
-	int flags = SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+#if defined(CRAG_USE_MOUSE)
+	flags |= SDL_WINDOW_MOUSE_FOCUS;
+#endif
 	
 	// Get existing video info.
 	SDL_DisplayMode desktop_display_mode;
@@ -75,6 +70,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
+	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
 	window = SDL_CreateWindow(title, 
 							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 							  resolution.x, resolution.y, 
@@ -88,13 +84,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	
 	_has_focus = true;
 
-	// Linux requires libxi-dev to be installed for this.
-	if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
-	{
-		ERROR_MESSAGE("Failed to set relative mouse mode.");
-		return false;
-	}
-	
 	return true;
 }
 
@@ -104,63 +93,88 @@ void app::Deinit()
 
 	SDL_DestroyWindow(window);
 	window = nullptr;
+	
 	refresh_rate = -1;
 
 	SDL_Quit();
 
+	CRAG_DEBUG_CHECK_MEMORY();
 }
 
-SDL_GLContext app::InitContext()
+bool app::InitContext()
 {
 	ASSERT(window != nullptr);
 
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-	if (context == nullptr)
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+	
+	if (renderer == nullptr)
 	{
 		DEBUG_BREAK_SDL();
-		return nullptr;
-	}
-	
-	if (SDL_GL_MakeCurrent(window, context) != 0)
-	{
-		DEBUG_BREAK_SDL();
-		return nullptr;
-	}
-	
-	return context;
-}
-
-void app::DeinitContext(SDL_GLContext context)
-{
-	SDL_GL_DeleteContext(context);
-}
-
-bool app::LoadFile(char const * filename, std::vector<char> & buffer)
-{
-	FILE * source = fopen(filename, "rb");
-	if (source == nullptr)
-	{
-		ASSERT(errno == ENOENT);
-		ERROR_MESSAGE("file not found '%s'", filename);
 		return false;
 	}
-	
-	fseek(source, 0, SEEK_END);
-	size_t length = ftell(source);
-	fseek(source, 0, SEEK_SET);
-
-	buffer.resize(length);
-	
-	size_t read = fread(& buffer[0], 1, length, source);
-	if (read != length)
-	{
-		DEBUG_MESSAGE("error loading %s: length=" SIZE_T_FORMAT_SPEC "; read=" SIZE_T_FORMAT_SPEC, filename, length, read);
-		return false;
-	}
-
-	fclose(source);
 	
 	return true;
+}
+
+void app::DeinitContext()
+{
+	ASSERT(renderer != nullptr);
+	SDL_DestroyRenderer(renderer);
+	renderer = nullptr;
+}
+
+app::FileResource app::LoadFile(char const * filename, bool null_terminate)
+{
+	// open file
+	SDL_RWops * source = SDL_RWFromFile(filename, "rb");
+	if (source == nullptr)
+	{
+		DEBUG_MESSAGE("failed to open file, '%s':", filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
+	}
+	
+	// determine length
+	auto length = static_cast<std::size_t>(SDL_RWseek(source, 0, SEEK_END));
+	SDL_RWseek(source, 0, SEEK_SET);
+
+	// prepare buffer
+	std::size_t size = length + null_terminate;
+	FileResource buffer(new app::FileResource::element_type(size));
+	if (! buffer || buffer->size() != size)
+	{
+		DEBUG_MESSAGE("failed to allocated " SIZE_T_FORMAT_SPEC " bytes file, '%s':", size, filename);
+		return FileResource();
+	}
+	
+	// read file
+	auto read = SDL_RWread(source, & buffer->front(), 1, length);
+	if (read != length)
+	{
+		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
+	}
+
+	// close file
+	if (SDL_RWclose(source) != 0)
+	{
+		DEBUG_MESSAGE("failed to close file, '%s':", filename);
+		DEBUG_BREAK_SDL();
+		return FileResource();
+	}
+	
+	// append terminator
+	if (null_terminate)
+	{
+		(* buffer)[length] = '\0';
+		
+		// If this happens, it probably means that a null terminator was read from the file.
+		ASSERT(strlen(buffer->data()) == length);
+	}
+	
+	// success!
+	return buffer;
 }
 
 void app::Beep()
