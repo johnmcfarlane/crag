@@ -225,7 +225,7 @@ bool app::IsKeyDown(SDL_Scancode key_code)
 	if (key_code >= 0)
 	{
 		int num_keys;
-		Uint8 * key_down = SDL_GetKeyboardState(& num_keys);
+		auto key_down = SDL_GetKeyboardState(& num_keys);
 		
 		if (key_code < num_keys)
 		{

@@ -24,6 +24,8 @@
 #include "core/app.h"
 #include "core/ConfigManager.h"
 
+#include <SDL_main.h>
+
 #define RUN_TEST
 
 
@@ -39,17 +41,6 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
-// TODO: search source for WIN32, __APPLE__, __ANDROID__ etc. 
-// and try to simplify/reduce
-#if defined(WIN32)
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
-	CragMain();
-
-	// WM_QUIT param should be returned here but it is lost
-	return 0;
-}
-#else
 int main(int, char * *)
 {
 	if (CragMain())
@@ -61,7 +52,6 @@ int main(int, char * *)
 		return EXIT_FAILURE;
 	}
 }
-#endif	// ! WIN32
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
