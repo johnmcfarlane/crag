@@ -330,14 +330,14 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & 
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const
 {
-	Vector2 screen_position(mouse_button_event.x, mouse_button_event.y);
-	return screen_position;
+	geom::Vector<Sint32, 2> screen_position(mouse_button_event.x, mouse_button_event.y);
+	return geom::Cast<float>(screen_position);
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const
 {
-	Vector2 screen_position(mouse_motion_event.x, mouse_motion_event.y);
-	return screen_position;
+	geom::Vector<Sint32, 2> screen_position(mouse_motion_event.x, mouse_motion_event.y);
+	return geom::Cast<float>(screen_position);
 }
 
 Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const

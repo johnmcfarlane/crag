@@ -15,8 +15,12 @@
 #include "Layer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
-#include "SetCameraEvent.h"
 #include "Texture.h"
+
+#if defined(WIN32)
+#include "SetCameraEvent.h"
+#include "SetOriginEvent.h"
+#endif
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"

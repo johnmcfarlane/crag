@@ -31,7 +31,7 @@ Scene::Scene(Engine & engine)
 {
 	auto frustum = pov.GetFrustum();
 
-	frustum.fov = static_cast<double>(camera_fov);
+	frustum.fov = camera_fov;
 	frustum.depth_range[0] = frustum.depth_range[1] = -1;
 	
 	pov.SetFrustum(frustum);

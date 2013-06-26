@@ -96,6 +96,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
 	$(CRAG_PATH)/sim/EntityFunctions.cpp \
 	$(CRAG_PATH)/sim/FrequencyEstimator.cpp \
 	$(CRAG_PATH)/sim/gravity.cpp \
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 	$(CRAG_PATH)/sim/ObserverController.cpp \
 	$(CRAG_PATH)/sim/ObserverInput.cpp \
@@ -104,14 +105,23 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
 	$(CRAG_PATH)/sim/ObserverInput.cpp \
 	$(CRAG_PATH)/sim/TouchObserverController.cpp \
 >>>>>>> Stashed changes
+=======
+	$(CRAG_PATH)/sim/MouseObserverController.cpp \
+	$(CRAG_PATH)/sim/ObserverInput.cpp \
+	$(CRAG_PATH)/sim/TouchObserverController.cpp \
+>>>>>>> linux
 	$(CRAG_PATH)/ipc/Fiber.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \
 	$(CRAG_PATH)/ipc/FiberPosix.cpp \
 	$(CRAG_PATH)/ipc/FiberWin.cpp \
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 	$(CRAG_PATH)/ipc/ListenerInterface.cpp \
 >>>>>>> Stashed changes
+=======
+	$(CRAG_PATH)/ipc/ListenerInterface.cpp \
+>>>>>>> linux
 	$(CRAG_PATH)/smp/ReadersWriterMutex.cpp \
 	$(CRAG_PATH)/smp/scheduler.cpp \
 	$(CRAG_PATH)/smp/Semaphore.cpp \

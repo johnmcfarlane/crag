@@ -66,7 +66,7 @@ namespace ipc
 		
 		~Daemon() 
 		{ 
-			ASSERT(_state == State::request_flush_end);
+			ASSERT(_state == State::acknowledge_flush_end);
 			SetState(State::request_destroy);
 			
 			ASSERT(singleton == this);
@@ -313,7 +313,7 @@ namespace ipc
 
 		static float ShutdownTimeout()
 		{
-			return .1;
+			return .1f;
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////

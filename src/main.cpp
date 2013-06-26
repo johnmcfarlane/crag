@@ -25,6 +25,10 @@
 #include "core/app.h"
 #include "core/ConfigManager.h"
 
+#if defined(WIN32)
+#include <SDL_main.h>
+#endif
+
 #define RUN_TEST
 
 
@@ -40,72 +44,6 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
-// TODO: search source for WIN32, __APPLE__, __ANDROID__ etc. 
-// and try to simplify/reduce
-#if defined(WIN32)
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
-	// scan input
-	auto buffer = lpCmdLine;
-	auto buffer_end = buffer;
-	auto num_arguments = 0;
-
-	for (auto was_space = true; ; ++ buffer_end)
-	{
-		char c = * buffer_end;
-		if (c == '\0')
-		{
-			break;
-		}
-
-		auto is_space = std::isspace(c) != 0;
-		if (is_space)
-		{
-			(* buffer_end) = '\0';
-		}
-		else
-		{
-			if (was_space)
-			{
-				++ num_arguments;
-			}
-		}
-
-		was_space = is_space;
-	}
-
-	// allocate the argument array
-	auto const arguments = new char const * [num_arguments];
-	auto const arguments_end = arguments + num_arguments;
-	
-	// go through again and populate argument array
-	auto buffer_iterator = buffer;
-	for (auto argument_iterator = arguments; argument_iterator != arguments_end; ++ argument_iterator)
-	{
-		while (! * buffer_iterator)
-		{
-			++ buffer_iterator;
-			ASSERT(buffer_iterator < buffer_end);
-		}
-
-		* argument_iterator = buffer_iterator;
-
-		while (* buffer_iterator)
-		{
-			++ buffer_iterator;
-			ASSERT(buffer_iterator <= buffer_end);
-		}
-	}
-	ASSERT(* buffer_iterator == '\0');
-
-	CragMain(num_arguments, arguments);
-
-	delete [] arguments;
-
-	// WM_QUIT param should be returned here but it is lost
-	return 0;
-}
-#else
 int main(int argc, char * * argv)
 {
 	if (CragMain(argc - 1, argv + 1))
@@ -117,7 +55,6 @@ int main(int argc, char * * argv)
 		return EXIT_FAILURE;
 	}
 }
-#endif	// ! WIN32
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
@@ -343,7 +280,6 @@ namespace
 	{
 		switch (event->type) 
 		{
-			case SDL_APP_LOWMEMORY:
 			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
 #if defined(CRAG_USE_TOUCH)
