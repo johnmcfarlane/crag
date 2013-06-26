@@ -36,11 +36,12 @@ namespace
 			return nullptr;
 		}
 
-		auto length = ftell(& file);
-		if (length < 0)
+		auto extent = ftell(& file);
+		if (extent < 0)
 		{
 			return nullptr;
 		}
+		auto length = static_cast<std::size_t>(extent);
 
 		if (fseek(& file, 0, SEEK_SET) != 0)
 		{
@@ -48,7 +49,7 @@ namespace
 		}
 
 		// prepare buffer
-		std::size_t size = length + null_terminate;
+		auto size = length + null_terminate;
 		FileResource::element_type * buffer = new FileResource::element_type(size);
 		if (! buffer || buffer->size() != size)
 		{
