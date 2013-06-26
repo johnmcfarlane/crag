@@ -3,7 +3,8 @@ package org.libsdl.app;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.*;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 
 import android.app.*;
 import android.content.*;
@@ -24,34 +25,39 @@ import android.hardware.*;
     SDL Activity
 */
 public class SDLActivity extends Activity {
+    private static final String TAG = "Crag";
 
     // Keep track of the paused state
     public static boolean mIsPaused = false;
 
     // Main components
-    private static SDLActivity mSingleton;
-    private static SDLSurface mSurface;
-    private static View mTextEdit;
-    private static ViewGroup mLayout;
+    protected static SDLActivity mSingleton;
+    protected static SDLSurface mSurface;
+    protected static View mTextEdit;
+    protected static ViewGroup mLayout;
 
     // This is what SDL runs in. It invokes SDL_main(), eventually
-    private static Thread mSDLThread;
+    protected static Thread mSDLThread;
 
     // Audio
-    private static Thread mAudioThread;
-    private static AudioTrack mAudioTrack;
+    protected static Thread mAudioThread;
+    protected static AudioTrack mAudioTrack;
 
-    // EGL private objects
-    private static EGLContext  mEGLContext;
-    private static EGLSurface  mEGLSurface;
-    private static EGLDisplay  mEGLDisplay;
-    private static EGLConfig   mEGLConfig;
-    private static int mGLMajor, mGLMinor;
+    // EGL objects
+    protected static EGLContext  mEGLContext;
+    protected static EGLSurface  mEGLSurface;
+    protected static EGLDisplay  mEGLDisplay;
+    protected static EGLConfig   mEGLConfig;
+    protected static int mGLMajor, mGLMinor;
 
     // Load the .so
     static {
         System.loadLibrary("ode");
         System.loadLibrary("SDL2");
+        //System.loadLibrary("SDL2_image");
+        //System.loadLibrary("SDL2_mixer");
+        //System.loadLibrary("SDL2_net");
+        //System.loadLibrary("SDL2_ttf");
         System.loadLibrary("main");
     }
 
@@ -74,17 +80,26 @@ public class SDLActivity extends Activity {
     }
 
     // Events
-    /*protected void onPause() {
+    @Override
+    protected void onPause() {
         Log.v("SDL", "onPause()");
         super.onPause();
         // Don't call SDLActivity.nativePause(); here, it will be called by SDLSurface::surfaceDestroyed
     }
 
+    @Override
     protected void onResume() {
         Log.v("SDL", "onResume()");
         super.onResume();
         // Don't call SDLActivity.nativeResume(); here, it will be called via SDLSurface::surfaceChanged->SDLActivity::startApp
-    }*/
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.v("SDL", "onLowMemory()");
+        super.onLowMemory();
+        SDLActivity.nativeLowMemory();
+    }
 
     @Override
     protected void onDestroy() {
@@ -111,36 +126,72 @@ public class SDLActivity extends Activity {
     static final int COMMAND_UNUSED = 2;
     static final int COMMAND_TEXTEDIT_HIDE = 3;
 
-    // Handler for the messages
-    Handler commandHandler = new Handler() {
+    protected static final int COMMAND_USER = 0x8000;
+
+    /**
+     * This method is called by SDL if SDL did not handle a message itself.
+     * This happens if a received message contains an unsupported command.
+     * Method can be overwritten to handle Messages in a different class.
+     * @param command the command of the message.
+     * @param param the parameter of the message. May be null.
+     * @return if the message was handled in overridden method.
+     */
+    protected boolean onUnhandledMessage(int command, Object param) {
+        return false;
+    }
+
+    /**
+     * A Handler class for Messages from native SDL applications.
+     * It uses current Activities as target (e.g. for the title).
+     * static to prevent implicit references to enclosing object.
+     */
+    protected static class SDLCommandHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+            Context context = getContext();
+            if (context == null) {
+                Log.e(TAG, "error handling message, getContext() returned null");
+                return;
+            }
             switch (msg.arg1) {
             case COMMAND_CHANGE_TITLE:
-                setTitle((String)msg.obj);
+                if (context instanceof Activity) {
+                    ((Activity) context).setTitle((String)msg.obj);
+                } else {
+                    Log.e(TAG, "error handling message, getContext() returned no Activity");
+                }
                 break;
             case COMMAND_TEXTEDIT_HIDE:
                 if (mTextEdit != null) {
                     mTextEdit.setVisibility(View.GONE);
 
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mTextEdit.getWindowToken(), 0);
                 }
                 break;
+
+            default:
+                if ((context instanceof SDLActivity) && !((SDLActivity) context).onUnhandledMessage(msg.arg1, msg.obj)) {
+                    Log.e(TAG, "error handling message, command is " + msg.arg1);
+                }
             }
         }
-    };
+    }
+
+    // Handler for the messages
+    Handler commandHandler = new SDLCommandHandler();
 
     // Send a message from the SDLMain thread
-    void sendCommand(int command, Object data) {
+    boolean sendCommand(int command, Object data) {
         Message msg = commandHandler.obtainMessage();
         msg.arg1 = command;
         msg.obj = data;
-        commandHandler.sendMessage(msg);
+        return commandHandler.sendMessage(msg);
     }
 
     // C functions we call
     public static native void nativeInit();
+    public static native void nativeLowMemory();
     public static native void nativeQuit();
     public static native void nativePause();
     public static native void nativeResume();
@@ -164,13 +215,13 @@ public class SDLActivity extends Activity {
         flipEGL();
     }
 
-    public static void setActivityTitle(String title) {
+    public static boolean setActivityTitle(String title) {
         // Called from SDLMain() thread and can't directly affect the view
-        mSingleton.sendCommand(COMMAND_CHANGE_TITLE, title);
+        return mSingleton.sendCommand(COMMAND_CHANGE_TITLE, title);
     }
 
-    public static void sendMessage(int command, int param) {
-        mSingleton.sendCommand(command, Integer.valueOf(param));
+    public static boolean sendMessage(int command, int param) {
+        return mSingleton.sendCommand(command, Integer.valueOf(param));
     }
 
     public static Context getContext() {
@@ -233,9 +284,9 @@ public class SDLActivity extends Activity {
         }
     }
 
-    public static void showTextInput(int x, int y, int w, int h) {
+    public static boolean showTextInput(int x, int y, int w, int h) {
         // Transfer the task to the main thread as a Runnable
-        mSingleton.commandHandler.post(new ShowTextInputTask(x, y, w, h));
+        return mSingleton.commandHandler.post(new ShowTextInputTask(x, y, w, h));
     }
 
 
@@ -455,10 +506,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     View.OnKeyListener, View.OnTouchListener, SensorEventListener  {
 
     // Sensors
-    private static SensorManager mSensorManager;
+    protected static SensorManager mSensorManager;
 
     // Keep track of the surface size to normalize touch events
-    private static float mWidth, mHeight;
+    protected static float mWidth, mHeight;
 
     // Startup    
     public SDLSurface(Context context) {
@@ -561,8 +612,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void onDraw(Canvas canvas) {}
 
 
-
-
     // Key events
     @Override
     public boolean onKey(View  v, int keyCode, KeyEvent event) {
@@ -584,11 +633,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     // Touch events
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        {
              final int touchDevId = event.getDeviceId();
              final int pointerCount = event.getPointerCount();
              // touchId, pointerId, action, x, y, pressure
-             int actionPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent. ACTION_POINTER_ID_SHIFT; /* API 8: event.getActionIndex(); */
+             int actionPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT; /* API 8: event.getActionIndex(); */
              int pointerFingerId = event.getPointerId(actionPointerIndex);
              int action = (event.getAction() & MotionEvent.ACTION_MASK); /* API 8: event.getActionMasked(); */
 
@@ -609,7 +657,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
              } else {
                 SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
              }
-        }
       return true;
    } 
 
