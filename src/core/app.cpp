@@ -165,6 +165,9 @@ bool app::InitContext()
 	ASSERT(window != nullptr);
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+
+	// currently, SDL_CreateRenderer triggers errno changes in X calls
+	errno = 0;
 	
 	if (renderer == nullptr)
 	{
