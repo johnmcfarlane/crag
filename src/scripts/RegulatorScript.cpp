@@ -223,7 +223,7 @@ namespace
 				return;
 			}
 			
-			QuaterneCount recommended_num_quaterne(static_cast<int>(num_quaterne.GetNumber() * max_mesh_generation_reaction_coefficient) - 1);
+			QuaterneCount recommended_num_quaterne(std::max(static_cast<int>(num_quaterne.GetNumber() * max_mesh_generation_reaction_coefficient) - 1, 0));
 			if (recommended_num_quaterne < _min_recommended_num_quaterne)
 			{
 				_min_recommended_num_quaterne = recommended_num_quaterne;
