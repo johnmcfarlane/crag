@@ -249,7 +249,7 @@ void TouchObserverController::UpdateCameraRotation(Finger const & finger)
 	// convert them into rotations and take the difference
 	auto from_matrix = gfx::Rotation(relative_down_direction, camera_up);
 	auto to_matrix = gfx::Rotation(relative_current_direction, camera_up);
-	auto required_rotation = Inverse(to_matrix) * (from_matrix);
+	auto required_rotation = Inverse(from_matrix) * (to_matrix);
 	
 	// apply them to camera rotation
 	// TODO: Is operator* the right way around?

@@ -97,8 +97,8 @@ Vector3 Pov::ScreenToWorld(Vector2 const & screen_position) const
 	auto resolution = geom::Cast<float>(_frustum.resolution);
 
 	Vector3 normalized(
-		- 2.f * (screen_position.x / resolution.x) + 1.f,
-		2.f * (screen_position.y / resolution.y) - 1.f,
+		2.f * (screen_position.x / resolution.x) - 1.f,
+		- 2.f * (screen_position.y / resolution.y) + 1.f,
 		- 1.f);
 		
 	Vector4 clip(
