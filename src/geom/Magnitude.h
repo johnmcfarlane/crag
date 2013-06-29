@@ -66,6 +66,14 @@ namespace geom
 		v *= (InvSqrt(LengthSq(v)) * length);
 	}
 
+	// Sets r to given length. 
+	// Is undefined when length is zero.
+	// Slow but accurate. 
+	template<typename S, int N> void Resize(Ray<S, N> & r, S length)
+	{
+		Resize(r.direction, length);
+	}
+
 	// Converts v to unit vector and returns v. 
 	// Is undefined when input is zero length.
 	// Fast but inaccurate. 
