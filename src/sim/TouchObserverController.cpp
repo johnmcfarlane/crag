@@ -134,27 +134,38 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 		case SDL_MOUSEBUTTONDOWN:
 		{
 			auto direction = GetPixelDirection(GetScreenPosition(event.button), _transformation);
-			HandleFingerDown(direction, SDL_FingerID());
+			SDL_FingerID finger_id(event.button.button);
+			if (event.button.button == SDL_BUTTON_RIGHT && IsDown(finger_id))
+			{
+				HandleFingerUp(finger_id);
+			}
+			else
+			{
+				HandleFingerDown(direction, finger_id);
+			}
 			break;
 		}
 		
 		case SDL_MOUSEBUTTONUP:
 		{
-			HandleFingerUp(SDL_FingerID());
+			if (event.button.button != SDL_BUTTON_RIGHT)
+			{
+				HandleFingerUp(SDL_FingerID(event.button.button));
+			}
 			break;
 		}
 		
 		case SDL_MOUSEMOTION:
 		{
 			// if the mouse button isn't pressed,
-			if (! IsDown(SDL_FingerID()))
+			if (! IsDown(SDL_FingerID(event.button.button)))
 			{
 				// ignore motion because we're emulating a touch device
 				break;
 			}
 			
 			auto direction = GetPixelDirection(GetScreenPosition(event.motion), GetDownTransformation());
-			HandleFingerMotion(direction, SDL_FingerID());
+			HandleFingerMotion(direction, SDL_FingerID(SDL_BUTTON_LEFT));
 			break;
 		}
 #endif
