@@ -17,7 +17,6 @@
 #include "physics/Body.h"
 
 #include "gfx/axes.h"
-#include "gfx/Pov.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetOriginEvent.h"
 
@@ -54,6 +53,11 @@ TouchObserverController::TouchObserverController(Entity & entity, Transformation
 , _transformation(transformation)
 , _origin(geom::abs::Vector3::Zero())
 {
+	_frustum.resolution = app::GetResolution();
+	_frustum.depth_range = Vector2(1, 2);
+	_frustum.fov = camera_fov;
+
+	// register 
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.AddOrdering(& TouchObserverController::Tick, & Entity::Tick);
 	roster.AddCommand(* this, & TouchObserverController::Tick);
@@ -342,13 +346,8 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & 
 
 Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const
 {
-	gfx::Frustum frustum;
-	frustum.resolution = app::GetResolution();
-	frustum.depth_range = Vector2(1, 2);
-	frustum.fov = camera_fov;
-	
 	gfx::Pov pov;
-	pov.SetFrustum(frustum);
+	pov.SetFrustum(_frustum);
 	pov.SetTransformation(transformation);
 
 	Vector3 position = pov.ScreenToWorld(screen_position);

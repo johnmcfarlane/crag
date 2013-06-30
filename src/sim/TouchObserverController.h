@@ -13,6 +13,8 @@
 
 #include "Controller.h"
 
+#include "gfx/Pov.h"
+
 #include "ipc/Listener.h"
 
 #include "core/EventWatcher.h"
@@ -82,6 +84,7 @@ namespace sim
 		
 		// variables
 		Transformation _transformation;
+		gfx::Frustum _frustum;
 		geom::abs::Vector3 _origin;
 		FingerVector _fingers;
 		core::EventWatcher _event_watcher;
