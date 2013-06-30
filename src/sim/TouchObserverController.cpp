@@ -337,22 +337,22 @@ Transformation const & TouchObserverController::GetDownTransformation() const
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const
 {
-	Vector2 normalized_screen_position(touch_finger_event.x, touch_finger_event.y);
-	auto screen_resolution = geom::Cast<float>(app::GetResolution());
-	Vector2 screen_position = screen_resolution * normalized_screen_position;
+	Vector2 screen_position(2.f * touch_finger_event.x - 1.f, 1.f - 2.f * touch_finger_event.y);
 	return screen_position;
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const
 {
-	geom::Vector<Sint32, 2> screen_position(mouse_button_event.x, mouse_button_event.y);
-	return geom::Cast<float>(screen_position);
+	Vector2 pixel_position(mouse_button_event.x, mouse_button_event.y);
+	Vector2 screen_position = _frustum.PixelToScreen(pixel_position);
+	return screen_position;
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const
 {
-	geom::Vector<Sint32, 2> screen_position(mouse_motion_event.x, mouse_motion_event.y);
-	return geom::Cast<float>(screen_position);
+	Vector2 pixel_position(mouse_motion_event.x, mouse_motion_event.y);
+	Vector2 screen_position = _frustum.PixelToScreen(pixel_position);
+	return screen_position;
 }
 
 Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const
