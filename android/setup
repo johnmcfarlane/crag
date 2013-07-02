@@ -1,5 +1,5 @@
 #!/bin/sh
-ln -s ../../dependencies/SDL2 jni/SDL
+ln -s ../../dependencies/SDL jni/SDL
 cd ../dependencies/ode
 #./bootstrap
 sh autogen.sh

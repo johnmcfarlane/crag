@@ -1,5 +1,5 @@
 #!/bin/sh
-cd SDL2
+cd SDL
 ./autogen.sh
 mkdir build
 cd build
