@@ -216,7 +216,7 @@ void Fiber::InitContext()
 
 void Fiber::InitCallback(Callback * callback, void * data)
 {
-#if MAKECONTEXT_SMALLER_INT
+#if defined(MAKECONTEXT_SMALLER_INT)
 	static_assert(sizeof(data) == sizeof(int) * 2, "wrong platform");
 
 	// makecontext only takes integers but the caller passes in a pointer
@@ -240,7 +240,7 @@ void Fiber::InitCallback(Callback * callback, void * data)
 #endif
 }
 
-#if MAKECONTEXT_SMALLER_INT
+#if defined(MAKECONTEXT_SMALLER_INT)
 void Fiber::OnLaunchHelper(unsigned i0, unsigned i1, unsigned i2, unsigned i3, unsigned i4, unsigned i5)
 {
 	HelperCallbackParameter parameters[3];

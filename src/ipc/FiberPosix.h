@@ -16,9 +16,7 @@
 #if defined(__LLP64__) || defined(__LP64__)
 // These memory models do not readily support passing of pointers.
 // See [http://en.wikipedia.org/wiki/Setcontext#Example].
-#define MAKECONTEXT_SMALLER_INT 1
-#else
-#define MAKECONTEXT_SMALLER_INT 0
+#define MAKECONTEXT_SMALLER_INT
 #endif
 
 namespace ipc
@@ -73,7 +71,7 @@ namespace ipc
 		void InitContext();
 		void InitCallback(Callback * callback, void * data);
 
-#if MAKECONTEXT_SMALLER_INT
+#if defined(MAKECONTEXT_SMALLER_INT)
 		static void OnLaunchHelper(unsigned i0, unsigned i1, unsigned i2, unsigned i3, unsigned i4, unsigned i5);
 #endif
 		static void OnLaunch(Fiber & fiber, Callback * callback, void * data);
