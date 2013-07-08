@@ -129,7 +129,7 @@ void sim::MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
 		
 		geom::abs::Scalar crater_to_pos_distance_squared = DistanceSq(position, crater.center);
 		
-		if (crater_to_pos_distance_squared < Square(crater.radius))
+		if (crater_to_pos_distance_squared < Squared(crater.radius))
 		{
 			if (! GetIntersection(crater, ray, t1, t2))
 			{
@@ -167,7 +167,7 @@ void sim::MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater,
 		crater.center = geom::abs::Vector3(rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f);
 		crater_center_squared = LengthSq(crater.center);
 	}
-	while (crater_center_squared > Square(.5f));
+	while (crater_center_squared > Squared(.5f));
 	
 	// Push it to moon max radius and then out a [non]random amount up until crater.radius in distance.
 	geom::abs::Scalar crater_elevation_coefficient = .85;

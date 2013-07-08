@@ -31,7 +31,7 @@ namespace geom
 		
 		static S Area(S radius)
 		{
-			return static_cast<S>(PI) * Square(radius);
+			return static_cast<S>(PI) * Squared(radius);
 		}
 	};
 
@@ -41,12 +41,12 @@ namespace geom
 	public:
 		static S Area(S radius)
 		{
-			return static_cast<S>(PI * 4.) * Square(radius);
+			return static_cast<S>(PI * 4.) * Squared(radius);
 		}
 		
 		static S Volume(S radius)
 		{
-			return static_cast<S>(PI * 4. / 3.) * Cube(radius);
+			return static_cast<S>(PI * 4. / 3.) * Cubed(radius);
 		}
 		
 		static S RadiusFromVolume(S volume)

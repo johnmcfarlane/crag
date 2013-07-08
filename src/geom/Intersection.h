@@ -21,7 +21,7 @@ namespace geom
 	template<typename S, int N> bool Contains(Sphere<S, N> const & sphere, Vector<S, N> const & point)
 	{
 		S center_distance_squared = DistanceSq(sphere.center, point);
-		return center_distance_squared <= Square(sphere.radius);
+		return center_distance_squared <= Squared(sphere.radius);
 	}
 
 	// Returns true iff b is completely inside a.
@@ -35,7 +35,7 @@ namespace geom
 		else
 		{
 			S center_distance_squared = DistanceSq(a.center, b.center);
-			return center_distance_squared <= Square(a.radius - b.radius);
+			return center_distance_squared <= Squared(a.radius - b.radius);
 		}
 	}
 
@@ -48,7 +48,7 @@ namespace geom
 		assert(a.radius > b.radius);
 		
 		S center_distance_squared = DistanceSq(a.center, b.center);
-		return center_distance_squared <= Square(a.radius - b.radius);
+		return center_distance_squared <= Squared(a.radius - b.radius);
 	}
 
 	// Returns true iff half-space represented by plane, abc, contains point, p.
@@ -136,7 +136,7 @@ namespace geom
 	bool Intersects(Sphere<S, N> const & a, Sphere<S, N> const & b)
 	{
 		S center_distance_squared = DistanceSq(a.center, b.center);
-		return center_distance_squared < Square(a.radius + b.radius);
+		return center_distance_squared < Squared(a.radius + b.radius);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -151,12 +151,12 @@ namespace geom
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
 		S a = LengthSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
-		S c = LengthSq(sphere_to_start) - Square(sphere.radius);
+		S c = LengthSq(sphere_to_start) - Squared(sphere.radius);
 		
 		// (Slightly reduced) Quadratic:
-		// t = (- half_b (+/-) sqrt(Square(half_b) - (a * c))) / a
+		// t = (- half_b (+/-) sqrt(Squared(half_b) - (a * c))) / a
 		
-		S root = Square(half_b) - a * c;
+		S root = Squared(half_b) - a * c;
 		if (root < 0)
 		{
 			return false;
@@ -175,12 +175,12 @@ namespace geom
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
 		S a = LengthSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
-		S c = LengthSq(sphere_to_start) - Square(sphere.radius);
+		S c = LengthSq(sphere_to_start) - Squared(sphere.radius);
 		
 		// (Slightly reduced) Quadratic:
-		// t = (- half_b (+/-) sqrt(Square(half_b) - (a * c))) / a
+		// t = (- half_b (+/-) sqrt(Squared(half_b) - (a * c))) / a
 		
-		S root = Square(half_b) - a * c;
+		S root = Squared(half_b) - a * c;
 		if (root < 0)
 		{
 			return false;
@@ -277,7 +277,7 @@ namespace geom
 	// Original code by David Eberly in Magic. via OPCODE collision library distributed with ODE
 	template<typename S, int N> bool GetIntersection(Sphere<S, N> const & sphere, Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, S * depth = nullptr)
 	{
-		S mRadius2 = Square(sphere.radius);
+		S mRadius2 = Squared(sphere.radius);
 		
 		Vector<S, N> kDiff;
 		S fC;

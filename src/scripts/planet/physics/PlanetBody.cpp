@@ -93,7 +93,7 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 
 	// Calculate the mass.
 	Scalar density = 1;
-	Scalar volume = Cube(_mean_radius);
+	Scalar volume = Cubed(_mean_radius);
 	Scalar mass = volume * density;
 
 	// Calculate the force. Actually, this isn't really the force;
@@ -101,11 +101,11 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 	Scalar force;
 	if (distance < _mean_radius)
 	{
-		force = mass * distance / Cube(_mean_radius);
+		force = mass * distance / Cubed(_mean_radius);
 	}
 	else
 	{
-		force = mass / Square(distance);
+		force = mass / Squared(distance);
 	}
 
 	Vector3 contribution = direction * force;

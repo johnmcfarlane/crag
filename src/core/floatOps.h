@@ -87,12 +87,12 @@ inline bool NearEqual(double a, double b, double error = .0001)
 	return NearEqual<double>(a, b, error);
 }
 
-template<typename T> T Square(T a)
+template<typename T> T Squared(T a)
 {
 	return a * a;
 }
 
-template<typename T> T Cube(T a)
+template<typename T> T Cubed(T a)
 {
 	return a * a * a;
 }

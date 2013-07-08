@@ -86,7 +86,7 @@ LeafNode::PreRenderResult Puff::PreRender()
 	_radius = static_cast<float>(geom::Sphere<Scalar, 3>::Properties::RadiusFromVolume(_spawn_volume));
 	_radius += puff_radius_growth_rate * static_cast<float>(age);
 	
-	_color.a = std::min(1.f / Square(_radius * puff_radius_coefficient), 1.f);
+	_color.a = std::min(1.f / Squared(_radius * puff_radius_coefficient), 1.f);
 	
 	if (_color.a < puff_min_alpha)
 	{

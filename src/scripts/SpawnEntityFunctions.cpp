@@ -219,7 +219,7 @@ namespace
 							star.center.x = random.GetUnitInclusive<float>() - .5f;
 							star.center.y = random.GetUnitInclusive<float>() - .5f;
 							star.center.z = random.GetUnitInclusive<float>() - .5f;
-							star.radius = Square(random.GetUnitInclusive<float>());
+							star.radius = Squared(random.GetUnitInclusive<float>());
 
 							float w = star_z;
 							if ((w > 0) != (pole != 0) || w == 0)
@@ -236,7 +236,7 @@ namespace
 							Normalize(line_direction);
 
 							float dp = DotProduct(star.center, line_direction);
-							float a_sq = LengthSq(star.center) - Square(dp);
+							float a_sq = LengthSq(star.center) - Squared(dp);
 
 							intensity += (double)star.radius / (double)a_sq;
 						}
@@ -292,7 +292,7 @@ namespace
 					star.center.x = random.GetUnitInclusive<float>() - .5f;
 					star.center.y = random.GetUnitInclusive<float>() - .5f;
 					star.center.z = random.GetUnitInclusive<float>() - .5f;
-					star.radius = Square(random.GetUnitInclusive<float>());
+					star.radius = Squared(random.GetUnitInclusive<float>());
 				
 					float const * axes = star.center.GetAxes();
 					float w = axes[axis];

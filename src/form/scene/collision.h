@@ -224,7 +224,7 @@ namespace form { namespace collision
 		{
 			// The sphere's far distance is negative; it's embedded.
 			Scalar altitude_squared = LengthSq(center_to_surface);
-			if (Square(collision_info.t2) > altitude_squared)
+			if (Squared(collision_info.t2) > altitude_squared)
 			{
 				// The rare case that the object is past the surface AND past
 				// the center of the polyhedron as well.

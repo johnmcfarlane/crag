@@ -265,7 +265,7 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedr
 	geom::abs::Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
 	geom::abs::Scalar rnd_x = params.rnd.GetUnitInclusive<geom::abs::Scalar>() * 2. - 1.;
-	rnd_x *= Square(rnd_x);
+	rnd_x *= Squared(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,
 	// and clip that variance based on the hard limits of the planet.
