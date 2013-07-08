@@ -93,7 +93,7 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 
 	// Calculate the mass.
 	Scalar density = 1;
-	Scalar volume = Cubed(_mean_radius);
+	Scalar volume = geom::Sphere<Scalar, 3>::Properties::Volume(_mean_radius);
 	Scalar mass = volume * density;
 
 	// Calculate the force. Actually, this isn't really the force;
