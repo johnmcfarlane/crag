@@ -58,13 +58,13 @@ namespace sim
 
 		void HandleEvents();
 		void HandleEvent(SDL_Event const & event);
-		void HandleFingerDown(Vector3 const & direction, SDL_FingerID id);
+		void HandleFingerDown(Vector2 const & screen_position, SDL_FingerID id);
 		void HandleFingerUp(SDL_FingerID id);
-		void HandleFingerMotion(Vector3 const & direction, SDL_FingerID id);
+		void HandleFingerMotion(Vector2 const & screen_position, SDL_FingerID id);
 		
 		void UpdateCamera();
-		void UpdateCameraRotation(Finger const & finger);
-		void UpdateCameraTranslation(Finger const & finger1, Finger const & finger2);
+		void UpdateCamera(Finger const & finger);
+		void UpdateCamera(Finger const & finger1, Finger const & finger2);
 		void SetTransformation(Transformation const & transformation);
 
 		physics::Body & GetBody();
