@@ -390,15 +390,15 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & 
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const
 {
-	Vector2 pixel_position(mouse_button_event.x, mouse_button_event.y);
-	Vector2 screen_position = _frustum.PixelToScreen(pixel_position);
+	auto pixel_position = geom::MakeVector(mouse_button_event.x, mouse_button_event.y);
+	auto screen_position = _frustum.PixelToScreen(geom::Cast<float>(pixel_position));
 	return screen_position;
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const
 {
-	Vector2 pixel_position(mouse_motion_event.x, mouse_motion_event.y);
-	Vector2 screen_position = _frustum.PixelToScreen(pixel_position);
+	auto pixel_position = geom::MakeVector(mouse_motion_event.x, mouse_motion_event.y);
+	auto screen_position = _frustum.PixelToScreen(geom::Cast<float>(pixel_position));
 	return screen_position;
 }
 
