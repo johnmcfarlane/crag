@@ -93,6 +93,12 @@ namespace geom
 			static_cast<LHS_S>(rhs.y));
 	}
 
+	template <typename S>
+	Vector<S, 2> MakeVector(S x, S y)
+	{
+		return Vector<S, 2>(x, y);
+	}
+
 	template<typename S> bool operator == (Vector<S, 2> const & lhs, Vector<S, 2> const & rhs)
 	{
 		return
