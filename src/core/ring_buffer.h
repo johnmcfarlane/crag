@@ -329,7 +329,8 @@ namespace core
 		
 		void deallocate()
 		{
-			delete [] _buffer_begin;
+			auto num_bytes = reinterpret_cast<char *>(_buffer_end) - reinterpret_cast<char *>(_buffer_begin);
+			FreePage(_buffer_begin, num_bytes);
 		}
 		
 		// initialize data pointers to correct values
