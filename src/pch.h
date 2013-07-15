@@ -65,12 +65,6 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// ODE includes.
-
-#include <ode/ode.h>
-
-
-//////////////////////////////////////////////////////////////////////
 // SDL includes.
 
 // Disable partial compatability with SDL 1.2.
@@ -116,11 +110,10 @@
 //////////////////////////////////////////////////////////////////////
 // standard includes.
 
-#include <errno.h>
-
 // C standard library
 #include <cassert>
 #include <cctype>
+#include <cerrno>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>

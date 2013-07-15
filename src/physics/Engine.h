@@ -13,6 +13,8 @@
 
 #include "smp/vector.h"
 
+#include <ode/contact.h>
+
 namespace form
 {
 	class Scene;

@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include <ode/contact.h>
+
 namespace physics
 {
 	// forward-declarations

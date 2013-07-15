@@ -14,6 +14,9 @@
 
 #include "geom/Matrix33.h"
 
+#include <ode/collision.h>
+#include <ode/objects.h>
+
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////

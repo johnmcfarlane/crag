@@ -24,6 +24,10 @@
 #include "gfx/Debug.h"
 #endif
 
+#include <ode/collision.h>
+#include <ode/collision_space.h>
+#include <ode/objects.h>
+#include <ode/odeinit.h>
 
 using namespace physics;
 

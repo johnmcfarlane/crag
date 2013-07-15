@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <ode/common.h>
+
 namespace geom
 {
 	template <typename S, int R, int C>
