@@ -94,6 +94,8 @@ void TouchObserverController::Tick()
 {
 	// event-based input
 	HandleEvents();
+
+	BroadcastTransformation();
 }
 
 void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
@@ -329,10 +331,13 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 void TouchObserverController::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
+}
 
+void TouchObserverController::BroadcastTransformation() const
+{
 	// broadcast new camera position
 	gfx::SetCameraEvent event;
-	event.transformation = transformation;
+	event.transformation = _transformation;
 	Daemon::Broadcast(event);
 }
 

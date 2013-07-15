@@ -66,6 +66,7 @@ namespace sim
 		void UpdateCamera(Finger const & finger);
 		void UpdateCamera(Finger const & finger1, Finger const & finger2);
 		void SetTransformation(Transformation const & transformation);
+		void BroadcastTransformation() const;
 
 		physics::Body & GetBody();
 		physics::Body const & GetBody() const;
