@@ -96,14 +96,14 @@ Scalar Body::GetMass() const
 	return m.mass;
 }
 
-Vector3 Body::GetPosition() const
+Vector3 Body::GetTranslation() const
 {
 	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
 }
 
-void Body::SetPosition(Vector3 const & position) const
+void Body::SetTranslation(Vector3 const & translation) const
 {
-	dGeomSetPosition(geom_id, position.x, position.y, position.z);
+	dGeomSetPosition(geom_id, translation.x, translation.y, translation.z);
 }
 
 Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
@@ -221,8 +221,8 @@ void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 
 	dJointAttach(joint_id, body1.body_id, body2.body_id);
 	
-	Vector3 position1 = body1.GetPosition();
-	Vector3 position2 = body2.GetPosition();
+	Vector3 position1 = body1.GetTranslation();
+	Vector3 position2 = body2.GetTranslation();
 	Vector3 center = (position1 + position2) * Scalar(.5);
 	
 	switch (dJointGetType(joint_id))
@@ -265,10 +265,10 @@ bool physics::IsAttached(Body const & body1, Body const & body2)
 #if defined(VERIFY)
 void physics::Body::Verify() const
 {
-	VerifyObject(GetPosition());
+	VerifyObject(GetTranslation());
 	VerifyObject(GetVelocity());
 	VerifyObject(GetRotation());
-	VerifyOp(geom::Length(GetPosition()), <, 4.0e+8);
+	VerifyOp(geom::Length(GetTranslation()), <, 4.0e+8);
 //	VerifyOp(geom::Length(GetVelocity()), <, 1000);
 }
 #endif

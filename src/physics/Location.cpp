@@ -50,7 +50,7 @@ Matrix33 Location::GetRotation() const
 
 Transformation Location::GetTransformation() const
 {
-	return Transformation(GetPosition(), GetRotation(), GetScale());
+	return Transformation(GetTranslation(), GetRotation(), GetScale());
 }
 
 Vector3 Location::Transform(Vector3 local) const

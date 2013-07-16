@@ -47,7 +47,7 @@ namespace sim
 			return;
 		}
 
-		Vector3 bodyPosition = body->GetPosition();
-		body->SetPosition(bodyPosition - delta);
+		Vector3 bodyTranslation = body->GetTranslation();
+		body->SetTranslation(bodyTranslation - delta);
 	}
 }

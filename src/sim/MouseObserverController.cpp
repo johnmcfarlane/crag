@@ -173,9 +173,9 @@ void MouseObserverController::ApplyInput(ObserverInput const & input)
 void MouseObserverController::UpdateCamera() const
 {
 	auto& body = GetBody();
-	auto position = body.GetPosition();
+	auto translation = body.GetTranslation();
 	auto rotation = body.GetRotation();
-	Transformation transformation (position, rotation);
+	Transformation transformation (translation, rotation);
 
 	// broadcast new camera position
 	gfx::SetCameraEvent event;

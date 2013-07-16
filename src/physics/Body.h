@@ -39,8 +39,8 @@ namespace physics
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		
-		virtual Vector3 GetPosition() const final;
-		void SetPosition(Vector3 const &) const;
+		virtual Vector3 GetTranslation() const final;
+		void SetTranslation(Vector3 const & translation) const;
 		
 		Vector3 GetRelativePointVelocity(Vector3 const & point) const;
 		Vector3 GetVelocity() const;

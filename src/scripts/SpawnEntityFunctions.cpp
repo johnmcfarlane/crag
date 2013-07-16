@@ -85,7 +85,7 @@ namespace
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto & body = * new physics::BoxBody(physics_engine, true, size);
-		body.SetPosition(spawn_pos);
+		body.SetTranslation(spawn_pos);
 		body.SetDensity(box_density);
 		body.SetLinearDamping(box_linear_damping);
 		body.SetAngularDamping(box_angular_damping);
@@ -103,7 +103,7 @@ namespace
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto & body = * new physics::SphericalBody(physics_engine, true, sphere.radius);
-		body.SetPosition(sphere.center);
+		body.SetTranslation(sphere.center);
 		body.SetDensity(density);
 		body.SetLinearDamping(linear_damping);
 		body.SetAngularDamping(angular_damping);
@@ -365,7 +365,7 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 		// body
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 		auto body = new physics::PlanetBody(physics_engine, formation, physics::Scalar(sphere.radius));
-		body->SetPosition(geom::Cast<physics::Scalar>(sphere.center));
+		body->SetTranslation(geom::Cast<physics::Scalar>(sphere.center));
 		entity.SetLocation(body);
 
 		// register with the renderer

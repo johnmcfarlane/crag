@@ -287,7 +287,7 @@ void Engine::PurgeEntities()
 			return;
 		}
 		
-		Vector3 position = location->GetPosition();
+		Vector3 position = location->GetTranslation();
 		if (Length(position) < purge_distance)
 		{
 			return;

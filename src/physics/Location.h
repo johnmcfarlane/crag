@@ -27,7 +27,7 @@ namespace physics
 		virtual Body const * GetBody() const;
 
 		virtual Vector3 GetScale() const;
-		virtual Vector3 GetPosition() const = 0;
+		virtual Vector3 GetTranslation() const = 0;
 		virtual Matrix33 GetRotation() const;
 		virtual Transformation GetTransformation() const;
 
@@ -38,4 +38,3 @@ namespace physics
 #endif
 	};
 }
-

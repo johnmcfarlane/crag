@@ -122,10 +122,10 @@ void Entity::UpdateModels() const
 		return;
 	}
 	
-	Vector3 position = _location->GetPosition();
+	Vector3 translation = _location->GetTranslation();
 	Matrix33 rotation = _location->GetRotation();
 	Vector3 scale = _location->GetScale();
-	Transformation transformation(position, rotation, scale);
+	Transformation transformation(translation, rotation, scale);
 
 	_model.Call([transformation] (gfx::Object & node) {
 		node.SetLocalTransformation(transformation);

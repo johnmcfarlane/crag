@@ -22,7 +22,7 @@ namespace physics
 		FixedLocation(Transformation const & transformation);
 
 		virtual Vector3 GetScale() const final;
-		virtual Vector3 GetPosition() const final;
+		virtual Vector3 GetTranslation() const final;
 		virtual Matrix33 GetRotation() const final;
 
 #if defined(VERIFY)
@@ -32,4 +32,3 @@ namespace physics
 		Transformation _transformation;
 	};
 }
-

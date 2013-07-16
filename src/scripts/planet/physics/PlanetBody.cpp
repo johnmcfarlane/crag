@@ -84,7 +84,7 @@ PlanetBody::PlanetBody(Engine & physics_engine, form::Formation const & formatio
 
 void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
 {
-	Vector3 const & center = GetPosition();
+	Vector3 const & center = GetTranslation();
 	Vector3 to_center = center - pos;
 	Scalar distance = Length(to_center);
 	
@@ -132,7 +132,7 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	form::Scene const & scene = physics_engine.GetScene();
 	
 	// Get vital geometric information about the cuboid.
-	Vector3 position = box.GetPosition();
+	Vector3 position = box.GetTranslation();
 	Vector3 dimensions = box.GetScale();
 	Vector3 extents = dimensions * Scalar(.5);
 	Matrix33 rotation = box.GetRotation();
@@ -209,7 +209,7 @@ void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFu
 	
 	typedef Object<form::Sphere3> Object;
 	Object collision_object;
-	collision_object.bounding_sphere.center = sphere.GetPosition();
+	collision_object.bounding_sphere.center = sphere.GetTranslation();
 	collision_object.bounding_sphere.radius = sphere.GetRadius();
 	
 	collision_object.shape = collision_object.bounding_sphere;
