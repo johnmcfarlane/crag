@@ -115,9 +115,9 @@ namespace
 			case 1:
 			{
 				// box
-				geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-					geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)),
-					geom::rel::Scalar(std::exp(GetRandomUnit() * -2.)));
+				geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)),
+					geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)),
+					geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)));
 				sim::EntityHandle box = SpawnBox(spawn_pos, size, color);
 				_shapes.push_back(box);
 				break;
