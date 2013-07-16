@@ -35,7 +35,6 @@ namespace physics
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
 		dGeomID GetGeomId() const;
-		virtual Vector3 GetScale() const = 0;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		

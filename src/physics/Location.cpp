@@ -37,11 +37,6 @@ Body const * Location::GetBody() const
 	return nullptr;
 }
 
-Vector3 Location::GetScale() const
-{
-	return Vector3(1, 1, 1);
-}
-
 Matrix33 Location::GetRotation() const
 {
 	static Matrix33 identity = Matrix33::Identity();
@@ -50,7 +45,7 @@ Matrix33 Location::GetRotation() const
 
 Transformation Location::GetTransformation() const
 {
-	return Transformation(GetTranslation(), GetRotation(), GetScale());
+	return Transformation(GetTranslation(), GetRotation());
 }
 
 Vector3 Location::Transform(Vector3 local) const

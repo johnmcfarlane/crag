@@ -26,7 +26,6 @@ namespace physics
 		virtual Body * GetBody();
 		virtual Body const * GetBody() const;
 
-		virtual Vector3 GetScale() const;
 		virtual Vector3 GetTranslation() const = 0;
 		virtual Matrix33 GetRotation() const;
 		virtual Transformation GetTransformation() const;

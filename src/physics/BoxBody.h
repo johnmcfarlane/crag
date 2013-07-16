@@ -22,7 +22,7 @@ namespace physics
 		BoxBody(Engine & engine, bool movable, Vector3 const & dimensions);
 		
 		void SetDimensions(Vector3 const & dimensions) const;
-		Vector3 GetScale() const;
+		Vector3 GetDimensions() const;
 		
 		virtual void SetDensity(Scalar density);
 		

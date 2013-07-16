@@ -133,7 +133,7 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	
 	// Get vital geometric information about the cuboid.
 	Vector3 position = box.GetTranslation();
-	Vector3 dimensions = box.GetScale();
+	Vector3 dimensions = box.GetDimensions();
 	Vector3 extents = dimensions * Scalar(.5);
 	Matrix33 rotation = box.GetRotation();
 	
