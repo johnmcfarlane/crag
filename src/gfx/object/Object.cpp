@@ -57,6 +57,11 @@ void Object::Verify() const
 	}
 	
 	VerifyObject(_local_transformation);
+
+	auto scale = _local_transformation.GetScale();
+	VerifyTrue(NearEqual<Scalar>(scale.x, 1, 0.001));
+	VerifyTrue(NearEqual<Scalar>(scale.y, 1, 0.001));
+	VerifyTrue(NearEqual<Scalar>(scale.z, 1, 0.001));
 }
 #endif
 
