@@ -280,14 +280,13 @@ DiskProgram::DiskProgram()
 {
 }
 
-void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const
+void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const
 {
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	
 	geom::Vector3f center = ToOpenGl(model_view.GetTranslation());
 	GL_CALL(glUniform3f(_center_location, center.x, center.y, center.z));
 	
-	float radius = static_cast<float>(CalculateRadius(model_view));
 	GL_CALL(glUniform1f(_radius_location, radius));
 }
 
@@ -304,17 +303,6 @@ void DiskProgram::InitUniforms()
 	_radius_location = GetUniformLocation("radius");
 }
 
-Scalar DiskProgram::CalculateRadius(geom::Transformation<float> const & transformation)
-{
-	Vector3 size = transformation.GetScale();
-	ASSERT(NearEqual(size.x / size.y, 1, Scalar(0.0001)));
-	ASSERT(NearEqual(size.y / size.z, 1, Scalar(0.0001)));
-	ASSERT(NearEqual(size.z / size.x, 1, Scalar(0.0001)));
-	Scalar radius = size.x;
-	return radius;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // FogProgram member definitions
 
@@ -323,9 +311,9 @@ FogProgram::FogProgram()
 {
 }
 
-void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const
+void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float radius, float density) const
 {
-	DiskProgram::SetUniforms(model_view, color);
+	DiskProgram::SetUniforms(model_view, radius, color);
 	
 	glUniform1f(_density_location, density);
 }

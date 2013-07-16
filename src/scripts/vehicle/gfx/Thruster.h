@@ -29,7 +29,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Thruster);
 
-		Thruster(Init const & init, Transformation const & local_transformation);
+		Thruster(Init const & init, Transformation const & local_transformation, float thrust_max);
 		
 		void Update(float const & thrust_factor);
 
@@ -38,6 +38,7 @@ namespace gfx
 		void AddPuff(float thrust_factor);
 		
 		// variables
+		float const _thrust_max;
 		float _thrust_factor;
 	};
 }

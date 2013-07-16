@@ -47,7 +47,7 @@ void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 void Planet::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
-	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view));
+	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view, _radius_max));
 }
 
 bool Planet::GetRenderRange(RenderRange & range) const 

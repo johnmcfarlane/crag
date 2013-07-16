@@ -75,7 +75,7 @@ void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 	Transformation scale = model_view * Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
-	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale));
+	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale, _radius));
 }
 
 LeafNode::PreRenderResult Puff::PreRender()
@@ -102,7 +102,7 @@ void Puff::Render(Engine const & renderer) const
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
 	Color4f lighting = renderer.CalculateLighting(translation);
-	disk_program.SetUniforms(model_view, _color * lighting);
+	disk_program.SetUniforms(model_view, _radius, _color * lighting);
 	
 	Quad const & disk_quad = static_cast<Quad const &>(ref(GetMeshResource()));
 	disk_quad.Draw();

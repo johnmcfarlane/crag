@@ -28,9 +28,10 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Ball, 100);
 
-Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
 : LeafNode(init, local_transformation, Layer::foreground)
 , _color(Color4f::Black())
+, _radius(radius)
 {
 	_color = color;
 	
@@ -48,7 +49,7 @@ void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 	Transformation scratch;
 
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
-	Transformation model_view_transformation = sphere_quad.CalculateModelViewTransformation(model_view);
+	Transformation model_view_transformation = sphere_quad.CalculateModelViewTransformation(model_view, _radius);
 
 	SetModelViewTransformation(model_view_transformation);
 }
@@ -57,10 +58,9 @@ bool Ball::GetRenderRange(RenderRange & range) const
 { 
 	Transformation const & transformation = GetModelViewTransformation();
 	Scalar depth = GetDepth(transformation);
-	Scalar radius = transformation.GetScale().x;
 	
-	range[0] = depth - radius;
-	range[1] = depth + radius;
+	range[0] = depth - _radius;
+	range[1] = depth + _radius;
 	
 	return true;
 }
@@ -71,7 +71,7 @@ void Ball::Render(Engine const & renderer) const
 	Program const & program = ref(renderer.GetCurrentProgram());
 	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(program);
 	Transformation const & transformation = GetModelViewTransformation();
-	sphere_program.SetUniforms(transformation, _color);
+	sphere_program.SetUniforms(transformation, _radius, _color);
 	
 	// Draw the quad.
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());

@@ -92,8 +92,8 @@ namespace
 		box.SetLocation(& body);
 
 		// graphics
-		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity(), size * .5f);
-		auto model = gfx::BoxHandle::CreateHandle(local_transformation, color);
+		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
+		auto model = gfx::BoxHandle::CreateHandle(local_transformation, size, color);
 		box.SetModel(model);
 	}
 
@@ -116,8 +116,8 @@ namespace
 		ConstructSphericalBody(ball, sphere, ball_density, ball_linear_damping, ball_angular_damping);
 
 		// graphics
-		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, color);
+		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
+		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, color);
 		ball.SetModel(model);
 	}
 

@@ -23,13 +23,16 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Box);
 
-		Box(Init const & init, Transformation const & local_transformation, Color4f const & color);
+		Box(Init const & init, Transformation const & local_transformation, Vector3 const & dimensions, Color4f const & color);
 
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;
 		
 	private:
+		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
+
 		// variables
 		Color4f _color;
+		Vector3 _dimensions;
 	};
 }

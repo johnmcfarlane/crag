@@ -34,11 +34,11 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray)
 	, _thrust_factor(0)
 {
 	// calculate local transformation
-	auto thrust_scale = Length(ray.direction);
-	Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_scale), thrust_scale);
+	auto thrust_max = Length(ray.direction);
+	Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
 
 	// create model
-	_model = gfx::ThrusterHandle::CreateHandle(local_transformation);
+	_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
 	
 	// register tick
 	auto & tick_roster = entity.GetEngine().GetTickRoster();

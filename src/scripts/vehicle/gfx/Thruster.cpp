@@ -39,8 +39,9 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Thruster, 4);
 
-Thruster::Thruster(super::Init const & init, Transformation const & local_transformation)
+Thruster::Thruster(super::Init const & init, Transformation const & local_transformation, float thrust_max)
 : super(init, local_transformation, thruster_color)
+, _thrust_max(thrust_max)
 {
 }
 
@@ -78,13 +79,12 @@ void Thruster::AddPuff(float thrust_factor)
 		
 	// Calculate the thruster/puff direction.
 	Vector3 thruster_direction = GetAxis(model_transformation.GetRotation(), Direction::forward);
-	Scalar thruster_max = Length(thruster_direction);
-	thruster_direction *= Scalar(1) / thruster_max;
+	thruster_direction *= Scalar(1) / _thrust_max;
 	
 	// decide how big the puff will be
 	Scalar spawn_volume;
 	{
-		auto thrust = thruster_max * thrust_factor;
+		auto thrust = _thrust_max * thrust_factor;
 
 		spawn_volume = exp(g4 * puff_volume_variance) * thrust * puff_volume_median;
 	}

@@ -106,11 +106,10 @@ namespace gfx
 	public:
 		DiskProgram();
 		
-		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color) const;
+		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
 	private:
 		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override;
-		static Scalar CalculateRadius(geom::Transformation<float> const & transformation);
 
 		// variables
 		GLint _color_location;
@@ -123,7 +122,7 @@ namespace gfx
 	public:
 		FogProgram();
 		
-		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float density) const;
+		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float radius, float density) const;
 	private:
 		virtual void InitAttribs(GLuint id) override final;
 		virtual void InitUniforms() override final;

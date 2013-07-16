@@ -25,6 +25,7 @@ LeafNode::LeafNode(Init const & init, Transformation const & local_transformatio
 , _mesh_resource(nullptr)
 , _is_opaque(true)
 {
+	VerifyObject(* this);
 }
 
 #if defined(VERIFY)

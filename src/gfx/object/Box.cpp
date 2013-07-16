@@ -25,9 +25,10 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Box, 100);
 
-Box::Box(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+Box::Box(LeafNode::Init const & init, Transformation const & local_transformation, Vector3 const & dimensions, Color4f const & color)
 : LeafNode(init, local_transformation, Layer::foreground)
 , _color(color)
+, _dimensions(dimensions)
 {
 	SetIsOpaque(_color.a == 255);
 	
@@ -49,8 +50,7 @@ bool Box::GetRenderRange(RenderRange & range) const
 	// but it probably isn't worth the clock cycles to do that.
 	float radius;
 	{
-		auto size = transformation.GetScale();
-		radius = float(Length(size) * .5);
+		radius = float(Length(_dimensions) * .5);
 	}
 
 	range[0] = depth - radius;
@@ -75,4 +75,10 @@ void Box::Render(Engine const & renderer) const
 	cuboid.Draw();
 	
 	GL_VERIFY;
+}
+
+void Box::UpdateModelViewTransformation(Transformation const & model_view)
+{
+	Transformation scaled(model_view.GetTranslation(), model_view.GetRotation(), _dimensions);
+	SetModelViewTransformation(scaled);
 }

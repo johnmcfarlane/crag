@@ -33,7 +33,7 @@ namespace gfx
 		Quad(float depth_offset);
 		~Quad();
 		
-		Transformation CalculateModelViewTransformation(Transformation const & leaf) const;
+		Transformation CalculateModelViewTransformation(Transformation const & leaf, float radius) const;
 
 		void Activate() const override;
 		void Deactivate() const override;

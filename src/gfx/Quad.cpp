@@ -74,7 +74,7 @@ Quad::~Quad()
 	_quad.Deinit();
 }
 
-Transformation Quad::CalculateModelViewTransformation(Transformation const & leaf) const
+Transformation Quad::CalculateModelViewTransformation(Transformation const & leaf, float radius) const
 {
 	Transformation::Vector3 translation = leaf.GetTranslation();
 
@@ -87,9 +87,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
 	Transformation::Matrix33 rotation = Inverse(gfx::Rotation(camera_to_center));
 
-	Transformation::Vector3 scale = leaf.GetScale();
-
-	return Transformation(translation, rotation, scale);
+	return Transformation(translation, rotation, radius);
 }
 
 void Quad::Activate() const

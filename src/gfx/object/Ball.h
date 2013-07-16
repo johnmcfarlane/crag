@@ -27,7 +27,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Ball);
 
-		Ball(Init const & init, Transformation const & local_transformation, Color4f const & color);
+		Ball(Init const & init, Transformation const & local_transformation, float radius, Color4f const & color);
 
 	private:
 		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation) final;
@@ -37,5 +37,6 @@ namespace gfx
 		
 		// variables
 		Color4f _color;
+		float _radius;
 	};
 }
