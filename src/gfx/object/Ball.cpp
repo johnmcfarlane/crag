@@ -46,8 +46,6 @@ Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformat
 
 void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 {
-	Transformation scratch;
-
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	Transformation model_view_transformation = sphere_quad.CalculateModelViewTransformation(model_view, _radius);
 
