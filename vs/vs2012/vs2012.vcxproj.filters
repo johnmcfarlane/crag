@@ -57,7 +57,6 @@
     <ClCompile Include="..\..\src\physics\Body.cpp" />
     <ClCompile Include="..\..\src\physics\BoxBody.cpp" />
     <ClCompile Include="..\..\src\physics\Engine.cpp" />
-    <ClCompile Include="..\..\src\physics\FixedLocation.cpp" />
     <ClCompile Include="..\..\src\physics\IntersectionFunctor.cpp" />
     <ClCompile Include="..\..\src\physics\Location.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
@@ -97,6 +96,7 @@
     <ClCompile Include="..\..\src\ipc\ListenerInterface.cpp" />
     <ClCompile Include="..\..\src\sim\MouseObserverController.cpp" />
     <ClCompile Include="..\..\src\sim\TouchObserverController.cpp" />
+    <ClCompile Include="..\..\src\physics\PassiveLocation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -201,7 +201,6 @@
     <ClInclude Include="..\..\src\physics\BoxBody.h" />
     <ClInclude Include="..\..\src\physics\defs.h" />
     <ClInclude Include="..\..\src\physics\Engine.h" />
-    <ClInclude Include="..\..\src\physics\FixedLocation.h" />
     <ClInclude Include="..\..\src\physics\IntersectionFunctor.h" />
     <ClInclude Include="..\..\src\physics\Location.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
@@ -256,6 +255,7 @@
     <ClInclude Include="..\..\src\ipc\FiberAndroid.h" />
     <ClInclude Include="..\..\src\sim\MouseObserverController.h" />
     <ClInclude Include="..\..\src\sim\TouchObserverController.h" />
+    <ClInclude Include="..\..\src\physics\PassiveLocation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
