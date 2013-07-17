@@ -118,8 +118,8 @@ namespace sim
 		geom::abs::Vector3 _origin;
 		physics::Engine & _physics_engine;
 
-		core::locality::Roster & _tick_roster;
-		core::locality::Roster & _draw_roster;
+		core::locality::Roster & _tick_roster;	// general simulation tick
+		core::locality::Roster & _draw_roster;	// provides opportunity to communicate graphical changes to renderer
 	};
 	
 }
