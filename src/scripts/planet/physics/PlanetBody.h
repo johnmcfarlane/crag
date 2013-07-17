@@ -29,7 +29,7 @@ namespace physics
 	public:
 		DECLARE_ALLOCATOR(PlanetaryBody);
 
-		PlanetBody(Engine & physics_engine, form::Formation const & formation, Scalar radius);
+		PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius);
 		
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 	private:

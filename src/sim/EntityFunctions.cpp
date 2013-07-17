@@ -47,7 +47,8 @@ namespace sim
 			return;
 		}
 
-		Vector3 bodyTranslation = body->GetTranslation();
-		body->SetTranslation(bodyTranslation - delta);
+		auto transformation = body->GetTransformation();
+		transformation.SetTranslation(transformation.GetTranslation() - delta);
+		body->SetTransformation(transformation);
 	}
 }

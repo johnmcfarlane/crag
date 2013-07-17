@@ -15,6 +15,7 @@
 #include "form/scene/Scene.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Roster.h"
 
 #if ! defined(NDEBUG)
 //#define DEBUG_CONTACT
@@ -47,6 +48,7 @@ Engine::Engine()
 , contact_joints(dJointGroupCreate(0))
 , _formation_scene(ref(new form::Scene(512, 512)))
 , _contacts(65536)
+, _tick_roster(ref(new core::locality::Roster))
 {
 	dInitODE2(0);
 }
@@ -68,6 +70,11 @@ form::Scene & Engine::GetScene()
 form::Scene const & Engine::GetScene() const
 {
 	return _formation_scene;
+}
+
+core::locality::Roster & Engine::GetRoster()
+{
+	return _tick_roster;
 }
 
 dBodyID Engine::CreateBody() const
@@ -121,6 +128,9 @@ void Engine::Tick(double delta_time, Ray3 const & camera_ray)
 		// No collision checking, so just tick physics.
 		dWorldQuickStep (world, Scalar(delta_time));
 	}
+	
+	// call objects that want to know that physics has ticked
+	_tick_roster.Call();
 }
 
 void Engine::ToggleCollisions()

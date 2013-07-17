@@ -75,8 +75,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
-PlanetBody::PlanetBody(Engine & physics_engine, form::Formation const & formation, Scalar radius)
-: SphericalBody(physics_engine, false, radius)
+PlanetBody::PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius)
+: SphericalBody(transformation, physics_engine, false, radius)
 , _formation(formation)
 , _mean_radius(radius)
 {

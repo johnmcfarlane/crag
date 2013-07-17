@@ -23,7 +23,8 @@ Location::~Location()
 { 
 }
 
-Location::Location() 
+Location::Location(Transformation const & transformation) 
+: _transformation(transformation)
 { 
 }
 
@@ -37,18 +38,27 @@ Body const * Location::GetBody() const
 	return nullptr;
 }
 
-Matrix33 Location::GetRotation() const
+Vector3 Location::GetTranslation() const
 {
-	static Matrix33 identity = Matrix33::Identity();
-	return identity;
+	return _transformation.GetTranslation();
 }
 
-Transformation Location::GetTransformation() const
+Matrix33 const & Location::GetRotation() const
 {
-	return Transformation(GetTranslation(), GetRotation());
+	return _transformation.GetRotation();
+}
+
+Transformation const & Location::GetTransformation() const
+{
+	return _transformation;
+}
+
+void Location::SetTransformation(Transformation const & transformation)
+{
+	_transformation = transformation;
 }
 
 Vector3 Location::Transform(Vector3 local) const
 {
-	return GetTransformation().Transform(local);
+	return _transformation.Transform(local);
 }

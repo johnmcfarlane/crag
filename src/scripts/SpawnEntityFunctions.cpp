@@ -26,7 +26,7 @@
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
-#include "physics/FixedLocation.h"
+#include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
 #include "gfx/Engine.h"
@@ -84,8 +84,7 @@ namespace
 		sim::Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::BoxBody(physics_engine, true, size);
-		body.SetTranslation(spawn_pos);
+		auto & body = * new physics::BoxBody(spawn_pos, physics_engine, true, size);
 		body.SetDensity(box_density);
 		body.SetLinearDamping(box_linear_damping);
 		body.SetAngularDamping(box_angular_damping);
@@ -102,8 +101,7 @@ namespace
 		sim::Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphericalBody(physics_engine, true, sphere.radius);
-		body.SetTranslation(sphere.center);
+		auto & body = * new physics::SphericalBody(sphere.center, physics_engine, true, sphere.radius);
 		body.SetDensity(density);
 		body.SetLinearDamping(linear_damping);
 		body.SetAngularDamping(angular_damping);
@@ -364,8 +362,7 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 
 		// body
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
-		auto body = new physics::PlanetBody(physics_engine, formation, physics::Scalar(sphere.radius));
-		body->SetTranslation(geom::Cast<physics::Scalar>(sphere.center));
+		auto body = new physics::PlanetBody(sphere.center, physics_engine, formation, physics::Scalar(sphere.radius));
 		entity.SetLocation(body);
 
 		// register with the renderer
@@ -408,7 +405,7 @@ sim::EntityHandle SpawnStar()
 		// physics
 		geom::rel::Vector3 position(65062512.f, 75939904.f, 0.f);
 		sim::Transformation transformation(position);
-		auto location = new physics::FixedLocation(transformation);
+		auto location = new physics::PassiveLocation(transformation);
 		sun.SetLocation(location);
 
 		// graphics

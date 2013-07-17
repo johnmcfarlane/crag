@@ -15,6 +15,14 @@
 
 #include <ode/contact.h>
 
+namespace core
+{
+	namespace locality
+	{
+		class Roster;
+	}
+}
+
 namespace form
 {
 	class Scene;
@@ -39,6 +47,8 @@ namespace physics
 		form::Scene & GetScene();
 		form::Scene const & GetScene() const;
 		
+		core::locality::Roster & GetRoster();
+
 		dBodyID CreateBody() const;
 		dGeomID CreateBox(Vector3 const & dimensions) const;
 		dGeomID CreateSphere(Scalar radius) const;
@@ -73,6 +83,9 @@ namespace physics
 		
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
 		ContactVector _contacts;
+
+		// list of objcets called at end of tick
+		core::locality::Roster & _tick_roster;
 	};
 	
 }

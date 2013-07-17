@@ -11,6 +11,14 @@
 
 #include "Location.h"
 
+namespace core
+{
+	namespace locality
+	{
+		class Roster;
+	}
+}
+
 namespace physics
 {
 	// forward-declarations
@@ -25,12 +33,12 @@ namespace physics
 	class Body : public Location
 	{
 	protected:
-		Body(Engine & engine, dGeomID init_geom_id, bool movable);
+		Body(Transformation const & transformation, Engine & engine, dGeomID init_geom_id, bool movable);
 	public:
 		virtual ~Body() override;
 		
-		virtual Body * GetBody() final;
-		virtual Body const * GetBody() const final;
+		Body * GetBody() final;
+		Body const * GetBody() const final;
 
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
@@ -38,15 +46,11 @@ namespace physics
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		
-		virtual Vector3 GetTranslation() const final;
-		void SetTranslation(Vector3 const & translation) const;
+		void SetTransformation(Transformation const & transformation) final;
 		
 		Vector3 GetRelativePointVelocity(Vector3 const & point) const;
 		Vector3 GetVelocity() const;
 		
-		virtual Matrix33 GetRotation() const final;
-		void SetRotation(Matrix33 const & matrix);
-
 		bool GetIsCollidable() const;
 		void SetIsCollidable(bool collidable);
 		
@@ -70,9 +74,21 @@ namespace physics
 #if defined(VERIFY)
 		virtual void Verify() const;
 #endif
+	private:
+		Vector3 const & GetGeomTranslation() const;
+		void SetGeomTranslation(Vector3 const & translation);
+
+		Matrix33 const & GetGeomRotation() const;
+		void SetGeomRotation(Matrix33 const & matrix);
+
+		Transformation GetGeomTransformation() const;
+		void SetGeomTransformation(Transformation const & transformation);
+
+		void Tick();
 
 	protected:
 		dGeomID geom_id;	// the collision info
 		dBodyID body_id;	// the dynaical info
+		core::locality::Roster & _roster;
 	};
 }

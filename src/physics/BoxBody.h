@@ -19,7 +19,7 @@ namespace physics
 	class BoxBody : public Body
 	{
 	public:
-		BoxBody(Engine & engine, bool movable, Vector3 const & dimensions);
+		BoxBody(Transformation const & transformation, Engine & engine, bool movable, Vector3 const & dimensions);
 		
 		void SetDimensions(Vector3 const & dimensions) const;
 		Vector3 GetDimensions() const;

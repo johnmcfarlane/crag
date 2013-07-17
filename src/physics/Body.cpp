@@ -14,6 +14,8 @@
 
 #include "geom/Matrix33.h"
 
+#include "core/Roster.h"
+
 #include <ode/collision.h>
 #include <ode/objects.h>
 
@@ -22,8 +24,10 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
 
-Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
-: geom_id(init_geom_id)
+Body::Body(Transformation const & transformation, Engine & engine, dGeomID init_geom_id, bool movable)
+: Location(transformation)
+, geom_id(init_geom_id)
+, _roster(engine.GetRoster())
 {
 	// body_id
 	if (movable)
@@ -39,11 +43,20 @@ Body::Body(Engine & engine, dGeomID init_geom_id, bool movable)
 		body_id = 0;
 	}
 	
+	// geom_id
 	dGeomSetData(geom_id, this);
+
+	// set ODE transformation
+	SetGeomTransformation(transformation);
+	
+	// register for physics tick
+	_roster.AddCommand(* this, & Body::Tick);
 }
 
 Body::~Body()
 {
+	_roster.RemoveCommand(* this, & Body::Tick);
+
 	if (body_id != 0)
 	{
 		// destroy all joints associated with the body
@@ -96,14 +109,13 @@ Scalar Body::GetMass() const
 	return m.mass;
 }
 
-Vector3 Body::GetTranslation() const
+void Body::SetTransformation(Transformation const & transformation)
 {
-	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
-}
-
-void Body::SetTranslation(Vector3 const & translation) const
-{
-	dGeomSetPosition(geom_id, translation.x, translation.y, translation.z);
+	// set ODE value
+	SetGeomTransformation(transformation);
+	
+	// set cached value in Location
+	Location::SetTransformation(transformation);
 }
 
 Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
@@ -128,16 +140,6 @@ Vector3 Body::GetVelocity() const
 	Vector3 velocity;
 	dBodyGetRelPointVel (body_id, 0, 0, 0, velocity.GetAxes());
 	return velocity;
-}
-
-Matrix33 Body::GetRotation() const
-{
-	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
-}
-
-void Body::SetRotation(Matrix33 const & matrix)
-{
-	dGeomSetRotation(geom_id, reinterpret_cast<Scalar const *>(matrix.GetArray()));
 }
 
 bool Body::GetIsCollidable() const
@@ -272,3 +274,39 @@ void physics::Body::Verify() const
 //	VerifyOp(geom::Length(GetVelocity()), <, 1000);
 }
 #endif
+
+Vector3 const & physics::Body::GetGeomTranslation() const
+{
+	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
+}
+
+void physics::Body::SetGeomTranslation(Vector3 const & translation)
+{
+	dGeomSetPosition(geom_id, translation.x, translation.y, translation.z);
+}
+
+Matrix33 const & physics::Body::GetGeomRotation() const
+{
+	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
+}
+
+void physics::Body::SetGeomRotation(Matrix33 const & matrix)
+{
+	dGeomSetRotation(geom_id, reinterpret_cast<Scalar const *>(matrix.GetArray()));
+}
+
+Transformation physics::Body::GetGeomTransformation() const
+{
+	return Transformation(GetGeomTranslation(), GetGeomRotation());
+}
+
+void physics::Body::SetGeomTransformation(Transformation const & transformation)
+{
+	SetGeomTranslation(transformation.GetTranslation());
+	SetGeomRotation(transformation.GetRotation());
+}
+
+void physics::Body::Tick()
+{
+	SetTransformation(GetGeomTransformation());
+}

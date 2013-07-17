@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "geom/Transformation.h"
+
 namespace physics
 {
 	class Body;
@@ -20,20 +22,24 @@ namespace physics
 	{
 		OBJECT_NO_COPY(Location);
 	public:
-		Location();
+		Location(Transformation const & transformation);
 		virtual ~Location();
 
 		virtual Body * GetBody();
 		virtual Body const * GetBody() const;
 
-		virtual Vector3 GetTranslation() const = 0;
-		virtual Matrix33 GetRotation() const;
-		virtual Transformation GetTransformation() const;
+		Vector3 GetTranslation() const;
+		Matrix33 const & GetRotation() const;
 
-		virtual Vector3 Transform(Vector3 local) const;
+		Transformation const & GetTransformation() const;
+		virtual void SetTransformation(Transformation const & transformation) = 0;
+
+		Vector3 Transform(Vector3 local) const;
 
 #if defined(VERIFY)
-		virtual void Verify() const = 0;
+		virtual void Verify() const { };
 #endif
+	private:
+		Transformation _transformation;
 	};
 }
