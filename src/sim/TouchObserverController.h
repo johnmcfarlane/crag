@@ -48,7 +48,7 @@ namespace sim
 
 	public:
 		// functions
-		TouchObserverController(Entity & entity, Transformation const & transformation);
+		TouchObserverController(Entity & entity);
 		virtual ~TouchObserverController();
 
 	private:
@@ -65,6 +65,8 @@ namespace sim
 		void UpdateCamera();
 		void UpdateCamera(Finger const & finger);
 		void UpdateCamera(Finger const & finger1, Finger const & finger2);
+		
+		Transformation const & GetTransformation() const;
 		void SetTransformation(Transformation const & transformation);
 		void BroadcastTransformation() const;
 
@@ -84,7 +86,6 @@ namespace sim
 		Vector3 GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const;
 		
 		// variables
-		Transformation _transformation;
 		gfx::Frustum _frustum;
 		geom::abs::Vector3 _origin;
 		FingerVector _fingers;

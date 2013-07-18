@@ -66,9 +66,8 @@ struct TouchObserverController::Finger
 	SDL_FingerID id;
 };
 
-TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
+TouchObserverController::TouchObserverController(Entity & entity)
 : Controller(entity)
-, _transformation(transformation)
 , _origin(geom::abs::Vector3::Zero())
 {
 	_frustum.resolution = app::GetResolution();
@@ -100,13 +99,15 @@ void TouchObserverController::Tick()
 
 void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
 {
-	auto previous_relative_camera_position = _transformation.GetTranslation();
+	auto transformation = GetTransformation();
+	auto previous_relative_camera_position = transformation.GetTranslation();
 	auto absolute_camera_pos = geom::RelToAbs(previous_relative_camera_position, _origin);
 
 	_origin = event.origin;
 
 	auto new_relative_camera_position = geom::AbsToRel(absolute_camera_pos, _origin);
-	_transformation.SetTranslation(new_relative_camera_position);
+	transformation.SetTranslation(new_relative_camera_position);
+	SetTransformation(transformation);
 }
 
 void TouchObserverController::HandleEvents()
@@ -216,9 +217,9 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		}
 	} ();
 	
-	finger.down_transformation = _transformation;
-	finger.direction = GetPixelDirection(screen_position, _transformation);
-	finger.world_position = _transformation.GetTranslation() + finger.direction * 10.f;
+	finger.down_transformation = GetTransformation();
+	finger.direction = GetPixelDirection(screen_position, finger.down_transformation);
+	finger.world_position = finger.down_transformation.GetTranslation() + finger.direction * 10.f;
 	finger.screen_position = screen_position;
 	
 	ASSERT(IsDown(id));
@@ -324,20 +325,31 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 	};
 
 	// the math
-	auto camera_transformation = CalculateCameraTranslationRoll(translationRollFinger1, translationRollFinger2, _transformation);
+	auto camera_transformation = CalculateCameraTranslationRoll(translationRollFinger1, translationRollFinger2, GetTransformation());
 	SetTransformation(geom::Cast<float>(camera_transformation));
+}
+
+Transformation const & TouchObserverController::GetTransformation() const
+{
+	auto & entity = GetEntity();
+	auto location = entity.GetLocation();
+	ASSERT(location);
+	
+	return location->GetTransformation();
 }
 
 void TouchObserverController::SetTransformation(Transformation const & transformation)
 {
-	_transformation = transformation;
+	auto & entity = GetEntity();
+	auto location = entity.GetLocation();
+	location->SetTransformation(transformation);
 }
 
 void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
 	gfx::SetCameraEvent event;
-	event.transformation = _transformation;
+	event.transformation = GetTransformation();
 	Daemon::Broadcast(event);
 }
 
@@ -379,7 +391,7 @@ Transformation const & TouchObserverController::GetDownTransformation() const
 	if (_fingers.empty())
 	{
 		DEBUG_BREAK("Shouldn't even be here");
-		return _transformation;
+		return GetTransformation();
 	}
 
 	auto & start_finger = _fingers.front();

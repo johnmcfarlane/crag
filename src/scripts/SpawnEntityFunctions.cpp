@@ -122,14 +122,17 @@ namespace
 	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
 	{
 		// physics
-#if defined(OBSERVER_USE_MOUSE)
+#if defined(OBSERVER_USE_TOUCH)
+		auto & location = * new physics::PassiveLocation(position);
+		observer.SetLocation(& location);
+#elif defined(OBSERVER_USE_MOUSE)
 		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), observer_density, observer_linear_damping, observer_angular_damping);
 #endif
 
 		// controller
 		sim::Controller * controller;
 #if defined(OBSERVER_USE_TOUCH)
-		controller = new sim::TouchObserverController(observer, position);
+		controller = new sim::TouchObserverController(observer);
 #elif defined(OBSERVER_USE_MOUSE)
 		// Linux requires libxi-dev to be installed for this to succeed.
 		if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
@@ -139,7 +142,7 @@ namespace
 		else
 		{
 			DEBUG_MESSAGE("Failed to set relative mouse mode.");
-			controller = new sim::TouchObserverController(observer, position);
+			controller = new sim::TouchObserverController(observer);
 		}
 #else
 #error no controller strategy
