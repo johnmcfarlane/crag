@@ -94,6 +94,11 @@ namespace geom
 		{ 
 		}
 
+		static Sphere Zero() 
+		{
+			return Sphere(Vector::Zero(), 0); 
+		}
+
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
