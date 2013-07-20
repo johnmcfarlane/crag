@@ -127,7 +127,7 @@ namespace geom
 		return lhs;
 	}
 
-	template<typename LHS_S, typename RHS_S> Vector<LHS_S, 2> & operator *= (Vector<LHS_S, 2> & lhs, RHS_S rhs)
+	template<typename S> Vector<S, 2> & operator *= (Vector<S, 2> & lhs, S rhs)
 	{
 		lhs.x *= rhs;
 		lhs.y *= rhs;
