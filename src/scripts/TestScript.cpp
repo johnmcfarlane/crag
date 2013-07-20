@@ -43,7 +43,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	geom::rel::Vector3 observer_start_pos(0, 9999400, -5);
+	sim::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	bool spawn_vehicle = true;
@@ -94,7 +94,7 @@ namespace
 			return engine.GetCamera();
 		});
 	
-		geom::rel::Vector3 spawn_pos = geom::Project(camera_ray, sim::Scalar(5));
+		sim::Vector3 spawn_pos = geom::Project(camera_ray, sim::Scalar(5));
 	
 		gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
 					Random::sequence.GetUnitInclusive<float>(), 
@@ -107,7 +107,8 @@ namespace
 			{
 				// ball
 				float radius = geom::rel::Scalar(std::exp(- GetRandomUnit() * 2));
-				sim::EntityHandle ball = SpawnBall(spawn_pos, radius, color);
+				sim::Sphere3 sphere(spawn_pos, radius);
+				sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), color);
 				_shapes.push_back(ball);
 				break;
 			}
@@ -115,10 +116,10 @@ namespace
 			case 1:
 			{
 				// box
-				geom::rel::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)),
+				sim::Vector3 size(geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)),
 					geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)),
 					geom::rel::Scalar(std::exp(GetRandomUnit() * -1.)));
-				sim::EntityHandle box = SpawnBox(spawn_pos, size, color);
+				sim::EntityHandle box = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, color);
 				_shapes.push_back(box);
 				break;
 			}
@@ -232,7 +233,7 @@ void Test (applet::AppletInterface & applet_interface)
 	// Create vehicle.
 	if (spawn_vehicle)
 	{
-		_vehicle = SpawnRover(observer_start_pos + geom::rel::Vector3(0, 5, +5));
+		_vehicle = SpawnRover(observer_start_pos + sim::Vector3(0, 5, +5));
 	}
 
 	// main loop

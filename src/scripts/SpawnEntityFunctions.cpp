@@ -78,13 +78,13 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
 	
-	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, geom::rel::Vector3 size, gfx::Color4f color)
+	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, sim::Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
 	{
 		// physics
 		sim::Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::BoxBody(spawn_pos, physics_engine, true, size);
+		auto & body = * new physics::BoxBody(spawn_pos, & velocity, physics_engine, size);
 		body.SetDensity(box_density);
 		body.SetLinearDamping(box_linear_damping);
 		body.SetAngularDamping(box_angular_damping);
@@ -96,22 +96,22 @@ namespace
 		box.SetModel(model);
 	}
 
-	void ConstructSphericalBody(sim::Entity & entity, geom::rel::Sphere3 const & sphere, float density, float linear_damping, float angular_damping)
+	void ConstructSphericalBody(sim::Entity & entity, geom::rel::Sphere3 const & sphere, sim::Vector3 const & velocity, float density, float linear_damping, float angular_damping)
 	{
 		sim::Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphericalBody(sphere.center, physics_engine, true, sphere.radius);
+		auto & body = * new physics::SphericalBody(sphere.center, & velocity, physics_engine, sphere.radius);
 		body.SetDensity(density);
 		body.SetLinearDamping(linear_damping);
 		body.SetAngularDamping(angular_damping);
 		entity.SetLocation(& body);
 	}
 
-	void ConstructBall(sim::Entity & ball, geom::rel::Sphere3 sphere, gfx::Color4f color)
+	void ConstructBall(sim::Entity & ball, geom::rel::Sphere3 sphere, sim::Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphericalBody(ball, sphere, ball_density, ball_linear_damping, ball_angular_damping);
+		ConstructSphericalBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -126,7 +126,7 @@ namespace
 		auto & location = * new physics::PassiveLocation(position);
 		observer.SetLocation(& location);
 #elif defined(OBSERVER_USE_MOUSE)
-		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), observer_density, observer_linear_damping, observer_angular_damping);
+		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
 #endif
 
 		// controller
@@ -166,7 +166,7 @@ namespace
 
 	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
-		ConstructBall(entity, sphere, gfx::Color4f::White());
+		ConstructBall(entity, sphere, sim::Vector3::Zero(), gfx::Color4f::White());
 
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
@@ -315,26 +315,25 @@ namespace
 	}
 }
 
-sim::EntityHandle SpawnBall(sim::Vector3 const & position, sim::Scalar radius, gfx::Color4f color)
+sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
 {
 	// ball
 	auto ball = sim::EntityHandle::CreateHandle();
 
-	ball.Call([position, radius, color] (sim::Entity & ball) {
-		geom::rel::Sphere3 sphere(position, radius);
-		ConstructBall(ball, sphere, color);
+	ball.Call([sphere, velocity, color] (sim::Entity & ball) {
+		ConstructBall(ball, sphere, velocity, color);
 	});
 
 	return ball;
 }
 
-sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & size, gfx::Color4f color)
+sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & velocity, sim::Vector3 const & size, gfx::Color4f color)
 {
 	// box
 	auto box = sim::EntityHandle::CreateHandle();
 
-	box.Call([position, size, color] (sim::Entity & box) {
-		ConstructBox(box, position, size, color);
+	box.Call([position, velocity, size, color] (sim::Entity & box) {
+		ConstructBox(box, position, velocity, size, color);
 	});
 
 	return box;

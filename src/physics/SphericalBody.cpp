@@ -20,8 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // SphericalBody
 
-physics::SphericalBody::SphericalBody(Transformation const & transformation, physics::Engine & engine, bool movable, Scalar radius)
-: Body(transformation, engine, engine.CreateSphere(radius), movable)
+physics::SphericalBody::SphericalBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine, Scalar radius)
+: Body(transformation, velocity, engine, engine.CreateSphere(radius))
 {
 }
 

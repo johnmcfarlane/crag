@@ -21,7 +21,7 @@ namespace physics
 	class SphericalBody : public Body
 	{
 	public:
-		SphericalBody(Transformation const & transformation, physics::Engine & engine, bool movable, Scalar radius);
+		SphericalBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;

@@ -32,10 +32,9 @@ namespace physics
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body : public Location
 	{
-	protected:
-		Body(Transformation const & transformation, Engine & engine, dGeomID init_geom_id, bool movable);
 	public:
-		virtual ~Body() override;
+		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, dGeomID init_geom_id);
+		virtual ~Body() = 0;
 		
 		Body * GetBody() final;
 		Body const * GetBody() const final;

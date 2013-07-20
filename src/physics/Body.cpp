@@ -24,17 +24,18 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
 
-Body::Body(Transformation const & transformation, Engine & engine, dGeomID init_geom_id, bool movable)
+Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, dGeomID init_geom_id)
 : Location(transformation)
 , geom_id(init_geom_id)
 , _roster(engine.GetRoster())
 {
 	// body_id
-	if (movable)
+	if (velocity != nullptr)
 	{
 		body_id = engine.CreateBody();
 		
 		dBodySetData(body_id, this);
+		dBodySetLinearVel(body_id, velocity->x, velocity->y, velocity->z);
 		dBodySetGravityMode(body_id, false);
 		dGeomSetBody(geom_id, body_id);
 	}
