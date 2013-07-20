@@ -26,6 +26,15 @@
 
 #include "geom/Quaternion.h"
 
+#if ! defined(NDEBUG)
+//#define SPAWN_SHAPES
+#endif
+
+#if defined(SPAWN_SHAPES)
+#include "scripts/SpawnEntityFunctions.h"
+#include "gfx/Color.h"
+#endif
+
 extern float camera_fov;
 
 using namespace sim;
@@ -222,6 +231,19 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 	finger.world_position = finger.down_transformation.GetTranslation() + finger.direction * 10.f;
 	finger.screen_position = screen_position;
 	
+#if defined(SPAWN_SHAPES)
+	switch (_fingers.size())
+	{
+		case 1:
+			SpawnBall(Sphere3(finger.world_position, 0.5f), finger.direction * 5.1f, gfx::Color4f::Blue());
+			break;
+			
+		case 2:
+			SpawnBox(finger.world_position, finger.direction * 5.1f, Vector3(1, 1, 1), gfx::Color4f::Blue());
+			break;
+	}
+#endif
+		
 	ASSERT(IsDown(id));
 }
 
