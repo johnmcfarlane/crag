@@ -44,12 +44,135 @@ namespace
 	struct TranslationRollFinger
 	{
 		Vector3 const & world_position;
-		Vector2 const & screen_position;
+		Vector3 const & screen_direction;
 	};
 	
-	Transformation CalculateCameraTranslationRoll(TranslationRollFinger const & /*finger1*/, TranslationRollFinger const & /*finger2*/, Transformation const & camera_transformation)
+	// returns results for a; assumes gamma is acute
+	// http://en.wikipedia.org/wiki/Solution_of_triangles#Two_sides_and_non-included_angle_given_.28SSA.29
+	template <typename S>
+	S SolveTriangleSSA(S b, S c, S beta)
 	{
-		//Vector3 const & forward = gfx::GetAxis(camera_transformation.GetRotation(), gfx::Direction::forward);
+		// verify input
+		ASSERT(b == b);
+		ASSERT(c == c);
+		ASSERT(beta == beta);
+		
+		// constants
+		constexpr float half_pi = PI / 2;
+	
+		S c_over_b = c / b;
+		S sin_gamma = c_over_b * std::sin(beta);
+		
+		if (sin_gamma > 1)
+		{
+			// hopefully a precision error
+			DEBUG_MESSAGE("Inpossible triangle. sin_gamma = %lf", double(sin_gamma));
+			
+			sin_gamma = 1.f;
+		}
+		
+		S gamma = std::asin(sin_gamma);
+		
+		// if b < c
+		if (std::fabs(c_over_b) > 1)
+		{
+			ASSERT(std::fabs(b) < std::fabs(c));
+			
+			// TODO: It may be possible for gamma to be obtuse intentionally.
+			gamma = PI - gamma;
+		}
+		else
+		{
+			ASSERT(std::fabs(b) >= std::fabs(c));
+			ASSERT(gamma <= half_pi);
+		}
+		
+		S alpha = PI - beta - gamma;
+		S a = b * sin(alpha) / 	sin(beta);
+		
+		return a;
+	}
+	
+	Transformation CalculateCameraTranslationRoll(TranslationRollFinger const & finger1, TranslationRollFinger const & finger2, Transformation const & camera_transformation)
+	{
+		Vector3 const & forward = gfx::GetAxis(camera_transformation.GetRotation(), gfx::Direction::forward);
+		
+/*
+		O = camera
+		P = finger1.screen_position
+		Q = finger2.screen_position
+		A = finger1.world_position
+		B = finger2.world_position
+		The problem is that world is in different space to screen and camera
+		although P rests on the line between A and O (and Q and B have a similar
+		relationship).
+		
+		          a
+		 C*---------------*B  ^ ^
+		   \b            /    | |
+		   A*-----------/     d |
+			 \         /        |
+			  \       /         ?
+			   \     /          |
+		     ---*---*---      ^ |
+		   ^   P \ / Q        1 |
+		   |      *           v v
+		forward   O   
+*/
+		////////////////////////////////////////////////////////////////////////////////
+		// screen
+
+		// OP and OQ
+		auto camera_to_screen1 = finger1.screen_direction;
+		auto camera_to_screen2 = finger2.screen_direction;
+		
+		// vector from world_position #1 to world_position #2, AB
+		auto screen_position_diff = camera_to_screen2 - camera_to_screen1;
+		
+		// distance between screen positions, PQ
+		auto screen_span = geom::Length(screen_position_diff);
+		
+		auto camera_to_screen_distance1 = geom::Length(camera_to_screen1);
+		auto camera_to_screen_distance2 = geom::Length(camera_to_screen2);
+		
+		camera_to_screen1 *= 1.f / camera_to_screen_distance1;
+		camera_to_screen2 *= 1.f / camera_to_screen_distance2;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// world
+
+		// vector from world_position #1 to world_position #2, AB
+		auto world_position_diff = finger2.world_position - finger1.world_position;
+
+		// how far forwards of world position #1 is #2, d
+		auto world_position_diff_forward = geom::DotProduct(world_position_diff, forward);
+
+		// distance between world positions, |AB| aka c
+		auto world_span = geom::Length(world_position_diff);
+
+		// the distance we would extent OA to make it in line with B, |AC| aka b
+		auto equalizer = world_position_diff_forward * camera_to_screen_distance1;
+		
+		// cos(OPQ) - which is equal to cos(ACB)
+		auto cos_gamma = geom::DotProduct(screen_position_diff * 1.f / screen_span, - camera_to_screen1);
+		
+		// triangle_width, a
+		float triangle_width;
+		
+		// if world positions are just-about aligned,
+		if (std::fabs(equalizer) * 1000 < world_span)
+		{
+			// then forego the precision errors and act like they really are
+			triangle_width = world_span;
+		}
+		else
+		{
+			// else solve the triangle
+			triangle_width = SolveTriangleSSA(world_span, equalizer, std::acos(cos_gamma));
+		}
+		
+		auto triangle_height = triangle_width / screen_span;
+		
 		return camera_transformation;
 	}
 }
@@ -337,13 +460,13 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 	TranslationRollFinger translationRollFinger1 = 
 	{
 		finger1.world_position,
-		finger1.screen_position
+		finger1.direction
 	};
 
 	TranslationRollFinger translationRollFinger2 = 
 	{
 		finger2.world_position,
-		finger2.screen_position
+		finger2.direction
 	};
 
 	// the math
