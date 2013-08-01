@@ -58,7 +58,7 @@ namespace
 		ASSERT(beta == beta);
 		
 		// constants
-		constexpr float half_pi = PI / 2;
+		constexpr auto half_pi = float(PI * .5);
 	
 		S c_over_b = c / b;
 		S sin_gamma = c_over_b * std::sin(beta);
@@ -79,7 +79,7 @@ namespace
 			ASSERT(std::fabs(b) < std::fabs(c));
 			
 			// TODO: It may be possible for gamma to be obtuse intentionally.
-			gamma = PI - gamma;
+			gamma = float(PI) - gamma;
 		}
 		else
 		{
@@ -87,7 +87,7 @@ namespace
 			ASSERT(gamma <= half_pi);
 		}
 		
-		S alpha = PI - beta - gamma;
+		S alpha = float(PI) - beta - gamma;
 		S a = b * sin(alpha) / 	sin(beta);
 		
 		return a;
