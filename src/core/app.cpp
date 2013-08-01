@@ -72,7 +72,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	
 	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
 	window = SDL_CreateWindow(title, 
-							  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+							  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
 							  resolution.x, resolution.y, 
 							  flags);
 	
