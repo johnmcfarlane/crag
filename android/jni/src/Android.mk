@@ -13,7 +13,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
-LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
+LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/applet/Applet.cpp \
 	$(CRAG_PATH)/applet/Engine.cpp \
 	$(CRAG_PATH)/core/app.cpp \
