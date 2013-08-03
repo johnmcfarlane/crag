@@ -207,7 +207,6 @@ namespace geom
 	template<typename I, typename S, int N> 
 	bool GetIntersection(I begin, I end, Ray<S, N> const & line, S & t1, S & t2)
 	{
-		typedef Vector<S, N> Vector;
 		typedef Ray<S, N> Ray;
 		
 		// this is the exit point

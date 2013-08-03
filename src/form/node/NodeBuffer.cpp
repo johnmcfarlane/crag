@@ -374,9 +374,9 @@ void form::NodeBuffer::SortQuaterna()
 		return;
 	}
 
+#if 0
 	typedef geom::Vector<Quaterna *, 2> QuaternaRange;
 
-#if 0
 	QuaternaRange unsorted_range =
 	{
 		quaterne,

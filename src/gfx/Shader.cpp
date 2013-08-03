@@ -81,7 +81,6 @@ Shader::~Shader()
 
 bool Shader::Init(char const * const * filenames, GLenum shader_type)
 {
-	typedef app::FileResource::element_type Buffer;
 	typedef std::vector<app::FileResource> BufferArray;
 	
 	auto filenames_end = filenames;
