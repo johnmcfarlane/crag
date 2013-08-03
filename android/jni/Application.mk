@@ -8,7 +8,7 @@ APP_STL := gnustl_static	# success?
 #APP_STL := gabi++_shared	# fails on <algorithm>
 #APP_STL := none	# fails on <cassert>
 
-NDK_TOOLCHAIN_VERSION := 4.7
+NDK_TOOLCHAIN_VERSION := 4.8
 #APP_PLATFORM := android-15
 APP_PLATFORM := android-10
 APP_OPTIM := debug
