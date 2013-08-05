@@ -10,6 +10,12 @@
 #pragma once
 
 
+// VERIFY macro
+#if defined(VERIFY)
+#error VERIFY already defined
+#endif
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Statement macros
 
@@ -22,64 +28,24 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Debug-only function parameter wrapper
+// Debug-only code
 
-#if defined(NDEBUG)
-#define CRAG_DEBUG_PARAM(X)
-#else
-#define CRAG_DEBUG_PARAM(X) X
-#endif
+#if ! defined(NDEBUG)
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Verify / Dump flags
-
-#if ! defined (NDEBUG)
 #define VERIFY
-#elif defined(VERIFY)
-#error VERIFY defined but NDEBUG is not
-#endif
 
-////////////////////////////////////////////////////////////////////////////////
 // Misc debug helpers
-
 namespace core
 {
 	// thread identifier used in debug output
-#if ! defined(NDEBUG)
 	void DebugSetThreadName(char const * thread_name);
 	char const * DebugGetThreadName();
-#else
-	inline void DebugSetThreadName(char const *) { }
-#endif
 }
 
-// Console output
-void PrintMessage(FILE * out, char const * format, ...);
+// function parameter wrapper
+#define CRAG_DEBUG_PARAM(X) X
 
-// FUNCTION_SIGNATURE - a string containing the signature of the current function
-#if defined(__GNUC__)
-#define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
-#elif defined(WIN32)
-#define FUNCTION_SIGNATURE __FUNCSIG__
-#else
-#define FUNCTION_SIGNATURE __func__
-#endif
-
-
-// TRUNCATE_STRING
-#if defined(WIN32)
-// VS debugger requires complete file path for navigation features
-#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING
-#else
-#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) (& STRING[std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)])
-#endif
-
-
-// DEBUG_MESSAGE - debug build-only stdout output for useful development information
-#if defined(NDEBUG)
-#define DEBUG_MESSAGE(...) DO_NOTHING
-#else
+// DEBUG_COLOR_ macros
 #if defined(WIN32) || defined(__ANDROID__)
 #define DEBUG_COLOR_FILE
 #define DEBUG_COLOR_LINE
@@ -97,13 +63,26 @@ void PrintMessage(FILE * out, char const * format, ...);
 #define DEBUG_COLOR_THREAD "\x1B[31;2m"
 #define DEBUG_COLOR_NORM "\x1B[37;22m"
 #endif
-#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "] " DEBUG_COLOR_THREAD "%s" DEBUG_COLOR_NORM "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE, ::core::DebugGetThreadName())
+
+// TRUNCATE_STRING
+#if defined(WIN32)
+// VS debugger requires complete file path for navigation features
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING
+#else
+#define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) (& STRING[std::max(0, (int)sizeof(STRING) - 1 - TARGET_LENGTH)])
 #endif
 
+// FUNCTION_SIGNATURE - a string containing the signature of the current function
+#if defined(__GNUC__)
+#define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
+#elif defined(WIN32)
+#define FUNCTION_SIGNATURE __FUNCSIG__
+#else
+#define FUNCTION_SIGNATURE __func__
+#endif
 
-// ERROR_MESSAGE - output serious error messages to stderr in all builds
-#define ERROR_MESSAGE(FORMAT, ...) PrintMessage(stderr, FORMAT "\n", ## __VA_ARGS__)
-
+// DEBUG_MESSAGE - debug build-only stdout output for useful development information
+#define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "] " DEBUG_COLOR_THREAD "%s" DEBUG_COLOR_NORM "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE, ::core::DebugGetThreadName())
 
 // BREAK - interrupt execution
 #if defined(WIN32)
@@ -123,44 +102,51 @@ void PrintMessage(FILE * out, char const * format, ...);
 #define BREAK() assert(false)
 #endif
 
-
 // DEBUG_BREAK - debug build-only execution interruption with error message
-#if defined(NDEBUG)
-#define DEBUG_BREAK(...) UNREACHABLE()
-#else
 #define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
 		DEBUG_MESSAGE(FORMAT, ## __VA_ARGS__); \
 		BREAK(); \
 	)
-#endif
-
 
 // ASSERT - interrupt execution in a debug build iff given condition fails
-#if defined(NDEBUG)
-#define ASSERT(CONDITION) DO_NOTHING
-#else
 #define ASSERT(CONDITION) \
 	DO_STATEMENT ( \
 		if (! (CONDITION)) { \
 			DEBUG_BREAK("ASSERT: '%s'", #CONDITION); \
 		} \
 	)
-#endif
-
 
 // standard library error reporter
-#if defined(NDEBUG)
-#define AssertErrno() DO_NOTHING
-#else
 #define AssertErrno() \
 	DO_STATEMENT ( \
 		if (errno != 0) { \
 			DEBUG_BREAK("errno: %d '%s'", errno, strerror(errno)); \
 		} \
 	)
-#endif
 
+#else
+
+namespace core
+{
+	inline void DebugSetThreadName(char const *) { }
+}
+
+#define CRAG_DEBUG_PARAM(X)
+#define DEBUG_MESSAGE(...) DO_NOTHING
+#define DEBUG_BREAK(...) UNREACHABLE()
+#define ASSERT(CONDITION) DO_NOTHING
+#define AssertErrno() DO_NOTHING
+
+#endif	// NDEBUG
+
+
+// Console output
+void PrintMessage(FILE * out, char const * format, ...);
+
+
+// ERROR_MESSAGE - output serious error messages to stderr in all builds
+#define ERROR_MESSAGE(FORMAT, ...) PrintMessage(stderr, FORMAT "\n", ## __VA_ARGS__)
 
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
