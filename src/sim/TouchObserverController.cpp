@@ -22,6 +22,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
+#include "core/Random.h"
 #include "core/Roster.h"
 
 #include "geom/Quaternion.h"
@@ -44,24 +45,31 @@ namespace
 	struct TranslationRollFinger
 	{
 		Vector3 const & world_position;
+		
+		// vector from camera to touch-point on screen, so no shorter than unit length
 		Vector3 const & screen_direction;
 	};
+	
+	// http://en.wikipedia.org/wiki/Solution_of_triangles#Three_sides_given_.28SSS.29
+	template <typename S>
+	S SolveTriangleSSS(S a, S b, S c)
+	{
+		return std::acos((Squared(b) + Squared(c) - Squared(a)) / (2.f * b * c));
+	}
 	
 	// returns results for a; assumes gamma is acute
 	// http://en.wikipedia.org/wiki/Solution_of_triangles#Two_sides_and_non-included_angle_given_.28SSA.29
 	template <typename S>
-	S SolveTriangleSSA(S b, S c, S beta)
+	S SolveTriangleSSA(S b, S c, S beta, bool second)
 	{
 		// verify input
 		ASSERT(b == b);
 		ASSERT(c == c);
 		ASSERT(beta == beta);
 		
-		// constants
-		constexpr auto half_pi = float(PI * .5);
-	
 		S c_over_b = c / b;
-		S sin_gamma = c_over_b * std::sin(beta);
+		S sin_beta = std::sin(beta);
+		S sin_gamma = c_over_b * sin_beta;
 		
 		if (sin_gamma > 1)
 		{
@@ -79,25 +87,32 @@ namespace
 			ASSERT(std::fabs(b) < std::fabs(c));
 			
 			// TODO: It may be possible for gamma to be obtuse intentionally.
-			gamma = float(PI) - gamma;
+			if (second)
+			{
+				gamma = float(PI) - gamma;
+			}
 		}
 		else
 		{
 			ASSERT(std::fabs(b) >= std::fabs(c));
-			ASSERT(gamma <= half_pi);
+			ASSERT(gamma <= float(PI * .5));
 		}
 		
 		S alpha = float(PI) - beta - gamma;
-		S a = b * sin(alpha) / 	sin(beta);
+		S a = b * sin(alpha) / sin_beta;
 		
 		return a;
 	}
 	
 	Transformation CalculateCameraTranslationRoll(TranslationRollFinger const & finger1, TranslationRollFinger const & finger2, Transformation const & camera_transformation)
 	{
-		Vector3 const & forward = gfx::GetAxis(camera_transformation.GetRotation(), gfx::Direction::forward);
+		const auto camera_rotation = camera_transformation.GetRotation();
+		const auto camera_forward = gfx::GetAxis(camera_rotation, gfx::Direction::forward);
 		
-/*
+		/*//////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		// triangle height
+
 		O = camera
 		P = finger1.screen_position
 		Q = finger2.screen_position
@@ -108,53 +123,53 @@ namespace
 		relationship).
 		
 		          a
-		 C*---------------*B  ^ ^
+		 C*-------M-------*B  ^ ^
 		   \b            /    | |
 		   A*-----------/     d |
 			 \         /        |
-			  \       /         ?
+			  \       /         h
 			   \     /          |
 		     ---*---*---      ^ |
 		   ^   P \ / Q        1 |
 		   |      *           v v
-		forward   O   
-*/
+		forward   O                                                                   */
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// screen
 
-		// OP and OQ
-		auto camera_to_screen1 = finger1.screen_direction;
-		auto camera_to_screen2 = finger2.screen_direction;
-		
 		// vector from world_position #1 to world_position #2, AB
-		auto screen_position_diff = camera_to_screen2 - camera_to_screen1;
+		const auto screen_position_diff = finger2.screen_direction - finger1.screen_direction;
 		
 		// distance between screen positions, PQ
-		auto screen_span = geom::Length(screen_position_diff);
+		const auto screen_span = geom::Length(screen_position_diff);
 		
-		auto camera_to_screen_distance1 = geom::Length(camera_to_screen1);
-		auto camera_to_screen_distance2 = geom::Length(camera_to_screen2);
+		const auto screen_position_direction = screen_position_diff * 1.f / screen_span;
 		
-		camera_to_screen1 *= 1.f / camera_to_screen_distance1;
-		camera_to_screen2 *= 1.f / camera_to_screen_distance2;
+		const auto camera_to_screen_distance1 = geom::Length(finger1.screen_direction);
+		const auto camera_to_screen_distance2 = geom::Length(finger2.screen_direction);
+		
+		const auto camera_to_screen_direction1 = finger1.screen_direction * 1.f / camera_to_screen_distance1;
+		const auto camera_to_screen_direction2 = finger2.screen_direction * 1.f / camera_to_screen_distance2;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// world
 
 		// vector from world_position #1 to world_position #2, AB
-		auto world_position_diff = finger2.world_position - finger1.world_position;
+		const auto world_position_diff = finger2.world_position - finger1.world_position;
 
 		// how far forwards of world position #1 is #2, d
-		auto world_position_diff_forward = geom::DotProduct(world_position_diff, forward);
+		const auto world_position_diff_forward = geom::DotProduct(world_position_diff, camera_forward);
 
 		// distance between world positions, |AB| aka c
-		auto world_span = geom::Length(world_position_diff);
+		const auto world_span = geom::Length(world_position_diff);
+		
+		const auto world_position_diff_direction = world_position_diff / world_span;
 
 		// the distance we would extent OA to make it in line with B, |AC| aka b
-		auto equalizer = world_position_diff_forward * camera_to_screen_distance1;
+		const auto equalizer = world_position_diff_forward * camera_to_screen_distance1;
 		
 		// cos(OPQ) - which is equal to cos(ACB)
-		auto cos_gamma = geom::DotProduct(screen_position_diff * 1.f / screen_span, - camera_to_screen1);
+		const auto cos_gamma = geom::DotProduct(screen_position_direction, - camera_to_screen_direction1);
 		
 		// triangle_width, a
 		float triangle_width;
@@ -168,12 +183,34 @@ namespace
 		else
 		{
 			// else solve the triangle
-			triangle_width = SolveTriangleSSA(world_span, equalizer, std::acos(cos_gamma));
+			triangle_width = SolveTriangleSSA(world_span, equalizer, std::acos(cos_gamma), cos_gamma < 0);
 		}
 		
-		auto triangle_height = triangle_width / screen_span;
+		// how far ahead of the camera is world position 2
+		const auto world_position_forward2 = triangle_width / screen_span;
 		
-		return camera_transformation;
+		// world position#2 in screen space
+		const auto ss_world_position2 = camera_to_screen_direction2 * world_position_forward2 * camera_to_screen_distance2;
+		const auto camera_to_world_distance2 = geom::Length(ss_world_position2);
+		
+		const auto get_angle = [] (Vector3 const & v, Matrix33 const & r)
+		{
+			Vector2 c(
+				geom::DotProduct(v, gfx::GetAxis(r, gfx::Direction::right)),
+				geom::DotProduct(v, gfx::GetAxis(r, gfx::Direction::up)));
+			return std::atan2(c.x, c.y);
+		};
+		
+		const auto rotation_angle_to = get_angle(world_position_diff_direction, camera_rotation);
+		const auto rotation_angle_from = get_angle(screen_position_direction, camera_rotation);
+		const auto rotation_angle = rotation_angle_to - rotation_angle_from;
+		
+		const auto output_rotation = camera_rotation * geom::Inverse(gfx::Rotation(gfx::Direction::forward, rotation_angle));
+		
+		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * gfx::Rotation(gfx::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
+		const auto output_translation = finger2.world_position - ws_camera_to_screen_direction2 * camera_to_world_distance2;
+
+		return Transformation(output_translation, output_rotation);
 	}
 }
 
@@ -258,6 +295,7 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 #if defined(CRAG_USE_TOUCH)
 		case SDL_FINGERDOWN:
 		{
+			DEBUG_MESSAGE("SDL_FINGERDOWN %d", int(event.tfinger.fingerId));
 			auto screen_position = GetScreenPosition(event.tfinger);
 			HandleFingerDown(screen_position, event.tfinger.fingerId);
 			break;
@@ -265,8 +303,9 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 			
 		case SDL_FINGERUP:
 		{
+			DEBUG_MESSAGE("SDL_UP %d", int(event.tfinger.fingerId));
 			HandleFingerUp(event.tfinger.fingerId);
-			ASSERT(_fingers.empty());
+			//ASSERT(_fingers.empty());
 			break;
 		}
 			
@@ -274,6 +313,7 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 		{
 			if (_fingers.empty())
 			{
+				DEBUG_MESSAGE("phantom motion %d", int(event.tfinger.fingerId));
 				break;
 			}
 
@@ -330,6 +370,8 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 
 void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, SDL_FingerID id)
 {
+	auto transformation = GetTransformation();
+
 	// find existing / create new Finger in _fingers and return reference
 	auto& finger = [&] () -> Finger&
 	{
@@ -349,20 +391,24 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		}
 	} ();
 	
-	finger.down_transformation = GetTransformation();
+	finger.down_transformation = transformation;
 	finger.direction = GetPixelDirection(screen_position, finger.down_transformation);
-	finger.world_position = finger.down_transformation.GetTranslation() + finger.direction * 10.f;
+	
+	auto random_distance = 5.f /*+ Random::sequence.GetUnit<float>() * 5.f*/;
+	finger.world_position = finger.down_transformation.GetTranslation() + finger.direction * random_distance;
 	finger.screen_position = screen_position;
 	
 #if defined(SPAWN_SHAPES)
+	auto speed = 0.f;
+	auto velocity = finger.direction * speed;
 	switch (_fingers.size())
 	{
 		case 1:
-			SpawnBall(Sphere3(finger.world_position, 0.5f), finger.direction * 5.1f, gfx::Color4f::Blue());
+			SpawnBall(Sphere3(finger.world_position, 0.5f), velocity, gfx::Color4f::Red());
 			break;
 			
 		case 2:
-			SpawnBox(finger.world_position, finger.direction * 5.1f, Vector3(1, 1, 1), gfx::Color4f::Blue());
+			SpawnBox(finger.world_position, velocity, Vector3(1, 1, 1), gfx::Color4f::Blue());
 			break;
 	}
 #endif
@@ -390,9 +436,14 @@ void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position
 	auto found = FindFinger(id);
 	if (found == _fingers.end())
 	{
-		DEBUG_MESSAGE("missing down");
-		HandleFingerDown(screen_position, id);
-		return;
+		if (_fingers.empty())
+		{
+			DEBUG_BREAK("missing down event");
+			return;
+		}
+		ASSERT(_fingers.size() == 1);
+		
+		found = _fingers.begin();
 	}
 	
 	found->direction = GetPixelDirection(screen_position, GetDownTransformation());
@@ -410,11 +461,11 @@ void TouchObserverController::UpdateCamera()
 			break;
 			
 		case 1:
-			UpdateCamera(_fingers.front());
+			UpdateCamera(_fingers[0]);
 			break;
 			
 		default:
-			UpdateCamera(_fingers.front(), _fingers.back());
+			UpdateCamera(_fingers[0], _fingers[1]);
 			break;
 	}
 }
@@ -468,9 +519,15 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 		finger2.world_position,
 		finger2.direction
 	};
+	
+	if (finger1.direction == finger2.direction)
+	{
+		DEBUG_MESSAGE("finger collision detected!");
+		return;
+	}
 
 	// the math
-	auto camera_transformation = CalculateCameraTranslationRoll(translationRollFinger1, translationRollFinger2, GetTransformation());
+	auto camera_transformation = CalculateCameraTranslationRoll(translationRollFinger1, translationRollFinger2, finger1.down_transformation);
 	SetTransformation(geom::Cast<float>(camera_transformation));
 }
 
