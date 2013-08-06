@@ -49,7 +49,7 @@ QuaterneCount::QuaterneCount(int num_quaterne) : _num(num_quaterne)
 #if defined(VERIFY)
 void QuaterneCount::Verify() const
 {
-	VerifyTrue(_num > 0);
+	VerifyOp(_num, >, 0);
 }
 #endif
 

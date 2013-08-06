@@ -206,11 +206,11 @@ namespace core
 			verify_address(_data_begin);
 			verify_address(data_end);
 			
-			assert(capacity() >= block::header_size + sizeof(value_type));
-			assert(_data_begin >= _buffer_begin);
-			assert(_data_begin <= _buffer_end);
-			assert(data_end >= _buffer_begin);
-			assert(data_end <= _buffer_end);
+			VerifyOp(capacity(), >=, block::header_size + sizeof(value_type));
+			VerifyOp(_data_begin, >=, _buffer_begin);
+			VerifyOp(_data_begin, <=, _buffer_end);
+			VerifyOp(data_end, >=, _buffer_begin);
+			VerifyOp(data_end, <=, _buffer_end);
 			
 			for (const_iterator i = const_iterator(_data_begin); i != const_iterator(* _data_end); ++ i)
 			{
@@ -349,16 +349,18 @@ namespace core
 			_buffer_begin = _buffer_end = nullptr;
 			init_data();
 		}
-		
-		static void verify_address(size_type CRAG_DEBUG_PARAM(num_bytes))
+
+#if defined(VERIFY)
+		static void verify_address(size_type num_bytes)
 		{
-			assert(ring_buffer::round_down(num_bytes) == num_bytes);
+			VerifyEqual(ring_buffer::round_down(num_bytes), num_bytes);
 		}
 		
 		static void verify_address(void const * num_bytes)
 		{
 			verify_address(size_type(num_bytes));
 		}
+#endif
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
