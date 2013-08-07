@@ -77,18 +77,28 @@ namespace sim
 		FingerVector::const_iterator FindFinger(SDL_FingerID id) const;
 		bool IsDown(SDL_FingerID id) const;
 		
-		Transformation const & GetDownTransformation() const;
-		
 		Vector2 GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const;
 		Vector2 GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const;
 		Vector2 GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const;
 
 		Vector3 GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const;
 		
+		////////////////////////////////////////////////////////////////////////////////
 		// variables
+		
+		// used to calculate screen->world projection
 		gfx::Frustum _frustum;
+		
+		// local origin in universal space
 		geom::abs::Vector3 _origin;
+		
+		// camera transformation at point where finger pressed/released
+		Transformation _down_transformation;
+		
+		// record of fingers used to interact with touch screen
 		FingerVector _fingers;
+		
+		// receives/stores touch events
 		core::EventWatcher _event_watcher;
 	};
 }

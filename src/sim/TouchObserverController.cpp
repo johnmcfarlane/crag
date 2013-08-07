@@ -47,7 +47,7 @@ namespace
 		Vector3 const & world_position;
 		
 		// vector from camera to touch-point on screen, so no shorter than unit length
-		Vector3 const & screen_direction;
+		Vector3 screen_direction;
 	};
 	
 	// http://en.wikipedia.org/wiki/Solution_of_triangles#Three_sides_given_.28SSS.29
@@ -219,14 +219,8 @@ namespace
 
 struct TouchObserverController::Finger
 {
-	// camera transformation at point where finger pressed down
-	Transformation down_transformation;
-	
 	// initial direction from camera to point of contact between finger and screen
 	Vector3 world_position;
-	
-	// current direction from camera to point of contact between finger and screen
-	Vector3 direction;
 	
 	// current screen position
 	Vector2 screen_position;
@@ -295,7 +289,6 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 #if defined(CRAG_USE_TOUCH)
 		case SDL_FINGERDOWN:
 		{
-			DEBUG_MESSAGE("SDL_FINGERDOWN %d", int(event.tfinger.fingerId));
 			auto screen_position = GetScreenPosition(event.tfinger);
 			HandleFingerDown(screen_position, event.tfinger.fingerId);
 			break;
@@ -303,20 +296,12 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 			
 		case SDL_FINGERUP:
 		{
-			DEBUG_MESSAGE("SDL_UP %d", int(event.tfinger.fingerId));
 			HandleFingerUp(event.tfinger.fingerId);
-			//ASSERT(_fingers.empty());
 			break;
 		}
 			
 		case SDL_FINGERMOTION:
 		{
-			if (_fingers.empty())
-			{
-				DEBUG_MESSAGE("phantom motion %d", int(event.tfinger.fingerId));
-				break;
-			}
-
 			auto screen_position = GetScreenPosition(event.tfinger);
 			HandleFingerMotion(screen_position, event.tfinger.fingerId);
 			break;
@@ -370,8 +355,6 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 
 void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, SDL_FingerID id)
 {
-	auto transformation = GetTransformation();
-
 	// find existing / create new Finger in _fingers and return reference
 	auto& finger = [&] () -> Finger&
 	{
@@ -390,17 +373,17 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 			return * found;
 		}
 	} ();
+		
+	_down_transformation = GetTransformation();
 	
-	finger.down_transformation = transformation;
-	finger.direction = GetPixelDirection(screen_position, finger.down_transformation);
-	
+	auto direction = GetPixelDirection(screen_position, _down_transformation);
 	auto random_distance = 5.f /*+ Random::sequence.GetUnit<float>() * 5.f*/;
-	finger.world_position = finger.down_transformation.GetTranslation() + finger.direction * random_distance;
+	finger.world_position = _down_transformation.GetTranslation() + direction * random_distance;
 	finger.screen_position = screen_position;
 	
 #if defined(SPAWN_SHAPES)
 	auto speed = 0.f;
-	auto velocity = finger.direction * speed;
+	auto velocity = direction * speed;
 	switch (_fingers.size())
 	{
 		case 1:
@@ -412,7 +395,7 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 			break;
 	}
 #endif
-		
+
 	ASSERT(IsDown(id));
 }
 
@@ -426,8 +409,10 @@ void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 	else
 	{
 		_fingers.erase(found);
-	}
 	
+		_down_transformation = GetTransformation();
+	}
+
 	ASSERT(! IsDown(id));
 }
 
@@ -436,17 +421,10 @@ void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position
 	auto found = FindFinger(id);
 	if (found == _fingers.end())
 	{
-		if (_fingers.empty())
-		{
-			DEBUG_BREAK("missing down event");
-			return;
-		}
-		ASSERT(_fingers.size() == 1);
-		
-		found = _fingers.begin();
+		// happens when a move event immediately follows an up event
+		return;
 	}
 	
-	found->direction = GetPixelDirection(screen_position, GetDownTransformation());
 	found->screen_position = screen_position;
 	
 	UpdateCamera();
@@ -477,14 +455,13 @@ void TouchObserverController::UpdateCamera()
 void TouchObserverController::UpdateCamera(Finger const & finger)
 {
 	// extract data about initial camera transformation
-	auto & down_transformation = finger.down_transformation;
-	Vector3 camera_position = down_transformation.GetTranslation();
-	Matrix33 camera_rotation = down_transformation.GetRotation();
+	Vector3 camera_position = _down_transformation.GetTranslation();
+	Matrix33 camera_rotation = _down_transformation.GetRotation();
 	Vector3 camera_up = gfx::GetAxis(camera_rotation, gfx::Direction::up);
 	
 	// get 'from' and 'to' finger pointing directions
 	Vector3 relative_down_direction = geom::Normalized(finger.world_position - camera_position);
-	Vector3 relative_current_direction = geom::Normalized(finger.direction);
+	Vector3 relative_current_direction = geom::Normalized(GetPixelDirection(finger.screen_position, _down_transformation));
 	
 	// convert them into rotations and take the difference
 	auto from_matrix = gfx::Rotation(relative_down_direction, camera_up);
@@ -508,26 +485,29 @@ void TouchObserverController::UpdateCamera(Finger const & finger)
 // - moving fingers together/appart translates the camera along the z
 void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const & finger2)
 {
-	TranslationRollFinger translationRollFinger1 = 
-	{
-		finger1.world_position,
-		finger1.direction
-	};
-
-	TranslationRollFinger translationRollFinger2 = 
-	{
-		finger2.world_position,
-		finger2.direction
-	};
-	
-	if (finger1.direction == finger2.direction)
+	if (finger1.screen_position == finger2.screen_position
+	|| finger1.world_position == finger2.world_position)
 	{
 		DEBUG_MESSAGE("finger collision detected!");
 		return;
 	}
-
+	
+	auto convert = [=] (Finger const & finger) 
+	{
+		TranslationRollFinger translation_roll_finger = 
+		{
+			finger.world_position,
+			GetPixelDirection(finger.screen_position, _down_transformation)
+		};
+		
+		return translation_roll_finger;
+	};
+	
+	auto translation_roll_finger1 = convert(finger1);
+	auto translation_roll_finger2 = convert(finger2);
+	
 	// the math
-	auto camera_transformation = CalculateCameraTranslationRoll(translationRollFinger1, translationRollFinger2, finger1.down_transformation);
+	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_finger1, translation_roll_finger2, _down_transformation);
 	SetTransformation(geom::Cast<float>(camera_transformation));
 }
 
@@ -585,20 +565,6 @@ TouchObserverController::FingerVector::const_iterator TouchObserverController::F
 bool TouchObserverController::IsDown(SDL_FingerID id) const
 {
 	return FindFinger(id) != _fingers.end();
-}
-
-// TODO: this is guesswork currently
-Transformation const & TouchObserverController::GetDownTransformation() const
-{
-	if (_fingers.empty())
-	{
-		DEBUG_BREAK("Shouldn't even be here");
-		return GetTransformation();
-	}
-
-	auto & start_finger = _fingers.front();
-	auto & start_transformation = start_finger.down_transformation;
-	return start_transformation;
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const
