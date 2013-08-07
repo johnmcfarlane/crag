@@ -117,6 +117,13 @@ namespace core
 		} \
 	)
 
+// CRAG_DEBUG_DUMP - print out the name/value of an expression
+#define CRAG_DEBUG_DUMP(EXPRESSION) DO_STATEMENT( \
+		std::ostringstream s; \
+		s << #EXPRESSION << " = " << EXPRESSION; \
+		DEBUG_MESSAGE("%s", s.str().c_str()); \
+	)
+
 // standard library error reporter
 #define AssertErrno() \
 	DO_STATEMENT ( \
@@ -136,6 +143,7 @@ namespace core
 #define DEBUG_MESSAGE(...) DO_NOTHING
 #define DEBUG_BREAK(...) UNREACHABLE()
 #define ASSERT(CONDITION) DO_NOTHING
+#define CRAG_DEBUG_DUMP(EXPRESSION) DO_NOTHING
 #define AssertErrno() DO_NOTHING
 
 #endif	// NDEBUG
