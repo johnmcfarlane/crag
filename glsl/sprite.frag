@@ -7,6 +7,10 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+#ifdef GLES2
+precision highp float;
+#endif
+
 // inputs from the renderer
 uniform sampler2D texture;
 

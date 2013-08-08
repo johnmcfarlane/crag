@@ -9,6 +9,10 @@
 
 #extension GL_OES_standard_derivatives : enable
 
+#ifdef GLES2
+precision highp float;
+#endif
+
 // inputs from the renderer
 uniform bool fragment_lighting;
 uniform bool flat_shade;
