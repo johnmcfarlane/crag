@@ -59,7 +59,6 @@ add_executable(crag
 	src/physics/Body.cpp
 	src/physics/BoxBody.cpp
 	src/physics/Engine.cpp
-	src/physics/IntersectionFunctor.cpp
 	src/physics/Location.cpp
 	src/physics/PassiveLocation.cpp
 	src/physics/SphericalBody.cpp

@@ -45,7 +45,7 @@ void physics::SphericalBody::SetDensity(Scalar density)
 	dBodySetMass (body_id, & m);
 }
 
-void physics::SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const
+void physics::SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
 {
 	planet.OnDeferredCollisionWithSphere(* this, functor);
 }

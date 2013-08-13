@@ -27,7 +27,7 @@ namespace physics
 		virtual void SetDensity(Scalar density);
 		
 	protected:
-		virtual void OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const;
 	};
 	
 }

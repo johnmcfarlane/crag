@@ -16,6 +16,7 @@
 namespace form
 {
 	class Formation;
+	class Scene;
 }
 
 namespace physics
@@ -35,11 +36,12 @@ namespace physics
 	private:
 		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
 
-		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const;
-		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
+		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
 
 		// variables
 		form::Formation const & _formation;
+		form::Scene const & _scene;
 		Scalar _mean_radius;
 	};
 	

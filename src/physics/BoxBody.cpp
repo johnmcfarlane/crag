@@ -48,7 +48,7 @@ void physics::BoxBody::SetDensity(Scalar density)
 	dBodySetMass (body_id, & m);
 }
 
-void physics::BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctor & functor) const
+void physics::BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
 {
 	planet.OnDeferredCollisionWithBox(* this, functor);
 }

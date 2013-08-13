@@ -11,6 +11,8 @@
 
 #include "Location.h"
 
+#include "core/function_ref.h"
+
 namespace core
 {
 	namespace locality
@@ -24,10 +26,11 @@ namespace physics
 	// forward-declarations
 	class Body;
 	class Engine;
-	class IntersectionFunctor;
 	
 	void Attach(dJointID joint, Body const & body1, Body const & body2);
 	bool IsAttached(Body const & body1, Body const & body2);
+	
+	typedef ::core::function_ref<void (Vector3 const & pos, Vector3 const & normal, Scalar depth)> IntersectionFunctorRef;
 	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body : public Location
@@ -63,9 +66,9 @@ namespace physics
 		
 		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
 		
-		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const;
-		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctor & functor) const;
-		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const;
+		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
+		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctorRef const & functor) const;
+		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
 		
 		friend void Attach(dJointID joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);

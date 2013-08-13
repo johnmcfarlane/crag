@@ -16,7 +16,6 @@
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
-#include "physics/IntersectionFunctor.h"
 
 #include "form/Formation.h"
 #include "form/Engine.h"
@@ -35,38 +34,10 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE (formation_sphere_collision_detail_factor, float, 1.f);
-	CONFIG_DEFINE (formation_box_collision_detail_factor, float, 1.5f);
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// DeferredIntersectionFunctor - wrapper for TreeQueryFunctor
-	
-	class DeferredIntersectionFunctor : public smp::scheduler::Job
-	{
-	public:	
-		DeferredIntersectionFunctor(Body const & body, PlanetBody const & planet_body, IntersectionFunctor const & intersection_functor)
-		: _body(body)
-		, _planet_body(planet_body)
-		, _intersection_functor(intersection_functor)
-		{
-		}
-		
-	private:
-		virtual void operator () (size_type unit_index)
-		{
-			if (unit_index != 0)
-			{
-				DEBUG_BREAK("bad index, " SIZE_T_FORMAT_SPEC ".", unit_index);
-			}
-			
-			_body.OnDeferredCollisionWithPlanet(_planet_body, _intersection_functor);
-		}
-		
-		Body const & _body;
-		PlanetBody const & _planet_body;
-		IntersectionFunctor _intersection_functor;
-	};
+	CONFIG_DEFINE(formation_sphere_collision_detail_factor, float, 1.f);
+	CONFIG_DEFINE(formation_box_collision_detail_factor, float, 1.5f);
+	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1f);	// coulomb friction coefficient
+	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 }
 
 
@@ -78,6 +49,7 @@ DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius)
 : SphericalBody(transformation, nullptr, physics_engine, radius)
 , _formation(formation)
+, _scene(physics_engine.GetScene())
 , _mean_radius(radius)
 {
 }
@@ -116,20 +88,38 @@ bool PlanetBody::OnCollision(Engine & engine, Body const & that_body) const
 {
 	dGeomID object_geom = that_body.GetGeomId();
 	dGeomID planet_geom = GetGeomId();
-	IntersectionFunctor intersection_functor(engine, object_geom, planet_geom);
+
+	dContact contact;
+	ZeroObject(contact);
+	contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
+	contact.surface.mu = planet_collision_friction;
+	contact.surface.bounce = planet_collision_bounce;
+	contact.surface.bounce_vel = .1f;
+	contact.geom.g1 = object_geom;
+	contact.geom.g2 = planet_geom;
 	
-	that_body.OnDeferredCollisionWithPlanet(* this, intersection_functor);
+	auto f = [&engine, &contact] (Vector3 const & pos, Vector3 const & normal, Scalar depth) {
+		contact.geom.pos[0] = pos.x;
+		contact.geom.pos[1] = pos.y;
+		contact.geom.pos[2] = pos.z;
+		contact.geom.normal[0] = normal.x;
+		contact.geom.normal[1] = normal.y;
+		contact.geom.normal[2] = normal.z;
+		contact.geom.depth = depth;
+	
+		engine.OnContact(contact);
+	};
+
+	that_body.OnDeferredCollisionWithPlanet(* this, physics::IntersectionFunctorRef(f));
 	
 	return true;
 }
 
-void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctor & functor) const
+void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const
 {
 	using namespace form::collision;
 
 	BoxBody const & box = static_cast<BoxBody const &>(body);
-	Engine const & physics_engine = functor.GetEngine();
-	form::Scene const & scene = physics_engine.GetScene();
 	
 	// Get vital geometric information about the cuboid.
 	Vector3 position = box.GetTranslation();
@@ -177,7 +167,7 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	}
  	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
-	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
+	form::Polyhedron const * polyhedron = _scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
 		ASSERT(false);
@@ -191,15 +181,13 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
 }
 
-void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctor & functor) const
+void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const
 {
 	using namespace form::collision;
 
 	SphericalBody const & sphere = static_cast<SphericalBody const &>(body);
-	Engine const & physics_engine = functor.GetEngine();
-	form::Scene const & scene = physics_engine.GetScene();
 
-	form::Polyhedron const * polyhedron = scene.GetPolyhedron(_formation);
+	form::Polyhedron const * polyhedron = _scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
 		// This can happen if the PlanetBody has just been created 

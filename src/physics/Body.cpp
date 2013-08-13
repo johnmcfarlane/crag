@@ -202,17 +202,17 @@ bool Body::OnCollision(Engine &, Body const &) const
 	return false;
 }
 
-void Body::OnDeferredCollisionWithBox(Body const &, IntersectionFunctor &) const
+void Body::OnDeferredCollisionWithBox(Body const &, IntersectionFunctorRef const &) const
 {
 	ASSERT(false);
 }
 
-void Body::OnDeferredCollisionWithPlanet(Body const &, IntersectionFunctor &) const
+void Body::OnDeferredCollisionWithPlanet(Body const &, IntersectionFunctorRef const &) const
 {
 	ASSERT(false);
 }
 
-void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctor &) const
+void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctorRef const &) const
 {
 	ASSERT(false);
 }
