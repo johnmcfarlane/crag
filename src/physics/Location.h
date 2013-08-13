@@ -34,7 +34,8 @@ namespace physics
 		Transformation const & GetTransformation() const;
 		virtual void SetTransformation(Transformation const & transformation) = 0;
 
-		Vector3 Transform(Vector3 local) const;
+		Vector3 Transform(Vector3 local_position) const;
+		Vector3 Rotate(Vector3 local_direction) const;
 
 #if defined(VERIFY)
 		virtual void Verify() const { };

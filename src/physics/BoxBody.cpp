@@ -28,24 +28,24 @@ physics::BoxBody::BoxBody(Transformation const & transformation, Vector3 const *
 
 void physics::BoxBody::SetDimensions(Vector3 const & dimensions) const
 {
-	dGeomBoxSetLengths(geom_id, dimensions.x, dimensions.y, dimensions.z);
+	dGeomBoxSetLengths(_collision_handle, dimensions.x, dimensions.y, dimensions.z);
 }
 
 physics::Vector3 physics::BoxBody::GetDimensions() const
 {
 	Vector3 dimensions;
-	dGeomBoxGetLengths(geom_id, dimensions.GetAxes());
+	dGeomBoxGetLengths(_collision_handle, dimensions.GetAxes());
 	return dimensions;
 }
 
 void physics::BoxBody::SetDensity(Scalar density)
 {
-	ASSERT(body_id != 0);
+	ASSERT(_collision_handle != nullptr);
 	
 	dMass m;
 	Vector3 dimensions = GetDimensions();
 	dMassSetBox (& m, density, dimensions.x, dimensions.y, dimensions.z);
-	dBodySetMass (body_id, & m);
+	dBodySetMass (_body_handle, & m);
 }
 
 void physics::BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const

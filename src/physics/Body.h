@@ -27,7 +27,7 @@ namespace physics
 	class Body;
 	class Engine;
 	
-	void Attach(dJointID joint, Body const & body1, Body const & body2);
+	void Attach(JointHandle joint, Body const & body1, Body const & body2);
 	bool IsAttached(Body const & body1, Body const & body2);
 	
 	typedef ::core::function_ref<void (Vector3 const & pos, Vector3 const & normal, Scalar depth)> IntersectionFunctorRef;
@@ -36,7 +36,7 @@ namespace physics
 	class Body : public Location
 	{
 	public:
-		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, dGeomID init_geom_id);
+		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle);
 		virtual ~Body() = 0;
 		
 		Body * GetBody() final;
@@ -44,7 +44,7 @@ namespace physics
 
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
-		dGeomID GetGeomId() const;
+		CollisionHandle GetCollisionHandle() const;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
 		
@@ -68,9 +68,10 @@ namespace physics
 		
 		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
 		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctorRef const & functor) const;
+		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
 		
-		friend void Attach(dJointID joint, Body const & body1, Body const & body2);
+		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		
 #if defined(VERIFY)
@@ -89,8 +90,8 @@ namespace physics
 		void Tick();
 
 	protected:
-		dGeomID geom_id;	// the collision info
-		dBodyID body_id;	// the dynaical info
+		CollisionHandle _collision_handle;	// the collision info
+		BodyHandle _body_handle;	// the dynaical info
 		core::locality::Roster & _roster;
 	};
 }

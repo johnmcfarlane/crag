@@ -27,22 +27,22 @@ physics::SphericalBody::SphericalBody(Transformation const & transformation, Vec
 
 void physics::SphericalBody::SetRadius(Scalar radius) const
 {
-	dGeomSphereSetRadius(geom_id, radius);
+	dGeomSphereSetRadius(_collision_handle, radius);
 }
 
 physics::Scalar physics::SphericalBody::GetRadius() const
 {
-	return dGeomSphereGetRadius(geom_id);
+	return dGeomSphereGetRadius(_collision_handle);
 }
 
 void physics::SphericalBody::SetDensity(Scalar density)
 {
-	ASSERT(body_id != 0);
+	ASSERT(_body_handle != 0);
 	
 	dMass m;
 	Scalar radius = GetRadius();
 	dMassSetSphere (& m, density, radius);
-	dBodySetMass (body_id, & m);
+	dBodySetMass (_body_handle, & m);
 }
 
 void physics::SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const

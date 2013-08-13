@@ -128,6 +128,16 @@ namespace form { namespace collision
 	// Sphere Collision support
 	
 	template <typename COLLISION_FUNCTOR>
+	inline bool TestShapeCollision(CollisionFunctor<Ray3, COLLISION_FUNCTOR> const &, CollisionInfo const &)
+	{
+		ASSERT(false);
+		return false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Sphere Collision support
+	
+	template <typename COLLISION_FUNCTOR>
 	inline bool TestShapeCollision(CollisionFunctor<Sphere3, COLLISION_FUNCTOR> const & node_functor, CollisionInfo const & collision_info)
 	{
 		// In the case of Sphere3, where the bounding_sphere IS the shape, shape becomes a placeholder.

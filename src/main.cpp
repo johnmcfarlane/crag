@@ -11,6 +11,7 @@
 #include "pch.h"
 
 #include "scripts/MainScript.h"
+#include "scripts/TestScript.h"
 
 #include "form/Engine.h"
 #include "sim/Engine.h"
@@ -36,16 +37,16 @@
 
 namespace 
 {
-	bool CragMain();
+	bool CragMain(int, char const * const *);
 }
 
 
 //////////////////////////////////////////////////////////////////////
 // main
 
-int main(int, char * *)
+int main(int argc, char * * argv)
 {
-	if (CragMain())
+	if (CragMain(argc - 1, argv + 1))
 	{
 		return EXIT_SUCCESS;
 	}
@@ -255,6 +256,14 @@ namespace
 				break;
 			}
 			
+			case SDL_APP_LOWMEMORY:
+			{
+				DEBUG_MESSAGE("Received low memory warning");
+				
+				// without a resource manager, little to do but carry on
+				return true;
+			}
+			
 			case SDL_QUIT:
 			{
 				DEBUG_MESSAGE("SDL_QUIT received on main thread loop");
@@ -292,7 +301,7 @@ namespace
 	}
 
 	// The main program function.
-	bool CragMain()
+	bool CragMain(int argc, char const * const * argv)
 	{
 		PrintMessage(stdout,
 			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
@@ -325,14 +334,21 @@ namespace
 			sim::Daemon simulation(0x800);
 			applet::Daemon applets(0x400);
 			
-			// start thread the daemons
+			// start the daemons
 			formation.Start("form");
 			simulation.Start("sim");
 			renderer.Start("render");
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+			if (argc > 0 && std::strcmp(argv[0], "ga") == 0)
+			{
+				applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+			}
+			else
+			{
+				applet::AppletHandle::CreateHandle("Main", 8192, & TestScript);
+			}
 			
 			while (HandleEvent())
 			{

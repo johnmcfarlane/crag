@@ -10,6 +10,7 @@
 #pragma once
 
 #include <ode/common.h>
+#include <ode/contact.h>
 
 namespace geom
 {
@@ -19,9 +20,17 @@ namespace geom
 	class Transformation;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// definitions
+
 namespace physics
 {
 	typedef dReal Scalar;
+	typedef dGeomID CollisionHandle;
+	typedef dBodyID BodyHandle;
+	typedef dJointID JointHandle;
+	typedef dContact Contact;
+
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;

@@ -37,7 +37,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
-DEFINE_POOL_ALLOCATOR(Thruster, 4);
+DEFINE_POOL_ALLOCATOR(Thruster, 64);
 
 Thruster::Thruster(super::Init const & init, Transformation const & local_transformation, float thrust_max)
 : super(init, local_transformation, thruster_color)

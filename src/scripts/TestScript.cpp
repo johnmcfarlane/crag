@@ -183,7 +183,7 @@ namespace
 }
 
 // main entry point
-void Test (applet::AppletInterface & applet_interface)
+void TestScript(applet::AppletInterface & applet_interface)
 {
 	FUNCTION_NO_REENTRY;
 

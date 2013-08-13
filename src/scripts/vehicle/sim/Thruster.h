@@ -31,7 +31,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		Thruster(Entity & entity, Ray3 const & ray);
+		Thruster(Entity & entity, Ray3 const & ray, bool light);
 		virtual ~Thruster();
 
 #if defined(VERIFY)

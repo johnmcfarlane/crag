@@ -73,7 +73,12 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/physics/Engine.cpp \
 	$(CRAG_PATH)/physics/Location.cpp \
 	$(CRAG_PATH)/physics/PassiveLocation.cpp \
+	$(CRAG_PATH)/physics/RayCast.cpp \
 	$(CRAG_PATH)/physics/SphericalBody.cpp \
+	$(CRAG_PATH)/scripts/ga/AnimatController.cpp \
+	$(CRAG_PATH)/scripts/ga/AnimatThruster.cpp \
+	$(CRAG_PATH)/scripts/ga/Genome.cpp \
+	$(CRAG_PATH)/scripts/ga/Sensor.cpp \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \
 	$(CRAG_PATH)/scripts/planet/gfx/Planet.cpp \

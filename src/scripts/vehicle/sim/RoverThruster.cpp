@@ -25,7 +25,7 @@ using namespace sim;
 DEFINE_DEFAULT_ALLOCATOR(RoverThruster);
 
 RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, SDL_Scancode key)
-: Thruster(entity, ray)
+: Thruster(entity, ray, true)
 , _key(key)
 {
 	auto & tick_roster = entity.GetEngine().GetTickRoster();

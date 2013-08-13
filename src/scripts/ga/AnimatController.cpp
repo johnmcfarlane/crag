@@ -11,29 +11,50 @@
 
 #include "AnimatController.h"
 
-#include "sim/defs.h"
+#include "AnimatThruster.h"
+
+#include "sim/Engine.h"
+#include "sim/Entity.h"
+
+#include "core/Roster.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
 
-AnimatController::Sensor::Sensor(Ray3 const & ray)
-: _ray(ray)
-{
-}
+DEFINE_POOL_ALLOCATOR(AnimatController, 10);
 
-AnimatController::AnimatController(Entity & entity)
+AnimatController::AnimatController(Entity & entity, float radius)
 : VehicleController(entity)
 {
-	CreateSensors();
-	CreateThrusters();
+	CreateSensors(radius);
+	CreateThrusters(radius);
 	Connect();
+
+	auto & roster = entity.GetEngine().GetTickRoster();
+	roster.AddCommand(* this, & AnimatController::Tick);
+	roster.AddOrdering(& AnimatController::Tick, & Entity::Tick);
 }
 
-void AnimatController::CreateSensors()
+AnimatController::~AnimatController()
 {
-	auto root_third = static_cast<float>(std::sqrt(1. / 3.));
+	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	roster.RemoveCommand(* this, & AnimatController::Tick);
+
+	for (auto sensor : _sensors)
+	{
+		delete sensor;
+	}
+}
+
+void AnimatController::Tick()
+{
+}
+
+void AnimatController::CreateSensors(float radius)
+{
+	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
 	auto direction_scale = 5.f;
 
 	Ray3 ray;
@@ -58,9 +79,10 @@ void AnimatController::CreateSensors()
 	}
 }
 
-void AnimatController::CreateThrusters()
+void AnimatController::CreateThrusters(float radius)
 {
-	auto root_third = static_cast<float>(std::sqrt(1. / 3.));
+	auto & entity = GetEntity();
+	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
 	auto direction_scale = 5.f;
 
 	Ray3 ray;
@@ -79,7 +101,7 @@ void AnimatController::CreateThrusters()
 				ray.position.x = x ? root_third : -root_third;
 				ray.direction.x = ray.position.x * direction_scale;
 
-				AddSensor(ray);
+				AddThruster(new AnimatThruster(entity, ray));
 			}
 		}
 	}
@@ -91,11 +113,7 @@ void AnimatController::Connect()
 
 void AnimatController::AddSensor(Ray3 const & ray)
 {
-	_sensors.emplace_back(ray);
-}
-
-void AnimatController::Tick()
-{
+	_sensors.push_back(new Sensor(GetEntity(), ray));
 }
 
 void AnimatController::TickThrusters()

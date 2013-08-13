@@ -24,28 +24,28 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
 
-Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, dGeomID init_geom_id)
+Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
-, geom_id(init_geom_id)
+, _collision_handle(collision_handle)
 , _roster(engine.GetRoster())
 {
-	// body_id
+	// _body_handle
 	if (velocity != nullptr)
 	{
-		body_id = engine.CreateBody();
+		_body_handle = engine.CreateBody();
 		
-		dBodySetData(body_id, this);
-		dBodySetLinearVel(body_id, velocity->x, velocity->y, velocity->z);
-		dBodySetGravityMode(body_id, false);
-		dGeomSetBody(geom_id, body_id);
+		dBodySetData(_body_handle, this);
+		dBodySetLinearVel(_body_handle, velocity->x, velocity->y, velocity->z);
+		dBodySetGravityMode(_body_handle, false);
+		dGeomSetBody(_collision_handle, _body_handle);
 	}
 	else 
 	{
-		body_id = 0;
+		_body_handle = nullptr;
 	}
 	
-	// geom_id
-	dGeomSetData(geom_id, this);
+	// _collision_handle
+	dGeomSetData(_collision_handle, this);
 
 	// set ODE transformation
 	SetGeomTransformation(transformation);
@@ -58,23 +58,23 @@ Body::~Body()
 {
 	_roster.RemoveCommand(* this, & Body::Tick);
 
-	if (body_id != 0)
+	if (_body_handle != 0)
 	{
 		// destroy all joints associated with the body
-		int num_joints = dBodyGetNumJoints (body_id);
+		int num_joints = dBodyGetNumJoints (_body_handle);
 		while (num_joints --)
 		{
-			dJointID joint_id = dBodyGetJoint (body_id, num_joints);
+			dJointID joint_id = dBodyGetJoint (_body_handle, num_joints);
 			dJointDestroy(joint_id);
 		}
 		
 		// destroy the body
-		dBodyDestroy(body_id);
+		dBodyDestroy(_body_handle);
 	}
 	
 	// destroy the geom
-	ASSERT(geom_id != 0);
-	dGeomDestroy(geom_id);
+	ASSERT(_collision_handle != 0);
+	dGeomDestroy(_collision_handle);
 }
 
 Body * Body::GetBody()
@@ -91,23 +91,26 @@ void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/)
 {
 }
 
-dGeomID Body::GetGeomId() const
+CollisionHandle Body::GetCollisionHandle() const
 {
-	return geom_id;
+	return _collision_handle;
 }
 
 Scalar Body::GetMass() const
 {
-	if (body_id == 0)
+	if (_body_handle == 0)
 	{
 		return -1;
 	}
 	
-	dMass m;
-	dBodyGetMass(body_id, & m);
-	ASSERT(m.mass >= 0);
+	Scalar mass;
 	
-	return m.mass;
+	dMass m;
+	dBodyGetMass(_body_handle, & m);
+	mass = m.mass;
+
+	ASSERT(mass >= 0);
+	return mass;
 }
 
 void Body::SetTransformation(Transformation const & transformation)
@@ -121,80 +124,90 @@ void Body::SetTransformation(Transformation const & transformation)
 
 Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
 {
-	if (body_id == nullptr)
+	if (_body_handle == nullptr)
 	{
 		return Vector3::Zero();
 	}
 
 	Vector3 velocity;
-	dBodyGetRelPointVel (body_id, point.x, point.y, point.z, velocity.GetAxes());
+
+	dBodyGetRelPointVel (_body_handle, point.x, point.y, point.z, velocity.GetAxes());
+
 	return velocity;
 }
 
 Vector3 Body::GetVelocity() const
 {
-	if (body_id == nullptr)
+	if (_body_handle == nullptr)
 	{
 		return Vector3::Zero();
 	}
 
 	Vector3 velocity;
-	dBodyGetRelPointVel (body_id, 0, 0, 0, velocity.GetAxes());
+	
+#if defined(USE_ODE)
+	dBodyGetRelPointVel (_body_handle, 0, 0, 0, velocity.GetAxes());
+#endif
+
+#if defined(USE_BULLET)
+	_body_handle->getLinearVelocity();
+#endif
+
 	return velocity;
 }
 
 bool Body::GetIsCollidable() const
 {
-	unsigned long collide_bits = dGeomGetCollideBits(geom_id);
+	unsigned long collide_bits = dGeomGetCollideBits(_collision_handle);
 	return collide_bits != 0;
 }
 
 void Body::SetIsCollidable(bool collidable)
 {
 	unsigned long collide_bits = collidable ? std::numeric_limits<unsigned long>::max() : 0;
-	dGeomSetCategoryBits(geom_id, collide_bits);
-	dGeomSetCollideBits(geom_id, collide_bits);
+	dGeomSetCategoryBits(_collision_handle, collide_bits);
+	dGeomSetCollideBits(_collision_handle, collide_bits);
 }
 
 bool Body::IsMovable() const
 {
-	return body_id != 0;
+	return _body_handle != 0;
 }
 
 void Body::SetLinearDamping(Scalar linear_damping)
 {
-	ASSERT(body_id != 0);
-	dBodySetLinearDamping(body_id, linear_damping);
+	ASSERT(_body_handle != 0);
+	dBodySetLinearDamping(_body_handle, linear_damping);
 }
 
 void Body::SetAngularDamping(Scalar angular_damping)
 {
-	ASSERT(body_id != 0);
-	dBodySetAngularDamping(body_id, angular_damping);
+	ASSERT(_body_handle != 0);
+	dBodySetAngularDamping(_body_handle, angular_damping);
 }
 
 void Body::AddRelTorque(Vector3 const & torque)
 {
-	ASSERT(body_id != 0);
-	dBodyAddRelTorque(body_id, torque.x, torque.y, torque.z);
+	ASSERT(_body_handle != 0);
+	dBodyAddRelTorque(_body_handle, torque.x, torque.y, torque.z);
 }
 
 void Body::AddForce(Vector3 const & force)
 {
-	ASSERT(body_id != 0);
-	dBodyAddForce(body_id, force.x, force.y, force.z);
+	ASSERT(_body_handle != 0);
+	dBodyAddForce(_body_handle, force.x, force.y, force.z);
 }
 
 void Body::AddRelForce(Vector3 const & force)
 {
-	ASSERT(body_id != 0);
-	dBodyAddRelForce(body_id, force.x, force.y, force.z);
+	ASSERT(_body_handle != 0);
+	dBodyAddRelForce(_body_handle, force.x, force.y, force.z);
 }
 
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
-	ASSERT(body_id != 0);
-	dBodyAddRelForceAtRelPos(body_id, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+	ASSERT(_body_handle != 0);
+	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
 bool Body::OnCollision(Engine &, Body const &) const
@@ -212,6 +225,11 @@ void Body::OnDeferredCollisionWithPlanet(Body const &, IntersectionFunctorRef co
 	ASSERT(false);
 }
 
+void Body::OnDeferredCollisionWithRay(Body const &, IntersectionFunctorRef const &) const
+{
+	ASSERT(false);
+}
+
 void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctorRef const &) const
 {
 	ASSERT(false);
@@ -219,10 +237,10 @@ void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctorRef co
 
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 {
-	ASSERT(body1.body_id != nullptr);
-	ASSERT(body2.body_id != nullptr);
+	ASSERT(body1._body_handle != nullptr);
+	ASSERT(body2._body_handle != nullptr);
 
-	dJointAttach(joint_id, body1.body_id, body2.body_id);
+	dJointAttach(joint_id, body1._body_handle, body2._body_handle);
 	
 	Vector3 position1 = body1.GetTranslation();
 	Vector3 position2 = body2.GetTranslation();
@@ -257,12 +275,12 @@ void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 
 bool physics::IsAttached(Body const & body1, Body const & body2)
 {
-	if (body1.body_id == nullptr || body2.body_id == nullptr)
+	if (body1._body_handle == nullptr || body2._body_handle == nullptr)
 	{
 		return false;
 	}
 	
-	return dAreConnected(body1.body_id, body2.body_id) != 0;
+	return dAreConnected(body1._body_handle, body2._body_handle) != 0;
 }
 
 #if defined(VERIFY)
@@ -278,22 +296,22 @@ void physics::Body::Verify() const
 
 Vector3 const & physics::Body::GetGeomTranslation() const
 {
-	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(geom_id));
+	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(_collision_handle));
 }
 
 void physics::Body::SetGeomTranslation(Vector3 const & translation)
 {
-	dGeomSetPosition(geom_id, translation.x, translation.y, translation.z);
+	dGeomSetPosition(_collision_handle, translation.x, translation.y, translation.z);
 }
 
 Matrix33 const & physics::Body::GetGeomRotation() const
 {
-	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(geom_id));
+	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(_collision_handle));
 }
 
 void physics::Body::SetGeomRotation(Matrix33 const & matrix)
 {
-	dGeomSetRotation(geom_id, reinterpret_cast<Scalar const *>(matrix.GetArray()));
+	dGeomSetRotation(_collision_handle, reinterpret_cast<Scalar const *>(matrix.GetArray()));
 }
 
 Transformation physics::Body::GetGeomTransformation() const
