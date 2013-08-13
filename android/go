@@ -1,1 +1,2 @@
-ndk-build $1 $2 $3 $4 && ant debug && ant debug install && ndk-gdb --start
+ndk-build $1 $2 $3 $4 && ant debug && ant debug install # && ndk-gdb --start
+
