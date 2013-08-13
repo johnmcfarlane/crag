@@ -45,7 +45,7 @@ namespace form { namespace collision
 	class Object;
 
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor, float min_area);
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor);
 	
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -108,11 +108,10 @@ namespace form { namespace collision
 		typedef ::form::collision::Object<ShapeType> Object;
 		
 		// functions
-		CollisionFunctor(Vector3 const & polyhedron_center, Object const & object, FUNCTOR & functor, float min_area)
+		CollisionFunctor(Vector3 const & polyhedron_center, Object const & object, FUNCTOR & functor)
 		: _pyramid(polyhedron_center)
 		, _object(object)
 		, _functor(functor)
-		, _min_area(min_area)
 		{
 		}
 		
@@ -120,7 +119,6 @@ namespace form { namespace collision
 		Pyramid _pyramid;	// contains the center of the formation etc.
 		Object const & _object;	// the object with which to collide the formation
 		FUNCTOR & _functor;	// thing to call when collision is detected
-		float _min_area;
 	};
 	
 	
@@ -290,12 +288,6 @@ namespace form { namespace collision
 	template <typename NODE_FUNCTOR>
 	void ForEachCollision (NODE_FUNCTOR & node_functor, Node const & node) 
 	{
-		if (node.area < node_functor._min_area)
-		{
-			ForEachCollision_Leaf(node_functor, node);
-			return;
-		}
-		
 		Node const * children = node.GetChildren();
 		if (children == nullptr)
 		{
@@ -421,9 +413,9 @@ namespace form { namespace collision
 	// ForEachCollision implementation
 	
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor, float min_area)
+	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor)
 	{
-		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, object, functor, min_area);
+		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, object, functor);
 		
 		form::RootNode const & root_node = polyhedron.GetRootNode();
 		ForEachCollision(node_functor, root_node);

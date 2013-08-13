@@ -35,8 +35,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
 	
-	CONFIG_DEFINE(formation_sphere_collision_detail_factor, float, 1.f);
-	CONFIG_DEFINE(formation_box_collision_detail_factor, float, 1.5f);
 	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1f);	// coulomb friction coefficient
 	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 }
@@ -176,10 +174,8 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	}
 	
 	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
-	float min_box_edge = std::min(float(dimensions.x), std::min(float(dimensions.y), float(dimensions.z)));
-	float min_parent_area = min_box_edge * formation_box_collision_detail_factor;
 	
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const
@@ -210,11 +206,8 @@ void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunct
 #if defined(NDEBUG)
 #error dont forget about this!
 #endif
-//	float sphere_area(Area(collision_object.shape));
-//	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
-	auto min_parent_area = 0.01f;
 
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const
@@ -239,8 +232,6 @@ void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFu
 	collision_object.shape = collision_object.bounding_sphere;
 	
 	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
-	float sphere_area(Area(collision_object.shape));
-	float min_parent_area = sphere_area * formation_sphere_collision_detail_factor;
 
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor, min_parent_area);
+	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
 }
