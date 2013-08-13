@@ -38,7 +38,11 @@ namespace ipc
 
 		virtual ~EngineBase()
 		{
-			ASSERT(IsEmpty());
+			if (! IsEmpty())
+			{
+				DEBUG_MESSAGE(SIZE_T_FORMAT_SPEC " object(s) remaining", _objects.size());
+				exit(0);
+			}
 		}
 
 		bool IsEmpty() const
