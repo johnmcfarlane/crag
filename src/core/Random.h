@@ -28,7 +28,7 @@ public:
 	SeedType GetInt()
 	{
 		seed = seed * 1103515245 + 12345;
-		return(static_cast<SeedType>(seed >> (num_bits + 1)) & maximum);
+		return (static_cast<SeedType>(seed >> (num_bits + 1)) & maximum);
 	}
 	
 	// returns pseudo-random whole number in the range [0, n)

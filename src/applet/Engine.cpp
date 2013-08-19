@@ -117,6 +117,7 @@ bool Engine::ProcessTasks()
 
 bool Engine::ProcessTask(Applet & applet)
 {
+    VerifyObjectRef(applet);
 	ASSERT(applet.IsRunning());
 
 	if (_quit_flag)

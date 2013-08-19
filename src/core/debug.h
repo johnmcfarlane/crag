@@ -46,7 +46,7 @@ namespace core
 #define CRAG_DEBUG_PARAM(X) X
 
 // DEBUG_COLOR_ macros
-#if defined(WIN32) || defined(__ANDROID__)
+#if defined(WIN32) || defined(__ANDROID__) || defined(__APPLE__)
 #define DEBUG_COLOR_FILE
 #define DEBUG_COLOR_LINE
 #define DEBUG_COLOR_TEXT
@@ -94,9 +94,8 @@ namespace core
 #if defined(__i386__)
 #define BREAK() asm("int3")
 #else
-#include <signal.h>
-#define BREAK() raise(SIGTRAP)
-// NB: __builtin_trap() is another possability
+#define BREAK() __builtin_trap()
+// NB: raise(SIGTRAP) is an alternative
 #endif
 #else
 #define BREAK() assert(false)

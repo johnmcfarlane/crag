@@ -363,9 +363,9 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		if (found == _fingers.end())
 		{
 			_fingers.emplace_back();
-			auto& finger = _fingers.back();
-			finger.id = id;
-			return finger;
+			auto& found_finger = _fingers.back();
+			found_finger.id = id;
+			return found_finger;
 		}
 		else
 		{

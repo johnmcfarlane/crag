@@ -102,7 +102,7 @@ namespace form
 		void operator() (gfx::SetOriginEvent const & event) final;
 		
 		void EnableAdjustNumQuaterna(bool enabled);
-		void OnSetRecommendedNumQuaterne(int recommented_num_quaterne);
+		void OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne);
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
@@ -135,7 +135,7 @@ namespace form
 		core::Time mesh_generation_time;
 		
 		bool _enable_adjust_num_quaterna;
-		int _requested_num_quaterne;
+		std::size_t _requested_num_quaterne;
 		
 		bool _pending_origin_request;
 

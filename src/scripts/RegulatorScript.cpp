@@ -41,7 +41,7 @@ QuaterneCount::QuaterneCount() : _num(invalid().GetNumber())
 	VerifyObject(* this);
 }
 
-QuaterneCount::QuaterneCount(int num_quaterne) : _num(num_quaterne) 
+QuaterneCount::QuaterneCount(std::size_t num_quaterne) : _num(num_quaterne) 
 { 
 	VerifyObject(* this);
 }
@@ -49,7 +49,7 @@ QuaterneCount::QuaterneCount(int num_quaterne) : _num(num_quaterne)
 #if defined(VERIFY)
 void QuaterneCount::Verify() const
 {
-	VerifyOp(_num, >, 0);
+	VerifyOp(_num, >, 0u);
 }
 #endif
 
@@ -66,7 +66,7 @@ bool QuaterneCount::operator < (QuaterneCount const & rhs) const
 	return GetNumber() < rhs.GetNumber(); 
 }
 
-int QuaterneCount::GetNumber() const 
+std::size_t QuaterneCount::GetNumber() const 
 { 
 	return _num; 
 }

@@ -33,7 +33,7 @@ int form::VertexBuffer::GetIndex(Vertex const & v) const
 {
 	Vertex const * array = & _verts.front();
 
-	int index = & v - array;
+	int index = int(& v - array);
 	
 	return index;
 }

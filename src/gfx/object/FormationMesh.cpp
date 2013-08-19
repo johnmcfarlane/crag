@@ -30,8 +30,8 @@ using namespace gfx;
 
 namespace
 {
-	STAT (num_polys, int, .05f);
-	STAT (num_quats_used, int, 0.15f);
+	STAT (num_polys, std::size_t, .05f);
+	STAT (num_quats_used, std::size_t, 0.15f);
 	
 	CONFIG_DEFINE (formation_emission, Color4f, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_ambient, Color4f, Color4f(0.05f));
@@ -49,8 +49,8 @@ FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quatern
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
-	size_t max_num_verts = max_num_quaterne * form::NodeBuffer::num_verts_per_quaterna;
-	size_t max_num_indices = max_num_quaterne * form::NodeBuffer::num_indices_per_quaterna;
+	auto max_num_verts = int(max_num_quaterne * form::NodeBuffer::num_verts_per_quaterna);
+	auto max_num_indices = int(max_num_quaterne * form::NodeBuffer::num_indices_per_quaterna);
 	
 	for (int index = 0; index < 2; ++ index)
 	{
@@ -204,7 +204,7 @@ bool FormationMesh::FinishBufferUpload()
 	
 	// broadcast that this is the current number of quaterne being displayed;
 	// means that any performance measurements are taken against this load
-	int num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
+	auto num_quaterne = _pending_mesh->GetProperties()._num_quaterne;
 	if (num_quaterne > 0)
 	{
 		gfx::NumQuaterneSetMessage message = { num_quaterne };

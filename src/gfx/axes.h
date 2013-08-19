@@ -38,7 +38,7 @@ namespace gfx
 	// Returns the axis in the given direction from the given matrix.
 	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Direction direction)
 	{
-		return rotation.GetColumn(static_cast<std::size_t>(direction));
+		return rotation.GetColumn(static_cast<int>(direction));
 	}
 	
 	// Converts position/matrix combo to a Ray.
@@ -101,7 +101,7 @@ namespace gfx
 		auto cos = std::cos(angle);
 		auto sin = std::sin(angle);
 		
-		auto index0 = static_cast<std::size_t>(direction);
+		auto index0 = static_cast<int>(direction);
 		auto index1 = TriMod(index0 + 1);
 		auto index2 = TriMod(index1 + 1);
 		

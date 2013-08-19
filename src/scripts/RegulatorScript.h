@@ -48,7 +48,7 @@ namespace script
 			////////////////////////////////////////////////////////////////////////////////
 			// functions
 			QuaterneCount();
-			QuaterneCount(int num_quaterne);
+			QuaterneCount(std::size_t num_quaterne);
 			
 #if defined(VERIFY)
 			void Verify() const;
@@ -60,7 +60,7 @@ namespace script
 			QuaterneCount & operator ++ ();
 			QuaterneCount & operator -- ();
 
-			int GetNumber() const;
+			std::size_t GetNumber() const;
 			
 			static QuaterneCount max();
 			static QuaterneCount invalid();
@@ -68,7 +68,7 @@ namespace script
 		private:
 			////////////////////////////////////////////////////////////////////////////////
 			// variables
-			int _num;
+			std::size_t _num;
 		};
 
 		////////////////////////////////////////////////////////////////////////////////

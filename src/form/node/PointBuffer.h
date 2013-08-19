@@ -17,7 +17,7 @@ namespace form
 	{
 		typedef core::object_pool<Point> Pool;
 	public:
-		PointBuffer(int max_num_verts);
+		PointBuffer(std::size_t max_num_verts);
 		
 		bool IsEmpty() const;
 		void ClearPointers();

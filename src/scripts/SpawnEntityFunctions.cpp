@@ -319,8 +319,8 @@ sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & ve
 	// ball
 	auto ball = sim::EntityHandle::CreateHandle();
 
-	ball.Call([sphere, velocity, color] (sim::Entity & ball) {
-		ConstructBall(ball, sphere, velocity, color);
+	ball.Call([sphere, velocity, color] (sim::Entity & entity) {
+		ConstructBall(entity, sphere, velocity, color);
 	});
 
 	return ball;
@@ -331,8 +331,8 @@ sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & v
 	// box
 	auto box = sim::EntityHandle::CreateHandle();
 
-	box.Call([position, velocity, size, color] (sim::Entity & box) {
-		ConstructBox(box, position, velocity, size, color);
+	box.Call([position, velocity, size, color] (sim::Entity & entity) {
+		ConstructBox(entity, position, velocity, size, color);
 	});
 
 	return box;
@@ -342,8 +342,8 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 {
 	auto observer = sim::EntityHandle::CreateHandle();
 
-	observer.Call([position] (sim::Entity & observer) {
-		ConstructObserver(observer, position);
+	observer.Call([position] (sim::Entity & entity) {
+		ConstructObserver(entity, position);
 	});
 
 	return observer;
@@ -384,14 +384,14 @@ gfx::ObjectHandle SpawnSkybox()
 {
 	bool const fast = true;
 	auto skybox = gfx::SkyboxHandle::CreateHandle();
-	skybox.Call([fast] (gfx::Skybox & skybox) {
+	skybox.Call([fast] (gfx::Skybox & object) {
 		if (fast)
 		{
-			DrawStarsFast(skybox, 512, 20000);
+			DrawStarsFast(object, 512, 20000);
 		}
 		else
 		{
-			DrawStarsSlow(skybox, 256, 100);
+			DrawStarsSlow(object, 256, 100);
 		}
 	});
 
@@ -402,17 +402,17 @@ sim::EntityHandle SpawnStar()
 {
 	auto sun = sim::EntityHandle::CreateHandle();
 
-	sun.Call([] (sim::Entity & sun) {
+	sun.Call([] (sim::Entity & entity) {
 		// physics
 		geom::rel::Vector3 position(65062512.f, 75939904.f, 0.f);
 		sim::Transformation transformation(position);
 		auto location = new physics::PassiveLocation(transformation);
-		sun.SetLocation(location);
+		entity.SetLocation(location);
 
 		// graphics
 		gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
 		auto light = gfx::LightHandle::CreateHandle(transformation, color);
-		sun.SetModel(light);
+		entity.SetModel(light);
 	});
 
 	return sun;
@@ -426,8 +426,8 @@ sim::EntityHandle SpawnRover(sim::Vector3 const & position)
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
-	vehicle.Call([sphere] (sim::Entity & vehicle) {
-		ConstructRover(vehicle, sphere);
+	vehicle.Call([sphere] (sim::Entity & entity) {
+		ConstructRover(entity, sphere);
 	});
 
 	return vehicle;

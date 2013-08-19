@@ -27,6 +27,8 @@
 
 #if defined(WIN32)
 #include <SDL_main.h>
+#else
+#include <SDL2/SDL_main.h>
 #endif
 
 #define RUN_TEST
@@ -343,11 +345,11 @@ namespace
 			// launch the main script
 			if (argc > 0 && std::strcmp(argv[0], "ga") == 0)
 			{
-				applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+				applet::AppletHandle::CreateHandle("Main", 16384, & MainScript);
 			}
 			else
 			{
-				applet::AppletHandle::CreateHandle("Main", 8192, & TestScript);
+				applet::AppletHandle::CreateHandle("Main", 16384, & TestScript);
 			}
 			
 			while (HandleEvent())
