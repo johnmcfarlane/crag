@@ -315,7 +315,7 @@ static void CustomApplicationMain (int argc, char **argv)
     NSRange localRange;
     NSString *result;
 
-    bufferSize = selfLen + aStringLen - aRange.length;
+    bufferSize = (unsigned int)(selfLen + aStringLen - aRange.length);
     buffer = (unichar *)NSAllocateMemoryPages(bufferSize*sizeof(unichar));
     
     /* Get first part into buffer */

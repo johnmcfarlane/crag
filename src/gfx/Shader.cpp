@@ -127,7 +127,7 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 		return false;
 	}
 	
-	GL_CALL(glShaderSource(_id, num_strings, string_array, nullptr));
+	GL_CALL(glShaderSource(_id, int(num_strings), string_array, nullptr));
 
 #if defined(WIN32)
 	_freea(string_array);
@@ -144,7 +144,7 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 		auto line_start = 0;
 		for (auto i = 0; i < num_strings; ++ i)
 		{
-			auto line_end = line_start + GetNumLines(string_array[i]) - 1;
+			auto line_end = int(line_start + GetNumLines(string_array[i]) - 1);
 			DEBUG_MESSAGE("%s [%d,%d]'.", filenames[i], line_start, line_end);
 			line_start = line_end;
 		}

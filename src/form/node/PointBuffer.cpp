@@ -16,7 +16,7 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // PointBuffer member definitions
 
-PointBuffer::PointBuffer(int max_num_verts) 
+PointBuffer::PointBuffer(std::size_t max_num_verts) 
 : _pool(max_num_verts)
 {
 }

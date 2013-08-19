@@ -13,7 +13,7 @@ namespace gfx
 {
 	struct NumQuaterneSetMessage
 	{
-		int num_quaterne;
+		std::size_t num_quaterne;
 	};
 
 	struct FrameDurationSampledMessage

@@ -36,7 +36,7 @@ inline void ZeroMemory(char * ptr, size_t num_bytes)
 }
 #endif
 
-template<typename T> inline void ZeroArray(T * object_ptr, int count)
+template<typename T> inline void ZeroArray(T * object_ptr, std::size_t count)
 {
 	ZeroMemory(reinterpret_cast<char *>(object_ptr), sizeof(T) * count);
 }

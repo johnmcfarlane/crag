@@ -223,9 +223,9 @@ void Test (applet::AppletInterface & applet_interface)
 	applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
 	
 	// launch regulator
-	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & applet_interface) {
+	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & ai) {
 		script::RegulatorScript regulator;
-		regulator(applet_interface);
+		regulator(ai);
 	});
 	
 	gfx::ObjectHandle skybox = SpawnSkybox();

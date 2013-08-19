@@ -308,7 +308,7 @@ void form::Node::Verify() const
 
 	if (_parent != nullptr) 
 	{
-		int child_index = (this - _parent->GetChildren());
+		int child_index = int(this - _parent->GetChildren());
 		VerifyTrue(_parent->GetChildren() + child_index == this);
 		VerifyTrue(child_index >= 0 && child_index < 4);
 		VerifyTrue(seed == _parent->GetChildSeed(child_index));

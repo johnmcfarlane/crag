@@ -30,7 +30,7 @@ namespace
 				auto direction = affector.direction;
 				
 				int delta = (direction < Direction::negative) ? 1 : -1;
-				std::size_t axis_index = static_cast<std::size_t>(direction) % 3;
+				auto axis_index = static_cast<int>(direction) % 3;
 				input[affector.type][axis_index] += delta;
 			}
 		}

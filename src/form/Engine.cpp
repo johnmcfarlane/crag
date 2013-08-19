@@ -128,7 +128,7 @@ void form::Engine::EnableAdjustNumQuaterna(bool enabled)
 	_enable_adjust_num_quaterna = enabled;
 }
 
-void form::Engine::OnSetRecommendedNumQuaterne(int recommented_num_quaterne)
+void form::Engine::OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne)
 {
 	_requested_num_quaterne = recommented_num_quaterne;
 }
@@ -210,7 +210,7 @@ void form::Engine::AdjustNumQuaterna()
 	}
 	
 	// limit the range of quaterne counts
-	Clamp(_requested_num_quaterne, int(min_num_quaterne), int(max_num_quaterne));
+	Clamp(_requested_num_quaterne, std::size_t(min_num_quaterne), std::size_t(max_num_quaterne));
 	
 	// apply the recommended number
 	NodeBuffer & active_buffer = _scene.GetNodeBuffer();
@@ -265,7 +265,7 @@ form::Mesh * form::Engine::PopMesh()
 void form::Engine::OnOriginReset()
 {
 	auto& node_buffer = _scene.GetNodeBuffer();
-	int num_quaterna = node_buffer.GetNumQuaternaUsed();
+	auto num_quaterna = node_buffer.GetNumQuaternaUsed();
 	_scene.OnOriginReset(_origin);
 	node_buffer.SetNumQuaternaUsedTarget(num_quaterna);
 
@@ -280,8 +280,8 @@ bool form::Engine::IsGrowing() const
 {
 	NodeBuffer const & node_buffer = _scene.GetNodeBuffer();
 	
-	int num_used = node_buffer.GetNumQuaternaUsed();
-	int num_used_target = node_buffer.GetNumQuaternaUsedTarget();
+	auto num_used = node_buffer.GetNumQuaternaUsed();
+	auto num_used_target = node_buffer.GetNumQuaternaUsedTarget();
 	
 	return num_used < num_used_target;
 }

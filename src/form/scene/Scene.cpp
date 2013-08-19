@@ -25,7 +25,7 @@
 form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _node_buffer(ref(new NodeBuffer(max_num_quaterne)))
 {
-	_node_buffer.SetNumQuaternaUsedTarget(min_num_quaterne);
+	_node_buffer.SetNumQuaternaUsedTarget(int(min_num_quaterne));
 }
 
 form::Scene::~Scene()

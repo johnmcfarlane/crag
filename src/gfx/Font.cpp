@@ -147,7 +147,7 @@ void Font::RenderVerts() const
 	
 	// Draw VBO
 	vbo.Activate();
-	int num_verts = vertex_buffer.size();
+	int num_verts = int(vertex_buffer.size());
 	vbo.DrawStrip(0, num_verts);
 	vbo.Deactivate();
 	

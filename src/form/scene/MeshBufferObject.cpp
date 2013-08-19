@@ -26,6 +26,7 @@ void form::MeshBufferObject::Verify() const
 {
 	super::Verify();
 	VerifyOp(max_index, >=, 0);
+	VerifyOp(max_index, <=, std::numeric_limits<GLushort>::max());
 	VerifyObject(properties);
 }
 #endif
@@ -78,7 +79,7 @@ void form::MeshBufferObject::SetVbo(VertexBuffer const & vertices)
 {
 	size_t num_vertices = vertices.Size();
 	Vertex const * vertex_array = (num_vertices > 0) ? vertices.GetArray() : nullptr;
-	super::SetVbo(num_vertices, vertex_array);
+	super::SetVbo(int(num_vertices), vertex_array);
 }
 
 void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
@@ -86,4 +87,6 @@ void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
 	max_index = indices.GetSize();
 	gfx::IndexBuffer::value_type const * index_array = (max_index > 0) ? indices.GetArray() : nullptr;
 	super::SetIbo(max_index, index_array);
+	
+	VerifyObject(* this);
 }

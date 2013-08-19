@@ -116,6 +116,7 @@ bool Fiber::IsCurrent() const
 
 void Fiber::Continue()
 {
+	VerifyObject(* this);
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
 	ASSERT(_context.uc_link == nullptr);
@@ -132,10 +133,12 @@ void Fiber::Continue()
 	_context.uc_link = nullptr;
 
 	ASSERT(! IsCurrent());
+	VerifyObject(* this);
 }
 
 void Fiber::Yield()
 {
+	VerifyObject(* this);
 	ASSERT(IsCurrent());
 	ASSERT(_context.uc_link != nullptr);
 	
@@ -147,15 +150,16 @@ void Fiber::Yield()
 	ASSERT(IsRunning());
 	ASSERT(IsCurrent());
 	ASSERT(_context.uc_link != nullptr);
+	VerifyObject(* this);
 }
 
 #if defined(VERIFY)
 void Fiber::Verify() const
 {
-	ASSERT(_context.uc_stack.ss_sp != nullptr);
-	ASSERT(_context.uc_stack.ss_size >= MINSIGSTKSZ);
-	ASSERT(_context.uc_stack.ss_size >= _stack_size);
-	ASSERT(_context.uc_stack.ss_size == calculate_stack_allocation(_stack_size));
+	VerifyOp(_context.uc_stack.ss_sp, !=, static_cast<decltype(_context.uc_stack.ss_sp)>(nullptr));
+	VerifyOp(_context.uc_stack.ss_size, >=, static_cast<decltype(_context.uc_stack.ss_size)>(MINSIGSTKSZ));
+	VerifyOp(_context.uc_stack.ss_size, >=, _stack_size);
+	VerifyOp(_context.uc_stack.ss_size, ==, calculate_stack_allocation(_stack_size));
 	
 	// _stack_size - and not the allocated stack size - is compared against 
 	// because this value doesn't change across platforms or build configs. 
@@ -164,11 +168,11 @@ void Fiber::Verify() const
 	std::size_t stack_use = EstimateStackUse();
 	if (stack_use >= _stack_size)
 	{
-		DEBUG_BREAK("%s stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, GetName(), stack_use, _stack_size);
+		DEBUG_BREAK("%s stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, _name, stack_use, _stack_size);
 	}
 	else if (stack_use >= _stack_size - 1024)
 	{
-		DEBUG_MESSAGE("%s near stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, GetName(), stack_use, _stack_size);
+		DEBUG_MESSAGE("%s near stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, _name, stack_use, _stack_size);
 	}
 }
 
@@ -176,7 +180,7 @@ void Fiber::InitStackUseEstimator()
 {
 	// Write to each address in the stack and check these values in the d'tor.
 	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
-	Random sequence(seed);
+	Random sequence(seed & Random::SeedType(-1));
 	for (uint8_t * i = reinterpret_cast<uint8_t *>(_context.uc_stack.ss_sp), * end = i +_context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
@@ -189,7 +193,7 @@ void Fiber::InitStackUseEstimator()
 std::size_t Fiber::EstimateStackUse() const
 {
 	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
-	Random sequence(seed);
+	Random sequence(seed & Random::SeedType(-1));
 	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_context.uc_stack.ss_sp), * end = i + _context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());

@@ -112,10 +112,10 @@ void form::NodeBuffer::Verify() const
 	VerifyTrue(quaterne_used_end_target >= quaterne_used_end);
 	VerifyTrue(quaterne_end >= quaterne_used_end_target);
 
-	int num_nodes_used = nodes_used_end - nodes;
+	auto num_nodes_used = nodes_used_end - nodes;
 	VerifyTrue((num_nodes_used % num_nodes_per_quaterna) == 0);
 	
-	int num_quaterne_used = quaterne_used_end - quaterne;
+	auto num_quaterne_used = quaterne_used_end - quaterne;
 	
 	VerifyTrue(num_nodes_used == num_quaterne_used * 4);
 	
@@ -162,9 +162,9 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 			VerifyArrayElement(children, nodes, nodes_used_end);
 		}
 
-		for (int i = 0; i < 3; ++ i)
+		for (int j = 0; j < 3; ++ j)
 		{
-			Point const & point = sibling.GetCorner(i);
+			Point const & point = sibling.GetCorner(j);
 			VerifyObjectRef(point);
 			point_buffer.VerifyAllocatedElement(point);
 		}
@@ -193,17 +193,17 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
-int form::NodeBuffer::GetNumNodesUsed() const
+std::size_t form::NodeBuffer::GetNumNodesUsed() const
 {
 	return nodes_used_end - nodes;
 }
 
-int form::NodeBuffer::GetNumQuaternaUsed() const
+std::size_t form::NodeBuffer::GetNumQuaternaUsed() const
 {
 	return quaterne_used_end - quaterne;
 }
 
-int form::NodeBuffer::GetNumQuaternaUsedTarget() const
+std::size_t form::NodeBuffer::GetNumQuaternaUsedTarget() const
 {
 	return quaterne_used_end_target - quaterne;
 }
@@ -226,7 +226,7 @@ form::Scalar form::NodeBuffer::GetMinLeafDistanceSquared()
 	return node_score_functor.GetMinLeafDistanceSquared();
 }
 
-void form::NodeBuffer::SetNumQuaternaUsedTarget(int n)
+void form::NodeBuffer::SetNumQuaternaUsedTarget(std::size_t n)
 {
 	if (profile_mode)
 	{
@@ -1019,8 +1019,8 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 {
 	// From the new used quaterna value, figure out new used node value.
 #if (WIP == 0)
-	int new_num_quaterne_used = quaterne_used_end - quaterne;
-	int new_num_nodes_used = new_num_quaterne_used << 2;	// 4 nodes per quaterna
+	auto new_num_quaterne_used = quaterne_used_end - quaterne;
+	auto new_num_nodes_used = new_num_quaterne_used << 2;	// 4 nodes per quaterna
 	nodes_used_end = nodes + new_num_nodes_used;
 #endif
 	VerifyArrayElement(nodes_used_end, nodes, nodes_end + 1);

@@ -63,9 +63,9 @@ namespace form
 #endif
 		PointBuffer & GetPoints() { return point_buffer; }
 		
-		int GetNumNodesUsed() const;
-		int GetNumQuaternaUsed() const;
-		int GetNumQuaternaUsedTarget() const;
+		std::size_t GetNumNodesUsed() const;
+		std::size_t GetNumQuaternaUsed() const;
+		std::size_t GetNumQuaternaUsedTarget() const;
 		
 		// returns 0 if there are none
 		float GetMinParentScore() const;
@@ -74,7 +74,7 @@ namespace form
 		Scalar GetMinLeafDistanceSquared();
 		
 		// Must be a multiple of four.
-		void SetNumQuaternaUsedTarget(int n);	
+		void SetNumQuaternaUsedTarget(std::size_t n);
 		
 		void Tick(Ray3 const & new_camera_ray);
 		void OnReset();

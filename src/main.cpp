@@ -26,6 +26,8 @@
 
 #if defined(WIN32)
 #include <SDL_main.h>
+#elif defined(__APPLE__)
+#include <SDL2/SDL_main.h>
 #endif
 
 #define RUN_TEST
@@ -43,7 +45,7 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // main
 
-int main(int, char * *)
+int SDL_main(int, char * *)
 {
 	if (CragMain())
 	{
@@ -332,7 +334,7 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::AppletHandle::CreateHandle("Main", 8192, & MainScript);
+			applet::AppletHandle::CreateHandle("Main", 16384, & MainScript);
 			
 			while (HandleEvent())
 			{

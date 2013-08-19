@@ -23,7 +23,6 @@ namespace form
 		void Verify() const
 		{
 			VerifyObject(_origin);
-			VerifyOp(_num_quaterne, >=, 0);
 		}
 #endif
 
@@ -40,7 +39,7 @@ namespace form
 		}
 		
 		Vector _origin;
-		int _num_quaterne;
+		std::size_t _num_quaterne;
 	};
 	
 }
