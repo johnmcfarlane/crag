@@ -5,11 +5,10 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 SDL_PATH := ../SDL
-ODE_PATH := ../../../dependencies/ode
+DEPENDENCIES_PATH := ../../../dependencies
 CRAG_PATH := ../../../src
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
-	$(LOCAL_PATH)/$(ODE_PATH)/include \
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(DEPENDENCIES_PATH)/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
