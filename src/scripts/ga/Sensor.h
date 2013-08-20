@@ -15,10 +15,10 @@
 
 namespace core
 {
-       namespace locality
-       {
-               class Roster;
-       }
+	   namespace locality
+	   {
+			   class Roster;
+	   }
 }
 
 namespace sim
