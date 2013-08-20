@@ -413,8 +413,9 @@ namespace form { namespace collision
 	// ForEachCollision implementation
 	
 	template <typename SHAPE, typename FUNCTOR>
-	void ForEachCollision(Polyhedron const & polyhedron, Vector3 const & polyhedron_center, Object<SHAPE> const & object, FUNCTOR & functor)
+	void ForEachCollision(Polyhedron const & polyhedron, Object<SHAPE> const & object, FUNCTOR & functor)
 	{
+		form::Vector3 const & polyhedron_center = geom::Cast<form::Scalar>(polyhedron.GetShape().center);
 		CollisionFunctor<SHAPE, FUNCTOR> node_functor(polyhedron_center, object, functor);
 		
 		form::RootNode const & root_node = polyhedron.GetRootNode();

@@ -173,9 +173,7 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 		return;
 	}
 	
-	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
-	
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
+	ForEachCollision(* polyhedron, collision_object, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const
@@ -201,13 +199,7 @@ void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunct
 	
 	collision_object.shape = ray;
 	
-	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
-	
-#if defined(NDEBUG)
-#error dont forget about this!
-#endif
-
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
+	ForEachCollision(* polyhedron, collision_object, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const
@@ -230,8 +222,6 @@ void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFu
 	collision_object.bounding_sphere.radius = sphere.GetRadius();
 	
 	collision_object.shape = collision_object.bounding_sphere;
-	
-	form::Vector3 const & relative_formation_position = geom::Cast<form::Scalar>(polyhedron->GetShape().center);
 
-	ForEachCollision(* polyhedron, relative_formation_position, collision_object, functor);
+	ForEachCollision(* polyhedron, collision_object, functor);
 }
