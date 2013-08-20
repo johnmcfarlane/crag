@@ -24,10 +24,10 @@
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
 
+using namespace sim;
 
 namespace 
 {
-	
 	// Config values
 	CONFIG_DEFINE (planet_shader_depth_medium, int, 2);
 	CONFIG_DEFINE (planet_shader_random_range, geom::abs::Scalar, 0.002);
@@ -66,7 +66,6 @@ namespace
 		
 		return depth;
 	}
-
 }
 
 
@@ -145,9 +144,9 @@ namespace debug
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::PlanetShader::Params
+// PlanetShader::Params
 
-class sim::PlanetShader::Params
+class PlanetShader::Params
 {
 public:
 	form::Node const & a;
@@ -161,7 +160,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader
 
-void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
+void PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
 {
 	int seed = polyhedron.GetFormation().GetSeed();
 	
@@ -171,7 +170,7 @@ void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Poin
 	// This one is the same each time.
 	//Random crater_randomizer(seed + 2);
 
-	geom::abs::Sphere3 shape = polyhedron.GetShape();
+	geom::abs::Sphere3 shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	geom::abs::Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
@@ -183,7 +182,7 @@ void sim::PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Poin
 	}
 }
 
-bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
+bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
 {
 	VerifyObject(a);
 	VerifyObject(b);
@@ -220,13 +219,13 @@ bool sim::PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node c
 }
 
 // Comes in normalized. Is then given the correct length.
-void sim::PlanetShader::CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position) const
+void PlanetShader::CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position) const
 {
 	geom::abs::Scalar radius = GetRandomHeightCoefficient(rnd);
 	position *= radius;
 }
 
-geom::abs::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
+geom::abs::Scalar PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
 	geom::abs::Scalar random_exponent = (.5 - rnd.GetUnitInclusive<geom::abs::Scalar>()) * planet_shader_random_range;
 	geom::abs::Scalar coefficient = std::exp(random_exponent);
@@ -234,7 +233,7 @@ geom::abs::Scalar sim::PlanetShader::GetRandomHeightCoefficient(Random & rnd) co
 }
 
 // At shallow depth, heigh is highly random.
-bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const
+bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const
 {
 	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	
@@ -251,7 +250,7 @@ bool sim::PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, ge
 	return true;
 }
 
-bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const 
+bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const 
 {
 	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	
@@ -287,27 +286,27 @@ bool sim::PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedr
 	return true;
 }
 
-geom::abs::Vector3 sim::PlanetShader::GetLocalPosition(form::Point const & point, geom::abs::Vector3 const & center) const
+geom::abs::Vector3 PlanetShader::GetLocalPosition(form::Point const & point, geom::abs::Vector3 const & center) const
 {
 	return GetLocalPosition(point.pos, center);
 }
 
-geom::abs::Vector3 sim::PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
+geom::abs::Vector3 PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
 {
 	return geom::Cast<double>(point_pos) - center;
 }
 
-geom::abs::Scalar sim::PlanetShader::GetAltitude(form::Point const & point, geom::abs::Vector3 const & center) const
+geom::abs::Scalar PlanetShader::GetAltitude(form::Point const & point, geom::abs::Vector3 const & center) const
 {
 	return GetAltitude(point.pos, center);
 }
 
-geom::abs::Scalar sim::PlanetShader::GetAltitude(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
+geom::abs::Scalar PlanetShader::GetAltitude(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
 {
 	return GetAltitude(GetLocalPosition(point_pos, center));
 }
 
-geom::abs::Scalar sim::PlanetShader::GetAltitude(geom::abs::Vector3 const & local_pos) const
+geom::abs::Scalar PlanetShader::GetAltitude(geom::abs::Vector3 const & local_pos) const
 {
 	return Length(local_pos);
 }

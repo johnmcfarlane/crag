@@ -18,24 +18,25 @@
 
 #include "form/scene/Polyhedron.h"
 
+using namespace form;
 
 /////////////////////////////////////////////////////////////////
-// form::Scene
+// Scene
 
-form::Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
+Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _node_buffer(ref(new NodeBuffer(max_num_quaterne)))
 {
 	_node_buffer.SetNumQuaternaUsedTarget(int(min_num_quaterne));
 }
 
-form::Scene::~Scene()
+Scene::~Scene()
 {
 	Clear();
 	delete & _node_buffer;
 }
 
 #if defined(VERIFY)
-void form::Scene::Verify() const
+void Scene::Verify() const
 {
 	if (! _node_buffer.GetPoints().IsEmpty())
 	{
@@ -45,7 +46,7 @@ void form::Scene::Verify() const
 	VerifyObject(_node_buffer);
 }
 
-/*void form::SceneVerifyTrue(Mesh const & m) const
+/*void SceneVerifyTrue(Mesh const & m) const
 {
 	VertexBuffer const & vb = * m.GetPoints();
 	IndexBuffer const & ib = m.GetIndices();
@@ -59,7 +60,7 @@ void form::Scene::Verify() const
 }*/
 #endif
 
-void form::Scene::Clear()
+void Scene::Clear()
 {
 	for (FormationMap::iterator it = formation_map.begin(); it != formation_map.end(); ++ it) {
 		FormationPair & pair = * it;
@@ -69,31 +70,31 @@ void form::Scene::Clear()
 	formation_map.clear();
 }
 
-form::NodeBuffer & form::Scene::GetNodeBuffer()
+NodeBuffer & Scene::GetNodeBuffer()
 {
 	return _node_buffer;
 }
 
-form::NodeBuffer const & form::Scene::GetNodeBuffer() const
+NodeBuffer const & Scene::GetNodeBuffer() const
 {
 	return _node_buffer;
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void form::Scene::OnOriginReset(geom::abs::Vector3 const & origin) 
+void Scene::OnOriginReset(geom::abs::Vector3 const & origin) 
 {
 	// The difficult bit: fix all our data which relied on the old origin.
 	ResetFormations(origin);
 }
 
-void form::Scene::AddFormation(Formation & formation, geom::abs::Vector3 const & origin)
+void Scene::AddFormation(Formation & formation, geom::abs::Vector3 const & origin)
 {
 	ASSERT(formation_map.find(& formation) == formation_map.end());
 	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
 	InitPolyhedron(* i, origin);
 }
 
-void form::Scene::RemoveFormation(Formation const & formation)
+void Scene::RemoveFormation(Formation const & formation)
 {
 	FormationMap::iterator i = formation_map.find(& formation);
 	ASSERT(i != formation_map.end());
@@ -102,7 +103,7 @@ void form::Scene::RemoveFormation(Formation const & formation)
 	formation_map.erase(i);
 }
 
-form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation) const
+Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
 {
 	FormationMap::const_iterator found = formation_map.find(& formation);
 	if (found == formation_map.end())
@@ -115,13 +116,13 @@ form::Polyhedron const * form::Scene::GetPolyhedron(Formation const & formation)
 	}
 }
 
-void form::Scene::Tick(geom::rel::Ray3 const & camera_ray)
+void Scene::Tick(geom::rel::Ray3 const & camera_ray)
 {
 	_node_buffer.Tick(camera_ray);
 	TickModels();
 }
 
-void form::Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
+void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
 {
 	_node_buffer.GenerateMesh(mesh);
 	
@@ -131,7 +132,7 @@ void form::Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) c
 }
 
 // Currently just updates the formation_map contents.
-void form::Scene::TickModels()
+void Scene::TickModels()
 {
 	for (auto& pair : formation_map)
 	{
@@ -139,7 +140,7 @@ void form::Scene::TickModels()
 	}
 }
 
-void form::Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
+void Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
 {
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
@@ -149,7 +150,7 @@ void form::Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
 	}
 }
 
-void form::Scene::ResetFormations(geom::abs::Vector3 const & origin)
+void Scene::ResetFormations(geom::abs::Vector3 const & origin)
 {
 	for (auto & pair : formation_map) 
 	{
@@ -164,9 +165,9 @@ void form::Scene::ResetFormations(geom::abs::Vector3 const & origin)
 	}
 }
 
-void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
+void Scene::TickPolyhedron(Polyhedron & polyhedron)
 {
-	form::RootNode & root_node = polyhedron._root_node;
+	RootNode & root_node = polyhedron._root_node;
 	
 	if (root_node.IsExpandable()) 
 	{
@@ -177,7 +178,7 @@ void form::Scene::TickPolyhedron(Polyhedron & polyhedron)
 }
 
 // The given pair contains a formation and a polyhedron.
-void form::Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin)
+void Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin)
 {
 	Polyhedron & polyhedron = pair.second;
 
@@ -186,7 +187,7 @@ void form::Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const 
 	polyhedron.Init(origin, points);
 }
 
-void form::Scene::DeinitPolyhedron(FormationPair & pair)
+void Scene::DeinitPolyhedron(FormationPair & pair)
 {
 	Polyhedron & polyhedron = pair.second;
 	

@@ -21,12 +21,11 @@
 
 #include "geom/Intersection.h"
 
+using namespace sim;
 
-namespace 
+namespace
 {
-	
 	geom::abs::Scalar root_three = sqrt(3.);
-	
 
 	// RootNode initialization data, i.e. a tetrahedron.
 	geom::abs::Vector3 root_corners[4] = 
@@ -36,14 +35,13 @@ namespace
 		geom::abs::Vector3( 1,  1, -1),
 		geom::abs::Vector3(-1, -1, -1)
 	};
-	
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // MoonShader
 
-sim::MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
+MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
 {
 	// This one is the same each time.
 	Random crater_randomizer(seed + 2);
@@ -82,7 +80,7 @@ sim::MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
 	}
 }
 
-void sim::MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
+void MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
 {
 	geom::abs::Scalar radius = polyhedron.GetShape().radius;
 	
@@ -96,7 +94,7 @@ void sim::MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point 
 	}
 }
 
-bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
+bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
 {
 	form::Formation const & formation = polyhedron.GetFormation();
 	
@@ -116,7 +114,7 @@ bool sim::MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node con
 	return true;
 }
 
-void sim::MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
+void MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
 {
 	geom::abs::Scalar t1, t2;
 	geom::abs::Ray3 ray(geom::abs::Vector3::Zero(), position);
@@ -151,7 +149,7 @@ void sim::MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
 	position *= t;
 }
 
-void sim::MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom::abs::Scalar moon_radius) const
+void MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom::abs::Scalar moon_radius) const
 {
 	//geom::abs::Scalar min_crater_distance = radius * 1.05f;	// center to center
 	geom::abs::Scalar max_crater_radius = moon_radius * .25;

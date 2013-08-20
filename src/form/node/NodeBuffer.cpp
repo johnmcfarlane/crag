@@ -24,6 +24,7 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
+using namespace form;
 
 CONFIG_DECLARE (profile_mode, bool);
 
@@ -39,13 +40,13 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// local function definitions
 	
-	inline void UpdateQuaternaScore(form::Quaterna & q) 
+	inline void UpdateQuaternaScore(Quaterna & q) 
 	{
-		form::Node * parent = q.nodes[0].GetParent();
+		Node * parent = q.nodes[0].GetParent();
 		q.parent_score = (parent != nullptr) ? parent->score : -1;
 	}
 	
-	bool QuaternaSortUnused(form::Quaterna const & lhs, form::Quaterna const & rhs)
+	bool QuaternaSortUnused(Quaterna const & lhs, Quaterna const & rhs)
 	{
 		return lhs.nodes < rhs.nodes;
 	}
@@ -56,7 +57,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // NodeBuffer functions
 
-form::NodeBuffer::NodeBuffer(size_t max_num_quaterne)
+NodeBuffer::NodeBuffer(size_t max_num_quaterne)
 : nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_quaterne * num_nodes_per_quaterna, 128)))
 , nodes_used_end(nodes)
 , nodes_end(nodes + max_num_quaterne * num_nodes_per_quaterna)
@@ -76,7 +77,7 @@ form::NodeBuffer::NodeBuffer(size_t max_num_quaterne)
 	VerifyObject(* this);
 }
 
-form::NodeBuffer::~NodeBuffer()
+NodeBuffer::~NodeBuffer()
 {
 	VerifyObject(* this);
 
@@ -98,7 +99,7 @@ form::NodeBuffer::~NodeBuffer()
 }
 
 #if defined(VERIFY)
-void form::NodeBuffer::Verify() const
+void NodeBuffer::Verify() const
 {
 	VerifyArrayPointer(nodes_used_end, nodes, nodes_end);
 	
@@ -139,7 +140,7 @@ void form::NodeBuffer::Verify() const
 	}*/
 }
 
-void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
+void NodeBuffer::VerifyUsed(Quaterna const & q) const
 {
 	Node const * n = q.nodes;
 	VerifyArrayElement(n, nodes, nodes_used_end);
@@ -152,7 +153,7 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 	
 	for (int i = 0; i < 4; ++ i)
 	{
-		form::Node const & sibling = q.nodes[i];
+		Node const & sibling = q.nodes[i];
 		
 		// All four siblings should have the same parent.
 		VerifyTrue(q.nodes[i].GetParent() == parent);
@@ -173,7 +174,7 @@ void form::NodeBuffer::VerifyUsed(Quaterna const & q) const
 	VerifyObject(q);
 }
 
-void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
+void NodeBuffer::VerifyUnused(Quaterna const & q) const
 {
 	VerifyTrue(q.parent_score == -1);
 	
@@ -182,7 +183,7 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 	
 	for (int i = 0; i < 4; ++ i)
 	{
-		form::Node const & sibling = q.nodes[i];
+		Node const & sibling = q.nodes[i];
 		
 		VerifyTrue(sibling.GetParent() == nullptr);
 		VerifyTrue(! sibling.HasChildren());
@@ -193,22 +194,22 @@ void form::NodeBuffer::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
-std::size_t form::NodeBuffer::GetNumNodesUsed() const
+std::size_t NodeBuffer::GetNumNodesUsed() const
 {
 	return nodes_used_end - nodes;
 }
 
-std::size_t form::NodeBuffer::GetNumQuaternaUsed() const
+std::size_t NodeBuffer::GetNumQuaternaUsed() const
 {
 	return quaterne_used_end - quaterne;
 }
 
-std::size_t form::NodeBuffer::GetNumQuaternaUsedTarget() const
+std::size_t NodeBuffer::GetNumQuaternaUsedTarget() const
 {
 	return quaterne_used_end_target - quaterne;
 }
 
-float form::NodeBuffer::GetMinParentScore() const
+float NodeBuffer::GetMinParentScore() const
 {
 	if (quaterne_used_end > quaterne)
 	{
@@ -221,12 +222,12 @@ float form::NodeBuffer::GetMinParentScore() const
 	}
 }
 
-form::Scalar form::NodeBuffer::GetMinLeafDistanceSquared()
+Scalar NodeBuffer::GetMinLeafDistanceSquared()
 {
 	return node_score_functor.GetMinLeafDistanceSquared();
 }
 
-void form::NodeBuffer::SetNumQuaternaUsedTarget(std::size_t n)
+void NodeBuffer::SetNumQuaternaUsedTarget(std::size_t n)
 {
 	if (profile_mode)
 	{
@@ -255,7 +256,7 @@ void form::NodeBuffer::SetNumQuaternaUsedTarget(std::size_t n)
 
 // This is the main tick function for all things 'nodey'.
 // It is also where a considerable amount of the SceneThread's time is spent.
-void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
+void NodeBuffer::Tick(Ray3 const & new_camera_ray)
 {
 	VerifyObjectRef(new_camera_ray);
 	VerifyObject (* this);
@@ -277,7 +278,7 @@ void form::NodeBuffer::Tick(Ray3 const & new_camera_ray)
 	VerifyObject(* this);
 }
 
-void form::NodeBuffer::OnReset()
+void NodeBuffer::OnReset()
 {
 	ASSERT(point_buffer.IsEmpty());
 	InitQuaterna(quaterne_used_end);
@@ -291,7 +292,7 @@ void form::NodeBuffer::OnReset()
 	VerifyObject(* this);
 }
 
-void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
+void NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
 {
 	for (Node * node = nodes; node != nodes_used_end; ++ node)
 	{
@@ -316,7 +317,7 @@ void form::NodeBuffer::ResetNodeOrigins(Vector3 const & origin_delta)
 	}
 }
 
-void form::NodeBuffer::InitQuaterna(Quaterna const * end)
+void NodeBuffer::InitQuaterna(Quaterna const * end)
 {
 	Node * n = nodes;
 	for (Quaterna * iterator = quaterne; iterator < end; n += 4, ++ iterator) {
@@ -325,7 +326,7 @@ void form::NodeBuffer::InitQuaterna(Quaterna const * end)
 	}
 }
 
-void form::NodeBuffer::UpdateNodes()
+void NodeBuffer::UpdateNodes()
 {
 	do 
 	{
@@ -342,13 +343,13 @@ void form::NodeBuffer::UpdateNodes()
 	while (IsNodeChurnIntensive());
 }
 
-void form::NodeBuffer::UpdateNodeScores()
+void NodeBuffer::UpdateNodeScores()
 {
 	node_score_functor.ResetCounters();
 	ForEachNode<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
 }
 
-void form::NodeBuffer::UpdateQuaterna()
+void NodeBuffer::UpdateQuaterna()
 {
 	// Reflect the new scores in the quaterne.
 	UpdateQuaternaScores();
@@ -357,7 +358,7 @@ void form::NodeBuffer::UpdateQuaterna()
 	SortQuaterna();
 }
 
-void form::NodeBuffer::UpdateQuaternaScores()
+void NodeBuffer::UpdateQuaternaScores()
 {
 	ForEachQuaterna(UpdateQuaternaScore, 1024, true);
 	
@@ -366,7 +367,7 @@ void form::NodeBuffer::UpdateQuaternaScores()
 }
 
 // Algorithm to sort nodes array. 
-void form::NodeBuffer::SortQuaterna()
+void NodeBuffer::SortQuaterna()
 {
 	if (quaterne_sorted_end == quaterne_used_end)
 	{
@@ -481,7 +482,7 @@ void form::NodeBuffer::SortQuaterna()
 	}
 #elif 0
 	// Sure and steady ... and slow!
-//	std::sort(quaterne_sorted_end, quaterne_used_end, [] (form::Quaterna const & lhs, form::Quaterna const & rhs) {
+//	std::sort(quaterne_sorted_end, quaterne_used_end, [] (Quaterna const & lhs, Quaterna const & rhs) {
 //		return lhs.parent_score > rhs.parent_score;
 //	});
 
@@ -546,7 +547,7 @@ void form::NodeBuffer::SortQuaterna()
 	}
 #else
 	// Sure and steady ... and slow!
-	std::sort(quaterne, quaterne_used_end, [] (form::Quaterna const & lhs, form::Quaterna const & rhs) {
+	std::sort(quaterne, quaterne_used_end, [] (Quaterna const & lhs, Quaterna const & rhs) {
 		return lhs.parent_score > rhs.parent_score;
 	});
 #endif
@@ -554,7 +555,7 @@ void form::NodeBuffer::SortQuaterna()
 	quaterne_sorted_end = quaterne_used_end;
 }
 
-bool form::NodeBuffer::ChurnNodes()
+bool NodeBuffer::ChurnNodes()
 {
 	ASSERT(_expandable_nodes.size() == 0);
 	
@@ -571,7 +572,7 @@ bool form::NodeBuffer::ChurnNodes()
 	return expand_functor.GetNumExpanded() > 0;
 }
 
-void form::NodeBuffer::GenerateMesh(Mesh & mesh) 
+void NodeBuffer::GenerateMesh(Mesh & mesh) 
 {
 	VerifyObject(* this);
 	
@@ -586,7 +587,7 @@ void form::NodeBuffer::GenerateMesh(Mesh & mesh)
 ///////////////////////////////////////////////////////
 // Node-related members.
 
-float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
+float NodeBuffer::GetWorseReplacableQuaternaScore() const
 {
 	// See if there are unused quaterne.
 	if (quaterne_used_end != quaterne_used_end_target)
@@ -611,7 +612,7 @@ float form::NodeBuffer::GetWorseReplacableQuaternaScore() const
 	return std::numeric_limits<float>::max();
 }
 
-bool form::NodeBuffer::ExpandNode(Node & node) 
+bool NodeBuffer::ExpandNode(Node & node) 
 {
 	ASSERT(node.IsExpandable());
 
@@ -675,7 +676,7 @@ bool form::NodeBuffer::ExpandNode(Node & node)
 	return false;
 }
 
-bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
+bool NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)	
 {
 	Node * worst_children = children_quaterna.nodes;
 	ASSERT(worst_children + 0 != & node);
@@ -733,7 +734,7 @@ bool form::NodeBuffer::ExpandNode(Node & node, Quaterna & children_quaterna)
 	return true;
 }
 
-void form::NodeBuffer::CollapseNodes(Node & root)
+void NodeBuffer::CollapseNodes(Node & root)
 {
 	// Remove the entire tree from the given root.
 	CollapseNode(root);
@@ -759,7 +760,7 @@ void form::NodeBuffer::CollapseNodes(Node & root)
 	FixUpDecreasedNodes(old_quaterne_used_end);
 }
 
-void form::NodeBuffer::CollapseNode(Node & node)
+void NodeBuffer::CollapseNode(Node & node)
 {
 	Node * children = node.GetChildren();
 	if (children != nullptr) {
@@ -770,7 +771,7 @@ void form::NodeBuffer::CollapseNode(Node & node)
 
 // Make sure cousins and their mid-point_buffer match up.
 // Also make sure all children know who their parent is.
-void form::NodeBuffer::InitChildPointers(Node & parent_node)
+void NodeBuffer::InitChildPointers(Node & parent_node)
 {
 	Node::Triplet const * parent_triple = parent_node.triple;
 	Node * child_nodes = parent_node.GetChildren();
@@ -819,7 +820,7 @@ void form::NodeBuffer::InitChildPointers(Node & parent_node)
 	center.SetParent(& parent_node);
 }
 
-void form::NodeBuffer::DeinitChildren(Node * children)
+void NodeBuffer::DeinitChildren(Node * children)
 {
 	ASSERT(children->GetParent()->GetChildren() == children);
 	children->GetParent()->SetChildren(nullptr);
@@ -831,7 +832,7 @@ void form::NodeBuffer::DeinitChildren(Node * children)
 }
 
 // Nulls all the relevant pointers, disconnects cousins, frees verts.
-void form::NodeBuffer::DeinitNode(Node & node)
+void NodeBuffer::DeinitNode(Node & node)
 {
 	CollapseNode(node);
 	
@@ -870,7 +871,7 @@ void form::NodeBuffer::DeinitNode(Node & node)
 	node.score = 0;
 }
 
-void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
+void NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 {
 	Node * parent = original->GetParent();
 	
@@ -906,7 +907,7 @@ void form::NodeBuffer::SubstituteChildren(Node * substitute, Node * original)
 }
 
 // Repair the pointers that point TO this node.
-void form::NodeBuffer::RepairChild(Node & child)
+void NodeBuffer::RepairChild(Node & child)
 {
 	// Repair children's parent pointers.
 	Node * node_it = child.GetChildren();
@@ -931,7 +932,7 @@ void form::NodeBuffer::RepairChild(Node & child)
 	}
 }
 
-void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterne_used_end)
+void NodeBuffer::IncreaseNodes(Quaterna * new_quaterne_used_end)
 {
 	// Verify that the input is indeed a decrease.
 	VerifyArrayElement(new_quaterne_used_end, quaterne_used_end, quaterne_end + 1);
@@ -945,7 +946,7 @@ void form::NodeBuffer::IncreaseNodes(Quaterna * new_quaterne_used_end)
 
 // Reduce the number of used nodes and, accordingly, the number of used quaterne.
 // This is quite an involved and painful process which sometimes fails half-way through.
-void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterne_used_end)
+void NodeBuffer::DecreaseNodes(Quaterna * new_quaterne_used_end)
 {
 	Quaterna * old_quaterne_used_end = quaterne_used_end;
 
@@ -965,7 +966,7 @@ void form::NodeBuffer::DecreaseNodes(Quaterna * new_quaterne_used_end)
 	VerifyObject (* this);
 }
 
-void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
+void NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
 {
 	// Verify that the input is indeed a decrease.
 	VerifyArrayElement(new_quaterne_used_end, quaterne, quaterne_used_end + 1);
@@ -1015,7 +1016,7 @@ void form::NodeBuffer::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
 }
 
 #define WIP 0
-void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
+void NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 {
 	// From the new used quaterna value, figure out new used node value.
 #if (WIP == 0)
@@ -1073,7 +1074,7 @@ void form::NodeBuffer::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
 }
 
 template <typename FUNCTOR> 
-void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
+void NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 {
 	if (nodes_used_end == nodes)
 	{
@@ -1082,16 +1083,16 @@ void form::NodeBuffer::ForEachNode(FUNCTOR f, size_t step_size, bool parallel)
 	
 	if (! parallel)
 	{
-		core::for_each <form::Node *, FUNCTOR> (nodes, nodes_used_end, f);
+		core::for_each <Node *, FUNCTOR> (nodes, nodes_used_end, f);
 	}
 	else 
 	{
-		smp::for_each <form::Node *, FUNCTOR>(nodes, nodes_used_end, f, step_size, -1);
+		smp::for_each <Node *, FUNCTOR>(nodes, nodes_used_end, f, step_size, -1);
 	}
 }
 
 template <typename FUNCTOR> 
-void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool parallel)
+void NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool parallel)
 {
 	if (quaterne_used_end == quaterne)
 	{
@@ -1100,10 +1101,10 @@ void form::NodeBuffer::ForEachQuaterna(FUNCTOR f, size_t step_size, bool paralle
 
 	if (! parallel && step_size == 1)
 	{
-		core::for_each<form::Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f);
+		core::for_each<Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f);
 	}
 	else
 	{
-		smp::for_each<form::Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f, step_size, -1);
+		smp::for_each<Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f, step_size, -1);
 	}
 }

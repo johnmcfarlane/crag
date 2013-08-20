@@ -18,11 +18,12 @@
 
 #include "core/memory.h"
 
+using namespace form;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessors
 
-form::Polyhedron & form::GetPolyhedron(Node & node)
+Polyhedron & form::GetPolyhedron(Node & node)
 {
 	RootNode & root_node = GetRootNode(node);
 	
@@ -34,23 +35,23 @@ form::Polyhedron & form::GetPolyhedron(Node & node)
 
 
 /////////////////////////////////////////////////////////////////
-// form::Polyhedron
+// Polyhedron
 
-form::Polyhedron::Polyhedron(Formation & formation)
+Polyhedron::Polyhedron(Formation & formation)
 : _shape(formation.GetShape())
 , _formation(formation)
 {
 	_root_node = RootNode(* this);
 }
 
-form::Polyhedron::Polyhedron(Polyhedron const & rhs)
+Polyhedron::Polyhedron(Polyhedron const & rhs)
 : _shape(rhs._shape)
 , _formation(rhs._formation)
 {
 	_root_node = RootNode(* this);
 }
 
-void form::Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer)
+void Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
 	_shape.center = geom::AbsToRel<double>(_formation.GetShape().center, origin);
@@ -73,32 +74,32 @@ void form::Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & poi
 	_root_node.Init(_formation.GetSeed(), root_points);
 }
 
-void form::Polyhedron::Deinit(PointBuffer & point_buffer)
+void Polyhedron::Deinit(PointBuffer & point_buffer)
 {
 	_root_node.Deinit(point_buffer);
 }
 
-geom::abs::Sphere3 const & form::Polyhedron::GetShape() const
+geom::abs::Sphere3 const & Polyhedron::GetShape() const
 {
 	return _shape;
 }
 
-form::Formation & form::Polyhedron::GetFormation()
+Formation & Polyhedron::GetFormation()
 {
 	return _formation;
 }
 
-form::Formation const & form::Polyhedron::GetFormation() const
+Formation const & Polyhedron::GetFormation() const
 {
 	return _formation;
 }
 
-form::RootNode const & form::Polyhedron::GetRootNode() const
+RootNode const & Polyhedron::GetRootNode() const
 {
 	return _root_node;
 }
 
-void form::Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
+void Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
 {
 	geom::abs::Sphere3 const & shape = _formation.GetShape();
 	_shape.center = geom::AbsToRel<double>(shape.center, origin);
@@ -111,7 +112,7 @@ void form::Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
 	shader.InitRootPoints(* this, root_points);
 }
 
-bool form::Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
+bool Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
 {
 	Node * children = node.GetChildren();
 	if (children == nullptr)
