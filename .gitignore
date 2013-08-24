@@ -7,6 +7,7 @@ android/jni/gen
 android/jni/SDL
 !android/jni/SDL/include/SDL_config.h
 android/libs/
+android/local.properties
 android/obj
 
 /backtrace

@@ -5,3 +5,5 @@ cd ../dependencies/ode
 sh autogen.sh
 ./configure --host=arm-linux --enable-double-precision=no --disable-demos --disable-asserts --disable-libccd
 cd ../../android
+android update project -p .
+
