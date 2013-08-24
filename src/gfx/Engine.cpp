@@ -508,7 +508,7 @@ geom::abs::Vector3 const & Engine::GetOrigin() const
 Engine::StateParam const Engine::init_state[] =
 {
 	INIT(GL_CULL_FACE, true),
-	INIT(GL_DEPTH_TEST, false),
+	INIT(GL_DEPTH_TEST, true),
 	INIT(GL_BLEND, false),
 	INIT(GL_INVALID_ENUM, false),
 };
@@ -867,10 +867,16 @@ void Engine::RenderFrame()
 	InvalidateUniforms();
 	
 	// All the things.
-	RenderScene();
-	
-	// Crap you generally don't want.
-	DebugDraw();
+	if (culling)
+	{
+		RenderScene();
+	}
+	else
+	{
+		Disable(GL_CULL_FACE);
+		RenderScene();
+		Enable(GL_CULL_FACE);
+	}
 	
 	// Ensures that FormationMesh::PreRender functions correctly.
 	SetCurrentMesh(nullptr);
@@ -880,11 +886,23 @@ void Engine::RenderFrame()
 
 void Engine::RenderScene()
 {
-	// Adjust near and far plane.
-	auto projection_matrix = CalcForegroundProjectionMatrix(* scene);
+	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
 	
-	// Draw material objects.
-	RenderForegroundPass(projection_matrix);
+	// calculate matrices
+	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(* scene);
+	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* scene);
+	
+	// render forground, opaque elements
+	RenderLayer(foreground_projection_matrix, Layer::foreground);
+	
+	// render background elements (skybox)
+	RenderLayer(background_projection_matrix, Layer::background);
+	
+	// render forground, transparent elements
+	RenderTransparentPass(foreground_projection_matrix);
+	
+	// render debug-only elephants
+	DebugDraw(foreground_projection_matrix);
 }
 
 void Engine::InvalidateUniforms()
@@ -896,55 +914,14 @@ void Engine::InvalidateUniforms()
 	}
 }
 
-bool Engine::BeginRenderForeground() const
+void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 {
-	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
-		
-	if (! culling) 
-	{
-		Disable(GL_CULL_FACE);
-	}
-	
-	Enable(GL_DEPTH_TEST);
-	
-	return true;
-}
-
-void Engine::RenderForegroundPass(Matrix44 const & projection_matrix)
-{
-	// begin
-	if (! BeginRenderForeground())
-	{
-		return;
-	}
-	
-	// render opaque objects
-	RenderLayer(projection_matrix, Layer::foreground);
-	
-	// render the background
-	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* scene);
-	RenderLayer(background_projection_matrix, Layer::background);
-	
 	// render partially transparent objects
 	Enable(GL_BLEND);
 	glDepthMask(false);
 	RenderLayer(projection_matrix, Layer::foreground, false);
 	Disable(GL_BLEND);
 	glDepthMask(true);
-
-	// end
-	EndRenderForeground();
-}
-
-void Engine::EndRenderForeground() const
-{
-	// Reset state
-	Disable(GL_DEPTH_TEST);
-
-	if (! culling) 
-	{
-		Enable(GL_CULL_FACE);
-	}
 }
 
 int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque)
@@ -1010,38 +987,32 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, b
 	return num_rendered_objects;
 }
 
-void Engine::DebugDraw()
+void Engine::DebugDraw(Matrix44 const & CRAG_DEBUG_PARAM(projection_matrix))
 {
-#if defined(GFX_DEBUG)
-
-	SetCurrentProgram(nullptr);
-	SetCurrentMesh(nullptr);
-	
-#if 0
 	if (capture_enable)
 	{
 		return;
 	}
 
+#if defined(CRAG_GFX_DEBUG)
+
+	SetCurrentProgram(nullptr);
+	SetCurrentMesh(nullptr);
+	
+	// calculate model view transformation
+	auto & pov = scene->GetPov();
+	auto & model_view_projection = pov.GetTransformation();
+
+	// mark the local origin
 	Debug::AddBasis(Vector3::Zero(), 1000000.);
 	
-	Pov const & pov = scene->GetPov();
-	Transformation const & transformation = pov.GetTransformation();
-
-	// Set the model view to the regular global view but at the origin
-	Vector3 translation = transformation.GetTranslation();
-	Matrix33 rotation = transformation.GetRotation();
-	Matrix33 inverse_rotation = Inverse(rotation);
-	Transformation model_view(Vector3::Zero(), inverse_rotation);
-	SetModelViewMatrix(model_view);
-	
-	// then pass the missing translation into the draw function.
-	// It corrects all the verts accordingly (avoids a precision issue).
-	Debug::Draw(translation);
+	// draw 3D debug elements
+	auto model_view_matrix = model_view_projection.GetMatrix();
+	Debug::Draw(model_view_matrix, projection_matrix);
 	Debug::Clear();
 	
-	STAT_SET (pos, translation);	// std::streamsize previous_precision = out.precision(10); ...; out.precision(previous_precision);
-#endif
+	// print camera position
+	STAT_SET (pos, model_view_projection.GetTranslation());
 	
 #if defined (GATHER_STATS)
 	// The string into which is written Debug text.
@@ -1065,7 +1036,7 @@ void Engine::DebugDraw()
 	}
 #endif	// defined (GATHER_STATS)
 	
-#endif	// defined(GFX_DEBUG)
+#endif	// defined(CRAG_GFX_DEBUG)
 }
 
 void Engine::ProcessRenderTiming()

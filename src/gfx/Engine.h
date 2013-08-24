@@ -135,13 +135,12 @@ namespace gfx
 		void RenderScene();
 		
 		void InvalidateUniforms();
-		bool BeginRenderForeground() const;
-		void RenderForegroundPass(Matrix44 const & projection_matrix);
-		void EndRenderForeground() const;
+		void RenderBackgroundPass(Matrix44 const & projection_matrix);
+		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		
 		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
-		void DebugDraw();
+		void DebugDraw(Matrix44 const & projection_matrix);
 
 		void ProcessRenderTiming();
 		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);

@@ -9,6 +9,9 @@
 
 #pragma once
 
+#if ! defined(__ANDROID__) && (defined(PROFILE) || ! defined(NDEBUG))
+#define CRAG_GFX_DEBUG
+#endif
 
 namespace geom
 {

@@ -13,7 +13,7 @@
 
 #include "core/ConfigEntry.h"
 
-#if defined(GFX_DEBUG)
+#if defined(CRAG_GFX_DEBUG)
 
 #include "axes.h"
 #include "Color.h"
@@ -23,8 +23,8 @@
 #include "geom/MatrixOps.h"
 
 
-using namespace gfx::Debug;
-using gfx::Font;
+using namespace gfx;
+using namespace Debug;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,13 +74,12 @@ namespace
 			ASSERT(c >= 0 && c <= 1);
 		}
 		
-		void Draw(Vector3 const & camera_pos, bool hidden) const
+		void Draw(bool hidden) const
 		{
 			Color const & color = hidden ? colors._hidden_color : colors._color;
 			glColor4fv(color.GetArray());
 
-			geom::Vector3f relative_pos = geom::Cast<float>(pos - camera_pos);
-			glVertex3f(relative_pos.x, relative_pos.y, relative_pos.z);
+			glVertex3f(pos.x, pos.y, pos.z);
 		}
 		
 		Vector3 pos;
@@ -131,13 +130,13 @@ namespace
 			points.push_back(Point(pos, ColorPair(colors)));
 		}
 		
-		void Draw(Vector3 const & camera_pos, bool hidden) const
+		void Draw(bool hidden) const
 		{
 			glBegin(mode);
 			for (point_vector::const_iterator it = points.begin(); it != points.end(); ++ it)
 			{
 				Point const & point = * it;
-				point.Draw(camera_pos, hidden);
+				point.Draw(hidden);
 			}
 			glEnd();
 		}
@@ -154,15 +153,15 @@ namespace
 	PointArray lines(GL_LINES);
 	PointArray tris(GL_TRIANGLES);
 
-	void DrawPrimatives(Vector3 const & camera_pos, bool hidden)
+	void DrawPrimatives(bool hidden)
 	{
 		if (hidden) {
 			glDepthFunc(GL_GREATER);
 		}
 
-		points.Draw(camera_pos, hidden);
-		lines.Draw(camera_pos, hidden);
-		tris.Draw(camera_pos, hidden);
+		points.Draw(hidden);
+		lines.Draw(hidden);
+		tris.Draw(hidden);
 
 		if (hidden) {
 			glDepthFunc(GL_LEQUAL);
@@ -357,28 +356,31 @@ void AddFrustum(Pov const & pov)
 }
 #endif
 
-void gfx::Debug::Draw(Vector3 const & camera_pos)
+void gfx::Debug::Draw(Matrix44 const & model_view_matrix, Matrix44 const & projection_matrix)
 {
 	mutex.lock();
+	
+	// Set the model view and projection matrices
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(geom::Transposition(ToOpenGl(geom::Inverse(model_view_matrix))).GetArray());
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(geom::Transposition(projection_matrix).GetArray());
 	
 	GL_VERIFY;
 	Verify();
 
 	// Set state
-	Disable(GL_CULL_FACE);
 	ASSERT(! IsEnabled(GL_LIGHTING));
-	Enable(GL_DEPTH_TEST);
 	
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Enable(GL_BLEND);
 	
-	DrawPrimatives(camera_pos, false);
-	DrawPrimatives(camera_pos, true);
+	DrawPrimatives(false);
+	DrawPrimatives(true);
 	
 	// Unset state
-	Enable(GL_CULL_FACE);
-	Disable(GL_DEPTH_TEST);
 	Disable(GL_BLEND);
 	glColor3f(1,1,1);
 
