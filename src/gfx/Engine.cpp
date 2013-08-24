@@ -687,9 +687,12 @@ void Engine::InitVSync()
 		case 1:
 			ERROR_MESSAGE("Crag cannot run when vsync is forced on AND OpenGL feature, fences, are not supported.");
 			exit(1);
-
+			
 		default:
 			ASSERT(false);
+
+		case -1:
+			DEBUG_BREAK_SDL();
 		}
 
 		ASSERT(vsync);
