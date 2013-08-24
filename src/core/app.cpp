@@ -67,7 +67,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	{
 		resolution.x = desktop_display_mode.w;
 		resolution.y = desktop_display_mode.h;
-		flags |= SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;	// TODO: investigate SDL_WINDOW_FULLSCREEN_DESKTOP
 	}
 	
 	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
