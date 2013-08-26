@@ -18,27 +18,29 @@
 #include <ode/mass.h>
 #include <ode/objects.h>
 
+using namespace physics;
+
 ////////////////////////////////////////////////////////////////////////////////
 // BoxBody
 
-physics::BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions)
+BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions)
 : Body(transformation, velocity, engine, engine.CreateBox(dimensions))
 {
 }
 
-void physics::BoxBody::SetDimensions(Vector3 const & dimensions) const
+void BoxBody::SetDimensions(Vector3 const & dimensions) const
 {
 	dGeomBoxSetLengths(_collision_handle, dimensions.x, dimensions.y, dimensions.z);
 }
 
-physics::Vector3 physics::BoxBody::GetDimensions() const
+Vector3 BoxBody::GetDimensions() const
 {
 	Vector3 dimensions;
 	dGeomBoxGetLengths(_collision_handle, dimensions.GetAxes());
 	return dimensions;
 }
 
-void physics::BoxBody::SetDensity(Scalar density)
+void BoxBody::SetDensity(Scalar density)
 {
 	ASSERT(_collision_handle != nullptr);
 	
@@ -48,7 +50,7 @@ void physics::BoxBody::SetDensity(Scalar density)
 	dBodySetMass (_body_handle, & m);
 }
 
-void physics::BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
+void BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
 {
 	planet.OnDeferredCollisionWithBox(* this, functor);
 }
