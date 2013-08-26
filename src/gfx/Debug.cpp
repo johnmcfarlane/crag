@@ -391,7 +391,9 @@ void gfx::Debug::Draw(Matrix44 const & model_view_matrix, Matrix44 const & proje
 
 void gfx::Debug::Clear()
 {
+	mutex.lock();
 	ClearPrimatives();
+	mutex.unlock();
 }
 
 void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)
