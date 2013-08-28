@@ -118,7 +118,7 @@ namespace geom
 	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Sphere<LHS_S, N>>::type
 	Cast(Sphere<RHS_S, N> const & rhs)
 	{
-		return Sphere<LHS_S, 3>(Cast<LHS_S>(rhs.center), static_cast<LHS_S>(rhs.radius));
+		return Sphere<LHS_S, N>(Cast<LHS_S>(rhs.center), static_cast<LHS_S>(rhs.radius));
 	}
 
 	// equality operator
