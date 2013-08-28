@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <ode/collision.h>
 #include <ode/common.h>
 #include <ode/contact.h>
 
@@ -30,9 +31,11 @@ namespace physics
 	typedef dBodyID BodyHandle;
 	typedef dJointID JointHandle;
 	typedef dContact Contact;
+	typedef dTriMeshDataID MeshData;
 
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Ray<Scalar, 3> Ray3;
+	typedef geom::Sphere<Scalar, 3> Sphere3;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 	typedef geom::Transformation<Scalar> Transformation;
