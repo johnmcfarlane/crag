@@ -73,13 +73,6 @@ namespace form
 	public:
 		typedef ipc::Daemon<Engine> Daemon;
 
-		struct TreeQueryFunctor
-		{
-			virtual ~TreeQueryFunctor() { }
-			virtual void operator () (Scene const & scene) = 0;
-			
-		};
-		
 		typedef core::ring_buffer<smp::scheduler::Job> BatchedFunctorBuffer;
 		
 		////////////////////////////////////////////////////////////////////////////////
