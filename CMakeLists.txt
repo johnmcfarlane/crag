@@ -114,7 +114,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DdSINGLE -DPROFILE -D__STRICT_ANSI_
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
-target_link_libraries(crag ${SDL2_LIBRARY} ${OPENGL_LIBRARIES} "ode" "dl" "GLEW" "pthread" "stdc++" "m")
+find_library(ODE_LIBRARY ode dependencies/lib)
+target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "GLEW" "pthread" "stdc++" "m")
 
 include (PrecompiledHeader.cmake)
 add_precompiled_header(crag src/pch.h)
