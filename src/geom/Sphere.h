@@ -135,6 +135,18 @@ namespace geom
 		return lhs.center != rhs.center || lhs.radius != rhs.radius;
 	}
 
+	// streaming
+	template <typename S, int N>
+	std::ostream & operator << (std::ostream & out, Sphere<S, N> const & sphere)
+	{
+		return out << sphere.center << '+' << sphere.radius;
+	}
+
+	template <typename S, int N>
+	std::istream & operator >> (std::istream & in, Sphere<S, N> const & sphere)
+	{
+		return in >> sphere.center >> '+' >> sphere.radius;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Sphere properties
