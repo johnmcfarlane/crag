@@ -190,7 +190,7 @@ void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunct
 		return;
 	}
 	
-	auto ray = ray_cast.getRay();
+	auto ray = ray_cast.GetRay();
 	
 	typedef Object<form::Ray3> Object;
 	Object collision_object;

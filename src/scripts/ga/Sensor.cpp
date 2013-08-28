@@ -102,7 +102,7 @@ Sensor::~Sensor()
 void Sensor::Tick()
 {
 	Ray3 scan_ray = GenerateScanRay();
-	_ray_cast.setRay(scan_ray);
+	_ray_cast.SetRay(scan_ray);
 	
 	gfx::Debug::ColorPair cp(gfx::Debug::Color::White(), gfx::Debug::Color(0,0,0,0));
 	gfx::Debug::AddLine(scan_ray.position, geom::Project(scan_ray, 1.f), cp);

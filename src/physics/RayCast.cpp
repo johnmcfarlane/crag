@@ -47,20 +47,20 @@ RayCast::RayCast(Engine & engine)
 {
 }
 
-void RayCast::setDirection(Vector3 const & direction)
+void RayCast::SetDirection(Vector3 const & direction)
 {
-	Ray3 ray = getRay();
+	Ray3 ray = GetRay();
 	ray.direction = direction;
-	setRay(ray);
+	SetRay(ray);
 }
 
-Vector3 RayCast::getDirection() const
+Vector3 RayCast::GetDirection() const
 {
-	Ray3 ray = getRay();
+	Ray3 ray = GetRay();
 	return ray.direction;
 }
 
-void RayCast::setRay(Ray3 ray)
+void RayCast::SetRay(Ray3 ray)
 {
 	auto length_squared = geom::LengthSq(ray);
 
@@ -82,7 +82,7 @@ void RayCast::setRay(Ray3 ray)
 		ray.direction.x, ray.direction.y, ray.direction.z);
 }
 
-Ray3 RayCast::getRay() const
+Ray3 RayCast::GetRay() const
 {
 	Ray3 ray;
 	dGeomRayGet(_collision_handle, & ray.position[0], & ray.direction[0]);

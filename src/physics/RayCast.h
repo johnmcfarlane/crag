@@ -23,12 +23,12 @@ namespace physics
 
 		RayCast(Engine & engine);
 		
-		void setDirection(Vector3 const & direction);
-		Vector3 getDirection() const;
+		void SetDirection(Vector3 const & direction);
+		Vector3 GetDirection() const;
 		
 		// ray's direction includes its length, i.e. it is not unit length
-		void setRay(Ray3 ray);
-		Ray3 getRay() const;
+		void SetRay(Ray3 ray);
+		Ray3 GetRay() const;
 
 		Scalar GetLength() const;
 
