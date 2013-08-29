@@ -82,17 +82,17 @@ dBodyID Engine::CreateBody() const
 	return dBodyCreate(world);
 }
 
-dGeomID Engine::CreateBox(Vector3 const & dimensions) const
+CollisionHandle Engine::CreateBox(Vector3 const & dimensions) const
 {
 	return dCreateBox(space, dimensions.x, dimensions.y, dimensions.z);
 }
 
-dGeomID Engine::CreateSphere(Scalar radius) const
+CollisionHandle Engine::CreateSphere(Scalar radius) const
 {
 	return dCreateSphere(space, radius);
 }
 
-dGeomID Engine::CreateRay(Scalar length) const
+CollisionHandle Engine::CreateRay(Scalar length) const
 {
 	return dCreateRay(space, length);
 }
@@ -180,7 +180,7 @@ void Engine::DestroyCollisions()
 
 // Called by ODE when geometry collides. In the case of planets, 
 // this means the outer shell of the planet.
-void Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
+void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, CollisionHandle geom2)
 {
 	physics::Engine & engine = * reinterpret_cast<physics::Engine *>(data);
 	
@@ -201,7 +201,7 @@ void Engine::OnNearCollisionCallback (void *data, dGeomID geom1, dGeomID geom2)
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
-void Engine::OnUnhandledCollision(dGeomID geom1, dGeomID geom2)
+void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
 	int const max_contacts_per_collision = 1;
