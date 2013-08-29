@@ -26,6 +26,7 @@ using namespace physics;
 
 Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
+, _engine(engine)
 , _collision_handle(collision_handle)
 , _roster(engine.GetRoster())
 {
@@ -89,6 +90,11 @@ Body const * Body::GetBody() const
 
 void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
 {
+}
+
+BodyHandle Body::GetBodyHandle() const
+{
+	return _body_handle;
 }
 
 CollisionHandle Body::GetCollisionHandle() const

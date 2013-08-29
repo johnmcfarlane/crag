@@ -44,6 +44,7 @@ namespace physics
 
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
+		BodyHandle GetBodyHandle() const;
 		CollisionHandle GetCollisionHandle() const;
 		virtual void SetDensity(Scalar density) = 0;
 		Scalar GetMass() const;	// -ve means infinite
@@ -90,6 +91,9 @@ namespace physics
 		void Tick();
 
 	protected:
+		Engine & _engine;
+		
+	private:
 		CollisionHandle _collision_handle;	// the collision info
 		BodyHandle _body_handle;	// the dynaical info
 		core::locality::Roster & _roster;

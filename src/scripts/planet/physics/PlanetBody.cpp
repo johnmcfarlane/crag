@@ -48,7 +48,6 @@ DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius)
 : SphericalBody(transformation, nullptr, physics_engine, radius)
 , _formation(formation)
-, _scene(physics_engine.GetScene())
 , _mean_radius(radius)
 {
 }
@@ -166,7 +165,8 @@ void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunct
 	}
  	
 	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
-	form::Polyhedron const * polyhedron = _scene.GetPolyhedron(_formation);
+	auto& scene = _engine.GetScene();
+	auto polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
 		ASSERT(false);
@@ -182,7 +182,8 @@ void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunct
 
 	auto & ray_cast = static_cast<RayCast const &>(body);
 
-	auto polyhedron = _scene.GetPolyhedron(_formation);
+	auto& scene = _engine.GetScene();
+	auto polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
 		// This can happen if the PlanetBody has just been created 
@@ -208,7 +209,8 @@ void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFu
 
 	SphericalBody const & sphere = static_cast<SphericalBody const &>(body);
 
-	form::Polyhedron const * polyhedron = _scene.GetPolyhedron(_formation);
+	auto& scene = _engine.GetScene();
+	auto polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
 		// This can happen if the PlanetBody has just been created 

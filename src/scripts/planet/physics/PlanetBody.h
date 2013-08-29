@@ -27,10 +27,13 @@ namespace physics
 	
 	class PlanetBody : public SphericalBody
 	{
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
 	public:
 		DECLARE_ALLOCATOR(PlanetaryBody);
 
-		PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius);
+		PlanetBody(Transformation const & transformation, Engine & engine, form::Formation const & formation, Scalar radius);
 		
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 	private:
@@ -42,7 +45,6 @@ namespace physics
 
 		// variables
 		form::Formation const & _formation;
-		form::Scene const & _scene;
 		Scalar _mean_radius;
 	};
 	

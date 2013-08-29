@@ -25,14 +25,14 @@ using namespace physics;
 void RayCast::Verify() const
 {
 	// test length
-	dReal length = dGeomRayGetLength(_collision_handle);
+	dReal length = GetLength();
 	VerifyOp(length, >=, 0);
 	VerifyEqual(length, length);
 
 	// test position/direction
 	dVector3 position;
 	dVector3 direction;
-	dGeomRayGet(_collision_handle, position, direction);
+	dGeomRayGet(GetCollisionHandle(), position, direction);
 	Ray3 ray(
 		Vector3(position[0], position[1], position[2]),
 		Vector3(direction[0], direction[1], direction[2])
@@ -76,8 +76,8 @@ void RayCast::SetRay(Ray3 ray)
 		ray.direction /= length;
 	}
 
-	dGeomRaySetLength(_collision_handle, length);
-	dGeomRaySet(_collision_handle, 
+	dGeomRaySetLength(GetCollisionHandle(), length);
+	dGeomRaySet(GetCollisionHandle(), 
 		ray.position.x, ray.position.y, ray.position.z, 
 		ray.direction.x, ray.direction.y, ray.direction.z);
 }
@@ -85,14 +85,14 @@ void RayCast::SetRay(Ray3 ray)
 Ray3 RayCast::GetRay() const
 {
 	Ray3 ray;
-	dGeomRayGet(_collision_handle, & ray.position[0], & ray.direction[0]);
-	ray.direction *= dGeomRayGetLength(_collision_handle);
+	dGeomRayGet(GetCollisionHandle(), & ray.position[0], & ray.direction[0]);
+	ray.direction *= GetLength();
 	return ray;
 }
 
 Scalar RayCast::GetLength() const
 {
-	return dGeomRayGetLength(_collision_handle);
+	return dGeomRayGetLength(GetCollisionHandle());
 }
 
 void RayCast::SetDensity(Scalar)

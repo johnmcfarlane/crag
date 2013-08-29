@@ -30,24 +30,24 @@ BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity
 
 void BoxBody::SetDimensions(Vector3 const & dimensions) const
 {
-	dGeomBoxSetLengths(_collision_handle, dimensions.x, dimensions.y, dimensions.z);
+	dGeomBoxSetLengths(GetCollisionHandle(), dimensions.x, dimensions.y, dimensions.z);
 }
 
 Vector3 BoxBody::GetDimensions() const
 {
 	Vector3 dimensions;
-	dGeomBoxGetLengths(_collision_handle, dimensions.GetAxes());
+	dGeomBoxGetLengths(GetCollisionHandle(), dimensions.GetAxes());
 	return dimensions;
 }
 
 void BoxBody::SetDensity(Scalar density)
 {
-	ASSERT(_collision_handle != nullptr);
+	ASSERT(GetCollisionHandle() != nullptr);
 	
 	dMass m;
 	Vector3 dimensions = GetDimensions();
 	dMassSetBox (& m, density, dimensions.x, dimensions.y, dimensions.z);
-	dBodySetMass (_body_handle, & m);
+	dBodySetMass (GetBodyHandle(), & m);
 }
 
 void BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
