@@ -40,6 +40,16 @@ namespace
 	CONFIG_DEFINE (collisions, bool, true);
 
 	STAT (num_contacts, int, .15f);
+
+#if ! defined(NDEBUG)
+	void odeMessageFunction (int errnum, const char *msg, va_list ap)
+	{
+		constexpr std::size_t buffer_size = 4096;
+		char buffer[buffer_size];
+		vsnprintf(buffer, buffer_size, msg, ap);
+		DEBUG_BREAK("ODE#%d: %s", errnum, buffer); 
+	}
+#endif
 }
 CONFIG_DEFINE (collisions_parallelization, bool, true);
 
@@ -54,6 +64,9 @@ Engine::Engine()
 , _formation_scene(ref(new form::Scene(512, 512)))
 , _tick_roster(ref(new core::locality::Roster))
 {
+	dSetErrorHandler(odeMessageFunction);
+	dSetDebugHandler(odeMessageFunction);
+	dSetMessageHandler(odeMessageFunction);
 	dInitODE2(0);
 }
 
