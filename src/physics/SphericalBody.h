@@ -29,6 +29,7 @@ namespace physics
 		virtual void SetDensity(Scalar density) override;
 		
 	protected:
+		Sphere3 GetBoundingSphere() const final;
 		virtual void OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const;
 	};
 	

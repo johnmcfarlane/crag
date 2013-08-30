@@ -47,7 +47,17 @@ void SphericalBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-void physics::SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
+Sphere3 SphericalBody::GetBoundingSphere() const
+{
+	Sphere3 bounding_sphere;
+	
+	bounding_sphere.center = GetTranslation();
+	bounding_sphere.radius = GetRadius();
+	
+	return bounding_sphere;
+}
+
+void SphericalBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
 {
 	planet.OnDeferredCollisionWithSphere(* this, functor);
 }

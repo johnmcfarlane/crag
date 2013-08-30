@@ -42,6 +42,8 @@ namespace physics
 		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
 		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const;
 		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
+		
+		void OnDeferredCollisionWithSimpleBody(Body const & body, IntersectionFunctorRef const & functor) const;
 
 		// variables
 		form::Formation const & _formation;

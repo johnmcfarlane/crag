@@ -10,7 +10,9 @@
 #include "pch.h"
 
 #include "Engine.h"
+
 #include "Body.h"
+#include "MeshSurround.h"
 
 #include "form/scene/Scene.h"
 
@@ -19,10 +21,10 @@
 #include "core/Statistics.h"
 
 #if ! defined(NDEBUG)
-//#define DEBUG_CONTACT
+//#define DEBUG_CONTACTS
 #endif
 
-#if defined(DEBUG_CONTACT)
+#if defined(DEBUG_CONTACTS)
 #include "gfx/Debug.h"
 #endif
 
@@ -106,8 +108,47 @@ CollisionHandle Engine::CreateMesh(MeshData data) const
 
 void Engine::DestroyShape(CollisionHandle shape)
 {
+	for (auto iterator = std::begin(_mesh_map); iterator != std::end(_mesh_map);)
+	{
+		auto current = iterator;
+		++ iterator;
+		
+		auto key = current->first;
+		ASSERT(key.first < key.second);
+		if (key.first == shape || key.second == shape)
+		{
+			_mesh_map.erase(current);
+		}
+	}
 	
 	dGeomDestroy(shape);
+}
+
+MeshSurround & Engine::GetMeshSurround(CollisionHandle geom1, CollisionHandle geom2)
+{
+	ASSERT(geom1 != geom2);
+	
+	if (geom2 < geom1)
+	{
+		return GetMeshSurround(geom2, geom1);
+	}
+	
+	MeshMapKey key = 
+	{
+		geom1, 
+		geom2 
+	};
+	
+	auto found = _mesh_map.find(key);
+	if (found == _mesh_map.end())
+	{
+		auto insertion_result = _mesh_map.insert(std::make_pair(key, MeshSurround()));
+		ASSERT(insertion_result.second);
+		
+		found = insertion_result.first;
+	}
+	
+	return found->second;
 }
 
 void Engine::Attach(Body const & body1, Body const & body2)
@@ -261,11 +302,11 @@ void Engine::OnContact(dContact const & contact)
 
 	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 
-#if defined(DEBUG_CONTACT)
+#if defined(DEBUG_CONTACTS)
 	Vector3 pos(contact.geom.pos[0], contact.geom.pos[1], contact.geom.pos[2]);
 	Vector3 normal(contact.geom.normal[0], contact.geom.normal[1], contact.geom.normal[2]);
-	gfx::Debug::AddLine(pos, pos + normal * contact.geom.depth * 100.);
-	std::cout << pos << ' ' << normal << ' ' << contact.geom.depth << '\n';
+	gfx::Debug::AddLine(pos, pos + normal * contact.geom.depth * 100.f);
+	//std::cout << pos << ' ' << normal << ' ' << contact.geom.depth << '\n';
 #endif
 
 	_contacts.push_back(contact);

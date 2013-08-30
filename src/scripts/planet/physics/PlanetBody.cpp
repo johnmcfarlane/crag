@@ -11,19 +11,11 @@
 
 #include "PlanetBody.h"
 
-#include "sim/defs.h"
-#include "sim/Engine.h"
-
-#include "physics/BoxBody.h"
 #include "physics/Engine.h"
-#include "physics/RayCast.h"
+#include "physics/MeshSurround.h"
 
-#include "form/Formation.h"
-#include "form/Engine.h"
-#include "form/node/NodeBuffer.h"
-#include "form/scene/collision.h"
-
-#include "geom/MatrixOps.h"
+#include "form/scene/ForEachFaceInSphere.h"
+#include "form/scene/Scene.h"
 
 #include "core/ConfigEntry.h"
 
@@ -39,14 +31,13 @@ namespace
 	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
 
 DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
-PlanetBody::PlanetBody(Transformation const & transformation, Engine & physics_engine, form::Formation const & formation, Scalar radius)
-: SphericalBody(transformation, nullptr, physics_engine, radius)
+PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Formation const & formation, Scalar radius)
+: SphericalBody(transformation, nullptr, engine, radius)
 , _formation(formation)
 , _mean_radius(radius)
 {
@@ -115,101 +106,25 @@ bool PlanetBody::OnCollision(Engine & engine, Body const & that_body) const
 
 void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const
 {
-	using namespace form::collision;
-
-	BoxBody const & box = static_cast<BoxBody const &>(body);
-	
-	// Get vital geometric information about the cuboid.
-	Vector3 position = box.GetTranslation();
-	Vector3 dimensions = box.GetDimensions();
-	Vector3 extents = dimensions * Scalar(.5);
-	Matrix33 rotation = box.GetRotation();
-	
-	// Initialise the PointCloud.
-	typedef Object<ConvexHull> Object;
-	Object collision_object;
-	
-	// bounding sphere
-	collision_object.bounding_sphere.center = position;
-	collision_object.bounding_sphere.radius = Length(extents);
-	
-	// points
-	{
-		ConvexHull::Vector::iterator i = collision_object.shape.faces.begin();
-		for (int axis = 0; axis < 3; ++ axis)
-		{
-			for (int pole = 0; pole < 2; ++ pole)
-			{
-				float pole_sign = pole ? 1.f : -1.f;
-				sim::Ray3 plane;
-				
-				plane.position = Vector3::Zero();
-				plane.position[axis] = pole_sign * extents[axis];
-				plane.position = rotation * plane.position;
-				i->position = plane.position;
-				i->position += collision_object.bounding_sphere.center;
-				
-				plane.direction = Vector3::Zero();
-				plane.direction[axis] = pole_sign;
-				plane.direction = rotation * plane.direction;
-				i->direction = plane.direction;
-				
-				//gfx::Debug::AddLine(form::SceneToSim(sim::Vector3(i->position), origin), 
-				//	form::SceneToSim(sim::Vector3(i->position + i->direction), origin),
-				//	gfx::Debug::ColorPair(gfx::Color4f::White(), 0.1f));
-				
-				++ i;
-			}
-		}
-		ASSERT(i == collision_object.shape.faces.end());
-	}
- 	
-	// TODO: Try and move as much of this as possible into the ForEachIntersection fn.
-	auto& scene = _engine.GetScene();
-	auto polyhedron = scene.GetPolyhedron(_formation);
-	if (polyhedron == nullptr)
-	{
-		ASSERT(false);
-		return;
-	}
-	
-	ForEachCollision(* polyhedron, collision_object, functor);
+	OnDeferredCollisionWithSimpleBody(body, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const
 {
-	using namespace form::collision;
-
-	auto & ray_cast = static_cast<RayCast const &>(body);
-
-	auto& scene = _engine.GetScene();
-	auto polyhedron = scene.GetPolyhedron(_formation);
-	if (polyhedron == nullptr)
-	{
-		// This can happen if the PlanetBody has just been created 
-		// and the corresponding OnAddFormation message hasn't been read yet.
-		return;
-	}
-	
-	auto ray = ray_cast.GetRay();
-	
-	typedef Object<form::Ray3> Object;
-	Object collision_object;
-	collision_object.bounding_sphere.center = geom::Project(ray, .5f);
-	collision_object.bounding_sphere.radius = geom::Length(ray) * .5;
-	
-	collision_object.shape = ray;
-	
-	ForEachCollision(* polyhedron, collision_object, functor);
+	OnDeferredCollisionWithSimpleBody(body, functor);
 }
 
 void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const
 {
-	using namespace form::collision;
+	OnDeferredCollisionWithSimpleBody(body, functor);
+}
 
-	SphericalBody const & sphere = static_cast<SphericalBody const &>(body);
+void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, IntersectionFunctorRef const & functor) const
+{
+	////////////////////////////////////////////////////////////////////////////////
+	// get necessary data for scanning planet surface
 
-	auto& scene = _engine.GetScene();
+	auto & scene = _engine.GetScene();
 	auto polyhedron = scene.GetPolyhedron(_formation);
 	if (polyhedron == nullptr)
 	{
@@ -218,12 +133,64 @@ void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFu
 		return;
 	}
 	
-	typedef Object<form::Sphere3> Object;
-	Object collision_object;
-	collision_object.bounding_sphere.center = sphere.GetTranslation();
-	collision_object.bounding_sphere.radius = sphere.GetRadius();
-	
-	collision_object.shape = collision_object.bounding_sphere;
+	////////////////////////////////////////////////////////////////////////////////
+	// gather the two collision handles together
 
-	ForEachCollision(* polyhedron, collision_object, functor);
+	// the incoming body - could be any class of shape
+	auto body_collision_handle = body.GetCollisionHandle();
+	auto planet_collision_handle = GetCollisionHandle();
+	
+	auto & mesh_surround = _engine.GetMeshSurround(planet_collision_handle, body_collision_handle);
+	auto mesh_collision_handle = mesh_surround.GetCollisionHandle();
+	mesh_surround.Enable();
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// generate mesh representing the planet surface in the vacinity of the body
+
+	form::Sphere3 collision_sphere = body.GetBoundingSphere();
+	mesh_surround.ClearData();
+
+	auto face_functor = [& mesh_surround] (form::Point & a, form::Point & b, form::Point & c, geom::Vector3f const & normal, float /*score*/)
+	{
+		mesh_surround.AddTriangle(a.pos, b.pos, c.pos, normal);
+	};
+	
+	form::ForEachFaceInSphere(* polyhedron, collision_sphere, face_functor);
+	
+	mesh_surround.RefreshData();
+	
+    ////////////////////////////////////////////////////////////////////////////////
+	// collide and generate contacts
+
+	constexpr auto max_num_contacts = 10240;
+	typedef std::array<dContactGeom, max_num_contacts> ContactVector;
+	ContactVector contacts;
+	
+	int flags = contacts.size();
+	ASSERT((flags >> 16) == 0);
+	ASSERT(flags >= max_num_contacts);
+	
+	std::size_t num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
+	ASSERT(num_contacts <= contacts.size());
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// execute
+
+	for (auto index = 0u; index < num_contacts; ++ index)
+	{
+		dContactGeom const & contact_geom = contacts[index];
+		
+		Vector3 position(contact_geom.pos[0], contact_geom.pos[1], contact_geom.pos[2]);	// TODO: Nifty conversion hacks between dVector and Vector3f
+		Vector3 normal(contact_geom.normal[0], contact_geom.normal[1], contact_geom.normal[2]);
+		Scalar depth = contact_geom.depth;
+		ASSERT(contact_geom.g1 == body_collision_handle);
+		ASSERT(contact_geom.g2 == mesh_collision_handle);
+
+		functor(position, normal, depth);
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// reset
+	
+	mesh_surround.Disable();
 }

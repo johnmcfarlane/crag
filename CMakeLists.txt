@@ -60,6 +60,7 @@ add_executable(crag
 	src/physics/BoxBody.cpp
 	src/physics/Engine.cpp
 	src/physics/Location.cpp
+	src/physics/MeshSurround.cpp
 	src/physics/PassiveLocation.cpp
 	src/physics/RayCast.cpp
 	src/physics/SphericalBody.cpp

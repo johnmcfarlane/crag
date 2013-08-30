@@ -50,6 +50,19 @@ void BoxBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
+Sphere3 BoxBody::GetBoundingSphere() const
+{
+	Sphere3 bounding_sphere;
+	
+	bounding_sphere.center = GetTranslation();
+	
+	Vector3 dimensions = GetDimensions();
+	Vector3 extents = dimensions * Scalar(.5);
+	bounding_sphere.radius = geom::Length(extents);
+	
+	return bounding_sphere;
+}
+
 void BoxBody::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
 {
 	planet.OnDeferredCollisionWithBox(* this, functor);
