@@ -75,7 +75,7 @@ Body::~Body()
 	
 	// destroy the geom
 	ASSERT(_collision_handle != 0);
-	dGeomDestroy(_collision_handle);
+	_engine.DestroyShape(_collision_handle);
 }
 
 Body * Body::GetBody()

@@ -55,6 +55,8 @@ namespace physics
 		CollisionHandle CreateBox(Vector3 const & dimensions) const;
 		CollisionHandle CreateSphere(Scalar radius) const;
 		CollisionHandle CreateRay(Scalar length) const;
+		CollisionHandle CreateMesh(MeshData data) const;
+		void DestroyShape(CollisionHandle shape);
 		
 		void Attach(Body const & body1, Body const & body2);
 		

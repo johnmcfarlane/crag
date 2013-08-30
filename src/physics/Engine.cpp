@@ -99,6 +99,17 @@ CollisionHandle Engine::CreateRay(Scalar length) const
 	return dCreateRay(space, length);
 }
 
+CollisionHandle Engine::CreateMesh(MeshData data) const
+{
+	return dCreateTriMesh(space, data, nullptr, nullptr, nullptr);
+}
+
+void Engine::DestroyShape(CollisionHandle shape)
+{
+	
+	dGeomDestroy(shape);
+}
+
 void Engine::Attach(Body const & body1, Body const & body2)
 {
 	dJointID joint_id = dJointCreateBall(world, 0);
