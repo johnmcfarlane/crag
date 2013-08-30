@@ -5,105 +5,131 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := ode
 
 ODE_PATH := ../../../dependencies/ode
-ODE_SOURCE := $(ODE_PATH)/ode/src
-ODE_INCLUDE := $(ODE_PATH)/include
 
-OU_PATH := $(ODE_PATH)/ou
-OU_SRC_PATH := $(OU_PATH)/src/ou
-OU_INCLUDE := $(OU_PATH)/include
-
-CCD_PATH := $(ODE_PATH)/libccd
-CCD_SOURCE := $(CCD_PATH)/src
-CCD_INCLUDE := $(CCD_PATH)/src
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(ODE_SOURCE) \
-	$(LOCAL_PATH)/$(ODE_INCLUDE) \
-	$(LOCAL_PATH)/$(OU_INCLUDE) \
-	$(LOCAL_PATH)/$(CCD_INCLUDE)
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(ODE_PATH)/ode/src \
+	$(LOCAL_PATH)/$(ODE_PATH)/include \
+	$(LOCAL_PATH)/$(ODE_PATH)/ou/include \
+	$(LOCAL_PATH)/$(ODE_PATH)/libccd/src \
+	$(LOCAL_PATH)/$(ODE_PATH)/OPCODE
 
 # Add your application source files here...
-LOCAL_SRC_FILES := $(ODE_SOURCE)/array.cpp \
-	$(ODE_SOURCE)/box.cpp \
-	$(ODE_SOURCE)/capsule.cpp \
-	$(ODE_SOURCE)/collision_cylinder_box.cpp \
-	$(ODE_SOURCE)/collision_cylinder_plane.cpp \
-	$(ODE_SOURCE)/collision_cylinder_sphere.cpp \
-	$(ODE_SOURCE)/collision_cylinder_trimesh.cpp \
-	$(ODE_SOURCE)/collision_kernel.cpp \
-	$(ODE_SOURCE)/collision_libccd.cpp \
-	$(ODE_SOURCE)/collision_quadtreespace.cpp \
-	$(ODE_SOURCE)/collision_sapspace.cpp \
-	$(ODE_SOURCE)/collision_space.cpp \
-	$(ODE_SOURCE)/collision_transform.cpp \
-	$(ODE_SOURCE)/collision_trimesh_box.cpp \
-	$(ODE_SOURCE)/collision_trimesh_ccylinder.cpp \
-	$(ODE_SOURCE)/collision_trimesh_disabled.cpp \
-	$(ODE_SOURCE)/collision_trimesh_distance.cpp \
-	$(ODE_SOURCE)/collision_trimesh_gimpact.cpp \
-	$(ODE_SOURCE)/collision_trimesh_opcode.cpp \
-	$(ODE_SOURCE)/collision_trimesh_plane.cpp \
-	$(ODE_SOURCE)/collision_trimesh_ray.cpp \
-	$(ODE_SOURCE)/collision_trimesh_sphere.cpp \
-	$(ODE_SOURCE)/collision_trimesh_trimesh.cpp \
-	$(ODE_SOURCE)/collision_trimesh_trimesh_new.cpp \
-	$(ODE_SOURCE)/collision_util.cpp \
-	$(ODE_SOURCE)/convex.cpp \
-	$(ODE_SOURCE)/cylinder.cpp \
-	$(ODE_SOURCE)/error.cpp \
-	$(ODE_SOURCE)/export-dif.cpp \
-	$(ODE_SOURCE)/heightfield.cpp \
-	$(ODE_SOURCE)/lcp.cpp \
-	$(ODE_SOURCE)/mass.cpp \
-	$(ODE_SOURCE)/mat.cpp \
-	$(ODE_SOURCE)/matrix.cpp \
-	$(ODE_SOURCE)/memory.cpp \
-	$(ODE_SOURCE)/misc.cpp \
-	$(ODE_SOURCE)/obstack.cpp \
-	$(ODE_SOURCE)/ode.cpp \
-	$(ODE_SOURCE)/odeinit.cpp \
-	$(ODE_SOURCE)/odemath.cpp \
-	$(ODE_SOURCE)/odeou.cpp \
-	$(ODE_SOURCE)/odetls.cpp \
-	$(ODE_SOURCE)/plane.cpp \
-	$(ODE_SOURCE)/quickstep.cpp \
-	$(ODE_SOURCE)/ray.cpp \
-	$(ODE_SOURCE)/rotation.cpp \
-	$(ODE_SOURCE)/sphere.cpp \
-	$(ODE_SOURCE)/step.cpp \
-	$(ODE_SOURCE)/timer.cpp \
-	$(ODE_SOURCE)/util.cpp \
-	$(ODE_SOURCE)/joints/amotor.cpp \
-	$(ODE_SOURCE)/joints/ball.cpp \
-	$(ODE_SOURCE)/joints/contact.cpp \
-	$(ODE_SOURCE)/joints/fixed.cpp \
-	$(ODE_SOURCE)/joints/hinge2.cpp \
-	$(ODE_SOURCE)/joints/hinge.cpp \
-	$(ODE_SOURCE)/joints/joint.cpp \
-	$(ODE_SOURCE)/joints/lmotor.cpp \
-	$(ODE_SOURCE)/joints/null.cpp \
-	$(ODE_SOURCE)/joints/piston.cpp \
-	$(ODE_SOURCE)/joints/plane2d.cpp \
-	$(ODE_SOURCE)/joints/pr.cpp \
-	$(ODE_SOURCE)/joints/pu.cpp \
-	$(ODE_SOURCE)/joints/slider.cpp \
-	$(ODE_SOURCE)/joints/universal.cpp \
-	$(ODE_SOURCE)/fastdot.c \
-	$(ODE_SOURCE)/fastldlt.c \
-	$(ODE_SOURCE)/fastlsolve.c \
-	$(ODE_SOURCE)/fastltsolve.c \
-	$(ODE_SOURCE)/nextafterf.c \
-	$(OU_SRC_PATH)/atomic.cpp \
-	$(OU_SRC_PATH)/customization.cpp \
-	$(OU_SRC_PATH)/malloc.cpp \
-	$(OU_SRC_PATH)/threadlocalstorage.cpp \
-	$(CCD_SOURCE)/alloc.c \
-	$(CCD_SOURCE)/ccd.c \
-	$(CCD_SOURCE)/mpr.c \
-	$(CCD_SOURCE)/polytope.c \
-	$(CCD_SOURCE)/support.c \
-	$(CCD_SOURCE)/vec3.c
+LOCAL_SRC_FILES := $(ODE_PATH)/ode/src/array.cpp \
+	$(ODE_PATH)/ode/src/box.cpp \
+	$(ODE_PATH)/ode/src/capsule.cpp \
+	$(ODE_PATH)/ode/src/collision_cylinder_box.cpp \
+	$(ODE_PATH)/ode/src/collision_cylinder_plane.cpp \
+	$(ODE_PATH)/ode/src/collision_cylinder_sphere.cpp \
+	$(ODE_PATH)/ode/src/collision_cylinder_trimesh.cpp \
+	$(ODE_PATH)/ode/src/collision_kernel.cpp \
+	$(ODE_PATH)/ode/src/collision_libccd.cpp \
+	$(ODE_PATH)/ode/src/collision_quadtreespace.cpp \
+	$(ODE_PATH)/ode/src/collision_sapspace.cpp \
+	$(ODE_PATH)/ode/src/collision_space.cpp \
+	$(ODE_PATH)/ode/src/collision_transform.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_box.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_ccylinder.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_disabled.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_distance.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_gimpact.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_opcode.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_plane.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_ray.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_sphere.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_trimesh.cpp \
+	$(ODE_PATH)/ode/src/collision_trimesh_trimesh_new.cpp \
+	$(ODE_PATH)/ode/src/collision_util.cpp \
+	$(ODE_PATH)/ode/src/convex.cpp \
+	$(ODE_PATH)/ode/src/cylinder.cpp \
+	$(ODE_PATH)/ode/src/error.cpp \
+	$(ODE_PATH)/ode/src/export-dif.cpp \
+	$(ODE_PATH)/ode/src/heightfield.cpp \
+	$(ODE_PATH)/ode/src/lcp.cpp \
+	$(ODE_PATH)/ode/src/mass.cpp \
+	$(ODE_PATH)/ode/src/mat.cpp \
+	$(ODE_PATH)/ode/src/matrix.cpp \
+	$(ODE_PATH)/ode/src/memory.cpp \
+	$(ODE_PATH)/ode/src/misc.cpp \
+	$(ODE_PATH)/ode/src/obstack.cpp \
+	$(ODE_PATH)/ode/src/ode.cpp \
+	$(ODE_PATH)/ode/src/odeinit.cpp \
+	$(ODE_PATH)/ode/src/odemath.cpp \
+	$(ODE_PATH)/ode/src/odeou.cpp \
+	$(ODE_PATH)/ode/src/odetls.cpp \
+	$(ODE_PATH)/ode/src/plane.cpp \
+	$(ODE_PATH)/ode/src/quickstep.cpp \
+	$(ODE_PATH)/ode/src/ray.cpp \
+	$(ODE_PATH)/ode/src/rotation.cpp \
+	$(ODE_PATH)/ode/src/sphere.cpp \
+	$(ODE_PATH)/ode/src/step.cpp \
+	$(ODE_PATH)/ode/src/timer.cpp \
+	$(ODE_PATH)/ode/src/util.cpp \
+	$(ODE_PATH)/ode/src/joints/amotor.cpp \
+	$(ODE_PATH)/ode/src/joints/ball.cpp \
+	$(ODE_PATH)/ode/src/joints/contact.cpp \
+	$(ODE_PATH)/ode/src/joints/fixed.cpp \
+	$(ODE_PATH)/ode/src/joints/hinge2.cpp \
+	$(ODE_PATH)/ode/src/joints/hinge.cpp \
+	$(ODE_PATH)/ode/src/joints/joint.cpp \
+	$(ODE_PATH)/ode/src/joints/lmotor.cpp \
+	$(ODE_PATH)/ode/src/joints/null.cpp \
+	$(ODE_PATH)/ode/src/joints/piston.cpp \
+	$(ODE_PATH)/ode/src/joints/plane2d.cpp \
+	$(ODE_PATH)/ode/src/joints/pr.cpp \
+	$(ODE_PATH)/ode/src/joints/pu.cpp \
+	$(ODE_PATH)/ode/src/joints/slider.cpp \
+	$(ODE_PATH)/ode/src/joints/universal.cpp \
+	$(ODE_PATH)/ode/src/fastdot.c \
+	$(ODE_PATH)/ode/src/fastldlt.c \
+	$(ODE_PATH)/ode/src/fastlsolve.c \
+	$(ODE_PATH)/ode/src/fastltsolve.c \
+	$(ODE_PATH)/ode/src/nextafterf.c \
+	$(ODE_PATH)/ou/src/ou/atomic.cpp \
+	$(ODE_PATH)/ou/src/ou/customization.cpp \
+	$(ODE_PATH)/ou/src/ou/malloc.cpp \
+	$(ODE_PATH)/ou/src/ou/threadlocalstorage.cpp \
+	$(ODE_PATH)/libccd/src/alloc.c \
+	$(ODE_PATH)/libccd/src/ccd.c \
+	$(ODE_PATH)/libccd/src/mpr.c \
+	$(ODE_PATH)/libccd/src/polytope.c \
+	$(ODE_PATH)/libccd/src/support.c \
+	$(ODE_PATH)/libccd/src/vec3.c \
+	$(ODE_PATH)/OPCODE/OPC_AABBCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_AABBTree.cpp \
+	$(ODE_PATH)/OPCODE/OPC_BaseModel.cpp \
+	$(ODE_PATH)/OPCODE/OPC_Collider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_Common.cpp \
+	$(ODE_PATH)/OPCODE/OPC_HybridModel.cpp \
+	$(ODE_PATH)/OPCODE/OPC_LSSCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_MeshInterface.cpp \
+	$(ODE_PATH)/OPCODE/OPC_Model.cpp \
+	$(ODE_PATH)/OPCODE/OPC_OBBCollider.cpp \
+	$(ODE_PATH)/OPCODE/Opcode.cpp \
+	$(ODE_PATH)/OPCODE/OPC_OptimizedTree.cpp \
+	$(ODE_PATH)/OPCODE/OPC_Picking.cpp \
+	$(ODE_PATH)/OPCODE/OPC_PlanesCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_RayCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_SphereCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_TreeBuilders.cpp \
+	$(ODE_PATH)/OPCODE/OPC_TreeCollider.cpp \
+	$(ODE_PATH)/OPCODE/OPC_VolumeCollider.cpp \
+	$(ODE_PATH)/OPCODE/StdAfx.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceAABB.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceContainer.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceHPoint.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceIndexedTriangle.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceMatrix3x3.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceMatrix4x4.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceOBB.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IcePlane.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IcePoint.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceRandom.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceRay.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceRevisitedRadix.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceSegment.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceTriangle.cpp \
+	$(ODE_PATH)/OPCODE/Ice/IceUtils.cpp
 
-LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -Wall -Wfatal-errors -fno-rtti -fno-exceptions -D__ODE__ -D_OU_NAMESPACE=odeou -D__STRICT_ANSI__ -DNDEBUG -DdSINGLE -DCCD_SINGLE
-LOCAL_CFLAGS := -O2 -pthread -Wall -Wfatal-errors -D__STRICT_ANSI__ -DNDEBUG -DdSINGLE -DCCD_SINGLE
+LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -Wall -Wfatal-errors -fno-rtti -fno-exceptions -D__ODE__ -D_OU_NAMESPACE=odeou -D__STRICT_ANSI__ -DNDEBUG -DdSINGLE -DCCD_SINGLE -DdTRIMESH_ENABLED -DdTRIMESH_OPCODE
+LOCAL_CFLAGS := -O2 -pthread -Wall -Wfatal-errors -D__STRICT_ANSI__ -DNDEBUG -DdSINGLE -DCCD_SINGLE -DdTRIMESH_ENABLED -DdTRIMESH_OPCODE
 
 include $(BUILD_SHARED_LIBRARY)
