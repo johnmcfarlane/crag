@@ -16,6 +16,7 @@
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
+#include "core/Statistics.h"
 
 #if ! defined(NDEBUG)
 //#define DEBUG_CONTACT
@@ -35,6 +36,8 @@ using namespace physics;
 namespace 
 {
 	CONFIG_DEFINE (collisions, bool, true);
+
+	STAT (num_contacts, int, .15f);
 }
 CONFIG_DEFINE (collisions_parallelization, bool, true);
 
@@ -146,6 +149,8 @@ void Engine::CreateCollisions()
 {
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
+
+	STAT_SET(num_contacts, _contacts.size());
 }
 
 void Engine::CreateJoints()

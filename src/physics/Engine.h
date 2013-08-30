@@ -69,7 +69,7 @@ namespace physics
 		void DestroyCollisions();
 		static void OnNearCollisionCallback (void *data, CollisionHandle geom1, CollisionHandle geom2);
 		
-		// Called by bodies which don't handling their own.
+		// called on bodies which don't handling their own collision
 		void OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2);
 		
 	public:
