@@ -64,9 +64,12 @@ Engine::Engine()
 , _formation_scene(ref(new form::Scene(512, 512)))
 , _tick_roster(ref(new core::locality::Roster))
 {
+#if ! defined(NDEBUG)
 	dSetErrorHandler(odeMessageFunction);
 	dSetDebugHandler(odeMessageFunction);
 	dSetMessageHandler(odeMessageFunction);
+#endif
+
 	dInitODE2(0);
 }
 
