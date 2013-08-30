@@ -228,7 +228,7 @@ ReentryGuard reentry_guard(counter);
 // Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
 { 
-	ASSERT(& ref >= reinterpret_cast<T *>(0x10000)); 
+	VerifyOp(& ref, >=, reinterpret_cast<T *>(0x10000)); 
 }
 
 // Additionally, pointers may be null.
