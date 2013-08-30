@@ -987,14 +987,13 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, b
 	return num_rendered_objects;
 }
 
-void Engine::DebugDraw(Matrix44 const & CRAG_DEBUG_PARAM(projection_matrix))
+#if defined(CRAG_GFX_DEBUG)
+void Engine::DebugDraw(Matrix44 const & projection_matrix)
 {
 	if (capture_enable)
 	{
 		return;
 	}
-
-#if defined(CRAG_GFX_DEBUG)
 
 	SetCurrentProgram(nullptr);
 	SetCurrentMesh(nullptr);
@@ -1035,9 +1034,12 @@ void Engine::DebugDraw(Matrix44 const & CRAG_DEBUG_PARAM(projection_matrix))
 		Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
 	}
 #endif	// defined (GATHER_STATS)
-	
-#endif	// defined(CRAG_GFX_DEBUG)
 }
+#else
+void Engine::DebugDraw(Matrix44 const &)
+{
+}	
+#endif	// defined(CRAG_GFX_DEBUG)
 
 void Engine::ProcessRenderTiming()
 {
