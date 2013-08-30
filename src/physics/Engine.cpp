@@ -47,7 +47,6 @@ Engine::Engine()
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
 , _formation_scene(ref(new form::Scene(512, 512)))
-, _contacts(65536)
 , _tick_roster(ref(new core::locality::Roster))
 {
 	dInitODE2(0);
@@ -214,14 +213,13 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 	}
 	
 	// Time to increase max_num_contacts?
-	ASSERT (num_contacts <= max_contacts_per_collision);
+	ASSERT (num_contacts * 2 <= max_contacts_per_collision);
 	
-	dContact * contacts = _contacts.grow(num_contacts);
-	
+	_contacts.reserve(_contacts.size() + num_contacts);
 	for (int index = 0; index < num_contacts; ++ index)
 	{
 		dContactGeom & contact_geom = contact_geoms[index];
-		dContact & contact = contacts[index];
+		dContact contact;
 		
 		contact.geom = contact_geom;
 		
@@ -234,6 +232,8 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 		
 		contact.geom.g1 = geom1;
 		contact.geom.g2 = geom2;
+		
+		_contacts.push_back(contact);
 	}
 }
 

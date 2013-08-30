@@ -11,8 +11,6 @@
 
 #include "defs.h"
 
-#include "smp/vector.h"
-
 #include <ode/contact.h>
 
 namespace core
@@ -36,10 +34,14 @@ namespace physics
 	// The physics singleton.
 	class Engine
 	{
+		////////////////////////////////////////////////////////////////////////////////
 		// types
-		typedef smp::vector<Contact> ContactVector;
-	public:
 		
+		// store of all the contacts that occur in a Tick
+		typedef std::vector<Contact> ContactVector;
+
+	public:
+		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Engine();
 		~Engine();
