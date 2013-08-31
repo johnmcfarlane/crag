@@ -10,7 +10,7 @@
 #pragma once
 
 #include "form/defs.h"
-#include "form/node/Shader.h"
+#include "form/Shader.h"
 
 #include "core/Random.h"
 

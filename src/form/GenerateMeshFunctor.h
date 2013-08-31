@@ -11,7 +11,7 @@
 
 #include "Node.h"
 
-#include "form/scene/Mesh.h"
+#include "Mesh.h"
 #include "ForEachNodeFace.h"
 
 

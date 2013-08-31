@@ -19,7 +19,7 @@
 #include "gfx/Scene.h"
 
 #include "form/Engine.h"
-#include "form/node/NodeBuffer.h"
+#include "form/NodeBuffer.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"

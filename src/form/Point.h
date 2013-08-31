@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "form/scene/Vertex.h"
-
+#include "form/Vertex.h"
 
 namespace form
 {

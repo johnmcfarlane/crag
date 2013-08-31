@@ -11,7 +11,7 @@
 
 #include "Mesh.h"
 
-#include "form/node/Point.h"
+#include "form/Point.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"

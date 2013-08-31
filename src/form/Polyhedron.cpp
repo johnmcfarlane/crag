@@ -13,8 +13,8 @@
 #include "VertexBuffer.h"
 
 #include "form/Formation.h"
-#include "form/node/PointBuffer.h"
-#include "form/node/Shader.h"
+#include "form/PointBuffer.h"
+#include "form/Shader.h"
 
 #include "core/memory.h"
 

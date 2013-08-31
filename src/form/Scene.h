@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/scene/Polyhedron.h"
+#include "form/Polyhedron.h"
 
 #include "geom/origin.h"
 

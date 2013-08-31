@@ -11,7 +11,7 @@
 
 #include "gfx/object/LeafNode.h"
 
-#include "form/scene/MeshBufferObject.h"
+#include "form/MeshBufferObject.h"
 
 #include "core/double_buffer.h"
 

@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "form/scene/Mesh.h"
-#include "form/scene/Scene.h"
+#include "form/Mesh.h"
+#include "form/Scene.h"
 
 #include "sim/defs.h"
 

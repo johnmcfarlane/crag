@@ -16,7 +16,7 @@
 #include "physics/Engine.h"
 
 #include "form/Engine.h"
-#include "form/node/NodeBuffer.h"
+#include "form/NodeBuffer.h"
 
 #include "gfx/SetOriginEvent.h"
 

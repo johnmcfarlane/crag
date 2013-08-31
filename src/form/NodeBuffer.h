@@ -15,7 +15,7 @@
 
 #include "smp/vector.h"
 
-#include "form/node/CalculateNodeScoreFunctor.h"
+#include "form/CalculateNodeScoreFunctor.h"
 
 
 namespace form

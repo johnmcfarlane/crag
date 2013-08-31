@@ -24,8 +24,6 @@ namespace form
 
 namespace sim
 {
-	class PlanetaryBody;
-	
 	// A planet is a celestial body which is represented using the formation system.
 	class PlanetController : public Controller
 	{

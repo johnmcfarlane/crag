@@ -14,9 +14,9 @@
 #include "sim/Engine.h"
 
 #include "form/Formation.h"
-#include "form/node/Node.h"
-#include "form/node/Point.h"
-#include "form/scene/Polyhedron.h"
+#include "form/Node.h"
+#include "form/Point.h"
+#include "form/Polyhedron.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"

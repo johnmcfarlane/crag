@@ -10,9 +10,8 @@
 #include "pch.h"
 
 #include "form/Formation.h"
-
-#include "form/node/Shader.h"
-#include "form/scene/Mesh.h"
+#include "form/Mesh.h"
+#include "form/Shader.h"
 
 using namespace form;
 

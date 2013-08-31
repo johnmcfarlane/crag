@@ -8,8 +8,8 @@
 //
 
 #include "Polyhedron.h"
-#include "form/node/ForEachNodeFace.h"
-#include "form/node/ForEachChildNode.h"
+#include "ForEachNodeFace.h"
+#include "ForEachChildNode.h"
 
 #include "geom/Intersection.h"
 

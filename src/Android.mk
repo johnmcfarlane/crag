@@ -26,18 +26,18 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
 	$(SDL_PATH)/src/core/Statistics.cpp \
 	$(SDL_PATH)/src/form/Engine.cpp \
 	$(SDL_PATH)/src/form/Formation.cpp \
-	$(SDL_PATH)/src/form/node/CalculateNodeScoreFunctor.cpp \
-	$(SDL_PATH)/src/form/node/NodeBuffer.cpp \
-	$(SDL_PATH)/src/form/node/Node.cpp \
-	$(SDL_PATH)/src/form/node/PointBuffer.cpp \
-	$(SDL_PATH)/src/form/node/Point.cpp \
-	$(SDL_PATH)/src/form/node/RootNode.cpp \
-	$(SDL_PATH)/src/form/scene/MeshBufferObject.cpp \
-	$(SDL_PATH)/src/form/scene/Mesh.cpp \
-	$(SDL_PATH)/src/form/scene/Polyhedron.cpp \
-	$(SDL_PATH)/src/form/scene/Scene.cpp \
-	$(SDL_PATH)/src/form/scene/VertexBuffer.cpp \
-	$(SDL_PATH)/src/form/scene/Vertex.cpp \
+	$(SDL_PATH)/src/form/CalculateNodeScoreFunctor.cpp \
+	$(SDL_PATH)/src/form/NodeBuffer.cpp \
+	$(SDL_PATH)/src/form/Node.cpp \
+	$(SDL_PATH)/src/form/PointBuffer.cpp \
+	$(SDL_PATH)/src/form/Point.cpp \
+	$(SDL_PATH)/src/form/RootNode.cpp \
+	$(SDL_PATH)/src/form/MeshBufferObject.cpp \
+	$(SDL_PATH)/src/form/Mesh.cpp \
+	$(SDL_PATH)/src/form/Polyhedron.cpp \
+	$(SDL_PATH)/src/form/Scene.cpp \
+	$(SDL_PATH)/src/form/VertexBuffer.cpp \
+	$(SDL_PATH)/src/form/Vertex.cpp \
 	$(SDL_PATH)/src/gfx/Cuboid.cpp \
 	$(SDL_PATH)/src/gfx/Debug.cpp \
 	$(SDL_PATH)/src/gfx/Engine.cpp \

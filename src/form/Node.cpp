@@ -9,13 +9,11 @@
 
 #include "pch.h"
 
-#include "form/node/Node.h"
-#include "form/node/PointBuffer.h"
-#include "form/node/Shader.h"
-
 #include "form/Formation.h"
-
-#include "form/scene/Polyhedron.h"
+#include "form/Node.h"
+#include "form/PointBuffer.h"
+#include "form/Polyhedron.h"
+#include "form/Shader.h"
 
 #include "core/Random.h"
 

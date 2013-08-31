@@ -14,8 +14,8 @@
 #include "physics/Engine.h"
 #include "physics/MeshSurround.h"
 
-#include "form/scene/ForEachFaceInSphere.h"
-#include "form/scene/Scene.h"
+#include "form/ForEachFaceInSphere.h"
+#include "form/Scene.h"
 
 #include "core/ConfigEntry.h"
 

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/node/RootNode.h"
+#include "form/RootNode.h"
 
 #include "geom/origin.h"
 

@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "form/node/Point.h"
-
+#include "form/Point.h"
 
 namespace form
 {

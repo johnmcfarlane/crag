@@ -14,20 +14,20 @@ add_executable(crag
 	src/core/Random.cpp
 	src/core/Roster.cpp
 	src/core/Statistics.cpp
+	src/form/CalculateNodeScoreFunctor.cpp
 	src/form/Engine.cpp
 	src/form/Formation.cpp
-	src/form/node/CalculateNodeScoreFunctor.cpp
-	src/form/node/NodeBuffer.cpp
-	src/form/node/Node.cpp
-	src/form/node/PointBuffer.cpp
-	src/form/node/Point.cpp
-	src/form/node/RootNode.cpp
-	src/form/scene/MeshBufferObject.cpp
-	src/form/scene/Mesh.cpp
-	src/form/scene/Polyhedron.cpp
-	src/form/scene/Scene.cpp
-	src/form/scene/VertexBuffer.cpp
-	src/form/scene/Vertex.cpp
+	src/form/MeshBufferObject.cpp
+	src/form/Mesh.cpp
+	src/form/NodeBuffer.cpp
+	src/form/Node.cpp
+	src/form/Point.cpp
+	src/form/PointBuffer.cpp
+	src/form/Polyhedron.cpp
+	src/form/RootNode.cpp
+	src/form/Scene.cpp
+	src/form/VertexBuffer.cpp
+	src/form/Vertex.cpp
 	src/gfx/Cuboid.cpp
 	src/gfx/Debug.cpp
 	src/gfx/Engine.cpp

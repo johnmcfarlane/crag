@@ -14,7 +14,7 @@
 
 #include "Formation.h"
 
-#include "form/node/NodeBuffer.h"
+#include "form/NodeBuffer.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"

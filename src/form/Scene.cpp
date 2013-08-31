@@ -14,9 +14,8 @@
 
 #include "Mesh.h"
 
-#include "form/node/NodeBuffer.h"
-
-#include "form/scene/Polyhedron.h"
+#include "form/NodeBuffer.h"
+#include "form/Polyhedron.h"
 
 using namespace form;
 

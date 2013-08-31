@@ -27,18 +27,18 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/Statistics.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
 	$(CRAG_PATH)/form/Formation.cpp \
-	$(CRAG_PATH)/form/node/CalculateNodeScoreFunctor.cpp \
-	$(CRAG_PATH)/form/node/NodeBuffer.cpp \
-	$(CRAG_PATH)/form/node/Node.cpp \
-	$(CRAG_PATH)/form/node/PointBuffer.cpp \
-	$(CRAG_PATH)/form/node/Point.cpp \
-	$(CRAG_PATH)/form/node/RootNode.cpp \
-	$(CRAG_PATH)/form/scene/MeshBufferObject.cpp \
-	$(CRAG_PATH)/form/scene/Mesh.cpp \
-	$(CRAG_PATH)/form/scene/Polyhedron.cpp \
-	$(CRAG_PATH)/form/scene/Scene.cpp \
-	$(CRAG_PATH)/form/scene/VertexBuffer.cpp \
-	$(CRAG_PATH)/form/scene/Vertex.cpp \
+	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \
+	$(CRAG_PATH)/form/NodeBuffer.cpp \
+	$(CRAG_PATH)/form/Node.cpp \
+	$(CRAG_PATH)/form/PointBuffer.cpp \
+	$(CRAG_PATH)/form/Point.cpp \
+	$(CRAG_PATH)/form/RootNode.cpp \
+	$(CRAG_PATH)/form/MeshBufferObject.cpp \
+	$(CRAG_PATH)/form/Mesh.cpp \
+	$(CRAG_PATH)/form/Polyhedron.cpp \
+	$(CRAG_PATH)/form/Scene.cpp \
+	$(CRAG_PATH)/form/VertexBuffer.cpp \
+	$(CRAG_PATH)/form/Vertex.cpp \
 	$(CRAG_PATH)/gfx/Cuboid.cpp \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \

@@ -14,10 +14,9 @@
 #include "ExpandNodeFunctor.h"
 #include "GatherExpandableNodesFunctor.h"
 #include "GenerateMeshFunctor.h"
+#include "Polyhedron.h"
 #include "Quaterna.h"
 #include "Shader.h"
-
-#include "form/scene/Polyhedron.h"
 
 #include "smp/for_each.h"
 

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/node/Shader.h"
+#include "form/Shader.h"
 
 #include "geom/origin.h"
 

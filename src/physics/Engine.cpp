@@ -14,7 +14,7 @@
 #include "Body.h"
 #include "MeshSurround.h"
 
-#include "form/scene/Scene.h"
+#include "form/Scene.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"

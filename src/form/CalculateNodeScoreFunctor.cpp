@@ -11,7 +11,7 @@
 
 #include "CalculateNodeScoreFunctor.h"
 
-#include "form/node/Node.h"
+#include "form/Node.h"
 
 #include "core/ConfigEntry.h"
 
