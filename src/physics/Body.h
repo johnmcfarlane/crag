@@ -65,14 +65,10 @@ namespace physics
 		void AddRelForce(Vector3 const & force);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
-		virtual Sphere3 GetBoundingSphere() const = 0;
-		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
-		
-		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
-		virtual void OnDeferredCollisionWithPlanet(Body const & body, IntersectionFunctorRef const & functor) const;
-		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const;
-		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
-		
+		virtual bool OnCollision(Body const & that_body) const = 0;
+		virtual bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const;
+		virtual bool OnCollisionWithRay(Body const & body, Ray3 const & ray) const;
+
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		

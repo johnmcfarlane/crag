@@ -216,29 +216,14 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-bool Body::OnCollision(Engine &, Body const &) const
+bool Body::OnCollisionWithSolid(Body const &, Sphere3 const &) const
 {
 	return false;
 }
 
-void Body::OnDeferredCollisionWithBox(Body const &, IntersectionFunctorRef const &) const
+bool Body::OnCollisionWithRay(Body const &, Ray3 const &) const
 {
-	ASSERT(false);
-}
-
-void Body::OnDeferredCollisionWithPlanet(Body const &, IntersectionFunctorRef const &) const
-{
-	ASSERT(false);
-}
-
-void Body::OnDeferredCollisionWithRay(Body const &, IntersectionFunctorRef const &) const
-{
-	ASSERT(false);
-}
-
-void Body::OnDeferredCollisionWithSphere(Body const &, IntersectionFunctorRef const &) const
-{
-	ASSERT(false);
+	return false;
 }
 
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)

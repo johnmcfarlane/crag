@@ -73,53 +73,12 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 	gravity += contribution;
 }
 
-bool PlanetBody::OnCollision(Engine & engine, Body const & that_body) const
+bool PlanetBody::OnCollision(Body const & body) const
 {
-	CollisionHandle that_collision_handle = that_body.GetCollisionHandle();
-	CollisionHandle this_collision_handle = GetCollisionHandle();
-
-	dContact contact;
-	ZeroObject(contact);
-	contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
-	contact.surface.mu = planet_collision_friction;
-	contact.surface.bounce = planet_collision_bounce;
-	contact.surface.bounce_vel = .1f;
-	contact.geom.g1 = that_collision_handle;
-	contact.geom.g2 = this_collision_handle;
-	
-	auto f = [&engine, &contact] (Vector3 const & pos, Vector3 const & normal, Scalar depth) {
-		contact.geom.pos[0] = pos.x;
-		contact.geom.pos[1] = pos.y;
-		contact.geom.pos[2] = pos.z;
-		contact.geom.normal[0] = normal.x;
-		contact.geom.normal[1] = normal.y;
-		contact.geom.normal[2] = normal.z;
-		contact.geom.depth = depth;
-	
-		engine.OnContact(contact);
-	};
-
-	that_body.OnDeferredCollisionWithPlanet(* this, physics::IntersectionFunctorRef(f));
-	
-	return true;
+	return body.OnCollision(* this);
 }
 
-void PlanetBody::OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const
-{
-	OnDeferredCollisionWithSimpleBody(body, functor);
-}
-
-void PlanetBody::OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const
-{
-	OnDeferredCollisionWithSimpleBody(body, functor);
-}
-
-void PlanetBody::OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const
-{
-	OnDeferredCollisionWithSimpleBody(body, functor);
-}
-
-void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, IntersectionFunctorRef const & functor) const
+bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// get necessary data for scanning planet surface
@@ -130,7 +89,7 @@ void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, Intersecti
 	{
 		// This can happen if the PlanetBody has just been created 
 		// and the corresponding OnAddFormation message hasn't been read yet.
-		return;
+		return true;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +106,6 @@ void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, Intersecti
 	////////////////////////////////////////////////////////////////////////////////
 	// generate mesh representing the planet surface in the vacinity of the body
 
-	form::Sphere3 collision_sphere = body.GetBoundingSphere();
 	mesh_surround.ClearData();
 
 	auto face_functor = [& mesh_surround] (form::Point & a, form::Point & b, form::Point & c, geom::Vector3f const & normal, float /*score*/)
@@ -155,7 +113,7 @@ void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, Intersecti
 		mesh_surround.AddTriangle(a.pos, b.pos, c.pos, normal);
 	};
 	
-	form::ForEachFaceInSphere(* polyhedron, collision_sphere, face_functor);
+	form::ForEachFaceInSphere(* polyhedron, bounding_sphere, face_functor);
 	
 	mesh_surround.RefreshData();
 	
@@ -176,21 +134,35 @@ void PlanetBody::OnDeferredCollisionWithSimpleBody(Body const & body, Intersecti
 	////////////////////////////////////////////////////////////////////////////////
 	// execute
 
+	dContact contact;
+	ZeroObject(contact);
+	contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
+	contact.surface.mu = planet_collision_friction;
+	contact.surface.bounce = planet_collision_bounce;
+	contact.surface.bounce_vel = .1f;
+	contact.geom.g1 = body_collision_handle;
+	contact.geom.g2 = planet_collision_handle;
+	
 	for (auto index = 0u; index < num_contacts; ++ index)
 	{
 		dContactGeom const & contact_geom = contacts[index];
-		
-		Vector3 position(contact_geom.pos[0], contact_geom.pos[1], contact_geom.pos[2]);	// TODO: Nifty conversion hacks between dVector and Vector3f
-		Vector3 normal(contact_geom.normal[0], contact_geom.normal[1], contact_geom.normal[2]);
-		Scalar depth = contact_geom.depth;
 		ASSERT(contact_geom.g1 == body_collision_handle);
 		ASSERT(contact_geom.g2 == mesh_collision_handle);
 
-		functor(position, normal, depth);
+		contact.geom = contact_geom;
+		_engine.OnContact(contact);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// reset
 	
 	mesh_surround.Disable();
+	
+	return true;
+}
+
+bool PlanetBody::OnCollisionWithRay(Body const & /*body*/, Ray3 const & /*ray*/) const
+{
+	ASSERT(false);
+	return true;
 }

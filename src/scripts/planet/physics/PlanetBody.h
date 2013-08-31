@@ -1,5 +1,5 @@
 //
-//  PlanetaryBody.h
+//  PlanetBody.h
 //  crag
 //
 //  Created by John on 6/20/10.
@@ -23,7 +23,7 @@ namespace physics
 {
 	// Planets are roughly sphere shaped, 
 	// so a spherical body is used to detect near collision,
-	// then PlanetaryBody does the work of colliding with the planet's surface.
+	// then PlanetBody does the work of colliding with the planet's surface.
 	
 	class PlanetBody : public SphericalBody
 	{
@@ -31,19 +31,16 @@ namespace physics
 		// functions
 
 	public:
-		DECLARE_ALLOCATOR(PlanetaryBody);
+		DECLARE_ALLOCATOR(PlanetBody);
 
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Formation const & formation, Scalar radius);
 		
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 	private:
-		virtual bool OnCollision(Engine & engine, Body const & that_body) const;
+		virtual bool OnCollision(Body const & body) const;
 
-		virtual void OnDeferredCollisionWithBox(Body const & body, IntersectionFunctorRef const & functor) const;
-		virtual void OnDeferredCollisionWithRay(Body const & body, IntersectionFunctorRef const & functor) const;
-		virtual void OnDeferredCollisionWithSphere(Body const & body, IntersectionFunctorRef const & functor) const;
-		
-		void OnDeferredCollisionWithSimpleBody(Body const & body, IntersectionFunctorRef const & functor) const;
+		bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const final;
+		bool OnCollisionWithRay(Body const & body, Ray3 const & ray) const final;
 
 		// variables
 		form::Formation const & _formation;

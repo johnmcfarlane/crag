@@ -100,21 +100,7 @@ void RayCast::SetDensity(Scalar)
 	ASSERT(false);
 }
 
-Sphere3 RayCast::GetBoundingSphere() const
+bool RayCast::OnCollision(Body const & body) const
 {
-	Ray3 unit_ray;
-	dGeomRayGet(GetCollisionHandle(), & unit_ray.position[0], & unit_ray.direction[0]);
-	Scalar half_length = GetLength() * .5f;
-
-	Sphere3 bounding_sphere;
-	
-	bounding_sphere.center = geom::Project(unit_ray, half_length);
-	bounding_sphere.radius = half_length;
-	
-	return bounding_sphere;
-}
-
-void RayCast::OnDeferredCollisionWithPlanet(Body const & planet, IntersectionFunctorRef const & functor) const
-{
-	planet.OnDeferredCollisionWithRay(* this, functor);
+	return body.OnCollisionWithRay(* this, GetRay());
 }

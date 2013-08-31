@@ -254,21 +254,20 @@ void Engine::DestroyCollisions()
 // this means the outer shell of the planet.
 void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, CollisionHandle geom2)
 {
-	physics::Engine & engine = * reinterpret_cast<physics::Engine *>(data);
-	
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
 	
-	if (body1.OnCollision(engine, body2))
+	if (body1.OnCollision(body2))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(engine, body1))
+	if (body2.OnCollision(body1))
 	{
 		return;
 	}
 	
+	physics::Engine & engine = * reinterpret_cast<physics::Engine *>(data);
 	engine.OnUnhandledCollision(geom1, geom2);
 }
 
