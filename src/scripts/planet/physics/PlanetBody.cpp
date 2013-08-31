@@ -163,6 +163,5 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 
 bool PlanetBody::OnCollisionWithRay(Body const & /*body*/, Ray3 const & /*ray*/) const
 {
-	ASSERT(false);
 	return true;
 }

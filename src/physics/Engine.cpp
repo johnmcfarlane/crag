@@ -274,9 +274,6 @@ void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, Collisi
 // This is the default handler. It leaves ODE to deal with it. 
 void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 {
-	ASSERT(dGeomGetBody(geom1) != nullptr);
-	ASSERT(dGeomGetBody(geom2) != nullptr);
-
 	// No reason not to keep this nice and high; it's on the stack.
 	int constexpr max_contacts_per_collision = 1024;
 	dContactGeom contact_geoms [max_contacts_per_collision];
