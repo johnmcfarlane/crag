@@ -28,7 +28,6 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 : Location(transformation)
 , _engine(engine)
 , _collision_handle(collision_handle)
-, _roster(engine.GetRoster())
 {
 	// _body_handle
 	if (velocity != nullptr)
@@ -52,12 +51,14 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 	SetGeomTransformation(transformation);
 	
 	// register for physics tick
-	_roster.AddCommand(* this, & Body::Tick);
+	auto & roster = _engine.GetRoster();
+	roster.AddCommand(* this, & Body::Tick);
 }
 
 Body::~Body()
 {
-	_roster.RemoveCommand(* this, & Body::Tick);
+	auto & roster = _engine.GetRoster();
+	roster.RemoveCommand(* this, & Body::Tick);
 
 	if (_body_handle != 0)
 	{

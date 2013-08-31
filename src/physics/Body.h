@@ -93,6 +93,5 @@ namespace physics
 	private:
 		CollisionHandle _collision_handle;	// the collision info
 		BodyHandle _body_handle;	// the dynaical info
-		core::locality::Roster & _roster;
 	};
 }
