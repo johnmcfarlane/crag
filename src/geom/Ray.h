@@ -92,6 +92,19 @@ namespace geom
 		return lhs.position != rhs.position || lhs.direction != rhs.direction;
 	}
 
+	// streaming
+	template <typename S, int N>
+	std::ostream & operator << (std::ostream & out, Ray<S, N> const & ray)
+	{
+		return out << ray.position << '+' << ray.direction;
+	}
+
+	template <typename S, int N>
+	std::istream & operator >> (std::istream & in, Ray<S, N> const & ray)
+	{
+		return in >> ray.position >> '+' >> ray.direction;
+	}
+
 	//////////////////////////////////////////////////////////////////
 	// Ray<S, N> aliases
 	
