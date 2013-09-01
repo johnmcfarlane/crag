@@ -65,6 +65,9 @@ namespace physics
 		void AddRelForce(Vector3 const & force);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
+		void SetIsCollidable(Body const & body, bool collidable);
+		bool IsCollidable(Body const & body) const;
+		
 		virtual bool OnCollision(Body const & that_body) const = 0;
 		virtual bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const;
 		virtual bool OnCollisionWithRay(Body const & body, Ray3 const & ray) const;
@@ -93,5 +96,6 @@ namespace physics
 	private:
 		CollisionHandle _collision_handle;	// the collision info
 		BodyHandle _body_handle;	// the dynaical info
+		Body const * _exception;
 	};
 }

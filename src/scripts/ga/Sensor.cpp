@@ -86,6 +86,10 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray)
 , _ray(ray)
 , _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine())))
 {
+	auto location = entity.GetLocation();
+	auto body = location->GetBody();
+	_ray_cast.SetIsCollidable(* body, false);
+	
 	auto & roster = GetTickRoster();
 	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
 	roster.AddCommand(* this, & Sensor::Tick);

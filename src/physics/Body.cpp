@@ -28,6 +28,7 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 : Location(transformation)
 , _engine(engine)
 , _collision_handle(collision_handle)
+, _exception(nullptr)
 {
 	// _body_handle
 	if (velocity != nullptr)
@@ -215,6 +216,20 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+}
+
+void Body::SetIsCollidable(Body const & body, bool collidable)
+{
+	ASSERT(! collidable);	// incomplete implementation
+	ASSERT(_exception == nullptr);	// || _exception == & body
+	_exception = & body;
+}
+
+bool Body::IsCollidable(Body const & body) const
+{
+	VerifyRef(body);
+	
+	return & body != _exception;
 }
 
 bool Body::OnCollisionWithSolid(Body const &, Sphere3 const &) const

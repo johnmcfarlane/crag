@@ -272,6 +272,11 @@ void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, Collisi
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
 	
+	if (! body1.IsCollidable(body2) || ! body2.IsCollidable(body1))
+	{
+		return;
+	}
+	
 	if (body1.OnCollision(body2))
 	{
 		return;
