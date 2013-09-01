@@ -21,27 +21,6 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // physics::RayCast member definitions
 
-#if defined(VERIFY)
-void RayCast::Verify() const
-{
-	// test length
-	dReal length = GetLength();
-	VerifyOp(length, >=, 0);
-	VerifyEqual(length, length);
-
-	// test position/direction
-	dVector3 position;
-	dVector3 direction;
-	dGeomRayGet(GetCollisionHandle(), position, direction);
-	Ray3 ray(
-		Vector3(position[0], position[1], position[2]),
-		Vector3(direction[0], direction[1], direction[2])
-	);
-	VerifyObject(ray);
-	VerifyTrue(NearEqual(geom::Length(ray), 1, .0001f));
-}
-#endif
-
 RayCast::RayCast(Engine & engine)
 : Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(0))
 {
@@ -104,3 +83,24 @@ bool RayCast::OnCollision(Body const & body) const
 {
 	return body.OnCollisionWithRay(* this, GetRay());
 }
+
+#if defined(VERIFY)
+void RayCast::Verify() const
+{
+	// test length
+	dReal length = GetLength();
+	VerifyOp(length, >=, 0);
+	VerifyEqual(length, length);
+
+	// test position/direction
+	dVector3 position;
+	dVector3 direction;
+	dGeomRayGet(GetCollisionHandle(), position, direction);
+	Ray3 ray(
+		Vector3(position[0], position[1], position[2]),
+		Vector3(direction[0], direction[1], direction[2])
+	);
+	VerifyObject(ray);
+	VerifyTrue(NearEqual(geom::Length(ray), 1, .0001f));
+}
+#endif

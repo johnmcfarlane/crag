@@ -17,10 +17,6 @@ namespace physics
 	class RayCast : public Body
 	{
 	public:
-#if defined(VERIFY)
-		virtual void Verify() const override final;
-#endif
-
 		RayCast(Engine & engine);
 		
 		void SetDirection(Vector3 const & direction);
@@ -36,5 +32,9 @@ namespace physics
 		virtual void SetDensity(Scalar density) override final;
 
 		virtual bool OnCollision(Body const & that_body) const final;
+
+#if defined(VERIFY)
+		virtual void Verify() const override final;
+#endif
 	};
 }
