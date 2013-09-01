@@ -17,19 +17,7 @@
 #include "form/ForEachFaceInSphere.h"
 #include "form/Scene.h"
 
-#include "core/ConfigEntry.h"
-
 using namespace physics;
-
-namespace
-{
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// config constants
-	
-	CONFIG_DEFINE(planet_collision_friction, physics::Scalar, .1f);	// coulomb friction coefficient
-	CONFIG_DEFINE(planet_collision_bounce, physics::Scalar, .50);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
@@ -121,7 +109,7 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 	// collide and generate contacts
 
 	constexpr auto max_num_contacts = 10240;
-	typedef std::array<dContactGeom, max_num_contacts> ContactVector;
+	typedef std::array<ContactGeom, max_num_contacts> ContactVector;
 	ContactVector contacts;
 	
 	int flags = contacts.size();
@@ -131,27 +119,7 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 	std::size_t num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
 	ASSERT(num_contacts <= contacts.size());
 	
-	////////////////////////////////////////////////////////////////////////////////
-	// execute
-
-	dContact contact;
-	ZeroObject(contact);
-	contact.surface.mode = dContactBounce | dContactSlip1 | dContactSlip2;
-	contact.surface.mu = planet_collision_friction;
-	contact.surface.bounce = planet_collision_bounce;
-	contact.surface.bounce_vel = .1f;
-	contact.geom.g1 = body_collision_handle;
-	contact.geom.g2 = planet_collision_handle;
-	
-	for (auto index = 0u; index < num_contacts; ++ index)
-	{
-		dContactGeom const & contact_geom = contacts[index];
-		ASSERT(contact_geom.g1 == body_collision_handle);
-		ASSERT(contact_geom.g2 == mesh_collision_handle);
-
-		contact.geom = contact_geom;
-		_engine.OnContact(contact);
-	}
+	_engine.AddContacts(contacts.begin(), contacts.begin() + num_contacts);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// reset

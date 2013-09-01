@@ -83,7 +83,17 @@ namespace physics
 		
 	public:
 		// Called once individual points of contact have been determined.
-		void OnContact(Contact const & contact);
+		void AddContact(ContactGeom const & contact_geom);
+		
+		template <typename ITERATOR>
+		void AddContacts(ITERATOR begin, ITERATOR end)
+		{
+			auto count = end - begin;	// ITERATOR must be random access
+			_contacts.reserve(_contacts.size() + count);
+			std::for_each(begin, end, [=] (ContactGeom const & contact_geom) {
+				AddContact(contact_geom);
+			});
+		}
 		
 	private:		
 		// variables
@@ -95,6 +105,7 @@ namespace physics
 		
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
 		ContactVector _contacts;
+		dContact _contact;	// permanently stores common properties
 
 		// list of objcets called at end of tick
 		core::locality::Roster & _tick_roster;

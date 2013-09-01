@@ -31,6 +31,7 @@ namespace physics
 	typedef dBodyID BodyHandle;
 	typedef dJointID JointHandle;
 	typedef dContact Contact;
+	typedef dContactGeom ContactGeom;
 	typedef dTriMeshDataID MeshData;
 
 	typedef geom::Vector<Scalar, 3> Vector3;

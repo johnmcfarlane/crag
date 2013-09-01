@@ -37,7 +37,13 @@ using namespace physics;
 
 namespace 
 {
-	CONFIG_DEFINE (collisions, bool, true);
+	////////////////////////////////////////////////////////////////////////////////
+	// config constants
+	
+	CONFIG_DEFINE(collisions, bool, true);
+	CONFIG_DEFINE(contact_surface_friction, physics::Scalar, 1.);	// coulomb friction coefficient
+	CONFIG_DEFINE(contact_surface_bounce, physics::Scalar, .5);
+	CONFIG_DEFINE(contact_surface_bounce_velocity, physics::Scalar, .1);
 
 	STAT (num_contacts, int, .15f);
 
@@ -64,13 +70,22 @@ Engine::Engine()
 , _formation_scene(ref(new form::Scene(512, 512)))
 , _tick_roster(ref(new core::locality::Roster))
 {
+	// init ODE error handling
 #if ! defined(NDEBUG)
 	dSetErrorHandler(odeMessageFunction);
 	dSetDebugHandler(odeMessageFunction);
 	dSetMessageHandler(odeMessageFunction);
 #endif
 
+	// init ODE
 	dInitODE2(0);
+
+	// init _contact
+	ZeroObject(_contact);
+	_contact.surface.mode = dContactBounce;
+	_contact.surface.mu = contact_surface_friction;
+	_contact.surface.bounce = contact_surface_bounce;
+	_contact.surface.bounce_vel = contact_surface_bounce_velocity;
 }
 
 Engine::~Engine()
@@ -276,9 +291,9 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 {
 	// No reason not to keep this nice and high; it's on the stack.
 	int constexpr max_contacts_per_collision = 1024;
-	dContactGeom contact_geoms [max_contacts_per_collision];
+	ContactGeom contact_geoms [max_contacts_per_collision];
 	
-	int num_contacts = dCollide (geom1, geom2, max_contacts_per_collision, contact_geoms, sizeof(dContactGeom));
+	int num_contacts = dCollide (geom1, geom2, max_contacts_per_collision, contact_geoms, sizeof(ContactGeom));
 	if (num_contacts == 0)
 	{
 		return;
@@ -287,34 +302,17 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 	// Time to increase max_num_contacts?
 	ASSERT (num_contacts * 2 <= max_contacts_per_collision);
 	
-	_contacts.reserve(_contacts.size() + num_contacts);
-	for (int index = 0; index < num_contacts; ++ index)
-	{
-		dContactGeom & contact_geom = contact_geoms[index];
-		dContact contact;
-		
-		contact.geom = contact_geom;
-		
-		// init the surface member of the contact
-		dSurfaceParameters & surface = contact.surface;
-		surface.mode = dContactBounce | dContactSoftCFM;
-		surface.mu = 1;
-		surface.bounce = .5f;
-		surface.bounce_vel = .1f;
-		
-		contact.geom.g1 = geom1;
-		contact.geom.g2 = geom2;
-		
-		_contacts.push_back(contact);
-	}
+	AddContacts(contact_geoms, contact_geoms + num_contacts);
 }
 
-void Engine::OnContact(dContact const & contact)
+void Engine::AddContact(ContactGeom const & contact_geom)
 {
 	// geometry sanity tests
-	ASSERT(contact.geom.g1 != contact.geom.g2);
-	ASSERT(contact.geom.depth >= 0);
+	ASSERT(contact_geom.g1 != contact_geom.g2);
+	ASSERT(contact_geom.depth >= 0);
 
+	_contact.geom = contact_geom;
+	_contacts.push_back(_contact);
 	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 
 #if defined(DEBUG_CONTACTS)
@@ -323,6 +321,4 @@ void Engine::OnContact(dContact const & contact)
 	gfx::Debug::AddLine(pos, pos + normal * contact.geom.depth * 100.f);
 	//std::cout << pos << ' ' << normal << ' ' << contact.geom.depth << '\n';
 #endif
-
-	_contacts.push_back(contact);
 }
