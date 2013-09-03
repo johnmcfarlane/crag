@@ -81,7 +81,7 @@ void RayCast::SetDensity(Scalar)
 
 bool RayCast::OnCollision(Body const & body) const
 {
-	return body.OnCollisionWithRay(* this, GetRay());
+	return body.OnCollisionWithRay(* this);
 }
 
 #if defined(VERIFY)

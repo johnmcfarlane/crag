@@ -40,7 +40,7 @@ namespace physics
 		virtual bool OnCollision(Body const & body) const;
 
 		bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const final;
-		bool OnCollisionWithRay(Body const & body, Ray3 const & ray) const final;
+		bool OnCollisionWithRay(Body const & body) const final;
 
 		// variables
 		form::Formation const & _formation;

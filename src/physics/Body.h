@@ -70,7 +70,7 @@ namespace physics
 		
 		virtual bool OnCollision(Body const & that_body) const = 0;
 		virtual bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const;
-		virtual bool OnCollisionWithRay(Body const & body, Ray3 const & ray) const;
+		virtual bool OnCollisionWithRay(Body const & body) const;
 
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);

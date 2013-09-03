@@ -237,7 +237,7 @@ bool Body::OnCollisionWithSolid(Body const &, Sphere3 const &) const
 	return false;
 }
 
-bool Body::OnCollisionWithRay(Body const &, Ray3 const &) const
+bool Body::OnCollisionWithRay(Body const &) const
 {
 	return false;
 }
