@@ -75,26 +75,6 @@ namespace geom
 		return FastDistanceToSurface<S>(a, b, c, s.center) < s.radius;
 	}
 
-	// Returns true if a is in between b and c.
-	template<typename V> bool IsInBetween(V const & a, V const & b, V const & c)
-	{
-		V ab = a - b;
-		V bc = b - c;	
-		if (DotProduct(ab, bc) > 0)
-		{
-			return false;
-		}
-		
-		V ca = c - a;
-		if (DotProduct(bc, ca) > 0)
-		{
-			return false;
-		}
-		
-		return true;
-	}
-
-
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
 	// Intersection tests
