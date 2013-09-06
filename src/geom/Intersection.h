@@ -52,27 +52,27 @@ namespace geom
 	}
 
 	// Returns true iff half-space represented by plane, abc, contains point, p.
-	template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
+	template<typename S, int N> bool Contains(Triangle<S, N> const & triangle, Vector<S, N> const & p) 
 	{
-		return DistanceToSurface<S>(a, b, c, p) < 0;
+		return Distance<S>(triangle, p) < 0;
 	}
 
 	// Returns true iff half-space represented by plane, abc, contains point, p.
-	template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Vector<S, N> const & p) 
+	template<typename S, int N> bool FastContains(Triangle<S, N> const & triangle, Vector<S, N> const & p) 
 	{
-		return FastDistanceToSurface<S>(a, b, c, p) < 0;
+		return FastDistance<S>(triangle, p) < 0;
 	}
 
 	// Returns true iff half-space represented by plane, abc, contains sphere, s.
-	template<typename S, int N> bool Contains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
+	template<typename S, int N> bool Contains(Triangle<S, N> const & triangle, Sphere<S, N> const & s) 
 	{
-		return DistanceToSurface<S>(a, b, c, s.center) < s.radius;
+		return Distance<S>(triangle, s.center) < s.radius;
 	}
 
 	// Returns true iff half-space represented by plane, abc, contains sphere, s.
-	template<typename S, int N> bool FastContains(Vector<S, N> const & a, Vector<S, N> const & b, Vector<S, N> const & c, Sphere<S, N> const & s) 
+	template<typename S, int N> bool FastContains(Triangle<S, N> const & triangle, Sphere<S, N> const & s) 
 	{
-		return FastDistanceToSurface<S>(a, b, c, s.center) < s.radius;
+		return FastDistance<S>(triangle, s.center) < s.radius;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -93,9 +93,9 @@ namespace geom
 	////////////////////////////////////////////////////////////////////////////////
 	// Plane / Line
 
-	// Returns projection along a at which intersection occurs.
+	// Returns projection along line at which intersection with plane occurs.
 	template<typename S, int N> 
-	S GetIntersection(Ray<S, N> const & plane, Ray<S, N> const & line)
+	S GetIntersection(Plane<S, N> const & plane, Ray<S, N> const & line)
 	{
 		S n = DotProduct(plane.position - line.position, plane.direction);
 		if (n == 0)

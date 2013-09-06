@@ -156,8 +156,10 @@
 #include "geom/Vector4.h"
 #include "geom/Distance.h"
 #include "geom/Magnitude.h"
+#include "geom/Plane.h"
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
+#include "geom/Triangle.h"
 
 #include "ipc/Handle_Impl.h"
 #include "ipc/Object.h"

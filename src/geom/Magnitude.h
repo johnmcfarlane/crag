@@ -11,8 +11,8 @@
 
 #pragma once
 
-// WARNING: Must include one of the VectorN.h headers before this.
-// WARNING: Do not directly include Vector.h.
+#include "Ray.h"
+#include "Triangle.h"
 
 namespace geom
 {
@@ -95,11 +95,11 @@ namespace geom
 	}
 
 	// Given the positions of the corners of a triangle, returns the area of the triangle.
-	template<typename S, typename V> S TriangleArea(V const & a, V const & b, V const & c)
+	template<typename S, int N> S Area(Triangle<S, N> const & t)
 	{
-		S ab = Length(a - b);
-		S bc = Length(b - c);
-		S ca = Length(c - a);
+		S ab = Length(t.points[0] - t.points[1]);
+		S bc = Length(t.points[1] - t.points[2]);
+		S ca = Length(t.points[2] - t.points[0]);
 		return TriangleArea(ab, bc, ca);
 	}
 

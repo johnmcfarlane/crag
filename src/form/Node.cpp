@@ -216,22 +216,20 @@ void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 
 bool form::Node::InitScoreParameters()
 {
-	geom::Vector3f const & a = ref(triple[0].corner).pos;
-	geom::Vector3f const & b = ref(triple[1].corner).pos;
-	geom::Vector3f const & c = ref(triple[2].corner).pos;
+	Triangle surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
 	
-	normal = TriangleNormal(a, b, c);
+	normal = geom::Normal(surface);
 	ASSERT(normal == normal);
 	ASSERT(LengthSq(normal) > 0);
 	FastNormalize(normal);
 	
-	area = geom::TriangleArea<float>(a, b, c);
+	area = geom::Area(surface);
 	if (area == 0) 
 	{
 		return false;
 	}
 	
-	center = (a + b + c) / 3.f;
+	center = geom::Center(surface);
 	return true;
 }
 

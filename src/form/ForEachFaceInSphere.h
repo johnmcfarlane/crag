@@ -24,13 +24,11 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// helper classes and functions
 
-	typedef std::array<Vector3, 3> Triangle;
-
 	bool TouchesProjection(Vector3 const & pyramid_tip, Triangle const & pyramid_base, Sphere3 const & sphere)
 	{
-		return FastContains(pyramid_tip, pyramid_base[0], pyramid_base[2], sphere) 
-		&& FastContains(pyramid_tip, pyramid_base[1], pyramid_base[0], sphere) 
-		&& FastContains(pyramid_tip, pyramid_base[2], pyramid_base[1], sphere);
+		return FastContains(Triangle(pyramid_tip, pyramid_base.points[0], pyramid_base.points[2]), sphere) 
+		&& FastContains(Triangle(pyramid_tip, pyramid_base.points[1], pyramid_base.points[0]), sphere) 
+		&& FastContains(Triangle(pyramid_tip, pyramid_base.points[2], pyramid_base.points[1]), sphere);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -53,9 +51,9 @@ namespace form
 		{
 			// should hold, but doesn't
 			//ASSERT(TouchesProjection(_polyhedron_center, surface, _sphere));
-			ASSERT(surface[0] == node.GetCorner(0).pos);
-			ASSERT(surface[1] == node.GetCorner(1).pos);
-			ASSERT(surface[2] == node.GetCorner(2).pos);
+			ASSERT(surface.points[0] == node.GetCorner(0).pos);
+			ASSERT(surface.points[1] == node.GetCorner(1).pos);
+			ASSERT(surface.points[2] == node.GetCorner(2).pos);
 
 			Node const * children = node.GetChildren();
 			if (children == nullptr)
@@ -85,7 +83,7 @@ namespace form
 			// For each sub-dividing line that can be drawn between node mid-points,
 			auto test_sub_division = [&] (int sub_division_index)
 			{
-				ASSERT(surface[sub_division_index] == node.GetCorner(sub_division_index).pos);
+				ASSERT(surface.points[sub_division_index] == node.GetCorner(sub_division_index).pos);
 
 				auto sub_division_index1 = TriMod(sub_division_index + 1);
 				auto sub_division_index2 = TriMod(sub_division_index + 2);
@@ -94,7 +92,7 @@ namespace form
 				Vector3 const & c = mid_points_pos[sub_division_index1];
 
 				// Test upon which side of the line the given sphere lies.
-				Scalar d = FastDistanceToSurface(_polyhedron_center, b, c, _sphere.center);
+				Scalar d = FastDistance(Triangle(_polyhedron_center, b, c), _sphere.center);
 				Scalar r = _sphere.radius;
 				if (d <= - r)
 				{
@@ -114,9 +112,9 @@ namespace form
 					}
 
 					// Recur for this outer child. 
-					child_surface[sub_division_index] = surface[sub_division_index];
-					child_surface[sub_division_index1] = b;
-					child_surface[sub_division_index2] = c;
+					child_surface.points[sub_division_index] = surface.points[sub_division_index];
+					child_surface.points[sub_division_index1] = b;
+					child_surface.points[sub_division_index2] = c;
 
 					(* this)(children[sub_division_index], child_surface);
 				}
@@ -128,9 +126,9 @@ namespace form
 
 			if (center_counter == 3)
 			{
-				child_surface[0] = mid_points_pos[0];
-				child_surface[1] = mid_points_pos[1];
-				child_surface[2] = mid_points_pos[2];
+				child_surface.points[0] = mid_points_pos[0];
+				child_surface.points[1] = mid_points_pos[1];
+				child_surface.points[2] = mid_points_pos[2];
 
 				(* this)(children[3], child_surface);
 			}
@@ -154,9 +152,9 @@ namespace form
 		if (! ForEachChildNode(root_node, [&] (Node const & child)
 		{
 			Triangle surface;
-			surface[0] = child.GetCorner(0).pos;
-			surface[1] = child.GetCorner(1).pos;
-			surface[2] = child.GetCorner(2).pos;
+			surface.points[0] = child.GetCorner(0).pos;
+			surface.points[1] = child.GetCorner(1).pos;
+			surface.points[2] = child.GetCorner(2).pos;
 
 			// Slightly inefficient as the same sides have their distance calculated multiple times.
 			if (TouchesProjection(polyhedron_center, surface, sphere))
