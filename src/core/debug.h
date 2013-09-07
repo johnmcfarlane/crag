@@ -15,6 +15,7 @@
 #error VERIFY already defined
 #endif
 
+//#define CRAG_DEBUG_SHOW_FUNCTION
 
 ////////////////////////////////////////////////////////////////////////////////
 // Statement macros
@@ -73,7 +74,9 @@ namespace core
 #endif
 
 // FUNCTION_SIGNATURE - a string containing the signature of the current function
-#if defined(__GNUC__)
+#if ! defined(CRAG_DEBUG_SHOW_FUNCTION)
+#define FUNCTION_SIGNATURE ""
+#elif defined(__GNUC__)
 #define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
 #elif defined(WIN32)
 #define FUNCTION_SIGNATURE __FUNCSIG__
