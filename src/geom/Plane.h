@@ -84,12 +84,12 @@ namespace geom
 	template <typename S, int N>
 	std::ostream & operator << (std::ostream & out, Plane<S, N> const & plane)
 	{
-		return out << plane.position << '+' << plane.normal;
+		return out << plane.position << "<>" << plane.normal;
 	}
 
 	template <typename S, int N>
 	std::istream & operator >> (std::istream & in, Plane<S, N> const & plane)
 	{
-		return in >> plane.position >> '+' >> plane.normal;
+		return in >> plane.position >> "<>" >> plane.normal;
 	}
 }
