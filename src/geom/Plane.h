@@ -20,8 +20,8 @@ namespace geom
 	{
 	public:
 		typedef S Scalar;
-		typedef Vector<S, N> Vector;
-		typedef Triangle<S, N> Triangle;
+		typedef ::geom::Vector<S, N> Vector;
+		typedef ::geom::Triangle<S, N> Triangle;
 
 		Plane() = default;
 		Plane(Plane const & rhs) = default;

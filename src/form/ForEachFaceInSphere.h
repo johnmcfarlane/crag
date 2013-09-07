@@ -24,11 +24,11 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// helper classes and functions
 
-	bool TouchesProjection(Vector3 const & pyramid_tip, Triangle const & pyramid_base, Sphere3 const & sphere)
+	bool TouchesProjection(Vector3 const & pyramid_tip, Triangle3 const & pyramid_base, Sphere3 const & sphere)
 	{
-		return FastContains(Triangle(pyramid_tip, pyramid_base.points[0], pyramid_base.points[2]), sphere) 
-		&& FastContains(Triangle(pyramid_tip, pyramid_base.points[1], pyramid_base.points[0]), sphere) 
-		&& FastContains(Triangle(pyramid_tip, pyramid_base.points[2], pyramid_base.points[1]), sphere);
+		return FastContains(Triangle3(pyramid_tip, pyramid_base.points[0], pyramid_base.points[2]), sphere) 
+		&& FastContains(Triangle3(pyramid_tip, pyramid_base.points[1], pyramid_base.points[0]), sphere) 
+		&& FastContains(Triangle3(pyramid_tip, pyramid_base.points[2], pyramid_base.points[1]), sphere);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace form
 		{
 		}
 
-		void operator() (Node const & node, Triangle const & surface) const
+		void operator() (Node const & node, Triangle3 const & surface) const
 		{
 			// should hold, but doesn't
 			//ASSERT(TouchesProjection(_polyhedron_center, surface, _sphere));
@@ -76,7 +76,7 @@ namespace form
 				mid_points[2]->pos
 			};
 
-			Triangle child_surface;
+			Triangle3 child_surface;
 
 			int center_counter = 0;
 
@@ -92,7 +92,7 @@ namespace form
 				Vector3 const & c = mid_points_pos[sub_division_index1];
 
 				// Test upon which side of the line the given sphere lies.
-				Scalar d = FastDistance(Triangle(_polyhedron_center, b, c), _sphere.center);
+				Scalar d = FastDistance(Triangle3(_polyhedron_center, b, c), _sphere.center);
 				Scalar r = _sphere.radius;
 				if (d <= - r)
 				{
@@ -151,7 +151,7 @@ namespace form
 		RootNode const & root_node = polyhedron.GetRootNode();
 		if (! ForEachChildNode(root_node, [&] (Node const & child)
 		{
-			Triangle surface;
+			Triangle3 surface;
 			surface.points[0] = child.GetCorner(0).pos;
 			surface.points[1] = child.GetCorner(1).pos;
 			surface.points[2] = child.GetCorner(2).pos;

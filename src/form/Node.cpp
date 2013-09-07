@@ -216,7 +216,7 @@ void form::Node::Reinit(Polyhedron & polyhedron, PointBuffer & point_buffer)
 
 bool form::Node::InitScoreParameters()
 {
-	Triangle surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
+	Triangle3 surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
 	
 	normal = geom::Normal(surface);
 	ASSERT(normal == normal);

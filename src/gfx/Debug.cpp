@@ -242,12 +242,12 @@ void gfx::Debug::AddLine(Vector3 const & a, Vector3 const & b, ColorPair const &
 	mutex.unlock();
 }
 
-void gfx::Debug::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, ColorPair const & colors)
+void gfx::Debug::AddTriangle(Triangle3 const & triangle, ColorPair const & colors)
 {
 	mutex.lock();
-	tris.AddPoint(a, colors);
-	tris.AddPoint(b, colors);
-	tris.AddPoint(c, colors);
+	tris.AddPoint(triangle.points[0], colors);
+	tris.AddPoint(triangle.points[1], colors);
+	tris.AddPoint(triangle.points[2], colors);
 	mutex.unlock();
 }
 

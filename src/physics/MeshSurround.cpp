@@ -35,7 +35,7 @@ MeshSurround::MeshSurround(MeshSurround && rhs)
 : _mesh_data(rhs._mesh_data)
 , _collision_handle(rhs._collision_handle)
 , _vertices(std::move(rhs._vertices))
-, _triangles(std::move(rhs._triangles))
+, _triangle_indices(std::move(rhs._triangle_indices))
 , _normals(std::move(rhs._normals))
 {
 	rhs._mesh_data = 0;
@@ -72,30 +72,31 @@ void MeshSurround::ClearData()
 {
 	dGeomTriMeshDataBuildSimple(_mesh_data, nullptr, 0, nullptr, 0);
 	_vertices.clear();
-	_triangles.clear();
+	_triangle_indices.clear();
 	_normals.clear();
 }
 
-void MeshSurround::AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, Vector3 const & normal)
+void MeshSurround::AddTriangle(Triangle3 const & triangle, Vector3 const & normal)
 {
 	ASSERT(NearEqual(geom::Length(normal), 1.f, .001f));
 
-	Triangle triangle;
-	triangle[0] = _vertices.size();
-	triangle[1] = triangle[0] + 2;
-	triangle[2] = triangle[0] + 1;
-	_triangles.push_back(triangle);
+	TriangleIndices indices;
+	indices[0] = _vertices.size();
+	indices[1] = indices[0] + 2;
+	indices[2] = indices[0] + 1;
+	_triangle_indices.push_back(indices);
 
-	_vertices.push_back(a);
-	_vertices.push_back(b);
-	_vertices.push_back(c);
+	for (const auto & vertex : triangle.points)
+	{
+		_vertices.push_back(vertex);
+	}
 
 	_normals.push_back(- normal);
 
 #if defined(DEBUG_TRIANGLES)
 	gfx::Debug::Color random_color(Random::sequence.GetUnit<float>(), Random::sequence.GetUnit<float>(), Random::sequence.GetUnit<float>(), .5f);
-	gfx::Debug::AddTriangle(a, b, c, random_color);
-	auto average = (a + b + c) / 3.f;
+	gfx::Debug::AddTriangle(triangle, random_color);
+	auto average = geom::Center(triangle);
 	gfx::Debug::AddLine(average, average + normal, gfx::Debug::Color::White());
 #endif
 }
@@ -104,6 +105,6 @@ void MeshSurround::RefreshData()
 {
 	dGeomTriMeshDataBuildSingle1(_mesh_data,
 		_vertices.data(), sizeof(VerticesVector::value_type), _vertices.size(), 
-		_triangles.data(), _triangles.size() * 3, sizeof(TrianglesVector::value_type), 
+		_triangle_indices.data(), _triangle_indices.size() * 3, sizeof(TriangleIndicesVector::value_type), 
 		_normals.data());
 }

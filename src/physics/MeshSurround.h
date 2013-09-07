@@ -23,9 +23,9 @@ namespace physics
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef std::array<int, 3> Triangle;
+		typedef std::array<int, 3> TriangleIndices;
 		typedef std::vector<Vector3> VerticesVector;
-		typedef std::vector<Triangle> TrianglesVector;
+		typedef std::vector<TriangleIndices> TriangleIndicesVector;
 		typedef std::vector<Vector3> NormalsVector;
 
 	public:
@@ -42,7 +42,7 @@ namespace physics
 		void Disable();
 
 		void ClearData();
-		void AddTriangle(Vector3 const & a, Vector3 const & b, Vector3 const & c, Vector3 const & normal);
+		void AddTriangle(Triangle3 const & triangle, Vector3 const & normal);
 		void RefreshData();
 
 	private:
@@ -52,7 +52,7 @@ namespace physics
 		MeshData _mesh_data;
 		CollisionHandle _collision_handle;
 		VerticesVector _vertices;	// TODO: replace with node buffer
-		TrianglesVector _triangles;
+		TriangleIndicesVector _triangle_indices;
 		NormalsVector _normals;
 	};
 }

@@ -40,4 +40,5 @@ namespace physics
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 	typedef geom::Transformation<Scalar> Transformation;
+	typedef geom::Triangle<Scalar, 3> Triangle3;
 }

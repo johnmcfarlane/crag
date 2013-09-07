@@ -17,18 +17,18 @@ namespace geom
 	{
 	public:
 		typedef S Scalar;
-		typedef Vector<S, N> Vector;
-		typedef std::array<Vector, 3> Array;
+		typedef ::geom::Vector<S, N> Vector;
+		typedef ::std::array<Vector, 3> Array;
 
 		Triangle() = default;
 		Triangle(Triangle const & rhs) = default;
-		explicit Triangle(Array const & rhs)
+		explicit Triangle(std::initializer_list<Vector> rhs)
 		: points(rhs)
 		{
 		}
 		
 		Triangle(Vector const & a, Vector const & b, Vector const & c)
-		: Triangle({{a, b, c}})
+		: points({{a, b, c}})
 		{
 		}
 
