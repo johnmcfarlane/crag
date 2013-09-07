@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Triangle.h"
+
 namespace geom
 {
 	template <typename S, int N>
@@ -34,7 +36,7 @@ namespace geom
 		}
 
 		Plane(Triangle const & triangle) 
-		: Plane(triangle.center(), triangle.normal())
+		: Plane(geom::Center(triangle), geom::Normal(triangle))
 		{
 		}
 

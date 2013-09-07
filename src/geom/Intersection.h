@@ -97,13 +97,13 @@ namespace geom
 	template<typename S, int N> 
 	S GetIntersection(Plane<S, N> const & plane, Ray<S, N> const & line)
 	{
-		S n = DotProduct(plane.position - line.position, plane.direction);
+		S n = DotProduct(plane.position - line.position, plane.normal);
 		if (n == 0)
 		{
 			return 0;
 		}
 		
-		S d = DotProduct(line.direction, plane.direction);
+		S d = DotProduct(line.direction, plane.normal);
 
 		return n / d;
 	}
