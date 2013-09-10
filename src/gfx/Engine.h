@@ -140,7 +140,12 @@ namespace gfx
 		
 		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
 		
+#if defined(CRAG_GFX_DEBUG)
 		void DebugDraw(Matrix44 const & projection_matrix);
+#endif
+#if defined(GATHER_STATS)
+		void DebugText();
+#endif
 
 		void ProcessRenderTiming();
 		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);

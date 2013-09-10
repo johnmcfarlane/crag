@@ -877,9 +877,6 @@ void Engine::RenderFrame()
 		RenderScene();
 		Enable(GL_CULL_FACE);
 	}
-	
-	// Ensures that FormationMesh::PreRender functions correctly.
-	SetCurrentMesh(nullptr);
 
 	VerifyRenderState();
 }
@@ -900,9 +897,10 @@ void Engine::RenderScene()
 	
 	// render forground, transparent elements
 	RenderTransparentPass(foreground_projection_matrix);
-	
-	// render debug-only elephants
-	DebugDraw(foreground_projection_matrix);
+
+#if defined (GATHER_STATS)
+	DebugText();
+#endif
 }
 
 void Engine::InvalidateUniforms()
@@ -915,13 +913,23 @@ void Engine::InvalidateUniforms()
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
-{
+{	
 	// render partially transparent objects
 	Enable(GL_BLEND);
 	glDepthMask(false);
+
 	RenderLayer(projection_matrix, Layer::foreground, false);
-	Disable(GL_BLEND);
+
+	// mesh needs to be reset before next frame
+	// to ensure that FormationMesh::PreRender functions correctly
+	SetCurrentMesh(nullptr);
+
+#if defined(CRAG_GFX_DEBUG)
+	DebugDraw(projection_matrix);
+#endif
+
 	glDepthMask(true);
+	Disable(GL_BLEND);
 }
 
 int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque)
@@ -996,7 +1004,6 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	}
 
 	SetCurrentProgram(nullptr);
-	SetCurrentMesh(nullptr);
 	
 	// calculate model view transformation
 	auto & pov = scene->GetPov();
@@ -1007,13 +1014,30 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	
 	// draw 3D debug elements
 	auto model_view_matrix = model_view_projection.GetMatrix();
-	Debug::Draw(model_view_matrix, projection_matrix);
+
+	glDepthMask(GL_FALSE);
+	if (culling)
+	{
+		Disable(GL_CULL_FACE);
+		Debug::Draw(model_view_matrix, projection_matrix);
+		Enable(GL_CULL_FACE);
+	}
+	else
+	{
+		Debug::Draw(model_view_matrix, projection_matrix);
+	}
+	glDepthMask(GL_TRUE);
+	
 	Debug::Clear();
 	
 	// print camera position
 	STAT_SET (pos, model_view_projection.GetTranslation());
-	
+}
+#endif	// defined(CRAG_GFX_DEBUG)
+
 #if defined (GATHER_STATS)
+void Engine::DebugText()
+{
 	// The string into which is written Debug text.
 	std::stringstream out_stream;
 	
@@ -1033,13 +1057,8 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 		static_cast<SpriteProgram*>(sprite_program)->SetUniforms(app::GetResolution());
 		Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
 	}
-#endif	// defined (GATHER_STATS)
 }
-#else
-void Engine::DebugDraw(Matrix44 const &)
-{
-}	
-#endif	// defined(CRAG_GFX_DEBUG)
+#endif	// defined (GATHER_STATS)
 
 void Engine::ProcessRenderTiming()
 {

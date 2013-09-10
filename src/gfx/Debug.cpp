@@ -155,7 +155,8 @@ namespace
 
 	void DrawPrimatives(bool hidden)
 	{
-		if (hidden) {
+		if (hidden)
+		{
 			glDepthFunc(GL_GREATER);
 		}
 
@@ -163,7 +164,8 @@ namespace
 		lines.Draw(hidden);
 		tris.Draw(hidden);
 
-		if (hidden) {
+		if (hidden)
+		{
 			glDepthFunc(GL_LEQUAL);
 		}
 	}
@@ -375,13 +377,11 @@ void gfx::Debug::Draw(Matrix44 const & model_view_matrix, Matrix44 const & proje
 	
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	Enable(GL_BLEND);
 	
 	DrawPrimatives(false);
 	DrawPrimatives(true);
 	
 	// Unset state
-	Disable(GL_BLEND);
 	glColor3f(1,1,1);
 
 	Verify();
