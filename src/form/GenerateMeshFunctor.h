@@ -42,7 +42,7 @@ namespace form
 		{
 			if (node.IsLeaf()) 
 			{
-				ForEachNodeFace(node, * this);
+				ForEachNodeFace<GenerateMeshFunctor &>(node, * this);
 			}
 		}
 		

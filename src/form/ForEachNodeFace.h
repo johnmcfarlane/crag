@@ -40,7 +40,7 @@ namespace form
 	// Given a Node, node, calculates its triangles and passes them to functor, f, via
 	// member function AddFace(a, b, c, norm) where a, b and c are the points of a triangle 
 	// and norm is the triangle's normal.
-	template<typename FaceFunctor> void ForEachNodeFace(Node const & node, FaceFunctor & f)
+	template<typename FaceFunctor> void ForEachNodeFace(Node const & node, FaceFunctor f)
 	{
 		// Generally, it's advised to call this fn only for leaf nodes. 
 		// But not required.
