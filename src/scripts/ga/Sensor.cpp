@@ -16,7 +16,7 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/Location.h"
+#include "physics/RayCast.h"
 
 #include "gfx/Debug.h"
 
@@ -105,11 +105,16 @@ Sensor::~Sensor()
 
 void Sensor::Tick()
 {
+	float length = _ray_cast.GetLength();
+	float penetration = _ray_cast.GetPenetrationDepth();
+
+	auto previous_ray = _ray_cast.GetRay();
+	auto penetration_position = geom::Project(previous_ray, penetration ? (penetration / length) : 0);	
+	gfx::Debug::AddLine(previous_ray.position, penetration_position, gfx::Debug::Color::Green());
+	gfx::Debug::AddLine(penetration_position, geom::Project(previous_ray, 1.f), gfx::Debug::Color::Red());
+
 	Ray3 scan_ray = GenerateScanRay();
 	_ray_cast.SetRay(scan_ray);
-	
-	gfx::Debug::ColorPair cp(gfx::Debug::Color::White(), gfx::Debug::Color(0,0,0,0));
-	gfx::Debug::AddLine(scan_ray.position, geom::Project(scan_ray, 1.f), cp);
 }
 
 Ray3 Sensor::GetGlobalRay() const

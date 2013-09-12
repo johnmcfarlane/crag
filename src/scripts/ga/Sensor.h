@@ -11,14 +11,17 @@
 
 #include "sim/defs.h"
 
-#include "physics/RayCast.h"
-
 namespace core
 {
 	   namespace locality
 	   {
 			   class Roster;
 	   }
+}
+
+namespace physics
+{
+	class RayCast;
 }
 
 namespace sim
