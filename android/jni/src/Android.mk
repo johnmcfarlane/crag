@@ -25,9 +25,10 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/Random.cpp \
 	$(CRAG_PATH)/core/Roster.cpp \
 	$(CRAG_PATH)/core/Statistics.cpp \
+	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \
+	$(CRAG_PATH)/form/CastRay.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
 	$(CRAG_PATH)/form/Formation.cpp \
-	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \
 	$(CRAG_PATH)/form/NodeBuffer.cpp \
 	$(CRAG_PATH)/form/Node.cpp \
 	$(CRAG_PATH)/form/PointBuffer.cpp \

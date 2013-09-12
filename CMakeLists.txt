@@ -15,6 +15,7 @@ add_executable(crag
 	src/core/Roster.cpp
 	src/core/Statistics.cpp
 	src/form/CalculateNodeScoreFunctor.cpp
+	src/form/CastRay.cpp
 	src/form/Engine.cpp
 	src/form/Formation.cpp
 	src/form/MeshBufferObject.cpp
