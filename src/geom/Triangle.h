@@ -46,6 +46,20 @@ namespace geom
 		Array points;
 	};
 
+	// catches pointless casts and bypasses them
+	template <typename S, int N>
+	Triangle<S, N> const & Cast(Triangle<S, N> const & rhs)
+	{
+		return rhs;
+	}
+
+	// casts between triangles of different scalar types
+	template <typename LHS_S, typename RHS_S, int N>
+	Triangle<LHS_S, N> Cast(Triangle<RHS_S, N> const & rhs)
+	{
+		return Triangle<LHS_S, N>(Cast<LHS_S>(rhs.points[0]), Cast<LHS_S>(rhs.points[1]), Cast<LHS_S>(rhs.points[2]));
+	}
+	
 	template <typename S, int N>
 	Vector<S, N> Center(Triangle<S, N> const & t)
 	{
@@ -56,5 +70,18 @@ namespace geom
 	Vector<S, N> Normal(Triangle<S, N> const & t)
 	{
 		return CrossProduct(t.points[1] - t.points[0], t.points[1] - t.points[2]);
+	}
+
+	// streaming
+	template <typename S, int N>
+	std::ostream & operator << (std::ostream & out, Triangle<S, N> const & triangle)
+	{
+		return out << triangle.points[0] << ";" << triangle.points[1] << ";" << triangle.points[2];
+	}
+
+	template <typename S, int N>
+	std::istream & operator >> (std::istream & in, Triangle<S, N> const & triangle)
+	{
+		return in >> triangle.points[0] >> ";" >> triangle.points[1] >> ";" >> triangle.points[2];
 	}
 }
