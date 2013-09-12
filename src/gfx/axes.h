@@ -60,7 +60,7 @@ namespace gfx
 	template<typename S>
 	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward, geom::Vector<S, 3> const & up)
 	{
-		ASSERT(NearEqual(Length(forward), S(1), S(0.0001)));
+		VerifyNearlyEqual(Length(forward), S(1), S(0.0001));
 		
 		geom::Vector<S, 3> right = Normalized(CrossProduct(forward, up));
 		geom::Vector<S, 3> matrix_up = CrossProduct(right, forward);
@@ -75,18 +75,18 @@ namespace gfx
 	template<typename S>
 	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward)
 	{
-		ASSERT(NearEqual(Length(forward), S(1), S(0.0001)));
+		VerifyNearlyEqual(Length(forward), S(1), S(0.0001));
 
 		geom::Vector<S, 3> up = Perpendicular(forward);
 		Normalize(up);
 		
 		geom::Vector<S, 3> right = CrossProduct(forward, up);
-		ASSERT(NearEqual(Length(right), S(1), S(0.0001)));
+		VerifyNearlyEqual(Length(right), S(1), S(0.0001));
 		
 		// verify axes are perpendicular to one another
-		ASSERT(NearEqual(DotProduct(forward, right), S(0), S(0.0001)));
-		ASSERT(NearEqual(DotProduct(right, up), S(0), S(0.0001)));
-		ASSERT(NearEqual(DotProduct(up, forward), S(0), S(0.0001)));
+		VerifyNearlyEqual(DotProduct(forward, right), S(0), S(0.0001));
+		VerifyNearlyEqual(DotProduct(right, up), S(0), S(0.0001));
+		VerifyNearlyEqual(DotProduct(up, forward), S(0), S(0.0001));
 
 		return geom::Matrix<S, 3, 3>(
 			right.x, right.y, right.z,
