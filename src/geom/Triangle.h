@@ -21,7 +21,7 @@ namespace geom
 		typedef ::std::array<Vector, 3> Array;
 
 		Triangle() = default;
-		Triangle(Triangle const & rhs) = default;
+		Triangle(Triangle const &) = default;
 		explicit Triangle(std::initializer_list<Vector> rhs)
 		: points(rhs)
 		{
@@ -55,7 +55,7 @@ namespace geom
 
 	// casts between triangles of different scalar types
 	template <typename LHS_S, typename RHS_S, int N>
-	Triangle<LHS_S, N> Cast(Triangle<RHS_S, N> const & rhs)
+	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Triangle<LHS_S, N>>::type Cast(Triangle<RHS_S, N> const & rhs)
 	{
 		return Triangle<LHS_S, N>(Cast<LHS_S>(rhs.points[0]), Cast<LHS_S>(rhs.points[1]), Cast<LHS_S>(rhs.points[2]));
 	}

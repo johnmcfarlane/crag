@@ -16,7 +16,7 @@ namespace geom
 	template <typename S, int N> class Ray
 	{
 	public:
-		typedef Vector<S, N> V;
+		typedef typename ::geom::Vector<S, N> V;
 		
 		Ray() 
 		{
