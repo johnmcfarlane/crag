@@ -111,7 +111,7 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang")
 
 # TODO: -Weffc++ -fno-unwind-tables
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DdSINGLE -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
-#set(CMAKE_CXX_FLAGS "-std=c++11 -O1 -pthread -DdSINGLE -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
+#set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -pthread -DdSINGLE -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 dependencies/lib)
