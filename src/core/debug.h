@@ -228,6 +228,19 @@ ReentryGuard reentry_guard(counter);
 		} \
 	)
 
+#define VerifyNearlyEqualLog(A, B, EPSILON) \
+	DO_STATEMENT( \
+		auto a = A; \
+		auto b = B; \
+		if (! NearEqualLog(a, b, EPSILON)) { \
+			::std::ostringstream message; \
+			message << #A "=" << a \
+					<< ", " #B "=" << b \
+					<< ", EPSILON=" << EPSILON; \
+			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
+		} \
+	)
+
 // Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
 { 
@@ -288,6 +301,9 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 	VerifyOp(element, <, end);	// element inside top end of range
 }
 #else
+
+#define VerifyNearlyEqual(A, B, EPSILON) DO_NOTHING
+#define VerifyNearlyEqualLog(A, B, EPSILON) DO_NOTHING
 
 template<typename T> void VerifyRef(T const &) { }
 template<typename T> void VerifyPtr(T const *) { }

@@ -87,6 +87,14 @@ inline bool NearEqual(double a, double b, double error = .0001)
 	return NearEqual<double>(a, b, error);
 }
 
+template<typename T> bool NearEqualLog(T const & a, T const & b, T error)
+{
+	ASSERT(error > 0);
+
+	T ratio = (a > b) ? (a / b) : (a < b) ? (b / a) : 1;
+	return (ratio <= error + 1);
+}
+
 template<typename T> T Squared(T a)
 {
 	return a * a;
