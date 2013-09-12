@@ -219,7 +219,7 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 }
 
-void Body::SetIsCollidable(Body const & body, bool collidable)
+void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
 {
 	ASSERT(! collidable);	// incomplete implementation
 	ASSERT(_exception == nullptr);	// || _exception == & body
