@@ -13,11 +13,13 @@
 
 namespace physics
 {
-	// Represents a ray to the physics system; has collision by is not dynamic
+	// Represents a ray to the physics system; has collision by is not dynamic.
+	// TODO: Change interface so that Ray3 has normalized direction
 	class RayCast : public Body
 	{
 	public:
 		RayCast(Engine & engine);
+		~RayCast();
 		
 		void SetDirection(Vector3 const & direction);
 		Vector3 GetDirection() const;
@@ -27,14 +29,20 @@ namespace physics
 		Ray3 GetRay() const;
 
 		Scalar GetLength() const;
+		Scalar GetPenetrationDepth() const;
 
+		void SetSample(float depth) const;
+		void ResetSample();
 	private:
 		virtual void SetDensity(Scalar density) override final;
 
 		virtual bool OnCollision(Body const & that_body) const final;
-
+		
 #if defined(VERIFY)
 		virtual void Verify() const override final;
 #endif
+
+		float _penetration_depth;
+		mutable float _min_sample;
 	};
 }

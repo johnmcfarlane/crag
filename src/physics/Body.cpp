@@ -11,6 +11,7 @@
 
 #include "Body.h"
 #include "Engine.h"
+#include "RayCast.h"
 
 #include "geom/Matrix33.h"
 
@@ -237,9 +238,31 @@ bool Body::OnCollisionWithSolid(Body const &, Sphere3 const &) const
 	return false;
 }
 
-bool Body::OnCollisionWithRay(Body const &) const
+bool Body::OnCollisionWithRay(Body const & that_body) const
 {
-	return false;
+	auto that_collision_handle = that_body.GetCollisionHandle();
+	auto this_collision_handle = GetCollisionHandle();
+
+#if defined(NDEBUG)
+	constexpr uint16_t max_contacts = 1;
+#else
+	constexpr uint16_t max_contacts = 2;
+#endif
+	dContactGeom contacts[max_contacts];
+	std::size_t num_contacts = dCollide(this_collision_handle, that_collision_handle, max_contacts, contacts, sizeof(contacts[0]));
+	ASSERT(num_contacts <= 1);
+	
+	if (num_contacts > 0)
+	{
+		auto & collision_geom = contacts[0];
+		ASSERT(collision_geom.g1 == this_collision_handle);
+		ASSERT(collision_geom.g2 == that_collision_handle);
+		
+		auto & ray_cast = static_cast<RayCast const &>(that_body);
+		ray_cast.SetSample(collision_geom.depth);
+	}
+	
+	return true;
 }
 
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)

@@ -13,7 +13,9 @@
 
 #include "physics/Engine.h"
 #include "physics/MeshSurround.h"
+#include "physics/RayCast.h"
 
+#include "form/CastRay.h"
 #include "form/ForEachFaceInSphere.h"
 #include "form/Scene.h"
 
@@ -96,7 +98,7 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 
 	mesh_surround.ClearData();
 
-	auto face_functor = [& mesh_surround] (form::Point & a, form::Point & b, form::Point & c, geom::Vector3f const & normal, float /*score*/)
+	auto face_functor = [& mesh_surround] (form::Point const & a, form::Point const & b, form::Point const & c, geom::Vector3f const & normal, float /*score*/)
 	{
 		mesh_surround.AddTriangle(Triangle3(a.pos, b.pos, c.pos), normal);
 	};
@@ -131,5 +133,29 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 
 bool PlanetBody::OnCollisionWithRay(Body const & body) const
 {
+	auto & ray_cast = static_cast<RayCast const &>(body);
+	auto ray = ray_cast.GetRay();
+
+	////////////////////////////////////////////////////////////////////////////////
+	// get necessary data for scanning planet surface
+
+	auto & scene = _engine.GetScene();
+	auto polyhedron = scene.GetPolyhedron(_formation);
+	if (polyhedron == nullptr)
+	{
+		// This can happen if the PlanetBody has just been created 
+		// and the corresponding OnAddFormation message hasn't been read yet.
+		return true;
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// test ray against polyhedron and register result with ray_cast
+
+	auto ray_cast_result = form::CastRay(* polyhedron, ray);
+	if (ray_cast_result.projection >= 0)
+	{
+		ray_cast.SetSample(ray_cast_result.projection);
+	}
+	
 	return true;
 }

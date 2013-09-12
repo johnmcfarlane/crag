@@ -14,6 +14,8 @@
 
 #include "geom/Matrix33.h"
 
+#include "core/Roster.h"
+
 #include <ode/collision.h>
 
 using namespace physics;
@@ -23,7 +25,19 @@ using namespace physics;
 
 RayCast::RayCast(Engine & engine)
 : Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(0))
+, _penetration_depth(0)
+, _min_sample(0)
 {
+	// register for physics tick
+	auto & roster = _engine.GetRoster();
+	roster.AddCommand(* this, & RayCast::ResetSample);
+}
+
+RayCast::~RayCast()
+{
+	// register for physics tick
+	auto & roster = _engine.GetRoster();
+	roster.RemoveCommand(* this, & RayCast::ResetSample);
 }
 
 void RayCast::SetDirection(Vector3 const & direction)
@@ -39,26 +53,32 @@ Vector3 RayCast::GetDirection() const
 	return ray.direction;
 }
 
-void RayCast::SetRay(Ray3 ray)
+void RayCast::SetRay(Ray3 const ray)
 {
 	auto length_squared = geom::LengthSq(ray);
 
-	decltype(length_squared) length;
+	Scalar length;
+	Vector3 unit_direction;
 	if (length_squared == 0)
 	{
 		length = 0;
-		ray.direction = Vector3(1,0,0);
+		unit_direction = Vector3(1,0,0);
 	}
 	else
 	{
 		length = std::sqrt(length_squared);
-		ray.direction /= length;
+		unit_direction = ray.direction / length;
 	}
 
 	dGeomRaySetLength(GetCollisionHandle(), length);
 	dGeomRaySet(GetCollisionHandle(), 
 		ray.position.x, ray.position.y, ray.position.z, 
-		ray.direction.x, ray.direction.y, ray.direction.z);
+		unit_direction.x, unit_direction.y, unit_direction.z);
+
+	_min_sample = length;
+	
+	ASSERT(NearEqual(geom::Length(ray.position - GetRay().position), 0.f, 0.001f));
+	ASSERT(NearEqual(geom::Length(ray.direction - GetRay().direction), 0.f, 0.001f));
 }
 
 Ray3 RayCast::GetRay() const
@@ -72,6 +92,28 @@ Ray3 RayCast::GetRay() const
 Scalar RayCast::GetLength() const
 {
 	return dGeomRayGetLength(GetCollisionHandle());
+}
+
+Scalar RayCast::GetPenetrationDepth() const
+{
+	return _penetration_depth;
+}
+
+void RayCast::SetSample(float depth) const
+{
+	if (depth < _min_sample)
+	{
+		_min_sample = depth;
+	}
+}
+
+void RayCast::ResetSample()
+{
+	ASSERT(_min_sample >= 0);
+	ASSERT(_min_sample <= GetLength());
+	
+	_penetration_depth = _min_sample;
+	_min_sample = GetLength();
 }
 
 void RayCast::SetDensity(Scalar)
