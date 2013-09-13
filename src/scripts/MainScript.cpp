@@ -32,8 +32,12 @@
 
 #include "geom/origin.h"
 
+#include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
 #include "core/Random.h"
+
+CONFIG_DEFINE(num_animats, int, 1);
+
 
 using geom::Vector3f;
 
@@ -54,7 +58,6 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
-	constexpr auto num_animats = 10;
 	std::vector<sim::EntityHandle> animats(num_animats);
 	
 	////////////////////////////////////////////////////////////////////////////////
