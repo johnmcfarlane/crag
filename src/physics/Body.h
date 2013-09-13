@@ -68,9 +68,9 @@ namespace physics
 		void SetIsCollidable(Body const & body, bool collidable);
 		bool IsCollidable(Body const & body) const;
 		
-		virtual bool OnCollision(Body const & that_body) const = 0;
-		virtual bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const;
-		virtual bool OnCollisionWithRay(Body const & body) const;
+		virtual bool OnCollision(Body & that_body) = 0;
+		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere);
+		virtual bool OnCollisionWithRay(Body & body);
 
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);

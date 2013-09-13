@@ -37,10 +37,10 @@ namespace physics
 		
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 	private:
-		virtual bool OnCollision(Body const & body) const;
+		virtual bool OnCollision(Body & body);
 
-		bool OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const final;
-		bool OnCollisionWithRay(Body const & body) const final;
+		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere) final;
+		bool OnCollisionWithRay(Body & body) final;
 
 		// variables
 		form::Formation const & _formation;

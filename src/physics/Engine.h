@@ -55,7 +55,8 @@ namespace physics
 		form::Scene & GetScene();
 		form::Scene const & GetScene() const;
 		
-		core::locality::Roster & GetRoster();
+		core::locality::Roster & GetPreTickRoster();
+		core::locality::Roster & GetPostTickRoster();
 
 		dBodyID CreateBody() const;
 		CollisionHandle CreateBox(Vector3 const & dimensions) const;
@@ -107,8 +108,9 @@ namespace physics
 		ContactVector _contacts;
 		dContact _contact;	// permanently stores common properties
 
-		// list of objcets called at end of tick
-		core::locality::Roster & _tick_roster;
+		// list of objcets called at start/end of tick
+		core::locality::Roster & _pre_tick_roster;
+		core::locality::Roster & _post_tick_roster;
 		
 		// a secondary shape contains mesh data in the vacinity of other objects;
 		// needs its lifetime managed somewhere central to physics simulation

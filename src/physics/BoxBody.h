@@ -27,7 +27,7 @@ namespace physics
 		virtual void SetDensity(Scalar density);
 		
 	protected:
-		virtual bool OnCollision(Body const & that_body) const final;
+		virtual bool OnCollision(Body & that_body) final;
 	};
 	
 }

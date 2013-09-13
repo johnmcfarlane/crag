@@ -29,7 +29,7 @@ namespace physics
 		virtual void SetDensity(Scalar density) override;
 		
 	protected:
-		virtual bool OnCollision(Body const & body) const override;
+		virtual bool OnCollision(Body & body) override;
 	};
 	
 }

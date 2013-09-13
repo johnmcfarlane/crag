@@ -50,7 +50,7 @@ void BoxBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-bool BoxBody::OnCollision(Body const & body) const
+bool BoxBody::OnCollision(Body & body)
 {
 	Vector3 dimensions = GetDimensions();
 	Vector3 extents = dimensions * Scalar(.5);

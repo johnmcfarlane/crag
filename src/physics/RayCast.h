@@ -14,35 +14,39 @@
 namespace physics
 {
 	// Represents a ray to the physics system; has collision by is not dynamic.
-	// TODO: Change interface so that Ray3 has normalized direction
 	class RayCast : public Body
 	{
 	public:
-		RayCast(Engine & engine);
+		RayCast(Engine & engine, Scalar length);
 		~RayCast();
 		
+#if defined(VERIFY)
+		void Verify() const final;
+#endif
+
 		void SetDirection(Vector3 const & direction);
 		Vector3 GetDirection() const;
 		
-		// ray's direction includes its length, i.e. it is not unit length
+		// ray must have unit direction
 		void SetRay(Ray3 ray);
 		Ray3 GetRay() const;
-
-		Scalar GetLength() const;
-		Scalar GetPenetrationDepth() const;
-
-		void SetSample(float depth) const;
-		void ResetSample();
-	private:
-		virtual void SetDensity(Scalar density) override final;
-
-		virtual bool OnCollision(Body const & that_body) const final;
 		
-#if defined(VERIFY)
-		virtual void Verify() const override final;
-#endif
+		void SetLength(Scalar length);
+		Scalar GetLength() const;
+		
+		bool IsContacted() const;
 
-		float _penetration_depth;
-		mutable float _min_sample;
+		Scalar GetContactDistance() const;
+		void SampleContact(Scalar contact_distance);
+
+	private:
+		void ResetContactDistance();
+		
+		void SetDensity(Scalar density) override final;
+
+		bool OnCollision(Body & that_body) final;
+		
+		Scalar _contact_distance;
+		static constexpr Scalar max_contact_distance = std::numeric_limits<Scalar>::max();
 	};
 }

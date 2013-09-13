@@ -40,5 +40,5 @@ namespace form
 	};
 
 	// performs a ray cast on a polyhedron
-	RayCastResult CastRay(Polyhedron const & polyhedron, Ray3 const & ray);
+	RayCastResult CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Scalar length);
 }

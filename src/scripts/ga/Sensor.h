@@ -39,10 +39,16 @@ namespace sim
 		Sensor(Entity & entity, Ray3 const & position);
 		~Sensor();
 
+#if defined(VERIFY)
+		void Verify() const;
+#else
+		void Verify() const { }
+#endif
+
 	private:
 		void Tick();
 		Ray3 GetGlobalRay() const;
-		Ray3 GenerateScanRay() const;
+		void GenerateScanRay() const;
 
 		core::locality::Roster & GetTickRoster();
 
@@ -50,8 +56,9 @@ namespace sim
 		// variables
 
 		Entity & _entity;
-		Ray3 _ray;	// Project(_ray, 1) = average sensor tip
-		std::vector<float> _thruster_mapping;
+		Scalar _length;
 		physics::RayCast & _ray_cast;
+		Ray3 const _local_ray;	// Project(_ray, 1) = average sensor tip
+		std::vector<float> _thruster_mapping;
 	};
 }

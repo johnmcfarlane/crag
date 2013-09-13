@@ -83,9 +83,12 @@ DEFINE_POOL_ALLOCATOR(Sensor, 80);
 
 Sensor::Sensor(Entity & entity, Ray3 const & ray)
 : _entity(entity)
-, _ray(ray)
-, _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine())))
+, _length(geom::Length(ray.direction))
+, _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), _length)))
+, _local_ray(Ray3(ray.position, ray.direction / _length))
 {
+	GenerateScanRay();
+	
 	auto location = entity.GetLocation();
 	auto body = location->GetBody();
 	_ray_cast.SetIsCollidable(* body, false);
@@ -103,34 +106,57 @@ Sensor::~Sensor()
 	delete & _ray_cast;
 }
 
+#if defined(VERIFY)
+void Sensor::Verify() const
+{
+	VerifyObject(_local_ray.position);
+	VerifyIsUnit(_local_ray.direction, .0001f);
+}
+#endif
+
 void Sensor::Tick()
 {
-	float length = _ray_cast.GetLength();
-	float penetration = _ray_cast.GetPenetrationDepth();
+	// draw previous ray result
+	auto length = _ray_cast.GetLength();
+	auto scan_ray = _ray_cast.GetRay();
+	if (_ray_cast.IsContacted())
+	{
+		auto contact_distance = _ray_cast.GetContactDistance();
+		auto penetration_position = geom::Project(scan_ray, contact_distance);	
+		gfx::Debug::AddLine(scan_ray.position, penetration_position, gfx::Debug::Color::Yellow());
+		gfx::Debug::AddLine(penetration_position, geom::Project(scan_ray, length), gfx::Debug::Color::Red());
+	}
+	else
+	{
+		gfx::Debug::AddLine(scan_ray.position, geom::Project(scan_ray, length), gfx::Debug::Color::Green());
+	}
 
-	auto previous_ray = _ray_cast.GetRay();
-	auto penetration_position = geom::Project(previous_ray, penetration ? (penetration / length) : 0);	
-	gfx::Debug::AddLine(previous_ray.position, penetration_position, gfx::Debug::Color::Green());
-	gfx::Debug::AddLine(penetration_position, geom::Project(previous_ray, 1.f), gfx::Debug::Color::Red());
-
-	Ray3 scan_ray = GenerateScanRay();
-	_ray_cast.SetRay(scan_ray);
+	GenerateScanRay();
 }
 
 Ray3 Sensor::GetGlobalRay() const
 {
-	return Transform(_ray, _entity);
+	return Transform(_local_ray, _entity);
 }
 
-Ray3 Sensor::GenerateScanRay() const
+void Sensor::GenerateScanRay() const
 {
-	Ray3 global = GetGlobalRay();
+	VerifyObject(* this);
 	
-	auto length = geom::Length(global.direction);
+	Ray3 scan_ray = GetGlobalRay();
+	VerifyIsUnit(scan_ray.direction, .0001f);
+
+	scan_ray.direction *= _length;
+	
 	auto random_direction = GetRandomDirection(Random::sequence);
-	global.direction += random_direction * length * 0.75f;
+	scan_ray.direction += random_direction * _length * 0.05f;
 	
-	return global;
+	auto scan_length = geom::Length(scan_ray.direction);
+	scan_ray.direction /= scan_length;
+	
+	// generate new ray
+	_ray_cast.SetLength(scan_length);
+	_ray_cast.SetRay(scan_ray);
 }
 
 core::locality::Roster & Sensor::GetTickRoster()

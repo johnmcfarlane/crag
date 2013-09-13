@@ -345,8 +345,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // CastRay implementation
 
-RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray)
+RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Scalar length)
 {
+	VerifyIsUnit(ray.direction, .0001f);
+	VerifyOp(length, >=, 0.f);
+	
 	// get children
 	auto & root_node = polyhedron.GetRootNode();
 	auto children = root_node.GetChildren();
@@ -358,12 +361,11 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray)
 
 	// generate uniforms
 	auto polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
-	auto ray_length = geom::Length(ray);
 	impl::Uniforms uniforms = 
 	{
 		geom::Cast<impl::Scalar>(polyhedron_center),
-		impl::Ray3(geom::Cast<impl::Scalar>(ray.position), geom::Cast<impl::Scalar>(ray.direction / ray_length)),
-		ray_length
+		impl::Ray3(geom::Cast<impl::Scalar>(ray)),
+		length
 	};
 
 	// generate child attributes

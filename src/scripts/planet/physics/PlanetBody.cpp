@@ -63,12 +63,12 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 	gravity += contribution;
 }
 
-bool PlanetBody::OnCollision(Body const & body) const
+bool PlanetBody::OnCollision(Body & body)
 {
 	return body.OnCollision(* this);
 }
 
-bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & bounding_sphere) const
+bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere)
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// get necessary data for scanning planet surface
@@ -131,10 +131,11 @@ bool PlanetBody::OnCollisionWithSolid(Body const & body, Sphere3 const & boundin
 	return true;
 }
 
-bool PlanetBody::OnCollisionWithRay(Body const & body) const
+bool PlanetBody::OnCollisionWithRay(Body & body)
 {
-	auto & ray_cast = static_cast<RayCast const &>(body);
+	auto & ray_cast = static_cast<RayCast &>(body);
 	auto ray = ray_cast.GetRay();
+	auto length = ray_cast.GetLength();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// get necessary data for scanning planet surface
@@ -151,10 +152,10 @@ bool PlanetBody::OnCollisionWithRay(Body const & body) const
 	////////////////////////////////////////////////////////////////////////////////
 	// test ray against polyhedron and register result with ray_cast
 
-	auto ray_cast_result = form::CastRay(* polyhedron, ray);
+	auto ray_cast_result = form::CastRay(* polyhedron, ray, length);
 	if (ray_cast_result.projection >= 0)
 	{
-		ray_cast.SetSample(ray_cast_result.projection);
+		ray_cast.SampleContact(ray_cast_result.projection);
 	}
 	
 	return true;

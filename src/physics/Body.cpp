@@ -53,13 +53,13 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 	SetGeomTransformation(transformation);
 	
 	// register for physics tick
-	auto & roster = _engine.GetRoster();
+	auto & roster = _engine.GetPreTickRoster();
 	roster.AddCommand(* this, & Body::Tick);
 }
 
 Body::~Body()
 {
-	auto & roster = _engine.GetRoster();
+	auto & roster = _engine.GetPreTickRoster();
 	roster.RemoveCommand(* this, & Body::Tick);
 
 	if (_body_handle != 0)
@@ -233,12 +233,12 @@ bool Body::IsCollidable(Body const & body) const
 	return & body != _exception;
 }
 
-bool Body::OnCollisionWithSolid(Body const &, Sphere3 const &) const
+bool Body::OnCollisionWithSolid(Body &, Sphere3 const &)
 {
 	return false;
 }
 
-bool Body::OnCollisionWithRay(Body const & that_body) const
+bool Body::OnCollisionWithRay(Body & that_body)
 {
 	auto that_collision_handle = that_body.GetCollisionHandle();
 	auto this_collision_handle = GetCollisionHandle();
@@ -258,8 +258,8 @@ bool Body::OnCollisionWithRay(Body const & that_body) const
 		ASSERT(collision_geom.g1 == this_collision_handle);
 		ASSERT(collision_geom.g2 == that_collision_handle);
 		
-		auto & ray_cast = static_cast<RayCast const &>(that_body);
-		ray_cast.SetSample(collision_geom.depth);
+		auto & ray_cast = static_cast<RayCast &>(that_body);
+		ray_cast.SampleContact(collision_geom.depth);
 	}
 	
 	return true;
