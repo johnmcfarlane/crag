@@ -70,8 +70,10 @@ namespace physics
 		
 		void Tick(double delta_time, Ray3 const & camera_ray);
 		
-		void ToggleCollisions();
+		// use sparingly
+		Scalar CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
 		
+		void ToggleCollisions();
 	private:
 		void CreateCollisions();
 		void CreateJoints();

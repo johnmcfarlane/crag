@@ -13,6 +13,7 @@
 
 #include "Body.h"
 #include "MeshSurround.h"
+#include "RayCast.h"
 
 #include "form/Scene.h"
 
@@ -56,6 +57,19 @@ namespace
 		DEBUG_BREAK("ODE#%d: %s", errnum, buffer); 
 	}
 #endif
+
+	void OnCastRayCollision(void *, CollisionHandle body_handle, CollisionHandle ray_handle)
+	{
+		ASSERT(dGeomGetClass(ray_handle) == dRayClass);
+
+		void * body_data = dGeomGetData (body_handle);
+		Body & body = ref(static_cast<Body *>(body_data));
+	
+		void * ray_data = dGeomGetData (ray_handle);
+		RayCast & ray_cast = ref(static_cast<RayCast *>(ray_data));
+	
+		body.OnCollisionWithRay(ray_cast);
+	}
 }
 CONFIG_DEFINE (collisions_parallelization, bool, true);
 
@@ -230,6 +244,28 @@ void Engine::Tick(double delta_time, Ray3 const & camera_ray)
 	
 	// call objects that want to know that physics has ticked
 	_post_tick_roster.Call();
+}
+
+float Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
+{
+	VerifyIsUnit(ray, .0001f);
+	
+	// create physics::RayCast object
+	RayCast ray_cast(* this, length);
+	ray_cast.SetRay(ray);
+	
+	// don't collide against given exception object
+	if (exception != nullptr)
+	{
+		ray_cast.SetIsCollidable(* exception, false);
+	}
+	
+	// perform collision between ray_cast and all pre-existing objects
+	auto handle = ray_cast.GetCollisionHandle();
+	dSpaceCollide2(reinterpret_cast<CollisionHandle>(space), handle, nullptr, OnCastRayCollision);
+
+	// return result
+	return ray_cast.GetContactDistance();
 }
 
 void Engine::ToggleCollisions()
