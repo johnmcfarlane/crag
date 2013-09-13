@@ -77,8 +77,9 @@ void RayCast::SetRay(Ray3 const ray)
 
 	_min_sample = length;
 	
-	ASSERT(NearEqual(geom::Length(ray.position - GetRay().position), 0.f, 0.001f));
-	ASSERT(NearEqual(geom::Length(ray.direction - GetRay().direction), 0.f, 0.001f));
+	VerifyNearlyEqual(geom::Length(ray.position - GetRay().position), 0.f, 0.001f);
+	VerifyNearlyEqual(geom::Length(geom::Normalized(ray.direction) - geom::Normalized(GetRay().direction)), 0.f, 0.001f);
+	VerifyNearlyEqualLog(geom::Length(ray.direction), geom::Length(GetRay().direction), 0.001f);
 }
 
 Ray3 RayCast::GetRay() const
