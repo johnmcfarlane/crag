@@ -304,6 +304,9 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 }
 #else
 
+#define VerifyTrue(CONDITION) DO_NOTHING
+#define VerifyOp(A, OP, B) DO_NOTHING
+#define VerifyEqual(A, B) DO_NOTHING
 #define VerifyNearlyEqual(A, B, EPSILON) DO_NOTHING
 #define VerifyNearlyEqualLog(A, B, EPSILON) DO_NOTHING
 #define VerifyIsUnit(V, EPSILON) DO_NOTHING
