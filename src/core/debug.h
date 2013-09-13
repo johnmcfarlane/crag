@@ -241,6 +241,8 @@ ReentryGuard reentry_guard(counter);
 		} \
 	)
 
+#define VerifyIsUnit(V, EPSILON) VerifyNearlyEqual(geom::Length(V), decltype(geom::Length(V))(1), EPSILON)
+
 // Verify that the reference is not null - nor a value suspiciously close to null.
 template<typename T> void VerifyRef(T const & ref) 
 { 
@@ -304,6 +306,7 @@ template<typename T> void VerifyArrayElement(T const * element, T const * begin,
 
 #define VerifyNearlyEqual(A, B, EPSILON) DO_NOTHING
 #define VerifyNearlyEqualLog(A, B, EPSILON) DO_NOTHING
+#define VerifyIsUnit(V, EPSILON) DO_NOTHING
 
 template<typename T> void VerifyRef(T const &) { }
 template<typename T> void VerifyPtr(T const *) { }
