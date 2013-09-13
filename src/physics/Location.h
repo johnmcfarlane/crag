@@ -38,7 +38,9 @@ namespace physics
 		Vector3 Rotate(Vector3 local_direction) const;
 
 #if defined(VERIFY)
-		virtual void Verify() const { };
+		virtual void Verify() const;
+#else
+		void Verify() const { }
 #endif
 	private:
 		Transformation _transformation;

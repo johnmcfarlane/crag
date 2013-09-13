@@ -67,3 +67,11 @@ Vector3 Location::Rotate(Vector3 local_rotation) const
 {
 	return _transformation.Rotate(local_rotation);
 }
+
+#if defined(VERIFY)
+void Location::Verify() const 
+{
+	VerifyObject(_transformation);
+}
+#endif
+
