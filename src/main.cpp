@@ -343,13 +343,13 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			if (argc > 0 && std::strcmp(argv[0], "ga") == 0)
+			if (argc > 0 && std::strcmp(argv[0], "test") == 0)
 			{
-				applet::AppletHandle::CreateHandle("Main", 16384, & MainScript);
+				applet::AppletHandle::CreateHandle("Main", 16384, & TestScript);
 			}
 			else
 			{
-				applet::AppletHandle::CreateHandle("Main", 16384, & TestScript);
+				applet::AppletHandle::CreateHandle("Main", 16384, & MainScript);
 			}
 			
 			while (HandleEvent())
