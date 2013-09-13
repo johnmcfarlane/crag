@@ -15,6 +15,7 @@
 #include "Entity.h"
 
 #include "physics/Body.h"
+#include "physics/Engine.h"
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
@@ -42,6 +43,8 @@ using namespace sim;
 
 namespace
 {
+	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000.f);
+
 	struct TranslationRollFinger
 	{
 		Vector3 const & world_position;
@@ -376,9 +379,19 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		
 	_down_transformation = GetTransformation();
 	
+	// generate ray from eye to finger
 	auto direction = GetPixelDirection(screen_position, _down_transformation);
-	auto random_distance = 5.f /*+ Random::sequence.GetUnit<float>() * 5.f*/;
-	finger.world_position = _down_transformation.GetTranslation() + direction * random_distance;
+	Ray3 ray(_down_transformation.GetTranslation(), geom::Normalized(direction));
+
+	// perform ray cast to determine what finger is pointing to
+	auto & entity = GetEntity();
+	auto & engine = entity.GetEngine();
+	auto & physics_engine = engine.GetPhysicsEngine();
+	const auto body = entity.GetBody();
+	auto touch_distance = physics_engine.CastRay(ray, max_touch_ray_cast_distance, body);
+
+	// store as the world position
+	finger.world_position = _down_transformation.GetTranslation() + direction * touch_distance;
 	finger.screen_position = screen_position;
 	
 #if defined(SPAWN_SHAPES)
