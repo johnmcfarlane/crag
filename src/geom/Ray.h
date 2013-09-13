@@ -75,7 +75,7 @@ namespace geom
 
 	// casts between rays of different scalar types
 	template <typename LHS_S, typename RHS_S, int N>
-	Ray<LHS_S, N> Cast(Ray<RHS_S, N> const & rhs)
+	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Ray<LHS_S, N>>::type Cast(Ray<RHS_S, N> const & rhs)
 	{
 		return Ray<LHS_S, N>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.direction));
 	}
