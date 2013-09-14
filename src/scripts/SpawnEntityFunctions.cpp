@@ -41,12 +41,6 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
-#if defined(CRAG_USE_MOUSE)
-#define OBSERVER_USE_MOUSE
-#else
-#define OBSERVER_USE_TOUCH
-#endif
-
 namespace gfx 
 { 
 	DECLARE_CLASS_HANDLE(Box); // gfx::BoxHandle
@@ -73,6 +67,12 @@ namespace
 	CONFIG_DEFINE (observer_angular_damping, physics::Scalar, 0.05f);
 
 	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
+
+#if defined(CRAG_USE_MOUSE)
+	CONFIG_DEFINE (observer_use_touch, bool, false);
+#elif defined(CRAG_USE_TOUCH)
+	CONFIG_DEFINE (observer_use_touch, bool, true);
+#endif
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -121,31 +121,36 @@ namespace
 	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
 	{
 		// physics
-#if defined(OBSERVER_USE_TOUCH)
-		auto & location = * new physics::PassiveLocation(position);
-		observer.SetLocation(& location);
-#elif defined(OBSERVER_USE_MOUSE)
-		ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
-#endif
-
-		// controller
-		sim::Controller * controller;
-#if defined(OBSERVER_USE_TOUCH)
-		controller = new sim::TouchObserverController(observer);
-#elif defined(OBSERVER_USE_MOUSE)
-		// Linux requires libxi-dev to be installed for this to succeed.
-		if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+		if (observer_use_touch)
 		{
-			controller = new sim::MouseObserverController(observer);
+			auto & location = * new physics::PassiveLocation(position);
+			observer.SetLocation(& location);
 		}
 		else
 		{
-			DEBUG_MESSAGE("Failed to set relative mouse mode.");
+			ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+		}
+
+		// controller
+		sim::Controller * controller;
+		if (observer_use_touch)
+		{
 			controller = new sim::TouchObserverController(observer);
 		}
-#else
-#error no controller strategy
-#endif
+		else
+		{
+			// Linux requires libxi-dev to be installed for this to succeed.
+			if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+			{
+				controller = new sim::MouseObserverController(observer);
+			}
+			else
+			{
+				DEBUG_MESSAGE("Failed to set relative mouse mode.");
+				controller = new sim::TouchObserverController(observer);
+			}
+		}
+		
 		observer.SetController(controller);
 
 #if defined(OBSERVER_LIGHT)
