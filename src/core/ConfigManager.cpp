@@ -191,8 +191,7 @@ void ConfigManager::Parse(int argc, char * const * argv)
 		if (parameter == nullptr)
 		{
 			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" in command %s.", name_string, * argv);
-			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
-			break;
+			continue;
 		}
 		
 		parameter->Get(current_value, default_value);
