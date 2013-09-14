@@ -168,27 +168,15 @@ namespace
 			return GenerateSideAttribute(ray, plane);
 		}
 
-		// fill out attributes given the ray cast invariants
-		// and known information about the node it describes
-		Attributes GenerateAttributes(Uniforms const & uniforms, Node const * node, form::Point const & a, form::Point const & b, form::Point const & c)
+		// given attributes with all 3 side attributes filled out, calculate the range
+		void GenerateAttributesRange(Attributes & attributes)
 		{
-			Attributes attributes;
 			attributes.range[0] = std::numeric_limits<Scalar>::lowest();
 			attributes.range[1] = std::numeric_limits<Scalar>::max();
-			attributes.node = node;
-			attributes.surface = Triangle3(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
 
 			for (int side_index0 = 0; side_index0 != 3; ++ side_index0)
 			{
-				const auto side_index1 = TriMod(side_index0 + 1);
-				const auto side_index2 = TriMod(side_index0 + 2);
-
-				const auto & a = attributes.surface.points[side_index2];
-				const auto & b = attributes.surface.points[side_index1];
-				const Triangle3 side(a, b, uniforms.center);
-				
 				auto & side_attributes = attributes.sides[side_index0];
-				side_attributes = GenerateSideAttribute(uniforms.ray, side);
 
 				if (side_attributes.dot_product > 0)
 				{
@@ -201,6 +189,29 @@ namespace
 					attributes.range[1] = std::min(attributes.range[1], side_attributes.intersection);
 				}
 			}
+		}
+
+		// fill out attributes given the ray cast invariants
+		// and known information about the node it describes
+		Attributes GenerateAttributes(Uniforms const & uniforms, Node const * node, form::Point const & a, form::Point const & b, form::Point const & c)
+		{
+			Attributes attributes;
+			attributes.node = node;
+			attributes.surface = Triangle3(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
+
+			for (int side_index0 = 0; side_index0 != 3; ++ side_index0)
+			{
+				const auto side_index1 = TriMod(side_index0 + 1);
+				const auto side_index2 = TriMod(side_index0 + 2);
+
+				const auto & a = attributes.surface.points[side_index2];
+				const auto & b = attributes.surface.points[side_index1];
+				const Triangle3 side(a, b, uniforms.center);
+
+				attributes.sides[side_index0] = GenerateSideAttribute(uniforms.ray, side);
+			}
+
+			GenerateAttributesRange(attributes);
 
 			return attributes;
 		}
@@ -324,20 +335,36 @@ namespace
 			{
 				return DoLeaf(uniforms, attributes);
 			}
-			else
+
+			Attributes child_attributes[4];
+
+			// the center child node contains entirely novel edges
+			child_attributes[3] = GenerateAttributes(uniforms, children[3]);
+
+			// but each of the outer three children 
+			// are some combination of the parent and the center child
+			for (auto child_index0 = 0; child_index0 != 3; ++ child_index0)
 			{
-				Attributes child_attributes[4];
+				auto child_index1 = TriMod(child_index0 + 1);
+				auto child_index2 = TriMod(child_index0 + 2);
 
-				for (auto child_index = 0; child_index != 4; ++ child_index)
-				{
-					// TODO: use attributes to generate child_attributes
-					Attributes & child_attribute = child_attributes[child_index];
-					Node const & child = children[child_index];
-					child_attribute = GenerateAttributes(uniforms, child);
-				}
+				auto & child_attribute = child_attributes[child_index0];
 
-				return ForEachFace(std::begin(child_attributes), std::end(child_attributes), uniforms, & Recurse);
+				child_attribute.node = children + child_index0;
+
+				child_attribute.surface.points[child_index0] = attributes.surface.points[child_index0];
+				child_attribute.surface.points[child_index1] = child_attributes[3].surface.points[child_index2];
+				child_attribute.surface.points[child_index2] = child_attributes[3].surface.points[child_index1];
+
+				child_attribute.sides[child_index0] = child_attributes[3].sides[child_index0];
+				child_attribute.sides[child_index0].dot_product *= -1;
+				child_attribute.sides[child_index1] = attributes.sides[child_index1];
+				child_attribute.sides[child_index2] = attributes.sides[child_index2];
+
+				GenerateAttributesRange(child_attribute);
 			}
+
+			return ForEachFace(std::begin(child_attributes), std::end(child_attributes), uniforms, & Recurse);
 		}
 	}
 }
