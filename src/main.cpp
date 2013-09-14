@@ -39,7 +39,7 @@
 
 namespace 
 {
-	bool CragMain(int, char const * const *);
+	bool CragMain(int, char * const *);
 }
 
 
@@ -304,7 +304,7 @@ namespace
 	}
 
 	// The main program function.
-	bool CragMain(int argc, char const * const * argv)
+	bool CragMain(int argc, char * const * argv)
 	{
 		PrintMessage(stdout,
 			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
@@ -314,7 +314,7 @@ namespace
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
-		core::ConfigManager config_manager;
+		core::ConfigManager config_manager(argc, argv);
 		
 		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;

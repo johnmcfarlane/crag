@@ -43,13 +43,15 @@ namespace
 using core::ConfigManager;
 
 
-ConfigManager::ConfigManager()
+ConfigManager::ConfigManager(int argc, char * const * argv)
 {
 	if (! Load())
 	{
 		// Make sure we always have a config file handy.
 		Save();
 	}
+	
+	Parse(argc, argv);
 }
 
 ConfigManager::~ConfigManager()
@@ -162,6 +164,42 @@ void ConfigManager::Save()
 #endif
 }
 
+void ConfigManager::Parse(int argc, char * const * argv)
+{
+	char current_value[max_string_size];
+	char default_value[max_string_size];
+	
+	auto get_value = [] (char * const argument) -> char const *
+	{
+		auto found = strchr(argument, '=');
+		if (found == nullptr)
+		{
+			return "1";
+		}
+
+		* found = '\0';
+		return found + 1;
+	};
+
+	for (; argc > 0; ++ argv, -- argc)
+	{
+		auto name_string = * argv;
+		auto value_string = get_value(* argv);
+		
+		// Get the parameter in question, given its name.
+		auto parameter = ConfigEntry::find(name_string);
+		if (parameter == nullptr)
+		{
+			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" in command %s.", name_string, * argv);
+			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
+			break;
+		}
+		
+		parameter->Get(current_value, default_value);
+		parameter->Set(value_string, default_value);
+	}
+}
+
 #else
 
 bool ConfigManager::Load()
@@ -170,6 +208,10 @@ bool ConfigManager::Load()
 }
 
 void ConfigManager::Save()
+{
+}
+
+void ConfigManager::Parse(int, char * const *)
 {
 }
 
