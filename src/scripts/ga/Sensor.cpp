@@ -79,7 +79,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
-DEFINE_POOL_ALLOCATOR(Sensor, 80);
+DEFINE_POOL_ALLOCATOR(Sensor, 800);
 
 Sensor::Sensor(Entity & entity, Ray3 const & ray)
 : _entity(entity)

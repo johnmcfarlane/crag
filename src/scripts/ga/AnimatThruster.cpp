@@ -21,7 +21,7 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // AnimatThruster member definitions
 
-DEFINE_POOL_ALLOCATOR(AnimatThruster, 80);
+DEFINE_POOL_ALLOCATOR(AnimatThruster, 800);
 
 AnimatThruster::AnimatThruster(Entity & entity, Ray3 const & ray)
 : Thruster(entity, ray, false)

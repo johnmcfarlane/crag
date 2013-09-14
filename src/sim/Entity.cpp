@@ -29,7 +29,7 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
-DEFINE_POOL_ALLOCATOR(Entity, 100);
+DEFINE_POOL_ALLOCATOR(Entity, 200);
 
 Entity::Entity(super::Init const & init)
 : super(init)
