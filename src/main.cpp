@@ -86,6 +86,7 @@ namespace
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
 	
+	CONFIG_DEFINE (run_test, bool, false);
 	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
@@ -343,14 +344,7 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			if (argc > 0 && std::strcmp(argv[0], "test") == 0)
-			{
-				applet::AppletHandle::CreateHandle("Main", 16384, & TestScript);
-			}
-			else
-			{
-				applet::AppletHandle::CreateHandle("Main", 16384, & MainScript);
-			}
+			applet::AppletHandle::CreateHandle("Main", 16384, run_test ? & TestScript : & MainScript);
 			
 			while (HandleEvent())
 			{
