@@ -97,8 +97,8 @@ namespace
 		}
 		else
 		{
-			ASSERT(std::fabs(b) >= std::fabs(c));
-			ASSERT(gamma <= float(PI * .5));
+			VerifyOp(std::fabs(b), >=, std::fabs(c));
+			VerifyOp(gamma, <=, float(PI * .5));
 		}
 		
 		S alpha = float(PI) - beta - gamma;
