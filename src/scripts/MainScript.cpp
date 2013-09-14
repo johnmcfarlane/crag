@@ -58,7 +58,7 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
-	std::vector<sim::EntityHandle> animats(num_animats);
+	std::vector<sim::EntityHandle> animats;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
@@ -137,7 +137,8 @@ namespace
 
 	void SpawnAnimats(Vector3f base_position)
 	{
-		for (auto& animat : animats)
+		animats.resize(num_animats);
+		for (auto & animat : animats)
 		{
 			Vector3f offset;
 			float r;
