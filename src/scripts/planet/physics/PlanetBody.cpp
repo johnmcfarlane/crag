@@ -98,9 +98,9 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	mesh_surround.ClearData();
 
-	auto face_functor = [& mesh_surround] (form::Point const & a, form::Point const & b, form::Point const & c, geom::Vector3f const & normal, float /*score*/)
+	auto face_functor = [& mesh_surround] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
-		mesh_surround.AddTriangle(Triangle3(a.pos, b.pos, c.pos), normal);
+		mesh_surround.AddTriangle(face, normal);
 	};
 	
 	form::ForEachFaceInSphere(* polyhedron, bounding_sphere, face_functor);

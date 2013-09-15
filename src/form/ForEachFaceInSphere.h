@@ -18,6 +18,7 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declaration
 
+	// calls functor on any faces which are close enough to sphere to consider collision
 	template <typename FUNCTOR>
 	void ForEachFaceInSphere(Polyhedron const &, Sphere3 const &, FUNCTOR);
 
@@ -58,7 +59,13 @@ namespace form
 			Node const * children = node.GetChildren();
 			if (children == nullptr)
 			{
-				ForEachNodeFace(node, _poly_functor);
+				ForEachNodeFace(node, [this] (form::Point const & a, form::Point const & b, form::Point const & c, geom::Vector3f const & normal, float)
+				{
+					Triangle3 face(a.pos, b.pos, c.pos);
+					VerifyNearlyEqual(geom::Length(geom::Normalized(geom::Normal(face)) - normal), 0.f, .01f);
+					
+					_poly_functor(face, normal);
+				});
 				return;
 			}
 
