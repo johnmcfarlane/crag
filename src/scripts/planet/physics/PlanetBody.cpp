@@ -97,8 +97,24 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	mesh_surround.ClearData();
 
-	auto face_functor = [& mesh_surround] (form::Triangle3 const & face, form::Vector3 const & normal)
+	bool contained = false;
+	auto face_functor = [& mesh_surround, & contained, & bounding_sphere] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
+		Vector3 center = geom::Center(face);
+		form::Plane3 plane(center, normal);
+		
+		auto distance = Distance(plane, bounding_sphere.center);
+		if (distance > bounding_sphere.radius)
+		{
+			return;
+		}
+		
+		// lets be kind and call this a heuristic
+		if (distance < 0.f)
+		{
+			contained = true;
+		}
+		
 		mesh_surround.AddTriangle(face, normal);
 	};
 	
@@ -126,7 +142,29 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	std::size_t num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
 	ASSERT(num_contacts <= contacts.size());
 	
-	_engine.AddContacts(contacts.begin(), contacts.begin() + num_contacts);
+	if (num_contacts != 0)
+	{
+		auto begin = std::begin(contacts);
+		_engine.AddContacts(begin, begin + num_contacts);
+	}
+	else
+	{
+		if (contained)
+		{
+			ContactGeom contact_geom;
+			contact_geom.pos[0] = bounding_sphere.center.x;
+			contact_geom.pos[1] = bounding_sphere.center.y;
+			contact_geom.pos[2] = bounding_sphere.center.z;
+			auto normal = geom::Normalized(bounding_sphere.center - geom::Cast<Scalar>(polyhedron->GetShape().center));
+			contact_geom.normal[0] = normal.x;
+			contact_geom.normal[1] = normal.y;
+			contact_geom.normal[2] = normal.z;
+			contact_geom.depth = geom::Diameter(bounding_sphere);
+			contact_geom.g1 = body_collision_handle;
+			contact_geom.g2 = mesh_collision_handle;
+			_engine.AddContact(contact_geom);
+		}
+	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// reset
