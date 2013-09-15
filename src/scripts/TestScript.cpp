@@ -29,6 +29,7 @@
 
 #include "geom/origin.h"
 
+#include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
@@ -46,8 +47,8 @@ namespace
 	sim::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
-	bool spawn_vehicle = true;
-	bool spawn_planets = true;
+	CONFIG_DEFINE(spawn_vehicle, bool, true);
+	CONFIG_DEFINE(spawn_planets, bool, true);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
