@@ -91,7 +91,6 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	
 	auto & mesh_surround = _engine.GetMeshSurround(planet_collision_handle, body_collision_handle);
 	auto mesh_collision_handle = mesh_surround.GetCollisionHandle();
-	mesh_surround.Enable();
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// generate mesh representing the planet surface in the vacinity of the body
@@ -105,7 +104,13 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	
 	form::ForEachFaceInSphere(* polyhedron, bounding_sphere, face_functor);
 	
+	if (mesh_surround.IsEmpty())
+	{
+		return true;
+	}
+	
 	mesh_surround.RefreshData();
+	mesh_surround.Enable();
 	
     ////////////////////////////////////////////////////////////////////////////////
 	// collide and generate contacts

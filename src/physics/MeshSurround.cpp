@@ -101,6 +101,13 @@ void MeshSurround::AddTriangle(Triangle3 const & triangle, Vector3 const & norma
 #endif
 }
 
+bool MeshSurround::IsEmpty() const
+{
+	ASSERT(_triangle_indices.empty() == _vertices.empty());
+	ASSERT(_triangle_indices.empty() == _normals.empty());
+	return _triangle_indices.empty();
+}
+
 void MeshSurround::RefreshData()
 {
 	dGeomTriMeshDataBuildSingle1(_mesh_data,

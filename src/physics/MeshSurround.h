@@ -43,6 +43,7 @@ namespace physics
 
 		void ClearData();
 		void AddTriangle(Triangle3 const & triangle, Vector3 const & normal);
+		bool IsEmpty() const;
 		void RefreshData();
 
 	private:
