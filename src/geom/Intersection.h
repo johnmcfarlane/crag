@@ -15,6 +15,7 @@
 namespace geom
 {
 	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 	// Containment tests
 
 	// Returns true iff sphere contains point.
@@ -51,28 +52,24 @@ namespace geom
 		return center_distance_squared <= Squared(a.radius - b.radius);
 	}
 
-	// Returns true iff half-space represented by plane, abc, contains point, p.
-	template<typename S, int N> bool Contains(Triangle<S, N> const & triangle, Vector<S, N> const & p) 
-	{
-		return Distance<S>(triangle, p) < 0;
-	}
+	////////////////////////////////////////////////////////////////////////////////
+	// Plane / Point
 
 	// Returns true iff half-space represented by plane, abc, contains point, p.
-	template<typename S, int N> bool FastContains(Triangle<S, N> const & triangle, Vector<S, N> const & p) 
+	template<typename S, int N>
+	bool Contains(Plane<S, N> const & plane, Vector<S, N> const & p) 
 	{
-		return FastDistance<S>(triangle, p) < 0;
+		return Distance<S>(plane, p) < 0;
 	}
 
-	// Returns true iff half-space represented by plane, abc, contains sphere, s.
-	template<typename S, int N> bool Contains(Triangle<S, N> const & triangle, Sphere<S, N> const & s) 
-	{
-		return Distance<S>(triangle, s.center) < s.radius;
-	}
+	////////////////////////////////////////////////////////////////////////////////
+	// Plane / Sphere
 
 	// Returns true iff half-space represented by plane, abc, contains sphere, s.
-	template<typename S, int N> bool FastContains(Triangle<S, N> const & triangle, Sphere<S, N> const & s) 
+	template<typename S, int N>
+	bool Contains(Plane<S, N> const & plane, Sphere<S, N> const & s) 
 	{
-		return FastDistance<S>(triangle, s.center) < s.radius;
+		return Distance<S>(plane, s.center) < - s.radius;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +114,26 @@ namespace geom
 	{
 		S center_distance_squared = DistanceSq(a.center, b.center);
 		return center_distance_squared < Squared(a.radius + b.radius);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Plane / Point
+
+	// Returns true iff half-space represented by plane, abc, intersects with point, p.
+	template<typename S, int N>
+	bool Intersects(Plane<S, N> const & plane, Vector<S, N> const & p) 
+	{
+		return Contains(plane, p);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Plane / Sphere
+
+	// Returns true iff half-space represented by plane, abc, intersects with sphere, s.
+	template<typename S, int N>
+	bool Intersects(Plane<S, N> const & plane, Sphere<S, N> const & s) 
+	{
+		return Distance<S>(plane, s.center) < s.radius;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
