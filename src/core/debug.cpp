@@ -11,6 +11,10 @@
 
 #include "core/debug.h"
 
+#if defined(__ANDROID__)
+#include  <android/log.h>
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // core::DebugSetThreadName/DebugSetThreadName definitions
 
