@@ -153,14 +153,7 @@ Vector3 Body::GetVelocity() const
 	}
 
 	Vector3 velocity;
-	
-#if defined(USE_ODE)
 	dBodyGetRelPointVel (_body_handle, 0, 0, 0, velocity.GetAxes());
-#endif
-
-#if defined(USE_BULLET)
-	_body_handle->getLinearVelocity();
-#endif
 
 	return velocity;
 }
