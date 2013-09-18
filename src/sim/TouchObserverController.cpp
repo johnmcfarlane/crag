@@ -50,7 +50,7 @@ namespace
 		Vector3 const & world_position;
 		
 		// vector from camera to touch-point on screen, so no shorter than unit length
-		Vector3 screen_direction;
+		Vector3 screen_position;
 	};
 	
 	// http://en.wikipedia.org/wiki/Solution_of_triangles#Three_sides_given_.28SSS.29
@@ -92,16 +92,16 @@ namespace
 			// TODO: It may be possible for gamma to be obtuse intentionally.
 			if (second)
 			{
-				gamma = float(PI) - gamma;
+				gamma = S(PI) - gamma;
 			}
 		}
 		else
 		{
 			VerifyOp(std::fabs(b), >=, std::fabs(c));
-			VerifyOp(gamma, <=, float(PI * .5));
+			VerifyOp(gamma, <=, S(PI * .5));
 		}
 		
-		S alpha = float(PI) - beta - gamma;
+		S alpha = S(PI) - beta - gamma;
 		S a = b * sin(alpha) / sin_beta;
 		
 		return a;
@@ -109,7 +109,12 @@ namespace
 	
 	Transformation CalculateCameraTranslationRoll(TranslationRollFinger const & finger1, TranslationRollFinger const & finger2, Transformation const & camera_transformation)
 	{
-		const auto camera_rotation = camera_transformation.GetRotation();
+		typedef float Scalar;
+		typedef geom::Vector<Scalar, 2> Vector2;
+		typedef geom::Vector<Scalar, 3> Vector3;
+		typedef geom::Matrix<Scalar, 3, 3> Matrix33;
+		
+		const auto camera_rotation = geom::Cast<Scalar>(camera_transformation.GetRotation());
 		const auto camera_forward = gfx::GetAxis(camera_rotation, gfx::Direction::forward);
 		
 		/*//////////////////////////////////////////////////////////////////////////////
@@ -141,24 +146,24 @@ namespace
 		// screen
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto screen_position_diff = finger2.screen_direction - finger1.screen_direction;
+		const auto screen_position_diff = geom::Cast<Scalar>(finger2.screen_position) - geom::Cast<Scalar>(finger1.screen_position);
 		
 		// distance between screen positions, PQ
 		const auto screen_span = geom::Length(screen_position_diff);
 		
-		const auto screen_position_direction = screen_position_diff * 1.f / screen_span;
+		const auto screen_position_direction = screen_position_diff * Scalar(1) / screen_span;
 		
-		const auto camera_to_screen_distance1 = geom::Length(finger1.screen_direction);
-		const auto camera_to_screen_distance2 = geom::Length(finger2.screen_direction);
+		const auto camera_to_screen_distance1 = geom::Length(geom::Cast<Scalar>(finger1.screen_position));
+		const auto camera_to_screen_distance2 = geom::Length(geom::Cast<Scalar>(finger2.screen_position));
 		
-		const auto camera_to_screen_direction1 = finger1.screen_direction * 1.f / camera_to_screen_distance1;
-		const auto camera_to_screen_direction2 = finger2.screen_direction * 1.f / camera_to_screen_distance2;
+		const auto camera_to_screen_direction1 = geom::Cast<Scalar>(finger1.screen_position) * Scalar(1) / camera_to_screen_distance1;
+		const auto camera_to_screen_direction2 = geom::Cast<Scalar>(finger2.screen_position) * Scalar(1) / camera_to_screen_distance2;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// world
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto world_position_diff = finger2.world_position - finger1.world_position;
+		const auto world_position_diff = geom::Cast<Scalar>(finger2.world_position) - geom::Cast<Scalar>(finger1.world_position);
 
 		// how far forwards of world position #1 is #2, d
 		const auto world_position_diff_forward = geom::DotProduct(world_position_diff, camera_forward);
@@ -175,7 +180,7 @@ namespace
 		const auto cos_gamma = geom::DotProduct(screen_position_direction, - camera_to_screen_direction1);
 		
 		// triangle_width, a
-		float triangle_width;
+		Scalar triangle_width;
 		
 		// if world positions are just-about aligned,
 		if (std::fabs(equalizer) * 1000 < world_span)
@@ -191,10 +196,11 @@ namespace
 		
 		// how far ahead of the camera is world position 2
 		const auto world_position_forward2 = triangle_width / screen_span;
-		
-		// world position#2 in screen space
-		const auto ss_world_position2 = camera_to_screen_direction2 * world_position_forward2 * camera_to_screen_distance2;
-		const auto camera_to_world_distance2 = geom::Length(ss_world_position2);
+		/*const*/ auto camera_to_world_distance2 = world_position_forward2 * camera_to_screen_distance2;	// correct
+
+		// how far ahead of the camera is world position 1
+		const auto world_position_forward1 = world_position_forward2 - world_position_diff_forward;
+		const auto camera_to_world_distance1 = world_position_forward1 * camera_to_screen_distance1;
 		
 		const auto get_angle = [] (Vector3 const & v, Matrix33 const & r)
 		{
@@ -204,16 +210,26 @@ namespace
 			return std::atan2(c.x, c.y);
 		};
 		
-		const auto rotation_angle_to = get_angle(world_position_diff_direction, camera_rotation);
-		const auto rotation_angle_from = get_angle(screen_position_direction, camera_rotation);
-		const auto rotation_angle = rotation_angle_to - rotation_angle_from;
+		// an angle gleaned from difference between world positions
+		const auto world_rotation_angle = get_angle(world_position_diff_direction, camera_rotation);
 		
+		// an angle gleaned from difference between screen positions
+		const auto camera_to_world_ratio = camera_to_world_distance1 / camera_to_world_distance2;
+		const auto normalized_screen_position2 = camera_to_screen_direction2 / camera_to_world_ratio;
+		const auto normalized_screen_diff_direction = geom::Normalized(normalized_screen_position2 - camera_to_screen_direction1);
+		const auto screen_rotation_angle = get_angle(normalized_screen_diff_direction, camera_rotation);
+		
+		// the difference between the world and screen rotations dictates output rotaiton
+		const auto rotation_angle = world_rotation_angle - screen_rotation_angle;
 		const auto output_rotation = camera_rotation * geom::Inverse(gfx::Rotation(gfx::Direction::forward, rotation_angle));
 		
+		// displacement from world position2 to the new camera position
 		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * gfx::Rotation(gfx::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
-		const auto output_translation = finger2.world_position - ws_camera_to_screen_direction2 * camera_to_world_distance2;
+		
+		// put it all together and book in to local clinic
+		const auto output_translation = geom::Cast<Scalar>(finger2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
 
-		return Transformation(output_translation, output_rotation);
+		return sim::Transformation(geom::Cast<sim::Scalar>(output_translation), geom::Cast<sim::Scalar>(output_rotation));
 	}
 }
 
@@ -372,7 +388,6 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		}
 		else
 		{
-			DEBUG_MESSAGE("double-down detected");
 			return * found;
 		}
 	} ();
@@ -388,10 +403,10 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 	auto & engine = entity.GetEngine();
 	auto & physics_engine = engine.GetPhysicsEngine();
 	const auto body = entity.GetBody();
-	auto touch_distance = physics_engine.CastRay(ray, max_touch_ray_cast_distance, body);
+	auto touch_distance = std::min(max_touch_ray_cast_distance, physics_engine.CastRay(ray, max_touch_ray_cast_distance, body));
 
 	// store as the world position
-	finger.world_position = _down_transformation.GetTranslation() + direction * touch_distance;
+	finger.world_position = geom::Project(ray, touch_distance);
 	finger.screen_position = screen_position;
 	
 #if defined(SPAWN_SHAPES)
@@ -422,9 +437,9 @@ void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 	else
 	{
 		_fingers.erase(found);
-	
-		_down_transformation = GetTransformation();
 	}
+
+	_down_transformation = GetTransformation();
 
 	ASSERT(! IsDown(id));
 }
@@ -521,7 +536,7 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 	
 	// the math
 	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_finger1, translation_roll_finger2, _down_transformation);
-	SetTransformation(geom::Cast<float>(camera_transformation));
+	SetTransformation(camera_transformation);
 }
 
 Transformation const & TouchObserverController::GetTransformation() const
