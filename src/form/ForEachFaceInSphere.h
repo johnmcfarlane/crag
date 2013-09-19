@@ -170,7 +170,8 @@ namespace form
 			}
 		}))
 		{
-			DEBUG_BREAK("Need to deal with tetrahedron case");
+			// this shouldn't happen
+			DEBUG_BREAK("Root node has no children");
 		}
 	}
 }
