@@ -53,14 +53,14 @@ namespace form
 	{
 		VerifyObjectRef(lhs);
 		VerifyObjectRef(rhs);
-		
+
 		// Being negative means behind the ray. That's worse than being in front.
 		int positive_compare = int(lhs.projection >= 0) - int(rhs.projection >= 0);
 		if (positive_compare)
 		{
 			return positive_compare > 0;
 		}
-		
+
 		return lhs.projection < rhs.projection;
 	}
 }
@@ -81,7 +81,7 @@ namespace
 		typedef geom::Plane<Scalar, 3> Plane3;
 		typedef geom::Triangle<Scalar, 3> Triangle3;
 		typedef std::array<Scalar, 2> Range;
-		
+
 		// useful info about the collision between the ray 
 		// and a side of the triangular pyramid occipied by a Node
 		struct SideAttributes
@@ -127,7 +127,7 @@ namespace
 
 			gfx::Debug::AddLine(geom::Cast<gfx::Scalar>(a), geom::Cast<gfx::Scalar>(b), random_color);
 		}
-	
+
 		void AddTriangle(Triangle3 const & triangle)
 		{
 			gfx::Debug::Color random_color(Random::sequence.GetUnit<gfx::Scalar>(), Random::sequence.GetUnit<gfx::Scalar>(), Random::sequence.GetUnit<gfx::Scalar>(), .5f);
@@ -147,14 +147,14 @@ namespace
 		{
 			VerifyNearlyEqual(geom::Length(ray.direction), Scalar(1.), Scalar(.001));
 			VerifyNearlyEqual(geom::Length(plane.normal), Scalar(1.), Scalar(.001));
-			
+
 			SideAttributes side_attributes;
-			
+
 			auto ray_to_plane = ray.position - plane.position;
 			auto ray_to_plane_distance = geom::DotProduct(ray_to_plane, plane.normal);
 			side_attributes.dot_product = - geom::DotProduct(plane.normal, ray.direction);
 			side_attributes.intersection = ray_to_plane_distance / side_attributes.dot_product;
-			
+
 			return side_attributes;
 		}
 
@@ -164,7 +164,7 @@ namespace
 			Plane3 plane;
 			plane.position = (side.points[0] + side.points[1]) * Scalar(.5);
 			plane.normal = geom::Normalized(geom::Normal(side));
-			
+
 			return GenerateSideAttribute(ray, plane);
 		}
 
@@ -269,7 +269,7 @@ namespace
 				// This is currently out best hope for a contact; call in.
 				RayCastResult child_result = (* function)(uniforms, attributes);
 				VerifyObject(child_result);
-				
+
 				// evaluate result
 				result = std::min(result, child_result);
 			}
@@ -286,7 +286,7 @@ namespace
 			Plane3 plane(side);
 			geom::Normalize(plane.normal);
 			const auto side_attributes = GenerateSideAttribute(uniforms.ray, plane);
-			
+
 			if (side_attributes.dot_product > 0 // only register entry - not exis
 			&& side_attributes.intersection >= leaf_attributes.range[0] 
 			&& side_attributes.intersection < leaf_attributes.range[1])
@@ -303,7 +303,7 @@ namespace
 
 				VerifyObject(result);
 			}
-		
+
 			AddTriangle(leaf_attributes.surface);
 
 			return result;
