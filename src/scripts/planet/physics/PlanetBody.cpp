@@ -97,8 +97,10 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	mesh_surround.ClearData();
 
-	bool contained = false;
-	auto face_functor = [& mesh_surround, & contained, & bounding_sphere] (form::Triangle3 const & face, form::Vector3 const & normal)
+	// only applied if the body is embedded and won't register with ODE collision
+	ContactGeom containment_geom;
+	containment_geom.depth = std::numeric_limits<Scalar>::lowest();
+	auto face_functor = [& mesh_surround, & containment_geom, & bounding_sphere] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
 		Vector3 center = geom::Center(face);
 		form::Plane3 plane(center, normal);
@@ -106,13 +108,17 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		auto distance = Distance(plane, bounding_sphere.center);
 		if (distance > bounding_sphere.radius)
 		{
+			// body is clear of this poly - even if it was an infinite plane
 			return;
 		}
 		
-		// lets be kind and call this a heuristic
-		if (distance < 0.f)
+		auto depth = bounding_sphere.radius - distance;
+		if (depth > containment_geom.depth)
 		{
-			contained = true;
+			containment_geom.depth = depth;
+			containment_geom.normal[0] = normal.x;
+			containment_geom.normal[1] = normal.y;
+			containment_geom.normal[2] = normal.z;
 		}
 		
 		mesh_surround.AddTriangle(face, normal);
@@ -142,27 +148,25 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	std::size_t num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
 	ASSERT(num_contacts <= contacts.size());
 	
+	// If contact was detected,
 	if (num_contacts != 0)
 	{
+		// add it to the list to be resolved.
 		auto begin = std::begin(contacts);
 		_engine.AddContacts(begin, begin + num_contacts);
 	}
 	else
 	{
-		if (contained)
+		// If there's a good chance the body is contained by the polyhedron,
+		if (containment_geom.depth > bounding_sphere.radius)
 		{
-			ContactGeom contact_geom;
-			contact_geom.pos[0] = bounding_sphere.center.x;
-			contact_geom.pos[1] = bounding_sphere.center.y;
-			contact_geom.pos[2] = bounding_sphere.center.z;
-			auto normal = geom::Normalized(bounding_sphere.center - geom::Cast<Scalar>(polyhedron->GetShape().center));
-			contact_geom.normal[0] = normal.x;
-			contact_geom.normal[1] = normal.y;
-			contact_geom.normal[2] = normal.z;
-			contact_geom.depth = geom::Diameter(bounding_sphere);
-			contact_geom.g1 = body_collision_handle;
-			contact_geom.g2 = mesh_collision_handle;
-			_engine.AddContact(contact_geom);
+			// add a provisional contact.
+			containment_geom.pos[0] = bounding_sphere.center.x;
+			containment_geom.pos[1] = bounding_sphere.center.y;
+			containment_geom.pos[2] = bounding_sphere.center.z;
+			containment_geom.g1 = body_collision_handle;
+			containment_geom.g2 = mesh_collision_handle;
+			_engine.AddContact(containment_geom);
 		}
 	}
 	
