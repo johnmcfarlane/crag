@@ -170,7 +170,7 @@ namespace form
 			}
 		}))
 		{
-			DEBUG_MESSAGE("Need to deal with tetrahedron case");
+			DEBUG_BREAK("Need to deal with tetrahedron case");
 		}
 	}
 }
