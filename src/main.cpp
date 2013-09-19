@@ -274,6 +274,14 @@ namespace
 				// it's time to quit
 				return false;
 			}
+			
+			case SDL_APP_WILLENTERBACKGROUND:
+			{
+				DEBUG_MESSAGE("SDL_APP_WILLENTERBACKGROUND received on main thread loop");
+				
+				// it's time to quit
+				return false;
+			}
 		}
 
 		return true;
@@ -284,6 +292,7 @@ namespace
 		switch (event->type) 
 		{
 			case SDL_QUIT:
+			case SDL_APP_WILLENTERBACKGROUND:
 			case SDL_WINDOWEVENT:
 #if defined(CRAG_USE_TOUCH)
 			case SDL_FINGERDOWN:
