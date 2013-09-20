@@ -32,7 +32,9 @@ namespace geom
 		}
 
 		Vector(Vector<S, 3> const & rhs) 
-		: Vector(rhs.x, rhs.y, rhs.z) 
+		: x(rhs.x)
+		, y(rhs.y)
+		, z(rhs.z)
 		{ 
 		}
 		
