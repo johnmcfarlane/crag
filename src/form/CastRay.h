@@ -40,6 +40,6 @@ namespace form
 	};
 
 	// performs a ray cast on a polyhedron; ray must have unit direction 
-	// and length is the minimum guaranteed distance along ray to scan
+	// and if no contact is found, length is max for Scalar
 	RayCastResult CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Scalar length);
 }

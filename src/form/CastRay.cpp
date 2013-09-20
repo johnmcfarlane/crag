@@ -139,10 +139,6 @@ namespace
 			Plane3 plane(triangle);
 			AddLine(plane.position, plane.position + geom::Normalized(plane.normal));
 		}
-#else
-		inline void AddTriangle(Triangle3 const &)
-		{
-		}
 #endif
 
 		SideAttributes GenerateSideAttribute(Ray3 const & ray, Plane3 const & plane)
@@ -271,6 +267,7 @@ namespace
 				// This is currently out best hope for a contact; call in.
 				RayCastResult child_result = (* function)(uniforms, attributes);
 				VerifyObject(child_result);
+				VerifyTrue(child_result.projection == std::numeric_limits<Scalar>::max() || child_result.projection <= uniforms.length);
 
 				// evaluate result
 				result = std::min(result, child_result);
@@ -291,19 +288,22 @@ namespace
 
 			if (side_attributes.dot_product > 0 // only register entry - not exis
 			&& side_attributes.intersection >= leaf_attributes.range[0] 
-			&& side_attributes.intersection < leaf_attributes.range[1])
+			&& side_attributes.intersection < leaf_attributes.range[1]
+			&& side_attributes.intersection <= uniforms.length)
 			{
 				result.normal = geom::Cast<form::Scalar>(plane.normal);
 				result.projection = side_attributes.intersection;
 				result.node = leaf_attributes.node;
 
 				VerifyObject(result);
+				VerifyTrue(result.projection == std::numeric_limits<Scalar>::max() || result.projection <= uniforms.length);
 			}
 			else
 			{
 				result.normal = - geom::Cast<form::Scalar>(uniforms.ray.direction);
 
 				VerifyObject(result);
+				VerifyTrue(result.projection == std::numeric_limits<Scalar>::max() || result.projection <= uniforms.length);
 			}
 
 #if defined(DEBUG_SHOW_LINE)
