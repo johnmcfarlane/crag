@@ -17,10 +17,12 @@
 #include "geom/Intersection.h"
 
 #if ! defined(NDEBUG)
-//#define DEBUG_TRIANGLES
+//#define DEBUG_SHOW_LINE
+//#define DEBUG_SHOW_RESULT
 #endif
 
-#if defined(DEBUG_TRIANGLES)
+#if defined(DEBUG_SHOW_LINE) || defined(DEBUG_SHOW_RESULT)
+#define DEBUG_DRAW_TRIANGLES
 #include "gfx/Debug.h"
 #include "core/Random.h"
 #endif
@@ -119,7 +121,7 @@ namespace
 			return lhs.range[0] < rhs.range[0];
 		}
 
-#if defined(DEBUG_TRIANGLES)
+#if defined(DEBUG_DRAW_TRIANGLES)
 		template <typename S>
 		void AddLine(geom::Vector<S, 3> const & a, geom::Vector<S, 3> const & b)
 		{
@@ -304,7 +306,9 @@ namespace
 				VerifyObject(result);
 			}
 
+#if defined(DEBUG_SHOW_LINE)
 			AddTriangle(leaf_attributes.surface);
+#endif
 
 			return result;
 		}
@@ -408,5 +412,14 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 	}
 
 	// begin!
+#if defined(DEBUG_SHOW_RESULT)
+	auto result = impl::ForEachFace(std::begin(child_attributes), std::end(child_attributes), uniforms, & impl::Recurse);
+	if (result.node)
+	{
+		impl::AddTriangle(Triangle3(result.node->GetCorner(0).pos, result.node->GetCorner(1).pos, result.node->GetCorner(2).pos));
+	}
+	return result;
+#else
 	return impl::ForEachFace(std::begin(child_attributes), std::end(child_attributes), uniforms, & impl::Recurse);
+#endif
 }
