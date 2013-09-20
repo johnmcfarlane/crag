@@ -10,10 +10,12 @@
 #include "entity/vehicle/sim/VehicleController.h"
 
 #include "Genome.h"
-#include "Sensor.h"
 
 namespace sim
 {
+	// forward-declarations
+	class Sensor;
+	
 	// governs the behevior of a sim::Entity which is an artificial animal
 	class AnimatController : public VehicleController
 	{

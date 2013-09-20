@@ -118,6 +118,8 @@ bool RayCast::IsContacted() const
 
 Scalar RayCast::GetContactDistance() const
 {
+	ASSERT(IsContacted());
+	
 	return _contact_distance;
 }
 

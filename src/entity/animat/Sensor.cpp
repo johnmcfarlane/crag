@@ -81,11 +81,12 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Sensor, 800);
 
-Sensor::Sensor(Entity & entity, Ray3 const & ray)
+Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance)
 : _entity(entity)
-, _length(geom::Length(ray.direction))
-, _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), _length)))
-, _local_ray(Ray3(ray.position, ray.direction / _length))
+, _length(length)
+, _variance(variance)
+, _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), length)))
+, _local_ray(ray)
 {
 	GenerateScanRay();
 	
@@ -106,6 +107,26 @@ Sensor::~Sensor()
 	delete & _ray_cast;
 }
 
+Scalar Sensor::GetReading() const
+{
+	if (! _ray_cast.IsContacted())
+	{
+		return 1.f;
+	}
+	
+	auto contact_distance = _ray_cast.GetContactDistance();
+	if (contact_distance > _length)
+	{
+		return 1.f;
+	}
+	
+	auto ratio = contact_distance / _length;
+	ASSERT(ratio >= 0);
+	ASSERT(ratio <= 1.f);
+	
+	return ratio;
+}
+
 #if defined(VERIFY)
 void Sensor::Verify() const
 {
@@ -117,18 +138,19 @@ void Sensor::Verify() const
 void Sensor::Tick()
 {
 	// draw previous ray result
-	auto length = _ray_cast.GetLength();
+	auto reading = GetReading();
 	auto scan_ray = _ray_cast.GetRay();
-	if (_ray_cast.IsContacted())
+	auto start = scan_ray.position;
+	auto end = geom::Project(scan_ray, _length);
+	if (reading < 1)
 	{
-		auto contact_distance = _ray_cast.GetContactDistance();
-		auto penetration_position = geom::Project(scan_ray, contact_distance);	
-		gfx::Debug::AddLine(scan_ray.position, penetration_position, gfx::Debug::Color::Yellow());
-		gfx::Debug::AddLine(penetration_position, geom::Project(scan_ray, length), gfx::Debug::Color::Red());
+		auto penetration_position = geom::Project(scan_ray, reading * _length);
+		gfx::Debug::AddLine(start, penetration_position, gfx::Debug::Color::Yellow());
+		gfx::Debug::AddLine(penetration_position, end, gfx::Debug::Color::Red());
 	}
 	else
 	{
-		gfx::Debug::AddLine(scan_ray.position, geom::Project(scan_ray, length), gfx::Debug::Color::Green());
+		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
 	}
 
 	GenerateScanRay();
@@ -149,13 +171,12 @@ void Sensor::GenerateScanRay() const
 	scan_ray.direction *= _length;
 	
 	auto random_direction = GetRandomDirection(Random::sequence);
-	scan_ray.direction += random_direction * _length * 0.05f;
+	scan_ray.direction += random_direction * _length * _variance;
 	
 	auto scan_length = geom::Length(scan_ray.direction);
 	scan_ray.direction /= scan_length;
 	
 	// generate new ray
-	_ray_cast.SetLength(scan_length);
 	_ray_cast.SetRay(scan_ray);
 }
 

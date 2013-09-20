@@ -36,8 +36,10 @@ namespace sim
 
 		DECLARE_ALLOCATOR(Sensor);
 
-		Sensor(Entity & entity, Ray3 const & position);
+		Sensor(Entity & entity, Ray3 const & position, Scalar length, Scalar variance = 0);
 		~Sensor();
+		
+		Scalar GetReading() const;
 
 #if defined(VERIFY)
 		void Verify() const;
@@ -57,6 +59,7 @@ namespace sim
 
 		Entity & _entity;
 		Scalar _length;
+		Scalar _variance;
 		physics::RayCast & _ray_cast;
 		Ray3 const _local_ray;	// Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
