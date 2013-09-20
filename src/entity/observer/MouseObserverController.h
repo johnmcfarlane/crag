@@ -22,6 +22,7 @@ namespace physics
 namespace sim
 {
 	struct ObserverInput;
+	class Sensor;
 
 	// controls an entity whose job it is to translate mouse and keyboard events 
 	// into camera impulses which are then appied to a physics body
@@ -54,5 +55,6 @@ namespace sim
 		int _speed;
 		core::EventWatcher _event_watcher;
 		bool _collidable;
+		Sensor & _sensor;
 	};
 }

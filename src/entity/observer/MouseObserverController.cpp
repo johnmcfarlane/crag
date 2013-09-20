@@ -12,6 +12,8 @@
 #include "MouseObserverController.h"
 #include "ObserverInput.h"
 
+#include "entity/animat/Sensor.h"
+
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
@@ -54,6 +56,7 @@ using namespace sim;
 MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
+, _sensor(* new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, 0.f, 1.f)), 1000000.f))
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.AddOrdering(& MouseObserverController::Tick, & Entity::Tick);
@@ -68,6 +71,8 @@ MouseObserverController::~MouseObserverController()
 
 	// record speed in config file
 	observer_speed = _speed;
+	
+	delete & _sensor;
 }
 
 void MouseObserverController::Tick()
