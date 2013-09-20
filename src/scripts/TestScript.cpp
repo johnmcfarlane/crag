@@ -9,9 +9,10 @@
 
 #include "pch.h"
 
-#include "SpawnEntityFunctions.h"
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
+
+#include "entity/SpawnEntityFunctions.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"

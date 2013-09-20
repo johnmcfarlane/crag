@@ -14,6 +14,21 @@ add_executable(crag
 	src/core/Random.cpp
 	src/core/Roster.cpp
 	src/core/Statistics.cpp
+	src/entity/animat/AnimatController.cpp
+	src/entity/animat/AnimatThruster.cpp
+	src/entity/animat/Genome.cpp
+	src/entity/animat/Sensor.cpp
+	src/entity/planet/gfx/Planet.cpp
+	src/entity/planet/physics/PlanetBody.cpp
+	src/entity/planet/sim/MoonShader.cpp
+	src/entity/planet/sim/PlanetController.cpp
+	src/entity/planet/sim/PlanetShader.cpp
+	src/entity/SpawnEntityFunctions.cpp
+	src/entity/vehicle/gfx/Puff.cpp
+	src/entity/vehicle/gfx/Thruster.cpp
+	src/entity/vehicle/sim/RoverThruster.cpp
+	src/entity/vehicle/sim/Thruster.cpp
+	src/entity/vehicle/sim/VehicleController.cpp
 	src/form/CalculateNodeScoreFunctor.cpp
 	src/form/CastRay.cpp
 	src/form/Engine.cpp
@@ -67,23 +82,8 @@ add_executable(crag
 	src/physics/SphericalBody.cpp
 	src/scripts/MainScript.cpp
 	src/scripts/MonitorOrigin.cpp
-	src/scripts/ga/AnimatController.cpp
-	src/scripts/ga/AnimatThruster.cpp
-	src/scripts/ga/Genome.cpp
-	src/scripts/ga/Sensor.cpp
-	src/scripts/planet/gfx/Planet.cpp
-	src/scripts/planet/physics/PlanetBody.cpp
-	src/scripts/planet/sim/MoonShader.cpp
-	src/scripts/planet/sim/PlanetController.cpp
-	src/scripts/planet/sim/PlanetShader.cpp
 	src/scripts/RegulatorScript.cpp
-	src/scripts/SpawnEntityFunctions.cpp
 	src/scripts/TestScript.cpp
-	src/scripts/vehicle/gfx/Puff.cpp
-	src/scripts/vehicle/gfx/Thruster.cpp
-	src/scripts/vehicle/sim/RoverThruster.cpp
-	src/scripts/vehicle/sim/Thruster.cpp
-	src/scripts/vehicle/sim/VehicleController.cpp
 	src/sim/Controller.cpp
 	src/sim/Engine.cpp
 	src/sim/Entity.cpp

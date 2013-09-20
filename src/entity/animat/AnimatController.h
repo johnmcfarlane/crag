@@ -7,8 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-// TODO: directory structure clearly isn't nailed down yet
-#include "scripts/vehicle/sim/VehicleController.h"
+#include "entity/vehicle/sim/VehicleController.h"
 
 #include "Genome.h"
 #include "Sensor.h"

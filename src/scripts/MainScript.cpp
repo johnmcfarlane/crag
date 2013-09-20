@@ -9,12 +9,12 @@
 
 #include "pch.h"
 
-#include "SpawnEntityFunctions.h"
 #include "TestScript.h"
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
-#include "ga/AnimatController.h"
+#include "entity/SpawnEntityFunctions.h"
+#include "entity/animat/AnimatController.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"

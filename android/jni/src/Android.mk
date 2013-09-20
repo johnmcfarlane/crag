@@ -25,6 +25,21 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/Random.cpp \
 	$(CRAG_PATH)/core/Roster.cpp \
 	$(CRAG_PATH)/core/Statistics.cpp \
+	$(CRAG_PATH)/entity/animat/AnimatController.cpp \
+	$(CRAG_PATH)/entity/animat/AnimatThruster.cpp \
+	$(CRAG_PATH)/entity/animat/Genome.cpp \
+	$(CRAG_PATH)/entity/animat/Sensor.cpp \
+	$(CRAG_PATH)/entity/planet/gfx/Planet.cpp \
+	$(CRAG_PATH)/entity/planet/physics/PlanetBody.cpp \
+	$(CRAG_PATH)/entity/planet/sim/MoonShader.cpp \
+	$(CRAG_PATH)/entity/planet/sim/PlanetController.cpp \
+	$(CRAG_PATH)/entity/planet/sim/PlanetShader.cpp \
+	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
+	$(CRAG_PATH)/entity/vehicle/gfx/Puff.cpp \
+	$(CRAG_PATH)/entity/vehicle/gfx/Thruster.cpp \
+	$(CRAG_PATH)/entity/vehicle/sim/RoverThruster.cpp \
+	$(CRAG_PATH)/entity/vehicle/sim/Thruster.cpp \
+	$(CRAG_PATH)/entity/vehicle/sim/VehicleController.cpp \
 	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \
 	$(CRAG_PATH)/form/CastRay.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
@@ -76,25 +91,10 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/physics/PassiveLocation.cpp \
 	$(CRAG_PATH)/physics/RayCast.cpp \
 	$(CRAG_PATH)/physics/SphericalBody.cpp \
-	$(CRAG_PATH)/scripts/ga/AnimatController.cpp \
-	$(CRAG_PATH)/scripts/ga/AnimatThruster.cpp \
-	$(CRAG_PATH)/scripts/ga/Genome.cpp \
-	$(CRAG_PATH)/scripts/ga/Sensor.cpp \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \
-	$(CRAG_PATH)/scripts/planet/gfx/Planet.cpp \
-	$(CRAG_PATH)/scripts/planet/physics/PlanetBody.cpp \
-	$(CRAG_PATH)/scripts/planet/sim/MoonShader.cpp \
-	$(CRAG_PATH)/scripts/planet/sim/PlanetController.cpp \
-	$(CRAG_PATH)/scripts/planet/sim/PlanetShader.cpp \
 	$(CRAG_PATH)/scripts/RegulatorScript.cpp \
-	$(CRAG_PATH)/scripts/SpawnEntityFunctions.cpp \
 	$(CRAG_PATH)/scripts/TestScript.cpp \
-	$(CRAG_PATH)/scripts/vehicle/gfx/Puff.cpp \
-	$(CRAG_PATH)/scripts/vehicle/gfx/Thruster.cpp \
-	$(CRAG_PATH)/scripts/vehicle/sim/RoverThruster.cpp \
-	$(CRAG_PATH)/scripts/vehicle/sim/Thruster.cpp \
-	$(CRAG_PATH)/scripts/vehicle/sim/VehicleController.cpp \
 	$(CRAG_PATH)/sim/Controller.cpp \
 	$(CRAG_PATH)/sim/Engine.cpp \
 	$(CRAG_PATH)/sim/Entity.cpp \

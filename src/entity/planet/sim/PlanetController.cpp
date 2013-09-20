@@ -14,15 +14,15 @@
 #include "MoonShader.h"
 #include "PlanetShader.h"
 
+#include "entity/planet/gfx/Planet.h"
+#include "entity/planet/physics/PlanetBody.h"
+
 #include "sim/Entity.h"
 #include "sim/Engine.h"
-
-#include "scripts/planet/physics/PlanetBody.h"
 
 #include "form/Formation.h"
 
 #include "gfx/Engine.h"
-#include "scripts/planet/gfx/Planet.h"
 
 #include "core/Random.h"
 #include "core/Roster.h"
