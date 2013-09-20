@@ -9,9 +9,8 @@
 
 #pragma once
 
-#include "defs.h"
-
-#include "Controller.h"
+#include "sim/Controller.h"
+#include "sim/defs.h"
 
 #include "core/EventWatcher.h"
 

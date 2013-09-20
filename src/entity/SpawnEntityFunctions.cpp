@@ -11,6 +11,9 @@
 
 #include "SpawnEntityFunctions.h"
 
+#include "observer/MouseObserverController.h"
+#include "observer/TouchObserverController.h"
+
 #include "planet/sim/PlanetController.h"
 #include "planet/physics/PlanetBody.h"
 #include "planet/gfx/Planet.h"
@@ -21,8 +24,6 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
-#include "sim/MouseObserverController.h"
-#include "sim/TouchObserverController.h"
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"

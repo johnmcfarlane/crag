@@ -11,8 +11,8 @@
 
 #include "TouchObserverController.h"
 
-#include "Engine.h"
-#include "Entity.h"
+#include "sim/Engine.h"
+#include "sim/Entity.h"
 
 #include "physics/Body.h"
 #include "physics/Engine.h"

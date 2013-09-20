@@ -29,6 +29,9 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/animat/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/animat/Genome.cpp \
 	$(CRAG_PATH)/entity/animat/Sensor.cpp \
+	$(CRAG_PATH)/entity/observer/MouseObserverController.cpp \
+	$(CRAG_PATH)/entity/observer/ObserverInput.cpp \
+	$(CRAG_PATH)/entity/observer/TouchObserverController.cpp \
 	$(CRAG_PATH)/entity/planet/gfx/Planet.cpp \
 	$(CRAG_PATH)/entity/planet/physics/PlanetBody.cpp \
 	$(CRAG_PATH)/entity/planet/sim/MoonShader.cpp \
@@ -101,9 +104,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/sim/EntityFunctions.cpp \
 	$(CRAG_PATH)/sim/FrequencyEstimator.cpp \
 	$(CRAG_PATH)/sim/gravity.cpp \
-	$(CRAG_PATH)/sim/MouseObserverController.cpp \
-	$(CRAG_PATH)/sim/ObserverInput.cpp \
-	$(CRAG_PATH)/sim/TouchObserverController.cpp \
 	$(CRAG_PATH)/ipc/Fiber.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \
 	$(CRAG_PATH)/ipc/FiberPosix.cpp \

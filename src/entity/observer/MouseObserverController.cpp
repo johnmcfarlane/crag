@@ -10,10 +10,10 @@
 #include "pch.h"
 
 #include "MouseObserverController.h"
-
-#include "Engine.h"
-#include "Entity.h"
 #include "ObserverInput.h"
+
+#include "sim/Engine.h"
+#include "sim/Entity.h"
 
 #include "physics/Body.h"
 
