@@ -54,8 +54,8 @@ void RayCast::Verify() const
 	dVector3 direction;
 	dGeomRayGet(GetCollisionHandle(), position, direction);
 	Ray3 ray(
-		Vector3(position[0], position[1], position[2]),
-		Vector3(direction[0], direction[1], direction[2])
+		physics::Convert(position),
+		physics::Convert(direction)
 	);
 	VerifyObject(ray);
 	VerifyTrue(NearEqual(geom::Length(ray), 1, .0001f));

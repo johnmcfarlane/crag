@@ -161,9 +161,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		if (containment_geom.depth > bounding_sphere.radius)
 		{
 			// add a provisional contact.
-			containment_geom.pos[0] = bounding_sphere.center.x;
-			containment_geom.pos[1] = bounding_sphere.center.y;
-			containment_geom.pos[2] = bounding_sphere.center.z;
+			Convert(containment_geom.pos, bounding_sphere.center);
 			containment_geom.g1 = body_collision_handle;
 			containment_geom.g2 = mesh_collision_handle;
 			_engine.AddContact(containment_geom);

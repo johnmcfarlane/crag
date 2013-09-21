@@ -366,8 +366,8 @@ void Engine::AddContact(ContactGeom const & contact_geom)
 	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 
 #if defined(DEBUG_CONTACTS)
-	Vector3 pos(contact_geom.pos[0], contact_geom.pos[1], contact_geom.pos[2]);
-	Vector3 normal(contact_geom.normal[0], contact_geom.normal[1], contact_geom.normal[2]);
+	Vector3 pos(Convert(contact_geom.pos));
+	Vector3 normal(Convert(contact_geom.normal));
 	gfx::Debug::AddLine(pos, pos + normal * contact_geom.depth * 100.f);
 	//std::cout << pos << ' ' << normal << ' ' << contact_geom.depth << '\n';
 #endif

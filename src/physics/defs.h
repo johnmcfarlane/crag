@@ -41,4 +41,14 @@ namespace physics
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 	typedef geom::Transformation<Scalar> Transformation;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
+
+	inline void Convert(dVector3 & lhs, Vector3 const & rhs)
+	{
+		memcpy(lhs, & rhs, sizeof(Vector3));
+	}
+
+	inline Vector3 const & Convert(dVector3 const & v) 
+	{ 
+		return reinterpret_cast<Vector3 const &>(v);
+	}
 }
