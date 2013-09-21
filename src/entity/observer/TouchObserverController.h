@@ -21,6 +21,11 @@
 #include "geom/origin.h"
 #include "geom/Transformation.h"
 
+namespace form
+{
+	class RayCastResult;
+}
+
 namespace physics
 {
 	class Body;
@@ -81,6 +86,8 @@ namespace sim
 		Vector2 GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const;
 
 		Vector3 GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const;
+		
+		form::RayCastResult CastRay(Ray3 const & ray, Scalar & length) const;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

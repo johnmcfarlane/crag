@@ -401,12 +401,8 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 	Ray3 ray(_down_transformation.GetTranslation(), geom::Normalized(direction));
 
 	// perform ray cast to determine what finger is pointing to
-	auto & entity = GetEntity();
-	auto & engine = entity.GetEngine();
-	auto & physics_engine = engine.GetPhysicsEngine();
-	const auto body = entity.GetBody();
-	auto ray_cast_projection = physics_engine.CastRay(ray, max_touch_ray_cast_distance, body).GetDistance();
-	auto touch_distance = std::min(max_touch_ray_cast_distance, ray_cast_projection);
+	auto touch_result = CastRay(ray, max_touch_ray_cast_distance);
+	auto touch_distance = std::min(touch_result.GetDistance(), max_touch_ray_cast_distance);
 
 	// store as the world position
 	finger.world_position = geom::Project(ray, touch_distance);
@@ -539,6 +535,21 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 	
 	// the math
 	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_finger1, translation_roll_finger2, _down_transformation);
+	
+	Ray3 ray;
+	ray.position = _down_transformation.GetTranslation();
+	auto destination_translation = camera_transformation.GetTranslation();
+	ray.direction = destination_translation - ray.position;
+	auto ray_length = geom::Length(ray.direction);
+	ray.direction /= ray_length;
+	ray_length += 1.f;
+	auto result = CastRay(ray, ray_length);
+	if (result)
+	{
+		auto projection = std::max(1.f, result.GetDistance() - 1.f);
+		camera_transformation.SetTranslation(geom::Project(ray, projection));
+	}
+	
 	SetTransformation(camera_transformation);
 }
 
@@ -631,4 +642,14 @@ Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_positi
 	Vector3 direction = position - transformation.GetTranslation();
 
 	return direction;
+}
+
+form::RayCastResult TouchObserverController::CastRay(Ray3 const & ray, Scalar & length) const
+{
+	auto & entity = GetEntity();
+	auto & engine = entity.GetEngine();
+	auto & physics_engine = engine.GetPhysicsEngine();
+	const auto body = entity.GetBody();
+	
+	return physics_engine.CastRay(ray, length, body);
 }
