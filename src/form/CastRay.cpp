@@ -13,6 +13,7 @@
 
 #include "ForEachNodeFace.h"
 #include "Polyhedron.h"
+#include "RayCastResult.h"
 
 #include "geom/Intersection.h"
 
@@ -28,44 +29,6 @@
 #endif
 
 using namespace form;
-
-////////////////////////////////////////////////////////////////////////////////
-// RayCastResult function definitions
-
-namespace form
-{
-#if defined(VERIFY)
-	void RayCastResult::Verify() const
-	{
-		VerifyEqual(projection, projection);
-		if (projection < std::numeric_limits<Scalar>::max())
-		{
-			VerifyTrue(node != nullptr);
-			VerifyNearlyEqual(geom::Length(normal), 1.f, .001f);
-		}
-		else
-		{
-			VerifyTrue(node == nullptr);
-		}
-	}
-#endif
-
-	// the sort criteria applied to RayCastResult when choosing the lowest contact
-	bool operator<(RayCastResult const & lhs, RayCastResult const & rhs)
-	{
-		VerifyObjectRef(lhs);
-		VerifyObjectRef(rhs);
-
-		// Being negative means behind the ray. That's worse than being in front.
-		int positive_compare = int(lhs.projection >= 0) - int(rhs.projection >= 0);
-		if (positive_compare)
-		{
-			return positive_compare > 0;
-		}
-
-		return lhs.projection < rhs.projection;
-	}
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // file-local definitions
@@ -267,7 +230,7 @@ namespace
 				// This is currently out best hope for a contact; call in.
 				RayCastResult child_result = (* function)(uniforms, attributes);
 				VerifyObject(child_result);
-				VerifyTrue(child_result.projection == std::numeric_limits<Scalar>::max() || child_result.projection <= uniforms.length);
+				VerifyTrue(child_result.GetDistance() == std::numeric_limits<Scalar>::max() || child_result.GetDistance() <= uniforms.length);
 
 				// evaluate result
 				result = std::min(result, child_result);
@@ -291,19 +254,11 @@ namespace
 			&& side_attributes.intersection < leaf_attributes.range[1]
 			&& side_attributes.intersection <= uniforms.length)
 			{
-				result.normal = geom::Cast<form::Scalar>(plane.normal);
-				result.projection = side_attributes.intersection;
-				result.node = leaf_attributes.node;
-
-				VerifyObject(result);
-				VerifyTrue(result.projection == std::numeric_limits<Scalar>::max() || result.projection <= uniforms.length);
+				return RayCastResult(geom::Cast<form::Scalar>(plane.normal), side_attributes.intersection, leaf_attributes.node);
 			}
 			else
 			{
-				result.normal = - geom::Cast<form::Scalar>(uniforms.ray.direction);
-
-				VerifyObject(result);
-				VerifyTrue(result.projection == std::numeric_limits<Scalar>::max() || result.projection <= uniforms.length);
+				return RayCastResult();
 			}
 
 #if defined(DEBUG_SHOW_LINE)
@@ -418,6 +373,10 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 	{
 		impl::AddTriangle(Triangle3(result.node->GetCorner(0).pos, result.node->GetCorner(1).pos, result.node->GetCorner(2).pos));
 	}
+
+	VerifyObject(result);
+	VerifyTrue(result.GetDistance() == std::numeric_limits<Scalar>::max() || result.GetDistance() <= uniforms.length);
+
 	return result;
 #else
 	return impl::ForEachFace(std::begin(child_attributes), std::end(child_attributes), uniforms, & impl::Recurse);

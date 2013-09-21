@@ -16,6 +16,7 @@
 #include "physics/RayCast.h"
 
 #include "form/CastRay.h"
+#include "form/RayCastResult.h"
 #include "form/ForEachFaceInSphere.h"
 #include "form/Scene.h"
 
@@ -198,10 +199,7 @@ bool PlanetBody::OnCollisionWithRay(Body & body)
 	// test ray against polyhedron and register result with ray_cast
 
 	auto ray_cast_result = form::CastRay(* polyhedron, ray, length);
-	if (ray_cast_result.projection >= 0)
-	{
-		ray_cast.SampleContact(ray_cast_result.projection);
-	}
+	ray_cast.SampleResult(ray_cast_result);
 	
 	return true;
 }

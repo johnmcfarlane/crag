@@ -25,24 +25,23 @@ using namespace physics;
 
 RayCast::RayCast(Engine & engine, Scalar length)
 : Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(length))
-, _contact_distance(0)
 {
 	// register for physics tick
 	auto & roster = _engine.GetPreTickRoster();
-	roster.AddCommand(* this, & RayCast::ResetContactDistance);
+	roster.AddCommand(* this, & RayCast::ResetResult);
 }
 
 RayCast::~RayCast()
 {
 	// register for physics tick
 	auto & roster = _engine.GetPreTickRoster();
-	roster.RemoveCommand(* this, & RayCast::ResetContactDistance);
+	roster.RemoveCommand(* this, & RayCast::ResetResult);
 }
 
 #if defined(VERIFY)
 void RayCast::Verify() const
 {
-	VerifyOp(_contact_distance, >=, 0);
+	VerifyObject(_result);
 	
 	// test length
 	dReal length = GetLength();
@@ -84,7 +83,7 @@ void RayCast::SetRay(Ray3 const ray)
 		ray.position.x, ray.position.y, ray.position.z, 
 		ray.direction.x, ray.direction.y, ray.direction.z);
 
-	ResetContactDistance();
+	ResetResult();
 
 	VerifyNearlyEqual(geom::Length(ray.position - GetRay().position), 0.f, 0.01f);
 	VerifyNearlyEqual(geom::Length(geom::Normalized(ray.direction) - geom::Normalized(GetRay().direction)), 0.f, 0.001f);
@@ -109,33 +108,24 @@ Scalar RayCast::GetLength() const
 	return dGeomRayGetLength(GetCollisionHandle());
 }
 
-bool RayCast::IsContacted() const
+form::RayCastResult const & RayCast::GetResult() const
 {
-	VerifyObject(* this);
-	
-	return _contact_distance < max_contact_distance;
+	return _result;
 }
 
-Scalar RayCast::GetContactDistance() const
+void RayCast::SampleResult(form::RayCastResult const & result)
 {
-	ASSERT(IsContacted());
-	
-	return _contact_distance;
-}
-
-void RayCast::SampleContact(Scalar contact_distance)
-{
-	VerifyTrue(contact_distance >= 0);
+	VerifyObject(result);
 	VerifyObject(* this);
 	
-	_contact_distance = std::min(_contact_distance, contact_distance);
+	_result = std::min(_result, result);
 	
 	VerifyObject(* this);
 }
 
-void RayCast::ResetContactDistance()
+void RayCast::ResetResult()
 {
-	_contact_distance = std::numeric_limits<Scalar>::max();
+	_result = form::RayCastResult();
 }
 
 void RayCast::SetDensity(Scalar)

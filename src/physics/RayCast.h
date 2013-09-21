@@ -11,6 +11,8 @@
 
 #include "Body.h"
 
+#include "form/RayCastResult.h"
+
 namespace physics
 {
 	// Represents a ray to the physics system; has collision by is not dynamic.
@@ -34,19 +36,16 @@ namespace physics
 		void SetLength(Scalar length);
 		Scalar GetLength() const;
 		
-		bool IsContacted() const;
-
-		Scalar GetContactDistance() const;
-		void SampleContact(Scalar contact_distance);
+		form::RayCastResult const & GetResult() const;
+		void SampleResult(form::RayCastResult const & result);
 
 	private:
-		void ResetContactDistance();
+		void ResetResult();
 		
 		void SetDensity(Scalar density) override final;
 
 		bool OnCollision(Body & that_body) final;
 		
-		Scalar _contact_distance;
-		static constexpr Scalar max_contact_distance = std::numeric_limits<Scalar>::max();
+		form::RayCastResult _result;
 	};
 }

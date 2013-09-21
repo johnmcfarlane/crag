@@ -13,6 +13,8 @@
 #include "Engine.h"
 #include "RayCast.h"
 
+#include "form/RayCastResult.h"
+
 #include "geom/Matrix33.h"
 
 #include "core/Roster.h"
@@ -252,7 +254,7 @@ bool Body::OnCollisionWithRay(Body & that_body)
 		ASSERT(collision_geom.g2 == that_collision_handle);
 		
 		auto & ray_cast = static_cast<RayCast &>(that_body);
-		ray_cast.SampleContact(collision_geom.depth);
+		ray_cast.SampleResult(form::RayCastResult(physics::Convert(collision_geom.normal), collision_geom.depth, nullptr));
 	}
 	
 	return true;

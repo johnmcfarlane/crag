@@ -16,6 +16,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
+#include "form/RayCastResult.h"
+
 #include "physics/RayCast.h"
 
 #include "gfx/Debug.h"
@@ -109,16 +111,14 @@ Sensor::~Sensor()
 
 Scalar Sensor::GetReading() const
 {
-	if (! _ray_cast.IsContacted())
+	const auto& result = _ray_cast.GetResult();
+	if (! result)
 	{
 		return 1.f;
 	}
 	
-	auto contact_distance = _ray_cast.GetContactDistance();
-	if (contact_distance > _length)
-	{
-		return 1.f;
-	}
+	auto contact_distance = result.GetDistance();
+	VerifyOp (contact_distance, <=, _length);
 	
 	auto ratio = contact_distance / _length;
 	ASSERT(ratio >= 0);

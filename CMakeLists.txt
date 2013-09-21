@@ -43,6 +43,7 @@ add_executable(crag
 	src/form/Point.cpp
 	src/form/PointBuffer.cpp
 	src/form/Polyhedron.cpp
+	src/form/RayCastResult.cpp
 	src/form/RootNode.cpp
 	src/form/Scene.cpp
 	src/form/VertexBuffer.cpp

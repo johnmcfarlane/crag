@@ -23,6 +23,7 @@ namespace core
 
 namespace form
 {
+	class RayCastResult;
 	class Scene;
 }
 
@@ -71,7 +72,7 @@ namespace physics
 		void Tick(double delta_time, Ray3 const & camera_ray);
 		
 		// use sparingly
-		Scalar CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
+		form::RayCastResult CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
 		
 		void ToggleCollisions();
 	private:

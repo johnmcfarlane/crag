@@ -12,32 +12,10 @@
 namespace form 
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// forward-declaration
+	// forward-declarations
 
 	class Polyhedron;
-
-	////////////////////////////////////////////////////////////////////////////////
-	// RayCastResult class definition - represents contact between ray and polyhedron
-
-	struct RayCastResult
-	{
-		// this type dictates the precision used in CastRay
-		typedef ::form::Scalar Scalar;
-
-		// the normal of the surface with which the ray contacted
-		Vector3 normal;
-
-		// the distance along the ray (as proportion of ray direction)
-		// at which contact occurred
-		Scalar projection = std::numeric_limits<Scalar>::max();
-
-		// the individual node with which contact occurred
-		Node const * node = nullptr;
-
-#if defined(VERIFY)
-		void Verify() const;
-#endif
-	};
+	class RayCastResult;
 
 	// performs a ray cast on a polyhedron; ray must have unit direction 
 	// and if no contact is found, length is max for Scalar

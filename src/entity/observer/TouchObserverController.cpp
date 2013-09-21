@@ -14,6 +14,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
+#include "form/RayCastResult.h"
+
 #include "physics/Body.h"
 #include "physics/Engine.h"
 
@@ -403,7 +405,8 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 	auto & engine = entity.GetEngine();
 	auto & physics_engine = engine.GetPhysicsEngine();
 	const auto body = entity.GetBody();
-	auto touch_distance = std::min(max_touch_ray_cast_distance, physics_engine.CastRay(ray, max_touch_ray_cast_distance, body));
+	auto ray_cast_projection = physics_engine.CastRay(ray, max_touch_ray_cast_distance, body).GetDistance();
+	auto touch_distance = std::min(max_touch_ray_cast_distance, ray_cast_projection);
 
 	// store as the world position
 	finger.world_position = geom::Project(ray, touch_distance);

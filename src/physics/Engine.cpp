@@ -15,6 +15,7 @@
 #include "MeshSurround.h"
 #include "RayCast.h"
 
+#include "form/RayCastResult.h"
 #include "form/Scene.h"
 
 #include "core/ConfigEntry.h"
@@ -246,7 +247,7 @@ void Engine::Tick(double delta_time, Ray3 const & camera_ray)
 	_post_tick_roster.Call();
 }
 
-float Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
+form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
 {
 	VerifyIsUnit(ray, .0001f);
 	
@@ -265,7 +266,7 @@ float Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
 	dSpaceCollide2(reinterpret_cast<CollisionHandle>(space), handle, nullptr, OnCastRayCollision);
 
 	// return result
-	return ray_cast.GetContactDistance();
+	return ray_cast.GetResult();
 }
 
 void Engine::ToggleCollisions()
