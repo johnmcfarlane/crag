@@ -38,6 +38,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/planet/sim/PlanetController.cpp \
 	$(CRAG_PATH)/entity/planet/sim/PlanetShader.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
+	$(CRAG_PATH)/entity/SpawnSkybox.cpp \
 	$(CRAG_PATH)/entity/vehicle/gfx/Puff.cpp \
 	$(CRAG_PATH)/entity/vehicle/gfx/Thruster.cpp \
 	$(CRAG_PATH)/entity/vehicle/sim/RoverThruster.cpp \

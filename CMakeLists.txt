@@ -27,6 +27,7 @@ add_executable(crag
 	src/entity/planet/sim/PlanetController.cpp
 	src/entity/planet/sim/PlanetShader.cpp
 	src/entity/SpawnEntityFunctions.cpp
+	src/entity/SpawnSkybox.cpp
 	src/entity/vehicle/gfx/Puff.cpp
 	src/entity/vehicle/gfx/Thruster.cpp
 	src/entity/vehicle/sim/RoverThruster.cpp

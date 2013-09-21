@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "SpawnEntityFunctions.h"
+//#include "SpawnEntityFunctions.h"
 
 #include "observer/MouseObserverController.h"
 #include "observer/TouchObserverController.h"
@@ -34,13 +34,11 @@
 #include "gfx/object/Ball.h"
 #include "gfx/object/Box.h"
 #include "gfx/object/Light.h"
-#include "gfx/object/Skybox.h"
 
 #include "geom/origin.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
-#include "core/Random.h"
 
 namespace gfx 
 { 
@@ -181,143 +179,6 @@ namespace
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 	}
-
-	void DrawStarsSlow(gfx::Skybox & skybox, int box_edge_size, int num_stars)
-	{
-		for (int axis = 0; axis < 3; ++ axis)
-		{
-			int x_axis = TriMod(axis + 1);
-			int y_axis = TriMod(axis + 2);
-			int z_axis = axis;
-			for (int pole = 0; pole < 2; ++ pole)
-			{
-				gfx::Image side;
-				side.Create(geom::Vector2i(box_edge_size, box_edge_size));
-				side.Clear(gfx::Color4b::Black());
-
-				geom::Vector2i pos;
-				geom::Vector2f f_pos;
-				for (pos.x = 0; pos.x < box_edge_size; ++ pos.x)
-				{
-					f_pos.x = ((static_cast<float>(pos.x) + .5f) / (static_cast<float>(box_edge_size) - .0f)) - .5f;
-
-					for (pos.y = 0; pos.y < box_edge_size; ++ pos.y)
-					{
-						f_pos.y = ((static_cast<float>(pos.y) + .5f) / (static_cast<float>(box_edge_size) - .0f)) - .5f;
-
-						double intensity = 0;
-						Random random (1);
-
-						geom::Sphere<float, 3> star;
-						float const * axes = star.center.GetAxes();
-	//					float & star_x = axes[x_axis];
-	//					float & star_y = axes[y_axis];
-						float const & star_z = axes[z_axis];
-
-						geom::Vector3f line_direction;
-						float * line_axes = line_direction.GetAxes();
-						float & line_x = line_axes[x_axis];
-						float & line_y = line_axes[y_axis];
-						float & line_z = line_axes[z_axis];
-
-						for (int i = num_stars; i; -- i)
-						{
-							star.center.x = random.GetUnitInclusive<float>() - .5f;
-							star.center.y = random.GetUnitInclusive<float>() - .5f;
-							star.center.z = random.GetUnitInclusive<float>() - .5f;
-							star.radius = Squared(random.GetUnitInclusive<float>());
-
-							float w = star_z;
-							if ((w > 0) != (pole != 0) || w == 0)
-							{
-								continue;
-							}
-
-							//float w_co = .5f / w;
-							//geom::Vector2f uv(star_x * w_co, star_y * w_co);
-
-							line_x = f_pos.x;
-							line_y = f_pos.y;
-							line_z = (w > 0) ? .5f : -.5f;
-							Normalize(line_direction);
-
-							float dp = DotProduct(star.center, line_direction);
-							float a_sq = LengthSq(star.center) - Squared(dp);
-
-							intensity += (double)star.radius / (double)a_sq;
-						}
-
-						float comp = static_cast<float>(std::min(1., .0002 * intensity));
-						gfx::Color4f c (comp);
-						side.SetPixel(pos, c);
-					}
-				}
-
-				skybox.SetSide(axis, pole, side);
-			}
-		}
-	}
-
-	void DrawStar(gfx::Image & side, geom::Vector2f const & uv, float r)
-	{
-		auto size = side.GetSize();
-		geom::Vector2i pos;
-
-		pos.x = static_cast<int>((uv.x + .5f) * size.x);
-		if (pos.x < 0 || pos.x >= size.x) {
-			return;
-		}
-	
-		pos.y = static_cast<int>((uv.y + .5f) * size.y);
-		if (pos.y < 0 || pos.y >= size.y) {
-			return;
-		}
-	
-		float comp = std::min(1.f, r);
-		gfx::Color4f c (comp);
-		side.SetPixel(pos, c);
-	}
-
-	void DrawStarsFast(gfx::Skybox & skybox, int box_edge_size, int num_stars)
-	{
-		for (int axis = 0; axis < 3; ++ axis)
-		{
-			for (int pole = 0; pole < 2; ++ pole)
-			{
-				gfx::Image side;
-				side.Create(geom::Vector2i(box_edge_size, box_edge_size));
-				side.Clear(gfx::Color4b::Black());
-			
-				Random random (1);
-				for (int i = num_stars; i; -- i)
-				{
-					geom::Sphere<float, 3> star;
-					//random.GetGaussians(star.center.x, star.center.y);
-					//random.GetGaussians(star.center.z, star.radius);
-					//star.radius = Abs(star.radius);
-					star.center.x = random.GetUnitInclusive<float>() - .5f;
-					star.center.y = random.GetUnitInclusive<float>() - .5f;
-					star.center.z = random.GetUnitInclusive<float>() - .5f;
-					star.radius = Squared(random.GetUnitInclusive<float>());
-				
-					float const * axes = star.center.GetAxes();
-					float w = axes[axis];
-					if ((w > 0) != (pole != 0) || w == 0)
-					{
-						continue;
-					}
-				
-					float w_co = .5f / w;
-				
-					geom::Vector2f uv(axes[TriMod(axis + 1)] * w_co, axes[TriMod(axis + 2)] * w_co);
-					float radius = star.radius * Abs(w_co);
-					DrawStar(side, uv, radius);
-				}
-			
-				skybox.SetSide(axis, pole, side);
-			}
-		}
-	}
 }
 
 sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
@@ -384,24 +245,6 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 	});
 
 	return handle;
-}
-
-gfx::ObjectHandle SpawnSkybox()
-{
-	bool const fast = true;
-	auto skybox = gfx::SkyboxHandle::CreateHandle();
-	skybox.Call([fast] (gfx::Skybox & object) {
-		if (fast)
-		{
-			DrawStarsFast(object, 512, 20000);
-		}
-		else
-		{
-			DrawStarsSlow(object, 256, 100);
-		}
-	});
-
-	return skybox;
 }
 
 sim::EntityHandle SpawnStar()

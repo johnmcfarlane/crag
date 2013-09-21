@@ -13,6 +13,7 @@
 #include "RegulatorScript.h"
 
 #include "entity/SpawnEntityFunctions.h"
+#include "entity/SpawnSkybox.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -230,7 +231,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 		regulator(ai);
 	});
 	
-	gfx::ObjectHandle skybox = SpawnSkybox();
+	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create vehicle.
 	if (spawn_vehicle)
