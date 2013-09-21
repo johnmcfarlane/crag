@@ -194,7 +194,14 @@ void MainScript(applet::AppletInterface & applet_interface)
 		regulator(applet_interface);
 	});
 	
-	gfx::ObjectHandle skybox = SpawnHolodeckSkybox();
+	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
+		"assets/skybox/left.bmp",
+		"assets/skybox/right.bmp",
+		"assets/skybox/bottom.bmp",
+		"assets/skybox/top.bmp",
+		"assets/skybox/back.bmp",
+		"assets/skybox/front.bmp"
+	}});
 	
 	SpawnAnimats(observer_start_pos);
 
