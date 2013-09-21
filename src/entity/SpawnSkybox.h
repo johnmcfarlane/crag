@@ -9,3 +9,4 @@
 
 gfx::ObjectHandle SpawnHolodeckSkybox();
 gfx::ObjectHandle SpawnStarfieldSkybox();
+gfx::ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filenames);

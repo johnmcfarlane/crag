@@ -214,3 +214,26 @@ gfx::ObjectHandle SpawnStarfieldSkybox()
 
 	return skybox;
 }
+
+gfx::ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filenames)
+{
+	auto skybox = gfx::SkyboxHandle::CreateHandle();
+
+	skybox.Call([filenames] (gfx::Skybox & object) {
+		gfx::Image image;
+	
+		auto filename_iterator = std::begin(filenames);
+		for (auto axis = 0; axis < 3; ++ axis)
+		{
+			for (auto pole = 0; pole < 2; ++ filename_iterator, ++ pole)
+			{
+				image.Load(* filename_iterator);
+				object.SetSide(axis, pole, image);
+			}
+		}
+
+		ASSERT(filename_iterator == std::end(filenames));
+	});
+	
+	return skybox;
+}
