@@ -27,6 +27,7 @@ namespace app
 	
 	// file access
 	typedef std::shared_ptr<std::vector<char>> FileResource;
+	char const * GetFullPath(char const * filepath);
 	FileResource LoadFile(char const * filename, bool null_terminate = false);
 	
 	// misc

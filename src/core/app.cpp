@@ -123,10 +123,23 @@ void app::DeinitContext()
 	renderer = nullptr;
 }
 
+char const * app::GetFullPath(char const * filepath)
+{
+#if defined(__ANDROID__)
+	static constexpr char prefix[] = "assets/";
+	static constexpr std::size_t prefix_size = std::extent<decltype(prefix)>::value - 1;
+	ASSERT(strncmp(filepath, prefix, prefix_size) == 0);
+	
+	return filepath + prefix_size;
+#else
+	return filepath;
+#endif
+}
+
 app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
 	// open file
-	SDL_RWops * source = SDL_RWFromFile(filename, "rb");
+	SDL_RWops * source = SDL_RWFromFile(app::GetFullPath(filename), "rb");
 	if (source == nullptr)
 	{
 		DEBUG_MESSAGE("failed to open file, '%s':", filename);

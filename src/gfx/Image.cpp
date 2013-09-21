@@ -192,7 +192,7 @@ void Image::Clear(Color4b const & color)
 
 void Image::Load(char const * filename)
 {
-	surface = SDL_LoadBMP(filename);
+	surface = SDL_LoadBMP(app::GetFullPath(filename));
 }
 
 bool Image::Save(char const * filename)

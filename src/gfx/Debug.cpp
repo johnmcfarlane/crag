@@ -196,7 +196,7 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	font = new Font("font_bitmap.bmp", .5f);
+	font = new Font("assets/font_bitmap.bmp", .5f);
 }
 
 
