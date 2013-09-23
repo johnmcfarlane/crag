@@ -180,26 +180,47 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 bool PlanetBody::OnCollisionWithRay(Body & body)
 {
 	auto & ray_cast = static_cast<RayCast &>(body);
-	auto ray = ray_cast.GetRay();
-	auto length = ray_cast.GetLength();
+
+	auto calculate_length_to_cast = [& ray_cast] ()
+	{
+		const auto & previous_ray_casy_result = ray_cast.GetResult();
+		if (previous_ray_casy_result)
+		{
+			// if contact has previously been detected,
+			// testing beyond the distance of that contact is of no use
+			auto length_to_cast = previous_ray_casy_result.GetDistance();
+
+			// check that this is indeed a shortening of the ray to cast
+			VerifyOp(length_to_cast, <=, ray_cast.GetLength());
+
+			return length_to_cast;
+		}
+		else
+		{
+			return ray_cast.GetLength();
+		}
+	};
+
+	const auto length = calculate_length_to_cast();
+	const auto ray = ray_cast.GetRay();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// get necessary data for scanning planet surface
 
-	auto & scene = _engine.GetScene();
-	auto polyhedron = scene.GetPolyhedron(_formation);
-	if (polyhedron == nullptr)
+	const auto & scene = _engine.GetScene();
+	const auto polyhedron = scene.GetPolyhedron(_formation);
+	if (! polyhedron)
 	{
 		// This can happen if the PlanetBody has just been created 
 		// and the corresponding OnAddFormation message hasn't been read yet.
 		return true;
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////////
 	// test ray against polyhedron and register result with ray_cast
 
-	auto ray_cast_result = form::CastRay(* polyhedron, ray, length);
+	const auto ray_cast_result = form::CastRay(* polyhedron, ray, length);
+
 	ray_cast.SampleResult(ray_cast_result);
-	
 	return true;
 }
