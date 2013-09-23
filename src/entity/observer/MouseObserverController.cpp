@@ -37,6 +37,7 @@ namespace
 	CONFIG_DEFINE (observer_translation_input, float, 10.08f);
 	CONFIG_DEFINE (observer_rotation_input, float, 12.6f);
 	CONFIG_DEFINE (observer_mouse_sensitivity, float, 0.35f);
+	CONFIG_DEFINE (observer_mouse_ray_cast_distance, float, 1000000000.f);
 
 	// TODO: this value is likely sensitive to screen resolutions
 #if defined(__APPLE__)
@@ -56,7 +57,7 @@ using namespace sim;
 MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
-, _sensor(* new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, 0.f, 1.f)), 1000000.f))
+, _sensor(* new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, 0.f, 1.f)), observer_mouse_ray_cast_distance))
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.AddOrdering(& MouseObserverController::Tick, & Entity::Tick);
