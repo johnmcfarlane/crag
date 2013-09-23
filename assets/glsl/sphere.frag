@@ -7,7 +7,7 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GLES2
+#ifdef GL_ES
 precision highp float;
 #endif
 
@@ -53,7 +53,9 @@ void SetFragmentDepth(in vec4 view_position)
 {
 	highp vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
 	
-	//gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
+#ifndef GL_ES
+	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
+#endif
 }
 
 

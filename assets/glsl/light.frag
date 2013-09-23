@@ -7,7 +7,7 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GLES2
+#ifdef GL_ES
 precision highp float;
 #endif
 

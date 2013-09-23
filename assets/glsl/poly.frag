@@ -9,7 +9,7 @@
 
 #extension GL_OES_standard_derivatives : enable
 
-#ifdef GLES2
+#ifdef GL_ES
 precision highp float;
 #endif
 
