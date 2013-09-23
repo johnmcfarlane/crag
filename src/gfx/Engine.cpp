@@ -69,7 +69,7 @@ namespace
 	STAT (frame_3_total_duration, double, .18f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
-	
+	STAT_DEFAULT (z_range, sim::Vector2, .78f, sim::Vector2::Zero());
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local functions
@@ -188,6 +188,8 @@ namespace
 		LeafNode::RenderList const & render_list = scene.GetRenderList();
 
 		RenderRange depth_range = CalculateDepthRange(render_list);
+		STAT_SET (z_range, depth_range);
+
 		return CalcProjectionMatrix(scene, depth_range);
 	}
 
