@@ -97,6 +97,11 @@ bool ConfigManager::Load()
 		
 		config_file.getline(config_line, max_string_size - 1);
 		defaults_file.getline(default_line, max_string_size - 1);
+		
+		if (config_line[0] == '\0')
+		{
+			continue;
+		}
 
 		// read name/value strings from config file
 		char * value_string = strchr(config_line, '=');
