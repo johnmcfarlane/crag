@@ -291,8 +291,11 @@ namespace
 	{
 		switch (event->type) 
 		{
-			case SDL_QUIT:
 			case SDL_APP_WILLENTERBACKGROUND:
+#if defined(__ANDROID__)
+				exit(0);
+#endif
+			case SDL_QUIT:
 			case SDL_WINDOWEVENT:
 #if defined(CRAG_USE_TOUCH)
 			case SDL_FINGERDOWN:
