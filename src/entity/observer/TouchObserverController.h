@@ -71,6 +71,7 @@ namespace sim
 		void UpdateCamera(Finger const & finger1, Finger const & finger2);
 		
 		Transformation const & GetTransformation() const;
+		void ClampTransformation(Transformation & transformation) const;
 		void SetTransformation(Transformation const & transformation);
 		void BroadcastTransformation() const;
 

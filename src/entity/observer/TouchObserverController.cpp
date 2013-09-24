@@ -154,6 +154,10 @@ namespace
 		const auto screen_span = geom::Length(screen_position_diff);
 		
 		const auto screen_position_direction = screen_position_diff * Scalar(1) / screen_span;
+		if (screen_span < .00001f)
+		{
+			return camera_transformation;
+		}
 		
 		const auto camera_to_screen_distance1 = geom::Length(geom::Cast<Scalar>(finger1.screen_position));
 		const auto camera_to_screen_distance2 = geom::Length(geom::Cast<Scalar>(finger2.screen_position));
@@ -535,21 +539,9 @@ void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const 
 	
 	// the math
 	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_finger1, translation_roll_finger2, _down_transformation);
-	
-	Ray3 ray;
-	ray.position = _down_transformation.GetTranslation();
-	auto destination_translation = camera_transformation.GetTranslation();
-	ray.direction = destination_translation - ray.position;
-	auto ray_length = geom::Length(ray.direction);
-	ray.direction /= ray_length;
-	ray_length += 1.f;
-	auto result = CastRay(ray, ray_length);
-	if (result)
-	{
-		auto projection = std::max(1.f, result.GetDistance() - 1.f);
-		camera_transformation.SetTranslation(geom::Project(ray, projection));
-	}
-	
+
+	ClampTransformation(camera_transformation);
+
 	SetTransformation(camera_transformation);
 }
 
@@ -560,6 +552,41 @@ Transformation const & TouchObserverController::GetTransformation() const
 	ASSERT(location);
 	
 	return location->GetTransformation();
+}
+
+// adjusts given transformation to avoid penetrating world geometry
+void TouchObserverController::ClampTransformation(Transformation & transformation) const
+{
+	// get start point
+	auto destination_translation = transformation.GetTranslation();
+
+	// create ray to proposed destination
+	Ray3 ray;
+	ray.position = _down_transformation.GetTranslation();
+	ray.direction = destination_translation - ray.position;
+
+	// normalize the ray
+	auto ray_length = geom::Length(ray.direction);
+	if (ray_length < .00001f)
+	{
+		// no change
+		return;
+	}
+	ray.direction /= ray_length;
+
+	// add a little extra to account for near z (unreliable)
+	ray_length += 1.f;
+
+	// how far alone the ray is clear?
+	auto result = CastRay(ray, ray_length);
+	if (! result)
+	{
+		// full length is fine
+		return;
+	}
+
+	auto projection = std::max(1.f, result.GetDistance() - 1.f);
+	transformation.SetTranslation(geom::Project(ray, projection));
 }
 
 void TouchObserverController::SetTransformation(Transformation const & transformation)
