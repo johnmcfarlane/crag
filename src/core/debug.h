@@ -264,6 +264,11 @@ void VerifyObject(T const & object)
 	object.Verify();
 }
 
+inline void VerifyObject(float f)
+{
+	VerifyEqual(f, f);
+}
+
 // Verify address of object and run object's internal verification.
 template<typename T>
 void VerifyObjectRef(T const & ref)
