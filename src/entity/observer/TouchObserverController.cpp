@@ -45,7 +45,7 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000.f);
+	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
 
 	struct TranslationRollFinger
 	{
