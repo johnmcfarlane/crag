@@ -40,6 +40,12 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
+#if defined(CRAG_USE_MOUSE)
+CONFIG_DEFINE (observer_use_touch, bool, false);
+#elif defined(CRAG_USE_TOUCH)
+CONFIG_DEFINE (observer_use_touch, bool, true);
+#endif
+
 namespace gfx 
 { 
 	DECLARE_CLASS_HANDLE(Box); // gfx::BoxHandle
@@ -66,12 +72,6 @@ namespace
 	CONFIG_DEFINE (observer_angular_damping, physics::Scalar, 0.05f);
 
 	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
-
-#if defined(CRAG_USE_MOUSE)
-	CONFIG_DEFINE (observer_use_touch, bool, false);
-#elif defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE (observer_use_touch, bool, true);
-#endif
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions

@@ -28,15 +28,12 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 
+CONFIG_DECLARE (observer_use_touch, bool);
+
 namespace
 {
 	CONFIG_DEFINE (min_precision_score, sim::Scalar, .001f);
-	
-#if defined(__ANDROID__)
-	CONFIG_DEFINE (regulator_touch_max_distance, float, 10000.f);
-#else
-	CONFIG_DEFINE (regulator_touch_max_distance, float, 1000000000.f);
-#endif
+	CONFIG_DEFINE (regulator_touch_max_distance, float, 100000.f);
 
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
@@ -46,7 +43,7 @@ namespace
 		auto distance_from_origin = geom::Length(camera_pos);
 		
 		// especially on Android, certain things go wrong when the origin is too far away
-		if (distance_from_origin > regulator_touch_max_distance)
+		if (observer_use_touch && distance_from_origin > regulator_touch_max_distance)
 		{
 			return true;
 		}
