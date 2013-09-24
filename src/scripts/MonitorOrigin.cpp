@@ -33,7 +33,7 @@ CONFIG_DECLARE (observer_use_touch, bool);
 namespace
 {
 	CONFIG_DEFINE (min_precision_score, sim::Scalar, .001f);
-	CONFIG_DEFINE (regulator_touch_max_distance, float, 100000.f);
+	CONFIG_DEFINE (regulator_touch_max_distance, float, 10000.f);
 
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
