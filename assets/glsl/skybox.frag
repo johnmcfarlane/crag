@@ -20,8 +20,4 @@ varying lowp vec2 fragment_tex_coord;
 void main(void)
 {
 	gl_FragColor = texture2D(texture, fragment_tex_coord);
-
-#ifndef GL_ES
-	gl_FragDepth = 1.0;
-#endif
 }
