@@ -863,6 +863,7 @@ void Engine::RenderFrame()
 	VerifyRenderState();
 	
 	// clear the screen.
+	ASSERT(GetBool<GL_DEPTH_WRITEMASK>());
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	
 	// Set up lights.
