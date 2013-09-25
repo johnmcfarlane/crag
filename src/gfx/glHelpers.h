@@ -56,6 +56,14 @@ namespace gfx
 		return result;
 	}
 	
+	// Poll OpenGL for an int-type parameter value.
+	template<GLenum PNAME> bool GetBool()
+	{
+		GLboolean result;
+		GL_CALL(glGetBooleanv(PNAME, & result));
+		return result;
+	}
+	
 	// Returns true if the given OpenGL parameter is true. 
 	inline bool IsEnabled(GLenum cap)
 	{
