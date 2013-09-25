@@ -26,6 +26,7 @@
 using namespace gfx;
 using namespace Debug;
 
+CONFIG_DECLARE(depth_func, int);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local definitions
@@ -166,7 +167,7 @@ namespace
 
 		if (hidden)
 		{
-			glDepthFunc(GL_LEQUAL);
+			glDepthFunc(depth_func);
 		}
 	}
 

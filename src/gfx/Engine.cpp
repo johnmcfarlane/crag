@@ -31,9 +31,9 @@
 using core::Time;
 using namespace gfx;
 
-CONFIG_DECLARE (profile_mode, bool);
+CONFIG_DEFINE(depth_func, int, GL_LEQUAL);
+CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
-
 
 namespace 
 {
@@ -725,7 +725,7 @@ void Engine::InitRenderState()
 
 	GL_CALL(glFrontFace(GL_CCW));
 	GL_CALL(glCullFace(GL_BACK));
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(depth_func);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	VerifyRenderState();
@@ -747,7 +747,7 @@ void Engine::VerifyRenderState() const
 	}
 	
 	// TODO: Write equivalent functions for all state in GL. :S
-	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
+	ASSERT(GetInt<GL_DEPTH_FUNC>() == depth_func);
 #endif	// NDEBUG
 }
 
@@ -885,7 +885,7 @@ void Engine::RenderFrame()
 
 void Engine::RenderScene()
 {
-	ASSERT(GetInt<GL_DEPTH_FUNC>() == GL_LEQUAL);
+	ASSERT(GetInt<GL_DEPTH_FUNC>() == depth_func);
 	
 	// calculate matrices
 	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(* scene);
