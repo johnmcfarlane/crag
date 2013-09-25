@@ -142,7 +142,7 @@ void Font::RenderVerts() const
 	// State
 	Enable(GL_BLEND);
 	Disable(GL_DEPTH_TEST);
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 	
 	// Draw VBO
 	vbo.Activate();
@@ -150,7 +150,7 @@ void Font::RenderVerts() const
 	vbo.DrawStrip(0, num_verts);
 	vbo.Deactivate();
 	
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
 	Enable(GL_DEPTH_TEST);
 	Disable(GL_BLEND);
 }
