@@ -249,10 +249,11 @@ namespace
 			geom::Normalize(plane.normal);
 			const auto side_attributes = GenerateSideAttribute(uniforms.ray, plane);
 
-			&& side_attributes.intersection >= leaf_attributes.range[0] 
 			if (side_attributes.dot_product > 0 // only register entry - not exit
+			&& side_attributes.intersection >= leaf_attributes.range[0]	// within the volume covered by the node
 			&& side_attributes.intersection < leaf_attributes.range[1]
-			&& side_attributes.intersection <= uniforms.length)
+			&& side_attributes.intersection <= uniforms.length	// within the overall range
+			&& side_attributes.intersection >= 0)
 			{
 				return RayCastResult(geom::Cast<form::Scalar>(plane.normal), side_attributes.intersection, leaf_attributes.node);
 			}
