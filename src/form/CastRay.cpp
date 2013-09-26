@@ -249,8 +249,8 @@ namespace
 			geom::Normalize(plane.normal);
 			const auto side_attributes = GenerateSideAttribute(uniforms.ray, plane);
 
-			if (side_attributes.dot_product > 0 // only register entry - not exis
 			&& side_attributes.intersection >= leaf_attributes.range[0] 
+			if (side_attributes.dot_product > 0 // only register entry - not exit
 			&& side_attributes.intersection < leaf_attributes.range[1]
 			&& side_attributes.intersection <= uniforms.length)
 			{

@@ -79,7 +79,7 @@ namespace
 		if (sin_gamma > 1)
 		{
 			// hopefully a precision error
-			DEBUG_MESSAGE("Inpossible triangle. sin_gamma = %lf", double(sin_gamma));
+			DEBUG_MESSAGE("Impossible triangle. sin_gamma = %lf", double(sin_gamma));
 			
 			sin_gamma = 1.f;
 		}
