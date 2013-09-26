@@ -287,15 +287,24 @@ void TouchObserverController::Tick()
 
 void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
 {
-	auto transformation = GetTransformation();
-	auto previous_relative_camera_position = transformation.GetTranslation();
-	auto absolute_camera_pos = geom::RelToAbs(previous_relative_camera_position, _origin);
+	// convert entity position
+	auto old_transformation = GetTransformation();
+	auto new_transformation = geom::Convert(old_transformation, _origin, event.origin);
+	SetTransformation(new_transformation);
+	
+	// convert _down_transformation
+	if (! _fingers.empty())
+	{
+		_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
+	}
+	
+	// convert fingers
+	for (auto & finger : _fingers)
+	{
+		finger.world_position = geom::Convert(finger.world_position, _origin, event.origin);
+	}
 
 	_origin = event.origin;
-
-	auto new_relative_camera_position = geom::AbsToRel(absolute_camera_pos, _origin);
-	transformation.SetTranslation(new_relative_camera_position);
-	SetTransformation(transformation);
 }
 
 void TouchObserverController::HandleEvents()
