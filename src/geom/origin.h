@@ -95,4 +95,14 @@ namespace geom
 	{
 		return geom::abs::Transformation(RelToAbs(rel.GetTranslation(), origin), geom::Cast<geom::abs::Scalar>(rel.GetRotation()));
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// Convert
+	
+	template <typename REL_T>
+	inline REL_T Convert(REL_T const & rel, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin)
+	{
+		auto abs = RelToAbs(rel, source_origin);
+		return AbsToRel(abs, destination_origin);
+	}
 }
