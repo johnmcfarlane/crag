@@ -427,11 +427,14 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 	}
 #endif
 
+	ASSERT(! _fingers.empty());
 	ASSERT(IsDown(id));
 }
 
 void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 {
+	ASSERT(! _fingers.empty());
+	
 	auto found = FindFinger(id);
 	if (found == _fingers.end())
 	{
