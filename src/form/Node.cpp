@@ -219,8 +219,8 @@ bool form::Node::InitScoreParameters()
 	Triangle3 surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
 	
 	normal = geom::Normal(surface);
-	ASSERT(normal == normal);
-	ASSERT(LengthSq(normal) > 0);
+	VerifyObject(normal);
+	VerifyOp(LengthSq(normal), >, 0);
 	FastNormalize(normal);
 	
 	area = geom::Area(surface);

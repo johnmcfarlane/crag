@@ -41,10 +41,13 @@ Scalar RayCastResult::GetDistance() const
 #if defined(VERIFY)
 void RayCastResult::Verify() const
 {
-	VerifyEqual(_distance, _distance);
-	if (_distance < _max_distance)
+	if (_distance != _max_distance)
 	{
+		VerifyObject(_normal);
 		VerifyNearlyEqual(geom::Length(_normal), 1.f, .001f);
+
+		VerifyObject(_distance);
+		VerifyOp(_distance, >=, 0.f);
 	}
 	else
 	{
