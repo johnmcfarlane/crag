@@ -41,6 +41,9 @@ namespace geom
 		typedef Transformation<Scalar> Transformation;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// AbsToRel
+	
 	// relative-absolute conversion
 	template <typename REL_S = geom::rel::Scalar>
 	inline Vector<REL_S, 3> AbsToRel(geom::abs::Vector3 const & abs, geom::abs::Vector3 const & origin)
@@ -61,6 +64,15 @@ namespace geom
 	}
 	
 	template <typename REL_S = geom::rel::Scalar>
+	inline Transformation<REL_S> AbsToRel(geom::abs::Transformation const & abs, geom::abs::Vector3 const & origin)
+	{
+		return Transformation<REL_S>(AbsToRel(abs.GetTranslation(), origin), geom::Cast<REL_S>(abs.GetRotation()));
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// RelToAbs
+	
+	template <typename REL_S = geom::rel::Scalar>
 	inline geom::abs::Vector3 RelToAbs(Vector<REL_S, 3> const & rel, geom::abs::Vector3 const & origin)
 	{
 		return Cast<geom::abs::Scalar>(rel) + origin;
@@ -76,5 +88,11 @@ namespace geom
 	inline geom::abs::Sphere3 RelToAbs(Sphere<REL_S, 3> const & rel, geom::abs::Vector3 const & origin)
 	{
 		return geom::abs::Sphere3(RelToAbs<REL_S>(rel.center, origin), static_cast<geom::abs::Scalar>(rel.radius));
+	}
+	
+	template <typename REL_S = geom::rel::Scalar>
+	inline geom::abs::Transformation RelToAbs(Transformation<REL_S> const & rel, geom::abs::Vector3 const & origin)
+	{
+		return geom::abs::Transformation(RelToAbs(rel.GetTranslation(), origin), geom::Cast<geom::abs::Scalar>(rel.GetRotation()));
 	}
 }
