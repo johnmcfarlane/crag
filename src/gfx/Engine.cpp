@@ -58,6 +58,12 @@ namespace
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
 	
+#if defined(CRAG_USE_GLES)
+	CONFIG_DEFINE (max_foreground_depth, float, 0.99999f);
+#else
+	CONFIG_DEFINE (max_foreground_depth, float, 0.9999999f);
+#endif
+
 	// TODO
 	//CONFIG_DEFINE (record_enable, bool, false);
 	//CONFIG_DEFINE (record_playback, bool, false);
@@ -727,6 +733,7 @@ void Engine::InitRenderState()
 	GL_CALL(glCullFace(GL_BACK));
 	glDepthFunc(depth_func);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthRangef(0.f, max_foreground_depth);
 
 	VerifyRenderState();
 }
@@ -896,7 +903,9 @@ void Engine::RenderScene()
 	RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 	// render background elements (skybox)
+	glDepthRangef(0.f, 1.f);
 	RenderLayer(background_projection_matrix, Layer::background);
+	glDepthRangef(0.f, max_foreground_depth);
 	
 	// render forground, transparent elements
 	RenderTransparentPass(foreground_projection_matrix);

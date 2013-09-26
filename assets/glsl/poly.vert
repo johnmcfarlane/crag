@@ -43,11 +43,4 @@ void main(void)
 	}
 
 	gl_Position = projection_matrix * position4;
-	
-	// this hack prevents z-fighting between distanc polygons and the skybox
-#ifdef GL_ES
-	gl_Position.z *= .99999;
-#else
-	gl_Position.z *= .9999999;
-#endif
 }
