@@ -1,0 +1,8 @@
+# vs/.gitignore
+Debug/
+Release/
+ipch
+*.opensdf
+*.sdf
+*.suo
+*.user

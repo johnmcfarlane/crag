@@ -1,0 +1,7 @@
+# android/.gitignore
+bin/
+gen/
+jni/SDL
+libs/
+local.properties
+obj/

@@ -1,0 +1,7 @@
+# xcode/.gitignore
+xcode4/bin
+xcode4/crag/crag.xcodeproj/project.xcworkspace/
+xcode4/crag/crag.xcodeproj/xcuserdata
+xcode4/include
+xcode4/lib
+xcode4/share

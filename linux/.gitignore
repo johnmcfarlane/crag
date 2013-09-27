@@ -1,0 +1,7 @@
+# linux/.gitignore
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+crag.cfg
+default.cfg

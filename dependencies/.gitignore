@@ -1,0 +1,9 @@
+# dependencies/.gitignore
+bin/
+bullet/
+glew/
+include/
+lib/
+ode/
+SDL/
+share/
