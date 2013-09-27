@@ -38,6 +38,11 @@ Scalar RayCastResult::GetDistance() const
 	return _distance;
 }
 
+Node const * RayCastResult::GetNode() const
+{
+	return _node;
+}
+
 #if defined(VERIFY)
 void RayCastResult::Verify() const
 {

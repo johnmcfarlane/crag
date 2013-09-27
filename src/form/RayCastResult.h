@@ -36,6 +36,8 @@ namespace form
 		
 		Scalar GetDistance() const;
 
+		Node const * GetNode() const;
+
 		friend bool operator<(RayCastResult const & lhs, RayCastResult const & rhs);
 
 #if defined(VERIFY)
