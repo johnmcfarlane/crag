@@ -61,7 +61,7 @@ namespace gfx
 	{
 		GLboolean result;
 		GL_CALL(glGetBooleanv(PNAME, & result));
-		return result;
+		return result != GL_FALSE;
 	}
 	
 	// Returns true if the given OpenGL parameter is true. 

@@ -60,9 +60,9 @@ namespace
 		Vector3 random_direction;
 		while (true)
 		{
-			random_direction.x = sequence.GetUnitInclusive<Scalar>() - 0.5;
-			random_direction.y = sequence.GetUnitInclusive<Scalar>() - 0.5;
-			random_direction.z = sequence.GetUnitInclusive<Scalar>() - 0.5;
+			random_direction.x = sequence.GetUnitInclusive<Scalar>() - 0.5f;
+			random_direction.y = sequence.GetUnitInclusive<Scalar>() - 0.5f;
+			random_direction.z = sequence.GetUnitInclusive<Scalar>() - 0.5f;
 			auto length_squared = geom::LengthSq(random_direction);
 			if (length_squared > 1.0f)
 			{

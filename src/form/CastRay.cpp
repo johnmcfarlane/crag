@@ -186,7 +186,8 @@ namespace
 		// iterates over the given range of node attributes in asscending order of distance
 		// from ray start; filters out unsuitable candidates; calls given function on the rest
 		// and remembers the best result, i.e. where the first contact with the ray occurs
-		RayCastResult ForEachFace(Attributes * begin, Attributes * end, Uniforms const & uniforms, ForEachFaceFunction function)
+		template <typename Iterator>
+		RayCastResult ForEachFace(Iterator begin, Iterator end, Uniforms const & uniforms, ForEachFaceFunction function)
 		{
 			// sort the attribute array in ascending order of distance from ray start
 			std::sort(begin, end);
