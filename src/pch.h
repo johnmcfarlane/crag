@@ -11,33 +11,10 @@
 
 #if defined(__cplusplus)
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // WIN32 specifics
 
 #if defined(WIN32)
-
-//////////////////////////////////////////////////////////////////////
-// Clean inclusion of <windows.h>.
-
-// Set minimum Windows version
-#define _WIN32_WINNT _WIN32_WINNT_WIN2K
-#include <SDKDDKVer.h>
-
-// Main include for Windows world.
-#define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-#undef ERROR
-#undef IN
-#undef OUT
-#undef GetObject
-#undef Yield
-
-// Avoid some annoying warnings.
-#pragma warning(disable : 4530)
-#pragma warning(disable : 4200)
 
 // warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead...
 #pragma warning(disable : 4996)	// ... except that strcpy_s is not yet a standard.
@@ -119,6 +96,9 @@
 #include <cstring>
 
 // C++ standard library
+
+#pragma warning(push)
+#pragma warning(disable: 4530)
 #include <algorithm>
 #include <array>
 #include <atomic>
@@ -139,6 +119,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#pragma warning(pop)
 
 //////////////////////////////////////////////////////////////////////
 // core includes.
@@ -162,7 +143,6 @@
 
 #include "ipc/Handle_Impl.h"
 #include "ipc/Object.h"
-
 
 //////////////////////////////////////////////////////////////////////
 

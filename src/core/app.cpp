@@ -13,7 +13,9 @@
 
 #include "core/ConfigEntry.h"
 
-#if ! defined(WIN32) && ! defined(__APPLE__)
+#if defined(WIN32)
+#include "core/windows.h"
+#elif ! defined(__APPLE__)
 #include <sys/resource.h>
 #endif
 

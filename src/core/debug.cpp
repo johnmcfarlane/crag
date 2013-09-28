@@ -12,7 +12,9 @@
 #include "core/debug.h"
 
 #if defined(__ANDROID__)
-#include  <android/log.h>
+#include <android/log.h>
+#elif defined(WIN32)
+#include "core/windows.h"
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////

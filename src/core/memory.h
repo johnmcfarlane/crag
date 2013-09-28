@@ -29,12 +29,10 @@ void DebugCheckMemory(int line, char const * filename);
 
 // ZeroMemory
 
-#if ! defined(WIN32)
 inline void ZeroMemory(char * ptr, size_t num_bytes)
 {
 	memset(static_cast<void *>(ptr), 0, num_bytes);
 }
-#endif
 
 template<typename T> inline void ZeroArray(T * object_ptr, std::size_t count)
 {

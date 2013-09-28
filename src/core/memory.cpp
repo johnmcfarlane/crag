@@ -11,7 +11,9 @@
 
 #include "memory.h"
 
-#if ! defined(WIN32)
+#if defined(WIN32)
+#include "core/windows.h"
+#else
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
