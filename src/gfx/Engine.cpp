@@ -115,7 +115,16 @@ namespace
 		return GLEW_NV_fence != GL_FALSE;
 #endif
 	}
-	
+
+	void setDepthRange(float near, float far)
+	{
+#if defined(WIN32)
+		glDepthRange(near, far);
+#else
+		glDepthRangef(near, far);
+#endif
+	}
+
 	// Given the list of objects to render, calculates suitable near/far z values.
 	RenderRange CalculateDepthRange(LeafNode::RenderList const & render_list)
 	{
@@ -733,7 +742,7 @@ void Engine::InitRenderState()
 	GL_CALL(glCullFace(GL_BACK));
 	glDepthFunc(depth_func);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthRangef(0.f, max_foreground_depth);
+	setDepthRange(0.f, max_foreground_depth);
 
 	VerifyRenderState();
 }
@@ -903,9 +912,9 @@ void Engine::RenderScene()
 	RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 	// render background elements (skybox)
-	glDepthRangef(0.f, 1.f);
+	setDepthRange(0.f, 1.f);
 	RenderLayer(background_projection_matrix, Layer::background);
-	glDepthRangef(0.f, max_foreground_depth);
+	setDepthRange(0.f, max_foreground_depth);
 	
 	// render forground, transparent elements
 	RenderTransparentPass(foreground_projection_matrix);
