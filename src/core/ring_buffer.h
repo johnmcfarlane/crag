@@ -25,8 +25,6 @@ namespace core
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-#pragma warning(push)
-#pragma warning(disable: 4200)
 		struct block
 		{
 			block * _next;
@@ -34,7 +32,6 @@ namespace core
 			
 			enum { header_size = sizeof(block *) };
 		};
-#pragma warning(pop)
 
 	public:
 		typedef BASE_CLASS value_type;

@@ -16,6 +16,8 @@
 
 #if defined(WIN32)
 
+#pragma warning(disable: 4200)
+
 // warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead...
 #pragma warning(disable : 4996)	// ... except that strcpy_s is not yet a standard.
 
@@ -97,8 +99,11 @@
 
 // C++ standard library
 
+#if defined(WIN32)
 #pragma warning(push)
 #pragma warning(disable: 4530)
+#endif
+
 #include <algorithm>
 #include <array>
 #include <atomic>
@@ -119,7 +124,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+#if defined(WIN32)
 #pragma warning(pop)
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // core includes.

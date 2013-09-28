@@ -16,7 +16,7 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // RayCastResult function definitions
 
-Scalar constexpr RayCastResult::_max_distance = std::numeric_limits<Scalar>::max();
+Scalar const RayCastResult::_max_distance = std::numeric_limits<Scalar>::max();
 
 RayCastResult::RayCastResult(Vector3 const & normal, Scalar distance, Node const * node)
 : _normal(normal)
