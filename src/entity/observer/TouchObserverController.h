@@ -47,7 +47,7 @@ namespace sim
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		// types
-		struct Finger;
+		class Finger;
 		typedef std::vector<Finger> FingerVector;
 
 	public:
