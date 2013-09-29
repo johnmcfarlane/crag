@@ -11,8 +11,6 @@
 
 #include "Object.h"
 
-#include "gfx/Layer.h"
-
 #include "geom/Transformation.h"
 
 
@@ -42,7 +40,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Init const & init, Transformation const & local_transformation, Layer::type layer);
+		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer);
 		
 #if defined(VERIFY)
 		virtual void Verify() const override;
@@ -59,7 +57,7 @@ namespace gfx
 
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 		
-		Layer::type GetLayer() const;
+		Layer GetLayer() const;
 		
 		Program * GetProgram();
 		Program const * GetProgram() const;
@@ -91,7 +89,7 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(LeafNode, RenderList);
 		
 		float _render_depth;
-		Layer::type _layer;
+		Layer _layer;
 		Program * _program;
 		MeshResource const * _mesh_resource;
 		bool _is_opaque;

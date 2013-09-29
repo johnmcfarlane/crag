@@ -953,7 +953,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Disable(GL_BLEND);
 }
 
-int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque)
+int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque)
 {
 	int num_rendered_objects = 0;
 	

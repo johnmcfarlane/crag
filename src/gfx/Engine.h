@@ -12,7 +12,6 @@
 #include "defs.h"
 #include "Fence.h"
 #include "FrameBuffer.h"
-#include "Layer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
 #include "Texture.h"
@@ -138,7 +137,7 @@ namespace gfx
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		
-		int RenderLayer(Matrix44 const & projection_matrix, Layer::type layer, bool opaque = true);
+		int RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
 		
 #if defined(CRAG_GFX_DEBUG)
 		void DebugDraw(Matrix44 const & projection_matrix);

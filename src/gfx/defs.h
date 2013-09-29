@@ -36,6 +36,14 @@ namespace gfx
 		size = dont_care
 	};
 	
+	// render layers
+	enum class Layer
+	{
+		background,
+		light,
+		foreground
+	};
+	
 	// geometric types
 	typedef float Scalar;
 	typedef geom::Vector<Scalar, 2> Vector2;

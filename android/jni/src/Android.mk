@@ -69,7 +69,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
 	$(CRAG_PATH)/gfx/Image.cpp \
 	$(CRAG_PATH)/gfx/IndexBuffer.cpp \
-	$(CRAG_PATH)/gfx/Layer.cpp \
 	$(CRAG_PATH)/gfx/object/Ball.cpp \
 	$(CRAG_PATH)/gfx/object/Box.cpp \
 	$(CRAG_PATH)/gfx/object/FormationMesh.cpp \

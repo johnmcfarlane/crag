@@ -57,7 +57,6 @@ add_executable(crag
 	gfx/glHelpers.cpp
 	gfx/Image.cpp
 	gfx/IndexBuffer.cpp
-	gfx/Layer.cpp
 	gfx/object/Ball.cpp
 	gfx/object/Box.cpp
 	gfx/object/FormationMesh.cpp

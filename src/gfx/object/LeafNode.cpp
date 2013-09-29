@@ -16,7 +16,7 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::LeafNode member definitions
 
-LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer::type layer)
+LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer layer)
 : Object(init, local_transformation)
 , _model_view_transformation(Transformation::Matrix44::Identity())
 , _render_depth(0)
@@ -111,7 +111,7 @@ bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 	}
 }
 
-Layer::type LeafNode::GetLayer() const
+Layer LeafNode::GetLayer() const
 {
 	return _layer;
 }
