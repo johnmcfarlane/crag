@@ -1,1 +1,1 @@
-gdb crag core -batch -ex bt
+gdb ./bin/crag core -batch -ex bt
