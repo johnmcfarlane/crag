@@ -10,6 +10,7 @@
 #include "pch.h"
 
 #include "TouchObserverController.h"
+#include "Contact.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -47,9 +48,9 @@ namespace
 {
 	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
 
-	struct TranslationRollFinger
+	struct TranslationRollContact
 	{
-		Vector3 const & world_position;
+		Vector3 world_position;
 		
 		// vector from camera to touch-point on screen, so no shorter than unit length
 		Vector3 screen_position;
@@ -76,12 +77,14 @@ namespace
 		S sin_beta = std::sin(beta);
 		S sin_gamma = c_over_b * sin_beta;
 		
+			// hopefully a precision error
 		if (sin_gamma > 1)
 		{
-			// hopefully a precision error
-			DEBUG_MESSAGE("Impossible triangle. sin_gamma = %lf", double(sin_gamma));
-			
 			sin_gamma = 1.f;
+		}
+		else if (sin_gamma < -1)
+		{
+			sin_gamma = -1.f;
 		}
 		
 		S gamma = std::asin(sin_gamma);
@@ -109,7 +112,7 @@ namespace
 		return a;
 	}
 	
-	Transformation CalculateCameraTranslationRoll(TranslationRollFinger const & finger1, TranslationRollFinger const & finger2, Transformation const & camera_transformation)
+	Transformation CalculateCameraTranslationRoll(TranslationRollContact const & contact1, TranslationRollContact const & contact2, Transformation const & camera_transformation)
 	{
 		typedef float Scalar;
 		typedef geom::Vector<Scalar, 2> Vector2;
@@ -124,10 +127,10 @@ namespace
 		// triangle height
 
 		O = camera
-		P = finger1.screen_position
-		Q = finger2.screen_position
-		A = finger1.world_position
-		B = finger2.world_position
+		P = contact1.screen_position
+		Q = contact2.screen_position
+		A = contact1.world_position
+		B = contact2.world_position
 		The problem is that world is in different space to screen and camera
 		although P rests on the line between A and O (and Q and B have a similar
 		relationship).
@@ -148,28 +151,28 @@ namespace
 		// screen
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto screen_position_diff = geom::Cast<Scalar>(finger2.screen_position) - geom::Cast<Scalar>(finger1.screen_position);
+		const auto screen_position_diff = geom::Cast<Scalar>(contact2.screen_position) - geom::Cast<Scalar>(contact1.screen_position);
 		
 		// distance between screen positions, PQ
 		const auto screen_span = geom::Length(screen_position_diff);
 		
-		const auto screen_position_direction = screen_position_diff * Scalar(1) / screen_span;
 		if (screen_span < .00001f)
 		{
 			return camera_transformation;
 		}
+		const auto screen_position_direction = screen_position_diff / screen_span;
 		
-		const auto camera_to_screen_distance1 = geom::Length(geom::Cast<Scalar>(finger1.screen_position));
-		const auto camera_to_screen_distance2 = geom::Length(geom::Cast<Scalar>(finger2.screen_position));
+		const auto camera_to_screen_distance1 = geom::Length(geom::Cast<Scalar>(contact1.screen_position));
+		const auto camera_to_screen_distance2 = geom::Length(geom::Cast<Scalar>(contact2.screen_position));
 		
-		const auto camera_to_screen_direction1 = geom::Cast<Scalar>(finger1.screen_position) * Scalar(1) / camera_to_screen_distance1;
-		const auto camera_to_screen_direction2 = geom::Cast<Scalar>(finger2.screen_position) * Scalar(1) / camera_to_screen_distance2;
+		const auto camera_to_screen_direction1 = geom::Cast<Scalar>(contact1.screen_position) * Scalar(1) / camera_to_screen_distance1;
+		const auto camera_to_screen_direction2 = geom::Cast<Scalar>(contact2.screen_position) * Scalar(1) / camera_to_screen_distance2;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// world
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto world_position_diff = geom::Cast<Scalar>(finger2.world_position) - geom::Cast<Scalar>(finger1.world_position);
+		const auto world_position_diff = geom::Cast<Scalar>(contact2.world_position) - geom::Cast<Scalar>(contact1.world_position);
 
 		// how far forwards of world position #1 is #2, d
 		const auto world_position_diff_forward = geom::DotProduct(world_position_diff, camera_forward);
@@ -202,7 +205,8 @@ namespace
 		
 		// how far ahead of the camera is world position 2
 		const auto world_position_forward2 = triangle_width / screen_span;
-		/*const*/ auto camera_to_world_distance2 = world_position_forward2 * camera_to_screen_distance2;	// correct
+
+		const auto camera_to_world_distance2 = world_position_forward2 * camera_to_screen_distance2;	// correct
 
 		// how far ahead of the camera is world position 1
 		const auto world_position_forward1 = world_position_forward2 - world_position_diff_forward;
@@ -233,7 +237,7 @@ namespace
 		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * gfx::Rotation(gfx::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
 		
 		// put it all together and book in to local clinic
-		const auto output_translation = geom::Cast<Scalar>(finger2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
+		const auto output_translation = geom::Cast<Scalar>(contact2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
 
 		return sim::Transformation(geom::Cast<sim::Scalar>(output_translation), geom::Cast<sim::Scalar>(output_rotation));
 	}
@@ -241,98 +245,6 @@ namespace
 
 ////////////////////////////////////////////////////////////////////////////////
 // TouchObserverController member definitions
-
-class TouchObserverController::Finger
-{
-public:
-	Finger() = default;
-
-	Finger(Vector3 const & world_position, Vector2 const & screen_position, SDL_FingerID id)
-	: _world_position(world_position)
-	, _background(false)
-	, _screen_position(screen_position)
-	, _id(id)
-	{
-		VerifyObject(* this);
-	}
-	
-	Finger(Vector2 const & screen_position, SDL_FingerID id)
-	: _screen_position(screen_position)
-	, _id(id)
-	{
-		VerifyObject(* this);
-	}
-	
-	Vector3 const & GetWorldPosition() const
-	{
-		ASSERT(! _background);
-		VerifyObject(* this);
-		return _world_position;
-	}
-	
-	Vector2 const & GetScreenPosition() const
-	{
-		VerifyObject(* this);
-		return _screen_position;
-	}
-	
-	void SetScreenPosition(Vector2 const & screen_position)
-	{
-		VerifyObject(* this);
-		_screen_position = screen_position;
-		VerifyObject(* this);
-	}
-	
-	SDL_FingerID GetId() const
-	{
-		VerifyObject(* this);
-		return _id;
-	}
-	
-	friend Finger ConvertOrigin(Finger const & finger, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin)
-	{
-		if (finger._background)
-		{
-			return Finger(finger._screen_position, finger._id);
-		}
-		else
-		{
-			return Finger(geom::Convert(finger._world_position, source_origin, destination_origin), finger._screen_position, finger._id);
-		}
-	}
-	
-	void Verify() const
-	{
-#if defined(VERIFY)
-		if (_background)
-		{
-			VerifyEqual(_world_position, Vector3());
-		}
-		else
-		{
-			VerifyObject(_world_position);
-		}
-		
-		VerifyObject(_screen_position);
-		VerifyOp(_id, >, 0);
-#endif
-	}
-	
-private:
-	// initial direction from camera to point of contact between finger and screen
-	Vector3 _world_position;
-	
-	// if true, _world_position is invalid
-	bool _background = true;
-	
-	// current screen position
-	Vector2 _screen_position;
-	
-	// SDL ID of finger
-	SDL_FingerID _id = invalid_id;
-	
-	static SDL_FingerID constexpr invalid_id = -1;
-};
 
 TouchObserverController::TouchObserverController(Entity & entity)
 : Controller(entity)
@@ -373,15 +285,15 @@ void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
 	SetTransformation(new_transformation);
 	
 	// convert _down_transformation
-	if (! _fingers.empty())
+	if (! _contacts.empty())
 	{
 		_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
 	}
 	
-	// convert fingers
-	for (auto & finger : _fingers)
+	// convert contacts
+	for (auto & contact : _contacts)
 	{
-		finger = ConvertOrigin(finger, _origin, event.origin);
+		contact = ConvertOrigin(contact, _origin, event.origin);
 	}
 
 	_origin = event.origin;
@@ -469,16 +381,16 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 
 void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, SDL_FingerID id)
 {
-	// find existing / create new Finger in _fingers and return reference
-	auto& finger = [&] () -> Finger&
+	// find existing / create new contact in _contacts and return reference
+	auto& contact = [&] () -> Contact&
 	{
-		auto found = FindFinger(id);
+		auto found = FindContact(id);
 
-		if (found == _fingers.end())
+		if (found == _contacts.end())
 		{
-			_fingers.emplace_back();
-			auto& found_finger = _fingers.back();
-			return found_finger;
+			_contacts.emplace_back();
+			auto& found_contact = _contacts.back();
+			return found_contact;
 		}
 		else
 		{
@@ -494,42 +406,52 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 
 	// perform ray cast to determine what finger is pointing to
 	auto touch_result = CastRay(ray, max_touch_ray_cast_distance);
-	auto touch_distance = std::min(touch_result.GetDistance(), max_touch_ray_cast_distance);
+	
+	// if ray hit something,
+	if (touch_result)
+	{
+		auto touch_distance = touch_result.GetDistance();
 
-	// store as the world position
-	finger = Finger(geom::Project(ray, touch_distance), screen_position, id);
+		// store as the world position
+		contact = Contact(geom::Project(ray, touch_distance), Contact::VectorType::foreground, screen_position, id);
+	}
+	else
+	{
+		// either way, store screen position and finger ID
+		contact = Contact(ray.direction, Contact::VectorType::background, screen_position, id);
+	}
 	
 #if defined(SPAWN_SHAPES)
 	auto speed = 0.f;
 	auto velocity = direction * speed;
-	switch (_fingers.size())
+	switch (_contacts.size())
 	{
 		case 1:
-			SpawnBall(Sphere3(finger.GetWorldPosition(), 0.5f), velocity, gfx::Color4f::Red());
+			SpawnBall(Sphere3(contact.GetWorldPosition(), 0.5f), velocity, gfx::Color4f::Red());
 			break;
 			
 		case 2:
-			SpawnBox(finger.GetWorldPosition(), velocity, Vector3(1, 1, 1), gfx::Color4f::Blue());
+			SpawnBox(contact.GetWorldPosition(), velocity, Vector3(1, 1, 1), gfx::Color4f::Blue());
 			break;
 	}
 #endif
 
-	ASSERT(! _fingers.empty());
+	ASSERT(! _contacts.empty());
 	ASSERT(IsDown(id));
 }
 
 void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 {
-	ASSERT(! _fingers.empty());
+	ASSERT(! _contacts.empty());
 	
-	auto found = FindFinger(id);
-	if (found == _fingers.end())
+	auto found = FindContact(id);
+	if (found == _contacts.end())
 	{
 		DEBUG_MESSAGE("double-up detected");
 	}
 	else
 	{
-		_fingers.erase(found);
+		_contacts.erase(found);
 	}
 
 	_down_transformation = GetTransformation();
@@ -539,8 +461,8 @@ void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 
 void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position, SDL_FingerID id)
 {
-	auto found = FindFinger(id);
-	if (found == _fingers.end())
+	auto found = FindContact(id);
+	if (found == _contacts.end())
 	{
 		// happens when a move event immediately follows an up event
 		return;
@@ -553,19 +475,24 @@ void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position
 
 void TouchObserverController::UpdateCamera()
 {
-	switch (_fingers.size())
+	switch (_contacts.size())
 	{
 		case 0:
 			DEBUG_MESSAGE("erroneous cal to UpdateCamera");
 			break;
 			
 		case 1:
-			UpdateCamera(_fingers[0]);
+			UpdateCamera(_contacts[0]);
 			break;
 			
 		default:
-			UpdateCamera(_fingers[0], _fingers[1]);
+		{
+			auto size = _contacts.size();
+			const auto & contact0 = _contacts[size - 2];
+			const auto & contact1 = _contacts[size - 1];
+			UpdateCamera({{ & contact0, & contact1 }});
 			break;
+		}
 	}
 }
 
@@ -573,7 +500,7 @@ void TouchObserverController::UpdateCamera()
 // rotates the camera around a fixed position with fixed up axis 
 // when one finger is touching the screen; 
 // is intended to feel analogous to scrolling within a UI view
-void TouchObserverController::UpdateCamera(Finger const & finger)
+void TouchObserverController::UpdateCamera(Contact const & contact)
 {
 	// extract data about initial camera transformation
 	Vector3 camera_position = _down_transformation.GetTranslation();
@@ -581,8 +508,8 @@ void TouchObserverController::UpdateCamera(Finger const & finger)
 	Vector3 camera_up = gfx::GetAxis(camera_rotation, gfx::Direction::up);
 	
 	// get 'from' and 'to' finger pointing directions
-	Vector3 relative_down_direction = geom::Normalized(finger.GetWorldPosition() - camera_position);
-	Vector3 relative_current_direction = geom::Normalized(GetPixelDirection(finger.GetScreenPosition(), _down_transformation));
+	Vector3 relative_down_direction = contact.GetWorldDirection(camera_position);
+	Vector3 relative_current_direction = geom::Normalized(GetPixelDirection(contact.GetScreenPosition(), _down_transformation));
 	
 	// convert them into rotations and take the difference
 	auto from_matrix = gfx::Rotation(relative_down_direction, camera_up);
@@ -604,32 +531,87 @@ void TouchObserverController::UpdateCamera(Finger const & finger)
 // - moving fingers in parallel pans camera
 // - rotating fingers rotated the camera rolls the camera / rotates along the z
 // - moving fingers together/appart translates the camera along the z
-void TouchObserverController::UpdateCamera(Finger const & finger1, Finger const & finger2)
+void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contacts)
 {
-	if (finger1.GetScreenPosition() == finger2.GetScreenPosition()
-	|| finger1.GetWorldPosition() == finger2.GetWorldPosition())
+	ASSERT(contacts[0]);
+	ASSERT(contacts[1]);
+
+	if (Collided(* contacts[0], * contacts[1]))
 	{
 		DEBUG_MESSAGE("finger collision detected!");
 		return;
 	}
 	
-	auto convert = [=] (Finger const & finger) 
+	struct ContactBuffer
 	{
-		TranslationRollFinger translation_roll_finger = 
-		{
-			finger.GetWorldPosition(),
-			GetPixelDirection(finger.GetScreenPosition(), _down_transformation)
-		};
-		
-		return translation_roll_finger;
+		std::array<Contact const *, 2> contacts = {{ nullptr, nullptr }};
+		std::size_t size = 0;
 	};
 	
-	auto translation_roll_finger1 = convert(finger1);
-	auto translation_roll_finger2 = convert(finger2);
+	std::array<ContactBuffer, 2> buffers;
 	
-	// the math
-	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_finger1, translation_roll_finger2, _down_transformation);
+	for (auto i = 0; i < 2; ++ i)
+	{
+		auto const & contact = * contacts[i];
+		auto vector_type = contact.GetVectorType();
+		auto buffer_index = static_cast<std::size_t>(vector_type);
+		auto & buffer = buffers[buffer_index];
+		buffer.contacts[buffer.size ++] = & contact;
+	}
+	
+	auto ConvertForeground = [&] (Contact const & contact) 
+	{
+		TranslationRollContact translation_roll_contact = 
+		{
+			contact.GetWorldPosition(),
+			GetPixelDirection(contact.GetScreenPosition(), _down_transformation)
+		};
 
+		return translation_roll_contact;
+	};
+	
+	auto ConvertBackground = [&] (Contact const & background_contact, Vector3 const & foreground_contact_position)
+	{
+		auto camera_position = _down_transformation.GetTranslation();
+		auto distance = geom::Length(foreground_contact_position - camera_position);
+
+		TranslationRollContact translation_roll_contact = 
+		{
+			geom::Project(Ray3(camera_position, background_contact.GetWorldDirection()), distance),
+			GetPixelDirection(background_contact.GetScreenPosition(), _down_transformation)
+		};
+
+		return translation_roll_contact;
+	};
+	
+	auto const & foreground_buffer = buffers[static_cast<std::size_t>(Contact::VectorType::foreground)];
+	auto const & background_buffer = buffers[static_cast<std::size_t>(Contact::VectorType::background)];
+
+	std::array<TranslationRollContact, 2> translation_roll_contacts;
+	
+	switch (foreground_buffer.size)
+	{
+		case 2:
+		{
+			translation_roll_contacts[0] = ConvertForeground(* foreground_buffer.contacts[0]);
+			translation_roll_contacts[1] = ConvertForeground(* foreground_buffer.contacts[1]);
+			break;
+		}
+
+		case 1:
+		{
+			translation_roll_contacts[0] = ConvertForeground(* foreground_buffer.contacts[0]);
+			translation_roll_contacts[1] = ConvertBackground(* background_buffer.contacts[0], translation_roll_contacts[0].world_position);
+			break;
+		}
+		
+		case 0:
+			return;
+	}
+
+	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_contacts[0], translation_roll_contacts[1], _down_transformation);
+
+	// the math
 	ClampTransformation(camera_transformation);
 
 	SetTransformation(camera_transformation);
@@ -708,22 +690,22 @@ physics::Body const & TouchObserverController::GetBody() const
 	return ref(location.GetBody());
 }
 
-TouchObserverController::FingerVector::iterator TouchObserverController::FindFinger(SDL_FingerID id)
+TouchObserverController::ContactVector::iterator TouchObserverController::FindContact(SDL_FingerID id)
 {
-	return std::find_if(_fingers.begin(), _fingers.end(), [id] (Finger const & finger) 
+	return std::find_if(_contacts.begin(), _contacts.end(), [id] (Contact const & contact) 
 	{
-		return finger.GetId() == id;
+		return contact.GetId() == id;
 	});
 }
 
-TouchObserverController::FingerVector::const_iterator TouchObserverController::FindFinger(SDL_FingerID id) const
+TouchObserverController::ContactVector::const_iterator TouchObserverController::FindContact(SDL_FingerID id) const
 {
-	return const_cast<TouchObserverController&>(*this).FindFinger(id);
+	return const_cast<TouchObserverController&>(*this).FindContact(id);
 }
 
 bool TouchObserverController::IsDown(SDL_FingerID id) const
 {
-	return FindFinger(id) != _fingers.end();
+	return FindContact(id) != _contacts.end();
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const

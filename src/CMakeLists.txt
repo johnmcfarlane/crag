@@ -17,6 +17,7 @@ add_executable(crag
 	entity/animat/AnimatThruster.cpp
 	entity/animat/Genome.cpp
 	entity/animat/Sensor.cpp
+	entity/observer/Contact.cpp
 	entity/observer/MouseObserverController.cpp
 	entity/observer/ObserverInput.cpp
 	entity/observer/TouchObserverController.cpp

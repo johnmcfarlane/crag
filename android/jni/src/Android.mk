@@ -29,6 +29,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/animat/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/animat/Genome.cpp \
 	$(CRAG_PATH)/entity/animat/Sensor.cpp \
+	$(CRAG_PATH)/entity/observer/Contact.cpp \
 	$(CRAG_PATH)/entity/observer/MouseObserverController.cpp \
 	$(CRAG_PATH)/entity/observer/ObserverInput.cpp \
 	$(CRAG_PATH)/entity/observer/TouchObserverController.cpp \

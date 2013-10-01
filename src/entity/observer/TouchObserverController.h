@@ -38,6 +38,7 @@ namespace gfx
 
 namespace sim
 {
+	class Contact;
 	struct ObserverInput;
 
 	// controls an entity whose job it is to translate touch-screen events into 
@@ -47,8 +48,7 @@ namespace sim
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	{
 		// types
-		class Finger;
-		typedef std::vector<Finger> FingerVector;
+		typedef std::vector<Contact> ContactVector;
 
 	public:
 		// functions
@@ -67,8 +67,8 @@ namespace sim
 		void HandleFingerMotion(Vector2 const & screen_position, SDL_FingerID id);
 		
 		void UpdateCamera();
-		void UpdateCamera(Finger const & finger);
-		void UpdateCamera(Finger const & finger1, Finger const & finger2);
+		void UpdateCamera(Contact const & contact);
+		void UpdateCamera(std::array<Contact const *, 2> contacts);
 		
 		Transformation const & GetTransformation() const;
 		void ClampTransformation(Transformation & transformation) const;
@@ -78,8 +78,8 @@ namespace sim
 		physics::Body & GetBody();
 		physics::Body const & GetBody() const;
 		
-		FingerVector::iterator FindFinger(SDL_FingerID id);
-		FingerVector::const_iterator FindFinger(SDL_FingerID id) const;
+		ContactVector::iterator FindContact(SDL_FingerID id);
+		ContactVector::const_iterator FindContact(SDL_FingerID id) const;
 		bool IsDown(SDL_FingerID id) const;
 		
 		Vector2 GetScreenPosition(SDL_TouchFingerEvent const & touch_finger_event) const;
@@ -99,11 +99,11 @@ namespace sim
 		// local origin in universal space
 		geom::abs::Vector3 _origin;
 		
-		// camera transformation at point where finger pressed/released
+		// camera transformation at point where contact pressed/released
 		Transformation _down_transformation;
 		
-		// record of fingers used to interact with touch screen
-		FingerVector _fingers;
+		// record of contacts used to interact with touch screen
+		ContactVector _contacts;
 		
 		// receives/stores touch events
 		core::EventWatcher _event_watcher;
