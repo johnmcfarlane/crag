@@ -121,9 +121,9 @@ SDL_FingerID Contact::GetId() const
 	return _id;
 }
 
+#if defined(VERIFY)
 void Contact::Verify() const
 {
-#if defined(VERIFY)
 	VerifyObject(_world_vector);
 
 	switch (_vector_type)
@@ -141,6 +141,5 @@ void Contact::Verify() const
 	
 	VerifyObject(_screen_position);
 	VerifyOp(_id, >=, 0);
-#endif
 }
-
+#endif
