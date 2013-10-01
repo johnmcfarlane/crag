@@ -200,8 +200,8 @@ ReentryGuard reentry_guard(counter);
 
 #define VerifyOp(A, OP, B) \
 	DO_STATEMENT( \
-		auto a = (A); \
-		auto b = (B); \
+		const auto & a = (A); \
+		const auto & b = (B); \
 		if (!(a OP b)) { \
 			::std::ostringstream message; \
 			message \
