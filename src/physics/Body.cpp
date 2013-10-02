@@ -228,7 +228,7 @@ bool Body::IsCollidable(Body const & body) const
 	return & body != _exception;
 }
 
-bool Body::OnCollisionWithSolid(Body &, Sphere3 const &)
+bool Body::OnCollisionWithSolid(Body &, Sphere3 const &, ContactInterface &)
 {
 	return false;
 }

@@ -64,12 +64,12 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 	gravity += contribution;
 }
 
-bool PlanetBody::OnCollision(Body & body)
+bool PlanetBody::OnCollision(Body & body, ContactInterface & contact_interface)
 {
-	return body.OnCollision(* this);
+	return body.OnCollision(* this, contact_interface);
 }
 
-bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere)
+bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface)
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// get necessary data for scanning planet surface
@@ -154,7 +154,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	{
 		// add it to the list to be resolved.
 		auto begin = std::begin(contacts);
-		_engine.AddContacts(begin, begin + num_contacts);
+		contact_interface(begin, begin + num_contacts);
 	}
 	else
 	{
@@ -165,7 +165,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 			Convert(containment_geom.pos, bounding_sphere.center);
 			containment_geom.g1 = body_collision_handle;
 			containment_geom.g2 = mesh_collision_handle;
-			_engine.AddContact(containment_geom);
+			
+			contact_interface(& containment_geom, & containment_geom + 1);
 		}
 	}
 	

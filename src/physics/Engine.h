@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "defs.h"
+#include "ContactInterface.h"
 
 #include <ode/contact.h>
 
@@ -34,7 +34,7 @@ namespace physics
 	class MeshSurround;
 	
 	// The physics singleton.
-	class Engine
+	class Engine : public ContactInterface
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -73,6 +73,7 @@ namespace physics
 		
 		// use sparingly
 		form::RayCastResult CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
+		void Collide(Sphere3 const & sphere, ContactInterface & callback);
 		
 		void ToggleCollisions();
 	private:
@@ -85,19 +86,7 @@ namespace physics
 		// called on bodies which don't handling their own collision
 		void OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2);
 		
-	public:
-		// Called once individual points of contact have been determined.
-		void AddContact(ContactGeom const & contact_geom);
-		
-		template <typename ITERATOR>
-		void AddContacts(ITERATOR begin, ITERATOR end)
-		{
-			auto count = end - begin;	// ITERATOR must be random access
-			_contacts.reserve(_contacts.size() + count);
-			std::for_each(begin, end, [=] (ContactGeom const & contact_geom) {
-				AddContact(contact_geom);
-			});
-		}
+		void operator() (ContactGeom const * begin, ContactGeom const * end) final;
 		
 	private:		
 		// variables

@@ -9,9 +9,8 @@
 
 #pragma once
 
+#include "ContactInterface.h"
 #include "Location.h"
-
-#include "core/function_ref.h"
 
 namespace core
 {
@@ -29,8 +28,6 @@ namespace physics
 	
 	void Attach(JointHandle joint, Body const & body1, Body const & body2);
 	bool IsAttached(Body const & body1, Body const & body2);
-	
-	typedef ::core::function_ref<void (Vector3 const & pos, Vector3 const & normal, Scalar depth)> IntersectionFunctorRef;
 	
 	// Body wraps ODE geometry and physical body and handles certain collisions.
 	class Body : public Location
@@ -68,8 +65,8 @@ namespace physics
 		void SetIsCollidable(Body const & body, bool collidable);
 		bool IsCollidable(Body const & body) const;
 		
-		virtual bool OnCollision(Body & that_body) = 0;
-		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere);
+		virtual bool OnCollision(Body & that_body, ContactInterface & contact_interface) = 0;
+		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface);
 		virtual bool OnCollisionWithRay(Body & body);
 
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);

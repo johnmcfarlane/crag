@@ -14,6 +14,7 @@
 #include "Body.h"
 #include "MeshSurround.h"
 #include "RayCast.h"
+#include "SphericalBody.h"
 
 #include "form/RayCastResult.h"
 #include "form/Scene.h"
@@ -70,6 +71,21 @@ namespace
 		RayCast & ray_cast = ref(static_cast<RayCast *>(ray_data));
 	
 		body.OnCollisionWithRay(ray_cast);
+	}
+
+	void OnSphereCollision(void * data, CollisionHandle body_handle, CollisionHandle sphere_handle)
+	{
+		//ASSERT(dGeomGetClass(body_handle) == dSphereClass);
+		
+		auto & contact_interface = ref(static_cast<ContactInterface *>(data));
+
+		auto body_data = dGeomGetData (body_handle);
+		auto & body = ref(static_cast<Body *>(body_data));
+	
+		auto sphere_data = dGeomGetData (sphere_handle);
+		auto & sphere = ref(static_cast<Body *>(sphere_data));
+	
+		sphere.OnCollision(body, contact_interface);
 	}
 }
 CONFIG_DEFINE (collisions_parallelization, bool, true);
@@ -269,6 +285,16 @@ form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const 
 	return ray_cast.GetResult();
 }
 
+void Engine::Collide(Sphere3 const & sphere, ContactInterface & callback)
+{
+	// create physics::SphericalBody object
+	SphericalBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
+	
+	// perform collision between ray_cast and all pre-existing objects
+	auto handle = body.GetCollisionHandle();
+	dSpaceCollide2(reinterpret_cast<CollisionHandle>(space), handle, & callback, OnSphereCollision);
+}
+
 void Engine::ToggleCollisions()
 {
 	collisions = ! collisions;
@@ -313,8 +339,9 @@ void Engine::DestroyCollisions()
 
 // Called by ODE when geometry collides. In the case of planets, 
 // this means the outer shell of the planet.
-void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, CollisionHandle geom2)
+void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, CollisionHandle geom2)
 {
+	Engine & engine = ref(reinterpret_cast<Engine *>(data));
 	Body & body1 = ref(reinterpret_cast<Body *>(dGeomGetData(geom1)));
 	Body & body2 = ref(reinterpret_cast<Body *>(dGeomGetData(geom2)));
 	
@@ -323,17 +350,16 @@ void Engine::OnNearCollisionCallback (void *data, CollisionHandle geom1, Collisi
 		return;
 	}
 	
-	if (body1.OnCollision(body2))
+	if (body1.OnCollision(body2, engine))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(body1))
+	if (body2.OnCollision(body1, engine))
 	{
 		return;
 	}
 	
-	physics::Engine & engine = * reinterpret_cast<physics::Engine *>(data);
 	engine.OnUnhandledCollision(geom1, geom2);
 }
 
@@ -353,23 +379,29 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 	// Time to increase max_num_contacts?
 	ASSERT (num_contacts * 2 <= max_contacts_per_collision);
 	
-	AddContacts(contact_geoms, contact_geoms + num_contacts);
+	(* this)(contact_geoms, contact_geoms + num_contacts);
 }
 
-void Engine::AddContact(ContactGeom const & contact_geom)
+// Called once individual points of contact have been determined.
+void Engine::operator() (ContactGeom const * begin, ContactGeom const * end)
 {
-	// geometry sanity tests
-	ASSERT(contact_geom.g1 != contact_geom.g2);
-	ASSERT(contact_geom.depth >= 0);
+	auto count = end - begin;
+	_contacts.reserve(_contacts.size() + count);
+	std::for_each(begin, end, [=] (ContactGeom const & contact_geom)
+	{
+		// geometry sanity tests
+		ASSERT(contact_geom.g1 != contact_geom.g2);
+		ASSERT(contact_geom.depth >= 0);
 
-	_contact.geom = contact_geom;
-	_contacts.push_back(_contact);
-	//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
+		_contact.geom = contact_geom;
+		_contacts.push_back(_contact);
+		//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 
 #if defined(DEBUG_CONTACTS)
-	Vector3 pos(Convert(contact_geom.pos));
-	Vector3 normal(Convert(contact_geom.normal));
-	gfx::Debug::AddLine(pos, pos + normal * contact_geom.depth * 100.f);
-	//std::cout << pos << ' ' << normal << ' ' << contact_geom.depth << '\n';
+		Vector3 pos(Convert(contact_geom.pos));
+		Vector3 normal(Convert(contact_geom.normal));
+		gfx::Debug::AddLine(pos, pos + normal * contact_geom.depth * 100.f);
+		//std::cout << pos << ' ' << normal << ' ' << contact_geom.depth << '\n';
 #endif
+	});
 }

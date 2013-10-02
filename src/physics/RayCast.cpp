@@ -133,7 +133,7 @@ void RayCast::SetDensity(Scalar)
 	ASSERT(false);
 }
 
-bool RayCast::OnCollision(Body & body)
+bool RayCast::OnCollision(Body & body, ContactInterface &)
 {
 	return body.OnCollisionWithRay(* this);
 }
