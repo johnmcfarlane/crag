@@ -345,7 +345,7 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 	auto children = root_node.GetChildren();
 	if (children == nullptr)
 	{
-		DEBUG_BREAK("code path not implemented");
+		DEBUG_MESSAGE("code path not implemented");
 		return RayCastResult();
 	}
 
