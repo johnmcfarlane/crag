@@ -276,6 +276,16 @@ void TouchObserverController::Tick()
 	// event-based input
 	HandleEvents();
 
+	auto previous_transformation = GetTransformation();
+	auto transformation = UpdateCamera(previous_transformation);
+	
+	ClampTransformation(transformation);
+
+	if (previous_transformation != transformation)
+	{
+		SetTransformation(transformation);
+	}
+
 	BroadcastTransformation();
 }
 
@@ -471,29 +481,24 @@ void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position
 	}
 	
 	found->SetScreenPosition(screen_position);
-	
-	UpdateCamera();
 }
 
-void TouchObserverController::UpdateCamera()
+Transformation TouchObserverController::UpdateCamera(Transformation const & previous_transformation) const
 {
 	switch (_contacts.size())
 	{
 		case 0:
-			DEBUG_MESSAGE("erroneous cal to UpdateCamera");
-			break;
+			return previous_transformation;
 			
 		case 1:
-			UpdateCamera(_contacts[0]);
-			break;
+			return UpdateCamera(previous_transformation, _contacts[0]);
 			
 		default:
 		{
 			auto size = _contacts.size();
 			const auto & contact0 = _contacts[size - 2];
 			const auto & contact1 = _contacts[size - 1];
-			UpdateCamera({{ & contact0, & contact1 }});
-			break;
+			return UpdateCamera(previous_transformation, {{ & contact0, & contact1 }});
 		}
 	}
 }
@@ -502,7 +507,7 @@ void TouchObserverController::UpdateCamera()
 // rotates the camera around a fixed position with fixed up axis 
 // when one finger is touching the screen; 
 // is intended to feel analogous to scrolling within a UI view
-void TouchObserverController::UpdateCamera(Contact const & contact)
+Transformation TouchObserverController::UpdateCamera(Transformation const &, Contact const & contact) const
 {
 	// extract data about initial camera transformation
 	Vector3 camera_position = _down_transformation.GetTranslation();
@@ -524,7 +529,7 @@ void TouchObserverController::UpdateCamera(Contact const & contact)
 
 	// apply new camera rotation
 	Transformation camera_transformation(camera_position, Matrix33(camera_rotation));
-	SetTransformation(geom::Cast<float>(camera_transformation));
+	return camera_transformation;
 }
 
 // updates camera when two fingers are down; 
@@ -533,7 +538,7 @@ void TouchObserverController::UpdateCamera(Contact const & contact)
 // - moving fingers in parallel pans camera
 // - rotating fingers rotated the camera rolls the camera / rotates along the z
 // - moving fingers together/appart translates the camera along the z
-void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contacts)
+Transformation TouchObserverController::UpdateCamera(Transformation const & previous_transformation, std::array<Contact const *, 2> contacts) const
 {
 	ASSERT(contacts[0]);
 	ASSERT(contacts[1]);
@@ -541,7 +546,7 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 	if (Collided(* contacts[0], * contacts[1]))
 	{
 		DEBUG_MESSAGE("finger collision detected!");
-		return;
+		return previous_transformation;
 	}
 	
 	struct ContactBuffer
@@ -608,15 +613,11 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 		}
 		
 		case 0:
-			return;
+			return previous_transformation;
 	}
 
 	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_contacts[0], translation_roll_contacts[1], _down_transformation);
-
-	// the math
-	ClampTransformation(camera_transformation);
-
-	SetTransformation(camera_transformation);
+	return camera_transformation;
 }
 
 Transformation const & TouchObserverController::GetTransformation() const

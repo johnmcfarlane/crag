@@ -66,9 +66,9 @@ namespace sim
 		void HandleFingerUp(SDL_FingerID id);
 		void HandleFingerMotion(Vector2 const & screen_position, SDL_FingerID id);
 		
-		void UpdateCamera();
-		void UpdateCamera(Contact const & contact);
-		void UpdateCamera(std::array<Contact const *, 2> contacts);
+		Transformation UpdateCamera(Transformation const & previous_transformation) const;
+		Transformation UpdateCamera(Transformation const & previous_transformation, Contact const & contact) const;
+		Transformation UpdateCamera(Transformation const & previous_transformation, std::array<Contact const *, 2> contacts) const;
 		
 		Transformation const & GetTransformation() const;
 		bool ClampTransformation(Transformation & transformation) const;
