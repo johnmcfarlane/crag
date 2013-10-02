@@ -118,7 +118,8 @@ void Engine::RemoveFormation(form::Formation& formation)
 
 void Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera = gfx::GetCameraRay(event.transformation);
+	auto camera_ray = gfx::GetCameraRay(event.transformation);
+	_camera = geom::AbsToRel(camera_ray, _origin);
 }
 
 geom::rel::Ray3 const & Engine::GetCamera() const

@@ -9,14 +9,12 @@
 
 #pragma once
 
-#include "defs.h"
-
-#include "geom/Transformation.h"
+#include "geom/origin.h"
 
 namespace gfx
 {
 	struct SetCameraEvent
 	{
-		Transformation transformation;
+		geom::abs::Transformation transformation;
 	};
 }

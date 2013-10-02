@@ -194,11 +194,9 @@ void TestScript(applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event = {
-			gfx::Transformation(
-				geom::Cast<sim::Scalar>(observer_start_pos),
-				gfx::Rotation(sim::Vector3(0, 0, -1)))
-		};
+		gfx::SetCameraEvent event;
+		event.transformation.SetTranslation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
+		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, -1)));
 		gfx::Daemon::Broadcast(event);
 	}
 	

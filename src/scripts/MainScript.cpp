@@ -165,9 +165,9 @@ void MainScript(applet::AppletInterface & applet_interface)
 	
 	// Set camera position
 	{
-		sim::Matrix33 rotation = gfx::Rotation(Vector3f(0, 1, 0), Vector3f(1, 0, 0));
 		gfx::SetCameraEvent event;
-		event.transformation = sim::Transformation(geom::Cast<sim::Scalar>(observer_start_pos), rotation);
+		event.transformation = geom::abs::Transformation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
+
 		applet::Daemon::Broadcast(event);
 	}
 	

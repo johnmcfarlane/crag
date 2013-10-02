@@ -502,7 +502,8 @@ void Engine::operator() (SetCameraEvent const & event)
 {
 	if (scene != nullptr)
 	{
-		scene->SetCameraTransformation(event.transformation);
+		Transformation relative_transformation = geom::AbsToRel(event.transformation, _origin);
+		scene->SetCameraTransformation(relative_transformation);
 	}
 }
 

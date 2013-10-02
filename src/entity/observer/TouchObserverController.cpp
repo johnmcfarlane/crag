@@ -690,7 +690,7 @@ void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
 	gfx::SetCameraEvent event;
-	event.transformation = GetTransformation();
+	event.transformation = geom::RelToAbs(GetTransformation(), _origin);
 	Daemon::Broadcast(event);
 }
 

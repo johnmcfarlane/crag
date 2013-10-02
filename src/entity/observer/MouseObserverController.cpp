@@ -182,10 +182,13 @@ void MouseObserverController::UpdateCamera() const
 	auto translation = body.GetTranslation();
 	auto rotation = body.GetRotation();
 	Transformation transformation (translation, rotation);
+	
+	const auto & engine = GetEntity().GetEngine();
+	const auto & origin = engine.GetOrigin();
 
 	// broadcast new camera position
 	gfx::SetCameraEvent event;
-	event.transformation = transformation;
+	event.transformation = geom::RelToAbs(transformation, origin);
 	Daemon::Broadcast(event);
 }
 

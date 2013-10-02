@@ -111,7 +111,8 @@ void form::Engine::OnSetMesh(Mesh & mesh)
 
 void form::Engine::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera = gfx::GetCameraRay(event.transformation);
+	auto camera_ray = gfx::GetCameraRay(event.transformation);
+	_camera = geom::AbsToRel(camera_ray, _origin);
 }
 
 void form::Engine::operator() (gfx::SetOriginEvent const & event)
