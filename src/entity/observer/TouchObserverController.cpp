@@ -40,13 +40,15 @@
 #include "gfx/Color.h"
 #endif
 
-extern float camera_fov;
+CONFIG_DECLARE_ANGLE(camera_fov, float);
+CONFIG_DECLARE(camera_near, float);
 
 using namespace sim;
 
 namespace
 {
 	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
+	CONFIG_DEFINE (touch_observer_min_distance, Scalar, 2.f);	// as a proportion of camera_near
 
 	struct TranslationRollContact
 	{
@@ -626,39 +628,54 @@ Transformation const & TouchObserverController::GetTransformation() const
 	return location->GetTransformation();
 }
 
-// adjusts given transformation to avoid penetrating world geometry
-void TouchObserverController::ClampTransformation(Transformation & transformation) const
+// returns true if transformation was mutated
+bool TouchObserverController::ClampTransformation(Transformation & transformation) const
 {
-	// get start point
-	auto destination_translation = transformation.GetTranslation();
+	int i = 0;
+	while (TryClampTransformation(transformation) && ++ i < 10);
+	return i > 0;
+}
 
-	// create ray to proposed destination
-	Ray3 ray;
-	ray.position = _down_transformation.GetTranslation();
-	ray.direction = destination_translation - ray.position;
+// adjusts given transformation to avoid penetrating world geometry;
+// returns true if world geometry /might/ be encroaching on near render plane
+bool TouchObserverController::TryClampTransformation(Transformation & transformation) const
+{
+	Vector3 camera_position = transformation.GetTranslation();
+	Scalar max_clear_distance = camera_near * touch_observer_min_distance;
+	Scalar min_clear_distance = camera_near;
+	Sphere3 collision_sphere(camera_position, max_clear_distance);
 
-	// normalize the ray
-	auto ray_length = geom::Length(ray.direction);
-	if (ray_length < .00001f)
+	auto & entity = GetEntity();
+	auto & engine = entity.GetEngine();
+	auto & physics_engine = engine.GetPhysicsEngine();
+	
+	auto push = Vector3::Zero();
+	Scalar max_push_distance = 0;
+	auto function = [& push, & max_push_distance] (physics::ContactGeom const * begin, physics::ContactGeom const * end)
 	{
-		// no change
-		return;
-	}
-	ray.direction /= ray_length;
+		ASSERT(end > begin);
+		do
+		{
+			auto push_distance = begin->depth;
+			if (push_distance > max_push_distance)
+			{
+				max_push_distance = push_distance;
+				push = physics::Convert(begin->normal);
+			}
+		}
+		while (++ begin != end);
+	};
 
-	// add a little extra to account for near z (unreliable)
-	ray_length += 1.f;
-
-	// how far alone the ray is clear?
-	auto result = CastRay(ray, ray_length);
-	if (! result)
+	physics::ContactFunction<decltype(function)> contact_function(function);
+	physics_engine.Collide(collision_sphere, contact_function);
+	
+	if (max_push_distance > 0)
 	{
-		// full length is fine
-		return;
+		transformation.SetTranslation(camera_position + push * max_push_distance);
+		return max_push_distance > max_clear_distance - min_clear_distance;
 	}
-
-	auto projection = std::max(1.f, result.GetDistance() - 1.f);
-	transformation.SetTranslation(geom::Project(ray, projection));
+	
+	return false;
 }
 
 void TouchObserverController::SetTransformation(Transformation const & transformation)

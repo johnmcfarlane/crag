@@ -53,9 +53,9 @@ namespace sim
 	public:
 		// functions
 		TouchObserverController(Entity & entity);
+	private:
 		virtual ~TouchObserverController();
 
-	private:
 		void Tick();
 
 		void operator() (gfx::SetOriginEvent const & event) final;
@@ -71,7 +71,8 @@ namespace sim
 		void UpdateCamera(std::array<Contact const *, 2> contacts);
 		
 		Transformation const & GetTransformation() const;
-		void ClampTransformation(Transformation & transformation) const;
+		bool ClampTransformation(Transformation & transformation) const;
+		bool TryClampTransformation(Transformation & transformation) const;
 		void SetTransformation(Transformation const & transformation);
 		void BroadcastTransformation() const;
 
