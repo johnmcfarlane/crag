@@ -226,7 +226,7 @@ namespace
 		const auto world_rotation_angle = get_angle(world_position_diff_direction, camera_rotation);
 		
 		// an angle gleaned from difference between screen positions
-		const auto camera_to_world_ratio = camera_to_world_distance1 / camera_to_world_distance2;
+		const auto camera_to_world_ratio = std::fabs(camera_to_world_distance1 / camera_to_world_distance2);
 		const auto normalized_screen_position2 = camera_to_screen_direction2 / camera_to_world_ratio;
 		const auto normalized_screen_diff_direction = geom::Normalized(normalized_screen_position2 - camera_to_screen_direction1);
 		const auto screen_rotation_angle = get_angle(normalized_screen_diff_direction, camera_rotation);
