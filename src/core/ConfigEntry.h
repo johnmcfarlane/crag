@@ -105,4 +105,5 @@ namespace core
 #endif
 
 #define CONFIG_DECLARE(name, type) extern type name
+#define CONFIG_DECLARE_ANGLE(name, type) extern type name
 
