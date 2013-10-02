@@ -394,14 +394,14 @@ void TouchObserverController::HandleEvent(SDL_Event const & event)
 void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, SDL_FingerID id)
 {
 	// find existing / create new contact in _contacts and return reference
-	auto& contact = [&] () -> Contact&
+	auto & contact = [&] () -> Contact&
 	{
 		auto found = FindContact(id);
 
 		if (found == _contacts.end())
 		{
 			_contacts.emplace_back();
-			auto& found_contact = _contacts.back();
+			auto & found_contact = _contacts.back();
 			return found_contact;
 		}
 		else
@@ -696,15 +696,15 @@ void TouchObserverController::BroadcastTransformation() const
 
 physics::Body & TouchObserverController::GetBody()
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
 	return ref(location.GetBody());
 }
 
 physics::Body const & TouchObserverController::GetBody() const
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
 	return ref(location.GetBody());
 }
 
