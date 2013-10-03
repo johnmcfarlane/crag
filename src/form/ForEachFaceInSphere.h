@@ -59,7 +59,7 @@ namespace form
 			Node const * children = node.GetChildren();
 			if (children == nullptr)
 			{
-				ForEachNodeFace(node, [this] (form::Point const & a, form::Point const & b, form::Point const & c, geom::Vector3f const & normal, float)
+				ForEachNodeFace(node, [this] (Point const & a, Point const & b, Point const & c, geom::Vector3f const & normal, float)
 				{
 					Triangle3 face(a.pos, b.pos, c.pos);
 					VerifyNearlyEqual(geom::Length(geom::Normalized(geom::Normal(face)) - normal), 0.f, .01f);
