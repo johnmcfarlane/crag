@@ -171,8 +171,25 @@ namespace form
 			}
 		}))
 		{
-			// this shouldn't happen
-			DEBUG_BREAK("Root node has no children");
+			// if root node has no children, treat it as a tetrahedron
+			auto f = [& polyhedron_center, & sphere, & poly_functor] (Point const & a, Point const & b, Point const & c)
+			{
+				Triangle3 surface;
+				surface.points[0] = a.pos;
+				surface.points[1] = b.pos;
+				surface.points[2] = c.pos;
+				
+				if (TouchesProjection(polyhedron_center, surface, sphere))
+				{
+					Vector3 normal = geom::Normalized(geom::Normal(surface));
+					poly_functor(surface, normal);
+				}
+			};
+			
+			f(root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
+			f(root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
+			f(root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
+			f(* root_node.GetMidPoint(0), * root_node.GetMidPoint(1), * root_node.GetMidPoint(2));
 		}
 	}
 }
