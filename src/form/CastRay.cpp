@@ -340,15 +340,6 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 	VerifyIsUnit(ray.direction, .0001f);
 	VerifyOp(length, >=, 0.f);
 	
-	// get children
-	auto & root_node = polyhedron.GetRootNode();
-	auto children = root_node.GetChildren();
-	if (children == nullptr)
-	{
-		DEBUG_MESSAGE("code path not implemented");
-		return RayCastResult();
-	}
-
 	// generate uniforms
 	auto polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
 	impl::Uniforms uniforms = 
@@ -360,12 +351,26 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 
 	// generate child attributes
 	impl::Attributes child_attributes[4];
-	for (auto child_index = 0; child_index != 4; ++ child_index)
 	{
-		impl::Attributes & child_attribute = child_attributes[child_index];
-		Node const & child_node = children[child_index];
+		auto & root_node = polyhedron.GetRootNode();
+		auto children = root_node.GetChildren();
+		if (children != nullptr)
+		{
+			for (auto child_index = 0; child_index != 4; ++ child_index)
+			{
+				impl::Attributes & child_attribute = child_attributes[child_index];
+				Node const & child_node = children[child_index];
 
-		child_attribute = GenerateAttributes(uniforms, child_node);
+				child_attribute = GenerateAttributes(uniforms, child_node);
+			}
+		}
+		else
+		{
+			child_attributes[0] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
+			child_attributes[1] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
+			child_attributes[2] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
+			child_attributes[3] = GenerateAttributes(uniforms, & root_node, * root_node.GetMidPoint(0), * root_node.GetMidPoint(1), * root_node.GetMidPoint(2));
+		}
 	}
 
 	// begin!
