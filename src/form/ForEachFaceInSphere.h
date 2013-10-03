@@ -50,8 +50,6 @@ namespace form
 
 		void operator() (Node const & node, Triangle3 const & surface) const
 		{
-			// should hold, but doesn't
-			//ASSERT(TouchesProjection(_polyhedron_center, surface, _sphere));
 			ASSERT(surface.points[0] == node.GetCorner(0).pos);
 			ASSERT(surface.points[1] == node.GetCorner(1).pos);
 			ASSERT(surface.points[2] == node.GetCorner(2).pos);
