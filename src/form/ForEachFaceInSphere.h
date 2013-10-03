@@ -27,6 +27,9 @@ namespace form
 
 	bool TouchesProjection(Vector3 const & pyramid_tip, Triangle3 const & pyramid_base, Sphere3 const & sphere)
 	{
+		// checks consistent winding of pyramid_base
+		ASSERT(geom::Distance(pyramid_base, pyramid_tip) < 0);
+		
 		return Intersects(Plane3(Triangle3(pyramid_tip, pyramid_base.points[0], pyramid_base.points[2])), sphere) 
 		&& Intersects(Plane3(Triangle3(pyramid_tip, pyramid_base.points[1], pyramid_base.points[0])), sphere) 
 		&& Intersects(Plane3(Triangle3(pyramid_tip, pyramid_base.points[2], pyramid_base.points[1])), sphere);
