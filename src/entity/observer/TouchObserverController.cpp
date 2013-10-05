@@ -454,17 +454,14 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 
 void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 {
-	ASSERT(! _contacts.empty());
-	
 	auto found = FindContact(id);
 	if (found == _contacts.end())
 	{
-		DEBUG_MESSAGE("double-up detected");
+		// the very first event is often an 'up' because an icon was just tapped!
+		return;
 	}
-	else
-	{
-		_contacts.erase(found);
-	}
+
+	_contacts.erase(found);
 
 	_down_transformation = GetTransformation();
 
