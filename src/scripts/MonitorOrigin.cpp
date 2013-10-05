@@ -29,6 +29,7 @@
 #include "core/ConfigEntry.h"
 
 CONFIG_DECLARE (observer_use_touch, bool);
+CONFIG_DEFINE (origin_dynamic_enable, bool, true);
 
 namespace
 {
@@ -93,6 +94,8 @@ namespace
 
 void MonitorOrigin(applet::AppletInterface & applet_interface)
 {
+	ASSERT(origin_dynamic_enable);
+	
 	while (! applet_interface.GetQuitFlag())
 	{
 		applet_interface.Sleep(0.23432);

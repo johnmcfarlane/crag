@@ -37,7 +37,7 @@
 #include "core/Random.h"
 
 CONFIG_DEFINE(num_animats, int, 1);
-
+CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 using geom::Vector3f;
 
@@ -186,7 +186,10 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
 
 	// Create origin controller.
-	applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
+	if (origin_dynamic_enable)
+	{
+		applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
+	}
 	
 	// launch regulator
 	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & applet_interface) {
