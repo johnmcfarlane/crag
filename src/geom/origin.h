@@ -66,7 +66,7 @@ namespace geom
 	template <typename REL_S = geom::rel::Scalar>
 	inline Transformation<REL_S> AbsToRel(geom::abs::Transformation const & abs, geom::abs::Vector3 const & origin)
 	{
-		return Transformation<REL_S>(AbsToRel(abs.GetTranslation(), origin), geom::Cast<REL_S>(abs.GetRotation()));
+		return Transformation<REL_S>(AbsToRel<REL_S>(abs.GetTranslation(), origin), geom::Cast<REL_S>(abs.GetRotation()));
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,8 @@ namespace geom
 	template <typename REL_T>
 	inline REL_T Convert(REL_T const & rel, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin)
 	{
+		typedef typename REL_T::Scalar Scalar;
 		auto abs = RelToAbs(rel, source_origin);
-		return AbsToRel(abs, destination_origin);
+		return AbsToRel<Scalar>(abs, destination_origin);
 	}
 }
