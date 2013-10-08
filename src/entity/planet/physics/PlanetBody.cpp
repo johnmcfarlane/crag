@@ -99,9 +99,9 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	mesh_surround.ClearData();
 
 	// only applied if the body is embedded and won't register with ODE collision
-	ContactGeom containment_geom;
-	containment_geom.depth = std::numeric_limits<Scalar>::lowest();
-	auto face_functor = [& mesh_surround, & containment_geom, & bounding_sphere] (form::Triangle3 const & face, form::Vector3 const & normal)
+	Scalar max_depth = std::numeric_limits<Scalar>::lowest();
+	Vector3 max_depth_normal;
+	auto face_functor = [&] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
 		Vector3 center = geom::Center(face);
 		form::Plane3 plane(center, normal);
@@ -114,12 +114,10 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		}
 		
 		auto depth = bounding_sphere.radius - distance;
-		if (depth > containment_geom.depth)
+		if (depth > max_depth)
 		{
-			containment_geom.depth = depth;
-			containment_geom.normal[0] = normal.x;
-			containment_geom.normal[1] = normal.y;
-			containment_geom.normal[2] = normal.z;
+			max_depth = depth;
+			max_depth_normal = normal;
 		}
 		
 		mesh_surround.AddTriangle(face, normal);
@@ -127,45 +125,52 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	
 	form::ForEachFaceInSphere(* polyhedron, bounding_sphere, face_functor);
 	
-	if (mesh_surround.IsEmpty())
-	{
-		return true;
-	}
-	
-	mesh_surround.RefreshData();
-	mesh_surround.Enable();
-	
     ////////////////////////////////////////////////////////////////////////////////
 	// collide and generate contacts
 
 	constexpr auto max_num_contacts = 10240;
 	typedef std::array<ContactGeom, max_num_contacts> ContactVector;
 	ContactVector contacts;
+	std::size_t num_contacts;
 	
-	int flags = contacts.size();
-	ASSERT((flags >> 16) == 0);
-	ASSERT(flags >= max_num_contacts);
+	if (! mesh_surround.IsEmpty())
+	{
+		mesh_surround.RefreshData();
+		mesh_surround.Enable();
 	
-	std::size_t num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
-	ASSERT(num_contacts <= contacts.size());
+		int flags = contacts.size() - 1;
+		ASSERT((flags >> 16) == 0);
 	
+		num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
+
+		ASSERT(num_contacts <= contacts.size());
+	}
+	else
+	{
+		num_contacts = 0;
+	}
+	
+	// If there's a good chance the body is contained by the polyhedron,
+	if (max_depth > 0)
+	{
+		// add a provisional contact.
+		auto & containment_geom = contacts[num_contacts ++];
+		
+		Convert(containment_geom.pos, bounding_sphere.center);
+		containment_geom.normal[0] = max_depth_normal.x;
+		containment_geom.normal[1] = max_depth_normal.y;
+		containment_geom.normal[2] = max_depth_normal.z;
+		containment_geom.depth = max_depth;
+		containment_geom.g1 = body_collision_handle;
+		containment_geom.g2 = mesh_collision_handle;
+	}
+
 	// If contact was detected,
 	if (num_contacts != 0)
 	{
 		// add it to the list to be resolved.
 		auto begin = std::begin(contacts);
 		contact_interface(begin, begin + num_contacts);
-	}
-
-	// If there's a good chance the body is contained by the polyhedron,
-	if (containment_geom.depth > bounding_sphere.radius)
-	{
-		// add a provisional contact.
-		Convert(containment_geom.pos, bounding_sphere.center);
-		containment_geom.g1 = body_collision_handle;
-		containment_geom.g2 = mesh_collision_handle;
-		
-		contact_interface(& containment_geom, & containment_geom + 1);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
