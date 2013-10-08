@@ -52,7 +52,7 @@ namespace sim
 
 	public:
 		// functions
-		TouchObserverController(Entity & entity);
+		TouchObserverController(Entity & entity, Transformation const & transformation);
 	private:
 		virtual ~TouchObserverController();
 
@@ -66,14 +66,11 @@ namespace sim
 		void HandleFingerUp(SDL_FingerID id);
 		void HandleFingerMotion(Vector2 const & screen_position, SDL_FingerID id);
 		
-		Transformation UpdateCamera(Transformation const & previous_transformation) const;
-		Transformation UpdateCamera(Transformation const & previous_transformation, Contact const & contact) const;
-		Transformation UpdateCamera(Transformation const & previous_transformation, std::array<Contact const *, 2> contacts) const;
+		void UpdateCamera();
+		void UpdateCamera(Contact const & contact);
+		void UpdateCamera(std::array<Contact const *, 2> contacts);
 		
-		Transformation const & GetTransformation() const;
-		bool ClampTransformation(Transformation & transformation) const;
-		bool TryClampTransformation(Transformation & transformation) const;
-		void SetTransformation(Transformation const & transformation);
+		void ClampTransformation();
 		void BroadcastTransformation() const;
 
 		physics::Body & GetBody();
@@ -102,6 +99,9 @@ namespace sim
 		
 		// camera transformation at point where contact pressed/released
 		Transformation _down_transformation;
+		
+		// camera transformation at point where contact pressed/released
+		Transformation _current_transformation;
 		
 		// record of contacts used to interact with touch screen
 		ContactVector _contacts;

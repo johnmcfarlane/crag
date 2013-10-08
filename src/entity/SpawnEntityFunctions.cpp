@@ -120,35 +120,29 @@ namespace
 	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
 	{
 		// physics
-		if (observer_use_touch)
-		{
-			auto & location = * new physics::PassiveLocation(position);
-			observer.SetLocation(& location);
-		}
-		else
+		if (! observer_use_touch)
 		{
 			ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
 		}
 
 		// controller
-		sim::Controller * controller;
-		if (observer_use_touch)
+		auto controller = [&] () -> sim::Controller *
 		{
-			controller = new sim::TouchObserverController(observer);
-		}
-		else
-		{
-			// Linux requires libxi-dev to be installed for this to succeed.
-			if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+			if (! observer_use_touch)
 			{
-				controller = new sim::MouseObserverController(observer);
+				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+				{
+					return new sim::MouseObserverController(observer);
+				}
+				else
+				{
+					// Linux requires libxi-dev to be installed for this to succeed.
+					DEBUG_MESSAGE("Failed to set relative mouse mode.");
+				}
 			}
-			else
-			{
-				DEBUG_MESSAGE("Failed to set relative mouse mode.");
-				controller = new sim::TouchObserverController(observer);
-			}
-		}
+
+			return new sim::TouchObserverController(observer, position);
+		} ();
 		
 		observer.SetController(controller);
 

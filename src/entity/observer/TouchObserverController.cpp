@@ -248,9 +248,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // TouchObserverController member definitions
 
-TouchObserverController::TouchObserverController(Entity & entity)
+TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
 : Controller(entity)
 , _origin(geom::abs::Vector3::Zero())
+, _down_transformation(transformation)
+, _current_transformation(transformation)
 {
 	_frustum.resolution = app::GetResolution();
 	_frustum.depth_range = Vector2(1, 2);
@@ -276,31 +278,18 @@ void TouchObserverController::Tick()
 	// event-based input
 	HandleEvents();
 
-	auto previous_transformation = GetTransformation();
-	auto transformation = UpdateCamera(previous_transformation);
-	
-	ClampTransformation(transformation);
-
-	if (previous_transformation != transformation)
-	{
-		SetTransformation(transformation);
-	}
-
+	UpdateCamera();
+	ClampTransformation();
 	BroadcastTransformation();
 }
 
 void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
 {
-	// convert entity position
-	auto old_transformation = GetTransformation();
-	auto new_transformation = geom::Convert(old_transformation, _origin, event.origin);
-	SetTransformation(new_transformation);
-	
 	// convert _down_transformation
-	if (! _contacts.empty())
-	{
-		_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
-	}
+	_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
+	
+	// convert _current_transformation
+	_current_transformation = geom::Convert(_current_transformation, _origin, event.origin);
 	
 	// convert contacts
 	for (auto & contact : _contacts)
@@ -410,7 +399,7 @@ void TouchObserverController::HandleFingerDown(Vector2 const & screen_position, 
 		}
 	} ();
 		
-	_down_transformation = GetTransformation();
+	_down_transformation = _current_transformation;
 	
 	// generate ray from eye to finger
 	auto direction = GetPixelDirection(screen_position, _down_transformation);
@@ -463,7 +452,7 @@ void TouchObserverController::HandleFingerUp(SDL_FingerID id)
 
 	_contacts.erase(found);
 
-	_down_transformation = GetTransformation();
+	_down_transformation = _current_transformation;
 
 	ASSERT(! IsDown(id));
 }
@@ -480,22 +469,24 @@ void TouchObserverController::HandleFingerMotion(Vector2 const & screen_position
 	found->SetScreenPosition(screen_position);
 }
 
-Transformation TouchObserverController::UpdateCamera(Transformation const & previous_transformation) const
+void TouchObserverController::UpdateCamera()
 {
 	switch (_contacts.size())
 	{
 		case 0:
-			return previous_transformation;
+			break;
 			
 		case 1:
-			return UpdateCamera(previous_transformation, _contacts[0]);
+			UpdateCamera(_contacts[0]);
+			break;
 			
 		default:
 		{
 			auto size = _contacts.size();
 			const auto & contact0 = _contacts[size - 2];
 			const auto & contact1 = _contacts[size - 1];
-			return UpdateCamera(previous_transformation, {{ & contact0, & contact1 }});
+			UpdateCamera({{ & contact0, & contact1 }});
+			break;
 		}
 	}
 }
@@ -504,15 +495,15 @@ Transformation TouchObserverController::UpdateCamera(Transformation const & prev
 // rotates the camera around a fixed position with fixed up axis 
 // when one finger is touching the screen; 
 // is intended to feel analogous to scrolling within a UI view
-Transformation TouchObserverController::UpdateCamera(Transformation const &, Contact const & contact) const
+void TouchObserverController::UpdateCamera(Contact const & contact)
 {
 	// extract data about initial camera transformation
-	Vector3 camera_position = _down_transformation.GetTranslation();
-	Matrix33 camera_rotation = _down_transformation.GetRotation();
-	Vector3 camera_up = gfx::GetAxis(camera_rotation, gfx::Direction::up);
+	Vector3 const down_position = _down_transformation.GetTranslation();
+	Matrix33 const down_rotation = _down_transformation.GetRotation();
+	Vector3 const camera_up = gfx::GetAxis(down_rotation, gfx::Direction::up);
 	
 	// get 'from' and 'to' finger pointing directions
-	Vector3 relative_down_direction = contact.GetWorldDirection(camera_position);
+	Vector3 relative_down_direction = contact.GetWorldDirection(down_position);
 	Vector3 relative_current_direction = geom::Normalized(GetPixelDirection(contact.GetScreenPosition(), _down_transformation));
 	
 	// convert them into rotations and take the difference
@@ -521,12 +512,12 @@ Transformation TouchObserverController::UpdateCamera(Transformation const &, Con
 	auto required_rotation = Inverse(from_matrix) * (to_matrix);
 	
 	// apply them to camera rotation
-	// TODO: Is operator* the right way around?
-	camera_rotation = required_rotation * camera_rotation;
-
-	// apply new camera rotation
-	Transformation camera_transformation(camera_position, Matrix33(camera_rotation));
-	return camera_transformation;
+	Matrix33 new_rotation = required_rotation * down_rotation;
+	if (new_rotation != _current_transformation.GetRotation())
+	{
+		// apply new camera rotation
+		_current_transformation.SetRotation(new_rotation);
+	}
 }
 
 // updates camera when two fingers are down; 
@@ -535,7 +526,7 @@ Transformation TouchObserverController::UpdateCamera(Transformation const &, Con
 // - moving fingers in parallel pans camera
 // - rotating fingers rotated the camera rolls the camera / rotates along the z
 // - moving fingers together/appart translates the camera along the z
-Transformation TouchObserverController::UpdateCamera(Transformation const & previous_transformation, std::array<Contact const *, 2> contacts) const
+void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contacts)
 {
 	ASSERT(contacts[0]);
 	ASSERT(contacts[1]);
@@ -543,7 +534,7 @@ Transformation TouchObserverController::UpdateCamera(Transformation const & prev
 	if (Collided(* contacts[0], * contacts[1]))
 	{
 		DEBUG_MESSAGE("finger collision detected!");
-		return previous_transformation;
+		return;
 	}
 	
 	struct ContactBuffer
@@ -610,35 +601,20 @@ Transformation TouchObserverController::UpdateCamera(Transformation const & prev
 		}
 		
 		case 0:
-			return previous_transformation;
+			return;
 	}
 
 	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_contacts[0], translation_roll_contacts[1], _down_transformation);
-	return camera_transformation;
-}
-
-Transformation const & TouchObserverController::GetTransformation() const
-{
-	auto & entity = GetEntity();
-	auto location = entity.GetLocation();
-	ASSERT(location);
-	
-	return location->GetTransformation();
-}
-
-// returns true if transformation was mutated
-bool TouchObserverController::ClampTransformation(Transformation & transformation) const
-{
-	int i = 0;
-	while (TryClampTransformation(transformation) && ++ i < 10);
-	return i > 0;
+	if (camera_transformation != _current_transformation)
+	{
+		_current_transformation = camera_transformation;
+	}
 }
 
 // adjusts given transformation to avoid penetrating world geometry;
-// returns true if world geometry /might/ be encroaching on near render plane
-bool TouchObserverController::TryClampTransformation(Transformation & transformation) const
+void TouchObserverController::ClampTransformation()
 {
-	Vector3 camera_position = transformation.GetTranslation();
+	Vector3 camera_position = _current_transformation.GetTranslation();
 	Scalar max_clear_distance = camera_near * touch_observer_min_distance;
 	Scalar min_clear_distance = camera_near;
 	Sphere3 collision_sphere(camera_position, max_clear_distance);
@@ -667,27 +643,18 @@ bool TouchObserverController::TryClampTransformation(Transformation & transforma
 	physics::ContactFunction<decltype(function)> contact_function(function);
 	physics_engine.Collide(collision_sphere, contact_function);
 	
-	if (max_push_distance > 0)
+	if (max_push_distance > max_clear_distance - min_clear_distance)
 	{
-		transformation.SetTranslation(camera_position + push * max_push_distance);
-		return max_push_distance > max_clear_distance - min_clear_distance;
+		_current_transformation.SetTranslation(camera_position + push * max_push_distance);
 	}
-	
-	return false;
-}
-
-void TouchObserverController::SetTransformation(Transformation const & transformation)
-{
-	auto & entity = GetEntity();
-	auto location = entity.GetLocation();
-	location->SetTransformation(transformation);
 }
 
 void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
 	gfx::SetCameraEvent event;
-	event.transformation = geom::RelToAbs(GetTransformation(), _origin);
+	event.transformation = geom::RelToAbs(_current_transformation, _origin);
+
 	Daemon::Broadcast(event);
 }
 
