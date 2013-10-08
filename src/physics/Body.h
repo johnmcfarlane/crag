@@ -12,14 +12,6 @@
 #include "ContactInterface.h"
 #include "Location.h"
 
-namespace core
-{
-	namespace locality
-	{
-		class Roster;
-	}
-}
-
 namespace physics
 {
 	// forward-declarations
