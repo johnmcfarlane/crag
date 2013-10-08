@@ -149,6 +149,9 @@ void Engine::operator() (gfx::SetOriginEvent const & event)
 	// local collision formation scene
 	auto & scene = _physics_engine.GetScene();
 	scene.OnOriginReset(event.origin);
+	
+	// camera
+	_camera = geom::Convert(_camera, _origin, event.origin);
 
 	_origin = event.origin;
 }
