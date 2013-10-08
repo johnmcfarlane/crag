@@ -156,20 +156,18 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		auto begin = std::begin(contacts);
 		contact_interface(begin, begin + num_contacts);
 	}
-	else
+
+	// If there's a good chance the body is contained by the polyhedron,
+	if (containment_geom.depth > bounding_sphere.radius)
 	{
-		// If there's a good chance the body is contained by the polyhedron,
-		if (containment_geom.depth > bounding_sphere.radius)
-		{
-			// add a provisional contact.
-			Convert(containment_geom.pos, bounding_sphere.center);
-			containment_geom.g1 = body_collision_handle;
-			containment_geom.g2 = mesh_collision_handle;
-			
-			contact_interface(& containment_geom, & containment_geom + 1);
-		}
+		// add a provisional contact.
+		Convert(containment_geom.pos, bounding_sphere.center);
+		containment_geom.g1 = body_collision_handle;
+		containment_geom.g2 = mesh_collision_handle;
+		
+		contact_interface(& containment_geom, & containment_geom + 1);
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////////
 	// reset
 	
