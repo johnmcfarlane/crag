@@ -48,7 +48,7 @@ using namespace sim;
 namespace
 {
 	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
-	CONFIG_DEFINE (touch_observer_min_distance, Scalar, 2.f);	// as a proportion of camera_near
+	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of camera_near
 
 	struct TranslationRollContact
 	{
@@ -614,10 +614,11 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 // adjusts given transformation to avoid penetrating world geometry;
 void TouchObserverController::ClampTransformation()
 {
-	Vector3 camera_position = _current_transformation.GetTranslation();
-	Scalar max_clear_distance = camera_near * touch_observer_min_distance;
-	Scalar min_clear_distance = camera_near;
-	Sphere3 collision_sphere(camera_position, max_clear_distance);
+	ASSERT(touch_observer_distance_buffer >= 1.f);
+	
+	Vector3 center = _current_transformation.GetTranslation();
+	Scalar radius = camera_near * touch_observer_distance_buffer;
+	Sphere3 collision_sphere(center, radius);
 
 	auto & entity = GetEntity();
 	auto & engine = entity.GetEngine();
@@ -637,15 +638,15 @@ void TouchObserverController::ClampTransformation()
 				push = physics::Convert(begin->normal);
 			}
 		}
-		while (++ begin != end);
+		while ((++ begin) != end);
 	};
 
 	physics::ContactFunction<decltype(function)> contact_function(function);
 	physics_engine.Collide(collision_sphere, contact_function);
 	
-	if (max_push_distance > max_clear_distance - min_clear_distance)
+	if (max_push_distance > 0)
 	{
-		_current_transformation.SetTranslation(camera_position + push * max_push_distance);
+		_current_transformation.SetTranslation(center + push * max_push_distance);
 	}
 }
 
