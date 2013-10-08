@@ -19,6 +19,8 @@ namespace form
 	class Polyhedron;
 	class PointBuffer;
 
+	// TODO: Consider removing RootNode and refer instead of the child quaterna;
+	// TODO: then change Node* variables into relative addresses
 	class RootNode : public Node
 	{
 	public:
