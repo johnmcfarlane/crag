@@ -614,39 +614,44 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 // adjusts given transformation to avoid penetrating world geometry;
 void TouchObserverController::ClampTransformation()
 {
-	ASSERT(touch_observer_distance_buffer >= 1.f);
-	
-	Vector3 center = _current_transformation.GetTranslation();
-	Scalar radius = camera_near * touch_observer_distance_buffer;
-	Sphere3 collision_sphere(center, radius);
-
-	auto & entity = GetEntity();
-	auto & engine = entity.GetEngine();
-	auto & physics_engine = engine.GetPhysicsEngine();
-	
-	auto push = Vector3::Zero();
-	Scalar max_push_distance = 0;
-	auto function = [& push, & max_push_distance] (physics::ContactGeom const * begin, physics::ContactGeom const * end)
+	for (auto pass = 5; pass; -- pass)
 	{
-		ASSERT(end > begin);
-		do
+		ASSERT(touch_observer_distance_buffer >= 1.f);
+	
+		Vector3 center = _current_transformation.GetTranslation();
+		Scalar radius = camera_near * touch_observer_distance_buffer;
+		Sphere3 collision_sphere(center, radius);
+
+		auto & entity = GetEntity();
+		auto & engine = entity.GetEngine();
+		auto & physics_engine = engine.GetPhysicsEngine();
+	
+		auto push = physics::Vector3::Zero();
+		physics::Scalar max_push_distance = 0;
+		auto function = [& push, & max_push_distance] (physics::ContactGeom const * begin, physics::ContactGeom const * end)
 		{
-			auto push_distance = begin->depth;
-			if (push_distance > max_push_distance)
+			ASSERT(end > begin);
+			do
 			{
-				max_push_distance = push_distance;
-				push = physics::Convert(begin->normal);
+				auto push_distance = begin->depth;
+				if (push_distance > max_push_distance)
+				{
+					max_push_distance = push_distance;
+					push = physics::Convert(begin->normal);
+				}
 			}
-		}
-		while ((++ begin) != end);
-	};
+			while ((++ begin) != end);
+		};
 
-	physics::ContactFunction<decltype(function)> contact_function(function);
-	physics_engine.Collide(collision_sphere, contact_function);
+		physics::ContactFunction<decltype(function)> contact_function(function);
+		physics_engine.Collide(geom::Cast<physics::Scalar>(collision_sphere), contact_function);
 	
-	if (max_push_distance > 0)
-	{
-		_current_transformation.SetTranslation(center + push * max_push_distance);
+		if (max_push_distance <= 0)
+		{
+			break;
+		}
+		
+		_current_transformation.SetTranslation(center + geom::Cast<Scalar>(push * max_push_distance));
 	}
 }
 
