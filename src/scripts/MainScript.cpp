@@ -179,9 +179,6 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 	
-	// Give formations time to expand.
-	_applet_interface->Sleep(2);
-
 	// Create observer.
 	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
 
@@ -207,6 +204,9 @@ void MainScript(applet::AppletInterface & applet_interface)
 	}});
 	
 	SpawnAnimats(observer_start_pos);
+
+	// Give formations time to expand.
+	_applet_interface->Sleep(.1f);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
