@@ -56,6 +56,28 @@ bool Thread::IsCurrent() const
 	return running_thread_id == member_thread_id;
 }
 
+// creates and launches a new thread;
+// name must immutable
+void Thread::Launch(FunctionType function, char const * name)
+{
+	ASSERT(! IsLaunched());
+	
+#if defined(CRAG_USE_STL_THREAD)
+	_thread = ThreadType([this, function, name] {
+		// sets the thread's name; (useful for debugging)
+		smp::SetThreadName(name);
+
+		while (! IsCurrent()) {
+			Yield();
+		}
+		function();
+	});
+#else
+	_launch_function = function;
+	_thread = SDL_CreateThread(Callback, name, this);
+#endif
+}
+
 // Waits for thread to return from FUNCTION.
 void Thread::Join()
 {

@@ -16,6 +16,10 @@
 // but SDL is a little more mature and claims to work better on Android
 //#define CRAG_USE_STL_THREAD
 
+#if defined(CRAG_USE_STL_THREAD)
+#include <thread>
+#endif
+
 namespace smp
 {
 	// Use Thread to launch and manage a thread. 
@@ -33,8 +37,8 @@ namespace smp
 		typedef std::thread ThreadType;
 #else
 		typedef SDL_Thread * ThreadType;
-		typedef std::function<void ()> FunctionType;
 #endif
+		typedef std::function<void ()> FunctionType;
 
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -49,26 +53,7 @@ namespace smp
 
 		// creates and launches a new thread;
 		// name must immutable
-		template <typename FUNCTION_TYPE>
-		void Launch(FUNCTION_TYPE function, char const * name)
-		{
-			ASSERT(! IsLaunched());
-			
-#if defined(CRAG_USE_STL_THREAD)
-			_thread = ThreadType([this, function, name] {
-				// sets the thread's name; (useful for debugging)
-				smp::SetThreadName(name);
-
-				while (! IsCurrent()) {
-					Yield();
-				}
-				function();
-			});
-#else
-			_launch_function = function;
-			_thread = SDL_CreateThread(Callback, name, this);
-#endif
-		}
+		void Launch(FunctionType function, char const * name);
 		
 		// Waits for thread to return from FUNCTION.
 		void Join();
