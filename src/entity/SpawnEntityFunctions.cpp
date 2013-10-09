@@ -30,6 +30,8 @@
 #include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
+#include "form/Scene.h"
+
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Box.h"
@@ -224,8 +226,16 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 
 		// body
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
-		auto body = new physics::PlanetBody(sphere.center, physics_engine, formation, physics::Scalar(sphere.radius));
-		entity.SetLocation(body);
+		auto const * polyhedron = engine.GetScene().GetPolyhedron(formation);
+		if (polyhedron)
+		{
+			auto body = new physics::PlanetBody(sphere.center, physics_engine, * polyhedron, physics::Scalar(sphere.radius));
+			entity.SetLocation(body);
+		}
+		else
+		{
+			DEBUG_BREAK("missing formation polyhedron");
+		}
 
 		// register with the renderer
 #if defined(RENDER_SEA)

@@ -40,6 +40,7 @@ namespace physics
 namespace form
 {
 	class Formation;
+	class Scene;
 }
 
 namespace gfx
@@ -94,6 +95,10 @@ namespace sim
 		// accessors
 		core::Time GetTime() const;
 		physics::Engine & GetPhysicsEngine();		
+
+		form::Scene & GetScene();
+		form::Scene const & GetScene() const;
+		
 		core::locality::Roster & GetTickRoster();
 		core::locality::Roster & GetDrawRoster();
 
@@ -117,6 +122,7 @@ namespace sim
 		Ray3 _camera;
 		geom::abs::Vector3 _origin;
 		physics::Engine & _physics_engine;
+		form::Scene & _collision_scene;	// for collision
 
 		core::locality::Roster & _tick_roster;	// general simulation tick
 		core::locality::Roster & _draw_roster;	// provides opportunity to communicate graphical changes to renderer

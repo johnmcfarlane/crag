@@ -11,8 +11,6 @@
 
 #include "ContactInterface.h"
 
-#include <ode/contact.h>
-
 namespace core
 {
 	namespace locality
@@ -24,7 +22,6 @@ namespace core
 namespace form
 {
 	class RayCastResult;
-	class Scene;
 }
 
 namespace physics
@@ -53,9 +50,6 @@ namespace physics
 		Engine();
 		~Engine();
 		
-		form::Scene & GetScene();
-		form::Scene const & GetScene() const;
-		
 		core::locality::Roster & GetPreTickRoster();
 		core::locality::Roster & GetPostTickRoster();
 
@@ -69,7 +63,7 @@ namespace physics
 		
 		void Attach(Body const & body1, Body const & body2);
 		
-		void Tick(double delta_time, Ray3 const & camera_ray);
+		void Tick(double delta_time);
 		
 		// use sparingly
 		form::RayCastResult CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
@@ -94,8 +88,6 @@ namespace physics
 		dSpaceID space;
 		dJointGroupID contact_joints;
 
-		form::Scene & _formation_scene;
-		
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
 		ContactVector _contacts;
 		dContact _contact;	// permanently stores common properties

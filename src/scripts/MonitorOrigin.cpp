@@ -13,19 +13,15 @@
 
 #include "sim/Engine.h"
 
-#include "physics/Engine.h"
-
-#include "form/Engine.h"
 #include "form/NodeBuffer.h"
+#include "form/Scene.h"
 
 #include "gfx/SetOriginEvent.h"
 
 #include "geom/origin.h"
 
-#include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
-#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 CONFIG_DECLARE (observer_use_touch, bool);
@@ -68,8 +64,7 @@ namespace
 	
 	void ReviseOrigin(sim::Engine & engine)
 	{
-		auto & physics_engine = engine.GetPhysicsEngine();
-		auto & scene = physics_engine.GetScene();
+		auto & scene = engine.GetScene();
 		auto & node_buffer = scene.GetNodeBuffer();
 
 		auto & camera_ray = engine.GetCamera();

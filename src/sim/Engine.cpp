@@ -57,6 +57,7 @@ Engine::Engine()
 , _camera(geom::rel::Ray3::Zero())
 , _origin(geom::abs::Vector3::Zero())
 , _physics_engine(ref(new physics::Engine))
+, _collision_scene(ref(new form::Scene(512, 512)))
 , _tick_roster(ref(new core::locality::Roster))
 , _draw_roster(ref(new core::locality::Roster))
 {
@@ -65,6 +66,7 @@ Engine::Engine()
 Engine::~Engine()
 {
 	delete & _tick_roster;
+	delete & _collision_scene;
 	delete & _physics_engine;
 }
 
@@ -102,8 +104,7 @@ void Engine::AddFormation(form::Formation& formation)
 		engine.OnAddFormation(formation);
 	});
 
-	auto& scene = _physics_engine.GetScene();
-	scene.AddFormation(formation, GetOrigin());
+	_collision_scene.AddFormation(formation, GetOrigin());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
@@ -112,8 +113,7 @@ void Engine::RemoveFormation(form::Formation& formation)
 		engine.OnRemoveFormation(formation);
 	});
 
-	auto& scene = _physics_engine.GetScene();
-	scene.RemoveFormation(formation);
+	_collision_scene.RemoveFormation(formation);
 }
 
 void Engine::operator() (gfx::SetCameraEvent const & event)
@@ -147,8 +147,7 @@ void Engine::operator() (gfx::SetOriginEvent const & event)
 	UpdateRenderer();
 
 	// local collision formation scene
-	auto & scene = _physics_engine.GetScene();
-	scene.OnOriginReset(event.origin);
+	_collision_scene.OnOriginReset(event.origin);
 	
 	// camera
 	_camera = geom::Convert(_camera, _origin, event.origin);
@@ -184,6 +183,16 @@ core::Time Engine::GetTime() const
 physics::Engine & Engine::GetPhysicsEngine()
 {
 	return _physics_engine;
+}
+
+form::Scene & Engine::GetScene()
+{
+	return _collision_scene;
+}
+
+form::Scene const & Engine::GetScene() const
+{
+	return _collision_scene;
 }
 
 core::locality::Roster & Engine::GetTickRoster()
@@ -242,8 +251,10 @@ void Engine::Tick()
 		return;
 	}
 
-	_time += sim_tick_duration;
+	_collision_scene.Tick(_camera);
 
+	_time += sim_tick_duration;
+	
 	// tick everything
 	_tick_roster.Call();
 
@@ -256,7 +267,7 @@ void Engine::Tick()
 	}
 
 	// Run physics/collisions.
-	_physics_engine.Tick(sim_tick_duration, _camera);
+	_physics_engine.Tick(sim_tick_duration);
 
 	// Tell renderer about changes.
 	UpdateRenderer();

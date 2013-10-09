@@ -16,9 +16,7 @@
 #include "physics/RayCast.h"
 
 #include "form/CastRay.h"
-#include "form/RayCastResult.h"
 #include "form/ForEachFaceInSphere.h"
-#include "form/Scene.h"
 
 using namespace physics;
 
@@ -27,9 +25,9 @@ using namespace physics;
 
 DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
-PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Formation const & formation, Scalar radius)
+PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphericalBody(transformation, nullptr, engine, radius)
-, _formation(formation)
+, _polyhedron(polyhedron)
 , _mean_radius(radius)
 {
 }
@@ -72,18 +70,6 @@ bool PlanetBody::OnCollision(Body & body, ContactInterface & contact_interface)
 bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface)
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// get necessary data for scanning planet surface
-
-	auto & scene = _engine.GetScene();
-	auto polyhedron = scene.GetPolyhedron(_formation);
-	if (polyhedron == nullptr)
-	{
-		// This can happen if the PlanetBody has just been created 
-		// and the corresponding OnAddFormation message hasn't been read yet.
-		return true;
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////
 	// gather the two collision handles together
 
 	// the incoming body - could be any class of shape
@@ -123,7 +109,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		mesh_surround.AddTriangle(face, normal);
 	};
 	
-	form::ForEachFaceInSphere(* polyhedron, bounding_sphere, face_functor);
+	form::ForEachFaceInSphere(_polyhedron, bounding_sphere, face_functor);
 	
     ////////////////////////////////////////////////////////////////////////////////
 	// collide and generate contacts
@@ -209,21 +195,9 @@ bool PlanetBody::OnCollisionWithRay(Body & body)
 	const auto ray = ray_cast.GetRay();
 
 	////////////////////////////////////////////////////////////////////////////////
-	// get necessary data for scanning planet surface
-
-	const auto & scene = _engine.GetScene();
-	const auto polyhedron = scene.GetPolyhedron(_formation);
-	if (! polyhedron)
-	{
-		// This can happen if the PlanetBody has just been created 
-		// and the corresponding OnAddFormation message hasn't been read yet.
-		return true;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
 	// test ray against polyhedron and register result with ray_cast
 
-	const auto ray_cast_result = form::CastRay(* polyhedron, ray, length);
+	const auto ray_cast_result = form::CastRay(_polyhedron, ray, length);
 
 	ray_cast.SampleResult(ray_cast_result);
 	return true;

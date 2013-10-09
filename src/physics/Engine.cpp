@@ -11,13 +11,9 @@
 
 #include "Engine.h"
 
-#include "Body.h"
 #include "MeshSurround.h"
 #include "RayCast.h"
 #include "SphericalBody.h"
-
-#include "form/RayCastResult.h"
-#include "form/Scene.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
@@ -31,10 +27,7 @@
 #include "gfx/Debug.h"
 #endif
 
-#include <ode/collision.h>
-#include <ode/collision_space.h>
 #include <ode/objects.h>
-#include <ode/odeinit.h>
 
 using namespace physics;
 
@@ -98,7 +91,6 @@ Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, _formation_scene(ref(new form::Scene(512, 512)))
 , _pre_tick_roster(ref(new core::locality::Roster))
 , _post_tick_roster(ref(new core::locality::Roster))
 {
@@ -122,21 +114,10 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	delete & _formation_scene;
 	dSpaceDestroy(space);
 	dWorldDestroy(world);
 	dJointGroupDestroy(contact_joints);
 	dCloseODE();
-}
-
-form::Scene & Engine::GetScene()
-{
-	return _formation_scene;
-}
-
-form::Scene const & Engine::GetScene() const
-{
-	return _formation_scene;
 }
 
 core::locality::Roster & Engine::GetPreTickRoster()
@@ -232,13 +213,11 @@ void Engine::Attach(Body const & body1, Body const & body2)
 	dJointSetFixed (joint_id);
 }
 
-void Engine::Tick(double delta_time, Ray3 const & camera_ray)
+void Engine::Tick(double delta_time)
 {
 	// call objects that want to know that physics is about to be ticked
 	_pre_tick_roster.Call();
 
-	_formation_scene.Tick(camera_ray);
-	
 	if (collisions)
 	{
 		// Detect / represent all collisions.

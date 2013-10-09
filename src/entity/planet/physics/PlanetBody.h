@@ -15,8 +15,7 @@
 
 namespace form
 {
-	class Formation;
-	class Scene;
+	class Polyhedron;
 }
 
 namespace physics
@@ -33,7 +32,7 @@ namespace physics
 	public:
 		DECLARE_ALLOCATOR(PlanetBody);
 
-		PlanetBody(Transformation const & transformation, Engine & engine, form::Formation const & formation, Scalar radius);
+		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 	private:
@@ -43,7 +42,7 @@ namespace physics
 		bool OnCollisionWithRay(Body & body) final;
 
 		// variables
-		form::Formation const & _formation;
+		form::Polyhedron const & _polyhedron;
 		Scalar _mean_radius;
 	};
 	
