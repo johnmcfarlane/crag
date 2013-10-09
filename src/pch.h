@@ -44,17 +44,9 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// SDL includes.
+// SDL include
 
-// Disable partial compatability with SDL 1.2.
-#define SDL_NO_COMPAT
-
-#if defined(WIN32) || defined(__ANDROID__)
 #include <SDL.h>
-#else
-#include <SDL2/SDL.h>
-#endif
-
 
 //////////////////////////////////////////////////////////////////////
 // OpenGL includes

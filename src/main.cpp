@@ -25,11 +25,7 @@
 #include "core/app.h"
 #include "core/ConfigManager.h"
 
-#if defined(WIN32)
 #include <SDL_main.h>
-#else
-#include <SDL2/SDL_main.h>
-#endif
 
 #define RUN_TEST
 

@@ -106,7 +106,7 @@ add_executable(crag
 	smp/Thread.cpp
 	ipc/Uid.cpp)
 
-include_directories("." "../dependencies/include")
+include_directories("." "../dependencies/include" "../dependencies/include/SDL2")
 
 find_package(OpenGL REQUIRED)
 find_library(SDL2_LIBRARY SDL2 ../dependencies/lib)
