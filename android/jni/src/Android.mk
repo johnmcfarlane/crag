@@ -122,10 +122,10 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
 ifeq ($(APP_OPTIM),debug)
 	NDK_DEBUG=1
-	LOCAL_CPPFLAGS := -std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := -std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -Wno-unused-function -fno-rtti -fno-exceptions
 else
 	NDK_DEBUG=0
-	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -Wno-unused-function -fno-rtti -fno-exceptions
 endif
 
 LOCAL_SHARED_LIBRARIES := SDL2 ode
