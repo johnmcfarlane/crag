@@ -28,6 +28,12 @@
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
 
+#if defined(NDEBUG)
+#define INIT_CAP(CAP,ENABLED) { CAP,ENABLED }
+#else
+#define INIT_CAP(CAP,ENABLED) { CAP,ENABLED,#CAP }
+#endif
+
 using core::Time;
 using namespace gfx;
 
@@ -247,6 +253,13 @@ std::atomic<bool> Engine::_paused(false);
 #else
 const bool Engine::_paused(false);
 #endif
+
+Engine::StateParam const Engine::init_state[] =
+{
+	INIT_CAP(GL_CULL_FACE, true),
+	INIT_CAP(GL_DEPTH_TEST, true),
+	INIT_CAP(GL_BLEND, false),
+};
 
 #if defined(VERIFY)
 void Engine::Verify() const
@@ -530,20 +543,6 @@ void Engine::SetPaused(bool paused)
 }
 #endif
 
-#if defined(NDEBUG)
-#define INIT(CAP,ENABLED) { CAP,ENABLED }
-#else
-#define INIT(CAP,ENABLED) { CAP,ENABLED,#CAP }
-#endif
-
-Engine::StateParam const Engine::init_state[] =
-{
-	INIT(GL_CULL_FACE, true),
-	INIT(GL_DEPTH_TEST, true),
-	INIT(GL_BLEND, false),
-	INIT(GL_INVALID_ENUM, false),
-};
-
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	while (! quit_flag || ! scene->GetRoot().IsEmpty())
@@ -745,11 +744,9 @@ void Engine::InitVSync()
 
 void Engine::InitRenderState()
 {
-	StateParam const * param = init_state;
-	while (param->cap != GL_INVALID_ENUM)
+	for (auto const & param : init_state)
 	{
-		GL_CALL((param->enabled ? glEnable : glDisable)(param->cap));
-		++ param;
+		GL_CALL((param.enabled ? glEnable : glDisable)(param.cap));
 	}
 
 	GL_CALL(glFrontFace(GL_CCW));
@@ -764,16 +761,12 @@ void Engine::InitRenderState()
 void Engine::VerifyRenderState() const
 {
 #if ! defined(NDEBUG)
-	StateParam const * param = init_state;
-	while (param->cap != GL_INVALID_ENUM)
+	for (auto const & param : init_state)
 	{
-#if ! defined(NDEBUG)
-		if (param->enabled != IsEnabled(param->cap))
+		if (param.enabled != IsEnabled(param.cap))
 		{
-			DEBUG_BREAK("Bad render state: %s.", param->name);
+			DEBUG_BREAK("Bad render state: %s.", param.name);
 		}
-#endif
-		++ param;
 	}
 	
 	// TODO: Write equivalent functions for all state in GL. :S
