@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\DebugSingleDLL;..\..\dependencies\ode\lib\ReleaseSingleDLL;..\..\dependencies\glew\lib;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\dependencies\glew\lib\Release\Win32;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\DebugSingleDLL;..\..\dependencies\ode\lib\ReleaseSingleDLL;..\..\dependencies\glew\lib;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\dependencies\glew\lib\Release\Win32;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -73,7 +73,7 @@
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2main.lib;glew32sd.lib;ode_singled.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2main.lib;glew32s.lib;ode_singled.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -139,6 +139,7 @@
     <ClInclude Include="..\..\src\core\Singleton.h" />
     <ClInclude Include="..\..\src\core\Statistics.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
+    <ClInclude Include="..\..\src\entity\observer\Contact.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
     <ClInclude Include="..\..\src\form\CalculateNodeScoreFunctor.h" />
@@ -201,7 +202,6 @@
     <ClInclude Include="..\..\src\gfx\Image.h" />
     <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
     <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
-    <ClInclude Include="..\..\src\gfx\Layer.h" />
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
@@ -300,6 +300,7 @@
     <ClCompile Include="..\..\src\core\Roster.cpp" />
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
     <ClCompile Include="..\..\src\form\CalculateNodeScoreFunctor.cpp" />
@@ -341,7 +342,6 @@
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
-    <ClCompile Include="..\..\src\gfx\Layer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
     <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />

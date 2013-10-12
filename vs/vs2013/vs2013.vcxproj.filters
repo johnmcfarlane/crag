@@ -23,7 +23,6 @@
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
-    <ClCompile Include="..\..\src\gfx\Layer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
     <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
@@ -106,6 +105,7 @@
     <ClCompile Include="..\..\src\physics\MeshSurround.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -169,7 +169,6 @@
     <ClInclude Include="..\..\src\gfx\Image.h" />
     <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
     <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
-    <ClInclude Include="..\..\src\gfx\Layer.h" />
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
@@ -274,11 +273,11 @@
     <ClInclude Include="..\..\src\physics\RayCast.h" />
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
     <ClInclude Include="..\..\src\entity\SpawnEntityFunctions.h" />
-    <ClInclude Include="..\..\src\form\Shader.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
     <ClInclude Include="..\..\src\physics\MeshSurround.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\entity\observer\Contact.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
