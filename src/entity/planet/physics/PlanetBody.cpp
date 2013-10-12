@@ -155,7 +155,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	if (num_contacts != 0)
 	{
 		// add it to the list to be resolved.
-		auto begin = std::begin(contacts);
+		auto begin = contacts.data();
 		contact_interface(begin, begin + num_contacts);
 	}
 

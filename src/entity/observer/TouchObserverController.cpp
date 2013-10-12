@@ -559,7 +559,7 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 		TranslationRollContact translation_roll_contact = 
 		{
 			contact.GetWorldPosition(),
-			GetPixelDirection(contact.GetScreenPosition(), _down_transformation)
+			this->GetPixelDirection(contact.GetScreenPosition(), this->_down_transformation)
 		};
 
 		return translation_roll_contact;
@@ -567,13 +567,13 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 	
 	auto ConvertBackground = [&] (Contact const & background_contact, Vector3 const & foreground_contact_position)
 	{
-		auto camera_position = _down_transformation.GetTranslation();
+		auto camera_position = this->_down_transformation.GetTranslation();
 		auto distance = geom::Length(foreground_contact_position - camera_position);
 
 		TranslationRollContact translation_roll_contact = 
 		{
 			geom::Project(Ray3(camera_position, background_contact.GetWorldDirection()), distance),
-			GetPixelDirection(background_contact.GetScreenPosition(), _down_transformation)
+			this->GetPixelDirection(background_contact.GetScreenPosition(), this->_down_transformation)
 		};
 
 		return translation_roll_contact;
@@ -604,10 +604,10 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 			return;
 	}
 
-	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_contacts[0], translation_roll_contacts[1], _down_transformation);
-	if (camera_transformation != _current_transformation)
+	auto camera_transformation = CalculateCameraTranslationRoll(translation_roll_contacts[0], translation_roll_contacts[1], this->_down_transformation);
+	if (camera_transformation != this->_current_transformation)
 	{
-		_current_transformation = camera_transformation;
+		this->_current_transformation = camera_transformation;
 	}
 }
 
