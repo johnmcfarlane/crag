@@ -110,6 +110,10 @@ namespace gfx
 
 		void operator() (const SetOriginEvent & event) final;
 		geom::abs::Vector3 const & GetOrigin() const;
+		
+#if defined(__ANDROID__)
+		static void SetPaused(bool paused);
+#endif
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -180,6 +184,12 @@ namespace gfx
 		bool _flat_shaded;
 		bool _fragment_lighting;
 		int capture_frame;
+
+#if defined(__ANDROID__)
+		static std::atomic<bool> _paused;
+#else
+		static const bool _paused;
+#endif
 		
 		Image capture_image[2];
 

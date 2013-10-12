@@ -242,6 +242,12 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Engine member definitions
 
+#if defined(__ANDROID__)
+std::atomic<bool> Engine::_paused(false);
+#else
+const bool Engine::_paused(false);
+#endif
+
 #if defined(VERIFY)
 void Engine::Verify() const
 {
@@ -517,6 +523,13 @@ geom::abs::Vector3 const & Engine::GetOrigin() const
 	return _origin;
 }
 
+#if defined(__ANDROID__)
+void Engine::SetPaused(bool paused)
+{
+	_paused = paused;
+}
+#endif
+
 #if defined(NDEBUG)
 #define INIT(CAP,ENABLED) { CAP,ENABLED }
 #else
@@ -538,7 +551,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		message_queue.DispatchMessages(* this);
 		VerifyObjectRef(* scene);
 		
-		if (_ready && (_dirty || quit_flag))
+		if (! _paused && _ready && (_dirty || quit_flag))
 		{
 			PreRender();
 			UpdateTransformations();
@@ -869,7 +882,11 @@ void Engine::Render()
 
 	// Flip the front and back buffers and set fences.
 	SetFence(_fence1);
-	app::SwapBuffers();
+	
+	if (! _paused)
+	{
+		app::SwapBuffers();
+	}
 	SetFence(_fence2);
 
 	ProcessRenderTiming();
