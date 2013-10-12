@@ -256,6 +256,7 @@ void PolyProgram::InitAttribs(GLuint id)
 {
 	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
+	GL_CALL(glBindAttribLocation(id, 3, "vertex_color"));
 }
 
 void PolyProgram::InitUniforms()
