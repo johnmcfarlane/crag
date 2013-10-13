@@ -46,6 +46,16 @@ namespace gfx
 			return * grow(3);
 		}
 		
+		Super::const_iterator begin() const
+		{
+			return Super::begin();
+		}
+		
+		Super::const_iterator end() const
+		{
+			return Super::end();
+		}
+		
 		typedef Super::value_type value_type;
 		value_type const * GetArray() const;
 	};

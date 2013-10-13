@@ -18,6 +18,8 @@ namespace form
 {
 	class VertexBuffer
 	{
+		// types
+		typedef smp::vector<Vertex> VertexVector;
 	public:
 		// functions
 		VertexBuffer(int max_num_verts);
@@ -30,8 +32,26 @@ namespace form
 
 		int GetIndex(Vertex const & v) const;
 		
+		VertexVector::const_iterator begin() const
+		{
+			return std::begin(_verts);
+		}
+		VertexVector::iterator begin()
+		{
+			return std::begin(_verts);
+		}
+		
+		VertexVector::const_iterator end() const
+		{
+			return std::end(_verts);
+		}
+		VertexVector::iterator end()
+		{
+			return std::end(_verts);
+		}
+		
 	private:
 		// variables
-		smp::vector<Vertex> _verts;
+		VertexVector _verts;
 	};
 }
