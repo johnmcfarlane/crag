@@ -60,7 +60,7 @@ namespace geom
 	template <typename REL_S = geom::rel::Scalar>
 	inline Sphere<REL_S, 3> AbsToRel(geom::abs::Sphere3 const & abs, geom::abs::Vector3 const & origin)
 	{
-		return Sphere<REL_S, 3>(AbsToRel<REL_S>(abs.center, origin), Cast<REL_S>(abs.radius));
+		return Sphere<REL_S, 3>(AbsToRel<REL_S>(abs.center, origin), static_cast<REL_S>(abs.radius));
 	}
 	
 	template <typename REL_S = geom::rel::Scalar>
