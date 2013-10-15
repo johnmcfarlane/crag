@@ -15,7 +15,7 @@ precision highp float;
 
 
 // light.frag function which calculates the lighting for the given fragment
-highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal);
+lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, float shadow);
 
 
 // inputs from sphere.vert
@@ -87,7 +87,7 @@ void main(void)
 	}
 }
 
-#else
+#elif OUT_OF_ORDER
 
 void main(void)
 {
@@ -106,8 +106,7 @@ void main(void)
 #endif
 	highp vec3 frag_normal = normalize(frag_position.xyz - center);
 	
-	highp vec3 light = LightFragment(frag_position.xyz, frag_normal);
-	highp vec4 frag_color = color * vec4(light, 1.);
+	highp vec4 frag_color = LightFragment(frag_position.xyz, frag_normal, color, 1.);
 	
 	if (frag_color.a < 0.999)
 	{
@@ -132,4 +131,8 @@ void main(void)
 	gl_FragColor = clamp(frag_color, 0., 1.);
 }
 
+#else
+void main(void)
+{
+}
 #endif

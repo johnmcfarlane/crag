@@ -105,6 +105,9 @@ namespace gfx
 		void SetFragmentLighting(bool flat_shaded);
 		bool GetFragmentLighting() const;
 
+		void SetShadowsEnabled(bool enable_shadows);
+		bool GetShadowsEnabled() const;
+		
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
@@ -183,6 +186,7 @@ namespace gfx
 		bool culling;
 		bool _flat_shaded;
 		bool _fragment_lighting;
+		bool _shadows_enabled;
 		int capture_frame;
 
 #if defined(__ANDROID__)

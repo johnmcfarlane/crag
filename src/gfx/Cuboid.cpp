@@ -21,11 +21,13 @@ void EnableClientState<Cuboid::Vertex>()
 {
 	GL_CALL(glEnableVertexAttribArray(1));
 	GL_CALL(glEnableVertexAttribArray(2));
+	GL_CALL(glEnableVertexAttribArray(3));
 }
 
 template <>
 void DisableClientState<Cuboid::Vertex>()
 {
+	GL_CALL(glDisableVertexAttribArray(3));
 	GL_CALL(glDisableVertexAttribArray(2));
 	GL_CALL(glDisableVertexAttribArray(1));
 }
@@ -35,6 +37,7 @@ void Pointer<Cuboid::Vertex>()
 {
 	gfx::VertexAttribPointer<1, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::pos>();
 	gfx::VertexAttribPointer<2, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::norm>();
+	gfx::VertexAttribPointer<3, Cuboid::Vertex, Color4b, & Cuboid::Vertex::color>();
 }
 
 

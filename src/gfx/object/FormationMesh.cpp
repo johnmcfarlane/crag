@@ -145,7 +145,8 @@ void FormationMesh::Render(Engine const & renderer) const
 
 	bool fragment_lighting = renderer.GetFragmentLighting();
 	bool flat_shaded = renderer.GetFlatShaded();
-	poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded);
+	bool shadows_enabled = renderer.GetShadowsEnabled();
+	poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded, shadows_enabled);
 	
 	// Draw the mesh!
 	front_buffer.Draw();

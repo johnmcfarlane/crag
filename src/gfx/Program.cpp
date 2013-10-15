@@ -241,15 +241,17 @@ void Program::Verify() const
 PolyProgram::PolyProgram()
 : _fragment_lighting_location(-1)
 , _flat_shade_location(-1)
+, _shadows_enabled_location(-1)
 {
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool shadows_enabled) const
 {
 	ASSERT(IsBound());
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	GL_CALL(glUniform1i(_fragment_lighting_location, fragment_lighting));
 	GL_CALL(glUniform1i(_flat_shade_location, flat_shade));
+	GL_CALL(glUniform1i(_shadows_enabled_location, shadows_enabled));
 }
 
 void PolyProgram::InitAttribs(GLuint id)
@@ -267,7 +269,8 @@ void PolyProgram::InitUniforms()
 	_color_location = GetUniformLocation("color");
 	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
 	_flat_shade_location = GetUniformLocation("flat_shade");
-
+	_shadows_enabled_location = GetUniformLocation("shadows_enabled");
+	
 	GL_VERIFY;
 }
 

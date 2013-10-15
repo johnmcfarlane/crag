@@ -27,7 +27,9 @@
 #include "core/profile.h"
 #include "core/Statistics.h"
 
+using namespace form;
 
+#include "geom/Intersection.h"
 namespace 
 {
 	PROFILE_DEFINE (scene_tick_period, .01f);
@@ -37,6 +39,55 @@ namespace
 	
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
+
+	void GenerateShadows(Mesh & mesh, geom::Vector<double, 3> const & /*center*/, geom::Sphere<double, 3> const & light)
+	{
+		auto & vertex_buffer = mesh.GetVertices();
+		auto const & index_buffer = mesh.GetIndices();
+		
+		for (auto index_iterator = std::begin(index_buffer); index_iterator != std::end(index_buffer);)
+		{
+			typedef double Scalar;
+			typedef geom::Triangle<Scalar, 3> Triangle;
+			typedef geom::Plane<Scalar, 3> Plane;
+
+			ASSERT(index_iterator < std::end(index_buffer));
+			auto const & a = vertex_buffer.GetArray()[* index_iterator ++];
+			auto const & b = vertex_buffer.GetArray()[* index_iterator ++];
+			auto const & c = vertex_buffer.GetArray()[* index_iterator ++];
+			ASSERT(index_iterator <= std::end(index_buffer));
+
+			Triangle triangle(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
+			Plane plane(triangle);
+			if (geom::DotProduct(plane.normal, light.center - plane.position) > 0)
+			{
+				continue;
+			}
+			std::array<Plane, 3> sides;
+			for (auto index = 0; index < 3; ++ index)
+			{
+				Triangle side_triangle(light.center, triangle.points[TriMod(index + 2)], triangle.points[TriMod(index + 1)]);
+				sides[index] = side_triangle;
+			}
+			
+			for (auto & vertex : vertex_buffer)
+			{
+				if (! vertex.col.a || &vertex == &a || &vertex == &b || &vertex == &c)
+				{
+					continue;
+				}
+				
+				auto point = geom::Cast<Scalar>(vertex.pos);
+				if (geom::Contains(sides[0], point) && geom::Contains(sides[1], point) && geom::Contains(sides[2], point))
+				{
+					if (! geom::Contains(plane, point))
+					{
+						vertex.col.a = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -47,6 +98,7 @@ form::Engine::Engine()
 : quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
+, _shadows_enabled(false)
 , mesh_generation_time(app::GetTime())
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
@@ -144,6 +196,21 @@ void form::Engine::OnToggleMeshGeneration()
 	enable_mesh_generation = ! enable_mesh_generation;
 }
 
+void form::Engine::SetShadowsEnabled(bool shadows_enabled)
+{
+	_shadows_enabled = shadows_enabled;
+}
+
+bool form::Engine::GetShadowsEnabled() const
+{
+	return _shadows_enabled;
+}
+
+void form::Engine::SetShadowLight(geom::abs::Sphere3 const & shadow_light)
+{
+	_shadow_light = shadow_light;
+}
+
 void form::Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
@@ -229,6 +296,13 @@ void form::Engine::GenerateMesh()
 	
 	// build it
 	_scene.GenerateMesh(* mesh, _origin);
+	
+	if (_shadows_enabled)
+	{
+		auto center = geom::AbsToRel<double>(geom::abs::Vector3::Zero(), _origin);
+		auto light = geom::AbsToRel<double>(_shadow_light, _origin);
+		GenerateShadows(* mesh, center, light);
+	}
 	
 	// sent it to the FormationSet object
 	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {

@@ -90,7 +90,7 @@ namespace gfx
 	public:
 		PolyProgram();
 		
-		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const;
+		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool shadows_enabled) const;
 	private:
 		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override final;
@@ -99,6 +99,7 @@ namespace gfx
 		GLint _color_location;
 		GLint _fragment_lighting_location;
 		GLint _flat_shade_location;
+		GLint _shadows_enabled_location;
 	};
 	
 	class DiskProgram : public Program
