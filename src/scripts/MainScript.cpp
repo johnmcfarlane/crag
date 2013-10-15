@@ -50,7 +50,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	geom::rel::Vector3 observer_start_pos(0, 9999400, -5);
+	geom::rel::Vector3 observer_start_pos(-1085203, 3473659, 9306913);
+	geom::rel::Vector3 animat_start_pos(-1085203, 3473659, 9306923);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
@@ -172,7 +173,10 @@ void MainScript(applet::AppletInterface & applet_interface)
 	}
 	
 	// Create sun. 
-	sim::EntityHandle sun = SpawnStar();
+	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
+	star_volume.center = geom::Resized(star_volume.center, 100000000.);
+	gfx::Color4f star_color(gfx::Color4f(.2f,.55f,.9f) * 7500000000000000.f);
+	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Create planets
 	sim::EntityHandle planet;
@@ -203,7 +207,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 		"assets/skybox/front.bmp"
 	}});
 	
-	SpawnAnimats(observer_start_pos);
+	SpawnAnimats(animat_start_pos);
 
 	// Give formations time to expand.
 	_applet_interface->Sleep(.1f);

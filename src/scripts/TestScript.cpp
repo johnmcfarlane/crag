@@ -203,7 +203,9 @@ void TestScript(applet::AppletInterface & applet_interface)
 	}
 	
 	// Create sun. 
-	sim::EntityHandle sun = SpawnStar();
+	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
+	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Create planets
 	sim::EntityHandle planet, moon1, moon2;

@@ -251,19 +251,18 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 	return handle;
 }
 
-sim::EntityHandle SpawnStar()
+// assumes origin is zero
+sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color)
 {
 	auto sun = sim::EntityHandle::CreateHandle();
 
-	sun.Call([] (sim::Entity & entity) {
+	sun.Call([volume, color] (sim::Entity & entity) {
 		// physics
-		geom::rel::Vector3 position(65062512.f, 75939904.f, 0.f);
-		sim::Transformation transformation(position);
+		sim::Transformation transformation(geom::Cast<sim::Scalar>(volume.center));
 		auto location = new physics::PassiveLocation(transformation);
 		entity.SetLocation(location);
 
 		// graphics
-		gfx::Color4f color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
 		auto light = gfx::LightHandle::CreateHandle(transformation, color);
 		entity.SetModel(light);
 	});
