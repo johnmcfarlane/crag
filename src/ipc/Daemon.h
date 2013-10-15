@@ -97,6 +97,13 @@ namespace ipc
 			return singleton->_thread.IsCurrent();
 		}
 		
+		// the amount of time the Daemon will allow the thread to run 
+		// on program shutdown before forcefully quitting
+		static float ShutdownTimeout()
+		{
+			return .5f;
+		}
+		
 		size_t GetQueueCapacity() const
 		{
 			return _messages.capacity();
@@ -311,11 +318,6 @@ namespace ipc
 			return true;
 		}
 
-		static float ShutdownTimeout()
-		{
-			return .1f;
-		}
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
