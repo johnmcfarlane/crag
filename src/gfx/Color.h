@@ -173,6 +173,17 @@ namespace gfx
 		Comp r, g, b, a;
 	};
 	
+	template <typename C> 
+	std::ostream & operator << (std::ostream & out, Color4<C> const & color)
+	{
+		return out << color.r << ',' << color.g << ',' << color.b << ',' << color.a;
+	}
+
+	template <typename C> 
+	std::istream & operator >> (std::istream & in, Color4<C> const & color)
+	{
+		return in >> color.r >> ',' >> color.g >> ',' >> color.b >> ',' >> color.a;
+	}
 
 	///////////////////////////////////////////////////////////////
 	// Color4f
