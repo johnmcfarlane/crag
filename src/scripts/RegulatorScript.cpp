@@ -26,7 +26,7 @@ namespace
 	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost_half_life, float, 10.f);
 	
 	// TODO: Base it on full scene thread cycle.
-	CONFIG_DEFINE (max_mesh_generation_period, float, 0.35f);
+	CONFIG_DEFINE (max_mesh_generation_period_proportion, float, .75f);
 	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 	
 	typedef script::RegulatorScript::QuaterneCount QuaterneCount;
@@ -218,6 +218,7 @@ namespace
 	public:
 		void SampleMeshGenerationPeriod(core::Time const & mesh_generation_period, QuaterneCount num_quaterne)
 		{
+			auto max_mesh_generation_period = form::Engine::Daemon::ShutdownTimeout() * max_mesh_generation_period_proportion;
 			if (mesh_generation_period < max_mesh_generation_period)
 			{
 				return;
