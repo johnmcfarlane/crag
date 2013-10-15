@@ -119,12 +119,13 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	ContactVector contacts;
 	std::size_t num_contacts;
 	
+	constexpr auto spare_contact = 1;
 	if (! mesh_surround.IsEmpty())
 	{
 		mesh_surround.RefreshData();
 		mesh_surround.Enable();
 	
-		int flags = contacts.size() - 1;
+		int flags = contacts.size() - spare_contact;
 		ASSERT((flags >> 16) == 0);
 	
 		num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
@@ -140,7 +141,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	if (max_depth > 0)
 	{
 		// add a provisional contact.
-		auto & containment_geom = contacts[num_contacts ++];
+		auto & containment_geom = contacts[num_contacts];
+		num_contacts += spare_contact;
 		
 		Convert(containment_geom.pos, bounding_sphere.center);
 		containment_geom.normal[0] = max_depth_normal.x;
@@ -149,6 +151,9 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		containment_geom.depth = max_depth;
 		containment_geom.g1 = body_collision_handle;
 		containment_geom.g2 = mesh_collision_handle;
+		
+		VerifyOp(max_depth, >=, 0);
+		VerifyOp(containment_geom.depth, >=, 0);
 	}
 
 	// If contact was detected,
