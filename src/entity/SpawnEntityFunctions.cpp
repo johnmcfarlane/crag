@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-//#include "SpawnEntityFunctions.h"
+#include "SpawnEntityFunctions.h"
 
 #include "observer/MouseObserverController.h"
 #include "observer/TouchObserverController.h"
