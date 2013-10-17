@@ -193,10 +193,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 	}
 	
 	// launch regulator
-	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & applet_interface) {
-		script::RegulatorScript regulator;
-		regulator(applet_interface);
-	});
+	applet_interface.Launch("Regulator", 8192, &RegulatorScript);
 	
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/left.bmp",

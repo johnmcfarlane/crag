@@ -231,10 +231,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 	}
 	
 	// launch regulator
-	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & ai) {
-		script::RegulatorScript regulator;
-		regulator(ai);
-	});
+	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	

@@ -315,11 +315,15 @@ void form::Engine::GenerateMesh()
 	mesh_generation_time = t;
 
 	// broadcast timing information
-	gfx::MeshGenerationPeriodSampledMessage message = { last_mesh_generation_period };
+	gfx::MeshGenerationPeriodSampledMessage message = 
+	{
+		last_mesh_generation_period,
+		_scene.GetNodeBuffer().GetNumQuaternaUsed()
+	};
 	Daemon::Broadcast(message);
 	
 	// Sample the information for statistical output.
-	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / _scene.GetNodeBuffer().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / message.num_quaterne);
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();
