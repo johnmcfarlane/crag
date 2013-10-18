@@ -40,6 +40,16 @@ namespace
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
 
+#if defined(CRAG_USE_GLES)
+	auto const max_num_verts = 0x10000;
+#else
+	auto const max_num_verts = 0x100000;
+#endif
+	auto const max_num_tris = max_num_verts >> 1;
+	auto const max_num_nodes = max_num_tris >> 1;
+	auto const max_num_quaterne = max_num_nodes >> 2;
+	auto const min_num_quaterne = std::min(1024, max_num_quaterne);
+
 	void GenerateShadows(Mesh & mesh, geom::Vector<double, 3> const & /*center*/, geom::Sphere<double, 3> const & light)
 	{
 		auto & vertex_buffer = mesh.GetVertices();
@@ -107,10 +117,8 @@ form::Engine::Engine()
 , _origin(geom::abs::Vector3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
 {
-	int max_num_verts = max_num_quaterne * form::NodeBuffer::num_nodes_per_quaterna;
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		int max_num_tris = static_cast<int>(max_num_verts * 1.25f);
 		Mesh & mesh = ref(new Mesh (max_num_verts, max_num_tris));
 		_meshes.push_back(mesh);
 	}

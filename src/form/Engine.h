@@ -64,12 +64,6 @@ namespace form
 		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
 
-		enum {
-			// tweakables
-			min_num_quaterne = 1024,
-			max_num_quaterne = 65536
-		};
-		
 	public:
 		typedef ipc::Daemon<Engine> Daemon;
 
