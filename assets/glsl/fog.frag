@@ -87,7 +87,7 @@ void main(void)
 	}
 }
 
-#elif OUT_OF_ORDER
+#elif defined(OUT_OF_ORDER)
 
 void main(void)
 {
