@@ -9,15 +9,16 @@
  
 #pragma once
 
-#include "smp/vector.h"
+#include "glHelpers.h"
 
+#include "smp/vector.h"
 
 namespace gfx
 {
 	
-	class IndexBuffer : private smp::vector<GLushort>
+	class IndexBuffer : private smp::vector<ElementIndex>
 	{
-		typedef smp::vector<GLushort> Super;
+		typedef smp::vector<ElementIndex> Super;
 
 	public:
 		IndexBuffer(int capacity);

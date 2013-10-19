@@ -194,6 +194,11 @@ void TestScript(applet::AppletInterface & applet_interface)
 
 	_applet_interface = & applet_interface;
 	
+	// Create sun. 
+	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
+	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
+	
 	// Set camera position
 	{
 		gfx::SetCameraEvent event;
@@ -201,11 +206,6 @@ void TestScript(applet::AppletInterface & applet_interface)
 		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, -1)));
 		gfx::Daemon::Broadcast(event);
 	}
-	
-	// Create sun. 
-	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Create planets
 	sim::EntityHandle planet, moon1, moon2;
@@ -231,10 +231,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 	}
 	
 	// launch regulator
-	applet_interface.Launch("Regulator", 8192, [] (applet::AppletInterface & ai) {
-		script::RegulatorScript regulator;
-		regulator(ai);
-	});
+	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	

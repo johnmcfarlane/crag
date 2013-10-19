@@ -9,6 +9,8 @@
 
 #include "sim/defs.h"
 
+#include "geom/origin.h"
+
 namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Object);// gfx::ObjectHandle

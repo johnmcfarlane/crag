@@ -15,16 +15,16 @@
 namespace gfx
 {
 	// Wrapper for OpenGL IBO using unsigned integer indices.
-	class IndexBufferObject : public BufferObject<GLushort, GL_ELEMENT_ARRAY_BUFFER>
+	class IndexBufferObject : public BufferObject<ElementIndex, GL_ELEMENT_ARRAY_BUFFER>
 	{
-		typedef BufferObject<GLushort, GL_ELEMENT_ARRAY_BUFFER> super;
+		typedef BufferObject<ElementIndex, GL_ELEMENT_ARRAY_BUFFER> super;
 	public:
 		void DrawElements(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
 			ASSERT(IsBound());
-			ASSERT(count <= std::numeric_limits<GLushort>::max());
-			GLvoid const * ptr = reinterpret_cast<const GLvoid *>(sizeof(GLushort) * first);
-			GL_CALL(glDrawElements(mode, count, GL_UNSIGNED_SHORT, ptr));
+			ASSERT(count <= std::numeric_limits<GLsizei>::max());
+			GLvoid const * ptr = reinterpret_cast<const GLvoid *>(sizeof(ElementIndex) * first);
+			GL_CALL(glDrawElements(mode, count, CRAG_GFX_ELEMENT_INDEX_TYPE, ptr));
 		}
 	};
 }

@@ -58,6 +58,7 @@ namespace
 #else
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
 #endif
+	CONFIG_DEFINE (init_shadows_enabled, bool, true);
 
 	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
@@ -283,6 +284,7 @@ Engine::Engine()
 , culling(init_culling)
 , _flat_shaded(init_flat_shaded)
 , _fragment_lighting(init_fragment_lighting)
+, _shadows_enabled(init_shadows_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_mesh(nullptr)
@@ -510,6 +512,16 @@ void Engine::SetFragmentLighting(bool fragment_lighting)
 bool Engine::GetFragmentLighting() const
 {
 	return _fragment_lighting;
+}
+
+void Engine::SetShadowsEnabled(bool shadows_enabled)
+{
+	_shadows_enabled = shadows_enabled;
+}
+
+bool Engine::GetShadowsEnabled() const
+{
+	return _shadows_enabled;
 }
 
 void Engine::OnToggleCapture()

@@ -15,11 +15,15 @@
 
 #include "core/app.h"
 
+#if ! defined(NDEBUG)
+#define DUMP_GLSL_ERRORS
+#endif
+
 using namespace gfx;
 
 namespace
 {
-#if ! defined(NDEBUG)
+#if defined(DUMP_GLSL_ERRORS)
 	std::size_t GetNumLines(char const * source)
 	{
 		std::size_t num_lines = 1;
@@ -140,19 +144,19 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	// Check for errors in the source code.
 	if (! IsCompiled())
 	{
-		ERROR_MESSAGE("Failed to compile shader:");
+		PrintMessage(stderr, "Failed to compile shader:");
 
-#if ! defined(NDEBUG)
+#if defined(DUMP_GLSL_ERRORS)
 		auto line_start = 0;
 		for (auto i = 0; i < num_strings; ++ i)
 		{
 			auto line_end = int(line_start + GetNumLines(string_array[i]) - 1);
-			DEBUG_MESSAGE("%s [%d,%d]'.", filenames[i], line_start, line_end);
+			PrintMessage(stderr, "%s [%d,%d]'.", filenames[i], line_start, line_end);
 			line_start = line_end;
 		}
 
 		std::vector<char> info_log = GetInfoLog();
-		DEBUG_MESSAGE("Shader info log: %s", info_log.data());
+		PrintMessage(stderr, "Shader info log: %s", info_log.data());
 #endif
 		
 		Deinit();

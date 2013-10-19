@@ -25,7 +25,7 @@ varying vec3 fragment_normal;
 varying vec4 fragment_color;
 
 // light.frag function which calculates the lighting for the given fragment
-highp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal);
+lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, in float shadow);
 
 void main(void)
 {
@@ -34,14 +34,14 @@ void main(void)
 
 	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;
 
-	vec4 diffuse = color * vertex_color / 256.;
+	vec4 diffuse = color * vertex_color * (1. / 256.);
 	if (fragment_lighting || flat_shade)
 	{
 		fragment_color = diffuse;
 	}
 	else
 	{
-		fragment_color = diffuse * vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal)), diffuse.a);
+		fragment_color = vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal), diffuse.rgb, 1.), diffuse.a);
 	}
 
 	gl_Position = projection_matrix * position4;

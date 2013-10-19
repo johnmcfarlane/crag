@@ -11,6 +11,8 @@
 
 namespace gfx
 {
+	// relates to the mesh being rendered,
+	// i.e. FrameDurationSampledMessage
 	struct NumQuaterneSetMessage
 	{
 		std::size_t num_quaterne;
@@ -24,5 +26,6 @@ namespace gfx
 	struct MeshGenerationPeriodSampledMessage
 	{
 		core::Time mesh_generation_period;
+		std::size_t num_quaterne;
 	};
 }

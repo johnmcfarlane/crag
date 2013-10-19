@@ -25,8 +25,7 @@
 void form::MeshBufferObject::Verify() const
 {
 	super::Verify();
-	VerifyOp(max_index, >=, 0);
-	VerifyOp(max_index, <=, std::numeric_limits<GLushort>::max());
+	VerifyOp(max_index, <=, std::numeric_limits<gfx::ElementIndex>::max());
 	VerifyObject(properties);
 }
 #endif

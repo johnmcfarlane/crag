@@ -55,7 +55,7 @@ namespace form
 		void SetVbo(VertexBuffer const & vertices);	
 		void SetIbo(gfx::IndexBuffer const & indices);
 		
-		int max_index;
+		std::size_t max_index;
 		MeshProperties properties;
 	};
 }

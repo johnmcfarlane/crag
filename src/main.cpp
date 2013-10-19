@@ -168,12 +168,38 @@ namespace
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
 						break;
 						
+					case SDL_SCANCODE_S:
+						form::Daemon::Call([] (form::Engine & engine) 
+						{
+							bool shadows_enabled = engine.GetShadowsEnabled();
+							engine.SetShadowsEnabled(! shadows_enabled); 
+						});
+						break;
+						
 					default:
 						break;
 				}
 				break;
 			}
-				
+			
+			case KMOD_CTRL:
+			{
+				switch (keysym.scancode)
+				{
+					case SDL_SCANCODE_S:
+						gfx::Daemon::Call([] (gfx::Engine & engine) 
+						{
+							bool shadows_enabled = engine.GetShadowsEnabled();
+							engine.SetShadowsEnabled(! shadows_enabled); 
+						});
+						break;
+						
+					default:
+						break;
+				}
+				break;
+			}
+			
 			case KMOD_CTRL | KMOD_SHIFT:
 			{
 				switch (keysym.scancode)

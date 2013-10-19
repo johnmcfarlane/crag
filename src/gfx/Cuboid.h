@@ -25,6 +25,7 @@ namespace gfx
 		{
 			geom::Vector3f pos;
 			geom::Vector3f norm;
+			Color4b color = Color4b::White();
 		};
 		
 		typedef geom::Vector3f Vector3;

@@ -64,12 +64,6 @@ namespace form
 		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
 
-		enum {
-			// tweakables
-			min_num_quaterne = 1024,
-			max_num_quaterne = 65536
-		};
-		
 	public:
 		typedef ipc::Daemon<Engine> Daemon;
 
@@ -99,6 +93,10 @@ namespace form
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
+
+		void SetShadowsEnabled(bool enable_shadows);
+		bool GetShadowsEnabled() const;
+		void SetShadowLight(geom::abs::Sphere3 const & shadow_light);
 		
 		void Run(Daemon::MessageQueue & message_queue);
 
@@ -122,6 +120,7 @@ namespace form
 		bool quit_flag;
 		bool suspend_flag;
 		bool enable_mesh_generation;
+		bool _shadows_enabled;
 		
 		Mesh::list_type _meshes;
 		
@@ -134,6 +133,7 @@ namespace form
 
 		geom::rel::Ray3 _camera;
 		geom::abs::Vector3 _origin;
+		geom::abs::Sphere3 _shadow_light;
 		Scene _scene;
 	};
 	

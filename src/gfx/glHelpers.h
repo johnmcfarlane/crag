@@ -31,12 +31,22 @@
 		DEBUG_BREAK("GL error %X (%s): '%s'", error, gfx::ErrorString(error), #statement); } )
 #endif
 
-
 namespace gfx
 {
 	// forward-declarations
 	class FrameBuffer;
 	class Texture;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// index buffer object type
+
+#if defined(CRAG_USE_GLES)
+	typedef GLushort ElementIndex;
+#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_SHORT
+#else
+	typedef GLuint ElementIndex;
+#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_INT
+#endif
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Debug output

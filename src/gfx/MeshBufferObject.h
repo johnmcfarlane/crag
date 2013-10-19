@@ -60,7 +60,7 @@ namespace gfx
 			vbo.BufferSubData(num, array);
 		}
 		
-		void SetIbo(int num, GLushort const * array)
+		void SetIbo(int num, ElementIndex const * array)
 		{
 			ibo.BufferSubData(num, array);
 		}

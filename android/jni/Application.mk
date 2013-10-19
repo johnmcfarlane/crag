@@ -11,6 +11,6 @@ APP_STL := gnustl_static	# success?
 NDK_TOOLCHAIN_VERSION := 4.8
 #APP_PLATFORM := android-15
 APP_PLATFORM := android-10
-APP_OPTIM := debug
-#APP_OPTIM := release
+#APP_OPTIM := debug
+APP_OPTIM := release
 

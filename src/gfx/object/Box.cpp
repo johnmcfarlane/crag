@@ -69,7 +69,7 @@ void Box::Render(Engine const & renderer) const
 
 	bool fragment_lighting = renderer.GetFragmentLighting();
 	bool flat_shaded = renderer.GetFlatShaded();
-	poly_program.SetUniforms(_color, fragment_lighting, flat_shaded);
+	poly_program.SetUniforms(_color, fragment_lighting, flat_shaded, false);
 	
 	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetMeshResource());
 	cuboid.Draw();

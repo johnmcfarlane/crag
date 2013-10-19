@@ -27,7 +27,9 @@
 #include "core/profile.h"
 #include "core/Statistics.h"
 
+using namespace form;
 
+#include "geom/Intersection.h"
 namespace 
 {
 	PROFILE_DEFINE (scene_tick_period, .01f);
@@ -37,6 +39,65 @@ namespace
 	
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
+
+#if defined(CRAG_USE_GLES)
+	auto const max_num_verts = 0x10000;
+#else
+	auto const max_num_verts = 0x100000;
+#endif
+	auto const max_num_tris = max_num_verts >> 1;
+	auto const max_num_nodes = max_num_tris >> 1;
+	auto const max_num_quaterne = max_num_nodes >> 2;
+	auto const min_num_quaterne = std::min(1024, max_num_quaterne);
+
+	void GenerateShadows(Mesh & mesh, geom::Vector<double, 3> const & /*center*/, geom::Sphere<double, 3> const & light)
+	{
+		auto & vertex_buffer = mesh.GetVertices();
+		auto const & index_buffer = mesh.GetIndices();
+		
+		for (auto index_iterator = std::begin(index_buffer); index_iterator != std::end(index_buffer);)
+		{
+			typedef double Scalar;
+			typedef geom::Triangle<Scalar, 3> Triangle;
+			typedef geom::Plane<Scalar, 3> Plane;
+
+			ASSERT(index_iterator < std::end(index_buffer));
+			auto const & a = vertex_buffer.GetArray()[* index_iterator ++];
+			auto const & b = vertex_buffer.GetArray()[* index_iterator ++];
+			auto const & c = vertex_buffer.GetArray()[* index_iterator ++];
+			ASSERT(index_iterator <= std::end(index_buffer));
+
+			Triangle triangle(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
+			Plane plane(triangle);
+			if (geom::DotProduct(plane.normal, light.center - plane.position) > 0)
+			{
+				continue;
+			}
+			std::array<Plane, 3> sides;
+			for (auto index = 0; index < 3; ++ index)
+			{
+				Triangle side_triangle(light.center, triangle.points[TriMod(index + 2)], triangle.points[TriMod(index + 1)]);
+				sides[index] = side_triangle;
+			}
+			
+			for (auto & vertex : vertex_buffer)
+			{
+				if (! vertex.col.a || &vertex == &a || &vertex == &b || &vertex == &c)
+				{
+					continue;
+				}
+				
+				auto point = geom::Cast<Scalar>(vertex.pos);
+				if (geom::Contains(sides[0], point) && geom::Contains(sides[1], point) && geom::Contains(sides[2], point))
+				{
+					if (! geom::Contains(plane, point))
+					{
+						vertex.col.a = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -47,6 +108,7 @@ form::Engine::Engine()
 : quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
+, _shadows_enabled(false)
 , mesh_generation_time(app::GetTime())
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
@@ -55,10 +117,8 @@ form::Engine::Engine()
 , _origin(geom::abs::Vector3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
 {
-	int max_num_verts = max_num_quaterne * form::NodeBuffer::num_nodes_per_quaterna;
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		int max_num_tris = static_cast<int>(max_num_verts * 1.25f);
 		Mesh & mesh = ref(new Mesh (max_num_verts, max_num_tris));
 		_meshes.push_back(mesh);
 	}
@@ -142,6 +202,21 @@ void form::Engine::OnToggleSuspended()
 void form::Engine::OnToggleMeshGeneration()
 {
 	enable_mesh_generation = ! enable_mesh_generation;
+}
+
+void form::Engine::SetShadowsEnabled(bool shadows_enabled)
+{
+	_shadows_enabled = shadows_enabled;
+}
+
+bool form::Engine::GetShadowsEnabled() const
+{
+	return _shadows_enabled;
+}
+
+void form::Engine::SetShadowLight(geom::abs::Sphere3 const & shadow_light)
+{
+	_shadow_light = shadow_light;
 }
 
 void form::Engine::Run(Daemon::MessageQueue & message_queue)
@@ -230,6 +305,13 @@ void form::Engine::GenerateMesh()
 	// build it
 	_scene.GenerateMesh(* mesh, _origin);
 	
+	if (_shadows_enabled)
+	{
+		auto center = geom::AbsToRel<double>(geom::abs::Vector3::Zero(), _origin);
+		auto light = geom::AbsToRel<double>(_shadow_light, _origin);
+		GenerateShadows(* mesh, center, light);
+	}
+	
 	// sent it to the FormationSet object
 	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {
 		formation_mesh.SetMesh(mesh);
@@ -241,11 +323,15 @@ void form::Engine::GenerateMesh()
 	mesh_generation_time = t;
 
 	// broadcast timing information
-	gfx::MeshGenerationPeriodSampledMessage message = { last_mesh_generation_period };
+	gfx::MeshGenerationPeriodSampledMessage message = 
+	{
+		last_mesh_generation_period,
+		_scene.GetNodeBuffer().GetNumQuaternaUsed()
+	};
 	Daemon::Broadcast(message);
 	
 	// Sample the information for statistical output.
-	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / _scene.GetNodeBuffer().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / message.num_quaterne);
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
 	
 	smp::Yield();

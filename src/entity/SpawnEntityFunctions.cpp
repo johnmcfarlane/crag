@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-//#include "SpawnEntityFunctions.h"
+#include "SpawnEntityFunctions.h"
 
 #include "observer/MouseObserverController.h"
 #include "observer/TouchObserverController.h"
@@ -30,7 +30,7 @@
 #include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
-#include "form/Scene.h"
+#include "form/Engine.h"
 
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
@@ -265,6 +265,12 @@ sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f cons
 		// graphics
 		auto light = gfx::LightHandle::CreateHandle(transformation, color);
 		entity.SetModel(light);
+		
+		// formation
+		form::Daemon::Call([volume] (form::Engine & engine)
+		{
+			engine.SetShadowLight(volume);
+		});
 	});
 
 	return sun;

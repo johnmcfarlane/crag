@@ -21,11 +21,13 @@ void EnableClientState<Cuboid::Vertex>()
 {
 	GL_CALL(glEnableVertexAttribArray(1));
 	GL_CALL(glEnableVertexAttribArray(2));
+	GL_CALL(glEnableVertexAttribArray(3));
 }
 
 template <>
 void DisableClientState<Cuboid::Vertex>()
 {
+	GL_CALL(glDisableVertexAttribArray(3));
 	GL_CALL(glDisableVertexAttribArray(2));
 	GL_CALL(glDisableVertexAttribArray(1));
 }
@@ -35,6 +37,7 @@ void Pointer<Cuboid::Vertex>()
 {
 	gfx::VertexAttribPointer<1, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::pos>();
 	gfx::VertexAttribPointer<2, Cuboid::Vertex, geom::Vector<float, 3>, & Cuboid::Vertex::norm>();
+	gfx::VertexAttribPointer<3, Cuboid::Vertex, Color4b, & Cuboid::Vertex::color>();
 }
 
 
@@ -44,9 +47,9 @@ void Pointer<Cuboid::Vertex>()
 Cuboid::Cuboid()
 {
 	Vertex verts[3][2][4];
-	GLushort indices[3][2][2][3];
+	ElementIndex indices[3][2][2][3];
 	
-	GLushort * index = * * * indices;
+	ElementIndex * index = * * * indices;
 	for (int axis = 0; axis < 3; ++ axis)
 	{
 		for (int pole = 0; pole < 2; ++ pole)
@@ -73,7 +76,7 @@ Cuboid::Cuboid()
 				}
 			}
 			
-			GLushort index_base = polygon_verts - verts[0][0];
+			ElementIndex index_base = polygon_verts - verts[0][0];
 			* (index ++) = index_base + 0;
 			* (index ++) = index_base + 1;
 			* (index ++) = index_base + 2;
@@ -85,7 +88,7 @@ Cuboid::Cuboid()
 	}
 	
 	int num_verts = sizeof(verts) / sizeof(Vertex);
-	int num_indices = sizeof(indices) / sizeof(GLushort);
+	int num_indices = sizeof(indices) / sizeof(ElementIndex);
 	
 	_mesh.Init();
 	_mesh.Bind();
