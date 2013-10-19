@@ -27,7 +27,7 @@
 #include "gfx/Debug.h"
 #endif
 
-#include <ode/objects.h>
+#include <ode/ode.h>
 
 using namespace physics;
 

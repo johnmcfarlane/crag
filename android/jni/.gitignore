@@ -1,0 +1,4 @@
+# .gitignore
+ode
+-ode/Android.mk
+SDL

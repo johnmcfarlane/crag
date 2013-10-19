@@ -5,10 +5,11 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 SDL_PATH := ../SDL
-DEPENDENCIES_PATH := ../../../dependencies
+ODE_PATH := 
 CRAG_PATH := ../../../src
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(DEPENDENCIES_PATH)/include \
+LOCAL_C_INCLUDES := $(SDL_PATH)/include \
+	$(LOCAL_PATH)/../ode/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
@@ -122,10 +123,10 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
 ifeq ($(APP_OPTIM),debug)
 	NDK_DEBUG=1
-	LOCAL_CPPFLAGS := -std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -Wno-unused-function -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := -std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -Wno-unused-function -Wno-attributes -fno-rtti -fno-exceptions
 else
 	NDK_DEBUG=0
-	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -DdSINGLE -Wall -Wextra -Wfatal-errors -Wno-unused-function -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -Wno-unused-function -Wno-attributes -fno-rtti -fno-exceptions
 endif
 
 LOCAL_SHARED_LIBRARIES := SDL2 ode

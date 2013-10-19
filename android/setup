@@ -1,9 +1,32 @@
 #!/bin/sh
-ln -s ../../dependencies/SDL jni/SDL
-cd ../dependencies/ode
-#./bootstrap
-sh autogen.sh
-./configure --host=arm-linux --enable-double-precision=no --disable-demos --disable-asserts --disable-libccd
-cd ../../android
+
+cd jni
+
+################################################################################
+# SDL
+
+hg clone http://hg.libsdl.org/SDL
+cd SDL
+hg pull http://hg.libsdl.org/SDL
+hg update
+cd ..
+
+################################################################################
+# ODE
+
+svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+cd ode
+svn update
+
+./bootstrap
+CFLAGS="-fno-exceptions -fno-rtti -O3" CXXFLAGS="-fno-exceptions -fno-rtti -O3" ./configure --host=arm-linux --enable-single-precision --disable-demos --disable-asserts --disable-libccd 
+
+cd ..
+
+################################################################################
+# android
+
+cd ..
+
 android update project -p .
 
