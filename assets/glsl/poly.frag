@@ -38,11 +38,17 @@ void main(void)
 		// TODO: argh!!
 		lowp float d = dot(normal, fragment_normal);
 		normal *= d / abs(d);
+
+		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb, fragment_color.a), 1.);
 	}
 	else if (fragment_lighting)
 	{
 		normal = normalize(fragment_normal);
-	}
 
-	gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb, fragment_color.a), 1.);
+		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb, fragment_color.a), 1.);
+	}
+	else
+	{
+		gl_FragColor = fragment_color;
+	}
 }
