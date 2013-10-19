@@ -1,0 +1,3 @@
+#!/bin/sh
+apt-get install clang-3.3 libglu1-mesa-dev libode-sp-dev libglew-dev libxi-dev libsdl2-dev
+

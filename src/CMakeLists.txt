@@ -106,11 +106,11 @@ add_executable(crag
 	smp/Thread.cpp
 	ipc/Uid.cpp)
 
-include_directories("." "../dependencies/include" "../dependencies/include/SDL2")
+include_directories("." "/usr/include/SDL2")
 
 find_package(OpenGL REQUIRED)
-find_library(SDL2_LIBRARY SDL2 ../dependencies/lib)
-find_library(ODE_LIBRARY ode ../dependencies/lib)
+find_library(SDL2_LIBRARY SDL2 /usr/lib)
+find_library(ODE_LIBRARY ode /usr/lib)
 target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "GLEW" "pthread" "stdc++" "m")
 
 include (PrecompiledHeader.cmake)
