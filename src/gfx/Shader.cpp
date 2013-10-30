@@ -197,7 +197,7 @@ std::vector<char> Shader::GetInfoLog() const
 	glGetShaderInfoLog(_id, size, & length, & log_buffer.front());
 	GLint real_size = length + 1;
 	
-	if (real_size != size + 1)
+	if (real_size != size && real_size != size + 1)
 	{
 		DEBUG_MESSAGE("glGetShaderInfoLog buffer is %d bytes - not %d bytes", real_size, size);
 		size = real_size;
