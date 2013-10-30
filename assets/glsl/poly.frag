@@ -16,7 +16,6 @@ precision highp float;
 
 // inputs from the renderer
 uniform bool fragment_lighting;
-uniform bool flat_shade;
 
 // inputs from poly.vert
 varying lowp vec3 fragment_normal;
@@ -29,19 +28,7 @@ lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, 
 void main(void)
 {
 	lowp vec3 normal;
-	if (flat_shade)
-	{
-		lowp vec3 dx = dFdx(fragment_position);
-		lowp vec3 dy = dFdy(fragment_position);
-		normal = normalize(cross(dy, dx));
-
-		// TODO: argh!!
-		lowp float d = dot(normal, fragment_normal);
-		normal *= d / abs(d);
-
-		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb, fragment_color.a), 1.);
-	}
-	else if (fragment_lighting)
+	if (fragment_lighting)
 	{
 		normal = normalize(fragment_normal);
 

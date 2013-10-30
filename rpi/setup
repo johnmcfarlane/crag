@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# get SDL
+hg clone http://hg.libsdl.org/SDL
+cd SDL
+hg pull http://hg.libsdl.org/SDL
+hg update
+
+# build SDL
+mkdir -p build;cd build
+../configure --with-sysroot=$SYSROOT --host=arm-raspberry-linux-gnueabihf --prefix=$PWD/../.. --disable-pulseaudio --disable-esd
+make
+make install
+
+cd ..

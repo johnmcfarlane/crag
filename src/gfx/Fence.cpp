@@ -41,7 +41,7 @@ bool Fence::Init()
 
 #if defined(__APPLE__)
 	glGenFencesAPPLE(1, & _id);
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 	DEBUG_BREAK("Not supported");
 #else
 	glGenFencesNV(1, & _id);
@@ -56,7 +56,7 @@ void Fence::Deinit()
 
 #if defined(__APPLE__)
 	glDeleteFencesAPPLE(1, & _id);
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 	DEBUG_BREAK("Not supported");
 #else
 	glDeleteFencesNV(1, & _id);
@@ -71,7 +71,7 @@ void Fence::Set()
 
 #if defined(__APPLE__)
 	glSetFenceAPPLE(_id);
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 	DEBUG_BREAK("Not supported");
 #else
 	glSetFenceNV(_id, GL_ALL_COMPLETED_NV);
@@ -84,7 +84,7 @@ bool Fence::Test()
 
 #if defined(__APPLE__)
 	bool result = glTestFenceAPPLE(_id) != GL_FALSE;
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 	DEBUG_BREAK("Not supported");
 	bool result = true;
 #else
@@ -101,7 +101,7 @@ void Fence::Finish()
 
 #if defined(__APPLE__)
 	glFinishFenceAPPLE(_id);
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 	DEBUG_BREAK("Not supported");
 #else
 	glFinishFenceNV(_id);

@@ -162,7 +162,7 @@ inline double FastInvSqrt (double d)
 
 #endif	// defined(__SSE__)
 
-#if defined(__ANDROID__)
+#if defined(__arm__)
 
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
@@ -170,7 +170,7 @@ template<typename T> T FastInvSqrt(T a)
 	ASSERT(a != 0);
 	return Inverse(sqrt(a));
 }
-#endif	// defined(__ANDROID__))
+#endif	// defined(__arm__))
 
 template <typename T>
 inline T CubeRoot(T a)

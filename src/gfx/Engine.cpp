@@ -116,7 +116,7 @@ namespace
 	{
 #if defined(__APPLE__)
 		return true;
-#elif defined(__ANDROID__)
+#elif defined(CRAG_USE_GLES)
 		return false;
 #else
 		return GLEW_NV_fence != GL_FALSE;
@@ -793,7 +793,7 @@ bool Engine::HasShadowSupport() const
 		return false;
 	}
 	
-#if defined(__ANDROID__)
+#if defined(CRAG_USE_GLES)
 	return false;
 #elif defined(__APPLE__)
 	return true;
