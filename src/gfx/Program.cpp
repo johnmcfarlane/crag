@@ -16,6 +16,9 @@
 
 #include "core/app.h"
 
+#if ! defined(NDEBUG)
+#define DUMP_GLSL_ERRORS
+#endif
 
 using namespace gfx;
 
@@ -79,17 +82,23 @@ bool Program::Init(char const * const * vert_sources, char const * const * frag_
 	
 	glLinkProgram(_id);
 	
+#if defined(DUMP_GLSL_ERRORS)
+	std::string info_log;
+	GetInfoLog(info_log);
+
+	if (! info_log.c_str())
+	{
+		DEBUG_MESSAGE("Linker output of program including vert shader '%s':", vert_sources[0]);
+		
+		DEBUG_MESSAGE("%s", info_log.c_str());
+	}
+#endif
+	
 	if (! IsLinked())
 	{
-		ERROR_MESSAGE("Failed to link program including vert shader '%s'.", vert_sources[0]);
-		
-#if ! defined(NDEBUG)
-		std::string info_log;
-		GetInfoLog(info_log);
-		DEBUG_BREAK("Shader info log: \n%s", info_log.c_str());
-#endif
+		DEBUG_BREAK("Failed to link program including vert shader '%s'.", vert_sources[0]);
 	}
-	
+
 	Bind();
 	
 	_projection_matrix_location = GetUniformLocation("projection_matrix");

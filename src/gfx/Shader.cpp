@@ -141,28 +141,31 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 
 	GL_CALL(glCompileShader(_id));
 	
-	// Check for errors in the source code.
-	if (! IsCompiled())
-	{
-		PrintMessage(stderr, "Failed to compile shader:");
-
 #if defined(DUMP_GLSL_ERRORS)
+	std::vector<char> info_log = GetInfoLog();
+	if (! info_log.empty())
+	{
 		auto line_start = 0;
 		for (auto i = 0; i < num_strings; ++ i)
 		{
 			auto line_end = int(line_start + GetNumLines(string_array[i]) - 1);
-			PrintMessage(stderr, "%s [%d,%d]'.", filenames[i], line_start, line_end);
+			PrintMessage(stderr, "%s [%d,%d]\n", filenames[i], line_start, line_end);
 			line_start = line_end;
 		}
 
-		std::vector<char> info_log = GetInfoLog();
 		PrintMessage(stderr, "Shader info log: %s", info_log.data());
+	}
 #endif
+	
+	// Check for errors in the source code.
+	if (! IsCompiled())
+	{
+		DEBUG_BREAK("Failed to compile shader.");
 		
 		Deinit();
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -194,7 +197,7 @@ std::vector<char> Shader::GetInfoLog() const
 	glGetShaderInfoLog(_id, size, & length, & log_buffer.front());
 	GLint real_size = length + 1;
 	
-	if (real_size != size)
+	if (real_size != size + 1)
 	{
 		DEBUG_MESSAGE("glGetShaderInfoLog buffer is %d bytes - not %d bytes", real_size, size);
 		size = real_size;
