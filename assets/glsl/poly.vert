@@ -24,12 +24,12 @@ varying vec3 fragment_position;
 varying vec3 fragment_normal;
 varying vec4 fragment_color;
 
-// light.frag function which calculates the lighting for the given fragment
+// light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, in float shadow);
 
 void main(void)
 {
-	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1);
+	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1.);
 	fragment_position = position4.xyz;
 
 	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;

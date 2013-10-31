@@ -14,7 +14,7 @@ precision highp float;
 //#define TEST_INTERSECTION
 
 
-// light.frag function which calculates the lighting for the given fragment
+// light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, float shadow);
 
 

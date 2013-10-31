@@ -72,7 +72,7 @@ namespace
 	CONFIG_DEFINE (window_resolution_y, int, 600);
 #endif
 
-#if defined(__ANDROID__)
+#if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (video_full_screen, bool, true);
 #elif defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);

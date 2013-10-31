@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if ! defined(__ANDROID__) && (defined(PROFILE) || ! defined(NDEBUG))
+#if ! defined(CRAG_USE_GLES) && (defined(PROFILE) || ! defined(NDEBUG))
 #define CRAG_GFX_DEBUG
 #endif
 

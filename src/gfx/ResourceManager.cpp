@@ -85,19 +85,29 @@ Quad const & ResourceManager::GetDiskQuad() const
 
 bool ResourceManager::InitShaders()
 {
-	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename)
+	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename1, char const * frag_filename2 = nullptr)
 	{
 		if (program != nullptr)
 		{
-			char const * vert_filenames[] = { vert_filename, "assets/glsl/light.frag", nullptr };
-			char const * frag_filenames[] = { frag_filename, "assets/glsl/light.frag", nullptr };
+			static char const * light_shader_filename = "assets/glsl/light.glsl";
+			char const * vert_filenames[] = { vert_filename, light_shader_filename, nullptr };
+			char const * frag_filenames[] = { frag_filename1, light_shader_filename, frag_filename2, nullptr };
 			program->Init(vert_filenames, frag_filenames);
 		}
 		
 		_programs[int(index)] = program;
 	};
 
-	init_program(new PolyProgram, ProgramIndex::poly, "assets/glsl/poly.vert", "assets/glsl/poly.frag");
+#if defined(CRAG_USE_GL)
+	char const * flat_shader_filename = "assets/glsl/flat_enabled.glsl";
+#elif defined(CRAG_USE_GLES)
+	// performs a no-op on its inputs to avoid flat shading;
+	// necessary shader, GL_OES_standard_derivatives, is available on some GLES2
+	// systems but as they often don't have an 'F' key, it's never enabled anyway
+	char const * flat_shader_filename = "assets/glsl/flat_disabled.glsl";
+#endif
+
+	init_program(new PolyProgram, ProgramIndex::poly, "assets/glsl/poly.vert", "assets/glsl/poly.frag", flat_shader_filename);
 	init_program(new DiskProgram, ProgramIndex::sphere, "assets/glsl/disk.vert", "assets/glsl/sphere.frag");
 	init_program(new FogProgram, ProgramIndex::fog, "assets/glsl/disk.vert", "assets/glsl/fog.frag");
 	init_program(new DiskProgram, ProgramIndex::disk, "assets/glsl/disk.vert", "assets/glsl/disk.frag");

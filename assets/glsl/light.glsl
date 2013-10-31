@@ -1,5 +1,5 @@
 //
-//  light.frag
+//  light.glsl
 //  crag
 //
 //  Created by John McFarlane on 2011-12-29.

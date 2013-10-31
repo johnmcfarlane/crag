@@ -86,7 +86,7 @@ bool Program::Init(char const * const * vert_sources, char const * const * frag_
 	std::string info_log;
 	GetInfoLog(info_log);
 
-	if (! info_log.c_str())
+	if (! info_log.empty())
 	{
 		DEBUG_MESSAGE("Linker output of program including vert shader '%s':", vert_sources[0]);
 		

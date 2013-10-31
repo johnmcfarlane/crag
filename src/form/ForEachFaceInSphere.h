@@ -100,7 +100,8 @@ namespace form
 				Vector3 const & c = mid_points_pos[sub_division_index1];
 
 				// Test upon which side of the line the given sphere lies.
-				Scalar d = Distance(Triangle3(_polyhedron_center, b, c), _sphere.center);
+				auto sphere_center = _sphere.center;
+				Scalar d = Distance(Triangle3(_polyhedron_center, b, c), sphere_center);
 				Scalar r = _sphere.radius;
 				if (d <= - r)
 				{

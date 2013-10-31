@@ -20,7 +20,7 @@ namespace gfx
 	// Debugging
 
 #if ! defined(NDEBUG)
-#if defined(__ANDROID__)
+#if defined(CRAG_USE_GLES)
 	char const * ErrorString(GLenum)
 	{
 		return "GL error";
