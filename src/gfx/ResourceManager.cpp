@@ -85,7 +85,7 @@ Quad const & ResourceManager::GetDiskQuad() const
 
 bool ResourceManager::InitShaders()
 {
-	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename1, char const * frag_filename2 = nullptr)
+	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename1, char const * frag_filename2)
 	{
 		if (program != nullptr)
 		{
@@ -108,11 +108,11 @@ bool ResourceManager::InitShaders()
 #endif
 
 	init_program(new PolyProgram, ProgramIndex::poly, "assets/glsl/poly.vert", "assets/glsl/poly.frag", flat_shader_filename);
-	init_program(new DiskProgram, ProgramIndex::sphere, "assets/glsl/disk.vert", "assets/glsl/sphere.frag");
-	init_program(new FogProgram, ProgramIndex::fog, "assets/glsl/disk.vert", "assets/glsl/fog.frag");
-	init_program(new DiskProgram, ProgramIndex::disk, "assets/glsl/disk.vert", "assets/glsl/disk.frag");
-	init_program(new TexturedProgram, ProgramIndex::skybox, "assets/glsl/skybox.vert", "assets/glsl/skybox.frag");
-	init_program(new SpriteProgram, ProgramIndex::sprite, "assets/glsl/sprite.vert", "assets/glsl/sprite.frag");
+	init_program(new DiskProgram, ProgramIndex::sphere, "assets/glsl/disk.vert", "assets/glsl/sphere.frag", nullptr);
+	init_program(new FogProgram, ProgramIndex::fog, "assets/glsl/disk.vert", "assets/glsl/fog.frag", nullptr);
+	init_program(new DiskProgram, ProgramIndex::disk, "assets/glsl/disk.vert", "assets/glsl/disk.frag", nullptr);
+	init_program(new TexturedProgram, ProgramIndex::skybox, "assets/glsl/skybox.vert", "assets/glsl/skybox.frag", nullptr);
+	init_program(new SpriteProgram, ProgramIndex::sprite, "assets/glsl/sprite.vert", "assets/glsl/sprite.frag", nullptr);
 
 	return true;
 }

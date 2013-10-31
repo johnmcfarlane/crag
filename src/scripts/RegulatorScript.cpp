@@ -16,6 +16,8 @@
 #include "form/Engine.h"
 
 #include "gfx/Messages.h"
+#include "gfx/SetCameraEvent.h"
+#include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -131,7 +133,7 @@ namespace
 			float frame_duration_ratio_log = std::log(frame_duration_ratio);
 			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient());
 			
-			float raw_recommended_num_quaterne = num_quaterne;
+			auto raw_recommended_num_quaterne = static_cast<float>(num_quaterne);
 			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
 			ASSERT(raw_recommended_num_quaterne > 0);
 			
@@ -264,12 +266,12 @@ void RegulatorScript(applet::AppletInterface & applet_interface)
 {
 	FrameRateRegulator frame_rate_regulator;
 	MeshGenerationRegulator mesh_generation_regulator;
-	RegulatorArray const regulators(
-	{{
+	RegulatorArray const regulators =
+	{ {
 		& frame_rate_regulator,
 		& mesh_generation_regulator
-	}});
-	
+	} };
+
 	while (! applet_interface.GetQuitFlag())
 	{
 		Tick(regulators);
