@@ -30,7 +30,7 @@ namespace gfx
 	{
 		return reinterpret_cast<char const *>(gluErrorString(error));
 	}
-#endif	// defined(__ANDROID__)
+#endif	// defined(CRAG_USE_GLES)
 #endif	// ! defined(NDEBUG)
 
 	////////////////////////////////////////////////////////////////////////////////
