@@ -1,8 +1,0 @@
-#!/bin/sh
-cd ode
-sh autogen.sh
-./bootstrap
-CFLAGS="-fno-exceptions -fno-rtti -O3" CXXFLAGS="-fno-exceptions -fno-rtti -O3" ./configure --enable-single-precision --disable-demos --disable-asserts --prefix=$PWD/../
-make -j
-make install
-cd ..

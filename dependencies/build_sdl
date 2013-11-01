@@ -1,9 +1,0 @@
-#!/bin/sh
-cd SDL
-./autogen.sh
-mkdir build
-cd build
-../configure --prefix="$PWD/../.." --enable-static --disable-shared
-make $1 $2 $3 $4 $5 $6
-make install
-cd ..

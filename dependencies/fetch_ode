@@ -1,5 +1,0 @@
-#!/bin/sh
-svn checkout svn://svn.code.sf.net/p/opende/code/tags/0.12/ ode
-cd ode
-svn update
-cd ..
