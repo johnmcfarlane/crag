@@ -135,10 +135,6 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	
 	GL_CALL(glShaderSource(_id, int(num_strings), string_array, nullptr));
 
-#if defined(WIN32)
-	_freea(string_array);
-#endif
-
 	GL_CALL(glCompileShader(_id));
 	
 #if defined(DUMP_GLSL_ERRORS)
@@ -156,7 +152,11 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 		PrintMessage(stderr, "Shader info log: %s", info_log.data());
 	}
 #endif
-	
+
+#if defined(WIN32)
+	_freea(string_array);
+#endif
+
 	// Check for errors in the source code.
 	if (! IsCompiled())
 	{
