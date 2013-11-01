@@ -41,14 +41,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\dependencies\glew\lib\Release\Win32;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
+    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\vs\SDL2\include;..\..\vs\ode\include;..\..\vs\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\dependencies\SDL2\include;..\..\dependencies\ode\include;..\..\dependencies\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\..\dependencies\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\dependencies\glew\lib\Release\Win32;C:\Users\john\Documents\crag\dependencies\SDL2\lib\x86</LibraryPath>
+    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\SDL2\include;..\ode\include;..\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

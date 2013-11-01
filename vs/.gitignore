@@ -1,6 +1,9 @@
 # vs/.gitignore
 Debug/
+glew/
+ode/
 Release/
+SDL2/
 ipch
 *.opensdf
 *.sdf
