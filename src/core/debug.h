@@ -294,6 +294,7 @@ template<typename T> void VerifyArrayPointer(T const * element, T const * begin)
 	VerifyEqual((reinterpret_cast<char const *>(element) - reinterpret_cast<char const *>(begin)) % sizeof(T), static_cast<std::size_t>(0));	// element alignment
 }
 
+// verifies that element is a valid point in range, (begin, end)
 template<typename T> void VerifyArrayPointer(T const * element, T const * begin, T const * end) 
 { 
 	VerifyArrayPointer(end, begin);		// valid end pointer
@@ -301,6 +302,7 @@ template<typename T> void VerifyArrayPointer(T const * element, T const * begin,
 	VerifyOp(element, <=, end);	// element no further than top end of range
 }
 
+// verifies that element is a valid point in range, (begin, end]
 template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) 
 { 
 	VerifyArrayPointer(end, begin);		// valid end pointer
