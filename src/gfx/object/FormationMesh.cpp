@@ -19,7 +19,7 @@
 #include "gfx/Scene.h"
 
 #include "form/Engine.h"
-#include "form/NodeBuffer.h"
+#include "form/Surrounding.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"
@@ -49,8 +49,8 @@ FormationMesh::FormationMesh(LeafNode::Init const & init, size_t max_num_quatern
 , _queued_mesh(nullptr)
 , _pending_mesh(nullptr)
 {
-	auto max_num_verts = int(max_num_quaterne * form::NodeBuffer::num_verts_per_quaterna);
-	auto max_num_indices = int(max_num_quaterne * form::NodeBuffer::num_indices_per_quaterna);
+	auto max_num_verts = int(max_num_quaterne * form::Surrounding::num_verts_per_quaterna);
+	auto max_num_indices = int(max_num_quaterne * form::Surrounding::num_indices_per_quaterna);
 	
 	for (int index = 0; index < 2; ++ index)
 	{

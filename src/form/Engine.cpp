@@ -14,7 +14,7 @@
 
 #include "Formation.h"
 
-#include "form/NodeBuffer.h"
+#include "form/Surrounding.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
@@ -274,7 +274,7 @@ void form::Engine::TickScene()
 	
 	_scene.Tick(_camera);
 	
-	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetNodeBuffer().GetNumQuaternaUsed());
+	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetSurrounding().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 }
 
@@ -289,7 +289,7 @@ void form::Engine::AdjustNumQuaterna()
 	Clamp(_requested_num_quaterne, std::size_t(min_num_quaterne), std::size_t(max_num_quaterne));
 	
 	// apply the recommended number
-	NodeBuffer & active_buffer = _scene.GetNodeBuffer();
+	Surrounding & active_buffer = _scene.GetSurrounding();
 	active_buffer.SetNumQuaternaUsedTarget(_requested_num_quaterne);
 }
 
@@ -326,7 +326,7 @@ void form::Engine::GenerateMesh()
 	gfx::MeshGenerationPeriodSampledMessage message = 
 	{
 		last_mesh_generation_period,
-		_scene.GetNodeBuffer().GetNumQuaternaUsed()
+		_scene.GetSurrounding().GetNumQuaternaUsed()
 	};
 	Daemon::Broadcast(message);
 	
@@ -351,7 +351,7 @@ form::Mesh * form::Engine::PopMesh()
 
 void form::Engine::OnOriginReset()
 {
-	auto& node_buffer = _scene.GetNodeBuffer();
+	auto& node_buffer = _scene.GetSurrounding();
 	auto num_quaterna = node_buffer.GetNumQuaternaUsed();
 	_scene.OnOriginReset(_origin);
 	node_buffer.SetNumQuaternaUsedTarget(num_quaterna);
@@ -365,7 +365,7 @@ void form::Engine::OnOriginReset()
 
 bool form::Engine::IsGrowing() const
 {
-	NodeBuffer const & node_buffer = _scene.GetNodeBuffer();
+	Surrounding const & node_buffer = _scene.GetSurrounding();
 	
 	auto num_used = node_buffer.GetNumQuaternaUsed();
 	auto num_used_target = node_buffer.GetNumQuaternaUsedTarget();

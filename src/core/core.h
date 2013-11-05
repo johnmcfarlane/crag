@@ -109,6 +109,23 @@ namespace core
 		return owner;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// get_index - returns the position of a given element in a given array
+
+	// Given an instance of TYPE which is contained in CLASS as MEMBER,
+	// returns the containing object of CLASS.
+	template <typename TYPE>
+	std::size_t get_index(TYPE const * array, TYPE const & element)
+	{
+		auto element_ptr = & element;
+		assert(element_ptr >= array);
+		
+		auto index = element_ptr - array;
+		assert(array + index == element_ptr);
+		
+		return index;
+	}
+
 	//////////////////////////////////////////////////////////////////////
 	// Time - in seconds
 

@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Node.h"
-#include "NodeBuffer.h"
+#include "Surrounding.h"
 #include "Quaterna.h"
 
 
@@ -24,8 +24,8 @@ namespace form
 		
 	public:
 		// functions
-		ExpandNodeFunctor (NodeBuffer & init_node_buffer)
-		: node_buffer (init_node_buffer)
+		ExpandNodeFunctor (Surrounding & init_surrounding)
+		: surrounding (init_surrounding)
 		, num_expanded (0)
 		{
 			RecalculateMinScore();
@@ -33,7 +33,7 @@ namespace form
 		
 		void RecalculateMinScore()
 		{
-			min_score = node_buffer.GetWorseReplacableQuaternaScore();
+			min_score = surrounding.GetWorseReplacableQuaternaScore();
 		}
 		
 		int GetNumExpanded() const
@@ -48,7 +48,7 @@ namespace form
 			{
 				if (node->IsExpandable()) 
 				{
-					if (node_buffer.ExpandNode(* node)) 
+					if (surrounding.ExpandNode(* node)) 
 					{
 						RecalculateMinScore();
 						++ num_expanded;
@@ -59,7 +59,7 @@ namespace form
 		
 	private:
 		// variables
-		NodeBuffer & node_buffer;
+		Surrounding & surrounding;
 		int num_expanded;
 		float min_score;
 	};

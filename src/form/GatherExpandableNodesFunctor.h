@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Node.h"
-#include "NodeBuffer.h"
+#include "Surrounding.h"
 #include "Quaterna.h"
 
 #include "smp/vector.h"
@@ -26,8 +26,8 @@ namespace form
 		
 	public:
 		// functions
-		GatherExpandableNodesFunctor (NodeBuffer & node_buffer, SmpNodeVector & expandable_nodes)
-		: _node_buffer (node_buffer)
+		GatherExpandableNodesFunctor (Surrounding & surrounding, SmpNodeVector & expandable_nodes)
+		: _surrounding (surrounding)
 		, _expandable_nodes(expandable_nodes)
 		{
 			RecalculateMinScore();
@@ -35,7 +35,7 @@ namespace form
 		
 		void RecalculateMinScore()
 		{
-			min_score = _node_buffer.GetWorseReplacableQuaternaScore();
+			min_score = _surrounding.GetWorseReplacableQuaternaScore();
 		}
 		
 		// The node version. 
@@ -61,7 +61,7 @@ namespace form
 		
 	private:
 		// variables
-		NodeBuffer & _node_buffer;
+		Surrounding & _surrounding;
 		SmpNodeVector & _expandable_nodes;
 		float min_score;
 	};

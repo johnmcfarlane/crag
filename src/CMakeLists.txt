@@ -47,6 +47,7 @@ add_executable(crag
 	form/RayCastResult.cpp
 	form/RootNode.cpp
 	form/Scene.cpp
+	form/Surrounding.cpp
 	form/VertexBuffer.cpp
 	form/Vertex.cpp
 	gfx/Cuboid.cpp

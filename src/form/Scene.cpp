@@ -14,7 +14,7 @@
 
 #include "Mesh.h"
 
-#include "form/NodeBuffer.h"
+#include "form/Surrounding.h"
 #include "form/Polyhedron.h"
 
 using namespace form;
@@ -23,26 +23,26 @@ using namespace form;
 // Scene
 
 Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
-: _node_buffer(ref(new NodeBuffer(max_num_quaterne)))
+: _surrounding(ref(new Surrounding(max_num_quaterne)))
 {
-	_node_buffer.SetNumQuaternaUsedTarget(int(min_num_quaterne));
+	_surrounding.SetNumQuaternaUsedTarget(int(min_num_quaterne));
 }
 
 Scene::~Scene()
 {
 	Clear();
-	delete & _node_buffer;
+	delete & _surrounding;
 }
 
 #if defined(VERIFY)
 void Scene::Verify() const
 {
-	if (! _node_buffer.GetPoints().IsEmpty())
+	if (! _surrounding.GetPoints().IsEmpty())
 	{
 		VerifyTrue(! formation_map.empty());
 	}
 
-	VerifyObject(_node_buffer);
+	VerifyObject(_surrounding);
 }
 
 /*void SceneVerifyTrue(Mesh const & m) const
@@ -69,14 +69,14 @@ void Scene::Clear()
 	formation_map.clear();
 }
 
-NodeBuffer & Scene::GetNodeBuffer()
+Surrounding & Scene::GetSurrounding()
 {
-	return _node_buffer;
+	return _surrounding;
 }
 
-NodeBuffer const & Scene::GetNodeBuffer() const
+Surrounding const & Scene::GetSurrounding() const
 {
-	return _node_buffer;
+	return _surrounding;
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
@@ -117,17 +117,17 @@ Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
 
 void Scene::Tick(geom::rel::Ray3 const & camera_ray)
 {
-	_node_buffer.Tick(camera_ray);
+	_surrounding.Tick(camera_ray);
 	TickModels();
 }
 
 void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
 {
-	_node_buffer.GenerateMesh(mesh);
+	_surrounding.GenerateMesh(mesh);
 	
 	MeshProperties & properties = mesh.GetProperties();
 	properties._origin = origin;
-	properties._num_quaterne = _node_buffer.GetNumQuaternaUsed();
+	properties._num_quaterne = _surrounding.GetNumQuaternaUsed();
 }
 
 // Currently just updates the formation_map contents.
@@ -156,7 +156,7 @@ void Scene::ResetFormations(geom::abs::Vector3 const & origin)
 		DeinitPolyhedron(pair);
 	}
 	
-	_node_buffer.OnReset();
+	_surrounding.OnReset();
 
 	for (auto & pair : formation_map) 
 	{
@@ -171,7 +171,7 @@ void Scene::TickPolyhedron(Polyhedron & polyhedron)
 	if (root_node.IsExpandable()) 
 	{
 		VerifyObject(* this);
-		_node_buffer.ExpandNode(root_node);
+		_surrounding.ExpandNode(root_node);
 		VerifyObject(* this);
 	}
 }
@@ -181,7 +181,7 @@ void Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & orig
 {
 	Polyhedron & polyhedron = pair.second;
 
-	PointBuffer & points = _node_buffer.GetPoints();
+	PointBuffer & points = _surrounding.GetPoints();
 	
 	polyhedron.Init(origin, points);
 }
@@ -193,9 +193,9 @@ void Scene::DeinitPolyhedron(FormationPair & pair)
 	// Collapse the root node by fair means or foul.
 	RootNode & root_node = polyhedron._root_node;
 
-	_node_buffer.CollapseNodes(root_node);
+	_surrounding.CollapseNodes(root_node);
 	ASSERT(! root_node.HasChildren());
 
 	// Continue deinitialization somewhere a bit calmer.
-	polyhedron.Deinit(_node_buffer.GetPoints());
+	polyhedron.Deinit(_surrounding.GetPoints());
 }

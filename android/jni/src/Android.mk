@@ -50,16 +50,17 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/CastRay.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
 	$(CRAG_PATH)/form/Formation.cpp \
+	$(CRAG_PATH)/form/MeshBufferObject.cpp \
+	$(CRAG_PATH)/form/Mesh.cpp \
 	$(CRAG_PATH)/form/NodeBuffer.cpp \
 	$(CRAG_PATH)/form/Node.cpp \
 	$(CRAG_PATH)/form/PointBuffer.cpp \
 	$(CRAG_PATH)/form/Point.cpp \
 	$(CRAG_PATH)/form/RayCastResult.cpp \
 	$(CRAG_PATH)/form/RootNode.cpp \
-	$(CRAG_PATH)/form/MeshBufferObject.cpp \
-	$(CRAG_PATH)/form/Mesh.cpp \
 	$(CRAG_PATH)/form/Polyhedron.cpp \
 	$(CRAG_PATH)/form/Scene.cpp \
+	$(CRAG_PATH)/form/Surrounding.cpp \
 	$(CRAG_PATH)/form/VertexBuffer.cpp \
 	$(CRAG_PATH)/form/Vertex.cpp \
 	$(CRAG_PATH)/gfx/Cuboid.cpp \

@@ -18,7 +18,7 @@ namespace form
 	class Formation;
 	class Polyhedron;
 	class Mesh;
-	class NodeBuffer;
+	class Surrounding;
 	
 	// A representation (view?) of all the existing formations.
 	// The scene is relative to a point in space which becomes the local origin for the scene.
@@ -47,8 +47,8 @@ namespace form
 		void Clear();
 		
 		// Accessors for nodes/quaterna.
-		NodeBuffer & GetNodeBuffer();
-		NodeBuffer const & GetNodeBuffer() const;
+		Surrounding & GetSurrounding();
+		Surrounding const & GetSurrounding() const;
 		
 		void OnOriginReset(geom::abs::Vector3 const & origin);
 
@@ -76,7 +76,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Attributes
 		
-		NodeBuffer & _node_buffer;
+		Surrounding & _surrounding;
 		
 		FormationMap formation_map;		// The internal record of formations.
 	};

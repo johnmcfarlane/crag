@@ -13,7 +13,7 @@
 
 #include "sim/Engine.h"
 
-#include "form/NodeBuffer.h"
+#include "form/Surrounding.h"
 #include "form/Scene.h"
 
 #include "gfx/SetOriginEvent.h"
@@ -65,11 +65,11 @@ namespace
 	void ReviseOrigin(sim::Engine & engine)
 	{
 		auto & scene = engine.GetScene();
-		auto & node_buffer = scene.GetNodeBuffer();
+		auto & surrounding = scene.GetSurrounding();
 
 		auto & camera_ray = engine.GetCamera();
 		auto & camera_pos = camera_ray.position;
-		auto min_leaf_distance_squared = node_buffer.GetMinLeafDistanceSquared();
+		auto min_leaf_distance_squared = surrounding.GetMinLeafDistanceSquared();
 
 		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
 		{
