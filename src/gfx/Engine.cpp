@@ -952,6 +952,11 @@ void Engine::InvalidateUniforms()
 	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
 	{
 		Program * program = _resource_manager->GetProgram(static_cast<ProgramIndex>(program_index));
+		if (! program)
+		{
+			continue;
+		}
+
 		program->SetUniformsValid(false);
 	}
 }

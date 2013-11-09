@@ -87,7 +87,8 @@ bool ResourceManager::InitShaders()
 {
 	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename1, char const * frag_filename2)
 	{
-		if (program != nullptr)
+		ASSERT(program);
+		if (program)
 		{
 			static char const * light_shader_filename = "assets/glsl/light.glsl";
 			char const * vert_filenames[] = { vert_filename, light_shader_filename, nullptr };

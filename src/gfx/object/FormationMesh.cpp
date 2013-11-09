@@ -140,13 +140,16 @@ void FormationMesh::Render(Engine const & renderer) const
 	}
 	
 	// Pass rendering details to the shader program.
-	Program const & program = ref(renderer.GetCurrentProgram());
-	PolyProgram const & poly_program = static_cast<PolyProgram const &>(program);
+	auto program = renderer.GetCurrentProgram();
+	if  (program)
+	{
+		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
-	bool fragment_lighting = renderer.GetFragmentLighting();
-	bool flat_shaded = renderer.GetFlatShaded();
-	bool shadows_enabled = renderer.GetShadowsEnabled();
-	poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded, shadows_enabled);
+		bool fragment_lighting = renderer.GetFragmentLighting();
+		bool flat_shaded = renderer.GetFlatShaded();
+		bool shadows_enabled = renderer.GetShadowsEnabled();
+		poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded, shadows_enabled);
+	}
 	
 	// Draw the mesh!
 	front_buffer.Draw();

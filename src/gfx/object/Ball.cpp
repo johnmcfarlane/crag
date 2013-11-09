@@ -66,11 +66,14 @@ bool Ball::GetRenderRange(RenderRange & range) const
 void Ball::Render(Engine const & renderer) const
 {
 	// Pass rendering details to the shader program.
-	Program const & program = ref(renderer.GetCurrentProgram());
-	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(program);
-	Transformation const & transformation = GetModelViewTransformation();
-	sphere_program.SetUniforms(transformation, _radius, _color);
-	
+	auto program = renderer.GetCurrentProgram();
+	if (program)
+	{
+		DiskProgram const & sphere_program = static_cast<DiskProgram const &>(* program);
+		Transformation const & transformation = GetModelViewTransformation();
+		sphere_program.SetUniforms(transformation, _radius, _color);
+	}
+
 	// Draw the quad.
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
 	sphere_quad.Draw();
