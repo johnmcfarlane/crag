@@ -1,0 +1,2 @@
+rm core
+make -j8&&bin/crag $@||../bt
