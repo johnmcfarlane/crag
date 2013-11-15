@@ -1,1 +1,2 @@
+#!/bin/bash
 gdb ./bin/crag core -batch -ex bt

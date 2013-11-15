@@ -1,2 +1,11 @@
+#!/bin/bash
+
+if (($1)); then
+	JOBS="$1"
+	shift
+else
+	JOBS="1"
+fi
+
 rm core
-make -j8&&bin/crag $@||../bt
+make -j"$JOBS"&&bin/crag $@||../bt
