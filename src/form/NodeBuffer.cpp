@@ -14,6 +14,9 @@
 
 using namespace form;
 
+////////////////////////////////////////////////////////////////////////////////
+// form::NodeBuffer member definitions
+
 #if defined(VERIFY)
 void NodeBuffer::Verify() const
 {
@@ -98,12 +101,12 @@ bool NodeBuffer::IsEmpty() const
 
 std::size_t NodeBuffer::GetSize() const
 {
-	return _nodes_used_end - _nodes;
+	return core::get_index(_nodes, * _nodes_used_end);
 }
 
 std::size_t NodeBuffer::GetCapacity() const
 {
-	return _nodes_end - _nodes;
+	return core::get_index(_nodes, * _nodes_end);
 }
 
 Node const & NodeBuffer::operator [] (std::size_t index) const
