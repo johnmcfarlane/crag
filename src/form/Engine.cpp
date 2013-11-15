@@ -318,8 +318,8 @@ void form::Engine::GenerateMesh()
 	});
 	
 	// record timing information
-	core::Time t = app::GetTime();
-	core::Time last_mesh_generation_period = t - mesh_generation_time;
+	::core::Time t = app::GetTime();
+	::core::Time last_mesh_generation_period = t - mesh_generation_time;
 	mesh_generation_time = t;
 
 	// broadcast timing information
