@@ -26,6 +26,6 @@ namespace gfx
 	struct MeshGenerationPeriodSampledMessage
 	{
 		core::Time mesh_generation_period;
-		std::size_t num_quaterne;
+		int num_quaterne;
 	};
 }

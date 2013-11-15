@@ -290,7 +290,7 @@ void form::Engine::AdjustNumQuaterna()
 	
 	// apply the recommended number
 	Surrounding & active_buffer = _scene.GetSurrounding();
-	active_buffer.SetNumQuaternaUsedTarget(_requested_num_quaterne);
+	active_buffer.SetTargetNumQuaterna(_requested_num_quaterne);
 }
 
 void form::Engine::GenerateMesh()
@@ -351,24 +351,24 @@ form::Mesh * form::Engine::PopMesh()
 
 void form::Engine::OnOriginReset()
 {
-	auto& node_buffer = _scene.GetSurrounding();
-	auto num_quaterna = node_buffer.GetNumQuaternaUsed();
+	auto& surrounding = _scene.GetSurrounding();
+	auto num_quaterna = surrounding.GetNumQuaternaUsed();
 	_scene.OnOriginReset(_origin);
-	node_buffer.SetNumQuaternaUsedTarget(num_quaterna);
+	surrounding.SetTargetNumQuaterna(num_quaterna);
 
-	while (node_buffer.GetNumQuaternaUsed() < num_quaterna)
+	while (surrounding.GetNumQuaternaUsed() < num_quaterna)
 	{
 		TickScene();
-		ASSERT(node_buffer.GetNumQuaternaUsedTarget() == num_quaterna);
+		ASSERT(surrounding.GetTargetNumQuaterna() == num_quaterna);
 	}
 }
 
 bool form::Engine::IsGrowing() const
 {
-	Surrounding const & node_buffer = _scene.GetSurrounding();
+	Surrounding const & surrounding = _scene.GetSurrounding();
 	
-	auto num_used = node_buffer.GetNumQuaternaUsed();
-	auto num_used_target = node_buffer.GetNumQuaternaUsedTarget();
+	auto num_used = surrounding.GetNumQuaternaUsed();
+	auto num_used_target = surrounding.GetTargetNumQuaterna();
 	
 	return num_used < num_used_target;
 }

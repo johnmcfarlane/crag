@@ -10,6 +10,7 @@
 #pragma once
 
 #include "PointBuffer.h"
+#include "QuaternaBuffer.h"
 #include "NodeBuffer.h"
 
 #include "core/debug.h"
@@ -59,9 +60,8 @@ namespace form
 #endif
 		PointBuffer & GetPoints() { return point_buffer; }
 		
-		std::size_t GetNumNodesUsed() const;
-		std::size_t GetNumQuaternaUsed() const;
-		std::size_t GetNumQuaternaUsedTarget() const;
+		int GetNumNodesUsed() const;
+		int GetNumQuaternaUsed() const;
 		
 		// returns 0 if there are none
 		float GetMinParentScore() const;
@@ -70,7 +70,8 @@ namespace form
 		Scalar GetMinLeafDistanceSquared();
 		
 		// Must be a multiple of four.
-		void SetNumQuaternaUsedTarget(std::size_t n);
+		int GetTargetNumQuaterna() const;
+		void SetTargetNumQuaterna(int n);
 		
 		void Tick(Ray3 const & new_camera_ray);
 		void OnReset();
@@ -81,8 +82,6 @@ namespace form
 		void UpdateNodes();
 		void UpdateNodeScores();
 		void UpdateQuaterna();
-		void UpdateQuaternaScores();
-		void SortQuaterna();
 		bool ChurnNodes();
 	public:
 		
@@ -95,7 +94,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Node-related members.
 		static bool IsNodeChurnIntensive() { return true; }
-		float GetWorseReplacableQuaternaScore() const;
+		float GetLowestSortedQuaternaScore() const;
 		bool ExpandNode(Node & node);
 		bool ExpandNode(Node & node, Quaterna & children_quaterna);
 		void CollapseNodes(Node & root);
@@ -107,30 +106,19 @@ namespace form
 		void DeinitChildren(Node * children);
 		void DeinitNode(Node & node);
 		
-		static void SubstituteChildren(Node * substitute, Node * children);
-		static void RepairChild(Node & child);
-
-		void IncreaseNodes(Quaterna * new_quaterne_used_end);
-		void DecreaseNodes(Quaterna * new_quaterne_used_end);
+		void IncreaseNodes(int target_num_quaterne);
+		void DecreaseNodes(int target_num_quaterne);
 		
-		void DecreaseQuaterna(Quaterna * new_quaterne_used_end);
-		void FixUpDecreasedNodes(Quaterna * old_quaterne_used_end);
-
-		template <typename FUNCTOR> 
-		void ForEachQuaterna(FUNCTOR f, size_t step_size = 1, bool parallel = false);
+		void DecreaseQuaterna(int new_num_quaterne);
+		void FixUpDecreasedNodes(int old_num_quaterne);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
 		NodeBuffer _node_buffer;
 		
-		// An array of used nodes in ascending order of score.
-		Quaterna * const quaterne;		// [max_num_quaterne]
-
-		Quaterna * quaterne_sorted_end;			// end of the range the we know is sorted
-		Quaterna * quaterne_used_end;			// end of buffer of actually used quaterna
-		Quaterna * quaterne_used_end_target;	// where we'd like quaterne_used_end to be; cannot be less than used_end
-		Quaterna const * const quaterne_end;
+		QuaternaBuffer _quaterna_buffer;
+		int _target_num_quaterne;
 		
 		// Pool of vertices from which to take the corners of nodes.
 		PointBuffer point_buffer;

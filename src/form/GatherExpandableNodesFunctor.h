@@ -35,7 +35,7 @@ namespace form
 		
 		void RecalculateMinScore()
 		{
-			min_score = _surrounding.GetWorseReplacableQuaternaScore();
+			min_score = _surrounding.GetLowestSortedQuaternaScore();
 		}
 		
 		// The node version. 

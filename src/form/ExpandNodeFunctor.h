@@ -33,7 +33,7 @@ namespace form
 		
 		void RecalculateMinScore()
 		{
-			min_score = surrounding.GetWorseReplacableQuaternaScore();
+			min_score = surrounding.GetLowestSortedQuaternaScore();
 		}
 		
 		int GetNumExpanded() const

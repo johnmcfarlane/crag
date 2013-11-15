@@ -15,41 +15,135 @@
 #include "GatherExpandableNodesFunctor.h"
 #include "GenerateMeshFunctor.h"
 #include "Polyhedron.h"
-#include "Quaterna.h"
-#include "Shader.h"
 
-#include "smp/for_each.h"
-
-#include "core/app.h"
 #include "core/ConfigEntry.h"
 
 using namespace form;
 
 CONFIG_DECLARE (profile_mode, bool);
 
+////////////////////////////////////////////////////////////////////////////////
+// file-local definitions
 
-namespace 
+namespace
 {
-
 	// If profile_mode==true, this number of quaterne is enforced always (with reason).
 	// It is useful for eliminating the adaptive quaterne count algorithm during debugging.
 	CONFIG_DEFINE (profile_num_quaterne, int, 6400);
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// local function definitions
-	
-	inline void UpdateQuaternaScore(Quaterna & q) 
-	{
-		Node * parent = q.nodes[0].GetParent();
-		q.parent_score = (parent != nullptr) ? parent->score : -1;
-	}
-	
+
 	bool QuaternaSortUnused(Quaterna const & lhs, Quaterna const & rhs)
 	{
 		return lhs.nodes < rhs.nodes;
 	}
 
+	// Repair the pointers that point TO this node.
+	void RepairChild(Node & child)
+	{
+		// Repair children's parent pointers.
+		Node * node_it = child.GetChildren();
+		if (node_it != nullptr) {
+			Node * node_end = node_it + 4;
+			do {
+				ASSERT(node_it->GetParent() != & child);
+				node_it->SetParent(& child);
+				++ node_it;
+			}	while (node_it < node_end);
+		}
+
+		// Repair cousin pointers.
+		Node::Triplet * triple = child.triple;
+		for (int i = 0; i < 3; ++ i) {
+			Node * cousin = triple[i].cousin;
+			if (cousin != nullptr) {
+				ASSERT(cousin->triple[i].cousin != nullptr);
+				ASSERT(cousin->triple[i].cousin != & child);
+				cousin->triple[i].cousin = & child;
+			}
+		}
+	}
+
+	void SubstituteChildren(Node * substitute, Node * original)
+	{
+		Node * parent = original->GetParent();
+	
+		if (parent != nullptr) 
+		{
+			ASSERT(parent->GetChildren() == original);
+			parent->SetChildren(substitute);
+		
+			substitute[0] = original[0];
+			RepairChild(substitute[0]);
+			VerifyObject(substitute[0]);
+		
+			substitute[1] = original[1];
+			RepairChild(substitute[1]);
+			VerifyObject(substitute[1]);
+		
+			substitute[2] = original[2];
+			RepairChild(substitute[2]);
+			VerifyObject(substitute[2]);
+		
+			substitute[3] = original[3];
+			RepairChild(substitute[3]);
+			VerifyObject(substitute[3]);
+		}
+		else {
+			substitute[0] = original[0];
+			substitute[1] = original[1];
+			substitute[2] = original[2];
+			substitute[3] = original[3];
+		}
+	
+		ZeroArray(original, 4);
+	}
+
+	void FixUpDecreasedNodes(Quaterna * begin, Quaterna * end, int old_num_quaterne, Node const & new_nodes_used_end)
+	{
+		Quaterna * old_quaterne_used_end = begin + old_num_quaterne;
+		ASSERT(old_quaterne_used_end > end);
+	
+		// Use this pointer to walk down the used quaterne array.
+		Quaterna * used_quaterna = end;
+	
+		// For all the quaterne that have been freed up by the reduction...
+		for (Quaterna * unused_quaterna = old_quaterne_used_end - 1; unused_quaterna >= end; -- unused_quaterna)
+		{
+			ASSERT(! unused_quaterna->IsInUse());
+		
+			Node * unused_nodes = unused_quaterna->nodes;
+		
+			// Is a quatern past the end of used quaterne
+			// pointing to a node before the end of used nodes?
+			if (unused_nodes < & new_nodes_used_end)
+			{
+				// It needs to point to a quad of nodes past the end of used nodes.
+				// There must be a corresponding quad of nodes in such a position that is in use.
+				// They must be swapped.
+			
+				// Find the used quaterne whose nodes are past the end of the used range.
+				Node * substitute_nodes;
+				do
+				{
+					-- used_quaterna;
+					ASSERT(used_quaterna >= begin);
+					substitute_nodes = used_quaterna->nodes;
+				}
+				while (substitute_nodes < & new_nodes_used_end);
+
+				SubstituteChildren(unused_nodes, substitute_nodes);
+				std::swap(used_quaterna->nodes, unused_quaterna->nodes);
+			}
+		
+			//// TODO: Finally steam-roll over whatever the nodes pointer was because 
+			//// we want unused quaterne to point to their equivalent in the node array;
+			//nodes_used_end -= 4;
+			//unused_quaterna->nodes = nodes_used_end;
+		}
+
+		// Finally, the nodes were swapped between used and unused quats in any old order.
+		// But the unused nodes need to line up with the unused quaterne.
+		std::sort(end, old_quaterne_used_end, QuaternaSortUnused);
+	}
 }
 
 
@@ -58,16 +152,13 @@ namespace
 
 Surrounding::Surrounding(size_t max_num_quaterne)
 : _node_buffer(max_num_quaterne * num_nodes_per_quaterna)
-, quaterne(new Quaterna [max_num_quaterne])
-, quaterne_sorted_end(quaterne)
-, quaterne_used_end(quaterne)
-, quaterne_used_end_target(quaterne + std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
-, quaterne_end(quaterne + max_num_quaterne)
+, _quaterna_buffer(max_num_quaterne)
+, _target_num_quaterne(std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
 , point_buffer(max_num_quaterne * num_verts_per_quaterna)
 , cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
 , _expandable_nodes(max_num_quaterne * num_nodes_per_quaterna)
 {
-	InitQuaterna(quaterne_end);
+	InitQuaterna(std::begin(_quaterna_buffer) + _quaterna_buffer.capacity());
 
 	VerifyObject(* this);
 }
@@ -75,40 +166,21 @@ Surrounding::Surrounding(size_t max_num_quaterne)
 Surrounding::~Surrounding()
 {
 	VerifyObject(* this);
-
-#if ! defined(NDEBUG)
-	for (Quaterna const * i = quaterne; i != quaterne_used_end; ++ i)
-	{
-		ASSERT(! i->HasGrandChildren());
-		ASSERT(! i->nodes[0].IsInUse());
-		ASSERT(! i->nodes[1].IsInUse());
-		ASSERT(! i->nodes[2].IsInUse());
-		ASSERT(! i->nodes[3].IsInUse());
-	}
-#endif
-	
-	delete quaterne;
 }
 
 #if defined(VERIFY)
 void Surrounding::Verify() const
 {
-	VerifyObjectRef(_node_buffer);
-	
-	VerifyArrayPointer(quaterne_sorted_end, quaterne);
-	VerifyArrayPointer(quaterne_used_end, quaterne);
-	VerifyArrayPointer(quaterne_used_end_target, quaterne);
-	VerifyArrayPointer(quaterne_end, quaterne);
-	
-	VerifyTrue(quaterne_sorted_end >= quaterne);
-	VerifyTrue(quaterne_used_end >= quaterne_sorted_end);
-	VerifyTrue(quaterne_used_end_target >= quaterne_used_end);
-	VerifyTrue(quaterne_end >= quaterne_used_end_target);
+	VerifyObject(_node_buffer);
+	VerifyObject(_quaterna_buffer);
 
+	VerifyOp(_target_num_quaterne, <=, _quaterna_buffer.capacity());
+	VerifyOp(_target_num_quaterne, >=, _quaterna_buffer.size());
+	
 	auto num_nodes_used = GetNumNodesUsed();
 	VerifyTrue((num_nodes_used % num_nodes_per_quaterna) == 0);
 	
-	auto num_quaterne_used = core::get_index(quaterne, * quaterne_used_end);
+	auto num_quaterne_used = GetNumQuaternaUsed();
 	
 	VerifyTrue(num_nodes_used == num_quaterne_used * 4);
 	
@@ -171,7 +243,7 @@ void Surrounding::VerifyUnused(Quaterna const & q) const
 	VerifyTrue(q.parent_score == -1);
 	
 	Node const * n = q.nodes;
-	VerifyTrue(& _node_buffer[(& q - quaterne) * 4] == n);
+	VerifyTrue(& _node_buffer[(& q - std::begin(_quaterna_buffer)) * 4] == n);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
@@ -186,32 +258,25 @@ void Surrounding::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
-std::size_t Surrounding::GetNumNodesUsed() const
+int Surrounding::GetNumNodesUsed() const
 {
-	return _node_buffer.GetSize();
+	return static_cast<std::size_t>(_node_buffer.GetSize());
 }
 
-std::size_t Surrounding::GetNumQuaternaUsed() const
+int Surrounding::GetNumQuaternaUsed() const
 {
-	return quaterne_used_end - quaterne;
-}
-
-std::size_t Surrounding::GetNumQuaternaUsedTarget() const
-{
-	return quaterne_used_end_target - quaterne;
+	return _quaterna_buffer.size();
 }
 
 float Surrounding::GetMinParentScore() const
 {
-	if (quaterne_used_end > quaterne)
-	{
-		Quaterna last_quaterna = quaterne_used_end [-1];
-		return last_quaterna.parent_score;
-	}
-	else
+	if (_quaterna_buffer.empty())
 	{
 		return 0;
 	}
+
+	auto & last_quaterna = _quaterna_buffer.back();
+	return last_quaterna.parent_score;
 }
 
 Scalar Surrounding::GetMinLeafDistanceSquared()
@@ -219,31 +284,31 @@ Scalar Surrounding::GetMinLeafDistanceSquared()
 	return node_score_functor.GetMinLeafDistanceSquared();
 }
 
-void Surrounding::SetNumQuaternaUsedTarget(std::size_t n)
+int Surrounding::GetTargetNumQuaterna() const
 {
+	return _target_num_quaterne;
+}
+
+void Surrounding::SetTargetNumQuaterna(int target_num_quaterne)
+{
+	VerifyOp(target_num_quaterne, <=, _quaterna_buffer.capacity());
+
 	if (profile_mode)
 	{
 		return;
 	}
 
-	Quaterna * new_quaterne_used_end = quaterne + n;
-	VerifyArrayElement(new_quaterne_used_end, quaterne, quaterne_end + 1);
+	int num_quaterna_used = _quaterna_buffer.size();
+	std::ptrdiff_t growth = target_num_quaterne - num_quaterna_used;
 	
-	if (new_quaterne_used_end == quaterne_used_end) 
+	if (growth > 0)
 	{
-		// No change. Just make sure the target is the same
-		quaterne_used_end_target = new_quaterne_used_end;
+		IncreaseNodes(target_num_quaterne);
 	}
-	else if (new_quaterne_used_end > quaterne_used_end) 
+	else if (growth < 0)
 	{
-		IncreaseNodes(new_quaterne_used_end);
+		DecreaseNodes(target_num_quaterne);
 	}
-	else if (new_quaterne_used_end < quaterne_used_end)
-	{
-		DecreaseNodes(new_quaterne_used_end);
-	}
-	
-	VerifyObject(* this);
 }
 
 // This is the main tick function for all things 'nodey'.
@@ -273,11 +338,12 @@ void Surrounding::Tick(Ray3 const & new_camera_ray)
 void Surrounding::OnReset()
 {
 	ASSERT(point_buffer.IsEmpty());
-	InitQuaterna(quaterne_used_end);
+	InitQuaterna(std::end(_quaterna_buffer));
 
 	_node_buffer.Clear();
-	quaterne_sorted_end = quaterne_used_end = quaterne;
 	
+	_quaterna_buffer.Clear();
+
 	// Half the target number of nodes.
 	// Probably not a smart idea.
 	//quaterne_used_end_target -= (quaterne_used_end_target - quaterne) >> 1;
@@ -292,7 +358,7 @@ void Surrounding::ResetNodeOrigins(Vector3 const & origin_delta)
 void Surrounding::InitQuaterna(Quaterna const * end)
 {
 	auto n = std::begin(_node_buffer);
-	for (Quaterna * iterator = quaterne; iterator < end; n += 4, ++ iterator)
+	for (Quaterna * iterator = std::begin(_quaterna_buffer); iterator < end; n += 4, ++ iterator)
 	{
 		iterator->parent_score = -1;
 		iterator->nodes = n;
@@ -325,207 +391,10 @@ void Surrounding::UpdateNodeScores()
 void Surrounding::UpdateQuaterna()
 {
 	// Reflect the new scores in the quaterne.
-	UpdateQuaternaScores();
+	_quaterna_buffer.UpdateScores();
 	
 	// Now resort the quaterne so they are in order again.
-	SortQuaterna();
-}
-
-void Surrounding::UpdateQuaternaScores()
-{
-	ForEachQuaterna(UpdateQuaternaScore, 1024, true);
-	
-	// This basically says: "as far as I know, none of the quaterne are sorted."
-	quaterne_sorted_end = quaterne;
-}
-
-// Algorithm to sort nodes array. 
-void Surrounding::SortQuaterna()
-{
-	if (quaterne_sorted_end == quaterne_used_end)
-	{
-		VerifyObject(* this);
-		return;
-	}
-
-#if 0
-	typedef geom::Vector<Quaterna *, 2> QuaternaRange;
-
-	QuaternaRange unsorted_range =
-	{
-		quaterne,
-		quaterne_used_end - 1
-	};
-	
-	int c = 1;
-	while (unsorted_range.x < unsorted_range.y)
-	{
-		QuaternaRange next_unsorted_range =
-		{
-			quaterne_used_end,
-			quaterne
-		};
-		
-		for (auto i = unsorted_range.x; i != unsorted_range.y; ++ i)
-		{
-			if (i[0].parent_score < i[1].parent_score)
-			{
-				std::swap(i[0], i[1]);
-				
-				if (i < next_unsorted_range.x)
-				{
-					next_unsorted_range.x = i - 1;
-					
-					if (next_unsorted_range.x < quaterne)
-					{
-						next_unsorted_range.x = quaterne;
-					}
-				}
-				
-				if (i > next_unsorted_range.y)
-				{
-					next_unsorted_range.y = i + 1;
-				}
-			}
-		}
-		
-		if ((-- c) == 0)
-		{
-			break;
-		}
-		
-		unsorted_range = next_unsorted_range;
-	}
-#elif 0
-	QuaternaRange unsorted_range =
-	{
-		quaterne,
-		quaterne_used_end - 1
-	};
-	//int c = 0;
-	
-	for (auto i = quaterne; i != quaterne_used_end; ++ i)
-	{
-		//DEBUG_MESSAGE("%d:%f", i - quaterne, i->parent_score);
-	}
-	
-	while (unsorted_range.x < unsorted_range.y)
-	{
-		QuaternaRange next_unsorted_range = unsorted_range;
-		Quaterna * i = unsorted_range.x;
-		
-		for (; i < unsorted_range.y; ++ i)
-		{
-			if (i[0].parent_score < i[1].parent_score)
-			{
-				break;
-			}
-		}
-		next_unsorted_range.x = std::max(i - 1, quaterne);
-		
-		next_unsorted_range.y = next_unsorted_range.x;
-		for (; i < unsorted_range.y; ++ i)
-		{
-			if (i[0].parent_score < i[1].parent_score)
-			{
-				std::swap(i[0].parent_score, i[1].parent_score);
-				next_unsorted_range.y = i;
-			}
-		}
-		
-		if (next_unsorted_range.y + 1 == i)
-		{
-			const Quaterna * end = quaterne_used_end - 1;
-			for (unsorted_range.y = i; unsorted_range.y < end; ++ unsorted_range.y)
-			{
-				if (unsorted_range.y[0].parent_score > unsorted_range.y[1].parent_score)
-				{
-					break;
-				}
-				
-				std::swap(unsorted_range.y[0], unsorted_range.y[1]);
-			}
-		}
-
-//		DEBUG_MESSAGE("%d [%d,%d) -> [%d,%d)", c ++,
-//					  unsorted_range.x - quaterne, unsorted_range.y - quaterne,
-//					  next_unsorted_range.x - quaterne, next_unsorted_range.y - quaterne);
-		
-		unsorted_range = next_unsorted_range;
-	}
-#elif 0
-	// Sure and steady ... and slow!
-//	std::sort(quaterne_sorted_end, quaterne_used_end, [] (Quaterna const & lhs, Quaterna const & rhs) {
-//		return lhs.parent_score > rhs.parent_score;
-//	});
-
-	geom::Vector<Quaterna *, 2> range = { quaterne_sorted_end, quaterne_used_end - 1 };
-	int c = 0;
-	
-	while (range.x < range.y - 1)
-	{
-		geom::Vector<Quaterna *, 2> next_range =
-		{
-			quaterne_used_end,
-			quaterne_sorted_end
-		};
-		
-		for (size_t pass = 0; pass != 2; ++ pass)
-		{
-			for (Quaterna * i = range.x + pass; i < range.y; i += 2)
-			{
-				if (i[0].parent_score < i[1].parent_score)
-				{
-					std::swap(i[0], i[1]);
-					if (i <= next_range.x)
-					{
-						next_range.x = i - 1;
-					}
-					if (i >= next_range.y)
-					{
-						next_range.y = i + 2;
-					}
-				}
-			}
-			
-			range.x = std::max(next_range.x, quaterne);
-			range.y = std::min(next_range.y, quaterne_used_end - 1);
-			DEBUG_MESSAGE("%d:%d [%d,%d)", c ++, int(pass), range.x - quaterne, range.y - quaterne);
-		}
-	}
-	
-#elif 0
-	Quaterna * range_begin = quaterne;
-	while (true)
-	{
-		for (size_t pass = 0; pass != 2; ++ pass)
-		{
-			Quaterna * range_end = quaterne_sorted_end - 1;
-			for (Quaterna * i = range_begin + pass; i < range_end; i += 2)
-			{
-				if (i[0].parent_score < i[1].parent_score)
-				{
-					std::swap(i[0], i[1]);
-				}
-			}
-		}
-		
-		size_t range_size = quaterne_sorted_end - range_begin;
-		if (range_size < 128)
-		{
-			break;
-		}
-		
-		range_begin = range_begin + (range_size >> 1) + 1;
-	}
-#else
-	// Sure and steady ... and slow!
-	std::sort(quaterne, quaterne_used_end, [] (Quaterna const & lhs, Quaterna const & rhs) {
-		return lhs.parent_score > rhs.parent_score;
-	});
-#endif
-	
-	quaterne_sorted_end = quaterne_used_end;
+	_quaterna_buffer.Sort();
 }
 
 bool Surrounding::ChurnNodes()
@@ -534,7 +403,7 @@ bool Surrounding::ChurnNodes()
 	
 	// Populate vector with nodes which might want expanding.
 	GatherExpandableNodesFunctor gather_functor(* this, _expandable_nodes);
-	ForEachQuaterna<GatherExpandableNodesFunctor &>(gather_functor);
+	_quaterna_buffer.ForEach<GatherExpandableNodesFunctor &>(gather_functor);
 
 	// Traverse the vector and try and expand the nodes.
 	ExpandNodeFunctor expand_functor(* this);
@@ -560,29 +429,17 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 ///////////////////////////////////////////////////////
 // Node-related members.
 
-float Surrounding::GetWorseReplacableQuaternaScore() const
+float Surrounding::GetLowestSortedQuaternaScore() const
 {
-	// See if there are unused quaterne.
-	if (quaterne_used_end != quaterne_used_end_target)
+	// See if there are unused quaterne available.
+	if (_target_num_quaterne != _quaterna_buffer.size())
 	{
 		// As any used quaterna could replace an unused quaterna,
 		// we ought to aim pretty low. 
 		return std::numeric_limits<float>::min();
 	}
 	
-	// Find the (known) lowest-scoring quaterna in used.
-	if (quaterne_sorted_end > quaterne) 
-	{
-		// Ok, lets try the end of the sequence of sorted quaterne...
-		Quaterna & reusable_quaterna = quaterne_sorted_end [- 1];
-		return reusable_quaterna.parent_score;
-	}
-	
-	// We're clean out of nodes!
-	// Unless the node tree is somehow eating itself,
-	// this probably means a root nodes is expanding
-	// and there are no nodes. 
-	return std::numeric_limits<float>::max();
+	return _quaterna_buffer.GetLowestSortedScore();
 }
 
 bool Surrounding::ExpandNode(Node & node) 
@@ -590,63 +447,61 @@ bool Surrounding::ExpandNode(Node & node)
 	ASSERT(node.IsExpandable());
 
 	// Try and get an unused quaterna.
-	if (quaterne_used_end != quaterne_used_end_target)
+	if (_quaterna_buffer.size() != _target_num_quaterne)
 	{
 		// We currently wish to expand the number of nodes/quaterne used,
 		// so attempt to use the next unused quaterna in the array.
-		Quaterna & unused_quaterna = * quaterne_used_end;
+		auto & unused_quaterna = _quaterna_buffer.Grow();
 
 		if (! ExpandNode(node, unused_quaterna))
 		{
+			_quaterna_buffer.Shrink();
 			return false;
 		}
 		
 		_node_buffer.Push(4);
-		++ quaterne_used_end;
 		return true;
 	}
 	
 	// Find the lowest-scoring quaterna in used and attempt to reuse it.
-	if (quaterne_sorted_end > quaterne) 
+	auto reusable_quaterna = _quaterna_buffer.GetLowestSorted();
+	if (! reusable_quaterna) 
 	{
-		// Get the score to use to find the 'worst' Quaterna.
-		// We don't want to nuke a quaterna with a worse one, hence using the node score.
-		// But also, there's a slim chance that node's parent has a worse score than node's
-		// and we can't end up finding a quaterna that includes node as node's new children
-		// because that would cause a time paradox in the fabric of space.
-		float score = node.score;
-		
-		// Ok, lets try the end of the sequence of sorted quaterne...
-		Quaterna & reusable_quaterna = quaterne_sorted_end [- 1];			
-		
-		if (! reusable_quaterna.IsSuitableReplacement(score)) 
-		{
-			return false;
-		}
-
-		// Make sure that the node isn't replacing itself or one of its ancestors.
-		for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->GetParent())
-		{
-			if (ancestor >= reusable_quaterna.nodes && ancestor < reusable_quaterna.nodes + 4)
-			{
-				return false;
-			}
-		}
-		
-		if (! ExpandNode(node, reusable_quaterna))
-		{
-			return false;
-		}
-		
-		-- quaterne_sorted_end;
-		return true;
+		// We're out of sorted nodes.
+		return false;
+	}
+	
+	// Get the score to use to find the 'worst' Quaterna.
+	// We don't want to nuke a quaterna with a worse one, hence using the node score.
+	// But also, there's a slim chance that node's parent has a worse score than node's
+	// and we can't end up finding a quaterna that includes node as node's new children
+	// because that would cause a time paradox in the fabric of space.
+	float score = node.score;
+	
+	// Ok, lets try the end of the sequence of sorted quaterne...
+	
+	if (! reusable_quaterna->IsSuitableReplacement(score)) 
+	{
+		return false;
 	}
 
-	// We're clean out of nodes!
-	// Unless the node tree is somehow eating itself,
-	// this probably means a root nodes is expanding
-	// and there are no nodes. 
-	return false;
+	// Make sure that the node isn't replacing itself or one of its ancestors.
+	for (Node * ancestor = & node; ancestor != nullptr; ancestor = ancestor->GetParent())
+	{
+		if (ancestor >= reusable_quaterna->nodes && ancestor < reusable_quaterna->nodes + 4)
+		{
+			return false;
+		}
+	}
+	
+	if (! ExpandNode(node, * reusable_quaterna))
+	{
+		return false;
+	}
+	
+	_quaterna_buffer.DecrementSorted();
+
+	return true;
 }
 
 bool Surrounding::ExpandNode(Node & node, Quaterna & children_quaterna)	
@@ -716,27 +571,23 @@ void Surrounding::CollapseNodes(Node & root)
 	UpdateQuaterna();
 	
 	// ... except there may still be unused nodes in the used area.
-	Quaterna * old_quaterne_used_end = quaterne_used_end;
+	auto old_num_quaterne = _quaterna_buffer.size();
 
-	// Roll back to the start of the unused quaterne.
-	do
-		-- quaterne_used_end;
-	while (quaterne_used_end >= quaterne && ! quaterne_used_end->IsInUse());
-	++ quaterne_used_end;
-	
-	if (quaterne_sorted_end > quaterne_used_end)
+	// Roll back to the end of the used quaterne.
+	while (! _quaterna_buffer.empty() && ! _quaterna_buffer.back().IsInUse())
 	{
-		quaterne_sorted_end = quaterne_used_end;
+		_quaterna_buffer.Shrink();
 	}
 	
 	// Swap used nodes in unused range with unused nodes in used range.
-	FixUpDecreasedNodes(old_quaterne_used_end);
+	FixUpDecreasedNodes(old_num_quaterne);
 }
 
 void Surrounding::CollapseNode(Node & node)
 {
 	Node * children = node.GetChildren();
-	if (children != nullptr) {
+	if (children != nullptr)
+	{
 		DeinitChildren(children);
 		node.SetChildren(nullptr);
 	}
@@ -844,110 +695,50 @@ void Surrounding::DeinitNode(Node & node)
 	node.score = 0;
 }
 
-void Surrounding::SubstituteChildren(Node * substitute, Node * original)
-{
-	Node * parent = original->GetParent();
-	
-	if (parent != nullptr) 
-	{
-		ASSERT(parent->GetChildren() == original);
-		parent->SetChildren(substitute);
-		
-		substitute[0] = original[0];
-		RepairChild(substitute[0]);
-		VerifyObject(substitute[0]);
-		
-		substitute[1] = original[1];
-		RepairChild(substitute[1]);
-		VerifyObject(substitute[1]);
-		
-		substitute[2] = original[2];
-		RepairChild(substitute[2]);
-		VerifyObject(substitute[2]);
-		
-		substitute[3] = original[3];
-		RepairChild(substitute[3]);
-		VerifyObject(substitute[3]);
-	}
-	else {
-		substitute[0] = original[0];
-		substitute[1] = original[1];
-		substitute[2] = original[2];
-		substitute[3] = original[3];
-	}
-	
-	ZeroArray(original, 4);
-}
-
-// Repair the pointers that point TO this node.
-void Surrounding::RepairChild(Node & child)
-{
-	// Repair children's parent pointers.
-	Node * node_it = child.GetChildren();
-	if (node_it != nullptr) {
-		Node * node_end = node_it + 4;
-		do {
-			ASSERT(node_it->GetParent() != & child);
-			node_it->SetParent(& child);
-			++ node_it;
-		}	while (node_it < node_end);
-	}
-
-	// Repair cousin pointers.
-	Node::Triplet * triple = child.triple;
-	for (int i = 0; i < 3; ++ i) {
-		Node * cousin = triple[i].cousin;
-		if (cousin != nullptr) {
-			ASSERT(cousin->triple[i].cousin != nullptr);
-			ASSERT(cousin->triple[i].cousin != & child);
-			cousin->triple[i].cousin = & child;
-		}
-	}
-}
-
-void Surrounding::IncreaseNodes(Quaterna * new_quaterne_used_end)
+void Surrounding::IncreaseNodes(int target_num_quaterne)
 {
 	// Verify that the input is indeed a decrease.
-	VerifyArrayElement(new_quaterne_used_end, quaterne_used_end, quaterne_end + 1);
+	VerifyOp(target_num_quaterne, >, _quaterna_buffer.size());
+	VerifyOp(target_num_quaterne, <=, _quaterna_buffer.capacity());
 	
 	// Increasing the target number of nodes is simply a matter of setting a value. 
 	// The target pointer now point_buffer into the range of unused quaterne at the end of the array.
-	quaterne_used_end_target = new_quaterne_used_end;
+	_target_num_quaterne = target_num_quaterne;
 	
 	VerifyObject(* this);
 }
 
 // Reduce the number of used nodes and, accordingly, the number of used quaterne.
 // This is quite an involved and painful process which sometimes fails half-way through.
-void Surrounding::DecreaseNodes(Quaterna * new_quaterne_used_end)
+void Surrounding::DecreaseNodes(int target_num_quaterne)
 {
-	Quaterna * old_quaterne_used_end = quaterne_used_end;
+	auto old_num_quaterne = _quaterna_buffer.size();
 
 	// First decrease the number of quaterne. This is the bit that sometimes fails.
-	DecreaseQuaterna(new_quaterne_used_end);
+	DecreaseQuaterna(target_num_quaterne);
 	
 	// Was there any decrease at all?
-	if (old_quaterne_used_end == quaterne_used_end)
+	if (old_num_quaterne == _quaterna_buffer.size())
 	{
-		//ASSERT(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
+		ASSERT(false);	// This isn't deadly fatal but serious enough that I'd like to know it happens.
 		return;
 	}
 	
 	// Because the nodes aren't in the correct order, decreasing them is somewhat more tricky.
-	FixUpDecreasedNodes(old_quaterne_used_end);
+	FixUpDecreasedNodes(old_num_quaterne);
 	
 	VerifyObject (* this);
 }
 
-void Surrounding::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
+void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 {
 	// Verify that the input is indeed a decrease.
-	VerifyArrayElement(new_quaterne_used_end, quaterne, quaterne_used_end + 1);
+	VerifyOp(new_num_quaterne, <, _quaterna_buffer.size());
 	
 	// Loop through used quats backwards from far end.
 	do 
 	{
-		Quaterna & q = quaterne_used_end [- 1];
+		Quaterna & q = _quaterna_buffer.back();
 		Node * quaterna_nodes = q.nodes;
 		
 		// Is the quaterna being used?
@@ -973,97 +764,35 @@ void Surrounding::DecreaseQuaterna(Quaterna * new_quaterne_used_end)
 		ASSERT(! quaterna_nodes[2].HasChildren());
 		ASSERT(! quaterna_nodes[3].HasChildren());
 		
-		-- quaterne_used_end;
-	}	
-	while (quaterne_used_end > new_quaterne_used_end);
-	
-	// Both quaterne_sorted_end and quaterne_used_end_target 
-	// must be equal to quaterne_used_end at this point. 
-	if (quaterne_sorted_end > quaterne_used_end)
-	{
-		quaterne_sorted_end = quaterne_used_end;
+		_quaterna_buffer.Shrink();
 	}
+	while (_quaterna_buffer.size() > new_num_quaterne);
 	
 	// Target is really for increasing the target during churn.
-	quaterne_used_end_target = quaterne_used_end;
+	_target_num_quaterne = new_num_quaterne;
+	VerifyEqual(_target_num_quaterne, _quaterna_buffer.size());
+	
+	VerifyObject(* this);
 }
 
-void Surrounding::FixUpDecreasedNodes(Quaterna * old_quaterne_used_end)
+void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
 {
-	ASSERT(old_quaterne_used_end > quaterne_used_end);
+	auto new_num_quaterne = _quaterna_buffer.size();
+	ASSERT(old_num_quaterne > new_num_quaterne);
 	
 	// From the new used quaterna value, figure out new used node value.
-	auto new_num_quaterne_used = quaterne_used_end - quaterne;
-	auto new_num_nodes_used = new_num_quaterne_used << 2;	// 4 nodes per quaterna
+	auto new_num_nodes_used = new_num_quaterne << 2;	// 4 nodes per quaterna
 	auto new_nodes_used_end = std::begin(_node_buffer) + new_num_nodes_used;
 	auto old_nodes_used_end = std::end(_node_buffer);
 	ASSERT(old_nodes_used_end > new_nodes_used_end);
 
 	VerifyArrayElement(new_nodes_used_end, std::begin(_node_buffer), old_nodes_used_end);
 	
-	// Use this pointer to walk down the used quaterne array.
-	Quaterna * used_quaterna = quaterne_used_end;
+	::FixUpDecreasedNodes(std::begin(_quaterna_buffer), std::end(_quaterna_buffer), old_num_quaterne, * new_nodes_used_end);
 	
-	// For all the quaterne that have been freed up by the reduction...
-	for (Quaterna * unused_quaterna = old_quaterne_used_end - 1; unused_quaterna >= quaterne_used_end; -- unused_quaterna)
-	{
-		ASSERT(! unused_quaterna->IsInUse());
-		
-		Node * unused_nodes = unused_quaterna->nodes;
-		
-		// Is a quatern past the end of used quaterne
-		// pointing to a node before the end of used nodes?
-		if (unused_nodes < new_nodes_used_end)
-		{
-			// It needs to point to a quad of nodes past the end of used nodes.
-			// There must be a corresponding quad of nodes in such a position that is in use.
-			// They must be swapped.
-			
-			// Find the used quaterne whose nodes are past the end of the used range.
-			Node * substitute_nodes;
-			do
-			{
-				-- used_quaterna;
-				ASSERT(used_quaterna >= quaterne);
-				substitute_nodes = used_quaterna->nodes;
-			}
-			while (substitute_nodes < new_nodes_used_end);
-
-			SubstituteChildren(unused_nodes, substitute_nodes);
-			std::swap(used_quaterna->nodes, unused_quaterna->nodes);
-		}
-		
-//		// TODO: Finally steam-roll over whatever the nodes pointer was because 
-//		// we want unused quaterne to point to their equivalent in the node array;
-//		nodes_used_end -= 4;
-//		unused_quaterna->nodes = nodes_used_end;
-	}
-
 	// revise down the number of nodes in use
 	_node_buffer.Pop(old_nodes_used_end - new_nodes_used_end);
 	ASSERT(new_nodes_used_end == std::end(_node_buffer));
-
-	// Finally, the nodes were swapped between used and unused quats in any old order.
-	// But the unused nodes need to line up with the unused quaterne.
-	std::sort(quaterne_used_end, old_quaterne_used_end, QuaternaSortUnused);
 	
 	VerifyObject(* this);
-}
-
-template <typename FUNCTOR> 
-void Surrounding::ForEachQuaterna(FUNCTOR f, size_t step_size, bool parallel)
-{
-	if (quaterne_used_end == quaterne)
-	{
-		return;
-	}
-
-	if (! parallel && step_size == 1)
-	{
-		core::for_each<Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f);
-	}
-	else
-	{
-		smp::for_each<Quaterna *, FUNCTOR>(quaterne, quaterne_used_end, f, step_size, -1);
-	}
 }

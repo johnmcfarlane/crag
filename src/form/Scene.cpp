@@ -25,7 +25,7 @@ using namespace form;
 Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
 : _surrounding(ref(new Surrounding(max_num_quaterne)))
 {
-	_surrounding.SetNumQuaternaUsedTarget(int(min_num_quaterne));
+	_surrounding.SetTargetNumQuaterna(int(min_num_quaterne));
 }
 
 Scene::~Scene()

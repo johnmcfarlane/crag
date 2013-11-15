@@ -44,6 +44,7 @@ add_executable(crag
 	form/Point.cpp
 	form/PointBuffer.cpp
 	form/Polyhedron.cpp
+	form/QuaternaBuffer.cpp
 	form/RayCastResult.cpp
 	form/RootNode.cpp
 	form/Scene.cpp
