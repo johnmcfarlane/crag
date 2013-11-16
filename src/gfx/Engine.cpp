@@ -50,6 +50,7 @@ namespace
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
 	CONFIG_DEFINE (target_work_proportion, double, .95f);
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
+	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
@@ -679,7 +680,7 @@ void Engine::InitVSync()
 		refresh_rate = default_refresh_rate;
 	}
 
-	_frame_duration = 1.0f / refresh_rate;
+	_frame_duration = static_cast<float>(swap_interval) / refresh_rate;
 
 	if (profile_mode)
 	{
