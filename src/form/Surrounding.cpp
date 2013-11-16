@@ -182,7 +182,7 @@ void Surrounding::Verify() const
 	
 	auto num_quaterne_used = GetNumQuaternaUsed();
 	
-	VerifyTrue(num_nodes_used == num_quaterne_used * 4);
+	VerifyEqual(num_nodes_used, num_quaterne_used * 4);
 	
 	VerifyObject(point_buffer);
 	
@@ -732,6 +732,8 @@ void Surrounding::DecreaseNodes(int target_num_quaterne)
 
 void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 {
+	VerifyObject(* this);
+
 	// Verify that the input is indeed a decrease.
 	VerifyOp(new_num_quaterne, <, _quaterna_buffer.size());
 	
@@ -771,8 +773,6 @@ void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 	// Target is really for increasing the target during churn.
 	_target_num_quaterne = new_num_quaterne;
 	VerifyEqual(_target_num_quaterne, _quaterna_buffer.size());
-	
-	VerifyObject(* this);
 }
 
 void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
