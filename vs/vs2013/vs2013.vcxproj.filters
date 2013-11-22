@@ -106,6 +106,8 @@
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
+    <ClCompile Include="..\..\src\form\QuaternaBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\Surrounding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />

@@ -317,6 +317,7 @@
     <ClCompile Include="..\..\src\form\Point.cpp" />
     <ClCompile Include="..\..\src\form\PointBuffer.cpp" />
     <ClCompile Include="..\..\src\form\Polyhedron.cpp" />
+    <ClCompile Include="..\..\src\form\QuaternaBuffer.cpp" />
     <ClCompile Include="..\..\src\form\RayCastResult.cpp" />
     <ClCompile Include="..\..\src\form\RootNode.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode1</ObjectFileName>
@@ -325,6 +326,7 @@
     <ClCompile Include="..\..\src\form\Scene.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene1</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\src\form\Surrounding.cpp" />
     <ClCompile Include="..\..\src\form\Vertex.cpp" />
     <ClCompile Include="..\..\src\form\VertexBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\Cuboid.cpp" />
