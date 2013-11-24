@@ -19,7 +19,7 @@ using namespace gfx;
 // IndexBuffer member definitions
 
 IndexBuffer::IndexBuffer(int buffer_capacity)
-: Super(buffer_capacity)
+: super(buffer_capacity)
 {
 }
 

@@ -18,7 +18,7 @@ namespace gfx
 	
 	class IndexBuffer : private smp::vector<ElementIndex>
 	{
-		typedef smp::vector<ElementIndex> Super;
+		typedef smp::vector<ElementIndex> super;
 
 	public:
 		IndexBuffer(int capacity);
@@ -47,17 +47,17 @@ namespace gfx
 			return * grow(3);
 		}
 		
-		Super::const_iterator begin() const
+		super::const_iterator begin() const
 		{
-			return Super::begin();
+			return super::begin();
 		}
 		
-		Super::const_iterator end() const
+		super::const_iterator end() const
 		{
-			return Super::end();
+			return super::end();
 		}
 		
-		typedef Super::value_type value_type;
+		typedef super::value_type value_type;
 		value_type const * GetArray() const;
 	};
 
