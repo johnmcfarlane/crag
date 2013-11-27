@@ -14,11 +14,6 @@
 #include "ipc/Fiber.h"
 #include "ipc/Object.h"
 
-namespace smp 
-{
-	class Fiber;
-}
-
 namespace applet
 {
 	// Base class for applets, which are run in fibers.
