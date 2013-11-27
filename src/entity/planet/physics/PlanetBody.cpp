@@ -152,8 +152,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		containment_geom.g1 = body_collision_handle;
 		containment_geom.g2 = mesh_collision_handle;
 		
-		VerifyOp(max_depth, >=, 0);
-		VerifyOp(containment_geom.depth, >=, 0);
+		CRAG_VERIFY_OP(max_depth, >=, 0);
+		CRAG_VERIFY_OP(containment_geom.depth, >=, 0);
 	}
 
 	// If contact was detected,
@@ -186,7 +186,7 @@ bool PlanetBody::OnCollisionWithRay(Body & body)
 			auto length_to_cast = previous_ray_casy_result.GetDistance();
 
 			// check that this is indeed a shortening of the ray to cast
-			VerifyOp(length_to_cast, <=, ray_cast.GetLength());
+			CRAG_VERIFY_OP(length_to_cast, <=, ray_cast.GetLength());
 
 			return length_to_cast;
 		}

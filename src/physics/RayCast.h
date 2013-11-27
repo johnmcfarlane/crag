@@ -22,9 +22,7 @@ namespace physics
 		RayCast(Engine & engine, Scalar length);
 		~RayCast();
 		
-#if defined(VERIFY)
-		void Verify() const final;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(RayCast);
 
 		void SetDirection(Vector3 const & direction);
 		Vector3 GetDirection() const;

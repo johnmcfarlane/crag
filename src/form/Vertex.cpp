@@ -18,13 +18,10 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // form::Vertex helper functions
 
-#if defined(VERIFY)
-void Vertex::Verify() const
-{
-	VerifyObject(pos);
-	VerifyObject(norm);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Vertex, self)
+	CRAG_VERIFY(self.pos);
+	CRAG_VERIFY(self.norm);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 ////////////////////////////////////////////////////////////////////////////////
 // form::Vertex helper functions

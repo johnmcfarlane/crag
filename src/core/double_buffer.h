@@ -31,7 +31,7 @@ namespace core
 			: _front_buffer(& _buffer[0])
 			, _back_buffer(& _buffer[1])
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		// general-purpose c'tor; given arguments are passed to c'tors of both elements
@@ -43,45 +43,45 @@ namespace core
 		{
 			double_buffer();
 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		// copy c'tor
 		double_buffer(double_buffer const & rhs)
 			: _buffer(rhs._buffer)
 		{
-			VerifyObjectRef(rhs);
+			CRAG_VERIFY(rhs);
 			
 			copy_polarity(rhs);
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		// copy operator
 		double_buffer & operator = (double_buffer const & rhs)
 		{
-			VerifyObject(* this);
-			VerifyObjectRef(rhs);
+			CRAG_VERIFY(* this);
+			CRAG_VERIFY(rhs);
 			
 			_buffer[0] = rhs[0];
 			_buffer[1] = rhs[1];
 			copy_polarity(rhs);
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return * this;
 		}
 		
 		// front buffer accessors
 		value_type & front()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			
 			return * _front_buffer;
 		}
 		
 		value_type const & front() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			return * _front_buffer;
 		}
@@ -89,14 +89,14 @@ namespace core
 		// back buffer accessors
 		value_type & back()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			return * _back_buffer;
 		}
 		
 		value_type const & back() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			return * _back_buffer;
 		}
@@ -104,7 +104,7 @@ namespace core
 		// subscript operator
 		value_type & operator [] (int n)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			ASSERT(n == 0 || n == 1);
 
 			return _buffer[n];
@@ -112,7 +112,7 @@ namespace core
 		
 		value_type const & operator [] (int n) const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			ASSERT(n == 0 || n == 1);
 
 			return _buffer[n];
@@ -121,20 +121,19 @@ namespace core
 		// swaps the front and back buffers
 		void flip()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			std::swap(_front_buffer, _back_buffer);
 		}
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyObject(_buffer[0]);
-			VerifyObject(_buffer[1]);
-			VerifyArrayElement(_front_buffer, &_buffer[0], &_buffer[0]+2);
-			VerifyArrayElement(_back_buffer, &_buffer[0], &_buffer[0]+2);
-			VerifyTrue(_front_buffer != _back_buffer);
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(double_buffer, self)
+			CRAG_VERIFY(self._buffer[0]);
+			CRAG_VERIFY(self._buffer[1]);
+			CRAG_VERIFY_ARRAY_ELEMENT(self._front_buffer, &self._buffer[0], &self._buffer[0]+2);
+			CRAG_VERIFY_ARRAY_ELEMENT(self._back_buffer, &self._buffer[0], &self._buffer[0]+2);
+			CRAG_VERIFY_TRUE(self._front_buffer != self._back_buffer);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 		
 	private:

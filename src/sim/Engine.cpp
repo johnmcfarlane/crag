@@ -70,6 +70,10 @@ Engine::~Engine()
 	delete & _physics_engine;
 }
 
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
+	CRAG_VERIFY(static_cast<super const &>(self));
+CRAG_VERIFY_INVARIANTS_DEFINE_END
+
 void Engine::OnQuit()
 {
 	quit_flag = true;

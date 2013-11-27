@@ -60,7 +60,7 @@ namespace gfx
 	template<typename S>
 	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward, geom::Vector<S, 3> const & up)
 	{
-		VerifyNearlyEqual(Length(forward), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(forward), S(1), S(0.0001));
 		
 		geom::Vector<S, 3> right = Normalized(CrossProduct(forward, up));
 		geom::Vector<S, 3> matrix_up = CrossProduct(right, forward);
@@ -75,18 +75,18 @@ namespace gfx
 	template<typename S>
 	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward)
 	{
-		VerifyNearlyEqual(Length(forward), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(forward), S(1), S(0.0001));
 
 		geom::Vector<S, 3> up = Perpendicular(forward);
 		Normalize(up);
 		
 		geom::Vector<S, 3> right = CrossProduct(forward, up);
-		VerifyNearlyEqual(Length(right), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(right), S(1), S(0.0001));
 		
 		// verify axes are perpendicular to one another
-		VerifyNearlyEqual(DotProduct(forward, right), S(0), S(0.0001));
-		VerifyNearlyEqual(DotProduct(right, up), S(0), S(0.0001));
-		VerifyNearlyEqual(DotProduct(up, forward), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(forward, right), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(right, up), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(up, forward), S(0), S(0.0001));
 
 		return geom::Matrix<S, 3, 3>(
 			right.x, right.y, right.z,

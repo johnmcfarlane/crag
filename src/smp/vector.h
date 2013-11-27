@@ -55,20 +55,19 @@ namespace smp
 		////////////////////////////////////////////////////////////////////////////////
 		// invariant verification
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(vector, self)
 			// Either all members are null or non-null; no mix and match.
-			VerifyEqual((begin() == nullptr), (end() == nullptr));
-			VerifyEqual((begin() == nullptr), (everything == nullptr));
+			CRAG_VERIFY_EQUAL((self.begin() == nullptr), (self.end() == nullptr));
+			CRAG_VERIFY_EQUAL((self.begin() == nullptr), (self.everything == nullptr));
 			
-			// First, last and everything are in ascending order.
-			VerifyOp(begin(), <=, end());
-			VerifyOp(end(), <=, everything);
+			// First, last and self.everything are in ascending order.
+			CRAG_VERIFY_OP(self.begin(), <=, self.end());
+			CRAG_VERIFY_OP(self.end(), <=, self.everything);
 			
 			// Points are correctly lined up and add up.
-			VerifyEqual(begin() + (end() - begin()), end());
-			VerifyEqual(begin() + (everything - begin()), everything);
+			CRAG_VERIFY_EQUAL(self.begin() + (self.end() - self.begin()), self.end());
+			CRAG_VERIFY_EQUAL(self.begin() + (self.everything - self.begin()), self.everything);
 		}
 #endif
 		
@@ -118,14 +117,14 @@ namespace smp
 		
 		void reserve(size_type c)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			deinit();
 			init(c);
 		}
 		
 		void clear()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			// Call the d'tor on all the deleted elements.
 			for (T& element : *this)
@@ -135,24 +134,24 @@ namespace smp
 			
 			last = reinterpret_cast<atomic_type>(first);
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		bool empty() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return first == last;
 		}
 		
 		size_type size() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return size_type(end() - begin());
 		}
 		
 		size_type capacity() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return everything - first;
 		}
 		
@@ -206,7 +205,7 @@ namespace smp
 				new (it) T;
 			}
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			// Return the first of the new elements.
 			return pre_last;
@@ -224,7 +223,7 @@ namespace smp
 				new (it) T (filler);
 			}
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			// Return the first of the new elements.
 			return pre_last;
@@ -250,12 +249,12 @@ namespace smp
 			// Set everything to end of buffer.
 			everything = first + c;
 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		void deinit()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			// Erase all the allocated elements.
 			clear();

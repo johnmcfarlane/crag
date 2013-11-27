@@ -37,11 +37,7 @@ namespace physics
 		Vector3 Transform(Vector3 local_position) const;
 		Vector3 Rotate(Vector3 local_direction) const;
 
-#if defined(VERIFY)
-		virtual void Verify() const;
-#else
-		void Verify() const { }
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Location);
 	private:
 		Transformation _transformation;
 	};

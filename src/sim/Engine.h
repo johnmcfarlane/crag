@@ -73,6 +73,8 @@ namespace sim
 		Engine();
 		~Engine();
 		
+		CRAG_VERIFY_INVARIANTS_DECLARE(Engine);
+		
 		// message interface
 		void OnQuit();
 		

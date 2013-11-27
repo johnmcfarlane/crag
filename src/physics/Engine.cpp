@@ -244,7 +244,7 @@ void Engine::Tick(double delta_time)
 
 form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
 {
-	VerifyIsUnit(ray, .0001f);
+	CRAG_VERIFY_UNIT(ray, .0001f);
 	
 	// create physics::RayCast object
 	RayCast ray_cast(* this, length);

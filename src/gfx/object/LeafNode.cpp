@@ -25,17 +25,14 @@ LeafNode::LeafNode(Init const & init, Transformation const & local_transformatio
 , _mesh_resource(nullptr)
 , _is_opaque(true)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
-#if defined(VERIFY)
-void LeafNode::Verify() const
-{
-	super::Verify();
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(LeafNode, object)
+	CRAG_VERIFY(static_cast<LeafNode::super const &>(object));
 	
-	VerifyObject(_model_view_transformation);
-}
-#endif
+	CRAG_VERIFY(object._model_view_transformation);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 LeafNode & LeafNode::CastLeafNodeRef()
 {
@@ -69,7 +66,7 @@ void LeafNode::SetModelViewTransformation(Transformation const & model_view_tran
 	Transformation::Matrix44 const & matrix = _model_view_transformation.GetMatrix();
 	_render_depth = matrix[1][3];
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Transformation const & LeafNode::GetModelViewTransformation() const

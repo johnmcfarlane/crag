@@ -106,8 +106,8 @@ namespace
 
 		SideAttributes GenerateSideAttribute(Ray3 const & ray, Plane3 const & plane)
 		{
-			VerifyNearlyEqual(geom::Length(ray.direction), Scalar(1.), Scalar(.001));
-			VerifyNearlyEqual(geom::Length(plane.normal), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(ray.direction), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(plane.normal), Scalar(1.), Scalar(.001));
 
 			SideAttributes side_attributes;
 
@@ -230,8 +230,8 @@ namespace
 
 				// This is currently out best hope for a contact; call in.
 				RayCastResult child_result = (* function)(uniforms, attributes);
-				VerifyObject(child_result);
-				VerifyTrue(child_result.GetDistance() == std::numeric_limits<Scalar>::max() || child_result.GetDistance() <= uniforms.length);
+				CRAG_VERIFY(child_result);
+				CRAG_VERIFY_TRUE(child_result.GetDistance() == std::numeric_limits<Scalar>::max() || child_result.GetDistance() <= uniforms.length);
 
 				// evaluate result
 				result = std::min(result, child_result);
@@ -337,8 +337,8 @@ namespace
 
 RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Scalar length)
 {
-	VerifyIsUnit(ray.direction, .0001f);
-	VerifyOp(length, >=, 0.f);
+	CRAG_VERIFY_UNIT(ray.direction, .0001f);
+	CRAG_VERIFY_OP(length, >=, 0.f);
 	
 	// generate uniforms
 	auto polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
@@ -381,8 +381,8 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 		impl::AddTriangle(Triangle3(result.node->GetCorner(0).pos, result.node->GetCorner(1).pos, result.node->GetCorner(2).pos));
 	}
 
-	VerifyObject(result);
-	VerifyTrue(result.GetDistance() == std::numeric_limits<Scalar>::max() || result.GetDistance() <= uniforms.length);
+	CRAG_VERIFY(result);
+	CRAG_VERIFY_TRUE(result.GetDistance() == std::numeric_limits<Scalar>::max() || result.GetDistance() <= uniforms.length);
 
 	return result;
 #else

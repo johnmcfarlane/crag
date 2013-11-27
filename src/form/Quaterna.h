@@ -24,26 +24,8 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// Quaterna members
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyTrue(nodes != nullptr);
-			
-			Node * parent = nodes[0].GetParent();
-			
-			if (parent_score < 0) {
-				VerifyTrue(parent_score == -1);
-				VerifyTrue(parent == nullptr);
-			}
-			else {
-				VerifyTrue(parent != nullptr);
-			}
-			
-			for (Node * it = nodes; it != nodes + 4; ++ it) {
-				VerifyTrue(it->GetParent() == parent);
-				VerifyObject(* it);
-			}
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DECLARE(Quaterna);
 #endif
 		
 		bool IsInUse() const
@@ -73,4 +55,25 @@ namespace form
 		Node * nodes;	// [4]
 	};
 	
+#if defined(CRAG_VERIFY_ENABLED)
+	inline CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Quaterna, self)
+		CRAG_VERIFY(self.parent_score);
+		CRAG_VERIFY_TRUE(self.nodes != nullptr);
+		
+		Node * parent = self.nodes[0].GetParent();
+		
+		if (self.parent_score < 0) {
+			CRAG_VERIFY_TRUE(self.parent_score == -1);
+			CRAG_VERIFY_TRUE(parent == nullptr);
+		}
+		else {
+			CRAG_VERIFY_TRUE(parent != nullptr);
+		}
+		
+		for (Node * it = self.nodes; it != self.nodes + 4; ++ it) {
+			CRAG_VERIFY_TRUE(it->GetParent() == parent);
+			CRAG_VERIFY(* it);
+		}
+	CRAG_VERIFY_INVARIANTS_DEFINE_END
+#endif
 }

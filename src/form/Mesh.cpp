@@ -126,12 +126,14 @@ gfx::IndexBuffer const & form::Mesh::GetIndices() const
 	return indices;
 }
 
-#if defined(VERIFY)
-void form::Mesh::Verify() const
-{
-	::VerifyRef(vertices);
-	
-	VerifyTrue ((indices.GetSize() % 3) == 0);
-	VerifyTrue ((indices.GetSlack() % 3) == 0);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Mesh, self)
+	CRAG_VERIFY_EQUAL(self.indices.GetSize() % 3, 0);
+	CRAG_VERIFY_EQUAL(self.indices.GetSlack() % 3, 0);
+
+	for (auto index : self.indices)
+	{
+		Vertex const & v = self.vertices[index];
+		CRAG_VERIFY_ARRAY_ELEMENT(& v, std::begin(self.vertices), std::end(self.vertices));
+		CRAG_VERIFY(v);
+	}
+CRAG_VERIFY_INVARIANTS_DEFINE_END

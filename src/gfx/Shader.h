@@ -30,9 +30,7 @@ namespace gfx
 		bool IsInitialized() const;
 		bool IsCompiled() const;
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Shader);
 		
 	private:
 		std::vector<char> GetInfoLog() const;		

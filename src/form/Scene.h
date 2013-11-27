@@ -40,10 +40,8 @@ namespace form
 		Scene(size_t min_num_quaterne, size_t max_num_quaterne);
 		~Scene();
 		
-#if defined(VERIFY)
-		void Verify() const;
-		//void Verify(Mesh const & m) const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Scene);
+
 		void Clear();
 		
 		// Accessors for nodes/quaterna.

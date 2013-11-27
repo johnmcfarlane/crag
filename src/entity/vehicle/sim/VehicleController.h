@@ -31,9 +31,7 @@ namespace sim
 		VehicleController(Entity & entity);
 		~VehicleController();
 
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(VehicleController);
 		
 		// Add a Thruster
 		void AddThruster(Thruster * thruster);

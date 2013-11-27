@@ -74,7 +74,7 @@ ipc::MessageQueue<CLASS>::MessageQueue(size_type capacity)
 template <typename CLASS>
 ipc::MessageQueue<CLASS>::~MessageQueue()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsEmpty());
 
 	while (! GetPopBuffer().empty())
@@ -85,31 +85,6 @@ ipc::MessageQueue<CLASS>::~MessageQueue()
 	ASSERT(_buffers->buffer.empty());
 	ASSERT(_buffers->next == nullptr);
 }
-
-#if defined(VERIFY)
-template <typename CLASS>
-void ipc::MessageQueue<CLASS>::Verify() const
-{
-	VerifyTrue(_buffers != nullptr);
-
-	// If there's only one buffer,
-	if (_buffers->next == nullptr)
-	{
-		// then not much more can be tested.
-		_buffers->buffer.Verify();
-		return;
-	}
-
-	// If there are multiple buffers,
-	for (auto * buffer_node = _buffers; buffer_node != nullptr; buffer_node = buffer_node->next)
-	{
-		buffer_node->buffer.Verify();
-
-		// then none of them should be empty.
-		ASSERT(! buffer_node->buffer.empty());
-	}
-}
-#endif
 
 template <typename CLASS>
 bool ipc::MessageQueue<CLASS>::IsEmpty() const
@@ -122,7 +97,7 @@ template <typename MESSAGE>
 void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 {
 	Lock critical_section(_mutex);
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	auto * node = & GetPushBufferNode();
 
@@ -152,14 +127,14 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 		smp::Yield();
 	}
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 template <typename CLASS>
 bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
 {
 	_mutex.lock();
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	auto & pull_buffer = GetPopBuffer();
 	if (pull_buffer.empty())
@@ -207,7 +182,7 @@ void ipc::MessageQueue<CLASS>::CompleteDispatch(MESSAGE message, Class & object)
 template <typename CLASS>
 void ipc::MessageQueue<CLASS>::PopFront()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	auto & front = * _buffers;
 	auto & pop_buffer = front.buffer;
@@ -231,7 +206,7 @@ void ipc::MessageQueue<CLASS>::PopFront()
 
 	delete & front;
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 template <typename CLASS>

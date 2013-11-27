@@ -91,12 +91,12 @@ namespace form
 		void GetChildCorners(int child_index, Point * child_corners[3]) const;
 		void GetChildNeighbours(int child_index, Node * child_neighbours[3]) const;
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Node);
+
 	private:
 		flag_type flags_and_children;	//  4	/	8
 		Node * _parent;			//  4	/	8
+		
 	public:
 		int seed;				//  4	/	4
 

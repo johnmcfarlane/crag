@@ -60,13 +60,7 @@ namespace sim
 
 		SDL_FingerID GetId() const;
 
-#if defined(VERIFY)
-		void Verify() const;
-#else
-		void Verify() const
-		{
-		}
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Contact);
 
 	private:
 		// initial direction from camera to point of contact between contact and screen

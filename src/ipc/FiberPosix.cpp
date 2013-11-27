@@ -45,7 +45,7 @@ namespace
 	// figures out a sensible number of bytes to allocate for the fiber's stack
 	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
 	{
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		requested_stack_size = (requested_stack_size * 2) + 2048;
 #endif
 
@@ -72,7 +72,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 
 	InitContext();
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 	InitStackUseEstimator();
 #endif
 
@@ -84,7 +84,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 
 Fiber::~Fiber()
 {
-#if ! defined(NDEBUG)
+#if defined(CRAG_VERIFY_ENABLED)
 	ASSERT(! IsRunning());
 	ASSERT(! IsCurrent());
 	std::size_t stack_use = EstimateStackUse();
@@ -107,7 +107,7 @@ void Fiber::InitializeThread()
 
 bool Fiber::IsCurrent() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	char * somewhereOnTheStack = reinterpret_cast<char *>(& somewhereOnTheStack);
 	char * bottomOfTheStack = reinterpret_cast<char *>(_context.uc_stack.ss_sp);
 	std::size_t height = somewhereOnTheStack - bottomOfTheStack;
@@ -116,7 +116,7 @@ bool Fiber::IsCurrent() const
 
 void Fiber::Continue()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
 	ASSERT(_context.uc_link == nullptr);
@@ -133,12 +133,12 @@ void Fiber::Continue()
 	_context.uc_link = nullptr;
 
 	ASSERT(! IsCurrent());
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Fiber::Yield()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsCurrent());
 	ASSERT(_context.uc_link != nullptr);
 	
@@ -150,31 +150,30 @@ void Fiber::Yield()
 	ASSERT(IsRunning());
 	ASSERT(IsCurrent());
 	ASSERT(_context.uc_link != nullptr);
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
-#if defined(VERIFY)
-void Fiber::Verify() const
-{
-	VerifyOp(_context.uc_stack.ss_sp, !=, static_cast<decltype(_context.uc_stack.ss_sp)>(nullptr));
-	VerifyOp(_context.uc_stack.ss_size, >=, static_cast<decltype(_context.uc_stack.ss_size)>(MINSIGSTKSZ));
-	VerifyOp(_context.uc_stack.ss_size, >=, _stack_size);
-	VerifyOp(_context.uc_stack.ss_size, ==, calculate_stack_allocation(_stack_size));
+#if defined(CRAG_VERIFY_ENABLED)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Fiber, fiber)
+	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_sp, !=, static_cast<decltype(fiber._context.uc_stack.ss_sp)>(nullptr));
+	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, >=, static_cast<decltype(fiber._context.uc_stack.ss_size)>(MINSIGSTKSZ));
+	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, >=, fiber._stack_size);
+	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, ==, calculate_stack_allocation(fiber._stack_size));
 	
 	// _stack_size - and not the allocated stack size - is compared against 
 	// because this value doesn't change across platforms or build configs. 
 	// E.g. on OS X, allocated is always >= 32Ki so a Fiber with miniscule 
 	// stack would likely never trigger as assert.
-	std::size_t stack_use = EstimateStackUse();
-	if (stack_use >= _stack_size)
+	std::size_t stack_use = fiber.EstimateStackUse();
+	if (stack_use >= fiber._stack_size)
 	{
-		DEBUG_BREAK("%s stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, _name, stack_use, _stack_size);
+		DEBUG_BREAK("%s stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, fiber._name, stack_use, fiber._stack_size);
 	}
-	else if (stack_use >= _stack_size - 1024)
+	else if (stack_use >= fiber._stack_size - 1024)
 	{
-		DEBUG_MESSAGE("%s near stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, _name, stack_use, _stack_size);
+		DEBUG_MESSAGE("%s near stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, fiber._name, stack_use, fiber._stack_size);
 	}
-}
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Fiber::InitStackUseEstimator()
 {
@@ -265,9 +264,11 @@ void Fiber::OnLaunchHelper(unsigned i0, unsigned i1, unsigned i2, unsigned i3, u
 
 void Fiber::OnLaunch(Fiber & fiber, Callback * callback, void * data)
 {
-	ASSERT(fiber.IsCurrent());
-	ASSERT(fiber.EstimateStackUse() > 0);
-	
+#if defined(CRAG_VERIFY_ENABLED)
+	CRAG_VERIFY_TRUE(fiber.IsCurrent());
+	CRAG_VERIFY_OP(fiber.EstimateStackUse(), >, 0u);
+#endif
+
 	(* callback)(data);
 	
 	ASSERT(fiber._is_running);

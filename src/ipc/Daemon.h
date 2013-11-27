@@ -66,7 +66,7 @@ namespace ipc
 		
 		~Daemon() 
 		{ 
-			ASSERT(_state == State::acknowledge_flush_end);
+			CRAG_VERIFY_EQUAL_ENUM(_state, State::acknowledge_flush_end);
 			SetState(State::request_destroy);
 			
 			ASSERT(singleton == this);
@@ -165,8 +165,8 @@ namespace ipc
 		// Wait until it has finished flushing.
 		void EndFlush()
 		{
-			ASSERT(! singleton->_thread.IsCurrent());			
-			ASSERT(_state == State::acknowledge_flush_begin);
+			CRAG_VERIFY_FALSE(singleton->_thread.IsCurrent());			
+			CRAG_VERIFY_EQUAL_ENUM(_state, State::acknowledge_flush_begin);
 			
 			SetState(State::request_flush_end);
 
@@ -180,7 +180,7 @@ namespace ipc
 				
 				smp::Yield();
 			}
-			ASSERT(_state == State::acknowledge_flush_end);
+			CRAG_VERIFY_EQUAL_ENUM(_state, State::acknowledge_flush_end);
 			
 			ASSERT(_messages.IsEmpty());
 		}
@@ -222,7 +222,7 @@ namespace ipc
 			ASSERT(this == singleton);
 			ASSERT(_thread.IsCurrent());
 			
-			ASSERT(_state == State::initialized);
+			CRAG_VERIFY_EQUAL_ENUM(_state, State::initialized);
 			SetState(State::running);
 			
 			// create engine
@@ -238,7 +238,7 @@ namespace ipc
 			{
 				if (_state != State::acknowledge_flush_begin)
 				{
-					ASSERT(_state == State::request_flush_end);
+					CRAG_VERIFY_EQUAL_ENUM(_state, State::request_flush_end);
 				}
 				
 				if (IsTimedout())

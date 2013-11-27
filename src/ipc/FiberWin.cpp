@@ -32,7 +32,7 @@ namespace
 	// figures out a sensible number of bytes to allocate for the fiber's stack
 	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
 	{
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		// add some headroom in non-release builds
 		requested_stack_size = (requested_stack_size * 2) + 2048;
 #endif
@@ -82,14 +82,14 @@ void Fiber::InitializeThread()
 
 bool Fiber::IsCurrent() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	return _calling_fiber != nullptr;
 }
 
 void Fiber::Continue()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
 
@@ -98,12 +98,12 @@ void Fiber::Continue()
 	_calling_fiber = nullptr;
 
 	ASSERT(! IsCurrent());
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Fiber::Yield()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsCurrent());
 
 	SwitchToFiber(_calling_fiber);
@@ -112,15 +112,12 @@ void Fiber::Yield()
 	ASSERT(IsCurrent());
 }
 
-#if defined(VERIFY)
-void Fiber::Verify() const
-{
-	VerifyTrue(_fiber != nullptr);
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Fiber, self)
+	CRAG_VERIFY_TRUE(self._fiber != nullptr);
 	auto current_fiber = GetCurrentFiber();
-	VerifyTrue(current_fiber != _calling_fiber);
-	VerifyEqual(_calling_fiber == nullptr, _fiber != current_fiber);
-}
-#endif
+	CRAG_VERIFY_TRUE(current_fiber != self._calling_fiber);
+	CRAG_VERIFY_EQUAL(self._calling_fiber == nullptr, self._fiber != current_fiber);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void WINAPI Fiber::OnLaunch(void * fiber_pointer)
 {

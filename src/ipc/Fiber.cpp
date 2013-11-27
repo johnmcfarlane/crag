@@ -19,12 +19,12 @@ using namespace ipc;
 
 bool Fiber::IsRunning() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return _is_running;
 }
 
 char const * Fiber::GetName() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return _name;
 }

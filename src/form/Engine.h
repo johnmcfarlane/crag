@@ -61,6 +61,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
+		typedef ipc::EngineBase<Engine, Formation> super;
 		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
 
@@ -75,10 +76,7 @@ namespace form
 		Engine();
 		~Engine();
 		
-#if defined(VERIFY)
-		// Verification
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Engine);
 		
 		// message interface
 		void OnQuit();

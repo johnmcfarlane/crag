@@ -136,12 +136,12 @@ form::Engine::~Engine()
 	ASSERT(_formations.empty());
 }
 
-#if defined(VERIFY)
-void form::Engine::Verify() const
-{
-	VerifyObject(_scene);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Engine, self)
+	CRAG_VERIFY(self._scene);
+	CRAG_VERIFY(static_cast<super const &>(self));
+	CRAG_VERIFY(static_cast<SetCameraListener const &>(self));
+	CRAG_VERIFY(static_cast<SetOriginListener const &>(self));
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void form::Engine::OnQuit()
 {
@@ -265,7 +265,7 @@ void form::Engine::Tick()
 				
 	GenerateMesh();
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void form::Engine::TickScene()

@@ -19,12 +19,7 @@ namespace form
 	{
 		typedef geom::abs::Vector3 Vector;
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyObject(_origin);
-		}
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(MeshProperties);
 
 		MeshProperties() 
 		: _origin(Vector::Zero())
@@ -41,5 +36,10 @@ namespace form
 		Vector _origin;
 		std::size_t _num_quaterne;
 	};
-	
+
+#if defined(CRAG_VERIFY_ENABLED)
+	inline CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(MeshProperties, self)
+		CRAG_VERIFY(self._origin);
+	CRAG_VERIFY_INVARIANTS_DEFINE_END
+#endif
 }

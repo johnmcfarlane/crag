@@ -34,9 +34,7 @@ namespace sim
 		Thruster(Entity & entity, Ray3 const & ray, bool light);
 		virtual ~Thruster();
 
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
 
 		void SetParentModel(gfx::ObjectHandle parent_model);
 

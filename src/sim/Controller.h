@@ -21,9 +21,7 @@ namespace sim
 		Controller(Entity & entity);
 		virtual ~Controller();
 
-#if defined(VERIFY)
-		virtual void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Controller);
 
 		Entity & GetEntity();
 		Entity const & GetEntity() const;

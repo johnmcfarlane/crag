@@ -9,12 +9,6 @@
 
 #pragma once
 
-
-// VERIFY macro
-#if defined(VERIFY)
-#error VERIFY already defined
-#endif
-
 //#define CRAG_DEBUG_SHOW_FUNCTION
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,13 +21,13 @@
 // Semicolon-friendly empty statement.
 #define DO_NOTHING DO_STATEMENT()
 
+// avoids unused variable warnings
+#define CRAG_UNUSED(VARIABLE) DO_STATEMENT((void)(VARIABLE);)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Debug-only code
 
 #if ! defined(NDEBUG)
-
-#define VERIFY
 
 // Misc debug helpers
 namespace core
@@ -184,162 +178,3 @@ public:
 static int counter = 0; \
 ReentryGuard reentry_guard(counter);
 #endif
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Verify helper functions
-
-#if defined(VERIFY)
-
-#define VerifyTrue(CONDITION) \
-	DO_STATEMENT( \
-		if (! (CONDITION)) { \
-			DEBUG_BREAK("VerifyTrue(%s)", #CONDITION); \
-		} \
-	)
-
-#define VerifyOp(A, OP, B) \
-	DO_STATEMENT( \
-		const auto & a = (A); \
-		const auto & b = (B); \
-		if (!(a OP b)) { \
-			::std::ostringstream message; \
-			message \
-				<< '(' << #A "=" << a << ')' \
-				<< ' ' << #OP \
-				<< " (" << #B "=" << b << ')'; \
-			DEBUG_BREAK("Failed: %s", message.str().c_str()); \
-		} \
-	)
-
-#define VerifyEqual(A, B) \
-	VerifyOp(A, ==, B)
-
-#define VerifyNearlyEqual(A, B, EPSILON) \
-	DO_STATEMENT( \
-		auto a = A; \
-		auto b = B; \
-		if (! NearEqual(a, b, EPSILON)) { \
-			::std::ostringstream message; \
-			message << #A "=" << a \
-					<< ", " #B "=" << b \
-					<< ", " #EPSILON "=" << EPSILON; \
-			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
-		} \
-	)
-
-#define VerifyNearlyEqualLog(A, B, EPSILON) \
-	DO_STATEMENT( \
-		auto a = A; \
-		auto b = B; \
-		if (! NearEqualLog(a, b, EPSILON)) { \
-			::std::ostringstream message; \
-			message << #A "=" << a \
-					<< ", " #B "=" << b \
-					<< ", EPSILON=" << EPSILON; \
-			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
-		} \
-	)
-
-#define VerifyIsUnit(V, EPSILON) VerifyNearlyEqual(geom::Length(V), decltype(geom::Length(V))(1), EPSILON)
-
-// Verify that the reference is not null - nor a value suspiciously close to null.
-template<typename T> void VerifyRef(T const & ref) 
-{ 
-	VerifyOp(& ref, >=, reinterpret_cast<T *>(0x10000)); 
-}
-
-// Additionally, pointers may be null.
-template<typename T> void VerifyPtr(T const * ptr) 
-{ 
-	if (ptr != nullptr) {
-		VerifyRef(* ptr); 
-	}
-}
-
-// Run object's internal verification.
-template<typename T>
-void VerifyObject(T const & object)
-{
-	object.Verify();
-}
-
-inline void VerifyObject(float f)
-{
-	VerifyEqual(f, f);
-}
-
-// Verify address of object and run object's internal verification.
-template<typename T>
-void VerifyObjectRef(T const & ref)
-{
-	VerifyRef(ref);
-	VerifyObject(ref);
-}
-
-// Verify pointer to object and (if non-null) run object's internal verification.
-template<typename T>
-void VerifyObjectPtr(T const * ptr)
-{
-	if (ptr != nullptr) 
-	{
-		VerifyObjectRef(* ptr);
-	}
-}
-
-template<typename T> void VerifyArrayPointer(T const * element, T const * begin) 
-{ 
-	VerifyRef(* begin);	// null check
-	VerifyOp(begin, <=, element);	// in range
-	VerifyEqual((reinterpret_cast<char const *>(element) - reinterpret_cast<char const *>(begin)) % sizeof(T), static_cast<std::size_t>(0));	// element alignment
-}
-
-// verifies that element is a valid point in range, (begin, end)
-template<typename T> void VerifyArrayPointer(T const * element, T const * begin, T const * end) 
-{ 
-	VerifyArrayPointer(end, begin);		// valid end pointer
-	VerifyArrayPointer(element, begin);	// valid element pointer
-	VerifyOp(element, <=, end);	// element no further than top end of range
-}
-
-// verifies that element is a valid point in range, (begin, end]
-template<typename T> void VerifyArrayElement(T const * element, T const * begin, T const * end) 
-{ 
-	VerifyArrayPointer(end, begin);		// valid end pointer
-	VerifyArrayPointer(element, begin);	// valid element pointer
-	VerifyOp(element, <, end);	// element inside top end of range
-}
-#else
-
-#define VerifyTrue(CONDITION) DO_NOTHING
-#define VerifyOp(A, OP, B) DO_NOTHING
-#define VerifyEqual(A, B) DO_NOTHING
-#define VerifyNearlyEqual(A, B, EPSILON) DO_NOTHING
-#define VerifyNearlyEqualLog(A, B, EPSILON) DO_NOTHING
-#define VerifyIsUnit(V, EPSILON) DO_NOTHING
-
-template<typename T> void VerifyRef(T const &) { }
-template<typename T> void VerifyPtr(T const *) { }
-template<typename T> void VerifyObject(T const &) { }
-template<typename T> void VerifyObjectRef(T const &) { }
-template<typename T> void VerifyObjectPtr(T const *) { }
-template<typename T> void VerifyArrayPointer(T const *, T const *) { }
-template<typename T> void VerifyArrayPointer(T const *, T const *, T const *) { }
-template<typename T> void VerifyArrayElement(T const *, T const *, T const *) { }
-
-#endif
-
-
-// pointer to ref
-template<typename T> T & ref(T * ptr)
-{
-	VerifyRef(* ptr);
-	return * ptr;
-}
-
-// pointer to ref
-template<typename T> T const & ref(T const * ptr)
-{
-	VerifyRef(* ptr);
-	return * ptr;
-}

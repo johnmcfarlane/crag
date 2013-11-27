@@ -80,7 +80,7 @@ Frustum const & Pov::GetFrustum() const
 void Pov::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
-	VerifyObject(_transformation);
+	CRAG_VERIFY(_transformation);
 }
 
 Transformation const & Pov::GetTransformation() const

@@ -40,9 +40,7 @@ namespace form
 
 		friend bool operator<(RayCastResult const & lhs, RayCastResult const & rhs);
 
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(RayCastResult);
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// constants

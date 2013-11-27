@@ -56,9 +56,7 @@ namespace ipc
 		// must be called from within the fiber
 		void Yield();
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Fiber);
 
 	private:
 		static VOID WINAPI OnLaunch(LPVOID fiber_pointer);

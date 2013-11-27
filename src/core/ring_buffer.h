@@ -8,11 +8,6 @@
 
 #pragma once
 
-#if ! defined(NDEBUG)
-//#define CORE_RING_BUFFER_VERFICATION
-#endif
-
-
 namespace core
 {
 	// A sequence container which stores variable-sized objects of base class, BASE_CLASS.
@@ -93,7 +88,7 @@ namespace core
 		// access
 		value_type & front() 
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -101,7 +96,7 @@ namespace core
 		
 		value_type const & front() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			assert(! empty());
 			
 			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
@@ -109,13 +104,13 @@ namespace core
 		
 		const_iterator begin() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return const_iterator(_data_begin);
 		}
 		
 		const_iterator end() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return const_iterator(* _data_end);
 		}
 		
@@ -123,7 +118,7 @@ namespace core
 		template <typename CLASS>
 		bool push_back(CLASS const & source)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			
 			// CLASS must be derived from BASE_CLASS.
 			static_assert(std::is_base_of<BASE_CLASS, CLASS>::value, "wrong base type");
@@ -140,13 +135,13 @@ namespace core
 			// copy-construct object
 			new (back) CLASS (source);
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return true;
 		}
 		
 		void pop_front()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			assert(! empty());
 			
 			// get reference to the object to be deleted
@@ -164,7 +159,7 @@ namespace core
 			// call d'tor for object
 			object.~value_type();
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		void clear()
@@ -174,52 +169,51 @@ namespace core
 				pop_front();
 			}
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			if (empty())
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(ring_buffer, object)
+			if (object.empty())
 			{
-				VerifyEqual(* _data_end, _data_begin);
+				CRAG_VERIFY_EQUAL(* object._data_end, object._data_begin);
 			}
-			
-			if (_buffer_begin == nullptr)
+	
+			if (object._buffer_begin == nullptr)
 			{
-				assert(_buffer_end == nullptr);
-				assert(_data_begin == nullptr);
+				assert(object._buffer_end == nullptr);
+				assert(object._data_begin == nullptr);
 				return;
 			}
-			
+	
 			static int entry = 0;
 			if (entry > 0)
 			{
 				return;
 			}
 			++ entry;
-			
-			block const * data_end = * _data_end;
-			
-			verify_address(_buffer_begin);
-			verify_address(_buffer_end);
-			verify_address(_data_begin);
+	
+			block const * data_end = * object._data_end;
+	
+			verify_address(object._buffer_begin);
+			verify_address(object._buffer_end);
+			verify_address(object._data_begin);
 			verify_address(data_end);
-			
-			VerifyOp(capacity(), >=, block::header_size + sizeof(value_type));
-			VerifyOp(_data_begin, >=, _buffer_begin);
-			VerifyOp(_data_begin, <=, _buffer_end);
-			VerifyOp(data_end, >=, _buffer_begin);
-			VerifyOp(data_end, <=, _buffer_end);
-			
-			for (const_iterator i = const_iterator(_data_begin); i != const_iterator(* _data_end); ++ i)
+	
+			CRAG_VERIFY_OP(object.capacity(), >=, block::header_size + sizeof(value_type));
+			CRAG_VERIFY_OP(object._data_begin, >=, object._buffer_begin);
+			CRAG_VERIFY_OP(object._data_begin, <=, object._buffer_end);
+			CRAG_VERIFY_OP(data_end, >=, object._buffer_begin);
+			CRAG_VERIFY_OP(data_end, <=, object._buffer_end);
+	
+			for (const_iterator i = const_iterator(object._data_begin); i != const_iterator(* object._data_end); ++ i)
 			{
 			}
-			
+	
 			-- entry;
-		}
-#endif
-		
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif	// defined(CRAG_VERIFY_ENABLED)
+
 	private:
 		// allocates memory for the object
 		value_type * allocate_object_memory(size_type source_size)
@@ -247,7 +241,7 @@ namespace core
 			// expand data range
 			_data_end = & block_begin->_next;
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return reinterpret_cast<value_type *>(block_begin->_buffer);
 		}
 		
@@ -339,7 +333,7 @@ namespace core
 			_data_begin = _buffer_begin;
 			_data_end = & _data_begin;
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		// Null this object (except _data_end can never be null).
@@ -350,10 +344,10 @@ namespace core
 			init_data();
 		}
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		static void verify_address(size_type num_bytes)
 		{
-			VerifyEqual(ring_buffer::round_down(num_bytes), num_bytes);
+			CRAG_VERIFY_EQUAL(ring_buffer::round_down(num_bytes), num_bytes);
 		}
 		
 		static void verify_address(void const * num_bytes)
@@ -361,7 +355,7 @@ namespace core
 			verify_address(size_type(num_bytes));
 		}
 #endif
-		
+
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		

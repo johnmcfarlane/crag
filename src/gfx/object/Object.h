@@ -47,9 +47,7 @@ namespace gfx
 	public:
 		virtual ~Object();
 		
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Object);
 		
 		// scene graph types/variables/functions
 		virtual LeafNode & CastLeafNodeRef();
@@ -95,7 +93,7 @@ namespace gfx
 		void SetLocalTransformation(Transformation const & local_transformation);
 		
 		Transformation GetModelTransformation() const;
-
+		
 	private:
 		Transformation _local_transformation;
 	};

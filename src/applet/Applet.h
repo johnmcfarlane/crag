@@ -51,9 +51,7 @@ namespace applet
 
 		void SetQuitFlag();
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Applet);
 	private:
 		
 		// AppletInterface overrides

@@ -71,22 +71,19 @@ void Applet::Continue()
 
 bool Applet::GetQuitFlag() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return _quit_flag;
 }
 
 void Applet::SetQuitFlag()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	_quit_flag = true;
 }
 
-#if defined(VERIFY)
-void Applet::Verify() const
-{
-	VerifyObject(_fiber);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Applet, applet)
+	CRAG_VERIFY(applet._fiber);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Applet::Sleep(core::Time duration)
 {
@@ -99,7 +96,7 @@ void Applet::Sleep(core::Time duration)
 void Applet::WaitFor(Condition & condition)
 {
 	ASSERT(condition != null_condition);
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	ASSERT(_condition == null_condition);
 	_condition = condition;
@@ -122,7 +119,7 @@ void Applet::OnLaunch(void * data)
 	ASSERT(applet._condition == null_condition);
 	
 	applet._function(applet);
-	VerifyObject(applet);
+	CRAG_VERIFY(applet);
 
 	applet.SetQuitFlag();
 

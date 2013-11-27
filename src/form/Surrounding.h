@@ -52,9 +52,8 @@ namespace form
 		Surrounding(size_t max_num_quaterne);
 		~Surrounding();
 		
-#if defined(VERIFY)
-		//void VerifyRanking(Ranking const * ranking) const;
-		void Verify() const;
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DECLARE(Surrounding);
 		void VerifyUsed(Quaterna const & q) const;
 		void VerifyUnused(Quaterna const & q) const;
 #endif

@@ -131,17 +131,14 @@ void Entity::UpdateModels() const
 	});
 }
 
-#if defined(VERIFY)
-void Entity::Verify() const
-{
-	super::Verify();
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Entity, entity)
+	CRAG_VERIFY(static_cast<Entity::super const &>(entity));
 
-	VerifyObjectPtr(_location);
+	CRAG_VERIFY(entity._location);
 
-	if (_controller != nullptr)
+	if (entity._controller != nullptr)
 	{
-		VerifyObjectRef(* _controller);
-		VerifyEqual(& _controller->GetEntity(), this);
+		CRAG_VERIFY(* entity._controller);
+		CRAG_VERIFY_EQUAL(& entity._controller->GetEntity(), & entity);
 	}
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_END

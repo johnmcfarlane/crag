@@ -41,11 +41,7 @@ namespace sim
 		
 		Scalar GetReading() const;
 
-#if defined(VERIFY)
-		void Verify() const;
-#else
-		void Verify() const { }
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 
 	private:
 		void Tick();

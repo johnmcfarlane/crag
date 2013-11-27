@@ -29,9 +29,7 @@ namespace gfx
 		FormationMesh(Init const & init, size_t max_num_quaterne);
 		~FormationMesh();
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(FormationMesh);
 		
 		virtual void UpdateModelViewTransformation(Transformation const & model_view) override;
 

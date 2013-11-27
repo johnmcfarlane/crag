@@ -322,14 +322,14 @@ namespace core
 				return h.is_attached();
 			}
 			
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 			template <hook_type Class::*Member>
 			static void verify(value_type const & element)
 			{
 				hook_type const & h = element.*Member;
-				VerifyPtr(h._next);
-				VerifyPtr(h._previous);
-				VerifyTrue((h._next == nullptr) == (h._previous == nullptr));
+				CRAG_VERIFY(h._next);
+				CRAG_VERIFY(h._previous);
+				CRAG_VERIFY_TRUE((h._next == nullptr) == (h._previous == nullptr));
 			}
 #else
 			template <hook_type Class::*Member>
@@ -626,15 +626,12 @@ namespace core
 			}
 			
 			// throws a fit if something is wrong about the given element
-			void verify() const
-			{
-#if defined(VERIFY)
-				for (const_iterator i = begin(), __end = end(); i != __end; ++ i)
+			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(list, self)
+				for (const_iterator i = self.begin(), __end = self.end(); i != __end; ++ i)
 				{
-					verify(* i);
+					CRAG_VERIFY(* i);
 				}
-#endif
-			}
+			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 			
 			// throws a fit if something is wrong about the given element
 			static void verify(value_type const & element)

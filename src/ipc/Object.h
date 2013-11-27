@@ -51,16 +51,8 @@ namespace ipc
 		
 		virtual ~Object()
 		{ 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
-		
-#if defined(VERIFY)
-		virtual void Verify() const
-		{
-			VerifyRef(_engine);
-			ASSERT(_uid);
-		}
-#endif
 		
 		// default allocation
 		void* operator new(size_t sz) noexcept
@@ -115,6 +107,13 @@ namespace ipc
 		{
 			return _uid;
 		}
+
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Object, object)
+			CRAG_VERIFY(reinterpret_cast<void *>(& object._engine));
+			ASSERT(object._uid);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif	// defined(CRAG_VERIFY_ENABLED)
 
 	private:
 		// variables

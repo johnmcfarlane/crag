@@ -42,9 +42,7 @@ namespace gfx
 
 		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer);
 		
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(LeafNode);
 		
 		virtual LeafNode & CastLeafNodeRef() final;
 		virtual LeafNode const & CastLeafNodeRef() const final;

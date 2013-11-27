@@ -54,12 +54,12 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light)
 	auto & draw_roster = entity.GetEngine().GetDrawRoster();
 	draw_roster.AddCommand(* this, & Thruster::UpdateModel);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Thruster::~Thruster()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	// destroy model
 	_model.Destroy();
@@ -73,13 +73,10 @@ Thruster::~Thruster()
 	tick_roster.RemoveCommand(* this, & Thruster::Tick);
 }
 
-#if defined(VERIFY)
-void Thruster::Verify() const
-{
-	VerifyRef(_entity);
-	VerifyOp(_thrust_factor, >=, 0);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Thruster, self)
+	CRAG_VERIFY(self._entity);
+	CRAG_VERIFY_OP(self._thrust_factor, >=, 0);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Thruster::SetParentModel(gfx::ObjectHandle parent_model)
 {
@@ -102,23 +99,23 @@ Entity & Thruster::GetEntity()
 
 float Thruster::GetThrustFactor() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	return _thrust_factor;
 }
 
 void Thruster::SetThrustFactor(float thrust_factor)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	_thrust_factor = thrust_factor;
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Thruster::Tick()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	if (_thrust_factor <= 0)
 	{
@@ -134,7 +131,7 @@ void Thruster::Tick()
 
 void Thruster::UpdateModel() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	float thrust_factor = _thrust_factor;
 	if (thrust_factor <= 0)

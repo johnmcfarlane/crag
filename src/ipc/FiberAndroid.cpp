@@ -45,14 +45,14 @@ void Fiber::InitializeThread()
 
 bool Fiber::IsCurrent() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	return _thread.IsCurrent();
 }
 
 void Fiber::Continue()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsRunning());
 	ASSERT(! IsCurrent());
 
@@ -63,12 +63,12 @@ void Fiber::Continue()
 	_condition.wait(lock, [&] () { return _is_yielded; });
 
 	ASSERT(! IsCurrent());
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Fiber::Yield()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(IsCurrent());
 	
 	_is_yielded = true;
@@ -83,24 +83,21 @@ void Fiber::Yield()
 	ASSERT(IsCurrent());
 }
 
-#if defined(VERIFY)
-void Fiber::Verify() const
-{
-	VerifyTrue(_name != nullptr);
-	if (_is_yielded)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Fiber, self)
+	CRAG_VERIFY_TRUE(self._name != nullptr);
+	if (self._is_yielded)
 	{
-		VerifyTrue(! _thread.IsCurrent());
+		CRAG_VERIFY_TRUE(! self._thread.IsCurrent());
 	}
 	else
 	{
-		if (! _is_running)
+		if (! self._is_running)
 		{
 			// means we're yielding for the last time
-			VerifyTrue(_thread.IsCurrent());
+			CRAG_VERIFY_TRUE(self._thread.IsCurrent());
 		}
 	}
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Fiber::OnLaunch(Fiber * fiber, void * data, Callback * callback)
 {

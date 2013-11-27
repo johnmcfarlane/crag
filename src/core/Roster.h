@@ -123,9 +123,7 @@ namespace core
 			FunctionIndex GetFunctionIndex(Function function);
 			Function GetFunction(FunctionIndex function_index) const;
 
-#if defined(VERIFY)
-			void Verify() const;
-#endif
+			CRAG_VERIFY_INVARIANTS_DECLARE(Ordering);
 		private:
 			ComparisonTable _table;
 		};
@@ -161,9 +159,7 @@ namespace core
 			Roster();
 			~Roster();
 
-#if defined(VERIFY)
-			void Verify() const;
-#endif
+			CRAG_VERIFY_INVARIANTS_DECLARE(Roster);
 
 			void Call();
 

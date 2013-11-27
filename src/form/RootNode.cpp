@@ -12,14 +12,14 @@
 #include "RootNode.h"
 
 #include "PointBuffer.h"
-
+#include "Polyhedron.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessor
 
 form::RootNode & form::GetRootNode(Node & node)
 {
-	//VerifyArrayElement(& node, nodes, nodes_available_end);
+	//CRAG_VERIFY_ARRAY_ELEMENT(& node, nodes, nodes_available_end);
 	
 	Node * iterator = & node;
 	while (true) {

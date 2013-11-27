@@ -32,7 +32,7 @@ namespace geom
 		: position(_position)
 		, normal(_normal)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 
 		Plane(Triangle const & triangle) 
@@ -40,13 +40,12 @@ namespace geom
 		{
 		}
 
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyObject(position);
-			VerifyObject(normal);
-			VerifyOp(normal, !=, Vector::Zero());
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Plane, self)
+			CRAG_VERIFY(self.position);
+			CRAG_VERIFY(self.normal);
+			CRAG_VERIFY_OP(self.normal, !=, Vector::Zero());
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 
 		// attributes

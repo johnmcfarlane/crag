@@ -13,27 +13,41 @@
 
 #include "core/memory.h"
 
+using namespace form;
 
-form::VertexBuffer::VertexBuffer(int max_num_verts) 
+////////////////////////////////////////////////////////////////////////////////
+// form::VertexBuffer member definitions
+
+VertexBuffer::VertexBuffer(int max_num_verts) 
 : _verts(max_num_verts)
 {
 }
 
-form::Vertex & form::VertexBuffer::PushBack(Vertex const & element)
+form::Vertex & VertexBuffer::PushBack(Vertex const & element)
 {
 	return _verts.push_back(element);
 }
 
-void form::VertexBuffer::Clear()
+void VertexBuffer::Clear()
 {
 	_verts.clear();
 }
 
-int form::VertexBuffer::GetIndex(Vertex const & v) const
+int VertexBuffer::GetIndex(Vertex const & v) const
 {
 	Vertex const * array = & _verts.front();
 
 	int index = int(& v - array);
 	
 	return index;
+}
+
+Vertex const & VertexBuffer::operator[] (int index) const
+{
+	return _verts[index];
+}
+
+Vertex & VertexBuffer::operator[] (int index)
+{
+	return _verts[index];
 }

@@ -66,9 +66,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Engine);
 
 		Engine();
 		~Engine();

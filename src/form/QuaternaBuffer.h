@@ -29,9 +29,7 @@ namespace form
 		QuaternaBuffer(int max_num_quaterne);
 		~QuaternaBuffer();
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(QuaternaBuffer);
 
 		// high-level actions
 		void Clear();

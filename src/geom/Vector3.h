@@ -43,7 +43,7 @@ namespace geom
 		, y(rhs_y)
 		, z(rhs_z) 
 		{ 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		static constexpr std::size_t Size()
@@ -85,15 +85,14 @@ namespace geom
 			return Vector(max_value, max_value, max_value);
 		}
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyTrue(x == x);
-			VerifyTrue(y == y);
-			VerifyTrue(z == z);
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Vector, v)
+			CRAG_VERIFY(v.x);
+			CRAG_VERIFY(v.y);
+			CRAG_VERIFY(v.z);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
-		
+
 		S x, y, z;
 	};
 

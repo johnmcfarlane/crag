@@ -53,7 +53,8 @@ namespace core
 {
 	// A simple memory allocation pool which allocates/deallocates very quickly
 	// but can become unsorted quickly
-	template<typename T> class object_pool
+	template <typename T>
+	class object_pool
 	{
 		////////////////////////////////////////////////////////////////////////
 		// types
@@ -76,12 +77,12 @@ namespace core
 		{
 			init(max_elements);
 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 	
 		~object_pool()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			deinit();
 		}
@@ -115,7 +116,7 @@ namespace core
 		// or nullptr if the pool is full
 		void * allocate()
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			auto new_list_element = reinterpret_cast<value_type *>(_free_list_head);
 
@@ -137,21 +138,21 @@ namespace core
 			
 			++ _num_allocated;
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			return reinterpret_cast<void *>(new_list_element);
 		}
 	
 		// frees up memory returned from allocate
 		void free(void * ptr)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 
 			if (ptr == nullptr)
 			{
 				return;
 			}
 
-			VerifyArrayElement(reinterpret_cast<value_type *>(ptr), _array, reinterpret_cast<value_type const *>(_unlinked_begin));
+			CRAG_VERIFY_ARRAY_ELEMENT(reinterpret_cast<value_type *>(ptr), _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 
 			Node * n = reinterpret_cast<Node *>(ptr);
 		
@@ -165,7 +166,7 @@ namespace core
 				init_free_list();
 			}
 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 
 		// returns a new object constructed with given parameters
@@ -209,18 +210,40 @@ namespace core
 			return _num_allocated == 0;
 		}
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		// element must be any member of the array
 		void VerifyElement(value_type const & element) const
 		{
-			VerifyArrayElement(& element, _array, _array_end);
+			CRAG_VERIFY_ARRAY_ELEMENT(& element, _array, _array_end);
 		}
 
 		// element must be any member of the array which is currently allocated
 		void VerifyAllocatedElement(value_type const & element) const
 		{
-			VerifyArrayElement(& element, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
+			CRAG_VERIFY_ARRAY_ELEMENT(& element, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 		}
+
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(object_pool, pool)
+			CRAG_VERIFY_ARRAY_ELEMENT(reinterpret_cast<value_type *>(pool._free_list_head), pool._array, pool._array_end);
+			CRAG_VERIFY_ARRAY_POINTER(reinterpret_cast<value_type *>(pool._unlinked_begin), reinterpret_cast<value_type *>(pool._free_list_head), pool._array_end);
+			CRAG_VERIFY_ARRAY_POINTER(pool._array_end, reinterpret_cast<value_type *>(pool._unlinked_begin), pool._array_end);
+			CRAG_VERIFY_OP(pool._array_end, >, pool._array);
+
+#if defined(CRAG_CORE_OBJECT_POOL_DIAGNOSTICS)
+			std::size_t free_list_size = 0;
+			for (auto node_iterator = pool._free_list_head; node_iterator != pool._unlinked_begin; node_iterator = node_iterator->next)
+			{
+				VerifyFreeElement(* reinterpret_cast<value_type *>(node_iterator));
+				++ free_list_size;
+			}
+
+			std::size_t max_free_list_size = reinterpret_cast<value_type *>(pool._unlinked_begin) - pool._array;
+			CRAG_VERIFY_OP(free_list_size, <=, max_free_list_size);
+			CRAG_VERIFY_EQUAL(_num_allocated, max_free_list_size - free_list_size);
+#endif
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif	// defined(CRAG_VERIFY_ENABLED)
 
 		// element must be any member of the array which is currently not allocated
 		void VerifyFreeElement(value_type const & element) const
@@ -229,35 +252,10 @@ namespace core
 
 			auto & node = reinterpret_cast<Node const &>(element);
 			auto next = reinterpret_cast<value_type const *>(node.next);
-			VerifyArrayPointer(next, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
-		}
-
-		void Verify() const
-		{
-			VerifyArrayPointer(reinterpret_cast<value_type *>(_free_list_head), _array);
-			VerifyArrayPointer(reinterpret_cast<value_type *>(_unlinked_begin), reinterpret_cast<value_type *>(_free_list_head));
-			VerifyArrayPointer(_array_end, reinterpret_cast<value_type *>(_unlinked_begin));
-			VerifyOp(_array_end, >, _array);
-			
-#if defined(CRAG_CORE_OBJECT_POOL_DIAGNOSTICS)
-			std::size_t free_list_size = 0;
-			for (auto node_iterator = _free_list_head; node_iterator != _unlinked_begin; node_iterator = node_iterator->next)
-			{
-				VerifyFreeElement(* reinterpret_cast<value_type *>(node_iterator));
-				++ free_list_size;
-			}
-
-			std::size_t max_free_list_size = reinterpret_cast<value_type *>(_unlinked_begin) - _array;
-			VerifyOp(free_list_size, <=, max_free_list_size);
-			VerifyEqual(_num_allocated, max_free_list_size - free_list_size);
-#endif
-		}
-#else
-		void VerifyElement(value_type const *) const
-		{
+			CRAG_VERIFY_ARRAY_POINTER(next, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 		}
 #endif
-	
+
 	private:
 		// init/deinit
 		void init(size_type max_num_elements)

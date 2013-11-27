@@ -25,11 +25,9 @@ Controller::~Controller()
 { 
 }
 
-#if defined(VERIFY)
-void Controller::Verify() const
-{
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Controller, self)
+	// TODO: virtual
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Entity & Controller::GetEntity()
 {

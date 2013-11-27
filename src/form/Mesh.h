@@ -50,9 +50,7 @@ namespace form
 		gfx::IndexBuffer & GetIndices();
 		gfx::IndexBuffer const & GetIndices() const;
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Mesh);
 		
 		// variables
 	private:

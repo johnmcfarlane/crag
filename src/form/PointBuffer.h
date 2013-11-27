@@ -25,9 +25,9 @@ namespace form
 		Point * Create();
 		void Destroy(Point * ptr);
 		
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		void VerifyAllocatedElement(Point const & element) const;
-		void Verify() const;
+		CRAG_VERIFY_INVARIANTS_DECLARE(PointBuffer);
 #endif
 
 private:

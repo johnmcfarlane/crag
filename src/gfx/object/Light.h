@@ -37,9 +37,7 @@ namespace gfx
 		Light(Init const & init, Transformation const & local_transformation, Color4f const & color);
 		~Light();
 		
-#if defined(VERIFY)
-		virtual void Verify() const override;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;

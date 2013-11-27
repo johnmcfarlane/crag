@@ -22,8 +22,8 @@ namespace form
 	{
 		OBJECT_NO_COPY (NodeBuffer);
 	public:
-#if defined(VERIFY)
-		void Verify() const;
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DECLARE(NodeBuffer);
 		void VerifyUsed(Node const & n) const;
 #endif
 		

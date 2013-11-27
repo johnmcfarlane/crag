@@ -63,9 +63,7 @@ namespace sim
 		void UpdateModels() const;
 
 		// Verification
-	#if defined(VERIFY)
-		virtual void Verify() const final;
-	#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Entity);
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

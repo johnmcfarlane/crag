@@ -59,7 +59,8 @@ namespace ipc
 			for (auto & listener_node : _listeners)
 			{
 				auto & listener = static_cast<ListenerInterface &>(listener_node);
-				VerifyRef(listener);
+				CRAG_VERIFY_TRUE(& listener);
+				CRAG_VERIFY(& listener);
 
 				listener.Dispatch(event);
 			}

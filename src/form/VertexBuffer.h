@@ -32,6 +32,9 @@ namespace form
 
 		int GetIndex(Vertex const & v) const;
 		
+		Vertex const & operator[] (int index) const;
+		Vertex & operator[] (int index);
+		
 		VertexVector::const_iterator begin() const
 		{
 			return std::begin(_verts);

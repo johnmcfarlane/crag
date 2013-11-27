@@ -61,12 +61,10 @@ namespace ipc
 		// Must be called from within the fiber.
 		void Yield();
 		
-#if defined(VERIFY)
-		void Verify() const;
+		CRAG_VERIFY_INVARIANTS_DECLARE(Fiber);
 	private:
 		void InitStackUseEstimator();
 		std::size_t EstimateStackUse() const;
-#endif
 
 		void InitContext();
 		void InitCallback(Callback * callback, void * data);

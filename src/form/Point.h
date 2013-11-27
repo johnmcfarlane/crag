@@ -21,9 +21,7 @@ namespace form
 	public:
 		Point();
 
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Point);
 		
 		// Attributes
 		Vector3 pos;

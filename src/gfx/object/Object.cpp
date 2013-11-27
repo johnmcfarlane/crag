@@ -21,7 +21,7 @@ Object::Object(Init const & init, Transformation const & local_transformation)
 , _parent(nullptr)
 , _local_transformation(local_transformation)
 { 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Object::~Object() 
@@ -33,37 +33,6 @@ Object::~Object()
 		OrphanChild(* this);
 	}
 }
-
-#if defined(VERIFY)
-void Object::Verify() const
-{
-	super::Verify();
-	
-	List::verify(* this);
-	
-	VerifyPtr(_parent);
-
-	if (_parent != nullptr)
-	{
-		VerifyTrue(IsChild(* this, * _parent));
-	}
-
-	_children.verify();
-	
-	for (List::const_iterator i = _children.begin(), end = _children.begin(); i != end; ++ i)
-	{
-		Object const & child = static_cast<Object const &>(* i);
-		VerifyTrue(child.GetParent() == this);
-	}
-	
-	VerifyObject(_local_transformation);
-
-	auto scale = _local_transformation.GetScale();
-	VerifyTrue(NearEqual<Scalar>(scale.x, 1, 0.001f));
-	VerifyTrue(NearEqual<Scalar>(scale.y, 1, 0.001f));
-	VerifyTrue(NearEqual<Scalar>(scale.z, 1, 0.001f));
-}
-#endif
 
 LeafNode & Object::CastLeafNodeRef()
 {
@@ -182,7 +151,7 @@ Transformation const & Object::GetLocalTransformation() const
 void Object::SetLocalTransformation(Transformation const & local_transformation)
 {
 	_local_transformation = local_transformation;
-	VerifyObject(_local_transformation);
+	CRAG_VERIFY(_local_transformation);
 }
 
 Transformation Object::GetModelTransformation() const
@@ -211,3 +180,31 @@ Transformation Object::GetModelTransformation() const
 		ancestor = parent;
 	}
 }
+
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Object, object)
+	CRAG_VERIFY(static_cast<super const &>(object));
+	
+	List::verify(object);
+	
+	CRAG_VERIFY(object._parent);
+
+	if (object._parent != nullptr)
+	{
+		CRAG_VERIFY_TRUE(IsChild(object, * object._parent));
+	}
+
+	CRAG_VERIFY(object._children);
+	
+	for (List::const_iterator i = object._children.begin(), end = object._children.begin(); i != end; ++ i)
+	{
+		Object const & child = static_cast<Object const &>(* i);
+		CRAG_VERIFY_TRUE(child.GetParent() == & object);
+	}
+	
+	CRAG_VERIFY(object._local_transformation);
+
+	auto scale = object._local_transformation.GetScale();
+	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.x, 1, 0.001f));
+	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.y, 1, 0.001f));
+	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.z, 1, 0.001f));
+CRAG_VERIFY_INVARIANTS_DEFINE_END

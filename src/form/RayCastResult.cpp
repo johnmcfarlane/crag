@@ -23,19 +23,19 @@ RayCastResult::RayCastResult(Vector3 const & normal, Scalar distance, Node const
 , _distance(distance)
 , _node(node)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 RayCastResult::operator bool () const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	return _distance != _max_distance;
 }
 
 Scalar RayCastResult::GetDistance() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	return _distance;
 }
@@ -45,31 +45,28 @@ Node const * RayCastResult::GetNode() const
 	return _node;
 }
 
-#if defined(VERIFY)
-void RayCastResult::Verify() const
-{
-	if (_distance != _max_distance)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCastResult, self)
+	if (self._distance != self._max_distance)
 	{
-		VerifyObject(_normal);
-		VerifyNearlyEqual(geom::Length(_normal), 1.f, .001f);
+		CRAG_VERIFY(self._normal);
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(self._normal), 1.f, .001f);
 
-		VerifyObject(_distance);
-		VerifyOp(_distance, >=, 0.f);
+		CRAG_VERIFY(self._distance);
+		CRAG_VERIFY_OP(self._distance, >=, 0.f);
 	}
 	else
 	{
-		VerifyEqual(_node, static_cast<Node const *>(nullptr));
+		CRAG_VERIFY_EQUAL(self._node, static_cast<Node const *>(nullptr));
 	}
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 namespace form
 {
 	// the sort criteria applied to RayCastResult when choosing the lowest contact
 	bool operator<(RayCastResult const & lhs, RayCastResult const & rhs)
 	{
-		VerifyObjectRef(lhs);
-		VerifyObjectRef(rhs);
+		CRAG_VERIFY(lhs);
+		CRAG_VERIFY(rhs);
 
 		// Being negative means behind the ray. That's worse than being in front.
 		int positive_compare = int(lhs._distance >= 0) - int(rhs._distance >= 0);

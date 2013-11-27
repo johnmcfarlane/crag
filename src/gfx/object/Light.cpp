@@ -31,7 +31,7 @@ Light::Light(LeafNode::Init const & init, Transformation const & local_transform
 	Light::List & lights = scene.GetLightList();
 	lights.push_back(* this);
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Light::~Light()
@@ -41,15 +41,12 @@ Light::~Light()
 	lights.remove(* this);
 }
 
-#if defined(VERIFY)
-void Light::Verify() const
-{
-	super::Verify();
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
+	CRAG_VERIFY(static_cast<Light::super const &>(object));
 
-	VerifyTrue(Light::List::is_contained(* this));
-	VerifyTrue(_color.a == 1.f);
-}
-#endif
+	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
+	CRAG_VERIFY_TRUE(object._color.a == 1.f);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Light::SetColor(Color4f const & color)
 {

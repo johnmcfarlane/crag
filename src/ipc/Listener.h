@@ -41,21 +41,21 @@ namespace ipc
 		// busy objects should not be destroyed
 		bool IsBusy() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			
 			return _is_listening || _dispatch_count > 0;
 		}
 		
 		bool IsListening() const
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			
 			return _is_listening;
 		}
 		
 		void SetIsListening(bool is_listening)
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			
 			if (_is_listening == is_listening)
 			{
@@ -72,15 +72,14 @@ namespace ipc
 				_super::Remove();
 			}
 			
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 
-#if defined(VERIFY)
-		void Verify() const
-		{
-			//VerifyEqual(_super::IsContained(), _is_listening);
-			VerifyOp(_super::_counter, >=, 0);
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Listener, self)
+			//CRAG_VERIFY_EQUAL(_super::IsContained(), _is_listening);
+			CRAG_VERIFY_OP(self._counter, >=, 0);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 
 	private:
@@ -91,7 +90,7 @@ namespace ipc
 		
 		virtual void Dispatch (EVENT event) final
 		{
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 			_dispatch_count += 1;
 
 			ListenerDaemon::Call([this, event] (ListenerEngine &) {
@@ -99,7 +98,7 @@ namespace ipc
 				_dispatch_count -= 1;
 			});
 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 
 		virtual void operator() (EVENT const & event) = 0;

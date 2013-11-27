@@ -223,7 +223,7 @@ void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
 
 bool Body::IsCollidable(Body const & body) const
 {
-	VerifyRef(body);
+	CRAG_VERIFY(body);
 	
 	return & body != _exception;
 }
@@ -308,16 +308,13 @@ bool physics::IsAttached(Body const & body1, Body const & body2)
 	return dAreConnected(body1._body_handle, body2._body_handle) != 0;
 }
 
-#if defined(VERIFY)
-void physics::Body::Verify() const
-{
-	VerifyObject(GetTranslation());
-	VerifyObject(GetVelocity());
-	VerifyObject(GetRotation());
-	VerifyOp(geom::Length(GetTranslation()), <, 4.0e+8);
-//	VerifyOp(geom::Length(GetVelocity()), <, 1000);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
+	CRAG_VERIFY(self.GetTranslation());
+	CRAG_VERIFY(self.GetVelocity());
+	CRAG_VERIFY(self.GetRotation());
+	CRAG_VERIFY_OP(geom::Length(self.GetTranslation()), <, 4.0e+8);
+//	CRAG_VERIFY_OP(geom::Length(GetVelocity()), <, 1000);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Vector3 const & physics::Body::GetGeomTranslation() const
 {

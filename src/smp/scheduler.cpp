@@ -527,6 +527,8 @@ namespace smp
 		
 		void Complete(Batch & batch, int priority)
 		{
+			CRAG_VERIFY(batch);
+			
 			TaskManager & task_manager = singleton->GetTaskManager();
 			
 			size_t num_jobs = 0;

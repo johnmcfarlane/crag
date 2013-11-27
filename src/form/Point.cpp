@@ -22,10 +22,7 @@ Point::Point()
 {
 }
 
-#if defined(VERIFY)
-void Point::Verify() const
-{
-	VerifyObject(pos);
-	VerifyObjectPtr(vert);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Point, self)
+	CRAG_VERIFY(self.pos);
+	CRAG_VERIFY(self.vert);
+CRAG_VERIFY_INVARIANTS_DEFINE_END

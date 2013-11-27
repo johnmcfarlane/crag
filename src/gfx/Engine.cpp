@@ -263,14 +263,10 @@ Engine::StateParam const Engine::init_state[] =
 	INIT_CAP(GL_BLEND, false),
 };
 
-#if defined(VERIFY)
-void Engine::Verify() const
-{
-	super::Verify();
-
-	VerifyObjectPtr(scene);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
+	CRAG_VERIFY(static_cast<super const &>(self));
+	CRAG_VERIFY(self.scene);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : scene(nullptr)
@@ -561,7 +557,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	while (! quit_flag || ! scene->GetRoot().IsEmpty())
 	{
 		message_queue.DispatchMessages(* this);
-		VerifyObjectRef(* scene);
+		CRAG_VERIFY(* scene);
 		
 		if (! _paused && _ready && (_dirty || quit_flag))
 		{
@@ -844,7 +840,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	// calculate model view transformation for this object
 	auto & object_transformation = object.GetLocalTransformation();
 	auto model_view_transformation = parent_model_view_transformation * object_transformation;
-	VerifyObject(model_view_transformation);
+	CRAG_VERIFY(model_view_transformation);
 
 	// if it's something that'll get drawn
 	auto * leaf = object.CastLeafNodePtr();

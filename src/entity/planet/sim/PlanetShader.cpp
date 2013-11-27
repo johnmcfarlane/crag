@@ -184,8 +184,8 @@ void PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * p
 
 bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const
 {
-	VerifyObject(a);
-	VerifyObject(b);
+	CRAG_VERIFY(a);
+	CRAG_VERIFY(b);
 
 	int max_depth = std::numeric_limits<int>::max();
 	int depth = MeasureDepth(& a, max_depth);

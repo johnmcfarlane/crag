@@ -19,6 +19,7 @@
 
 #include "geom/Intersection.h"
 
+using namespace form;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Triplet
@@ -47,7 +48,7 @@ form::Node::Node()
 , seed (0)
 , score (0)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 form::Node::~Node()
@@ -219,8 +220,8 @@ bool form::Node::InitScoreParameters()
 	Triangle3 surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
 	
 	normal = geom::Normal(surface);
-	VerifyObject(normal);
-	VerifyOp(LengthSq(normal), >, 0);
+	CRAG_VERIFY(normal);
+	CRAG_VERIFY_OP(LengthSq(normal), >, 0);
 	FastNormalize(normal);
 	
 	area = geom::Area(surface);
@@ -295,50 +296,45 @@ void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) cons
 	ASSERT(child_corners[2] != nullptr);
 }
 
-#if defined(VERIFY)
-// Not valid for root_node!
-void form::Node::Verify() const
-{
-	VerifyTrue(sizeof(* this) == 80 || sizeof(* this) == 128);
-	VerifyEqual(reinterpret_cast<flag_type>(this) & flag_mask, static_cast<flag_type>(0));
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Node, self)
+	static_assert(sizeof(Node) == 80 || sizeof(Node) == 128, "Node may not be ideally packed");
+	CRAG_VERIFY_EQUAL(reinterpret_cast<Node::flag_type>(& self) & Node::flag_mask, static_cast<Node::flag_type>(0));
 
-	if (_parent != nullptr) 
+	if (self._parent != nullptr) 
 	{
-		int child_index = int(this - _parent->GetChildren());
-		VerifyTrue(_parent->GetChildren() + child_index == this);
-		VerifyTrue(child_index >= 0 && child_index < 4);
-		VerifyTrue(seed == _parent->GetChildSeed(child_index));
-		
+		int child_index = int(& self - self._parent->GetChildren());
+		CRAG_VERIFY_EQUAL(self._parent->GetChildren() + child_index, & self);
+		CRAG_VERIFY_TRUE(child_index >= 0 && child_index < 4);
+		CRAG_VERIFY_EQUAL(self.seed, self._parent->GetChildSeed(child_index));
+
 		for (int i = 0; i < 3; ++ i) 
 		{
-			Triplet const & t = triple[i];
-			VerifyTrue(t.corner != nullptr);
-			
+			Node::Triplet const & t = self.triple[i];
+			CRAG_VERIFY_TRUE(t.corner);
+	
 			Node const * cousin = t.cousin;
 			if (cousin != nullptr) 
 			{
-				Triplet const & ct = cousin->triple[i];
-				VerifyTrue(t.mid_point == ct.mid_point);
-				VerifyTrue(ct.cousin == this);
+				Node::Triplet const & ct = cousin->triple[i];
+				CRAG_VERIFY_EQUAL(t.mid_point, ct.mid_point);
+				CRAG_VERIFY_EQUAL(ct.cousin, & self);
 			}
 		}
-		
-		VerifyTrue(area > 0);
-		VerifyNearlyEqual(LengthSq(normal), 1.f, .001f);
-		VerifyTrue(score >= 0);
+
+		CRAG_VERIFY_OP(self.area, >, 0);
+		CRAG_VERIFY_NEARLY_EQUAL(LengthSq(self.normal), 1.f, .001f);
+		CRAG_VERIFY_OP(self.score, >=, 0);
 	}
 	else {
-		VerifyTrue(GetChildren() == nullptr);
-		
-		for (int i = 0; i < 3; ++ i) {
-			Triplet const & t = triple[i];
-			VerifyTrue(t.corner == nullptr);
-			VerifyTrue(t.mid_point == nullptr);
-			VerifyTrue(t.cousin == nullptr);
-		}
-		
-		VerifyTrue(score == 0);
-	}
+		CRAG_VERIFY_FALSE(self.GetChildren());
 
-}
-#endif
+		for (int i = 0; i < 3; ++ i) {
+			Node::Triplet const & t = self.triple[i];
+			CRAG_VERIFY_FALSE(t.corner);
+			CRAG_VERIFY_FALSE(t.mid_point);
+			CRAG_VERIFY_FALSE(t.cousin);
+		}
+
+		CRAG_VERIFY_EQUAL(self.score, 0);
+	}
+CRAG_VERIFY_INVARIANTS_DEFINE_END

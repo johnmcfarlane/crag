@@ -79,17 +79,18 @@ FormationMesh::~FormationMesh()
 	
 	delete _queued_mesh;
 	delete _pending_mesh;
+	
+	CRAG_VERIFY(* this);
 }
 
-#if defined(VERIFY)
-void FormationMesh::Verify() const
-{
-	super::Verify();
-	VerifyObjectPtr(_queued_mesh);
-	VerifyObjectPtr(_pending_mesh);
-	ASSERT(! mbo_buffers.back().IsBound());
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(FormationMesh, object)
+	CRAG_VERIFY(static_cast<FormationMesh::super const &>(object));
+
+	CRAG_VERIFY(object._queued_mesh);
+	CRAG_VERIFY(object._pending_mesh);
+	
+	ASSERT(! object.mbo_buffers.back().IsInitialized() || ! object.mbo_buffers.back().IsBound());
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void FormationMesh::SetMesh(form::Mesh * const & mesh)
 {
@@ -108,7 +109,7 @@ void FormationMesh::SetMesh(form::Mesh * const & mesh)
 
 LeafNode::PreRenderResult FormationMesh::PreRender()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	FinishBufferUpload();
 	BeginBufferUpload();
@@ -157,7 +158,7 @@ void FormationMesh::Render(Engine const & renderer) const
 
 bool FormationMesh::BeginBufferUpload()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	if (_pending_mesh != nullptr)
 	{
@@ -171,10 +172,10 @@ bool FormationMesh::BeginBufferUpload()
 		return false;
 	}
 
-	VerifyObjectRef(* _queued_mesh);
+	CRAG_VERIFY(* _queued_mesh);
 	
 	form::MeshBufferObject & back_buffer = mbo_buffers.back();
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	back_buffer.Bind();
 	back_buffer.Set(* _queued_mesh);

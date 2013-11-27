@@ -42,17 +42,14 @@ QuaternaBuffer::~QuaternaBuffer()
 	delete _quaterne;
 }
 
-#if defined(VERIFY)
-void QuaternaBuffer::Verify() const
-{
-	VerifyArrayPointer(_quaterne_sorted_end, _quaterne);
-	VerifyArrayPointer(_quaterne_used_end, _quaterne);
-	VerifyArrayPointer(_quaterne_end, _quaterne);
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(QuaternaBuffer, self)
+	CRAG_VERIFY_ARRAY_POINTER(self._quaterne_sorted_end, self._quaterne, self._quaterne_end);
+	CRAG_VERIFY_ARRAY_POINTER(self._quaterne_used_end, self._quaterne, self._quaterne_end);
+	CRAG_VERIFY_ARRAY_POINTER(self._quaterne_end, self._quaterne, self._quaterne_end);
 	
-	VerifyOp(_quaterne_sorted_end, >=, _quaterne);
-	VerifyOp(_quaterne_used_end, >=, _quaterne_sorted_end);
-}
-#endif
+	CRAG_VERIFY_OP(self._quaterne_sorted_end, >=, self._quaterne);
+	CRAG_VERIFY_OP(self._quaterne_used_end, >=, self._quaterne_sorted_end);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void QuaternaBuffer::Clear()
 {
@@ -76,7 +73,7 @@ void QuaternaBuffer::Sort()
 {
 	if (_quaterne_sorted_end == _quaterne_used_end)
 	{
-		VerifyObject(* this);
+		CRAG_VERIFY(* this);
 		return;
 	}
 
@@ -105,7 +102,7 @@ float QuaternaBuffer::GetLowestSortedScore() const
 // Find the (known) lowest-scoring quaterna in used.
 Quaterna * QuaternaBuffer::GetLowestSorted() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	if (_quaterne_sorted_end == _quaterne) 
 	{
@@ -124,29 +121,29 @@ Quaterna * QuaternaBuffer::GetLowestSorted() const
 void QuaternaBuffer::DecrementSorted()
 {
 	ASSERT(_quaterne_sorted_end > _quaterne);
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	-- _quaterne_sorted_end;
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Quaterna & QuaternaBuffer::Grow()
 {
 	ASSERT(size() < capacity());
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	auto & allocated = * _quaterne_used_end;
 	++ _quaterne_used_end;
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	return allocated;
 }
 
 void QuaternaBuffer::Shrink()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	ASSERT(size() > 0);
 	
@@ -154,7 +151,7 @@ void QuaternaBuffer::Shrink()
 	
 	_quaterne_sorted_end = std::min(_quaterne_sorted_end, _quaterne_used_end);
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 bool QuaternaBuffer::empty() const
@@ -174,7 +171,7 @@ int QuaternaBuffer::capacity() const
 
 Quaterna & QuaternaBuffer::operator [] (int index)
 {
-	VerifyOp(index, <, size());
+	CRAG_VERIFY_OP(index, <, size());
 	return _quaterne[index];
 }
 

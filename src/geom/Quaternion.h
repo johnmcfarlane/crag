@@ -40,7 +40,7 @@ namespace geom
 		: v(rhs_v)
 		, w(rhs_w) 
 		{ 
-			VerifyObject(* this);
+			CRAG_VERIFY(* this);
 		}
 		
 		explicit Quaternion(Matrix const & _rhs)
@@ -151,11 +151,11 @@ namespace geom
 			return v * s;
 		}
   
-  #if defined(VERIFY)
+  #if defined(CRAG_VERIFY_ENABLED)
 		void Verify() const
 		{
-			VerifyObject(v);
-			VerifyTrue(w == w);
+			CRAG_VERIFY(v);
+			CRAG_VERIFY_TRUE(w == w);
 		}
 #endif
 		

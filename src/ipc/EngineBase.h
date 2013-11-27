@@ -43,6 +43,8 @@ namespace ipc
 				DEBUG_MESSAGE(SIZE_T_FORMAT_SPEC " object(s) remaining", _objects.size());
 				exit(0);
 			}
+			
+			CRAG_VERIFY(static_cast<Engine const &>(* this));
 		}
 
 		bool IsEmpty() const
@@ -204,17 +206,14 @@ namespace ipc
 		
 	public:
 
-#if defined(VERIFY)
-		virtual void Verify() const
-		{
-			ForEachPair([=] (std::pair<Uid, SmpObject *> const & pair) {
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(EngineBase, self)
+			self.ForEachPair([& self] (std::pair<Uid, SmpObject *> const & pair) {
 				SmpObject const & smp_object = ref(pair.second);
-				ASSERT(pair.first == smp_object.GetUid());
-				ASSERT(this == & smp_object.GetEngine());
-				VerifyObject(smp_object);
+				CRAG_VERIFY_EQUAL(pair.first, smp_object.GetUid());
+				CRAG_VERIFY_EQUAL(& self, & smp_object.GetEngine());
+				CRAG_VERIFY(smp_object);
 			});
-		}
-#endif
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

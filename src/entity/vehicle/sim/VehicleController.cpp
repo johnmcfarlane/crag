@@ -22,12 +22,12 @@ using namespace sim;
 VehicleController::VehicleController(Entity & entity)
 : _super(entity)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 VehicleController::~VehicleController()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	while (! _thrusters.empty())
 	{
@@ -35,20 +35,17 @@ VehicleController::~VehicleController()
 	}
 }
 
-#if defined(VERIFY)
-void VehicleController::Verify() const
-{
-	for (auto & thruster : _thrusters)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(VehicleController, self)
+	for (auto & thruster : self._thrusters)
 	{
-		VerifyRef(* thruster);
-		VerifyEqual(& thruster->GetEntity(), & GetEntity());
+		CRAG_VERIFY(* thruster);
+		CRAG_VERIFY_EQUAL(& thruster->GetEntity(), & self.GetEntity());
 	}
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void VehicleController::AddThruster(Thruster * thruster)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	// model
 	auto & entity = GetEntity();
@@ -58,12 +55,12 @@ void VehicleController::AddThruster(Thruster * thruster)
 	// add to vector
 	_thrusters.push_back(thruster);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void VehicleController::PopThruster()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(! _thrusters.empty());
 
 	// get last thruster
@@ -75,5 +72,5 @@ void VehicleController::PopThruster()
 	// delete it
 	delete thruster;
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }

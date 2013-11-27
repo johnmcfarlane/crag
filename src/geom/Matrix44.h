@@ -171,14 +171,13 @@ namespace geom
 						  Row::Zero());
 		}
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyObject(rows[0]);
-			VerifyObject(rows[1]);
-			VerifyObject(rows[2]);
-			VerifyObject(rows[3]);
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Matrix, self)
+			CRAG_VERIFY(self.rows[0]);
+			CRAG_VERIFY(self.rows[1]);
+			CRAG_VERIFY(self.rows[2]);
+			CRAG_VERIFY(self.rows[3]);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 		
 	private:

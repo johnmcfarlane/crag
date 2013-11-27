@@ -76,12 +76,12 @@ namespace
 Shader::Shader() 
 : _id(0)
 { 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Shader::~Shader()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	assert(! IsInitialized());
 }
 
@@ -171,7 +171,7 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 
 bool Shader::IsInitialized() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return _id != 0;
 }
 
@@ -213,20 +213,17 @@ std::vector<char> Shader::GetInfoLog() const
 
 void Shader::Deinit()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	GL_CALL(glDeleteShader(_id));
 	_id = 0;
 }
 
-#if defined(VERIFY)
-void Shader::Verify() const
-{
-	if (_id == 0)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Shader, self)
+	if (self._id == 0)
 	{
 		return;
 	}
 	
-	assert(glIsShader(_id));
-}
-#endif
+	CRAG_VERIFY_TRUE(glIsShader(self._id));
+CRAG_VERIFY_INVARIANTS_DEFINE_END

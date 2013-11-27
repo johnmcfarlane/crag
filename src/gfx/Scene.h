@@ -30,9 +30,7 @@ namespace gfx
 		Scene(Engine & engine);
 		~Scene();
 		
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Scene);
 		
 		void SetTime(core::Time t);
 		core::Time GetTime() const;

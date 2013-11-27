@@ -45,14 +45,13 @@ void PointBuffer::Destroy(Point * ptr)
 	_pool.destroy(ptr);
 }
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 void PointBuffer::VerifyAllocatedElement(Point const & element) const
 {
 	_pool.VerifyAllocatedElement(element);
 }
 
-void PointBuffer::Verify() const
-{
-	_pool.Verify();
-}
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(PointBuffer, object)
+	CRAG_VERIFY(object._pool);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 #endif

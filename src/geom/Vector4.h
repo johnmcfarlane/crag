@@ -79,14 +79,13 @@ namespace geom
 			return Vector(0, 0, 0, 0); 
 		}
 		
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyTrue(x == x);
-			VerifyTrue(y == y);
-			VerifyTrue(z == z);
-			VerifyTrue(w == w);
-		}
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Vector, v)
+			CRAG_VERIFY(v.x);
+			CRAG_VERIFY(v.y);
+			CRAG_VERIFY(v.z);
+			CRAG_VERIFY(v.w);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 		
 		S x, y, z, w;

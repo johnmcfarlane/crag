@@ -17,9 +17,7 @@ namespace form
 	// Vertex type used by formation system to generate OpenGL mesh.
 	struct Vertex
 	{
-#if defined(VERIFY)
-		void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Vertex);
 
 		Vector3 pos;
 		Vector3 norm;

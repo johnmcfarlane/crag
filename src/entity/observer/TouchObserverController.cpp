@@ -104,8 +104,8 @@ namespace
 		}
 		else
 		{
-			VerifyOp(std::fabs(b), >=, std::fabs(c));
-			VerifyOp(gamma, <=, S(PI * .5));
+			CRAG_VERIFY_OP(std::fabs(b), >=, std::fabs(c));
+			CRAG_VERIFY_OP(gamma, <=, S(PI * .5));
 		}
 		
 		S alpha = S(PI) - beta - gamma;

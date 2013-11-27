@@ -22,14 +22,13 @@ namespace gfx
 	class BufferObject
 	{
 	public:
-#if defined(VERIFY)
-		void Verify() const
-		{
-			if (IsInitialized())
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(BufferObject, self)
+			if (self.IsInitialized())
 			{
-				VerifyTrue(glIsBuffer(_name));
+				CRAG_VERIFY_TRUE(glIsBuffer(self._name));
 			}
-		}
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 
 		BufferObject()

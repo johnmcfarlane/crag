@@ -64,9 +64,7 @@ namespace physics
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		
-#if defined(VERIFY)
-		virtual void Verify() const;
-#endif
+		CRAG_VERIFY_INVARIANTS_DECLARE(Body);
 	private:
 		Vector3 const & GetGeomTranslation() const;
 		void SetGeomTranslation(Vector3 const & translation);

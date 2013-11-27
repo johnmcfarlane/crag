@@ -21,14 +21,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // MeshBufferObject member definitions
 
-#if defined(VERIFY)
-void form::MeshBufferObject::Verify() const
-{
-	super::Verify();
-	VerifyOp(max_index, <=, std::numeric_limits<gfx::ElementIndex>::max());
-	VerifyObject(properties);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::MeshBufferObject, self)
+	CRAG_VERIFY(static_cast<super const &>(self));
+	CRAG_VERIFY_OP(self.max_index, <=, std::numeric_limits<gfx::ElementIndex>::max());
+	CRAG_VERIFY(self.properties);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 form::MeshBufferObject::MeshBufferObject()
 : max_index(0)
@@ -87,5 +84,5 @@ void form::MeshBufferObject::SetIbo(gfx::IndexBuffer const & indices)
 	gfx::IndexBuffer::value_type const * index_array = (max_index > 0) ? indices.GetArray() : nullptr;
 	super::SetIbo(max_index, index_array);
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }

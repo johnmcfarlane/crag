@@ -34,30 +34,14 @@ Scene::~Scene()
 	delete & _surrounding;
 }
 
-#if defined(VERIFY)
-void Scene::Verify() const
-{
-	if (! _surrounding.GetPoints().IsEmpty())
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, scene)
+	if (! scene._surrounding.GetPoints().IsEmpty())
 	{
-		VerifyTrue(! formation_map.empty());
+		CRAG_VERIFY_FALSE(scene.formation_map.empty());
 	}
 
-	VerifyObject(_surrounding);
-}
-
-/*void SceneVerifyTrue(Mesh const & m) const
-{
-	VertexBuffer const & vb = * m.GetPoints();
-	IndexBuffer const & ib = m.GetIndices();
-	
-	unsigned int const * indices = ib.GetArray();
-	unsigned int const * const indices_end = indices + ib.GetSize();
-	for (unsigned int const * it = indices; it != indices_end; ++ it) {
-		Vertex const & v = vb[* it];
-		Verify(v);
-	}
-}*/
-#endif
+	CRAG_VERIFY(scene._surrounding);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Scene::Clear()
 {
@@ -170,9 +154,9 @@ void Scene::TickPolyhedron(Polyhedron & polyhedron)
 	
 	if (root_node.IsExpandable()) 
 	{
-		VerifyObject(* this);
+		CRAG_VERIFY(* this);
 		_surrounding.ExpandNode(root_node);
-		VerifyObject(* this);
+		CRAG_VERIFY(* this);
 	}
 }
 

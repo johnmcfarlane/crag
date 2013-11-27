@@ -32,7 +32,7 @@ namespace geom
 		{
 		}
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 		void Verify() const
 		{
 			for (auto const & point : * this)

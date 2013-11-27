@@ -163,22 +163,11 @@ namespace geom
 			return GetRotation() * direction;
 		}
 		
-	#if defined(VERIFY)
-		void Verify() const
-		{
-			for (int row = 0; row != 4; ++ row)
-			{
-				for (int column = 0; column != 4; ++ column)
-				{
-					Scalar c = _matrix[row][column];
-					VerifyTrue(! IsInf(c));
-					VerifyTrue(! IsNaN(c));
-					VerifyTrue(c < std::numeric_limits<float>::max());
-					VerifyTrue(c > - std::numeric_limits<float>::max());
-				}
-			}
-		}
-	#endif
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Transformation, self)
+			CRAG_VERIFY(self._matrix);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif
 
 	private:
 		// variables

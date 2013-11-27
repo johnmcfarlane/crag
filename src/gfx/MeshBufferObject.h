@@ -82,27 +82,32 @@ namespace gfx
 			assert(mode == GL_TRIANGLES);
 			ibo.DrawElements(mode, count, first);
 		}
+
+		bool IsInitialized() const
+		{
+			CRAG_VERIFY(* this);
+			return vbo.IsInitialized();
+		}
 		
 		bool IsBound() const
 		{
-			VerifyObject(* this);
-			return vbo.IsBound() && ibo.IsBound();
+			CRAG_VERIFY(* this);
+			return vbo.IsBound();
 		}
 
-#if defined(VERIFY)
-		void Verify() const
-		{
-			VerifyObject(vbo);
-			VerifyObject(ibo);
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(MeshBufferObject, self)
+			CRAG_VERIFY(self.vbo);
+			CRAG_VERIFY(self.ibo);
 
-			ASSERT(vbo.IsInitialized() == ibo.IsInitialized());
-			if (! vbo.IsInitialized())
+			ASSERT(self.vbo.IsInitialized() == self.ibo.IsInitialized());
+			if (! self.vbo.IsInitialized())
 			{
 				return;
 			}
 			
-			ASSERT(vbo.IsBound() == ibo.IsBound());
-		}
+			ASSERT(self.vbo.IsBound() == self.ibo.IsBound());
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 		
 	protected:

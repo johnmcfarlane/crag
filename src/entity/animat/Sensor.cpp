@@ -118,7 +118,7 @@ Scalar Sensor::GetReading() const
 	}
 	
 	auto contact_distance = result.GetDistance();
-	VerifyOp (contact_distance, <=, _length);
+	CRAG_VERIFY_OP (contact_distance, <=, _length);
 	
 	auto ratio = contact_distance / _length;
 	ASSERT(ratio >= 0);
@@ -127,13 +127,10 @@ Scalar Sensor::GetReading() const
 	return ratio;
 }
 
-#if defined(VERIFY)
-void Sensor::Verify() const
-{
-	VerifyObject(_local_ray.position);
-	VerifyIsUnit(_local_ray.direction, .0001f);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
+	CRAG_VERIFY(self._local_ray.position);
+	CRAG_VERIFY_UNIT(self._local_ray.direction, .0001f);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Sensor::Tick()
 {
@@ -163,10 +160,10 @@ Ray3 Sensor::GetGlobalRay() const
 
 void Sensor::GenerateScanRay() const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	Ray3 scan_ray = GetGlobalRay();
-	VerifyIsUnit(scan_ray.direction, .0001f);
+	CRAG_VERIFY_UNIT(scan_ray.direction, .0001f);
 
 	scan_ray.direction *= _length;
 	

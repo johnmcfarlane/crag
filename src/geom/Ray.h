@@ -35,11 +35,11 @@ namespace geom
 		{
 		}
 
-#if defined(VERIFY)
-		void Verify() const
+#if defined(CRAG_VERIFY_ENABLED)
+		static void VerifyInvariants(Ray const & object)
 		{
-			VerifyObject(position);
-			VerifyObject(direction);
+			CRAG_VERIFY(object.position);
+			CRAG_VERIFY(object.direction);
 		}
 #endif
 		

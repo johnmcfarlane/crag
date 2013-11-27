@@ -42,12 +42,9 @@ Scene::~Scene()
 	ASSERT(_root.IsEmpty());
 }
 
-#if defined(VERIFY)
-void Scene::Verify() const
-{
-	VerifyObject(_root);
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
+	CRAG_VERIFY(self._root);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Scene::SetTime(core::Time t)
 {
@@ -61,7 +58,7 @@ core::Time Scene::GetTime() const
 
 void Scene::AddObject(Object & object)
 {
-	VerifyObjectRef(object);
+	CRAG_VERIFY(object);
 
 	// If object is a LeafNode,
 	LeafNode * leaf_node = object.CastLeafNodePtr();

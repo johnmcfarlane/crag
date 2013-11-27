@@ -63,7 +63,7 @@ namespace form
 				ForEachNodeFace(node, [this] (Point const & a, Point const & b, Point const & c, geom::Vector3f const & normal, float)
 				{
 					Triangle3 face(a.pos, b.pos, c.pos);
-					VerifyNearlyEqual(geom::Length(geom::Normalized(geom::Normal(face)) - normal), 0.f, .01f);
+					CRAG_VERIFY_NEARLY_EQUAL(geom::Length(geom::Normalized(geom::Normal(face)) - normal), 0.f, .01f);
 					
 					_poly_functor(face, normal);
 				});

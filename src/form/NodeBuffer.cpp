@@ -17,16 +17,15 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // form::NodeBuffer member definitions
 
-#if defined(VERIFY)
-void NodeBuffer::Verify() const
-{
-	VerifyArrayPointer(_nodes_used_end, _nodes, _nodes_end);
-}
+#if defined(CRAG_VERIFY_ENABLED)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(NodeBuffer, object)
+	CRAG_VERIFY_ARRAY_POINTER(object._nodes_used_end, object._nodes, object._nodes_end);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void NodeBuffer::VerifyUsed(Node const & n) const
 {
-	VerifyRef(n);
-	VerifyArrayElement(&n, _nodes, _nodes_used_end);
+	CRAG_VERIFY(n);
+	CRAG_VERIFY_ARRAY_ELEMENT(&n, _nodes, _nodes_used_end);
 }
 #endif
 
@@ -37,12 +36,12 @@ NodeBuffer::NodeBuffer(size_t max_num_nodes)
 {
 	ZeroArray(_nodes, max_num_nodes);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 NodeBuffer::~NodeBuffer()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	//delete nodes;
 	Free(_nodes);
@@ -56,7 +55,7 @@ void NodeBuffer::Clear()
 void NodeBuffer::Push(std::size_t num_nodes)
 {
 	auto new_nodes_used_end = _nodes_used_end + num_nodes;
-	VerifyArrayPointer(new_nodes_used_end, _nodes, _nodes_end);
+	CRAG_VERIFY_ARRAY_POINTER(new_nodes_used_end, _nodes, _nodes_end);
 	
 	_nodes_used_end = new_nodes_used_end;
 }
@@ -64,7 +63,7 @@ void NodeBuffer::Push(std::size_t num_nodes)
 void NodeBuffer::Pop(std::size_t num_nodes)
 {
 	auto new_nodes_used_end = _nodes_used_end - num_nodes;
-	VerifyArrayPointer(new_nodes_used_end, _nodes, _nodes_end);
+	CRAG_VERIFY_ARRAY_POINTER(new_nodes_used_end, _nodes, _nodes_end);
 	
 	_nodes_used_end = new_nodes_used_end;
 }
@@ -111,7 +110,7 @@ std::size_t NodeBuffer::GetCapacity() const
 
 Node const & NodeBuffer::operator [] (std::size_t index) const
 {
-	VerifyOp(index, <, GetSize());
+	CRAG_VERIFY_OP(index, <, GetSize());
 	return _nodes[index];
 }
 

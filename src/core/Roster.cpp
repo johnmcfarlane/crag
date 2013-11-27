@@ -73,7 +73,7 @@ void Function::operator() (void * object) const
 
 bool Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	// get table size
 	auto size = _table.size();
@@ -117,13 +117,13 @@ bool Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison co
 
 	SetComparison(rhs, lhs, - comparison);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return true;
 }
 
 Ordering::Comparison Ordering::GetComparison(FunctionIndex lhs, FunctionIndex rhs) const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	return _table[lhs].comparisons[rhs];
 }
 
@@ -149,7 +149,7 @@ Ordering::FunctionIndex Ordering::GetFunctionIndex(Function function)
 		found->comparisons.resize(new_size);
 		found->function = function;
 
-		VerifyObject(* this);
+		CRAG_VERIFY(* this);
 	}
 	
 	std::size_t index = found - _table.begin();
@@ -160,43 +160,40 @@ Ordering::FunctionIndex Ordering::GetFunctionIndex(Function function)
 
 Function Ordering::GetFunction(FunctionIndex function_index) const
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(function_index < _table.size());
 	return _table[function_index].function;
 }
 
-#if defined(VERIFY)
-void Ordering::Verify() const
-{
-	auto size = _table.size();
-	for (FunctionIndex row_index = 0; row_index != size; ++ row_index)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Ordering, object)
+	auto size = object._table.size();
+	for (Ordering::FunctionIndex row_index = 0; row_index != size; ++ row_index)
 	{
-		auto & row = _table[row_index].comparisons;
-		VerifyEqual(_table.size(), row.size());
+		auto & row = object._table[row_index].comparisons;
+		CRAG_VERIFY_EQUAL(object._table.size(), row.size());
 
-		for (FunctionIndex column_index = 0; column_index != size; ++ column_index)
+		for (Ordering::FunctionIndex column_index = 0; column_index != size; ++ column_index)
 		{
 			auto cell = row[column_index];
 
 			// verify cell
-			VerifyOp(cell, >=, -1);
-			VerifyOp(cell, <=, 1);
+			CRAG_VERIFY_OP(cell, >=, -1);
+			CRAG_VERIFY_OP(cell, <=, 1);
 
 			// verify that c=r diagonal is clear
 			if (row_index == column_index)
 			{
-				VerifyEqual(cell, 0);
+				CRAG_VERIFY_EQUAL(cell, 0);
 				continue;
 			}
 			else
 			{
 				// verify that [c][r] == -[r][c]
-				VerifyEqual(int(cell), int(- _table[column_index].comparisons[row_index]));
+				CRAG_VERIFY_EQUAL(int(cell), int(- object._table[column_index].comparisons[row_index]));
 			}
 		}
 	}
-}
-#endif
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 ////////////////////////////////////////////////////////////////////////////////
 // core::locality::Roster member definitions
@@ -214,12 +211,12 @@ bool core::locality::Roster::Command::operator!=(Command rhs) const
 
 Roster::Roster()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Roster::~Roster()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	if (! _commands.empty())
 	{
@@ -227,22 +224,19 @@ Roster::~Roster()
 	}
 }
 
-#if defined(VERIFY)
-void Roster::Verify() const
-{
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Roster, object)
 	// verify order
-	VerifyTrue(std::is_sorted(std::begin(_commands), std::end(_commands), [=] (Command lhs, Command rhs)
+	CRAG_VERIFY_TRUE(std::is_sorted(std::begin(object._commands), std::end(object._commands), [& object] (Command lhs, Command rhs)
 	{
-		return LessThan(lhs, rhs);
+		return object.LessThan(lhs, rhs);
 	}));
 
-	_ordering.Verify();
-}
-#endif
+	CRAG_VERIFY(object._ordering);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(lhs_function != rhs_function);
 
 	auto lhs_index = GetFunctionIndex(lhs_function);
@@ -253,16 +247,16 @@ void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 	{
 		Sort();
 
-		VerifyObject(* this);
+		CRAG_VERIFY(* this);
 
-#if defined(VERIFY)
+#if defined(CRAG_VERIFY_ENABLED)
 	// exhaustive comparison ensures complete integrity of ordering
 	auto end = std::end(_commands);
 	for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
 	{
 		for (auto rhs = lhs; ++ rhs != end; )
 		{
-			VerifyTrue(! LessThan(* rhs, * lhs));
+			CRAG_VERIFY_TRUE(! LessThan(* rhs, * lhs));
 		}
 	};
 #endif
@@ -274,7 +268,7 @@ void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 // bubble sort for locality of reference during Call loop
 void Roster::Call()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	// perform all calls
 	for (auto command : _commands)
@@ -284,12 +278,12 @@ void Roster::Call()
 		function(object);
 	}
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Roster::AddCommand(Command command)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	ASSERT(Find(command) == _commands.end());
 
 	auto insertion_position = Search(command);
@@ -298,7 +292,7 @@ void Roster::AddCommand(Command command)
 
 	_commands.insert(insertion_position, command);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Roster::RemoveCommand(Command command)
@@ -313,12 +307,12 @@ void Roster::RemoveCommand(Command command)
 
 	_commands.erase(found);
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Roster::CommandVector::iterator Roster::Search(Command command)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	auto found = std::lower_bound(_commands.begin(), _commands.end(), command, [=] (Command lhs, Command rhs) {
 		return LessThan(lhs, rhs);

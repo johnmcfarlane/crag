@@ -73,19 +73,19 @@ namespace
 		
 			substitute[0] = original[0];
 			RepairChild(substitute[0]);
-			VerifyObject(substitute[0]);
+			CRAG_VERIFY(substitute[0]);
 		
 			substitute[1] = original[1];
 			RepairChild(substitute[1]);
-			VerifyObject(substitute[1]);
+			CRAG_VERIFY(substitute[1]);
 		
 			substitute[2] = original[2];
 			RepairChild(substitute[2]);
-			VerifyObject(substitute[2]);
+			CRAG_VERIFY(substitute[2]);
 		
 			substitute[3] = original[3];
 			RepairChild(substitute[3]);
-			VerifyObject(substitute[3]);
+			CRAG_VERIFY(substitute[3]);
 		}
 		else {
 			substitute[0] = original[0];
@@ -160,31 +160,30 @@ Surrounding::Surrounding(size_t max_num_quaterne)
 {
 	InitQuaterna(std::begin(_quaterna_buffer) + _quaterna_buffer.capacity());
 
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 Surrounding::~Surrounding()
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
-#if defined(VERIFY)
-void Surrounding::Verify() const
-{
-	VerifyObject(_node_buffer);
-	VerifyObject(_quaterna_buffer);
+#if defined(CRAG_VERIFY_ENABLED)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, self)
+	CRAG_VERIFY(self._node_buffer);
+	CRAG_VERIFY(self._quaterna_buffer);
 
-	VerifyOp(_target_num_quaterne, <=, _quaterna_buffer.capacity());
-	VerifyOp(_target_num_quaterne, >=, _quaterna_buffer.size());
+	CRAG_VERIFY_OP(self._target_num_quaterne, <=, self._quaterna_buffer.capacity());
+	CRAG_VERIFY_OP(self._target_num_quaterne, >=, self._quaterna_buffer.size());
 	
-	auto num_nodes_used = GetNumNodesUsed();
-	VerifyTrue((num_nodes_used % num_nodes_per_quaterna) == 0);
+	auto num_nodes_used = self.GetNumNodesUsed();
+	CRAG_VERIFY_TRUE((num_nodes_used % num_nodes_per_quaterna) == 0);
 	
-	auto num_quaterne_used = GetNumQuaternaUsed();
+	auto num_quaterne_used = self.GetNumQuaternaUsed();
 	
-	VerifyEqual(num_nodes_used, num_quaterne_used * 4);
+	CRAG_VERIFY_EQUAL(num_nodes_used, num_quaterne_used * 4);
 	
-	VerifyObject(point_buffer);
+	CRAG_VERIFY(self.point_buffer);
 	
 	/*for (Quaterna const * q = quaterne; q < quaterne_used_end; ++ q) 
 	{
@@ -200,7 +199,7 @@ void Surrounding::Verify() const
 	for (Quaterna const * q2 = quaterne + 1; q2 < quaterne_sorted_end; ++ q2) 
 	{
 		Quaterna const * q1 = q2 - 1;
-		VerifyTrue(q2->parent_score <= q1->parent_score);
+		CRAG_VERIFY_TRUE(q2->parent_score <= q1->parent_score);
 	}*/
 }
 
@@ -211,16 +210,16 @@ void Surrounding::VerifyUsed(Quaterna const & q) const
 	
 	Node const * parent = q.nodes[0].GetParent();
 	
-	VerifyTrue(parent != nullptr);
-	VerifyTrue(parent->score == q.parent_score);
-	VerifyTrue(parent->score > 0);
+	CRAG_VERIFY_TRUE(parent != nullptr);
+	CRAG_VERIFY_TRUE(parent->score == q.parent_score);
+	CRAG_VERIFY_TRUE(parent->score > 0);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
 		
 		// All four siblings should have the same parent.
-		VerifyTrue(q.nodes[i].GetParent() == parent);
+		CRAG_VERIFY_TRUE(q.nodes[i].GetParent() == parent);
 		Node const * children = sibling.GetChildren();
 		if (children != nullptr)
 		{
@@ -230,31 +229,31 @@ void Surrounding::VerifyUsed(Quaterna const & q) const
 		for (int j = 0; j < 3; ++ j)
 		{
 			Point const & point = sibling.GetCorner(j);
-			VerifyObjectRef(point);
+			CRAG_VERIFY(point);
 			point_buffer.VerifyAllocatedElement(point);
 		}
 	}
 	
-	VerifyObject(q);
+	CRAG_VERIFY(q);
 }
 
 void Surrounding::VerifyUnused(Quaterna const & q) const
 {
-	VerifyTrue(q.parent_score == -1);
+	CRAG_VERIFY_TRUE(q.parent_score == -1);
 	
 	Node const * n = q.nodes;
-	VerifyTrue(& _node_buffer[(& q - std::begin(_quaterna_buffer)) * 4] == n);
+	CRAG_VERIFY_TRUE(& _node_buffer[(& q - std::begin(_quaterna_buffer)) * 4] == n);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
 		
-		VerifyTrue(sibling.GetParent() == nullptr);
-		VerifyTrue(! sibling.HasChildren());
-		VerifyTrue(sibling.score == 0);
+		CRAG_VERIFY_TRUE(sibling.GetParent() == nullptr);
+		CRAG_VERIFY_TRUE(! sibling.HasChildren());
+		CRAG_VERIFY_TRUE(sibling.score == 0);
 	}
 	
-	VerifyObject(q);
+	CRAG_VERIFY(q);
 }
 #endif
 
@@ -291,7 +290,7 @@ int Surrounding::GetTargetNumQuaterna() const
 
 void Surrounding::SetTargetNumQuaterna(int target_num_quaterne)
 {
-	VerifyOp(target_num_quaterne, <=, _quaterna_buffer.capacity());
+	CRAG_VERIFY_OP(target_num_quaterne, <=, _quaterna_buffer.capacity());
 
 	if (profile_mode)
 	{
@@ -315,8 +314,8 @@ void Surrounding::SetTargetNumQuaterna(int target_num_quaterne)
 // It is also where a considerable amount of the SceneThread's time is spent.
 void Surrounding::Tick(Ray3 const & new_camera_ray)
 {
-	VerifyObjectRef(new_camera_ray);
-	VerifyObject (* this);
+	CRAG_VERIFY(new_camera_ray);
+	CRAG_VERIFY (* this);
 
 	node_score_functor.SetCameraRay(new_camera_ray);
 
@@ -332,7 +331,7 @@ void Surrounding::Tick(Ray3 const & new_camera_ray)
 	
 	UpdateNodes();
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Surrounding::OnReset()
@@ -347,7 +346,7 @@ void Surrounding::OnReset()
 	// Half the target number of nodes.
 	// Probably not a smart idea.
 	//quaterne_used_end_target -= (quaterne_used_end_target - quaterne) >> 1;
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 void Surrounding::ResetNodeOrigins(Vector3 const & origin_delta)
@@ -416,7 +415,7 @@ bool Surrounding::ChurnNodes()
 
 void Surrounding::GenerateMesh(Mesh & mesh) 
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 	
 	point_buffer.ClearPointers();
 	mesh.Clear();
@@ -698,14 +697,14 @@ void Surrounding::DeinitNode(Node & node)
 void Surrounding::IncreaseNodes(int target_num_quaterne)
 {
 	// Verify that the input is indeed a decrease.
-	VerifyOp(target_num_quaterne, >, _quaterna_buffer.size());
-	VerifyOp(target_num_quaterne, <=, _quaterna_buffer.capacity());
+	CRAG_VERIFY_OP(target_num_quaterne, >, _quaterna_buffer.size());
+	CRAG_VERIFY_OP(target_num_quaterne, <=, _quaterna_buffer.capacity());
 	
 	// Increasing the target number of nodes is simply a matter of setting a value. 
 	// The target pointer now point_buffer into the range of unused quaterne at the end of the array.
 	_target_num_quaterne = target_num_quaterne;
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
 
 // Reduce the number of used nodes and, accordingly, the number of used quaterne.
@@ -727,15 +726,15 @@ void Surrounding::DecreaseNodes(int target_num_quaterne)
 	// Because the nodes aren't in the correct order, decreasing them is somewhat more tricky.
 	FixUpDecreasedNodes(old_num_quaterne);
 	
-	VerifyObject (* this);
+	CRAG_VERIFY (* this);
 }
 
 void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 {
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 
 	// Verify that the input is indeed a decrease.
-	VerifyOp(new_num_quaterne, <, _quaterna_buffer.size());
+	CRAG_VERIFY_OP(new_num_quaterne, <, _quaterna_buffer.size());
 	
 	// Loop through used quats backwards from far end.
 	do 
@@ -772,7 +771,7 @@ void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 	
 	// Target is really for increasing the target during churn.
 	_target_num_quaterne = new_num_quaterne;
-	VerifyEqual(_target_num_quaterne, _quaterna_buffer.size());
+	CRAG_VERIFY_EQUAL(_target_num_quaterne, _quaterna_buffer.size());
 }
 
 void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
@@ -786,7 +785,7 @@ void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
 	auto old_nodes_used_end = std::end(_node_buffer);
 	ASSERT(old_nodes_used_end > new_nodes_used_end);
 
-	VerifyArrayElement(new_nodes_used_end, std::begin(_node_buffer), old_nodes_used_end);
+	CRAG_VERIFY_ARRAY_ELEMENT(new_nodes_used_end, std::begin(_node_buffer), old_nodes_used_end);
 	
 	::FixUpDecreasedNodes(std::begin(_quaterna_buffer), std::end(_quaterna_buffer), old_num_quaterne, * new_nodes_used_end);
 	
@@ -794,5 +793,5 @@ void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
 	_node_buffer.Pop(old_nodes_used_end - new_nodes_used_end);
 	ASSERT(new_nodes_used_end == std::end(_node_buffer));
 	
-	VerifyObject(* this);
+	CRAG_VERIFY(* this);
 }
