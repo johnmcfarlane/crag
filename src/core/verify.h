@@ -118,7 +118,7 @@ namespace crag
 	namespace core
 	{
 		template <typename Type>
-		using is_integer = typename std::enable_if<std::numeric_limits<Type>::is_integer(), Type>::type;
+		using is_integer = typename std::enable_if<std::is_integral<Type>::value, Type>::type;
 		
 		template <typename Type>
 		using is_real = typename std::enable_if<std::is_floating_point<Type>::value, int>::type;
