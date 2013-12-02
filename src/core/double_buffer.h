@@ -126,7 +126,6 @@ namespace core
 			std::swap(_front_buffer, _back_buffer);
 		}
 		
-#if defined(CRAG_VERIFY_ENABLED)
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(double_buffer, self)
 			CRAG_VERIFY(self._buffer[0]);
 			CRAG_VERIFY(self._buffer[1]);
@@ -134,7 +133,6 @@ namespace core
 			CRAG_VERIFY_ARRAY_ELEMENT(self._back_buffer, &self._buffer[0], &self._buffer[0]+2);
 			CRAG_VERIFY_TRUE(self._front_buffer != self._back_buffer);
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
-#endif
 		
 	private:
 		void copy_polarity(const double_buffer & rhs)
