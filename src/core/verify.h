@@ -113,6 +113,12 @@
 // runs custom verification routine on given type
 #define CRAG_VERIFY(VARIABLE) ::crag::core::VerifyInvariants(VARIABLE)
 
+// makes it possible (albeit pointless) to say cout << nullptr
+inline std::ostream & operator << (std::ostream & out, std::nullptr_t)
+{
+	return out << "<null>";
+}
+
 namespace crag
 {
 	namespace core
