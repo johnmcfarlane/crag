@@ -591,7 +591,11 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 	auto const & foreground_buffer = buffers[static_cast<std::size_t>(Contact::VectorType::foreground)];
 	auto const & background_buffer = buffers[static_cast<std::size_t>(Contact::VectorType::background)];
 
-	std::array<TranslationRollContact, 2> translation_roll_contacts = { TranslationRollContact::Zero(), TranslationRollContact::Zero() };
+	std::array<TranslationRollContact, 2> translation_roll_contacts =
+	{{ 
+		TranslationRollContact::Zero(),
+		TranslationRollContact::Zero()
+	}};
 	
 	switch (foreground_buffer.size)
 	{
