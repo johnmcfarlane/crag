@@ -43,8 +43,8 @@ form::Node::Triplet::~Triplet()
 // Node
 
 form::Node::Node()
-: flags_and_children (0)
-, _parent (nullptr)
+: _children (nullptr)
+, _owner (nullptr)
 , seed (0)
 , score (0)
 {
@@ -54,7 +54,7 @@ form::Node::Node()
 form::Node::~Node()
 {
 	ASSERT(GetChildren() == nullptr);
-	ASSERT(_parent == nullptr);
+	ASSERT(_owner == nullptr);
 }
 
 // Makes sure node's three mid-points are non-null or returns false.
@@ -234,23 +234,33 @@ bool form::Node::InitScoreParameters()
 	return true;
 }
 
-void form::Node::SetFlags(flag_type f) 
-{
-	ASSERT ((f & pointer_mask) == 0);
-	flags_and_children &= pointer_mask;
-	flags_and_children |= f; 
-}
-
 void form::Node::SetChildren(Node * c) 
 { 
-	ASSERT ((reinterpret_cast<flag_type>(c) & flag_mask) == 0);
-	flags_and_children &= flag_mask;
-	flags_and_children |= reinterpret_cast<flag_type>(c); 
+	CRAG_VERIFY(* this);
+
+	_children = c;
+
+	CRAG_VERIFY(* this);
 }
 
-void form::Node::SetParent(Node * p) 
+void form::Node::SetParent(Node * parent) 
 { 
-	_parent = p; 
+	CRAG_VERIFY(* this);
+	CRAG_VERIFY_EQUAL(_owner.find<Polyhedron>(), nullptr);
+
+	_owner = parent; 
+
+	CRAG_VERIFY(* this);
+}
+
+void form::Node::SetPolyhedron(Polyhedron * polyhedron) 
+{ 
+	CRAG_VERIFY(* this);
+	CRAG_VERIFY_EQUAL(_owner.find<Node>(), nullptr);
+
+	_owner = polyhedron; 
+
+	CRAG_VERIFY(* this);
 }
 
 void form::Node::SetCousin(int index, Node & cousin)
@@ -298,43 +308,42 @@ void form::Node::GetChildCorners(int child_index, Point * child_corners[3]) cons
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Node, self)
 	static_assert(sizeof(Node) == 80 || sizeof(Node) == 128, "Node may not be ideally packed");
-	CRAG_VERIFY_EQUAL(reinterpret_cast<Node::flag_type>(& self) & Node::flag_mask, static_cast<Node::flag_type>(0));
+	CRAG_VERIFY(self._children);
+	CRAG_VERIFY(self._owner);
 
-	if (self._parent != nullptr) 
-	{
-		int child_index = int(& self - self._parent->GetChildren());
-		CRAG_VERIFY_EQUAL(self._parent->GetChildren() + child_index, & self);
-		CRAG_VERIFY_TRUE(child_index >= 0 && child_index < 4);
-		CRAG_VERIFY_EQUAL(self.seed, self._parent->GetChildSeed(child_index));
-
-		for (int i = 0; i < 3; ++ i) 
-		{
-			Node::Triplet const & t = self.triple[i];
-			CRAG_VERIFY_TRUE(t.corner);
+	auto parent = self._owner.find<Node>();
+	auto polyhedron = self._owner.find<Polyhedron>();
+	CRAG_VERIFY_OP(! parent, ||, ! polyhedron);
 	
-			Node const * cousin = t.cousin;
-			if (cousin != nullptr) 
+	if (parent) 
+	{
+		CRAG_VERIFY_FALSE(polyhedron);
+		
+		auto children = parent->GetChildren();
+		if (children)
+		{
+			int child_index = int(& self - children);
+			CRAG_VERIFY_EQUAL(children + child_index, & self);
+			CRAG_VERIFY_TRUE(child_index >= 0 && child_index < 4);
+			CRAG_VERIFY_EQUAL(self.seed, parent->GetChildSeed(child_index));
+
+			for (int i = 0; i < 3; ++ i) 
 			{
-				Node::Triplet const & ct = cousin->triple[i];
-				CRAG_VERIFY_EQUAL(t.mid_point, ct.mid_point);
-				CRAG_VERIFY_EQUAL(ct.cousin, & self);
+				Node::Triplet const & t = self.triple[i];
+				CRAG_VERIFY_TRUE(t.corner);
+	
+				Node const * cousin = t.cousin;
+				if (cousin != nullptr) 
+				{
+					Node::Triplet const & ct = cousin->triple[i];
+					CRAG_VERIFY_EQUAL(t.mid_point, ct.mid_point);
+					CRAG_VERIFY_EQUAL(ct.cousin, & self);
+				}
 			}
+
+			CRAG_VERIFY_OP(self.area, >, 0);
+			CRAG_VERIFY_NEARLY_EQUAL(LengthSq(self.normal), 1.f, .001f);
+			CRAG_VERIFY_OP(self.score, >=, 0);
 		}
-
-		CRAG_VERIFY_OP(self.area, >, 0);
-		CRAG_VERIFY_NEARLY_EQUAL(LengthSq(self.normal), 1.f, .001f);
-		CRAG_VERIFY_OP(self.score, >=, 0);
-	}
-	else {
-		CRAG_VERIFY_FALSE(self.GetChildren());
-
-		for (int i = 0; i < 3; ++ i) {
-			Node::Triplet const & t = self.triple[i];
-			CRAG_VERIFY_FALSE(t.corner);
-			CRAG_VERIFY_FALSE(t.mid_point);
-			CRAG_VERIFY_FALSE(t.cousin);
-		}
-
-		CRAG_VERIFY_EQUAL(self.score, 0);
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END

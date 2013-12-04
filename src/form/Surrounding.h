@@ -54,6 +54,8 @@ namespace form
 		
 #if defined(CRAG_VERIFY_ENABLED)
 		CRAG_VERIFY_INVARIANTS_DECLARE(Surrounding);
+		void VerifyUsed(Node const & n) const;
+		void VerifyUnused(Node const & n) const;
 		void VerifyUsed(Quaterna const & q) const;
 		void VerifyUnused(Quaterna const & q) const;
 #endif

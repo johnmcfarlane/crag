@@ -185,22 +185,62 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, self)
 	
 	CRAG_VERIFY(self.point_buffer);
 	
-	/*for (Quaterna const * q = quaterne; q < quaterne_used_end; ++ q) 
+	for (auto & q : self._quaterna_buffer) 
 	{
-		VerifyUsed(* q);
-	}*/
-	
-	// Rarely cause a problem and they are often the majority.
-	/*for (Quaterna const * q = quaterne_used_end; q < quaterne_end; ++ q) 
-	{
-		VerifyUnused(* q);
+		self.VerifyUsed(q);
 	}
 	
-	for (Quaterna const * q2 = quaterne + 1; q2 < quaterne_sorted_end; ++ q2) 
+	// Rarely cause a problem and they are often the majority so slow to verify.
+	/*for (auto index = self._quaterna_buffer.size(); index != self._quaterna_buffer.capacity(); ++ index) 
+	{
+		self.VerifyUnused(self._quaterna_buffer.begin()[index]);
+	}
+	
+	for (auto q2 = self._quaterna_buffer.begin() + 1; q2 < self._quaterna_buffer.GetLowestSorted(); ++ q2)
 	{
 		Quaterna const * q1 = q2 - 1;
-		CRAG_VERIFY_TRUE(q2->parent_score <= q1->parent_score);
+		CRAG_VERIFY_OP(q2->parent_score, <=, q1->parent_score);
 	}*/
+}
+
+void Surrounding::VerifyUsed(Node const & node) const
+{
+	CRAG_VERIFY(node);
+
+	auto parent = node.GetParent();
+	CRAG_VERIFY_TRUE(parent);
+
+	auto polyhedron = node.GetPolyhedron();
+	CRAG_VERIFY_FALSE(polyhedron);
+
+	for (int i = 0; i < 3; ++ i)
+	{
+		Node::Triplet const & t = node.triple[i];
+		CRAG_VERIFY_TRUE(t.corner);
+	}
+
+	CRAG_VERIFY_OP(node.score, >, 0);
+
+	CRAG_VERIFY_TRUE(parent->GetChildren());
+}
+
+void Surrounding::VerifyUnused(Node const & n) const
+{
+	CRAG_VERIFY(n);
+	CRAG_VERIFY_FALSE(n.GetParent());
+	CRAG_VERIFY_FALSE(n.GetPolyhedron());
+
+	CRAG_VERIFY_FALSE(n.GetParent());
+	CRAG_VERIFY_FALSE(n.HasChildren());
+	CRAG_VERIFY_EQUAL(n.score, 0);
+
+	for (int i = 0; i < 3; ++ i)
+	{
+		Node::Triplet const & t = n.triple[i];
+		CRAG_VERIFY_FALSE(t.corner);
+		CRAG_VERIFY_FALSE(t.mid_point);
+		CRAG_VERIFY_FALSE(t.cousin);
+	}
 }
 
 void Surrounding::VerifyUsed(Quaterna const & q) const
@@ -217,6 +257,7 @@ void Surrounding::VerifyUsed(Quaterna const & q) const
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
+		VerifyUsed(sibling);
 		
 		// All four siblings should have the same parent.
 		CRAG_VERIFY_TRUE(q.nodes[i].GetParent() == parent);
@@ -242,15 +283,12 @@ void Surrounding::VerifyUnused(Quaterna const & q) const
 	CRAG_VERIFY_TRUE(q.parent_score == -1);
 	
 	Node const * n = q.nodes;
-	CRAG_VERIFY_TRUE(& _node_buffer[(& q - std::begin(_quaterna_buffer)) * 4] == n);
+	CRAG_VERIFY_TRUE(_node_buffer.begin() + ((& q - std::begin(_quaterna_buffer)) * 4) == n);
 	
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
-		
-		CRAG_VERIFY_TRUE(sibling.GetParent() == nullptr);
-		CRAG_VERIFY_TRUE(! sibling.HasChildren());
-		CRAG_VERIFY_TRUE(sibling.score == 0);
+		VerifyUnused(sibling);
 	}
 	
 	CRAG_VERIFY(q);
@@ -512,7 +550,7 @@ bool Surrounding::ExpandNode(Node & node, Quaterna & children_quaterna)
 	ASSERT(worst_children + 3 != & node);
 	
 	// Note that after this point, expansion may fail but the node may have new mid-points.
-	Polyhedron & polyhedron = GetPolyhedron(node);
+	Polyhedron & polyhedron = ref(GetPolyhedron(node));
 	if (! node.InitMidPoints(polyhedron, point_buffer))
 	{
 		return false;
@@ -563,6 +601,14 @@ bool Surrounding::ExpandNode(Node & node, Quaterna & children_quaterna)
 
 void Surrounding::CollapseNodes(Node & root)
 {
+	CRAG_VERIFY(* this);
+	
+	bool has_children = root.HasChildren();
+	if (! has_children)
+	{
+		return;
+	}
+	
 	// Remove the entire tree from the given root.
 	CollapseNode(root);
 	
@@ -578,8 +624,12 @@ void Surrounding::CollapseNodes(Node & root)
 		_quaterna_buffer.Shrink();
 	}
 	
+	CRAG_VERIFY_OP(old_num_quaterne, >, _quaterna_buffer.size());
+	
 	// Swap used nodes in unused range with unused nodes in used range.
 	FixUpDecreasedNodes(old_num_quaterne);
+
+	CRAG_VERIFY(* this);
 }
 
 void Surrounding::CollapseNode(Node & node)
@@ -777,7 +827,7 @@ void Surrounding::DecreaseQuaterna(int new_num_quaterne)
 void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
 {
 	auto new_num_quaterne = _quaterna_buffer.size();
-	ASSERT(old_num_quaterne > new_num_quaterne);
+	CRAG_VERIFY_OP(old_num_quaterne, >, new_num_quaterne);
 	
 	// From the new used quaterna value, figure out new used node value.
 	auto new_num_nodes_used = new_num_quaterne << 2;	// 4 nodes per quaterna

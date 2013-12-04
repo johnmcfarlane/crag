@@ -19,7 +19,7 @@ namespace form
 	class Formation;
 	
 	// Helper function; Given a decendant node, find it's root, and then its polyhedron.
-	Polyhedron & GetPolyhedron(Node & node);
+	Polyhedron * GetPolyhedron(Node & node);
 	
 	// A Polyhedron is an instance of a Formation.
 	// The same Formation is represented in different Scenes by a different Polyhedron.
@@ -28,8 +28,6 @@ namespace form
 	class Polyhedron
 	{
 		// TODO: OBJECT_NO_COPY(Polyhedron);
-
-		friend Polyhedron & GetPolyhedron(Node & node);
 	public:
 		Polyhedron(Formation & formation);
 		Polyhedron(Polyhedron const & rhs);

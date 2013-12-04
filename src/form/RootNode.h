@@ -24,19 +24,16 @@ namespace form
 	class RootNode : public Node
 	{
 	public:
-		RootNode();
+		RootNode() = default;
 		RootNode(Polyhedron & _owner);
-		RootNode(RootNode const & rhs);
+		RootNode(RootNode const & rhs) = default;
+		~RootNode();
 		
 		void Init(int init_seed, Point * points[4]);
 		void GetPoints(Point * points[4]);
 		void Deinit(PointBuffer & points);
-		
-		Polyhedron & GetOwner() const;
 	private:
 		static void SetPointCenter(geom::Vector3f & point, geom::Vector3d const & relative_pos, geom::Vector3d const & point_center, double scale);
-		
-		Polyhedron * owner;
 	};
 
 }

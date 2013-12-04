@@ -23,16 +23,16 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessors
 
-Polyhedron & form::GetPolyhedron(Node & node)
+Polyhedron * form::GetPolyhedron(Node & node)
 {
-	RootNode & root_node = GetRootNode(node);
+	auto parent = node.GetParent();
+	if (parent)
+	{
+		return GetPolyhedron(* parent);
+	}
 	
-	Polyhedron & owner = root_node.GetOwner();
-	ASSERT(& owner._root_node == & root_node);
-	
-	return owner;
+	return node.GetPolyhedron();
 }
-
 
 /////////////////////////////////////////////////////////////////
 // Polyhedron

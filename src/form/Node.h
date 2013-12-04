@@ -11,6 +11,8 @@
 
 #include "form/Point.h"
 
+#include "core/pointer_union.h"
+
 namespace form
 {
 	class Node;
@@ -30,6 +32,9 @@ namespace form
 	class Node
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
 		Node();
 		~Node();
 
@@ -44,7 +49,7 @@ namespace form
 		
 		bool HasChildren() const { return GetChildren() != nullptr; }
 		bool IsRecyclable() const { return ! HasChildren(); }
-		bool IsInUse() const { return _parent != nullptr; }	// IsInUseOrIsRootNode
+		bool IsInUse() const { return _owner != nullptr; }
 		bool IsLeaf() const { return ! HasChildren(); }
 		
 		bool HasAllCousins() const
@@ -60,20 +65,20 @@ namespace form
 			return ! HasChildren() && HasAllCousins() /*&& score != 0*/;
 		}
 		
-		typedef size_t flag_type;
-		static flag_type const flag_mask = sizeof(void*) - 1;
-		static flag_type const pointer_mask = ~ flag_mask;
-		
-		flag_type GetFlags() const { return flags_and_children & flag_mask; }
-		void SetFlags(flag_type f);
-		
-		Node * GetChildren() { return reinterpret_cast<Node *>(flags_and_children & pointer_mask); }
-		Node const * GetChildren() const { return reinterpret_cast<Node *>(flags_and_children & pointer_mask); }
+		Node * GetChildren()
+		{
+			return _children;
+		}
+		Node const * GetChildren() const { return _children; }
 		void SetChildren(Node * c);
 		
-		Node * GetParent() { return _parent; }
-		Node const * GetParent() const { return _parent; }
+		Node * GetParent() { return _owner.find<Node>(); }
+		Node const * GetParent() const { return _owner.find<Node>(); }
 		void SetParent(Node * p);
+		
+		Polyhedron * GetPolyhedron() { return _owner.find<Polyhedron>(); }
+		Polyhedron const * GetPolyhedron() const { return _owner.find<Polyhedron>(); }
+		void SetPolyhedron(Polyhedron * p);
 		
 		Point * GetCornerPtr(int index) { return triple[index].corner; }
 		Point const * GetCornerPtr(int index) const { return triple[index].corner; }
@@ -94,9 +99,14 @@ namespace form
 		CRAG_VERIFY_INVARIANTS_DECLARE(Node);
 
 	private:
-		flag_type flags_and_children;	//  4	/	8
-		Node * _parent;			//  4	/	8
-		
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
+		Node * _children;
+
+		typedef ::crag::core::pointer_union_base<sizeof(double *), alignof(double *), sizeof(double), alignof(double), Node, Polyhedron> PointerUnion;
+		PointerUnion _owner;	//  4	/	8
+		static_assert(sizeof(_owner) == sizeof(void*), "");
 	public:
 		int seed;				//  4	/	4
 
@@ -118,6 +128,5 @@ namespace form
 		Vector3 normal;			// 12	/	12
 		
 		float score;			//  4	/	 4 32
-	};	// 80	/
-	
+	};	// 80	/	128
 }

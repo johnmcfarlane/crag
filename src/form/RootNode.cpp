@@ -19,8 +19,6 @@
 
 form::RootNode & form::GetRootNode(Node & node)
 {
-	//CRAG_VERIFY_ARRAY_ELEMENT(& node, nodes, nodes_available_end);
-	
 	Node * iterator = & node;
 	while (true) {
 		Node * parent = iterator->GetParent();
@@ -35,20 +33,17 @@ form::RootNode & form::GetRootNode(Node & node)
 ////////////////////////////////////////////////////////////////////////////////
 // RootNode
 
-form::RootNode::RootNode()
-	: owner(nullptr)
-{
-}
-
 form::RootNode::RootNode(Polyhedron & _owner)
-	: owner(& _owner)
 {
+	SetPolyhedron(& _owner);
 }
 
-form::RootNode::RootNode(RootNode const & rhs)
-	: Node(rhs)
-	, owner(rhs.owner)
+form::RootNode::~RootNode()
 {
+	CRAG_VERIFY(* this);
+	ASSERT(GetPolyhedron());
+	
+	SetPolyhedron(nullptr);
 }
 
 void form::RootNode::Init(int init_seed, Point * root_points[4])
@@ -101,9 +96,4 @@ void form::RootNode::Deinit(PointBuffer & points)
 		
 		triple[i].cousin = nullptr;
 	}
-}
-
-form::Polyhedron & form::RootNode::GetOwner() const
-{
-	return ref(owner);
 }
