@@ -9,13 +9,14 @@
 
 #pragma once
 
-#include "form/Point.h"
+#include "form/defs.h"
 
 #include "core/pointer_union.h"
 
 namespace form
 {
 	class Node;
+	class Point;
 	class PointBuffer;
 	class Polyhedron;
 	

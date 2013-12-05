@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/Vertex.h"
+#include "Vertex.h"
 
 namespace form
 {

@@ -11,6 +11,7 @@
 
 #include "Node.h"
 #include "NodeBuffer.h"
+#include "Point.h"
 
 using namespace form;
 

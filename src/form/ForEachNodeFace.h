@@ -11,6 +11,7 @@
 
 #include "defs.h"
 #include "Node.h"
+#include "Point.h"
 
 #include "geom/Intersection.h"
 
