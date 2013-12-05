@@ -53,9 +53,9 @@ namespace form
 
 		void operator() (Node const & node, Triangle3 const & surface) const
 		{
-			ASSERT(surface.points[0] == node.GetCorner(0).pos);
-			ASSERT(surface.points[1] == node.GetCorner(1).pos);
-			ASSERT(surface.points[2] == node.GetCorner(2).pos);
+			ASSERT(surface.points[0] == node.GetCorner(0)->pos);
+			ASSERT(surface.points[1] == node.GetCorner(1)->pos);
+			ASSERT(surface.points[2] == node.GetCorner(2)->pos);
 
 			Node const * children = node.GetChildren();
 			if (children == nullptr)
@@ -91,7 +91,7 @@ namespace form
 			// For each sub-dividing line that can be drawn between node mid-points,
 			auto test_sub_division = [&] (int sub_division_index)
 			{
-				ASSERT(surface.points[sub_division_index] == node.GetCorner(sub_division_index).pos);
+				ASSERT(surface.points[sub_division_index] == node.GetCorner(sub_division_index)->pos);
 
 				auto sub_division_index1 = TriMod(sub_division_index + 1);
 				auto sub_division_index2 = TriMod(sub_division_index + 2);
@@ -161,9 +161,9 @@ namespace form
 		if (! ForEachChildNode(root_node, [&] (Node const & child)
 		{
 			Triangle3 surface;
-			surface.points[0] = child.GetCorner(0).pos;
-			surface.points[1] = child.GetCorner(1).pos;
-			surface.points[2] = child.GetCorner(2).pos;
+			surface.points[0] = child.GetCorner(0)->pos;
+			surface.points[1] = child.GetCorner(1)->pos;
+			surface.points[2] = child.GetCorner(2)->pos;
 
 			// Slightly inefficient as the same sides have their distance calculated multiple times.
 			if (TouchesProjection(polyhedron_center, surface, sphere))
@@ -187,9 +187,9 @@ namespace form
 				}
 			};
 			
-			f(root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
-			f(root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
-			f(root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
+			f(* root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
+			f(* root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
+			f(* root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
 			f(* root_node.GetMidPoint(0), * root_node.GetMidPoint(1), * root_node.GetMidPoint(2));
 		}
 	}

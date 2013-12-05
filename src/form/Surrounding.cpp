@@ -269,7 +269,7 @@ void Surrounding::VerifyUsed(Quaterna const & q) const
 
 		for (int j = 0; j < 3; ++ j)
 		{
-			Point const & point = sibling.GetCorner(j);
+			Point const & point = ref(sibling.GetCorner(j));
 			CRAG_VERIFY(point);
 			point_buffer.VerifyAllocatedElement(point);
 		}

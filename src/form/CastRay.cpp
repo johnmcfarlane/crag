@@ -180,7 +180,7 @@ namespace
 		// as above with a little less known information
 		Attributes GenerateAttributes(Uniforms const & uniforms, Node const & node)
 		{
-			return GenerateAttributes(uniforms, & node, node.GetCorner(0), node.GetCorner(1), node.GetCorner(2));
+			return GenerateAttributes(uniforms, & node, ref(node.GetCorner(0)), ref(node.GetCorner(1)), ref(node.GetCorner(2)));
 		}
 
 		// iterates over the given range of node attributes in asscending order of distance
@@ -366,9 +366,9 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 		}
 		else
 		{
-			child_attributes[0] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
-			child_attributes[1] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
-			child_attributes[2] = GenerateAttributes(uniforms, & root_node, root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
+			child_attributes[0] = GenerateAttributes(uniforms, & root_node, * root_node.GetCorner(0), * root_node.GetMidPoint(2), * root_node.GetMidPoint(1));
+			child_attributes[1] = GenerateAttributes(uniforms, & root_node, * root_node.GetCorner(1), * root_node.GetMidPoint(0), * root_node.GetMidPoint(2));
+			child_attributes[2] = GenerateAttributes(uniforms, & root_node, * root_node.GetCorner(2), * root_node.GetMidPoint(1), * root_node.GetMidPoint(0));
 			child_attributes[3] = GenerateAttributes(uniforms, & root_node, * root_node.GetMidPoint(0), * root_node.GetMidPoint(1), * root_node.GetMidPoint(2));
 		}
 	}

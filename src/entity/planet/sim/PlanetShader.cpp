@@ -240,8 +240,8 @@ bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::a
 	geom::abs::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
 	polyhedron.GetFormation().SampleRadius(radius);
 
-	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
-	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
 	geom::abs::Scalar length = Length(result);
 	result *= (radius / length);
@@ -254,8 +254,8 @@ bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, g
 {
 	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
 	
-	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1)).pos, shape.center);
-	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1)).pos, shape.center);
+	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
 	geom::abs::Scalar result_length = Length(result);
 	

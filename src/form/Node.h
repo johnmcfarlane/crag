@@ -80,10 +80,8 @@ namespace form
 		Polyhedron const * GetPolyhedron() const { return _owner.find<Polyhedron>(); }
 		void SetPolyhedron(Polyhedron * p);
 		
-		Point * GetCornerPtr(int index) { return triple[index].corner; }
-		Point const * GetCornerPtr(int index) const { return triple[index].corner; }
-		Point & GetCorner(int index) { return ref(GetCornerPtr(index)); }
-		Point const & GetCorner(int index) const { return ref(GetCornerPtr(index)); }
+		Point const * GetCorner(int index) const { return triple[index].corner; }
+		Point * GetCorner(int index) { return triple[index].corner; }
 		
 		Point const * GetMidPoint(int index) const { return triple[index].mid_point; }
 		Point * GetMidPoint(int index) { return triple[index].mid_point; }

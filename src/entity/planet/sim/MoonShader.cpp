@@ -99,8 +99,8 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 	
 	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
 	geom::abs::Vector3 center = shape.center;
-	geom::abs::Vector3 near_a = geom::Cast<geom::abs::Scalar>(a.GetCorner(TriMod(index + 1)).pos) - center;
-	geom::abs::Vector3 near_b = geom::Cast<geom::abs::Scalar>(b.GetCorner(TriMod(index + 1)).pos) - center;
+	geom::abs::Vector3 near_a = geom::Cast<geom::abs::Scalar>(a.GetCorner(TriMod(index + 1))->pos) - center;
+	geom::abs::Vector3 near_b = geom::Cast<geom::abs::Scalar>(b.GetCorner(TriMod(index + 1))->pos) - center;
 	geom::abs::Vector3 near_mid = near_a + near_b;
 	near_mid *= shape.radius / Length(near_mid);
 	
