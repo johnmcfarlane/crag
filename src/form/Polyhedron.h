@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "form/RootNode.h"
+#include "form/Node.h"
 
 #include "geom/origin.h"
 
@@ -31,6 +31,9 @@ namespace form
 	public:
 		Polyhedron(Formation & formation);
 		Polyhedron(Polyhedron const & rhs);
+		~Polyhedron();
+		
+		CRAG_VERIFY_INVARIANTS_DECLARE(Polyhedron);
 		
 		void Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
@@ -38,7 +41,7 @@ namespace form
 		geom::abs::Sphere3 const & GetShape() const;
 		Formation & GetFormation();
 		Formation const & GetFormation() const;
-		RootNode const & GetRootNode() const;
+		Node const & GetRootNode() const;
 		
 		void SetOrigin(geom::abs::Vector3 const & origin);
 	private:
@@ -51,7 +54,7 @@ namespace form
 		
 	public:
 		geom::abs::Sphere3 _shape;
-		RootNode _root_node;	// Exists purely so that all 'real' nodes have a parent.
+		Node _root_node;	// Exists purely so that all 'real' nodes have a parent.
 		Formation & _formation;
 	};
 }

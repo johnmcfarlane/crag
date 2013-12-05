@@ -20,6 +20,59 @@
 
 using namespace form;
 
+namespace
+{
+	void InitRootNode(Node & root_node, int init_seed, Point * root_points[4])
+	{
+		Point * corner = root_points[0];
+
+		root_node.triple[0].corner = corner;
+		root_node.triple[1].corner = corner;
+		root_node.triple[2].corner = corner;
+		
+		root_node.center = geom::Vector3f::Zero();
+		root_node.area = 0;
+		root_node.normal = geom::Vector3f::Zero();
+		root_node.score = std::numeric_limits<float>::max();
+	
+		root_node.seed = init_seed;
+	
+		for (int i = 0; i < 3; ++ i)
+		{
+			Node::Triplet & t = root_node.triple[i];
+			t.mid_point = root_points[i + 1];
+			t.cousin = & root_node;
+		}
+	
+		// At this point, the four verts still need setting up.
+	}
+
+	void DeinitRootNode(Node & root_node, PointBuffer & points)
+	{
+		ASSERT(! root_node.HasChildren());
+	
+		points.Destroy(root_node.triple[0].corner);
+	
+		for (int i = 0; i < 3; ++ i) {
+			root_node.triple[i].corner = nullptr;
+		
+			points.Destroy(root_node.triple[i].mid_point);
+			root_node.triple[i].mid_point = nullptr;
+		
+			root_node.triple[i].cousin = nullptr;
+		}
+	}
+
+	void GetRootNodePoints(Node const & root_node, Point * points[4])
+	{
+		// TODO: Verify would include check that {points[0] == (triple[1]} == triple[2])
+		points[0] = root_node.triple[0].corner;
+		points[1] = root_node.triple[0].mid_point;
+		points[2] = root_node.triple[1].mid_point;
+		points[3] = root_node.triple[2].mid_point;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Node accessors
 
@@ -41,15 +94,31 @@ Polyhedron::Polyhedron(Formation & formation)
 : _shape(formation.GetShape())
 , _formation(formation)
 {
-	_root_node = RootNode(* this);
+	_root_node.SetPolyhedron(this);
+	
+	CRAG_VERIFY(* this);
 }
 
 Polyhedron::Polyhedron(Polyhedron const & rhs)
 : _shape(rhs._shape)
 , _formation(rhs._formation)
 {
-	_root_node = RootNode(* this);
+	_root_node.SetPolyhedron(this);
+
+	CRAG_VERIFY(* this);
 }
+
+Polyhedron::~Polyhedron()
+{
+	CRAG_VERIFY(* this);
+	
+	_root_node.SetPolyhedron(nullptr);
+}
+
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Polyhedron, self)
+	CRAG_VERIFY(self._root_node);
+	CRAG_VERIFY_EQUAL(self._root_node.GetPolyhedron(), & self);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer)
 {
@@ -71,12 +140,12 @@ void Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buf
 	shader.InitRootPoints(* this, root_points);	
 
 	// Initialize the root node with the points
-	_root_node.Init(_formation.GetSeed(), root_points);
+	InitRootNode(_root_node, _formation.GetSeed(), root_points);
 }
 
 void Polyhedron::Deinit(PointBuffer & point_buffer)
 {
-	_root_node.Deinit(point_buffer);
+	DeinitRootNode(_root_node, point_buffer);
 }
 
 geom::abs::Sphere3 const & Polyhedron::GetShape() const
@@ -94,7 +163,7 @@ Formation const & Polyhedron::GetFormation() const
 	return _formation;
 }
 
-RootNode const & Polyhedron::GetRootNode() const
+Node const & Polyhedron::GetRootNode() const
 {
 	return _root_node;
 }
@@ -106,7 +175,7 @@ void Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
 	_shape.radius = shape.radius;
 	
 	Point * root_points[4];
-	_root_node.GetPoints(root_points);
+	GetRootNodePoints(_root_node, root_points);
 
 	Shader const & shader = _formation.GetShader();
 	shader.InitRootPoints(* this, root_points);

@@ -58,7 +58,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/Point.cpp \
 	$(CRAG_PATH)/form/QuaternaBuffer.cpp \
 	$(CRAG_PATH)/form/RayCastResult.cpp \
-	$(CRAG_PATH)/form/RootNode.cpp \
 	$(CRAG_PATH)/form/Polyhedron.cpp \
 	$(CRAG_PATH)/form/Scene.cpp \
 	$(CRAG_PATH)/form/Surrounding.cpp \

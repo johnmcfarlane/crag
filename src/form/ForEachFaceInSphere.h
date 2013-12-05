@@ -157,7 +157,7 @@ namespace form
 		Vector3 const & polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
 		ForEachFaceInSphereFunctor node_functor(sphere, polyhedron_center, poly_functor);
 
-		RootNode const & root_node = polyhedron.GetRootNode();
+		Node const & root_node = polyhedron.GetRootNode();
 		if (! ForEachChildNode(root_node, [&] (Node const & child)
 		{
 			Triangle3 surface;

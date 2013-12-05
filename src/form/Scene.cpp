@@ -150,7 +150,7 @@ void Scene::ResetFormations(geom::abs::Vector3 const & origin)
 
 void Scene::TickPolyhedron(Polyhedron & polyhedron)
 {
-	RootNode & root_node = polyhedron._root_node;
+	Node & root_node = polyhedron._root_node;
 	
 	if (root_node.IsExpandable()) 
 	{
@@ -175,7 +175,7 @@ void Scene::DeinitPolyhedron(FormationPair & pair)
 	Polyhedron & polyhedron = pair.second;
 	
 	// Collapse the root node by fair means or foul.
-	RootNode & root_node = polyhedron._root_node;
+	Node & root_node = polyhedron._root_node;
 
 	_surrounding.CollapseNodes(root_node);
 	ASSERT(! root_node.HasChildren());
