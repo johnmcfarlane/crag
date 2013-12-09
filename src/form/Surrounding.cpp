@@ -12,8 +12,9 @@
 #include "Surrounding.h"
 
 #include "ExpandNodeFunctor.h"
+#include "ForEachNodeFace.h"
 #include "GatherExpandableNodesFunctor.h"
-#include "GenerateMeshFunctor.h"
+#include "Mesh.h"
 #include "Polyhedron.h"
 
 #include "core/ConfigEntry.h"
@@ -458,9 +459,20 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 	point_buffer.ClearPointers();
 	mesh.Clear();
 
-	GenerateMeshFunctor mesh_functor(node_score_functor.GetLeafScoreRange(), mesh);
-
-	_node_buffer.ForEach<GenerateMeshFunctor &>(mesh_functor, 1024, true);
+	_node_buffer.ForEach([& mesh] (Node & node)
+	{
+		if (! node.IsLeaf()) 
+		{
+			return;
+		}
+		
+		ForEachNodeFace(node, [& mesh] (Point & a, Point & b, Point & c, geom::Vector3f const & normal, float /*score*/)
+		{
+			Color color = Color::White();
+			
+			mesh.AddFace(a, b, c, normal, color);
+		});
+	}, 1024, true);
 }
 
 ///////////////////////////////////////////////////////
