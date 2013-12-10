@@ -16,42 +16,44 @@
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
+using namespace form;
+
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
-form::Mesh::Mesh(int max_num_verts, int max_num_tris)
+Mesh::Mesh(int max_num_verts, int max_num_tris)
 : vertices(max_num_verts)
 , indices(max_num_tris * 3)
 {
 }
 
-void form::Mesh::Clear()
+void Mesh::Clear()
 {
 	indices.Clear();
 	vertices.Clear();
 }
 
-form::MeshProperties & form::Mesh::GetProperties()
+MeshProperties & Mesh::GetProperties()
 {
 	return properties;
 }
 
-form::MeshProperties const & form::Mesh::GetProperties() const
+MeshProperties const & Mesh::GetProperties() const
 {
 	return properties;
 }
 
-size_t form::Mesh::GetIndexCount() const
+size_t Mesh::GetIndexCount() const
 {
 	return indices.GetSize();
 }
 
-size_t form::Mesh::GetNumPolys() const
+size_t Mesh::GetNumPolys() const
 {
 	return indices.GetSize() / 3;
 }
 
-form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
+Vertex & Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)
 	{
@@ -64,7 +66,7 @@ form::Vertex & form::Mesh::GetVertex(Point & point, Color color)
 	return * point.vert;
 }
 
-form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
+Vertex & Mesh::AddVertex(Point const & p, Color color)
 {
 	Vertex v = 
 	{ 
@@ -81,7 +83,7 @@ form::Vertex & form::Mesh::AddVertex(form::Point const & p, Color color)
 	return addition;
 }
 
-void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal)
+void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal)
 {
 	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
@@ -97,7 +99,7 @@ void form::Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f cons
 	c.norm += normal;
 }
 
-void form::Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color)
+void Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color)
 {
 	Vertex & vert_a = GetVertex(a, color);
 	Vertex & vert_b = GetVertex(b, color);
@@ -106,27 +108,27 @@ void form::Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const &
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
 
-form::VertexBuffer & form::Mesh::GetVertices() 
+VertexBuffer & Mesh::GetVertices() 
 {
 	return vertices;
 }
 
-form::VertexBuffer const & form::Mesh::GetVertices() const
+VertexBuffer const & Mesh::GetVertices() const
 {
 	return vertices;
 }
 
-gfx::IndexBuffer & form::Mesh::GetIndices()
+gfx::IndexBuffer & Mesh::GetIndices()
 {
 	return indices;
 }
 
-gfx::IndexBuffer const & form::Mesh::GetIndices() const
+gfx::IndexBuffer const & Mesh::GetIndices() const
 {
 	return indices;
 }
 
-CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Mesh, self)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Mesh, self)
 	CRAG_VERIFY_EQUAL(self.indices.GetSize() % 3, 0);
 	CRAG_VERIFY_EQUAL(self.indices.GetSlack() % 3, 0);
 
