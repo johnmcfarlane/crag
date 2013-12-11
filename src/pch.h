@@ -84,6 +84,7 @@
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <climits>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
