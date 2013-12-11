@@ -23,10 +23,51 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(NodeBuffer, object)
 	CRAG_VERIFY_ARRAY_POINTER(object._nodes_used_end, object._nodes, object._nodes_end);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void NodeBuffer::VerifyUsed(Node const & n) const
+void NodeBuffer::VerifyUsed(Node const & node) const
 {
-	CRAG_VERIFY(n);
-	CRAG_VERIFY_ARRAY_ELEMENT(&n, _nodes, _nodes_used_end);
+	CRAG_VERIFY_ARRAY_ELEMENT(& node, _nodes, _nodes_used_end);
+
+	CRAG_VERIFY(node);
+	
+	auto parent = node.GetParent();
+	CRAG_VERIFY_TRUE(parent);
+	
+	auto child_index = & node - parent->GetChildren();
+	CRAG_VERIFY_OP(child_index, >=, 0);
+	CRAG_VERIFY_OP(child_index, <, 4);
+
+	auto polyhedron = node.GetPolyhedron();
+	CRAG_VERIFY_FALSE(polyhedron);
+
+	for (int i = 0; i < 3; ++ i)
+	{
+		Node::Triplet const & t = node.triple[i];
+		CRAG_VERIFY_TRUE(t.corner);
+	}
+
+	CRAG_VERIFY_OP(node.score, >, 0);
+}
+
+void NodeBuffer::VerifyUnused(Node const & node) const
+{
+	CRAG_VERIFY_ARRAY_ELEMENT(& node, _nodes_used_end, _nodes_end);
+
+	CRAG_VERIFY(node);
+	
+	CRAG_VERIFY_FALSE(node.GetParent());
+	CRAG_VERIFY_FALSE(node.GetPolyhedron());
+
+	CRAG_VERIFY_FALSE(node.GetParent());
+	CRAG_VERIFY_FALSE(node.HasChildren());
+	CRAG_VERIFY_EQUAL(node.score, 0);
+
+	for (int i = 0; i < 3; ++ i)
+	{
+		Node::Triplet const & t = node.triple[i];
+		CRAG_VERIFY_FALSE(t.corner);
+		CRAG_VERIFY_FALSE(t.mid_point);
+		CRAG_VERIFY_FALSE(t.cousin);
+	}
 }
 #endif
 

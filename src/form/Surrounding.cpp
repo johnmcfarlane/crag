@@ -204,46 +204,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, self)
 	}*/
 }
 
-void Surrounding::VerifyUsed(Node const & node) const
-{
-	CRAG_VERIFY(node);
-
-	auto parent = node.GetParent();
-	CRAG_VERIFY_TRUE(parent);
-
-	auto polyhedron = node.GetPolyhedron();
-	CRAG_VERIFY_FALSE(polyhedron);
-
-	for (int i = 0; i < 3; ++ i)
-	{
-		Node::Triplet const & t = node.triple[i];
-		CRAG_VERIFY_TRUE(t.corner);
-	}
-
-	CRAG_VERIFY_OP(node.score, >, 0);
-
-	CRAG_VERIFY_TRUE(parent->GetChildren());
-}
-
-void Surrounding::VerifyUnused(Node const & n) const
-{
-	CRAG_VERIFY(n);
-	CRAG_VERIFY_FALSE(n.GetParent());
-	CRAG_VERIFY_FALSE(n.GetPolyhedron());
-
-	CRAG_VERIFY_FALSE(n.GetParent());
-	CRAG_VERIFY_FALSE(n.HasChildren());
-	CRAG_VERIFY_EQUAL(n.score, 0);
-
-	for (int i = 0; i < 3; ++ i)
-	{
-		Node::Triplet const & t = n.triple[i];
-		CRAG_VERIFY_FALSE(t.corner);
-		CRAG_VERIFY_FALSE(t.mid_point);
-		CRAG_VERIFY_FALSE(t.cousin);
-	}
-}
-
 void Surrounding::VerifyUsed(Quaterna const & q) const
 {
 	Node const & n = ref(q.nodes);
@@ -258,7 +218,7 @@ void Surrounding::VerifyUsed(Quaterna const & q) const
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
-		VerifyUsed(sibling);
+		_node_buffer.VerifyUsed(sibling);
 		
 		// All four siblings should have the same parent.
 		CRAG_VERIFY_TRUE(q.nodes[i].GetParent() == parent);
@@ -289,7 +249,7 @@ void Surrounding::VerifyUnused(Quaterna const & q) const
 	for (int i = 0; i < 4; ++ i)
 	{
 		Node const & sibling = q.nodes[i];
-		VerifyUnused(sibling);
+		_node_buffer.VerifyUnused(sibling);
 	}
 	
 	CRAG_VERIFY(q);
