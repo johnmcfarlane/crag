@@ -186,10 +186,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, self)
 	
 	CRAG_VERIFY(self.point_buffer);
 	
-	for (auto & q : self._quaterna_buffer) 
+	/*for (auto & q : self._quaterna_buffer) 
 	{
 		self.VerifyUsed(q);
-	}
+	}*/
 	
 	// Rarely cause a problem and they are often the majority so slow to verify.
 	/*for (auto index = self._quaterna_buffer.size(); index != self._quaterna_buffer.capacity(); ++ index) 
