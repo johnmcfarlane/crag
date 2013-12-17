@@ -101,6 +101,34 @@ namespace core
 			return * _back_buffer;
 		}
 		
+		value_type * begin()
+		{
+			CRAG_VERIFY(* this);
+			
+			return std::begin(_buffer);
+		}
+		
+		value_type const * begin() const
+		{
+			CRAG_VERIFY(* this);
+			
+			return std::begin(_buffer);
+		}
+		
+		value_type * end()
+		{
+			CRAG_VERIFY(* this);
+			
+			return std::end(_buffer);
+		}
+		
+		value_type const * end() const
+		{
+			CRAG_VERIFY(* this);
+			
+			return std::end(_buffer);
+		}
+		
 		// subscript operator
 		value_type & operator [] (int n)
 		{
