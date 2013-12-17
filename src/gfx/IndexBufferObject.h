@@ -22,7 +22,7 @@ namespace gfx
 		void DrawElements(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
 			ASSERT(IsBound());
-			ASSERT(count <= std::numeric_limits<GLsizei>::max());
+			CRAG_VERIFY_OP(static_cast<uintmax_t>(count), <=, static_cast<uintmax_t>(std::numeric_limits<ElementIndex>::max()));
 			GLvoid const * ptr = reinterpret_cast<const GLvoid *>(sizeof(ElementIndex) * first);
 			GL_CALL(glDrawElements(mode, count, CRAG_GFX_ELEMENT_INDEX_TYPE, ptr));
 		}
