@@ -32,6 +32,19 @@ namespace gfx
 		typedef BufferObject<VERTEX, GL_ARRAY_BUFFER> super;
 		
 	public:
+		VertexBufferObject() = default;
+		
+		VertexBufferObject(VertexBufferObject && rhs)
+		: super(std::move(rhs))
+		{
+		}
+		
+		VertexBufferObject & operator=(VertexBufferObject && rhs)
+		{
+			super::operator=(std::move(rhs));
+			return * this;
+		}
+		
 		bool IsBound() const
 		{
 			return super::IsBound();
