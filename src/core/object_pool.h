@@ -225,7 +225,7 @@ namespace core
 
 #if defined(CRAG_VERIFY_ENABLED)
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(object_pool, pool)
-			CRAG_VERIFY_ARRAY_ELEMENT(reinterpret_cast<value_type *>(pool._free_list_head), pool._array, pool._array_end);
+			CRAG_VERIFY_ARRAY_POINTER(reinterpret_cast<value_type *>(pool._free_list_head), pool._array, pool._array_end);
 			CRAG_VERIFY_ARRAY_POINTER(reinterpret_cast<value_type *>(pool._unlinked_begin), reinterpret_cast<value_type *>(pool._free_list_head), pool._array_end);
 			CRAG_VERIFY_ARRAY_POINTER(pool._array_end, reinterpret_cast<value_type *>(pool._unlinked_begin), pool._array_end);
 			CRAG_VERIFY_OP(pool._array_end, >, pool._array);
