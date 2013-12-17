@@ -36,11 +36,22 @@ namespace gfx
 		{
 		}
 		
+		BufferObject(BufferObject && rhs)
+		{
+			std::swap(_name, rhs._name);
+		}
+		
 		~BufferObject()
 		{
 			assert(! IsInitialized());
 		}
 
+		BufferObject & operator=(BufferObject && rhs)
+		{
+			std::swap(_name, rhs._name);
+			return * this;
+		}
+		
 		bool IsInitialized() const
 		{
 			return _name != 0;
