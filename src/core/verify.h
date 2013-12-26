@@ -47,14 +47,14 @@
 // verifies that result of expressions applied to binary operator is true
 #define CRAG_VERIFY_OP(A, OP, B) \
 	DO_STATEMENT( \
-		const auto & a = (A); \
-		const auto & b = (B); \
-		if (!(a OP b)) { \
+		const auto & __a = (A); \
+		const auto & __b = (B); \
+		if (!(__a OP __b)) { \
 			::std::ostringstream message; \
 			message \
-				<< '(' << #A "=" << a << ')' \
+				<< '(' << #A "=" << __a << ')' \
 				<< ' ' << #OP \
-				<< " (" << #B "=" << b << ')'; \
+				<< " (" << #B "=" << __b << ')'; \
 			DEBUG_BREAK("Failed: %s", message.str().c_str()); \
 		} \
 	)
@@ -70,12 +70,12 @@
 // verifies that given expressions are nearly equal within a margin
 #define CRAG_VERIFY_NEARLY_EQUAL(A, B, EPSILON) \
 	DO_STATEMENT( \
-		auto a = A; \
-		auto b = B; \
-		if (! NearEqual(a, b, EPSILON)) { \
+		auto __a = A; \
+		auto __b = B; \
+		if (! NearEqual(__a, __b, EPSILON)) { \
 			::std::ostringstream message; \
-			message << #A "=" << a \
-					<< ", " #B "=" << b \
+			message << #A "=" << __a \
+					<< ", " #B "=" << __b \
 					<< ", " #EPSILON "=" << EPSILON; \
 			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
 		} \
@@ -84,12 +84,12 @@
 // verifies that given expressions are nearly proportional within a margin
 #define CRAG_VERIFY_NEARLY_EQUAL_LOG(A, B, EPSILON) \
 	DO_STATEMENT( \
-		auto a = A; \
-		auto b = B; \
-		if (! NearEqualLog(a, b, EPSILON)) { \
+		auto __a = A; \
+		auto __b = B; \
+		if (! NearEqualLog(__a, __b, EPSILON)) { \
 			::std::ostringstream message; \
-			message << #A "=" << a \
-					<< ", " #B "=" << b \
+			message << #A "=" << __a \
+					<< ", " #B "=" << __b \
 					<< ", EPSILON=" << EPSILON; \
 			DEBUG_BREAK("Not nearly equal: %s", message.str().c_str()); \
 		} \
