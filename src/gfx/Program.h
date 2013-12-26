@@ -58,7 +58,7 @@ namespace gfx
 		void Unbind() const;
 		
 		// refers to the frame-invariant uniforms
-		void SetUniformsValid(bool uniforms_invalid);
+		void SetUniformsValid(bool uniforms_valid);
 		bool GetUniformsValid() const;
 		
 		void UpdateLights(Light::List const & lights) const;
