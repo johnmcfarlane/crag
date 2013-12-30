@@ -48,6 +48,13 @@ public:
 		return inverse * GetInt();
 	}
 	
+	// returns pseudo-random boolean
+	bool GetBool()
+	{
+		auto r = GetInt();
+		return (r & (1 << (num_bits - 1))) != 0;
+	}
+	
 	// returns pseudo-random number in the range [0, 1]
 	template <typename S>
 	S GetUnitInclusive()
