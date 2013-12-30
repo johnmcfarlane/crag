@@ -198,12 +198,19 @@ namespace crag
 			VerifyPtr(pointer);
 		}
 
-		// classes which don't have 
+		// classes with VerifyInvariants function
 		template <typename Type, is_class<Type> = 0>
 		void VerifyInvariants(Type const & object)
 		{
 			VerifyRef(object);
 			Type::VerifyInvariants(object);
+		}
+
+		// std::shared_ptr
+		template <typename Type>
+		void VerifyInvariants(std::shared_ptr<Type> const & ptr)
+		{
+			VerifyPtr(ptr.get());
 		}
 
 		// everything else
