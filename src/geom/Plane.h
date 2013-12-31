@@ -13,9 +13,6 @@
 
 namespace geom
 {
-	template <typename S, int N>
-	class Triangle;
-	
 	// an infinite plane represented by a surface point and normal
 	template <typename S, int N>
 	class Plane
@@ -65,6 +62,12 @@ namespace geom
 	Plane<LHS_S, N> Cast(Plane<RHS_S, N> const & rhs)
 	{
 		return Plane<LHS_S, N>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.normal));
+	}
+	
+	template <typename S, int N>
+	Plane<S, N> MakePlane(Triangle<S, N> const & t)
+	{
+		return Plane<S, N>(t);
 	}
 
 	template <typename S, int N>
