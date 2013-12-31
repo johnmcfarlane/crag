@@ -38,7 +38,7 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 	SetProgram(poly_program);
 	
 	MeshResource const & cuboid_mesh = resource_manager.GetCuboid();
-	SetMeshResource(& cuboid_mesh);
+	SetVboResource(& cuboid_mesh);
 }
 
 bool Box::GetRenderRange(RenderRange & range) const 
@@ -74,7 +74,7 @@ void Box::Render(Engine const & renderer) const
 		poly_program.SetUniforms(_color, fragment_lighting, flat_shaded, false);
 	}
 
-	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetMeshResource());
+	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetVboResource());
 	cuboid.Draw();
 	
 	GL_VERIFY;

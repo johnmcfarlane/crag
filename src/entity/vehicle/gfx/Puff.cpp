@@ -55,7 +55,7 @@ Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformat
 	SetProgram(poly_program);
 	
 	MeshResource const & disk_quad = resource_manager.GetDiskQuad();
-	SetMeshResource(& disk_quad);
+	SetVboResource(& disk_quad);
 	
 	Scene const & scene = init.engine.GetScene();
 	core::Time time = scene.GetTime();
@@ -74,7 +74,7 @@ void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 	
 	Transformation scale = model_view * Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
 	
-	Quad const & disk_quad = static_cast<Quad const &>(* GetMeshResource());
+	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());
 	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale, _radius));
 }
 
@@ -104,7 +104,7 @@ void Puff::Render(Engine const & renderer) const
 	Color4f lighting = renderer.CalculateLighting(translation);
 	disk_program.SetUniforms(model_view, _radius, _color * lighting);
 	
-	Quad const & disk_quad = static_cast<Quad const &>(ref(GetMeshResource()));
+	Quad const & disk_quad = static_cast<Quad const &>(ref(GetVboResource()));
 	disk_quad.Draw();
 }
 

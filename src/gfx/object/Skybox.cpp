@@ -93,7 +93,7 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 void Skybox::Render(Engine const &) const
 {
 	auto & engine = GetEngine();
-	engine.SetCurrentMesh(nullptr);
+	engine.SetVboResource(nullptr);
 
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	glDepthMask(GL_FALSE);

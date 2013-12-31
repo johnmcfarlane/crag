@@ -80,8 +80,8 @@ namespace gfx
 		Program const * GetCurrentProgram() const;
 		void SetCurrentProgram(Program const * program);
 		
-		MeshResource const * GetCurrentMesh() const;
-		void SetCurrentMesh(MeshResource const * mesh);
+		MeshResource const * GetVboResource() const;
+		void SetVboResource(MeshResource const * mesh);
 		
 		Color4f CalculateLighting(Vector3 const & position) const;
 

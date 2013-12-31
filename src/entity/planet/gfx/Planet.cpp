@@ -46,7 +46,7 @@ void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
 
 void Planet::UpdateModelViewTransformation(Transformation const & model_view)
 {
-	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());
 	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view, _radius_max));
 }
 
@@ -73,6 +73,6 @@ void Planet::Render(Engine const &) const
 //	Color4f color(.5f,.5f,.9f);
 //	fog_program.SetUniforms(transformation, color, .5f);
 //
-//	Quad const & sphere_quad = static_cast<Quad const &>(ref(GetMeshResource()));
+//	Quad const & sphere_quad = static_cast<Quad const &>(ref(GetVboResource()));
 //	sphere_quad.Draw();
 }

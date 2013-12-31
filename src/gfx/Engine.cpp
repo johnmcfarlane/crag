@@ -357,12 +357,12 @@ void Engine::SetCurrentProgram(Program const * program)
 	GL_VERIFY;
 }
 
-MeshResource const * Engine::GetCurrentMesh() const
+MeshResource const * Engine::GetVboResource() const
 {
 	return _current_mesh;
 }
 
-void Engine::SetCurrentMesh(MeshResource const * mesh)
+void Engine::SetVboResource(MeshResource const * mesh)
 {
 	if (mesh == _current_mesh)
 	{
@@ -968,7 +968,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 
 	// mesh needs to be reset before next frame
 	// to ensure that FormationMesh::PreRender functions correctly
-	SetCurrentMesh(nullptr);
+	SetVboResource(nullptr);
 
 #if defined(CRAG_GFX_DEBUG)
 	DebugDraw(projection_matrix);
@@ -1028,10 +1028,10 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool op
 			}
 		}
 		
-		MeshResource const * required_mesh = leaf_node.GetMeshResource();
+		MeshResource const * required_mesh = leaf_node.GetVboResource();
 		if (required_mesh != nullptr)
 		{
-			SetCurrentMesh(required_mesh);
+			SetVboResource(required_mesh);
 		}
 		
 		leaf_node.Render(* this);

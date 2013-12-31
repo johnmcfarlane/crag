@@ -191,7 +191,7 @@ void FormationMesh::OnMeshResourceChange()
 {
 	form::MeshBufferObject & front_buffer = mbo_buffers.front();
 	ASSERT(! front_buffer.IsBound());
-	SetMeshResource(& front_buffer);
+	SetVboResource(& front_buffer);
 }
 
 bool FormationMesh::FinishBufferUpload()

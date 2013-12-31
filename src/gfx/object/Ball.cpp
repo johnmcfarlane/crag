@@ -41,12 +41,12 @@ Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformat
 	SetProgram(sphere_program);
 	
 	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();
-	SetMeshResource(& sphere_quad);
+	SetVboResource(& sphere_quad);
 }
 
 void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 {
-	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());
 	Transformation model_view_transformation = sphere_quad.CalculateModelViewTransformation(model_view, _radius);
 
 	SetModelViewTransformation(model_view_transformation);
@@ -75,6 +75,6 @@ void Ball::Render(Engine const & renderer) const
 	}
 
 	// Draw the quad.
-	Quad const & sphere_quad = static_cast<Quad const &>(* GetMeshResource());
+	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());
 	sphere_quad.Draw();
 }

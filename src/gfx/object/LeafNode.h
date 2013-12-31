@@ -61,8 +61,8 @@ namespace gfx
 		Program const * GetProgram() const;
 		void SetProgram(Program * program);
 		
-		MeshResource const * GetMeshResource() const;
-		void SetMeshResource(MeshResource const * mesh_resource);
+		MeshResource const * GetVboResource() const;
+		void SetVboResource(MeshResource const * mesh_resource);
 		
 		bool IsOpaque() const;
 		void SetIsOpaque(bool is_opaque);

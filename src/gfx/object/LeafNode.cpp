@@ -128,12 +128,12 @@ void LeafNode::SetProgram(Program * program)
 	_program = program;
 }
 
-MeshResource const * LeafNode::GetMeshResource() const
+MeshResource const * LeafNode::GetVboResource() const
 {
 	return _mesh_resource;
 }
 
-void LeafNode::SetMeshResource(MeshResource const * mesh_resource)
+void LeafNode::SetVboResource(MeshResource const * mesh_resource)
 {
 	_mesh_resource = mesh_resource;
 }
