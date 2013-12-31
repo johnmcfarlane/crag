@@ -43,7 +43,7 @@ namespace gfx
 		
 		~BufferObject()
 		{
-			assert(! IsInitialized());
+			CRAG_VERIFY_FALSE(IsInitialized());
 		}
 
 		BufferObject & operator=(BufferObject && rhs)
@@ -59,33 +59,33 @@ namespace gfx
 		
 		void Init()
 		{
-			assert(! IsInitialized());
+			CRAG_VERIFY_FALSE(IsInitialized());
 			GL_CALL(glGenBuffers(1, & _name));
 		}
 		
 		void Deinit()
 		{
-			assert(IsInitialized());
+			CRAG_VERIFY_TRUE(IsInitialized());
 			GL_CALL(glDeleteBuffers(1, & _name));
 			_name = 0;
 		}
 		
 		bool IsBound() const
 		{
-			assert(IsInitialized());
+			CRAG_VERIFY_TRUE(IsInitialized());
 			return _name == GetBinding<TARGET>();
 		}
 		
 		void Bind() const
 		{
-			assert(IsInitialized());
-			assert(GetBinding<TARGET>() == 0);
+			CRAG_VERIFY_TRUE(IsInitialized());
+			CRAG_VERIFY_EQUAL(GetBinding<TARGET>(), 0u);
 			GL_CALL(glBindBuffer(TARGET, _name));
 		}
 		
 		void Unbind() const
 		{
-			assert(IsBound());
+			CRAG_VERIFY_TRUE(IsBound());
 #if ! defined(NDEBUG)
 			GL_CALL(glBindBuffer(TARGET, 0));
 #endif
@@ -93,7 +93,8 @@ namespace gfx
 		
 		void BufferData(GLsizeiptr num, ELEMENT const * array, GLenum usage)
 		{
-			assert(IsBound());
+			CRAG_VERIFY_OP(num, >=, 0);
+			CRAG_VERIFY_TRUE(IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * num;
 			GL_CALL(glBufferData(TARGET, size, array, usage));
 		}
@@ -105,7 +106,8 @@ namespace gfx
 		
 		void BufferSubData(GLsizeiptr num, ELEMENT const * array)
 		{
-			assert(IsBound());
+			CRAG_VERIFY_OP(num, >=, 0);
+			CRAG_VERIFY_TRUE(IsBound());
 			GLsizeiptr size = sizeof(ELEMENT) * num;
 			GL_CALL(glBufferSubData(TARGET, 0, size, array));
 		}
