@@ -112,6 +112,7 @@
 #include <queue>
 #include <set>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
