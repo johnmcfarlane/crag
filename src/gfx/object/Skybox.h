@@ -46,7 +46,7 @@ namespace gfx
 		
 		// Attribs
 		Texture sides[3][2];
-		Vbo vbo;	// TODO: cubemap
+		Vbo vbo;	// TODO: cubemap, TODO: Add to resource manager
 	};
 	
 }
