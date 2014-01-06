@@ -179,6 +179,8 @@ namespace
 
 sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
 {
+	ASSERT(color.a = 1);
+	
 	// ball
 	auto ball = sim::EntityHandle::CreateHandle();
 
@@ -191,6 +193,8 @@ sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & ve
 
 sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & velocity, sim::Vector3 const & size, gfx::Color4f color)
 {
+	ASSERT(color.a = 1);
+	
 	// box
 	auto box = sim::EntityHandle::CreateHandle();
 
@@ -263,14 +267,8 @@ sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f cons
 		entity.SetLocation(location);
 
 		// graphics
-		auto light = gfx::LightHandle::CreateHandle(transformation, color);
+		auto light = gfx::LightHandle::CreateHandle(transformation, color, gfx::LightType::shadow);
 		entity.SetModel(light);
-		
-		// formation
-		form::Daemon::Call([volume] (form::Engine & engine)
-		{
-			engine.SetShadowLight(volume);
-		});
 	});
 
 	return sun;

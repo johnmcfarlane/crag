@@ -7,6 +7,10 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+#ifdef GL_ES
+precision highp int;
+#endif
+
 // per-object inputs from the renderer
 uniform mat4 model_view_matrix;
 uniform mat4 projection_matrix;
@@ -25,7 +29,7 @@ varying vec3 fragment_normal;
 varying vec4 fragment_color;
 
 // light.glsl function which calculates the lighting for the given fragment
-lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, in float shadow);
+lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
 
 void main(void)
 {
@@ -41,7 +45,7 @@ void main(void)
 	}
 	else
 	{
-		fragment_color = vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal), diffuse.rgb, 1.), diffuse.a);
+		fragment_color = vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal), diffuse.rgb), diffuse.a);
 	}
 
 	gl_Position = projection_matrix * position4;

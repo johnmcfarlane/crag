@@ -1,5 +1,5 @@
 //
-//  Vertex.h
+//  gfx/Vertex.h
 //  crag
 //
 //  Created by John McFarlane on 2012-01-23.
@@ -9,18 +9,21 @@
 
 #pragma once
 
-#include "form/defs.h"
-#include "gfx/Color.h"
+#include "Color.h"
+#include "defs.h"
 
-namespace form
+namespace gfx
 {
-	// Vertex type used by formation system to generate OpenGL mesh.
+	// Vertex type used by gfx/form systems to generate OpenGL mesh.
 	struct Vertex
 	{
+		typedef ::gfx::Vector3 Vector3;
+		typedef Color4b Color;
+		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Vertex);
 
 		Vector3 pos;
 		Vector3 norm;
-		gfx::Color4b col;
+		Color4b color;
 	};
 }

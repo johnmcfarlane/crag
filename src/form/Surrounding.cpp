@@ -428,7 +428,7 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 		
 		ForEachNodeFace(node, [& mesh] (Point & a, Point & b, Point & c, geom::Vector3f const & normal, float /*score*/)
 		{
-			Color color = Color::White();
+			auto color = Mesh::Vertex::Color::White();
 			
 			mesh.AddFace(a, b, c, normal, color);
 		});

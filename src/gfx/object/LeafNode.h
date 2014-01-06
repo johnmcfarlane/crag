@@ -11,15 +11,18 @@
 
 #include "Object.h"
 
+#include "gfx/ShadowVolume.h"
+
 #include "geom/Transformation.h"
 
 
 namespace gfx
 {
 	// forward-declarations
-	class Program;
 	class LeafNode;
-	class MeshResource;
+	class Light;
+	class Program;
+	class VboResource;
 
 	bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 
@@ -40,7 +43,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer);
+		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool is_opaque = true, bool casts_shadow = false);
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(LeafNode);
 		
@@ -61,17 +64,19 @@ namespace gfx
 		Program const * GetProgram() const;
 		void SetProgram(Program * program);
 		
-		MeshResource const * GetVboResource() const;
-		void SetVboResource(MeshResource const * mesh_resource);
+		VboResource const * GetVboResource() const;
+		void SetVboResource(VboResource const * mesh_resource);
 		
 		bool IsOpaque() const;
-		void SetIsOpaque(bool is_opaque);
+		bool CastsShadow() const;
 		
 		// Return the necessary z-clipping range required to render this object through the given camera.
 		virtual bool GetRenderRange(RenderRange & range) const;
 		
 		// Perform any necessary preparation for rendering.
 		virtual PreRenderResult PreRender();
+		
+		virtual void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
 		
 		// Draw the object.
 		virtual void Render(Engine const & renderer) const;
@@ -87,9 +92,10 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(LeafNode, RenderList);
 		
 		float _render_depth;
-		Layer _layer;
+		Layer const _layer;
 		Program * _program;
-		MeshResource const * _mesh_resource;
-		bool _is_opaque;
+		VboResource const * _vbo_resource;
+		bool const _is_opaque;
+		bool const _casts_shadow;
 	};
 }

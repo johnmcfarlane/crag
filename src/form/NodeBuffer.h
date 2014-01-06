@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "defs.h"
+
 #include "smp/for_each.h"
 
 namespace form

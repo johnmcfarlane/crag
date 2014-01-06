@@ -12,14 +12,11 @@
 #include "Box.h"
 
 #include "gfx/axes.h"
-#include "gfx/Cuboid.h"
 #include "gfx/Engine.h"
 #include "gfx/Program.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
-
-#include "core/Random.h"
-
+#include "gfx/VboResource.h"
 
 using namespace gfx;
 
@@ -30,14 +27,14 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 , _color(color)
 , _dimensions(dimensions)
 {
-	SetIsOpaque(_color.a == 255);
+	ASSERT(_color.a == 1);
 	
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 	
 	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 	
-	MeshResource const & cuboid_mesh = resource_manager.GetCuboid();
+	VboResource const & cuboid_mesh = resource_manager.GetVbo(VboIndex::cuboid_mesh);
 	SetVboResource(& cuboid_mesh);
 }
 
@@ -71,10 +68,10 @@ void Box::Render(Engine const & renderer) const
 
 		bool fragment_lighting = renderer.GetFragmentLighting();
 		bool flat_shaded = renderer.GetFlatShaded();
-		poly_program.SetUniforms(_color, fragment_lighting, flat_shaded, false);
+		poly_program.SetUniforms(_color, fragment_lighting, flat_shaded);
 	}
 
-	Cuboid const & cuboid = static_cast<Cuboid const &>(* GetVboResource());
+	auto & cuboid = * GetVboResource();
 	cuboid.Draw();
 	
 	GL_VERIFY;

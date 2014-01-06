@@ -32,12 +32,13 @@
 namespace gfx
 {
 	// forward-declarations
-	class MeshResource;
+	class Light;
 	class Program;
 	class ResourceManager;
 	class Scene;
 	struct SetCameraEvent;
 	struct SetOriginEvent;
+	class VboResource;
 
 	// gfx::Daemon type
 	class Engine;
@@ -80,10 +81,10 @@ namespace gfx
 		Program const * GetCurrentProgram() const;
 		void SetCurrentProgram(Program const * program);
 		
-		MeshResource const * GetVboResource() const;
-		void SetVboResource(MeshResource const * mesh);
+		VboResource const * GetVboResource() const;
+		void SetVboResource(VboResource const * vbo);
 		
-		Color4f CalculateLighting(Vector3 const & position) const;
+		Color4f CalculateLighting(Vector3 const & position, LightType light_type) const;
 
 		// message interface
 		void OnQuit();
@@ -103,9 +104,6 @@ namespace gfx
 		void SetFragmentLighting(bool flat_shaded);
 		bool GetFragmentLighting() const;
 
-		void SetShadowsEnabled(bool enable_shadows);
-		bool GetShadowsEnabled() const;
-		
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
@@ -129,20 +127,23 @@ namespace gfx
 		void InitRenderState();
 		void VerifyRenderState() const;
 
-		bool HasShadowSupport() const;
-		
 		void PreRender();
 		void UpdateTransformations(Object & node, Transformation const & model_view_transformation);
 		void UpdateTransformations();
+		void UpdateShadowVolumes();
 		void Render();
 		void RenderFrame();
 		void RenderScene();
 		
-		void InvalidateUniforms();
+		void UpdateProgramLights(Light const & light);
+		void UpdateProgramLights(LightType light_type);
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		
-		int RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
+		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
+		void RenderShadowLights(Matrix44 const & projection_matrix);
+		void RenderShadowLight(Matrix44 const & projection_matrix, Light const & light);
+		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light);
 		
 #if defined(CRAG_GFX_DEBUG)
 		void DebugDraw(Matrix44 const & projection_matrix);
@@ -184,7 +185,6 @@ namespace gfx
 		bool culling;
 		bool _flat_shaded;
 		bool _fragment_lighting;
-		bool _shadows_enabled;
 		int capture_frame;
 
 #if defined(__ANDROID__)
@@ -215,6 +215,6 @@ namespace gfx
 		Fence _fence1, _fence2;
 
 		Program const * _current_program;
-		MeshResource const * _current_mesh;
+		VboResource const * _current_vbo;
 	};
 }

@@ -9,22 +9,22 @@
 
 #pragma once
 
-#include "Vertex.h"
+#include "gfx/Vertex.h"
 
 #include "smp/vector.h"
-
 
 namespace form 
 {
 	class VertexBuffer
 	{
 		// types
+		typedef gfx::Vertex Vertex;
 		typedef smp::vector<Vertex> VertexVector;
 	public:
 		// functions
 		VertexBuffer(int max_num_verts);
 
-		size_t Size() const { return _verts.size(); }
+		size_t GetSize() const { return _verts.size(); }
 		Vertex const * GetArray() const { return & _verts.front(); }
 		Vertex & PushBack(Vertex const & element);
 		

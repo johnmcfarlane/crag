@@ -9,11 +9,11 @@
 
 #include "pch.h"
 
-#include "gfx/IndexBuffer.h"
+#include "IndexBuffer.h"
 
 #include "core/memory.h"
 
-using namespace gfx;
+using namespace form;
 
 //////////////////////////////////////////////////////////////////////
 // IndexBuffer member definitions
@@ -26,16 +26,6 @@ IndexBuffer::IndexBuffer(int buffer_capacity)
 void IndexBuffer::Clear()
 {
 	clear();
-
-#if 0
-	size_t s = size();
-	if (s > 0) {
-		GLuint & beginning = * begin();
-		ZeroArray(& beginning, s);
-		
-		clear();
-	}
-#endif
 }
 
 IndexBuffer::value_type const * IndexBuffer::GetArray() const

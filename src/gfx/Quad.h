@@ -10,7 +10,7 @@
 #pragma once
 
 #include "defs.h"
-#include "MeshResource.h"
+#include "VboResource.h"
 #include "VertexBufferObject.h"
 
 
@@ -18,7 +18,7 @@ namespace gfx
 {
 	// Graphical representation of a sphere.
 	// Draws a quad in front of the sphere and has a specialized shader draw a sphere upon it.
-	class Quad : public MeshResource
+	class Quad : public VboResource
 	{
 	public:
 		// types

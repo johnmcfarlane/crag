@@ -50,7 +50,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/CastRay.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
 	$(CRAG_PATH)/form/Formation.cpp \
-	$(CRAG_PATH)/form/MeshBufferObject.cpp \
+	$(CRAG_PATH)/form/IndexBuffer.cpp \
 	$(CRAG_PATH)/form/Mesh.cpp \
 	$(CRAG_PATH)/form/NodeBuffer.cpp \
 	$(CRAG_PATH)/form/Node.cpp \
@@ -62,8 +62,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/Scene.cpp \
 	$(CRAG_PATH)/form/Surrounding.cpp \
 	$(CRAG_PATH)/form/VertexBuffer.cpp \
-	$(CRAG_PATH)/form/Vertex.cpp \
-	$(CRAG_PATH)/gfx/Cuboid.cpp \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \
 	$(CRAG_PATH)/gfx/Fence.cpp \
@@ -71,10 +69,10 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/FrameBuffer.cpp \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
 	$(CRAG_PATH)/gfx/Image.cpp \
-	$(CRAG_PATH)/gfx/IndexBuffer.cpp \
 	$(CRAG_PATH)/gfx/object/Ball.cpp \
 	$(CRAG_PATH)/gfx/object/Box.cpp \
-	$(CRAG_PATH)/gfx/object/FormationMesh.cpp \
+	$(CRAG_PATH)/gfx/object/FormationGeneration.cpp \
+	$(CRAG_PATH)/gfx/object/Surrounding.cpp \
 	$(CRAG_PATH)/gfx/object/LeafNode.cpp \
 	$(CRAG_PATH)/gfx/object/Light.cpp \
 	$(CRAG_PATH)/gfx/object/Object.cpp \
@@ -88,6 +86,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
 	$(CRAG_PATH)/gfx/Texture.cpp \
+	$(CRAG_PATH)/gfx/Vertex.cpp \
 	$(CRAG_PATH)/main.cpp \
 	$(CRAG_PATH)/pch.cpp \
 	$(CRAG_PATH)/physics/Body.cpp \

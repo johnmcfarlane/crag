@@ -23,7 +23,7 @@ namespace geom
 		typedef ::geom::Triangle<S, N> Triangle;
 
 		Plane() = default;
-		Plane(Plane const & rhs) = default;
+		Plane(Plane const &) = default;
 
 		Plane(Vector const & _position, Vector const & _normal)
 		: position(_position)

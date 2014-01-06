@@ -37,7 +37,7 @@ add_executable(crag
 	form/CastRay.cpp
 	form/Engine.cpp
 	form/Formation.cpp
-	form/MeshBufferObject.cpp
+	form/IndexBuffer.cpp
 	form/Mesh.cpp
 	form/NodeBuffer.cpp
 	form/Node.cpp
@@ -49,8 +49,6 @@ add_executable(crag
 	form/Scene.cpp
 	form/Surrounding.cpp
 	form/VertexBuffer.cpp
-	form/Vertex.cpp
-	gfx/Cuboid.cpp
 	gfx/Debug.cpp
 	gfx/Engine.cpp
 	gfx/Fence.cpp
@@ -58,10 +56,10 @@ add_executable(crag
 	gfx/FrameBuffer.cpp
 	gfx/glHelpers.cpp
 	gfx/Image.cpp
-	gfx/IndexBuffer.cpp
 	gfx/object/Ball.cpp
 	gfx/object/Box.cpp
-	gfx/object/FormationMesh.cpp
+	gfx/object/FormationGeneration.cpp
+	gfx/object/Surrounding.cpp
 	gfx/object/LeafNode.cpp
 	gfx/object/Light.cpp
 	gfx/object/Object.cpp
@@ -75,6 +73,7 @@ add_executable(crag
 	gfx/Scene.cpp
 	gfx/Shader.cpp
 	gfx/Texture.cpp
+	gfx/Vertex.cpp
 	main.cpp
 	pch.cpp
 	physics/Body.cpp

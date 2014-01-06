@@ -19,7 +19,7 @@
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
-#include "gfx/object/FormationMesh.h"
+#include "gfx/object/Surrounding.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetOriginEvent.h"
 
@@ -27,9 +27,10 @@
 #include "core/profile.h"
 #include "core/Statistics.h"
 
+#include "geom/Intersection.h"
+
 using namespace form;
 
-#include "geom/Intersection.h"
 namespace 
 {
 	PROFILE_DEFINE (scene_tick_period, .01f);
@@ -40,64 +41,15 @@ namespace
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
 
-#if defined(CRAG_USE_GLES)
-	auto const max_num_verts = 0x10000;
-#else
-	auto const max_num_verts = 0x100000;
-#endif
+	// the maximum size of formation-related buffers is limited by the maximum
+	// value allowed in GLES index buffers (which are 16 in some cases)
+	auto const max_allowed_num_verts = uintmax_t(std::numeric_limits<gfx::ElementIndex>::max());
+	auto const max_desired_num_verts = uintmax_t(0x100000);
+	auto const max_num_verts = int(std::min(max_allowed_num_verts, max_desired_num_verts));
 	auto const max_num_tris = max_num_verts >> 1;
 	auto const max_num_nodes = max_num_tris >> 1;
 	auto const max_num_quaterne = max_num_nodes >> 2;
 	auto const min_num_quaterne = std::min(1024, max_num_quaterne);
-
-	void GenerateShadows(Mesh & mesh, geom::Vector<double, 3> const & /*center*/, geom::Sphere<double, 3> const & light)
-	{
-		auto & vertex_buffer = mesh.GetVertices();
-		auto const & index_buffer = mesh.GetIndices();
-		
-		for (auto index_iterator = std::begin(index_buffer); index_iterator != std::end(index_buffer);)
-		{
-			typedef double Scalar;
-			typedef geom::Triangle<Scalar, 3> Triangle;
-			typedef geom::Plane<Scalar, 3> Plane;
-
-			ASSERT(index_iterator < std::end(index_buffer));
-			auto const & a = vertex_buffer.GetArray()[* index_iterator ++];
-			auto const & b = vertex_buffer.GetArray()[* index_iterator ++];
-			auto const & c = vertex_buffer.GetArray()[* index_iterator ++];
-			ASSERT(index_iterator <= std::end(index_buffer));
-
-			Triangle triangle(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
-			Plane plane(triangle);
-			if (geom::DotProduct(plane.normal, light.center - plane.position) > 0)
-			{
-				continue;
-			}
-			std::array<Plane, 3> sides;
-			for (auto index = 0; index < 3; ++ index)
-			{
-				Triangle side_triangle(light.center, triangle.points[TriMod(index + 2)], triangle.points[TriMod(index + 1)]);
-				sides[index] = side_triangle;
-			}
-			
-			for (auto & vertex : vertex_buffer)
-			{
-				if (! vertex.col.a || &vertex == &a || &vertex == &b || &vertex == &c)
-				{
-					continue;
-				}
-				
-				auto point = geom::Cast<Scalar>(vertex.pos);
-				if (geom::Contains(sides[0], point) && geom::Contains(sides[1], point) && geom::Contains(sides[2], point))
-				{
-					if (! geom::Contains(plane, point))
-					{
-						vertex.col.a = 0;
-					}
-				}
-			}
-		}
-	}
 }
 
 
@@ -108,7 +60,6 @@ form::Engine::Engine()
 : quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
-, _shadows_enabled(false)
 , mesh_generation_time(app::GetTime())
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
@@ -119,20 +70,13 @@ form::Engine::Engine()
 {
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		Mesh & mesh = ref(new Mesh (max_num_verts, max_num_tris));
-		_meshes.push_back(mesh);
+		auto mesh = std::make_shared<Mesh>(max_num_verts, max_num_tris);
+		_meshes.push(mesh);
 	}
 }
 
 form::Engine::~Engine()
 {
-	while (! _meshes.empty())
-	{
-		Mesh & mesh = _meshes.front();
-		_meshes.pop_front();
-		delete & mesh;
-	}
-	
 	ASSERT(_formations.empty());
 }
 
@@ -164,9 +108,9 @@ void form::Engine::OnRemoveFormation(form::Formation & formation)
 	delete & formation;
 }
 
-void form::Engine::OnSetMesh(Mesh & mesh)
+void form::Engine::OnSetMesh(std::shared_ptr<Mesh> const & mesh)
 {
-	_meshes.push_back(mesh);
+	_meshes.push(mesh);
 }
 
 void form::Engine::operator() (gfx::SetCameraEvent const & event)
@@ -202,21 +146,6 @@ void form::Engine::OnToggleSuspended()
 void form::Engine::OnToggleMeshGeneration()
 {
 	enable_mesh_generation = ! enable_mesh_generation;
-}
-
-void form::Engine::SetShadowsEnabled(bool shadows_enabled)
-{
-	_shadows_enabled = shadows_enabled;
-}
-
-bool form::Engine::GetShadowsEnabled() const
-{
-	return _shadows_enabled;
-}
-
-void form::Engine::SetShadowLight(geom::abs::Sphere3 const & shadow_light)
-{
-	_shadow_light = shadow_light;
 }
 
 void form::Engine::Run(Daemon::MessageQueue & message_queue)
@@ -296,25 +225,17 @@ void form::Engine::AdjustNumQuaterna()
 void form::Engine::GenerateMesh()
 {
 	// get an available mesh
-	Mesh * mesh = PopMesh();
-	if (mesh == nullptr)
+	std::shared_ptr<Mesh> mesh = PopMesh();
+	if (! mesh)
 	{
 		return;
 	}
 	
-	// build it
 	_scene.GenerateMesh(* mesh, _origin);
 	
-	if (_shadows_enabled)
-	{
-		auto center = geom::AbsToRel<double>(geom::abs::Vector3::Zero(), _origin);
-		auto light = geom::AbsToRel<double>(_shadow_light, _origin);
-		GenerateShadows(* mesh, center, light);
-	}
-	
 	// sent it to the FormationSet object
-	_mesh.Call([mesh] (gfx::FormationMesh & formation_mesh) {
-		formation_mesh.SetMesh(mesh);
+	_mesh.Call([mesh] (gfx::Surrounding & surrounding) {
+		surrounding.SetMesh(mesh);
 	});
 	
 	// record timing information
@@ -337,16 +258,16 @@ void form::Engine::GenerateMesh()
 	smp::Yield();
 }
 
-form::Mesh * form::Engine::PopMesh()
+std::shared_ptr<Mesh> form::Engine::PopMesh()
 {
 	if (_meshes.empty())
 	{
 		return nullptr;
 	}
 	
-	Mesh & mesh = _meshes.front();
-	_meshes.pop_front();
-	return & mesh;
+	auto mesh = _meshes.top();
+	_meshes.pop();
+	return mesh;
 }
 
 void form::Engine::OnOriginReset()

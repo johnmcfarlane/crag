@@ -15,10 +15,8 @@
 namespace gfx
 {
 	// forward-declarations
-	class Cuboid;
+	class VboResource;
 	class Program;
-	class Quad;
-	class Shader;
 	
 	// Central store for OpenGL resources which are:
 	// 1. shared between multiple objects and
@@ -34,23 +32,17 @@ namespace gfx
 		Program const * GetProgram(ProgramIndex index) const;
 		
 		// buffer object functions
-		Cuboid const & GetCuboid() const;
-		Quad const & GetSphereQuad() const;
-		Quad const & GetDiskQuad() const;
+		VboResource & GetVbo(VboIndex index);
+		VboResource const & GetVbo(VboIndex index) const;
 		
 	private:
 		bool InitShaders();
 		bool InitGeometry();
 		
-		// constants
-		static constexpr std::size_t _num_programs = std::size_t(ProgramIndex::size);
-
 		// shaders and shader programs
-		Program * _programs[_num_programs];
+		std::array<Program *, std::size_t(ProgramIndex::size)> _programs;
 		
 		// stock geometry
-		Cuboid * _cuboid;
-		Quad * _sphere_quad;
-		Quad * _disk_quad;
+		std::array<VboResource *, std::size_t(VboIndex::size)> _vbos;
 	};
 }

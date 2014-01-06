@@ -59,7 +59,7 @@ int main(int argc, char * * argv)
 
 
 CONFIG_DEFINE (profile_mode, bool, false);
-
+CONFIG_DECLARE (shadows_enabled, bool);
 
 namespace 
 {
@@ -169,11 +169,7 @@ namespace
 						break;
 						
 					case SDL_SCANCODE_S:
-						form::Daemon::Call([] (form::Engine & engine) 
-						{
-							bool shadows_enabled = engine.GetShadowsEnabled();
-							engine.SetShadowsEnabled(! shadows_enabled); 
-						});
+						shadows_enabled = ! shadows_enabled;
 						break;
 						
 					default:
@@ -186,14 +182,6 @@ namespace
 			{
 				switch (keysym.scancode)
 				{
-					case SDL_SCANCODE_S:
-						gfx::Daemon::Call([] (gfx::Engine & engine) 
-						{
-							bool shadows_enabled = engine.GetShadowsEnabled();
-							engine.SetShadowsEnabled(! shadows_enabled); 
-						});
-						break;
-						
 					default:
 						break;
 				}

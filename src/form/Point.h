@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Vertex.h"
+#include "gfx/Vertex.h"
 
 namespace form
 {
@@ -19,12 +19,17 @@ namespace form
 	class Point
 	{
 	public:
+		// types
+		typedef gfx::Vertex Vertex;
+		typedef Vertex::Vector3 Vector3;
+		
+		// functions
 		Point();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Point);
 		
-		// Attributes
-		Vector3 pos;
+		// attributes
+		Vertex::Vector3 pos;
 		Vertex * vert;
 	};
 }

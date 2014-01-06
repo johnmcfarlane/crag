@@ -26,14 +26,24 @@ namespace gfx
 {
 	enum class ProgramIndex
 	{
-		poly,
-		sphere,
-		fog,
-		disk,
-		skybox,
-		sprite,
-		dont_care,
+		poly,	// position, normal and color
+		shadow,	// void; used to write to stencil buffer
+		screen,	// [-1..1],[-1..1] maps to screen corners
+		sphere,	// quad with offset Z
+		fog,	// TODO
+		disk,	// quad with original Z
+		skybox,	// flat shaded with texture UVs
+		sprite,	// screen space with texture UVs
+		dont_care,	// don't bother setting a different program for this render object
 		size = dont_care
+	};
+	
+	enum class VboIndex
+	{
+		cuboid_mesh,
+		sphere_quad,
+		disk_quad,
+		size
 	};
 	
 	// render layers
@@ -42,6 +52,14 @@ namespace gfx
 		background,
 		light,
 		foreground
+	};
+	
+	enum class LightType
+	{
+		simple,
+		shadow,
+		size,
+		all
 	};
 	
 	// geometric types

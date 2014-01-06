@@ -23,7 +23,7 @@ VertexBuffer::VertexBuffer(int max_num_verts)
 {
 }
 
-form::Vertex & VertexBuffer::PushBack(Vertex const & element)
+gfx::Vertex & VertexBuffer::PushBack(Vertex const & element)
 {
 	return _verts.push_back(element);
 }
@@ -42,12 +42,12 @@ int VertexBuffer::GetIndex(Vertex const & v) const
 	return index;
 }
 
-Vertex const & VertexBuffer::operator[] (int index) const
+gfx::Vertex const & VertexBuffer::operator[] (int index) const
 {
 	return _verts[index];
 }
 
-Vertex & VertexBuffer::operator[] (int index)
+gfx::Vertex & VertexBuffer::operator[] (int index)
 {
 	return _verts[index];
 }

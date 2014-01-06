@@ -11,10 +11,12 @@
 
 #include "defs.h"
 
+#include "Pov.h"
+#include "ShadowMap.h"
+
 #include "object/RootNode.h"
 #include "object/LeafNode.h"
 #include "object/Light.h"
-#include "Pov.h"
 
 namespace gfx
 {
@@ -27,6 +29,9 @@ namespace gfx
 	class Scene
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
 		Scene(Engine & engine);
 		~Scene();
 		
@@ -39,13 +44,17 @@ namespace gfx
 		void RemoveObject(Object & object);
 		void SortRenderList();
 		
+		void AddLight(Light & light);
+		void RemoveLight(Light & light);
+		
 		Object & GetRoot();
 		Object const & GetRoot() const;
 		
 		LeafNode::RenderList & GetRenderList();
 		LeafNode::RenderList const & GetRenderList() const;
 
-		Light::List & GetLightList();
+		Light::List const & GetLightList() const;
+		ShadowMap & GetShadows();
 		
 		void SetResolution(geom::Vector2i const & r);
 		void SetCameraTransformation(Transformation const & transformation);
@@ -54,6 +63,7 @@ namespace gfx
 		Pov const & GetPov() const;
 		
 	private:
+		////////////////////////////////////////////////////////////////////////////////
 		// attributes
 		core::Time _time;
 		Pov pov;
@@ -61,5 +71,6 @@ namespace gfx
 		RootNode _root;	// root of object heirachy; uses list hook in Object
 		LeafNode::RenderList _render_list;	// flat list of drawable objects
 		Light::List _light_list;
+		ShadowMap _shadows;
 	};
 }

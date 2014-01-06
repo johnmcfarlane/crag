@@ -9,6 +9,7 @@
 
 #ifdef GL_ES
 precision highp float;
+precision highp int;
 #endif
 
 //#define TEST_NORMALS
@@ -23,40 +24,40 @@ struct Light
 
 
 // constants
-const int max_lights = 7;
+const int max_lights = 7;	// TODO: still quite hacky
 
 
 // light information provided by the renderer
 uniform Light lights[max_lights];
-uniform bool shadows_enabled;
+uniform int num_lights;
 
 // support function to calculate the light shone on a given fragment by a given light
-lowp vec3 LightFragment(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal, float shadow)
+lowp vec3 LightFragment(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
 {
 	highp vec3 frag_to_light = light.position - frag_position;
 	highp float distance = length(frag_to_light);
 	
 	highp float dp = dot(frag_to_light, frag_normal);
-	highp float attenuation = max(shadow * dp / (distance * distance * distance), 0.0);
+	highp float attenuation = max(dp / (distance * distance * distance), 0.0);
 
-	lowp vec3 diffuse = light.color * attenuation;
+	lowp vec3 color = light.color * attenuation;
 	
-	return diffuse;
+	return color;
 }
 
 // support function to calculate the light seen on a given fragment
-lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse, float shadow)
+lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse)
 {
 #if defined(TEST_NORMALS)
 	return frag_normal;
 #endif
 
-	lowp vec3 illumination = LightFragment(lights[0], frag_position, frag_normal, shadows_enabled ? shadow : 1.);
+	lowp vec3 illumination = vec3(0);
 	
-	for (int i = 1; i < max_lights; ++ i)
+	for (int i = 0; i < num_lights; ++ i)
 	{
-		illumination += LightFragment(lights[i], frag_position, frag_normal, 1.);
+		illumination += LightFragment(lights[i], frag_position, frag_normal);
 	}
-
+	
 	return diffuse * illumination;
 }

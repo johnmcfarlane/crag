@@ -34,13 +34,14 @@ namespace gfx
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Init const & init, Transformation const & local_transformation, Color4f const & color);
+		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type);
 		~Light();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
+		LightType GetType() const;
 		
 #if ! defined(NDEBUG)
 		LeafNode::PreRenderResult PreRender() override;
@@ -52,5 +53,6 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
 		Color4f _color;
+		LightType _type;
 	};
 }

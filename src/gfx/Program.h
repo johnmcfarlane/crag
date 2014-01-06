@@ -21,28 +21,12 @@ namespace gfx
 	// function declarations
 	GLuint InitShader(char const * filename, GLenum shader_type);
 
-	// GPUs were invented by people who can't bare to see macros phased out.
-	enum
-	{
-		MAX_LIGHTS = 7
-	};
-	
-	// set of uniform ids needed to specify lights to a glsl program
-	struct LightBlock
-	{
-		struct Light
-		{
-			unsigned position;
-			unsigned color;
-		};
-		
-		Light lights [MAX_LIGHTS];
-	};
-	
-	
 	// an application-specific shader program that manages its shaders
+	// TODO: Make SetUniforms virtual, include lights and matrices, 
+	// implement dirty cache to lazily update uniforms when bound
 	class Program
 	{
+		OBJECT_NO_COPY(Program);
 	public:
 		Program();
 		virtual ~Program();
@@ -57,18 +41,12 @@ namespace gfx
 		void Bind() const;
 		void Unbind() const;
 		
-		// refers to the frame-invariant uniforms
-		void SetUniformsValid(bool uniforms_valid);
-		bool GetUniformsValid() const;
-		
-		void UpdateLights(Light::List const & lights) const;
 		void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		
 	protected:
 		GLint GetUniformLocation(char const * name) const;
 
-	private:
 		virtual void InitAttribs(GLuint id);
 		virtual void InitUniforms();
 		
@@ -81,16 +59,42 @@ namespace gfx
 		Shader _frag_shader;
 		GLint _projection_matrix_location;
 		GLint _model_view_matrix_location;
-		LightBlock _light_block;
-		bool _uniforms_valid;
+	};
+	
+	// a program that requires light-related information
+	class LightProgram : public Program
+	{
+		// set of uniform ids needed to specify lights to a glsl program
+		struct LightLocation
+		{
+			unsigned position = 0;
+			unsigned color = 0;
+		};
+
+	public:
+		virtual void InitUniforms() override;
+		void SetLight(Light const & light);
+		void SetLights(Light::List const & lights, LightType filter);
+
+	private:
+
+		void SetLight(Light const & light, int index);
+		void AddLight();
+		
+		unsigned _num_lights_location;
+		std::vector<LightLocation> _light_locations;
 	};
 
-	class PolyProgram : public Program
+	class PolyProgram : public LightProgram
 	{
+		// types
+		typedef LightProgram super;
+		
+		// functions
 	public:
 		PolyProgram();
 		
-		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool shadows_enabled) const;
+		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const;
 	private:
 		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override final;
@@ -99,11 +103,30 @@ namespace gfx
 		GLint _color_location;
 		GLint _fragment_lighting_location;
 		GLint _flat_shade_location;
-		GLint _shadows_enabled_location;
+	};
+
+	class ShadowProgram : public Program
+	{
+	public:
+		ShadowProgram();
+	private:
+		virtual void InitAttribs(GLuint id) final;
 	};
 	
-	class DiskProgram : public Program
+	class ScreenProgram : public Program
 	{
+	public:
+		ScreenProgram();
+	private:
+		virtual void InitAttribs(GLuint id) final;
+	};
+	
+	class DiskProgram : public LightProgram
+	{
+		// types
+		typedef LightProgram super;
+		
+		// functions
 	public:
 		DiskProgram();
 		
@@ -132,12 +155,14 @@ namespace gfx
 		GLint _density_location;
 	};
 	
+	// used by skybox
 	class TexturedProgram : public Program
 	{
 	private:
 		virtual void InitAttribs(GLuint id) override final;
 	};
 	
+	// used to render text
 	class SpriteProgram : public Program
 	{
 	public:

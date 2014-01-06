@@ -16,14 +16,15 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::LeafNode member definitions
 
-LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer layer)
+LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool is_opaque, bool casts_shadow)
 : Object(init, local_transformation)
 , _model_view_transformation(Transformation::Matrix44::Identity())
 , _render_depth(0)
 , _layer(layer)
 , _program(nullptr)
-, _mesh_resource(nullptr)
-, _is_opaque(true)
+, _vbo_resource(nullptr)
+, _is_opaque(is_opaque)
+, _casts_shadow(casts_shadow)
 {
 	CRAG_VERIFY(* this);
 }
@@ -80,7 +81,7 @@ bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 	{
 		if (rhs._is_opaque)
 		{
-			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._mesh_resource) - reinterpret_cast<char const *>(rhs._mesh_resource);
+			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._vbo_resource) - reinterpret_cast<char const *>(rhs._vbo_resource);
 			if (mesh_index_diff != 0)
 			{
 				return mesh_index_diff < 0;
@@ -128,14 +129,14 @@ void LeafNode::SetProgram(Program * program)
 	_program = program;
 }
 
-MeshResource const * LeafNode::GetVboResource() const
+VboResource const * LeafNode::GetVboResource() const
 {
-	return _mesh_resource;
+	return _vbo_resource;
 }
 
-void LeafNode::SetVboResource(MeshResource const * mesh_resource)
+void LeafNode::SetVboResource(VboResource const * vbo_resource)
 {
-	_mesh_resource = mesh_resource;
+	_vbo_resource = vbo_resource;
 }
 
 bool LeafNode::IsOpaque() const
@@ -143,9 +144,9 @@ bool LeafNode::IsOpaque() const
 	return _is_opaque;
 }
 
-void LeafNode::SetIsOpaque(bool is_opaque)
+bool LeafNode::CastsShadow() const
 {
-	_is_opaque = is_opaque;
+	return _casts_shadow;
 }
 
 bool LeafNode::GetRenderRange(RenderRange &) const 
@@ -156,6 +157,11 @@ bool LeafNode::GetRenderRange(RenderRange &) const
 LeafNode::PreRenderResult LeafNode::PreRender()
 {
 	return ok;
+}
+
+void LeafNode::GenerateShadowVolume(Light const &, ShadowVolume &) const
+{
+	ASSERT(false);
 }
 
 void LeafNode::Render(Engine const &) const

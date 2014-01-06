@@ -41,12 +41,11 @@ namespace
 DEFINE_POOL_ALLOCATOR(Puff, 100);
 
 Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
-: LeafNode(init, local_transformation, Layer::foreground)
+: LeafNode(init, local_transformation, Layer::foreground, false)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
 {
-	SetIsOpaque(false);
 	STAT_INC(num_puffs, 1);
 
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
@@ -54,7 +53,7 @@ Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformat
 	Program * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
 	SetProgram(poly_program);
 	
-	MeshResource const & disk_quad = resource_manager.GetDiskQuad();
+	VboResource const & disk_quad = resource_manager.GetVbo(VboIndex::disk_quad);
 	SetVboResource(& disk_quad);
 	
 	Scene const & scene = init.engine.GetScene();
@@ -101,7 +100,7 @@ void Puff::Render(Engine const & renderer) const
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
-	Color4f lighting = renderer.CalculateLighting(translation);
+	Color4f lighting = renderer.CalculateLighting(translation, LightType::all);
 	disk_program.SetUniforms(model_view, _radius, _color * lighting);
 	
 	Quad const & disk_quad = static_cast<Quad const &>(ref(GetVboResource()));

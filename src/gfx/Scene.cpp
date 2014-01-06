@@ -10,6 +10,7 @@
 #include "pch.h"
 
 #include "Scene.h"
+#include "ShadowVolume.h"
 
 #include "core/ConfigEntry.h"
 
@@ -44,6 +45,15 @@ Scene::~Scene()
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
 	CRAG_VERIFY(self._root);
+	auto num_shadow_casters = std::count_if(std::begin(self._render_list), std::end(self._render_list), [] (LeafNode const & object)
+	{
+		return object.CastsShadow();
+	});
+	auto num_shadow_lights = std::count_if(std::begin(self._light_list), std::end(self._light_list), [] (Light const & light)
+	{
+		return light.GetType() == LightType::shadow;
+	});
+	CRAG_VERIFY_EQUAL(unsigned(num_shadow_casters * num_shadow_lights), self._shadows.size());
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Scene::SetTime(core::Time t)
@@ -62,13 +72,31 @@ void Scene::AddObject(Object & object)
 
 	// If object is a LeafNode,
 	LeafNode * leaf_node = object.CastLeafNodePtr();
-	if (leaf_node != nullptr)
+	if (leaf_node == nullptr)
 	{
-		// add it to the render list.
-		_render_list.push_back(* leaf_node);
+		return;
 	}
+	
+	// add it to the render list.
+	_render_list.push_back(* leaf_node);
 
 	AdoptChild(object, _root);
+	
+	if (leaf_node->CastsShadow())
+	{
+		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light const & light)
+		{
+			auto key = std::make_pair(leaf_node, & light);
+			ASSERT(_shadows.find(key) == std::end(_shadows));
+			
+			if (light.GetType() == LightType::shadow)
+			{
+				_shadows.insert(std::make_pair(key, ShadowVolume()));
+			}
+		});
+	}
+
+	CRAG_VERIFY(* this);
 }
 
 void Scene::RemoveObject(Object & object)
@@ -79,7 +107,23 @@ void Scene::RemoveObject(Object & object)
 		return;
 	}
 
+	// remove from list of things to be drawn
 	_render_list.remove(* leaf_node);
+	
+	// remove from list of things that cast a shadow
+	if (leaf_node->CastsShadow())
+	{
+		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light const & light)
+		{
+			auto key = std::make_pair(leaf_node, & light);
+			if (light.GetType() == LightType::shadow)
+			{
+				ASSERT(_shadows.find(key) != std::end(_shadows));
+			
+				_shadows.insert(std::make_pair(key, ShadowVolume()));
+			}
+		});
+	}
 }
 
 void Scene::SortRenderList()
@@ -103,6 +147,61 @@ void Scene::SortRenderList()
 	}
 }
 
+void Scene::AddLight(Light & light)
+{
+	CRAG_VERIFY(* this);
+	
+	ASSERT(! _light_list.contains(light));
+	_light_list.push_back(light);
+	
+	if (light.GetType() == LightType::shadow)
+	{
+		for (auto & object : _render_list)
+		{
+			if (! object.CastsShadow())
+			{
+				continue;
+			}
+			
+			auto key = std::make_pair(& object, & light);
+			ASSERT(_shadows.find(key) == std::end(_shadows));
+			_shadows.insert(std::make_pair(key, ShadowVolume()));
+		}
+	}
+
+	CRAG_VERIFY(light);
+	CRAG_VERIFY(* this);
+}
+
+void Scene::RemoveLight(Light & light)
+{
+	CRAG_VERIFY(* this);
+	CRAG_VERIFY(light);
+
+	ASSERT(_light_list.contains(light));
+	_light_list.remove(light);
+
+	if (light.GetType() == LightType::shadow)
+	{
+		for (auto & object : _render_list)
+		{
+			if (! object.CastsShadow())
+			{
+				continue;
+			}
+		
+			// find any of the shadow volume entries - they're interchangable per object
+			auto key = std::make_pair(& object, & light);
+			auto found_light = _shadows.find(key);
+			ASSERT(found_light != std::end(_shadows));
+		
+			_shadows.erase(found_light);
+		}
+	}
+
+	CRAG_VERIFY(* this);
+}
+
 Object & Scene::GetRoot()
 {
 	return _root;
@@ -123,9 +222,14 @@ LeafNode::RenderList const & Scene::GetRenderList() const
 	return _render_list;
 }
 
-Light::List & Scene::GetLightList()
+Light::List const & Scene::GetLightList() const
 {
 	return _light_list;
+}
+
+ShadowMap & Scene::GetShadows()
+{
+	return _shadows;
 }
 
 void Scene::SetResolution(geom::Vector2i const & r)

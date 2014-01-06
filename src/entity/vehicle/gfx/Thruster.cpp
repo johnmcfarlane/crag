@@ -40,7 +40,7 @@ namespace
 DEFINE_POOL_ALLOCATOR(Thruster, 64);
 
 Thruster::Thruster(super::Init const & init, Transformation const & local_transformation, float thrust_max)
-: super(init, local_transformation, thruster_color)
+: super(init, local_transformation, thruster_color, gfx::LightType::simple)
 , _thrust_max(thrust_max)
 {
 }

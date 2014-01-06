@@ -9,16 +9,15 @@
  
 #pragma once
 
-#include "glHelpers.h"
+#include "gfx/glHelpers.h"
 
 #include "smp/vector.h"
 
-namespace gfx
+namespace form
 {
-	
-	class IndexBuffer : private smp::vector<ElementIndex>
+	class IndexBuffer : private smp::vector<gfx::ElementIndex>
 	{
-		typedef smp::vector<ElementIndex> super;
+		typedef smp::vector<gfx::ElementIndex> super;
 
 	public:
 		IndexBuffer(int capacity);
@@ -42,9 +41,9 @@ namespace gfx
 		
 		void Clear();
 		
-		value_type & PushBack()
+		value_type & PushBack(int num_points = 3)
 		{
-			return * grow(3);
+			return * grow(num_points);
 		}
 		
 		super::const_iterator begin() const

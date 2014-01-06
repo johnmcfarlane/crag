@@ -31,7 +31,6 @@ namespace form
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Sphere<Scalar, 3> Sphere3;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
-	typedef gfx::Color4b Color;
 	
 	// thread-safe node vector
 	typedef smp::vector<Node *> SmpNodeVector;

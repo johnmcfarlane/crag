@@ -103,7 +103,6 @@ namespace
 	
 		gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
 					Random::sequence.GetUnitInclusive<float>(), 
-					Random::sequence.GetUnitInclusive<float>(), 
 					Random::sequence.GetUnitInclusive<float>());
 
 		switch (shape_num)

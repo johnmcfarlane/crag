@@ -43,17 +43,7 @@ MeshProperties const & Mesh::GetProperties() const
 	return properties;
 }
 
-size_t Mesh::GetIndexCount() const
-{
-	return indices.GetSize();
-}
-
-size_t Mesh::GetNumPolys() const
-{
-	return indices.GetSize() / 3;
-}
-
-Vertex & Mesh::GetVertex(Point & point, Color color)
+Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)
 	{
@@ -66,12 +56,12 @@ Vertex & Mesh::GetVertex(Point & point, Color color)
 	return * point.vert;
 }
 
-Vertex & Mesh::AddVertex(Point const & p, Color color)
+Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 {
 	Vertex v = 
 	{ 
 		p.pos, 
-		Vector3::Zero(),
+		Vertex::Vector3::Zero(),
 		gfx::Color4b(color.r,
 					 color.g,
 					 color.b,
@@ -83,11 +73,11 @@ Vertex & Mesh::AddVertex(Point const & p, Color color)
 	return addition;
 }
 
-void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal)
+void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal)
 {
 	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
-	gfx::IndexBuffer::value_type * corner_indices = & indices.PushBack();
+	IndexBuffer::value_type * corner_indices = & indices.PushBack();
 	corner_indices [0] = vertices.GetIndex(a);
 	corner_indices [1] = vertices.GetIndex(b);
 	corner_indices [2] = vertices.GetIndex(c);
@@ -99,7 +89,7 @@ void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & no
 	c.norm += normal;
 }
 
-void Mesh::AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color)
+void Mesh::AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & normal, gfx::Color4b color)
 {
 	Vertex & vert_a = GetVertex(a, color);
 	Vertex & vert_b = GetVertex(b, color);
@@ -118,12 +108,12 @@ VertexBuffer const & Mesh::GetVertices() const
 	return vertices;
 }
 
-gfx::IndexBuffer & Mesh::GetIndices()
+IndexBuffer & Mesh::GetIndices()
 {
 	return indices;
 }
 
-gfx::IndexBuffer const & Mesh::GetIndices() const
+IndexBuffer const & Mesh::GetIndices() const
 {
 	return indices;
 }

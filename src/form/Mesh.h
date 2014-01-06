@@ -9,11 +9,9 @@
 
 #pragma once
 
+#include "IndexBuffer.h"
 #include "MeshProperties.h"
 #include "VertexBuffer.h"
-
-#include "gfx/IndexBuffer.h"
-
 
 namespace form
 {
@@ -25,6 +23,10 @@ namespace form
 	class Mesh
 	{
 	public:
+		// types
+		typedef gfx::Vertex Vertex;
+		typedef Vertex::Color Color;
+		
 		// functions
 		Mesh(int max_num_verts, int max_num_tris);
 		
@@ -33,33 +35,27 @@ namespace form
 		MeshProperties & GetProperties();
 		MeshProperties const & GetProperties() const;
 
-		size_t GetIndexCount() const;
-		size_t GetNumPolys() const;
-		
 		Vertex & GetVertex(Point & point, Color color);
 	private:
 		Vertex & AddVertex(Point const & p, Color color);
 	public:
 		
-		void AddFace(Vertex & a, Vertex & b, Vertex & c, geom::Vector3f const & normal);
-		void AddFace(Point & a, Point & b, Point & c, geom::Vector3f const & normal, gfx::Color4b color);
+		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal);
+		void AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & normal, gfx::Color4b color);
 
 		VertexBuffer & GetVertices();
 		VertexBuffer const & GetVertices() const;
 		
-		gfx::IndexBuffer & GetIndices();
-		gfx::IndexBuffer const & GetIndices() const;
+		IndexBuffer & GetIndices();
+		IndexBuffer const & GetIndices() const;
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Mesh);
 		
 		// variables
 	private:
 		VertexBuffer vertices;
-		gfx::IndexBuffer indices;
+		IndexBuffer indices;
 		MeshProperties properties;
-		
-	public:
-		DEFINE_INTRUSIVE_LIST(Mesh, list_type);
 	};
 	
 }

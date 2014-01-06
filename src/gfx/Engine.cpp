@@ -37,7 +37,8 @@
 using core::Time;
 using namespace gfx;
 
-CONFIG_DEFINE(depth_func, int, GL_LEQUAL);
+CONFIG_DEFINE(depth_func, int, GL_LESS);
+CONFIG_DEFINE (shadows_enabled, bool, false);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
 
@@ -59,9 +60,6 @@ namespace
 #else
 	CONFIG_DEFINE (init_fragment_lighting, bool, true);
 #endif
-	CONFIG_DEFINE (init_shadows_enabled, bool, true);
-
-	CONFIG_DEFINE (enable_shadow_mapping, bool, true);
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
@@ -281,10 +279,9 @@ Engine::Engine()
 , culling(init_culling)
 , _flat_shaded(init_flat_shaded)
 , _fragment_lighting(init_fragment_lighting)
-, _shadows_enabled(init_shadows_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
-, _current_mesh(nullptr)
+, _current_vbo(nullptr)
 {
 #if ! defined(NDEBUG)
 	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
@@ -357,32 +354,33 @@ void Engine::SetCurrentProgram(Program const * program)
 	GL_VERIFY;
 }
 
-MeshResource const * Engine::GetVboResource() const
+VboResource const * Engine::GetVboResource() const
 {
-	return _current_mesh;
+	return _current_vbo;
 }
 
-void Engine::SetVboResource(MeshResource const * mesh)
+void Engine::SetVboResource(VboResource const * vbo)
 {
-	if (mesh == _current_mesh)
+	if (vbo == _current_vbo)
 	{
 		return;
 	}
 	
-	if (_current_mesh != nullptr)
+	if (_current_vbo != nullptr)
 	{
-		_current_mesh->Deactivate();
+		_current_vbo->Deactivate();
 	}
 	
-	_current_mesh = mesh;
+	_current_vbo = vbo;
 
-	if (_current_mesh != nullptr)
+	if (_current_vbo != nullptr)
 	{
-		_current_mesh->Activate();
+		_current_vbo->Activate();
 	}
 }
 
-Color4f Engine::CalculateLighting(Vector3 const & position) const
+// TODO: Just do this in the vertex shader?
+Color4f Engine::CalculateLighting(Vector3 const & position, LightType light_type) const
 {
 	Color4f lighting_color = Color4f::Black();
 	
@@ -390,6 +388,14 @@ Color4f Engine::CalculateLighting(Vector3 const & position) const
 	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ i)
 	{
 		Light const & light = * i;
+		if (light_type != LightType::all)
+		{
+			// filter by type
+			if (light_type != light.GetType())
+			{
+				continue;
+			}
+		}
 
 		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
 		
@@ -511,16 +517,6 @@ bool Engine::GetFragmentLighting() const
 	return _fragment_lighting;
 }
 
-void Engine::SetShadowsEnabled(bool shadows_enabled)
-{
-	_shadows_enabled = shadows_enabled;
-}
-
-bool Engine::GetShadowsEnabled() const
-{
-	return _shadows_enabled;
-}
-
 void Engine::OnToggleCapture()
 {
 	capture_enable = ! capture_enable;
@@ -556,6 +552,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	while (! quit_flag || ! scene->GetRoot().IsEmpty())
 	{
+		CRAG_VERIFY(* scene);
 		message_queue.DispatchMessages(* this);
 		CRAG_VERIFY(* scene);
 		
@@ -563,6 +560,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		{
 			PreRender();
 			UpdateTransformations();
+			UpdateShadowVolumes();
 			Render();
 			Capture();
 			
@@ -783,32 +781,6 @@ void Engine::VerifyRenderState() const
 #endif	// NDEBUG
 }
 
-// TODO: Remove?
-bool Engine::HasShadowSupport() const
-{
-	if (! enable_shadow_mapping) {
-		return false;
-	}
-	
-#if defined(CRAG_USE_GLES)
-	return false;
-#elif defined(__APPLE__)
-	return true;
-#else
-	if (! GLEW_ARB_shadow) {
-		return false;
-	}
-	if (! GLEW_ARB_depth_texture) {
-		return false;
-	}
-	if (! GLEW_EXT_framebuffer_object) {
-		return false;
-	}
-	
-	return true;
-#endif
-}
-
 void Engine::PreRender()
 {
 	// purge objects
@@ -878,6 +850,21 @@ void Engine::UpdateTransformations()
 	scene->SortRenderList();
 }
 
+void Engine::UpdateShadowVolumes()
+{
+	auto & shadows = scene->GetShadows();
+	for (auto & pair : shadows)
+	{
+		auto & key = pair.first;
+		auto & object = * key.first;
+		auto & light = * key.second;
+
+		auto & shadow = pair.second;
+
+		object.GenerateShadowVolume(light, shadow);
+	}
+}
+
 void Engine::Render()
 {
 	RenderFrame();
@@ -902,18 +889,16 @@ void Engine::RenderFrame()
 	ASSERT(GetBool<GL_DEPTH_WRITEMASK>());
 	GL_CALL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 	
-	// Set up lights.
-	InvalidateUniforms();
-	
-	// All the things.
-	if (culling)
-	{
-		RenderScene();
-	}
-	else
+	// TODO: Come up with system for these, more readable, self contained, include init_state
+	if (! culling)
 	{
 		Disable(GL_CULL_FACE);
-		RenderScene();
+	}
+	
+	RenderScene();
+
+	if (! culling)
+	{
 		Enable(GL_CULL_FACE);
 	}
 
@@ -928,15 +913,30 @@ void Engine::RenderScene()
 	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(* scene);
 	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* scene);
 	
-	// render forground, opaque elements
-	RenderLayer(foreground_projection_matrix, Layer::foreground);
+	if (shadows_enabled)
+	{
+		// render foreground, opaque elements with simple lighting
+		UpdateProgramLights(LightType::simple);
+		RenderLayer(foreground_projection_matrix, Layer::foreground);
+	
+		// render foreground, opaque elements with shadow lighting
+		RenderShadowLights(foreground_projection_matrix);
+	}
+	else
+	{
+		// render foreground, opaque elements with all lighting
+		UpdateProgramLights(LightType::all);
+		RenderLayer(foreground_projection_matrix, Layer::foreground);
+	}
 	
 	// render background elements (skybox)
 	setDepthRange(0.f, 1.f);
+	glDepthFunc(GL_LEQUAL);
 	RenderLayer(background_projection_matrix, Layer::background);
+	glDepthFunc(depth_func);
 	setDepthRange(0.f, max_foreground_depth);
 	
-	// render forground, transparent elements
+	// render foreground, transparent elements
 	RenderTransparentPass(foreground_projection_matrix);
 
 #if defined (GATHER_STATS)
@@ -944,52 +944,66 @@ void Engine::RenderScene()
 #endif
 }
 
-void Engine::InvalidateUniforms()
+void Engine::UpdateProgramLights(Light const & light)
 {
-	for (int program_index = 0; program_index != int(ProgramIndex::size); ++ program_index)
+	auto update_program = [&] (ProgramIndex program_index)
 	{
-		Program * program = _resource_manager->GetProgram(static_cast<ProgramIndex>(program_index));
-		if (! program)
-		{
-			continue;
-		}
+		auto & program = ref(_resource_manager->GetProgram(program_index));
+		SetCurrentProgram(& program);
 
-		program->SetUniformsValid(false);
-	}
+		auto & light_program = static_cast<LightProgram &>(program);
+		light_program.SetLight(light);
+	};
+	
+	update_program(ProgramIndex::poly);
+	update_program(ProgramIndex::disk);
+	update_program(ProgramIndex::sphere);
+}
+
+void Engine::UpdateProgramLights(LightType light_type)
+{
+	auto & lights = scene->GetLightList();
+	
+	auto update_program = [&] (ProgramIndex program_index)
+	{
+		auto & program = ref(_resource_manager->GetProgram(program_index));
+		SetCurrentProgram(& program);
+
+		auto & light_program = static_cast<LightProgram &>(program);
+		light_program.SetLights(lights, light_type);
+	};
+	
+	update_program(ProgramIndex::poly);
+	update_program(ProgramIndex::disk);
+	update_program(ProgramIndex::sphere);
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 {	
 	// render partially transparent objects
 	Enable(GL_BLEND);
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 
+	UpdateProgramLights(LightType::all);
 	RenderLayer(projection_matrix, Layer::foreground, false);
 
-	// mesh needs to be reset before next frame
-	// to ensure that FormationMesh::PreRender functions correctly
+	// vbo needs to be reset before next frame
+	// to ensure that FormationVbo::PreRender functions correctly
 	SetVboResource(nullptr);
 
 #if defined(CRAG_GFX_DEBUG)
 	DebugDraw(projection_matrix);
 #endif
 
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
 	Disable(GL_BLEND);
 }
 
-int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque)
+void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque)
 {
-	int num_rendered_objects = 0;
-	
-	typedef LeafNode::RenderList List;
-	List & render_list = scene->GetRenderList();
-	auto & lights = scene->GetLightList();
-	
-	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+	auto & render_list = scene->GetRenderList();
+	for (auto & leaf_node : render_list)
 	{
-		LeafNode & leaf_node = * i;
-		
 		if (leaf_node.GetLayer() != layer)
 		{
 			continue;
@@ -1005,17 +1019,9 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool op
 		{
 			if (required_program->IsInitialized())
 			{
+				// set the frame-constant uniforms
 				SetCurrentProgram(required_program);
-				
-				// once per frame,
-				if (! required_program->GetUniformsValid())
-				{
-					required_program->SetUniformsValid(true);
-
-					// set the frame-constant uniforms while it's active
-					required_program->UpdateLights(lights);
-					required_program->SetProjectionMatrix(projection_matrix);
-				}
+				required_program->SetProjectionMatrix(projection_matrix);
 				
 				// Set the model view matrix.
 				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
@@ -1028,17 +1034,158 @@ int Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool op
 			}
 		}
 		
-		MeshResource const * required_mesh = leaf_node.GetVboResource();
-		if (required_mesh != nullptr)
+		VboResource const * required_vbo = leaf_node.GetVboResource();
+		if (required_vbo != nullptr)
 		{
-			SetVboResource(required_mesh);
+			SetVboResource(required_vbo);
 		}
 		
 		leaf_node.Render(* this);
-		++ num_rendered_objects;
+	}
+}
+
+void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
+{
+	Enable(GL_STENCIL_TEST);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	auto & lights = scene->GetLightList();
+	for (auto & light : lights)
+	{
+		if (light.GetType() == LightType::shadow)
+		{
+			RenderShadowLight(projection_matrix, light);
+		}
 	}
 	
-	return num_rendered_objects;
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_TRUE);
+	Disable(GL_STENCIL_TEST);
+}
+
+void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const & light)
+{
+	GL_VERIFY;
+
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// shadow volume
+
+	GL_CALL(glClear(GL_STENCIL_BUFFER_BIT));
+
+	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
+	SetCurrentProgram(shadow_program);
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
+	glDepthFunc(GL_LEQUAL);
+
+	////////////////////////////////////////////////////////////////////////////////
+	// back
+	
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+	RenderShadowVolumes(projection_matrix, light);
+
+	////////////////////////////////////////////////////////////////////////////////
+	// front
+
+	glFrontFace(GL_CW);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+	RenderShadowVolumes(projection_matrix, light);
+	glFrontFace(GL_CCW);
+
+	////////////////////////////////////////////////////////////////////////////////
+	// reset some stuff
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// light
+
+	// program
+	auto screen_program = static_cast<ScreenProgram *>(_resource_manager->GetProgram(ProgramIndex::screen));
+	SetCurrentProgram(screen_program);
+
+	// state
+	glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFFL);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	// render
+	glDepthFunc(GL_LEQUAL);
+	Enable(GL_BLEND);	// TODO: Ensure additive; move this call further down stack
+
+	UpdateProgramLights(light);
+	RenderLayer(projection_matrix, Layer::foreground);
+
+	Disable(GL_BLEND);
+	glDepthFunc(depth_func);
+
+#if 0
+	// draw shadow volumes to color buffer for diagnostic purposes
+	glDepthFunc(GL_ALWAYS);
+	SetCurrentProgram(shadow_program);
+	glDepthMask(GL_TRUE);
+	Enable(GL_BLEND);
+	Disable(GL_STENCIL_TEST);
+	Disable(GL_CULL_FACE);
+	RenderShadowVolumes(projection_matrix, light);
+	Enable(GL_CULL_FACE);
+	Enable(GL_STENCIL_TEST);
+	Disable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glDepthFunc(depth_func);
+#endif
+
+	GL_VERIFY;
+}
+
+void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light)
+{
+	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
+	ASSERT(GetCurrentProgram() == shadow_program);
+
+	shadow_program->SetProjectionMatrix(projection_matrix);
+	
+	auto & shadows = scene->GetShadows();
+	auto & render_list = scene->GetRenderList();
+
+	ShadowMapKey key;
+	key.second = & light;
+	for (auto & leaf_node : render_list)
+	{
+		if (! leaf_node.CastsShadow())
+		{
+			continue;
+		}
+		
+		if (leaf_node.GetLayer() != Layer::foreground)
+		{
+			continue;
+		}
+		
+		// get shadow that matches the object-light combination
+		key.first = & leaf_node;
+		auto found = shadows.find(key);
+		ASSERT(found != std::end(shadows));
+		
+		auto & vbo_resource = found->second;
+		if (! vbo_resource.IsInitialized())
+		{
+			continue;
+		}
+		
+		SetVboResource(& vbo_resource);
+
+		// Set the model view matrix.
+		Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
+		auto model_view_matrix = model_view_transformation.GetMatrix();
+		shadow_program->SetModelViewMatrix(model_view_matrix);
+
+		// Draw
+		vbo_resource.Draw();
+	}
 }
 
 #if defined(CRAG_GFX_DEBUG)

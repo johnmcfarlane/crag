@@ -25,7 +25,7 @@
 
 namespace gfx 
 {
-	DECLARE_CLASS_HANDLE(FormationMesh);	// gfx::FormationMeshHandle
+	DECLARE_CLASS_HANDLE(Surrounding);	// gfx::SurroundingHandle
 	struct SetCameraEvent;
 	struct SetOriginEvent;
 }
@@ -82,7 +82,7 @@ namespace form
 		void OnQuit();
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
-		void OnSetMesh(Mesh & mesh);
+		void OnSetMesh(std::shared_ptr<Mesh> const & mesh);
 		void operator() (gfx::SetCameraEvent const & event) final;
 		void operator() (gfx::SetOriginEvent const & event) final;
 		
@@ -92,17 +92,13 @@ namespace form
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
 
-		void SetShadowsEnabled(bool enable_shadows);
-		bool GetShadowsEnabled() const;
-		void SetShadowLight(geom::abs::Sphere3 const & shadow_light);
-		
 		void Run(Daemon::MessageQueue & message_queue);
 
 	private:
 		void Tick();
 		void TickScene();
 		void GenerateMesh();
-		Mesh * PopMesh();
+		std::shared_ptr<Mesh> PopMesh();
 		
 		void AdjustNumQuaterna();
 		
@@ -112,15 +108,14 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		gfx::FormationMeshHandle _mesh;
+		gfx::SurroundingHandle _mesh;
 		FormationSet _formations;
 		
 		bool quit_flag;
 		bool suspend_flag;
 		bool enable_mesh_generation;
-		bool _shadows_enabled;
 		
-		Mesh::list_type _meshes;
+		std::stack<std::shared_ptr<Mesh>> _meshes;
 		
 		core::Time mesh_generation_time;
 		
@@ -131,7 +126,6 @@ namespace form
 
 		geom::rel::Ray3 _camera;
 		geom::abs::Vector3 _origin;
-		geom::abs::Sphere3 _shadow_light;
 		Scene _scene;
 	};
 	

@@ -28,7 +28,6 @@ using namespace gfx;
 
 Program::Program()
 : _id(0)
-, _uniforms_valid(false)
 {
 }
 
@@ -105,17 +104,6 @@ bool Program::Init(char const * const * vert_sources, char const * const * frag_
 	_model_view_matrix_location = GetUniformLocation("model_view_matrix");
 	InitUniforms();
 	
-	for (auto i = 0; i < MAX_LIGHTS; ++ i)
-	{
-		char name[40];
-		
-		sprintf(name, "lights[%d].position", i);
-		_light_block.lights[i].position = glGetUniformLocation(_id, name);
-		
-		sprintf(name, "lights[%d].color", i);
-		_light_block.lights[i].color = glGetUniformLocation(_id, name);
-	}
-	
 	Unbind();
 	return true;
 }
@@ -142,48 +130,6 @@ void Program::Unbind() const
 {
 	ASSERT(IsBound());
 	GL_CALL(glUseProgram(0));
-}
-
-void Program::SetUniformsValid(bool uniforms_valid)
-{
-	_uniforms_valid = uniforms_valid;
-}
-
-bool Program::GetUniformsValid() const
-{
-	return _uniforms_valid;
-}
-
-void Program::UpdateLights(Light::List const & lights) const
-{
-	ASSERT(IsBound());
-
-	LightBlock const & light_block = _light_block;
-	LightBlock::Light const * uniforms = light_block.lights, * uniforms_end = uniforms + MAX_LIGHTS;
-	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ uniforms, ++ i)
-	{
-		Light const & light = * i;
-		if (uniforms == uniforms_end)
-		{
-			// We're out of light uniforms. Time to start prioritizing perhaps.
-			DEBUG_BREAK("light limit, %d, exceeded", MAX_LIGHTS);
-			break;
-		}
-		
-		auto & transformation = light.GetModelViewTransformation();
-		geom::Vector3f position = ToOpenGl(transformation.GetTranslation());
-		Color4f const & color = light.GetColor();
-		
-		glUniform3f(uniforms->position, position.x, position.y, position.z);
-		glUniform3f(uniforms->color, color.r, color.g, color.b);
-	}
-	
-	// Make sure any unused light uniforms are blacked out.
-	while (uniforms != uniforms_end)
-	{
-		glUniform3f(uniforms->color, 0, 0, 0);
-		++ uniforms;
-	}
 }
 
 void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
@@ -243,6 +189,86 @@ void Program::Verify() const
 	assert(glIsProgram(_id));
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// LightProgram member definitions
+
+void LightProgram::InitUniforms()
+{
+	ASSERT(IsBound());
+	GL_VERIFY;
+	
+	Program::InitUniforms();
+	
+	_num_lights_location = glGetUniformLocation(_id, "num_lights");
+
+	GL_VERIFY;
+}
+
+void LightProgram::SetLight(Light const & light)
+{
+	ASSERT(IsBound());
+
+	SetLight(light, 0);
+	
+	glUniform1i(_num_lights_location, 1);
+}
+
+void LightProgram::SetLights(Light::List const & lights, LightType filter)
+{
+	ASSERT(IsBound());
+
+	auto num_lights = 0;
+	for (auto & light : lights)
+	{
+		if (filter != LightType::all)
+		{
+			auto type = light.GetType();
+			if (type != filter)
+			{
+				continue;
+			}
+		}
+		
+		SetLight(light, num_lights);
+		++ num_lights;
+	}
+	
+	glUniform1i(_num_lights_location, num_lights);
+}
+
+void LightProgram::SetLight(Light const & light, int index)
+{
+	while (unsigned(index) >= _light_locations.size())
+	{
+		AddLight();
+	}
+	
+	auto & location = _light_locations[index];
+
+	auto & transformation = light.GetModelViewTransformation();
+	geom::Vector3f position = ToOpenGl(transformation.GetTranslation());
+	GL_CALL(glUniform3f(location.position, position.x, position.y, position.z));
+
+	Color4f const & color = light.GetColor();
+	GL_CALL(glUniform3f(location.color, color.r, color.g, color.b));
+}
+
+void LightProgram::AddLight()
+{
+	LightLocation additional;
+	{
+		auto i = int(_light_locations.size());
+		char name[40];
+	
+		sprintf(name, "lights[%d].position", i);
+		additional.position = glGetUniformLocation(_id, name);
+	
+		sprintf(name, "lights[%d].color", i);
+		additional.color = glGetUniformLocation(_id, name);
+	}
+
+	_light_locations.push_back(additional);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // PolyProgram member definitions
@@ -250,17 +276,15 @@ void Program::Verify() const
 PolyProgram::PolyProgram()
 : _fragment_lighting_location(-1)
 , _flat_shade_location(-1)
-, _shadows_enabled_location(-1)
 {
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool shadows_enabled) const
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const
 {
 	ASSERT(IsBound());
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	GL_CALL(glUniform1i(_fragment_lighting_location, fragment_lighting));
 	GL_CALL(glUniform1i(_flat_shade_location, flat_shade));
-	GL_CALL(glUniform1i(_shadows_enabled_location, shadows_enabled));
 }
 
 void PolyProgram::InitAttribs(GLuint id)
@@ -274,13 +298,38 @@ void PolyProgram::InitUniforms()
 {
 	ASSERT(IsBound());
 	GL_VERIFY;
+	
+	super::InitUniforms();
 
 	_color_location = GetUniformLocation("color");
 	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
 	_flat_shade_location = GetUniformLocation("flat_shade");
-	_shadows_enabled_location = GetUniformLocation("shadows_enabled");
 	
 	GL_VERIFY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ShadowProgram member definitions
+
+ShadowProgram::ShadowProgram()
+{
+}
+
+void ShadowProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ScreenProgram member definitions
+
+ScreenProgram::ScreenProgram()
+{
+}
+
+void ScreenProgram::InitAttribs(GLuint id)
+{
+	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -311,6 +360,8 @@ void DiskProgram::InitAttribs(GLuint id)
 
 void DiskProgram::InitUniforms()
 {
+	super::InitUniforms();
+
 	_color_location = GetUniformLocation("color");
 	_center_location = GetUniformLocation("center");
 	_radius_location = GetUniformLocation("radius");

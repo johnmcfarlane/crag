@@ -36,9 +36,12 @@ namespace gfx
 		{
 		}
 		
+		BufferObject(BufferObject const &) = delete;
+		
 		BufferObject(BufferObject && rhs)
+		: _name(rhs._name)
 		{
-			std::swap(_name, rhs._name);
+			rhs._name = 0;
 		}
 		
 		~BufferObject()
@@ -46,6 +49,8 @@ namespace gfx
 			CRAG_VERIFY_FALSE(IsInitialized());
 		}
 
+		BufferObject & operator=(BufferObject const &) = delete;
+		
 		BufferObject & operator=(BufferObject && rhs)
 		{
 			std::swap(_name, rhs._name);

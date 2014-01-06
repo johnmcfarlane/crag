@@ -30,17 +30,17 @@ DEFINE_POOL_ALLOCATOR(Ball, 100);
 
 Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
 : LeafNode(init, local_transformation, Layer::foreground)
-, _color(Color4f::Black())
+, _color(color)
 , _radius(radius)
 {
-	_color = color;
+	CRAG_VERIFY_EQUAL(_color.a, 1);
 	
 	ResourceManager & resource_manager = init.engine.GetResourceManager();
 
 	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
 	SetProgram(sphere_program);
 	
-	MeshResource const & sphere_quad = resource_manager.GetSphereQuad();
+	auto & sphere_quad = resource_manager.GetVbo(VboIndex::sphere_quad);
 	SetVboResource(& sphere_quad);
 }
 

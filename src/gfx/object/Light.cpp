@@ -19,26 +19,29 @@
 
 #include "core/ConfigEntry.h"
 
-
 using namespace gfx;
 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Light definitions
 
-Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color)
+Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type)
 : LeafNode(init, local_transformation, Layer::light)
 , _color(color)
+, _type(type)
 {
-	Scene & scene = init.engine.GetScene();
-	Light::List & lights = scene.GetLightList();
-	lights.push_back(* this);
+	Scene & scene = GetEngine().GetScene();
+	CRAG_VERIFY(scene);
+	scene.AddLight(* this);
 	
 	CRAG_VERIFY(* this);
 }
 
 Light::~Light()
 {
+	CRAG_VERIFY(* this);
+
 	Scene & scene = GetEngine().GetScene();
-	Light::List & lights = scene.GetLightList();
-	lights.remove(* this);
+	scene.RemoveLight(* this);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
@@ -46,6 +49,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
 
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
+	CRAG_VERIFY_TRUE(object._type == LightType::simple || object._type == LightType::shadow);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Light::SetColor(Color4f const & color)
@@ -56,6 +60,11 @@ void Light::SetColor(Color4f const & color)
 Color4f const & Light::GetColor() const
 {
 	return _color;
+}
+
+LightType Light::GetType() const
+{
+	return _type;
 }
 
 #if ! defined(NDEBUG)
