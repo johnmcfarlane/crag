@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# To be run from debug or release subdirectories
 if (($1)); then
 	JOBS="$1"
 	shift
