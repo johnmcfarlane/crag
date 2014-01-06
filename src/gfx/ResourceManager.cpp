@@ -11,7 +11,7 @@
 
 #include "ResourceManager.h"
 
-#include "MeshResource.h"
+#include "IndexedVboResource.h"
 #include "Program.h"
 #include "Quad.h"
 #include "Shader.h"
@@ -27,7 +27,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// Cuboid type definitions
 
-	typedef MeshResource<Vertex, GL_STATIC_DRAW> Cuboid;
+	typedef IndexedVboResource<Vertex, GL_STATIC_DRAW> Cuboid;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// cuboid creation

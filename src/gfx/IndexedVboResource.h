@@ -1,5 +1,5 @@
 //
-//  gfx/MeshResource.h
+//  gfx/IndexedVboResource.h
 //  crag
 //
 //  Created by John McFarlane on 2013-12-12.
@@ -15,9 +15,9 @@
 
 namespace gfx
 {
-	// graphical representation of a solid made up of triangles
+	// a vertex buffer object with accompanying indices
 	template<typename VERTEX, GLenum USAGE> 
-	class MeshResource : public VboResource
+	class IndexedVboResource : public VboResource
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -31,7 +31,7 @@ namespace gfx
 		// functions
 	public:
 		// verification
-		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(MeshResource, self)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(IndexedVboResource, self)
 			CRAG_VERIFY(self._vbo);
 			CRAG_VERIFY(self._ibo);
 
@@ -46,9 +46,9 @@ namespace gfx
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 		
 		// c'tors
-		MeshResource() = default;
+		IndexedVboResource() = default;
 		
-		MeshResource(MeshResource && rhs)
+		IndexedVboResource(IndexedVboResource && rhs)
 		: _vbo(std::move(rhs._vbo))
 		, _num_vertices(rhs._num_vertices)
 		, _ibo(std::move(rhs._ibo))
@@ -61,7 +61,7 @@ namespace gfx
 		}
 		
 		// reserves buffer space
-		MeshResource(int max_num_vertices, int max_num_indices)
+		IndexedVboResource(int max_num_vertices, int max_num_indices)
 		: _num_vertices(max_num_vertices)
 		, _num_indices(max_num_indices)
 		{
@@ -74,7 +74,7 @@ namespace gfx
 			CRAG_VERIFY(* this);
 		}
 		
-		MeshResource(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
+		IndexedVboResource(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
 		: _num_vertices(std::distance(vertices_begin, vertices_end))
 		, _num_indices(std::distance(indices_begin, indices_end))
 		{
@@ -88,7 +88,7 @@ namespace gfx
 			CRAG_VERIFY(* this);
 		}
 
-		~MeshResource()
+		~IndexedVboResource()
 		{
 			CRAG_VERIFY(* this);
 			
@@ -101,7 +101,7 @@ namespace gfx
 		}
 		
 		// copy
-		MeshResource & operator=(MeshResource && rhs)
+		IndexedVboResource & operator=(IndexedVboResource && rhs)
 		{
 			CRAG_VERIFY(* this);
 			CRAG_VERIFY(rhs);

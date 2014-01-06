@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "MeshResource.h"
+#include "IndexedVboResource.h"
 #include "Vertex.h"
 
 #include "geom/Intersection.h"
@@ -21,7 +21,7 @@
 namespace gfx
 {
 	// ShadowVolume class definition
-	typedef gfx::MeshResource<Vector3, GL_DYNAMIC_DRAW> ShadowVolume;
+	typedef gfx::IndexedVboResource<Vector3, GL_DYNAMIC_DRAW> ShadowVolume;
 
 	// given a mesh and a light position, generates its shadow volume
 	template <typename Mesh>

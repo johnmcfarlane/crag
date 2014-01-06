@@ -10,7 +10,7 @@
 #pragma once
 
 #include "gfx/defs.h"
-#include "gfx/MeshResource.h"
+#include "gfx/IndexedVboResource.h"
 #include "gfx/Vertex.h"
 
 #include "form/Mesh.h"
@@ -29,16 +29,16 @@ namespace form
 namespace gfx 
 { 
 	// forward-declarations
-	template<typename VERTEX, GLenum USAGE> class MeshResource;
+	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;
 
-	typedef gfx::MeshResource<Vector3, GL_DYNAMIC_DRAW> ShadowVolumeResource;
+	typedef gfx::IndexedVboResource<Vector3, GL_DYNAMIC_DRAW> ShadowVolumeResource;
 
 	// An OpenGL vertex/index buffer pair specialized for storing the results of the formation system for rendering.
 	class FormationGeneration
 	{
 	public:
 		// types
-		typedef gfx::MeshResource<Vertex, GL_DYNAMIC_DRAW> MeshResource;
+		typedef gfx::IndexedVboResource<Vertex, GL_DYNAMIC_DRAW> IndexedVboResource;
 
 		// functions
 		CRAG_VERIFY_INVARIANTS_DECLARE(FormationGeneration);
@@ -47,7 +47,7 @@ namespace gfx
 		
 		void SetMesh(form::Mesh const & mesh);
 
-		MeshResource const & GetVboResource() const;
+		IndexedVboResource const & GetVboResource() const;
 		
 		geom::abs::Vector3 const & GetOrigin() const;
 		
@@ -58,7 +58,7 @@ namespace gfx
 		
 	private:
 		// variables
-		MeshResource _mesh_resource;
+		IndexedVboResource _indexed_vbo_resource;
 		form::MeshProperties _properties;
 	};
 }

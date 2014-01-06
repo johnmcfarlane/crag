@@ -195,8 +195,9 @@ void TestScript(applet::AppletInterface & applet_interface)
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.9f) * 7500000000000000.f);
-	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.9f) * 1250000000000000.f);
+	sim::EntityHandle sun1 = SpawnStar(star_volume, star_color);
+	sim::EntityHandle sun2 = SpawnStar(star_volume, gfx::Color4f::Green() * 2000000000000000.f);
 	
 	// Set camera position
 	{
@@ -243,7 +244,25 @@ void TestScript(applet::AppletInterface & applet_interface)
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
 	{
-		applet_interface.WaitFor([& applet_interface] () {
+		applet_interface.WaitFor([& applet_interface, & sun1, & sun2] () {
+			sun1.Call([] (sim::Entity & entity) {
+				auto location = entity.GetLocation();
+				auto time = app::GetTime() * 0.1;
+				auto pos = geom::Vector3d(sinf(time) * 50000000, cosf(time) * 50000000, 0);
+				auto & engine = entity.GetEngine();
+				auto & origin = engine.GetOrigin();
+				location->SetTransformation(geom::AbsToRel(pos, origin));
+			});
+		
+			sun2.Call([] (sim::Entity & entity) {
+				auto location = entity.GetLocation();
+				auto time = app::GetTime() * 0.21314;
+				auto pos = geom::Vector3d(sinf(time) * 70000000, cosf(time) * 70000000, 0);
+				auto & engine = entity.GetEngine();
+				auto & origin = engine.GetOrigin();
+				location->SetTransformation(geom::AbsToRel(pos, origin));
+			});
+		
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
 		});
 
@@ -260,7 +279,8 @@ void TestScript(applet::AppletInterface & applet_interface)
 	}
 	
 	_vehicle.Destroy();
-	sun.Destroy();
+	sun2.Destroy();
+	sun1.Destroy();
 	moon2.Destroy();
 	moon1.Destroy();
 	planet.Destroy();

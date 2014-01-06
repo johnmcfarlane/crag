@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 #include "Debug.h"
-#include "MeshResource.h"
+#include "IndexedVboResource.h"
 #include "Messages.h"
 #include "Program.h"
 #include "ResourceManager.h"

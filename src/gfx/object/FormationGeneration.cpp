@@ -28,12 +28,12 @@ using namespace gfx;
 // FormationGeneration member definitions
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(FormationGeneration, self)
-	CRAG_VERIFY(self._mesh_resource);
+	CRAG_VERIFY(self._indexed_vbo_resource);
 	CRAG_VERIFY(self._properties);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 FormationGeneration::FormationGeneration(int max_num_quaterne)
-: _mesh_resource(
+: _indexed_vbo_resource(
 	max_num_quaterne * form::Surrounding::num_verts_per_quaterna, 
 	max_num_quaterne * form::Surrounding::num_indices_per_quaterna)
 {
@@ -44,16 +44,16 @@ void FormationGeneration::SetMesh(form::Mesh const & mesh)
 	auto & vertices = mesh.GetVertices();
 	auto & indices = mesh.GetIndices();
 
-	_mesh_resource.Set(std::begin(vertices), std::end(vertices), std::begin(indices), std::end(indices));
+	_indexed_vbo_resource.Set(std::begin(vertices), std::end(vertices), std::begin(indices), std::end(indices));
 	
 	_properties = mesh.GetProperties();
 	
 	CRAG_VERIFY(* this);
 }
 
-FormationGeneration::MeshResource const & FormationGeneration::GetVboResource() const
+FormationGeneration::IndexedVboResource const & FormationGeneration::GetVboResource() const
 {
-	return _mesh_resource;
+	return _indexed_vbo_resource;
 }
 
 form::MeshProperties::Vector const & FormationGeneration::GetOrigin() const
@@ -63,5 +63,5 @@ form::MeshProperties::Vector const & FormationGeneration::GetOrigin() const
 
 void FormationGeneration::Draw() const
 {
-	_mesh_resource.Draw();
+	_indexed_vbo_resource.Draw();
 }
