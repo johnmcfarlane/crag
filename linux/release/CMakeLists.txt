@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 project(crag)
 
 # TODO: -Weffc++ -fno-unwind-tables
-set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -pthread -DdSINGLE -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions -Wno-strict-aliasing")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -pthread -DdSINGLE -D__STRICT_ANSI__ -DNDEBUG -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions -Wno-strict-aliasing -ftemplate-backtrace-limit=0")
 
 #include_directories("src" "dependencies/include")
 #set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
