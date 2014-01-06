@@ -98,6 +98,8 @@ namespace geom
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Convert
+	//
+	// TODO: Create a space class containing an origin vector
 	
 	template <typename REL_T>
 	inline REL_T Convert(REL_T const & rel, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin)
