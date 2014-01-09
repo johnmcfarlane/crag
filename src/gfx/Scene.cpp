@@ -190,7 +190,7 @@ void Scene::RemoveLight(Light & light)
 				continue;
 			}
 		
-			// find any of the shadow volume entries - they're interchangable per object
+			// find the shadow volume resource matching this object/light pair
 			auto key = std::make_pair(& object, & light);
 			auto found_light = _shadows.find(key);
 			ASSERT(found_light != std::end(_shadows));
