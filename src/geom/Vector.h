@@ -77,3 +77,28 @@ namespace geom
 		return DotProduct(v, v);
 	}
 }
+
+namespace std
+{
+	template <typename S, int N>
+	S const * begin(geom::Vector<S, N> const & v)
+	{
+		return & v[0];
+	}
+	template <typename S, int N>
+	S * begin(geom::Vector<S, N> & v)
+	{
+		return & v[0];
+	}
+	
+	template <typename S, int N>
+	S const * end(geom::Vector<S, N> const & v)
+	{
+		return begin(v) + N;
+	}
+	template <typename S, int N>
+	S * end(geom::Vector<S, N> & v)
+	{
+		return begin(v) + N;
+	}
+}
