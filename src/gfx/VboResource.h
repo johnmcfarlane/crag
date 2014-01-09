@@ -11,7 +11,7 @@
 
 namespace gfx
 {
-	// Base class for a graphical resource such as a VBO / Mesh
+	// Base class for a graphical resource such as a vertex buffer object
 	// which is costly to bind / unbind during rendering.
 	class VboResource
 	{
