@@ -10,7 +10,6 @@
 #include "pch.h"
 
 #include "Polyhedron.h"
-#include "VertexBuffer.h"
 
 #include "form/Formation.h"
 #include "form/PointBuffer.h"

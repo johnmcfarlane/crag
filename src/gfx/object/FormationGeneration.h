@@ -11,7 +11,7 @@
 
 #include "gfx/defs.h"
 #include "gfx/IndexedVboResource.h"
-#include "gfx/Vertex.h"
+#include "gfx/LitVertex.h"
 
 #include "form/Mesh.h"
 #include "form/MeshProperties.h"
@@ -38,7 +38,7 @@ namespace gfx
 	{
 	public:
 		// types
-		typedef gfx::IndexedVboResource<Vertex, GL_DYNAMIC_DRAW> IndexedVboResource;
+		typedef gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW> IndexedVboResource;
 
 		// functions
 		CRAG_VERIFY_INVARIANTS_DECLARE(FormationGeneration);

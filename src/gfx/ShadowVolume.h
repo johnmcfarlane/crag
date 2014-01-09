@@ -10,7 +10,8 @@
 #pragma once
 
 #include "IndexedVboResource.h"
-#include "Vertex.h"
+#include "Mesh.h"
+#include "PlainVertex.h"
 
 #include "geom/Intersection.h"
 
@@ -21,16 +22,15 @@
 namespace gfx
 {
 	// ShadowVolume class definition
-	typedef gfx::IndexedVboResource<Vector3, GL_DYNAMIC_DRAW> ShadowVolume;
+	typedef gfx::IndexedVboResource<PlainVertex, GL_DYNAMIC_DRAW> ShadowVolume;
+	
+	typedef Mesh<PlainVertex> ShadowVolumeMesh;
 
-	// given a mesh and a light position, generates its shadow volume
-	template <typename Mesh>
-	void GenerateShadowVolume(ShadowVolume & shadow_volume, Mesh const & mesh, Vector3 light_position)
+	// given a mesh and a light position, generates geometry describing its shadow
+	template <typename Vertex>
+	ShadowVolumeMesh GenerateShadowVolumeMesh(Mesh<Vertex> const & mesh, Vector3 light_position)
 	{
 		// types
-		typedef std::vector<Vector3> ShadowVertexBuffer;
-		typedef std::vector<ElementIndex> ShadowIndexBuffer;
-
 		typedef std::array<ElementIndex, 2> Edge;
 
 		struct EdgeHash
@@ -44,28 +44,32 @@ namespace gfx
 		// given an un matched edge, is its neighbouring surface lit?
 		// (edges have two neighbouring surfaces once matched)
 		typedef std::unordered_map<Edge, bool, EdgeHash> EdgeMap;
-		
+	
 		// solid vertices
 		auto & solid_vertices = mesh.GetVertices();
-		auto num_solid_vertices = solid_vertices.GetSize();
-		auto solid_vertex_array = solid_vertices.GetArray();
+		auto num_solid_vertices = solid_vertices.size();
+		auto solid_vertex_array = solid_vertices.data();
+		
+		// return object
+		ShadowVolumeMesh shadow_volume_mesh(num_solid_vertices * 2, 0);
 
 		// shadow vertices
-		ShadowVertexBuffer shadow_vertices(num_solid_vertices * 2);
+		auto & shadow_vertices = shadow_volume_mesh.GetVertices();
 
-		std::transform(solid_vertex_array, solid_vertex_array + num_solid_vertices, std::begin(shadow_vertices), [] (Vertex const & vertex)
+		std::transform(solid_vertex_array, solid_vertex_array + num_solid_vertices, std::begin(shadow_vertices), [] (Vertex const & vertex) -> PlainVertex
 		{
-			return vertex.pos;
+			return { vertex.pos };
 		});
 
-		std::transform(solid_vertex_array, solid_vertex_array + num_solid_vertices, std::begin(shadow_vertices) + num_solid_vertices, [& light_position] (Vertex const & vertex)
+		std::transform(solid_vertex_array, solid_vertex_array + num_solid_vertices, std::begin(shadow_vertices) + num_solid_vertices, [& light_position] (Vertex const & vertex) -> PlainVertex
 		{
 			auto & pos = vertex.pos;
-			return pos * 2.f - light_position;
+			auto dir = geom::Normalized(vertex.pos - light_position);
+			return { pos + dir * 1000.f };
 		});
 
 		// shadow indices
-		ShadowIndexBuffer shadow_indices;
+		auto & shadow_indices = shadow_volume_mesh.GetIndices();
 
 		EdgeMap unmatched_edges;
 
@@ -81,9 +85,9 @@ namespace gfx
 			for (auto p = 0; p != 3; ++ i, ++ p)
 			{
 				auto index = * i;
-				CRAG_VERIFY_OP((int)index, >=, 0);
-				CRAG_VERIFY_OP((int)index, <, solid_indices.GetSize());
-	
+				CRAG_VERIFY_OP(index, >=, 0u);
+				CRAG_VERIFY_OP(index, <, solid_indices.size());
+
 				points[p] = index;
 				triangle.points[p] = solid_vertices[index].pos;
 			}
@@ -113,25 +117,25 @@ namespace gfx
 						{
 							std::swap(a, b);
 						}
-				
+			
 						auto a_shadow = a + num_solid_vertices;
 						auto b_shadow = b + num_solid_vertices;
-			
+		
 						shadow_indices.push_back(a);
 						shadow_indices.push_back(a_shadow);
 						shadow_indices.push_back(b);
 						shadow_indices.push_back(b_shadow);
 						shadow_indices.push_back(b);
 						shadow_indices.push_back(a_shadow);
-			
-#if ! defined(NDEBUG)
-//						// draw lines in direction of light rays
-//						Debug::AddLine(shadow_vertices[a], shadow_vertices[a_shadow]);
-//						Debug::AddLine(shadow_vertices[b], shadow_vertices[b_shadow]);
+		
+#if ! defined(NDEBUG) && 0
+						// draw lines in direction of light rays
+						Debug::AddLine(shadow_vertices[a].pos, shadow_vertices[a_shadow].pos);
+						Debug::AddLine(shadow_vertices[b].pos, shadow_vertices[b_shadow].pos);
 
-//						// draw silhouettes
-//						Debug::AddLine(shadow_vertices[a], shadow_vertices[b]);
-//						Debug::AddLine(shadow_vertices[a_shadow], shadow_vertices[b_shadow]);
+						// draw silhouettes
+						Debug::AddLine(shadow_vertices[a].pos, shadow_vertices[b].pos);
+						Debug::AddLine(shadow_vertices[a_shadow].pos, shadow_vertices[b_shadow].pos);
 #endif
 					}
 
@@ -144,6 +148,6 @@ namespace gfx
 			RegisterEdge(points[2], points[0], lit);
 		};
 
-		shadow_volume.Set(& * std::begin(shadow_vertices), & * std::end(shadow_vertices), & * std::begin(shadow_indices), & * std::end(shadow_indices));
+		return shadow_volume_mesh;
 	}
 }

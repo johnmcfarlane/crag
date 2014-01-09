@@ -1,5 +1,5 @@
 //
-//  Mesh.cpp
+//  form/Mesh.cpp
 //  crag
 //
 //  Created by John on 10/24/09.
@@ -22,15 +22,13 @@ using namespace form;
 // form::Mesh
 
 Mesh::Mesh(int max_num_verts, int max_num_tris)
-: vertices(max_num_verts)
-, indices(max_num_tris * 3)
+: _lit_mesh(max_num_verts, max_num_tris * 3)
 {
 }
 
 void Mesh::Clear()
 {
-	indices.Clear();
-	vertices.Clear();
+	_lit_mesh.Clear();
 }
 
 MeshProperties & Mesh::GetProperties()
@@ -51,7 +49,6 @@ Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 	}
 	
 	ASSERT(point.pos == point.vert->pos);
-	//ASSERT(texture == point.vert->texture);
 	
 	return * point.vert;
 }
@@ -68,19 +65,28 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 					 color.a)
 	};
 
-	Vertex & addition = vertices.PushBack(v);
+	auto & vertices = _lit_mesh.GetVertices();
+	vertices.push_back(v);
 	
-	return addition;
+	return vertices.back();
 }
 
 void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal)
 {
 	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
 	
-	IndexBuffer::value_type * corner_indices = & indices.PushBack();
-	corner_indices [0] = vertices.GetIndex(a);
-	corner_indices [1] = vertices.GetIndex(b);
-	corner_indices [2] = vertices.GetIndex(c);
+	auto & vertices = _lit_mesh.GetVertices();
+	auto & indices = _lit_mesh.GetIndices();
+
+	auto add_corner = [&] (Vertex & vertex)
+	{
+		auto vertex_index = std::distance(& * vertices.begin(), & vertex);
+		indices.push_back(vertex_index);
+	};
+
+	add_corner(a);
+	add_corner(b);
+	add_corner(c);
 
 	// These additions are not thread-safe but I can't imagine it causing more
 	// than a minor inaccuracy in the normal calculation. 
@@ -98,34 +104,11 @@ void Mesh::AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & norm
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
 
-VertexBuffer & Mesh::GetVertices() 
+Mesh::LitMesh const & Mesh::GetLitMesh() const
 {
-	return vertices;
-}
-
-VertexBuffer const & Mesh::GetVertices() const
-{
-	return vertices;
-}
-
-IndexBuffer & Mesh::GetIndices()
-{
-	return indices;
-}
-
-IndexBuffer const & Mesh::GetIndices() const
-{
-	return indices;
+	return _lit_mesh;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Mesh, self)
-	CRAG_VERIFY_EQUAL(self.indices.GetSize() % 3, 0);
-	CRAG_VERIFY_EQUAL(self.indices.GetSlack() % 3, 0);
-
-	for (auto index : self.indices)
-	{
-		Vertex const & v = self.vertices[index];
-		CRAG_VERIFY_ARRAY_ELEMENT(& v, std::begin(self.vertices), std::end(self.vertices));
-		CRAG_VERIFY(v);
-	}
+	CRAG_VERIFY(self._lit_mesh);
 CRAG_VERIFY_INVARIANTS_DEFINE_END

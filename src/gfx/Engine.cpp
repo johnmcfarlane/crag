@@ -38,7 +38,7 @@ using core::Time;
 using namespace gfx;
 
 CONFIG_DEFINE(depth_func, int, GL_LESS);
-CONFIG_DEFINE (shadows_enabled, bool, false);
+CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
 
@@ -1124,18 +1124,27 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 
 #if 0
 	// draw shadow volumes to color buffer for diagnostic purposes
+	bool flip = (int(app::GetTime() * 256) & 255) == 0;
+	if (flip)
+	{
+		glFrontFace(GL_CW);
+	}
 	glDepthFunc(GL_ALWAYS);
 	SetCurrentProgram(shadow_program);
 	glDepthMask(GL_TRUE);
 	Enable(GL_BLEND);
 	Disable(GL_STENCIL_TEST);
-	Disable(GL_CULL_FACE);
+//	Disable(GL_CULL_FACE);
 	RenderShadowVolumes(projection_matrix, light);
-	Enable(GL_CULL_FACE);
+//	Enable(GL_CULL_FACE);
 	Enable(GL_STENCIL_TEST);
 	Disable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glDepthFunc(depth_func);
+	if (flip)
+	{
+		glFrontFace(GL_CCW);
+	}
 #endif
 
 	GL_VERIFY;

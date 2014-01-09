@@ -13,9 +13,13 @@
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/Mesh.h"
+#include "gfx/MeshResource.h"
+#include "gfx/Model.h"
 #include "gfx/Program.h"
 #include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
+#include "gfx/ShadowVolume.h"
 #include "gfx/VboResource.h"
 
 using namespace gfx;
@@ -23,7 +27,7 @@ using namespace gfx;
 DEFINE_POOL_ALLOCATOR(Box, 100);
 
 Box::Box(LeafNode::Init const & init, Transformation const & local_transformation, Vector3 const & dimensions, Color4f const & color)
-: LeafNode(init, local_transformation, Layer::foreground)
+: LeafNode(init, local_transformation, Layer::foreground, true, true)
 , _color(color)
 , _dimensions(dimensions)
 {
@@ -34,7 +38,7 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
 	SetProgram(poly_program);
 	
-	VboResource const & cuboid_mesh = resource_manager.GetVbo(VboIndex::cuboid_mesh);
+	VboResource const & cuboid_mesh = resource_manager.GetVbo(VboIndex::cuboid);
 	SetVboResource(& cuboid_mesh);
 }
 
@@ -81,4 +85,27 @@ void Box::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	Transformation scaled(model_view.GetTranslation(), model_view.GetRotation(), _dimensions);
 	SetModelViewTransformation(scaled);
+}
+
+void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
+{
+	if (! shadow_volume.IsInitialized())
+	{
+		shadow_volume = ShadowVolume(64, 120);
+	}
+
+	auto & engine = GetEngine();
+	ResourceManager & resource_manager = engine.GetResourceManager();
+	auto & cuboid_model = resource_manager.GetModel(ModelIndex::cuboid);
+	auto & cuboid_mesh_resource = static_cast<MeshResource<PlainVertex> const &>(cuboid_model);
+	auto & cuboid_mesh = static_cast<ShadowVolumeMesh const &>(cuboid_mesh_resource.GetMesh());
+	
+	auto light_position = light.GetModelTransformation().GetTranslation();
+	auto box_transformation = GetModelTransformation();
+	auto box_position = box_transformation.GetTranslation();
+	auto box_to_light = light_position - box_position;
+	auto rotated_box_to_light = geom::Inverse(box_transformation.GetRotation()) * box_to_light;
+	
+	auto shadow_volume_mesh = GenerateShadowVolumeMesh(cuboid_mesh, rotated_box_to_light);
+	shadow_volume.Set(shadow_volume_mesh);
 }

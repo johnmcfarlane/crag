@@ -24,6 +24,13 @@ namespace geom
 
 namespace gfx
 {
+	enum class ModelIndex
+	{
+		cuboid,
+		lit_cuboid,
+		size
+	};
+	
 	enum class ProgramIndex
 	{
 		poly,	// position, normal and color
@@ -40,7 +47,7 @@ namespace gfx
 	
 	enum class VboIndex
 	{
-		cuboid_mesh,
+		cuboid,
 		sphere_quad,
 		disk_quad,
 		size

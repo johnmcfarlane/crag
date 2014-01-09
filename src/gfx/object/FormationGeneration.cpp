@@ -41,10 +41,8 @@ FormationGeneration::FormationGeneration(int max_num_quaterne)
 
 void FormationGeneration::SetMesh(form::Mesh const & mesh)
 {
-	auto & vertices = mesh.GetVertices();
-	auto & indices = mesh.GetIndices();
-
-	_indexed_vbo_resource.Set(std::begin(vertices), std::end(vertices), std::begin(indices), std::end(indices));
+	auto & lit_mesh = mesh.GetLitMesh();
+	_indexed_vbo_resource.Set(lit_mesh);
 	
 	_properties = mesh.GetProperties();
 	

@@ -17,7 +17,7 @@
 namespace gfx
 {
 	// Box class
-	class Box : public LeafNode
+	class Box final : public LeafNode
 	{
 	public:
 		// functions
@@ -29,7 +29,8 @@ namespace gfx
 		void Render(Engine const & renderer) const override;
 		
 	private:
-		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
+		void UpdateModelViewTransformation(Transformation const & model_view) final;
+		void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const final;
 
 		// variables
 		Color4f _color;

@@ -11,10 +11,10 @@
 
 #include "defs.h"
 
-
 namespace gfx
 {
 	// forward-declarations
+	class Model;
 	class VboResource;
 	class Program;
 	
@@ -27,22 +27,30 @@ namespace gfx
 		ResourceManager();
 		~ResourceManager();
 		
+		// model functions
+		Model & GetModel(ModelIndex index);
+		Model const & GetModel(ModelIndex index) const;
+		
 		// program functions
 		Program * GetProgram(ProgramIndex index);
 		Program const * GetProgram(ProgramIndex index) const;
 		
-		// buffer object functions
+		// vertex buffer object functions
 		VboResource & GetVbo(VboIndex index);
 		VboResource const & GetVbo(VboIndex index) const;
 		
 	private:
+		bool InitModels();
 		bool InitShaders();
-		bool InitGeometry();
+		bool InitVbos();
+		
+		// stock geometry
+		std::array<Model *, std::size_t(ModelIndex::size)> _models;
 		
 		// shaders and shader programs
 		std::array<Program *, std::size_t(ProgramIndex::size)> _programs;
 		
-		// stock geometry
+		// GPU geometry buffers
 		std::array<VboResource *, std::size_t(VboIndex::size)> _vbos;
 	};
 }

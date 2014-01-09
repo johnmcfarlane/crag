@@ -11,13 +11,12 @@
 
 #include "Surrounding.h"
 
-#include "gfx/Debug.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/Program.h"
 #include "gfx/ResourceManager.h"
-#include "gfx/Scene.h"
-#include "gfx/ShadowVolume.h"
+
+#include "gfx/object/Light.h"
 
 #include "form/Engine.h"
 #include "form/Surrounding.h"
@@ -45,7 +44,7 @@ namespace
 // gfx::Surrounding member definitions
 
 Surrounding::Surrounding(LeafNode::Init const & init, int max_num_quaterne)
-: LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, true)
+: LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, false)
 , _generation(max_num_quaterne)
 , _max_num_quaterne(max_num_quaterne)
 {
@@ -113,7 +112,7 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	}
 	
 	// state number of polygons/quaterna
-	STAT_SET (num_polys, mesh->GetIndices().GetSize() / 3);
+	STAT_SET (num_polys, mesh->GetLitMesh().GetIndices().size() / 3);
 	STAT_SET (num_quats_used, mesh->GetProperties()._num_quaterne);
 }
 
@@ -145,7 +144,8 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 	auto gfx_light_position = light.GetModelTransformation().GetTranslation();
 	auto form_light_position = GfxToForm(gfx_light_position);
 
-	::GenerateShadowVolume(shadow_volume, * _mesh, form_light_position);
+	auto shadow_volume_mesh = GenerateShadowVolumeMesh(_mesh->GetLitMesh(), form_light_position);
+	shadow_volume.Set(shadow_volume_mesh);
 }
 
 void Surrounding::Render(Engine const & renderer) const

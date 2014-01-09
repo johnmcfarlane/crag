@@ -1,5 +1,5 @@
 //
-//  Mesh.h
+//  form/Mesh.h
 //  crag
 //
 //  Created by John on 10/24/09.
@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include "IndexBuffer.h"
 #include "MeshProperties.h"
-#include "VertexBuffer.h"
+
+#include "gfx/Mesh.h"
+#include "gfx/LitVertex.h"
 
 namespace form
 {
@@ -24,7 +25,8 @@ namespace form
 	{
 	public:
 		// types
-		typedef gfx::Vertex Vertex;
+		typedef gfx::LitVertex Vertex;
+		typedef gfx::Mesh<gfx::LitVertex> LitMesh;
 		typedef Vertex::Color Color;
 		
 		// functions
@@ -43,18 +45,13 @@ namespace form
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal);
 		void AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & normal, gfx::Color4b color);
 
-		VertexBuffer & GetVertices();
-		VertexBuffer const & GetVertices() const;
-		
-		IndexBuffer & GetIndices();
-		IndexBuffer const & GetIndices() const;
+		LitMesh const & GetLitMesh() const;
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Mesh);
 		
 		// variables
 	private:
-		VertexBuffer vertices;
-		IndexBuffer indices;
+		LitMesh _lit_mesh;
 		MeshProperties properties;
 	};
 	

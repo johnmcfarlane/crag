@@ -175,7 +175,6 @@ void Scene::AddLight(Light & light)
 
 void Scene::RemoveLight(Light & light)
 {
-	CRAG_VERIFY(* this);
 	CRAG_VERIFY(light);
 
 	ASSERT(_light_list.contains(light));
@@ -198,8 +197,6 @@ void Scene::RemoveLight(Light & light)
 			_shadows.erase(found_light);
 		}
 	}
-
-	CRAG_VERIFY(* this);
 }
 
 Object & Scene::GetRoot()

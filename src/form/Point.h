@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "gfx/Vertex.h"
+#include "gfx/LitVertex.h"
 
 namespace form
 {
@@ -20,7 +20,7 @@ namespace form
 	{
 	public:
 		// types
-		typedef gfx::Vertex Vertex;
+		typedef gfx::LitVertex Vertex;
 		typedef Vertex::Vector3 Vector3;
 		
 		// functions

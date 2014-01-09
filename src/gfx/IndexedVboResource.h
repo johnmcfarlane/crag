@@ -15,7 +15,10 @@
 
 namespace gfx
 {
-	// a vertex buffer object with accompanying indices
+	// forward-declarations
+	template <typename Vertex> class Mesh;
+
+	// a vertex buffer object with accompanying index buffer
 	template<typename VERTEX, GLenum USAGE> 
 	class IndexedVboResource : public VboResource
 	{
@@ -58,6 +61,12 @@ namespace gfx
 			rhs._num_indices = 0;
 
 			CRAG_VERIFY(* this);
+		}
+		
+		// reserves buffer space
+		IndexedVboResource(Mesh<Vertex> const & mesh)
+		: IndexedVboResource(& * mesh.GetVertices().begin(), & * mesh.GetVertices().end(), & * mesh.GetIndices().begin(), & * mesh.GetIndices().end())
+		{
 		}
 		
 		// reserves buffer space
@@ -119,6 +128,14 @@ namespace gfx
 		}
 
 		// set data
+		void Set(Mesh<Vertex> const & mesh)
+		{
+			auto & vertices = mesh.GetVertices();
+			auto & indices = mesh.GetIndices();
+			
+			Set(& * vertices.begin(), & * vertices.end(), & * indices.begin(), & * indices.end());
+		}
+		
 		void Set(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
 		{
 			CRAG_VERIFY(* this);

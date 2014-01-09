@@ -50,7 +50,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/CastRay.cpp \
 	$(CRAG_PATH)/form/Engine.cpp \
 	$(CRAG_PATH)/form/Formation.cpp \
-	$(CRAG_PATH)/form/IndexBuffer.cpp \
 	$(CRAG_PATH)/form/Mesh.cpp \
 	$(CRAG_PATH)/form/NodeBuffer.cpp \
 	$(CRAG_PATH)/form/Node.cpp \
@@ -61,7 +60,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/Polyhedron.cpp \
 	$(CRAG_PATH)/form/Scene.cpp \
 	$(CRAG_PATH)/form/Surrounding.cpp \
-	$(CRAG_PATH)/form/VertexBuffer.cpp \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \
 	$(CRAG_PATH)/gfx/Fence.cpp \
@@ -78,6 +76,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/object/Object.cpp \
 	$(CRAG_PATH)/gfx/object/RootNode.cpp \
 	$(CRAG_PATH)/gfx/object/Skybox.cpp \
+	$(CRAG_PATH)/gfx/PlainVertex.cpp \
 	$(CRAG_PATH)/gfx/Pov.cpp \
 	$(CRAG_PATH)/gfx/Program.cpp \
 	$(CRAG_PATH)/gfx/Quad.cpp \
@@ -86,7 +85,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
 	$(CRAG_PATH)/gfx/Texture.cpp \
-	$(CRAG_PATH)/gfx/Vertex.cpp \
+	$(CRAG_PATH)/gfx/LitVertex.cpp \
 	$(CRAG_PATH)/main.cpp \
 	$(CRAG_PATH)/pch.cpp \
 	$(CRAG_PATH)/physics/Body.cpp \

@@ -1,5 +1,5 @@
 //
-//  gfx/Vertex.h
+//  gfx/LitVertex.h
 //  crag
 //
 //  Created by John McFarlane on 2012-01-23.
@@ -15,12 +15,12 @@
 namespace gfx
 {
 	// Vertex type used by gfx/form systems to generate OpenGL mesh.
-	struct Vertex
+	struct LitVertex
 	{
 		typedef ::gfx::Vector3 Vector3;
 		typedef Color4b Color;
 		
-		CRAG_VERIFY_INVARIANTS_DECLARE(Vertex);
+		CRAG_VERIFY_INVARIANTS_DECLARE(LitVertex);
 
 		Vector3 pos;
 		Vector3 norm;
