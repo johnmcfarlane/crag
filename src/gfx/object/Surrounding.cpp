@@ -28,8 +28,6 @@
 
 using namespace gfx;
 
-CONFIG_DECLARE(shadows_enabled, bool);
-
 namespace
 {
 	STAT (num_polys, std::size_t, .05f);
@@ -137,11 +135,6 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 		return;
 	}
 	
-	if (! shadows_enabled)
-	{
-		return;
-	}
-
 	if (! shadow_volume.IsInitialized())
 	{
 		shadow_volume = ShadowVolume(
