@@ -117,7 +117,7 @@ namespace geom
 		
 		Vector4 GetTranslation4() const
 		{
-			return Vector4(_matrix.GetColumn());
+			return Vector4(_matrix.GetColumn(3));
 		}
 		
 		void SetTranslation(Vector3 const & translation)
