@@ -12,6 +12,7 @@
 #include <ode/collision.h>
 #include <ode/common.h>
 #include <ode/contact.h>
+#include <ode/mass.h>
 
 namespace geom
 {
@@ -32,6 +33,7 @@ namespace physics
 	typedef dJointID JointHandle;
 	typedef dContact Contact;
 	typedef dContactGeom ContactGeom;
+	typedef dMass Mass;
 	typedef dTriMeshDataID MeshData;
 
 	typedef geom::Vector<Scalar, 3> Vector3;

@@ -72,7 +72,7 @@ void sim::ApplyGravity(Engine & engine, core::Time delta)
 {
 	engine.ForEachObject([&] (Entity & entity) {
 		physics::Body * body = entity.GetBody();
-		if (body == nullptr)
+		if (body == nullptr || ! body->ObeysGravity())
 		{
 			return;
 		}

@@ -26,17 +26,20 @@ namespace physics
 	{
 	public:
 		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle);
-		virtual ~Body() = 0;
+		virtual ~Body();
 		
 		Body * GetBody() final;
 		Body const * GetBody() const final;
 
+		virtual bool ObeysGravity() const;
 		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
 		BodyHandle GetBodyHandle() const;
 		CollisionHandle GetCollisionHandle() const;
-		virtual void SetDensity(Scalar density) = 0;
+		virtual void SetDensity(Scalar density);
+		
 		Scalar GetMass() const;	// -ve means infinite
+		virtual void SetMass(Mass const & mass) const;
 		
 		void SetTransformation(Transformation const & transformation) final;
 		
@@ -66,23 +69,25 @@ namespace physics
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Body);
 	private:
-		Vector3 const & GetGeomTranslation() const;
-		void SetGeomTranslation(Vector3 const & translation);
+		virtual Vector3 const & GetGeomTranslation() const;
+		virtual void SetGeomTranslation(Vector3 const & translation);
 
-		Matrix33 const & GetGeomRotation() const;
-		void SetGeomRotation(Matrix33 const & matrix);
+		virtual Matrix33 const & GetGeomRotation() const;
+		virtual void SetGeomRotation(Matrix33 const & matrix);
 
+	protected:
 		Transformation GetGeomTransformation() const;
 		void SetGeomTransformation(Transformation const & transformation);
 
+	private:
 		void Tick();
 
 	protected:
 		Engine & _engine;
-		
-	private:
 		CollisionHandle _collision_handle;	// the collision info
 		BodyHandle _body_handle;	// the dynaical info
+		
+	private:
 		Body const * _exception;
 	};
 }

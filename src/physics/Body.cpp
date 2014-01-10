@@ -41,7 +41,6 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 		dBodySetData(_body_handle, this);
 		dBodySetLinearVel(_body_handle, velocity->x, velocity->y, velocity->z);
 		dBodySetGravityMode(_body_handle, false);
-		dGeomSetBody(_collision_handle, _body_handle);
 	}
 	else 
 	{
@@ -49,10 +48,14 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 	}
 	
 	// _collision_handle
-	dGeomSetData(_collision_handle, this);
+	if (_collision_handle)
+	{
+		dGeomSetBody(_collision_handle, _body_handle);
+		dGeomSetData(_collision_handle, this);
 
-	// set ODE transformation
-	SetGeomTransformation(transformation);
+		// set ODE transformation
+		SetGeomTransformation(transformation);
+	}
 	
 	// register for physics tick
 	auto & roster = _engine.GetPreTickRoster();
@@ -93,6 +96,11 @@ Body const * Body::GetBody() const
 	return this;
 }
 
+bool Body::ObeysGravity() const
+{
+	return true;
+}
+
 void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
 {
 }
@@ -105,6 +113,11 @@ BodyHandle Body::GetBodyHandle() const
 CollisionHandle Body::GetCollisionHandle() const
 {
 	return _collision_handle;
+}
+
+void Body::SetDensity(Scalar)
+{
+	DEBUG_BREAK("Body with no form has no volume, and therefore no density");
 }
 
 Scalar Body::GetMass() const
@@ -122,6 +135,12 @@ Scalar Body::GetMass() const
 
 	ASSERT(mass >= 0);
 	return mass;
+}
+
+void Body::SetMass(Mass const &) const
+{
+	// consider using a method from a derived class
+	DEBUG_BREAK("invalid call to Body::SetMess");
 }
 
 void Body::SetTransformation(Transformation const & transformation)
@@ -162,6 +181,11 @@ Vector3 Body::GetVelocity() const
 
 bool Body::GetIsCollidable() const
 {
+	if (! _collision_handle)
+	{
+		return false;
+	}
+	
 	unsigned long collide_bits = dGeomGetCollideBits(_collision_handle);
 	return collide_bits != 0;
 }

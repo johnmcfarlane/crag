@@ -15,7 +15,6 @@
 #include "SphericalBody.h"
 
 #include <ode/collision.h>
-#include <ode/mass.h>
 #include <ode/objects.h>
 
 using namespace physics;
