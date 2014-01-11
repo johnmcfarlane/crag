@@ -209,7 +209,7 @@ namespace
 			ASSERT(message.mesh_generation_period >= 0);
 	
 			auto max_mesh_generation_period = form::Engine::Daemon::ShutdownTimeout() * max_mesh_generation_period_proportion;
-			if (message.mesh_generation_period < max_mesh_generation_period)
+			if (message.mesh_generation_period > max_mesh_generation_period)
 			{
 				_min_recommended_num_quaterne = invalid_num_quaterne - 1;
 				return;
