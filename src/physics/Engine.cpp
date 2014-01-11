@@ -101,7 +101,7 @@ Engine::Engine()
 #endif
 
 	// init ODE
-	dInitODE2(0);
+	dInitODE();
 
 	// init _contact
 	ZeroObject(_contact);
