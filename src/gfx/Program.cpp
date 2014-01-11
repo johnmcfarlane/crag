@@ -199,6 +199,7 @@ void LightProgram::InitUniforms()
 	
 	Program::InitUniforms();
 	
+	_ambient_location = GetUniformLocation("ambient");
 	_num_lights_location = glGetUniformLocation(_id, "num_lights");
 
 	GL_VERIFY;
@@ -208,15 +209,19 @@ void LightProgram::SetLight(Light const & light)
 {
 	ASSERT(IsBound());
 
+	SetAmbient(Color4f::Black());
+	
 	SetLight(light, 0);
 	
 	glUniform1i(_num_lights_location, 1);
 }
 
-void LightProgram::SetLights(Light::List const & lights, LightType filter)
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter)
 {
 	ASSERT(IsBound());
 
+	SetAmbient(ambient);
+	
 	auto num_lights = 0;
 	for (auto & light : lights)
 	{
@@ -268,6 +273,13 @@ void LightProgram::AddLight()
 	}
 
 	_light_locations.push_back(additional);
+}
+
+void LightProgram::SetAmbient(Color4f const & ambient) const
+{
+	CRAG_VERIFY_EQUAL(ambient.a, 1);
+	
+	GL_CALL(glUniform4f(_ambient_location, ambient.r, ambient.g, ambient.b, ambient.a));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -74,14 +74,16 @@ namespace gfx
 	public:
 		virtual void InitUniforms() override;
 		void SetLight(Light const & light);
-		void SetLights(Light::List const & lights, LightType filter);
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter);
 
 	private:
 
 		void SetLight(Light const & light, int index);
 		void AddLight();
+		void SetAmbient(Color4f const & ambient) const;
 		
-		unsigned _num_lights_location;
+		GLint _ambient_location;
+		GLint _num_lights_location;
 		std::vector<LightLocation> _light_locations;
 	};
 

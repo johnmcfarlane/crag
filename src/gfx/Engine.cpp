@@ -41,6 +41,9 @@ CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
+CONFIG_DEFINE(ambient_r, float, .01);
+CONFIG_DEFINE(ambient_g, float, .03);
+CONFIG_DEFINE(ambient_b, float, .02);
 
 namespace 
 {
@@ -962,6 +965,8 @@ void Engine::UpdateProgramLights(Light const & light)
 
 void Engine::UpdateProgramLights(LightType light_type)
 {
+	Color4f ambient(ambient_r, ambient_g, ambient_b);
+
 	auto & lights = scene->GetLightList();
 	
 	auto update_program = [&] (ProgramIndex program_index)
@@ -970,7 +975,7 @@ void Engine::UpdateProgramLights(LightType light_type)
 		SetCurrentProgram(& program);
 
 		auto & light_program = static_cast<LightProgram &>(program);
-		light_program.SetLights(lights, light_type);
+		light_program.SetLights(ambient, lights, light_type);
 	};
 	
 	update_program(ProgramIndex::poly);
