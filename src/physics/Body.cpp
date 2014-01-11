@@ -194,6 +194,11 @@ bool Body::GetIsCollidable() const
 
 void Body::SetIsCollidable(bool collidable)
 {
+	if (! _collision_handle)
+	{
+		return;
+	}
+	
 	unsigned long collide_bits = collidable ? std::numeric_limits<unsigned long>::max() : 0;
 	dGeomSetCategoryBits(_collision_handle, collide_bits);
 	dGeomSetCollideBits(_collision_handle, collide_bits);
