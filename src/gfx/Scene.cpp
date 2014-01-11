@@ -120,7 +120,7 @@ void Scene::RemoveObject(Object & object)
 			{
 				ASSERT(_shadows.find(key) != std::end(_shadows));
 			
-				_shadows.insert(std::make_pair(key, ShadowVolume()));
+				_shadows.erase(key);
 			}
 		});
 	}
@@ -191,10 +191,9 @@ void Scene::RemoveLight(Light & light)
 		
 			// find the shadow volume resource matching this object/light pair
 			auto key = std::make_pair(& object, & light);
-			auto found_light = _shadows.find(key);
-			ASSERT(found_light != std::end(_shadows));
+			ASSERT(_shadows.find(key) != std::end(_shadows));
 		
-			_shadows.erase(found_light);
+			_shadows.erase(key);
 		}
 	}
 }
