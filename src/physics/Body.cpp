@@ -349,21 +349,25 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Vector3 const & physics::Body::GetGeomTranslation() const
 {
+	ASSERT(_collision_handle);
 	return * reinterpret_cast<Vector3 const *>(dGeomGetPosition(_collision_handle));
 }
 
 void physics::Body::SetGeomTranslation(Vector3 const & translation)
 {
+	ASSERT(_collision_handle);
 	dGeomSetPosition(_collision_handle, translation.x, translation.y, translation.z);
 }
 
 Matrix33 const & physics::Body::GetGeomRotation() const
 {
+	ASSERT(_collision_handle);
 	return * reinterpret_cast<Matrix33 const *>(dGeomGetRotation(_collision_handle));
 }
 
 void physics::Body::SetGeomRotation(Matrix33 const & matrix)
 {
+	ASSERT(_collision_handle);
 	dGeomSetRotation(_collision_handle, reinterpret_cast<Scalar const *>(matrix.GetArray()));
 }
 
