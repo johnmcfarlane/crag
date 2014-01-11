@@ -27,6 +27,7 @@
 
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
+#include "physics/GhostBody.h"
 #include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
@@ -47,6 +48,7 @@ CONFIG_DEFINE (observer_use_touch, bool, false);
 #elif defined(CRAG_USE_TOUCH)
 CONFIG_DEFINE (observer_use_touch, bool, true);
 #endif
+CONFIG_DEFINE (observer_physics, bool, false);
 
 namespace gfx 
 { 
@@ -96,6 +98,20 @@ namespace
 		box.SetModel(model);
 	}
 
+	void ConstructBody(sim::Entity & entity, geom::rel::Vector3 const & position, sim::Vector3 const & velocity, physics::Mass m, float linear_damping, float angular_damping)
+	{
+		sim::Engine & engine = entity.GetEngine();
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();
+
+		auto & body = * new physics::GhostBody(position, velocity, physics_engine);
+		
+		// setting the mass of a shapeless body is somewhat nonsensical
+		body.SetMass(m);
+		body.SetLinearDamping(linear_damping);
+		body.SetAngularDamping(angular_damping);
+		entity.SetLocation(& body);
+	}
+
 	void ConstructSphericalBody(sim::Entity & entity, geom::rel::Sphere3 const & sphere, sim::Vector3 const & velocity, float density, float linear_damping, float angular_damping)
 	{
 		sim::Engine & engine = entity.GetEngine();
@@ -124,7 +140,16 @@ namespace
 		// physics
 		if (! observer_use_touch)
 		{
-			ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+			if (observer_physics)
+			{
+				ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+			}
+			else
+			{
+				physics::Mass m;
+				dMassSetSphere(& m, observer_density, observer_radius);
+				ConstructBody(observer, position, sim::Vector3::Zero(), m, observer_linear_damping, observer_angular_damping);
+			}
 		}
 
 		// controller
