@@ -82,8 +82,10 @@ Body::~Body()
 	}
 	
 	// destroy the geom
-	ASSERT(_collision_handle != 0);
-	_engine.DestroyShape(_collision_handle);
+	if (_collision_handle)
+	{
+		_engine.DestroyShape(_collision_handle);
+	}
 }
 
 Body * Body::GetBody()
