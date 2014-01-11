@@ -50,7 +50,7 @@ bool GhostBody::OnCollision(Body &, ContactInterface &)
 	// benign but wrong
 	DEBUG_BREAK("GhostBody collision detected. (Does not have collision geometry.)");
 	
-	return false;
+	return true;
 }
 
 Vector3 const & GhostBody::GetGeomTranslation() const
