@@ -11,8 +11,6 @@
 
 #include "PlanetBody.h"
 
-#include "physics/Engine.h"
-#include "physics/MeshSurround.h"
 #include "physics/RayCast.h"
 
 #include "form/CastRay.h"
@@ -76,13 +74,19 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	auto body_collision_handle = body.GetCollisionHandle();
 	auto planet_collision_handle = GetCollisionHandle();
 	
-	auto & mesh_surround = _engine.GetMeshSurround(planet_collision_handle, body_collision_handle);
-	auto mesh_collision_handle = mesh_surround.GetCollisionHandle();
-	
 	////////////////////////////////////////////////////////////////////////////////
 	// generate mesh representing the planet surface in the vacinity of the body
 
-	mesh_surround.ClearData();
+	// TODO: make thread-safe; this is low-priority because:
+	// a) using single-threaded collision;
+	// b) thread-safety strategy is likely to depend on specifics of parallelization
+	static std::vector<Vector3> vertices;
+	static std::vector<dTriIndex> indices;
+	static std::vector<Vector3> normals;
+	
+	ASSERT(vertices.empty());
+	ASSERT(indices.empty());
+	ASSERT(normals.empty());
 
 	// only applied if the body is embedded and won't register with ODE collision
 	Scalar max_depth = std::numeric_limits<Scalar>::lowest();
@@ -106,39 +110,52 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 			max_depth_normal = normal;
 		}
 		
-		mesh_surround.AddTriangle(face, normal);
+		auto index = vertices.size() + 2;
+		for (auto & point : face.points)
+		{
+			indices.push_back(index --);
+			vertices.push_back(point);
+			normals.push_back(normal);
+		}
 	};
 	
 	form::ForEachFaceInSphere(_polyhedron, bounding_sphere, face_functor);
+	
+	// early-out
+	if (indices.empty())
+	{
+		return true;
+	}
+	
+    ////////////////////////////////////////////////////////////////////////////////
+	// create physics geometry based on mesh
+
+	MeshData mesh_data = dGeomTriMeshDataCreate();
+	dGeomTriMeshDataBuildSingle1(mesh_data,
+		vertices.front().GetAxes(), sizeof(Vector3), vertices.size(),
+		indices.data(), indices.size(), sizeof(dTriIndex),
+		reinterpret_cast<int *>(normals.data()));
+
+	CollisionHandle mesh_collision_handle = dCreateTriMesh(nullptr, mesh_data, nullptr, nullptr, nullptr);
 	
     ////////////////////////////////////////////////////////////////////////////////
 	// collide and generate contacts
 
 	constexpr auto max_num_contacts = 10240;
+	constexpr auto spare_contact = 1;
 	typedef std::array<ContactGeom, max_num_contacts> ContactVector;
 	ContactVector contacts;
-	std::size_t num_contacts;
+	std::size_t num_contacts = 0;
 	
-	constexpr auto spare_contact = 1;
-	if (! mesh_surround.IsEmpty())
-	{
-		mesh_surround.RefreshData();
-		mesh_surround.Enable();
-	
-		int flags = contacts.size() - spare_contact;
-		ASSERT((flags >> 16) == 0);
-	
-		num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
+	int flags = contacts.size() - spare_contact;
+	ASSERT((flags >> 16) == 0);
 
-		ASSERT(num_contacts <= contacts.size());
-	}
-	else
-	{
-		num_contacts = 0;
-	}
+	num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
+
+	ASSERT(num_contacts <= contacts.size());
 	
 	// If there's a good chance the body is contained by the polyhedron,
-	if (max_depth > 0)
+	if (num_contacts == 0 && max_depth > bounding_sphere.radius)
 	{
 		// add a provisional contact.
 		auto & containment_geom = contacts[num_contacts];
@@ -150,10 +167,20 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		containment_geom.normal[2] = max_depth_normal.z;
 		containment_geom.depth = max_depth;
 		containment_geom.g1 = body_collision_handle;
-		containment_geom.g2 = mesh_collision_handle;
+		containment_geom.g2 = planet_collision_handle;
 		
 		CRAG_VERIFY_OP(max_depth, >=, 0);
 		CRAG_VERIFY_OP(containment_geom.depth, >=, 0);
+	}
+	else
+	{
+		// switcheroo - replace temporary mesh id with permanent planet id
+		std::for_each(std::begin(contacts), std::begin(contacts) + num_contacts, [&] (ContactGeom & contact)
+		{
+			ASSERT(contact.g1 = body_collision_handle);
+			ASSERT(contact.g2 = mesh_collision_handle);
+			contact.g2 = planet_collision_handle;
+		});
 	}
 
 	// If contact was detected,
@@ -165,10 +192,18 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	// reset
+	// clean up physics objects
 	
-	mesh_surround.Disable();
+	dGeomDestroy(mesh_collision_handle);
+	dGeomTriMeshDataDestroy(mesh_data);
+
+	////////////////////////////////////////////////////////////////////////////////
+	// clean up mesh
 	
+	vertices.clear();
+	indices.clear();
+	normals.clear();
+
 	return true;
 }
 

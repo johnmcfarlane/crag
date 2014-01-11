@@ -80,7 +80,6 @@ add_executable(crag
 	physics/Engine.cpp
 	physics/GhostBody.cpp
 	physics/Location.cpp
-	physics/MeshSurround.cpp
 	physics/PassiveLocation.cpp
 	physics/RayCast.cpp
 	physics/SphericalBody.cpp

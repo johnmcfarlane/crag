@@ -28,7 +28,6 @@ namespace physics
 {
 	// forward-declarations
 	class Body;
-	class MeshSurround;
 	
 	// The physics singleton.
 	class Engine : public ContactInterface
@@ -38,10 +37,6 @@ namespace physics
 		
 		// store of all the contacts that occur in a Tick
 		typedef std::vector<Contact> ContactVector;
-
-		// maps from other geometry to planet tri-mesh local to other geometry
-		typedef std::pair<CollisionHandle, CollisionHandle> MeshMapKey;
-		typedef std::map<MeshMapKey, MeshSurround> MeshMap;
 
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +54,6 @@ namespace physics
 		CollisionHandle CreateRay(Scalar length) const;
 		CollisionHandle CreateMesh(MeshData data) const;
 		void DestroyShape(CollisionHandle shape);
-		MeshSurround & GetMeshSurround(CollisionHandle geom1, CollisionHandle geom2);
 		
 		void Attach(Body const & body1, Body const & body2);
 		
@@ -95,10 +89,6 @@ namespace physics
 		// list of objcets called at start/end of tick
 		core::locality::Roster & _pre_tick_roster;
 		core::locality::Roster & _post_tick_roster;
-		
-		// a secondary shape contains mesh data in the vacinity of other objects;
-		// needs its lifetime managed somewhere central to physics simulation
-		MeshMap _mesh_map;
 	};
 	
 }
