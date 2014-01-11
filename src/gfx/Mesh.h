@@ -14,13 +14,13 @@
 namespace gfx
 {
 	// CPU-side representation of a mesh using vertices and indices
-	template <typename Vertex>
+	template <typename Vertex, typename Index = ElementIndex>
 	class Mesh
 	{
 	public:
 		// types
 		typedef Vertex VertexType;
-		typedef ElementIndex IndexType;
+		typedef Index IndexType;
 		typedef std::vector<VertexType> VertexArrayType;
 		typedef std::vector<IndexType> IndexArrayType;
 		

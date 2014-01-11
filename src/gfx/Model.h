@@ -13,14 +13,14 @@
 
 namespace gfx
 {
-	template <typename Vertex>
+	template <typename Vertex, typename Index>
 	class Mesh;
 	
 	// a 3D shape stored in ResourceManager
 	class Model
 	{
 	public:
-		typedef Mesh<Vector3> ShadowVolumeMesh;
+		typedef Mesh<Vector3, ElementIndex> ShadowVolumeMesh;
 		
 		virtual ~Model() = default;
 	};

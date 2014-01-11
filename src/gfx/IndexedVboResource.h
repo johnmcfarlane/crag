@@ -16,7 +16,7 @@
 namespace gfx
 {
 	// forward-declarations
-	template <typename Vertex> class Mesh;
+	template <typename Vertex, typename Index> class Mesh;
 
 	// a vertex buffer object with accompanying index buffer
 	template<typename VERTEX, GLenum USAGE> 
@@ -26,9 +26,10 @@ namespace gfx
 		// types
 	public:
 		typedef VERTEX Vertex;
+		typedef gfx::Mesh<VERTEX, ElementIndex> Mesh;
 	private:
-		typedef ::gfx::VertexBufferObject<Vertex> VertexBufferObject;
-		typedef ::gfx::IndexBufferObject IndexBufferObject;
+		typedef gfx::VertexBufferObject<Vertex> VertexBufferObject;
+		typedef gfx::IndexBufferObject IndexBufferObject;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -64,7 +65,7 @@ namespace gfx
 		}
 		
 		// reserves buffer space
-		IndexedVboResource(Mesh<Vertex> const & mesh)
+		IndexedVboResource(Mesh const & mesh)
 		: IndexedVboResource(& * mesh.GetVertices().begin(), & * mesh.GetVertices().end(), & * mesh.GetIndices().begin(), & * mesh.GetIndices().end())
 		{
 		}
@@ -128,7 +129,7 @@ namespace gfx
 		}
 
 		// set data
-		void Set(Mesh<Vertex> const & mesh)
+		void Set(Mesh const & mesh)
 		{
 			auto & vertices = mesh.GetVertices();
 			auto & indices = mesh.GetIndices();
