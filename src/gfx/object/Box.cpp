@@ -70,7 +70,7 @@ void Box::Render(Engine const & renderer) const
 	{
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
-		bool fragment_lighting = renderer.GetFragmentLighting();
+		auto fragment_lighting = renderer.GetFragmentLightingEnabled();
 		bool flat_shaded = renderer.GetFlatShaded();
 		poly_program.SetUniforms(_color, fragment_lighting, flat_shaded);
 	}

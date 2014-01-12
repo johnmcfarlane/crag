@@ -145,7 +145,7 @@ namespace
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) 
 						{
-							engine.SetFragmentLighting(! engine.GetFragmentLighting());
+							engine.SetFragmentLightingEnabled(! engine.GetFragmentLightingEnabled());
 						});
 						break;
 					}

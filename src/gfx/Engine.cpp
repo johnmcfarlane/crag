@@ -59,9 +59,9 @@ namespace
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (init_fragment_lighting, bool, false);
+	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 #else
-	CONFIG_DEFINE (init_fragment_lighting, bool, true);
+	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, true);
 #endif
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
@@ -281,7 +281,7 @@ Engine::Engine()
 , vsync(false)
 , culling(init_culling)
 , _flat_shaded(init_flat_shaded)
-, _fragment_lighting(init_fragment_lighting)
+, _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -509,15 +509,15 @@ bool Engine::GetFlatShaded() const
 	return _flat_shaded;
 }
 
-void Engine::SetFragmentLighting(bool fragment_lighting)
+void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
 {
-	_dirty = _fragment_lighting != fragment_lighting;
-	_fragment_lighting = fragment_lighting;
+	_dirty = _fragment_lighting_enabled != fragment_lighting_enabled;
+	_fragment_lighting_enabled = fragment_lighting_enabled;
 }
 
-bool Engine::GetFragmentLighting() const
+bool Engine::GetFragmentLightingEnabled() const
 {
-	return _fragment_lighting;
+	return _fragment_lighting_enabled;
 }
 
 void Engine::OnToggleCapture()

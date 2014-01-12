@@ -162,7 +162,7 @@ void Surrounding::Render(Engine const & renderer) const
 	{
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
-		bool fragment_lighting = renderer.GetFragmentLighting();
+		bool fragment_lighting = renderer.GetFragmentLightingEnabled();
 		bool flat_shaded = renderer.GetFlatShaded();
 		poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded);
 	}
