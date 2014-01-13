@@ -178,16 +178,6 @@ namespace
 				break;
 			}
 			
-			case KMOD_CTRL:
-			{
-				switch (keysym.scancode)
-				{
-					default:
-						break;
-				}
-				break;
-			}
-			
 			case KMOD_CTRL | KMOD_SHIFT:
 			{
 				switch (keysym.scancode)

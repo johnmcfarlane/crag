@@ -16,6 +16,8 @@
 #include "form/Engine.h"
 
 #include "gfx/Messages.h"
+#include "gfx/SetCameraEvent.h"
+#include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"

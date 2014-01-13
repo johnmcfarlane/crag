@@ -41,9 +41,9 @@ CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
-CONFIG_DEFINE(ambient_r, float, .01);
-CONFIG_DEFINE(ambient_g, float, .03);
-CONFIG_DEFINE(ambient_b, float, .02);
+CONFIG_DEFINE(ambient_r, float, .01f);
+CONFIG_DEFINE(ambient_g, float, .03f);
+CONFIG_DEFINE(ambient_b, float, .02f);
 
 namespace 
 {

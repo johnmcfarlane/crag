@@ -14,7 +14,6 @@
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\form\Engine.cpp" />
     <ClCompile Include="..\..\src\form\Formation.cpp" />
-    <ClCompile Include="..\..\src\gfx\Cuboid.cpp" />
     <ClCompile Include="..\..\src\gfx\Debug.cpp" />
     <ClCompile Include="..\..\src\gfx\Engine.cpp" />
     <ClCompile Include="..\..\src\gfx\Fence.cpp" />
@@ -22,10 +21,8 @@
     <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
-    <ClCompile Include="..\..\src\gfx\IndexBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\FormationMesh.cpp" />
     <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
@@ -76,15 +73,12 @@
     <ClCompile Include="..\..\src\form\CalculateNodeScoreFunctor.cpp" />
     <ClCompile Include="..\..\src\form\CastRay.cpp" />
     <ClCompile Include="..\..\src\form\Mesh.cpp" />
-    <ClCompile Include="..\..\src\form\MeshBufferObject.cpp" />
     <ClCompile Include="..\..\src\form\Node.cpp" />
     <ClCompile Include="..\..\src\form\NodeBuffer.cpp" />
     <ClCompile Include="..\..\src\form\Point.cpp" />
     <ClCompile Include="..\..\src\form\PointBuffer.cpp" />
     <ClCompile Include="..\..\src\form\Polyhedron.cpp" />
     <ClCompile Include="..\..\src\form\RayCastResult.cpp" />
-    <ClCompile Include="..\..\src\form\Vertex.cpp" />
-    <ClCompile Include="..\..\src\form\VertexBuffer.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\PlanetShader.cpp" />
     <ClCompile Include="..\..\src\form\Scene.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\PlanetController.cpp" />
@@ -94,7 +88,6 @@
     <ClCompile Include="..\..\src\entity\animat\AnimatController.cpp" />
     <ClCompile Include="..\..\src\entity\animat\Sensor.cpp" />
     <ClCompile Include="..\..\src\form\RootNode.cpp" />
-    <ClCompile Include="..\..\src\form\RootNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\RootNode.cpp" />
     <ClCompile Include="..\..\src\entity\vehicle\gfx\Thruster.cpp" />
     <ClCompile Include="..\..\src\entity\vehicle\sim\Thruster.cpp" />
@@ -102,12 +95,16 @@
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
     <ClCompile Include="..\..\src\form\RootNode.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
-    <ClCompile Include="..\..\src\physics\MeshSurround.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
     <ClCompile Include="..\..\src\form\QuaternaBuffer.cpp" />
     <ClCompile Include="..\..\src\form\Surrounding.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\FormationGeneration.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Surrounding.cpp" />
+    <ClCompile Include="..\..\src\physics\GhostBody.cpp" />
+    <ClCompile Include="..\..\src\gfx\LitVertex.cpp" />
+    <ClCompile Include="..\..\src\gfx\PlainVertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -160,7 +157,6 @@
     <ClInclude Include="..\..\src\geom\Vector4.h" />
     <ClInclude Include="..\..\src\gfx\BufferObject.h" />
     <ClInclude Include="..\..\src\gfx\Color.h" />
-    <ClInclude Include="..\..\src\gfx\Cuboid.h" />
     <ClInclude Include="..\..\src\gfx\Debug.h" />
     <ClInclude Include="..\..\src\gfx\defs.h" />
     <ClInclude Include="..\..\src\gfx\Engine.h" />
@@ -169,13 +165,11 @@
     <ClInclude Include="..\..\src\gfx\FrameBuffer.h" />
     <ClInclude Include="..\..\src\gfx\glHelpers.h" />
     <ClInclude Include="..\..\src\gfx\Image.h" />
-    <ClInclude Include="..\..\src\gfx\IndexBuffer.h" />
     <ClInclude Include="..\..\src\gfx\IndexBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
     <ClInclude Include="..\..\src\gfx\object\Box.h" />
-    <ClInclude Include="..\..\src\gfx\object\FormationMesh.h" />
     <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
@@ -249,7 +243,6 @@
     <ClInclude Include="..\..\src\form\GatherExpandableNodesFunctor.h" />
     <ClInclude Include="..\..\src\form\GenerateMeshFunctor.h" />
     <ClInclude Include="..\..\src\form\Mesh.h" />
-    <ClInclude Include="..\..\src\form\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\form\MeshProperties.h" />
     <ClInclude Include="..\..\src\form\Node.h" />
     <ClInclude Include="..\..\src\form\NodeBuffer.h" />
@@ -258,10 +251,7 @@
     <ClInclude Include="..\..\src\form\Polyhedron.h" />
     <ClInclude Include="..\..\src\form\Quaterna.h" />
     <ClInclude Include="..\..\src\form\RayCastResult.h" />
-    <ClInclude Include="..\..\src\form\RootNode.h" />
     <ClInclude Include="..\..\src\form\Scene.h" />
-    <ClInclude Include="..\..\src\form\Vertex.h" />
-    <ClInclude Include="..\..\src\form\VertexBuffer.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\PlanetShader.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\PlanetController.h" />
     <ClInclude Include="..\..\src\entity\planet\physics\PlanetBody.h" />
@@ -276,10 +266,14 @@
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
     <ClInclude Include="..\..\src\entity\SpawnEntityFunctions.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
-    <ClInclude Include="..\..\src\physics\MeshSurround.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\entity\observer\Contact.h" />
+    <ClInclude Include="..\..\src\gfx\object\FormationGeneration.h" />
+    <ClInclude Include="..\..\src\gfx\object\Surrounding.h" />
+    <ClInclude Include="..\..\src\physics\GhostBody.h" />
+    <ClInclude Include="..\..\src\gfx\LitVertex.h" />
+    <ClInclude Include="..\..\src\gfx\PlainVertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />

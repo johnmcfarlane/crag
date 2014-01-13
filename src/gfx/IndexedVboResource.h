@@ -66,7 +66,9 @@ namespace gfx
 		
 		// reserves buffer space
 		IndexedVboResource(Mesh const & mesh)
-		: IndexedVboResource(& * mesh.GetVertices().begin(), & * mesh.GetVertices().end(), & * mesh.GetIndices().begin(), & * mesh.GetIndices().end())
+			: IndexedVboResource(
+				mesh.GetVertices().data(), mesh.GetVertices().data() + mesh.GetVertices().size(), 
+				mesh.GetIndices().data(), mesh.GetIndices().data() + mesh.GetIndices().size())
 		{
 		}
 		
@@ -134,7 +136,7 @@ namespace gfx
 			auto & vertices = mesh.GetVertices();
 			auto & indices = mesh.GetIndices();
 			
-			Set(& * vertices.begin(), & * vertices.end(), & * indices.begin(), & * indices.end());
+			Set(vertices.data(), vertices.data() + vertices.size(), indices.data(), indices.data() + indices.size());
 		}
 		
 		void Set(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)

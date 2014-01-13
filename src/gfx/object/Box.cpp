@@ -91,7 +91,7 @@ void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume
 {
 	if (! shadow_volume.IsInitialized())
 	{
-		shadow_volume = ShadowVolume(64, 120);
+		shadow_volume = std::move(ShadowVolume(64, 120));
 	}
 
 	auto & engine = GetEngine();

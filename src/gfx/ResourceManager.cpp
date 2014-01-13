@@ -97,15 +97,15 @@ namespace
 		Vector3 position;
 		for (int z = 0; z < 2; ++ z)
 		{
-			position.z = z ? .5 : -.5;
+			position.z = z ? .5f : -.5f;
 
 			for (int y = 0; y < 2; ++ y)
 			{
-				position.y = y ? .5 : -.5;
+				position.y = y ? .5f : -.5f;
 	
 				for (int x = 0; x < 2; ++ x)
 				{
-					position.x = x ? .5 : -.5;
+					position.x = x ? .5f : -.5f;
 					
 					vertices[z][y][x].pos = position;
 				}
