@@ -89,11 +89,6 @@ void Box::UpdateModelViewTransformation(Transformation const & model_view)
 
 void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
 {
-	if (! shadow_volume.IsInitialized())
-	{
-		shadow_volume = std::move(ShadowVolume(64, 120));
-	}
-
 	auto & engine = GetEngine();
 	ResourceManager & resource_manager = engine.GetResourceManager();
 	auto & cuboid_model = resource_manager.GetModel(ModelIndex::cuboid);
@@ -107,5 +102,13 @@ void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume
 	auto rotated_box_to_light = geom::Inverse(box_transformation.GetRotation()) * box_to_light;
 	
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(cuboid_mesh, rotated_box_to_light);
+
+	if (! shadow_volume.IsInitialized())
+	{
+		auto num_vertices = shadow_volume_mesh.GetVertices().size();
+		auto num_indices = shadow_volume_mesh.GetIndices().size();
+		shadow_volume = std::move(ShadowVolume(num_vertices, num_indices));
+	}
+
 	shadow_volume.Set(shadow_volume_mesh);
 }
