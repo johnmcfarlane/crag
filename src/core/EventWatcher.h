@@ -17,6 +17,8 @@ namespace core
 	// Condition that an event has not arrived in the applet::Engine.
 	class EventWatcher
 	{
+		OBJECT_NO_COPY(EventWatcher);
+
 	public:
 		// functions
 		EventWatcher();
