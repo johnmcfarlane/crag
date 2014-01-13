@@ -43,8 +43,6 @@ namespace ipc
 				DEBUG_MESSAGE(SIZE_T_FORMAT_SPEC " object(s) remaining", _objects.size());
 				exit(0);
 			}
-			
-			CRAG_VERIFY(static_cast<Engine const &>(* this));
 		}
 
 		bool IsEmpty() const
