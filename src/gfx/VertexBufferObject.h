@@ -98,6 +98,15 @@ namespace gfx
 	{
 		static constexpr GLenum type = GL_FLOAT;
 		static constexpr bool normalized = false;
+		static constexpr int dimension = 1;
+	};
+
+	template <>
+	struct TypeInfo<int>
+	{
+		static constexpr GLenum type = GL_INT;
+		static constexpr bool normalized = false;
+		static constexpr int dimension = 1;
 	};
 
 	template <>
@@ -105,20 +114,41 @@ namespace gfx
 	{
 		static constexpr GLenum type = GL_UNSIGNED_BYTE;
 		static constexpr bool normalized = false;
+		static constexpr int dimension = 1;
 	};
 	
-
+	template <typename Element>
+	struct TypeInfo<Color4<Element>>
+	{
+		typedef TypeInfo<Element> ElementInfo;
+		
+		static constexpr GLenum type = ElementInfo::type;
+		static constexpr bool normalized = ElementInfo::normalized;
+		static constexpr int dimension = 4;
+	};
+	
+	template <typename Element, int Dimension>
+	struct TypeInfo<geom::Vector<Element, Dimension>>
+	{
+		typedef TypeInfo<Element> ElementInfo;
+		
+		static constexpr GLenum type = ElementInfo::type;
+		static constexpr bool normalized = ElementInfo::normalized;
+		static constexpr int dimension = Dimension;
+	};
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// GL attribute helper functions
 	
-	template <unsigned index, typename Vertex, typename Vector, Vector Vertex::* _member>
+	template <unsigned index, typename Vertex, typename MemberType, MemberType Vertex::* _member>
 	void VertexAttribPointer()
 	{
-		typedef TypeInfo<typename Vector::Scalar> TypeInfo;
+		//typedef TypeInfo<typename Vector::Scalar> TypeInfo;
+		typedef TypeInfo<MemberType> TypeInfo;
 
 		Vertex const * null_vert = nullptr;
 		
-		auto constexpr size = Vector::Size();
+		auto constexpr size = TypeInfo::dimension;
 		auto constexpr type = TypeInfo::type;
 		auto constexpr normalized = TypeInfo::normalized;
 		auto constexpr stride = sizeof(Vertex);
