@@ -25,5 +25,6 @@ namespace gfx
 		Vector3 pos;
 		Vector3 norm;
 		Color4b color;
+		float height;
 	};
 }

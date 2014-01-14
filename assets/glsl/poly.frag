@@ -18,33 +18,47 @@ precision highp int;
 // inputs from the renderer
 uniform bool fragment_lighting;
 uniform bool flat_shade;
+uniform bool relief_enabled;
 
 // inputs from poly.vert
 varying lowp vec3 fragment_normal;
 varying lowp vec3 fragment_position;
 varying lowp vec4 fragment_color;
+varying float fragment_height;
 
 // light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
 lowp vec3 FlatNormal(in highp vec3 frag_position, in highp vec3 frag_normal);
 
+float relief(float range, float a, float b)
+{
+	return (mod(fragment_height, range) > 1.) ? a : b;
+}
+
 void main(void)
 {
-	lowp vec3 normal;
+	vec3 diffuse = fragment_color.rgb;
+	
+	if (relief_enabled)
+	{
+		diffuse.rgb *= relief(10., 1., relief(50, .8, 1.2));
+	}
+
 	if (flat_shade)
 	{
-		normal = FlatNormal(fragment_position, fragment_normal);
+		lowp vec3 normal = FlatNormal(fragment_position, fragment_normal);
 
-		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb), fragment_color.a);
+		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, diffuse.rgb), fragment_color.a);
 	}
 	else if (fragment_lighting)
 	{
-		normal = normalize(fragment_normal);
+		lowp vec3 normal = normalize(fragment_normal);
 
-		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, fragment_color.rgb), fragment_color.a);
+		gl_FragColor = vec4(LightFragment(fragment_position.xyz, normal, diffuse.rgb), fragment_color.a);
 	}
 	else
 	{
-		gl_FragColor = fragment_color;
+		gl_FragColor.xyz = diffuse;
+		gl_FragColor.a = fragment_color.a;
 	}
 }

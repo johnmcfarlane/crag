@@ -21,6 +21,7 @@ using namespace gfx;
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(LitVertex, self)
 	CRAG_VERIFY(self.pos);
 	CRAG_VERIFY(self.norm);
+	CRAG_VERIFY(self.height);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,11 +33,13 @@ void EnableClientState<LitVertex>()
 	GL_CALL(glEnableVertexAttribArray(1));
 	GL_CALL(glEnableVertexAttribArray(2));
 	GL_CALL(glEnableVertexAttribArray(3));
+	GL_CALL(glEnableVertexAttribArray(4));
 }
 
 template <>
 void DisableClientState<LitVertex>()
 {
+	GL_CALL(glDisableVertexAttribArray(4));
 	GL_CALL(glDisableVertexAttribArray(3));
 	GL_CALL(glDisableVertexAttribArray(2));
 	GL_CALL(glDisableVertexAttribArray(1));
@@ -48,5 +51,6 @@ void Pointer<LitVertex>()
 	gfx::VertexAttribPointer<1, LitVertex, geom::Vector<float, 3>, & LitVertex::pos>();
 	gfx::VertexAttribPointer<2, LitVertex, geom::Vector<float, 3>, & LitVertex::norm>();
 	gfx::VertexAttribPointer<3, LitVertex, gfx::Color4b, & LitVertex::color>();
+	gfx::VertexAttribPointer<4, LitVertex, float, & LitVertex::height>();
 }
 

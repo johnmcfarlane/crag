@@ -286,17 +286,20 @@ void LightProgram::SetAmbient(Color4f const & ambient) const
 // PolyProgram member definitions
 
 PolyProgram::PolyProgram()
-: _fragment_lighting_location(-1)
+: _color_location(-1)
+, _fragment_lighting_location(-1)
 , _flat_shade_location(-1)
+, _relief_enabled_location(-1)
 {
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool relief_enabled) const
 {
 	ASSERT(IsBound());
 	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
 	GL_CALL(glUniform1i(_fragment_lighting_location, fragment_lighting));
 	GL_CALL(glUniform1i(_flat_shade_location, flat_shade));
+	GL_CALL(glUniform1i(_relief_enabled_location, relief_enabled));
 }
 
 void PolyProgram::InitAttribs(GLuint id)
@@ -304,6 +307,7 @@ void PolyProgram::InitAttribs(GLuint id)
 	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
 	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
 	GL_CALL(glBindAttribLocation(id, 3, "vertex_color"));
+	GL_CALL(glBindAttribLocation(id, 4, "vertex_height"));
 }
 
 void PolyProgram::InitUniforms()
@@ -316,6 +320,7 @@ void PolyProgram::InitUniforms()
 	_color_location = GetUniformLocation("color");
 	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
 	_flat_shade_location = GetUniformLocation("flat_shade");
+	_relief_enabled_location = GetUniformLocation("relief_enabled");
 	
 	GL_VERIFY;
 }
