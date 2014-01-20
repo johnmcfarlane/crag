@@ -41,7 +41,7 @@ void main(void)
 	
 	if (relief_enabled)
 	{
-		diffuse.rgb *= relief(10., 1., relief(50, .8, 1.2));
+		diffuse.rgb *= relief(10., 1., relief(50., .8, 1.2));
 	}
 
 	if (flat_shade)
