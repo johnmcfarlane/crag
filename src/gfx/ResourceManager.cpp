@@ -181,7 +181,6 @@ ResourceManager::~ResourceManager()
 	
 	for (auto & program : _programs)
 	{
-		program->Deinit();
 		delete program;
 		program = nullptr;
 	}
@@ -233,20 +232,6 @@ bool ResourceManager::InitModels()
 
 bool ResourceManager::InitShaders()
 {
-	auto init_program = [&] (Program * program, ProgramIndex index, char const * vert_filename, char const * frag_filename1, char const * frag_filename2)
-	{
-		ASSERT(program);
-		if (program)
-		{
-			static char const * light_shader_filename = "assets/glsl/light.glsl";
-			char const * vert_filenames[] = { vert_filename, light_shader_filename, nullptr };
-			char const * frag_filenames[] = { frag_filename1, light_shader_filename, frag_filename2, nullptr };
-			program->Init(vert_filenames, frag_filenames);
-		}
-		
-		_programs[int(index)] = program;
-	};
-
 #if defined(CRAG_USE_GL)
 	char const * flat_shader_filename = "assets/glsl/flat_enabled.glsl";
 #elif defined(CRAG_USE_GLES)
@@ -256,14 +241,44 @@ bool ResourceManager::InitShaders()
 	char const * flat_shader_filename = "assets/glsl/flat_disabled.glsl";
 #endif
 
-	init_program(new PolyProgram, ProgramIndex::poly, "assets/glsl/poly.vert", "assets/glsl/poly.frag", flat_shader_filename);
-	init_program(new ShadowProgram, ProgramIndex::shadow, "assets/glsl/shadow.vert", "assets/glsl/shadow.frag", nullptr);
-	init_program(new ScreenProgram, ProgramIndex::screen, "assets/glsl/screen.vert", "assets/glsl/screen.frag", nullptr);
-	init_program(new DiskProgram, ProgramIndex::sphere, "assets/glsl/disk.vert", "assets/glsl/sphere.frag", nullptr);
-	init_program(new DiskProgram, ProgramIndex::disk, "assets/glsl/disk.vert", "assets/glsl/disk.frag", nullptr);
-	init_program(new TexturedProgram, ProgramIndex::skybox, "assets/glsl/skybox.vert", "assets/glsl/skybox.frag", nullptr);
-	init_program(new SpriteProgram, ProgramIndex::sprite, "assets/glsl/sprite.vert", "assets/glsl/sprite.frag", nullptr);
+	static char const * light_shader_filename = "assets/glsl/light.glsl";
 
+	_programs[int(ProgramIndex::poly)] = new PolyProgram(
+		{ "assets/glsl/poly.vert", light_shader_filename },
+		{ "assets/glsl/poly.frag", flat_shader_filename, light_shader_filename });
+
+	_programs[int(ProgramIndex::shadow)] = new ShadowProgram(
+		{ "assets/glsl/shadow.vert", light_shader_filename },
+		{ "assets/glsl/shadow.frag", light_shader_filename });
+
+	_programs[int(ProgramIndex::screen)] = new ScreenProgram(
+		{ "assets/glsl/screen.vert", light_shader_filename },
+		{ "assets/glsl/screen.frag", light_shader_filename });
+
+	_programs[int(ProgramIndex::sphere)] = new DiskProgram(
+		{ "assets/glsl/disk.vert", light_shader_filename },
+		{ "assets/glsl/sphere.frag", light_shader_filename });
+
+	_programs[int(ProgramIndex::disk)] = new DiskProgram(
+		{ "assets/glsl/disk.vert", light_shader_filename },
+		{ "assets/glsl/disk.frag", light_shader_filename });
+
+	_programs[int(ProgramIndex::skybox)] = new TexturedProgram(
+		{ "assets/glsl/skybox.vert", light_shader_filename },
+		{ "assets/glsl/skybox.frag", light_shader_filename });
+
+	_programs[int(ProgramIndex::sprite)] = new SpriteProgram(
+		{ "assets/glsl/sprite.vert", light_shader_filename },
+		{ "assets/glsl/sprite.frag", light_shader_filename });
+
+	for (auto program : _programs)
+	{
+		if (! program->IsInitialized())
+		{
+			return false;
+		}
+	}
+	
 	return true;
 }
 

@@ -85,17 +85,11 @@ Shader::~Shader()
 	assert(! IsInitialized());
 }
 
-bool Shader::Init(char const * const * filenames, GLenum shader_type)
+bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_type)
 {
 	typedef std::vector<app::FileResource> BufferArray;
 	
-	auto filenames_end = filenames;
-	while (* filenames_end)
-	{
-		++ filenames_end;
-	}
-	
-	auto num_strings = filenames_end - filenames;
+	int num_strings = filenames.size();
 	
 	// load individual shader files
 #if defined(WIN32)
@@ -104,9 +98,10 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	char const * string_array [num_strings];
 #endif
 	BufferArray source_buffers(num_strings);
-	for (auto index = 0; index != num_strings; ++ index)
+	auto filename_iterator = std::begin(filenames);
+	for (auto index = 0; index != num_strings; ++ filename_iterator, ++ index)
 	{
-		char const * filename = filenames[index];
+		char const * filename = * filename_iterator;
 		
 		auto source_buffer = app::LoadFile(filename, true);
 		if (! source_buffer)
@@ -142,10 +137,11 @@ bool Shader::Init(char const * const * filenames, GLenum shader_type)
 	if (! info_log.empty())
 	{
 		auto line_start = 0;
-		for (auto i = 0; i < num_strings; ++ i)
+		auto filename_iterator = std::begin(filenames);
+		for (auto i = 0; i < num_strings; ++ filename_iterator, ++ i)
 		{
 			auto line_end = int(line_start + GetNumLines(string_array[i]) - 1);
-			PrintMessage(stderr, "%s [%d,%d]\n", filenames[i], line_start, line_end);
+			PrintMessage(stderr, "%s [%d,%d]\n", * filename_iterator, line_start, line_end);
 			line_start = line_end;
 		}
 

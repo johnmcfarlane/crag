@@ -26,15 +26,12 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Program);
 	public:
-		Program();
+		Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		virtual ~Program();
 		
 		bool IsInitialized() const;
 		bool IsLinked() const;
 		bool IsBound() const;
-		
-		bool Init(char const * const * vert_sources, char const * const * frag_sources);
-		void Deinit();
 		
 		void Bind() const;
 		void Unbind() const;
@@ -43,9 +40,12 @@ namespace gfx
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		
 	protected:
-		virtual void InitAttribs(GLuint id);
+		void BindAttribLocation(int index, char const * name) const;
+		template <typename Type> void InitUniformLocation(Uniform<Type> & uniform, char const * name) const;
+		void Finalize();	// must be called at end of construction (hacky)
+
+	private:
 		virtual void InitUniforms();
-		
 		void GetInfoLog(std::string & info_log) const;
 		void Verify() const;
 
@@ -62,6 +62,8 @@ namespace gfx
 		using super = Program;
 		
 		// functions
+		Program3d(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
 		void SetProjectionMatrix(Matrix44 const & projection_matrix) const final;
 		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const final;
 		
@@ -93,6 +95,8 @@ namespace gfx
 		// functions
 		
 		virtual void InitUniforms() override;
+		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
 		void SetLight(Light const & light);
 		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter);
 
@@ -116,11 +120,10 @@ namespace gfx
 		
 		// functions
 	public:
-		PolyProgram();
+		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool relief_enabled = false) const;
 	private:
-		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override final;
 		
 		// variables
@@ -133,17 +136,13 @@ namespace gfx
 	class ShadowProgram : public Program3d
 	{
 	public:
-		ShadowProgram();
-	private:
-		virtual void InitAttribs(GLuint id) final;
+		ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	class ScreenProgram : public Program
 	{
 	public:
-		ScreenProgram();
-	private:
-		virtual void InitAttribs(GLuint id) final;
+		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	class DiskProgram : public LightProgram
@@ -153,11 +152,10 @@ namespace gfx
 		typedef LightProgram super;
 		
 		// functions
-		DiskProgram();
+		DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
 	private:
-		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override;
 
 		// variables
@@ -169,17 +167,18 @@ namespace gfx
 	// used by skybox
 	class TexturedProgram : public Program3d
 	{
-	private:
-		virtual void InitAttribs(GLuint id) override final;
+	public:
+		TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	// used to render text
 	class SpriteProgram : public Program
 	{
 	public:
+		SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
 		void SetUniforms(geom::Vector2i const & resolution) const;
 	private:
-		virtual void InitAttribs(GLuint id) override final;
 		virtual void InitUniforms() override final;
 		
 		// variables

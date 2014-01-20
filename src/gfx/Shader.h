@@ -24,7 +24,7 @@ namespace gfx
 		Shader();
 		~Shader();
 		
-		bool Init(char const * const * filenames, GLenum shader_type);
+		bool Init(std::initializer_list<char const *> filenames, GLenum shader_type);
 		void Deinit();
 		
 		bool IsInitialized() const;
