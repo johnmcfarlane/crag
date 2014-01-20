@@ -18,9 +18,6 @@
 
 namespace gfx
 {
-	// function declarations
-	GLuint InitShader(char const * filename, GLenum shader_type);
-
 	// an application-specific shader program that manages its shaders
 	// TODO: Make SetUniforms virtual, include lights and matrices, 
 	// implement dirty cache to lazily update uniforms when bound
