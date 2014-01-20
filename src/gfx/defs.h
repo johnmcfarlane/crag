@@ -69,6 +69,16 @@ namespace gfx
 		all
 	};
 	
+	// index buffer object type
+
+#if defined(CRAG_USE_GLES)
+	typedef GLushort ElementIndex;
+#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_SHORT
+#else
+	typedef GLuint ElementIndex;
+#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_INT
+#endif
+
 	// geometric types
 	typedef float Scalar;
 	typedef geom::Vector<Scalar, 2> Vector2;

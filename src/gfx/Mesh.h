@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "glHelpers.h"
+#include "defs.h"
 
 namespace gfx
 {

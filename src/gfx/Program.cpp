@@ -12,7 +12,6 @@
 #include "Program.h"
 
 #include "axes.h"
-#include "glHelpers.h"
 
 #include "core/app.h"
 
