@@ -24,6 +24,7 @@ namespace gfx
 		Uniform(GLuint program, char const * name)
 		: _location(glGetUniformLocation(program, name))
 		{
+			GL_VERIFY;
 		}
 		
 		bool IsInitialized() const
