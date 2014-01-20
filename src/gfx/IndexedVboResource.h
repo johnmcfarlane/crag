@@ -15,9 +15,6 @@
 
 namespace gfx
 {
-	// forward-declarations
-	template <typename Vertex, typename Index> class Mesh;
-
 	// a vertex buffer object with accompanying index buffer
 	template<typename VERTEX, GLenum USAGE> 
 	class IndexedVboResource : public VboResource

@@ -79,6 +79,11 @@ namespace gfx
 #define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_INT
 #endif
 
+	// mesh types
+	template <typename Vertex, typename Index> class Mesh;
+	struct LitVertex;
+	typedef Mesh<LitVertex, ElementIndex> LitMesh;
+	
 	// geometric types
 	typedef float Scalar;
 	typedef geom::Vector<Scalar, 2> Vector2;

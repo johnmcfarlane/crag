@@ -26,7 +26,7 @@ namespace form
 	public:
 		// types
 		typedef gfx::LitVertex Vertex;
-		typedef gfx::Mesh<gfx::LitVertex> LitMesh;
+		typedef gfx::LitMesh LitMesh;
 		typedef Vertex::Color Color;
 		
 		// functions
