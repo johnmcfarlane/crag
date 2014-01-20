@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include "gfx/object/Light.h"
-
 #include "Shader.h"
+#include "Uniform.h"
+
+#include "gfx/object/Light.h"
 
 #include "geom/Transformation.h"
 
@@ -38,12 +39,10 @@ namespace gfx
 		void Bind() const;
 		void Unbind() const;
 		
-		void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
-		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
+		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
+		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		
 	protected:
-		GLint GetUniformLocation(char const * name) const;
-
 		virtual void InitAttribs(GLuint id);
 		virtual void InitUniforms();
 		
@@ -54,21 +53,45 @@ namespace gfx
 		GLuint _id;
 		Shader _vert_shader;
 		Shader _frag_shader;
-		GLint _projection_matrix_location;
-		GLint _model_view_matrix_location;
 	};
 	
-	// a program that requires light-related information
-	class LightProgram : public Program
+	class Program3d : public Program
 	{
+	public:
+		// types
+		using super = Program;
+		
+		// functions
+		void SetProjectionMatrix(Matrix44 const & projection_matrix) const final;
+		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const final;
+		
+		void InitUniforms() override;
+
+	private:
+		// variables
+		Uniform<Matrix44> _projection_matrix;
+		Uniform<Matrix44> _model_view_matrix;
+	};
+		
+	// a program that requires light-related information
+	class LightProgram : public Program3d
+	{
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
 		// set of uniform ids needed to specify lights to a glsl program
-		struct LightLocation
+		struct LightUniforms
 		{
-			unsigned position = 0;
-			unsigned color = 0;
+			Uniform<Vector3> position;
+			Uniform<Color4f> color;
 		};
 
 	public:
+		using super = Program3d;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
 		virtual void InitUniforms() override;
 		void SetLight(Light const & light);
 		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter);
@@ -77,11 +100,13 @@ namespace gfx
 
 		void SetLight(Light const & light, int index);
 		void AddLight();
-		void SetAmbient(Color4f const & ambient) const;
 		
-		GLint _ambient_location;
-		GLint _num_lights_location;
-		std::vector<LightLocation> _light_locations;
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		
+		Uniform<Color4f> _ambient;
+		Uniform<int> _num_lights;
+		std::vector<LightUniforms> _lights;
 	};
 
 	class PolyProgram : public LightProgram
@@ -99,13 +124,13 @@ namespace gfx
 		virtual void InitUniforms() override final;
 		
 		// variables
-		GLint _color_location;
-		GLint _fragment_lighting_location;
-		GLint _flat_shade_location;
-		GLint _relief_enabled_location;
+		Uniform<Color4f> _color;
+		Uniform<bool> _fragment_lighting;
+		Uniform<bool> _flat_shade;
+		Uniform<bool> _relief_enabled;
 	};
 
-	class ShadowProgram : public Program
+	class ShadowProgram : public Program3d
 	{
 	public:
 		ShadowProgram();
@@ -123,11 +148,11 @@ namespace gfx
 	
 	class DiskProgram : public LightProgram
 	{
+	public:
 		// types
 		typedef LightProgram super;
 		
 		// functions
-	public:
 		DiskProgram();
 		
 		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
@@ -136,27 +161,13 @@ namespace gfx
 		virtual void InitUniforms() override;
 
 		// variables
-		GLint _color_location;
-		GLint _center_location;
-		GLint _radius_location;
-	};
-	
-	class FogProgram : public DiskProgram
-	{
-	public:
-		FogProgram();
-		
-		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float radius, float density) const;
-	private:
-		virtual void InitAttribs(GLuint id) override final;
-		virtual void InitUniforms() override final;
-		
-		// variables
-		GLint _density_location;
+		Uniform<Color4f> _color;
+		Uniform<Vector3> _center;
+		Uniform<float> _radius;
 	};
 	
 	// used by skybox
-	class TexturedProgram : public Program
+	class TexturedProgram : public Program3d
 	{
 	private:
 		virtual void InitAttribs(GLuint id) override final;
@@ -172,7 +183,7 @@ namespace gfx
 		virtual void InitUniforms() override final;
 		
 		// variables
-		GLint _position_scale_location;
-		GLint _position_offset_location;
+		Uniform<Vector2> _position_scale;
+		Uniform<Vector2> _position_offset;
 	};
 }

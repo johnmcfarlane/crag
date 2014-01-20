@@ -86,6 +86,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Shader.cpp \
 	$(CRAG_PATH)/gfx/Texture.cpp \
 	$(CRAG_PATH)/gfx/LitVertex.cpp \
+	$(CRAG_PATH)/gfx/Uniform.cpp \
 	$(CRAG_PATH)/main.cpp \
 	$(CRAG_PATH)/pch.cpp \
 	$(CRAG_PATH)/physics/Body.cpp \

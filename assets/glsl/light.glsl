@@ -19,7 +19,7 @@ precision highp int;
 struct Light
 {
 	vec3 position;
-	vec3 color;
+	vec4 color;
 };
 
 
@@ -41,7 +41,7 @@ lowp vec3 LightFragment(in Light light, in highp vec3 frag_position, in highp ve
 	highp float dp = dot(frag_to_light, frag_normal);
 	highp float attenuation = max(dp / (distance * distance * distance), 0.0);
 
-	lowp vec3 color = light.color * attenuation;
+	lowp vec3 color = light.color.rgb * attenuation;
 	
 	return color;
 }

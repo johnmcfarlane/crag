@@ -959,7 +959,6 @@ void Engine::UpdateProgramLights(Light const & light)
 	};
 	
 	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::disk);
 	update_program(ProgramIndex::sphere);
 }
 
@@ -979,7 +978,6 @@ void Engine::UpdateProgramLights(LightType light_type)
 	};
 	
 	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::disk);
 	update_program(ProgramIndex::sphere);
 }
 

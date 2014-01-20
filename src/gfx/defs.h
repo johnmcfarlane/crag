@@ -37,7 +37,6 @@ namespace gfx
 		shadow,	// void; used to write to stencil buffer
 		screen,	// [-1..1],[-1..1] maps to screen corners
 		sphere,	// quad with offset Z
-		fog,	// TODO
 		disk,	// quad with original Z
 		skybox,	// flat shaded with texture UVs
 		sprite,	// screen space with texture UVs

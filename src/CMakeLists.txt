@@ -73,6 +73,7 @@ add_executable(crag
 	gfx/Shader.cpp
 	gfx/Texture.cpp
 	gfx/LitVertex.cpp
+	gfx/Uniform.cpp
 	main.cpp
 	pch.cpp
 	physics/Body.cpp

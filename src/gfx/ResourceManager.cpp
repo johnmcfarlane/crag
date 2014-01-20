@@ -260,7 +260,6 @@ bool ResourceManager::InitShaders()
 	init_program(new ShadowProgram, ProgramIndex::shadow, "assets/glsl/shadow.vert", "assets/glsl/shadow.frag", nullptr);
 	init_program(new ScreenProgram, ProgramIndex::screen, "assets/glsl/screen.vert", "assets/glsl/screen.frag", nullptr);
 	init_program(new DiskProgram, ProgramIndex::sphere, "assets/glsl/disk.vert", "assets/glsl/sphere.frag", nullptr);
-	init_program(new FogProgram, ProgramIndex::fog, "assets/glsl/disk.vert", "assets/glsl/fog.frag", nullptr);
 	init_program(new DiskProgram, ProgramIndex::disk, "assets/glsl/disk.vert", "assets/glsl/disk.frag", nullptr);
 	init_program(new TexturedProgram, ProgramIndex::skybox, "assets/glsl/skybox.vert", "assets/glsl/skybox.frag", nullptr);
 	init_program(new SpriteProgram, ProgramIndex::sprite, "assets/glsl/sprite.vert", "assets/glsl/sprite.frag", nullptr);
