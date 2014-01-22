@@ -45,6 +45,11 @@ void Pointer<Quad::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Quad member definitions
 
+Quad::Quad(Quad && rhs)
+: _quad(std::move(rhs._quad))
+{
+}
+
 Quad::Quad(float depth_offset)
 {
 	float const z = depth_offset;
@@ -67,11 +72,6 @@ Quad::Quad(float depth_offset)
 	_quad.Bind();
 	_quad.BufferData(6, verts, GL_STATIC_DRAW);
 	_quad.Unbind();
-}
-
-Quad::~Quad()
-{
-	_quad.Deinit();
 }
 
 Transformation Quad::CalculateModelViewTransformation(Transformation const & leaf, float radius) const

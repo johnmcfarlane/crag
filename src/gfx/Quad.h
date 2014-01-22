@@ -30,8 +30,8 @@ namespace gfx
 		typedef ::gfx::VertexBufferObject<Vertex> VertexBufferObject;
 		
 		// functions
+		Quad(Quad && rhs);
 		Quad(float depth_offset);
-		~Quad();
 		
 		Transformation CalculateModelViewTransformation(Transformation const & leaf, float radius) const;
 
