@@ -1,0 +1,72 @@
+//
+//  core/ResourceManager.cpp
+//  crag
+//
+//  Created by John McFarlane on 2014-01-15.
+//  Copyright 2014 John McFarlane. All rights reserved.
+//  This program is distributed under the terms of the GNU General Public License.
+//
+
+#include "pch.h"
+
+#include "ResourceManager.h"
+
+using namespace crag::core;
+
+////////////////////////////////////////////////////////////////////////////////
+// core::ResourceManager member definitions
+
+ResourceManager ResourceManager::_singleton;
+
+ResourceManager & ResourceManager::Get()
+{
+	return _singleton;
+}
+
+void ResourceManager::Unregister(HashString const & key)
+{
+	auto & resource = GetResource(key);
+	resource.Destroy();
+}
+
+void ResourceManager::Prefetch(HashString const & key) const
+{
+	auto const & resource = GetResource(key);
+	resource.Prefetch();
+}
+
+ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & key) const
+{
+	_mutex.ReadLock();
+	
+	auto found = _resources.find(key);
+	CRAG_VERIFY_FALSE (found == _resources.end());
+	
+	auto const & resource = found->second;
+	
+	_mutex.ReadUnlock();
+	return resource;
+}
+
+ResourceManager::ValueType & ResourceManager::GetResource(KeyType const & key)
+{
+	auto const_this = const_cast<ResourceManager const *>(this);
+	return const_cast<ValueType &>(const_this->GetResource(key));
+}
+
+void ResourceManager::AddResource(KeyType const & key, ValueType && value)
+{
+	_mutex.WriteLock();
+	
+	auto found = _resources.find(key);
+	if (found != _resources.end())
+	{
+		CRAG_VERIFY_EQUAL(found->second.GetTypeId(), value.GetTypeId());
+		DEBUG_BREAK("multiple resources with same key");
+		return;
+	}
+	
+	_resources.insert(std::make_pair(key, std::move(value)));
+	
+	_mutex.WriteUnlock();
+}

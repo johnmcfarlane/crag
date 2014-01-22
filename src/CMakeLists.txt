@@ -11,6 +11,8 @@ add_executable(crag
 	core/memory.cpp
 	core/profile.cpp
 	core/Random.cpp
+	core/Resource.cpp
+	core/ResourceManager.cpp
 	core/Roster.cpp
 	core/Statistics.cpp
 	core/TypeId.cpp
