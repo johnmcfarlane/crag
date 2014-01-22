@@ -14,7 +14,6 @@
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/Program.h"
-#include "gfx/ResourceManager.h"
 
 #include "gfx/object/Light.h"
 
@@ -22,6 +21,7 @@
 #include "form/Surrounding.h"
 
 #include "core/ConfigEntry.h"
+#include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
 
@@ -49,9 +49,9 @@ Surrounding::Surrounding(LeafNode::Init const & init, int max_num_quaterne)
 , _generation(max_num_quaterne)
 , _max_num_quaterne(max_num_quaterne)
 {
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
-	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
-	SetProgram(poly_program);
+	auto const & resource_manager = crag::core::ResourceManager::Get();
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	SetProgram(& poly_program);
 
 	auto & mesh_resource = _generation.GetVboResource();
 	ASSERT(! mesh_resource.IsBound());

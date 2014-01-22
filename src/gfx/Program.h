@@ -26,6 +26,7 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Program);
 	public:
+		Program(Program && rhs);
 		Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		virtual ~Program();
 		
@@ -62,6 +63,7 @@ namespace gfx
 		using super = Program;
 		
 		// functions
+		Program3d(Program3d && rhs);
 		Program3d(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetProjectionMatrix(Matrix44 const & projection_matrix) const final;
@@ -95,22 +97,22 @@ namespace gfx
 		// functions
 		
 		virtual void InitUniforms() override;
+		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetLight(Light const & light);
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter);
+		void SetLight(Light const & light) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const;
 
 	private:
 
-		void SetLight(Light const & light, int index);
-		void AddLight();
+		void SetLight(Light const & light, int index) const;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Uniform<Color4f> _ambient;
 		Uniform<int> _num_lights;
-		std::vector<LightUniforms> _lights;
+		std::array<LightUniforms, 8> _lights;
 	};
 
 	class PolyProgram : public LightProgram
@@ -120,6 +122,7 @@ namespace gfx
 		
 		// functions
 	public:
+		PolyProgram(PolyProgram && rhs);
 		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool relief_enabled = false) const;
@@ -136,12 +139,14 @@ namespace gfx
 	class ShadowProgram : public Program3d
 	{
 	public:
+		ShadowProgram(ShadowProgram && rhs);
 		ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	class ScreenProgram : public Program
 	{
 	public:
+		ScreenProgram(ScreenProgram && rhs);
 		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
@@ -152,6 +157,7 @@ namespace gfx
 		typedef LightProgram super;
 		
 		// functions
+		DiskProgram(DiskProgram && rhs);
 		DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
@@ -168,6 +174,7 @@ namespace gfx
 	class TexturedProgram : public Program3d
 	{
 	public:
+		TexturedProgram(TexturedProgram && rhs);
 		TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
@@ -175,6 +182,7 @@ namespace gfx
 	class SpriteProgram : public Program
 	{
 	public:
+		SpriteProgram(SpriteProgram && rhs);
 		SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(geom::Vector2i const & resolution) const;

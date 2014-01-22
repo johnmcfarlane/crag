@@ -24,11 +24,9 @@ namespace gfx
 	// ShadowVolume class definition
 	typedef gfx::IndexedVboResource<PlainVertex, GL_DYNAMIC_DRAW> ShadowVolume;
 	
-	typedef Mesh<PlainVertex> ShadowVolumeMesh;
-
 	// given a mesh and a light position, generates geometry describing its shadow
 	template <typename Vertex>
-	ShadowVolumeMesh GenerateShadowVolumeMesh(Mesh<Vertex> const & mesh, Vector3 light_position)
+	PlainMesh GenerateShadowVolumeMesh(Mesh<Vertex> const & mesh, Vector3 light_position)
 	{
 		// types
 		typedef std::array<ElementIndex, 2> Edge;
@@ -51,7 +49,7 @@ namespace gfx
 		auto solid_vertex_array = solid_vertices.data();
 		
 		// return object
-		ShadowVolumeMesh shadow_volume_mesh(num_solid_vertices * 2, 0);
+		PlainMesh shadow_volume_mesh(num_solid_vertices * 2, 0);
 
 		// shadow vertices
 		auto & shadow_vertices = shadow_volume_mesh.GetVertices();

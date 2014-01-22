@@ -23,6 +23,14 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Program member definitions
 
+Program::Program(Program && rhs)
+: _id(rhs._id)
+, _vert_shader(std::move(rhs._vert_shader))
+, _frag_shader(std::move(rhs._frag_shader))
+{
+	rhs._id = 0;
+}
+
 Program::Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : _id(glCreateProgram())	// Create the program.
 {
@@ -60,6 +68,11 @@ Program::Program(std::initializer_list<char const *> vert_sources, std::initiali
 
 Program::~Program()
 {
+	if (_id == 0)
+	{
+		return;
+	}
+	
 	glDetachShader(_id, _frag_shader._id);
 	glDetachShader(_id, _vert_shader._id);
 	
@@ -166,6 +179,13 @@ void Program::Verify() const
 ////////////////////////////////////////////////////////////////////////////////
 // Program3d member definitions
 
+Program3d::Program3d(Program3d && rhs)
+: Program(std::move(rhs))
+, _projection_matrix(std::move(rhs._projection_matrix))
+, _model_view_matrix(std::move(rhs._model_view_matrix))
+{
+}
+
 Program3d::Program3d(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program(vert_sources, frag_sources)
 {
@@ -192,6 +212,14 @@ void Program3d::InitUniforms()
 ////////////////////////////////////////////////////////////////////////////////
 // LightProgram member definitions
 
+LightProgram::LightProgram(LightProgram && rhs)
+: Program3d(std::move(rhs))
+, _ambient(std::move(rhs._ambient))
+, _num_lights(std::move(rhs._num_lights))
+, _lights(std::move(rhs._lights))
+{
+}
+
 LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program3d(vert_sources, frag_sources)
 {
@@ -203,9 +231,22 @@ void LightProgram::InitUniforms()
 	
 	InitUniformLocation(_ambient, "ambient");
 	InitUniformLocation(_num_lights, "num_lights");
+	
+	for (auto index = 0u; index != _lights.size(); ++ index)
+	{
+		auto & light_uniforms = _lights[index];
+
+		char name[40];
+	
+		sprintf(name, "lights[%d].position", index);
+		InitUniformLocation(light_uniforms.position, name);
+	
+		sprintf(name, "lights[%d].color", index);
+		InitUniformLocation(light_uniforms.color, name);
+	}
 }
 
-void LightProgram::SetLight(Light const & light)
+void LightProgram::SetLight(Light const & light) const
 {
 	ASSERT(IsBound());
 
@@ -215,7 +256,7 @@ void LightProgram::SetLight(Light const & light)
 	_num_lights.Set(1);
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter)
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const
 {
 	ASSERT(IsBound());
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
@@ -240,11 +281,12 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 	_num_lights.Set(num_lights);
 }
 
-void LightProgram::SetLight(Light const & light, int index)
+void LightProgram::SetLight(Light const & light, int index) const
 {
-	while (unsigned(index) >= _lights.size())
+	if (unsigned(index) >= _lights.size())
 	{
-		AddLight();
+		DEBUG_BREAK("too many lights");
+		return;
 	}
 	
 	auto & light_uniforms = _lights[index];
@@ -257,25 +299,17 @@ void LightProgram::SetLight(Light const & light, int index)
 	light_uniforms.color.Set(color);
 }
 
-void LightProgram::AddLight()
-{
-	LightUniforms additional;
-	{
-		auto i = int(_lights.size());
-		char name[40];
-	
-		sprintf(name, "lights[%d].position", i);
-		InitUniformLocation(additional.position, name);
-	
-		sprintf(name, "lights[%d].color", i);
-		InitUniformLocation(additional.color, name);
-	}
-
-	_lights.push_back(additional);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // PolyProgram member definitions
+
+PolyProgram::PolyProgram(PolyProgram && rhs)
+: LightProgram(std::move(rhs))
+, _color(std::move(rhs._color))
+, _fragment_lighting(std::move(rhs._fragment_lighting))
+, _flat_shade(std::move(rhs._flat_shade))
+, _relief_enabled(std::move(rhs._relief_enabled))
+{
+}
 
 PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : LightProgram(vert_sources, frag_sources)
@@ -311,6 +345,11 @@ void PolyProgram::InitUniforms()
 ////////////////////////////////////////////////////////////////////////////////
 // ShadowProgram member definitions
 
+ShadowProgram::ShadowProgram(ShadowProgram && rhs)
+: Program3d(std::move(rhs))
+{
+}
+
 ShadowProgram::ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program3d(vert_sources, frag_sources)
 {
@@ -322,6 +361,11 @@ ShadowProgram::ShadowProgram(std::initializer_list<char const *> vert_sources, s
 ////////////////////////////////////////////////////////////////////////////////
 // ScreenProgram member definitions
 
+ScreenProgram::ScreenProgram(ScreenProgram && rhs)
+: Program(std::move(rhs))
+{
+}
+
 ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program(vert_sources, frag_sources)
 {
@@ -332,6 +376,14 @@ ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, s
 
 ////////////////////////////////////////////////////////////////////////////////
 // DiskProgram member definitions
+
+DiskProgram::DiskProgram(DiskProgram && rhs)
+: LightProgram(std::move(rhs))
+, _color(std::move(rhs._color))
+, _center(std::move(rhs._center))
+, _radius(std::move(rhs._radius))
+{
+}
 
 DiskProgram::DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : LightProgram(vert_sources, frag_sources)
@@ -361,6 +413,11 @@ void DiskProgram::InitUniforms()
 ////////////////////////////////////////////////////////////////////////////////
 // TexturedProgram member definitions
 
+TexturedProgram::TexturedProgram(TexturedProgram && rhs)
+: Program3d(std::move(rhs))
+{
+}
+
 TexturedProgram::TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program3d(vert_sources, frag_sources)
 {
@@ -372,6 +429,13 @@ TexturedProgram::TexturedProgram(std::initializer_list<char const *> vert_source
 
 ////////////////////////////////////////////////////////////////////////////////
 // SpriteProgram member definitions
+
+SpriteProgram::SpriteProgram(SpriteProgram && rhs)
+: Program(std::move(rhs))
+, _position_scale(std::move(rhs._position_scale))
+, _position_offset(std::move(rhs._position_offset))
+{
+}
 
 SpriteProgram::SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program(vert_sources, frag_sources)

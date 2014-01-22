@@ -13,9 +13,17 @@
 #define CRAG_GFX_DEBUG
 #endif
 
+// forward-declarations
+namespace crag
+{
+	namespace core
+	{
+		template <typename Type> class ResourceHandle;
+	}
+}
+
 namespace geom
 {
-	// forward-declarations
 	template <typename S, int D> class Vector;
 	template <typename S, int R, int C> class Matrix;
 	template <typename S> class Transformation;
@@ -24,34 +32,11 @@ namespace geom
 
 namespace gfx
 {
-	enum class ModelIndex
-	{
-		cuboid,
-		lit_cuboid,
-		size
-	};
-	
-	enum class ProgramIndex
-	{
-		poly,	// position, normal and color
-		shadow,	// void; used to write to stencil buffer
-		screen,	// [-1..1],[-1..1] maps to screen corners
-		sphere,	// quad with offset Z
-		disk,	// quad with original Z
-		skybox,	// flat shaded with texture UVs
-		sprite,	// screen space with texture UVs
-		dont_care,	// don't bother setting a different program for this render object
-		size = dont_care
-	};
-	
-	enum class VboIndex
-	{
-		cuboid,
-		sphere_quad,
-		disk_quad,
-		size
-	};
-	
+	class Program;
+	class VboResource;
+	template <typename Vertex, typename Index> class Mesh;
+	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;
+
 	// render layers
 	enum class Layer
 	{
@@ -78,10 +63,9 @@ namespace gfx
 #define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_INT
 #endif
 
-	// mesh types
-	template <typename Vertex, typename Index> class Mesh;
-	struct LitVertex;
-	typedef Mesh<LitVertex, ElementIndex> LitMesh;
+	// resource handle types
+	using ProgramHandle = crag::core::ResourceHandle<Program>;
+	using VboResourceHandle = crag::core::ResourceHandle<VboResource>;
 	
 	// geometric types
 	typedef float Scalar;

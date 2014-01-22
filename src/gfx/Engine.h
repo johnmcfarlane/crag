@@ -33,12 +33,9 @@ namespace gfx
 {
 	// forward-declarations
 	class Light;
-	class Program;
-	class ResourceManager;
 	class Scene;
 	struct SetCameraEvent;
 	struct SetOriginEvent;
-	class VboResource;
 
 	// gfx::Daemon type
 	class Engine;
@@ -74,9 +71,6 @@ namespace gfx
 
 		Scene & GetScene();
 		Scene const & GetScene() const;
-		
-		ResourceManager & GetResourceManager();
-		ResourceManager const & GetResourceManager() const;
 		
 		Program const * GetCurrentProgram() const;
 		void SetCurrentProgram(Program const * program);
@@ -168,7 +162,6 @@ namespace gfx
 		// variables
 		
 		Scene * scene;
-		ResourceManager * _resource_manager;
 		geom::abs::Vector3 _origin;
 
 		//FrameBuffer frame_buffer;

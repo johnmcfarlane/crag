@@ -13,14 +13,14 @@
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/LitVertex.h"
 #include "gfx/Mesh.h"
-#include "gfx/MeshResource.h"
-#include "gfx/Model.h"
 #include "gfx/Program.h"
-#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/ShadowVolume.h"
 #include "gfx/VboResource.h"
+
+#include "core/ResourceManager.h"
 
 using namespace gfx;
 
@@ -33,12 +33,12 @@ Box::Box(LeafNode::Init const & init, Transformation const & local_transformatio
 {
 	ASSERT(_color.a == 1);
 	
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
+	auto const & resource_manager = crag::core::ResourceManager::Get();
 	
-	Program * poly_program = resource_manager.GetProgram(ProgramIndex::poly);
-	SetProgram(poly_program);
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	SetProgram(& poly_program);
 	
-	VboResource const & cuboid_mesh = resource_manager.GetVbo(VboIndex::cuboid);
+	auto const & cuboid_mesh = * resource_manager.GetHandle<LitVboResource>("CuboidVbo");
 	SetVboResource(& cuboid_mesh);
 }
 
@@ -89,11 +89,8 @@ void Box::UpdateModelViewTransformation(Transformation const & model_view)
 
 void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
 {
-	auto & engine = GetEngine();
-	ResourceManager & resource_manager = engine.GetResourceManager();
-	auto & cuboid_model = resource_manager.GetModel(ModelIndex::cuboid);
-	auto & cuboid_mesh_resource = static_cast<MeshResource<PlainVertex> const &>(cuboid_model);
-	auto & cuboid_mesh = static_cast<ShadowVolumeMesh const &>(cuboid_mesh_resource.GetMesh());
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto const & cuboid_mesh = * resource_manager.GetHandle<PlainMesh>("CuboidPlainMesh");
 	
 	auto light_position = light.GetModelTransformation().GetTranslation();
 	auto box_transformation = GetModelTransformation();

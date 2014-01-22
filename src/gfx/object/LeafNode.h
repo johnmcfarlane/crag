@@ -60,9 +60,8 @@ namespace gfx
 		
 		Layer GetLayer() const;
 		
-		Program * GetProgram();
 		Program const * GetProgram() const;
-		void SetProgram(Program * program);
+		void SetProgram(Program const * program);
 		
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * mesh_resource);
@@ -93,7 +92,7 @@ namespace gfx
 		
 		float _render_depth;
 		Layer const _layer;
-		Program * _program;
+		Program const * _program;
 		VboResource const * _vbo_resource;
 		bool const _is_opaque;
 		bool const _casts_shadow;

@@ -27,4 +27,8 @@ namespace gfx
 		Color4b color;
 		float height;
 	};
+
+	using LitMesh = Mesh<LitVertex, ElementIndex>;
+	using LitMeshHandle = crag::core::ResourceHandle<LitMesh>;
+	using LitVboResource = IndexedVboResource<LitVertex, GL_STATIC_DRAW>;
 }

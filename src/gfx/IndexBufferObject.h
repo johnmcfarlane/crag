@@ -10,7 +10,7 @@
 #pragma once
 
 #include "BufferObject.h"
-
+#include "defs.h"
 
 namespace gfx
 {

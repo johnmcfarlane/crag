@@ -23,5 +23,6 @@ namespace gfx
 		Vector3 pos;
 	};
 	
-	typedef Mesh<PlainVertex> PlainMesh;
+	using PlainMesh = Mesh<PlainVertex, ElementIndex>;
+	using PlainMeshHandle = crag::core::ResourceHandle<PlainMesh>;
 }

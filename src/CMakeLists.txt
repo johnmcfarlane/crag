@@ -70,8 +70,8 @@ add_executable(crag
 	gfx/Pov.cpp
 	gfx/Program.cpp
 	gfx/Quad.cpp
+	gfx/RegisterResources.cpp
 	gfx/RenderBuffer.cpp
-	gfx/ResourceManager.cpp
 	gfx/Scene.cpp
 	gfx/Shader.cpp
 	gfx/Texture.cpp

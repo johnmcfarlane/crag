@@ -13,7 +13,6 @@
 
 #include "gfx/Program.h"
 #include "gfx/Engine.h"
-#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
@@ -22,6 +21,7 @@
 
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
+#include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
 
@@ -48,12 +48,12 @@ Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformat
 {
 	STAT_INC(num_puffs, 1);
 
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
+	auto const & resource_manager = crag::core::ResourceManager::Get();
 	
-	Program * poly_program = resource_manager.GetProgram(ProgramIndex::disk);
-	SetProgram(poly_program);
+	auto const & program = * resource_manager.GetHandle<DiskProgram>("DiskProgram");
+	SetProgram(& program);
 	
-	VboResource const & disk_quad = resource_manager.GetVbo(VboIndex::disk_quad);
+	auto const & disk_quad = * resource_manager.GetHandle<Quad>("QuadVbo");
 	SetVboResource(& disk_quad);
 	
 	Scene const & scene = init.engine.GetScene();
@@ -97,13 +97,13 @@ LeafNode::PreRenderResult Puff::PreRender()
 
 void Puff::Render(Engine const & renderer) const
 {
-	DiskProgram const & disk_program = static_cast<DiskProgram const &>(ref(GetProgram()));
+	DiskProgram const & disk_program = static_cast<DiskProgram const &>(* GetProgram());
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
 	Color4f lighting = renderer.CalculateLighting(translation, LightType::all);
 	disk_program.SetUniforms(model_view, _radius, _color * lighting);
 	
-	Quad const & disk_quad = static_cast<Quad const &>(ref(GetVboResource()));
+	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());
 	disk_quad.Draw();
 }
 

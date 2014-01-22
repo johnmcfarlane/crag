@@ -15,7 +15,7 @@
 #include "IndexedVboResource.h"
 #include "Messages.h"
 #include "Program.h"
-#include "ResourceManager.h"
+#include "RegisterResources.h"
 #include "Scene.h"
 #include "SetCameraEvent.h"
 #include "SetOriginEvent.h"
@@ -26,6 +26,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
+#include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
 #if defined(NDEBUG)
@@ -271,7 +272,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : scene(nullptr)
-, _resource_manager(nullptr)
 , _origin(geom::abs::Vector3::Zero())
 , _frame_duration(0)
 , last_frame_end_position(app::GetTime())
@@ -294,10 +294,14 @@ Engine::Engine()
 	{
 		quit_flag = true;
 	}
+	
+	RegisterResources();
 }
 
 Engine::~Engine()
 {
+	UnregisterResources();
+
 	Deinit();
 
 	// must be turned on by key input or by cfg edit
@@ -316,16 +320,6 @@ Scene const & Engine::GetScene() const
 	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
-}
-
-ResourceManager & Engine::GetResourceManager()
-{
-	return ref(_resource_manager);
-}
-
-ResourceManager const & Engine::GetResourceManager() const
-{
-	return ref(_resource_manager);
 }
 
 Program const * Engine::GetCurrentProgram() const
@@ -603,8 +597,6 @@ bool Engine::Init()
 		return false;
 	}
 	
-	_resource_manager = new ResourceManager;
-	
 	InitVSync();
 	
 	scene = new Scene(* this);
@@ -643,9 +635,6 @@ void Engine::Deinit()
 		ASSERT(false);
 		return;
 	}
-	
-	delete _resource_manager;
-	_resource_manager = nullptr;
 	
 	Debug::Deinit();
 	
@@ -949,17 +938,16 @@ void Engine::RenderScene()
 
 void Engine::UpdateProgramLights(Light const & light)
 {
-	auto update_program = [&] (ProgramIndex program_index)
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	auto update_program = [&] (LightProgram const & light_program)
 	{
-		auto & program = ref(_resource_manager->GetProgram(program_index));
-		SetCurrentProgram(& program);
-
-		auto & light_program = static_cast<LightProgram &>(program);
+		SetCurrentProgram(& light_program);
 		light_program.SetLight(light);
 	};
 	
-	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::sphere);
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
 void Engine::UpdateProgramLights(LightType light_type)
@@ -968,17 +956,16 @@ void Engine::UpdateProgramLights(LightType light_type)
 
 	auto & lights = scene->GetLightList();
 	
-	auto update_program = [&] (ProgramIndex program_index)
+	auto update_program = [&] (LightProgram const & light_program)
 	{
-		auto & program = ref(_resource_manager->GetProgram(program_index));
-		SetCurrentProgram(& program);
-
-		auto & light_program = static_cast<LightProgram &>(program);
+		SetCurrentProgram(& light_program);
 		light_program.SetLights(ambient, lights, light_type);
 	};
 	
-	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::sphere);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
@@ -1017,8 +1004,8 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool o
 			continue;
 		}
 		
-		Program * required_program = leaf_node.GetProgram();
-		if (required_program != nullptr)
+		auto required_program = leaf_node.GetProgram();
+		if (required_program)
 		{
 			if (required_program->IsInitialized())
 			{
@@ -1037,8 +1024,8 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool o
 			}
 		}
 		
-		VboResource const * required_vbo = leaf_node.GetVboResource();
-		if (required_vbo != nullptr)
+		auto required_vbo = leaf_node.GetVboResource();
+		if (required_vbo)
 		{
 			SetVboResource(required_vbo);
 		}
@@ -1077,8 +1064,9 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 
 	GL_CALL(glClear(GL_STENCIL_BUFFER_BIT));
 
-	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
-	SetCurrentProgram(shadow_program);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	SetCurrentProgram(& shadow_program);
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
@@ -1108,8 +1096,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 	// light
 
 	// program
-	auto screen_program = static_cast<ScreenProgram *>(_resource_manager->GetProgram(ProgramIndex::screen));
-	SetCurrentProgram(screen_program);
+	auto & screen_program = * resource_manager.GetHandle<ScreenProgram>("ScreenProgram");
+	SetCurrentProgram(& screen_program);
 
 	// state
 	glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFFL);
@@ -1155,10 +1143,11 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 
 void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light)
 {
-	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
-	ASSERT(GetCurrentProgram() == shadow_program);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	ASSERT(GetCurrentProgram() == & shadow_program);
 
-	shadow_program->SetProjectionMatrix(projection_matrix);
+	shadow_program.SetProjectionMatrix(projection_matrix);
 	
 	auto & shadows = scene->GetShadows();
 	auto & render_list = scene->GetRenderList();
@@ -1193,7 +1182,7 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const
 		// Set the model view matrix.
 		Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
 		auto model_view_matrix = model_view_transformation.GetMatrix();
-		shadow_program->SetModelViewMatrix(model_view_matrix);
+		shadow_program.SetModelViewMatrix(model_view_matrix);
 
 		// Draw
 		vbo_resource.Draw();
@@ -1255,13 +1244,11 @@ void Engine::DebugText()
 		}
 	}
 	
-	Program * sprite_program = _resource_manager->GetProgram(ProgramIndex::sprite);
-	if (sprite_program != nullptr)
-	{
-		SetCurrentProgram(sprite_program);
-		static_cast<SpriteProgram*>(sprite_program)->SetUniforms(app::GetResolution());
-		Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
-	}
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto const & sprite_program = * resource_manager.GetHandle<SpriteProgram>("SpriteProgram");
+	SetCurrentProgram(& sprite_program);
+	sprite_program.SetUniforms(app::GetResolution());
+	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
 }
 #endif	// defined (GATHER_STATS)
 

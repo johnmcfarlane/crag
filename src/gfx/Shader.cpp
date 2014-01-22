@@ -79,6 +79,12 @@ Shader::Shader()
 	CRAG_VERIFY(* this);
 }
 
+Shader::Shader(Shader && rhs)
+: _id(rhs._id)
+{
+	rhs._id = 0;
+}
+ 
 Shader::~Shader()
 {
 	CRAG_VERIFY(* this);

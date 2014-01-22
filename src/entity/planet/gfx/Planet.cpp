@@ -14,6 +14,8 @@
 #include "gfx/axes.h"
 #include "gfx/Quad.h"
 
+#include "core/ResourceManager.h"
+
 using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +27,11 @@ Planet::Planet(LeafNode::Init const & init, Transformation const & local_transfo
 	: LeafNode(init, local_transformation, Layer::foreground)
 , _sea_level(radius)
 {
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	auto const & sphere_quad = * resource_manager.GetHandle<Quad>("SphereQuadVbo");
+
+	SetVboResource(& sphere_quad);
 }
 
 void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)

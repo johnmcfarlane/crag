@@ -83,8 +83,8 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Pov.cpp \
 	$(CRAG_PATH)/gfx/Program.cpp \
 	$(CRAG_PATH)/gfx/Quad.cpp \
+	$(CRAG_PATH)/gfx/RegisterResources.cpp \
 	$(CRAG_PATH)/gfx/RenderBuffer.cpp \
-	$(CRAG_PATH)/gfx/ResourceManager.cpp \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
 	$(CRAG_PATH)/gfx/Texture.cpp \

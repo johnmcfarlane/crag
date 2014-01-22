@@ -22,6 +22,7 @@ namespace gfx
 		// functions
 	public:
 		Shader();
+		Shader(Shader && rhs);
 		~Shader();
 		
 		bool Init(std::initializer_list<char const *> filenames, GLenum shader_type);
