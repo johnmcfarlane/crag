@@ -89,7 +89,7 @@ namespace ipc
 	}
 #endif
 
-#if defined(WIN32) || defined(__GNUC__)
+#if defined(WIN32) || ! defined(__clang__)
 	template <typename TYPE>
 	void Handle<TYPE>::Create()
 	{

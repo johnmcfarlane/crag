@@ -72,7 +72,7 @@ namespace ipc
 		static Handle CreateHandle(PARAMETERS && ... parameters);
 #endif
 
-#if defined(WIN32) || defined(__GNUC__)
+#if defined(WIN32) || ! defined(__clang__)
 		void Create();
 
 		template <typename PARAMETER1>
