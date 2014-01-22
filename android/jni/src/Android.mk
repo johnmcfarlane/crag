@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/Random.cpp \
 	$(CRAG_PATH)/core/Roster.cpp \
 	$(CRAG_PATH)/core/Statistics.cpp \
+	$(CRAG_PATH)/core/TypeId.cpp \
 	$(CRAG_PATH)/entity/animat/AnimatController.cpp \
 	$(CRAG_PATH)/entity/animat/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/animat/Genome.cpp \

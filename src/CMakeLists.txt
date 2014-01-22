@@ -13,6 +13,7 @@ add_executable(crag
 	core/Random.cpp
 	core/Roster.cpp
 	core/Statistics.cpp
+	core/TypeId.cpp
 	entity/animat/AnimatController.cpp
 	entity/animat/AnimatThruster.cpp
 	entity/animat/Genome.cpp
