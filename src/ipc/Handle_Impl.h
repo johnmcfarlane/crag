@@ -144,7 +144,7 @@ namespace ipc
 		Destroy();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2, parameter3);
+			engine.template CreateObject<Type, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
 		});
 		SetUid(uid);
 	}
