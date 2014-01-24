@@ -83,6 +83,9 @@ namespace ipc
 
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
 		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
+		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4);
 #else
 		template <typename ... PARAMETERS>
 		void Create(PARAMETERS ... parameters);
