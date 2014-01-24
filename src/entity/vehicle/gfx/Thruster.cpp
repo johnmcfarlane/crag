@@ -59,6 +59,8 @@ void Thruster::Update(float const & thrust_factor)
 
 LeafNode::PreRenderResult Thruster::PreRender()
 {
+	Light::PreRender();
+	
 	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
 	
 	// TODO: Resetting this here is wrong. (What happens if sim stalls?)
