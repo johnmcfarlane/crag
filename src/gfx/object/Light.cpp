@@ -70,9 +70,8 @@ LightType Light::GetType() const
 #if ! defined(NDEBUG)
 LeafNode::PreRenderResult Light::PreRender()
 {
-	Vector3 light_position = GetModelTransformation().GetTranslation();
 	Vector3 intensity(_color.r, _color.g, _color.b);
-	Debug::AddBasis(light_position, geom::Length(intensity));
+	Debug::AddBasis(GetModelTransformation(), geom::Length(intensity));
 	
 	return ok;
 }
