@@ -26,7 +26,7 @@ Object::Object(Init const & init, Transformation const & local_transformation)
 
 Object::~Object() 
 {
-	ASSERT(IsEmpty());
+	ASSERT(_children.empty());
 
 	if (_parent != nullptr)
 	{
@@ -98,49 +98,14 @@ Object const * Object::GetParent() const
 	return _parent;
 }
 
-bool Object::IsEmpty() const
+Object::List & Object::GetChildren()
 {
-	return _children.empty();
+	return _children;
 }
 
-Object::List::iterator Object::Begin()
+Object::List const & Object::GetChildren() const
 {
-	return _children.begin();
-}
-
-Object::List::const_iterator Object::Begin() const
-{
-	return _children.begin();
-}
-
-Object::List::iterator Object::End()
-{
-	return _children.end();
-}
-
-Object::List::const_iterator Object::End() const
-{
-	return _children.end();
-}
-
-Object & Object::Front()
-{
-	return _children.front();
-}
-
-Object const & Object::Front() const
-{
-	return _children.front();
-}
-		
-Object & Object::Back()
-{
-	return _children.back();
-}
-
-Object const & Object::Back() const
-{
-	return _children.back();
+	return _children;
 }
 
 Transformation const & Object::GetLocalTransformation() const

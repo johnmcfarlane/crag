@@ -428,9 +428,10 @@ void Engine::OnAddObject(Object & object)
 
 void Engine::OnRemoveObject(Object & object)
 {
-	while (! object.IsEmpty())
+	auto & children = object.GetChildren();
+	while (! children.empty())
 	{
-		auto & back = object.Back();
+		auto & back = children.back();
 		DestroyObject(back.GetUid());
 	}
 
@@ -547,7 +548,8 @@ void Engine::SetPaused(bool paused)
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	while (! quit_flag || ! scene->GetRoot().IsEmpty())
+	auto & children = scene->GetRoot().GetChildren();
+	while (! quit_flag || ! children.empty())
 	{
 		CRAG_VERIFY(* scene);
 		message_queue.DispatchMessages(* this);
@@ -807,6 +809,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	CRAG_VERIFY(model_view_transformation);
 
 	// if it's something that'll get drawn
+	auto & children = object.GetChildren();
 	auto * leaf = object.CastLeafNodePtr();
 	if (leaf != nullptr)
 	{
@@ -816,7 +819,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (object.IsEmpty())
+		if (children.empty())
 		{
 			// destroy it
 			DestroyObject(object.GetUid());
@@ -825,7 +828,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	}
 	
 	// propagate to children
-	for (auto i = object.Begin(), end = object.End(); i != end;)
+	for (auto i = children.begin(), end = children.end(); i != end;)
 	{
 		auto & child = * i;
 		++ i;

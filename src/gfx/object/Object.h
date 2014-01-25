@@ -71,20 +71,9 @@ namespace gfx
 		
 		Object * GetParent();
 		Object const * GetParent() const;
-
-		bool IsEmpty() const;
 		
-		List::iterator Begin();
-		List::const_iterator Begin() const;
-		
-		List::iterator End();
-		List::const_iterator End() const;
-		
-		Object & Front();
-		Object const & Front() const;
-		
-		Object & Back();
-		Object const & Back() const;
+		List & GetChildren();
+		List const & GetChildren() const;
 
 		//////////////////////////////////////////////////////////////////////////////
 		// transformation

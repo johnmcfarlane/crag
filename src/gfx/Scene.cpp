@@ -40,7 +40,7 @@ Scene::Scene(Engine & engine)
 
 Scene::~Scene()
 {
-	ASSERT(_root.IsEmpty());
+	ASSERT(_root.GetChildren().empty());
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
