@@ -60,7 +60,7 @@ namespace gfx
 		void AddPoint(Vector3 const & a, ColorPair const & colors = ColorPair(1, 1));
 		void AddLine(Vector3 const & a, Vector3 const & b, ColorPair const & colors_a, ColorPair const & colors_b);
 		void AddTriangle(Triangle3 const & triangle, ColorPair const & colors = ColorPair(1, 1));
-		void AddBasis(Vector3 const & center, Vector3 const & scale = Vector3(1, 1, 1), Matrix33 const & rotation = Matrix33::Identity());
+		void AddBasis(Transformation const & transformation, Vector3 const & scale = Vector3(1, 1, 1));
 		void AddFrustum(Pov const & pov);
 		
 		void Draw(Matrix44 const & model_view_matrix, Matrix44 const & projection_matrix);
@@ -76,7 +76,7 @@ namespace gfx
 		inline void AddPoint(Vector3 const &, ColorPair const & = ColorPair(1, 1)) { }
 		inline void AddLine(Vector3 const &, Vector3 const &, ColorPair const &, ColorPair const &) { }
 		inline void AddTriangle(Triangle3 const &, ColorPair const & = ColorPair(1, 1)) { }
-		inline void AddBasis(Vector3 const &, Vector3 const & = Vector3(1, 1, 1), Matrix33 const & = Matrix33::Identity()) { }
+		inline void AddBasis(Transformation const &, Vector3 const & = Vector3(1, 1, 1)) { }
 		inline void AddFrustum(Pov const &) { }
 
 		inline void Draw(Transformation const &, Transformation const &) { }
@@ -88,9 +88,9 @@ namespace gfx
 		{
 			AddLine(a, b, colors, colors);
 		}
-		inline void AddBasis(Vector3 const & center, Scalar scale, Matrix33 const & rotation = Matrix33::Identity()) 
+		inline void AddBasis(Transformation const & transformation, Scalar scale) 
 		{ 
-			AddBasis(center, Vector3(scale, scale, scale), rotation);
+			AddBasis(transformation, Vector3(scale, scale, scale));
 		}
 	}
 }
