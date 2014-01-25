@@ -95,7 +95,6 @@ add_executable(crag
 	sim/Engine.cpp
 	sim/Entity.cpp
 	sim/EntityFunctions.cpp
-	sim/FrequencyEstimator.cpp
 	sim/gravity.cpp
 	ipc/ListenerInterface.cpp
 	ipc/Fiber.cpp

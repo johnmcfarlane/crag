@@ -108,7 +108,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/sim/Engine.cpp \
 	$(CRAG_PATH)/sim/Entity.cpp \
 	$(CRAG_PATH)/sim/EntityFunctions.cpp \
-	$(CRAG_PATH)/sim/FrequencyEstimator.cpp \
 	$(CRAG_PATH)/sim/gravity.cpp \
 	$(CRAG_PATH)/ipc/Fiber.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \
