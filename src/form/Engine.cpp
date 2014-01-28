@@ -153,7 +153,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	_mesh.Create(max_num_quaterne);
+	_mesh.Create();
 	auto mesh_handle = _mesh;
 	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
 		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());

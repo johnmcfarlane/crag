@@ -72,7 +72,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Image.cpp \
 	$(CRAG_PATH)/gfx/object/Ball.cpp \
 	$(CRAG_PATH)/gfx/object/Box.cpp \
-	$(CRAG_PATH)/gfx/object/FormationGeneration.cpp \
 	$(CRAG_PATH)/gfx/object/Surrounding.cpp \
 	$(CRAG_PATH)/gfx/object/LeafNode.cpp \
 	$(CRAG_PATH)/gfx/object/Light.cpp \

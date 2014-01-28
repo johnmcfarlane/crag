@@ -15,10 +15,7 @@
 #include "gfx/Messages.h"
 #include "gfx/Program.h"
 
-#include "gfx/object/Light.h"
-
 #include "form/Engine.h"
-#include "form/Surrounding.h"
 
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
@@ -44,17 +41,15 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Surrounding member definitions
 
-Surrounding::Surrounding(LeafNode::Init const & init, int max_num_quaterne)
+Surrounding::Surrounding(LeafNode::Init const & init)
 : LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, false)
-, _max_num_quaterne(max_num_quaterne)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(& poly_program);
 
-	auto & mesh_resource = _generation.GetVboResource();
-	ASSERT(! mesh_resource.IsInitialized() || ! mesh_resource.IsBound());
-	SetVboResource(& mesh_resource);
+	ASSERT(! _vbo_resource.IsInitialized() || ! _vbo_resource.IsBound());
+	SetVboResource(& _vbo_resource);
 }
 
 Surrounding::~Surrounding()
@@ -71,17 +66,16 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 		CRAG_VERIFY(* object._mesh);
 	}
 	
-	CRAG_VERIFY(object._generation);
+	CRAG_VERIFY_OP(! object._vbo_resource.IsInitialized(), ||, ! object._vbo_resource.IsBound());
 
-	auto & mesh_resource = object._generation.GetVboResource();
-	CRAG_VERIFY_OP(! mesh_resource.IsInitialized(), ||, ! mesh_resource.IsBound());
+	CRAG_VERIFY(object._vbo_resource);
+	CRAG_VERIFY(object._properties);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Surrounding::UpdateModelViewTransformation(Transformation const & model_view)
 {
-	auto & generation_origin = _generation.GetOrigin();
 	auto & gfx_origin = GetEngine().GetOrigin();
-	auto offset = generation_origin - gfx_origin;
+	auto offset = _properties._origin - gfx_origin;
 
 	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
 }
@@ -99,9 +93,11 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 		ReturnMesh(_mesh);
 	}
 	
+	// do some assignment
 	_mesh = mesh;
-	_generation.SetMesh(* mesh);
-
+	_properties = mesh->GetProperties();
+	_vbo_resource.Set(mesh->GetLitMesh());
+	
 	// broadcast that this is the current number of quaterne being displayed;
 	// means that any performance measurements are taken against this load
 	auto num_quaterne = mesh->GetProperties()._num_quaterne;
@@ -121,7 +117,7 @@ LeafNode::PreRenderResult Surrounding::PreRender()
 	CRAG_VERIFY(* this);
 	
 #if ! defined(NDEBUG)
-	Debug::AddBasis(geom::Cast<float>(_generation.GetOrigin()), 1.);
+	Debug::AddBasis(geom::Cast<float>(_properties._origin), 1.);
 #endif
 
 	return ok;
@@ -143,8 +139,7 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 
 void Surrounding::Render(Engine const & renderer) const
 {
-	auto & mesh_resource = _generation.GetVboResource();
-	if (mesh_resource.GetNumIndices() == 0)
+	if (_vbo_resource.GetNumIndices() == 0)
 	{
 		return;
 	}
@@ -161,7 +156,7 @@ void Surrounding::Render(Engine const & renderer) const
 	}
 	
 	// Draw the mesh!
-	mesh_resource.Draw();
+	_vbo_resource.Draw();
 }
 
 void Surrounding::ReturnMesh(std::shared_ptr<form::Mesh> const & mesh)
@@ -173,7 +168,7 @@ void Surrounding::ReturnMesh(std::shared_ptr<form::Mesh> const & mesh)
 
 Vector3 Surrounding::GfxToForm(Vector3 const & position) const
 {
-	auto & form_origin = _generation.GetOrigin();
+	auto & form_origin = _properties._origin;
 	auto & gfx_origin = GetEngine().GetOrigin();
 	return geom::Convert(position, gfx_origin, form_origin);
 }
