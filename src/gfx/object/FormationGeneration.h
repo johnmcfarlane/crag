@@ -43,8 +43,6 @@ namespace gfx
 		// functions
 		CRAG_VERIFY_INVARIANTS_DECLARE(FormationGeneration);
 
-		FormationGeneration(int max_num_quaterne);
-		
 		void SetMesh(form::Mesh const & mesh);
 
 		IndexedVboResource const & GetVboResource() const;

@@ -46,7 +46,6 @@ namespace
 
 Surrounding::Surrounding(LeafNode::Init const & init, int max_num_quaterne)
 : LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, false)
-, _generation(max_num_quaterne)
 , _max_num_quaterne(max_num_quaterne)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
@@ -54,7 +53,7 @@ Surrounding::Surrounding(LeafNode::Init const & init, int max_num_quaterne)
 	SetProgram(& poly_program);
 
 	auto & mesh_resource = _generation.GetVboResource();
-	ASSERT(! mesh_resource.IsBound());
+	ASSERT(! mesh_resource.IsInitialized() || ! mesh_resource.IsBound());
 	SetVboResource(& mesh_resource);
 }
 
@@ -135,13 +134,6 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 		return;
 	}
 	
-	if (! shadow_volume.IsInitialized())
-	{
-		shadow_volume = ShadowVolume(
-			_max_num_quaterne * form::Surrounding::num_verts_per_quaterna * 2, 
-			_max_num_quaterne * form::Surrounding::num_indices_per_quaterna);
-	}
-
 	auto gfx_light_position = light.GetModelTransformation().GetTranslation();
 	auto form_light_position = GfxToForm(gfx_light_position);
 
@@ -152,7 +144,7 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 void Surrounding::Render(Engine const & renderer) const
 {
 	auto & mesh_resource = _generation.GetVboResource();
-	if (mesh_resource.GetNumVertices() == 0)
+	if (mesh_resource.GetNumIndices() == 0)
 	{
 		return;
 	}

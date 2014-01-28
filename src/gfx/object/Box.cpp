@@ -100,12 +100,5 @@ void Box::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume
 	
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(cuboid_mesh, rotated_box_to_light);
 
-	if (! shadow_volume.IsInitialized())
-	{
-		auto num_vertices = shadow_volume_mesh.GetVertices().size();
-		auto num_indices = shadow_volume_mesh.GetIndices().size();
-		shadow_volume = std::move(ShadowVolume(num_vertices, num_indices));
-	}
-
 	shadow_volume.Set(shadow_volume_mesh);
 }

@@ -33,79 +33,69 @@ namespace gfx
 	public:
 		// verification
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(IndexedVboResource, self)
-			CRAG_VERIFY(self._vbo);
-			CRAG_VERIFY(self._ibo);
+			CRAG_VERIFY_OP(self._max_num_indices, >=, 0);
+			CRAG_VERIFY_OP(self._max_num_vertices, >=, 0);
+			CRAG_VERIFY_OP(self._num_indices, >=, 0);
 
-			CRAG_VERIFY_OP(static_cast<uintmax_t>(self._num_vertices), <=, std::numeric_limits<gfx::ElementIndex>::max());
+			CRAG_VERIFY_OP(self._max_num_indices, >=, self._num_indices);
+			CRAG_VERIFY_OP(static_cast<uintmax_t>(self._max_num_vertices), <=, std::numeric_limits<gfx::ElementIndex>::max());
 			CRAG_VERIFY_FALSE(self._num_indices % 3);
+			
+			if (self._max_num_vertices > 0)
+			{
+				CRAG_VERIFY_TRUE(self._vbo.IsInitialized());
+			}
+			if (! self._vbo.IsInitialized())
+			{
+				CRAG_VERIFY_FALSE(self._max_num_vertices);
+			}
+
+			if (self._max_num_indices > 0)
+			{
+				CRAG_VERIFY_TRUE(self._ibo.IsInitialized());
+			}
+			if (! self._ibo.IsInitialized())
+			{
+				CRAG_VERIFY_FALSE(self._max_num_indices);
+			}
 
 			CRAG_VERIFY_EQUAL(self._vbo.IsInitialized(), self._ibo.IsInitialized());
-			if (self._vbo.IsInitialized())
-			{
-				CRAG_VERIFY_EQUAL(self._vbo.IsBound(), self._ibo.IsBound());
-			}
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 		
 		// c'tors
-		IndexedVboResource() = default;
+		IndexedVboResource()
+		{
+			CRAG_VERIFY(* this);
+		}
 		
 		IndexedVboResource(IndexedVboResource && rhs)
 		: _vbo(std::move(rhs._vbo))
-		, _num_vertices(rhs._num_vertices)
 		, _ibo(std::move(rhs._ibo))
+		, _max_num_vertices(rhs._max_num_vertices)
+		, _max_num_indices(rhs._max_num_indices)
 		, _num_indices(rhs._num_indices)
 		{
-			rhs._num_vertices = 0;
+			rhs._max_num_vertices = 0;
+			rhs._max_num_indices = 0;
 			rhs._num_indices = 0;
 
 			CRAG_VERIFY(* this);
+			CRAG_VERIFY(rhs);
 		}
 		
-		// reserves buffer space
 		IndexedVboResource(Mesh const & mesh)
-			: IndexedVboResource(
-				mesh.GetVertices().data(), mesh.GetVertices().data() + mesh.GetVertices().size(), 
-				mesh.GetIndices().data(), mesh.GetIndices().data() + mesh.GetIndices().size())
 		{
+			Set(mesh);
 		}
 		
-		// reserves buffer space
-		IndexedVboResource(int max_num_vertices, int max_num_indices)
-		: _num_vertices(max_num_vertices)
-		, _num_indices(max_num_indices)
-		{
-			Init();
-			Bind();
-			Reserve(max_num_vertices, max_num_indices);
-			Unbind();
-			
-			ASSERT(! _vbo.IsBound());
-			CRAG_VERIFY(* this);
-		}
-		
-		IndexedVboResource(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
-		: _num_vertices(std::distance(vertices_begin, vertices_end))
-		, _num_indices(std::distance(indices_begin, indices_end))
-		{
-			Init();
-			Bind();
-			Reserve(_num_vertices, _num_indices);
-			Set(vertices_begin, indices_begin);
-			Unbind();
-			
-			ASSERT(! _ibo.IsBound());
-			CRAG_VERIFY(* this);
-		}
-
 		~IndexedVboResource()
 		{
 			CRAG_VERIFY(* this);
 			
 			if (IsInitialized())
 			{
-				Deinit();
-			
-				CRAG_VERIFY(* this);
+				_vbo.Deinit();
+				_ibo.Deinit();
 			}
 		}
 		
@@ -118,7 +108,8 @@ namespace gfx
 			_vbo = std::move(rhs._vbo);
 			_ibo = std::move(rhs._ibo);
 			
-			std::swap(_num_vertices, rhs._num_vertices);
+			std::swap(_max_num_vertices, rhs._max_num_vertices);
+			std::swap(_max_num_indices, rhs._max_num_indices);
 			std::swap(_num_indices, rhs._num_indices);
 			
 			CRAG_VERIFY(* this);
@@ -136,26 +127,7 @@ namespace gfx
 			Set(vertices.data(), vertices.data() + vertices.size(), indices.data(), indices.data() + indices.size());
 		}
 		
-		void Set(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
-		{
-			CRAG_VERIFY(* this);
-
-			_num_vertices = std::distance(vertices_begin, vertices_end);
-			_num_indices = std::distance(indices_begin, indices_end);
-			
-			Bind();
-			Set(vertices_begin, indices_begin);
-			Unbind();
-
-			CRAG_VERIFY(* this);
-		}
-		
 		// get state
-		int GetNumVertices() const
-		{
-			return _num_vertices;
-		}
-		
 		int GetNumIndices() const
 		{
 			return _num_indices;
@@ -163,6 +135,7 @@ namespace gfx
 		
 		bool IsInitialized() const
 		{
+			CRAG_VERIFY(* this);
 			return _vbo.IsInitialized();
 		}
 		
@@ -175,7 +148,6 @@ namespace gfx
 		void Activate() const
 		{
 			CRAG_VERIFY(* this);
-			ASSERT(IsInitialized());
 
 			Bind();
 
@@ -213,40 +185,58 @@ namespace gfx
 			_vbo.Unbind();
 			_ibo.Unbind();
 		}
-		
-		void Reserve(int num_vertices, int num_indices)
-		{
-			_vbo.BufferData(num_vertices, USAGE);
-			_ibo.BufferData(num_indices, USAGE);
-		}
-		
-		void Set(Vertex const * vertices, ElementIndex const * indices)
-		{
-			_vbo.BufferSubData(_num_vertices, vertices);
-			_ibo.BufferSubData(_num_indices, indices);
-		}
-		
-		void Init()
-		{
-			_vbo.Init();
-			_ibo.Init();
-		}
 
-		void Deinit()
+		void Set(Vertex const * vertices_begin, Vertex const * vertices_end, ElementIndex const * indices_begin, ElementIndex const * indices_end)
 		{
-			ASSERT(! IsBound());
+			CRAG_VERIFY(* this);
+
+			// lazily initialize GL objects
+			if (! IsInitialized())
+			{
+				_vbo.Init();
+				_ibo.Init();
+			}
 			
-			_vbo.Deinit();
-			_ibo.Deinit();
+			// bind
+			Bind();
+			
+			// calculate number of vertices and indices
+			auto num_vertices = std::distance(vertices_begin, vertices_end);
+			_num_indices = std::distance(indices_begin, indices_end);
+
+			// expand vertex buffer as necessary
+			if (num_vertices > _max_num_vertices)
+			{
+				_vbo.BufferData(num_vertices, USAGE);
+				_max_num_vertices = num_vertices;
+			}
+			
+			// expand index buffer as necessary
+			if (_num_indices > _max_num_indices)
+			{
+				_ibo.BufferData(_num_indices, USAGE);
+				_max_num_indices = _num_indices;
+			}
+
+			// write data
+			_vbo.BufferSubData(num_vertices, vertices_begin);
+			_ibo.BufferSubData(_num_indices, indices_begin);
+
+			// unbind
+			Unbind();
+
+			CRAG_VERIFY(* this);
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		VertexBufferObject _vbo;	// solid / shadow
-		int _num_vertices = 0;
-
+		VertexBufferObject _vbo;
 		IndexBufferObject _ibo;
+
+		int _max_num_vertices = 0;
+		int _max_num_indices = 0;
+
 		int _num_indices = 0;
 	};
 }

@@ -12,7 +12,6 @@
 #include "FormationGeneration.h"
 
 #include "form/Mesh.h"
-#include "form/Surrounding.h"
 
 #include "gfx/Color.h"
 #include "gfx/Debug.h"
@@ -31,13 +30,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(FormationGeneration, self)
 	CRAG_VERIFY(self._indexed_vbo_resource);
 	CRAG_VERIFY(self._properties);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
-
-FormationGeneration::FormationGeneration(int max_num_quaterne)
-: _indexed_vbo_resource(
-	max_num_quaterne * form::Surrounding::num_verts_per_quaterna, 
-	max_num_quaterne * form::Surrounding::num_indices_per_quaterna)
-{
-}
 
 void FormationGeneration::SetMesh(form::Mesh const & mesh)
 {
