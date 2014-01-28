@@ -100,10 +100,11 @@ namespace
 		std::copy(* * vertices, * * vertices + num_vertices, cuboid.GetVertices().data());
 		std::copy(* * * indices, * * * indices + num_indices, cuboid.GetIndices().data());
 		
+		CRAG_VERIFY(cuboid);
 		return cuboid;
 	}
 
-	PlainMesh CreateCuboid()
+	PlainMesh CreatePlainCuboid()
 	{
 		PlainVertex vertices[2][2][2];	// [z][y][x]
 		ElementIndex indices[3][2][2][3];
@@ -165,6 +166,7 @@ namespace
 		std::copy(* * vertices, * * vertices + num_vertices, cuboid.GetVertices().data());
 		std::copy(* * * indices, * * * indices + num_indices, cuboid.GetIndices().data());
 		
+		CRAG_VERIFY(cuboid);
 		return cuboid;
 	}
 
@@ -172,7 +174,7 @@ namespace
 	{
 		auto & manager = crag::core::ResourceManager::Get();
 	
-		manager.Register<PlainMesh>("CuboidPlainMesh", CreateCuboid);
+		manager.Register<PlainMesh>("CuboidPlainMesh", CreatePlainCuboid);
 		manager.Register<LitMesh>("CuboidLitMesh", CreateLitCuboid);
 	}
 
@@ -240,34 +242,34 @@ namespace
 				{ "assets/glsl/sprite.frag", light_shader_filename });
 		});
 	}
+	
+	bool RegisterVbos()
+	{
+		auto & manager = crag::core::ResourceManager::Get();
+
+		manager.Register<LitVboResource>("CuboidVbo", [] ()
+		{
+			auto & manager = crag::core::ResourceManager::Get();
+			auto const & lit_cuboid_mesh = * manager.GetHandle<LitMesh>("CuboidLitMesh");
+			return LitVboResource(lit_cuboid_mesh);
+		});
+	
+		manager.Register<Quad>("SphereQuadVbo", [] ()
+		{
+			return Quad(-1);
+		});
+	
+		manager.Register<Quad>("QuadVbo", [] ()
+		{
+			return Quad(0);
+		});
+	
+		return true;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::ResourceManager
-	
-bool RegisterVbos()
-{
-	auto & manager = crag::core::ResourceManager::Get();
-
-	manager.Register<LitVboResource>("CuboidVbo", [] ()
-	{
-		auto & manager = crag::core::ResourceManager::Get();
-		auto const & lit_cuboid_mesh = * manager.GetHandle<LitMesh>("CuboidLitMesh");
-		return LitVboResource(lit_cuboid_mesh);
-	});
-	
-	manager.Register<Quad>("SphereQuadVbo", [] ()
-	{
-		return Quad(-1);
-	});
-	
-	manager.Register<Quad>("QuadVbo", [] ()
-	{
-		return Quad(0);
-	});
-	
-	return true;
-}
+// external definitions
 
 void gfx::RegisterResources()
 {
