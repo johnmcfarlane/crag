@@ -30,5 +30,7 @@ namespace gfx
 
 	using LitMesh = Mesh<LitVertex, ElementIndex>;
 	using LitMeshHandle = crag::core::ResourceHandle<LitMesh>;
+	
 	using LitVboResource = IndexedVboResource<LitVertex, GL_STATIC_DRAW>;
+	using LitVboHandle = crag::core::ResourceHandle<LitVboResource>;
 }
