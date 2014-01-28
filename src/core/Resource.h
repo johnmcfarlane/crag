@@ -206,7 +206,6 @@ namespace crag
 		template <typename Type>
 		Type const & Resource::get() const
 		{
-			// TODO: mutex
 			Prefetch();
 			
 			auto const resource_wrapper = _object.get();

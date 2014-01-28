@@ -41,6 +41,7 @@ Resource::Resource(Resource && rhs)
 
 void Resource::Prefetch() const
 {
+	// TODO: Need a lock here
 	if (! _object)
 	{
 		_object = WrapperUniquePtr(_create_function());
