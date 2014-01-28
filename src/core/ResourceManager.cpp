@@ -25,8 +25,14 @@ ResourceManager & ResourceManager::Get()
 
 void ResourceManager::Unregister(HashString const & key)
 {
-	auto & resource = GetResource(key);
-	resource.Destroy();
+	_mutex.WriteLock();
+	
+	if (_resources.erase(key) != 1)
+	{
+		DEBUG_BREAK("didn't remove a single element");
+	}
+	
+	_mutex.WriteUnlock();
 }
 
 void ResourceManager::Prefetch(HashString const & key) const

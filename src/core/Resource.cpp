@@ -13,6 +13,11 @@
 
 using namespace crag::core;
 
+namespace
+{
+	std::mutex resource_mutex;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // crag::core::Resource member definitions
 
@@ -34,17 +39,17 @@ Resource::Resource(Resource && rhs)
 	rhs._type_id = TypeId();
 }
 
-void Resource::Destroy()
-{
-	_object.reset();
-}
-
 void Resource::Prefetch() const
 {
 	if (! _object)
 	{
 		_object = WrapperUniquePtr(_create_function());
 	}
+}
+
+void Resource::Flush() const
+{
+	_object.reset();
 }
 
 TypeId Resource::GetTypeId() const

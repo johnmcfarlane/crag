@@ -77,12 +77,12 @@ namespace crag
 			template <typename Type, typename Function>
 			static Resource Create(Function function);
 			
-			void Destroy();
-			
 			template <typename Type>
 			Type const & get() const;
 			
 			void Prefetch() const;
+			void Flush() const;
+			
 			TypeId GetTypeId() const;
 			
 			////////////////////////////////////////////////////////////////////////////////
@@ -165,6 +165,16 @@ namespace crag
 				CRAG_VERIFY(* this);
 
 				return _resource ? & _resource->get<Type>() : nullptr;
+			}
+			
+			void Flush()
+			{
+				CRAG_VERIFY(* this);
+
+				if (_resource)
+				{
+					_resource->Flush();
+				}
 			}
 			
 		private:
