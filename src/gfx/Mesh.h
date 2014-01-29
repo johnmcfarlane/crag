@@ -28,9 +28,23 @@ namespace gfx
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Mesh, self)
 			CRAG_VERIFY_FALSE(self._indices.size() % 3);
 			auto num_vertices = self._vertices.size();
+			
 			for (auto index : self._indices)
 			{
 				CRAG_VERIFY_OP(index, <, num_vertices);
+			}
+
+			for (auto vertex_index = 0u; vertex_index != num_vertices; ++ vertex_index)
+			{
+				auto const & vertex = self._vertices[vertex_index];
+				CRAG_VERIFY(vertex);
+				
+#if 0	// slow
+				// check that vertex is used
+				auto begin = std::begin(self._indices);
+				auto end = std::end(self._indices);
+				CRAG_VERIFY_TRUE(std::find(begin, end, vertex_index) != end);
+#endif
 			}
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 
@@ -40,7 +54,6 @@ namespace gfx
 		: _vertices(num_vertices)
 		, _indices(num_indices)
 		{
-			CRAG_VERIFY(* this);
 		}
 		
 		Mesh(Mesh const &) = default;
@@ -69,8 +82,6 @@ namespace gfx
 		
 		void Clear()
 		{
-			CRAG_VERIFY(* this);
-
 			_vertices.clear();
 			_indices.clear();
 
