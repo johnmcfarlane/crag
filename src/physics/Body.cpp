@@ -266,26 +266,55 @@ bool Body::OnCollisionWithSolid(Body &, Sphere3 const &, ContactInterface &)
 
 bool Body::OnCollisionWithRay(Body & that_body)
 {
+	auto & ray_cast = static_cast<RayCast &>(that_body);
+
+	// cast ray against object
 	auto that_collision_handle = that_body.GetCollisionHandle();
 	auto this_collision_handle = GetCollisionHandle();
 
-#if defined(NDEBUG)
-	constexpr uint16_t max_contacts = 1;
-#else
 	constexpr uint16_t max_contacts = 2;
+#if defined(NDEBUG)
+	constexpr uint16_t contacts_size = max_contacts;
+#else
+	constexpr uint16_t contacts_size = max_contacts + 1;
 #endif
-	dContactGeom contacts[max_contacts];
-	std::size_t num_contacts = dCollide(this_collision_handle, that_collision_handle, max_contacts, contacts, sizeof(contacts[0]));
-	ASSERT(num_contacts <= 1);
+	dContactGeom contacts[contacts_size];
+	std::size_t num_contacts = dCollide(this_collision_handle, that_collision_handle, contacts_size, contacts, sizeof(contacts[0]));
+	CRAG_VERIFY_OP(num_contacts, <=, max_contacts);
 	
-	if (num_contacts > 0)
+	// find nearest penetration contact
+	Vector3 ray_direction = ray_cast.GetDirection();
+	
+	auto max_contact_depth = std::numeric_limits<Scalar>::max();
+	auto first_contact_depth = max_contact_depth;
+	auto first_contact_normal = Vector3::Zero();
+	
+	std::for_each(contacts, contacts + num_contacts, [&] (dContactGeom const & contact)
 	{
-		auto & collision_geom = contacts[0];
-		ASSERT(collision_geom.g1 == this_collision_handle);
-		ASSERT(collision_geom.g2 == that_collision_handle);
+		ASSERT(contact.g1 == this_collision_handle);
+		ASSERT(contact.g2 == that_collision_handle);
+	
+		auto depth = contact.depth;
+		ASSERT(depth >= 0);
 		
-		auto & ray_cast = static_cast<RayCast &>(that_body);
-		ray_cast.SampleResult(form::RayCastResult(physics::Convert(collision_geom.normal), collision_geom.depth, nullptr));
+		if (depth >= first_contact_depth)
+		{
+			return;
+		}
+		
+		auto normal = physics::Convert(contact.normal);
+		if (geom::DotProduct(normal, ray_direction) >= 0)
+		{
+			return;
+		}
+		
+		first_contact_depth = depth;
+		first_contact_normal = normal;
+	});
+	
+	if (first_contact_depth != max_contact_depth)
+	{
+		ray_cast.SampleResult(form::RayCastResult(first_contact_normal, first_contact_depth, nullptr));
 	}
 	
 	return true;
