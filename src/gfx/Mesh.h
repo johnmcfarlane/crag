@@ -124,4 +124,43 @@ namespace gfx
 		IndexArrayType _indices;
 	};
 	
+	template <typename Vertex, typename TransformationFunction>
+	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh, TransformationFunction transformation)
+	{
+		CRAG_VERIFY(mesh);
+		
+		// calculate bounding radius (fast but inaccurate)
+		Scalar max_length_squared = 0;
+
+		for (auto vertex : mesh.GetVertices())
+		{
+			// remember position with greatest length
+			auto length_squared = geom::LengthSq(transformation(vertex.pos));
+			max_length_squared = std::max(max_length_squared, length_squared);
+		}
+
+		return std::sqrt(max_length_squared);
+	}
+	
+	template <typename Vertex>
+	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh)
+	{
+		auto identity = [] (Vector3 const & p) -> Vector3 const & 
+		{ 
+			return p; 
+		};
+		
+		return GetBoundingRadius(mesh, identity);
+	}
+	
+	template <typename Vertex>
+	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh, Vector3 const & scale)
+	{
+		auto scaler = [& scale] (Vector3 const & p) -> Vector3
+		{
+			return p * scale;
+		};
+		
+		return GetBoundingRadius(mesh, scaler);
+	}
 }
