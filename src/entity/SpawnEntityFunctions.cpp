@@ -28,6 +28,7 @@
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
 #include "physics/GhostBody.h"
+#include "physics/MeshBody.h"
 #include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
@@ -35,13 +36,14 @@
 
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
-#include "gfx/object/Box.h"
 #include "gfx/object/Light.h"
+#include "gfx/object/MeshObject.h"
 
 #include "geom/origin.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
+#include "core/ResourceManager.h"
 
 #if defined(CRAG_USE_MOUSE)
 CONFIG_DEFINE (observer_use_touch, bool, false);
@@ -80,8 +82,85 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
 	
+	template <typename IndexType>
+	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateShipMesh()
+	{
+		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
+		
+		auto & vertices = mesh.GetVertices();
+		vertices.reserve(5);
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, 0.f, 1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(-1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, -.25f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, .25f, -1.f) });
+		ASSERT(vertices.size() == vertices.capacity());
+
+		auto & indices = mesh.GetIndices();
+		indices.reserve(18);
+		auto add_tri = [& indices] (int a, int b, int c)
+		{
+			indices.push_back(a);
+			indices.push_back(b);
+			indices.push_back(c);
+		};
+		add_tri(0, 1, 4);
+		add_tri(0, 4, 2);
+		add_tri(0, 2, 3);
+		add_tri(0, 3, 1);
+		add_tri(1, 3, 4);
+		add_tri(2, 4, 3);
+		ASSERT(indices.size() == indices.capacity());
+		
+		CRAG_VERIFY(mesh);
+		return mesh;
+	}
+	
+	// given a Mesh comprising unique vertex entries,
+	// generates a GPU-friendly mesh with flat shading
+	gfx::LitMesh GenerateFlatLitMesh(physics::Mesh const & source_mesh, gfx::Color4f const & color = gfx::Color4f::White())
+	{
+		auto & source_vertices = source_mesh.GetVertices();
+		auto & source_indices = source_mesh.GetIndices();
+		auto num_source_indices = source_indices.size();
+
+		gfx::LitMesh destination_mesh;
+
+		auto & destination_vertices = destination_mesh.GetVertices();
+		auto & destination_indices = destination_mesh.GetIndices();
+		
+		destination_vertices.reserve(num_source_indices);
+		destination_indices.reserve(num_source_indices);
+
+		for (auto index_index = 0u; index_index != num_source_indices; index_index += 3)
+		{
+			gfx::Triangle3 source_triangle;
+			for (int i = 0; i != 3; ++ i)
+			{
+				auto vert_index = source_indices[index_index + i];
+				source_triangle.points[i] = source_vertices[vert_index].pos;
+			}
+
+			auto source_plane = geom::MakePlane(source_triangle);
+			
+			for (auto const & vertex : source_triangle.points)
+			{
+				destination_indices.push_back(destination_vertices.size());
+				destination_vertices.push_back(gfx::LitVertex({ vertex, source_plane.normal, color, 0.f }));
+			}
+		}
+		
+		CRAG_VERIFY_EQUAL(source_vertices.size(), source_vertices.capacity());
+		CRAG_VERIFY_EQUAL(source_indices.size(), source_indices.capacity());
+
+		CRAG_VERIFY(destination_mesh);
+		return destination_mesh;
+	}
+	
 	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, sim::Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
 	{
+		auto & resource_manager = crag::core::ResourceManager::Get();
+
 		// physics
 		sim::Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -94,7 +173,9 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
-		auto model = gfx::BoxHandle::CreateHandle(local_transformation, size, color);
+		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("CuboidVbo");
+		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("CuboidPlainMesh");
+		auto model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, size, lit_vbo, plain_mesh);
 		box.SetModel(model);
 	}
 
