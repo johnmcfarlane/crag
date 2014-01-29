@@ -96,6 +96,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/physics/Engine.cpp \
 	$(CRAG_PATH)/physics/GhostBody.cpp \
 	$(CRAG_PATH)/physics/Location.cpp \
+	$(CRAG_PATH)/physics/MeshBody.cpp \
 	$(CRAG_PATH)/physics/PassiveLocation.cpp \
 	$(CRAG_PATH)/physics/RayCast.cpp \
 	$(CRAG_PATH)/physics/SphericalBody.cpp \
