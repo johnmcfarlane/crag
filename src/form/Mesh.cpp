@@ -21,9 +21,10 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
-Mesh::Mesh(int max_num_verts, int max_num_tris)
-: _lit_mesh(max_num_verts, max_num_tris * 3)
+void Mesh::Reserve(int max_num_verts, int max_num_tris)
 {
+	_lit_mesh.GetVertices().reserve(max_num_verts);
+	_lit_mesh.GetIndices().reserve(max_num_tris);
 }
 
 void Mesh::Clear()

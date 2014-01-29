@@ -30,8 +30,7 @@ namespace form
 		typedef Vertex::Color Color;
 		
 		// functions
-		Mesh(int max_num_verts, int max_num_tris);
-		
+		void Reserve(int max_num_verts, int max_num_tris);
 		void Clear();
 		
 		MeshProperties & GetProperties();

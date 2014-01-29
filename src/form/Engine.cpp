@@ -70,7 +70,8 @@ form::Engine::Engine()
 {
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		auto mesh = std::make_shared<Mesh>(max_num_verts, max_num_tris);
+		auto mesh = std::make_shared<Mesh>();
+		mesh->Reserve(max_num_verts, max_num_tris);
 		_meshes.push(mesh);
 	}
 }
