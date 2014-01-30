@@ -98,8 +98,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	Vector3 max_depth_normal;
 	auto face_functor = [&] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
-		Vector3 center = geom::Center(face);
-		form::Plane3 plane(center, normal);
+		Vector3 centroid = geom::Centroid(face);
+		form::Plane3 plane(centroid, normal);
 		
 		auto distance = Distance(plane, bounding_sphere.center);
 		if (distance > bounding_sphere.radius)

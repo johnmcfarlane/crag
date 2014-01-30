@@ -61,7 +61,7 @@ namespace geom
 	}
 	
 	template <typename S, int N>
-	Vector<S, N> Center(Triangle<S, N> const & t)
+	Vector<S, N> Centroid(Triangle<S, N> const & t)
 	{
 		return (t.points[0] + t.points[1] + t.points[2]) / S(3);
 	}
