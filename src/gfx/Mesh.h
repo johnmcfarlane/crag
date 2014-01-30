@@ -124,8 +124,11 @@ namespace gfx
 		IndexArrayType _indices;
 	};
 	
-	template <typename Vertex, typename TransformationFunction>
-	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh, TransformationFunction transformation)
+	////////////////////////////////////////////////////////////////////////////////
+	// GetBoundingRadius
+	
+	template <typename Vertex, typename Index, typename TransformationFunction>
+	Scalar GetBoundingRadius(Mesh<Vertex, Index> const & mesh, TransformationFunction transformation)
 	{
 		CRAG_VERIFY(mesh);
 		
@@ -142,8 +145,8 @@ namespace gfx
 		return std::sqrt(max_length_squared);
 	}
 	
-	template <typename Vertex>
-	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh)
+	template <typename Vertex, typename Index>
+	Scalar GetBoundingRadius(Mesh<Vertex, Index> const & mesh)
 	{
 		auto identity = [] (Vector3 const & p) -> Vector3 const & 
 		{ 
@@ -153,8 +156,8 @@ namespace gfx
 		return GetBoundingRadius(mesh, identity);
 	}
 	
-	template <typename Vertex>
-	Scalar GetBoundingRadius(Mesh<Vertex> const & mesh, Vector3 const & scale)
+	template <typename Vertex, typename Index>
+	Scalar GetBoundingRadius(Mesh<Vertex, Index> const & mesh, Vector3 const & scale)
 	{
 		auto scaler = [& scale] (Vector3 const & p) -> Vector3
 		{
