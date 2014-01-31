@@ -78,6 +78,7 @@ namespace
 						polygon_vert->pos = position;
 						polygon_vert->norm = normal;
 						polygon_vert->color = Color4f::White();
+						polygon_vert->height = 0;
 					}
 				}
 			
