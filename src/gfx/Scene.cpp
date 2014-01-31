@@ -138,12 +138,8 @@ void Scene::SortRenderList()
 		LeafNode & node = unsorted.front();
 		unsorted.pop_front();
 		
-		List::iterator i = _render_list.begin();
-		for (List::iterator end = _render_list.end(); i != end && node < * i; ++ i)
-		{
-		}
-		
-		_render_list.insert(i, node);
+		auto insertion_point = std::lower_bound(std::begin(_render_list), std::end(_render_list), node);
+		_render_list.insert(insertion_point, node);
 	}
 }
 
