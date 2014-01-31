@@ -18,6 +18,7 @@ namespace physics
 	class MeshBody : public Body
 	{
 	public:
+		MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh, Scalar volume);
 		MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh);
 		~MeshBody();
 

@@ -16,12 +16,14 @@
 #include "gfx/Mesh.h"
 #include "gfx/PlainVertex.h"
 
+#include <ode/objects.h>
+
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MeshBody
 
-MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh)
+MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh, Scalar volume)
 : Body(transformation, velocity, engine, engine.CreateMesh(nullptr))
 , _mesh_data(dGeomTriMeshDataCreate())
 , _bounding_radius(gfx::GetBoundingRadius(mesh))
@@ -32,8 +34,25 @@ MeshBody::MeshBody(Transformation const & transformation, Vector3 const * veloci
 	dGeomTriMeshDataBuildSingle(_mesh_data,
 		vertices.front().pos.GetAxes(), sizeof(Mesh::VertexType), vertices.size(),
 		indices.data(), indices.size(), sizeof(Mesh::IndexType));
+		CRAG_DEBUG_DUMP(indices.size());
 
 	dGeomTriMeshSetData(_collision_handle, _mesh_data);
+	
+	// set mass
+	if (_body_handle)
+	{
+		dMass m;
+
+		// dMassSetTrimesh doesn't seem to like the ship mesh or I'd call it instead
+		dMassSetSphere(& m, 1.f, Sphere3::Properties::RadiusFromVolume(volume));
+
+		dBodySetMass (_body_handle, & m);
+	}
+}
+
+MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh)
+: MeshBody(transformation, velocity, engine, mesh, gfx::CalculateVolume(mesh))
+{
 }
 
 MeshBody::~MeshBody()
