@@ -163,6 +163,21 @@ namespace ipc
 		});
 		SetUid(uid);
 	}
+
+	template <typename TYPE>
+	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
+	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
+	{
+		typedef typename Type::Daemon Daemon;
+		typedef typename Type::Engine Engine;
+
+		Destroy();
+		Uid uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
+			engine.template CreateObject<Type, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
+		});
+		SetUid(uid);
+	}
 #else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
