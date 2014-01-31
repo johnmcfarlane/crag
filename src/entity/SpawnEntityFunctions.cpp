@@ -85,8 +85,10 @@ namespace
 	template <typename IndexType>
 	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateShipMesh()
 	{
+		// ship mesh
 		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
 		
+		// add vertices
 		auto & vertices = mesh.GetVertices();
 		vertices.reserve(5);
 		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, 0.f, 1.f) });
@@ -96,22 +98,31 @@ namespace
 		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, .25f, -1.f) });
 		ASSERT(vertices.size() == vertices.capacity());
 
+		// add faces
 		auto & indices = mesh.GetIndices();
 		indices.reserve(18);
-		auto add_tri = [& indices] (int a, int b, int c)
+		auto add_face = [& indices] (int a, int b, int c)
 		{
 			indices.push_back(a);
 			indices.push_back(b);
 			indices.push_back(c);
 		};
-		add_tri(0, 1, 4);
-		add_tri(0, 4, 2);
-		add_tri(0, 2, 3);
-		add_tri(0, 3, 1);
-		add_tri(1, 3, 4);
-		add_tri(2, 4, 3);
+		add_face(0, 1, 4);
+		add_face(0, 4, 2);
+		add_face(0, 2, 3);
+		add_face(0, 3, 1);
+		add_face(1, 3, 4);
+		add_face(2, 4, 3);
 		ASSERT(indices.size() == indices.capacity());
 		
+		// translate centroid to origin
+		auto centroid = CalculateCentroidAndVolume(mesh);
+		for (auto & vertex : vertices)
+		{
+			vertex.pos -= centroid.first;
+		}
+		
+		// return result
 		CRAG_VERIFY(mesh);
 		return mesh;
 	}
