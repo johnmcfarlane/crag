@@ -1,5 +1,5 @@
 //
-//  LitVertex.cpp
+//  gfx/PlainVertex.cpp
 //  crag
 //
 //  Created by John McFarlane on 2012-01-23.
