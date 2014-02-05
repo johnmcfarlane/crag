@@ -1,5 +1,5 @@
 //
-//  Controller.cpp
+//  MouseObserverController.cpp
 //  crag
 //
 //  Created by John on 1/24/10.
