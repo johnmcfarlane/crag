@@ -134,10 +134,13 @@
     <ClInclude Include="..\..\src\core\object_pool.h" />
     <ClInclude Include="..\..\src\core\profile.h" />
     <ClInclude Include="..\..\src\core\Random.h" />
+    <ClInclude Include="..\..\src\core\Resource.h" />
+    <ClInclude Include="..\..\src\core\ResourceManager.h" />
     <ClInclude Include="..\..\src\core\ring_buffer.h" />
     <ClInclude Include="..\..\src\core\Roster.h" />
     <ClInclude Include="..\..\src\core\Singleton.h" />
     <ClInclude Include="..\..\src\core\Statistics.h" />
+    <ClInclude Include="..\..\src\core\TypeId.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
     <ClInclude Include="..\..\src\entity\observer\Contact.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
@@ -200,10 +203,9 @@
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
-    <ClInclude Include="..\..\src\gfx\object\Box.h" />
-    <ClInclude Include="..\..\src\gfx\object\FormationGeneration.h" />
     <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
+    <ClInclude Include="..\..\src\gfx\object\MeshObject.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
     <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
@@ -212,11 +214,12 @@
     <ClInclude Include="..\..\src\gfx\Pov.h" />
     <ClInclude Include="..\..\src\gfx\Program.h" />
     <ClInclude Include="..\..\src\gfx\Quad.h" />
+    <ClInclude Include="..\..\src\gfx\RegisterResources.h" />
     <ClInclude Include="..\..\src\gfx\RenderBuffer.h" />
-    <ClInclude Include="..\..\src\gfx\ResourceManager.h" />
     <ClInclude Include="..\..\src\gfx\Scene.h" />
     <ClInclude Include="..\..\src\gfx\Shader.h" />
     <ClInclude Include="..\..\src\gfx\Texture.h" />
+    <ClInclude Include="..\..\src\gfx\Uniform.h" />
     <ClInclude Include="..\..\src\gfx\VertexBufferObject.h" />
     <ClInclude Include="..\..\src\ipc\Daemon.h" />
     <ClInclude Include="..\..\src\ipc\EngineBase.h" />
@@ -265,7 +268,6 @@
     <ClInclude Include="..\..\src\sim\Engine.h" />
     <ClInclude Include="..\..\src\sim\Entity.h" />
     <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
-    <ClInclude Include="..\..\src\sim\FrequencyEstimator.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
     <ClInclude Include="..\..\src\entity\observer\MouseObserverController.h" />
     <ClInclude Include="..\..\src\entity\observer\ObserverInput.h" />
@@ -294,8 +296,11 @@
     <ClCompile Include="..\..\src\core\memory.cpp" />
     <ClCompile Include="..\..\src\core\profile.cpp" />
     <ClCompile Include="..\..\src\core\Random.cpp" />
+    <ClCompile Include="..\..\src\core\Resource.cpp" />
+    <ClCompile Include="..\..\src\core\ResourceManager.cpp" />
     <ClCompile Include="..\..\src\core\Roster.cpp" />
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
+    <ClCompile Include="..\..\src\core\TypeId.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
     <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
@@ -334,10 +339,9 @@
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\LitVertex.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Box.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\FormationGeneration.cpp" />
     <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\MeshObject.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
     <ClCompile Include="..\..\src\gfx\object\RootNode.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode0</ObjectFileName>
@@ -352,14 +356,15 @@
     <ClCompile Include="..\..\src\gfx\Pov.cpp" />
     <ClCompile Include="..\..\src\gfx\Program.cpp" />
     <ClCompile Include="..\..\src\gfx\Quad.cpp" />
+    <ClCompile Include="..\..\src\gfx\RegisterResources.cpp" />
     <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp" />
-    <ClCompile Include="..\..\src\gfx\ResourceManager.cpp" />
     <ClCompile Include="..\..\src\gfx\Scene.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene0</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene0</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\gfx\Shader.cpp" />
     <ClCompile Include="..\..\src\gfx\Texture.cpp" />
+    <ClCompile Include="..\..\src\gfx\Uniform.cpp" />
     <ClCompile Include="..\..\src\ipc\Fiber.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberAndroid.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberPosix.cpp" />
@@ -412,7 +417,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
-    <ClCompile Include="..\..\src\sim\FrequencyEstimator.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
     <ClCompile Include="..\..\src\entity\observer\MouseObserverController.cpp" />
     <ClCompile Include="..\..\src\entity\observer\ObserverInput.cpp" />
