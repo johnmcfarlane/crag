@@ -105,11 +105,11 @@ void MouseObserverController::HandleEvent(ObserverInput & input, SDL_Event const
 	switch (event.type)
 	{
 		case SDL_KEYDOWN:
-			HandleKeyboardEvent(event.key.keysym.scancode, 1);
+			HandleKeyboardEvent(event.key.keysym.scancode, true);
 			break;
 		
 		case SDL_KEYUP:
-			HandleKeyboardEvent(event.key.keysym.scancode, 0);
+			HandleKeyboardEvent(event.key.keysym.scancode, false);
 			break;
 		
 		case SDL_MOUSEMOTION:
