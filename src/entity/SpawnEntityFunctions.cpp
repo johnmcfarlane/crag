@@ -292,6 +292,59 @@ namespace
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 	}
+	
+	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
+	{
+		// resources
+		auto & resource_manager = crag::core::ResourceManager::Get();
+		resource_manager.Register<physics::Mesh>("ShipPhysicsMesh", [] ()
+		{
+			return GenerateShipMesh<dTriIndex>();
+		});
+		resource_manager.Register<gfx::PlainMesh>("ShipPlainMesh", [] ()
+		{
+			return GenerateShipMesh<gfx::ElementIndex>();
+		});
+		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
+			return GenerateFlatLitMesh(* physics_mesh);
+		});
+		
+		auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+		resource_manager.Register<gfx::LitVboResource>("ShipVbo", [lit_mesh_handle] ()
+		{
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+
+		// physics
+		sim::Engine & sim_engine = entity.GetEngine();
+		physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
+
+		auto velocity = sim::Vector3::Zero();
+		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
+		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
+		body.SetLinearDamping(.01);
+		body.SetAngularDamping(.01);
+		entity.SetLocation(& body);
+
+		// graphics
+		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
+		gfx::Color4f const & color = gfx::Color4f::White();
+		gfx::Vector3 scale(1.f, 1.f, 1.f);
+		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
+		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipPlainMesh");
+		gfx::ObjectHandle model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
+		entity.SetModel(model);
+		
+		// controller
+		auto& controller = ref(new sim::VehicleController(entity));
+		entity.SetController(& controller);
+
+		AddRoverThruster(controller, sim::Vector3(0, 0, -1), sim::Vector3(0, 0, 1), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Vector3(0, -.25, 0), sim::Vector3(0, .25, 0), SDL_SCANCODE_B);
+	}
 }
 
 sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
@@ -404,4 +457,15 @@ sim::EntityHandle SpawnRover(sim::Vector3 const & position)
 	});
 
 	return vehicle;
+}
+
+sim::EntityHandle SpawnShip(sim::Vector3 const & position)
+{
+	auto ship = sim::EntityHandle::CreateHandle();
+
+	ship.Call([position] (sim::Entity & entity) {
+		ConstructShip(entity, position);
+	});
+
+	return ship;
 }
