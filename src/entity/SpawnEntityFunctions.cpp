@@ -11,6 +11,8 @@
 
 #include "SpawnEntityFunctions.h"
 
+#include "camera/CameraController.h"
+
 #include "observer/MouseObserverController.h"
 #include "observer/TouchObserverController.h"
 
@@ -78,6 +80,12 @@ namespace
 	CONFIG_DEFINE (observer_angular_damping, physics::Scalar, 0.05f);
 
 	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
+
+	CONFIG_DEFINE (camera_radius, float, .5);
+	CONFIG_DEFINE (camera_density, float, 1);
+	
+	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -272,6 +280,21 @@ namespace
 #endif
 	}
 
+	void ConstructCamera(sim::Entity & camera, sim::EntityHandle subject_handle)
+	{
+		auto & engine = camera.GetEngine();
+		auto subject = engine.GetObject(subject_handle.GetUid());
+		auto subject_location = subject->GetLocation();
+		auto position = subject_location->GetTranslation();
+		position.y += 5;
+		
+		// physics
+		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), sim::Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+
+		// controller
+		camera.SetController(new sim::CameraController(camera, subject_handle));
+	}
+
 	void AddRoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
 		auto & entity = controller.GetEntity();
@@ -384,6 +407,17 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 	});
 
 	return observer;
+}
+
+sim::EntityHandle SpawnCamera(sim::EntityHandle subject)
+{
+	auto camera = sim::EntityHandle::CreateHandle();
+
+	camera.Call([subject] (sim::Entity & entity) {
+		ConstructCamera(entity, subject);
+	});
+
+	return camera;
 }
 
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters)
