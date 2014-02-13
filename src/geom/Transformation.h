@@ -27,6 +27,7 @@ namespace geom
 		typedef S Scalar;
 		typedef Matrix<Scalar, 3, 3> Matrix33;
 		typedef Matrix<Scalar, 4, 4> Matrix44;
+		typedef Ray<Scalar, 3> Ray3;
 		typedef Vector<Scalar, 3> Vector3;
 		typedef Vector<Scalar, 4> Vector4;
 		
@@ -161,6 +162,11 @@ namespace geom
 		Vector3 Rotate(Vector3 const & direction) const
 		{
 			return GetRotation() * direction;
+		}
+		
+		Ray3 Transform(Ray3 const & ray) const
+		{
+			return Ray3(Transform(ray.position), Rotate(ray.direction));
 		}
 		
 #if defined(CRAG_VERIFY_ENABLED)
