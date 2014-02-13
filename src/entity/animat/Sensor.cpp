@@ -29,32 +29,16 @@ using namespace sim;
 
 namespace
 {
-	// given a position which is relative to entity, returns simulation-relative position
-	Vector3 TransformPosition(Vector3 local, Entity const & entity)
-	{
-		auto location = entity.GetLocation();
-		return location->Transform(local);
-	}
-	
-	// given a position which is relative to entity, returns simulation-relative position
-	Vector3 TransformDirection(Vector3 local, Entity const & entity)
-	{
-		auto location = entity.GetLocation();
-		return location->Rotate(local);
-	}
-
 	Ray3 Transform(Ray3 const & local, Entity const & entity)
 	{
-		Ray3 global;
-	
-		global.position = TransformPosition(local.position, entity);
-		global.direction = TransformDirection(local.direction, entity);
+		auto location = entity.GetLocation();
+		auto const & transformation = location->GetTransformation();
 
-		// TODO: broken assert (hopefully) because execution gets here ahead of an origin		
-		//ASSERT(geom::Length(TransformPosition(geom::Project(local, 1.0f), entity) - geom::Project(global, 1.0f)) < .0001f);
-		
+		auto global = transformation.Transform(local);
+
 		return global;
 	}
+	
 	Vector3 GetRandomDirection(Random & sequence)
 	{
 		Vector3 random_direction;
