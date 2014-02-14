@@ -348,8 +348,8 @@ namespace
 		auto velocity = sim::Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
-		body.SetLinearDamping(.01);
-		body.SetAngularDamping(.01);
+		body.SetLinearDamping(.01f);
+		body.SetAngularDamping(.01f);
 		entity.SetLocation(& body);
 
 		// graphics
