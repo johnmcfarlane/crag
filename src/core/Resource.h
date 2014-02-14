@@ -123,7 +123,7 @@ namespace crag
 			
 			operator bool() const
 			{
-				return _resource;
+				return _resource != nullptr;
 			}
 			
 			friend bool operator==(ResourceHandle const & lhs, std::nullptr_t)
