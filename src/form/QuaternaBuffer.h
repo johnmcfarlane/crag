@@ -26,6 +26,8 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
+		OBJECT_NO_COPY(QuaternaBuffer);
+
 		QuaternaBuffer(int max_num_quaterne);
 		~QuaternaBuffer();
 		

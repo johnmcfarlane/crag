@@ -64,7 +64,7 @@ namespace
 			buffer_size = (size + 128) * 2;
 			buffer = new char [buffer_size];
 
-			if (vsnprintf(buffer, buffer_size, format, args) != size)
+			if (vsnprintf(buffer, buffer_size, format, args) != int(size))
 			{
 				// this should not happen
 				__debugbreak();

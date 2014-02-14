@@ -19,6 +19,8 @@ namespace ipc
 	template <typename ENGINE>
 	struct ObjectInit
 	{
+		OBJECT_NO_COPY(ObjectInit);
+
 		ObjectInit(ENGINE & init_engine, Uid init_uid)
 		: engine(init_engine)
 		, uid(init_uid)

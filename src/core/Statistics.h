@@ -73,6 +73,8 @@ namespace core
 	
 	class Statistics : public Enumeration <StatInterface>
 	{
+		OBJECT_NO_COPY(Statistics);
+
 		typedef Enumeration <StatInterface> super;
 	public:
 	};

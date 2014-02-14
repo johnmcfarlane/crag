@@ -41,6 +41,8 @@ namespace sim
 		// reads Genes from a Genome
 		class GenomeReader
 		{
+			OBJECT_NO_COPY(GenomeReader);
+
 		public:
 			GenomeReader(Genome & genome);
 
