@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\src\core\Statistics.h" />
     <ClInclude Include="..\..\src\core\TypeId.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
+    <ClInclude Include="..\..\src\entity\camera\CameraController.h" />
     <ClInclude Include="..\..\src\entity\observer\Contact.h" />
     <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
@@ -243,11 +244,13 @@
     <ClInclude Include="..\..\src\physics\Engine.h" />
     <ClInclude Include="..\..\src\physics\GhostBody.h" />
     <ClInclude Include="..\..\src\physics\Location.h" />
+    <ClInclude Include="..\..\src\physics\MeshBody.h" />
     <ClInclude Include="..\..\src\physics\PassiveLocation.h" />
     <ClInclude Include="..\..\src\physics\RayCast.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
     <ClInclude Include="..\..\src\entity\animat\AnimatController.h" />
     <ClInclude Include="..\..\src\entity\animat\Sensor.h" />
+    <ClInclude Include="..\..\src\scripts\GameScript.h" />
     <ClInclude Include="..\..\src\scripts\MainScript.h" />
     <ClInclude Include="..\..\src\entity\planet\gfx\Planet.h" />
     <ClInclude Include="..\..\src\entity\planet\physics\PlanetBody.h" />
@@ -302,6 +305,7 @@
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\core\TypeId.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\camera\CameraController.cpp" />
     <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
     <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
@@ -386,11 +390,13 @@
     </ClCompile>
     <ClCompile Include="..\..\src\physics\GhostBody.cpp" />
     <ClCompile Include="..\..\src\physics\Location.cpp" />
+    <ClCompile Include="..\..\src\physics\MeshBody.cpp" />
     <ClCompile Include="..\..\src\physics\PassiveLocation.cpp" />
     <ClCompile Include="..\..\src\physics\RayCast.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
     <ClCompile Include="..\..\src\entity\animat\AnimatController.cpp" />
     <ClCompile Include="..\..\src\entity\animat\Sensor.cpp" />
+    <ClCompile Include="..\..\src\scripts\GameScript.cpp" />
     <ClCompile Include="..\..\src\scripts\MainScript.cpp" />
     <ClCompile Include="..\..\src\entity\planet\gfx\Planet.cpp" />
     <ClCompile Include="..\..\src\entity\planet\physics\PlanetBody.cpp" />
