@@ -18,6 +18,8 @@ namespace physics
 	class ContactInterface
 	{
 	public:
+		OBJECT_NO_COPY(ContactInterface);
+
 		virtual ~ContactInterface() { }
 		virtual void operator() (ContactGeom const * begin, ContactGeom const * end) = 0;
 	};

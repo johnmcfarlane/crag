@@ -31,6 +31,8 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
+		OBJECT_NO_COPY(Thruster);
+
 		Thruster(Entity & entity, Ray3 const & ray, bool light);
 		virtual ~Thruster();
 

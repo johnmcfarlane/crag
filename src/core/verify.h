@@ -130,17 +130,22 @@ namespace crag
 		using is_real = typename std::enable_if<std::is_floating_point<Type>::value, int>::type;
 		
 		// Verify that pointer is valid
-		template<typename Type> 
+#if defined(WIN32)
+		template<typename Type>
+		void VerifyPtr(Type const *) 
+		{
+		}
+#else
+		template<typename Type>
 		void VerifyPtr(Type const * ptr) 
 		{
 			// TODO: Re-enable when std::align is defined
 			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
 
-#if ! defined(WIN32)
 			CRAG_VERIFY_TRUE(! (reinterpret_cast<std::size_t>(ptr) & (alignof(Type) - 1)));
-#endif
 		}
-		
+#endif
+
 		// Verify that the reference is not null - nor a value suspiciously close to null.
 		template <typename Type>
 		void VerifyRef(Type const & ref)
