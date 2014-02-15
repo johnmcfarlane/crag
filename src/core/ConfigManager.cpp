@@ -43,15 +43,13 @@ namespace
 using core::ConfigManager;
 
 
-ConfigManager::ConfigManager(int argc, char * const * argv)
+ConfigManager::ConfigManager()
 {
 	if (! Load())
 	{
 		// Make sure we always have a config file handy.
 		Save();
 	}
-	
-	Parse(argc, argv);
 }
 
 ConfigManager::~ConfigManager()
@@ -169,7 +167,7 @@ void ConfigManager::Save()
 #endif
 }
 
-void ConfigManager::Parse(int argc, char * const * argv)
+bool ConfigManager::ParseCommandLine(int argc, char * const * argv)
 {
 	char current_value[max_string_size];
 	char default_value[max_string_size];
@@ -196,12 +194,14 @@ void ConfigManager::Parse(int argc, char * const * argv)
 		if (parameter == nullptr)
 		{
 			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" in command %s.", name_string, * argv);
-			continue;
+			return false;
 		}
 		
 		parameter->Get(current_value, default_value);
 		parameter->Set(value_string, default_value);
 	}
+	
+	return true;
 }
 
 #else
@@ -215,8 +215,9 @@ void ConfigManager::Save()
 {
 }
 
-void ConfigManager::Parse(int, char * const *)
+bool ConfigManager::ParseCommandLine(int, char * const *)
 {
+	return true
 }
 
 #endif	// ENABLE_CONFIG
