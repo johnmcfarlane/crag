@@ -193,7 +193,7 @@ bool ConfigManager::ParseCommandLine(int argc, char * const * argv)
 		auto parameter = ConfigEntry::find(name_string);
 		if (parameter == nullptr)
 		{
-			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" in command %s.", name_string, * argv);
+			ERROR_MESSAGE("ConfigManager: unrecognised command line parameter \"%s\"", name_string, * argv);
 			return false;
 		}
 		
