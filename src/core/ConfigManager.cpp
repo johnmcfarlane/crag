@@ -208,7 +208,7 @@ void ConfigManager::Parse(int argc, char * const * argv)
 
 bool ConfigManager::Load()
 {
-	return false;
+	return true;
 }
 
 void ConfigManager::Save()
