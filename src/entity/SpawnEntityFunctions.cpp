@@ -368,8 +368,13 @@ namespace
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Vector3(0, 0, -1), sim::Vector3(0, 0, 1), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Vector3(0, -.25, 0), sim::Vector3(0, .25, 0), SDL_SCANCODE_B);
+		auto back = -.525f;
+		auto forward = 1.f;
+		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
+		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
+		AddRoverThruster(controller, sim::Vector3(0, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_SPACE);
+		AddRoverThruster(controller, sim::Vector3(+.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_LEFT);
+		AddRoverThruster(controller, sim::Vector3(-.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_RIGHT);
 	}
 }
 
