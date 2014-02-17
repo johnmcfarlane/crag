@@ -87,6 +87,9 @@ namespace
 	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
 	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 
+	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.05f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
 	
@@ -348,8 +351,8 @@ namespace
 		auto velocity = sim::Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
-		body.SetLinearDamping(.01f);
-		body.SetAngularDamping(.01f);
+		body.SetLinearDamping(ship_linear_damping);
+		body.SetAngularDamping(ship_angular_damping);
 		entity.SetLocation(& body);
 
 		// graphics
