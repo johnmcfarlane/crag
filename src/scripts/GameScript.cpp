@@ -49,7 +49,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 ship_start_pos(0, 9999400, -5);
+	sim::Vector3 ship_start_pos(0, 9999410, 0);
+	sim::Vector3 camera_start_pos(0, 9999410, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
@@ -200,8 +201,8 @@ void GameScript(applet::AppletInterface & applet_interface)
 	// Set camera position
 	{
 		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(geom::Cast<geom::abs::Scalar>(ship_start_pos));
-		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, -1)));
+		event.transformation.SetTranslation(geom::Cast<geom::abs::Scalar>(camera_start_pos));
+		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, 1)));
 		gfx::Daemon::Broadcast(event);
 	}
 	
@@ -227,7 +228,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	_ship = SpawnShip(ship_start_pos);
 
 	// Create camera.
-	sim::EntityHandle camera = SpawnCamera(_ship);
+	sim::EntityHandle camera = SpawnCamera(camera_start_pos, _ship);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())

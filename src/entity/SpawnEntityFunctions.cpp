@@ -64,7 +64,7 @@ namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
-	
+
 	CONFIG_DEFINE (box_density, physics::Scalar, 1);
 	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
 	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
@@ -283,14 +283,8 @@ namespace
 #endif
 	}
 
-	void ConstructCamera(sim::Entity & camera, sim::EntityHandle subject_handle)
+	void ConstructCamera(sim::Entity & camera, sim::Vector3 const & position, sim::EntityHandle subject_handle)
 	{
-		auto & engine = camera.GetEngine();
-		auto subject = engine.GetObject(subject_handle.GetUid());
-		auto subject_location = subject->GetLocation();
-		auto position = subject_location->GetTranslation();
-		position.y += 5;
-		
 		// physics
 		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), sim::Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
@@ -417,12 +411,12 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 	return observer;
 }
 
-sim::EntityHandle SpawnCamera(sim::EntityHandle subject)
+sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject)
 {
 	auto camera = sim::EntityHandle::CreateHandle();
 
-	camera.Call([subject] (sim::Entity & entity) {
-		ConstructCamera(entity, subject);
+	camera.Call([position, subject] (sim::Entity & entity) {
+		ConstructCamera(entity, position, subject);
 	});
 
 	return camera;
