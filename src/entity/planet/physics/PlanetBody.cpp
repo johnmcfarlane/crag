@@ -16,6 +16,9 @@
 #include "form/CastRay.h"
 #include "form/ForEachFaceInSphere.h"
 
+#include "gfx/Mesh.h"
+#include "gfx/PlainVertex.h"
+
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,9 +83,11 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	// TODO: make thread-safe; this is low-priority because:
 	// a) using single-threaded collision;
 	// b) thread-safety strategy is likely to depend on specifics of parallelization
-	static std::vector<Vector3> vertices;
-	static std::vector<dTriIndex> indices;
+	static Mesh mesh;
 	static std::vector<Vector3> normals;
+
+	auto & vertices = mesh.GetVertices();
+	auto & indices = mesh.GetIndices();
 	
 	ASSERT(vertices.empty());
 	ASSERT(indices.empty());
@@ -93,8 +98,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	Vector3 max_depth_normal;
 	auto face_functor = [&] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
-		Vector3 center = geom::Center(face);
-		form::Plane3 plane(center, normal);
+		Vector3 centroid = geom::Centroid(face);
+		form::Plane3 plane(centroid, normal);
 		
 		auto distance = Distance(plane, bounding_sphere.center);
 		if (distance > bounding_sphere.radius)
@@ -114,7 +119,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 		for (auto & point : face.points)
 		{
 			indices.push_back(index --);
-			vertices.push_back(point);
+			vertices.push_back(gfx::PlainVertex{ point });
 			normals.push_back(normal);
 		}
 	};
@@ -132,8 +137,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	MeshData mesh_data = dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSingle1(mesh_data,
-		vertices.front().GetAxes(), sizeof(Vector3), vertices.size(),
-		indices.data(), indices.size(), sizeof(dTriIndex),
+		vertices.front().pos.GetAxes(), sizeof(Mesh::VertexType), vertices.size(),
+		indices.data(), indices.size(), sizeof(Mesh::IndexType),
 		reinterpret_cast<int *>(normals.data()));
 
 	CollisionHandle mesh_collision_handle = dCreateTriMesh(nullptr, mesh_data, nullptr, nullptr, nullptr);

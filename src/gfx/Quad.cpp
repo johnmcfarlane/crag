@@ -45,6 +45,11 @@ void Pointer<Quad::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Quad member definitions
 
+Quad::Quad(Quad && rhs)
+: _quad(std::move(rhs._quad))
+{
+}
+
 Quad::Quad(float depth_offset)
 {
 	float const z = depth_offset;
@@ -69,11 +74,6 @@ Quad::Quad(float depth_offset)
 	_quad.Unbind();
 }
 
-Quad::~Quad()
-{
-	_quad.Deinit();
-}
-
 Transformation Quad::CalculateModelViewTransformation(Transformation const & leaf, float radius) const
 {
 	Transformation::Vector3 translation = leaf.GetTranslation();
@@ -85,7 +85,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 	}
 	
 	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
-	Transformation::Matrix33 rotation = Inverse(gfx::Rotation(camera_to_center));
+	Transformation::Matrix33 rotation = gfx::Rotation(camera_to_center);
 
 	return Transformation(translation, rotation, radius);
 }

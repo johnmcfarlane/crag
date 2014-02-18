@@ -248,7 +248,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 //			sun1.Call([] (sim::Entity & entity) {
 //				auto location = entity.GetLocation();
 //				auto time = app::GetTime() * 0.1;
-//				auto pos = geom::Vector3d(sinf(time) * 50000000, cosf(time) * 50000000, 0);
+//				auto pos = geom::Vector3d(std::sin(time) * 50000000, std::cos(time) * 50000000, 0);
 //				auto & engine = entity.GetEngine();
 //				auto & origin = engine.GetOrigin();
 //				location->SetTransformation(geom::AbsToRel(pos, origin));
@@ -257,7 +257,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 			sun2.Call([] (sim::Entity & entity) {
 				auto location = entity.GetLocation();
 				auto time = app::GetTime() * 0.21314;
-				auto pos = geom::Vector3d(sinf(time) * 70000000, cosf(time) * 70000000, 0);
+				auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
 				auto & engine = entity.GetEngine();
 				auto & origin = engine.GetOrigin();
 				location->SetTransformation(geom::AbsToRel(pos, origin));

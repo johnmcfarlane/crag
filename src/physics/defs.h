@@ -14,12 +14,21 @@
 #include <ode/contact.h>
 #include <ode/mass.h>
 
+////////////////////////////////////////////////////////////////////////////////
+// forward-declarations
+
 namespace geom
 {
 	template <typename S, int R, int C>
 	class Matrix;
 	template <typename S>
 	class Transformation;
+}
+
+namespace gfx
+{
+	template <typename Vertex, typename Index> class Mesh;
+	struct PlainVertex;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +53,8 @@ namespace physics
 	typedef geom::Transformation<Scalar> Transformation;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
 
+	typedef gfx::Mesh<gfx::PlainVertex, dTriIndex> Mesh;
+	
 	inline void Convert(dVector3 & lhs, Vector3 const & rhs)
 	{
 		memcpy(lhs, & rhs, sizeof(Vector3));

@@ -14,7 +14,6 @@
 #include "gfx/axes.h"
 #include "gfx/Program.h"
 #include "gfx/Engine.h"
-#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
@@ -22,7 +21,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
-
+#include "core/ResourceManager.h"
 
 using namespace gfx;
 
@@ -35,12 +34,12 @@ Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformat
 {
 	CRAG_VERIFY_EQUAL(_color.a, 1);
 	
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
+	auto & resource_manager = crag::core::ResourceManager::Get();
 
-	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::sphere);
-	SetProgram(sphere_program);
+	auto const & sphere_program = * resource_manager.GetHandle<DiskProgram>("SphereProgram");
+	SetProgram(& sphere_program);
 	
-	auto & sphere_quad = resource_manager.GetVbo(VboIndex::sphere_quad);
+	auto & sphere_quad = * resource_manager.GetHandle<Quad>("SphereQuadVbo");
 	SetVboResource(& sphere_quad);
 }
 

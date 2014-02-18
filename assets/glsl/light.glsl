@@ -19,7 +19,7 @@ precision highp int;
 struct Light
 {
 	vec3 position;
-	vec3 color;
+	vec4 color;
 };
 
 
@@ -28,8 +28,9 @@ const int max_lights = 7;	// TODO: still quite hacky
 
 
 // light information provided by the renderer
-uniform Light lights[max_lights];
+uniform vec4 ambient;
 uniform int num_lights;
+uniform Light lights[max_lights];
 
 // support function to calculate the light shone on a given fragment by a given light
 lowp vec3 LightFragment(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
@@ -40,7 +41,7 @@ lowp vec3 LightFragment(in Light light, in highp vec3 frag_position, in highp ve
 	highp float dp = dot(frag_to_light, frag_normal);
 	highp float attenuation = max(dp / (distance * distance * distance), 0.0);
 
-	lowp vec3 color = light.color * attenuation;
+	lowp vec3 color = light.color.rgb * attenuation;
 	
 	return color;
 }
@@ -52,7 +53,7 @@ lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, 
 	return frag_normal;
 #endif
 
-	lowp vec3 illumination = vec3(0);
+	lowp vec3 illumination = ambient.rgb;
 	
 	for (int i = 0; i < num_lights; ++ i)
 	{

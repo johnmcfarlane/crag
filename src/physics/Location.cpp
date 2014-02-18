@@ -58,16 +58,6 @@ void Location::SetTransformation(Transformation const & transformation)
 	_transformation = transformation;
 }
 
-Vector3 Location::Transform(Vector3 local_position) const
-{
-	return _transformation.Transform(local_position);
-}
-
-Vector3 Location::Rotate(Vector3 local_rotation) const
-{
-	return _transformation.Rotate(local_rotation);
-}
-
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Location, self)
 	CRAG_VERIFY(self._transformation);
 CRAG_VERIFY_INVARIANTS_DEFINE_END

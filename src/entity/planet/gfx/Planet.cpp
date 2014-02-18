@@ -12,17 +12,11 @@
 #include "Planet.h"
 
 #include "gfx/axes.h"
-#include "gfx/Program.h"
 #include "gfx/Quad.h"
-#include "gfx/Engine.h"
-#include "gfx/ResourceManager.h"
 
-#include "geom/Ray.h"
-#include "geom/Transformation.h"
-
+#include "core/ResourceManager.h"
 
 using namespace gfx;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
@@ -33,9 +27,11 @@ Planet::Planet(LeafNode::Init const & init, Transformation const & local_transfo
 	: LeafNode(init, local_transformation, Layer::foreground)
 , _sea_level(radius)
 {
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
-	Program * sphere_program = resource_manager.GetProgram(ProgramIndex::fog);
-	SetProgram(sphere_program);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	auto const & sphere_quad = * resource_manager.GetHandle<Quad>("SphereQuadVbo");
+
+	SetVboResource(& sphere_quad);
 }
 
 void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
@@ -67,12 +63,4 @@ void Planet::Render(Engine const &) const
 	{
 		return;
 	}
-	
-//	FogProgram const & fog_program = static_cast<FogProgram const &>(ref(GetProgram()));
-//	Transformation const & transformation = GetModelViewTransformation();
-//	Color4f color(.5f,.5f,.9f);
-//	fog_program.SetUniforms(transformation, color, .5f);
-//
-//	Quad const & sphere_quad = static_cast<Quad const &>(ref(GetVboResource()));
-//	sphere_quad.Draw();
 }

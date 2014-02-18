@@ -46,7 +46,10 @@ namespace gfx
 		
 		~BufferObject()
 		{
-			CRAG_VERIFY_FALSE(IsInitialized());
+			if (IsInitialized())
+			{
+				Deinit();
+			}
 		}
 
 		BufferObject & operator=(BufferObject const &) = delete;

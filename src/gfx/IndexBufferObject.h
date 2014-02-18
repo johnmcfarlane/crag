@@ -10,7 +10,7 @@
 #pragma once
 
 #include "BufferObject.h"
-
+#include "defs.h"
 
 namespace gfx
 {
@@ -19,6 +19,19 @@ namespace gfx
 	{
 		typedef BufferObject<ElementIndex, GL_ELEMENT_ARRAY_BUFFER> super;
 	public:
+		IndexBufferObject() = default;
+
+		IndexBufferObject(IndexBufferObject && rhs)
+			: super(std::move(rhs))
+		{
+		}
+
+		IndexBufferObject & operator=(IndexBufferObject && rhs)
+		{
+			super::operator=(std::move(rhs));
+			return * this;
+		}
+
 		void DrawElements(GLenum mode, GLsizei count, GLuint first = 0) const
 		{
 			ASSERT(IsBound());

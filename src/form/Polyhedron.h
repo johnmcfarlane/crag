@@ -27,11 +27,12 @@ namespace form
 	// is that that have a different root_node and likely live in a different coordinate space.
 	class Polyhedron
 	{
-		// TODO: OBJECT_NO_COPY(Polyhedron);
 	public:
 		Polyhedron(Formation & formation);
 		Polyhedron(Polyhedron const & rhs);
 		~Polyhedron();
+
+		Polyhedron & operator=(Polyhedron const &) = delete;
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Polyhedron);
 		

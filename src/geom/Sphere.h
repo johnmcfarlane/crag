@@ -165,9 +165,4 @@ namespace geom
 	{
 		return Sphere<S, N>::Properties::Volume(s.radius);
 	}
-
-	template<typename S, int N> S RadiusFromVolume(Sphere<S, N> const & s)
-	{
-		return Sphere<S, N>::Properties::RadiusFromVolume(s.radius);
-	}
 }

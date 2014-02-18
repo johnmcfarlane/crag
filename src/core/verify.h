@@ -129,35 +129,33 @@ namespace crag
 		template <typename Type>
 		using is_real = typename std::enable_if<std::is_floating_point<Type>::value, int>::type;
 		
-		template <typename Type>
-		using is_class = typename std::enable_if<std::is_class<Type>::value, int>::type;
-		
-		template <typename Type>
-		using is_other = typename std::enable_if<! is_real<Type>::value, int>::type;
-		
+		// Verify that pointer is valid
+#if defined(WIN32)
+		template<typename Type>
+		void VerifyPtr(Type const *) 
+		{
+		}
+#else
+		template<typename Type>
+		void VerifyPtr(Type const * ptr) 
+		{
+			// TODO: Re-enable when std::align is defined
+			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
+
+			CRAG_VERIFY_TRUE(! (reinterpret_cast<std::size_t>(ptr) & (alignof(Type) - 1)));
+		}
+#endif
+
 		// Verify that the reference is not null - nor a value suspiciously close to null.
 		template <typename Type>
 		void VerifyRef(Type const & ref)
 		{
-			// TODO: Re-enable when std::align is defined
-			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
-			
-			CRAG_VERIFY_TRUE(! (reinterpret_cast<std::size_t>(& ref) & (alignof(Type) - 1)));
-			
+			// a reference is everything a pointer is, plus it's non-null
 			CRAG_VERIFY_TRUE(& ref);
+
+			VerifyPtr(& ref);
 		}
 
-		// Verify that pointer is valid
-		template<typename Type> 
-		void VerifyPtr(Type const * ptr) 
-		{
-			if (ptr)
-			{
-				// a reference is everything a pointer is, plus it's non-null
-				VerifyRef(* ptr);
-			}
-		}
-		
 		// void pointer
 		inline void VerifyInvariants(void const *)
 		{
@@ -172,7 +170,8 @@ namespace crag
 			
 			// b must be 0 or 1
 			auto c = reinterpret_cast<unsigned char const &>(b);
-			CRAG_VERIFY_OP(c, <=, true);
+			auto t = static_cast<unsigned char>(true);
+			CRAG_VERIFY_OP(c, <= , t);
 		}
 
 		// integer
@@ -182,7 +181,7 @@ namespace crag
 		}
 
 		// real
-		template <typename Type, is_real<Type> = 0>
+		template <typename Type, typename std::enable_if<std::is_floating_point<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type real)
 		{
 			CRAG_VERIFY_FALSE(IsInf(real));
@@ -199,7 +198,7 @@ namespace crag
 		}
 
 		// classes with VerifyInvariants function
-		template <typename Type, is_class<Type> = 0>
+		template <typename Type, typename std::enable_if<std::is_class<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type const & object)
 		{
 			VerifyRef(object);
@@ -214,7 +213,7 @@ namespace crag
 		}
 
 		// everything else
-		template <typename Type, is_other<Type> = 0>
+		template <typename Type, typename ::std::enable_if<! ::std::is_floating_point<Type>::value && ! std::is_class<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type const & object)
 		{
 			VerifyRef(object);

@@ -11,6 +11,8 @@
 
 #include "SpawnEntityFunctions.h"
 
+#include "camera/CameraController.h"
+
 #include "observer/MouseObserverController.h"
 #include "observer/TouchObserverController.h"
 
@@ -28,6 +30,7 @@
 #include "physics/BoxBody.h"
 #include "physics/Engine.h"
 #include "physics/GhostBody.h"
+#include "physics/MeshBody.h"
 #include "physics/PassiveLocation.h"
 #include "physics/SphericalBody.h"
 
@@ -35,13 +38,14 @@
 
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
-#include "gfx/object/Box.h"
 #include "gfx/object/Light.h"
+#include "gfx/object/MeshObject.h"
 
 #include "geom/origin.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
+#include "core/ResourceManager.h"
 
 #if defined(CRAG_USE_MOUSE)
 CONFIG_DEFINE (observer_use_touch, bool, false);
@@ -60,7 +64,7 @@ namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
-	
+
 	CONFIG_DEFINE (box_density, physics::Scalar, 1);
 	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
 	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
@@ -77,11 +81,108 @@ namespace
 
 	CONFIG_DEFINE (observer_light_color, geom::Vector3f, geom::Vector3f(0.6f, 0.8f, 1.0f) * 1.f);
 
+	CONFIG_DEFINE (camera_radius, float, .5);
+	CONFIG_DEFINE (camera_density, float, 1);
+	
+	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
+
+	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.05f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
 	
+	template <typename IndexType>
+	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateShipMesh()
+	{
+		// ship mesh
+		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
+		
+		// add vertices
+		auto & vertices = mesh.GetVertices();
+		vertices.reserve(5);
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, 0.f, 1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(-1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, -.25f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, .25f, -1.f) });
+		ASSERT(vertices.size() == vertices.capacity());
+
+		// add faces
+		auto & indices = mesh.GetIndices();
+		indices.reserve(18);
+		auto add_face = [& indices] (int a, int b, int c)
+		{
+			indices.push_back(a);
+			indices.push_back(b);
+			indices.push_back(c);
+		};
+		add_face(0, 1, 4);
+		add_face(0, 4, 2);
+		add_face(0, 2, 3);
+		add_face(0, 3, 1);
+		add_face(1, 3, 4);
+		add_face(2, 4, 3);
+		ASSERT(indices.size() == indices.capacity());
+		
+		// translate centroid to origin
+		auto centroid = CalculateCentroidAndVolume(mesh);
+		for (auto & vertex : vertices)
+		{
+			vertex.pos -= centroid.first;
+		}
+		
+		// return result
+		CRAG_VERIFY(mesh);
+		return mesh;
+	}
+	
+	// given a Mesh comprising unique vertex entries,
+	// generates a GPU-friendly mesh with flat shading
+	gfx::LitMesh GenerateFlatLitMesh(physics::Mesh const & source_mesh, gfx::Color4f const & color = gfx::Color4f::White())
+	{
+		auto & source_vertices = source_mesh.GetVertices();
+		auto & source_indices = source_mesh.GetIndices();
+		auto num_source_indices = source_indices.size();
+
+		gfx::LitMesh destination_mesh;
+
+		auto & destination_vertices = destination_mesh.GetVertices();
+		auto & destination_indices = destination_mesh.GetIndices();
+		
+		destination_vertices.reserve(num_source_indices);
+		destination_indices.reserve(num_source_indices);
+
+		for (auto index_index = 0u; index_index != num_source_indices; index_index += 3)
+		{
+			gfx::Triangle3 source_triangle;
+			for (int i = 0; i != 3; ++ i)
+			{
+				auto vert_index = source_indices[index_index + i];
+				source_triangle.points[i] = source_vertices[vert_index].pos;
+			}
+
+			auto source_plane = geom::MakePlane(source_triangle);
+			
+			for (auto const & vertex : source_triangle.points)
+			{
+				destination_indices.push_back(destination_vertices.size());
+				destination_vertices.push_back(gfx::LitVertex({ vertex, source_plane.normal, color, 0.f }));
+			}
+		}
+		
+		CRAG_VERIFY_EQUAL(source_vertices.size(), source_vertices.capacity());
+		CRAG_VERIFY_EQUAL(source_indices.size(), source_indices.capacity());
+
+		CRAG_VERIFY(destination_mesh);
+		return destination_mesh;
+	}
+	
 	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, sim::Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
 	{
+		auto & resource_manager = crag::core::ResourceManager::Get();
+
 		// physics
 		sim::Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -94,7 +195,9 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
-		auto model = gfx::BoxHandle::CreateHandle(local_transformation, size, color);
+		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("CuboidVbo");
+		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("CuboidPlainMesh");
+		auto model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, size, lit_vbo, plain_mesh);
 		box.SetModel(model);
 	}
 
@@ -180,6 +283,15 @@ namespace
 #endif
 	}
 
+	void ConstructCamera(sim::Entity & camera, sim::Vector3 const & position, sim::EntityHandle subject_handle)
+	{
+		// physics
+		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), sim::Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+
+		// controller
+		camera.SetController(new sim::CameraController(camera, subject_handle));
+	}
+
 	void AddRoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
 	{
 		auto & entity = controller.GetEntity();
@@ -199,6 +311,64 @@ namespace
 		AddRoverThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
 		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+	}
+	
+	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
+	{
+		// resources
+		auto & resource_manager = crag::core::ResourceManager::Get();
+		resource_manager.Register<physics::Mesh>("ShipPhysicsMesh", [] ()
+		{
+			return GenerateShipMesh<dTriIndex>();
+		});
+		resource_manager.Register<gfx::PlainMesh>("ShipPlainMesh", [] ()
+		{
+			return GenerateShipMesh<gfx::ElementIndex>();
+		});
+		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
+			return GenerateFlatLitMesh(* physics_mesh);
+		});
+		
+		auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+		resource_manager.Register<gfx::LitVboResource>("ShipVbo", [lit_mesh_handle] ()
+		{
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+
+		// physics
+		sim::Engine & sim_engine = entity.GetEngine();
+		physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
+
+		auto velocity = sim::Vector3::Zero();
+		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
+		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
+		body.SetLinearDamping(ship_linear_damping);
+		body.SetAngularDamping(ship_angular_damping);
+		entity.SetLocation(& body);
+
+		// graphics
+		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
+		gfx::Color4f const & color = gfx::Color4f::White();
+		gfx::Vector3 scale(1.f, 1.f, 1.f);
+		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
+		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipPlainMesh");
+		gfx::ObjectHandle model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
+		entity.SetModel(model);
+		
+		// controller
+		auto& controller = ref(new sim::VehicleController(entity));
+		entity.SetController(& controller);
+
+		auto back = -.525f;
+		auto forward = 1.f;
+		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
+		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
+		AddRoverThruster(controller, sim::Vector3(0, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_SPACE);
+		AddRoverThruster(controller, sim::Vector3(+.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_LEFT);
+		AddRoverThruster(controller, sim::Vector3(-.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_RIGHT);
 	}
 }
 
@@ -239,6 +409,17 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 	});
 
 	return observer;
+}
+
+sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject)
+{
+	auto camera = sim::EntityHandle::CreateHandle();
+
+	camera.Call([position, subject] (sim::Entity & entity) {
+		ConstructCamera(entity, position, subject);
+	});
+
+	return camera;
 }
 
 sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters)
@@ -312,4 +493,15 @@ sim::EntityHandle SpawnRover(sim::Vector3 const & position)
 	});
 
 	return vehicle;
+}
+
+sim::EntityHandle SpawnShip(sim::Vector3 const & position)
+{
+	auto ship = sim::EntityHandle::CreateHandle();
+
+	ship.Call([position] (sim::Entity & entity) {
+		ConstructShip(entity, position);
+	});
+
+	return ship;
 }

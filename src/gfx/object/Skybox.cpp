@@ -11,14 +11,15 @@
 
 #include "Skybox.h"
 
+#include "gfx/Engine.h"
 #include "gfx/Image.h"
 #include "gfx/Pov.h"
-#include "gfx/Engine.h"
-#include "gfx/ResourceManager.h"
 #include "gfx/Scene.h"
+#include "gfx/Program.h"
+
+#include "core/ResourceManager.h"
 
 using namespace gfx;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // vertex helper functions
@@ -53,10 +54,10 @@ Skybox::Skybox(LeafNode::Init const & init)
 {
 	InitVerts();
 
-	ResourceManager & resource_manager = init.engine.GetResourceManager();
+	auto const & resource_manager = crag::core::ResourceManager::Get();
 	
-	Program * skybox_program = resource_manager.GetProgram(ProgramIndex::skybox);
-	SetProgram(skybox_program);
+	auto const & skybox_program = * resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
+	SetProgram(& skybox_program);
 }
 
 Skybox::~Skybox()

@@ -142,6 +142,9 @@ namespace crag
 #if defined(__GNUC__)
 			// TODO: remove this once project builds under Android ok
 			StorageType storage __attribute__((aligned(max_align)));
+#elif defined(WIN32)
+			// winging it
+			StorageType storage;
 #else
 			alignas(max_align) StorageType storage;
 #endif

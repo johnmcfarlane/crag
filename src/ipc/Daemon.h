@@ -264,6 +264,7 @@ namespace ipc
 			SetState(State::acknowledge_flush_end);
 		
 			// destroy engine
+			CRAG_VERIFY(engine);
 			_engine = nullptr;
 		}
 		

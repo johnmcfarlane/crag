@@ -9,18 +9,16 @@
 
 #pragma once
 
-#include "gfx/object/Light.h"
-
 #include "Shader.h"
+#include "Uniform.h"
+
+#include "gfx/object/Light.h"
 
 #include "geom/Transformation.h"
 
 
 namespace gfx
 {
-	// function declarations
-	GLuint InitShader(char const * filename, GLenum shader_type);
-
 	// an application-specific shader program that manages its shaders
 	// TODO: Make SetUniforms virtual, include lights and matrices, 
 	// implement dirty cache to lazily update uniforms when bound
@@ -28,28 +26,27 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Program);
 	public:
-		Program();
+		Program(Program && rhs);
+		Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		virtual ~Program();
 		
 		bool IsInitialized() const;
 		bool IsLinked() const;
 		bool IsBound() const;
 		
-		bool Init(char const * const * vert_sources, char const * const * frag_sources);
-		void Deinit();
-		
 		void Bind() const;
 		void Unbind() const;
 		
-		void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
-		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
+		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
+		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		
 	protected:
-		GLint GetUniformLocation(char const * name) const;
+		void BindAttribLocation(int index, char const * name) const;
+		template <typename Type> void InitUniformLocation(Uniform<Type> & uniform, char const * name) const;
+		void Finalize();	// must be called at end of construction (hacky)
 
-		virtual void InitAttribs(GLuint id);
+	private:
 		virtual void InitUniforms();
-		
 		void GetInfoLog(std::string & info_log) const;
 		void Verify() const;
 
@@ -57,32 +54,65 @@ namespace gfx
 		GLuint _id;
 		Shader _vert_shader;
 		Shader _frag_shader;
-		GLint _projection_matrix_location;
-		GLint _model_view_matrix_location;
 	};
 	
-	// a program that requires light-related information
-	class LightProgram : public Program
+	class Program3d : public Program
 	{
+	public:
+		// types
+		using super = Program;
+		
+		// functions
+		Program3d(Program3d && rhs);
+		Program3d(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
+		void SetProjectionMatrix(Matrix44 const & projection_matrix) const final;
+		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const final;
+		
+		void InitUniforms() override;
+
+	private:
+		// variables
+		Uniform<Matrix44> _projection_matrix;
+		Uniform<Matrix44> _model_view_matrix;
+	};
+		
+	// a program that requires light-related information
+	class LightProgram : public Program3d
+	{
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
 		// set of uniform ids needed to specify lights to a glsl program
-		struct LightLocation
+		struct LightUniforms
 		{
-			unsigned position = 0;
-			unsigned color = 0;
+			Uniform<Vector3> position;
+			Uniform<Color4f> color;
 		};
 
 	public:
+		using super = Program3d;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
 		virtual void InitUniforms() override;
-		void SetLight(Light const & light);
-		void SetLights(Light::List const & lights, LightType filter);
+		LightProgram(LightProgram && rhs);
+		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
+		void SetLight(Light const & light) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const;
 
 	private:
 
-		void SetLight(Light const & light, int index);
-		void AddLight();
+		void SetLight(Light const & light, int index) const;
 		
-		unsigned _num_lights_location;
-		std::vector<LightLocation> _light_locations;
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		
+		Uniform<Color4f> _ambient;
+		Uniform<int> _num_lights;
+		std::array<LightUniforms, 8> _lights;
 	};
 
 	class PolyProgram : public LightProgram
@@ -92,87 +122,75 @@ namespace gfx
 		
 		// functions
 	public:
-		PolyProgram();
+		PolyProgram(PolyProgram && rhs);
+		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const;
+		void SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool relief_enabled = false) const;
 	private:
-		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override final;
 		
 		// variables
-		GLint _color_location;
-		GLint _fragment_lighting_location;
-		GLint _flat_shade_location;
+		Uniform<Color4f> _color;
+		Uniform<bool> _fragment_lighting;
+		Uniform<bool> _flat_shade;
+		Uniform<bool> _relief_enabled;
 	};
 
-	class ShadowProgram : public Program
+	class ShadowProgram : public Program3d
 	{
 	public:
-		ShadowProgram();
-	private:
-		virtual void InitAttribs(GLuint id) final;
+		ShadowProgram(ShadowProgram && rhs);
+		ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	class ScreenProgram : public Program
 	{
 	public:
-		ScreenProgram();
-	private:
-		virtual void InitAttribs(GLuint id) final;
+		ScreenProgram(ScreenProgram && rhs);
+		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	class DiskProgram : public LightProgram
 	{
+	public:
 		// types
 		typedef LightProgram super;
 		
 		// functions
-	public:
-		DiskProgram();
+		DiskProgram(DiskProgram && rhs);
+		DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
 	private:
-		virtual void InitAttribs(GLuint id) override;
 		virtual void InitUniforms() override;
 
 		// variables
-		GLint _color_location;
-		GLint _center_location;
-		GLint _radius_location;
-	};
-	
-	class FogProgram : public DiskProgram
-	{
-	public:
-		FogProgram();
-		
-		void SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float radius, float density) const;
-	private:
-		virtual void InitAttribs(GLuint id) override final;
-		virtual void InitUniforms() override final;
-		
-		// variables
-		GLint _density_location;
+		Uniform<Color4f> _color;
+		Uniform<Vector3> _center;
+		Uniform<float> _radius;
 	};
 	
 	// used by skybox
-	class TexturedProgram : public Program
+	class TexturedProgram : public Program3d
 	{
-	private:
-		virtual void InitAttribs(GLuint id) override final;
+	public:
+		TexturedProgram(TexturedProgram && rhs);
+		TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
 	// used to render text
 	class SpriteProgram : public Program
 	{
 	public:
+		SpriteProgram(SpriteProgram && rhs);
+		SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+		
 		void SetUniforms(geom::Vector2i const & resolution) const;
 	private:
-		virtual void InitAttribs(GLuint id) override final;
 		virtual void InitUniforms() override final;
 		
 		// variables
-		GLint _position_scale_location;
-		GLint _position_offset_location;
+		Uniform<Vector2> _position_scale;
+		Uniform<Vector2> _position_offset;
 	};
 }

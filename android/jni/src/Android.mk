@@ -24,12 +24,16 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/memory.cpp \
 	$(CRAG_PATH)/core/profile.cpp \
 	$(CRAG_PATH)/core/Random.cpp \
+	$(CRAG_PATH)/core/Resource.cpp \
+	$(CRAG_PATH)/core/ResourceManager.cpp \
 	$(CRAG_PATH)/core/Roster.cpp \
 	$(CRAG_PATH)/core/Statistics.cpp \
+	$(CRAG_PATH)/core/TypeId.cpp \
 	$(CRAG_PATH)/entity/animat/AnimatController.cpp \
 	$(CRAG_PATH)/entity/animat/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/animat/Genome.cpp \
 	$(CRAG_PATH)/entity/animat/Sensor.cpp \
+	$(CRAG_PATH)/entity/camera/CameraController.cpp \
 	$(CRAG_PATH)/entity/observer/Contact.cpp \
 	$(CRAG_PATH)/entity/observer/MouseObserverController.cpp \
 	$(CRAG_PATH)/entity/observer/ObserverInput.cpp \
@@ -68,24 +72,24 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
 	$(CRAG_PATH)/gfx/Image.cpp \
 	$(CRAG_PATH)/gfx/object/Ball.cpp \
-	$(CRAG_PATH)/gfx/object/Box.cpp \
-	$(CRAG_PATH)/gfx/object/FormationGeneration.cpp \
 	$(CRAG_PATH)/gfx/object/Surrounding.cpp \
 	$(CRAG_PATH)/gfx/object/LeafNode.cpp \
 	$(CRAG_PATH)/gfx/object/Light.cpp \
 	$(CRAG_PATH)/gfx/object/Object.cpp \
 	$(CRAG_PATH)/gfx/object/RootNode.cpp \
 	$(CRAG_PATH)/gfx/object/Skybox.cpp \
+	$(CRAG_PATH)/gfx/object/MeshObject.cpp \
 	$(CRAG_PATH)/gfx/PlainVertex.cpp \
 	$(CRAG_PATH)/gfx/Pov.cpp \
 	$(CRAG_PATH)/gfx/Program.cpp \
 	$(CRAG_PATH)/gfx/Quad.cpp \
+	$(CRAG_PATH)/gfx/RegisterResources.cpp \
 	$(CRAG_PATH)/gfx/RenderBuffer.cpp \
-	$(CRAG_PATH)/gfx/ResourceManager.cpp \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
 	$(CRAG_PATH)/gfx/Texture.cpp \
 	$(CRAG_PATH)/gfx/LitVertex.cpp \
+	$(CRAG_PATH)/gfx/Uniform.cpp \
 	$(CRAG_PATH)/main.cpp \
 	$(CRAG_PATH)/pch.cpp \
 	$(CRAG_PATH)/physics/Body.cpp \
@@ -93,9 +97,11 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/physics/Engine.cpp \
 	$(CRAG_PATH)/physics/GhostBody.cpp \
 	$(CRAG_PATH)/physics/Location.cpp \
+	$(CRAG_PATH)/physics/MeshBody.cpp \
 	$(CRAG_PATH)/physics/PassiveLocation.cpp \
 	$(CRAG_PATH)/physics/RayCast.cpp \
 	$(CRAG_PATH)/physics/SphericalBody.cpp \
+	$(CRAG_PATH)/scripts/GameScript.cpp \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \
 	$(CRAG_PATH)/scripts/RegulatorScript.cpp \
@@ -104,7 +110,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/sim/Engine.cpp \
 	$(CRAG_PATH)/sim/Entity.cpp \
 	$(CRAG_PATH)/sim/EntityFunctions.cpp \
-	$(CRAG_PATH)/sim/FrequencyEstimator.cpp \
 	$(CRAG_PATH)/sim/gravity.cpp \
 	$(CRAG_PATH)/ipc/Fiber.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \

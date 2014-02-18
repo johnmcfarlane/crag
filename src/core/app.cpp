@@ -224,7 +224,7 @@ bool app::IsKeyDown(SDL_Scancode key_code)
 
 bool app::IsButtonDown(int mouse_button)
 {
-	Uint8 mouse_state = SDL_GetMouseState(nullptr, nullptr);
+	auto mouse_state = SDL_GetMouseState(nullptr, nullptr);
 	return (mouse_state & SDL_BUTTON(mouse_button)) != 0;
 }
 

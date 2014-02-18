@@ -254,15 +254,36 @@ void gfx::Debug::AddTriangle(Triangle3 const & triangle, ColorPair const & color
 	mutex.unlock();
 }
 
-void gfx::Debug::AddBasis(Vector3 const & center, Vector3 const & scale, Matrix33 const & rotation)
+void gfx::Debug::AddBasis(Transformation const & transformation, Vector3 const & scale)
 {
-	AddLine(center, center + GetAxis(rotation, Direction::right) * scale.x, ColorPair(Color::Red()));
-	AddLine(center, center + GetAxis(rotation, Direction::forward) * scale.y, ColorPair(Color::Green()));
-	AddLine(center, center + GetAxis(rotation, Direction::up) * scale.z, ColorPair(Color::Blue()));
+	auto start = transformation.GetTranslation();
 	
-	AddLine(center, center - GetAxis(rotation, Direction::right) * scale.x, ColorPair(Color::Cyan()));
-	AddLine(center, center - GetAxis(rotation, Direction::forward) * scale.y, ColorPair(Color::Magenta()));
-	AddLine(center, center - GetAxis(rotation, Direction::up) * scale.z, ColorPair(Color::Yellow()));
+	auto draw_line = [&] (int axis, int pole)
+	{
+		auto offset = Vector3::Zero();
+		offset[axis] = scale[axis] * pole;
+		
+		auto end = transformation.Transform(offset);
+		
+		auto color = Color4f::Black();
+		if (pole > 0)
+		{
+			color[axis] = 1.f;
+		}
+		else
+		{
+			color[TriMod(axis + 1)] = 1.f;
+			color[TriMod(axis + 2)] = 1.f;
+		}
+
+		AddLine(start, end, color);
+	};
+
+	for (auto axis = 0; axis != 3; ++ axis)
+	{
+		draw_line(axis, -1);
+		draw_line(axis, 1);
+	}
 }
 
 #if 0

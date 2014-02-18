@@ -10,9 +10,11 @@
 #pragma once
 
 #include "LeafNode.h"
-#include "FormationGeneration.h"
 
-#include "core/double_buffer.h"
+#include "gfx/IndexedVboResource.h"
+#include "gfx/LitVertex.h"
+
+#include "form/Mesh.h"
 
 namespace gfx
 {
@@ -21,10 +23,11 @@ namespace gfx
 	{
 		// types
 		typedef LeafNode super;
+		using IndexedVboResource = gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
 		
 	public:
 		// functions
-		Surrounding(Init const & init, int max_num_quaterne);
+		Surrounding(Init const & init);
 		~Surrounding();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Surrounding);
@@ -49,10 +52,11 @@ namespace gfx
 		// CPU-side mesh geometry sent from form::Engine
 		std::shared_ptr<form::Mesh> _mesh;
 		
+		// basically, where is our origin
+		form::MeshProperties _properties;
+		
 		// contains the geometry and GL state
-		FormationGeneration _generation;
-
-		int const _max_num_quaterne;
+		IndexedVboResource _vbo_resource;
 	};
 }
 

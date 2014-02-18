@@ -15,7 +15,7 @@
 #include "IndexedVboResource.h"
 #include "Messages.h"
 #include "Program.h"
-#include "ResourceManager.h"
+#include "RegisterResources.h"
 #include "Scene.h"
 #include "SetCameraEvent.h"
 #include "SetOriginEvent.h"
@@ -26,6 +26,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
+#include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
 #if defined(NDEBUG)
@@ -41,6 +42,9 @@ CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
+CONFIG_DEFINE(ambient_r, float, .01f);
+CONFIG_DEFINE(ambient_g, float, .03f);
+CONFIG_DEFINE(ambient_b, float, .02f);
 
 namespace 
 {
@@ -56,9 +60,9 @@ namespace
 	CONFIG_DEFINE (init_culling, bool, true);
 	CONFIG_DEFINE (init_flat_shaded, bool, false);
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (init_fragment_lighting, bool, false);
+	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 #else
-	CONFIG_DEFINE (init_fragment_lighting, bool, true);
+	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, true);
 #endif
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
@@ -268,7 +272,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : scene(nullptr)
-, _resource_manager(nullptr)
 , _origin(geom::abs::Vector3::Zero())
 , _frame_duration(0)
 , last_frame_end_position(app::GetTime())
@@ -278,7 +281,7 @@ Engine::Engine()
 , vsync(false)
 , culling(init_culling)
 , _flat_shaded(init_flat_shaded)
-, _fragment_lighting(init_fragment_lighting)
+, _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -291,10 +294,14 @@ Engine::Engine()
 	{
 		quit_flag = true;
 	}
+	
+	RegisterResources();
 }
 
 Engine::~Engine()
 {
+	UnregisterResources();
+
 	Deinit();
 
 	// must be turned on by key input or by cfg edit
@@ -313,16 +320,6 @@ Scene const & Engine::GetScene() const
 	ASSERT(Daemon::IsCurrentThread());
 	
 	return ref(scene);
-}
-
-ResourceManager & Engine::GetResourceManager()
-{
-	return ref(_resource_manager);
-}
-
-ResourceManager const & Engine::GetResourceManager() const
-{
-	return ref(_resource_manager);
 }
 
 Program const * Engine::GetCurrentProgram() const
@@ -431,9 +428,10 @@ void Engine::OnAddObject(Object & object)
 
 void Engine::OnRemoveObject(Object & object)
 {
-	while (! object.IsEmpty())
+	auto & children = object.GetChildren();
+	while (! children.empty())
 	{
-		auto & back = object.Back();
+		auto & back = children.back();
 		DestroyObject(back.GetUid());
 	}
 
@@ -506,15 +504,15 @@ bool Engine::GetFlatShaded() const
 	return _flat_shaded;
 }
 
-void Engine::SetFragmentLighting(bool fragment_lighting)
+void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
 {
-	_dirty = _fragment_lighting != fragment_lighting;
-	_fragment_lighting = fragment_lighting;
+	_dirty = _fragment_lighting_enabled != fragment_lighting_enabled;
+	_fragment_lighting_enabled = fragment_lighting_enabled;
 }
 
-bool Engine::GetFragmentLighting() const
+bool Engine::GetFragmentLightingEnabled() const
 {
-	return _fragment_lighting;
+	return _fragment_lighting_enabled;
 }
 
 void Engine::OnToggleCapture()
@@ -550,7 +548,8 @@ void Engine::SetPaused(bool paused)
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	while (! quit_flag || ! scene->GetRoot().IsEmpty())
+	auto & children = scene->GetRoot().GetChildren();
+	while (! quit_flag || ! children.empty())
 	{
 		CRAG_VERIFY(* scene);
 		message_queue.DispatchMessages(* this);
@@ -600,8 +599,6 @@ bool Engine::Init()
 		return false;
 	}
 	
-	_resource_manager = new ResourceManager;
-	
 	InitVSync();
 	
 	scene = new Scene(* this);
@@ -640,9 +637,6 @@ void Engine::Deinit()
 		ASSERT(false);
 		return;
 	}
-	
-	delete _resource_manager;
-	_resource_manager = nullptr;
 	
 	Debug::Deinit();
 	
@@ -815,6 +809,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	CRAG_VERIFY(model_view_transformation);
 
 	// if it's something that'll get drawn
+	auto & children = object.GetChildren();
 	auto * leaf = object.CastLeafNodePtr();
 	if (leaf != nullptr)
 	{
@@ -824,7 +819,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (object.IsEmpty())
+		if (children.empty())
 		{
 			// destroy it
 			DestroyObject(object.GetUid());
@@ -833,7 +828,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	}
 	
 	// propagate to children
-	for (auto i = object.Begin(), end = object.End(); i != end;)
+	for (auto i = children.begin(), end = children.end(); i != end;)
 	{
 		auto & child = * i;
 		++ i;
@@ -946,36 +941,34 @@ void Engine::RenderScene()
 
 void Engine::UpdateProgramLights(Light const & light)
 {
-	auto update_program = [&] (ProgramIndex program_index)
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	auto update_program = [&] (LightProgram const & light_program)
 	{
-		auto & program = ref(_resource_manager->GetProgram(program_index));
-		SetCurrentProgram(& program);
-
-		auto & light_program = static_cast<LightProgram &>(program);
+		SetCurrentProgram(& light_program);
 		light_program.SetLight(light);
 	};
 	
-	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::disk);
-	update_program(ProgramIndex::sphere);
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
 void Engine::UpdateProgramLights(LightType light_type)
 {
+	Color4f ambient(ambient_r, ambient_g, ambient_b);
+
 	auto & lights = scene->GetLightList();
 	
-	auto update_program = [&] (ProgramIndex program_index)
+	auto update_program = [&] (LightProgram const & light_program)
 	{
-		auto & program = ref(_resource_manager->GetProgram(program_index));
-		SetCurrentProgram(& program);
-
-		auto & light_program = static_cast<LightProgram &>(program);
-		light_program.SetLights(lights, light_type);
+		SetCurrentProgram(& light_program);
+		light_program.SetLights(ambient, lights, light_type);
 	};
 	
-	update_program(ProgramIndex::poly);
-	update_program(ProgramIndex::disk);
-	update_program(ProgramIndex::sphere);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
@@ -1014,8 +1007,8 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool o
 			continue;
 		}
 		
-		Program * required_program = leaf_node.GetProgram();
-		if (required_program != nullptr)
+		auto required_program = leaf_node.GetProgram();
+		if (required_program)
 		{
 			if (required_program->IsInitialized())
 			{
@@ -1034,8 +1027,8 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool o
 			}
 		}
 		
-		VboResource const * required_vbo = leaf_node.GetVboResource();
-		if (required_vbo != nullptr)
+		auto required_vbo = leaf_node.GetVboResource();
+		if (required_vbo)
 		{
 			SetVboResource(required_vbo);
 		}
@@ -1074,8 +1067,9 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 
 	GL_CALL(glClear(GL_STENCIL_BUFFER_BIT));
 
-	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
-	SetCurrentProgram(shadow_program);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	SetCurrentProgram(& shadow_program);
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
@@ -1105,8 +1099,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 	// light
 
 	// program
-	auto screen_program = static_cast<ScreenProgram *>(_resource_manager->GetProgram(ProgramIndex::screen));
-	SetCurrentProgram(screen_program);
+	auto & screen_program = * resource_manager.GetHandle<ScreenProgram>("ScreenProgram");
+	SetCurrentProgram(& screen_program);
 
 	// state
 	glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFFL);
@@ -1152,10 +1146,11 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 
 void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light)
 {
-	auto * shadow_program = _resource_manager->GetProgram(ProgramIndex::shadow);
-	ASSERT(GetCurrentProgram() == shadow_program);
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	ASSERT(GetCurrentProgram() == & shadow_program);
 
-	shadow_program->SetProjectionMatrix(projection_matrix);
+	shadow_program.SetProjectionMatrix(projection_matrix);
 	
 	auto & shadows = scene->GetShadows();
 	auto & render_list = scene->GetRenderList();
@@ -1190,7 +1185,7 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const
 		// Set the model view matrix.
 		Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
 		auto model_view_matrix = model_view_transformation.GetMatrix();
-		shadow_program->SetModelViewMatrix(model_view_matrix);
+		shadow_program.SetModelViewMatrix(model_view_matrix);
 
 		// Draw
 		vbo_resource.Draw();
@@ -1252,13 +1247,11 @@ void Engine::DebugText()
 		}
 	}
 	
-	Program * sprite_program = _resource_manager->GetProgram(ProgramIndex::sprite);
-	if (sprite_program != nullptr)
-	{
-		SetCurrentProgram(sprite_program);
-		static_cast<SpriteProgram*>(sprite_program)->SetUniforms(app::GetResolution());
-		Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
-	}
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto const & sprite_program = * resource_manager.GetHandle<SpriteProgram>("SpriteProgram");
+	SetCurrentProgram(& sprite_program);
+	sprite_program.SetUniforms(app::GetResolution());
+	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
 }
 #endif	// defined (GATHER_STATS)
 

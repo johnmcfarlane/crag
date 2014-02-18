@@ -115,8 +115,8 @@ namespace geom
 	////////////////////////////////////////////////////////////////////////////////
 	// Volume
 
-	template<typename S, typename V> S TetrahedronVolume(V const & a, V const & b, V const & c, V const & d)
+	template<typename V> auto TetrahedronVolume(V const & a, V const & b, V const & c, V const & d) -> decltype(DotProduct(a, a))
 	{
-		return Abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
+		return std::abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
 	}
 }

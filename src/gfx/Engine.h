@@ -33,12 +33,9 @@ namespace gfx
 {
 	// forward-declarations
 	class Light;
-	class Program;
-	class ResourceManager;
 	class Scene;
 	struct SetCameraEvent;
 	struct SetOriginEvent;
-	class VboResource;
 
 	// gfx::Daemon type
 	class Engine;
@@ -75,9 +72,6 @@ namespace gfx
 		Scene & GetScene();
 		Scene const & GetScene() const;
 		
-		ResourceManager & GetResourceManager();
-		ResourceManager const & GetResourceManager() const;
-		
 		Program const * GetCurrentProgram() const;
 		void SetCurrentProgram(Program const * program);
 		
@@ -101,8 +95,8 @@ namespace gfx
 		void SetFlatShaded(bool flat_shaded);
 		bool GetFlatShaded() const;
 
-		void SetFragmentLighting(bool flat_shaded);
-		bool GetFragmentLighting() const;
+		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
+		bool GetFragmentLightingEnabled() const;
 
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
@@ -168,7 +162,6 @@ namespace gfx
 		// variables
 		
 		Scene * scene;
-		ResourceManager * _resource_manager;
 		geom::abs::Vector3 _origin;
 
 		//FrameBuffer frame_buffer;
@@ -184,7 +177,7 @@ namespace gfx
 		bool vsync;
 		bool culling;
 		bool _flat_shaded;
-		bool _fragment_lighting;
+		bool _fragment_lighting_enabled;
 		int capture_frame;
 
 #if defined(__ANDROID__)

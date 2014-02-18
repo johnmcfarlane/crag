@@ -11,12 +11,16 @@ add_executable(crag
 	core/memory.cpp
 	core/profile.cpp
 	core/Random.cpp
+	core/Resource.cpp
+	core/ResourceManager.cpp
 	core/Roster.cpp
 	core/Statistics.cpp
+	core/TypeId.cpp
 	entity/animat/AnimatController.cpp
 	entity/animat/AnimatThruster.cpp
 	entity/animat/Genome.cpp
 	entity/animat/Sensor.cpp
+	entity/camera/CameraController.cpp
 	entity/observer/Contact.cpp
 	entity/observer/MouseObserverController.cpp
 	entity/observer/ObserverInput.cpp
@@ -55,24 +59,24 @@ add_executable(crag
 	gfx/glHelpers.cpp
 	gfx/Image.cpp
 	gfx/object/Ball.cpp
-	gfx/object/Box.cpp
-	gfx/object/FormationGeneration.cpp
 	gfx/object/Surrounding.cpp
 	gfx/object/LeafNode.cpp
 	gfx/object/Light.cpp
 	gfx/object/Object.cpp
 	gfx/object/RootNode.cpp
 	gfx/object/Skybox.cpp
+	gfx/object/MeshObject.cpp
 	gfx/PlainVertex.cpp
 	gfx/Pov.cpp
 	gfx/Program.cpp
 	gfx/Quad.cpp
+	gfx/RegisterResources.cpp
 	gfx/RenderBuffer.cpp
-	gfx/ResourceManager.cpp
 	gfx/Scene.cpp
 	gfx/Shader.cpp
 	gfx/Texture.cpp
 	gfx/LitVertex.cpp
+	gfx/Uniform.cpp
 	main.cpp
 	pch.cpp
 	physics/Body.cpp
@@ -80,9 +84,11 @@ add_executable(crag
 	physics/Engine.cpp
 	physics/GhostBody.cpp
 	physics/Location.cpp
+	physics/MeshBody.cpp
 	physics/PassiveLocation.cpp
 	physics/RayCast.cpp
 	physics/SphericalBody.cpp
+	scripts/GameScript.cpp
 	scripts/MainScript.cpp
 	scripts/MonitorOrigin.cpp
 	scripts/RegulatorScript.cpp
@@ -91,7 +97,6 @@ add_executable(crag
 	sim/Engine.cpp
 	sim/Entity.cpp
 	sim/EntityFunctions.cpp
-	sim/FrequencyEstimator.cpp
 	sim/gravity.cpp
 	ipc/ListenerInterface.cpp
 	ipc/Fiber.cpp

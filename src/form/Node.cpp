@@ -230,7 +230,7 @@ bool form::Node::InitScoreParameters()
 		return false;
 	}
 	
-	center = geom::Center(surface);
+	center = geom::Centroid(surface);
 	return true;
 }
 

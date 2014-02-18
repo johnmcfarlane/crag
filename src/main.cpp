@@ -10,6 +10,7 @@
 
 #include "pch.h"
 
+#include "scripts/GameScript.h"
 #include "scripts/MainScript.h"
 #include "scripts/TestScript.h"
 
@@ -26,9 +27,6 @@
 #include "core/ConfigManager.h"
 
 #include <SDL_main.h>
-
-#define RUN_TEST
-
 
 //////////////////////////////////////////////////////////////////////
 // Local Function Declarations
@@ -82,7 +80,7 @@ namespace
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
 	
-	CONFIG_DEFINE (run_test, bool, false);
+	CONFIG_DEFINE (script_mode, int, 1);
 	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
@@ -145,7 +143,7 @@ namespace
 					{
 						gfx::Daemon::Call([] (gfx::Engine & engine) 
 						{
-							engine.SetFragmentLighting(! engine.GetFragmentLighting());
+							engine.SetFragmentLightingEnabled(! engine.GetFragmentLightingEnabled());
 						});
 						break;
 					}
@@ -172,16 +170,6 @@ namespace
 						shadows_enabled = ! shadows_enabled;
 						break;
 						
-					default:
-						break;
-				}
-				break;
-			}
-			
-			case KMOD_CTRL:
-			{
-				switch (keysym.scancode)
-				{
 					default:
 						break;
 				}
@@ -337,7 +325,26 @@ namespace
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
-		core::ConfigManager config_manager(argc, argv);
+		core::ConfigManager config_manager;
+		if (! config_manager.ParseCommandLine(argc, argv))
+		{
+			return false;
+		}
+		
+		// vet script_mode value
+		typedef decltype(& GameScript) ScriptFunction; 
+		std::array<ScriptFunction, 3> scripts = 
+		{{
+			& TestScript,
+			& GameScript,
+			& MainScript
+		}};
+		
+		if (std::size_t(script_mode) >= scripts.size())
+		{
+			ERROR_MESSAGE("invalid script_mode, %d; valid range is [0..%d)", script_mode, scripts.size());
+			return false;
+		}
 		
 		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
 		bool full_screen = (! profile_mode) && video_full_screen;
@@ -367,7 +374,7 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::AppletHandle::CreateHandle("Main", 16384, run_test ? & TestScript : & MainScript);
+			applet::AppletHandle::CreateHandle("Main", 16384, scripts[script_mode]);
 			
 			while (HandleEvent())
 			{

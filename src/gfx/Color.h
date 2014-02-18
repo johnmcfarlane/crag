@@ -16,6 +16,7 @@ namespace gfx
 {
 	template <typename DstComp, typename SrcComp> DstComp ConvertColorComponent(SrcComp lhs);
 
+	// TODO: consolidate with Vector4
 	template <typename Comp> class Color4
 	{
 	public:

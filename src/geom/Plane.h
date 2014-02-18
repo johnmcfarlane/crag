@@ -33,7 +33,7 @@ namespace geom
 		}
 
 		Plane(Triangle const & triangle) 
-		: Plane(geom::Center(triangle), geom::Normal(triangle))
+		: Plane(geom::Centroid(triangle), geom::Normal(triangle))
 		{
 		}
 

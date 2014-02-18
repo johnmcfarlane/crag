@@ -328,8 +328,8 @@ void Engine::operator() (ContactGeom const * begin, ContactGeom const * end)
 	std::for_each(begin, end, [=] (ContactGeom const & contact_geom)
 	{
 		// geometry sanity tests
-		ASSERT(contact_geom.g1 != contact_geom.g2);
-		ASSERT(contact_geom.depth >= 0);
+		CRAG_VERIFY_OP(contact_geom.g1, !=, contact_geom.g2);
+		CRAG_VERIFY_OP(contact_geom.depth, >=, 0);
 
 		_contact.geom = contact_geom;
 		_contacts.push_back(_contact);

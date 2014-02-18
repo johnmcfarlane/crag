@@ -18,6 +18,9 @@ namespace physics
 	class ContactInterface
 	{
 	public:
+		OBJECT_NO_COPY(ContactInterface);
+
+		ContactInterface() = default;
 		virtual ~ContactInterface() { }
 		virtual void operator() (ContactGeom const * begin, ContactGeom const * end) = 0;
 	};
@@ -25,6 +28,8 @@ namespace physics
 	template <typename FunctionType>
 	class ContactFunction : public ContactInterface
 	{
+		OBJECT_NO_COPY(ContactFunction);
+
 	public:
 		ContactFunction(FunctionType const & function)
 		: _function(function)

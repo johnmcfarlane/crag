@@ -157,9 +157,11 @@ namespace crag
 				
 				// get index of Type
 				constexpr auto index = get_index_of_type<Type>();
+#if ! defined(WIN32)
 				static_assert(index != -1, "Type not found in Types");
 				static_assert(! (index & ~ index_mask), "index exceeds capacity");
-				
+#endif
+
 				// deal with the special case of a nullptr
 				if (! ptr)
 				{
@@ -187,8 +189,10 @@ namespace crag
 				
 				// get index of Type
 				constexpr IndexType required_index = get_index_of_type<Type>();
+#if ! defined(WIN32)
 				static_assert(required_index != -1, "Type not stored");
 				static_assert(! (required_index & ~ index_mask), "index exceeds capacity");
+#endif
 
 				// access this' data assuming that it's the type in question
 				auto ptr = buffer.template get<Type *>();

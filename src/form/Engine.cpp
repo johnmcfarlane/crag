@@ -70,7 +70,8 @@ form::Engine::Engine()
 {
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
 	{
-		auto mesh = std::make_shared<Mesh>(max_num_verts, max_num_tris);
+		auto mesh = std::make_shared<Mesh>();
+		mesh->Reserve(max_num_verts, max_num_tris);
 		_meshes.push(mesh);
 	}
 }
@@ -153,7 +154,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// register with the renderer
-	_mesh.Create(max_num_quaterne);
+	_mesh.Create();
 	auto mesh_handle = _mesh;
 	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
 		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());

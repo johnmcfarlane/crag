@@ -21,9 +21,10 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
-Mesh::Mesh(int max_num_verts, int max_num_tris)
-: _lit_mesh(max_num_verts, max_num_tris * 3)
+void Mesh::Reserve(int max_num_verts, int max_num_tris)
 {
+	_lit_mesh.GetVertices().reserve(max_num_verts);
+	_lit_mesh.GetIndices().reserve(max_num_tris);
 }
 
 void Mesh::Clear()
@@ -55,6 +56,17 @@ Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 
 Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 {
+	// TODO: if contour lines stay, move height into Point
+	auto calculate_height = [] (geom::rel::Vector3 const & pos, geom::rel::Vector3 const & origin) -> float
+	{
+		using namespace geom;
+		auto origin_height = Length(origin);
+		auto relative_center = pos + origin;
+		auto height = Length(relative_center);
+		auto relative_height = height - origin_height;
+		return relative_height;
+	};
+	
 	Vertex v = 
 	{ 
 		p.pos, 
@@ -62,7 +74,8 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 		gfx::Color4b(color.r,
 					 color.g,
 					 color.b,
-					 color.a)
+					 color.a),
+		calculate_height(p.pos, geom::Cast<float>(properties._origin))
 	};
 
 	auto & vertices = _lit_mesh.GetVertices();

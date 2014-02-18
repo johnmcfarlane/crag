@@ -103,9 +103,9 @@ namespace form
 
 		Node * _children;
 
-		typedef ::crag::core::pointer_union_base<sizeof(double *), alignof(double *), sizeof(double), alignof(double), Node, Polyhedron> PointerUnion;
+		typedef ::crag::core::pointer_union_base<sizeof(void * *), alignof(void * *), sizeof(void *), alignof(void *), Node, Polyhedron> PointerUnion;
 		PointerUnion _owner;	//  4	/	8
-		static_assert(sizeof(_owner) == sizeof(void*), "");
+		static_assert(sizeof(decltype(_owner)) == sizeof(void*), "Bad assumption about pointer size");
 	public:
 		int seed;				//  4	/	4
 

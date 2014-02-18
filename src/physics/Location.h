@@ -34,9 +34,6 @@ namespace physics
 		Transformation const & GetTransformation() const;
 		virtual void SetTransformation(Transformation const & transformation) = 0;
 
-		Vector3 Transform(Vector3 local_position) const;
-		Vector3 Rotate(Vector3 local_direction) const;
-
 		CRAG_VERIFY_INVARIANTS_DECLARE(Location);
 	private:
 		Transformation _transformation;

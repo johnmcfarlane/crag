@@ -148,12 +148,12 @@ namespace geom
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
 
-	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 4> const & v)
+	template<typename S> ::std::ostream & operator << (::std::ostream & out, Vector<S, 4> const & v)
 	{
 		return out << v.x << ',' << v.y << ',' << v.z << ',' << v.w;
 	}
 
-	template<typename S> std::istream & operator >> (std::istream & in, Vector<S, 4> const & v)
+	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 4> const & v)
 	{
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z >> ',' >> v.w;
 	}

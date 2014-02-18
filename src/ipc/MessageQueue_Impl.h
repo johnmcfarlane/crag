@@ -101,7 +101,7 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 	
 	auto * node = & GetPushBufferNode();
 
-	while (true)
+	for (;;)
 	{
 		auto & buffer = node->buffer;
 
@@ -214,7 +214,7 @@ typename ipc::MessageQueue<CLASS>::BufferNode & ipc::MessageQueue<CLASS>::GetPus
 {
 	auto * buffer_node = _buffers;
 
-	while (true)
+	for (;;)
 	{
 		auto * next = buffer_node->next;
 		if (next == nullptr)

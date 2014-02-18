@@ -12,9 +12,6 @@
 #include "Program.h"
 
 #include "axes.h"
-#include "glHelpers.h"
-
-#include "core/app.h"
 
 #if ! defined(NDEBUG)
 #define DUMP_GLSL_ERRORS
@@ -26,13 +23,65 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Program member definitions
 
-Program::Program()
-: _id(0)
+Program::Program(Program && rhs)
+: _id(rhs._id)
+, _vert_shader(std::move(rhs._vert_shader))
+, _frag_shader(std::move(rhs._frag_shader))
 {
+	rhs._id = 0;
+}
+
+Program::Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: _id(glCreateProgram())	// Create the program.
+{
+	// Create the main vert and frag shaders.
+	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
+	{
+		DEBUG_BREAK("fatal vertex shader error");
+		return;
+	}
+	
+	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
+	{
+		DEBUG_BREAK("fatal fragment shader error");
+		return;
+	}
+	
+	GL_CALL(glAttachShader(_id, _vert_shader._id));
+	GL_CALL(glAttachShader(_id, _frag_shader._id));
+	
+#if defined(DUMP_GLSL_ERRORS)
+	std::string info_log;
+	GetInfoLog(info_log);
+
+	if (! info_log.empty())
+	{
+		for (auto source : vert_sources)
+		{
+			PrintMessage(stderr, "Linker output of program including vert shader '%s':\n", source);
+		}
+		
+		PrintMessage(stderr, "%s", info_log.c_str());
+	}
+#endif
 }
 
 Program::~Program()
 {
+	if (_id == 0)
+	{
+		return;
+	}
+	
+	glDetachShader(_id, _frag_shader._id);
+	glDetachShader(_id, _vert_shader._id);
+	
+	_frag_shader.Deinit();
+	_vert_shader.Deinit();
+	
+	glDeleteProgram(_id);
+	_id = 0;
+
 	ASSERT(! IsInitialized());
 }
 
@@ -56,70 +105,6 @@ bool Program::IsBound() const
 	return unsigned(GetInt<GL_CURRENT_PROGRAM>()) == _id;
 }
 
-bool Program::Init(char const * const * vert_sources, char const * const * frag_sources)
-{
-	assert(! IsInitialized());
-
-	// Create the program.
-	_id = glCreateProgram();
-
-	// Create the main vert and frag shaders.
-	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
-	{
-		return false;
-	}
-	
-	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
-	{
-		return false;
-	}
-	
-	GL_CALL(glAttachShader(_id, _vert_shader._id));
-	GL_CALL(glAttachShader(_id, _frag_shader._id));
-	
-	InitAttribs(_id);
-	
-	glLinkProgram(_id);
-	
-#if defined(DUMP_GLSL_ERRORS)
-	std::string info_log;
-	GetInfoLog(info_log);
-
-	if (! info_log.empty())
-	{
-		PrintMessage(stderr, "Linker output of program including vert shader '%s':\n", vert_sources[0]);
-		
-		PrintMessage(stderr, "%s", info_log.c_str());
-	}
-#endif
-	
-	if (! IsLinked())
-	{
-		DEBUG_BREAK("Failed to link program including vert shader '%s'.", vert_sources[0]);
-	}
-
-	Bind();
-	
-	_projection_matrix_location = GetUniformLocation("projection_matrix");
-	_model_view_matrix_location = GetUniformLocation("model_view_matrix");
-	InitUniforms();
-	
-	Unbind();
-	return true;
-}
-
-void Program::Deinit()
-{
-	glDetachShader(_id, _frag_shader._id);
-	glDetachShader(_id, _vert_shader._id);
-	
-	_frag_shader.Deinit();
-	_vert_shader.Deinit();
-	
-	glDeleteProgram(_id);
-	_id = 0;
-}
-
 void Program::Bind() const
 {
 	ASSERT(GetInt<GL_CURRENT_PROGRAM>() == 0);
@@ -132,35 +117,37 @@ void Program::Unbind() const
 	GL_CALL(glUseProgram(0));
 }
 
-void Program::SetProjectionMatrix(Matrix44 const & projection_matrix) const
+void Program::SetProjectionMatrix(Matrix44 const &) const
 {
-#if defined(CRAG_USE_GLES)
-	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_FALSE, geom::Transposition(projection_matrix).GetArray()));
-#elif defined(CRAG_USE_GL)
-	GL_CALL(glUniformMatrix4fv(_projection_matrix_location, 1, GL_TRUE, projection_matrix.GetArray()));
-#endif
 }
 
-void Program::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
-{
-#if defined(CRAG_USE_GLES)
-	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_FALSE, geom::Transposition(ToOpenGl(model_view_matrix)).GetArray()));
-#elif defined(CRAG_USE_GL)
-	GL_CALL(glUniformMatrix4fv(_model_view_matrix_location, 1, GL_TRUE, ToOpenGl(model_view_matrix).GetArray()));
-#endif
-}
-
-GLint Program::GetUniformLocation(char const * name) const
-{
-	return glGetUniformLocation(_id, name);
-}
-
-void Program::InitAttribs(GLuint /*id*/)
+void Program::SetModelViewMatrix(Matrix44 const &) const
 {
 }
 
 void Program::InitUniforms()
 {
+}
+
+void Program::BindAttribLocation(int index, char const * name) const
+{
+	GL_CALL(glBindAttribLocation(_id, index, name));
+}
+
+template <typename Type>
+void Program::InitUniformLocation(Uniform<Type> & uniform, char const * name) const
+{
+	uniform = Uniform<Type>(_id, name);
+}
+
+void Program::Finalize()
+{
+	glLinkProgram(_id);
+	ASSERT(IsLinked());
+	
+	Bind();
+	InitUniforms();
+	Unbind();
 }
 
 void Program::GetInfoLog(std::string & info_log) const
@@ -190,32 +177,89 @@ void Program::Verify() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Program3d member definitions
+
+Program3d::Program3d(Program3d && rhs)
+: Program(std::move(rhs))
+, _projection_matrix(std::move(rhs._projection_matrix))
+, _model_view_matrix(std::move(rhs._model_view_matrix))
+{
+}
+
+Program3d::Program3d(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program(vert_sources, frag_sources)
+{
+}
+
+void Program3d::SetProjectionMatrix(Matrix44 const & projection_matrix) const
+{
+	_projection_matrix.Set(projection_matrix);
+}
+
+void Program3d::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
+{
+	_model_view_matrix.Set(ToOpenGl(model_view_matrix));
+}
+
+void Program3d::InitUniforms()
+{
+	ASSERT(IsBound());
+	
+	InitUniformLocation(_projection_matrix, "projection_matrix");
+	InitUniformLocation(_model_view_matrix, "model_view_matrix");
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // LightProgram member definitions
+
+LightProgram::LightProgram(LightProgram && rhs)
+: Program3d(std::move(rhs))
+, _ambient(std::move(rhs._ambient))
+, _num_lights(std::move(rhs._num_lights))
+, _lights(std::move(rhs._lights))
+{
+}
+
+LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program3d(vert_sources, frag_sources)
+{
+}
 
 void LightProgram::InitUniforms()
 {
-	ASSERT(IsBound());
-	GL_VERIFY;
+	super::InitUniforms();
 	
-	Program::InitUniforms();
+	InitUniformLocation(_ambient, "ambient");
+	InitUniformLocation(_num_lights, "num_lights");
 	
-	_num_lights_location = glGetUniformLocation(_id, "num_lights");
+	for (auto index = 0u; index != _lights.size(); ++ index)
+	{
+		auto & light_uniforms = _lights[index];
 
-	GL_VERIFY;
+		char name[40];
+	
+		sprintf(name, "lights[%d].position", index);
+		InitUniformLocation(light_uniforms.position, name);
+	
+		sprintf(name, "lights[%d].color", index);
+		InitUniformLocation(light_uniforms.color, name);
+	}
 }
 
-void LightProgram::SetLight(Light const & light)
+void LightProgram::SetLight(Light const & light) const
 {
 	ASSERT(IsBound());
 
 	SetLight(light, 0);
 	
-	glUniform1i(_num_lights_location, 1);
+	_ambient.Set(Color4f::Black());
+	_num_lights.Set(1);
 }
 
-void LightProgram::SetLights(Light::List const & lights, LightType filter)
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const
 {
 	ASSERT(IsBound());
+	CRAG_VERIFY_EQUAL(ambient.a, 1);
 
 	auto num_lights = 0;
 	for (auto & light : lights)
@@ -233,193 +277,184 @@ void LightProgram::SetLights(Light::List const & lights, LightType filter)
 		++ num_lights;
 	}
 	
-	glUniform1i(_num_lights_location, num_lights);
+	_ambient.Set(ambient);
+	_num_lights.Set(num_lights);
 }
 
-void LightProgram::SetLight(Light const & light, int index)
+void LightProgram::SetLight(Light const & light, int index) const
 {
-	while (unsigned(index) >= _light_locations.size())
+	if (unsigned(index) >= _lights.size())
 	{
-		AddLight();
+		DEBUG_BREAK("too many lights");
+		return;
 	}
 	
-	auto & location = _light_locations[index];
+	auto & light_uniforms = _lights[index];
 
 	auto & transformation = light.GetModelViewTransformation();
-	geom::Vector3f position = ToOpenGl(transformation.GetTranslation());
-	GL_CALL(glUniform3f(location.position, position.x, position.y, position.z));
+	auto position = transformation.GetTranslation();
+	light_uniforms.position.Set(position);
 
 	Color4f const & color = light.GetColor();
-	GL_CALL(glUniform3f(location.color, color.r, color.g, color.b));
-}
-
-void LightProgram::AddLight()
-{
-	LightLocation additional;
-	{
-		auto i = int(_light_locations.size());
-		char name[40];
-	
-		sprintf(name, "lights[%d].position", i);
-		additional.position = glGetUniformLocation(_id, name);
-	
-		sprintf(name, "lights[%d].color", i);
-		additional.color = glGetUniformLocation(_id, name);
-	}
-
-	_light_locations.push_back(additional);
+	light_uniforms.color.Set(color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // PolyProgram member definitions
 
-PolyProgram::PolyProgram()
-: _fragment_lighting_location(-1)
-, _flat_shade_location(-1)
+PolyProgram::PolyProgram(PolyProgram && rhs)
+: LightProgram(std::move(rhs))
+, _color(std::move(rhs._color))
+, _fragment_lighting(std::move(rhs._fragment_lighting))
+, _flat_shade(std::move(rhs._flat_shade))
+, _relief_enabled(std::move(rhs._relief_enabled))
 {
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade) const
+PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: LightProgram(vert_sources, frag_sources)
+{
+	// attribute locations
+	BindAttribLocation(1, "vertex_position");
+	BindAttribLocation(2, "vertex_normal");
+	BindAttribLocation(3, "vertex_color");
+	BindAttribLocation(4, "vertex_height");
+
+	Finalize();
+}
+
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool flat_shade, bool relief_enabled) const
 {
 	ASSERT(IsBound());
-	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
-	GL_CALL(glUniform1i(_fragment_lighting_location, fragment_lighting));
-	GL_CALL(glUniform1i(_flat_shade_location, flat_shade));
-}
-
-void PolyProgram::InitAttribs(GLuint id)
-{
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
-	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
-	GL_CALL(glBindAttribLocation(id, 3, "vertex_color"));
+	_color.Set(color);
+	_fragment_lighting.Set(fragment_lighting);
+	_flat_shade.Set(flat_shade);
+	_relief_enabled.Set(relief_enabled);
 }
 
 void PolyProgram::InitUniforms()
 {
-	ASSERT(IsBound());
-	GL_VERIFY;
-	
 	super::InitUniforms();
 
-	_color_location = GetUniformLocation("color");
-	_fragment_lighting_location = GetUniformLocation("fragment_lighting");
-	_flat_shade_location = GetUniformLocation("flat_shade");
-	
-	GL_VERIFY;
+	InitUniformLocation(_color, "color");
+	InitUniformLocation(_fragment_lighting, "fragment_lighting");
+	InitUniformLocation(_flat_shade, "flat_shade");
+	InitUniformLocation(_relief_enabled, "relief_enabled");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // ShadowProgram member definitions
 
-ShadowProgram::ShadowProgram()
+ShadowProgram::ShadowProgram(ShadowProgram && rhs)
+: Program3d(std::move(rhs))
 {
 }
 
-void ShadowProgram::InitAttribs(GLuint id)
+ShadowProgram::ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program3d(vert_sources, frag_sources)
 {
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	BindAttribLocation(1, "vertex_position");
+	
+	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // ScreenProgram member definitions
 
-ScreenProgram::ScreenProgram()
+ScreenProgram::ScreenProgram(ScreenProgram && rhs)
+: Program(std::move(rhs))
 {
 }
 
-void ScreenProgram::InitAttribs(GLuint id)
+ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program(vert_sources, frag_sources)
 {
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
+	BindAttribLocation(1, "vertex_position");
+	
+	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // DiskProgram member definitions
 
-DiskProgram::DiskProgram()
-: _color_location(-1)
-, _center_location(-1)
-, _radius_location(-1)
+DiskProgram::DiskProgram(DiskProgram && rhs)
+: LightProgram(std::move(rhs))
+, _color(std::move(rhs._color))
+, _center(std::move(rhs._center))
+, _radius(std::move(rhs._radius))
 {
+}
+
+DiskProgram::DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: LightProgram(vert_sources, frag_sources)
+{
+	BindAttribLocation(1, "vertex_position");
+	BindAttribLocation(2, "vertex_normal");
+	
+	Finalize();
 }
 
 void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const
 {
-	GL_CALL(glUniform4f(_color_location, color.r, color.g, color.b, color.a));
-	
-	geom::Vector3f center = ToOpenGl(model_view.GetTranslation());
-	GL_CALL(glUniform3f(_center_location, center.x, center.y, center.z));
-	
-	GL_CALL(glUniform1f(_radius_location, radius));
-}
-
-void DiskProgram::InitAttribs(GLuint id)
-{
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
-	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
+	_color.Set(color);
+	_center.Set(model_view.GetTranslation());
+	_radius.Set(radius);
 }
 
 void DiskProgram::InitUniforms()
 {
 	super::InitUniforms();
 
-	_color_location = GetUniformLocation("color");
-	_center_location = GetUniformLocation("center");
-	_radius_location = GetUniformLocation("radius");
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// FogProgram member definitions
-
-FogProgram::FogProgram()
-: _density_location(-1)
-{
-}
-
-void FogProgram::SetUniforms(geom::Transformation<float> const & model_view, Color4f const & color, float radius, float density) const
-{
-	DiskProgram::SetUniforms(model_view, radius, color);
-	
-	glUniform1f(_density_location, density);
-}
-
-void FogProgram::InitAttribs(GLuint id)
-{
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
-	GL_CALL(glBindAttribLocation(id, 2, "vertex_normal"));
-}
-
-void FogProgram::InitUniforms()
-{
-	_density_location = GetUniformLocation("density");
+	InitUniformLocation(_color, "color");
+	InitUniformLocation(_center, "center");
+	InitUniformLocation(_radius, "radius");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // TexturedProgram member definitions
 
-void TexturedProgram::InitAttribs(GLuint id)
+TexturedProgram::TexturedProgram(TexturedProgram && rhs)
+: Program3d(std::move(rhs))
 {
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
-	GL_CALL(glBindAttribLocation(id, 2, "vertex_tex_coord"));
+}
+
+TexturedProgram::TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program3d(vert_sources, frag_sources)
+{
+	BindAttribLocation(1, "vertex_position");
+	BindAttribLocation(2, "vertex_tex_coord");
+
+	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // SpriteProgram member definitions
 
+SpriteProgram::SpriteProgram(SpriteProgram && rhs)
+: Program(std::move(rhs))
+, _position_scale(std::move(rhs._position_scale))
+, _position_offset(std::move(rhs._position_offset))
+{
+}
+
+SpriteProgram::SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: Program(vert_sources, frag_sources)
+{
+	BindAttribLocation(1, "vertex_position");
+	BindAttribLocation(2, "vertex_tex_coord");
+	
+	Finalize();
+}
+
 void SpriteProgram::SetUniforms(geom::Vector2i const & resolution) const
 {
 	auto resolution_f = geom::Cast<float>(resolution);
-	GL_CALL(glUniform2f(_position_scale_location, 1.f / resolution_f.x, - 1.f / resolution_f.y));
-	GL_CALL(glUniform2f(_position_offset_location, -.5f, .5f));
-}
-
-void SpriteProgram::InitAttribs(GLuint id)
-{
-	GL_CALL(glBindAttribLocation(id, 1, "vertex_position"));
-	GL_CALL(glBindAttribLocation(id, 2, "vertex_tex_coord"));
+	_position_scale.Set(Vector2(1.f / resolution_f.x, - 1.f / resolution_f.y));
+	_position_offset.Set(Vector2(-.5f, .5f));
 }
 
 void SpriteProgram::InitUniforms()
 {
-	_position_scale_location = GetUniformLocation("position_scale");
-	_position_offset_location = GetUniformLocation("position_offset");
+	InitUniformLocation(_position_scale, "position_scale");
+	InitUniformLocation(_position_offset, "position_offset");
 }

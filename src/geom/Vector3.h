@@ -98,7 +98,7 @@ namespace geom
 
 	// casts between 3d vector of different scalar types
 	template <typename LHS_S, typename RHS_S>
-	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
+	typename ::std::enable_if<! ::std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
 	{
 		return Vector<LHS_S, 3>(
 			static_cast<LHS_S>(rhs.x),
@@ -135,6 +135,14 @@ namespace geom
 		lhs.x *= rhs;
 		lhs.y *= rhs;
 		lhs.z *= rhs;
+		return lhs;
+	}
+
+	template<typename S> inline Vector<S, 3> & operator *= (Vector<S, 3> & lhs, Vector<S, 3> const & rhs)
+	{
+		lhs.x *= rhs.x;
+		lhs.y *= rhs.y;
+		lhs.z *= rhs.z;
 		return lhs;
 	}
 
@@ -181,12 +189,12 @@ namespace geom
 		return p;
 	}
 
-	template<typename S> std::ostream & operator << (std::ostream & out, Vector<S, 3> const & v)
+	template<typename S> ::std::ostream & operator << (::std::ostream & out, Vector<S, 3> const & v)
 	{
 		return out << v.x << ',' << v.y << ',' << v.z;
 	}
 
-	template<typename S> std::istream & operator >> (std::istream & in, Vector<S, 3> const & v)
+	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 3> const & v)
 	{
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 	}

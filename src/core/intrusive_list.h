@@ -437,7 +437,7 @@ namespace core
 			void unlink_all()
 			{
 				value_type * i = _head._next;
-				while (true)
+				for (;;)
 				{
 					hook_type & h = i->*Member;
 					if (& h == & _head)

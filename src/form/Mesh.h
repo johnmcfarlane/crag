@@ -26,12 +26,11 @@ namespace form
 	public:
 		// types
 		typedef gfx::LitVertex Vertex;
-		typedef gfx::Mesh<gfx::LitVertex> LitMesh;
+		typedef gfx::LitMesh LitMesh;
 		typedef Vertex::Color Color;
 		
 		// functions
-		Mesh(int max_num_verts, int max_num_tris);
-		
+		void Reserve(int max_num_verts, int max_num_tris);
 		void Clear();
 		
 		MeshProperties & GetProperties();

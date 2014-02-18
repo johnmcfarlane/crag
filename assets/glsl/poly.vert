@@ -22,11 +22,13 @@ uniform bool flat_shade;
 attribute vec3 vertex_position;
 attribute vec3 vertex_normal;
 attribute vec4 vertex_color;
+attribute float vertex_height;
 
 // outputs to poly.frag
 varying vec3 fragment_position;
 varying vec3 fragment_normal;
 varying vec4 fragment_color;
+varying float fragment_height;
 
 // light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
@@ -47,6 +49,8 @@ void main(void)
 	{
 		fragment_color = vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal), diffuse.rgb), diffuse.a);
 	}
+	
+	fragment_height = vertex_height;
 
 	gl_Position = projection_matrix * position4;
 }
