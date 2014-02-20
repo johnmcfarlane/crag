@@ -15,47 +15,23 @@
 
 namespace gfx 
 {
-	enum class Axis
-	{
-		x,
-		y,
-		z,
-		size
-	};
-	
 	enum class Direction
 	{
-		right,
+		right = 0,
 		up,
-		forward,	// This is how the camera is represented in OpenGL.
-		left,
-		down,
-		backward,
+		forward,
 		size,
-		negative = left
+		end = size,
+		begin = right
 	};
 	
-	// Returns the axis in the given direction from the given matrix.
-	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Axis axis)
-	{
-		CRAG_VERIFY_OP(int(axis), >=, int(Axis::x));
-		CRAG_VERIFY_OP(int(axis), <, int(Axis::size));
-		
-		return rotation.GetColumn(static_cast<int>(axis));
-	}
-	
-	// Returns the axis in the given direction from the given matrix.
+	// Returns the direction in the given direction from the given matrix.
 	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Direction direction)
 	{
-		CRAG_VERIFY_OP(int(direction), >=, int(Direction::right));
-		CRAG_VERIFY_OP(int(direction), <, int(Direction::size));
-		
 		auto axis = int(direction);
-		auto negative = int(Direction::negative);
-		if (axis >= negative)
-		{
-			axis -= negative;
-		}
+
+		CRAG_VERIFY_OP(axis, >=, int(Direction::begin));
+		CRAG_VERIFY_OP(axis, <, int(Direction::end));
 		
 		return rotation.GetColumn(axis);
 	}
