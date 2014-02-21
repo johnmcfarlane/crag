@@ -126,6 +126,14 @@ namespace geom
 			return Column(rows[0][i], rows[1][i], rows[2][i]); 
 		}
 		
+		void SetColumn(int i, Column const & column)
+		{ 
+			assert(i >= 0 && i < 3);
+			rows[0][i] = column[0];
+			rows[1][i] = column[1];
+			rows[2][i] = column[2];
+		}
+		
 		S Determinant() const
 		{
 			return (rows[0][0]*rows[1][1]*rows[2][2] 
