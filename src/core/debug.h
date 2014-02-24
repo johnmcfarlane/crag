@@ -16,11 +16,15 @@
 
 // Semicolon-friendly compound statement.
 // Useful for wrapping up macros to appear like a function call.
+#if defined(WIN32)
 #define DO_STATEMENT(...) \
 	__pragma(warning(push)) \
 	__pragma(warning(disable:4127)) \
 	do { __VA_ARGS__ } while (false) \
 	__pragma(warning(pop))
+#else
+#define DO_STATEMENT(...) do { __VA_ARGS__ } while (false)
+#endif
 
 // Semicolon-friendly empty statement.
 #define DO_NOTHING DO_STATEMENT()

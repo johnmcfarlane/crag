@@ -325,7 +325,11 @@ namespace
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
-		core::ConfigManager config_manager(argc, argv);
+		core::ConfigManager config_manager;
+		if (! config_manager.ParseCommandLine(argc, argv))
+		{
+			return false;
+		}
 		
 		// vet script_mode value
 		typedef decltype(& GameScript) ScriptFunction; 

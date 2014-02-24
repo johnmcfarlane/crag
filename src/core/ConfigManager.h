@@ -19,13 +19,13 @@ namespace core
 	class ConfigManager
 	{
 	public:
-		ConfigManager(int argc, char * const * argv);
+		ConfigManager();
 		~ConfigManager();
 		
+		bool ParseCommandLine(int argc, char * const * argv);
 	private:
 		bool Load();
 		void Save();
-		void Parse(int argc, char * const * argv);
 	};
 
 }

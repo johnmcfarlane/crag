@@ -81,13 +81,13 @@ namespace gfx
 	{
 		CRAG_VERIFY_NEARLY_EQUAL(Length(forward), S(1), S(0.0001));
 		
-		geom::Vector<S, 3> right = Normalized(CrossProduct(forward, up));
-		geom::Vector<S, 3> matrix_up = CrossProduct(right, forward);
+		geom::Vector<S, 3> right = Normalized(CrossProduct(up, forward));
+		geom::Vector<S, 3> matrix_up = CrossProduct(forward, right);
 		
 		return geom::Matrix<S, 3, 3>(
-			right.x, right.y, right.z,
-			matrix_up.x, matrix_up.y, matrix_up.z,
-			forward.x, forward.y, forward.z);
+			right.x, matrix_up.x, forward.x,
+			right.y, matrix_up.y, forward.y,
+			right.z, matrix_up.z, forward.z);
 	}
 	
 	// converts forward vector into rotation matrix
@@ -108,9 +108,9 @@ namespace gfx
 		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(up, forward), S(0), S(0.0001));
 
 		return geom::Matrix<S, 3, 3>(
-			right.x, right.y, right.z,
-			up.x, up.y, up.z,
-			forward.x, forward.y, forward.z);
+			right.x, up.x, forward.x,
+			right.y, up.y, forward.y,
+			right.z, up.z, forward.z);
 	}
 	
 	// generates rotation of given angle around given axis

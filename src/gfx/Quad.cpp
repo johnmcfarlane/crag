@@ -85,7 +85,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 	}
 	
 	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
-	Transformation::Matrix33 rotation = Inverse(gfx::Rotation(camera_to_center));
+	Transformation::Matrix33 rotation = gfx::Rotation(camera_to_center);
 
 	return Transformation(translation, rotation, radius);
 }

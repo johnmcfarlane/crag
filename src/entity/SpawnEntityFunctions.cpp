@@ -64,7 +64,7 @@ namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
-	
+
 	CONFIG_DEFINE (box_density, physics::Scalar, 1);
 	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
 	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
@@ -86,6 +86,9 @@ namespace
 	
 	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
 	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
+
+	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.05f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -280,14 +283,8 @@ namespace
 #endif
 	}
 
-	void ConstructCamera(sim::Entity & camera, sim::EntityHandle subject_handle)
+	void ConstructCamera(sim::Entity & camera, sim::Vector3 const & position, sim::EntityHandle subject_handle)
 	{
-		auto & engine = camera.GetEngine();
-		auto subject = engine.GetObject(subject_handle.GetUid());
-		auto subject_location = subject->GetLocation();
-		auto position = subject_location->GetTranslation();
-		position.y += 5;
-		
 		// physics
 		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), sim::Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
@@ -348,8 +345,8 @@ namespace
 		auto velocity = sim::Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
-		body.SetLinearDamping(.01f);
-		body.SetAngularDamping(.01f);
+		body.SetLinearDamping(ship_linear_damping);
+		body.SetAngularDamping(ship_angular_damping);
 		entity.SetLocation(& body);
 
 		// graphics
@@ -365,8 +362,13 @@ namespace
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Vector3(0, 0, -1), sim::Vector3(0, 0, 1), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Vector3(0, -.25, 0), sim::Vector3(0, .25, 0), SDL_SCANCODE_B);
+		auto back = -.525f;
+		auto forward = 1.f;
+		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
+		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
+		AddRoverThruster(controller, sim::Vector3(0, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_SPACE);
+		AddRoverThruster(controller, sim::Vector3(+.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_LEFT);
+		AddRoverThruster(controller, sim::Vector3(-.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_RIGHT);
 	}
 }
 
@@ -409,12 +411,12 @@ sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
 	return observer;
 }
 
-sim::EntityHandle SpawnCamera(sim::EntityHandle subject)
+sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject)
 {
 	auto camera = sim::EntityHandle::CreateHandle();
 
-	camera.Call([subject] (sim::Entity & entity) {
-		ConstructCamera(entity, subject);
+	camera.Call([position, subject] (sim::Entity & entity) {
+		ConstructCamera(entity, position, subject);
 	});
 
 	return camera;
