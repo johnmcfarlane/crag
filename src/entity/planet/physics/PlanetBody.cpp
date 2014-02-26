@@ -160,7 +160,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	ASSERT(num_contacts <= contacts.size());
 	
 	// If there's a good chance the body is contained by the polyhedron,
-	if (num_contacts == 0 && max_depth > bounding_sphere.radius)
+	if (num_contacts == 0 && max_depth > bounding_sphere.radius * 2.f)
 	{
 		// add a provisional contact.
 		auto & containment_geom = contacts[num_contacts];

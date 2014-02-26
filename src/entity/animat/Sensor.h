@@ -41,6 +41,7 @@ namespace sim
 		~Sensor();
 		
 		Scalar GetReading() const;
+		Scalar GetReadingDistance() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 

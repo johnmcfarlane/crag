@@ -1,11 +1,11 @@
 #!/bin/bash
 # To be run from debug or release subdirectories
-if (($1)); then
+if [ "$1" ]; then
 	JOBS="$1"
 	shift
 else
-	JOBS="1"
+	JOBS="-j1"
 fi
 
 rm core
-make -j"$JOBS"&&bin/crag $@||../bt
+make "$JOBS"&&bin/crag $@||../bt

@@ -363,9 +363,9 @@ namespace
 		entity.SetController(& controller);
 
 		auto back = -.525f;
-		auto forward = 1.f;
-		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
-		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
+		auto forward = 1.5f;
+		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
+		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
 		AddRoverThruster(controller, sim::Vector3(0, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_SPACE);
 		AddRoverThruster(controller, sim::Vector3(+.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_LEFT);
 		AddRoverThruster(controller, sim::Vector3(-.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_RIGHT);
