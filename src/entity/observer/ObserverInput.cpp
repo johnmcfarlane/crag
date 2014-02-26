@@ -29,7 +29,7 @@ namespace
 				auto & affector = i->affector;
 				auto direction = affector.direction;
 				
-				int delta = (direction < Direction::negative) ? 1 : -1;
+				int delta = affector.pole_sign;
 				auto axis_index = static_cast<int>(direction) % 3;
 				input[affector.type][axis_index] += delta;
 			}
@@ -43,6 +43,7 @@ namespace
 	{
 		ObserverInput::Index type;	// [pos/rot]
 		Direction direction;
+		int pole_sign;
 	};
 
 
@@ -62,33 +63,33 @@ namespace
 	InputKeyMapping const keys[] = 
 	{
 		// Arrow keys
-		{ { ObserverInput::rotation, Direction::down }, SDL_SCANCODE_LEFT },
-		{ { ObserverInput::rotation, Direction::up }, SDL_SCANCODE_RIGHT },
-		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_UP },
-		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_DOWN },
+		{ { ObserverInput::rotation, Direction::up, -1 }, SDL_SCANCODE_LEFT },
+		{ { ObserverInput::rotation, Direction::up, 1 }, SDL_SCANCODE_RIGHT },
+		{ { ObserverInput::translation, Direction::forward, 1 }, SDL_SCANCODE_UP },
+		{ { ObserverInput::translation, Direction::forward, -1 }, SDL_SCANCODE_DOWN },
 		
 		// Above arrow SDL_SCANCODEs (3x2)
-		{ { ObserverInput::rotation, Direction::backward }, SDL_SCANCODE_INSERT },
-		{ { ObserverInput::translation, Direction::left }, SDL_SCANCODE_DELETE },
-		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_HOME },
-		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_END },
-		{ { ObserverInput::rotation, Direction::forward }, SDL_SCANCODE_PAGEUP },
-		{ { ObserverInput::translation, Direction::right }, SDL_SCANCODE_PAGEDOWN },
+		{ { ObserverInput::rotation, Direction::forward, -1 }, SDL_SCANCODE_INSERT },
+		{ { ObserverInput::translation, Direction::right, -1 }, SDL_SCANCODE_DELETE },
+		{ { ObserverInput::translation, Direction::forward, 1 }, SDL_SCANCODE_HOME },
+		{ { ObserverInput::translation, Direction::forward, -1 }, SDL_SCANCODE_END },
+		{ { ObserverInput::rotation, Direction::forward, 1 }, SDL_SCANCODE_PAGEUP },
+		{ { ObserverInput::translation, Direction::right, 1 }, SDL_SCANCODE_PAGEDOWN },
 		
 		// FPS standard
-		{ { ObserverInput::rotation, Direction::forward }, SDL_SCANCODE_Q },
-		{ { ObserverInput::translation, Direction::left }, SDL_SCANCODE_A },
-		{ { ObserverInput::translation, Direction::forward }, SDL_SCANCODE_W },
-		{ { ObserverInput::translation, Direction::backward }, SDL_SCANCODE_S },
-		{ { ObserverInput::rotation, Direction::backward }, SDL_SCANCODE_E },
-		{ { ObserverInput::translation, Direction::right }, SDL_SCANCODE_D },
+		{ { ObserverInput::rotation, Direction::forward, 1 }, SDL_SCANCODE_Q },
+		{ { ObserverInput::translation, Direction::right, -1 }, SDL_SCANCODE_A },
+		{ { ObserverInput::translation, Direction::forward, 1 }, SDL_SCANCODE_W },
+		{ { ObserverInput::translation, Direction::forward, -1 }, SDL_SCANCODE_S },
+		{ { ObserverInput::rotation, Direction::forward, -1 }, SDL_SCANCODE_E },
+		{ { ObserverInput::translation, Direction::right, 1 }, SDL_SCANCODE_D },
 		
 		// Lots of up/down options
-		{ { ObserverInput::translation, Direction::up }, SDL_SCANCODE_SPACE },
-		{ { ObserverInput::translation, Direction::down }, SDL_SCANCODE_RCTRL },
-		{ { ObserverInput::translation, Direction::down }, SDL_SCANCODE_LCTRL },
+		{ { ObserverInput::translation, Direction::up, 1 }, SDL_SCANCODE_SPACE },
+		{ { ObserverInput::translation, Direction::up, -1 }, SDL_SCANCODE_RCTRL },
+		{ { ObserverInput::translation, Direction::up, -1 }, SDL_SCANCODE_LCTRL },
 
-		{ { ObserverInput::size, Direction::size }, SDL_SCANCODE_UNKNOWN }
+		{ { ObserverInput::size, Direction::size, 0 }, SDL_SCANCODE_UNKNOWN }
 	};
 
 
@@ -106,10 +107,10 @@ namespace
 
 	InputMouseMapping buttons[] = 
 	{
-		{ { ObserverInput::translation, Direction::down }, 1 },
-		{ { ObserverInput::translation, Direction::up }, 2 },
+		{ { ObserverInput::translation, Direction::up, -1 }, 1 },
+		{ { ObserverInput::translation, Direction::up, 1 }, 2 },
 		
-		{ { ObserverInput::size, Direction::size }, -1 }
+		{ { ObserverInput::size, Direction::size, 0 }, -1 }
 	};
 
 }

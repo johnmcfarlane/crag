@@ -21,6 +21,7 @@ namespace geom
 	public:
 		// types
 		typedef Vector<S, 3> Row;
+		typedef Vector<S, 3> Column;
 		class _Row : public Vector<S, 3>
 		{
 			// I would assume that __attribute__ ((aligned (sizeof(S) * 4)))
@@ -119,10 +120,18 @@ namespace geom
 		}
 		
 		// slow because matrix is row major and return value needs to be composed and copied
-		Row GetColumn(int i) const 
+		Column GetColumn(int i) const 
 		{ 
 			assert(i >= 0 && i < 3);
-			return Row(rows[0][i], rows[1][i], rows[2][i]); 
+			return Column(rows[0][i], rows[1][i], rows[2][i]); 
+		}
+		
+		void SetColumn(int i, Column const & column)
+		{ 
+			assert(i >= 0 && i < 3);
+			rows[0][i] = column[0];
+			rows[1][i] = column[1];
+			rows[2][i] = column[2];
 		}
 		
 		S Determinant() const
