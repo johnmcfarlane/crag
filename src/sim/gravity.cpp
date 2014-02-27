@@ -43,9 +43,10 @@ namespace
 	}
 
 	
-	void ApplyGravity(Engine & engine, core::Time delta, physics::Body & body) 
+	void ApplyGravity(Engine & engine, core::Time delta, physics::Location & location) 
 	{
-		Vector3 const & position = body.GetTranslation();
+		Vector3 const & position = location.GetTranslation();
+		auto & body = core::StaticCast<physics::Body &>(location);
 		Scalar mass = body.GetMass();
 		if (mass <= 0)
 		{
@@ -63,13 +64,13 @@ namespace
 void sim::ApplyGravity(Engine & engine, core::Time delta)
 {
 	engine.ForEachObject([&] (Entity & entity) {
-		physics::Body * body = entity.GetBody();
-		if (body == nullptr || ! body->ObeysGravity())
+		physics::Location * location = entity.GetLocation();
+		if (location == nullptr || ! location->ObeysGravity())
 		{
 			return;
 		}
 		
-		::ApplyGravity(engine, delta, * body);
+		::ApplyGravity(engine, delta, * location);
 	});
 }
 

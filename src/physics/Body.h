@@ -28,9 +28,6 @@ namespace physics
 		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle);
 		virtual ~Body();
 		
-		Body * GetBody() final;
-		Body const * GetBody() const final;
-
 		virtual bool ObeysGravity() const;
 
 		BodyHandle GetBodyHandle() const;

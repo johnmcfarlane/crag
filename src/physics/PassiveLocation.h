@@ -12,7 +12,7 @@
 namespace physics
 {
 	// A locator which gets its location from a physics::Body
-	class PassiveLocation : public Location
+	class PassiveLocation final : public Location
 	{
 	public:
 		PassiveLocation(Transformation const & transformation);

@@ -14,7 +14,7 @@
 namespace physics
 {
 	// a body with no collision or gravity
-	class GhostBody : public Body
+	class GhostBody final : public Body
 	{
 	public:
 		CRAG_VERIFY_INVARIANTS_DECLARE(GhostBody);

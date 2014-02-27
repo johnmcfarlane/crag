@@ -24,31 +24,25 @@ namespace sim
 {
 	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine)
 	{
-		auto body1 = entity1.GetBody();
-		if (body1 == nullptr)
-		{
-			return;
-		}
+		auto location1 = entity1.GetLocation();
+		auto & body1 = core::StaticCast<physics::Body>(ref(location1));
+		
+		auto location2 = entity2.GetLocation();
+		auto & body2 = core::StaticCast<physics::Body>(ref(location2));
 
-		auto body2 = entity2.GetBody();
-		if (body2 == nullptr)
-		{
-			return;
-		}
-
-		physics_engine.Attach(* body1, * body2);
+		physics_engine.Attach(body1, body2);
 	}
 
 	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta)
 	{
-		auto body = entity.GetBody();
-		if (body == nullptr)
+		auto location = entity.GetLocation();
+		if (location == nullptr)
 		{
 			return;
 		}
 
-		auto transformation = body->GetTransformation();
+		auto transformation = location->GetTransformation();
 		transformation.SetTranslation(transformation.GetTranslation() - delta);
-		body->SetTransformation(transformation);
+		location->SetTransformation(transformation);
 	}
 }

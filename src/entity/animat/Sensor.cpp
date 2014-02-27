@@ -77,8 +77,8 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 	GenerateScanRay();
 	
 	auto location = entity.GetLocation();
-	auto body = location->GetBody();
-	_ray_cast.SetIsCollidable(* body, false);
+	auto & body = core::StaticCast<physics::Body>(*location);
+	_ray_cast.SetIsCollidable(body, false);
 	
 	auto & roster = GetTickRoster();
 	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);

@@ -91,8 +91,9 @@ void PlanetController::Tick()
 	auto radius_range = geom::Cast<gfx::Scalar>(_formation->GetRadiusRange());
 
 	auto & entity = GetEntity();
-	auto & body = ref(entity.GetBody());
-	auto & planetary_body = static_cast<physics::PlanetBody &>(body);
+	auto location = entity.GetLocation();
+	auto & body = core::StaticCast<physics::Body const>(ref(location));
+	auto & planetary_body = static_cast<physics::PlanetBody const &>(body);
 	planetary_body.SetRadius(physics::Scalar(radius_range[1]));
 
 	// update planet params

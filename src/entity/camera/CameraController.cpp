@@ -165,14 +165,14 @@ void CameraController::UpdateCamera() const
 
 physics::Body & CameraController::GetBody()
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
+	return core::StaticCast<physics::Body>(location);
 }
 
 physics::Body const & CameraController::GetBody() const
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
+	return core::StaticCast<physics::Body const>(location);
 }
