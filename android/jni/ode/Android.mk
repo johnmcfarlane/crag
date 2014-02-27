@@ -80,6 +80,7 @@ LOCAL_SRC_FILES := ode/src/array.cpp \
 	ode/src/joints/pr.cpp \
 	ode/src/joints/pu.cpp \
 	ode/src/joints/slider.cpp \
+	ode/src/joints/transmission.cpp \
 	ode/src/joints/universal.cpp \
 	ode/src/fastdot.c \
 	ode/src/fastldlt.c \
