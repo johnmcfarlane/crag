@@ -80,6 +80,24 @@ private: \
 
 namespace core
 {
+	////////////////////////////////////////////////////////////////////////////////
+	// static_cast
+
+	// performs a compile-time cast from type, From, to type, To;
+	// in debug builds, performs a run-time test that cast is valid;
+	// must have RTTI turned on in debug builds for this to work
+	template <typename To, typename From>
+	To & StaticCast(From & object)
+	{
+		To & cast = static_cast<To &>(object);
+
+#if ! defined(__ANDROID__)
+		assert(& dynamic_cast<To &>(object) == & cast);
+#endif
+
+		return cast;
+	}
+
 	//////////////////////////////////////////////////////////////////////
 	// get_owner - inverse pointer to member
 
@@ -108,7 +126,7 @@ namespace core
 		
 		return owner;
 	}
-
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// get_index - returns the position of a given element in a given array
 
@@ -158,4 +176,3 @@ namespace core
 		return duration;
 	}
 }
-
