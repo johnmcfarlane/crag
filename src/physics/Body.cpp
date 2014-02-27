@@ -103,10 +103,6 @@ bool Body::ObeysGravity() const
 	return true;
 }
 
-void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
-{
-}
-
 BodyHandle Body::GetBodyHandle() const
 {
 	return _body_handle;

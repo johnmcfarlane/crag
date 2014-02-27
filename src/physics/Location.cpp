@@ -58,6 +58,11 @@ void Location::SetTransformation(Transformation const & transformation)
 	_transformation = transformation;
 }
 
+Vector3 Location::GetGravitationalForce(Vector3 const &) const
+{
+	return Vector3::Zero();
+}
+
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Location, self)
 	CRAG_VERIFY(self._transformation);
 CRAG_VERIFY_INVARIANTS_DEFINE_END

@@ -33,18 +33,10 @@ namespace
 		
 		engine.ForEachObject([& pos, & force] (Entity const & entity) {
 			auto location = entity.GetLocation();
-			if (location == nullptr)
+			if (location)
 			{
-				return;
+				force += location->GetGravitationalForce(pos);
 			}
-
-			auto body = location->GetBody();
-			if (body == nullptr)
-			{
-				return;
-			}
-
-			body->GetGravitationalForce(pos, force);
 		});
 		
 		return force * Scalar(mass) * Scalar(gravitational_force);

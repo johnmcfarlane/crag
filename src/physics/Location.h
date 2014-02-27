@@ -34,6 +34,7 @@ namespace physics
 		Transformation const & GetTransformation() const;
 		virtual void SetTransformation(Transformation const & transformation) = 0;
 
+		virtual Vector3 GetGravitationalForce(Vector3 const & pos) const;
 		CRAG_VERIFY_INVARIANTS_DECLARE(Location);
 	private:
 		Transformation _transformation;

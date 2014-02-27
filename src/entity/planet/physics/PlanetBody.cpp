@@ -33,7 +33,7 @@ PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, f
 {
 }
 
-void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const
+Vector3 PlanetBody::GetGravitationalForce(Vector3 const & pos) const
 {
 	Vector3 const & center = GetTranslation();
 	Vector3 to_center = center - pos;
@@ -59,8 +59,7 @@ void PlanetBody::GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) c
 		force = mass / Squared(distance);
 	}
 
-	Vector3 contribution = direction * force;
-	gravity += contribution;
+	return direction * force;
 }
 
 bool PlanetBody::OnCollision(Body & body, ContactInterface & contact_interface)

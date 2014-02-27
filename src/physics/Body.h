@@ -32,7 +32,6 @@ namespace physics
 		Body const * GetBody() const final;
 
 		virtual bool ObeysGravity() const;
-		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
 
 		BodyHandle GetBodyHandle() const;
 		CollisionHandle GetCollisionHandle() const;
