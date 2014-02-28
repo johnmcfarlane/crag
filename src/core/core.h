@@ -126,6 +126,16 @@ namespace core
 		
 		return owner;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// twizzle
+	
+	// calls given function with parameters reversed
+	template <typename O, typename I, O (* f)(I, I)>
+	O Twizzle(I lhs, I rhs)
+	{
+		return f(rhs, lhs);
+	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// get_index - returns the position of a given element in a given array
