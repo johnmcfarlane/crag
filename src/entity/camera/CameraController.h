@@ -17,6 +17,7 @@
 namespace physics
 {
 	class Body;
+	class RayCast;
 }
 
 namespace sim
@@ -40,7 +41,8 @@ namespace sim
 		void HandleEvent(SDL_Event const & event);
 		void HandleKeyboardEvent(SDL_Scancode scancode, bool down);
 
-		void UpdateCamera() const;
+		void Update();
+		void UpdateCameraRayCast() const;
 
 		physics::Body & GetBody();
 		physics::Body const & GetBody() const;
@@ -48,7 +50,7 @@ namespace sim
 		// variables
 		bool _collidable;
 		core::EventWatcher _event_watcher;
-		Sensor & _sensor;
+		physics::RayCast & _ray_cast;
 		EntityHandle _subject;
 	};
 }

@@ -11,12 +11,11 @@
 
 #include "CameraController.h"
 
-#include "entity/animat/Sensor.h"
-
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
 #include "physics/Body.h"
+#include "physics/RayCast.h"
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
@@ -24,19 +23,63 @@
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
+using namespace sim;
+
 namespace
 {
 	CONFIG_DEFINE (camera_controller_height, float, 10.f);
+	CONFIG_DEFINE (camera_controller_distance, float, 10.5f);
+	CONFIG_DEFINE (camera_up_push_magnitude, float, 10.f);
+	
+	// given information about camera location and direction, 
+	// send a 'set camera' event
+	void UpdateCamera(Vector3 const & camera_translation, geom::abs::Vector3 const & origin, Vector3 const & forward, Vector3 const & up)
+	{
+		auto dot = geom::DotProduct(forward, up);
+		if (dot > .99999f || dot < -.99999f)
+		{
+			// subject is above or below camera; cannot calculate sensible camera up
+			return;
+		}
+
+		auto rotation = gfx::Rotation(forward, up);
+
+		// broadcast new camera position
+		gfx::SetCameraEvent event;
+		event.transformation.SetTranslation(geom::RelToAbs(camera_translation, origin));
+		event.transformation.SetRotation(rotation);
+		Daemon::Broadcast(event);
+	}
+	
+	// nudge body forward and upward, based on distance from subject 
+	// and altitude as measured by ray cast
+	void UpdateBody(physics::Body & camera_body, physics::RayCast const & ray_cast, Vector3 const & forward, Vector3 const & up, float distance)
+	{
+		// apply linear forces to camera
+		Vector3 push = Vector3::Zero();
+
+		auto & ray_cast_result = ray_cast.GetResult();
+		auto altitude = ray_cast_result.GetDistance();
+		if (altitude < camera_controller_height)
+		{
+			push += up * camera_up_push_magnitude * (1.f - (altitude / camera_controller_height));
+		}
+
+		if (distance > camera_controller_distance)
+		{
+			push += forward * distance / camera_controller_distance;
+		}
+
+		camera_body.AddForce(push);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // CameraController member definitions
 
-using namespace sim;
-
 CameraController::CameraController(Entity & entity, EntityHandle subject)
 : _super(entity)
-, _sensor(* new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, -1.f, 0.f)), camera_controller_height))
+, _ray_cast(* new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
 , _subject(subject)
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
@@ -50,13 +93,13 @@ CameraController::~CameraController()
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.RemoveCommand(* this, & CameraController::Tick);
 
-	delete & _sensor;
+	delete & _ray_cast;
 }
 
 void CameraController::Tick()
 {
 	// send last location update to rendered etc.
-	UpdateCamera();
+	Update();
 
 	// event-based input
 	HandleEvents();
@@ -110,9 +153,9 @@ void CameraController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 	}
 }
 
-void CameraController::UpdateCamera() const
+void CameraController::Update()
 {
-	const auto & camera_body = GetBody();
+	auto & camera_body = GetBody();
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
@@ -147,20 +190,24 @@ void CameraController::UpdateCamera() const
 	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
 	auto up = geom::Normalized(camera_translation - relative_origin);
 
-	auto dot = geom::DotProduct(forward, up);
-	if (dot > .99999f || dot < -.99999f)
-	{
-		// subject is above or below camera; cannot calculate sensible camera up
-		return;
-	}
+	UpdateCamera(camera_translation, origin, forward, up);
+	UpdateBody(camera_body, _ray_cast, forward, up, distance);
+	UpdateCameraRayCast();
+}
 
-	auto rotation = gfx::Rotation(forward, up);
-	auto transformation = Transformation(camera_translation, rotation);
+void CameraController::UpdateCameraRayCast() const
+{
+	const auto & engine = GetEntity().GetEngine();
+	
+	auto & camera_body = GetBody();
+	auto camera_transformation = camera_body.GetTransformation();
+	auto camera_translation = camera_transformation.GetTranslation();
 
-	// broadcast new camera position
-	gfx::SetCameraEvent event;
-	event.transformation = geom::RelToAbs(transformation, origin);
-	Daemon::Broadcast(event);
+	const auto & origin = engine.GetOrigin();
+	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
+	auto up = geom::Normalized(camera_translation - relative_origin);
+
+	_ray_cast.SetRay(Ray3(camera_translation, - up));
 }
 
 physics::Body & CameraController::GetBody()
