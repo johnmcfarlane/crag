@@ -85,26 +85,6 @@ physics::Location const * Entity::GetLocation() const
 	return _location;
 }
 
-physics::Body * Entity::GetBody()
-{
-	if (_location == nullptr)
-	{
-		return nullptr;
-	}
-
-	return _location->GetBody();
-}
-
-physics::Body const * Entity::GetBody() const
-{
-	if (_location == nullptr)
-	{
-		return nullptr;
-	}
-
-	return _location->GetBody();
-}
-
 gfx::ObjectHandle Entity::GetModel() const
 {
 	return _model;

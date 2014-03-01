@@ -28,16 +28,6 @@ Location::Location(Transformation const & transformation)
 { 
 }
 
-Body * Location::GetBody()
-{
-	return nullptr;
-}
-
-Body const * Location::GetBody() const
-{
-	return nullptr;
-}
-
 Vector3 Location::GetTranslation() const
 {
 	return _transformation.GetTranslation();
@@ -56,6 +46,16 @@ Transformation const & Location::GetTransformation() const
 void Location::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
+}
+
+Vector3 Location::GetGravitationalForce(Vector3 const &) const
+{
+	return Vector3::Zero();
+}
+
+bool Location::ObeysGravity() const
+{
+	return false;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Location, self)

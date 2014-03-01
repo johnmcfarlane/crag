@@ -53,40 +53,76 @@ namespace gfx
 	
 	// converts forward and up vectors into rotation matrix
 	template<typename S>
-	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward, geom::Vector<S, 3> const & up)
+	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & axis1, geom::Vector<S, 3> axis2, Direction d1 = Direction::forward, Direction d2 = Direction::up)
 	{
-		CRAG_VERIFY_NEARLY_EQUAL(Length(forward), S(1), S(0.0001));
+		typedef geom::Vector<S, 3> Vector;
 		
-		geom::Vector<S, 3> right = Normalized(CrossProduct(up, forward));
-		geom::Vector<S, 3> matrix_up = CrossProduct(forward, right);
+		// generate axis indices
+		auto a1 = int(d1);
+		auto a2 = int(d2);
+		auto a3 = 3 - (a1 + a2);
 		
-		return geom::Matrix<S, 3, 3>(
-			right.x, matrix_up.x, forward.x,
-			right.y, matrix_up.y, forward.y,
-			right.z, matrix_up.z, forward.z);
+		CRAG_VERIFY_OP(a1, >=, int(Direction::begin));
+		CRAG_VERIFY_OP(a1, <, int(Direction::end));
+		CRAG_VERIFY_OP(a2, >=, int(Direction::begin));
+		CRAG_VERIFY_OP(a2, <, int(Direction::end));
+		CRAG_VERIFY_OP(a3, >=, int(Direction::begin));
+		CRAG_VERIFY_OP(a3, <, int(Direction::end));
+		
+		CRAG_VERIFY_OP(a1, !=, a2);
+		CRAG_VERIFY_OP(a2, !=, a3);
+		CRAG_VERIFY_OP(a3, !=, a1);
+		
+		// if inputs are flipped, CrossProduct must be flipped also
+		auto cp = (TriMod(a2 + 1) == a1)
+		? geom::CrossProduct<S>
+		: core::Twizzle<Vector, Vector const &, geom::CrossProduct<S>>;
+		
+		// set axes apart from one another
+		Vector axis3 = Normalized(cp(axis2, axis1));
+		axis2 = cp(axis1, axis3);
+
+		// verify that axes are units
+		CRAG_VERIFY_NEARLY_EQUAL(Length(axis1), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(axis2), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(axis3), S(1), S(0.0001));
+		
+		// assign to matrix object
+		geom::Matrix<S, 3, 3> rotation;
+		rotation.SetColumn(a1, axis1);
+		rotation.SetColumn(a2, axis2);
+		rotation.SetColumn(a3, axis3);
+		
+		return rotation;
 	}
 	
-	// converts forward vector into rotation matrix
+	// given an axis of a given direction, D, produce an arbitrary unit rotation
 	template<typename S>
-	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & forward)
+	geom::Matrix<S, 3, 3> Rotation(geom::Vector<S, 3> const & axis, Direction d = Direction::forward)
 	{
-		CRAG_VERIFY_NEARLY_EQUAL(Length(forward), S(1), S(0.0001));
-
-		geom::Vector<S, 3> up = Perpendicular(forward);
-		Normalize(up);
+		typedef geom::Vector<S, 3> Vector;
 		
-		geom::Vector<S, 3> right = CrossProduct(forward, up);
-		CRAG_VERIFY_NEARLY_EQUAL(Length(right), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Length(axis), S(1), S(0.0001));
+
+		Vector axis_d2 = Normalized(Perpendicular(axis));
+		Vector axis_d1 = CrossProduct(axis, axis_d2);
+		CRAG_VERIFY_NEARLY_EQUAL(Length(axis_d1), S(1), S(0.0001));
 		
 		// verify axes are perpendicular to one another
-		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(forward, right), S(0), S(0.0001));
-		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(right, up), S(0), S(0.0001));
-		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(up, forward), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(axis, axis_d1), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(axis_d1, axis_d2), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(axis_d2, axis), S(0), S(0.0001));
 
-		return geom::Matrix<S, 3, 3>(
-			right.x, up.x, forward.x,
-			right.y, up.y, forward.y,
-			right.z, up.z, forward.z);
+		auto d0 = int(d);
+		auto d1 = TriMod(d0 + 1);
+		auto d2 = TriMod(d0 + 2);
+		
+		geom::Matrix<S, 3, 3> rotation;
+		rotation.SetColumn(d0, axis);
+		rotation.SetColumn(d1, axis_d1);
+		rotation.SetColumn(d2, axis_d2);
+		
+		return rotation;
 	}
 	
 	// generates rotation of given angle around given axis
@@ -135,3 +171,4 @@ namespace gfx
 		return geom::Vector<S, 4>(vector[0], vector[1], - vector[2], vector[3]);
 	}
 }
+

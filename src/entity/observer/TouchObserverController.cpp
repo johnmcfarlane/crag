@@ -681,14 +681,14 @@ physics::Body & TouchObserverController::GetBody()
 {
 	auto & entity = GetEntity();
 	auto & location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	return core::StaticCast<physics::Body>(location);
 }
 
 physics::Body const & TouchObserverController::GetBody() const
 {
 	auto & entity = GetEntity();
 	auto & location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	return core::StaticCast<physics::Body const>(location);
 }
 
 TouchObserverController::ContactVector::iterator TouchObserverController::FindContact(SDL_FingerID id)
@@ -749,7 +749,8 @@ form::RayCastResult TouchObserverController::CastRay(Ray3 const & ray, Scalar & 
 	auto & entity = GetEntity();
 	auto & engine = entity.GetEngine();
 	auto & physics_engine = engine.GetPhysicsEngine();
-	const auto body = entity.GetBody();
+	auto location = entity.GetLocation();
+	auto & body = core::StaticCast<physics::Body const>(ref(location));
 	
-	return physics_engine.CastRay(ray, length, body);
+	return physics_engine.CastRay(ray, length, & body);
 }
