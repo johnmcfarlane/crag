@@ -36,6 +36,7 @@
 
 #include "form/Engine.h"
 
+#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Light.h"
@@ -355,20 +356,38 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipPlainMesh");
-		gfx::ObjectHandle model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
-		entity.SetModel(model);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
+		entity.SetModel(model_handle);
+		
+		gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red(), gfx::LightType::beam);
+		gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
+			engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
+		});
 		
 		// controller
-		auto& controller = ref(new sim::VehicleController(entity));
+		auto & controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		auto back = -.525f;
-		auto forward = 1.5f;
-		AddRoverThruster(controller, sim::Vector3(0, +.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_UP);
-		AddRoverThruster(controller, sim::Vector3(0, -.25, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_DOWN);
-		AddRoverThruster(controller, sim::Vector3(0, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_SPACE);
-		AddRoverThruster(controller, sim::Vector3(+.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_LEFT);
-		AddRoverThruster(controller, sim::Vector3(-.5, 0, back), sim::Vector3(0, 0, forward), SDL_SCANCODE_RIGHT);
+		// add a single thruster
+		auto add_thruster = [&] (sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+		{
+			AddRoverThruster(controller, position, direction, key);
+		};
+		
+		// add two complimentary thrusters
+		auto add_thrusters = [&] (sim::Vector3 position, sim::Vector3 const & direction, SDL_Scancode first_key, int axis, SDL_Scancode second_key)
+		{
+			add_thruster(position, direction, first_key);
+			position[axis] *= -1.f;
+			add_thruster(position, direction, second_key);
+		};
+		
+		auto forward = sim::Vector3(0, 0, 2.5f);
+		auto up = sim::Vector3(0, .5f, 0);
+
+		add_thruster(sim::Vector3(0, 0, -.525f), forward, SDL_SCANCODE_SPACE);
+		add_thrusters(sim::Vector3(0, -.25f, .25f), up, SDL_SCANCODE_DOWN, 2, SDL_SCANCODE_UP);
+		add_thrusters(sim::Vector3(.5, -.1f, 0), up, SDL_SCANCODE_LEFT, 0, SDL_SCANCODE_RIGHT);
 	}
 }
 
