@@ -35,6 +35,7 @@ namespace geom
 		// functions 
 		
 		Transformation()
+		: Transformation(Matrix44::Identity())
 		{
 		}
 		
