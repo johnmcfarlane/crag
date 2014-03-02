@@ -359,11 +359,6 @@ namespace
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 		
-		gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red(), gfx::LightType::beam);
-		gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
-			engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
-		});
-		
 		// controller
 		auto & controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
