@@ -88,7 +88,7 @@ namespace gfx
 			Set(mesh);
 		}
 		
-		~IndexedVboResource()
+		~IndexedVboResource() noexcept
 		{
 			CRAG_VERIFY(* this);
 			

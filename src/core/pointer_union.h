@@ -93,7 +93,7 @@ namespace crag
 		{
 			// type
 			typedef union_buffer<pointer_size, pointer_align> Unionbuffer;
-			typedef uintptr_t IndexType;
+			typedef int IndexType;
 			
 		public:
 			// functions
@@ -219,7 +219,7 @@ namespace crag
 			}
 			
 			template <typename Type>
-			static constexpr int get_index_of_type()
+			static constexpr IndexType get_index_of_type()
 			{
 				typedef ::crag::core::impl::traits<Types ...> traits;
 				return traits::template index<Type>();
