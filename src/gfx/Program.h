@@ -87,6 +87,7 @@ namespace gfx
 		struct LightUniforms
 		{
 			Uniform<Vector3> position;
+			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 		};
 
@@ -111,7 +112,8 @@ namespace gfx
 		// variables
 		
 		Uniform<Color4f> _ambient;
-		Uniform<int> _num_lights;
+		Uniform<int> _num_point_lights;
+		Uniform<int> _num_beam_lights;
 		std::array<LightUniforms, 8> _lights;
 	};
 

@@ -909,7 +909,7 @@ void Engine::RenderScene()
 	if (shadows_enabled)
 	{
 		// render foreground, opaque elements with non-shadow lighting
-		UpdateProgramLights(LightType::point);
+		UpdateProgramLights(LightTypeSet(LightType::point) | LightTypeSet(LightType::beam));
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 		// render foreground, opaque elements with shadow lighting

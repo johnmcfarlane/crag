@@ -50,6 +50,7 @@ namespace gfx
 	enum class LightType
 	{
 		point,
+		beam,
 		shadow,
 		size
 	};

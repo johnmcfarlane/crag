@@ -27,6 +27,9 @@ namespace
 	SDL_Renderer * renderer = nullptr;
 
 	int refresh_rate = -1;
+
+	int num_keys = -1;
+	Uint8 const * key_state_map = nullptr;
 }
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
@@ -91,6 +94,9 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	}
 	
 	_has_focus = true;
+
+	// get pointer to keyboard state map
+	key_state_map = SDL_GetKeyboardState(& num_keys);
 
 	return true;
 }
@@ -207,19 +213,11 @@ void app::Beep()
 
 bool app::IsKeyDown(SDL_Scancode key_code)
 {
-	if (key_code >= 0)
-	{
-		int num_keys;
-		Uint8 const * key_down = SDL_GetKeyboardState(& num_keys);
-		
-		if (key_code < num_keys)
-		{
-			return key_down[key_code] != false;
-		}
-	}
+	CRAG_VERIFY_OP(key_code, >=, 0);
+	CRAG_VERIFY_OP(key_code, <, num_keys);
+	CRAG_VERIFY_EQUAL(key_state_map, SDL_GetKeyboardState(nullptr));
 	
-	ASSERT(false);
-	return false;
+	return key_state_map[key_code] != 0;
 }
 
 bool app::IsButtonDown(int mouse_button)
