@@ -101,7 +101,7 @@ namespace gfx
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetLight(Light const & light) const;
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const;
 
 	private:
 

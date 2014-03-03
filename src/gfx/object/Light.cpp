@@ -49,7 +49,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
 
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
-	CRAG_VERIFY_TRUE(object._type == LightType::simple || object._type == LightType::shadow);
+	CRAG_VERIFY_TRUE(object._type == LightType::point || object._type == LightType::shadow);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Light::SetColor(Color4f const & color)

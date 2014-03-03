@@ -256,26 +256,42 @@ void LightProgram::SetLight(Light const & light) const
 	_num_lights.Set(1);
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const
 {
 	ASSERT(IsBound());
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
-
+	
 	auto num_lights = 0;
-	for (auto & light : lights)
+	
+	auto populate_lights = [&] (LightType pass_type)
 	{
-		if (filter != LightType::all)
+		if (! filter[pass_type])
+		{
+			return;
+		}
+		
+		for (auto & light : lights)
 		{
 			auto type = light.GetType();
-			if (type != filter)
+			if (pass_type != type)
 			{
 				continue;
 			}
-		}
 		
-		SetLight(light, num_lights);
-		++ num_lights;
-	}
+			Color4f const & color = light.GetColor();
+			if (color.r + color.g + color.b == 0)
+			{
+				continue;
+			}
+			
+			SetLight(light, num_lights);
+			++ num_lights;
+		}
+	};
+	
+	// add point lights first
+	populate_lights(LightType::point);
+	populate_lights(LightType::shadow);
 	
 	_ambient.Set(ambient);
 	_num_lights.Set(num_lights);
