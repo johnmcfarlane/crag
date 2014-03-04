@@ -25,7 +25,7 @@ namespace gfx
 namespace std
 {
 	template <>
-	struct hash<::gfx::ShadowMapKey>
+	struct hash<gfx::ShadowMapKey>
 	{
 		size_t operator()(::gfx::ShadowMapKey const & key) const
 		{

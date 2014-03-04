@@ -18,7 +18,7 @@ namespace core
 	class enum_set
 	{
 		// types
-		using bitset = std::bitset<::std::size_t(value_limit)>;
+		using bitset = std::bitset<std::size_t(value_limit)>;
 	public:
 		using reference = typename bitset::reference;
 		

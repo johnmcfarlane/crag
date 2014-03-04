@@ -56,6 +56,10 @@ namespace crag
 				: _value(std::move(value)) 
 				{
 				}
+
+				~Wrapper() noexcept
+				{
+				}
 			private:
 				void const * get() const override
 				{ 
