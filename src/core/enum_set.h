@@ -49,7 +49,7 @@ namespace core
 		enum_set & set(EnumType pos, bool value = true)
 		{
 			auto index = ::std::size_t(pos);
-			ASSERT(index >= 0);
+			ASSERT(index < _bits.size());
 
 			_bits.set(index, value);
 
@@ -75,7 +75,7 @@ namespace core
 			ASSERT(pos < value_limit);
 
 			auto index = ::std::size_t(pos);
-			ASSERT(index >= 0);
+			ASSERT(index < _bits.size());
 
 			return _bits[index];
 		}
@@ -85,7 +85,7 @@ namespace core
 			ASSERT(pos < value_limit);
 
 			auto index = ::std::size_t(pos);
-			ASSERT(index >= 0);
+			ASSERT(index < _bits.size());
 
 			return _bits[index];
 		}
