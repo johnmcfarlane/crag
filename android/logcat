@@ -1,1 +1,1 @@
-adb logcat $1 $2 $3 $4 crag_log:* SDL:* DEBUG:I *:E
+./android-sdk/platform-tools/adb logcat $1 $2 $3 $4 crag_log:* SDL:* DEBUG:I *:E
