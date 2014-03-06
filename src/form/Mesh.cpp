@@ -123,5 +123,6 @@ Mesh::LitMesh const & Mesh::GetLitMesh() const
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Mesh, self)
-	CRAG_VERIFY(self._lit_mesh);
+	// slow
+	//CRAG_VERIFY(self._lit_mesh);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
