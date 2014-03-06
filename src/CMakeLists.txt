@@ -115,11 +115,11 @@ if (CRAG_RPI)
 	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${GLES2_LIBRARY} "dl" "pthread" "stdc++" "m")
 else (CRAG_RPI)
-	include_directories("." "/usr/include/SDL2")
+	include_directories("." "/usr/include/SDL2" "../linux/include/SDL2")
 
 	# TODO: Given these don't appear to be needed by RPi, try removing them here
 	find_package(OpenGL REQUIRED)
-	find_library(SDL2_LIBRARY SDL2 /usr/lib)
+	find_library(SDL2_LIBRARY SDL2 /usr/lib ../linux/lib)
 	find_library(ODE_LIBRARY ode /usr/lib)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "GLEW" "pthread" "stdc++" "m")
 endif (CRAG_RPI)

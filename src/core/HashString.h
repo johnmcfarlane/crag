@@ -86,7 +86,7 @@ namespace crag
 namespace std
 {
 	template <>
-	struct hash<::crag::core::HashString>
+	struct hash<crag::core::HashString>
 	{
 		size_t operator()(::crag::core::HashString const & key) const
 		{

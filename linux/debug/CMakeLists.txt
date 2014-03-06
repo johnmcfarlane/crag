@@ -1,15 +1,16 @@
-# Linux debug build
+# Linux release build
 
 cmake_minimum_required(VERSION 2.8)
 
 project(crag)
 
-# TODO: -Weffc++ -fno-unwind-tables
-set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DdSINGLE -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-rtti -fno-exceptions -ftemplate-backtrace-limit=0")
+# TODO: -Weffc++ -ftemplate-backtrace-limit=0
+set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DdSINGLE -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-exceptions -fno-unwind-tables")
 
 #include_directories("src" "dependencies/include")
 #set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/c++")
+#set(CMAKE_CXX_COMPILER "/usr/bin/clang")
 
 add_subdirectory(../../src bin)

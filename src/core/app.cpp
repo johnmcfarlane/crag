@@ -27,13 +27,16 @@ namespace
 	SDL_Renderer * renderer = nullptr;
 
 	int refresh_rate = -1;
+
+	int num_keys = -1;
+	Uint8 const * key_state_map = nullptr;
 }
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 {
 #if ! defined(WIN32) && ! defined(NDEBUG) && ! defined(__ANDROID__)
 	rlimit rlim;
-	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024;
+	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024 * 1024;
 	setrlimit(RLIMIT_CORE, &rlim);
 #endif
 	
@@ -52,7 +55,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 #if defined(CRAG_USE_GL)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
 	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
@@ -91,6 +94,9 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	}
 	
 	_has_focus = true;
+
+	// get pointer to keyboard state map
+	key_state_map = SDL_GetKeyboardState(& num_keys);
 
 	return true;
 }
@@ -207,19 +213,11 @@ void app::Beep()
 
 bool app::IsKeyDown(SDL_Scancode key_code)
 {
-	if (key_code >= 0)
-	{
-		int num_keys;
-		Uint8 const * key_down = SDL_GetKeyboardState(& num_keys);
-		
-		if (key_code < num_keys)
-		{
-			return key_down[key_code] != false;
-		}
-	}
+	CRAG_VERIFY_OP(key_code, >=, 0);
+	CRAG_VERIFY_OP(key_code, <, num_keys);
+	CRAG_VERIFY_EQUAL(key_state_map, SDL_GetKeyboardState(nullptr));
 	
-	ASSERT(false);
-	return false;
+	return key_state_map[key_code] != 0;
 }
 
 bool app::IsButtonDown(int mouse_button)

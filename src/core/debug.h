@@ -60,11 +60,11 @@ namespace core
 #else
 #define DEBUG_COLOR_FILE "\x1B[32;1m"
 #define DEBUG_COLOR_LINE "\x1B[31;1m"
-#define DEBUG_COLOR_TEXT "\x1B[37;1m"
+#define DEBUG_COLOR_TEXT DEBUG_COLOR_NORM
 #define DEBUG_COLOR_FUNC "\x1B[36;2m"
-#define DEBUG_COLOR_PUNC "\x1B[37;2m"
+#define DEBUG_COLOR_PUNC DEBUG_COLOR_NORM
 #define DEBUG_COLOR_THREAD "\x1B[31;2m"
-#define DEBUG_COLOR_NORM "\x1B[37;22m"
+#define DEBUG_COLOR_NORM "\e[m"
 #endif
 
 // TRUNCATE_STRING

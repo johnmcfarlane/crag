@@ -54,8 +54,6 @@ namespace sim
 		void SetLocation(physics::Location * locator);
 		physics::Location * GetLocation();
 		physics::Location const * GetLocation() const;
-		physics::Body * GetBody();
-		physics::Body const * GetBody() const;
 
 		// graphics
 		gfx::ObjectHandle GetModel() const;

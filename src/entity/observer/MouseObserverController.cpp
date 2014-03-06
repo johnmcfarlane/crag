@@ -194,14 +194,14 @@ void MouseObserverController::UpdateCamera() const
 
 physics::Body & MouseObserverController::GetBody()
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
+	return core::StaticCast<physics::Body>(location);
 }
 
 physics::Body const & MouseObserverController::GetBody() const
 {
-	auto& entity = GetEntity();
-	auto& location = ref(entity.GetLocation());
-	return ref(location.GetBody());
+	auto & entity = GetEntity();
+	auto & location = ref(entity.GetLocation());
+	return core::StaticCast<physics::Body const>(location);
 }

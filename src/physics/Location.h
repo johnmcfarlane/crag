@@ -25,14 +25,14 @@ namespace physics
 		Location(Transformation const & transformation);
 		virtual ~Location();
 
-		virtual Body * GetBody();
-		virtual Body const * GetBody() const;
-
 		Vector3 GetTranslation() const;
 		Matrix33 const & GetRotation() const;
 
 		Transformation const & GetTransformation() const;
 		virtual void SetTransformation(Transformation const & transformation) = 0;
+
+		virtual Vector3 GetGravitationalForce(Vector3 const & pos) const;
+		virtual bool ObeysGravity() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Location);
 	private:

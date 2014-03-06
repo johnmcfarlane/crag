@@ -100,7 +100,7 @@ void Puff::Render(Engine const & renderer) const
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(* GetProgram());
 	Transformation const & model_view = GetModelViewTransformation();
 	Vector3 translation = model_view.GetTranslation();
-	Color4f lighting = renderer.CalculateLighting(translation, LightType::all);
+	Color4f lighting = renderer.CalculateLighting(translation, LightTypeSet().set());
 	disk_program.SetUniforms(model_view, _radius, _color * lighting);
 	
 	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());

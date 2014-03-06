@@ -88,23 +88,9 @@ Body::~Body()
 	}
 }
 
-Body * Body::GetBody()
-{
-	return this;
-}
-
-Body const * Body::GetBody() const
-{
-	return this;
-}
-
 bool Body::ObeysGravity() const
 {
 	return true;
-}
-
-void Body::GetGravitationalForce(Vector3 const & /*pos*/, Vector3 & /*gravity*/) const
-{
 }
 
 BodyHandle Body::GetBodyHandle() const

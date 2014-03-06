@@ -169,7 +169,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Object, object)
 	CRAG_VERIFY(object._local_transformation);
 
 	auto scale = object._local_transformation.GetScale();
-	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.x, 1, 0.001f));
-	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.y, 1, 0.001f));
-	CRAG_VERIFY_TRUE(NearEqual<Scalar>(scale.z, 1, 0.001f));
+	CRAG_VERIFY_NEARLY_EQUAL(scale.x, 1, 0.001f);
+	CRAG_VERIFY_NEARLY_EQUAL(scale.y, 1, 0.001f);
+	CRAG_VERIFY_NEARLY_EQUAL(scale.z, 1, 0.001f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END

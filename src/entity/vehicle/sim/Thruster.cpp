@@ -122,11 +122,9 @@ void Thruster::Tick()
 		return;
 	}
 
-	auto body = GetEntity().GetBody();
-	if (body != nullptr)
-	{
-		body->AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
-	}
+	auto location = GetEntity().GetLocation();
+	auto & body = core::StaticCast<physics::Body>(ref(location));
+	body.AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
 }
 
 void Thruster::UpdateModel() const

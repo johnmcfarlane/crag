@@ -34,7 +34,7 @@ namespace physics
 
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
-		virtual void GetGravitationalForce(Vector3 const & pos, Vector3 & gravity) const;
+		Vector3 GetGravitationalForce(Vector3 const & pos) const final;
 	private:
 		virtual bool OnCollision(Body & body, ContactInterface & contact_interface);
 

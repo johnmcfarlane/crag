@@ -1,2 +1,30 @@
-#!/bin/bash
-apt-get install clang-3.3 libglu1-mesa-dev libode-sp-dev libglew-dev libxi-dev libsdl2-dev
+#!/usr/bin/env bash
+set -o errexit
+
+sudo apt-get install make cmake g++-4.7 mercurial libglu1-mesa-dev libode-sp-dev libglew-dev libxi-dev build-essential
+
+################################################################################
+# SDL
+
+hg clone http://hg.libsdl.org/SDL || true
+cd SDL
+hg pull http://hg.libsdl.org/SDL
+hg update
+#./autogen.sh
+mkdir build || true
+cd build
+../configure --prefix="$PWD/../.." --enable-static --disable-shared
+make
+make install
+cd ../..
+
+################################################################################
+# cmake
+
+cd debug
+cmake .
+cd ..
+
+cd release
+cmake .
+cd ..

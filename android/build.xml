@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This should be changed to the name of your project -->
 <project name="Crag" default="help">
 
     <!-- The local.properties file is created and updated by the 'android' tool.

@@ -80,8 +80,6 @@ void RayCast::SetRay(Ray3 const ray)
 		ray.position.x, ray.position.y, ray.position.z, 
 		ray.direction.x, ray.direction.y, ray.direction.z);
 
-	ResetResult();
-
 	CRAG_VERIFY_NEARLY_EQUAL(geom::Length(ray.position - GetRay().position), 0.f, 0.01f);
 	CRAG_VERIFY_NEARLY_EQUAL(geom::Length(geom::Normalized(ray.direction) - geom::Normalized(GetRay().direction)), 0.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL_LOG(geom::Length(ray.direction), geom::Length(GetRay().direction), 0.001f);

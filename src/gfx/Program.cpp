@@ -215,7 +215,8 @@ void Program3d::InitUniforms()
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
 , _ambient(std::move(rhs._ambient))
-, _num_lights(std::move(rhs._num_lights))
+, _num_point_lights(std::move(rhs._num_point_lights))
+, _num_beam_lights(std::move(rhs._num_beam_lights))
 , _lights(std::move(rhs._lights))
 {
 }
@@ -230,7 +231,8 @@ void LightProgram::InitUniforms()
 	super::InitUniforms();
 	
 	InitUniformLocation(_ambient, "ambient");
-	InitUniformLocation(_num_lights, "num_lights");
+	InitUniformLocation(_num_point_lights, "num_point_lights");
+	InitUniformLocation(_num_beam_lights, "num_beam_lights");
 	
 	for (auto index = 0u; index != _lights.size(); ++ index)
 	{
@@ -240,6 +242,9 @@ void LightProgram::InitUniforms()
 	
 		sprintf(name, "lights[%d].position", index);
 		InitUniformLocation(light_uniforms.position, name);
+	
+		sprintf(name, "lights[%d].direction", index);
+		InitUniformLocation(light_uniforms.direction, name);
 	
 		sprintf(name, "lights[%d].color", index);
 		InitUniformLocation(light_uniforms.color, name);
@@ -253,32 +258,78 @@ void LightProgram::SetLight(Light const & light) const
 	SetLight(light, 0);
 	
 	_ambient.Set(Color4f::Black());
-	_num_lights.Set(1);
+	
+	auto type = light.GetType();
+	switch (type)
+	{
+	default:
+		DEBUG_BREAK("bad enum value, %d", int(type));
+		
+	case LightType::point:
+	case LightType::shadow:
+		_num_point_lights.Set(1);
+		_num_beam_lights.Set(0);
+		break;
+		
+	case LightType::beam:
+		_num_point_lights.Set(0);
+		_num_beam_lights.Set(1);
+		break;
+	}
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const
 {
 	ASSERT(IsBound());
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
-
+	
+	auto num_point_lights = 0;
+	auto num_beam_lights = 0;
 	auto num_lights = 0;
-	for (auto & light : lights)
+	
+	auto populate_lights = [&] (LightType pass_type)
 	{
-		if (filter != LightType::all)
+		if (! filter[pass_type])
+		{
+			return 0;
+		}
+		
+		auto num_type_lights = 0;
+
+		for (auto & light : lights)
 		{
 			auto type = light.GetType();
-			if (type != filter)
+			if (pass_type != type)
 			{
 				continue;
 			}
+		
+			Color4f const & color = light.GetColor();
+			if (color.r + color.g + color.b == 0)
+			{
+				continue;
+			}
+			
+			SetLight(light, num_lights);
+			++ num_lights;
+			++ num_type_lights;
 		}
 		
-		SetLight(light, num_lights);
-		++ num_lights;
-	}
+		return num_type_lights;
+	};
+	
+	// add point lights first
+	num_point_lights += populate_lights(LightType::point);
+	num_point_lights += populate_lights(LightType::shadow);
+	
+	// then beam
+	num_beam_lights += populate_lights(LightType::beam);
+	
+	ASSERT(num_beam_lights + num_point_lights == num_lights);
 	
 	_ambient.Set(ambient);
-	_num_lights.Set(num_lights);
+	_num_point_lights.Set(num_point_lights);
+	_num_beam_lights.Set(num_beam_lights);
 }
 
 void LightProgram::SetLight(Light const & light, int index) const
@@ -294,6 +345,9 @@ void LightProgram::SetLight(Light const & light, int index) const
 	auto & transformation = light.GetModelViewTransformation();
 	auto position = transformation.GetTranslation();
 	light_uniforms.position.Set(position);
+	
+	auto direction = GetAxis(transformation.GetRotation(), Direction::forward);
+	light_uniforms.direction.Set(direction);
 
 	Color4f const & color = light.GetColor();
 	light_uniforms.color.Set(color);

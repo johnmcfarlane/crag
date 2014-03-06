@@ -377,7 +377,7 @@ void Engine::SetVboResource(VboResource const * vbo)
 }
 
 // TODO: Just do this in the vertex shader?
-Color4f Engine::CalculateLighting(Vector3 const & position, LightType light_type) const
+Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeSet filter) const
 {
 	Color4f lighting_color = Color4f::Black();
 	
@@ -385,13 +385,11 @@ Color4f Engine::CalculateLighting(Vector3 const & position, LightType light_type
 	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ i)
 	{
 		Light const & light = * i;
-		if (light_type != LightType::all)
+
+		// filter by type
+		if (! filter[light.GetType()])
 		{
-			// filter by type
-			if (light_type != light.GetType())
-			{
-				continue;
-			}
+			continue;
 		}
 
 		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
@@ -910,8 +908,8 @@ void Engine::RenderScene()
 	
 	if (shadows_enabled)
 	{
-		// render foreground, opaque elements with simple lighting
-		UpdateProgramLights(LightType::simple);
+		// render foreground, opaque elements with non-shadow lighting
+		UpdateProgramLights(LightTypeSet(LightType::point) | LightTypeSet(LightType::beam));
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 		// render foreground, opaque elements with shadow lighting
@@ -920,7 +918,7 @@ void Engine::RenderScene()
 	else
 	{
 		// render foreground, opaque elements with all lighting
-		UpdateProgramLights(LightType::all);
+		UpdateProgramLights(LightTypeSet().set());
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	}
 	
@@ -953,7 +951,7 @@ void Engine::UpdateProgramLights(Light const & light)
 	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
-void Engine::UpdateProgramLights(LightType light_type)
+void Engine::UpdateProgramLights(LightTypeSet light_types)
 {
 	Color4f ambient(ambient_r, ambient_g, ambient_b);
 
@@ -962,7 +960,7 @@ void Engine::UpdateProgramLights(LightType light_type)
 	auto update_program = [&] (LightProgram const & light_program)
 	{
 		SetCurrentProgram(& light_program);
-		light_program.SetLights(ambient, lights, light_type);
+		light_program.SetLights(ambient, lights, light_types);
 	};
 	
 	auto & resource_manager = crag::core::ResourceManager::Get();
@@ -977,7 +975,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Enable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 
-	UpdateProgramLights(LightType::all);
+	UpdateProgramLights(LightTypeSet().set());
 	RenderLayer(projection_matrix, Layer::foreground, false);
 
 	// vbo needs to be reset before next frame

@@ -1,2 +1,7 @@
-ndk-build $1 $2 $3 $4 && ant debug && ant debug install # && ndk-gdb --start
+#!/usr/bin/env bash
+set -o errexit
 
+android-ndk/ndk-build $1 $2 $3 $4
+ant debug
+ant debug install
+#android-ndk/ndk-gdb --start --adb=android-sdk/platform-tools/adb

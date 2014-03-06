@@ -77,8 +77,8 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 	GenerateScanRay();
 	
 	auto location = entity.GetLocation();
-	auto body = location->GetBody();
-	_ray_cast.SetIsCollidable(* body, false);
+	auto & body = core::StaticCast<physics::Body>(*location);
+	_ray_cast.SetIsCollidable(body, false);
 	
 	auto & roster = GetTickRoster();
 	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
@@ -95,13 +95,14 @@ Sensor::~Sensor()
 
 Scalar Sensor::GetReading() const
 {
-	const auto& result = _ray_cast.GetResult();
+	const auto & result = _ray_cast.GetResult();
 	if (! result)
 	{
 		return 1.f;
 	}
 	
 	auto contact_distance = result.GetDistance();
+	CRAG_VERIFY_OP (contact_distance, >=, 0);
 	CRAG_VERIFY_OP (contact_distance, <=, _length);
 	
 	auto ratio = contact_distance / _length;
@@ -111,6 +112,21 @@ Scalar Sensor::GetReading() const
 	return ratio;
 }
 
+Scalar Sensor::GetReadingDistance() const
+{
+	const auto & result = _ray_cast.GetResult();
+	if (! result)
+	{
+		return _length;
+	}
+	
+	auto contact_distance = result.GetDistance();
+	CRAG_VERIFY_OP (contact_distance, >=, 0);
+	CRAG_VERIFY_OP (contact_distance, <=, _length);
+	
+	return contact_distance;
+}
+
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
 	CRAG_VERIFY(self._local_ray.position);
 	CRAG_VERIFY_UNIT(self._local_ray.direction, .0001f);
@@ -118,6 +134,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Sensor::Tick()
 {
+#if ! defined(NDEBUG)
 	// draw previous ray result
 	auto reading = GetReading();
 	auto scan_ray = _ray_cast.GetRay();
@@ -133,6 +150,7 @@ void Sensor::Tick()
 	{
 		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
 	}
+#endif
 
 	GenerateScanRay();
 }

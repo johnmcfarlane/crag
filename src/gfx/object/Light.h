@@ -24,14 +24,7 @@ namespace gfx
 	// A gfx Object representing a light source.
 	class Light : public LeafNode
 	{
-		////////////////////////////////////////////////////////////////////////////////
-		// types
 	public:
-		struct UpdateParams
-		{
-			Vector3 position;
-		};
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type);

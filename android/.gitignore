@@ -1,4 +1,6 @@
 # android/.gitignore
+android-ndk/
+android-sdk/
 bin/
 gen/
 jni/SDL

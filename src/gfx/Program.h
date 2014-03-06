@@ -87,6 +87,7 @@ namespace gfx
 		struct LightUniforms
 		{
 			Uniform<Vector3> position;
+			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 		};
 
@@ -101,7 +102,7 @@ namespace gfx
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetLight(Light const & light) const;
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightType filter) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const;
 
 	private:
 
@@ -111,7 +112,8 @@ namespace gfx
 		// variables
 		
 		Uniform<Color4f> _ambient;
-		Uniform<int> _num_lights;
+		Uniform<int> _num_point_lights;
+		Uniform<int> _num_beam_lights;
 		std::array<LightUniforms, 8> _lights;
 	};
 
