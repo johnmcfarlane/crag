@@ -2,6 +2,7 @@
 android-ndk/
 android-sdk/
 bin/
+dl/
 gen/
 jni/SDL
 libs/

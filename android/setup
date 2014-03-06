@@ -2,11 +2,40 @@
 set -o errexit
 
 ################################################################################
-# SDL
+# packages
 
 sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install automake ia32-libs libtool subversion
+sudo apt-get install automake ia32-libs java-package libtool subversion
+
+################################################################################
+# Java
+
+cd dl
+make-jpkg jdk*
+sudo dpkg -i oracle-j2sdk*.deb
+sudo update-java-alternatives -s j2sdk1.7-oracle
+cd ..s
+
+################################################################################
+# extract android development kits
+
+mkdir android-sdk || true
+mkdir android-ndk || true
+
+cd dl
+tar zxf android-sdk*
+mv android-sdk*/* ../android-sdk
+
+tar xvjf android-ndk*.tar.bz2
+mv android-ndk*/* ../android-ndk
+cd ..
+
+################################################################################
+# invoke android command to get Android SDK modules
+
+echo Please install Android SDK packages and close the package manager to continue
+./android-sdk/tools/android
 
 ################################################################################
 # SDL
