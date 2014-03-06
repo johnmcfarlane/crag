@@ -123,14 +123,19 @@ namespace crag
 			
 			operator bool() const
 			{
-				return * this != nullptr;
+				return ! buffer.empty();
 			}
 			
 			bool operator==(std::nullptr_t) const
 			{
-				return * this == pointer_union_base();
+				return buffer.empty();
 			}
-			
+
+			bool operator!=(std::nullptr_t) const
+			{
+				return ! buffer.empty();
+			}
+
 			bool operator==(pointer_union_base const & rhs) const
 			{
 				return buffer == rhs.buffer;

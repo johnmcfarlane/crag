@@ -204,6 +204,7 @@ namespace
 		
 		if (! app::GetEvent(event))
 		{
+			smp::Yield();
 			return true;
 		}
 		
