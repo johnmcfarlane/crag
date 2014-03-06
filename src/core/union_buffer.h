@@ -40,6 +40,15 @@ namespace crag
 			{
 				return ! (lhs == rhs);
 			}
+
+			// empty test
+			bool empty() const
+			{
+				return std::all_of(std::begin(storage), std::end(storage), [](ElementType element) 
+				{ 
+					return element == 0; 
+				});
+			}
 			
 			// zero the buffer
 			void clear()
