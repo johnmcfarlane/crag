@@ -162,7 +162,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 
 // SDL Error Reporter
 #define DEBUG_BREAK_SDL() \
-	DEBUG_BREAK("SDL error: '%s'", SDL_GetError());	
+	DEBUG_BREAK("SDL error: \"%s\"", SDL_GetError());	
 
 
 //////////////////////////////////////////////////////////////////////
