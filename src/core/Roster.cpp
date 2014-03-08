@@ -161,7 +161,9 @@ Ordering::FunctionIndex Ordering::GetFunctionIndex(Function function)
 Function Ordering::GetFunction(FunctionIndex function_index) const
 {
 	CRAG_VERIFY(* this);
-	ASSERT(function_index < _table.size());
+	static_assert(std::is_unsigned<FunctionIndex>::value, "Need to check for negative value as well");
+	CRAG_VERIFY_OP(function_index, <, _table.size());
+
 	return _table[function_index].function;
 }
 
@@ -224,14 +226,36 @@ Roster::~Roster()
 	}
 }
 
-CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Roster, object)
-	// verify order
-	CRAG_VERIFY_TRUE(std::is_sorted(std::begin(object._commands), std::end(object._commands), [& object] (Command lhs, Command rhs)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Roster, self)
+	CRAG_VERIFY(self._ordering);
+	
+	for (auto & command: self._commands)
 	{
-		return object.LessThan(lhs, rhs);
+		auto f = command.function_index;
+		CRAG_VERIFY_TRUE(self._ordering.GetFunction(f) != nullptr);
+	}
+	
+	auto begin = std::begin(self._commands);
+	auto end = std::end(self._commands);
+
+	// verify order
+	CRAG_VERIFY_TRUE(std::is_sorted(begin, end, [& self] (Command lhs, Command rhs)
+	{
+		return self.LessThan(lhs, rhs);
 	}));
 
-	CRAG_VERIFY(object._ordering);
+#if 1	// expensive
+	// exhaustive comparison ensures complete integrity of ordering
+	for (auto rhs = begin; rhs != end; ++ rhs)
+	{
+		auto const & rhs_command = * rhs;
+		for (auto lhs = begin; lhs != rhs; ++ lhs)
+		{
+			auto const & lhs_command = * lhs;
+			CRAG_VERIFY_TRUE(! self.LessThan(rhs_command, lhs_command));
+		}
+	}
+#endif
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Roster::AddOrdering(Function lhs_function, Function rhs_function)
@@ -246,21 +270,9 @@ void Roster::AddOrdering(Function lhs_function, Function rhs_function)
 	if (_ordering.SetComparison(lhs_index, rhs_index, -1))
 	{
 		Sort();
-
-		CRAG_VERIFY(* this);
-
-#if defined(CRAG_VERIFY_ENABLED)
-	// exhaustive comparison ensures complete integrity of ordering
-	auto end = std::end(_commands);
-	for (auto lhs = std::begin(_commands); lhs != end; ++ lhs)
-	{
-		for (auto rhs = lhs; ++ rhs != end; )
-		{
-			CRAG_VERIFY_TRUE(! LessThan(* rhs, * lhs));
-		}
-	};
-#endif
 	}
+	
+	CRAG_VERIFY(* this);
 }
 
 // TODO: separate sorting into essential sorting and incremental sorting;
@@ -284,11 +296,11 @@ void Roster::Call()
 void Roster::AddCommand(Command command)
 {
 	CRAG_VERIFY(* this);
-	ASSERT(Find(command) == _commands.end());
+	ASSERT(Find(command) == std::end(_commands));
 
 	auto insertion_position = Search(command);
-	ASSERT(insertion_position == _commands.end() || * insertion_position != command);
-	ASSERT(insertion_position == _commands.end() || ! LessThan(* insertion_position, command));
+	ASSERT(insertion_position == std::end(_commands) || * insertion_position != command);
+	ASSERT(insertion_position == std::end(_commands) || ! LessThan(* insertion_position, command));
 
 	_commands.insert(insertion_position, command);
 
@@ -299,7 +311,7 @@ void Roster::RemoveCommand(Command command)
 {
 	auto found = Find(command);
 	
-	if (found == _commands.end())
+	if (found == std::end(_commands))
 	{
 		DEBUG_BREAK("command not found");
 		return;
@@ -325,7 +337,7 @@ Roster::CommandVector::iterator Roster::Find(Command command)
 {
 	Roster::CommandVector::iterator found = Search(command);
 
-	Roster::CommandVector::iterator end = _commands.end();
+	Roster::CommandVector::iterator end = std::end(_commands);
 	if (found != end)
 	{
 		Command f = * found;
@@ -336,7 +348,7 @@ Roster::CommandVector::iterator Roster::Find(Command command)
 	}
 
 #if ! defined(NDEBUG)
-	auto slow_found = std::find(_commands.begin(), _commands.end(), command);
+	auto slow_found = std::find(std::begin(_commands), std::end(_commands), command);
 	ASSERT(found == slow_found);
 #endif
 
@@ -345,7 +357,7 @@ Roster::CommandVector::iterator Roster::Find(Command command)
 
 void Roster::Sort()
 {
-	std::sort(_commands.begin(), _commands.end(), [=] (Command lhs, Command rhs) {
+	std::sort(std::begin(_commands), std::end(_commands), [=] (Command lhs, Command rhs) {
 		return LessThan(lhs, rhs);
 	});
 }
