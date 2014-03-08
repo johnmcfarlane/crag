@@ -72,6 +72,8 @@ namespace core
 			friend bool operator < (Function lhs, Function rhs);
 			void operator() (void * object) const;
 
+			void Dump() const;
+
 		private:
 			template <typename CLASS, typename FUNCTION>
 			void Set(FUNCTION member_function)
@@ -124,7 +126,10 @@ namespace core
 			Function GetFunction(FunctionIndex function_index) const;
 
 			CRAG_VERIFY_INVARIANTS_DECLARE(Ordering);
+
+			void Dump() const;
 		private:
+
 			ComparisonTable _table;
 		};
 
@@ -148,6 +153,8 @@ namespace core
 
 				bool operator==(Command rhs) const;
 				bool operator!=(Command rhs) const;
+				
+				void Dump() const;
 			};
 
 			typedef std::vector<Command> CommandVector;
@@ -202,6 +209,8 @@ namespace core
 
 			FunctionIndex GetFunctionIndex(Function function);
 			Function GetFunction(FunctionIndex function_index) const;
+			
+			void Dump() const;
 
 			////////////////////////////////////////////////////////////////////
 			// variables

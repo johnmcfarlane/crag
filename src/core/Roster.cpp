@@ -68,6 +68,11 @@ void Function::operator() (void * object) const
 	(surrogate.*member_function)();
 }
 
+void Function::Dump() const
+{
+	std::cout << _function.array[0] << ',' << _function.array[1];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // core::locality::Ordering member definitions
 
@@ -197,6 +202,49 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Ordering, object)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
+void Ordering::Dump() const
+{
+	auto size = _table.size();
+
+	std::cout << "  ";
+	for (Ordering::FunctionIndex column_index = 0; column_index != size; ++ column_index)
+	{
+		std::cout << ' ' << column_index << ' ';
+	}
+	std::cout << std::endl;
+
+	for (Ordering::FunctionIndex row_index = 0; row_index != size; ++ row_index)
+	{
+		auto & row = _table[row_index].comparisons;
+		CRAG_VERIFY_EQUAL(_table.size(), row.size());
+
+		std::cout << row_index << ' ';
+		for (Ordering::FunctionIndex column_index = 0; column_index != size; ++ column_index)
+		{
+			auto cell = row[column_index];
+			
+			switch (cell)
+			{
+			case -1:
+				std::cout << "-1 ";
+				break;
+			case 0:
+				std::cout << " 0 ";
+				break;
+			case +1:
+				std::cout << "+1 ";
+				break;
+			
+			default:
+				DEBUG_BREAK("Bad enum value, %d", cell);
+				break;
+			}
+		}
+		
+		std::cout << std::endl;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // core::locality::Roster member definitions
 
@@ -209,6 +257,11 @@ bool core::locality::Roster::Command::operator==(Command rhs) const
 bool core::locality::Roster::Command::operator!=(Command rhs) const
 {
 	return ! operator==(rhs);
+}
+
+void Roster::Command::Dump() const
+{
+	std::cout << function_index << ' ' << object << std::endl;
 }
 
 Roster::Roster()
@@ -388,4 +441,14 @@ Roster::FunctionIndex Roster::GetFunctionIndex(Function function)
 Function Roster::GetFunction(FunctionIndex function_index) const
 {
 	return _ordering.GetFunction(function_index);
+}
+
+void Roster::Dump() const
+{
+	_ordering.Dump();
+	
+	for (auto const & command : _commands)
+	{
+		command.Dump();
+	}
 }
