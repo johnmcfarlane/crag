@@ -415,10 +415,16 @@ void Roster::Sort()
 	});
 }
 
+// establishes Command order
 bool Roster::LessThan(Command lhs, Command rhs) const
 {
 		auto lhs_index = lhs.function_index;
 		auto rhs_index = rhs.function_index;
+		if (lhs_index == rhs_index)
+		{
+			return lhs.object < rhs.object;
+		}
+		
 		auto comparison = _ordering.GetComparison(lhs_index, rhs_index);
 		switch (comparison)
 		{
@@ -429,7 +435,7 @@ bool Roster::LessThan(Command lhs, Command rhs) const
 		default:
 			DEBUG_BREAK("invaid value, %d, returned by GetComparison", int(comparison));
 		case 0:
-			return lhs.object < rhs.object;
+			return lhs_index < rhs_index;
 		}
 }
 
