@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "entity/vehicle/sim/Thruster.h"
+#include "entity/sim/Thruster.h"
 
 namespace sim
 {

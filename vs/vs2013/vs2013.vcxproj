@@ -141,10 +141,25 @@
     <ClInclude Include="..\..\src\core\Singleton.h" />
     <ClInclude Include="..\..\src\core\Statistics.h" />
     <ClInclude Include="..\..\src\core\TypeId.h" />
-    <ClInclude Include="..\..\src\entity\animat\AnimatThruster.h" />
-    <ClInclude Include="..\..\src\entity\camera\CameraController.h" />
-    <ClInclude Include="..\..\src\entity\observer\Contact.h" />
-    <ClInclude Include="..\..\src\entity\planet\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\entity\gfx\Planet.h" />
+    <ClInclude Include="..\..\src\entity\gfx\Puff.h" />
+    <ClInclude Include="..\..\src\entity\gfx\Thruster.h" />
+    <ClInclude Include="..\..\src\entity\physics\PlanetBody.h" />
+    <ClInclude Include="..\..\src\entity\sim\AnimatController.h" />
+    <ClInclude Include="..\..\src\entity\sim\AnimatThruster.h" />
+    <ClInclude Include="..\..\src\entity\sim\CameraController.h" />
+    <ClInclude Include="..\..\src\entity\sim\Contact.h" />
+    <ClInclude Include="..\..\src\entity\sim\Genome.h" />
+    <ClInclude Include="..\..\src\entity\sim\MoonShader.h" />
+    <ClInclude Include="..\..\src\entity\sim\MouseObserverController.h" />
+    <ClInclude Include="..\..\src\entity\sim\ObserverInput.h" />
+    <ClInclude Include="..\..\src\entity\sim\PlanetController.h" />
+    <ClInclude Include="..\..\src\entity\sim\PlanetShader.h" />
+    <ClInclude Include="..\..\src\entity\sim\RoverThruster.h" />
+    <ClInclude Include="..\..\src\entity\sim\Sensor.h" />
+    <ClInclude Include="..\..\src\entity\sim\Thruster.h" />
+    <ClInclude Include="..\..\src\entity\sim\TouchObserverController.h" />
+    <ClInclude Include="..\..\src\entity\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
     <ClInclude Include="..\..\src\form\CalculateNodeScoreFunctor.h" />
     <ClInclude Include="..\..\src\form\CastRay.h" />
@@ -248,23 +263,12 @@
     <ClInclude Include="..\..\src\physics\PassiveLocation.h" />
     <ClInclude Include="..\..\src\physics\RayCast.h" />
     <ClInclude Include="..\..\src\physics\SphericalBody.h" />
-    <ClInclude Include="..\..\src\entity\animat\AnimatController.h" />
-    <ClInclude Include="..\..\src\entity\animat\Sensor.h" />
     <ClInclude Include="..\..\src\scripts\GameScript.h" />
     <ClInclude Include="..\..\src\scripts\MainScript.h" />
-    <ClInclude Include="..\..\src\entity\planet\gfx\Planet.h" />
-    <ClInclude Include="..\..\src\entity\planet\physics\PlanetBody.h" />
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
-    <ClInclude Include="..\..\src\entity\planet\sim\PlanetController.h" />
-    <ClInclude Include="..\..\src\entity\planet\sim\PlanetShader.h" />
     <ClInclude Include="..\..\src\scripts\RegulatorScript.h" />
     <ClInclude Include="..\..\src\entity\SpawnEntityFunctions.h" />
     <ClInclude Include="..\..\src\scripts\TestScript.h" />
-    <ClInclude Include="..\..\src\entity\vehicle\gfx\Puff.h" />
-    <ClInclude Include="..\..\src\entity\vehicle\gfx\Thruster.h" />
-    <ClInclude Include="..\..\src\entity\vehicle\sim\RoverThruster.h" />
-    <ClInclude Include="..\..\src\entity\vehicle\sim\Thruster.h" />
-    <ClInclude Include="..\..\src\entity\vehicle\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\sim\axes.h" />
     <ClInclude Include="..\..\src\sim\Controller.h" />
     <ClInclude Include="..\..\src\sim\defs.h" />
@@ -272,9 +276,6 @@
     <ClInclude Include="..\..\src\sim\Entity.h" />
     <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
-    <ClInclude Include="..\..\src\entity\observer\MouseObserverController.h" />
-    <ClInclude Include="..\..\src\entity\observer\ObserverInput.h" />
-    <ClInclude Include="..\..\src\entity\observer\TouchObserverController.h" />
     <ClInclude Include="..\..\src\smp\for_each.h" />
     <ClInclude Include="..\..\src\smp\Future.h" />
     <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
@@ -304,10 +305,28 @@
     <ClCompile Include="..\..\src\core\Roster.cpp" />
     <ClCompile Include="..\..\src\core\Statistics.cpp" />
     <ClCompile Include="..\..\src\core\TypeId.cpp" />
-    <ClCompile Include="..\..\src\entity\animat\AnimatThruster.cpp" />
-    <ClCompile Include="..\..\src\entity\camera\CameraController.cpp" />
-    <ClCompile Include="..\..\src\entity\observer\Contact.cpp" />
-    <ClCompile Include="..\..\src\entity\planet\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\entity\gfx\Planet.cpp" />
+    <ClCompile Include="..\..\src\entity\gfx\Puff.cpp" />
+    <ClCompile Include="..\..\src\entity\gfx\Thruster.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster1</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thruster1</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\src\entity\physics\PlanetBody.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\AnimatController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\AnimatThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\CameraController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Contact.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Genome.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\MoonShader.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\MouseObserverController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\ObserverInput.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\PlanetController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\PlanetShader.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\RoverThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Sensor.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Thruster.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\TouchObserverController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
     <ClCompile Include="..\..\src\form\CalculateNodeScoreFunctor.cpp" />
     <ClCompile Include="..\..\src\form\CastRay.cpp" />
@@ -394,28 +413,12 @@
     <ClCompile Include="..\..\src\physics\PassiveLocation.cpp" />
     <ClCompile Include="..\..\src\physics\RayCast.cpp" />
     <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
-    <ClCompile Include="..\..\src\entity\animat\AnimatController.cpp" />
-    <ClCompile Include="..\..\src\entity\animat\Sensor.cpp" />
     <ClCompile Include="..\..\src\scripts\GameScript.cpp" />
     <ClCompile Include="..\..\src\scripts\MainScript.cpp" />
-    <ClCompile Include="..\..\src\entity\planet\gfx\Planet.cpp" />
-    <ClCompile Include="..\..\src\entity\planet\physics\PlanetBody.cpp" />
-    <ClCompile Include="..\..\src\entity\planet\sim\PlanetController.cpp" />
-    <ClCompile Include="..\..\src\entity\planet\sim\PlanetShader.cpp" />
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
     <ClCompile Include="..\..\src\scripts\RegulatorScript.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnEntityFunctions.cpp" />
     <ClCompile Include="..\..\src\scripts\TestScript.cpp" />
-    <ClCompile Include="..\..\src\entity\vehicle\gfx\Puff.cpp" />
-    <ClCompile Include="..\..\src\entity\vehicle\gfx\Thruster.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster1.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thruster0</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\src\entity\vehicle\sim\RoverThruster.cpp" />
-    <ClCompile Include="..\..\src\entity\vehicle\sim\Thruster.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thruster2.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\src\entity\vehicle\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\sim\Controller.cpp" />
     <ClCompile Include="..\..\src\sim\Engine.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine0</ObjectFileName>
@@ -424,9 +427,6 @@
     <ClCompile Include="..\..\src\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
-    <ClCompile Include="..\..\src\entity\observer\MouseObserverController.cpp" />
-    <ClCompile Include="..\..\src\entity\observer\ObserverInput.cpp" />
-    <ClCompile Include="..\..\src\entity\observer\TouchObserverController.cpp" />
     <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
     <ClCompile Include="..\..\src\smp\scheduler.cpp" />
     <ClCompile Include="..\..\src\smp\Semaphore.cpp" />

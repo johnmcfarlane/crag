@@ -13,7 +13,7 @@
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
-#include "entity/animat/AnimatController.h"
+#include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnSkybox.h"
 

@@ -16,27 +16,27 @@ add_executable(crag
 	core/Roster.cpp
 	core/Statistics.cpp
 	core/TypeId.cpp
-	entity/animat/AnimatController.cpp
-	entity/animat/AnimatThruster.cpp
-	entity/animat/Genome.cpp
-	entity/animat/Sensor.cpp
-	entity/camera/CameraController.cpp
-	entity/observer/Contact.cpp
-	entity/observer/MouseObserverController.cpp
-	entity/observer/ObserverInput.cpp
-	entity/observer/TouchObserverController.cpp
-	entity/planet/gfx/Planet.cpp
-	entity/planet/physics/PlanetBody.cpp
-	entity/planet/sim/MoonShader.cpp
-	entity/planet/sim/PlanetController.cpp
-	entity/planet/sim/PlanetShader.cpp
+	entity/gfx/Planet.cpp
+	entity/gfx/Puff.cpp
+	entity/gfx/Thruster.cpp
+	entity/physics/PlanetBody.cpp
+	entity/sim/AnimatController.cpp
+	entity/sim/AnimatThruster.cpp
+	entity/sim/CameraController.cpp
+	entity/sim/Contact.cpp
+	entity/sim/Genome.cpp
+	entity/sim/MoonShader.cpp
+	entity/sim/MouseObserverController.cpp
+	entity/sim/ObserverInput.cpp
+	entity/sim/PlanetController.cpp
+	entity/sim/PlanetShader.cpp
+	entity/sim/RoverThruster.cpp
+	entity/sim/Sensor.cpp
+	entity/sim/Thruster.cpp
+	entity/sim/TouchObserverController.cpp
+	entity/sim/VehicleController.cpp
 	entity/SpawnEntityFunctions.cpp
 	entity/SpawnSkybox.cpp
-	entity/vehicle/gfx/Puff.cpp
-	entity/vehicle/gfx/Thruster.cpp
-	entity/vehicle/sim/RoverThruster.cpp
-	entity/vehicle/sim/Thruster.cpp
-	entity/vehicle/sim/VehicleController.cpp
 	form/CalculateNodeScoreFunctor.cpp
 	form/CastRay.cpp
 	form/Engine.cpp

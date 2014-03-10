@@ -11,17 +11,15 @@
 
 #include "SpawnEntityFunctions.h"
 
-#include "camera/CameraController.h"
+#include "entity/sim/CameraController.h"
 
-#include "observer/MouseObserverController.h"
-#include "observer/TouchObserverController.h"
-
-#include "planet/sim/PlanetController.h"
-#include "planet/physics/PlanetBody.h"
-#include "planet/gfx/Planet.h"
-
-#include "vehicle/sim/RoverThruster.h"
-#include "vehicle/sim/VehicleController.h"
+#include "entity/gfx/Planet.h"
+#include "entity/physics/PlanetBody.h"
+#include "entity/sim/MouseObserverController.h"
+#include "entity/sim/PlanetController.h"
+#include "entity/sim/RoverThruster.h"
+#include "entity/sim/TouchObserverController.h"
+#include "entity/sim/VehicleController.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
