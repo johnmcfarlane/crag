@@ -12,7 +12,7 @@
 #include "MouseObserverController.h"
 #include "ObserverInput.h"
 
-#include "entity/animat/Sensor.h"
+#include "entity/sim/Sensor.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"

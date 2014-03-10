@@ -14,8 +14,8 @@
 #include "MoonShader.h"
 #include "PlanetShader.h"
 
-#include "entity/planet/gfx/Planet.h"
-#include "entity/planet/physics/PlanetBody.h"
+#include "entity/gfx/Planet.h"
+#include "entity/physics/PlanetBody.h"
 
 #include "sim/Entity.h"
 #include "sim/Engine.h"

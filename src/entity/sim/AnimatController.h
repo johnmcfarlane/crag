@@ -7,7 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "entity/vehicle/sim/VehicleController.h"
+#include "entity/sim/VehicleController.h"
 
 #include "Genome.h"
 
