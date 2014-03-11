@@ -201,8 +201,8 @@ namespace gfx
 		
 #if ! defined(NDEBUG)
 		// fps counter
-		static int const _frame_time_history_size = 360;
-		core::Time _frame_time_history[_frame_time_history_size];
+		static int constexpr _frame_time_history_size = 60;
+		std::array<core::Time, _frame_time_history_size> _frame_time_history;
 #endif
 		
 		Fence _fence1, _fence2;

@@ -287,7 +287,7 @@ Engine::Engine()
 , _current_vbo(nullptr)
 {
 #if ! defined(NDEBUG)
-	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
+	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
 	
 	if (! Init())
@@ -1311,9 +1311,13 @@ void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_positi
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 	// update the history
-	memmove(_frame_time_history, _frame_time_history + 1, sizeof(* _frame_time_history) * (_frame_time_history_size - 1));
-	Time first_entry = _frame_time_history[0];
-	Time & last_entry = _frame_time_history[_frame_time_history_size - 1];
+	auto begin = std::begin(_frame_time_history);
+	auto end = std::end(_frame_time_history);
+	std::copy(begin + 1, end, begin);
+
+	// get the range
+	Time first_entry = * begin;
+	Time & last_entry = * (end - 1);
 	last_entry = frame_start_position;
 	
 	// average it
