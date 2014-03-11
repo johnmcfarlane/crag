@@ -75,7 +75,7 @@ namespace
 #elif defined(PROFILE)
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #elif defined(NDEBUG)
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (video_full_screen, bool, true);
 #else
 	CONFIG_DEFINE (video_full_screen, bool, false);
 #endif
