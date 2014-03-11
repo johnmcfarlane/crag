@@ -104,6 +104,7 @@ namespace
 	CONFIG_DEFINE (ufo_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (ufo_stabilizer_thrust, physics::Scalar, .5f);
 	CONFIG_DEFINE (ufo_stabilizer_distance, physics::Scalar, 0.2f);
+	CONFIG_DEFINE (enable_beam, bool, false);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -447,10 +448,13 @@ namespace
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
-		gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
-		gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
-			engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
-		});
+		if (enable_beam)
+		{
+			gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
+			gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
+				engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
+			});
+		}
 
 		// controller
 		auto & controller = ref(new VehicleController(entity));
