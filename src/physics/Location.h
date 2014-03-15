@@ -31,7 +31,8 @@ namespace physics
 		Transformation const & GetTransformation() const;
 		virtual void SetTransformation(Transformation const & transformation) = 0;
 
-		virtual Vector3 GetGravitationalForce(Vector3 const & pos) const;
+		// the amount of attractive influence this body has at a given point in space
+		virtual Vector3 GetGravitationalAttraction(Vector3 const & pos) const;
 		virtual bool ObeysGravity() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Location);

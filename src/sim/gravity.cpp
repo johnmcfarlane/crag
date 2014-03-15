@@ -35,7 +35,7 @@ namespace
 			auto location = entity.GetLocation();
 			if (location)
 			{
-				force += location->GetGravitationalForce(pos);
+				force += location->GetGravitationalAttraction(pos);
 			}
 		});
 		
