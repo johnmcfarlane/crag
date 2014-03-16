@@ -25,6 +25,7 @@ add_executable(crag
 	entity/sim/CameraController.cpp
 	entity/sim/Contact.cpp
 	entity/sim/Genome.cpp
+	entity/sim/HoverThruster.cpp
 	entity/sim/MoonShader.cpp
 	entity/sim/MouseObserverController.cpp
 	entity/sim/ObserverInput.cpp
