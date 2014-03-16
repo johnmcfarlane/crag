@@ -15,6 +15,7 @@
 
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
+#include "entity/sim/HoverThruster.h"
 #include "entity/sim/MouseObserverController.h"
 #include "entity/sim/PlanetController.h"
 #include "entity/sim/RoverThruster.h"
@@ -299,6 +300,13 @@ namespace
 		controller.AddThruster(thruster);
 	}
 
+	void AddHoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Scalar distance)
+	{
+		auto & entity = controller.GetEntity();
+		auto thruster = new sim::HoverThruster(entity, position, distance);
+		controller.AddThruster(thruster);
+	}
+
 	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
 		ConstructBall(entity, sphere, sim::Vector3::Zero(), gfx::Color4f::White());
@@ -386,6 +394,9 @@ namespace
 		add_thruster(sim::Vector3(0, 0, -.525f), forward, SDL_SCANCODE_SPACE);
 		add_thrusters(sim::Vector3(0, -.25f, .25f), up, SDL_SCANCODE_DOWN, 2, SDL_SCANCODE_UP);
 		add_thrusters(sim::Vector3(.5, -.1f, 0), up, SDL_SCANCODE_LEFT, 0, SDL_SCANCODE_RIGHT);
+		
+		AddHoverThruster(controller, sim::Vector3(0.f, -.25f, 0.f), -.1f);
+		AddHoverThruster(controller, sim::Vector3(0.f, .25f, 0.f), .1f);
 	}
 }
 
