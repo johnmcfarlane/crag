@@ -61,6 +61,8 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 	// register for physics tick
 	auto & roster = _engine.GetPreTickRoster();
 	roster.AddCommand(* this, & Body::Tick);
+	
+	CRAG_VERIFY(* this);
 }
 
 Body::~Body()
@@ -371,6 +373,15 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
 	CRAG_VERIFY(self.GetRotation());
 	CRAG_VERIFY_OP(geom::Length(self.GetTranslation()), <, 4.0e+8);
 //	CRAG_VERIFY_OP(geom::Length(GetVelocity()), <, 1000);
+
+	auto mass = self.GetMass();
+	CRAG_VERIFY(mass);
+	CRAG_VERIFY_TRUE((mass <= 0) == (! self._body_handle));
+	
+	if (! self._body_handle)
+	{
+		CRAG_VERIFY(self._gravitational_force == Vector3::Zero());
+	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Vector3 const & physics::Body::GetGeomTranslation() const
