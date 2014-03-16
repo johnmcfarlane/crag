@@ -24,7 +24,8 @@ namespace physics
 
 namespace sim
 {
-	// applies force to an entity; is owned by a controller
+	// applies force to an entity; is owned by a controller;
+	// ray is in entity-local coordinate space
 	struct Thruster
 	{
 	public:
@@ -41,6 +42,9 @@ namespace sim
 		void SetParentModel(gfx::ObjectHandle parent_model);
 
 		Entity & GetEntity();
+		
+		Ray3 const & GetRay() const;
+		void SetRay(Ray3 const & ray);
 
 		// get/set the amount of thrust being applied to entity's body
 		float GetThrustFactor() const;
@@ -55,7 +59,7 @@ namespace sim
 		// variables
 
 		sim::Entity & _entity;
-		Ray3 const _ray;	// position/direction of Thruster relative to vehicle
+		Ray3 _ray;	// position/direction of Thruster relative to vehicle
 		gfx::ThrusterHandle _model;
 		float _thrust_factor;
 	};
