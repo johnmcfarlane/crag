@@ -140,8 +140,11 @@ void Thruster::UpdateModel() const
 		return;
 	}
 
-	_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+	if (_model)
 	{
-		thruster.Update(thrust_factor);
-	});
+		_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+		{
+			thruster.Update(thrust_factor);
+		});
+	}
 }
