@@ -33,14 +33,17 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light)
 	, _ray(ray)
 	, _thrust_factor(0)
 {
-	// calculate local transformation
-	auto thrust_max = Length(ray.direction);
-	Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
-
 	// create model
 	if (light)
 	{
-		_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
+		// calculate local transformation
+		auto thrust_max = Length(ray.direction);
+		if (thrust_max)
+		{
+			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
+
+			_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
+		}
 	}
 
 	// roster
