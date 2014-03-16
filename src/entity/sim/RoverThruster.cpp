@@ -29,8 +29,8 @@ RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, SDL_Scancode key
 , _key(key)
 {
 	auto & tick_roster = entity.GetEngine().GetTickRoster();
-	tick_roster.AddCommand(* this, & RoverThruster::TickThrustFactor);
 	tick_roster.AddOrdering(& RoverThruster::TickThrustFactor, & Thruster::Tick);
+	tick_roster.AddCommand(* this, & RoverThruster::TickThrustFactor);
 }
 
 RoverThruster::~RoverThruster()
