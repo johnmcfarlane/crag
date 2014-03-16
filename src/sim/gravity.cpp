@@ -56,7 +56,7 @@ namespace
 		Vector3 gravitational_force_per_second = Weight(engine, position, mass);
 		Vector3 gravity = gravitational_force_per_second / Scalar(delta);
 		
-		body.AddForce(gravity);
+		body.SetGravitationalForce(gravity);
 	}
 	
 }

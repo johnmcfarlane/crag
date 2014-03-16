@@ -32,6 +32,7 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 , _engine(engine)
 , _collision_handle(collision_handle)
 , _exception(nullptr)
+, _gravitational_force(Vector3::Zero())
 {
 	// _body_handle
 	if (velocity != nullptr)
@@ -91,6 +92,16 @@ Body::~Body()
 bool Body::ObeysGravity() const
 {
 	return true;
+}
+
+void Body::SetGravitationalForce(Vector3 const & gravitational_force)
+{
+	_gravitational_force = gravitational_force;
+}
+
+Vector3 const & Body::GetGravitationalForce() const
+{
+	return _gravitational_force;
 }
 
 BodyHandle Body::GetBodyHandle() const
@@ -400,4 +411,9 @@ void physics::Body::SetGeomTransformation(Transformation const & transformation)
 void physics::Body::Tick()
 {
 	SetTransformation(GetGeomTransformation());
+	
+	if (_body_handle)
+	{
+		AddForce(_gravitational_force);
+	}
 }
