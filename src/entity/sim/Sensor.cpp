@@ -11,12 +11,8 @@
 
 #include "Sensor.h"
 
-#include "AnimatController.h"
-
 #include "sim/Engine.h"
 #include "sim/Entity.h"
-
-#include "form/RayCastResult.h"
 
 #include "physics/RayCast.h"
 
@@ -79,7 +75,6 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 	_ray_cast.SetIsCollidable(body, false);
 	
 	auto & roster = GetTickRoster();
-	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
 	roster.AddCommand(* this, & Sensor::Tick);
 }
 

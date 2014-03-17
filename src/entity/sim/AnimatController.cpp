@@ -37,8 +37,9 @@ AnimatController::AnimatController(Entity & entity, float radius)
 	Connect();
 
 	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddCommand(* this, & AnimatController::Tick);
 	roster.AddOrdering(& AnimatController::Tick, & Entity::Tick);
+	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
+	roster.AddCommand(* this, & AnimatController::Tick);
 }
 
 AnimatController::~AnimatController()

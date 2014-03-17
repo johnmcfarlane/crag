@@ -45,8 +45,8 @@ namespace sim
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 
-	private:
 		void Tick();
+	private:
 		Ray3 GetGlobalRay() const;
 		void GenerateScanRay() const;
 
