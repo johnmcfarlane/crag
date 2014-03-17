@@ -278,6 +278,14 @@ void Body::AddForce(Vector3 const & force)
 	DebugDrawForce<false, false>(* this, force);
 }
 
+void Body::AddForceAtPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddForceAtPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<false, false>(* this, force, & pos);
+}
+
 void Body::AddRelForce(Vector3 const & force)
 {
 	ASSERT(_body_handle != 0);
@@ -292,6 +300,14 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 
 	DebugDrawForce<true, true>(* this, force, & pos);
+}
+
+void Body::AddForceAtRelPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<false, true>(* this, force, & pos);
 }
 
 void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
@@ -321,7 +337,7 @@ bool Body::OnCollisionWithRay(Body & that_body)
 	auto that_collision_handle = that_body.GetCollisionHandle();
 	auto this_collision_handle = GetCollisionHandle();
 
-	constexpr uint16_t max_contacts = 2;
+	constexpr uint16_t max_contacts = 6;
 #if defined(NDEBUG)
 	constexpr uint16_t contacts_size = max_contacts;
 #else
