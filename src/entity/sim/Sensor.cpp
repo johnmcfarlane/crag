@@ -20,8 +20,6 @@
 
 #include "physics/RayCast.h"
 
-#include "gfx/Debug.h"
-
 #include "core/Random.h"
 #include "core/Roster.h"
 
@@ -134,24 +132,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Sensor::Tick()
 {
-#if ! defined(NDEBUG)
-	// draw previous ray result
-	auto reading = GetReading();
-	auto scan_ray = _ray_cast.GetRay();
-	auto start = scan_ray.position;
-	auto end = geom::Project(scan_ray, _length);
-	if (reading < 1)
-	{
-		auto penetration_position = geom::Project(scan_ray, reading * _length);
-		gfx::Debug::AddLine(start, penetration_position, gfx::Debug::Color::Yellow());
-		gfx::Debug::AddLine(penetration_position, end, gfx::Debug::Color::Red());
-	}
-	else
-	{
-		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
-	}
-#endif
-
 	GenerateScanRay();
 }
 
