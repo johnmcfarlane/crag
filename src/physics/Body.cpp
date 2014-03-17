@@ -36,6 +36,38 @@
 
 using namespace physics;
 
+namespace
+{
+#if defined(CRAG_PHYSICS_BODY_DEBUG)
+	template <bool relative_direction, bool relative_position>
+	void DebugDrawForce(Body const & body, Vector3 const & direction, Vector3 const * position = nullptr)
+	{
+		auto const & transformation = body.GetTransformation();
+		
+		Vector3 position_tmp;
+		if (position)
+		{
+			position_tmp = * position;
+		}
+		else
+		{
+			position_tmp = transformation.GetTranslation();
+		}
+		
+		Ray3 ray(
+			relative_position ? transformation.Transform(position_tmp) : position_tmp,
+			(relative_direction ? transformation.Rotate(direction) : direction) * CRAG_PHYSICS_BODY_DEBUG);
+
+		gfx::Debug::AddLine(ray);
+	}
+#else
+	template <bool relative_direction, bool relative_position>
+	void DebugDrawForce(Body const &, Vector3 const &, Vector3 const * = nullptr)
+	{
+	}
+#endif
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
 
@@ -243,12 +275,7 @@ void Body::AddForce(Vector3 const & force)
 	ASSERT(_body_handle != 0);
 	dBodyAddForce(_body_handle, force.x, force.y, force.z);
 
-#if defined(CRAG_PHYSICS_BODY_DEBUG)
-	auto const & transformation = GetTransformation();
-	auto translation = transformation.GetTranslation();
-	Ray3 ray(translation, force * CRAG_PHYSICS_BODY_DEBUG);
-	gfx::Debug::AddLine(ray);
-#endif
+	DebugDrawForce<false, false>(* this, force);
 }
 
 void Body::AddRelForce(Vector3 const & force)
@@ -256,12 +283,7 @@ void Body::AddRelForce(Vector3 const & force)
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForce(_body_handle, force.x, force.y, force.z);
 
-#if defined(CRAG_PHYSICS_BODY_DEBUG)
-	auto const & transformation = GetTransformation();
-	auto translation = transformation.GetTranslation();
-	auto ray = Ray3(translation, transformation.Rotate(force * CRAG_PHYSICS_BODY_DEBUG));
-	gfx::Debug::AddLine(ray);
-#endif
+	DebugDrawForce<true, false>(* this, force);
 }
 
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
@@ -269,11 +291,7 @@ void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 
-#if defined(CRAG_PHYSICS_BODY_DEBUG)
-	auto const & transformation = GetTransformation();
-	auto ray = transformation.Transform(Ray3(pos, force * CRAG_PHYSICS_BODY_DEBUG));
-	gfx::Debug::AddLine(ray);
-#endif
+	DebugDrawForce<true, true>(* this, force, & pos);
 }
 
 void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
