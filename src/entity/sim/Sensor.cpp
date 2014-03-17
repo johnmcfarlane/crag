@@ -65,14 +65,14 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 : _entity(entity)
 , _length(length)
 , _variance(variance)
-, _ray_cast(ref(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), length)))
+, _ray_cast(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), length))
 , _local_ray(ray)
 {
 	GenerateScanRay();
 	
 	auto location = entity.GetLocation();
 	auto & body = core::StaticCast<physics::Body>(*location);
-	_ray_cast.SetIsCollidable(body, false);
+	_ray_cast->SetIsCollidable(body, false);
 	
 	auto & roster = GetTickRoster();
 	roster.AddCommand(* this, & Sensor::Tick);
@@ -82,13 +82,11 @@ Sensor::~Sensor()
 {
 	auto & roster = GetTickRoster();
 	roster.RemoveCommand(* this, & Sensor::Tick);
-
-	delete & _ray_cast;
 }
 
 Scalar Sensor::GetReading() const
 {
-	const auto & result = _ray_cast.GetResult();
+	const auto & result = _ray_cast->GetResult();
 	if (! result)
 	{
 		return 1.f;
@@ -107,7 +105,7 @@ Scalar Sensor::GetReading() const
 
 Scalar Sensor::GetReadingDistance() const
 {
-	const auto & result = _ray_cast.GetResult();
+	const auto & result = _ray_cast->GetResult();
 	if (! result)
 	{
 		return _length;
@@ -151,7 +149,7 @@ void Sensor::GenerateScanRay() const
 	scan_ray.direction /= scan_length;
 	
 	// generate new ray
-	_ray_cast.SetRay(scan_ray);
+	_ray_cast->SetRay(scan_ray);
 }
 
 core::locality::Roster & Sensor::GetTickRoster()

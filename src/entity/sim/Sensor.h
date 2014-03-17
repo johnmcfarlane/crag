@@ -58,7 +58,7 @@ namespace sim
 		Entity & _entity;
 		Scalar _length;
 		Scalar _variance;
-		physics::RayCast & _ray_cast;
+		std::unique_ptr<physics::RayCast> const _ray_cast;
 		Ray3 const _local_ray;	// Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
 	};
