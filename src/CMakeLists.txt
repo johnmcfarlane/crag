@@ -36,6 +36,7 @@ add_executable(crag
 	entity/sim/Thruster.cpp
 	entity/sim/TouchObserverController.cpp
 	entity/sim/VehicleController.cpp
+	entity/sim/VernierThruster.cpp
 	entity/SpawnEntityFunctions.cpp
 	entity/SpawnSkybox.cpp
 	form/CalculateNodeScoreFunctor.cpp

@@ -26,7 +26,7 @@ using namespace sim;
 DEFINE_DEFAULT_ALLOCATOR(HoverThruster);
 
 HoverThruster::HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude)
-: Thruster(entity, Ray3(position, Vector3::Zero()), false)
+: Thruster(entity, Ray3(position, Vector3::Zero()), false, 1.f)
 , _magnitude(magnitude)
 {
 	ASSERT(_magnitude != 0);

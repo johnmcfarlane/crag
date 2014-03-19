@@ -34,7 +34,7 @@ namespace sim
 
 		OBJECT_NO_COPY(Thruster);
 
-		Thruster(Entity & entity, Ray3 const & ray, bool light);
+		Thruster(Entity & entity, Ray3 const & ray, bool light, Scalar thrust_factor);
 		virtual ~Thruster();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
@@ -50,7 +50,7 @@ namespace sim
 		float GetThrustFactor() const;
 		void SetThrustFactor(float thrust_factor);
 
-		void Tick();
+		virtual void Tick();
 	private:
 		// adds a puff of smoke
 		void UpdateModel() const;
@@ -61,6 +61,6 @@ namespace sim
 		sim::Entity & _entity;
 		Ray3 _ray;	// position/direction of Thruster relative to vehicle
 		gfx::ThrusterHandle _model;
-		float _thrust_factor;
+		Scalar _thrust_factor;
 	};
 }

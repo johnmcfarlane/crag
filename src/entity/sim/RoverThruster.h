@@ -17,12 +17,14 @@ namespace sim
 	class RoverThruster : public Thruster
 	{
 	public:
+		using ActivationCallback = std::function<Scalar ()>;
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
 		DECLARE_ALLOCATOR(RoverThruster);
 
-		RoverThruster(Entity & entity, Ray3 const & ray, SDL_Scancode key);
+		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback);
 		~RoverThruster();
 	private:
 		void TickThrustFactor();
@@ -30,6 +32,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		SDL_Scancode _key;
+		ActivationCallback _activation_callback;
 	};
 }

@@ -14,7 +14,6 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "core/app.h"
 #include "core/Roster.h"
 
 using namespace sim;
@@ -24,9 +23,9 @@ using namespace sim;
 
 DEFINE_DEFAULT_ALLOCATOR(RoverThruster);
 
-RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, SDL_Scancode key)
-: Thruster(entity, ray, true)
-, _key(key)
+RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback)
+: Thruster(entity, ray, true, 0.f)
+, _activation_callback(activation_callback)
 {
 	auto & tick_roster = entity.GetEngine().GetTickRoster();
 	tick_roster.AddOrdering(& RoverThruster::TickThrustFactor, & Thruster::Tick);
@@ -41,6 +40,6 @@ RoverThruster::~RoverThruster()
 
 void RoverThruster::TickThrustFactor()
 {
-	bool is_key_down = app::IsKeyDown(_key);
-	SetThrustFactor(is_key_down);
+	auto activation = _activation_callback();
+	SetThrustFactor(activation);
 }

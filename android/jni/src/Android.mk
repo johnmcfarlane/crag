@@ -49,6 +49,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
 	$(CRAG_PATH)/entity/sim/VehicleController.cpp \
+	$(CRAG_PATH)/entity/sim/VernierThruster.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
 	$(CRAG_PATH)/entity/SpawnSkybox.cpp \
 	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \

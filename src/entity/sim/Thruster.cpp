@@ -28,10 +28,10 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
-Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light)
+Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light, Scalar thrust_factor)
 	: _entity(entity)
 	, _ray(ray)
-	, _thrust_factor(0)
+	, _thrust_factor(thrust_factor)
 {
 	// create model
 	if (light)
