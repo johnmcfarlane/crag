@@ -85,7 +85,7 @@ namespace
 	CONFIG_DEFINE (camera_radius, float, .5);
 	CONFIG_DEFINE (camera_density, float, 1);
 	
-	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.5f);
 	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 
 	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.05f);
