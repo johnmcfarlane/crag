@@ -89,7 +89,7 @@ namespace
 	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 
 	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.05f);
-	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.2f);
+	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.15f);
 	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
