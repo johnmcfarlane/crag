@@ -28,19 +28,22 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
-Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light)
+Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light, Scalar thrust_factor)
 	: _entity(entity)
 	, _ray(ray)
-	, _thrust_factor(0)
+	, _thrust_factor(thrust_factor)
 {
-	// calculate local transformation
-	auto thrust_max = Length(ray.direction);
-	Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
-
 	// create model
 	if (light)
 	{
-		_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
+		// calculate local transformation
+		auto thrust_max = Length(ray.direction);
+		if (thrust_max)
+		{
+			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
+
+			_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
+		}
 	}
 
 	// roster
@@ -97,6 +100,28 @@ Entity & Thruster::GetEntity()
 	return _entity;
 }
 
+Ray3 const & Thruster::GetRay() const
+{
+	return _ray;
+}
+
+void Thruster::SetRay(Ray3 const & ray)
+{
+	_ray = ray;
+
+	if (_model)
+	{
+		// create model
+		_model.Call([ray] (gfx::Object & model)
+		{
+			// calculate new local light transformation
+			auto thrust_max = Length(ray.direction);
+			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
+			model.SetLocalTransformation(local_transformation);
+		});
+	}
+}
+
 float Thruster::GetThrustFactor() const
 {
 	CRAG_VERIFY(* this);
@@ -137,8 +162,11 @@ void Thruster::UpdateModel() const
 		return;
 	}
 
-	_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+	if (_model)
 	{
-		thruster.Update(thrust_factor);
-	});
+		_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+		{
+			thruster.Update(thrust_factor);
+		});
+	}
 }

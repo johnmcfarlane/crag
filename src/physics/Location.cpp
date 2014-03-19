@@ -48,7 +48,7 @@ void Location::SetTransformation(Transformation const & transformation)
 	_transformation = transformation;
 }
 
-Vector3 Location::GetGravitationalForce(Vector3 const &) const
+Vector3 Location::GetGravitationalAttraction(Vector3 const &) const
 {
 	return Vector3::Zero();
 }

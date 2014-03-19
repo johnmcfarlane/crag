@@ -37,6 +37,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/sim/CameraController.cpp \
 	$(CRAG_PATH)/entity/sim/Contact.cpp \
+	$(CRAG_PATH)/entity/sim/HoverThruster.cpp \
 	$(CRAG_PATH)/entity/sim/Genome.cpp \
 	$(CRAG_PATH)/entity/sim/MoonShader.cpp \
 	$(CRAG_PATH)/entity/sim/MouseObserverController.cpp \
@@ -48,6 +49,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
 	$(CRAG_PATH)/entity/sim/VehicleController.cpp \
+	$(CRAG_PATH)/entity/sim/VernierThruster.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
 	$(CRAG_PATH)/entity/SpawnSkybox.cpp \
 	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \

@@ -34,7 +34,6 @@ MeshBody::MeshBody(Transformation const & transformation, Vector3 const * veloci
 	dGeomTriMeshDataBuildSingle(_mesh_data,
 		vertices.front().pos.GetAxes(), sizeof(Mesh::VertexType), vertices.size(),
 		indices.data(), indices.size(), sizeof(Mesh::IndexType));
-		CRAG_DEBUG_DUMP(indices.size());
 
 	dGeomTriMeshSetData(_collision_handle, _mesh_data);
 	

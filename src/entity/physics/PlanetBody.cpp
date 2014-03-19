@@ -33,7 +33,7 @@ PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, f
 {
 }
 
-Vector3 PlanetBody::GetGravitationalForce(Vector3 const & pos) const
+Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 {
 	Vector3 const & center = GetTranslation();
 	Vector3 to_center = center - pos;

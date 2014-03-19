@@ -1,5 +1,5 @@
 //
-//  RoverThruster.h
+//  HoverThruster.h
 //  crag
 //
 //  Created by John McFarlane on 2013-03-20.
@@ -13,25 +13,24 @@
 
 namespace sim
 {
-	// thruster for a human-steered vehicle
-	class RoverThruster : public Thruster
+	// thruster which applies thrust along the axis of gravity of the entity
+	class HoverThruster : public Thruster
 	{
 	public:
-		using ActivationCallback = std::function<Scalar ()>;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(RoverThruster);
+		DECLARE_ALLOCATOR(HoverThruster);
 
-		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback);
-		~RoverThruster();
+		HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude);
+		~HoverThruster();
+
 	private:
-		void TickThrustFactor();
-
+		void TickThrustDirection();
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		ActivationCallback _activation_callback;
+		Scalar _magnitude;
 	};
 }

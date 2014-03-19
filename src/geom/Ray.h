@@ -93,6 +93,25 @@ namespace geom
 		return lhs.position != rhs.position || lhs.direction != rhs.direction;
 	}
 
+	template <typename S, int N>
+	Ray<S, N> operator*=(Ray<S, N> & lhs, S rhs)
+	{
+		lhs.direction *= rhs;
+		return lhs;
+	}
+
+	template <typename S, int N>
+	Ray<S, N> operator*(Ray<S, N> lhs, S rhs)
+	{
+		return lhs *= rhs;
+	}
+
+	template <typename S, int N>
+	Ray<S, N> operator*(S lhs, Ray<S, N> rhs)
+	{
+		return rhs *= lhs;
+	}
+
 	// streaming
 	template <typename S, int N>
 	std::ostream & operator << (std::ostream & out, Ray<S, N> const & ray)

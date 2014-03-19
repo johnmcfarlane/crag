@@ -15,11 +15,13 @@
 
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
+#include "entity/sim/HoverThruster.h"
 #include "entity/sim/MouseObserverController.h"
 #include "entity/sim/PlanetController.h"
 #include "entity/sim/RoverThruster.h"
 #include "entity/sim/TouchObserverController.h"
 #include "entity/sim/VehicleController.h"
+#include "entity/sim/VernierThruster.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -83,11 +85,14 @@ namespace
 	CONFIG_DEFINE (camera_radius, float, .5);
 	CONFIG_DEFINE (camera_density, float, 1);
 	
-	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.025f);
+	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.5f);
 	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 
-	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.025f);
-	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.05f);
+	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.05f);
+	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.15f);
+	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
+	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
+	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -291,11 +296,28 @@ namespace
 		camera.SetController(new sim::CameraController(camera, subject_handle));
 	}
 
-	void AddRoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+	void AddHoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Scalar distance)
 	{
 		auto & entity = controller.GetEntity();
-		sim::Ray3 ray(position, direction);
-		auto thruster = new sim::RoverThruster(entity, ray, key);
+		auto thruster = new sim::HoverThruster(entity, position, distance);
+		controller.AddThruster(thruster);
+	}
+
+	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
+	{
+		auto & entity = controller.GetEntity();
+		auto activation_callback = [key, invert] ()
+		{
+			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
+		};
+		auto * thruster = new sim::RoverThruster(entity, ray, activation_callback);
+		controller.AddThruster(thruster);
+	}
+
+	void AddVernierThruster(sim::VehicleController & controller, sim::Ray3 const & ray)
+	{
+		auto & entity = controller.GetEntity();
+		auto * thruster = new sim::VernierThruster(entity, ray);
 		controller.AddThruster(thruster);
 	}
 
@@ -306,10 +328,10 @@ namespace
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
 	}
 	
 	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
@@ -367,25 +389,35 @@ namespace
 		entity.SetController(& controller);
 
 		// add a single thruster
-		auto add_thruster = [&] (sim::Vector3 const & position, sim::Vector3 const & direction, SDL_Scancode key)
+		auto add_thruster = [&] (sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
 		{
-			AddRoverThruster(controller, position, direction, key);
+			if (key == SDL_SCANCODE_UNKNOWN)
+			{
+				AddVernierThruster(controller, ray);
+			}
+			else
+			{
+				AddRoverThruster(controller, ray, key, invert);
+			}
 		};
 		
 		// add two complimentary thrusters
-		auto add_thrusters = [&] (sim::Vector3 position, sim::Vector3 const & direction, SDL_Scancode first_key, int axis, SDL_Scancode second_key)
+		auto add_thrusters = [&] (sim::Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert = false)
 		{
-			add_thruster(position, direction, first_key);
-			position[axis] *= -1.f;
-			add_thruster(position, direction, second_key);
+			add_thruster(ray, first_key, invert);
+			ray.position[axis] *= -1.f;
+			ray.direction[axis] *= -1.f;
+			add_thruster(ray, second_key, invert);
 		};
 		
-		auto forward = sim::Vector3(0, 0, 2.5f);
-		auto up = sim::Vector3(0, .5f, 0);
+		auto forward = sim::Vector3(0, 0, ship_forward_thrust);
 
-		add_thruster(sim::Vector3(0, 0, -.525f), forward, SDL_SCANCODE_SPACE);
-		add_thrusters(sim::Vector3(0, -.25f, .25f), up, SDL_SCANCODE_DOWN, 2, SDL_SCANCODE_UP);
-		add_thrusters(sim::Vector3(.5, -.1f, 0), up, SDL_SCANCODE_LEFT, 0, SDL_SCANCODE_RIGHT);
+		add_thrusters(sim::Ray3(sim::Vector3(0.f, 0.f, 1.f), geom::Resized(sim::Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN);
+		add_thrusters(sim::Ray3(sim::Vector3(1., 0.f, 0), geom::Resized(sim::Vector3(- ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN);
+		add_thrusters(sim::Ray3(sim::Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
+		
+		AddHoverThruster(controller, sim::Vector3(0.f, -.25f, 0.f), -.1f);
+		AddHoverThruster(controller, sim::Vector3(0.f, .25f, 0.f), .1f);
 	}
 }
 

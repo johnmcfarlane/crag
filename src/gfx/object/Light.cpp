@@ -13,11 +13,14 @@
 
 #include "gfx/Engine.h"
 #include "gfx/Scene.h"
+
+#if defined(CRAG_GFX_LIGHT_DEBUG)
+#if ! defined(CRAG_GFX_DEBUG)
+#error Pointless definition of CRAG_GFX_LIGHT_DEBUG
+#endif
+
 #include "gfx/Debug.h"
-
-#include "geom/origin.h"
-
-#include "core/ConfigEntry.h"
+#endif
 
 using namespace gfx;
 
@@ -68,7 +71,7 @@ LightType Light::GetType() const
 	return _type;
 }
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_GFX_LIGHT_DEBUG)
 LeafNode::PreRenderResult Light::PreRender()
 {
 	Vector3 intensity(_color.r, _color.g, _color.b);

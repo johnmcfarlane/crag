@@ -22,7 +22,51 @@
 #include <ode/collision.h>
 #include <ode/objects.h>
 
+#if ! defined(NDEBUG)
+//#define CRAG_PHYSICS_BODY_DEBUG (-1.f)
+#endif
+
+#if defined(CRAG_PHYSICS_BODY_DEBUG)
+#include "gfx/Debug.h"
+
+#if ! defined(CRAG_GFX_DEBUG)
+#error Pointless definition of CRAG_PHYSICS_BODY_DEBUG
+#endif
+#endif
+
 using namespace physics;
+
+namespace
+{
+#if defined(CRAG_PHYSICS_BODY_DEBUG)
+	template <bool relative_direction, bool relative_position>
+	void DebugDrawForce(Body const & body, Vector3 const & direction, Vector3 const * position = nullptr)
+	{
+		auto const & transformation = body.GetTransformation();
+		
+		Vector3 position_tmp;
+		if (position)
+		{
+			position_tmp = * position;
+		}
+		else
+		{
+			position_tmp = transformation.GetTranslation();
+		}
+		
+		Ray3 ray(
+			relative_position ? transformation.Transform(position_tmp) : position_tmp,
+			(relative_direction ? transformation.Rotate(direction) : direction) * CRAG_PHYSICS_BODY_DEBUG);
+
+		gfx::Debug::AddLine(ray);
+	}
+#else
+	template <bool relative_direction, bool relative_position>
+	void DebugDrawForce(Body const &, Vector3 const &, Vector3 const * = nullptr)
+	{
+	}
+#endif
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
@@ -32,6 +76,7 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 , _engine(engine)
 , _collision_handle(collision_handle)
 , _exception(nullptr)
+, _gravitational_force(Vector3::Zero())
 {
 	// _body_handle
 	if (velocity != nullptr)
@@ -60,6 +105,8 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 	// register for physics tick
 	auto & roster = _engine.GetPreTickRoster();
 	roster.AddCommand(* this, & Body::Tick);
+	
+	CRAG_VERIFY(* this);
 }
 
 Body::~Body()
@@ -91,6 +138,16 @@ Body::~Body()
 bool Body::ObeysGravity() const
 {
 	return true;
+}
+
+void Body::SetGravitationalForce(Vector3 const & gravitational_force)
+{
+	_gravitational_force = gravitational_force;
+}
+
+Vector3 const & Body::GetGravitationalForce() const
+{
+	return _gravitational_force;
 }
 
 BodyHandle Body::GetBodyHandle() const
@@ -217,18 +274,40 @@ void Body::AddForce(Vector3 const & force)
 {
 	ASSERT(_body_handle != 0);
 	dBodyAddForce(_body_handle, force.x, force.y, force.z);
+
+	DebugDrawForce<false, false>(* this, force);
+}
+
+void Body::AddForceAtPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddForceAtPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<false, false>(* this, force, & pos);
 }
 
 void Body::AddRelForce(Vector3 const & force)
 {
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForce(_body_handle, force.x, force.y, force.z);
+
+	DebugDrawForce<true, false>(* this, force);
 }
 
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<true, true>(* this, force, & pos);
+}
+
+void Body::AddForceAtRelPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<false, true>(* this, force, & pos);
 }
 
 void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
@@ -258,7 +337,7 @@ bool Body::OnCollisionWithRay(Body & that_body)
 	auto that_collision_handle = that_body.GetCollisionHandle();
 	auto this_collision_handle = GetCollisionHandle();
 
-	constexpr uint16_t max_contacts = 2;
+	constexpr uint16_t max_contacts = 6;
 #if defined(NDEBUG)
 	constexpr uint16_t contacts_size = max_contacts;
 #else
@@ -360,6 +439,15 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
 	CRAG_VERIFY(self.GetRotation());
 	CRAG_VERIFY_OP(geom::Length(self.GetTranslation()), <, 4.0e+8);
 //	CRAG_VERIFY_OP(geom::Length(GetVelocity()), <, 1000);
+
+	auto mass = self.GetMass();
+	CRAG_VERIFY(mass);
+	CRAG_VERIFY_TRUE((mass <= 0) == (! self._body_handle));
+	
+	if (! self._body_handle)
+	{
+		CRAG_VERIFY(self._gravitational_force == Vector3::Zero());
+	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Vector3 const & physics::Body::GetGeomTranslation() const
@@ -400,4 +488,9 @@ void physics::Body::SetGeomTransformation(Transformation const & transformation)
 void physics::Body::Tick()
 {
 	SetTransformation(GetGeomTransformation());
+	
+	if (_body_handle)
+	{
+		AddForce(_gravitational_force);
+	}
 }

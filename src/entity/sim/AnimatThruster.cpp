@@ -24,7 +24,7 @@ using namespace sim;
 DEFINE_POOL_ALLOCATOR(AnimatThruster, 800);
 
 AnimatThruster::AnimatThruster(Entity & entity, Ray3 const & ray)
-: Thruster(entity, ray, false)
+: Thruster(entity, ray, false, 1.f)
 {
 	auto & tick_roster = entity.GetEngine().GetTickRoster();
 	tick_roster.AddOrdering(& AnimatThruster::TickThrustFactor, & Thruster::Tick);
