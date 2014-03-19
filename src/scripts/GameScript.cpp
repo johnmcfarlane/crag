@@ -50,7 +50,7 @@ namespace
 	// setup variables
 	
 	sim::Vector3 ship_start_pos(0, 9999400, 0);
-	sim::Vector3 camera_start_pos(0, 9999410, -5);
+	sim::Vector3 camera_start_pos(10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
