@@ -27,8 +27,8 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (camera_controller_height, float, 12.5f);
-	CONFIG_DEFINE (camera_controller_distance, float, 15.f);
+	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
+	CONFIG_DEFINE (camera_controller_distance, float, 10.f);
 	CONFIG_DEFINE (camera_push_magnitude, float, 1000.f);
 	
 	// given information about camera location and direction, 
