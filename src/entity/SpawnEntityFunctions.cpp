@@ -328,10 +328,10 @@ namespace
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 5, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 5, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 5, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 5, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
 	}
 	
 	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
