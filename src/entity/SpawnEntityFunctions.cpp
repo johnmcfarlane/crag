@@ -303,12 +303,12 @@ namespace
 		controller.AddThruster(thruster);
 	}
 
-	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key)
+	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
 	{
 		auto & entity = controller.GetEntity();
-		auto activation_callback = [key] ()
+		auto activation_callback = [key, invert] ()
 		{
-			return app::IsKeyDown(key) ? 1.f : 0.f;
+			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
 		};
 		auto * thruster = new sim::RoverThruster(entity, ray, activation_callback);
 		controller.AddThruster(thruster);
@@ -389,7 +389,7 @@ namespace
 		entity.SetController(& controller);
 
 		// add a single thruster
-		auto add_thruster = [&] (sim::Ray3 const & ray, SDL_Scancode key)
+		auto add_thruster = [&] (sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
 		{
 			if (key == SDL_SCANCODE_UNKNOWN)
 			{
@@ -397,25 +397,24 @@ namespace
 			}
 			else
 			{
-				AddRoverThruster(controller, ray, key);
+				AddRoverThruster(controller, ray, key, invert);
 			}
 		};
 		
 		// add two complimentary thrusters
-		auto add_thrusters = [&] (sim::Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key)
+		auto add_thrusters = [&] (sim::Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert = false)
 		{
-			add_thruster(ray, first_key);
+			add_thruster(ray, first_key, invert);
 			ray.position[axis] *= -1.f;
 			ray.direction[axis] *= -1.f;
-			add_thruster(ray, second_key);
+			add_thruster(ray, second_key, invert);
 		};
 		
 		auto forward = sim::Vector3(0, 0, ship_forward_thrust);
 
-		add_thruster(sim::Ray3(sim::Vector3(0, 0, -.525f), forward), SDL_SCANCODE_SPACE);
 		add_thrusters(sim::Ray3(sim::Vector3(0.f, 0.f, 1.f), geom::Resized(sim::Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN);
 		add_thrusters(sim::Ray3(sim::Vector3(1., 0.f, 0), geom::Resized(sim::Vector3(- ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN);
-		add_thrusters(sim::Ray3(sim::Vector3(1.f, 0.f, -.525f), forward * .1f), SDL_SCANCODE_LEFT, 0, SDL_SCANCODE_RIGHT);
+		add_thrusters(sim::Ray3(sim::Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
 		
 		AddHoverThruster(controller, sim::Vector3(0.f, -.25f, 0.f), -.1f);
 		AddHoverThruster(controller, sim::Vector3(0.f, .25f, 0.f), .1f);
