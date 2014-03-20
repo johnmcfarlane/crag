@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# extract android development kit
+
+mkdir android-sdk || rm -rf android-sdk/*
+
+cd dl
+rm -rf android-sdk-linux
+tar zxf android-sdk*
+mv android-sdk*/* ../android-sdk
+cd ..
+
+echo Please install Android SDK packages and close the package manager to continue
+./android-sdk/tools/android

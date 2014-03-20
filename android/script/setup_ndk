@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# extract native development kits
+
+mkdir android-ndk || rm -rf android-ndk/*
+
+cd dl
+tar xvjf android-ndk*.tar.bz2
+mv -u android-ndk*/* ../android-ndk
+cd ..
