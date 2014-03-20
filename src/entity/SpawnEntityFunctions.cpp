@@ -296,11 +296,15 @@ namespace
 		camera.SetController(new sim::CameraController(camera, subject_handle));
 	}
 
+	void AddThruster(sim::VehicleController & controller, sim::Thruster * thruster)
+	{
+		controller.AddThruster(sim::VehicleController::ThrusterPtr(thruster));
+	}
+
 	void AddHoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Scalar distance)
 	{
 		auto & entity = controller.GetEntity();
-		auto thruster = new sim::HoverThruster(entity, position, distance);
-		controller.AddThruster(thruster);
+		AddThruster(controller, new sim::HoverThruster(entity, position, distance));
 	}
 
 	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
@@ -310,15 +314,13 @@ namespace
 		{
 			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
 		};
-		auto * thruster = new sim::RoverThruster(entity, ray, activation_callback);
-		controller.AddThruster(thruster);
+		AddThruster(controller, new sim::RoverThruster(entity, ray, activation_callback));
 	}
 
 	void AddVernierThruster(sim::VehicleController & controller, sim::Ray3 const & ray)
 	{
 		auto & entity = controller.GetEntity();
-		auto * thruster = new sim::VernierThruster(entity, ray);
-		controller.AddThruster(thruster);
+		AddThruster(controller, new sim::VernierThruster(entity, ray));
 	}
 
 	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)

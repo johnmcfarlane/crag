@@ -105,7 +105,7 @@ void AnimatController::CreateThrusters(float radius)
 				ray.position.x = x ? root_third : -root_third;
 				ray.direction.x = ray.position.x * direction_scale;
 
-				AddThruster(new AnimatThruster(entity, ray));
+				AddThruster(VehicleController::ThrusterPtr(new AnimatThruster(entity, ray)));
 			}
 		}
 	}

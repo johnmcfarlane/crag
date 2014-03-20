@@ -22,9 +22,10 @@ namespace sim
 		// types
 
 		typedef Controller _super;
-		typedef std::vector<Thruster *> ThrusterVector;
-		
 	public:
+		typedef std::unique_ptr<Thruster> ThrusterPtr;
+		typedef std::vector<ThrusterPtr> ThrusterVector;
+
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
@@ -34,7 +35,7 @@ namespace sim
 		CRAG_VERIFY_INVARIANTS_DECLARE(VehicleController);
 		
 		// Add a Thruster
-		void AddThruster(Thruster * thruster);
+		void AddThruster(ThrusterPtr && thruster);
 	protected:
 		void PopThruster();
 
