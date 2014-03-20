@@ -2,9 +2,9 @@
 set -o errexit
 
 script/setup_pkg
-#script/setup_java
-#script/setup_adk
-#script/setup_ndk
-#script/setup_sdl
-#script/setup_ode
+script/setup_java
+script/setup_adk
+script/setup_ndk
+script/setup_sdl
+script/setup_ode
 script/setup_project
