@@ -38,12 +38,11 @@ namespace geom
 		{ 
 		}
 		
-		Vector(S rhs_x, S rhs_y, S rhs_z) 
+		constexpr Vector(S rhs_x, S rhs_y, S rhs_z) 
 		: x(rhs_x)
 		, y(rhs_y)
 		, z(rhs_z) 
 		{ 
-			CRAG_VERIFY(* this);
 		}
 		
 		static constexpr std::size_t Size()
@@ -74,7 +73,7 @@ namespace geom
 			return reinterpret_cast<S const *>(this);
 		}
 
-		static Vector Zero() 
+		static Vector constexpr Zero() 
 		{
 			return Vector(0, 0, 0); 
 		}
