@@ -234,7 +234,7 @@ namespace gfx
 			Triangle3 triangle(face[0]->pos, face[1]->pos, face[2]->pos);
 			
 			// CalculateCentroid must be called with simple shape that contains origin
-			ASSERT(geom::Distance(triangle, Vector3::Zero()) < 0);
+			CRAG_VERIFY_OP(geom::Distance(triangle, Vector3::Zero()), <=, 0);
 			
 			auto triangle_centroid = geom::Centroid(triangle);
 			
