@@ -286,6 +286,14 @@ void Body::AddForceAtPos(Vector3 const & force, Vector3 const & pos)
 	DebugDrawForce<false, false>(* this, force, & pos);
 }
 
+void Body::AddForceAtRelPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<false, true>(* this, force, & pos);
+}
+
 void Body::AddRelForce(Vector3 const & force)
 {
 	ASSERT(_body_handle != 0);
@@ -294,20 +302,20 @@ void Body::AddRelForce(Vector3 const & force)
 	DebugDrawForce<true, false>(* this, force);
 }
 
+void Body::AddRelForceAtPos(Vector3 const & force, Vector3 const & pos)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddRelForceAtPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
+
+	DebugDrawForce<true, false>(* this, force, & pos);
+}
+
 void Body::AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos)
 {
 	ASSERT(_body_handle != 0);
 	dBodyAddRelForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
 
 	DebugDrawForce<true, true>(* this, force, & pos);
-}
-
-void Body::AddForceAtRelPos(Vector3 const & force, Vector3 const & pos)
-{
-	ASSERT(_body_handle != 0);
-	dBodyAddForceAtRelPos(_body_handle, force.x, force.y, force.z, pos.x, pos.y, pos.z);
-
-	DebugDrawForce<false, true>(* this, force, & pos);
 }
 
 void Body::SetIsCollidable(Body const & body, bool CRAG_DEBUG_PARAM(collidable))
