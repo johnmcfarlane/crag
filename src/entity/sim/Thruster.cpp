@@ -28,13 +28,13 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
-Thruster::Thruster(Entity & entity, Ray3 const & ray, bool light, Scalar thrust_factor)
+Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor)
 	: _entity(entity)
 	, _ray(ray)
 	, _thrust_factor(thrust_factor)
 {
 	// create model
-	if (light)
+	if (graphical)
 	{
 		// calculate local transformation
 		auto thrust_max = Length(ray.direction);

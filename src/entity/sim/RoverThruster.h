@@ -24,7 +24,7 @@ namespace sim
 
 		DECLARE_ALLOCATOR(RoverThruster);
 
-		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback);
+		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback, bool graphical);
 		~RoverThruster();
 	private:
 		void TickThrustFactor();

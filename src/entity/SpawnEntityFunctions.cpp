@@ -307,14 +307,14 @@ namespace
 		AddThruster(controller, new sim::HoverThruster(entity, position, distance));
 	}
 
-	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
+	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool graphical, bool invert = false)
 	{
 		auto & entity = controller.GetEntity();
 		auto activation_callback = [key, invert] ()
 		{
 			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
 		};
-		AddThruster(controller, new sim::RoverThruster(entity, ray, activation_callback));
+		AddThruster(controller, new sim::RoverThruster(entity, ray, activation_callback, graphical));
 	}
 
 	void AddVernierThruster(sim::VehicleController & controller, sim::Ray3 const & ray)
@@ -330,10 +330,10 @@ namespace
 		auto& controller = ref(new sim::VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
 	}
 	
 	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
@@ -399,7 +399,7 @@ namespace
 			}
 			else
 			{
-				AddRoverThruster(controller, ray, key, invert);
+				AddRoverThruster(controller, ray, key, true, invert);
 			}
 		};
 		

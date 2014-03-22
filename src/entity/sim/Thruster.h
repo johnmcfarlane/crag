@@ -34,7 +34,7 @@ namespace sim
 
 		OBJECT_NO_COPY(Thruster);
 
-		Thruster(Entity & entity, Ray3 const & ray, bool light, Scalar thrust_factor);
+		Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor);
 		virtual ~Thruster();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
