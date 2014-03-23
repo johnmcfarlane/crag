@@ -19,6 +19,7 @@
 #include "entity/sim/MouseObserverController.h"
 #include "entity/sim/PlanetController.h"
 #include "entity/sim/RoverThruster.h"
+#include "entity/sim/UfoController.h"
 #include "entity/sim/TouchObserverController.h"
 #include "entity/sim/VehicleController.h"
 #include "entity/sim/VernierThruster.h"
@@ -94,6 +95,11 @@ namespace
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
 
+	CONFIG_DEFINE (ufo_linear_damping, physics::Scalar, 0.01f);
+	CONFIG_DEFINE (ufo_angular_damping, physics::Scalar, 0.05f);
+	CONFIG_DEFINE (ufo_stabilizer_thrust, physics::Scalar, .5f);
+	CONFIG_DEFINE (ufo_stabilizer_distance, physics::Scalar, 0.2f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
 	
@@ -129,6 +135,68 @@ namespace
 		add_face(1, 3, 4);
 		add_face(2, 4, 3);
 		ASSERT(indices.size() == indices.capacity());
+		
+		// translate centroid to origin
+		auto centroid = CalculateCentroidAndVolume(mesh);
+		for (auto & vertex : vertices)
+		{
+			vertex.pos -= centroid.first;
+		}
+		
+		// return result
+		CRAG_VERIFY(mesh);
+		return mesh;
+	}
+	
+	template <typename IndexType>
+	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateUfoMesh()
+	{
+		// ufo mesh
+		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
+		
+		// add vertices
+		constexpr auto num_sectors = 8;
+		constexpr auto inner_scale = geom::MakeVector(.5f, .3f, .5f);
+		constexpr auto outer_scale = geom::MakeVector(1.f, 0.f, 1.f);
+		auto & vertices = mesh.GetVertices();
+		auto add_vertices = [& vertices, & inner_scale, & outer_scale] (sim::Vector3 const & radial)
+		{
+			vertices.push_back(gfx::PlainVertex { radial * inner_scale });
+			vertices.push_back(gfx::PlainVertex { radial * outer_scale });
+		};
+		vertices.reserve(num_sectors * 2 + 2);
+		for (auto sector = 0; sector != num_sectors; ++ sector)
+		{
+			auto angle = float(PI * 2 * sector) / num_sectors;
+			auto radial = geom::MakeVector(std::cos(angle), 1.f, std::sin(angle));
+			add_vertices(radial);
+		}
+		add_vertices(sim::Vector3(0.f, 1.f, 0.f));
+		CRAG_VERIFY_EQUAL(vertices.size(), vertices.capacity());
+
+		// add faces
+		constexpr auto num_faces = num_sectors * 4;
+		constexpr auto num_indices = num_faces * 3;
+		constexpr auto inner_center = num_sectors * 2;
+		constexpr auto outer_center = inner_center + 1;
+		auto & indices = mesh.GetIndices();
+		indices.reserve(num_indices);
+		auto add_face = [& indices] (int a, int b, int c)
+		{
+			indices.push_back(a);
+			indices.push_back(b);
+			indices.push_back(c);
+		};
+		for (auto sector = 0; sector != num_sectors; ++ sector)
+		{
+			int inner_index[2] = { sector * 2, ((sector + 1) % num_sectors) * 2 };
+			int outer_index[2] = { inner_index[0] + 1, inner_index[1] + 1 };
+			add_face(inner_index[0], inner_index[1], inner_center);
+			add_face(inner_index[1], inner_index[0], outer_index[0]);
+			add_face(outer_index[0], outer_index[1], inner_index[1]);
+			add_face(outer_index[1], outer_index[0], outer_center);
+		}
+		CRAG_VERIFY_EQUAL(indices.size(), indices.capacity());
 		
 		// translate centroid to origin
 		auto centroid = CalculateCentroidAndVolume(mesh);
@@ -421,6 +489,62 @@ namespace
 		AddHoverThruster(controller, sim::Vector3(0.f, -.25f, 0.f), -.1f);
 		AddHoverThruster(controller, sim::Vector3(0.f, .25f, 0.f), .1f);
 	}
+
+	void ConstructUfo(sim::Entity & entity, sim::Vector3 const & position)
+	{
+		// resources
+		auto & resource_manager = crag::core::ResourceManager::Get();
+		resource_manager.Register<physics::Mesh>("UfoPhysicsMesh", [] ()
+		{
+			return GenerateUfoMesh<dTriIndex>();
+		});
+		resource_manager.Register<gfx::PlainMesh>("UfoPlainMesh", [] ()
+		{
+			return GenerateUfoMesh<gfx::ElementIndex>();
+		});
+		resource_manager.Register<gfx::LitMesh>("UfoLitMesh", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("UfoPhysicsMesh");
+			return GenerateFlatLitMesh(* physics_mesh);
+		});
+		
+		auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("UfoLitMesh");
+		resource_manager.Register<gfx::LitVboResource>("UfoVbo", [lit_mesh_handle] ()
+		{
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+
+		// physics
+		sim::Engine & sim_engine = entity.GetEngine();
+		physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
+
+		auto velocity = sim::Vector3::Zero();
+		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("UfoPhysicsMesh");
+		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
+		body.SetLinearDamping(ufo_linear_damping);
+		body.SetAngularDamping(ufo_angular_damping);
+		entity.SetLocation(& body);
+
+		// graphics
+		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
+		gfx::Color4f const & color = gfx::Color4f::White();
+		gfx::Vector3 scale(1.f, 1.f, 1.f);
+		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("UfoVbo");
+		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("UfoPlainMesh");
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
+		entity.SetModel(model_handle);
+
+		// controller
+		auto & controller = ref(new sim::UfoController(entity));
+		entity.SetController(& controller);
+
+		if (SDL_SetRelativeMouseMode(SDL_TRUE))
+		{
+			// Linux requires libxi-dev to be installed for this to succeed.
+			DEBUG_MESSAGE("Failed to set relative mouse mode.");
+		}
+	}
 }
 
 sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
@@ -552,6 +676,17 @@ sim::EntityHandle SpawnShip(sim::Vector3 const & position)
 
 	ship.Call([position] (sim::Entity & entity) {
 		ConstructShip(entity, position);
+	});
+
+	return ship;
+}
+
+sim::EntityHandle SpawnUfo(sim::Vector3 const & position)
+{
+	auto ship = sim::EntityHandle::CreateHandle();
+
+	ship.Call([position] (sim::Entity & entity) {
+		ConstructUfo(entity, position);
 	});
 
 	return ship;
