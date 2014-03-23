@@ -23,7 +23,7 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/SphericalBody.h"
+#include "physics/SphereBody.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
@@ -76,7 +76,7 @@ namespace
 
 			// physics
 			auto zero_vector = sim::Vector3::Zero();
-			auto & body = * new physics::SphericalBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
+			auto & body = * new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
 			body.SetDensity(1);
 			body.SetLinearDamping(0.005f);
 			body.SetAngularDamping(0.005f);

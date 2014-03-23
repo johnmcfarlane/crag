@@ -1,5 +1,5 @@
 //
-//  SphericalBody.cpp
+//  SphereBody.cpp
 //  crag
 //
 //  Created by John on 6/16/10.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "SphericalBody.h"
+#include "SphereBody.h"
 
 #include "Engine.h"
 
@@ -19,24 +19,24 @@
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
-// SphericalBody
+// SphereBody
 
-SphericalBody::SphericalBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Scalar radius)
+SphereBody::SphereBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Scalar radius)
 : Body(transformation, velocity, engine, engine.CreateSphere(radius))
 {
 }
 
-void SphericalBody::SetRadius(Scalar radius) const
+void SphereBody::SetRadius(Scalar radius) const
 {
 	dGeomSphereSetRadius(GetCollisionHandle(), radius);
 }
 
-Scalar SphericalBody::GetRadius() const
+Scalar SphereBody::GetRadius() const
 {
 	return dGeomSphereGetRadius(GetCollisionHandle());
 }
 
-void SphericalBody::SetDensity(Scalar density)
+void SphereBody::SetDensity(Scalar density)
 {
 	ASSERT(GetBodyHandle() != 0);
 	
@@ -46,7 +46,7 @@ void SphericalBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-bool SphericalBody::OnCollision(Body & body, ContactInterface & contact_interface)
+bool SphereBody::OnCollision(Body & body, ContactInterface & contact_interface)
 {
 	Sphere3 bounding_sphere(GetTranslation(), GetRadius());
 	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_interface);

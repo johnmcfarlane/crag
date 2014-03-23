@@ -29,11 +29,12 @@
 #include "sim/EntityFunctions.h"
 
 #include "physics/BoxBody.h"
+#include "physics/CylinderBody.h"
 #include "physics/Engine.h"
 #include "physics/GhostBody.h"
 #include "physics/MeshBody.h"
 #include "physics/PassiveLocation.h"
-#include "physics/SphericalBody.h"
+#include "physics/SphereBody.h"
 
 #include "form/Engine.h"
 
@@ -97,6 +98,8 @@ namespace
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
 
+	CONFIG_DEFINE (ufo_height, physics::Scalar, .3f);
+	CONFIG_DEFINE (ufo_radius, physics::Scalar, 1.f);
 	CONFIG_DEFINE (ufo_linear_damping, physics::Scalar, 0.01f);
 	CONFIG_DEFINE (ufo_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (ufo_stabilizer_thrust, physics::Scalar, .5f);
@@ -139,10 +142,10 @@ namespace
 		ASSERT(indices.size() == indices.capacity());
 		
 		// translate centroid to origin
-		auto centroid = CalculateCentroidAndVolume(mesh);
+		auto centroid = CalculateCentroidAndVolume(mesh).first;
 		for (auto & vertex : vertices)
 		{
-			vertex.pos -= centroid.first;
+			vertex.pos -= centroid;
 		}
 		
 		// return result
@@ -151,15 +154,15 @@ namespace
 	}
 	
 	template <typename IndexType>
-	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateUfoMesh()
+	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateUfoMesh(Scalar height, Scalar radius)
 	{
 		// ufo mesh
 		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
 		
 		// add vertices
 		constexpr auto num_sectors = 8;
-		constexpr auto inner_scale = geom::MakeVector(.5f, .3f, .5f);
-		constexpr auto outer_scale = geom::MakeVector(1.f, 0.f, 1.f);
+		const auto inner_scale = geom::MakeVector(.5f, .5f, height * .5f);
+		const auto outer_scale = geom::MakeVector(radius, radius, height * - .5f);
 		auto & vertices = mesh.GetVertices();
 		auto add_vertices = [& vertices, & inner_scale, & outer_scale] (Vector3 const & radial)
 		{
@@ -170,10 +173,10 @@ namespace
 		for (auto sector = 0; sector != num_sectors; ++ sector)
 		{
 			auto angle = float(PI * 2 * sector) / num_sectors;
-			auto radial = geom::MakeVector(std::cos(angle), 1.f, std::sin(angle));
+			auto radial = geom::MakeVector(std::sin(angle), std::cos(angle), 1.f);
 			add_vertices(radial);
 		}
-		add_vertices(Vector3(0.f, 1.f, 0.f));
+		add_vertices(Vector3(0.f, 0.f, 1.f));
 		CRAG_VERIFY_EQUAL(vertices.size(), vertices.capacity());
 
 		// add faces
@@ -199,13 +202,6 @@ namespace
 			add_face(outer_index[1], outer_index[0], outer_center);
 		}
 		CRAG_VERIFY_EQUAL(indices.size(), indices.capacity());
-		
-		// translate centroid to origin
-		auto centroid = CalculateCentroidAndVolume(mesh);
-		for (auto & vertex : vertices)
-		{
-			vertex.pos -= centroid.first;
-		}
 		
 		// return result
 		CRAG_VERIFY(mesh);
@@ -289,12 +285,12 @@ namespace
 		entity.SetLocation(& body);
 	}
 
-	void ConstructSphericalBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
+	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphericalBody(sphere.center, & velocity, physics_engine, sphere.radius);
+		auto & body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
 		body.SetDensity(density);
 		body.SetLinearDamping(linear_damping);
 		body.SetAngularDamping(angular_damping);
@@ -304,7 +300,7 @@ namespace
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphericalBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
+		ConstructSphereBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -319,7 +315,7 @@ namespace
 		{
 			if (observer_physics)
 			{
-				ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+				ConstructSphereBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
 			}
 			else
 			{
@@ -360,7 +356,7 @@ namespace
 	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
 	{
 		// physics
-		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+		ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
 		// controller
 		camera.SetController(new CameraController(camera, subject_handle));
@@ -498,11 +494,11 @@ namespace
 		auto & resource_manager = crag::core::ResourceManager::Get();
 		resource_manager.Register<physics::Mesh>("UfoPhysicsMesh", [] ()
 		{
-			return GenerateUfoMesh<dTriIndex>();
+			return GenerateUfoMesh<dTriIndex>(ufo_height, ufo_radius);
 		});
 		resource_manager.Register<gfx::PlainMesh>("UfoPlainMesh", [] ()
 		{
-			return GenerateUfoMesh<gfx::ElementIndex>();
+			return GenerateUfoMesh<gfx::ElementIndex>(ufo_height, ufo_radius);
 		});
 		resource_manager.Register<gfx::LitMesh>("UfoLitMesh", [] ()
 		{
@@ -521,9 +517,10 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
+		auto rotation = gfx::Rotation(geom::Normalized(position), gfx::Direction::forward);
+		Transformation transformation(position, rotation);
 		auto velocity = Vector3::Zero();
-		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("UfoPhysicsMesh");
-		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
+		auto & body = * new physics::CylinderBody(transformation, & velocity, physics_engine, ufo_radius, ufo_height);
 		body.SetLinearDamping(ufo_linear_damping);
 		body.SetAngularDamping(ufo_angular_damping);
 		entity.SetLocation(& body);
