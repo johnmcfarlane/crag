@@ -49,7 +49,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 ship_start_pos(0, 9999400, 0);
+	sim::Vector3 ufo_start_pos(0, 9999400, 0);
 	sim::Vector3 camera_start_pos(10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
@@ -59,7 +59,7 @@ namespace
 
 	Random random_sequence;
 	applet::AppletInterface * _applet_interface;
-	sim::EntityHandle _ship;
+	sim::EntityHandle _ufo;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
@@ -224,11 +224,11 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
-	// Create ship.
-	_ship = SpawnShip(ship_start_pos);
+	// Create ufo.
+	_ufo = SpawnUfo(ufo_start_pos);
 
 	// Create camera.
-	sim::EntityHandle camera = SpawnCamera(camera_start_pos, _ship);
+	sim::EntityHandle camera = SpawnCamera(camera_start_pos, _ufo);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
@@ -250,7 +250,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 		_shapes.pop_back();
 	}
 	
-	_ship.Destroy();
+	_ufo.Destroy();
 	sun.Destroy();
 	planet.Destroy();
 	
