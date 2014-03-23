@@ -144,6 +144,11 @@ CollisionHandle Engine::CreateSphere(Scalar radius) const
 	return dCreateSphere(space, radius);
 }
 
+CollisionHandle Engine::CreateCylinder(Scalar radius, Scalar length) const
+{
+	return dCreateCylinder(space, radius, length);
+}
+
 CollisionHandle Engine::CreateRay(Scalar length) const
 {
 	return dCreateRay(space, length);

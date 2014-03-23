@@ -84,6 +84,7 @@ add_executable(crag
 	pch.cpp
 	physics/Body.cpp
 	physics/BoxBody.cpp
+	physics/CylinderBody.cpp
 	physics/Engine.cpp
 	physics/GhostBody.cpp
 	physics/Location.cpp
