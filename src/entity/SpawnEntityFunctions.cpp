@@ -49,6 +49,8 @@
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
 
+using namespace sim;
+
 #if defined(CRAG_USE_MOUSE)
 CONFIG_DEFINE (observer_use_touch, bool, false);
 #elif defined(CRAG_USE_TOUCH)
@@ -112,11 +114,11 @@ namespace
 		// add vertices
 		auto & vertices = mesh.GetVertices();
 		vertices.reserve(5);
-		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, 0.f, 1.f) });
-		vertices.push_back(gfx::PlainVertex { sim::Vector3(-1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { sim::Vector3(1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, -.25f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { sim::Vector3(0.f, .25f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { Vector3(0.f, 0.f, 1.f) });
+		vertices.push_back(gfx::PlainVertex { Vector3(-1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { Vector3(1.f, 0.f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { Vector3(0.f, -.25f, -1.f) });
+		vertices.push_back(gfx::PlainVertex { Vector3(0.f, .25f, -1.f) });
 		ASSERT(vertices.size() == vertices.capacity());
 
 		// add faces
@@ -159,7 +161,7 @@ namespace
 		constexpr auto inner_scale = geom::MakeVector(.5f, .3f, .5f);
 		constexpr auto outer_scale = geom::MakeVector(1.f, 0.f, 1.f);
 		auto & vertices = mesh.GetVertices();
-		auto add_vertices = [& vertices, & inner_scale, & outer_scale] (sim::Vector3 const & radial)
+		auto add_vertices = [& vertices, & inner_scale, & outer_scale] (Vector3 const & radial)
 		{
 			vertices.push_back(gfx::PlainVertex { radial * inner_scale });
 			vertices.push_back(gfx::PlainVertex { radial * outer_scale });
@@ -171,7 +173,7 @@ namespace
 			auto radial = geom::MakeVector(std::cos(angle), 1.f, std::sin(angle));
 			add_vertices(radial);
 		}
-		add_vertices(sim::Vector3(0.f, 1.f, 0.f));
+		add_vertices(Vector3(0.f, 1.f, 0.f));
 		CRAG_VERIFY_EQUAL(vertices.size(), vertices.capacity());
 
 		// add faces
@@ -251,12 +253,12 @@ namespace
 		return destination_mesh;
 	}
 	
-	void ConstructBox(sim::Entity & box, geom::rel::Vector3 spawn_pos, sim::Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
+	void ConstructBox(Entity & box, geom::rel::Vector3 spawn_pos, Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
 	{
 		auto & resource_manager = crag::core::ResourceManager::Get();
 
 		// physics
-		sim::Engine & engine = box.GetEngine();
+		Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto & body = * new physics::BoxBody(spawn_pos, & velocity, physics_engine, size);
@@ -273,9 +275,9 @@ namespace
 		box.SetModel(model);
 	}
 
-	void ConstructBody(sim::Entity & entity, geom::rel::Vector3 const & position, sim::Vector3 const & velocity, physics::Mass m, float linear_damping, float angular_damping)
+	void ConstructBody(Entity & entity, geom::rel::Vector3 const & position, Vector3 const & velocity, physics::Mass m, float linear_damping, float angular_damping)
 	{
-		sim::Engine & engine = entity.GetEngine();
+		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto & body = * new physics::GhostBody(position, velocity, physics_engine);
@@ -287,9 +289,9 @@ namespace
 		entity.SetLocation(& body);
 	}
 
-	void ConstructSphericalBody(sim::Entity & entity, geom::rel::Sphere3 const & sphere, sim::Vector3 const & velocity, float density, float linear_damping, float angular_damping)
+	void ConstructSphericalBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
 	{
-		sim::Engine & engine = entity.GetEngine();
+		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto & body = * new physics::SphericalBody(sphere.center, & velocity, physics_engine, sphere.radius);
@@ -299,7 +301,7 @@ namespace
 		entity.SetLocation(& body);
 	}
 
-	void ConstructBall(sim::Entity & ball, geom::rel::Sphere3 sphere, sim::Vector3 const & velocity, gfx::Color4f color)
+	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
 		ConstructSphericalBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
@@ -310,31 +312,31 @@ namespace
 		ball.SetModel(model);
 	}
 
-	void ConstructObserver(sim::Entity & observer, sim::Vector3 const & position)
+	void ConstructObserver(Entity & observer, Vector3 const & position)
 	{
 		// physics
 		if (! observer_use_touch)
 		{
 			if (observer_physics)
 			{
-				ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), sim::Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+				ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
 			}
 			else
 			{
 				physics::Mass m;
 				dMassSetSphere(& m, observer_density, observer_radius);
-				ConstructBody(observer, position, sim::Vector3::Zero(), m, observer_linear_damping, observer_angular_damping);
+				ConstructBody(observer, position, Vector3::Zero(), m, observer_linear_damping, observer_angular_damping);
 			}
 		}
 
 		// controller
-		auto controller = [&] () -> sim::Controller *
+		auto controller = [&] () -> Controller *
 		{
 			if (! observer_use_touch)
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
-					return new sim::MouseObserverController(observer);
+					return new MouseObserverController(observer);
 				}
 				else
 				{
@@ -343,7 +345,7 @@ namespace
 				}
 			}
 
-			return new sim::TouchObserverController(observer, position);
+			return new TouchObserverController(observer, position);
 		} ();
 		
 		observer.SetController(controller);
@@ -355,56 +357,56 @@ namespace
 #endif
 	}
 
-	void ConstructCamera(sim::Entity & camera, sim::Vector3 const & position, sim::EntityHandle subject_handle)
+	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
 	{
 		// physics
-		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), sim::Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
 		// controller
-		camera.SetController(new sim::CameraController(camera, subject_handle));
+		camera.SetController(new CameraController(camera, subject_handle));
 	}
 
-	void AddThruster(sim::VehicleController & controller, sim::Thruster * thruster)
+	void AddThruster(VehicleController & controller, Thruster * thruster)
 	{
-		controller.AddThruster(sim::VehicleController::ThrusterPtr(thruster));
+		controller.AddThruster(VehicleController::ThrusterPtr(thruster));
 	}
 
-	void AddHoverThruster(sim::VehicleController & controller, sim::Vector3 const & position, sim::Scalar distance)
+	void AddHoverThruster(VehicleController & controller, Vector3 const & position, Scalar distance)
 	{
 		auto & entity = controller.GetEntity();
-		AddThruster(controller, new sim::HoverThruster(entity, position, distance));
+		AddThruster(controller, new HoverThruster(entity, position, distance));
 	}
 
-	void AddRoverThruster(sim::VehicleController & controller, sim::Ray3 const & ray, SDL_Scancode key, bool graphical, bool invert = false)
+	void AddRoverThruster(VehicleController & controller, Ray3 const & ray, SDL_Scancode key, bool graphical, bool invert = false)
 	{
 		auto & entity = controller.GetEntity();
 		auto activation_callback = [key, invert] ()
 		{
 			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
 		};
-		AddThruster(controller, new sim::RoverThruster(entity, ray, activation_callback, graphical));
+		AddThruster(controller, new RoverThruster(entity, ray, activation_callback, graphical));
 	}
 
-	void AddVernierThruster(sim::VehicleController & controller, sim::Ray3 const & ray)
+	void AddVernierThruster(VehicleController & controller, Ray3 const & ray)
 	{
 		auto & entity = controller.GetEntity();
-		AddThruster(controller, new sim::VernierThruster(entity, ray));
+		AddThruster(controller, new VernierThruster(entity, ray));
 	}
 
-	void ConstructRover(sim::Entity & entity, geom::rel::Sphere3 const & sphere)
+	void ConstructRover(Entity & entity, geom::rel::Sphere3 const & sphere)
 	{
-		ConstructBall(entity, sphere, sim::Vector3::Zero(), gfx::Color4f::White());
+		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
-		auto& controller = ref(new sim::VehicleController(entity));
+		auto& controller = ref(new VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, .5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, sim::Ray3(sim::Vector3(-.5, -.8f, -.5), sim::Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
 	}
 	
-	void ConstructShip(sim::Entity & entity, sim::Vector3 const & position)
+	void ConstructShip(Entity & entity, Vector3 const & position)
 	{
 		// resources
 		auto & resource_manager = crag::core::ResourceManager::Get();
@@ -430,10 +432,10 @@ namespace
 		});
 
 		// physics
-		sim::Engine & sim_engine = entity.GetEngine();
-		physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
+		Engine & engine = entity.GetEngine();
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto velocity = sim::Vector3::Zero();
+		auto velocity = Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
 		body.SetLinearDamping(ship_linear_damping);
@@ -455,11 +457,11 @@ namespace
 		});
 
 		// controller
-		auto & controller = ref(new sim::VehicleController(entity));
+		auto & controller = ref(new VehicleController(entity));
 		entity.SetController(& controller);
 
 		// add a single thruster
-		auto add_thruster = [&] (sim::Ray3 const & ray, SDL_Scancode key, bool invert = false)
+		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert = false)
 		{
 			if (key == SDL_SCANCODE_UNKNOWN)
 			{
@@ -472,7 +474,7 @@ namespace
 		};
 		
 		// add two complimentary thrusters
-		auto add_thrusters = [&] (sim::Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert = false)
+		auto add_thrusters = [&] (Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert = false)
 		{
 			add_thruster(ray, first_key, invert);
 			ray.position[axis] *= -1.f;
@@ -480,17 +482,17 @@ namespace
 			add_thruster(ray, second_key, invert);
 		};
 		
-		auto forward = sim::Vector3(0, 0, ship_forward_thrust);
+		auto forward = Vector3(0, 0, ship_forward_thrust);
 
-		add_thrusters(sim::Ray3(sim::Vector3(0.f, 0.f, 1.f), geom::Resized(sim::Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN);
-		add_thrusters(sim::Ray3(sim::Vector3(1., 0.f, 0), geom::Resized(sim::Vector3(- ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN);
-		add_thrusters(sim::Ray3(sim::Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
+		add_thrusters(Ray3(Vector3(0.f, 0.f, 1.f), geom::Resized(Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN);
+		add_thrusters(Ray3(Vector3(1., 0.f, 0), geom::Resized(Vector3(- ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN);
+		add_thrusters(Ray3(Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
 		
-		AddHoverThruster(controller, sim::Vector3(0.f, -.25f, 0.f), -.1f);
-		AddHoverThruster(controller, sim::Vector3(0.f, .25f, 0.f), .1f);
+		AddHoverThruster(controller, Vector3(0.f, -.25f, 0.f), -.1f);
+		AddHoverThruster(controller, Vector3(0.f, .25f, 0.f), .1f);
 	}
 
-	void ConstructUfo(sim::Entity & entity, sim::Vector3 const & position)
+	void ConstructUfo(Entity & entity, Vector3 const & position)
 	{
 		// resources
 		auto & resource_manager = crag::core::ResourceManager::Get();
@@ -516,10 +518,10 @@ namespace
 		});
 
 		// physics
-		sim::Engine & sim_engine = entity.GetEngine();
-		physics::Engine & physics_engine = sim_engine.GetPhysicsEngine();
+		Engine & engine = entity.GetEngine();
+		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto velocity = sim::Vector3::Zero();
+		auto velocity = Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("UfoPhysicsMesh");
 		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
 		body.SetLinearDamping(ufo_linear_damping);
@@ -536,7 +538,7 @@ namespace
 		entity.SetModel(model_handle);
 
 		// controller
-		auto & controller = ref(new sim::UfoController(entity));
+		auto & controller = ref(new UfoController(entity));
 		entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
@@ -547,65 +549,65 @@ namespace
 	}
 }
 
-sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color)
+EntityHandle SpawnBall(Sphere3 const & sphere, Vector3 const & velocity, gfx::Color4f color)
 {
 	ASSERT(color.a = 1);
 	
 	// ball
-	auto ball = sim::EntityHandle::CreateHandle();
+	auto ball = EntityHandle::CreateHandle();
 
-	ball.Call([sphere, velocity, color] (sim::Entity & entity) {
+	ball.Call([sphere, velocity, color] (Entity & entity) {
 		ConstructBall(entity, sphere, velocity, color);
 	});
 
 	return ball;
 }
 
-sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & velocity, sim::Vector3 const & size, gfx::Color4f color)
+EntityHandle SpawnBox(Vector3 const & position, Vector3 const & velocity, Vector3 const & size, gfx::Color4f color)
 {
 	ASSERT(color.a = 1);
 	
 	// box
-	auto box = sim::EntityHandle::CreateHandle();
+	auto box = EntityHandle::CreateHandle();
 
-	box.Call([position, velocity, size, color] (sim::Entity & entity) {
+	box.Call([position, velocity, size, color] (Entity & entity) {
 		ConstructBox(entity, position, velocity, size, color);
 	});
 
 	return box;
 }
 
-sim::EntityHandle SpawnObserver(const sim::Vector3 & position)
+EntityHandle SpawnObserver(const Vector3 & position)
 {
-	auto observer = sim::EntityHandle::CreateHandle();
+	auto observer = EntityHandle::CreateHandle();
 
-	observer.Call([position] (sim::Entity & entity) {
+	observer.Call([position] (Entity & entity) {
 		ConstructObserver(entity, position);
 	});
 
 	return observer;
 }
 
-sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject)
+EntityHandle SpawnCamera(Vector3 const & position, EntityHandle subject)
 {
-	auto camera = sim::EntityHandle::CreateHandle();
+	auto camera = EntityHandle::CreateHandle();
 
-	camera.Call([position, subject] (sim::Entity & entity) {
+	camera.Call([position, subject] (Entity & entity) {
 		ConstructCamera(entity, position, subject);
 	});
 
 	return camera;
 }
 
-sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int num_craters)
+EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_craters)
 {
-	auto handle = sim::EntityHandle::CreateHandle();
+	auto handle = EntityHandle::CreateHandle();
 
-	handle.Call([sphere, random_seed, num_craters] (sim::Entity & entity) {
+	handle.Call([sphere, random_seed, num_craters] (Entity & entity) {
 		auto & engine = entity.GetEngine();
 
 		// controller
-		auto& controller = ref(new sim::PlanetController(entity, sphere, random_seed, num_craters));
+		auto& controller = ref(new PlanetController(entity, sphere, random_seed, num_craters));
 		auto& formation = controller.GetFormation();
 		entity.SetController(& controller);
 
@@ -637,13 +639,13 @@ sim::EntityHandle SpawnPlanet(const sim::Sphere3 & sphere, int random_seed, int 
 }
 
 // assumes origin is zero
-sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color)
+EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color)
 {
-	auto sun = sim::EntityHandle::CreateHandle();
+	auto sun = EntityHandle::CreateHandle();
 
-	sun.Call([volume, color] (sim::Entity & entity) {
+	sun.Call([volume, color] (Entity & entity) {
 		// physics
-		sim::Transformation transformation(geom::Cast<sim::Scalar>(volume.center));
+		Transformation transformation(geom::Cast<Scalar>(volume.center));
 		auto location = new physics::PassiveLocation(transformation);
 		entity.SetLocation(location);
 
@@ -655,37 +657,37 @@ sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f cons
 	return sun;
 }
 
-sim::EntityHandle SpawnRover(sim::Vector3 const & position)
+EntityHandle SpawnRover(Vector3 const & position)
 {
-	auto vehicle = sim::EntityHandle::CreateHandle();
+	auto vehicle = EntityHandle::CreateHandle();
 
 	geom::rel::Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
-	vehicle.Call([sphere] (sim::Entity & entity) {
+	vehicle.Call([sphere] (Entity & entity) {
 		ConstructRover(entity, sphere);
 	});
 
 	return vehicle;
 }
 
-sim::EntityHandle SpawnShip(sim::Vector3 const & position)
+EntityHandle SpawnShip(Vector3 const & position)
 {
-	auto ship = sim::EntityHandle::CreateHandle();
+	auto ship = EntityHandle::CreateHandle();
 
-	ship.Call([position] (sim::Entity & entity) {
+	ship.Call([position] (Entity & entity) {
 		ConstructShip(entity, position);
 	});
 
 	return ship;
 }
 
-sim::EntityHandle SpawnUfo(sim::Vector3 const & position)
+EntityHandle SpawnUfo(Vector3 const & position)
 {
-	auto ship = sim::EntityHandle::CreateHandle();
+	auto ship = EntityHandle::CreateHandle();
 
-	ship.Call([position] (sim::Entity & entity) {
+	ship.Call([position] (Entity & entity) {
 		ConstructUfo(entity, position);
 	});
 
