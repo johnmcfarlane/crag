@@ -26,14 +26,14 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (ufo_controlled_thrust, physics::Scalar, 4.5f);
+	CONFIG_DEFINE (ufo_controlled_thrust, physics::Scalar, 9.f);
 	
 #if defined(CRAG_USE_MOUSE)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 5.f);
+	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 45.f);
 #endif
 
 #if defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 100000.f);
+	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 900000.f);
 #endif
 }
 
@@ -44,7 +44,7 @@ UfoController::UfoController(Entity & entity)
 : VehicleController(entity)
 , _camera_right(1.f, 0.f, 0.f)
 , _camera_forward(0.f, 0.f, 1.f)
-, _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, -.2f, 0.f), Vector3(0.f, ufo_controlled_thrust, 0.f)), false, 1.f))
+, _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, ufo_controlled_thrust)), false, 1.f))
 , _num_presses(0)
 {
 	AddThruster(VehicleController::ThrusterPtr(_main_thruster));
