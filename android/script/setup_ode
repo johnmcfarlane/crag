@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# ODE
+
+cd jni
+
+#frequently fails
+svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+svn checkout svn://svn.code.sf.net/p/opende/code/trunk ode
+
+cd ode
+svn update
+
+./bootstrap
+CFLAGS="-fno-exceptions -fno-rtti -O3" CXXFLAGS="-fno-exceptions -fno-rtti -O3" ./configure --host=arm-linux --enable-single-precision --disable-demos --disable-asserts --disable-libccd 
+
+cd ../..

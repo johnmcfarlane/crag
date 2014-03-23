@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# install Oracle Java
+
+cd dl
+make-jpkg jdk*
+sudo dpkg -i oracle-j2sdk*.deb
+sudo update-java-alternatives -s j2sdk1.7-oracle
+cd ..
