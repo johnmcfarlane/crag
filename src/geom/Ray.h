@@ -19,17 +19,17 @@ namespace geom
 		typedef S Scalar;
 		typedef typename ::geom::Vector<Scalar, N> V;
 		
-		Ray() 
+		constexpr Ray() 
 		{
 		}
 		
-		Ray(Ray const & rhs) 
+		constexpr Ray(Ray const & rhs) 
 		: position(rhs.position)
 		, direction(rhs.direction) 
 		{
 		}
 		
-		Ray(V const & pos, V const & dir) 
+		constexpr Ray(V pos, V dir) 
 		: position(pos)
 		, direction(dir) 
 		{

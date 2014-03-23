@@ -22,7 +22,7 @@ namespace geom
 	public:
 		typedef S Scalar;
 		
-		Vector() 
+		constexpr Vector() 
 #if ! defined(NDEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())
@@ -31,7 +31,7 @@ namespace geom
 		{ 
 		}
 
-		Vector(Vector<S, 3> const & rhs) 
+		constexpr Vector(Vector<S, 3> const & rhs) 
 		: x(rhs.x)
 		, y(rhs.y)
 		, z(rhs.z)
