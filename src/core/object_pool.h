@@ -284,7 +284,7 @@ namespace core
 		{
 			if (_num_allocated != 0)
 			{
-				DEBUG_MESSAGE("object pool destroyed with " SIZE_T_FORMAT_SPEC " object remaining", _num_allocated);
+				DEBUG_BREAK("object pool destroyed with " SIZE_T_FORMAT_SPEC " object remaining", _num_allocated);
 			}
 
 			FreePage(_array, get_allocation_size(capacity()));

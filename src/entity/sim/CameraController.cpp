@@ -27,9 +27,9 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (camera_controller_height, float, 10.f);
-	CONFIG_DEFINE (camera_controller_distance, float, 10.5f);
-	CONFIG_DEFINE (camera_up_push_magnitude, float, 10.f);
+	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
+	CONFIG_DEFINE (camera_controller_distance, float, 10.f);
+	CONFIG_DEFINE (camera_push_magnitude, float, 1000.f);
 	
 	// given information about camera location and direction, 
 	// send a 'set camera' event
@@ -62,15 +62,12 @@ namespace
 		auto altitude = ray_cast_result.GetDistance();
 		if (altitude < camera_controller_height)
 		{
-			push += up * camera_up_push_magnitude * (1.f - (altitude / camera_controller_height));
+			push += up * (1.f - (altitude / camera_controller_height));
 		}
 
-		if (distance > camera_controller_distance)
-		{
-			push += forward * distance / camera_controller_distance;
-		}
+		push += forward * (distance - camera_controller_distance) / camera_controller_distance;
 
-		camera_body.AddForce(push);
+		camera_body.AddForce(push * camera_push_magnitude);
 	}
 }
 

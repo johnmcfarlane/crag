@@ -22,7 +22,7 @@ namespace geom
 	public:
 		typedef S Scalar;
 		
-		Vector() 
+		constexpr Vector() 
 #if ! defined(NDEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())
@@ -31,19 +31,18 @@ namespace geom
 		{ 
 		}
 
-		Vector(Vector<S, 3> const & rhs) 
+		constexpr Vector(Vector<S, 3> const & rhs) 
 		: x(rhs.x)
 		, y(rhs.y)
 		, z(rhs.z)
 		{ 
 		}
 		
-		Vector(S rhs_x, S rhs_y, S rhs_z) 
+		constexpr Vector(S rhs_x, S rhs_y, S rhs_z) 
 		: x(rhs_x)
 		, y(rhs_y)
 		, z(rhs_z) 
 		{ 
-			CRAG_VERIFY(* this);
 		}
 		
 		static constexpr std::size_t Size()
@@ -74,7 +73,7 @@ namespace geom
 			return reinterpret_cast<S const *>(this);
 		}
 
-		static Vector Zero() 
+		static Vector constexpr Zero() 
 		{
 			return Vector(0, 0, 0); 
 		}
@@ -104,6 +103,12 @@ namespace geom
 			static_cast<LHS_S>(rhs.x),
 			static_cast<LHS_S>(rhs.y),
 			static_cast<LHS_S>(rhs.z));
+	}
+
+	template <typename S>
+	Vector<S, 3> constexpr MakeVector(S x, S y, S z)
+	{
+		return Vector<S, 3>(x, y, z);
 	}
 
 	template<typename S> bool operator == (Vector<S, 3> const & lhs, Vector<S, 3> const & rhs)

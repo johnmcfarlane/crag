@@ -19,17 +19,17 @@ namespace geom
 		typedef S Scalar;
 		typedef typename ::geom::Vector<Scalar, N> V;
 		
-		Ray() 
+		constexpr Ray() 
 		{
 		}
 		
-		Ray(Ray const & rhs) 
+		constexpr Ray(Ray const & rhs) 
 		: position(rhs.position)
 		, direction(rhs.direction) 
 		{
 		}
 		
-		Ray(V const & pos, V const & dir) 
+		constexpr Ray(V pos, V dir) 
 		: position(pos)
 		, direction(dir) 
 		{
@@ -91,6 +91,25 @@ namespace geom
 	bool operator!=(Ray<S, N> const & lhs, Ray<S, N> const & rhs)
 	{
 		return lhs.position != rhs.position || lhs.direction != rhs.direction;
+	}
+
+	template <typename S, int N>
+	Ray<S, N> operator*=(Ray<S, N> & lhs, S rhs)
+	{
+		lhs.direction *= rhs;
+		return lhs;
+	}
+
+	template <typename S, int N>
+	Ray<S, N> operator*(Ray<S, N> lhs, S rhs)
+	{
+		return lhs *= rhs;
+	}
+
+	template <typename S, int N>
+	Ray<S, N> operator*(S lhs, Ray<S, N> rhs)
+	{
+		return rhs *= lhs;
 	}
 
 	// streaming

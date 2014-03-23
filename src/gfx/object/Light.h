@@ -15,6 +15,9 @@
 
 #include "sim/defs.h"
 
+#if ! defined(NDEBUG)
+//#define CRAG_GFX_LIGHT_DEBUG
+#endif
 
 namespace gfx
 {
@@ -36,7 +39,7 @@ namespace gfx
 		Color4f const & GetColor() const;
 		LightType GetType() const;
 		
-#if ! defined(NDEBUG)
+#if defined(CRAG_GFX_LIGHT_DEBUG)
 		LeafNode::PreRenderResult PreRender() override;
 #endif
 		

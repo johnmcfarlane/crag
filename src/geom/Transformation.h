@@ -186,4 +186,10 @@ namespace geom
 	{
 		return Transformation<LHS_S>(Cast<LHS_S>(rhs.GetMatrix()));
 	}
+
+	template <typename S>
+	Transformation<S> Inverse(Transformation<S> const & transformation)
+	{
+		return ::geom::Inverse(transformation.GetMatrix());
+	}
 }

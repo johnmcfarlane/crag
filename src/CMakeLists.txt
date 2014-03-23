@@ -25,6 +25,7 @@ add_executable(crag
 	entity/sim/CameraController.cpp
 	entity/sim/Contact.cpp
 	entity/sim/Genome.cpp
+	entity/sim/HoverThruster.cpp
 	entity/sim/MoonShader.cpp
 	entity/sim/MouseObserverController.cpp
 	entity/sim/ObserverInput.cpp
@@ -34,7 +35,9 @@ add_executable(crag
 	entity/sim/Sensor.cpp
 	entity/sim/Thruster.cpp
 	entity/sim/TouchObserverController.cpp
+	entity/sim/UfoController.cpp
 	entity/sim/VehicleController.cpp
+	entity/sim/VernierThruster.cpp
 	entity/SpawnEntityFunctions.cpp
 	entity/SpawnSkybox.cpp
 	form/CalculateNodeScoreFunctor.cpp

@@ -43,7 +43,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(VehicleController, self)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void VehicleController::AddThruster(Thruster * thruster)
+void VehicleController::AddThruster(ThrusterPtr && thruster)
 {
 	CRAG_VERIFY(* this);
 
@@ -53,7 +53,7 @@ void VehicleController::AddThruster(Thruster * thruster)
 	thruster->SetParentModel(parent_model);
 
 	// add to vector
-	_thrusters.push_back(thruster);
+	_thrusters.push_back(std::move(thruster));
 
 	CRAG_VERIFY(* this);
 }
@@ -63,14 +63,8 @@ void VehicleController::PopThruster()
 	CRAG_VERIFY(* this);
 	ASSERT(! _thrusters.empty());
 
-	// get last thruster
-	auto thruster = _thrusters.back();
-
 	// remove it from vector
 	_thrusters.pop_back();
-
-	// delete it
-	delete thruster;
 
 	CRAG_VERIFY(* this);
 }
