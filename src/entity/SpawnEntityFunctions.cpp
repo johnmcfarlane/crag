@@ -139,10 +139,10 @@ namespace
 		ASSERT(indices.size() == indices.capacity());
 		
 		// translate centroid to origin
-		auto centroid = CalculateCentroidAndVolume(mesh);
+		auto centroid = CalculateCentroidAndVolume(mesh).first;
 		for (auto & vertex : vertices)
 		{
-			vertex.pos -= centroid.first;
+			vertex.pos -= centroid;
 		}
 		
 		// return result
