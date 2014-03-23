@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 #include "RayCast.h"
-#include "SphericalBody.h"
+#include "SphereBody.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
@@ -225,8 +225,8 @@ form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const 
 
 void Engine::Collide(Sphere3 const & sphere, ContactInterface & callback)
 {
-	// create physics::SphericalBody object
-	SphericalBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
+	// create physics::SphereBody object
+	SphereBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
 	
 	// perform collision between ray_cast and all pre-existing objects
 	auto handle = body.GetCollisionHandle();

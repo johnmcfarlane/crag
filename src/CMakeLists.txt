@@ -90,7 +90,7 @@ add_executable(crag
 	physics/MeshBody.cpp
 	physics/PassiveLocation.cpp
 	physics/RayCast.cpp
-	physics/SphericalBody.cpp
+	physics/SphereBody.cpp
 	scripts/GameScript.cpp
 	scripts/MainScript.cpp
 	scripts/MonitorOrigin.cpp

@@ -1,5 +1,5 @@
 //
-//  SphericalBody.h
+//  SphereBody.h
 //  crag
 //
 //  Created by John on 6/16/10.
@@ -16,12 +16,11 @@ namespace physics
 {
 	class Engine;
 
-	// TODO: Rename this to Sphere and give it a comment.
-	// TODO: Repeat for BoxBody.
-	class SphericalBody : public Body
+	// a physical body that is round
+	class SphereBody : public Body
 	{
 	public:
-		SphericalBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine, Scalar radius);
+		SphereBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
 		Scalar GetRadius() const;

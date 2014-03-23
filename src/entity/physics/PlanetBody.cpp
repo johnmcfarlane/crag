@@ -27,7 +27,7 @@ using namespace physics;
 DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
-: SphericalBody(transformation, nullptr, engine, radius)
+: SphereBody(transformation, nullptr, engine, radius)
 , _polyhedron(polyhedron)
 , _mean_radius(radius)
 {

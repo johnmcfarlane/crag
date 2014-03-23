@@ -12,7 +12,6 @@
 #include "BoxBody.h"
 
 #include "Engine.h"
-#include "SphericalBody.h"
 
 #include <ode/collision.h>
 #include <ode/objects.h>

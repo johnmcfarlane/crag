@@ -33,7 +33,7 @@
 #include "physics/GhostBody.h"
 #include "physics/MeshBody.h"
 #include "physics/PassiveLocation.h"
-#include "physics/SphericalBody.h"
+#include "physics/SphereBody.h"
 
 #include "form/Engine.h"
 
@@ -289,12 +289,12 @@ namespace
 		entity.SetLocation(& body);
 	}
 
-	void ConstructSphericalBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
+	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphericalBody(sphere.center, & velocity, physics_engine, sphere.radius);
+		auto & body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
 		body.SetDensity(density);
 		body.SetLinearDamping(linear_damping);
 		body.SetAngularDamping(angular_damping);
@@ -304,7 +304,7 @@ namespace
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphericalBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
+		ConstructSphereBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -319,7 +319,7 @@ namespace
 		{
 			if (observer_physics)
 			{
-				ConstructSphericalBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+				ConstructSphereBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
 			}
 			else
 			{
@@ -360,7 +360,7 @@ namespace
 	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
 	{
 		// physics
-		ConstructSphericalBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+		ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
 		// controller
 		camera.SetController(new CameraController(camera, subject_handle));
