@@ -92,9 +92,6 @@ namespace gfx
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
-		void SetFlatShaded(bool flat_shaded);
-		bool GetFlatShaded() const;
-
 		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
 		bool GetFragmentLightingEnabled() const;
 
@@ -176,7 +173,6 @@ namespace gfx
 		bool _dirty;
 		bool vsync;
 		bool culling;
-		bool _flat_shaded;
 		bool _fragment_lighting_enabled;
 		int capture_frame;
 

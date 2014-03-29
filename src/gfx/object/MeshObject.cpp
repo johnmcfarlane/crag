@@ -70,7 +70,7 @@ void MeshObject::Render(Engine const & renderer) const
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
 		auto fragment_lighting = renderer.GetFragmentLightingEnabled();
-		bool flat_shaded = renderer.GetFlatShaded();
+		bool flat_shaded = false;
 		poly_program.SetUniforms(_color, fragment_lighting, flat_shaded);
 	}
 

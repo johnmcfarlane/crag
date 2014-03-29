@@ -15,7 +15,10 @@
 #include "scripts/TestScript.h"
 
 #include "form/Engine.h"
+#include "form/Mesh.h"
+
 #include "sim/Engine.h"
+
 #include "gfx/Engine.h"
 
 #include "applet/Engine.h"
@@ -58,6 +61,9 @@ int main(int argc, char * * argv)
 
 CONFIG_DEFINE (profile_mode, bool, false);
 CONFIG_DECLARE (shadows_enabled, bool);
+#if ! defined(CRAG_FLAT_SHADE)
+CONFIG_DECLARE (flat_shade_enabled, bool);
+#endif
 
 namespace 
 {
@@ -122,12 +128,11 @@ namespace
 						break;
 					}
 					
+#if ! defined(CRAG_FLAT_SHADE)
 					case SDL_SCANCODE_F:
-						gfx::Daemon::Call([] (gfx::Engine & engine) 
-						{ 
-							engine.SetFlatShaded(! engine.GetFlatShaded());
-						});
+						flat_shade_enabled = ! flat_shade_enabled;
 						break;
+#endif
 
 					case SDL_SCANCODE_G:
 					{

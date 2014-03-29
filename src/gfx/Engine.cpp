@@ -58,7 +58,6 @@ namespace
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_flat_shaded, bool, false);
 #if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 #else
@@ -280,7 +279,6 @@ Engine::Engine()
 , _dirty(true)
 , vsync(false)
 , culling(init_culling)
-, _flat_shaded(init_flat_shaded)
 , _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
@@ -489,17 +487,6 @@ void Engine::OnToggleCulling()
 {
 	culling = ! culling;
 	_dirty = true;
-}
-
-void Engine::SetFlatShaded(bool flat_shaded)
-{
-	_dirty = _flat_shaded != flat_shaded;
-	_flat_shaded = flat_shaded;
-}
-
-bool Engine::GetFlatShaded() const
-{
-	return _flat_shaded;
 }
 
 void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
