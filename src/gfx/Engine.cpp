@@ -58,7 +58,6 @@ namespace
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_flat_shaded, bool, false);
 #if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 #else
@@ -280,14 +279,13 @@ Engine::Engine()
 , _dirty(true)
 , vsync(false)
 , culling(init_culling)
-, _flat_shaded(init_flat_shaded)
 , _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
 {
 #if ! defined(NDEBUG)
-	std::fill(_frame_time_history, _frame_time_history + _frame_time_history_size, 0);
+	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
 	
 	if (! Init())
@@ -489,17 +487,6 @@ void Engine::OnToggleCulling()
 {
 	culling = ! culling;
 	_dirty = true;
-}
-
-void Engine::SetFlatShaded(bool flat_shaded)
-{
-	_dirty = _flat_shaded != flat_shaded;
-	_flat_shaded = flat_shaded;
-}
-
-bool Engine::GetFlatShaded() const
-{
-	return _flat_shaded;
 }
 
 void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
@@ -1311,9 +1298,13 @@ void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_positi
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 	// update the history
-	memmove(_frame_time_history, _frame_time_history + 1, sizeof(* _frame_time_history) * (_frame_time_history_size - 1));
-	Time first_entry = _frame_time_history[0];
-	Time & last_entry = _frame_time_history[_frame_time_history_size - 1];
+	auto begin = std::begin(_frame_time_history);
+	auto end = std::end(_frame_time_history);
+	std::copy(begin + 1, end, begin);
+
+	// get the range
+	Time first_entry = * begin;
+	Time & last_entry = * (end - 1);
 	last_entry = frame_start_position;
 	
 	// average it

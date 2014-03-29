@@ -11,7 +11,9 @@
 
 #include "Surrounding.h"
 
+#include "gfx/Debug.h"
 #include "gfx/Engine.h"
+#include "gfx/GenerateShadowVolumeMesh.h"
 #include "gfx/Messages.h"
 #include "gfx/Program.h"
 
@@ -21,6 +23,9 @@
 #include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
+#if ! defined(CRAG_FLAT_SHADE)
+CONFIG_DEFINE (flat_shade_enabled, bool, true);
+#endif
 
 using namespace gfx;
 
@@ -108,7 +113,7 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	}
 	
 	// state number of polygons/quaterna
-	STAT_SET (num_polys, mesh->GetLitMesh().GetIndices().size() / 3);
+	STAT_SET (num_polys, mesh->GetLitMesh().size() / 3);
 	STAT_SET (num_quats_used, mesh->GetProperties()._num_quaterne);
 }
 
@@ -139,7 +144,7 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 
 void Surrounding::Render(Engine const & renderer) const
 {
-	if (_vbo_resource.GetNumIndices() == 0)
+	if (_vbo_resource.empty())
 	{
 		return;
 	}
@@ -151,7 +156,12 @@ void Surrounding::Render(Engine const & renderer) const
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
 		bool fragment_lighting = renderer.GetFragmentLightingEnabled();
-		bool flat_shaded = renderer.GetFlatShaded();
+#if defined(CRAG_FLAT_SHADE)
+		// flatness is handled by form::Mesh and cannot be switched off at run-time
+		bool flat_shaded = false;
+#else
+		bool flat_shaded = flat_shade_enabled;
+#endif
 		poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded, relief_enabled);
 	}
 	

@@ -92,9 +92,6 @@ namespace gfx
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
-		void SetFlatShaded(bool flat_shaded);
-		bool GetFlatShaded() const;
-
 		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
 		bool GetFragmentLightingEnabled() const;
 
@@ -176,7 +173,6 @@ namespace gfx
 		bool _dirty;
 		bool vsync;
 		bool culling;
-		bool _flat_shaded;
 		bool _fragment_lighting_enabled;
 		int capture_frame;
 
@@ -201,8 +197,8 @@ namespace gfx
 		
 #if ! defined(NDEBUG)
 		// fps counter
-		static int const _frame_time_history_size = 360;
-		core::Time _frame_time_history[_frame_time_history_size];
+		static int constexpr _frame_time_history_size = 60;
+		std::array<core::Time, _frame_time_history_size> _frame_time_history;
 #endif
 		
 		Fence _fence1, _fence2;

@@ -19,10 +19,61 @@ namespace gfx
 	{
 	public:
 		// types
-		typedef Vertex VertexType;
-		typedef Index IndexType;
-		typedef std::vector<VertexType> VertexArrayType;
-		typedef std::vector<IndexType> IndexArrayType;
+		typedef Vertex value_type;
+		typedef Index index_type;
+		typedef std::vector<value_type> VertexArrayType;
+		typedef std::vector<index_type> IndexArrayType;
+		
+		class const_iterator
+		{
+		public:
+			void dump() const
+			{
+				CRAG_DEBUG_DUMP(_vertices);
+				CRAG_DEBUG_DUMP(*_index_pos);
+				CRAG_DEBUG_DUMP(&*_index_pos);
+			}
+			const_iterator() = default;
+			
+			const_iterator(const_iterator const &) = default;
+			
+			const_iterator(VertexArrayType const & vertices, typename IndexArrayType::const_iterator index_pos)
+			: _vertices(& vertices)
+			, _index_pos(index_pos)
+			{
+			}
+			
+			Vertex const & operator* () const
+			{
+				return (* _vertices)[* _index_pos];
+			}
+			
+			Vertex const * operator-> () const
+			{
+				return & (* _vertices)[* _index_pos];
+			}
+			
+			const_iterator & operator++()
+			{
+				++ _index_pos;
+				return * this;
+			}
+			
+			friend bool operator==(const_iterator const & lhs, const_iterator const & rhs)
+			{
+				ASSERT(lhs._index_pos != rhs._index_pos || lhs._vertices == rhs._vertices);
+				return lhs._index_pos == rhs._index_pos;
+			}
+			
+			friend bool operator!=(const_iterator const & lhs, const_iterator const & rhs)
+			{
+				return ! (lhs == rhs);
+			}
+			
+		private:
+			VertexArrayType const * _vertices = nullptr;
+			typename IndexArrayType::const_iterator _index_pos;
+		};
 		
 		// functions
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Mesh, self)
@@ -80,7 +131,7 @@ namespace gfx
 			return * this;
 		}
 		
-		void Clear()
+		void clear()
 		{
 			_vertices.clear();
 			_indices.clear();
@@ -96,6 +147,17 @@ namespace gfx
 			_indices.resize(num_indices);
 			
 			CRAG_VERIFY(* this);
+		}
+		
+		int size() const
+		{
+			return _indices.size();
+		}
+		
+		int data() const
+		{
+			// TODO: this works but is insane
+			return _vertices.data();
 		}
 		
 		VertexArrayType & GetVertices()
@@ -116,6 +178,16 @@ namespace gfx
 		IndexArrayType const & GetIndices() const
 		{
 			return _indices;
+		}
+		
+		const_iterator begin() const
+		{
+			return const_iterator(_vertices, _indices.begin());
+		}
+		
+		const_iterator end() const
+		{
+			return const_iterator(_vertices, _indices.end());
 		}
 		
 	private:

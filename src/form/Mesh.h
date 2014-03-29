@@ -9,10 +9,19 @@
 
 #pragma once
 
+#include "defs.h"
 #include "MeshProperties.h"
 
 #include "gfx/Mesh.h"
 #include "gfx/LitVertex.h"
+
+// GLES lags in support for GL_OES_standard_derivatives so the extra verts
+// must solution is used instead
+#if defined(CRAG_USE_GLES)
+// generates retro-style flat-shaded mesh by adding exta vertices
+// with common normals; if defined, disables global flag, flat_shade_enabled
+#define CRAG_FLAT_SHADE
+#endif
 
 namespace form
 {
@@ -26,7 +35,11 @@ namespace form
 	public:
 		// types
 		typedef gfx::LitVertex Vertex;
+#if defined(CRAG_FLAT_SHADE)
+		typedef gfx::LitMesh::VertexArrayType LitMesh;
+#else
 		typedef gfx::LitMesh LitMesh;
+#endif
 		typedef Vertex::Color Color;
 		
 		// functions
@@ -36,13 +49,17 @@ namespace form
 		MeshProperties & GetProperties();
 		MeshProperties const & GetProperties() const;
 
+#if ! defined(CRAG_FLAT_SHADE)
 		Vertex & GetVertex(Point & point, Color color);
 	private:
 		Vertex & AddVertex(Point const & p, Color color);
-	public:
 		
 		void AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal);
+	public:
 		void AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & normal, gfx::Color4b color);
+#else
+		void AddFace(Point const & a, Point const & b, Point const & c, Vertex::Vector3 const & normal, gfx::Color4b color);
+#endif
 
 		LitMesh const & GetLitMesh() const;
 		

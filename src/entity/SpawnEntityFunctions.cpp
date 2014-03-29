@@ -40,6 +40,7 @@
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/IndexedVboResource.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Light.h"
 #include "gfx/object/MeshObject.h"
@@ -104,6 +105,7 @@ namespace
 	CONFIG_DEFINE (ufo_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (ufo_stabilizer_thrust, physics::Scalar, .5f);
 	CONFIG_DEFINE (ufo_stabilizer_distance, physics::Scalar, 0.2f);
+	CONFIG_DEFINE (enable_beam, bool, false);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// function definitions
@@ -224,13 +226,12 @@ namespace
 		destination_vertices.reserve(num_source_indices);
 		destination_indices.reserve(num_source_indices);
 
-		for (auto index_index = 0u; index_index != num_source_indices; index_index += 3)
+		for (auto end = std::end(source_mesh), source_iterator = std::begin(source_mesh); source_iterator != end; )
 		{
 			gfx::Triangle3 source_triangle;
-			for (int i = 0; i != 3; ++ i)
+			for (int i = 0; i != 3; ++ source_iterator, ++ i)
 			{
-				auto vert_index = source_indices[index_index + i];
-				source_triangle.points[i] = source_vertices[vert_index].pos;
+				source_triangle.points[i] = source_iterator->pos;
 			}
 
 			auto source_plane = geom::MakePlane(source_triangle);
@@ -396,10 +397,10 @@ namespace
 		auto& controller = ref(new VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
 	}
 	
 	void ConstructShip(Entity & entity, Vector3 const & position)
@@ -447,10 +448,13 @@ namespace
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
-		gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
-		gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
-			engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
-		});
+		if (enable_beam)
+		{
+			gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
+			gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
+				engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
+			});
+		}
 
 		// controller
 		auto & controller = ref(new VehicleController(entity));
