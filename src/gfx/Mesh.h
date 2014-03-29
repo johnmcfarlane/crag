@@ -19,10 +19,10 @@ namespace gfx
 	{
 	public:
 		// types
-		typedef Vertex VertexType;
-		typedef Index IndexType;
-		typedef std::vector<VertexType> VertexArrayType;
-		typedef std::vector<IndexType> IndexArrayType;
+		typedef Vertex value_type;
+		typedef Index index_type;
+		typedef std::vector<value_type> VertexArrayType;
+		typedef std::vector<index_type> IndexArrayType;
 		
 		// functions
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Mesh, self)
@@ -80,7 +80,7 @@ namespace gfx
 			return * this;
 		}
 		
-		void Clear()
+		void clear()
 		{
 			_vertices.clear();
 			_indices.clear();
@@ -96,6 +96,17 @@ namespace gfx
 			_indices.resize(num_indices);
 			
 			CRAG_VERIFY(* this);
+		}
+		
+		int size() const
+		{
+			return _indices.size();
+		}
+		
+		int data() const
+		{
+			// TODO: this works but is insane
+			return _vertices.data();
 		}
 		
 		VertexArrayType & GetVertices()

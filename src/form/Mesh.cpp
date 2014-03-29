@@ -29,7 +29,7 @@ void Mesh::Reserve(int max_num_verts, int max_num_tris)
 
 void Mesh::Clear()
 {
-	_lit_mesh.Clear();
+	_lit_mesh.clear();
 }
 
 MeshProperties & Mesh::GetProperties()

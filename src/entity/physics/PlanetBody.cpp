@@ -136,8 +136,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	MeshData mesh_data = dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSingle1(mesh_data,
-		vertices.front().pos.GetAxes(), sizeof(Mesh::VertexType), vertices.size(),
-		indices.data(), indices.size(), sizeof(Mesh::IndexType),
+		vertices.front().pos.GetAxes(), sizeof(Mesh::value_type), vertices.size(),
+		indices.data(), indices.size(), sizeof(Mesh::index_type),
 		reinterpret_cast<int *>(normals.data()));
 
 	CollisionHandle mesh_collision_handle = dCreateTriMesh(nullptr, mesh_data, nullptr, nullptr, nullptr);
