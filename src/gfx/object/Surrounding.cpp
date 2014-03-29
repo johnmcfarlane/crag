@@ -11,7 +11,9 @@
 
 #include "Surrounding.h"
 
+#include "gfx/Debug.h"
 #include "gfx/Engine.h"
+#include "gfx/GenerateShadowVolumeMesh.h"
 #include "gfx/Messages.h"
 #include "gfx/Program.h"
 

@@ -40,6 +40,7 @@
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/IndexedVboResource.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Light.h"
 #include "gfx/object/MeshObject.h"

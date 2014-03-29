@@ -13,6 +13,8 @@
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
+#include "gfx/GenerateShadowVolumeMesh.h"
+#include "gfx/IndexedVboResource.h"
 #include "gfx/Program.h"
 
 #include "core/ResourceManager.h"
