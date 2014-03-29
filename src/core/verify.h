@@ -218,6 +218,8 @@ namespace crag
 			VerifyRef(object);
 		}
 
+		// TODO: the VerifyArray* fns need to work with iterators;
+		// TODO: even if that means implementing safe printf or somesuch
 		template<typename T>
 		void VerifyArrayOffset(T const * offset, T const * array) 
 		{ 
