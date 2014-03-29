@@ -397,10 +397,10 @@ namespace
 		auto& controller = ref(new VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, false);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
 	}
 	
 	void ConstructShip(Entity & entity, Vector3 const & position)
