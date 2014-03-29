@@ -1,5 +1,5 @@
 //
-//  defs.h
+//  physics/defs.h
 //  crag
 //
 //  Created by John on 6/20/10.

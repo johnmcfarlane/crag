@@ -1,5 +1,5 @@
 //
-//  defs.h
+//  gfx/defs.h
 //  crag
 //
 //  Created by John McFarlane on 7/18/11.

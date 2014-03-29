@@ -1,3 +1,5 @@
+//
+//  applet/defs.h
 //  crag
 //
 //  Created by John McFarlane on 2012-02-10.
