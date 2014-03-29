@@ -128,9 +128,9 @@ namespace gfx
 		}
 		
 		// get state
-		int GetNumIndices() const
+		bool empty() const
 		{
-			return _num_indices;
+			return _num_indices == 0;
 		}
 		
 		bool IsInitialized() const

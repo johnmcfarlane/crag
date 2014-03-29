@@ -139,7 +139,7 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 
 void Surrounding::Render(Engine const & renderer) const
 {
-	if (_vbo_resource.GetNumIndices() == 0)
+	if (_vbo_resource.empty())
 	{
 		return;
 	}
