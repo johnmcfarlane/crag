@@ -54,7 +54,7 @@ Engine::Engine()
 : quit_flag(false)
 , paused(false)
 , _time(0)
-, _camera(geom::rel::Ray3::Zero())
+, _camera(Ray3::Zero())
 , _origin(geom::abs::Vector3::Zero())
 , _physics_engine(ref(new physics::Engine))
 , _collision_scene(ref(new form::Scene(512, 512)))
@@ -126,7 +126,7 @@ void Engine::operator() (gfx::SetCameraEvent const & event)
 	_camera = geom::AbsToRel(camera_ray, _origin);
 }
 
-geom::rel::Ray3 const & Engine::GetCamera() const
+Ray3 const & Engine::GetCamera() const
 {
 	return _camera;
 }
@@ -134,7 +134,7 @@ geom::rel::Ray3 const & Engine::GetCamera() const
 void Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	// figure out the delta
-	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(event.origin - _origin);
+	auto delta = geom::Cast<Scalar>(event.origin - _origin);
 
 	// quit if there's no change
 	if (geom::LengthSq(delta) == 0)

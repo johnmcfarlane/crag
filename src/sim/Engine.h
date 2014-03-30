@@ -85,7 +85,7 @@ namespace sim
 		void RemoveFormation(form::Formation& formation);
 		
 		void operator() (gfx::SetCameraEvent const & event) final;
-		geom::rel::Ray3 const & GetCamera() const;
+		Ray3 const & GetCamera() const;
 
 		void operator() (gfx::SetOriginEvent const & event) final;
 		geom::abs::Vector3 const & GetOrigin() const;
