@@ -99,6 +99,13 @@ namespace geom
 			return Sphere(Vector::Zero(), 0); 
 		}
 
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Sphere, s)
+			CRAG_VERIFY(s.center);
+			CRAG_VERIFY(s.radius);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif
+
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
