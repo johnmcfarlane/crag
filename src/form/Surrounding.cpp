@@ -17,6 +17,8 @@
 #include "Mesh.h"
 #include "Polyhedron.h"
 
+#include "gfx/LodParameters.h"
+
 #include "core/ConfigEntry.h"
 
 using namespace form;
@@ -156,7 +158,7 @@ Surrounding::Surrounding(size_t max_num_quaterne)
 , _quaterna_buffer(max_num_quaterne)
 , _target_num_quaterne(std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
 , point_buffer(max_num_quaterne * num_verts_per_quaterna)
-, cached_node_score_ray(CalculateNodeScoreFunctor::GetInvalidRay())
+, cached_node_score_lod_parameters(CalculateNodeScoreFunctor::GetInvalidLodParameters())
 , _expandable_nodes(max_num_quaterne * num_nodes_per_quaterna)
 {
 	InitQuaterna(std::begin(_quaterna_buffer) + _quaterna_buffer.capacity());
@@ -311,21 +313,21 @@ void Surrounding::SetTargetNumQuaterna(int target_num_quaterne)
 
 // This is the main tick function for all things 'nodey'.
 // It is also where a considerable amount of the SceneThread's time is spent.
-void Surrounding::Tick(Ray3 const & new_camera_ray)
+void Surrounding::Tick(gfx::LodParameters const & lod_parameters)
 {
-	CRAG_VERIFY(new_camera_ray);
+	CRAG_VERIFY (lod_parameters);
 	CRAG_VERIFY (* this);
 
-	node_score_functor.SetCameraRay(new_camera_ray);
+	node_score_functor.SetLodParameters(lod_parameters);
 
 	// Is the new camera ray significantly different to 
 	// the one used to last score the bulk of the node buffer?
 	// TODO: Disabled. Causes complications, not least fluctuations in the frame-rate
 	// which in turn cause fluctuations in the node count.
-	if (node_score_functor.IsSignificantlyDifferent(cached_node_score_ray) || true)
+	if (node_score_functor.IsSignificantlyDifferent(cached_node_score_lod_parameters.center) || true)
 	{
 		UpdateNodeScores();
-		cached_node_score_ray = new_camera_ray;
+		cached_node_score_lod_parameters = lod_parameters;
 	}
 	
 	UpdateNodes();

@@ -52,8 +52,7 @@ namespace sim
 
 		core::EventWatcher _event_watcher;
 		
-		Vector3 _camera_right;
-		Vector3 _camera_forward;
+		Matrix33 _camera_rotation;
 		
 		Thruster * _main_thruster;
 		int _num_presses;

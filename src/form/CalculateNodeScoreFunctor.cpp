@@ -18,37 +18,35 @@
 
 using namespace form;
 
-
-extern float camera_near;
-
-
 CONFIG_DEFINE(node_score_recalc_coefficient, double, .1);
 CONFIG_DEFINE(node_score_score_coefficient, double, 1.5);
 
+namespace
+{
+	gfx::LodParameters invalid_lod_parameters = 
+	{
+		Vector3::Max(),
+		-1.f
+	};
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // CalculateNodeScoreFunctor definitions
 
 CalculateNodeScoreFunctor::CalculateNodeScoreFunctor()
 {
-	// make sure that the initial ray is just plain wrong!
-	camera_ray = GetInvalidRay();
-	
-	// Initialize all cached values used by the functor. Try and maintain a high degree of precision. 
-	min_recalc_distance_squared = Scalar(Squared(node_score_recalc_coefficient * camera_near));
-	double min_score_distance_squared_precise = Squared(node_score_score_coefficient * camera_near);
-	min_score_distance_squared = Scalar(min_score_distance_squared_precise);
-	inverse_min_score_distance_squared = Scalar(1. / min_score_distance_squared_precise);
+	// make sure that the initial position is just plain wrong!
+	SetLodParameters(GetInvalidLodParameters());
 }
 
-Ray3 CalculateNodeScoreFunctor::GetInvalidRay()
+gfx::LodParameters const & CalculateNodeScoreFunctor::GetInvalidLodParameters()
 {
-	return Ray3(Vector3::Max(), Vector3::Max());
+	return invalid_lod_parameters;
 }
 
-bool CalculateNodeScoreFunctor::IsSignificantlyDifferent(Ray3 const & other_camera_ray) const
+bool CalculateNodeScoreFunctor::IsSignificantlyDifferent(Vector3 const & other_lod_center) const
 {
-	Scalar distance_squared = DistanceSq(other_camera_ray.position, camera_ray.position);
+	Scalar distance_squared = DistanceSq(other_lod_center, _lod_parameters.center);
 	return distance_squared >= min_recalc_distance_squared;
 }
 
@@ -69,9 +67,16 @@ Scalar CalculateNodeScoreFunctor::GetMinLeafDistanceSquared() const
 	return min_leaf_distance_squared;
 }
 
-void CalculateNodeScoreFunctor::SetCameraRay(Ray3 const & new_camera_ray)
+void CalculateNodeScoreFunctor::SetLodParameters(gfx::LodParameters const & lod_parameters)
 {
-	camera_ray = new_camera_ray;
+	CRAG_VERIFY(lod_parameters);
+
+	_lod_parameters = lod_parameters;
+
+	min_recalc_distance_squared = Scalar(Squared(node_score_recalc_coefficient * lod_parameters.min_distance));
+	double min_score_distance_squared_precise = Squared(node_score_score_coefficient * lod_parameters.min_distance);
+	min_score_distance_squared = Scalar(min_score_distance_squared_precise);
+	inverse_min_score_distance_squared = Scalar(1. / min_score_distance_squared_precise);
 }
 
 void CalculateNodeScoreFunctor::operator()(Node & node)
@@ -81,23 +86,23 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	float score = node.area;
 	
 	// distance	
-	geom::Vector3f node_to_camera = camera_ray.position - node.center;
-	float distance_squared = LengthSq(node_to_camera);
+	geom::Vector3f node_to_lod_center = _lod_parameters.center - node.center;
+	float distance_squared = LengthSq(node_to_lod_center);
 	ASSERT(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
 	{
-		node_to_camera *= FastInvSqrt(distance_squared);
+		node_to_lod_center *= FastInvSqrt(distance_squared);
 	}
 	else 
 	{
-		node_to_camera = geom::Vector3f(1,0,0);
+		node_to_lod_center = geom::Vector3f(1,0,0);
 	}
-	ASSERT(NearEqual(LengthSq(node_to_camera), 1.f, 1.02f));
+	ASSERT(NearEqual(LengthSq(node_to_lod_center), 1.f, 1.02f));
 	
 	// towardness: -1=facing away, 1=facing towards
-	// purpose: favour polys which are facing towards the camera
-	float camera_dp = DotProduct(node_to_camera, node.normal);
-	float towardness_factor = std::exp(camera_dp);
+	// purpose: favour polys which are facing towards the LOD center
+	float lod_center_dp = DotProduct(node_to_lod_center, node.normal);
+	float towardness_factor = std::exp(lod_center_dp);
 	score *= towardness_factor;
 	
 	// Distance-based falloff.

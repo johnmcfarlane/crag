@@ -35,9 +35,9 @@ namespace
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
 	// is the origin too far away to allow for precise, camera-centric calculations?
-	bool ShouldReviseOrigin(geom::rel::Vector3 const & camera_pos, float min_leaf_distance_squared)
+	bool ShouldReviseOrigin(geom::rel::Vector3 const & lod_center, float min_leaf_distance_squared)
 	{
-		auto distance_from_origin = geom::Length(camera_pos);
+		auto distance_from_origin = geom::Length(lod_center);
 		
 		// especially on Android, certain things go wrong when the origin is too far away
 		if (observer_use_touch && distance_from_origin > origin_touch_max_distance)
@@ -67,18 +67,17 @@ namespace
 		auto & scene = engine.GetScene();
 		auto & surrounding = scene.GetSurrounding();
 
-		auto & camera_ray = engine.GetCamera();
-		auto & camera_pos = camera_ray.position;
+		auto & lod_center = engine.GetLodParameters().center;
 		auto min_leaf_distance_squared = surrounding.GetMinLeafDistanceSquared();
 
-		if (ShouldReviseOrigin(camera_pos, min_leaf_distance_squared))
+		if (ShouldReviseOrigin(lod_center, min_leaf_distance_squared))
 		{
 #if ! defined(NDEBUG)
 			app::Beep();
 #endif
 
 			auto origin = engine.GetOrigin();
-			auto new_origin = geom::RelToAbs(camera_pos, origin);
+			auto new_origin = geom::RelToAbs(lod_center, origin);
 
 			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
 			gfx::SetOriginEvent event = { new_origin };

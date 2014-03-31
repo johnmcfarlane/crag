@@ -99,9 +99,11 @@ Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
 	}
 }
 
-void Scene::Tick(geom::rel::Ray3 const & camera_ray)
+void Scene::Tick(gfx::LodParameters const & lod_parameters)
 {
-	_surrounding.Tick(camera_ray);
+	CRAG_VERIFY(lod_parameters);
+	
+	_surrounding.Tick(lod_parameters);
 	TickModels();
 }
 

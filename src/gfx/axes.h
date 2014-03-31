@@ -26,7 +26,8 @@ namespace gfx
 	};
 	
 	// Returns the direction in the given direction from the given matrix.
-	template<typename S> inline geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Direction direction)
+	template<typename S>
+	geom::Vector<S, 3> GetAxis(geom::Matrix<S, 3, 3> const & rotation, Direction direction)
 	{
 		auto axis = int(direction);
 
@@ -34,6 +35,18 @@ namespace gfx
 		CRAG_VERIFY_OP(axis, <, int(Direction::end));
 		
 		return rotation.GetColumn(axis);
+	}
+	
+	// Returns the direction in the given direction from the given matrix.
+	template<typename S>
+	void SetAxis(geom::Matrix<S, 3, 3> & rotation, Direction direction, geom::Vector<S, 3> const & vector)
+	{
+		auto axis = int(direction);
+
+		CRAG_VERIFY_OP(axis, >=, int(Direction::begin));
+		CRAG_VERIFY_OP(axis, <, int(Direction::end));
+		
+		rotation.SetColumn(axis, vector);
 	}
 	
 	// Converts position/matrix combo to a Ray.
