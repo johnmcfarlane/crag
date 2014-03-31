@@ -42,8 +42,7 @@ namespace
 
 UfoController::UfoController(Entity & entity)
 : VehicleController(entity)
-, _camera_right(1.f, 0.f, 0.f)
-, _camera_forward(0.f, 0.f, 1.f)
+, _camera_rotation(Matrix33::Identity())
 , _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, ufo_controlled_thrust)), false, 1.f))
 , _num_presses(0)
 {
@@ -65,8 +64,7 @@ UfoController::~UfoController()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)
-	CRAG_VERIFY(self._camera_right);
-	CRAG_VERIFY(self._camera_forward);
+	CRAG_VERIFY(self._camera_rotation);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void UfoController::Tick()
@@ -108,22 +106,53 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 		ufo_controller_sensitivity * pointer_delta.x / resolution.x,
 		ufo_controller_sensitivity * pointer_delta.y / resolution.y);
 	
-	auto ufo_down = geom::Normalized(body.GetGravitationalForce());
+	auto gravity = body.GetGravitationalForce();
+	auto gravity_magnitude_squared = geom::Length(gravity);
 
-	Vector3 ufo_forward, ufo_right;
-	if (geom::Length(ufo_down) > 0)
+	Matrix33 ufo_rotation;
+	
+	auto get_axis = [&] (gfx::Direction direction)
 	{
-		ufo_forward = geom::Normalized(geom::CrossProduct(ufo_down, _camera_right));
-		ufo_right = geom::Normalized(geom::CrossProduct(ufo_forward, ufo_down));
+		return gfx::GetAxis(ufo_rotation, direction);
+	};
+	
+	if (gravity_magnitude_squared > 0)
+	{
+		auto set_axis = [&] (gfx::Direction direction, Vector3 const & vector)
+		{
+			gfx::SetAxis(ufo_rotation, direction, vector);
+		};
+		
+		set_axis(
+			gfx::Direction::up,
+			gravity / - std::sqrt(gravity_magnitude_squared));
+		
+		set_axis(
+			gfx::Direction::forward,
+			geom::Normalized(
+				geom::CrossProduct(
+					gfx::GetAxis(_camera_rotation, gfx::Direction::right),
+					get_axis(gfx::Direction::up))));
+		
+		set_axis(
+			gfx::Direction::right,
+			geom::Normalized(
+				geom::CrossProduct(
+					get_axis(gfx::Direction::up),
+					get_axis(gfx::Direction::forward))));
 	}
 	else
 	{
-		ufo_forward = _camera_forward;
-		ufo_right = _camera_right;
+		ufo_rotation = _camera_rotation;
 	}
 	
-	auto tilt = ufo_right * drag.x - ufo_forward * drag.y;
-	body.AddForceAtPos(tilt, body.GetTranslation() - ufo_down);
+	auto tilt = 
+		get_axis(gfx::Direction::right) * drag.x
+		- get_axis(gfx::Direction::forward) * drag.y;
+		
+	body.AddForceAtPos(
+		tilt, 
+		body.GetTranslation() + get_axis(gfx::Direction::up));
 }
 
 Vector2 UfoController::HandleEvents()
@@ -213,7 +242,5 @@ void UfoController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 
 void UfoController::operator() (gfx::SetCameraEvent const & event)
 {
-	auto const & rotation = event.transformation.GetRotation();
-	_camera_right = geom::Cast<Scalar>(gfx::GetAxis(rotation, gfx::Direction::right));
-	_camera_forward = geom::Cast<Scalar>(gfx::GetAxis(rotation, gfx::Direction::forward));
+	_camera_rotation = geom::Cast<Scalar>(event.transformation.GetRotation());
 }
