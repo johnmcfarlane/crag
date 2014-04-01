@@ -10,7 +10,6 @@
 #pragma once
 
 #include "defs.h"
-#include "Fence.h"
 #include "FrameBuffer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
@@ -112,7 +111,6 @@ namespace gfx
 
 		bool Init();
 		void Deinit();
-		bool InitFrameBuffer();
 		
 		void InitVSync();
 		void InitRenderState();
@@ -144,8 +142,7 @@ namespace gfx
 #endif
 
 		void ProcessRenderTiming();
-		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);
-		void ConvertRenderTiming(core::Time frame_start_position, core::Time pre_sync_position, core::Time post_sync_position, core::Time & frame_duration, core::Time & busy_duration);
+		void GetRenderTiming(core::Time & frame_start_position, core::Time & frame_end_position);
 		void SampleFrameDuration(core::Time busy_duration) const;
 #if defined(GATHER_STATS)
 		void UpdateFpsCounter(core::Time frame_start_position);
@@ -153,25 +150,18 @@ namespace gfx
 		
 		void Capture();
 
-		static void SetFence(Fence & fence);
-
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Scene * scene;
 		geom::abs::Vector3 _origin;
-
-		//FrameBuffer frame_buffer;
-		//RenderBuffer depth_buffer;
-		//Texture depth_texture;
 		
-		core::Time _frame_duration;
+		core::Time _target_frame_duration;
 		core::Time last_frame_end_position;
 		
 		bool quit_flag;
 		bool _ready;
 		bool _dirty;
-		bool vsync;
 		bool culling;
 		bool _fragment_lighting_enabled;
 		int capture_frame;
@@ -201,8 +191,6 @@ namespace gfx
 		std::array<core::Time, _frame_time_history_size> _frame_time_history;
 #endif
 		
-		Fence _fence1, _fence2;
-
 		Program const * _current_program;
 		VboResource const * _current_vbo;
 	};

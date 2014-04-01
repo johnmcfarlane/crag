@@ -56,7 +56,6 @@ add_executable(crag
 	form/Surrounding.cpp
 	gfx/Debug.cpp
 	gfx/Engine.cpp
-	gfx/Fence.cpp
 	gfx/Font.cpp
 	gfx/FrameBuffer.cpp
 	gfx/glHelpers.cpp
