@@ -57,11 +57,7 @@ namespace
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-#if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
-#else
-	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, true);
-#endif
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
