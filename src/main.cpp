@@ -15,7 +15,6 @@
 #include "scripts/TestScript.h"
 
 #include "form/Engine.h"
-#include "form/Mesh.h"
 
 #include "sim/Engine.h"
 
@@ -128,12 +127,6 @@ namespace
 						break;
 					}
 					
-#if ! defined(CRAG_FLAT_SHADE)
-					case SDL_SCANCODE_F:
-						flat_shade_enabled = ! flat_shade_enabled;
-						break;
-#endif
-
 					case SDL_SCANCODE_G:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleGravity(); });
