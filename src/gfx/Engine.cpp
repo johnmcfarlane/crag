@@ -53,16 +53,11 @@ namespace
 	
 	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
 	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
-	CONFIG_DEFINE (target_work_proportion, double, .95f);
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-#if defined(CRAG_USE_GLES)
 	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
-#else
-	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, true);
-#endif
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
@@ -79,9 +74,7 @@ namespace
 	//CONFIG_DEFINE (capture, bool, false);
 	//CONFIG_DEFINE (record_playback_skip, int, 1);
 
-	STAT (frame_1_busy_duration, double, .15f);
-	STAT (frame_2_vsync_duration, double, .18f);
-	STAT (frame_3_total_duration, double, .18f);
+	STAT (frame_duration, double, .15f);
 	STAT (fps, float, .0f);
 	STAT_DEFAULT (pos, sim::Vector3, .3f, sim::Vector3::Zero());
 	STAT_DEFAULT (z_range, sim::Vector2, .78f, sim::Vector2::Zero());
@@ -114,17 +107,6 @@ namespace
 		return true;
 	}
 	
-	bool GlSupportsFences()
-	{
-#if defined(__APPLE__)
-		return true;
-#elif defined(CRAG_USE_GLES)
-		return false;
-#else
-		return GLEW_NV_fence != GL_FALSE;
-#endif
-	}
-
 	void setDepthRange(float near, float far)
 	{
 #if defined(WIN32)
@@ -272,12 +254,11 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 Engine::Engine()
 : scene(nullptr)
 , _origin(geom::abs::Vector3::Zero())
-, _frame_duration(0)
+, _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
 , _dirty(true)
-, vsync(false)
 , culling(init_culling)
 , _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
@@ -579,11 +560,6 @@ bool Engine::Init()
 		return false;
 	}
 	
-	if (! InitFrameBuffer())
-	{
-		return false;
-	}
-	
 	InitVSync();
 	
 	scene = new Scene(* this);
@@ -593,25 +569,6 @@ bool Engine::Init()
 	InitRenderState();
 	
 	Debug::Init();
-	return true;
-}
-
-bool Engine::InitFrameBuffer()
-{
-//	frame_buffer.Init();
-//	frame_buffer.Bind();
-//	
-//	depth_buffer.Init();
-//	depth_buffer.Bind();
-//	geom::Vector2i resolution = app::GetResolution();
-//	depth_buffer.ResizeForDepth(resolution.x, resolution.y);
-//	
-//	depth_texture.Init();
-//	depth_texture.Bind();
-//	depth_texture.SetImage(resolution.x, resolution.y, nullptr); 
-//	
-//	Attach(frame_buffer, depth_texture);
-	
 	return true;
 }
 
@@ -626,16 +583,6 @@ void Engine::Deinit()
 	Debug::Deinit();
 	
 	init_culling = culling;
-	
-	if (_fence2.IsInitialized())
-	{
-		_fence2.Deinit();
-	}
-
-	if (_fence1.IsInitialized())
-	{
-		_fence1.Deinit();
-	}
 	
 	delete scene;
 	scene = nullptr;
@@ -653,78 +600,11 @@ void Engine::InitVSync()
 		refresh_rate = default_refresh_rate;
 	}
 
-	_frame_duration = static_cast<float>(swap_interval) / refresh_rate;
+	_target_frame_duration = static_cast<float>(swap_interval) / refresh_rate;
 
-	if (profile_mode)
-	{
-		vsync = false;
-	}
-	else
-	{
-		if (GlSupportsFences())
-		{
-			_fence1.Init();
-			_fence2.Init();
-
-			vsync = _fence1.IsInitialized() && _fence2.IsInitialized();
-		}
-		else
-		{
-			vsync = false;
-		}
-	}
-
-	int desired_swap_interval = vsync ? 1 : 0;
-
-	if (SDL_GL_SetSwapInterval(desired_swap_interval) != 0)
+	if (SDL_GL_SetSwapInterval(0) != 0)
 	{
 		DEBUG_BREAK_SDL();
-
-		// It's hard to tell whether vsync is enabled or not at this point.
-		// Assume that it's not.
-		vsync = false;
-	}
-	else
-	{
-		// Note: Oddly, when vsync is forced on in NVidia Control Panel,
-		// it still gets turned off by call to SDL_GL_SetSwapInterval.
-		int actual_swap_interval = SDL_GL_GetSwapInterval();
-		if (actual_swap_interval == desired_swap_interval)
-		{
-			// success
-			return;
-		}
-
-		switch (actual_swap_interval)
-		{
-		case 0:
-			break;
-
-		case 1:
-			ERROR_MESSAGE("Crag cannot run when vsync is forced on AND OpenGL feature, fences, are not supported.");
-			exit(1);
-			
-		default:
-			ASSERT(false);
-
-		case -1:
-			DEBUG_BREAK_SDL();
-		}
-
-		ASSERT(vsync);
-	}
-
-	// Something went wrong if we get to here.
-	// We need to remove the fences and forgo vsync.
-
-	vsync = false;
-	if (_fence1.IsInitialized())
-	{
-		_fence1.Deinit();
-	}
-	if (_fence2.IsInitialized())
-	{
-		_fence2.Deinit();
 	}
 }
 
@@ -849,14 +729,10 @@ void Engine::Render()
 {
 	RenderFrame();
 
-	// Flip the front and back buffers and set fences.
-	SetFence(_fence1);
-	
 	if (! _paused)
 	{
 		app::SwapBuffers();
 	}
-	SetFence(_fence2);
 
 	ProcessRenderTiming();
 }
@@ -1242,56 +1118,28 @@ void Engine::DebugText()
 
 void Engine::ProcessRenderTiming()
 {
-	Time frame_start_position, pre_sync_position, post_sync_position;
-	GetRenderTiming(frame_start_position, pre_sync_position, post_sync_position);
+	Time frame_start_position, frame_end_position;
+	GetRenderTiming(frame_start_position, frame_end_position);
 	
-	Time frame_duration, busy_duration;
-	ConvertRenderTiming(frame_start_position, pre_sync_position, post_sync_position, frame_duration, busy_duration);
+	Time frame_duration = frame_end_position - frame_start_position;
+	STAT_SET(frame_duration, frame_duration);
 	
 #if defined(GATHER_STATS)
 	UpdateFpsCounter(frame_start_position);
 #endif
 	
-	SampleFrameDuration(busy_duration);
+	SampleFrameDuration(frame_duration);
 }
 
 // TODO: Consider SDL_GetPerformanceCounter / SDL_GetPerformanceFrequency
-void Engine::GetRenderTiming(Time & frame_start_position, Time & pre_sync_position, Time & post_sync_position)
+void Engine::GetRenderTiming(Time & frame_start_position, Time & frame_end_position)
 {
 	frame_start_position = last_frame_end_position;
-	
-	if (vsync)
-	{
-		// Get timing information from the fences.
-		_fence1.Finish();
-		pre_sync_position = app::GetTime();
+	frame_end_position = app::GetTime();
 
-		_fence2.Finish();
-		post_sync_position = app::GetTime();
-	}
-	else
-	{
-		// There is no sync.
-		pre_sync_position = post_sync_position = app::GetTime();
-	}
+	ASSERT(frame_end_position >= frame_start_position);
 
-	ASSERT(pre_sync_position >= frame_start_position);
-	ASSERT(post_sync_position >= pre_sync_position);
-
-	last_frame_end_position = post_sync_position;
-}
-
-void Engine::ConvertRenderTiming(Time frame_start_position, Time pre_sync_position, Time post_sync_position, Time & frame_duration, Time & busy_duration)
-{
-	Time vsync_duration = post_sync_position - pre_sync_position;
-	Time frame_end_position = post_sync_position;
-	
-	frame_duration = frame_end_position - frame_start_position;
-	busy_duration = frame_duration - vsync_duration;
-	
-	STAT_SET(frame_1_busy_duration, busy_duration);
-	STAT_SET(frame_2_vsync_duration, vsync_duration);
-	STAT_SET(frame_3_total_duration, frame_duration);
+	last_frame_end_position = frame_end_position;
 }
 
 #if defined(GATHER_STATS) && ! defined(NDEBUG)
@@ -1314,15 +1162,9 @@ void Engine::UpdateFpsCounter(Time frame_start_position)
 }
 #endif
 
-void Engine::SampleFrameDuration(Time busy_duration) const
+void Engine::SampleFrameDuration(Time frame_duration) const
 {
-	Time target_frame_duration = _frame_duration;
-	if (vsync)
-	{
-		target_frame_duration *= target_work_proportion;
-	}
-	
-	float frame_duration_ratio = float(busy_duration / target_frame_duration);
+	float frame_duration_ratio = float(frame_duration / _target_frame_duration);
 	ASSERT(frame_duration_ratio >= 0);
 	ASSERT(! IsInf(frame_duration_ratio));
 	
@@ -1353,12 +1195,4 @@ void Engine::Capture()
 	}
 
 	++ capture_frame;
-}
-
-void Engine::SetFence(Fence & fence)
-{
-	if (fence.IsInitialized())
-	{
-		fence.Set();
-	}
 }

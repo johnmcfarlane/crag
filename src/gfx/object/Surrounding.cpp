@@ -156,13 +156,7 @@ void Surrounding::Render(Engine const & renderer) const
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
 		bool fragment_lighting = renderer.GetFragmentLightingEnabled();
-#if defined(CRAG_FLAT_SHADE)
-		// flatness is handled by form::Mesh and cannot be switched off at run-time
-		bool flat_shaded = false;
-#else
-		bool flat_shaded = flat_shade_enabled;
-#endif
-		poly_program.SetUniforms(Color4f::White(), fragment_lighting, flat_shaded, relief_enabled);
+		poly_program.SetUniforms(Color4f::White(), fragment_lighting, relief_enabled);
 	}
 	
 	// Draw the mesh!

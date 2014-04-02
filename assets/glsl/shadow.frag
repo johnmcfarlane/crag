@@ -7,8 +7,6 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#extension GL_OES_standard_derivatives : enable
-
 #ifdef GL_ES
 precision highp float;
 #endif

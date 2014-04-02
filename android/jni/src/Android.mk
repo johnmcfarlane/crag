@@ -69,7 +69,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/Surrounding.cpp \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \
-	$(CRAG_PATH)/gfx/Fence.cpp \
 	$(CRAG_PATH)/gfx/Font.cpp \
 	$(CRAG_PATH)/gfx/FrameBuffer.cpp \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
