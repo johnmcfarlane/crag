@@ -149,6 +149,11 @@ namespace gfx
 			CRAG_VERIFY(* this);
 		}
 		
+		int empty() const
+		{
+			return _indices.empty();
+		}
+		
 		int size() const
 		{
 			return _indices.size();
