@@ -76,13 +76,13 @@ namespace
 #endif
 
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (video_full_screen, bool, true);
+	CONFIG_DEFINE (full_screen, bool, true);
 #elif defined(PROFILE)
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, false);
 #elif defined(NDEBUG)
-	CONFIG_DEFINE (video_full_screen, bool, true);
+	CONFIG_DEFINE (full_screen, bool, true);
 #else
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, false);
 #endif
 	
 	CONFIG_DEFINE (script_mode, int, 1);
@@ -323,7 +323,7 @@ namespace
 
 		DEBUG_MESSAGE("-> CragMain");
 
-		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
+		// Instance the config manager first of all so that all the config variables, such as full_screen are correct.
 		core::ConfigManager config_manager;
 		if (! config_manager.ParseCommandLine(argc, argv))
 		{
@@ -346,7 +346,6 @@ namespace
 		}
 		
 		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
-		bool full_screen = (! profile_mode) && video_full_screen;
 		if (! app::Init(window_resolution, full_screen, "Crag"))
 		{
 			return false;
