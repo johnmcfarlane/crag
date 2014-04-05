@@ -9,10 +9,7 @@
 
 #pragma once
 
-#include "form/Mesh.h"
 #include "form/Scene.h"
-
-#include "sim/defs.h"
 
 #include "gfx/LodParameters.h"
 
@@ -21,9 +18,6 @@
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
-#include "smp/scheduler.h"
-#include "smp/Semaphore.h"
-
 
 namespace gfx 
 {
@@ -37,12 +31,10 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// forward declarations
 	
-	class FormationFunctor;
 	class Formation;
-	class Scene;
+	class Mesh;
 	
 	typedef std::set<Formation *> FormationSet;
-	
 	
 	// form::Daemon type
 	class Engine;
@@ -70,8 +62,6 @@ namespace form
 	public:
 		typedef ipc::Daemon<Engine> Daemon;
 
-		typedef core::ring_buffer<smp::scheduler::Job> BatchedFunctorBuffer;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
