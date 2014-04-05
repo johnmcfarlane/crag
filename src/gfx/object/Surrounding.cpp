@@ -23,10 +23,6 @@
 #include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
-#if ! defined(CRAG_FLAT_SHADE)
-CONFIG_DEFINE (flat_shade_enabled, bool, true);
-#endif
-
 using namespace gfx;
 
 namespace

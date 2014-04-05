@@ -60,9 +60,6 @@ int main(int argc, char * * argv)
 
 CONFIG_DEFINE (profile_mode, bool, false);
 CONFIG_DECLARE (shadows_enabled, bool);
-#if ! defined(CRAG_FLAT_SHADE)
-CONFIG_DECLARE (flat_shade_enabled, bool);
-#endif
 
 namespace 
 {
