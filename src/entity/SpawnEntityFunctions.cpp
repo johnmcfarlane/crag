@@ -156,7 +156,7 @@ namespace
 	}
 	
 	template <typename IndexType>
-	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateUfoMesh(Scalar height, Scalar radius)
+	gfx::Mesh<gfx::PlainVertex, IndexType> GeneratePlainUfoMesh(Scalar height, Scalar radius)
 	{
 		// ufo mesh
 		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
@@ -210,6 +210,93 @@ namespace
 		return mesh;
 	}
 	
+#if ! defined(CRAG_FLAT_SHADE)
+	gfx::LitMesh GenerateLitUfoMesh(Scalar height, Scalar radius)
+	{
+		Vector3 constexpr up(0.f, 0.f, 1.f);
+		constexpr auto verts_per_sector = 4;
+		
+		// ufo mesh
+		gfx::LitMesh mesh;
+		
+		gfx::LitVertex vertex;
+		vertex.color = gfx::Color4f::White();
+		vertex.height = 0;
+		
+		// add radial vertices
+		constexpr auto num_sectors = 8;
+		const auto inner_scale = geom::MakeVector(.5f, .5f, height * .5f);
+		const auto outer_scale = geom::MakeVector(radius, radius, height * - .5f);
+		auto & vertices = mesh.GetVertices();
+		auto add_side_vertices = [&] (Vector3 const & radial)
+		{
+			auto inner_pos = radial * inner_scale;
+			auto outer_pos = radial * outer_scale;
+			auto along = outer_pos - inner_pos;
+			auto perp = geom::CrossProduct(along, up);
+			auto normal = geom::Normalized(geom::CrossProduct(perp, along));
+
+			vertex.pos = inner_pos;
+			vertex.norm = up;
+			vertices.push_back(vertex);
+
+			vertex.norm = normal;
+			vertices.push_back(vertex);
+
+			vertex.pos = outer_pos;
+			vertices.push_back(vertex);
+
+			vertex.norm = - up;
+			vertices.push_back(vertex);
+		};
+		vertices.reserve(num_sectors * verts_per_sector + 2);
+		for (auto sector = 0; sector != num_sectors; ++ sector)
+		{
+			auto angle = float(PI * 2 * sector) / num_sectors;
+			auto radial = geom::MakeVector(std::sin(angle), std::cos(angle), 1.f);
+			add_side_vertices(radial);
+		}
+
+		// add two center vertices
+		vertex.pos = inner_scale * up;
+		vertex.norm = inner_scale * up;
+		vertices.push_back(vertex);
+
+		vertex.pos = outer_scale * up;
+		vertex.norm = outer_scale * up;
+		vertices.push_back(vertex);
+
+		CRAG_VERIFY_EQUAL(vertices.size(), vertices.capacity());
+
+		// add faces
+		constexpr auto num_faces = num_sectors * 4;
+		constexpr auto num_indices = num_faces * 3;
+		constexpr auto inner_center = num_sectors * verts_per_sector;
+		constexpr auto outer_center = inner_center + 1;
+		auto & indices = mesh.GetIndices();
+		indices.reserve(num_indices);
+		auto add_face = [& indices] (int a, int b, int c)
+		{
+			indices.push_back(a);
+			indices.push_back(b);
+			indices.push_back(c);
+		};
+		for (auto sector = 0; sector != num_sectors; ++ sector)
+		{
+			int index_start[2] = { sector * verts_per_sector, ((sector + 1) % num_sectors) * verts_per_sector };
+			add_face(index_start[0], index_start[1], inner_center);
+			add_face(index_start[1] + 1, index_start[0] + 1, index_start[0] + 2);
+			add_face(index_start[0] + 2, index_start[1] + 2, index_start[1] + 1);
+			add_face(index_start[1] + 2, index_start[0] + 2, outer_center);
+		}
+		CRAG_VERIFY_EQUAL(indices.size(), indices.capacity());
+		
+		// return result
+		CRAG_VERIFY(mesh);
+		return mesh;
+	}
+#endif
+
 	// given a Mesh comprising unique vertex entries,
 	// generates a GPU-friendly mesh with flat shading
 	gfx::LitMesh GenerateFlatLitMesh(physics::Mesh const & source_mesh, gfx::Color4f const & color = gfx::Color4f::White())
@@ -498,17 +585,21 @@ namespace
 		auto & resource_manager = crag::core::ResourceManager::Get();
 		resource_manager.Register<physics::Mesh>("UfoPhysicsMesh", [] ()
 		{
-			return GenerateUfoMesh<dTriIndex>(ufo_height, ufo_radius);
+			return GeneratePlainUfoMesh<dTriIndex>(ufo_height, ufo_radius);
 		});
 		resource_manager.Register<gfx::PlainMesh>("UfoPlainMesh", [] ()
 		{
-			return GenerateUfoMesh<gfx::ElementIndex>(ufo_height, ufo_radius);
+			return GeneratePlainUfoMesh<gfx::ElementIndex>(ufo_height, ufo_radius);
 		});
 		resource_manager.Register<gfx::LitMesh>("UfoLitMesh", [] ()
 		{
+#if defined(CRAG_FLAT_SHADE)
 			auto & resource_manager = crag::core::ResourceManager::Get();
 			auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("UfoPhysicsMesh");
 			return GenerateFlatLitMesh(* physics_mesh);
+#else
+			return GenerateLitUfoMesh(ufo_height, ufo_radius);
+#endif
 		});
 		
 		auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("UfoLitMesh");
