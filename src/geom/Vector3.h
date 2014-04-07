@@ -151,6 +151,14 @@ namespace geom
 		return lhs;
 	}
 
+	template<typename S> inline Vector<S, 3> & operator /= (Vector<S, 3> & lhs, Vector<S, 3> const & rhs)
+	{
+		lhs.x /= rhs.x;
+		lhs.y /= rhs.y;
+		lhs.z /= rhs.z;
+		return lhs;
+	}
+
 	template<typename S> inline Vector<S, 3> operator - (Vector<S, 3> const & rhs)
 	{
 		return Vector<S, 3>(- rhs.x, - rhs.y, - rhs.z);
