@@ -93,7 +93,7 @@ void MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow
 	auto transformation = GetModelTransformation();
 	auto position = transformation.GetTranslation();
 	auto to_light = light_position - position;
-	auto rotated_to_light = geom::Inverse(transformation.GetRotation()) * to_light;
+	auto rotated_to_light = geom::Inverse(transformation.GetRotation()) * to_light / _scale;
 	
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(* _plain_mesh, rotated_to_light);
 
