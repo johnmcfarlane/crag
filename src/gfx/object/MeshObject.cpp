@@ -88,7 +88,6 @@ void MeshObject::UpdateModelViewTransformation(Transformation const & model_view
 
 void MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
 {
-	// TODO: include _scale
 	auto light_position = light.GetModelTransformation().GetTranslation();
 	auto transformation = GetModelTransformation();
 	auto position = transformation.GetTranslation();
