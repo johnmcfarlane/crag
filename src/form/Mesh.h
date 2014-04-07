@@ -15,13 +15,8 @@
 #include "gfx/Mesh.h"
 #include "gfx/LitVertex.h"
 
-// GLES lags in support for GL_OES_standard_derivatives so the extra verts
-// must solution is used instead
-#if defined(CRAG_USE_GLES)
-// generates retro-style flat-shaded mesh by adding exta vertices
-// with common normals; if defined, disables global flag, flat_shade_enabled
-#define CRAG_FLAT_SHADE
-#endif
+// activates flat-shaded mesh style by adding exta vertices with common normals
+//#define CRAG_FLAT_SHADE
 
 namespace form
 {

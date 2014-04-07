@@ -23,10 +23,6 @@
 #include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
-#if ! defined(CRAG_FLAT_SHADE)
-CONFIG_DEFINE (flat_shade_enabled, bool, true);
-#endif
-
 using namespace gfx;
 
 namespace
@@ -53,8 +49,7 @@ Surrounding::Surrounding(LeafNode::Init const & init)
 	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(& poly_program);
 
-	ASSERT(! _vbo_resource.IsInitialized() || ! _vbo_resource.IsBound());
-	SetVboResource(& _vbo_resource);
+	CRAG_VERIFY(* this);
 }
 
 Surrounding::~Surrounding()
@@ -69,11 +64,23 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	if (object._mesh)
 	{
 		CRAG_VERIFY(* object._mesh);
+		if (object._mesh->GetLitMesh().empty())
+		{
+			CRAG_VERIFY_FALSE(object.GetVboResource());
+		}
+		else
+		{
+			CRAG_VERIFY_TRUE(object._vbo_resource.IsInitialized());
+			CRAG_VERIFY_FALSE(object._vbo_resource.IsBound());
+			CRAG_VERIFY_TRUE(object.GetVboResource());
+		}
 	}
-	
-	CRAG_VERIFY_OP(! object._vbo_resource.IsInitialized(), ||, ! object._vbo_resource.IsBound());
+	else
+	{
+		CRAG_VERIFY_FALSE(object._vbo_resource.IsInitialized());
+		CRAG_VERIFY_FALSE(object.GetVboResource());
+	}
 
-	CRAG_VERIFY(object._vbo_resource);
 	CRAG_VERIFY(object._properties);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
@@ -87,6 +94,7 @@ void Surrounding::UpdateModelViewTransformation(Transformation const & model_vie
 
 void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 {
+	CRAG_VERIFY(* this);
 	CRAG_VERIFY_TRUE(mesh);
 	
 	// if there's already a mesh queued up,
@@ -101,7 +109,17 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	// do some assignment
 	_mesh = mesh;
 	_properties = mesh->GetProperties();
-	_vbo_resource.Set(mesh->GetLitMesh());
+	
+	auto const & lit_mesh = mesh->GetLitMesh();
+	if (lit_mesh.empty())
+	{
+		SetVboResource(nullptr);
+	}
+	else
+	{
+		_vbo_resource.Set(lit_mesh);
+		SetVboResource(& _vbo_resource);
+	}
 	
 	// broadcast that this is the current number of quaterne being displayed;
 	// means that any performance measurements are taken against this load
@@ -113,8 +131,9 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	}
 	
 	// state number of polygons/quaterna
-	STAT_SET (num_polys, mesh->GetLitMesh().size() / 3);
+	STAT_SET (num_polys, lit_mesh.size() / 3);
 	STAT_SET (num_quats_used, mesh->GetProperties()._num_quaterne);
+	CRAG_VERIFY(* this);
 }
 
 LeafNode::PreRenderResult Surrounding::PreRender()
@@ -144,10 +163,14 @@ void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 
 void Surrounding::Render(Engine const & renderer) const
 {
-	if (_vbo_resource.empty())
+	if (! GetVboResource())
 	{
+		// happens if mesh is empty
 		return;
 	}
+	
+	ASSERT(GetVboResource() == & _vbo_resource);
+	ASSERT(! _vbo_resource.empty());
 	
 	// Pass rendering details to the shader program.
 	auto program = renderer.GetCurrentProgram();

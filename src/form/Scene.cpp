@@ -109,6 +109,9 @@ void Scene::Tick(gfx::LodParameters const & lod_parameters)
 
 void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
 {
+	mesh.Clear();
+	_surrounding.ResetMeshPointers();
+	
 	_surrounding.GenerateMesh(mesh);
 	
 	MeshProperties & properties = mesh.GetProperties();

@@ -19,8 +19,6 @@ namespace gfx
 	template <typename MeshType>
 	std::vector<PlainVertex> GenerateShadowVolumeMesh(MeshType const & mesh, Vector3 light_position)
 	{
-		using Vertex = typename MeshType::value_type;
-		
 		// types
 		typedef std::array<Vector3 const *, 2> Edge;
 

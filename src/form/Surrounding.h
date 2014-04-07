@@ -21,11 +21,6 @@
 
 #include "CalculateNodeScoreFunctor.h"
 
-namespace gfx
-{
-	struct LodParameters;
-}
-
 namespace form
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -85,11 +80,12 @@ namespace form
 		void InitQuaterna(Quaterna const * end);
 		
 		void UpdateNodes();
-		void UpdateNodeScores();
+		void UpdateNodeScores(gfx::LodParameters const & lod_parameters);
 		void UpdateQuaterna();
 		bool ChurnNodes();
 	public:
 		
+		void ResetMeshPointers();
 		void GenerateMesh(Mesh & mesh);
 		
 		bool IsChildNode(Node const & node) const;
@@ -128,7 +124,6 @@ namespace form
 		PointBuffer point_buffer;
 		
 		CalculateNodeScoreFunctor node_score_functor;
-		gfx::LodParameters cached_node_score_lod_parameters;	// lod center position used when last the node buffer's scores were recalculated en masse. 
 		
 		// used by ChurnNodes
 		SmpNodeVector _expandable_nodes;

@@ -170,7 +170,7 @@ namespace gfx
 		void Draw() const
 		{
 			ASSERT(IsBound());
-			_ibo.DrawElements(GL_TRIANGLES, _num_indices, 0);
+			_ibo.DrawElements(GL_TRIANGLES, _num_indices);
 		}
 
 	private:
