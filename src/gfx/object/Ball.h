@@ -31,11 +31,14 @@ namespace gfx
 
 	private:
 		void UpdateModelViewTransformation(Transformation const & model_view_transformation) override;
+		Transformation const & GetShadowModelViewTransformation() const override;
 		
 		bool GetRenderRange(RenderRange & range) const override;
+		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
 		void Render(Engine const & renderer) const override;
 		
 		// variables
+		Transformation _shadow_model_view_transformation;
 		Color4f _color;
 		float _radius;
 	};
