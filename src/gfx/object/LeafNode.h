@@ -55,6 +55,7 @@ namespace gfx
 		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation);
 		void SetModelViewTransformation(Transformation const & model_view_transformation);
 		Transformation const & GetModelViewTransformation() const;
+		virtual Transformation const & GetShadowModelViewTransformation() const;
 
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 		

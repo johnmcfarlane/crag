@@ -1044,7 +1044,7 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const
 		SetVboResource(& vbo_resource);
 
 		// Set the model view matrix.
-		Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
+		Transformation const & model_view_transformation = leaf_node.GetShadowModelViewTransformation();
 		auto model_view_matrix = model_view_transformation.GetMatrix();
 		shadow_program.SetModelViewMatrix(model_view_matrix);
 
