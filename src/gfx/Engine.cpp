@@ -985,7 +985,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 		glFrontFace(GL_CW);
 	}
 	glDepthFunc(GL_ALWAYS);
-	SetCurrentProgram(shadow_program);
+	SetCurrentProgram(& shadow_program);
 	glDepthMask(GL_TRUE);
 	Enable(GL_BLEND);
 	Disable(GL_STENCIL_TEST);
