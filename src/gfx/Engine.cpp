@@ -371,6 +371,11 @@ Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeSet filter)
 			continue;
 		}
 
+		if (! light.GetIsLuminant())
+		{
+			continue;
+		}
+		
 		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
 		
 		Vector3 frag_to_light = light_position - position;
@@ -712,16 +717,25 @@ void Engine::UpdateTransformations()
 
 void Engine::UpdateShadowVolumes()
 {
-	auto & shadows = scene->GetShadows();
+	auto & lights = scene->GetLightList();
+	for (auto & light : lights)
+	{
+		light.SetIsExtinguished(false);
+	}
+	
+	ShadowMap & shadows = scene->GetShadows();
 	for (auto & pair : shadows)
 	{
 		auto & key = pair.first;
 		auto & object = * key.first;
-		auto & light = * key.second;
+		Light & light = * key.second;
 
 		auto & shadow = pair.second;
 
-		object.GenerateShadowVolume(light, shadow);
+		if (! object.GenerateShadowVolume(light, shadow))
+		{
+			light.SetIsExtinguished(true);
+		}
 	}
 }
 
@@ -907,7 +921,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	auto & lights = scene->GetLightList();
 	for (auto & light : lights)
 	{
-		if (light.GetType() == LightType::shadow)
+		if (light.GetType() == LightType::shadow && light.GetIsLuminant())
 		{
 			RenderShadowLight(projection_matrix, light);
 		}
@@ -918,7 +932,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	Disable(GL_STENCIL_TEST);
 }
 
-void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const & light)
+void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light)
 {
 	GL_VERIFY;
 
@@ -1005,7 +1019,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light const &
 	GL_VERIFY;
 }
 
-void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light)
+void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light)
 {
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");

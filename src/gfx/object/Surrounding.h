@@ -49,7 +49,7 @@ namespace gfx
 		
 	private:
 		PreRenderResult PreRender() override;
-		void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
+		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
 		void Render(Engine const & renderer) const override;
 		
 		void OnMeshResourceChange();

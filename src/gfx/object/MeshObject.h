@@ -34,7 +34,7 @@ namespace gfx
 		
 	private:
 		void UpdateModelViewTransformation(Transformation const & model_view) final;
-		void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const final;
+		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const final;
 
 		// variables
 		Color4f _color;

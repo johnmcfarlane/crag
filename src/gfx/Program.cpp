@@ -253,6 +253,7 @@ void LightProgram::InitUniforms()
 
 void LightProgram::SetLight(Light const & light) const
 {
+	ASSERT(light.GetIsLuminant());
 	ASSERT(IsBound());
 
 	SetLight(light, 0);
@@ -303,9 +304,8 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 			{
 				continue;
 			}
-		
-			Color4f const & color = light.GetColor();
-			if (color.r + color.g + color.b == 0)
+
+			if (! light.GetIsLuminant())
 			{
 				continue;
 			}

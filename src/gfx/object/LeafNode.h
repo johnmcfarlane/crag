@@ -76,7 +76,8 @@ namespace gfx
 		// Perform any necessary preparation for rendering.
 		virtual PreRenderResult PreRender();
 		
-		virtual void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
+		// returns false iff light is obscured by object and should be ignored
+		virtual bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
 		
 		// Draw the object.
 		virtual void Render(Engine const & renderer) const;

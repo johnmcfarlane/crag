@@ -86,7 +86,7 @@ void MeshObject::UpdateModelViewTransformation(Transformation const & model_view
 	SetModelViewTransformation(transformation);
 }
 
-void MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
+bool MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
 {
 	auto light_position = light.GetModelTransformation().GetTranslation();
 	auto transformation = GetModelTransformation();
@@ -95,6 +95,11 @@ void MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow
 	auto rotated_to_light = geom::Inverse(transformation.GetRotation()) * to_light / _scale;
 	
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(* _plain_mesh, rotated_to_light);
+	if (shadow_volume_mesh.empty())
+	{
+		return false;
+	}
 
 	shadow_volume.Set(shadow_volume_mesh);
+	return true;
 }

@@ -159,9 +159,10 @@ LeafNode::PreRenderResult LeafNode::PreRender()
 	return ok;
 }
 
-void LeafNode::GenerateShadowVolume(Light const &, ShadowVolume &) const
+bool LeafNode::GenerateShadowVolume(Light const &, ShadowVolume &) const
 {
 	ASSERT(false);
+	return true;
 }
 
 void LeafNode::Render(Engine const &) const
