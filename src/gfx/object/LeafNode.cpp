@@ -75,6 +75,11 @@ Transformation const & LeafNode::GetModelViewTransformation() const
 	return _model_view_transformation;
 }
 
+Transformation const & LeafNode::GetShadowModelViewTransformation() const
+{
+	return _model_view_transformation;
+}
+
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
 	if (lhs._is_opaque)
@@ -154,9 +159,10 @@ LeafNode::PreRenderResult LeafNode::PreRender()
 	return ok;
 }
 
-void LeafNode::GenerateShadowVolume(Light const &, ShadowVolume &) const
+bool LeafNode::GenerateShadowVolume(Light const &, ShadowVolume &) const
 {
 	ASSERT(false);
+	return true;
 }
 
 void LeafNode::Render(Engine const &) const

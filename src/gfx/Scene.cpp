@@ -84,7 +84,7 @@ void Scene::AddObject(Object & object)
 	
 	if (leaf_node->CastsShadow())
 	{
-		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light const & light)
+		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
 			auto key = std::make_pair(leaf_node, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
@@ -113,7 +113,7 @@ void Scene::RemoveObject(Object & object)
 	// remove from list of things that cast a shadow
 	if (leaf_node->CastsShadow())
 	{
-		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light const & light)
+		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
 			auto key = std::make_pair(leaf_node, & light);
 			if (light.GetType() == LightType::shadow)
@@ -214,12 +214,22 @@ LeafNode::RenderList const & Scene::GetRenderList() const
 	return _render_list;
 }
 
+Light::List & Scene::GetLightList()
+{
+	return _light_list;
+}
+
 Light::List const & Scene::GetLightList() const
 {
 	return _light_list;
 }
 
 ShadowMap & Scene::GetShadows()
+{
+	return _shadows;
+}
+
+ShadowMap const & Scene::GetShadows() const
 {
 	return _shadows;
 }

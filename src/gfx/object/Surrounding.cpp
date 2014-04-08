@@ -147,18 +147,25 @@ LeafNode::PreRenderResult Surrounding::PreRender()
 	return ok;
 }
 
-void Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
+bool Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const
 {
 	if (! _mesh)
 	{
-		return;
+		return true;
 	}
 	
 	auto gfx_light_position = light.GetModelTransformation().GetTranslation();
 	auto form_light_position = GfxToForm(gfx_light_position);
 
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(_mesh->GetLitMesh(), form_light_position);
+	if (shadow_volume_mesh.empty())
+	{
+		return false;
+	}
+	
 	shadow_volume.Set(shadow_volume_mesh);
+	
+	return true;
 }
 
 void Surrounding::Render(Engine const & renderer) const

@@ -131,8 +131,8 @@ namespace gfx
 		
 		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
 		void RenderShadowLights(Matrix44 const & projection_matrix);
-		void RenderShadowLight(Matrix44 const & projection_matrix, Light const & light);
-		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light);
+		void RenderShadowLight(Matrix44 const & projection_matrix, Light & light);
+		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light);
 		
 #if defined(CRAG_GFX_DEBUG)
 		void DebugDraw(Matrix44 const & projection_matrix);

@@ -21,7 +21,7 @@ namespace gfx
 	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
 
 	// Ball class
-	class Ball : public LeafNode
+	class Ball final : public LeafNode
 	{
 	public:
 		// functions
@@ -30,12 +30,15 @@ namespace gfx
 		Ball(Init const & init, Transformation const & local_transformation, float radius, Color4f const & color);
 
 	private:
-		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation) final;
+		void UpdateModelViewTransformation(Transformation const & model_view_transformation) override;
+		Transformation const & GetShadowModelViewTransformation() const override;
 		
 		bool GetRenderRange(RenderRange & range) const override;
+		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
 		void Render(Engine const & renderer) const override;
 		
 		// variables
+		Transformation _shadow_model_view_transformation;
 		Color4f _color;
 		float _radius;
 	};

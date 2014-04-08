@@ -109,6 +109,13 @@ namespace geom
 				dimensions.z * dimensions.x) * S(2);
 	}
 
+	// given a regular, convex polygon with points of unit distance from center,
+	// returns the area
+	template <typename S>
+	S constexpr GetPolygonArea(int num_sides)
+	{
+		return std::sin(S(PI / num_sides)) * std::cos(S(PI / num_sides)) * num_sides;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Volume

@@ -95,12 +95,12 @@ template<typename T> bool NearEqualLog(T const & a, T const & b, T error)
 	return (ratio <= error + 1);
 }
 
-template<typename T> T Squared(T a)
+template<typename T> T constexpr Squared(T a)
 {
 	return a * a;
 }
 
-template<typename T> T Cubed(T a)
+template<typename T> T constexpr Cubed(T a)
 {
 	return a * a * a;
 }
