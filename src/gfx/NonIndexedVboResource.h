@@ -24,7 +24,6 @@ namespace gfx
 		// types
 	public:
 		using Vertex = VERTEX;
-		using VertexArray = std::vector<Vertex>;
 	private:
 		using VertexBufferObject = gfx::VertexBufferObject<Vertex>;
 		
@@ -65,7 +64,7 @@ namespace gfx
 			CRAG_VERIFY(rhs);
 		}
 		
-		NonIndexedVboResource(VertexArray const & vertices)
+		NonIndexedVboResource(std::vector<Vertex> const & vertices)
 		{
 			Set(vertices);
 		}
@@ -97,6 +96,7 @@ namespace gfx
 		}
 
 		// set data
+		template <typename VertexArray>
 		void Set(VertexArray const & vertices)
 		{
 			Set(& * std::begin(vertices), & * std::end(vertices));
