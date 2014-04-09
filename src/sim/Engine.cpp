@@ -17,16 +17,14 @@
 
 #include "form/Engine.h"
 
-#include "physics/Body.h"
+#include "physics/Location.h"
 #include "physics/Engine.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetOriginEvent.h"
 
-#include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
@@ -95,13 +93,6 @@ void Engine::OnAddObject(Entity &)
 		engine.OnSetTime(time);
 		engine.OnSetReady(true);
 	});
-}
-
-void Engine::OnAttachEntities(Uid uid1, Uid uid2)
-{
-	auto& entity1 = ref(GetObject(uid1));
-	auto& entity2 = ref(GetObject(uid2));
-	AttachEntities(entity1, entity2, _physics_engine);
 }
 
 void Engine::AddFormation(form::Formation& formation)
