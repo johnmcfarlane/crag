@@ -260,6 +260,11 @@ void Engine::CreateJoints()
 		dBodyID body1 = dGeomGetBody(contact.geom.g1);
 		dBodyID body2 = dGeomGetBody(contact.geom.g2);
 		
+		if (! body1 && ! body2)
+		{
+			continue;
+		}
+		
 		// body sanity tests
 		ASSERT(body1 != body2);
 		ASSERT(body1 == nullptr || dBodyGetWorld(body1) == world);
