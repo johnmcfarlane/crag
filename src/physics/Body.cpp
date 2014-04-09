@@ -424,6 +424,11 @@ void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 			dJointSetBallAnchor (joint_id, position1.x, position1.y, position1.z);
 			break;
 		}
+		
+		case dJointTypeFixed:
+		{
+			break;
+		}
 			
 		default:
 			// Not yet implemented.
