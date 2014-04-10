@@ -7,4 +7,5 @@ gen/
 jni/SDL
 libs/
 local.properties
+crag-release-key.keystore
 obj/
