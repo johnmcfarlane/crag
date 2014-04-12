@@ -24,7 +24,7 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
-	SDL_Renderer * renderer = nullptr;
+	SDL_GLContext context = nullptr;
 
 	int refresh_rate = -1;
 
@@ -125,9 +125,9 @@ bool app::InitContext()
 {
 	ASSERT(window != nullptr);
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+	context = SDL_GL_CreateContext(window);
 	
-	if (renderer == nullptr)
+	if (context == nullptr)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
@@ -138,9 +138,9 @@ bool app::InitContext()
 
 void app::DeinitContext()
 {
-	ASSERT(renderer != nullptr);
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
+	ASSERT(context != nullptr);
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
 }
 
 char const * app::GetFullPath(char const * filepath)
