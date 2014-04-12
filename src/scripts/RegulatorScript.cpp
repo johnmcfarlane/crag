@@ -180,9 +180,12 @@ namespace
 		core::Time _startup_time;
 		
 		// constants
-		static float constexpr _invalid_frame_rate_ratio = -1.f;
+		static float const _invalid_frame_rate_ratio;
 	};
-	
+
+	// constants
+	float const FrameRateRegulator::_invalid_frame_rate_ratio = -1.f;
+
 	// a regulator which recommends changes to the number of quaterne based on
 	// whether formation meshes are taking too long to generate
 	class MeshGenerationRegulator final 

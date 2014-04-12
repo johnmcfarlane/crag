@@ -24,7 +24,8 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
-	SDL_Renderer * renderer = nullptr;
+	SDL_Renderer * renderer = nullptr;	// this isn't needed for Win32/Android
+	SDL_GLContext context = nullptr;
 
 	int refresh_rate = -1;
 
@@ -47,8 +48,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		return false;
 	}
 	
-	ASSERT(window == nullptr);
-
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -88,10 +87,13 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	}
 	
 	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
-	window = SDL_CreateWindow(title, 
-							  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-							  resolution.x, resolution.y, 
-							  flags);
+
+	ASSERT(window == nullptr);
+	window = SDL_CreateWindow(
+		title, 
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+		resolution.x, resolution.y, 
+		flags);
 	
 	if (window == 0)
 	{
@@ -126,18 +128,28 @@ bool app::InitContext()
 	ASSERT(window != nullptr);
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
-	
 	if (renderer == nullptr)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
 	}
 	
+	context = SDL_GL_CreateContext(window);
+	if (context == nullptr)
+	{
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+
 	return true;
 }
 
 void app::DeinitContext()
 {
+	ASSERT(context != nullptr);
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
+
 	ASSERT(renderer != nullptr);
 	SDL_DestroyRenderer(renderer);
 	renderer = nullptr;
