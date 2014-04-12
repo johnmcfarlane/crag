@@ -61,23 +61,6 @@
 #define UNREACHABLE() __assume(false)
 #endif
 
-
-//////////////////////////////////////////////////////////////////////
-// OBJECT_SINGLETON
-// 
-// Prevent object from being instanced more than once.
-// Put at top of class definition; include "core/Singleton.h".
-
-#if defined(NDEBUG)
-#define OBJECT_SINGLETON(CLASS) \
-	OBJECT_NO_COPY(CLASS)
-#else
-#define OBJECT_SINGLETON(CLASS) \
-	OBJECT_NO_COPY(CLASS); \
-private: \
-	core::Singleton<CLASS> _singleton
-#endif
-
 namespace core
 {
 	////////////////////////////////////////////////////////////////////////////////

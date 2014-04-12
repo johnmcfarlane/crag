@@ -98,7 +98,7 @@ bool Ordering::SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison co
 
 	// this pair should not already have been set to something different;
 	// it means there are conflicting ordering pairs
-	ASSERT(_comparison == 0);
+	CRAG_VERIFY_OP(_comparison, !=, comparison);
 
 	// set the 1st order comparison
 	_comparison = comparison;

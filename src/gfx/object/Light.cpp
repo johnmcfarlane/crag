@@ -13,11 +13,14 @@
 
 #include "gfx/Engine.h"
 #include "gfx/Scene.h"
+
+#if defined(CRAG_GFX_LIGHT_DEBUG)
+#if ! defined(CRAG_GFX_DEBUG)
+#error Pointless definition of CRAG_GFX_LIGHT_DEBUG
+#endif
+
 #include "gfx/Debug.h"
-
-#include "geom/origin.h"
-
-#include "core/ConfigEntry.h"
+#endif
 
 using namespace gfx;
 
@@ -53,6 +56,21 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
 	CRAG_VERIFY_TRUE(object._type < LightType::size);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
+bool Light::GetIsExtinguished() const
+{
+	return _is_extinguished;
+}
+
+void Light::SetIsExtinguished(bool is_extinguished)
+{
+	_is_extinguished = is_extinguished;
+}
+
+bool Light::GetIsLuminant() const
+{
+	return ! _is_extinguished && _color.r + _color.g + _color.b > 0.f;
+}
+
 void Light::SetColor(Color4f const & color)
 {
 	_color = Color4f(color.r, color.g, color.b, 1.f);
@@ -68,7 +86,7 @@ LightType Light::GetType() const
 	return _type;
 }
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_GFX_LIGHT_DEBUG)
 LeafNode::PreRenderResult Light::PreRender()
 {
 	Vector3 intensity(_color.r, _color.g, _color.b);

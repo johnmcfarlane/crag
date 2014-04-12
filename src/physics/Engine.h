@@ -53,6 +53,7 @@ namespace physics
 		dBodyID CreateBody() const;
 		CollisionHandle CreateBox(Vector3 const & dimensions) const;
 		CollisionHandle CreateSphere(Scalar radius) const;
+		CollisionHandle CreateCylinder(Scalar radius, Scalar length) const;
 		CollisionHandle CreateRay(Scalar length) const;
 		CollisionHandle CreateMesh(MeshData data) const;
 		void DestroyShape(CollisionHandle shape);

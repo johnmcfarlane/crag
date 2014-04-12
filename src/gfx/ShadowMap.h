@@ -18,7 +18,7 @@ namespace gfx
 	class Light;
 
 	// key
-	typedef std::pair<LeafNode const *, Light const *> ShadowMapKey;
+	typedef std::pair<LeafNode const *, Light *> ShadowMapKey;
 	typedef std::pair<ShadowMapKey, ShadowVolume> ShadowMapPair;
 }
 

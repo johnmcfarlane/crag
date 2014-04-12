@@ -24,12 +24,12 @@ namespace geom
 	class SphereProperties<S, 2>
 	{
 	public:
-		static S Circumference(S radius)
+		static S constexpr Circumference(S radius)
 		{
 			return static_cast<S>(PI * 2.) * radius;
 		}
 		
-		static S Area(S radius)
+		static S constexpr Area(S radius)
 		{
 			return static_cast<S>(PI) * Squared(radius);
 		}
@@ -39,17 +39,17 @@ namespace geom
 	class SphereProperties<S, 3>
 	{
 	public:
-		static S Area(S radius)
+		static S constexpr Area(S radius)
 		{
 			return static_cast<S>(PI * 4.) * Squared(radius);
 		}
 		
-		static S Volume(S radius)
+		static S constexpr Volume(S radius)
 		{
 			return static_cast<S>(PI * 4. / 3.) * Cubed(radius);
 		}
 		
-		static S RadiusFromVolume(S volume)
+		static S constexpr RadiusFromVolume(S volume)
 		{
 			return CubeRoot(volume / static_cast<S>(PI * 4. / 3.));
 		}
@@ -98,6 +98,13 @@ namespace geom
 		{
 			return Sphere(Vector::Zero(), 0); 
 		}
+
+#if defined(CRAG_VERIFY_ENABLED)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Sphere, s)
+			CRAG_VERIFY(s.center);
+			CRAG_VERIFY(s.radius);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+#endif
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

@@ -37,8 +37,9 @@ AnimatController::AnimatController(Entity & entity, float radius)
 	Connect();
 
 	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddCommand(* this, & AnimatController::Tick);
 	roster.AddOrdering(& AnimatController::Tick, & Entity::Tick);
+	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
+	roster.AddCommand(* this, & AnimatController::Tick);
 }
 
 AnimatController::~AnimatController()
@@ -104,7 +105,7 @@ void AnimatController::CreateThrusters(float radius)
 				ray.position.x = x ? root_third : -root_third;
 				ray.direction.x = ray.position.x * direction_scale;
 
-				AddThruster(new AnimatThruster(entity, ray));
+				AddThruster(VehicleController::ThrusterPtr(new AnimatThruster(entity, ray)));
 			}
 		}
 	}

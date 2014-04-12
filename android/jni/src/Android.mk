@@ -37,6 +37,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/sim/CameraController.cpp \
 	$(CRAG_PATH)/entity/sim/Contact.cpp \
+	$(CRAG_PATH)/entity/sim/HoverThruster.cpp \
 	$(CRAG_PATH)/entity/sim/Genome.cpp \
 	$(CRAG_PATH)/entity/sim/MoonShader.cpp \
 	$(CRAG_PATH)/entity/sim/MouseObserverController.cpp \
@@ -47,7 +48,9 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/Sensor.cpp \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
+	$(CRAG_PATH)/entity/sim/UfoController.cpp \
 	$(CRAG_PATH)/entity/sim/VehicleController.cpp \
+	$(CRAG_PATH)/entity/sim/VernierThruster.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
 	$(CRAG_PATH)/entity/SpawnSkybox.cpp \
 	$(CRAG_PATH)/form/CalculateNodeScoreFunctor.cpp \
@@ -66,7 +69,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/form/Surrounding.cpp \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \
-	$(CRAG_PATH)/gfx/Fence.cpp \
 	$(CRAG_PATH)/gfx/Font.cpp \
 	$(CRAG_PATH)/gfx/FrameBuffer.cpp \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
@@ -94,13 +96,14 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/pch.cpp \
 	$(CRAG_PATH)/physics/Body.cpp \
 	$(CRAG_PATH)/physics/BoxBody.cpp \
+	$(CRAG_PATH)/physics/CylinderBody.cpp \
 	$(CRAG_PATH)/physics/Engine.cpp \
 	$(CRAG_PATH)/physics/GhostBody.cpp \
 	$(CRAG_PATH)/physics/Location.cpp \
 	$(CRAG_PATH)/physics/MeshBody.cpp \
 	$(CRAG_PATH)/physics/PassiveLocation.cpp \
 	$(CRAG_PATH)/physics/RayCast.cpp \
-	$(CRAG_PATH)/physics/SphericalBody.cpp \
+	$(CRAG_PATH)/physics/SphereBody.cpp \
 	$(CRAG_PATH)/scripts/GameScript.cpp \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \

@@ -11,7 +11,7 @@
 
 #include "physics/defs.h"
 
-#include "physics/SphericalBody.h"
+#include "physics/SphereBody.h"
 
 namespace form
 {
@@ -24,7 +24,7 @@ namespace physics
 	// so a spherical body is used to detect near collision,
 	// then PlanetBody does the work of colliding with the planet's surface.
 	
-	class PlanetBody : public SphericalBody
+	class PlanetBody : public SphereBody
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -34,7 +34,7 @@ namespace physics
 
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
-		Vector3 GetGravitationalForce(Vector3 const & pos) const final;
+		Vector3 GetGravitationalAttraction(Vector3 const & pos) const final;
 	private:
 		virtual bool OnCollision(Body & body, ContactInterface & contact_interface);
 

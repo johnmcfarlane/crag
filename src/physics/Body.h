@@ -29,6 +29,10 @@ namespace physics
 		virtual ~Body();
 		
 		virtual bool ObeysGravity() const;
+		
+		// the sum force being exherted on this body as a result of gravity
+		void SetGravitationalForce(Vector3 const & gravitational_force);
+		Vector3 const & GetGravitationalForce() const;
 
 		BodyHandle GetBodyHandle() const;
 		CollisionHandle GetCollisionHandle() const;
@@ -46,11 +50,17 @@ namespace physics
 		void SetIsCollidable(bool collidable);
 		
 		bool IsMovable() const;
+		
 		void SetLinearDamping(Scalar linear_damping);
 		void SetAngularDamping(Scalar angular_damping);
+		
 		void AddRelTorque(Vector3 const & torque);
+		
 		void AddForce(Vector3 const & force);
+		void AddForceAtPos(Vector3 const & force, Vector3 const & pos);
+		void AddForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		void AddRelForce(Vector3 const & force);
+		void AddRelForceAtPos(Vector3 const & force, Vector3 const & pos);
 		void AddRelForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		
 		void SetIsCollidable(Body const & body, bool collidable);
@@ -85,5 +95,6 @@ namespace physics
 		
 	private:
 		Body const * _exception;
+		Vector3 _gravitational_force;
 	};
 }

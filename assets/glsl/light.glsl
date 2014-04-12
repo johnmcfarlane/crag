@@ -25,7 +25,7 @@ struct Light
 
 
 // constants
-const int max_lights = 7;	// TODO: still quite hacky
+const int max_lights = 8;
 
 
 // light information provided by the renderer

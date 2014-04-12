@@ -27,13 +27,13 @@ using namespace physics;
 DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
-: SphericalBody(transformation, nullptr, engine, radius)
+: SphereBody(transformation, nullptr, engine, radius)
 , _polyhedron(polyhedron)
 , _mean_radius(radius)
 {
 }
 
-Vector3 PlanetBody::GetGravitationalForce(Vector3 const & pos) const
+Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 {
 	Vector3 const & center = GetTranslation();
 	Vector3 to_center = center - pos;
@@ -136,8 +136,8 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 
 	MeshData mesh_data = dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSingle1(mesh_data,
-		vertices.front().pos.GetAxes(), sizeof(Mesh::VertexType), vertices.size(),
-		indices.data(), indices.size(), sizeof(Mesh::IndexType),
+		vertices.front().pos.GetAxes(), sizeof(Mesh::value_type), vertices.size(),
+		indices.data(), indices.size(), sizeof(Mesh::index_type),
 		reinterpret_cast<int *>(normals.data()));
 
 	CollisionHandle mesh_collision_handle = dCreateTriMesh(nullptr, mesh_data, nullptr, nullptr, nullptr);

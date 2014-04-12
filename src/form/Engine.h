@@ -9,24 +9,25 @@
 
 #pragma once
 
-#include "form/Mesh.h"
 #include "form/Scene.h"
 
-#include "sim/defs.h"
+#include "gfx/LodParameters.h"
+
+#if defined(WIN32)
+#include "gfx/SetLodParametersEvent.h"
+#include "gfx/SetOriginEvent.h"
+#endif
 
 #include "core/Singleton.h"
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
-#include "smp/scheduler.h"
-#include "smp/Semaphore.h"
-
 
 namespace gfx 
 {
 	DECLARE_CLASS_HANDLE(Surrounding);	// gfx::SurroundingHandle
-	struct SetCameraEvent;
+	struct SetLodParametersEvent;
 	struct SetOriginEvent;
 }
 
@@ -35,12 +36,10 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// forward declarations
 	
-	class FormationFunctor;
 	class Formation;
-	class Scene;
+	class Mesh;
 	
 	typedef std::set<Formation *> FormationSet;
-	
 	
 	// form::Daemon type
 	class Engine;
@@ -53,8 +52,8 @@ namespace form
 	// The top-most formation management class.
 	class Engine 
 	: public ipc::EngineBase<Engine, Formation>
-	, private ipc::Listener<Engine, gfx::SetCameraEvent>
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
+	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 		
@@ -62,14 +61,12 @@ namespace form
 		// types
 
 		typedef ipc::EngineBase<Engine, Formation> super;
-		typedef ipc::Listener<Engine, gfx::SetCameraEvent> SetCameraListener;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
+		typedef ipc::Listener<Engine, gfx::SetLodParametersEvent> SetLodParametersListener;
 
 	public:
 		typedef ipc::Daemon<Engine> Daemon;
 
-		typedef core::ring_buffer<smp::scheduler::Job> BatchedFunctorBuffer;
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
@@ -83,7 +80,7 @@ namespace form
 		void OnAddFormation(Formation & formation);
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(std::shared_ptr<Mesh> const & mesh);
-		void operator() (gfx::SetCameraEvent const & event) final;
+		void operator() (gfx::SetLodParametersEvent const & event) final;
 		void operator() (gfx::SetOriginEvent const & event) final;
 		
 		void EnableAdjustNumQuaterna(bool enabled);
@@ -124,7 +121,7 @@ namespace form
 		
 		bool _pending_origin_request;
 
-		geom::rel::Ray3 _camera;
+		gfx::LodParameters _lod_parameters;
 		geom::abs::Vector3 _origin;
 		Scene _scene;
 	};

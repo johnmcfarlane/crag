@@ -9,9 +9,16 @@
 
 #pragma once
 
+#include "form/defs.h"
+
+#if defined(CRAG_FLAT_SHADE)
+#include "gfx/NonIndexedVboResource.h"
+#else
+#include "gfx/IndexedVboResource.h"
+#endif
+
 #include "LeafNode.h"
 
-#include "gfx/IndexedVboResource.h"
 #include "gfx/LitVertex.h"
 
 #include "form/Mesh.h"
@@ -23,7 +30,11 @@ namespace gfx
 	{
 		// types
 		typedef LeafNode super;
-		using IndexedVboResource = gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
+#if defined(CRAG_FLAT_SHADE)
+		using VboResource = gfx::NonIndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
+#else
+		using VboResource = gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
+#endif
 		
 	public:
 		// functions
@@ -38,7 +49,7 @@ namespace gfx
 		
 	private:
 		PreRenderResult PreRender() override;
-		void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
+		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
 		void Render(Engine const & renderer) const override;
 		
 		void OnMeshResourceChange();
@@ -56,7 +67,7 @@ namespace gfx
 		form::MeshProperties _properties;
 		
 		// contains the geometry and GL state
-		IndexedVboResource _vbo_resource;
+		VboResource _vbo_resource;
 	};
 }
 

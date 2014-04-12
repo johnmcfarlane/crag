@@ -24,7 +24,7 @@ namespace
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
-	SDL_Renderer * renderer = nullptr;
+	SDL_GLContext context = nullptr;
 
 	int refresh_rate = -1;
 
@@ -52,8 +52,14 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
 #if defined(CRAG_USE_GL)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
+
+#if defined(CRAG_USE_GLES)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
@@ -119,9 +125,9 @@ bool app::InitContext()
 {
 	ASSERT(window != nullptr);
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+	context = SDL_GL_CreateContext(window);
 	
-	if (renderer == nullptr)
+	if (context == nullptr)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
@@ -132,9 +138,9 @@ bool app::InitContext()
 
 void app::DeinitContext()
 {
-	ASSERT(renderer != nullptr);
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
+	ASSERT(context != nullptr);
+	SDL_GL_DeleteContext(context);
+	context = nullptr;
 }
 
 char const * app::GetFullPath(char const * filepath)

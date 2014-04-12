@@ -22,6 +22,7 @@
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
+#include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
@@ -671,10 +672,15 @@ void TouchObserverController::ClampTransformation()
 void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
-	gfx::SetCameraEvent event;
-	event.transformation = geom::RelToAbs(_current_transformation, _origin);
+	gfx::SetCameraEvent set_camera_event;
+	set_camera_event.transformation = geom::RelToAbs(_current_transformation, _origin);
+	Daemon::Broadcast(set_camera_event);
 
-	Daemon::Broadcast(event);
+	// broadcast new lod center
+	gfx::SetLodParametersEvent set_lod_parameters_event;
+	set_lod_parameters_event.parameters.center = _current_transformation.GetTranslation();
+	set_lod_parameters_event.parameters.min_distance = camera_near;
+	Daemon::Broadcast(set_lod_parameters_event);
 }
 
 physics::Body & TouchObserverController::GetBody()

@@ -13,10 +13,24 @@
 #include "core/debug.h"
 
 
+//////////////////////////////////////////////////////////////////////
+// OBJECT_SINGLETON
+// 
+// Prevent object from being instanced more than once.
+// Put at top of class definition; include "core/Singleton.h".
+
+#if defined(NDEBUG)
+#define OBJECT_SINGLETON(CLASS) \
+	OBJECT_NO_COPY(CLASS)
+#else
+#define OBJECT_SINGLETON(CLASS) \
+	OBJECT_NO_COPY(CLASS); \
+private: \
+	core::Singleton<CLASS> _singleton
+
 namespace core
 {
-	
-	// A singleton simply asserts if it is instanced multiply.
+	// A singleton simply asserts that it is not instanced multiply.
 	template <typename S> class Singleton
 	{
 		OBJECT_NO_COPY (Singleton);
@@ -45,3 +59,5 @@ namespace core
 
 	template<typename S> S * Singleton<S>::the_instance = nullptr;
 }
+#endif
+

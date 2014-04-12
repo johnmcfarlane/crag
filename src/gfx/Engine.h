@@ -10,7 +10,6 @@
 #pragma once
 
 #include "defs.h"
-#include "Fence.h"
 #include "FrameBuffer.h"
 #include "Image.h"
 #include "RenderBuffer.h"
@@ -92,9 +91,6 @@ namespace gfx
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
-		void SetFlatShaded(bool flat_shaded);
-		bool GetFlatShaded() const;
-
 		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
 		bool GetFragmentLightingEnabled() const;
 
@@ -115,7 +111,6 @@ namespace gfx
 
 		bool Init();
 		void Deinit();
-		bool InitFrameBuffer();
 		
 		void InitVSync();
 		void InitRenderState();
@@ -136,8 +131,8 @@ namespace gfx
 		
 		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
 		void RenderShadowLights(Matrix44 const & projection_matrix);
-		void RenderShadowLight(Matrix44 const & projection_matrix, Light const & light);
-		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light const & light);
+		void RenderShadowLight(Matrix44 const & projection_matrix, Light & light);
+		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light);
 		
 #if defined(CRAG_GFX_DEBUG)
 		void DebugDraw(Matrix44 const & projection_matrix);
@@ -147,8 +142,7 @@ namespace gfx
 #endif
 
 		void ProcessRenderTiming();
-		void GetRenderTiming(core::Time & frame_start_position, core::Time & pre_sync_position, core::Time & post_sync_position);
-		void ConvertRenderTiming(core::Time frame_start_position, core::Time pre_sync_position, core::Time post_sync_position, core::Time & frame_duration, core::Time & busy_duration);
+		void GetRenderTiming(core::Time & frame_start_position, core::Time & frame_end_position);
 		void SampleFrameDuration(core::Time busy_duration) const;
 #if defined(GATHER_STATS)
 		void UpdateFpsCounter(core::Time frame_start_position);
@@ -156,27 +150,19 @@ namespace gfx
 		
 		void Capture();
 
-		static void SetFence(Fence & fence);
-
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Scene * scene;
 		geom::abs::Vector3 _origin;
-
-		//FrameBuffer frame_buffer;
-		//RenderBuffer depth_buffer;
-		//Texture depth_texture;
 		
-		core::Time _frame_duration;
+		core::Time _target_frame_duration;
 		core::Time last_frame_end_position;
 		
 		bool quit_flag;
 		bool _ready;
 		bool _dirty;
-		bool vsync;
 		bool culling;
-		bool _flat_shaded;
 		bool _fragment_lighting_enabled;
 		int capture_frame;
 
@@ -201,12 +187,10 @@ namespace gfx
 		
 #if ! defined(NDEBUG)
 		// fps counter
-		static int const _frame_time_history_size = 360;
-		core::Time _frame_time_history[_frame_time_history_size];
+		static int constexpr _frame_time_history_size = 60;
+		std::array<core::Time, _frame_time_history_size> _frame_time_history;
 #endif
 		
-		Fence _fence1, _fence2;
-
 		Program const * _current_program;
 		VboResource const * _current_vbo;
 	};

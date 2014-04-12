@@ -88,6 +88,10 @@ namespace gfx
 		{
 			AddLine(a, b, colors, colors);
 		}
+		inline void AddLine(Ray3 const & ray, ColorPair const & colors = ColorPair(1, 1))
+		{
+			AddLine(ray.position, ray.position + ray.direction, colors, colors);
+		}
 		inline void AddBasis(Transformation const & transformation, Scalar scale) 
 		{ 
 			AddBasis(transformation, Vector3(scale, scale, scale));

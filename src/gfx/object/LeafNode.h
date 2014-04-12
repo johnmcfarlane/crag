@@ -55,6 +55,7 @@ namespace gfx
 		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation);
 		void SetModelViewTransformation(Transformation const & model_view_transformation);
 		Transformation const & GetModelViewTransformation() const;
+		virtual Transformation const & GetShadowModelViewTransformation() const;
 
 		friend bool operator < (LeafNode const & lhs, LeafNode const & rhs);
 		
@@ -75,7 +76,8 @@ namespace gfx
 		// Perform any necessary preparation for rendering.
 		virtual PreRenderResult PreRender();
 		
-		virtual void GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
+		// returns false iff light is obscured by object and should be ignored
+		virtual bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
 		
 		// Draw the object.
 		virtual void Render(Engine const & renderer) const;
