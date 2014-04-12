@@ -548,7 +548,7 @@ namespace
 		entity.SetController(& controller);
 
 		// add a single thruster
-		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert = false)
+		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert)
 		{
 			if (key == SDL_SCANCODE_UNKNOWN)
 			{
@@ -561,7 +561,7 @@ namespace
 		};
 		
 		// add two complimentary thrusters
-		auto add_thrusters = [&] (Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert = false)
+		auto add_thrusters = [&] (Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert)
 		{
 			add_thruster(ray, first_key, invert);
 			ray.position[axis] *= -1.f;
@@ -571,8 +571,8 @@ namespace
 		
 		auto forward = Vector3(0, 0, ship_forward_thrust);
 
-		add_thrusters(Ray3(Vector3(0.f, 0.f, 1.f), geom::Resized(Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN);
-		add_thrusters(Ray3(Vector3(1., 0.f, 0), geom::Resized(Vector3(- ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN);
+		add_thrusters(Ray3(Vector3(0.f, 0.f, 1.f), geom::Resized(Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN, false);
+		add_thrusters(Ray3(Vector3(1., 0.f, 0), geom::Resized(Vector3(-ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN, false);
 		add_thrusters(Ray3(Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
 		
 		AddHoverThruster(controller, Vector3(0.f, -.25f, 0.f), -.1f);

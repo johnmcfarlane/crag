@@ -99,7 +99,8 @@ namespace gfx
 		template <typename VertexArray>
 		void Set(VertexArray const & vertices)
 		{
-			Set(& * std::begin(vertices), & * std::end(vertices));
+			auto first = &* std::begin(vertices);
+			Set(first, first + vertices.size());
 		}
 		
 		// get state

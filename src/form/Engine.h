@@ -13,6 +13,11 @@
 
 #include "gfx/LodParameters.h"
 
+#if defined(WIN32)
+#include "gfx/SetLodParametersEvent.h"
+#include "gfx/SetOriginEvent.h"
+#endif
+
 #include "core/Singleton.h"
 
 #include "ipc/Daemon.h"
