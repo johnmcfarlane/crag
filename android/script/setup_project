@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# setup android project
+
+./android-sdk/tools/android update project --path . --name Crag --target android-12 --subprojects

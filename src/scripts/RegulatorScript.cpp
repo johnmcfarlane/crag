@@ -26,7 +26,7 @@
 namespace 
 {
 	CONFIG_DEFINE (frame_duration_reaction_coefficient_base, float, 0.025f);
-	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost, float, 0.225f);
+	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost, float, .25f);
 	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost_half_life, float, 10.f);
 	
 	// TODO: Base it on full scene thread cycle.
@@ -67,7 +67,8 @@ namespace
 	public:
 		FrameRateRegulator() 
 		: _current_num_quaterne(invalid_num_quaterne)
-		, _min_recommended_num_quaterne(invalid_num_quaterne)
+		, _frame_duration_ratio_sum(_invalid_frame_rate_ratio)
+		, _frame_duration_ratio_count(0)
 		, _startup_time(app::GetTime())
 		{
 		}
@@ -75,17 +76,24 @@ namespace
 	private:
 		bool HasRecommendation() const
 		{
-			return _min_recommended_num_quaterne != invalid_num_quaterne;
+			return _frame_duration_ratio_count > 0;
 		}
 		
 		QuaterneCount GetRecommendedNumQuaterna() const
 		{
-			return _min_recommended_num_quaterne;
+			ASSERT(_frame_duration_ratio_count > 0);
+			auto frame_duration_ratio_avg = _frame_duration_ratio_sum / _frame_duration_ratio_count;
+
+			auto recommended_num_quaterne = MakeRecommendation(frame_duration_ratio_avg, _current_num_quaterne, _startup_time);
+
+			return recommended_num_quaterne;
 		}
 		
+		// called after GetRecommendedNumQuaterna
 		void PostRecommendation()
 		{
-			_min_recommended_num_quaterne = invalid_num_quaterne;
+			_frame_duration_ratio_sum = 0;
+			_frame_duration_ratio_count = 0;
 		}
 		
 		void BeginExit()
@@ -121,17 +129,17 @@ namespace
 			auto frame_duration_ratio = message.frame_duration_ratio;
 			frame_duration_ratio = std::max(frame_duration_ratio, std::numeric_limits<float>::min());
 			
-			QuaterneCount recommended_num_quaterne = MakeRecommendation(frame_duration_ratio, _current_num_quaterne);
-			_min_recommended_num_quaterne = std::min(_min_recommended_num_quaterne, recommended_num_quaterne);
+			_frame_duration_ratio_sum += frame_duration_ratio;
+			++ _frame_duration_ratio_count;
 		}
 		
-		QuaterneCount MakeRecommendation(float const & frame_duration_ratio, QuaterneCount num_quaterne)
+		static QuaterneCount MakeRecommendation(float const & frame_duration_ratio, QuaterneCount num_quaterne, core::Time startup_time)
 		{
 			ASSERT(frame_duration_ratio >= 0);
 			ASSERT(! IsInf(frame_duration_ratio));
 			
 			float frame_duration_ratio_log = std::log(frame_duration_ratio);
-			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient());
+			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient(startup_time));
 			
 			auto raw_recommended_num_quaterne = static_cast<float>(num_quaterne);
 			raw_recommended_num_quaterne *= frame_duration_ratio_exp;
@@ -156,9 +164,9 @@ namespace
 		}
 		
 		// Annealing stage where changes to num quaterne are relatively high.
-		float CalculateFrameRateReactionCoefficient() const
+		static float CalculateFrameRateReactionCoefficient(core::Time startup_time)
 		{
-			core::Time sim_time = app::GetTime() - _startup_time;
+			core::Time sim_time = app::GetTime() - startup_time;
 			float boost_factor = std::pow(.5f, static_cast<float>(sim_time) / frame_duration_reaction_coefficient_boost_half_life);
 			float boost_summand = frame_duration_reaction_coefficient_boost * boost_factor;
 			float base_summand = frame_duration_reaction_coefficient_base;
@@ -167,8 +175,12 @@ namespace
 		
 		// variables
 		QuaterneCount _current_num_quaterne;
-		QuaterneCount _min_recommended_num_quaterne;
+		float _frame_duration_ratio_sum;
+		int _frame_duration_ratio_count;
 		core::Time _startup_time;
+		
+		// constants
+		static float constexpr _invalid_frame_rate_ratio = -1.f;
 	};
 	
 	// a regulator which recommends changes to the number of quaterne based on
@@ -209,7 +221,7 @@ namespace
 			ASSERT(message.mesh_generation_period >= 0);
 	
 			auto max_mesh_generation_period = form::Engine::Daemon::ShutdownTimeout() * max_mesh_generation_period_proportion;
-			if (message.mesh_generation_period > max_mesh_generation_period)
+			if (message.mesh_generation_period < max_mesh_generation_period)
 			{
 				_min_recommended_num_quaterne = invalid_num_quaterne - 1;
 				return;
@@ -248,18 +260,14 @@ void Tick(RegulatorArray const & regulators)
 		auto recommended_num_quaterne = regulator->GetRecommendedNumQuaterna();
 		
 		worst_num_quaterne = std::min(worst_num_quaterne, recommended_num_quaterne);
+
+		regulator->PostRecommendation();
 	}
 
-	//DEBUG_MESSAGE("current:%d recommended:%d", _current_num_quaterne.GetNumber(), recommended_num_quaterne.GetNumber());
 	form::Daemon::Call([worst_num_quaterne] (form::Engine & engine) 
 	{
 		engine.OnSetRecommendedNumQuaterne(worst_num_quaterne);
 	});
-	
-	for (auto regulator : regulators)
-	{
-		regulator->PostRecommendation();
-	}
 }
 
 void RegulatorScript(applet::AppletInterface & applet_interface)

@@ -128,9 +128,9 @@ namespace gfx
 		}
 		
 		// get state
-		int GetNumIndices() const
+		bool empty() const
 		{
-			return _num_indices;
+			return _num_indices == 0;
 		}
 		
 		bool IsInitialized() const
@@ -170,7 +170,7 @@ namespace gfx
 		void Draw() const
 		{
 			ASSERT(IsBound());
-			_ibo.DrawElements(GL_TRIANGLES, _num_indices, 0);
+			_ibo.DrawElements(GL_TRIANGLES, _num_indices);
 		}
 
 	private:

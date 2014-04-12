@@ -11,6 +11,8 @@
 
 #include "form/defs.h"
 
+#include "gfx/LodParameters.h"
+
 namespace form 
 {
 	// forward-declarations
@@ -27,23 +29,23 @@ namespace form
 		
 		CalculateNodeScoreFunctor();
 
-		// Returns a ray that is significantly different to any valid ray. 
-		static Ray3 GetInvalidRay();
+		// Returns a lod center that is significantly different to any valid position. 
+		static gfx::LodParameters const & GetInvalidLodParameters();
 		
-		// Returns true iff using the functor with the given ray instead
+		// Returns true iff using the functor with the given lod center instead
 		// would yield significantly different scores.
-		bool IsSignificantlyDifferent(Ray3 const & other_camera_ray) const;
+		bool IsSignificantlyDifferent(Vector3 const & other_lod_center) const;
 		
 		void ResetCounters();
 		geom::Vector2f GetLeafScoreRange() const;
 		Scalar GetMinLeafDistanceSquared() const;
 		
-		void SetCameraRay(Ray3 const & new_camera_ray);
+		void SetLodParameters(gfx::LodParameters const & lod_parameters);
 
 		void operator() (Node & node);
 
 	private:
-		Ray3 camera_ray;
+		gfx::LodParameters _lod_parameters;
 		Scalar min_recalc_distance_squared;
 		Scalar min_score_distance_squared;
 		Scalar inverse_min_score_distance_squared;

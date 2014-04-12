@@ -18,6 +18,18 @@
 
 #include <ode/collision.h>
 
+#if ! defined(NDEBUG)
+//#define CRAG_PHYSICS_RAY_CAST_DEBUG
+#endif
+
+#if defined(CRAG_PHYSICS_RAY_CAST_DEBUG)
+#include "gfx/Debug.h"
+
+#if ! defined(CRAG_GFX_DEBUG)
+#error Pointless definition of CRAG_PHYSICS_RAY_CAST_DEBUG
+#endif
+#endif
+
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +132,24 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 
 void RayCast::ResetResult()
 {
+#if defined(CRAG_PHYSICS_RAY_CAST_DEBUG)
+	// draw previous ray result
+	auto scan_ray = GetRay();
+	auto start = scan_ray.position;
+	auto end = geom::Project(scan_ray, GetLength());
+	if (_result)
+	{
+		auto distance = _result.GetDistance();
+		auto penetration_position = geom::Project(scan_ray, distance);
+		gfx::Debug::AddLine(start, penetration_position, gfx::Debug::Color::Yellow());
+		gfx::Debug::AddLine(penetration_position, end, gfx::Debug::Color::Red());
+	}
+	else
+	{
+		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
+	}
+#endif
+
 	_result = form::RayCastResult();
 }
 

@@ -13,6 +13,11 @@
 
 #include "geom/origin.h"
 
+namespace gfx
+{
+	struct LodParameters;
+}
+
 namespace form
 {
 	class Formation;
@@ -54,7 +59,7 @@ namespace form
 		void RemoveFormation(Formation const & formation);
 		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		
-		void Tick(geom::rel::Ray3 const & camera_ray);
+		void Tick(gfx::LodParameters const & lod_parameters);
 		void GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const;
 	private:
 		

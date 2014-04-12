@@ -29,7 +29,8 @@ namespace geom
 	// Returns a copy of v with unit length. 
 	// Is undefined when input is zero length.
 	// Slow but accurate. 
-	template<typename S, int N> Vector<S, N> Normalized(Vector<S, N> const & v)
+	template <typename T>
+	T Normalized(T const & v)
 	{
 		return v * InvSqrt(LengthSq(v));
 	}
@@ -37,7 +38,8 @@ namespace geom
 	// Returns a copy of v with given length. 
 	// Is undefined when input is zero.
 	// Slow but accurate. 
-	template<typename S, int N> Vector<S, N> Resized(Vector<S, N> const & v, S length)
+	template <typename T, typename S> 
+	T Resized(T const & v, S length)
 	{
 		return v * (InvSqrt(LengthSq(v)) * length);
 	}
@@ -45,7 +47,8 @@ namespace geom
 	// Returns a copy of v with unit length. 
 	// Is undefined when input is zero length.
 	// Fast but inaccurate. 
-	template<typename S, int N> Vector<S, N> FastNormalized(Vector<S, N> const & v)
+	template <typename T>
+	T FastNormalized(T const & v)
 	{
 		return v * FastInvSqrt(LengthSq(v));
 	}
@@ -53,7 +56,8 @@ namespace geom
 	// Converts v to unit vector. 
 	// Is undefined when input is zero length.
 	// Slow but accurate. 
-	template<typename S, int N> void Normalize(Vector<S, N> & v)
+	template <typename T> 
+	void Normalize(T & v)
 	{
 		v *= InvSqrt(LengthSq(v));
 	}
@@ -61,23 +65,17 @@ namespace geom
 	// Sets v to given length. 
 	// Is undefined when length is zero.
 	// Slow but accurate. 
-	template<typename S, int N> void Resize(Vector<S, N> & v, S length)
+	template <typename T, typename S> 
+	void Resize(T const & v, S length)
 	{
 		v *= (InvSqrt(LengthSq(v)) * length);
-	}
-
-	// Sets r to given length. 
-	// Is undefined when length is zero.
-	// Slow but accurate. 
-	template<typename S, int N> void Resize(Ray<S, N> & r, S length)
-	{
-		Resize(r.direction, length);
 	}
 
 	// Converts v to unit vector and returns v. 
 	// Is undefined when input is zero length.
 	// Fast but inaccurate. 
-	template<typename S, int N> void FastNormalize(Vector<S, N> & v)
+	template <typename T> 
+	void FastNormalize(T & v)
 	{
 		v *= FastInvSqrt(LengthSq(v));
 	}
@@ -111,6 +109,13 @@ namespace geom
 				dimensions.z * dimensions.x) * S(2);
 	}
 
+	// given a regular, convex polygon with points of unit distance from center,
+	// returns the area
+	template <typename S>
+	S constexpr GetPolygonArea(int num_sides)
+	{
+		return std::sin(S(PI / num_sides)) * std::cos(S(PI / num_sides)) * num_sides;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Volume

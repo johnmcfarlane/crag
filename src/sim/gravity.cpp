@@ -23,7 +23,7 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (gravitational_force, float, 0.000000001f);
+	CONFIG_DEFINE (gravitational_force, float, 0.0000000025f);
 
 	// Given a position and a mass at that position, returns a 
 	// reasonable approximation of the weight vector at that position.
@@ -35,7 +35,7 @@ namespace
 			auto location = entity.GetLocation();
 			if (location)
 			{
-				force += location->GetGravitationalForce(pos);
+				force += location->GetGravitationalAttraction(pos);
 			}
 		});
 		
@@ -56,7 +56,7 @@ namespace
 		Vector3 gravitational_force_per_second = Weight(engine, position, mass);
 		Vector3 gravity = gravitational_force_per_second / Scalar(delta);
 		
-		body.AddForce(gravity);
+		body.SetGravitationalForce(gravity);
 	}
 	
 }

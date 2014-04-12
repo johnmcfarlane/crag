@@ -23,6 +23,7 @@
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
+#include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
@@ -54,8 +55,9 @@ Engine::Engine()
 : quit_flag(false)
 , paused(false)
 , _time(0)
-, _camera(geom::rel::Ray3::Zero())
+, _camera(Ray3::Zero())
 , _origin(geom::abs::Vector3::Zero())
+, _lod_parameters({ Vector3::Zero(), 1.f })
 , _physics_engine(ref(new physics::Engine))
 , _collision_scene(ref(new form::Scene(512, 512)))
 , _tick_roster(ref(new core::locality::Roster))
@@ -126,7 +128,7 @@ void Engine::operator() (gfx::SetCameraEvent const & event)
 	_camera = geom::AbsToRel(camera_ray, _origin);
 }
 
-geom::rel::Ray3 const & Engine::GetCamera() const
+Ray3 const & Engine::GetCamera() const
 {
 	return _camera;
 }
@@ -134,7 +136,7 @@ geom::rel::Ray3 const & Engine::GetCamera() const
 void Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	// figure out the delta
-	geom::rel::Vector3 delta = geom::Cast<geom::rel::Scalar>(event.origin - _origin);
+	auto delta = geom::Cast<Scalar>(event.origin - _origin);
 
 	// quit if there's no change
 	if (geom::LengthSq(delta) == 0)
@@ -155,6 +157,9 @@ void Engine::operator() (gfx::SetOriginEvent const & event)
 	
 	// camera
 	_camera = geom::Convert(_camera, _origin, event.origin);
+	
+	// LOD parameters
+	_lod_parameters.center = geom::Convert(_lod_parameters.center, _origin, event.origin);
 
 	_origin = event.origin;
 }
@@ -162,6 +167,16 @@ void Engine::operator() (gfx::SetOriginEvent const & event)
 geom::abs::Vector3 const & Engine::GetOrigin() const
 {
 	return _origin;
+}
+
+void Engine::operator() (gfx::SetLodParametersEvent const & event)
+{
+	_lod_parameters = event.parameters;
+}
+
+gfx::LodParameters const & Engine::GetLodParameters() const
+{
+	return _lod_parameters;
 }
 
 void Engine::OnTogglePause()
@@ -241,6 +256,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	// stop listening for SetCameraEvent
 	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
 	ipc::Listener<Engine, gfx::SetOriginEvent>::SetIsListening(false);
+	ipc::Listener<Engine, gfx::SetLodParametersEvent>::SetIsListening(false);
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetTime(std::numeric_limits<core::Time>::max());
@@ -255,7 +271,7 @@ void Engine::Tick()
 		return;
 	}
 
-	_collision_scene.Tick(_camera);
+	_collision_scene.Tick(_lod_parameters);
 
 	_time += sim_tick_duration;
 	

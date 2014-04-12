@@ -1,5 +1,5 @@
 //
-//  defs.h
+//  sim/defs.h
 //  crag
 //
 //  Created by John on 2/11/10.

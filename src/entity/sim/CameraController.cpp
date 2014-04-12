@@ -19,18 +19,31 @@
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
+#include "gfx/SetLodParametersEvent.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
+
+#include "geom/origin.h"
 
 using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (camera_controller_height, float, 10.f);
-	CONFIG_DEFINE (camera_controller_distance, float, 10.5f);
-	CONFIG_DEFINE (camera_up_push_magnitude, float, 10.f);
+	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
+	CONFIG_DEFINE (camera_controller_distance, float, 10.f);
+	CONFIG_DEFINE (camera_push_magnitude, float, 1000.f);
+	CONFIG_DEFINE (camera_lod_radius, float, 5.f);
 	
+	void UpdateLodParameters(Vector3 const & /*camera_translation*/, Vector3 const & subject_translation)
+	{
+		// broadcast new camera position
+		gfx::SetLodParametersEvent event;
+		event.parameters.center = subject_translation;
+		event.parameters.min_distance = camera_lod_radius;
+		Daemon::Broadcast(event);
+	}
+
 	// given information about camera location and direction, 
 	// send a 'set camera' event
 	void UpdateCamera(Vector3 const & camera_translation, geom::abs::Vector3 const & origin, Vector3 const & forward, Vector3 const & up)
@@ -62,15 +75,12 @@ namespace
 		auto altitude = ray_cast_result.GetDistance();
 		if (altitude < camera_controller_height)
 		{
-			push += up * camera_up_push_magnitude * (1.f - (altitude / camera_controller_height));
+			push += up * (1.f - (altitude / camera_controller_height));
 		}
 
-		if (distance > camera_controller_distance)
-		{
-			push += forward * distance / camera_controller_distance;
-		}
+		push += forward * (distance - camera_controller_distance) / camera_controller_distance;
 
-		camera_body.AddForce(push);
+		camera_body.AddForce(push * camera_push_magnitude);
 	}
 }
 
@@ -190,6 +200,7 @@ void CameraController::Update()
 	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
 	auto up = geom::Normalized(camera_translation - relative_origin);
 
+	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_translation, origin, forward, up);
 	UpdateBody(camera_body, _ray_cast, forward, up, distance);
 	UpdateCameraRayCast();

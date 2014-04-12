@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# ensure necessary OS packages are up to date
+
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install automake ia32-libs java-package libtool subversion

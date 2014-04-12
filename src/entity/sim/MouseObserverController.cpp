@@ -20,6 +20,7 @@
 #include "physics/Body.h"
 
 #include "gfx/SetCameraEvent.h"
+#include "gfx/SetLodParametersEvent.h"
 
 #include "ipc/Daemon.h"
 
@@ -30,6 +31,7 @@
 #include "core/Roster.h"
 
 CONFIG_DECLARE (sim_tick_duration, core::Time);
+CONFIG_DECLARE (camera_near, float);
 
 namespace
 {
@@ -187,9 +189,15 @@ void MouseObserverController::UpdateCamera() const
 	const auto & origin = engine.GetOrigin();
 
 	// broadcast new camera position
-	gfx::SetCameraEvent event;
-	event.transformation = geom::RelToAbs(transformation, origin);
-	Daemon::Broadcast(event);
+	gfx::SetCameraEvent set_camera_event;
+	set_camera_event.transformation = geom::RelToAbs(transformation, origin);
+	Daemon::Broadcast(set_camera_event);
+
+	// broadcast new lod center
+	gfx::SetLodParametersEvent set_lod_parameters_event;
+	set_lod_parameters_event.parameters.center = transformation.GetTranslation();
+	set_lod_parameters_event.parameters.min_distance = camera_near;
+	Daemon::Broadcast(set_lod_parameters_event);
 }
 
 physics::Body & MouseObserverController::GetBody()
