@@ -10,8 +10,6 @@
 #pragma once
 
 #include <ode/collision.h>
-#include <ode/common.h>
-#include <ode/contact.h>
 #include <ode/mass.h>
 
 ////////////////////////////////////////////////////////////////////////////////

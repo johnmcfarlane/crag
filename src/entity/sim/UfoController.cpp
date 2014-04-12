@@ -185,7 +185,7 @@ Vector2 UfoController::HandleEvent(SDL_Event const & event)
 			break;
 		
 		case SDL_MOUSEMOTION:
-			return Vector2(event.motion.xrel, event.motion.yrel);
+			return Vector2(Scalar(event.motion.xrel), Scalar(event.motion.yrel));
 			
 		case SDL_MOUSEBUTTONDOWN:
 			++ _num_presses;
