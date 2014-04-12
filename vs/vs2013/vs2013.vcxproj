@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\vs\SDL2\include;..\..\vs\ode\include;..\..\vs\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\SDL2\include;..\ode\include;..\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);C:\Users\john\crag\vs\glew\lib\Release\Win32;..\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\src\entity\sim\CameraController.h" />
     <ClInclude Include="..\..\src\entity\sim\Contact.h" />
     <ClInclude Include="..\..\src\entity\sim\Genome.h" />
+    <ClInclude Include="..\..\src\entity\sim\HoverThruster.h" />
     <ClInclude Include="..\..\src\entity\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\entity\sim\MouseObserverController.h" />
     <ClInclude Include="..\..\src\entity\sim\ObserverInput.h" />
@@ -159,7 +160,9 @@
     <ClInclude Include="..\..\src\entity\sim\Sensor.h" />
     <ClInclude Include="..\..\src\entity\sim\Thruster.h" />
     <ClInclude Include="..\..\src\entity\sim\TouchObserverController.h" />
+    <ClInclude Include="..\..\src\entity\sim\UfoController.h" />
     <ClInclude Include="..\..\src\entity\sim\VehicleController.h" />
+    <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
     <ClInclude Include="..\..\src\form\CalculateNodeScoreFunctor.h" />
     <ClInclude Include="..\..\src\form\CastRay.h" />
@@ -209,7 +212,6 @@
     <ClInclude Include="..\..\src\gfx\Debug.h" />
     <ClInclude Include="..\..\src\gfx\defs.h" />
     <ClInclude Include="..\..\src\gfx\Engine.h" />
-    <ClInclude Include="..\..\src\gfx\Fence.h" />
     <ClInclude Include="..\..\src\gfx\Font.h" />
     <ClInclude Include="..\..\src\gfx\FrameBuffer.h" />
     <ClInclude Include="..\..\src\gfx\glHelpers.h" />
@@ -255,6 +257,7 @@
     <ClInclude Include="..\..\src\pch.h" />
     <ClInclude Include="..\..\src\physics\Body.h" />
     <ClInclude Include="..\..\src\physics\BoxBody.h" />
+    <ClInclude Include="..\..\src\physics\CylinderBody.h" />
     <ClInclude Include="..\..\src\physics\defs.h" />
     <ClInclude Include="..\..\src\physics\Engine.h" />
     <ClInclude Include="..\..\src\physics\GhostBody.h" />
@@ -262,7 +265,7 @@
     <ClInclude Include="..\..\src\physics\MeshBody.h" />
     <ClInclude Include="..\..\src\physics\PassiveLocation.h" />
     <ClInclude Include="..\..\src\physics\RayCast.h" />
-    <ClInclude Include="..\..\src\physics\SphericalBody.h" />
+    <ClInclude Include="..\..\src\physics\SphereBody.h" />
     <ClInclude Include="..\..\src\scripts\GameScript.h" />
     <ClInclude Include="..\..\src\scripts\MainScript.h" />
     <ClInclude Include="..\..\src\scripts\MonitorOrigin.h" />
@@ -317,6 +320,7 @@
     <ClCompile Include="..\..\src\entity\sim\CameraController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Contact.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Genome.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\HoverThruster.cpp" />
     <ClCompile Include="..\..\src\entity\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\sim\MouseObserverController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\ObserverInput.cpp" />
@@ -326,7 +330,9 @@
     <ClCompile Include="..\..\src\entity\sim\Sensor.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Thruster.cpp" />
     <ClCompile Include="..\..\src\entity\sim\TouchObserverController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\UfoController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VehicleController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
     <ClCompile Include="..\..\src\form\CalculateNodeScoreFunctor.cpp" />
     <ClCompile Include="..\..\src\form\CastRay.cpp" />
@@ -355,7 +361,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src\gfx\Fence.cpp" />
     <ClCompile Include="..\..\src\gfx\Font.cpp" />
     <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
@@ -403,6 +408,7 @@
     </ClCompile>
     <ClCompile Include="..\..\src\physics\Body.cpp" />
     <ClCompile Include="..\..\src\physics\BoxBody.cpp" />
+    <ClCompile Include="..\..\src\physics\CylinderBody.cpp" />
     <ClCompile Include="..\..\src\physics\Engine.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Engine1</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Engine1</ObjectFileName>
@@ -412,7 +418,7 @@
     <ClCompile Include="..\..\src\physics\MeshBody.cpp" />
     <ClCompile Include="..\..\src\physics\PassiveLocation.cpp" />
     <ClCompile Include="..\..\src\physics\RayCast.cpp" />
-    <ClCompile Include="..\..\src\physics\SphericalBody.cpp" />
+    <ClCompile Include="..\..\src\physics\SphereBody.cpp" />
     <ClCompile Include="..\..\src\scripts\GameScript.cpp" />
     <ClCompile Include="..\..\src\scripts\MainScript.cpp" />
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
