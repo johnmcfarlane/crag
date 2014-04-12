@@ -47,8 +47,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		return false;
 	}
 	
-	ASSERT(window == nullptr);
-
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -88,10 +86,13 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	}
 	
 	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
-	window = SDL_CreateWindow(title, 
-							  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-							  resolution.x, resolution.y, 
-							  flags);
+
+	ASSERT(window == nullptr);
+	window = SDL_CreateWindow(
+		title, 
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+		resolution.x, resolution.y, 
+		flags);
 	
 	if (window == 0)
 	{
