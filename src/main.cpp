@@ -314,7 +314,7 @@ namespace
 	bool CragMain(int argc, char * const * argv)
 	{
 		PrintMessage(stdout,
-			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
+			"Crag Demo; Copyright 2010-2014 John McFarlane\n");
 
 		core::DebugSetThreadName("main");
 
