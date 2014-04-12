@@ -19,18 +19,12 @@
 #include <sys/resource.h>
 #endif
 
-#if ! defined(__ANDROID__) && ! defined(WIN32)
-#define CRAG_LINUX_SDL_WORKAROUND
-#endif
-
 namespace 
 {
 	bool _has_focus = true;
 	
 	SDL_Window * window = nullptr;
-#if defined(CRAG_LINUX_SDL_WORKAROUND)
-	SDL_Renderer * renderer = nullptr;
-#endif
+	SDL_Renderer * renderer = nullptr;	// this isn't needed for Win32/Android
 	SDL_GLContext context = nullptr;
 
 	int refresh_rate = -1;
@@ -133,14 +127,12 @@ bool app::InitContext()
 {
 	ASSERT(window != nullptr);
 
-#if defined(CRAG_LINUX_SDL_WORKAROUND)
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
 	if (renderer == nullptr)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
 	}
-#endif
 	
 	context = SDL_GL_CreateContext(window);
 	if (context == nullptr)
@@ -158,11 +150,9 @@ void app::DeinitContext()
 	SDL_GL_DeleteContext(context);
 	context = nullptr;
 
-#if defined(CRAG_LINUX_SDL_WORKAROUND)
 	ASSERT(renderer != nullptr);
 	SDL_DestroyRenderer(renderer);
 	renderer = nullptr;
-#endif
 }
 
 char const * app::GetFullPath(char const * filepath)
