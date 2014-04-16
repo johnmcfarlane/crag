@@ -7,9 +7,4 @@ project(crag)
 # TODO: -Weffc++ -ftemplate-backtrace-limit=0
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -pthread -DPROFILE -DdSINGLE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-exceptions -fno-unwind-tables")
 
-#set(CMAKE_CXX_COMPILER "/usr/bin/colorgcc")
-#set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-#set(CMAKE_CXX_COMPILER "/usr/bin/c++")
-#set(CMAKE_CXX_COMPILER "/usr/bin/clang")
-
 add_subdirectory(../../src bin)
