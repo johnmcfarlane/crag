@@ -97,7 +97,8 @@ bool MeshObject::GenerateShadowVolume(Light const & light, ShadowVolume & shadow
 	auto shadow_volume_mesh = GenerateShadowVolumeMesh(* _plain_mesh, rotated_to_light);
 	if (shadow_volume_mesh.empty())
 	{
-		return false;
+		// TODO: Fix for saucer mesh
+		return true;
 	}
 
 	shadow_volume.Set(shadow_volume_mesh);

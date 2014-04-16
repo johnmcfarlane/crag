@@ -40,9 +40,10 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::UfoController member functions
 
-UfoController::UfoController(Entity & entity)
+UfoController::UfoController(Entity & entity, EntityHandle ball_entity)
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
+, _ball_entity(ball_entity)
 , _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, ufo_controlled_thrust)), false, 1.f))
 , _num_presses(0)
 {
@@ -56,11 +57,20 @@ UfoController::UfoController(Entity & entity)
 
 UfoController::~UfoController()
 {
-	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
+	auto & engine = GetEntity().GetEngine();
 
+	// deactivate listener
+	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
+	
 	// roster
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
+	auto & roster = engine.GetTickRoster();
 	roster.RemoveCommand(* this, & UfoController::Tick);
+	
+	// remove ball
+	if (_ball_entity)
+	{
+		engine.DestroyObject(_ball_entity.GetUid());
+	}
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)

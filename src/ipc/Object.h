@@ -105,6 +105,7 @@ namespace ipc
 			return _engine;
 		}
 		
+		// TODO: This should be GetHandle
 		Uid GetUid() const
 		{
 			return _uid;

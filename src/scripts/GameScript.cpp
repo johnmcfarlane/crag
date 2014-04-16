@@ -14,6 +14,7 @@
 
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnSkybox.h"
+#include "entity/SpawnPlayer.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -39,6 +40,7 @@
 using geom::Vector3f;
 
 CONFIG_DECLARE(origin_dynamic_enable, bool);
+CONFIG_DECLARE(player_type, int);
 
 namespace 
 {
@@ -49,8 +51,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 ufo_start_pos(0, 9999400, 0);
-	sim::Vector3 camera_start_pos(10, 9999400, 0);
+	sim::Vector3 player_start_pos(0, 9999400, 0);
+	sim::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
@@ -59,7 +61,7 @@ namespace
 
 	Random random_sequence;
 	applet::AppletInterface * _applet_interface;
-	sim::EntityHandle _ufo;
+	sim::EntityHandle _player;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
@@ -224,11 +226,15 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
-	// Create ufo.
-	_ufo = SpawnUfo(ufo_start_pos);
+	// Create player.
+	_player = SpawnPlayer(player_start_pos, PlayerType(player_type));
 
 	// Create camera.
-	sim::EntityHandle camera = SpawnCamera(camera_start_pos, _ufo);
+	sim::EntityHandle camera;
+	if (player_type != int(PlayerType::observer))
+	{
+		camera = SpawnCamera(camera_start_pos, _player);
+	}
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
@@ -250,7 +256,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 		_shapes.pop_back();
 	}
 	
-	_ufo.Destroy();
+	_player.Destroy();
 	sun.Destroy();
 	planet.Destroy();
 	

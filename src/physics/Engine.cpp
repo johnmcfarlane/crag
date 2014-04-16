@@ -166,7 +166,7 @@ void Engine::DestroyShape(CollisionHandle shape)
 
 void Engine::Attach(Body const & body1, Body const & body2)
 {
-	dJointID joint_id = dJointCreateBall(world, 0);
+	dJointID joint_id = dJointCreateFixed(world, 0);
 	if (joint_id == nullptr)
 	{
 		ASSERT(false);
@@ -259,6 +259,11 @@ void Engine::CreateJoints()
 		
 		dBodyID body1 = dGeomGetBody(contact.geom.g1);
 		dBodyID body2 = dGeomGetBody(contact.geom.g2);
+		
+		if (! body1 && ! body2)
+		{
+			continue;
+		}
 		
 		// body sanity tests
 		ASSERT(body1 != body2);

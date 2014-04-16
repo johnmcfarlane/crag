@@ -82,7 +82,6 @@ namespace sim
 		void OnQuit();
 		
 		virtual void OnAddObject(super::Object & entity) override final;
-		void OnAttachEntities(Uid uid1, Uid uid2);
 		
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);

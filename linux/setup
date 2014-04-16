@@ -19,6 +19,16 @@ make install
 cd ../..
 
 ################################################################################
+# clean build folders
+
+git clean -Xdf bin
+git clean -Xdf debug
+git clean -Xdf lib
+git clean -Xdf include
+git clean -Xdf release
+git clean -Xdf share
+
+################################################################################
 # cmake
 
 cd debug

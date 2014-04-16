@@ -33,6 +33,8 @@
 #define INIT_CAP(CAP,ENABLED) { CAP,ENABLED }
 #else
 #define INIT_CAP(CAP,ENABLED) { CAP,ENABLED,#CAP }
+
+//#define CRAG_DEBUG_SHADOW_VOLUMES
 #endif
 
 using core::Time;
@@ -991,7 +993,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	Disable(GL_BLEND);
 	glDepthFunc(depth_func);
 
-#if 0
+#if defined(CRAG_DEBUG_SHADOW_VOLUMES)
 	// draw shadow volumes to color buffer for diagnostic purposes
 	bool flip = (int(app::GetTime() * 256) & 255) == 0;
 	if (flip)
