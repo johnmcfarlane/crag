@@ -80,6 +80,8 @@ namespace
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
 	CONFIG_DEFINE (enable_beam, bool, false);
 
+	CONFIG_DEFINE (ufo_color, gfx::Color4f, gfx::Color4f::Cyan());
+
 	CONFIG_DEFINE (saucer_height, physics::Scalar, .6f);
 	CONFIG_DEFINE (saucer_radius, physics::Scalar, 1.f);
 	CONFIG_DEFINE (saucer_cylinder_height, physics::Scalar, .01f);
@@ -664,11 +666,10 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
-		gfx::Color4f const & color = gfx::Color4f::White();
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, lit_vbo, plain_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
 		if (enable_beam)
@@ -723,7 +724,6 @@ namespace
 
 		auto velocity = Vector3::Zero();
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
-		gfx::Color4f const & color = gfx::Color4f::White();
 
 		// resources
 		auto & resource_manager = crag::core::ResourceManager::Get();
@@ -760,7 +760,7 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, color);
+				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color);
 				ball_entity->SetModel(model);
 			}
 			
@@ -772,7 +772,7 @@ namespace
 		
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, scale, vbo, shadow_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
 		ufo_entity.SetModel(model_handle);
 
 		// controller
