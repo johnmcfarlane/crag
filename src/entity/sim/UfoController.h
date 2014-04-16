@@ -28,7 +28,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		UfoController(Entity & entity, EntityHandle ball_entity);
+		UfoController(Entity & entity, Scalar max_thrust, EntityHandle ball_entity);
 		~UfoController();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController);

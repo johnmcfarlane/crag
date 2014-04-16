@@ -89,6 +89,7 @@ namespace
 	CONFIG_DEFINE (saucer_ball_density, float, 1);
 	CONFIG_DEFINE (saucer_ball_linear_damping, float, 0.005f);
 	CONFIG_DEFINE (saucer_ball_angular_damping, float, 0.005f);
+	CONFIG_DEFINE (saucer_thrust, float, 16.f);
 	CONFIG_DEFINE (saucer_linear_damping, physics::Scalar, 0.01f);
 	CONFIG_DEFINE (saucer_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
@@ -97,6 +98,7 @@ namespace
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
 	CONFIG_DEFINE (thargoid_inner_radius_ratio, physics::Scalar, .5f);
+	CONFIG_DEFINE (thargoid_thrust, float, 9.f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// mesh generation
@@ -716,7 +718,7 @@ namespace
 		AddHoverThruster(controller, Vector3(0.f, .25f, 0.f), .1f);
 	}
 
-	void ConstructUfo(Entity & ufo_entity, Vector3 const & position, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar radius)
+	void ConstructUfo(Entity & ufo_entity, Vector3 const & position, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
 	{
 		// misc preparation
 		Engine & engine = ufo_entity.GetEngine();
@@ -776,7 +778,7 @@ namespace
 		ufo_entity.SetModel(model_handle);
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle));
+		auto & controller = ref(new UfoController(ufo_entity, thrust, ball_entity_handle));
 		ufo_entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
@@ -950,15 +952,15 @@ sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_t
 			break;
 
 		case PlayerType::thargoid:
-			ConstructUfo(entity, position, "ThargoidVbo", "ThargoidShadowMesh", player_type, thargoid_radius);
+			ConstructUfo(entity, position, "ThargoidVbo", "ThargoidShadowMesh", player_type, thargoid_thrust, thargoid_radius);
 			break;
 
 		case PlayerType::cos_saucer:
-			ConstructUfo(entity, position, "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_radius);
+			ConstructUfo(entity, position, "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 
 		case PlayerType::ball_saucer:
-			ConstructUfo(entity, position, "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_radius);
+			ConstructUfo(entity, position, "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 		}
 	});
