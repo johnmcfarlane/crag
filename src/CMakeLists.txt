@@ -40,6 +40,7 @@ add_executable(crag
 	entity/sim/VernierThruster.cpp
 	entity/SpawnEntityFunctions.cpp
 	entity/SpawnSkybox.cpp
+	entity/SpawnPlayer.cpp
 	form/CalculateNodeScoreFunctor.cpp
 	form/CastRay.cpp
 	form/Engine.cpp

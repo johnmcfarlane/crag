@@ -28,7 +28,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		UfoController(Entity & entity);
+		UfoController(Entity & entity, EntityHandle ball_entity);
 		~UfoController();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController);
@@ -53,6 +53,8 @@ namespace sim
 		core::EventWatcher _event_watcher;
 		
 		Matrix33 _camera_rotation;
+		
+		EntityHandle _ball_entity;
 		
 		Thruster * _main_thruster;
 		int _num_presses;

@@ -15,6 +15,7 @@
 
 #include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
+#include "entity/SpawnPlayer.h"
 #include "entity/SpawnSkybox.h"
 
 #include "applet/Applet.h"
@@ -36,6 +37,7 @@
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
+CONFIG_DECLARE(player_type, int);
 CONFIG_DEFINE(num_animats, int, 1);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
@@ -184,7 +186,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
+	sim::EntityHandle observer = SpawnPlayer(observer_start_pos, PlayerType(player_type));
 
 	// Create origin controller.
 	if (origin_dynamic_enable)
