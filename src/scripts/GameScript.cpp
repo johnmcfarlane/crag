@@ -236,6 +236,11 @@ void GameScript(applet::AppletInterface & applet_interface)
 		camera = SpawnCamera(camera_start_pos, _player);
 	}
 
+	// ball
+	sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
+	sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
+	_shapes.push_back(ball);
+
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
 	{
