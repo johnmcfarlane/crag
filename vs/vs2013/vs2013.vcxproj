@@ -163,6 +163,7 @@
     <ClInclude Include="..\..\src\entity\sim\UfoController.h" />
     <ClInclude Include="..\..\src\entity\sim\VehicleController.h" />
     <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
+    <ClInclude Include="..\..\src\entity\SpawnPlayer.h" />
     <ClInclude Include="..\..\src\entity\SpawnSkybox.h" />
     <ClInclude Include="..\..\src\form\CalculateNodeScoreFunctor.h" />
     <ClInclude Include="..\..\src\form\CastRay.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="..\..\src\entity\sim\UfoController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VehicleController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
     <ClCompile Include="..\..\src\form\CalculateNodeScoreFunctor.cpp" />
     <ClCompile Include="..\..\src\form\CastRay.cpp" />
