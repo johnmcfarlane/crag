@@ -38,7 +38,7 @@
 
 using geom::Vector3f;
 
-CONFIG_DECLARE(player_type, bool);
+CONFIG_DECLARE(player_type, int);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 namespace 
