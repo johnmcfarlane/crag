@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\src\entity\sim\HoverThruster.cpp" />
     <ClCompile Include="..\..\src\entity\sim\UfoController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
+    <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -290,6 +291,7 @@
     <ClInclude Include="..\..\src\entity\sim\HoverThruster.h" />
     <ClInclude Include="..\..\src\entity\sim\UfoController.h" />
     <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
+    <ClInclude Include="..\..\src\entity\SpawnPlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
