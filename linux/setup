@@ -4,6 +4,16 @@ set -o errexit
 sudo apt-get install make cmake g++-4.7 mercurial libglu1-mesa-dev libode-sp-dev libglew-dev libxi-dev build-essential
 
 ################################################################################
+# clean build folders
+
+git clean -Xdf bin
+git clean -Xdf debug
+git clean -Xdf lib
+git clean -Xdf include
+git clean -Xdf release
+git clean -Xdf share
+
+################################################################################
 # SDL
 
 hg clone http://hg.libsdl.org/SDL || true
@@ -14,19 +24,9 @@ hg update
 mkdir build || true
 cd build
 ../configure --prefix="$PWD/../.." --enable-static --disable-shared
-make
+make -j8
 make install
 cd ../..
-
-################################################################################
-# clean build folders
-
-git clean -Xdf bin
-git clean -Xdf debug
-git clean -Xdf lib
-git clean -Xdf include
-git clean -Xdf release
-git clean -Xdf share
 
 ################################################################################
 # cmake
