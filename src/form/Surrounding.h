@@ -13,6 +13,8 @@
 #include "QuaternaBuffer.h"
 #include "NodeBuffer.h"
 
+#include "gfx/LodParameters.h"
+
 #include "core/debug.h"
 
 #include "smp/vector.h"
@@ -21,7 +23,6 @@
 
 namespace form
 {
-	
 	////////////////////////////////////////////////////////////////////////////////
 	// forward-declarations
 	
@@ -72,18 +73,19 @@ namespace form
 		int GetTargetNumQuaterna() const;
 		void SetTargetNumQuaterna(int n);
 		
-		void Tick(Ray3 const & new_camera_ray);
+		void Tick(gfx::LodParameters const & lod_parameters);
 		void OnReset();
 		void ResetNodeOrigins(Vector3 const & origin_delta);
 	private:
 		void InitQuaterna(Quaterna const * end);
 		
 		void UpdateNodes();
-		void UpdateNodeScores();
+		void UpdateNodeScores(gfx::LodParameters const & lod_parameters);
 		void UpdateQuaterna();
 		bool ChurnNodes();
 	public:
 		
+		void ResetMeshPointers();
 		void GenerateMesh(Mesh & mesh);
 		
 		bool IsChildNode(Node const & node) const;
@@ -118,12 +120,10 @@ namespace form
 		
 		QuaternaBuffer _quaterna_buffer;
 		int _target_num_quaterne;
-		
 		// Pool of vertices from which to take the corners of nodes.
 		PointBuffer point_buffer;
 		
 		CalculateNodeScoreFunctor node_score_functor;
-		Ray3 cached_node_score_ray;	// ray used when last the node buffer's scores were recalculated en masse. 
 		
 		// used by ChurnNodes
 		SmpNodeVector _expandable_nodes;

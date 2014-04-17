@@ -53,8 +53,11 @@ namespace gfx
 		LeafNode::RenderList & GetRenderList();
 		LeafNode::RenderList const & GetRenderList() const;
 
+		Light::List & GetLightList();
 		Light::List const & GetLightList() const;
+
 		ShadowMap & GetShadows();
+		ShadowMap const & GetShadows() const;
 		
 		void SetResolution(geom::Vector2i const & r);
 		void SetCameraTransformation(Transformation const & transformation);

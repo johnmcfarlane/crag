@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 #include "RayCast.h"
-#include "SphericalBody.h"
+#include "SphereBody.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
@@ -144,6 +144,11 @@ CollisionHandle Engine::CreateSphere(Scalar radius) const
 	return dCreateSphere(space, radius);
 }
 
+CollisionHandle Engine::CreateCylinder(Scalar radius, Scalar length) const
+{
+	return dCreateCylinder(space, radius, length);
+}
+
 CollisionHandle Engine::CreateRay(Scalar length) const
 {
 	return dCreateRay(space, length);
@@ -161,7 +166,7 @@ void Engine::DestroyShape(CollisionHandle shape)
 
 void Engine::Attach(Body const & body1, Body const & body2)
 {
-	dJointID joint_id = dJointCreateBall(world, 0);
+	dJointID joint_id = dJointCreateFixed(world, 0);
 	if (joint_id == nullptr)
 	{
 		ASSERT(false);
@@ -225,8 +230,8 @@ form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const 
 
 void Engine::Collide(Sphere3 const & sphere, ContactInterface & callback)
 {
-	// create physics::SphericalBody object
-	SphericalBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
+	// create physics::SphereBody object
+	SphereBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
 	
 	// perform collision between ray_cast and all pre-existing objects
 	auto handle = body.GetCollisionHandle();
@@ -254,6 +259,11 @@ void Engine::CreateJoints()
 		
 		dBodyID body1 = dGeomGetBody(contact.geom.g1);
 		dBodyID body2 = dGeomGetBody(contact.geom.g2);
+		
+		if (! body1 && ! body2)
+		{
+			continue;
+		}
 		
 		// body sanity tests
 		ASSERT(body1 != body2);

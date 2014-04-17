@@ -15,7 +15,9 @@
 #include "scripts/TestScript.h"
 
 #include "form/Engine.h"
+
 #include "sim/Engine.h"
+
 #include "gfx/Engine.h"
 
 #include "applet/Engine.h"
@@ -55,6 +57,13 @@ int main(int argc, char * * argv)
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
+#if defined(CRAG_USE_GL)
+CONFIG_DEFINE (player_type, int, 4);
+#endif
+
+#if defined(CRAG_USE_GLES)
+CONFIG_DEFINE (player_type, int, 3);
+#endif
 
 CONFIG_DEFINE (profile_mode, bool, false);
 CONFIG_DECLARE (shadows_enabled, bool);
@@ -71,13 +80,13 @@ namespace
 #endif
 
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (video_full_screen, bool, true);
+	CONFIG_DEFINE (full_screen, bool, true);
 #elif defined(PROFILE)
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, false);
 #elif defined(NDEBUG)
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, true);
 #else
-	CONFIG_DEFINE (video_full_screen, bool, false);
+	CONFIG_DEFINE (full_screen, bool, false);
 #endif
 	
 	CONFIG_DEFINE (script_mode, int, 1);
@@ -122,13 +131,6 @@ namespace
 						break;
 					}
 					
-					case SDL_SCANCODE_F:
-						gfx::Daemon::Call([] (gfx::Engine & engine) 
-						{ 
-							engine.SetFlatShaded(! engine.GetFlatShaded());
-						});
-						break;
-
 					case SDL_SCANCODE_G:
 					{
 						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleGravity(); });
@@ -319,13 +321,13 @@ namespace
 	bool CragMain(int argc, char * const * argv)
 	{
 		PrintMessage(stdout,
-			"Crag Demo; Copyright 2010-2013 John McFarlane\n");
+			"Crag Demo; Copyright 2010-2014 John McFarlane\n");
 
 		core::DebugSetThreadName("main");
 
 		DEBUG_MESSAGE("-> CragMain");
 
-		// Instance the config manager first of all so that all the config variables, such as video_full_screen are correct.
+		// Instance the config manager first of all so that all the config variables, such as full_screen are correct.
 		core::ConfigManager config_manager;
 		if (! config_manager.ParseCommandLine(argc, argv))
 		{
@@ -348,7 +350,6 @@ namespace
 		}
 		
 		geom::Vector2i window_resolution(window_resolution_x, window_resolution_y);
-		bool full_screen = (! profile_mode) && video_full_screen;
 		if (! app::Init(window_resolution, full_screen, "Crag"))
 		{
 			return false;

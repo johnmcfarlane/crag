@@ -183,60 +183,51 @@ namespace
 	{
 		auto & manager = crag::core::ResourceManager::Get();
 	
-#if defined(CRAG_USE_GL)
-		char const * flat_shader_filename = "assets/glsl/flat_enabled.glsl";
-#elif defined(CRAG_USE_GLES)
-		// performs a no-op on its inputs to avoid flat shading;
-		// necessary shader, GL_OES_standard_derivatives, is available on some GLES2
-		// systems but as they often don't have an 'F' key, it's never enabled anyway
-		char const * flat_shader_filename = "assets/glsl/flat_disabled.glsl";
-#endif
-
 		static char const * light_shader_filename = "assets/glsl/light.glsl";
 
-		manager.Register<PolyProgram>("PolyProgram", [flat_shader_filename] ()
+		manager.Register<PolyProgram>("PolyProgram", [] ()
 		{
 			return PolyProgram(
 				{ "assets/glsl/poly.vert", light_shader_filename },
-				{ "assets/glsl/poly.frag", flat_shader_filename, light_shader_filename });
+				{ "assets/glsl/poly.frag", light_shader_filename });
 		});
 
-		manager.Register<ShadowProgram>("ShadowProgram", [flat_shader_filename] ()
+		manager.Register<ShadowProgram>("ShadowProgram", [] ()
 		{
 			return ShadowProgram(
 				{ "assets/glsl/shadow.vert", light_shader_filename },
 				{ "assets/glsl/shadow.frag", light_shader_filename });
 		});
 
-		manager.Register<ScreenProgram>("ScreenProgram", [flat_shader_filename] ()
+		manager.Register<ScreenProgram>("ScreenProgram", [] ()
 		{
 			return ScreenProgram(
 				{ "assets/glsl/screen.vert", light_shader_filename },
 				{ "assets/glsl/screen.frag", light_shader_filename });
 		});
 
-		manager.Register<DiskProgram>("SphereProgram", [flat_shader_filename] ()
+		manager.Register<DiskProgram>("SphereProgram", [] ()
 		{
 			return DiskProgram(
 				{ "assets/glsl/disk.vert", light_shader_filename },
 				{ "assets/glsl/sphere.frag", light_shader_filename });
 		});
 
-		manager.Register<DiskProgram>("DiskProgram", [flat_shader_filename] ()
+		manager.Register<DiskProgram>("DiskProgram", [] ()
 		{
 			return DiskProgram(
 				{ "assets/glsl/disk.vert", light_shader_filename },
 				{ "assets/glsl/disk.frag", light_shader_filename });
 		});
 
-		manager.Register<TexturedProgram>("SkyboxProgram", [flat_shader_filename] ()
+		manager.Register<TexturedProgram>("SkyboxProgram", [] ()
 		{
 			return TexturedProgram(
 				{ "assets/glsl/skybox.vert", light_shader_filename },
 				{ "assets/glsl/skybox.frag", light_shader_filename });
 		});
 
-		manager.Register<SpriteProgram>("SpriteProgram", [flat_shader_filename] ()
+		manager.Register<SpriteProgram>("SpriteProgram", [] ()
 		{
 			return SpriteProgram(
 				{ "assets/glsl/sprite.vert", light_shader_filename },

@@ -40,8 +40,7 @@ namespace ipc
 		{
 			if (! IsEmpty())
 			{
-				DEBUG_MESSAGE(SIZE_T_FORMAT_SPEC " object(s) remaining", _objects.size());
-				exit(0);
+				DEBUG_BREAK(SIZE_T_FORMAT_SPEC " object(s) remaining", _objects.size());
 			}
 		}
 
@@ -134,7 +133,7 @@ namespace ipc
 
 #if defined(WIN32)
 		template <typename OBJECT_TYPE>
-		void CreateObject(Uid uid)
+		OBJECT_TYPE * CreateObject(Uid uid)
 		{
 			ipc::ObjectInit<Engine>
 			init = 
@@ -148,11 +147,13 @@ namespace ipc
 			{
 				AddObject(* object);
 			}
+			
+			return object;
 		}
 #endif
 
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		void CreateObject(Uid uid, PARAMETERS const & ... parameters)
+		OBJECT_TYPE * CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
 			ipc::ObjectInit<Engine>
 			init = 
@@ -166,6 +167,8 @@ namespace ipc
 			{
 				AddObject(* object);
 			}
+			
+			return object;
 		}
 
 		void DestroyObject(Uid uid)

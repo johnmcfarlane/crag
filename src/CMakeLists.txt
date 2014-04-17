@@ -16,27 +16,31 @@ add_executable(crag
 	core/Roster.cpp
 	core/Statistics.cpp
 	core/TypeId.cpp
-	entity/animat/AnimatController.cpp
-	entity/animat/AnimatThruster.cpp
-	entity/animat/Genome.cpp
-	entity/animat/Sensor.cpp
-	entity/camera/CameraController.cpp
-	entity/observer/Contact.cpp
-	entity/observer/MouseObserverController.cpp
-	entity/observer/ObserverInput.cpp
-	entity/observer/TouchObserverController.cpp
-	entity/planet/gfx/Planet.cpp
-	entity/planet/physics/PlanetBody.cpp
-	entity/planet/sim/MoonShader.cpp
-	entity/planet/sim/PlanetController.cpp
-	entity/planet/sim/PlanetShader.cpp
+	entity/gfx/Planet.cpp
+	entity/gfx/Puff.cpp
+	entity/gfx/Thruster.cpp
+	entity/physics/PlanetBody.cpp
+	entity/sim/AnimatController.cpp
+	entity/sim/AnimatThruster.cpp
+	entity/sim/CameraController.cpp
+	entity/sim/Contact.cpp
+	entity/sim/Genome.cpp
+	entity/sim/HoverThruster.cpp
+	entity/sim/MoonShader.cpp
+	entity/sim/MouseObserverController.cpp
+	entity/sim/ObserverInput.cpp
+	entity/sim/PlanetController.cpp
+	entity/sim/PlanetShader.cpp
+	entity/sim/RoverThruster.cpp
+	entity/sim/Sensor.cpp
+	entity/sim/Thruster.cpp
+	entity/sim/TouchObserverController.cpp
+	entity/sim/UfoController.cpp
+	entity/sim/VehicleController.cpp
+	entity/sim/VernierThruster.cpp
 	entity/SpawnEntityFunctions.cpp
 	entity/SpawnSkybox.cpp
-	entity/vehicle/gfx/Puff.cpp
-	entity/vehicle/gfx/Thruster.cpp
-	entity/vehicle/sim/RoverThruster.cpp
-	entity/vehicle/sim/Thruster.cpp
-	entity/vehicle/sim/VehicleController.cpp
+	entity/SpawnPlayer.cpp
 	form/CalculateNodeScoreFunctor.cpp
 	form/CastRay.cpp
 	form/Engine.cpp
@@ -53,7 +57,6 @@ add_executable(crag
 	form/Surrounding.cpp
 	gfx/Debug.cpp
 	gfx/Engine.cpp
-	gfx/Fence.cpp
 	gfx/Font.cpp
 	gfx/FrameBuffer.cpp
 	gfx/glHelpers.cpp
@@ -81,13 +84,14 @@ add_executable(crag
 	pch.cpp
 	physics/Body.cpp
 	physics/BoxBody.cpp
+	physics/CylinderBody.cpp
 	physics/Engine.cpp
 	physics/GhostBody.cpp
 	physics/Location.cpp
 	physics/MeshBody.cpp
 	physics/PassiveLocation.cpp
 	physics/RayCast.cpp
-	physics/SphericalBody.cpp
+	physics/SphereBody.cpp
 	scripts/GameScript.cpp
 	scripts/MainScript.cpp
 	scripts/MonitorOrigin.cpp

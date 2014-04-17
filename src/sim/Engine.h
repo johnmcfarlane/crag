@@ -19,6 +19,7 @@
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetOriginEvent.h"
 #endif
+#include "gfx/SetLodParametersEvent.h"
 
 #include "geom/origin.h"
 
@@ -46,6 +47,7 @@ namespace form
 namespace gfx
 {
 	struct SetCameraEvent;
+	struct SetLodParametersEvent;
 	struct SetOriginEvent;
 }
 
@@ -60,6 +62,7 @@ namespace sim
 	: public ipc::EngineBase<Engine, Entity>
 	, private ipc::Listener<Engine, gfx::SetCameraEvent>
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
+	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
 		OBJECT_SINGLETON(Engine);
 
@@ -79,16 +82,18 @@ namespace sim
 		void OnQuit();
 		
 		virtual void OnAddObject(super::Object & entity) override final;
-		void OnAttachEntities(Uid uid1, Uid uid2);
 		
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);
 		
 		void operator() (gfx::SetCameraEvent const & event) final;
-		geom::rel::Ray3 const & GetCamera() const;
+		Ray3 const & GetCamera() const;
 
 		void operator() (gfx::SetOriginEvent const & event) final;
 		geom::abs::Vector3 const & GetOrigin() const;
+		
+		void operator() (gfx::SetLodParametersEvent const & event) final;
+		gfx::LodParameters const & GetLodParameters() const;
 		
 		void OnTogglePause();
 		void OnToggleGravity();
@@ -123,6 +128,7 @@ namespace sim
 
 		Ray3 _camera;
 		geom::abs::Vector3 _origin;
+		gfx::LodParameters _lod_parameters;
 		physics::Engine & _physics_engine;
 		form::Scene & _collision_scene;	// for collision
 

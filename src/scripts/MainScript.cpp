@@ -13,8 +13,9 @@
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
-#include "entity/animat/AnimatController.h"
+#include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
+#include "entity/SpawnPlayer.h"
 #include "entity/SpawnSkybox.h"
 
 #include "applet/Applet.h"
@@ -23,7 +24,7 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/SphericalBody.h"
+#include "physics/SphereBody.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
@@ -36,6 +37,7 @@
 #include "core/EventWatcher.h"
 #include "core/Random.h"
 
+CONFIG_DECLARE(player_type, int);
 CONFIG_DEFINE(num_animats, int, 1);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
@@ -76,7 +78,7 @@ namespace
 
 			// physics
 			auto zero_vector = sim::Vector3::Zero();
-			auto & body = * new physics::SphericalBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
+			auto & body = * new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
 			body.SetDensity(1);
 			body.SetLinearDamping(0.005f);
 			body.SetAngularDamping(0.005f);
@@ -184,7 +186,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnObserver(observer_start_pos);
+	sim::EntityHandle observer = SpawnPlayer(observer_start_pos, PlayerType(player_type));
 
 	// Create origin controller.
 	if (origin_dynamic_enable)

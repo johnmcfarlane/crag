@@ -1,5 +1,5 @@
 //
-//  defs.h
+//  physics/defs.h
 //  crag
 //
 //  Created by John on 6/20/10.
@@ -10,8 +10,6 @@
 #pragma once
 
 #include <ode/collision.h>
-#include <ode/common.h>
-#include <ode/contact.h>
 #include <ode/mass.h>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +51,8 @@ namespace physics
 	typedef geom::Transformation<Scalar> Transformation;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
 
-	typedef gfx::Mesh<gfx::PlainVertex, dTriIndex> Mesh;
+	using ElementIndex = dTriIndex;
+	typedef gfx::Mesh<gfx::PlainVertex, ElementIndex> Mesh;
 	
 	inline void Convert(dVector3 & lhs, Vector3 const & rhs)
 	{

@@ -15,12 +15,12 @@
 
 #include "sim/defs.h"
 
+#if ! defined(NDEBUG)
+//#define CRAG_GFX_LIGHT_DEBUG
+#endif
 
 namespace gfx
 {
-	// forward-declarations
-	struct LightInfo;
-	
 	// A gfx Object representing a light source.
 	class Light : public LeafNode
 	{
@@ -32,11 +32,16 @@ namespace gfx
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
 		
+		bool GetIsExtinguished() const;
+		void SetIsExtinguished(bool is_extinguished);
+		
+		bool GetIsLuminant() const;
+		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
 		LightType GetType() const;
 		
-#if ! defined(NDEBUG)
+#if defined(CRAG_GFX_LIGHT_DEBUG)
 		LeafNode::PreRenderResult PreRender() override;
 #endif
 		
@@ -47,5 +52,6 @@ namespace gfx
 
 		Color4f _color;
 		LightType _type;
+		bool _is_extinguished = false;
 	};
 }

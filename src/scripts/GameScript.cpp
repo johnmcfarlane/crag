@@ -14,6 +14,7 @@
 
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnSkybox.h"
+#include "entity/SpawnPlayer.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -39,6 +40,7 @@
 using geom::Vector3f;
 
 CONFIG_DECLARE(origin_dynamic_enable, bool);
+CONFIG_DECLARE(player_type, int);
 
 namespace 
 {
@@ -49,8 +51,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 ship_start_pos(0, 9999410, 0);
-	sim::Vector3 camera_start_pos(0, 9999410, -5);
+	sim::Vector3 player_start_pos(0, 9999400, 0);
+	sim::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
@@ -59,7 +61,7 @@ namespace
 
 	Random random_sequence;
 	applet::AppletInterface * _applet_interface;
-	sim::EntityHandle _ship;
+	sim::EntityHandle _player;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
@@ -224,11 +226,20 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
-	// Create ship.
-	_ship = SpawnShip(ship_start_pos);
+	// Create player.
+	_player = SpawnPlayer(player_start_pos, PlayerType(player_type));
 
 	// Create camera.
-	sim::EntityHandle camera = SpawnCamera(camera_start_pos, _ship);
+	sim::EntityHandle camera;
+	if (player_type != int(PlayerType::observer))
+	{
+		camera = SpawnCamera(camera_start_pos, _player);
+	}
+
+	// ball
+	sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
+	sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
+	_shapes.push_back(ball);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
@@ -250,7 +261,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 		_shapes.pop_back();
 	}
 	
-	_ship.Destroy();
+	_player.Destroy();
 	sun.Destroy();
 	planet.Destroy();
 	

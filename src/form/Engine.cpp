@@ -1,5 +1,5 @@
 //
-// form/form::Engine.cpp
+// form/Engine.cpp
 // Crag
 //
 // Created by john on 5/23/09.
@@ -14,13 +14,13 @@
 
 #include "Formation.h"
 
-#include "form/Surrounding.h"
+#include "Surrounding.h"
 
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/object/Surrounding.h"
-#include "gfx/SetCameraEvent.h"
+#include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetOriginEvent.h"
 
 #include "core/app.h"
@@ -64,7 +64,7 @@ form::Engine::Engine()
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
 , _pending_origin_request(false)
-, _camera(geom::rel::Ray3::Zero())
+, _lod_parameters({ Vector3::Zero(), 0.f })
 , _origin(geom::abs::Vector3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
 {
@@ -84,7 +84,7 @@ form::Engine::~Engine()
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Engine, self)
 	CRAG_VERIFY(self._scene);
 	CRAG_VERIFY(static_cast<super const &>(self));
-	CRAG_VERIFY(static_cast<SetCameraListener const &>(self));
+	CRAG_VERIFY(static_cast<SetLodParametersListener const &>(self));
 	CRAG_VERIFY(static_cast<SetOriginListener const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
@@ -114,19 +114,17 @@ void form::Engine::OnSetMesh(std::shared_ptr<Mesh> const & mesh)
 	_meshes.push(mesh);
 }
 
-void form::Engine::operator() (gfx::SetCameraEvent const & event)
+void form::Engine::operator() (gfx::SetLodParametersEvent const & event)
 {
-	auto camera_ray = gfx::GetCameraRay(event.transformation);
-	_camera = geom::AbsToRel(camera_ray, _origin);
+	_lod_parameters = event.parameters;
 }
 
 void form::Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	_pending_origin_request = true;
 
-	geom::abs::Vector3 camera_pos = geom::RelToAbs(_camera.position, _origin);
+	_lod_parameters.center = geom::Convert(_lod_parameters.center, _origin, event.origin);
 	_origin = event.origin;
-	_camera.position = geom::AbsToRel(camera_pos, _origin);
 }
 
 void form::Engine::EnableAdjustNumQuaterna(bool enabled)
@@ -174,7 +172,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 	_mesh.Destroy();
 
 	// stop listening for events
-	SetCameraListener::SetIsListening(false);
+	SetLodParametersListener::SetIsListening(false);
 	SetOriginListener::SetIsListening(false);
 }
 
@@ -202,7 +200,7 @@ void form::Engine::TickScene()
 {
 	PROFILE_TIMER_BEGIN(t);
 	
-	_scene.Tick(_camera);
+	_scene.Tick(_lod_parameters);
 	
 	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetSurrounding().GetNumQuaternaUsed());
 	PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));

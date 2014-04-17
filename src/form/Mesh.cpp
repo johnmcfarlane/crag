@@ -18,18 +18,39 @@
 
 using namespace form;
 
+namespace
+{
+	// TODO: if contour lines stay, move height into Point
+	float CalculateHeight(geom::rel::Vector3 const & pos, geom::rel::Vector3 const & origin)
+	{
+		using namespace geom;
+		auto origin_height = Length(origin);
+		auto relative_center = pos + origin;
+		auto height = Length(relative_center);
+		auto relative_height = height - origin_height;
+		return relative_height;
+	};
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
+#if defined(CRAG_FLAT_SHADE)
+void Mesh::Reserve(int, int max_num_tris)
+{
+	_lit_mesh.reserve(max_num_tris * 3);
+}
+#else
 void Mesh::Reserve(int max_num_verts, int max_num_tris)
 {
 	_lit_mesh.GetVertices().reserve(max_num_verts);
 	_lit_mesh.GetIndices().reserve(max_num_tris);
 }
+#endif
 
 void Mesh::Clear()
 {
-	_lit_mesh.Clear();
+	_lit_mesh.clear();
 }
 
 MeshProperties & Mesh::GetProperties()
@@ -42,6 +63,7 @@ MeshProperties const & Mesh::GetProperties() const
 	return properties;
 }
 
+#if ! defined(CRAG_FLAT_SHADE)
 Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)
@@ -56,17 +78,6 @@ Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 
 Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 {
-	// TODO: if contour lines stay, move height into Point
-	auto calculate_height = [] (geom::rel::Vector3 const & pos, geom::rel::Vector3 const & origin) -> float
-	{
-		using namespace geom;
-		auto origin_height = Length(origin);
-		auto relative_center = pos + origin;
-		auto height = Length(relative_center);
-		auto relative_height = height - origin_height;
-		return relative_height;
-	};
-	
 	Vertex v = 
 	{ 
 		p.pos, 
@@ -75,7 +86,7 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 					 color.g,
 					 color.b,
 					 color.a),
-		calculate_height(p.pos, geom::Cast<float>(properties._origin))
+		CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
 	};
 
 	auto & vertices = _lit_mesh.GetVertices();
@@ -116,6 +127,30 @@ void Mesh::AddFace(Point & a, Point & b, Point & c, Vertex::Vector3 const & norm
 	
 	AddFace(vert_a, vert_b, vert_c, normal);
 }
+
+#else
+
+void Mesh::AddFace(Point const & a, Point const & b, Point const & c, Vertex::Vector3 const & normal, gfx::Color4b color)
+{
+	auto add_face = [&] (Point const & p)
+	{
+		_lit_mesh.push_back({ 
+			p.pos, 
+			normal,
+			gfx::Color4b(color.r,
+						 color.g,
+						 color.b,
+						 color.a),
+			CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
+		});
+	};
+	
+	add_face(a);
+	add_face(b);
+	add_face(c);
+}
+
+#endif
 
 Mesh::LitMesh const & Mesh::GetLitMesh() const
 {
