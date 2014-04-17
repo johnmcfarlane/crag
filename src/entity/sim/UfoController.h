@@ -28,7 +28,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		UfoController(Entity & entity, EntityHandle ball_entity);
+		UfoController(Entity & entity, EntityHandle ball_entity, Scalar max_thrust, bool always_climb);
 		~UfoController();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController);
@@ -39,7 +39,7 @@ namespace sim
 		void ApplyThrust(Vector2 pointer_delta);
 		bool ShouldThrust(bool is_rotating) const;
 
-		void ApplyTilt(Vector2 pointer_delta);
+		bool ApplyTilt(Vector2 pointer_delta);
 
 		Vector2 HandleEvents();
 		Vector2 HandleEvent(SDL_Event const & event);
@@ -54,9 +54,11 @@ namespace sim
 		
 		Matrix33 _camera_rotation;
 		
-		EntityHandle _ball_entity;
+		EntityHandle const _ball_entity;
 		
 		Thruster * _main_thruster;
 		int _num_presses;
+		Scalar const _max_thrust;
+		bool const _always_climb;
 	};
 }
