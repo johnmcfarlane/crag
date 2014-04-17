@@ -720,6 +720,8 @@ namespace
 
 	void ConstructUfo(Entity & ufo_entity, Vector3 const & position, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
 	{
+		bool is_thargoid = player_type == PlayerType::thargoid;
+		
 		// misc preparation
 		Engine & engine = ufo_entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -735,7 +737,7 @@ namespace
 		// saucer physics
 		auto rotation = gfx::Rotation(geom::Normalized(position), gfx::Direction::forward);
 		Transformation transformation(position, rotation);
-		auto & body = * new physics::CylinderBody(transformation, & velocity, physics_engine, radius, (player_type == PlayerType::thargoid) ? thargoid_height : saucer_cylinder_height);
+		auto & body = * new physics::CylinderBody(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
 		body.SetLinearDamping(saucer_linear_damping);
 		body.SetAngularDamping(saucer_angular_damping);
 		ufo_entity.SetLocation(& body);
@@ -778,7 +780,7 @@ namespace
 		ufo_entity.SetModel(model_handle);
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, thrust, ball_entity_handle));
+		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust, ! is_thargoid));
 		ufo_entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
