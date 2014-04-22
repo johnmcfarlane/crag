@@ -54,7 +54,7 @@ Program::Program(std::initializer_list<char const *> vert_sources, std::initiali
 	std::string info_log;
 	GetInfoLog(info_log);
 
-	if (! info_log.empty())
+	if (info_log.size() > 1)
 	{
 		for (auto source : vert_sources)
 		{

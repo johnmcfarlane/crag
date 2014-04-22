@@ -140,7 +140,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	
 #if defined(DUMP_GLSL_ERRORS)
 	std::vector<char> info_log = GetInfoLog();
-	if (! info_log.empty())
+	if (info_log.size() > 1)
 	{
 		auto line_start = 0;
 		auto filename_iterator = std::begin(filenames);
