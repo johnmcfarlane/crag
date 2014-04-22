@@ -327,6 +327,7 @@ namespace
 
 		for (auto sector = 0; sector != num_sectors; ++ sector)
 		{
+			bool odd_sector = (! (num_sectors & 1)) && (sector & 1);
 			auto next_sector = (sector + next_sector_offset) % num_sectors;
 			
 			auto sector_vertex_index = sector_vertices_index + sector * num_rings;
@@ -344,12 +345,24 @@ namespace
 					next_sector_vertex_index + ring
 				};
 				
-				indices.push_back(quad[2]);
-				indices.push_back(quad[1]);
-				indices.push_back(quad[0]);
-				indices.push_back(quad[1]);
-				indices.push_back(quad[2]);
-				indices.push_back(quad[3]);
+				if (odd_sector)
+				{
+					indices.push_back(quad[2]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[2]);
+					indices.push_back(quad[3]);
+				}
+				else
+				{
+					indices.push_back(quad[3]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[2]);
+					indices.push_back(quad[3]);
+				}
 			}
 		}
 
