@@ -37,7 +37,7 @@ void main(void)
 	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1.);
 	fragment_position = position4.xyz;
 
-	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;
+	fragment_normal = (model_view_matrix * vec4(vertex_normal, 0)).xyz;
 
 	vec4 diffuse = color * vertex_color * (1. / 256.);
 	if (fragment_lighting)
@@ -46,7 +46,7 @@ void main(void)
 	}
 	else
 	{
-		fragment_color = vec4(LightFragment(fragment_position.xyz, normalize(fragment_normal), diffuse.rgb), diffuse.a);
+		fragment_color = vec4(LightFragment(fragment_position, fragment_normal, diffuse.rgb), diffuse.a);
 	}
 	
 	fragment_height = vertex_height;
