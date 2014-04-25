@@ -220,7 +220,13 @@ namespace
 			for (auto const & vertex : source_triangle.points)
 			{
 				destination_indices.push_back(destination_vertices.size());
-				destination_vertices.push_back(gfx::LitVertex({ vertex, source_plane.normal, color, 0.f }));
+				destination_vertices.push_back(gfx::LitVertex(
+				{ 
+					vertex,
+					geom::Normalized(source_plane.normal),
+					color, 
+					0.f
+				}));
 			}
 		}
 		
