@@ -94,6 +94,8 @@ namespace
 	CONFIG_DEFINE (saucer_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
+	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
+	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
 
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
@@ -771,7 +773,7 @@ namespace
 		{
 			Sphere3 sphere(position, saucer_ball_radius);
 			Uid uid = Uid::Create();
-			sim::Entity * ball_entity = engine.CreateObject<Entity>(uid);
+			auto ball_entity = engine.CreateObject<Entity>(uid);
 
 			// physics
 			auto & ball_body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
@@ -865,11 +867,13 @@ namespace
 		resource_manager.Register<gfx::LitVboResource>("CosSaucerVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-#if defined(CRAG_FLAT_SHADE)
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
-#else
 			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
-#endif
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+		resource_manager.Register<gfx::LitVboResource>("CosSaucerFlatLitVbo", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -900,11 +904,13 @@ namespace
 		resource_manager.Register<gfx::LitVboResource>("BallSaucerVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-#if defined(CRAG_FLAT_SHADE)
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
-#else
 			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
-#endif
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+		resource_manager.Register<gfx::LitVboResource>("BallSaucerFlatLitVbo", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -978,11 +984,11 @@ sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_t
 			break;
 
 		case PlayerType::cos_saucer:
-			ConstructUfo(entity, position, "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, position, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 
 		case PlayerType::ball_saucer:
-			ConstructUfo(entity, position, "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, position, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 		}
 	});
