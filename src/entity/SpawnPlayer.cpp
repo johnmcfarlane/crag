@@ -479,12 +479,13 @@ namespace
 		auto up = [half_height, radius] (Scalar angle, Scalar d)
 		{
 			auto radial = Vector3(std::sin(angle), std::cos(angle), 1.f);
+			auto slope_angle = d * Scalar(PI);
 			
 			auto x = radius * d;
-			auto y = half_height * (.5f * std::cos(d * Scalar(PI)) + .5f);
+			auto y = half_height * (.5f * std::cos(slope_angle) + .5f);
 			
 			auto dx = radius;
-			auto dy = std::sin(d * Scalar(PI)) - (half_height * .5f);
+			auto dy = std::sin(slope_angle);
 			
 			auto position = radial * Vector3(x, x, y);
 			auto normal = geom::Normalized(radial * Vector3(dy, dy, dx));
