@@ -16,7 +16,6 @@ uniform mat4 model_view_matrix;
 uniform mat4 projection_matrix;
 uniform vec4 color;
 uniform bool fragment_lighting;
-uniform bool flat_shade;
 
 // per-vertex inputs from renderer
 attribute vec3 vertex_position;
@@ -41,7 +40,7 @@ void main(void)
 	fragment_normal = normalize(model_view_matrix * vec4(vertex_normal, 0)).xyz;
 
 	vec4 diffuse = color * vertex_color * (1. / 256.);
-	if (fragment_lighting || flat_shade)
+	if (fragment_lighting)
 	{
 		fragment_color = diffuse;
 	}
