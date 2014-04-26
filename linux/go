@@ -2,12 +2,15 @@
 # To be run from debug or release subdirectories
 set -o errexit
 
-if [ "$1" ]; then
-	JOBS="$1"
-	shift
-else
-	JOBS="-j1"
+if [ "$#" -lt 2 ]
+then
+	echo "<num-cores> (release|debug) [<crag-parameter> ...]"
+	exit 1
 fi
 
+JOBS="-j$1"
+FOLDER="$2"
+shift 2
+
 rm core || true
-make "$JOBS"&&bin/crag $@||../bt
+make -C "$FOLDER" "$JOBS" crag&&"$FOLDER"/bin/crag $@||./bt "$FOLDER"

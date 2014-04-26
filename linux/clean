@@ -2,5 +2,5 @@
 # To be run from debug or release subdirectories
 set -o errexit
 
-FOLDER="$1"
-gdb "$FOLDER"/bin/crag core -batch -ex bt
+make -C debug clean
+make -C release clean
