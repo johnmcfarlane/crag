@@ -75,6 +75,35 @@ namespace gfx
 			typename IndexArrayType::const_iterator _index_pos;
 		};
 		
+		class iterator : public const_iterator
+		{
+			using Super = const_iterator;
+			
+		public:
+			iterator(VertexArrayType & vertices, typename IndexArrayType::iterator index_pos)
+			: Super(vertices, index_pos)
+			{
+			}
+			
+			Vertex & operator* ()
+			{
+				auto & vertex = Super::operator*();
+				return const_cast<Vertex &>(vertex);
+			}
+			
+			Vertex * operator-> ()
+			{
+				auto vertex = Super::operator*();
+				return const_cast<Vertex *>(vertex);
+			}
+			
+			iterator & operator++()
+			{
+				Super::operator++();
+				return * this;
+			}
+		};
+		
 		// functions
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Mesh, self)
 			CRAG_VERIFY_FALSE(self._indices.size() % 3);
@@ -190,9 +219,19 @@ namespace gfx
 			return const_iterator(_vertices, _indices.begin());
 		}
 		
+		iterator begin()
+		{
+			return iterator(_vertices, _indices.begin());
+		}
+		
 		const_iterator end() const
 		{
 			return const_iterator(_vertices, _indices.end());
+		}
+		
+		iterator end()
+		{
+			return iterator(_vertices, _indices.end());
 		}
 		
 	private:
