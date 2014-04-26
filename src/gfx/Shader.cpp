@@ -108,6 +108,10 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	for (auto index = 0; index != num_strings; ++ filename_iterator, ++ index)
 	{
 		char const * filename = * filename_iterator;
+		if (! filename)
+		{
+			continue;
+		}
 		
 		auto source_buffer = app::LoadFile(filename, true);
 		if (! source_buffer)
