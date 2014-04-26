@@ -46,7 +46,11 @@ ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & 
 	_mutex.ReadLock();
 	
 	auto found = _resources.find(key);
-	CRAG_VERIFY_FALSE (found == _resources.end());
+	if (found == _resources.end())
+	{
+		CRAG_DEBUG_DUMP(key);
+		DEBUG_BREAK("failed to find resource");
+	}
 	
 	auto const & resource = found->second;
 	
