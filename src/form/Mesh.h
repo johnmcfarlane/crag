@@ -16,7 +16,7 @@
 #include "gfx/LitVertex.h"
 
 // activates flat-shaded mesh style by adding exta vertices with common normals
-//#define CRAG_FLAT_SHADE
+#define CRAG_FORM_FLAT_SHADE
 
 namespace form
 {
@@ -30,7 +30,7 @@ namespace form
 	public:
 		// types
 		typedef gfx::LitVertex Vertex;
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 		typedef gfx::LitMesh::VertexArrayType LitMesh;
 #else
 		typedef gfx::LitMesh LitMesh;
@@ -45,7 +45,7 @@ namespace form
 		MeshProperties & GetProperties();
 		MeshProperties const & GetProperties() const;
 
-#if ! defined(CRAG_FLAT_SHADE)
+#if ! defined(CRAG_FORM_FLAT_SHADE)
 		Vertex & GetVertex(Point & point, Color color);
 	private:
 		Vertex & AddVertex(Point const & p, Color color);

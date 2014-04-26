@@ -21,7 +21,7 @@ using namespace form;
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 void Mesh::Reserve(int, int max_num_tris)
 {
 	_lit_mesh.reserve(max_num_tris * 3);
@@ -58,7 +58,7 @@ MeshProperties const & Mesh::GetProperties() const
 	return properties;
 }
 
-#if ! defined(CRAG_FLAT_SHADE)
+#if ! defined(CRAG_FORM_FLAT_SHADE)
 Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)

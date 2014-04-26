@@ -11,7 +11,7 @@
 
 #include "form/defs.h"
 
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 #include "gfx/NonIndexedVboResource.h"
 #else
 #include "gfx/IndexedVboResource.h"
@@ -30,7 +30,7 @@ namespace gfx
 	{
 		// types
 		typedef LeafNode super;
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 		using VboResource = gfx::NonIndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
 #else
 		using VboResource = gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
