@@ -40,6 +40,7 @@ namespace form
 		// functions
 		void Reserve(int max_num_verts, int max_num_tris);
 		void Clear();
+		void NormalizeNormals();
 		
 		MeshProperties & GetProperties();
 		MeshProperties const & GetProperties() const;

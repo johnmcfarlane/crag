@@ -39,6 +39,15 @@ void Mesh::Clear()
 	_lit_mesh.clear();
 }
 
+void Mesh::NormalizeNormals()
+{
+	for (auto & vertex : _lit_mesh)
+	{
+		Vector3 & norm = vertex.norm;
+		geom::Normalize(norm);
+	}
+}
+
 MeshProperties & Mesh::GetProperties()
 {
 	return properties;
