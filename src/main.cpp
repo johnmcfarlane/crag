@@ -141,15 +141,6 @@ namespace
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleSuspended(); });
 						break;
 						
-					case SDL_SCANCODE_L:
-					{
-						gfx::Daemon::Call([] (gfx::Engine & engine) 
-						{
-							engine.SetFragmentLightingEnabled(! engine.GetFragmentLightingEnabled());
-						});
-						break;
-					}
-					
 					default:
 						break;
 				}

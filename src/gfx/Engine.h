@@ -91,9 +91,6 @@ namespace gfx
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
-		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
-		bool GetFragmentLightingEnabled() const;
-
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
@@ -163,7 +160,6 @@ namespace gfx
 		bool _ready;
 		bool _dirty;
 		bool culling;
-		bool _fragment_lighting_enabled;
 		int capture_frame;
 
 #if defined(__ANDROID__)

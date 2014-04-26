@@ -40,13 +40,13 @@ Program::Program(std::initializer_list<char const *> vert_sources, std::initiali
 		DEBUG_BREAK("fatal vertex shader error");
 		return;
 	}
-	
+
 	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
 	{
 		DEBUG_BREAK("fatal fragment shader error");
 		return;
 	}
-	
+
 	GL_CALL(glAttachShader(_id, _vert_shader._id));
 	GL_CALL(glAttachShader(_id, _frag_shader._id));
 	
@@ -359,7 +359,6 @@ void LightProgram::SetLight(Light const & light, int index) const
 PolyProgram::PolyProgram(PolyProgram && rhs)
 : LightProgram(std::move(rhs))
 , _color(std::move(rhs._color))
-, _fragment_lighting(std::move(rhs._fragment_lighting))
 {
 }
 
@@ -375,11 +374,10 @@ PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::
 	Finalize();
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting) const
+void PolyProgram::SetUniforms(Color4f const & color) const
 {
 	ASSERT(IsBound());
 	_color.Set(color);
-	_fragment_lighting.Set(fragment_lighting);
 }
 
 void PolyProgram::InitUniforms()
@@ -387,7 +385,6 @@ void PolyProgram::InitUniforms()
 	super::InitUniforms();
 
 	InitUniformLocation(_color, "color");
-	InitUniformLocation(_fragment_lighting, "fragment_lighting");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

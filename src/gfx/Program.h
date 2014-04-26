@@ -127,13 +127,12 @@ namespace gfx
 		PolyProgram(PolyProgram && rhs);
 		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetUniforms(Color4f const & color, bool fragment_lighting) const;
+		void SetUniforms(Color4f const & color) const;
 	private:
 		virtual void InitUniforms() override final;
 		
 		// variables
 		Uniform<Color4f> _color;
-		Uniform<bool> _fragment_lighting;
 	};
 
 	class ShadowProgram : public Program3d

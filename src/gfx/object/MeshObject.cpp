@@ -37,7 +37,7 @@ MeshObject::MeshObject(Init const & init, Transformation const & local_transform
 	SetVboResource(lit_vbo.get());
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyVProgram");
 	SetProgram(& poly_program);
 }
 
@@ -68,9 +68,7 @@ void MeshObject::Render(Engine const & renderer) const
 	if (program)
 	{
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
-
-		auto fragment_lighting = renderer.GetFragmentLightingEnabled();
-		poly_program.SetUniforms(_color, fragment_lighting);
+		poly_program.SetUniforms(_color);
 	}
 
 	auto & vbo = * GetVboResource();

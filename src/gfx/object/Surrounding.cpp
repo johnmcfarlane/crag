@@ -45,7 +45,7 @@ Surrounding::Surrounding(LeafNode::Init const & init)
 : LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, false)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyVProgram");
 	SetProgram(& poly_program);
 
 	CRAG_VERIFY(* this);
@@ -183,9 +183,7 @@ void Surrounding::Render(Engine const & renderer) const
 	if  (program)
 	{
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
-
-		bool fragment_lighting = renderer.GetFragmentLightingEnabled();
-		poly_program.SetUniforms(Color4f::White(), fragment_lighting);
+		poly_program.SetUniforms(Color4f::White());
 	}
 	
 	// Draw the mesh!

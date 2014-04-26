@@ -59,7 +59,6 @@ namespace
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
@@ -262,7 +261,6 @@ Engine::Engine()
 , _ready(true)
 , _dirty(true)
 , culling(init_culling)
-, _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -475,17 +473,6 @@ void Engine::OnToggleCulling()
 {
 	culling = ! culling;
 	_dirty = true;
-}
-
-void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
-{
-	_dirty = _fragment_lighting_enabled != fragment_lighting_enabled;
-	_fragment_lighting_enabled = fragment_lighting_enabled;
-}
-
-bool Engine::GetFragmentLightingEnabled() const
-{
-	return _fragment_lighting_enabled;
 }
 
 void Engine::OnToggleCapture()
@@ -826,7 +813,8 @@ void Engine::UpdateProgramLights(Light const & light)
 		light_program.SetLight(light);
 	};
 	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"));
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"));
 	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
@@ -844,7 +832,8 @@ void Engine::UpdateProgramLights(LightTypeSet light_types)
 	
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"));
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"));
 	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
