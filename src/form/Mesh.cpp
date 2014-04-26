@@ -18,20 +18,6 @@
 
 using namespace form;
 
-namespace
-{
-	// TODO: if contour lines stay, move height into Point
-	float CalculateHeight(geom::rel::Vector3 const & pos, geom::rel::Vector3 const & origin)
-	{
-		using namespace geom;
-		auto origin_height = Length(origin);
-		auto relative_center = pos + origin;
-		auto height = Length(relative_center);
-		auto relative_height = height - origin_height;
-		return relative_height;
-	};
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
@@ -85,8 +71,7 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 		gfx::Color4b(color.r,
 					 color.g,
 					 color.b,
-					 color.a),
-		CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
+					 color.a)
 	};
 
 	auto & vertices = _lit_mesh.GetVertices();
@@ -140,8 +125,7 @@ void Mesh::AddFace(Point const & a, Point const & b, Point const & c, Vertex::Ve
 			gfx::Color4b(color.r,
 						 color.g,
 						 color.b,
-						 color.a),
-			CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
+						 color.a)
 		});
 	};
 	

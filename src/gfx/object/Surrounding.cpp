@@ -35,7 +35,6 @@ namespace
 	CONFIG_DEFINE (formation_diffuse, Color4f, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_specular, float, 0.0f);
 	CONFIG_DEFINE (formation_shininess, float, 0.0f);
-	CONFIG_DEFINE (relief_enabled, bool, false);
 }
 
 
@@ -186,7 +185,7 @@ void Surrounding::Render(Engine const & renderer) const
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
 
 		bool fragment_lighting = renderer.GetFragmentLightingEnabled();
-		poly_program.SetUniforms(Color4f::White(), fragment_lighting, relief_enabled);
+		poly_program.SetUniforms(Color4f::White(), fragment_lighting);
 	}
 	
 	// Draw the mesh!

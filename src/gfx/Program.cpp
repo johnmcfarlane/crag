@@ -360,7 +360,6 @@ PolyProgram::PolyProgram(PolyProgram && rhs)
 : LightProgram(std::move(rhs))
 , _color(std::move(rhs._color))
 , _fragment_lighting(std::move(rhs._fragment_lighting))
-, _relief_enabled(std::move(rhs._relief_enabled))
 {
 }
 
@@ -376,12 +375,11 @@ PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::
 	Finalize();
 }
 
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool relief_enabled) const
+void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting) const
 {
 	ASSERT(IsBound());
 	_color.Set(color);
 	_fragment_lighting.Set(fragment_lighting);
-	_relief_enabled.Set(relief_enabled);
 }
 
 void PolyProgram::InitUniforms()
@@ -390,7 +388,6 @@ void PolyProgram::InitUniforms()
 
 	InitUniformLocation(_color, "color");
 	InitUniformLocation(_fragment_lighting, "fragment_lighting");
-	InitUniformLocation(_relief_enabled, "relief_enabled");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

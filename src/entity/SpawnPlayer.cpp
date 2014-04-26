@@ -226,8 +226,7 @@ namespace
 				{ 
 					vertex,
 					geom::Normalized(source_plane.normal),
-					color, 
-					0.f
+					color
 				}));
 			}
 		}
@@ -447,8 +446,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4f::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, up_fn, 8, 2, 1);
@@ -465,8 +463,7 @@ namespace
 			{
 				position,
 				Vector3(0.f, 0.f, -1.f), 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4f::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, down_fn, 8, 1, 7);
@@ -496,8 +493,7 @@ namespace
 			{
 				position, 
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4f::White()
 			};
 		};
 		
@@ -540,8 +536,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4f::White()
 			};
 		};
 

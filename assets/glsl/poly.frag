@@ -15,31 +15,19 @@ precision highp int;
 
 // inputs from the renderer
 uniform bool fragment_lighting;
-uniform bool relief_enabled;
 
 // inputs from poly.vert
 varying lowp vec3 fragment_normal;
 varying lowp vec3 fragment_position;
 varying lowp vec4 fragment_color;
-varying float fragment_height;
 
 // light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
-
-float relief(float range, float a, float b)
-{
-	return (mod(fragment_height, range) > 1.) ? a : b;
-}
 
 void main(void)
 {
 	vec3 diffuse = fragment_color.rgb;
 	
-	if (relief_enabled)
-	{
-		diffuse.rgb *= relief(10., 1., relief(50., .8, 1.2));
-	}
-
 	if (fragment_lighting)
 	{
 		lowp vec3 normal = normalize(fragment_normal);
