@@ -70,7 +70,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 		else
 		{
 			CRAG_VERIFY_TRUE(object._vbo_resource.IsInitialized());
-			CRAG_VERIFY_FALSE(object._vbo_resource.IsBound());
 			CRAG_VERIFY_TRUE(object.GetVboResource());
 		}
 	}
@@ -169,6 +168,8 @@ bool Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 
 void Surrounding::Render(Engine const & renderer) const
 {
+	CRAG_VERIFY(* this);
+
 	if (! GetVboResource())
 	{
 		// happens if mesh is empty
@@ -188,6 +189,7 @@ void Surrounding::Render(Engine const & renderer) const
 	
 	// Draw the mesh!
 	_vbo_resource.Draw();
+	CRAG_VERIFY(* this);
 }
 
 void Surrounding::ReturnMesh(std::shared_ptr<form::Mesh> const & mesh)
