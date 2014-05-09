@@ -45,6 +45,11 @@ namespace core
 			return enum_set(lhs._bits & rhs._bits);
 		}
 		
+		bool any() const
+		{
+			return _bits.any();
+		}
+		
 		// sets a bit
 		enum_set & set(EnumType pos, bool value = true)
 		{
