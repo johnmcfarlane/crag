@@ -59,6 +59,45 @@ namespace gfx
 				return * this;
 			}
 			
+			const_iterator & operator--()
+			{
+				-- _index_pos;
+				return * this;
+			}
+			
+			const_iterator & operator+=(int diff)
+			{
+				_index_pos += diff;
+				return * this;
+			}
+			
+			const_iterator & operator-=(int diff)
+			{
+				_index_pos -= diff;
+				return * this;
+			}
+			
+			const_iterator operator+(int diff) const
+			{
+				auto pos = * this;
+				pos += diff;
+				return pos;
+			}
+			
+			const_iterator operator-(int diff) const
+			{
+				auto pos = * this;
+				pos -= diff;
+				return pos;
+			}
+			
+			Vertex const & operator[](int diff) const
+			{
+				auto pos = (* this);
+				pos += diff;
+				return * pos;
+			}
+			
 			friend bool operator==(const_iterator const & lhs, const_iterator const & rhs)
 			{
 				ASSERT(lhs._index_pos != rhs._index_pos || lhs._vertices == rhs._vertices);
@@ -101,6 +140,45 @@ namespace gfx
 			{
 				Super::operator++();
 				return * this;
+			}
+			
+			iterator & operator--()
+			{
+				Super::operator--();
+				return * this;
+			}
+			
+			iterator & operator+=(int diff)
+			{
+				Super::operator+=(diff);
+				return * this;
+			}
+			
+			iterator & operator-=(int diff)
+			{
+				Super::operator-=(diff);
+				return * this;
+			}
+			
+			iterator operator+(int diff) const
+			{
+				auto pos = * this;
+				pos += diff;
+				return pos;
+			}
+			
+			iterator operator-(int diff) const
+			{
+				auto pos = * this;
+				pos -= diff;
+				return pos;
+			}
+			
+			Vertex & operator[](int diff) const
+			{
+				auto pos = (* this);
+				pos += diff;
+				return * pos;
 			}
 		};
 		
