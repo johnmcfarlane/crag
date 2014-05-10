@@ -217,6 +217,7 @@ LightProgram::LightProgram(LightProgram && rhs)
 , _ambient(std::move(rhs._ambient))
 , _num_point_lights(std::move(rhs._num_point_lights))
 , _num_beam_lights(std::move(rhs._num_beam_lights))
+, _num_search_lights(std::move(rhs._num_search_lights))
 , _lights(std::move(rhs._lights))
 {
 }
@@ -233,6 +234,7 @@ void LightProgram::InitUniforms()
 	InitUniformLocation(_ambient, "ambient");
 	InitUniformLocation(_num_point_lights, "num_point_lights");
 	InitUniformLocation(_num_beam_lights, "num_beam_lights");
+	InitUniformLocation(_num_search_lights, "num_search_lights");
 	
 	for (auto index = 0u; index != _lights.size(); ++ index)
 	{
@@ -267,40 +269,47 @@ void LightProgram::SetLight(Light const & light) const
 		DEBUG_BREAK("bad enum value, %d", int(type));
 		
 	case LightType::point:
-	case LightType::shadow:
+	case LightType::point_shadow:
 		_num_point_lights.Set(1);
 		_num_beam_lights.Set(0);
+		_num_search_lights.Set(0);
+		break;
+		
+	case LightType::search:
+	case LightType::search_shadow:
+		_num_point_lights.Set(0);
+		_num_beam_lights.Set(0);
+		_num_search_lights.Set(1);
 		break;
 		
 	case LightType::beam:
 		_num_point_lights.Set(0);
 		_num_beam_lights.Set(1);
+		_num_search_lights.Set(0);
 		break;
 	}
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeBitSet filter) const
 {
 	ASSERT(IsBound());
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
 	
 	auto num_point_lights = 0;
+	auto num_search_lights = 0;
 	auto num_beam_lights = 0;
 	auto num_lights = 0;
 	
-	auto populate_lights = [&] (LightType pass_type)
+	auto populate_lights = [&] (LightTypeBitSet pass_types)
 	{
-		if (! filter[pass_type])
-		{
-			return 0;
-		}
-		
+		pass_types &= filter;
+
 		auto num_type_lights = 0;
 
 		for (auto & light : lights)
 		{
 			auto type = light.GetType();
-			if (pass_type != type)
+			if (! pass_types[type])
 			{
 				continue;
 			}
@@ -319,16 +328,19 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 	};
 	
 	// add point lights first
-	num_point_lights += populate_lights(LightType::point);
-	num_point_lights += populate_lights(LightType::shadow);
+	num_point_lights += populate_lights(LightTypeBitSet(LightType::point) | LightTypeBitSet(LightType::point_shadow));
+	
+	// then search
+	num_search_lights += populate_lights(LightTypeBitSet(LightType::search) | LightTypeBitSet(LightType::search_shadow));
 	
 	// then beam
 	num_beam_lights += populate_lights(LightType::beam);
 	
-	ASSERT(num_beam_lights + num_point_lights == num_lights);
+	ASSERT(num_point_lights + num_search_lights + num_beam_lights == num_lights);
 	
 	_ambient.Set(ambient);
 	_num_point_lights.Set(num_point_lights);
+	_num_search_lights.Set(num_search_lights);
 	_num_beam_lights.Set(num_beam_lights);
 }
 

@@ -1,5 +1,5 @@
 //
-//  enum_set.h
+//  enum_bitset.h
 //  crag
 //
 //  Created by John McFarlane on 2014-03-01.
@@ -15,7 +15,7 @@ namespace core
 {
 	// a bit set with an enum as the key
 	template <typename EnumType, EnumType value_limit>
-	class enum_set
+	class enum_bitset
 	{
 		// types
 		using bitset = std::bitset<std::size_t(value_limit)>;
@@ -24,25 +24,31 @@ namespace core
 		
 		// functions
 	private:
-		enum_set(bitset const & bits) : _bits(bits) { }
+		enum_bitset(bitset const & bits) : _bits(bits) { }
 	public:
-		enum_set() = default;
-		enum_set(enum_set const &) = default;
-		enum_set(EnumType pos)
+		enum_bitset() = default;
+		enum_bitset(enum_bitset const &) = default;
+		enum_bitset(EnumType pos)
 		{
 			set(pos);
 		}
 
-		enum_set & operator=(enum_set const &) = default;
+		enum_bitset & operator=(enum_bitset const &) = default;
 		
-		friend enum_set operator | (enum_set const & lhs, enum_set const & rhs)
+		friend enum_bitset operator | (enum_bitset const & lhs, enum_bitset const & rhs)
 		{
-			return enum_set(lhs._bits | rhs._bits);
+			return enum_bitset(lhs._bits | rhs._bits);
 		}
 		
-		friend enum_set operator & (enum_set const & lhs, enum_set const & rhs)
+		friend enum_bitset operator & (enum_bitset const & lhs, enum_bitset const & rhs)
 		{
-			return enum_set(lhs._bits & rhs._bits);
+			return enum_bitset(lhs._bits & rhs._bits);
+		}
+		
+		friend enum_bitset operator &= (enum_bitset & lhs, enum_bitset const & rhs)
+		{
+			lhs._bits &= rhs._bits;
+			return rhs._bits;
 		}
 		
 		bool any() const
@@ -51,7 +57,7 @@ namespace core
 		}
 		
 		// sets a bit
-		enum_set & set(EnumType pos, bool value = true)
+		enum_bitset & set(EnumType pos, bool value = true)
 		{
 			auto index = ::std::size_t(pos);
 			ASSERT(index < _bits.size());
@@ -62,14 +68,14 @@ namespace core
 		}
 		
 		// sets all bits to true
-		enum_set & set()
+		enum_bitset & set()
 		{
 			_bits.set();
 			return * this;
 		}
 		
 		// sets all bits to false
-		enum_set & reset()
+		enum_bitset & reset()
 		{
 			_bits.reset();
 			return * this;

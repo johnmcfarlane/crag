@@ -12,8 +12,7 @@
 #include "LeafNode.h"
 
 #include "gfx/Color.h"
-
-#include "sim/defs.h"
+#include "gfx/LightType.h"
 
 #if ! defined(NDEBUG)
 //#define CRAG_GFX_LIGHT_DEBUG
@@ -40,6 +39,7 @@ namespace gfx
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
 		LightType GetType() const;
+		bool MakesShadow() const;
 		
 #if defined(CRAG_GFX_LIGHT_DEBUG)
 		LeafNode::PreRenderResult PreRender() override;

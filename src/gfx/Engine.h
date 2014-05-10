@@ -12,6 +12,7 @@
 #include "defs.h"
 #include "FrameBuffer.h"
 #include "Image.h"
+#include "LightType.h"
 #include "RenderBuffer.h"
 #include "Texture.h"
 
@@ -77,7 +78,7 @@ namespace gfx
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * vbo);
 		
-		Color4f CalculateLighting(Vector3 const & position, LightTypeSet filter) const;
+		Color4f CalculateLighting(Vector3 const & position, LightTypeBitSet filter) const;
 
 		// message interface
 		void OnQuit();
@@ -122,7 +123,7 @@ namespace gfx
 		void RenderScene();
 		
 		void UpdateProgramLights(Light const & light);
-		void UpdateProgramLights(LightTypeSet light_types);
+		void UpdateProgramLights(LightTypeBitSet light_types);
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		

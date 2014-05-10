@@ -215,7 +215,7 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 		entity.SetLocation(location);
 
 		// graphics
-		auto light = gfx::LightHandle::CreateHandle(transformation, color, gfx::LightType::shadow);
+		auto light = gfx::LightHandle::CreateHandle(transformation, color, gfx::LightType::point_shadow);
 		entity.SetModel(light);
 	});
 

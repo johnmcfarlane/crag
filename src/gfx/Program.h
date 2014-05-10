@@ -102,7 +102,7 @@ namespace gfx
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetLight(Light const & light) const;
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeBitSet filter) const;
 
 	private:
 
@@ -114,6 +114,7 @@ namespace gfx
 		Uniform<Color4f> _ambient;
 		Uniform<int> _num_point_lights;
 		Uniform<int> _num_beam_lights;
+		Uniform<int> _num_search_lights;
 		std::array<LightUniforms, 8> _lights;
 	};
 

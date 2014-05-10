@@ -356,7 +356,7 @@ void Engine::SetVboResource(VboResource const * vbo)
 }
 
 // TODO: Just do this in the vertex shader?
-Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeSet filter) const
+Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeBitSet filter) const
 {
 	Color4f lighting_color = Color4f::Black();
 	
@@ -775,7 +775,7 @@ void Engine::RenderScene()
 	if (shadows_enabled)
 	{
 		// render foreground, opaque elements with non-shadow lighting
-		UpdateProgramLights(LightTypeSet(LightType::point) | LightTypeSet(LightType::beam));
+		UpdateProgramLights(LightTypeBitSet(LightType::point) | LightTypeBitSet(LightType::beam) | LightTypeBitSet(LightType::search));
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 		// render foreground, opaque elements with shadow lighting
@@ -784,7 +784,7 @@ void Engine::RenderScene()
 	else
 	{
 		// render foreground, opaque elements with all lighting
-		UpdateProgramLights(LightTypeSet().set());
+		UpdateProgramLights(LightTypeBitSet().set());
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	}
 	
@@ -818,7 +818,7 @@ void Engine::UpdateProgramLights(Light const & light)
 	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
 }
 
-void Engine::UpdateProgramLights(LightTypeSet light_types)
+void Engine::UpdateProgramLights(LightTypeBitSet light_types)
 {
 	Color4f ambient(ambient_r, ambient_g, ambient_b);
 
@@ -843,7 +843,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Enable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 
-	UpdateProgramLights(LightTypeSet().set());
+	UpdateProgramLights(LightTypeBitSet().set());
 	RenderLayer(projection_matrix, Layer::foreground, false);
 
 	// vbo needs to be reset before next frame
@@ -912,7 +912,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	auto & lights = scene->GetLightList();
 	for (auto & light : lights)
 	{
-		if (light.GetType() == LightType::shadow && light.GetIsLuminant())
+		if (light.MakesShadow() && light.GetIsLuminant())
 		{
 			RenderShadowLight(projection_matrix, light);
 		}

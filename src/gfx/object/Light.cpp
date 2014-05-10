@@ -86,6 +86,19 @@ LightType Light::GetType() const
 	return _type;
 }
 
+bool Light::MakesShadow() const
+{
+	switch (_type)
+	{
+		case LightType::point_shadow:
+		case LightType::search_shadow:
+			return true;
+			
+		default:
+			return false;
+	}
+}
+
 #if defined(CRAG_GFX_LIGHT_DEBUG)
 LeafNode::PreRenderResult Light::PreRender()
 {
