@@ -80,14 +80,14 @@ lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, 
 	
 	int i = 0;
 	
-	for (int cd = num_point_lights; cd != 0; -- cd)
+	for (int end = i + num_point_lights; i != end; ++ i)
 	{
-		illumination += LightFragment_Point(lights[i ++], frag_position, frag_normal);
+		illumination += LightFragment_Point(lights[i], frag_position, frag_normal);
 	}
 	
-	for (int cd = num_search_lights; cd != 0; -- cd)
+	for (int end = i + num_search_lights; i != end; ++ i)
 	{
-		illumination += LightFragment_Search(lights[i ++], frag_position, frag_normal);
+		illumination += LightFragment_Search(lights[i], frag_position, frag_normal);
 	}
 	
 	return diffuse * illumination;
