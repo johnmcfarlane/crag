@@ -96,6 +96,7 @@ namespace
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
 	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
 	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
+	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
 
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
@@ -795,6 +796,24 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
 		ufo_entity.SetModel(model_handle);
+
+		// searchlight
+		if (saucer_search_light_enable)
+		{
+			gfx::Transformation search_light_transformation;
+#if defined(CRAG_USE_GLES)
+			auto light_type = gfx::LightType::search;
+#endif
+#if defined(CRAG_USE_GL)
+			auto light_type = gfx::LightType::search_shadow;
+#endif
+			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(search_light_transformation, gfx::Color4f::White() * 1.f, light_type, model_handle);
+			auto light_uid = light_handle.GetUid();
+			auto model_uid = model_handle.GetUid();
+			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
+				engine.OnSetParent(light_uid, model_uid);
+			});
+		}
 
 		// controller
 		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust, ! is_thargoid));

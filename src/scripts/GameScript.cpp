@@ -197,7 +197,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.85f) * 8000000000000000.f);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.85f) * 5000000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Set camera position
