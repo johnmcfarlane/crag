@@ -760,10 +760,16 @@ namespace
 		body.SetAngularDamping(saucer_angular_damping);
 		ufo_entity.SetLocation(& body);
 
+		// graphics
+		gfx::Vector3 scale(1.f, 1.f, 1.f);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
+		ufo_entity.SetModel(model_handle);
+
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
 		
 		EntityHandle ball_entity_handle;
+		gfx::ObjectHandle exception_object;
 		
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
@@ -784,6 +790,12 @@ namespace
 				// graphics
 				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color);
 				ball_entity->SetModel(model);
+				
+				exception_object = model;
+			}
+			else
+			{
+				exception_object = model_handle;
 			}
 			
 			ball_entity_handle.SetUid(ball_entity->GetUid());
@@ -792,22 +804,21 @@ namespace
 		////////////////////////////////////////////////////////////////////////////////
 		// saucer
 		
-		// graphics
-		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
-		ufo_entity.SetModel(model_handle);
-
 		// searchlight
 		if (saucer_search_light_enable)
 		{
-			gfx::Transformation search_light_transformation;
+			// distance between saucer mesh and ball (in the case of ball saucer);
+			// ensures light is clear of enclosing object that would extinguish it
+			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
+			
+			gfx::Transformation search_light_transformation(Vector3(0.f, clear_distance, 0.f));
 #if defined(CRAG_USE_GLES)
 			auto light_type = gfx::LightType::search;
 #endif
 #if defined(CRAG_USE_GL)
 			auto light_type = gfx::LightType::search_shadow;
 #endif
-			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(search_light_transformation, gfx::Color4f::White() * 1.f, light_type, model_handle);
+			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(search_light_transformation, gfx::Color4f::White() * 1.f, light_type, exception_object);
 			auto light_uid = light_handle.GetUid();
 			auto model_uid = model_handle.GetUid();
 			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
