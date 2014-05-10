@@ -121,11 +121,15 @@ void Scene::RemoveObject(Object & object)
 		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
 			auto key = std::make_pair(leaf_node, & light);
-			if (light.MakesShadow())
+			if (light.MakesShadow() && light.GetException() != leaf_node)
 			{
 				ASSERT(_shadows.find(key) != std::end(_shadows));
 			
 				_shadows.erase(key);
+			}
+			else
+			{
+				ASSERT(_shadows.find(key) == std::end(_shadows));
 			}
 		});
 	}
