@@ -19,7 +19,6 @@ namespace gfx
 		point_shadow,
 		search,
 		search_shadow,
-		beam,
 		size
 	};
 

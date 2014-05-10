@@ -78,7 +78,6 @@ namespace
 	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
-	CONFIG_DEFINE (enable_beam, bool, false);
 
 	CONFIG_DEFINE (ufo_color, gfx::Color4f, gfx::Color4f::Cyan());
 
@@ -691,14 +690,6 @@ namespace
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
-
-		if (enable_beam)
-		{
-			gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
-			gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
-				engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
-			});
-		}
 
 		// controller
 		auto & controller = ref(new VehicleController(entity));

@@ -20,7 +20,7 @@ precision highp int;
 struct Light
 {
 	vec3 position;
-	vec3 direction;	// for beam/search lights
+	vec3 direction;	// for search lights
 	vec4 color;
 };
 
@@ -32,7 +32,6 @@ const int max_lights = 8;
 // light information provided by the renderer
 uniform vec4 ambient;
 uniform int num_point_lights;
-uniform int num_beam_lights;
 uniform int num_search_lights;
 uniform Light lights[max_lights];
 
@@ -48,16 +47,6 @@ lowp vec3 LightFragment_Point(in Light light, in highp vec3 frag_position, in hi
 	lowp vec3 color = light.color.rgb * attenuation;
 	
 	return color;
-}
-
-// support function to calculate the light shone on a given fragment by a given light
-lowp vec3 LightFragment_Beam(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
-{
-	highp vec3 frag_to_light_source = light.position - frag_position;
-	highp float r = length(frag_to_light_source - light.direction * dot(frag_to_light_source, light.direction));
-	highp float i = exp((-5000. * r * r));
-	
-	return light.color.rgb * i;
 }
 
 // support function to calculate the light shone on a given fragment by a given light
@@ -94,11 +83,6 @@ lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, 
 	for (int cd = num_point_lights; cd != 0; -- cd)
 	{
 		illumination += LightFragment_Point(lights[i ++], frag_position, frag_normal);
-	}
-	
-	for (int cd = num_beam_lights; cd != 0; -- cd)
-	{
-		illumination += LightFragment_Beam(lights[i ++], frag_position, frag_normal);
 	}
 	
 	for (int cd = num_search_lights; cd != 0; -- cd)
