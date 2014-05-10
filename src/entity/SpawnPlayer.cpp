@@ -195,8 +195,7 @@ namespace
 	// given a Mesh comprising unique vertex entries,
 	// generates a GPU-friendly mesh with flat shading
 	// TODO: Write a more general-purpose flat-faced mesh converted which scans for dupes as it generates new verts
-	template <typename MeshType>
-	gfx::LitMesh GenerateFlatLitMesh(MeshType const & source_mesh, gfx::Color4f const & color = gfx::Color4f::White())
+	gfx::LitMesh GenerateFlatLitMesh(gfx::LitMesh const & source_mesh)
 	{
 		auto & source_vertices = source_mesh.GetVertices();
 		auto & source_indices = source_mesh.GetIndices();
@@ -210,24 +209,26 @@ namespace
 		destination_vertices.reserve(num_source_indices);
 		destination_indices.reserve(num_source_indices);
 
-		for (auto end = std::end(source_mesh), source_iterator = std::begin(source_mesh); source_iterator != end; )
+		for (auto end = std::end(source_mesh), source_iterator = std::begin(source_mesh); source_iterator != end; source_iterator += 3)
 		{
 			gfx::Triangle3 source_triangle;
-			for (int i = 0; i != 3; ++ source_iterator, ++ i)
+			for (int i = 0; i != 3; ++ i)
 			{
-				source_triangle.points[i] = source_iterator->pos;
+				source_triangle.points[i] = source_iterator[i].pos;
 			}
 
 			auto source_plane = geom::MakePlane(source_triangle);
 			
-			for (auto const & vertex : source_triangle.points)
+			for (int i = 0; i != 3; ++ i)
 			{
 				destination_indices.push_back(destination_vertices.size());
+				
+				auto const & source_vertex = source_iterator[i];
 				destination_vertices.push_back(gfx::LitVertex(
 				{ 
-					vertex,
+					source_vertex.pos,
 					geom::Normalized(source_plane.normal),
-					color
+					source_vertex.color
 				}));
 			}
 		}
@@ -239,20 +240,19 @@ namespace
 		return destination_mesh;
 	}
 	
-	template <typename IndexType>
-	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateShipMesh()
+	gfx::LitMesh GenerateShipMesh(gfx::Color4b const & color = gfx::Color4b::White())
 	{
 		// ship mesh
-		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
+		gfx::LitMesh mesh;
 		
 		// add vertices
 		auto & vertices = mesh.GetVertices();
 		vertices.reserve(5);
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, 0.f, 1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(-1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, -.25f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, .25f, -1.f) });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.f, 1.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(-1.f, 0.f, -1.f), Vector3(-1.f, 0.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(1.f, 0.f, -1.f), Vector3(1.f, 0.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, -.25f, -1.f), Vector3(0.f, -1.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, .25f, -1.f), Vector3(0.f, 1.f, 0.f), color });
 		ASSERT(vertices.size() == vertices.capacity());
 
 		// add faces
@@ -447,7 +447,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White()
+				gfx::Color4b::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, up_fn, 8, 2, 1);
@@ -464,7 +464,7 @@ namespace
 			{
 				position,
 				Vector3(0.f, 0.f, -1.f), 
-				gfx::Color4f::White()
+				gfx::Color4b::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, down_fn, 8, 1, 7);
@@ -494,7 +494,7 @@ namespace
 			{
 				position, 
 				normal, 
-				gfx::Color4f::White()
+				gfx::Color4b::White()
 			};
 		};
 		
@@ -537,7 +537,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White()
+				gfx::Color4b::White()
 			};
 		};
 
@@ -689,7 +689,7 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, lit_vbo, plain_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
 		if (enable_beam)
@@ -832,25 +832,33 @@ namespace
 		auto & resource_manager = crag::core::ResourceManager::Get();
 
 		// ship
+		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		{
+			return GenerateShipMesh();
+		});
 		resource_manager.Register<physics::Mesh>("ShipPhysicsMesh", [] ()
 		{
-			return GenerateShipMesh<physics::ElementIndex>();
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
 		resource_manager.Register<gfx::PlainMesh>("ShipShadowMesh", [] ()
 		{
-			return GenerateShipMesh<gfx::ElementIndex>();
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		resource_manager.Register<gfx::LitMesh>("ShipFlatLitMesh", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto plain_mesh = resource_manager.GetHandle<physics::Mesh>("ShipShadowMesh");
-			return GenerateFlatLitMesh(* plain_mesh);
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		resource_manager.Register<gfx::LitVboResource>("ShipVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -874,8 +882,8 @@ namespace
 		resource_manager.Register<gfx::LitMesh>("CosSaucerFlatLitMesh", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto physics_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
-			return GenerateFlatLitMesh(* physics_mesh);
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		resource_manager.Register<gfx::LitVboResource>("CosSaucerVbo", [] ()
