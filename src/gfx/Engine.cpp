@@ -1023,9 +1023,10 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 
 	ShadowMapKey key;
 	key.second = & light;
+	auto exception = light.GetException();
 	for (auto & leaf_node : render_list)
 	{
-		if (! leaf_node.CastsShadow())
+		if (! leaf_node.CastsShadow() || & leaf_node == exception)
 		{
 			continue;
 		}

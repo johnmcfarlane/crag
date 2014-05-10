@@ -26,7 +26,7 @@ namespace gfx
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type);
+		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type, ObjectHandle exception = ObjectHandle());
 		~Light();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
@@ -41,6 +41,8 @@ namespace gfx
 		LightType GetType() const;
 		bool MakesShadow() const;
 		
+		LeafNode const * GetException() const;
+		
 #if defined(CRAG_GFX_LIGHT_DEBUG)
 		LeafNode::PreRenderResult PreRender() override;
 #endif
@@ -51,6 +53,7 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
 		Color4f _color;
+		LeafNode const * _exception;
 		LightType _type;
 		bool _is_extinguished = false;
 	};

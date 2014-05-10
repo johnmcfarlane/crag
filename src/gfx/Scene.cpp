@@ -86,6 +86,11 @@ void Scene::AddObject(Object & object)
 	{
 		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
+			if (light.GetException() == leaf_node)
+			{
+				return;
+			}
+			
 			auto key = std::make_pair(leaf_node, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
 			
@@ -159,6 +164,11 @@ void Scene::AddLight(Light & light)
 				continue;
 			}
 			
+			if (light.GetException() == & object)
+			{
+				return;
+			}
+			
 			auto key = std::make_pair(& object, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
 			_shadows.insert(std::make_pair(key, ShadowVolume()));
@@ -180,7 +190,7 @@ void Scene::RemoveLight(Light & light)
 	{
 		for (auto & object : _render_list)
 		{
-			if (! object.CastsShadow())
+			if (! object.CastsShadow() || light.GetException() == & object)
 			{
 				continue;
 			}

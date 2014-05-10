@@ -27,12 +27,26 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Light definitions
 
-Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type)
+Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type, ObjectHandle exception)
 : LeafNode(init, local_transformation, Layer::light)
 , _color(color)
+, _exception(nullptr)
 , _type(type)
 {
-	Scene & scene = GetEngine().GetScene();
+	auto & engine = GetEngine();
+	if (exception)
+	{
+		auto exception_object = engine.GetObject(exception.GetUid());
+		ASSERT(exception_object);
+		
+		if (exception_object)
+		{
+			_exception = & core::StaticCast<LeafNode>(* exception_object);
+			CRAG_DEBUG_DUMP(_exception);
+		}
+	}
+	
+	Scene & scene = engine.GetScene();
 	CRAG_VERIFY(scene);
 	scene.AddLight(* this);
 	
@@ -97,6 +111,11 @@ bool Light::MakesShadow() const
 		default:
 			return false;
 	}
+}
+
+LeafNode const * Light::GetException() const
+{
+	return _exception;
 }
 
 #if defined(CRAG_GFX_LIGHT_DEBUG)
