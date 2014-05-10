@@ -718,6 +718,8 @@ void Engine::UpdateShadowVolumes()
 		auto & key = pair.first;
 		auto & object = * key.first;
 		Light & light = * key.second;
+		
+		ASSERT(light.GetException() != & object);
 
 		auto & shadow = pair.second;
 
