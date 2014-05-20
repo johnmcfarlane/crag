@@ -803,13 +803,12 @@ namespace
 			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
 			
 			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
-#if defined(CRAG_USE_GLES)
 			auto light_type = gfx::LightType::search;
-#endif
-#if defined(CRAG_USE_GL)
-			auto light_type = gfx::LightType::search_shadow;
-#endif
-			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(search_light_transformation, gfx::Color4f::White() * 1.f, light_type, exception_object);
+			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(
+				search_light_transformation, 
+				gfx::Color4f(.02f, .04f, .08f), 
+				light_type, exception_object,
+				float(PI * .05));
 			auto light_uid = light_handle.GetUid();
 			auto model_uid = model_handle.GetUid();
 			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
