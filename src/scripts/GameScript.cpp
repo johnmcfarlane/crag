@@ -51,6 +51,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
+	CONFIG_DEFINE(enable_spawn_ball, bool, true);
+
 	sim::Vector3 player_start_pos(0, 9999400, 0);
 	sim::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
@@ -237,9 +239,12 @@ void GameScript(applet::AppletInterface & applet_interface)
 	}
 
 	// ball
-	sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
-	sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
-	_shapes.push_back(ball);
+	if (enable_spawn_ball)
+	{
+		sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
+		sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
+		_shapes.push_back(ball);
+	}
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
