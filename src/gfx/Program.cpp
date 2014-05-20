@@ -248,6 +248,9 @@ void LightProgram::InitUniforms()
 	
 		sprintf(name, "lights[%d].color", index);
 		InitUniformLocation(light_uniforms.color, name);
+
+		sprintf(name, "lights[%d].angle", index);
+		InitUniformLocation(light_uniforms.angle, name);
 	}
 }
 
@@ -348,6 +351,9 @@ void LightProgram::SetLight(Light const & light, int index) const
 
 	Color4f const & color = light.GetColor();
 	light_uniforms.color.Set(color);
+
+	auto angle = light.GetAngleVector();
+	light_uniforms.angle.Set(angle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -456,12 +462,12 @@ void DiskProgram::InitUniforms()
 // TexturedProgram member definitions
 
 TexturedProgram::TexturedProgram(TexturedProgram && rhs)
-: Program3d(std::move(rhs))
+: LightProgram(std::move(rhs))
 {
 }
 
 TexturedProgram::TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: Program3d(vert_sources, frag_sources)
+: LightProgram(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_tex_coord");

@@ -89,6 +89,7 @@ namespace gfx
 			Uniform<Vector3> position;
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
+			Uniform<Vector2> angle;
 		};
 
 	public:
@@ -135,6 +136,7 @@ namespace gfx
 		Uniform<Color4f> _color;
 	};
 
+	// for rendering shadow volumes
 	class ShadowProgram : public Program3d
 	{
 	public:
@@ -170,7 +172,7 @@ namespace gfx
 	};
 	
 	// used by skybox
-	class TexturedProgram : public Program3d
+	class TexturedProgram : public LightProgram
 	{
 	public:
 		TexturedProgram(TexturedProgram && rhs);

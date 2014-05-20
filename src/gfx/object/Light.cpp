@@ -27,12 +27,18 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Light definitions
 
-Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type, ObjectHandle exception)
+Light::Light(
+	LeafNode::Init const & init, Transformation const & local_transformation, 
+	Color4f const & color, LightType type, 
+	ObjectHandle exception, Scalar angle)
 : LeafNode(init, local_transformation, Layer::light)
 , _color(color)
+, _angle(std::sqrt(.5f), std::sqrt(.5f))
 , _exception(nullptr)
 , _type(type)
 {
+	SetAngle(angle);
+
 	auto & engine = GetEngine();
 	if (exception)
 	{
@@ -66,6 +72,9 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
 
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
+	CRAG_VERIFY_UNIT(object._angle, .0001f);
+	CRAG_VERIFY_OP(object._angle.x, >= , 0.f);
+	CRAG_VERIFY_OP(object._angle.y, >= , 0.f);
 	CRAG_VERIFY_TRUE(int(object._type) >= 0);
 	CRAG_VERIFY_TRUE(object._type < LightType::size);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
@@ -93,6 +102,18 @@ void Light::SetColor(Color4f const & color)
 Color4f const & Light::GetColor() const
 {
 	return _color;
+}
+
+void Light::SetAngle(Scalar angle)
+{
+	_angle.x = std::sin(angle);
+	_angle.y = std::cos(angle);
+}
+
+Vector2 Light::GetAngleVector() const
+{
+	CRAG_VERIFY(* this);
+	return _angle;
 }
 
 LightType Light::GetType() const

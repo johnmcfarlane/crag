@@ -16,12 +16,16 @@ attribute vec3 vertex_position;
 attribute vec2 vertex_tex_coord;
 
 // outputs to skybox.frag
+varying vec3 fragment_position;
 varying vec2 fragment_tex_coord;
 
 void main(void)
 {
-	vec4 vertex = projection_matrix * model_view_matrix * vec4(vertex_position, 1.0);
-	gl_Position = vec4(vertex.xyw, vertex.w);
+	vec4 position4 = model_view_matrix * vec4(vertex_position, 1.);
+	vec4 vertex = projection_matrix * position4;
 
+	fragment_position = position4.xyz;
 	fragment_tex_coord = vertex_tex_coord;
+
+	gl_Position = vec4(vertex.xyw, vertex.w);
 }

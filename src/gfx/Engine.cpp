@@ -793,6 +793,7 @@ void Engine::RenderScene()
 	// render background elements (skybox)
 	setDepthRange(0.f, 1.f);
 	glDepthFunc(GL_LEQUAL);
+	UpdateProgramLights(LightTypeBitSet(LightType::search_shadow) | LightTypeBitSet(LightType::search));
 	RenderLayer(background_projection_matrix, Layer::background);
 	glDepthFunc(depth_func);
 	setDepthRange(0.f, max_foreground_depth);
@@ -818,6 +819,7 @@ void Engine::UpdateProgramLights(Light const & light)
 	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"));
 	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"));
 	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
+	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"));
 }
 
 void Engine::UpdateProgramLights(LightTypeBitSet light_types)
@@ -826,7 +828,7 @@ void Engine::UpdateProgramLights(LightTypeBitSet light_types)
 
 	auto & lights = scene->GetLightList();
 	
-	auto update_program = [&] (LightProgram const & light_program)
+	auto update_program = [&] (LightProgram const & light_program, Color4f const & ambient)
 	{
 		SetCurrentProgram(& light_program);
 		light_program.SetLights(ambient, lights, light_types);
@@ -834,9 +836,10 @@ void Engine::UpdateProgramLights(LightTypeBitSet light_types)
 	
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"));
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"));
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"), ambient);
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"), ambient);
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"), ambient);
+	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"), Color4f::Black());
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)

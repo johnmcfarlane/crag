@@ -802,7 +802,7 @@ namespace
 			// ensures light is clear of enclosing object that would extinguish it
 			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
 			
-			gfx::Transformation search_light_transformation(Vector3(0.f, clear_distance, 0.f));
+			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
 #if defined(CRAG_USE_GLES)
 			auto light_type = gfx::LightType::search;
 #endif

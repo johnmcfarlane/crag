@@ -26,7 +26,10 @@ namespace gfx
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type, ObjectHandle exception = ObjectHandle());
+		Light(
+			Init const & init, Transformation const & local_transformation, 
+			Color4f const & color, LightType type, 
+			ObjectHandle exception = ObjectHandle(), Scalar angle = PI * .25f);
 		~Light();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
@@ -38,6 +41,12 @@ namespace gfx
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
+		
+		// TODO: BeamLight derived class with separate render pass
+		// after other lights
+		void SetAngle(Scalar width);
+		Vector2 GetAngleVector() const;
+		
 		LightType GetType() const;
 		bool MakesShadow() const;
 		
@@ -53,6 +62,7 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
 		Color4f _color;
+		Vector2 _angle;	// search light sin/cos
 		LeafNode const * _exception;
 		LightType _type;
 		bool _is_extinguished = false;
