@@ -220,7 +220,7 @@ lowp vec3 LightFragment_Search(in Light light, in highp vec3 frag_position, in h
 // support function to calculate the light seen on a given fragment
 lowp vec3 BackgroundLightFragment(in highp vec3 frag_direction, in lowp vec3 diffuse)
 {
-	lowp vec3 beam_illumination = ambient.rgb * 0.;
+	lowp vec3 beam_illumination = ambient.rgb;
 	
 	int i = num_point_lights;
 	for (int end = i + num_search_lights; i != end; ++ i)
