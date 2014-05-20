@@ -27,12 +27,6 @@ namespace gfx
 		class const_iterator
 		{
 		public:
-			void dump() const
-			{
-				CRAG_DEBUG_DUMP(_vertices);
-				CRAG_DEBUG_DUMP(*_index_pos);
-				CRAG_DEBUG_DUMP(&*_index_pos);
-			}
 			const_iterator() = default;
 			
 			const_iterator(const_iterator const &) = default;

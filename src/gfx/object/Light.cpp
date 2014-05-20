@@ -48,7 +48,6 @@ Light::Light(
 		if (exception_object)
 		{
 			_exception = & core::StaticCast<LeafNode>(* exception_object);
-			CRAG_DEBUG_DUMP(_exception);
 		}
 	}
 	
