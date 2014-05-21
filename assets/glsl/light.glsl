@@ -36,7 +36,7 @@ struct Contact
 
 
 // constants
-const int max_lights = 8;
+const int max_lights = 2;
 
 
 // light information provided by the renderer
@@ -44,6 +44,7 @@ uniform vec4 ambient;
 uniform int num_point_lights;
 uniform int num_search_lights;
 uniform Light lights[max_lights];
+
 
 float Squared(float s)
 {
@@ -55,7 +56,7 @@ float Calculate_SearchAttenuation(float sin_angle, float light_to_position)
 	return Squared(sin_angle * light_to_position);
 }
 
-vec3 ApplyFog(in vec3 fog_color, in float fog_distance, in float light_to_position, in float sin_angle)
+lowp vec3 ApplyFog(in Light light, in float fog_distance, in float light_to_position)
 {
 	// factor based on how far through the beam the ray passes
 	float particle_density = 2.5;
@@ -66,11 +67,11 @@ vec3 ApplyFog(in vec3 fog_color, in float fog_distance, in float light_to_positi
 	float fog_factor_from_light_penetration = exp(- Squared(particle_falloff * light_to_position));
 
 	// attenuation relative to distance from light source
-	float intensity_of_light_being_traversed = Calculate_SearchAttenuation(sin_angle, light_to_position);
+	float intensity_of_light_being_traversed = Calculate_SearchAttenuation(light.angle.x, light_to_position);
 
 	float fog_intensity = fog_factor_from_ray_penetration * fog_factor_from_light_penetration / intensity_of_light_being_traversed;
 
-	return fog_color.rgb * fog_intensity;
+	return light.color.rgb * fog_intensity;
 }
 
 void SetContact(inout Contact contact, in float t, in vec3 camera_direction)
@@ -86,7 +87,8 @@ bool GetContactGood(in Contact contact, in Light light)
 
 vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, float camera_distance)
 {
-	// TODO: attribute to author
+	// cone/line intersection test copied from
+	// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
 	float AdD = dot(light.direction, camera_direction);
 	float cosSqr = Squared(light.angle.y);
 	vec3 E = - light.position;
@@ -95,7 +97,6 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 	float EdE = dot(E, E);
 	float c2 = AdD * AdD - cosSqr;
 
-	// Solve the quadratic.  Keep only those X for which Dot(A,X-V) >= 0.
 	if (c2 == 0.)
 	{
 		// haven't seend this happen; would like to know about it if it did.
@@ -171,7 +172,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 
 	float depth = min(t2 - t1, 1000000000.);
 	vec3 avg_light_position = (contact1.position + contact2.position) * .5;
-	return ApplyFog(light.color.rgb, depth, length(avg_light_position - light.position), light.angle.x);
+	return ApplyFog(light, depth, length(avg_light_position - light.position));
 }
 
 vec3 LightFragment_SearchBeam(in Light light, in highp vec3 frag_position)

@@ -115,7 +115,7 @@ namespace gfx
 		Uniform<Color4f> _ambient;
 		Uniform<int> _num_point_lights;
 		Uniform<int> _num_search_lights;
-		std::array<LightUniforms, 8> _lights;
+		std::array<LightUniforms, 2> _lights;
 	};
 
 	class PolyProgram : public LightProgram
