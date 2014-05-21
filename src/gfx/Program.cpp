@@ -135,7 +135,6 @@ void Program::InitUniformLocation(Uniform<Type> & uniform, char const * name) co
 
 void Program::Finalize()
 {
-	CRAG_DEBUG_DUMP(_id);
 	GL_CALL(glLinkProgram(_id));
 	
 	if (! IsLinked())
