@@ -47,7 +47,7 @@ namespace gfx
 
 	private:
 		virtual void InitUniforms();
-		void GetInfoLog(std::string & info_log) const;
+		bool DumpInfoLog() const;
 		void Verify() const;
 
 		// variables

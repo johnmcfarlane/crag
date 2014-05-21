@@ -50,20 +50,13 @@ Program::Program(std::initializer_list<char const *> vert_sources, std::initiali
 	GL_CALL(glAttachShader(_id, _vert_shader._id));
 	GL_CALL(glAttachShader(_id, _frag_shader._id));
 	
-#if defined(DUMP_GLSL_ERRORS)
-	std::string info_log;
-	GetInfoLog(info_log);
-
-	if (info_log.size() > 1)
+	if (DumpInfoLog())
 	{
 		for (auto source : vert_sources)
 		{
 			PrintMessage(stderr, "Linker output of program including vert shader '%s':\n", source);
 		}
-		
-		PrintMessage(stderr, "%s", info_log.c_str());
 	}
-#endif
 }
 
 Program::~Program()
@@ -142,28 +135,42 @@ void Program::InitUniformLocation(Uniform<Type> & uniform, char const * name) co
 
 void Program::Finalize()
 {
-	glLinkProgram(_id);
-	ASSERT(IsLinked());
+	CRAG_DEBUG_DUMP(_id);
+	GL_CALL(glLinkProgram(_id));
+	
+	if (! IsLinked())
+	{
+		DumpInfoLog();
+	}
 	
 	Bind();
 	InitUniforms();
 	Unbind();
 }
 
-void Program::GetInfoLog(std::string & info_log) const
+bool Program::DumpInfoLog() const
 {
+#if defined(DUMP_GLSL_ERRORS)
 	GLint length;
 	GL_CALL(glGetProgramiv(_id, GL_INFO_LOG_LENGTH, & length));
-	
 	if (length == 0)
 	{
-		info_log.clear();
+		return false;
 	}
-	else
+
+	std::string info_log;
+	info_log.resize(length);
+	glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);
+	if (info_log.size() <= 1)
 	{
-		info_log.resize(length);
-		glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);
+		return false;
 	}
+	
+	PrintMessage(stderr, "%s", info_log.c_str());
+	return true;
+#else
+	return false;
+#endif
 }
 
 void Program::Verify() const
