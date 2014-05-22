@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\..\vs\SDL2\include;..\..\vs\ode\include;..\..\vs\glew\include</IncludePath>
+    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\SDL2\include;..\ode\include;..\glew\include</IncludePath>
     <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
