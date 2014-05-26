@@ -135,8 +135,8 @@ namespace
 		
 		static QuaterneCount MakeRecommendation(float const & frame_duration_ratio, QuaterneCount num_quaterne, core::Time startup_time)
 		{
-			ASSERT(frame_duration_ratio >= 0);
-			ASSERT(! IsInf(frame_duration_ratio));
+			CRAG_VERIFY_OP(frame_duration_ratio, >=, 0);
+			CRAG_VERIFY(frame_duration_ratio);
 			
 			float frame_duration_ratio_log = std::log(frame_duration_ratio);
 			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient(startup_time));
