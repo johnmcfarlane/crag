@@ -74,18 +74,20 @@ lowp vec3 ApplyFog(in Light light, in float fog_distance, in float light_to_posi
 	return light.color.rgb * fog_intensity;
 }
 
-void SetContact(inout Contact contact, in float t, in vec3 camera_direction)
+Contact SetContact(const vec3 camera_direction, const float t)
 {
-	contact.position = t * camera_direction;
+	Contact contact;
+	contact.position = camera_direction * t;
 	contact.t = t;
+	return contact;
 }
 
-bool GetContactGood(in Contact contact, in Light light)
+bool GetContactGood(const Contact contact, const Light light)
 {
 	return dot(contact.position - light.position, light.direction) < 0.;
 }
 
-vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, float camera_distance)
+vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_direction, const float camera_distance)
 {
 	// cone/line intersection test copied from
 	// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
@@ -95,7 +97,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 	float AdE = dot(light.direction, E);
 	float DdE = dot(camera_direction, E);
 	float EdE = dot(E, E);
-	float c2 = AdD * AdD - cosSqr;
+	float c2 = Squared(AdD) - cosSqr;
 
 	if (c2 == 0.)
 	{
@@ -106,7 +108,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 	float c1 = AdD * AdE - cosSqr * DdE;
 	float c0 = AdE * AdE - cosSqr * EdE;
 
-	float discr = c1 * c1 - c0 * c2;
+	float discr = Squared(c1) - c0 * c2;
 	if (discr <= 0.)
 	{
 		return vec3(0.);
@@ -117,8 +119,8 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 	float invC2 = 1. / c2;
 
 	Contact contact1, contact2;
-	SetContact(contact1, (- c1 - root) * invC2, camera_direction);
-	SetContact(contact2, (- c1 + root) * invC2, camera_direction);
+	contact1 = SetContact(camera_direction, (- c1 - root) * invC2);
+	contact2 = SetContact(camera_direction, (- c1 + root) * invC2);
 	bool good1 = GetContactGood(contact1, light);
 	bool good2 = GetContactGood(contact2, light);
 
@@ -131,7 +133,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 		else
 		{
 			float t = (contact1.t < contact2.t) ? far_negative : far_positive;
-			SetContact(contact2, t, camera_direction);
+			contact2 = SetContact(camera_direction, t);
 		}
 	}
 	else
@@ -139,7 +141,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 		if (good2)
 		{
 			float t = (contact2.t < contact1.t) ? far_negative : far_positive;
-			SetContact(contact1, t, camera_direction);
+			contact1 = SetContact(camera_direction, t);
 		}
 		else
 		{
@@ -175,7 +177,7 @@ vec3 LightFragment_SearchBeam(in Light light, in highp vec3 camera_direction, fl
 	return ApplyFog(light, depth, length(avg_light_position - light.position));
 }
 
-vec3 LightFragment_SearchBeam(in Light light, in highp vec3 frag_position)
+vec3 LightFragment_SearchBeam(const Light light, const highp vec3 frag_position)
 {
 	float camera_distance = length(frag_position);
 	vec3 camera_direction = frag_position / camera_distance;
