@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# params
 if [ "$#" -lt 2 ]
 then
-	echo "<num-cores> (release|debug) [<crag-parameter> ...]"
+	echo "$0 <num-cores> (release|debug) [<crag-parameter> ...]"
 	exit 1
 fi
 
@@ -11,5 +12,12 @@ JOBS="-j$1"
 FOLDER="$2"
 shift 2
 
+# dump core files
+ulimit -c unlimited
+
+# delete old core files
 rm core || true
+rm core.* || true
+
+# build and run or dump the crash stack
 make -C "$FOLDER" "$JOBS" crag&&"$FOLDER"/bin/crag $@||./bt "$FOLDER"

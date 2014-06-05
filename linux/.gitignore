@@ -6,6 +6,7 @@ cmake_install.cmake
 crag.cfg
 default.cfg
 core
+core.*
 SDL
 bin
 include

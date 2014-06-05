@@ -15,8 +15,6 @@
 
 #if defined(WIN32)
 #include "core/windows.h"
-#elif ! defined(__APPLE__)
-#include <sys/resource.h>
 #endif
 
 namespace 
@@ -35,12 +33,6 @@ namespace
 
 bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 {
-#if ! defined(WIN32) && ! defined(NDEBUG) && ! defined(__ANDROID__)
-	rlimit rlim;
-	rlim.rlim_cur = rlim.rlim_max = 1024 * 1024 * 1024;
-	setrlimit(RLIMIT_CORE, &rlim);
-#endif
-	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{

@@ -3,4 +3,4 @@
 set -o errexit
 
 FOLDER="$1"
-gdb "$FOLDER"/bin/crag core -batch -ex bt
+gdb "$FOLDER"/bin/crag core.* -batch -ex bt
