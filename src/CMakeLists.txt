@@ -67,6 +67,7 @@ add_executable(crag
 	gfx/object/Light.cpp
 	gfx/object/Object.cpp
 	gfx/object/RootNode.cpp
+	gfx/object/SearchLight.cpp
 	gfx/object/Skybox.cpp
 	gfx/object/MeshObject.cpp
 	gfx/PlainVertex.cpp

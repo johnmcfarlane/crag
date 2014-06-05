@@ -24,7 +24,7 @@ struct Light
 	vec3 position;
 	vec3 direction;	// for search lights
 	vec4 color;
-	vec2 angle;	// sin/cos
+	vec2 angle;	// for search light, sin/cos
 };
 
 // used by search beam functions
@@ -51,29 +51,6 @@ float Squared(float s)
 	return s * s;
 }
 
-float Calculate_SearchAttenuation(float sin_angle, float light_to_position)
-{
-	return Squared(sin_angle * light_to_position);
-}
-
-lowp vec3 ApplyFog(in Light light, in float fog_distance, in float light_to_position)
-{
-	// factor based on how far through the beam the ray passes
-	float particle_density = 2.5;
-	float fog_factor_from_ray_penetration = .5 * Squared(particle_density * fog_distance);
-
-	// factor relates to falloff from particles blocking light as it travels away from light source
-	float particle_falloff = .5;
-	float fog_factor_from_light_penetration = exp(- Squared(particle_falloff * light_to_position));
-
-	// attenuation relative to distance from light source
-	float intensity_of_light_being_traversed = Calculate_SearchAttenuation(light.angle.x, light_to_position);
-
-	float fog_intensity = fog_factor_from_ray_penetration * fog_factor_from_light_penetration / intensity_of_light_being_traversed;
-
-	return light.color.rgb * fog_intensity;
-}
-
 Contact SetContact(const vec3 camera_direction, const float t)
 {
 	Contact contact;
@@ -89,92 +66,101 @@ bool GetContactGood(const Contact contact, const Light light)
 
 vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_direction, const float camera_distance)
 {
-	// cone/line intersection test copied from
-	// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
-	float AdD = dot(light.direction, camera_direction);
-	float cosSqr = Squared(light.angle.y);
-	vec3 E = - light.position;
-	float AdE = dot(light.direction, E);
-	float DdE = dot(camera_direction, E);
-	float EdE = dot(E, E);
-	float c2 = Squared(AdD) - cosSqr;
-
-	if (c2 == 0.)
-	{
-		// haven't seend this happen; would like to know about it if it did.
-		return vec3(1., 0., 0.);
-	}
-
-	float c1 = AdD * AdE - cosSqr * DdE;
-	float c0 = AdE * AdE - cosSqr * EdE;
-
-	float discr = Squared(c1) - c0 * c2;
-	if (discr <= 0.)
-	{
-		return vec3(0.);
-	}
-
-	// Q(t) = 0 has two distinct real-valued roots.
-	float root = sqrt(discr);
-	float invC2 = 1. / c2;
-
+	// details of the two contact points between the camera ray and the volume
+	// of the search beam; contact1 is behind contact2 (camera-wise)
 	Contact contact1, contact2;
-	contact1 = SetContact(camera_direction, (- c1 - root) * invC2);
-	contact2 = SetContact(camera_direction, (- c1 + root) * invC2);
-	bool good1 = GetContactGood(contact1, light);
-	bool good2 = GetContactGood(contact2, light);
+	{
+		// cone/line intersection test copied from
+		// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
+		float AdD = dot(light.direction, camera_direction);
+		float cosSqr = Squared(light.angle.y);
+		vec3 E = - light.position;
+		float AdE = dot(light.direction, E);
+		float DdE = dot(camera_direction, E);
+		float EdE = dot(E, E);
+		float c2 = cosSqr - Squared(AdD);
 
-	if (good1)
-	{
-		if (good2)
-		{
-			// very good
-		}
-		else
-		{
-			float t = (contact1.t < contact2.t) ? far_negative : far_positive;
-			contact2 = SetContact(camera_direction, t);
-		}
-	}
-	else
-	{
-		if (good2)
-		{
-			float t = (contact2.t < contact1.t) ? far_negative : far_positive;
-			contact1 = SetContact(camera_direction, t);
-		}
-		else
+		float c1 = AdD * AdE - cosSqr * DdE;
+		float c0 = AdE * AdE - cosSqr * EdE;
+
+		float discr = Squared(c1) + c0 * c2;
+		if (discr <= 0.)
 		{
 			return vec3(0.);
 		}
+
+		// Q(t) = 0 has two distinct real-valued roots.
+		float root = sqrt(discr);
+		float invC2 = -1. / c2;
+
+		contact1 = SetContact(camera_direction, (- c1 + root) * invC2);
+		contact2 = SetContact(camera_direction, (- c1 - root) * invC2);
+
+		// not tested when beam is in behind camera
+		if (contact1.t > contact2.t)
+		{
+			Contact tmp = contact1;
+			contact1 = contact2;
+			contact2 = tmp;
+		}
+	
+		bool good1 = GetContactGood(contact1, light);
+		bool good2 = GetContactGood(contact2, light);
+
+		if (good1)
+		{
+			if (good2)
+			{
+				// very good
+			}
+			else
+			{
+				contact2 = contact1;
+				contact1 = SetContact(camera_direction, far_negative);
+			}
+		}
+		else
+		{
+			if (good2)
+			{
+				contact1 = contact2;
+				contact2 = SetContact(camera_direction, far_positive);
+			}
+			else
+			{
+				return vec3(0.);
+			}
+		}
+
+		// clip to near z
+		if (contact1.t < 0.)
+		{
+			contact1.t = 0.;
+		}
+		
+		// clip to solid surface or far z
+		if (contact2.t > camera_distance)
+		{
+			contact2.t = camera_distance;
+		}
+
+		if (contact1.t >= contact2.t)
+		{
+			// beam entirely behind camera or entirely beyond surface
+			return vec3(0.);
+		}
 	}
-
-	float t1 = min(contact1.t, contact2.t);
-	float t2 = max(contact1.t, contact2.t);
-
-	if (t1 > camera_distance || t2 < 0.)
+	
 	{
-		return vec3(0.);
-	}
+		float depth = contact2.t - contact1.t;
+		float light_distance1 = length(contact1.position - light.position);
+		float light_distance2 = length(contact2.position - light.position);
+		
+		float x1 = pow(light_distance1, -2.);
+		float x2 = pow(light_distance2, -2.);
 
-	if (t1 < 0.)
-	{
-		t1 = t2;
-		t2 = 1000000.;
+		return .25 * light.color.rgb * (x2 + x1);
 	}
-	if (t2 > camera_distance)
-	{
-		t2 = camera_distance;
-	}
-
-	if (t1 >= t2)
-	{
-		return vec3(0.);
-	}
-
-	float depth = min(t2 - t1, 1000000000.);
-	vec3 avg_light_position = (contact1.position + contact2.position) * .5;
-	return ApplyFog(light, depth, length(avg_light_position - light.position));
 }
 
 vec3 LightFragment_SearchBeam(const Light light, const highp vec3 frag_position)
@@ -202,22 +188,21 @@ lowp vec3 LightFragment_Point(in Light light, in highp vec3 frag_position, in hi
 // support function to calculate the light shone on a given fragment by a given light
 lowp vec3 LightFragment_Search(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
 {
-	vec3 frag_to_light_source = light.position - frag_position;
-	float d = length(frag_to_light_source);
-	frag_to_light_source /= d;
+	highp vec3 frag_to_light = light.position - frag_position;
+	highp float distance = length(frag_to_light);
+	highp vec3 frag_to_light_direction = frag_to_light / distance;
 	
-	float surface_attitude_factor = dot(light.direction, frag_normal);
-
-	float projection_dp = dot(light.direction, frag_to_light_source);
-	if (projection_dp < light.angle.y)
+	if (dot(frag_to_light_direction, light.direction) < light.angle.y)
 	{
 		return vec3(0.);
 	}
 	
-	float distance_attenuation = Calculate_SearchAttenuation(light.angle.x, d);
+	highp float dp = dot(frag_to_light_direction, frag_normal);
+	highp float attenuation = max(dp / (distance * distance), 0.0);
 
-	float intensity = surface_attitude_factor / distance_attenuation;
-	return light.color.rgb * intensity;
+	lowp vec3 color = light.color.rgb * attenuation;
+	
+	return color;
 }
 
 // support function to calculate the light seen on a given fragment

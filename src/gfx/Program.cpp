@@ -358,7 +358,7 @@ void LightProgram::SetLight(Light const & light, int index) const
 	Color4f const & color = light.GetColor();
 	light_uniforms.color.Set(color);
 
-	auto angle = light.GetAngleVector();
+	auto angle = light.GetAngle();
 	light_uniforms.angle.Set(angle);
 }
 

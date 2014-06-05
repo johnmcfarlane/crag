@@ -38,7 +38,7 @@
 #include "gfx/LitVertex.h"
 #include "gfx/PlainVertex.h"
 #include "gfx/object/Ball.h"
-#include "gfx/object/Light.h"
+#include "gfx/object/SearchLight.h"
 #include "gfx/object/MeshObject.h"
 
 #include "geom/origin.h"
@@ -60,6 +60,7 @@ namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
 	DECLARE_CLASS_HANDLE(Light); // gfx::LightHandle
+	DECLARE_CLASS_HANDLE(SearchLight); // gfx::SearchLightHandle
 }
 
 namespace
@@ -96,6 +97,7 @@ namespace
 	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
 	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
 	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
+	CONFIG_DEFINE (saucer_search_light_angle, Scalar, .15f);
 
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
@@ -804,11 +806,12 @@ namespace
 			
 			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
 			auto light_type = gfx::LightType::search;
-			gfx::ObjectHandle light_handle = gfx::LightHandle::CreateHandle(
+			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::CreateHandle(
 				search_light_transformation, 
-				gfx::Color4f(.02f, .04f, .08f), 
-				light_type, exception_object,
-				float(PI * .05));
+				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
+				light_type,
+				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
+				exception_object);
 			auto light_uid = light_handle.GetUid();
 			auto model_uid = model_handle.GetUid();
 			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
