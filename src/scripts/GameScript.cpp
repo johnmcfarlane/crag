@@ -52,8 +52,10 @@ namespace
 	// setup variables
 	
 	CONFIG_DEFINE(enable_spawn_ball, bool, true);
+	CONFIG_DEFINE(enable_spawn_cube, bool, true);
+	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
 
-	sim::Vector3 player_start_pos(0, 9999400, 0);
+	sim::Vector3 player_start_pos(5, 9999400, 0);
 	sim::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
@@ -241,9 +243,27 @@ void GameScript(applet::AppletInterface & applet_interface)
 	// ball
 	if (enable_spawn_ball)
 	{
-		sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
-		sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
+		auto sphere = sim::Sphere3(player_start_pos + sim::Vector3(5.f, 8.f, -4.f), 1.f);
+		auto ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
 		_shapes.push_back(ball);
+	}
+
+	// cube
+	if (enable_spawn_cube)
+	{
+		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(0.f, 10.f, 3.f));
+		auto size = sim::Vector3(1.f, 1.f, 1.f) * 2.f;
+		auto cube = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Green());
+		_shapes.push_back(cube);
+	}
+	
+	// obelisk
+	if (enable_spawn_obelisk)
+	{
+		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(1.f, 8.f, 3.f));
+		auto size = sim::Vector3(1.f, 4.f, 9.f) * .5f;
+		auto obelisk = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Black());
+		_shapes.push_back(obelisk);
 	}
 
 	// main loop
