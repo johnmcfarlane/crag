@@ -21,7 +21,7 @@ varying highp vec4 quad_position;
 	
 // inputs from the renderer
 uniform highp mat4 projection_matrix;
-uniform highp vec4 color;
+uniform lowp vec4 color;
 uniform highp vec3 center;
 uniform highp float radius;
 
@@ -49,9 +49,9 @@ bool GetIntersection(in highp vec3 ray, out highp float t)
 
 void SetFragmentDepth(in vec4 view_position)
 {
+#ifndef GL_ES
 	highp vec2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;
 	
-#ifndef GL_ES
 	gl_FragDepth = 0.5 + 0.5 * clipZW.x / clipZW.y;
 #endif
 }
@@ -69,5 +69,5 @@ void main(void)
 
 	highp vec3 frag_normal = normalize(frag_position.xyz - center);
 
-	gl_FragColor = color * vec4(LightFragment(frag_position.xyz, frag_normal, color.xyz), color.a);
+	gl_FragColor = vec4(LightFragment(frag_position.xyz, frag_normal, color.xyz), color.a);
 }
