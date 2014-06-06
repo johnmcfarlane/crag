@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# generate security key for deployment to Google store
 set -o errexit
 
 keytool -genkey -v -keystore crag-release-key.keystore -alias CRAG_ANDROID_ALIAS -keyalg RSA -keysize 2048 -validity 10000

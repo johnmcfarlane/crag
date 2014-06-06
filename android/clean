@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# script to clean the android debug/release build
 set -o errexit
 
 android-ndk/ndk-build clean
