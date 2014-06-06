@@ -11,8 +11,6 @@
 precision highp float;
 #endif
 
-//#define TEST_INTERSECTION
-
 
 // light.glsl function which calculates the lighting for the given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
@@ -58,26 +56,6 @@ void SetFragmentDepth(in vec4 view_position)
 #endif
 }
 
-
-#if defined(TEST_INTERSECTION)
-
-void main(void)
-{
-	float t;
-	if (! GetIntersection(quad_position.xyz, t))
-	{
-		gl_FragColor = vec4(1, 0, 0, 1);
-	}
-	else
-	{
-		float c = length(center);
-		float prop = (c - length(quad_position.xyz * t)) / radius;
-		gl_FragColor = vec4(0., prop, prop, 1.);
-	}
-}
-
-#else
-
 void main(void)
 {
 	highp float t;
@@ -93,5 +71,3 @@ void main(void)
 
 	gl_FragColor = color * vec4(LightFragment(frag_position.xyz, frag_normal, color.xyz), color.a);
 }
-
-#endif

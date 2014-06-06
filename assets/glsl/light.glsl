@@ -13,7 +13,6 @@ precision highp int;
 #endif
 
 #define PI 3.14159265358979323846264338327950288419716939937510
-//#define TEST_NORMALS
 
 const float far_positive = 1000000.;
 const float far_negative = - far_positive;
@@ -222,10 +221,6 @@ lowp vec3 BackgroundLightFragment(in highp vec3 frag_direction, in lowp vec3 dif
 // support function to calculate the light seen on a given fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse)
 {
-#if defined(TEST_NORMALS)
-	return frag_normal;
-#endif
-
 	lowp vec3 surface_illumination = ambient.rgb;
 	lowp vec3 beam_illumination = vec3(0.);
 	
