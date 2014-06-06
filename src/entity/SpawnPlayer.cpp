@@ -820,7 +820,7 @@ namespace
 		}
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust, ! is_thargoid));
+		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust));
 		ufo_entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
