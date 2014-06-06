@@ -63,7 +63,9 @@ bool GetContactGood(const Contact contact, const Light light)
 	return dot(contact.position - light.position, light.direction) < 0.;
 }
 
-vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_direction, const float camera_distance)
+// support function to calculate the light reflected off an idealized atmosphere
+// before a given fragment from a given search light
+vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, const float ray_distance)
 {
 	// details of the two contact points between the camera ray and the volume
 	// of the search beam; contact1 is behind contact2 (camera-wise)
@@ -71,11 +73,11 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 	{
 		// cone/line intersection test copied from
 		// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
-		float AdD = dot(light.direction, camera_direction);
+		float AdD = dot(light.direction, ray_direction);
 		float cosSqr = Squared(light.angle.y);
 		vec3 E = - light.position;
 		float AdE = dot(light.direction, E);
-		float DdE = dot(camera_direction, E);
+		float DdE = dot(ray_direction, E);
 		float EdE = dot(E, E);
 		float c2 = cosSqr - Squared(AdD);
 
@@ -92,8 +94,8 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 		float root = sqrt(discr);
 		float invC2 = -1. / c2;
 
-		contact1 = SetContact(camera_direction, (- c1 + root) * invC2);
-		contact2 = SetContact(camera_direction, (- c1 - root) * invC2);
+		contact1 = SetContact(ray_direction, (- c1 + root) * invC2);
+		contact2 = SetContact(ray_direction, (- c1 - root) * invC2);
 
 		// not tested when beam is in behind camera
 		if (contact1.t > contact2.t)
@@ -115,7 +117,7 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 			else
 			{
 				contact2 = contact1;
-				contact1 = SetContact(camera_direction, far_negative);
+				contact1 = SetContact(ray_direction, far_negative);
 			}
 		}
 		else
@@ -123,7 +125,7 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 			if (good2)
 			{
 				contact1 = contact2;
-				contact2 = SetContact(camera_direction, far_positive);
+				contact2 = SetContact(ray_direction, far_positive);
 			}
 			else
 			{
@@ -138,9 +140,9 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 		}
 		
 		// clip to solid surface or far z
-		if (contact2.t > camera_distance)
+		if (contact2.t > ray_distance)
 		{
-			contact2.t = camera_distance;
+			contact2.t = ray_distance;
 		}
 
 		if (contact1.t >= contact2.t)
@@ -162,16 +164,9 @@ vec3 LightFragment_SearchBeam(const Light light, const highp vec3 camera_directi
 	}
 }
 
-vec3 LightFragment_SearchBeam(const Light light, const highp vec3 frag_position)
-{
-	float camera_distance = length(frag_position);
-	vec3 camera_direction = frag_position / camera_distance;
-
-	return LightFragment_SearchBeam(light, camera_direction, camera_distance);
-}
-
-// support function to calculate the light shone on a given fragment by a given light
-lowp vec3 LightFragment_Point(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
+// support function to calculate 
+// the light reflected off a given fragment from a given point light
+lowp vec3 GetPointLightReflection(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
 {
 	highp vec3 frag_to_light = light.position - frag_position;
 	highp float distance = length(frag_to_light);
@@ -184,8 +179,9 @@ lowp vec3 LightFragment_Point(in Light light, in highp vec3 frag_position, in hi
 	return color;
 }
 
-// support function to calculate the light shone on a given fragment by a given light
-lowp vec3 LightFragment_Search(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
+// support function to calculate 
+// the light reflected off a given fragment from a given search light
+lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
 {
 	highp vec3 frag_to_light = light.position - frag_position;
 	highp float distance = length(frag_to_light);
@@ -204,39 +200,41 @@ lowp vec3 LightFragment_Search(in Light light, in highp vec3 frag_position, in h
 	return color;
 }
 
-// support function to calculate the light seen on a given fragment
-lowp vec3 BackgroundLightFragment(in highp vec3 frag_direction, in lowp vec3 diffuse)
+////////////////////////////////////////////////////////////////////////////////
+// top-level lighting functions
+
+// get color value of background (skybox) fragment
+lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diffuse)
 {
-	lowp vec3 beam_illumination = ambient.rgb;
+	vec3 illumination = ambient.rgb + diffuse;
 	
-	int i = num_point_lights;
-	for (int end = i + num_search_lights; i != end; ++ i)
+	for (int i = num_point_lights, end = i + num_search_lights; i != end; ++ i)
 	{
-		beam_illumination += LightFragment_SearchBeam(lights[i], frag_direction, far_positive);
+		illumination += GetBeamIllumination(lights[i], ray_direction, far_positive);
 	}
 	
-	return diffuse + beam_illumination;
+	return illumination;
 }
 
-// support function to calculate the light seen on a given fragment
+// get color value of foreground fragment
 lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse)
 {
-	lowp vec3 surface_illumination = ambient.rgb;
-	lowp vec3 beam_illumination = vec3(0.);
+	vec3 illumination = ambient.rgb;
+	vec3 reflection = vec3(0.);
 	
-	int i = 0;
-	
-	for (int end = i + num_point_lights; i != end; ++ i)
+	for (int i = 0, end = num_point_lights; i != end; ++ i)
 	{
-		surface_illumination += LightFragment_Point(lights[i], frag_position, frag_normal);
+		reflection += GetPointLightReflection(lights[i], frag_position, frag_normal);
 	}
 	
-	for (int end = i + num_search_lights; i != end; ++ i)
+	for (int i = num_point_lights, end = i + num_search_lights; i != end; ++ i)
 	{
-		surface_illumination += LightFragment_Search(lights[i], frag_position, frag_normal);
-		
-		beam_illumination += LightFragment_SearchBeam(lights[i], frag_position);
+		reflection += GetSearchLightReflection(lights[i], frag_position, frag_normal);
+
+		float ray_distance = length(frag_position);
+		vec3 ray_direction = frag_position / ray_distance;
+		illumination += GetBeamIllumination(lights[i], ray_direction, ray_distance);
 	}
-	
-	return diffuse * surface_illumination + beam_illumination;
+
+	return diffuse * reflection + illumination;
 }
