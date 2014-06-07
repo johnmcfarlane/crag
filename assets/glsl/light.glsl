@@ -75,16 +75,16 @@ vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, cons
 		// http://www.geometrictools.com/LibMathematics/Intersection/Intersection.html
 		float AdD = dot(light.direction, ray_direction);
 		float cosSqr = Squared(light.angle.y);
-		vec3 E = - light.position;
+		vec3 E = light.position;
 		float AdE = dot(light.direction, E);
 		float DdE = dot(ray_direction, E);
 		float EdE = dot(E, E);
-		float c2 = cosSqr - Squared(AdD);
+		float c2 = Squared(AdD) - cosSqr;
 
-		float c1 = AdD * AdE - cosSqr * DdE;
+		float c1 = cosSqr * DdE - AdD * AdE;
 		float c0 = AdE * AdE - cosSqr * EdE;
 
-		float discr = Squared(c1) + c0 * c2;
+		float discr = Squared(c1) - c0 * c2;
 		if (discr <= 0.)
 		{
 			return vec3(0.);
@@ -92,7 +92,7 @@ vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, cons
 
 		// Q(t) = 0 has two distinct real-valued roots.
 		float root = sqrt(discr);
-		float invC2 = -1. / c2;
+		float invC2 = 1. / c2;
 
 		contact1 = SetContact(ray_direction, (- c1 + root) * invC2);
 		contact2 = SetContact(ray_direction, (- c1 - root) * invC2);
