@@ -156,7 +156,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 			line_start = line_end;
 		}
 
-		PrintMessage(stderr, "Shader info log: %s", info_log.data());
+		PrintMessage(stderr, "Shader info log:\n%s", info_log.data());
 	}
 #endif
 
