@@ -805,11 +805,9 @@ namespace
 			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
 			
 			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
-			auto light_type = gfx::LightType::search;
 			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::CreateHandle(
 				search_light_transformation, 
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
-				light_type,
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
 				exception_object);
 			auto light_uid = light_handle.GetUid();

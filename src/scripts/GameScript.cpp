@@ -244,7 +244,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	if (enable_spawn_ball)
 	{
 		auto sphere = sim::Sphere3(player_start_pos + sim::Vector3(5.f, 8.f, -4.f), 1.f);
-		auto ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
+		auto ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Green());
 		_shapes.push_back(ball);
 	}
 
@@ -253,7 +253,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	{
 		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(0.f, 10.f, 3.f));
 		auto size = sim::Vector3(1.f, 1.f, 1.f) * 2.f;
-		auto cube = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Green());
+		auto cube = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Red());
 		_shapes.push_back(cube);
 	}
 	

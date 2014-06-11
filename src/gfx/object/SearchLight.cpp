@@ -13,17 +13,32 @@
 
 using namespace gfx;
 
+namespace
+{
+	LightAttributes const search_light_attribs =
+	{
+		LightResolution::fragment,
+		LightType::search,
+#if defined(CRAG_USE_GL)
+		true
+#endif
+#if defined(CRAG_USE_GLES)
+		false;
+#endif
+	};
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::SearchLight definitions
 
 SearchLight::SearchLight(
 	LeafNode::Init const & init, Transformation const & local_transformation, 
-	Color4f const & color, LightType type, Vector2 angle, ObjectHandle exception)
-: Light(init, local_transformation, color, type, exception)
+	Color4f const & color, Vector2 angle, ObjectHandle exception)
+: Light(
+	init, local_transformation, color, 
+	search_light_attribs, exception)
 , _angle(angle)
 {
-	ASSERT(type == LightType::search || type == LightType::search_shadow);
-	
 	CRAG_VERIFY(* this);
 }
 

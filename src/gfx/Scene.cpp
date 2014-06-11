@@ -51,7 +51,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
 	});
 	auto num_shadow_lights = std::count_if(std::begin(self._light_list), std::end(self._light_list), [] (Light const & light)
 	{
-		return light.MakesShadow();
+		return light.GetAttributes().makes_shadow;
 	});
 	CRAG_VERIFY_OP(self._shadows.size(), <=, unsigned(num_shadow_casters * num_shadow_lights));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
@@ -94,7 +94,7 @@ void Scene::AddObject(Object & object)
 			auto key = std::make_pair(leaf_node, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
 			
-			if (light.MakesShadow())
+			if (light.GetAttributes().makes_shadow)
 			{
 				_shadows.insert(std::make_pair(key, ShadowVolume()));
 			}
@@ -121,7 +121,7 @@ void Scene::RemoveObject(Object & object)
 		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
 			auto key = std::make_pair(leaf_node, & light);
-			if (light.MakesShadow() && light.GetException() != leaf_node)
+			if (light.GetAttributes().makes_shadow && light.GetException() != leaf_node)
 			{
 				ASSERT(_shadows.find(key) != std::end(_shadows));
 			
@@ -159,7 +159,7 @@ void Scene::AddLight(Light & light)
 	ASSERT(! _light_list.contains(light));
 	_light_list.push_back(light);
 	
-	if (light.MakesShadow())
+	if (light.GetAttributes().makes_shadow)
 	{
 		for (auto & object : _render_list)
 		{
@@ -190,7 +190,7 @@ void Scene::RemoveLight(Light & light)
 	ASSERT(_light_list.contains(light));
 	_light_list.remove(light);
 
-	if (light.MakesShadow())
+	if (light.GetAttributes().makes_shadow)
 	{
 		for (auto & object : _render_list)
 		{

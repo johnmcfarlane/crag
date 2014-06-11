@@ -22,18 +22,28 @@ attribute vec3 vertex_normal;
 attribute vec4 vertex_color;
 
 // outputs to poly_v.frag
-varying vec4 fragment_color;
+varying highp vec3 fragment_position;
+varying highp vec3 fragment_normal;
+varying lowp vec4 fragment_diffuse;
+varying lowp vec3 fragment_reflection;
+varying lowp vec3 fragment_illumination;
 
 // light.glsl function which calculates the lighting for the given fragment
-lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
+void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination);
 
 void main(void)
 {
 	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1.);
 	gl_Position = projection_matrix * position4;
+	fragment_position = position4.xyz;
 
-	vec3 normal = (model_view_matrix * vec4(vertex_normal, 0)).xyz;
+	fragment_normal = (model_view_matrix * vec4(vertex_normal, 0)).xyz;
 
-	vec4 diffuse = color * vertex_color * (1. / 256.);
-	fragment_color = vec4(LightFragment(position4.xyz, normal, diffuse.rgb), diffuse.a);
+	fragment_diffuse = color * vertex_color * (1. / 256.);
+
+	ForegroundLightVertex(
+		fragment_position, 
+		fragment_normal, 
+		fragment_reflection, 
+		fragment_illumination);
 }

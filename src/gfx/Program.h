@@ -91,6 +91,9 @@ namespace gfx
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
 		};
+		
+		template <typename ELEMENT>
+		using Array = std::array<std::array<ELEMENT, std::size_t(LightType::size)>, std::size_t(LightResolution::size)>;
 
 	public:
 		using super = Program3d;
@@ -102,20 +105,16 @@ namespace gfx
 		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetLight(Light const & light) const;
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeBitSet filter) const;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
 
 	private:
-
-		void SetLight(Light const & light, int index) const;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Uniform<Color4f> _ambient;
-		Uniform<int> _num_point_lights;
-		Uniform<int> _num_search_lights;
-		std::array<LightUniforms, 2> _lights;
+		Array<Uniform<int>> _num_lights;
+		Array<std::array<LightUniforms, 1>> _lights;
 	};
 
 	class PolyProgram : public LightProgram

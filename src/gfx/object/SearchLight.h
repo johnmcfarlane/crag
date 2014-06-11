@@ -22,7 +22,7 @@ namespace gfx
 
 		SearchLight(
 			Init const & init, Transformation const & local_transformation, 
-			Color4f const & color, LightType type, Vector2 angle, 
+			Color4f const & color, Vector2 angle, 
 			ObjectHandle exception = ObjectHandle());
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(SearchLight);

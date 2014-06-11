@@ -29,12 +29,12 @@ using namespace gfx;
 
 Light::Light(
 	LeafNode::Init const & init, Transformation const & local_transformation, 
-	Color4f const & color, LightType type, 
+	Color4f const & color, LightAttributes attributes,
 	ObjectHandle exception)
 : LeafNode(init, local_transformation, Layer::light)
 , _color(color)
 , _exception(nullptr)
-, _type(type)
+, _attributes(attributes)
 {
 	auto & engine = GetEngine();
 	if (exception)
@@ -68,8 +68,9 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
 
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
-	CRAG_VERIFY_TRUE(int(object._type) >= 0);
-	CRAG_VERIFY_TRUE(object._type < LightType::size);
+	CRAG_VERIFY_TRUE(object._attributes.type == LightType::point || object._attributes.type == LightType::search);
+	CRAG_VERIFY_TRUE(object._attributes.resolution == LightResolution::vertex || object._attributes.resolution == LightResolution::fragment);
+	CRAG_VERIFY(object._attributes.makes_shadow);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 bool Light::GetIsExtinguished() const
@@ -107,22 +108,9 @@ Vector2 Light::GetAngle() const
 	return Vector2::Zero();
 }
 
-LightType Light::GetType() const
+LightAttributes Light::GetAttributes() const
 {
-	return _type;
-}
-
-bool Light::MakesShadow() const
-{
-	switch (_type)
-	{
-		case LightType::point_shadow:
-		case LightType::search_shadow:
-			return true;
-			
-		default:
-			return false;
-	}
+	return _attributes;
 }
 
 LeafNode const * Light::GetException() const

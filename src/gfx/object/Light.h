@@ -28,7 +28,7 @@ namespace gfx
 		// functions
 		Light(
 			Init const & init, Transformation const & local_transformation, 
-			Color4f const & color, LightType type, 
+			Color4f const & color, LightAttributes attributes,
 			ObjectHandle exception = ObjectHandle());
 		~Light();
 		
@@ -45,9 +45,7 @@ namespace gfx
 		virtual void SetAngle(Vector2 params);
 		virtual Vector2 GetAngle() const;
 		
-		LightType GetType() const;
-		bool MakesShadow() const;
-		
+		LightAttributes GetAttributes() const;
 		LeafNode const * GetException() const;
 		
 #if defined(CRAG_GFX_LIGHT_DEBUG)
@@ -60,7 +58,7 @@ namespace gfx
 
 		Color4f _color;
 		LeafNode const * _exception;
-		LightType _type;
+		LightAttributes _attributes;
 		bool _is_extinguished = false;
 	};
 }

@@ -31,8 +31,7 @@ namespace
 	// the resources that must be created and destroyed on gfx thread
 	HashString gl_resources[] = 
 	{
-		HashString("PolyFProgram"),
-		HashString("PolyVProgram"),
+		HashString("PolyProgram"),
 		HashString("ShadowProgram"),
 		HashString("ScreenProgram"),
 		HashString("SphereProgram"),
@@ -185,18 +184,11 @@ namespace
 	
 		static char const * light_shader_filename = "assets/glsl/light.glsl";
 
-		manager.Register<PolyProgram>("PolyFProgram", [] ()
+		manager.Register<PolyProgram>("PolyProgram", [] ()
 		{
 			return PolyProgram(
-				{ "assets/glsl/poly_f.vert", light_shader_filename },
-				{ "assets/glsl/poly_f.frag", light_shader_filename });
-		});
-
-		manager.Register<PolyProgram>("PolyVProgram", [] ()
-		{
-			return PolyProgram(
-				{ "assets/glsl/poly_v.vert", light_shader_filename },
-				{ "assets/glsl/poly_v.frag", nullptr });
+				{ "assets/glsl/poly.vert", light_shader_filename },
+				{ "assets/glsl/poly.frag", light_shader_filename });
 		});
 
 		manager.Register<ShadowProgram>("ShadowProgram", [] ()

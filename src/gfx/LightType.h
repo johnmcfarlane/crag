@@ -9,18 +9,43 @@
 
 #pragma once
 
-#include "core/enum_bitset.h"
+#include "core/function_ref.h"
 
 namespace gfx
 {
+	// forward-declaration
+	class Light;
+	
+	// types
+	enum class LightResolution
+	{
+		// is calculated per-vertex; low resolution
+		vertex,
+
+		// is calculated per-fragment; high resolution
+		fragment,
+		
+		size
+	};
+	
 	enum class LightType
 	{
+		// radiates equally in all directions from a single point
 		point,
-		point_shadow,
+		
+		// a directed cone of light
 		search,
-		search_shadow,
+		
 		size
 	};
 
-	using LightTypeBitSet = core::enum_bitset<LightType, LightType::size>;
+	struct LightAttributes
+	{
+		// variables
+		LightResolution resolution;
+		LightType type;
+		bool makes_shadow;
+	};
+	
+	using LightFilter = core::function_ref<bool (Light const &)>;
 }

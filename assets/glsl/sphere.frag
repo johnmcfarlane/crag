@@ -13,7 +13,7 @@ precision highp float;
 
 
 // light.glsl function which calculates the lighting for the given fragment
-lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse);
+lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse);
 
 
 // inputs from sphere.vert
@@ -69,5 +69,5 @@ void main(void)
 
 	highp vec3 frag_normal = normalize(frag_position.xyz - center);
 
-	gl_FragColor = vec4(LightFragment(frag_position.xyz, frag_normal, color.xyz), color.a);
+	gl_FragColor = ForegroundLightAll(frag_position.xyz, frag_normal.xyz, color);
 }

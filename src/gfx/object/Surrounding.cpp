@@ -45,12 +45,7 @@ Surrounding::Surrounding(LeafNode::Init const & init)
 : LeafNode(init, Transformation::Matrix44::Identity(), Layer::foreground, true, false)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
-#if defined(CRAG_USE_GLES)
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyVProgram");
-#endif
-#if defined(CRAG_USE_GL)
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyFProgram");
-#endif
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(& poly_program);
 
 	CRAG_VERIFY(* this);

@@ -356,7 +356,7 @@ void Engine::SetVboResource(VboResource const * vbo)
 }
 
 // TODO: Just do this in the vertex shader?
-Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeBitSet filter) const
+Color4f Engine::CalculateLighting(Vector3 const & position, LightFilter const & filter) const
 {
 	Color4f lighting_color = Color4f::Black();
 	
@@ -366,7 +366,7 @@ Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeBitSet filt
 		Light const & light = * i;
 
 		// filter by type
-		if (! filter[light.GetType()])
+		if (! filter(light))
 		{
 			continue;
 		}
@@ -777,7 +777,8 @@ void Engine::RenderScene()
 	if (shadows_enabled)
 	{
 		// render foreground, opaque elements with non-shadow lighting
-		UpdateProgramLights(LightTypeBitSet(LightType::point) | LightTypeBitSet(LightType::search));
+		auto light_filter = [] (Light const & light) { return light.GetAttributes().makes_shadow == false; };
+		UpdateProgramLights(light_filter, true);
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	
 		// render foreground, opaque elements with shadow lighting
@@ -786,14 +787,16 @@ void Engine::RenderScene()
 	else
 	{
 		// render foreground, opaque elements with all lighting
-		UpdateProgramLights(LightTypeBitSet().set());
+		auto light_filter = [] (Light const &) { return true; };
+		UpdateProgramLights(light_filter, true);
 		RenderLayer(foreground_projection_matrix, Layer::foreground);
 	}
 	
 	// render background elements (skybox)
 	setDepthRange(0.f, 1.f);
 	glDepthFunc(GL_LEQUAL);
-	UpdateProgramLights(LightTypeBitSet(LightType::search_shadow) | LightTypeBitSet(LightType::search));
+	auto light_filter = [] (Light const & light) { return light.GetAttributes().type == LightType::search; };
+	UpdateProgramLights(light_filter, false);
 	RenderLayer(background_projection_matrix, Layer::background);
 	glDepthFunc(depth_func);
 	setDepthRange(0.f, max_foreground_depth);
@@ -806,40 +809,22 @@ void Engine::RenderScene()
 #endif
 }
 
-void Engine::UpdateProgramLights(Light const & light)
+void Engine::UpdateProgramLights(LightFilter const & filter, bool add_ambient)
 {
-	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto ambient = add_ambient ? Color4f(ambient_r, ambient_g, ambient_b) : Color4f::Black();
+	auto & lights = scene->GetLightList();
 	
 	auto update_program = [&] (LightProgram const & light_program)
 	{
 		SetCurrentProgram(& light_program);
-		light_program.SetLight(light);
-	};
-	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"));
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"));
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
-	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"));
-}
-
-void Engine::UpdateProgramLights(LightTypeBitSet light_types)
-{
-	Color4f ambient(ambient_r, ambient_g, ambient_b);
-
-	auto & lights = scene->GetLightList();
-	
-	auto update_program = [&] (LightProgram const & light_program, Color4f const & ambient)
-	{
-		SetCurrentProgram(& light_program);
-		light_program.SetLights(ambient, lights, light_types);
+		light_program.SetLights(ambient, lights, filter);
 	};
 	
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyFProgram"), ambient);
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyVProgram"), ambient);
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"), ambient);
-	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"), Color4f::Black());
+	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
+	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
+	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"));
 }
 
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
@@ -848,7 +833,8 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Enable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 
-	UpdateProgramLights(LightTypeBitSet().set());
+	auto light_filter = [] (Light const &) { return true; };
+	UpdateProgramLights(light_filter, true);
 	RenderLayer(projection_matrix, Layer::foreground, false);
 
 	// vbo needs to be reset before next frame
@@ -917,7 +903,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	auto & lights = scene->GetLightList();
 	for (auto & light : lights)
 	{
-		if (light.MakesShadow() && light.GetIsLuminant())
+		if (light.GetAttributes().makes_shadow && light.GetIsLuminant())
 		{
 			RenderShadowLight(projection_matrix, light);
 		}
@@ -981,7 +967,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	glDepthFunc(GL_LEQUAL);
 	Enable(GL_BLEND);	// TODO: Ensure additive; move this call further down stack
 
-	UpdateProgramLights(light);
+	auto light_filter = [& light] (Light const & l) { return & l == & light; };
+	UpdateProgramLights(light_filter, false);
 	RenderLayer(projection_matrix, Layer::foreground);
 
 	Disable(GL_BLEND);

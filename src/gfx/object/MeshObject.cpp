@@ -37,7 +37,7 @@ MeshObject::MeshObject(Init const & init, Transformation const & local_transform
 	SetVboResource(lit_vbo.get());
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyFProgram");
+	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(& poly_program);
 }
 

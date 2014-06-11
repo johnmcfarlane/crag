@@ -221,8 +221,7 @@ void Program3d::InitUniforms()
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
 , _ambient(std::move(rhs._ambient))
-, _num_point_lights(std::move(rhs._num_point_lights))
-, _num_search_lights(std::move(rhs._num_search_lights))
+, _num_lights(std::move(rhs._num_lights))
 , _lights(std::move(rhs._lights))
 {
 }
@@ -237,129 +236,111 @@ void LightProgram::InitUniforms()
 	super::InitUniforms();
 	
 	InitUniformLocation(_ambient, "ambient");
-	InitUniformLocation(_num_point_lights, "num_point_lights");
-	InitUniformLocation(_num_search_lights, "num_search_lights");
 	
-	for (auto index = 0u; index != _lights.size(); ++ index)
+	for (auto resolution = 0; resolution != int(LightResolution::size); ++ resolution)
 	{
-		auto & light_uniforms = _lights[index];
+		auto & nums = _num_lights[resolution];
+		auto & light_arrays = _lights[resolution];
 
-		char name[40];
-	
-		sprintf(name, "lights[%d].position", index);
-		InitUniformLocation(light_uniforms.position, name);
-	
-		sprintf(name, "lights[%d].direction", index);
-		InitUniformLocation(light_uniforms.direction, name);
-	
-		sprintf(name, "lights[%d].color", index);
-		InitUniformLocation(light_uniforms.color, name);
+		for (auto type = 0; type != int(LightType::size); ++ type)
+		{
+			char name_prefix[50];
+			sprintf(name_prefix, "lights.resolutions[%d].types[%d]", resolution, type);
 
-		sprintf(name, "lights[%d].angle", index);
-		InitUniformLocation(light_uniforms.angle, name);
+			auto & num = nums[type];
+			auto & light_array = light_arrays[type];
+
+			char name[100];
+			sprintf(name, "%s.num_lights", name_prefix);
+			InitUniformLocation(num, name);
+		
+			for (auto index = 0u; index != _lights.size(); ++ index)
+			{
+				auto & light_uniforms = light_array[index];
+
+				sprintf(name, "%s.lights[%d].position", name_prefix, index);
+				InitUniformLocation(light_uniforms.position, name);
+
+				sprintf(name, "%s.lights[%d].direction", name_prefix, index);
+				InitUniformLocation(light_uniforms.direction, name);
+
+				sprintf(name, "%s.lights[%d].color", name_prefix, index);
+				InitUniformLocation(light_uniforms.color, name);
+
+				sprintf(name, "%s.lights[%d].angle", name_prefix, index);
+				InitUniformLocation(light_uniforms.angle, name);
+			}
+		}
 	}
 }
 
-void LightProgram::SetLight(Light const & light) const
-{
-	ASSERT(light.GetIsLuminant());
-	ASSERT(IsBound());
-
-	SetLight(light, 0);
-	
-	_ambient.Set(Color4f::Black());
-	
-	auto type = light.GetType();
-	switch (type)
-	{
-	default:
-		DEBUG_BREAK("bad enum value, %d", int(type));
-		
-	case LightType::point:
-	case LightType::point_shadow:
-		_num_point_lights.Set(1);
-		_num_search_lights.Set(0);
-		break;
-		
-	case LightType::search:
-	case LightType::search_shadow:
-		_num_point_lights.Set(0);
-		_num_search_lights.Set(1);
-		break;
-	}
-}
-
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeBitSet filter) const
+void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
 {
 	ASSERT(IsBound());
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
 	
-	auto num_point_lights = 0;
-	auto num_search_lights = 0;
-	auto num_lights = 0;
-	
-	auto populate_lights = [&] (LightTypeBitSet pass_types)
+	Array<int> nums;
+
+	for (auto & resolution_nums : nums)
 	{
-		pass_types &= filter;
-
-		auto num_type_lights = 0;
-
-		for (auto & light : lights)
+		for (auto & type_nums : resolution_nums)
 		{
-			auto type = light.GetType();
-			if (! pass_types[type])
-			{
-				continue;
-			}
-
-			if (! light.GetIsLuminant())
-			{
-				continue;
-			}
-			
-			SetLight(light, num_lights);
-			++ num_lights;
-			++ num_type_lights;
+			type_nums = 0;
 		}
-		
-		return num_type_lights;
-	};
-	
-	// add point lights first
-	num_point_lights += populate_lights(LightTypeBitSet(LightType::point) | LightTypeBitSet(LightType::point_shadow));
-	
-	// then search
-	num_search_lights += populate_lights(LightTypeBitSet(LightType::search) | LightTypeBitSet(LightType::search_shadow));
-	
-	ASSERT(num_point_lights + num_search_lights == num_lights);
-	
-	_ambient.Set(ambient);
-	_num_point_lights.Set(num_point_lights);
-	_num_search_lights.Set(num_search_lights);
-}
-
-void LightProgram::SetLight(Light const & light, int index) const
-{
-	if (unsigned(index) >= _lights.size())
-	{
-		DEBUG_BREAK("too many lights");
-		return;
 	}
 	
-	auto & light_uniforms = _lights[index];
+	for (auto & light : lights)
+	{
+		if (! filter(light))
+		{
+			// otherwise filtered out
+			continue;
+		}
 
-	auto & transformation = light.GetModelViewTransformation();
-	auto position = transformation.GetTranslation();
-	light_uniforms.position.Set(position);
+		if (! light.GetIsLuminant())
+		{
+			// not doing any lighting right now
+			continue;
+		}
+		
+		auto attributes = light.GetAttributes();
+		auto resolution = int(attributes.resolution);
+		auto type = int(attributes.type);
+
+		auto & num = nums[resolution][type];
+		auto & light_array = _lights[resolution][type];
+		if (unsigned(num) >= _lights.size())
+		{
+			DEBUG_MESSAGE("too many lights");
+			continue;
+		}
 	
-	auto direction = GetAxis(transformation.GetRotation(), Direction::forward);
-	light_uniforms.direction.Set(direction);
+		auto & light_uniforms = light_array[num];
+		++ num;
 
-	Color4f const & color = light.GetColor();
-	light_uniforms.color.Set(color);
+		auto & transformation = light.GetModelViewTransformation();
+		auto position = transformation.GetTranslation();
+		light_uniforms.position.Set(position);
+	
+		auto direction = GetAxis(transformation.GetRotation(), Direction::forward);
+		light_uniforms.direction.Set(direction);
 
-	auto angle = light.GetAngle();
-	light_uniforms.angle.Set(angle);
+		Color4f const & color = light.GetColor();
+		light_uniforms.color.Set(color);
+
+		auto angle = light.GetAngle();
+		light_uniforms.angle.Set(angle);
+	}
+
+	for (auto resolution = 0; resolution != int(LightResolution::size); ++ resolution)
+	{
+		for (auto type = 0; type != int(LightType::size); ++ type)
+		{
+			_num_lights[resolution][type].Set(nums[resolution][type]);
+		}
+	}
+	
+	_ambient.Set(ambient);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

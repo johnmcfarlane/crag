@@ -78,7 +78,7 @@ namespace gfx
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * vbo);
 		
-		Color4f CalculateLighting(Vector3 const & position, LightTypeBitSet filter) const;
+		Color4f CalculateLighting(Vector3 const & position, LightFilter const & filter) const;
 
 		// message interface
 		void OnQuit();
@@ -122,8 +122,7 @@ namespace gfx
 		void RenderFrame();
 		void RenderScene();
 		
-		void UpdateProgramLights(Light const & light);
-		void UpdateProgramLights(LightTypeBitSet light_types);
+		void UpdateProgramLights(LightFilter const & filter, bool add_ambient);
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		

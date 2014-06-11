@@ -12,10 +12,17 @@ precision highp float;
 precision highp int;
 #endif
 
-#define PI 3.14159265358979323846264338327950288419716939937510
+////////////////////////////////////////////////////////////////////////////////
+// constants
+
+const int max_lights = 1;
 
 const float far_positive = 1000000.;
 const float far_negative = - far_positive;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// light types / variables
 
 // contains information for a single light
 struct Light
@@ -26,6 +33,30 @@ struct Light
 	vec2 angle;	// for search light, sin/cos
 };
 
+struct TypeLights
+{
+	Light lights[max_lights];
+	int num_lights;
+};
+
+struct ResolutionLights
+{
+	TypeLights types[2];	// point / search
+};
+
+struct Lights
+{
+	ResolutionLights resolutions[2];	// vertex, fragment
+};
+
+// light information provided by the renderer
+uniform vec4 ambient;
+uniform Lights lights;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// misc types
+
 // used by search beam functions
 struct Contact
 {
@@ -34,16 +65,8 @@ struct Contact
 };
 
 
-// constants
-const int max_lights = 2;
-
-
-// light information provided by the renderer
-uniform vec4 ambient;
-uniform int num_point_lights;
-uniform int num_search_lights;
-uniform Light lights[max_lights];
-
+////////////////////////////////////////////////////////////////////////////////
+// functions
 
 float Squared(float s)
 {
@@ -65,7 +88,7 @@ bool GetContactGood(const Contact contact, const Light light)
 
 // support function to calculate the light reflected off an idealized atmosphere
 // before a given fragment from a given search light
-vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, const float ray_distance)
+lowp vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, const float ray_distance)
 {
 	// details of the two contact points between the camera ray and the volume
 	// of the search beam; contact1 is behind contact2 (camera-wise)
@@ -201,40 +224,67 @@ lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 frag_position, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// resolution-agnostic lighting functions
+
+// get color value of background (skybox) point on vertex or fragment
+void BackgroundLight(in TypeLights search_lights, in highp vec3 ray_direction, inout lowp vec3 illumination)
+{
+	for (int i = 0, num_search_lights = search_lights.num_lights; i != num_search_lights; ++ i)
+	{
+		illumination += GetBeamIllumination(search_lights.lights[i], ray_direction, far_positive);
+	}
+}
+
+// get color value of foreground fragment
+void ForegroundLight(const in ResolutionLights resolution_lights, in highp vec3 frag_position, in highp vec3 frag_normal, inout lowp vec3 reflection, inout lowp vec3 illumination)
+{
+	for (int i = 0, num_point_lights = resolution_lights.types[0].num_lights; i != num_point_lights; ++ i)
+	{
+		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], frag_position, frag_normal);
+	}
+
+	for (int i = 0, num_search_lights = resolution_lights.types[1].num_lights; i != num_search_lights; ++ i)
+	{
+		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], frag_position, frag_normal);
+
+		float ray_distance = length(frag_position);
+		vec3 ray_direction = frag_position / ray_distance;
+		illumination += GetBeamIllumination(resolution_lights.types[1].lights[i], ray_direction, ray_distance);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // top-level lighting functions
+
+// get color value of foreground fragment
+void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination)
+{
+	reflection = vec3(0.);
+	illumination = vec3(0.);
+	ForegroundLight(lights.resolutions[0], position, normal, reflection, illumination);
+}
+
+// get color value of foreground fragment
+lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+{
+	ForegroundLight(lights.resolutions[1], position, normal, reflection, illumination);
+	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
+}
+
+// combined lighting of ForegroundLightVertex and ForegroundLightFragment
+lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse)
+{
+	lowp vec3 reflection, illumination;
+	ForegroundLightVertex(position, normal, reflection, illumination);
+	return ForegroundLightFragment(position, normal, diffuse, reflection, illumination);
+}
 
 // get color value of background (skybox) fragment
 lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diffuse)
 {
-	vec3 illumination = ambient.rgb + diffuse;
-	
-	for (int i = num_point_lights, end = i + num_search_lights; i != end; ++ i)
-	{
-		illumination += GetBeamIllumination(lights[i], ray_direction, far_positive);
-	}
-	
-	return illumination;
-}
-
-// get color value of foreground fragment
-lowp vec3 LightFragment(in highp vec3 frag_position, in highp vec3 frag_normal, in lowp vec3 diffuse)
-{
-	vec3 illumination = ambient.rgb;
-	vec3 reflection = vec3(0.);
-	
-	for (int i = 0, end = num_point_lights; i != end; ++ i)
-	{
-		reflection += GetPointLightReflection(lights[i], frag_position, frag_normal);
-	}
-	
-	for (int i = num_point_lights, end = i + num_search_lights; i != end; ++ i)
-	{
-		reflection += GetSearchLightReflection(lights[i], frag_position, frag_normal);
-
-		float ray_distance = length(frag_position);
-		vec3 ray_direction = frag_position / ray_distance;
-		illumination += GetBeamIllumination(lights[i], ray_direction, ray_distance);
-	}
-
-	return diffuse * reflection + illumination;
+	lowp vec3 color = diffuse;
+	BackgroundLight(lights.resolutions[0].types[1], ray_direction, color);
+	BackgroundLight(lights.resolutions[1].types[1], ray_direction, color);
+	return color;
 }
