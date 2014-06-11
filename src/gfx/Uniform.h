@@ -11,6 +11,10 @@
 
 #include "glHelpers.h"
 
+#if ! defined(NDEBUG)
+//#define CRAG_GFX_UNIFORMS_DEBUG
+#endif
+
 namespace gfx
 {
 	template <typename Type>
@@ -26,7 +30,7 @@ namespace gfx
 		{
 			GL_VERIFY;
 			
-#if ! defined(NDEBUG)
+#if defined(CRAG_GFX_UNIFORMS_DEBUG)
 			if (! IsInitialized())
 			{
 				// can be caused by shader compiler identifying 
