@@ -23,7 +23,7 @@ namespace
 		true
 #endif
 #if defined(CRAG_USE_GLES)
-		false;
+		false
 #endif
 	};
 }

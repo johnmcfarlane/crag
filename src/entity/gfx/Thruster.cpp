@@ -41,9 +41,9 @@ namespace
 #endif
 
 #if defined(CRAG_USE_GLES)
-		LightResolution::vertex;
+		LightResolution::vertex,
 		LightType::point,
-		false;
+		false
 #endif
 	};
 }
