@@ -20,7 +20,7 @@ namespace
 		LightResolution::fragment,
 		LightType::search,
 #if defined(CRAG_USE_GL)
-		true
+		false
 #endif
 #if defined(CRAG_USE_GLES)
 		false
