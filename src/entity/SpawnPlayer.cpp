@@ -767,8 +767,7 @@ namespace
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
 			Sphere3 sphere(position, saucer_ball_radius);
-			Uid uid = Uid::Create();
-			auto ball_entity = engine.CreateObject<Entity>(uid);
+			auto ball_entity = engine.CreateObject<Entity>();
 
 			// physics
 			auto & ball_body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
