@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Object.h"
+
 namespace ipc
 {
 	// an optional base class for the Engine classes which are managed by Daemon

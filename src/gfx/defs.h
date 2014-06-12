@@ -22,6 +22,11 @@ namespace crag
 	}
 }
 
+namespace ipc
+{
+	class Uid;
+}
+
 namespace geom
 {
 	template <typename S, int D> class Vector;

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ipc/Object.h"
+
 #include "defs.h"
 
 namespace gfx

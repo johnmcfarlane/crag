@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ipc/Handle.h"
+
 #include "core/function_ref.h"
 
 namespace applet

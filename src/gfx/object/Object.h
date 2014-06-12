@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ipc/Object.h"
+
 #include "gfx/defs.h"
 
 #include "geom/Transformation.h"

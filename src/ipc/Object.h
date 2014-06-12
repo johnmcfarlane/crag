@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Uid.h"
+#include "Handle_Impl.h"
 
 namespace ipc
 {

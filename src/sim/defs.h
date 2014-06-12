@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "ipc/Handle.h"
 
 namespace geom
 {
@@ -18,6 +19,12 @@ namespace geom
 	template <typename S, int D> class Sphere;
 	template <typename S> class Transformation;
 	template <typename S, int D> class Ray;
+}
+
+namespace ipc
+{
+	template <typename Engine>
+	class Daemon;
 }
 
 namespace sim
