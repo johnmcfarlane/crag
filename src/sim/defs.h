@@ -20,15 +20,6 @@ namespace geom
 	template <typename S, int D> class Ray;
 }
 
-namespace smp
-{
-	template <typename CLASS>
-	class Daemon;
-	
-	class Uid;
-}
-
-
 namespace sim
 {
 	class Engine;
