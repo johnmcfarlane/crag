@@ -311,7 +311,12 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 		auto & light_array = _lights[resolution][type];
 		if (unsigned(num) >= light_array.size())
 		{
-			DEBUG_MESSAGE("too many lights");
+			DEBUG_MESSAGE(
+				"too many lights [%d][%d][%d>%d]", 
+				int(LightResolution::size),
+				int(LightType::size),
+				int(std::count_if(std::begin(lights), std::end(lights), filter)), 
+				int(light_array.size()));
 			continue;
 		}
 	
