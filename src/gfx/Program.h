@@ -110,11 +110,17 @@ namespace gfx
 	private:
 		
 		////////////////////////////////////////////////////////////////////////////////
+		// constants
+		
+		// matches value in assets/glsl/light.glsl
+		static constexpr auto max_attribute_lights = 6;
+		
+		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		Uniform<Color4f> _ambient;
 		Array<Uniform<int>> _num_lights;
-		Array<std::array<LightUniforms, 1>> _lights;
+		Array<std::array<LightUniforms, max_attribute_lights>> _lights;
 	};
 
 	class PolyProgram : public LightProgram

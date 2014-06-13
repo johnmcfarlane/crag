@@ -15,7 +15,8 @@ precision highp int;
 ////////////////////////////////////////////////////////////////////////////////
 // constants
 
-const int max_lights = 1;
+// matches value in src/gfx/Program.h
+const int max_attribute_lights = 6;
 
 const float far_positive = 1000000.;
 const float far_negative = - far_positive;
@@ -35,7 +36,7 @@ struct Light
 
 struct TypeLights
 {
-	Light lights[max_lights];
+	Light lights[max_attribute_lights];
 	int num_lights;
 };
 
