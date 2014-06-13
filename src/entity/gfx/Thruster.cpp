@@ -34,17 +34,9 @@ namespace
 	
 	LightAttributes const thruster_light_attribs =
 	{
-#if defined(CRAG_USE_GL)
-		LightResolution::fragment,
-		LightType::point,
-		true
-#endif
-
-#if defined(CRAG_USE_GLES)
 		LightResolution::vertex,
 		LightType::point,
 		false
-#endif
 	};
 }
 
