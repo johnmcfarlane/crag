@@ -309,7 +309,7 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 
 		auto & num = nums[resolution][type];
 		auto & light_array = _lights[resolution][type];
-		if (unsigned(num) >= _lights.size())
+		if (unsigned(num) >= light_array.size())
 		{
 			DEBUG_MESSAGE("too many lights");
 			continue;
