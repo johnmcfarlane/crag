@@ -43,7 +43,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool is_opaque = true, bool casts_shadow = false);
+		LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow = false);
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(LeafNode);
 		
@@ -67,7 +67,6 @@ namespace gfx
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * mesh_resource);
 		
-		bool IsOpaque() const;
 		bool CastsShadow() const;
 		
 		// Return the necessary z-clipping range required to render this object through the given camera.
@@ -96,7 +95,6 @@ namespace gfx
 		Layer const _layer;
 		Program const * _program;
 		VboResource const * _vbo_resource;
-		bool const _is_opaque;
 		bool const _casts_shadow;
 	};
 }

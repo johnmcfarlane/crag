@@ -27,7 +27,7 @@ DEFINE_POOL_ALLOCATOR(MeshObject, 100);
 // gfx::MeshObject member definitions
 
 MeshObject::MeshObject(Init const & init, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh)
-: LeafNode(init, local_transformation, Layer::foreground, true, true)
+: LeafNode(init, local_transformation, Layer::opaque, true)
 , _color(color)
 , _scale(scale)
 , _bounding_radius(GetBoundingRadius(* plain_mesh, scale))

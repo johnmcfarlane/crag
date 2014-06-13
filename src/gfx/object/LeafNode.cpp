@@ -16,14 +16,13 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::LeafNode member definitions
 
-LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool is_opaque, bool casts_shadow)
+LeafNode::LeafNode(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow)
 : Object(init, local_transformation)
 , _model_view_transformation(Transformation::Matrix44::Identity())
 , _render_depth(0)
 , _layer(layer)
 , _program(nullptr)
 , _vbo_resource(nullptr)
-, _is_opaque(is_opaque)
 , _casts_shadow(casts_shadow)
 {
 	CRAG_VERIFY(* this);
@@ -82,9 +81,9 @@ Transformation const & LeafNode::GetShadowModelViewTransformation() const
 
 bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 {
-	if (lhs._is_opaque)
+	if (lhs._layer == Layer::opaque)
 	{
-		if (rhs._is_opaque)
+		if (rhs._layer == Layer::opaque)
 		{
 			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._vbo_resource) - reinterpret_cast<char const *>(rhs._vbo_resource);
 			if (mesh_index_diff != 0)
@@ -105,7 +104,7 @@ bool gfx::operator < (LeafNode const & lhs, LeafNode const & rhs)
 	}
 	else
 	{
-		if (rhs._is_opaque)
+		if (rhs._layer == Layer::opaque)
 		{
 			return false;
 		}
@@ -137,11 +136,6 @@ VboResource const * LeafNode::GetVboResource() const
 void LeafNode::SetVboResource(VboResource const * vbo_resource)
 {
 	_vbo_resource = vbo_resource;
-}
-
-bool LeafNode::IsOpaque() const
-{
-	return _is_opaque;
 }
 
 bool LeafNode::CastsShadow() const

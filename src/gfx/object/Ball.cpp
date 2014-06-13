@@ -28,7 +28,7 @@ using namespace gfx;
 DEFINE_POOL_ALLOCATOR(Ball, 100);
 
 Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
-: LeafNode(init, local_transformation, Layer::foreground, true, true)
+: LeafNode(init, local_transformation, Layer::opaque, true)
 , _color(color)
 , _radius(radius)
 {

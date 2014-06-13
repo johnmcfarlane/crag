@@ -47,7 +47,8 @@ namespace gfx
 	{
 		background,
 		light,
-		foreground
+		opaque,
+		transparent
 	};
 	
 	// index buffer object type

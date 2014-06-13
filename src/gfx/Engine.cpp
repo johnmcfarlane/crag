@@ -128,12 +128,6 @@ namespace
 		{
 			LeafNode const & leaf_node = * i;
 			
-			// if in the foreground layer,
-			if (leaf_node.GetLayer() != Layer::foreground)
-			{
-				continue;
-			}
-			
 			// and has a render range,
 			RenderRange depth_range;
 			if (! leaf_node.GetRenderRange(depth_range))
@@ -779,7 +773,7 @@ void Engine::RenderScene()
 		// render foreground, opaque elements with non-shadow lighting
 		auto light_filter = [] (Light const & light) { return light.GetAttributes().makes_shadow == false; };
 		UpdateProgramLights(light_filter, true);
-		RenderLayer(foreground_projection_matrix, Layer::foreground);
+		RenderLayer(foreground_projection_matrix, Layer::opaque);
 	
 		// render foreground, opaque elements with shadow lighting
 		RenderShadowLights(foreground_projection_matrix);
@@ -789,7 +783,7 @@ void Engine::RenderScene()
 		// render foreground, opaque elements with all lighting
 		auto light_filter = [] (Light const &) { return true; };
 		UpdateProgramLights(light_filter, true);
-		RenderLayer(foreground_projection_matrix, Layer::foreground);
+		RenderLayer(foreground_projection_matrix, Layer::opaque);
 	}
 	
 	// render background elements (skybox)
@@ -835,7 +829,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 
 	auto light_filter = [] (Light const &) { return true; };
 	UpdateProgramLights(light_filter, true);
-	RenderLayer(projection_matrix, Layer::foreground, false);
+	RenderLayer(projection_matrix, Layer::transparent);
 
 	// vbo needs to be reset before next frame
 	// to ensure that FormationVbo::PreRender functions correctly
@@ -849,17 +843,12 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Disable(GL_BLEND);
 }
 
-void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque)
+void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
 {
 	auto & render_list = scene->GetRenderList();
 	for (auto & leaf_node : render_list)
 	{
 		if (leaf_node.GetLayer() != layer)
-		{
-			continue;
-		}
-		
-		if (leaf_node.IsOpaque() != opaque)
 		{
 			continue;
 		}
@@ -969,7 +958,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 
 	auto light_filter = [& light] (Light const & l) { return & l == & light; };
 	UpdateProgramLights(light_filter, false);
-	RenderLayer(projection_matrix, Layer::foreground);
+	RenderLayer(projection_matrix, Layer::opaque);
 
 	Disable(GL_BLEND);
 	glDepthFunc(depth_func);
@@ -1023,7 +1012,7 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 			continue;
 		}
 		
-		if (leaf_node.GetLayer() != Layer::foreground)
+		if (leaf_node.GetLayer() != Layer::opaque)
 		{
 			continue;
 		}

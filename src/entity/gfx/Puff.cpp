@@ -41,7 +41,7 @@ namespace
 DEFINE_POOL_ALLOCATOR(Puff, 100);
 
 Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
-: LeafNode(init, local_transformation, Layer::foreground, false)
+: LeafNode(init, local_transformation, Layer::transparent)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
