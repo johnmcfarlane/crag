@@ -7,6 +7,8 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+#if 1
+
 #ifdef GL_ES
 precision highp float;
 precision highp int;
@@ -289,3 +291,32 @@ lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diff
 	BackgroundLight(lights.resolutions[1].types[1], ray_direction, color);
 	return color;
 }
+
+#else
+
+// get color value of foreground fragment
+void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination)
+{
+	reflection = vec3(0.);
+	illumination = vec3(0.);
+}
+
+// get color value of foreground fragment
+lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+{
+	return diffuse;
+}
+
+// combined lighting of ForegroundLightVertex and ForegroundLightFragment
+lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse)
+{
+	return diffuse;
+}
+
+// get color value of background (skybox) fragment
+lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diffuse)
+{
+	return diffuse;
+}
+
+#endif
