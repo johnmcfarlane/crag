@@ -17,7 +17,7 @@
 // Insert into public section of listed class.
 #define DEFINE_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
 	private: \
-		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, LIST_TYPE##_hook_type, LIST_TYPE##_hook); \
 	public: \
 		DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
 
@@ -25,7 +25,7 @@
 // variant of DEFINE_INTRUSIVE_LIST which plays nicely with class templates.
 #define DEFINE_TEMPLATED_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
 	private: \
-		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, LIST_TYPE##_hook_type, LIST_TYPE##_hook); \
 	public: \
 		DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
 
