@@ -40,8 +40,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Puff, 100);
 
-Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
-: LeafNode(init, local_transformation, Layer::transparent)
+Puff::Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
+: Object(init, local_transformation, Layer::transparent)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
@@ -77,7 +77,7 @@ void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale, _radius));
 }
 
-LeafNode::PreRenderResult Puff::PreRender()
+Object::PreRenderResult Puff::PreRender()
 {
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);

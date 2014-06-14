@@ -41,8 +41,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Surrounding member definitions
 
-Surrounding::Surrounding(LeafNode::Init const & init)
-: LeafNode(init, Transformation::Matrix44::Identity(), Layer::opaque, false)
+Surrounding::Surrounding(Init const & init)
+: Object(init, Transformation::Matrix44::Identity(), Layer::opaque, false)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
@@ -57,7 +57,7 @@ Surrounding::~Surrounding()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
-	CRAG_VERIFY(static_cast<Surrounding::super const &>(object));
+	CRAG_VERIFY(static_cast<Object const &>(object));
 
 	CRAG_VERIFY(object._mesh);
 	if (object._mesh)
@@ -134,7 +134,7 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	CRAG_VERIFY(* this);
 }
 
-LeafNode::PreRenderResult Surrounding::PreRender()
+Object::PreRenderResult Surrounding::PreRender()
 {
 	CRAG_VERIFY(* this);
 	

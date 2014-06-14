@@ -118,19 +118,19 @@ namespace
 	}
 
 	// Given the list of objects to render, calculates suitable near/far z values.
-	RenderRange CalculateDepthRange(LeafNode::RenderList const & render_list)
+	RenderRange CalculateDepthRange(Object::RenderList const & render_list)
 	{
 		float float_max = std::numeric_limits<float>::max();
 		RenderRange frustum_depth_range (float_max, - float_max);
 		
 		// For all leaf nodes in the render list,
-		for (LeafNode::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+		for (Object::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 		{
-			LeafNode const & leaf_node = * i;
+			auto & object = * i;
 			
 			// and has a render range,
 			RenderRange depth_range;
-			if (! leaf_node.GetRenderRange(depth_range))
+			if (! object.GetRenderRange(depth_range))
 			{
 				continue;
 			}
@@ -186,7 +186,7 @@ namespace
 	// TODO: belongs with Scene; scene should be const
 	Matrix44 CalcForegroundProjectionMatrix(Scene const & scene)
 	{
-		LeafNode::RenderList const & render_list = scene.GetRenderList();
+		auto & render_list = scene.GetRenderList();
 
 		RenderRange depth_range = CalculateDepthRange(render_list);
 		STAT_SET (z_range, depth_range);
@@ -631,24 +631,22 @@ void Engine::VerifyRenderState() const
 void Engine::PreRender()
 {
 	// purge objects
-	typedef LeafNode::RenderList List;
-	
-	List const & render_list = scene->GetRenderList();
-	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; )
+	auto & render_list = scene->GetRenderList();
+	for (auto i = render_list.begin(), end = render_list.end(); i != end; )
 	{
-		LeafNode & leaf_node = * i;
+		auto & object = * i;
 		++ i;
 		
-		LeafNode::PreRenderResult result = leaf_node.PreRender();
+		auto result = object.PreRender();
 		
 		switch (result)
 		{
 			default:
 				ASSERT(false);
-			case LeafNode::ok:
+			case Object::ok:
 				break;
-			case LeafNode::remove:
-				DestroyObject(leaf_node.GetUid());
+			case Object::remove:
+				DestroyObject(object.GetUid());
 				break;
 		}
 	}
@@ -663,11 +661,10 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 
 	// if it's something that'll get drawn
 	auto & children = object.GetChildren();
-	auto * leaf = object.CastLeafNodePtr();
-	if (leaf != nullptr)
+	if (object.GetParent())
 	{
 		// set model view transformation (with whatever necessary rejiggering)
-		leaf->UpdateModelViewTransformation(model_view_transformation);
+		object.UpdateModelViewTransformation(model_view_transformation);
 	}
 	else
 	{
@@ -711,7 +708,7 @@ void Engine::UpdateShadowVolumes()
 	{
 		auto & key = pair.first;
 		auto & object = * key.first;
-		Light & light = * key.second;
+		auto & light = * key.second;
 		
 		ASSERT(light.GetException() != & object);
 
@@ -846,14 +843,14 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
 {
 	auto & render_list = scene->GetRenderList();
-	for (auto & leaf_node : render_list)
+	for (auto & object : render_list)
 	{
-		if (leaf_node.GetLayer() != layer)
+		if (object.GetLayer() != layer)
 		{
 			continue;
 		}
 		
-		auto required_program = leaf_node.GetProgram();
+		auto required_program = object.GetProgram();
 		if (required_program)
 		{
 			if (required_program->IsInitialized())
@@ -863,7 +860,7 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
 				required_program->SetProjectionMatrix(projection_matrix);
 				
 				// Set the model view matrix.
-				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
+				Transformation const & model_view_transformation = object.GetModelViewTransformation();
 				auto model_view_matrix = model_view_transformation.GetMatrix();
 				required_program->SetModelViewMatrix(model_view_matrix);
 			}
@@ -873,13 +870,13 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
 			}
 		}
 		
-		auto required_vbo = leaf_node.GetVboResource();
+		auto required_vbo = object.GetVboResource();
 		if (required_vbo)
 		{
 			SetVboResource(required_vbo);
 		}
 		
-		leaf_node.Render(* this);
+		object.Render(* this);
 	}
 }
 
@@ -1005,20 +1002,20 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 	ShadowMapKey key;
 	key.second = & light;
 	auto exception = light.GetException();
-	for (auto & leaf_node : render_list)
+	for (auto & object : render_list)
 	{
-		if (! leaf_node.CastsShadow() || & leaf_node == exception)
+		if (! object.CastsShadow() || & object == exception)
 		{
 			continue;
 		}
 		
-		if (leaf_node.GetLayer() != Layer::opaque)
+		if (object.GetLayer() != Layer::opaque)
 		{
 			continue;
 		}
 		
 		// get shadow that matches the object-light combination
-		key.first = & leaf_node;
+		key.first = & object;
 		auto found = shadows.find(key);
 		ASSERT(found != std::end(shadows));
 		
@@ -1031,8 +1028,8 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 		SetVboResource(& vbo_resource);
 
 		// Set the model view matrix.
-		Transformation const & model_view_transformation = leaf_node.GetShadowModelViewTransformation();
-		auto model_view_matrix = model_view_transformation.GetMatrix();
+		auto & model_view_transformation = object.GetShadowModelViewTransformation();
+		auto & model_view_matrix = model_view_transformation.GetMatrix();
 		shadow_program.SetModelViewMatrix(model_view_matrix);
 
 		// Draw

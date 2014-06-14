@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "Object.h"
 
 #include "gfx/Color.h"
 #include "gfx/LightType.h"
@@ -21,7 +21,7 @@
 namespace gfx
 {
 	// A gfx Object representing a light source.
-	class Light : public LeafNode
+	class Light : public Object
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -46,10 +46,10 @@ namespace gfx
 		virtual Vector2 GetAngle() const;
 		
 		LightAttributes GetAttributes() const;
-		LeafNode const * GetException() const;
+		Object const * GetException() const;
 		
 #if defined(CRAG_GFX_LIGHT_DEBUG)
-		LeafNode::PreRenderResult PreRender() override;
+		PreRenderResult PreRender() override;
 #endif
 		
 		// variables
@@ -57,7 +57,7 @@ namespace gfx
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
 		Color4f _color;
-		LeafNode const * _exception;
+		Object const * _exception;
 		LightAttributes _attributes;
 		bool _is_extinguished = false;
 	};

@@ -12,6 +12,9 @@
 #include "RegisterResources.h"
 
 #include "IndexedVboResource.h"
+#include "LitVertex.h"
+#include "Mesh.h"
+#include "PlainVertex.h"
 #include "Program.h"
 #include "Quad.h"
 #include "Shader.h"

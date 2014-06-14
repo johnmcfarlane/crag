@@ -64,7 +64,7 @@ void Thruster::Update(float const & thrust_factor)
 	}
 }
 
-LeafNode::PreRenderResult Thruster::PreRender()
+Object::PreRenderResult Thruster::PreRender()
 {
 	Light::PreRender();
 	
@@ -73,7 +73,7 @@ LeafNode::PreRenderResult Thruster::PreRender()
 	// TODO: Resetting this here is wrong. (What happens if sim stalls?)
 	_thrust_factor = 0;
 	
-	return LeafNode::ok;
+	return ok;
 }
 
 void Thruster::AddPuff(float thrust_factor)

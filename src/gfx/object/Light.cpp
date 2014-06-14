@@ -28,10 +28,10 @@ using namespace gfx;
 // gfx::Light definitions
 
 Light::Light(
-	LeafNode::Init const & init, Transformation const & local_transformation, 
+	Init const & init, Transformation const & local_transformation, 
 	Color4f const & color, LightAttributes attributes,
 	ObjectHandle exception)
-: LeafNode(init, local_transformation, Layer::light)
+: Object(init, local_transformation, Layer::light)
 , _color(color)
 , _exception(nullptr)
 , _attributes(attributes)
@@ -44,7 +44,7 @@ Light::Light(
 		
 		if (exception_object)
 		{
-			_exception = & core::StaticCast<LeafNode>(* exception_object);
+			_exception = & core::StaticCast<Object>(* exception_object);
 		}
 	}
 	
@@ -64,8 +64,6 @@ Light::~Light()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
-	CRAG_VERIFY(static_cast<LeafNode const &>(object));
-
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
 	CRAG_VERIFY_TRUE(object._attributes.type == LightType::point || object._attributes.type == LightType::search);
@@ -113,13 +111,13 @@ LightAttributes Light::GetAttributes() const
 	return _attributes;
 }
 
-LeafNode const * Light::GetException() const
+Object const * Light::GetException() const
 {
 	return _exception;
 }
 
 #if defined(CRAG_GFX_LIGHT_DEBUG)
-LeafNode::PreRenderResult Light::PreRender()
+PreRenderResult Light::PreRender()
 {
 	Vector3 intensity(_color.r, _color.g, _color.b);
 	Debug::AddBasis(GetModelTransformation(), geom::Length(intensity));

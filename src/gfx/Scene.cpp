@@ -28,7 +28,7 @@ CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
 
 Scene::Scene(Engine & engine)
 : _time(-1)
-, _root(ipc::ObjectInit<Engine>(engine, Uid::Create()), Transformation::Matrix44::Identity())
+, _root(Object::Init(engine, Uid::Create()), Transformation::Matrix44::Identity(), Layer::background)
 {
 	auto frustum = pov.GetFrustum();
 
@@ -45,7 +45,7 @@ Scene::~Scene()
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
 	CRAG_VERIFY(self._root);
-	auto num_shadow_casters = std::count_if(std::begin(self._render_list), std::end(self._render_list), [] (LeafNode const & object)
+	auto num_shadow_casters = std::count_if(std::begin(self._render_list), std::end(self._render_list), [] (Object const & object)
 	{
 		return object.CastsShadow();
 	});
@@ -69,29 +69,23 @@ core::Time Scene::GetTime() const
 void Scene::AddObject(Object & object)
 {
 	CRAG_VERIFY(object);
-
-	// If object is a LeafNode,
-	LeafNode * leaf_node = object.CastLeafNodePtr();
-	if (leaf_node == nullptr)
-	{
-		return;
-	}
+	ASSERT (& object != & _root);
 	
 	// add it to the render list.
-	_render_list.push_back(* leaf_node);
+	_render_list.push_back(object);
 
 	AdoptChild(object, _root);
 	
-	if (leaf_node->CastsShadow())
+	if (object.CastsShadow())
 	{
 		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
-			if (light.GetException() == leaf_node)
+			if (light.GetException() == & object)
 			{
 				return;
 			}
 			
-			auto key = std::make_pair(leaf_node, & light);
+			auto key = std::make_pair(& object, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
 			
 			if (light.GetAttributes().makes_shadow)
@@ -106,22 +100,18 @@ void Scene::AddObject(Object & object)
 
 void Scene::RemoveObject(Object & object)
 {
-	LeafNode * leaf_node = object.CastLeafNodePtr();
-	if (leaf_node == nullptr)
-	{
-		return;
-	}
+	ASSERT (& object != & _root);
 
 	// remove from list of things to be drawn
-	_render_list.remove(* leaf_node);
+	_render_list.remove(object);
 	
 	// remove from list of things that cast a shadow
-	if (leaf_node->CastsShadow())
+	if (object.CastsShadow())
 	{
 		std::for_each(std::begin(_light_list), std::end(_light_list), [&] (Light & light)
 		{
-			auto key = std::make_pair(leaf_node, & light);
-			if (light.GetAttributes().makes_shadow && light.GetException() != leaf_node)
+			auto key = std::make_pair(& object, & light);
+			if (light.GetAttributes().makes_shadow && light.GetException() != & object)
 			{
 				ASSERT(_shadows.find(key) != std::end(_shadows));
 			
@@ -137,18 +127,17 @@ void Scene::RemoveObject(Object & object)
 
 void Scene::SortRenderList()
 {
-	typedef LeafNode::RenderList List;
-	List unsorted;
+	decltype(_render_list) unsorted;
 	
 	std::swap(unsorted, _render_list);
 	
 	while (! unsorted.empty())
 	{
-		LeafNode & node = unsorted.front();
+		auto & object = unsorted.front();
 		unsorted.pop_front();
 		
-		auto insertion_point = std::lower_bound(std::begin(_render_list), std::end(_render_list), node);
-		_render_list.insert(insertion_point, node);
+		auto insertion_point = std::lower_bound(std::begin(_render_list), std::end(_render_list), object);
+		_render_list.insert(insertion_point, object);
 	}
 }
 
@@ -218,12 +207,12 @@ Object const & Scene::GetRoot() const
 	return _root;
 }
 
-LeafNode::RenderList & Scene::GetRenderList()
+Object::RenderList & Scene::GetRenderList()
 {
 	return _render_list;
 }
 
-LeafNode::RenderList const & Scene::GetRenderList() const
+Object::RenderList const & Scene::GetRenderList() const
 {
 	return _render_list;
 }

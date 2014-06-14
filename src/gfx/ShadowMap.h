@@ -14,11 +14,10 @@
 namespace gfx
 {
 	// forward-declarations
-	class LeafNode;
 	class Light;
 
 	// key
-	typedef std::pair<LeafNode const *, Light *> ShadowMapKey;
+	typedef std::pair<Object const *, Light *> ShadowMapKey;
 	typedef std::pair<ShadowMapKey, ShadowVolume> ShadowMapPair;
 }
 

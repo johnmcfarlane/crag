@@ -32,7 +32,7 @@ namespace
 // gfx::SearchLight definitions
 
 SearchLight::SearchLight(
-	LeafNode::Init const & init, Transformation const & local_transformation, 
+	Init const & init, Transformation const & local_transformation, 
 	Color4f const & color, Vector2 angle, ObjectHandle exception)
 : Light(
 	init, local_transformation, color, 

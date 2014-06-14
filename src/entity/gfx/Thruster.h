@@ -33,7 +33,7 @@ namespace gfx
 		
 		void Update(float const & thrust_factor);
 
-		LeafNode::PreRenderResult PreRender() override;
+		PreRenderResult PreRender() override;
 	private:
 		void AddPuff(float thrust_factor);
 		
