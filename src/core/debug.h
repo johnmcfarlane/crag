@@ -32,6 +32,11 @@
 // avoids unused variable warnings
 #define CRAG_UNUSED(VARIABLE) DO_STATEMENT((void)(VARIABLE);)
 
+// returns true iff it's the first time it's called
+#define CRAG_ONCE ([] { \
+    static std::atomic<bool> first_time(true); \
+    return first_time.exchange(false); } ())
+
 ////////////////////////////////////////////////////////////////////////////////
 // Debug-only code
 
@@ -136,6 +141,8 @@ namespace core
 		} \
 	)
 
+#define CRAG_DEBUG_ONCE CRAG_ONCE
+
 #else
 
 namespace core
@@ -149,6 +156,7 @@ namespace core
 #define ASSERT(CONDITION) DO_NOTHING
 #define CRAG_DEBUG_DUMP(EXPRESSION) DO_NOTHING
 #define AssertErrno() DO_NOTHING
+#define CRAG_DEBUG_ONCE (false)
 
 #endif	// NDEBUG
 
