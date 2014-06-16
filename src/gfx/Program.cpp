@@ -220,7 +220,6 @@ void Program3d::InitUniforms()
 
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
-, _ambient(std::move(rhs._ambient))
 , _num_lights(std::move(rhs._num_lights))
 , _lights(std::move(rhs._lights))
 {
@@ -234,8 +233,6 @@ LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std
 void LightProgram::InitUniforms()
 {
 	super::InitUniforms();
-	
-	InitUniformLocation(_ambient, "ambient");
 	
 	for (auto resolution = 0; resolution != int(LightResolution::size); ++ resolution)
 	{
@@ -274,10 +271,9 @@ void LightProgram::InitUniforms()
 	}
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
+void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
 {
 	ASSERT(IsBound());
-	CRAG_VERIFY_EQUAL(ambient.a, 1);
 	
 	Array<int> nums;
 
@@ -348,6 +344,34 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 			_num_lights[resolution][type].Set(nums[resolution][type]);
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ForegroundProgram member definitions
+
+ForegroundProgram::ForegroundProgram(ForegroundProgram && rhs)
+: LightProgram(std::move(rhs))
+, _ambient(std::move(rhs._ambient))
+{
+}
+
+ForegroundProgram::ForegroundProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: LightProgram(vert_sources, frag_sources)
+{
+}
+
+void ForegroundProgram::InitUniforms()
+{
+	LightProgram::InitUniforms();
+
+	InitUniformLocation(_ambient, "ambient");
+}
+
+void ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
+{
+	CRAG_VERIFY_EQUAL(ambient.a, 1);
+
+	LightProgram::SetLights(ambient, lights, filter);
 	
 	_ambient.Set(ambient);
 }
@@ -356,13 +380,13 @@ void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights
 // PolyProgram member definitions
 
 PolyProgram::PolyProgram(PolyProgram && rhs)
-: LightProgram(std::move(rhs))
+: ForegroundProgram(std::move(rhs))
 , _color(std::move(rhs._color))
 {
 }
 
 PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: LightProgram(vert_sources, frag_sources)
+: ForegroundProgram(vert_sources, frag_sources)
 {
 	// attribute locations
 	BindAttribLocation(1, "vertex_position");
@@ -422,7 +446,7 @@ ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, s
 // DiskProgram member definitions
 
 DiskProgram::DiskProgram(DiskProgram && rhs)
-: LightProgram(std::move(rhs))
+: super(std::move(rhs))
 , _color(std::move(rhs._color))
 , _center(std::move(rhs._center))
 , _radius(std::move(rhs._radius))
@@ -430,7 +454,7 @@ DiskProgram::DiskProgram(DiskProgram && rhs)
 }
 
 DiskProgram::DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: LightProgram(vert_sources, frag_sources)
+: super(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_normal");

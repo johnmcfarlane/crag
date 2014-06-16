@@ -19,9 +19,23 @@
 
 namespace gfx
 {
+	// Class Hierarchy:
+	//
+	//	Program:
+	//		ScreenProgram
+	//		SpriteProgram
+	//		Program3d:
+	//			ShadowProgram
+	//			LightProgram:
+	//				TexturedProgram
+	//				ForegroundProgram:
+	//					PolyProgram
+	//					DiskProgram
+	
 	// an application-specific shader program that manages its shaders
 	// TODO: Make SetUniforms virtual, include lights and matrices, 
 	// implement dirty cache to lazily update uniforms when bound
+	
 	class Program
 	{
 		OBJECT_NO_COPY(Program);
@@ -105,7 +119,7 @@ namespace gfx
 		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
+		virtual void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
 
 	private:
 		
@@ -118,15 +132,35 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Uniform<Color4f> _ambient;
 		Array<Uniform<int>> _num_lights;
 		Array<std::array<LightUniforms, max_attribute_lights>> _lights;
 	};
+	
+	// Things in the 3D world but in front of the skybox
+	class ForegroundProgram : public LightProgram
+	{
+	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
 
-	class PolyProgram : public LightProgram
+		ForegroundProgram(ForegroundProgram && rhs);
+		ForegroundProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+
+	protected:
+		void InitUniforms() override;
+	private:
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		
+		Uniform<Color4f> _ambient;
+	};
+
+	class PolyProgram : public ForegroundProgram
 	{
 		// types
-		typedef LightProgram super;
+		typedef ForegroundProgram super;
 		
 		// functions
 	public:
@@ -135,7 +169,7 @@ namespace gfx
 		
 		void SetUniforms(Color4f const & color) const;
 	private:
-		virtual void InitUniforms() override final;
+		void InitUniforms() final;
 		
 		// variables
 		Uniform<Color4f> _color;
@@ -156,11 +190,11 @@ namespace gfx
 		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
-	class DiskProgram : public LightProgram
+	class DiskProgram : public ForegroundProgram
 	{
 	public:
 		// types
-		typedef LightProgram super;
+		typedef ForegroundProgram super;
 		
 		// functions
 		DiskProgram(DiskProgram && rhs);
@@ -176,7 +210,7 @@ namespace gfx
 		Uniform<float> _radius;
 	};
 	
-	// used by skybox
+	// TODO: Rename Skybox
 	class TexturedProgram : public LightProgram
 	{
 	public:
