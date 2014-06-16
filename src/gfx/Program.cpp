@@ -352,6 +352,7 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 ForegroundProgram::ForegroundProgram(ForegroundProgram && rhs)
 : LightProgram(std::move(rhs))
 , _ambient(std::move(rhs._ambient))
+, _color(std::move(rhs._color))
 {
 }
 
@@ -360,11 +361,18 @@ ForegroundProgram::ForegroundProgram(std::initializer_list<char const *> vert_so
 {
 }
 
+void ForegroundProgram::SetUniforms(Color4f const & color) const
+{
+	ASSERT(IsBound());
+	_color.Set(color);
+}
+
 void ForegroundProgram::InitUniforms()
 {
 	LightProgram::InitUniforms();
 
 	InitUniformLocation(_ambient, "ambient");
+	InitUniformLocation(_color, "color");
 }
 
 void ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
@@ -381,7 +389,6 @@ void ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & l
 
 PolyProgram::PolyProgram(PolyProgram && rhs)
 : ForegroundProgram(std::move(rhs))
-, _color(std::move(rhs._color))
 {
 }
 
@@ -395,19 +402,6 @@ PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::
 	BindAttribLocation(4, "vertex_height");
 
 	Finalize();
-}
-
-void PolyProgram::SetUniforms(Color4f const & color) const
-{
-	ASSERT(IsBound());
-	_color.Set(color);
-}
-
-void PolyProgram::InitUniforms()
-{
-	super::InitUniforms();
-
-	InitUniformLocation(_color, "color");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +441,6 @@ ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, s
 
 DiskProgram::DiskProgram(DiskProgram && rhs)
 : super(std::move(rhs))
-, _color(std::move(rhs._color))
 , _center(std::move(rhs._center))
 , _radius(std::move(rhs._radius))
 {
@@ -464,7 +457,8 @@ DiskProgram::DiskProgram(std::initializer_list<char const *> vert_sources, std::
 
 void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const
 {
-	_color.Set(color);
+	super::SetUniforms(color);
+
 	_center.Set(model_view.GetTranslation());
 	_radius.Set(radius);
 }
@@ -473,7 +467,6 @@ void DiskProgram::InitUniforms()
 {
 	super::InitUniforms();
 
-	InitUniformLocation(_color, "color");
 	InitUniformLocation(_center, "center");
 	InitUniformLocation(_radius, "radius");
 }

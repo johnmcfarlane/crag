@@ -146,6 +146,7 @@ namespace gfx
 		ForegroundProgram(ForegroundProgram && rhs);
 		ForegroundProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 
+		void SetUniforms(Color4f const & color) const;
 	protected:
 		void InitUniforms() override;
 	private:
@@ -155,6 +156,7 @@ namespace gfx
 		// variables
 		
 		Uniform<Color4f> _ambient;
+		Uniform<Color4f> _color;
 	};
 
 	class PolyProgram : public ForegroundProgram
@@ -166,13 +168,6 @@ namespace gfx
 	public:
 		PolyProgram(PolyProgram && rhs);
 		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
-		
-		void SetUniforms(Color4f const & color) const;
-	private:
-		void InitUniforms() final;
-		
-		// variables
-		Uniform<Color4f> _color;
 	};
 
 	// for rendering shadow volumes
@@ -205,7 +200,6 @@ namespace gfx
 		virtual void InitUniforms() override;
 
 		// variables
-		Uniform<Color4f> _color;
 		Uniform<Vector3> _center;
 		Uniform<float> _radius;
 	};
