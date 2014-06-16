@@ -53,6 +53,7 @@ namespace gfx
 		
 		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
+		virtual int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
 		
 	protected:
 		void BindAttribLocation(int index, char const * name) const;
@@ -119,7 +120,9 @@ namespace gfx
 		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		virtual void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
+	protected:
+		
+		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const override;
 
 	private:
 		
@@ -150,7 +153,7 @@ namespace gfx
 	protected:
 		void InitUniforms() override;
 	private:
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
+		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

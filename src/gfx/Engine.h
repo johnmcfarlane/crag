@@ -122,11 +122,10 @@ namespace gfx
 		void RenderFrame();
 		void RenderScene();
 		
-		void UpdateProgramLights(LightFilter const & filter, bool add_ambient);
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		
-		void RenderLayer(Matrix44 const & projection_matrix, Layer layer);
+		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient);
 		void RenderShadowLights(Matrix44 const & projection_matrix);
 		void RenderShadowLight(Matrix44 const & projection_matrix, Light & light);
 		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light);

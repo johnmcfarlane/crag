@@ -769,8 +769,7 @@ void Engine::RenderScene()
 	{
 		// render foreground, opaque elements with non-shadow lighting
 		auto light_filter = [] (Light const & light) { return light.GetAttributes().makes_shadow == false; };
-		UpdateProgramLights(light_filter, true);
-		RenderLayer(foreground_projection_matrix, Layer::opaque);
+		RenderLayer(foreground_projection_matrix, Layer::opaque, light_filter, true);
 	
 		// render foreground, opaque elements with shadow lighting
 		RenderShadowLights(foreground_projection_matrix);
@@ -779,16 +778,14 @@ void Engine::RenderScene()
 	{
 		// render foreground, opaque elements with all lighting
 		auto light_filter = [] (Light const &) { return true; };
-		UpdateProgramLights(light_filter, true);
-		RenderLayer(foreground_projection_matrix, Layer::opaque);
+		RenderLayer(foreground_projection_matrix, Layer::opaque, light_filter, true);
 	}
 	
 	// render background elements (skybox)
 	setDepthRange(0.f, 1.f);
 	glDepthFunc(GL_LEQUAL);
 	auto light_filter = [] (Light const & light) { return light.GetAttributes().type == LightType::search; };
-	UpdateProgramLights(light_filter, false);
-	RenderLayer(background_projection_matrix, Layer::background);
+	RenderLayer(background_projection_matrix, Layer::background, light_filter, true);
 	glDepthFunc(depth_func);
 	setDepthRange(0.f, max_foreground_depth);
 	
@@ -800,24 +797,6 @@ void Engine::RenderScene()
 #endif
 }
 
-void Engine::UpdateProgramLights(LightFilter const & filter, bool add_ambient)
-{
-	auto ambient = add_ambient ? Color4f(ambient_r, ambient_g, ambient_b) : Color4f::Black();
-	auto & lights = scene->GetLightList();
-	
-	auto update_program = [&] (LightProgram const & light_program)
-	{
-		SetCurrentProgram(& light_program);
-		light_program.SetLights(ambient, lights, filter);
-	};
-	
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
-	update_program(* resource_manager.GetHandle<TexturedProgram>("SkyboxProgram"));
-}
-
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 {	
 	// render partially transparent objects
@@ -825,8 +804,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	glDepthMask(GL_FALSE);
 
 	auto light_filter = [] (Light const &) { return true; };
-	UpdateProgramLights(light_filter, true);
-	RenderLayer(projection_matrix, Layer::transparent);
+	RenderLayer(projection_matrix, Layer::transparent, light_filter, true);
 
 	// vbo needs to be reset before next frame
 	// to ensure that FormationVbo::PreRender functions correctly
@@ -840,8 +818,11 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Disable(GL_BLEND);
 }
 
-void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
+void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
+	auto ambient = add_ambient ? Color4f(ambient_r, ambient_g, ambient_b) : Color4f::Black();
+	auto & lights = scene->GetLightList();
+	
 	auto & render_list = scene->GetRenderList();
 	for (auto & object : render_list)
 	{
@@ -863,6 +844,9 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer)
 				Transformation const & model_view_transformation = object.GetModelViewTransformation();
 				auto model_view_matrix = model_view_transformation.GetMatrix();
 				required_program->SetModelViewMatrix(model_view_matrix);
+				
+				// Do the work of UpdateProgramLights here for this program
+				required_program->SetLights(ambient, lights, light_filter);
 			}
 			else
 			{
@@ -954,8 +938,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	Enable(GL_BLEND);	// TODO: Ensure additive; move this call further down stack
 
 	auto light_filter = [& light] (Light const & l) { return & l == & light; };
-	UpdateProgramLights(light_filter, false);
-	RenderLayer(projection_matrix, Layer::opaque);
+	RenderLayer(projection_matrix, Layer::opaque, light_filter, false);
 
 	Disable(GL_BLEND);
 	glDepthFunc(depth_func);
