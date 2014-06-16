@@ -211,7 +211,7 @@ namespace
 		manager.Register<DiskProgram>("SphereProgram", [] ()
 		{
 			return DiskProgram(
-				{ "assets/glsl/disk.vert", light_shader_filename },
+				{ "assets/glsl/sphere.vert", light_shader_filename },
 				{ "assets/glsl/sphere.frag", light_shader_filename });
 		});
 

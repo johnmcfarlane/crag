@@ -17,7 +17,7 @@ lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lo
 
 
 // inputs from sphere.vert
-varying highp vec4 quad_position;
+varying highp vec4 frag_position;
 	
 // inputs from the renderer
 uniform highp mat4 projection_matrix;
@@ -59,12 +59,12 @@ void SetFragmentDepth(in vec4 view_position)
 void main(void)
 {
 	highp float t;
-	if (! GetIntersection(quad_position.xyz, t))
+	if (! GetIntersection(frag_position.xyz, t))
 	{
 		discard;
 	}
 
-	highp vec4 frag_position = quad_position * t;
+	highp vec4 frag_position = frag_position * t;
 	SetFragmentDepth(frag_position);
 
 	highp vec3 frag_normal = normalize(frag_position.xyz - center);
