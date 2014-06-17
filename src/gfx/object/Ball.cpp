@@ -141,16 +141,12 @@ bool Ball::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volum
 	return true;
 }
 
-void Ball::Render(Engine const & renderer) const
+void Ball::Render(Engine const &) const
 {
 	// Pass rendering details to the shader program.
-	auto program = renderer.GetCurrentProgram();
-	if (program)
-	{
-		DiskProgram const & sphere_program = static_cast<DiskProgram const &>(* program);
-		Transformation const & transformation = GetModelViewTransformation();
-		sphere_program.SetUniforms(transformation, _radius, _color);
-	}
+	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(* GetProgram());
+	Transformation const & transformation = GetModelViewTransformation();
+	sphere_program.SetUniforms(transformation, _radius, _color);
 
 	// Draw the quad.
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());
