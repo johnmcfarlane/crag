@@ -12,7 +12,7 @@
 #include "glHelpers.h"
 
 #if ! defined(NDEBUG)
-//#define CRAG_GFX_UNIFORMS_DEBUG
+#define CRAG_GFX_UNIFORMS_DEBUG
 #endif
 
 namespace gfx
@@ -35,7 +35,7 @@ namespace gfx
 			{
 				// can be caused by shader compiler identifying 
 				// that a variable is unused and optimizing it away
-				DEBUG_MESSAGE("failed to get location of uniform, \"%s\"", name);
+				DEBUG_BREAK("failed to get location of uniform, \"%s\"", name);
 			}
 #endif
 		}
