@@ -349,45 +349,6 @@ void Engine::SetVboResource(VboResource const * vbo)
 	}
 }
 
-// TODO: Just do this in the vertex shader?
-Color4f Engine::CalculateLighting(Vector3 const & position, LightFilter const & filter) const
-{
-	Color4f lighting_color = Color4f::Black();
-	
-	Light::List const & lights = scene->GetLightList();
-	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ i)
-	{
-		Light const & light = * i;
-
-		// filter by type
-		if (! filter(light))
-		{
-			continue;
-		}
-
-		if (! light.GetIsLuminant())
-		{
-			continue;
-		}
-		
-		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
-		
-		Vector3 frag_to_light = light_position - position;
-		float distance_squared = static_cast<float>(LengthSq(frag_to_light));
-		
-		float attenuation = Clamped(1.f / distance_squared, 0.f, 1.f);
-		
-		Color4f const & color = light.GetColor();
-		ASSERT(color.a == 1.f);
-		Color4f diffuse = color * attenuation;
-		
-		lighting_color += diffuse;
-	}
-	
-	lighting_color.a = 1.f;
-	return lighting_color;
-}
-
 void Engine::OnQuit()
 {
 	quit_flag = true;

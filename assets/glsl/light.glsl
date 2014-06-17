@@ -7,8 +7,6 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#if 1
-
 #ifdef GL_ES
 precision highp float;
 precision highp int;
@@ -206,6 +204,17 @@ lowp vec3 GetPointLightReflection(in Light light, in highp vec3 frag_position, i
 }
 
 // support function to calculate 
+// the light reflected off a given fragment from a given point light
+lowp vec3 GetPointLightReflection(in Light light, in highp vec3 frag_position)
+{
+	highp vec3 frag_to_light = light.position - frag_position;
+	highp float distance_sq = dot(frag_to_light, frag_to_light);
+	
+	lowp vec3 color = light.color.rgb / distance_sq;
+	return color;
+}
+
+// support function to calculate 
 // the light reflected off a given fragment from a given search light
 lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 frag_position, in highp vec3 frag_normal)
 {
@@ -224,6 +233,22 @@ lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 frag_position, 
 	lowp vec3 color = light.color.rgb * attenuation;
 	
 	return color;
+}
+
+// support function to calculate 
+// the light reflected off a given fragment from a given search light
+lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 frag_position)
+{
+	highp vec3 frag_to_light = light.position - frag_position;
+	highp float distance = length(frag_to_light);
+	highp vec3 frag_to_light_direction = frag_to_light / distance;
+	
+	if (dot(frag_to_light_direction, light.direction) < light.angle.y)
+	{
+		return vec3(0.);
+	}
+	
+	return light.color.rgb / (distance * distance);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,11 +281,35 @@ void ForegroundLight(const in ResolutionLights resolution_lights, in highp vec3 
 	}
 }
 
+// get color value of foreground fragment
+void ForegroundLight(const in ResolutionLights resolution_lights, in highp vec3 frag_position, inout lowp vec3 reflection, inout lowp vec3 illumination)
+{
+	for (int i = 0, num_point_lights = resolution_lights.types[0].num_lights; i != num_point_lights; ++ i)
+	{
+		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], frag_position);
+	}
 
+	for (int i = 0, num_search_lights = resolution_lights.types[1].num_lights; i != num_search_lights; ++ i)
+	{
+		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], frag_position);
+
+		float ray_distance = length(frag_position);
+		vec3 ray_direction = frag_position / ray_distance;
+		illumination += GetBeamIllumination(resolution_lights.types[1].lights[i], ray_direction, ray_distance);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // top-level lighting functions
 
-// get color value of foreground fragment
+#if 1
+
+////////////////////////////////////////////////////////////////////////////////
+// foreground surfaces with normals (solids)
+
+// calculate per-vertex light
 void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination)
 {
 	reflection = vec3(0.);
@@ -268,14 +317,14 @@ void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out low
 	ForegroundLight(lights.resolutions[0], position, normal, reflection, illumination);
 }
 
-// get color value of foreground fragment
+// calculate per-fragment light
 lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
 {
 	ForegroundLight(lights.resolutions[1], position, normal, reflection, illumination);
 	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
 }
 
-// combined lighting of ForegroundLightVertex and ForegroundLightFragment
+// accumulate per-vertex and per-fragment light
 lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse)
 {
 	lowp vec3 reflection, illumination;
@@ -283,7 +332,36 @@ lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lo
 	return ForegroundLightFragment(position, normal, diffuse, reflection, illumination);
 }
 
-// get color value of background (skybox) fragment
+////////////////////////////////////////////////////////////////////////////////
+// foreground surfaces with normals (fluffy stuff)
+
+// calculate per-vertex light
+void ForegroundLightVertex(in highp vec3 position, out lowp vec3 reflection, out lowp vec3 illumination)
+{
+	reflection = vec3(0.);
+	illumination = vec3(0.);
+	ForegroundLight(lights.resolutions[0], position, reflection, illumination);
+}
+
+// calculate per-fragment light
+lowp vec4 ForegroundLightFragment(in highp vec3 position, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+{
+	ForegroundLight(lights.resolutions[1], position, reflection, illumination);
+	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
+}
+
+// accumulate per-vertex and per-fragment light without normal
+lowp vec4 ForegroundLightAll(in highp vec3 position, in lowp vec4 diffuse)
+{
+	lowp vec3 reflection, illumination;
+	ForegroundLightVertex(position, reflection, illumination);
+	return ForegroundLightFragment(position, diffuse, reflection, illumination);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// background surfaces (skybox)
+
+// calculate per-fragment light
 lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diffuse)
 {
 	lowp vec3 color = diffuse;
@@ -309,6 +387,12 @@ lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, 
 
 // combined lighting of ForegroundLightVertex and ForegroundLightFragment
 lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse)
+{
+	return diffuse;
+}
+
+// combined lighting of ForegroundLightVertex and ForegroundLightFragment
+lowp vec4 ForegroundLightAll(in highp vec3 position, in lowp vec4 diffuse)
 {
 	return diffuse;
 }

@@ -78,8 +78,6 @@ namespace gfx
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * vbo);
 		
-		Color4f CalculateLighting(Vector3 const & position, LightFilter const & filter) const;
-
 		// message interface
 		void OnQuit();
 		virtual void OnAddObject(Object & object) override final;

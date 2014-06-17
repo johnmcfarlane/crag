@@ -95,15 +95,14 @@ Object::PreRenderResult Puff::PreRender()
 	return ok;
 }
 
-void Puff::Render(Engine const & renderer) const
+void Puff::Render(Engine const &) const
 {
+	// Pass rendering details to the shader program.
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(* GetProgram());
 	Transformation const & model_view = GetModelViewTransformation();
-	Vector3 translation = model_view.GetTranslation();
-	auto light_filter = [] (Light const &) { return true; };
-	Color4f lighting = renderer.CalculateLighting(translation, LightFilter(light_filter));
-	disk_program.SetUniforms(model_view, _radius, _color * lighting);
+	disk_program.SetUniforms(model_view, _radius, _color);
 	
+	// Draw the ball.
 	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());
 	disk_quad.Draw();
 }
