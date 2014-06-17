@@ -281,7 +281,7 @@ lowp vec3 GetPointLightReflection(in Light light, in highp vec3 position)
 	highp vec3 to_light = light.position - position;
 	highp float distance_sq = dot(to_light, to_light);
 	
-	return light.color.rgb / distance_sq;
+	return light.color.rgb * .5 / distance_sq;
 }
 
 // return light reflected by given search light on a given position
@@ -296,7 +296,7 @@ lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 position)
 		return vec3(0.);
 	}
 	
-	return light.color.rgb / (distance * distance);
+	return light.color.rgb * .5 / (distance * distance);
 }
 
 // accumulate light reflected and illuminated by given lights on a given position
