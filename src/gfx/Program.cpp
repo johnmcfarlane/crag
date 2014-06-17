@@ -256,7 +256,7 @@ void LightProgram::InitUniforms()
 			sprintf(name, "%s.num_lights", name_prefix);
 			InitUniformLocation(num, name);
 		
-			for (auto index = 0u; index != _lights.size(); ++ index)
+			for (auto index = 0u; index != light_array.size(); ++ index)
 			{
 				auto & light_uniforms = light_array[index];
 
