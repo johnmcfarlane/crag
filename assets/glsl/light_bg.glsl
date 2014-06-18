@@ -7,6 +7,10 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
+#define ENABLE_LIGHTING
+
+#if defined(ENABLE_LIGHTING)
+
 #ifdef GL_ES
 precision highp float;
 precision highp int;
@@ -32,3 +36,12 @@ lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diff
 	BackgroundLight(lights.resolutions[1].types[1], ray_direction, color);
 	return color;
 }
+
+#else
+
+lowp vec3 BackgroundLightFragment(in highp vec3 ray_direction, in lowp vec3 diffuse)
+{
+	return diffuse;
+}
+
+#endif

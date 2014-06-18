@@ -7,6 +7,10 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
+#define ENABLE_LIGHTING
+
+#if defined(ENABLE_LIGHTING)
+
 #ifdef GL_ES
 precision highp float;
 precision highp int;
@@ -71,6 +75,23 @@ lowp vec4 ForegroundLightFragment(in highp vec3 position, in lowp vec4 diffuse, 
 	ForegroundLight(lights.resolutions[1], position, reflection, illumination);
 	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
 }
+
+#else
+
+// return light reflected and illuminated by vertex lights on a given position
+void ForegroundLightVertex(in highp vec3 position, out lowp vec3 reflection, out lowp vec3 illumination)
+{
+	reflection = vec3(0.);
+	illumination = vec3(0.);
+}
+
+// return consolidated light reflected and illuminated by fragment lights on a given position
+lowp vec4 ForegroundLightFragment(in highp vec3 position, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+{
+	return diffuse;
+}
+
+#endif
 
 // return consolidated light reflected and illuminated by all lights on a given position
 lowp vec4 ForegroundLightAll(in highp vec3 position, in lowp vec4 diffuse)
