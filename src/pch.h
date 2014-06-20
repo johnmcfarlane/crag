@@ -144,9 +144,6 @@
 #include "geom/Sphere.h"
 #include "geom/Triangle.h"
 
-#include "ipc/Handle_Impl.h"
-#include "ipc/Object.h"
-
 //////////////////////////////////////////////////////////////////////
 
 #endif // defined(__cplusplus)

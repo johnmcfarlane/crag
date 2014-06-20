@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# run this when things break and you're too lazy to fix them
+set -o errexit
+
+script/setup_pkg
+./android-sdk/tools/android
+script/setup_sdl
+script/setup_ode
+script/setup_project

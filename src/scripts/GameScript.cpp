@@ -51,7 +51,11 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 player_start_pos(0, 9999400, 0);
+	CONFIG_DEFINE(enable_spawn_ball, bool, true);
+	CONFIG_DEFINE(enable_spawn_cube, bool, true);
+	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
+
+	sim::Vector3 player_start_pos(5, 9999400, 0);
 	sim::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
@@ -197,7 +201,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.85f) * 8000000000000000.f);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.85f) * 5000000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Set camera position
@@ -237,9 +241,30 @@ void GameScript(applet::AppletInterface & applet_interface)
 	}
 
 	// ball
-	sim::Sphere3 sphere(player_start_pos + sim::Vector3(0.f, 10.f, 3.f), 1.f);
-	sim::EntityHandle ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Red());
-	_shapes.push_back(ball);
+	if (enable_spawn_ball)
+	{
+		auto sphere = sim::Sphere3(player_start_pos + sim::Vector3(5.f, 8.f, -4.f), 1.f);
+		auto ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Green());
+		_shapes.push_back(ball);
+	}
+
+	// cube
+	if (enable_spawn_cube)
+	{
+		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(0.f, 10.f, 3.f));
+		auto size = sim::Vector3(1.f, 1.f, 1.f) * 2.f;
+		auto cube = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Red());
+		_shapes.push_back(cube);
+	}
+	
+	// obelisk
+	if (enable_spawn_obelisk)
+	{
+		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(1.f, 8.f, 3.f));
+		auto size = sim::Vector3(1.f, 4.f, 9.f) * .5f;
+		auto obelisk = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Black());
+		_shapes.push_back(obelisk);
+	}
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())

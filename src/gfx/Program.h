@@ -19,9 +19,23 @@
 
 namespace gfx
 {
+	// Class Hierarchy:
+	//
+	//	Program:
+	//		ScreenProgram
+	//		SpriteProgram
+	//		Program3d:
+	//			ShadowProgram
+	//			LightProgram:
+	//				TexturedProgram
+	//				ForegroundProgram:
+	//					PolyProgram
+	//					DiskProgram
+	
 	// an application-specific shader program that manages its shaders
 	// TODO: Make SetUniforms virtual, include lights and matrices, 
 	// implement dirty cache to lazily update uniforms when bound
+	
 	class Program
 	{
 		OBJECT_NO_COPY(Program);
@@ -39,6 +53,7 @@ namespace gfx
 		
 		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
+		virtual int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
 		
 	protected:
 		void BindAttribLocation(int index, char const * name) const;
@@ -47,7 +62,7 @@ namespace gfx
 
 	private:
 		virtual void InitUniforms();
-		void GetInfoLog(std::string & info_log) const;
+		bool DumpInfoLog() const;
 		void Verify() const;
 
 		// variables
@@ -89,7 +104,11 @@ namespace gfx
 			Uniform<Vector3> position;
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
+			Uniform<Vector2> angle;
 		};
+		
+		template <typename ELEMENT>
+		using Array = std::array<std::array<ELEMENT, std::size_t(LightType::size)>, std::size_t(LightResolution::size)>;
 
 	public:
 		using super = Program3d;
@@ -101,42 +120,60 @@ namespace gfx
 		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
-		void SetLight(Light const & light) const;
-		void SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const;
+	protected:
+		
+		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const override;
 
 	private:
-
-		void SetLight(Light const & light, int index) const;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// constants
+		
+		// matches value in assets/glsl/light.glsl
+		static constexpr auto max_attribute_lights = 6;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
+		Array<Uniform<int>> _num_lights;
+		Array<std::array<LightUniforms, max_attribute_lights>> _lights;
+	};
+	
+	// Things in the 3D world but in front of the skybox
+	class ForegroundProgram : public LightProgram
+	{
+	public:
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+
+		ForegroundProgram(ForegroundProgram && rhs);
+		ForegroundProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
+
+		void SetUniforms(Color4f const & color) const;
+	protected:
+		void InitUniforms() override;
+	private:
+		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+		
 		Uniform<Color4f> _ambient;
-		Uniform<int> _num_point_lights;
-		Uniform<int> _num_beam_lights;
-		std::array<LightUniforms, 8> _lights;
+		Uniform<Color4f> _color;
 	};
 
-	class PolyProgram : public LightProgram
+	class PolyProgram : public ForegroundProgram
 	{
 		// types
-		typedef LightProgram super;
+		typedef ForegroundProgram super;
 		
 		// functions
 	public:
 		PolyProgram(PolyProgram && rhs);
 		PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
-		
-		void SetUniforms(Color4f const & color, bool fragment_lighting, bool relief_enabled = false) const;
-	private:
-		virtual void InitUniforms() override final;
-		
-		// variables
-		Uniform<Color4f> _color;
-		Uniform<bool> _fragment_lighting;
-		Uniform<bool> _relief_enabled;
 	};
 
+	// for rendering shadow volumes
 	class ShadowProgram : public Program3d
 	{
 	public:
@@ -151,11 +188,11 @@ namespace gfx
 		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
-	class DiskProgram : public LightProgram
+	class DiskProgram : public ForegroundProgram
 	{
 	public:
 		// types
-		typedef LightProgram super;
+		typedef ForegroundProgram super;
 		
 		// functions
 		DiskProgram(DiskProgram && rhs);
@@ -166,13 +203,12 @@ namespace gfx
 		virtual void InitUniforms() override;
 
 		// variables
-		Uniform<Color4f> _color;
 		Uniform<Vector3> _center;
 		Uniform<float> _radius;
 	};
 	
-	// used by skybox
-	class TexturedProgram : public Program3d
+	// TODO: Rename Skybox
+	class TexturedProgram : public LightProgram
 	{
 	public:
 		TexturedProgram(TexturedProgram && rhs);

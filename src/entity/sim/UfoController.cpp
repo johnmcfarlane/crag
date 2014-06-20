@@ -38,14 +38,12 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::UfoController member functions
 
-UfoController::UfoController(Entity & entity, EntityHandle ball_entity, Scalar max_thrust, bool always_climb)
+UfoController::UfoController(Entity & entity, EntityHandle ball_entity, Scalar max_thrust)
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
 , _ball_entity(ball_entity)
 , _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, max_thrust)), false, 1.f))
 , _num_presses(0)
-, _max_thrust(max_thrust)
-, _always_climb(always_climb)
 {
 	AddThruster(VehicleController::ThrusterPtr(_main_thruster));
 
@@ -82,15 +80,7 @@ void UfoController::Tick()
 	Vector2 pointer_delta = HandleEvents();
 
 	ApplyThrust(pointer_delta);
-	
-	bool upside_down = ApplyTilt(pointer_delta);
-	
-	if (_always_climb)
-	{
-		Scalar upward = upside_down ? -1.f : 1.f;
-		Ray3 ray(Vector3(0.f, 0.f, -.2f * upward), Vector3(0.f, 0.f, _max_thrust * upward));
-		_main_thruster->SetRay(ray);
-	}
+	ApplyTilt(pointer_delta);
 }
 
 void UfoController::ApplyThrust(Vector2 pointer_delta)
@@ -106,12 +96,12 @@ bool UfoController::ShouldThrust(bool) const
 }
 
 // returns true iff UFO is upside down
-bool UfoController::ApplyTilt(Vector2 pointer_delta)
+void UfoController::ApplyTilt(Vector2 pointer_delta)
 {
 	auto location = GetEntity().GetLocation();
 	if (! location)
 	{
-		return false;
+		return;
 	}
 	auto & body = core::StaticCast<physics::Body>(* location);
 	
@@ -166,9 +156,6 @@ bool UfoController::ApplyTilt(Vector2 pointer_delta)
 	body.AddForceAtPos(
 		tilt, 
 		body.GetTranslation() + get_axis(gfx::Direction::up));
-	
-	bool upside_down = geom::DotProduct(gravity, gfx::GetAxis(location->GetRotation(), gfx::Direction::forward)) > 0.f;
-	return upside_down;
 }
 
 Vector2 UfoController::HandleEvents()

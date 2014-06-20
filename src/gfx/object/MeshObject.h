@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "Object.h"
 
 #include "gfx/LitVertex.h"
+#include "gfx/ShadowVolume.h"
 
 #include "core/Resource.h"
 
@@ -20,7 +21,7 @@ namespace gfx
 	DECLARE_CLASS_HANDLE(MeshObject); // gfx::MeshObjectHandle
 
 	// MeshObject class - general purpose mesh object
-	class MeshObject final : public LeafNode
+	class MeshObject final : public Object
 	{
 	public:
 		// functions

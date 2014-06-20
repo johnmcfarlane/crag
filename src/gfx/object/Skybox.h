@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "Object.h"
 
 #include "gfx/Texture.h"
 #include "gfx/VertexBufferObject.h"
@@ -20,7 +20,7 @@ namespace gfx
 	class Scene;
 	DECLARE_CLASS_HANDLE(Skybox);
 	
-	class Skybox : public LeafNode
+	class Skybox : public Object
 	{
 	public:
 		// Types

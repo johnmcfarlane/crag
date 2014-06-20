@@ -1,5 +1,5 @@
 //
-//  Object.h
+//  ipc/Object.h
 //  crag
 //
 //  Created by John McFarlane on 2011-05-23.
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Uid.h"
+#include "Handle_Impl.h"
 
 namespace ipc
 {

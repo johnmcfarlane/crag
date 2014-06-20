@@ -108,6 +108,11 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	for (auto index = 0; index != num_strings; ++ filename_iterator, ++ index)
 	{
 		char const * filename = * filename_iterator;
+		if (! filename)
+		{
+			string_array[index] = "";
+			continue;
+		}
 		
 		auto source_buffer = app::LoadFile(filename, true);
 		if (! source_buffer)
@@ -140,7 +145,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	
 #if defined(DUMP_GLSL_ERRORS)
 	std::vector<char> info_log = GetInfoLog();
-	if (! info_log.empty())
+	if (info_log.size() > 1)
 	{
 		auto line_start = 0;
 		auto filename_iterator = std::begin(filenames);
@@ -151,7 +156,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 			line_start = line_end;
 		}
 
-		PrintMessage(stderr, "Shader info log: %s", info_log.data());
+		PrintMessage(stderr, "Shader info log:\n%s", info_log.data());
 	}
 #endif
 

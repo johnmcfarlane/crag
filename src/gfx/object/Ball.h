@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "gfx/object/LeafNode.h"
+#include "gfx/object/Object.h"
 
 #include "gfx/Color.h"
 
@@ -21,7 +21,7 @@ namespace gfx
 	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
 
 	// Ball class
-	class Ball final : public LeafNode
+	class Ball final : public Object
 	{
 	public:
 		// functions

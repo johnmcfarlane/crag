@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ipc/Object.h"
+
 #include "gfx/defs.h"
 
 #include "geom/Transformation.h"
@@ -19,16 +21,23 @@ namespace gfx { DECLARE_CLASS_HANDLE(Object); }	// gfx::ObjectHandle
 namespace gfx
 {
 	// forward-declarations
-	class LeafNode;
 	class Pov;
 	class Engine;
+	class Light;
 	class Scene;
 
+	// ShadowVolume forward-declaration
+	template <typename VERTEX, GLenum USAGE> class NonIndexedVboResource;
+	struct PlainVertex;
+	using ShadowVolume = gfx::NonIndexedVboResource<PlainVertex, GL_DYNAMIC_DRAW>;
+	
 	// function declarations
 	bool IsChild(Object const & child, Object const & parent);
 	void AdoptChild(Object & child, Object & parent);
 	void OrphanChild(Object & child, Object & parent);
 	void OrphanChild(Object & child);
+
+	bool operator < (Object const &, Object const &);
 
 	// Base class for drawable things.
 	// meaning they effectively double as nodes in a hierachical scene graph.
@@ -40,20 +49,20 @@ namespace gfx
 		
 		typedef ipc::Object<Object, Engine> super;
 		
+	public:
+		enum PreRenderResult
+		{
+			ok,
+			remove
+		};
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(Init const & init, Transformation const & local_transformation);
-	public:
+		Object(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow = false);
 		virtual ~Object();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Object);
-		
-		// scene graph types/variables/functions
-		virtual LeafNode & CastLeafNodeRef();
-		virtual LeafNode const & CastLeafNodeRef() const;
-		virtual LeafNode * CastLeafNodePtr();
-		virtual LeafNode const * CastLeafNodePtr() const;
 		
 		//////////////////////////////////////////////////////////////////////////////
 		// tree structure
@@ -82,8 +91,50 @@ namespace gfx
 		void SetLocalTransformation(Transformation const & local_transformation);
 		
 		Transformation GetModelTransformation() const;
+
+		virtual void UpdateModelViewTransformation(Transformation const & model_view_transformation);
+		void SetModelViewTransformation(Transformation const & model_view_transformation);
+		Transformation const & GetModelViewTransformation() const;
+		virtual Transformation const & GetShadowModelViewTransformation() const;
+		
+		friend bool operator < (Object const & lhs, Object const & rhs);
+		
+		Layer GetLayer() const;
+		
+		Program const * GetProgram() const;
+		void SetProgram(Program const * program);
+		
+		VboResource const * GetVboResource() const;
+		void SetVboResource(VboResource const * mesh_resource);
+		
+		bool CastsShadow() const;
+		
+		// Return the necessary z-clipping range required to render this object through the given camera.
+		virtual bool GetRenderRange(RenderRange & range) const;
+		
+		// Perform any necessary preparation for rendering.
+		virtual PreRenderResult PreRender();
+		
+		// returns false iff light is obscured by object and should be ignored
+		virtual bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const;
+		
+		// Draw the object.
+		virtual void Render(Engine const & renderer) const;
 		
 	private:
+		////////////////////////////////////////////////////////////////////////////////
+		// variables
+
 		Transformation _local_transformation;
+		Transformation _model_view_transformation;
+		
+		// This is the list which is sorted in render order.
+		DEFINE_INTRUSIVE_LIST(Object, RenderList);
+		
+		float _render_depth;
+		Layer const _layer;
+		Program const * _program;
+		VboResource const * _vbo_resource;
+		bool const _casts_shadow;
 	};
 }

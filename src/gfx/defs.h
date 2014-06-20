@@ -13,8 +13,6 @@
 #define CRAG_GFX_DEBUG
 #endif
 
-#include "core/enum_set.h"
-
 // forward-declarations
 namespace crag
 {
@@ -22,6 +20,11 @@ namespace crag
 	{
 		template <typename Type> class ResourceHandle;
 	}
+}
+
+namespace ipc
+{
+	class Uid;
 }
 
 namespace geom
@@ -44,18 +47,9 @@ namespace gfx
 	{
 		background,
 		light,
-		foreground
+		opaque,
+		transparent
 	};
-	
-	enum class LightType
-	{
-		point,
-		beam,
-		shadow,
-		size
-	};
-	
-	using LightTypeSet = core::enum_set<LightType, LightType::size>;
 	
 	// index buffer object type
 

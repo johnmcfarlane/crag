@@ -5,4 +5,4 @@ set -o errexit
 
 sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install automake ia32-libs java-package libtool subversion
+sudo apt-get install ant automake ia32-libs java-package libtool subversion

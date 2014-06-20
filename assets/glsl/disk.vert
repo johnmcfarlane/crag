@@ -8,18 +8,23 @@
 //
 
 // per-object inputs from the renderer
-uniform highp mat4 model_view_matrix;
-uniform highp mat4 projection_matrix;
+uniform MATRIX4 model_view_matrix;
+uniform MATRIX4 projection_matrix;
+uniform COLOR4 color;
 
 // per-vertex inputs from renderer
-attribute highp vec3 vertex_position;
+attribute VECTOR3 vertex_position;
+attribute COLOR4 vertex_color;
 
-// outputs to poly.frag
-varying highp vec4 quad_position;
+// outputs to disk.frag
+varying VECTOR3 frag_position;
+varying COLOR4 frag_color;
 
 void main(void)
 {
-	highp vec4 vertex_position4 = vec4(vertex_position, 1);
-	quad_position = model_view_matrix * vertex_position4;
-	gl_Position = projection_matrix * quad_position;
+	VECTOR4 frag_position4 = model_view_matrix * VECTOR4(vertex_position, 1);
+	gl_Position = projection_matrix * frag_position4;
+	
+	frag_position = frag_position4.xyz;
+	frag_color = ForegroundLightAll(frag_position, color);
 }

@@ -7,28 +7,23 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-#endif
-
 // inputs from the renderer
-uniform highp vec3 center;
-uniform highp float radius;	// TODO: use inverse radius instead
-uniform highp vec4 color;
+uniform VECTOR3 center;
+uniform SCALAR radius;	// TODO: use inverse radius instead
 
 // inputs from disk.vert
-varying highp vec4 quad_position;
-
+varying VECTOR3 frag_position;
+varying VECTOR4 frag_color;
 
 void main(void)
 {
-	highp float d = distance(quad_position.xyz, center) / radius;
+	SCALAR d = distance(frag_position, center) / radius;
 	if (d > 1.)
 	{
-		//discard;
+		discard;
 	}
 
 	d *= d * d;
 	d = 1. - d;
-	gl_FragColor = vec4(color.xyz, color.a * d);
+	gl_FragColor = vec4(frag_color.xyz, frag_color.a * d);
 }

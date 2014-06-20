@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# script to run after initially cloning crag or after downloading latest ADK/NDK
+# (into dl folder)
 set -o errexit
 
 script/setup_pkg

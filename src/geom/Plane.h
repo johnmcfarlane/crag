@@ -47,7 +47,7 @@ namespace geom
 
 		// attributes
 		Vector position;	// arbitrary point on surface
-		Vector normal;	// normalized normal to surface
+		Vector normal;	// normal to surface
 	};
 
 	// catches pointless casts and bypasses them

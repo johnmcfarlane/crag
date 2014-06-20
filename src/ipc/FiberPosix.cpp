@@ -179,7 +179,7 @@ void Fiber::InitStackUseEstimator()
 {
 	// Write to each address in the stack and check these values in the d'tor.
 	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
-	Random sequence(seed & Random::SeedType(-1));
+	Random sequence(seed & Random::ValueType(-1));
 	for (uint8_t * i = reinterpret_cast<uint8_t *>(_context.uc_stack.ss_sp), * end = i +_context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
@@ -192,7 +192,7 @@ void Fiber::InitStackUseEstimator()
 std::size_t Fiber::EstimateStackUse() const
 {
 	uintptr_t seed = reinterpret_cast<uintptr_t>(_context.uc_stack.ss_sp);
-	Random sequence(seed & Random::SeedType(-1));
+	Random sequence(seed & Random::ValueType(-1));
 	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_context.uc_stack.ss_sp), * end = i + _context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());

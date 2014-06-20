@@ -9,11 +9,10 @@
 
 #pragma once
 
-#include "LeafNode.h"
+#include "Object.h"
 
 #include "gfx/Color.h"
-
-#include "sim/defs.h"
+#include "gfx/LightType.h"
 
 #if ! defined(NDEBUG)
 //#define CRAG_GFX_LIGHT_DEBUG
@@ -22,12 +21,15 @@
 namespace gfx
 {
 	// A gfx Object representing a light source.
-	class Light : public LeafNode
+	class Light : public Object
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		Light(Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type);
+		Light(
+			Init const & init, Transformation const & local_transformation, 
+			Color4f const & color, LightAttributes attributes,
+			ObjectHandle exception = ObjectHandle());
 		~Light();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Light);
@@ -39,19 +41,24 @@ namespace gfx
 		
 		void SetColor(Color4f const & color);
 		Color4f const & GetColor() const;
-		LightType GetType() const;
+		
+		virtual void SetAngle(Vector2 params);
+		virtual Vector2 GetAngle() const;
+		
+		LightAttributes GetAttributes() const;
+		Object const * GetException() const;
 		
 #if defined(CRAG_GFX_LIGHT_DEBUG)
-		LeafNode::PreRenderResult PreRender() override;
+		PreRenderResult PreRender() override;
 #endif
 		
 		// variables
 	private:
-		// This is the list which is sorted in order of 
 		DEFINE_INTRUSIVE_LIST(Light, List);
 
 		Color4f _color;
-		LightType _type;
+		Object const * _exception;
+		LightAttributes _attributes;
 		bool _is_extinguished = false;
 	};
 }

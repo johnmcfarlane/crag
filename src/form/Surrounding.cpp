@@ -434,6 +434,8 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 			mesh.AddFace(a, b, c, normal, color);
 		});
 	}, 1024, true);
+	
+	mesh.NormalizeNormals();
 }
 
 ///////////////////////////////////////////////////////

@@ -31,6 +31,13 @@ namespace
 	CONFIG_DEFINE(puff_drift_coefficient, Scalar, .75);
 	CONFIG_DEFINE(puff_volume_variance, Scalar, 1.);
 	CONFIG_DEFINE(puff_volume_median, Scalar, 0.0005f);
+	
+	LightAttributes const thruster_light_attribs =
+	{
+		LightResolution::vertex,
+		LightType::point,
+		false
+	};
 }
 
 
@@ -40,7 +47,7 @@ namespace
 DEFINE_POOL_ALLOCATOR(Thruster, 64);
 
 Thruster::Thruster(super::Init const & init, Transformation const & local_transformation, float thrust_max)
-: super(init, local_transformation, thruster_color, gfx::LightType::point)
+: super(init, local_transformation, thruster_color, thruster_light_attribs)
 , _thrust_max(thrust_max)
 {
 }
@@ -57,7 +64,7 @@ void Thruster::Update(float const & thrust_factor)
 	}
 }
 
-LeafNode::PreRenderResult Thruster::PreRender()
+Object::PreRenderResult Thruster::PreRender()
 {
 	Light::PreRender();
 	
@@ -66,7 +73,7 @@ LeafNode::PreRenderResult Thruster::PreRender()
 	// TODO: Resetting this here is wrong. (What happens if sim stalls?)
 	_thrust_factor = 0;
 	
-	return LeafNode::ok;
+	return ok;
 }
 
 void Thruster::AddPuff(float thrust_factor)

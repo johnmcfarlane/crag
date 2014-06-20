@@ -18,24 +18,10 @@
 
 using namespace form;
 
-namespace
-{
-	// TODO: if contour lines stay, move height into Point
-	float CalculateHeight(geom::rel::Vector3 const & pos, geom::rel::Vector3 const & origin)
-	{
-		using namespace geom;
-		auto origin_height = Length(origin);
-		auto relative_center = pos + origin;
-		auto height = Length(relative_center);
-		auto relative_height = height - origin_height;
-		return relative_height;
-	};
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // form::Mesh
 
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 void Mesh::Reserve(int, int max_num_tris)
 {
 	_lit_mesh.reserve(max_num_tris * 3);
@@ -53,6 +39,15 @@ void Mesh::Clear()
 	_lit_mesh.clear();
 }
 
+void Mesh::NormalizeNormals()
+{
+	for (auto & vertex : _lit_mesh)
+	{
+		Vector3 & norm = vertex.norm;
+		geom::Normalize(norm);
+	}
+}
+
 MeshProperties & Mesh::GetProperties()
 {
 	return properties;
@@ -63,7 +58,7 @@ MeshProperties const & Mesh::GetProperties() const
 	return properties;
 }
 
-#if ! defined(CRAG_FLAT_SHADE)
+#if ! defined(CRAG_FORM_FLAT_SHADE)
 Mesh::Vertex & Mesh::GetVertex(Point & point, Color color)
 {
 	if (point.vert == nullptr)
@@ -85,8 +80,7 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 		gfx::Color4b(color.r,
 					 color.g,
 					 color.b,
-					 color.a),
-		CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
+					 color.a)
 	};
 
 	auto & vertices = _lit_mesh.GetVertices();
@@ -140,8 +134,7 @@ void Mesh::AddFace(Point const & a, Point const & b, Point const & c, Vertex::Ve
 			gfx::Color4b(color.r,
 						 color.g,
 						 color.b,
-						 color.a),
-			CalculateHeight(p.pos, geom::Cast<float>(properties._origin))
+						 color.a)
 		});
 	};
 	

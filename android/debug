@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
+# build crag and copy to phone for testing;
+# (does not affect build settings; see jni/Application.mk)
+
 set -o errexit
 
 android-ndk/ndk-build $1 $2 $3 $4
 ant debug
 ant debug install
+./logcat -c
 #android-ndk/ndk-gdb --start --adb=android-sdk/platform-tools/adb

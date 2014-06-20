@@ -11,15 +11,19 @@
 
 #include "Object.h"
 
-#include "LeafNode.h"
-
 using namespace gfx;
 
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Object member definitions
 
-Object::Object(Init const & init, Transformation const & local_transformation)
+Object::Object(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow)
 : super(init)
 , _parent(nullptr)
 , _local_transformation(local_transformation)
+, _layer(layer)
+, _program(nullptr)
+, _vbo_resource(nullptr)
+, _casts_shadow(casts_shadow)
 { 
 	CRAG_VERIFY(* this);
 }
@@ -32,28 +36,6 @@ Object::~Object()
 	{
 		OrphanChild(* this);
 	}
-}
-
-LeafNode & Object::CastLeafNodeRef()
-{
-	ASSERT(false);
-	return static_cast<LeafNode &>(* this);
-}
-
-LeafNode const & Object::CastLeafNodeRef() const
-{
-	ASSERT(false);
-	return static_cast<LeafNode const &>(* this);
-}
-
-LeafNode * Object::CastLeafNodePtr()
-{
-	return nullptr;
-}
-
-LeafNode const * Object::CastLeafNodePtr() const
-{
-	return nullptr;
 }
 
 bool gfx::IsChild(Object const & child, Object const & parent)
@@ -167,9 +149,120 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Object, object)
 	}
 	
 	CRAG_VERIFY(object._local_transformation);
+	CRAG_VERIFY(object._model_view_transformation);
 
 	auto scale = object._local_transformation.GetScale();
 	CRAG_VERIFY_NEARLY_EQUAL(scale.x, 1.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL(scale.y, 1.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL(scale.z, 1.f, 0.001f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
+
+void Object::UpdateModelViewTransformation(Transformation const & model_view_transformation)
+{
+	SetModelViewTransformation(model_view_transformation);
+}
+
+void Object::SetModelViewTransformation(Transformation const & model_view_transformation)
+{
+	_model_view_transformation = model_view_transformation;
+	
+	Transformation::Matrix44 const & matrix = _model_view_transformation.GetMatrix();
+	_render_depth = matrix[1][3];
+
+	CRAG_VERIFY(* this);
+}
+
+Transformation const & Object::GetModelViewTransformation() const
+{
+	return _model_view_transformation;
+}
+
+Transformation const & Object::GetShadowModelViewTransformation() const
+{
+	return _model_view_transformation;
+}
+
+bool gfx::operator < (Object const & lhs, Object const & rhs)
+{
+	if (lhs._layer == Layer::opaque)
+	{
+		if (rhs._layer == Layer::opaque)
+		{
+			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._vbo_resource) - reinterpret_cast<char const *>(rhs._vbo_resource);
+			if (mesh_index_diff != 0)
+			{
+				return mesh_index_diff < 0;
+			}
+			
+			ptrdiff_t shader_index_diff = reinterpret_cast<char const *>(lhs._program) - reinterpret_cast<char const *>(rhs._program);
+			if (shader_index_diff != 0)
+			{
+				return shader_index_diff < 0;
+			}
+			
+			return lhs._render_depth > rhs._render_depth;
+		}
+
+		return true;
+	}
+	else
+	{
+		if (rhs._layer == Layer::opaque)
+		{
+			return false;
+		}
+		
+		return lhs._render_depth < rhs._render_depth;
+	}
+}
+
+Layer Object::GetLayer() const
+{
+	return _layer;
+}
+
+Program const * Object::GetProgram() const
+{
+	return _program;
+}
+
+void Object::SetProgram(Program const * program)
+{
+	_program = program;
+}
+
+VboResource const * Object::GetVboResource() const
+{
+	return _vbo_resource;
+}
+
+void Object::SetVboResource(VboResource const * vbo_resource)
+{
+	_vbo_resource = vbo_resource;
+}
+
+bool Object::CastsShadow() const
+{
+	return _casts_shadow;
+}
+
+bool Object::GetRenderRange(RenderRange &) const 
+{ 
+	return false;
+}
+
+Object::PreRenderResult Object::PreRender()
+{
+	return ok;
+}
+
+bool Object::GenerateShadowVolume(Light const &, ShadowVolume &) const
+{
+	ASSERT(false);
+	return true;
+}
+
+void Object::Render(Engine const &) const
+{
+	ASSERT(false);
+}
