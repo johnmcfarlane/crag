@@ -7,52 +7,45 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#define ENABLE_LIGHTING
-
 #if defined(ENABLE_LIGHTING)
-
-#ifdef GL_ES
-precision highp float;
-precision highp int;
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // foreground surfaces with normals (solids)
 
 // return light reflected by given point light on a given surface
-lowp vec3 GetPointLightReflection(in Light light, in highp vec3 position, in highp vec3 normal)
+COLOR3 GetPointLightReflection(const Light light, in VECTOR3 position, in VECTOR3 normal)
 {
-	highp vec3 to_light = light.position - position;
-	highp float distance = length(to_light);
+	VECTOR3 to_light = light.position - position;
+	SCALAR distance = length(to_light);
 	
-	highp float dp = dot(to_light, normal);
-	highp float attenuation = max(dp / (distance * distance * distance), 0.0);
+	SCALAR dp = dot(to_light, normal);
+	SCALAR attenuation = max(dp / (distance * distance * distance), 0.0);
 
 	return light.color.rgb * attenuation;
 }
 
 // return light reflected by given search light on a given surface
-lowp vec3 GetSearchLightReflection(in Light light, in highp vec3 position, in highp vec3 normal)
+COLOR3 GetSearchLightReflection(const Light light, in VECTOR3 position, in VECTOR3 normal)
 {
-	highp vec3 to_light = light.position - position;
-	highp float distance = length(to_light);
-	highp vec3 to_light_direction = to_light / distance;
+	VECTOR3 to_light = light.position - position;
+	SCALAR distance = length(to_light);
+	VECTOR3 to_light_direction = to_light / distance;
 	
 	if (dot(to_light_direction, light.direction) < light.angle.y)
 	{
 		return vec3(0.);
 	}
 	
-	highp float dp = dot(to_light_direction, normal);
-	highp float attenuation = max(dp / (distance * distance), 0.0);
+	SCALAR dp = dot(to_light_direction, normal);
+	SCALAR attenuation = max(dp / (distance * distance), 0.0);
 
-	lowp vec3 color = light.color.rgb * attenuation;
+	COLOR3 color = light.color.rgb * attenuation;
 	
 	return color;
 }
 
 // accumulate light reflected and illuminated by given lights on a given surface
-void ForegroundLight(const in ResolutionLights resolution_lights, in highp vec3 position, in highp vec3 normal, inout lowp vec3 reflection, inout lowp vec3 illumination)
+void ForegroundLight(const in ResolutionLights resolution_lights, in VECTOR3 position, in VECTOR3 normal, inout COLOR3 reflection, inout COLOR3 illumination)
 {
 	for (int i = 0, num_point_lights = resolution_lights.types[0].num_lights; i != num_point_lights; ++ i)
 	{
@@ -70,7 +63,7 @@ void ForegroundLight(const in ResolutionLights resolution_lights, in highp vec3 
 }
 
 // return light reflected and illuminated by vertex lights on a given surface
-void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination)
+void ForegroundLightVertex(in VECTOR3 position, in VECTOR3 normal, out COLOR3 reflection, out COLOR3 illumination)
 {
 	reflection = vec3(0.);
 	illumination = vec3(0.);
@@ -78,7 +71,7 @@ void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out low
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given surface
-lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+COLOR4 ForegroundLightFragment(in VECTOR3 position, in VECTOR3 normal, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
 {
 	ForegroundLight(lights.resolutions[1], position, normal, reflection, illumination);
 	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
@@ -87,24 +80,24 @@ lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, 
 #else
 
 // return light reflected and illuminated by vertex lights on a given surface
-void ForegroundLightVertex(in highp vec3 position, in highp vec3 normal, out lowp vec3 reflection, out lowp vec3 illumination)
+void ForegroundLightVertex(in VECTOR3 position, in VECTOR3 normal, out COLOR3 reflection, out COLOR3 illumination)
 {
 	reflection = vec3(0.);
 	illumination = vec3(0.);
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given surface
-lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination)
+COLOR4 ForegroundLightFragment(in VECTOR3 position, in VECTOR3 normal, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
 {
 	return diffuse;
 }
 
-#endif
+#endif	// ENABLE_LIGHTING
 
 // return consolidated light reflected and illuminated by all lights on a given surface
-lowp vec4 ForegroundLightAll(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse)
+COLOR4 ForegroundLightAll(in VECTOR3 position, in VECTOR3 normal, in COLOR4 diffuse)
 {
-	lowp vec3 reflection, illumination;
+	COLOR3 reflection, illumination;
 	ForegroundLightVertex(position, normal, reflection, illumination);
 	return ForegroundLightFragment(position, normal, diffuse, reflection, illumination);
 }

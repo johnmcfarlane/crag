@@ -7,14 +7,7 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-#endif
-
-// inputs from shadow.vert
-varying lowp vec3 fragment_position;
-
 void main(void)
 {
-	gl_FragColor = vec4(1., 0., 1., .1);
+	gl_FragColor = COLOR4(1., 0., 1., .1);
 }

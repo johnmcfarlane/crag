@@ -7,19 +7,16 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-precision highp int;
-#endif
+#if defined(ENABLE_LIGHTING)
 
 ////////////////////////////////////////////////////////////////////////////////
 // constants
 
 // matches value in src/gfx/Program.h
-const int max_attribute_lights = 6;
+#define MAX_ATTRIBUTE_LIGHTS 6
 
-const float far_positive = 1000000.;
-const float far_negative = - far_positive;
+const float far_positive = + 1000000.;
+const float far_negative = - 1000000.;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +33,7 @@ struct Light
 
 struct TypeLights
 {
-	Light lights[max_attribute_lights];
+	Light lights[MAX_ATTRIBUTE_LIGHTS];
 	int num_lights;
 };
 
@@ -51,7 +48,7 @@ struct Lights
 };
 
 // light information provided by the renderer
-uniform vec4 ambient;
+uniform COLOR4 ambient;
 uniform Lights lights;
 
 
@@ -89,7 +86,7 @@ bool GetContactGood(const Contact contact, const Light light)
 
 // support function to calculate the light reflected off an idealized atmosphere
 // before a given fragment from a given search light
-lowp vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction, const float ray_distance)
+COLOR3 GetBeamIllumination(const Light light, const VECTOR3 ray_direction, const float ray_distance)
 {
 	// details of the two contact points between the camera ray and the volume
 	// of the search beam; contact1 is behind contact2 (camera-wise)
@@ -187,3 +184,5 @@ lowp vec3 GetBeamIllumination(const Light light, const highp vec3 ray_direction,
 		return .25 * light.color.rgb * (x2 + x1);
 	}
 }
+
+#endif	// ENABLE_LIGHTING

@@ -7,24 +7,16 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-precision highp int;
-#endif
-
 // inputs from poly_f.vert
-varying highp vec3 fragment_position;
-varying highp vec3 fragment_normal;
-varying lowp vec4 fragment_diffuse;
-varying lowp vec3 fragment_reflection;
-varying lowp vec3 fragment_illumination;
-
-// light.glsl function which calculates the lighting for the given fragment
-lowp vec4 ForegroundLightFragment(in highp vec3 position, in highp vec3 normal, in lowp vec4 diffuse, in lowp vec3 reflection, in lowp vec3 illumination);
+varying VECTOR3 fragment_position;
+varying VECTOR3 fragment_normal;
+varying COLOR4 fragment_diffuse;
+varying COLOR3 fragment_reflection;
+varying COLOR3 fragment_illumination;
 
 void main(void)
 {
-	vec3 normal = normalize(fragment_normal);
+	VECTOR3 normal = normalize(fragment_normal);
 
 	gl_FragColor = ForegroundLightFragment(
 		fragment_position, 

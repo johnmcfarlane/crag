@@ -8,18 +8,18 @@
 //
 
 // per-object inputs from the renderer
-uniform highp mat4 model_view_matrix;
-uniform highp mat4 projection_matrix;
+uniform MATRIX4 model_view_matrix;
+uniform MATRIX4 projection_matrix;
 
 // per-vertex inputs from renderer
-attribute highp vec3 vertex_position;
+attribute VECTOR3 vertex_position;
 
 // outputs to fragment shader
-varying highp vec4 frag_position;
+varying VECTOR4 frag_position;
 
 void main(void)
 {
-	highp vec4 vertex_position4 = vec4(vertex_position, 1);
+	VECTOR4 vertex_position4 = VECTOR4(vertex_position, 1);
 	frag_position = model_view_matrix * vertex_position4;
 	gl_Position = projection_matrix * frag_position;
 }

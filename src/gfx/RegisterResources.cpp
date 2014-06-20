@@ -185,6 +185,7 @@ namespace
 	{
 		auto & manager = crag::core::ResourceManager::Get();
 	
+		static char const * common_shader_filename = "assets/glsl/common.glsl";
 		static char const * light_common_shader_filename = "assets/glsl/light_common.glsl";
 		static char const * light_fg_solid_filename = "assets/glsl/light_fg_solid.glsl";
 		static char const * light_fg_soft_filename = "assets/glsl/light_fg_soft.glsl";
@@ -193,50 +194,50 @@ namespace
 		manager.Register<PolyProgram>("PolyProgram", [] ()
 		{
 			return PolyProgram(
-				{ light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
-				{ light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
 		});
 
 		manager.Register<ShadowProgram>("ShadowProgram", [] ()
 		{
 			return ShadowProgram(
-				{ "assets/glsl/shadow.vert" },
-				{ "assets/glsl/shadow.frag" });
+				{ common_shader_filename, "assets/glsl/shadow.vert" },
+				{ common_shader_filename, "assets/glsl/shadow.frag" });
 		});
 
 		manager.Register<ScreenProgram>("ScreenProgram", [] ()
 		{
 			return ScreenProgram(
-				{ "assets/glsl/screen.vert" },
-				{ "assets/glsl/screen.frag" });
+				{ common_shader_filename, "assets/glsl/screen.vert" },
+				{ common_shader_filename, "assets/glsl/screen.frag" });
 		});
 
 		manager.Register<DiskProgram>("SphereProgram", [] ()
 		{
 			return DiskProgram(
-				{ light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.vert" },
-				{ light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.frag" });
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.frag" });
 		});
 
 		manager.Register<DiskProgram>("DiskProgram", [] ()
 		{
 			return DiskProgram(
-				{ light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.vert" },
-				{ light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.frag" });
+				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.frag" });
 		});
 
 		manager.Register<TexturedProgram>("SkyboxProgram", [] ()
 		{
 			return TexturedProgram(
-				{ light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.vert" },
-				{ light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.frag" });
+				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.frag" });
 		});
 
 		manager.Register<SpriteProgram>("SpriteProgram", [] ()
 		{
 			return SpriteProgram(
-				{ "assets/glsl/sprite.vert" },
-				{ "assets/glsl/sprite.frag" });
+				{ common_shader_filename, "assets/glsl/sprite.vert" },
+				{ common_shader_filename, "assets/glsl/sprite.frag" });
 		});
 	}
 	
