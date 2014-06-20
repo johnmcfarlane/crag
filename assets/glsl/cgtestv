@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo $@
+cat $@|cgc -glslWerror -strict -oglsl -profile glslv
