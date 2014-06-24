@@ -15,7 +15,7 @@
 // return consolidated light reflected and illuminated by given lights from a given direction
 void BackgroundLight(in TypeLights search_lights, in VECTOR3 ray_direction, inout COLOR3 illumination)
 {
-	for (int i = 0, num_search_lights = search_lights.num_lights; i != num_search_lights; ++ i)
+	for (int i = search_lights.num_lights; i -- > 0;)
 	{
 		illumination += GetBeamIllumination(search_lights.lights[i], ray_direction, far_positive);
 	}

@@ -47,12 +47,12 @@ COLOR3 GetSearchLightReflection(const Light light, in VECTOR3 position, in VECTO
 // accumulate light reflected and illuminated by given lights on a given surface
 void ForegroundLight(const in ResolutionLights resolution_lights, in VECTOR3 position, in VECTOR3 normal, inout COLOR3 reflection, inout COLOR3 illumination)
 {
-	for (int i = 0, num_point_lights = resolution_lights.types[0].num_lights; i != num_point_lights; ++ i)
+	for (int i = resolution_lights.types[0].num_lights; i -- > 0;)
 	{
 		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], position, normal);
 	}
 
-	for (int i = 0, num_search_lights = resolution_lights.types[1].num_lights; i != num_search_lights; ++ i)
+	for (int i = resolution_lights.types[1].num_lights; i -- > 0;)
 	{
 		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], position, normal);
 
