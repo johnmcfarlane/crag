@@ -190,8 +190,11 @@ void form::Engine::Tick()
 	AdjustNumQuaterna();
 	
 	TickScene();
-				
-	GenerateMesh();
+	
+	if (enable_mesh_generation)
+	{			
+		GenerateMesh();
+	}
 	
 	CRAG_VERIFY(* this);
 }
