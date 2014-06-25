@@ -12,6 +12,7 @@
 #if defined(GL_ES)
 #define COLOR3 lowp vec3
 #define COLOR4 lowp vec4
+#define UV_COORD medp vec2
 #define SCALAR highp float
 #define VECTOR2 highp vec2
 #define VECTOR3 highp vec3
@@ -20,6 +21,7 @@
 #else
 #define COLOR3 vec3
 #define COLOR4 vec4
+#define UV_COORD vec2
 #define SCALAR float
 #define VECTOR2 vec2
 #define VECTOR3 vec3
