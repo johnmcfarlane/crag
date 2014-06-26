@@ -42,13 +42,13 @@
 #if defined(WIN32)
 	// This works around a peculiarity of VC++ compiler.
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
-		template <typename CLASS> struct _ListTypeDefinitionHelper { \
+		template <typename CLASS> struct LIST_TYPE##_ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::HOOK_MEMBER> LIST_TYPE; }; \
-		typedef _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
+		typedef LIST_TYPE##_ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 	#define DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
-		template <typename CLASS> struct _ListTypeDefinitionHelper { \
+		template <typename CLASS> struct LIST_TYPE##_ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::HOOK_MEMBER> LIST_TYPE; }; \
-		typedef typename _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
+		typedef typename LIST_TYPE##_ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 #else
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		typedef core::intrusive::list<LISTED_CLASS, & LISTED_CLASS::HOOK_MEMBER> LIST_TYPE
