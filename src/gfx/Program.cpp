@@ -27,12 +27,19 @@ Program::Program(Program && rhs)
 : _id(rhs._id)
 , _vert_shader(std::move(rhs._vert_shader))
 , _frag_shader(std::move(rhs._frag_shader))
+, _needs_matrix_update(rhs._needs_matrix_update)
+, _needs_lights_update(rhs._needs_lights_update)
 {
 	rhs._id = 0;
+	rhs._needs_matrix_update = false;
+	rhs._needs_lights_update = false;
+
 }
 
 Program::Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : _id(glCreateProgram())	// Create the program.
+, _needs_matrix_update(true)
+, _needs_lights_update(true)
 {
 	// Create the main vert and frag shaders.
 	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
@@ -108,6 +115,26 @@ void Program::Unbind() const
 {
 	ASSERT(IsBound());
 	GL_CALL(glUseProgram(0));
+}
+
+void Program::SetNeedsMatrixUpdate(bool needs_matrix_update) const
+{
+	_needs_matrix_update = needs_matrix_update;
+}
+
+bool Program::NeedsMatrixUpdate() const
+{
+	return _needs_matrix_update;
+}
+
+void Program::SetNeedsLightsUpdate(bool needs_lights_update) const
+{
+	_needs_lights_update = needs_lights_update;
+}
+
+bool Program::NeedsLightsUpdate() const
+{
+	return _needs_lights_update;
 }
 
 void Program::SetProjectionMatrix(Matrix44 const &) const

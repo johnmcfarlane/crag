@@ -415,6 +415,11 @@ void Engine::OnSetReady(bool ready)
 	ASSERT(ready != _ready);
 	_ready = ready;
 	_dirty = true;
+
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
+	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
+	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
 }
 
 void Engine::OnResize(geom::Vector2i size)
@@ -781,6 +786,12 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 
 void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
+	// make all (relevant) shaders as having out-of-date light uniforms
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
+	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
+	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
+
 	auto ambient = add_ambient ? Color4f(ambient_r, ambient_g, ambient_b) : Color4f::Black();
 	auto & lights = scene->GetLightList();
 	
@@ -792,26 +803,34 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 			continue;
 		}
 		
+		// if object 'cares' what shader is enabled
 		auto required_program = object.GetProgram();
 		if (required_program)
 		{
-			if (required_program->IsInitialized())
+			// make it current (binds if necessary)
+			SetCurrentProgram(required_program);
+		
+			// Set the model view matrix.
+			Transformation const & model_view_transformation = object.GetModelViewTransformation();
+			auto & model_view_matrix = model_view_transformation.GetMatrix();
+			required_program->SetModelViewMatrix(model_view_matrix);
+
+			// update projectin matrix
+			if (required_program->NeedsMatrixUpdate())
 			{
-				// set the frame-constant uniforms
-				SetCurrentProgram(required_program);
+				required_program->SetNeedsMatrixUpdate(false);
+				
+				// happens once per shader per frame
 				required_program->SetProjectionMatrix(projection_matrix);
-				
-				// Set the model view matrix.
-				Transformation const & model_view_transformation = object.GetModelViewTransformation();
-				auto model_view_matrix = model_view_transformation.GetMatrix();
-				required_program->SetModelViewMatrix(model_view_matrix);
-				
-				// Do the work of UpdateProgramLights here for this program
-				required_program->SetLights(ambient, lights, light_filter);
 			}
-			else
+
+			// update projectin matrix
+			if (required_program->NeedsLightsUpdate())
 			{
-				SetCurrentProgram(nullptr);
+				required_program->SetNeedsLightsUpdate(false);
+				
+				// happens once per shader per call to RenderLayer
+				required_program->SetLights(ambient, lights, light_filter);
 			}
 		}
 		

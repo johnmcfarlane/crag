@@ -51,6 +51,12 @@ namespace gfx
 		void Bind() const;
 		void Unbind() const;
 		
+		void SetNeedsMatrixUpdate(bool needs_update) const;
+		bool NeedsMatrixUpdate() const;
+		
+		void SetNeedsLightsUpdate(bool needs_update) const;
+		bool NeedsLightsUpdate() const;
+		
 		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
 		virtual int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
@@ -69,6 +75,8 @@ namespace gfx
 		GLuint _id;
 		Shader _vert_shader;
 		Shader _frag_shader;
+		mutable bool _needs_matrix_update;
+		mutable bool _needs_lights_update;
 	};
 	
 	class Program3d : public Program
