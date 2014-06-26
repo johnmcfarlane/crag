@@ -21,7 +21,6 @@
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
@@ -70,7 +69,6 @@
     <ClCompile Include="..\..\src\form\RayCastResult.cpp" />
     <ClCompile Include="..\..\src\form\Scene.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnEntityFunctions.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\RootNode.cpp" />
     <ClCompile Include="..\..\src\physics\RayCast.cpp" />
     <ClCompile Include="..\..\src\scripts\MonitorOrigin.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnSkybox.cpp" />
@@ -113,6 +111,7 @@
     <ClCompile Include="..\..\src\entity\sim\UfoController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -176,10 +175,8 @@
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
-    <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
-    <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
     <ClInclude Include="..\..\src\gfx\Pov.h" />
     <ClInclude Include="..\..\src\gfx\Program.h" />
@@ -292,6 +289,7 @@
     <ClInclude Include="..\..\src\entity\sim\UfoController.h" />
     <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
     <ClInclude Include="..\..\src\entity\SpawnPlayer.h" />
+    <ClInclude Include="..\..\src\gfx\object\SearchLight.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
