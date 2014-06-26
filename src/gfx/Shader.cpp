@@ -153,8 +153,8 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 		auto filename_iterator = std::begin(filenames);
 		for (auto i = 0; i < num_strings; ++ filename_iterator, ++ i)
 		{
-			auto const & buffer = string_array[i];
 #if defined(DUMP_GLSL_ERROR_FILES)
+			auto const & buffer = string_array[i];
 #if defined(DUMP_GLSL_ACCUMULATE_LINE_NUMBERS)
 			line_start = 0;
 #endif
