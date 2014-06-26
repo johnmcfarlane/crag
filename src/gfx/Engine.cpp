@@ -786,7 +786,7 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 
 void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
-	// make all (relevant) shaders as having out-of-date light uniforms
+	// mark all (relevant) shaders as having out-of-date light uniforms
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
 	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
