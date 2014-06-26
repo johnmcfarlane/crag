@@ -8,6 +8,4 @@ Makefile
 SDL/
 share/
 cmake_install.cmake
-crag.cfg
-default.cfg
 core
