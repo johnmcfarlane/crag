@@ -47,18 +47,18 @@ COLOR3 GetSearchLightReflection(const Light light, in VECTOR3 position, in VECTO
 // accumulate light reflected and illuminated by given lights on a given surface
 void ForegroundLight(const in ResolutionLights resolution_lights, in VECTOR3 position, in VECTOR3 normal, inout COLOR3 reflection, inout COLOR3 illumination)
 {
-	for (int i = resolution_lights.types[0].num_lights; i -- > 0;)
+	for (int i = resolution_lights.point_lights.num_lights; i -- > 0;)
 	{
-		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], position, normal);
+		reflection += GetPointLightReflection(resolution_lights.point_lights.lights[i], position, normal);
 	}
 
-	for (int i = resolution_lights.types[1].num_lights; i -- > 0;)
+	for (int i = resolution_lights.search_lights.num_lights; i -- > 0;)
 	{
-		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], position, normal);
+		reflection += GetSearchLightReflection(resolution_lights.search_lights.lights[i], position, normal);
 
 		float ray_distance = length(position);
 		vec3 ray_direction = position / ray_distance;
-		illumination += GetBeamIllumination(resolution_lights.types[1].lights[i], ray_direction, ray_distance);
+		illumination += GetBeamIllumination(resolution_lights.search_lights.lights[i], ray_direction, ray_distance);
 	}
 }
 
@@ -67,13 +67,13 @@ void ForegroundLightVertex(in VECTOR3 position, in VECTOR3 normal, out COLOR3 re
 {
 	reflection = vec3(0.);
 	illumination = vec3(0.);
-	ForegroundLight(lights.resolutions[0], position, normal, reflection, illumination);
+	ForegroundLight(vertex_lights, position, normal, reflection, illumination);
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given surface
 COLOR4 ForegroundLightFragment(in VECTOR3 position, in VECTOR3 normal, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
 {
-	ForegroundLight(lights.resolutions[1], position, normal, reflection, illumination);
+	ForegroundLight(fragment_lights, position, normal, reflection, illumination);
 	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
 }
 

@@ -39,17 +39,14 @@ struct TypeLights
 
 struct ResolutionLights
 {
-	TypeLights types[2];	// point / search
-};
-
-struct Lights
-{
-	ResolutionLights resolutions[2];	// vertex, fragment
+	TypeLights point_lights;
+	TypeLights search_lights;
 };
 
 // light information provided by the renderer
 uniform COLOR4 ambient;
-uniform Lights lights;
+uniform ResolutionLights vertex_lights;
+uniform ResolutionLights fragment_lights;
 
 
 ////////////////////////////////////////////////////////////////////////////////

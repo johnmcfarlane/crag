@@ -39,18 +39,18 @@ COLOR3 GetSearchLightReflection(in Light light, in VECTOR3 position)
 // accumulate light reflected and illuminated by given lights on a given position
 void ForegroundLight(const in ResolutionLights resolution_lights, in VECTOR3 position, inout COLOR3 reflection, inout COLOR3 illumination)
 {
-	for (int i = resolution_lights.types[0].num_lights; i -- > 0;)
+	for (int i = resolution_lights.point_lights.num_lights; i -- > 0;)
 	{
-		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], position);
+		reflection += GetPointLightReflection(resolution_lights.point_lights.lights[i], position);
 	}
 
-	for (int i = resolution_lights.types[1].num_lights; i -- > 0;)
+	for (int i = resolution_lights.search_lights.num_lights; i -- > 0;)
 	{
-		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], position);
+		reflection += GetSearchLightReflection(resolution_lights.search_lights.lights[i], position);
 
 		float ray_distance = length(position);
 		vec3 ray_direction = position / ray_distance;
-		illumination += GetBeamIllumination(resolution_lights.types[1].lights[i], ray_direction, ray_distance);
+		illumination += GetBeamIllumination(resolution_lights.search_lights.lights[i], ray_direction, ray_distance);
 	}
 }
 
@@ -59,13 +59,13 @@ void ForegroundLightVertex(in VECTOR3 position, out COLOR3 reflection, out COLOR
 {
 	reflection = vec3(0.);
 	illumination = vec3(0.);
-	ForegroundLight(lights.resolutions[0], position, reflection, illumination);
+	ForegroundLight(vertex_lights, position, reflection, illumination);
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given position
 COLOR4 ForegroundLightFragment(in VECTOR3 position, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
 {
-	ForegroundLight(lights.resolutions[1], position, reflection, illumination);
+	ForegroundLight(fragment_lights, position, reflection, illumination);
 	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
 }
 

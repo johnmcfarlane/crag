@@ -25,8 +25,8 @@ void BackgroundLight(in TypeLights search_lights, in VECTOR3 ray_direction, inou
 COLOR3 BackgroundLightFragment(in VECTOR3 ray_direction, in COLOR3 diffuse)
 {
 	COLOR3 color = diffuse;
-	BackgroundLight(lights.resolutions[0].types[1], ray_direction, color);
-	BackgroundLight(lights.resolutions[1].types[1], ray_direction, color);
+	BackgroundLight(vertex_lights.search_lights, ray_direction, color);
+	BackgroundLight(fragment_lights.search_lights, ray_direction, color);
 	return color;
 }
 

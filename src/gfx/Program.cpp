@@ -274,7 +274,19 @@ void LightProgram::InitUniforms()
 		for (auto type = 0; type != int(LightType::size); ++ type)
 		{
 			char name_prefix[50];
-			sprintf(name_prefix, "lights.resolutions[%d].types[%d]", resolution, type);
+			{
+				constexpr char const * resolutions[] = 
+				{
+					"vertex_lights",
+					"fragment_lights"
+				};
+				constexpr char const * types[] = 
+				{
+					"point_lights",
+					"search_lights"
+				};
+				sprintf(name_prefix, "%s.%s", resolutions[resolution], types[type]);
+			}
 
 			auto & num = nums[type];
 			auto & light_array = light_arrays[type];
