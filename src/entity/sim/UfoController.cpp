@@ -27,11 +27,11 @@ using namespace sim;
 namespace
 {
 #if defined(CRAG_USE_MOUSE)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 45.f);
+	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 22.5f);
 #endif
 
 #if defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 900000.f);
+	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 450000.f);
 #endif
 }
 
@@ -156,6 +156,10 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 	body.AddForceAtPos(
 		tilt, 
 		body.GetTranslation() + get_axis(gfx::Direction::up));
+		
+	body.AddForceAtPos(
+		- tilt, 
+		body.GetTranslation() - get_axis(gfx::Direction::up));
 }
 
 Vector2 UfoController::HandleEvents()
