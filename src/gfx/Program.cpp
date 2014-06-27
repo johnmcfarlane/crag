@@ -452,7 +452,6 @@ PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_normal");
 	BindAttribLocation(3, "vertex_color");
-	BindAttribLocation(4, "vertex_height");
 
 	Finalize();
 }
