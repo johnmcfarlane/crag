@@ -45,9 +45,7 @@ char const * core::DebugGetThreadName()
 namespace
 {
 #if defined(WIN32)
-
-	char * buffer = nullptr;
-	std::size_t buffer_size = 0u;
+	std::vector<char> buffer;
 
 	// redirects output to a string buffer and sends it to CRT debugging console
 	void VFPrintF(FILE * out, char const * format, va_list args)
@@ -55,24 +53,29 @@ namespace
 		ASSERT(out == stdout || out == stderr);
 
 		// attempt to print using existing buffer
-		std::size_t size = vsnprintf(buffer, buffer_size, format, args);
+		auto buffer_size = int(buffer.size());
+		auto output_size = vsnprintf(buffer.data(), buffer_size, format, args);
+		ASSERT(output_size);
 
-		// resize buffer if it's too small
-		if (size >= buffer_size)
+		if (output_size > 0)
 		{
-			delete buffer;
-			buffer_size = (size + 128) * 2;
-			buffer = new char [buffer_size];
-
-			if (vsnprintf(buffer, buffer_size, format, args) != int(size))
+			if (output_size <= buffer_size)
 			{
-				// this should not happen
-				__debugbreak();
+				// send buffer to debugging console
+				OutputDebugStringA(buffer.data());
+
+				return;
 			}
+
+			buffer.resize(output_size + 1);
+		}
+		else
+		{
+			buffer.resize(buffer_size << 1);
 		}
 
-		// send buffer to debugging console
-		OutputDebugStringA(buffer);
+		// try again
+		VFPrintF(out, format, args);
 	}
 
 #elif defined(__ANDROID__)
