@@ -21,6 +21,8 @@ namespace gfx
 	template <typename ELEMENT, GLenum TARGET> 
 	class BufferObject
 	{
+		OBJECT_NO_COPY(BufferObject);
+
 	public:
 #if defined(CRAG_VERIFY_ENABLED)
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(BufferObject, self)
@@ -36,8 +38,6 @@ namespace gfx
 		{
 		}
 		
-		BufferObject(BufferObject const &) = delete;
-		
 		BufferObject(BufferObject && rhs)
 		: _name(rhs._name)
 		{
@@ -52,8 +52,6 @@ namespace gfx
 			}
 		}
 
-		BufferObject & operator=(BufferObject const &) = delete;
-		
 		BufferObject & operator=(BufferObject && rhs)
 		{
 			std::swap(_name, rhs._name);

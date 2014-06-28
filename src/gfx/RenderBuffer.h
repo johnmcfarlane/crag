@@ -17,6 +17,7 @@ namespace gfx
 	// Wrapper for OpenGL render buffer object.
 	class RenderBuffer
 	{
+		OBJECT_NO_COPY(RenderBuffer);
 	public:
 		RenderBuffer();
 		~RenderBuffer();

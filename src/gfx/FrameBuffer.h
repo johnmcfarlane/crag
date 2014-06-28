@@ -18,6 +18,7 @@ namespace gfx
 	// Wrapper for OpenGL frame buffer object
 	class FrameBuffer
 	{
+		OBJECT_NO_COPY(FrameBuffer);
 	public:
 		FrameBuffer();
 		~FrameBuffer();
