@@ -155,6 +155,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Object, object)
 	CRAG_VERIFY_NEARLY_EQUAL(scale.x, 1.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL(scale.y, 1.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL(scale.z, 1.f, 0.001f);
+
+	CRAG_VERIFY(object._program);
+	CRAG_VERIFY(object._vbo_resource);
+	CRAG_VERIFY(object._casts_shadow);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Object::UpdateModelViewTransformation(Transformation const & model_view_transformation)
@@ -229,6 +233,8 @@ Program const * Object::GetProgram() const
 void Object::SetProgram(Program const * program)
 {
 	_program = program;
+
+	CRAG_VERIFY(* this);
 }
 
 VboResource const * Object::GetVboResource() const

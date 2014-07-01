@@ -85,12 +85,13 @@ Shader::Shader(Shader && rhs)
 : _id(rhs._id)
 {
 	rhs._id = 0;
+	CRAG_VERIFY(* this);
 }
  
 Shader::~Shader()
 {
 	CRAG_VERIFY(* this);
-	assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_type)

@@ -7,20 +7,19 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
+#define ENABLE_LIGHTING
+
+////////////////////////////////////////////////////////////////////////////////
+// light types
+
+// returns (solid) lighting results
+struct LightResults
+{
+	COLOR3 reflection;
+	COLOR3 illumination;
+};
+
 #if defined(ENABLE_LIGHTING)
-
-////////////////////////////////////////////////////////////////////////////////
-// constants
-
-// matches value in src/gfx/Program.h
-#define MAX_ATTRIBUTE_LIGHTS 6
-
-const float far_positive = + 1000000.;
-const float far_negative = - 1000000.;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// light types / variables
 
 // contains information for a single light
 struct Light
@@ -31,22 +30,27 @@ struct Light
 	vec2 angle;	// for search light, sin/cos
 };
 
-struct TypeLights
-{
-	Light lights[MAX_ATTRIBUTE_LIGHTS];
-	int num_lights;
-};
+////////////////////////////////////////////////////////////////////////////////
+// constants
 
-struct ResolutionLights
-{
-	TypeLights point_lights;
-	TypeLights search_lights;
-};
+// matches value in src/gfx/Program.h
+#define MAX_LIGHTS 6
+
+const float far_positive = + 1000000.;
+const float far_negative = - 1000000.;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// uniforms
 
 // light information provided by the renderer
 uniform COLOR4 ambient;
-uniform ResolutionLights vertex_lights;
-uniform ResolutionLights fragment_lights;
+uniform Light lights[MAX_LIGHTS];
+
+uniform int vertex_point_lights_end;
+uniform int vertex_search_lights_end;
+uniform int fragment_point_lights_end;
+uniform int fragment_search_lights_end;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +87,7 @@ bool GetContactGood(const Contact contact, const Light light)
 
 // support function to calculate the light reflected off an idealized atmosphere
 // before a given fragment from a given search light
-COLOR3 GetBeamIllumination(const Light light, const VECTOR3 ray_direction, const float ray_distance)
+COLOR3 GetBeamIllumination(Light light, VECTOR3 ray_direction, SCALAR ray_distance)
 {
 	// details of the two contact points between the camera ray and the volume
 	// of the search beam; contact1 is behind contact2 (camera-wise)

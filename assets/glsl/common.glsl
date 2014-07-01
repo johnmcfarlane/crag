@@ -1,3 +1,9 @@
+#if defined(GL_ES)
+#version 100
+#else
+#version 130
+#endif
+
 //
 //  common.glsl
 //  crag
@@ -6,8 +12,6 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
-
-#define ENABLE_LIGHTING
 
 #if defined(GL_ES)
 #define COLOR3 lowp vec3

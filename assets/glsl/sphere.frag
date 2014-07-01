@@ -19,7 +19,7 @@ uniform SCALAR radius;
 
 // given a ray cast from the origin (eye),
 // returns point at which it intersects the sphere given by center/radius.
-bool GetIntersection(in VECTOR3 ray, out SCALAR t)
+bool GetIntersection(VECTOR3 ray, out SCALAR t)
 {
 	SCALAR a = dot(ray, ray);
 	SCALAR half_b = dot(ray, center);
@@ -38,7 +38,7 @@ bool GetIntersection(in VECTOR3 ray, out SCALAR t)
 }
 
 
-void SetFragmentDepth(in vec4 view_position)
+void SetFragmentDepth(vec4 view_position)
 {
 #ifndef GL_ES
 	VECTOR2 clipZW = view_position.z * projection_matrix[2].zw + projection_matrix[3].zw;

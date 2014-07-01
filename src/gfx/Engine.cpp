@@ -417,6 +417,7 @@ void Engine::OnSetReady(bool ready)
 	_dirty = true;
 
 	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.Test();
 	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
 	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
 	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
