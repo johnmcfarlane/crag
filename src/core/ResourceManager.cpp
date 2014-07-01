@@ -23,7 +23,7 @@ ResourceManager & ResourceManager::Get()
 	return _singleton;
 }
 
-void ResourceManager::Unregister(HashString const & key)
+void ResourceManager::Unregister(KeyType const & key)
 {
 	_mutex.WriteLock();
 	
@@ -35,7 +35,7 @@ void ResourceManager::Unregister(HashString const & key)
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Prefetch(HashString const & key) const
+void ResourceManager::Prefetch(KeyType const & key) const
 {
 	auto const & resource = GetResource(key);
 	resource.Prefetch();
