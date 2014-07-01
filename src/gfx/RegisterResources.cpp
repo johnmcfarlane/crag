@@ -191,12 +191,6 @@ namespace
 		static char const * light_fg_soft_filename = "assets/glsl/light_fg_soft.glsl";
 		static char const * light_bg_filename = "assets/glsl/light_bg.glsl";
 
-		{
-			auto program2 = MakeProgram<PolyProgram>(
-			{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
-			{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
-		}
-
 		manager.Register<PolyProgram>("PolyProgram", []()
 		{
 			return MakeProgram<PolyProgram>(
