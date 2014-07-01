@@ -47,10 +47,10 @@ const float far_negative = - 1000000.;
 uniform COLOR4 ambient;
 uniform Light lights[MAX_LIGHTS];
 
-uniform int vertex_point_lights_end;
-uniform int vertex_search_lights_end;
-uniform int fragment_point_lights_end;
-uniform int fragment_search_lights_end;
+uniform lowp int vertex_point_lights_end;
+uniform lowp int vertex_search_lights_end;
+uniform lowp int fragment_point_lights_end;
+uniform lowp int fragment_search_lights_end;
 
 
 ////////////////////////////////////////////////////////////////////////////////
