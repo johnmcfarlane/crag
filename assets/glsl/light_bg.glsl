@@ -15,11 +15,11 @@
 // return consolidated light reflected and illuminated by given lights from a given direction
 COLOR3 BackgroundLight(int search_lights_begin, int search_lights_end, VECTOR3 ray_direction)
 {
-	COLOR3 illumination = COLOR3(0);
+	COLOR3 illumination = COLOR3(0.);
 	
-	for (int count = search_lights_end - search_lights_begin; count > 0; count ++)
+	for (int count = search_lights_end - search_lights_begin; count > 0; -- count)
 	{
-		Light light = lights[search_lights_begin];
+		Light light = lights[search_lights_begin ++];
 
 		illumination += GetBeamIllumination(light, ray_direction, far_positive);
 	}

@@ -36,6 +36,6 @@ void main(void)
 
 	LightResults result = ForegroundLightVertex(fragment_position, fragment_normal);
 
-	result.reflection = fragment_reflection; 
-	result.illumination = fragment_illumination;
+	fragment_reflection = result.reflection;
+	fragment_illumination = result.illumination;
 }

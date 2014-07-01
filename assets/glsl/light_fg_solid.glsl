@@ -51,14 +51,14 @@ LightResults ForegroundLight(int point_lights_begin, int point_lights_end, int s
 
 	int i = point_lights_begin;
 
-	for (int num_point_lights = point_lights_end - point_lights_begin; num_point_lights > 0; ++ i, -- num_point_lights)
+	for (int i = point_lights_begin; i != point_lights_end; ++ i)
 	{
 		Light light = lights[i];
 
 		results.reflection += GetPointLightReflection(light, position, normal);
 	}
 
-	for (int num_search_lights = search_lights_end - point_lights_end; num_search_lights > 0; ++ i, -- num_search_lights)
+	for (int i = point_lights_end; i != search_lights_end; ++ i)
 	{
 		Light light = lights[i];
 
@@ -84,7 +84,7 @@ COLOR4 ForegroundLightFragment(VECTOR3 position, VECTOR3 normal, COLOR4 diffuse,
 	LightResults results = ForegroundLight(vertex_search_lights_end, fragment_point_lights_end, fragment_search_lights_end, position, normal);
 	results.reflection += reflection;
 	results.illumination += illumination;
-	return COLOR4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
+	return COLOR4(ambient.rgb + results.reflection * diffuse.rgb + results.illumination, diffuse.a);
 }
 
 #else
