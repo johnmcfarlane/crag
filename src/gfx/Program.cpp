@@ -305,7 +305,7 @@ void LightProgram::InitUniforms()
 	InitUniformLocation(_fragment_point_lights_end, "fragment_point_lights_end");
 	InitUniformLocation(_fragment_search_lights_end, "fragment_search_lights_end");
 
-	for (auto index = 0; index != _lights.size(); ++ index)
+	for (auto index = 0u; index != _lights.size(); ++ index)
 	{
 		auto & light = _lights[index];
 
@@ -332,15 +332,15 @@ int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFi
 	ASSERT(IsBound());
 
 	std::array<std::array<Uniform<int> const *, int(LightResolution::size)>, int(LightResolution::size)> light_indices =
-	{ {
-		{
+	{{
+		{{
 			& _vertex_point_lights_end,
 			& _vertex_search_lights_end
-		},
-		{
+		}},
+		{{
 			& _fragment_point_lights_end,
 			& _fragment_search_lights_end
-		}
+		}}
 	}};
 
 	auto total_lights = 0;

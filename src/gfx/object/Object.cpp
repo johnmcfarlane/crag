@@ -11,6 +11,9 @@
 
 #include "Object.h"
 
+#include "gfx/Program.h"
+#include "gfx/VboResource.h"
+
 using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
