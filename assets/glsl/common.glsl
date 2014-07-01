@@ -1,9 +1,3 @@
-#if defined(GL_ES)
-#version 100
-#else
-#version 130
-#endif
-
 //
 //  common.glsl
 //  crag
