@@ -20,8 +20,9 @@ namespace smp
 	template <typename T>
 	class vector
 	{
+		OBJECT_NO_COPY(vector);
+
 	public:
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		

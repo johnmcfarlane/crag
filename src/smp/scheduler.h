@@ -26,10 +26,13 @@ namespace smp
 		// base class for task descriptor
 		class Job
 		{
+			OBJECT_NO_COPY(Job);
+
 		public:
 			typedef std::size_t size_type;
 			
-			// virtual d'tor
+			// c'tor/d'tor
+			Job() = default;
 			virtual ~Job() { }
 			
 			// Perform a unit of work which is independant of the rest,

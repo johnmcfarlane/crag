@@ -17,6 +17,7 @@ namespace gfx
 {
 	class Font
 	{
+		OBJECT_NO_COPY(Font);
 	public:
 		// types
 		struct Vertex

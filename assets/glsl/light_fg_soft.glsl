@@ -13,7 +13,7 @@
 // foreground surfaces with normals (fluffy stuff)
 
 // return light reflected by given point light on a given position
-COLOR3 GetPointLightReflection(in Light light, in VECTOR3 position)
+COLOR3 GetPointLightReflection(Light light, VECTOR3 position)
 {
 	VECTOR3 to_light = light.position - position;
 	SCALAR distance_sq = dot(to_light, to_light);
@@ -22,7 +22,7 @@ COLOR3 GetPointLightReflection(in Light light, in VECTOR3 position)
 }
 
 // return light reflected by given search light on a given position
-COLOR3 GetSearchLightReflection(in Light light, in VECTOR3 position)
+COLOR3 GetSearchLightReflection(Light light, VECTOR3 position)
 {
 	VECTOR3 to_light = light.position - position;
 	SCALAR distance = length(to_light);
@@ -37,49 +37,62 @@ COLOR3 GetSearchLightReflection(in Light light, in VECTOR3 position)
 }
 
 // accumulate light reflected and illuminated by given lights on a given position
-void ForegroundLight(const in ResolutionLights resolution_lights, in VECTOR3 position, inout COLOR3 reflection, inout COLOR3 illumination)
+LightResults ForegroundLight(int point_lights_begin, int point_lights_end, int search_lights_end, VECTOR3 position)
 {
-	for (int i = 0, num_point_lights = resolution_lights.types[0].num_lights; i != num_point_lights; ++ i)
+	LightResults results = LightResults(COLOR3(0.), COLOR3(0.));
+
+	int i = point_lights_begin;
+
+	for (int num_point_lights = point_lights_end - point_lights_begin; num_point_lights > 0; ++ i, -- num_point_lights)
 	{
-		reflection += GetPointLightReflection(resolution_lights.types[0].lights[i], position);
+		Light light = lights[i];
+
+		results.reflection += GetPointLightReflection(light, position);
 	}
 
-	for (int i = 0, num_search_lights = resolution_lights.types[1].num_lights; i != num_search_lights; ++ i)
+	for (int num_search_lights = search_lights_end - point_lights_end; num_search_lights > 0; ++ i, -- num_search_lights)
 	{
-		reflection += GetSearchLightReflection(resolution_lights.types[1].lights[i], position);
+		Light light = lights[i];
 
+		results.reflection += GetSearchLightReflection(light, position);
+
+#if defined(ENABLE_BEAM_LIGHTING)
 		float ray_distance = length(position);
 		vec3 ray_direction = position / ray_distance;
-		illumination += GetBeamIllumination(resolution_lights.types[1].lights[i], ray_direction, ray_distance);
+		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
+#endif
 	}
+
+	return results;
 }
 
 // return light reflected and illuminated by vertex lights on a given position
-void ForegroundLightVertex(in VECTOR3 position, out COLOR3 reflection, out COLOR3 illumination)
+LightResults ForegroundLightVertex(VECTOR3 position)
 {
-	reflection = vec3(0.);
-	illumination = vec3(0.);
-	ForegroundLight(lights.resolutions[0], position, reflection, illumination);
+	return ForegroundLight(0, vertex_point_lights_end, vertex_search_lights_end, position);
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given position
-COLOR4 ForegroundLightFragment(in VECTOR3 position, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
+COLOR4 ForegroundLightFragment(VECTOR3 position, COLOR4 diffuse, LightResults vertex_results)
 {
-	ForegroundLight(lights.resolutions[1], position, reflection, illumination);
-	return vec4(ambient.rgb + reflection * diffuse.rgb + illumination, diffuse.a);
+	LightResults results = ForegroundLight(vertex_search_lights_end, fragment_point_lights_end, fragment_search_lights_end, position);
+	
+	results.reflection += vertex_results.reflection;
+	results.illumination += vertex_results.illumination;
+
+	return vec4(ambient.rgb + results.reflection * diffuse.rgb + results.illumination, diffuse.a);
 }
 
 #else
 
 // return light reflected and illuminated by vertex lights on a given position
-void ForegroundLightVertex(in VECTOR3 position, out COLOR3 reflection, out COLOR3 illumination)
+LightResults ForegroundLightVertex(VECTOR3 position)
 {
-	reflection = vec3(0.);
-	illumination = vec3(0.);
+	return LightResults(vec3(0.), vec3(0.));
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given position
-COLOR4 ForegroundLightFragment(in VECTOR3 position, in COLOR4 diffuse, in COLOR3 reflection, in COLOR3 illumination)
+COLOR4 ForegroundLightFragment(VECTOR3 position, COLOR4 diffuse, LightResults vertex_results)
 {
 	return diffuse;
 }
@@ -87,9 +100,8 @@ COLOR4 ForegroundLightFragment(in VECTOR3 position, in COLOR4 diffuse, in COLOR3
 #endif	// ENABLE_LIGHTING
 
 // return consolidated light reflected and illuminated by all lights on a given position
-COLOR4 ForegroundLightAll(in VECTOR3 position, in COLOR4 diffuse)
+COLOR4 ForegroundLightAll(VECTOR3 position, COLOR4 diffuse)
 {
-	COLOR3 reflection, illumination;
-	ForegroundLightVertex(position, reflection, illumination);
-	return ForegroundLightFragment(position, diffuse, reflection, illumination);
+	LightResults vertex_results = ForegroundLightVertex(position);
+	return ForegroundLightFragment(position, diffuse, vertex_results);
 }

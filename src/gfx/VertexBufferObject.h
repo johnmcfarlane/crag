@@ -53,7 +53,8 @@ namespace gfx
 		// Enable the appropriate client states and set the buffer offsets.
 		void Activate() const
 		{
-			assert(IsBound());
+			CRAG_VERIFY(* this);
+			CRAG_VERIFY_TRUE(IsBound());
 			
 			EnableClientState<VERTEX>();
 			Pointer<VERTEX>();
@@ -64,25 +65,31 @@ namespace gfx
 		// Disable the enabled client states.
 		void Deactivate() const
 		{
-			assert(IsBound());
+			CRAG_VERIFY(* this);
+			CRAG_VERIFY_TRUE(IsBound());
+
 			DisableClientState<VERTEX>();
 		}
 
 		void Draw(GLenum mode, GLint first, GLsizei count) const
 		{
-			assert(IsBound());
+			CRAG_VERIFY(* this);
+			CRAG_VERIFY_TRUE(IsBound());
+
 			GL_CALL(glDrawArrays(mode, first, count));
 		}
 		
 		void DrawTris(GLint first, GLsizei count) const
 		{
-			assert((count % 3) == 0);
+			CRAG_VERIFY_EQUAL(count % 3, 0);
+
 			Draw(GL_TRIANGLES, first, count);
 		}
 		
 		void DrawStrip(GLint first, GLsizei count) const
 		{
-			assert(count >= 3);
+			CRAG_VERIFY_OP(count, >=, 3);
+
 			Draw(GL_TRIANGLE_STRIP, first, count);
 		}
 	};

@@ -45,11 +45,19 @@ namespace gfx
 		virtual ~Program();
 		
 		bool IsInitialized() const;
+
 		bool IsLinked() const;
+		void Link();
+
 		bool IsBound() const;
-		
 		void Bind() const;
 		void Unbind() const;
+		
+		void SetNeedsMatrixUpdate(bool needs_update) const;
+		bool NeedsMatrixUpdate() const;
+		
+		void SetNeedsLightsUpdate(bool needs_update) const;
+		bool NeedsLightsUpdate() const;
 		
 		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
@@ -58,10 +66,10 @@ namespace gfx
 	protected:
 		void BindAttribLocation(int index, char const * name) const;
 		template <typename Type> void InitUniformLocation(Uniform<Type> & uniform, char const * name) const;
-		void Finalize();	// must be called at end of construction (hacky)
+
+		virtual void InitUniforms();
 
 	private:
-		virtual void InitUniforms();
 		bool DumpInfoLog() const;
 		void Verify() const;
 
@@ -69,7 +77,17 @@ namespace gfx
 		GLuint _id;
 		Shader _vert_shader;
 		Shader _frag_shader;
+		mutable bool _needs_matrix_update;
+		mutable bool _needs_lights_update;
 	};
+
+	template <typename ProgramType>
+	ProgramType MakeProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+	{
+		auto program = ProgramType(vert_sources, frag_sources);
+		program.Link();
+		return program;
+	}
 	
 	class Program3d : public Program
 	{
@@ -84,9 +102,9 @@ namespace gfx
 		void SetProjectionMatrix(Matrix44 const & projection_matrix) const final;
 		void SetModelViewMatrix(Matrix44 const & model_view_matrix) const final;
 		
+	protected:
 		void InitUniforms() override;
 
-	private:
 		// variables
 		Uniform<Matrix44> _projection_matrix;
 		Uniform<Matrix44> _model_view_matrix;
@@ -95,33 +113,39 @@ namespace gfx
 	// a program that requires light-related information
 	class LightProgram : public Program3d
 	{
+	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
+		template <typename ELEMENT>
+		using Array = std::array<std::array<ELEMENT, int(LightResolution::size)>, int(LightResolution::size)>;
+
+	public:
 		// set of uniform ids needed to specify lights to a glsl program
 		struct LightUniforms
 		{
+			OBJECT_NO_COPY(LightUniforms);
+			LightUniforms() = default;
+			LightUniforms(LightUniforms &&);
+			LightUniforms & operator=(LightUniforms &&);
+
 			Uniform<Vector3> position;
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
 		};
-		
-		template <typename ELEMENT>
-		using Array = std::array<std::array<ELEMENT, std::size_t(LightType::size)>, std::size_t(LightResolution::size)>;
 
-	public:
 		using super = Program3d;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		virtual void InitUniforms() override;
 		LightProgram(LightProgram && rhs);
 		LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 	protected:
-		
+		void InitUniforms() override;
+
 		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const override;
 
 	private:
@@ -129,19 +153,27 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// constants
 		
-		// matches value in assets/glsl/light.glsl
-		static constexpr auto max_attribute_lights = 6;
+		// matches value in assets/glsl/light_commont.glsl
+		static constexpr auto max_lights = 6;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
-		Array<Uniform<int>> _num_lights;
-		Array<std::array<LightUniforms, max_attribute_lights>> _lights;
+		// flat light array
+		std::array<LightUniforms, max_lights> _lights;
+
+		// progressive indices into _lights (_vertex_point_lights_begin is always zero)
+		Uniform<int> _vertex_point_lights_end;
+		Uniform<int> _vertex_search_lights_end;
+		Uniform<int> _fragment_point_lights_end;
+		Uniform<int> _fragment_search_lights_end;
 	};
 	
 	// Things in the 3D world but in front of the skybox
 	class ForegroundProgram : public LightProgram
 	{
+		using super = LightProgram;
+
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -162,7 +194,7 @@ namespace gfx
 		Uniform<Color4f> _color;
 	};
 
-	class PolyProgram : public ForegroundProgram
+	class PolyProgram final : public ForegroundProgram
 	{
 		// types
 		typedef ForegroundProgram super;
@@ -174,21 +206,21 @@ namespace gfx
 	};
 
 	// for rendering shadow volumes
-	class ShadowProgram : public Program3d
+	class ShadowProgram final : public Program3d
 	{
 	public:
 		ShadowProgram(ShadowProgram && rhs);
 		ShadowProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
-	class ScreenProgram : public Program
+	class ScreenProgram final : public Program
 	{
 	public:
 		ScreenProgram(ScreenProgram && rhs);
 		ScreenProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 	};
 	
-	class DiskProgram : public ForegroundProgram
+	class DiskProgram final : public ForegroundProgram
 	{
 	public:
 		// types
@@ -200,7 +232,7 @@ namespace gfx
 		
 		void SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const;
 	private:
-		virtual void InitUniforms() override;
+		void InitUniforms() override;
 
 		// variables
 		Uniform<Vector3> _center;
@@ -208,7 +240,7 @@ namespace gfx
 	};
 	
 	// TODO: Rename Skybox
-	class TexturedProgram : public LightProgram
+	class TexturedProgram final : public LightProgram
 	{
 	public:
 		TexturedProgram(TexturedProgram && rhs);
@@ -216,15 +248,18 @@ namespace gfx
 	};
 	
 	// used to render text
-	class SpriteProgram : public Program
+	class SpriteProgram final : public Program
 	{
+		// types
+		typedef Program super;
+
 	public:
 		SpriteProgram(SpriteProgram && rhs);
 		SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources);
 		
 		void SetUniforms(geom::Vector2i const & resolution) const;
 	private:
-		virtual void InitUniforms() override final;
+		void InitUniforms() override;
 		
 		// variables
 		Uniform<Vector2> _position_scale;

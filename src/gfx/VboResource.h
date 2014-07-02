@@ -15,10 +15,9 @@ namespace gfx
 	// which is costly to bind / unbind during rendering.
 	class VboResource
 	{
+		OBJECT_NO_COPY(VboResource);
 	public:
 		VboResource() = default;
-		VboResource(VboResource const &) = delete;
-		VboResource & operator=(VboResource const &) = delete;
 
 		virtual ~VboResource() { }
 		virtual void Activate() const = 0;

@@ -24,6 +24,7 @@ namespace gfx
 	// Basic bitmap class / wrapper for SDL surface.
 	class Image
 	{
+		OBJECT_NO_COPY(Image);
 	public:
 
 		Image();

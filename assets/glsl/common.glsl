@@ -7,22 +7,34 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#define ENABLE_LIGHTING
-
 #if defined(GL_ES)
-#define COLOR3 lowp vec3
-#define COLOR4 lowp vec4
-#define SCALAR highp float
-#define VECTOR2 highp vec2
-#define VECTOR3 highp vec3
-#define VECTOR4 highp vec4
-#define MATRIX4 highp mat4
+precision highp float;
+precision lowp int;
+
+#define COLOR_PRECISION lowp
+#define UV_PRECISION highp
+#define VECTOR_PRECISION highp
+
+#define COLOR3 COLOR_PRECISION vec3
+#define COLOR4 COLOR_PRECISION vec4
+#define UV_COORD UV_PRECISION vec2
+#define SCALAR VECTOR_PRECISION float
+#define VECTOR2 VECTOR_PRECISION vec2
+#define VECTOR3 VECTOR_PRECISION vec3
+#define VECTOR4 VECTOR_PRECISION vec4
+#define MATRIX4 VECTOR_PRECISION mat4
 #else
 #define COLOR3 vec3
 #define COLOR4 vec4
+#define UV_COORD vec2
 #define SCALAR float
 #define VECTOR2 vec2
 #define VECTOR3 vec3
 #define VECTOR4 vec4
 #define MATRIX4 mat4
 #endif
+
+float Squared(float s)
+{
+	return s * s;
+}

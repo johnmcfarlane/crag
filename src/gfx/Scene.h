@@ -27,6 +27,7 @@ namespace gfx
 	// including point-of-view info needed to render.
 	class Scene
 	{
+		OBJECT_NO_COPY(Scene);
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions

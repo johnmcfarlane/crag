@@ -34,9 +34,8 @@ void main(void)
 
 	fragment_diffuse = color * vertex_color * (1. / 256.);
 
-	ForegroundLightVertex(
-		fragment_position, 
-		fragment_normal, 
-		fragment_reflection, 
-		fragment_illumination);
+	LightResults result = ForegroundLightVertex(fragment_position, fragment_normal);
+
+	fragment_reflection = result.reflection;
+	fragment_illumination = result.illumination;
 }

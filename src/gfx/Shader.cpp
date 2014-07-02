@@ -17,6 +17,8 @@
 
 #if ! defined(NDEBUG)
 #define DUMP_GLSL_ERRORS
+//#define DUMP_GLSL_ERROR_FILES
+#define DUMP_GLSL_ACCUMULATE_LINE_NUMBERS
 #endif
 
 using namespace gfx;
@@ -83,12 +85,13 @@ Shader::Shader(Shader && rhs)
 : _id(rhs._id)
 {
 	rhs._id = 0;
+	CRAG_VERIFY(* this);
 }
  
 Shader::~Shader()
 {
 	CRAG_VERIFY(* this);
-	assert(! IsInitialized());
+	ASSERT(! IsInitialized());
 }
 
 bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_type)
@@ -151,9 +154,23 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 		auto filename_iterator = std::begin(filenames);
 		for (auto i = 0; i < num_strings; ++ filename_iterator, ++ i)
 		{
+#if defined(DUMP_GLSL_ERROR_FILES)
+			auto const & buffer = string_array[i];
+#if defined(DUMP_GLSL_ACCUMULATE_LINE_NUMBERS)
+			line_start = 0;
+#endif
+			for (auto c = buffer; * c; )
+			{
+				auto line_end = std::strchr(c, '\n');
+				auto line_length = line_end - c;
+				PrintMessage(stderr, "%d:%3d %.*s", i, ++ line_start, line_length, c);
+				c += line_length + (* line_end == '\n');
+			}
+#else
 			auto line_end = int(line_start + GetNumLines(string_array[i]) - 1);
 			PrintMessage(stderr, "%s [%d,%d]\n", * filename_iterator, line_start, line_end);
 			line_start = line_end;
+#endif
 		}
 
 		PrintMessage(stderr, "Shader info log:\n%s", info_log.data());

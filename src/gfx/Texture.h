@@ -20,6 +20,8 @@ namespace gfx
 	
 	class Texture
 	{
+		OBJECT_NO_COPY(Texture);
+
 	public:
 		Texture();
 		~Texture();

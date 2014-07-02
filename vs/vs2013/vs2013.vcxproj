@@ -222,11 +222,10 @@
     <ClInclude Include="..\..\src\gfx\MeshBufferObject.h" />
     <ClInclude Include="..\..\src\gfx\MeshResource.h" />
     <ClInclude Include="..\..\src\gfx\object\Ball.h" />
-    <ClInclude Include="..\..\src\gfx\object\LeafNode.h" />
     <ClInclude Include="..\..\src\gfx\object\Light.h" />
     <ClInclude Include="..\..\src\gfx\object\MeshObject.h" />
     <ClInclude Include="..\..\src\gfx\object\Object.h" />
-    <ClInclude Include="..\..\src\gfx\object\RootNode.h" />
+    <ClInclude Include="..\..\src\gfx\object\SearchLight.h" />
     <ClInclude Include="..\..\src\gfx\object\Skybox.h" />
     <ClInclude Include="..\..\src\gfx\object\Surrounding.h" />
     <ClInclude Include="..\..\src\gfx\PlainVertex.h" />
@@ -369,14 +368,10 @@
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\LitVertex.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\LeafNode.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\MeshObject.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\RootNode.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)RootNode0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)RootNode0</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Surrounding.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Surrounding1</ObjectFileName>

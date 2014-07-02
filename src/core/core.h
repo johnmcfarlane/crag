@@ -16,16 +16,9 @@
 // Prevent object from being copied. 
 // Put at top of class definition. 
 
-#if defined(WIN32)
-#define OBJECT_NO_COPY(CLASS) \
-	CLASS & operator=(const CLASS&); \
-	CLASS(const CLASS&);
-
-#else
 #define OBJECT_NO_COPY(CLASS) \
 	CLASS & operator=(const CLASS&) = delete; \
 	CLASS(const CLASS&) = delete;
-#endif
 
 
 //////////////////////////////////////////////////////////////////////

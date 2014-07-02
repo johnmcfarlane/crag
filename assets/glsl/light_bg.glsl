@@ -7,32 +7,38 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#if defined(ENABLE_LIGHTING)
+#if defined(ENABLE_LIGHTING) && defined(ENABLE_BEAM_LIGHTING)
 
 ////////////////////////////////////////////////////////////////////////////////
 // background surfaces (skybox)
 
 // return consolidated light reflected and illuminated by given lights from a given direction
-void BackgroundLight(in TypeLights search_lights, in VECTOR3 ray_direction, inout COLOR3 illumination)
+COLOR3 BackgroundLight(int search_lights_begin, int search_lights_end, VECTOR3 ray_direction)
 {
-	for (int i = 0, num_search_lights = search_lights.num_lights; i != num_search_lights; ++ i)
+	COLOR3 illumination = COLOR3(0.);
+	
+	for (int count = search_lights_end - search_lights_begin; count > 0; -- count)
 	{
-		illumination += GetBeamIllumination(search_lights.lights[i], ray_direction, far_positive);
+		Light light = lights[search_lights_begin ++];
+
+		illumination += GetBeamIllumination(light, ray_direction, far_positive);
 	}
+
+	return illumination;
 }
 
 // return consolidated light reflected and illuminated by all lights from a given direction
-COLOR3 BackgroundLightFragment(in VECTOR3 ray_direction, in COLOR3 diffuse)
+COLOR3 BackgroundLightFragment(VECTOR3 ray_direction, COLOR3 diffuse)
 {
 	COLOR3 color = diffuse;
-	BackgroundLight(lights.resolutions[0].types[1], ray_direction, color);
-	BackgroundLight(lights.resolutions[1].types[1], ray_direction, color);
+	color += BackgroundLight(vertex_point_lights_end, vertex_search_lights_end, ray_direction);
+	color += BackgroundLight(fragment_point_lights_end, fragment_search_lights_end, ray_direction);
 	return color;
 }
 
 #else
 
-COLOR3 BackgroundLightFragment(in VECTOR3 ray_direction, in COLOR3 diffuse)
+COLOR3 BackgroundLightFragment(VECTOR3 ray_direction, COLOR3 diffuse)
 {
 	return diffuse;
 }
