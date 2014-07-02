@@ -29,3 +29,8 @@ precision lowp int;
 #define VECTOR4 vec4
 #define MATRIX4 mat4
 #endif
+
+float Squared(float s)
+{
+	return s * s;
+}

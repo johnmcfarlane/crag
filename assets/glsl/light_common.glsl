@@ -67,11 +67,6 @@ struct Contact
 ////////////////////////////////////////////////////////////////////////////////
 // functions
 
-float Squared(float s)
-{
-	return s * s;
-}
-
 Contact SetContact(const vec3 camera_direction, const float t)
 {
 	Contact contact;
