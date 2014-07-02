@@ -381,19 +381,19 @@ int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFi
 					break;
 				}
 
-				auto & light_uniforms = _lights[total_lights];
+				auto const & light_uniforms = _lights[total_lights];
 
-				auto & transformation = light.GetModelViewTransformation();
+				auto const & transformation = light.GetModelViewTransformation();
 				auto position = transformation.GetTranslation();
 				light_uniforms.position.Set(position);
 
-				auto direction = GetAxis(transformation.GetRotation(), Direction::forward);
+				auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
 				light_uniforms.direction.Set(direction);
 
-				Color4f const & color = light.GetColor();
+				auto const & color = light.GetColor();
 				light_uniforms.color.Set(color);
 
-				auto angle = light.GetAngle();
+				auto const & angle = light.GetAngle();
 				light_uniforms.angle.Set(angle);
 
 				++ total_lights;
