@@ -7,7 +7,7 @@
 //  Copyright 2014 John McFarlane. All rights reserved.
 //
 
-#if defined(ENABLE_LIGHTING)
+#if defined(ENABLE_LIGHTING) && defined(ENABLE_BEAM_LIGHTING)
 
 ////////////////////////////////////////////////////////////////////////////////
 // background surfaces (skybox)

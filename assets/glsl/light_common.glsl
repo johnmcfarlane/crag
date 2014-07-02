@@ -9,6 +9,10 @@
 
 #define ENABLE_LIGHTING
 
+#if ! defined(GL_ES)
+#define ENABLE_BEAM_LIGHTING
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // light types
 
@@ -79,6 +83,8 @@ bool GetContactGood(const Contact contact, const Light light)
 {
 	return dot(contact.position - light.position, light.direction) < 0.;
 }
+
+#if defined(ENABLE_BEAM_LIGHTING)
 
 // support function to calculate the light reflected off an idealized atmosphere
 // before a given fragment from a given search light
@@ -176,5 +182,7 @@ COLOR3 GetBeamIllumination(Light light, VECTOR3 ray_direction, SCALAR ray_distan
 
 	return .25 * light.color.rgb * (x2 + x1);
 }
+
+#endif	// ENABLE_BEAM_LIGHTING
 
 #endif	// ENABLE_LIGHTING

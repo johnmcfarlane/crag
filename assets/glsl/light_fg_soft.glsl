@@ -56,9 +56,11 @@ LightResults ForegroundLight(int point_lights_begin, int point_lights_end, int s
 
 		results.reflection += GetSearchLightReflection(light, position);
 
+#if defined(ENABLE_BEAM_LIGHTING)
 		float ray_distance = length(position);
 		vec3 ray_direction = position / ray_distance;
 		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
+#endif
 	}
 
 	return results;
