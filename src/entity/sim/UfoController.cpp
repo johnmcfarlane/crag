@@ -31,7 +31,7 @@ namespace
 #endif
 
 #if defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 450000.f);
+	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 900000.f);
 #endif
 }
 
@@ -103,63 +103,22 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 	{
 		return;
 	}
+	
 	auto & body = core::StaticCast<physics::Body>(* location);
 	
 	auto resolution = app::GetResolution();
-	Vector2 drag(
-		ufo_controller_sensitivity * pointer_delta.x / resolution.x,
-		ufo_controller_sensitivity * pointer_delta.y / resolution.y);
+	auto factor = ufo_controller_sensitivity / geom::Length(resolution);
+	Vector2 drag(pointer_delta.x * factor, pointer_delta.y * factor);
 	
-	auto gravity = body.GetGravitationalForce();
-	auto gravity_magnitude_squared = geom::Length(gravity);
-	Matrix33 ufo_rotation;
+	auto touch_pad_right = gfx::GetAxis(_camera_rotation, gfx::Direction::right);
+	auto touch_pad_up = gfx::GetAxis(_camera_rotation, gfx::Direction::forward);
+	auto touch_pad_normal = gfx::GetAxis(_camera_rotation, gfx::Direction::up);
+
+	auto tilt = touch_pad_right * drag.x + touch_pad_up * - drag.y;
+	auto translation = body.GetTranslation();
 	
-	auto get_axis = [&] (gfx::Direction direction)
-	{
-		return gfx::GetAxis(ufo_rotation, direction);
-	};
-	
-	if (gravity_magnitude_squared > 0)
-	{
-		auto set_axis = [&] (gfx::Direction direction, Vector3 const & vector)
-		{
-			gfx::SetAxis(ufo_rotation, direction, vector);
-		};
-		
-		set_axis(
-			gfx::Direction::up,
-			gravity / - std::sqrt(gravity_magnitude_squared));
-		
-		set_axis(
-			gfx::Direction::forward,
-			geom::Normalized(
-				geom::CrossProduct(
-					gfx::GetAxis(_camera_rotation, gfx::Direction::right),
-					get_axis(gfx::Direction::up))));
-		
-		set_axis(
-			gfx::Direction::right,
-			geom::Normalized(
-				geom::CrossProduct(
-					get_axis(gfx::Direction::up),
-					get_axis(gfx::Direction::forward))));
-	}
-	else
-	{
-		ufo_rotation = _camera_rotation;
-	}
-	
-	auto tilt = 
-		get_axis(gfx::Direction::right) * drag.x
-		- get_axis(gfx::Direction::forward) * drag.y;
-		
-	body.AddForceAtPos(
-		tilt, 
-		body.GetTranslation() + get_axis(gfx::Direction::up));
-		
-	body.AddForceAtPos(
-		- tilt, 
-		body.GetTranslation() - get_axis(gfx::Direction::up));
+	body.AddForceAtPos(tilt, translation + touch_pad_normal);
+	body.AddForceAtPos(- tilt, translation - touch_pad_normal);
 }
 
 Vector2 UfoController::HandleEvents()
