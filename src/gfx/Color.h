@@ -141,7 +141,7 @@ namespace gfx
 		}
 		static Color4 Grey()	
 		{
-			return Color4(Half);
+			return Color4(Half());
 		}
 
 		static Color4 Red()		
