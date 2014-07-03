@@ -9,23 +9,30 @@
 
 #if defined(ENABLE_LIGHTING)
 
+#if defined(GL_ES)
+#define LIGHT3 VECTOR3
+#else
+#define LIGHT3 COLOR3
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // foreground surfaces with normals (solids)
 
 // return light reflected by given point light on a given surface
-COLOR3 GetPointLightReflection(Light light, VECTOR3 position, VECTOR3 normal)
+LIGHT3 GetPointLightReflection(Light light, VECTOR3 position, VECTOR3 normal)
 {
 	VECTOR3 to_light = light.position - position;
 	SCALAR distance = length(to_light);
+	VECTOR3 to_light_direction = to_light / distance;
 	
-	SCALAR dp = dot(to_light, normal);
-	SCALAR attenuation = max(dp / (distance * distance * distance), 0.0);
+	SCALAR dp = dot(to_light_direction, normal);
+	SCALAR attenuation = max(dp / (distance * distance), 0.0);
 
-	return light.color.rgb * attenuation;
+	return LIGHT3(light.color.rgb) * attenuation;
 }
 
 // return light reflected by given search light on a given surface
-COLOR3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 normal)
+LIGHT3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 normal)
 {
 	VECTOR3 to_light = light.position - position;
 	SCALAR distance = length(to_light);
@@ -39,9 +46,7 @@ COLOR3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 nor
 	SCALAR dp = dot(to_light_direction, normal);
 	SCALAR attenuation = max(dp / (distance * distance), 0.0);
 
-	COLOR3 color = light.color.rgb * attenuation;
-	
-	return color;
+	return LIGHT3(light.color.rgb) * attenuation;
 }
 
 // accumulate light reflected and illuminated by given lights on a given surface

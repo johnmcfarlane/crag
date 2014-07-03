@@ -58,7 +58,7 @@ void main(void)
 	VECTOR4 frag_position = frag_position * t;
 	SetFragmentDepth(frag_position);
 
-	VECTOR3 frag_normal = normalize(frag_position.xyz - center);
+	VECTOR3 frag_normal = (frag_position.xyz - center) / radius;
 
 	gl_FragColor = ForegroundLightAll(frag_position.xyz, frag_normal.xyz, color);
 }

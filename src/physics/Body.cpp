@@ -278,6 +278,12 @@ void Body::AddForce(Vector3 const & force)
 	DebugDrawForce<false, false>(* this, force);
 }
 
+void Body::AddTorque(Vector3 const & torque)
+{
+	ASSERT(_body_handle != 0);
+	dBodyAddTorque(_body_handle, torque.x, torque.y, torque.z);
+}
+
 void Body::AddForceAtPos(Vector3 const & force, Vector3 const & pos)
 {
 	ASSERT(_body_handle != 0);
