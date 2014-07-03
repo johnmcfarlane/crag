@@ -57,6 +57,7 @@ namespace physics
 		void AddRelTorque(Vector3 const & torque);
 		
 		void AddForce(Vector3 const & force);
+		void AddTorque(Vector3 const & torque);
 		void AddForceAtPos(Vector3 const & force, Vector3 const & pos);
 		void AddForceAtRelPos(Vector3 const & force, Vector3 const & pos);
 		void AddRelForce(Vector3 const & force);
