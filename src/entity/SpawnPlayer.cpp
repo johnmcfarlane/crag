@@ -80,7 +80,9 @@ namespace
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
 
-	CONFIG_DEFINE (ufo_color, gfx::Color4f, gfx::Color4f::Cyan());
+	CONFIG_DEFINE (ufo_color1, gfx::Color4f, gfx::Color4f::Green());
+	CONFIG_DEFINE (ufo_color2, gfx::Color4f, gfx::Color4f::Red());
+	CONFIG_DEFINE (ufo_color3, gfx::Color4f, gfx::Color4f::Green());
 
 	CONFIG_DEFINE (saucer_height, physics::Scalar, .6f);
 	CONFIG_DEFINE (saucer_radius, physics::Scalar, 1.f);
@@ -384,8 +386,17 @@ namespace
 	{
 		gfx::LitMesh mesh;
 		
-		GenerateUfoMeshSide(mesh, up_fn, num_sectors, upper_num_rings, 1);
-		GenerateUfoMeshSide(mesh, down_fn, num_sectors, lower_num_rings, num_sectors - 1);
+		GenerateUfoMeshSide(mesh, [up_fn] (Scalar angle, Scalar x) {
+			auto v = up_fn(angle, x);
+			v.color = ufo_color1;
+			return v;
+		}, num_sectors, upper_num_rings, 1);
+		
+		GenerateUfoMeshSide(mesh, [down_fn] (Scalar angle, Scalar x) {
+			auto v = down_fn(angle, x);
+			v.color = ufo_color2;
+			return v;
+		}, num_sectors, lower_num_rings, num_sectors - 1);
 		
 		// return result
 		CRAG_VERIFY(mesh);
@@ -755,7 +766,7 @@ namespace
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
 		ufo_entity.SetModel(model_handle);
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -780,7 +791,7 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color);
+				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color3);
 				ball_entity->SetModel(model);
 				
 				exception_object = model;
