@@ -44,17 +44,13 @@ CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
-CONFIG_DEFINE(ambient_r, float, .01f);
-CONFIG_DEFINE(ambient_g, float, .03f);
-CONFIG_DEFINE(ambient_b, float, .02f);
 
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
-	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
-	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
+	CONFIG_DEFINE (global_ambient, Color4f, Color4f(.01f,.01f,.02f));
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 	CONFIG_DEFINE (swap_interval, int, 1);
 
@@ -792,7 +788,7 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
 	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
 
-	auto ambient = add_ambient ? Color4f(ambient_r, ambient_g, ambient_b) : Color4f::Black();
+	auto ambient = add_ambient ? global_ambient : Color4f::Black();
 	auto & lights = scene->GetLightList();
 	
 	auto & render_list = scene->GetRenderList();
