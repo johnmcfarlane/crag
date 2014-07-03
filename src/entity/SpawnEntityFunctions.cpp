@@ -204,18 +204,20 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 }
 
 // assumes origin is zero
-EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color)
+EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color, bool casts_shadow)
 {
 	auto sun = EntityHandle::CreateHandle();
 
-	sun.Call([volume, color] (Entity & entity) {
+	sun.Call([volume, color, casts_shadow] (Entity & entity) {
 		// physics
 		Transformation transformation(geom::Cast<Scalar>(volume.center));
 		auto location = new physics::PassiveLocation(transformation);
 		entity.SetLocation(location);
 
 		// graphics
-		auto light = gfx::LightHandle::CreateHandle(transformation, color, gfx::LightType::shadow);
+		auto light = gfx::LightHandle::CreateHandle(
+			transformation, color, 
+			gfx::LightAttributes { gfx::LightResolution::vertex, gfx::LightType::point, casts_shadow });
 		entity.SetModel(light);
 	});
 

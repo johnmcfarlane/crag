@@ -67,7 +67,7 @@ namespace
 	public:
 		FrameRateRegulator() 
 		: _current_num_quaterne(invalid_num_quaterne)
-		, _frame_duration_ratio_sum(_invalid_frame_rate_ratio)
+		, _frame_duration_ratio_sum(0)
 		, _frame_duration_ratio_count(0)
 		, _startup_time(app::GetTime())
 		{
@@ -81,7 +81,8 @@ namespace
 		
 		QuaterneCount GetRecommendedNumQuaterna() const
 		{
-			ASSERT(_frame_duration_ratio_count > 0);
+			CRAG_VERIFY_OP(_frame_duration_ratio_count, >, 0);
+			CRAG_VERIFY_OP(_frame_duration_ratio_sum, >=, 0);
 			auto frame_duration_ratio_avg = _frame_duration_ratio_sum / _frame_duration_ratio_count;
 
 			auto recommended_num_quaterne = MakeRecommendation(frame_duration_ratio_avg, _current_num_quaterne, _startup_time);
@@ -135,8 +136,8 @@ namespace
 		
 		static QuaterneCount MakeRecommendation(float const & frame_duration_ratio, QuaterneCount num_quaterne, core::Time startup_time)
 		{
-			ASSERT(frame_duration_ratio >= 0);
-			ASSERT(! IsInf(frame_duration_ratio));
+			CRAG_VERIFY_OP(frame_duration_ratio, >=, 0);
+			CRAG_VERIFY(frame_duration_ratio);
 			
 			float frame_duration_ratio_log = std::log(frame_duration_ratio);
 			float frame_duration_ratio_exp = std::exp(frame_duration_ratio_log * - CalculateFrameRateReactionCoefficient(startup_time));
@@ -178,13 +179,7 @@ namespace
 		float _frame_duration_ratio_sum;
 		int _frame_duration_ratio_count;
 		core::Time _startup_time;
-		
-		// constants
-		static float const _invalid_frame_rate_ratio;
 	};
-
-	// constants
-	float const FrameRateRegulator::_invalid_frame_rate_ratio = -1.f;
 
 	// a regulator which recommends changes to the number of quaterne based on
 	// whether formation meshes are taking too long to generate

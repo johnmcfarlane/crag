@@ -12,6 +12,7 @@
 #include "defs.h"
 #include "FrameBuffer.h"
 #include "Image.h"
+#include "LightType.h"
 #include "RenderBuffer.h"
 #include "Texture.h"
 
@@ -77,8 +78,6 @@ namespace gfx
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * vbo);
 		
-		Color4f CalculateLighting(Vector3 const & position, LightTypeSet filter) const;
-
 		// message interface
 		void OnQuit();
 		virtual void OnAddObject(Object & object) override final;
@@ -91,9 +90,6 @@ namespace gfx
 		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
-		void SetFragmentLightingEnabled(bool fragment_lighting_enabled);
-		bool GetFragmentLightingEnabled() const;
-
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
@@ -124,12 +120,10 @@ namespace gfx
 		void RenderFrame();
 		void RenderScene();
 		
-		void UpdateProgramLights(Light const & light);
-		void UpdateProgramLights(LightTypeSet light_types);
 		void RenderBackgroundPass(Matrix44 const & projection_matrix);
 		void RenderTransparentPass(Matrix44 const & projection_matrix);
 		
-		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque = true);
+		void RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient);
 		void RenderShadowLights(Matrix44 const & projection_matrix);
 		void RenderShadowLight(Matrix44 const & projection_matrix, Light & light);
 		void RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light);
@@ -163,7 +157,6 @@ namespace gfx
 		bool _ready;
 		bool _dirty;
 		bool culling;
-		bool _fragment_lighting_enabled;
 		int capture_frame;
 
 #if defined(__ANDROID__)

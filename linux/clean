@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# To be run from debug or release subdirectories
+set -o errexit
+
+make -C debug clean
+make -C release clean

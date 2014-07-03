@@ -12,6 +12,9 @@
 #include "RegisterResources.h"
 
 #include "IndexedVboResource.h"
+#include "LitVertex.h"
+#include "Mesh.h"
+#include "PlainVertex.h"
 #include "Program.h"
 #include "Quad.h"
 #include "Shader.h"
@@ -78,7 +81,6 @@ namespace
 						polygon_vert->pos = position;
 						polygon_vert->norm = normal;
 						polygon_vert->color = Color4f::White();
-						polygon_vert->height = 0;
 					}
 				}
 			
@@ -183,55 +185,59 @@ namespace
 	{
 		auto & manager = crag::core::ResourceManager::Get();
 	
-		static char const * light_shader_filename = "assets/glsl/light.glsl";
+		static char const * common_shader_filename = "assets/glsl/common.glsl";
+		static char const * light_common_shader_filename = "assets/glsl/light_common.glsl";
+		static char const * light_fg_solid_filename = "assets/glsl/light_fg_solid.glsl";
+		static char const * light_fg_soft_filename = "assets/glsl/light_fg_soft.glsl";
+		static char const * light_bg_filename = "assets/glsl/light_bg.glsl";
 
-		manager.Register<PolyProgram>("PolyProgram", [] ()
+		manager.Register<PolyProgram>("PolyProgram", []()
 		{
-			return PolyProgram(
-				{ "assets/glsl/poly.vert", light_shader_filename },
-				{ "assets/glsl/poly.frag", light_shader_filename });
+			return MakeProgram<PolyProgram>(
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
 		});
 
 		manager.Register<ShadowProgram>("ShadowProgram", [] ()
 		{
-			return ShadowProgram(
-				{ "assets/glsl/shadow.vert", light_shader_filename },
-				{ "assets/glsl/shadow.frag", light_shader_filename });
+			return MakeProgram<ShadowProgram>(
+				{ common_shader_filename, "assets/glsl/shadow.vert" },
+				{ common_shader_filename, "assets/glsl/shadow.frag" });
 		});
 
 		manager.Register<ScreenProgram>("ScreenProgram", [] ()
 		{
-			return ScreenProgram(
-				{ "assets/glsl/screen.vert", light_shader_filename },
-				{ "assets/glsl/screen.frag", light_shader_filename });
+			return MakeProgram<ScreenProgram>(
+				{ common_shader_filename, "assets/glsl/screen.vert" },
+				{ common_shader_filename, "assets/glsl/screen.frag" });
 		});
 
 		manager.Register<DiskProgram>("SphereProgram", [] ()
 		{
-			return DiskProgram(
-				{ "assets/glsl/disk.vert", light_shader_filename },
-				{ "assets/glsl/sphere.frag", light_shader_filename });
+			return MakeProgram<DiskProgram>(
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.frag" });
 		});
 
 		manager.Register<DiskProgram>("DiskProgram", [] ()
 		{
-			return DiskProgram(
-				{ "assets/glsl/disk.vert", light_shader_filename },
-				{ "assets/glsl/disk.frag", light_shader_filename });
+			return MakeProgram<DiskProgram>(
+				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.frag" });
 		});
 
 		manager.Register<TexturedProgram>("SkyboxProgram", [] ()
 		{
-			return TexturedProgram(
-				{ "assets/glsl/skybox.vert", light_shader_filename },
-				{ "assets/glsl/skybox.frag", light_shader_filename });
+			return MakeProgram<TexturedProgram>(
+				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.vert" },
+				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.frag" });
 		});
 
 		manager.Register<SpriteProgram>("SpriteProgram", [] ()
 		{
-			return SpriteProgram(
-				{ "assets/glsl/sprite.vert", light_shader_filename },
-				{ "assets/glsl/sprite.frag", light_shader_filename });
+			return MakeProgram<SpriteProgram>(
+				{ common_shader_filename, "assets/glsl/sprite.vert" },
+				{ common_shader_filename, "assets/glsl/sprite.frag" });
 		});
 	}
 	

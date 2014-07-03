@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Object.h"
+
 namespace ipc
 {
 	// an optional base class for the Engine classes which are managed by Daemon
@@ -131,6 +133,12 @@ namespace ipc
 			}
 		}
 
+		template <typename OBJECT_TYPE>
+		OBJECT_TYPE * CreateObject()
+		{
+			return CreateObject<OBJECT_TYPE>(Uid::Create());
+		}
+		
 #if defined(WIN32)
 		template <typename OBJECT_TYPE>
 		OBJECT_TYPE * CreateObject(Uid uid)

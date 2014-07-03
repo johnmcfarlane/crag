@@ -23,6 +23,7 @@
 #include "applet/AppletInterface_Impl.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Statistics.h"
 
 CONFIG_DECLARE (observer_use_touch, bool);
 CONFIG_DEFINE (origin_dynamic_enable, bool, true);
@@ -31,6 +32,9 @@ namespace
 {
 	CONFIG_DEFINE (min_precision_score, sim::Scalar, .001f);
 	CONFIG_DEFINE (origin_touch_max_distance, float, 10000.f);
+   
+	STAT_DEFAULT(sim_origin_reset_distance_factor, sim::Scalar, 0.6f, 0.f);
+	STAT_DEFAULT(sim_origin_reset_precision_factor, sim::Scalar, 0.3f, 0.f);
 
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
@@ -39,10 +43,18 @@ namespace
 	{
 		auto distance_from_origin = geom::Length(lod_center);
 		
+		STAT_SET(sim_origin_reset_distance_factor, -1.f);
+		STAT_SET(sim_origin_reset_precision_factor, -1.f);
+	   
 		// especially on Android, certain things go wrong when the origin is too far away
-		if (observer_use_touch && distance_from_origin > origin_touch_max_distance)
+		if (observer_use_touch)
 		{
-			return true;
+			STAT_SET(sim_origin_reset_distance_factor, distance_from_origin / origin_touch_max_distance);
+
+			if (distance_from_origin > origin_touch_max_distance)
+			{
+				return true;
+			}
 		}
 		
 		if (min_leaf_distance_squared == std::numeric_limits<decltype(min_leaf_distance_squared)>::max())
@@ -54,6 +66,8 @@ namespace
 		auto distance_from_surface = std::sqrt(min_leaf_distance_squared);
 
 		auto precision_score = distance_from_surface / distance_from_origin;
+		STAT_SET(sim_origin_reset_precision_factor, min_precision_score / precision_score);
+
 		if (precision_score < min_precision_score)
 		{
 			return true;

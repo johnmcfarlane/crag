@@ -7,15 +7,11 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-#endif
-
 // inputs from the renderer
 uniform sampler2D texture;
 
 // inputs from skybox.vert
-varying lowp vec2 fragment_tex_coord;
+varying UV_COORD fragment_tex_coord;
 
 void main(void)
 {

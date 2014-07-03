@@ -7,17 +7,19 @@
 //  Copyright 2011 John McFarlane. All rights reserved.
 //
 
-#ifdef GL_ES
-precision highp float;
-#endif
-
-// inputs from the renderer
+// per-object inputs from the renderer
 uniform sampler2D texture;
 
 // inputs from skybox.vert
-varying lowp vec2 fragment_tex_coord;
+varying VECTOR3 fragment_position;
+varying UV_COORD fragment_tex_coord;
 
 void main(void)
 {
-	gl_FragColor = texture2D(texture, fragment_tex_coord);
+	COLOR4 texture_color = texture2D(texture, fragment_tex_coord);
+
+	VECTOR3 fragment_direction = normalize(fragment_position);
+
+	gl_FragColor.rgb = BackgroundLightFragment(fragment_direction, texture_color.rgb);
+	gl_FragColor.a = 1.;
 }

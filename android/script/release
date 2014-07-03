@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -o errexit
-
-android-ndk/ndk-build $1 $2 $3 $4
-ant release
-ant release install

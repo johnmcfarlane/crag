@@ -77,17 +77,6 @@ namespace geom
 	// Intersection tests
 
 	////////////////////////////////////////////////////////////////////////////////
-	// Line / Line
-
-	// Returns true iff lines a and b intersect with one another.
-	template<typename S, int N> 
-	bool Intersects(Ray<S, N> const & a, Ray<S, N> const & b)
-	{
-		// In other words, are they not parallel? 
-		return DotProduct(a.direction, b.direction) != 0;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
 	// Plane / Line
 
 	// Returns projection along line at which intersection with plane occurs.

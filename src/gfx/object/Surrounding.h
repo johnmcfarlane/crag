@@ -11,26 +11,25 @@
 
 #include "form/defs.h"
 
-#if defined(CRAG_FLAT_SHADE)
-#include "gfx/NonIndexedVboResource.h"
-#else
-#include "gfx/IndexedVboResource.h"
-#endif
-
-#include "LeafNode.h"
+#include "Object.h"
 
 #include "gfx/LitVertex.h"
 
 #include "form/Mesh.h"
 
+#if defined(CRAG_FORM_FLAT_SHADE)
+#include "gfx/NonIndexedVboResource.h"
+#else
+#include "gfx/IndexedVboResource.h"
+#endif
+
 namespace gfx
 {
 	// the graphical representation of form::Surrounding
-	class Surrounding final : public LeafNode
+	class Surrounding final : public Object
 	{
 		// types
-		typedef LeafNode super;
-#if defined(CRAG_FLAT_SHADE)
+#if defined(CRAG_FORM_FLAT_SHADE)
 		using VboResource = gfx::NonIndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;
 #else
 		using VboResource = gfx::IndexedVboResource<LitVertex, GL_DYNAMIC_DRAW>;

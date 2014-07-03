@@ -17,27 +17,27 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	// types
 	
-	typedef uint32_t SeedType;
+	typedef uint32_t ValueType;
 	
 	////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	Random(SeedType iseed = 1) : seed(iseed) { }
+	Random(ValueType iseed = 1) : seed(iseed) { }
 	
 	// returns pseudo-random whole number in the range [0, maximum]
-	SeedType GetInt()
+	ValueType GetInt()
 	{
 		seed = seed * 1103515245 + 12345;
-		return (static_cast<SeedType>(seed >> (num_bits + 1)) & maximum);
+		return (static_cast<ValueType>(seed >> (num_bits + 1)) & maximum);
 	}
 	
-	// returns pseudo-random whole number in the range [0, n)
-	SeedType GetInt(SeedType n)
+	// returns pseudo-random whole number in the range [0, limit)
+	ValueType GetInt(ValueType limit)
 	{
 		uint64_t r = GetInt();
-		r *= n;
+		r *= limit;
 		r >>= num_bits;
-		return static_cast<SeedType>(r);
+		return static_cast<ValueType>(r);
 	}
 	
 	// returns pseudo-random number in the range [0, 1)
@@ -106,6 +106,6 @@ private:
 	////////////////////////////////////////////////////////////////////////////
 	// variables
 
-	SeedType seed;
+	ValueType seed;
 };
 

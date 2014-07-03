@@ -141,7 +141,7 @@ namespace gfx
 		}
 		static Color4 Grey()	
 		{
-			return Color4(Half);
+			return Color4(Half());
 		}
 
 		static Color4 Red()		
@@ -168,6 +168,15 @@ namespace gfx
 		static Color4 Yellow()
 		{
 			return Color4(Full(), Full(), 0);
+		}
+		
+		static Color4 Periwinkle()
+		{
+			return Color4(Comp(.8), Comp(.8), Full());
+		}
+		static Color4 Orange()
+		{
+			return Color4(Full(), Half(), 0);
 		}
 	
 		// Attributes.

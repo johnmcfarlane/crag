@@ -17,7 +17,7 @@
 // Insert into public section of listed class.
 #define DEFINE_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
 	private: \
-		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, LIST_TYPE##_hook_type, LIST_TYPE##_hook); \
 	public: \
 		DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
 
@@ -25,7 +25,7 @@
 // variant of DEFINE_INTRUSIVE_LIST which plays nicely with class templates.
 #define DEFINE_TEMPLATED_INTRUSIVE_LIST(LISTED_CLASS, LIST_TYPE) \
 	private: \
-		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, _hook_type, LIST_TYPE##_hook); \
+		DEFINE_INTRUSIVE_LIST_HOOK(LISTED_CLASS, LIST_TYPE##_hook_type, LIST_TYPE##_hook); \
 	public: \
 		DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, LIST_TYPE##_hook, LIST_TYPE)
 
@@ -42,13 +42,13 @@
 #if defined(WIN32)
 	// This works around a peculiarity of VC++ compiler.
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
-		template <typename CLASS> struct _ListTypeDefinitionHelper { \
+		template <typename CLASS> struct LIST_TYPE##_ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::HOOK_MEMBER> LIST_TYPE; }; \
-		typedef _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
+		typedef LIST_TYPE##_ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 	#define DEFINE_TEMPLATED_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
-		template <typename CLASS> struct _ListTypeDefinitionHelper { \
+		template <typename CLASS> struct LIST_TYPE##_ListTypeDefinitionHelper { \
 		typedef core::intrusive::list<CLASS, & CLASS::HOOK_MEMBER> LIST_TYPE; }; \
-		typedef typename _ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
+		typedef typename LIST_TYPE##_ListTypeDefinitionHelper<LISTED_CLASS>::LIST_TYPE LIST_TYPE
 #else
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		typedef core::intrusive::list<LISTED_CLASS, & LISTED_CLASS::HOOK_MEMBER> LIST_TYPE

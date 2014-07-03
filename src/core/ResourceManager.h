@@ -27,13 +27,20 @@ namespace crag
 		{
 		public:
 			////////////////////////////////////////////////////////////////////////////////
+			// types
+
+			using KeyType = HashString;
+			using ValueType = Resource;
+			using ResourceMap = std::map<KeyType, ValueType>;
+
+			////////////////////////////////////////////////////////////////////////////////
 			// functions
 		
 			static ResourceManager & Get();
 			
 			// connects a hash string to a function object which creates an object of type, Type
 			template <typename Type, typename CreateFunction>
-			void Register(HashString const & key, CreateFunction create_function)
+			void Register(KeyType const & key, CreateFunction create_function)
 			{
 				auto thunk = [create_function] ()
 				{
@@ -44,32 +51,25 @@ namespace crag
 			}
 			
 			// removes resource with given key (invalidating all current handles)
-			void Unregister(HashString const & key);
+			void Unregister(KeyType const & key);
 
 			// returns a permanent handle which can be used to point to desired resource
 			template <typename Type>
-			ResourceHandle<Type> GetHandle(HashString const & key) const
+			ResourceHandle<Type> GetHandle(KeyType const & key) const
 			{
 				auto const & resource = GetResource(key);
 				return ResourceHandle<Type>(resource);
 			}
 			
 			// ensure that resource exists (necessary for thread-sensitive GL resources)
-			void Prefetch(HashString const & key) const;
+			void Prefetch(KeyType const & key) const;
 
 		private:
-			Resource const & GetResource(HashString const & key) const;
-			Resource & GetResource(HashString const & key);
+			Resource const & GetResource(KeyType const & key) const;
+			Resource & GetResource(KeyType const & key);
 		
-			void AddResource(HashString const & key, Resource && value);
+			void AddResource(KeyType const & key, Resource && value);
 			
-			////////////////////////////////////////////////////////////////////////////////
-			// types
-
-			using KeyType = HashString;
-			using ValueType = Resource;
-			using ResourceMap = std::map<KeyType, ValueType>;
-		
 			////////////////////////////////////////////////////////////////////////////////
 			// variables
 

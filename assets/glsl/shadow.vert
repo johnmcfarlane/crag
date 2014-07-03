@@ -8,14 +8,14 @@
 //
 
 // per-object inputs from the renderer
-uniform mat4 model_view_matrix;
-uniform mat4 projection_matrix;
+uniform MATRIX4 model_view_matrix;
+uniform MATRIX4 projection_matrix;
 
 // per-vertex inputs from renderer
-attribute vec3 vertex_position;
+attribute VECTOR3 vertex_position;
 
 void main(void)
 {
-	highp vec4 position4 = model_view_matrix * vec4(vertex_position, 1.);
+	VECTOR4 position4 = model_view_matrix * VECTOR4(vertex_position, 1.);
 	gl_Position = projection_matrix * position4;
 }

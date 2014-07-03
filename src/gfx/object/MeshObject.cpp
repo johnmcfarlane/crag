@@ -27,7 +27,7 @@ DEFINE_POOL_ALLOCATOR(MeshObject, 100);
 // gfx::MeshObject member definitions
 
 MeshObject::MeshObject(Init const & init, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh)
-: LeafNode(init, local_transformation, Layer::foreground, true, true)
+: Object(init, local_transformation, Layer::opaque, true)
 , _color(color)
 , _scale(scale)
 , _bounding_radius(GetBoundingRadius(* plain_mesh, scale))
@@ -68,9 +68,7 @@ void MeshObject::Render(Engine const & renderer) const
 	if (program)
 	{
 		PolyProgram const & poly_program = static_cast<PolyProgram const &>(* program);
-
-		auto fragment_lighting = renderer.GetFragmentLightingEnabled();
-		poly_program.SetUniforms(_color, fragment_lighting);
+		poly_program.SetUniforms(_color);
 	}
 
 	auto & vbo = * GetVboResource();

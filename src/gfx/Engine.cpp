@@ -44,22 +44,17 @@ CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(camera_near, float);
-CONFIG_DEFINE(ambient_r, float, .01f);
-CONFIG_DEFINE(ambient_g, float, .03f);
-CONFIG_DEFINE(ambient_b, float, .02f);
 
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
-	//CONFIG_DEFINE (clear_color, Color, Color(1.f, 0.f, 1.f));
-	CONFIG_DEFINE (background_ambient_color, Color4f, Color4f(0.1f));
+	CONFIG_DEFINE (global_ambient, Color4f, Color4f(.01f,.01f,.02f));
 	CONFIG_DEFINE (default_refresh_rate, int, 50);
 	CONFIG_DEFINE (swap_interval, int, 1);
 
 	CONFIG_DEFINE (init_culling, bool, true);
-	CONFIG_DEFINE (init_fragment_lighting_enabled, bool, false);
 	
 	CONFIG_DEFINE (capture_enable, bool, false);
 	CONFIG_DEFINE (capture_skip, int, 0);
@@ -119,25 +114,19 @@ namespace
 	}
 
 	// Given the list of objects to render, calculates suitable near/far z values.
-	RenderRange CalculateDepthRange(LeafNode::RenderList const & render_list)
+	RenderRange CalculateDepthRange(Object::RenderList const & render_list)
 	{
 		float float_max = std::numeric_limits<float>::max();
 		RenderRange frustum_depth_range (float_max, - float_max);
 		
 		// For all leaf nodes in the render list,
-		for (LeafNode::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+		for (Object::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
 		{
-			LeafNode const & leaf_node = * i;
-			
-			// if in the foreground layer,
-			if (leaf_node.GetLayer() != Layer::foreground)
-			{
-				continue;
-			}
+			auto & object = * i;
 			
 			// and has a render range,
 			RenderRange depth_range;
-			if (! leaf_node.GetRenderRange(depth_range))
+			if (! object.GetRenderRange(depth_range))
 			{
 				continue;
 			}
@@ -193,7 +182,7 @@ namespace
 	// TODO: belongs with Scene; scene should be const
 	Matrix44 CalcForegroundProjectionMatrix(Scene const & scene)
 	{
-		LeafNode::RenderList const & render_list = scene.GetRenderList();
+		auto & render_list = scene.GetRenderList();
 
 		RenderRange depth_range = CalculateDepthRange(render_list);
 		STAT_SET (z_range, depth_range);
@@ -262,7 +251,6 @@ Engine::Engine()
 , _ready(true)
 , _dirty(true)
 , culling(init_culling)
-, _fragment_lighting_enabled(init_fragment_lighting_enabled)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -357,45 +345,6 @@ void Engine::SetVboResource(VboResource const * vbo)
 	}
 }
 
-// TODO: Just do this in the vertex shader?
-Color4f Engine::CalculateLighting(Vector3 const & position, LightTypeSet filter) const
-{
-	Color4f lighting_color = Color4f::Black();
-	
-	Light::List const & lights = scene->GetLightList();
-	for (Light::List::const_iterator i = lights.begin(), end = lights.end(); i != end; ++ i)
-	{
-		Light const & light = * i;
-
-		// filter by type
-		if (! filter[light.GetType()])
-		{
-			continue;
-		}
-
-		if (! light.GetIsLuminant())
-		{
-			continue;
-		}
-		
-		Vector3 light_position = light.GetModelViewTransformation().GetTranslation();
-		
-		Vector3 frag_to_light = light_position - position;
-		float distance_squared = static_cast<float>(LengthSq(frag_to_light));
-		
-		float attenuation = Clamped(1.f / distance_squared, 0.f, 1.f);
-		
-		Color4f const & color = light.GetColor();
-		ASSERT(color.a == 1.f);
-		Color4f diffuse = color * attenuation;
-		
-		lighting_color += diffuse;
-	}
-	
-	lighting_color.a = 1.f;
-	return lighting_color;
-}
-
 void Engine::OnQuit()
 {
 	quit_flag = true;
@@ -462,6 +411,11 @@ void Engine::OnSetReady(bool ready)
 	ASSERT(ready != _ready);
 	_ready = ready;
 	_dirty = true;
+
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
+	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
+	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
 }
 
 void Engine::OnResize(geom::Vector2i size)
@@ -475,17 +429,6 @@ void Engine::OnToggleCulling()
 {
 	culling = ! culling;
 	_dirty = true;
-}
-
-void Engine::SetFragmentLightingEnabled(bool fragment_lighting_enabled)
-{
-	_dirty = _fragment_lighting_enabled != fragment_lighting_enabled;
-	_fragment_lighting_enabled = fragment_lighting_enabled;
-}
-
-bool Engine::GetFragmentLightingEnabled() const
-{
-	return _fragment_lighting_enabled;
 }
 
 void Engine::OnToggleCapture()
@@ -650,24 +593,22 @@ void Engine::VerifyRenderState() const
 void Engine::PreRender()
 {
 	// purge objects
-	typedef LeafNode::RenderList List;
-	
-	List const & render_list = scene->GetRenderList();
-	for (List::iterator i = render_list.begin(), end = render_list.end(); i != end; )
+	auto & render_list = scene->GetRenderList();
+	for (auto i = render_list.begin(), end = render_list.end(); i != end; )
 	{
-		LeafNode & leaf_node = * i;
+		auto & object = * i;
 		++ i;
 		
-		LeafNode::PreRenderResult result = leaf_node.PreRender();
+		auto result = object.PreRender();
 		
 		switch (result)
 		{
 			default:
 				ASSERT(false);
-			case LeafNode::ok:
+			case Object::ok:
 				break;
-			case LeafNode::remove:
-				DestroyObject(leaf_node.GetUid());
+			case Object::remove:
+				DestroyObject(object.GetUid());
 				break;
 		}
 	}
@@ -682,11 +623,10 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 
 	// if it's something that'll get drawn
 	auto & children = object.GetChildren();
-	auto * leaf = object.CastLeafNodePtr();
-	if (leaf != nullptr)
+	if (object.GetParent())
 	{
 		// set model view transformation (with whatever necessary rejiggering)
-		leaf->UpdateModelViewTransformation(model_view_transformation);
+		object.UpdateModelViewTransformation(model_view_transformation);
 	}
 	else
 	{
@@ -730,7 +670,9 @@ void Engine::UpdateShadowVolumes()
 	{
 		auto & key = pair.first;
 		auto & object = * key.first;
-		Light & light = * key.second;
+		auto & light = * key.second;
+		
+		ASSERT(light.GetException() != & object);
 
 		auto & shadow = pair.second;
 
@@ -788,8 +730,8 @@ void Engine::RenderScene()
 	if (shadows_enabled)
 	{
 		// render foreground, opaque elements with non-shadow lighting
-		UpdateProgramLights(LightTypeSet(LightType::point) | LightTypeSet(LightType::beam));
-		RenderLayer(foreground_projection_matrix, Layer::foreground);
+		auto light_filter = [] (Light const & light) { return light.GetAttributes().makes_shadow == false; };
+		RenderLayer(foreground_projection_matrix, Layer::opaque, light_filter, true);
 	
 		// render foreground, opaque elements with shadow lighting
 		RenderShadowLights(foreground_projection_matrix);
@@ -797,14 +739,15 @@ void Engine::RenderScene()
 	else
 	{
 		// render foreground, opaque elements with all lighting
-		UpdateProgramLights(LightTypeSet().set());
-		RenderLayer(foreground_projection_matrix, Layer::foreground);
+		auto light_filter = [] (Light const &) { return true; };
+		RenderLayer(foreground_projection_matrix, Layer::opaque, light_filter, true);
 	}
 	
 	// render background elements (skybox)
 	setDepthRange(0.f, 1.f);
 	glDepthFunc(GL_LEQUAL);
-	RenderLayer(background_projection_matrix, Layer::background);
+	auto light_filter = [] (Light const & light) { return light.GetAttributes().type == LightType::search; };
+	RenderLayer(background_projection_matrix, Layer::background, light_filter, true);
 	glDepthFunc(depth_func);
 	setDepthRange(0.f, max_foreground_depth);
 	
@@ -816,46 +759,14 @@ void Engine::RenderScene()
 #endif
 }
 
-void Engine::UpdateProgramLights(Light const & light)
-{
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	
-	auto update_program = [&] (LightProgram const & light_program)
-	{
-		SetCurrentProgram(& light_program);
-		light_program.SetLight(light);
-	};
-	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
-}
-
-void Engine::UpdateProgramLights(LightTypeSet light_types)
-{
-	Color4f ambient(ambient_r, ambient_g, ambient_b);
-
-	auto & lights = scene->GetLightList();
-	
-	auto update_program = [&] (LightProgram const & light_program)
-	{
-		SetCurrentProgram(& light_program);
-		light_program.SetLights(ambient, lights, light_types);
-	};
-	
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	
-	update_program(* resource_manager.GetHandle<PolyProgram>("PolyProgram"));
-	update_program(* resource_manager.GetHandle<DiskProgram>("SphereProgram"));
-}
-
 void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 {	
 	// render partially transparent objects
 	Enable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 
-	UpdateProgramLights(LightTypeSet().set());
-	RenderLayer(projection_matrix, Layer::foreground, false);
+	auto light_filter = [] (Light const &) { return true; };
+	RenderLayer(projection_matrix, Layer::transparent, light_filter, true);
 
 	// vbo needs to be reset before next frame
 	// to ensure that FormationVbo::PreRender functions correctly
@@ -869,48 +780,63 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 	Disable(GL_BLEND);
 }
 
-void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, bool opaque)
+void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
+	// mark all (relevant) shaders as having out-of-date light uniforms
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
+	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
+	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
+
+	auto ambient = add_ambient ? global_ambient : Color4f::Black();
+	auto & lights = scene->GetLightList();
+	
 	auto & render_list = scene->GetRenderList();
-	for (auto & leaf_node : render_list)
+	for (auto & object : render_list)
 	{
-		if (leaf_node.GetLayer() != layer)
+		if (object.GetLayer() != layer)
 		{
 			continue;
 		}
 		
-		if (leaf_node.IsOpaque() != opaque)
-		{
-			continue;
-		}
-		
-		auto required_program = leaf_node.GetProgram();
+		// if object 'cares' what shader is enabled
+		auto required_program = object.GetProgram();
 		if (required_program)
 		{
-			if (required_program->IsInitialized())
+			// make it current (binds if necessary)
+			SetCurrentProgram(required_program);
+		
+			// Set the model view matrix.
+			Transformation const & model_view_transformation = object.GetModelViewTransformation();
+			auto & model_view_matrix = model_view_transformation.GetMatrix();
+			required_program->SetModelViewMatrix(model_view_matrix);
+
+			// update projectin matrix
+			if (required_program->NeedsMatrixUpdate())
 			{
-				// set the frame-constant uniforms
-				SetCurrentProgram(required_program);
-				required_program->SetProjectionMatrix(projection_matrix);
+				required_program->SetNeedsMatrixUpdate(false);
 				
-				// Set the model view matrix.
-				Transformation const & model_view_transformation = leaf_node.GetModelViewTransformation();
-				auto model_view_matrix = model_view_transformation.GetMatrix();
-				required_program->SetModelViewMatrix(model_view_matrix);
+				// happens once per shader per frame
+				required_program->SetProjectionMatrix(projection_matrix);
 			}
-			else
+
+			// update projectin matrix
+			if (required_program->NeedsLightsUpdate())
 			{
-				SetCurrentProgram(nullptr);
+				required_program->SetNeedsLightsUpdate(false);
+				
+				// happens once per shader per call to RenderLayer
+				required_program->SetLights(ambient, lights, light_filter);
 			}
 		}
 		
-		auto required_vbo = leaf_node.GetVboResource();
+		auto required_vbo = object.GetVboResource();
 		if (required_vbo)
 		{
 			SetVboResource(required_vbo);
 		}
 		
-		leaf_node.Render(* this);
+		object.Render(* this);
 	}
 }
 
@@ -923,7 +849,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	auto & lights = scene->GetLightList();
 	for (auto & light : lights)
 	{
-		if (light.GetType() == LightType::shadow && light.GetIsLuminant())
+		if (light.GetAttributes().makes_shadow && light.GetIsLuminant())
 		{
 			RenderShadowLight(projection_matrix, light);
 		}
@@ -987,8 +913,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	glDepthFunc(GL_LEQUAL);
 	Enable(GL_BLEND);	// TODO: Ensure additive; move this call further down stack
 
-	UpdateProgramLights(light);
-	RenderLayer(projection_matrix, Layer::foreground);
+	auto light_filter = [& light] (Light const & l) { return & l == & light; };
+	RenderLayer(projection_matrix, Layer::opaque, light_filter, false);
 
 	Disable(GL_BLEND);
 	glDepthFunc(depth_func);
@@ -1034,20 +960,21 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 
 	ShadowMapKey key;
 	key.second = & light;
-	for (auto & leaf_node : render_list)
+	auto exception = light.GetException();
+	for (auto & object : render_list)
 	{
-		if (! leaf_node.CastsShadow())
+		if (! object.CastsShadow() || & object == exception)
 		{
 			continue;
 		}
 		
-		if (leaf_node.GetLayer() != Layer::foreground)
+		if (object.GetLayer() != Layer::opaque)
 		{
 			continue;
 		}
 		
 		// get shadow that matches the object-light combination
-		key.first = & leaf_node;
+		key.first = & object;
 		auto found = shadows.find(key);
 		ASSERT(found != std::end(shadows));
 		
@@ -1060,8 +987,8 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 		SetVboResource(& vbo_resource);
 
 		// Set the model view matrix.
-		Transformation const & model_view_transformation = leaf_node.GetShadowModelViewTransformation();
-		auto model_view_matrix = model_view_transformation.GetMatrix();
+		auto & model_view_transformation = object.GetShadowModelViewTransformation();
+		auto & model_view_matrix = model_view_transformation.GetMatrix();
 		shadow_program.SetModelViewMatrix(model_view_matrix);
 
 		// Draw

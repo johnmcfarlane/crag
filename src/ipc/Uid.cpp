@@ -9,6 +9,7 @@
 
 #include "pch.h"
 
+#include "Uid.h"
 
 using namespace ipc;
 

@@ -27,8 +27,8 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Ball, 100);
 
-Ball::Ball(LeafNode::Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
-: LeafNode(init, local_transformation, Layer::foreground, true, true)
+Ball::Ball(Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
+: Object(init, local_transformation, Layer::opaque, true)
 , _color(color)
 , _radius(radius)
 {
@@ -141,16 +141,12 @@ bool Ball::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volum
 	return true;
 }
 
-void Ball::Render(Engine const & renderer) const
+void Ball::Render(Engine const &) const
 {
 	// Pass rendering details to the shader program.
-	auto program = renderer.GetCurrentProgram();
-	if (program)
-	{
-		DiskProgram const & sphere_program = static_cast<DiskProgram const &>(* program);
-		Transformation const & transformation = GetModelViewTransformation();
-		sphere_program.SetUniforms(transformation, _radius, _color);
-	}
+	DiskProgram const & sphere_program = static_cast<DiskProgram const &>(* GetProgram());
+	Transformation const & transformation = GetModelViewTransformation();
+	sphere_program.SetUniforms(transformation, _radius, _color);
 
 	// Draw the quad.
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());

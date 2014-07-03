@@ -54,6 +54,7 @@ namespace
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	CONFIG_DEFINE(spawn_vehicle, bool, true);
+	CONFIG_DEFINE(vehicle_thrust, sim::Scalar, 15.f);
 	CONFIG_DEFINE(spawn_planets, bool, true);
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +241,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 	// Create vehicle.
 	if (spawn_vehicle)
 	{
-		_vehicle = SpawnRover(observer_start_pos + sim::Vector3(0, 5, +5));
+		_vehicle = SpawnRover(observer_start_pos + sim::Vector3(0, 5, +5), vehicle_thrust);
 	}
 
 	// main loop

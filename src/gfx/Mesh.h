@@ -27,12 +27,6 @@ namespace gfx
 		class const_iterator
 		{
 		public:
-			void dump() const
-			{
-				CRAG_DEBUG_DUMP(_vertices);
-				CRAG_DEBUG_DUMP(*_index_pos);
-				CRAG_DEBUG_DUMP(&*_index_pos);
-			}
 			const_iterator() = default;
 			
 			const_iterator(const_iterator const &) = default;
@@ -59,6 +53,45 @@ namespace gfx
 				return * this;
 			}
 			
+			const_iterator & operator--()
+			{
+				-- _index_pos;
+				return * this;
+			}
+			
+			const_iterator & operator+=(int diff)
+			{
+				_index_pos += diff;
+				return * this;
+			}
+			
+			const_iterator & operator-=(int diff)
+			{
+				_index_pos -= diff;
+				return * this;
+			}
+			
+			const_iterator operator+(int diff) const
+			{
+				auto pos = * this;
+				pos += diff;
+				return pos;
+			}
+			
+			const_iterator operator-(int diff) const
+			{
+				auto pos = * this;
+				pos -= diff;
+				return pos;
+			}
+			
+			Vertex const & operator[](int diff) const
+			{
+				auto pos = (* this);
+				pos += diff;
+				return * pos;
+			}
+			
 			friend bool operator==(const_iterator const & lhs, const_iterator const & rhs)
 			{
 				ASSERT(lhs._index_pos != rhs._index_pos || lhs._vertices == rhs._vertices);
@@ -73,6 +106,74 @@ namespace gfx
 		private:
 			VertexArrayType const * _vertices = nullptr;
 			typename IndexArrayType::const_iterator _index_pos;
+		};
+		
+		class iterator : public const_iterator
+		{
+			using Super = const_iterator;
+			
+		public:
+			iterator(VertexArrayType & vertices, typename IndexArrayType::iterator index_pos)
+			: Super(vertices, index_pos)
+			{
+			}
+			
+			Vertex & operator* ()
+			{
+				auto & vertex = Super::operator*();
+				return const_cast<Vertex &>(vertex);
+			}
+			
+			Vertex * operator-> ()
+			{
+				auto vertex = Super::operator*();
+				return const_cast<Vertex *>(vertex);
+			}
+			
+			iterator & operator++()
+			{
+				Super::operator++();
+				return * this;
+			}
+			
+			iterator & operator--()
+			{
+				Super::operator--();
+				return * this;
+			}
+			
+			iterator & operator+=(int diff)
+			{
+				Super::operator+=(diff);
+				return * this;
+			}
+			
+			iterator & operator-=(int diff)
+			{
+				Super::operator-=(diff);
+				return * this;
+			}
+			
+			iterator operator+(int diff) const
+			{
+				auto pos = * this;
+				pos += diff;
+				return pos;
+			}
+			
+			iterator operator-(int diff) const
+			{
+				auto pos = * this;
+				pos -= diff;
+				return pos;
+			}
+			
+			Vertex & operator[](int diff) const
+			{
+				auto pos = (* this);
+				pos += diff;
+				return * pos;
+			}
 		};
 		
 		// functions
@@ -190,9 +291,19 @@ namespace gfx
 			return const_iterator(_vertices, _indices.begin());
 		}
 		
+		iterator begin()
+		{
+			return iterator(_vertices, _indices.begin());
+		}
+		
 		const_iterator end() const
 		{
 			return const_iterator(_vertices, _indices.end());
+		}
+		
+		iterator end()
+		{
+			return iterator(_vertices, _indices.end());
 		}
 		
 	private:

@@ -38,7 +38,7 @@
 #include "gfx/LitVertex.h"
 #include "gfx/PlainVertex.h"
 #include "gfx/object/Ball.h"
-#include "gfx/object/Light.h"
+#include "gfx/object/SearchLight.h"
 #include "gfx/object/MeshObject.h"
 
 #include "geom/origin.h"
@@ -60,6 +60,7 @@ namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Ball); // gfx::BallHandle
 	DECLARE_CLASS_HANDLE(Light); // gfx::LightHandle
+	DECLARE_CLASS_HANDLE(SearchLight); // gfx::SearchLightHandle
 }
 
 namespace
@@ -78,9 +79,10 @@ namespace
 	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
-	CONFIG_DEFINE (enable_beam, bool, false);
 
-	CONFIG_DEFINE (ufo_color, gfx::Color4f, gfx::Color4f::Cyan());
+	CONFIG_DEFINE (ufo_color1, gfx::Color4f, gfx::Color4f::Green());
+	CONFIG_DEFINE (ufo_color2, gfx::Color4f, gfx::Color4f::Red());
+	CONFIG_DEFINE (ufo_color3, gfx::Color4f, gfx::Color4f::Green());
 
 	CONFIG_DEFINE (saucer_height, physics::Scalar, .6f);
 	CONFIG_DEFINE (saucer_radius, physics::Scalar, 1.f);
@@ -94,6 +96,10 @@ namespace
 	CONFIG_DEFINE (saucer_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
+	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
+	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
+	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
+	CONFIG_DEFINE (saucer_search_light_angle, Scalar, .15f);
 
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
@@ -192,8 +198,7 @@ namespace
 	// given a Mesh comprising unique vertex entries,
 	// generates a GPU-friendly mesh with flat shading
 	// TODO: Write a more general-purpose flat-faced mesh converted which scans for dupes as it generates new verts
-	template <typename MeshType>
-	gfx::LitMesh GenerateFlatLitMesh(MeshType const & source_mesh, gfx::Color4f const & color = gfx::Color4f::White())
+	gfx::LitMesh GenerateFlatLitMesh(gfx::LitMesh const & source_mesh)
 	{
 		auto & source_vertices = source_mesh.GetVertices();
 		auto & source_indices = source_mesh.GetIndices();
@@ -207,20 +212,27 @@ namespace
 		destination_vertices.reserve(num_source_indices);
 		destination_indices.reserve(num_source_indices);
 
-		for (auto end = std::end(source_mesh), source_iterator = std::begin(source_mesh); source_iterator != end; )
+		for (auto end = std::end(source_mesh), source_iterator = std::begin(source_mesh); source_iterator != end; source_iterator += 3)
 		{
 			gfx::Triangle3 source_triangle;
-			for (int i = 0; i != 3; ++ source_iterator, ++ i)
+			for (int i = 0; i != 3; ++ i)
 			{
-				source_triangle.points[i] = source_iterator->pos;
+				source_triangle.points[i] = source_iterator[i].pos;
 			}
 
 			auto source_plane = geom::MakePlane(source_triangle);
 			
-			for (auto const & vertex : source_triangle.points)
+			for (int i = 0; i != 3; ++ i)
 			{
 				destination_indices.push_back(destination_vertices.size());
-				destination_vertices.push_back(gfx::LitVertex({ vertex, source_plane.normal, color, 0.f }));
+				
+				auto const & source_vertex = source_iterator[i];
+				destination_vertices.push_back(gfx::LitVertex(
+				{ 
+					source_vertex.pos,
+					geom::Normalized(source_plane.normal),
+					source_vertex.color
+				}));
 			}
 		}
 		
@@ -231,20 +243,19 @@ namespace
 		return destination_mesh;
 	}
 	
-	template <typename IndexType>
-	gfx::Mesh<gfx::PlainVertex, IndexType> GenerateShipMesh()
+	gfx::LitMesh GenerateShipMesh(gfx::Color4b const & color = gfx::Color4b::White())
 	{
 		// ship mesh
-		gfx::Mesh<gfx::PlainVertex, IndexType> mesh;
+		gfx::LitMesh mesh;
 		
 		// add vertices
 		auto & vertices = mesh.GetVertices();
 		vertices.reserve(5);
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, 0.f, 1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(-1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(1.f, 0.f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, -.25f, -1.f) });
-		vertices.push_back(gfx::PlainVertex { Vector3(0.f, .25f, -1.f) });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.f, 1.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(-1.f, 0.f, -1.f), Vector3(-1.f, 0.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(1.f, 0.f, -1.f), Vector3(1.f, 0.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, -.25f, -1.f), Vector3(0.f, -1.f, 0.f), color });
+		vertices.push_back(gfx::LitVertex { Vector3(0.f, .25f, -1.f), Vector3(0.f, 1.f, 0.f), color });
 		ASSERT(vertices.size() == vertices.capacity());
 
 		// add faces
@@ -327,6 +338,7 @@ namespace
 
 		for (auto sector = 0; sector != num_sectors; ++ sector)
 		{
+			bool odd_sector = (! (num_sectors & 1)) && (sector & 1);
 			auto next_sector = (sector + next_sector_offset) % num_sectors;
 			
 			auto sector_vertex_index = sector_vertices_index + sector * num_rings;
@@ -344,12 +356,24 @@ namespace
 					next_sector_vertex_index + ring
 				};
 				
-				indices.push_back(quad[2]);
-				indices.push_back(quad[1]);
-				indices.push_back(quad[0]);
-				indices.push_back(quad[1]);
-				indices.push_back(quad[2]);
-				indices.push_back(quad[3]);
+				if (odd_sector)
+				{
+					indices.push_back(quad[2]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[2]);
+					indices.push_back(quad[3]);
+				}
+				else
+				{
+					indices.push_back(quad[3]);
+					indices.push_back(quad[1]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[0]);
+					indices.push_back(quad[2]);
+					indices.push_back(quad[3]);
+				}
 			}
 		}
 
@@ -362,8 +386,17 @@ namespace
 	{
 		gfx::LitMesh mesh;
 		
-		GenerateUfoMeshSide(mesh, up_fn, num_sectors, upper_num_rings, 1);
-		GenerateUfoMeshSide(mesh, down_fn, num_sectors, lower_num_rings, num_sectors - 1);
+		GenerateUfoMeshSide(mesh, [up_fn] (Scalar angle, Scalar x) {
+			auto v = up_fn(angle, x);
+			v.color = ufo_color1;
+			return v;
+		}, num_sectors, upper_num_rings, 1);
+		
+		GenerateUfoMeshSide(mesh, [down_fn] (Scalar angle, Scalar x) {
+			auto v = down_fn(angle, x);
+			v.color = ufo_color2;
+			return v;
+		}, num_sectors, lower_num_rings, num_sectors - 1);
 		
 		// return result
 		CRAG_VERIFY(mesh);
@@ -426,8 +459,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4b::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, up_fn, 8, 2, 1);
@@ -444,8 +476,7 @@ namespace
 			{
 				position,
 				Vector3(0.f, 0.f, -1.f), 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4b::White()
 			};
 		};
 		GenerateUfoMeshSide(mesh, down_fn, 8, 1, 7);
@@ -460,12 +491,13 @@ namespace
 		auto up = [half_height, radius] (Scalar angle, Scalar d)
 		{
 			auto radial = Vector3(std::sin(angle), std::cos(angle), 1.f);
+			auto slope_angle = d * Scalar(PI);
 			
 			auto x = radius * d;
-			auto y = half_height * (.5f * std::cos(d * Scalar(PI)) + .5f);
+			auto y = half_height * (.5f * std::cos(slope_angle) + .5f);
 			
 			auto dx = radius;
-			auto dy = std::sin(d * Scalar(PI)) - (half_height * .5f);
+			auto dy = std::sin(slope_angle);
 			
 			auto position = radial * Vector3(x, x, y);
 			auto normal = geom::Normalized(radial * Vector3(dy, dy, dx));
@@ -474,8 +506,7 @@ namespace
 			{
 				position, 
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4b::White()
 			};
 		};
 		
@@ -518,8 +549,7 @@ namespace
 			{
 				position,
 				normal, 
-				gfx::Color4f::White(),
-				0
+				gfx::Color4b::White()
 			};
 		};
 
@@ -638,17 +668,17 @@ namespace
 		AddThruster(controller, new VernierThruster(entity, ray));
 	}
 
-	void ConstructRover(Entity & entity, geom::rel::Sphere3 const & sphere)
+	void ConstructRover(Entity & entity, geom::rel::Sphere3 const & sphere, Scalar thrust)
 	{
 		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
 		auto& controller = ref(new VehicleController(entity));
 		entity.SetController(& controller);
 
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, 15, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 	}
 	
 	void ConstructShip(Entity & entity, Vector3 const & position)
@@ -671,16 +701,8 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, lit_vbo, plain_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
-
-		if (enable_beam)
-		{
-			gfx::ObjectHandle beam_handle = gfx::LightHandle::CreateHandle(gfx::Transformation(), gfx::Color4f::Red() * 100000.f, gfx::LightType::beam);
-			gfx::Daemon::Call([beam_handle, model_handle] (gfx::Engine & engine) {
-				engine.OnSetParent(beam_handle.GetUid(), model_handle.GetUid());
-			});
-		}
 
 		// controller
 		auto & controller = ref(new VehicleController(entity));
@@ -742,16 +764,21 @@ namespace
 		body.SetAngularDamping(saucer_angular_damping);
 		ufo_entity.SetLocation(& body);
 
+		// graphics
+		gfx::Vector3 scale(1.f, 1.f, 1.f);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
+		ufo_entity.SetModel(model_handle);
+
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
 		
 		EntityHandle ball_entity_handle;
+		gfx::ObjectHandle exception_object;
 		
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
 			Sphere3 sphere(position, saucer_ball_radius);
-			Uid uid = Uid::Create();
-			sim::Entity * ball_entity = engine.CreateObject<Entity>(uid);
+			auto ball_entity = engine.CreateObject<Entity>();
 
 			// physics
 			auto & ball_body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
@@ -764,8 +791,14 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color);
+				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color3);
 				ball_entity->SetModel(model);
+				
+				exception_object = model;
+			}
+			else
+			{
+				exception_object = model_handle;
 			}
 			
 			ball_entity_handle.SetUid(ball_entity->GetUid());
@@ -774,13 +807,28 @@ namespace
 		////////////////////////////////////////////////////////////////////////////////
 		// saucer
 		
-		// graphics
-		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, ufo_color, scale, vbo, shadow_mesh);
-		ufo_entity.SetModel(model_handle);
+		// searchlight
+		if (saucer_search_light_enable)
+		{
+			// distance between saucer mesh and ball (in the case of ball saucer);
+			// ensures light is clear of enclosing object that would extinguish it
+			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
+			
+			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
+			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::CreateHandle(
+				search_light_transformation, 
+				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
+				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
+				exception_object);
+			auto light_uid = light_handle.GetUid();
+			auto model_uid = model_handle.GetUid();
+			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
+				engine.OnSetParent(light_uid, model_uid);
+			});
+		}
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust, ! is_thargoid));
+		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust));
 		ufo_entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
@@ -796,25 +844,33 @@ namespace
 		auto & resource_manager = crag::core::ResourceManager::Get();
 
 		// ship
+		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		{
+			return GenerateShipMesh();
+		});
 		resource_manager.Register<physics::Mesh>("ShipPhysicsMesh", [] ()
 		{
-			return GenerateShipMesh<physics::ElementIndex>();
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
 		resource_manager.Register<gfx::PlainMesh>("ShipShadowMesh", [] ()
 		{
-			return GenerateShipMesh<gfx::ElementIndex>();
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		resource_manager.Register<gfx::LitMesh>("ShipFlatLitMesh", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto plain_mesh = resource_manager.GetHandle<physics::Mesh>("ShipShadowMesh");
-			return GenerateFlatLitMesh(* plain_mesh);
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		resource_manager.Register<gfx::LitVboResource>("ShipVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -838,18 +894,20 @@ namespace
 		resource_manager.Register<gfx::LitMesh>("CosSaucerFlatLitMesh", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto physics_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
-			return GenerateFlatLitMesh(* physics_mesh);
+			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		resource_manager.Register<gfx::LitVboResource>("CosSaucerVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-#if defined(CRAG_FLAT_SHADE)
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
-#else
 			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
-#endif
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+		resource_manager.Register<gfx::LitVboResource>("CosSaucerFlatLitVbo", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -880,11 +938,13 @@ namespace
 		resource_manager.Register<gfx::LitVboResource>("BallSaucerVbo", [] ()
 		{
 			auto & resource_manager = crag::core::ResourceManager::Get();
-#if defined(CRAG_FLAT_SHADE)
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
-#else
 			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
-#endif
+			return gfx::LitVboResource(* lit_mesh_handle);
+		});
+		resource_manager.Register<gfx::LitVboResource>("BallSaucerFlatLitVbo", [] ()
+		{
+			auto & resource_manager = crag::core::ResourceManager::Get();
+			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
 			return gfx::LitVboResource(* lit_mesh_handle);
 		});
 
@@ -921,7 +981,7 @@ namespace
 	}
 }
 
-EntityHandle SpawnRover(Vector3 const & position)
+EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 {
 	auto vehicle = EntityHandle::CreateHandle();
 
@@ -929,8 +989,8 @@ EntityHandle SpawnRover(Vector3 const & position)
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
-	vehicle.Call([sphere] (Entity & entity) {
-		ConstructRover(entity, sphere);
+	vehicle.Call([sphere, thrust] (Entity & entity) {
+		ConstructRover(entity, sphere, thrust);
 	});
 
 	return vehicle;
@@ -958,11 +1018,11 @@ sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_t
 			break;
 
 		case PlayerType::cos_saucer:
-			ConstructUfo(entity, position, "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, position, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 
 		case PlayerType::ball_saucer:
-			ConstructUfo(entity, position, "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, position, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 		}
 	});

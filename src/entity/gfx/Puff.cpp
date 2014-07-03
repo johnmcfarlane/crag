@@ -40,8 +40,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Puff, 100);
 
-Puff::Puff(LeafNode::Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
-: LeafNode(init, local_transformation, Layer::foreground, false)
+Puff::Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
+: Object(init, local_transformation, Layer::transparent)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
@@ -77,7 +77,7 @@ void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale, _radius));
 }
 
-LeafNode::PreRenderResult Puff::PreRender()
+Object::PreRenderResult Puff::PreRender()
 {
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
@@ -95,14 +95,14 @@ LeafNode::PreRenderResult Puff::PreRender()
 	return ok;
 }
 
-void Puff::Render(Engine const & renderer) const
+void Puff::Render(Engine const &) const
 {
+	// Pass rendering details to the shader program.
 	DiskProgram const & disk_program = static_cast<DiskProgram const &>(* GetProgram());
 	Transformation const & model_view = GetModelViewTransformation();
-	Vector3 translation = model_view.GetTranslation();
-	Color4f lighting = renderer.CalculateLighting(translation, LightTypeSet().set());
-	disk_program.SetUniforms(model_view, _radius, _color * lighting);
+	disk_program.SetUniforms(model_view, _radius, _color);
 	
+	// Draw the ball.
 	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());
 	disk_quad.Draw();
 }

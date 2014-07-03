@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "gfx/object/LeafNode.h"
+#include "gfx/object/Object.h"
 
 namespace gfx
 {
 	// graphical representation of a Planet
-	class Planet : public LeafNode
+	class Planet : public Object
 	{
 	public:
 		// functions

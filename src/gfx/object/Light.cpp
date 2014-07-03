@@ -27,12 +27,28 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Light definitions
 
-Light::Light(LeafNode::Init const & init, Transformation const & local_transformation, Color4f const & color, LightType type)
-: LeafNode(init, local_transformation, Layer::light)
+Light::Light(
+	Init const & init, Transformation const & local_transformation, 
+	Color4f const & color, LightAttributes attributes,
+	ObjectHandle exception)
+: Object(init, local_transformation, Layer::light)
 , _color(color)
-, _type(type)
+, _exception(nullptr)
+, _attributes(attributes)
 {
-	Scene & scene = GetEngine().GetScene();
+	auto & engine = GetEngine();
+	if (exception)
+	{
+		auto exception_object = engine.GetObject(exception.GetUid());
+		ASSERT(exception_object);
+		
+		if (exception_object)
+		{
+			_exception = & core::StaticCast<Object>(* exception_object);
+		}
+	}
+	
+	Scene & scene = engine.GetScene();
 	CRAG_VERIFY(scene);
 	scene.AddLight(* this);
 	
@@ -48,12 +64,11 @@ Light::~Light()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Light, object)
-	CRAG_VERIFY(static_cast<Light::super const &>(object));
-
 	CRAG_VERIFY_TRUE(Light::List::is_contained(object));
 	CRAG_VERIFY_TRUE(object._color.a == 1.f);
-	CRAG_VERIFY_TRUE(int(object._type) >= 0);
-	CRAG_VERIFY_TRUE(object._type < LightType::size);
+	CRAG_VERIFY_TRUE(object._attributes.type == LightType::point || object._attributes.type == LightType::search);
+	CRAG_VERIFY_TRUE(object._attributes.resolution == LightResolution::vertex || object._attributes.resolution == LightResolution::fragment);
+	CRAG_VERIFY(object._attributes.makes_shadow);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 bool Light::GetIsExtinguished() const
@@ -81,13 +96,28 @@ Color4f const & Light::GetColor() const
 	return _color;
 }
 
-LightType Light::GetType() const
+void Light::SetAngle(Vector2)
 {
-	return _type;
+	DEBUG_BREAK("Pointless call. Intended?");
+}
+
+Vector2 Light::GetAngle() const
+{
+	return Vector2::Zero();
+}
+
+LightAttributes Light::GetAttributes() const
+{
+	return _attributes;
+}
+
+Object const * Light::GetException() const
+{
+	return _exception;
 }
 
 #if defined(CRAG_GFX_LIGHT_DEBUG)
-LeafNode::PreRenderResult Light::PreRender()
+PreRenderResult Light::PreRender()
 {
 	Vector3 intensity(_color.r, _color.g, _color.b);
 	Debug::AddBasis(GetModelTransformation(), geom::Length(intensity));

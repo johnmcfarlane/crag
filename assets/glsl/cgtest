@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -o errexit
+
+#./cgtestv poly.vert
+
+#./cgtestv common.glsl light_common.glsl light_fg_solid.glsl poly.vert
+#./cgtestv common.glsl light_common.glsl light_fg_solid.glsl sphere.vert
+#./cgtestv common.glsl light_common.glsl light_fg_soft.glsl disk.vert
+#./cgtestv common.glsl light_common.glsl light_bg.glsl skybox.vert
+#./cgtestv common.glsl shadow.vert
+#./cgtestv common.glsl sprite.vert
+
+#./cgtestf common.glsl light_common.glsl light_fg_solid.glsl poly.frag
+#./cgtestf common.glsl light_common.glsl light_fg_solid.glsl sphere.frag
+./cgtestf common.glsl light_common.glsl light_fg_soft.glsl disk.frag
+#./cgtestf common.glsl light_common.glsl light_bg.glsl skybox.frag
+#./cgtestf common.glsl shadow.frag
+#./cgtestf common.glsl sprite.frag

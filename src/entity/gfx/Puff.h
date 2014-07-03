@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "gfx/object/LeafNode.h"
+#include "gfx/object/Object.h"
 
 #include "gfx/Color.h"
 
@@ -17,7 +17,7 @@
 namespace gfx
 {
 	// Puff class
-	class Puff : public LeafNode
+	class Puff : public Object
 	{
 	public:
 		DECLARE_ALLOCATOR(Puff);

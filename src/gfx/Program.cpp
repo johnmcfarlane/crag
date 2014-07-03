@@ -27,12 +27,18 @@ Program::Program(Program && rhs)
 : _id(rhs._id)
 , _vert_shader(std::move(rhs._vert_shader))
 , _frag_shader(std::move(rhs._frag_shader))
+, _needs_matrix_update(rhs._needs_matrix_update)
+, _needs_lights_update(rhs._needs_lights_update)
 {
 	rhs._id = 0;
+	rhs._needs_matrix_update = false;
+	rhs._needs_lights_update = false;
 }
 
 Program::Program(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : _id(glCreateProgram())	// Create the program.
+, _needs_matrix_update(true)
+, _needs_lights_update(true)
 {
 	// Create the main vert and frag shaders.
 	if (! _vert_shader.Init(vert_sources, GL_VERTEX_SHADER))
@@ -40,30 +46,23 @@ Program::Program(std::initializer_list<char const *> vert_sources, std::initiali
 		DEBUG_BREAK("fatal vertex shader error");
 		return;
 	}
-	
+
 	if (! _frag_shader.Init(frag_sources, GL_FRAGMENT_SHADER))
 	{
 		DEBUG_BREAK("fatal fragment shader error");
 		return;
 	}
-	
+
 	GL_CALL(glAttachShader(_id, _vert_shader._id));
 	GL_CALL(glAttachShader(_id, _frag_shader._id));
 	
-#if defined(DUMP_GLSL_ERRORS)
-	std::string info_log;
-	GetInfoLog(info_log);
-
-	if (! info_log.empty())
+	if (DumpInfoLog())
 	{
 		for (auto source : vert_sources)
 		{
 			PrintMessage(stderr, "Linker output of program including vert shader '%s':\n", source);
 		}
-		
-		PrintMessage(stderr, "%s", info_log.c_str());
 	}
-#endif
 }
 
 Program::~Program()
@@ -107,14 +106,40 @@ bool Program::IsBound() const
 
 void Program::Bind() const
 {
+	ASSERT(IsLinked());
 	ASSERT(GetInt<GL_CURRENT_PROGRAM>() == 0);
+
 	GL_CALL(glUseProgram(_id));
+
+	ASSERT(IsBound());
 }
 
 void Program::Unbind() const
 {
+	ASSERT(IsLinked());
 	ASSERT(IsBound());
+
 	GL_CALL(glUseProgram(0));
+}
+
+void Program::SetNeedsMatrixUpdate(bool needs_matrix_update) const
+{
+	_needs_matrix_update = needs_matrix_update;
+}
+
+bool Program::NeedsMatrixUpdate() const
+{
+	return _needs_matrix_update;
+}
+
+void Program::SetNeedsLightsUpdate(bool needs_lights_update) const
+{
+	_needs_lights_update = needs_lights_update;
+}
+
+bool Program::NeedsLightsUpdate() const
+{
+	return _needs_lights_update;
 }
 
 void Program::SetProjectionMatrix(Matrix44 const &) const
@@ -125,8 +150,14 @@ void Program::SetModelViewMatrix(Matrix44 const &) const
 {
 }
 
+int Program::SetLights(Color4f const &, Light::List const &, LightFilter const &) const
+{
+	return 0;
+}
+
 void Program::InitUniforms()
 {
+	ASSERT(IsBound());
 }
 
 void Program::BindAttribLocation(int index, char const * name) const
@@ -137,33 +168,47 @@ void Program::BindAttribLocation(int index, char const * name) const
 template <typename Type>
 void Program::InitUniformLocation(Uniform<Type> & uniform, char const * name) const
 {
-	uniform = Uniform<Type>(_id, name);
+	uniform = std::move(Uniform<Type>(_id, name));
 }
 
-void Program::Finalize()
+void Program::Link()
 {
-	glLinkProgram(_id);
-	ASSERT(IsLinked());
+	ASSERT(! IsLinked());
+
+	GL_CALL(glLinkProgram(_id));
+	if (! IsLinked())
+	{
+		DumpInfoLog();
+	}
 	
 	Bind();
 	InitUniforms();
 	Unbind();
 }
 
-void Program::GetInfoLog(std::string & info_log) const
+bool Program::DumpInfoLog() const
 {
+#if defined(DUMP_GLSL_ERRORS)
 	GLint length;
 	GL_CALL(glGetProgramiv(_id, GL_INFO_LOG_LENGTH, & length));
-	
 	if (length == 0)
 	{
-		info_log.clear();
+		return false;
 	}
-	else
+
+	std::string info_log;
+	info_log.resize(length);
+	glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);
+	if (info_log.size() <= 1)
 	{
-		info_log.resize(length);
-		glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);
+		return false;
 	}
+	
+	PrintMessage(stderr, "%s", info_log.c_str());
+	return true;
+#else
+	return false;
+#endif
 }
 
 void Program::Verify() const
@@ -203,10 +248,31 @@ void Program3d::SetModelViewMatrix(Matrix44 const & model_view_matrix) const
 
 void Program3d::InitUniforms()
 {
-	ASSERT(IsBound());
+	super::InitUniforms();
 	
 	InitUniformLocation(_projection_matrix, "projection_matrix");
 	InitUniformLocation(_model_view_matrix, "model_view_matrix");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// LightProgram::LightUniforms member definitions
+
+LightProgram::LightUniforms::LightUniforms(LightUniforms && rhs)
+: position(std::move(rhs.position))
+, direction(std::move(rhs.direction))
+, color(std::move(rhs.color))
+, angle(std::move(rhs.angle))
+{
+}
+
+LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUniforms && rhs)
+{
+	std::swap(position, rhs.position);
+	std::swap(direction, rhs.direction);
+	std::swap(color, rhs.color);
+	std::swap(angle, rhs.angle);
+
+	return * this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,11 +280,15 @@ void Program3d::InitUniforms()
 
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
-, _ambient(std::move(rhs._ambient))
-, _num_point_lights(std::move(rhs._num_point_lights))
-, _num_beam_lights(std::move(rhs._num_beam_lights))
-, _lights(std::move(rhs._lights))
+, _vertex_point_lights_end(std::move(rhs._vertex_point_lights_end))
+, _vertex_search_lights_end(std::move(rhs._vertex_search_lights_end))
+, _fragment_point_lights_end(std::move(rhs._fragment_point_lights_end))
+, _fragment_search_lights_end(std::move(rhs._fragment_search_lights_end))
 {
+	for (auto i = 0; i != max_lights; ++ i)
+	{
+		std::swap(_lights[i], rhs._lights[i]);
+	}
 }
 
 LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
@@ -228,169 +298,170 @@ LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std
 
 void LightProgram::InitUniforms()
 {
-	super::InitUniforms();
+	super::InitUniforms();	
 	
-	InitUniformLocation(_ambient, "ambient");
-	InitUniformLocation(_num_point_lights, "num_point_lights");
-	InitUniformLocation(_num_beam_lights, "num_beam_lights");
-	
+	InitUniformLocation(_vertex_point_lights_end, "vertex_point_lights_end");
+	InitUniformLocation(_vertex_search_lights_end, "vertex_search_lights_end");
+	InitUniformLocation(_fragment_point_lights_end, "fragment_point_lights_end");
+	InitUniformLocation(_fragment_search_lights_end, "fragment_search_lights_end");
+
 	for (auto index = 0u; index != _lights.size(); ++ index)
 	{
-		auto & light_uniforms = _lights[index];
+		auto & light = _lights[index];
 
-		char name[40];
-	
-		sprintf(name, "lights[%d].position", index);
-		InitUniformLocation(light_uniforms.position, name);
-	
-		sprintf(name, "lights[%d].direction", index);
-		InitUniformLocation(light_uniforms.direction, name);
-	
-		sprintf(name, "lights[%d].color", index);
-		InitUniformLocation(light_uniforms.color, name);
+		int constexpr name_size = 64;
+		char name[name_size];
+
+		snprintf(name, name_size, "lights[%d].position", index);
+		InitUniformLocation(light.position, name);
+
+		snprintf(name, name_size, "lights[%d].direction", index);
+		InitUniformLocation(light.direction, name);
+
+		snprintf(name, name_size, "lights[%d].color", index);
+		InitUniformLocation(light.color, name);
+
+		snprintf(name, name_size, "lights[%d].angle", index);
+		InitUniformLocation(light.angle, name);
 	}
 }
 
-void LightProgram::SetLight(Light const & light) const
+int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
 {
-	ASSERT(light.GetIsLuminant());
+	ASSERT(_lights.size() == max_lights);
 	ASSERT(IsBound());
 
-	SetLight(light, 0);
-	
-	_ambient.Set(Color4f::Black());
-	
-	auto type = light.GetType();
-	switch (type)
+	std::array<std::array<Uniform<int> const *, int(LightResolution::size)>, int(LightResolution::size)> light_indices =
+	{{
+		{{
+			& _vertex_point_lights_end,
+			& _vertex_search_lights_end
+		}},
+		{{
+			& _fragment_point_lights_end,
+			& _fragment_search_lights_end
+		}}
+	}};
+
+	auto total_lights = 0;
+
+	for (auto resolution = 0; resolution != int(LightResolution::size); ++ resolution)
 	{
-	default:
-		DEBUG_BREAK("bad enum value, %d", int(type));
-		
-	case LightType::point:
-	case LightType::shadow:
-		_num_point_lights.Set(1);
-		_num_beam_lights.Set(0);
-		break;
-		
-	case LightType::beam:
-		_num_point_lights.Set(0);
-		_num_beam_lights.Set(1);
-		break;
+		for (auto type = 0; type != int(LightType::size); ++ type)
+		{
+			for (auto const & light : lights)
+			{
+				if (! filter(light))
+				{
+					// otherwise filtered out
+					continue;
+				}
+
+				auto attributes = light.GetAttributes();
+				if (attributes.resolution != LightResolution(resolution)
+					|| attributes.type != LightType(type))
+				{
+					continue;
+				}
+
+				if (! light.GetIsLuminant())
+				{
+					// not doing any lighting right now
+					continue;
+				}
+
+				if (unsigned(total_lights) >= _lights.size())
+				{
+					if (CRAG_DEBUG_ONCE)
+					{
+						DEBUG_MESSAGE(
+							"too many lights [%u>%u]", unsigned(total_lights), _lights.size());
+					}
+
+					break;
+				}
+
+				auto const & light_uniforms = _lights[total_lights];
+
+				auto const & transformation = light.GetModelViewTransformation();
+				auto position = transformation.GetTranslation();
+				light_uniforms.position.Set(position);
+
+				auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
+				light_uniforms.direction.Set(direction);
+
+				auto const & color = light.GetColor();
+				light_uniforms.color.Set(color);
+
+				auto const & angle = light.GetAngle();
+				light_uniforms.angle.Set(angle);
+
+				++ total_lights;
+			}
+
+			light_indices[resolution][type]->Set(total_lights);
+		}
 	}
+	
+	// base class override is a stub
+	ASSERT(super::SetLights(Color4f(), lights, filter) == 0);
+	
+	return total_lights;
 }
 
-void LightProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightTypeSet filter) const
+////////////////////////////////////////////////////////////////////////////////
+// ForegroundProgram member definitions
+
+ForegroundProgram::ForegroundProgram(ForegroundProgram && rhs)
+: LightProgram(std::move(rhs))
+, _ambient(std::move(rhs._ambient))
+, _color(std::move(rhs._color))
+{
+}
+
+ForegroundProgram::ForegroundProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
+: LightProgram(vert_sources, frag_sources)
+{
+}
+
+void ForegroundProgram::SetUniforms(Color4f const & color) const
 {
 	ASSERT(IsBound());
+	_color.Set(color);
+}
+
+void ForegroundProgram::InitUniforms()
+{
+	super::InitUniforms();
+
+	InitUniformLocation(_ambient, "ambient");
+	InitUniformLocation(_color, "color");
+}
+
+int ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
+{
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
 	
-	auto num_point_lights = 0;
-	auto num_beam_lights = 0;
-	auto num_lights = 0;
-	
-	auto populate_lights = [&] (LightType pass_type)
-	{
-		if (! filter[pass_type])
-		{
-			return 0;
-		}
-		
-		auto num_type_lights = 0;
-
-		for (auto & light : lights)
-		{
-			auto type = light.GetType();
-			if (pass_type != type)
-			{
-				continue;
-			}
-
-			if (! light.GetIsLuminant())
-			{
-				continue;
-			}
-			
-			SetLight(light, num_lights);
-			++ num_lights;
-			++ num_type_lights;
-		}
-		
-		return num_type_lights;
-	};
-	
-	// add point lights first
-	num_point_lights += populate_lights(LightType::point);
-	num_point_lights += populate_lights(LightType::shadow);
-	
-	// then beam
-	num_beam_lights += populate_lights(LightType::beam);
-	
-	ASSERT(num_beam_lights + num_point_lights == num_lights);
-	
 	_ambient.Set(ambient);
-	_num_point_lights.Set(num_point_lights);
-	_num_beam_lights.Set(num_beam_lights);
-}
 
-void LightProgram::SetLight(Light const & light, int index) const
-{
-	if (unsigned(index) >= _lights.size())
-	{
-		DEBUG_BREAK("too many lights");
-		return;
-	}
-	
-	auto & light_uniforms = _lights[index];
-
-	auto & transformation = light.GetModelViewTransformation();
-	auto position = transformation.GetTranslation();
-	light_uniforms.position.Set(position);
-	
-	auto direction = GetAxis(transformation.GetRotation(), Direction::forward);
-	light_uniforms.direction.Set(direction);
-
-	Color4f const & color = light.GetColor();
-	light_uniforms.color.Set(color);
+	return LightProgram::SetLights(ambient, lights, filter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // PolyProgram member definitions
 
 PolyProgram::PolyProgram(PolyProgram && rhs)
-: LightProgram(std::move(rhs))
-, _color(std::move(rhs._color))
-, _fragment_lighting(std::move(rhs._fragment_lighting))
-, _relief_enabled(std::move(rhs._relief_enabled))
+: ForegroundProgram(std::move(rhs))
 {
 }
 
 PolyProgram::PolyProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: LightProgram(vert_sources, frag_sources)
+: ForegroundProgram(vert_sources, frag_sources)
 {
 	// attribute locations
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_normal");
 	BindAttribLocation(3, "vertex_color");
-	BindAttribLocation(4, "vertex_height");
-
-	Finalize();
-}
-
-void PolyProgram::SetUniforms(Color4f const & color, bool fragment_lighting, bool relief_enabled) const
-{
-	ASSERT(IsBound());
-	_color.Set(color);
-	_fragment_lighting.Set(fragment_lighting);
-	_relief_enabled.Set(relief_enabled);
-}
-
-void PolyProgram::InitUniforms()
-{
-	super::InitUniforms();
-
-	InitUniformLocation(_color, "color");
-	InitUniformLocation(_fragment_lighting, "fragment_lighting");
-	InitUniformLocation(_relief_enabled, "relief_enabled");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -405,8 +476,6 @@ ShadowProgram::ShadowProgram(std::initializer_list<char const *> vert_sources, s
 : Program3d(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
-	
-	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -421,33 +490,29 @@ ScreenProgram::ScreenProgram(std::initializer_list<char const *> vert_sources, s
 : Program(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
-	
-	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // DiskProgram member definitions
 
 DiskProgram::DiskProgram(DiskProgram && rhs)
-: LightProgram(std::move(rhs))
-, _color(std::move(rhs._color))
+: super(std::move(rhs))
 , _center(std::move(rhs._center))
 , _radius(std::move(rhs._radius))
 {
 }
 
 DiskProgram::DiskProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: LightProgram(vert_sources, frag_sources)
+: super(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_normal");
-	
-	Finalize();
 }
 
 void DiskProgram::SetUniforms(geom::Transformation<float> const & model_view, float radius, Color4f const & color) const
 {
-	_color.Set(color);
+	super::SetUniforms(color);
+
 	_center.Set(model_view.GetTranslation());
 	_radius.Set(radius);
 }
@@ -456,7 +521,6 @@ void DiskProgram::InitUniforms()
 {
 	super::InitUniforms();
 
-	InitUniformLocation(_color, "color");
 	InitUniformLocation(_center, "center");
 	InitUniformLocation(_radius, "radius");
 }
@@ -465,36 +529,32 @@ void DiskProgram::InitUniforms()
 // TexturedProgram member definitions
 
 TexturedProgram::TexturedProgram(TexturedProgram && rhs)
-: Program3d(std::move(rhs))
+: LightProgram(std::move(rhs))
 {
 }
 
 TexturedProgram::TexturedProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: Program3d(vert_sources, frag_sources)
+: LightProgram(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_tex_coord");
-
-	Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // SpriteProgram member definitions
 
 SpriteProgram::SpriteProgram(SpriteProgram && rhs)
-: Program(std::move(rhs))
+: super(std::move(rhs))
 , _position_scale(std::move(rhs._position_scale))
 , _position_offset(std::move(rhs._position_offset))
 {
 }
 
 SpriteProgram::SpriteProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
-: Program(vert_sources, frag_sources)
+: super(vert_sources, frag_sources)
 {
 	BindAttribLocation(1, "vertex_position");
 	BindAttribLocation(2, "vertex_tex_coord");
-	
-	Finalize();
 }
 
 void SpriteProgram::SetUniforms(geom::Vector2i const & resolution) const
@@ -506,6 +566,8 @@ void SpriteProgram::SetUniforms(geom::Vector2i const & resolution) const
 
 void SpriteProgram::InitUniforms()
 {
+	super::InitUniforms();
+
 	InitUniformLocation(_position_scale, "position_scale");
 	InitUniformLocation(_position_offset, "position_offset");
 }
