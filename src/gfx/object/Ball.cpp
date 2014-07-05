@@ -25,7 +25,7 @@
 
 using namespace gfx;
 
-DEFINE_POOL_ALLOCATOR(Ball, 100);
+DEFINE_POOL_ALLOCATOR(Ball);
 
 Ball::Ball(Init const & init, Transformation const & local_transformation, float radius, Color4f const & color)
 : Object(init, local_transformation, Layer::opaque, true)

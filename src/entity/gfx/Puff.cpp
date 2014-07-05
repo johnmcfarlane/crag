@@ -38,7 +38,7 @@ namespace
 	STAT(num_puffs, int, .1f);
 }
 
-DEFINE_POOL_ALLOCATOR(Puff, 100);
+DEFINE_POOL_ALLOCATOR(Puff);
 
 Puff::Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
 : Object(init, local_transformation, Layer::transparent)

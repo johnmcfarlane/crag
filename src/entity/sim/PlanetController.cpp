@@ -32,7 +32,7 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // sim::PlanetController member definitions
 
-DEFINE_POOL_ALLOCATOR(PlanetController, 3);
+DEFINE_POOL_ALLOCATOR(PlanetController);
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)

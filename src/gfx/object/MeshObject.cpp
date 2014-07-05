@@ -21,7 +21,7 @@
 
 using namespace gfx;
 
-DEFINE_POOL_ALLOCATOR(MeshObject, 100);
+DEFINE_POOL_ALLOCATOR(MeshObject);
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::MeshObject member definitions

@@ -11,6 +11,8 @@
 
 #include "Point.h"
 
+#include "core/object_pool.h"
+
 namespace form 
 {
 	class PointBuffer

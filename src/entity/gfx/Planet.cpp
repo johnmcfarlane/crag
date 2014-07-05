@@ -21,7 +21,7 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-DEFINE_POOL_ALLOCATOR(Planet, 3);
+DEFINE_POOL_ALLOCATOR(Planet);
 
 Planet::Planet(Init const & init, Transformation const & local_transformation, Scalar radius)
 	: Object(init, local_transformation, Layer::opaque)
