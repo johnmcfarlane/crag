@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "ObjectBase.h"
 
 namespace ipc
 {
@@ -26,8 +26,8 @@ namespace ipc
 
 		typedef ENGINE Engine;
 		typedef OBJECT Object;
-		typedef ipc::Object<Object, ENGINE> SmpObject;
-		typedef std::unordered_map<Uid, SmpObject *> ObjectMap;
+		typedef ipc::ObjectBase<Object, ENGINE> ObjectBase;
+		typedef std::unordered_map<Uid, ObjectBase *> ObjectMap;
 		typedef typename ObjectMap::iterator Iterator;
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -60,8 +60,8 @@ namespace ipc
 				return nullptr;
 			}
 
-			SmpObject & smp_object = ref(found->second);
-			Object & object = smp_object;
+			ObjectBase & object_base = ref(found->second);
+			Object & object = object_base;
 			return & object;
 		}
 
@@ -73,8 +73,8 @@ namespace ipc
 				return nullptr;
 			}
 
-			SmpObject & smp_object = ref(found->second);
-			Object & object = smp_object;
+			ObjectBase & object_base = ref(found->second);
+			Object & object = object_base;
 			return & object;
 		}
 
@@ -102,7 +102,7 @@ namespace ipc
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f)
 		{
-			ForEachPair([& f] (std::pair<Uid, SmpObject *> pair) {
+			ForEachPair([& f] (std::pair<Uid, ObjectBase *> pair) {
 				f(ref(pair.second));
 			});
 		}
@@ -110,7 +110,7 @@ namespace ipc
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f) const
 		{
-			ForEachPair([& f] (std::pair<Uid, SmpObject *> pair) {
+			ForEachPair([& f] (std::pair<Uid, ObjectBase *> pair) {
 				f(ref(pair.second));
 			});
 		}
@@ -216,11 +216,11 @@ namespace ipc
 	public:
 
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(EngineBase, self)
-			self.ForEachPair([& self] (std::pair<Uid, SmpObject *> const & pair) {
-				SmpObject const & smp_object = ref(pair.second);
-				CRAG_VERIFY_EQUAL(pair.first, smp_object.GetUid());
-				CRAG_VERIFY_EQUAL(& self, & smp_object.GetEngine());
-				CRAG_VERIFY(smp_object);
+			self.ForEachPair([& self] (std::pair<Uid, ObjectBase *> const & pair) {
+				ObjectBase const & object_base = ref(pair.second);
+				CRAG_VERIFY_EQUAL(pair.first, object_base.GetUid());
+				CRAG_VERIFY_EQUAL(& self, & object_base.GetEngine());
+				CRAG_VERIFY(object_base);
 			});
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 

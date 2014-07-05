@@ -1,5 +1,5 @@
 //
-//  ipc/Object.h
+//  ipc/ObjectBase.h
 //  crag
 //
 //  Created by John McFarlane on 2011-05-23.
@@ -34,9 +34,9 @@ namespace ipc
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from Object.
 	template <typename OBJECT, typename ENGINE>
-	class Object
+	class ObjectBase
 	{
-		OBJECT_NO_COPY(Object);
+		OBJECT_NO_COPY(ObjectBase);
 
 	public:
 		// types
@@ -45,13 +45,13 @@ namespace ipc
 		typedef ObjectInit<Engine> Init;
 		
 		// functions
-		Object(Init const & init)
+		ObjectBase(Init const & init)
 		: _engine(init.engine)
 		, _uid(init.uid)
 		{
 		}
 		
-		virtual ~Object()
+		virtual ~ObjectBase()
 		{ 
 			CRAG_VERIFY(* this);
 		}
@@ -80,7 +80,7 @@ namespace ipc
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
-			Object & reverse = t;
+			ObjectBase & reverse = t;
 			ASSERT(& reverse == this);
 #endif
 			
@@ -93,7 +93,7 @@ namespace ipc
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
-			Object const & reverse = t;
+			ObjectBase const & reverse = t;
 			ASSERT(& reverse == this);
 #endif
 			
@@ -112,7 +112,7 @@ namespace ipc
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
-		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Object, object)
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(ObjectBase, object)
 			CRAG_VERIFY(reinterpret_cast<void *>(& object._engine));
 			ASSERT(object._uid);
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END

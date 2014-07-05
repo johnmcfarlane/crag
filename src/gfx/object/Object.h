@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ipc/Object.h"
+#include "ipc/ObjectBase.h"
 
 #include "gfx/defs.h"
 
@@ -41,13 +41,13 @@ namespace gfx
 
 	// Base class for drawable things.
 	// meaning they effectively double as nodes in a hierachical scene graph.
-	class Object : public ipc::Object<Object, Engine>
+	class Object : public ipc::ObjectBase<Object, Engine>
 	{
 	protected:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef ipc::Object<Object, Engine> super;
+		typedef ipc::ObjectBase<Object, Engine> super;
 		
 	public:
 		enum PreRenderResult
