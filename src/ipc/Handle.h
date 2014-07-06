@@ -55,6 +55,7 @@ namespace ipc
 		
 		// Returns the UID of the entity being handled.
 		// TODO: Should be able to remove this.
+		// TODO: Eventually give Handle unique_ptr semantics
 		Uid GetUid() const;
 		
 		// Sets the UID of the entity being handled.
