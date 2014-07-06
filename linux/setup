@@ -20,13 +20,10 @@ hg clone http://hg.libsdl.org/SDL || true
 cd SDL
 hg pull http://hg.libsdl.org/SDL
 hg update
-#./autogen.sh
-mkdir build || true
-cd build
-../configure --prefix="$PWD/../.." --enable-static --disable-shared
+./configure --prefix="$PWD/.." --enable-static --disable-shared
 make -j8
 make install
-cd ../..
+cd ..
 
 ################################################################################
 # cmake
