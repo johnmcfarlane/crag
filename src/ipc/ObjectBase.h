@@ -30,7 +30,7 @@ namespace ipc
 		using Engine = ENGINE;
 		
 		using EngineBase = ipc::EngineBase<Engine, Object>;
-		using Daemon = Daemon<Engine> ;
+		using Daemon = ::ipc::Daemon<Engine> ;
 		
 		// friends
 		friend EngineBase;
