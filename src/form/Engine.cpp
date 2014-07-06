@@ -78,7 +78,6 @@ form::Engine::Engine()
 
 form::Engine::~Engine()
 {
-	ASSERT(_formations.empty());
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Engine, self)
@@ -95,15 +94,11 @@ void form::Engine::OnQuit()
 
 void form::Engine::OnAddFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(& formation) == _formations.end());
-	_formations.insert(& formation);
 	_scene.AddFormation(formation, _origin);
 }
 
 void form::Engine::OnRemoveFormation(form::Formation & formation)
 {
-	ASSERT(_formations.find(& formation) != _formations.end());
-	_formations.erase(& formation);
 	_scene.RemoveFormation(formation);
 	
 	delete & formation;
@@ -235,7 +230,7 @@ void form::Engine::GenerateMesh()
 	
 	_scene.GenerateMesh(* mesh, _origin);
 	
-	// sent it to the FormationSet object
+	// sent it to the gfx::Surrounding object
 	_mesh.Call([mesh] (gfx::Surrounding & surrounding) {
 		surrounding.SetMesh(mesh);
 	});

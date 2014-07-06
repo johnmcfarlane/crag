@@ -39,8 +39,6 @@ namespace form
 	class Formation;
 	class Mesh;
 	
-	typedef std::set<Formation *> FormationSet;
-	
 	// form::Daemon type
 	class Engine;
 	typedef ipc::Daemon<Engine> Daemon;
@@ -106,7 +104,6 @@ namespace form
 		// variables
 		
 		gfx::SurroundingHandle _mesh;
-		FormationSet _formations;
 		
 		bool quit_flag;
 		bool suspend_flag;
