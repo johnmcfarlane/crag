@@ -146,7 +146,7 @@ namespace ipc
 			ipc::ObjectInit<Engine>
 			init = 
 			{
-				static_cast<Engine &>(* this),
+				core::StaticCast<Engine &>(* this),
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE(init);
@@ -166,7 +166,7 @@ namespace ipc
 			ipc::ObjectInit<Engine>
 			init = 
 			{
-				static_cast<Engine &>(* this),
+				core::StaticCast<Engine &>(* this),
 				uid
 			};
 			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);

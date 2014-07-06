@@ -76,7 +76,7 @@ namespace ipc
 
 		operator OBJECT & ()
 		{
-			OBJECT & t = * static_cast<OBJECT *>(this);
+			OBJECT & t = core::StaticCast<OBJECT>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
@@ -89,7 +89,7 @@ namespace ipc
 		
 		operator OBJECT const & () const
 		{
-			OBJECT const & t = * static_cast<OBJECT const *>(this);
+			OBJECT const & t = core::StaticCast<OBJECT const>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
@@ -105,7 +105,7 @@ namespace ipc
 			return _engine;
 		}
 		
-		// TODO: This should be GetHandle
+		//  TODO: This should be GetHandle
 		Uid GetUid() const
 		{
 			return _uid;
