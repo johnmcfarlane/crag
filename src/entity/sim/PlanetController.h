@@ -13,13 +13,16 @@
 
 #include "sim/Controller.h"
 
-#include "geom/Sphere.h"
-
-namespace gfx { DECLARE_CLASS_HANDLE(Planet); }	// gfx::PlanetHandle
+namespace gfx
+{
+	DECLARE_CLASS_HANDLE(Planet);	// gfx::PlanetHandle
+}
 
 namespace form
 {
 	class Formation;
+	class Object;
+	DECLARE_CLASS_HANDLE(Object);	// form::ObjectHandle
 }
 
 namespace sim
@@ -27,6 +30,9 @@ namespace sim
 	// A planet is a celestial body which is represented using the formation system.
 	class PlanetController : public Controller
 	{
+		// types
+		using FormationPtr = std::unique_ptr<form::Formation>;
+		
 	public:
 		// functions
 		DECLARE_ALLOCATOR(PlanetController);
@@ -40,7 +46,8 @@ namespace sim
 		void Tick();
 		
 		// variables
-		form::Formation * _formation;	// TODO: form::FormationHandle
+		FormationPtr _formation;	// physics
+		form::ObjectHandle _handle;	// graphics
 		Scalar _radius_mean;
 	};
 }

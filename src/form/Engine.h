@@ -36,7 +36,7 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// forward declarations
 	
-	class Formation;
+	class Object;
 	class Mesh;
 	
 	// form::Daemon type
@@ -49,7 +49,7 @@ namespace form
 	
 	// The top-most formation management class.
 	class Engine 
-	: public ipc::EngineBase<Engine, Formation>
+	: public ipc::EngineBase<Engine, Object>
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
@@ -58,7 +58,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef ipc::EngineBase<Engine, Formation> super;
+		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
 		typedef ipc::Listener<Engine, gfx::SetLodParametersEvent> SetLodParametersListener;
 

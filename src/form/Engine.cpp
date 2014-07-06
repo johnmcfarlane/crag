@@ -100,8 +100,6 @@ void Engine::OnAddFormation(Formation & formation)
 void Engine::OnRemoveFormation(Formation & formation)
 {
 	_scene.RemoveFormation(formation);
-	
-	delete & formation;
 }
 
 void Engine::OnSetMesh(std::shared_ptr<Mesh> const & mesh)

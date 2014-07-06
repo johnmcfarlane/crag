@@ -97,19 +97,11 @@ void Engine::OnAddObject(Entity &)
 
 void Engine::AddFormation(form::Formation& formation)
 {
-	form::Daemon::Call([& formation] (form::Engine & engine) {
-		engine.OnAddFormation(formation);
-	});
-
 	_collision_scene.AddFormation(formation, GetOrigin());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
 {
-	form::Daemon::Call([& formation] (form::Engine & engine) {
-		engine.OnRemoveFormation(formation);
-	});
-
 	_collision_scene.RemoveFormation(formation);
 }
 

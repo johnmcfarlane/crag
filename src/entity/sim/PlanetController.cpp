@@ -20,7 +20,8 @@
 #include "sim/Entity.h"
 #include "sim/Engine.h"
 
-#include "form/Formation.h"
+#include "form/Engine.h"
+#include "form/Object.h"
 
 #include "gfx/Engine.h"
 
@@ -36,7 +37,6 @@ DEFINE_POOL_ALLOCATOR(PlanetController);
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)
-, _formation(nullptr)
 , _radius_mean(sphere.radius)
 {
 	ASSERT(sphere.radius > 0);
@@ -44,22 +44,24 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	Random random(random_seed);
 	
 	// factory
-	form::Shader * shader;
+	form::Formation::ShaderPtr shader;
 	if (num_craters > 0)
 	{
 		int random_seed_shader = random.GetInt();
-		shader = new MoonShader(random_seed_shader, num_craters, _radius_mean);
+		shader = std::make_shared<MoonShader>(random_seed_shader, num_craters, _radius_mean);
 	}
 	else 
 	{
-		shader = new PlanetShader();
+		shader = std::make_shared<PlanetShader>();
 	}
 	
 	// formation
 	auto & engine = entity.GetEngine();
 	int random_seed_formation = random.GetInt();
 	geom::abs::Sphere3 formation_sphere = geom::Cast<geom::abs::Scalar>(sphere);
-	_formation = new form::Formation(random_seed_formation, * shader, formation_sphere);
+	
+	_formation = FormationPtr(new form::Formation(random_seed_formation, shader, formation_sphere));
+	_handle.Create(* _formation);
 	engine.AddFormation(* _formation);
 
 	// roster
@@ -76,14 +78,16 @@ PlanetController::~PlanetController()
 	auto & roster = engine.GetTickRoster();
 	roster.RemoveCommand(* this, & PlanetController::Tick);
 
-	// unregister with formation manager
+	// remove physics
 	engine.RemoveFormation(* _formation);
-	_formation = nullptr;
+
+	// unregister with formation manager
+	_handle.Destroy();
 }
 
 form::Formation const & PlanetController::GetFormation() const
 {
-	return ref(_formation);
+	return * _formation;
 }
 
 void PlanetController::Tick()

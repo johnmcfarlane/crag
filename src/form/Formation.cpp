@@ -16,7 +16,7 @@
 using namespace form;
 
 
-Formation::Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape)
+Formation::Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 const & shape)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
@@ -25,14 +25,9 @@ Formation::Formation(int seed, Shader const & shader, geom::abs::Sphere3 const &
 	_radius_max = _shape.radius;
 }
 
-Formation::~Formation()
-{
-	delete & _shader;
-}
-
 Shader const & Formation::GetShader() const
 {
-	return _shader;
+	return * _shader;
 }
 
 geom::abs::Sphere3 const & Formation::GetShape() const
