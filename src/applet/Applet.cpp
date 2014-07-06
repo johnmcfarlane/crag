@@ -49,6 +49,11 @@ Applet::~Applet()
 	ASSERT(_quit_flag);
 }
 
+Engine & Applet::GetEngine() const
+{
+	return super::GetEngine();
+}
+
 char const * Applet::GetName() const
 {
 	return _fiber.GetName();
@@ -104,11 +109,6 @@ void Applet::WaitFor(Condition & condition)
 	_fiber.Yield();
 	
 	_condition = null_condition;
-}
-
-Engine & Applet::GetEngine()
-{
-	return super::GetEngine();
 }
 
 void Applet::OnLaunch(void * data)

@@ -33,6 +33,8 @@ namespace applet
 		Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function);
 		~Applet();
 		
+		Engine & GetEngine() const override;
+
 		char const * GetName() const;
 		
 		// true iff the applet has not yet returned
@@ -54,8 +56,6 @@ namespace applet
 		
 		virtual void Sleep(core::Time duration) override;
 		virtual void WaitFor(Condition & condition) override;
-
-		virtual Engine & GetEngine() override;
 
 		// called on fiber startup
 		static void OnLaunch (void *);
