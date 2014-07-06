@@ -30,7 +30,7 @@ namespace applet
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Applet(Init const & init, char const * name, std::size_t stack_size, LaunchFunction const & function);
+		Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function);
 		~Applet();
 		
 		char const * GetName() const;

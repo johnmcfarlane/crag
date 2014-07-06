@@ -23,8 +23,8 @@ using namespace gfx;
 
 DEFINE_POOL_ALLOCATOR(Planet);
 
-Planet::Planet(Init const & init, Transformation const & local_transformation, Scalar radius)
-	: Object(init, local_transformation, Layer::opaque)
+Planet::Planet(Engine & engine, Transformation const & local_transformation, Scalar radius)
+: Object(engine, local_transformation, Layer::opaque)
 , _sea_level(radius)
 {
 	auto & resource_manager = crag::core::ResourceManager::Get();

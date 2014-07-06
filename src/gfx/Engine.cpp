@@ -631,7 +631,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (children.empty())
+		if (children.empty() && & object != & scene->GetRoot())
 		{
 			// destroy it
 			DestroyObject(object.GetUid());

@@ -49,8 +49,8 @@ void Pointer<Skybox::Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Skybox member definitions
 
-Skybox::Skybox(Object::Init const & init)
-: Object(init, gfx::Transformation::Matrix44::Identity(), Layer::background)
+Skybox::Skybox(Engine & engine)
+: Object(engine, gfx::Transformation::Matrix44::Identity(), Layer::background)
 {
 	InitVerts();
 

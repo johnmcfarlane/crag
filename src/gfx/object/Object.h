@@ -59,7 +59,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Object(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow = false);
+		Object(Engine & engine, Transformation const & local_transformation, Layer layer, bool casts_shadow = false);
 		virtual ~Object();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Object);

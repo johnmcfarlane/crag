@@ -27,7 +27,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		Light(
-			Init const & init, Transformation const & local_transformation, 
+			Engine & engine, Transformation const & local_transformation, 
 			Color4f const & color, LightAttributes attributes,
 			ObjectHandle exception = ObjectHandle());
 		~Light();

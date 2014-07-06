@@ -20,7 +20,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Planet);
 
-		Planet(Init const & init, Transformation const & local_transformation, Scalar radius);
+		Planet(Engine & engine, Transformation const & local_transformation, Scalar radius);
 		
 		void SetRadiusMinMax(Scalar radius_min, Scalar radius_max);
 

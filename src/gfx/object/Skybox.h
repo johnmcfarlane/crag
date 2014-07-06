@@ -33,7 +33,7 @@ namespace gfx
 		typedef VertexBufferObject<Vertex> Vbo;
 		
 		// Methods
-		Skybox(Init const & init);
+		Skybox(Engine & engine);
 		~Skybox();
 		
 		void SetSide(int axis, int pole, Image const & image);

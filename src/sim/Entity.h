@@ -42,7 +42,7 @@ namespace sim
 
 		DECLARE_ALLOCATOR(Entity);
 
-		Entity(Init const & init);
+		Entity(Engine & engine);
 		~Entity();
 		
 		// general callbacks

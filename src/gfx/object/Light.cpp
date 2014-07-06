@@ -28,15 +28,14 @@ using namespace gfx;
 // gfx::Light definitions
 
 Light::Light(
-	Init const & init, Transformation const & local_transformation, 
+	Engine & engine, Transformation const & local_transformation, 
 	Color4f const & color, LightAttributes attributes,
 	ObjectHandle exception)
-: Object(init, local_transformation, Layer::light)
+: Object(engine, local_transformation, Layer::light)
 , _color(color)
 , _exception(nullptr)
 , _attributes(attributes)
 {
-	auto & engine = GetEngine();
 	if (exception)
 	{
 		auto exception_object = engine.GetObject(exception.GetUid());

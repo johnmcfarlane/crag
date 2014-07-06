@@ -21,7 +21,7 @@ namespace gfx
 		// functions
 
 		SearchLight(
-			Init const & init, Transformation const & local_transformation, 
+			Engine & engine, Transformation const & local_transformation, 
 			Color4f const & color, Vector2 angle, 
 			ObjectHandle exception = ObjectHandle());
 

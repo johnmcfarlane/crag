@@ -40,8 +40,8 @@ namespace
 
 DEFINE_POOL_ALLOCATOR(Puff);
 
-Puff::Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume)
-: Object(init, local_transformation, Layer::transparent)
+Puff::Puff(Engine & engine, Transformation const & local_transformation, Scalar spawn_volume)
+: Object(engine, local_transformation, Layer::transparent)
 , _spawn_volume(spawn_volume)
 , _radius(0)
 , _color(0.75, 0.75, 0.75, 1)
@@ -56,7 +56,7 @@ Puff::Puff(Init const & init, Transformation const & local_transformation, Scala
 	auto const & disk_quad = * resource_manager.GetHandle<Quad>("QuadVbo");
 	SetVboResource(& disk_quad);
 	
-	Scene const & scene = init.engine.GetScene();
+	Scene const & scene = engine.GetScene();
 	core::Time time = scene.GetTime();
 	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
 }

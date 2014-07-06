@@ -19,8 +19,8 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Object member definitions
 
-Object::Object(Init const & init, Transformation const & local_transformation, Layer layer, bool casts_shadow)
-: super(init)
+Object::Object(Engine & engine, Transformation const & local_transformation, Layer layer, bool casts_shadow)
+: super(engine)
 , _parent(nullptr)
 , _local_transformation(local_transformation)
 , _layer(layer)

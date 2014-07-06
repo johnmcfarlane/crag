@@ -22,7 +22,7 @@ namespace gfx
 	public:
 		DECLARE_ALLOCATOR(Puff);
 
-		Puff(Init const & init, Transformation const & local_transformation, Scalar spawn_volume);
+		Puff(Engine & engine, Transformation const & local_transformation, Scalar spawn_volume);
 		~Puff();
 		
 	private:

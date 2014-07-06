@@ -28,7 +28,7 @@ CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
 
 Scene::Scene(Engine & engine)
 : _time(-1)
-, _root(Object::Init(engine, Uid::Create()), Transformation::Matrix44::Identity(), Layer::background)
+, _root(engine, Transformation::Matrix44::Identity(), Layer::background)
 {
 	auto frustum = pov.GetFrustum();
 

@@ -143,17 +143,11 @@ namespace ipc
 		template <typename OBJECT_TYPE>
 		OBJECT_TYPE * CreateObject(Uid uid)
 		{
-			ipc::ObjectInit<Engine>
-			init = 
-			{
-				core::StaticCast<Engine &>(* this),
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE(init);
+			OBJECT_TYPE * object = new OBJECT_TYPE();
 
 			if (object != nullptr)
 			{
-				AddObject(* object);
+				AddObject(uid, * object);
 			}
 			
 			return object;
@@ -163,17 +157,11 @@ namespace ipc
 		template <typename OBJECT_TYPE, typename ... PARAMETERS>
 		OBJECT_TYPE * CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
-			ipc::ObjectInit<Engine>
-			init = 
-			{
-				core::StaticCast<Engine &>(* this),
-				uid
-			};
-			OBJECT_TYPE * object = new OBJECT_TYPE(init, parameters ...);
+			OBJECT_TYPE * object = new OBJECT_TYPE(core::StaticCast<Engine>(* this), parameters ...);
 
 			if (object != nullptr)
 			{
-				AddObject(* object);
+				AddObject(uid, * object);
 			}
 			
 			return object;
@@ -181,6 +169,8 @@ namespace ipc
 
 		void DestroyObject(Uid uid)
 		{
+			ASSERT(uid);
+			
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
@@ -205,10 +195,16 @@ namespace ipc
 		virtual void OnAddObject(Object &) { }
 		virtual void OnRemoveObject(Object &) { }
 
-		void AddObject(Object & object)
+		void AddObject(Uid uid, Object & object)
 		{
-			Uid uid = object.GetUid();
-			ASSERT(_objects.find(uid) == _objects.end());
+			CRAG_VERIFY_TRUE(uid);
+			ASSERT(! GetObject(uid));
+
+			CRAG_VERIFY(object);
+			CRAG_VERIFY_TRUE(! object.GetUid());
+
+			object.SetUid(uid);
+
 			_objects[uid] = & object;
 			OnAddObject(object);
 		}

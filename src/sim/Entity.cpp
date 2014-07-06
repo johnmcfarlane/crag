@@ -31,8 +31,8 @@ using namespace sim;
 
 DEFINE_POOL_ALLOCATOR(Entity);
 
-Entity::Entity(super::Init const & init)
-: super(init)
+Entity::Entity(Engine & engine)
+: super(engine)
 , _controller(nullptr)
 , _location(nullptr)
 {

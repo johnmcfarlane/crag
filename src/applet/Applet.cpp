@@ -33,8 +33,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // applet::Applet member definitions
 
-Applet::Applet(Init const & init, char const * name, std::size_t stack_size, LaunchFunction const & function)
-: super(init)
+Applet::Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function)
+: super(engine)
 , _fiber(name, stack_size, static_cast<void *>(this), & OnLaunch)
 , _function(function)
 , _condition(null_condition)
