@@ -56,7 +56,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // form::Engine member definitions
 
-form::Engine::Engine()
+Engine::Engine()
 : quit_flag(false)
 , suspend_flag(false)
 , enable_mesh_generation(true)
@@ -76,45 +76,45 @@ form::Engine::Engine()
 	}
 }
 
-form::Engine::~Engine()
+Engine::~Engine()
 {
 }
 
-CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(form::Engine, self)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
 	CRAG_VERIFY(self._scene);
 	CRAG_VERIFY(static_cast<super const &>(self));
 	CRAG_VERIFY(static_cast<SetLodParametersListener const &>(self));
 	CRAG_VERIFY(static_cast<SetOriginListener const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void form::Engine::OnQuit()
+void ::Engine::OnQuit()
 {
 	quit_flag = true;
 }
 
-void form::Engine::OnAddFormation(form::Formation & formation)
+void Engine::OnAddFormation(Formation & formation)
 {
 	_scene.AddFormation(formation, _origin);
 }
 
-void form::Engine::OnRemoveFormation(form::Formation & formation)
+void Engine::OnRemoveFormation(Formation & formation)
 {
 	_scene.RemoveFormation(formation);
 	
 	delete & formation;
 }
 
-void form::Engine::OnSetMesh(std::shared_ptr<Mesh> const & mesh)
+void Engine::OnSetMesh(std::shared_ptr<Mesh> const & mesh)
 {
 	_meshes.push(mesh);
 }
 
-void form::Engine::operator() (gfx::SetLodParametersEvent const & event)
+void Engine::operator() (gfx::SetLodParametersEvent const & event)
 {
 	_lod_parameters = event.parameters;
 }
 
-void form::Engine::operator() (gfx::SetOriginEvent const & event)
+void Engine::operator() (gfx::SetOriginEvent const & event)
 {
 	_pending_origin_request = true;
 
@@ -122,27 +122,27 @@ void form::Engine::operator() (gfx::SetOriginEvent const & event)
 	_origin = event.origin;
 }
 
-void form::Engine::EnableAdjustNumQuaterna(bool enabled)
+void Engine::EnableAdjustNumQuaterna(bool enabled)
 {
 	_enable_adjust_num_quaterna = enabled;
 }
 
-void form::Engine::OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne)
+void Engine::OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne)
 {
 	_requested_num_quaterne = recommented_num_quaterne;
 }
 
-void form::Engine::OnToggleSuspended()
+void Engine::OnToggleSuspended()
 {
 	suspend_flag = ! suspend_flag;
 }
 
-void form::Engine::OnToggleMeshGeneration()
+void Engine::OnToggleMeshGeneration()
 {
 	enable_mesh_generation = ! enable_mesh_generation;
 }
 
-void form::Engine::Run(Daemon::MessageQueue & message_queue)
+void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
@@ -174,7 +174,7 @@ void form::Engine::Run(Daemon::MessageQueue & message_queue)
 // The tick function of the scene thread. 
 // This functions gets called repeatedly either in the scene thread - if there is on -
 // or in the main thread as part of the main render/simulation iteration.
-void form::Engine::Tick()
+void Engine::Tick()
 {
 	if (_pending_origin_request) 
 	{
@@ -194,7 +194,7 @@ void form::Engine::Tick()
 	CRAG_VERIFY(* this);
 }
 
-void form::Engine::TickScene()
+void Engine::TickScene()
 {
 	PROFILE_TIMER_BEGIN(t);
 	
@@ -204,7 +204,7 @@ void form::Engine::TickScene()
 	PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 }
 
-void form::Engine::AdjustNumQuaterna()
+void Engine::AdjustNumQuaterna()
 {
 	if (! _enable_adjust_num_quaterna)
 	{
@@ -219,7 +219,7 @@ void form::Engine::AdjustNumQuaterna()
 	active_buffer.SetTargetNumQuaterna(_requested_num_quaterne);
 }
 
-void form::Engine::GenerateMesh()
+void Engine::GenerateMesh()
 {
 	// get an available mesh
 	std::shared_ptr<Mesh> mesh = PopMesh();
@@ -255,7 +255,7 @@ void form::Engine::GenerateMesh()
 	smp::Yield();
 }
 
-std::shared_ptr<Mesh> form::Engine::PopMesh()
+std::shared_ptr<Mesh> Engine::PopMesh()
 {
 	if (_meshes.empty())
 	{
@@ -267,7 +267,7 @@ std::shared_ptr<Mesh> form::Engine::PopMesh()
 	return mesh;
 }
 
-void form::Engine::OnOriginReset()
+void Engine::OnOriginReset()
 {
 	auto& surrounding = _scene.GetSurrounding();
 	auto num_quaterna = surrounding.GetNumQuaternaUsed();
@@ -281,7 +281,7 @@ void form::Engine::OnOriginReset()
 	}
 }
 
-bool form::Engine::IsGrowing() const
+bool Engine::IsGrowing() const
 {
 	Surrounding const & surrounding = _scene.GetSurrounding();
 	
