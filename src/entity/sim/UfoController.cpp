@@ -107,7 +107,7 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 	auto & body = core::StaticCast<physics::Body>(* location);
 	
 	auto resolution = app::GetResolution();
-	auto factor = ufo_controller_sensitivity / geom::Length(resolution);
+	auto factor = ufo_controller_sensitivity / geom::Length(geom::Cast<float>(resolution));
 	Vector2 drag(pointer_delta.x * factor, pointer_delta.y * factor);
 	
 	auto touch_pad_right = gfx::GetAxis(_camera_rotation, gfx::Direction::right);

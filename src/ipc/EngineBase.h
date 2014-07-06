@@ -143,7 +143,7 @@ namespace ipc
 		template <typename OBJECT_TYPE>
 		OBJECT_TYPE * CreateObject(Uid uid)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE();
+			OBJECT_TYPE * object = new OBJECT_TYPE(core::StaticCast<Engine>(* this));
 
 			if (object != nullptr)
 			{
