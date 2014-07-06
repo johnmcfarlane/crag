@@ -80,7 +80,13 @@ namespace core
 		template<typename Class>
 		class hook
 		{
+			OBJECT_NO_COPY(hook);
+			
+			// friends
+			friend class list_base<Class>;
+			
 		public:
+			// types
 			typedef size_t size_type;
 			typedef Class value_type;
 			
@@ -108,9 +114,6 @@ namespace core
 			// variables
 			value_type * _next;
 			value_type * _previous;
-			
-			// friends
-			friend class list_base<Class>;
 		};
 		
 		
@@ -371,7 +374,8 @@ namespace core
 				bool lhs_empty = empty<Member>(lhs_head);
 				bool rhs_empty = empty<Member>(rhs_head);
 				
-				std::swap(lhs_head, rhs_head);
+				std::swap(lhs_head._next, rhs_head._next);
+				std::swap(lhs_head._previous, rhs_head._previous);
 				
 				if (rhs_empty)
 				{
@@ -446,7 +450,7 @@ namespace core
 					}
 					
 					i = h._next;
-					h = hook_type();
+					h._next = h._previous = nullptr;
 				}
 				
 				// All removed elements are in a good state
@@ -479,7 +483,7 @@ namespace core
 				unlink<Member>(attached);
 				
 				hook_type & h = attached.*Member;
-				h = hook_type();
+				h._next = h._previous = nullptr;
 			}
 			
 			template <hook_type Class::* Member>
