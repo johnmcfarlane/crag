@@ -17,29 +17,7 @@
 using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
-// gfx::Object member definitions
-
-Object::Object(Engine & engine, Transformation const & local_transformation, Layer layer, bool casts_shadow)
-: super(engine)
-, _parent(nullptr)
-, _local_transformation(local_transformation)
-, _layer(layer)
-, _program(nullptr)
-, _vbo_resource(nullptr)
-, _casts_shadow(casts_shadow)
-{ 
-	CRAG_VERIFY(* this);
-}
-
-Object::~Object() 
-{
-	ASSERT(_children.empty());
-
-	if (_parent != nullptr)
-	{
-		OrphanChild(* this);
-	}
-}
+// gfx::Object helper function definitions
 
 bool gfx::IsChild(Object const & child, Object const & parent)
 {
@@ -70,6 +48,31 @@ void gfx::OrphanChild(Object & child)
 	if (parent != nullptr)
 	{
 		OrphanChild(child, * parent);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// gfx::Object member definitions
+
+Object::Object(Engine & engine, Transformation const & local_transformation, Layer layer, bool casts_shadow)
+: super(engine)
+, _parent(nullptr)
+, _local_transformation(local_transformation)
+, _layer(layer)
+, _program(nullptr)
+, _vbo_resource(nullptr)
+, _casts_shadow(casts_shadow)
+{ 
+	CRAG_VERIFY(* this);
+}
+
+Object::~Object() 
+{
+	ASSERT(_children.empty());
+
+	if (_parent != nullptr)
+	{
+		OrphanChild(* this);
 	}
 }
 
