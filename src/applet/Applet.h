@@ -12,27 +12,29 @@
 #include "AppletInterface.h"
 
 #include "ipc/Fiber.h"
-#include "ipc/Object.h"
+#include "ipc/ObjectBase.h"
 
 namespace applet
 {
 	// Base class for applets, which are run in fibers.
 	// If your applet is sufficiently complex that it deserves its own class,
 	// derive that class from this one. Alternatively, specialize the Applet class.
-	class Applet : public ipc::Object<Applet, Engine>, public AppletInterface
+	class Applet : public ipc::ObjectBase<Applet, Engine>, public AppletInterface
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef ipc::Object<Applet, Engine> super;
+		typedef ipc::ObjectBase<Applet, Engine> super;
 	public:
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Applet(Init const & init, char const * name, std::size_t stack_size, LaunchFunction const & function);
+		Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function);
 		~Applet();
 		
+		Engine & GetEngine() const override;
+
 		char const * GetName() const;
 		
 		// true iff the applet has not yet returned
@@ -54,8 +56,6 @@ namespace applet
 		
 		virtual void Sleep(core::Time duration) override;
 		virtual void WaitFor(Condition & condition) override;
-
-		virtual Engine & GetEngine() override;
 
 		// called on fiber startup
 		static void OnLaunch (void *);

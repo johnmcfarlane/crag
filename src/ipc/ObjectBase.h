@@ -1,5 +1,5 @@
 //
-//  ipc/Object.h
+//  ipc/ObjectBase.h
 //  crag
 //
 //  Created by John McFarlane on 2011-05-23.
@@ -16,42 +16,35 @@ namespace ipc
 	template <typename CLASS>
 	class Daemon;
 	
-	template <typename ENGINE>
-	struct ObjectInit
-	{
-		OBJECT_NO_COPY(ObjectInit);
-
-		ObjectInit(ENGINE & init_engine, Uid init_uid)
-		: engine(init_engine)
-		, uid(init_uid)
-		{
-		}
-		
-		ENGINE & engine;
-		Uid uid;
-	};
+	template <typename OBJECT, typename ENGINE>
+	class EngineBase;
 	
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from Object.
 	template <typename OBJECT, typename ENGINE>
-	class Object
+	class ObjectBase
 	{
-		OBJECT_NO_COPY(Object);
-
 	public:
 		// types
-		typedef ENGINE Engine;
-		typedef ::ipc::Daemon<Engine> Daemon;
-		typedef ObjectInit<Engine> Init;
+		using Object = OBJECT;
+		using Engine = ENGINE;
 		
+		using EngineBase = ipc::EngineBase<Engine, Object>;
+		using Daemon = ::ipc::Daemon<Engine> ;
+		
+		// friends
+		friend EngineBase;
+
 		// functions
-		Object(Init const & init)
-		: _engine(init.engine)
-		, _uid(init.uid)
+		OBJECT_NO_COPY(ObjectBase);
+
+		ObjectBase(Engine & engine)
+		: _engine(engine)
 		{
+			CRAG_VERIFY(* this);
 		}
-		
-		virtual ~Object()
+				
+		virtual ~ObjectBase()
 		{ 
 			CRAG_VERIFY(* this);
 		}
@@ -74,26 +67,26 @@ namespace ipc
 			::Free(p);
 		}
 
-		operator OBJECT & ()
+		operator Object & ()
 		{
-			OBJECT & t = * static_cast<OBJECT *>(this);
+			Object & t = core::StaticCast<Object>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
-			Object & reverse = t;
+			ObjectBase & reverse = t;
 			ASSERT(& reverse == this);
 #endif
 			
 			return t;
 		}
 		
-		operator OBJECT const & () const
+		operator Object const & () const
 		{
-			OBJECT const & t = * static_cast<OBJECT const *>(this);
+			Object const & t = core::StaticCast<Object const>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
-			Object const & reverse = t;
+			ObjectBase const & reverse = t;
 			ASSERT(& reverse == this);
 #endif
 			
@@ -105,20 +98,29 @@ namespace ipc
 			return _engine;
 		}
 		
-		// TODO: This should be GetHandle
+		//  TODO: This should be GetHandle
 		Uid GetUid() const
 		{
 			return _uid;
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
-		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(Object, object)
-			CRAG_VERIFY(reinterpret_cast<void *>(& object._engine));
-			ASSERT(object._uid);
+		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(ObjectBase, object)
+			CRAG_VERIFY(& object._engine);
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif	// defined(CRAG_VERIFY_ENABLED)
 
 	private:
+		void SetUid(Uid uid)
+		{
+			static_assert(std::is_base_of<EngineBase, Engine>::value, "ENGINE isn't correctly derived from ipc::EngineBase");
+			CRAG_VERIFY_TRUE(! _uid);
+			
+			_uid = uid;
+			
+			CRAG_VERIFY(* this);
+		}
+		
 		// variables
 		Engine & _engine;
 		Uid _uid;

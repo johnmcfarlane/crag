@@ -11,44 +11,6 @@
 
 #include "core/debug.h"
 
-//////////////////////////////////////////////////////////////////////
-// Object pool macros
-
-// define this if you want everything to run slower
-//#define CRAG_CORE_OBJECT_POOL_DIAGNOSTICS
-
-// fixed-size pool allocation;
-// placed with class member definitions
-// and add DECLARE_ALLOCATOR to the class definition
-#define DEFINE_POOL_ALLOCATOR(TYPE, MIN_OBJECTS) \
-	static core::object_pool<TYPE> pool(MIN_OBJECTS); \
-	void * TYPE::operator new(size_t sz) noexcept \
-	{ \
-		if (sz != sizeof(TYPE)) \
-		{ \
-			DEBUG_BREAK("allocator for object of type " #TYPE " and size " SIZE_T_FORMAT_SPEC "B asked to allocate " SIZE_T_FORMAT_SPEC "B.", sizeof(TYPE), sz); \
-		} \
-		void * ptr = pool.allocate(); \
-		if (ptr == nullptr) \
-		{ \
-			DEBUG_BREAK("failed to allocate object of type " #TYPE); \
-		} \
-		return ptr; \
-	} \
-	void * TYPE::operator new [] (size_t) noexcept \
-	{ \
-		DEBUG_BREAK("not supported"); \
-		return nullptr; \
-	} \
-	void TYPE::operator delete(void * p) noexcept \
-	{ \
-		pool.free(p); \
-	} \
-	void TYPE::operator delete [](void *) noexcept \
-	{ \
-		DEBUG_BREAK("not supported"); \
-	}
-
 namespace core
 {
 	// A simple memory allocation pool which allocates/deallocates very quickly

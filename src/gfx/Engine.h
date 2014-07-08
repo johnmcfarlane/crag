@@ -80,8 +80,8 @@ namespace gfx
 		
 		// message interface
 		void OnQuit();
-		virtual void OnAddObject(Object & object) override final;
-		virtual void OnRemoveObject(Object & object) override final;
+		void OnAddObject(ObjectSharedPtr const & object) final;
+		void OnRemoveObject(ObjectSharedPtr const & object) final;
 		void OnSetParent(Uid child_uid, Uid parent_uid);
 		void OnSetParent(Object & child, Uid parent_uid);
 		void OnSetParent(Object & child, Object & parent);

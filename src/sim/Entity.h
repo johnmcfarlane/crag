@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ipc/Object.h"
+#include "ipc/ObjectBase.h"
 
 #include "defs.h"
 
@@ -29,12 +29,12 @@ namespace sim
 	class Controller;
 
 	// A thing that exist in the simulation.
-	class Entity : public ipc::Object<Entity, sim::Engine>
+	class Entity : public ipc::ObjectBase<Entity, sim::Engine>
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef ipc::Object<Entity, sim::Engine> super;
+		typedef ipc::ObjectBase<Entity, sim::Engine> super;
 	public:
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace sim
 
 		DECLARE_ALLOCATOR(Entity);
 
-		Entity(Init const & init);
+		Entity(Engine & engine);
 		~Entity();
 		
 		// general callbacks

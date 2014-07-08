@@ -345,13 +345,18 @@
     <ClCompile Include="..\..\src\form\Mesh.cpp" />
     <ClCompile Include="..\..\src\form\Node.cpp" />
     <ClCompile Include="..\..\src\form\NodeBuffer.cpp" />
+    <ClCompile Include="..\..\src\form\Object.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene0</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\form\Point.cpp" />
     <ClCompile Include="..\..\src\form\PointBuffer.cpp" />
     <ClCompile Include="..\..\src\form\Polyhedron.cpp" />
     <ClCompile Include="..\..\src\form\QuaternaBuffer.cpp" />
     <ClCompile Include="..\..\src\form\RayCastResult.cpp" />
     <ClCompile Include="..\..\src\form\Scene.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene1</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene3</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene3</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\form\Surrounding.cpp" />
     <ClCompile Include="..\..\src\gfx\Debug.cpp">
@@ -370,7 +375,10 @@
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Light.cpp" />
     <ClCompile Include="..\..\src\gfx\object\MeshObject.cpp" />
-    <ClCompile Include="..\..\src\gfx\object\Object.cpp" />
+    <ClCompile Include="..\..\src\gfx\object\Object.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene1</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene1</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Skybox.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Surrounding.cpp">
@@ -384,8 +392,8 @@
     <ClCompile Include="..\..\src\gfx\RegisterResources.cpp" />
     <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\Scene.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene0</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene0</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene2</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene2</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\gfx\Shader.cpp" />
     <ClCompile Include="..\..\src\gfx\Texture.cpp" />

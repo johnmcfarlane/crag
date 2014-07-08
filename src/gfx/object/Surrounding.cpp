@@ -41,8 +41,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Surrounding member definitions
 
-Surrounding::Surrounding(Init const & init)
-: Object(init, Transformation::Matrix44::Identity(), Layer::opaque, false)
+Surrounding::Surrounding(Engine & engine)
+: Object(engine, Transformation::Matrix44::Identity(), Layer::opaque, false)
 {
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");

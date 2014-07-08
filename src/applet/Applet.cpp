@@ -33,8 +33,8 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // applet::Applet member definitions
 
-Applet::Applet(Init const & init, char const * name, std::size_t stack_size, LaunchFunction const & function)
-: super(init)
+Applet::Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function)
+: super(engine)
 , _fiber(name, stack_size, static_cast<void *>(this), & OnLaunch)
 , _function(function)
 , _condition(null_condition)
@@ -47,6 +47,11 @@ Applet::~Applet()
 {
 	ASSERT(! _fiber.IsRunning());
 	ASSERT(_quit_flag);
+}
+
+Engine & Applet::GetEngine() const
+{
+	return super::GetEngine();
 }
 
 char const * Applet::GetName() const
@@ -104,11 +109,6 @@ void Applet::WaitFor(Condition & condition)
 	_fiber.Yield();
 	
 	_condition = null_condition;
-}
-
-Engine & Applet::GetEngine()
-{
-	return super::GetEngine();
 }
 
 void Applet::OnLaunch(void * data)

@@ -169,7 +169,7 @@ void CameraController::Update()
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
-	const auto & engine = GetEntity().GetEngine();
+	auto & engine = GetEntity().GetEngine();
 	auto subject = engine.GetObject(_subject.GetUid());
 	if (! subject)
 	{

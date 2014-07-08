@@ -57,7 +57,7 @@
 namespace core
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// static_cast
+	// StaticCast
 
 	// performs a compile-time cast from type, From, to type, To;
 	// in debug builds, performs a run-time test that cast is valid;

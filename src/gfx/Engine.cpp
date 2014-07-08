@@ -197,27 +197,6 @@ namespace
 		RenderRange depth_range = { .1f, 10.f };
 		return CalcProjectionMatrix(scene, depth_range);
 	}
-	
-	// Given a scene and the uid of a branc_node in that scene
-	// (or Uid() for the scene's root node),
-	// returns a reference to that branch node.
-	Object * GetParent(Engine & engine, Uid parent_uid)
-	{
-		if (parent_uid)
-		{
-			auto * parent = engine.GetObject(parent_uid);
-
-			if (parent != nullptr)
-			{
-				return parent;
-			}
-
-			DEBUG_BREAK("missing object");
-		}
-
-		auto & scene = engine.GetScene();
-		return & scene.GetRoot();
-	}
 
 }	// namespace
 
@@ -238,7 +217,7 @@ Engine::StateParam const Engine::init_state[] =
 };
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
-	CRAG_VERIFY(static_cast<super const &>(self));
+	CRAG_VERIFY(core::StaticCast<super const>(self));
 	CRAG_VERIFY(self.scene);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
@@ -350,17 +329,18 @@ void Engine::OnQuit()
 	quit_flag = true;
 }
 
-void Engine::OnAddObject(Object & object)
+void Engine::OnAddObject(ObjectSharedPtr const & object_ptr)
 {
 	ASSERT(scene != nullptr);
 
-	// success!
+	auto & object = * object_ptr;
 	scene->AddObject(object);
 	OnSetParent(object, Uid());
 }
 
-void Engine::OnRemoveObject(Object & object)
+void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 {
+	auto & object = * object_ptr;
 	auto & children = object.GetChildren();
 	while (! children.empty())
 	{
@@ -374,25 +354,35 @@ void Engine::OnRemoveObject(Object & object)
 
 void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 {
-	auto * child = GetObject(child_uid);
-	if (child == nullptr)
+	ASSERT(child_uid);
+	
+	auto const & child = GetObject(child_uid);
+	if (! child)
 	{
 		return;
 	}
 	
-	OnSetParent(ref(child), parent_uid);
+	OnSetParent(* child, parent_uid);
 }
 
 void Engine::OnSetParent(Object & child, Uid parent_uid)
 {
-	auto * parent = GetParent(* this, parent_uid);
-	if (parent == nullptr)
+	auto & parent = [&] () -> Object &
 	{
-		DEBUG_BREAK("Given parent, " SIZE_T_FORMAT_SPEC ", not found", std::hash<Uid>()(parent_uid));
-		return;
-	}
+		if (parent_uid)
+		{
+			auto & object = GetObject(parent_uid);
+		
+			if (object)
+			{
+				return * object;
+			}
+		}
+		
+		return scene->GetRoot();
+	} ();
 	
-	OnSetParent(child, * parent);
+	OnSetParent(child, parent);
 }
 
 void Engine::OnSetParent(Object & child, Object & parent)
@@ -464,7 +454,7 @@ void Engine::SetPaused(bool paused)
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	auto & children = scene->GetRoot().GetChildren();
+	auto const & children = scene->GetRoot().GetChildren();
 	while (! quit_flag || ! children.empty())
 	{
 		CRAG_VERIFY(* scene);
@@ -631,7 +621,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (children.empty())
+		if (children.empty() && & object != & scene->GetRoot())
 		{
 			// destroy it
 			DestroyObject(object.GetUid());

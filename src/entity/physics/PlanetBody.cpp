@@ -24,7 +24,7 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
 
-DEFINE_POOL_ALLOCATOR(PlanetBody, 3);
+DEFINE_POOL_ALLOCATOR(PlanetBody);
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)

@@ -127,3 +127,5 @@ void FreePage(void * allocation, size_t num_bytes);
 		::Free(p); \
 	}
 
+// TODO: Write a good pool allocator
+#define DEFINE_POOL_ALLOCATOR DEFINE_DEFAULT_ALLOCATOR

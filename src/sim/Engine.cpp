@@ -80,7 +80,7 @@ void Engine::OnQuit()
 }
 
 // TODO: Really need this?
-void Engine::OnAddObject(Entity &)
+void Engine::OnAddObject(ObjectSharedPtr const &)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the gfx::Engine is in an incomplete state.
@@ -97,19 +97,11 @@ void Engine::OnAddObject(Entity &)
 
 void Engine::AddFormation(form::Formation& formation)
 {
-	form::Daemon::Call([& formation] (form::Engine & engine) {
-		engine.OnAddFormation(formation);
-	});
-
 	_collision_scene.AddFormation(formation, GetOrigin());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
 {
-	form::Daemon::Call([& formation] (form::Engine & engine) {
-		engine.OnRemoveFormation(formation);
-	});
-
 	_collision_scene.RemoveFormation(formation);
 }
 

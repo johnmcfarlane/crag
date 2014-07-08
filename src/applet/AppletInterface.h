@@ -24,6 +24,8 @@ namespace applet
 		// functions
 		virtual ~AppletInterface() { }
 		
+		virtual Engine & GetEngine() const = 0;
+
 		virtual char const * GetName() const = 0;
 		
 		// applet thread quit flag get/setter
@@ -59,8 +61,5 @@ namespace applet
 
 		template <typename FUNCTION_TYPE>
 		void Launch(char const * name, std::size_t stack_size, FUNCTION_TYPE const & function);
-
-	private:
-		virtual Engine & GetEngine() = 0;
 	};
 }

@@ -227,7 +227,7 @@ namespace ipc
 			auto base = engine.GetObject(uid);
 			if (base != nullptr)
 			{
-				auto& derived = static_cast<Type &>(* base);
+				auto& derived = core::StaticCast<Type>(* base);
 				function(derived);
 			}
 		});
@@ -244,7 +244,7 @@ namespace ipc
 		auto uid = _uid;
 		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
 			auto base = engine.GetObject(uid);
-			auto derived = static_cast<Type *>(base);
+			auto derived = core::StaticCast<Type>(base);
 			function(derived);
 		});
 	}
@@ -268,7 +268,7 @@ namespace ipc
 				return;
 			}
 			
-			auto & derived = static_cast<Type &>(* base);
+			auto & derived = core::StaticCast<Type &>(* base);
 			future.OnSuccess(function(derived));
 		});
 	}

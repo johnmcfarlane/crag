@@ -36,10 +36,8 @@ namespace form
 	////////////////////////////////////////////////////////////////////////////////
 	// forward declarations
 	
-	class Formation;
+	class Object;
 	class Mesh;
-	
-	typedef std::set<Formation *> FormationSet;
 	
 	// form::Daemon type
 	class Engine;
@@ -51,7 +49,7 @@ namespace form
 	
 	// The top-most formation management class.
 	class Engine 
-	: public ipc::EngineBase<Engine, Formation>
+	: public ipc::EngineBase<Engine, Object>
 	, private ipc::Listener<Engine, gfx::SetOriginEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
@@ -60,7 +58,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 
-		typedef ipc::EngineBase<Engine, Formation> super;
+		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
 		typedef ipc::Listener<Engine, gfx::SetLodParametersEvent> SetLodParametersListener;
 
@@ -106,7 +104,6 @@ namespace form
 		// variables
 		
 		gfx::SurroundingHandle _mesh;
-		FormationSet _formations;
 		
 		bool quit_flag;
 		bool suspend_flag;

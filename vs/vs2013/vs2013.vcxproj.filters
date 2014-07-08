@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
+    <ClCompile Include="..\..\src\form\Object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />

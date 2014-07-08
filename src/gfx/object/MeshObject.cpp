@@ -21,13 +21,13 @@
 
 using namespace gfx;
 
-DEFINE_POOL_ALLOCATOR(MeshObject, 100);
+DEFINE_POOL_ALLOCATOR(MeshObject);
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::MeshObject member definitions
 
-MeshObject::MeshObject(Init const & init, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh)
-: Object(init, local_transformation, Layer::opaque, true)
+MeshObject::MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh)
+: Object(engine, local_transformation, Layer::opaque, true)
 , _color(color)
 , _scale(scale)
 , _bounding_radius(GetBoundingRadius(* plain_mesh, scale))

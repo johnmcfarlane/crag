@@ -24,10 +24,19 @@ namespace form
 	// It contains all the data necessary to create a positioned polyhedron.
 	class Formation
 	{
-		OBJECT_NO_COPY(Formation);
 	public:
-		Formation(int seed, Shader const & shader, geom::abs::Sphere3 const & shape);
-		~Formation();
+		////////////////////////////////////////////////////////////////////////////////
+		// types
+		
+		using ShaderPtr = std::shared_ptr<Shader const>;
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// functions
+		
+		Formation(Formation const & rhs) = default;
+		Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 const & shape);
+
+		Formation & operator=(Formation const & rhs) = default;
 
 		Shader const & GetShader() const;
 		geom::abs::Sphere3 const & GetShape() const;	// global coordinate
@@ -38,7 +47,7 @@ namespace form
 
 	private:
 		int _seed;
-		Shader const & _shader;
+		ShaderPtr _shader;
 		geom::abs::Sphere3 _shape;
 		geom::abs::Scalar _radius_min;
 		geom::abs::Scalar _radius_max;

@@ -48,6 +48,7 @@ add_executable(crag
 	form/Mesh.cpp
 	form/NodeBuffer.cpp
 	form/Node.cpp
+	form/Object.cpp
 	form/Point.cpp
 	form/PointBuffer.cpp
 	form/Polyhedron.cpp

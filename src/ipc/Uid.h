@@ -42,6 +42,13 @@ namespace ipc
 		// create a new unique object
 		static Uid Create();
 		
+#if ! defined(NDEBUG)
+		ValueType GetValue() const
+		{
+			return _value;
+		}
+#endif
+		
 	private:
 		// variables
 		ValueType _value;

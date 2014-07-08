@@ -27,7 +27,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(Ball);
 
-		Ball(Init const & init, Transformation const & local_transformation, float radius, Color4f const & color);
+		Ball(Engine & engine, Transformation const & local_transformation, float radius, Color4f const & color);
 
 	private:
 		void UpdateModelViewTransformation(Transformation const & model_view_transformation) override;
