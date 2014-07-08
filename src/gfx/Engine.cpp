@@ -197,27 +197,6 @@ namespace
 		RenderRange depth_range = { .1f, 10.f };
 		return CalcProjectionMatrix(scene, depth_range);
 	}
-	
-	// Given a scene and the uid of a branc_node in that scene
-	// (or Uid() for the scene's root node),
-	// returns a reference to that branch node.
-	Object * GetParent(Engine & engine, Uid parent_uid)
-	{
-		if (parent_uid)
-		{
-			auto const & parent = engine.GetObject(parent_uid);
-
-			if (parent != nullptr)
-			{
-				return parent.get();
-			}
-
-			DEBUG_BREAK("missing object");
-		}
-
-		auto & scene = engine.GetScene();
-		return & scene.GetRoot();
-	}
 
 }	// namespace
 
@@ -386,14 +365,22 @@ void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 
 void Engine::OnSetParent(Object & child, Uid parent_uid)
 {
-	auto * parent = GetParent(* this, parent_uid);
-	if (parent == nullptr)
+	auto & parent = [&] () -> Object &
 	{
-		DEBUG_BREAK("Given parent, " SIZE_T_FORMAT_SPEC ", not found", std::hash<Uid>()(parent_uid));
-		return;
-	}
+		if (parent_uid)
+		{
+			auto & object = GetObject(parent_uid);
+		
+			if (object)
+			{
+				return * object;
+			}
+		}
+		
+		return scene->GetRoot();
+	} ();
 	
-	OnSetParent(child, * parent);
+	OnSetParent(child, parent);
 }
 
 void Engine::OnSetParent(Object & child, Object & parent)
