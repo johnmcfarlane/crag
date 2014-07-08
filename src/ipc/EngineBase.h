@@ -76,25 +76,12 @@ namespace ipc
 		}
 
 		// object management
-		template <typename Type = ObjectType>
-		SharedPtr<Type> GetObject(Uid uid)
+		ObjectSharedPtr const & GetObject(Uid uid)
 		{
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
-				return ObjectSharedPtr();
-			}
-
-			return found->second;
-		}
-
-		template <typename Type = ObjectType>
-		SharedConstPtr<Type> GetObject(Uid uid) const
-		{
-			auto found = _objects.find(uid);
-			if (found == _objects.end())
-			{
-				return ObjectSharedConstPtr();
+				return _null_ptr;
 			}
 
 			return found->second;
@@ -256,5 +243,16 @@ namespace ipc
 
 	private:
 		ObjectMap _objects;
+		
+		static ObjectSharedPtr const _null_ptr;
+		static ObjectSharedConstPtr const _null_const_ptr;
 	};
+
+	template <typename ENGINE, typename OBJECT>
+	typename EngineBase<ENGINE, OBJECT>::ObjectSharedPtr const 
+	EngineBase<ENGINE, OBJECT>::_null_ptr;
+
+	template <typename ENGINE, typename OBJECT>
+	typename EngineBase<ENGINE, OBJECT>::ObjectSharedConstPtr const 
+	EngineBase<ENGINE, OBJECT>::_null_const_ptr;
 }
