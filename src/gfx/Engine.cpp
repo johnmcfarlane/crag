@@ -354,6 +354,8 @@ void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 
 void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 {
+	ASSERT(child_uid);
+	
 	auto const & child = GetObject(child_uid);
 	if (! child)
 	{
@@ -452,7 +454,7 @@ void Engine::SetPaused(bool paused)
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	auto & children = scene->GetRoot().GetChildren();
+	auto const & children = scene->GetRoot().GetChildren();
 	while (! quit_flag || ! children.empty())
 	{
 		CRAG_VERIFY(* scene);
