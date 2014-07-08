@@ -81,7 +81,7 @@ namespace sim
 		// message interface
 		void OnQuit();
 		
-		virtual void OnAddObject(super::Object & entity) override final;
+		void OnAddObject(ObjectSharedPtr const & entity) final;
 		
 		void AddFormation(form::Formation& formation);
 		void RemoveFormation(form::Formation& formation);

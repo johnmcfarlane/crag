@@ -80,7 +80,7 @@ void Engine::OnQuit()
 }
 
 // TODO: Really need this?
-void Engine::OnAddObject(Entity &)
+void Engine::OnAddObject(ObjectSharedPtr const &)
 {
 	// Until the UpdateModels call is complete, 
 	// the data sent to the gfx::Engine is in an incomplete state.

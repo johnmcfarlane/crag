@@ -23,12 +23,36 @@ namespace ipc
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// types
+		
+		// parameter types
+		using EngineType = ENGINE;
+		using ObjectType = OBJECT;
+		
+		// the base class for objects stored in this engine
+		using ObjectBaseType = ipc::ObjectBase<ObjectType, EngineType>;
 
-		typedef ENGINE Engine;
-		typedef OBJECT Object;
-		typedef ipc::ObjectBase<Object, ENGINE> ObjectBase;
-		typedef std::unordered_map<Uid, ObjectBase *> ObjectMap;
-		typedef typename ObjectMap::iterator Iterator;
+		// smart pointer
+		template <typename Type>
+		using SharedPtr = std::shared_ptr<Type>;
+
+		template <typename Type>
+		using SharedConstPtr = std::shared_ptr<Type const>;
+
+		template <typename Type>
+		using WeakPtr = std::weak_ptr<Type>;
+
+		template <typename Type>
+		using WeakConstPtr = std::weak_ptr<Type const>;
+
+		using ObjectSharedPtr = SharedPtr<ObjectType>;
+		using ObjectSharedConstPtr = SharedConstPtr<ObjectType const>;
+		using ObjectWeakPtr = WeakPtr<ObjectType>;
+		using ObjectWeakConstPtr = WeakConstPtr<ObjectType const>;
+		
+		// object storage types
+		using MapPtr = ObjectSharedPtr;
+		using ObjectMap = std::unordered_map<Uid, MapPtr>;
+		using Iterator = typename ObjectMap::iterator;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -52,30 +76,28 @@ namespace ipc
 		}
 
 		// object management
-		Object * GetObject(Uid uid)
+		template <typename Type = ObjectType>
+		SharedPtr<Type> GetObject(Uid uid)
 		{
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
-				return nullptr;
+				return ObjectSharedPtr();
 			}
 
-			ObjectBase & object_base = ref(found->second);
-			Object & object = object_base;
-			return & object;
+			return found->second;
 		}
 
-		Object const * GetObject(Uid uid) const
+		template <typename Type = ObjectType>
+		SharedConstPtr<Type> GetObject(Uid uid) const
 		{
 			auto found = _objects.find(uid);
 			if (found == _objects.end())
 			{
-				return nullptr;
+				return ObjectSharedConstPtr();
 			}
 
-			ObjectBase & object_base = ref(found->second);
-			Object & object = object_base;
-			return & object;
+			return found->second;
 		}
 
 		// for each map pair
@@ -102,16 +124,16 @@ namespace ipc
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f)
 		{
-			ForEachPair([& f] (std::pair<Uid, ObjectBase *> pair) {
-				f(ref(pair.second));
+			ForEachPair([& f] (typename ObjectMap::value_type const & pair) {
+				f(* pair.second);
 			});
 		}
 
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f) const
 		{
-			ForEachPair([& f] (std::pair<Uid, ObjectBase *> pair) {
-				f(ref(pair.second));
+			ForEachPair([& f] (typename ObjectMap::value_type const & pair) {
+				f(* pair.second);
 			});
 		}
 
@@ -133,35 +155,35 @@ namespace ipc
 			}
 		}
 
-		template <typename OBJECT_TYPE>
-		OBJECT_TYPE * CreateObject()
+		template <typename Type>
+		SharedPtr<Type> CreateObject()
 		{
-			return CreateObject<OBJECT_TYPE>(Uid::Create());
+			return CreateObject<Type>(Uid::Create());
 		}
 		
 #if defined(WIN32)
-		template <typename OBJECT_TYPE>
-		OBJECT_TYPE * CreateObject(Uid uid)
+		template <typename Type>
+		SharedPtr<Type> CreateObject(Uid uid)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE(core::StaticCast<Engine>(* this));
+			auto object = std::make_shared<ObjectType>(core::StaticCast<Engine>(* this));
 
-			if (object != nullptr)
+			if (object)
 			{
-				AddObject(uid, * object);
+				AddObject(uid, object);
 			}
 			
 			return object;
 		}
 #endif
 
-		template <typename OBJECT_TYPE, typename ... PARAMETERS>
-		OBJECT_TYPE * CreateObject(Uid uid, PARAMETERS const & ... parameters)
+		template <typename Type, typename ... PARAMETERS>
+		SharedPtr<Type> CreateObject(Uid uid, PARAMETERS const & ... parameters)
 		{
-			OBJECT_TYPE * object = new OBJECT_TYPE(core::StaticCast<Engine>(* this), parameters ...);
+			auto object = std::make_shared<Type>(core::StaticCast<EngineType>(* this), parameters ...);
 
-			if (object != nullptr)
+			if (object)
 			{
-				AddObject(uid, * object);
+				AddObject(uid, object);
 			}
 			
 			return object;
@@ -183,40 +205,49 @@ namespace ipc
 
 		Iterator DestroyObject(Iterator destroyed)
 		{
-			auto object = destroyed->second;
-			OnRemoveObject(* object);
+			auto const & object = destroyed->second;
+			OnRemoveObject(object);
 			auto next = _objects.erase(destroyed);
-			delete object;
 
 			return next;
 		}
 
 	private:
-		virtual void OnAddObject(Object &) { }
-		virtual void OnRemoveObject(Object &) { }
+		virtual void OnAddObject(ObjectSharedPtr const &) { }
+		virtual void OnRemoveObject(ObjectSharedPtr const &) { }
 
-		void AddObject(Uid uid, Object & object)
+		template <typename Type>
+		void AddObject(Uid uid, SharedPtr<Type> & object)
 		{
+			// UID must be initialized and absent from the Engint's map
 			CRAG_VERIFY_TRUE(uid);
 			ASSERT(! GetObject(uid));
 
+			// object must be valid and unassigned
 			CRAG_VERIFY(object);
-			CRAG_VERIFY_TRUE(! object.GetUid());
+			CRAG_VERIFY_TRUE(! object->GetUid());
 
-			object.SetUid(uid);
+			// assign the UID to the object
+			object->SetUid(uid);
 
-			_objects[uid] = & object;
-			OnAddObject(object);
+			// cast to the map storage type (in case Type is a derived type)
+			auto _object = std::static_pointer_cast<ObjectType>(object);
+			
+			// store it
+			_objects[uid] = _object;
+			
+			// invoke callback in case Engine needs to react to the addition
+			OnAddObject(_object);
 		}
 		
 	public:
 
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(EngineBase, self)
-			self.ForEachPair([& self] (std::pair<Uid, ObjectBase *> const & pair) {
-				ObjectBase const & object_base = ref(pair.second);
-				CRAG_VERIFY_EQUAL(pair.first, object_base.GetUid());
-				CRAG_VERIFY_EQUAL(& self, & object_base.GetEngine());
-				CRAG_VERIFY(object_base);
+			self.ForEachPair([& self] (typename ObjectMap::value_type const & pair) {
+				auto const & object = * pair.second;
+				CRAG_VERIFY_EQUAL(pair.first, object.GetUid());
+				CRAG_VERIFY_EQUAL(& self, & object.GetEngine());
+				CRAG_VERIFY(object);
 			});
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 

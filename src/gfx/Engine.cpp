@@ -205,11 +205,11 @@ namespace
 	{
 		if (parent_uid)
 		{
-			auto * parent = engine.GetObject(parent_uid);
+			auto const & parent = engine.GetObject(parent_uid);
 
 			if (parent != nullptr)
 			{
-				return parent;
+				return parent.get();
 			}
 
 			DEBUG_BREAK("missing object");
@@ -238,7 +238,7 @@ Engine::StateParam const Engine::init_state[] =
 };
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
-	CRAG_VERIFY(static_cast<super const &>(self));
+	CRAG_VERIFY(core::StaticCast<super const>(self));
 	CRAG_VERIFY(self.scene);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
@@ -350,17 +350,18 @@ void Engine::OnQuit()
 	quit_flag = true;
 }
 
-void Engine::OnAddObject(Object & object)
+void Engine::OnAddObject(ObjectSharedPtr const & object_ptr)
 {
 	ASSERT(scene != nullptr);
 
-	// success!
+	auto & object = * object_ptr;
 	scene->AddObject(object);
 	OnSetParent(object, Uid());
 }
 
-void Engine::OnRemoveObject(Object & object)
+void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 {
+	auto & object = * object_ptr;
 	auto & children = object.GetChildren();
 	while (! children.empty())
 	{
@@ -374,13 +375,13 @@ void Engine::OnRemoveObject(Object & object)
 
 void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
 {
-	auto * child = GetObject(child_uid);
-	if (child == nullptr)
+	auto const & child = GetObject(child_uid);
+	if (! child)
 	{
 		return;
 	}
 	
-	OnSetParent(ref(child), parent_uid);
+	OnSetParent(* child, parent_uid);
 }
 
 void Engine::OnSetParent(Object & child, Uid parent_uid)

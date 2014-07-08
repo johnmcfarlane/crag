@@ -12,8 +12,7 @@
 
 #include "Engine.h"
 
-#include "Formation.h"
-
+#include "Object.h"
 #include "Surrounding.h"
 
 #include "gfx/axes.h"
