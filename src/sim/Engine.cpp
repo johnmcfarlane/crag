@@ -33,9 +33,7 @@ CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
 
 namespace
 {
-	CONFIG_DEFINE (apply_gravity, bool, true);
-
-	// TODO: This could cause the Observer to be destroyed
+	CONFIG_DEFINE(apply_gravity, bool, true);
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
 	STAT_DEFAULT(sim_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
