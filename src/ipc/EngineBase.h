@@ -244,6 +244,7 @@ namespace ipc
 				CRAG_VERIFY_EQUAL(pair.first, object.GetHandle());
 				CRAG_VERIFY_EQUAL(& self, & object.GetEngine());
 				CRAG_VERIFY(object);
+				CRAG_VERIFY_TRUE(object.GetHandle());
 			});
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 
