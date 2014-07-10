@@ -69,10 +69,6 @@ namespace std
 	template <>
 	struct hash <ipc::Uid>
 	{
-		size_t operator() (ipc::Uid uid) const
-		{
-			ASSERT(uid);
-			return uid._value;
-		}
+		size_t operator() (ipc::Uid uid) const;
 	};
 }
