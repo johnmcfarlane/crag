@@ -238,3 +238,15 @@ namespace ipc
 		});
 	}
 }
+
+namespace std
+{
+	template <typename TYPE>
+	struct hash <ipc::Handle<TYPE>>
+	{
+		size_t operator() (ipc::Handle<TYPE> handle) const
+		{
+			return hash <ipc::Uid> () (handle._uid);
+		}
+	};
+}
