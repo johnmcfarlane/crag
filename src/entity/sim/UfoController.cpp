@@ -67,7 +67,7 @@ UfoController::~UfoController()
 	// remove ball
 	if (_ball_entity)
 	{
-		engine.DestroyObject(_ball_entity.GetUid());
+		engine.ReleaseObject(_ball_entity);
 	}
 }
 

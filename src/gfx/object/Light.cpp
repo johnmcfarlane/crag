@@ -38,7 +38,7 @@ Light::Light(
 {
 	if (exception)
 	{
-		auto exception_object = engine.GetObject(exception.GetUid());
+		auto exception_object = engine.GetObject(exception);
 		ASSERT(exception_object);
 		
 		if (exception_object)

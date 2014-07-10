@@ -294,28 +294,20 @@ void Engine::UpdateRenderer() const
 // Perform a step in the simulation. 
 void Engine::PurgeEntities()
 {
-	std::vector<Entity *> to_delete;
-
-	ForEachObject([& to_delete] (Entity & entity) {
+	ForEachObject_ReleaseIf([] (Entity & entity) {
 		physics::Location const * location = entity.GetLocation();
 		if (location == nullptr)
 		{
-			return;
+			return false;
 		}
 		
 		Vector3 position = location->GetTranslation();
 		if (Length(position) < purge_distance)
 		{
-			return;
+			return false;
 		}
 		
 		DEBUG_MESSAGE("Removing entity with bad position, %f,%f,%f", position.x, position.y, position.z);
-
-		to_delete.push_back(& entity);
+		return true;
 	});
-
-	for (auto entity : to_delete)
-	{
-		DestroyObject(entity->GetUid());
-	}
 }

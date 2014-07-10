@@ -17,56 +17,11 @@ namespace ipc
 	// Handle member definitions
 	
 	template <typename TYPE>
-	Handle<TYPE>::Handle()
-	{
-	}
-	
-	template <typename TYPE>
-	Handle<TYPE>::Handle(Uid uid)
-	: _uid(uid)
-	{
-	}
-	
-	template <typename TYPE>
-	Handle<TYPE>::Handle(Type & object)
-	: _uid(object.GetUid())
-	{
-	}
-	
-	template <typename TYPE>
 	template <typename BASE_TYPE>
-	Handle<TYPE>::operator Handle<BASE_TYPE> & ()
+	Handle<TYPE>::operator Handle<BASE_TYPE> () const
 	{
 		static_assert(std::is_base_of<BASE_TYPE, TYPE>::value, "invalid cast");
-		return reinterpret_cast<Handle <BASE_TYPE> &>(* this);
-	}
-	
-	template <typename TYPE>
-	template <typename BASE_TYPE>
-	Handle<TYPE>::operator Handle<BASE_TYPE> const & () const
-	{
-		static_assert(std::is_base_of<BASE_TYPE, TYPE>::value, "invalid cast");
-		return reinterpret_cast<Handle <BASE_TYPE> const &>(* this);
-	}
-	
-	template <typename TYPE>
-	Handle<TYPE>::operator bool () const
-	{
-		return _uid;
-	}
-	
-	// Returns the UID of the entity being handled.
-	template <typename TYPE>
-	Uid Handle<TYPE>::GetUid() const
-	{
-		return _uid;
-	}
-	
-	// Sets the UID of the entity being handled.
-	template <typename TYPE>
-	void Handle<TYPE>::SetUid(Uid uid)
-	{
-		_uid = uid;
+		return Handle <BASE_TYPE>(_uid);
 	}
 	
 #if defined(WIN32)
@@ -93,141 +48,151 @@ namespace ipc
 	template <typename TYPE>
 	void Handle<TYPE>::Create()
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid] (Engine & engine) {
-			engine.template CreateObject<Type>(uid);
+			engine.template CreateObject<ObjectType>(uid);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 
 	template <typename TYPE>
 	template <typename PARAMETER1>
 	void Handle<TYPE>::Create(PARAMETER1 parameter1)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1>(uid, parameter1);
+			engine.template CreateObject<ObjectType, PARAMETER1>(uid, parameter1);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2>
 	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1, parameter2] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
 	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
 	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(uid, parameter1, parameter2, parameter3, parameter4);
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(uid, parameter1, parameter2, parameter3, parameter4);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
 	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
+		Release();
 		Uid uid = Uid::Create();
 		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 #else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
 	void Handle<TYPE>::Create(PARAMETERS ... parameters)
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 
-		Destroy();
-		Uid uid = Uid::Create();
+		Release();
+		Uid uid(Uid::Create());
 		Daemon::Call([uid, parameters ...] (Engine & engine) {
-			engine.template CreateObject<Type, PARAMETERS ...>(uid, parameters ...);
+			engine.template CreateObject<ObjectType, PARAMETERS ...>(Handle(uid), parameters ...);
 		});
-		SetUid(uid);
+
+		_uid = uid;
 	}
 #endif
 	
-	// Tells simulation to destroy the object.
+	// Tells simulation to release the object.
 	template <typename TYPE>
-	void Handle<TYPE>::Destroy()
+	void Handle<TYPE>::Release()
 	{
-		typedef typename Type::Daemon Daemon;
-		typedef typename Type::Engine Engine;
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
 		
-		// If not already destroyed,
+		// If not already released,
 		if (_uid)
 		{
 			// set message.
 			Uid uid = _uid;
 			Daemon::Call([uid] (Engine & engine) {
-				engine.DestroyObject(uid);
+				engine.ReleaseObject(Handle(uid));
 			});
 			_uid = Uid();
 		}
 	}
-	
+
 	// calls the given function with a reference to the handle's object
 	// (unless the handle is not valid when call is put through) 
 	template <typename TYPE>
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(FUNCTION_TYPE function) const
 	{
+		using Daemon = typename ObjectType::DaemonType;
+		using Engine = typename ObjectType::EngineType;
+		
 		ASSERT(_uid);
 
-		auto uid = _uid;
-		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
-			auto base = engine.GetObject(uid);
+		auto handle = * this;
+		Daemon::Call([function, handle] (Engine & engine) {
+			auto base = engine.GetObject(handle);
 			if (base != nullptr)
 			{
-				auto& derived = core::StaticCast<Type>(* base);
+				auto& derived = core::StaticCast<ObjectType>(* base);
 				function(derived);
 			}
 		});
@@ -242,9 +207,9 @@ namespace ipc
 		ASSERT(_uid);
 
 		auto uid = _uid;
-		Type::Daemon::Call([function, uid] (typename Type::Engine & engine) {
+		ObjectType::Daemon::Call([function, uid] (typename ObjectType::Engine & engine) {
 			auto base = engine.GetObject(uid);
-			auto derived = core::StaticCast<Type>(base);
+			auto derived = core::StaticCast<ObjectType>(base);
 			function(derived);
 		});
 	}
@@ -259,7 +224,7 @@ namespace ipc
 		ASSERT(future.IsPendind());
 		
 		auto uid = _uid;
-		Type::Daemon::Call([& future, function, uid] (typename Type::Engine & engine) {
+		ObjectType::Daemon::Call([& future, function, uid] (typename ObjectType::Engine & engine) {
 			ASSERT(future.IsPendind());
 			
 			auto base = engine.GetObject(uid);
@@ -268,29 +233,8 @@ namespace ipc
 				return;
 			}
 			
-			auto & derived = core::StaticCast<Type &>(* base);
+			auto & derived = core::StaticCast<ObjectType &>(* base);
 			future.OnSuccess(function(derived));
 		});
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// Handle helpers
-	
-	template <typename TYPE>
-	bool operator==(Handle<TYPE> const & lhs, Handle<TYPE> const & rhs)
-	{
-		return lhs.GetUid() == rhs.GetUid();
-	}
-	
-	template <typename TYPE>
-	bool operator!=(Handle<TYPE> const & lhs, Handle<TYPE> const & rhs)
-	{
-		return lhs.GetUid() != rhs.GetUid();
-	}
-	
-	template <typename TYPE>
-	bool operator<(Handle<TYPE> const & lhs, Handle<TYPE> const & rhs)
-	{
-		return lhs.GetUid() < rhs.GetUid();
 	}
 }

@@ -170,7 +170,7 @@ void CameraController::Update()
 	auto camera_translation = camera_transformation.GetTranslation();
 
 	auto & engine = GetEntity().GetEngine();
-	auto subject = engine.GetObject(_subject.GetUid());
+	auto subject = engine.GetObject(_subject);
 	if (! subject)
 	{
 		DEBUG_BREAK("camera has no subject");

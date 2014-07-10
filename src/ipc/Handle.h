@@ -24,42 +24,54 @@ namespace ipc
 	// forward-declaration
 	template <typename RESULT_TYPE>
 	class Future;
-
+	
 	// A handle to an object on a different thread
 	// which is of (or derived from) type, TYPE.
 	template <typename TYPE>
 	class Handle
 	{
+		friend struct std::hash<Handle>;
+
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef TYPE Type;
-
+		using ObjectType = TYPE;
+		
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Handle();
-		Handle(Uid uid);
-		Handle(Type & object);
+		Handle() = default;
+		
+		Handle(Uid uid)
+		: _uid(uid)
+		{
+		}
+		
+		friend bool operator == (Handle const & lhs, Handle const & rhs)
+		{
+			return lhs._uid == rhs._uid;
+		}
+		
+		friend bool operator != (Handle const & lhs, Handle const & rhs)
+		{
+			return lhs._uid != rhs._uid;
+		}
+		
+		friend bool operator < (Handle const & lhs, Handle const & rhs)
+		{
+			return lhs._uid < rhs._uid;
+		}
 		
 		// static cast to base types
 		template <typename BASE_TYPE> 
-		operator Handle<BASE_TYPE> & ();
-		
-		template <typename BASE_TYPE> 
-		operator Handle<BASE_TYPE> const & () const;
+		operator Handle<BASE_TYPE> () const;
 
 		// true iff handle points to an object
-		operator bool () const;
-		
-		// Returns the UID of the entity being handled.
-		// TODO: Should be able to remove this.
-		// TODO: Eventually give Handle unique_ptr semantics
-		Uid GetUid() const;
-		
-		// Sets the UID of the entity being handled.
-		void SetUid(Uid uid);
+		operator bool () const
+		{
+			return _uid;
+		}
 		
 #if defined(WIN32)
 		// creates an object; passes parameters to c'tor;
@@ -95,8 +107,8 @@ namespace ipc
 		void Create(PARAMETERS ... parameters);
 #endif
 		
-		// Tells simulation to destroy the object.
-		void Destroy();
+		// Tells simulation to release the object.
+		void Release();
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// Call - generates a deferred function call to the thread-safe object
@@ -127,5 +139,17 @@ namespace ipc
 		// variables
 		
 		Uid _uid;
+	};
+}
+
+namespace std
+{
+	template <typename TYPE>
+	struct hash <ipc::Handle<TYPE>>
+	{
+		size_t operator() (ipc::Handle<TYPE> handle) const
+		{
+			return hash <ipc::Uid> () (handle._uid);
+		}
 	};
 }

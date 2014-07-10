@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ipc/ObjectBase.h"
+#include "ipc/Handle.h"
 
 #include "gfx/defs.h"
 

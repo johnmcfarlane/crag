@@ -157,7 +157,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	}
 	
 	// un-register with the renderer
-	_mesh.Destroy();
+	_mesh.Release();
 
 	// stop listening for events
 	SetLodParametersListener::SetIsListening(false);

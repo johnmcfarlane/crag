@@ -64,8 +64,8 @@ Thruster::~Thruster()
 {
 	CRAG_VERIFY(* this);
 
-	// destroy model
-	_model.Destroy();
+	// release model
+	_model.Release();
 
 	// unregister draw
 	auto & draw_roster = GetEntity().GetEngine().GetDrawRoster();
@@ -81,17 +81,16 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Thruster, self)
 	CRAG_VERIFY_OP(self._thrust_factor, >=, 0);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Thruster::SetParentModel(gfx::ObjectHandle parent_model)
+void Thruster::SetParentModel(gfx::ObjectHandle parent_handle)
 {
 	if (! _model)
 	{
 		return;
 	}
 
-	auto uid = _model.GetUid();
-	auto parent_uid = parent_model.GetUid();
-	gfx::Daemon::Call([uid, parent_uid] (gfx::Engine & engine) {
-		engine.OnSetParent(uid, parent_uid);
+	auto model_handle = _model;
+	gfx::Daemon::Call([model_handle, parent_handle] (gfx::Engine & engine) {
+		engine.OnSetParent(model_handle, parent_handle);
 	});
 }
 

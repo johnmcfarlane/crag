@@ -345,27 +345,27 @@ void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 	while (! children.empty())
 	{
 		auto & back = children.back();
-		DestroyObject(back.GetUid());
+		ReleaseObject(back);
 	}
 
 	ASSERT(scene != nullptr);
 	scene->RemoveObject(object);
 }
 
-void Engine::OnSetParent(Uid child_uid, Uid parent_uid)
+void Engine::OnSetParent(ObjectHandle child_handle, ObjectHandle parent_handle)
 {
-	ASSERT(child_uid);
+	ASSERT(child_handle);
 	
-	auto const & child = GetObject(child_uid);
+	auto const & child = GetObject(child_handle);
 	if (! child)
 	{
 		return;
 	}
 	
-	OnSetParent(* child, parent_uid);
+	OnSetParent(* child, parent_handle);
 }
 
-void Engine::OnSetParent(Object & child, Uid parent_uid)
+void Engine::OnSetParent(Object & child, ObjectHandle parent_uid)
 {
 	auto & parent = [&] () -> Object &
 	{
@@ -598,7 +598,7 @@ void Engine::PreRender()
 			case Object::ok:
 				break;
 			case Object::remove:
-				DestroyObject(object.GetUid());
+				ReleaseObject(object);
 				break;
 		}
 	}
@@ -623,8 +623,8 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 		// if it's an empty branch,
 		if (children.empty() && & object != & scene->GetRoot())
 		{
-			// destroy it
-			DestroyObject(object.GetUid());
+			// release it
+			ReleaseObject(object);
 			return;
 		}
 	}

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Handle_Impl.h"
+#include "Handle.h"
 
 namespace ipc
 {
@@ -26,11 +26,12 @@ namespace ipc
 	{
 	public:
 		// types
-		using Object = OBJECT;
-		using Engine = ENGINE;
+		using ObjectType = OBJECT;
+		using EngineType = ENGINE;
+		using DaemonType = ::ipc::Daemon<EngineType>;
 		
-		using EngineBase = ipc::EngineBase<Engine, Object>;
-		using Daemon = ::ipc::Daemon<Engine> ;
+		using EngineBase = ipc::EngineBase<EngineType, ObjectType>;
+		using HandleType = Handle<ObjectType>;
 		
 		// friends
 		friend EngineBase;
@@ -38,7 +39,7 @@ namespace ipc
 		// functions
 		OBJECT_NO_COPY(ObjectBase);
 
-		ObjectBase(Engine & engine)
+		ObjectBase(EngineType & engine)
 		: _engine(engine)
 		{
 			CRAG_VERIFY(* this);
@@ -67,9 +68,9 @@ namespace ipc
 			::Free(p);
 		}
 
-		operator Object & ()
+		operator ObjectType & ()
 		{
-			Object & t = core::StaticCast<Object>(* this);
+			ObjectType & t = core::StaticCast<ObjectType>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
@@ -80,9 +81,9 @@ namespace ipc
 			return t;
 		}
 		
-		operator Object const & () const
+		operator ObjectType const & () const
 		{
-			Object const & t = core::StaticCast<Object const>(* this);
+			ObjectType const & t = core::StaticCast<ObjectType const>(* this);
 			
 #if ! defined(NDEBUG)
 			// Check that this cast is valid.
@@ -93,15 +94,14 @@ namespace ipc
 			return t;
 		}
 
-		Engine & GetEngine() const
+		EngineType & GetEngine() const
 		{
 			return _engine;
 		}
 		
-		//  TODO: This should be GetHandle
-		Uid GetUid() const
+		HandleType GetHandle() const
 		{
-			return _uid;
+			return _handle;
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
@@ -111,18 +111,17 @@ namespace ipc
 #endif	// defined(CRAG_VERIFY_ENABLED)
 
 	private:
-		void SetUid(Uid uid)
+		void SetHandle(HandleType handle)
 		{
-			static_assert(std::is_base_of<EngineBase, Engine>::value, "ENGINE isn't correctly derived from ipc::EngineBase");
-			CRAG_VERIFY_TRUE(! _uid);
+			CRAG_VERIFY_TRUE(! _handle);
 			
-			_uid = uid;
+			_handle = handle;
 			
 			CRAG_VERIFY(* this);
 		}
 		
 		// variables
-		Engine & _engine;
-		Uid _uid;
+		EngineType & _engine;
+		HandleType _handle;
 	};
 }

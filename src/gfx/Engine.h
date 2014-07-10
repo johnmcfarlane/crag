@@ -40,6 +40,8 @@ namespace gfx
 	// gfx::Daemon type
 	class Engine;
 	typedef ipc::Daemon<Engine> Daemon;
+
+	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
 	
 	// The graphics Engine class. 
 	// Does all the donkey-work of bullying OpenGL 
@@ -82,8 +84,8 @@ namespace gfx
 		void OnQuit();
 		void OnAddObject(ObjectSharedPtr const & object) final;
 		void OnRemoveObject(ObjectSharedPtr const & object) final;
-		void OnSetParent(Uid child_uid, Uid parent_uid);
-		void OnSetParent(Object & child, Uid parent_uid);
+		void OnSetParent(ObjectHandle child_uid, ObjectHandle parent_uid);
+		void OnSetParent(Object & child, ObjectHandle parent_uid);
 		void OnSetParent(Object & child, Object & parent);
 		void OnSetTime(core::Time time);
 		void OnSetReady(bool ready);

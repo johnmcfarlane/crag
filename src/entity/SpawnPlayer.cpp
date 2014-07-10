@@ -801,7 +801,7 @@ namespace
 				exception_object = model_handle;
 			}
 			
-			ball_entity_handle.SetUid(ball_entity->GetUid());
+			ball_entity_handle = ball_entity->GetHandle();
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -820,10 +820,8 @@ namespace
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
 				exception_object);
-			auto light_uid = light_handle.GetUid();
-			auto model_uid = model_handle.GetUid();
-			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
-				engine.OnSetParent(light_uid, model_uid);
+			gfx::Daemon::Call([light_handle, model_handle] (gfx::Engine & engine) {
+				engine.OnSetParent(light_handle, model_handle);
 			});
 		}
 
