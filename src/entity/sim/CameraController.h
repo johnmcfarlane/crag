@@ -31,7 +31,7 @@ namespace sim
 		typedef Controller _super;
 	public:
 		// functions
-		CameraController(Entity & entity, EntityHandle subject);
+		CameraController(Entity & entity, std::shared_ptr<Entity> const & subject);
 		virtual ~CameraController();
 
 	private:
@@ -51,6 +51,6 @@ namespace sim
 		bool _collidable;
 		core::EventWatcher _event_watcher;
 		physics::RayCast & _ray_cast;
-		EntityHandle _subject;
+		std::shared_ptr<Entity> _subject;
 	};
 }

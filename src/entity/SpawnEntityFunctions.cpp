@@ -40,6 +40,7 @@
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
 
+using namespace std;
 using namespace sim;
 
 namespace gfx 
@@ -121,7 +122,9 @@ namespace
 		ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
 
 		// controller
-		camera.SetController(new CameraController(camera, subject_handle));
+		auto & engine = camera.GetEngine();
+		auto const & subject = engine.GetObject(subject_handle);
+		camera.SetController(new CameraController(camera, subject));
 	}
 }
 

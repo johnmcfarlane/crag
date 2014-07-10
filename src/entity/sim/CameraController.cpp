@@ -87,7 +87,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // CameraController member definitions
 
-CameraController::CameraController(Entity & entity, EntityHandle subject)
+CameraController::CameraController(Entity & entity, std::shared_ptr<Entity> const & subject)
 : _super(entity)
 , _ray_cast(* new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
 , _subject(subject)
@@ -169,15 +169,14 @@ void CameraController::Update()
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
-	auto & engine = GetEntity().GetEngine();
-	auto subject = engine.GetObject(_subject);
-	if (! subject)
+	if (! _subject)
 	{
 		DEBUG_BREAK("camera has no subject");
 		return;
 	}
+	auto const & subject = * _subject;
 	
-	auto subject_location = subject->GetLocation();
+	auto subject_location = subject.GetLocation();
 	if (! subject_location)
 	{
 		DEBUG_BREAK("camera's subject has no location");
@@ -194,6 +193,7 @@ void CameraController::Update()
 		return;
 	}
 	
+	auto & engine = GetEntity().GetEngine();
 	const auto & origin = engine.GetOrigin();
 	auto forward = camera_to_subject / distance;
 
