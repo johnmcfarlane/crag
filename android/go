@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# build crag and copy to phone for testing;
+# (does not affect build settings; see jni/Application.mk)
+
+set -o errexit
+
+MODE="$1"
+shift 1
+
+./build $@
+
+ant "$MODE"
+ant "$MODE" install
+./logcat -c
+#android-ndk/ndk-gdb --start --adb=android-sdk/platform-tools/adb
