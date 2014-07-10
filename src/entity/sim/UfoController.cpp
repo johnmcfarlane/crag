@@ -38,7 +38,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::UfoController member functions
 
-UfoController::UfoController(Entity & entity, EntityHandle ball_entity, Scalar max_thrust)
+UfoController::UfoController(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust)
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
 , _ball_entity(ball_entity)
@@ -55,6 +55,8 @@ UfoController::UfoController(Entity & entity, EntityHandle ball_entity, Scalar m
 
 UfoController::~UfoController()
 {
+	CRAG_VERIFY(* this);
+	
 	auto & engine = GetEntity().GetEngine();
 
 	// deactivate listener
@@ -67,12 +69,17 @@ UfoController::~UfoController()
 	// remove ball
 	if (_ball_entity)
 	{
-		engine.ReleaseObject(_ball_entity);
+		engine.ReleaseObject(* _ball_entity);
 	}
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)
 	CRAG_VERIFY(self._camera_rotation);
+	if (self._ball_entity)
+	{
+		CRAG_VERIFY(* self._ball_entity);
+		CRAG_VERIFY_TRUE(self._ball_entity->GetHandle());
+	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void UfoController::Tick()

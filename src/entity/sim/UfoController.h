@@ -28,7 +28,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		UfoController(Entity & entity, EntityHandle ball_entity, Scalar max_thrust);
+		UfoController(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust);
 		~UfoController();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController);
@@ -54,7 +54,7 @@ namespace sim
 		
 		Matrix33 _camera_rotation;
 		
-		EntityHandle const _ball_entity;
+		std::shared_ptr<Entity> _ball_entity;
 		
 		Thruster * _main_thruster;
 		int _num_presses;
