@@ -22,7 +22,8 @@ namespace ipc
 	// Base class for objects used by the engines.
 	// OBJECT derives directly from Object.
 	template <typename OBJECT, typename ENGINE>
-	class ObjectBase
+	class ObjectBase 
+	: public crag::counted_object<ObjectBase<OBJECT, ENGINE>>
 	{
 	public:
 		// types

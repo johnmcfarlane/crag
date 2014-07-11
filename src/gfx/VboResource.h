@@ -13,7 +13,7 @@ namespace gfx
 {
 	// Base class for a graphical resource such as a vertex buffer object
 	// which is costly to bind / unbind during rendering.
-	class VboResource
+	class VboResource : private crag::counted_object<VboResource>
 	{
 		OBJECT_NO_COPY(VboResource);
 	public:
