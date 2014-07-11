@@ -73,6 +73,9 @@ namespace crag
 		
 			void AddResource(KeyType const & key, Resource && value);
 			
+			ResourceManager() = default;
+			~ResourceManager();
+			
 			////////////////////////////////////////////////////////////////////////////////
 			// variables
 

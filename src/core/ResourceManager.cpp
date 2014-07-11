@@ -87,3 +87,8 @@ void ResourceManager::AddResource(KeyType const & key, ValueType && value)
 	
 	_mutex.WriteUnlock();
 }
+
+ResourceManager::~ResourceManager()
+{
+	ASSERT(_resources.empty());
+}
