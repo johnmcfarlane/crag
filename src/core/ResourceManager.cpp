@@ -35,6 +35,13 @@ void ResourceManager::Unregister(KeyType const & key)
 	_mutex.WriteUnlock();
 }
 
+void ResourceManager::Flush()
+{
+	_mutex.WriteLock();
+	_resources.clear();
+	_mutex.WriteUnlock();
+}
+
 void ResourceManager::Prefetch(KeyType const & key) const
 {
 	auto const & resource = GetResource(key);
