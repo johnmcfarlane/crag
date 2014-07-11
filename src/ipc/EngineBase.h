@@ -156,7 +156,7 @@ namespace ipc
 		template <typename Type>
 		SharedPtr<Type> CreateObject(Handle handle)
 		{
-			auto object = std::make_shared<ObjectType>(core::StaticCast<Engine>(* this));
+			auto object = std::make_shared<Type>(core::StaticCast<EngineType>(* this));
 
 			if (object)
 			{
