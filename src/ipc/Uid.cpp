@@ -13,12 +13,23 @@
 
 using namespace ipc;
 
+////////////////////////////////////////////////////////////////////////////////
+// ipc::Uid friends
 
 std::ostream & ipc::operator << (std::ostream & out, Uid const & uid)
 {
 	return out << uid._value;
 }
 
+std::size_t std::hash<ipc::Uid>::operator() (ipc::Uid uid) const
+{
+	ASSERT(uid);
+	return uid._value;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// ipc::Uid member definitions
 
 Uid Uid::Create()
 {

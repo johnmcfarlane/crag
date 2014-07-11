@@ -77,7 +77,7 @@ bool Engine::ProcessTasks()
 	bool did_work = false;
 	
 	// Step through all applets,
-	ForEachObject_DestroyIf([this, & did_work] (Applet & applet) -> bool 
+	ForEachObject_ReleaseIf([this, & did_work] (Applet & applet) -> bool
 	{
 		// If processing was not done, 
 		if (! ProcessTask(applet))

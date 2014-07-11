@@ -47,6 +47,7 @@
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
 
+using namespace std;
 using namespace sim;
 
 #if defined(CRAG_USE_MOUSE)
@@ -772,13 +773,13 @@ namespace
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
 		
-		EntityHandle ball_entity_handle;
+		shared_ptr<Entity> ball_entity;
 		gfx::ObjectHandle exception_object;
 		
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
 			Sphere3 sphere(position, saucer_ball_radius);
-			auto ball_entity = engine.CreateObject<Entity>();
+			ball_entity = engine.CreateObject<Entity>();
 
 			// physics
 			auto & ball_body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
@@ -800,8 +801,6 @@ namespace
 			{
 				exception_object = model_handle;
 			}
-			
-			ball_entity_handle.SetUid(ball_entity->GetUid());
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -820,15 +819,13 @@ namespace
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
 				exception_object);
-			auto light_uid = light_handle.GetUid();
-			auto model_uid = model_handle.GetUid();
-			gfx::Daemon::Call([light_uid, model_uid] (gfx::Engine & engine) {
-				engine.OnSetParent(light_uid, model_uid);
+			gfx::Daemon::Call([light_handle, model_handle] (gfx::Engine & engine) {
+				engine.OnSetParent(light_handle, model_handle);
 			});
 		}
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, ball_entity_handle, thrust));
+		auto & controller = ref(new UfoController(ufo_entity, ball_entity, thrust));
 		ufo_entity.SetController(& controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))

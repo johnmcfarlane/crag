@@ -88,7 +88,7 @@ namespace
 			if (_shapes.size() >= max_shapes)
 			{
 				EntityVector::iterator first = _shapes.begin();
-				first->Destroy();
+				first->Release();
 				_shapes.erase(first);
 			}
 		}
@@ -277,21 +277,21 @@ void TestScript(applet::AppletInterface & applet_interface)
 	
 	while (! _shapes.empty())
 	{
-		_shapes.back().Destroy();
+		_shapes.back().Release();
 		_shapes.pop_back();
 	}
 	
-	_vehicle.Destroy();
-	sun2.Destroy();
-	sun1.Destroy();
-	moon2.Destroy();
-	moon1.Destroy();
-	planet.Destroy();
+	_vehicle.Release();
+	sun2.Release();
+	sun1.Release();
+	moon2.Release();
+	moon1.Release();
+	planet.Release();
 	
 	// remove skybox
-	skybox.Destroy();
+	skybox.Release();
 
-	observer.Destroy();
+	observer.Release();
 	
 	ASSERT(_applet_interface == & applet_interface);
 }

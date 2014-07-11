@@ -35,6 +35,13 @@ void ResourceManager::Unregister(KeyType const & key)
 	_mutex.WriteUnlock();
 }
 
+void ResourceManager::Flush()
+{
+	_mutex.WriteLock();
+	_resources.clear();
+	_mutex.WriteUnlock();
+}
+
 void ResourceManager::Prefetch(KeyType const & key) const
 {
 	auto const & resource = GetResource(key);
@@ -79,4 +86,9 @@ void ResourceManager::AddResource(KeyType const & key, ValueType && value)
 	_resources.insert(std::make_pair(key, std::move(value)));
 	
 	_mutex.WriteUnlock();
+}
+
+ResourceManager::~ResourceManager()
+{
+	ASSERT(_resources.empty());
 }

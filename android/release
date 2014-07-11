@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# build crag and copy to phone for final testing and upload (requires key);
-# (does not affect build settings; see jni/Application.mk)
-set -o errexit
-
-android-ndk/ndk-build $1 $2 $3 $4
-ant release
-ant release install

@@ -14,7 +14,7 @@ namespace sim
 	class Entity;
 
 	// a member of Entity which generates distinctive behavior
-	class Controller
+	class Controller : private crag::counted_object<Controller>
 	{
 		OBJECT_NO_COPY(Controller);
 	public:

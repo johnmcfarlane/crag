@@ -36,7 +36,7 @@ namespace gfx
 	// TODO: Make SetUniforms virtual, include lights and matrices, 
 	// implement dirty cache to lazily update uniforms when bound
 	
-	class Program
+	class Program : private crag::counted_object<Program>
 	{
 		OBJECT_NO_COPY(Program);
 	public:

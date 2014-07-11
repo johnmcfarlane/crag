@@ -82,7 +82,7 @@ PlanetController::~PlanetController()
 	engine.RemoveFormation(* _formation);
 
 	// unregister with formation manager
-	_handle.Destroy();
+	_handle.Release();
 }
 
 form::Formation const & PlanetController::GetFormation() const

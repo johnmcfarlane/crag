@@ -91,7 +91,7 @@ namespace
 			if (_shapes.size() >= max_shapes)
 			{
 				EntityVector::iterator first = _shapes.begin();
-				first->Destroy();
+				first->Release();
 				_shapes.erase(first);
 			}
 		}
@@ -282,18 +282,18 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	while (! _shapes.empty())
 	{
-		_shapes.back().Destroy();
+		_shapes.back().Release();
 		_shapes.pop_back();
 	}
 	
-	_player.Destroy();
-	sun.Destroy();
-	planet.Destroy();
+	_player.Release();
+	sun.Release();
+	planet.Release();
 	
 	// remove skybox
-	skybox.Destroy();
+	skybox.Release();
 
-	camera.Destroy();
+	camera.Release();
 	
 	ASSERT(_applet_interface == & applet_interface);
 }

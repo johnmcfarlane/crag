@@ -4,8 +4,7 @@
 
 set -o errexit
 
-android-ndk/ndk-build $1 $2 $3 $4
-ant debug
-ant debug install
-./logcat -c
-#android-ndk/ndk-gdb --start --adb=android-sdk/platform-tools/adb
+JOBS="-j$1"
+shift 1
+
+android-ndk/ndk-build "$JOBS" $@

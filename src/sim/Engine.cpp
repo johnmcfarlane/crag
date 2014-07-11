@@ -33,9 +33,7 @@ CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
 
 namespace
 {
-	CONFIG_DEFINE (apply_gravity, bool, true);
-
-	// TODO: This could cause the Observer to be destroyed
+	CONFIG_DEFINE(apply_gravity, bool, true);
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
 	STAT_DEFAULT(sim_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
@@ -296,28 +294,20 @@ void Engine::UpdateRenderer() const
 // Perform a step in the simulation. 
 void Engine::PurgeEntities()
 {
-	std::vector<Entity *> to_delete;
-
-	ForEachObject([& to_delete] (Entity & entity) {
+	ForEachObject_ReleaseIf([] (Entity & entity) {
 		physics::Location const * location = entity.GetLocation();
 		if (location == nullptr)
 		{
-			return;
+			return false;
 		}
 		
 		Vector3 position = location->GetTranslation();
 		if (Length(position) < purge_distance)
 		{
-			return;
+			return false;
 		}
 		
 		DEBUG_MESSAGE("Removing entity with bad position, %f,%f,%f", position.x, position.y, position.z);
-
-		to_delete.push_back(& entity);
+		return true;
 	});
-
-	for (auto entity : to_delete)
-	{
-		DestroyObject(entity->GetUid());
-	}
 }

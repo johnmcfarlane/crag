@@ -39,7 +39,7 @@ namespace sim
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
 
-		void SetParentModel(gfx::ObjectHandle parent_model);
+		void SetParentModel(gfx::ObjectHandle parent_handle);
 
 		Entity & GetEntity();
 		

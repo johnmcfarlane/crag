@@ -143,12 +143,8 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
 	
-	// register with the renderer
+	// create the mesh used to pass results to the gfx thread
 	_mesh.Create();
-	auto mesh_handle = _mesh;
-	gfx::Daemon::Call([mesh_handle](gfx::Engine & engine){
-		engine.OnSetParent(mesh_handle.GetUid(), gfx::Uid());
-	});
 	
 	while (! quit_flag) 
 	{
@@ -161,7 +157,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	}
 	
 	// un-register with the renderer
-	_mesh.Destroy();
+	_mesh.Release();
 
 	// stop listening for events
 	SetLodParametersListener::SetIsListening(false);

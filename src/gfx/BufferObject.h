@@ -19,7 +19,8 @@ namespace gfx
 	// 
 	// Base class for IBO and VBO.
 	template <typename ELEMENT, GLenum TARGET> 
-	class BufferObject
+	class BufferObject 
+	: private crag::counted_object<BufferObject<ELEMENT, TARGET>>
 	{
 		OBJECT_NO_COPY(BufferObject);
 

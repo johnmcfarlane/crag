@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ObjectBase.h"
+#include "Handle_Impl.h"
 
 namespace ipc
 {
@@ -49,9 +50,12 @@ namespace ipc
 		using ObjectWeakPtr = WeakPtr<ObjectType>;
 		using ObjectWeakConstPtr = WeakConstPtr<ObjectType const>;
 		
+		// object handle type
+		using Handle = typename ObjectBaseType::HandleType;
+		
 		// object storage types
 		using MapPtr = ObjectSharedPtr;
-		using ObjectMap = std::unordered_map<Uid, MapPtr>;
+		using ObjectMap = std::unordered_map<Handle, MapPtr>;
 		using Iterator = typename ObjectMap::iterator;
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -76,9 +80,9 @@ namespace ipc
 		}
 
 		// object management
-		ObjectSharedPtr const & GetObject(Uid uid)
+		ObjectSharedPtr const & GetObject(Handle handle)
 		{
-			auto found = _objects.find(uid);
+			auto found = _objects.find(handle);
 			if (found == _objects.end())
 			{
 				return _null_ptr;
@@ -126,14 +130,14 @@ namespace ipc
 
 		// for each object (f returns false if it is to be erased)
 		template <typename FUNCTION>
-		void ForEachObject_DestroyIf(FUNCTION f)
+		void ForEachObject_ReleaseIf(FUNCTION f)
 		{
 			for (auto i = _objects.begin(); i != _objects.end();)
 			{
 				auto pair = * i;
 				if (f(* pair.second))
 				{
-					i = DestroyObject(i);
+					i = ReleaseObject(i);
 				}
 				else
 				{
@@ -150,13 +154,13 @@ namespace ipc
 		
 #if defined(WIN32)
 		template <typename Type>
-		SharedPtr<Type> CreateObject(Uid uid)
+		SharedPtr<Type> CreateObject(Handle handle)
 		{
-			auto object = std::make_shared<ObjectType>(core::StaticCast<Engine>(* this));
+			auto object = std::make_shared<Type>(core::StaticCast<EngineType>(* this));
 
 			if (object)
 			{
-				AddObject(uid, object);
+				AddObject(handle, object);
 			}
 			
 			return object;
@@ -164,37 +168,42 @@ namespace ipc
 #endif
 
 		template <typename Type, typename ... PARAMETERS>
-		SharedPtr<Type> CreateObject(Uid uid, PARAMETERS const & ... parameters)
+		SharedPtr<Type> CreateObject(Handle handle, PARAMETERS const & ... parameters)
 		{
 			auto object = std::make_shared<Type>(core::StaticCast<EngineType>(* this), parameters ...);
 
 			if (object)
 			{
-				AddObject(uid, object);
+				AddObject(handle, object);
 			}
 			
 			return object;
 		}
 
-		void DestroyObject(Uid uid)
+		void ReleaseObject(ObjectBaseType & object)
 		{
-			ASSERT(uid);
+			ReleaseObject(object.GetHandle());
+		}
+
+		void ReleaseObject(Handle handle)
+		{
+			ASSERT(handle);
 			
-			auto found = _objects.find(uid);
+			auto found = _objects.find(handle);
 			if (found == _objects.end())
 			{
 				DEBUG_MESSAGE("Object not found");
 				return;
 			}
 
-			DestroyObject(found);
+			ReleaseObject(found);
 		}
 
-		Iterator DestroyObject(Iterator destroyed)
+		Iterator ReleaseObject(Iterator i)
 		{
-			auto const & object = destroyed->second;
+			auto const & object = i->second;
 			OnRemoveObject(object);
-			auto next = _objects.erase(destroyed);
+			auto next = _objects.erase(i);
 
 			return next;
 		}
@@ -204,24 +213,24 @@ namespace ipc
 		virtual void OnRemoveObject(ObjectSharedPtr const &) { }
 
 		template <typename Type>
-		void AddObject(Uid uid, SharedPtr<Type> & object)
+		void AddObject(Handle handle, SharedPtr<Type> & object)
 		{
-			// UID must be initialized and absent from the Engint's map
-			CRAG_VERIFY_TRUE(uid);
-			ASSERT(! GetObject(uid));
+			// Handle must be initialized and absent from the Engint's map
+			CRAG_VERIFY_TRUE(handle);
+			ASSERT(! GetObject(handle));
 
 			// object must be valid and unassigned
 			CRAG_VERIFY(object);
-			CRAG_VERIFY_TRUE(! object->GetUid());
+			CRAG_VERIFY_TRUE(! object->GetHandle());
 
-			// assign the UID to the object
-			object->SetUid(uid);
+			// assign the Handle to the object
+			object->SetHandle(handle);
 
 			// cast to the map storage type (in case Type is a derived type)
 			auto _object = std::static_pointer_cast<ObjectType>(object);
 			
 			// store it
-			_objects[uid] = _object;
+			_objects[handle] = _object;
 			
 			// invoke callback in case Engine needs to react to the addition
 			OnAddObject(_object);
@@ -232,9 +241,10 @@ namespace ipc
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(EngineBase, self)
 			self.ForEachPair([& self] (typename ObjectMap::value_type const & pair) {
 				auto const & object = * pair.second;
-				CRAG_VERIFY_EQUAL(pair.first, object.GetUid());
+				CRAG_VERIFY_EQUAL(pair.first, object.GetHandle());
 				CRAG_VERIFY_EQUAL(& self, & object.GetEngine());
 				CRAG_VERIFY(object);
+				CRAG_VERIFY_TRUE(object.GetHandle());
 			});
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 

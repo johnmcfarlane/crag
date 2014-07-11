@@ -15,7 +15,7 @@ namespace gfx
 {
 	// CPU-side representation of a mesh using vertices and indices
 	template <typename Vertex, typename Index = ElementIndex>
-	class Mesh
+	class Mesh : private crag::counted_object<Mesh<Vertex, ElementIndex>>
 	{
 	public:
 		// types

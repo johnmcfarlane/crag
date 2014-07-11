@@ -47,7 +47,7 @@ Entity::~Entity()
 
 	delete _controller;
 	delete _location;
-	_model.Destroy();
+	_model.Release();
 }
 
 // placeholder helps govern the order in which stuff gets called by _tick_roster

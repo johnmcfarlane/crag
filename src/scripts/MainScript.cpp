@@ -224,17 +224,17 @@ void MainScript(applet::AppletInterface & applet_interface)
 		}
 	}
 	
-	sun.Destroy();
-	planet.Destroy();
+	sun.Release();
+	planet.Release();
 	
 	// remove skybox
-	skybox.Destroy();
+	skybox.Release();
 
-	observer.Destroy();
+	observer.Release();
 
 	sim::Daemon::Call([] (sim::Engine & engine) 
 	{
-		engine.ForEachObject_DestroyIf([] (sim::Entity &) 
+		engine.ForEachObject_ReleaseIf([] (sim::Entity &) 
 		{
 			return true;
 		});

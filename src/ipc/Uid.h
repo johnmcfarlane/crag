@@ -9,10 +9,20 @@
 
 #pragma once
 
+// forward-declarations
 namespace ipc
 {
-	// forward-declarations
 	class Uid;	
+}
+
+namespace std
+{
+	template <>
+	struct hash <ipc::Uid>;
+}
+
+namespace ipc
+{
 	std::ostream & operator << (std::ostream & out, Uid const & uid);
 
 	// Unique identifier:
@@ -27,8 +37,6 @@ namespace ipc
 		// functions
 		Uid() : _value(0) { }
 
-		std::size_t Hash() const { return _value; }
-		
 		operator bool () const { return _value != 0; }
 		
 		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
@@ -38,6 +46,7 @@ namespace ipc
 		friend bool operator < (Uid const & lhs, Uid const & rhs) { return lhs._value < rhs._value; }
 		
 		friend std::ostream & operator << (std::ostream & out, Uid const & uid);
+		friend struct std::hash<Uid>;
 		
 		// create a new unique object
 		static Uid Create();
@@ -60,10 +69,6 @@ namespace std
 	template <>
 	struct hash <ipc::Uid>
 	{
-		size_t operator() (ipc::Uid uid) const
-		{
-			ASSERT(uid);
-			return uid.Hash();
-		}
+		size_t operator() (ipc::Uid uid) const;
 	};
 }

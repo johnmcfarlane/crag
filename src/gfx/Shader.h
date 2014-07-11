@@ -13,7 +13,7 @@
 namespace gfx
 {
 	// Wrapper for an OpenGL shader object.
-	class Shader
+	class Shader : private crag::counted_object<Shader>
 	{
 		OBJECT_NO_COPY(Shader);
 		

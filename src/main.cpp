@@ -27,6 +27,7 @@
 
 #include "core/app.h"
 #include "core/ConfigManager.h"
+#include "core/ResourceManager.h"
 
 #include <SDL_main.h>
 
@@ -410,6 +411,8 @@ namespace
 			simulation.EndFlush();
 			renderer.EndFlush();
 			formation.EndFlush();
+			
+			crag::core::ResourceManager::Get().Flush();
 		}
 		
 		smp::scheduler::Deinit();

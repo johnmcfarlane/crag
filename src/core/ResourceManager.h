@@ -52,6 +52,9 @@ namespace crag
 			
 			// removes resource with given key (invalidating all current handles)
 			void Unregister(KeyType const & key);
+			
+			// as above but indescriminate
+			void Flush();
 
 			// returns a permanent handle which can be used to point to desired resource
 			template <typename Type>
@@ -69,6 +72,9 @@ namespace crag
 			Resource & GetResource(KeyType const & key);
 		
 			void AddResource(KeyType const & key, Resource && value);
+			
+			ResourceManager() = default;
+			~ResourceManager();
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// variables

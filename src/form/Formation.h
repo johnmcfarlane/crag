@@ -33,7 +33,7 @@ namespace form
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Formation(Formation const & rhs) = default;
+		Formation(Formation const &) = default;
 		Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 const & shape);
 
 		Formation & operator=(Formation const & rhs) = default;
