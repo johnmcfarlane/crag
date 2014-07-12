@@ -146,8 +146,8 @@ void Thruster::Tick()
 		return;
 	}
 
-	auto location = GetEntity().GetLocation();
-	auto & body = core::StaticCast<physics::Body>(ref(location));
+	auto & location = * GetEntity().GetLocation();
+	auto & body = core::StaticCast<physics::Body>(location);
 	body.AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
 }
 

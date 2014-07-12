@@ -33,8 +33,6 @@ DEFINE_POOL_ALLOCATOR(Entity);
 
 Entity::Entity(Engine & engine)
 : super(engine)
-, _controller(nullptr)
-, _location(nullptr)
 {
 	auto & draw_roster = GetEngine().GetDrawRoster();
 	draw_roster.AddCommand(* this, & Entity::UpdateModels);
@@ -45,8 +43,6 @@ Entity::~Entity()
 	auto & draw_roster = GetEngine().GetDrawRoster();
 	draw_roster.RemoveCommand(* this, & Entity::UpdateModels);
 
-	delete _controller;
-	delete _location;
 	_model.Release();
 }
 
@@ -56,31 +52,38 @@ void Entity::Tick()
 	ASSERT(false);
 }
 
-void Entity::SetController(Controller * controller)
+void Entity::SetController(ControllerPtr const & controller)
 {
-	ASSERT((_controller == nullptr) != (controller == nullptr));
 	_controller = controller;
+
+	CRAG_VERIFY(* this);
 }
 
-Controller * Entity::GetController()
+Entity::ControllerPtr & Entity::GetController()
 {
 	return _controller;
 }
 
-void Entity::SetLocation(physics::Location * location)
+Entity::ControllerPtr const & Entity::GetController() const
+{
+	return _controller;
+}
+
+void Entity::SetLocation(LocationPtr const & location)
 {
 	// TODO: exploit ODE fn, dBodySetMovedCallback(dBodyID, void (*)(dBodyID));
 	// TODO: in conjunction with dBodySetData
-	ASSERT((_location == nullptr) != (location == nullptr));
 	_location = location;
+
+	CRAG_VERIFY(* this);
 }
 
-physics::Location * Entity::GetLocation()
+Entity::LocationPtr & Entity::GetLocation()
 {
 	return _location;
 }
 
-physics::Location const * Entity::GetLocation() const
+Entity::LocationPtr const & Entity::GetLocation() const
 {
 	return _location;
 }
@@ -115,10 +118,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Entity, entity)
 	CRAG_VERIFY(static_cast<Entity::super const &>(entity));
 
 	CRAG_VERIFY(entity._location);
-
-	if (entity._controller != nullptr)
-	{
-		CRAG_VERIFY(* entity._controller);
-		CRAG_VERIFY_EQUAL(& entity._controller->GetEntity(), & entity);
-	}
+	
+	CRAG_VERIFY(entity._controller);
+	CRAG_VERIFY(entity._controller);
 CRAG_VERIFY_INVARIANTS_DEFINE_END

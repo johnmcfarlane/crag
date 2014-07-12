@@ -25,7 +25,7 @@ namespace
 {
 	Ray3 Transform(Ray3 const & local, Entity const & entity)
 	{
-		auto location = entity.GetLocation();
+		auto const & location = entity.GetLocation();
 		auto const & transformation = location->GetTransformation();
 
 		auto global = transformation.Transform(local);
@@ -70,8 +70,8 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 {
 	GenerateScanRay();
 	
-	auto location = entity.GetLocation();
-	auto & body = core::StaticCast<physics::Body>(*location);
+	auto & location = * entity.GetLocation();
+	auto & body = core::StaticCast<physics::Body>(location);
 	_ray_cast->SetIsCollidable(body, false);
 	
 	auto & roster = GetTickRoster();

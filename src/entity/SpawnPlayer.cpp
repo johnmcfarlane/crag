@@ -565,13 +565,13 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::GhostBody(position, velocity, physics_engine);
+		auto body = make_shared<physics::GhostBody>(position, velocity, physics_engine);
 		
 		// setting the mass of a shapeless body is somewhat nonsensical
-		body.SetMass(m);
-		body.SetLinearDamping(linear_damping);
-		body.SetAngularDamping(angular_damping);
-		entity.SetLocation(& body);
+		body->SetMass(m);
+		body->SetLinearDamping(linear_damping);
+		body->SetAngularDamping(angular_damping);
+		entity.SetLocation(body);
 	}
 
 	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
@@ -579,11 +579,11 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
-		body.SetDensity(density);
-		body.SetLinearDamping(linear_damping);
-		body.SetAngularDamping(angular_damping);
-		entity.SetLocation(& body);
+		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+		body->SetDensity(density);
+		body->SetLinearDamping(linear_damping);
+		body->SetAngularDamping(angular_damping);
+		entity.SetLocation(body);
 	}
 
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
@@ -615,13 +615,13 @@ namespace
 		}
 
 		// controller
-		auto controller = [&] () -> Controller *
+		auto controller = [&] () -> shared_ptr<Controller>
 		{
 			if (! observer_use_touch)
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
-					return new MouseObserverController(observer);
+					return make_shared<MouseObserverController>(observer);
 				}
 				else
 				{
@@ -630,7 +630,7 @@ namespace
 				}
 			}
 
-			return new TouchObserverController(observer, position);
+			return make_shared<TouchObserverController>(observer, position);
 		} ();
 		
 		observer.SetController(controller);
@@ -673,13 +673,13 @@ namespace
 	{
 		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
-		auto& controller = ref(new VehicleController(entity));
-		entity.SetController(& controller);
+		auto controller = make_shared<VehicleController>(entity);
+		entity.SetController(controller);
 
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 	}
 	
 	void ConstructShip(Entity & entity, Vector3 const & position)
@@ -692,10 +692,10 @@ namespace
 
 		auto velocity = Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
-		auto & body = * new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh);
-		body.SetLinearDamping(ship_linear_damping);
-		body.SetAngularDamping(ship_angular_damping);
-		entity.SetLocation(& body);
+		auto body = make_shared<physics::MeshBody>(position, & velocity, physics_engine, * physics_mesh);
+		body->SetLinearDamping(ship_linear_damping);
+		body->SetAngularDamping(ship_angular_damping);
+		entity.SetLocation(body);
 
 		// graphics
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
@@ -706,19 +706,19 @@ namespace
 		entity.SetModel(model_handle);
 
 		// controller
-		auto & controller = ref(new VehicleController(entity));
-		entity.SetController(& controller);
+		auto controller = make_shared<VehicleController>(entity);
+		entity.SetController(controller);
 
 		// add a single thruster
 		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert)
 		{
 			if (key == SDL_SCANCODE_UNKNOWN)
 			{
-				AddVernierThruster(controller, ray);
+				AddVernierThruster(* controller, ray);
 			}
 			else
 			{
-				AddRoverThruster(controller, ray, key, true, invert);
+				AddRoverThruster(* controller, ray, key, true, invert);
 			}
 		};
 		
@@ -737,8 +737,8 @@ namespace
 		add_thrusters(Ray3(Vector3(1., 0.f, 0), geom::Resized(Vector3(-ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN, false);
 		add_thrusters(Ray3(Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
 		
-		AddHoverThruster(controller, Vector3(0.f, -.25f, 0.f), -.1f);
-		AddHoverThruster(controller, Vector3(0.f, .25f, 0.f), .1f);
+		AddHoverThruster(* controller, Vector3(0.f, -.25f, 0.f), -.1f);
+		AddHoverThruster(* controller, Vector3(0.f, .25f, 0.f), .1f);
 	}
 
 	void ConstructUfo(Entity & ufo_entity, Vector3 const & position, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
@@ -760,10 +760,10 @@ namespace
 		// saucer physics
 		auto rotation = gfx::Rotation(geom::Normalized(position), gfx::Direction::forward);
 		Transformation transformation(position, rotation);
-		auto & body = * new physics::CylinderBody(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
-		body.SetLinearDamping(saucer_linear_damping);
-		body.SetAngularDamping(saucer_angular_damping);
-		ufo_entity.SetLocation(& body);
+		auto body = make_shared<physics::CylinderBody>(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
+		body->SetLinearDamping(saucer_linear_damping);
+		body->SetAngularDamping(saucer_angular_damping);
+		ufo_entity.SetLocation(body);
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
@@ -782,12 +782,12 @@ namespace
 			ball_entity = engine.CreateObject<Entity>();
 
 			// physics
-			auto & ball_body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
-			ball_entity->SetLocation(& ball_body);
+			auto ball_body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+			ball_entity->SetLocation(ball_body);
 		
 			AttachEntities(ufo_entity, * ball_entity, physics_engine);
-			ball_body.SetIsCollidable(body, false);
-			body.SetIsCollidable(ball_body, false);
+			ball_body->SetIsCollidable(* body, false);
+			body->SetIsCollidable(* ball_body, false);
 
 			if (player_type == PlayerType::ball_saucer)
 			{
@@ -825,8 +825,8 @@ namespace
 		}
 
 		// controller
-		auto & controller = ref(new UfoController(ufo_entity, ball_entity, thrust));
-		ufo_entity.SetController(& controller);
+		auto controller = make_shared<UfoController>(ufo_entity, ball_entity, thrust);
+		ufo_entity.SetController(controller);
 
 		if (SDL_SetRelativeMouseMode(SDL_TRUE))
 		{

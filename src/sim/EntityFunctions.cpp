@@ -24,11 +24,11 @@ namespace sim
 {
 	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine)
 	{
-		auto location1 = entity1.GetLocation();
-		auto & body1 = core::StaticCast<physics::Body>(ref(location1));
+		auto const & location1 = entity1.GetLocation();
+		auto & body1 = core::StaticCast<physics::Body>(* location1);
 		
-		auto location2 = entity2.GetLocation();
-		auto & body2 = core::StaticCast<physics::Body>(ref(location2));
+		auto const & location2 = entity2.GetLocation();
+		auto & body2 = core::StaticCast<physics::Body>(* location2);
 
 		physics_engine.Attach(body1, body2);
 	}

@@ -36,6 +36,8 @@ namespace physics
 		virtual bool ObeysGravity() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Location);
+		
+		static Location const & null;
 	private:
 		Transformation _transformation;
 	};

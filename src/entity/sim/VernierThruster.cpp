@@ -49,7 +49,7 @@ void VernierThruster::Tick()
 		return;
 	}
 
-	auto & body = core::StaticCast<physics::Body>(ref(location));
+	auto & body = core::StaticCast<physics::Body>(* location);
 
 	auto const & local_ray = GetRay();
 	auto global_ray = body.GetTransformation().Transform(local_ray);

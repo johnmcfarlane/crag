@@ -295,8 +295,8 @@ void Engine::UpdateRenderer() const
 void Engine::PurgeEntities()
 {
 	ForEachObject_ReleaseIf([] (Entity & entity) {
-		physics::Location const * location = entity.GetLocation();
-		if (location == nullptr)
+		auto const & location = entity.GetLocation();
+		if (! location)
 		{
 			return false;
 		}

@@ -25,7 +25,6 @@ namespace sim
 
 		Entity & GetEntity();
 		Entity const & GetEntity() const;
-		
 	private:
 		Entity & _entity;
 	};

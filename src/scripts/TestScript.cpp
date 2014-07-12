@@ -258,7 +258,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 //			});
 		
 			sun2.Call([] (sim::Entity & entity) {
-				auto location = entity.GetLocation();
+				auto const & location = entity.GetLocation();
 				auto time = app::GetTime() * 0.21314;
 				auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
 				auto & engine = entity.GetEngine();
