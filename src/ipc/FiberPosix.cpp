@@ -196,7 +196,7 @@ std::size_t Fiber::EstimateStackUse() const
 	for (uint8_t const * i = reinterpret_cast<uint8_t const *>(_context.uc_stack.ss_sp), * end = i + _context.uc_stack.ss_size; i != end; ++ i)
 	{
 		uint8_t r = sequence.GetInt(std::numeric_limits<uint8_t>::max());
-		uint8_t stack_element = * i;
+		uint8_t stack_element = * i;	// TODO: "Invalid read of size 1" (Valgrind)
 		if (stack_element != r)
 		{
 			// note: assuming that stack grows downward
