@@ -686,14 +686,14 @@ void TouchObserverController::BroadcastTransformation() const
 physics::Body & TouchObserverController::GetBody()
 {
 	auto & entity = GetEntity();
-	auto & location = ref(entity.GetLocation());
+	auto & location = * entity.GetLocation();
 	return core::StaticCast<physics::Body>(location);
 }
 
 physics::Body const & TouchObserverController::GetBody() const
 {
-	auto & entity = GetEntity();
-	auto & location = ref(entity.GetLocation());
+	auto const & entity = GetEntity();
+	auto const & location = * entity.GetLocation();
 	return core::StaticCast<physics::Body const>(location);
 }
 
@@ -755,8 +755,8 @@ form::RayCastResult TouchObserverController::CastRay(Ray3 const & ray, Scalar & 
 	auto & entity = GetEntity();
 	auto & engine = entity.GetEngine();
 	auto & physics_engine = engine.GetPhysicsEngine();
-	auto location = entity.GetLocation();
-	auto & body = core::StaticCast<physics::Body const>(ref(location));
+	auto const & location = * entity.GetLocation();
+	auto const & body = core::StaticCast<physics::Body const>(location);
 	
 	return physics_engine.CastRay(ray, length, & body);
 }

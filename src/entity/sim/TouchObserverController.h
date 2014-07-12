@@ -53,9 +53,9 @@ namespace sim
 	public:
 		// functions
 		TouchObserverController(Entity & entity, Transformation const & transformation);
-	private:
 		virtual ~TouchObserverController();
 
+	private:
 		void Tick();
 
 		void operator() (gfx::SetOriginEvent const & event) final;

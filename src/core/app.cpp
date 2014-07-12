@@ -55,7 +55,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL;
 
 #if defined(CRAG_USE_MOUSE)
 	flags |= SDL_WINDOW_MOUSE_FOCUS;

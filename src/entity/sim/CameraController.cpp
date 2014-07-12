@@ -224,13 +224,13 @@ void CameraController::UpdateCameraRayCast() const
 physics::Body & CameraController::GetBody()
 {
 	auto & entity = GetEntity();
-	auto & location = ref(entity.GetLocation());
-	return core::StaticCast<physics::Body>(location);
+	auto const & location = entity.GetLocation();
+	return core::StaticCast<physics::Body>(* location);
 }
 
 physics::Body const & CameraController::GetBody() const
 {
 	auto & entity = GetEntity();
-	auto & location = ref(entity.GetLocation());
-	return core::StaticCast<physics::Body const>(location);
+	auto const & location = entity.GetLocation();
+	return core::StaticCast<physics::Body const>(* location);
 }

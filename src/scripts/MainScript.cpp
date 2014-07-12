@@ -78,11 +78,11 @@ namespace
 
 			// physics
 			auto zero_vector = sim::Vector3::Zero();
-			auto & body = * new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
-			body.SetDensity(1);
-			body.SetLinearDamping(0.005f);
-			body.SetAngularDamping(0.005f);
-			entity.SetLocation(& body);
+			auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
+			body->SetDensity(1);
+			body->SetLinearDamping(0.005f);
+			body->SetAngularDamping(0.005f);
+			entity.SetLocation(body);
 
 			// graphics
 			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
@@ -90,7 +90,7 @@ namespace
 			entity.SetModel(model);
 
 			// controller
-			auto controller = new sim::AnimatController(entity, sphere.radius);
+			auto controller = std::make_shared<sim::AnimatController>(entity, sphere.radius);
 			entity.SetController(controller);
 		});
 

@@ -64,8 +64,8 @@ namespace
 void sim::ApplyGravity(Engine & engine, core::Time delta)
 {
 	engine.ForEachObject([&] (Entity & entity) {
-		physics::Location * location = entity.GetLocation();
-		if (location == nullptr || ! location->ObeysGravity())
+		auto const & location = entity.GetLocation();
+		if (! location || ! location->ObeysGravity())
 		{
 			return;
 		}

@@ -79,11 +79,11 @@ namespace
 		Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::BoxBody(spawn_pos, & velocity, physics_engine, size);
-		body.SetDensity(box_density);
-		body.SetLinearDamping(box_linear_damping);
-		body.SetAngularDamping(box_angular_damping);
-		box.SetLocation(& body);
+		auto body = make_shared<physics::BoxBody>(spawn_pos, & velocity, physics_engine, size);
+		body->SetDensity(box_density);
+		body->SetLinearDamping(box_linear_damping);
+		body->SetAngularDamping(box_angular_damping);
+		box.SetLocation(body);
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
@@ -98,11 +98,11 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto & body = * new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius);
-		body.SetDensity(density);
-		body.SetLinearDamping(linear_damping);
-		body.SetAngularDamping(angular_damping);
-		entity.SetLocation(& body);
+		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+		body->SetDensity(density);
+		body->SetLinearDamping(linear_damping);
+		body->SetAngularDamping(angular_damping);
+		entity.SetLocation(body);
 	}
 
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
@@ -124,7 +124,8 @@ namespace
 		// controller
 		auto & engine = camera.GetEngine();
 		auto const & subject = engine.GetObject(subject_handle);
-		camera.SetController(new CameraController(camera, subject));
+		auto controller = make_shared<CameraController>(camera, subject);
+		camera.SetController(controller);
 	}
 }
 
@@ -175,16 +176,16 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		auto & engine = entity.GetEngine();
 
 		// controller
-		auto& controller = ref(new PlanetController(entity, sphere, random_seed, num_craters));
-		auto& formation = controller.GetFormation();
-		entity.SetController(& controller);
+		auto controller = make_shared<PlanetController>(entity, sphere, random_seed, num_craters);
+		auto& formation = controller->GetFormation();
+		entity.SetController(controller);
 
 		// body
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 		auto const * polyhedron = engine.GetScene().GetPolyhedron(formation);
 		if (polyhedron)
 		{
-			auto body = new physics::PlanetBody(sphere.center, physics_engine, * polyhedron, physics::Scalar(sphere.radius));
+			auto body = make_shared<physics::PlanetBody>(sphere.center, physics_engine, * polyhedron, physics::Scalar(sphere.radius));
 			entity.SetLocation(body);
 		}
 		else
@@ -214,7 +215,7 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 	sun.Call([volume, color, casts_shadow] (Entity & entity) {
 		// physics
 		Transformation transformation(geom::Cast<Scalar>(volume.center));
-		auto location = new physics::PassiveLocation(transformation);
+		auto location = make_shared<physics::PassiveLocation>(transformation);
 		entity.SetLocation(location);
 
 		// graphics

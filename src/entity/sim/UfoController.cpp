@@ -105,7 +105,7 @@ bool UfoController::ShouldThrust(bool) const
 // returns true iff UFO is upside down
 void UfoController::ApplyTilt(Vector2 pointer_delta)
 {
-	auto location = GetEntity().GetLocation();
+	auto const & location = GetEntity().GetLocation();
 	if (! location)
 	{
 		return;

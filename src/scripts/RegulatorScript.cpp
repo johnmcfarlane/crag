@@ -234,7 +234,7 @@ namespace
 		
 	private:
 		// variables
-		QuaterneCount _min_recommended_num_quaterne;
+		QuaterneCount _min_recommended_num_quaterne = 0;
 	};
 }
 

@@ -20,7 +20,6 @@ namespace gfx
 
 namespace physics
 {
-	class Body;
 	class Location;
 }
 
@@ -34,8 +33,11 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		typedef ipc::ObjectBase<Entity, sim::Engine> super;
 	public:
+		using super = ipc::ObjectBase<Entity, sim::Engine>;
+
+		using ControllerPtr = std::shared_ptr<Controller>;
+		using LocationPtr = std::shared_ptr<physics::Location>;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -49,27 +51,28 @@ namespace sim
 		void Tick();
 
 		// controller
-		void SetController(Controller * controller);
-		Controller * GetController();
+		void SetController(ControllerPtr const & controller);
+		ControllerPtr & GetController();
+		ControllerPtr const & GetController() const;
 		
 		// physics
-		void SetLocation(physics::Location * locator);
-		physics::Location * GetLocation();
-		physics::Location const * GetLocation() const;
+		void SetLocation(LocationPtr const & locator);
+		LocationPtr & GetLocation();
+		LocationPtr const & GetLocation() const;
 
 		// graphics
 		gfx::ObjectHandle GetModel() const;
 		void SetModel(gfx::ObjectHandle model);
 		void UpdateModels() const;
-
+		
 		// Verification
 		CRAG_VERIFY_INVARIANTS_DECLARE(Entity);
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		Controller * _controller;
-		physics::Location * _location;
+		ControllerPtr _controller;
+		LocationPtr _location;
 		gfx::ObjectHandle _model;
 	};
 }

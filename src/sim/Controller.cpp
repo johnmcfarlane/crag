@@ -11,10 +11,21 @@
 
 #include "Controller.h"
 
+using namespace sim;
+
+namespace
+{
+	class NullController : public Controller
+	{
+	};
+
+//	NullController const null_controller;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Controller member definitions
 
-using namespace sim;
+//Controller const & Controller::null = null_controller;
 
 Controller::Controller(Entity & entity)
 : _entity(entity)
