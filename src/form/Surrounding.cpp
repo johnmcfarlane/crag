@@ -278,7 +278,7 @@ float Surrounding::GetMinParentScore() const
 	return last_quaterna.parent_score;
 }
 
-Scalar Surrounding::GetMinLeafDistanceSquared()
+Scalar Surrounding::GetMinLeafDistanceSquared() const
 {
 	return node_score_functor.GetMinLeafDistanceSquared();
 }
