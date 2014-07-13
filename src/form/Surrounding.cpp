@@ -11,7 +11,6 @@
 
 #include "Surrounding.h"
 
-#include "ExpandNodeFunctor.h"
 #include "ForEachNodeFace.h"
 #include "GatherExpandableNodesFunctor.h"
 #include "Mesh.h"
@@ -400,12 +399,22 @@ bool Surrounding::ChurnNodes()
 	_quaterna_buffer.ForEach<GatherExpandableNodesFunctor &>(gather_functor);
 
 	// Traverse the vector and try and expand the nodes.
-	ExpandNodeFunctor expand_functor(* this);
-	core::for_each <SmpNodeVector::iterator, ExpandNodeFunctor &>(_expandable_nodes.begin(), _expandable_nodes.end(), expand_functor);
+	auto min_score = GetLowestSortedQuaternaScore();
+	auto changed = false;
+	for (auto node : _expandable_nodes)
+	{
+		if (node->score > min_score
+			&& node->IsExpandable()
+			&& ExpandNode(* node)) 
+		{
+			min_score = GetLowestSortedQuaternaScore();
+			changed = true;
+		}
+	}
 	
 	_expandable_nodes.clear();
 	
-	return expand_functor.GetNumExpanded() > 0;
+	return changed;
 }
 
 void Surrounding::ResetMeshPointers() 
