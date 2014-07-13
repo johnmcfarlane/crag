@@ -82,7 +82,7 @@ namespace form
 		void UpdateNodes();
 		void UpdateNodeScores(gfx::LodParameters const & lod_parameters);
 		void UpdateQuaterna();
-		bool ChurnNodes();
+		bool ExpandNodes();
 	public:
 		
 		void ResetMeshPointers();

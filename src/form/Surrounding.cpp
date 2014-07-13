@@ -366,7 +366,7 @@ void Surrounding::UpdateNodes()
 		// Finally, using the quaterne,
 		// replace nodes whose parent's scores have dropped enough
 		// with ones whose score have increased enough.
-		if (! ChurnNodes())
+		if (! ExpandNodes())
 		{
 			break;
 		}
@@ -390,7 +390,7 @@ void Surrounding::UpdateQuaterna()
 	_quaterna_buffer.Sort();
 }
 
-bool Surrounding::ChurnNodes()
+bool Surrounding::ExpandNodes()
 {
 	ASSERT(_expandable_nodes.size() == 0);
 	
