@@ -11,8 +11,6 @@
 
 #include "defs.h"
 
-#include "smp/for_each.h"
-
 namespace form
 {
 	// forward-declarations
@@ -50,24 +48,6 @@ namespace form
 
 		Node * begin();
 		Node * end();
-		
-		template <typename FUNCTOR> 
-		void ForEach(FUNCTOR f, size_t step_size, bool parallel)
-		{
-			if (IsEmpty())
-			{
-				return;
-			}
-	
-			if (parallel)
-			{
-				smp::for_each <Node *, FUNCTOR>(_nodes, _nodes_used_end, f, step_size, -1);
-			}
-			else 
-			{
-				core::for_each <Node *, FUNCTOR> (_nodes, _nodes_used_end, f);
-			}
-		}
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

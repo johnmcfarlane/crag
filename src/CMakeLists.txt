@@ -108,7 +108,6 @@ add_executable(crag
 	ipc/FiberPosix.cpp
 	ipc/FiberWin.cpp
 	smp/ReadersWriterMutex.cpp
-	smp/scheduler.cpp
 	smp/Semaphore.cpp
 	smp/smp.cpp
 	smp/Thread.cpp

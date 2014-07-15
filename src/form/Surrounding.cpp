@@ -378,7 +378,10 @@ void Surrounding::UpdateNodeScores(gfx::LodParameters const & lod_parameters)
 {
 	node_score_functor.SetLodParameters(lod_parameters);
 	node_score_functor.ResetCounters();
-	_node_buffer.ForEach<CalculateNodeScoreFunctor &>(node_score_functor, 1024, true);
+	for (auto & node : _node_buffer)
+	{
+		node_score_functor(node);
+	}
 }
 
 void Surrounding::UpdateQuaterna()
@@ -396,7 +399,10 @@ bool Surrounding::ExpandNodes()
 	
 	// Populate vector with nodes which might want expanding.
 	GatherExpandableNodesFunctor gather_functor(* this, _expandable_nodes);
-	_quaterna_buffer.ForEach<GatherExpandableNodesFunctor &>(gather_functor);
+	for (auto & quaterna : _quaterna_buffer)
+	{
+		gather_functor(quaterna);
+	}
 
 	// Traverse the vector and try and expand the nodes.
 	auto min_score = GetLowestSortedQuaternaScore();
@@ -429,11 +435,11 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 	CRAG_VERIFY(* this);
 	CRAG_VERIFY_TRUE(mesh.GetLitMesh().empty());
 
-	_node_buffer.ForEach([& mesh] (Node & node)
+	for (auto const & node : _node_buffer)
 	{
 		if (! node.IsLeaf()) 
 		{
-			return;
+			continue;
 		}
 		
 		ForEachNodeFace(node, [& mesh] (Point & a, Point & b, Point & c, geom::Vector3f const & normal, float /*score*/)
@@ -442,7 +448,7 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 			
 			mesh.AddFace(a, b, c, normal, color);
 		});
-	}, 1024, true);
+	}
 	
 	mesh.NormalizeNormals();
 }

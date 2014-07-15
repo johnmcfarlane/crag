@@ -23,8 +23,6 @@
 #include "applet/Engine.h"
 #include "applet/Applet.h"
 
-#include "smp/scheduler.h"
-
 #include "core/app.h"
 #include "core/ConfigManager.h"
 #include "core/ResourceManager.h"
@@ -349,10 +347,6 @@ namespace
 		
 		SDL_SetEventFilter(EventFilter, nullptr);
 		
-		// sheduler and formation thread are always running
-		size_t num_reserved_cpus = 2;
-		smp::scheduler::Init(num_reserved_cpus);
-		
 		{
 			// TODO: Find a way to make these common; writing everything out four times is not good.
 			// Instantiate the four daemons
@@ -415,7 +409,6 @@ namespace
 			crag::core::ResourceManager::Get().Flush();
 		}
 		
-		smp::scheduler::Deinit();
 		app::Deinit();
 		
 		DEBUG_MESSAGE("<- CragMain");

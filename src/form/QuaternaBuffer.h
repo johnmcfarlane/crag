@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "smp/for_each.h"
-
 namespace form
 {
 	// forward-declarations
@@ -66,24 +64,6 @@ namespace form
 
 		Quaterna * end();
 		Quaterna const * end() const;
-
-		template <typename FUNCTOR> 
-		void ForEach(FUNCTOR f, size_t step_size = 1, bool parallel = false)
-		{
-			if (empty())
-			{
-				return;
-			}
-
-			if (! parallel && step_size == 1)
-			{
-				core::for_each<Quaterna *, FUNCTOR>(_quaterne, _quaterne_used_end, f);
-			}
-			else
-			{
-				smp::for_each<Quaterna *, FUNCTOR>(_quaterne, _quaterne_used_end, f, step_size, -1);
-			}
-		}
 		
 	private:
 		////////////////////////////////////////////////////////////////////////////////
