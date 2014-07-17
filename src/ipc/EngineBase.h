@@ -149,7 +149,9 @@ namespace ipc
 		template <typename Type>
 		SharedPtr<Type> CreateObject()
 		{
-			return CreateObject<Type>(Uid::Create());
+			// instances a new, initialized handle
+			auto handle = Handle::CreateFromUid(Uid::Create());
+			return CreateObject<Type>(handle);
 		}
 		
 #if defined(WIN32)

@@ -43,7 +43,7 @@ namespace ipc
 	Handle<TYPE>::operator Handle<BASE_TYPE> () const
 	{
 		static_assert(std::is_base_of<BASE_TYPE, TYPE>::value, "invalid cast");
-		return Handle <BASE_TYPE>(_uid);
+		return Handle<BASE_TYPE>::CreateFromUid(_uid);
 	}
 	
 #if defined(WIN32)
@@ -74,12 +74,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid] (Engine & engine) {
-			engine.template CreateObject<ObjectType>(uid);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle] (Engine & engine) {
+			engine.template CreateObject<ObjectType>(handle);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 
 	template <typename TYPE>
@@ -90,12 +90,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid, parameter1] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1>(uid, parameter1);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameter1] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1>(handle, parameter1);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 
 	template <typename TYPE>
@@ -106,12 +106,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameter1, parameter2] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(handle, parameter1, parameter2);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 
 	template <typename TYPE>
@@ -122,12 +122,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameter1, parameter2, parameter3] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(handle, parameter1, parameter2, parameter3);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 
 	template <typename TYPE>
@@ -138,12 +138,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(uid, parameter1, parameter2, parameter3, parameter4);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(handle, parameter1, parameter2, parameter3, parameter4);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 
 	template <typename TYPE>
@@ -154,12 +154,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(handle, parameter1, parameter2, parameter3, parameter4, parameter5);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 #else
 	template <typename TYPE>
@@ -170,12 +170,12 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 
 		Release();
-		Uid uid(Uid::Create());
-		Daemon::Call([uid, parameters ...] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETERS ...>(Handle(uid), parameters ...);
+		Handle handle(Uid::Create());
+		Daemon::Call([handle, parameters ...] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETERS ...>(handle, parameters ...);
 		});
 
-		_uid = uid;
+		* this = handle;
 	}
 #endif
 	
@@ -190,11 +190,12 @@ namespace ipc
 		if (_uid.IsInitialized())
 		{
 			// set message.
-			Uid uid = _uid;
-			Daemon::Call([uid] (Engine & engine) {
-				engine.ReleaseObject(Handle(uid));
-			});
+			auto handle = * this;
 			_uid = Uid();
+			
+			Daemon::Call([handle] (Engine & engine) {
+				engine.ReleaseObject(handle);
+			});
 		}
 	}
 
@@ -214,7 +215,7 @@ namespace ipc
 			auto base = engine.GetObject(handle);
 			if (base != nullptr)
 			{
-				auto& derived = core::StaticCast<ObjectType>(* base);
+				auto & derived = core::StaticCast<ObjectType>(* base);
 				function(derived);
 			}
 		});
@@ -228,9 +229,9 @@ namespace ipc
 	{
 		ASSERT(_uid.IsInitialized());
 
-		auto uid = _uid;
-		ObjectType::Daemon::Call([function, uid] (typename ObjectType::Engine & engine) {
-			auto base = engine.GetObject(uid);
+		auto handle = * this;
+		ObjectType::Daemon::Call([function, handle] (typename ObjectType::Engine & engine) {
+			auto base = engine.GetObject(handle);
 			auto derived = core::StaticCast<ObjectType>(base);
 			function(derived);
 		});
@@ -245,11 +246,11 @@ namespace ipc
 		ASSERT(_uid.IsInitialized());
 		ASSERT(future.IsPendind());
 		
-		auto uid = _uid;
-		ObjectType::Daemon::Call([& future, function, uid] (typename ObjectType::Engine & engine) {
+		auto handle = * this;
+		ObjectType::Daemon::Call([& future, function, handle] (typename ObjectType::Engine & engine) {
 			ASSERT(future.IsPendind());
 			
-			auto base = engine.GetObject(uid);
+			auto base = engine.GetObject(handle);
 			if (base == nullptr) {
 				future.OnFailure();
 				return;

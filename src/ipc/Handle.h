@@ -49,16 +49,16 @@ namespace ipc
 		
 		using ObjectType = TYPE;
 		
-	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		
-		Handle() = default;
 		
 		Handle(Uid uid)
 		: _uid(uid)
 		{
 		}
+		
+	public:
+		Handle() = default;
 		
 		friend bool operator == (Handle const & lhs, Handle const & rhs)
 		{
@@ -83,6 +83,11 @@ namespace ipc
 		bool IsInitialized() const
 		{
 			return _uid.IsInitialized();
+		}
+		
+		static Handle CreateFromUid(Uid const & uid)
+		{
+			return Handle(uid);
 		}
 		
 #if defined(WIN32)
