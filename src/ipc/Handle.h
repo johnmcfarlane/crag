@@ -86,25 +86,25 @@ namespace ipc
 #endif
 
 #if defined(WIN32) || ! defined(__clang__)
-		void Create();
+		void CreateObject();
 
 		template <typename PARAMETER1>
-		void Create(PARAMETER1 parameter1);
+		void CreateObject(PARAMETER1 parameter1);
 
 		template <typename PARAMETER1, typename PARAMETER2>
-		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2);
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2);
 
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
 
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
-		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4);
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4);
 
 		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
-		void Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5);
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5);
 #else
 		template <typename ... PARAMETERS>
-		void Create(PARAMETERS ... parameters);
+		void CreateObject(PARAMETERS ... parameters);
 #endif
 		
 		// Tells simulation to release the object.

@@ -144,7 +144,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// create the mesh used to pass results to the gfx thread
-	_mesh.Create();
+	_mesh.CreateObject();
 	
 	while (! quit_flag) 
 	{

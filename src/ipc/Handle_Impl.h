@@ -30,7 +30,7 @@ namespace ipc
 	Handle<TYPE> Handle<TYPE>::CreateHandle(PARAMETERS ... parameters)
 	{
 		Handle creation;
-		creation.Create(parameters ...); 
+		creation.CreateObject(parameters ...); 
 		return creation;
 	}
 #else
@@ -39,14 +39,14 @@ namespace ipc
 	Handle<TYPE> Handle<TYPE>::CreateHandle(PARAMETERS && ... parameters)
 	{
 		Handle creation;
-		creation.Create(std::forward<PARAMETERS>(parameters) ...); 
+		creation.CreateObject(std::forward<PARAMETERS>(parameters) ...); 
 		return creation;
 	}
 #endif
 
 #if defined(WIN32) || ! defined(__clang__)
 	template <typename TYPE>
-	void Handle<TYPE>::Create()
+	void Handle<TYPE>::CreateObject()
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -62,7 +62,7 @@ namespace ipc
 
 	template <typename TYPE>
 	template <typename PARAMETER1>
-	void Handle<TYPE>::Create(PARAMETER1 parameter1)
+	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -78,7 +78,7 @@ namespace ipc
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2>
-	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2)
+	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -94,7 +94,7 @@ namespace ipc
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
+	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -110,7 +110,7 @@ namespace ipc
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
-	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4)
+	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -126,7 +126,7 @@ namespace ipc
 
 	template <typename TYPE>
 	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
-	void Handle<TYPE>::Create(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
+	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
@@ -142,7 +142,7 @@ namespace ipc
 #else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
-	void Handle<TYPE>::Create(PARAMETERS ... parameters)
+	void Handle<TYPE>::CreateObject(PARAMETERS ... parameters)
 	{
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
