@@ -100,7 +100,7 @@ void Entity::SetModel(gfx::ObjectHandle model)
 
 void Entity::UpdateModels() const
 {
-	if (_location == nullptr || ! _model)
+	if (_location == nullptr || ! _model.IsInitialized())
 	{
 		return;
 	}

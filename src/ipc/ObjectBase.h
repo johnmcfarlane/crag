@@ -114,7 +114,7 @@ namespace ipc
 	private:
 		void SetHandle(HandleType handle)
 		{
-			CRAG_VERIFY_TRUE(! _handle);
+			CRAG_VERIFY_TRUE(! _handle.IsInitialized());
 			
 			_handle = handle;
 			

@@ -21,6 +21,17 @@
 
 namespace ipc
 {
+	template <typename TYPE> class Handle;
+}
+
+namespace std
+{
+	template <typename TYPE>
+	ostream & operator << (ostream & out, ::ipc::Handle<TYPE> const & handle);
+}
+
+namespace ipc
+{
 	// forward-declaration
 	template <typename RESULT_TYPE>
 	class Future;
@@ -30,6 +41,7 @@ namespace ipc
 	template <typename TYPE>
 	class Handle
 	{
+		friend ::std::ostream & ::std::operator << <> (::std::ostream & out, Handle const & handle);
 		friend struct std::hash<Handle>;
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -68,9 +80,9 @@ namespace ipc
 		operator Handle<BASE_TYPE> () const;
 
 		// true iff handle points to an object
-		operator bool () const
+		bool IsInitialized() const
 		{
-			return _uid;
+			return _uid.IsInitialized();
 		}
 		
 #if defined(WIN32)

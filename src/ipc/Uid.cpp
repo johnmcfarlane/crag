@@ -23,7 +23,7 @@ std::ostream & ipc::operator << (std::ostream & out, Uid const & uid)
 
 std::size_t std::hash<ipc::Uid>::operator() (ipc::Uid uid) const
 {
-	ASSERT(uid);
+	ASSERT(uid.IsInitialized());
 	return uid._value;
 }
 
@@ -33,7 +33,7 @@ std::size_t std::hash<ipc::Uid>::operator() (ipc::Uid uid) const
 
 Uid Uid::Create()
 {
-	static std::atomic<ValueType> _counter(1u);
+	static std::atomic<ValueType> _counter(2u);
 	
 #if ! defined(NDEBUG)
 	// check that we've still got lots of capacity

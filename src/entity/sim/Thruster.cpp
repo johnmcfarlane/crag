@@ -83,7 +83,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Thruster::SetParentModel(gfx::ObjectHandle parent_handle)
 {
-	if (! _model)
+	if (! _model.IsInitialized())
 	{
 		return;
 	}
@@ -108,7 +108,7 @@ void Thruster::SetRay(Ray3 const & ray)
 {
 	_ray = ray;
 
-	if (_model)
+	if (_model.IsInitialized())
 	{
 		// create model
 		_model.Call([ray] (gfx::Object & model)
@@ -161,7 +161,7 @@ void Thruster::UpdateModel() const
 		return;
 	}
 
-	if (_model)
+	if (_model.IsInitialized())
 	{
 		_model.Call([thrust_factor] (gfx::Thruster & thruster) 
 		{

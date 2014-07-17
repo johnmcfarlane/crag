@@ -37,7 +37,7 @@ namespace ipc
 		// functions
 		Uid() : _value(0) { }
 
-		operator bool () const { return _value != 0; }
+		bool IsInitialized() const { return _value != 0; }
 		
 		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
 		

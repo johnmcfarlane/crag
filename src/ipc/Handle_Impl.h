@@ -11,6 +11,28 @@
 
 #include "Handle.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// Handle friend definitions
+
+namespace std
+{
+	template <typename TYPE>
+	ostream & 
+	operator << (ostream & out, ::ipc::Handle<TYPE> const & handle)
+	{
+		return out << handle._uid;
+	}
+
+	template <typename TYPE>
+	struct hash <ipc::Handle<TYPE>>
+	{
+		size_t operator() (ipc::Handle<TYPE> handle) const
+		{
+			return hash <ipc::Uid> () (handle._uid);
+		}
+	};
+}
+
 namespace ipc
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +187,7 @@ namespace ipc
 		using Engine = typename ObjectType::EngineType;
 		
 		// If not already released,
-		if (_uid)
+		if (_uid.IsInitialized())
 		{
 			// set message.
 			Uid uid = _uid;
@@ -185,7 +207,7 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 		
-		ASSERT(_uid);
+		ASSERT(_uid.IsInitialized());
 
 		auto handle = * this;
 		Daemon::Call([function, handle] (Engine & engine) {
@@ -204,7 +226,7 @@ namespace ipc
 	template <typename FUNCTION_TYPE>
 	void Handle<TYPE>::CallPtr(FUNCTION_TYPE function) const
 	{
-		ASSERT(_uid);
+		ASSERT(_uid.IsInitialized());
 
 		auto uid = _uid;
 		ObjectType::Daemon::Call([function, uid] (typename ObjectType::Engine & engine) {
@@ -220,7 +242,7 @@ namespace ipc
 	template <typename VALUE_TYPE, typename FUNCTION_TYPE>
 	void Handle<TYPE>::Call(Future<VALUE_TYPE> & future, FUNCTION_TYPE function) const
 	{
-		ASSERT(_uid);
+		ASSERT(_uid.IsInitialized());
 		ASSERT(future.IsPendind());
 		
 		auto uid = _uid;
@@ -237,16 +259,4 @@ namespace ipc
 			future.OnSuccess(function(derived));
 		});
 	}
-}
-
-namespace std
-{
-	template <typename TYPE>
-	struct hash <ipc::Handle<TYPE>>
-	{
-		size_t operator() (ipc::Handle<TYPE> handle) const
-		{
-			return hash <ipc::Uid> () (handle._uid);
-		}
-	};
 }
