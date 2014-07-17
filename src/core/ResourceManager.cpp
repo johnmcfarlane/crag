@@ -27,9 +27,10 @@ void ResourceManager::Unregister(KeyType const & key)
 {
 	_mutex.WriteLock();
 	
-	if (_resources.erase(key) != 1)
+	auto erased = _resources.erase(key);
+	if (erased != 1)
 	{
-		DEBUG_BREAK("didn't remove a single element");
+		DEBUG_BREAK("didn't remove a single element (%d)", int(erased));
 	}
 	
 	_mutex.WriteUnlock();
