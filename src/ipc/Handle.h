@@ -77,12 +77,12 @@ namespace ipc
 		// creates an object; passes parameters to c'tor;
 		// returns handle to object
 		template <typename ... PARAMETERS>
-		static Handle CreateHandle(PARAMETERS ... parameters);
+		static Handle Create(PARAMETERS ... parameters);
 #else
 		// creates an object; passes parameters to c'tor;
 		// returns handle to object
 		template <typename ... PARAMETERS>
-		static Handle CreateHandle(PARAMETERS && ... parameters);
+		static Handle Create(PARAMETERS && ... parameters);
 #endif
 
 #if defined(WIN32) || ! defined(__clang__)

@@ -362,7 +362,7 @@ namespace
 			applets.Start("applet");
 			
 			// launch the main script
-			applet::AppletHandle::CreateHandle("Main", 16384, scripts[script_mode]);
+			applet::AppletHandle::Create("Main", 16384, scripts[script_mode]);
 			
 			while (HandleEvent())
 			{

@@ -68,7 +68,7 @@ namespace
 	
 	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
 	{
-		auto animat = sim::EntityHandle::CreateHandle();
+		auto animat = sim::EntityHandle::Create();
 
 		sim::Sphere3 sphere(position, 1);
 		animat.Call([sphere] (sim::Entity & entity) 
@@ -86,7 +86,7 @@ namespace
 
 			// graphics
 			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-			gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, gfx::Color4f::Green());
+			gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
 			entity.SetModel(model);
 
 			// controller

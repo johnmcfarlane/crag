@@ -593,7 +593,7 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
-		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, color);
+		gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
 		ball.SetModel(model);
 	}
 
@@ -702,7 +702,7 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
 		// controller
@@ -767,7 +767,7 @@ namespace
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
 		ufo_entity.SetModel(model_handle);
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -792,7 +792,7 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color3);
+				gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, ufo_color3);
 				ball_entity->SetModel(model);
 				
 				exception_object = model;
@@ -814,7 +814,7 @@ namespace
 			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
 			
 			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
-			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::CreateHandle(
+			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::Create(
 				search_light_transformation, 
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
@@ -980,7 +980,7 @@ namespace
 
 EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 {
-	auto vehicle = EntityHandle::CreateHandle();
+	auto vehicle = EntityHandle::Create();
 
 	geom::rel::Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
@@ -997,7 +997,7 @@ sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_t
 {
 	AddUfoResources();
 	
-	auto ship = EntityHandle::CreateHandle();
+	auto ship = EntityHandle::Create();
 
 	ship.Call([=] (Entity & entity) {
 		switch (player_type)

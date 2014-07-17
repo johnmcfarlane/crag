@@ -42,7 +42,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 		{
 			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
 
-			_model = gfx::ThrusterHandle::CreateHandle(local_transformation, thrust_max);
+			_model = gfx::ThrusterHandle::Create(local_transformation, thrust_max);
 		}
 	}
 

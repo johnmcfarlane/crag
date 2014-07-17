@@ -27,7 +27,7 @@ namespace ipc
 #if defined(WIN32)
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
-	Handle<TYPE> Handle<TYPE>::CreateHandle(PARAMETERS ... parameters)
+	Handle<TYPE> Handle<TYPE>::Create(PARAMETERS ... parameters)
 	{
 		Handle creation;
 		creation.CreateObject(parameters ...); 
@@ -36,7 +36,7 @@ namespace ipc
 #else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
-	Handle<TYPE> Handle<TYPE>::CreateHandle(PARAMETERS && ... parameters)
+	Handle<TYPE> Handle<TYPE>::Create(PARAMETERS && ... parameters)
 	{
 		Handle creation;
 		creation.CreateObject(std::forward<PARAMETERS>(parameters) ...); 

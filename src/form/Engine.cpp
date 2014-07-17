@@ -223,7 +223,7 @@ void Engine::GenerateMesh()
 	
 	_scene.GenerateMesh(* mesh, _origin);
 	
-	// sent it to the gfx::Surrounding object
+	// send it to the gfx::Surrounding object
 	_mesh.Call([mesh] (gfx::Surrounding & surrounding) {
 		surrounding.SetMesh(mesh);
 	});
