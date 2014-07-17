@@ -39,8 +39,6 @@ namespace ipc
 
 		bool IsInitialized() const { return _value != 0; }
 		
-		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
-		
 		friend bool operator == (Uid const & lhs, Uid const & rhs) { return lhs._value == rhs._value; }
 		friend bool operator != (Uid const & lhs, Uid const & rhs) { return lhs._value != rhs._value; }
 		friend bool operator < (Uid const & lhs, Uid const & rhs) { return lhs._value < rhs._value; }
