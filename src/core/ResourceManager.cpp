@@ -30,6 +30,7 @@ void ResourceManager::Unregister(KeyType const & key)
 	auto erased = _resources.erase(key);
 	if (erased != 1)
 	{
+		CRAG_DEBUG_DUMP(key);
 		DEBUG_BREAK("didn't remove a single element (%d)", int(erased));
 	}
 	
