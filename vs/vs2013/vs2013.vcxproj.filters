@@ -46,7 +46,6 @@
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
     <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
-    <ClCompile Include="..\..\src\smp\scheduler.cpp" />
     <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
     <ClCompile Include="..\..\src\smp\smp.cpp" />
     <ClCompile Include="..\..\src\smp\Thread.cpp" />
@@ -113,6 +112,7 @@
     <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
     <ClCompile Include="..\..\src\form\Object.cpp" />
+    <ClCompile Include="..\..\src\scripts\InitSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -206,7 +206,6 @@
     <ClInclude Include="..\..\src\smp\for_each.h" />
     <ClInclude Include="..\..\src\smp\Future.h" />
     <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
-    <ClInclude Include="..\..\src\smp\scheduler.h" />
     <ClInclude Include="..\..\src\smp\Semaphore.h" />
     <ClInclude Include="..\..\src\smp\SimpleMutex.h" />
     <ClInclude Include="..\..\src\smp\smp.h" />
@@ -291,6 +290,7 @@
     <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
     <ClInclude Include="..\..\src\entity\SpawnPlayer.h" />
     <ClInclude Include="..\..\src\gfx\object\SearchLight.h" />
+    <ClInclude Include="..\..\src\scripts\InitSpace.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />
