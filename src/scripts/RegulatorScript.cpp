@@ -282,7 +282,7 @@ void RegulatorScript(applet::AppletInterface & applet_interface)
 	{
 		Tick(regulators);
 
-		applet_interface.Sleep(0.25);
+		applet_interface.Sleep(0.5);
 	}
 
 	for (auto regulator : regulators)
