@@ -41,7 +41,6 @@ namespace ipc
 	template <typename TYPE>
 	class Handle
 	{
-		friend ::std::ostream & ::std::operator << <> (::std::ostream & out, Handle const & handle);
 		friend struct std::hash<Handle>;
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +59,11 @@ namespace ipc
 	public:
 		Handle() = default;
 		
+		friend std::ostream & operator << (std::ostream & out, Handle const & handle)
+		{
+			return out << handle._uid;
+		}
+
 		friend bool operator == (Handle const & lhs, Handle const & rhs)
 		{
 			return lhs._uid == rhs._uid;

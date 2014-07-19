@@ -17,13 +17,6 @@
 namespace std
 {
 	template <typename TYPE>
-	ostream & 
-	operator << (ostream & out, ::ipc::Handle<TYPE> const & handle)
-	{
-		return out << handle._uid;
-	}
-
-	template <typename TYPE>
 	struct hash <ipc::Handle<TYPE>>
 	{
 		size_t operator() (ipc::Handle<TYPE> handle) const
