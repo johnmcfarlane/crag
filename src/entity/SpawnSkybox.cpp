@@ -9,6 +9,8 @@
 
 #include "pch.h"
 
+#include "SpawnSkybox.h"
+
 #include "gfx/Engine.h"
 #include "gfx/Image.h"
 #include "gfx/object/Skybox.h"
