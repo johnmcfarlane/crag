@@ -93,6 +93,7 @@ add_executable(crag
 	physics/RayCast.cpp
 	physics/SphereBody.cpp
 	scripts/GameScript.cpp
+	scripts/InitSpace.cpp
 	scripts/MainScript.cpp
 	scripts/MonitorOrigin.cpp
 	scripts/RegulatorScript.cpp

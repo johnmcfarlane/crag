@@ -9,9 +9,7 @@
 
 #include "pch.h"
 
-#include "TestScript.h"
-#include "MonitorOrigin.h"
-#include "RegulatorScript.h"
+#include "InitSpace.h"
 
 #include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
@@ -26,12 +24,8 @@
 
 #include "physics/SphereBody.h"
 
-#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
-#include "gfx/SetCameraEvent.h"
-
-#include "geom/origin.h"
 
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
@@ -52,8 +46,8 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	geom::rel::Vector3 observer_start_pos(-1085203, 3473659, 9306913);
-	geom::rel::Vector3 animat_start_pos(-1085203, 3473659, 9306923);
+	geom::abs::Vector3 observer_start_pos(-1085203, 3473659, 9306913);
+	geom::abs::Vector3 animat_start_pos(-1085203, 3473659, 9306923);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
@@ -166,13 +160,13 @@ void MainScript(applet::AppletInterface & applet_interface)
 
 	_applet_interface = & applet_interface;
 	
-	// Set camera position
-	{
-		gfx::SetCameraEvent event;
-		event.transformation = geom::abs::Transformation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
+//	// Set camera position
+//	{
+//		gfx::SetCameraEvent event;
+//		event.transformation = geom::abs::Transformation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
 
-		applet::Daemon::Broadcast(event);
-	}
+//		applet::Daemon::Broadcast(event);
+//	}
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
@@ -184,18 +178,14 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::EntityHandle planet;
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
+
+	InitSpace(applet_interface, observer_start_pos);
+	
+	// Give formations time to expand.
+	applet_interface.Sleep(.25f);
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(observer_start_pos, PlayerType(player_type));
-
-	// Create origin controller.
-	if (origin_dynamic_enable)
-	{
-		applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
-	}
-	
-	// launch regulator
-	applet_interface.Launch("Regulator", 8192, &RegulatorScript);
+	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
 	
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/left.bmp",
@@ -206,10 +196,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 		"assets/skybox/front.bmp"
 	}});
 	
-	SpawnAnimats(animat_start_pos);
-
-	// Give formations time to expand.
-	_applet_interface->Sleep(.1f);
+	auto rel_animat_start_pos = geom::AbsToRel(animat_start_pos, observer_start_pos);
+	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
