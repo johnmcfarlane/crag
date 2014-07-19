@@ -58,7 +58,9 @@ namespace form
 		void VerifyUsed(Quaterna const & q) const;
 		void VerifyUnused(Quaterna const & q) const;
 #endif
-		PointBuffer & GetPoints() { return point_buffer; }
+
+		PointBuffer const & GetPoints() const;
+		PointBuffer & GetPoints();
 		
 		int GetNumNodesUsed() const;
 		int GetNumQuaternaUsed() const;
@@ -73,7 +75,7 @@ namespace form
 		int GetTargetNumQuaterna() const;
 		void SetTargetNumQuaterna(int n);
 		
-		void Tick(gfx::LodParameters const & lod_parameters);
+		bool Tick(gfx::LodParameters const & lod_parameters);
 		void OnReset();
 		void ResetNodeOrigins(Vector3 const & origin_delta);
 	private:
@@ -82,7 +84,7 @@ namespace form
 		void UpdateNodes();
 		void UpdateNodeScores(gfx::LodParameters const & lod_parameters);
 		void UpdateQuaterna();
-		bool ExpandNodes();
+		void ExpandNodes();
 	public:
 		
 		void ResetMeshPointers();
@@ -127,6 +129,8 @@ namespace form
 		
 		// used by ChurnNodes
 		SmpNodeVector _expandable_nodes;
+		
+		bool _changed;
 	};
 	
 }

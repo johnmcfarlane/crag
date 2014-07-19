@@ -20,6 +20,21 @@
 
 #include "core/ConfigEntry.h"
 
+#if ! defined(NDEBUG)
+// logs changes to the Surrounding::_changed variable
+//#define DEBUG_SURROUNDING_LOG_CHANGE_ENABLE
+#endif
+
+#if defined(DEBUG_SURROUNDING_LOG_CHANGE_ENABLE)
+#define DEBUG_SURROUNDING_LOG_CHANGE(VARIABLE, VALUE) DO_STATEMENT( \
+	auto __previous = VARIABLE; \
+	VARIABLE = VALUE; \
+	if (__previous != VARIABLE) \
+		CRAG_DEBUG_DUMP(VARIABLE); )
+#else
+#define DEBUG_SURROUNDING_LOG_CHANGE(VARIABLE, VALUE) VARIABLE = VALUE
+#endif
+
 using namespace form;
 
 CONFIG_DECLARE (profile_mode, bool);
@@ -158,6 +173,7 @@ Surrounding::Surrounding(size_t max_num_quaterne)
 , _target_num_quaterne(std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
 , point_buffer(max_num_quaterne * num_verts_per_quaterna)
 , _expandable_nodes(max_num_quaterne * num_nodes_per_quaterna)
+, _changed(true)
 {
 	InitQuaterna(std::begin(_quaterna_buffer) + _quaterna_buffer.capacity());
 
@@ -256,6 +272,18 @@ void Surrounding::VerifyUnused(Quaterna const & q) const
 }
 #endif
 
+PointBuffer const & Surrounding::GetPoints() const
+{
+	return point_buffer;
+}
+
+PointBuffer & Surrounding::GetPoints()
+{
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, true);
+
+	return point_buffer;
+}
+
 int Surrounding::GetNumNodesUsed() const
 {
 	return static_cast<std::size_t>(_node_buffer.GetSize());
@@ -311,20 +339,30 @@ void Surrounding::SetTargetNumQuaterna(int target_num_quaterne)
 
 // This is the main tick function for all things 'nodey'.
 // It is also where a considerable amount of the SceneThread's time is spent.
-void Surrounding::Tick(gfx::LodParameters const & lod_parameters)
+bool Surrounding::Tick(gfx::LodParameters const & lod_parameters)
 {
 	CRAG_VERIFY (lod_parameters);
 	CRAG_VERIFY (* this);
 
 	// Is the new camera ray significantly different to 
 	// the one used to last score the bulk of the node buffer?
-	// TODO: Disabled. Causes complications, not least fluctuations in the frame-rate
-	// which in turn cause fluctuations in the node count.
+	if (! _changed && ! node_score_functor.IsSignificantlyDifferent(lod_parameters.center))
+	{
+		// if there are no changes to act upon, return false;
+		// caller knows that no new mesh is required
+		return false;
+	}
+
+	// reset changed flag; this may get set on again before return
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, false);
+	
 	UpdateNodeScores(lod_parameters);
-	
 	UpdateNodes();
-	
+
 	CRAG_VERIFY(* this);
+	
+	// yes, a new mesh would be appropriate
+	return true;
 }
 
 void Surrounding::OnReset()
@@ -336,6 +374,8 @@ void Surrounding::OnReset()
 	
 	_quaterna_buffer.Clear();
 
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, true);
+
 	// Half the target number of nodes.
 	// Probably not a smart idea.
 	//quaterne_used_end_target -= (quaterne_used_end_target - quaterne) >> 1;
@@ -345,6 +385,7 @@ void Surrounding::OnReset()
 void Surrounding::ResetNodeOrigins(Vector3 const & origin_delta)
 {
 	_node_buffer.ResetNodeOrigins(origin_delta);
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, true);
 }
 
 void Surrounding::InitQuaterna(Quaterna const * end)
@@ -359,19 +400,11 @@ void Surrounding::InitQuaterna(Quaterna const * end)
 
 void Surrounding::UpdateNodes()
 {
-	do 
-	{
-		UpdateQuaterna();
-		
-		// Finally, using the quaterne,
-		// replace nodes whose parent's scores have dropped enough
-		// with ones whose score have increased enough.
-		if (! ExpandNodes())
-		{
-			break;
-		}
-	}
-	while (IsNodeChurnIntensive());
+	UpdateQuaterna();
+	
+	// Using the quaterne, replace nodes whose parent's scores
+	// have dropped enough with ones whose score have increased enough.
+	ExpandNodes();
 }
 
 void Surrounding::UpdateNodeScores(gfx::LodParameters const & lod_parameters)
@@ -393,7 +426,7 @@ void Surrounding::UpdateQuaterna()
 	_quaterna_buffer.Sort();
 }
 
-bool Surrounding::ExpandNodes()
+void Surrounding::ExpandNodes()
 {
 	ASSERT(_expandable_nodes.size() == 0);
 	
@@ -406,7 +439,6 @@ bool Surrounding::ExpandNodes()
 
 	// Traverse the vector and try and expand the nodes.
 	auto min_score = GetLowestSortedQuaternaScore();
-	auto changed = false;
 	for (auto node : _expandable_nodes)
 	{
 		if (node->score > min_score
@@ -414,13 +446,10 @@ bool Surrounding::ExpandNodes()
 			&& ExpandNode(* node)) 
 		{
 			min_score = GetLowestSortedQuaternaScore();
-			changed = true;
 		}
 	}
 	
 	_expandable_nodes.clear();
-	
-	return changed;
 }
 
 void Surrounding::ResetMeshPointers() 
@@ -487,6 +516,8 @@ bool Surrounding::ExpandNode(Node & node)
 		}
 		
 		_node_buffer.Push(4);
+		
+		ASSERT(_changed);
 		return true;
 	}
 	
@@ -528,6 +559,7 @@ bool Surrounding::ExpandNode(Node & node)
 	
 	_quaterna_buffer.DecrementSorted();
 
+	ASSERT(_changed);
 	return true;
 }
 
@@ -586,6 +618,7 @@ bool Surrounding::ExpandNode(Node & node, Quaterna & children_quaterna)
 		node_score_functor (children_quaterna.nodes[3]);
 	}
 	
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, true);
 	return true;
 }
 
@@ -744,6 +777,7 @@ void Surrounding::IncreaseNodes(int target_num_quaterne)
 	// The target pointer now point_buffer into the range of unused quaterne at the end of the array.
 	_target_num_quaterne = target_num_quaterne;
 	
+	DEBUG_SURROUNDING_LOG_CHANGE(_changed, true);
 	CRAG_VERIFY(* this);
 }
 

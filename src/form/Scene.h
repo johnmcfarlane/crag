@@ -59,7 +59,7 @@ namespace form
 		void RemoveFormation(Formation const & formation);
 		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		
-		void Tick(gfx::LodParameters const & lod_parameters);
+		bool Tick(gfx::LodParameters const & lod_parameters);
 		void GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const;
 	private:
 		

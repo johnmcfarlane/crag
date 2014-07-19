@@ -37,6 +37,7 @@ namespace
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
 	STAT_DEFAULT(sim_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
+	STAT(form_changed_sim, bool, 0);
 }
 
 
@@ -252,7 +253,10 @@ void Engine::Tick()
 		return;
 	}
 
-	_collision_scene.Tick(_lod_parameters);
+	if (_collision_scene.Tick(_lod_parameters))
+		STAT_SET(form_changed_sim, true);
+	else
+		STAT_SET(form_changed_sim, false);
 
 	_time += sim_tick_duration;
 	
