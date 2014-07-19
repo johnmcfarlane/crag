@@ -231,7 +231,8 @@ void GameScript(applet::AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create player.
-	_player = SpawnPlayer(player_start_pos, PlayerType(player_type));
+	sim::Transformation transformation(player_start_pos, gfx::Rotation(sim::Vector3(0, 1, 0)));
+	_player = SpawnPlayer(transformation, PlayerType(player_type));
 
 	// Create camera.
 	sim::EntityHandle camera;
