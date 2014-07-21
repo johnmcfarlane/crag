@@ -149,7 +149,9 @@ namespace ipc
 		template <typename Type>
 		SharedPtr<Type> CreateObject()
 		{
-			return CreateObject<Type>(Uid::Create());
+			// instances a new, initialized handle
+			auto handle = Handle::CreateFromUid(Uid::Create());
+			return CreateObject<Type>(handle);
 		}
 		
 #if defined(WIN32)
@@ -187,7 +189,7 @@ namespace ipc
 
 		void ReleaseObject(Handle handle)
 		{
-			ASSERT(handle);
+			ASSERT(handle.IsInitialized());
 			
 			auto found = _objects.find(handle);
 			if (found == _objects.end())
@@ -216,12 +218,12 @@ namespace ipc
 		void AddObject(Handle handle, SharedPtr<Type> & object)
 		{
 			// Handle must be initialized and absent from the Engint's map
-			CRAG_VERIFY_TRUE(handle);
+			CRAG_VERIFY_TRUE(handle.IsInitialized());
 			ASSERT(! GetObject(handle));
 
 			// object must be valid and unassigned
 			CRAG_VERIFY(object);
-			CRAG_VERIFY_TRUE(! object->GetHandle());
+			CRAG_VERIFY_TRUE(! object->GetHandle().IsInitialized());
 
 			// assign the Handle to the object
 			object->SetHandle(handle);
@@ -244,7 +246,7 @@ namespace ipc
 				CRAG_VERIFY_EQUAL(pair.first, object.GetHandle());
 				CRAG_VERIFY_EQUAL(& self, & object.GetEngine());
 				CRAG_VERIFY(object);
-				CRAG_VERIFY_TRUE(object.GetHandle());
+				CRAG_VERIFY_TRUE(object.GetHandle().IsInitialized());
 			});
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 

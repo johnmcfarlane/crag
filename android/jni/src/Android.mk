@@ -106,6 +106,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/physics/RayCast.cpp \
 	$(CRAG_PATH)/physics/SphereBody.cpp \
 	$(CRAG_PATH)/scripts/GameScript.cpp \
+	$(CRAG_PATH)/scripts/InitSpace.cpp \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \
 	$(CRAG_PATH)/scripts/RegulatorScript.cpp \
@@ -121,7 +122,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/ipc/FiberWin.cpp \
 	$(CRAG_PATH)/ipc/ListenerInterface.cpp \
 	$(CRAG_PATH)/smp/ReadersWriterMutex.cpp \
-	$(CRAG_PATH)/smp/scheduler.cpp \
 	$(CRAG_PATH)/smp/Semaphore.cpp \
 	$(CRAG_PATH)/smp/smp.cpp \
 	$(CRAG_PATH)/smp/Thread.cpp \

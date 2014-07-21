@@ -39,6 +39,7 @@ namespace
 	
 	STAT (mesh_generation, bool, .206f);
 	STAT (dynamic_origin, bool, .206f);
+	STAT (form_changed_gfx, bool, 0);
 
 	// the maximum size of formation-related buffers is limited by the maximum
 	// value allowed in GLES index buffers (which are 16 in some cases)
@@ -144,7 +145,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	FUNCTION_NO_REENTRY;
 	
 	// create the mesh used to pass results to the gfx thread
-	_mesh.Create();
+	_mesh.CreateObject();
 	
 	while (! quit_flag) 
 	{
@@ -179,11 +180,6 @@ void Engine::Tick()
 	
 	TickScene();
 	
-	if (enable_mesh_generation)
-	{			
-		GenerateMesh();
-	}
-	
 	CRAG_VERIFY(* this);
 }
 
@@ -191,10 +187,24 @@ void Engine::TickScene()
 {
 	PROFILE_TIMER_BEGIN(t);
 	
-	_scene.Tick(_lod_parameters);
+	if (_scene.Tick(_lod_parameters))
+	{
+		PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetSurrounding().GetNumQuaternaUsed());
+		PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
 	
-	PROFILE_SAMPLE(scene_tick_per_quaterna, PROFILE_TIMER_READ(t) / _scene.GetSurrounding().GetNumQuaternaUsed());
-	PROFILE_SAMPLE(scene_tick_period, PROFILE_TIMER_READ(t));
+		if (enable_mesh_generation)
+		{
+			GenerateMesh();
+		}
+
+		STAT_SET(form_changed_gfx, true);
+	}
+	else
+	{
+		smp::Sleep(.01);
+
+		STAT_SET(form_changed_gfx, false);
+	}
 }
 
 void Engine::AdjustNumQuaterna()
@@ -223,7 +233,7 @@ void Engine::GenerateMesh()
 	
 	_scene.GenerateMesh(* mesh, _origin);
 	
-	// sent it to the gfx::Surrounding object
+	// send it to the gfx::Surrounding object
 	_mesh.Call([mesh] (gfx::Surrounding & surrounding) {
 		surrounding.SetMesh(mesh);
 	});

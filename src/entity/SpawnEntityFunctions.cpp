@@ -89,7 +89,7 @@ namespace
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("CuboidVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("CuboidPlainMesh");
-		auto model = gfx::MeshObjectHandle::CreateHandle(local_transformation, color, size, lit_vbo, plain_mesh);
+		auto model = gfx::MeshObjectHandle::Create(local_transformation, color, size, lit_vbo, plain_mesh);
 		box.SetModel(model);
 	}
 
@@ -112,7 +112,7 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
-		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, color);
+		gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
 		ball.SetModel(model);
 	}
 
@@ -134,7 +134,7 @@ EntityHandle SpawnBall(Sphere3 const & sphere, Vector3 const & velocity, gfx::Co
 	ASSERT(color.a = 1);
 	
 	// ball
-	auto ball = EntityHandle::CreateHandle();
+	auto ball = EntityHandle::Create();
 
 	ball.Call([sphere, velocity, color] (Entity & entity) {
 		ConstructBall(entity, sphere, velocity, color);
@@ -148,7 +148,7 @@ EntityHandle SpawnBox(Vector3 const & position, Vector3 const & velocity, Vector
 	ASSERT(color.a = 1);
 	
 	// box
-	auto box = EntityHandle::CreateHandle();
+	auto box = EntityHandle::Create();
 
 	box.Call([position, velocity, size, color] (Entity & entity) {
 		ConstructBox(entity, position, velocity, size, color);
@@ -159,7 +159,7 @@ EntityHandle SpawnBox(Vector3 const & position, Vector3 const & velocity, Vector
 
 EntityHandle SpawnCamera(Vector3 const & position, EntityHandle subject)
 {
-	auto camera = EntityHandle::CreateHandle();
+	auto camera = EntityHandle::Create();
 
 	camera.Call([position, subject] (Entity & entity) {
 		ConstructCamera(entity, position, subject);
@@ -170,7 +170,7 @@ EntityHandle SpawnCamera(Vector3 const & position, EntityHandle subject)
 
 EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_craters)
 {
-	auto handle = EntityHandle::CreateHandle();
+	auto handle = EntityHandle::Create();
 
 	handle.Call([sphere, random_seed, num_craters] (Entity & entity) {
 		auto & engine = entity.GetEngine();
@@ -200,7 +200,7 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		gfx::Scalar sea_level = 0;
 #endif
 		
-		auto model = gfx::PlanetHandle::CreateHandle(gfx::Transformation(sphere.center), sea_level);
+		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center), sea_level);
 		entity.SetModel(model);
 	});
 
@@ -210,7 +210,7 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 // assumes origin is zero
 EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color, bool casts_shadow)
 {
-	auto sun = EntityHandle::CreateHandle();
+	auto sun = EntityHandle::Create();
 
 	sun.Call([volume, color, casts_shadow] (Entity & entity) {
 		// physics
@@ -219,7 +219,7 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 		entity.SetLocation(location);
 
 		// graphics
-		auto light = gfx::LightHandle::CreateHandle(
+		auto light = gfx::LightHandle::Create(
 			transformation, color, 
 			gfx::LightAttributes { gfx::LightResolution::vertex, gfx::LightType::point, casts_shadow });
 		entity.SetModel(light);

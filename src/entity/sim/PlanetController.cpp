@@ -61,7 +61,7 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	geom::abs::Sphere3 formation_sphere = geom::Cast<geom::abs::Scalar>(sphere);
 	
 	_formation = FormationPtr(new form::Formation(random_seed_formation, shader, formation_sphere));
-	_handle.Create(* _formation);
+	_handle.CreateObject(* _formation);
 	engine.AddFormation(* _formation);
 
 	// roster

@@ -58,11 +58,11 @@ void QuaternaBuffer::Clear()
 
 void QuaternaBuffer::UpdateScores()
 {
-	ForEach([] (Quaterna & q) 
+	for (auto & q : * this)
 	{
 		Node * parent = q.nodes[0].GetParent();
 		q.parent_score = (parent != nullptr) ? parent->score : -1;
-	}, 1024, true);
+	}
 	
 	// This basically says: "as far as I know, none of the quaterne are sorted."
 	_quaterne_sorted_end = _quaterne;

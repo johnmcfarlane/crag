@@ -335,7 +335,7 @@ void Engine::OnAddObject(ObjectSharedPtr const & object_ptr)
 
 	auto & object = * object_ptr;
 	scene->AddObject(object);
-	OnSetParent(object, Uid());
+	OnSetParent(object, Handle());
 }
 
 void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
@@ -354,7 +354,7 @@ void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 
 void Engine::OnSetParent(ObjectHandle child_handle, ObjectHandle parent_handle)
 {
-	ASSERT(child_handle);
+	ASSERT(child_handle.IsInitialized());
 	
 	auto const & child = GetObject(child_handle);
 	if (! child)
@@ -369,7 +369,7 @@ void Engine::OnSetParent(Object & child, ObjectHandle parent_uid)
 {
 	auto & parent = [&] () -> Object &
 	{
-		if (parent_uid)
+		if (parent_uid.IsInitialized())
 		{
 			auto & object = GetObject(parent_uid);
 		

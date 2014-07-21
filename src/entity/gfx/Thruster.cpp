@@ -110,5 +110,5 @@ void Thruster::AddPuff(float thrust_factor)
 		transformation = Transformation(translation, gfx::Rotation<Scalar>(puff_direction));
 	}
 
-	ipc::Handle<Puff>::CreateHandle(transformation, spawn_volume);
+	ipc::Handle<Puff>::Create(transformation, spawn_volume);
 }

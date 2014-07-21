@@ -19,4 +19,4 @@ enum class PlayerType
 };
 
 sim::EntityHandle SpawnRover(sim::Vector3 const & position, sim::Scalar thrust);
-sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_type);
+sim::EntityHandle SpawnPlayer(sim::Transformation const & transformation, PlayerType player_type);

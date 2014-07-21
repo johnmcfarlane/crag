@@ -9,8 +9,7 @@
 
 #include "pch.h"
 
-#include "MonitorOrigin.h"
-#include "RegulatorScript.h"
+#include "InitSpace.h"
 
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnPlayer.h"
@@ -28,9 +27,6 @@
 #include "gfx/Color.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
-#include "gfx/SetCameraEvent.h"
-
-#include "geom/origin.h"
 
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
@@ -50,7 +46,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	sim::Vector3 observer_start_pos(0, 9999400, -5);
+	geom::abs::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	CONFIG_DEFINE(spawn_vehicle, bool, true);
@@ -202,14 +198,6 @@ void TestScript(applet::AppletInterface & applet_interface)
 	sim::EntityHandle sun1 = SpawnStar(star_volume, star_color);
 	sim::EntityHandle sun2 = SpawnStar(star_volume, gfx::Color4f::Yellow() * 1000000000000000.f);
 	
-	// Set camera position
-	{
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
-		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, -1)));
-		gfx::Daemon::Broadcast(event);
-	}
-	
 	// Create planets
 	sim::EntityHandle planet, moon1, moon2;
 	if (spawn_planets)
@@ -221,27 +209,20 @@ void TestScript(applet::AppletInterface & applet_interface)
 		moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 	}
 	
-	// Give formations time to expand.
-	//_applet_interface->Sleep(2);	// (Currently doesn't work out so well.)
-
-	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(observer_start_pos, PlayerType(player_type));
-
-	// Create origin controller.
-	if (origin_dynamic_enable)
-	{
-		applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
-	}
+	InitSpace(applet_interface, observer_start_pos);
 	
-	// launch regulator
-	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
+	// Give formations time to expand.
+	applet_interface.Sleep(.25f);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
+	// Create observer.
+	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
+
 	// Create vehicle.
 	if (spawn_vehicle)
 	{
-		_vehicle = SpawnRover(observer_start_pos + sim::Vector3(0, 5, +5), vehicle_thrust);
+		_vehicle = SpawnRover(sim::Vector3::Zero() + sim::Vector3(0, 5, +5), vehicle_thrust);
 	}
 
 	// main loop

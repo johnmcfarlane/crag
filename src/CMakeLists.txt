@@ -93,6 +93,7 @@ add_executable(crag
 	physics/RayCast.cpp
 	physics/SphereBody.cpp
 	scripts/GameScript.cpp
+	scripts/InitSpace.cpp
 	scripts/MainScript.cpp
 	scripts/MonitorOrigin.cpp
 	scripts/RegulatorScript.cpp
@@ -108,7 +109,6 @@ add_executable(crag
 	ipc/FiberPosix.cpp
 	ipc/FiberWin.cpp
 	smp/ReadersWriterMutex.cpp
-	smp/scheduler.cpp
 	smp/Semaphore.cpp
 	smp/smp.cpp
 	smp/Thread.cpp

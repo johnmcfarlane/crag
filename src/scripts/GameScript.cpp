@@ -9,29 +9,21 @@
 
 #include "pch.h"
 
-#include "MonitorOrigin.h"
-#include "RegulatorScript.h"
+#include "InitSpace.h"
 
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnSkybox.h"
 #include "entity/SpawnPlayer.h"
 
-#include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/Location.h"
-
 #include "gfx/axes.h"
 #include "gfx/Color.h"
-#include "gfx/Debug.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
-#include "gfx/SetCameraEvent.h"
-
-#include "geom/origin.h"
 
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
@@ -39,7 +31,6 @@
 
 using geom::Vector3f;
 
-CONFIG_DECLARE(origin_dynamic_enable, bool);
 CONFIG_DECLARE(player_type, int);
 
 namespace 
@@ -55,8 +46,8 @@ namespace
 	CONFIG_DEFINE(enable_spawn_cube, bool, true);
 	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
 
-	sim::Vector3 player_start_pos(5, 9999400, 0);
-	sim::Vector3 camera_start_pos(-10, 9999400, 0);
+	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
+	geom::abs::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
@@ -198,52 +189,43 @@ void GameScript(applet::AppletInterface & applet_interface)
 	FUNCTION_NO_REENTRY;
 
 	_applet_interface = & applet_interface;
+
+	// coordinate system
+	auto origin = geom::Cast<geom::abs::Scalar>(camera_start_pos);
+	auto rel_camera_start_pos = geom::AbsToRel(camera_start_pos, origin);
+	auto rel_player_start_pos = geom::AbsToRel(player_start_pos, origin);
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
 	gfx::Color4f star_color(gfx::Color4f(1.f,.975f,.95f) * 6000000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
-	// Set camera position
-	{
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(geom::Cast<geom::abs::Scalar>(camera_start_pos));
-		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, 1)));
-		gfx::Daemon::Broadcast(event);
-	}
-	
 	// Create planets
 	sim::EntityHandle planet;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), 10000000), 3634, 0);
 	
-	// Give formations time to expand.
-	//_applet_interface->Sleep(2);	// (Currently doesn't work out so well.)
-
-	// Create origin controller.
-	if (origin_dynamic_enable)
-	{
-		applet_interface.Launch("MonitorOrigin", 8192, &MonitorOrigin);
-	}
+	InitSpace(applet_interface, origin);
 	
-	// launch regulator
-	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
+	// Give formations time to expand.
+	applet_interface.Sleep(.25f);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create player.
-	_player = SpawnPlayer(player_start_pos, PlayerType(player_type));
+	sim::Transformation transformation(rel_player_start_pos, gfx::Rotation(sim::Vector3(0, 1, 0)));
+	_player = SpawnPlayer(transformation, PlayerType(player_type));
 
 	// Create camera.
 	sim::EntityHandle camera;
 	if (player_type != int(PlayerType::observer))
 	{
-		camera = SpawnCamera(camera_start_pos, _player);
+		camera = SpawnCamera(rel_camera_start_pos, _player);
 	}
 
 	// ball
 	if (enable_spawn_ball)
 	{
-		auto sphere = sim::Sphere3(player_start_pos + sim::Vector3(5.f, 8.f, -4.f), 1.f);
+		auto sphere = sim::Sphere3(rel_player_start_pos + sim::Vector3(5.f, 8.f, -4.f), 1.f);
 		auto ball = SpawnBall(sphere, sim::Vector3::Zero(), gfx::Color4f::Periwinkle());
 		_shapes.push_back(ball);
 	}
@@ -251,7 +233,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	// cube
 	if (enable_spawn_cube)
 	{
-		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(0.f, 10.f, 3.f));
+		auto spawn_pos = sim::Vector3(rel_player_start_pos + sim::Vector3(0.f, 10.f, 3.f));
 		auto size = sim::Vector3(1.f, 1.f, 1.f) * 2.f;
 		auto cube = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Orange());
 		_shapes.push_back(cube);
@@ -260,7 +242,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	// obelisk
 	if (enable_spawn_obelisk)
 	{
-		auto spawn_pos = sim::Vector3(player_start_pos + sim::Vector3(1.f, 8.f, 3.f));
+		auto spawn_pos = sim::Vector3(rel_player_start_pos + sim::Vector3(1.f, 8.f, 3.f));
 		auto size = sim::Vector3(1.f, 4.f, 9.f) * .5f;
 		auto obelisk = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Black());
 		_shapes.push_back(obelisk);

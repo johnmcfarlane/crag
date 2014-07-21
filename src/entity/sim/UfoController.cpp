@@ -78,7 +78,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)
 	if (self._ball_entity)
 	{
 		CRAG_VERIFY(* self._ball_entity);
-		CRAG_VERIFY_TRUE(self._ball_entity->GetHandle());
+		CRAG_VERIFY_TRUE(self._ball_entity->GetHandle().IsInitialized());
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 

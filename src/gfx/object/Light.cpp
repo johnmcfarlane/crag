@@ -36,7 +36,7 @@ Light::Light(
 , _exception(nullptr)
 , _attributes(attributes)
 {
-	if (exception)
+	if (exception.IsInitialized())
 	{
 		auto exception_object = engine.GetObject(exception);
 		ASSERT(exception_object);

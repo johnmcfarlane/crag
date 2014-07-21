@@ -9,6 +9,8 @@
 
 #include "pch.h"
 
+#include "SpawnSkybox.h"
+
 #include "gfx/Engine.h"
 #include "gfx/Image.h"
 #include "gfx/object/Skybox.h"
@@ -188,7 +190,7 @@ namespace
 
 gfx::ObjectHandle SpawnHolodeckSkybox()
 {
-	auto skybox = gfx::SkyboxHandle::CreateHandle();
+	auto skybox = gfx::SkyboxHandle::Create();
 	skybox.Call([] (gfx::Skybox & skybox) {
 		DrawHolodeckSkybox(skybox, 512, 16);
 	});
@@ -200,7 +202,7 @@ gfx::ObjectHandle SpawnHolodeckSkybox()
 gfx::ObjectHandle SpawnStarfieldSkybox()
 {
 	bool const fast = true;
-	auto skybox = gfx::SkyboxHandle::CreateHandle();
+	auto skybox = gfx::SkyboxHandle::Create();
 	skybox.Call([fast] (gfx::Skybox & object) {
 		if (fast)
 		{
@@ -217,7 +219,7 @@ gfx::ObjectHandle SpawnStarfieldSkybox()
 
 gfx::ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filenames)
 {
-	auto skybox = gfx::SkyboxHandle::CreateHandle();
+	auto skybox = gfx::SkyboxHandle::Create();
 
 	skybox.Call([filenames] (gfx::Skybox & object) {
 		gfx::Image image;

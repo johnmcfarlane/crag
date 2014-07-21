@@ -35,7 +35,8 @@ Scene::~Scene()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, scene)
-	if (! scene._surrounding.GetPoints().IsEmpty())
+	auto const & surrounding = scene._surrounding;
+	if (! surrounding.GetPoints().IsEmpty())
 	{
 		CRAG_VERIFY_FALSE(scene.formation_map.empty());
 	}
@@ -99,12 +100,14 @@ Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
 	}
 }
 
-void Scene::Tick(gfx::LodParameters const & lod_parameters)
+bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 {
 	CRAG_VERIFY(lod_parameters);
 	
-	_surrounding.Tick(lod_parameters);
+	bool changed = _surrounding.Tick(lod_parameters);
 	TickModels();
+	
+	return changed;
 }
 
 void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const

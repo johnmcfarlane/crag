@@ -598,7 +598,7 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
-		gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, color);
+		gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
 		ball.SetModel(model);
 	}
 
@@ -707,7 +707,7 @@ namespace
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("ShipVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("ShipShadowMesh");
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, lit_vbo, plain_mesh);
 		entity.SetModel(model_handle);
 
 		// controller
@@ -746,7 +746,7 @@ namespace
 		AddHoverThruster(* controller, Vector3(0.f, .25f, 0.f), .1f);
 	}
 
-	void ConstructUfo(Entity & ufo_entity, Vector3 const & position, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
+	void ConstructUfo(Entity & ufo_entity, Transformation const & transformation, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
 	{
 		bool is_thargoid = player_type == PlayerType::thargoid;
 		
@@ -755,7 +755,6 @@ namespace
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto velocity = Vector3::Zero();
-		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
 
 		// resources
 		auto & resource_manager = crag::core::ResourceManager::Get();
@@ -763,8 +762,6 @@ namespace
 		auto shadow_mesh = resource_manager.GetHandle<gfx::PlainMesh>(shadow_mesh_name);
 
 		// saucer physics
-		auto rotation = gfx::Rotation(geom::Normalized(position), gfx::Direction::forward);
-		Transformation transformation(position, rotation);
 		auto body = make_shared<physics::CylinderBody>(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
 		body->SetLinearDamping(saucer_linear_damping);
 		body->SetAngularDamping(saucer_angular_damping);
@@ -772,7 +769,7 @@ namespace
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::CreateHandle(local_transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
+		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(transformation, gfx::Color4f::White(), scale, vbo, shadow_mesh);
 		ufo_entity.SetModel(model_handle);
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -783,7 +780,7 @@ namespace
 		
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
-			Sphere3 sphere(position, saucer_ball_radius);
+			Sphere3 sphere(transformation.GetTranslation(), saucer_ball_radius);
 			ball_entity = engine.CreateObject<Entity>();
 
 			// physics
@@ -797,7 +794,7 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::CreateHandle(local_transformation, sphere.radius, ufo_color3);
+				gfx::ObjectHandle model = gfx::BallHandle::Create(transformation, sphere.radius, ufo_color3);
 				ball_entity->SetModel(model);
 				
 				exception_object = model;
@@ -819,7 +816,7 @@ namespace
 			float clear_distance = (saucer_height * .5f + saucer_ball_radius) * .5f;
 			
 			gfx::Transformation search_light_transformation(Vector3(0.f, 0.f, - clear_distance));
-			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::CreateHandle(
+			gfx::ObjectHandle light_handle = gfx::SearchLightHandle::Create(
 				search_light_transformation, 
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
@@ -985,7 +982,7 @@ namespace
 
 EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 {
-	auto vehicle = EntityHandle::CreateHandle();
+	auto vehicle = EntityHandle::Create();
 
 	geom::rel::Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
@@ -998,33 +995,33 @@ EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 	return vehicle;
 }
 
-sim::EntityHandle SpawnPlayer(sim::Vector3 const & position, PlayerType player_type)
+sim::EntityHandle SpawnPlayer(sim::Transformation const & transformation, PlayerType player_type)
 {
 	AddUfoResources();
 	
-	auto ship = EntityHandle::CreateHandle();
+	auto ship = EntityHandle::Create();
 
 	ship.Call([=] (Entity & entity) {
 		switch (player_type)
 		{
 		case PlayerType::observer:
-			ConstructObserver(entity, position);
+			ConstructObserver(entity, transformation.GetTranslation());
 			break;
 
 		case PlayerType::arrow:
-			ConstructShip(entity, position);
+			ConstructShip(entity, transformation.GetTranslation());
 			break;
 
 		case PlayerType::thargoid:
-			ConstructUfo(entity, position, "ThargoidVbo", "ThargoidShadowMesh", player_type, thargoid_thrust, thargoid_radius);
+			ConstructUfo(entity, transformation, "ThargoidVbo", "ThargoidShadowMesh", player_type, thargoid_thrust, thargoid_radius);
 			break;
 
 		case PlayerType::cos_saucer:
-			ConstructUfo(entity, position, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, transformation, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 
 		case PlayerType::ball_saucer:
-			ConstructUfo(entity, position, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, transformation, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
 			break;
 		}
 	});

@@ -35,11 +35,7 @@ namespace ipc
 		
 	public:
 		// functions
-		Uid() : _value(0) { }
-
-		operator bool () const { return _value != 0; }
-		
-		Uid & operator = (Uid const & rhs) { _value = rhs._value; return * this; }
+		bool IsInitialized() const { return _value != 0; }
 		
 		friend bool operator == (Uid const & lhs, Uid const & rhs) { return lhs._value == rhs._value; }
 		friend bool operator != (Uid const & lhs, Uid const & rhs) { return lhs._value != rhs._value; }
@@ -60,7 +56,7 @@ namespace ipc
 		
 	private:
 		// variables
-		ValueType _value;
+		ValueType _value = 0;
 	};
 }
 
