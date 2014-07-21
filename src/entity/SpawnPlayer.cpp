@@ -99,7 +99,12 @@ namespace
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
 	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
 	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
+#if defined(CRAG_USE_GL)
 	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
+#endif
+#if defined(CRAG_USE_GLES)
+	CONFIG_DEFINE (saucer_search_light_enable, bool, false);
+#endif
 	CONFIG_DEFINE (saucer_search_light_angle, Scalar, .15f);
 
 	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
