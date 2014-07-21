@@ -40,6 +40,12 @@ namespace
 	CONFIG_DEFINE(contact_surface_bounce, physics::Scalar, .5);
 	CONFIG_DEFINE(contact_surface_bounce_velocity, physics::Scalar, .1f);
 
+	CONFIG_DEFINE(angular_damping, physics::Scalar, .05f);
+	CONFIG_DEFINE(linear_damping, physics::Scalar, .01f);
+
+	CONFIG_DEFINE(angular_damping_threshold, physics::Scalar, .05f);
+	CONFIG_DEFINE(linear_damping_threshold, physics::Scalar, .01f);
+
 	STAT (num_contacts, int, .15f);
 
 #if ! defined(NDEBUG)
@@ -109,6 +115,11 @@ Engine::Engine()
 	_contact.surface.mu = contact_surface_friction;
 	_contact.surface.bounce = contact_surface_bounce;
 	_contact.surface.bounce_vel = contact_surface_bounce_velocity;
+
+	// damping global settings
+	dWorldSetDamping(world, linear_damping, angular_damping);
+	dWorldSetLinearDampingThreshold(world, linear_damping_threshold);
+	dWorldSetAngularDampingThreshold(world, linear_damping_threshold);
 }
 
 Engine::~Engine()
