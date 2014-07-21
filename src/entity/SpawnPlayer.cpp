@@ -72,11 +72,6 @@ namespace
 	CONFIG_DEFINE (observer_radius, float, .5);
 	CONFIG_DEFINE (observer_density, float, 1);
 	
-	CONFIG_DEFINE (observer_linear_damping, physics::Scalar, 0.025f);
-	CONFIG_DEFINE (observer_angular_damping, physics::Scalar, 0.05f);
-
-	CONFIG_DEFINE (ship_linear_damping, physics::Scalar, 0.05f);
-	CONFIG_DEFINE (ship_angular_damping, physics::Scalar, 0.15f);
 	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
 	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
 	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
@@ -90,11 +85,7 @@ namespace
 	CONFIG_DEFINE (saucer_cylinder_height, physics::Scalar, .01f);
 	CONFIG_DEFINE (saucer_ball_radius, physics::Scalar, .45f);
 	CONFIG_DEFINE (saucer_ball_density, float, 1);
-	CONFIG_DEFINE (saucer_ball_linear_damping, float, 0.005f);
-	CONFIG_DEFINE (saucer_ball_angular_damping, float, 0.005f);
 	CONFIG_DEFINE (saucer_thrust, float, 16.f);
-	CONFIG_DEFINE (saucer_linear_damping, physics::Scalar, 0.01f);
-	CONFIG_DEFINE (saucer_angular_damping, physics::Scalar, 0.05f);
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
 	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
@@ -565,7 +556,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// entity composition
 	
-	void ConstructBody(Entity & entity, geom::rel::Vector3 const & position, Vector3 const & velocity, physics::Mass m, float linear_damping, float angular_damping)
+	void ConstructBody(Entity & entity, geom::rel::Vector3 const & position, Vector3 const & velocity, physics::Mass m)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -574,27 +565,23 @@ namespace
 		
 		// setting the mass of a shapeless body is somewhat nonsensical
 		body->SetMass(m);
-		body->SetLinearDamping(linear_damping);
-		body->SetAngularDamping(angular_damping);
 		entity.SetLocation(body);
 	}
 
-	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
+	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
 		body->SetDensity(density);
-		body->SetLinearDamping(linear_damping);
-		body->SetAngularDamping(angular_damping);
 		entity.SetLocation(body);
 	}
 
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphereBody(ball, sphere, velocity, saucer_ball_density, saucer_ball_linear_damping, saucer_ball_angular_damping);
+		ConstructSphereBody(ball, sphere, velocity, saucer_ball_density);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -609,13 +596,13 @@ namespace
 		{
 			if (observer_physics)
 			{
-				ConstructSphereBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density, observer_linear_damping, observer_angular_damping);
+				ConstructSphereBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density);
 			}
 			else
 			{
 				physics::Mass m;
 				dMassSetSphere(& m, observer_density, observer_radius);
-				ConstructBody(observer, position, Vector3::Zero(), m, observer_linear_damping, observer_angular_damping);
+				ConstructBody(observer, position, Vector3::Zero(), m);
 			}
 		}
 
@@ -698,8 +685,6 @@ namespace
 		auto velocity = Vector3::Zero();
 		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto body = make_shared<physics::MeshBody>(position, & velocity, physics_engine, * physics_mesh);
-		body->SetLinearDamping(ship_linear_damping);
-		body->SetAngularDamping(ship_angular_damping);
 		entity.SetLocation(body);
 
 		// graphics
@@ -763,8 +748,6 @@ namespace
 
 		// saucer physics
 		auto body = make_shared<physics::CylinderBody>(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
-		body->SetLinearDamping(saucer_linear_damping);
-		body->SetAngularDamping(saucer_angular_damping);
 		ufo_entity.SetLocation(body);
 
 		// graphics

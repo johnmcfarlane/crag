@@ -74,8 +74,6 @@ namespace
 			auto zero_vector = sim::Vector3::Zero();
 			auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
 			body->SetDensity(1);
-			body->SetLinearDamping(0.005f);
-			body->SetAngularDamping(0.005f);
 			entity.SetLocation(body);
 
 			// graphics
