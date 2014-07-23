@@ -14,12 +14,10 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/Body.h"
 #include "physics/RayCast.h"
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetLodParametersEvent.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
@@ -107,63 +105,6 @@ CameraController::~CameraController()
 }
 
 void CameraController::Tick()
-{
-	// send last location update to rendered etc.
-	Update();
-
-	// event-based input
-	HandleEvents();
-}
-
-void CameraController::HandleEvents()
-{
-	SDL_Event event;
-	while (_event_watcher.PopEvent(event))
-	{
-		HandleEvent(event);
-	}
-}
-
-void CameraController::HandleEvent(SDL_Event const & event)
-{
-	switch (event.type)
-	{
-		case SDL_KEYDOWN:
-			HandleKeyboardEvent(event.key.keysym.scancode, true);
-			break;
-		
-		case SDL_KEYUP:
-			HandleKeyboardEvent(event.key.keysym.scancode, false);
-			break;
-		
-		default:
-			break;
-	}
-}
-
-// returns false if it's time to quit
-void CameraController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
-{
-	if (! down)
-	{
-		return;
-	}
-
-	switch (scancode)
-	{
-		case SDL_SCANCODE_C:
-			{
-				_collidable = ! _collidable;
-				GetBody().SetIsCollidable(_collidable);
-			}
-			break;
-			
-		default:
-			break;
-	}
-}
-
-void CameraController::Update()
 {
 	auto & camera_body = GetBody();
 	auto camera_transformation = camera_body.GetTransformation();
