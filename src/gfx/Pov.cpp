@@ -22,6 +22,12 @@ Pov::Pov()
 {
 }
 
+Pov::Pov(Transformation const & transformation, Frustum const & frustum)
+: _transformation(transformation)
+, _frustum(frustum)
+{
+}
+
 void Pov::SetFrustum(Frustum const & frustum)
 {
 	_frustum = frustum;

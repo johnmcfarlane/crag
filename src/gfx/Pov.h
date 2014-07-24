@@ -22,6 +22,7 @@ namespace gfx
 	public:
 		// functions
 		Pov();
+		Pov(Transformation const & transformation, Frustum const & frustum);
 		
 		void SetFrustum(Frustum const & frustum);
 		Frustum const & GetFrustum() const;
@@ -40,7 +41,7 @@ namespace gfx
 		
 	private:
 		// variables
-		Frustum _frustum;
 		Transformation _transformation;
+		Frustum _frustum;
 	};
 }
