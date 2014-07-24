@@ -32,7 +32,8 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	FUNCTION_NO_REENTRY;
 
 	// coordinate system
-	auto rel_start_pos = geom::AbsToRel(start_pos, start_pos);
+	auto const & origin = geom::RelToAbs(start_pos, geom::abs::Vector3::Zero());
+	auto rel_start_pos = geom::AbsToRel(start_pos, origin);
 	
 	// Create origin controller.
 	if (origin_dynamic_enable)
@@ -47,7 +48,7 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	{
 		gfx::SetOriginEvent event = 
 		{
-			start_pos
+			origin
 		};
 		applet::Daemon::Broadcast(event);
 	}
@@ -62,9 +63,7 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(start_pos * 3.);
-		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, 1)));
+		gfx::SetCameraEvent event = { { start_pos * 3. } };
 		gfx::Daemon::Broadcast(event);
 	}
 }
