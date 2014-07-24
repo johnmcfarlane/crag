@@ -41,15 +41,15 @@
 #include "gfx/Color.h"
 #endif
 
-CONFIG_DECLARE_ANGLE(camera_fov, float);
-CONFIG_DECLARE(camera_near, float);
+CONFIG_DECLARE(frustum_default_depth_near, float);
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 using namespace sim;
 
 namespace
 {
 	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
-	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of camera_near
+	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of near Z
 
 	struct TranslationRollContact
 	{
@@ -266,7 +266,7 @@ TouchObserverController::TouchObserverController(Entity & entity, Transformation
 {
 	_frustum.resolution = app::GetResolution();
 	_frustum.depth_range = Vector2(1, 2);
-	_frustum.fov = camera_fov;
+	_frustum.fov = frustum_default_fov;
 
 	// register 
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
@@ -633,7 +633,7 @@ void TouchObserverController::ClampTransformation()
 		ASSERT(touch_observer_distance_buffer >= 1.f);
 	
 		Vector3 center = _current_transformation.GetTranslation();
-		Scalar radius = camera_near * touch_observer_distance_buffer;
+		Scalar radius = frustum_default_depth_near * touch_observer_distance_buffer;
 		Sphere3 collision_sphere(center, radius);
 
 		auto & entity = GetEntity();
@@ -679,7 +679,7 @@ void TouchObserverController::BroadcastTransformation() const
 	// broadcast new lod center
 	gfx::SetLodParametersEvent set_lod_parameters_event;
 	set_lod_parameters_event.parameters.center = _current_transformation.GetTranslation();
-	set_lod_parameters_event.parameters.min_distance = camera_near;
+	set_lod_parameters_event.parameters.min_distance = frustum_default_depth_near;
 	Daemon::Broadcast(set_lod_parameters_event);
 }
 

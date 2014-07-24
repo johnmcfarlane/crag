@@ -69,6 +69,7 @@ add_executable(crag
 	gfx/object/SearchLight.cpp
 	gfx/object/Skybox.cpp
 	gfx/object/MeshObject.cpp
+	gfx/Frustum.cpp
 	gfx/PlainVertex.cpp
 	gfx/Pov.cpp
 	gfx/Program.cpp

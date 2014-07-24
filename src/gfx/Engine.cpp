@@ -43,7 +43,7 @@ using namespace gfx;
 CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
-CONFIG_DECLARE(camera_near, float);
+CONFIG_DECLARE(frustum_default_depth_near, float);
 
 namespace 
 {
@@ -135,7 +135,7 @@ namespace
 			ASSERT(! IsInf(depth_range[1]));
 			
 			// and it isn't behind the camera,
-			if (depth_range[1] <= camera_near)
+			if (depth_range[1] <= frustum_default_depth_near)
 			{
 				continue;
 			}
@@ -153,13 +153,13 @@ namespace
 		}
 
 		// Bind the near plane to the default value,
-		frustum_depth_range[0] = std::max(frustum_depth_range[0], (Scalar)camera_near);
+		frustum_depth_range[0] = std::max(frustum_depth_range[0], (Scalar)frustum_default_depth_near);
 		
 		if (frustum_depth_range[0] >= frustum_depth_range[1])
 		{
 			// with nothing to render, there is no valid depth range,
 			// so throw together some dummy values.
-			return RenderRange(camera_near, camera_near * 1024);
+			return RenderRange(frustum_default_depth_near, frustum_default_depth_near * 1024);
 		}
 		
 		return frustum_depth_range;

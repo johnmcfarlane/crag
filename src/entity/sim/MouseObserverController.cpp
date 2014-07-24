@@ -30,8 +30,8 @@
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
-CONFIG_DECLARE (sim_tick_duration, core::Time);
-CONFIG_DECLARE (camera_near, float);
+CONFIG_DECLARE(sim_tick_duration, core::Time);
+CONFIG_DECLARE(frustum_default_depth_near, float);
 
 namespace
 {
@@ -196,7 +196,7 @@ void MouseObserverController::UpdateCamera() const
 	// broadcast new lod center
 	gfx::SetLodParametersEvent set_lod_parameters_event;
 	set_lod_parameters_event.parameters.center = transformation.GetTranslation();
-	set_lod_parameters_event.parameters.min_distance = camera_near;
+	set_lod_parameters_event.parameters.min_distance = frustum_default_depth_near;
 	Daemon::Broadcast(set_lod_parameters_event);
 }
 

@@ -18,7 +18,6 @@
 #include "axes.h"
 #include "Color.h"
 #include "Font.h"
-#include "Pov.h"
 
 #include "geom/MatrixOps.h"
 

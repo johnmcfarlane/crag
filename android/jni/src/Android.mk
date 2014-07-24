@@ -82,6 +82,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/object/SearchLight.cpp \
 	$(CRAG_PATH)/gfx/object/Skybox.cpp \
 	$(CRAG_PATH)/gfx/object/MeshObject.cpp \
+	$(CRAG_PATH)/gfx/Frustum.cpp \
 	$(CRAG_PATH)/gfx/PlainVertex.cpp \
 	$(CRAG_PATH)/gfx/Pov.cpp \
 	$(CRAG_PATH)/gfx/Program.cpp \

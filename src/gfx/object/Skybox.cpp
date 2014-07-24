@@ -13,7 +13,6 @@
 
 #include "gfx/Engine.h"
 #include "gfx/Image.h"
-#include "gfx/Pov.h"
 #include "gfx/Scene.h"
 #include "gfx/Program.h"
 
