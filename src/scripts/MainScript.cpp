@@ -158,14 +158,6 @@ void MainScript(applet::AppletInterface & applet_interface)
 
 	_applet_interface = & applet_interface;
 	
-//	// Set camera position
-//	{
-//		gfx::SetCameraEvent event;
-//		event.transformation = geom::abs::Transformation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
-
-//		applet::Daemon::Broadcast(event);
-//	}
-	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
 	star_volume.center = geom::Resized(star_volume.center, 100000000.);
@@ -177,7 +169,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 
-	InitSpace(applet_interface, observer_start_pos);
+	auto const & origin = observer_start_pos;
+	InitSpace(applet_interface, origin);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);
@@ -194,7 +187,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 		"assets/skybox/front.bmp"
 	}});
 	
-	auto rel_animat_start_pos = geom::AbsToRel(animat_start_pos, observer_start_pos);
+	auto rel_animat_start_pos = geom::AbsToRel(animat_start_pos, origin);
 	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop

@@ -191,7 +191,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	_applet_interface = & applet_interface;
 
 	// coordinate system
-	auto origin = geom::Cast<geom::abs::Scalar>(camera_start_pos);
+	auto const & origin = camera_start_pos;
 	auto rel_camera_start_pos = geom::AbsToRel(camera_start_pos, origin);
 	auto rel_player_start_pos = geom::AbsToRel(player_start_pos, origin);
 	

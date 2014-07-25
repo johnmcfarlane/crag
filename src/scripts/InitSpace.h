@@ -17,4 +17,4 @@ namespace applet
 // ensures Lodding system kicks off; 
 // call after spawning formations and before a brief pause;
 // then spawn skybox and physical objects
-void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & start_pos);
+void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & origin);

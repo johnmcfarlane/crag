@@ -209,7 +209,8 @@ void TestScript(applet::AppletInterface & applet_interface)
 		moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 	}
 	
-	InitSpace(applet_interface, observer_start_pos);
+	auto const & origin = observer_start_pos;
+	InitSpace(applet_interface, origin);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);

@@ -27,14 +27,10 @@
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 // main entry point
-void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & start_pos)
+void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & origin)
 {
 	FUNCTION_NO_REENTRY;
 
-	// coordinate system
-	auto const & origin = geom::RelToAbs(start_pos, geom::abs::Vector3::Zero());
-	auto rel_start_pos = geom::AbsToRel(start_pos, origin);
-	
 	// Create origin controller.
 	if (origin_dynamic_enable)
 	{
@@ -56,14 +52,14 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	// set LOD parameters
 	{
 		gfx::SetLodParametersEvent event;
-		event.parameters.center = rel_start_pos;
+		event.parameters.center = gfx::Vector3::Zero();
 		event.parameters.min_distance = 1.f;
 		gfx::Daemon::Broadcast(event);
 	}
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event = { { start_pos * 3. } };
+		gfx::SetCameraEvent event = { { geom::abs::Vector3::Zero() } };
 		gfx::Daemon::Broadcast(event);
 	}
 }
