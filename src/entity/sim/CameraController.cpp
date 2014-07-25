@@ -13,6 +13,7 @@
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
+#include "sim/gravity.h"
 
 #include "physics/RayCast.h"
 
@@ -124,6 +125,13 @@ void CameraController::Tick()
 		return;
 	}
 	
+	auto const & subject_body = core::StaticCast<physics::Body const>(* subject_location);
+	Vector3 up = GetUp(subject_body.GetGravitationalForce());
+	if (up == Vector3::Zero())
+	{
+		return;
+	}
+	
 	auto const & subject_translation = subject_location->GetTranslation();
 	auto camera_to_subject = subject_translation - camera_translation;
 	auto distance = geom::Length(camera_to_subject);
@@ -137,9 +145,6 @@ void CameraController::Tick()
 	auto & engine = GetEntity().GetEngine();
 	const auto & origin = engine.GetOrigin();
 	auto forward = camera_to_subject / distance;
-
-	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
-	auto up = geom::Normalized(camera_translation - relative_origin);
 
 	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_translation, origin, forward, up);
