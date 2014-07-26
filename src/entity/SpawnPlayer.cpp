@@ -761,11 +761,10 @@ namespace
 		
 		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
 		{
-			Sphere3 sphere(transformation.GetTranslation(), saucer_ball_radius);
 			ball_entity = engine.CreateObject<Entity>();
 
 			// physics
-			auto ball_body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+			auto ball_body = make_shared<physics::SphereBody>(transformation, & velocity, physics_engine, saucer_ball_radius);
 			ball_entity->SetLocation(ball_body);
 		
 			AttachEntities(ufo_entity, * ball_entity, physics_engine);
@@ -775,7 +774,7 @@ namespace
 			if (player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::Create(transformation, sphere.radius, ufo_color3);
+				gfx::ObjectHandle model = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
 				ball_entity->SetModel(model);
 				
 				exception_object = model;
