@@ -7,7 +7,10 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "geom/origin.h"
+namespace geom
+{
+	class Space;
+}
 
 namespace applet
 {
@@ -17,4 +20,4 @@ namespace applet
 // ensures Lodding system kicks off; 
 // call after spawning formations and before a brief pause;
 // then spawn skybox and physical objects
-void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & origin);
+void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & space);

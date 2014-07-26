@@ -169,8 +169,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 
-	auto const & origin = observer_start_pos;
-	InitSpace(applet_interface, origin);
+	geom::Space space(observer_start_pos);
+	InitSpace(applet_interface, space);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);
@@ -187,7 +187,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 		"assets/skybox/front.bmp"
 	}});
 	
-	auto rel_animat_start_pos = geom::AbsToRel(animat_start_pos, origin);
+	auto rel_animat_start_pos = space.AbsToRel(animat_start_pos);
 	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop

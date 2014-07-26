@@ -17,7 +17,7 @@
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -27,7 +27,7 @@
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 // main entry point
-void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & origin)
+void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & space)
 {
 	FUNCTION_NO_REENTRY;
 
@@ -40,11 +40,11 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	// launch regulator
 	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
 	
-	// Set Origin
+	// Set Space
 	{
-		gfx::SetOriginEvent event = 
+		gfx::SetSpaceEvent event = 
 		{
-			origin
+			space
 		};
 		applet::Daemon::Broadcast(event);
 	}

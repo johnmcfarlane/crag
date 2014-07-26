@@ -11,7 +11,7 @@
 
 #include "defs.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 namespace physics
 {
@@ -32,5 +32,5 @@ namespace sim
 	// physically attaches the given entities to one another
 	void AttachEntities(Entity & entity1, Entity & entity2, physics::Engine & physics_engine);
 	
-	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta);
+	void ResetSpace(Entity & entity, geom::rel::Vector3 const & delta);
 }

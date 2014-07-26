@@ -23,7 +23,7 @@
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 using namespace sim;
 
@@ -45,7 +45,7 @@ namespace
 
 	// given information about camera location and direction, 
 	// send a 'set camera' event
-	void UpdateCamera(Vector3 const & camera_translation, geom::abs::Vector3 const & origin, Vector3 const & forward, Vector3 const & up)
+	void UpdateCamera(Vector3 const & camera_translation, geom::Space const & space, Vector3 const & forward, Vector3 const & up)
 	{
 		auto dot = geom::DotProduct(forward, up);
 		if (dot > .99999f || dot < -.99999f)
@@ -58,7 +58,7 @@ namespace
 
 		// broadcast new camera position
 		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(geom::RelToAbs(camera_translation, origin));
+		event.transformation.SetTranslation(space.RelToAbs(camera_translation));
 		event.transformation.SetRotation(rotation);
 		Daemon::Broadcast(event);
 	}
@@ -143,11 +143,11 @@ void CameraController::Tick()
 	}
 	
 	auto & engine = GetEntity().GetEngine();
-	const auto & origin = engine.GetOrigin();
+	const auto & space = engine.GetSpace();
 	auto forward = camera_to_subject / distance;
 
 	UpdateLodParameters(camera_translation, subject_translation);
-	UpdateCamera(camera_translation, origin, forward, up);
+	UpdateCamera(camera_translation, space, forward, up);
 	UpdateBody(camera_body, _ray_cast, forward, up, distance);
 	UpdateCameraRayCast();
 }
@@ -160,8 +160,8 @@ void CameraController::UpdateCameraRayCast() const
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
-	const auto & origin = engine.GetOrigin();
-	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
+	const auto & space = engine.GetSpace();
+	auto relative_origin = space.AbsToRel(geom::Vector3d::Zero());
 	auto up = geom::Normalized(camera_translation - relative_origin);
 
 	_ray_cast.SetRay(Ray3(camera_translation, - up));

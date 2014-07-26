@@ -186,11 +186,11 @@ void MouseObserverController::UpdateCamera() const
 	Transformation transformation (translation, rotation);
 	
 	const auto & engine = GetEntity().GetEngine();
-	const auto & origin = engine.GetOrigin();
+	const auto & space = engine.GetSpace();
 
 	// broadcast new camera position
 	gfx::SetCameraEvent set_camera_event;
-	set_camera_event.transformation = geom::RelToAbs(transformation, origin);
+	set_camera_event.transformation = space.RelToAbs(transformation);
 	Daemon::Broadcast(set_camera_event);
 
 	// broadcast new lod center

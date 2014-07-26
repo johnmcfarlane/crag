@@ -11,12 +11,14 @@
 
 #include "Contact.h"
 
+#include "geom/Space.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Contact friend definitions
 
-Contact sim::ConvertOrigin(Contact const & contact, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin)
+Contact sim::ConvertSpace(Contact const & contact, geom::Space const & source_space, geom::Space const & destination_space)
 {
 	CRAG_VERIFY(contact);
 	
@@ -29,7 +31,7 @@ Contact sim::ConvertOrigin(Contact const & contact, geom::abs::Vector3 const & s
 			return contact;
 
 		case Contact::VectorType::foreground:
-			return Contact(geom::Convert(contact._world_vector, source_origin, destination_origin), contact._vector_type, contact._screen_position, contact._id);
+			return Contact(geom::Convert(contact._world_vector, source_space, destination_space), contact._vector_type, contact._screen_position, contact._id);
 	}
 }
 

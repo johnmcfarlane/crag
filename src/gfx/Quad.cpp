@@ -13,9 +13,7 @@
 
 #include "axes.h"
 
-#include "geom/origin.h"
 #include "geom/Transformation.h"
-
 
 using namespace gfx;
 

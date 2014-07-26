@@ -14,7 +14,7 @@
 
 #include "core/Random.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 namespace sim
 {

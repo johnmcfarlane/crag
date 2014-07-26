@@ -33,7 +33,7 @@ namespace sim
 		physics_engine.Attach(body1, body2);
 	}
 
-	void ResetOrigin(Entity & entity, geom::rel::Vector3 const & delta)
+	void ResetSpace(Entity & entity, geom::rel::Vector3 const & delta)
 	{
 		auto location = entity.GetLocation();
 		if (location == nullptr)

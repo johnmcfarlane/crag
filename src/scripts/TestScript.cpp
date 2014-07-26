@@ -243,9 +243,9 @@ void TestScript(applet::AppletInterface & applet_interface)
 				auto const & location = entity.GetLocation();
 				auto time = app::GetTime() * 0.21314;
 				auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
-				auto & engine = entity.GetEngine();
-				auto & origin = engine.GetOrigin();
-				location->SetTransformation(geom::AbsToRel(pos, origin));
+				auto const & engine = entity.GetEngine();
+				auto const & space = engine.GetSpace();
+				location->SetTransformation(space.AbsToRel(pos));
 			});
 		
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();

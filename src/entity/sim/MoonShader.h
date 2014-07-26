@@ -11,7 +11,7 @@
 
 #include "form/Shader.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 #include "core/Random.h"
 
@@ -19,7 +19,6 @@ namespace sim
 {
 	// forward declarations
 	class Planet;
-	
 	
 	// A class which governs how the edges of individual polys of a moon's surface are sub-divided.
 	class MoonShader : public form::Shader

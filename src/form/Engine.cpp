@@ -20,7 +20,7 @@
 #include "gfx/Messages.h"
 #include "gfx/object/Surrounding.h"
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "core/app.h"
 #include "core/profile.h"
@@ -38,7 +38,7 @@ namespace
 	PROFILE_DEFINE (mesh_generation_per_quaterna, .01f);
 	
 	STAT (mesh_generation, bool, .206f);
-	STAT (dynamic_origin, bool, .206f);
+	STAT (dynamic_space, bool, .206f);
 	STAT (form_changed_gfx, bool, 0);
 
 	// the maximum size of formation-related buffers is limited by the maximum
@@ -63,9 +63,8 @@ Engine::Engine()
 , mesh_generation_time(app::GetTime())
 , _enable_adjust_num_quaterna(true)
 , _requested_num_quaterne(0)
-, _pending_origin_request(false)
+, _pending_space_request(false)
 , _lod_parameters({ Vector3::Zero(), 0.f })
-, _origin(geom::abs::Vector3::Zero())
 , _scene(min_num_quaterne, max_num_quaterne)
 {
 	for (int num_meshes = 3; num_meshes > 0; -- num_meshes)
@@ -84,7 +83,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
 	CRAG_VERIFY(self._scene);
 	CRAG_VERIFY(static_cast<super const &>(self));
 	CRAG_VERIFY(static_cast<SetLodParametersListener const &>(self));
-	CRAG_VERIFY(static_cast<SetOriginListener const &>(self));
+	CRAG_VERIFY(static_cast<SetSpaceListener const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void ::Engine::OnQuit()
@@ -94,7 +93,7 @@ void ::Engine::OnQuit()
 
 void Engine::OnAddFormation(Formation & formation)
 {
-	_scene.AddFormation(formation, _origin);
+	_scene.AddFormation(formation, _space);
 }
 
 void Engine::OnRemoveFormation(Formation & formation)
@@ -112,12 +111,12 @@ void Engine::operator() (gfx::SetLodParametersEvent const & event)
 	_lod_parameters = event.parameters;
 }
 
-void Engine::operator() (gfx::SetOriginEvent const & event)
+void Engine::operator() (gfx::SetSpaceEvent const & event)
 {
-	_pending_origin_request = true;
+	_pending_space_request = true;
 
-	_lod_parameters.center = geom::Convert(_lod_parameters.center, _origin, event.origin);
-	_origin = event.origin;
+	_lod_parameters.center = geom::Convert(_lod_parameters.center, _space, event.space);
+	_space = event.space;
 }
 
 void Engine::EnableAdjustNumQuaterna(bool enabled)
@@ -162,7 +161,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 	// stop listening for events
 	SetLodParametersListener::SetIsListening(false);
-	SetOriginListener::SetIsListening(false);
+	SetSpaceListener::SetIsListening(false);
 }
 
 // The tick function of the scene thread. 
@@ -170,10 +169,10 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 // or in the main thread as part of the main render/simulation iteration.
 void Engine::Tick()
 {
-	if (_pending_origin_request) 
+	if (_pending_space_request) 
 	{
-		OnOriginReset();
-		_pending_origin_request = false;
+		OnSpaceReset();
+		_pending_space_request = false;
 	}
 
 	AdjustNumQuaterna();
@@ -231,7 +230,7 @@ void Engine::GenerateMesh()
 		return;
 	}
 	
-	_scene.GenerateMesh(* mesh, _origin);
+	_scene.GenerateMesh(* mesh, _space);
 	
 	// send it to the gfx::Surrounding object
 	_mesh.Call([mesh] (gfx::Surrounding & surrounding) {
@@ -270,11 +269,11 @@ std::shared_ptr<Mesh> Engine::PopMesh()
 	return mesh;
 }
 
-void Engine::OnOriginReset()
+void Engine::OnSpaceReset()
 {
 	auto& surrounding = _scene.GetSurrounding();
 	auto num_quaterna = surrounding.GetNumQuaternaUsed();
-	_scene.OnOriginReset(_origin);
+	_scene.OnSpaceReset(_space);
 	surrounding.SetTargetNumQuaterna(num_quaterna);
 
 	while (surrounding.GetNumQuaternaUsed() < num_quaterna)

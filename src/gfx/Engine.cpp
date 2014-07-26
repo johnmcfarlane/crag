@@ -18,7 +18,7 @@
 #include "RegisterResources.h"
 #include "Scene.h"
 #include "SetCameraEvent.h"
-#include "SetOriginEvent.h"
+#include "SetSpaceEvent.h"
 
 #include "form/Engine.h"
 
@@ -223,7 +223,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : scene(nullptr)
-, _origin(geom::abs::Vector3::Zero())
 , _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -430,19 +429,19 @@ void Engine::operator() (SetCameraEvent const & event)
 {
 	if (scene != nullptr)
 	{
-		Transformation relative_transformation = geom::AbsToRel(event.transformation, _origin);
+		Transformation relative_transformation = _space.AbsToRel(event.transformation);
 		scene->SetCameraTransformation(relative_transformation);
 	}
 }
 
-void Engine::operator() (SetOriginEvent const & event)
+void Engine::operator() (SetSpaceEvent const & event)
 {
-	_origin = event.origin;
+	_space = event.space;
 }
 
-geom::abs::Vector3 const & Engine::GetOrigin() const
+geom::Space const & Engine::GetSpace() const
 {
-	return _origin;
+	return _space;
 }
 
 #if defined(__ANDROID__)
@@ -478,7 +477,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	}
 
 	SetCameraListener::SetIsListening(false);
-	SetOriginListener::SetIsListening(false);
+	SetSpaceListener::SetIsListening(false);
 }
 
 bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
@@ -1000,7 +999,7 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	auto & pov = scene->GetPov();
 	auto & model_view_projection = pov.GetTransformation();
 
-	// mark the local origin
+	// mark the local space
 	Debug::AddBasis(Vector3::Zero(), 1000000.);
 	
 	// draw 3D debug elements

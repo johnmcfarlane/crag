@@ -119,10 +119,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Polyhedron, self)
 	CRAG_VERIFY_EQUAL(self._root_node.GetPolyhedron(), & self);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Polyhedron::Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer)
+void Polyhedron::Init(geom::Space const & space, PointBuffer & point_buffer)
 {
 	// Initialize the shader.
-	_shape.center = geom::AbsToRel<double>(_formation.GetShape().center, origin);
+	_shape.center = space.AbsToRel<double>(_formation.GetShape().center);
 	Shader const & shader = _formation.GetShader();
 	
 	// Create me some points.
@@ -167,10 +167,10 @@ Node const & Polyhedron::GetRootNode() const
 	return _root_node;
 }
 
-void Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
+void Polyhedron::SetSpace(geom::Space const & space)
 {
 	geom::abs::Sphere3 const & shape = _formation.GetShape();
-	_shape.center = geom::AbsToRel<double>(shape.center, origin);
+	_shape.center = space.AbsToRel<double>(shape.center);
 	_shape.radius = shape.radius;
 	
 	Point * root_points[4];
@@ -180,7 +180,7 @@ void Polyhedron::SetOrigin(geom::abs::Vector3 const & origin)
 	shader.InitRootPoints(* this, root_points);
 }
 
-bool Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
+bool Polyhedron::ResetSpace(Node & node, PointBuffer & point_buffer, int depth)
 {
 	Node * children = node.GetChildren();
 	if (children == nullptr)
@@ -199,9 +199,9 @@ bool Polyhedron::ResetOrigin(Node & node, PointBuffer & point_buffer, int depth)
 	else 
 	{
 		-- depth;
-		return	ResetOrigin(children[0], point_buffer, depth)
-			|	ResetOrigin(children[1], point_buffer, depth)
-			|	ResetOrigin(children[2], point_buffer, depth)
-			|	ResetOrigin(children[3], point_buffer, depth);
+		return	ResetSpace(children[0], point_buffer, depth)
+			|	ResetSpace(children[1], point_buffer, depth)
+			|	ResetSpace(children[2], point_buffer, depth)
+			|	ResetSpace(children[3], point_buffer, depth);
 	}
 }

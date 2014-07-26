@@ -15,7 +15,7 @@
 
 #if defined(WIN32)
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 #endif
 
 #include "core/Singleton.h"
@@ -28,7 +28,7 @@ namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Surrounding);	// gfx::SurroundingHandle
 	struct SetLodParametersEvent;
-	struct SetOriginEvent;
+	struct SetSpaceEvent;
 }
 
 namespace form 
@@ -50,7 +50,7 @@ namespace form
 	// The top-most formation management class.
 	class Engine 
 	: public ipc::EngineBase<Engine, Object>
-	, private ipc::Listener<Engine, gfx::SetOriginEvent>
+	, private ipc::Listener<Engine, gfx::SetSpaceEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
 		OBJECT_SINGLETON(Engine);
@@ -59,7 +59,7 @@ namespace form
 		// types
 
 		typedef ipc::EngineBase<Engine, Object> super;
-		typedef ipc::Listener<Engine, gfx::SetOriginEvent> SetOriginListener;
+		typedef ipc::Listener<Engine, gfx::SetSpaceEvent> SetSpaceListener;
 		typedef ipc::Listener<Engine, gfx::SetLodParametersEvent> SetLodParametersListener;
 
 	public:
@@ -79,7 +79,7 @@ namespace form
 		void OnRemoveFormation(Formation & formation);
 		void OnSetMesh(std::shared_ptr<Mesh> const & mesh);
 		void operator() (gfx::SetLodParametersEvent const & event) final;
-		void operator() (gfx::SetOriginEvent const & event) final;
+		void operator() (gfx::SetSpaceEvent const & event) final;
 		
 		void EnableAdjustNumQuaterna(bool enabled);
 		void OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne);
@@ -97,7 +97,7 @@ namespace form
 		
 		void AdjustNumQuaterna();
 		
-		void OnOriginReset();
+		void OnSpaceReset();
 		bool IsGrowing() const;
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -116,10 +116,10 @@ namespace form
 		bool _enable_adjust_num_quaterna;
 		std::size_t _requested_num_quaterne;
 		
-		bool _pending_origin_request;
+		bool _pending_space_request;
 
 		gfx::LodParameters _lod_parameters;
-		geom::abs::Vector3 _origin;
+		geom::Space _space;
 		Scene _scene;
 	};
 	

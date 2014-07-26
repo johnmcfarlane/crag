@@ -84,8 +84,8 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Surrounding::UpdateModelViewTransformation(Transformation const & model_view)
 {
-	auto & gfx_origin = GetEngine().GetOrigin();
-	auto offset = _properties._origin - gfx_origin;
+	auto & gfx_space = GetEngine().GetSpace();
+	auto offset = _properties._space - gfx_space;
 
 	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
 }
@@ -139,7 +139,7 @@ Object::PreRenderResult Surrounding::PreRender()
 	CRAG_VERIFY(* this);
 	
 #if ! defined(NDEBUG)
-	Debug::AddBasis(geom::Cast<float>(_properties._origin), 1.);
+	Debug::AddBasis(_properties._space.AbsToRel(geom::abs::Vector3::Zero()), 1.);
 #endif
 
 	return ok;
@@ -201,7 +201,7 @@ void Surrounding::ReturnMesh(std::shared_ptr<form::Mesh> const & mesh)
 
 Vector3 Surrounding::GfxToForm(Vector3 const & position) const
 {
-	auto & form_origin = _properties._origin;
-	auto & gfx_origin = GetEngine().GetOrigin();
-	return geom::Convert(position, gfx_origin, form_origin);
+	auto & form_space = _properties._space;
+	auto & gfx_space = GetEngine().GetSpace();
+	return geom::Convert(position, gfx_space, form_space);
 }

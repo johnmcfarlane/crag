@@ -191,9 +191,9 @@ void GameScript(applet::AppletInterface & applet_interface)
 	_applet_interface = & applet_interface;
 
 	// coordinate system
-	auto const & origin = camera_start_pos;
-	auto rel_camera_start_pos = geom::AbsToRel(camera_start_pos, origin);
-	auto rel_player_start_pos = geom::AbsToRel(player_start_pos, origin);
+	geom::Space space(camera_start_pos);
+	auto rel_camera_start_pos = space.AbsToRel(camera_start_pos);
+	auto rel_player_start_pos = space.AbsToRel(player_start_pos);
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
@@ -204,7 +204,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	sim::EntityHandle planet;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), 10000000), 3634, 0);
 	
-	InitSpace(applet_interface, origin);
+	InitSpace(applet_interface, space);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);

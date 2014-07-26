@@ -18,14 +18,14 @@
 
 #if defined(WIN32)
 #include "SetCameraEvent.h"
-#include "SetOriginEvent.h"
+#include "SetSpaceEvent.h"
 #endif
 
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 #include "core/Statistics.h"
 
@@ -35,7 +35,7 @@ namespace gfx
 	class Light;
 	class Scene;
 	struct SetCameraEvent;
-	struct SetOriginEvent;
+	struct SetSpaceEvent;
 
 	// gfx::Daemon type
 	class Engine;
@@ -50,7 +50,7 @@ namespace gfx
 	class Engine 
 	: public ipc::EngineBase<Engine, Object>
 	, private ipc::Listener<Engine, SetCameraEvent>
-	, private ipc::Listener<Engine, SetOriginEvent>
+	, private ipc::Listener<Engine, SetSpaceEvent>
 	{
 		OBJECT_NO_COPY(Engine);
 		
@@ -58,7 +58,7 @@ namespace gfx
 		// types
 		
 		typedef ipc::Listener<gfx::Engine, gfx::SetCameraEvent> SetCameraListener;
-		typedef ipc::Listener<gfx::Engine, gfx::SetOriginEvent> SetOriginListener;
+		typedef ipc::Listener<gfx::Engine, gfx::SetSpaceEvent> SetSpaceListener;
 	public:
 		typedef ipc::EngineBase<Engine, Object> super;
 		typedef ipc::Daemon<Engine> Daemon;
@@ -95,8 +95,8 @@ namespace gfx
 		void OnToggleCapture();
 		void operator() (const SetCameraEvent & event) final;
 
-		void operator() (const SetOriginEvent & event) final;
-		geom::abs::Vector3 const & GetOrigin() const;
+		void operator() (const SetSpaceEvent & event) final;
+		geom::Space const & GetSpace() const;
 		
 #if defined(__ANDROID__)
 		static void SetPaused(bool paused);
@@ -150,7 +150,7 @@ namespace gfx
 		// variables
 		
 		Scene * scene;
-		geom::abs::Vector3 _origin;
+		geom::Space _space;
 		
 		core::Time _target_frame_duration;
 		core::Time last_frame_end_position;

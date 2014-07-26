@@ -11,7 +11,10 @@
 
 #include "form/Polyhedron.h"
 
-#include "geom/origin.h"
+namespace geom
+{
+	class Space;
+}
 
 namespace gfx
 {
@@ -26,7 +29,7 @@ namespace form
 	class Surrounding;
 	
 	// A representation (view?) of all the existing formations.
-	// The scene is relative to a point in space which becomes the local origin for the scene.
+	// The scene is relative to a point in space which becomes the local space for the scene.
 	// The reason for the class is that the coordinate space of even a single large formation
 	// is too great to be represented using float coordinates and greater accuracy is required near the observer.
 	class Scene
@@ -53,26 +56,26 @@ namespace form
 		Surrounding & GetSurrounding();
 		Surrounding const & GetSurrounding() const;
 		
-		void OnOriginReset(geom::abs::Vector3 const & origin);
+		void OnSpaceReset(geom::Space const & space);
 
-		void AddFormation(Formation & formation, geom::abs::Vector3 const & origin);
+		void AddFormation(Formation & formation, geom::Space const & space);
 		void RemoveFormation(Formation const & formation);
 		Polyhedron const * GetPolyhedron(Formation const & formation) const;
 		
 		bool Tick(gfx::LodParameters const & lod_parameters);
-		void GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const;
+		void GenerateMesh(Mesh & mesh, geom::Space const & space) const;
 	private:
 		
 		///////////////////////////////////////////////////////
 		// Formation-related members.
 		
 		void TickModels();
-		void ResetPolyhedronOrigins(geom::abs::Vector3 const & origin);
-		void ResetFormations(geom::abs::Vector3 const & origin);
+		void ResetPolyhedronSpaces(geom::Space const & space);
+		void ResetFormations(geom::Space const & space);
 
 		void TickPolyhedron(Polyhedron & model);
 
-		void InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin);
+		void InitPolyhedron(FormationPair & pair, geom::Space const & space);
 		void DeinitPolyhedron(FormationPair & pair);
 		
 		

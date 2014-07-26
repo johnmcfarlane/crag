@@ -23,7 +23,7 @@
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -260,7 +260,6 @@ namespace
 
 TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
 : Controller(entity)
-, _origin(geom::abs::Vector3::Zero())
 , _down_transformation(transformation)
 , _current_transformation(transformation)
 {
@@ -293,21 +292,21 @@ void TouchObserverController::Tick()
 	BroadcastTransformation();
 }
 
-void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
+void TouchObserverController::operator() (gfx::SetSpaceEvent const & event)
 {
 	// convert _down_transformation
-	_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
+	_down_transformation = geom::Convert(_down_transformation, _space, event.space);
 	
 	// convert _current_transformation
-	_current_transformation = geom::Convert(_current_transformation, _origin, event.origin);
+	_current_transformation = geom::Convert(_current_transformation, _space, event.space);
 	
 	// convert contacts
 	for (auto & contact : _contacts)
 	{
-		contact = ConvertOrigin(contact, _origin, event.origin);
+		contact = ConvertSpace(contact, _space, event.space);
 	}
 
-	_origin = event.origin;
+	_space = event.space;
 }
 
 void TouchObserverController::HandleEvents()
@@ -673,7 +672,7 @@ void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
 	gfx::SetCameraEvent set_camera_event;
-	set_camera_event.transformation = geom::RelToAbs(_current_transformation, _origin);
+	set_camera_event.transformation = _space.RelToAbs(_current_transformation);
 	Daemon::Broadcast(set_camera_event);
 
 	// broadcast new lod center

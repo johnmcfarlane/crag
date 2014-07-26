@@ -16,7 +16,6 @@
 #include "gfx/Scene.h"
 #include "gfx/Quad.h"
 
-#include "geom/origin.h"
 #include "geom/Sphere.h"
 
 #include "core/ConfigEntry.h"

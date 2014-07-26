@@ -41,8 +41,6 @@
 #include "gfx/object/SearchLight.h"
 #include "gfx/object/MeshObject.h"
 
-#include "geom/origin.h"
-
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
@@ -556,7 +554,7 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// entity composition
 	
-	void ConstructBody(Entity & entity, geom::rel::Vector3 const & position, Vector3 const & velocity, physics::Mass m)
+	void ConstructBody(Entity & entity, sim::Vector3 const & position, Vector3 const & velocity, physics::Mass m)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -568,7 +566,7 @@ namespace
 		entity.SetLocation(body);
 	}
 
-	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density)
+	void ConstructSphereBody(Entity & entity, Sphere3 const & sphere, Vector3 const & velocity, float density)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -578,7 +576,7 @@ namespace
 		entity.SetLocation(body);
 	}
 
-	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
+	void ConstructBall(Entity & ball, Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
 		ConstructSphereBody(ball, sphere, velocity, saucer_ball_density);
@@ -596,7 +594,7 @@ namespace
 		{
 			if (observer_physics)
 			{
-				ConstructSphereBody(observer, geom::rel::Sphere3(position, observer_radius), Vector3::Zero(), observer_density);
+				ConstructSphereBody(observer, Sphere3(position, observer_radius), Vector3::Zero(), observer_density);
 			}
 			else
 			{
@@ -661,7 +659,7 @@ namespace
 		AddThruster(controller, new VernierThruster(entity, ray));
 	}
 
-	void ConstructRover(Entity & entity, geom::rel::Sphere3 const & sphere, Scalar thrust)
+	void ConstructRover(Entity & entity, Sphere3 const & sphere, Scalar thrust)
 	{
 		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
@@ -967,7 +965,7 @@ EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 {
 	auto vehicle = EntityHandle::Create();
 
-	geom::rel::Sphere3 sphere;
+	Sphere3 sphere;
 	sphere.center = geom::Cast<float>(position);
 	sphere.radius = 1.;
 
