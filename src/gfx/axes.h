@@ -106,6 +106,10 @@ namespace gfx
 		rotation.SetColumn(a2, axis2);
 		rotation.SetColumn(a3, axis3);
 		
+		// verify requested axes are as requested
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis1 - rotation.GetColumn(a1)), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis2 - rotation.GetColumn(a2)), S(0), S(0.0001));
+
 		return rotation;
 	}
 	
@@ -135,6 +139,9 @@ namespace gfx
 		rotation.SetColumn(d1, axis_d1);
 		rotation.SetColumn(d2, axis_d2);
 		
+		// verify requested axis is as requested
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis - rotation.GetColumn(d0)), S(0), S(0.0001));
+
 		return rotation;
 	}
 	
