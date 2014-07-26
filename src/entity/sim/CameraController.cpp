@@ -154,15 +154,15 @@ void CameraController::Tick()
 
 void CameraController::UpdateCameraRayCast() const
 {
-	const auto & engine = GetEntity().GetEngine();
-	
 	auto & camera_body = GetBody();
+	auto const & up = GetUp(camera_body.GetGravitationalForce());
+	if (up == Vector3::Zero())
+	{
+		return;
+	}
+	
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
-
-	const auto & space = engine.GetSpace();
-	auto relative_origin = space.AbsToRel(geom::Vector3d::Zero());
-	auto up = geom::Normalized(camera_translation - relative_origin);
 
 	_ray_cast.SetRay(Ray3(camera_translation, - up));
 }
