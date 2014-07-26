@@ -34,7 +34,6 @@
 
 using geom::Vector3f;
 
-CONFIG_DECLARE(player_type, int);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 namespace 
@@ -218,7 +217,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
+	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), origin);
 
 	// Create vehicle.
 	if (spawn_vehicle)
@@ -273,7 +272,8 @@ void TestScript(applet::AppletInterface & applet_interface)
 	// remove skybox
 	skybox.Release();
 
-	observer.Release();
+	player_and_camera[1].Release();
+	player_and_camera[0].Release();
 	
 	ASSERT(_applet_interface == & applet_interface);
 }

@@ -31,8 +31,6 @@
 
 using geom::Vector3f;
 
-CONFIG_DECLARE(player_type, int);
-
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +45,6 @@ namespace
 	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
 
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
-	geom::abs::Vector3 camera_start_pos(-10, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
 	
@@ -191,8 +188,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	_applet_interface = & applet_interface;
 
 	// coordinate system
-	geom::Space space(camera_start_pos);
-	auto rel_camera_start_pos = space.AbsToRel(camera_start_pos);
+	geom::Space space(player_start_pos);
 	auto rel_player_start_pos = space.AbsToRel(player_start_pos);
 	
 	// Create sun. 
@@ -212,15 +208,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create player.
-	sim::Transformation transformation(rel_player_start_pos, gfx::Rotation(sim::Vector3(0, 1, 0)));
-	_player = SpawnPlayer(transformation, PlayerType(player_type));
-
-	// Create camera.
-	sim::EntityHandle camera;
-	if (player_type != int(PlayerType::observer))
-	{
-		camera = SpawnCamera(rel_camera_start_pos, _player);
-	}
+	auto player_and_camera = SpawnPlayer(rel_player_start_pos, space);
 
 	// ball
 	if (enable_spawn_ball)
@@ -268,14 +256,13 @@ void GameScript(applet::AppletInterface & applet_interface)
 		_shapes.pop_back();
 	}
 	
-	_player.Release();
+	player_and_camera[1].Release();
+	player_and_camera[0].Release();
 	sun.Release();
 	planet.Release();
 	
 	// remove skybox
 	skybox.Release();
 
-	camera.Release();
-	
 	ASSERT(_applet_interface == & applet_interface);
 }

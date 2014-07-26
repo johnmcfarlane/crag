@@ -9,14 +9,10 @@
 
 #include "sim/defs.h"
 
-enum class PlayerType
+namespace geom
 {
-	observer,
-	arrow,
-	thargoid,
-	cos_saucer,
-	ball_saucer
-};
+	class Space;
+}
 
 sim::EntityHandle SpawnRover(sim::Vector3 const & position, sim::Scalar thrust);
-sim::EntityHandle SpawnPlayer(sim::Transformation const & transformation, PlayerType player_type);
+std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & translation, geom::Space const & space);

@@ -176,7 +176,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 	applet_interface.Sleep(.25f);
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
+	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), space);
 	
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/left.bmp",
@@ -209,7 +209,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	// remove skybox
 	skybox.Release();
 
-	observer.Release();
+	player_and_camera[1].Release();
+	player_and_camera[0].Release();
 
 	sim::Daemon::Call([] (sim::Engine & engine) 
 	{

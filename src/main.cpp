@@ -56,14 +56,6 @@ int main(int argc, char * * argv)
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
-#if defined(CRAG_USE_GL)
-CONFIG_DEFINE (player_type, int, 4);
-#endif
-
-#if defined(CRAG_USE_GLES)
-CONFIG_DEFINE (player_type, int, 3);
-#endif
-
 CONFIG_DEFINE (profile_mode, bool, false);
 CONFIG_DECLARE (shadows_enabled, bool);
 

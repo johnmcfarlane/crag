@@ -10,6 +10,7 @@
 #include "pch.h"
 
 #include "SpawnPlayer.h"
+#include "SpawnEntityFunctions.h"
 
 #include "entity/sim/HoverThruster.h"
 #include "entity/sim/MouseObserverController.h"
@@ -22,6 +23,7 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
+#include "sim/gravity.h"
 
 #include "physics/defs.h"
 #include "physics/CylinderBody.h"
@@ -40,6 +42,8 @@
 #include "gfx/object/Ball.h"
 #include "gfx/object/SearchLight.h"
 #include "gfx/object/MeshObject.h"
+
+#include "geom/Space.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -64,6 +68,15 @@ namespace gfx
 
 namespace
 {
+	enum class PlayerType
+	{
+		observer,
+		arrow,
+		thargoid,
+		cos_saucer,
+		ball_saucer
+	};
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
 
@@ -100,6 +113,15 @@ namespace
 	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
 	CONFIG_DEFINE (thargoid_inner_radius_ratio, physics::Scalar, .5f);
 	CONFIG_DEFINE (thargoid_thrust, float, 9.f);
+
+#if defined(CRAG_USE_GL)
+	CONFIG_DEFINE (player_type, int, 4);
+#endif
+#if defined(CRAG_USE_GLES)
+	CONFIG_DEFINE (player_type, int, 3);
+#endif
+
+	CONFIG_DEFINE (camera_start_offset, Vector3, Vector3(-15, 0, 0));
 
 	////////////////////////////////////////////////////////////////////////////////
 	// mesh generation
@@ -975,36 +997,48 @@ EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 	return vehicle;
 }
 
-sim::EntityHandle SpawnPlayer(sim::Transformation const & transformation, PlayerType player_type)
+std::array<sim::EntityHandle, 2> SpawnPlayer(Vector3 const & translation, geom::Space const & space)
 {
 	AddUfoResources();
 	
-	auto ship = EntityHandle::Create();
+	auto player = EntityHandle::Create();
 
-	ship.Call([=] (Entity & entity) {
-		switch (player_type)
+	// TODO: Coordinate system still not right. (Try player_type=3 script_mode=2)
+	auto up = geom::Normalized(translation - space.AbsToRel(geom::abs::Vector3::Zero()));
+	sim::Transformation transformation(translation, gfx::Rotation(up, gfx::Direction::forward));
+
+	auto _player_type = PlayerType(player_type);
+	player.Call([=] (Entity & entity) {
+		switch (_player_type)
 		{
 		case PlayerType::observer:
-			ConstructObserver(entity, transformation.GetTranslation());
+			ConstructObserver(entity, translation);
 			break;
 
 		case PlayerType::arrow:
-			ConstructShip(entity, transformation.GetTranslation());
+			ConstructShip(entity, translation);
 			break;
 
 		case PlayerType::thargoid:
-			ConstructUfo(entity, transformation, "ThargoidVbo", "ThargoidShadowMesh", player_type, thargoid_thrust, thargoid_radius);
+			ConstructUfo(entity, transformation, "ThargoidVbo", "ThargoidShadowMesh", _player_type, thargoid_thrust, thargoid_radius);
 			break;
 
 		case PlayerType::cos_saucer:
-			ConstructUfo(entity, transformation, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, transformation, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", _player_type, saucer_thrust, saucer_radius);
 			break;
 
 		case PlayerType::ball_saucer:
-			ConstructUfo(entity, transformation, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", player_type, saucer_thrust, saucer_radius);
+			ConstructUfo(entity, transformation, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", _player_type, saucer_thrust, saucer_radius);
 			break;
 		}
 	});
 
-	return ship;
+	// Create camera.
+	sim::EntityHandle camera;
+	if (_player_type != PlayerType::observer)
+	{
+		camera = SpawnCamera(translation + camera_start_offset, player);
+	}
+
+	return {{ player, camera }};
 }
