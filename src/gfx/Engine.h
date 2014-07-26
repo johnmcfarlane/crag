@@ -89,7 +89,6 @@ namespace gfx
 		void OnSetParent(Object & child, Object & parent);
 		void OnSetTime(core::Time time);
 		void OnSetReady(bool ready);
-		void OnResize(geom::Vector2i size);
 		void OnToggleCulling();
 		
 		void OnToggleCapture();

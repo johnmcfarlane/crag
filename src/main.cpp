@@ -202,10 +202,8 @@ namespace
 					case SDL_WINDOWEVENT_RESIZED:
 					{
 						// TODO: Check it's the right window?
-						geom::Vector2i size(window_event.data1, window_event.data2);
-						gfx::Daemon::Call([size] (gfx::Engine & engine) {
-							engine.OnResize(size);
-						});
+						// TODO: Create a SetResolutionEvent
+						DEBUG_BREAK("Received unhandled resize event; size:{%f,%f}", window_event.data1, window_event.data2);
 						break;
 					}
 					

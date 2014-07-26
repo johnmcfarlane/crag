@@ -407,13 +407,6 @@ void Engine::OnSetReady(bool ready)
 	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
 }
 
-void Engine::OnResize(geom::Vector2i size)
-{
-	glViewport(0, 0, size.x, size.y);
-	scene->SetResolution(size);
-}
-
-
 void Engine::OnToggleCulling()
 {
 	culling = ! culling;
