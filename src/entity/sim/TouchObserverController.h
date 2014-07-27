@@ -12,7 +12,7 @@
 #include "sim/Controller.h"
 #include "sim/defs.h"
 
-#include "gfx/Pov.h"
+#include "gfx/Frustum.h"
 
 #include "ipc/Listener.h"
 

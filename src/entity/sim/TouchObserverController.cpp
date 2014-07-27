@@ -21,6 +21,7 @@
 #include "physics/Engine.h"
 
 #include "gfx/axes.h"
+#include "gfx/Pov.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetSpaceEvent.h"
@@ -40,9 +41,6 @@
 #include "scripts/SpawnEntityFunctions.h"
 #include "gfx/Color.h"
 #endif
-
-CONFIG_DECLARE(frustum_default_depth_near, float);
-CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 using namespace sim;
 
@@ -265,7 +263,6 @@ TouchObserverController::TouchObserverController(Entity & entity, Transformation
 {
 	_frustum.resolution = app::GetResolution();
 	_frustum.depth_range = Vector2(1, 2);
-	_frustum.fov = frustum_default_fov;
 
 	// register 
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
@@ -627,12 +624,14 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 // adjusts given transformation to avoid penetrating world geometry;
 void TouchObserverController::ClampTransformation()
 {
+	auto camera_near = _frustum.depth_range[0];
+	
 	for (auto pass = 5; pass; -- pass)
 	{
 		ASSERT(touch_observer_distance_buffer >= 1.f);
 	
 		Vector3 center = _current_transformation.GetTranslation();
-		Scalar radius = frustum_default_depth_near * touch_observer_distance_buffer;
+		Scalar radius = camera_near * touch_observer_distance_buffer;
 		Sphere3 collision_sphere(center, radius);
 
 		auto & entity = GetEntity();
@@ -671,14 +670,16 @@ void TouchObserverController::ClampTransformation()
 void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
-	gfx::SetCameraEvent set_camera_event;
-	set_camera_event.transformation = _space.RelToAbs(_current_transformation);
+	gfx::SetCameraEvent set_camera_event = {
+		_space.RelToAbs(_current_transformation),
+		_frustum.fov
+	};
 	Daemon::Broadcast(set_camera_event);
 
 	// broadcast new lod center
 	gfx::SetLodParametersEvent set_lod_parameters_event;
 	set_lod_parameters_event.parameters.center = _current_transformation.GetTranslation();
-	set_lod_parameters_event.parameters.min_distance = frustum_default_depth_near;
+	set_lod_parameters_event.parameters.min_distance = _frustum.depth_range[0];
 	Daemon::Broadcast(set_lod_parameters_event);
 }
 
@@ -738,9 +739,7 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & 
 // returns the vector from the camera to the screen position in world space
 Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const
 {
-	gfx::Pov pov;
-	pov.SetFrustum(_frustum);
-	pov.SetTransformation(transformation);
+	gfx::Pov pov(transformation, _frustum);
 
 	// position of the pixel on the made-up screen in world space
 	Vector3 position = pov.ScreenToWorld(screen_position);

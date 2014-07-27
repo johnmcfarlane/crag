@@ -25,6 +25,7 @@
 #include "core/ConfigEntry.h"
 
 CONFIG_DECLARE(origin_dynamic_enable, bool);
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 // main entry point
 void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & space)
@@ -59,7 +60,10 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & s
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event = { { geom::abs::Vector3::Zero() } };
+		gfx::SetCameraEvent event = { 
+			{ geom::abs::Vector3::Zero() },
+			frustum_default_fov
+		};
 		gfx::Daemon::Broadcast(event);
 	}
 }

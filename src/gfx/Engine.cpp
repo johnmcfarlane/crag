@@ -420,11 +420,20 @@ void Engine::OnToggleCapture()
 
 void Engine::operator() (SetCameraEvent const & event)
 {
-	if (scene != nullptr)
+	if (! scene)
 	{
-		Transformation relative_transformation = _space.AbsToRel(event.transformation);
-		scene->SetCameraTransformation(relative_transformation);
+		return;
 	}
+	
+	auto const & scene_frustum = scene->GetPov().GetFrustum();
+	scene->SetPov({
+		_space.AbsToRel(event.transformation),
+		{
+			scene_frustum.resolution,
+			scene_frustum.depth_range,
+			event.fov 
+		}
+	});
 }
 
 void Engine::operator() (SetSpaceEvent const & event)
@@ -495,8 +504,6 @@ bool Engine::Init()
 	InitVSync();
 	
 	scene = new Scene(* this);
-	geom::Vector2i resolution = app::GetResolution();
-	scene->SetResolution(resolution);
 	
 	InitRenderState();
 	

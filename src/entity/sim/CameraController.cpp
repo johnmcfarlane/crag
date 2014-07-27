@@ -27,6 +27,8 @@
 
 using namespace sim;
 
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
+
 namespace
 {
 	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
@@ -54,12 +56,15 @@ namespace
 			return;
 		}
 
-		auto rotation = gfx::Rotation(forward, up);
-
 		// broadcast new camera position
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(space.RelToAbs(camera_translation));
-		event.transformation.SetRotation(rotation);
+		gfx::SetCameraEvent event = { 
+			{
+				space.RelToAbs(camera_translation),
+				gfx::Rotation(forward, up)
+			},
+			frustum_default_fov
+		};
+
 		Daemon::Broadcast(event);
 	}
 	

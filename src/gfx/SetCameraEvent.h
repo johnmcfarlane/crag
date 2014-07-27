@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "defs.h"
+
 #include "geom/Space.h"
 
 namespace gfx
@@ -16,5 +18,6 @@ namespace gfx
 	struct SetCameraEvent
 	{
 		geom::abs::Transformation transformation;
+		Scalar fov;
 	};
 }

@@ -227,25 +227,18 @@ ShadowMap const & Scene::GetShadows() const
 	return _shadows;
 }
 
-void Scene::SetResolution(geom::Vector2i const & r)
+void Scene::SetPov(Pov const & pov)
 {
-	auto frustum = pov.GetFrustum();
-	frustum.resolution = r;
-	pov.SetFrustum(frustum);
-}
-
-void Scene::SetCameraTransformation(Transformation const & transformation)
-{
-	pov.SetTransformation(transformation);
-	_root.SetLocalTransformation(Inverse(transformation.GetMatrix()));
+	_pov = pov;
+	_root.SetLocalTransformation(Inverse(_pov.GetTransformation().GetMatrix()));
 }
 
 Pov & Scene::GetPov()
 {
-	return pov;
+	return _pov;
 }
 
 Pov const & Scene::GetPov() const
 {
-	return pov;
+	return _pov;
 }
