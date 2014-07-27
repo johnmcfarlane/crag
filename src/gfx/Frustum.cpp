@@ -15,6 +15,9 @@
 
 #include "geom/Matrix44.h"
 
+#include "core/app.h"
+// TODO: Frustum should not depend on app.h.
+
 using namespace gfx;
 
 CONFIG_DEFINE (frustum_default_depth_near, float, .25f);
@@ -25,9 +28,16 @@ CONFIG_DEFINE_ANGLE (frustum_default_fov, float, 55.f);
 // gfx::Frustum member definitions
 
 Frustum::Frustum()
-: resolution(-1, -1)
+: resolution(app::GetResolution())	// TODO: Frustum should be cheaper to construct.
 , depth_range(frustum_default_depth_near, frustum_default_depth_far)
 , fov(frustum_default_fov)
+{
+}
+
+Frustum::Frustum(geom::Vector2i _resolution, RenderRange _depth_range, Scalar _fov)
+: resolution(_resolution)	// TODO: Frustum should be cheaper to construct.
+, depth_range(_depth_range)
+, fov(_fov)
 {
 }
 

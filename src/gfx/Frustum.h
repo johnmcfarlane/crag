@@ -19,6 +19,7 @@ namespace gfx
 	{
 	public:
 		Frustum();
+		Frustum(geom::Vector2i _resolution, RenderRange _depth_range, Scalar _fov);
 		
 		Matrix44 CalcProjectionMatrix() const;
 		
@@ -27,6 +28,6 @@ namespace gfx
 
 		geom::Vector2i resolution;
 		RenderRange depth_range;	// does this really belong here?
-		float fov;	// radians
+		Scalar fov;	// radians
 	};
 }
