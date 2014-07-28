@@ -15,6 +15,7 @@
 #include "gfx/Engine.h"
 #include "gfx/GenerateShadowVolumeMesh.h"
 #include "gfx/Messages.h"
+#include "gfx/NonIndexedVboResource.h"
 #include "gfx/Program.h"
 
 #include "form/Engine.h"
