@@ -15,7 +15,8 @@
 #include "entity/sim/HoverThruster.h"
 #include "entity/sim/MouseObserverController.h"
 #include "entity/sim/RoverThruster.h"
-#include "entity/sim/UfoController.h"
+#include "entity/sim/UfoController1.h"
+#include "entity/sim/UfoController2.h"
 #include "entity/sim/TouchObserverController.h"
 #include "entity/sim/VehicleController.h"
 #include "entity/sim/VernierThruster.h"
@@ -58,6 +59,8 @@ CONFIG_DEFINE (observer_use_touch, bool, false);
 CONFIG_DEFINE (observer_use_touch, bool, true);
 #endif
 CONFIG_DEFINE (observer_physics, bool, false);
+CONFIG_DEFINE(ufo_controller_type, int, 2);
+CONFIG_DEFINE(saucer_ball_radius, physics::Scalar, .45f);
 
 namespace gfx
 {
@@ -94,7 +97,6 @@ namespace
 	CONFIG_DEFINE (saucer_height, physics::Scalar, .6f);
 	CONFIG_DEFINE (saucer_radius, physics::Scalar, 1.f);
 	CONFIG_DEFINE (saucer_cylinder_height, physics::Scalar, .01f);
-	CONFIG_DEFINE (saucer_ball_radius, physics::Scalar, .45f);
 	CONFIG_DEFINE (saucer_ball_density, float, 1);
 	CONFIG_DEFINE (saucer_thrust, float, 16.f);
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
@@ -829,14 +831,25 @@ namespace
 		}
 
 		// controller
-		auto controller = make_shared<UfoController>(ufo_entity, ball_entity, thrust);
-		ufo_entity.SetController(controller);
-
-		if (SDL_SetRelativeMouseMode(SDL_TRUE))
+		shared_ptr<Controller> controller;
+		switch (ufo_controller_type)
 		{
-			// Linux requires libxi-dev to be installed for this to succeed.
-			DEBUG_MESSAGE("Failed to set relative mouse mode.");
+			default:
+				DEBUG_BREAK("invalid value; ufo_controller_type:%d; range:[1,2]", ufo_controller_type);
+			case 1:
+				controller = make_shared<UfoController1>(ufo_entity, ball_entity, thrust);
+
+				if (SDL_SetRelativeMouseMode(SDL_TRUE))
+				{
+					// Linux requires libxi-dev to be installed for this to succeed.
+					DEBUG_MESSAGE("Failed to set relative mouse mode.");
+				}
+				break;
+			case 2:
+				controller = make_shared<UfoController2>(ufo_entity, ball_entity, thrust);
+				break;
 		}
+		ufo_entity.SetController(controller);
 	}
 	
 	void AddUfoResources()

@@ -1,5 +1,5 @@
 //
-//  entity/sim/UfoController.cpp
+//  entity/sim/UfoController1.cpp
 //  crag
 //
 //  Created by John McFarlane on 2014-03-20.
@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#include "UfoController.h"
+#include "UfoController1.h"
 #include "RoverThruster.h"
 
 #include "sim/Entity.h"
@@ -27,18 +27,18 @@ using namespace sim;
 namespace
 {
 #if defined(CRAG_USE_MOUSE)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 100.f);
+	CONFIG_DEFINE(ufo_controller1_sensitivity, Scalar, 100.f);
 #endif
 
 #if defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE(ufo_controller_sensitivity, Scalar, 2000000.f);
+	CONFIG_DEFINE(ufo_controller1_sensitivity, Scalar, 2000000.f);
 #endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// sim::UfoController member functions
+// sim::UfoController1 member functions
 
-UfoController::UfoController(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust)
+UfoController1::UfoController1(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust)
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
 , _ball_entity(ball_entity)
@@ -48,12 +48,12 @@ UfoController::UfoController(Entity & entity, std::shared_ptr<Entity> const & ba
 	AddThruster(VehicleController::ThrusterPtr(_main_thruster));
 
 	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddCommand(* this, & UfoController::Tick);
+	roster.AddCommand(* this, & UfoController1::Tick);
 
 	CRAG_VERIFY(* this);
 }
 
-UfoController::~UfoController()
+UfoController1::~UfoController1()
 {
 	CRAG_VERIFY(* this);
 	
@@ -64,7 +64,7 @@ UfoController::~UfoController()
 	
 	// roster
 	auto & roster = engine.GetTickRoster();
-	roster.RemoveCommand(* this, & UfoController::Tick);
+	roster.RemoveCommand(* this, & UfoController1::Tick);
 	
 	// remove ball
 	if (_ball_entity)
@@ -73,7 +73,7 @@ UfoController::~UfoController()
 	}
 }
 
-CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController1, self)
 	CRAG_VERIFY(self._camera_rotation);
 	if (self._ball_entity)
 	{
@@ -82,7 +82,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController, self)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void UfoController::Tick()
+void UfoController1::Tick()
 {
 	Vector2 pointer_delta = HandleEvents();
 
@@ -90,20 +90,20 @@ void UfoController::Tick()
 	ApplyTilt(pointer_delta);
 }
 
-void UfoController::ApplyThrust(Vector2 pointer_delta)
+void UfoController1::ApplyThrust(Vector2 pointer_delta)
 {
 	bool is_rotating = pointer_delta != Vector2::Zero();
 	auto thrust_factor = ShouldThrust(is_rotating) ? 1.f : 0.f;
 	_main_thruster->SetThrustFactor(thrust_factor);
 }
 
-bool UfoController::ShouldThrust(bool) const
+bool UfoController1::ShouldThrust(bool) const
 {
 	return _num_presses > 0;
 }
 
 // returns true iff UFO is upside down
-void UfoController::ApplyTilt(Vector2 pointer_delta)
+void UfoController1::ApplyTilt(Vector2 pointer_delta)
 {
 	auto const & location = GetEntity().GetLocation();
 	if (! location)
@@ -114,7 +114,7 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 	auto & body = core::StaticCast<physics::Body>(* location);
 	
 	auto resolution = app::GetResolution();
-	auto factor = ufo_controller_sensitivity / geom::Length(geom::Cast<float>(resolution));
+	auto factor = ufo_controller1_sensitivity / geom::Length(geom::Cast<float>(resolution));
 	Vector2 drag(pointer_delta.x * factor, pointer_delta.y * factor);
 	
 	auto touch_pad_right = gfx::GetAxis(_camera_rotation, gfx::Direction::right);
@@ -128,7 +128,7 @@ void UfoController::ApplyTilt(Vector2 pointer_delta)
 	body.AddForceAtPos(- tilt, translation - touch_pad_normal);
 }
 
-Vector2 UfoController::HandleEvents()
+Vector2 UfoController1::HandleEvents()
 {
 	auto pointer_delta = Vector2::Zero();
 	
@@ -141,7 +141,7 @@ Vector2 UfoController::HandleEvents()
 	return pointer_delta;
 }
 
-Vector2 UfoController::HandleEvent(SDL_Event const & event)
+Vector2 UfoController1::HandleEvent(SDL_Event const & event)
 {
 	switch (event.type)
 	{
@@ -193,7 +193,7 @@ Vector2 UfoController::HandleEvent(SDL_Event const & event)
 	return Vector2::Zero();
 }
 
-void UfoController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
+void UfoController1::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 {
 	switch (scancode)
 	{
@@ -213,7 +213,7 @@ void UfoController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 	}
 }
 
-void UfoController::operator() (gfx::SetCameraEvent const & event)
+void UfoController1::operator() (gfx::SetCameraEvent const & event)
 {
 	_camera_rotation = geom::Cast<Scalar>(event.transformation.GetRotation());
 }
