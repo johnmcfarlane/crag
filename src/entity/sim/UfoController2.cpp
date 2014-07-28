@@ -19,6 +19,7 @@
 #include "physics/Body.h"
 
 #include "gfx/axes.h"
+#include "gfx/Debug.h"
 
 #include "geom/Intersection.h"
 
@@ -33,7 +34,8 @@ namespace
 {
 	CONFIG_DEFINE(ufo_controller2_sensitivity, Scalar, 5000.f);
 	CONFIG_DEFINE(ufo_controller2_vanish_distance, Scalar, 1000000.f);
-	CONFIG_DEFINE(ufo_controller2_drag_roof_height, Scalar, 10.f);
+	CONFIG_DEFINE(ufo_controller2_drag_roof_height, Scalar, 7.f);
+	CONFIG_DEFINE(ufo_controller2_max_direction, Scalar, 10.f);
 	
 	Ray3 GetPointerRay(gfx::Pov const & pov, geom::Vector2i const & pixel_position)
 	{
@@ -63,6 +65,19 @@ namespace
 		auto const & pointer_ray = GetPointerRay(pov, pixel_position);
 	
 		return GetWorldPosition(pointer_ray, horizontal_plane);
+	}
+	
+	Vector3 GetForce(Vector3 const & target_position, Plane3 const & horizontal_plane, Scalar thrust)
+	{
+		CRAG_VERIFY_UNIT(horizontal_plane.normal, .00001f);
+		
+		auto const & horizontal_direction = geom::Clamped(target_position - horizontal_plane.position, ufo_controller2_max_direction);
+		auto const & vertical_direction = horizontal_plane.normal * ufo_controller2_drag_roof_height;
+		auto const & direction = geom::Normalized(horizontal_direction + vertical_direction);
+
+		auto const & force = direction * thrust;
+		
+		return force;
 	}
 }
 
@@ -112,6 +127,14 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController2, self)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
+void UfoController2::operator() (gfx::SetCameraEvent const & event)
+{
+	auto const & space = GetEntity().GetEngine().GetSpace();
+
+	_pov.SetTransformation(space.AbsToRel(event.transformation));
+	_pov.GetFrustum().fov = event.fov;
+}
+
 void UfoController2::Tick()
 {
 	geom::Vector2i pixel_position;
@@ -141,21 +164,11 @@ void UfoController2::Tick()
 	Vector3 target_position = GetTargetPosition(_pov, pixel_position, horizontal_plane);
 	
 	// force
-	auto const & horizontal_force = (target_position - horizontal_plane.position) / ufo_controller2_drag_roof_height;
-	auto const & elevation_force = up;
-	auto force = geom::Clamped(horizontal_force + elevation_force, 1.f) * _thrust;
+	auto const & force = GetForce(target_position, horizontal_plane, _thrust);
 	
 	// point at top of UFO
 	auto const & ufo_up = gfx::GetAxis(rotation, gfx::Direction::forward);
 	auto const & ufo_top = translation + ufo_up * saucer_ball_radius;
 
 	body.AddForceAtPos(force, ufo_top);
-}
-
-void UfoController2::operator() (gfx::SetCameraEvent const & event)
-{
-	auto const & space = GetEntity().GetEngine().GetSpace();
-
-	_pov.SetTransformation(space.AbsToRel(event.transformation));
-	_pov.GetFrustum().fov = event.fov;
 }

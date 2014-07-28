@@ -34,9 +34,9 @@ namespace sim
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController2);
 
 	private:
-		void Tick();
-
 		void operator() (gfx::SetCameraEvent const & event);
+
+		void Tick();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data
