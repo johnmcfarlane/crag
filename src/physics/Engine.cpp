@@ -40,7 +40,7 @@ namespace
 	CONFIG_DEFINE(contact_surface_bounce, physics::Scalar, .5);
 	CONFIG_DEFINE(contact_surface_bounce_velocity, physics::Scalar, .1f);
 
-	CONFIG_DEFINE(angular_damping, physics::Scalar, .05f);
+	CONFIG_DEFINE(angular_damping, physics::Scalar, .02f);
 	CONFIG_DEFINE(linear_damping, physics::Scalar, .01f);
 
 	CONFIG_DEFINE(angular_damping_threshold, physics::Scalar, .0005f);
