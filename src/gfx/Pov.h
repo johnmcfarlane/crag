@@ -26,10 +26,12 @@ namespace gfx
 		
 		void SetFrustum(Frustum const & frustum);
 		Frustum const & GetFrustum() const;
+		Frustum & GetFrustum();
 
 		// set/get the camera position/rotation
 		void SetTransformation(Transformation const & transformation);
 		Transformation const & GetTransformation() const;
+		Transformation & GetTransformation();
 		
 		Vector3 GetPosition() const;
 

@@ -38,6 +38,11 @@ Frustum const & Pov::GetFrustum() const
 	return _frustum;
 }
 
+Frustum & Pov::GetFrustum()
+{
+	return _frustum;
+}
+
 void Pov::SetTransformation(Transformation const & transformation)
 {
 	_transformation = transformation;
@@ -45,6 +50,11 @@ void Pov::SetTransformation(Transformation const & transformation)
 }
 
 Transformation const & Pov::GetTransformation() const
+{
+	return _transformation;
+}
+
+Transformation & Pov::GetTransformation()
 {
 	return _transformation;
 }
