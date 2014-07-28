@@ -60,6 +60,25 @@ namespace geom
 		return v;
 	}
 
+	// Minimizes v to given length. 
+	template <typename T, typename S> 
+	void Clamp(T & v, S length)
+	{
+		auto length_squared = LengthSq(v);
+		if (length_squared > Squared(length))
+		{
+			v *= (InvSqrt(length_squared) * length);
+		}
+	}
+
+	// Returns a copy of v no greater than given length. 
+	template <typename T, typename S> 
+	T Clamped(T v, S length)
+	{
+		Clamp(v, length);
+		return v;
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Area
