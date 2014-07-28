@@ -102,7 +102,7 @@ namespace
 	CONFIG_DEFINE (saucer_num_sectors, int, 24);
 	CONFIG_DEFINE (saucer_num_rings, int, 5);
 	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
-	CONFIG_DEFINE (saucer_flat_shade_ball, bool, true);
+	CONFIG_DEFINE (saucer_flat_shade_ball, bool, false);
 #if defined(CRAG_USE_GL)
 	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
 #endif
