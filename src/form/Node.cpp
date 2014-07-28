@@ -222,7 +222,7 @@ bool form::Node::InitScoreParameters()
 	normal = geom::Normal(surface);
 	CRAG_VERIFY(normal);
 	CRAG_VERIFY_OP(LengthSq(normal), >, 0);
-	FastNormalize(normal);
+	Normalize(normal);
 	
 	area = geom::Area(surface);
 	if (area == 0) 
