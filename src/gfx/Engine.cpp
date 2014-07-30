@@ -18,7 +18,7 @@
 #include "RegisterResources.h"
 #include "Scene.h"
 #include "SetCameraEvent.h"
-#include "SetOriginEvent.h"
+#include "SetSpaceEvent.h"
 
 #include "form/Engine.h"
 
@@ -43,7 +43,7 @@ using namespace gfx;
 CONFIG_DEFINE(depth_func, int, GL_LESS);
 CONFIG_DEFINE (shadows_enabled, bool, true);
 CONFIG_DECLARE(profile_mode, bool);
-CONFIG_DECLARE(camera_near, float);
+CONFIG_DECLARE(frustum_default_depth_near, float);
 
 namespace 
 {
@@ -135,7 +135,7 @@ namespace
 			ASSERT(! IsInf(depth_range[1]));
 			
 			// and it isn't behind the camera,
-			if (depth_range[1] <= camera_near)
+			if (depth_range[1] <= frustum_default_depth_near)
 			{
 				continue;
 			}
@@ -153,13 +153,13 @@ namespace
 		}
 
 		// Bind the near plane to the default value,
-		frustum_depth_range[0] = std::max(frustum_depth_range[0], (Scalar)camera_near);
+		frustum_depth_range[0] = std::max(frustum_depth_range[0], (Scalar)frustum_default_depth_near);
 		
 		if (frustum_depth_range[0] >= frustum_depth_range[1])
 		{
 			// with nothing to render, there is no valid depth range,
 			// so throw together some dummy values.
-			return RenderRange(camera_near, camera_near * 1024);
+			return RenderRange(frustum_default_depth_near, frustum_default_depth_near * 1024);
 		}
 		
 		return frustum_depth_range;
@@ -223,7 +223,6 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : scene(nullptr)
-, _origin(geom::abs::Vector3::Zero())
 , _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -408,13 +407,6 @@ void Engine::OnSetReady(bool ready)
 	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
 }
 
-void Engine::OnResize(geom::Vector2i size)
-{
-	glViewport(0, 0, size.x, size.y);
-	scene->SetResolution(size);
-}
-
-
 void Engine::OnToggleCulling()
 {
 	culling = ! culling;
@@ -428,21 +420,30 @@ void Engine::OnToggleCapture()
 
 void Engine::operator() (SetCameraEvent const & event)
 {
-	if (scene != nullptr)
+	if (! scene)
 	{
-		Transformation relative_transformation = geom::AbsToRel(event.transformation, _origin);
-		scene->SetCameraTransformation(relative_transformation);
+		return;
 	}
+	
+	auto const & scene_frustum = scene->GetPov().GetFrustum();
+	scene->SetPov({
+		_space.AbsToRel(event.transformation),
+		{
+			scene_frustum.resolution,
+			scene_frustum.depth_range,
+			event.fov 
+		}
+	});
 }
 
-void Engine::operator() (SetOriginEvent const & event)
+void Engine::operator() (SetSpaceEvent const & event)
 {
-	_origin = event.origin;
+	_space = event.space;
 }
 
-geom::abs::Vector3 const & Engine::GetOrigin() const
+geom::Space const & Engine::GetSpace() const
 {
-	return _origin;
+	return _space;
 }
 
 #if defined(__ANDROID__)
@@ -478,7 +479,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	}
 
 	SetCameraListener::SetIsListening(false);
-	SetOriginListener::SetIsListening(false);
+	SetSpaceListener::SetIsListening(false);
 }
 
 bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
@@ -503,8 +504,6 @@ bool Engine::Init()
 	InitVSync();
 	
 	scene = new Scene(* this);
-	geom::Vector2i resolution = app::GetResolution();
-	scene->SetResolution(resolution);
 	
 	InitRenderState();
 	
@@ -1000,7 +999,7 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	auto & pov = scene->GetPov();
 	auto & model_view_projection = pov.GetTransformation();
 
-	// mark the local origin
+	// mark the local space
 	Debug::AddBasis(Vector3::Zero(), 1000000.);
 	
 	// draw 3D debug elements

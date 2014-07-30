@@ -56,14 +56,6 @@ int main(int argc, char * * argv)
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
-#if defined(CRAG_USE_GL)
-CONFIG_DEFINE (player_type, int, 4);
-#endif
-
-#if defined(CRAG_USE_GLES)
-CONFIG_DEFINE (player_type, int, 3);
-#endif
-
 CONFIG_DEFINE (profile_mode, bool, false);
 CONFIG_DECLARE (shadows_enabled, bool);
 
@@ -210,10 +202,8 @@ namespace
 					case SDL_WINDOWEVENT_RESIZED:
 					{
 						// TODO: Check it's the right window?
-						geom::Vector2i size(window_event.data1, window_event.data2);
-						gfx::Daemon::Call([size] (gfx::Engine & engine) {
-							engine.OnResize(size);
-						});
+						// TODO: Create a SetResolutionEvent
+						DEBUG_BREAK("Received unhandled resize event; size:{%f,%f}", window_event.data1, window_event.data2);
 						break;
 					}
 					

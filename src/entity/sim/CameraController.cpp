@@ -13,20 +13,21 @@
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
+#include "sim/gravity.h"
 
-#include "physics/Body.h"
 #include "physics/RayCast.h"
 
 #include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetLodParametersEvent.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 using namespace sim;
+
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 namespace
 {
@@ -46,7 +47,7 @@ namespace
 
 	// given information about camera location and direction, 
 	// send a 'set camera' event
-	void UpdateCamera(Vector3 const & camera_translation, geom::abs::Vector3 const & origin, Vector3 const & forward, Vector3 const & up)
+	void UpdateCamera(Vector3 const & camera_translation, geom::Space const & space, Vector3 const & forward, Vector3 const & up)
 	{
 		auto dot = geom::DotProduct(forward, up);
 		if (dot > .99999f || dot < -.99999f)
@@ -55,12 +56,15 @@ namespace
 			return;
 		}
 
-		auto rotation = gfx::Rotation(forward, up);
-
 		// broadcast new camera position
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(geom::RelToAbs(camera_translation, origin));
-		event.transformation.SetRotation(rotation);
+		gfx::SetCameraEvent event = { 
+			{
+				space.RelToAbs(camera_translation),
+				gfx::Rotation(forward, up)
+			},
+			frustum_default_fov
+		};
+
 		Daemon::Broadcast(event);
 	}
 	
@@ -108,63 +112,6 @@ CameraController::~CameraController()
 
 void CameraController::Tick()
 {
-	// send last location update to rendered etc.
-	Update();
-
-	// event-based input
-	HandleEvents();
-}
-
-void CameraController::HandleEvents()
-{
-	SDL_Event event;
-	while (_event_watcher.PopEvent(event))
-	{
-		HandleEvent(event);
-	}
-}
-
-void CameraController::HandleEvent(SDL_Event const & event)
-{
-	switch (event.type)
-	{
-		case SDL_KEYDOWN:
-			HandleKeyboardEvent(event.key.keysym.scancode, true);
-			break;
-		
-		case SDL_KEYUP:
-			HandleKeyboardEvent(event.key.keysym.scancode, false);
-			break;
-		
-		default:
-			break;
-	}
-}
-
-// returns false if it's time to quit
-void CameraController::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
-{
-	if (! down)
-	{
-		return;
-	}
-
-	switch (scancode)
-	{
-		case SDL_SCANCODE_C:
-			{
-				_collidable = ! _collidable;
-				GetBody().SetIsCollidable(_collidable);
-			}
-			break;
-			
-		default:
-			break;
-	}
-}
-
-void CameraController::Update()
-{
 	auto & camera_body = GetBody();
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
@@ -183,6 +130,13 @@ void CameraController::Update()
 		return;
 	}
 	
+	auto const & subject_body = core::StaticCast<physics::Body const>(* subject_location);
+	Vector3 up = GetUp(subject_body.GetGravitationalForce());
+	if (up == Vector3::Zero())
+	{
+		return;
+	}
+	
 	auto const & subject_translation = subject_location->GetTranslation();
 	auto camera_to_subject = subject_translation - camera_translation;
 	auto distance = geom::Length(camera_to_subject);
@@ -194,29 +148,26 @@ void CameraController::Update()
 	}
 	
 	auto & engine = GetEntity().GetEngine();
-	const auto & origin = engine.GetOrigin();
+	const auto & space = engine.GetSpace();
 	auto forward = camera_to_subject / distance;
 
-	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
-	auto up = geom::Normalized(camera_translation - relative_origin);
-
 	UpdateLodParameters(camera_translation, subject_translation);
-	UpdateCamera(camera_translation, origin, forward, up);
+	UpdateCamera(camera_translation, space, forward, up);
 	UpdateBody(camera_body, _ray_cast, forward, up, distance);
 	UpdateCameraRayCast();
 }
 
 void CameraController::UpdateCameraRayCast() const
 {
-	const auto & engine = GetEntity().GetEngine();
-	
 	auto & camera_body = GetBody();
+	auto const & up = GetUp(camera_body.GetGravitationalForce());
+	if (up == Vector3::Zero())
+	{
+		return;
+	}
+	
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
-
-	const auto & origin = engine.GetOrigin();
-	auto relative_origin = geom::AbsToRel(geom::Vector3d::Zero(), origin);
-	auto up = geom::Normalized(camera_translation - relative_origin);
 
 	_ray_cast.SetRay(Ray3(camera_translation, - up));
 }

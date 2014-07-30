@@ -69,7 +69,7 @@ namespace geom
 	{
 		Plane<S, N> plane;
 		plane.position = triangle.points[1];
-		plane.normal = FastNormalized(Normal(triangle));
+		plane.normal = Normalized(Normal(triangle));
 		
 		return Distance(plane, point);
 	}

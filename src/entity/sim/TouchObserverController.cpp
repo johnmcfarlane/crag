@@ -21,9 +21,10 @@
 #include "physics/Engine.h"
 
 #include "gfx/axes.h"
+#include "gfx/Pov.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -41,15 +42,12 @@
 #include "gfx/Color.h"
 #endif
 
-CONFIG_DECLARE_ANGLE(camera_fov, float);
-CONFIG_DECLARE(camera_near, float);
-
 using namespace sim;
 
 namespace
 {
 	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
-	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of camera_near
+	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of near Z
 
 	struct TranslationRollContact
 	{
@@ -260,13 +258,11 @@ namespace
 
 TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
 : Controller(entity)
-, _origin(geom::abs::Vector3::Zero())
 , _down_transformation(transformation)
 , _current_transformation(transformation)
 {
 	_frustum.resolution = app::GetResolution();
 	_frustum.depth_range = Vector2(1, 2);
-	_frustum.fov = camera_fov;
 
 	// register 
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
@@ -293,21 +289,21 @@ void TouchObserverController::Tick()
 	BroadcastTransformation();
 }
 
-void TouchObserverController::operator() (gfx::SetOriginEvent const & event)
+void TouchObserverController::operator() (gfx::SetSpaceEvent const & event)
 {
 	// convert _down_transformation
-	_down_transformation = geom::Convert(_down_transformation, _origin, event.origin);
+	_down_transformation = geom::Convert(_down_transformation, _space, event.space);
 	
 	// convert _current_transformation
-	_current_transformation = geom::Convert(_current_transformation, _origin, event.origin);
+	_current_transformation = geom::Convert(_current_transformation, _space, event.space);
 	
 	// convert contacts
 	for (auto & contact : _contacts)
 	{
-		contact = ConvertOrigin(contact, _origin, event.origin);
+		contact = ConvertSpace(contact, _space, event.space);
 	}
 
-	_origin = event.origin;
+	_space = event.space;
 }
 
 void TouchObserverController::HandleEvents()
@@ -628,6 +624,8 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 // adjusts given transformation to avoid penetrating world geometry;
 void TouchObserverController::ClampTransformation()
 {
+	auto camera_near = _frustum.depth_range[0];
+	
 	for (auto pass = 5; pass; -- pass)
 	{
 		ASSERT(touch_observer_distance_buffer >= 1.f);
@@ -672,14 +670,16 @@ void TouchObserverController::ClampTransformation()
 void TouchObserverController::BroadcastTransformation() const
 {
 	// broadcast new camera position
-	gfx::SetCameraEvent set_camera_event;
-	set_camera_event.transformation = geom::RelToAbs(_current_transformation, _origin);
+	gfx::SetCameraEvent set_camera_event = {
+		_space.RelToAbs(_current_transformation),
+		_frustum.fov
+	};
 	Daemon::Broadcast(set_camera_event);
 
 	// broadcast new lod center
 	gfx::SetLodParametersEvent set_lod_parameters_event;
 	set_lod_parameters_event.parameters.center = _current_transformation.GetTranslation();
-	set_lod_parameters_event.parameters.min_distance = camera_near;
+	set_lod_parameters_event.parameters.min_distance = _frustum.depth_range[0];
 	Daemon::Broadcast(set_lod_parameters_event);
 }
 
@@ -739,9 +739,7 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & 
 // returns the vector from the camera to the screen position in world space
 Vector3 TouchObserverController::GetPixelDirection(Vector2 const & screen_position, Transformation const & transformation) const
 {
-	gfx::Pov pov;
-	pov.SetFrustum(_frustum);
-	pov.SetTransformation(transformation);
+	gfx::Pov pov(transformation, _frustum);
 
 	// position of the pixel on the made-up screen in world space
 	Vector3 position = pov.ScreenToWorld(screen_position);

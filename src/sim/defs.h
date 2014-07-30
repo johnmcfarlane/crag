@@ -16,6 +16,7 @@ namespace geom
 	// forward-declarations
 	template <typename S, int D> class Vector;
 	template <typename S, int R, int C> class Matrix;
+	template <typename S, int D> class Plane;
 	template <typename S, int D> class Sphere;
 	template <typename S> class Transformation;
 	template <typename S, int D> class Ray;
@@ -41,6 +42,7 @@ namespace sim
 	typedef geom::Vector<Scalar, 2> Vector2;
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Vector<Scalar, 4> Vector4;
+	typedef geom::Plane<Scalar, 3> Plane3;
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Sphere<Scalar, 3> Sphere3;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;

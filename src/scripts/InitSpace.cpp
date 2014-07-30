@@ -17,7 +17,7 @@
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "applet/Applet.h"
 #include "applet/AppletInterface_Impl.h"
@@ -25,15 +25,13 @@
 #include "core/ConfigEntry.h"
 
 CONFIG_DECLARE(origin_dynamic_enable, bool);
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 // main entry point
-void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 const & start_pos)
+void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & space)
 {
 	FUNCTION_NO_REENTRY;
 
-	// coordinate system
-	auto rel_start_pos = geom::AbsToRel(start_pos, start_pos);
-	
 	// Create origin controller.
 	if (origin_dynamic_enable)
 	{
@@ -43,11 +41,11 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	// launch regulator
 	applet_interface.Launch("Regulator", 8192, & RegulatorScript);
 	
-	// Set Origin
+	// Set Space
 	{
-		gfx::SetOriginEvent event = 
+		gfx::SetSpaceEvent event = 
 		{
-			start_pos
+			space
 		};
 		applet::Daemon::Broadcast(event);
 	}
@@ -55,16 +53,17 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::abs::Vector3 co
 	// set LOD parameters
 	{
 		gfx::SetLodParametersEvent event;
-		event.parameters.center = rel_start_pos;
+		event.parameters.center = gfx::Vector3::Zero();
 		event.parameters.min_distance = 1.f;
 		gfx::Daemon::Broadcast(event);
 	}
 	
 	// Set camera position
 	{
-		gfx::SetCameraEvent event;
-		event.transformation.SetTranslation(start_pos * 3.);
-		event.transformation.SetRotation(gfx::Rotation(geom::abs::Vector3(0, 0, 1)));
+		gfx::SetCameraEvent event = { 
+			{ geom::abs::Vector3::Zero() },
+			frustum_default_fov
+		};
 		gfx::Daemon::Broadcast(event);
 	}
 }

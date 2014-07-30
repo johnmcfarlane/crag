@@ -17,11 +17,11 @@
 
 #if defined(WIN32)
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 #endif
 #include "gfx/SetLodParametersEvent.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 #include "core/Singleton.h"
 
@@ -48,7 +48,7 @@ namespace gfx
 {
 	struct SetCameraEvent;
 	struct SetLodParametersEvent;
-	struct SetOriginEvent;
+	struct SetSpaceEvent;
 }
 
 namespace sim
@@ -61,7 +61,7 @@ namespace sim
 	class Engine 
 	: public ipc::EngineBase<Engine, Entity>
 	, private ipc::Listener<Engine, gfx::SetCameraEvent>
-	, private ipc::Listener<Engine, gfx::SetOriginEvent>
+	, private ipc::Listener<Engine, gfx::SetSpaceEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
 		OBJECT_SINGLETON(Engine);
@@ -89,8 +89,8 @@ namespace sim
 		void operator() (gfx::SetCameraEvent const & event) final;
 		Ray3 const & GetCamera() const;
 
-		void operator() (gfx::SetOriginEvent const & event) final;
-		geom::abs::Vector3 const & GetOrigin() const;
+		void operator() (gfx::SetSpaceEvent const & event) final;
+		geom::Space const & GetSpace() const;
 		
 		void operator() (gfx::SetLodParametersEvent const & event) final;
 		gfx::LodParameters const & GetLodParameters() const;
@@ -127,7 +127,7 @@ namespace sim
 		core::Time _time;
 
 		Ray3 _camera;
-		geom::abs::Vector3 _origin;
+		geom::Space _space;
 		gfx::LodParameters _lod_parameters;
 		physics::Engine & _physics_engine;
 		form::Scene & _collision_scene;	// for collision

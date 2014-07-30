@@ -11,7 +11,7 @@
 
 #include "form/Node.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 namespace form
 {
@@ -36,7 +36,7 @@ namespace form
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Polyhedron);
 		
-		void Init(geom::abs::Vector3 const & origin, PointBuffer & point_buffer);
+		void Init(geom::Space const & space, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
 
 		geom::abs::Sphere3 const & GetShape() const;
@@ -44,9 +44,9 @@ namespace form
 		Formation const & GetFormation() const;
 		Node const & GetRootNode() const;
 		
-		void SetOrigin(geom::abs::Vector3 const & origin);
+		void SetSpace(geom::Space const & space);
 	private:
-		bool ResetOrigin(Node & node, PointBuffer & point_buffer, int depth);
+		bool ResetSpace(Node & node, PointBuffer & point_buffer, int depth);
 		
 		enum 
 		{

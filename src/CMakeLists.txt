@@ -35,7 +35,8 @@ add_executable(crag
 	entity/sim/Sensor.cpp
 	entity/sim/Thruster.cpp
 	entity/sim/TouchObserverController.cpp
-	entity/sim/UfoController.cpp
+	entity/sim/UfoController1.cpp
+	entity/sim/UfoController2.cpp
 	entity/sim/VehicleController.cpp
 	entity/sim/VernierThruster.cpp
 	entity/SpawnEntityFunctions.cpp
@@ -69,6 +70,7 @@ add_executable(crag
 	gfx/object/SearchLight.cpp
 	gfx/object/Skybox.cpp
 	gfx/object/MeshObject.cpp
+	gfx/Frustum.cpp
 	gfx/PlainVertex.cpp
 	gfx/Pov.cpp
 	gfx/Program.cpp

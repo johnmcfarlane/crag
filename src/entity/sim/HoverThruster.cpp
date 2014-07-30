@@ -13,6 +13,7 @@
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
+#include "sim/gravity.h"
 
 #include "physics/Body.h"
 
@@ -54,15 +55,13 @@ void HoverThruster::TickThrustDirection()
 	}
 	
 	auto & body = core::StaticCast<physics::Body>(* location);
-	
-	auto gravitational_force = body.GetGravitationalForce();
-	auto gravity = geom::Length(gravitational_force);
-	if (! gravity)
+	Vector3 up = GetUp(body.GetGravitationalForce());
+	if (up == Vector3::Zero())
 	{
 		return;
 	}
 	
-	auto up_thrust = gravitational_force * _magnitude / - gravity;
+	auto up_thrust = up * _magnitude;
 	auto transformation = body.GetTransformation();
 	
 	auto new_ray = GetRay();

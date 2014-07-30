@@ -9,7 +9,7 @@
 
 #include "sim/defs.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 namespace gfx
 {

@@ -16,9 +16,9 @@
 #include "form/Surrounding.h"
 #include "form/Scene.h"
 
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 
 #include "applet/AppletInterface_Impl.h"
 
@@ -90,11 +90,12 @@ namespace
 			app::Beep();
 #endif
 
-			auto origin = engine.GetOrigin();
-			auto new_origin = geom::RelToAbs(lod_center, origin);
+			auto space = engine.GetSpace();
 
-			DEBUG_MESSAGE("Set: %f,%f,%f", new_origin.x, new_origin.y, new_origin.z);
-			gfx::SetOriginEvent event = { new_origin };
+			auto origin = space.RelToAbs(lod_center);
+			DEBUG_MESSAGE("Set: %lf,%lf,%lf", origin.x, origin.y, origin.z);
+
+			gfx::SetSpaceEvent event = { geom::Space(origin) };
 			applet::Daemon::Broadcast(event);
 		}
 	}

@@ -12,13 +12,13 @@
 #include "sim/Controller.h"
 #include "sim/defs.h"
 
-#include "gfx/Pov.h"
+#include "gfx/Frustum.h"
 
 #include "ipc/Listener.h"
 
 #include "core/EventWatcher.h"
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 #include "geom/Transformation.h"
 
 namespace form
@@ -33,7 +33,7 @@ namespace physics
 
 namespace gfx
 {
-	struct SetOriginEvent;
+	struct SetSpaceEvent;
 }
 
 namespace sim
@@ -45,7 +45,7 @@ namespace sim
 	// camera movement
 	class TouchObserverController 
 	: public Controller
-	, private ipc::Listener<Engine, gfx::SetOriginEvent>
+	, private ipc::Listener<Engine, gfx::SetSpaceEvent>
 	{
 		// types
 		typedef std::vector<Contact> ContactVector;
@@ -58,7 +58,7 @@ namespace sim
 	private:
 		void Tick();
 
-		void operator() (gfx::SetOriginEvent const & event) final;
+		void operator() (gfx::SetSpaceEvent const & event) final;
 
 		void HandleEvents();
 		void HandleEvent(SDL_Event const & event);
@@ -95,7 +95,7 @@ namespace sim
 		gfx::Frustum _frustum;
 		
 		// local origin in universal space
-		geom::abs::Vector3 _origin;
+		geom::Space _space;
 		
 		// camera transformation at point where contact pressed/released
 		Transformation _down_transformation;

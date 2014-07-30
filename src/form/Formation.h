@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "geom/origin.h"
+#include "geom/Space.h"
 #include "geom/Sphere.h"
 
 namespace form 

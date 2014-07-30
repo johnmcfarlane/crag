@@ -15,4 +15,8 @@ namespace sim
 {
 	// simulates gravitational interactions between the given entities
 	void ApplyGravity(Engine & engine, core::Time delta);
+	
+	// given gravitational force as provided by a physics::Body,
+	// calculates upward direction or returns Zero
+	Vector3 GetUp(Vector3 const & gravitational_force);
 }

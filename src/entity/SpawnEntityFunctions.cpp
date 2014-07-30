@@ -55,18 +55,13 @@ namespace
 	// Config values
 
 	CONFIG_DEFINE (box_density, physics::Scalar, 1);
-	CONFIG_DEFINE (box_linear_damping, physics::Scalar, 0.005f);
-	CONFIG_DEFINE (box_angular_damping, physics::Scalar, 0.005f);
 
 	CONFIG_DEFINE (ball_density, float, 1);
-	CONFIG_DEFINE (ball_linear_damping, float, 0.005f);
-	CONFIG_DEFINE (ball_angular_damping, float, 0.005f);
 
 	CONFIG_DEFINE (camera_radius, float, .5);
 	CONFIG_DEFINE (camera_density, float, 1);
 	
 	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.5f);
-	CONFIG_DEFINE (camera_angular_damping, physics::Scalar, 0.05f);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
@@ -81,8 +76,6 @@ namespace
 
 		auto body = make_shared<physics::BoxBody>(spawn_pos, & velocity, physics_engine, size);
 		body->SetDensity(box_density);
-		body->SetLinearDamping(box_linear_damping);
-		body->SetAngularDamping(box_angular_damping);
 		box.SetLocation(body);
 
 		// graphics
@@ -93,22 +86,22 @@ namespace
 		box.SetModel(model);
 	}
 
-	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping, float angular_damping)
+	shared_ptr<physics::SphereBody> ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
 		body->SetDensity(density);
-		body->SetLinearDamping(linear_damping);
-		body->SetAngularDamping(angular_damping);
 		entity.SetLocation(body);
+		
+		return body;
 	}
 
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphereBody(ball, sphere, velocity, ball_density, ball_linear_damping, ball_angular_damping);
+		ConstructSphereBody(ball, sphere, velocity, ball_density);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -119,7 +112,8 @@ namespace
 	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
 	{
 		// physics
-		ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping, camera_angular_damping);
+		auto body = ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density);
+		body->SetLinearDamping(camera_linear_damping);
 
 		// controller
 		auto & engine = camera.GetEngine();

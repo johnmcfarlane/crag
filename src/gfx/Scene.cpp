@@ -19,10 +19,6 @@
 
 using namespace gfx;
 
-// used in CalculateNodeScoreFunctor.cpp
-CONFIG_DEFINE (camera_near, float, .25f);
-CONFIG_DEFINE_ANGLE (camera_fov, float, 55.f);
-
 ////////////////////////////////////////////////////////////////////////////////
 // Scene member functions
 
@@ -30,12 +26,6 @@ Scene::Scene(Engine & engine)
 : _time(-1)
 , _root(engine, Transformation::Matrix44::Identity(), Layer::background)
 {
-	auto frustum = pov.GetFrustum();
-
-	frustum.fov = camera_fov;
-	frustum.depth_range[0] = frustum.depth_range[1] = -1;
-	
-	pov.SetFrustum(frustum);
 }
 
 Scene::~Scene()
@@ -237,25 +227,18 @@ ShadowMap const & Scene::GetShadows() const
 	return _shadows;
 }
 
-void Scene::SetResolution(geom::Vector2i const & r)
+void Scene::SetPov(Pov const & pov)
 {
-	auto frustum = pov.GetFrustum();
-	frustum.resolution = r;
-	pov.SetFrustum(frustum);
-}
-
-void Scene::SetCameraTransformation(Transformation const & transformation)
-{
-	pov.SetTransformation(transformation);
-	_root.SetLocalTransformation(Inverse(transformation.GetMatrix()));
+	_pov = pov;
+	_root.SetLocalTransformation(Inverse(_pov.GetTransformation().GetMatrix()));
 }
 
 Pov & Scene::GetPov()
 {
-	return pov;
+	return _pov;
 }
 
 Pov const & Scene::GetPov() const
 {
-	return pov;
+	return _pov;
 }

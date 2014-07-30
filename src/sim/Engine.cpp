@@ -23,7 +23,7 @@
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetOriginEvent.h"
+#include "gfx/SetSpaceEvent.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
@@ -36,7 +36,7 @@ namespace
 	CONFIG_DEFINE(apply_gravity, bool, true);
 	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
 
-	STAT_DEFAULT(sim_origin, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
+	STAT_DEFAULT(sim_space, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
 	STAT(form_changed_sim, bool, 0);
 }
 
@@ -53,7 +53,6 @@ Engine::Engine()
 , paused(false)
 , _time(0)
 , _camera(Ray3::Zero())
-, _origin(geom::abs::Vector3::Zero())
 , _lod_parameters({ Vector3::Zero(), 1.f })
 , _physics_engine(ref(new physics::Engine))
 , _collision_scene(ref(new form::Scene(512, 512)))
@@ -96,7 +95,7 @@ void Engine::OnAddObject(ObjectSharedPtr const &)
 
 void Engine::AddFormation(form::Formation& formation)
 {
-	_collision_scene.AddFormation(formation, GetOrigin());
+	_collision_scene.AddFormation(formation, GetSpace());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
@@ -107,7 +106,7 @@ void Engine::RemoveFormation(form::Formation& formation)
 void Engine::operator() (gfx::SetCameraEvent const & event)
 {
 	auto camera_ray = gfx::GetCameraRay(event.transformation);
-	_camera = geom::AbsToRel(camera_ray, _origin);
+	_camera = _space.AbsToRel(camera_ray);
 }
 
 Ray3 const & Engine::GetCamera() const
@@ -115,10 +114,10 @@ Ray3 const & Engine::GetCamera() const
 	return _camera;
 }
 
-void Engine::operator() (gfx::SetOriginEvent const & event)
+void Engine::operator() (gfx::SetSpaceEvent const & event)
 {
 	// figure out the delta
-	auto delta = geom::Cast<Scalar>(event.origin - _origin);
+	auto delta = geom::Cast<Scalar>(event.space - _space);
 
 	// quit if there's no change
 	if (geom::LengthSq(delta) == 0)
@@ -127,28 +126,28 @@ void Engine::operator() (gfx::SetOriginEvent const & event)
 	}
 	
 	ForEachObject([& delta] (Entity & entity) {
-		ResetOrigin(entity, delta);
+		ResetSpace(entity, delta);
 	});
 	
-	// TODO: Is there a risk of a render between calls to SetOrigin and Draw?
+	// TODO: Is there a risk of a render between calls to SetSpace and Draw?
 	// If so, could it result in a bad frame?
 	UpdateRenderer();
 
 	// local collision formation scene
-	_collision_scene.OnOriginReset(event.origin);
+	_collision_scene.OnSpaceReset(event.space);
 	
 	// camera
-	_camera = geom::Convert(_camera, _origin, event.origin);
+	_camera = geom::Convert(_camera, _space, event.space);
 	
 	// LOD parameters
-	_lod_parameters.center = geom::Convert(_lod_parameters.center, _origin, event.origin);
+	_lod_parameters.center = geom::Convert(_lod_parameters.center, _space, event.space);
 
-	_origin = event.origin;
+	_space = event.space;
 }
 
-geom::abs::Vector3 const & Engine::GetOrigin() const
+geom::Space const & Engine::GetSpace() const
 {
-	return _origin;
+	return _space;
 }
 
 void Engine::operator() (gfx::SetLodParametersEvent const & event)
@@ -237,7 +236,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 	// stop listening for SetCameraEvent
 	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
-	ipc::Listener<Engine, gfx::SetOriginEvent>::SetIsListening(false);
+	ipc::Listener<Engine, gfx::SetSpaceEvent>::SetIsListening(false);
 	ipc::Listener<Engine, gfx::SetLodParametersEvent>::SetIsListening(false);
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
@@ -280,7 +279,7 @@ void Engine::Tick()
 
 void Engine::UpdateRenderer() const
 {
-	STAT_SET(sim_origin, GetOrigin());
+	STAT_SET(sim_space, GetSpace().RelToAbs(Vector3::Zero()));
 
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(false);

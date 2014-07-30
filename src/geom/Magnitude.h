@@ -26,58 +26,57 @@ namespace geom
 		return std::sqrt(length_squared);
 	}
 
-	// Returns a copy of v with unit length. 
+	// Changes v to unit length. 
 	// Is undefined when input is zero length.
-	// Slow but accurate. 
-	template <typename T>
-	T Normalized(T const & v)
-	{
-		return v * InvSqrt(LengthSq(v));
-	}
-
-	// Returns a copy of v with given length. 
-	// Is undefined when input is zero.
-	// Slow but accurate. 
-	template <typename T, typename S> 
-	T Resized(T const & v, S length)
-	{
-		return v * (InvSqrt(LengthSq(v)) * length);
-	}
-
-	// Returns a copy of v with unit length. 
-	// Is undefined when input is zero length.
-	// Fast but inaccurate. 
-	template <typename T>
-	T FastNormalized(T const & v)
-	{
-		return v * FastInvSqrt(LengthSq(v));
-	}
-
-	// Converts v to unit vector. 
-	// Is undefined when input is zero length.
-	// Slow but accurate. 
 	template <typename T> 
 	void Normalize(T & v)
 	{
 		v *= InvSqrt(LengthSq(v));
 	}
 
-	// Sets v to given length. 
+	// Returns a copy of v with unit length. 
+	// Is undefined when input is zero length.
+	template <typename T>
+	T Normalized(T v)
+	{
+		Normalize(v);
+		return v;
+	}
+
+	// Changes v to given length. 
 	// Is undefined when length is zero.
-	// Slow but accurate. 
 	template <typename T, typename S> 
-	void Resize(T const & v, S length)
+	void Resize(T & v, S length)
 	{
 		v *= (InvSqrt(LengthSq(v)) * length);
 	}
 
-	// Converts v to unit vector and returns v. 
-	// Is undefined when input is zero length.
-	// Fast but inaccurate. 
-	template <typename T> 
-	void FastNormalize(T & v)
+	// Returns a copy of v with given length. 
+	// Is undefined when input is zero.
+	template <typename T, typename S> 
+	T Resized(T v, S length)
 	{
-		v *= FastInvSqrt(LengthSq(v));
+		Resize(v, length);
+		return v;
+	}
+
+	// Minimizes v to given length. 
+	template <typename T, typename S> 
+	void Clamp(T & v, S length)
+	{
+		auto length_squared = LengthSq(v);
+		if (length_squared > Squared(length))
+		{
+			v *= (InvSqrt(length_squared) * length);
+		}
+	}
+
+	// Returns a copy of v no greater than given length. 
+	template <typename T, typename S> 
+	T Clamped(T v, S length)
+	{
+		Clamp(v, length);
+		return v;
 	}
 
 

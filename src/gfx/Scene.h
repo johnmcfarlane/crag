@@ -59,9 +59,7 @@ namespace gfx
 		ShadowMap & GetShadows();
 		ShadowMap const & GetShadows() const;
 		
-		void SetResolution(geom::Vector2i const & r);
-		void SetCameraTransformation(Transformation const & transformation);
-		
+		void SetPov(Pov const & pov);
 		Pov & GetPov();
 		Pov const & GetPov() const;
 		
@@ -69,7 +67,7 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// attributes
 		core::Time _time;
-		Pov pov;
+		Pov _pov;
 		
 		Object _root;	// root of object heirachy; uses list hook in Object
 		Object::RenderList _render_list;	// flat list of drawable objects

@@ -74,8 +74,6 @@ namespace
 			auto zero_vector = sim::Vector3::Zero();
 			auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
 			body->SetDensity(1);
-			body->SetLinearDamping(0.005f);
-			body->SetAngularDamping(0.005f);
 			entity.SetLocation(body);
 
 			// graphics
@@ -160,14 +158,6 @@ void MainScript(applet::AppletInterface & applet_interface)
 
 	_applet_interface = & applet_interface;
 	
-//	// Set camera position
-//	{
-//		gfx::SetCameraEvent event;
-//		event.transformation = geom::abs::Transformation(geom::Cast<geom::abs::Scalar>(observer_start_pos));
-
-//		applet::Daemon::Broadcast(event);
-//	}
-	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
 	star_volume.center = geom::Resized(star_volume.center, 100000000.);
@@ -179,13 +169,14 @@ void MainScript(applet::AppletInterface & applet_interface)
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 
-	InitSpace(applet_interface, observer_start_pos);
+	geom::Space space(observer_start_pos);
+	InitSpace(applet_interface, space);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
+	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), space);
 	
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/left.bmp",
@@ -196,7 +187,7 @@ void MainScript(applet::AppletInterface & applet_interface)
 		"assets/skybox/front.bmp"
 	}});
 	
-	auto rel_animat_start_pos = geom::AbsToRel(animat_start_pos, observer_start_pos);
+	auto rel_animat_start_pos = space.AbsToRel(animat_start_pos);
 	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop
@@ -218,7 +209,8 @@ void MainScript(applet::AppletInterface & applet_interface)
 	// remove skybox
 	skybox.Release();
 
-	observer.Release();
+	player_and_camera[1].Release();
+	player_and_camera[0].Release();
 
 	sim::Daemon::Call([] (sim::Engine & engine) 
 	{

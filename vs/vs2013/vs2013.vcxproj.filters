@@ -107,12 +107,14 @@
     <ClCompile Include="..\..\src\physics\SphereBody.cpp" />
     <ClCompile Include="..\..\src\physics\CylinderBody.cpp" />
     <ClCompile Include="..\..\src\entity\sim\HoverThruster.cpp" />
-    <ClCompile Include="..\..\src\entity\sim\UfoController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\VernierThruster.cpp" />
     <ClCompile Include="..\..\src\entity\SpawnPlayer.cpp" />
     <ClCompile Include="..\..\src\gfx\object\SearchLight.cpp" />
     <ClCompile Include="..\..\src\form\Object.cpp" />
     <ClCompile Include="..\..\src\scripts\InitSpace.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\UfoController1.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\UfoController2.cpp" />
+    <ClCompile Include="..\..\src\gfx\Frustum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -286,11 +288,13 @@
     <ClInclude Include="..\..\src\physics\SphereBody.h" />
     <ClInclude Include="..\..\src\physics\CylinderBody.h" />
     <ClInclude Include="..\..\src\entity\sim\HoverThruster.h" />
-    <ClInclude Include="..\..\src\entity\sim\UfoController.h" />
     <ClInclude Include="..\..\src\entity\sim\VernierThruster.h" />
     <ClInclude Include="..\..\src\entity\SpawnPlayer.h" />
     <ClInclude Include="..\..\src\gfx\object\SearchLight.h" />
     <ClInclude Include="..\..\src\scripts\InitSpace.h" />
+    <ClInclude Include="..\..\src\entity\sim\UfoController1.h" />
+    <ClInclude Include="..\..\src\entity\sim\UfoController2.h" />
+    <ClInclude Include="..\..\src\gfx\Frustum.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />

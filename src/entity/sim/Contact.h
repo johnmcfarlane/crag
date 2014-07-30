@@ -7,9 +7,12 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include "geom/origin.h"
-
 #include "sim/defs.h"
+
+namespace geom
+{
+	class Space;
+}
 
 namespace sim
 {
@@ -20,7 +23,7 @@ namespace sim
 	class Contact;
 
 	// called on a contact when the origin changes
-	Contact ConvertOrigin(Contact const & contact, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin);
+	Contact ConvertSpace(Contact const & contact, geom::Space const & source_origin, geom::Space const & destination_origin);
 
 	// true iff contacts are too close together to be useful
 	bool Collided(Contact const & contact1, Contact const & contact2);
@@ -43,7 +46,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		friend Contact ConvertOrigin(Contact const & contact, geom::abs::Vector3 const & source_origin, geom::abs::Vector3 const & destination_origin);
+		friend Contact ConvertSpace(Contact const & contact, geom::Space const & source_space, geom::Space const & destination_space);
 		friend bool Collided(Contact const & contact1, Contact const & contact2);
 
 		Contact() = default;

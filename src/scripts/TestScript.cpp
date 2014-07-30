@@ -34,7 +34,6 @@
 
 using geom::Vector3f;
 
-CONFIG_DECLARE(player_type, int);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 namespace 
@@ -209,7 +208,8 @@ void TestScript(applet::AppletInterface & applet_interface)
 		moon2 = SpawnPlanet(sim::Sphere3(sim::Vector3(planet_radius * -2.5f, planet_radius * 0.5f, planet_radius * -1.f), 2500000), 13, 0);
 	}
 	
-	InitSpace(applet_interface, observer_start_pos);
+	auto const & origin = observer_start_pos;
+	InitSpace(applet_interface, origin);
 	
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);
@@ -217,7 +217,7 @@ void TestScript(applet::AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create observer.
-	sim::EntityHandle observer = SpawnPlayer(sim::Vector3::Zero(), PlayerType(player_type));
+	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), origin);
 
 	// Create vehicle.
 	if (spawn_vehicle)
@@ -242,9 +242,9 @@ void TestScript(applet::AppletInterface & applet_interface)
 				auto const & location = entity.GetLocation();
 				auto time = app::GetTime() * 0.21314;
 				auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
-				auto & engine = entity.GetEngine();
-				auto & origin = engine.GetOrigin();
-				location->SetTransformation(geom::AbsToRel(pos, origin));
+				auto const & engine = entity.GetEngine();
+				auto const & space = engine.GetSpace();
+				location->SetTransformation(space.AbsToRel(pos));
 			});
 		
 			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
@@ -272,7 +272,8 @@ void TestScript(applet::AppletInterface & applet_interface)
 	// remove skybox
 	skybox.Release();
 
-	observer.Release();
+	player_and_camera[1].Release();
+	player_and_camera[0].Release();
 	
 	ASSERT(_applet_interface == & applet_interface);
 }

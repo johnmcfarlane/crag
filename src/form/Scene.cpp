@@ -65,17 +65,17 @@ Surrounding const & Scene::GetSurrounding() const
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void Scene::OnOriginReset(geom::abs::Vector3 const & origin) 
+void Scene::OnSpaceReset(geom::Space const & space) 
 {
-	// The difficult bit: fix all our data which relied on the old origin.
-	ResetFormations(origin);
+	// The difficult bit: fix all our data which relied on the old space.
+	ResetFormations(space);
 }
 
-void Scene::AddFormation(Formation & formation, geom::abs::Vector3 const & origin)
+void Scene::AddFormation(Formation & formation, geom::Space const & space)
 {
 	ASSERT(formation_map.find(& formation) == formation_map.end());
 	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
-	InitPolyhedron(* i, origin);
+	InitPolyhedron(* i, space);
 }
 
 void Scene::RemoveFormation(Formation const & formation)
@@ -110,7 +110,7 @@ bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 	return changed;
 }
 
-void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
+void Scene::GenerateMesh(Mesh & mesh, geom::Space const & space) const
 {
 	mesh.Clear();
 	_surrounding.ResetMeshPointers();
@@ -118,7 +118,7 @@ void Scene::GenerateMesh(Mesh & mesh, geom::abs::Vector3 const & origin) const
 	_surrounding.GenerateMesh(mesh);
 	
 	MeshProperties & properties = mesh.GetProperties();
-	properties._origin = origin;
+	properties._space = space;
 	properties._num_quaterne = _surrounding.GetNumQuaternaUsed();
 }
 
@@ -131,17 +131,17 @@ void Scene::TickModels()
 	}
 }
 
-void Scene::ResetPolyhedronOrigins(geom::abs::Vector3 const & origin)
+void Scene::ResetPolyhedronSpaces(geom::Space const & space)
 {
 	for (FormationMap::iterator i = formation_map.begin(); i != formation_map.end(); ++ i) 
 	{
 		FormationPair & pair = * i;
 		Polyhedron & polyhedron = pair.second;
-		polyhedron.SetOrigin(origin);
+		polyhedron.SetSpace(space);
 	}
 }
 
-void Scene::ResetFormations(geom::abs::Vector3 const & origin)
+void Scene::ResetFormations(geom::Space const & space)
 {
 	for (auto & pair : formation_map) 
 	{
@@ -152,7 +152,7 @@ void Scene::ResetFormations(geom::abs::Vector3 const & origin)
 
 	for (auto & pair : formation_map) 
 	{
-		InitPolyhedron(pair, origin);
+		InitPolyhedron(pair, space);
 	}
 }
 
@@ -169,13 +169,13 @@ void Scene::TickPolyhedron(Polyhedron & polyhedron)
 }
 
 // The given pair contains a formation and a polyhedron.
-void Scene::InitPolyhedron(FormationPair & pair, geom::abs::Vector3 const & origin)
+void Scene::InitPolyhedron(FormationPair & pair, geom::Space const & space)
 {
 	Polyhedron & polyhedron = pair.second;
 
 	PointBuffer & points = _surrounding.GetPoints();
 	
-	polyhedron.Init(origin, points);
+	polyhedron.Init(space, points);
 }
 
 void Scene::DeinitPolyhedron(FormationPair & pair)

@@ -1,23 +1,22 @@
 //
-//  gfx/SetCameraEvent.h
+//  gfx/SetSpaceEvent.h
 //  crag
 //
-//  Created by John on 13/05/28.
+//  Created by John on 2013-06-17.
 //  Copyright 2013 John McFarlane. All rights reserved.
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
 #pragma once
 
-#include "defs.h"
-
 #include "geom/Space.h"
 
 namespace gfx
 {
-	struct SetCameraEvent
+	// inform listeners that the relative space has changed;
+	// all relative coordinates must pass through geom::Convert
+	struct SetSpaceEvent
 	{
-		geom::abs::Transformation transformation;
-		Scalar fov;
+		geom::Space space;
 	};
 }

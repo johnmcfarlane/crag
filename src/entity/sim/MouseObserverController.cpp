@@ -30,8 +30,9 @@
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
-CONFIG_DECLARE (sim_tick_duration, core::Time);
-CONFIG_DECLARE (camera_near, float);
+CONFIG_DECLARE(sim_tick_duration, core::Time);
+CONFIG_DECLARE(frustum_default_depth_near, float);
+CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 namespace
 {
@@ -186,17 +187,19 @@ void MouseObserverController::UpdateCamera() const
 	Transformation transformation (translation, rotation);
 	
 	const auto & engine = GetEntity().GetEngine();
-	const auto & origin = engine.GetOrigin();
+	const auto & space = engine.GetSpace();
 
 	// broadcast new camera position
-	gfx::SetCameraEvent set_camera_event;
-	set_camera_event.transformation = geom::RelToAbs(transformation, origin);
+	gfx::SetCameraEvent set_camera_event = { 
+		space.RelToAbs(transformation),
+		frustum_default_fov
+	};
 	Daemon::Broadcast(set_camera_event);
 
 	// broadcast new lod center
 	gfx::SetLodParametersEvent set_lod_parameters_event;
 	set_lod_parameters_event.parameters.center = transformation.GetTranslation();
-	set_lod_parameters_event.parameters.min_distance = camera_near;
+	set_lod_parameters_event.parameters.min_distance = frustum_default_depth_near;
 	Daemon::Broadcast(set_lod_parameters_event);
 }
 

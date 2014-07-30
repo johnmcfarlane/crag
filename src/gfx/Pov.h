@@ -10,40 +10,28 @@
 #pragma once
 
 #include "defs.h"
+#include "Frustum.h"
 
 #include "geom/Transformation.h"
 
 namespace gfx
 {
-	class Frustum
-	{
-	public:
-		Frustum();
-		
-		// TODO: Move this to a utils file
-		Matrix44 CalcProjectionMatrix() const;
-		
-		Vector2 PixelToScreen(Vector2 const & pixel_position) const;
-		Vector2 ScreenToPixel(Vector2 const & screen_position) const;
-
-		geom::Vector2i resolution;
-		RenderRange depth_range;	// does this really belong here?
-		float fov;	// radians
-	};
-	
 	// Point of view
 	class Pov
 	{
 	public:
 		// functions
 		Pov();
+		Pov(Transformation const & transformation, Frustum const & frustum);
 		
 		void SetFrustum(Frustum const & frustum);
 		Frustum const & GetFrustum() const;
+		Frustum & GetFrustum();
 
 		// set/get the camera position/rotation
 		void SetTransformation(Transformation const & transformation);
 		Transformation const & GetTransformation() const;
+		Transformation & GetTransformation();
 		
 		Vector3 GetPosition() const;
 
@@ -55,7 +43,7 @@ namespace gfx
 		
 	private:
 		// variables
-		Frustum _frustum;
 		Transformation _transformation;
+		Frustum _frustum;
 	};
 }

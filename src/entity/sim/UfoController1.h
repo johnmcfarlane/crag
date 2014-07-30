@@ -1,5 +1,5 @@
 //
-//  entity/sim/UfoController.h
+//  entity/sim/UfoController1.h
 //  crag
 //
 //  Created by John McFarlane on 2014-03-20.
@@ -20,7 +20,7 @@
 namespace sim
 {
 	// controls a vessel with mouse or touch-based tilting behavior
-	class UfoController final
+	class UfoController1 final
 	: public VehicleController
 	, private ipc::Listener<Engine, gfx::SetCameraEvent>
 	{
@@ -28,10 +28,10 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		UfoController(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust);
-		~UfoController();
+		UfoController1(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust);
+		~UfoController1();
 
-		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController);
+		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController1);
 
 	private:
 		void Tick();

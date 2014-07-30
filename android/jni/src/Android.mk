@@ -48,7 +48,8 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/sim/Sensor.cpp \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
-	$(CRAG_PATH)/entity/sim/UfoController.cpp \
+	$(CRAG_PATH)/entity/sim/UfoController1.cpp \
+	$(CRAG_PATH)/entity/sim/UfoController2.cpp \
 	$(CRAG_PATH)/entity/sim/VehicleController.cpp \
 	$(CRAG_PATH)/entity/sim/VernierThruster.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
@@ -82,6 +83,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/object/SearchLight.cpp \
 	$(CRAG_PATH)/gfx/object/Skybox.cpp \
 	$(CRAG_PATH)/gfx/object/MeshObject.cpp \
+	$(CRAG_PATH)/gfx/Frustum.cpp \
 	$(CRAG_PATH)/gfx/PlainVertex.cpp \
 	$(CRAG_PATH)/gfx/Pov.cpp \
 	$(CRAG_PATH)/gfx/Program.cpp \
