@@ -44,8 +44,7 @@ namespace geom
 #endif
 		}
 		
-		template <typename RHS_S>
-		Matrix(Matrix<RHS_S, 3, 3> const & rhs)
+		Matrix(Matrix const & rhs)
 		{
 			for (int m = 0; m != 3; ++ m)
 			{
