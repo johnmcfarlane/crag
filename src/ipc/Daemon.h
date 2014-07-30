@@ -218,54 +218,56 @@ namespace ipc
 		void Run()
 		{
 			FUNCTION_NO_REENTRY;
-			
+
 			ASSERT(this == singleton);
 			ASSERT(_thread.IsCurrent());
-			
+
 			CRAG_VERIFY_EQUAL_ENUM(_state, State::initialized);
 			SetState(State::running);
-			
-			// create engine
-			Engine engine;
-			_engine = & engine;
-			
-			engine.Run(_messages);
-			DEBUG_MESSAGE("Engine, %s, returned", _name);
-		
-			// Acknowledge that this won't be sending any more.
-			SetState(State::acknowledge_flush_begin);
-			while (_state < State::request_flush_end)
+
 			{
-				if (_state != State::acknowledge_flush_begin)
+				// create engine
+				Engine engine;
+				_engine = & engine;
+
+				engine.Run(_messages);
+				DEBUG_MESSAGE("Engine, %s, returned", _name);
+
+				// Acknowledge that this won't be sending any more.
+				SetState(State::acknowledge_flush_begin);
+				while (_state < State::request_flush_end)
 				{
-					CRAG_VERIFY_EQUAL_ENUM(_state, State::request_flush_end);
+					if (_state != State::acknowledge_flush_begin)
+					{
+						CRAG_VERIFY_EQUAL_ENUM(_state, State::request_flush_end);
+					}
+
+					if (IsTimedout())
+					{
+						DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+						break;
+					}
+
+					FlushMessagesOrYield();
 				}
-				
-				if (IsTimedout())
+
+				while (! _messages.IsEmpty() || ! ListenerBase::CanExit())
 				{
-					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
-					break;
+					if (IsTimedout())
+					{
+						DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
+						break;
+					}
+
+					FlushMessagesOrYield();
 				}
-				
-				FlushMessagesOrYield();
+
+				// destroy engine
+				CRAG_VERIFY(engine);
+				_engine = nullptr;
 			}
-			
-			while (! _messages.IsEmpty() || ! ListenerBase::CanExit())
-			{
-				if (IsTimedout())
-				{
-					DEBUG_MESSAGE("Engine, %s, has spent too long in state, %d", _name, (int)_state);
-					break;
-				}
-				
-				FlushMessagesOrYield();
-			}
-			
+
 			SetState(State::acknowledge_flush_end);
-		
-			// destroy engine
-			CRAG_VERIFY(engine);
-			_engine = nullptr;
 		}
 		
 		template <typename MESSAGE>
