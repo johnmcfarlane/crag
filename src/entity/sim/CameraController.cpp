@@ -47,21 +47,25 @@ namespace
 
 	// given information about camera location and direction, 
 	// send a 'set camera' event
-	void UpdateCamera(Vector3 const & camera_translation, geom::Space const & space, Vector3 const & forward, Vector3 const & up)
+	void UpdateCamera(Transformation const & camera_transformation, geom::Space const & space, Vector3 const & forward, Vector3 up)
 	{
+		using geom::abs::Scalar;
+
+		// if subject is above or below camera,
 		auto dot = geom::DotProduct(forward, up);
-		if (dot > .99999f || dot < -.99999f)
+		if (dot > 1.f || dot < -1.f)
 		{
-			// subject is above or below camera; cannot calculate sensible camera up
-			return;
+			// cannot calculate sensible camera up; use previous value
+			up = gfx::GetAxis(camera_transformation.GetRotation(), gfx::Direction::up);
 		}
 
-		// broadcast new camera position
-		gfx::SetCameraEvent event = { 
-			{
-				space.RelToAbs(camera_translation),
-				gfx::Rotation(forward, up)
-			},
+		gfx::SetCameraEvent event = {
+			// calculate sensible camera up
+			geom::Transformation<Scalar>(
+				space.RelToAbs(camera_transformation.GetTranslation()),
+				gfx::Rotation(
+					geom::Cast<Scalar>(forward), 
+					geom::Cast<Scalar>(up))),
 			frustum_default_fov
 		};
 
@@ -152,7 +156,7 @@ void CameraController::Tick()
 	auto forward = camera_to_subject / distance;
 
 	UpdateLodParameters(camera_translation, subject_translation);
-	UpdateCamera(camera_translation, space, forward, up);
+	UpdateCamera(camera_transformation, space, forward, up);
 	UpdateBody(camera_body, _ray_cast, forward, up, distance);
 	UpdateCameraRayCast();
 }
