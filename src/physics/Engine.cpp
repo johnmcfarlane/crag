@@ -36,7 +36,7 @@ namespace
 	// config constants
 	
 	CONFIG_DEFINE(collisions, bool, true);
-	CONFIG_DEFINE(contact_surface_friction, physics::Scalar, 1.);	// coulomb friction coefficient
+	CONFIG_DEFINE(contact_surface_friction, physics::Scalar, 2.);	// coulomb friction coefficient
 	CONFIG_DEFINE(contact_surface_bounce, physics::Scalar, .5);
 	CONFIG_DEFINE(contact_surface_bounce_velocity, physics::Scalar, .1f);
 
