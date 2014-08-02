@@ -28,7 +28,7 @@ namespace physics
 		Vector3 GetDirection() const;
 		
 		// ray must have unit direction
-		void SetRay(Ray3 ray);
+		void SetRay(Ray3 const & ray);
 		Ray3 GetRay() const;
 		
 		void SetLength(Scalar length);
