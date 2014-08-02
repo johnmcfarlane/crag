@@ -41,13 +41,6 @@ MeshObject::MeshObject(Engine & engine, Transformation const & local_transformat
 	SetProgram(& poly_program);
 }
 
-MeshObject::~MeshObject()
-{
-	// TODO: hack to prevent VBO outliving GL context;
-	// but what if there are multiple users of this resource?
-	_lit_vbo.Flush();
-}
-
 bool MeshObject::GetRenderRange(RenderRange & range) const
 {
 	Transformation const & transformation = GetModelViewTransformation();

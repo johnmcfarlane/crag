@@ -28,7 +28,6 @@ namespace gfx
 		DECLARE_ALLOCATOR(MeshObject);
 
 		MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh);
-		~MeshObject();
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;
