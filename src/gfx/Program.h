@@ -154,7 +154,7 @@ namespace gfx
 		// constants
 		
 		// matches value in assets/glsl/light_commont.glsl
-		static constexpr auto max_lights = 8;
+		static constexpr auto max_lights = 7;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

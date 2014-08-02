@@ -38,7 +38,7 @@ struct Light
 // constants
 
 // matches value in src/gfx/Program.h
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 7
 
 const float far_positive = + 1000000.;
 const float far_negative = - 1000000.;
