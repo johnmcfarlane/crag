@@ -15,8 +15,6 @@ namespace crag
 {
 	namespace core
 	{
-		class Resource;
-		
 		// A fool-proof way of holding a reasonably efficient reference to a resource
 		template <typename Type>
 		class ResourceHandle
@@ -32,9 +30,13 @@ namespace crag
 				}
 			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 			
-			ResourceHandle() = default;
+			ResourceHandle()
+			{
+				CRAG_VERIFY(* this);
+			}
 			
-			ResourceHandle(std::nullptr_t)
+			ResourceHandle(ResourceHandle const & rhs)
+			: _resource(rhs._resource)
 			{
 				CRAG_VERIFY(* this);
 			}
@@ -47,24 +49,6 @@ namespace crag
 			operator bool() const
 			{
 				return _resource != nullptr;
-			}
-			
-			friend bool operator==(ResourceHandle const & lhs, std::nullptr_t)
-			{
-				return lhs._resource == nullptr;
-			}
-			friend bool operator==(std::nullptr_t, ResourceHandle const & rhs)
-			{
-				return nullptr == rhs._resource;
-			}
-			
-			friend bool operator!=(ResourceHandle const & lhs, std::nullptr_t)
-			{
-				return lhs._resource != nullptr;
-			}
-			friend bool operator!=(std::nullptr_t, ResourceHandle const & rhs)
-			{
-				return nullptr != rhs._resource;
 			}
 			
 			Type const & operator*() const
