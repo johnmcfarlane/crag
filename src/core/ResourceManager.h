@@ -10,7 +10,7 @@
 #pragma once
 
 #include "HashString.h"
-#include "Resource.h"
+#include "ResourceHandle.h"
 
 #include "smp/ReadersWriterMutex.h"
 

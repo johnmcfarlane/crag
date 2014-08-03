@@ -14,7 +14,7 @@
 #include "gfx/LitVertex.h"
 #include "gfx/ShadowVolume.h"
 
-#include "core/Resource.h"
+#include "core/ResourceHandle.h"
 
 namespace gfx
 {
