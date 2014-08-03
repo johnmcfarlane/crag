@@ -87,6 +87,7 @@ namespace gfx
 			
 			_vbo = std::move(rhs._vbo);
 			
+			std::swap(_num_vertices, rhs._num_vertices);
 			std::swap(_max_num_vertices, rhs._max_num_vertices);
 			
 			CRAG_VERIFY(* this);
