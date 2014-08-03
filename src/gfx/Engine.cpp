@@ -789,7 +789,7 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 		}
 		
 		// if object 'cares' what shader is enabled
-		auto required_program = object.GetProgram();
+		auto required_program = object.GetProgram().get();
 		if (required_program)
 		{
 			// make it current (binds if necessary)

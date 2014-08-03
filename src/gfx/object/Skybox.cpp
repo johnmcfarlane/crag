@@ -55,8 +55,8 @@ Skybox::Skybox(Engine & engine)
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	
-	auto const & skybox_program = * resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
-	SetProgram(& skybox_program);
+	auto skybox_program = resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
+	SetProgram(skybox_program);
 }
 
 Skybox::~Skybox()

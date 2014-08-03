@@ -38,6 +38,8 @@ namespace geom
 namespace gfx
 {
 	class Program;
+	using ProgramHandle = crag::core::ResourceHandle<Program>;
+
 	class VboResource;
 	template <typename Vertex, typename Index> class Mesh;
 	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;

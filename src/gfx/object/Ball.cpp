@@ -36,8 +36,8 @@ Ball::Ball(Engine & engine, Transformation const & local_transformation, float r
 	
 	auto & resource_manager = crag::core::ResourceManager::Get();
 
-	auto const & sphere_program = * resource_manager.GetHandle<DiskProgram>("SphereProgram");
-	SetProgram(& sphere_program);
+	auto sphere_program = resource_manager.GetHandle<DiskProgram>("SphereProgram");
+	SetProgram(sphere_program);
 	
 	auto & sphere_quad = * resource_manager.GetHandle<Quad>("SphereQuadVbo");
 	SetVboResource(& sphere_quad);

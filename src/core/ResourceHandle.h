@@ -27,8 +27,8 @@ namespace crag
 				{
 					CRAG_VERIFY(* self._resource);
 					
-					// TODO: allow Type to be base type
-					CRAG_VERIFY_EQUAL(self._resource->_type_id, TypeId::Create<Type>());
+					// would require use of super type member and including Type's header
+					//CRAG_VERIFY_TRUE(IsA<Type>() (self._resource->_type_id));
 				}
 			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 			

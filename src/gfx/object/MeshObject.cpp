@@ -37,8 +37,8 @@ MeshObject::MeshObject(Engine & engine, Transformation const & local_transformat
 	SetVboResource(lit_vbo.get());
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
-	SetProgram(& poly_program);
+	auto poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	SetProgram(poly_program);
 }
 
 bool MeshObject::GetRenderRange(RenderRange & range) const

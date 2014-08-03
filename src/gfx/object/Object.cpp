@@ -204,10 +204,9 @@ bool gfx::operator < (Object const & lhs, Object const & rhs)
 				return mesh_index_diff < 0;
 			}
 			
-			ptrdiff_t shader_index_diff = reinterpret_cast<char const *>(lhs._program) - reinterpret_cast<char const *>(rhs._program);
-			if (shader_index_diff != 0)
+			if (lhs._program != rhs._program)
 			{
-				return shader_index_diff < 0;
+				return lhs._program < rhs._program;
 			}
 			
 			return lhs._render_depth > rhs._render_depth;
@@ -231,12 +230,12 @@ Layer Object::GetLayer() const
 	return _layer;
 }
 
-Program const * Object::GetProgram() const
+ProgramHandle Object::GetProgram() const
 {
 	return _program;
 }
 
-void Object::SetProgram(Program const * program)
+void Object::SetProgram(ProgramHandle program)
 {
 	_program = program;
 

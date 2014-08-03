@@ -16,6 +16,8 @@
 
 #include "geom/Transformation.h"
 
+#include "core/ResourceHandle.h"
+
 namespace gfx { DECLARE_CLASS_HANDLE(Object); }	// gfx::ObjectHandle
 
 
@@ -102,8 +104,8 @@ namespace gfx
 		
 		Layer GetLayer() const;
 		
-		Program const * GetProgram() const;
-		void SetProgram(Program const * program);
+		ProgramHandle GetProgram() const;
+		void SetProgram(ProgramHandle program);
 		
 		VboResource const * GetVboResource() const;
 		void SetVboResource(VboResource const * mesh_resource);
@@ -134,7 +136,7 @@ namespace gfx
 		
 		float _render_depth;
 		Layer const _layer;
-		Program const * _program;
+		ProgramHandle _program;
 		VboResource const * _vbo_resource;
 		bool const _casts_shadow;
 	};
