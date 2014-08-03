@@ -25,6 +25,8 @@ namespace crag
 				
 				if (self._resource)
 				{
+					CRAG_VERIFY(* self._resource);
+					
 					// TODO: allow Type to be base type
 					CRAG_VERIFY_EQUAL(self._resource->_type_id, TypeId::Create<Type>());
 				}
@@ -41,11 +43,20 @@ namespace crag
 				CRAG_VERIFY(* this);
 			}
 			
-			ResourceHandle(Resource const & resource)
+			ResourceHandle(Resource const * resource)
+			: _resource(resource)
 			{
-				Set(resource);
+				CRAG_VERIFY(* this);
 			}
 			
+			// cast to base types
+			template <typename BaseType> 
+			operator ResourceHandle<BaseType> () const
+			{
+				static_assert(std::is_base_of<BaseType, Type>::value, "invalid cast");
+				return ResourceHandle<BaseType>(_resource);
+			}
+
 			operator bool() const
 			{
 				return _resource != nullptr;
@@ -85,15 +96,6 @@ namespace crag
 			}
 			
 		private:
-			void Set(Resource const & resource)
-			{
-				CRAG_VERIFY(* this);
-				CRAG_VERIFY(resource);
-				
-				_resource = & resource;
-
-				CRAG_VERIFY(* this);
-			}
 			
 			Resource const * _resource = nullptr;
 		};

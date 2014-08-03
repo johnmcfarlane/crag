@@ -61,7 +61,7 @@ namespace crag
 			ResourceHandle<Type> GetHandle(KeyType const & key) const
 			{
 				auto const & resource = GetResource(key);
-				return ResourceHandle<Type>(resource);
+				return ResourceHandle<Type>(& resource);
 			}
 			
 			// ensure that resource exists (necessary for thread-sensitive GL resources)
