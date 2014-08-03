@@ -280,7 +280,7 @@ void gfx::RegisterResources()
 	auto & manager = crag::core::ResourceManager::Get();
 	for (auto const & key : gl_resources)
 	{
-		manager.Prefetch(key);
+		manager.Load(key);
 	}
 }
 
@@ -289,6 +289,6 @@ void gfx::UnregisterResources()
 	auto & manager = crag::core::ResourceManager::Get();
 	for (auto const & key : gl_resources)
 	{
-		manager.Unregister(key);
+		manager.Unload(key);
 	}
 }

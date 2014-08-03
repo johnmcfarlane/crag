@@ -84,8 +84,8 @@ namespace crag
 			template <typename Type>
 			Type const & get() const;
 			
-			void Prefetch() const;
-			void Flush() const;
+			void Load() const;
+			void Unload() const;
 			
 			TypeId GetTypeId() const;
 			
@@ -113,7 +113,7 @@ namespace crag
 		template <typename Type>
 		Type const & Resource::get() const
 		{
-			Prefetch();
+			Load();
 			
 			auto const resource_wrapper = _object.get();
 			ASSERT(resource_wrapper);

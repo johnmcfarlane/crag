@@ -39,7 +39,7 @@ Resource::Resource(Resource && rhs)
 	rhs._type_id = TypeId();
 }
 
-void Resource::Prefetch() const
+void Resource::Load() const
 {
 	// TODO: Need a lock here
 	if (! _object)
@@ -48,7 +48,7 @@ void Resource::Prefetch() const
 	}
 }
 
-void Resource::Flush() const
+void Resource::Unload() const
 {
 	_object.reset();
 }

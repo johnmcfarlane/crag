@@ -37,17 +37,24 @@ void ResourceManager::Unregister(KeyType const & key)
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Flush()
+void ResourceManager::Clear()
 {
 	_mutex.WriteLock();
+	DEBUG_MESSAGE("");
 	_resources.clear();
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Prefetch(KeyType const & key) const
+void ResourceManager::Load(KeyType const & key) const
 {
 	auto const & resource = GetResource(key);
-	resource.Prefetch();
+	resource.Load();
+}
+
+void ResourceManager::Unload(KeyType const & key) const
+{
+	auto const & resource = GetResource(key);
+	resource.Unload();
 }
 
 ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & key) const
@@ -73,13 +80,14 @@ ResourceManager::ValueType & ResourceManager::GetResource(KeyType const & key)
 	return const_cast<ValueType &>(const_this->GetResource(key));
 }
 
-void ResourceManager::AddResource(KeyType const & key, ValueType && value)
+void ResourceManager::Register(KeyType const & key, ValueType && value)
 {
 	_mutex.WriteLock();
 	
 	auto found = _resources.find(key);
 	if (found != _resources.end())
 	{
+		CRAG_DEBUG_DUMP(key);
 		CRAG_VERIFY_EQUAL(found->second.GetTypeId(), value.GetTypeId());
 		DEBUG_BREAK("multiple resources with same key");
 		return;

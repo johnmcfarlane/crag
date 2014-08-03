@@ -396,7 +396,7 @@ namespace
 			renderer.EndFlush();
 			formation.EndFlush();
 			
-			crag::core::ResourceManager::Get().Flush();
+			crag::core::ResourceManager::Get().Clear();
 		}
 		
 		app::Deinit();

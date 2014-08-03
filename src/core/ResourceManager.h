@@ -47,14 +47,14 @@ namespace crag
 					return new Resource::Wrapper<Type>(create_function());
 				};
 				
-				AddResource(key, Resource(thunk, TypeId::Create<Type>()));
+				Register(key, Resource(thunk, TypeId::Create<Type>()));
 			}
 			
 			// removes resource with given key (invalidating all current handles)
 			void Unregister(KeyType const & key);
 			
 			// as above but indescriminate
-			void Flush();
+			void Clear();
 
 			// returns a permanent handle which can be used to point to desired resource
 			template <typename Type>
@@ -65,13 +65,16 @@ namespace crag
 			}
 			
 			// ensure that resource exists (necessary for thread-sensitive GL resources)
-			void Prefetch(KeyType const & key) const;
+			void Load(KeyType const & key) const;
+			
+			// frees resource
+			void Unload(KeyType const & key) const;
 
 		private:
 			Resource const & GetResource(KeyType const & key) const;
 			Resource & GetResource(KeyType const & key);
 		
-			void AddResource(KeyType const & key, Resource && value);
+			void Register(KeyType const & key, Resource && value);
 			
 			ResourceManager() = default;
 			~ResourceManager();
