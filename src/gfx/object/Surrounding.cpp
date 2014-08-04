@@ -18,7 +18,14 @@
 #include "gfx/NonIndexedVboResource.h"
 #include "gfx/Program.h"
 
+#if defined(CRAG_FORM_FLAT_SHADE)
+#include "gfx/NonIndexedVboResource.h"
+#else
+#include "gfx/IndexedVboResource.h"
+#endif
+
 #include "form/Engine.h"
+#include "form/Mesh.h"
 
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
@@ -49,35 +56,37 @@ Surrounding::Surrounding(Engine & engine)
 	auto const poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(poly_program);
 
+	auto & vbo_resource = * new VboResource;
+	vbo_resource.Set(form::Mesh::LitMesh());
+	SetVboResource(& vbo_resource);
+
 	CRAG_VERIFY(* this);
 }
 
 Surrounding::~Surrounding()
 {
 	CRAG_VERIFY(* this);
+
+	delete GetVboResource();
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	CRAG_VERIFY(static_cast<Object const &>(object));
 
+	CRAG_VERIFY_TRUE(object.GetVboResource());
+	auto const & vbo_resource = core::StaticCast<VboResource const &>(* object.GetVboResource());
+	CRAG_VERIFY_TRUE(vbo_resource.IsInitialized());
+
 	CRAG_VERIFY(object._mesh);
 	if (object._mesh)
 	{
-		CRAG_VERIFY(* object._mesh);
-		if (object._mesh->GetLitMesh().empty())
-		{
-			CRAG_VERIFY_FALSE(object.GetVboResource());
-		}
-		else
-		{
-			CRAG_VERIFY_TRUE(object._vbo_resource.IsInitialized());
-			CRAG_VERIFY_TRUE(object.GetVboResource());
-		}
+		auto const & mesh = * object._mesh;
+		CRAG_VERIFY(mesh);
+		CRAG_VERIFY_EQUAL(mesh.GetLitMesh().empty(), vbo_resource.empty());
 	}
 	else
 	{
-		CRAG_VERIFY_FALSE(object._vbo_resource.IsInitialized());
-		CRAG_VERIFY_FALSE(object.GetVboResource());
+		CRAG_VERIFY_TRUE(vbo_resource.empty());
 	}
 
 	CRAG_VERIFY(object._properties);
@@ -110,15 +119,9 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	_properties = mesh->GetProperties();
 	
 	auto const & lit_mesh = mesh->GetLitMesh();
-	if (lit_mesh.empty())
-	{
-		SetVboResource(nullptr);
-	}
-	else
-	{
-		_vbo_resource.Set(lit_mesh);
-		SetVboResource(& _vbo_resource);
-	}
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	auto & mutable_vbo_resource = const_cast<VboResource &>(vbo_resource);
+	mutable_vbo_resource.Set(lit_mesh);
 	
 	// broadcast that this is the current number of quaterne being displayed;
 	// means that any performance measurements are taken against this load
@@ -171,14 +174,11 @@ void Surrounding::Render(Engine const & renderer) const
 {
 	CRAG_VERIFY(* this);
 
-	if (! GetVboResource())
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	if (vbo_resource.empty())
 	{
-		// happens if mesh is empty
 		return;
 	}
-	
-	ASSERT(GetVboResource() == & _vbo_resource);
-	ASSERT(! _vbo_resource.empty());
 	
 	// Pass rendering details to the shader program.
 	auto program = renderer.GetCurrentProgram();
@@ -189,7 +189,7 @@ void Surrounding::Render(Engine const & renderer) const
 	}
 	
 	// Draw the mesh!
-	_vbo_resource.Draw();
+	vbo_resource.Draw();
 	CRAG_VERIFY(* this);
 }
 

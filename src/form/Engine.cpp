@@ -12,6 +12,7 @@
 
 #include "Engine.h"
 
+#include "Mesh.h"
 #include "Object.h"
 #include "Surrounding.h"
 

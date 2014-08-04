@@ -13,18 +13,23 @@
 
 #include "Object.h"
 
-#include "gfx/LitVertex.h"
-
 #include "form/Mesh.h"
 
-#if defined(CRAG_FORM_FLAT_SHADE)
-#include "gfx/NonIndexedVboResource.h"
-#else
-#include "gfx/IndexedVboResource.h"
-#endif
+namespace form
+{
+	class Mesh;
+}
 
 namespace gfx
 {
+	struct LitVertex;
+	
+	template<typename VERTEX, GLenum USAGE> 
+	class NonIndexedVboResource;
+
+	template<typename VERTEX, GLenum USAGE> 
+	class IndexedVboResource;
+
 	// the graphical representation of form::Surrounding
 	class Surrounding final : public Object
 	{
@@ -64,9 +69,6 @@ namespace gfx
 		
 		// basically, where is our origin
 		form::MeshProperties _properties;
-		
-		// contains the geometry and GL state
-		VboResource _vbo_resource;
 	};
 }
 
