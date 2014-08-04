@@ -77,10 +77,13 @@ Font::Font(char const * filename, float scale)
 	vbo.Init();
 }
 
-Font::~Font()
+Font::Font(Font && rhs)
+: character_size(rhs.character_size)
+, inv_scale(rhs.inv_scale)
+, scale_factor(rhs.scale_factor)
+, texture(std::move(rhs.texture))
+, vbo(std::move(rhs.vbo))
 {
-	vbo.Deinit();
-	texture.Deinit();
 }
 
 Font::operator bool() const
