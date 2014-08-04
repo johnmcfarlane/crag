@@ -85,6 +85,15 @@ namespace crag
 				return _resource ? & _resource->get<Type>() : nullptr;
 			}
 			
+			void release()
+			{
+				CRAG_VERIFY(* this);
+
+				_resource = nullptr;
+
+				CRAG_VERIFY(* this);
+			}
+			
 		private:
 			
 			Resource const * _resource = nullptr;
