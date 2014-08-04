@@ -27,7 +27,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(MeshObject);
 
-		MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh);
+		MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, VboResourceHandle const & lit_vbo, PlainMeshHandle const & plain_mesh);
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;
@@ -41,6 +41,6 @@ namespace gfx
 		Vector3 _scale;
 		Scalar _bounding_radius;
 		PlainMeshHandle _plain_mesh;
-		LitVboHandle _lit_vbo;
+		VboResourceHandle _lit_vbo;
 	};
 }

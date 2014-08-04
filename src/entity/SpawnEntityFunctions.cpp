@@ -80,7 +80,7 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
-		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("CuboidVbo");
+		auto lit_vbo = resource_manager.GetHandle<gfx::VboResource>("CuboidVbo");
 		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("CuboidPlainMesh");
 		auto model = gfx::MeshObjectHandle::Create(local_transformation, color, size, lit_vbo, plain_mesh);
 		box.SetModel(model);
