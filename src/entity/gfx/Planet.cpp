@@ -29,9 +29,9 @@ Planet::Planet(Engine & engine, Transformation const & local_transformation, Sca
 {
 	auto & resource_manager = crag::core::ResourceManager::Get();
 	
-	auto const & sphere_quad = * resource_manager.GetHandle<Quad>("SphereQuadVbo");
+	auto sphere_quad = resource_manager.GetHandle<Quad>("SphereQuadVbo");
 
-	SetVboResource(& sphere_quad);
+	SetVboResource(sphere_quad);
 }
 
 void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)

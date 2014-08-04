@@ -198,7 +198,7 @@ bool gfx::operator < (Object const & lhs, Object const & rhs)
 	{
 		if (rhs._layer == Layer::opaque)
 		{
-			ptrdiff_t mesh_index_diff = reinterpret_cast<char const *>(lhs._vbo_resource) - reinterpret_cast<char const *>(rhs._vbo_resource);
+			ptrdiff_t mesh_index_diff = lhs._vbo_resource.get() - rhs._vbo_resource.get();
 			if (mesh_index_diff != 0)
 			{
 				return mesh_index_diff < 0;
@@ -242,12 +242,12 @@ void Object::SetProgram(ProgramHandle program)
 	CRAG_VERIFY(* this);
 }
 
-VboResource const * Object::GetVboResource() const
+VboResourceHandle Object::GetVboResource() const
 {
 	return _vbo_resource;
 }
 
-void Object::SetVboResource(VboResource const * vbo_resource)
+void Object::SetVboResource(VboResourceHandle vbo_resource)
 {
 	_vbo_resource = vbo_resource;
 }

@@ -49,11 +49,11 @@ Puff::Puff(Engine & engine, Transformation const & local_transformation, Scalar 
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	
-	auto program_handle = resource_manager.GetHandle<DiskProgram>("DiskProgram");
-	SetProgram(program_handle);
+	auto program = resource_manager.GetHandle<DiskProgram>("DiskProgram");
+	SetProgram(program);
 	
-	auto const & disk_quad = * resource_manager.GetHandle<Quad>("QuadVbo");
-	SetVboResource(& disk_quad);
+	auto disk_quad = resource_manager.GetHandle<Quad>("QuadVbo");
+	SetVboResource(disk_quad);
 	
 	Scene const & scene = engine.GetScene();
 	core::Time time = scene.GetTime();

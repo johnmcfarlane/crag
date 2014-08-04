@@ -107,8 +107,8 @@ namespace gfx
 		ProgramHandle GetProgram() const;
 		void SetProgram(ProgramHandle program);
 		
-		VboResource const * GetVboResource() const;
-		void SetVboResource(VboResource const * mesh_resource);
+		VboResourceHandle GetVboResource() const;
+		void SetVboResource(VboResourceHandle mesh_resource);
 		
 		bool CastsShadow() const;
 		
@@ -137,7 +137,7 @@ namespace gfx
 		float _render_depth;
 		Layer const _layer;
 		ProgramHandle _program;
-		VboResource const * _vbo_resource;
+		VboResourceHandle _vbo_resource;
 		bool const _casts_shadow;
 	};
 }

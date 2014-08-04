@@ -819,7 +819,7 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 			}
 		}
 		
-		auto required_vbo = object.GetVboResource();
+		auto required_vbo = object.GetVboResource().get();
 		if (required_vbo)
 		{
 			SetVboResource(required_vbo);

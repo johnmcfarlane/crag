@@ -34,7 +34,7 @@ MeshObject::MeshObject(Engine & engine, Transformation const & local_transformat
 , _plain_mesh(plain_mesh)
 , _lit_vbo(lit_vbo)
 {
-	SetVboResource(lit_vbo.get());
+	SetVboResource(lit_vbo);
 
 	auto const & resource_manager = crag::core::ResourceManager::Get();
 	auto poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");

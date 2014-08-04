@@ -43,6 +43,8 @@ namespace
 	CONFIG_DEFINE (formation_diffuse, Color4f, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_specular, float, 0.0f);
 	CONFIG_DEFINE (formation_shininess, float, 0.0f);
+	
+	char const * vbo_key = "SurroundingMesh";
 }
 
 
@@ -52,13 +54,15 @@ namespace
 Surrounding::Surrounding(Engine & engine)
 : Object(engine, Transformation::Matrix44::Identity(), Layer::opaque, false)
 {
-	auto const & resource_manager = crag::core::ResourceManager::Get();
+	auto & resource_manager = crag::core::ResourceManager::Get();
 	auto const poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");
 	SetProgram(poly_program);
-
-	auto & vbo_resource = * new VboResource;
-	vbo_resource.Set(form::Mesh::LitMesh());
-	SetVboResource(& vbo_resource);
+	
+	resource_manager.Register<VboResource>(vbo_key, [&] () {
+		return VboResource(form::Mesh::LitMesh());
+	});
+	
+	SetVboResource(resource_manager.GetHandle<VboResource>(vbo_key));
 
 	CRAG_VERIFY(* this);
 }
@@ -67,7 +71,10 @@ Surrounding::~Surrounding()
 {
 	CRAG_VERIFY(* this);
 
-	delete GetVboResource();
+	SetVboResource(nullptr);
+	
+	auto & resource_manager = crag::core::ResourceManager::Get();
+	resource_manager.Unregister(vbo_key);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
