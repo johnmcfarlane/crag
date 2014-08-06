@@ -236,18 +236,20 @@ Engine::Engine()
 #if ! defined(NDEBUG)
 	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
+
+	RegisterResources();
 	
 	if (! Init())
 	{
 		quit_flag = true;
 	}
 	
-	RegisterResources();
+	LoadResources();
 }
 
 Engine::~Engine()
 {
-	UnregisterResources();
+	UnloadResources();
 
 	Deinit();
 

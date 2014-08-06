@@ -12,5 +12,7 @@
 namespace gfx
 {
 	void RegisterResources();
-	void UnregisterResources();
+
+	void LoadResources();
+	void UnloadResources();
 }

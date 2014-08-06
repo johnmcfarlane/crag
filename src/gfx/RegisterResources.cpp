@@ -275,6 +275,10 @@ void gfx::RegisterResources()
 	RegisterShaders();
 	RegisterVbos();
 	
+}
+
+void gfx::LoadResources()
+{
 	// if programs and VBOs are not made now,
 	// their binding will clash with Engine's management of binding
 	auto & manager = crag::core::ResourceManager::Get();
@@ -283,9 +287,11 @@ void gfx::RegisterResources()
 		manager.Load(key);
 	}
 }
-
-void gfx::UnregisterResources()
+	
+void gfx::UnloadResources()
 {
+	// if programs and VBOs are not made now,
+	// their binding will clash with Engine's management of binding
 	auto & manager = crag::core::ResourceManager::Get();
 	for (auto const & key : gl_resources)
 	{
