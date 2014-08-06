@@ -11,6 +11,7 @@
 
 #include "RegisterResources.h"
 
+#include "Font.h"
 #include "IndexedVboResource.h"
 #include "LitVertex.h"
 #include "Mesh.h"
@@ -44,7 +45,8 @@ namespace
 		HashString("CuboidVbo"),
 		HashString("CuboidLitMesh"),
 		HashString("SphereQuadVbo"),
-		HashString("QuadVbo")
+		HashString("QuadVbo"),
+		HashString("DebugFont")
 	};
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -264,6 +266,24 @@ namespace
 	
 		return true;
 	}
+	
+	void RegisterFonts()
+	{
+#if ! defined(NDEBUG)
+		auto & manager = crag::core::ResourceManager::Get();
+
+		manager.Register<Font>("DebugFont", [] ()
+		{
+			// Some font sources:
+			// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
+			// http://www.ogre3d.org/wiki/index.php/Outlined_Fonts
+
+			// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
+			// http://www.libsdl.org/projects/SDL_image/
+			return Font("assets/font_bitmap.bmp", .5f);
+		});
+#endif
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,7 +294,7 @@ void gfx::RegisterResources()
 	RegisterModels();
 	RegisterShaders();
 	RegisterVbos();
-	
+	RegisterFonts();
 }
 
 void gfx::LoadResources()
