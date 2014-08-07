@@ -11,6 +11,8 @@
 
 #include "TypeId.h"
 
+#include "core/counted_object.h"
+
 namespace crag
 {
 	namespace core
@@ -22,7 +24,7 @@ namespace crag
 		
 		// stub for an object which can be retrieved by name from ResourceManager;
 		// object can be destroyed and recreated without Resource object moving
-		class Resource
+		class Resource : public crag::counted_object<Resource>
 		{
 			// friends
 			template <typename Type>

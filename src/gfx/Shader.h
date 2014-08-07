@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "core/counted_object.h"
 
 namespace gfx
 {

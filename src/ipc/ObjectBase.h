@@ -11,6 +11,8 @@
 
 #include "Handle.h"
 
+#include "core/counted_object.h"
+
 namespace ipc
 {
 	template <typename CLASS>

@@ -10,6 +10,7 @@
 
 #include "glHelpers.h"
 
+#include "core/counted_object.h"
 
 namespace gfx
 {

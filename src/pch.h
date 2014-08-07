@@ -127,7 +127,6 @@
 // core includes.
 
 #include "core/core.h"
-#include "core/counted_object.h"
 #include "core/debug.h"
 #include "core/floatOps.h"
 #include "core/intOps.h"
