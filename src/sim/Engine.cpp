@@ -50,7 +50,6 @@ using namespace sim;
 
 Engine::Engine()
 : quit_flag(false)
-, paused(false)
 , _time(0)
 , _camera(Ray3::Zero())
 , _lod_parameters({ Vector3::Zero(), 1.f })
@@ -69,6 +68,7 @@ Engine::~Engine()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
+	CRAG_VERIFY_OP(self._pause_counter, >=, 0);
 	CRAG_VERIFY(static_cast<super const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
@@ -160,9 +160,13 @@ gfx::LodParameters const & Engine::GetLodParameters() const
 	return _lod_parameters;
 }
 
-void Engine::OnTogglePause()
+void Engine::IncrementPause(int increment)
 {
-	paused = ! paused;
+	CRAG_VERIFY(* this);
+
+	_pause_counter += increment;
+
+	CRAG_VERIFY(* this);
 }
 
 void Engine::OnToggleGravity()
@@ -247,7 +251,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 void Engine::Tick()
 {
 	// Tick the entities.
-	if (paused) 
+	if (_pause_counter) 
 	{
 		return;
 	}

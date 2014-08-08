@@ -82,6 +82,8 @@ namespace
 	
 	CONFIG_DEFINE (script_mode, int, 1);
 	
+	bool paused = false;
+	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
 	
@@ -110,9 +112,12 @@ namespace
 			{
 				switch (keysym.scancode)
 				{
-					case SDL_SCANCODE_RETURN:
+					case SDL_SCANCODE_P:
 					{
-						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnTogglePause(); });
+						bool _paused = (paused = ! paused);
+						sim::Daemon::Call([_paused] (sim::Engine & engine) { 
+							engine.IncrementPause(_paused ? 1 : -1);
+						});
 						break;
 					}
 					
@@ -274,17 +279,25 @@ namespace
 		{
 #if defined(__ANDROID__)
 			case SDL_APP_WILLENTERBACKGROUND:
-				DEBUG_MESSAGE("SDL_APP_WILLENTERBACKGROUND");
 				gfx::Daemon::Call([] (gfx::Engine & engine) {
 					engine.SetIsSuspended(true);
 				});
+
+				sim::Daemon::Call([] (sim::Engine & engine) {
+					engine.IncrementPause(1);
+				});
+				
 				return 0;
 				
 			case SDL_APP_DIDENTERFOREGROUND:
-				DEBUG_MESSAGE("SDL_APP_DIDENTERFOREGROUND");
 				gfx::Daemon::Call([] (gfx::Engine & engine) {
 					engine.SetIsSuspended(false);
 				});
+
+				sim::Daemon::Call([] (sim::Engine & engine) {
+					engine.IncrementPause(-1);
+				});
+				
 				return 0;
 #endif
 

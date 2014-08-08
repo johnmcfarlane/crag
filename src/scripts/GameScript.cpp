@@ -240,12 +240,12 @@ void GameScript(applet::AppletInterface & applet_interface)
 
 	if (test_suspend_resume)
 	{
-		_applet_interface->Sleep(3.f);
+		_applet_interface->Sleep(1.f);
 		gfx::Daemon::Call([](gfx::Engine & engine) {
 			engine.SetIsSuspended(true);
 		});
 
-		_applet_interface->Sleep(1.f);
+		_applet_interface->Sleep(4.f);
 		gfx::Daemon::Call([](gfx::Engine & engine) {
 			engine.SetIsSuspended(false);
 		});

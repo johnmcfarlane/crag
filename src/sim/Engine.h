@@ -95,7 +95,7 @@ namespace sim
 		void operator() (gfx::SetLodParametersEvent const & event) final;
 		gfx::LodParameters const & GetLodParameters() const;
 		
-		void OnTogglePause();
+		void IncrementPause(int increment);
 		void OnToggleGravity();
 		void OnToggleCollision();
 
@@ -122,7 +122,7 @@ namespace sim
 		// attributes
 		
 		bool quit_flag;
-		bool paused;
+		int _pause_counter = 0;
 		
 		core::Time _time;
 
