@@ -106,10 +106,12 @@ namespace crag
 		template <typename Type, typename Function>
 		Resource Resource::Create(Function function)
 		{
-			using FunctionType = std::function<Function>;
-			static_assert(std::is_same<typename FunctionType::result_type, Type>::value, "Function does not return given Type");
+			auto thunk = [function] ()
+			{
+				return new Wrapper<Type>(function());
+			};
 			
-			return Resource([function] () { return function(); }, TypeId::Create<Type>());
+			return Resource(thunk, TypeId::Create<Type>());
 		}
 		
 		template <typename Type>

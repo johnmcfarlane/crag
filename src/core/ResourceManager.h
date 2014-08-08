@@ -42,12 +42,7 @@ namespace crag
 			template <typename Type, typename CreateFunction>
 			void Register(KeyType const & key, CreateFunction create_function)
 			{
-				auto thunk = [create_function] ()
-				{
-					return new Resource::Wrapper<Type>(create_function());
-				};
-				
-				Register(key, Resource(thunk, TypeId::Create<Type>()));
+				Register(key, Resource::Create<Type, CreateFunction>(create_function));
 			}
 			
 			// removes resource with given key (invalidating all current handles)
