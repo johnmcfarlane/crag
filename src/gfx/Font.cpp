@@ -72,7 +72,7 @@ Font::Font(char const * filename, float scale)
 	
 	scale_factor = scale;
 
-	image.CreateTexture(texture);
+	texture = image.CreateTexture();
 	
 	vbo.Init();
 }

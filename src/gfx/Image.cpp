@@ -146,11 +146,13 @@ void Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
 	* pixel = pixel_value;
 }
 
-bool Image::CreateTexture(Texture & texture) const
+Texture Image::CreateTexture() const
 {
+	Texture texture;
+	
 	if (surface == nullptr)
 	{
-		return false;
+		return texture;
 	}
 	
 	SDL_PixelFormat const & current_format = * surface->format;
@@ -159,7 +161,7 @@ bool Image::CreateTexture(Texture & texture) const
 		Image converted_image;
 		converted_image.Convert(* this, opengl_rgba8_format);
 		ASSERT (converted_image.surface == nullptr || (* converted_image.surface->format) == opengl_rgba8_format);
-		return converted_image.CreateTexture(texture);
+		return converted_image.CreateTexture();
 	}
 	
 	texture.Init();
@@ -169,7 +171,7 @@ bool Image::CreateTexture(Texture & texture) const
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	texture.Unbind();
 	
-	return true;
+	return texture;
 }
 
 

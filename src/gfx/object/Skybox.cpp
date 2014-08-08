@@ -77,7 +77,7 @@ void Skybox::SetSide(int axis, int pole, Image const & image)
 {
 	Texture & side_tex = sides[axis][pole];
 	
-	image.CreateTexture(side_tex);
+	side_tex = image.CreateTexture();
 }
 
 void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
