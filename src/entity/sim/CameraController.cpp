@@ -32,9 +32,10 @@ CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 namespace
 {
 	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
+	CONFIG_DEFINE (camera_controller_elevation, float, 2.5f);
 	CONFIG_DEFINE (camera_controller_distance, float, 10.f);
-	CONFIG_DEFINE (camera_push_magnitude, float, 1000.f);
-	CONFIG_DEFINE (camera_lod_radius, float, 5.f);
+	CONFIG_DEFINE (camera_push_magnitude, float, 100.f);
+	CONFIG_DEFINE (camera_lod_radius, float, 2.5f);
 	
 	void UpdateLodParameters(Vector3 const & /*camera_translation*/, Vector3 const & subject_translation)
 	{
@@ -74,20 +75,34 @@ namespace
 	
 	// nudge body forward and upward, based on distance from subject 
 	// and altitude as measured by ray cast
-	void UpdateBody(physics::Body & camera_body, physics::RayCast const & ray_cast, Vector3 const & forward, Vector3 const & up, float distance)
+	void UpdateBody(
+		physics::Body & camera_body, 
+		physics::RayCast const & ray_cast, 
+		Vector3 const & subject_translation, 
+		Vector3 const & up)
 	{
-		// apply linear forces to camera
-		Vector3 push = Vector3::Zero();
+		auto const & camera_translation = camera_body.GetTranslation();
+		Plane3 const subject_plane(subject_translation, up);
+		auto elevation = geom::Distance(subject_plane, camera_translation);
+		
+		auto horizontal_camera = camera_translation - up * elevation;
+		auto horizontal_to_camera = horizontal_camera - subject_translation;
+		
+		auto desired_elevation = camera_controller_elevation;
 
 		auto & ray_cast_result = ray_cast.GetResult();
-		auto altitude = ray_cast_result.GetDistance();
-		if (altitude < camera_controller_height)
+		if (ray_cast_result)
 		{
-			push += up * (1.f - (altitude / camera_controller_height));
+			auto altitude = ray_cast_result.GetDistance();
+			desired_elevation += camera_controller_height - altitude;
 		}
-
-		push += forward * (distance - camera_controller_distance) / camera_controller_distance;
-
+			
+		auto const & desired = subject_translation + geom::Resized(
+			horizontal_to_camera,
+			camera_controller_distance) + up * desired_elevation;
+			
+		auto const & push = desired - camera_translation;
+		
 		camera_body.AddForce(push * camera_push_magnitude);
 	}
 }
@@ -116,10 +131,6 @@ CameraController::~CameraController()
 
 void CameraController::Tick()
 {
-	auto & camera_body = GetBody();
-	auto camera_transformation = camera_body.GetTransformation();
-	auto camera_translation = camera_transformation.GetTranslation();
-
 	if (! _subject)
 	{
 		DEBUG_BREAK("camera has no subject");
@@ -134,13 +145,16 @@ void CameraController::Tick()
 		return;
 	}
 	
-	auto const & subject_body = core::StaticCast<physics::Body const>(* subject_location);
-	Vector3 up = GetUp(subject_body.GetGravitationalForce());
+	auto & camera_body = GetBody();
+	Vector3 up = GetUp(camera_body.GetGravitationalForce());
 	if (up == Vector3::Zero())
 	{
 		return;
 	}
 	
+	auto camera_transformation = camera_body.GetTransformation();
+	auto camera_translation = camera_transformation.GetTranslation();
+
 	auto const & subject_translation = subject_location->GetTranslation();
 	auto camera_to_subject = subject_translation - camera_translation;
 	auto distance = geom::Length(camera_to_subject);
@@ -157,7 +171,7 @@ void CameraController::Tick()
 
 	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_transformation, space, forward, up);
-	UpdateBody(camera_body, _ray_cast, forward, up, distance);
+	UpdateBody(camera_body, _ray_cast, subject_translation, up);
 	UpdateCameraRayCast();
 }
 

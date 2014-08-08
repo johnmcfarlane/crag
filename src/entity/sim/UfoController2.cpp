@@ -34,8 +34,8 @@ namespace
 {
 	CONFIG_DEFINE(ufo_controller2_sensitivity, Scalar, 5000.f);
 	CONFIG_DEFINE(ufo_controller2_vanish_distance, Scalar, 1000000.f);
-	CONFIG_DEFINE(ufo_controller2_drag_roof_height, Scalar, 7.f);
-	CONFIG_DEFINE(ufo_controller2_max_direction, Scalar, 10.f);
+	CONFIG_DEFINE(ufo_controller2_drag_roof_height, Scalar, 7.5f);
+	CONFIG_DEFINE(ufo_controller2_max_direction, Scalar, 7.5f);
 	
 	Ray3 GetPointerRay(gfx::Pov const & pov, geom::Vector2i const & pixel_position)
 	{

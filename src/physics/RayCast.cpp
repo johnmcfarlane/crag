@@ -83,7 +83,7 @@ Vector3 RayCast::GetDirection() const
 	return ray.direction;
 }
 
-void RayCast::SetRay(Ray3 const ray)
+void RayCast::SetRay(Ray3 const & ray)
 {
 	CRAG_VERIFY_UNIT(ray, .0001f);
 	CRAG_VERIFY(* this);
