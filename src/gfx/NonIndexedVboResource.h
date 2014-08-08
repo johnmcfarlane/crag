@@ -56,8 +56,10 @@ namespace gfx
 		
 		NonIndexedVboResource(NonIndexedVboResource && rhs)
 		: _vbo(std::move(rhs._vbo))
+		, _num_vertices(rhs._num_vertices)
 		, _max_num_vertices(rhs._max_num_vertices)
 		{
+			rhs._num_vertices = 0;
 			rhs._max_num_vertices = 0;
 
 			CRAG_VERIFY(* this);
