@@ -64,7 +64,7 @@ namespace crag
 			
 			Type const & operator*() const
 			{
-				ASSERT(* this);
+				CRAG_VERIFY(* this);
 				CRAG_VERIFY_TRUE(_resource);
 				
 				return _resource->get<Type>();
