@@ -139,6 +139,13 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	GL_CALL(_id = glCreateShader(shader_type));
 	if (_id == 0)
 	{
+#if ! defined(NDEBUG)
+		for (auto filename : filenames)
+		{
+			DEBUG_MESSAGE("Failed to create shader that includes %s", filename);
+		}
+#endif
+
 		return false;
 	}
 	
