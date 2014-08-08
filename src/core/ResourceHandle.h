@@ -85,6 +85,13 @@ namespace crag
 				return _resource ? & _resource->get<Type>() : nullptr;
 			}
 			
+			Resource const * get_resource() const
+			{
+				CRAG_VERIFY(* this);
+
+				return _resource;
+			}
+			
 			void release()
 			{
 				CRAG_VERIFY(* this);
@@ -98,5 +105,21 @@ namespace crag
 			
 			Resource const * _resource = nullptr;
 		};
+
+		template <typename LHS, typename RHS>
+		bool operator == (ResourceHandle<LHS> const & lhs, ResourceHandle<RHS> const & rhs)
+		{
+			static_assert(
+				std::is_same<LHS, RHS>::value || std::is_base_of<LHS, RHS>::value || std::is_base_of<RHS, LHS>::value,
+				"incompatible ResourceHandle types need never be compared");
+
+			return lhs.get_resource() == rhs.get_resource();
+		}
+		
+		template <typename LHS, typename RHS>
+		bool operator != (ResourceHandle<LHS> const & lhs, ResourceHandle<RHS> const & rhs)
+		{
+			return ! (lhs == rhs);
+		}
 	}
 }
