@@ -30,25 +30,6 @@ using namespace gfx;
 
 namespace
 {
-	using crag::core::HashString;
-	
-	// the resources that must be created and destroyed on gfx thread
-	HashString gl_resources[] = 
-	{
-		HashString("PolyProgram"),
-		HashString("ShadowProgram"),
-		HashString("ScreenProgram"),
-		HashString("SphereProgram"),
-		HashString("DiskProgram"),
-		HashString("SkyboxProgram"),
-		HashString("SpriteProgram"),
-		HashString("CuboidVbo"),
-		HashString("CuboidLitMesh"),
-		HashString("SphereQuadVbo"),
-		HashString("QuadVbo"),
-		HashString("DebugFont")
-	};
-	
 	////////////////////////////////////////////////////////////////////////////////
 	// cuboid creation
 
@@ -175,18 +156,14 @@ namespace
 		return cuboid;
 	}
 
-	void RegisterModels()
+	void RegisterModels(ResourceManager & manager)
 	{
-		auto & manager = crag::core::ResourceManager::Get();
-	
 		manager.Register<PlainMesh>("CuboidPlainMesh", CreatePlainCuboid);
 		manager.Register<LitMesh>("CuboidLitMesh", CreateLitCuboid);
 	}
 
-	void RegisterShaders()
+	void RegisterShaders(ResourceManager & manager)
 	{
-		auto & manager = crag::core::ResourceManager::Get();
-	
 		static char const * common_shader_filename = "assets/glsl/common.glsl";
 		static char const * light_common_shader_filename = "assets/glsl/light_common.glsl";
 		static char const * light_fg_solid_filename = "assets/glsl/light_fg_solid.glsl";
@@ -243,10 +220,8 @@ namespace
 		});
 	}
 	
-	bool RegisterVbos()
+	bool RegisterVbos(ResourceManager & manager)
 	{
-		auto & manager = crag::core::ResourceManager::Get();
-
 		manager.Register<LitVboResource>("CuboidVbo", [] ()
 		{
 			auto & manager = crag::core::ResourceManager::Get();
@@ -267,11 +242,9 @@ namespace
 		return true;
 	}
 	
-	void RegisterFonts()
+	void RegisterFonts(ResourceManager & manager)
 	{
 #if ! defined(NDEBUG)
-		auto & manager = crag::core::ResourceManager::Get();
-
 		manager.Register<Font>("DebugFont", [] ()
 		{
 			// Some font sources:
@@ -289,32 +262,13 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // external definitions
 
-void gfx::RegisterResources()
+void gfx::RegisterResources(ResourceManager & resource_manager)
 {
-	RegisterModels();
-	RegisterShaders();
-	RegisterVbos();
-	RegisterFonts();
-}
-
-void gfx::LoadResources()
-{
-	// if programs and VBOs are not made now,
-	// their binding will clash with Engine's management of binding
-	auto & manager = crag::core::ResourceManager::Get();
-	for (auto const & key : gl_resources)
-	{
-		manager.Load(key);
-	}
-}
+	// models are not directly GL dependent and can reside in the global store
+	auto & global_resource_manager = crag::core::ResourceManager::Get();
+	RegisterModels(global_resource_manager);
 	
-void gfx::UnloadResources()
-{
-	// if programs and VBOs are not made now,
-	// their binding will clash with Engine's management of binding
-	auto & manager = crag::core::ResourceManager::Get();
-	for (auto const & key : gl_resources)
-	{
-		manager.Unload(key);
-	}
+	RegisterShaders(resource_manager);
+	RegisterVbos(resource_manager);
+	RegisterFonts(resource_manager);
 }

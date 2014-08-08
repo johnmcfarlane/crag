@@ -18,7 +18,7 @@ namespace gfx
 
 	// key
 	typedef std::pair<Object const *, Light *> ShadowMapKey;
-	typedef std::pair<ShadowMapKey, ShadowVolume> ShadowMapPair;
+	typedef std::pair<ShadowMapKey, ShadowVolumeResource> ShadowMapPair;
 }
 
 namespace std
@@ -42,5 +42,5 @@ namespace gfx
 {
 	// ShadowMap maps objects to the shadows it casts; while each shadow is specific 
 	// to a light, the shadows for an object are interchangable resources
-	typedef std::unordered_map<ShadowMapKey, ShadowVolume> ShadowMap;
+	typedef std::unordered_map<ShadowMapKey, ShadowVolumeResource> ShadowMap;
 }

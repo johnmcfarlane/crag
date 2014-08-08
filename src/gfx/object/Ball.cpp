@@ -34,7 +34,7 @@ Ball::Ball(Engine & engine, Transformation const & local_transformation, float r
 {
 	CRAG_VERIFY_EQUAL(_color.a, 1);
 	
-	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & resource_manager = engine.GetResourceManager();
 
 	auto sphere_program = resource_manager.GetHandle<DiskProgram>("SphereProgram");
 	SetProgram(sphere_program);

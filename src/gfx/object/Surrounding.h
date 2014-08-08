@@ -15,6 +15,8 @@
 
 #include "form/Mesh.h"
 
+#include "ipc/Listener.h"
+
 namespace form
 {
 	class Mesh;
@@ -56,7 +58,7 @@ namespace gfx
 		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const override;
 		void Render(Engine const & renderer) const override;
 		
-		void OnMeshResourceChange();
+		void UpdateVbo();
 		void ReturnMesh(std::shared_ptr<form::Mesh> const & mesh);
 		
 		Vector3 GfxToForm(Vector3 const & position) const;

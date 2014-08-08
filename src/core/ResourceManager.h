@@ -19,9 +19,13 @@ namespace crag
 	namespace core
 	{
 		////////////////////////////////////////////////////////////////////////////////
-		// ResourceManager definition - singleton for storing resources; designed for
+		// ResourceManager definition - central store for resources; designed for
 		// efficient access with option to deallocate and lazily reallocate resources
 		// on low memory warning (not implemented)
+		
+		// Two instances exist: a global singleton-like manager accesible via Get() and
+		// a gfx-specific instance for storing all GL objects which need to be
+		// recreated after a mobile device resumes the app.
 
 		class ResourceManager final
 		{
@@ -62,17 +66,17 @@ namespace crag
 			// ensure that resource exists (necessary for thread-sensitive GL resources)
 			void Load(KeyType const & key) const;
 			
-			// frees resource
+			// frees resource (it'll get lazily reloaded on subsequent use)
 			void Unload(KeyType const & key) const;
+			
+			// frees all resources
+			void UnloadAll() const;
 
 		private:
 			Resource const & GetResource(KeyType const & key) const;
 			Resource & GetResource(KeyType const & key);
 		
 			void Register(KeyType const & key, Resource && value);
-			
-			ResourceManager() = default;
-			~ResourceManager();
 			
 			////////////////////////////////////////////////////////////////////////////////
 			// variables

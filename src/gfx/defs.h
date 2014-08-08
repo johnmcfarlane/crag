@@ -19,6 +19,9 @@ namespace crag
 	namespace core
 	{
 		template <typename Type> class ResourceHandle;
+		class HashString;
+		
+		class ResourceManager;
 	}
 }
 
@@ -42,6 +45,8 @@ namespace gfx
 	class VboResource;
 	template <typename Vertex, typename Index> class Mesh;
 	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;
+	
+	class Texture;
 
 	// render layers
 	enum class Layer
@@ -63,9 +68,16 @@ namespace gfx
 #endif
 
 	// resource handle types
-	using ProgramHandle = crag::core::ResourceHandle<Program>;
-	using VboResourceHandle = crag::core::ResourceHandle<VboResource>;
+	template <typename ResourceType> 
+	using ResourceHandle = crag::core::ResourceHandle<ResourceType>;
 	
+	using ResourceKey = crag::core::HashString;
+	using ResourceManager = crag::core::ResourceManager;
+
+	using ProgramHandle = ResourceHandle<Program>;
+	using VboResourceHandle = ResourceHandle<VboResource>;
+	using TextureResourceHandle = ResourceHandle<Texture>;
+
 	// geometric types
 	typedef float Scalar;
 	typedef geom::Vector<Scalar, 2> Vector2;

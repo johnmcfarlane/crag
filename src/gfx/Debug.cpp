@@ -188,7 +188,7 @@ namespace
 
 
 // Start things up.
-void gfx::Debug::Init()
+void gfx::Debug::Init(ResourceManager const & resource_manager)
 {
 	ASSERT(! font);
 
@@ -198,7 +198,7 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	font = crag::core::ResourceManager::Get().GetHandle<Font>("DebugFont");
+	font = resource_manager.GetHandle<Font>("DebugFont");
 }
 
 

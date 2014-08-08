@@ -12,6 +12,7 @@
 #include "Planet.h"
 
 #include "gfx/axes.h"
+#include "gfx/Engine.h"
 #include "gfx/Quad.h"
 
 #include "core/ResourceManager.h"
@@ -27,7 +28,7 @@ Planet::Planet(Engine & engine, Transformation const & local_transformation, Sca
 : Object(engine, local_transformation, Layer::opaque)
 , _sea_level(radius)
 {
-	auto & resource_manager = crag::core::ResourceManager::Get();
+	auto & resource_manager = engine.GetResourceManager();
 	
 	auto sphere_quad = resource_manager.GetHandle<Quad>("SphereQuadVbo");
 

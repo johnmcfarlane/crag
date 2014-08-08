@@ -27,6 +27,7 @@
 
 #include "geom/Space.h"
 
+#include "core/ResourceHandle.h"
 #include "core/Statistics.h"
 
 namespace gfx
@@ -71,14 +72,17 @@ namespace gfx
 		Engine();
 		~Engine();
 
+		ResourceManager & GetResourceManager();
+		ResourceManager const & GetResourceManager() const;
+
 		Scene & GetScene();
 		Scene const & GetScene() const;
 		
-		Program const * GetCurrentProgram() const;
-		void SetCurrentProgram(Program const * program);
+		ProgramHandle GetCurrentProgram() const;
+		void SetCurrentProgram(ProgramHandle program);
 		
-		VboResource const * GetVboResource() const;
-		void SetVboResource(VboResource const * vbo);
+		VboResourceHandle GetVboResource() const;
+		void SetVboResource(VboResourceHandle vbo);
 		
 		// message interface
 		void OnQuit();
@@ -97,9 +101,8 @@ namespace gfx
 		void operator() (const SetSpaceEvent & event) final;
 		geom::Space const & GetSpace() const;
 		
-#if defined(__ANDROID__)
-		static void SetPaused(bool paused);
-#endif
+		void SetIsSuspended(bool suspended);
+		bool GetIsSuspended() const;
 
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
@@ -148,6 +151,8 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
+		ResourceManager & _resource_manager;
+
 		Scene * scene;
 		geom::Space _space;
 		
@@ -158,14 +163,10 @@ namespace gfx
 		bool _ready;
 		bool _dirty;
 		bool culling;
+		bool _suspended;
+		
 		int capture_frame;
 
-#if defined(__ANDROID__)
-		static std::atomic<bool> _paused;
-#else
-		static const bool _paused;
-#endif
-		
 		Image capture_image[2];
 
 		struct StateParam
@@ -185,7 +186,7 @@ namespace gfx
 		std::array<core::Time, _frame_time_history_size> _frame_time_history;
 #endif
 		
-		Program const * _current_program;
-		VboResource const * _current_vbo;
+		ProgramHandle _current_program;
+		VboResourceHandle _current_vbo;
 	};
 }

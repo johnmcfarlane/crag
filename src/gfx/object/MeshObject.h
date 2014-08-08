@@ -14,7 +14,10 @@
 #include "gfx/LitVertex.h"
 #include "gfx/ShadowVolume.h"
 
+#include "ipc/Listener.h"
+
 #include "core/ResourceHandle.h"
+#include "core/HashString.h"
 
 namespace gfx
 {
@@ -27,7 +30,7 @@ namespace gfx
 		// functions
 		DECLARE_ALLOCATOR(MeshObject);
 
-		MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, VboResourceHandle const & lit_vbo, PlainMeshHandle const & plain_mesh);
+		MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, ResourceKey lit_vbo_key, ResourceKey plain_mesh_key);
 		
 		bool GetRenderRange(RenderRange & range) const override;
 		void Render(Engine const & renderer) const override;
@@ -35,12 +38,13 @@ namespace gfx
 	private:
 		void UpdateModelViewTransformation(Transformation const & model_view) final;
 		bool GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volume) const final;
-
+		
 		// variables
 		Color4f _color;
 		Vector3 _scale;
 		Scalar _bounding_radius;
 		PlainMeshHandle _plain_mesh;
+		ResourceKey _lit_vbo_key;
 		VboResourceHandle _lit_vbo;
 	};
 }

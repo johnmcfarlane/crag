@@ -21,9 +21,9 @@ namespace
 {
 	void DrawHolodeckSkybox(gfx::Skybox & skybox, int box_edge_size, int num_bars)
 	{
-		gfx::Image image;
-		image.Create(geom::Vector2i(box_edge_size, box_edge_size));
-		image.Clear(gfx::Color4b::Black());
+		auto image = std::make_shared<gfx::Image>();
+		image->Create(geom::Vector2i(box_edge_size, box_edge_size));
+		image->Clear(gfx::Color4b::Black());
 		auto square_size = box_edge_size / num_bars;
 		auto color = gfx::Color4f::Cyan();
 
@@ -34,10 +34,10 @@ namespace
 			for (position.y = 0; position.y < box_edge_size; ++ position.y)
 			{
 				alt_position.y = position.y;
-				image.SetPixel(position, color);
-				image.SetPixel(alt_position, color);
-				image.SetPixel(geom::Vector2i(position.y, position.x), color);
-				image.SetPixel(geom::Vector2i(alt_position.y, alt_position.x), color);
+				image->SetPixel(position, color);
+				image->SetPixel(alt_position, color);
+				image->SetPixel(geom::Vector2i(position.y, position.x), color);
+				image->SetPixel(geom::Vector2i(alt_position.y, alt_position.x), color);
 			}
 		}
 	
@@ -59,9 +59,9 @@ namespace
 			int z_axis = axis;
 			for (int pole = 0; pole < 2; ++ pole)
 			{
-				gfx::Image side;
-				side.Create(geom::Vector2i(box_edge_size, box_edge_size));
-				side.Clear(gfx::Color4b::Black());
+				auto image = std::make_shared<gfx::Image>();
+				image->Create(geom::Vector2i(box_edge_size, box_edge_size));
+				image->Clear(gfx::Color4b::Black());
 
 				geom::Vector2i pos;
 				geom::Vector2f f_pos;
@@ -117,11 +117,11 @@ namespace
 
 						float comp = static_cast<float>(std::min(1., .0002 * intensity));
 						gfx::Color4f c (comp);
-						side.SetPixel(pos, c);
+						image->SetPixel(pos, c);
 					}
 				}
 
-				skybox.SetSide(axis, pole, side);
+				skybox.SetSide(axis, pole, image);
 			}
 		}
 	}
@@ -152,9 +152,9 @@ namespace
 		{
 			for (int pole = 0; pole < 2; ++ pole)
 			{
-				gfx::Image side;
-				side.Create(geom::Vector2i(box_edge_size, box_edge_size));
-				side.Clear(gfx::Color4b::Black());
+				auto image = std::make_shared<gfx::Image>();
+				image->Create(geom::Vector2i(box_edge_size, box_edge_size));
+				image->Clear(gfx::Color4b::Black());
 			
 				Random random (1);
 				for (int i = num_stars; i; -- i)
@@ -179,10 +179,10 @@ namespace
 				
 					geom::Vector2f uv(axes[TriMod(axis + 1)] * w_co, axes[TriMod(axis + 2)] * w_co);
 					float radius = star.radius * Abs(w_co);
-					DrawStar(side, uv, radius);
+					DrawStar(* image, uv, radius);
 				}
 			
-				skybox.SetSide(axis, pole, side);
+				skybox.SetSide(axis, pole, image);
 			}
 		}
 	}
@@ -222,14 +222,14 @@ gfx::ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filename
 	auto skybox = gfx::SkyboxHandle::Create();
 
 	skybox.Call([filenames] (gfx::Skybox & object) {
-		gfx::Image image;
+		auto image = std::make_shared<gfx::Image>();
 	
 		auto filename_iterator = std::begin(filenames);
 		for (auto axis = 0; axis < 3; ++ axis)
 		{
 			for (auto pole = 0; pole < 2; ++ filename_iterator, ++ pole)
 			{
-				image.Load(* filename_iterator);
+				image->Load(* filename_iterator);
 				object.SetSide(axis, pole, image);
 			}
 		}

@@ -51,7 +51,7 @@ namespace gfx
 		};
 
 #if defined(CRAG_GFX_DEBUG)
-		void Init();
+		void Init(ResourceManager const & resource_manager);
 		void Deinit();
 		void Verify();
 
@@ -67,7 +67,7 @@ namespace gfx
 		void DrawText(char const * text, geom::Vector2i const & position);
 		void Clear();
 #else
-		inline void Init() { }
+		inline void Init(ResourceManager const &) { }
 		inline void Deinit() { }
 		inline void Verify() { }
 	
