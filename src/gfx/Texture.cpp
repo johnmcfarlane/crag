@@ -28,6 +28,12 @@ Texture::~Texture()
 	}
 }
 
+Texture & Texture::operator=(Texture && rhs)
+{
+	std::swap(_name, rhs._name);
+	return * this;
+}
+
 bool Texture::IsInitialized() const
 {
 	return _name != 0;

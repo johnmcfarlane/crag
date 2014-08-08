@@ -27,6 +27,8 @@ namespace gfx
 		Texture(Texture && rhs);
 		~Texture();
 		
+		Texture & operator=(Texture && rhs);
+		
 		bool IsInitialized() const;
 		bool IsBound() const;
 		
