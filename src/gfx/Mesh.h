@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+#include "core/counted_object.h"
+
 namespace gfx
 {
 	// CPU-side representation of a mesh using vertices and indices

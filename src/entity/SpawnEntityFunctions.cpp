@@ -38,7 +38,6 @@
 #include "gfx/object/MeshObject.h"
 
 #include "core/ConfigEntry.h"
-#include "core/ResourceManager.h"
 
 using namespace std;
 using namespace sim;
@@ -68,8 +67,6 @@ namespace
 
 	void ConstructBox(Entity & box, geom::rel::Vector3 spawn_pos, Vector3 const & velocity, geom::rel::Vector3 size, gfx::Color4f color)
 	{
-		auto & resource_manager = crag::core::ResourceManager::Get();
-
 		// physics
 		Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
@@ -80,9 +77,7 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
-		auto lit_vbo = resource_manager.GetHandle<gfx::LitVboResource>("CuboidVbo");
-		auto plain_mesh = resource_manager.GetHandle<gfx::PlainMesh>("CuboidPlainMesh");
-		auto model = gfx::MeshObjectHandle::Create(local_transformation, color, size, lit_vbo, plain_mesh);
+		auto model = gfx::MeshObjectHandle::Create(local_transformation, color, size, "CuboidVbo", "CuboidPlainMesh");
 		box.SetModel(model);
 	}
 

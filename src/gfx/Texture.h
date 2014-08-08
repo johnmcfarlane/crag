@@ -23,8 +23,11 @@ namespace gfx
 		OBJECT_NO_COPY(Texture);
 
 	public:
-		Texture();
+		Texture() = default;
+		Texture(Texture && rhs);
 		~Texture();
+		
+		Texture & operator=(Texture && rhs);
 		
 		bool IsInitialized() const;
 		bool IsBound() const;
@@ -41,6 +44,6 @@ namespace gfx
 		friend void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
 		
 	private:
-		GLuint _name;
+		GLuint _name = 0;
 	};
 }

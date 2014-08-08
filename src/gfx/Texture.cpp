@@ -14,14 +14,24 @@
 
 using namespace gfx;
 
-Texture::Texture()
-: _name(0)
+Texture::Texture(Texture && rhs)
+: _name(rhs._name)
 {
+	rhs._name = 0;
 }
 
 Texture::~Texture()
 {
-	ASSERT(! IsInitialized());
+	if (IsInitialized())
+	{
+		Deinit();
+	}
+}
+
+Texture & Texture::operator=(Texture && rhs)
+{
+	std::swap(_name, rhs._name);
+	return * this;
 }
 
 bool Texture::IsInitialized() const

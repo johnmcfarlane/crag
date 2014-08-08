@@ -49,7 +49,7 @@ namespace gfx
 		// pixel access
 		Color4b GetPixel(geom::Vector2i const & pos) const;
 		void SetPixel(geom::Vector2i const & pos, Color4b const & color);
-		bool CreateTexture(Texture & texture) const;
+		Texture CreateTexture() const;
 
 		// misc
 		void Clear(Color4b const & color);

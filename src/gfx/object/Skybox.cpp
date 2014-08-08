@@ -20,28 +20,96 @@
 
 using namespace gfx;
 
+namespace
+{
+	// Types
+	struct Vertex
+	{
+		geom::Vector3f pos;
+		geom::Vector2f tex;
+	};
+	
+	//typedef VertexBufferObject<Vertex> Vbo;
+	using SkyboxVboResource = NonIndexedVboResource<Vertex, GL_STATIC_DRAW>;
+	
+	char const * vbo_key = "SkyboxVbo";
+
+	// TODO: Cube map
+	SkyboxVboResource CreateVbo()
+	{
+		Vertex verts[3][2][6];
+	
+		for (auto axis = 0; axis < 3; ++ axis)
+		{
+			auto x_axis = TriMod(axis + 1);
+			auto y_axis = TriMod(axis + 2);
+			auto z_axis = TriMod(axis);
+		
+			for (auto pole = 0; pole < 2; ++ pole)
+			{
+				//Vertex * side_verts = verts[axis][pole];
+				
+				Vertex side_verts[2][2];
+			
+				for (auto u = 0; u < 2; ++ u)
+				{
+					for (auto v = 0; v < 2; ++ v)
+					{
+						auto & vert = side_verts[u][v];
+						
+						float * axes = vert.pos.GetAxes();
+						axes[x_axis] = (static_cast<float>(pole ^ u) - .5f) * 2;
+						axes[y_axis] = (static_cast<float>(v) - .5f) * 2;
+						axes[z_axis] = (static_cast<float>(pole) - .5f) * 2;
+						vert.tex.x = static_cast<float>(u);
+						vert.tex.y = static_cast<float>(v);
+					}
+				}
+				
+				auto verts_ptr = verts[axis][pole];
+				verts_ptr[0] = side_verts[0][0];
+				verts_ptr[1] = side_verts[0][1];
+				verts_ptr[2] = side_verts[1][0];
+				verts_ptr[3] = side_verts[1][1];
+				verts_ptr[4] = side_verts[1][0];
+				verts_ptr[5] = side_verts[0][1];
+			}
+		}
+		
+		auto size = 3 * 2 * 6;
+		auto begin = verts[0][0];
+		auto end = begin + size;
+		ASSERT(end == & verts[3][0][0]);
+		
+		SkyboxVboResource vbo;
+		vbo.Set(begin, end);
+
+		return vbo;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // vertex helper functions
 
 template <>
-void EnableClientState<Skybox::Vertex>()
+void EnableClientState<Vertex>()
 {
 	GL_CALL(glEnableVertexAttribArray(1));
 	GL_CALL(glEnableVertexAttribArray(2));
 }
 
 template <>
-void DisableClientState<Skybox::Vertex>()
+void DisableClientState<Vertex>()
 {
 	GL_CALL(glDisableVertexAttribArray(2));
 	GL_CALL(glDisableVertexAttribArray(1));
 }
 
 template <>
-void Pointer<Skybox::Vertex>()
+void Pointer<Vertex>()
 {
-	VertexAttribPointer<1, Skybox::Vertex, decltype(Skybox::Vertex::pos), & Skybox::Vertex::pos>();
-	VertexAttribPointer<2, Skybox::Vertex, decltype(Skybox::Vertex::tex), & Skybox::Vertex::tex>();
+	VertexAttribPointer<1, Vertex, decltype(Vertex::pos), & Vertex::pos>();
+	VertexAttribPointer<2, Vertex, decltype(Vertex::tex), & Vertex::tex>();
 }
 
 
@@ -51,33 +119,32 @@ void Pointer<Skybox::Vertex>()
 Skybox::Skybox(Engine & engine)
 : Object(engine, gfx::Transformation::Matrix44::Identity(), Layer::background)
 {
-	InitVerts();
-
-	auto const & resource_manager = crag::core::ResourceManager::Get();
+	auto & resource_manager = engine.GetResourceManager();
 	
-	auto const & skybox_program = * resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
-	SetProgram(& skybox_program);
+	// VBO
+	resource_manager.Register<SkyboxVboResource>(vbo_key, [&] () {
+		return CreateVbo();
+	});
+	auto vbo_handle = resource_manager.GetHandle<SkyboxVboResource>(vbo_key);
+	SetVboResource(vbo_handle);
+
+	// shader
+	auto skybox_program = resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
+	SetProgram(skybox_program);
 }
 
-Skybox::~Skybox()
+void Skybox::SetSide(int axis, int pole, std::shared_ptr<Image> const & image)
 {
-	vbo.Deinit();
+	char name[20];
+	sprintf(name, "skybox%d%d", axis, pole);
+	ResourceKey key(name);
 	
-	for (int axis = 0; axis < 3; ++ axis)
-	{
-		for (int pole = 0; pole < 2; ++ pole)
-		{
-			Texture & side = sides[axis][pole];
-			side.Deinit();
-		}
-	}
-}
-
-void Skybox::SetSide(int axis, int pole, Image const & image)
-{
-	Texture & side_tex = sides[axis][pole];
+	auto & resource_manager = GetEngine().GetResourceManager();
+	resource_manager.Register<Texture>(key, [image] () {
+		return image->CreateTexture();
+	});
 	
-	image.CreateTexture(side_tex);
+	sides[axis][pole] = resource_manager.GetHandle<Texture>(key);
 }
 
 void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
@@ -89,67 +156,23 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 
 void Skybox::Render(Engine const &) const
 {
-	auto & engine = GetEngine();
-	engine.SetVboResource(nullptr);
-
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	glDepthMask(GL_FALSE);
-	
-	// Draw VBO
-	vbo.Bind();
-	vbo.Activate();
+
+	auto const & vbo = core::StaticCast<SkyboxVboResource const &>(* GetVboResource());
 	
 	int index = 0;
 	for (int axis = 0; axis < 3; ++ axis)
 	{
 		for (int pole = 0; pole < 2; ++ pole)
 		{
-			Texture const & side = sides[axis][pole];
+			auto const & side = * sides[axis][pole];
 			side.Bind();
-			vbo.DrawStrip(index, 4);
+			vbo.DrawTris(index, 6);
 			side.Unbind();
-			index += 4;
+			index += 6;
 		}
 	}
-	
-	vbo.Deactivate();
-	vbo.Unbind();
 	
 	glDepthMask(GL_TRUE);
-}
-
-void Skybox::InitVerts()
-{
-	vbo.Init();
-	Vertex verts[3][2][4];
-	
-	for (int axis = 0; axis < 3; ++ axis)
-	{
-		int x_axis = TriMod(axis + 1);
-		int y_axis = TriMod(axis + 2);
-		int z_axis = TriMod(axis);
-		
-		for (int pole = 0; pole < 2; ++ pole)
-		{
-			Vertex * side_verts = verts[axis][pole];
-			
-			for (int u = 0; u < 2; ++ u)
-			{
-				for (int v = 0; v < 2; ++ v)
-				{
-					float * axes = side_verts->pos.GetAxes();
-					axes[x_axis] = (static_cast<float>(pole ^ u) - .5f) * 2;
-					axes[y_axis] = (static_cast<float>(v) - .5f) * 2;
-					axes[z_axis] = (static_cast<float>(pole) - .5f) * 2;
-					side_verts->tex.x = static_cast<float>(u);
-					side_verts->tex.y = static_cast<float>(v);
-					++ side_verts;
-				}
-			}
-		}
-	}
-	
-	vbo.Bind();
-	vbo.BufferData(3 * 2 * 4, verts[0][0], GL_STATIC_DRAW);
-	vbo.Unbind();
 }

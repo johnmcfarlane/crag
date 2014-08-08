@@ -28,31 +28,31 @@ namespace crag
 		public:
 			_Counter()
 			{
-				ASSERT(_num_counters == 0);
+				CRAG_VERIFY_EQUAL(_num_counters, 0);
 				++ _num_counters;
 		
-				ASSERT(_num_objects == 0);
+				CRAG_VERIFY_EQUAL(_num_objects, 0);
 			}
 
 			~_Counter()
 			{
-				ASSERT(_num_objects == 0);
+				CRAG_VERIFY_EQUAL(_num_objects, 0);
 
 				-- _num_counters;
-				ASSERT(_num_counters == 0);
+				CRAG_VERIFY_EQUAL(_num_counters, 0);
 			}
 
 			void IncrementObject()
 			{
-				ASSERT(_num_counters == 1);
+				CRAG_VERIFY_EQUAL(_num_counters, 1);
 				++ _num_objects;
-				ASSERT(_num_objects > 0);
+				CRAG_VERIFY_OP(_num_objects, >, 0);
 			}
 
 			void DecrementObject()
 			{
-				ASSERT(_num_counters == 1);
-				ASSERT(_num_objects > 0);
+				CRAG_VERIFY_EQUAL(_num_counters, 1);
+				CRAG_VERIFY_OP(_num_objects, >, 0);
 				-- _num_objects;
 			}
 	

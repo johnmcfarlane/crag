@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "core/counted_object.h"
+
 namespace sim
 {
 	class Entity;

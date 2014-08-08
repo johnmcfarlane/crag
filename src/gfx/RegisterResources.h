@@ -9,8 +9,15 @@
 
 #pragma once
 
+namespace crag
+{
+	namespace core
+	{
+		class ResourceManager;
+	}
+}
+
 namespace gfx
 {
-	void RegisterResources();
-	void UnregisterResources();
+	void RegisterResources(crag::core::ResourceManager & resource_manager);
 }

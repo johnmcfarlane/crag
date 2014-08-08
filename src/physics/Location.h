@@ -13,6 +13,8 @@
 
 #include "geom/Transformation.h"
 
+#include "core/counted_object.h"
+
 namespace physics
 {
 	class Body;

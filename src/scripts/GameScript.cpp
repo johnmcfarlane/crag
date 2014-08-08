@@ -44,6 +44,8 @@ namespace
 	CONFIG_DEFINE(enable_spawn_cube, bool, true);
 	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
 
+	CONFIG_DEFINE(test_suspend_resume, bool, false);
+
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
@@ -234,6 +236,19 @@ void GameScript(applet::AppletInterface & applet_interface)
 		auto size = sim::Vector3(1.f, 4.f, 9.f) * .5f;
 		auto obelisk = SpawnBox(spawn_pos, sim::Vector3::Zero(), size, gfx::Color4f::Black());
 		_shapes.push_back(obelisk);
+	}
+
+	if (test_suspend_resume)
+	{
+		_applet_interface->Sleep(3.f);
+		gfx::Daemon::Call([](gfx::Engine & engine) {
+			engine.SetIsSuspended(true);
+		});
+
+		_applet_interface->Sleep(1.f);
+		gfx::Daemon::Call([](gfx::Engine & engine) {
+			engine.SetIsSuspended(false);
+		});
 	}
 
 	// main loop

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 # print log output from a connect Android phone or emulator
 
-./android-sdk/platform-tools/adb logcat $1 $2 $3 $4 crag_log:V SDL:V Adreno-EGL:V Adreno-ES20:V DEBUG:V *:I
+./android-sdk/platform-tools/adb logcat $@ crag_log:V SDL:V Adreno-EGL:V Adreno-ES20:V DEBUG:V *:E CacheManager:F Prism:F dalvikvm:F

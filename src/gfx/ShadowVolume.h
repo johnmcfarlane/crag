@@ -12,8 +12,18 @@
 #include "NonIndexedVboResource.h"
 #include "PlainVertex.h"
 
+namespace crag
+{
+	namespace core
+	{
+		class Resource;
+	}
+}
+
 namespace gfx
 {
 	// ShadowVolume class definition
 	typedef gfx::NonIndexedVboResource<PlainVertex, GL_DYNAMIC_DRAW> ShadowVolume;
+	using ShadowVolumeResource = crag::core::Resource;
+	using ShadowVolumeHandle = crag::core::ResourceHandle<ShadowVolume>;
 }

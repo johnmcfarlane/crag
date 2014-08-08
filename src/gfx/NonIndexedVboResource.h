@@ -56,8 +56,10 @@ namespace gfx
 		
 		NonIndexedVboResource(NonIndexedVboResource && rhs)
 		: _vbo(std::move(rhs._vbo))
+		, _num_vertices(rhs._num_vertices)
 		, _max_num_vertices(rhs._max_num_vertices)
 		{
+			rhs._num_vertices = 0;
 			rhs._max_num_vertices = 0;
 
 			CRAG_VERIFY(* this);
@@ -87,6 +89,7 @@ namespace gfx
 			
 			_vbo = std::move(rhs._vbo);
 			
+			std::swap(_num_vertices, rhs._num_vertices);
 			std::swap(_max_num_vertices, rhs._max_num_vertices);
 			
 			CRAG_VERIFY(* this);
@@ -103,6 +106,38 @@ namespace gfx
 			Set(first, first + vertices.size());
 		}
 		
+		void Set(Vertex const * vertices_begin, Vertex const * vertices_end)
+		{
+			CRAG_VERIFY(* this);
+
+			// lazily initialize GL objects
+			if (! IsInitialized())
+			{
+				_vbo.Init();
+			}
+			
+			// bind
+			_vbo.Bind();
+			
+			// calculate number of vertices
+			_num_vertices = std::distance(vertices_begin, vertices_end);
+
+			// expand vertex buffer as necessary
+			if (_num_vertices > _max_num_vertices)
+			{
+				_vbo.BufferData(_num_vertices, USAGE);
+				_max_num_vertices = _num_vertices;
+			}
+			
+			// write data
+			_vbo.BufferSubData(_num_vertices, vertices_begin);
+
+			// unbind
+			_vbo.Unbind();
+
+			CRAG_VERIFY(* this);
+		}
+
 		// get state
 		bool empty() const
 		{
@@ -145,43 +180,16 @@ namespace gfx
 
 		void Draw() const
 		{
+			DrawTris(0, _num_vertices);
+		}
+
+		void DrawTris(int start, int count) const
+		{
 			ASSERT(IsBound());
-			_vbo.DrawTris(0, _num_vertices);
+			_vbo.DrawTris(start, count);
 		}
 
 	private:
-		void Set(Vertex const * vertices_begin, Vertex const * vertices_end)
-		{
-			CRAG_VERIFY(* this);
-
-			// lazily initialize GL objects
-			if (! IsInitialized())
-			{
-				_vbo.Init();
-			}
-			
-			// bind
-			_vbo.Bind();
-			
-			// calculate number of vertices
-			_num_vertices = std::distance(vertices_begin, vertices_end);
-
-			// expand vertex buffer as necessary
-			if (_num_vertices > _max_num_vertices)
-			{
-				_vbo.BufferData(_num_vertices, USAGE);
-				_max_num_vertices = _num_vertices;
-			}
-			
-			// write data
-			_vbo.BufferSubData(_num_vertices, vertices_begin);
-
-			// unbind
-			_vbo.Unbind();
-
-			CRAG_VERIFY(* this);
-		}
-
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 

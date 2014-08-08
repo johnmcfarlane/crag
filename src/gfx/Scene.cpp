@@ -80,7 +80,9 @@ void Scene::AddObject(Object & object)
 			
 			if (light.GetAttributes().makes_shadow)
 			{
-				_shadows.insert(std::make_pair(key, ShadowVolume()));
+				_shadows.insert(std::make_pair(key, ShadowVolumeResource::Create<ShadowVolume>([] () {
+					return ShadowVolume();
+				})));
 			}
 		});
 	}
@@ -154,7 +156,9 @@ void Scene::AddLight(Light & light)
 			
 			auto key = std::make_pair(& object, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
-			_shadows.insert(std::make_pair(key, ShadowVolume()));
+			_shadows.insert(std::make_pair(key, ShadowVolumeResource::Create<ShadowVolume>([] () {
+				return ShadowVolume();
+			})));
 		}
 	}
 

@@ -30,7 +30,7 @@ namespace gfx
 		
 		// functions
 		Font(char const * filename, float scale = 1.f);
-		~Font();
+		Font(Font && rhs);
 		
 		operator bool() const;
 

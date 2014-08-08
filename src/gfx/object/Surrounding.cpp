@@ -18,7 +18,14 @@
 #include "gfx/NonIndexedVboResource.h"
 #include "gfx/Program.h"
 
+#if defined(CRAG_FORM_FLAT_SHADE)
+#include "gfx/NonIndexedVboResource.h"
+#else
+#include "gfx/IndexedVboResource.h"
+#endif
+
 #include "form/Engine.h"
+#include "form/Mesh.h"
 
 #include "core/ConfigEntry.h"
 #include "core/ResourceManager.h"
@@ -36,6 +43,8 @@ namespace
 	CONFIG_DEFINE (formation_diffuse, Color4f, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE (formation_specular, float, 0.0f);
 	CONFIG_DEFINE (formation_shininess, float, 0.0f);
+	
+	char const * vbo_key = "SurroundingMesh";
 }
 
 
@@ -45,9 +54,15 @@ namespace
 Surrounding::Surrounding(Engine & engine)
 : Object(engine, Transformation::Matrix44::Identity(), Layer::opaque, false)
 {
-	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
-	SetProgram(& poly_program);
+	auto & resource_manager = engine.GetResourceManager();
+	auto const poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	SetProgram(poly_program);
+	
+	resource_manager.Register<VboResource>(vbo_key, [&] () {
+		return VboResource();
+	});
+	
+	SetVboResource(resource_manager.GetHandle<VboResource>(vbo_key));
 
 	CRAG_VERIFY(* this);
 }
@@ -55,29 +70,26 @@ Surrounding::Surrounding(Engine & engine)
 Surrounding::~Surrounding()
 {
 	CRAG_VERIFY(* this);
+
+	SetVboResource(nullptr);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	CRAG_VERIFY(static_cast<Object const &>(object));
 
+	CRAG_VERIFY_TRUE(object.GetVboResource());
+	auto const & vbo_resource = core::StaticCast<VboResource const &>(* object.GetVboResource());
+
 	CRAG_VERIFY(object._mesh);
 	if (object._mesh)
 	{
-		CRAG_VERIFY(* object._mesh);
-		if (object._mesh->GetLitMesh().empty())
-		{
-			CRAG_VERIFY_FALSE(object.GetVboResource());
-		}
-		else
-		{
-			CRAG_VERIFY_TRUE(object._vbo_resource.IsInitialized());
-			CRAG_VERIFY_TRUE(object.GetVboResource());
-		}
+		auto const & mesh = * object._mesh;
+		CRAG_VERIFY(mesh);
+		//CRAG_VERIFY_EQUAL(mesh.GetLitMesh().empty(), vbo_resource.empty());
 	}
 	else
 	{
-		CRAG_VERIFY_FALSE(object._vbo_resource.IsInitialized());
-		CRAG_VERIFY_FALSE(object.GetVboResource());
+		CRAG_VERIFY_TRUE(vbo_resource.empty());
 	}
 
 	CRAG_VERIFY(object._properties);
@@ -109,30 +121,10 @@ void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 	_mesh = mesh;
 	_properties = mesh->GetProperties();
 	
-	auto const & lit_mesh = mesh->GetLitMesh();
-	if (lit_mesh.empty())
+	if (! GetEngine().GetIsSuspended())
 	{
-		SetVboResource(nullptr);
+		UpdateVbo();
 	}
-	else
-	{
-		_vbo_resource.Set(lit_mesh);
-		SetVboResource(& _vbo_resource);
-	}
-	
-	// broadcast that this is the current number of quaterne being displayed;
-	// means that any performance measurements are taken against this load
-	auto num_quaterne = mesh->GetProperties()._num_quaterne;
-	if (num_quaterne > 0)
-	{
-		gfx::NumQuaterneSetMessage message = { num_quaterne };
-		Daemon::Broadcast(message);
-	}
-	
-	// state number of polygons/quaterna
-	STAT_SET (num_polys, lit_mesh.size() / 3);
-	STAT_SET (num_quats_used, mesh->GetProperties()._num_quaterne);
-	CRAG_VERIFY(* this);
 }
 
 Object::PreRenderResult Surrounding::PreRender()
@@ -143,6 +135,12 @@ Object::PreRenderResult Surrounding::PreRender()
 	Debug::AddBasis(_properties._space.AbsToRel(geom::abs::Vector3::Zero()), 1.);
 #endif
 
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	if (vbo_resource.empty() && _mesh)
+	{
+		UpdateVbo();
+	}
+	
 	return ok;
 }
 
@@ -171,14 +169,11 @@ void Surrounding::Render(Engine const & renderer) const
 {
 	CRAG_VERIFY(* this);
 
-	if (! GetVboResource())
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	if (vbo_resource.empty())
 	{
-		// happens if mesh is empty
 		return;
 	}
-	
-	ASSERT(GetVboResource() == & _vbo_resource);
-	ASSERT(! _vbo_resource.empty());
 	
 	// Pass rendering details to the shader program.
 	auto program = renderer.GetCurrentProgram();
@@ -189,7 +184,32 @@ void Surrounding::Render(Engine const & renderer) const
 	}
 	
 	// Draw the mesh!
-	_vbo_resource.Draw();
+	vbo_resource.Draw();
+	CRAG_VERIFY(* this);
+}
+
+void Surrounding::UpdateVbo()
+{
+	auto const & mesh = * _mesh;
+	auto const & lit_mesh = mesh.GetLitMesh();
+	auto const & properties = mesh.GetProperties();
+
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	auto & mutable_vbo_resource = const_cast<VboResource &>(vbo_resource);
+	mutable_vbo_resource.Set(lit_mesh);
+
+	// broadcast that this is the current number of quaterne being displayed;
+	// means that any performance measurements are taken against this load
+	auto num_quaterne = properties._num_quaterne;
+	if (num_quaterne > 0)
+	{
+		gfx::NumQuaterneSetMessage message = { num_quaterne };
+		Daemon::Broadcast(message);
+	}
+	
+	// state number of polygons/quaterna
+	STAT_SET (num_polys, lit_mesh.size() / 3);
+	STAT_SET (num_quats_used, properties._num_quaterne);
 	CRAG_VERIFY(* this);
 }
 

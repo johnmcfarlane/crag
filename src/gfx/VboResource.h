@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "core/counted_object.h"
+
 namespace gfx
 {
 	// Base class for a graphical resource such as a vertex buffer object

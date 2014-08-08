@@ -26,26 +26,22 @@ DEFINE_POOL_ALLOCATOR(MeshObject);
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::MeshObject member definitions
 
-MeshObject::MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, LitVboHandle const & lit_vbo, PlainMeshHandle const & plain_mesh)
+MeshObject::MeshObject(Engine & engine, Transformation const & local_transformation, Color4f const & color, Vector3 const & scale, ResourceKey lit_vbo_key, ResourceKey plain_mesh_key)
 : Object(engine, local_transformation, Layer::opaque, true)
 , _color(color)
 , _scale(scale)
-, _bounding_radius(GetBoundingRadius(* plain_mesh, scale))
-, _plain_mesh(plain_mesh)
-, _lit_vbo(lit_vbo)
+, _lit_vbo_key(lit_vbo_key)
 {
-	SetVboResource(lit_vbo.get());
+	auto & global_resource_manager = crag::core::ResourceManager::Get();
+	_plain_mesh = global_resource_manager.GetHandle<PlainMesh>(plain_mesh_key);
+	_bounding_radius = GetBoundingRadius(* _plain_mesh, scale);
+	
+	auto & gfx_resource_manager = engine.GetResourceManager();
+	_lit_vbo = gfx_resource_manager.GetHandle<VboResource>(_lit_vbo_key);
+	auto poly_program = gfx_resource_manager.GetHandle<PolyProgram>("PolyProgram");
+	SetProgram(poly_program);
 
-	auto const & resource_manager = crag::core::ResourceManager::Get();
-	auto const & poly_program = * resource_manager.GetHandle<PolyProgram>("PolyProgram");
-	SetProgram(& poly_program);
-}
-
-MeshObject::~MeshObject()
-{
-	// TODO: hack to prevent VBO outliving GL context;
-	// but what if there are multiple users of this resource?
-	_lit_vbo.Flush();
+	SetVboResource(_lit_vbo);
 }
 
 bool MeshObject::GetRenderRange(RenderRange & range) const

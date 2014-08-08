@@ -23,30 +23,17 @@ namespace gfx
 	class Skybox : public Object
 	{
 	public:
-		// Types
-		struct Vertex
-		{
-			geom::Vector3f pos;
-			geom::Vector2f tex;
-		};
-		
-		typedef VertexBufferObject<Vertex> Vbo;
-		
 		// Methods
 		Skybox(Engine & engine);
-		~Skybox();
 		
-		void SetSide(int axis, int pole, Image const & image);
+		void SetSide(int axis, int pole, std::shared_ptr<Image> const & image);
 		
 		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
 		void Render(Engine const & renderer) const override;
 		
 	private:
-		void InitVerts();
-		
 		// Attribs
-		Texture sides[3][2];
-		Vbo vbo;	// TODO: cubemap, TODO: Add to resource manager
+		TextureResourceHandle sides[3][2];
 	};
 	
 }

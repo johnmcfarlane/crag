@@ -30,24 +30,39 @@ void ResourceManager::Unregister(KeyType const & key)
 	auto erased = _resources.erase(key);
 	if (erased != 1)
 	{
-		CRAG_DEBUG_DUMP(key);
 		DEBUG_BREAK("didn't remove a single element (%d)", int(erased));
 	}
+	ASSERT(_resources.find(key) == _resources.end());
 	
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Flush()
+void ResourceManager::Clear()
 {
 	_mutex.WriteLock();
+	DEBUG_MESSAGE("");
 	_resources.clear();
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Prefetch(KeyType const & key) const
+void ResourceManager::Load(KeyType const & key) const
 {
 	auto const & resource = GetResource(key);
-	resource.Prefetch();
+	resource.Load();
+}
+
+void ResourceManager::Unload(KeyType const & key) const
+{
+	auto const & resource = GetResource(key);
+	resource.Unload();
+}
+
+void ResourceManager::UnloadAll() const
+{
+	for (auto const & resource_pair : _resources)
+	{
+		resource_pair.second.Unload();
+	}
 }
 
 ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & key) const
@@ -73,7 +88,7 @@ ResourceManager::ValueType & ResourceManager::GetResource(KeyType const & key)
 	return const_cast<ValueType &>(const_this->GetResource(key));
 }
 
-void ResourceManager::AddResource(KeyType const & key, ValueType && value)
+void ResourceManager::Register(KeyType const & key, ValueType && value)
 {
 	_mutex.WriteLock();
 	
@@ -88,9 +103,4 @@ void ResourceManager::AddResource(KeyType const & key, ValueType && value)
 	_resources.insert(std::make_pair(key, std::move(value)));
 	
 	_mutex.WriteUnlock();
-}
-
-ResourceManager::~ResourceManager()
-{
-	ASSERT(_resources.empty());
 }

@@ -274,7 +274,18 @@ namespace
 		{
 #if defined(__ANDROID__)
 			case SDL_APP_WILLENTERBACKGROUND:
-				gfx::Engine::SetPaused(true);
+				DEBUG_MESSAGE("SDL_APP_WILLENTERBACKGROUND");
+				gfx::Daemon::Call([] (gfx::Engine & engine) {
+					engine.SetIsSuspended(true);
+				});
+				return 0;
+				
+			case SDL_APP_DIDENTERFOREGROUND:
+				DEBUG_MESSAGE("SDL_APP_DIDENTERFOREGROUND");
+				gfx::Daemon::Call([] (gfx::Engine & engine) {
+					engine.SetIsSuspended(false);
+				});
+				return 0;
 #endif
 
 			case SDL_QUIT:
@@ -396,7 +407,7 @@ namespace
 			renderer.EndFlush();
 			formation.EndFlush();
 			
-			crag::core::ResourceManager::Get().Flush();
+			crag::core::ResourceManager::Get().Clear();
 		}
 		
 		app::Deinit();

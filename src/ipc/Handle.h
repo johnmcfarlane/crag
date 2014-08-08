@@ -79,7 +79,7 @@ namespace ipc
 			return lhs._uid < rhs._uid;
 		}
 		
-		// static cast to base types
+		// cast to base types
 		template <typename BASE_TYPE> 
 		operator Handle<BASE_TYPE> () const;
 

@@ -203,12 +203,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Engine member definitions
 
-#if defined(__ANDROID__)
-std::atomic<bool> Engine::_paused(false);
-#else
-const bool Engine::_paused(false);
-#endif
-
 Engine::StateParam const Engine::init_state[] =
 {
 	INIT_CAP(GL_CULL_FACE, true),
@@ -219,16 +213,18 @@ Engine::StateParam const Engine::init_state[] =
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
 	CRAG_VERIFY(core::StaticCast<super const>(self));
 	CRAG_VERIFY(self.scene);
+	CRAG_VERIFY(self._current_program);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
-: scene(nullptr)
+: _resource_manager(* new ResourceManager)
 , _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
 , _dirty(true)
 , culling(init_culling)
+, _suspended(false)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -236,23 +232,35 @@ Engine::Engine()
 #if ! defined(NDEBUG)
 	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
+
+	RegisterResources(_resource_manager);
 	
 	if (! Init())
 	{
 		quit_flag = true;
 	}
-	
-	RegisterResources();
 }
 
 Engine::~Engine()
 {
-	UnregisterResources();
+	_resource_manager.UnloadAll();
 
 	Deinit();
 
 	// must be turned on by key input or by cfg edit
 	capture_enable = false;
+	
+	delete & _resource_manager;
+}
+
+ResourceManager & Engine::GetResourceManager()
+{
+	return _resource_manager;
+}
+
+ResourceManager const & Engine::GetResourceManager() const
+{
+	return _resource_manager;
 }
 
 Scene & Engine::GetScene()
@@ -269,55 +277,56 @@ Scene const & Engine::GetScene() const
 	return ref(scene);
 }
 
-Program const * Engine::GetCurrentProgram() const
+ProgramHandle Engine::GetCurrentProgram() const
 {
 	return _current_program;
 }
 
-void Engine::SetCurrentProgram(Program const * program)
+void Engine::SetCurrentProgram(ProgramHandle program)
 {
 	if (program == _current_program)
 	{
+		ASSERT(! program || program.get() == _current_program.get());
+		ASSERT(! program || program->IsInitialized());
+		ASSERT(! program || program->IsBound());
 		return;
 	}
 	
-	if (_current_program != nullptr)
+	if (_current_program)
 	{
 		_current_program->Unbind();
 	}
 	
 	_current_program = program;
 	
-	if (_current_program != nullptr)
+	if (_current_program)
 	{
-		ASSERT(_current_program->IsInitialized());
-		
 		_current_program->Bind();
 	}
 	
 	GL_VERIFY;
 }
 
-VboResource const * Engine::GetVboResource() const
+VboResourceHandle Engine::GetVboResource() const
 {
 	return _current_vbo;
 }
 
-void Engine::SetVboResource(VboResource const * vbo)
+void Engine::SetVboResource(VboResourceHandle vbo)
 {
 	if (vbo == _current_vbo)
 	{
 		return;
 	}
 	
-	if (_current_vbo != nullptr)
+	if (_current_vbo)
 	{
 		_current_vbo->Deactivate();
 	}
 	
 	_current_vbo = vbo;
 
-	if (_current_vbo != nullptr)
+	if (_current_vbo)
 	{
 		_current_vbo->Activate();
 	}
@@ -401,10 +410,12 @@ void Engine::OnSetReady(bool ready)
 	_ready = ready;
 	_dirty = true;
 
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
-	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
-	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
+	if (! _suspended)
+	{
+		_resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
+		_resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
+		_resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
+	}
 }
 
 void Engine::OnToggleCulling()
@@ -446,12 +457,38 @@ geom::Space const & Engine::GetSpace() const
 	return _space;
 }
 
-#if defined(__ANDROID__)
-void Engine::SetPaused(bool paused)
+void Engine::SetIsSuspended(bool suspended)
 {
-	_paused = paused;
+	if (suspended == _suspended)
+	{
+		return;
+	}
+	
+	if ((_suspended = suspended))
+	{
+		SetCurrentProgram(nullptr);
+		SetVboResource(nullptr);
+
+		_resource_manager.UnloadAll();
+
+		for (auto & shadow_pair : scene->GetShadows())
+		{
+			shadow_pair.second.Unload();
+		}
+
+		app::DeinitContext();
+	}
+	else
+	{
+		app::InitContext();
+		InitRenderState();
+	}
 }
-#endif
+
+bool Engine::GetIsSuspended() const
+{
+	return _suspended;
+}
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
@@ -462,7 +499,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		message_queue.DispatchMessages(* this);
 		CRAG_VERIFY(* scene);
 		
-		if (! _paused && _ready && (_dirty || quit_flag))
+		if (! _suspended && _ready && (_dirty || quit_flag))
 		{
 			PreRender();
 			UpdateTransformations();
@@ -507,7 +544,7 @@ bool Engine::Init()
 	
 	InitRenderState();
 	
-	Debug::Init();
+	Debug::Init(_resource_manager);
 	return true;
 }
 
@@ -663,7 +700,7 @@ void Engine::UpdateShadowVolumes()
 		
 		ASSERT(light.GetException() != & object);
 
-		auto & shadow = pair.second;
+		auto & shadow = const_cast<ShadowVolume &>(pair.second.get<ShadowVolume>());
 
 		if (! object.GenerateShadowVolume(light, shadow))
 		{
@@ -676,7 +713,7 @@ void Engine::Render()
 {
 	RenderFrame();
 
-	if (! _paused)
+	if (! _suspended)
 	{
 		app::SwapBuffers();
 	}
@@ -772,10 +809,9 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
 	// mark all (relevant) shaders as having out-of-date light uniforms
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
-	resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
-	resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
 
 	auto ambient = add_ambient ? global_ambient : Color4f::Black();
 	auto & lights = scene->GetLightList();
@@ -859,9 +895,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 
 	GL_CALL(glClear(GL_STENCIL_BUFFER_BIT));
 
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
-	SetCurrentProgram(& shadow_program);
+	auto shadow_program = _resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	SetCurrentProgram(shadow_program);
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFFL);
@@ -891,8 +926,8 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	// light
 
 	// program
-	auto & screen_program = * resource_manager.GetHandle<ScreenProgram>("ScreenProgram");
-	SetCurrentProgram(& screen_program);
+	auto screen_program = _resource_manager.GetHandle<ScreenProgram>("ScreenProgram");
+	SetCurrentProgram(screen_program);
 
 	// state
 	glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFFL);
@@ -916,7 +951,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 		glFrontFace(GL_CW);
 	}
 	glDepthFunc(GL_ALWAYS);
-	SetCurrentProgram(& shadow_program);
+	SetCurrentProgram(shadow_program);
 	glDepthMask(GL_TRUE);
 	Enable(GL_BLEND);
 	Disable(GL_STENCIL_TEST);
@@ -938,11 +973,10 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 
 void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light)
 {
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	auto & shadow_program = * resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
-	ASSERT(GetCurrentProgram() == & shadow_program);
+	auto shadow_program = _resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	ASSERT(GetCurrentProgram() == shadow_program);
 
-	shadow_program.SetProjectionMatrix(projection_matrix);
+	shadow_program->SetProjectionMatrix(projection_matrix);
 	
 	auto & shadows = scene->GetShadows();
 	auto & render_list = scene->GetRenderList();
@@ -968,20 +1002,22 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 		ASSERT(found != std::end(shadows));
 		
 		auto & vbo_resource = found->second;
-		if (! vbo_resource.IsInitialized())
+		auto & vbo = vbo_resource.get<ShadowVolume>();
+		if (! vbo.IsInitialized())
 		{
+			DEBUG_BREAK("Uninitialized shadow volume VBO");
 			continue;
 		}
 		
-		SetVboResource(& vbo_resource);
+		SetVboResource(ShadowVolumeHandle(& vbo_resource));
 
 		// Set the model view matrix.
 		auto & model_view_transformation = object.GetShadowModelViewTransformation();
 		auto & model_view_matrix = model_view_transformation.GetMatrix();
-		shadow_program.SetModelViewMatrix(model_view_matrix);
+		shadow_program->SetModelViewMatrix(model_view_matrix);
 
 		// Draw
-		vbo_resource.Draw();
+		vbo.Draw();
 	}
 }
 
@@ -1040,10 +1076,9 @@ void Engine::DebugText()
 		}
 	}
 	
-	auto & resource_manager = crag::core::ResourceManager::Get();
-	auto const & sprite_program = * resource_manager.GetHandle<SpriteProgram>("SpriteProgram");
-	SetCurrentProgram(& sprite_program);
-	sprite_program.SetUniforms(app::GetResolution());
+	auto sprite_program = _resource_manager.GetHandle<SpriteProgram>("SpriteProgram");
+	SetCurrentProgram(sprite_program);
+	sprite_program->SetUniforms(app::GetResolution());
 	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));
 }
 #endif	// defined (GATHER_STATS)

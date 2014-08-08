@@ -12,6 +12,8 @@
 #include "Debug.h"
 
 #include "core/ConfigEntry.h"
+#include "core/ResourceHandle.h"
+#include "core/ResourceManager.h"
 
 #if defined(CRAG_GFX_DEBUG)
 
@@ -39,7 +41,7 @@ namespace
 	std::mutex mutex;
 	
 	// The font used to print the string to screen.
-	Font * font = nullptr;
+	crag::core::ResourceHandle<Font> font;
 	
 
 	// Stores a point of debug geometry. 
@@ -186,9 +188,9 @@ namespace
 
 
 // Start things up.
-void gfx::Debug::Init()
+void gfx::Debug::Init(ResourceManager const & resource_manager)
 {
-	ASSERT(font == nullptr);
+	ASSERT(! font);
 
 	// Some font sources:
 	// http://www.amanith.org/testsuite/amanithvg_gle/data/font_bitmap.png
@@ -196,16 +198,15 @@ void gfx::Debug::Init()
 
 	// Is this failing to load? Perhaps you forgot zlib1.dll or libpng12-0.dll. 
 	// http://www.libsdl.org/projects/SDL_image/
-	font = new Font("assets/font_bitmap.bmp", .5f);
+	font = resource_manager.GetHandle<Font>("DebugFont");
 }
 
 
 // Close things down.
 void gfx::Debug::Deinit()
 {
-	ASSERT(font != nullptr);
-	delete font;
-	font = nullptr;
+	ASSERT(font);
+	font.release();
 }
 
 
