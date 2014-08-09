@@ -247,9 +247,9 @@ namespace
 			
 			case SDL_APP_LOWMEMORY:
 			{
-				DEBUG_MESSAGE("Received low memory warning");
+				DEBUG_BREAK("Received low memory warning");
 				
-				// without a resource manager, little to do but carry on
+				// TODO: resource manager flush
 				return true;
 			}
 			
