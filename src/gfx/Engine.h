@@ -109,7 +109,7 @@ namespace gfx
 		void MainLoop();
 		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
-		bool Init();
+		void Init();
 		void Deinit();
 		
 		void InitVSync();
@@ -153,7 +153,7 @@ namespace gfx
 		
 		ResourceManager & _resource_manager;
 
-		Scene * scene;
+		Scene & _scene;
 		geom::Space _space;
 		
 		core::Time _target_frame_duration;
