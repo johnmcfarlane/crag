@@ -235,6 +235,11 @@ namespace ipc
 
 				// Acknowledge that this won't be sending any more.
 				SetState(State::acknowledge_flush_begin);
+				
+				// send an SDL event in case main even is asleep in SDL_WaitEvent
+				ASSERT(! IsRunning());
+				app::Quit();
+				
 				while (_state < State::request_flush_end)
 				{
 					if (_state != State::acknowledge_flush_begin)
