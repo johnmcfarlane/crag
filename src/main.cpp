@@ -378,29 +378,7 @@ namespace
 			// launch the main script
 			applet::AppletHandle::Create("Main", 16384, scripts[script_mode]);
 			
-			while (HandleEvent())
-			{
-				if (! formation.IsRunning())
-				{
-					DEBUG_MESSAGE("formation initiating shutdown");
-					break;
-				}
-				if (! simulation.IsRunning())
-				{
-					DEBUG_MESSAGE("simulation initiating shutdown");
-					break;
-				}
-				if (! renderer.IsRunning())
-				{
-					DEBUG_MESSAGE("renderer initiating shutdown");
-					break;
-				}
-				if (! applets.IsRunning())
-				{
-					DEBUG_MESSAGE("applets initiating shutdown");
-					break;
-				}
-			}
+			while (HandleEvent());
 			
 			// Tell the daemons to wind down.
 			applets.BeginFlush();
