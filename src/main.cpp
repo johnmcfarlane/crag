@@ -261,9 +261,9 @@ namespace
 				return false;
 			}
 			
-			case SDL_APP_WILLENTERBACKGROUND:
+			case SDL_APP_TERMINATING:
 			{
-				DEBUG_MESSAGE("SDL_APP_WILLENTERBACKGROUND received on main thread loop");
+				DEBUG_MESSAGE("Received SDL_APP_TERMINATING");
 				
 				// it's time to quit
 				return false;
