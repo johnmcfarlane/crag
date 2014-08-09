@@ -428,10 +428,6 @@ namespace
 		
 		DEBUG_MESSAGE("<- CragMain");
 		
-#if defined(__ANDROID__)
-		exit(0);
-#endif
-
 		return true;
 	}
 }
