@@ -115,6 +115,17 @@ void app::Deinit()
 	CRAG_DEBUG_CHECK_MEMORY();
 }
 
+void app::Quit()
+{
+	SDL_Event event;
+	event.quit = { SDL_QUIT, 0 };
+
+	if (! SDL_PushEvent(& event))
+	{
+		DEBUG_BREAK_SDL();
+	}
+}
+
 bool app::InitContext()
 {
 	ASSERT(window != nullptr);

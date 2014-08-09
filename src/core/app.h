@@ -20,6 +20,7 @@ namespace app
 	// general init/deinit
 	bool Init(geom::Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
+	void Quit();
 
 	// render thread-specific init/deinit
 	bool InitContext();
