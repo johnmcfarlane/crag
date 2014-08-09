@@ -198,9 +198,9 @@ public class SDLActivity extends Activity {
     }
         
     /* The native thread has finished */
-    public static void handleNativeExit() {
+    public static void handleNativeExit(SDLActivity singleton) {
         SDLActivity.mSDLThread = null;
-        mSingleton.finish();
+        singleton.finish();
     }
 
 
@@ -739,6 +739,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             new Thread(new Runnable(){
                 @Override
                 public void run(){
+                    SDLActivity singleton = SDLActivity.mSingleton;
                     try {
                         SDLActivity.mSDLThread.join();
                     }
@@ -746,7 +747,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                     finally{ 
                         // Native thread has finished
                         if (! SDLActivity.mExitCalledFromJava) {
-                            SDLActivity.handleNativeExit();
+                            SDLActivity.handleNativeExit(singleton);
                         }
                     }
                 }
