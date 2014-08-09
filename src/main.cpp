@@ -302,6 +302,7 @@ namespace
 #endif
 
 			case SDL_QUIT:
+			case SDL_APP_TERMINATING:
 			case SDL_WINDOWEVENT:
 #if defined(CRAG_USE_TOUCH)
 			case SDL_FINGERDOWN:
