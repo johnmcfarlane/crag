@@ -191,9 +191,8 @@ namespace
 	{
 		SDL_Event event;
 		
-		if (! app::GetEvent(event))
+		if (! app::GetEvent(event, true))
 		{
-			smp::Yield();
 			return true;
 		}
 		
