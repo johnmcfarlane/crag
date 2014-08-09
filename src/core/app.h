@@ -44,7 +44,7 @@ namespace app
 	void SwapBuffers();
 
 	// called from main thread
-	bool GetEvent(SDL_Event & event);
+	bool GetEvent(SDL_Event & event, bool block);
 	
 	// time
 	core::Time GetTime();
