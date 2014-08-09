@@ -245,7 +245,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 			engine.SetIsSuspended(true);
 		});
 
-		_applet_interface->Sleep(4.f);
+		_applet_interface->Sleep(1.f);
 		gfx::Daemon::Call([](gfx::Engine & engine) {
 			engine.SetIsSuspended(false);
 		});

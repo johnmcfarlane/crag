@@ -242,9 +242,9 @@ namespace
 		return true;
 	}
 	
+#if ! defined(NDEBUG)
 	void RegisterFonts(ResourceManager & manager)
 	{
-#if ! defined(NDEBUG)
 		manager.Register<Font>("DebugFont", [] ()
 		{
 			// Some font sources:
@@ -255,8 +255,8 @@ namespace
 			// http://www.libsdl.org/projects/SDL_image/
 			return Font("assets/font_bitmap.bmp", .5f);
 		});
-#endif
 	}
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -270,5 +270,8 @@ void gfx::RegisterResources(ResourceManager & resource_manager)
 	
 	RegisterShaders(resource_manager);
 	RegisterVbos(resource_manager);
+
+#if ! defined(NDEBUG)
 	RegisterFonts(resource_manager);
+#endif
 }

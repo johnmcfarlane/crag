@@ -247,9 +247,9 @@ namespace
 			
 			case SDL_APP_LOWMEMORY:
 			{
-				DEBUG_MESSAGE("Received low memory warning");
+				DEBUG_BREAK("Received low memory warning");
 				
-				// without a resource manager, little to do but carry on
+				// TODO: resource manager flush
 				return true;
 			}
 			
@@ -261,9 +261,9 @@ namespace
 				return false;
 			}
 			
-			case SDL_APP_WILLENTERBACKGROUND:
+			case SDL_APP_TERMINATING:
 			{
-				DEBUG_MESSAGE("SDL_APP_WILLENTERBACKGROUND received on main thread loop");
+				DEBUG_MESSAGE("Received SDL_APP_TERMINATING");
 				
 				// it's time to quit
 				return false;
@@ -302,6 +302,7 @@ namespace
 #endif
 
 			case SDL_QUIT:
+			case SDL_APP_TERMINATING:
 			case SDL_WINDOWEVENT:
 #if defined(CRAG_USE_TOUCH)
 			case SDL_FINGERDOWN:
@@ -427,10 +428,6 @@ namespace
 		
 		DEBUG_MESSAGE("<- CragMain");
 		
-#if defined(__ANDROID__)
-		exit(0);
-#endif
-
 		return true;
 	}
 }

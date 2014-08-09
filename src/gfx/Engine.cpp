@@ -79,14 +79,13 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local functions
 	
-	bool InitGlew()
+	void InitGlew()
 	{
 #if defined(GLEW_STATIC)
 		GLenum glew_err = glewInit();
 		if (glew_err != GLEW_OK)
 		{
-			ERROR_MESSAGE("GLEW Error: %s", glewGetErrorString(glew_err));
-			return false;
+			DEBUG_BREAK("GLEW Error: %s", glewGetErrorString(glew_err));
 		}
 
 		DEBUG_MESSAGE("GLEW Version: %s", glewGetString(GLEW_VERSION));
@@ -94,14 +93,11 @@ namespace
 #if ! defined(__APPLE__)
 		if (! GLEW_VERSION_1_5)
 		{
-			ERROR_MESSAGE("Error: Crag requires OpenGL 1.5 or greater.");
-			return false;
+			DEBUG_BREAK("Error: Crag requires OpenGL 1.5 or greater.");
 		}
 #endif
 		
 #endif
-		
-		return true;
 	}
 	
 	void setDepthRange(float near, float far)
@@ -212,19 +208,20 @@ Engine::StateParam const Engine::init_state[] =
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
 	CRAG_VERIFY(core::StaticCast<super const>(self));
-	CRAG_VERIFY(self.scene);
+	CRAG_VERIFY(self._scene);
 	CRAG_VERIFY(self._current_program);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
 : _resource_manager(* new ResourceManager)
+, _scene(* new Scene(* this))
 , _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
 , _ready(true)
 , _dirty(true)
 , culling(init_culling)
-, _suspended(false)
+, _suspended(true)
 , capture_frame(0)
 , _current_program(nullptr)
 , _current_vbo(nullptr)
@@ -234,23 +231,23 @@ Engine::Engine()
 #endif
 
 	RegisterResources(_resource_manager);
+	Debug::Init(_resource_manager);
 	
-	if (! Init())
-	{
-		quit_flag = true;
-	}
+	SetIsSuspended(false);
 }
 
 Engine::~Engine()
 {
-	_resource_manager.UnloadAll();
+	SetIsSuspended(true);
 
-	Deinit();
+	Debug::Deinit();
 
 	// must be turned on by key input or by cfg edit
 	capture_enable = false;
+	init_culling = culling;
 	
 	delete & _resource_manager;
+	delete & _scene;
 }
 
 ResourceManager & Engine::GetResourceManager()
@@ -267,14 +264,14 @@ Scene & Engine::GetScene()
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
-	return ref(scene);
+	return _scene;
 }
 
 Scene const & Engine::GetScene() const
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
-	return ref(scene);
+	return _scene;
 }
 
 ProgramHandle Engine::GetCurrentProgram() const
@@ -339,10 +336,8 @@ void Engine::OnQuit()
 
 void Engine::OnAddObject(ObjectSharedPtr const & object_ptr)
 {
-	ASSERT(scene != nullptr);
-
 	auto & object = * object_ptr;
-	scene->AddObject(object);
+	_scene.AddObject(object);
 	OnSetParent(object, Handle());
 }
 
@@ -356,8 +351,7 @@ void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 		ReleaseObject(back);
 	}
 
-	ASSERT(scene != nullptr);
-	scene->RemoveObject(object);
+	_scene.RemoveObject(object);
 }
 
 void Engine::OnSetParent(ObjectHandle child_handle, ObjectHandle parent_handle)
@@ -387,7 +381,7 @@ void Engine::OnSetParent(Object & child, ObjectHandle parent_uid)
 			}
 		}
 		
-		return scene->GetRoot();
+		return _scene.GetRoot();
 	} ();
 	
 	OnSetParent(child, parent);
@@ -401,7 +395,7 @@ void Engine::OnSetParent(Object & child, Object & parent)
 
 void Engine::OnSetTime(Time time)
 {
-	scene->SetTime(time);
+	_scene.SetTime(time);
 }
 
 void Engine::OnSetReady(bool ready)
@@ -431,13 +425,8 @@ void Engine::OnToggleCapture()
 
 void Engine::operator() (SetCameraEvent const & event)
 {
-	if (! scene)
-	{
-		return;
-	}
-	
-	auto const & scene_frustum = scene->GetPov().GetFrustum();
-	scene->SetPov({
+	auto const & scene_frustum = _scene.GetPov().GetFrustum();
+	_scene.SetPov({
 		_space.AbsToRel(event.transformation),
 		{
 			scene_frustum.resolution,
@@ -466,22 +455,11 @@ void Engine::SetIsSuspended(bool suspended)
 	
 	if ((_suspended = suspended))
 	{
-		SetCurrentProgram(nullptr);
-		SetVboResource(nullptr);
-
-		_resource_manager.UnloadAll();
-
-		for (auto & shadow_pair : scene->GetShadows())
-		{
-			shadow_pair.second.Unload();
-		}
-
-		app::DeinitContext();
+		Deinit();
 	}
 	else
 	{
-		app::InitContext();
-		InitRenderState();
+		Init();
 	}
 }
 
@@ -492,12 +470,12 @@ bool Engine::GetIsSuspended() const
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	auto const & children = scene->GetRoot().GetChildren();
+	auto const & children = _scene.GetRoot().GetChildren();
 	while (! quit_flag || ! children.empty())
 	{
-		CRAG_VERIFY(* scene);
+		CRAG_VERIFY(_scene);
 		message_queue.DispatchMessages(* this);
-		CRAG_VERIFY(* scene);
+		CRAG_VERIFY(_scene);
 		
 		if (! _suspended && _ready && (_dirty || quit_flag))
 		{
@@ -524,44 +502,26 @@ bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 	return message_queue.DispatchMessage(* this);
 }
 
-bool Engine::Init()
+void Engine::Init()
 {
-	ASSERT(scene == nullptr);
+	app::InitContext();
 
-	if (! app::InitContext())
-	{
-		return false;
-	}
-	
-	if (! InitGlew())
-	{
-		return false;
-	}
-	
+	InitGlew();
 	InitVSync();
-	
-	scene = new Scene(* this);
-	
 	InitRenderState();
-	
-	Debug::Init(_resource_manager);
-	return true;
 }
 
 void Engine::Deinit()
 {
-	if (scene == nullptr)
+	SetCurrentProgram(nullptr);
+	SetVboResource(nullptr);
+
+	_resource_manager.UnloadAll();
+
+	for (auto & shadow_pair : _scene.GetShadows())
 	{
-		ASSERT(false);
-		return;
+		shadow_pair.second.Unload();
 	}
-	
-	Debug::Deinit();
-	
-	init_culling = culling;
-	
-	delete scene;
-	scene = nullptr;
 
 	app::DeinitContext();
 }
@@ -619,7 +579,7 @@ void Engine::VerifyRenderState() const
 void Engine::PreRender()
 {
 	// purge objects
-	auto & render_list = scene->GetRenderList();
+	auto & render_list = _scene.GetRenderList();
 	for (auto i = render_list.begin(), end = render_list.end(); i != end; )
 	{
 		auto & object = * i;
@@ -657,7 +617,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (children.empty() && & object != & scene->GetRoot())
+		if (children.empty() && & object != & _scene.GetRoot())
 		{
 			// release it
 			ReleaseObject(object);
@@ -677,21 +637,21 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 
 void Engine::UpdateTransformations()
 {
-	Object & root_node = scene->GetRoot();
+	Object & root_node = _scene.GetRoot();
 	UpdateTransformations(root_node, Transformation::Matrix44::Identity());
 	
-	scene->SortRenderList();
+	_scene.SortRenderList();
 }
 
 void Engine::UpdateShadowVolumes()
 {
-	auto & lights = scene->GetLightList();
+	auto & lights = _scene.GetLightList();
 	for (auto & light : lights)
 	{
 		light.SetIsExtinguished(false);
 	}
 	
-	ShadowMap & shadows = scene->GetShadows();
+	ShadowMap & shadows = _scene.GetShadows();
 	for (auto & pair : shadows)
 	{
 		auto & key = pair.first;
@@ -711,12 +671,11 @@ void Engine::UpdateShadowVolumes()
 
 void Engine::Render()
 {
+	ASSERT(! _suspended);
+
 	RenderFrame();
 
-	if (! _suspended)
-	{
-		app::SwapBuffers();
-	}
+	app::SwapBuffers();
 
 	ProcessRenderTiming();
 }
@@ -750,8 +709,8 @@ void Engine::RenderScene()
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == depth_func);
 	
 	// calculate matrices
-	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(* scene);
-	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* scene);
+	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(_scene);
+	auto background_projection_matrix = CalcBackgroundProjectionMatrix(_scene);
 	
 	if (shadows_enabled)
 	{
@@ -814,9 +773,9 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 	_resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
 
 	auto ambient = add_ambient ? global_ambient : Color4f::Black();
-	auto & lights = scene->GetLightList();
+	auto & lights = _scene.GetLightList();
 	
-	auto & render_list = scene->GetRenderList();
+	auto & render_list = _scene.GetRenderList();
 	for (auto & object : render_list)
 	{
 		if (object.GetLayer() != layer)
@@ -871,7 +830,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	auto & lights = scene->GetLightList();
+	auto & lights = _scene.GetLightList();
 	for (auto & light : lights)
 	{
 		if (light.GetAttributes().makes_shadow && light.GetIsLuminant())
@@ -978,8 +937,8 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 
 	shadow_program->SetProjectionMatrix(projection_matrix);
 	
-	auto & shadows = scene->GetShadows();
-	auto & render_list = scene->GetRenderList();
+	auto & shadows = _scene.GetShadows();
+	auto & render_list = _scene.GetRenderList();
 
 	ShadowMapKey key;
 	key.second = & light;
@@ -1032,7 +991,7 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	SetCurrentProgram(nullptr);
 	
 	// calculate model view transformation
-	auto & pov = scene->GetPov();
+	auto & pov = _scene.GetPov();
 	auto & model_view_projection = pov.GetTransformation();
 
 	// mark the local space
