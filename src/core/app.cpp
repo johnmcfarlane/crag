@@ -115,6 +115,17 @@ void app::Deinit()
 	CRAG_DEBUG_CHECK_MEMORY();
 }
 
+void app::Quit()
+{
+	SDL_Event event;
+	event.quit = { SDL_QUIT, 0 };
+
+	if (! SDL_PushEvent(& event))
+	{
+		DEBUG_BREAK_SDL();
+	}
+}
+
 bool app::InitContext()
 {
 	ASSERT(window != nullptr);
@@ -253,8 +264,21 @@ void app::SwapBuffers()
 	SDL_GL_SwapWindow(window);
 }
 
-bool app::GetEvent(SDL_Event & event)
+bool app::GetEvent(SDL_Event & event, bool block)
 {
+	// get or block
+	if (block)
+	{
+		if (! SDL_WaitEvent(& event))
+		{
+			DEBUG_BREAK_SDL();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// get or return
 	bool has_event = SDL_PollEvent(& event) != 0;
 	
 	if (! has_event)

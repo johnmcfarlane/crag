@@ -20,6 +20,7 @@ namespace app
 	// general init/deinit
 	bool Init(geom::Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
+	void Quit();
 
 	// render thread-specific init/deinit
 	bool InitContext();
@@ -43,7 +44,7 @@ namespace app
 	void SwapBuffers();
 
 	// called from main thread
-	bool GetEvent(SDL_Event & event);
+	bool GetEvent(SDL_Event & event, bool block);
 	
 	// time
 	core::Time GetTime();
