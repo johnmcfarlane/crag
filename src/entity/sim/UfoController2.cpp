@@ -150,14 +150,19 @@ void UfoController2::Tick()
 		return;
 	}
 
-	// get UFO position
 	auto & body = core::StaticCast<physics::Body>(* location);
+	auto const & up = GetUp(body.GetGravitationalForce());
+	if (up == Vector3::Zero())
+	{
+		return;
+	}
+
+	// get UFO position
 	auto const & transformation = body.GetTransformation();
 	auto const & translation = transformation.GetTranslation();
 	auto const & rotation = transformation.GetRotation();
 
 	// horizontal plane
-	auto const & up = GetUp(body.GetGravitationalForce());
 	auto const & horizontal_plane = Plane3(translation, up);
 
 	// target position
