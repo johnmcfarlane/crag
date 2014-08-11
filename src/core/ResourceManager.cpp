@@ -40,7 +40,6 @@ void ResourceManager::Unregister(KeyType const & key)
 void ResourceManager::Clear()
 {
 	_mutex.WriteLock();
-	DEBUG_MESSAGE("");
 	_resources.clear();
 	_mutex.WriteUnlock();
 }
