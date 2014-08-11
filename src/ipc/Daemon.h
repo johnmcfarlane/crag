@@ -101,7 +101,7 @@ namespace ipc
 		// on program shutdown before forcefully quitting
 		static float ShutdownTimeout()
 		{
-			return .5f;
+			return 2.f;
 		}
 		
 		size_t GetQueueCapacity() const
