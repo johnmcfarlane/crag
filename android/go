@@ -7,7 +7,12 @@ set -o errexit
 MODE="$1"
 shift 1
 
-./build $@
+if [ $MODE = 'debug' ]
+then
+	./build $@ NDK_DEBUG=1 
+else
+	./build $@
+fi
 
 ant "$MODE"
 ant "$MODE" install
