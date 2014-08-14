@@ -133,7 +133,7 @@ bool app::InitContext()
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
 	if (renderer == nullptr)
 	{
-		DEBUG_BREAK_SDL();
+		DEBUG_MESSAGE("Failed to create renderer: \"%s\"", SDL_GetError());	
 		return false;
 	}
 	
