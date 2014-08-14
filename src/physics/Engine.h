@@ -90,8 +90,8 @@ namespace physics
 		dContact _contact;	// permanently stores common properties
 
 		// list of objcets called at start/end of tick
-		core::locality::Roster & _pre_tick_roster;
-		core::locality::Roster & _post_tick_roster;
+		std::unique_ptr<core::locality::Roster> _pre_tick_roster;
+		std::unique_ptr<core::locality::Roster> _post_tick_roster;
 	};
 	
 }
