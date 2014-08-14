@@ -11,6 +11,8 @@
 
 #include "MessageQueue.h"
 
+#include "core/counted_object.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // MessageQueue member definitions
 
@@ -46,7 +48,7 @@ public:
 };
 
 template <typename CLASS>
-struct ipc::MessageQueue<CLASS>::BufferNode
+struct ipc::MessageQueue<CLASS>::BufferNode : private crag::counted_object<BufferNode>
 {
 	OBJECT_NO_COPY(BufferNode);
 
