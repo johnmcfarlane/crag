@@ -62,6 +62,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	delete & _draw_roster;
 	delete & _tick_roster;
 	delete & _collision_scene;
 	delete & _physics_engine;

@@ -41,7 +41,7 @@ public:
 	}
 	
 	// returns pseudo-random number in the range [0, 1)
-	template <typename S>
+	template <typename S = float>
 	S GetUnit()
 	{
 		S inverse = S(1) / bound;
@@ -56,14 +56,14 @@ public:
 	}
 	
 	// returns pseudo-random number in the range [0, 1]
-	template <typename S>
+	template <typename S = float>
 	S GetUnitInclusive()
 	{
 		S inverse = S(1) / maximum;
 		return inverse * GetInt();
 	}
 	
-	template <typename S>
+	template <typename S = float>
 	void GetGaussians(S & y1, S & y2)
 	{
 		S const one = 1;

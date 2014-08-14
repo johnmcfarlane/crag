@@ -59,7 +59,7 @@ namespace ipc
 			}
 
 			// If there are multiple buffers,
-			for (auto * buffer_node = message_queue._buffers; buffer_node != nullptr; buffer_node = buffer_node->next)
+			for (auto * buffer_node = message_queue._buffers.get(); buffer_node; buffer_node = buffer_node->next.get())
 			{
 				CRAG_VERIFY(buffer_node->buffer);
 
@@ -97,6 +97,6 @@ namespace ipc
 		// variables
 
 		Mutex _mutex;
-		BufferNode * _buffers;
+		std::unique_ptr<BufferNode> _buffers;
 	};
 }

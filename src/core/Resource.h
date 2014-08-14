@@ -35,7 +35,7 @@ namespace crag
 			
 			// WrapperInterface and Wrapper hold the actual resource and can be dynamically
 			// destroyed and recreated using the create function if memory is tight
-			class WrapperInterface
+			class WrapperInterface : private crag::counted_object<WrapperInterface>
 			{
 				OBJECT_NO_COPY(WrapperInterface);
 			public:

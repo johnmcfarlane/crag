@@ -31,6 +31,8 @@
 
 using geom::Vector3f;
 
+	CONFIG_DEFINE(test_suspend_resume, bool, false);
+
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -44,8 +46,6 @@ namespace
 	CONFIG_DEFINE(enable_spawn_cube, bool, true);
 	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
 
-	CONFIG_DEFINE(test_suspend_resume, bool, false);
-
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
@@ -57,7 +57,6 @@ namespace
 	applet::AppletInterface * _applet_interface;
 	sim::EntityHandle _player;
 	EntityVector _shapes;
-	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -130,12 +129,12 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents()
+	bool HandleEvents(core::EventWatcher & event_watcher)
 	{
 		int num_events = 0;
 	
 		SDL_Event event;
-		while (_event_watcher.PopEvent(event))
+		while (event_watcher.PopEvent(event))
 		{
 			++ num_events;
 		
@@ -188,6 +187,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	FUNCTION_NO_REENTRY;
 
 	_applet_interface = & applet_interface;
+	core::EventWatcher event_watcher;
 
 	// coordinate system
 	geom::Space space(player_start_pos);
@@ -238,28 +238,33 @@ void GameScript(applet::AppletInterface & applet_interface)
 		_shapes.push_back(obelisk);
 	}
 
-	if (test_suspend_resume)
-	{
-		_applet_interface->Sleep(1.f);
-		gfx::Daemon::Call([](gfx::Engine & engine) {
-			engine.SetIsSuspended(true);
-		});
-
-		_applet_interface->Sleep(1.f);
-		gfx::Daemon::Call([](gfx::Engine & engine) {
-			engine.SetIsSuspended(false);
-		});
-	}
-
 	// main loop
 	while (! _applet_interface->GetQuitFlag())
 	{
-		applet_interface.WaitFor([& applet_interface] () 
+		if (test_suspend_resume)
 		{
-			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
-		});
+			bool suspend = Random::sequence.GetBool();
+			DEBUG_MESSAGE("suspend=%d", int(suspend));
+			gfx::Daemon::Call([suspend](gfx::Engine & engine) {
+				engine.SetIsSuspended(suspend);
+			});
 
-		if (! HandleEvents())
+			if (Random::sequence.GetBool())
+			{
+				float sleep = Squared(Random::sequence.GetUnit());
+				DEBUG_MESSAGE("sleep=%f", sleep);
+				_applet_interface->Sleep(sleep);
+			}
+		}
+		else
+		{
+			applet_interface.WaitFor([&] () 
+			{
+				return ! event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
+			});
+		}
+
+		if (! HandleEvents(event_watcher))
 		{
 			break;
 		}
@@ -280,4 +285,5 @@ void GameScript(applet::AppletInterface & applet_interface)
 	skybox.Release();
 
 	ASSERT(_applet_interface == & applet_interface);
+	_applet_interface = nullptr;
 }

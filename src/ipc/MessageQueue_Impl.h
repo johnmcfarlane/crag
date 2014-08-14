@@ -11,6 +11,8 @@
 
 #include "MessageQueue.h"
 
+#include "core/counted_object.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // MessageQueue member definitions
 
@@ -46,7 +48,7 @@ public:
 };
 
 template <typename CLASS>
-struct ipc::MessageQueue<CLASS>::BufferNode
+struct ipc::MessageQueue<CLASS>::BufferNode : private crag::counted_object<BufferNode>
 {
 	OBJECT_NO_COPY(BufferNode);
 
@@ -62,7 +64,7 @@ struct ipc::MessageQueue<CLASS>::BufferNode
 	}
 
 	Buffer buffer;
-	BufferNode * next;
+	std::unique_ptr<BufferNode> next;
 };
 
 template <typename CLASS>
@@ -118,11 +120,9 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 		typename Buffer::size_type new_capacity = std::max(required_capacity, existing_capacity) << 2;
 		DEBUG_MESSAGE("allocating larger ring buffer. new:" SIZE_T_FORMAT_SPEC "; msg:" SIZE_T_FORMAT_SPEC "; prev:" SIZE_T_FORMAT_SPEC, new_capacity, required_capacity, existing_capacity);
 
-		auto & new_buffer = ref(new BufferNode(new_capacity));
-
 		ASSERT(node->next == nullptr);
-		node->next = & new_buffer;
-		node = & new_buffer;
+		node->next.reset(new BufferNode(new_capacity));
+		node = node->next.get();
 
 		smp::Yield();
 	}
@@ -184,27 +184,21 @@ void ipc::MessageQueue<CLASS>::PopFront()
 {
 	CRAG_VERIFY(* this);
 
-	auto & front = * _buffers;
-	auto & pop_buffer = front.buffer;
-	pop_buffer.pop_front();
+	auto & front_buffer = _buffers->buffer;
+	front_buffer.pop_front();
 
-	if (! pop_buffer.empty())
+	if (! front_buffer.empty())
 	{
 		return;
 	}
-
-	auto next = front.next;
-	if (next == nullptr)
+	
+	auto & next = _buffers->next;
+	if (! next)
 	{
 		return;
 	}
-
-	ASSERT(! next->buffer.empty());
-
-	_buffers = next;
-	front.next = nullptr;
-
-	delete & front;
+	
+	_buffers = std::move(next);
 
 	CRAG_VERIFY(* this);
 }
@@ -212,11 +206,11 @@ void ipc::MessageQueue<CLASS>::PopFront()
 template <typename CLASS>
 typename ipc::MessageQueue<CLASS>::BufferNode & ipc::MessageQueue<CLASS>::GetPushBufferNode()
 {
-	auto * buffer_node = _buffers;
+	auto buffer_node = _buffers.get();
 
 	for (;;)
 	{
-		auto * next = buffer_node->next;
+		auto next = buffer_node->next.get();
 		if (next == nullptr)
 		{
 			return * buffer_node;

@@ -64,14 +64,14 @@ bool ConfigManager::Load()
 	std::ifstream config_file(config_filename);
 	if (! config_file.is_open())
 	{
-		ERROR_MESSAGE("Failed to open config file, %s.", config_filename);
+		DEBUG_MESSAGE("Failed to open config file, %s.", config_filename);
 		return false;
 	}
 
 	std::ifstream defaults_file(defaults_filename);
 	if (! defaults_file.is_open())
 	{
-		ERROR_MESSAGE("Failed to open defaults file, %s.", defaults_filename);
+		DEBUG_MESSAGE("Failed to open defaults file, %s.", defaults_filename);
 		defaults_file_ood = true;
 	}
 	else
@@ -88,8 +88,8 @@ bool ConfigManager::Load()
 		// read default value
 		if (defaults_file.eof())
 		{
-			ERROR_MESSAGE("ConfigManager: Unrecognised default parameter on line %d.", line_num);
-			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
+			DEBUG_MESSAGE("ConfigManager: Unrecognised default parameter on line %d.", line_num);
+			DEBUG_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
 			break;
 		}
 		
@@ -105,8 +105,8 @@ bool ConfigManager::Load()
 		char * value_string = strchr(config_line, '=');
 		if (value_string == nullptr)
 		{
-			ERROR_MESSAGE("ConfigManager: Invalid line %d of config file.", line_num);
-			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
+			DEBUG_MESSAGE("ConfigManager: Invalid line %d of config file.", line_num);
+			DEBUG_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
 			break;
 		}
 		
@@ -118,8 +118,8 @@ bool ConfigManager::Load()
 		ConfigEntry * parameter = ConfigEntry::find(name_string);
 		if (parameter == nullptr)
 		{
-			ERROR_MESSAGE("ConfigManager: unrecognised parameter \"%s\" on line %d.", name_string, line_num);
-			ERROR_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
+			DEBUG_MESSAGE("ConfigManager: unrecognised parameter \"%s\" on line %d.", name_string, line_num);
+			DEBUG_MESSAGE("ConfigManager: Program defaults will be used for remainder of values.");
 			break;
 		}
 		
@@ -142,7 +142,7 @@ void ConfigManager::Save()
 	std::ofstream config_file(config_filename);
 	if (! config_file.is_open())
 	{
-		ERROR_MESSAGE("Failed to open config file, %s.", config_filename);
+		DEBUG_MESSAGE("Failed to open config file, %s.", config_filename);
 	}
 	
 	std::ofstream defaults_file;
@@ -151,7 +151,7 @@ void ConfigManager::Save()
 		defaults_file.open(defaults_filename);
 		if (! defaults_file.is_open())
 		{
-			ERROR_MESSAGE("Failed to open config defaults file, %s.", defaults_filename);
+			DEBUG_MESSAGE("Failed to open config defaults file, %s.", defaults_filename);
 		}
 	}
 	

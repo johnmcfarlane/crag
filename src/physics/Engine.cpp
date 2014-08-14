@@ -96,8 +96,8 @@ Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, _pre_tick_roster(ref(new core::locality::Roster))
-, _post_tick_roster(ref(new core::locality::Roster))
+, _pre_tick_roster(new core::locality::Roster)
+, _post_tick_roster(new core::locality::Roster)
 {
 	// init ODE error handling
 #if ! defined(NDEBUG)
@@ -132,12 +132,12 @@ Engine::~Engine()
 
 core::locality::Roster & Engine::GetPreTickRoster()
 {
-	return _pre_tick_roster;
+	return * _pre_tick_roster;
 }
 
 core::locality::Roster & Engine::GetPostTickRoster()
 {
-	return _post_tick_roster;
+	return * _post_tick_roster;
 }
 
 dBodyID Engine::CreateBody() const
@@ -191,7 +191,7 @@ void Engine::Attach(Body const & body1, Body const & body2)
 void Engine::Tick(double delta_time)
 {
 	// call objects that want to know that physics is about to be ticked
-	_pre_tick_roster.Call();
+	_pre_tick_roster->Call();
 
 	if (collisions)
 	{
@@ -214,7 +214,7 @@ void Engine::Tick(double delta_time)
 	}
 	
 	// call objects that want to know that physics has ticked
-	_post_tick_roster.Call();
+	_post_tick_roster->Call();
 }
 
 form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
