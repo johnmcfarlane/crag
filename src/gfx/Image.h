@@ -11,6 +11,7 @@
 
 #include "Color.h"
 
+#include "core/counted_object.h"
 
 struct SDL_PixelFormat;
 struct SDL_Surface;
@@ -22,7 +23,7 @@ namespace gfx
 	class Texture;
 
 	// Basic bitmap class / wrapper for SDL surface.
-	class Image
+	class Image : private crag::counted_object<Image>
 	{
 		OBJECT_NO_COPY(Image);
 	public:
