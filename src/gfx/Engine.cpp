@@ -246,8 +246,8 @@ Engine::~Engine()
 	capture_enable = false;
 	init_culling = culling;
 	
-	delete & _resource_manager;
 	delete & _scene;
+	delete & _resource_manager;
 }
 
 ResourceManager & Engine::GetResourceManager()
@@ -453,14 +453,19 @@ void Engine::SetIsSuspended(bool suspended)
 		return;
 	}
 	
-	if ((_suspended = suspended))
+	if (suspended)
 	{
 		Deinit();
 	}
 	else
 	{
-		Init();
+		if (! Init())
+		{
+			return;
+		}
 	}
+	
+	_suspended = suspended;
 }
 
 bool Engine::GetIsSuspended() const
@@ -502,13 +507,20 @@ bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
 	return message_queue.DispatchMessage(* this);
 }
 
-void Engine::Init()
+bool Engine::Init()
 {
-	app::InitContext();
+	Flush();
+	
+	if (! app::InitContext())
+	{
+		return false;
+	}
 
 	InitGlew();
 	InitVSync();
 	InitRenderState();
+	
+	return true;
 }
 
 void Engine::Deinit()
@@ -516,14 +528,19 @@ void Engine::Deinit()
 	SetCurrentProgram(nullptr);
 	SetVboResource(nullptr);
 
+	Flush();
+
+	app::DeinitContext();
+}
+
+void Engine::Flush()
+{
 	_resource_manager.UnloadAll();
 
 	for (auto & shadow_pair : _scene.GetShadows())
 	{
 		shadow_pair.second.Unload();
 	}
-
-	app::DeinitContext();
 }
 
 // Decide whether to use vsync and initialize GL state accordingly.

@@ -109,8 +109,9 @@ namespace gfx
 		void MainLoop();
 		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
-		void Init();
+		bool Init();
 		void Deinit();
+		void Flush();
 		
 		void InitVSync();
 		void InitRenderState();
