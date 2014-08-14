@@ -15,6 +15,10 @@
 
 #include "core/Random.h"
 
+#if defined(CRAG_VERIFY_ENABLED)
+#define CRAG_FIBER_VERIFY
+#endif
+
 
 using namespace ipc;
 
@@ -45,7 +49,7 @@ namespace
 	// figures out a sensible number of bytes to allocate for the fiber's stack
 	std::size_t calculate_stack_allocation(std::size_t requested_stack_size)
 	{
-#if defined(CRAG_VERIFY_ENABLED)
+#if defined(CRAG_FIBER_VERIFY)
 		requested_stack_size = (requested_stack_size * 2) + 2048;
 #endif
 
@@ -72,7 +76,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 
 	InitContext();
 
-#if defined(CRAG_VERIFY_ENABLED)
+#if defined(CRAG_FIBER_VERIFY)
 	InitStackUseEstimator();
 #endif
 
@@ -84,7 +88,7 @@ Fiber::Fiber(char const * name, std::size_t stack_size, void * data, Callback * 
 
 Fiber::~Fiber()
 {
-#if defined(CRAG_VERIFY_ENABLED)
+#if defined(CRAG_FIBER_VERIFY)
 	ASSERT(! IsRunning());
 	ASSERT(! IsCurrent());
 	std::size_t stack_use = EstimateStackUse();
@@ -153,13 +157,13 @@ void Fiber::Yield()
 	CRAG_VERIFY(* this);
 }
 
-#if defined(CRAG_VERIFY_ENABLED)
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Fiber, fiber)
 	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_sp, !=, static_cast<decltype(fiber._context.uc_stack.ss_sp)>(nullptr));
 	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, >=, static_cast<decltype(fiber._context.uc_stack.ss_size)>(MINSIGSTKSZ));
 	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, >=, fiber._stack_size);
 	CRAG_VERIFY_OP(fiber._context.uc_stack.ss_size, ==, calculate_stack_allocation(fiber._stack_size));
 	
+#if defined(CRAG_FIBER_VERIFY)
 	// _stack_size - and not the allocated stack size - is compared against 
 	// because this value doesn't change across platforms or build configs. 
 	// E.g. on OS X, allocated is always >= 32Ki so a Fiber with miniscule 
@@ -173,8 +177,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Fiber, fiber)
 	{
 		DEBUG_MESSAGE("%s near stack overflow: used=" SIZE_T_FORMAT_SPEC "; requested:" SIZE_T_FORMAT_SPEC, fiber._name, stack_use, fiber._stack_size);
 	}
+#endif
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
+#if defined(CRAG_FIBER_VERIFY)
 void Fiber::InitStackUseEstimator()
 {
 	// Write to each address in the stack and check these values in the d'tor.
@@ -264,7 +270,7 @@ void Fiber::OnLaunchHelper(unsigned i0, unsigned i1, unsigned i2, unsigned i3, u
 
 void Fiber::OnLaunch(Fiber & fiber, Callback * callback, void * data)
 {
-#if defined(CRAG_VERIFY_ENABLED)
+#if defined(CRAG_FIBER_VERIFY)
 	CRAG_VERIFY_TRUE(fiber.IsCurrent());
 	CRAG_VERIFY_OP(fiber.EstimateStackUse(), >, 0u);
 #endif
