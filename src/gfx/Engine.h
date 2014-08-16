@@ -107,7 +107,6 @@ namespace gfx
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
-		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
 		bool Init();
 		void Deinit();

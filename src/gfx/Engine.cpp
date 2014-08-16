@@ -502,11 +502,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	SetSpaceListener::SetIsListening(false);
 }
 
-bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
-{
-	return message_queue.DispatchMessage(* this);
-}
-
 bool Engine::Init()
 {
 	Flush();
