@@ -14,7 +14,6 @@
 #include "Image.h"
 #include "LightType.h"
 #include "RenderBuffer.h"
-#include "Texture.h"
 
 #if defined(WIN32)
 #include "SetCameraEvent.h"

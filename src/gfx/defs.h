@@ -40,6 +40,32 @@ namespace geom
 
 namespace gfx
 {
+	// CubeMap - six of something
+	template <typename Type>
+	using CubeMap = std::array<std::array<Type, 2>, 3>;
+	
+	template <typename Function>
+	void ForEachSide(Function f)
+	{
+		for (auto d = 0; d != 3; ++ d)
+		{
+			for (auto p = 0; p != 2; ++ p)
+			{
+				f(d, p);
+			}
+		}
+	}
+
+	template <typename CubeMap, typename Function>
+	void ForEach(CubeMap & cube_map, Function f)
+	{
+		ForEachSide([& cube_map, f] (int d, int p) {
+			auto & side = cube_map[d][p];
+			f(side);
+		});
+	}
+
+	// GL resource types
 	class Program;
 
 	class VboResource;
@@ -47,6 +73,7 @@ namespace gfx
 	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;
 	
 	class Texture;
+	using TextureCubeMap = CubeMap<Texture>;
 
 	// render layers
 	enum class Layer
@@ -77,6 +104,7 @@ namespace gfx
 	using ProgramHandle = ResourceHandle<Program>;
 	using VboResourceHandle = ResourceHandle<VboResource>;
 	using TextureResourceHandle = ResourceHandle<Texture>;
+	using TextureCubeMapHandle = ResourceHandle<TextureCubeMap>;
 
 	// geometric types
 	typedef float Scalar;
