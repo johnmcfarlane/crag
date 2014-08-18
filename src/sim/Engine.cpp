@@ -223,6 +223,12 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	while (! quit_flag)
 	{
+		if (IsPaused()) 
+		{
+			message_queue.DispatchMessage(* this);
+			continue;
+		}
+
 		message_queue.DispatchMessages(* this);
 		
 		core::Time time = app::GetTime();
@@ -258,12 +264,6 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 void Engine::Tick()
 {
-	// Tick the entities.
-	if (_pause_counter) 
-	{
-		return;
-	}
-
 	if (_collision_scene.Tick(_lod_parameters))
 		STAT_SET(form_changed_sim, true);
 	else

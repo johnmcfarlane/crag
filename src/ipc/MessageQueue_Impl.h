@@ -69,7 +69,8 @@ struct ipc::MessageQueue<CLASS>::BufferNode : private crag::counted_object<Buffe
 
 template <typename CLASS>
 ipc::MessageQueue<CLASS>::MessageQueue(size_type capacity)
-: _buffers(new BufferNode(capacity))
+: _semaphore(Semaphore::Create(0))
+, _buffers(new BufferNode(capacity))
 {
 }
 
@@ -86,6 +87,8 @@ ipc::MessageQueue<CLASS>::~MessageQueue()
 	
 	ASSERT(_buffers->buffer.empty());
 	ASSERT(_buffers->next == nullptr);
+	
+	delete & _semaphore;
 }
 
 template <typename CLASS>
@@ -98,7 +101,8 @@ template <typename CLASS>
 template <typename MESSAGE>
 void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 {
-	Lock critical_section(_mutex);
+	_mutex.lock();
+	
 	CRAG_VERIFY(* this);
 	
 	auto * node = & GetPushBufferNode();
@@ -123,25 +127,27 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 		ASSERT(node->next == nullptr);
 		node->next.reset(new BufferNode(new_capacity));
 		node = node->next.get();
-
-		smp::Yield();
 	}
 
+	_mutex.unlock();
+	_semaphore.Increment();
+	
 	CRAG_VERIFY(* this);
 }
 
 template <typename CLASS>
-bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
+bool ipc::MessageQueue<CLASS>::TryDispatchMessage(Class & object)
 {
+	if (! _semaphore.TryDecrement())
+	{
+		return false;
+	}
+	
 	_mutex.lock();
 	CRAG_VERIFY(* this);
 	
 	auto & pull_buffer = GetPopBuffer();
-	if (pull_buffer.empty())
-	{
-		_mutex.unlock();
-		return false;
-	}
+	ASSERT (! pull_buffer.empty());
 	
 	EnvelopeBase const & message_wrapper = pull_buffer.front();
 
@@ -152,18 +158,35 @@ bool ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
 }
 
 template <typename CLASS>
+void ipc::MessageQueue<CLASS>::DispatchMessage(Class & object)
+{
+	_semaphore.Decrement();
+	_mutex.lock();
+
+	CRAG_VERIFY(* this);
+	
+	auto & pull_buffer = GetPopBuffer();
+	ASSERT(! pull_buffer.empty());
+	
+	EnvelopeBase const & message_wrapper = pull_buffer.front();
+
+	// calls complete dispatch with a (non-sliced) copy of object
+	message_wrapper(* this, object);
+}
+
+template <typename CLASS>
 int ipc::MessageQueue<CLASS>::DispatchMessages(Class & object)
 {
 	int num_messages = 0;
 			
-	while (DispatchMessage(object))
+	while (TryDispatchMessage(object))
 	{
 		++ num_messages;
 	}
 			
 	return num_messages;
 }
-		
+
 template <typename CLASS>
 template <typename MESSAGE>
 void ipc::MessageQueue<CLASS>::CompleteDispatch(MESSAGE message, Class & object)

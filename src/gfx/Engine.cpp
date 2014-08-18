@@ -476,13 +476,16 @@ bool Engine::GetIsSuspended() const
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	auto const & children = _scene.GetRoot().GetChildren();
-	while (! quit_flag || ! children.empty())
+	
+	do
 	{
 		CRAG_VERIFY(_scene);
-		message_queue.DispatchMessages(* this);
-		CRAG_VERIFY(_scene);
 		
-		if (! _suspended && _ready && (_dirty || quit_flag))
+		message_queue.DispatchMessage(* this);
+		
+		CRAG_VERIFY(_scene);
+
+		if (! _suspended && _ready && _dirty)
 		{
 			PreRender();
 			UpdateTransformations();
@@ -491,11 +494,14 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			Capture();
 			
 			_dirty = false;
+
+			message_queue.DispatchMessages(* this);
 		}
-		else
-		{
-			smp::Yield();
-		}
+	}	while (! quit_flag);
+	
+	while (! children.empty())
+	{
+		message_queue.DispatchMessages(* this);
 	}
 
 	SetCameraListener::SetIsListening(false);

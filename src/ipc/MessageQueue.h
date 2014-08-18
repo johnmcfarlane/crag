@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "smp/Semaphore.h"
 #include "smp/SimpleMutex.h"
 #include "smp/smp.h"
 
@@ -35,8 +36,8 @@ namespace ipc
 
 		struct BufferNode;
 
-		typedef smp::SimpleMutex Mutex;
-		typedef std::lock_guard<Mutex> Lock;
+		using Mutex = smp::SimpleMutex;
+		using Semaphore = smp::Semaphore;
 	public:
 		typedef typename Buffer::size_type size_type;
 		
@@ -76,7 +77,10 @@ namespace ipc
 		void PushBack(MESSAGE const & object);
 		
 		// returns false iff the Daemon should quit
-		bool DispatchMessage(Class & object);
+		bool TryDispatchMessage(Class & object);
+		
+		// returns false iff the Daemon should quit
+		void DispatchMessage(Class & object);
 		
 		// returns number of messages process
 		int DispatchMessages(Class & object);
@@ -97,6 +101,7 @@ namespace ipc
 		// variables
 
 		Mutex _mutex;
+		Semaphore & _semaphore;
 		std::unique_ptr<BufferNode> _buffers;
 	};
 }

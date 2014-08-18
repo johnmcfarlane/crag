@@ -149,7 +149,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	while (! quit_flag) 
 	{
-		message_queue.DispatchMessages(* this);
+		message_queue.DispatchMessage(* this);
 
 		if (! suspend_flag)
 		{
