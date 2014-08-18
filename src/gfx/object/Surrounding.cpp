@@ -67,13 +67,6 @@ Surrounding::Surrounding(Engine & engine)
 	CRAG_VERIFY(* this);
 }
 
-Surrounding::~Surrounding()
-{
-	CRAG_VERIFY(* this);
-
-	SetVboResource(nullptr);
-}
-
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	CRAG_VERIFY(static_cast<Object const &>(object));
 
