@@ -324,6 +324,8 @@ namespace
 	// The main program function.
 	bool CragMain(int argc, char * const * argv)
 	{
+		FUNCTION_NO_REENTRY;
+
 		PrintMessage(stdout,
 			"Crag Demo; Copyright 2010-2014 John McFarlane\n");
 
