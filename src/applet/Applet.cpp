@@ -114,6 +114,8 @@ void Applet::WaitFor(Condition & condition)
 void Applet::OnLaunch(void * data)
 {
 	Applet & applet = ref(reinterpret_cast<Applet *>(data));
+	
+	CRAG_VERIFY(applet);
 	ASSERT(applet.IsRunning());
 	
 	ASSERT(applet._condition == null_condition);
