@@ -170,6 +170,13 @@ void Engine::IncrementPause(int increment)
 	CRAG_VERIFY(* this);
 }
 
+bool Engine::IsPaused() const
+{
+	CRAG_VERIFY(* this);
+	
+	return _pause_counter > 0;
+}
+
 void Engine::OnToggleGravity()
 {
 	apply_gravity = ! apply_gravity;

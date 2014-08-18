@@ -96,6 +96,8 @@ namespace sim
 		gfx::LodParameters const & GetLodParameters() const;
 		
 		void IncrementPause(int increment);
+		bool IsPaused() const;
+		
 		void OnToggleGravity();
 		void OnToggleCollision();
 
