@@ -68,8 +68,10 @@
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
 #else
+#if defined(WIN32)
 #define GLEW_STATIC
 #include <GL/glew.h>	 // must be included before gl.h 
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif

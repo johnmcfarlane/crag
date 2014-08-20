@@ -102,10 +102,11 @@ namespace
 	
 	void setDepthRange(float near, float far)
 	{
-#if defined(WIN32)
-		glDepthRange(near, far);
-#else
+#if defined(CRAG_USE_GLES)
 		glDepthRangef(near, far);
+#endif
+#if defined(CRAG_USE_GL)
+		glDepthRange(near, far);
 #endif
 	}
 
