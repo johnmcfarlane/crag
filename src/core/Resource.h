@@ -47,6 +47,8 @@ namespace crag
 			using WrapperUniquePtr = std::unique_ptr<WrapperInterface>;
 			using CreateFunctionType = WrapperInterface * ();
 			using CreateFunctionWrapperType = std::function<CreateFunctionType>;
+			using Mutex = std::mutex;
+			using LockGuard = std::lock_guard<Mutex>;
 			
 		public:
 			template <typename Type>
@@ -77,6 +79,7 @@ namespace crag
 			OBJECT_NO_COPY(Resource);
 			CRAG_VERIFY_INVARIANTS_DECLARE(Resource);
 			
+			Resource() = delete;
 			Resource(CreateFunctionWrapperType create_function, TypeId type_id);
 			Resource(Resource && rhs);
 			
@@ -98,6 +101,7 @@ namespace crag
 			mutable WrapperUniquePtr _object;
 			CreateFunctionWrapperType _create_function;
 			TypeId _type_id;
+			mutable Mutex _mutex;
 		};
 
 		////////////////////////////////////////////////////////////////////////////////
