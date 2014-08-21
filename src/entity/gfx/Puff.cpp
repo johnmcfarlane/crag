@@ -47,7 +47,7 @@ Puff::Puff(Engine & engine, Transformation const & local_transformation, Scalar 
 {
 	STAT_INC(num_puffs, 1);
 
-	auto const & resource_manager = crag::core::ResourceManager::Get();
+	auto const & resource_manager = engine.GetResourceManager();
 	
 	auto program = resource_manager.GetHandle<DiskProgram>("DiskProgram");
 	SetProgram(program);
