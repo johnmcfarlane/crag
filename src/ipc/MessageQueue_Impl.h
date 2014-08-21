@@ -136,9 +136,9 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 }
 
 template <typename CLASS>
-bool ipc::MessageQueue<CLASS>::TryDispatchMessage(Class & object)
+bool ipc::MessageQueue<CLASS>::TryDispatchMessage(Class & object, core::Time timeout)
 {
-	if (! _semaphore.TryDecrement())
+	if (! _semaphore.TryDecrement(timeout))
 	{
 		return false;
 	}

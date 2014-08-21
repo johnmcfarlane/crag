@@ -11,7 +11,7 @@
 
 #include "RegulatorScript.h"
 
-#include "applet/AppletInterface_Impl.h"
+#include "applet/AppletInterface.h"
 
 #include "form/Engine.h"
 
@@ -289,17 +289,11 @@ void RegulatorScript(applet::AppletInterface & applet_interface)
 		regulator->BeginExit();
 	}
 	
-	applet_interface.WaitFor([& regulators] () -> bool 
+	do
 	{
-		for (auto regulator : regulators)
-		{
-			if (regulator->IsExitOk())
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	});
+		applet_interface.Sleep(0);
+	}	while (std::any_of(std::begin(regulators), std::end(regulators), [] (Regulator const * regulator) {
+			return ! regulator->IsExitOk();
+		}));
 }
 

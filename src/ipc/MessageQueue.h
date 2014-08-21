@@ -77,7 +77,7 @@ namespace ipc
 		void PushBack(MESSAGE const & object);
 		
 		// returns false iff the Daemon should quit
-		bool TryDispatchMessage(Class & object);
+		bool TryDispatchMessage(Class & object, core::Time timeout = 0);
 		
 		// returns false iff the Daemon should quit
 		void DispatchMessage(Class & object);

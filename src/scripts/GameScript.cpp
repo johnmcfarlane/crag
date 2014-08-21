@@ -30,8 +30,9 @@
 #include "core/Random.h"
 
 using geom::Vector3f;
+using applet::AppletInterface;
 
-	CONFIG_DEFINE(test_suspend_resume, bool, false);
+CONFIG_DEFINE(test_suspend_resume, bool, false);
 
 namespace 
 {
@@ -54,7 +55,6 @@ namespace
 	// variables
 
 	Random random_sequence;
-	applet::AppletInterface * _applet_interface;
 	sim::EntityHandle _player;
 	EntityVector _shapes;
 	bool _enable_dynamic_origin = true;
@@ -68,7 +68,7 @@ namespace
 		return random_sequence.GetUnit<double>();
 	}
 	
-	void SpawnShapes(int shape_num)
+	void SpawnShapes(int shape_num, AppletInterface & applet_interface)
 	{
 		if (max_shapes == 0)
 		{
@@ -90,7 +90,7 @@ namespace
 			return;
 		}
 
-		auto camera_ray = _applet_interface->Get<sim::Engine, sim::Ray3>([] (sim::Engine & engine) -> sim::Ray3 {
+		auto camera_ray = applet_interface.Get<sim::Engine, sim::Ray3>([] (sim::Engine & engine) -> sim::Ray3 {
 			return engine.GetCamera();
 		});
 	
@@ -129,7 +129,7 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents(core::EventWatcher & event_watcher)
+	void HandleEvents(core::EventWatcher & event_watcher, AppletInterface & applet_interface)
 	{
 		int num_events = 0;
 	
@@ -147,7 +147,8 @@ namespace
 			{
 				case SDL_SCANCODE_ESCAPE:
 				{
-					return false;
+					app::Quit();
+					break;
 				}
 
 				case SDL_SCANCODE_I:
@@ -165,28 +166,25 @@ namespace
 					break;
 				
 				case SDL_SCANCODE_COMMA:
-					SpawnShapes(0);
+					SpawnShapes(0, applet_interface);
 					break;
 				
 				case SDL_SCANCODE_PERIOD:
-					SpawnShapes(1);
+					SpawnShapes(1, applet_interface);
 					break;
 				
 				default:
 					break;
 			}
 		}
-
-		return true;
 	}
 }
 
 // main entry point
-void GameScript(applet::AppletInterface & applet_interface)
+void GameScript(AppletInterface & applet_interface)
 {
 	FUNCTION_NO_REENTRY;
 
-	_applet_interface = & applet_interface;
 	core::EventWatcher event_watcher;
 
 	// coordinate system
@@ -239,7 +237,7 @@ void GameScript(applet::AppletInterface & applet_interface)
 	}
 
 	// main loop
-	while (! _applet_interface->GetQuitFlag())
+	while (! applet_interface.GetQuitFlag())
 	{
 		if (test_suspend_resume)
 		{
@@ -253,21 +251,15 @@ void GameScript(applet::AppletInterface & applet_interface)
 			{
 				float sleep = Squared(Random::sequence.GetUnit());
 				DEBUG_MESSAGE("sleep=%f", sleep);
-				_applet_interface->Sleep(sleep);
+				applet_interface.Sleep(sleep);
 			}
 		}
 		else
 		{
-			applet_interface.WaitFor([&] () 
-			{
-				return ! event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
-			});
+			applet_interface.Sleep(0);
 		}
 
-		if (! HandleEvents(event_watcher))
-		{
-			break;
-		}
+		HandleEvents(event_watcher, applet_interface);
 	}
 	
 	while (! _shapes.empty())
@@ -283,7 +275,4 @@ void GameScript(applet::AppletInterface & applet_interface)
 	
 	// remove skybox
 	skybox.Release();
-
-	ASSERT(_applet_interface == & applet_interface);
-	_applet_interface = nullptr;
 }

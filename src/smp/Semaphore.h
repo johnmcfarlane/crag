@@ -30,6 +30,7 @@ namespace smp
 		
 		virtual void Decrement() = 0;
 		virtual bool TryDecrement() = 0;
+		virtual bool TryDecrement(core::Time timeout) = 0;
 		virtual void Increment() = 0;
 	};
 }

@@ -13,9 +13,8 @@
 
 #include "smp.h"
 
-// core
+#include "core/app.h"
 #include "core/debug.h"
-
 
 namespace smp 
 { 
@@ -23,7 +22,7 @@ namespace smp
 	{
 		// Version for when SDL Semaphores are working properly.
 		// This should hopefully block efficiently.
-		class EfficientSemaphore : public Semaphore
+		class EfficientSemaphore final : public Semaphore
 		{
 		public:
 			EfficientSemaphore(SDL_sem & sdl_semaphore)
@@ -67,6 +66,25 @@ namespace smp
 				}
 			}
 			
+			bool TryDecrement(core::Time timeout) override
+			{
+				auto milliseconds = Uint32(timeout * 1000);
+				int result = SDL_SemWaitTimeout(& _sdl_semaphore, milliseconds);
+				
+				switch (result)
+				{
+					case 0:
+						return true;
+						
+					case SDL_MUTEX_TIMEDOUT:
+						return false;
+						
+					default:
+						DEBUG_BREAK_SDL();
+						return false;
+				}
+			}
+			
 			void Increment() override
 			{
 				if (SDL_SemPost(& _sdl_semaphore) != 0)
@@ -82,7 +100,7 @@ namespace smp
 
 
 		// Behaves exactly like a semaphore but uses loops for its locks.
-		class CompatibleSemaphore : public Semaphore
+		class CompatibleSemaphore final : public Semaphore
 		{
 		public:
 			CompatibleSemaphore(ValueType initial_value)
@@ -115,6 +133,26 @@ namespace smp
 				return false;
 			}
 			
+			bool TryDecrement(core::Time timeout) override
+			{
+				auto timeout_time = app::GetTime() + timeout;
+				
+				while (true)
+				{
+					if (TryDecrement())
+					{
+						return true;
+					}
+					
+					if (timeout_time >= app::GetTime())
+					{
+						return false;
+					}
+					
+					smp::Yield();
+				}
+			}
+			
 			void Increment() override
 			{
 				std::atomic_fetch_add(& _value, 1);
@@ -129,13 +167,13 @@ namespace smp
 	// The semaphore makerer.
 	Semaphore & Semaphore::Create(ValueType initial_value)
 	{
-#if ! defined(WIN32)
 		SDL_sem * sdl_semaphore = SDL_CreateSemaphore(initial_value);
 		if (sdl_semaphore != nullptr)
 		{
 			return * new EfficientSemaphore(* sdl_semaphore);
 		}
-#endif
+		
+		DEBUG_BREAK("Failed to create Semaphore");
 		return * new CompatibleSemaphore(initial_value);
 	}
 }

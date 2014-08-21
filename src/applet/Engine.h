@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "defs.h"
-
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 
@@ -60,8 +58,8 @@ namespace applet
 	private:
 		bool HasFibersActive() const;
 		
-		bool ProcessTasks();
-		bool ProcessTask(Applet & applet);
+		core::Time ProcessTasks();
+		core::Time ProcessTask(Applet & applet);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

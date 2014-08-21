@@ -16,10 +16,15 @@
 
 namespace applet
 {
+	DECLARE_CLASS_HANDLE(Applet);	// applet::AppletHandle
+
+	// condition on which to wake from a WaitFor call
+	typedef std::function<void (AppletInterface &)> LaunchFunction;
+
 	// Base class for applets, which are run in fibers.
 	// If your applet is sufficiently complex that it deserves its own class,
 	// derive that class from this one. Alternatively, specialize the Applet class.
-	class Applet : public ipc::ObjectBase<Applet, Engine>, public AppletInterface
+	class Applet final : public ipc::ObjectBase<Applet, Engine>, public AppletInterface
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -33,30 +38,30 @@ namespace applet
 		Applet(Engine & engine, char const * name, std::size_t stack_size, LaunchFunction const & function);
 		~Applet();
 		
-		Engine & GetEngine() const override;
+		CRAG_VERIFY_INVARIANTS_DECLARE(Applet);
 
-		char const * GetName() const;
-		
 		// true iff the applet has not yet returned
 		bool IsRunning() const;
 		
-		// the condition which must test true before the applet can continue
-		const Condition & GetCondition() const;
+		// the absolute time when the Applet wishes to be continued
+		core::Time GetWakeTime() const;
 		
 		// continue execution
 		void Continue();
 
+		// applet should return from its launch function if quit flag is set
 		void SetQuitFlag();
-		
-		CRAG_VERIFY_INVARIANTS_DECLARE(Applet);
-	private:
-		
-		// AppletInterface overrides
-		virtual bool GetQuitFlag() const override;
-		
-		virtual void Sleep(core::Time duration) override;
-		virtual void WaitFor(Condition & condition) override;
 
+		// AppletInterface overrides
+		bool GetQuitFlag() const override;
+		
+		Engine & GetEngine() const override;
+
+		char const * GetName() const override;
+		
+		bool Sleep(core::Time duration) override;
+
+	private:
 		// called on fiber startup
 		static void OnLaunch (void *);
 
@@ -65,7 +70,7 @@ namespace applet
 		
 		ipc::Fiber _fiber;
 		LaunchFunction _function;
-		Condition _condition;
+		core::Time _wake_time;
 		bool _quit_flag;
 	};
 }
