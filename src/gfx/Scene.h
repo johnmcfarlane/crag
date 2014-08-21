@@ -29,6 +29,8 @@ namespace gfx
 	{
 		OBJECT_NO_COPY(Scene);
 	public:
+		using RenderList = std::vector<Object *>;
+		
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
@@ -50,8 +52,8 @@ namespace gfx
 		Object & GetRoot();
 		Object const & GetRoot() const;
 		
-		Object::RenderList & GetRenderList();
-		Object::RenderList const & GetRenderList() const;
+		RenderList & GetRenderList();
+		RenderList const & GetRenderList() const;
 
 		Light::List & GetLightList();
 		Light::List const & GetLightList() const;
@@ -70,7 +72,7 @@ namespace gfx
 		Pov _pov;
 		
 		Object _root;	// root of object heirachy; uses list hook in Object
-		Object::RenderList _render_list;	// flat list of drawable objects
+		RenderList _render_list;	// flat list of drawable objects
 		Light::List _light_list;
 		ShadowMap _shadows;
 	};
