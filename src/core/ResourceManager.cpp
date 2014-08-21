@@ -58,10 +58,14 @@ void ResourceManager::Unload(KeyType const & key) const
 
 void ResourceManager::UnloadAll() const
 {
+	_mutex.ReadLock();
+
 	for (auto const & resource_pair : _resources)
 	{
 		resource_pair.second.Unload();
 	}
+	
+	_mutex.ReadUnlock();
 }
 
 ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & key) const
@@ -89,7 +93,7 @@ ResourceManager::ValueType & ResourceManager::GetResource(KeyType const & key)
 
 void ResourceManager::Register(KeyType const & key, ValueType && value)
 {
-	_mutex.WriteLock();
+	_mutex.ReadLock();
 	
 	auto found = _resources.find(key);
 	if (found != _resources.end())
@@ -101,5 +105,5 @@ void ResourceManager::Register(KeyType const & key, ValueType && value)
 	
 	_resources.insert(std::make_pair(key, std::move(value)));
 	
-	_mutex.WriteUnlock();
+	_mutex.ReadUnlock();
 }
