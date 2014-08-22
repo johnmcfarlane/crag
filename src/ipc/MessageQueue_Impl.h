@@ -69,8 +69,7 @@ struct ipc::MessageQueue<CLASS>::BufferNode : private crag::counted_object<Buffe
 
 template <typename CLASS>
 ipc::MessageQueue<CLASS>::MessageQueue(size_type capacity)
-: _semaphore(Semaphore::Create(0))
-, _buffers(new BufferNode(capacity))
+: _buffers(new BufferNode(capacity))
 {
 }
 
@@ -87,8 +86,6 @@ ipc::MessageQueue<CLASS>::~MessageQueue()
 	
 	ASSERT(_buffers->buffer.empty());
 	ASSERT(_buffers->next == nullptr);
-	
-	delete & _semaphore;
 }
 
 template <typename CLASS>

@@ -14,23 +14,24 @@ namespace smp
 {
 	class Semaphore
 	{
+	public:
+		// value
+		typedef Uint32 ValueType;
+
+		// functions
 		OBJECT_NO_COPY(Semaphore);
 		
-	protected:
-		Semaphore() { }
-	public:
-		// Should be uint32_t but documentation is full of references to negative values.
-		typedef int32_t ValueType;
+		Semaphore(ValueType initial_value = 0);
+		~Semaphore();
 		
-		static Semaphore & Create(ValueType initial_value);
+		ValueType GetValue() const;
 		
-		virtual ~Semaphore() { }
-		
-		virtual ValueType GetValue() const = 0;
-		
-		virtual void Decrement() = 0;
-		virtual bool TryDecrement() = 0;
-		virtual bool TryDecrement(core::Time timeout) = 0;
-		virtual void Increment() = 0;
+		void Decrement();
+		bool TryDecrement();
+		bool TryDecrement(core::Time timeout);
+		void Increment();
+
+	private:
+		SDL_sem & _sdl_semaphore;
 	};
 }

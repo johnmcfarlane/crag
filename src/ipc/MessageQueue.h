@@ -101,7 +101,7 @@ namespace ipc
 		// variables
 
 		Mutex _mutex;
-		Semaphore & _semaphore;
+		Semaphore _semaphore;
 		std::unique_ptr<BufferNode> _buffers;
 	};
 }
