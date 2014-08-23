@@ -18,12 +18,21 @@ using namespace crag::core;
 
 ResourceManager ResourceManager::_singleton;
 
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(ResourceManager, self)
+	self._mutex.ReadLock();
+	for (auto & resource : self._resources)
+	{
+		CRAG_VERIFY(resource.second);
+	}
+	self._mutex.ReadUnlock();
+CRAG_VERIFY_INVARIANTS_DEFINE_END
+
 ResourceManager & ResourceManager::Get()
 {
 	return _singleton;
 }
 
-void ResourceManager::Unregister(KeyType const & key)
+void ResourceManager::Unregister(KeyType key)
 {
 	_mutex.WriteLock();
 	
@@ -44,13 +53,13 @@ void ResourceManager::Clear()
 	_mutex.WriteUnlock();
 }
 
-void ResourceManager::Load(KeyType const & key) const
+void ResourceManager::Load(KeyType key) const
 {
 	auto const & resource = GetResource(key);
 	resource.Load();
 }
 
-void ResourceManager::Unload(KeyType const & key) const
+void ResourceManager::Unload(KeyType key) const
 {
 	auto const & resource = GetResource(key);
 	resource.Unload();
@@ -68,7 +77,7 @@ void ResourceManager::UnloadAll() const
 	_mutex.ReadUnlock();
 }
 
-ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & key) const
+ResourceManager::ValueType const & ResourceManager::GetResource(KeyType key) const
 {
 	_mutex.ReadLock();
 	
@@ -85,13 +94,13 @@ ResourceManager::ValueType const & ResourceManager::GetResource(KeyType const & 
 	return resource;
 }
 
-ResourceManager::ValueType & ResourceManager::GetResource(KeyType const & key)
+ResourceManager::ValueType & ResourceManager::GetResource(KeyType key)
 {
 	auto const_this = const_cast<ResourceManager const *>(this);
 	return const_cast<ValueType &>(const_this->GetResource(key));
 }
 
-void ResourceManager::Register(KeyType const & key, ValueType && value)
+void ResourceManager::Register(KeyType key, ValueType && value)
 {
 	_mutex.ReadLock();
 	
