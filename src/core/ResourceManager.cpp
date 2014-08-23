@@ -16,41 +16,26 @@ using namespace crag::core;
 ////////////////////////////////////////////////////////////////////////////////
 // core::ResourceManager member definitions
 
-ResourceManager ResourceManager::_singleton;
-
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(ResourceManager, self)
-	self._mutex.ReadLock();
 	for (auto & resource : self._resources)
 	{
 		CRAG_VERIFY(resource.second);
 	}
-	self._mutex.ReadUnlock();
 CRAG_VERIFY_INVARIANTS_DEFINE_END
-
-ResourceManager & ResourceManager::Get()
-{
-	return _singleton;
-}
 
 void ResourceManager::Unregister(KeyType key)
 {
-	_mutex.WriteLock();
-	
 	auto erased = _resources.erase(key);
 	if (erased != 1)
 	{
 		DEBUG_BREAK("didn't remove a single element (%d)", int(erased));
 	}
 	ASSERT(_resources.find(key) == _resources.end());
-	
-	_mutex.WriteUnlock();
 }
 
 void ResourceManager::Clear()
 {
-	_mutex.WriteLock();
 	_resources.clear();
-	_mutex.WriteUnlock();
 }
 
 void ResourceManager::Load(KeyType key) const
@@ -67,20 +52,14 @@ void ResourceManager::Unload(KeyType key) const
 
 void ResourceManager::UnloadAll() const
 {
-	_mutex.ReadLock();
-
 	for (auto const & resource_pair : _resources)
 	{
 		resource_pair.second.Unload();
 	}
-	
-	_mutex.ReadUnlock();
 }
 
 ResourceManager::ValueType const & ResourceManager::GetResource(KeyType key) const
 {
-	_mutex.ReadLock();
-	
 	auto found = _resources.find(key);
 	if (found == _resources.end())
 	{
@@ -90,7 +69,6 @@ ResourceManager::ValueType const & ResourceManager::GetResource(KeyType key) con
 	
 	auto const & resource = found->second;
 	
-	_mutex.ReadUnlock();
 	return resource;
 }
 
@@ -102,8 +80,6 @@ ResourceManager::ValueType & ResourceManager::GetResource(KeyType key)
 
 void ResourceManager::Register(KeyType key, ValueType && value)
 {
-	_mutex.ReadLock();
-	
 	auto found = _resources.find(key);
 	if (found != _resources.end())
 	{
@@ -113,6 +89,4 @@ void ResourceManager::Register(KeyType key, ValueType && value)
 	}
 	
 	_resources.insert(std::make_pair(key, std::move(value)));
-	
-	_mutex.ReadUnlock();
 }

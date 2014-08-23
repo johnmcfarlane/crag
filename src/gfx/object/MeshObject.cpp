@@ -17,7 +17,7 @@
 #include "gfx/IndexedVboResource.h"
 #include "gfx/Program.h"
 
-#include "core/ResourceManager.h"
+#include "core/GlobalResourceManager.h"
 
 using namespace gfx;
 
@@ -32,8 +32,7 @@ MeshObject::MeshObject(Engine & engine, Transformation const & local_transformat
 , _scale(scale)
 , _lit_vbo_key(lit_vbo_key)
 {
-	auto & global_resource_manager = crag::core::ResourceManager::Get();
-	_plain_mesh = global_resource_manager.GetHandle<PlainMesh>(plain_mesh_key);
+	_plain_mesh = crag::GlobalResourceManager::GetHandle<PlainMesh>(plain_mesh_key);
 	_bounding_radius = GetBoundingRadius(* _plain_mesh, scale);
 	
 	auto & gfx_resource_manager = engine.GetResourceManager();

@@ -48,7 +48,7 @@
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
-#include "core/ResourceManager.h"
+#include "core/GlobalResourceManager.h"
 
 using namespace std;
 using namespace sim;
@@ -699,13 +699,12 @@ namespace
 	void ConstructShip(Entity & entity, Vector3 const & position)
 	{
 		Engine & engine = entity.GetEngine();
-		auto & resource_manager = crag::core::ResourceManager::Get();
 
 		// physics
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto velocity = Vector3::Zero();
-		auto physics_mesh = resource_manager.GetHandle<physics::Mesh>("ShipPhysicsMesh");
+		auto physics_mesh = crag::GlobalResourceManager::GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto body = make_shared<physics::MeshBody>(position, & velocity, physics_engine, * physics_mesh);
 		entity.SetLocation(body);
 
@@ -848,101 +847,88 @@ namespace
 	void AddUfoResources()
 	{
 		// TODO: When physcis and gfx index are same size, return one resource from the other
-		auto & resource_manager = crag::core::ResourceManager::Get();
 
 		// ship
-		resource_manager.Register<gfx::LitMesh>("ShipLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("ShipLitMesh", [] ()
 		{
 			return GenerateShipMesh();
 		});
-		resource_manager.Register<physics::Mesh>("ShipPhysicsMesh", [] ()
+		crag::GlobalResourceManager::Register<physics::Mesh>("ShipPhysicsMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ShipLitMesh");
 			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::PlainMesh>("ShipShadowMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::PlainMesh>("ShipShadowMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ShipLitMesh");
 			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::LitMesh>("ShipFlatLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("ShipFlatLitMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ShipLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ShipLitMesh");
 			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		// cos saucer
-		resource_manager.Register<gfx::LitMesh>("CosSaucerLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("CosSaucerLitMesh", [] ()
 		{
 			return GenerateCosSaucerMesh(saucer_ball_radius, saucer_radius);
 		});
-		resource_manager.Register<physics::Mesh>("CosSaucerPhysicsMesh", [] ()
+		crag::GlobalResourceManager::Register<physics::Mesh>("CosSaucerPhysicsMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
 			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::PlainMesh>("CosSaucerShadowMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::PlainMesh>("CosSaucerShadowMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
 			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::LitMesh>("CosSaucerFlatLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("CosSaucerFlatLitMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
 			return GenerateFlatLitMesh(* lit_mesh);
 		});
 		
 		// ball saucer
-		resource_manager.Register<gfx::LitMesh>("BallSaucerLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("BallSaucerLitMesh", [] ()
 		{
 			return GenerateBallSaucerMesh(saucer_height, saucer_radius);
 		});
-		resource_manager.Register<gfx::LitMesh>("BallSaucerFlatLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("BallSaucerFlatLitMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
+			auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
 			return GenerateFlatLitMesh(* lit_mesh_handle);
 		});
-		resource_manager.Register<physics::Mesh>("BallSaucerPhysicsMesh", [] ()
+		crag::GlobalResourceManager::Register<physics::Mesh>("BallSaucerPhysicsMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
 			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::PlainMesh>("BallSaucerShadowMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::PlainMesh>("BallSaucerShadowMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
 			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
 		
 		// thargoid
-		resource_manager.Register<gfx::LitMesh>("ThargoidLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("ThargoidLitMesh", [] ()
 		{
 			return GenerateThargoidMesh(thargoid_height, thargoid_radius);
 		});
-		resource_manager.Register<gfx::LitMesh>("ThargoidFlatLitMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::LitMesh>("ThargoidFlatLitMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ThargoidLitMesh");
+			auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ThargoidLitMesh");
 			return GenerateFlatLitMesh(* lit_mesh_handle);
 		});
-		resource_manager.Register<physics::Mesh>("ThargoidPhysicsMesh", [] ()
+		crag::GlobalResourceManager::Register<physics::Mesh>("ThargoidPhysicsMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ThargoidLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ThargoidLitMesh");
 			return LitToPlainMesh<physics::ElementIndex>(* lit_mesh);
 		});
-		resource_manager.Register<gfx::PlainMesh>("ThargoidShadowMesh", [] ()
+		crag::GlobalResourceManager::Register<gfx::PlainMesh>("ThargoidShadowMesh", [] ()
 		{
-			auto & resource_manager = crag::core::ResourceManager::Get();
-			auto lit_mesh = resource_manager.GetHandle<gfx::LitMesh>("ThargoidLitMesh");
+			auto lit_mesh = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ThargoidLitMesh");
 			return LitToPlainMesh<gfx::ElementIndex>(* lit_mesh);
 		});
 		
@@ -952,43 +938,37 @@ namespace
 			
 			resource_manager.Register<gfx::LitVboResource>("ShipVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ShipFlatLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ShipFlatLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 
 			resource_manager.Register<gfx::LitVboResource>("CosSaucerVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("CosSaucerLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 
 			resource_manager.Register<gfx::LitVboResource>("CosSaucerFlatLitVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("CosSaucerFlatLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 
 			resource_manager.Register<gfx::LitVboResource>("BallSaucerVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("BallSaucerLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 
 			resource_manager.Register<gfx::LitVboResource>("BallSaucerFlatLitVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("BallSaucerFlatLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 
 			resource_manager.Register<gfx::LitVboResource>("ThargoidVbo", [] ()
 			{
-				auto & resource_manager = crag::core::ResourceManager::Get();
-				auto lit_mesh_handle = resource_manager.GetHandle<gfx::LitMesh>("ThargoidFlatLitMesh");
+				auto lit_mesh_handle = crag::GlobalResourceManager::GetHandle<gfx::LitMesh>("ThargoidFlatLitMesh");
 				return gfx::LitVboResource(* lit_mesh_handle);
 			});
 		

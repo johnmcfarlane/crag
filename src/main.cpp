@@ -25,7 +25,7 @@
 
 #include "core/app.h"
 #include "core/ConfigManager.h"
-#include "core/ResourceManager.h"
+#include "core/GlobalResourceManager.h"
 
 #include <SDL_main.h>
 
@@ -400,7 +400,7 @@ namespace
 			renderer.EndFlush();
 			formation.EndFlush();
 			
-			crag::core::ResourceManager::Get().Clear();
+			crag::GlobalResourceManager::Clear();
 		}
 		
 		app::Deinit();

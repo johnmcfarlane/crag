@@ -8,6 +8,7 @@ add_executable(crag
 	core/ConfigManager.cpp
 	core/debug.cpp
 	core/EventWatcher.cpp
+	core/GlobalResourceManager.cpp
 	core/memory.cpp
 	core/profile.cpp
 	core/Random.cpp

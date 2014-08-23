@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/core/ConfigManager.cpp \
 	$(CRAG_PATH)/core/debug.cpp \
 	$(CRAG_PATH)/core/EventWatcher.cpp \
+	$(CRAG_PATH)/core/GlobalResourceManager.cpp \
 	$(CRAG_PATH)/core/memory.cpp \
 	$(CRAG_PATH)/core/profile.cpp \
 	$(CRAG_PATH)/core/Random.cpp \

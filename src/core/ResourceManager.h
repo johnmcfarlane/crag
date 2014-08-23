@@ -12,8 +12,6 @@
 #include "HashString.h"
 #include "ResourceHandle.h"
 
-#include "smp/ReadersWriterMutex.h"
-
 namespace crag
 {
 	namespace core
@@ -23,9 +21,9 @@ namespace crag
 		// efficient access with option to deallocate and lazily reallocate resources
 		// on low memory warning (not implemented)
 		
-		// Two instances exist: a global singleton-like manager accesible via Get() and
-		// a gfx-specific instance for storing all GL objects which need to be
-		// recreated after a mobile device resumes the app.
+		// Two instances exist: a global singleton-like manager accesible via 
+		// GlobalResourceManager and a gfx-specific instance for storing all GL objects 
+		// which need to be recreated after a mobile device resumes the app.
 
 		class ResourceManager final
 		{
@@ -44,8 +42,6 @@ namespace crag
 			ResourceManager() = default;
 		
 			CRAG_VERIFY_INVARIANTS_DECLARE(ResourceManager);
-			
-			static ResourceManager & Get();
 			
 			// connects a hash string to a function object which creates an object of type, Type
 			template <typename Type, typename CreateFunction>
@@ -87,9 +83,6 @@ namespace crag
 			// variables
 
 			ResourceMap _resources;
-			mutable smp::ReadersWriterMutex _mutex;
-			
-			static ResourceManager _singleton;
 		};
 	}
 }
