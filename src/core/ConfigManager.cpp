@@ -17,7 +17,7 @@
 #include "core/debug.h"
 
 
-#if ! defined(NDEBUG) || ! defined(PROFILE)
+#if ! defined(__ANDROID__)
 #define ENABLE_CONFIG_LOAD_SAVE
 #endif
 
