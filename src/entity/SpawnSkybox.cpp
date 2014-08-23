@@ -185,10 +185,22 @@ ObjectHandle SpawnHolodeckSkybox()
 		
 		resource_manager.Register<TextureCubeMap>("HolodeckSkyboxTextures", [] () {
 			// pretty inefficient, but the holodeck's a pretty special case
+#if ! defined(WIN32)
 			return TextureCubeMap {{
 				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }},
 				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }},
 				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }} }};
+#else
+			TextureCubeMap textures;
+			for (auto & side : textures)
+			{
+				for (auto & texture : side)
+				{
+					texture = std::move(CreateHolodeckSkyboxTexture(512, 16));
+				}
+			}
+			return textures;
+#endif
 		});
 	});
 	
