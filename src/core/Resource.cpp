@@ -38,8 +38,6 @@ Resource::Resource(Resource && rhs)
 
 void Resource::Load() const
 {
-	LockGuard lock(_mutex);
-	
 	if (! _object)
 	{
 		_object = WrapperUniquePtr(_create_function());
@@ -48,8 +46,6 @@ void Resource::Load() const
 
 void Resource::Unload() const
 {
-	LockGuard lock(_mutex);
-	
 	_object = nullptr;
 }
 
