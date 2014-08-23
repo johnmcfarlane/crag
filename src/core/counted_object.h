@@ -27,6 +27,7 @@ namespace crag
 		{
 		public:
 			_Counter()
+			: _num_objects(0)
 			{
 				CRAG_VERIFY_EQUAL(_num_objects, 0);
 			}
@@ -49,7 +50,7 @@ namespace crag
 			}
 	
 		private:
-			int _num_objects = 0;
+			std::atomic<int> _num_objects;
 		};
 
 	public:
