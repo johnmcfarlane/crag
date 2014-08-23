@@ -13,5 +13,21 @@
 
 using namespace crag;
 
-GlobalResourceManager::Mutex GlobalResourceManager::_mutex;
-crag::core::ResourceManager GlobalResourceManager::_singleton;
+////////////////////////////////////////////////////////////////////////////////
+// GlobalResourceManager member definitions
+
+crag::GlobalResourceManager * GlobalResourceManager::_singleton;
+
+GlobalResourceManager::GlobalResourceManager()
+{
+	ASSERT(! _singleton);
+	
+	_singleton = this;
+}
+
+GlobalResourceManager::~GlobalResourceManager()
+{
+	ASSERT(_singleton == this);
+	
+	_singleton = nullptr;
+}

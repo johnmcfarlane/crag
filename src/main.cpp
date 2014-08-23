@@ -364,6 +364,8 @@ namespace
 		SDL_SetEventFilter(EventFilter, nullptr);
 		
 		{
+			crag::GlobalResourceManager global_resource_manager;
+			
 			// TODO: Find a way to make these common; writing everything out four times is not good.
 			// Instantiate the four daemons
 			gfx::Daemon renderer(0x8000);
@@ -399,8 +401,6 @@ namespace
 			simulation.EndFlush();
 			renderer.EndFlush();
 			formation.EndFlush();
-			
-			crag::GlobalResourceManager::Clear();
 		}
 		
 		app::Deinit();

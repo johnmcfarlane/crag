@@ -29,40 +29,35 @@ namespace crag
 		// functions
 		
 		OBJECT_NO_COPY(GlobalResourceManager);
-		GlobalResourceManager() = delete;
+		GlobalResourceManager();
+		~GlobalResourceManager();
 	
 		// connects a hash string to a function object which creates an object of type, Type
 		template <typename Type, typename CreateFunction>
 		static void Register(KeyType key, CreateFunction create_function)
 		{
-			_mutex.WriteLock();
-			_singleton.Register<Type, CreateFunction>(key, create_function);
-			_mutex.WriteUnlock();
+			_singleton->_mutex.WriteLock();
+			_singleton->_resource_manager.Register<Type, CreateFunction>(key, create_function);
+			_singleton->_mutex.WriteUnlock();
 		}
 		
 		// returns a permanent handle which can be used to point to desired resource
 		template <typename Type>
 		static core::ResourceHandle<Type> GetHandle(KeyType key)
 		{
-			_mutex.ReadLock();
-			core::ResourceHandle<Type> handle = _singleton.GetHandle<Type>(key);
-			_mutex.ReadUnlock();
+			_singleton->_mutex.ReadLock();
+			core::ResourceHandle<Type> handle = _singleton->_resource_manager.GetHandle<Type>(key);
+			_singleton->_mutex.ReadUnlock();
 			return handle;
 		}
 		
-		// as above but indescriminate
-		static void Clear()
-		{
-			_mutex.WriteLock();
-			_singleton.Clear();
-			_mutex.WriteUnlock();
-		}
-
 	private:
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
+		
+		Mutex _mutex;
+		core::ResourceManager _resource_manager;
 
-		static Mutex _mutex;
-		static core::ResourceManager _singleton;
+		static GlobalResourceManager * _singleton;
 	};
 }
