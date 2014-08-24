@@ -35,9 +35,13 @@ Scene::~Scene()
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
 	CRAG_VERIFY(self._root);
-	auto num_shadow_casters = std::count_if(std::begin(self._render_list), std::end(self._render_list), [] (Object const & object)
+	for (auto object : self._render_list)
 	{
-		return object.CastsShadow();
+		CRAG_VERIFY_REF(* object);
+	}
+	auto num_shadow_casters = std::count_if(std::begin(self._render_list), std::end(self._render_list), [] (Object const * object)
+	{
+		return object->CastsShadow();
 	});
 	auto num_shadow_lights = std::count_if(std::begin(self._light_list), std::end(self._light_list), [] (Light const & light)
 	{
@@ -62,7 +66,7 @@ void Scene::AddObject(Object & object)
 	ASSERT (& object != & _root);
 	
 	// add it to the render list.
-	_render_list.push_back(object);
+	_render_list.push_back(& object);
 
 	AdoptChild(object, _root);
 	
@@ -94,8 +98,9 @@ void Scene::RemoveObject(Object & object)
 {
 	ASSERT (& object != & _root);
 
-	// remove from list of things to be drawn
-	_render_list.remove(object);
+	// remove from list of things to be drawn; if slow, consider bsearch exploiting sortedness
+	auto found = std::find(std::begin(_render_list), std::end(_render_list), & object);
+	_render_list.erase(found);
 	
 	// remove from list of things that cast a shadow
 	if (object.CastsShadow())
@@ -119,18 +124,7 @@ void Scene::RemoveObject(Object & object)
 
 void Scene::SortRenderList()
 {
-	decltype(_render_list) unsorted;
-	
-	std::swap(unsorted, _render_list);
-	
-	while (! unsorted.empty())
-	{
-		auto & object = unsorted.front();
-		unsorted.pop_front();
-		
-		auto insertion_point = std::lower_bound(std::begin(_render_list), std::end(_render_list), object);
-		_render_list.insert(insertion_point, object);
-	}
+	std::sort(std::begin(_render_list), std::end(_render_list));
 }
 
 void Scene::AddLight(Light & light)
@@ -142,19 +136,19 @@ void Scene::AddLight(Light & light)
 	
 	if (light.GetAttributes().makes_shadow)
 	{
-		for (auto & object : _render_list)
+		for (auto object : _render_list)
 		{
-			if (! object.CastsShadow())
+			if (! object->CastsShadow())
 			{
 				continue;
 			}
 			
-			if (light.GetException() == & object)
+			if (light.GetException() == object)
 			{
 				return;
 			}
 			
-			auto key = std::make_pair(& object, & light);
+			auto key = std::make_pair(object, & light);
 			ASSERT(_shadows.find(key) == std::end(_shadows));
 			_shadows.insert(std::make_pair(key, ShadowVolumeResource::Create<ShadowVolume>([] () {
 				return ShadowVolume();
@@ -175,15 +169,15 @@ void Scene::RemoveLight(Light & light)
 
 	if (light.GetAttributes().makes_shadow)
 	{
-		for (auto & object : _render_list)
+		for (auto object : _render_list)
 		{
-			if (! object.CastsShadow() || light.GetException() == & object)
+			if (! object->CastsShadow() || light.GetException() == object)
 			{
 				continue;
 			}
 		
 			// find the shadow volume resource matching this object/light pair
-			auto key = std::make_pair(& object, & light);
+			auto key = std::make_pair(object, & light);
 			ASSERT(_shadows.find(key) != std::end(_shadows));
 		
 			_shadows.erase(key);
@@ -201,12 +195,12 @@ Object const & Scene::GetRoot() const
 	return _root;
 }
 
-Object::RenderList & Scene::GetRenderList()
+Scene::RenderList & Scene::GetRenderList()
 {
 	return _render_list;
 }
 
-Object::RenderList const & Scene::GetRenderList() const
+Scene::RenderList const & Scene::GetRenderList() const
 {
 	return _render_list;
 }

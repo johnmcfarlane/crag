@@ -102,27 +102,26 @@ namespace
 	
 	void setDepthRange(float near, float far)
 	{
-#if defined(WIN32)
-		glDepthRange(near, far);
-#else
+#if defined(CRAG_USE_GLES)
 		glDepthRangef(near, far);
+#endif
+#if defined(CRAG_USE_GL)
+		glDepthRange(near, far);
 #endif
 	}
 
 	// Given the list of objects to render, calculates suitable near/far z values.
-	RenderRange CalculateDepthRange(Object::RenderList const & render_list)
+	RenderRange CalculateDepthRange(Scene::RenderList const & render_list)
 	{
 		float float_max = std::numeric_limits<float>::max();
 		RenderRange frustum_depth_range (float_max, - float_max);
 		
 		// For all leaf nodes in the render list,
-		for (Object::RenderList::const_iterator i = render_list.begin(), end = render_list.end(); i != end; ++ i)
+		for (auto object : render_list)
 		{
-			auto & object = * i;
-			
 			// and has a render range,
 			RenderRange depth_range;
-			if (! object.GetRenderRange(depth_range))
+			if (! object->GetRenderRange(depth_range))
 			{
 				continue;
 			}
@@ -476,13 +475,16 @@ bool Engine::GetIsSuspended() const
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	auto const & children = _scene.GetRoot().GetChildren();
-	while (! quit_flag || ! children.empty())
+	
+	do
 	{
 		CRAG_VERIFY(_scene);
-		message_queue.DispatchMessages(* this);
-		CRAG_VERIFY(_scene);
 		
-		if (! _suspended && _ready && (_dirty || quit_flag))
+		message_queue.DispatchMessage(* this);
+		
+		CRAG_VERIFY(_scene);
+
+		if (! _suspended && _ready && _dirty)
 		{
 			PreRender();
 			UpdateTransformations();
@@ -491,20 +493,18 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 			Capture();
 			
 			_dirty = false;
+
+			message_queue.DispatchMessages(* this);
 		}
-		else
-		{
-			smp::Yield();
-		}
+	}	while (! quit_flag);
+	
+	while (! children.empty())
+	{
+		message_queue.DispatchMessages(* this);
 	}
 
 	SetCameraListener::SetIsListening(false);
 	SetSpaceListener::SetIsListening(false);
-}
-
-bool Engine::ProcessMessage(Daemon::MessageQueue & message_queue)
-{
-	return message_queue.DispatchMessage(* this);
 }
 
 bool Engine::Init()
@@ -597,21 +597,26 @@ void Engine::PreRender()
 {
 	// purge objects
 	auto & render_list = _scene.GetRenderList();
-	for (auto i = render_list.begin(), end = render_list.end(); i != end; )
+	for (auto i = std::begin(render_list), end = std::end(render_list); i != end; )
 	{
-		auto & object = * i;
-		++ i;
+		auto object = * i;
 		
-		auto result = object.PreRender();
+		auto result = object->PreRender();
 		
 		switch (result)
 		{
 			default:
 				ASSERT(false);
 			case Object::ok:
+				++ i;
 				break;
+				
 			case Object::remove:
-				ReleaseObject(object);
+				ReleaseObject(* object);
+				
+				CRAG_VERIFY_ARRAY_POINTER(&*i, &*std::begin(render_list), &*std::end(render_list));
+				CRAG_VERIFY_TRUE(end != std::end(render_list));
+				end = std::end(render_list);
 				break;
 		}
 	}
@@ -793,22 +798,22 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 	auto & lights = _scene.GetLightList();
 	
 	auto & render_list = _scene.GetRenderList();
-	for (auto & object : render_list)
+	for (auto object : render_list)
 	{
-		if (object.GetLayer() != layer)
+		if (object->GetLayer() != layer)
 		{
 			continue;
 		}
 		
 		// if object 'cares' what shader is enabled
-		auto required_program = object.GetProgram();
+		auto required_program = object->GetProgram();
 		if (required_program)
 		{
 			// make it current (binds if necessary)
 			SetCurrentProgram(required_program);
 		
 			// Set the model view matrix.
-			Transformation const & model_view_transformation = object.GetModelViewTransformation();
+			Transformation const & model_view_transformation = object->GetModelViewTransformation();
 			auto & model_view_matrix = model_view_transformation.GetMatrix();
 			required_program->SetModelViewMatrix(model_view_matrix);
 
@@ -831,13 +836,13 @@ void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightF
 			}
 		}
 		
-		auto required_vbo = object.GetVboResource();
+		auto required_vbo = object->GetVboResource();
 		if (required_vbo)
 		{
 			SetVboResource(required_vbo);
 		}
 		
-		object.Render(* this);
+		object->Render(* this);
 	}
 }
 
@@ -960,20 +965,20 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 	ShadowMapKey key;
 	key.second = & light;
 	auto exception = light.GetException();
-	for (auto & object : render_list)
+	for (auto object : render_list)
 	{
-		if (! object.CastsShadow() || & object == exception)
+		if (! object->CastsShadow() || object == exception)
 		{
 			continue;
 		}
 		
-		if (object.GetLayer() != Layer::opaque)
+		if (object->GetLayer() != Layer::opaque)
 		{
 			continue;
 		}
 		
 		// get shadow that matches the object-light combination
-		key.first = & object;
+		key.first = object;
 		auto found = shadows.find(key);
 		ASSERT(found != std::end(shadows));
 		
@@ -988,7 +993,7 @@ void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & lig
 		SetVboResource(ShadowVolumeHandle(& vbo_resource));
 
 		// Set the model view matrix.
-		auto & model_view_transformation = object.GetShadowModelViewTransformation();
+		auto & model_view_transformation = object->GetShadowModelViewTransformation();
 		auto & model_view_matrix = model_view_transformation.GetMatrix();
 		shadow_program->SetModelViewMatrix(model_view_matrix);
 

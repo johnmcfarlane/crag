@@ -30,7 +30,6 @@ EventWatcher::EventWatcher()
 EventWatcher::~EventWatcher()
 {
 	SDL_DelEventWatch(OnEvent, this);
-	smp::Yield();	// fingers crossed!
 }
 
 bool EventWatcher::IsEmpty()

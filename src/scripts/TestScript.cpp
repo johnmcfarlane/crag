@@ -33,6 +33,7 @@
 #include "core/Random.h"
 
 using geom::Vector3f;
+using applet::AppletInterface;
 
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
@@ -56,7 +57,6 @@ namespace
 	// variables
 
 	Random random_sequence;
-	applet::AppletInterface * _applet_interface;
 	sim::EntityHandle _vehicle;
 	EntityVector _shapes;
 	core::EventWatcher _event_watcher;
@@ -71,7 +71,7 @@ namespace
 		return random_sequence.GetUnit<double>();
 	}
 	
-	void SpawnShapes(int shape_num)
+	void SpawnShapes(int shape_num, AppletInterface & applet_interface)
 	{
 		if (max_shapes == 0)
 		{
@@ -93,7 +93,7 @@ namespace
 			return;
 		}
 
-		auto camera_ray = _applet_interface->Get<sim::Engine, sim::Ray3>([] (sim::Engine & engine) -> sim::Ray3 {
+		auto camera_ray = applet_interface.Get<sim::Engine, sim::Ray3>([] (sim::Engine & engine) -> sim::Ray3 {
 			return engine.GetCamera();
 		});
 	
@@ -132,7 +132,7 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents()
+	void HandleEvents(AppletInterface & applet_interface)
 	{
 		int num_events = 0;
 	
@@ -150,7 +150,8 @@ namespace
 			{
 				case SDL_SCANCODE_ESCAPE:
 				{
-					return false;
+					app::Quit();
+					break;
 				}
 
 				case SDL_SCANCODE_I:
@@ -168,29 +169,25 @@ namespace
 					break;
 				
 				case SDL_SCANCODE_COMMA:
-					SpawnShapes(0);
+					SpawnShapes(0, applet_interface);
 					break;
 				
 				case SDL_SCANCODE_PERIOD:
-					SpawnShapes(1);
+					SpawnShapes(1, applet_interface);
 					break;
 				
 				default:
 					break;
 			}
 		}
-
-		return true;
 	}
 }
 
 // main entry point
-void TestScript(applet::AppletInterface & applet_interface)
+void TestScript(AppletInterface & applet_interface)
 {
 	FUNCTION_NO_REENTRY;
 
-	_applet_interface = & applet_interface;
-	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
 	gfx::Color4f star_color(gfx::Color4f(1.f,.95f,.85f) * 8000000000000000.f);
@@ -226,34 +223,27 @@ void TestScript(applet::AppletInterface & applet_interface)
 	}
 
 	// main loop
-	while (! _applet_interface->GetQuitFlag())
+	while (applet_interface.Sleep(0))
 	{
-		applet_interface.WaitFor([& applet_interface, & sun1, & sun2] () {
-//			sun1.Call([] (sim::Entity & entity) {
-//				auto location = entity.GetLocation();
-//				auto time = app::GetTime() * 0.1;
-//				auto pos = geom::Vector3d(std::sin(time) * 50000000, std::cos(time) * 50000000, 0);
-//				auto & engine = entity.GetEngine();
-//				auto & origin = engine.GetOrigin();
-//				location->SetTransformation(geom::AbsToRel(pos, origin));
-//			});
+//		sun1.Call([] (sim::Entity & entity) {
+//			auto location = entity.GetLocation();
+//			auto time = app::GetTime() * 0.1;
+//			auto pos = geom::Vector3d(std::sin(time) * 50000000, std::cos(time) * 50000000, 0);
+//			auto & engine = entity.GetEngine();
+//			auto & origin = engine.GetOrigin();
+//			location->SetTransformation(geom::AbsToRel(pos, origin));
+//		});
 		
-			sun2.Call([] (sim::Entity & entity) {
-				auto const & location = entity.GetLocation();
-				auto time = app::GetTime() * 0.21314;
-				auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
-				auto const & engine = entity.GetEngine();
-				auto const & space = engine.GetSpace();
-				location->SetTransformation(space.AbsToRel(pos));
-			});
-		
-			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
+		sun2.Call([] (sim::Entity & entity) {
+			auto const & location = entity.GetLocation();
+			auto time = app::GetTime() * 0.21314;
+			auto pos = geom::Vector3d(std::sin(time) * 70000000, std::cos(time) * 70000000, 0);
+			auto const & engine = entity.GetEngine();
+			auto const & space = engine.GetSpace();
+			location->SetTransformation(space.AbsToRel(pos));
 		});
 
-		if (! HandleEvents())
-		{
-			break;
-		}
+		HandleEvents(applet_interface);
 	}
 	
 	while (! _shapes.empty())
@@ -274,6 +264,4 @@ void TestScript(applet::AppletInterface & applet_interface)
 
 	player_and_camera[1].Release();
 	player_and_camera[0].Release();
-	
-	ASSERT(_applet_interface == & applet_interface);
 }

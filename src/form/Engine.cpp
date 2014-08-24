@@ -149,7 +149,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	
 	while (! quit_flag) 
 	{
-		message_queue.DispatchMessages(* this);
+		message_queue.DispatchMessage(* this);
 
 		if (! suspend_flag)
 		{
@@ -254,8 +254,6 @@ void Engine::GenerateMesh()
 	// Sample the information for statistical output.
 	PROFILE_SAMPLE(mesh_generation_per_quaterna, last_mesh_generation_period / message.num_quaterne);
 	PROFILE_SAMPLE(mesh_generation_period, last_mesh_generation_period);
-	
-	smp::Yield();
 }
 
 std::shared_ptr<Mesh> Engine::PopMesh()

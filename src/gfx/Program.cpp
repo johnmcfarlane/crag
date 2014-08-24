@@ -196,6 +196,7 @@ bool Program::DumpInfoLog() const
 		return false;
 	}
 
+	// TODO: Consider glValidateProgram
 	std::string info_log;
 	info_log.resize(length);
 	glGetProgramInfoLog(_id, length, nullptr, & info_log[0]);

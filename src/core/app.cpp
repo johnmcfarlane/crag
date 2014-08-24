@@ -89,7 +89,7 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	
 	if (window == 0)
 	{
-		DEBUG_BREAK_SDL();
+		DEBUG_MESSAGE("Failed to create window: \"%s\"", SDL_GetError());	
 		return false;
 	}
 	

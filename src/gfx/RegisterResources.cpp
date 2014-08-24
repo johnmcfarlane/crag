@@ -21,7 +21,7 @@
 #include "Shader.h"
 #include "LitVertex.h"
 
-#include "core/ResourceManager.h"
+#include "core/GlobalResourceManager.h"
 
 using namespace gfx;
 
@@ -156,10 +156,10 @@ namespace
 		return cuboid;
 	}
 
-	void RegisterModels(ResourceManager & manager)
+	void RegisterModels()
 	{
-		manager.Register<PlainMesh>("CuboidPlainMesh", CreatePlainCuboid);
-		manager.Register<LitMesh>("CuboidLitMesh", CreateLitCuboid);
+		crag::GlobalResourceManager::Register<PlainMesh>("CuboidPlainMesh", CreatePlainCuboid);
+		crag::GlobalResourceManager::Register<LitMesh>("CuboidLitMesh", CreateLitCuboid);
 	}
 
 	void RegisterShaders(ResourceManager & manager)
@@ -224,8 +224,7 @@ namespace
 	{
 		manager.Register<LitVboResource>("CuboidVbo", [] ()
 		{
-			auto & manager = crag::core::ResourceManager::Get();
-			auto const & lit_cuboid_mesh = * manager.GetHandle<LitMesh>("CuboidLitMesh");
+			auto const & lit_cuboid_mesh = * crag::GlobalResourceManager::GetHandle<LitMesh>("CuboidLitMesh");
 			return LitVboResource(lit_cuboid_mesh);
 		});
 	
@@ -265,8 +264,7 @@ namespace
 void gfx::RegisterResources(ResourceManager & resource_manager)
 {
 	// models are not directly GL dependent and can reside in the global store
-	auto & global_resource_manager = crag::core::ResourceManager::Get();
-	RegisterModels(global_resource_manager);
+	RegisterModels();
 	
 	RegisterShaders(resource_manager);
 	RegisterVbos(resource_manager);

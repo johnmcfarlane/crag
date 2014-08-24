@@ -17,7 +17,6 @@
 #include "entity/SpawnSkybox.h"
 
 #include "applet/Applet.h"
-#include "applet/AppletInterface_Impl.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -36,6 +35,7 @@ CONFIG_DEFINE(num_animats, int, 1);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 using geom::Vector3f;
+using applet::AppletInterface;
 
 namespace 
 {
@@ -52,7 +52,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
 
-	applet::AppletInterface * _applet_interface;
 	core::EventWatcher _event_watcher;
 	bool _enable_dynamic_origin = true;
 	std::vector<sim::EntityHandle> animats;
@@ -107,7 +106,7 @@ namespace
 	}
 
 	// returns true if the applet should NOT quit
-	bool HandleEvents()
+	void HandleEvents()
 	{
 		int num_events = 0;
 	
@@ -125,7 +124,8 @@ namespace
 			{
 				case SDL_SCANCODE_ESCAPE:
 				{
-					return false;
+					app::Quit();
+					break;
 				}
 
 				case SDL_SCANCODE_I:
@@ -146,18 +146,14 @@ namespace
 					break;
 			}
 		}
-
-		return true;
 	}
 }
 
 // main entry point
-void MainScript(applet::AppletInterface & applet_interface)
+void MainScript(AppletInterface & applet_interface)
 {
 	FUNCTION_NO_REENTRY;
 
-	_applet_interface = & applet_interface;
-	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
 	star_volume.center = geom::Resized(star_volume.center, 100000000.);
@@ -191,16 +187,9 @@ void MainScript(applet::AppletInterface & applet_interface)
 	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop
-	while (! _applet_interface->GetQuitFlag())
+	while (! applet_interface.Sleep(0))
 	{
-		applet_interface.WaitFor([& applet_interface] () {
-			return ! _event_watcher.IsEmpty() || applet_interface.GetQuitFlag();
-		});
-
-		if (! HandleEvents())
-		{
-			break;
-		}
+		HandleEvents();
 	}
 	
 	sun.Release();
@@ -219,6 +208,4 @@ void MainScript(applet::AppletInterface & applet_interface)
 			return true;
 		});
 	});
-	
-	ASSERT(_applet_interface == & applet_interface);
 }

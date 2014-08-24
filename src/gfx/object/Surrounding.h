@@ -45,7 +45,6 @@ namespace gfx
 	public:
 		// functions
 		Surrounding(Engine & engine);
-		~Surrounding();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Surrounding);
 		

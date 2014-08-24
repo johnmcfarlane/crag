@@ -15,6 +15,7 @@
 
 #include "ipc/Fiber.h"
 
+#include "core/ConfigEntry.h"
 
 #if defined(NDEBUG)
 #define FILE_LOCAL_BEGIN namespace {
@@ -27,6 +28,10 @@
 
 using namespace applet;
 
+namespace
+{
+	CONFIG_DEFINE(applet_min_interval, core::Time, 0.02);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Engine member definitions
@@ -57,94 +62,77 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	ipc::Fiber::InitializeThread();
 
 	// Main loop.
-	while (message_queue.DispatchMessages(* this) != 0 || HasFibersActive() || ! _quit_flag)
+	do
 	{
-		if (! ProcessTasks())
+		auto next_wake_time = ProcessTasks();
+		if (next_wake_time < 0)
 		{
-			smp::Sleep(0.01);
+			message_queue.DispatchMessage(* this);
+			continue;
+		}
+		
+		auto pause_time = std::max(applet_min_interval, next_wake_time - app::GetTime());
+		if (message_queue.TryDispatchMessage(* this, pause_time))
+		{
+			message_queue.DispatchMessages(* this);
 		}
 	}
+	while (! _quit_flag || HasFibersActive());
 }
-
+ 
 bool Engine::HasFibersActive() const
 {
 	return ! IsEmpty();
 }
 
-// Give all applets an opportunity to run.
-bool Engine::ProcessTasks()
+// gives the next Applet an opportunity to run;
+// returns time when next Applet should run
+core::Time Engine::ProcessTasks()
 {
-	bool did_work = false;
+	Applet * soonest = nullptr;
+	auto min_wake_time = std::numeric_limits<core::Time>::max();
 	
-	// Step through all applets,
-	ForEachObject_ReleaseIf([this, & did_work] (Applet & applet) -> bool
-	{
-		// If processing was not done, 
-		if (! ProcessTask(applet))
+	ForEachObject([&] (Applet & applet) {
+		ASSERT(applet.IsRunning());
+		
+		auto wake_time = applet.GetWakeTime();
+		if (wake_time < min_wake_time)
 		{
-			// applet hasn't changed state.
-			return false;
+			min_wake_time = wake_time;
+			soonest = & applet;
 		}
-
-		did_work = true;
-
-		// And if it's all done, 
-		if (! applet.IsRunning())
-		{
-			// the last applet quitting means it's time for the engine 
-			// (and subsequently the program) to quit also
-			_quit_flag = true;
-
-			// destroy the applet.
-			return true;
-		}
-		else if (_quit_flag)
-		{
-#if ! defined(NDEBUG)
-			if (ipc::ListenerBase::CanExit())
-			{
-				DEBUG_MESSAGE("Warning: %s told to quit but did not exit", applet.GetName());
-			}
-#endif
-		}
-
-		return false;
 	});
 	
-	// Return true iff any happened.
-	return did_work;
+	if (! soonest)
+	{
+		// there are no Applets
+		return -1;
+	}
+	
+	return ProcessTask(* soonest);
 }
 
-bool Engine::ProcessTask(Applet & applet)
+core::Time Engine::ProcessTask(Applet & applet)
 {
-	CRAG_VERIFY(applet);
-	ASSERT(applet.IsRunning());
-
 	if (_quit_flag)
 	{
 		applet.SetQuitFlag();
 	}
-	
-	const Condition & condition = applet.GetCondition();
-	if (! condition())
+	else
 	{
-		if (_quit_flag)
+		auto wake_time = applet.GetWakeTime();
+		if (wake_time > app::GetTime())
 		{
-#if ! defined(NDEBUG)
-			if (ipc::ListenerBase::CanExit())
-			{
-				DEBUG_BREAK("Warning: %s told to quit but did not wake", applet.GetName());
-			}
-#endif
+			return wake_time;
 		}
-
-		return false;
 	}
 	
-	// and if applet's continue condition is met, then continue!
-	// TODO: This uses as much as twice the number of context switches necessary 
-	// to visit all applets. One applet should be able to switch straight on 
-	// to the next.
 	applet.Continue();
-	return true;
+	
+	if (! applet.IsRunning())
+	{
+		ReleaseObject(applet);
+	}
+	
+	return 0;
 }

@@ -8,6 +8,7 @@ add_executable(crag
 	core/ConfigManager.cpp
 	core/debug.cpp
 	core/EventWatcher.cpp
+	core/GlobalResourceManager.cpp
 	core/memory.cpp
 	core/profile.cpp
 	core/Random.cpp
@@ -127,7 +128,7 @@ else (CRAG_RPI)
 	find_package(OpenGL REQUIRED)
 	find_library(SDL2_LIBRARY SDL2 /usr/lib ../linux/lib)
 	find_library(ODE_LIBRARY ode /usr/lib)
-	target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "GLEW" "pthread" "stdc++" "m")
+	target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
 endif (CRAG_RPI)
 
 include (PrecompiledHeader.cmake)

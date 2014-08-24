@@ -12,9 +12,9 @@
 #include "Skybox.h"
 
 #include "gfx/Engine.h"
-#include "gfx/Image.h"
-#include "gfx/Scene.h"
+#include "gfx/NonIndexedVboResource.h"
 #include "gfx/Program.h"
+#include "gfx/Texture.h"
 
 #include "core/ResourceManager.h"
 
@@ -116,7 +116,7 @@ void Pointer<Vertex>()
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Skybox member definitions
 
-Skybox::Skybox(Engine & engine)
+Skybox::Skybox(Engine & engine, ResourceKey textures_key)
 : Object(engine, gfx::Transformation::Matrix44::Identity(), Layer::background)
 {
 	auto & resource_manager = engine.GetResourceManager();
@@ -131,24 +131,22 @@ Skybox::Skybox(Engine & engine)
 	// shader
 	auto skybox_program = resource_manager.GetHandle<TexturedProgram>("SkyboxProgram");
 	SetProgram(skybox_program);
+	
+	// textures
+	_textures = resource_manager.GetHandle<TextureCubeMap>(textures_key);
+	
+	CRAG_VERIFY(* this);
 }
 
-void Skybox::SetSide(int axis, int pole, std::shared_ptr<Image> const & image)
-{
-	char name[20];
-	sprintf(name, "skybox%d%d", axis, pole);
-	ResourceKey key(name);
-	
-	auto & resource_manager = GetEngine().GetResourceManager();
-	resource_manager.Register<Texture>(key, [image] () {
-		return image->CreateTexture();
-	});
-	
-	sides[axis][pole] = resource_manager.GetHandle<Texture>(key);
-}
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Skybox, skybox)
+	CRAG_VERIFY(static_cast<Object const &>(skybox));
+	CRAG_VERIFY(skybox._textures);
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 {
+	CRAG_VERIFY(* this);
+	
 	// Set model view matrix (with zero translation).
 	Matrix33 rotation = model_view.GetRotation();
 	SetModelViewTransformation(Transformation(Vector3::Zero(), rotation));
@@ -156,23 +154,22 @@ void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
 
 void Skybox::Render(Engine const &) const
 {
+	CRAG_VERIFY(* this);
+
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	glDepthMask(GL_FALSE);
 
 	auto const & vbo = core::StaticCast<SkyboxVboResource const &>(* GetVboResource());
 	
-	int index = 0;
-	for (int axis = 0; axis < 3; ++ axis)
-	{
-		for (int pole = 0; pole < 2; ++ pole)
-		{
-			auto const & side = * sides[axis][pole];
-			side.Bind();
-			vbo.DrawTris(index, 6);
-			side.Unbind();
-			index += 6;
-		}
-	}
+	auto index = 0;
+	auto & cube_map = * _textures;
+	ForEach(cube_map, [&] (Texture const & texture) {
+		texture.Bind();
+		vbo.DrawTris(index, 6);
+		texture.Unbind();
+
+		index += 6;
+	});
 	
 	glDepthMask(GL_TRUE);
 }

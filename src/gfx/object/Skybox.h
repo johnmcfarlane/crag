@@ -11,9 +11,6 @@
 
 #include "Object.h"
 
-#include "gfx/Texture.h"
-#include "gfx/VertexBufferObject.h"
-
 namespace gfx
 {
 	class Image;
@@ -24,16 +21,16 @@ namespace gfx
 	{
 	public:
 		// Methods
-		Skybox(Engine & engine);
+		Skybox(Engine & engine, ResourceKey textures_key);
 		
-		void SetSide(int axis, int pole, std::shared_ptr<Image> const & image);
-		
+		CRAG_VERIFY_INVARIANTS_DECLARE(Skybox);
+
 		virtual void UpdateModelViewTransformation(Transformation const & model_view) final;
 		void Render(Engine const & renderer) const override;
 		
 	private:
 		// Attribs
-		TextureResourceHandle sides[3][2];
+		TextureCubeMapHandle _textures;
 	};
 	
 }

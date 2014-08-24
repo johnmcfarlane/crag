@@ -20,7 +20,8 @@
 
 #include "geom/Space.h"
 
-#include "applet/AppletInterface_Impl.h"
+#include "applet/AppletInterface.h"
+#include "applet/Engine.h"
 
 #include "core/ConfigEntry.h"
 #include "core/Statistics.h"

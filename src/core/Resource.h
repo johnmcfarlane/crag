@@ -24,7 +24,7 @@ namespace crag
 		
 		// stub for an object which can be retrieved by name from ResourceManager;
 		// object can be destroyed and recreated without Resource object moving
-		class Resource : public crag::counted_object<Resource>
+		class Resource final : public crag::counted_object<Resource>
 		{
 			// friends
 			template <typename Type>
@@ -52,14 +52,9 @@ namespace crag
 			template <typename Type>
 			class Wrapper final : public WrapperInterface
 			{
-				OBJECT_NO_COPY(Wrapper);
 			public:
 				Wrapper(Type && value) 
 				: _value(std::move(value)) 
-				{
-				}
-
-				~Wrapper() noexcept
 				{
 				}
 			private:
@@ -77,6 +72,7 @@ namespace crag
 			OBJECT_NO_COPY(Resource);
 			CRAG_VERIFY_INVARIANTS_DECLARE(Resource);
 			
+			Resource() = delete;
 			Resource(CreateFunctionWrapperType create_function, TypeId type_id);
 			Resource(Resource && rhs);
 			

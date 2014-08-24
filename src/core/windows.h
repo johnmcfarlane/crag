@@ -14,13 +14,17 @@
 #define _WIN32_WINNT _WIN32_WINNT_WIN2K
 #include <SDKDDKVer.h>
 
-// Main include for Windows world.
+// set flags that reduce the number of definitions windows.h causes
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
+
+// Main include for Windows world.
 #include <windows.h>
 
+// remove unwanted macros defined in windows.h
 #undef ERROR
 #undef IN
 #undef OUT
 #undef GetObject
 #undef Yield
+#undef DispatchMessage

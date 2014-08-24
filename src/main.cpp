@@ -25,7 +25,7 @@
 
 #include "core/app.h"
 #include "core/ConfigManager.h"
-#include "core/ResourceManager.h"
+#include "core/GlobalResourceManager.h"
 
 #include <SDL_main.h>
 
@@ -324,6 +324,8 @@ namespace
 	// The main program function.
 	bool CragMain(int argc, char * const * argv)
 	{
+		FUNCTION_NO_REENTRY;
+
 		PrintMessage(stdout,
 			"Crag Demo; Copyright 2010-2014 John McFarlane\n");
 
@@ -362,6 +364,8 @@ namespace
 		SDL_SetEventFilter(EventFilter, nullptr);
 		
 		{
+			crag::GlobalResourceManager global_resource_manager;
+			
 			// TODO: Find a way to make these common; writing everything out four times is not good.
 			// Instantiate the four daemons
 			gfx::Daemon renderer(0x8000);
@@ -397,8 +401,6 @@ namespace
 			simulation.EndFlush();
 			renderer.EndFlush();
 			formation.EndFlush();
-			
-			crag::core::ResourceManager::Get().Clear();
 		}
 		
 		app::Deinit();

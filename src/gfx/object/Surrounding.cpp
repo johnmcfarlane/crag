@@ -62,34 +62,26 @@ Surrounding::Surrounding(Engine & engine)
 		return VboResource();
 	});
 	
-	SetVboResource(resource_manager.GetHandle<VboResource>(vbo_key));
-
 	CRAG_VERIFY(* this);
-}
-
-Surrounding::~Surrounding()
-{
-	CRAG_VERIFY(* this);
-
-	SetVboResource(nullptr);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	CRAG_VERIFY(static_cast<Object const &>(object));
-
-	CRAG_VERIFY_TRUE(object.GetVboResource());
-	auto const & vbo_resource = core::StaticCast<VboResource const &>(* object.GetVboResource());
+	
+	auto vbo_resource_handle = object.GetVboResource();
 
 	CRAG_VERIFY(object._mesh);
 	if (object._mesh)
 	{
+		CRAG_VERIFY_TRUE(vbo_resource_handle);
+
 		auto const & mesh = * object._mesh;
 		CRAG_VERIFY(mesh);
 		//CRAG_VERIFY_EQUAL(mesh.GetLitMesh().empty(), vbo_resource.empty());
 	}
 	else
 	{
-		CRAG_VERIFY_TRUE(vbo_resource.empty());
+		CRAG_VERIFY_FALSE(vbo_resource_handle);
 	}
 
 	CRAG_VERIFY(object._properties);
@@ -135,10 +127,14 @@ Object::PreRenderResult Surrounding::PreRender()
 	Debug::AddBasis(_properties._space.AbsToRel(geom::abs::Vector3::Zero()), 1.);
 #endif
 
-	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
-	if (vbo_resource.empty() && _mesh)
+	auto vbo_resource_handle = GetVboResource();
+	if (vbo_resource_handle)
 	{
-		UpdateVbo();
+		auto const & vbo_resource = core::StaticCast<VboResource const>(* vbo_resource_handle);
+		if (vbo_resource.empty() && _mesh)
+		{
+			UpdateVbo();
+		}
 	}
 	
 	return ok;
@@ -169,7 +165,13 @@ void Surrounding::Render(Engine const & renderer) const
 {
 	CRAG_VERIFY(* this);
 
-	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	auto vbo_resource_handle = GetVboResource();
+	if (! vbo_resource_handle)
+	{
+		return;
+	}
+	
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* vbo_resource_handle);
 	if (vbo_resource.empty())
 	{
 		return;
@@ -194,7 +196,18 @@ void Surrounding::UpdateVbo()
 	auto const & lit_mesh = mesh.GetLitMesh();
 	auto const & properties = mesh.GetProperties();
 
-	auto const & vbo_resource = core::StaticCast<VboResource const>(* GetVboResource());
+	// lazily create VBO once it arrives from form::Engine
+	auto vbo_resource_handle = GetVboResource();
+	if (! vbo_resource_handle)
+	{
+		auto & resource_manager = GetEngine().GetResourceManager();
+		vbo_resource_handle = resource_manager.GetHandle<VboResource>(vbo_key);
+		ASSERT(vbo_resource_handle);
+		
+		SetVboResource(vbo_resource_handle);
+	}
+
+	auto const & vbo_resource = core::StaticCast<VboResource const>(* vbo_resource_handle);
 	auto & mutable_vbo_resource = const_cast<VboResource &>(vbo_resource);
 	mutable_vbo_resource.Set(lit_mesh);
 

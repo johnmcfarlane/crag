@@ -14,7 +14,6 @@
 #include "Image.h"
 #include "LightType.h"
 #include "RenderBuffer.h"
-#include "Texture.h"
 
 #if defined(WIN32)
 #include "SetCameraEvent.h"
@@ -107,7 +106,6 @@ namespace gfx
 		void Run(Daemon::MessageQueue & message_queue);
 	private:
 		void MainLoop();
-		bool ProcessMessage(Daemon::MessageQueue & message_queue);
 
 		bool Init();
 		void Deinit();

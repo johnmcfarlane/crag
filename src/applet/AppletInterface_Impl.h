@@ -18,23 +18,6 @@ namespace applet
 	////////////////////////////////////////////////////////////////////////////////
 	// AppletInterface member definitions
 	
-	template <typename FUNCTOR>
-	void AppletInterface::WaitFor(FUNCTOR functor)
-	{
-		Condition condition(functor);
-		WaitFor(condition);
-	}
-	
-	template <typename RESULT_TYPE>
-	void AppletInterface::WaitFor(ipc::Future<RESULT_TYPE> const & future)
-	{
-		WaitFor([& future] () -> bool {
-			return future.IsComplete();
-		});
-		
-		ASSERT(future.IsComplete());
-	}
-	
 	template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
 	void AppletInterface::Call(ipc::Future<RESULT_TYPE> & future, FUNCTION_TYPE const & function)
 	{
@@ -71,20 +54,12 @@ namespace applet
 		ipc::Future<RESULT_TYPE> future;
 		Call<ENGINE, RESULT_TYPE, FUNCTION_TYPE>(future, function);
 		
-		WaitFor(future);
+		do
+		{
+			Sleep(0);
+		}	while (! future.IsComplete());
 		
 		return future.Get();
-	}
-
-	template <typename ENGINE, typename RESULT_TYPE, typename OBJECT_TYPE, typename FUNCTION_TYPE>
-	ipc::Future<RESULT_TYPE> AppletInterface::Get(ipc::Handle<OBJECT_TYPE> object, FUNCTION_TYPE const & function)
-	{
-		ipc::Future<RESULT_TYPE> future;
-		Call<ENGINE, RESULT_TYPE, OBJECT_TYPE, FUNCTION_TYPE>(future, object, function);
-		
-		WaitFor(future);
-		
-		return future;
 	}
 
 	template <typename FUNCTION_TYPE>

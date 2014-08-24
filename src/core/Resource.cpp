@@ -13,11 +13,6 @@
 
 using namespace crag::core;
 
-namespace
-{
-	std::mutex resource_mutex;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // crag::core::Resource member definitions
 
@@ -36,12 +31,13 @@ Resource::Resource(Resource && rhs)
 , _create_function(std::move(rhs._create_function))
 , _type_id(rhs._type_id)
 {
+	ASSERT(! rhs._object);
+	ASSERT(! rhs._create_function);
 	rhs._type_id = TypeId();
 }
 
 void Resource::Load() const
 {
-	// TODO: Need a lock here
 	if (! _object)
 	{
 		_object = WrapperUniquePtr(_create_function());
@@ -50,7 +46,7 @@ void Resource::Load() const
 
 void Resource::Unload() const
 {
-	_object.reset();
+	_object = nullptr;
 }
 
 TypeId Resource::GetTypeId() const
