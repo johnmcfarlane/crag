@@ -140,6 +140,11 @@ void Engine::OnToggleMeshGeneration()
 	enable_mesh_generation = ! enable_mesh_generation;
 }
 
+bool Engine::IsSettled() const
+{
+	return _scene.IsSettled();
+}
+
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
 	FUNCTION_NO_REENTRY;
