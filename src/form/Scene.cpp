@@ -52,6 +52,8 @@ void Scene::Clear()
 	}
 	
 	formation_map.clear();
+	
+	_is_settled = false;
 }
 
 Surrounding & Scene::GetSurrounding()
@@ -69,6 +71,13 @@ void Scene::OnSpaceReset(geom::Space const & space)
 {
 	// The difficult bit: fix all our data which relied on the old space.
 	ResetFormations(space);
+	
+	_is_settled = false;
+}
+
+bool Scene::IsSettled() const
+{
+	return _is_settled;
 }
 
 void Scene::AddFormation(Formation & formation, geom::Space const & space)
@@ -76,6 +85,8 @@ void Scene::AddFormation(Formation & formation, geom::Space const & space)
 	ASSERT(formation_map.find(& formation) == formation_map.end());
 	FormationMap::iterator i = formation_map.insert(formation_map.begin(), FormationPair(& formation, Polyhedron(formation)));
 	InitPolyhedron(* i, space);
+	
+	_is_settled = false;
 }
 
 void Scene::RemoveFormation(Formation const & formation)
@@ -85,6 +96,8 @@ void Scene::RemoveFormation(Formation const & formation)
 	
 	DeinitPolyhedron(* i);
 	formation_map.erase(i);
+	
+	_is_settled = false;
 }
 
 Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
@@ -106,6 +119,11 @@ bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 	
 	bool changed = _surrounding.Tick(lod_parameters);
 	TickModels();
+	
+	if (! changed)
+	{
+		_is_settled = true;
+	}
 	
 	return changed;
 }
