@@ -208,9 +208,6 @@ void TestScript(AppletInterface & applet_interface)
 	auto const & origin = observer_start_pos;
 	InitSpace(applet_interface, origin);
 	
-	// Give formations time to expand.
-	applet_interface.Sleep(.25f);
-	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create observer.

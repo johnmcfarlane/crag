@@ -202,9 +202,6 @@ void GameScript(AppletInterface & applet_interface)
 	
 	InitSpace(applet_interface, space);
 	
-	// Give formations time to expand.
-	applet_interface.Sleep(.25f);
-	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	// Create player.
