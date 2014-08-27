@@ -19,8 +19,6 @@
 
 namespace 
 {
-	bool _has_focus = true;
-	
 	SDL_Window * window = nullptr;
 	SDL_Renderer * renderer = nullptr;	// this isn't needed for Win32/Android
 	SDL_GLContext context = nullptr;
@@ -98,8 +96,6 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 		return false;
 	}
 	
-	_has_focus = true;
-
 	// get pointer to keyboard state map
 	key_state_map = SDL_GetKeyboardState(& num_keys);
 
@@ -286,28 +282,8 @@ bool app::GetEvent(SDL_Event & event, bool block)
 	// get or return
 	bool has_event = SDL_PollEvent(& event) != 0;
 	
-	if (! has_event)
-	{
-		return false;
-	}
 	
-	switch (event.type)
-	{
-		case SDL_WINDOWEVENT:
-			switch (event.window.event)
-			{
-				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					_has_focus = true;
-					break;
-					
-				case SDL_WINDOWEVENT_FOCUS_LOST:
-					_has_focus = false;
-					break;
-			}
-			break;
-	}
-
-	return true;
+	return has_event;
 }
 
 core::Time app::GetTime()
