@@ -32,8 +32,6 @@
 using geom::Vector3f;
 using applet::AppletInterface;
 
-CONFIG_DEFINE(test_suspend_resume, bool, false);
-
 namespace 
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +44,12 @@ namespace
 	CONFIG_DEFINE(enable_spawn_ball, bool, true);
 	CONFIG_DEFINE(enable_spawn_cube, bool, true);
 	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
+
+#if defined(__ANDROID__)
+	constexpr auto test_suspend_resume = false;
+#else
+	CONFIG_DEFINE(test_suspend_resume, bool, false);
+#endif
 
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
 	size_t max_shapes = 50;
