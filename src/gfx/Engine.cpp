@@ -511,7 +511,7 @@ bool Engine::Init()
 {
 	Flush();
 	
-	if (! app::InitContext())
+	if (! app::InitGfx())
 	{
 		return false;
 	}
@@ -530,7 +530,7 @@ void Engine::Deinit()
 
 	Flush();
 
-	app::DeinitContext();
+	app::DeinitGfx();
 }
 
 void Engine::Flush()
