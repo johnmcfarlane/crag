@@ -74,8 +74,7 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & s
 
 	// Give formations time to expand.
 	while (applet_interface.Get<sim::Engine, bool>([] (sim::Engine const & engine) {
-		auto const & scene = engine.GetScene();
-		return ! scene.IsSettled();
+		return ! engine.IsSettled();
 	}));
 	
 	while (applet_interface.Get<form::Engine, bool>([] (form::Engine const & engine) {

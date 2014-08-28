@@ -142,7 +142,7 @@ void Engine::OnToggleMeshGeneration()
 
 bool Engine::IsSettled() const
 {
-	return _scene.IsSettled();
+	return quit_flag || _scene.IsSettled();
 }
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
