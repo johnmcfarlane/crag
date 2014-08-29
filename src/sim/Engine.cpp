@@ -207,6 +207,16 @@ form::Scene const & Engine::GetScene() const
 	return _collision_scene;
 }
 
+bool Engine::IsSettled() const
+{
+	if (quit_flag)
+	{
+		return true;
+	}
+	
+	return _collision_scene.IsSettled();
+}
+
 core::locality::Roster & Engine::GetTickRoster()
 {
 	return _tick_roster;

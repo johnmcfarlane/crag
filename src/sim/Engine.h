@@ -108,6 +108,8 @@ namespace sim
 		form::Scene & GetScene();
 		form::Scene const & GetScene() const;
 		
+		bool IsSettled() const;
+		
 		core::locality::Roster & GetTickRoster();
 		core::locality::Roster & GetDrawRoster();
 

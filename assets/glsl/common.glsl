@@ -8,12 +8,8 @@
 //
 
 #if defined(GL_ES)
-precision highp float;
-precision lowp int;
-
 #define COLOR_PRECISION lowp
-#define UV_PRECISION highp
-#define VECTOR_PRECISION highp
+#define UV_PRECISION mediump
 
 #define COLOR3 COLOR_PRECISION vec3
 #define COLOR4 COLOR_PRECISION vec4

@@ -73,11 +73,8 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, object)
 	CRAG_VERIFY(object._mesh);
 	if (object._mesh)
 	{
-		CRAG_VERIFY_TRUE(vbo_resource_handle);
-
 		auto const & mesh = * object._mesh;
 		CRAG_VERIFY(mesh);
-		//CRAG_VERIFY_EQUAL(mesh.GetLitMesh().empty(), vbo_resource.empty());
 	}
 	else
 	{

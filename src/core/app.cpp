@@ -19,100 +19,129 @@
 
 namespace 
 {
-	bool _has_focus = true;
+	SDL_Window * _window = nullptr;
+	SDL_Renderer * _renderer = nullptr;	// this isn't needed for Win32/Android
+	SDL_GLContext _context = nullptr;
+
+	SDL_DisplayMode _desktop_display_mode;
+	SDL_DisplayMode _current_display_mode;
+
+	geom::Vector2i _resolution;
+	bool _full_screen;
+	char const * _title;
+
+	int _num_keys = -1;
+	Uint8 const * _key_state_map = nullptr;
 	
-	SDL_Window * window = nullptr;
-	SDL_Renderer * renderer = nullptr;	// this isn't needed for Win32/Android
-	SDL_GLContext context = nullptr;
-
-	int refresh_rate = -1;
-
-	int num_keys = -1;
-	Uint8 const * key_state_map = nullptr;
-}
-
-bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
-{
-	// Initialize SDL.
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	bool InitWindow()
 	{
-		DEBUG_BREAK_SDL();
-		return false;
+		ASSERT(! _window);
+
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	
+	#if ! defined(NDEBUG)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+	#endif
+
+	#if defined(CRAG_USE_GL)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	#endif
+
+	#if defined(CRAG_USE_GLES)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	#endif
+
+		int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL;
+
+	#if defined(CRAG_USE_MOUSE)
+		flags |= SDL_WINDOW_INPUT_GRABBED;
+	#endif
+	
+		if (_full_screen)
+		{
+			_resolution.x = _desktop_display_mode.w;
+			_resolution.y = _desktop_display_mode.h;
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+	
+		DEBUG_MESSAGE("Creating window %d,%d", _resolution.x, _resolution.y);
+
+		_window = SDL_CreateWindow(
+			_title, 
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+			_resolution.x, _resolution.y, 
+			flags);
+	
+		if (! _window)
+		{
+			DEBUG_MESSAGE("Failed to create window: \"%s\"", SDL_GetError());	
+			return false;
+		}
+	
+		if (SDL_GetCurrentDisplayMode(0, & _current_display_mode))
+		{
+			DEBUG_BREAK_SDL();
+			return false;
+		}
+	
+		return true;
 	}
-	
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-#if defined(CRAG_USE_GL)
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
-
-#if defined(CRAG_USE_GLES)
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
-
-	int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL;
-
-#if defined(CRAG_USE_MOUSE)
-	flags |= SDL_WINDOW_MOUSE_FOCUS;
-#endif
-	
-	// Get existing video info.
-	SDL_DisplayMode desktop_display_mode;
-	if(SDL_GetDesktopDisplayMode(0, & desktop_display_mode) != 0)
+	void DeinitWindow()
 	{
-		DEBUG_BREAK_SDL();
-		return false;
+		ASSERT(_window);
+		SDL_DestroyWindow(_window);
+		_window = nullptr;
 	}
 
-	refresh_rate = desktop_display_mode.refresh_rate;
-	
-	if (full_screen)
+	bool InitRenderer()
 	{
-		resolution.x = desktop_display_mode.w;
-		resolution.y = desktop_display_mode.h;
-		flags |= SDL_WINDOW_FULLSCREEN;	// TODO: investigate SDL_WINDOW_FULLSCREEN_DESKTOP
-	}
-	
-	DEBUG_MESSAGE("Creating window %d,%d", resolution.x, resolution.y);
+		ASSERT(_window);
 
-	ASSERT(window == nullptr);
-	window = SDL_CreateWindow(
-		title, 
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-		resolution.x, resolution.y, 
-		flags);
-	
-	if (window == 0)
+		ASSERT(! _renderer);
+		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
+		if (_renderer == nullptr)
+		{
+			DEBUG_MESSAGE("Failed to create renderer: \"%s\"", SDL_GetError());	
+			return false;
+		}
+
+		return true;
+	}
+
+	void DeinitRenderer()
 	{
-		DEBUG_MESSAGE("Failed to create window: \"%s\"", SDL_GetError());	
-		return false;
+		ASSERT(_renderer);
+		SDL_DestroyRenderer(_renderer);
+		_renderer = nullptr;
 	}
-	
-	_has_focus = true;
 
-	// get pointer to keyboard state map
-	key_state_map = SDL_GetKeyboardState(& num_keys);
+	bool InitContext()
+	{
+		ASSERT(_window);
+		ASSERT(! _context);
+		_context = SDL_GL_CreateContext(_window);
+		if (! _context)
+		{
+			DEBUG_BREAK_SDL();
+			return false;
+		}
 
-	return true;
-}
+		return true;
+	}
 
-void app::Deinit()
-{
-	ASSERT(window != nullptr);
-
-	SDL_DestroyWindow(window);
-	window = nullptr;
-	
-	refresh_rate = -1;
-
-	SDL_Quit();
-
-	CRAG_DEBUG_CHECK_MEMORY();
+	void DeinitContext()
+	{
+		ASSERT(_context);
+		SDL_GL_DeleteContext(_context);
+		_context = nullptr;
+	}
 }
 
 void app::Quit()
@@ -126,36 +155,66 @@ void app::Quit()
 	}
 }
 
-bool app::InitContext()
+bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 {
-	ASSERT(window != nullptr);
+	_resolution = resolution;
+	_full_screen = full_screen;
+	_title = title;
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
-	if (renderer == nullptr)
-	{
-		DEBUG_MESSAGE("Failed to create renderer: \"%s\"", SDL_GetError());	
-		return false;
-	}
-	
-	context = SDL_GL_CreateContext(window);
-	if (context == nullptr)
+	// Initialize SDL.
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
 	}
+	
+	if(SDL_GetDesktopDisplayMode(0, & _desktop_display_mode) != 0)
+	{
+		DEBUG_BREAK_SDL();
+		return false;
+	}
+	
+	_current_display_mode = _desktop_display_mode;
+
+	if (! InitWindow())
+	{
+		return false;
+	}
+
+	// get pointer to keyboard state map
+	_key_state_map = SDL_GetKeyboardState(& _num_keys);
 
 	return true;
 }
 
-void app::DeinitContext()
+void app::Deinit()
 {
-	ASSERT(context != nullptr);
-	SDL_GL_DeleteContext(context);
-	context = nullptr;
+	DeinitWindow();
+	
+	SDL_Quit();
 
-	ASSERT(renderer != nullptr);
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
+	CRAG_DEBUG_CHECK_MEMORY();
+}
+
+bool app::InitGfx()
+{
+	if (! InitRenderer())
+	{
+		return false;
+	}
+	
+	if (! InitContext())
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+void app::DeinitGfx()
+{
+	DeinitContext();
+	DeinitRenderer();
 }
 
 char const * app::GetFullPath(char const * filepath)
@@ -235,10 +294,10 @@ void app::Beep()
 bool app::IsKeyDown(SDL_Scancode key_code)
 {
 	CRAG_VERIFY_OP(key_code, >=, 0);
-	CRAG_VERIFY_OP(key_code, <, num_keys);
-	CRAG_VERIFY_EQUAL(key_state_map, SDL_GetKeyboardState(nullptr));
+	CRAG_VERIFY_OP(key_code, <, _num_keys);
+	CRAG_VERIFY_EQUAL(_key_state_map, SDL_GetKeyboardState(nullptr));
 	
-	return key_state_map[key_code] != 0;
+	return _key_state_map[key_code] != 0;
 }
 
 bool app::IsButtonDown(int mouse_button)
@@ -250,18 +309,18 @@ bool app::IsButtonDown(int mouse_button)
 geom::Vector2i app::GetResolution()
 {
 	geom::Vector2i window_size;	
-	SDL_GetWindowSize(window, & window_size.x, & window_size.y);
+	SDL_GetWindowSize(_window, & window_size.x, & window_size.y);
 	return window_size;
 }
 
 int app::GetRefreshRate()
 {
-	return refresh_rate;
+	return _current_display_mode.refresh_rate;
 }
 
 void app::SwapBuffers()
 {
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(_window);
 }
 
 bool app::GetEvent(SDL_Event & event, bool block)
@@ -281,28 +340,8 @@ bool app::GetEvent(SDL_Event & event, bool block)
 	// get or return
 	bool has_event = SDL_PollEvent(& event) != 0;
 	
-	if (! has_event)
-	{
-		return false;
-	}
 	
-	switch (event.type)
-	{
-		case SDL_WINDOWEVENT:
-			switch (event.window.event)
-			{
-				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					_has_focus = true;
-					break;
-					
-				case SDL_WINDOWEVENT_FOCUS_LOST:
-					_has_focus = false;
-					break;
-			}
-			break;
-	}
-
-	return true;
+	return has_event;
 }
 
 core::Time app::GetTime()

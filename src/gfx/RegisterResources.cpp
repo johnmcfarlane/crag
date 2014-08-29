@@ -165,6 +165,8 @@ namespace
 	void RegisterShaders(ResourceManager & manager)
 	{
 		static char const * common_shader_filename = "assets/glsl/common.glsl";
+		static char const * common_vertex_filename = "assets/glsl/common.vert";
+		static char const * common_fragment_filename = "assets/glsl/common.frag";
 		static char const * light_common_shader_filename = "assets/glsl/light_common.glsl";
 		static char const * light_fg_solid_filename = "assets/glsl/light_fg_solid.glsl";
 		static char const * light_fg_soft_filename = "assets/glsl/light_fg_soft.glsl";
@@ -173,50 +175,50 @@ namespace
 		manager.Register<PolyProgram>("PolyProgram", []()
 		{
 			return MakeProgram<PolyProgram>(
-				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
-				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
+				{ common_vertex_filename, common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.vert" },
+				{ common_fragment_filename, common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/poly.frag" });
 		});
 
 		manager.Register<ShadowProgram>("ShadowProgram", [] ()
 		{
 			return MakeProgram<ShadowProgram>(
-				{ common_shader_filename, "assets/glsl/shadow.vert" },
-				{ common_shader_filename, "assets/glsl/shadow.frag" });
+				{ common_vertex_filename, common_shader_filename, "assets/glsl/shadow.vert" },
+				{ common_fragment_filename, common_shader_filename, "assets/glsl/shadow.frag" });
 		});
 
 		manager.Register<ScreenProgram>("ScreenProgram", [] ()
 		{
 			return MakeProgram<ScreenProgram>(
-				{ common_shader_filename, "assets/glsl/screen.vert" },
-				{ common_shader_filename, "assets/glsl/screen.frag" });
+				{ common_vertex_filename, common_shader_filename, "assets/glsl/screen.vert" },
+				{ common_fragment_filename, common_shader_filename, "assets/glsl/screen.frag" });
 		});
 
 		manager.Register<DiskProgram>("SphereProgram", [] ()
 		{
 			return MakeProgram<DiskProgram>(
-				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.vert" },
-				{ common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.frag" });
+				{ common_vertex_filename, common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.vert" },
+				{ common_fragment_filename, common_shader_filename, light_common_shader_filename, light_fg_solid_filename, "assets/glsl/sphere.frag" });
 		});
 
 		manager.Register<DiskProgram>("DiskProgram", [] ()
 		{
 			return MakeProgram<DiskProgram>(
-				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.vert" },
-				{ common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.frag" });
+				{ common_vertex_filename, common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.vert" },
+				{ common_fragment_filename, common_shader_filename, light_common_shader_filename, light_fg_soft_filename, "assets/glsl/disk.frag" });
 		});
 
 		manager.Register<TexturedProgram>("SkyboxProgram", [] ()
 		{
 			return MakeProgram<TexturedProgram>(
-				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.vert" },
-				{ common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.frag" });
+				{ common_vertex_filename, common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.vert" },
+				{ common_fragment_filename, common_shader_filename, light_common_shader_filename, light_bg_filename, "assets/glsl/skybox.frag" });
 		});
 
 		manager.Register<SpriteProgram>("SpriteProgram", [] ()
 		{
 			return MakeProgram<SpriteProgram>(
-				{ common_shader_filename, "assets/glsl/sprite.vert" },
-				{ common_shader_filename, "assets/glsl/sprite.frag" });
+				{ common_vertex_filename, common_shader_filename, "assets/glsl/sprite.vert" },
+				{ common_fragment_filename, common_shader_filename, "assets/glsl/sprite.frag" });
 		});
 	}
 	

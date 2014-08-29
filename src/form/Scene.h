@@ -57,6 +57,7 @@ namespace form
 		Surrounding const & GetSurrounding() const;
 		
 		void OnSpaceReset(geom::Space const & space);
+		bool IsSettled() const;
 
 		void AddFormation(Formation & formation, geom::Space const & space);
 		void RemoveFormation(Formation const & formation);
@@ -85,6 +86,8 @@ namespace form
 		Surrounding & _surrounding;
 		
 		FormationMap formation_map;		// The internal record of formations.
+		
+		bool _is_settled = false;
 	};
 
 }

@@ -13,6 +13,11 @@
 #include "MonitorOrigin.h"
 #include "RegulatorScript.h"
 
+#include "sim/Engine.h"
+
+#include "form/Engine.h"
+#include "form/Scene.h"
+
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
@@ -66,4 +71,13 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & s
 		};
 		gfx::Daemon::Broadcast(event);
 	}
+
+	// Give formations time to expand.
+	while (applet_interface.Get<sim::Engine, bool>([] (sim::Engine const & engine) {
+		return ! engine.IsSettled();
+	}));
+	
+	while (applet_interface.Get<form::Engine, bool>([] (form::Engine const & engine) {
+		return ! engine.IsSettled();
+	}));
 }

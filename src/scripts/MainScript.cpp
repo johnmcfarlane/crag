@@ -168,9 +168,6 @@ void MainScript(AppletInterface & applet_interface)
 	geom::Space space(observer_start_pos);
 	InitSpace(applet_interface, space);
 	
-	// Give formations time to expand.
-	applet_interface.Sleep(.25f);
-	
 	// Create observer.
 	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), space);
 	

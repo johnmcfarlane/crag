@@ -17,15 +17,16 @@
 
 namespace app
 {
+	void Quit();
+
 	// general init/deinit
 	bool Init(geom::Vector2i resolution, bool full_screen, char const * title);
 	void Deinit();
-	void Quit();
-
-	// render thread-specific init/deinit
-	bool InitContext();
-	void DeinitContext();
 	
+	// render thread-specific init/deinit
+	bool InitGfx();
+	void DeinitGfx();
+
 	// file access
 	typedef std::shared_ptr<std::vector<char>> FileResource;
 	char const * GetFullPath(char const * filepath);

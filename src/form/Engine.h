@@ -86,6 +86,8 @@ namespace form
 		
 		void OnToggleSuspended();
 		void OnToggleMeshGeneration();
+		
+		bool IsSettled() const;
 
 		void Run(Daemon::MessageQueue & message_queue);
 
