@@ -234,10 +234,10 @@ ObjectHandle SpawnStarfieldSkybox()
 
 ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filenames)
 {
-	Daemon::Call([& filenames] (Engine & engine) {
+	Daemon::Call([filenames] (Engine & engine) {
 		auto & resource_manager = engine.GetResourceManager();
 		
-		resource_manager.Register<TextureCubeMap>("BitmapSkyboxTextures", [& filenames] () {
+		resource_manager.Register<TextureCubeMap>("BitmapSkyboxTextures", [filenames] () {
 			TextureCubeMap cube_map;
 			
 			auto filename_iterator = std::begin(filenames);
