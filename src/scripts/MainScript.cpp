@@ -157,7 +157,7 @@ void MainScript(AppletInterface & applet_interface)
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
 	star_volume.center = geom::Resized(star_volume.center, 100000000.);
-	gfx::Color4f star_color(gfx::Color4f(.2f,.55f,.9f) * 7500000000000000.f);
+	gfx::Color4f star_color(gfx::Color4f(1.f,.975f,.95f) * 7500000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Create planets
@@ -171,14 +171,7 @@ void MainScript(AppletInterface & applet_interface)
 	// Create observer.
 	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), space);
 	
-	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
-		"assets/skybox/left.bmp",
-		"assets/skybox/right.bmp",
-		"assets/skybox/bottom.bmp",
-		"assets/skybox/top.bmp",
-		"assets/skybox/back.bmp",
-		"assets/skybox/front.bmp"
-	}});
+	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	auto rel_animat_start_pos = space.AbsToRel(animat_start_pos);
 	SpawnAnimats(rel_animat_start_pos);
