@@ -15,6 +15,8 @@
 
 #include "core/app.h"
 
+#include <SDL_image.h>
+
 using namespace gfx;
 
 namespace 
@@ -194,7 +196,11 @@ void Image::Clear(Color4b const & color)
 
 void Image::Load(char const * filename)
 {
-	surface = SDL_LoadBMP(app::GetFullPath(filename));
+	surface = IMG_Load(app::GetFullPath(filename));
+	if (! surface)
+	{
+		DEBUG_BREAK("Failed to load image: %s", IMG_GetError());
+	}
 }
 
 bool Image::Save(char const * filename)
