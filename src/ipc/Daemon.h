@@ -277,7 +277,10 @@ namespace ipc
 		template <typename MESSAGE>
 		void PushMessage(MESSAGE const & message)
 		{
-			_messages.PushBack(message);
+			if (_messages.PushBack(message))
+			{
+				DEBUG_MESSAGE("Engine, %s, received a deluge of messages on this thread", _name);
+			}
 		}
 		
 		bool FlushMessages()
