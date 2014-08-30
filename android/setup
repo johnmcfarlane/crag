@@ -8,5 +8,6 @@ script/setup_java
 script/setup_adk
 script/setup_ndk
 script/setup_sdl
+script/setup_sdl_image
 script/setup_ode
 script/setup_project
