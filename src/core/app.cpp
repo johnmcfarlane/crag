@@ -17,6 +17,8 @@
 #include "core/windows.h"
 #endif
 
+#include <SDL_image.h>
+
 namespace 
 {
 	SDL_Window * _window = nullptr;
@@ -191,6 +193,8 @@ void app::Deinit()
 {
 	DeinitWindow();
 	
+	IMG_Quit();
+
 	SDL_Quit();
 
 	CRAG_DEBUG_CHECK_MEMORY();
