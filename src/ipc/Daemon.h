@@ -42,7 +42,6 @@ namespace ipc
 		};
 
 		typedef smp::SimpleMutex Mutex;
-		typedef std::lock_guard<Mutex> Lock;
 	public:
 		typedef ENGINE Engine;
 		typedef ::ipc::MessageQueue<Engine> MessageQueue;
