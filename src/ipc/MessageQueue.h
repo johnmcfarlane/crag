@@ -72,9 +72,9 @@ namespace ipc
 
 		bool IsEmpty() const;
 		
-		// adds message to queue
+		// adds message to queue; returns true iff buffer needed expanding
 		template <typename MESSAGE>
-		void PushBack(MESSAGE const & object);
+		bool PushBack(MESSAGE const & object);
 		
 		// returns false iff the Daemon should quit
 		bool TryDispatchMessage(Class & object, core::Time timeout = 0);
