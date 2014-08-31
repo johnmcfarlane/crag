@@ -61,7 +61,6 @@ add_executable(crag
 	gfx/Debug.cpp
 	gfx/Engine.cpp
 	gfx/Font.cpp
-	gfx/FrameBuffer.cpp
 	gfx/glHelpers.cpp
 	gfx/Image.cpp
 	gfx/object/Ball.cpp

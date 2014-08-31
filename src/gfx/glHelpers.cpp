@@ -11,9 +11,6 @@
 
 #include "glHelpers.h"
 
-#include "FrameBuffer.h"
-#include "Texture.h"
-
 namespace gfx
 {
 	////////////////////////////////////////////////////////////////////////////////
@@ -59,19 +56,6 @@ namespace gfx
 	template <> GLuint GetBinding<GL_TEXTURE_2D>() 
 	{ 
 		return GetInt<GL_TEXTURE_BINDING_2D>(); 
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	// Misc
-
-	void Attach(FrameBuffer const & frame_buffer, Texture const & texture)
-	{
-		if (! frame_buffer.IsBound())
-		{
-			DEBUG_BREAK("frame buffer is not bound");
-		}
-	
-		GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture._name, 0));
 	}
 }
 

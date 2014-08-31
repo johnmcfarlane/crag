@@ -41,8 +41,6 @@ namespace gfx
 		void SetImage(GLsizei width, GLsizei height, GLvoid const * pixels);
 		void SetSubImage(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLvoid const * pixels);
 		
-		friend void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
-		
 	private:
 		GLuint _name = 0;
 	};

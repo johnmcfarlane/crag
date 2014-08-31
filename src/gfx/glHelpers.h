@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "geom/Matrix44.h"
-
 //////////////////////////////////////////////////////////////////////
 // OpenGl error checking
 
@@ -33,10 +31,6 @@
 
 namespace gfx
 {
-	// forward-declarations
-	class FrameBuffer;
-	class Texture;
-
 	////////////////////////////////////////////////////////////////////////////////
 	// Debug output
 
@@ -90,10 +84,4 @@ namespace gfx
 	// Binding
 
 	template <GLenum TARGET> GLuint GetBinding();
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// Misc
-	
-	void Attach(FrameBuffer const & frame_buffer, Texture const & texture);
 }
