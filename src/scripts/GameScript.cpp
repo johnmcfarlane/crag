@@ -211,21 +211,21 @@ void GameScript(AppletInterface & applet_interface)
 	
 #if defined(__ANDROID__)
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
-		"assets/skybox/left.png",
 		"assets/skybox/right.png",
-		"assets/skybox/bottom.png",
+		"assets/skybox/left.png",
 		"assets/skybox/top.png",
-		"assets/skybox/back.png",
-		"assets/skybox/front.png"
+		"assets/skybox/bottom.png",
+		"assets/skybox/front.png",
+		"assets/skybox/back.png"
 	}});
 #else
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
-		"assets/skybox/left.bmp",
 		"assets/skybox/right.bmp",
-		"assets/skybox/bottom.bmp",
+		"assets/skybox/left.bmp",
 		"assets/skybox/top.bmp",
-		"assets/skybox/back.bmp",
-		"assets/skybox/front.bmp"
+		"assets/skybox/bottom.bmp",
+		"assets/skybox/front.bmp",
+		"assets/skybox/back.bmp"
 	}});
 #endif
 	

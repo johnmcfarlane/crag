@@ -94,7 +94,8 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/RenderBuffer.cpp \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
-	$(CRAG_PATH)/gfx/Texture.cpp \
+	$(CRAG_PATH)/gfx/Texture2d.cpp \
+	$(CRAG_PATH)/gfx/TextureCubeMap.cpp \
 	$(CRAG_PATH)/gfx/LitVertex.cpp \
 	$(CRAG_PATH)/gfx/Uniform.cpp \
 	$(CRAG_PATH)/main.cpp \

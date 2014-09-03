@@ -14,7 +14,7 @@
 #include "gfx/Engine.h"
 #include "gfx/NonIndexedVboResource.h"
 #include "gfx/Program.h"
-#include "gfx/Texture.h"
+#include "gfx/TextureCubeMap.h"
 
 #include "core/ResourceManager.h"
 
@@ -133,14 +133,14 @@ Skybox::Skybox(Engine & engine, ResourceKey textures_key)
 	SetProgram(skybox_program);
 	
 	// textures
-	_textures = resource_manager.GetHandle<TextureCubeMap>(textures_key);
+	_texture = resource_manager.GetHandle<TextureCubeMap>(textures_key);
 	
 	CRAG_VERIFY(* this);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Skybox, skybox)
 	CRAG_VERIFY(static_cast<Object const &>(skybox));
-	CRAG_VERIFY(skybox._textures);
+	CRAG_VERIFY(skybox._texture);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Skybox::UpdateModelViewTransformation(Transformation const & model_view)
@@ -161,15 +161,10 @@ void Skybox::Render(Engine const &) const
 
 	auto const & vbo = core::StaticCast<SkyboxVboResource const &>(* GetVboResource());
 	
-	auto index = 0;
-	auto & cube_map = * _textures;
-	ForEach(cube_map, [&] (Texture const & texture) {
-		texture.Bind();
-		vbo.DrawTris(index, 6);
-		texture.Unbind();
-
-		index += 6;
-	});
+	auto & texture = * _texture;
+	texture.Bind();
+	vbo.DrawTris(0, 36);
+	texture.Unbind();
 	
 	glDepthMask(GL_TRUE);
 }

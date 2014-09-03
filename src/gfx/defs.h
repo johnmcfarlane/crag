@@ -72,8 +72,8 @@ namespace gfx
 	template <typename Vertex, typename Index> class Mesh;
 	template<typename VERTEX, GLenum USAGE> class IndexedVboResource;
 	
-	class Texture;
-	using TextureCubeMap = CubeMap<Texture>;
+	class Texture2d;
+	class TextureCubeMap;
 
 	// render layers
 	enum class Layer
@@ -103,7 +103,7 @@ namespace gfx
 
 	using ProgramHandle = ResourceHandle<Program>;
 	using VboResourceHandle = ResourceHandle<VboResource>;
-	using TextureResourceHandle = ResourceHandle<Texture>;
+	using Texture2dResourceHandle = ResourceHandle<Texture2d>;
 	using TextureCubeMapHandle = ResourceHandle<TextureCubeMap>;
 
 	// geometric types

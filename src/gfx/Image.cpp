@@ -21,67 +21,21 @@ using namespace gfx;
 
 namespace 
 {
-	Image::Format opengl_rgba8_format = 
-	{
-		static_cast<Uint32>(SDL_PIXELFORMAT_RGBA8888),	// Uint32 format;
-		nullptr,	// SDL_Palette *palette;
-		32,			// Uint8  BitsPerPixel;
-		4,			// Uint8  BytesPerPixel;
-		{ 0, 0 },
-		0x00ff0000,	// Uint32 Rmask;
-		0x0000ff00,	// Uint32 Gmask;
-		0x000000ff,	// Uint32 Bmask;
-		0xff000000,	// Uint32 Amask;
-		0,			// Uint8  Rloss;
-		0,			// Uint8  Gloss;
-		0,			// Uint8  Bloss;
-		0,			// Uint8  Aloss;
-		16,			// Uint8  Rshift;
-		8,			// Uint8  Gshift;
-		0,			// Uint8  Bshift;
-		24,			// Uint8  Ashift;
-		0,			// int refcount;
-		nullptr,	// SDL_PixelFormat *next;
-	};
+	auto opengl_rgba8_format = SDL_PIXELFORMAT_ARGB8888;
 }
-
-static bool operator == (SDL_Palette const & lhs, SDL_Palette const & rhs)
-{
-	return lhs.ncolors == rhs.ncolors
-		&& memcmp(lhs.colors, rhs.colors, sizeof(SDL_Color) * lhs.ncolors);
-}
-
-static bool operator == (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
-{
-	return (lhs.palette == rhs.palette || * lhs.palette == * rhs.palette)
-		&& lhs.BitsPerPixel == rhs.BitsPerPixel
-		&& lhs.BytesPerPixel == rhs.BytesPerPixel
-		&& lhs.Rloss == rhs.Rloss
-		&& lhs.Gloss == rhs.Gloss
-		&& lhs.Bloss == rhs.Bloss
-		&& lhs.Aloss == rhs.Aloss
-		&& lhs.Rshift == rhs.Rshift
-		&& lhs.Gshift == rhs.Gshift
-		&& lhs.Bshift == rhs.Bshift
-		&& lhs.Ashift == rhs.Ashift
-		&& lhs.Rmask == rhs.Rmask
-		&& lhs.Gmask == rhs.Gmask
-		&& lhs.Bmask == rhs.Bmask
-		&& lhs.Amask == rhs.Amask;
-}
-
-static bool operator != (SDL_PixelFormat const & lhs, SDL_PixelFormat const & rhs)
-{
-	return ! (lhs == rhs);
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Image
 
 Image::Image()
-: surface(nullptr)
+: _surface(nullptr)
 {
+}
+
+Image::Image(Image && rhs)
+: _surface(rhs._surface)
+{
+	rhs._surface = nullptr;
 }
 
 Image::~Image()
@@ -89,92 +43,88 @@ Image::~Image()
 	Destroy();
 }
 
-Image::Format const & Image::GetOpenGlRgba8Format()
+Image & Image::operator=(Image && rhs)
 {
-	return opengl_rgba8_format;
+	std::swap(_surface, rhs._surface);
+	return * this;
 }
 
-bool Image::Create(geom::Vector2i const & size, Format const & format)
+bool Image::Create(geom::Vector2i const & size)
 {
-	surface = SDL_CreateRGBSurface(0, 
-								   size.x, size.y, 
-								   format.BitsPerPixel, 
-								   format.Rmask,
-								   format.Gmask,
-								   format.Bmask,
-								   format.Amask);
+    Uint32 rmask, gmask, bmask, amask;
+
+    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
+       on the endianness (byte order) of the machine */
+	static_assert(SDL_BYTEORDER == SDL_LIL_ENDIAN, "Probably needs some fixing");
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+
+    _surface = SDL_CreateRGBSurface(0, size.x, size.y, 32, rmask, gmask, bmask, amask);
+    if (! _surface)
+    {
+    	DEBUG_BREAK_SDL();
+    	return false;
+    }
 	
-	return surface != nullptr;
+	return true;
 }
 
-bool Image::Convert(Image const & source, Format const & format)
+bool Image::Convert(Image const & source)
 {
-	surface = SDL_ConvertSurface(source.surface, & const_cast<SDL_PixelFormat &>(format), 0);
-	return surface != nullptr;
+	ASSERT(source._surface != _surface);
+	
+	_surface = SDL_ConvertSurfaceFormat(source._surface, opengl_rgba8_format, 0);
+	if (! _surface)
+	{
+		DEBUG_BREAK("Failed to convert image: %s", IMG_GetError());
+		return false;
+	}
+	
+	return true;
 }
 
 void Image::Destroy()
 {
-	if (surface != nullptr)
+	if (_surface != nullptr)
 	{
-		SDL_FreeSurface(surface);
+		SDL_FreeSurface(_surface);
 	}
 }
 
-int Image::GetWidth() const
+geom::Vector2i Image::GetSize() const
 {
-	return surface ? surface->w : 0;
+	return _surface 
+	? geom::Vector2i(_surface->w, _surface->h) 
+	: geom::Vector2i::Zero();
 }
 
 int Image::GetHeight() const
 {
-	return surface ? surface->h : 0;
+	return _surface ? _surface->h : 0;
+}
+
+int Image::GetWidth() const
+{
+	return _surface ? _surface->w : 0;
 }
 
 void Image::SetPixel(geom::Vector2i const & pos, Color4b const & color)
 {
-	ASSERT(pos.x >= 0 && pos.x < surface->w);
-	ASSERT(pos.y >= 0 && pos.x < surface->h);
+	ASSERT(pos.x >= 0 && pos.x < _surface->w);
+	ASSERT(pos.y >= 0 && pos.x < _surface->h);
 
-	char * line = reinterpret_cast<char *>(surface->pixels) + pos.y * surface->pitch;
+	char * line = reinterpret_cast<char *>(_surface->pixels) + pos.y * _surface->pitch;
 	Uint32 * pixel = reinterpret_cast<Uint32 *>(line) + pos.x;
 
-	Uint32 pixel_value = SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a);
+	Uint32 pixel_value = SDL_MapRGBA(_surface->format, color.r, color.g, color.b, color.a);
 	* pixel = pixel_value;
 }
 
-Texture Image::CreateTexture() const
-{
-	Texture texture;
-	
-	if (surface == nullptr)
-	{
-		return texture;
-	}
-	
-	SDL_PixelFormat const & current_format = * surface->format;
-	if (current_format != opengl_rgba8_format)
-	{
-		Image converted_image;
-		converted_image.Convert(* this, opengl_rgba8_format);
-		ASSERT (converted_image.surface == nullptr || (* converted_image.surface->format) == opengl_rgba8_format);
-		return converted_image.CreateTexture();
-	}
-	
-	texture.Init();
-	texture.Bind();
-	texture.SetImage(GetWidth(), GetHeight(), surface->pixels);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	texture.Unbind();
-	
-	return texture;
-}
-
-
 void Image::Clear(Color4b const & color)
 {
-	if (surface != nullptr)
+	if (_surface != nullptr)
 	{
 		SDL_Rect rect =
 		{
@@ -184,23 +134,30 @@ void Image::Clear(Color4b const & color)
 			GetHeight()
 		};
 
-		Uint32 rgba = SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a);
-		SDL_FillRect(surface, & rect, rgba);
+		Uint32 rgba = SDL_MapRGBA(_surface->format, color.r, color.g, color.b, color.a);
+		SDL_FillRect(_surface, & rect, rgba);
 	}
 }
 
 void Image::Load(char const * filename)
 {
-	surface = IMG_Load(app::GetFullPath(filename));
-	if (! surface)
+	_surface = IMG_Load(app::GetFullPath(filename));
+	if (! _surface)
 	{
-		DEBUG_BREAK("Failed to load image: %s", IMG_GetError());
+		DEBUG_BREAK("Failed to load image; filename:%s; error:%s", filename, IMG_GetError());
+	}
+
+	if (_surface->format->format != opengl_rgba8_format)
+	{
+		DEBUG_MESSAGE("Incorrect image format; filename:%s", filename);
+		auto raw_image = std::move(* this);
+		Convert(raw_image);
 	}
 }
 
 bool Image::Save(char const * filename)
 {
-	if (SDL_SaveBMP(surface, filename) != 0)
+	if (SDL_SaveBMP(_surface, filename) != 0)
 	{
 		DEBUG_BREAK_SDL();
 		return false;
@@ -221,54 +178,15 @@ bool Image::CaptureScreen()
 	GL_CALL(glReadPixels(0, 0,
 						   window_size.x, window_size.y, 
 						   GL_RGBA, GL_UNSIGNED_BYTE,
-						   surface->pixels));
+						   _surface->pixels));
 	
 	return true;
 }
 
-bool Image::Reformat(SDL_PixelFormat const & desired_format)
-{
-	if (surface != nullptr)
-	{
-		SDL_PixelFormat const & current_format = * surface->format;
-		if (current_format == desired_format)
-		{
-			return true;
-		}
-		
-		SDL_Surface * new_surface = SDL_ConvertSurface(surface, & const_cast<SDL_PixelFormat &>(desired_format), 0);
-		if (new_surface != nullptr)
-		{
-			SDL_FreeSurface(surface);
-			surface = new_surface;
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-bool Image::FormatForOpenGl()
-{
-	if (surface != nullptr)
-	{
-		SDL_PixelFormat const & current_format = * surface->format;
-		switch (current_format.BitsPerPixel)
-		{
-			case 32:
-				return Reformat(opengl_rgba8_format);
-				
-			default:
-				// not yet implemented
-				ASSERT(false);
-		}
-	}
-	
-	return false;
-}
-
 bool Image::CopyVFlip(Image & dst, Image const & src)
 {
+	ASSERT(dst._surface != src._surface);
+	
 	geom::Vector2i size = src.GetSize();
 	if (! dst.Create(size))
 	{
@@ -279,7 +197,7 @@ bool Image::CopyVFlip(Image & dst, Image const & src)
 	SDL_Rect dstrect = { 0, size.y - 1, size.x, 1 };
 	while (dstrect.y >= 0)
 	{
-		if (SDL_BlitSurface(src.surface, & srcrect, dst.surface, & dstrect) != 0)
+		if (SDL_BlitSurface(src._surface, & srcrect, dst._surface, & dstrect) != 0)
 		{
 			ASSERT(false);
 		}

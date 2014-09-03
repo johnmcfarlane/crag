@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Texture.h"
+#include "Texture2d.h"
 #include "VertexBufferObject.h"
 
 
@@ -46,7 +46,7 @@ namespace gfx
 		geom::Vector2i character_size;
 		geom::Vector2f inv_scale;
 		float scale_factor;
-		Texture texture;
+		Texture2d texture;
 		mutable VertexBufferObject vbo;
 	};
 }

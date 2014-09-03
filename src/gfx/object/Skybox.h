@@ -30,7 +30,7 @@ namespace gfx
 		
 	private:
 		// Attribs
-		TextureCubeMapHandle _textures;
+		TextureCubeMapHandle _texture;
 	};
 	
 }

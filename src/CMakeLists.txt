@@ -79,7 +79,8 @@ add_executable(crag
 	gfx/RenderBuffer.cpp
 	gfx/Scene.cpp
 	gfx/Shader.cpp
-	gfx/Texture.cpp
+	gfx/Texture2d.cpp
+	gfx/TextureCubeMap.cpp
 	gfx/LitVertex.cpp
 	gfx/Uniform.cpp
 	main.cpp

@@ -13,19 +13,16 @@ uniform MATRIX4 projection_matrix;
 
 // per-vertex inputs from renderer
 attribute VECTOR3 vertex_position;
-attribute UV_COORD vertex_tex_coord;
 
 // outputs to skybox.frag
-varying VECTOR3 fragment_position;
-varying UV_COORD fragment_tex_coord;
+varying UV_COORD3 fragment_tex_coord;
 
 void main(void)
 {
 	VECTOR4 position4 = model_view_matrix * VECTOR4(vertex_position, 1.);
 	VECTOR4 vertex = projection_matrix * position4;
 
-	fragment_position = position4.xyz;
-	fragment_tex_coord = vertex_tex_coord;
+	fragment_tex_coord = vertex_position;
 
 	gl_Position = VECTOR4(vertex.xyw, vertex.w);
 }
