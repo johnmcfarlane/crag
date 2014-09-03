@@ -57,5 +57,10 @@ namespace gfx
 	{ 
 		return GetInt<GL_TEXTURE_BINDING_2D>(); 
 	}
+
+	template <> GLuint GetBinding<GL_TEXTURE_CUBE_MAP>() 
+	{ 
+		return GetInt<GL_TEXTURE_BINDING_CUBE_MAP>(); 
+	}
 }
 
