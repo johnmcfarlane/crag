@@ -197,7 +197,7 @@ void GameScript(AppletInterface & applet_interface)
 	
 	// Create sun. 
 	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.975f,.95f) * 6000000000000000.f);
+	gfx::Color4f star_color(gfx::Color4f(.6f,.8f,1.f) * 8000000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	
 	// Create planets
@@ -206,7 +206,28 @@ void GameScript(AppletInterface & applet_interface)
 	
 	InitSpace(applet_interface, space);
 	
-	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
+	// Give formations time to expand.
+	applet_interface.Sleep(.25f);
+	
+#if defined(__ANDROID__)
+	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
+		"assets/skybox/right.png",
+		"assets/skybox/left.png",
+		"assets/skybox/top.png",
+		"assets/skybox/bottom.png",
+		"assets/skybox/front.png",
+		"assets/skybox/back.png"
+	}});
+#else
+	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
+		"assets/skybox/right.bmp",
+		"assets/skybox/left.bmp",
+		"assets/skybox/top.bmp",
+		"assets/skybox/bottom.bmp",
+		"assets/skybox/front.bmp",
+		"assets/skybox/back.bmp"
+	}});
+#endif
 	
 	// Create player.
 	auto player_and_camera = SpawnPlayer(rel_player_start_pos, space);

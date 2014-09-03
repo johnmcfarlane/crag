@@ -13,7 +13,8 @@
 
 #include "gfx/Engine.h"
 #include "gfx/Image.h"
-#include "gfx/Texture.h"
+#include "gfx/Texture2d.h"
+#include "gfx/TextureCubeMap.h"
 #include "gfx/object/Skybox.h"
 
 #include "core/ConfigEntry.h"
@@ -26,7 +27,7 @@ namespace
 {
 	CONFIG_DEFINE(skybox_starfield_fast, bool, true);
 	
-	Texture CreateHolodeckSkyboxTexture(int box_edge_size, int num_bars)
+	Image CreateHolodeckSkyboxImage(int box_edge_size, int num_bars)
 	{
 		Image image;
 		image.Create(geom::Vector2i(box_edge_size, box_edge_size));
@@ -48,10 +49,10 @@ namespace
 			}
 		}
 		
-		return image.CreateTexture();
+		return image;
 	}
 
-	Texture CreateStarsSlow(int axis, int pole, int box_edge_size, int num_stars)
+	Image CreateStarsSlow(int axis, int pole, int box_edge_size, int num_stars)
 	{
 		int x_axis = TriMod(axis + 1);
 		int y_axis = TriMod(axis + 2);
@@ -119,7 +120,7 @@ namespace
 			}
 		}
 
-		return image.CreateTexture();
+		return image;
 	}
 
 	void DrawStar(Image & side, geom::Vector2f const & uv, float r)
@@ -142,7 +143,7 @@ namespace
 		side.SetPixel(pos, c);
 	}
 
-	Texture CreateStarsFast(int axis, int pole, int box_edge_size, int num_stars)
+	Image CreateStarsFast(int axis, int pole, int box_edge_size, int num_stars)
 	{
 		Image image;
 		image.Create(geom::Vector2i(box_edge_size, box_edge_size));
@@ -174,7 +175,7 @@ namespace
 			DrawStar(image, uv, radius);
 		}
 	
-		return image.CreateTexture();
+		return image;
 	}
 }
 
@@ -185,22 +186,10 @@ ObjectHandle SpawnHolodeckSkybox()
 		
 		resource_manager.Register<TextureCubeMap>("HolodeckSkyboxTextures", [] () {
 			// pretty inefficient, but the holodeck's a pretty special case
-#if ! defined(WIN32)
-			return TextureCubeMap {{
-				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }},
-				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }},
-				{{ CreateHolodeckSkyboxTexture(512, 16), CreateHolodeckSkyboxTexture(512, 16) }} }};
-#else
-			TextureCubeMap textures;
-			for (auto & side : textures)
-			{
-				for (auto & texture : side)
-				{
-					texture = std::move(CreateHolodeckSkyboxTexture(512, 16));
-				}
-			}
-			return textures;
-#endif
+			return TextureCubeMap(CubeMap<Image> {{
+				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }},
+				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }},
+				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }} }});
 		});
 	});
 	
@@ -214,18 +203,18 @@ ObjectHandle SpawnStarfieldSkybox()
 		auto & resource_manager = engine.GetResourceManager();
 		
 		resource_manager.Register<TextureCubeMap>("StarfieldSkyboxTextures", [] () {
-			TextureCubeMap cube_map;
-			ForEachSide([& cube_map] (int axis, int pole) {
+			CubeMap<Image> images;
+			ForEachSide([& images] (int axis, int pole) {
 				if (skybox_starfield_fast)
 				{
-					cube_map[axis][pole] = CreateStarsFast(axis, pole, 512, 20000);
+					images[axis][pole] = std::move(CreateStarsFast(axis, pole, 512, 20000));
 				}
 				else
 				{
-					cube_map[axis][pole] = CreateStarsSlow(axis, pole, 512, 100);
+					images[axis][pole] = std::move(CreateStarsSlow(axis, pole, 512, 100));
 				}
 			});
-			return cube_map;
+			return TextureCubeMap(images);
 		});
 	});
 	
@@ -234,23 +223,21 @@ ObjectHandle SpawnStarfieldSkybox()
 
 ObjectHandle SpawnBitmapSkybox(std::array<char const *, 6> const & filenames)
 {
-	Daemon::Call([& filenames] (Engine & engine) {
+	Daemon::Call([filenames] (Engine & engine) {
 		auto & resource_manager = engine.GetResourceManager();
 		
-		resource_manager.Register<TextureCubeMap>("BitmapSkyboxTextures", [& filenames] () {
-			TextureCubeMap cube_map;
+		resource_manager.Register<TextureCubeMap>("BitmapSkyboxTextures", [filenames] () {
+			CubeMap<Image> images;
 			
 			auto filename_iterator = std::begin(filenames);
 			ForEachSide([&] (int axis, int pole) {
-				Image image;
-				image.Load(* filename_iterator);
-				cube_map[axis][pole] = image.CreateTexture();
+				images[axis][pole].Load(* filename_iterator);
 				
 				++ filename_iterator;
 			});
 			ASSERT(filename_iterator == std::end(filenames));
 		
-			return cube_map;
+			return TextureCubeMap(images);
 		});
 	});
 	

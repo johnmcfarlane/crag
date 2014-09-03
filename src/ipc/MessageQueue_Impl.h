@@ -96,8 +96,10 @@ bool ipc::MessageQueue<CLASS>::IsEmpty() const
 
 template <typename CLASS>
 template <typename MESSAGE>
-void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
+bool ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 {
+	bool expanded = false;
+
 	_mutex.lock();
 	
 	CRAG_VERIFY(* this);
@@ -124,12 +126,16 @@ void ipc::MessageQueue<CLASS>::PushBack(MESSAGE const & object)
 		ASSERT(node->next == nullptr);
 		node->next.reset(new BufferNode(new_capacity));
 		node = node->next.get();
+
+		expanded = true;
 	}
+
+	CRAG_VERIFY(* this);
 
 	_mutex.unlock();
 	_semaphore.Increment();
 	
-	CRAG_VERIFY(* this);
+	return expanded;
 }
 
 template <typename CLASS>

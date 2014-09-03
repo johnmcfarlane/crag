@@ -6,6 +6,7 @@ cmake_install.cmake
 core
 core.*
 SDL
+SDL_image
 bin
 include
 lib

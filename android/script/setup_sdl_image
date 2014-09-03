@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+
+# SDL_image
+
+cd jni
+
+hg clone http://hg.libsdl.org/SDL_image || true
+cd SDL_image
+hg pull http://hg.libsdl.org/SDL_image
+hg update
+cd ..
+
+cd ..

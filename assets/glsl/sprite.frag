@@ -11,7 +11,7 @@
 uniform sampler2D texture;
 
 // inputs from skybox.vert
-varying UV_COORD fragment_tex_coord;
+varying UV_COORD2 fragment_tex_coord;
 
 void main(void)
 {

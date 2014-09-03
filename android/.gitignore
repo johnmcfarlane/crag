@@ -5,6 +5,7 @@ bin/
 dl/
 gen/
 jni/SDL
+jni/SDL_image
 libs/
 local.properties
 crag-release-key.keystore

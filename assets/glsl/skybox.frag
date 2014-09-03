@@ -8,18 +8,12 @@
 //
 
 // per-object inputs from the renderer
-uniform sampler2D texture;
+uniform samplerCube cube_texture;
 
 // inputs from skybox.vert
-varying VECTOR3 fragment_position;
-varying UV_COORD fragment_tex_coord;
+varying UV_COORD3 fragment_tex_coord;
 
 void main(void)
 {
-	COLOR4 texture_color = texture2D(texture, fragment_tex_coord);
-
-	VECTOR3 fragment_direction = normalize(fragment_position);
-
-	gl_FragColor.rgb = BackgroundLightFragment(fragment_direction, texture_color.rgb);
-	gl_FragColor.a = 1.;
+	gl_FragColor = textureCube(cube_texture, fragment_tex_coord);
 }

@@ -13,7 +13,8 @@
 
 #define COLOR3 COLOR_PRECISION vec3
 #define COLOR4 COLOR_PRECISION vec4
-#define UV_COORD UV_PRECISION vec2
+#define UV_COORD2 UV_PRECISION vec2
+#define UV_COORD3 UV_PRECISION vec3
 #define SCALAR VECTOR_PRECISION float
 #define VECTOR2 VECTOR_PRECISION vec2
 #define VECTOR3 VECTOR_PRECISION vec3
@@ -22,7 +23,8 @@
 #else
 #define COLOR3 vec3
 #define COLOR4 vec4
-#define UV_COORD vec2
+#define UV_COORD2 vec2
+#define UV_COORD3 vec3
 #define SCALAR float
 #define VECTOR2 vec2
 #define VECTOR3 vec3

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-sudo apt-get install make cmake g++-4.7 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential
+sudo apt-get install make cmake g++-4.7 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential libpng12-dev
 
 ################################################################################
 # clean build folders
@@ -21,6 +21,19 @@ cd SDL
 hg pull http://hg.libsdl.org/SDL
 hg update
 ./configure --prefix="$PWD/.." --enable-static --disable-shared
+make -j8
+make install
+cd ..
+
+################################################################################
+# SDL_image
+
+hg clone http://hg.libsdl.org/SDL_image || true
+cd SDL_image
+hg pull http://hg.libsdl.org/SDL_image
+hg update
+./autogen.sh
+./configure --prefix="$PWD/.." --enable-static --disable-shared --enable-png-shared
 make -j8
 make install
 cd ..

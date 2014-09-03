@@ -5,11 +5,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 SDL_PATH := ../SDL
-ODE_PATH := 
+SDL_IMAGE_PATH := ../SDL_image
+ODE_PATH := /../ode
 CRAG_PATH := ../../../src
 
-LOCAL_C_INCLUDES := $(SDL_PATH)/include \
-	$(LOCAL_PATH)/../ode/include \
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
+	$(LOCAL_PATH)/$(SDL_IMAGE_PATH) \
+	$(LOCAL_PATH)/$(ODE_PATH)/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
@@ -74,7 +76,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/Debug.cpp \
 	$(CRAG_PATH)/gfx/Engine.cpp \
 	$(CRAG_PATH)/gfx/Font.cpp \
-	$(CRAG_PATH)/gfx/FrameBuffer.cpp \
 	$(CRAG_PATH)/gfx/glHelpers.cpp \
 	$(CRAG_PATH)/gfx/Image.cpp \
 	$(CRAG_PATH)/gfx/object/Ball.cpp \
@@ -93,7 +94,8 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/gfx/RenderBuffer.cpp \
 	$(CRAG_PATH)/gfx/Scene.cpp \
 	$(CRAG_PATH)/gfx/Shader.cpp \
-	$(CRAG_PATH)/gfx/Texture.cpp \
+	$(CRAG_PATH)/gfx/Texture2d.cpp \
+	$(CRAG_PATH)/gfx/TextureCubeMap.cpp \
 	$(CRAG_PATH)/gfx/LitVertex.cpp \
 	$(CRAG_PATH)/gfx/Uniform.cpp \
 	$(CRAG_PATH)/main.cpp \
@@ -140,7 +142,7 @@ else
 	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -Wno-unused-function -Wno-attributes -fno-rtti -fno-exceptions
 endif
 
-LOCAL_SHARED_LIBRARIES := SDL2 ode
+LOCAL_SHARED_LIBRARIES := SDL2 ode SDL2_image
 
 LOCAL_LDLIBS := -lGLESv2 -llog
 

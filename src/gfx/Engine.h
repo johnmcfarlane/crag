@@ -10,7 +10,6 @@
 #pragma once
 
 #include "defs.h"
-#include "FrameBuffer.h"
 #include "Image.h"
 #include "LightType.h"
 #include "RenderBuffer.h"

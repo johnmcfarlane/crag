@@ -57,7 +57,7 @@ Font::Font(char const * filename, float scale)
 {
 	Image image;
 	image.Load(filename);
-	if (! image)
+	if (! image.IsInitialized())
 	{
 		ERROR_MESSAGE("Failed to find font file, '%s'.", filename);
 		return;
@@ -72,7 +72,7 @@ Font::Font(char const * filename, float scale)
 	
 	scale_factor = scale;
 
-	texture = image.CreateTexture();
+	texture.Set(image);
 	
 	vbo.Init();
 }

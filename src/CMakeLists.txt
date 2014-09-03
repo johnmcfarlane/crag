@@ -61,7 +61,6 @@ add_executable(crag
 	gfx/Debug.cpp
 	gfx/Engine.cpp
 	gfx/Font.cpp
-	gfx/FrameBuffer.cpp
 	gfx/glHelpers.cpp
 	gfx/Image.cpp
 	gfx/object/Ball.cpp
@@ -80,7 +79,8 @@ add_executable(crag
 	gfx/RenderBuffer.cpp
 	gfx/Scene.cpp
 	gfx/Shader.cpp
-	gfx/Texture.cpp
+	gfx/Texture2d.cpp
+	gfx/TextureCubeMap.cpp
 	gfx/LitVertex.cpp
 	gfx/Uniform.cpp
 	main.cpp
@@ -127,8 +127,9 @@ else (CRAG_RPI)
 	# TODO: Given these don't appear to be needed by RPi, try removing them here
 	find_package(OpenGL REQUIRED)
 	find_library(SDL2_LIBRARY SDL2 /usr/lib ../linux/lib)
+	find_library(SDL2_IMAGE_LIBRARY SDL2_image /usr/lib ../linux/lib)
 	find_library(ODE_LIBRARY ode /usr/lib)
-	target_link_libraries(crag ${SDL2_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
+	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
 endif (CRAG_RPI)
 
 include (PrecompiledHeader.cmake)
