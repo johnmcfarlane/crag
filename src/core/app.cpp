@@ -43,27 +43,31 @@ namespace
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	
-	#if ! defined(NDEBUG)
+#if ! defined(NDEBUG)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-	#endif
+#endif
 
-	#if defined(CRAG_USE_GL)
+#if defined(CRAG_USE_GL)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	#endif
+#endif
 
-	#if defined(CRAG_USE_GLES)
+#if defined(CRAG_USE_GLES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	#endif
+#endif
 
-		int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL;
+		int flags = SDL_WINDOW_INPUT_GRABBED;
 
-	#if defined(CRAG_USE_MOUSE)
+#if defined(CRAG_USE_GL)
+		flags |= SDL_WINDOW_OPENGL;
+#endif
+
+#if defined(CRAG_USE_MOUSE)
 		flags |= SDL_WINDOW_INPUT_GRABBED;
-	#endif
+#endif
 	
 		if (_full_screen)
 		{
