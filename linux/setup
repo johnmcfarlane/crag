@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-sudo apt-get install make cmake g++-4.7 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential libpng12-dev
+sudo apt-get install make cmake g++-4.8 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential libpng12-dev
 
 ################################################################################
 # clean build folders
