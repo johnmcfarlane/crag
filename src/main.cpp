@@ -65,6 +65,9 @@ namespace
 #if defined(WIN32)
 	CONFIG_DEFINE (window_resolution_x, int, 800);
 	CONFIG_DEFINE (window_resolution_y, int, 600);
+#elif defined(CRAG_RPI)
+	CONFIG_DEFINE (window_resolution_x, int, 960);
+	CONFIG_DEFINE (window_resolution_y, int, 540);
 #else
 	CONFIG_DEFINE (window_resolution_x, int, 800);
 	CONFIG_DEFINE (window_resolution_y, int, 600);
