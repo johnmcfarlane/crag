@@ -263,6 +263,9 @@ LightProgram::LightUniforms::LightUniforms(LightUniforms && rhs)
 , direction(std::move(rhs.direction))
 , color(std::move(rhs.color))
 , angle(std::move(rhs.angle))
+, used(std::move(rhs.used))
+, fragment(std::move(rhs.fragment))
+, search(std::move(rhs.search))
 {
 }
 
@@ -272,6 +275,9 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 	std::swap(direction, rhs.direction);
 	std::swap(color, rhs.color);
 	std::swap(angle, rhs.angle);
+	std::swap(used, rhs.used);
+	std::swap(fragment, rhs.fragment);
+	std::swap(search, rhs.search);
 
 	return * this;
 }
@@ -281,10 +287,6 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
-, _vertex_point_lights_end(std::move(rhs._vertex_point_lights_end))
-, _vertex_search_lights_end(std::move(rhs._vertex_search_lights_end))
-, _fragment_point_lights_end(std::move(rhs._fragment_point_lights_end))
-, _fragment_search_lights_end(std::move(rhs._fragment_search_lights_end))
 {
 	for (auto i = 0; i != max_lights; ++ i)
 	{
@@ -300,11 +302,6 @@ LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std
 void LightProgram::InitUniforms()
 {
 	super::InitUniforms();	
-	
-	InitUniformLocation(_vertex_point_lights_end, "vertex_point_lights_end");
-	InitUniformLocation(_vertex_search_lights_end, "vertex_search_lights_end");
-	InitUniformLocation(_fragment_point_lights_end, "fragment_point_lights_end");
-	InitUniformLocation(_fragment_search_lights_end, "fragment_search_lights_end");
 
 	for (auto index = 0u; index != _lights.size(); ++ index)
 	{
@@ -324,6 +321,15 @@ void LightProgram::InitUniforms()
 
 		snprintf(name, name_size, "lights[%d].angle", index);
 		InitUniformLocation(light.angle, name);
+
+		snprintf(name, name_size, "lights[%d].used", index);
+		InitUniformLocation(light.used, name);
+
+		snprintf(name, name_size, "lights[%d].fragment", index);
+		InitUniformLocation(light.fragment, name);
+
+		snprintf(name, name_size, "lights[%d].search", index);
+		InitUniformLocation(light.search, name);
 	}
 }
 
@@ -332,78 +338,62 @@ int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFi
 	ASSERT(_lights.size() == max_lights);
 	ASSERT(IsBound());
 
-	std::array<std::array<Uniform<int> const *, int(LightResolution::size)>, int(LightResolution::size)> light_indices =
-	{{
-		{{
-			& _vertex_point_lights_end,
-			& _vertex_search_lights_end
-		}},
-		{{
-			& _fragment_point_lights_end,
-			& _fragment_search_lights_end
-		}}
-	}};
-
 	auto total_lights = 0;
 
-	for (auto resolution = 0; resolution != int(LightResolution::size); ++ resolution)
+	for (auto const & light : lights)
 	{
-		for (auto type = 0; type != int(LightType::size); ++ type)
+		if (! filter(light))
 		{
-			for (auto const & light : lights)
+			// otherwise filtered out
+			continue;
+		}
+
+		if (! light.GetIsLuminant())
+		{
+			// not doing any lighting right now
+			continue;
+		}
+
+		if (unsigned(total_lights) == _lights.size())
+		{
+			if (CRAG_DEBUG_ONCE)
 			{
-				if (! filter(light))
-				{
-					// otherwise filtered out
-					continue;
-				}
-
-				auto attributes = light.GetAttributes();
-				if (attributes.resolution != LightResolution(resolution)
-					|| attributes.type != LightType(type))
-				{
-					continue;
-				}
-
-				if (! light.GetIsLuminant())
-				{
-					// not doing any lighting right now
-					continue;
-				}
-
-				if (unsigned(total_lights) >= _lights.size())
-				{
-					if (CRAG_DEBUG_ONCE)
-					{
-						DEBUG_MESSAGE(
-							"too many lights [%u>%u]", unsigned(total_lights), _lights.size());
-					}
-
-					break;
-				}
-
-				auto const & light_uniforms = _lights[total_lights];
-
-				auto const & transformation = light.GetModelViewTransformation();
-				auto position = transformation.GetTranslation();
-				light_uniforms.position.Set(position);
-
-				auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
-				light_uniforms.direction.Set(direction);
-
-				auto const & color = light.GetColor();
-				light_uniforms.color.Set(color);
-
-				auto const & angle = light.GetAngle();
-				light_uniforms.angle.Set(angle);
-
-				++ total_lights;
+				DEBUG_MESSAGE(
+					"too many lights [%u>%u]", unsigned(total_lights), _lights.size());
 			}
 
-			light_indices[resolution][type]->Set(total_lights);
+			break;
 		}
+
+		auto const & light_uniforms = _lights[total_lights];
+
+		auto const & transformation = light.GetModelViewTransformation();
+		auto position = transformation.GetTranslation();
+		light_uniforms.position.Set(position);
+
+		auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
+		light_uniforms.direction.Set(direction);
+
+		auto const & color = light.GetColor();
+		light_uniforms.color.Set(color);
+
+		auto const & angle = light.GetAngle();
+		light_uniforms.angle.Set(angle);
+		
+		auto attributes = light.GetAttributes();
+		light_uniforms.used.Set(true);
+		light_uniforms.fragment.Set(attributes.resolution == LightResolution::fragment);
+		light_uniforms.search.Set(attributes.type == LightType::search);
+
+		++ total_lights;
 	}
 	
+	for (auto unused = unsigned(total_lights); unused != _lights.size(); ++ unused)
+	{
+		auto const & light_uniforms = _lights[unused];
+		light_uniforms.used.Set(false);
+	}
+
 	// base class override is a stub
 	ASSERT(super::SetLights(Color4f(), lights, filter) == 0);
 	

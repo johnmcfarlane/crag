@@ -32,6 +32,9 @@ struct Light
 	vec3 direction;	// for search lights
 	vec4 color;
 	vec2 angle;	// for search light, sin/cos
+	bool used;
+	bool fragment;	// opposed to vertex
+	bool search;	// opposed to point light
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,11 +53,6 @@ const float far_negative = - 1000000.;
 // light information provided by the renderer
 uniform COLOR4 ambient;
 uniform Light lights[MAX_LIGHTS];
-
-uniform lowp int vertex_point_lights_end;
-uniform lowp int vertex_search_lights_end;
-uniform lowp int fragment_point_lights_end;
-uniform lowp int fragment_search_lights_end;
 
 
 ////////////////////////////////////////////////////////////////////////////////

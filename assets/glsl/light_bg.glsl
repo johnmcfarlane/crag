@@ -13,13 +13,23 @@
 // background surfaces (skybox)
 
 // return consolidated light reflected and illuminated by given lights from a given direction
-COLOR3 BackgroundLight(int search_lights_begin, int search_lights_end, VECTOR3 ray_direction)
+COLOR3 BackgroundLight(VECTOR3 ray_direction, bool fragment)
 {
 	COLOR3 illumination = COLOR3(0.);
 	
-	for (int count = search_lights_end - search_lights_begin; count > 0; -- count)
+	for (int i = 0; i != MAX_LIGHTS; ++ i)
 	{
-		Light light = lights[search_lights_begin ++];
+		Light light = lights[i];
+		
+		if (! (light.used && light.search))
+		{
+			continue;
+		}
+		
+		if (light.fragment != fragment)
+		{
+			continue;
+		}
 
 		illumination += GetBeamIllumination(light, ray_direction, far_positive);
 	}
@@ -31,8 +41,8 @@ COLOR3 BackgroundLight(int search_lights_begin, int search_lights_end, VECTOR3 r
 COLOR3 BackgroundLightFragment(VECTOR3 ray_direction, COLOR3 diffuse)
 {
 	COLOR3 color = diffuse;
-	color += BackgroundLight(vertex_point_lights_end, vertex_search_lights_end, ray_direction);
-	color += BackgroundLight(fragment_point_lights_end, fragment_search_lights_end, ray_direction);
+	color += BackgroundLight(ray_direction, false);
+	color += BackgroundLight(ray_direction, true);
 	return color;
 }
 

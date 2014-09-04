@@ -133,6 +133,9 @@ namespace gfx
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
+			Uniform<bool> used;
+			Uniform<bool> fragment;
+			Uniform<bool> search;
 		};
 
 		using super = Program3d;
@@ -161,12 +164,6 @@ namespace gfx
 		
 		// flat light array
 		std::array<LightUniforms, max_lights> _lights;
-
-		// progressive indices into _lights (_vertex_point_lights_begin is always zero)
-		Uniform<int> _vertex_point_lights_end;
-		Uniform<int> _vertex_search_lights_end;
-		Uniform<int> _fragment_point_lights_end;
-		Uniform<int> _fragment_search_lights_end;
 	};
 	
 	// Things in the 3D world but in front of the skybox

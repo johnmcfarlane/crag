@@ -26,11 +26,11 @@ varying COLOR3 fragment_illumination;
 
 void main(void)
 {
-	VECTOR4 position4 = model_view_matrix * VECTOR4(vertex_position, 1.);
+	VECTOR4 position4 = model_view_matrix * vec4(vertex_position, 1.);
 	gl_Position = projection_matrix * position4;
 	fragment_position = position4.xyz;
 
-	fragment_normal = (model_view_matrix * VECTOR4(vertex_normal, 0.)).xyz;
+	fragment_normal = (model_view_matrix * vec4(vertex_normal, 0.)).xyz;
 
 	fragment_diffuse = color * vertex_color * (1. / 256.);
 
