@@ -1,11 +1,13 @@
 # linux/.gitignore
-bin/
 CMakeCache.txt
 CMakeFiles/
-include/
-lib/
 Makefile
-SDL/
-share/
 cmake_install.cmake
 core
+core.*
+SDL
+SDL_image
+bin
+include
+lib
+share
