@@ -4,7 +4,7 @@ set -o errexit
 # params
 if [ "$#" -lt 2 ]
 then
-	echo "$0 <num-cores> (release|debug) [<crag-parameter> ...]"
+	echo "$0 (release|debug) <num-cores> [<crag-parameter> ...]"
 	exit 1
 fi
 
