@@ -22,7 +22,6 @@
 namespace 
 {
 	SDL_Window * _window = nullptr;
-	SDL_Renderer * _renderer = nullptr;	// this isn't needed for Win32/Android
 	SDL_GLContext _context = nullptr;
 
 	SDL_DisplayMode _desktop_display_mode;
@@ -106,28 +105,6 @@ namespace
 		_window = nullptr;
 	}
 
-	bool InitRenderer()
-	{
-		ASSERT(_window);
-
-		ASSERT(! _renderer);
-		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
-		if (_renderer == nullptr)
-		{
-			DEBUG_MESSAGE("Failed to create renderer: \"%s\"", SDL_GetError());	
-			return false;
-		}
-
-		return true;
-	}
-
-	void DeinitRenderer()
-	{
-		ASSERT(_renderer);
-		SDL_DestroyRenderer(_renderer);
-		_renderer = nullptr;
-	}
-
 	bool InitContext()
 	{
 		ASSERT(_window);
@@ -206,11 +183,6 @@ void app::Deinit()
 
 bool app::InitGfx()
 {
-	if (! InitRenderer())
-	{
-		return false;
-	}
-	
 	if (! InitContext())
 	{
 		return false;
@@ -222,7 +194,6 @@ bool app::InitGfx()
 void app::DeinitGfx()
 {
 	DeinitContext();
-	DeinitRenderer();
 }
 
 char const * app::GetFullPath(char const * filepath)
