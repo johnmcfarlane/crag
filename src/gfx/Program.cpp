@@ -263,7 +263,6 @@ LightProgram::LightUniforms::LightUniforms(LightUniforms && rhs)
 , color(std::move(rhs.color))
 , angle(std::move(rhs.angle))
 , used(std::move(rhs.used))
-, fragment(std::move(rhs.fragment))
 , search(std::move(rhs.search))
 {
 }
@@ -275,7 +274,6 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 	std::swap(color, rhs.color);
 	std::swap(angle, rhs.angle);
 	std::swap(used, rhs.used);
-	std::swap(fragment, rhs.fragment);
 	std::swap(search, rhs.search);
 
 	return * this;
@@ -287,9 +285,14 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
 {
-	for (auto i = 0; i != max_lights; ++ i)
+	for (auto i = 0; i != max_vertex_lights; ++ i)
 	{
-		std::swap(_lights[i], rhs._lights[i]);
+		std::swap(_vertex_lights[i], rhs._vertex_lights[i]);
+	}
+
+	for (auto i = 0; i != max_fragment_lights; ++ i)
+	{
+		std::swap(_fragment_lights[i], rhs._fragment_lights[i]);
 	}
 }
 
@@ -302,98 +305,106 @@ void LightProgram::InitUniforms()
 {
 	super::InitUniforms();	
 
-	for (auto index = 0u; index != _lights.size(); ++ index)
+	auto init_lights = [this] (LightUniforms * array, int size, char const * array_name)
 	{
-		auto & light = _lights[index];
+		for (auto index = 0; index != size; ++ index)
+		{
+			auto & light_uniforms = array[index];
 
-		int constexpr name_size = 64;
-		char name[name_size];
+			int constexpr name_size = 64;
+			char name[name_size];
 
-		snprintf(name, name_size, "lights[%d].position", index);
-		InitUniformLocation(light.position, name);
+			snprintf(name, name_size, "%s[%d].position", array_name, index);
+			InitUniformLocation(light_uniforms.position, name);
 
-		snprintf(name, name_size, "lights[%d].direction", index);
-		InitUniformLocation(light.direction, name);
+			snprintf(name, name_size, "%s[%d].direction", array_name, index);
+			InitUniformLocation(light_uniforms.direction, name);
 
-		snprintf(name, name_size, "lights[%d].color", index);
-		InitUniformLocation(light.color, name);
+			snprintf(name, name_size, "%s[%d].color", array_name, index);
+			InitUniformLocation(light_uniforms.color, name);
 
-		snprintf(name, name_size, "lights[%d].angle", index);
-		InitUniformLocation(light.angle, name);
+			snprintf(name, name_size, "%s[%d].angle", array_name, index);
+			InitUniformLocation(light_uniforms.angle, name);
 
-		snprintf(name, name_size, "lights[%d].used", index);
-		InitUniformLocation(light.used, name);
+			snprintf(name, name_size, "%s[%d].used", array_name, index);
+			InitUniformLocation(light_uniforms.used, name);
 
-		snprintf(name, name_size, "lights[%d].fragment", index);
-		InitUniformLocation(light.fragment, name);
-
-		snprintf(name, name_size, "lights[%d].search", index);
-		InitUniformLocation(light.search, name);
-	}
+			snprintf(name, name_size, "%s[%d].search", array_name, index);
+			InitUniformLocation(light_uniforms.search, name);
+		}
+	};
+	
+	init_lights(_vertex_lights.data(), (int)_vertex_lights.size(), "vertex_lights");
+	init_lights(_fragment_lights.data(), (int)_fragment_lights.size(), "fragment_lights");
 }
 
 void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
 {
-	ASSERT(_lights.size() == max_lights);
+	ASSERT(_vertex_lights.size() == max_vertex_lights);
+	ASSERT(_fragment_lights.size() == max_fragment_lights);
 	ASSERT(IsBound());
 
-	auto total_lights = 0;
-
-	for (auto const & light : lights)
+	auto set_lights = [& lights, & filter] (LightUniforms const * uniforms_begin, LightUniforms const * uniforms_end, LightResolution resolution)
 	{
-		if (! filter(light))
-		{
-			// otherwise filtered out
-			continue;
-		}
+		auto light_uniforms_iterator = uniforms_begin;
 
-		if (! light.GetIsLuminant())
+		for (auto const & light : lights)
 		{
-			// not doing any lighting right now
-			continue;
-		}
-
-		if (unsigned(total_lights) == _lights.size())
-		{
-			if (CRAG_DEBUG_ONCE)
+			if (! filter(light))
 			{
-				DEBUG_MESSAGE(
-					"too many lights [%u>%u]", unsigned(total_lights), _lights.size());
+				// otherwise filtered out
+				continue;
 			}
 
-			break;
-		}
+			if (! light.GetIsLuminant())
+			{
+				// not doing any lighting right now
+				continue;
+			}
 
-		auto const & light_uniforms = _lights[total_lights];
+			auto attributes = light.GetAttributes();
+			if (attributes.resolution != resolution)
+			{
+				continue;
+			}
+			
+			if (light_uniforms_iterator == uniforms_end)
+			{
+				if (CRAG_DEBUG_ONCE)
+				{
+					DEBUG_BREAK("too many lights");
+				}
 
-		auto const & transformation = light.GetModelViewTransformation();
-		auto position = transformation.GetTranslation();
-		light_uniforms.position.Set(position);
+				return;
+			}
 
-		auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
-		light_uniforms.direction.Set(direction);
+			auto const & transformation = light.GetModelViewTransformation();
+			auto position = transformation.GetTranslation();
+			light_uniforms_iterator->position.Set(position);
 
-		auto const & color = light.GetColor();
-		light_uniforms.color.Set(color);
+			auto const & direction = GetAxis(transformation.GetRotation(), Direction::forward);
+			light_uniforms_iterator->direction.Set(direction);
 
-		auto const & angle = light.GetAngle();
-		light_uniforms.angle.Set(angle);
+			auto const & color = light.GetColor();
+			light_uniforms_iterator->color.Set(color);
+
+			auto const & angle = light.GetAngle();
+			light_uniforms_iterator->angle.Set(angle);
 		
-		auto attributes = light.GetAttributes();
-		light_uniforms.used.Set(true);
-		light_uniforms.fragment.Set(attributes.resolution == LightResolution::fragment);
-		light_uniforms.search.Set(attributes.type == LightType::search);
+			light_uniforms_iterator->used.Set(true);
+			light_uniforms_iterator->search.Set(attributes.type == LightType::search);
 
-		++ total_lights;
-	}
+			++ light_uniforms_iterator;
+		}
 	
-	for (auto unused = unsigned(total_lights); unused != _lights.size(); ++ unused)
-	{
-		auto const & light_uniforms = _lights[unused];
-		light_uniforms.used.Set(false);
-	}
+		for (; light_uniforms_iterator != uniforms_end; ++ light_uniforms_iterator)
+		{
+			light_uniforms_iterator->used.Set(false);
+		}
+	};
 
-	// base class override is a stub
+	set_lights(std::begin(_vertex_lights), std::end(_vertex_lights), LightResolution::vertex);
+	set_lights(std::begin(_fragment_lights), std::end(_fragment_lights), LightResolution::fragment);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

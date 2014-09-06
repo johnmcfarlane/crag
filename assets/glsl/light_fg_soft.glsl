@@ -37,56 +37,55 @@ COLOR3 GetSearchLightReflection(Light light, VECTOR3 position)
 }
 
 // accumulate light reflected and illuminated by given lights on a given position
-LightResults ForegroundLight(VECTOR3 position, bool fragment)
+void ForegroundLight(Light light, VECTOR3 position, inout LightResults results)
 {
-	LightResults results = LightResults(COLOR3(0.), COLOR3(0.));
-
-	for (int i = 0; i != MAX_LIGHTS; ++ i)
+	if (! light.used)
 	{
-		Light light = lights[i];
-		
-		if (! light.used)
-		{
-			continue;
-		}
-		
-		if (light.fragment != fragment)
-		{
-			continue;
-		}
-
-		if (light.search)
-		{
-			results.reflection += GetSearchLightReflection(light, position);
+		return;
+	}
+	
+	if (light.search)
+	{
+		results.reflection += GetSearchLightReflection(light, position);
 
 #if defined(ENABLE_BEAM_LIGHTING)
-			float ray_distance = length(position);
-			vec3 ray_direction = position / ray_distance;
-			results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
+		float ray_distance = length(position);
+		vec3 ray_direction = position / ray_distance;
+		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
-		}
-		else
-		{
-			results.reflection += GetPointLightReflection(light, position);
-		}
 	}
-
-	return results;
+	else
+	{
+		results.reflection += GetPointLightReflection(light, position);
+	}
 }
 
 // return light reflected and illuminated by vertex lights on a given position
 LightResults ForegroundLightVertex(VECTOR3 position)
 {
-	return ForegroundLight(position, false);
+	LightResults results = LightResults(COLOR3(0.), COLOR3(0.));
+
+	for (int i = 0; i < MAX_VERTEX_LIGHTS; ++ i)
+	{
+		ForegroundLight(vertex_lights[i], position, results);
+	}
+	
+	return results;
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given position
 COLOR4 ForegroundLightFragment(VECTOR3 position, COLOR4 diffuse, LightResults vertex_results)
 {
-	LightResults results = ForegroundLight(position, true);
+	LightResults results;
+	results.reflection = vertex_results.reflection;
+	results.illumination = vertex_results.illumination;
 	
-	results.reflection += vertex_results.reflection;
-	results.illumination += vertex_results.illumination;
+#if defined(MAX_FRAGMENT_LIGHTS)
+	for (int i = 0; i < MAX_FRAGMENT_LIGHTS; ++ i)
+	{
+		ForegroundLight(fragment_lights[i], position, results);
+	}
+#endif
 
 	return vec4(ambient.rgb + results.reflection * diffuse.rgb + results.illumination, diffuse.a);
 }

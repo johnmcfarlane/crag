@@ -33,15 +33,11 @@ struct Light
 	vec4 color;
 	vec2 angle;	// for search light, sin/cos
 	bool used;
-	bool fragment;	// opposed to vertex
 	bool search;	// opposed to point light
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // constants
-
-// matches value in src/gfx/Program.h
-#define MAX_LIGHTS 7
 
 const float far_positive = + 1000000.;
 const float far_negative = - 1000000.;
@@ -52,7 +48,15 @@ const float far_negative = - 1000000.;
 
 // light information provided by the renderer
 uniform COLOR4 ambient;
-uniform Light lights[MAX_LIGHTS];
+
+// matches values in src/gfx/Program.h
+#define MAX_VERTEX_LIGHTS 6
+uniform Light vertex_lights[MAX_VERTEX_LIGHTS];
+
+#if ! defined(GL_ES) || 1
+#define MAX_FRAGMENT_LIGHTS 1
+uniform Light fragment_lights[MAX_FRAGMENT_LIGHTS];
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////

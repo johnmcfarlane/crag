@@ -134,7 +134,6 @@ namespace gfx
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
 			Uniform<bool> used;
-			Uniform<bool> fragment;
 			Uniform<bool> search;
 		};
 
@@ -157,13 +156,20 @@ namespace gfx
 		// constants
 		
 		// matches value in assets/glsl/light_commont.glsl
-		static constexpr auto max_lights = 7;
+#if defined(CRAG_USE_GLES)
+		static constexpr auto max_vertex_lights = 1;
+		static constexpr auto max_fragment_lights = 0;
+#else
+		static constexpr auto max_vertex_lights = 6;
+		static constexpr auto max_fragment_lights = 1;
+#endif
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		// flat light array
-		std::array<LightUniforms, max_lights> _lights;
+		std::array<LightUniforms, max_vertex_lights> _vertex_lights;
+		std::array<LightUniforms, max_fragment_lights> _fragment_lights;
 	};
 	
 	// Things in the 3D world but in front of the skybox

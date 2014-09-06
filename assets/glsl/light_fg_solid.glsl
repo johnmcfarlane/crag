@@ -50,55 +50,56 @@ LIGHT3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 nor
 }
 
 // accumulate light reflected and illuminated by given lights on a given surface
-LightResults ForegroundLight(VECTOR3 position, VECTOR3 normal, bool fragment)
+void ForegroundLight(const Light light, VECTOR3 position, VECTOR3 normal, inout LightResults results)
 {
-	LightResults results = LightResults(vec3(0.), vec3(0.));
-
-	for (int i = 0; i != MAX_LIGHTS; ++ i)
+	if (! light.used)
 	{
-		Light light = lights[i];
-		
-		if (! light.used)
-		{
-			continue;
-		}
-		
-		if (light.fragment != fragment)
-		{
-			continue;
-		}
-
-		if (light.search)
-		{
-			results.reflection += GetSearchLightReflection(light, position, normal);
+		return;
+	}
+	
+	if (light.search)
+	{
+		results.reflection += GetSearchLightReflection(light, position, normal);
 
 #if defined(ENABLE_BEAM_LIGHTING)
-			SCALAR ray_distance = length(position);
-			VECTOR3 ray_direction = position / ray_distance;
-			results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
+		SCALAR ray_distance = length(position);
+		VECTOR3 ray_direction = position / ray_distance;
+		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
-		}
-		else
-		{
-			results.reflection += GetPointLightReflection(light, position, normal);
-		}
 	}
-
-	return results;
+	else
+	{
+		results.reflection += GetPointLightReflection(light, position, normal);
+	}
 }
 
 // return light reflected and illuminated by vertex lights on a given surface
 LightResults ForegroundLightVertex(VECTOR3 position, VECTOR3 normal)
 {
-	return ForegroundLight(position, normal, false);
+	LightResults results = LightResults(vec3(0.), vec3(0.));
+
+	for (int i = 0; i != MAX_VERTEX_LIGHTS; ++ i)
+	{
+		ForegroundLight(vertex_lights[i], position, normal, results);
+	}
+
+	return results;
 }
 
 // return consolidated light reflected and illuminated by fragment lights on a given surface
 COLOR4 ForegroundLightFragment(VECTOR3 position, VECTOR3 normal, COLOR4 diffuse, COLOR3 reflection, COLOR3 illumination)
 {
-	LightResults results = ForegroundLight(position, normal, true);
-	results.reflection += reflection;
-	results.illumination += illumination;
+	LightResults results;
+	results.reflection = reflection;
+	results.illumination = illumination;
+	
+#if defined(MAX_FRAGMENT_LIGHTS)
+	for (int i = 0; i != MAX_FRAGMENT_LIGHTS; ++ i)
+	{
+ 		ForegroundLight(fragment_lights[i], position, normal, results);
+ 	}
+#endif
+	
 	return vec4(ambient.rgb + results.reflection * diffuse.rgb + results.illumination, diffuse.a);
 }
 
