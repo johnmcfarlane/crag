@@ -26,7 +26,7 @@ namespace gfx
 		OBJECT_NO_COPY(TextureCubeMap);
 
 		TextureCubeMap() = default;
-		TextureCubeMap(TextureCubeMap && rhs) = default;
+		TextureCubeMap(TextureCubeMap && rhs);
 		TextureCubeMap(CubeMap<Image> const & images);
 		
 		TextureCubeMap & operator=(TextureCubeMap && rhs);

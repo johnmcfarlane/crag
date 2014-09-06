@@ -23,7 +23,7 @@ namespace gfx
 	{
 	public:
 		Texture2d() = default;
-		Texture2d(Texture2d &&) = default;
+		Texture2d(Texture2d && rhs);
 		Texture2d(Image const & image);
 		
 		Texture2d & operator=(Texture2d && rhs);
