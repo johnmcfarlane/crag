@@ -150,9 +150,8 @@ void Program::SetModelViewMatrix(Matrix44 const &) const
 {
 }
 
-int Program::SetLights(Color4f const &, Light::List const &, LightFilter const &) const
+void Program::SetLights(Color4f const &, Light::List const &, LightFilter const &) const
 {
-	return 0;
 }
 
 void Program::InitUniforms()
@@ -333,7 +332,7 @@ void LightProgram::InitUniforms()
 	}
 }
 
-int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
+void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
 {
 	ASSERT(_lights.size() == max_lights);
 	ASSERT(IsBound());
@@ -395,9 +394,6 @@ int LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFi
 	}
 
 	// base class override is a stub
-	ASSERT(super::SetLights(Color4f(), lights, filter) == 0);
-	
-	return total_lights;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -429,13 +425,13 @@ void ForegroundProgram::InitUniforms()
 	InitUniformLocation(_color, "color");
 }
 
-int ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
+void ForegroundProgram::SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const
 {
 	CRAG_VERIFY_EQUAL(ambient.a, 1);
 	
 	_ambient.Set(ambient);
 
-	return LightProgram::SetLights(ambient, lights, filter);
+	LightProgram::SetLights(ambient, lights, filter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
