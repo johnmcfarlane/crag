@@ -61,7 +61,7 @@ namespace gfx
 		
 		virtual void SetProjectionMatrix(Matrix44 const & projection_matrix) const;
 		virtual void SetModelViewMatrix(Matrix44 const & model_view_matrix) const;
-		virtual int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
+		virtual void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const;
 		
 	protected:
 		void BindAttribLocation(int index, char const * name) const;
@@ -133,6 +133,7 @@ namespace gfx
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
+			Uniform<int> type;
 		};
 
 		using super = Program3d;
@@ -146,7 +147,7 @@ namespace gfx
 	protected:
 		void InitUniforms() override;
 
-		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const override;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const override;
 
 	private:
 		
@@ -154,19 +155,20 @@ namespace gfx
 		// constants
 		
 		// matches value in assets/glsl/light_commont.glsl
-		static constexpr auto max_lights = 7;
+#if defined(CRAG_USE_GLES)
+		static constexpr auto max_vertex_lights = 1;
+		static constexpr auto max_fragment_lights = 0;
+#else
+		static constexpr auto max_vertex_lights = 6;
+		static constexpr auto max_fragment_lights = 1;
+#endif
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 		
 		// flat light array
-		std::array<LightUniforms, max_lights> _lights;
-
-		// progressive indices into _lights (_vertex_point_lights_begin is always zero)
-		Uniform<int> _vertex_point_lights_end;
-		Uniform<int> _vertex_search_lights_end;
-		Uniform<int> _fragment_point_lights_end;
-		Uniform<int> _fragment_search_lights_end;
+		std::array<LightUniforms, max_vertex_lights> _vertex_lights;
+		std::array<LightUniforms, max_fragment_lights> _fragment_lights;
 	};
 	
 	// Things in the 3D world but in front of the skybox
@@ -185,7 +187,7 @@ namespace gfx
 	protected:
 		void InitUniforms() override;
 	private:
-		int SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
+		void SetLights(Color4f const & ambient, Light::List const & lights, LightFilter const & filter) const final;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

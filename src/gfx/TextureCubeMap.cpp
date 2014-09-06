@@ -18,6 +18,11 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::TextureCubeMap member definitions
 
+TextureCubeMap::TextureCubeMap(TextureCubeMap && rhs)
+: Texture(std::move(rhs))
+{
+}
+
 TextureCubeMap::TextureCubeMap(CubeMap<Image> const & images)
 {
 	Set(images);

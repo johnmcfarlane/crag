@@ -19,7 +19,7 @@ varying VECTOR4 frag_position;
 
 void main(void)
 {
-	VECTOR4 vertex_position4 = VECTOR4(vertex_position, 1);
+	VECTOR4 vertex_position4 = vec4(vertex_position, 1);
 	frag_position = model_view_matrix * vertex_position4;
 	gl_Position = projection_matrix * frag_position;
 }

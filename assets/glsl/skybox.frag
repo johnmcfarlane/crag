@@ -11,9 +11,15 @@
 uniform samplerCube cube_texture;
 
 // inputs from skybox.vert
+varying VECTOR3 fragment_position;
 varying UV_COORD3 fragment_tex_coord;
 
 void main(void)
 {
-	gl_FragColor = textureCube(cube_texture, fragment_tex_coord);
+	COLOR3 texture_color = textureCube(cube_texture, fragment_tex_coord).rgb;
+
+	VECTOR3 fragment_direction = normalize(fragment_position);
+
+	gl_FragColor.rgb = BackgroundLightFragment(fragment_direction, texture_color);
+	gl_FragColor.a = 1.;
 }

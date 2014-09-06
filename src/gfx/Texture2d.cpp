@@ -17,6 +17,11 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Texture2d member definitions
 
+Texture2d::Texture2d(Texture2d && rhs)
+: Texture(std::move(rhs))
+{
+}
+
 Texture2d::Texture2d(Image const & image)
 {
 	Set(image);

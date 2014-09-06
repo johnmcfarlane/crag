@@ -9,7 +9,7 @@
 
 #define ENABLE_LIGHTING
 
-#if ! defined(GL_ES)
+#if defined(CRAG_USE_GL)
 #define ENABLE_BEAM_LIGHTING
 #endif
 
@@ -32,13 +32,11 @@ struct Light
 	vec3 direction;	// for search lights
 	vec4 color;
 	vec2 angle;	// for search light, sin/cos
+	int type;	// [point, search] (or -1 for unused)
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // constants
-
-// matches value in src/gfx/Program.h
-#define MAX_LIGHTS 7
 
 const float far_positive = + 1000000.;
 const float far_negative = - 1000000.;
@@ -49,12 +47,15 @@ const float far_negative = - 1000000.;
 
 // light information provided by the renderer
 uniform COLOR4 ambient;
-uniform Light lights[MAX_LIGHTS];
 
-uniform lowp int vertex_point_lights_end;
-uniform lowp int vertex_search_lights_end;
-uniform lowp int fragment_point_lights_end;
-uniform lowp int fragment_search_lights_end;
+// matches values in src/gfx/Program.h
+#define MAX_VERTEX_LIGHTS 6
+uniform Light vertex_lights[MAX_VERTEX_LIGHTS];
+
+#if defined(CRAG_USE_GL)
+#define MAX_FRAGMENT_LIGHTS 1
+uniform Light fragment_lights[MAX_FRAGMENT_LIGHTS];
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////

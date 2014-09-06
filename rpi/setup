@@ -1,15 +1,61 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -o errexit
 
-# get SDL
-hg clone http://hg.libsdl.org/SDL
+################################################################################
+# things you might also need to do
+
+# read SDL/docs/README-raspberrypi.md, notably:
+# - run `sudo rpi-update`
+# - set your gpu_mem=128
+
+################################################################################
+# system packages
+
+sudo apt-get install make cmake automake g++-4.8 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential mesa-common-dev libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+
+################################################################################
+# clean build folders
+
+git clean -Xdf bin
+git clean -Xdf debug
+git clean -Xdf lib
+git clean -Xdf include
+git clean -Xdf release
+git clean -Xdf share
+
+################################################################################
+# SDL
+
+hg clone http://hg.libsdl.org/SDL || true
 cd SDL
 hg pull http://hg.libsdl.org/SDL
 hg update
-
-# build SDL
-mkdir -p build;cd build
-../configure --with-sysroot=$SYSROOT --host=arm-raspberry-linux-gnueabihf --prefix=$PWD/../.. --disable-pulseaudio --disable-esd
+#./autogen.sh
+./configure --prefix="$PWD/.." --enable-static --disable-shared --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
 make
 make install
+cd ..
 
+################################################################################
+# SDL_image
+
+hg clone http://hg.libsdl.org/SDL_image || true
+cd SDL_image
+hg pull http://hg.libsdl.org/SDL_image
+hg update
+./autogen.sh
+./configure --prefix="$PWD/.." --enable-static --disable-shared --enable-png-shared
+make -j8
+make install
+cd ..
+
+################################################################################
+# cmake
+
+cd debug
+cmake .
+cd ..
+
+cd release
+cmake .
 cd ..

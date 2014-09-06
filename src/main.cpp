@@ -65,19 +65,27 @@ namespace
 #if defined(WIN32)
 	CONFIG_DEFINE (window_resolution_x, int, 800);
 	CONFIG_DEFINE (window_resolution_y, int, 600);
+#elif defined(CRAG_RPI)
+	CONFIG_DEFINE (window_resolution_x, int, 640);
+	CONFIG_DEFINE (window_resolution_y, int, 480);
 #else
 	CONFIG_DEFINE (window_resolution_x, int, 800);
 	CONFIG_DEFINE (window_resolution_y, int, 600);
 #endif
 
-#if defined(CRAG_USE_GLES)
+#if defined(CRAG_MOBILE)
+	// mobile device apps are typically all full-screen 
 	CONFIG_DEFINE (full_screen, bool, true);
-#elif defined(PROFILE)
-	CONFIG_DEFINE (full_screen, bool, false);
-#elif defined(NDEBUG)
+#endif
+
+#if defined(CRAG_PC)
+#if defined(NDEBUG) && ! defined(PROFILE)
+	// non-debug builds are best in full-screen mode (unless profiling)
 	CONFIG_DEFINE (full_screen, bool, true);
 #else
+	// but during development, a window 
 	CONFIG_DEFINE (full_screen, bool, false);
+#endif
 #endif
 	
 	CONFIG_DEFINE (script_mode, int, 1);

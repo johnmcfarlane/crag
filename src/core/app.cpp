@@ -22,7 +22,6 @@
 namespace 
 {
 	SDL_Window * _window = nullptr;
-	SDL_Renderer * _renderer = nullptr;	// this isn't needed for Win32/Android
 	SDL_GLContext _context = nullptr;
 
 	SDL_DisplayMode _desktop_display_mode;
@@ -43,27 +42,31 @@ namespace
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	
-	#if ! defined(NDEBUG)
+#if ! defined(NDEBUG)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-	#endif
+#endif
 
-	#if defined(CRAG_USE_GL)
+#if defined(CRAG_USE_GL)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	#endif
+#endif
 
-	#if defined(CRAG_USE_GLES)
+#if defined(CRAG_USE_GLES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	#endif
+#endif
 
-		int flags = SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL;
+		int flags = SDL_WINDOW_INPUT_GRABBED;
 
-	#if defined(CRAG_USE_MOUSE)
+#if defined(CRAG_USE_GL)
+		flags |= SDL_WINDOW_OPENGL;
+#endif
+
+#if defined(CRAG_USE_MOUSE)
 		flags |= SDL_WINDOW_INPUT_GRABBED;
-	#endif
+#endif
 	
 		if (_full_screen)
 		{
@@ -100,28 +103,6 @@ namespace
 		ASSERT(_window);
 		SDL_DestroyWindow(_window);
 		_window = nullptr;
-	}
-
-	bool InitRenderer()
-	{
-		ASSERT(_window);
-
-		ASSERT(! _renderer);
-		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE*/);
-		if (_renderer == nullptr)
-		{
-			DEBUG_MESSAGE("Failed to create renderer: \"%s\"", SDL_GetError());	
-			return false;
-		}
-
-		return true;
-	}
-
-	void DeinitRenderer()
-	{
-		ASSERT(_renderer);
-		SDL_DestroyRenderer(_renderer);
-		_renderer = nullptr;
 	}
 
 	bool InitContext()
@@ -202,11 +183,6 @@ void app::Deinit()
 
 bool app::InitGfx()
 {
-	if (! InitRenderer())
-	{
-		return false;
-	}
-	
 	if (! InitContext())
 	{
 		return false;
@@ -218,7 +194,6 @@ bool app::InitGfx()
 void app::DeinitGfx()
 {
 	DeinitContext();
-	DeinitRenderer();
 }
 
 char const * app::GetFullPath(char const * filepath)

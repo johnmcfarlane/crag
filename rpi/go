@@ -2,15 +2,15 @@
 set -o errexit
 
 # params
-if [ "$#" -lt 2 ]
+if [ "$#" -lt 1 ]
 then
-	echo "$0 (release|debug) <num-cores> [<crag-parameter> ...]"
+	echo "$0 (release|debug) [<crag-parameter> ...]"
 	exit 1
 fi
 
 FOLDER="$1"
-JOBS="-j$2"
-shift 2
+JOBS="-j1"
+shift 1
 
 # dump core files
 ulimit -c unlimited
