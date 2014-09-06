@@ -9,7 +9,7 @@
 
 #define ENABLE_LIGHTING
 
-#if ! defined(GL_ES)
+#if defined(CRAG_USE_GL)
 #define ENABLE_BEAM_LIGHTING
 #endif
 
@@ -53,7 +53,7 @@ uniform COLOR4 ambient;
 #define MAX_VERTEX_LIGHTS 6
 uniform Light vertex_lights[MAX_VERTEX_LIGHTS];
 
-#if ! defined(GL_ES) || 1
+#if defined(CRAG_USE_GL)
 #define MAX_FRAGMENT_LIGHTS 1
 uniform Light fragment_lights[MAX_FRAGMENT_LIGHTS];
 #endif
