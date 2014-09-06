@@ -32,8 +32,7 @@ struct Light
 	vec3 direction;	// for search lights
 	vec4 color;
 	vec2 angle;	// for search light, sin/cos
-	bool used;
-	bool search;	// opposed to point light
+	int type;	// [point, search] (or -1 for unused)
 };
 
 ////////////////////////////////////////////////////////////////////////////////

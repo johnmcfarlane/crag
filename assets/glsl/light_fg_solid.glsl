@@ -52,12 +52,11 @@ LIGHT3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 nor
 // accumulate light reflected and illuminated by given lights on a given surface
 void ForegroundLight(const Light light, VECTOR3 position, VECTOR3 normal, inout LightResults results)
 {
-	if (! light.used)
+	if (light.type == 0)
 	{
-		return;
+		results.reflection += GetPointLightReflection(light, position, normal);
 	}
-	
-	if (light.search)
+	else if (light.type == 1)
 	{
 		results.reflection += GetSearchLightReflection(light, position, normal);
 
@@ -66,10 +65,6 @@ void ForegroundLight(const Light light, VECTOR3 position, VECTOR3 normal, inout 
 		VECTOR3 ray_direction = position / ray_distance;
 		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
-	}
-	else
-	{
-		results.reflection += GetPointLightReflection(light, position, normal);
 	}
 }
 

@@ -39,12 +39,11 @@ COLOR3 GetSearchLightReflection(Light light, VECTOR3 position)
 // accumulate light reflected and illuminated by given lights on a given position
 void ForegroundLight(Light light, VECTOR3 position, inout LightResults results)
 {
-	if (! light.used)
+	if (light.type == 0)
 	{
-		return;
+		results.reflection += GetPointLightReflection(light, position);
 	}
-	
-	if (light.search)
+	else if (light.type == 1)
 	{
 		results.reflection += GetSearchLightReflection(light, position);
 
@@ -53,10 +52,6 @@ void ForegroundLight(Light light, VECTOR3 position, inout LightResults results)
 		vec3 ray_direction = position / ray_distance;
 		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
-	}
-	else
-	{
-		results.reflection += GetPointLightReflection(light, position);
 	}
 }
 

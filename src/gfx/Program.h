@@ -133,8 +133,7 @@ namespace gfx
 			Uniform<Vector3> direction;
 			Uniform<Color4f> color;
 			Uniform<Vector2> angle;
-			Uniform<bool> used;
-			Uniform<bool> search;
+			Uniform<int> type;
 		};
 
 		using super = Program3d;

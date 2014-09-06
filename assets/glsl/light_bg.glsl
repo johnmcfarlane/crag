@@ -15,12 +15,10 @@
 // return consolidated light reflected and illuminated by given lights from a given direction
 void BackgroundLight(Light light, VECTOR3 ray_direction, inout COLOR3 illumination)
 {
-	if (! (light.used && light.search))
+	if (light.type == 1)
 	{
-		return;
+		illumination += GetBeamIllumination(light, ray_direction, far_positive);
 	}
-	
-	illumination += GetBeamIllumination(light, ray_direction, far_positive);
 }
 
 // return consolidated light reflected and illuminated by all lights from a given direction

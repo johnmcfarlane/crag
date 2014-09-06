@@ -262,8 +262,7 @@ LightProgram::LightUniforms::LightUniforms(LightUniforms && rhs)
 , direction(std::move(rhs.direction))
 , color(std::move(rhs.color))
 , angle(std::move(rhs.angle))
-, used(std::move(rhs.used))
-, search(std::move(rhs.search))
+, type(std::move(rhs.type))
 {
 }
 
@@ -273,8 +272,7 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 	std::swap(direction, rhs.direction);
 	std::swap(color, rhs.color);
 	std::swap(angle, rhs.angle);
-	std::swap(used, rhs.used);
-	std::swap(search, rhs.search);
+	std::swap(type, rhs.type);
 
 	return * this;
 }
@@ -326,11 +324,8 @@ void LightProgram::InitUniforms()
 			snprintf(name, name_size, "%s[%d].angle", array_name, index);
 			InitUniformLocation(light_uniforms.angle, name);
 
-			snprintf(name, name_size, "%s[%d].used", array_name, index);
-			InitUniformLocation(light_uniforms.used, name);
-
-			snprintf(name, name_size, "%s[%d].search", array_name, index);
-			InitUniformLocation(light_uniforms.search, name);
+			snprintf(name, name_size, "%s[%d].type", array_name, index);
+			InitUniformLocation(light_uniforms.type, name);
 		}
 	};
 	
@@ -391,15 +386,14 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 			auto const & angle = light.GetAngle();
 			light_uniforms_iterator->angle.Set(angle);
 		
-			light_uniforms_iterator->used.Set(true);
-			light_uniforms_iterator->search.Set(attributes.type == LightType::search);
+			light_uniforms_iterator->type.Set(attributes.type != LightType::point);
 
 			++ light_uniforms_iterator;
 		}
 	
 		for (; light_uniforms_iterator != uniforms_end; ++ light_uniforms_iterator)
 		{
-			light_uniforms_iterator->used.Set(false);
+			light_uniforms_iterator->type.Set(-1);
 		}
 	};
 
