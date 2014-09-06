@@ -34,7 +34,7 @@ namespace
 	
 	LightAttributes const thruster_light_attribs =
 	{
-		LightResolution::fragment,
+		LightResolution::vertex,
 		LightType::point,
 		false
 	};
