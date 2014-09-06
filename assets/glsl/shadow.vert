@@ -16,6 +16,6 @@ attribute VECTOR3 vertex_position;
 
 void main(void)
 {
-	VECTOR4 position4 = model_view_matrix * VECTOR4(vertex_position, 1.);
+	VECTOR4 position4 = model_view_matrix * vec4(vertex_position, 1.);
 	gl_Position = projection_matrix * position4;
 }
