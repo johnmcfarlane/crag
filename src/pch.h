@@ -80,6 +80,26 @@
 
 
 //////////////////////////////////////////////////////////////////////
+// platform characteristics
+
+#if defined(__ANDROID__)
+// Android, iOS (not current)
+#define CRAG_MOBILE	// build target is a phone or tablet
+#else
+// Debian/Ubuntu/Raspbian, Windows, OS X (not current)
+#define CRAG_PC	// build target is a tranditional desktop or laptop PC
+#endif
+
+#if defined(CRAG_MOBILE)
+#define CRAG_USE_TOUCH	// build target is predominantly a touch-based device
+#endif
+
+#if defined(CRAG_PC)
+#define CRAG_USE_MOUSE	// build target is a keyboard/point device combo
+#endif
+
+
+//////////////////////////////////////////////////////////////////////
 // standard includes.
 
 // C standard library
