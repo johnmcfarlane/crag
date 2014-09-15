@@ -102,7 +102,7 @@ namespace gfx
 		template <typename VertexArray>
 		void Set(VertexArray const & vertices)
 		{
-			auto first = &* std::begin(vertices);
+			auto first = vertices.data();
 			Set(first, first + vertices.size());
 		}
 		
