@@ -56,16 +56,17 @@ namespace
 		// vector from camera to touch-point on screen, so no shorter than unit length
 		Vector3 screen_position;
 		
-		static TranslationRollContact Zero()
-		{
-			return TranslationRollContact
-			{
-				Vector3::Zero(),
- 				Vector3::Zero()
- 			};
-		}
+		static TranslationRollContact Zero();
 	};
-	
+
+	TranslationRollContact TranslationRollContact::Zero()
+	{
+		return TranslationRollContact {
+			Vector3::Zero(),
+			Vector3::Zero()
+		};
+	}
+
 	// http://en.wikipedia.org/wiki/Solution_of_triangles#Three_sides_given_.28SSS.29
 	template <typename S>
 	S SolveTriangleSSS(S a, S b, S c)
@@ -545,8 +546,14 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 	
 	struct ContactBuffer
 	{
-		std::array<Contact const *, 2> contacts = {{ nullptr, nullptr }};
-		std::size_t size = 0;
+		ContactBuffer()
+			: contacts({ { nullptr, nullptr } })
+			, size(0)
+		{
+		}
+
+		std::array<Contact const *, 2> contacts;
+		std::size_t size;
 	};
 	
 	std::array<ContactBuffer, 2> buffers;
