@@ -186,10 +186,10 @@ ObjectHandle SpawnHolodeckSkybox()
 		
 		resource_manager.Register<TextureCubeMap>("HolodeckSkyboxTextures", [] () {
 			// pretty inefficient, but the holodeck's a pretty special case
-			return TextureCubeMap(CubeMap<Image> {{
+			return TextureCubeMap(CubeMap<Image> ({{
 				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }},
 				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }},
-				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }} }});
+				{{ CreateHolodeckSkyboxImage(512, 16), CreateHolodeckSkyboxImage(512, 16) }} }}));
 		});
 	});
 	
