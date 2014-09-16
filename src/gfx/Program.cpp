@@ -303,7 +303,7 @@ void LightProgram::InitUniforms()
 		auto index = 0;
 		for (auto & light_uniforms : array)
 		{
-			auto & light_uniforms = array[index];
+			ASSERT(& light_uniforms == & array[index]);
 
 			int constexpr name_size = 64;
 			char name[name_size];
