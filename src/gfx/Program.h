@@ -117,10 +117,6 @@ namespace gfx
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 		
-		template <typename ELEMENT>
-		using Array = std::array<std::array<ELEMENT, int(LightResolution::size)>, int(LightResolution::size)>;
-
-	public:
 		// set of uniform ids needed to specify lights to a glsl program
 		struct LightUniforms
 		{
@@ -136,6 +132,9 @@ namespace gfx
 			Uniform<int> type;
 		};
 
+		using LightUniformArray = std::vector<LightUniforms>;
+
+	public:
 		using super = Program3d;
 		
 		////////////////////////////////////////////////////////////////////////////////
@@ -167,8 +166,8 @@ namespace gfx
 		// variables
 		
 		// flat light array
-		std::array<LightUniforms, max_vertex_lights> _vertex_lights;
-		std::array<LightUniforms, max_fragment_lights> _fragment_lights;
+		LightUniformArray _vertex_lights;
+		LightUniformArray _fragment_lights;
 	};
 	
 	// Things in the 3D world but in front of the skybox

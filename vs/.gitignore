@@ -4,6 +4,7 @@ glew/
 ode/
 Release/
 SDL2/
+SDL2_image/
 ipch
 *.opensdf
 *.sdf

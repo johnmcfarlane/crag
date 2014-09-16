@@ -36,11 +36,11 @@ TextureCubeMap & TextureCubeMap::operator=(TextureCubeMap && rhs)
 
 void TextureCubeMap::Set(CubeMap<Image> const & images)
 {
-	constexpr auto layers = CubeMap<GLenum> {{
+	constexpr auto layers = CubeMap<GLenum> ({{
 		{{ GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X }},
 		{{ GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y }},
 		{{ GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z }}
-	}};
+	}});
 	
 	// otherwise, this need to be ready
 	if (! IsInitialized())

@@ -17,7 +17,6 @@
     <ClCompile Include="..\..\src\gfx\Debug.cpp" />
     <ClCompile Include="..\..\src\gfx\Engine.cpp" />
     <ClCompile Include="..\..\src\gfx\Font.cpp" />
-    <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
     <ClCompile Include="..\..\src\gfx\object\Ball.cpp" />
@@ -30,7 +29,6 @@
     <ClCompile Include="..\..\src\gfx\RenderBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\Scene.cpp" />
     <ClCompile Include="..\..\src\gfx\Shader.cpp" />
-    <ClCompile Include="..\..\src\gfx\Texture.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\pch.cpp" />
     <ClCompile Include="..\..\src\physics\Body.cpp" />
@@ -115,6 +113,9 @@
     <ClCompile Include="..\..\src\entity\sim\UfoController1.cpp" />
     <ClCompile Include="..\..\src\entity\sim\UfoController2.cpp" />
     <ClCompile Include="..\..\src\gfx\Frustum.cpp" />
+    <ClCompile Include="..\..\src\gfx\Texture2d.cpp" />
+    <ClCompile Include="..\..\src\gfx\TextureCubeMap.cpp" />
+    <ClCompile Include="..\..\src\core\GlobalResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\applet\Applet.h" />
@@ -295,6 +296,7 @@
     <ClInclude Include="..\..\src\entity\sim\UfoController1.h" />
     <ClInclude Include="..\..\src\entity\sim\UfoController2.h" />
     <ClInclude Include="..\..\src\gfx\Frustum.h" />
+    <ClInclude Include="..\..\src\core\GlobalResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\core" />

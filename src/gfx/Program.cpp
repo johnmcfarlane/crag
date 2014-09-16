@@ -282,20 +282,15 @@ LightProgram::LightUniforms & LightProgram::LightUniforms::operator = (LightUnif
 
 LightProgram::LightProgram(LightProgram && rhs)
 : Program3d(std::move(rhs))
+, _vertex_lights(std::move(rhs._vertex_lights))
+, _fragment_lights(std::move(rhs._fragment_lights))
 {
-	for (auto i = 0; i != max_vertex_lights; ++ i)
-	{
-		std::swap(_vertex_lights[i], rhs._vertex_lights[i]);
-	}
-
-	for (auto i = 0; i != max_fragment_lights; ++ i)
-	{
-		std::swap(_fragment_lights[i], rhs._fragment_lights[i]);
-	}
 }
 
 LightProgram::LightProgram(std::initializer_list<char const *> vert_sources, std::initializer_list<char const *> frag_sources)
 : Program3d(vert_sources, frag_sources)
+, _vertex_lights(max_vertex_lights)
+, _fragment_lights(max_fragment_lights)
 {
 }
 
@@ -303,11 +298,12 @@ void LightProgram::InitUniforms()
 {
 	super::InitUniforms();	
 
-	auto init_lights = [this] (LightUniforms * array, int size, char const * array_name)
+	auto init_lights = [this](LightUniformArray & array, char const * array_name)
 	{
-		for (auto index = 0; index != size; ++ index)
+		auto index = 0;
+		for (auto & light_uniforms : array)
 		{
-			auto & light_uniforms = array[index];
+			ASSERT(& light_uniforms == & array[index]);
 
 			int constexpr name_size = 64;
 			char name[name_size];
@@ -326,11 +322,13 @@ void LightProgram::InitUniforms()
 
 			snprintf(name, name_size, "%s[%d].type", array_name, index);
 			InitUniformLocation(light_uniforms.type, name);
+
+			++ index;
 		}
 	};
 	
-	init_lights(_vertex_lights.data(), (int)_vertex_lights.size(), "vertex_lights");
-	init_lights(_fragment_lights.data(), (int)_fragment_lights.size(), "fragment_lights");
+	init_lights(_vertex_lights, "vertex_lights");
+	init_lights(_fragment_lights, "fragment_lights");
 }
 
 void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightFilter const & filter) const
@@ -339,9 +337,9 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 	ASSERT(_fragment_lights.size() == max_fragment_lights);
 	ASSERT(IsBound());
 
-	auto set_lights = [& lights, & filter] (LightUniforms const * uniforms_begin, LightUniforms const * uniforms_end, LightResolution resolution)
+	auto set_lights = [& lights, & filter](LightUniformArray const & light_uniforms, LightResolution resolution)
 	{
-		auto light_uniforms_iterator = uniforms_begin;
+		auto light_uniforms_iterator = std::begin(light_uniforms);
 
 		for (auto const & light : lights)
 		{
@@ -363,7 +361,7 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 				continue;
 			}
 			
-			if (light_uniforms_iterator == uniforms_end)
+			if (light_uniforms_iterator == std::end(light_uniforms))
 			{
 				if (CRAG_DEBUG_ONCE)
 				{
@@ -391,14 +389,14 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 			++ light_uniforms_iterator;
 		}
 	
-		for (; light_uniforms_iterator != uniforms_end; ++ light_uniforms_iterator)
+		for (; light_uniforms_iterator != std::end(light_uniforms); ++ light_uniforms_iterator)
 		{
 			light_uniforms_iterator->type.Set(-1);
 		}
 	};
 
-	set_lights(std::begin(_vertex_lights), std::end(_vertex_lights), LightResolution::vertex);
-	set_lights(std::begin(_fragment_lights), std::end(_fragment_lights), LightResolution::fragment);
+	set_lights(_vertex_lights, LightResolution::vertex);
+	set_lights(_fragment_lights, LightResolution::fragment);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

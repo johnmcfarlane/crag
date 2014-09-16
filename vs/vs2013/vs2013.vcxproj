@@ -41,14 +41,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\SDL2\include;..\ode\include;..\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
+    <IncludePath>$(IncludePath);..\SDL2\include;..\SDL2_image\include;..\ode\include;..\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(WindowsSDK_LibraryPath_x86);..\glew\lib\Release\Win32;..\SDL2\lib\x86;..\SDL2_image\lib\x86;..\ode\lib\DebugSingleLib</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VCInstallPath_CTP_NOV2012)\include;$(IncludePath);..\SDL2\include;..\ode\include;..\glew\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);C:\Users\john\crag\vs\glew\lib\Release\Win32;..\ode\lib\ReleaseSingleLib;C:\Users\john\Documents\crag\vs\glew\lib\Release\Win32;..\SDL2\lib\x86</LibraryPath>
+    <IncludePath>$(IncludePath);..\SDL2\include;..\SDL2_image\include;..\ode\include;..\glew\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(WindowsSDK_LibraryPath_x86);..\glew\lib\Release\Win32;..\SDL2\lib\x86;..\SDL2_image\lib\x86;..\ode\lib\ReleaseSingleLib</LibraryPath>
     <TargetName>crag</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -73,7 +73,7 @@
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2main.lib;glew32s.lib;ode_singled.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2_image.lib;SDL2main.lib;glew32s.lib;ode_singled.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -104,7 +104,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2main.lib;glew32s.lib;ode_single.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;Glu32.lib;user32.lib;SDL2.lib;SDL2_image.lib;SDL2main.lib;glew32s.lib;ode_single.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -128,6 +128,7 @@
     <ClInclude Include="..\..\src\core\floatOps.h" />
     <ClInclude Include="..\..\src\core\for_each.h" />
     <ClInclude Include="..\..\src\core\function_ref.h" />
+    <ClInclude Include="..\..\src\core\GlobalResourceManager.h" />
     <ClInclude Include="..\..\src\core\intOps.h" />
     <ClInclude Include="..\..\src\core\intrusive_list.h" />
     <ClInclude Include="..\..\src\core\memory.h" />
@@ -302,6 +303,7 @@
     <ClCompile Include="..\..\src\core\ConfigManager.cpp" />
     <ClCompile Include="..\..\src\core\debug.cpp" />
     <ClCompile Include="..\..\src\core\EventWatcher.cpp" />
+    <ClCompile Include="..\..\src\core\GlobalResourceManager.cpp" />
     <ClCompile Include="..\..\src\core\memory.cpp" />
     <ClCompile Include="..\..\src\core\profile.cpp" />
     <ClCompile Include="..\..\src\core\Random.cpp" />
@@ -371,7 +373,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\gfx\Font.cpp" />
-    <ClCompile Include="..\..\src\gfx\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\gfx\Frustum.cpp" />
     <ClCompile Include="..\..\src\gfx\glHelpers.cpp" />
     <ClCompile Include="..\..\src\gfx\Image.cpp" />
@@ -400,7 +401,8 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene2</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\src\gfx\Shader.cpp" />
-    <ClCompile Include="..\..\src\gfx\Texture.cpp" />
+    <ClCompile Include="..\..\src\gfx\Texture2d.cpp" />
+    <ClCompile Include="..\..\src\gfx\TextureCubeMap.cpp" />
     <ClCompile Include="..\..\src\gfx\Uniform.cpp" />
     <ClCompile Include="..\..\src\ipc\Fiber.cpp" />
     <ClCompile Include="..\..\src\ipc\FiberAndroid.cpp" />
