@@ -207,7 +207,7 @@ namespace ipc
 		template <typename EVENT>
 		static void Broadcast(EVENT event)
 		{
-			ASSERT(singleton->_state < State::acknowledge_flush_begin);
+			ASSERT(singleton->_state < State::acknowledge_flush_end);
 
 			typedef ListenerInterface<EVENT> ListenerInterface;
 			ListenerInterface::Broadcast(event);
