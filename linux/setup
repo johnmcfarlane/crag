@@ -16,27 +16,12 @@ git clean -Xdf share
 ################################################################################
 # SDL
 
-hg clone http://hg.libsdl.org/SDL || true
-cd SDL
-hg pull http://hg.libsdl.org/SDL
-hg update
-./configure --prefix="$PWD/.." --enable-static --disable-shared
-make -j8
-make install
-cd ..
+./script/script_sdl
 
 ################################################################################
 # SDL_image
 
-hg clone http://hg.libsdl.org/SDL_image || true
-cd SDL_image
-hg pull http://hg.libsdl.org/SDL_image
-hg update
-./autogen.sh
-./configure --prefix="$PWD/.." --enable-static --disable-shared --enable-png-shared
-make -j8
-make install
-cd ..
+./script/script_sdl_image
 
 ################################################################################
 # cmake
