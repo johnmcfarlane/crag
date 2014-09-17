@@ -198,9 +198,9 @@ public class SDLActivity extends Activity {
     }
         
     /* The native thread has finished */
-    public static void handleNativeExit(SDLActivity singleton) {
+    public static void handleNativeExit() {
         SDLActivity.mSDLThread = null;
-        singleton.finish();
+        mSingleton.finish();
     }
 
 
@@ -734,27 +734,27 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             // This is the entry point to the C app.
             // Start up the C app thread and enable sensor input for the first time
 
-            SDLActivity.mSDLThread = new Thread(new SDLMain(), "SDLThread");
+            final Thread sdlThread = new Thread(new SDLMain(), "SDLThread");
             enableSensor(Sensor.TYPE_ACCELEROMETER, true);
-            SDLActivity.mSDLThread.start();
+            sdlThread.start();
             
             // Set up a listener thread to catch when the native thread ends
-            new Thread(new Runnable(){
+            SDLActivity.mSDLThread = new Thread(new Runnable(){
                 @Override
                 public void run(){
-                    SDLActivity singleton = SDLActivity.mSingleton;
                     try {
-                        SDLActivity.mSDLThread.join();
+                        sdlThread.join();
                     }
                     catch(Exception e){}
                     finally{ 
                         // Native thread has finished
                         if (! SDLActivity.mExitCalledFromJava) {
-                            SDLActivity.handleNativeExit(singleton);
+                            SDLActivity.handleNativeExit();
                         }
                     }
                 }
-            }).start();
+            });
+            SDLActivity.mSDLThread.start();
         }
     }
 
