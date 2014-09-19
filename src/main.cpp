@@ -199,7 +199,7 @@ namespace
 					{
 						// TODO: Check it's the right window?
 						// TODO: Create a SetResolutionEvent
-						DEBUG_BREAK("Received unhandled resize event; size:{%f,%f}", window_event.data1, window_event.data2);
+						DEBUG_MESSAGE("Received unhandled resize event; size:{%d,%d}", int(window_event.data1), int(window_event.data2));
 						break;
 					}
 					
