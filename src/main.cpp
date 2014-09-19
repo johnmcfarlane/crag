@@ -26,32 +26,12 @@
 #include "core/app.h"
 #include "core/ConfigManager.h"
 #include "core/GlobalResourceManager.h"
+#include "core/Random.h"
 
 #include <SDL_main.h>
+#include <thread>
 
-//////////////////////////////////////////////////////////////////////
-// Local Function Declarations
-
-namespace 
-{
-	bool CragMain(int, char * const *);
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// main
-
-int main(int argc, char * * argv)
-{
-	if (CragMain(argc - 1, argv + 1))
-	{
-		return EXIT_SUCCESS;
-	}
-	else
-	{
-		return EXIT_FAILURE;
-	}
-}
+//#define DEBUG_TEST_DAEMONS
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
@@ -145,6 +125,10 @@ namespace
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleSuspended(); });
 						break;
 						
+#if defined(DEBUG_TEST_DAEMONS)
+					case SDL_SCANCODE_ESCAPE:
+						exit(1);
+#endif
 					default:
 						break;
 				}
@@ -371,6 +355,14 @@ namespace
 		
 		SDL_SetEventFilter(EventFilter, nullptr);
 		
+#if defined(DEBUG_TEST_DAEMONS)
+		std::thread debug_quit_thread([] ()
+		{
+			smp::Sleep(std::pow(Random::sequence.GetUnit<float>() * 2.f, 4) * .25f);
+			app::Quit();
+		});
+#endif
+
 		{
 			crag::GlobalResourceManager global_resource_manager;
 			
@@ -410,6 +402,10 @@ namespace
 			renderer.EndFlush();
 			formation.EndFlush();
 		}
+
+#if defined(DEBUG_TEST_DAEMONS)
+		debug_quit_thread.join();
+#endif
 		
 		app::Deinit();
 		
@@ -417,4 +413,24 @@ namespace
 		
 		return true;
 	}
+}
+
+//////////////////////////////////////////////////////////////////////
+// main
+
+int main(int argc, char * * argv)
+{
+	do
+	{
+		if (! CragMain(argc - 1, argv + 1))
+		{
+			return EXIT_FAILURE;
+		}
+	}
+#if defined(DEBUG_TEST_DAEMONS)
+	while (true);
+#else
+	while (false);
+#endif
+	return EXIT_SUCCESS;
 }
