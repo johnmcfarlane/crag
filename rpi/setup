@@ -26,28 +26,12 @@ git clean -Xdf share
 ################################################################################
 # SDL
 
-hg clone http://hg.libsdl.org/SDL || true
-cd SDL
-hg pull http://hg.libsdl.org/SDL
-hg update
-#./autogen.sh
-./configure --prefix="$PWD/.." --enable-static --disable-shared --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
-make
-make install
-cd ..
+./script/setup_sdl
 
 ################################################################################
 # SDL_image
 
-hg clone http://hg.libsdl.org/SDL_image || true
-cd SDL_image
-hg pull http://hg.libsdl.org/SDL_image
-hg update
-./autogen.sh
-./configure --prefix="$PWD/.." --enable-static --disable-shared --enable-png-shared
-make -j8
-make install
-cd ..
+./script_setup_sdl_image
 
 ################################################################################
 # cmake

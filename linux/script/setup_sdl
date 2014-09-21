@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+
+################################################################################
+# SDL
+
+hg clone http://hg.libsdl.org/SDL || true
+cd SDL
+hg pull http://hg.libsdl.org/SDL
+hg update
+./configure --prefix="$PWD/.." --enable-static --disable-shared
+make -j8
+make install
+cd ..

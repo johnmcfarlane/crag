@@ -10,3 +10,4 @@ libs/
 local.properties
 crag-release-key.keystore
 obj/
+valgrind/
