@@ -29,9 +29,12 @@
 #include "core/Random.h"
 
 #include <SDL_main.h>
-#include <thread>
 
 //#define DEBUG_TEST_DAEMONS
+
+#if defined(DEBUG_TEST_DAEMONS)
+#include <thread>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Local Variables
