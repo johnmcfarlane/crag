@@ -196,7 +196,7 @@ bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const 
 	int combined_seed(seed_1 + seed_2);
 	Random rnd(combined_seed);
 
-	Params params { a, b, index, depth, combined_seed };
+	Params params { a, b, index, depth, Random(combined_seed) };
 	
 	geom::abs::Vector3 result;
 	if (depth >= planet_shader_depth_medium)

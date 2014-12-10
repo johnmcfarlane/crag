@@ -117,7 +117,8 @@ namespace gfx
 	typedef geom::Transformation<Scalar> Transformation;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
 	typedef geom::Ray<Scalar, 3> Ray3;
-	
+	typedef geom::Sphere<Scalar, 3> Sphere3;
+
 	// unique identifier for gfx::Object;
 	// used when refering to objects from outside the render thread
 	typedef ipc::Uid Uid;

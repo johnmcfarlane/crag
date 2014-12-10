@@ -165,9 +165,9 @@ namespace
 				const auto side_index1 = TriMod(side_index0 + 1);
 				const auto side_index2 = TriMod(side_index0 + 2);
 
-				const auto & a = attributes.surface.points[side_index2];
-				const auto & b = attributes.surface.points[side_index1];
-				const Triangle3 side(a, b, uniforms.center);
+				const auto & p = attributes.surface.points[side_index2];
+				const auto & q = attributes.surface.points[side_index1];
+				const Triangle3 side(p, q, uniforms.center);
 
 				attributes.sides[side_index0] = GenerateSideAttribute(uniforms.ray, side);
 			}

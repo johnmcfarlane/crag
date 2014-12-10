@@ -750,9 +750,9 @@ namespace
 		AddHoverThruster(* controller, Vector3(0.f, .25f, 0.f), .1f);
 	}
 
-	void ConstructUfo(Entity & ufo_entity, Transformation const & transformation, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType player_type, Scalar thrust, Scalar radius)
+	void ConstructUfo(Entity & ufo_entity, Transformation const & transformation, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType _player_type, Scalar thrust, Scalar radius)
 	{
-		bool is_thargoid = player_type == PlayerType::thargoid;
+		bool is_thargoid = _player_type == PlayerType::thargoid;
 		
 		// misc preparation
 		Engine & engine = ufo_entity.GetEngine();
@@ -775,7 +775,7 @@ namespace
 		shared_ptr<Entity> ball_entity;
 		gfx::ObjectHandle exception_object;
 		
-		if (player_type == PlayerType::cos_saucer || player_type == PlayerType::ball_saucer)
+		if (_player_type == PlayerType::cos_saucer || _player_type == PlayerType::ball_saucer)
 		{
 			ball_entity = engine.CreateObject<Entity>();
 
@@ -787,7 +787,7 @@ namespace
 			ball_body->SetIsCollidable(* body, false);
 			body->SetIsCollidable(* ball_body, false);
 
-			if (player_type == PlayerType::ball_saucer)
+			if (_player_type == PlayerType::ball_saucer)
 			{
 				// graphics
 				gfx::ObjectHandle model = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
