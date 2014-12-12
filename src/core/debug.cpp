@@ -53,8 +53,8 @@ void crag::core::Break()
 #if defined(__i386__)
 	asm("int3")
 #else
-	__builtin_trap()
-		// NB: raise(SIGTRAP) is an alternative
+	__builtin_trap();
+	// NB: raise(SIGTRAP) is an alternative
 #endif
 #else
 	assert(false);
