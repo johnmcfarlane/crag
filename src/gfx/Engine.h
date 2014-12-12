@@ -14,7 +14,7 @@
 #include "LightType.h"
 #include "RenderBuffer.h"
 
-#if defined(WIN32)
+#if defined(WIN32_C2079_WORKAROUND)
 #include "SetCameraEvent.h"
 #include "SetSpaceEvent.h"
 #endif

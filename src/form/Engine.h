@@ -13,7 +13,7 @@
 
 #include "gfx/LodParameters.h"
 
-#if defined(WIN32)
+#if defined(WIN32_C2079_WORKAROUND)
 #include "gfx/SetLodParametersEvent.h"
 #include "gfx/SetSpaceEvent.h"
 #endif

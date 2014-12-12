@@ -27,6 +27,9 @@
 // causes a problem in VC++ project because of the way libs are built
 #define HAVE_M_PI
 
+#define WIN32_C2079_WORKAROUND	// undefined struct caused by missing include directive
+#define WIN32_C2338_WORKAROUND	// caused by differences in pointer sizes between VC & other compilers
+
 #else
 
 #define SIZE_T_FORMAT_SPEC "%zu"
