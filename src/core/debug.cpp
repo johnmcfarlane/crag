@@ -40,6 +40,28 @@ char const * core::DebugGetThreadName()
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
+// crag::core::Break definition
+
+void crag::core::Break()
+{
+#if defined(WIN32)
+	assert(false);	// sometimes __debugbreak does nothing
+	__debugbreak();
+#elif defined(__ANDROID__)
+	__android_log_assert("error", "crag", "internal error");
+#elif defined(__GNUC__)
+#if defined(__i386__)
+	asm("int3")
+#else
+	__builtin_trap()
+		// NB: raise(SIGTRAP) is an alternative
+#endif
+#else
+	assert(false);
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // core::PrintMessage definition
 
 namespace
