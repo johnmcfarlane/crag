@@ -22,7 +22,7 @@ namespace app
 	void DeinitGfx();
 
 	// file access
-	typedef std::shared_ptr<std::vector<char>> FileResource;
+	typedef std::vector<char> FileResource;
 	char const * GetFullPath(char const * filepath);
 	FileResource LoadFile(char const * filename, bool null_terminate = false);
 	

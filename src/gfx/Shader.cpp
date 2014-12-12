@@ -99,15 +99,15 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	typedef std::vector<app::FileResource> BufferArray;
 	
 	int num_strings = filenames.size();
+	std::vector<app::FileResource> source_buffers(num_strings);
 
 	// load individual shader files
 #if defined(WIN32)
-	auto string_array = static_cast<char const * *>(_malloca(num_strings * sizeof(char const *)));
+	std::vector<char const *> string_array(num_strings);
 #else
 	char const * string_array[num_strings];
 #endif
 	{
-		BufferArray source_buffers(num_strings);
 		auto filename_iterator = std::begin(filenames);
 		for (auto index = 0; index != num_strings; ++filename_iterator, ++index)
 		{
@@ -119,19 +119,19 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 			}
 
 			auto source_buffer = app::LoadFile(filename, true);
-			if (!source_buffer)
+			if (source_buffer.empty())
 			{
 				return false;
 			}
 
 #if ! defined(CRAG_USE_GLES)
 			// earlier version of desktop GLSL fail to ignore these
-			EraseQualifier(source_buffer->data(), "lowp");
-			EraseQualifier(source_buffer->data(), "mediump");
-			EraseQualifier(source_buffer->data(), "highp");
+			EraseQualifier(source_buffer.data(), "lowp");
+			EraseQualifier(source_buffer.data(), "mediump");
+			EraseQualifier(source_buffer.data(), "highp");
 #endif
 
-			string_array[index] = source_buffer->data();
+			string_array[index] = source_buffer.data();
 
 			source_buffers[index] = std::move(source_buffer);
 		}
@@ -184,10 +184,6 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 
 		PrintMessage(stderr, "Shader info log:\n%s", info_log.data());
 	}
-#endif
-
-#if defined(WIN32)
-	_freea(string_array);
 #endif
 
 	// Check for errors in the source code.
