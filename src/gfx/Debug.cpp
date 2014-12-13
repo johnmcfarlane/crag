@@ -35,7 +35,7 @@ CONFIG_DECLARE(depth_func, int);
 namespace
 {
 	// Messages of below this verbosity value should get printed.
-	CONFIG_DEFINE(debug_verbosity, double, .5);
+	CONFIG_DEFINE(debug_verbosity, .5);
 		
 	// Mutex for global functions.
 	std::mutex mutex;

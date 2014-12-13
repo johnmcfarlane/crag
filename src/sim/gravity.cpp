@@ -23,7 +23,7 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (gravitational_constant, float, 0.0000000025f);
+	CONFIG_DEFINE(gravitational_constant, 0.0000000025f);
 
 	// Given a position and a mass at that position, returns a 
 	// reasonable approximation of the weight vector at that position.

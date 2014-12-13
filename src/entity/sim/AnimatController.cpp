@@ -22,7 +22,7 @@
 
 using namespace sim;
 
-CONFIG_DEFINE(animat_sensor_length, Scalar, 5.f);
+CONFIG_DEFINE(animat_sensor_length, 5.f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions

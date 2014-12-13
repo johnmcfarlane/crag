@@ -32,10 +32,10 @@ CONFIG_DECLARE(saucer_ball_radius, physics::Scalar);
 
 namespace
 {
-	CONFIG_DEFINE(ufo_controller2_sensitivity, Scalar, 5000.f);
-	CONFIG_DEFINE(ufo_controller2_vanish_distance, Scalar, 1000000.f);
-	CONFIG_DEFINE(ufo_controller2_drag_roof_height, Scalar, 7.5f);
-	CONFIG_DEFINE(ufo_controller2_max_direction, Scalar, 7.5f);
+	CONFIG_DEFINE(ufo_controller2_sensitivity, 5000.f);
+	CONFIG_DEFINE(ufo_controller2_vanish_distance, 1000000.f);
+	CONFIG_DEFINE(ufo_controller2_drag_roof_height, 7.5f);
+	CONFIG_DEFINE(ufo_controller2_max_direction, 7.5f);
 	
 	Ray3 GetPointerRay(gfx::Pov const & pov, geom::Vector2i const & pixel_position)
 	{

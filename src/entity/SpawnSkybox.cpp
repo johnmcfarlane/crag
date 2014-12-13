@@ -25,7 +25,7 @@ using namespace gfx;
 
 namespace
 {
-	CONFIG_DEFINE(skybox_starfield_fast, bool, true);
+	CONFIG_DEFINE(skybox_starfield_fast, true);
 	
 	Image CreateHolodeckSkyboxImage(int box_edge_size, int num_bars)
 	{

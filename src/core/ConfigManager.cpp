@@ -10,7 +10,6 @@
 #include "pch.h"
 
 #include "ConfigManager.h"
-#include "ConfigEntry.h"
 
 #if defined(ENABLE_CONFIG)
 
@@ -20,7 +19,6 @@
 #if ! defined(__ANDROID__)
 #define ENABLE_CONFIG_LOAD_SAVE
 #endif
-
 
 namespace 
 {
@@ -39,11 +37,9 @@ namespace
 //////////////////////////////////////////////////////////////////////
 // Config function definitions
 
+using namespace ::crag::core::config;
 
-using core::ConfigManager;
-
-
-ConfigManager::ConfigManager()
+Manager::Manager()
 {
 	if (! Load())
 	{
@@ -52,12 +48,12 @@ ConfigManager::ConfigManager()
 	}
 }
 
-ConfigManager::~ConfigManager()
+Manager::~Manager()
 {
 	Save();
 }
 
-bool ConfigManager::Load()
+bool Manager::Load()
 {
 #if defined(ENABLE_CONFIG_LOAD_SAVE)
 	// open files
@@ -115,7 +111,7 @@ bool ConfigManager::Load()
 		char const * name_string = config_line;
 		
 		// Get the parameter in question, given its name.
-		ConfigEntry * parameter = ConfigEntry::find(name_string);
+		auto parameter = Entry::find(name_string);
 		if (parameter == nullptr)
 		{
 			DEBUG_MESSAGE("ConfigManager: unrecognised parameter \"%s\" on line %d.", name_string, line_num);
@@ -133,7 +129,7 @@ bool ConfigManager::Load()
 	return true;
 }
 
-void ConfigManager::Save()
+void Manager::Save()
 {
 #if defined(ENABLE_CONFIG_LOAD_SAVE)
 	parameter_set_complete = true;
@@ -155,11 +151,11 @@ void ConfigManager::Save()
 		}
 	}
 	
-	for (ConfigEntry::iterator i = ConfigEntry::begin(); i != ConfigEntry::end(); ++ i)
+	for (Entry::iterator i = Entry::begin(); i != Entry::end(); ++ i)
 	{
 		char config_string[max_string_size];
 		char default_string[max_string_size];
-		ConfigEntry & config_entry = * i;
+		Entry & config_entry = * i;
 		config_entry.Get(config_string, default_string);
 		config_file << config_entry.GetName() << "=" << config_string << '\n';
 		defaults_file << default_string << '\n';
@@ -167,7 +163,7 @@ void ConfigManager::Save()
 #endif
 }
 
-bool ConfigManager::ParseCommandLine(int argc, char * const * argv)
+bool Manager::ParseCommandLine(int argc, char * const * argv)
 {
 	char current_value[max_string_size];
 	char default_value[max_string_size];
@@ -190,7 +186,7 @@ bool ConfigManager::ParseCommandLine(int argc, char * const * argv)
 		auto value_string = get_value(* argv);
 		
 		// Get the parameter in question, given its name.
-		auto parameter = ConfigEntry::find(name_string);
+		auto parameter = Entry::find(name_string);
 		if (parameter == nullptr)
 		{
 			ERROR_MESSAGE("ConfigManager: unrecognised command line parameter \"%s\"", name_string, * argv);
@@ -206,16 +202,16 @@ bool ConfigManager::ParseCommandLine(int argc, char * const * argv)
 
 #else
 
-bool ConfigManager::Load()
+bool Manager::Load()
 {
 	return true;
 }
 
-void ConfigManager::Save()
+void Manager::Save()
 {
 }
 
-bool ConfigManager::ParseCommandLine(int, char * const *)
+bool Manager::ParseCommandLine(int, char * const *)
 {
 	return true
 }

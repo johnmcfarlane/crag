@@ -49,9 +49,9 @@ namespace
 	geom::abs::Vector3 observer_start_pos(0, 9999400, -5);
 	size_t max_shapes = 50;
 	bool cleanup_shapes = true;
-	CONFIG_DEFINE(spawn_vehicle, bool, true);
-	CONFIG_DEFINE(vehicle_thrust, sim::Scalar, 15.f);
-	CONFIG_DEFINE(spawn_planets, bool, true);
+	CONFIG_DEFINE(spawn_vehicle, true);
+	CONFIG_DEFINE(vehicle_thrust, 15.f);
+	CONFIG_DEFINE(spawn_planets, true);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// variables

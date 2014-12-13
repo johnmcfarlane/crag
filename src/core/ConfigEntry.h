@@ -16,35 +16,37 @@
 
 #include "Enumeration.h"
 
-
-namespace core
+namespace crag {
+namespace core {
+namespace config
 {
-	
-	class ConfigEntry : public Enumeration<ConfigEntry>
+	class Entry : public ::core::Enumeration<Entry>
 	{
 	public:
-		ConfigEntry(char const * name) 
-		: Enumeration<ConfigEntry>(name) 
-		{ 
-		}
-		
-		virtual ~ConfigEntry()
+		Entry(char const * name)
+			: ::core::Enumeration<Entry>(name)
 		{
 		}
-		
+
+		virtual ~Entry()
+		{
+		}
+
 		virtual void Get(char * config_string, char * default_string) const = 0;
 
 		// Returns true iff the default has changed.
 		virtual bool Set(char const * config_string, char const * default_string) = 0;
 	};
 
-
-	template<typename S> class Config : protected ConfigEntry
+	template <typename TYPE>
+	class GenericEntry : Entry
 	{
 	public:
-		template <typename IN_S>
-		Config(IN_S & var, char const * init_name) 
-		: ConfigEntry(init_name)
+		using value_type = TYPE;
+
+		template <typename IN_TYPE>
+		GenericEntry(IN_TYPE & var, char const * init_name)
+		: Entry(init_name)
 		, variable(var)
 		, default_value(var)
 		{ 
@@ -58,7 +60,7 @@ namespace core
 		
 		virtual bool Set(char const * config_string, char const * default_string) 
 		{
-			S stored_default_value;
+			value_type stored_default_value;
 			StringToValue(stored_default_value, default_string);
 			if (stored_default_value == default_value)
 			{
@@ -71,31 +73,36 @@ namespace core
 		}
 		
 	private:
-		static int ValueToString(char * string, S const & value);
-		static int StringToValue(S & value, char const * string);
+		static int ValueToString(char * string, value_type const & value);
+		static int StringToValue(value_type & value, char const * string);
 		
-		S & variable;
-		S const default_value;
+		value_type & variable;
+		value_type const default_value;
 	};
 
-
-	template<typename S> class ConfigAngle : protected Config<S>
+	template<typename TYPE> 
+	class GenericEntryAngle : protected GenericEntry<TYPE>
 	{
 	public:
-		ConfigAngle(S & init_var, char const * init_name) 
-		: Config<S>(init_var, init_name)
+		GenericEntryAngle(value_type & init_var, char const * init_name)
+		: GenericEntry<value_type>(init_var, init_name)
 		{ 
 		}
 		
-		static int ValueToString(char * string, S const & value);
-		static int StringToValue(S & value, char const * string);
+		static int ValueToString(char * string, value_type const & value);
+		static int StringToValue(value_type & value, char const * string);
 	};
+}}}
 
-}
 
 
-#define CONFIG_DEFINE(name, type, default) type name = default; core::Config<type> name##config (name, #name)
-#define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default); core::ConfigAngle<type> name##config (name, #name)
+#define CONFIG_DEFINE(name, default_value) \
+	decltype(default_value) name = default_value; \
+	::crag::core::config::GenericEntry<decltype(default_value)> name##config (name, #name)
+
+#define CONFIG_DEFINE_ANGLE(name, default_value) \
+	decltype(default_value) name = DegToRad(default_value); \
+	::crag::core::config::GenericEntryAngle<decltype(default_value)> name##config (name, #name)
 
 #else
 
@@ -106,4 +113,3 @@ namespace core
 
 #define CONFIG_DECLARE(name, type) extern type name
 #define CONFIG_DECLARE_ANGLE(name, type) extern type name
-

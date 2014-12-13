@@ -46,8 +46,8 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE (max_touch_ray_cast_distance, physics::Scalar, 1000000000.f);
-	CONFIG_DEFINE (touch_observer_distance_buffer, Scalar, 2.f);	// as a proportion of near Z
+	CONFIG_DEFINE(max_touch_ray_cast_distance, 1000000000.f);
+	CONFIG_DEFINE(touch_observer_distance_buffer, 2.f);	// as a proportion of near Z
 
 	struct TranslationRollContact
 	{

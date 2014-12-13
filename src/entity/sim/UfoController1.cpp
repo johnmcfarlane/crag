@@ -27,11 +27,11 @@ using namespace sim;
 namespace
 {
 #if defined(CRAG_USE_MOUSE)
-	CONFIG_DEFINE(ufo_controller1_sensitivity, Scalar, 100.f);
+	CONFIG_DEFINE(ufo_controller1_sensitivity, 100.f);
 #endif
 
 #if defined(CRAG_USE_TOUCH)
-	CONFIG_DEFINE(ufo_controller1_sensitivity, Scalar, 2000000.f);
+	CONFIG_DEFINE(ufo_controller1_sensitivity, 2000000.f);
 #endif
 }
 

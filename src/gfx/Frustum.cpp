@@ -20,9 +20,9 @@
 
 using namespace gfx;
 
-CONFIG_DEFINE (frustum_default_depth_near, float, .25f);
-CONFIG_DEFINE (frustum_default_depth_far, float, 1000.f);
-CONFIG_DEFINE_ANGLE (frustum_default_fov, float, 55.f);
+CONFIG_DEFINE(frustum_default_depth_near, .25f);
+CONFIG_DEFINE(frustum_default_depth_far, 1000.f);
+CONFIG_DEFINE_ANGLE(frustum_default_fov, 55.f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Frustum member definitions

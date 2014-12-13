@@ -54,13 +54,13 @@ using namespace std;
 using namespace sim;
 
 #if defined(CRAG_USE_MOUSE)
-CONFIG_DEFINE (observer_use_touch, bool, false);
+CONFIG_DEFINE(observer_use_touch, false);
 #elif defined(CRAG_USE_TOUCH)
-CONFIG_DEFINE (observer_use_touch, bool, true);
+CONFIG_DEFINE(observer_use_touch, true);
 #endif
-CONFIG_DEFINE (observer_physics, bool, false);
-CONFIG_DEFINE(ufo_controller_type, int, 2);
-CONFIG_DEFINE(saucer_ball_radius, physics::Scalar, .45f);
+CONFIG_DEFINE(observer_physics, false);
+CONFIG_DEFINE(ufo_controller_type, 2);
+CONFIG_DEFINE(saucer_ball_radius, .45f);
 
 namespace gfx
 {
@@ -83,47 +83,47 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
 
-	CONFIG_DEFINE (observer_radius, float, .5);
-	CONFIG_DEFINE (observer_density, float, 1);
+	CONFIG_DEFINE(observer_radius, .5f);
+	CONFIG_DEFINE(observer_density, 1.f);
 	
-	CONFIG_DEFINE (ship_upward_thrust, physics::Scalar, 0.25f);
-	CONFIG_DEFINE (ship_upward_thrust_gradient, physics::Scalar, 0.75f);
-	CONFIG_DEFINE (ship_forward_thrust, physics::Scalar, 10.0f);
+	CONFIG_DEFINE(ship_upward_thrust, 0.25f);
+	CONFIG_DEFINE(ship_upward_thrust_gradient, 0.75f);
+	CONFIG_DEFINE(ship_forward_thrust, 10.0f);
 
-	CONFIG_DEFINE (ufo_color1, gfx::Color4f, gfx::Color4f::Green());
-	CONFIG_DEFINE (ufo_color2, gfx::Color4f, gfx::Color4f::Red());
-	CONFIG_DEFINE (ufo_color3, gfx::Color4f, gfx::Color4f::Green());
+	CONFIG_DEFINE(ufo_color1, gfx::Color4f::Green());
+	CONFIG_DEFINE(ufo_color2, gfx::Color4f::Red());
+	CONFIG_DEFINE(ufo_color3, gfx::Color4f::Green());
 
-	CONFIG_DEFINE (saucer_height, physics::Scalar, .6f);
-	CONFIG_DEFINE (saucer_radius, physics::Scalar, 1.f);
-	CONFIG_DEFINE (saucer_cylinder_height, physics::Scalar, .01f);
-	CONFIG_DEFINE (saucer_ball_density, float, 1);
-	CONFIG_DEFINE (saucer_thrust, float, 16.f);
-	CONFIG_DEFINE (saucer_num_sectors, int, 24);
-	CONFIG_DEFINE (saucer_num_rings, int, 5);
-	CONFIG_DEFINE (saucer_flat_shade_cos, bool, false);
-	CONFIG_DEFINE (saucer_flat_shade_ball, bool, false);
+	CONFIG_DEFINE(saucer_height, .6f);
+	CONFIG_DEFINE(saucer_radius, 1.f);
+	CONFIG_DEFINE(saucer_cylinder_height, .01f);
+	CONFIG_DEFINE(saucer_ball_density, 1.f);
+	CONFIG_DEFINE(saucer_thrust, 16.f);
+	CONFIG_DEFINE(saucer_num_sectors, 24);
+	CONFIG_DEFINE(saucer_num_rings, 5);
+	CONFIG_DEFINE(saucer_flat_shade_cos, false);
+	CONFIG_DEFINE(saucer_flat_shade_ball, false);
 #if defined(CRAG_USE_GL)
-	CONFIG_DEFINE (saucer_search_light_enable, bool, true);
+	CONFIG_DEFINE(saucer_search_light_enable, true);
 #endif
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (saucer_search_light_enable, bool, false);
+	CONFIG_DEFINE(saucer_search_light_enable, false);
 #endif
-	CONFIG_DEFINE (saucer_search_light_angle, Scalar, .15f);
+	CONFIG_DEFINE(saucer_search_light_angle, .15f);
 
-	CONFIG_DEFINE (thargoid_height, physics::Scalar, .3f);
-	CONFIG_DEFINE (thargoid_radius, physics::Scalar, 1.f);
-	CONFIG_DEFINE (thargoid_inner_radius_ratio, physics::Scalar, .5f);
-	CONFIG_DEFINE (thargoid_thrust, float, 9.f);
+	CONFIG_DEFINE(thargoid_height, .3f);
+	CONFIG_DEFINE(thargoid_radius, 1.f);
+	CONFIG_DEFINE(thargoid_inner_radius_ratio, .5f);
+	CONFIG_DEFINE(thargoid_thrust, 9.f);
 
 #if defined(CRAG_USE_GL)
-	CONFIG_DEFINE (player_type, int, 4);
+	CONFIG_DEFINE(player_type, 4);
 #endif
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (player_type, int, 3);
+	CONFIG_DEFINE(player_type, 3);
 #endif
 
-	CONFIG_DEFINE (camera_start_offset, Vector3, Vector3(-15, 0, 0));
+	CONFIG_DEFINE(camera_start_offset, Vector3(-15, 0, 0));
 
 	////////////////////////////////////////////////////////////////////////////////
 	// mesh generation

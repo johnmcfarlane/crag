@@ -28,13 +28,13 @@
 #include "core/ConfigEntry.h"
 #include "core/Roster.h"
 
-CONFIG_DEFINE (sim_tick_duration, core::Time, 1.f / 60.f);
+CONFIG_DEFINE(sim_tick_duration, 1. / 60.);
 
 
 namespace
 {
-	CONFIG_DEFINE(apply_gravity, bool, true);
-	CONFIG_DEFINE(purge_distance, double, 1000000000000.);
+	CONFIG_DEFINE(apply_gravity, true);
+	CONFIG_DEFINE(purge_distance, 1000000000000.);
 
 	STAT_DEFAULT(sim_space, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
 	STAT(form_changed_sim, bool, 0);

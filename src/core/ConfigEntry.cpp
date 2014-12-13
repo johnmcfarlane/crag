@@ -19,9 +19,7 @@
 
 #include "geom/Matrix44.h"
 
-
-namespace core {
-
+using namespace crag::core::config;
 
 //////////////////////////////////////////////////////////////////////
 // ValueToString / StringToValue specializations
@@ -64,12 +62,12 @@ namespace
 	
 }
 
-template<> int Config<bool>::ValueToString(char * string, bool const & value)
+template<> int GenericEntry<bool>::ValueToString(char * string, bool const & value)
 {
 	return sprintf(string, "%s", value ? "true" : "false") > 0;
 }
 
-template<> int Config<bool>::StringToValue(bool & value, char const * string)
+template<> int GenericEntry<bool>::StringToValue(bool & value, char const * string)
 {
 	for (boolean_tag_pair const * tag_iterator = boolean_tags; tag_iterator != boolean_tags_end; ++ tag_iterator) {
 		if (tag_iterator->matches(string, false)) {
@@ -86,84 +84,84 @@ template<> int Config<bool>::StringToValue(bool & value, char const * string)
 }
 
 // int
-template<> int Config<int>::ValueToString(char * string, int const & value)
+template<> int GenericEntry<int>::ValueToString(char * string, int const & value)
 {
 	return sprintf(string, "%d", value) > 0;
 }
 
-template<> int Config<int>::StringToValue(int & value, char const * string)
+template<> int GenericEntry<int>::StringToValue(int & value, char const * string)
 {
 	return sscanf(string, "%d", & value) == 1;
 }
 
 // size_t
-template<> int Config<size_t>::ValueToString(char * string, size_t const & value)
+template<> int GenericEntry<size_t>::ValueToString(char * string, size_t const & value)
 {
 	return sprintf(string, SIZE_T_FORMAT_SPEC, value) > 0;
 }
 
-template<> int Config<size_t>::StringToValue(size_t & value, char const * string)
+template<> int GenericEntry<size_t>::StringToValue(size_t & value, char const * string)
 {
 	return sscanf(string, SIZE_T_FORMAT_SPEC, & value) == 1;
 }
 
 // float
-template<> int Config<float>::ValueToString(char * string, float const & value)
+template<> int GenericEntry<float>::ValueToString(char * string, float const & value)
 {
 	return sprintf(string, "%g", value) > 0;
 }
 
-template<> int Config<float>::StringToValue(float & value, char const * string)
+template<> int GenericEntry<float>::StringToValue(float & value, char const * string)
 {
 	return sscanf(string, "%g", & value) == 1;
 }
 
 // double
-template<> int Config<double>::ValueToString(char * string, double const & value)
+template<> int GenericEntry<double>::ValueToString(char * string, double const & value)
 {
 	return sprintf(string, "%g", value) > 0;
 }
 
-template<> int Config<double>::StringToValue(double & value, char const * string)
+template<> int GenericEntry<double>::StringToValue(double & value, char const * string)
 {
 	return sscanf(string, "%lg", & value) == 1;
 }
 
 // Color
-template<> int Config<gfx::Color4f>::ValueToString(char * string, gfx::Color4f const & value)
+template<> int GenericEntry<gfx::Color4f>::ValueToString(char * string, gfx::Color4f const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g", value.r, value.g, value.b, value.a) > 0;
 }
 
-template<> int Config<gfx::Color4f>::StringToValue(gfx::Color4f & value, char const * string)
+template<> int GenericEntry<gfx::Color4f>::StringToValue(gfx::Color4f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g,%g", & value.r, & value.g, & value.b, & value.a) == 1;
 }
 
 // geom::Vector3f
-template<> int Config<geom::Vector3f>::ValueToString(char * string, geom::Vector3f const & value)
+template<> int GenericEntry<geom::Vector3f>::ValueToString(char * string, geom::Vector3f const & value)
 {
 	return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
 }
 
-template<> int Config<geom::Vector3f>::StringToValue(geom::Vector3f & value, char const * string)
+template<> int GenericEntry<geom::Vector3f>::StringToValue(geom::Vector3f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g", & value.x, & value.y, & value.z) == 1;
 }
 
 // geom::Vector3d
-template<> int Config<geom::Vector3d>::ValueToString(char * string, geom::Vector3d const & value)
+template<> int GenericEntry<geom::Vector3d>::ValueToString(char * string, geom::Vector3d const & value)
 {
 	return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
 }
 
-template<> int Config<geom::Vector3d>::StringToValue(geom::Vector3d & value, char const * string)
+template<> int GenericEntry<geom::Vector3d>::StringToValue(geom::Vector3d & value, char const * string)
 {
 	return sscanf(string, "%lg,%lg,%lg", & value.x, & value.y, & value.z) == 1;
 }
 
 // geom::Matrix44f
-template<> int Config<geom::Matrix44f>::ValueToString(char * string, geom::Matrix44f const & value)
+template<> int GenericEntry<geom::Matrix44f>::ValueToString(char * string, geom::Matrix44f const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -172,7 +170,7 @@ template<> int Config<geom::Matrix44f>::ValueToString(char * string, geom::Matri
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, char const * string)
+template<> int GenericEntry<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, char const * string)
 {
 	return sscanf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
@@ -182,7 +180,7 @@ template<> int Config<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, c
 }
 
 // geom::Matrix44d
-template<> int Config<geom::Matrix44d>::ValueToString(char * string, geom::Matrix44d const & value)
+template<> int GenericEntry<geom::Matrix44d>::ValueToString(char * string, geom::Matrix44d const & value)
 {
 	return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 				   value[0][0], value[0][1], value[0][2], value[0][3], 
@@ -191,7 +189,7 @@ template<> int Config<geom::Matrix44d>::ValueToString(char * string, geom::Matri
 				   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 }
 
-template<> int Config<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, char const * string)
+template<> int GenericEntry<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, char const * string)
 {
 	return sscanf(string, "%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg", 
 				  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
@@ -201,12 +199,12 @@ template<> int Config<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, c
 }
 
 // float
-template<> int ConfigAngle<float>::ValueToString(char * string, float const & value)
+template<> int GenericEntryAngle<float>::ValueToString(char * string, float const & value)
 {
 	return sprintf(string, "%g", RadToDeg(value)) > 0;
 }
 
-template<> int ConfigAngle<float>::StringToValue(float & value, char const * string)
+template<> int GenericEntryAngle<float>::StringToValue(float & value, char const * string)
 {
 	if (sscanf(string, "%g", & value) == 1) {
 		value = DegToRad(value);
@@ -218,12 +216,12 @@ template<> int ConfigAngle<float>::StringToValue(float & value, char const * str
 }
 
 // double
-template<> int ConfigAngle<double>::ValueToString(char * string, double const & value)
+template<> int GenericEntryAngle<double>::ValueToString(char * string, double const & value)
 {
 	return sprintf(string, "%g", RadToDeg(value)) > 0;
 }
 
-template<> int ConfigAngle<double>::StringToValue(double & value, char const * string)
+template<> int GenericEntryAngle<double>::StringToValue(double & value, char const * string)
 {
 	if (sscanf(string, "%lg", & value) == 1) {
 		value = DegToRad(value);
@@ -233,7 +231,5 @@ template<> int ConfigAngle<double>::StringToValue(double & value, char const * s
 		return 0;
 	}
 }
-
-}	// namespace core
 
 #endif	// ENABLE_CONFIG

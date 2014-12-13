@@ -36,19 +36,19 @@ CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 namespace
 {
-	CONFIG_DEFINE (observer_speed, int, 1);
-	CONFIG_DEFINE (observer_translation_input, float, 10.08f);
-	CONFIG_DEFINE (observer_rotation_input, float, 12.6f);
-	CONFIG_DEFINE (observer_mouse_sensitivity, float, 0.35f);
-	CONFIG_DEFINE (observer_mouse_ray_cast_distance, float, 1000000000.f);
+	CONFIG_DEFINE(observer_speed, 1);
+	CONFIG_DEFINE(observer_translation_input, 10.08f);
+	CONFIG_DEFINE(observer_rotation_input, 12.6f);
+	CONFIG_DEFINE(observer_mouse_sensitivity, 0.35f);
+	CONFIG_DEFINE(observer_mouse_ray_cast_distance, 1000000000.f);
 
 	// TODO: this value is likely sensitive to screen resolutions
 #if defined(__APPLE__)
-	CONFIG_DEFINE (observer_mouse_sensitivity_platform_factor, float, 1.0f);
+	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 1.0f);
 #elif defined(WIN32)
-	CONFIG_DEFINE (observer_mouse_sensitivity_platform_factor, float, 0.5f);
+	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 0.5f);
 #else
-	CONFIG_DEFINE (observer_mouse_sensitivity_platform_factor, float, 0.1f);
+	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 0.1f);
 #endif
 }
 

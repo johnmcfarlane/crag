@@ -24,13 +24,13 @@
 
 namespace 
 {
-	CONFIG_DEFINE (frame_duration_reaction_coefficient_base, float, 0.025f);
-	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost, float, .25f);
-	CONFIG_DEFINE (frame_duration_reaction_coefficient_boost_half_life, float, 10.f);
+	CONFIG_DEFINE(frame_duration_reaction_coefficient_base, 0.025f);
+	CONFIG_DEFINE(frame_duration_reaction_coefficient_boost, .25f);
+	CONFIG_DEFINE(frame_duration_reaction_coefficient_boost_half_life, 10.f);
 	
 	// TODO: Base it on full scene thread cycle.
-	CONFIG_DEFINE (max_mesh_generation_period_proportion, float, .75f);
-	CONFIG_DEFINE (max_mesh_generation_reaction_coefficient, float, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
+	CONFIG_DEFINE(max_mesh_generation_period_proportion, .75f);
+	CONFIG_DEFINE(max_mesh_generation_reaction_coefficient, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 	
 	typedef std::size_t QuaterneCount;
 	const QuaterneCount invalid_num_quaterne = std::numeric_limits<QuaterneCount>::max();

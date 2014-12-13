@@ -39,39 +39,39 @@
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
-CONFIG_DEFINE (profile_mode, bool, false);
+CONFIG_DEFINE(profile_mode, false);
 CONFIG_DECLARE (shadows_enabled, bool);
 
 namespace 
 {
 
 #if defined(WIN32)
-	CONFIG_DEFINE (window_resolution_x, int, 800);
-	CONFIG_DEFINE (window_resolution_y, int, 600);
+	CONFIG_DEFINE(window_resolution_x, 800);
+	CONFIG_DEFINE(window_resolution_y, 600);
 #elif defined(CRAG_RPI)
-	CONFIG_DEFINE (window_resolution_x, int, 640);
-	CONFIG_DEFINE (window_resolution_y, int, 480);
+	CONFIG_DEFINE(window_resolution_x, 640);
+	CONFIG_DEFINE(window_resolution_y, 480);
 #else
-	CONFIG_DEFINE (window_resolution_x, int, 800);
-	CONFIG_DEFINE (window_resolution_y, int, 600);
+	CONFIG_DEFINE(window_resolution_x, 800);
+	CONFIG_DEFINE(window_resolution_y, 600);
 #endif
 
 #if defined(CRAG_MOBILE)
 	// mobile device apps are typically all full-screen 
-	CONFIG_DEFINE (full_screen, bool, true);
+	CONFIG_DEFINE(full_screen, true);
 #endif
 
 #if defined(CRAG_PC)
 #if defined(NDEBUG) && ! defined(PROFILE)
 	// non-debug builds are best in full-screen mode (unless profiling)
-	CONFIG_DEFINE (full_screen, bool, true);
+	CONFIG_DEFINE(full_screen, false);
 #else
 	// but during development, a window 
-	CONFIG_DEFINE (full_screen, bool, false);
+	CONFIG_DEFINE(full_screen, false);
 #endif
 #endif
 	
-	CONFIG_DEFINE (script_mode, int, 1);
+	CONFIG_DEFINE(script_mode, 1);
 	
 	bool paused = false;
 	
@@ -329,7 +329,7 @@ namespace
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as full_screen are correct.
-		core::ConfigManager config_manager;
+		::crag::core::config::Manager config_manager;
 		if (! config_manager.ParseCommandLine(argc, argv))
 		{
 			return false;

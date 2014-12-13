@@ -26,11 +26,11 @@ using namespace gfx;
 
 namespace
 {
-	CONFIG_DEFINE(puff_probability, float, .25f);
-	CONFIG_DEFINE(thruster_color, Color4f, Color4f(1.f, .5f, .25f));
-	CONFIG_DEFINE(puff_drift_coefficient, Scalar, .75);
-	CONFIG_DEFINE(puff_volume_variance, Scalar, 1.);
-	CONFIG_DEFINE(puff_volume_median, Scalar, 0.0005f);
+	CONFIG_DEFINE(puff_probability, .25f);
+	CONFIG_DEFINE(thruster_color, Color4f(1.f, .5f, .25f));
+	CONFIG_DEFINE(puff_drift_coefficient, .75f);
+	CONFIG_DEFINE(puff_volume_variance, 1.f);
+	CONFIG_DEFINE(puff_volume_median, 0.0005f);
 	
 	LightAttributes const thruster_light_attribs =
 	{
