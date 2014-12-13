@@ -94,39 +94,13 @@ namespace ipc
 			return Handle(uid);
 		}
 		
-#if defined(WIN32)
-		// creates an object; passes parameters to c'tor;
-		// returns handle to object
-		template <typename ... PARAMETERS>
-		static Handle Create(PARAMETERS ... parameters);
-#else
 		// creates an object; passes parameters to c'tor;
 		// returns handle to object
 		template <typename ... PARAMETERS>
 		static Handle Create(PARAMETERS && ... parameters);
-#endif
 
-#if defined(WIN32) || ! defined(__clang__)
-		void CreateObject();
-
-		template <typename PARAMETER1>
-		void CreateObject(PARAMETER1 parameter1);
-
-		template <typename PARAMETER1, typename PARAMETER2>
-		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2);
-
-		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
-
-		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
-		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4);
-
-		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
-		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5);
-#else
 		template <typename ... PARAMETERS>
 		void CreateObject(PARAMETERS ... parameters);
-#endif
 		
 		// Tells simulation to release the object.
 		void Release();

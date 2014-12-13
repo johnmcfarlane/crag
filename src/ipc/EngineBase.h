@@ -154,21 +154,6 @@ namespace ipc
 			return CreateObject<Type>(handle);
 		}
 		
-#if defined(WIN32)
-		template <typename Type>
-		SharedPtr<Type> CreateObject(Handle handle)
-		{
-			auto object = std::make_shared<Type>(core::StaticCast<EngineType>(* this));
-
-			if (object)
-			{
-				AddObject(handle, object);
-			}
-			
-			return object;
-		}
-#endif
-
 		template <typename Type, typename ... PARAMETERS>
 		SharedPtr<Type> CreateObject(Handle handle, PARAMETERS const & ... parameters)
 		{
