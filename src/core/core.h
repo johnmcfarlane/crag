@@ -26,10 +26,16 @@
 
 #if defined(WIN32)
 #define constexpr const
+#if defined(WIN32_C3861_WORKAROUND)
 #define alignof __alignof
-#define noexcept _NOEXCEPT
-#define thread_local __declspec(thread)
 #define snprintf _snprintf
+#endif
+#if defined(WIN32_C3646_WORKAROUND)
+#define noexcept _NOEXCEPT
+#endif
+#if defined(WIN32_C2144_WORKAROUND)
+#define thread_local __declspec(thread)
+#endif
 #elif defined(__GNUC__)
 #define thread_local __thread
 #endif
