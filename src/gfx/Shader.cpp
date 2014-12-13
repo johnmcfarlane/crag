@@ -151,7 +151,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 		return false;
 	}
 	
-	GL_CALL(glShaderSource(_id, int(num_strings), string_array, nullptr));
+	GL_CALL(glShaderSource(_id, int(num_strings), string_array.data(), nullptr));
 
 	GL_CALL(glCompileShader(_id));
 	
