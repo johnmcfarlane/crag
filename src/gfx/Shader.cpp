@@ -102,11 +102,8 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	std::vector<app::FileResource> source_buffers(num_strings);
 
 	// load individual shader files
-#if defined(WIN32)
 	std::vector<char const *> string_array(num_strings);
-#else
-	char const * string_array[num_strings];
-#endif
+
 	{
 		auto filename_iterator = std::begin(filenames);
 		for (auto index = 0; index != num_strings; ++filename_iterator, ++index)
