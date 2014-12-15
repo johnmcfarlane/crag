@@ -83,7 +83,10 @@ namespace config
 	template<typename TYPE> 
 	class GenericEntryAngle : protected GenericEntry<TYPE>
 	{
+		using _Base = GenericEntry<TYPE>;
 	public:
+		using value_type = typename _Base::value_type;
+
 		GenericEntryAngle(value_type & init_var, char const * init_name)
 		: GenericEntry<value_type>(init_var, init_name)
 		{ 
