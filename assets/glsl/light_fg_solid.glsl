@@ -18,54 +18,39 @@
 ////////////////////////////////////////////////////////////////////////////////
 // foreground surfaces with normals (solids)
 
-// return light reflected by given point light on a given surface
-LIGHT3 GetPointLightReflection(Light light, VECTOR3 position, VECTOR3 normal)
-{
-	VECTOR3 to_light = light.position - position;
-	SCALAR distance = length(to_light);
-	VECTOR3 to_light_direction = to_light / distance;
-	
-	SCALAR dp = dot(to_light_direction, normal);
-	SCALAR attenuation = max(dp / (distance * distance), 0.0);
-
-	return vec3(light.color.rgb) * attenuation;
-}
-
-// return light reflected by given search light on a given surface
-LIGHT3 GetSearchLightReflection(const Light light, VECTOR3 position, VECTOR3 normal)
-{
-	VECTOR3 to_light = light.position - position;
-	SCALAR distance = length(to_light);
-	VECTOR3 to_light_direction = to_light / distance;
-	
-	if (dot(to_light_direction, light.direction) < light.angle.y)
-	{
-		return vec3(0.);
-	}
-	
-	SCALAR dp = dot(to_light_direction, normal);
-	SCALAR attenuation = max(dp / (distance * distance), 0.0);
-
-	return vec3(light.color.rgb) * attenuation;
-}
-
 // accumulate light reflected and illuminated by given lights on a given surface
 void ForegroundLight(const Light light, VECTOR3 position, VECTOR3 normal, inout LightResults results)
 {
-	if (light.type == 0)
+	if (light.type == -1)
 	{
-		results.reflection += GetPointLightReflection(light, position, normal);
+		// this light is switched off
+		return;
 	}
-	else if (light.type == 1)
-	{
-		results.reflection += GetSearchLightReflection(light, position, normal);
 
+	VECTOR3 to_light = light.position - position;
+	SCALAR distance = length(to_light);
+	VECTOR3 to_light_direction = to_light / distance;
+	
+	if (light.type == 1)
+	{
 #if defined(ENABLE_BEAM_LIGHTING)
+		// crepuscular ray
 		SCALAR ray_distance = length(position);
 		VECTOR3 ray_direction = position / ray_distance;
 		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
+
+		if (dot(to_light_direction, light.direction) > light.angle.y)
+		{
+			// surface point falls outside spot light cone
+			return;
+		}
 	}
+	
+	SCALAR dp = dot(to_light_direction, normal);
+	SCALAR attenuation = max(dp / (distance * distance), 0.0);
+
+	results.reflection += vec3(light.color.rgb) * attenuation;
 }
 
 // return light reflected and illuminated by vertex lights on a given surface
