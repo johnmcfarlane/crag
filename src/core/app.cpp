@@ -209,8 +209,11 @@ char const * app::GetFullPath(char const * filepath)
 #endif
 }
 
+// 521,216
 app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
+	ASSERT(filename);
+
 	// open file
 	SDL_RWops * source = SDL_RWFromFile(app::GetFullPath(filename), "rb");
 	if (source == nullptr)
