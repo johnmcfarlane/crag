@@ -137,6 +137,28 @@ namespace core
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	// make_transform - simple map/list comprehension riff; makes vector
+	// containing result of applying given function to given sequence
+	//
+	// e.g.:
+	//	auto in = std::vector<int>{{ 1, 2, 3 }};
+	//	auto f = [](int n){return n*n; };
+	//	auto t = make_transform(in, f);
+	//	assert((t == std::vector<int>{{ 1, 4, 9 }}));
+
+	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(typename SrcSequence::value_type)>::type>
+	std::vector<DstElement> make_transform(SrcSequence const & source, Fn unary_function)
+	{
+		std::vector<DstElement> destination;
+		destination.reserve(source.size());
+		for (auto const & source_element : source)
+		{
+			destination.push_back(unary_function(source_element));
+		}
+		return destination;
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	// Time - in seconds
 
 	typedef double Time;
