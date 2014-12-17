@@ -40,7 +40,7 @@ void ForegroundLight(const Light light, VECTOR3 position, VECTOR3 normal, inout 
 		results.illumination += GetBeamIllumination(light, ray_direction, ray_distance);
 #endif
 
-		if (dot(to_light_direction, light.direction) > light.angle.y)
+		if (dot(to_light_direction, light.direction) < light.angle.y)
 		{
 			// surface point falls outside spot light cone
 			return;
