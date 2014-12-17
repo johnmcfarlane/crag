@@ -94,28 +94,11 @@ namespace core
 // DEBUG_MESSAGE - debug build-only stdout output for useful development information
 #define DEBUG_MESSAGE(FORMAT, ...) PrintMessage(stdout, DEBUG_COLOR_FILE "%32s" DEBUG_COLOR_PUNC "(" DEBUG_COLOR_LINE "%3d" DEBUG_COLOR_PUNC "):" DEBUG_COLOR_TEXT FORMAT DEBUG_COLOR_PUNC " [" DEBUG_COLOR_FUNC "%s" DEBUG_COLOR_PUNC "] " DEBUG_COLOR_THREAD "%s" DEBUG_COLOR_NORM "\n", MESSAGE_TRUNCATE(__FILE__, 32), __LINE__, ## __VA_ARGS__, FUNCTION_SIGNATURE, ::core::DebugGetThreadName())
 
-// BREAK - interrupt execution
-#if defined(WIN32)
-#define BREAK() __debugbreak()
-#elif defined(__ANDROID__)
-#include  <android/log.h>
-#define BREAK() __android_log_assert("error", "crag", "internal error");
-#elif defined(__GNUC__)
-#if defined(__i386__)
-#define BREAK() asm("int3")
-#else
-#define BREAK() __builtin_trap()
-// NB: raise(SIGTRAP) is an alternative
-#endif
-#else
-#define BREAK() assert(false)
-#endif
-
 // DEBUG_BREAK - debug build-only execution interruption with error message
 #define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
 		DEBUG_MESSAGE(FORMAT, ## __VA_ARGS__); \
-		BREAK(); \
+		::crag::core::Break(); \
 	)
 
 // ASSERT - interrupt execution in a debug build iff given condition fails
@@ -160,6 +143,14 @@ namespace core
 
 #endif	// NDEBUG
 
+// crag::core::Break() - interrupt execution
+namespace crag
+{
+	namespace core
+	{
+		void Break();
+	}
+}
 
 // Console output
 void PrintMessage(FILE * out, char const * format, ...);

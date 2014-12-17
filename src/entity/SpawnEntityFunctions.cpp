@@ -53,14 +53,14 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// Config values
 
-	CONFIG_DEFINE (box_density, physics::Scalar, 1);
+	CONFIG_DEFINE(box_density, 1.f);
 
-	CONFIG_DEFINE (ball_density, float, 1);
+	CONFIG_DEFINE(ball_density, 1.f);
 
-	CONFIG_DEFINE (camera_radius, float, .5);
-	CONFIG_DEFINE (camera_density, float, 1);
+	CONFIG_DEFINE(camera_radius, .5f);
+	CONFIG_DEFINE(camera_density, 1.f);
 	
-	CONFIG_DEFINE (camera_linear_damping, physics::Scalar, 0.5f);
+	CONFIG_DEFINE(camera_linear_damping, 0.5f);
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions

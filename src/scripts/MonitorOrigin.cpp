@@ -27,12 +27,12 @@
 #include "core/Statistics.h"
 
 CONFIG_DECLARE (observer_use_touch, bool);
-CONFIG_DEFINE (origin_dynamic_enable, bool, true);
+CONFIG_DEFINE(origin_dynamic_enable, true);
 
 namespace
 {
-	CONFIG_DEFINE (min_precision_score, sim::Scalar, .001f);
-	CONFIG_DEFINE (origin_touch_max_distance, float, 10000.f);
+	CONFIG_DEFINE(min_precision_score, .001f);
+	CONFIG_DEFINE(origin_touch_max_distance, 10000.f);
    
 	STAT_DEFAULT(sim_origin_reset_distance_factor, sim::Scalar, 0.6f, 0.f);
 	STAT_DEFAULT(sim_origin_reset_precision_factor, sim::Scalar, 0.3f, 0.f);

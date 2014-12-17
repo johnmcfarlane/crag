@@ -30,7 +30,7 @@ using namespace applet;
 
 namespace
 {
-	CONFIG_DEFINE(applet_min_interval, core::Time, 0.02);
+	CONFIG_DEFINE(applet_min_interval, 0.02);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -31,11 +31,11 @@ CONFIG_DECLARE_ANGLE(frustum_default_fov, float);
 
 namespace
 {
-	CONFIG_DEFINE (camera_controller_height, float, 7.5f);
-	CONFIG_DEFINE (camera_controller_elevation, float, 2.5f);
-	CONFIG_DEFINE (camera_controller_distance, float, 10.f);
-	CONFIG_DEFINE (camera_push_magnitude, float, 100.f);
-	CONFIG_DEFINE (camera_lod_radius, float, 2.5f);
+	CONFIG_DEFINE(camera_controller_height, 7.5f);
+	CONFIG_DEFINE(camera_controller_elevation, 2.5f);
+	CONFIG_DEFINE(camera_controller_distance, 10.f);
+	CONFIG_DEFINE(camera_push_magnitude, 100.f);
+	CONFIG_DEFINE(camera_lod_radius, 2.5f);
 	
 	void UpdateLodParameters(Vector3 const & /*camera_translation*/, Vector3 const & subject_translation)
 	{

@@ -27,7 +27,7 @@ namespace core
 
 			// the choice of Function here is entirely arbitrary;
 			// (it's the closest class to hand)
-#if ! defined(WIN32)
+#if ! defined(WIN32_C2338_WORKAROUND)
 			typedef Function ArbitraryClass;
 #else
 			struct ArbitraryBaseClass1 { virtual ~ArbitraryBaseClass1() { } };

@@ -31,7 +31,7 @@
 #include "core/Random.h"
 
 CONFIG_DECLARE(player_type, int);
-CONFIG_DEFINE(num_animats, int, 1);
+CONFIG_DEFINE(num_animats, 1);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 using geom::Vector3f;

@@ -18,8 +18,8 @@
 
 using namespace form;
 
-CONFIG_DEFINE(node_score_recalc_coefficient, double, .1);
-CONFIG_DEFINE(node_score_score_coefficient, double, 1.5);
+CONFIG_DEFINE(node_score_recalc_coefficient, .1);
+CONFIG_DEFINE(node_score_score_coefficient, 1.5);
 
 namespace
 {

@@ -70,6 +70,31 @@ namespace
 			}
 		}
 	}
+
+	std::vector<app::FileResource> ReadFileBuffers(std::initializer_list<char const *> filenames)
+	{
+		return core::make_transform(filenames, [](char const * filename)
+		{
+			if (!filename)
+			{
+				return app::FileResource();
+			}
+
+			auto source_buffer = app::LoadFile(filename);
+
+			if (!source_buffer.empty())
+			{
+#if ! defined(CRAG_USE_GLES)
+				// earlier version of desktop GLSL fail to ignore these
+				EraseQualifier(source_buffer.data(), "lowp");
+				EraseQualifier(source_buffer.data(), "mediump");
+				EraseQualifier(source_buffer.data(), "highp");
+#endif
+			}
+
+			return source_buffer;
+		});
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,45 +121,6 @@ Shader::~Shader()
 
 bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_type)
 {
-	typedef std::vector<app::FileResource> BufferArray;
-	
-	int num_strings = filenames.size();
-	
-	// load individual shader files
-#if defined(WIN32)
-	auto string_array = static_cast<char const * *>(_malloca(num_strings * sizeof(char const *)));
-#else
-	char const * string_array [num_strings];
-#endif
-	BufferArray source_buffers(num_strings);
-	auto filename_iterator = std::begin(filenames);
-	for (auto index = 0; index != num_strings; ++ filename_iterator, ++ index)
-	{
-		char const * filename = * filename_iterator;
-		if (! filename)
-		{
-			string_array[index] = "";
-			continue;
-		}
-		
-		auto source_buffer = app::LoadFile(filename, true);
-		if (! source_buffer)
-		{
-			return false;
-		}
-		
-#if ! defined(CRAG_USE_GLES)
-		// earlier version of desktop GLSL fail to ignore these
-		EraseQualifier(source_buffer->data(), "lowp");
-		EraseQualifier(source_buffer->data(), "mediump");
-		EraseQualifier(source_buffer->data(), "highp");
-#endif
-		
-		string_array[index] = source_buffer->data();
-		
-		source_buffers[index] = std::move(source_buffer);
-	}
-	
 	// Create the shader.
 	GL_CALL(_id = glCreateShader(shader_type));
 	if (_id == 0)
@@ -148,9 +134,25 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 
 		return false;
 	}
-	
-	GL_CALL(glShaderSource(_id, int(num_strings), string_array, nullptr));
 
+	// load individual shader files
+	auto file_buffers = ReadFileBuffers(filenames);
+	int num_strings = file_buffers.size();
+
+	// generate array of pointers for GL
+	auto string_array = core::make_transform(file_buffers, [](app::FileResource const & lhs)
+	{
+		return lhs.data();
+	});
+
+	// generate array of sizes for GL
+	auto length_array = core::make_transform(file_buffers, [](app::FileResource const & lhs)
+	{
+		return GLint(lhs.size());
+	});
+
+	// pass to GL
+	GL_CALL(glShaderSource(_id, num_strings, string_array.data(), length_array.data()));
 	GL_CALL(glCompileShader(_id));
 	
 #if defined(DUMP_GLSL_ERRORS)
@@ -182,10 +184,6 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 
 		PrintMessage(stderr, "Shader info log:\n%s", info_log.data());
 	}
-#endif
-
-#if defined(WIN32)
-	_freea(string_array);
 #endif
 
 	// Check for errors in the source code.

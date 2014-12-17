@@ -38,11 +38,11 @@ namespace
 	STAT (num_polys, std::size_t, .05f);
 	STAT (num_quats_used, std::size_t, 0.15f);
 	
-	CONFIG_DEFINE (formation_emission, Color4f, Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE (formation_ambient, Color4f, Color4f(0.05f));
-	CONFIG_DEFINE (formation_diffuse, Color4f, Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE (formation_specular, float, 0.0f);
-	CONFIG_DEFINE (formation_shininess, float, 0.0f);
+	CONFIG_DEFINE(formation_emission, Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE(formation_ambient, Color4f(0.05f));
+	CONFIG_DEFINE(formation_diffuse, Color4f(0.0f, 0.0f, 0.0f));
+	CONFIG_DEFINE(formation_specular, 0.0f);
+	CONFIG_DEFINE(formation_shininess, 0.0f);
 	
 	char const * vbo_key = "SurroundingMesh";
 }

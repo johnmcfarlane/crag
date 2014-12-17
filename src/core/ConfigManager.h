@@ -11,21 +11,21 @@
 
 #include "ConfigEntry.h"
 
-
-namespace core
+namespace crag {
+namespace core {
+namespace config
 {
-
 	// Contains the complete list of configuration settings.
-	class ConfigManager
+	class Manager
 	{
 	public:
-		ConfigManager();
-		~ConfigManager();
-		
+		Manager();
+		~Manager();
+
 		bool ParseCommandLine(int argc, char * const * argv);
 	private:
 		bool Load();
 		void Save();
 	};
 
-}
+}}}

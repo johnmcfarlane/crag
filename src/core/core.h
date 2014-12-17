@@ -26,10 +26,16 @@
 
 #if defined(WIN32)
 #define constexpr const
+#if defined(WIN32_C3861_WORKAROUND)
 #define alignof __alignof
-#define noexcept _NOEXCEPT
-#define thread_local __declspec(thread)
 #define snprintf _snprintf
+#endif
+#if defined(WIN32_C3646_WORKAROUND)
+#define noexcept _NOEXCEPT
+#endif
+#if defined(WIN32_C2144_WORKAROUND)
+#define thread_local __declspec(thread)
+#endif
 #elif defined(__GNUC__)
 #define thread_local __thread
 #endif
@@ -128,6 +134,28 @@ namespace core
 		assert(array + index == element_ptr);
 		
 		return index;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// make_transform - simple map/list comprehension riff; makes vector
+	// containing result of applying given function to given sequence
+	//
+	// e.g.:
+	//	auto in = std::vector<int>{{ 1, 2, 3 }};
+	//	auto f = [](int n){return n*n; };
+	//	auto t = make_transform(in, f);
+	//	assert((t == std::vector<int>{{ 1, 4, 9 }}));
+
+	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(typename SrcSequence::value_type)>::type>
+	std::vector<DstElement> make_transform(SrcSequence const & source, Fn unary_function)
+	{
+		std::vector<DstElement> destination;
+		destination.reserve(source.size());
+		for (auto const & source_element : source)
+		{
+			destination.push_back(unary_function(source_element));
+		}
+		return destination;
 	}
 
 	//////////////////////////////////////////////////////////////////////

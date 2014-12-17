@@ -74,4 +74,4 @@ namespace ipc
 	};
 }
 
-#endif	// defined(WIN32)
+#endif	// defined(CRAG_USE_FIBER_WIN)

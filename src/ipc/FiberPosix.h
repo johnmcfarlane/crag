@@ -83,4 +83,4 @@ namespace ipc
 	};
 }
 
-#endif	// ! defined(WIN32) && ! defined(__ANDROID__)
+#endif	// defined(CRAG_USE_FIBER_POSIX)

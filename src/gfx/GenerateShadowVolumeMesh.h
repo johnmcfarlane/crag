@@ -81,10 +81,10 @@ namespace gfx
 			
 						auto project = [&] (Vector3 const & corner)
 						{
-							Ray3 edge;
-							edge.position = corner;
-							edge.direction = geom::Normalized(corner - light_position);
-							return geom::Project(edge, 1000.f);	// TODO: magic number
+							Ray3 edge_ray;
+							edge_ray.position = corner;
+							edge_ray.direction = geom::Normalized(corner - light_position);
+							return geom::Project(edge_ray, 1000.f);	// TODO: magic number
 						};
 						auto a_projection = project(* a);
 						auto b_projection = project(* b);

@@ -40,8 +40,8 @@
 using core::Time;
 using namespace gfx;
 
-CONFIG_DEFINE(depth_func, int, GL_LESS);
-CONFIG_DEFINE (shadows_enabled, bool, true);
+CONFIG_DEFINE(depth_func, GL_LESS);
+CONFIG_DEFINE(shadows_enabled, true);
 CONFIG_DECLARE(profile_mode, bool);
 CONFIG_DECLARE(frustum_default_depth_near, float);
 
@@ -50,26 +50,26 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// File-local Variables
 	
-	CONFIG_DEFINE (global_ambient, Color4f, Color4f(.01f,.01f,.02f));
-	CONFIG_DEFINE (default_refresh_rate, int, 50);
-	CONFIG_DEFINE (swap_interval, int, 1);
+	CONFIG_DEFINE(global_ambient, Color4f(.01f,.01f,.02f));
+	CONFIG_DEFINE(default_refresh_rate, 50);
+	CONFIG_DEFINE(swap_interval, 1);
 
-	CONFIG_DEFINE (init_culling, bool, true);
+	CONFIG_DEFINE(init_culling, true);
 	
-	CONFIG_DEFINE (capture_enable, bool, false);
-	CONFIG_DEFINE (capture_skip, int, 0);
+	CONFIG_DEFINE(capture_enable, false);
+	CONFIG_DEFINE(capture_skip, 0);
 	
 #if defined(CRAG_USE_GLES)
-	CONFIG_DEFINE (max_foreground_depth, float, 0.99999f);
+	CONFIG_DEFINE(max_foreground_depth, 0.99999f);
 #else
-	CONFIG_DEFINE (max_foreground_depth, float, 0.9999999f);
+	CONFIG_DEFINE(max_foreground_depth, 0.9999999f);
 #endif
 
 	// TODO
-	//CONFIG_DEFINE (record_enable, bool, false);
-	//CONFIG_DEFINE (record_playback, bool, false);
-	//CONFIG_DEFINE (capture, bool, false);
-	//CONFIG_DEFINE (record_playback_skip, int, 1);
+	//CONFIG_DEFINE(record_enable, false);
+	//CONFIG_DEFINE(record_playback, false);
+	//CONFIG_DEFINE(capture, false);
+	//CONFIG_DEFINE(record_playback_skip, 1);
 
 	STAT (frame_duration, double, .15f);
 	STAT (fps, float, .0f);

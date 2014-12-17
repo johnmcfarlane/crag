@@ -39,7 +39,7 @@
 
 // DEFINE_INTRUSIVE_LIST_TYPE macro can be used to define a list type for a listed class.
 // Insert into public section of listed class.
-#if defined(WIN32)
+#if defined(WIN32_C2327_WORKAROUND)
 	// This works around a peculiarity of VC++ compiler.
 	#define DEFINE_INTRUSIVE_LIST_TYPE(LISTED_CLASS, HOOK_MEMBER, LIST_TYPE) \
 		template <typename CLASS> struct LIST_TYPE##_ListTypeDefinitionHelper { \

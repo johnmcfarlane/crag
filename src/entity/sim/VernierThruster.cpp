@@ -24,8 +24,8 @@ using namespace sim;
 
 namespace
 {
-	CONFIG_DEFINE(thrust_ground_effect_max_distance, Scalar, 50.f);
-	CONFIG_DEFINE(thrust_ground_effect_factor, Scalar, 50.f);
+	CONFIG_DEFINE(thrust_ground_effect_max_distance, 50.f);
+	CONFIG_DEFINE(thrust_ground_effect_factor, 50.f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

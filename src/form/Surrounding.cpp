@@ -46,7 +46,7 @@ namespace
 {
 	// If profile_mode==true, this number of quaterne is enforced always (with reason).
 	// It is useful for eliminating the adaptive quaterne count algorithm during debugging.
-	CONFIG_DEFINE (profile_num_quaterne, int, 6400);
+	CONFIG_DEFINE(profile_num_quaterne, 6400);
 
 	bool QuaternaSortUnused(Quaterna const & lhs, Quaterna const & rhs)
 	{

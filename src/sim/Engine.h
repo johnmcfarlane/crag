@@ -15,7 +15,7 @@
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
 
-#if defined(WIN32)
+#if defined(WIN32_C2079_WORKAROUND)
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetSpaceEvent.h"
 #endif

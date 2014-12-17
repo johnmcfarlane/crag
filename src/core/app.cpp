@@ -209,8 +209,11 @@ char const * app::GetFullPath(char const * filepath)
 #endif
 }
 
+// 521,216
 app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
+	ASSERT(filename);
+
 	// open file
 	SDL_RWops * source = SDL_RWFromFile(app::GetFullPath(filename), "rb");
 	if (source == nullptr)
@@ -226,15 +229,15 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 
 	// prepare buffer
 	std::size_t size = length + null_terminate;
-	FileResource buffer(new app::FileResource::element_type(size));
-	if (! buffer || buffer->size() != size)
+	FileResource buffer(size);
+	if (buffer.size() != size)
 	{
 		DEBUG_MESSAGE("failed to allocated " SIZE_T_FORMAT_SPEC " bytes file, '%s':", size, filename);
 		return FileResource();
 	}
 	
 	// read file
-	auto read = SDL_RWread(source, & buffer->front(), 1, length);
+	auto read = SDL_RWread(source, buffer.data(), 1, length);
 	if (read != length)
 	{
 		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
@@ -253,10 +256,10 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	// append terminator
 	if (null_terminate)
 	{
-		(* buffer)[length] = '\0';
+		buffer[length] = '\0';
 		
 		// If this happens, it probably means that a null terminator was read from the file.
-		ASSERT(strlen(buffer->data()) == length);
+		ASSERT(strlen(buffer.data()) == length);
 	}
 	
 	// success!

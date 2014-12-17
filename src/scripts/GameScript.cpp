@@ -41,14 +41,14 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	CONFIG_DEFINE(enable_spawn_ball, bool, true);
-	CONFIG_DEFINE(enable_spawn_cube, bool, true);
-	CONFIG_DEFINE(enable_spawn_obelisk, bool, true);
+	CONFIG_DEFINE(enable_spawn_ball, true);
+	CONFIG_DEFINE(enable_spawn_cube, true);
+	CONFIG_DEFINE(enable_spawn_obelisk, true);
 
 #if defined(__ANDROID__)
 	constexpr auto test_suspend_resume = false;
 #else
-	CONFIG_DEFINE(test_suspend_resume, bool, false);
+	CONFIG_DEFINE(test_suspend_resume, false);
 #endif
 
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);

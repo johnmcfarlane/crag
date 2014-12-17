@@ -29,9 +29,9 @@ using namespace sim;
 namespace 
 {
 	// Config values
-	CONFIG_DEFINE (planet_shader_depth_medium, int, 2);
-	CONFIG_DEFINE (planet_shader_random_range, geom::abs::Scalar, 0.002);
-	CONFIG_DEFINE (planet_shader_medium_coefficient, geom::abs::Scalar, .35);
+	CONFIG_DEFINE(planet_shader_depth_medium, 2);
+	CONFIG_DEFINE(planet_shader_random_range, 0.002);
+	CONFIG_DEFINE(planet_shader_medium_coefficient, .35);
 	
 	geom::abs::Scalar root_three = sqrt(3.);
 	
@@ -196,7 +196,7 @@ bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const 
 	int combined_seed(seed_1 + seed_2);
 	Random rnd(combined_seed);
 
-	Params params { a, b, index, depth, combined_seed };
+	Params params { a, b, index, depth, Random(combined_seed) };
 	
 	geom::abs::Vector3 result;
 	if (depth >= planet_shader_depth_medium)

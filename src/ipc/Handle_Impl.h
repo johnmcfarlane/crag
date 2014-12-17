@@ -39,16 +39,6 @@ namespace ipc
 		return Handle<BASE_TYPE>::CreateFromUid(_uid);
 	}
 	
-#if defined(WIN32)
-	template <typename TYPE>
-	template <typename ... PARAMETERS>
-	Handle<TYPE> Handle<TYPE>::Create(PARAMETERS ... parameters)
-	{
-		Handle creation;
-		creation.CreateObject(parameters ...); 
-		return creation;
-	}
-#else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
 	Handle<TYPE> Handle<TYPE>::Create(PARAMETERS && ... parameters)
@@ -57,104 +47,7 @@ namespace ipc
 		creation.CreateObject(std::forward<PARAMETERS>(parameters) ...); 
 		return creation;
 	}
-#endif
 
-#if defined(WIN32) || ! defined(__clang__)
-	template <typename TYPE>
-	void Handle<TYPE>::CreateObject()
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle] (Engine & engine) {
-			engine.template CreateObject<ObjectType>(handle);
-		});
-
-		* this = handle;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1>(handle, parameter1);
-		});
-
-		* this = handle;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(handle, parameter1, parameter2);
-		});
-
-		* this = handle;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(handle, parameter1, parameter2, parameter3);
-		});
-
-		* this = handle;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(handle, parameter1, parameter2, parameter3, parameter4);
-		});
-
-		* this = handle;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(handle, parameter1, parameter2, parameter3, parameter4, parameter5);
-		});
-
-		* this = handle;
-	}
-#else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
 	void Handle<TYPE>::CreateObject(PARAMETERS ... parameters)
@@ -170,7 +63,6 @@ namespace ipc
 
 		* this = handle;
 	}
-#endif
 	
 	// Tells simulation to release the object.
 	template <typename TYPE>

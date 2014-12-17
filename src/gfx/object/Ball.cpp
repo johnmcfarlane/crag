@@ -99,33 +99,37 @@ bool Ball::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volum
 			return false;
 		}
 		
-		auto angle = std::asin(ratio);
+		Vector3 cos_axis, sin_axis;
+		Sphere3 near_disc, far_disc;
+		{
+			auto angle = std::asin(ratio);
 
-		auto near_offset_from_ball = - std::sin(angle) * _radius;
-		auto shadow_length = _radius * shadow_length_factor;
-		auto shadow_depth = std::cos(angle) * shadow_length;
-		auto far_offset_from_ball = shadow_depth + near_offset_from_ball;
-		
-		auto near_center = light_to_ball_direction * near_offset_from_ball;
-		auto near_disc_radius = std::cos(angle) * _radius;
+			auto near_offset_from_ball = -std::sin(angle) * _radius;
+			auto shadow_length = _radius * shadow_length_factor;
+			auto shadow_depth = std::cos(angle) * shadow_length;
+			auto far_offset_from_ball = shadow_depth + near_offset_from_ball;
 
-		auto far_disc_radius = radius_correction * near_disc_radius * (light_to_ball_distance + far_offset_from_ball) / (light_to_ball_distance - _radius);		
-		auto far_center = light_to_ball_direction * far_offset_from_ball;
+			near_disc.center = light_to_ball_direction * near_offset_from_ball;
+			near_disc.radius = std::cos(angle) * _radius;
 
-		auto shadow_rotation = gfx::Rotation(light_to_ball_direction, gfx::Direction::forward);
-		auto cos_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::right);
-		auto sin_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::up);
-	
+			far_disc.radius = radius_correction * near_disc.radius * (light_to_ball_distance + far_offset_from_ball) / (light_to_ball_distance - _radius);
+			far_disc.center = light_to_ball_direction * far_offset_from_ball;
+
+			auto shadow_rotation = gfx::Rotation(light_to_ball_direction, gfx::Direction::forward);
+			cos_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::right);
+			sin_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::up);
+		}
+
 		for (auto index = 0; index < shadow_num_strips; ++ index)
 		{
 			auto constexpr step_angle = Scalar(PI * 2. / shadow_num_strips);
 			Scalar angle[2] = { index * step_angle, (index + 1) * step_angle };
 
 			Vector3 quad[4];
-			quad[0] = near_center + near_disc_radius * (cos_axis * std::cos(angle[0]) + sin_axis * std::sin(angle[0]));
-			quad[1] = near_center + near_disc_radius * (cos_axis * std::cos(angle[1]) + sin_axis * std::sin(angle[1]));
-			quad[2] = far_center + far_disc_radius * (cos_axis * std::cos(angle[0]) + sin_axis * std::sin(angle[0]));
-			quad[3] = far_center + far_disc_radius * (cos_axis * std::cos(angle[1]) + sin_axis * std::sin(angle[1]));
+			quad[0] = near_disc.center + near_disc.radius * (cos_axis * std::cos(angle[0]) + sin_axis * std::sin(angle[0]));
+			quad[1] = near_disc.center + near_disc.radius * (cos_axis * std::cos(angle[1]) + sin_axis * std::sin(angle[1]));
+			quad[2] = far_disc.center + far_disc.radius * (cos_axis * std::cos(angle[0]) + sin_axis * std::sin(angle[0]));
+			quad[3] = far_disc.center + far_disc.radius * (cos_axis * std::cos(angle[1]) + sin_axis * std::sin(angle[1]));
 		
 			auto index_base = index * num_vertices_per_strip;
 			vertices[index_base + 0] = {{ quad[0] }};

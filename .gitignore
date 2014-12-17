@@ -3,3 +3,4 @@
 .DS_Store
 crag.cfg
 default.cfg
+*.dll

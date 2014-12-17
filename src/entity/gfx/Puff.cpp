@@ -29,10 +29,10 @@ using namespace gfx;
 
 namespace
 {
-	CONFIG_DEFINE(puff_displacement, float, .75);	// m/s
-	CONFIG_DEFINE(puff_radius_growth_rate, float, 2.5f);	// m/s
-	CONFIG_DEFINE(puff_radius_coefficient, float, 3.5);
-	CONFIG_DEFINE(puff_min_alpha, float, .01f);
+	CONFIG_DEFINE(puff_displacement, .75f);	// m/s
+	CONFIG_DEFINE(puff_radius_growth_rate, 2.5f);	// m/s
+	CONFIG_DEFINE(puff_radius_coefficient, 3.5f);
+	CONFIG_DEFINE(puff_min_alpha, .01f);
 	
 	STAT(num_puffs, int, .1f);
 }
