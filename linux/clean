@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
-# To be run from debug or release subdirectories
-set -o errexit
+set -e
 
-make -C debug clean
-make -C release clean
+################################################################################
+# clean build folders
+
+# cd crag/linux
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
+git clean -Xdf bin
+git clean -Xdf include
+git clean -Xdf lib
+git clean -Xdf SDL
+git clean -Xdf SDL_image
+git clean -Xdf share
