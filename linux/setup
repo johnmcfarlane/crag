@@ -1,35 +1,17 @@
 #!/usr/bin/env bash
-set -o errexit
+set -e
+
+# cd crag/linux
+cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 sudo apt-get install make cmake automake g++-4.8 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential libpng12-dev
 
 ################################################################################
-# clean build folders
-
-git clean -Xdf bin
-git clean -Xdf debug
-git clean -Xdf lib
-git clean -Xdf include
-git clean -Xdf release
-git clean -Xdf share
-
-################################################################################
 # SDL
 
-./script/script_sdl
+./script/setup_sdl
 
 ################################################################################
 # SDL_image
 
-./script/script_sdl_image
-
-################################################################################
-# cmake
-
-cd debug
-cmake .
-cd ..
-
-cd release
-cmake .
-cd ..
+./script/setup_sdl_image
