@@ -12,3 +12,6 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 pch.h.gch
+
+# CLion files
+.idea/workspace.xml
