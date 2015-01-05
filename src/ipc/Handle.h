@@ -12,6 +12,9 @@
 #include "Future.h"
 #include "Uid.h"
 
+#if ! defined(__ANDROID__) || defined(__clang__)
+#define CRAG_USE_VARIADIC_LAMBDA
+#endif
 
 // Forward-declares class, CLASS, and creates shorthand version of its handle,
 // E.g. "ipc::Handle<MyClass>" becomes "MyClassHandle".
@@ -99,8 +102,27 @@ namespace ipc
 		template <typename ... PARAMETERS>
 		static Handle Create(PARAMETERS && ... parameters);
 
+#if ! defined(CRAG_USE_VARIADIC_LAMBDA)
+		void CreateObject();
+
+		template <typename PARAMETER1>
+		void CreateObject(PARAMETER1 parameter1);
+
+		template <typename PARAMETER1, typename PARAMETER2>
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4);
+
+		template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
+		void CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5);
+#else
 		template <typename ... PARAMETERS>
 		void CreateObject(PARAMETERS ... parameters);
+#endif
 		
 		// Tells simulation to release the object.
 		void Release();
