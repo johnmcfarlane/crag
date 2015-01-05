@@ -3,6 +3,9 @@
 # (into dl folder)
 set -o errexit
 
+# cd crag/android
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
 script/setup_pkg
 script/setup_java
 script/setup_adk

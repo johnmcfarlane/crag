@@ -3,9 +3,11 @@ set -o errexit
 
 # extract native development kits
 
-mkdir android-ndk || rm -rf android-ndk/*
+mkdir -p android-ndk
+rm -rf android-ndk/*
 
 cd dl
-tar xvjf android-ndk*.tar.bz2
+chmod +x android-ndk*.bin
+./android-ndk*.bin
 mv -u android-ndk*/* ../android-ndk
 cd ..

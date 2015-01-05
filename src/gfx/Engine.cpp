@@ -29,6 +29,8 @@
 #include "core/ResourceManager.h"
 #include "core/Statistics.h"
 
+#include <sstream>
+
 #if defined(NDEBUG)
 #define INIT_CAP(CAP,ENABLED) { CAP,ENABLED }
 #else

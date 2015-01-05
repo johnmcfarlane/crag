@@ -15,9 +15,12 @@
 
 #include "core/debug.h"
 
-
 #if ! defined(__ANDROID__)
 #define ENABLE_CONFIG_LOAD_SAVE
+#endif
+
+#if defined(ENABLE_CONFIG_LOAD_SAVE)
+#include <fstream>
 #endif
 
 namespace 
