@@ -55,13 +55,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle] (Engine & engine) {
-			engine.template CreateObject<ObjectType>(handle);
+		auto uid = Uid::Create();
+		Daemon::Call([uid] (Engine & engine) {
+			engine.template CreateObject<ObjectType>(uid);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 
 	template <typename TYPE>
@@ -71,13 +71,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1>(handle, parameter1);
+		auto uid = Uid::Create();
+		Daemon::Call([uid, parameter1] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1>(uid, parameter1);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 
 	template <typename TYPE>
@@ -87,13 +87,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(handle, parameter1, parameter2);
+		auto uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 
 	template <typename TYPE>
@@ -103,13 +103,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(handle, parameter1, parameter2, parameter3);
+		auto uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 
 	template <typename TYPE>
@@ -119,13 +119,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(handle, parameter1, parameter2, parameter3, parameter4);
+		auto uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(uid, parameter1, parameter2, parameter3, parameter4);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 
 	template <typename TYPE>
@@ -135,13 +135,13 @@ namespace ipc
 		using Daemon = typename ObjectType::DaemonType;
 		using Engine = typename ObjectType::EngineType;
 
-		Release();
-		Handle handle(Uid::Create());
-		Daemon::Call([handle, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(handle, parameter1, parameter2, parameter3, parameter4, parameter5);
+		auto uid = Uid::Create();
+		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
+			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
 		});
 
-		* this = handle;
+		Release();
+		_uid = uid;
 	}
 #else
 	template <typename TYPE>

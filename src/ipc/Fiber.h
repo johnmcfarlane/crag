@@ -17,7 +17,7 @@
 // determine which type of fiber support to use
 #if defined(WIN32)
 #define CRAG_USE_FIBER_WIN	// use the windows Fiber API
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) || defined(__pnacl__)
 #define CRAG_USE_FIBER_THREADED	// use placeholder lock-step threading
 #else
 #define CRAG_USE_FIBER_POSIX	// use makecontext etc.

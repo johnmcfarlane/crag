@@ -159,6 +159,8 @@ size_t GetPageSize()
 		SYSTEM_INFO system_info;
 		GetSystemInfo(& system_info);
 		page_size = system_info.dwPageSize;
+#elif defined(__pnacl__)
+		page_size = getpagesize();
 #else
 		page_size = sysconf (_SC_PAGE_SIZE);
 #endif

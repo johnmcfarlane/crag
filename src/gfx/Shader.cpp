@@ -45,6 +45,7 @@ namespace
 	}
 #endif
 	
+#if ! defined(CRAG_USE_GLES)
 	void EraseQualifier(char * source, char const * pattern)
 	{
 		ASSERT(source != nullptr);
@@ -70,6 +71,7 @@ namespace
 			}
 		}
 	}
+#endif
 
 	std::vector<app::FileResource> ReadFileBuffers(std::initializer_list<char const *> filenames)
 	{

@@ -12,7 +12,7 @@
 #include "Future.h"
 #include "Uid.h"
 
-#if defined(WIN32) || defined(__clang__)
+#if (defined(WIN32) || defined(__clang__)) && ! defined(__pnacl__)
 #define CRAG_USE_VARIADIC_LAMBDA
 #endif
 
@@ -54,6 +54,9 @@ namespace ipc
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
+#if ! defined(CRAG_USE_VARIADIC_LAMBDA)
+public:
+#endif
 		Handle(Uid uid)
 		: _uid(uid)
 		{

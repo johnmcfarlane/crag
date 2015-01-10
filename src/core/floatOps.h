@@ -162,7 +162,7 @@ inline double FastInvSqrt (double d)
 
 #endif	// defined(__SSE__)
 
-#if defined(__arm__)
+#if defined(__arm__) || defined(__pnacl__)
 
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)

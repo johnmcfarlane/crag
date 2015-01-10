@@ -64,7 +64,7 @@
 #define GL_GLEXT_PROTOTYPES 1
 
 // TODO: Re-evaluate "SDL_opengl.h"
-#if defined(__ANDROID__) || defined(CRAG_RPI)
+#if defined(__ANDROID__) || defined(CRAG_RPI) || defined(__pnacl__)
 
 #define CRAG_USE_GLES
 #include <GLES2/gl2.h>

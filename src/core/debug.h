@@ -69,7 +69,7 @@ namespace core
 #define DEBUG_COLOR_FUNC "\x1B[36;2m"
 #define DEBUG_COLOR_PUNC DEBUG_COLOR_NORM
 #define DEBUG_COLOR_THREAD "\x1B[31;2m"
-#define DEBUG_COLOR_NORM "\e[m"
+#define DEBUG_COLOR_NORM "\033[m"
 #endif
 
 // TRUNCATE_STRING

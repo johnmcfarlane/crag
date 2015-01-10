@@ -98,6 +98,13 @@ void smp::SetThreadName(char const * thread_name)
 	pthread_setname_np(thread_name);
 }
 
+#elif defined(__pnacl__)
+
+// smp::SetThreadName - PNaCl stub
+void smp::SetThreadName(char const *)
+{
+}
+
 #else
 
 #include <sys/prctl.h>
