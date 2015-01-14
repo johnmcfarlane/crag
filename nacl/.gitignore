@@ -1,0 +1,11 @@
+bin
+include
+lib
+nacl_sdk.zip
+nacl_sdk
+ode
+pnacl
+share
+SDL
+SDL_image
+tmp
