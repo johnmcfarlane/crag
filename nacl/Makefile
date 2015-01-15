@@ -15,7 +15,7 @@ CRAG_SRC_DIR := $(NACL_DIR)/../src
 
 # include flags
 CRAG_INCLUDE_FLAGS := -I$(CRAG_SRC_DIR)
-ODE_INCLUDE_FLAGS := -I$(NACL_DIR)/include/ode
+ODE_INCLUDE_FLAGS := -I$(NACL_DIR)/include
 SDL_INCLUDE_FLAGS := -I$(NACL_DIR)/include/SDL2
 NACL_INCLUDE_FLAGS := -I$(NACL_SDK_ROOT)/include
 INCLUDE_FLAGS := $(ODE_INCLUDE_FLAGS) $(NACL_INCLUDE_FLAGS) $(SDL_INCLUDE_FLAGS) $(SDL_IMAGE_INCLUDE_FLAGS) $(CRAG_INCLUDE_FLAGS)
@@ -26,9 +26,8 @@ LINK_DIR_FLAGS := -L$(NACL_DIR)/lib
 #LINK_DIR_FLAGS := -L$(NACL_DIR)/lib -L$(NACL_LIB_DIR) -L$(NACL_LIB_DIR)/lib -L$(NACL_LIB_DIR)/ports/lib/newlib_pnacl/Release
 
 TARGET = crag
-DEPS = ppapi_simple nacl_io
 # ppapi_simple and SDL2 end up being listed twice due to dependency solving issues -- Gabriel
-LIBS = ode SDL2_image SDL2 SDL2main $(DEPS) ppapi_gles2 ppapi_cpp ppapi pthread
+LIBS = ode SDL2_image SDL2 ppapi_simple SDL2main ppapi_simple nacl_io ppapi_gles2 ppapi_cpp ppapi pthread
 
 FLAGS := $(INCLUDE_FLAGS)
 CPP_WARNING_FLAGS := -Wall
@@ -182,14 +181,13 @@ $(1).bc: $(2) $(foreach dep,$(4),$(STAMPDIR)/$(dep).stamp)
 	$(call LOG,LINK,$$@,$(PNACL_LINK) -o $$@ $(2) $(PNACL_LDFLAGS) --pnacl-driver-verbose $(foreach path,$(5),-L$(path)/pnacl/$(CONFIG)) $(LINK_DIR_FLAGS) $(foreach lib,$(3),-l$(lib)) $(6))
 endef
 
-$(foreach dep,$(DEPS),$(eval $(call DEPEND_RULE,$(dep))))
 $(foreach src,$(SOURCES),$(eval $(call COMPILE_RULE,$(src),$(CXXFLAGS))))
 
 ifeq ($(CONFIG),Release)
-$(eval $(call LINK_RULE,$(TARGET)_unstripped,$(SOURCES),$(LIBS),$(DEPS)))
+$(eval $(call LINK_RULE,$(TARGET)_unstripped,$(SOURCES),$(LIBS)))
 $(eval $(call STRIP_RULE,$(TARGET),$(TARGET)_unstripped))
 else
-$(eval $(call LINK_RULE,$(TARGET),$(SOURCES),$(LIBS),$(DEPS)))
+$(eval $(call LINK_RULE,$(TARGET),$(SOURCES),$(LIBS)))
 endif
 
 $(eval $(call NMF_RULE,$(TARGET),))
