@@ -19,8 +19,9 @@ export CC="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-clang"
 export CXX="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-clang"
 export AR="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
 export LD="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
+export RANLIB="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ranlib"
 
 ./bootstrap
 ./configure --host=nacl --enable-single-precision --disable-demos --disable-asserts --disable-libccd --prefix="$NACL_DIR"
-make -j4
+make -j"$NCPUS"
 make install
