@@ -73,7 +73,7 @@ namespace core
 	{
 		To & cast = static_cast<To &>(object);
 
-#if ! defined(__ANDROID__)
+#if ! defined(__ANDROID__) && ! defined(NDEBUG)
 		assert(& dynamic_cast<To &>(object) == & cast);
 #endif
 
