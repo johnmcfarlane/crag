@@ -50,3 +50,5 @@ To try it out:
 2. Download, extract and launch the latest [Early Access Program (EAP)](https://confluence.jetbrains.com/display/CLION/Early+Access+Program) build.
 
 3. Select "Open Project" and direct CLion to the crag directory.
+
+4. Go to run configuration dialog (Run -> Edit Configuration) and set Working Directory to the crag folder.
