@@ -160,8 +160,8 @@ void PrintMessage(FILE * out, char const * format, ...);
 #define ERROR_MESSAGE(FORMAT, ...) PrintMessage(stderr, FORMAT "\n", ## __VA_ARGS__)
 
 // SDL Error Reporter
-#define DEBUG_BREAK_SDL() \
-	DEBUG_BREAK("SDL error: \"%s\"", SDL_GetError());	
+#define CRAG_REPORT_SDL_ERROR() \
+	ERROR_MESSAGE("SDL error: \"%s\"", SDL_GetError());
 
 
 //////////////////////////////////////////////////////////////////////

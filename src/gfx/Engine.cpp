@@ -559,7 +559,7 @@ void Engine::InitVSync()
 
 	if (SDL_GL_SetSwapInterval(0) != 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 	}
 }
 
