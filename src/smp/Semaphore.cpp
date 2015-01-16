@@ -35,7 +35,7 @@ void Semaphore::Decrement()
 {
 	if (SDL_SemWait(& _sdl_semaphore) != 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 	}
 }
 
@@ -52,7 +52,7 @@ bool Semaphore::TryDecrement()
 			return false;
 			
 		default:
-			DEBUG_BREAK_SDL();
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 	}
 }
@@ -71,7 +71,7 @@ bool Semaphore::TryDecrement(core::Time timeout)
 			return false;
 			
 		default:
-			DEBUG_BREAK_SDL();
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 	}
 }
@@ -80,6 +80,7 @@ void Semaphore::Increment()
 {
 	if (SDL_SemPost(& _sdl_semaphore) != 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
+		::crag::core::Break();
 	}
 }

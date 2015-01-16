@@ -12,7 +12,7 @@
 #include "Future.h"
 #include "Uid.h"
 
-#if ! defined(__ANDROID__) || defined(__clang__)
+#if defined(WIN32) || defined(__clang__)
 #define CRAG_USE_VARIADIC_LAMBDA
 #endif
 

@@ -64,8 +64,8 @@ bool Image::Create(geom::Vector2i const & size)
     _surface = SDL_CreateRGBSurface(0, size.x, size.y, 32, rmask, gmask, bmask, amask);
     if (! _surface)
     {
-    	DEBUG_BREAK_SDL();
-    	return false;
+		CRAG_REPORT_SDL_ERROR();
+		return false;
     }
 	
 	return true;
@@ -159,7 +159,7 @@ bool Image::Save(char const * filename)
 {
 	if (SDL_SaveBMP(_surface, filename) != 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return false;
 	}
 	

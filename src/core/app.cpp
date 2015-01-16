@@ -91,7 +91,7 @@ namespace
 	
 		if (SDL_GetCurrentDisplayMode(0, & _current_display_mode))
 		{
-			DEBUG_BREAK_SDL();
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 		}
 	
@@ -112,7 +112,7 @@ namespace
 		_context = SDL_GL_CreateContext(_window);
 		if (! _context)
 		{
-			DEBUG_BREAK_SDL();
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 		}
 
@@ -134,7 +134,7 @@ void app::Quit()
 
 	if (! SDL_PushEvent(& event))
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 	}
 }
 
@@ -147,13 +147,13 @@ bool app::Init(geom::Vector2i resolution, bool full_screen, char const * title)
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return false;
 	}
 	
 	if(SDL_GetDesktopDisplayMode(0, & _desktop_display_mode) != 0)
 	{
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return false;
 	}
 	
@@ -219,7 +219,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	if (source == nullptr)
 	{
 		DEBUG_MESSAGE("failed to open file, '%s':", filename);
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return FileResource();
 	}
 	
@@ -241,7 +241,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	if (read != length)
 	{
 		DEBUG_MESSAGE("only read " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", read, length, filename);
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return FileResource();
 	}
 
@@ -249,7 +249,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	if (SDL_RWclose(source) != 0)
 	{
 		DEBUG_MESSAGE("failed to close file, '%s':", filename);
-		DEBUG_BREAK_SDL();
+		CRAG_REPORT_SDL_ERROR();
 		return FileResource();
 	}
 	
@@ -312,7 +312,7 @@ bool app::GetEvent(SDL_Event & event, bool block)
 	{
 		if (! SDL_WaitEvent(& event))
 		{
-			DEBUG_BREAK_SDL();
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 		}
 		
