@@ -4,7 +4,7 @@ set -e
 # cd crag/linux
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-sudo apt-get install make cmake automake g++-4.8 mercurial libglu1-mesa-dev libode-sp-dev libxi-dev build-essential libpng12-dev
+sudo apt-get install cmake mercurial libode-sp-dev libglu1-mesa-dev xorg-dev
 
 ################################################################################
 # SDL
