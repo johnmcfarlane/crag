@@ -43,7 +43,6 @@ namespace
 	CONFIG_DEFINE(angular_damping, .02f);
 	CONFIG_DEFINE(linear_damping, .01f);
 
-	CONFIG_DEFINE(angular_damping_threshold, .0005f);
 	CONFIG_DEFINE(linear_damping_threshold, .01f);
 
 	STAT (num_contacts, int, .15f);

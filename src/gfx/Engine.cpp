@@ -59,8 +59,7 @@ namespace
 	CONFIG_DEFINE(init_culling, true);
 	
 	CONFIG_DEFINE(capture_enable, false);
-	CONFIG_DEFINE(capture_skip, 0);
-	
+
 #if defined(CRAG_GLES)
 	CONFIG_DEFINE(max_foreground_depth, 0.99999f);
 #else
