@@ -1,4 +1,5 @@
 bin
+config.log
 include
 lib
 nacl_sdk.zip
