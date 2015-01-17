@@ -14,6 +14,7 @@ set(SOURCE_FILES
     src/applet/Engine.h
     src/core/app.cpp
     src/core/app.h
+    src/core/config.h
     src/core/ConfigEntry.cpp
     src/core/ConfigEntry.h
     src/core/ConfigManager.cpp
