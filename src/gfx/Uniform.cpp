@@ -66,9 +66,9 @@ namespace gfx
 	void Uniform<geom::Matrix44f>::SetUnchecked(geom::Matrix44f const & value) const
 	{
 		ASSERT(IsInitialized());
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 		GL_CALL(glUniformMatrix4fv(_location, 1, GL_FALSE, geom::Transposition(value).GetArray()));
-#elif defined(GRAG_GL)
+#elif defined(CRAG_GL)
 		GL_CALL(glUniformMatrix4fv(_location, 1, GL_TRUE, value.GetArray()));
 #endif
 	}

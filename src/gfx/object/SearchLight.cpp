@@ -19,10 +19,10 @@ namespace
 	{
 		LightResolution::fragment,
 		LightType::search,
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 		false
 #endif
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 		false
 #endif
 	};

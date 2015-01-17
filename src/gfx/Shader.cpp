@@ -45,7 +45,7 @@ namespace
 	}
 #endif
 	
-#if ! defined(GRAG_GLES)
+#if ! defined(CRAG_GLES)
 	void EraseQualifier(char * source, char const * pattern)
 	{
 		ASSERT(source != nullptr);
@@ -86,7 +86,7 @@ namespace
 
 			if (!source_buffer.empty())
 			{
-#if ! defined(GRAG_GLES)
+#if ! defined(CRAG_GLES)
 				// earlier version of desktop GLSL fail to ignore these
 				EraseQualifier(source_buffer.data(), "lowp");
 				EraseQualifier(source_buffer.data(), "mediump");

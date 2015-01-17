@@ -154,7 +154,7 @@ namespace gfx
 		// constants
 		
 		// matches value in assets/glsl/light_commont.glsl
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 		static constexpr auto max_vertex_lights = 1;
 		static constexpr auto max_fragment_lights = 0;
 #else

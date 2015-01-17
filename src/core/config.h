@@ -72,9 +72,9 @@
 // graphics API
 
 #if defined(CRAG_PC) && ! defined(CRAG_RPI)
-#define GRAG_GL
+#define CRAG_GL
 #else
-#define GRAG_GLES
+#define CRAG_GLES
 #endif
 
 //////////////////////////////////////////////////////////////////////

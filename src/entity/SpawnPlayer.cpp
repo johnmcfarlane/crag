@@ -103,10 +103,10 @@ namespace
 	CONFIG_DEFINE(saucer_num_rings, 5);
 	CONFIG_DEFINE(saucer_flat_shade_cos, false);
 	CONFIG_DEFINE(saucer_flat_shade_ball, false);
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 	CONFIG_DEFINE(saucer_search_light_enable, true);
 #endif
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 	CONFIG_DEFINE(saucer_search_light_enable, false);
 #endif
 	CONFIG_DEFINE(saucer_search_light_angle, .15f);
@@ -116,10 +116,10 @@ namespace
 	CONFIG_DEFINE(thargoid_inner_radius_ratio, .5f);
 	CONFIG_DEFINE(thargoid_thrust, 9.f);
 
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 	CONFIG_DEFINE(player_type, 4);
 #endif
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 	CONFIG_DEFINE(player_type, 3);
 #endif
 

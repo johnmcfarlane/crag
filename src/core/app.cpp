@@ -46,13 +46,13 @@ namespace
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 #endif
 
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -60,7 +60,7 @@ namespace
 
 		int flags = SDL_WINDOW_INPUT_GRABBED;
 
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 		flags |= SDL_WINDOW_OPENGL;
 #endif
 

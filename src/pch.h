@@ -64,12 +64,12 @@
 #define GL_GLEXT_PROTOTYPES 1
 
 // TODO: Re-evaluate "SDL_opengl.h"
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #endif
 
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 #if defined(CRAG_OS_X)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>

@@ -61,7 +61,7 @@ namespace
 	CONFIG_DEFINE(capture_enable, false);
 	CONFIG_DEFINE(capture_skip, 0);
 	
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 	CONFIG_DEFINE(max_foreground_depth, 0.99999f);
 #else
 	CONFIG_DEFINE(max_foreground_depth, 0.9999999f);
@@ -104,10 +104,10 @@ namespace
 	
 	void setDepthRange(float near, float far)
 	{
-#if defined(GRAG_GLES)
+#if defined(CRAG_GLES)
 		glDepthRangef(near, far);
 #endif
-#if defined(GRAG_GL)
+#if defined(CRAG_GL)
 		glDepthRange(near, far);
 #endif
 	}
