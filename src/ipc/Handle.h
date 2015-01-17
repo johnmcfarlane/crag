@@ -12,7 +12,7 @@
 #include "Future.h"
 #include "Uid.h"
 
-#if (defined(WIN32) || defined(__clang__)) && ! defined(__pnacl__)
+#if defined(CRAG_COMPILER_MSVC) || defined(CRAG_COMPILER_GCC) && ! defined(CRAG_OS_PNACL)
 #define CRAG_USE_VARIADIC_LAMBDA
 #endif
 

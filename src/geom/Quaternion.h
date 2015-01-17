@@ -28,7 +28,7 @@ namespace geom
 		typedef ::geom::Matrix<S, 3, 3> Matrix;
 		
 		Quaternion() 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		: w(std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 

@@ -103,10 +103,10 @@ namespace
 	CONFIG_DEFINE(saucer_num_rings, 5);
 	CONFIG_DEFINE(saucer_flat_shade_cos, false);
 	CONFIG_DEFINE(saucer_flat_shade_ball, false);
-#if defined(CRAG_USE_GL)
+#if defined(GRAG_GL)
 	CONFIG_DEFINE(saucer_search_light_enable, true);
 #endif
-#if defined(CRAG_USE_GLES)
+#if defined(GRAG_GLES)
 	CONFIG_DEFINE(saucer_search_light_enable, false);
 #endif
 	CONFIG_DEFINE(saucer_search_light_angle, .15f);
@@ -116,10 +116,10 @@ namespace
 	CONFIG_DEFINE(thargoid_inner_radius_ratio, .5f);
 	CONFIG_DEFINE(thargoid_thrust, 9.f);
 
-#if defined(CRAG_USE_GL)
+#if defined(GRAG_GL)
 	CONFIG_DEFINE(player_type, 4);
 #endif
-#if defined(CRAG_USE_GLES)
+#if defined(GRAG_GLES)
 	CONFIG_DEFINE(player_type, 3);
 #endif
 
@@ -190,7 +190,7 @@ namespace
 			ASSERT(destination_indices.size() == source_indices.size());
 			ASSERT(destination_indices.size() == destination_indices.capacity());
 			
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			if (destination_vertices.size() <= source_vertices.size())
 			{
 				DEBUG_MESSAGE("%d bytes saved", (source_vertices.size() - destination_vertices.size()) * sizeof(typename DestinationMeshType::value_type));

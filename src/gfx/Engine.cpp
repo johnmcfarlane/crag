@@ -31,7 +31,7 @@
 
 #include <sstream>
 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 #define INIT_CAP(CAP,ENABLED) { CAP,ENABLED }
 #else
 #define INIT_CAP(CAP,ENABLED) { CAP,ENABLED,#CAP }
@@ -61,7 +61,7 @@ namespace
 	CONFIG_DEFINE(capture_enable, false);
 	CONFIG_DEFINE(capture_skip, 0);
 	
-#if defined(CRAG_USE_GLES)
+#if defined(GRAG_GLES)
 	CONFIG_DEFINE(max_foreground_depth, 0.99999f);
 #else
 	CONFIG_DEFINE(max_foreground_depth, 0.9999999f);
@@ -92,7 +92,7 @@ namespace
 
 		DEBUG_MESSAGE("GLEW Version: %s", glewGetString(GLEW_VERSION));
 		
-#if ! defined(__APPLE__)
+#if ! defined(CRAG_OS_X)
 		if (! GLEW_VERSION_1_5)
 		{
 			DEBUG_BREAK("Error: Crag requires OpenGL 1.5 or greater.");
@@ -104,10 +104,10 @@ namespace
 	
 	void setDepthRange(float near, float far)
 	{
-#if defined(CRAG_USE_GLES)
+#if defined(GRAG_GLES)
 		glDepthRangef(near, far);
 #endif
-#if defined(CRAG_USE_GL)
+#if defined(GRAG_GL)
 		glDepthRange(near, far);
 #endif
 	}
@@ -227,7 +227,7 @@ Engine::Engine()
 , _current_program(nullptr)
 , _current_vbo(nullptr)
 {
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
 
@@ -581,7 +581,7 @@ void Engine::InitRenderState()
 
 void Engine::VerifyRenderState() const
 {
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	for (auto const & param : init_state)
 	{
 		if (param.enabled != IsEnabled(param.cap))
@@ -592,7 +592,7 @@ void Engine::VerifyRenderState() const
 	
 	// TODO: Write equivalent functions for all state in GL. :S
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == depth_func);
-#endif	// NDEBUG
+#endif	// CRAG_DEBUG
 }
 
 void Engine::PreRender()
@@ -1092,7 +1092,7 @@ void Engine::GetRenderTiming(Time & frame_start_position, Time & frame_end_posit
 	last_frame_end_position = frame_end_position;
 }
 
-#if defined(GATHER_STATS) && ! defined(NDEBUG)
+#if defined(GATHER_STATS) && defined(CRAG_DEBUG)
 void Engine::UpdateFpsCounter(Time frame_start_position)
 {
 	// update the history

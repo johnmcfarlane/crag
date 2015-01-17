@@ -138,4 +138,4 @@ void WINAPI Fiber::OnLaunch(void * fiber_pointer)
 	DEBUG_BREAK("reached end of OnLaunch for %s", fiber.GetName());
 }
 
-#endif	// defined(WIN32)
+#endif	// defined(CRAG_OS_WINDOWS)

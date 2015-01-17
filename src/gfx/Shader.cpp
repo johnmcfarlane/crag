@@ -15,7 +15,7 @@
 
 #include "core/app.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 #define DUMP_GLSL_ERRORS
 //#define DUMP_GLSL_ERROR_FILES
 #define DUMP_GLSL_ACCUMULATE_LINE_NUMBERS
@@ -45,7 +45,7 @@ namespace
 	}
 #endif
 	
-#if ! defined(CRAG_USE_GLES)
+#if ! defined(GRAG_GLES)
 	void EraseQualifier(char * source, char const * pattern)
 	{
 		ASSERT(source != nullptr);
@@ -86,7 +86,7 @@ namespace
 
 			if (!source_buffer.empty())
 			{
-#if ! defined(CRAG_USE_GLES)
+#if ! defined(GRAG_GLES)
 				// earlier version of desktop GLSL fail to ignore these
 				EraseQualifier(source_buffer.data(), "lowp");
 				EraseQualifier(source_buffer.data(), "mediump");
@@ -127,7 +127,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 	GL_CALL(_id = glCreateShader(shader_type));
 	if (_id == 0)
 	{
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		for (auto filename : filenames)
 		{
 			DEBUG_MESSAGE("Failed to create shader that includes %s", filename);

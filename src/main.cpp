@@ -45,7 +45,7 @@ CONFIG_DECLARE (shadows_enabled, bool);
 namespace 
 {
 
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 	CONFIG_DEFINE(window_resolution_x, 800);
 	CONFIG_DEFINE(window_resolution_y, 600);
 #elif defined(CRAG_RPI)
@@ -62,7 +62,7 @@ namespace
 #endif
 
 #if defined(CRAG_PC)
-#if defined(NDEBUG) && ! defined(PROFILE)
+#if defined(CRAG_RELEASE) && ! defined(PROFILE)
 	// non-debug builds are best in full-screen mode (unless profiling)
 	CONFIG_DEFINE(full_screen, false);
 #else
@@ -271,7 +271,7 @@ namespace
 	{
 		switch (event->type) 
 		{
-#if defined(__ANDROID__)
+#if defined(CRAG_OS_ANDROID)
 			case SDL_APP_WILLENTERBACKGROUND:
 				gfx::Daemon::Call([] (gfx::Engine & engine) {
 					engine.SetIsSuspended(true);

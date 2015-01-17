@@ -16,8 +16,8 @@ namespace gfx
 	////////////////////////////////////////////////////////////////////////////////
 	// Debugging
 
-#if ! defined(NDEBUG)
-#if defined(CRAG_USE_GLES)
+#if defined(CRAG_DEBUG)
+#if defined(GRAG_GLES)
 	char const * ErrorString(GLenum)
 	{
 		return "GL error";
@@ -27,8 +27,8 @@ namespace gfx
 	{
 		return reinterpret_cast<char const *>(gluErrorString(error));
 	}
-#endif	// defined(CRAG_USE_GLES)
-#endif	// ! defined(NDEBUG)
+#endif	// defined(GRAG_GLES)
+#endif	// defined(CRAG_DEBUG)
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Binding

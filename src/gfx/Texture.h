@@ -83,7 +83,7 @@ namespace gfx
 		void Unbind() const
 		{ 
 			assert(IsBound());
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			GL_CALL(glBindTexture(TARGET, 0)); 
 #endif
 		}

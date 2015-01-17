@@ -243,7 +243,7 @@ namespace
 		return true;
 	}
 	
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	void RegisterFonts(ResourceManager & manager)
 	{
 		manager.Register<Font>("DebugFont", [] ()
@@ -271,7 +271,7 @@ void gfx::RegisterResources(ResourceManager & resource_manager)
 	RegisterShaders(resource_manager);
 	RegisterVbos(resource_manager);
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	RegisterFonts(resource_manager);
 #endif
 }

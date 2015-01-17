@@ -33,7 +33,7 @@
 
 #include "geom/Quaternion.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define SPAWN_SHAPES
 #endif
 

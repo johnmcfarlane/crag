@@ -47,7 +47,7 @@ namespace ipc
 		// create a new unique object
 		static Uid Create();
 		
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		ValueType GetValue() const
 		{
 			return _value;

@@ -9,12 +9,12 @@
 //	The pre-compiled header for the crag project
 //
 
-#if defined(__cplusplus)
+#include "core/config.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-// WIN32 specifics
+// CRAG_COMPILER_MSVC specifics
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 
 #pragma warning(disable: 4200)
 
@@ -45,9 +45,9 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// __APPLE__ specifics
+// CRAG_OS_X specifics
 
-#if defined (__APPLE__)
+#if defined (CRAG_OS_X)
 #define _XOPEN_SOURCE
 #define _DARWIN_C_SOURCE
 #endif
@@ -64,48 +64,24 @@
 #define GL_GLEXT_PROTOTYPES 1
 
 // TODO: Re-evaluate "SDL_opengl.h"
-#if defined(__ANDROID__) || defined(CRAG_RPI) || defined(__pnacl__)
-
-#define CRAG_USE_GLES
+#if defined(GRAG_GLES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
 
-#else	// defined(__ANDROID__)
-
-#define CRAG_USE_GL
-#if defined(__APPLE__)
+#if defined(GRAG_GL)
+#if defined(CRAG_OS_X)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
 #else
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 #define GLEW_STATIC
 #include <GL/glew.h>	 // must be included before gl.h 
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-
-#endif	// ! defined(__ANDROID__)
-
-
-//////////////////////////////////////////////////////////////////////
-// platform characteristics
-
-#if defined(__ANDROID__)
-// Android, iOS (not current)
-#define CRAG_MOBILE	// build target is a phone or tablet
-#else
-// Debian/Ubuntu/Raspbian, Windows, OS X (not current)
-#define CRAG_PC	// build target is a tranditional desktop or laptop PC
-#endif
-
-#if defined(CRAG_MOBILE)
-#define CRAG_USE_TOUCH	// build target is predominantly a touch-based device
-#endif
-
-#if defined(CRAG_PC)
-#define CRAG_USE_MOUSE	// build target is a keyboard/point device combo
 #endif
 
 
@@ -124,7 +100,7 @@
 
 // C++ standard library
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4530)
 #endif
@@ -149,7 +125,7 @@
 #include <unordered_set>
 #include <vector>
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #pragma warning(pop)
 #endif
 
@@ -172,7 +148,3 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 #include "geom/Triangle.h"
-
-//////////////////////////////////////////////////////////////////////
-
-#endif // defined(__cplusplus)

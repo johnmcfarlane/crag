@@ -58,7 +58,7 @@ namespace core
 		template <typename Function>
 		void for_each_activated(Function function)
 		{
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 			std::for_each(_array, reinterpret_cast<value_type *>(_unlinked_begin), function);
 #else
 			std::for_each(_array, reinterpret_cast<value_type *>(_unlinked_begin), [function] (value_type & element)
@@ -224,7 +224,7 @@ namespace core
 		{
 			ASSERT(max_num_elements != 0);
 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 			// round capacity up to nearest page size
 			size_t required_num_bytes = RoundToPageSize(sizeof(value_type) * max_num_elements);
 			max_num_elements = required_num_bytes / sizeof(value_type);

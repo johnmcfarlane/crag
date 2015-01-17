@@ -15,7 +15,7 @@
 
 #include "core/debug.h"
 
-#if ! defined(__ANDROID__)
+#if defined(CRAG_PC)
 #define ENABLE_CONFIG_LOAD_SAVE
 #endif
 

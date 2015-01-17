@@ -71,7 +71,7 @@ namespace
 
 namespace debug
 {
-#if defined(NDEBUG) || 1
+#if defined(CRAG_RELEASE) || 1
 	void ClearNodePoints() { }
 	void MarkNodePoint(form::Node const &, form::Point const &, int /*row*/, int /*column*/) { }
 	void DrawNodePoints() { }

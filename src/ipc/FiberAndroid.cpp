@@ -117,4 +117,4 @@ void Fiber::OnLaunch(Fiber * fiber, void * data, Callback * callback)
 	fiber->_condition.notify_one();
 }
 
-#endif	// defined(__ANDROID__)
+#endif	// defined(CRAG_PLATFORM_ANDROID)

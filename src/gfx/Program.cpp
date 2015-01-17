@@ -13,7 +13,7 @@
 
 #include "axes.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 #define DUMP_GLSL_ERRORS
 #endif
 

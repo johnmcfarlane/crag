@@ -11,16 +11,16 @@
 
 #include "core/debug.h"
 
-#if defined(__ANDROID__)
+#if defined(CRAG_OS_ANDROID)
 #include <android/log.h>
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 #include "core/windows.h"
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // core::DebugSetThreadName/DebugSetThreadName definitions
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 namespace
 {
 	constexpr auto _thread_name_max_len = 16;
@@ -44,18 +44,13 @@ char const * core::DebugGetThreadName()
 
 void crag::core::Break()
 {
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 	assert(false);	// sometimes __debugbreak does nothing
 	__debugbreak();
-#elif defined(__ANDROID__)
+#elif defined(CRAG_OS_ANDROID)
 	__android_log_assert("error", "crag", "internal error");
-#elif defined(__GNUC__)
-#if defined(__i386__)
-	asm("int3")
-#else
+#elif defined(CRAG_COMPILER_GCC)
 	__builtin_trap();
-	// NB: raise(SIGTRAP) is an alternative
-#endif
 #else
 	assert(false);
 #endif
@@ -66,7 +61,7 @@ void crag::core::Break()
 
 namespace
 {
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 	std::vector<char> buffer;
 
 	// redirects output to a string buffer and sends it to CRT debugging console
@@ -100,7 +95,7 @@ namespace
 		VFPrintF(out, format, args);
 	}
 
-#elif defined(__ANDROID__)
+#elif defined(CRAG_OS_ANDROID)
 
 	void VFPrintF(FILE * out, char const * format, va_list args)
 	{
@@ -138,7 +133,7 @@ void PrintMessage(FILE * out, char const * format, ...)
 ////////////////////////////////////////////////////////////////////////////////
 // ReentryGuard member definitions
 
-#if ! defined(NDEBUG) && ! defined(WIN32)
+#if defined(CRAG_DEBUG) && ! defined(CRAG_OS_WINDOWS)
 
 ReentryGuard::ReentryGuard(int & counter)
 : _counter(counter) 

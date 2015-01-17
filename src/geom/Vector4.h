@@ -21,7 +21,7 @@ namespace geom
 	{
 	public:
 		Vector() 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		: Vector(
 			std::numeric_limits<S>::signaling_NaN(),
 			std::numeric_limits<S>::signaling_NaN(),

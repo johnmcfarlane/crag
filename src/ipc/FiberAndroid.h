@@ -75,4 +75,4 @@ namespace ipc
 	};
 }
 
-#endif	// defined(__ANDROID__)
+#endif	// defined(CRAG_PLATFORM_ANDROID)

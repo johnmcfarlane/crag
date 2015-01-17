@@ -20,7 +20,7 @@
 
 #include "core/ConfigEntry.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 // logs changes to the Surrounding::_changed variable
 //#define DEBUG_SURROUNDING_LOG_CHANGE_ENABLE
 #endif

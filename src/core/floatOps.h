@@ -13,7 +13,7 @@
 #include "core/debug.h"
 
 
-#if defined(WIN32) && (_M_IX86_FP > 0)
+#if defined(CRAG_COMPILER_MSVC) && (_M_IX86_FP > 0)
 #define __SSE__
 #endif
 
@@ -55,7 +55,7 @@ template<typename T> void Clamp(T & val, T const & min, T const & max)
 template <typename T>
 bool Signbit(T value)
 {
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 	return value < 0;
 #else
 	return std::signbit(value);
@@ -162,7 +162,7 @@ inline double FastInvSqrt (double d)
 
 #endif	// defined(__SSE__)
 
-#if defined(__arm__) || defined(__pnacl__)
+#if defined(__arm__) || defined(CRAG_OS_PNACL)
 
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
@@ -176,7 +176,7 @@ template <typename T>
 inline T CubeRoot(T a)
 {
 	assert(a >= 0);
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 	return pow(a, T(1. / 3.));
 #else
 	return cbrt(a);
@@ -195,10 +195,10 @@ template<typename T> inline T RadToDeg(T d)
 
 inline bool IsNaN(double n)
 {
-#if defined(__GNUC__)
-	return std::isnan(n);
-#elif defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 	return _isnan(n) != 0;
+#else
+	return std::isnan(n);
 #endif
 }
 
@@ -209,10 +209,10 @@ inline bool IsNaN(float n)
 
 inline bool IsInf(double n)
 {
-#if defined(__GNUC__)
-	return std::isinf(n);
-#elif defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 	return _finite(n) == 0;
+#else
+	return std::isinf(n);
 #endif
 }
 

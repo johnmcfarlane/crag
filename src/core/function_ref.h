@@ -35,7 +35,7 @@ namespace core
 		{
 		}
 		
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 		// differences in VC++ compiler mean copy c'tor is skipped and function_ref is itself wrapped in a function_ref.
 		template <typename FUNCTOR>
 #else

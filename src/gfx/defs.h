@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if ! defined(CRAG_USE_GLES) && (defined(PROFILE) || ! defined(NDEBUG))
+#if defined(GRAG_GL) && (defined(PROFILE) || defined(CRAG_DEBUG))
 #define CRAG_GFX_DEBUG
 #endif
 
@@ -86,7 +86,7 @@ namespace gfx
 	
 	// index buffer object type
 
-#if defined(CRAG_USE_GLES)
+#if defined(GRAG_GLES)
 	typedef GLushort ElementIndex;
 #define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_SHORT
 #else
