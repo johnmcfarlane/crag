@@ -11,6 +11,9 @@ NACL_DIR ?= $(abspath $(CURDIR))
 NACL_SDK_ROOT ?= $(NACL_DIR)/nacl_sdk/pepper_39
 include $(NACL_SDK_ROOT)/tools/common.mk
 
+TARGET = crag
+
+# source directory
 CRAG_SRC_DIR := $(NACL_DIR)/../src
 
 # include flags
@@ -21,13 +24,9 @@ NACL_INCLUDE_FLAGS := -I$(NACL_SDK_ROOT)/include
 INCLUDE_FLAGS := $(ODE_INCLUDE_FLAGS) $(NACL_INCLUDE_FLAGS) $(SDL_INCLUDE_FLAGS) $(SDL_IMAGE_INCLUDE_FLAGS) $(CRAG_INCLUDE_FLAGS)
 
 # link directories
-NACL_LIB_DIR := $(NACL_SDK_ROOT)/lib
-LINK_DIR_FLAGS := -L$(NACL_DIR)/lib
-#LINK_DIR_FLAGS := -L$(NACL_DIR)/lib -L$(NACL_LIB_DIR) -L$(NACL_LIB_DIR)/lib -L$(NACL_LIB_DIR)/ports/lib/newlib_pnacl/Release
+LINK_DIR_FLAGS := -L$(NACL_DIR)/lib -L$(NACL_SDK_ROOT)/ports/lib/newlib_pnacl/$(CONFIG)
 
-TARGET = crag
-# ppapi_simple and SDL2 end up being listed twice due to dependency solving issues -- Gabriel
-LIBS = ode SDL2_image SDL2 ppapi_simple SDL2main ppapi_simple nacl_io ppapi_gles2 ppapi_cpp ppapi pthread
+LIBS = ode SDL2_image png z SDL2 ppapi_simple SDL2main ppapi_simple nacl_io ppapi_gles2 ppapi_cpp ppapi pthread
 
 FLAGS := $(INCLUDE_FLAGS)
 CPP_WARNING_FLAGS := -Wall

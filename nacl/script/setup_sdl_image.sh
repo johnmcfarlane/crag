@@ -21,7 +21,7 @@ export RANLIB="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ranlib"
 export SDL2_CONFIG="$NACL_DIR"/bin/sdl2-config
 
 ./autogen.sh
-./configure --host=pnacl --prefix "$NACL_DIR"
+./configure --host=pnacl --disable-png --prefix "$NACL_DIR"
 
 make CONFIG="Release" -j"$NCPUS" || true
 
