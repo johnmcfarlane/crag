@@ -32,7 +32,7 @@
 
 #if defined(__clang__)
 #define CRAG_COMPILER_CLANG
-#if __clang_major__ > 3 || (__clang_major__ == 3 && __clang_minor__ > 3)
+#if __clang_major__ > 3 || (__clang_major__ == 3 && __clang_minor__ > 4)
 #define CRAG_COMPILER_MATURE
 #endif
 #elif defined(__GNUG__)
