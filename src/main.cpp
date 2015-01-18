@@ -56,21 +56,13 @@ namespace
 	CONFIG_DEFINE(window_resolution_y, 600);
 #endif
 
-#if defined(CRAG_GL)
-	// mobile device apps are typically all full-screen 
+#if defined(CRAG_GL) && (defined(CRAG_DEBUG) || defined(PROFILE))
+	// during development, a window 
+	CONFIG_DEFINE(full_screen, false);
+#else
 	CONFIG_DEFINE(full_screen, true);
 #endif
 
-#if defined(CRAG_GLES)
-#if defined(CRAG_RELEASE) && ! defined(PROFILE)
-	// non-debug builds are best in full-screen mode (unless profiling)
-	CONFIG_DEFINE(full_screen, false);
-#else
-	// but during development, a window 
-	CONFIG_DEFINE(full_screen, false);
-#endif
-#endif
-	
 	CONFIG_DEFINE(script_mode, 1);
 	
 	bool paused = false;
