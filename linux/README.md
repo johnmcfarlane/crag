@@ -27,6 +27,12 @@ It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but shou
 
 1. Use cmake to generate a release build Makefile:
 
+   For Raspberry Pi:
+
+   `cmake -DCMAKE_BUILD_TYPE=Release -DCRAG_RPI=1`
+
+   For PC:
+
    `cmake -DCMAKE_BUILD_TYPE=Release`
 
 2. Compiler and link the program:

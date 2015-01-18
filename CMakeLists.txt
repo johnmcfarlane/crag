@@ -320,7 +320,7 @@ set(SOURCE_FILES
 add_executable(crag ${SOURCE_FILES})
 
 if (CRAG_RPI)
-	include_directories("src" "/usr/include/SDL2" "../rpi/include/SDL2" "/opt/vc/include")
+	include_directories("src" "/usr/include/SDL2" "linux/include/SDL2" "../rpi/include/SDL2" "/opt/vc/include")
 
 	find_library(BCM_HOST bcm_host /opt/vc/lib)
 	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
