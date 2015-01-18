@@ -21,7 +21,8 @@ It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but shou
 
 3. Run the setup script which installs Debian packages and other dependencies:
 
-   `./crag/linux/setup`
+   `cd crag`
+   `./linux/setup.sh`
 
 ## Build and Run
 
