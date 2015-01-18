@@ -12,7 +12,7 @@
 #include "Future.h"
 #include "Uid.h"
 
-#if defined(CRAG_COMPILER_MSVC) || defined(CRAG_COMPILER_GCC) && ! defined(CRAG_OS_PNACL)
+#if defined(CRAG_COMPILER_MATURE)
 #define CRAG_USE_VARIADIC_LAMBDA
 #endif
 

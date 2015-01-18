@@ -32,10 +32,17 @@
 
 #if defined(__clang__)
 #define CRAG_COMPILER_CLANG
-#elif defined(__GNUC__) || defined(__GNUG__)
+#if __clang_major__ > 3 || (__clang_major__ == 3 && __clang_minor__ > 3)
+#define CRAG_COMPILER_MATURE
+#endif
+#elif defined(__GNUG__)
 #define CRAG_COMPILER_GCC
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 8)
+#define CRAG_COMPILER_MATURE
+#endif
 #elif defined(_MSC_VER)
 #define CRAG_COMPILER_MSVC
+#define CRAG_COMPILER_MATURE
 #else
 #error unrecognized compiler
 #endif
