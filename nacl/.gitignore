@@ -4,6 +4,8 @@ include
 lib
 nacl_sdk.zip
 nacl_sdk
+nacl_stderr.log
+nacl_stdout.log
 ode
 pnacl
 share
