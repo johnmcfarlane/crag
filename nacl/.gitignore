@@ -2,13 +2,14 @@ bin
 config.log
 include
 lib
+nacl.log
 nacl_sdk.zip
 nacl_sdk
-nacl_stderr.log
-nacl_stdout.log
 ode
 pnacl
 share
 SDL
 SDL_image
+stderr.log
+stdout.log
 tmp
