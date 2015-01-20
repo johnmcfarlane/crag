@@ -8,7 +8,7 @@ CHROME_DIR=/opt/google/chrome/
 # where to put all of Chrome's files
 CHROME_DATA_DIR=$LOCAL_DIR/tmp
 mkdir -p $CHROME_DATA_DIR
-echo Chrome user are in $CHROME_DATA_DIR
+echo Chrome user files are in $CHROME_DATA_DIR
 
 # chrome environment variables
 export NACL_PLUGIN_DEBUG=1
