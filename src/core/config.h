@@ -26,9 +26,10 @@
 #endif
 
 //////////////////////////////////////////////////////////////////////
-// compiler
+// compiler and compiler 'maturity'
 //
-// specifying the wrong compiler is likely to cause compiler errors
+// specifying the wrong compiler is likely to cause compiler errors;
+// maturity now really just means 'supports variadic lambda capture'
 
 #if defined(__clang__)
 #define CRAG_COMPILER_CLANG
@@ -42,10 +43,33 @@
 #endif
 #elif defined(_MSC_VER)
 #define CRAG_COMPILER_MSVC
+#if _MSC_VER >= 1800	// VS2013 and older
 #define CRAG_COMPILER_MATURE
+#endif
 #else
 #error unrecognized compiler
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// Compiler differences requiring specific workarounds
+
+#if defined(CRAG_COMPILER_MSVC)
+
+// required by all known versions
+#define WIN32_C2079_WORKAROUND	// undefined struct caused by missing include directive
+#define WIN32_C2338_WORKAROUND	// caused by differences in pointer sizes between VC & other compilers
+
+#if _MSC_VER < 1900	// VS2013
+#define WIN32_C2327_WORKAROUND	// not a type name, static, or enumerator (intrusive list)
+#define WIN32_C3646_WORKAROUND	// 'noexcept' : unknown override specifier
+#define WIN32_C3861_WORKAROUND	// 'alignof' : identifier not found (__alignof and _snprintf)
+#endif
+
+#if _MSC_VER < 1800	// pre VS2013
+#define WIN32_C2144_WORKAROUND	// syntax error : 'char' should be preceded by ';' (threadlocal)
+#endif
+
+#endif	// CRAG_COMPILER_MSVC
 
 //////////////////////////////////////////////////////////////////////
 // OS
