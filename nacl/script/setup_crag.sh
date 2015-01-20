@@ -7,6 +7,3 @@ source "$LOCAL_DIR"/init.sh
 
 # build
 make -j"$NCPUS" CONFIG=Release $@
-
-# help
-echo run '"python -m SimpleHTTPServer"'
