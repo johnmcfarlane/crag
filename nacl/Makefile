@@ -30,7 +30,7 @@ LIBS = ode SDL2_image png z SDL2 ppapi_simple SDL2main ppapi_simple nacl_io ppap
 
 FLAGS := $(INCLUDE_FLAGS)
 CPP_WARNING_FLAGS := -Wall
-CXXFLAGS := $(FLAGS) -std=gnu++11 -pthread $(CPP_WARNING_FLAGS)
+CXXFLAGS := $(CXXFLAGS) $(FLAGS) -std=gnu++11 -pthread $(CPP_WARNING_FLAGS)
 
 SOURCES := \
 	$(CRAG_SRC_DIR)/sim/EntityFunctions.cpp \
