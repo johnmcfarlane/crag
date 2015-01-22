@@ -137,14 +137,15 @@ void PrintMessage(FILE * out, char const * format, ...)
 
 ReentryGuard::ReentryGuard(int & counter)
 : _counter(counter) 
-{ 
-	assert(++ _counter == 1); 
-
-} 
+{
+	ASSERT(_counter == 0);
+	++ _counter;
+}
 
 ReentryGuard::~ReentryGuard() 
-{ 
-	assert(-- _counter == 0); 
+{
+	-- _counter;
+	ASSERT(_counter == 0);
 }
 
 #endif
