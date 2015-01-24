@@ -112,6 +112,13 @@ namespace
 		__android_log_vprint(priority, "crag_log", format, args);
 	}
 
+#elif defined(CRAG_OS_PNACL)
+
+	void VFPrintF(FILE *, char const * format, va_list args)
+	{
+		vfprintf(stdout, format, args);
+	}
+
 #else
 
 	void VFPrintF(FILE * out, char const * format, va_list args)
