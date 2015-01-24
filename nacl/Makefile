@@ -8,7 +8,7 @@
 VALID_TOOLCHAINS := pnacl
 
 NACL_DIR ?= $(abspath $(CURDIR))
-NACL_SDK_ROOT ?= $(NACL_DIR)/nacl_sdk/pepper_39
+NACL_SDK_ROOT ?= $(NACL_DIR)/nacl_sdk/$(SDK_NAME)
 include $(NACL_SDK_ROOT)/tools/common.mk
 
 TARGET = crag
