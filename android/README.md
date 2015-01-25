@@ -4,19 +4,32 @@ Note: An Android package for ARM devices can be found [here](https://drive.googl
 
 ## Introduction
 
-This page provides information on how to build Crag for Android devices. It is written against Debian GNU/Linux 7.4. Please feel free to provide feedback using the link at the bottom of this page.
+This page provides information on how to build Crag for Android devices. It is written against Debian GNU/Linux 7.4 or Ubuntu 14.04 LTS.
 
 ### System Setup
 
 The Crag project comes with an Android `setup` script which will attempt to prepare your Debian system to build and run Android builds. Be warned that this script - if successful - will do unforgivable things to your computer such as installing Oracle's Java Development Kit and adding 32-bit support to your OS.
 
 1. `sudo apt-get install git`
-1. follow [these instructions](https://code.google.com/p/crag/source/checkout) to clone the crag project
-1. Download the following files to the crag/android/dl folder:
+2. follow [these instructions](https://code.google.com/p/crag/source/checkout) to clone the crag project
+3. Download the following files to the crag/android/dl folder:
    * [Android SDK Tools](http://developer.android.com/sdk/index.html)
    * [Android NDK](http://developer.android.com/tools/sdk/ndk/index.html)
-   * [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-1. `crag/android/setup`
+4. Instal Oracle's JDK:
+   * On Debian, Oracle's Java development kit is not available as a package and must be prepared as follows:
+     * Download the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) to the crag/android/dl folder.
+     * From the crag/android folder, run:
+
+       `script/setup_java`
+   * On Ubuntu:
+
+     ```
+     sudo apt-get install python-software-properties
+     sudo add-apt-repository ppa:webupd8team/java
+     sudo apt-get update
+     sudo apt-get install oracle-java7-installer
+     ```
+5. `crag/android/setup`
    * follow the instructions and enter your password when prompted
    * when the Android SDL Manager launches, select the following packages:
      * Tools:
