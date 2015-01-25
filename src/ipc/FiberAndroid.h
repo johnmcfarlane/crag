@@ -75,4 +75,4 @@ namespace ipc
 	};
 }
 
-#endif	// defined(CRAG_PLATFORM_ANDROID)
+#endif	// defined(CRAG_USE_FIBER_THREADED)
