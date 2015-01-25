@@ -134,8 +134,6 @@ void Free(void * allocation)
 	return dlfree(allocation);
 #elif defined(CRAG_OS_WINDOWS)
 	return _aligned_free(allocation);
-#elif defined(CRAG_PLATFORM_ANDROID)
-	return free(allocation);
 #else
 	return free(allocation);
 #endif
