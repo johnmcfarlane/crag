@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-set -o errexit
-
-# ODE
-
-cd jni
+# Script to download and configure ODE for use by Crag in Android builds
+set -e
 
 #frequently fails
 hg clone https://bitbucket.org/odedevs/ode || true
@@ -16,4 +13,4 @@ export CFLAGS="-fno-exceptions -fno-rtti -O3"
 export CXXFLAGS="-fno-exceptions -fno-rtti -O3"
 ./configure --host=arm-linux --enable-single-precision --disable-demos --disable-asserts --disable-libccd
 
-cd ../..
+cd ..
