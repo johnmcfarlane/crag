@@ -39,7 +39,7 @@ namespace geom
 		Matrix()
 		{
 			static_assert(sizeof(Matrix) == sizeof(S) * 12, "Matrix<S, 3, 3> is improperly aligned.");
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			Fill(std::numeric_limits<S>::signaling_NaN());
 #endif
 		}

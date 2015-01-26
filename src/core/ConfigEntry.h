@@ -9,8 +9,9 @@
 
 #pragma once
 
-
+#if defined(CRAG_PC)
 #define ENABLE_CONFIG
+#endif
 
 #if defined(ENABLE_CONFIG)
 
@@ -109,8 +110,11 @@ namespace config
 
 #else
 
-#define CONFIG_DEFINE(name, type, default) type name = default
-#define CONFIG_DEFINE_ANGLE(name, type, default) type name = DegToRad(default)
+#define CONFIG_DEFINE(name, default_value) \
+	decltype(default_value) name = default_value;
+
+#define CONFIG_DEFINE_ANGLE(name, default_value) \
+	decltype(default_value) name = DegToRad(default_value);
 
 #endif
 

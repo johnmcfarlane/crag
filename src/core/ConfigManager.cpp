@@ -11,11 +11,13 @@
 
 #include "ConfigManager.h"
 
+using namespace ::crag::core::config;
+
 #if defined(ENABLE_CONFIG)
 
 #include "core/debug.h"
 
-#if ! defined(__ANDROID__)
+#if defined(CRAG_PC)
 #define ENABLE_CONFIG_LOAD_SAVE
 #endif
 
@@ -39,8 +41,6 @@ namespace
 
 //////////////////////////////////////////////////////////////////////
 // Config function definitions
-
-using namespace ::crag::core::config;
 
 Manager::Manager()
 {
@@ -205,6 +205,19 @@ bool Manager::ParseCommandLine(int argc, char * const * argv)
 
 #else
 
+Manager::Manager()
+{
+}
+
+Manager::~Manager()
+{
+}
+
+bool Manager::ParseCommandLine(int, char * const *)
+{
+	return true;
+}
+
 bool Manager::Load()
 {
 	return true;
@@ -212,11 +225,6 @@ bool Manager::Load()
 
 void Manager::Save()
 {
-}
-
-bool Manager::ParseCommandLine(int, char * const *)
-{
-	return true
 }
 
 #endif	// ENABLE_CONFIG

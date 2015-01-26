@@ -76,7 +76,7 @@ namespace geom
 		
 		// c'tors
 		Sphere() 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		: radius(std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 

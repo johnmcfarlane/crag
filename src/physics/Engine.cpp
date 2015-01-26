@@ -18,7 +18,7 @@
 #include "core/Roster.h"
 #include "core/Statistics.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define DEBUG_CONTACTS
 #endif
 
@@ -43,12 +43,11 @@ namespace
 	CONFIG_DEFINE(angular_damping, .02f);
 	CONFIG_DEFINE(linear_damping, .01f);
 
-	CONFIG_DEFINE(angular_damping_threshold, .0005f);
 	CONFIG_DEFINE(linear_damping_threshold, .01f);
 
 	STAT (num_contacts, int, .15f);
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	void odeMessageFunction (int errnum, const char *msg, va_list ap)
 	{
 		constexpr std::size_t buffer_size = 4096;
@@ -100,7 +99,7 @@ Engine::Engine()
 , _post_tick_roster(new core::locality::Roster)
 {
 	// init ODE error handling
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	dSetErrorHandler(odeMessageFunction);
 	dSetDebugHandler(odeMessageFunction);
 	dSetMessageHandler(odeMessageFunction);

@@ -56,7 +56,7 @@ void smp::SetThreadPriority(int priority)
 	SDL_SetThreadPriority(sdl_priority);
 }
 
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 
 #include <windows.h>
 
@@ -88,7 +88,7 @@ void smp::SetThreadName(char const * thread_name)
 	{
 	}
 }
-#elif defined(__APPLE__)
+#elif defined(CRAG_OS_X)
 
 #include <pthread.h>
 
@@ -96,6 +96,13 @@ void smp::SetThreadName(char const * thread_name)
 void smp::SetThreadName(char const * thread_name)
 {
 	pthread_setname_np(thread_name);
+}
+
+#elif defined(CRAG_OS_PNACL)
+
+// smp::SetThreadName - PNaCl stub
+void smp::SetThreadName(char const *)
+{
 }
 
 #else

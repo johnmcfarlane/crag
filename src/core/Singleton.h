@@ -19,7 +19,7 @@
 // Prevent object from being instanced more than once.
 // Put at top of class definition; include "core/Singleton.h".
 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 #define OBJECT_SINGLETON(CLASS) \
 	OBJECT_NO_COPY(CLASS)
 #else

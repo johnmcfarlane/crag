@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////
 // OpenGl error checking
 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 #define GL_VERIFY DO_NOTHING
 #define GL_CALL(statement) statement;
 #else
@@ -34,7 +34,7 @@ namespace gfx
 	////////////////////////////////////////////////////////////////////////////////
 	// Debug output
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	char const * ErrorString(GLenum error);
 #endif
 

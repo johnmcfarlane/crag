@@ -17,7 +17,7 @@
 
 void DebugCheckMemory(int line, char const * filename);
 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 #define CRAG_DEBUG_CHECK_MEMORY() DO_NOTHING
 #else
 #define CRAG_DEBUG_CHECK_MEMORY() DebugCheckMemory(__LINE__, __FILE__)

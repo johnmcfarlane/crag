@@ -45,7 +45,7 @@ namespace
 	CONFIG_DEFINE(enable_spawn_cube, true);
 	CONFIG_DEFINE(enable_spawn_obelisk, true);
 
-#if defined(__ANDROID__)
+#if defined(CRAG_OS_ANDROID)
 	constexpr auto test_suspend_resume = false;
 #else
 	CONFIG_DEFINE(test_suspend_resume, false);
@@ -209,7 +209,7 @@ void GameScript(AppletInterface & applet_interface)
 	// Give formations time to expand.
 	applet_interface.Sleep(.25f);
 	
-#if defined(__ANDROID__)
+#if defined(CRAG_OS_ANDROID)
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/right.png",
 		"assets/skybox/left.png",

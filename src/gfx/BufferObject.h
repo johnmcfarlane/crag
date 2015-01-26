@@ -125,7 +125,7 @@ namespace gfx
 			CRAG_VERIFY(* this);
 			CRAG_VERIFY_TRUE(IsBound());
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			GL_CALL(glBindBuffer(TARGET, 0));
 			CRAG_VERIFY_FALSE(IsBound());
 #endif

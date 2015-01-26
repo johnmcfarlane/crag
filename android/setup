@@ -7,7 +7,6 @@ set -o errexit
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 script/setup_pkg
-script/setup_java
 script/setup_adk
 script/setup_ndk
 script/setup_sdl

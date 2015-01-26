@@ -9,12 +9,12 @@
 //	The pre-compiled header for the crag project
 //
 
-#if defined(__cplusplus)
+#include "core/config.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-// WIN32 specifics
+// CRAG_COMPILER_MSVC specifics
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 
 #pragma warning(disable: 4200)
 
@@ -27,16 +27,6 @@
 // causes a problem in VC++ project because of the way libs are built
 #define HAVE_M_PI
 
-// required by VS2013 and older
-#define WIN32_C2144_WORKAROUND	// syntax error : 'char' should be preceded by ';' (threadlocal)
-#define WIN32_C2327_WORKAROUND	// not a type name, static, or enumerator (intrusive list)
-#define WIN32_C3646_WORKAROUND	// 'noexcept' : unknown override specifier
-#define WIN32_C3861_WORKAROUND	// 'alignof' : identifier not found (__alignof and _snprintf)
-
-// required by all versions
-#define WIN32_C2079_WORKAROUND	// undefined struct caused by missing include directive
-#define WIN32_C2338_WORKAROUND	// caused by differences in pointer sizes between VC & other compilers
-
 #else
 
 #define SIZE_T_FORMAT_SPEC "%zu"
@@ -45,9 +35,9 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// __APPLE__ specifics
+// CRAG_OS_X specifics
 
-#if defined (__APPLE__)
+#if defined (CRAG_OS_X)
 #define _XOPEN_SOURCE
 #define _DARWIN_C_SOURCE
 #endif
@@ -64,48 +54,24 @@
 #define GL_GLEXT_PROTOTYPES 1
 
 // TODO: Re-evaluate "SDL_opengl.h"
-#if defined(__ANDROID__) || defined(CRAG_RPI)
-
-#define CRAG_USE_GLES
+#if defined(CRAG_GLES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
 
-#else	// defined(__ANDROID__)
-
-#define CRAG_USE_GL
-#if defined(__APPLE__)
+#if defined(CRAG_GL)
+#if defined(CRAG_OS_X)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLCurrent.h>
 #include <OpenGL/glu.h>
 #else
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 #define GLEW_STATIC
 #include <GL/glew.h>	 // must be included before gl.h 
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-
-#endif	// ! defined(__ANDROID__)
-
-
-//////////////////////////////////////////////////////////////////////
-// platform characteristics
-
-#if defined(__ANDROID__)
-// Android, iOS (not current)
-#define CRAG_MOBILE	// build target is a phone or tablet
-#else
-// Debian/Ubuntu/Raspbian, Windows, OS X (not current)
-#define CRAG_PC	// build target is a tranditional desktop or laptop PC
-#endif
-
-#if defined(CRAG_MOBILE)
-#define CRAG_USE_TOUCH	// build target is predominantly a touch-based device
-#endif
-
-#if defined(CRAG_PC)
-#define CRAG_USE_MOUSE	// build target is a keyboard/point device combo
 #endif
 
 
@@ -124,7 +90,7 @@
 
 // C++ standard library
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4530)
 #endif
@@ -149,7 +115,7 @@
 #include <unordered_set>
 #include <vector>
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #pragma warning(pop)
 #endif
 
@@ -172,7 +138,3 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 #include "geom/Triangle.h"
-
-//////////////////////////////////////////////////////////////////////
-
-#endif // defined(__cplusplus)

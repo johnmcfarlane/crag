@@ -11,7 +11,7 @@
 
 #include "memory.h"
 
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 #include "core/windows.h"
 #else
 #include <sys/mman.h>
@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // heap error checking
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define CRAG_DEBUG_ENABLE_CHECK_MEMORY
 #endif
 
@@ -43,7 +43,7 @@ namespace
 	}
 }
 
-#if ! defined(WIN32)
+#if ! defined(CRAG_OS_WINDOWS)
 #define CRAG_USE_DLMALLOC
 #if defined(DEBUG) || defined(USE_DL_PREFIX) || defined(USE_RECURSIVE_LOCKS) || defined(MALLOC_INSPECT_ALL)
 #error dlalloc macros already defined
@@ -62,7 +62,7 @@ namespace
 #define USE_LOCKS 1
 
 #include "dlmalloc.c"
-#endif	// ! defined(WIN32)
+#endif	// ! defined(CRAG_OS_WINDOWS)
 
 // called to initiate a walk of the heap in pursuit of memory corruptioN
 void DebugCheckMemory(int line, char const * filename)
@@ -70,7 +70,7 @@ void DebugCheckMemory(int line, char const * filename)
 	check_line = line;
 	check_file = filename;
 
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 	HANDLE hHeap = GetProcessHeap();
 	if (! HeapValidate(hHeap, 0, nullptr))
 	{
@@ -96,14 +96,14 @@ void * Allocate(size_t num_bytes, size_t alignment)
 {
 #if defined(CRAG_USE_DLMALLOC)
 	return dlmemalign(alignment, num_bytes);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 	return _aligned_malloc(num_bytes, alignment);
-#elif defined(__APPLE__)
+#elif defined(CRAG_OS_X)
 	// Apple deliberately prevent use of posix_memalign. 
 	// Malloc is guaranteed to be 16-byte aligned. 
 	// Anything requiring greater alignment can simply run slower on mac.
 	return malloc(num_bytes);
-#elif defined(__ANDROID__)
+#elif defined(CRAG_OS_ANDROID)
 	return memalign(alignment, num_bytes);
 #else
 	void * allocation;
@@ -132,10 +132,8 @@ void Free(void * allocation)
 {
 #if defined(CRAG_USE_DLMALLOC)
 	return dlfree(allocation);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 	return _aligned_free(allocation);
-#elif defined(__ANDROID__)
-	return free(allocation);
 #else
 	return free(allocation);
 #endif
@@ -155,10 +153,12 @@ size_t GetPageSize()
 	static size_t page_size = 0;
 	if (page_size == 0)
 	{
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 		SYSTEM_INFO system_info;
 		GetSystemInfo(& system_info);
 		page_size = system_info.dwPageSize;
+#elif defined(CRAG_OS_PNACL)
+		page_size = getpagesize();
 #else
 		page_size = sysconf (_SC_PAGE_SIZE);
 #endif
@@ -176,7 +176,7 @@ void * AllocatePage(size_t num_bytes)
 	// allocate
 #if defined(CRAG_USE_DLMALLOC)
 	void * p = dlvalloc(num_bytes);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 	void * p = VirtualAlloc(nullptr, num_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
 	void * p = mmap(nullptr, num_bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0);
@@ -186,7 +186,7 @@ void * AllocatePage(size_t num_bytes)
 	{
 #if defined(CRAG_USE_DLMALLOC)
 		DEBUG_BREAK("dlvalloc(" SIZE_T_FORMAT_SPEC ") failed with error code, %X", num_bytes, errno);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
 #else
 		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
@@ -202,7 +202,7 @@ void FreePage(void * allocation, size_t num_bytes)
 
 #if defined(CRAG_USE_DLMALLOC)
 	dlfree(allocation);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 	if (! VirtualFree(allocation, 0, MEM_RELEASE))
 	{
 		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
@@ -221,7 +221,7 @@ void FreePage(void * allocation, size_t num_bytes)
 // TODO: Make this stuff play nice on windows.
 // As well as not liking the exception, there is a mismatch somewhere 
 // which manifests itself as an assert deep within std::mutex
-#if ! defined(WIN32)
+#if ! defined(CRAG_OS_WINDOWS)
 void * operator new (std::size_t size) throw (std::bad_alloc)
 {
 	return Allocate(size);
@@ -257,4 +257,4 @@ void operator delete[] (void* ptr, const std::nothrow_t &) throw()
 {
 	Free(ptr);
 }
-#endif	// WIN32
+#endif	// CRAG_OS_WINDOWS

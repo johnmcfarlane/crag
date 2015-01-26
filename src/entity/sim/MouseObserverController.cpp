@@ -43,9 +43,9 @@ namespace
 	CONFIG_DEFINE(observer_mouse_ray_cast_distance, 1000000000.f);
 
 	// TODO: this value is likely sensitive to screen resolutions
-#if defined(__APPLE__)
+#if defined(CRAG_OS_X)
 	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 1.0f);
-#elif defined(WIN32)
+#elif defined(CRAG_OS_WINDOWS)
 	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 0.5f);
 #else
 	CONFIG_DEFINE(observer_mouse_sensitivity_platform_factor, 0.1f);

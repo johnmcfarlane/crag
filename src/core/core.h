@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////
 // Missing keywords etc.
 
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #define constexpr const
 #if defined(WIN32_C3861_WORKAROUND)
 #define alignof __alignof
@@ -36,7 +36,7 @@
 #if defined(WIN32_C2144_WORKAROUND)
 #define thread_local __declspec(thread)
 #endif
-#elif defined(__GNUC__)
+#elif defined(CRAG_COMPILER_GCC)
 #define thread_local __thread
 #endif
 
@@ -45,18 +45,20 @@
 // Optimization directives
 
 // EXPECT - tells compiler to expect EXP==C; returns EXP
-#if defined(__GNUC__)
+#if defined(CRAG_COMPILER_GCC)
 #define ASSUME(CONDITION) __builtin_expect(CONDITION, true)
-#elif defined(WIN32)
+#elif defined(CRAG_COMPILER_MSVC)
 #define ASSUME(CONDITION) __assume(CONDITION)
 #else
 #define ASSUME(CONDITION) (CONDITION)
 #endif
 
 // UNREACHABLE - tells the compiler, you can't get here
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(CRAG_COMPILER_GCC) || defined(CRAG_COMPILER_CLANG)
 #define UNREACHABLE __builtin_unreachable
-#else
+#endif
+
+#if defined(CRAG_COMPILER_MSVC)
 #define UNREACHABLE() __assume(false)
 #endif
 
@@ -73,7 +75,7 @@ namespace core
 	{
 		To & cast = static_cast<To &>(object);
 
-#if ! defined(__ANDROID__) && ! defined(NDEBUG)
+#if defined(CRAG_PC) && defined(CRAG_DEBUG)
 		assert(& dynamic_cast<To &>(object) == & cast);
 #endif
 

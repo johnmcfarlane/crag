@@ -24,7 +24,7 @@ namespace geom
 		typedef S Scalar;
 		
 		Vector() 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())
 #endif

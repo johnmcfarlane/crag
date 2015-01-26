@@ -41,9 +41,7 @@ namespace
 	CONFIG_DEFINE(formation_emission, Color4f(0.0f, 0.0f, 0.0f));
 	CONFIG_DEFINE(formation_ambient, Color4f(0.05f));
 	CONFIG_DEFINE(formation_diffuse, Color4f(0.0f, 0.0f, 0.0f));
-	CONFIG_DEFINE(formation_specular, 0.0f);
-	CONFIG_DEFINE(formation_shininess, 0.0f);
-	
+
 	char const * vbo_key = "SurroundingMesh";
 }
 
@@ -120,7 +118,7 @@ Object::PreRenderResult Surrounding::PreRender()
 {
 	CRAG_VERIFY(* this);
 	
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	Debug::AddBasis(_properties._space.AbsToRel(geom::abs::Vector3::Zero()), 1.);
 #endif
 

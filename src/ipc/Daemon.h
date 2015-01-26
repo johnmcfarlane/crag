@@ -55,7 +55,7 @@ namespace ipc
 		, _messages(ring_buffer_size)
 		, _state(State::initialized)
 		, _state_change_time(-1)
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		, _name(nullptr)
 #endif
 		{
@@ -112,7 +112,7 @@ namespace ipc
 		{
 			ASSERT(! singleton->_thread.IsCurrent());
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			ASSERT(_name == nullptr);
 			_name = name;
 #endif
@@ -336,7 +336,7 @@ namespace ipc
 		smp::Thread _thread;
 		State _state;
 		core::Time _state_change_time;
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		char const * _name;
 #endif
 		

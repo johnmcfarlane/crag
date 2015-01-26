@@ -28,7 +28,7 @@ QuaternaBuffer::QuaternaBuffer(int max_num_quaterne)
 
 QuaternaBuffer::~QuaternaBuffer()
 {
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	for (Quaterna const * i = _quaterne; i != _quaterne_used_end; ++ i)
 	{
 		ASSERT(! i->HasGrandChildren());

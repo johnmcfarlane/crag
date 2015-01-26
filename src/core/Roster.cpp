@@ -400,7 +400,7 @@ Roster::CommandVector::iterator Roster::Find(Command command)
 		}
 	}
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	auto slow_found = std::find(std::begin(_commands), std::end(_commands), command);
 	ASSERT(found == slow_found);
 #endif

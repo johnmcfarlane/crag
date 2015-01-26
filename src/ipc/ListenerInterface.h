@@ -38,7 +38,7 @@ namespace ipc
 		// functions
 		virtual ~ListenerInterface()
 		{
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			std::lock_guard<Mutex> lock(_mutex);
 
 			if (_listeners.contains(* this))

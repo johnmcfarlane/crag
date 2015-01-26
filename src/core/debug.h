@@ -16,7 +16,7 @@
 
 // Semicolon-friendly compound statement.
 // Useful for wrapping up macros to appear like a function call.
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 #define DO_STATEMENT(...) \
 	__pragma(warning(push)) \
 	__pragma(warning(disable:4127)) \
@@ -40,7 +40,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Debug-only code
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 
 // Misc debug helpers
 namespace core
@@ -54,7 +54,15 @@ namespace core
 #define CRAG_DEBUG_PARAM(X) X
 
 // DEBUG_COLOR_ macros
-#if defined(WIN32) || defined(__ANDROID__) || defined(__APPLE__)
+#if defined(CRAG_OS_LINUX) || defined(CRAG_OS_X)
+#define DEBUG_COLOR_FILE "\x1B[32;1m"
+#define DEBUG_COLOR_LINE "\x1B[31;1m"
+#define DEBUG_COLOR_TEXT DEBUG_COLOR_NORM
+#define DEBUG_COLOR_FUNC "\x1B[36;2m"
+#define DEBUG_COLOR_PUNC DEBUG_COLOR_NORM
+#define DEBUG_COLOR_THREAD "\x1B[31;2m"
+#define DEBUG_COLOR_NORM "\033[m"
+#else
 #define DEBUG_COLOR_FILE
 #define DEBUG_COLOR_LINE
 #define DEBUG_COLOR_TEXT
@@ -62,18 +70,10 @@ namespace core
 #define DEBUG_COLOR_PUNC
 #define DEBUG_COLOR_THREAD
 #define DEBUG_COLOR_NORM
-#else
-#define DEBUG_COLOR_FILE "\x1B[32;1m"
-#define DEBUG_COLOR_LINE "\x1B[31;1m"
-#define DEBUG_COLOR_TEXT DEBUG_COLOR_NORM
-#define DEBUG_COLOR_FUNC "\x1B[36;2m"
-#define DEBUG_COLOR_PUNC DEBUG_COLOR_NORM
-#define DEBUG_COLOR_THREAD "\x1B[31;2m"
-#define DEBUG_COLOR_NORM "\e[m"
 #endif
 
 // TRUNCATE_STRING
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 // VS debugger requires complete file path for navigation features
 #define MESSAGE_TRUNCATE(STRING, TARGET_LENGTH) STRING
 #else
@@ -83,9 +83,9 @@ namespace core
 // FUNCTION_SIGNATURE - a string containing the signature of the current function
 #if ! defined(CRAG_DEBUG_SHOW_FUNCTION)
 #define FUNCTION_SIGNATURE ""
-#elif defined(__GNUC__)
+#elif defined(CRAG_COMPILER_GCC)
 #define FUNCTION_SIGNATURE __PRETTY_FUNCTION__
-#elif defined(WIN32)
+#elif defined(CRAG_COMPILER_MSVC)
 #define FUNCTION_SIGNATURE __FUNCSIG__
 #else
 #define FUNCTION_SIGNATURE __func__
@@ -141,7 +141,7 @@ namespace core
 #define AssertErrno() DO_NOTHING
 #define CRAG_DEBUG_ONCE (false)
 
-#endif	// NDEBUG
+#endif
 
 // crag::core::Break() - interrupt execution
 namespace crag
@@ -171,7 +171,7 @@ void PrintMessage(FILE * out, char const * format, ...);
 // either recursively of in multiple threads.
 // Put at the top of a function. 
 
-#if defined(NDEBUG) || defined(WIN32)
+#if defined(CRAG_RELEASE) || defined(CRAG_OS_WINDOWS)
 #define FUNCTION_NO_REENTRY DO_NOTHING
 #else
 class ReentryGuard

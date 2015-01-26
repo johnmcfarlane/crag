@@ -10,8 +10,8 @@ crag
 cmake_install.cmake
 CMakeCache.txt
 CMakeFiles
-Makefile
 pch.h.gch
 
 # CLion files
 .idea/workspace.xml
+.idea/dictionaries

@@ -171,14 +171,14 @@ namespace gfx
 		{
 			GLenum cap;
 			bool enabled;
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			char const * name;
 #endif
 		};
 
 		static StateParam const init_state[];
 		
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		// fps counter
 		static int constexpr _frame_time_history_size = 60;
 		std::array<core::Time, _frame_time_history_size> _frame_time_history;

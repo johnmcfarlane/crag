@@ -222,7 +222,7 @@ void gfx::Debug::Verify()
 // Return a value indicating how much logging output gets printed to screen each frame.
 double gfx::Debug::GetVerbosity() 
 { 
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 	return .25;
 #else
 	return debug_verbosity;

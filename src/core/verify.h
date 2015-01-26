@@ -16,7 +16,7 @@
 #error CRAG_VERIFY_ENABLED already defined
 #endif
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 // iff defined, enables verification code
 #define CRAG_VERIFY_ENABLED
 #endif
@@ -132,7 +132,7 @@ namespace crag
 		using is_real = typename std::enable_if<std::is_floating_point<Type>::value, int>::type;
 		
 		// Verify that pointer is valid
-#if defined(WIN32)
+#if defined(CRAG_COMPILER_MSVC)
 		template<typename Type>
 		void VerifyPtr(Type const *) 
 		{

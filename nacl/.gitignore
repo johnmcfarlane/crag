@@ -1,0 +1,15 @@
+bin
+config.log
+include
+lib
+nacl.log
+nacl_sdk.zip
+nacl_sdk
+ode
+pnacl
+share
+SDL
+SDL_image
+stderr.log
+stdout.log
+tmp

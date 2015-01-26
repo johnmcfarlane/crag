@@ -11,7 +11,7 @@
 
 #include "glHelpers.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define CRAG_GFX_UNIFORMS_DEBUG
 #endif
 

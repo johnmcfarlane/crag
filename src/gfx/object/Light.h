@@ -14,7 +14,7 @@
 #include "gfx/Color.h"
 #include "gfx/LightType.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define CRAG_GFX_LIGHT_DEBUG
 #endif
 

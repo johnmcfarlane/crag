@@ -17,7 +17,7 @@
 
 #include "geom/Intersection.h"
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define DEBUG_SHOW_LINE
 //#define DEBUG_SHOW_RESULT
 #endif
@@ -216,7 +216,7 @@ namespace
 				bool is_past_the_end = attributes.range[0] >= uniforms.length;
 				if (is_past_the_end)
 				{
-#if ! defined(NDEBUG) && 0
+#if defined(CRAG_DEBUG) && 0
 					// then all following nodes are also beyond the ray,
 					std::for_each(i, end, [uniforms] (Attributes const & a) 
 					{

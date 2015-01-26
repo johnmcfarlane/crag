@@ -87,7 +87,7 @@ namespace
 
 		if (ShouldReviseOrigin(lod_center, min_leaf_distance_squared))
 		{
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			app::Beep();
 #endif
 

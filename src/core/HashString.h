@@ -29,7 +29,7 @@ namespace crag
 		public:
 			constexpr HashString(char const * string)
 			: _value(Calculate(string))
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			, _debug_string(string)
 #endif
 			{
@@ -52,10 +52,10 @@ namespace crag
 
 			friend std::ostream & operator << (std::ostream & lhs, HashString const & rhs)
 			{
-#if defined(NDEBUG)
-				return lhs << rhs._value;
-#else
+#if defined(CRAG_DEBUG)
 				return lhs << rhs._value << '(' << rhs._debug_string << ')';
+#else
+				return lhs << rhs._value;
 #endif
 			}
 
@@ -76,7 +76,7 @@ namespace crag
 			// variables
 		
 			ValueType _value;
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			char const * _debug_string;
 #endif
 		};

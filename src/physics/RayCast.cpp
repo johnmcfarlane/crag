@@ -18,7 +18,7 @@
 
 #include <ode/collision.h>
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define CRAG_PHYSICS_RAY_CAST_DEBUG
 #endif
 

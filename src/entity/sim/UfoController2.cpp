@@ -32,7 +32,6 @@ CONFIG_DECLARE(saucer_ball_radius, physics::Scalar);
 
 namespace
 {
-	CONFIG_DEFINE(ufo_controller2_sensitivity, 5000.f);
 	CONFIG_DEFINE(ufo_controller2_vanish_distance, 1000000.f);
 	CONFIG_DEFINE(ufo_controller2_drag_roof_height, 7.5f);
 	CONFIG_DEFINE(ufo_controller2_max_direction, 7.5f);

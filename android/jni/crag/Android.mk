@@ -6,7 +6,7 @@ LOCAL_MODULE := main
 
 SDL_PATH := ../SDL
 SDL_IMAGE_PATH := ../SDL_image
-ODE_PATH := /../ode
+ODE_PATH := /../../ode
 CRAG_PATH := ../../../src
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \

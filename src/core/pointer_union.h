@@ -162,7 +162,7 @@ namespace crag
 				
 				// get index of Type
 				constexpr auto index = get_index_of_type<Type>();
-#if ! defined(WIN32)
+#if ! defined(CRAG_COMPILER_MSVC)
 				static_assert(index != -1, "Type not found in Types");
 				static_assert(! (index & ~ index_mask), "index exceeds capacity");
 #endif
@@ -194,7 +194,7 @@ namespace crag
 				
 				// get index of Type
 				constexpr IndexType required_index = get_index_of_type<Type>();
-#if ! defined(WIN32)
+#if ! defined(CRAG_COMPILER_MSVC)
 				static_assert(required_index != -1, "Type not stored");
 				static_assert(! (required_index & ~ index_mask), "index exceeds capacity");
 #endif

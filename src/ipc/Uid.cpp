@@ -35,7 +35,7 @@ Uid Uid::Create()
 {
 	static std::atomic<ValueType> _counter(2u);
 	
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	// check that we've still got lots of capacity
 	ASSERT(_counter <= ValueType(-1) >> 8);
 	

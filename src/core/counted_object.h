@@ -22,7 +22,7 @@ namespace crag
 	template <typename ObjectType>
 	class counted_object
 	{
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		class _Counter
 		{
 		public:
@@ -64,7 +64,7 @@ namespace crag
 	////////////////////////////////////////////////////////////////////////////////
 	// crag::counted_object::_Counter member definitions
 	
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 	template <typename ObjectType>
 	typename counted_object<ObjectType>::_Counter
 	counted_object<ObjectType>::_counter;

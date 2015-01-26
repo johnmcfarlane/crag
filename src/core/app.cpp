@@ -13,7 +13,7 @@
 
 #include "core/ConfigEntry.h"
 
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 #include "core/windows.h"
 #endif
 
@@ -42,17 +42,17 @@ namespace
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 #endif
 
-#if defined(CRAG_USE_GL)
+#if defined(CRAG_GL)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-#if defined(CRAG_USE_GLES)
+#if defined(CRAG_GLES)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -60,7 +60,7 @@ namespace
 
 		int flags = SDL_WINDOW_INPUT_GRABBED;
 
-#if defined(CRAG_USE_GL)
+#if defined(CRAG_GL)
 		flags |= SDL_WINDOW_OPENGL;
 #endif
 
@@ -198,7 +198,7 @@ void app::DeinitGfx()
 
 char const * app::GetFullPath(char const * filepath)
 {
-#if defined(__ANDROID__)
+#if defined(CRAG_OS_ANDROID)
 	static constexpr char prefix[] = "assets/";
 	static constexpr std::size_t prefix_size = std::extent<decltype(prefix)>::value - 1;
 	ASSERT(strncmp(filepath, prefix, prefix_size) == 0);
@@ -268,7 +268,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 
 void app::Beep()
 {
-#if defined(WIN32)
+#if defined(CRAG_OS_WINDOWS)
 	MessageBeep(MB_ICONINFORMATION);
 #endif
 }

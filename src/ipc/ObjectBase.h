@@ -75,7 +75,7 @@ namespace ipc
 		{
 			ObjectType & t = core::StaticCast<ObjectType>(* this);
 			
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			// Check that this cast is valid.
 			ObjectBase & reverse = t;
 			ASSERT(& reverse == this);
@@ -88,7 +88,7 @@ namespace ipc
 		{
 			ObjectType const & t = core::StaticCast<ObjectType const>(* this);
 			
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 			// Check that this cast is valid.
 			ObjectBase const & reverse = t;
 			ASSERT(& reverse == this);

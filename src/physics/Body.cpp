@@ -22,7 +22,7 @@
 #include <ode/collision.h>
 #include <ode/objects.h>
 
-#if ! defined(NDEBUG)
+#if defined(CRAG_DEBUG)
 //#define CRAG_PHYSICS_BODY_DEBUG (-1.f)
 #endif
 
@@ -352,7 +352,7 @@ bool Body::OnCollisionWithRay(Body & that_body)
 	auto this_collision_handle = GetCollisionHandle();
 
 	constexpr uint16_t max_contacts = 6;
-#if defined(NDEBUG)
+#if defined(CRAG_RELEASE)
 	constexpr uint16_t contacts_size = max_contacts;
 #else
 	constexpr uint16_t contacts_size = max_contacts + 1;
