@@ -26,6 +26,7 @@ rm -f "$NACL_EXE_STDOUT"
 rm -f "$NACLLOG"
 
 # launch chrome directly
+cd "$LOCAL_DIR"
 "$CHROME_DIR"/chrome --user-data-dir="$CHROME_DATA_DIR" --test-type --no-sandbox --args --enable-logging --vmodule=ppb*=4 http://localhost:8000/ &
 
 python -m SimpleHTTPServer
