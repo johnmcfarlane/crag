@@ -320,12 +320,12 @@ set(SOURCE_FILES
 add_executable(crag ${SOURCE_FILES})
 
 if (CRAG_RPI)
-	include_directories("src" "/usr/include/SDL2" "linux/include/SDL2" "../rpi/include/SDL2" "/opt/vc/include")
+	include_directories("src" "/usr/include/SDL2" "linux/include/SDL2" "./linux/include/SDL2" "/opt/vc/include")
 
 	find_library(BCM_HOST bcm_host /opt/vc/lib)
 	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
-	find_library(SDL2_LIBRARY SDL2 /usr/lib ../rpi/lib)
-	find_library(SDL2_IMAGE_LIBRARY SDL2_image /usr/lib ../rpi/lib)
+	find_library(SDL2_LIBRARY SDL2 /usr/lib ./linux/lib)
+	find_library(SDL2_IMAGE_LIBRARY SDL2_image /usr/lib ./linux/lib)
 	find_library(ODE_LIBRARY ode /usr/lib)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${GLES2_LIBRARY} ${BCM_HOST} "dl" "pthread" "stdc++" "m" "rt")
 else (CRAG_RPI)
