@@ -9,7 +9,7 @@ sudo apt-get install cmake mercurial libode-sp-dev libglu1-mesa-dev xorg-dev
 ################################################################################
 # SDL
 
-./script/setup_sdl
+./script/setup_sdl $@
 
 ################################################################################
 # SDL_image

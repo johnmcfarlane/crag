@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This file details how to build and run [Crag](https://code.google.com/p/crag/) on [Debian](https://www.debian.org/) GNU Linux systems.
+This file details how to build and run [Crag](https://code.google.com/p/crag/) on PCs running [Debian](https://www.debian.org/) GNU Linux.
 It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Debian Jessie](https://www.debian.org/releases/jessie/) desktop releases.
 
 ## Setup and Install
@@ -28,17 +28,13 @@ It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but shou
 
 1. Use cmake to generate a release build Makefile:
 
-   For Raspberry Pi:
-
-   `cmake -DCMAKE_BUILD_TYPE=Release -DCRAG_RPI=1`
-
-   For PC:
-
    `cmake -DCMAKE_BUILD_TYPE=Release`
 
-2. Compiler and link the program:
+2. Compile and link the program:
 
    `make`
+
+   (You can speed up compilation on multicore systems using the `[jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html)` option.)
 
 3. Run:
 
