@@ -14,7 +14,7 @@ This file details how to build and run [Crag](https://code.google.com/p/crag/) o
 
 2. Clone the project:
 
-   `git clone https://code.google.com/p/crag/ -b linux`
+   `git clone https://code.google.com/p/crag/ -b rpi`
 
    (More instructions on cloning Crag can be found [here](https://code.google.com/p/crag/source/checkout).)
 
