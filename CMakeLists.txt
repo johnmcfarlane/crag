@@ -320,6 +320,8 @@ set(SOURCE_FILES
 add_executable(crag ${SOURCE_FILES})
 
 if (CRAG_RPI)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_RPI")
+
 	include_directories("src" "/usr/include/SDL2" "linux/include/SDL2" "./linux/include/SDL2" "/opt/vc/include")
 
 	find_library(BCM_HOST bcm_host /opt/vc/lib)
