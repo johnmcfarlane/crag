@@ -341,5 +341,5 @@ else (CRAG_RPI)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
 endif (CRAG_RPI)
 
-#include (src/PrecompiledHeader.cmake)
-#add_precompiled_header(crag src/pch.h)
+include (PrecompiledHeader.cmake)
+add_precompiled_header(crag src/pch.h)
