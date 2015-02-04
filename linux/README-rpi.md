@@ -21,7 +21,7 @@ This file details how to build and run [Crag](https://code.google.com/p/crag/) o
 3. Run the setup script which installs Debian packages and other dependencies:
 
    `cd crag`
-   `./linux/setup.sh --disable-video-opengl`
+   `./linux/setup.sh --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11`
 
 ## Build and Run
 
