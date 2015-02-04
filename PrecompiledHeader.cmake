@@ -83,10 +83,9 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
     MAKE_DIRECTORY(${_outdir})
     SET(_output "${_outdir}/.c++")
 
-# JohnMcF: doesn't quite work but may be handy once I have separate builds    
-#    STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+    STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name_build)
     STRING(TOUPPER "CMAKE_CXX_FLAGS" _flags_var_name)
-    SET(_compiler_FLAGS ${${_flags_var_name}})
+    SET(_compiler_FLAGS ${${_flags_var_name}} ${${_flags_var_name_build}})
     
     GET_DIRECTORY_PROPERTY(_directory_flags INCLUDE_DIRECTORIES)
     FOREACH(item ${_directory_flags})

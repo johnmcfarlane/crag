@@ -85,7 +85,7 @@ namespace
 	
 		if (! _window)
 		{
-			DEBUG_MESSAGE("Failed to create window: \"%s\"", SDL_GetError());	
+			CRAG_REPORT_SDL_ERROR();
 			return false;
 		}
 	
