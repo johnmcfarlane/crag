@@ -1,9 +1,11 @@
-# Building Crag for Linux
+# Building Crag for GNU/Linux
 
 ## Introduction
 
 This file details how to build and run [Crag](https://code.google.com/p/crag/) on PCs running [Debian](https://www.debian.org/) GNU Linux.
 It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Debian Jessie](https://www.debian.org/releases/jessie/) desktop releases.
+
+See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 ## Setup and Install
 
