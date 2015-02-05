@@ -1,5 +1,7 @@
 # [Crag](https://github.com/johnmcfarlane/crag)
 
+![Screenshot](http://john.mcfarlane.name/projects/crag.png)
+
 ## Introduction
 
 Crag is a personal programming project developed with the aim of exploring and demonstrating a number of programming techniques. 
