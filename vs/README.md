@@ -1,7 +1,5 @@
 # Instructions on how to build Crag for Windows.
 
-UNDER CONSTRUCTION
-
 ## Introduction
 
 This page provides information about building Crag under Windows. If you follow the instructions below, you should not need to deal with any computer code. However, a familiarity with getting C/C++ projects to build under Windows will be a major advantageous. Please feel free to provide feedback using the comments section at the bottom of this page. 
