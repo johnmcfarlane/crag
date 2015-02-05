@@ -31,7 +31,7 @@ Instructions are available for the following platforms:
 
 - [Ubuntu GNU/Linux](linux/README.md) on PC
 - [Raspberry Pi](linux/README-rpi.md)
-- [Windows](vc/README.md) using MSVC++
+- [Windows](vs/README.md) using MSVC++
 - [Android](android/README.md)
 
 ## Licencing
