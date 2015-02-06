@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This file details how to build and run [Crag](https://code.google.com/p/crag/) on [Raspberry Pi](http://www.raspberrypi.org/) running [Raspbian](http://www.raspbian.org/) GNU Linux. Tips on configuring the system for best performance can be found in the [SDL documentation](https://hg.libsdl.org/SDL/file/tip/docs/README-raspberrypi.md).
+This file details how to build and run [Crag](https://github.com/johnmcfarlane/crag) on [Raspberry Pi](http://www.raspberrypi.org/) running [Raspbian](http://www.raspbian.org/) GNU Linux. Tips on configuring the system for best performance can be found in the [SDL documentation](https://hg.libsdl.org/SDL/file/tip/docs/README-raspberrypi.md).
 
 ## Setup and Install
 
@@ -14,9 +14,7 @@ This file details how to build and run [Crag](https://code.google.com/p/crag/) o
 
 2. Clone the project:
 
-   `git clone https://code.google.com/p/crag/ -b rpi`
-
-   (More instructions on cloning Crag can be found [here](https://code.google.com/p/crag/source/checkout).)
+   `git clone https://github.com/johnmcfarlane/crag.git`
 
 3. Run the setup script which installs Debian packages and other dependencies:
 

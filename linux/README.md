@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This file details how to build and run [Crag](https://code.google.com/p/crag/) on PCs running [Debian](https://www.debian.org/) GNU Linux.
+This file details how to build and run [Crag](https://github.com/johnmcfarlane/crag) on PCs running [Debian](https://www.debian.org/) GNU Linux.
 It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Debian Jessie](https://www.debian.org/releases/jessie/) desktop releases.
 
 See [README-rpi.md] for instructions targeted at Raspberry Pi.
@@ -17,9 +17,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 2. Clone the project:
 
-   `git clone https://code.google.com/p/crag/ -b linux`
-
-   (More instructions on cloning Crag can be found [here](https://code.google.com/p/crag/source/checkout).)
+   `git clone https://github.com/johnmcfarlane/crag.git`
 
 3. Run the setup script which installs Debian packages and other dependencies:
 

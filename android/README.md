@@ -11,7 +11,7 @@ This page provides information on how to build Crag for Android devices. It is w
 The Crag project comes with an Android `setup` script which will attempt to prepare your Debian system to build and run Android builds. Be warned that this script - if successful - will do unforgivable things to your computer such as installing Oracle's Java Development Kit and adding 32-bit support to your OS.
 
 1. `sudo apt-get install git`
-2. follow [these instructions](https://code.google.com/p/crag/source/checkout) to clone the crag project
+2. `git clone https://github.com/johnmcfarlane/crag.git`
 3. Download the following files to the crag/android/dl folder:
    * [Android SDK Tools](http://developer.android.com/sdk/index.html)
    * [Android NDK](http://developer.android.com/tools/sdk/ndk/index.html)
