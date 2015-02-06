@@ -20,7 +20,7 @@ This file details how to build and run [Crag](https://github.com/johnmcfarlane/c
 
    ```
    cd crag
-   ./linux/setup.sh --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
+   linux/setup.sh --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
    ```
 
 ## Build and Run

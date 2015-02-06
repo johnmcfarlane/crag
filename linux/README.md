@@ -23,7 +23,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
    ```
    cd crag
-   ./linux/setup.sh
+   linux/setup.sh
    ```
 
 ## Build and Run
