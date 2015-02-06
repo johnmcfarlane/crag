@@ -32,7 +32,7 @@ Windows XP comes with the facility to open zip files. However, one or two of the
 
 ## 2 Getting Crag Source Code
 
-First, you need to get the crag source code using Git. Follow the instructions [here](http://code.google.com/p/crag/source/checkout). 
+First, you need to get the crag source code from [GitHub](https://github.com/johnmcfarlane/crag).
 
 ## 3 Dependencies
 
