@@ -11,8 +11,10 @@ NaCL is work in progress and currently crashes consistently.
 
 1. Run NaCL setup script
 
-   `cd crag`
-   `nacl/setup.sh`
+   ```
+   cd crag
+   nacl/setup.sh
+   ```
 
 2. Run:
 
