@@ -36,7 +36,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
    `make`
 
-   (You can speed up compilation on multicore systems using the `[jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html)` option.)
+   (You can speed up compilation on multicore systems using the [jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html) option.)
 
 3. Run:
 
