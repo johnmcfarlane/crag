@@ -57,3 +57,8 @@ To try it out:
 3. Select "Open Project" and direct CLion to the crag directory.
 
 4. Go to run configuration dialog (Run -> Edit Configuration) and set Working Directory to the crag folder.
+
+### Troubleshooting
+
+If you receive a build message complaining that a file "has been modified since the precompiled header 'pch.h.gch/.c++' was built", 
+you will need to select the Clean option from the Run menu.
