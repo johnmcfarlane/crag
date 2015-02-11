@@ -37,6 +37,6 @@ AnimatThruster::~AnimatThruster()
 	tick_roster.RemoveCommand(* this, & AnimatThruster::TickThrustFactor);
 }
 
-void AnimatThruster::TickThrustFactor()
+void AnimatThruster::TickThrustFactor(AnimatThruster *)
 {
 }

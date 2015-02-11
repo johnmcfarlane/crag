@@ -45,9 +45,9 @@ HoverThruster::~HoverThruster()
 	tick_roster.RemoveCommand(* this, & HoverThruster::TickThrustDirection);
 }
 
-void HoverThruster::TickThrustDirection()
+void HoverThruster::TickThrustDirection(HoverThruster * thruster)
 {
-	auto location = GetEntity().GetLocation();
+	auto location = thruster->GetEntity().GetLocation();
 	if (! location)
 	{
 		DEBUG_BREAK("missing location");
@@ -61,10 +61,10 @@ void HoverThruster::TickThrustDirection()
 		return;
 	}
 	
-	auto up_thrust = up * _magnitude;
+	auto up_thrust = up * thruster->_magnitude;
 	auto transformation = body.GetTransformation();
 	
-	auto new_ray = GetRay();
+	auto new_ray = thruster->GetRay();
 	new_ray.direction = geom::Inverse(transformation).Rotate(up_thrust);
-	SetRay(new_ray);
+	thruster->SetRay(new_ray);
 }

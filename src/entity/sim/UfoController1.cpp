@@ -82,12 +82,12 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController1, self)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void UfoController1::Tick()
+void UfoController1::Tick(UfoController1 * controller)
 {
-	Vector2 pointer_delta = HandleEvents();
+	Vector2 pointer_delta = controller->HandleEvents();
 
-	ApplyThrust(pointer_delta);
-	ApplyTilt(pointer_delta);
+	controller->ApplyThrust(pointer_delta);
+	controller->ApplyTilt(pointer_delta);
 }
 
 void UfoController1::ApplyThrust(Vector2 pointer_delta)

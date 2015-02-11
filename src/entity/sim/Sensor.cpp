@@ -123,9 +123,9 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
 	CRAG_VERIFY_UNIT(self._local_ray.direction, .0001f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Sensor::Tick()
+void Sensor::Tick(Sensor * sensor)
 {
-	GenerateScanRay();
+	sensor->GenerateScanRay();
 }
 
 Ray3 Sensor::GetGlobalRay() const
@@ -152,7 +152,7 @@ void Sensor::GenerateScanRay() const
 	_ray_cast->SetRay(scan_ray);
 }
 
-core::locality::Roster & Sensor::GetTickRoster()
+crag::core::Roster & Sensor::GetTickRoster()
 {
 	return _entity.GetEngine().GetTickRoster();
 }

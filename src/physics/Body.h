@@ -87,7 +87,7 @@ namespace physics
 		void SetGeomTransformation(Transformation const & transformation);
 
 	private:
-		void Tick();
+		static void Tick(Body *);
 
 	protected:
 		Engine & _engine;

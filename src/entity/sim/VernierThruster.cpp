@@ -38,11 +38,11 @@ VernierThruster::VernierThruster(Entity & entity, Ray3 const & ray)
 	CRAG_VERIFY(* this);
 }
 
-void VernierThruster::Tick()
+void VernierThruster::Tick(VernierThruster * thruster)
 {
-	CRAG_VERIFY(* this);
+	CRAG_VERIFY(* thruster);
 
-	auto location = GetEntity().GetLocation();
+	auto location = thruster->GetEntity().GetLocation();
 	if (! location)
 	{
 		DEBUG_BREAK("thruster attached to eneity with no location");
@@ -51,7 +51,7 @@ void VernierThruster::Tick()
 
 	auto & body = core::StaticCast<physics::Body>(* location);
 
-	auto const & local_ray = GetRay();
+	auto const & local_ray = thruster->GetRay();
 	auto global_ray = body.GetTransformation().Transform(local_ray);
 	global_ray.direction /= - geom::Length(global_ray.direction);
 	
@@ -59,7 +59,7 @@ void VernierThruster::Tick()
 	
 	thrust_factor += [&] ()
 	{
-		auto const & result = _ray_cast->GetResult();
+		auto const & result = thruster->_ray_cast->GetResult();
 		if (! result)
 		{
 			// ray cast isn't colliding with anything
@@ -73,11 +73,11 @@ void VernierThruster::Tick()
 		
 		return cusion;
 	} ();
-	
-	SetThrustFactor(thrust_factor);
+
+	thruster->SetThrustFactor(thrust_factor);
 	
 	// update ray cast
-	_ray_cast->SetRay(global_ray);
+	thruster->_ray_cast->SetRay(global_ray);
 	
-	Thruster::Tick();
+	Thruster::Tick(thruster);
 }

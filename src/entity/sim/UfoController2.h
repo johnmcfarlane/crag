@@ -36,7 +36,7 @@ namespace sim
 	private:
 		void operator() (gfx::SetCameraEvent const & event);
 
-		void Tick();
+		static void Tick(UfoController2 *);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data

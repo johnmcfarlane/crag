@@ -134,7 +134,7 @@ void UfoController2::operator() (gfx::SetCameraEvent const & event)
 	_pov.GetFrustum().fov = event.fov;
 }
 
-void UfoController2::Tick()
+void UfoController2::Tick(UfoController2 * controller)
 {
 	geom::Vector2i pixel_position;
 	auto mouse_state = SDL_GetMouseState(& pixel_position.x, & pixel_position.y);
@@ -143,7 +143,7 @@ void UfoController2::Tick()
 		return;
 	}
 	
-	auto const & location = GetEntity().GetLocation();
+	auto const & location = controller->GetEntity().GetLocation();
 	if (! location)
 	{
 		return;
@@ -165,10 +165,10 @@ void UfoController2::Tick()
 	auto const & horizontal_plane = Plane3(translation, up);
 
 	// target position
-	Vector3 target_position = GetTargetPosition(_pov, pixel_position, horizontal_plane);
+	Vector3 target_position = GetTargetPosition(controller->_pov, pixel_position, horizontal_plane);
 	
 	// force
-	auto const & force = GetForce(target_position, horizontal_plane, _thrust);
+	auto const & force = GetForce(target_position, horizontal_plane, controller->_thrust);
 	
 	// point at top of UFO
 	auto const & ufo_up = gfx::GetAxis(rotation, gfx::Direction::forward);

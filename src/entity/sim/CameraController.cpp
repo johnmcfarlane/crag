@@ -129,14 +129,14 @@ CameraController::~CameraController()
 	delete & _ray_cast;
 }
 
-void CameraController::Tick()
+void CameraController::Tick(CameraController * controller)
 {
-	if (! _subject)
+	if (! controller->_subject)
 	{
 		DEBUG_BREAK("camera has no subject");
 		return;
 	}
-	auto const & subject = * _subject;
+	auto const & subject = * controller->_subject;
 	
 	auto subject_location = subject.GetLocation();
 	if (! subject_location)
@@ -145,7 +145,7 @@ void CameraController::Tick()
 		return;
 	}
 	
-	auto & camera_body = GetBody();
+	auto & camera_body = controller->GetBody();
 	Vector3 up = GetUp(camera_body.GetGravitationalForce());
 	if (up == Vector3::Zero())
 	{
@@ -165,14 +165,14 @@ void CameraController::Tick()
 		return;
 	}
 	
-	auto & engine = GetEntity().GetEngine();
+	auto & engine = controller->GetEntity().GetEngine();
 	const auto & space = engine.GetSpace();
 	auto forward = camera_to_subject / distance;
 
 	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_transformation, space, forward, up);
-	UpdateBody(camera_body, _ray_cast, subject_translation, up);
-	UpdateCameraRayCast();
+	UpdateBody(camera_body, controller->_ray_cast, subject_translation, up);
+	controller->UpdateCameraRayCast();
 }
 
 void CameraController::UpdateCameraRayCast() const

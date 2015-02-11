@@ -280,14 +280,14 @@ TouchObserverController::~TouchObserverController()
 	roster.RemoveCommand(* this, & TouchObserverController::Tick);
 }
 
-void TouchObserverController::Tick()
+void TouchObserverController::Tick(TouchObserverController * controller)
 {
 	// event-based input
-	HandleEvents();
+	controller->HandleEvents();
 
-	UpdateCamera();
-	ClampTransformation();
-	BroadcastTransformation();
+	controller->UpdateCamera();
+	controller->ClampTransformation();
+	controller->BroadcastTransformation();
 }
 
 void TouchObserverController::operator() (gfx::SetSpaceEvent const & event)

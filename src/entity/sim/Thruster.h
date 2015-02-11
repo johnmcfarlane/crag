@@ -50,10 +50,10 @@ namespace sim
 		float GetThrustFactor() const;
 		void SetThrustFactor(float thrust_factor);
 
-		virtual void Tick();
+		static void Tick(Thruster *);
 	private:
 		// adds a puff of smoke
-		void UpdateModel() const;
+		static void UpdateModel(Thruster const *);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

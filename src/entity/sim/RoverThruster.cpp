@@ -38,8 +38,8 @@ RoverThruster::~RoverThruster()
 	tick_roster.RemoveCommand(* this, & RoverThruster::TickThrustFactor);
 }
 
-void RoverThruster::TickThrustFactor()
+void RoverThruster::TickThrustFactor(RoverThruster * thruster)
 {
-	auto activation = _activation_callback();
-	SetThrustFactor(activation);
+	auto activation = thruster->_activation_callback();
+	thruster->SetThrustFactor(activation);
 }

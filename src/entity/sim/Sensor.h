@@ -11,9 +11,9 @@
 
 #include "sim/defs.h"
 
-namespace core
+namespace crag
 {
-	   namespace locality
+	   namespace core
 	   {
 			   class Roster;
 	   }
@@ -45,12 +45,12 @@ namespace sim
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 
-		void Tick();
+		static void Tick(Sensor *);
 	private:
 		Ray3 GetGlobalRay() const;
 		void GenerateScanRay() const;
 
-		core::locality::Roster & GetTickRoster();
+		crag::core::Roster & GetTickRoster();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

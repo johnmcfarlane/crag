@@ -27,7 +27,7 @@ namespace sim
 		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback, bool graphical);
 		~RoverThruster();
 	private:
-		void TickThrustFactor();
+		static void TickThrustFactor(RoverThruster *);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

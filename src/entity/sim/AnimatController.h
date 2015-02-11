@@ -28,7 +28,7 @@ namespace sim
 		AnimatController(Entity & entity, float radius);
 		~AnimatController();
 
-		virtual void Tick() final;
+		static void Tick(AnimatController *);
 
 	private:
 		void CreateSensors(float radius);

@@ -137,33 +137,35 @@ void Thruster::SetThrustFactor(float thrust_factor)
 	CRAG_VERIFY(* this);
 }
 
-void Thruster::Tick()
+void Thruster::Tick(Thruster * thruster)
 {
-	CRAG_VERIFY(* this);
+	CRAG_VERIFY(* thruster);
 
-	if (_thrust_factor <= 0)
+	if (thruster->_thrust_factor <= 0)
 	{
 		return;
 	}
 
-	auto & location = * GetEntity().GetLocation();
+	auto & location = * thruster->GetEntity().GetLocation();
 	auto & body = core::StaticCast<physics::Body>(location);
-	body.AddRelForceAtRelPos(_ray.direction * _thrust_factor, _ray.position);
+	auto & ray = thruster->_ray;
+	body.AddRelForceAtRelPos(ray.direction * thruster->_thrust_factor, ray.position);
 }
 
-void Thruster::UpdateModel() const
+void Thruster::UpdateModel(Thruster const * thruster)
 {
-	CRAG_VERIFY(* this);
+	CRAG_VERIFY(* thruster);
 
-	float thrust_factor = _thrust_factor;
+	float thrust_factor = thruster->_thrust_factor;
 	if (thrust_factor <= 0)
 	{
 		return;
 	}
 
-	if (_model.IsInitialized())
+	auto & model = thruster->_model;
+	if (model.IsInitialized())
 	{
-		_model.Call([thrust_factor] (gfx::Thruster & thruster) 
+		model.Call([thrust_factor] (gfx::Thruster & thruster)
 		{
 			thruster.Update(thrust_factor);
 		});
