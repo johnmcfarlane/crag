@@ -116,6 +116,7 @@ namespace
 
 	void VFPrintF(FILE *, char const * format, va_list args)
 	{
+		vfprintf(stderr, format, args);
 		vfprintf(stdout, format, args);
 	}
 
