@@ -58,7 +58,7 @@ namespace
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-		int flags = SDL_WINDOW_INPUT_GRABBED;
+		int flags = 0;
 
 #if defined(CRAG_GL)
 		flags |= SDL_WINDOW_OPENGL;
