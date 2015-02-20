@@ -2,7 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/android/ode" vcs="hg4idea" />
     <mapping directory="$PROJECT_DIR$/linux/SDL" vcs="hg4idea" />
     <mapping directory="$PROJECT_DIR$/linux/SDL_image" vcs="hg4idea" />
+    <mapping directory="$PROJECT_DIR$/nacl/SDL" vcs="hg4idea" />
+    <mapping directory="$PROJECT_DIR$/nacl/SDL_image" vcs="hg4idea" />
+    <mapping directory="$PROJECT_DIR$/nacl/ode" vcs="hg4idea" />
   </component>
 </project>
