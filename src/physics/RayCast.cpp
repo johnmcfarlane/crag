@@ -130,7 +130,7 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 	CRAG_VERIFY(* this);
 }
 
-void RayCast::ResetResult()
+void RayCast::ResetResult(RayCast * ray_cast)
 {
 #if defined(CRAG_PHYSICS_RAY_CAST_DEBUG)
 	// draw previous ray result
@@ -150,7 +150,7 @@ void RayCast::ResetResult()
 	}
 #endif
 
-	_result = form::RayCastResult();
+	ray_cast->_result = form::RayCastResult();
 }
 
 void RayCast::SetDensity(Scalar)

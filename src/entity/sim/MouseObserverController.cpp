@@ -79,19 +79,19 @@ MouseObserverController::~MouseObserverController()
 	delete & _sensor;
 }
 
-void MouseObserverController::Tick()
+void MouseObserverController::Tick(MouseObserverController * controller)
 {
 	// send last location update to rendered etc.
-	UpdateCamera();
+	controller->UpdateCamera();
 
 	// state-based input
 	ObserverInput input = GetObserverInput();
 
 	// event-based input
-	HandleEvents(input);
+	controller->HandleEvents(input);
 
-	ScaleInput(input);
-	ApplyInput(input);
+	controller->ScaleInput(input);
+	controller->ApplyInput(input);
 }
 
 void MouseObserverController::HandleEvents(ObserverInput & input)

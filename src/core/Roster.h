@@ -9,130 +9,12 @@
 
 #pragma once
 
-namespace core
+#include "Ordering.h"
+
+namespace crag
 {
-	namespace locality
+	namespace core
 	{
-		class Function;
-		bool operator == (Function lhs, Function rhs);
-		bool operator != (Function lhs, Function rhs);
-		bool operator < (Function lhs, Function rhs);
-
-		// the member function to be called for an object;
-		// WARNING: not particularly compliant
-		class Function
-		{
-			////////////////////////////////////////////////////////
-			// types
-
-			// the choice of Function here is entirely arbitrary;
-			// (it's the closest class to hand)
-#if ! defined(WIN32_C2338_WORKAROUND)
-			typedef Function ArbitraryClass;
-#else
-			struct ArbitraryBaseClass1 { virtual ~ArbitraryBaseClass1() { } };
-			struct ArbitraryBaseClass2 { virtual ~ArbitraryBaseClass2() { } };
-			class ArbitraryClass : public ArbitraryBaseClass1, ArbitraryBaseClass2 { };
-#endif
-			typedef void (ArbitraryClass::* ArbitraryMemberFunctionType)();
-
-			struct FunctionPointerBuffer
-			{
-				void * array[2];
-			};
-
-			template <typename MemberFunctionType>
-			union FunctionPointerTransmogrifier
-			{
-				MemberFunctionType member_function;
-				FunctionPointerBuffer buffer;
-			};
-		public:
-			Function();
-			Function(Function const & rhs);
-
-			template <typename CLASS>
-			Function(void (CLASS::* member_function)())
-			{
-				Set<CLASS, decltype(member_function)>(member_function);
-			}
-
-			template <typename CLASS>
-			Function(void (CLASS::* member_function)() const)
-			{
-				Set<CLASS, decltype(member_function)>(member_function);
-			}
-
-			bool operator == (std::nullptr_t) const;
-			bool operator != (std::nullptr_t) const;
-
-			friend bool operator == (Function lhs, Function rhs);
-			friend bool operator != (Function lhs, Function rhs);
-
-			friend bool operator < (Function lhs, Function rhs);
-			void operator() (void * object) const;
-
-			void Dump() const;
-
-		private:
-			template <typename CLASS, typename FUNCTION>
-			void Set(FUNCTION member_function)
-			{
-				static_assert(sizeof(FunctionPointerBuffer) >= sizeof(member_function), "FunctionPointerBuffer isn't big enough to store given function pointer");
-				static_assert(sizeof(ArbitraryMemberFunctionType) >= sizeof(member_function), "ArbitraryMemberFunctionType is not the same size as non-arbitrary equivalent");
-				FunctionPointerTransmogrifier<decltype(member_function)> transmogrifier;
-				transmogrifier.buffer.array[0] = transmogrifier.buffer.array[1] = nullptr;
-				transmogrifier.member_function = member_function;
-				_function = transmogrifier.buffer;
-			}
-
-			template <typename CLASS, void (CLASS::*FUNCTION)()>
-			static void CallMemberFunction(CLASS & object)
-			{
-				(object.*FUNCTION)();
-			}
-
-			FunctionPointerBuffer _function;
-		};
-
-		// remembers the relative order in which a collection of Functions should be 
-		// called; infers orderings; asserts if contradictory orderings are given
-		class Ordering
-		{
-			/////////////////////////////////////////////////////////////////////////////
-			// types
-
-			typedef signed char Comparison;
-			typedef std::vector<Comparison> ComparisonVector;
-
-			// how a function compares against all the others
-			struct FunctionComparisons
-			{
-				ComparisonVector comparisons;
-				Function function;
-			};
-			typedef std::vector<FunctionComparisons> ComparisonTable;
-		public:
-			typedef std::size_t FunctionIndex;
-
-			/////////////////////////////////////////////////////////////////////////////
-			// functions
-
-			// returns true iff this changed
-			bool SetComparison(FunctionIndex lhs, FunctionIndex rhs, Comparison comparison);
-			Comparison GetComparison(FunctionIndex lhs, FunctionIndex rhs) const;
-
-			FunctionIndex GetFunctionIndex(Function function);
-			Function GetFunction(FunctionIndex function_index) const;
-
-			CRAG_VERIFY_INVARIANTS_DECLARE(Ordering);
-
-			void Dump() const;
-		private:
-
-			ComparisonTable _table;
-		};
-
 		// collects together pairs of objects and functions to be called
 		// on those object; accepts ordering constraints based on function
 		// to ensure all pairs with a certain function are called before
@@ -145,14 +27,87 @@ namespace core
 			////////////////////////////////////////////////////////////////////////////////
 			// types
 
-			typedef Ordering::FunctionIndex FunctionIndex;
+			// the function to be called for an object;
+			class Function
+			{
+				////////////////////////////////////////////////////////
+				// types
+
+				using VoidFunctionPointerParameter = void *;
+				using VoidFunctionPointer = void (*) (VoidFunctionPointerParameter);
+
+				template <typename CLASS>
+				using TypedFunctionPointerParameter = CLASS *;
+
+				template <typename CLASS>
+				using TypedFunctionPointer = void (*) (TypedFunctionPointerParameter<CLASS>);
+
+			public:
+				Function() = default;
+				Function(Function const & rhs) = default;
+
+				template <typename CLASS>
+				Function(TypedFunctionPointer<CLASS> typed_function)
+				{
+					Set<CLASS>(typed_function);
+				}
+
+				operator bool () const
+				{
+					return _function_pointer != nullptr;
+				}
+
+				friend bool operator == (Function lhs, Function rhs)
+				{
+					return lhs._function_pointer == rhs._function_pointer;
+				}
+
+				friend bool operator != (Function lhs, Function rhs)
+				{
+					return lhs._function_pointer != rhs._function_pointer;
+				}
+
+				void operator() (void * object) const
+				{
+					// undefined behaviour
+					_function_pointer(object);
+				}
+
+			private:
+				template <typename CLASS>
+				void Set(TypedFunctionPointer<CLASS> typed_function_pointer)
+				{
+					static_assert(
+							sizeof(TypedFunctionPointerParameter<CLASS>) == sizeof(VoidFunctionPointerParameter),
+							"bad assumption about ability to cast between typed and untyped functions");
+					static_assert(
+							sizeof(TypedFunctionPointer<CLASS>) == sizeof(VoidFunctionPointer),
+							"bad assumption about ability to cast between typed and untyped functions");
+
+					_function_pointer = reinterpret_cast<VoidFunctionPointer>(typed_function_pointer);
+				}
+
+				VoidFunctionPointer _function_pointer = nullptr;
+			};
+
+			using Ordering = crag::core::Ordering<Function>;
+			using FunctionIndex = Ordering::Index;
 			struct Command
 			{
 				void * object;
 				FunctionIndex function_index;
 
-				bool operator==(Command rhs) const;
-				bool operator!=(Command rhs) const;
+				bool operator == (Command rhs) const
+				{
+					return object == rhs.object
+							&& function_index == rhs.function_index;
+				}
+
+				bool operator != (Command rhs) const
+				{
+					return object != rhs.object
+							|| function_index != rhs.function_index;
+				}
 				
 				void Dump() const;
 			};

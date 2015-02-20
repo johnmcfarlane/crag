@@ -25,9 +25,9 @@
 
 #include "core/Singleton.h"
 
-namespace core
+namespace crag
 {
-	namespace locality
+	namespace core
 	{
 		class Roster;
 	}
@@ -109,9 +109,9 @@ namespace sim
 		form::Scene const & GetScene() const;
 		
 		bool IsSettled() const;
-		
-		core::locality::Roster & GetTickRoster();
-		core::locality::Roster & GetDrawRoster();
+
+		crag::core::Roster & GetTickRoster();
+		crag::core::Roster & GetDrawRoster();
 
 		// called be Daemon when simulation thread starts
 		void Run(Daemon::MessageQueue & message_queue);
@@ -136,8 +136,8 @@ namespace sim
 		physics::Engine & _physics_engine;
 		form::Scene & _collision_scene;	// for collision
 
-		core::locality::Roster & _tick_roster;	// general simulation tick
-		core::locality::Roster & _draw_roster;	// provides opportunity to communicate graphical changes to renderer
+		crag::core::Roster & _tick_roster;	// general simulation tick
+		crag::core::Roster & _draw_roster;	// provides opportunity to communicate graphical changes to renderer
 	};
 	
 }

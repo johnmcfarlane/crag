@@ -55,8 +55,8 @@ Engine::Engine()
 , _lod_parameters({ Vector3::Zero(), 1.f })
 , _physics_engine(ref(new physics::Engine))
 , _collision_scene(ref(new form::Scene(512, 512)))
-, _tick_roster(ref(new core::locality::Roster))
-, _draw_roster(ref(new core::locality::Roster))
+, _tick_roster(ref(new crag::core::Roster))
+, _draw_roster(ref(new crag::core::Roster))
 {
 }
 
@@ -217,12 +217,12 @@ bool Engine::IsSettled() const
 	return _collision_scene.IsSettled();
 }
 
-core::locality::Roster & Engine::GetTickRoster()
+crag::core::Roster & Engine::GetTickRoster()
 {
 	return _tick_roster;
 }
 
-core::locality::Roster & Engine::GetDrawRoster()
+crag::core::Roster & Engine::GetDrawRoster()
 {
 	return _draw_roster;
 }

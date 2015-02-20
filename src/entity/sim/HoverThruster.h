@@ -26,7 +26,7 @@ namespace sim
 		~HoverThruster();
 
 	private:
-		void TickThrustDirection();
+		static void TickThrustDirection(HoverThruster *);
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

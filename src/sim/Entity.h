@@ -48,7 +48,7 @@ namespace sim
 		~Entity();
 		
 		// general callbacks
-		void Tick();
+		static void Tick(Entity *);
 
 		// controller
 		void SetController(ControllerPtr const & controller);
@@ -63,7 +63,7 @@ namespace sim
 		// graphics
 		gfx::ObjectHandle GetModel() const;
 		void SetModel(gfx::ObjectHandle model);
-		void UpdateModels() const;
+		static void UpdateModels(Entity const *);
 		
 		// Verification
 		CRAG_VERIFY_INVARIANTS_DECLARE(Entity);

@@ -11,9 +11,9 @@
 
 #include "ContactInterface.h"
 
-namespace core
+namespace crag
 {
-	namespace locality
+	namespace core
 	{
 		class Roster;
 	}
@@ -47,8 +47,8 @@ namespace physics
 		Engine();
 		~Engine();
 		
-		core::locality::Roster & GetPreTickRoster();
-		core::locality::Roster & GetPostTickRoster();
+		crag::core::Roster & GetPreTickRoster();
+		crag::core::Roster & GetPostTickRoster();
 
 		dBodyID CreateBody() const;
 		CollisionHandle CreateBox(Vector3 const & dimensions) const;
@@ -90,8 +90,8 @@ namespace physics
 		dContact _contact;	// permanently stores common properties
 
 		// list of objcets called at start/end of tick
-		std::unique_ptr<core::locality::Roster> _pre_tick_roster;
-		std::unique_ptr<core::locality::Roster> _post_tick_roster;
+		std::unique_ptr<crag::core::Roster> _pre_tick_roster;
+		std::unique_ptr<crag::core::Roster> _post_tick_roster;
 	};
 	
 }

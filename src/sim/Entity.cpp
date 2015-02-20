@@ -47,7 +47,7 @@ Entity::~Entity()
 }
 
 // placeholder helps govern the order in which stuff gets called by _tick_roster
-void Entity::Tick()
+void Entity::Tick(Entity *)
 {
 	ASSERT(false);
 }
@@ -98,18 +98,19 @@ void Entity::SetModel(gfx::ObjectHandle model)
 	_model = model;
 }
 
-void Entity::UpdateModels() const
+void Entity::UpdateModels(Entity const * entity)
 {
-	if (_location == nullptr || ! _model.IsInitialized())
+	auto location = entity->_location;
+	if (location == nullptr || ! entity->_model.IsInitialized())
 	{
 		return;
 	}
 	
-	Vector3 translation = _location->GetTranslation();
-	Matrix33 rotation = _location->GetRotation();
+	Vector3 translation = location->GetTranslation();
+	Matrix33 rotation = location->GetRotation();
 	Transformation transformation(translation, rotation);
 
-	_model.Call([transformation] (gfx::Object & node) {
+	entity->_model.Call([transformation] (gfx::Object & node) {
 		node.SetLocalTransformation(transformation);
 	});
 }

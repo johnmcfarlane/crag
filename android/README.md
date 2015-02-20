@@ -42,7 +42,8 @@ The Crag project comes with an Android `setup` script which will attempt to prep
 
 ### System Setup
 
-From the android folder, type `./go debug 4` where 4 is the number of CPUs. 
+From the android folder, type `./go debug N` where `N` is the number of CPUs on your PC. 
+Remember to connect your phone to your PC!
 
 ### Debugging
 

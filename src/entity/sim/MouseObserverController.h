@@ -35,7 +35,7 @@ namespace sim
 		virtual ~MouseObserverController();
 
 	private:		
-		void Tick();
+		static void Tick(MouseObserverController *);
 
 		void HandleEvents(ObserverInput & input);
 		void HandleEvent(ObserverInput & input, SDL_Event const & event);

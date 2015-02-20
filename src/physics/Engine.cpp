@@ -95,8 +95,8 @@ Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, _pre_tick_roster(new core::locality::Roster)
-, _post_tick_roster(new core::locality::Roster)
+, _pre_tick_roster(new crag::core::Roster)
+, _post_tick_roster(new crag::core::Roster)
 {
 	// init ODE error handling
 #if defined(CRAG_DEBUG)
@@ -129,12 +129,12 @@ Engine::~Engine()
 	dCloseODE();
 }
 
-core::locality::Roster & Engine::GetPreTickRoster()
+crag::core::Roster & Engine::GetPreTickRoster()
 {
 	return * _pre_tick_roster;
 }
 
-core::locality::Roster & Engine::GetPostTickRoster()
+crag::core::Roster & Engine::GetPostTickRoster()
 {
 	return * _post_tick_roster;
 }

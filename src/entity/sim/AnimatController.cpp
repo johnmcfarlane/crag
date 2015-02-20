@@ -53,7 +53,7 @@ AnimatController::~AnimatController()
 	}
 }
 
-void AnimatController::Tick()
+void AnimatController::Tick(AnimatController *)
 {
 }
 

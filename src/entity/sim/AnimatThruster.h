@@ -25,7 +25,7 @@ namespace sim
 		AnimatThruster(Entity & entity, Ray3 const & ray);
 		~AnimatThruster();
 	private:
-		void TickThrustFactor();
+		static void TickThrustFactor(AnimatThruster *);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

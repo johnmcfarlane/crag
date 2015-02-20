@@ -11,10 +11,7 @@
 
 #include "Thruster.h"
 
-namespace physics
-{
-	class RayCast;
-}
+#include "physics/RayCast.h"
 
 namespace sim
 {
@@ -27,7 +24,7 @@ namespace sim
 
 		VernierThruster(Entity & entity, Ray3 const & ray);
 
-		void Tick() override;
+		static void Tick(VernierThruster *);
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

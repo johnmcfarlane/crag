@@ -54,7 +54,7 @@ namespace core
 #define CRAG_DEBUG_PARAM(X) X
 
 // DEBUG_COLOR_ macros
-#if defined(CRAG_OS_LINUX) || defined(CRAG_OS_X)
+#if defined(CRAG_ANSI_CONSOLE)
 #define DEBUG_COLOR_FILE "\x1B[32;1m"
 #define DEBUG_COLOR_LINE "\x1B[31;1m"
 #define DEBUG_COLOR_TEXT DEBUG_COLOR_NORM

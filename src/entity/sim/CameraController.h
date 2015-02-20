@@ -34,7 +34,7 @@ namespace sim
 		virtual ~CameraController();
 
 	private:
-		void Tick();
+		static void Tick(CameraController *);
 		void UpdateCameraRayCast() const;
 
 		physics::Body & GetBody();

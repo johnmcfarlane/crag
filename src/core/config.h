@@ -118,3 +118,10 @@
 #if defined(CRAG_PC) || defined(CRAG_WEB)
 #define CRAG_USE_MOUSE	// build target is a keyboard/point device combo
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// ability to change text color on the console
+
+#if defined(CRAG_OS_LINUX) || defined(CRAG_OS_X)
+#define CRAG_ANSI_CONSOLE
+#endif

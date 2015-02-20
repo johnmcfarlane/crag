@@ -38,7 +38,7 @@ namespace physics
 		void SampleResult(form::RayCastResult const & result);
 
 	private:
-		void ResetResult();
+		static void ResetResult(RayCast *);
 		
 		void SetDensity(Scalar density) override final;
 

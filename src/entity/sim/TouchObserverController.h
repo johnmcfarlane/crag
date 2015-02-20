@@ -56,7 +56,7 @@ namespace sim
 		virtual ~TouchObserverController();
 
 	private:
-		void Tick();
+		static void Tick(TouchObserverController *);
 
 		void operator() (gfx::SetSpaceEvent const & event) final;
 

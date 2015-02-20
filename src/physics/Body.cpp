@@ -504,12 +504,12 @@ void physics::Body::SetGeomTransformation(Transformation const & transformation)
 	SetGeomRotation(transformation.GetRotation());
 }
 
-void physics::Body::Tick()
+void Body::Tick(Body * body)
 {
-	SetTransformation(GetGeomTransformation());
+	body->SetTransformation(body->GetGeomTransformation());
 	
-	if (_body_handle)
+	if (body->_body_handle)
 	{
-		AddForce(_gravitational_force);
+		body->AddForce(body->_gravitational_force);
 	}
 }

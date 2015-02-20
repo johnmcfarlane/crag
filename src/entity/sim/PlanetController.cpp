@@ -90,11 +90,11 @@ form::Formation const & PlanetController::GetFormation() const
 	return * _formation;
 }
 
-void PlanetController::Tick()
+void PlanetController::Tick(PlanetController * controller)
 {
-	auto radius_range = geom::Cast<gfx::Scalar>(_formation->GetRadiusRange());
+	auto radius_range = geom::Cast<gfx::Scalar>(controller->_formation->GetRadiusRange());
 
-	auto & entity = GetEntity();
+	auto & entity = controller->GetEntity();
 	auto const & location = entity.GetLocation();
 	auto & body = core::StaticCast<physics::Body const>(* location);
 	auto & planetary_body = static_cast<physics::PlanetBody const &>(body);

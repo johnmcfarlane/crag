@@ -43,7 +43,7 @@ namespace sim
 		form::Formation const & GetFormation() const;
 
 	private:
-		void Tick();
+		static void Tick(PlanetController *);
 		
 		// variables
 		FormationPtr _formation;	// physics

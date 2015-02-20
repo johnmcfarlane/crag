@@ -34,7 +34,7 @@ namespace sim
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController1);
 
 	private:
-		void Tick();
+		static void Tick(UfoController1 *);
 
 		void ApplyThrust(Vector2 pointer_delta);
 		bool ShouldThrust(bool is_rotating) const;
