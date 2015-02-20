@@ -7,15 +7,30 @@ It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but shou
 
 NaCL is work in progress and currently crashes consistently.
 
-## Setup and Install
+## Setup
 
-1. Run NaCL setup script
+Run NaCL setup script:
 
-   ```
-   cd crag
-   nacl/setup.sh
-   ```
+`crag/nacl/setup.sh`
 
-2. Run:
+## Run
 
-   `./run.sh`
+Run the `run.sh` script which launches a browser and web server:
+
+`./run.sh`
+
+## Debug
+
+After turning on the appropriate debugging flags in Makefile and launching Chrome with the correct flags
+as detailed [here](https://developer.chrome.com/native-client/devguide/devcycle/debugging),
+launch the debugger:
+
+`crag/nacl/script/gdb.sh`
+
+From in the debugger:
+
+`target remote localhost:4014`
+
+## Clean using make
+
+`make clean CONFIG=Release SDK_NAME=pepper_40`
