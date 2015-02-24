@@ -53,19 +53,15 @@ Engine::Engine()
 , _time(0)
 , _camera(Ray3::Zero())
 , _lod_parameters({ Vector3::Zero(), 1.f })
-, _physics_engine(ref(new physics::Engine))
-, _collision_scene(ref(new form::Scene(512, 512)))
-, _tick_roster(ref(new crag::core::Roster))
-, _draw_roster(ref(new crag::core::Roster))
+, _physics_engine(new physics::Engine)
+, _collision_scene(new form::Scene(128, 128))
+, _tick_roster(new crag::core::Roster)
+, _draw_roster(new crag::core::Roster)
 {
 }
 
 Engine::~Engine()
 {
-	delete & _draw_roster;
-	delete & _tick_roster;
-	delete & _collision_scene;
-	delete & _physics_engine;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
@@ -96,12 +92,12 @@ void Engine::OnAddObject(ObjectSharedPtr const &)
 
 void Engine::AddFormation(form::Formation& formation)
 {
-	_collision_scene.AddFormation(formation, GetSpace());
+	_collision_scene->AddFormation(formation, GetSpace());
 }
 
 void Engine::RemoveFormation(form::Formation& formation)
 {
-	_collision_scene.RemoveFormation(formation);
+	_collision_scene->RemoveFormation(formation);
 }
 
 void Engine::operator() (gfx::SetCameraEvent const & event)
@@ -135,7 +131,7 @@ void Engine::operator() (gfx::SetSpaceEvent const & event)
 	UpdateRenderer();
 
 	// local collision formation scene
-	_collision_scene.OnSpaceReset(event.space);
+	_collision_scene->OnSpaceReset(event.space);
 	
 	// camera
 	_camera = geom::Convert(_camera, _space, event.space);
@@ -184,7 +180,7 @@ void Engine::OnToggleGravity()
 
 void Engine::OnToggleCollision()
 {
-	_physics_engine.ToggleCollisions();
+	_physics_engine->ToggleCollisions();
 }
 
 core::Time Engine::GetTime() const
@@ -194,17 +190,17 @@ core::Time Engine::GetTime() const
 
 physics::Engine & Engine::GetPhysicsEngine()
 {
-	return _physics_engine;
+	return * _physics_engine;
 }
 
 form::Scene & Engine::GetScene()
 {
-	return _collision_scene;
+	return * _collision_scene;
 }
 
 form::Scene const & Engine::GetScene() const
 {
-	return _collision_scene;
+	return * _collision_scene;
 }
 
 bool Engine::IsSettled() const
@@ -214,17 +210,17 @@ bool Engine::IsSettled() const
 		return true;
 	}
 	
-	return _collision_scene.IsSettled();
+	return _collision_scene->IsSettled();
 }
 
 crag::core::Roster & Engine::GetTickRoster()
 {
-	return _tick_roster;
+	return * _tick_roster;
 }
 
 crag::core::Roster & Engine::GetDrawRoster()
 {
-	return _draw_roster;
+	return * _draw_roster;
 }
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
@@ -274,7 +270,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 void Engine::Tick()
 {
-	if (_collision_scene.Tick(_lod_parameters))
+	if (_collision_scene->Tick(_lod_parameters))
 		STAT_SET(form_changed_sim, true);
 	else
 		STAT_SET(form_changed_sim, false);
@@ -282,7 +278,7 @@ void Engine::Tick()
 	_time += sim_tick_duration;
 	
 	// tick everything
-	_tick_roster.Call();
+	_tick_roster->Call();
 
 	// Perform the Entity-specific simulation.
 	PurgeEntities();
@@ -293,7 +289,7 @@ void Engine::Tick()
 	}
 
 	// Run physics/collisions.
-	_physics_engine.Tick(sim_tick_duration);
+	_physics_engine->Tick(sim_tick_duration);
 
 	// Tell renderer about changes.
 	UpdateRenderer();
@@ -307,7 +303,7 @@ void Engine::UpdateRenderer() const
 		engine.OnSetReady(false);
 	});
 	
-	_draw_roster.Call();
+	_draw_roster->Call();
 
 	auto time = _time;
 	gfx::Daemon::Call([time] (gfx::Engine & engine) {

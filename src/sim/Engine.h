@@ -133,11 +133,11 @@ namespace sim
 		Ray3 _camera;
 		geom::Space _space;
 		gfx::LodParameters _lod_parameters;
-		physics::Engine & _physics_engine;
-		form::Scene & _collision_scene;	// for collision
+		std::unique_ptr<physics::Engine> _physics_engine;
+		std::unique_ptr<form::Scene> _collision_scene;	// for collision
 
-		crag::core::Roster & _tick_roster;	// general simulation tick
-		crag::core::Roster & _draw_roster;	// provides opportunity to communicate graphical changes to renderer
+		std::unique_ptr<crag::core::Roster> _tick_roster;	// general simulation tick
+		std::unique_ptr<crag::core::Roster> _draw_roster;	// provides opportunity to communicate graphical changes to renderer
 	};
 	
 }
