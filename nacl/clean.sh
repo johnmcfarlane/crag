@@ -3,7 +3,8 @@ set -e
 
 # init
 LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-source "$LOCAL_DIR"/script/init.sh
+cd "$LOCAL_DIR"/script
+source ./init.sh
 
 # delete stuff
 cd "$LOCAL_DIR"

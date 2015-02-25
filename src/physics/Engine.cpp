@@ -34,8 +34,13 @@ namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
-	
+
+#if defined (CRAG_OS_PNACL)
+	// TODO: crashes in ForEachFactInSphere.h
+	CONFIG_DEFINE(collisions, false);
+#else
 	CONFIG_DEFINE(collisions, true);
+#endif
 	CONFIG_DEFINE(contact_surface_friction, 2.f);	// coulomb friction coefficient
 	CONFIG_DEFINE(contact_surface_bounce, .5f);
 	CONFIG_DEFINE(contact_surface_bounce_velocity, .1f);
