@@ -11,9 +11,9 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 1. Install Git and your favorite C++11 compiler:
 
-   `sudo apt-get install git g++`
+   `sudo apt-get install git mercurial g++ cmake automake libode-sp-dev`
 
-   Crag is regularly tested against g++ and Clang. Other packages are installed in step 3.
+   Crag is regularly tested against g++ and Clang.
 
 2. Clone the project:
 
