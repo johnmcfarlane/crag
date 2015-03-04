@@ -5,5 +5,5 @@ set -e
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source script/init.sh
 
-"$SCRIPT_DIR"/run_chrome.sh &
-"$SCRIPT_DIR"/run_server.sh
+# delete stuff
+git clean --force -dX .

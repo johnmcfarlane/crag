@@ -2,7 +2,8 @@
 set -e
 
 # orient
-SCRIPT_DIR="$( dirname "${BASH_SOURCE[0]}" )"/script
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+source script/init.sh
 
 # system packages
 sudo apt-get install libc6:i386 git mercurial automake libtool
@@ -12,4 +13,3 @@ sudo apt-get install libc6:i386 git mercurial automake libtool
 "$SCRIPT_DIR"/setup_ode.sh
 "$SCRIPT_DIR"/setup_sdl.sh
 "$SCRIPT_DIR"/setup_sdl_image.sh
-"$SCRIPT_DIR"/setup_crag.sh

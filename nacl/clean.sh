@@ -2,10 +2,8 @@
 set -e
 
 # init
-LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-cd "$LOCAL_DIR"/script
-source ./init.sh
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+source script/init.sh
 
-# delete stuff
-cd "$LOCAL_DIR"
-git clean --force -dX .
+# remove artifacts
+make clean -j"$NCPUS" CONFIG=Release SDK_NAME=$SDK_NAME

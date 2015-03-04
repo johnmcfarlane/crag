@@ -2,8 +2,8 @@
 set -e
 
 # init
-LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-source "$LOCAL_DIR"/init.sh
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
+source script/init.sh
 
 # download NaCL SDK and unzip to crag/nacl
 DOWNLOAD_DIR="$NACL_DIR"
