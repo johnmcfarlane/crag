@@ -12,7 +12,6 @@
 
 #include "scripts/GameScript.h"
 #include "scripts/MainScript.h"
-#include "scripts/TestScript.h"
 
 #include "form/Engine.h"
 
@@ -63,13 +62,13 @@ namespace
 	CONFIG_DEFINE(full_screen, true);
 #endif
 
-	CONFIG_DEFINE(script_mode, 1);
+	CONFIG_DEFINE(script_mode, 0);
 	
 	bool paused = false;
 	
 	//////////////////////////////////////////////////////////////////////
 	// Local Function Definitions
-	
+
 	// returns false iff the program should quit.
 	void OnKeyPress(SDL_Keysym keysym)
 	{
@@ -329,9 +328,8 @@ namespace
 		
 		// vet script_mode value
 		typedef decltype(& GameScript) ScriptFunction; 
-		std::array<ScriptFunction, 3> scripts = 
+		std::array<ScriptFunction, 2> scripts =
 		{{
-			& TestScript,
 			& GameScript,
 			& MainScript
 		}};

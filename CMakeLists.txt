@@ -290,8 +290,6 @@ set(SOURCE_FILES
     src/scripts/MonitorOrigin.h
     src/scripts/RegulatorScript.cpp
     src/scripts/RegulatorScript.h
-    src/scripts/TestScript.cpp
-    src/scripts/TestScript.h
     src/sim/Controller.cpp
     src/sim/Controller.h
     src/sim/defs.h
