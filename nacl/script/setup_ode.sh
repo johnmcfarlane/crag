@@ -2,8 +2,8 @@
 set -e
 
 # init
-LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-source "$LOCAL_DIR"/init.sh
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
+source script/init.sh
 ODE_DIR="$NACL_DIR"/ode
 
 # get ODE

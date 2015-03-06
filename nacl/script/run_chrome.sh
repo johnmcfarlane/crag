@@ -2,32 +2,34 @@
 set -e
 
 # init
-SCRIPT_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-NACL_DIR="$SCRIPT_DIR"/..
-CHROME_DIR=/opt/google/chrome/
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
+source script/init.sh
 
 # where to put all of Chrome's files
 CHROME_DATA_DIR="$NACL_DIR"/tmp
+CHROME_DIR=/opt/google/chrome/
+
 mkdir -p $CHROME_DATA_DIR
 echo Chrome user files are in $CHROME_DATA_DIR
 
+CRAG_URL=http://localhost:8000
+
 # chrome environment variables
 export NACL_PLUGIN_DEBUG=1
-export NACL_SRPC_DEBUG=[255]
-export NACLVERBOSITY=[255]
+export NACL_SRPC_DEBUG=0
+export NACLVERBOSITY=0
 
-export NACL_EXE_STDERR="$LOCAL_DIR"/stderr.log
-export NACL_EXE_STDOUT="$LOCAL_DIR"/stdout.log
-export NACLLOG="$LOCAL_DIR"/nacl.log
+export NACL_EXE_STDERR="$NACL_DIR"/stderr.log
+rm -f "$NACL_EXE_STDERR"
+
+export NACL_EXE_STDOUT="$NACL_DIR"/stdout.log
+rm -f "$NACL_EXE_STDOUT"
+
+#export NACLLOG="$NACL_DIR"/nacl.log
+rm -f "$NACLLOG"
 
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH":"$CHROME_DIR"
 
-rm -f "$NACL_EXE_STDERR"
-rm -f "$NACL_EXE_STDOUT"
-rm -f "$NACLLOG"
-
 # launch chrome directly
-"$CHROME_DIR"/chrome --user-data-dir="$CHROME_DATA_DIR" http://localhost:8000/
-#"$CHROME_DIR"/chrome --user-data-dir="$CHROME_DATA_DIR" http://localhost:8000/
-#"$CHROME_DIR"/chrome --user-data-dir="$CHROME_DATA_DIR" --test-type --no-sandbox --args --enable-logging --vmodule=ppb*=4 http://localhost:8000/ --enable-nacl-debug --enable-nacl --disable-hang-monitor
-#"$CHROME_DIR"/chrome --user-data-dir="$CHROME_DATA_DIR" --test-type --no-sandbox --args --enable-logging --vmodule=ppb*=4 http://localhost:5103/
+"$CHROME_DIR"/chrome "$CRAG_URL" --user-data-dir="$CHROME_DATA_DIR" --test-type --no-sandbox --enable-logging=stderr --vmodule=ppb*=4
+#"$CHROME_DIR"/chrome "$CRAG_URL" --user-data-dir="$CHROME_DATA_DIR" --test-type --no-sandbox --enable-logging=stderr --vmodule=ppb*=4 --enable-nacl-debug --enable-nacl --disable-hang-monitor

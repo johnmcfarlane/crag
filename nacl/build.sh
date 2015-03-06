@@ -5,5 +5,6 @@ set -e
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source script/init.sh
 
-"$SCRIPT_DIR"/run_chrome.sh &
-"$SCRIPT_DIR"/run_server.sh
+# build artifacts
+# Debug or Release
+make -j"$NCPUS" CONFIG=$1 SDK_NAME=$SDK_NAME

@@ -2,8 +2,8 @@
 set -e
 
 # init
-LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-source "$LOCAL_DIR"/init.sh
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
+source script/init.sh
 SDL_IMAGE_DIR="$NACL_DIR"/SDL_image
 
 # get SDL_image
@@ -30,3 +30,5 @@ make CONFIG="Release" -j"$NCPUS" || true
 cp "$SDL_IMAGE_DIR"/.libs/libSDL2_image.a "$NACL_DIR"/lib
 cp "$SDL_IMAGE_DIR"/.libs/libSDL2_image.la "$NACL_DIR"/lib
 cp "$SDL_IMAGE_DIR"/SDL_image.h "$NACL_DIR"/include/SDL2
+
+echo "success (honest)"

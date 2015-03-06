@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-LOCAL_DIR="$( dirname "${BASH_SOURCE[0]}" )"
-cd "$LOCAL_DIR"/..
-ls
+# init
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
+source script/init.sh
 
 python -m SimpleHTTPServer 8000
