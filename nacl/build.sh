@@ -6,4 +6,5 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 source script/init.sh
 
 # build artifacts
-make -j"$NCPUS" CONFIG=Release $@ SDK_NAME=$SDK_NAME
+# Debug or Release
+make -j"$NCPUS" CONFIG=$1 SDK_NAME=$SDK_NAME

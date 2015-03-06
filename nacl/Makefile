@@ -30,7 +30,14 @@ LIBS = ode SDL2_image png z SDL2 ppapi_simple SDL2main ppapi_simple nacl_io ppap
 
 FLAGS := $(INCLUDE_FLAGS)
 CPP_WARNING_FLAGS := -Wall
-CXXFLAGS := $(CXXFLAGS) $(FLAGS) -std=gnu++11 -pthread $(CPP_WARNING_FLAGS) -O2 -DNDEBUG
+
+ifeq ($(CONFIG),Release)
+CONFIG_FLAGS = -O2 -DNDEBUG
+else
+CONFIG_FLAGS = -O0 -g
+endif
+
+CXXFLAGS := $(CXXFLAGS) $(FLAGS) -std=gnu++11 -pthread $(CPP_WARNING_FLAGS) $(CONFIG_FLAGS)
 
 SOURCES := \
 	$(CRAG_SRC_DIR)/sim/EntityFunctions.cpp \
@@ -182,11 +189,7 @@ endef
 
 $(foreach src,$(SOURCES),$(eval $(call COMPILE_RULE,$(src),$(CXXFLAGS))))
 
-ifeq ($(CONFIG),Release)
 $(eval $(call LINK_RULE,$(TARGET)_unstripped,$(SOURCES),$(LIBS)))
 $(eval $(call STRIP_RULE,$(TARGET),$(TARGET)_unstripped))
-else
-$(eval $(call LINK_RULE,$(TARGET),$(SOURCES),$(LIBS)))
-endif
 
 $(eval $(call NMF_RULE,$(TARGET),))
