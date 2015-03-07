@@ -11,9 +11,9 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 1. Install Git and your favorite C++11 compiler:
 
-   `sudo apt-get install git g++`
+   `sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev`
 
-   Crag is regularly tested against g++ and Clang. Other packages are installed in step 3.
+   Crag is regularly tested against g++ and Clang.
 
 2. Clone the project:
 
@@ -22,8 +22,8 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 3. Run the setup script which installs Debian packages and other dependencies:
 
    ```
-   cd crag
-   linux/setup.sh
+   cd crag/linux
+   ./setup.sh
    ```
 
 ## Build and Run
@@ -54,9 +54,9 @@ To try it out:
 
 2. Download, extract and launch the latest [Early Access Program (EAP)](https://confluence.jetbrains.com/display/CLION/Early+Access+Program) build.
 
-3. Select "Open Project" and direct CLion to the crag directory.
+3. Select "Open Project" and direct CLion to the `crag/linux` directory.
 
-4. Go to run configuration dialog (Run -> Edit Configuration) and set Working Directory to the crag folder.
+4. Go to run configuration dialog (Run -> Edit Configuration) and set Working Directory to the `crag/linux` folder.
 
 ### Troubleshooting
 

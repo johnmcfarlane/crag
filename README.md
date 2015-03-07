@@ -14,14 +14,14 @@ It is written mostly in C++ and is designed to be as portable as possible, using
 
 ## Download
 
-Infrequently build binaries are available for:
+Infrequently built binaries are available for:
 
 - [Android](https://drive.google.com/file/d/0BzcKPEavdc2NdUlfNTdmeTUwLTQ/edit?usp=sharing) (works on most devices).
 - [Windows](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)
 
 ## Clone
 
-The project is currently hosted on [GitHub](https://github.com/johnmcfarlane).
+The project is currently hosted on [GitHub](https://github.com/johnmcfarlane/crag).
 
 ```git clone https://github.com/johnmcfarlane/crag.git```
 
