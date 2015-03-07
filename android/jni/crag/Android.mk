@@ -115,7 +115,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/scripts/MainScript.cpp \
 	$(CRAG_PATH)/scripts/MonitorOrigin.cpp \
 	$(CRAG_PATH)/scripts/RegulatorScript.cpp \
-	$(CRAG_PATH)/scripts/TestScript.cpp \
 	$(CRAG_PATH)/sim/Controller.cpp \
 	$(CRAG_PATH)/sim/Engine.cpp \
 	$(CRAG_PATH)/sim/Entity.cpp \
