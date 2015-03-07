@@ -182,6 +182,23 @@ namespace
 			}
 		}
 	}
+
+	void RandomlyStutter(AppletInterface & applet_interface)
+	{
+		bool suspend = Random::sequence.GetBool();
+		DEBUG_MESSAGE("suspend=%d", int(suspend));
+		gfx::Daemon::Call([suspend](gfx::Engine &engine)
+		{
+			engine.SetIsSuspended(suspend);
+		});
+
+		if (Random::sequence.GetBool())
+		{
+			float sleep = Squared(Random::sequence.GetUnit());
+			DEBUG_MESSAGE("sleep=%f", sleep);
+			applet_interface.Sleep(sleep);
+		}
+	};
 }
 
 // main entry point
@@ -259,29 +276,14 @@ void GameScript(AppletInterface & applet_interface)
 	}
 
 	// main loop
-	while (! applet_interface.GetQuitFlag())
+	while (applet_interface.Sleep(0))
 	{
+		HandleEvents(event_watcher, applet_interface);
+
 		if (test_suspend_resume)
 		{
-			bool suspend = Random::sequence.GetBool();
-			DEBUG_MESSAGE("suspend=%d", int(suspend));
-			gfx::Daemon::Call([suspend](gfx::Engine & engine) {
-				engine.SetIsSuspended(suspend);
-			});
-
-			if (Random::sequence.GetBool())
-			{
-				float sleep = Squared(Random::sequence.GetUnit());
-				DEBUG_MESSAGE("sleep=%f", sleep);
-				applet_interface.Sleep(sleep);
-			}
+			RandomlyStutter(applet_interface);
 		}
-		else
-		{
-			applet_interface.Sleep(0);
-		}
-
-		HandleEvents(event_watcher, applet_interface);
 	}
 	
 	while (! _shapes.empty())
