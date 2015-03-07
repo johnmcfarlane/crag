@@ -177,7 +177,7 @@ void MainScript(AppletInterface & applet_interface)
 	SpawnAnimats(rel_animat_start_pos);
 
 	// main loop
-	while (! applet_interface.Sleep(0))
+	while (applet_interface.Sleep(0))
 	{
 		HandleEvents();
 	}
