@@ -61,7 +61,6 @@ namespace
 	Random random_sequence;
 	sim::EntityHandle _player;
 	EntityVector _shapes;
-	bool _enable_dynamic_origin = true;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
@@ -155,20 +154,6 @@ namespace
 					break;
 				}
 
-				case SDL_SCANCODE_I:
-					if ((event.key.keysym.mod & KMOD_CTRL) == 0)
-					{
-						break;
-					}
-				
-					if ((event.key.keysym.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL)) != 0)
-					{
-						break;
-					}
-				
-					_enable_dynamic_origin = ! _enable_dynamic_origin;
-					break;
-				
 				case SDL_SCANCODE_COMMA:
 					SpawnShapes(0, applet_interface);
 					break;
