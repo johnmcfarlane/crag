@@ -2,7 +2,7 @@
 set -o errexit
 
 # cd crag/linux
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )"/..
 
 ################################################################################
 # SDL_image
