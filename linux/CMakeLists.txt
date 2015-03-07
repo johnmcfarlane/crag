@@ -292,8 +292,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/scripts/MonitorOrigin.h
     ${CRAG_SOURCE_DIRECTORY}/scripts/RegulatorScript.cpp
     ${CRAG_SOURCE_DIRECTORY}/scripts/RegulatorScript.h
-    ${CRAG_SOURCE_DIRECTORY}/scripts/TestScript.cpp
-    ${CRAG_SOURCE_DIRECTORY}/scripts/TestScript.h
     ${CRAG_SOURCE_DIRECTORY}/sim/Controller.cpp
     ${CRAG_SOURCE_DIRECTORY}/sim/Controller.h
     ${CRAG_SOURCE_DIRECTORY}/sim/defs.h
