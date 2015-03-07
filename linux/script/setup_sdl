@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# cd crag/linux
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
 ################################################################################
 # SDL
 
