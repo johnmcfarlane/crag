@@ -62,6 +62,24 @@
 #define UNREACHABLE() __assume(false)
 #endif
 
+namespace crag
+{
+	namespace core
+	{
+		//////////////////////////////////////////////////////////////////////
+		// element_type - given a container of Ts, yields T
+
+		template <typename CONTAINER>
+		using element_type = typename std::remove_reference<decltype(*std::begin(* static_cast<CONTAINER*>(nullptr)))>::type;
+
+		// element_type tests
+		static_assert(std::is_same<char, element_type<char[3]>>::value, "element_type test failed");
+		static_assert(std::is_same<double, element_type<std::list<double>>>::value, "element_type test failed");
+		static_assert(std::is_same<int, element_type<std::vector<int>>>::value, "element_type test failed");
+		static_assert(std::is_same<std::shared_ptr<std::string>, element_type<std::vector<std::shared_ptr<std::string>>>>::value, "element_type test failed");
+	}
+}
+
 namespace core
 {
 	////////////////////////////////////////////////////////////////////////////////
