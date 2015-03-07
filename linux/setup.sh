@@ -4,7 +4,7 @@ set -e
 # cd crag/linux
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-ln -s ../assets .
+ln -sf ../assets .
 
 ################################################################################
 # SDL
