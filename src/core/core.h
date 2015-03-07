@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 //////////////////////////////////////////////////////////////////////
 // OBJECT_NO_COPY
 // 
@@ -166,7 +165,7 @@ namespace core
 	//	auto t = make_transform(in, f);
 	//	assert((t == std::vector<int>{{ 1, 4, 9 }}));
 
-	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(typename SrcSequence::value_type)>::type>
+	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(crag::core::element_type<SrcSequence>)>::type>
 	std::vector<DstElement> make_transform(SrcSequence const & source, Fn unary_function)
 	{
 		std::vector<DstElement> destination;
