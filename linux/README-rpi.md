@@ -28,8 +28,8 @@ This file details how to build and run [Crag](https://github.com/johnmcfarlane/c
 4. Run the setup script which installs Debian packages and other dependencies:
 
    ```
-   cd crag
-   linux/setup.sh --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
+   cd crag/linux
+   ./setup.sh --host=arm-raspberry-linux-gnueabihf --target=arm-raspberry-linux-gnueabihf --disable-video-x11
    ```
 
 ## Build and Run
@@ -41,6 +41,8 @@ This file details how to build and run [Crag](https://github.com/johnmcfarlane/c
 2. Compile and link the program:
 
    `make`
+
+   (You can speed up compilation on multicore systems using the [jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html) option.)
 
 3. Run:
 

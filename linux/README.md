@@ -22,8 +22,8 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 3. Run the setup script which installs Debian packages and other dependencies:
 
    ```
-   cd crag
-   linux/setup.sh
+   cd crag/linux
+   ./setup.sh
    ```
 
 ## Build and Run
