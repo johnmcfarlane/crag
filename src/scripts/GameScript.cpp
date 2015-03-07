@@ -297,4 +297,7 @@ void GameScript(AppletInterface & applet_interface)
 	
 	// remove skybox
 	skybox.Release();
+
+	// when this function quits, the program must quit
+	ASSERT(applet_interface.GetQuitFlag());
 }

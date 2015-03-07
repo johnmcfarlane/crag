@@ -198,4 +198,7 @@ void MainScript(AppletInterface & applet_interface)
 			return true;
 		});
 	});
+
+	// when this function quits, the program must quit
+	ASSERT(applet_interface.GetQuitFlag());
 }
