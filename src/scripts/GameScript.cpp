@@ -183,7 +183,7 @@ namespace
 			DEBUG_MESSAGE("sleep=%f", sleep);
 			applet_interface.Sleep(sleep);
 		}
-	};
+	}
 }
 
 // main entry point

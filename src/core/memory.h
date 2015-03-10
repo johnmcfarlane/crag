@@ -81,7 +81,7 @@ void FreePage(void * allocation, size_t num_bytes);
 	void* operator new(size_t sz) noexcept; \
 	void* operator new [](size_t sz) noexcept; \
 	void operator delete(void* p) noexcept; \
-	void operator delete [](void* p) noexcept;
+	void operator delete [](void* p) noexcept
 
 // regular, do-nothing implementation;
 // placed with class member definitions

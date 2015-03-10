@@ -22,7 +22,7 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-DEFINE_POOL_ALLOCATOR(Planet);
+DEFINE_POOL_ALLOCATOR(Planet)
 
 Planet::Planet(Engine & engine, Transformation const & local_transformation, Scalar radius)
 : Object(engine, local_transformation, Layer::opaque)

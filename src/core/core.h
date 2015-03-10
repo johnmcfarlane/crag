@@ -17,7 +17,7 @@
 
 #define OBJECT_NO_COPY(CLASS) \
 	CLASS & operator=(const CLASS&) = delete; \
-	CLASS(const CLASS&) = delete;
+	CLASS(const CLASS&) = delete
 
 
 //////////////////////////////////////////////////////////////////////

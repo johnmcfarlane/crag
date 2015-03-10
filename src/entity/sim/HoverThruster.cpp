@@ -24,7 +24,7 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // HoverThruster member definitions
 
-DEFINE_DEFAULT_ALLOCATOR(HoverThruster);
+DEFINE_DEFAULT_ALLOCATOR(HoverThruster)
 
 HoverThruster::HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude)
 : Thruster(entity, Ray3(position, Vector3::Zero()), false, 1.f)
