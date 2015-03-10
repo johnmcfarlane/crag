@@ -64,10 +64,6 @@ namespace
 		flags |= SDL_WINDOW_OPENGL;
 #endif
 
-#if defined(CRAG_USE_MOUSE)
-		flags |= SDL_WINDOW_INPUT_GRABBED;
-#endif
-	
 		if (_full_screen)
 		{
 			_resolution.x = _desktop_display_mode.w;

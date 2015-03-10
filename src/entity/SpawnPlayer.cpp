@@ -1006,6 +1006,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(Vector3 const & translation, geom::
 		switch (_player_type)
 		{
 		case PlayerType::observer:
+			// on PC for all other types, SDL_WINDOW_INPUT_GRABBED is advised
 			ConstructObserver(entity, translation);
 			break;
 
