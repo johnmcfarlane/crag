@@ -54,7 +54,7 @@ Engine::Engine()
 , _camera(Ray3::Zero())
 , _lod_parameters({ Vector3::Zero(), 1.f })
 , _physics_engine(new physics::Engine)
-, _collision_scene(new form::Scene(128, 128))
+, _collision_scene(new form::Scene(512, 512))
 , _tick_roster(new crag::core::Roster)
 , _draw_roster(new crag::core::Roster)
 {
