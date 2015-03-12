@@ -63,4 +63,9 @@ namespace physics
 	{ 
 		return reinterpret_cast<Vector3 const &>(v);
 	}
+
+	inline Triangle3 Convert(std::array<dVector3, 3> const & t)
+	{
+		return Triangle3(Convert(t[0]), Convert(t[1]), Convert(t[2]));
+	}
 }
