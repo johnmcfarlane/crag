@@ -107,9 +107,6 @@ namespace
 
 	InputMouseMapping buttons[] = 
 	{
-		{ { ObserverInput::translation, Direction::up, -1 }, 1 },
-		{ { ObserverInput::translation, Direction::up, 1 }, 2 },
-		
 		{ { ObserverInput::size, Direction::size, 0 }, -1 }
 	};
 
