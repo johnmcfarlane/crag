@@ -23,10 +23,15 @@ namespace physics
 		~MeshBody();
 
 	protected:
-		virtual bool OnCollision(Body & that_body, ContactInterface & contact_interface) final;
-		
+		bool OnCollision(Body & that_body, ContactInterface & contact_interface) override;
+
+		void DebugDraw() const override;
+
 		MeshData _mesh_data;
 		Scalar _bounding_radius;
+#if defined(CRAG_DEBUG)
+		int _num_triangles;
+#endif
 	};
 	
 }

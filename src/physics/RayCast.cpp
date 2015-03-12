@@ -12,23 +12,9 @@
 #include "RayCast.h"
 #include "Engine.h"
 
-#include "geom/Matrix33.h"
-
 #include "core/Roster.h"
 
-#include <ode/collision.h>
-
-#if defined(CRAG_DEBUG)
-//#define CRAG_PHYSICS_RAY_CAST_DEBUG
-#endif
-
-#if defined(CRAG_PHYSICS_RAY_CAST_DEBUG)
 #include "gfx/Debug.h"
-
-#if ! defined(CRAG_GFX_DEBUG)
-#error Pointless definition of CRAG_PHYSICS_RAY_CAST_DEBUG
-#endif
-#endif
 
 using namespace physics;
 
@@ -132,7 +118,11 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 
 void RayCast::ResetResult(RayCast * ray_cast)
 {
-#if defined(CRAG_PHYSICS_RAY_CAST_DEBUG)
+	ray_cast->_result = form::RayCastResult();
+}
+
+void RayCast::DebugDraw() const
+{
 	// draw previous ray result
 	auto scan_ray = GetRay();
 	auto start = scan_ray.position;
@@ -148,9 +138,6 @@ void RayCast::ResetResult(RayCast * ray_cast)
 	{
 		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
 	}
-#endif
-
-	ray_cast->_result = form::RayCastResult();
 }
 
 void RayCast::SetDensity(Scalar)

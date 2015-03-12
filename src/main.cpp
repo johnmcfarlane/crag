@@ -40,6 +40,7 @@
 
 CONFIG_DEFINE(profile_mode, false);
 CONFIG_DECLARE (shadows_enabled, bool);
+CONFIG_DECLARE (physics_debug_draw, bool);
 
 namespace 
 {
@@ -140,7 +141,15 @@ namespace
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleMeshGeneration(); });
 						break;
-						
+
+#if defined(CRAG_DEBUG)
+					case SDL_SCANCODE_P:
+					{
+						physics_debug_draw = ! physics_debug_draw;
+						break;
+					}
+#endif
+
 					case SDL_SCANCODE_S:
 						shadows_enabled = ! shadows_enabled;
 						break;

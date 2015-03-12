@@ -24,7 +24,7 @@ namespace physics
 	// so a spherical body is used to detect near collision,
 	// then PlanetBody does the work of colliding with the planet's surface.
 	
-	class PlanetBody : public SphereBody
+	class PlanetBody final : public SphereBody
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -34,12 +34,14 @@ namespace physics
 
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
-		Vector3 GetGravitationalAttraction(Vector3 const & pos) const final;
+		Vector3 GetGravitationalAttraction(Vector3 const & pos) const override;
 	private:
 		virtual bool OnCollision(Body & body, ContactInterface & contact_interface);
 
-		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface) final;
-		bool OnCollisionWithRay(Body & body) final;
+		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface) override;
+		bool OnCollisionWithRay(Body & body) override;
+
+		void DebugDraw() const override;
 
 		// variables
 		form::Polyhedron const & _polyhedron;

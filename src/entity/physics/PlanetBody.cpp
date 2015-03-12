@@ -7,6 +7,8 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#include <gfx/Debug.h>
+#include <core/Random.h>
 #include "pch.h"
 
 #include "PlanetBody.h"
@@ -16,6 +18,7 @@
 #include "form/CastRay.h"
 #include "form/ForEachFaceInSphere.h"
 
+#include "gfx/Debug.h"
 #include "gfx/Mesh.h"
 #include "gfx/PlainVertex.h"
 
@@ -245,4 +248,23 @@ bool PlanetBody::OnCollisionWithRay(Body & body)
 
 	ray_cast.SampleResult(ray_cast_result);
 	return true;
+}
+
+void PlanetBody::DebugDraw() const
+{
+	using namespace gfx::Debug;
+
+	auto bounding_sphere = Sphere3(GetTranslation(), GetRadius() * .001f);
+	bounding_sphere.center = Vector3(0.f, 0.f, 0.f);
+
+	Random s;
+
+	auto face_functor = [& s] (form::Triangle3 const & face, form::Vector3 const &)
+	{
+		auto r = [& s] () { return s.GetUnit<float>(); };
+		auto color = Color(r(), r(), r());
+		AddTriangle(face, ColorPair(color, color * .25f));
+	};
+
+	form::ForEachFaceInSphere(_polyhedron, bounding_sphere, face_functor);
 }

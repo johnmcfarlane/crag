@@ -17,6 +17,7 @@
 #include "gfx/PlainVertex.h"
 
 #include <ode/objects.h>
+#include <gfx/Debug.h>
 
 using namespace physics;
 
@@ -37,6 +38,10 @@ MeshBody::MeshBody(Transformation const & transformation, Vector3 const * veloci
 
 	dGeomTriMeshSetData(_collision_handle, _mesh_data);
 	
+#if defined(CRAG_DEBUG)
+	_num_triangles = indices.size();
+#endif
+
 	// set mass
 	if (_body_handle)
 	{
@@ -64,4 +69,22 @@ bool MeshBody::OnCollision(Body & body, ContactInterface & contact_interface)
 	Sphere3 bounding_sphere(GetTranslation(), _bounding_radius);
 	
 	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_interface);
+}
+
+void MeshBody::DebugDraw() const
+{
+#if defined(CRAG_DEBUG)
+	for (auto triangle_index = 0; triangle_index != _num_triangles; ++ triangle_index)
+	{
+		std::array<dVector3, 3> triangle;
+		dGeomTriMeshGetTriangle(
+				GetCollisionHandle(),
+				triangle_index,
+				& triangle[0],
+				& triangle[1],
+				& triangle[2]);
+
+		gfx::Debug::AddTriangle(Convert(triangle));
+	}
+#endif
 }

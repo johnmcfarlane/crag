@@ -18,19 +18,21 @@
 #include "core/Roster.h"
 #include "core/Statistics.h"
 
-#if defined(CRAG_DEBUG)
-//#define DEBUG_CONTACTS
-#endif
-
-#if defined(DEBUG_CONTACTS)
 #include "gfx/Debug.h"
-#endif
 
 #include <ode/ode.h>
 
+#if defined(CRAG_DEBUG)
+#define DEBUG_CONTACTS
+#endif
+
 using namespace physics;
 
-namespace 
+#if defined(CRAG_DEBUG)
+CONFIG_DEFINE(physics_debug_draw, false);
+#endif
+
+namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// config constants
@@ -59,6 +61,19 @@ namespace
 		char buffer[buffer_size];
 		vsnprintf(buffer, buffer_size, msg, ap);
 		DEBUG_BREAK("ODE#%d: %s", errnum, buffer); 
+	}
+#endif
+
+#if defined(CRAG_DEBUG)
+	void DebugRenderSpace(dSpaceID space)
+	{
+		auto num_geoms = dSpaceGetNumGeoms(space);
+		for (auto i = 0; i != num_geoms; ++ i)
+		{
+			auto geom_id = dSpaceGetGeom(space, i);
+			auto & body = * reinterpret_cast<Body const *>(dGeomGetData(geom_id));
+			body.DebugDraw();
+		}
 	}
 #endif
 
@@ -219,6 +234,13 @@ void Engine::Tick(double delta_time)
 	
 	// call objects that want to know that physics has ticked
 	_post_tick_roster->Call();
+
+#if defined(CRAG_DEBUG)
+	if (physics_debug_draw)
+	{
+		DebugRenderSpace(space);
+	}
+#endif
 }
 
 form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const * exception)
