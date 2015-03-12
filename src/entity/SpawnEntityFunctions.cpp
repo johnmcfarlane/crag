@@ -183,13 +183,7 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		}
 
 		// register with the renderer
-#if defined(RENDER_SEA)
-		gfx::Scalar sea_level = _radius_mean;
-#else
-		gfx::Scalar sea_level = 0;
-#endif
-		
-		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center), sea_level);
+		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center));
 		entity.SetModel(model);
 	});
 
