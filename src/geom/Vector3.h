@@ -31,13 +31,6 @@ namespace geom
 		{ 
 		}
 
-		constexpr Vector(Vector<S, 3> const & rhs) 
-		: x(rhs.x)
-		, y(rhs.y)
-		, z(rhs.z)
-		{ 
-		}
-		
 		constexpr Vector(S rhs_x, S rhs_y, S rhs_z) 
 		: x(rhs_x)
 		, y(rhs_y)
