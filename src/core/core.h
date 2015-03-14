@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 //////////////////////////////////////////////////////////////////////
 // OBJECT_NO_COPY
 // 
@@ -18,7 +17,7 @@
 
 #define OBJECT_NO_COPY(CLASS) \
 	CLASS & operator=(const CLASS&) = delete; \
-	CLASS(const CLASS&) = delete;
+	CLASS(const CLASS&) = delete
 
 
 //////////////////////////////////////////////////////////////////////
@@ -61,6 +60,24 @@
 #if defined(CRAG_COMPILER_MSVC)
 #define UNREACHABLE() __assume(false)
 #endif
+
+namespace crag
+{
+	namespace core
+	{
+		//////////////////////////////////////////////////////////////////////
+		// element_type - given a container of Ts, yields T
+
+		template <typename CONTAINER>
+		using element_type = typename std::remove_reference<decltype(*std::begin(* static_cast<CONTAINER*>(nullptr)))>::type;
+
+		// element_type tests
+		static_assert(std::is_same<char, element_type<char[3]>>::value, "element_type test failed");
+		static_assert(std::is_same<double, element_type<std::list<double>>>::value, "element_type test failed");
+		static_assert(std::is_same<int, element_type<std::vector<int>>>::value, "element_type test failed");
+		static_assert(std::is_same<std::shared_ptr<std::string>, element_type<std::vector<std::shared_ptr<std::string>>>>::value, "element_type test failed");
+	}
+}
 
 namespace core
 {
@@ -148,7 +165,7 @@ namespace core
 	//	auto t = make_transform(in, f);
 	//	assert((t == std::vector<int>{{ 1, 4, 9 }}));
 
-	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(typename SrcSequence::value_type)>::type>
+	template <typename SrcSequence, typename Fn, typename DstElement = typename std::result_of<Fn(crag::core::element_type<SrcSequence>)>::type>
 	std::vector<DstElement> make_transform(SrcSequence const & source, Fn unary_function)
 	{
 		std::vector<DstElement> destination;

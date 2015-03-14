@@ -33,6 +33,10 @@
 
 using namespace gfx;
 
+#if defined(CRAG_DEBUG)
+CONFIG_DECLARE(physics_debug_draw, bool);
+#endif
+
 namespace
 {
 	STAT (num_polys, std::size_t, .05f);
@@ -159,6 +163,13 @@ bool Surrounding::GenerateShadowVolume(Light const & light, ShadowVolume & shado
 void Surrounding::Render(Engine const & renderer) const
 {
 	CRAG_VERIFY(* this);
+
+#if defined(CRAG_DEBUG)
+	if (physics_debug_draw)
+	{
+		return;
+	}
+#endif
 
 	auto vbo_resource_handle = GetVboResource();
 	if (! vbo_resource_handle)

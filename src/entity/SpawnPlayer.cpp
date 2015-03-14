@@ -116,11 +116,16 @@ namespace
 	CONFIG_DEFINE(thargoid_inner_radius_ratio, .5f);
 	CONFIG_DEFINE(thargoid_thrust, 9.f);
 
+#if defined(CRAG_USE_MOUSE)
+	CONFIG_DEFINE(player_type, 0);
+#endif
+#if defined(CRAG_USE_TOUCH)
 #if defined(CRAG_GL)
 	CONFIG_DEFINE(player_type, 4);
 #endif
 #if defined(CRAG_GLES)
 	CONFIG_DEFINE(player_type, 3);
+#endif
 #endif
 
 	CONFIG_DEFINE(camera_start_offset, Vector3(-15, 0, 0));
@@ -1006,6 +1011,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(Vector3 const & translation, geom::
 		switch (_player_type)
 		{
 		case PlayerType::observer:
+			// on PC for all other types, SDL_WINDOW_INPUT_GRABBED is advised
 			ConstructObserver(entity, translation);
 			break;
 

@@ -33,7 +33,7 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // sim::PlanetController member definitions
 
-DEFINE_POOL_ALLOCATOR(PlanetController);
+DEFINE_POOL_ALLOCATOR(PlanetController)
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)
@@ -92,19 +92,19 @@ form::Formation const & PlanetController::GetFormation() const
 
 void PlanetController::Tick(PlanetController * controller)
 {
-	auto radius_range = geom::Cast<gfx::Scalar>(controller->_formation->GetRadiusRange());
+	auto max_radius = controller->_formation->GetMaxRadius();
 
 	auto & entity = controller->GetEntity();
 	auto const & location = entity.GetLocation();
 	auto & body = core::StaticCast<physics::Body const>(* location);
 	auto & planetary_body = static_cast<physics::PlanetBody const &>(body);
-	planetary_body.SetRadius(physics::Scalar(radius_range[1]));
+	planetary_body.SetRadius(physics::Scalar(max_radius));
 
 	// update planet params
 	auto model_handle = entity.GetModel();
-	model_handle.Call([radius_range] (gfx::Object & object) {
+	model_handle.Call([max_radius] (gfx::Object & object) {
 		auto & planet = static_cast<gfx::Planet &>(object);
-		planet.SetRadiusMinMax(radius_range[0], radius_range[1]);
+		planet.SetMaxRadius(max_radius);
 	});
 }
 

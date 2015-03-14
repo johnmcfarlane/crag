@@ -53,7 +53,6 @@ namespace
 	// variables
 
 	core::EventWatcher _event_watcher;
-	bool _enable_dynamic_origin = true;
 	std::vector<sim::EntityHandle> animats;
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -128,20 +127,6 @@ namespace
 					break;
 				}
 
-				case SDL_SCANCODE_I:
-					if ((event.key.keysym.mod & KMOD_CTRL) == 0)
-					{
-						break;
-					}
-				
-					if ((event.key.keysym.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL)) != 0)
-					{
-						break;
-					}
-				
-					_enable_dynamic_origin = ! _enable_dynamic_origin;
-					break;
-				
 				default:
 					break;
 			}

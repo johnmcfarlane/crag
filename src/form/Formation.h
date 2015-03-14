@@ -43,14 +43,13 @@ namespace form
 		int GetSeed() const;
 		
 		void SampleRadius(geom::abs::Scalar sample_radius);
-		geom::abs::Vector2 GetRadiusRange() const;		
+		geom::abs::Scalar GetMaxRadius() const;
 
 	private:
 		int _seed;
 		ShaderPtr _shader;
 		geom::abs::Sphere3 _shape;
-		geom::abs::Scalar _radius_min;
-		geom::abs::Scalar _radius_max;
+		geom::abs::Scalar _max_radius;
 	};
 
 }

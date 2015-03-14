@@ -20,9 +20,8 @@ Formation::Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 cons
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
+, _max_radius(_shape.radius)
 {
-	_radius_min = _shape.radius;
-	_radius_max = _shape.radius;
 }
 
 Shader const & Formation::GetShader() const
@@ -42,17 +41,13 @@ int Formation::GetSeed() const
 
 void Formation::SampleRadius(geom::abs::Scalar sample_radius)
 {
-	if (sample_radius < _radius_min)
+	if (sample_radius > _max_radius)
 	{
-		_radius_min = sample_radius;
-	}
-	if (sample_radius > _radius_max)
-	{
-		_radius_max = sample_radius;
+		_max_radius = sample_radius;
 	}
 }
 
-geom::abs::Vector2 Formation::GetRadiusRange() const
+geom::abs::Scalar Formation::GetMaxRadius() const
 {
-	return geom::abs::Vector2(_radius_min, _radius_max);
+	return _max_radius;
 }

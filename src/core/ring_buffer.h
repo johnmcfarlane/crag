@@ -23,9 +23,13 @@ namespace core
 		struct block
 		{
 			block * _next;
-			char _buffer [];	// used to store an object whose base class is BASE_CLASS
-			
-			enum { header_size = sizeof(block *) };
+
+			char * buffer()
+			{
+				return reinterpret_cast<char *>((& _next) + 1);
+			}
+
+			static constexpr std::size_t header_size = sizeof(block *);
 		};
 
 	public:
@@ -42,8 +46,8 @@ namespace core
 			const_iterator(block const * position) : _position(const_cast<block *>(position)) { }
 			
 			// dereference
-			value_type & operator * () { return * reinterpret_cast<value_type *>(_position->_buffer); }
-			value_type * operator -> () { return reinterpret_cast<value_type *>(_position->_buffer); }
+			value_type & operator * () { return * reinterpret_cast<value_type *>(_position->buffer()); }
+			value_type * operator -> () { return reinterpret_cast<value_type *>(_position->buffer()); }
 			
 			// equality
 			friend bool operator==(const_iterator const & lhs, const_iterator const & rhs) { return lhs._position == rhs._position; }
@@ -91,7 +95,7 @@ namespace core
 			CRAG_VERIFY(* this);
 			assert(! empty());
 			
-			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
+			return * reinterpret_cast<value_type *>(_data_begin->buffer());
 		}
 		
 		value_type const & front() const
@@ -99,7 +103,7 @@ namespace core
 			CRAG_VERIFY(* this);
 			assert(! empty());
 			
-			return * reinterpret_cast<value_type *>(_data_begin->_buffer);
+			return * reinterpret_cast<value_type *>(_data_begin->buffer());
 		}
 		
 		const_iterator begin() const
@@ -242,7 +246,7 @@ namespace core
 			_data_end = & block_begin->_next;
 			
 			CRAG_VERIFY(* this);
-			return reinterpret_cast<value_type *>(block_begin->_buffer);
+			return reinterpret_cast<value_type *>(block_begin->buffer());
 		}
 		
 		// Finds the next adequate space of the given given size but doesn't reserve it.

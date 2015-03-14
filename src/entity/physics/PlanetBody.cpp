@@ -16,15 +16,48 @@
 #include "form/CastRay.h"
 #include "form/ForEachFaceInSphere.h"
 
+#include "gfx/Debug.h"
 #include "gfx/Mesh.h"
 #include "gfx/PlainVertex.h"
 
+#include "core/Random.h"
+
+#include "geom/Vector.h"
+
 using namespace physics;
+
+// std::hash<form::Triangle3 const &
+namespace std
+{
+	// for file-local use only; not a general solution:
+	// yields the same value for same combination of components in any order
+	template<>
+	struct hash<form::Triangle3>
+	{
+		typedef form::Triangle3 argument_type;
+		typedef std::size_t result_type;
+
+		result_type operator()(argument_type const & triangle) const
+		{
+			auto h = size_t(0);
+
+			for (auto & point : triangle.points)
+			{
+				for (auto component = ::begin(point); component != ::end(point); ++ component)
+				{
+					h ^= std::hash<Scalar>()(* component);
+				}
+			}
+
+			return h;
+		}
+	};
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
 
-DEFINE_POOL_ALLOCATOR(PlanetBody);
+DEFINE_POOL_ALLOCATOR(PlanetBody)
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)
@@ -245,4 +278,25 @@ bool PlanetBody::OnCollisionWithRay(Body & body)
 
 	ray_cast.SampleResult(ray_cast_result);
 	return true;
+}
+
+void PlanetBody::DebugDraw() const
+{
+	using namespace gfx::Debug;
+
+	auto bounding_sphere = Sphere3(GetTranslation(), GetRadius() * .001f);
+	bounding_sphere.center = Vector3(0.f, 0.f, 0.f);
+
+
+	auto face_functor = [] (form::Triangle3 const & face, form::Vector3 const &)
+	{
+		Random s(std::hash<form::Triangle3>()(face));
+
+		auto r = [& s] () { return s.GetUnit<float>(); };
+		auto color = Color(r(), r(), r());
+
+		AddTriangle(face, ColorPair(color, color * .25f));
+	};
+
+	form::ForEachFaceInSphere(_polyhedron, bounding_sphere, face_functor);
 }

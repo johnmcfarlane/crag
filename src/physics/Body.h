@@ -71,6 +71,8 @@ namespace physics
 		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface);
 		virtual bool OnCollisionWithRay(Body & body);
 
+		virtual void DebugDraw() const;
+
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 		

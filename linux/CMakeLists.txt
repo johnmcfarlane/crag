@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(crag)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -DdSINGLE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -fno-exceptions -fno-unwind-tables")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE -fno-unwind-tables")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Wno-strict-aliasing")
+set(WARNING_FLAGS "-Wall -Wextra -Wfatal-errors -Werror")
+set(MACRO_FLAGS "-DdSINGLE -D__STRICT_ANSI__")
+set(OPT_FLAGS "-fno-exceptions -fno-unwind-tables")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} ${MACRO_FLAGS} ${OPT_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE -O0 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast")
 
 set(CRAG_SOURCE_DIRECTORY "../src")
 

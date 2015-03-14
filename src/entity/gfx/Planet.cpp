@@ -22,11 +22,10 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-DEFINE_POOL_ALLOCATOR(Planet);
+DEFINE_POOL_ALLOCATOR(Planet)
 
-Planet::Planet(Engine & engine, Transformation const & local_transformation, Scalar radius)
+Planet::Planet(Engine & engine, Transformation const & local_transformation)
 : Object(engine, local_transformation, Layer::opaque)
-, _sea_level(radius)
 {
 	auto & resource_manager = engine.GetResourceManager();
 	
@@ -35,16 +34,15 @@ Planet::Planet(Engine & engine, Transformation const & local_transformation, Sca
 	SetVboResource(sphere_quad);
 }
 
-void Planet::SetRadiusMinMax(Scalar radius_min, Scalar radius_max)
+void Planet::SetMaxRadius(Scalar max_radius)
 {
-	_radius_min = radius_min;
-	_radius_max = radius_max;
+	_max_radius = max_radius;
 }
 
 void Planet::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());
-	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view, _radius_max));
+	SetModelViewTransformation(sphere_quad.CalculateModelViewTransformation(model_view, _max_radius));
 }
 
 bool Planet::GetRenderRange(RenderRange & range) const 
@@ -52,16 +50,12 @@ bool Planet::GetRenderRange(RenderRange & range) const
 	Transformation const & transformation = GetModelViewTransformation();
 	Scalar depth = GetDepth(transformation);
 	
-	range.y = depth + _radius_max;
-	range.x = depth - _radius_max;
+	range.y = depth + _max_radius;
+	range.x = depth - _max_radius;
 	
 	return true;
 }
 
 void Planet::Render(Engine const &) const
 {
-	if (_sea_level < _radius_min)
-	{
-		return;
-	}
 }

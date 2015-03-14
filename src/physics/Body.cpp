@@ -19,19 +19,13 @@
 
 #include "core/Roster.h"
 
+#include "gfx/Debug.h"
+
 #include <ode/collision.h>
 #include <ode/objects.h>
 
 #if defined(CRAG_DEBUG)
 //#define CRAG_PHYSICS_BODY_DEBUG (-1.f)
-#endif
-
-#if defined(CRAG_PHYSICS_BODY_DEBUG)
-#include "gfx/Debug.h"
-
-#if ! defined(CRAG_GFX_DEBUG)
-#error Pointless definition of CRAG_PHYSICS_BODY_DEBUG
-#endif
 #endif
 
 using namespace physics;
@@ -512,4 +506,9 @@ void Body::Tick(Body * body)
 	{
 		body->AddForce(body->_gravitational_force);
 	}
+}
+
+void Body::DebugDraw() const
+{
+	gfx::Debug::AddBasis(GetGeomTransformation(), 1.);
 }
