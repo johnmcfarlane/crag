@@ -214,8 +214,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	SDL_RWops * source = SDL_RWFromFile(app::GetFullPath(filename), "rb");
 	if (source == nullptr)
 	{
-		DEBUG_MESSAGE("failed to open file, '%s':", filename);
-		CRAG_REPORT_SDL_ERROR();
+		DEBUG_MESSAGE("LoadFile: %s", SDL_GetError());
 		return FileResource();
 	}
 	
