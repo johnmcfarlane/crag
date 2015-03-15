@@ -228,7 +228,7 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	FileResource buffer(size);
 	if (buffer.size() != size)
 	{
-		DEBUG_MESSAGE("failed to allocated " SIZE_T_FORMAT_SPEC " bytes file, '%s':", size, filename);
+		DEBUG_MESSAGE("failed to allocate " SIZE_T_FORMAT_SPEC " bytes file, '%s':", size, filename);
 		return FileResource();
 	}
 	
