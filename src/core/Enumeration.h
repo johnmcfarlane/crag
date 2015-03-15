@@ -91,12 +91,12 @@ namespace core
 			}
 		}
 		
-		static const_iterator begin()
+		static iterator begin()
 		{
 			return get_values().begin();
 		}
 		
-		static const_iterator end()
+		static iterator end()
 		{
 			return get_values().end();
 		}
