@@ -303,14 +303,27 @@ namespace
 		}
 
 		// save
-		ASSERT (in_buffer.back() == terminator);
-		auto in_size = in_buffer.size() - 1;
-		auto out_size = out_buffer.size();
-		if (out_size != in_size
-				|| ! std::equal(std::begin(in_buffer), std::begin(in_buffer) + in_size, std::begin(out_buffer)))
+		auto has_changed = [] (app::FileResource const & in_buffer, app::FileResource const & out_buffer)
+		{
+			if (in_buffer.empty())
+			{
+				return true;
+			}
+
+			ASSERT (in_buffer.back() == terminator);
+			auto in_size = in_buffer.size() - 1;
+			auto out_size = out_buffer.size();
+			return out_size != in_size
+					|| ! std::equal(std::begin(in_buffer), std::begin(in_buffer) + in_size, std::begin(out_buffer));
+		};
+
+		if (has_changed(in_buffer, out_buffer))
 		{
 			// only save if there's any change
-			app::SaveFile(config_filename, out_buffer);
+			if (! app::SaveFile(config_filename, out_buffer))
+			{
+				return false;
+			}
 		}
 
 		return true;
