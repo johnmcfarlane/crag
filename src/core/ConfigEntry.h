@@ -33,10 +33,10 @@ namespace config
 		{
 		}
 
-		virtual void Get(char * config_string, char * default_string) const = 0;
+		virtual bool Get(char * string, std::size_t max_string_size) const = 0;
 
 		// Returns true iff the default has changed.
-		virtual bool Set(char const * config_string, char const * default_string) = 0;
+		virtual bool Set(char const * string) = 0;
 	};
 
 	template <typename TYPE>
@@ -49,36 +49,24 @@ namespace config
 		GenericEntry(IN_TYPE & var, char const * init_name)
 		: Entry(init_name)
 		, variable(var)
-		, default_value(var)
-		{ 
+		{
 		}
 		
-		virtual void Get(char * config_string, char * default_string) const
+		virtual bool Get(char * string, std::size_t max_string_size) const
 		{
-			ValueToString(config_string, variable);
-			ValueToString(default_string, default_value);
+			return ValueToString(variable, string, max_string_size);
 		}
 		
-		virtual bool Set(char const * config_string, char const * default_string) 
+		virtual bool Set(char const * string)
 		{
-			value_type stored_default_value;
-			StringToValue(stored_default_value, default_string);
-			if (stored_default_value == default_value)
-			{
-				StringToValue(variable, config_string);
-				return false;
-			}
-			
-			ASSERT(default_value == variable);
-			return true;
+			return StringToValue(variable, string);
 		}
 		
 	private:
-		static int ValueToString(char * string, value_type const & value);
-		static int StringToValue(value_type & value, char const * string);
+		static bool ValueToString(value_type const & value, char * string, std::size_t max_string_size);
+		static bool StringToValue(value_type & value, char const * string);
 		
 		value_type & variable;
-		value_type const default_value;
 	};
 
 	template<typename TYPE> 
@@ -93,9 +81,12 @@ namespace config
 		{ 
 		}
 		
-		static int ValueToString(char * string, value_type const & value);
-		static int StringToValue(value_type & value, char const * string);
+		static bool ValueToString(value_type const & value, char * string, std::size_t max_string_size);
+		static bool StringToValue(value_type & value, char const * string);
 	};
+
+	// contains the complete list of configuration settings; returns false on fatal error
+	bool Init(int argc, char * const * argv);
 }}}
 
 

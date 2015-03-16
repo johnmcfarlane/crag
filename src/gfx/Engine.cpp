@@ -1054,7 +1054,7 @@ void Engine::DebugText()
 		core::StatInterface const & stat = * i;
 		if (Debug::GetVerbosity() > stat.GetVerbosity())
 		{
-			out_stream << stat.GetName() << ": " << stat << '\n';
+			out_stream << stat.GetKey() << ": " << stat << '\n';
 		}
 	}
 	

@@ -147,7 +147,7 @@ SOURCES := \
 	$(CRAG_SRC_DIR)/core/profile.cpp \
 	$(CRAG_SRC_DIR)/core/Random.cpp \
 	$(CRAG_SRC_DIR)/core/ConfigEntry.cpp \
-	$(CRAG_SRC_DIR)/core/ConfigManager.cpp \
+	$(CRAG_SRC_DIR)/core/ConfigInit.cpp \
 	$(CRAG_SRC_DIR)/pch.cpp \
 	$(CRAG_SRC_DIR)/ipc/FiberPosix.cpp \
 	$(CRAG_SRC_DIR)/ipc/Uid.cpp \

@@ -13,8 +13,6 @@
 
 #if defined(ENABLE_CONFIG)
 
-#include "ConfigManager.h"
-
 #include "gfx/Color.h"
 
 #include "geom/Matrix44.h"
@@ -62,12 +60,12 @@ namespace crag {
 namespace core {
 namespace config
 {
-	template<> int ::crag::core::config::GenericEntry<bool>::ValueToString(char * string, bool const & value)
+	template<> bool GenericEntry<bool>::ValueToString(bool const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%s", value ? "true" : "false") > 0;
+		return snprintf(string, max_string_size, "%s", value ? "true" : "false") > 0;
 	}
 
-	template<> int GenericEntry<bool>::StringToValue(bool & value, char const * string)
+	template<> bool GenericEntry<bool>::StringToValue(bool & value, char const * string)
 	{
 		for (boolean_tag_pair const * tag_iterator = boolean_tags; tag_iterator != boolean_tags_end; ++ tag_iterator) {
 			if (tag_iterator->matches(string, false)) {
@@ -84,127 +82,127 @@ namespace config
 	}
 
 	// int
-	template<> int GenericEntry<int>::ValueToString(char * string, int const & value)
+	template<> bool GenericEntry<int>::ValueToString(int const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%d", value) > 0;
+		return snprintf(string, max_string_size, "%d", value) > 0;
 	}
 
-	template<> int GenericEntry<int>::StringToValue(int & value, char const * string)
+	template<> bool GenericEntry<int>::StringToValue(int & value, char const * string)
 	{
 		return sscanf(string, "%d", & value) == 1;
 	}
 
 	// size_t
-	template<> int GenericEntry<size_t>::ValueToString(char * string, size_t const & value)
+	template<> bool GenericEntry<size_t>::ValueToString(size_t const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, SIZE_T_FORMAT_SPEC, value) > 0;
+		return snprintf(string, max_string_size, SIZE_T_FORMAT_SPEC, value) > 0;
 	}
 
-	template<> int GenericEntry<size_t>::StringToValue(size_t & value, char const * string)
+	template<> bool GenericEntry<size_t>::StringToValue(size_t & value, char const * string)
 	{
 		return sscanf(string, SIZE_T_FORMAT_SPEC, & value) == 1;
 	}
 
 	// float
-	template<> int GenericEntry<float>::ValueToString(char * string, float const & value)
+	template<> bool GenericEntry<float>::ValueToString(float const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g", value) > 0;
+		return snprintf(string, max_string_size, "%g", value) > 0;
 	}
 
-	template<> int GenericEntry<float>::StringToValue(float & value, char const * string)
+	template<> bool GenericEntry<float>::StringToValue(float & value, char const * string)
 	{
 		return sscanf(string, "%g", & value) == 1;
 	}
 
 	// double
-	template<> int GenericEntry<double>::ValueToString(char * string, double const & value)
+	template<> bool GenericEntry<double>::ValueToString(double const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g", value) > 0;
+		return snprintf(string, max_string_size, "%g", value) > 0;
 	}
 
-	template<> int GenericEntry<double>::StringToValue(double & value, char const * string)
+	template<> bool GenericEntry<double>::StringToValue(double & value, char const * string)
 	{
 		return sscanf(string, "%lg", & value) == 1;
 	}
 
 	// Color
-	template<> int GenericEntry<gfx::Color4f>::ValueToString(char * string, gfx::Color4f const & value)
+	template<> bool GenericEntry<gfx::Color4f>::ValueToString(gfx::Color4f const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g,%g,%g,%g", value.r, value.g, value.b, value.a) > 0;
+		return snprintf(string, max_string_size, "%g,%g,%g,%g", value.r, value.g, value.b, value.a) > 0;
 	}
 
-	template<> int GenericEntry<gfx::Color4f>::StringToValue(gfx::Color4f & value, char const * string)
+	template<> bool GenericEntry<gfx::Color4f>::StringToValue(gfx::Color4f & value, char const * string)
 	{
-		return sscanf(string, "%g,%g,%g,%g", & value.r, & value.g, & value.b, & value.a) == 1;
+		return sscanf(string, "%g,%g,%g,%g", & value.r, & value.g, & value.b, & value.a) == 4;
 	}
 
 	// geom::Vector3f
-	template<> int GenericEntry<geom::Vector3f>::ValueToString(char * string, geom::Vector3f const & value)
+	template<> bool GenericEntry<geom::Vector3f>::ValueToString(geom::Vector3f const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
+		return snprintf(string, max_string_size, "%g,%g,%g", value.x, value.y, value.z) > 0;
 	}
 
-	template<> int GenericEntry<geom::Vector3f>::StringToValue(geom::Vector3f & value, char const * string)
+	template<> bool GenericEntry<geom::Vector3f>::StringToValue(geom::Vector3f & value, char const * string)
 	{
-		return sscanf(string, "%g,%g,%g", & value.x, & value.y, & value.z) == 1;
+		return sscanf(string, "%g,%g,%g", & value.x, & value.y, & value.z) == 3;
 	}
 
 	// geom::Vector3d
-	template<> int GenericEntry<geom::Vector3d>::ValueToString(char * string, geom::Vector3d const & value)
+	template<> bool GenericEntry<geom::Vector3d>::ValueToString(geom::Vector3d const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g,%g,%g", value.x, value.y, value.z) > 0;
+		return snprintf(string, max_string_size, "%g,%g,%g", value.x, value.y, value.z) > 0;
 	}
 
-	template<> int GenericEntry<geom::Vector3d>::StringToValue(geom::Vector3d & value, char const * string)
+	template<> bool GenericEntry<geom::Vector3d>::StringToValue(geom::Vector3d & value, char const * string)
 	{
-		return sscanf(string, "%lg,%lg,%lg", & value.x, & value.y, & value.z) == 1;
+		return sscanf(string, "%lg,%lg,%lg", & value.x, & value.y, & value.z) == 3;
 	}
 
 	// geom::Matrix44f
-	template<> int GenericEntry<geom::Matrix44f>::ValueToString(char * string, geom::Matrix44f const & value)
+	template<> bool GenericEntry<geom::Matrix44f>::ValueToString(geom::Matrix44f const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
+		return snprintf(string, max_string_size, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 					   value[0][0], value[0][1], value[0][2], value[0][3], 
 					   value[1][0], value[1][1], value[1][2], value[1][3], 
 					   value[2][0], value[2][1], value[2][2], value[2][3], 
 					   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 	}
 
-	template<> int GenericEntry<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, char const * string)
+	template<> bool GenericEntry<geom::Matrix44f>::StringToValue(geom::Matrix44f & value, char const * string)
 	{
 		return sscanf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 					  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
 					  & value[1][0], & value[1][1], & value[1][2], & value[1][3], 
 					  & value[2][0], & value[2][1], & value[2][2], & value[2][3], 
-					  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 1;
+					  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 16;
 	}
 
 	// geom::Matrix44d
-	template<> int GenericEntry<geom::Matrix44d>::ValueToString(char * string, geom::Matrix44d const & value)
+	template<> bool GenericEntry<geom::Matrix44d>::ValueToString(geom::Matrix44d const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
+		return snprintf(string, max_string_size, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g", 
 					   value[0][0], value[0][1], value[0][2], value[0][3], 
 					   value[1][0], value[1][1], value[1][2], value[1][3], 
 					   value[2][0], value[2][1], value[2][2], value[2][3], 
 					   value[3][0], value[3][1], value[3][2], value[3][3]) > 0;
 	}
 
-	template<> int GenericEntry<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, char const * string)
+	template<> bool GenericEntry<geom::Matrix44d>::StringToValue(geom::Matrix44d & value, char const * string)
 	{
 		return sscanf(string, "%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg,%lg", 
 					  & value[0][0], & value[0][1], & value[0][2], & value[0][3], 
 					  & value[1][0], & value[1][1], & value[1][2], & value[1][3], 
 					  & value[2][0], & value[2][1], & value[2][2], & value[2][3], 
-					  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 1;
+					  & value[3][0], & value[3][1], & value[3][2], & value[3][3]) == 16;
 	}
 
 	// float
-	template<> int GenericEntryAngle<float>::ValueToString(char * string, float const & value)
+	template<> bool GenericEntryAngle<float>::ValueToString(float const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g", RadToDeg(value)) > 0;
+		return snprintf(string, max_string_size, "%g", RadToDeg(value)) > 0;
 	}
 
-	template<> int GenericEntryAngle<float>::StringToValue(float & value, char const * string)
+	template<> bool GenericEntryAngle<float>::StringToValue(float & value, char const * string)
 	{
 		if (sscanf(string, "%g", & value) == 1) {
 			value = DegToRad(value);
@@ -216,12 +214,12 @@ namespace config
 	}
 
 	// double
-	template<> int GenericEntryAngle<double>::ValueToString(char * string, double const & value)
+	template<> bool GenericEntryAngle<double>::ValueToString(double const & value, char * string, std::size_t max_string_size)
 	{
-		return sprintf(string, "%g", RadToDeg(value)) > 0;
+		return snprintf(string, max_string_size, "%g", RadToDeg(value)) > 0;
 	}
 
-	template<> int GenericEntryAngle<double>::StringToValue(double & value, char const * string)
+	template<> bool GenericEntryAngle<double>::StringToValue(double & value, char const * string)
 	{
 		if (sscanf(string, "%lg", & value) == 1) {
 			value = DegToRad(value);

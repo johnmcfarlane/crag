@@ -23,8 +23,7 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/config.h
     ${CRAG_SOURCE_DIRECTORY}/core/ConfigEntry.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/ConfigEntry.h
-    ${CRAG_SOURCE_DIRECTORY}/core/ConfigManager.cpp
-    ${CRAG_SOURCE_DIRECTORY}/core/ConfigManager.h
+    ${CRAG_SOURCE_DIRECTORY}/core/ConfigInit.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/core.h
     ${CRAG_SOURCE_DIRECTORY}/core/counted_object.h
     ${CRAG_SOURCE_DIRECTORY}/core/debug.cpp
