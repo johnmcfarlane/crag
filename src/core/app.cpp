@@ -205,7 +205,6 @@ char const * app::GetFullPath(char const * filepath)
 #endif
 }
 
-// 521,216
 app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 {
 	ASSERT(filename);
@@ -259,6 +258,40 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	
 	// success!
 	return buffer;
+}
+
+bool app::SaveFile(char const * filename, app::FileResource const & buffer)
+{
+	ASSERT(filename);
+
+	// open file
+	SDL_RWops * destination = SDL_RWFromFile(app::GetFullPath(filename), "wb");
+	if (destination == nullptr)
+	{
+		DEBUG_MESSAGE("SaveFile: %s", SDL_GetError());
+		return false;
+	}
+
+	// write file
+	auto length = buffer.size();
+	auto written = SDL_RWwrite(destination, buffer.data(), 1, length);
+	if (written != length)
+	{
+		DEBUG_MESSAGE("only wrote " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", written, length, filename);
+		CRAG_REPORT_SDL_ERROR();
+		return false;
+	}
+
+	// close file
+	if (SDL_RWclose(destination) != 0)
+	{
+		DEBUG_MESSAGE("failed to close file, '%s':", filename);
+		CRAG_REPORT_SDL_ERROR();
+		return false;
+	}
+
+	// success!
+	return true;
 }
 
 void app::Beep()

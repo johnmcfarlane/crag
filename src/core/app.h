@@ -25,6 +25,7 @@ namespace app
 	typedef std::vector<char> FileResource;
 	char const * GetFullPath(char const * filepath);
 	FileResource LoadFile(char const * filename, bool null_terminate = false);
+	bool SaveFile(char const * filename, FileResource const & buffer);
 	
 	// misc
 	void Beep();
