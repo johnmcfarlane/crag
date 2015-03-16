@@ -20,7 +20,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/applet/Engine.cpp \
 	$(CRAG_PATH)/core/app.cpp \
 	$(CRAG_PATH)/core/ConfigEntry.cpp \
-	$(CRAG_PATH)/core/ConfigManager.cpp \
+	$(CRAG_PATH)/core/ConfigInit.cpp \
 	$(CRAG_PATH)/core/debug.cpp \
 	$(CRAG_PATH)/core/EventWatcher.cpp \
 	$(CRAG_PATH)/core/GlobalResourceManager.cpp \

@@ -22,8 +22,8 @@ namespace core
 		
 		typedef TYPE value_type;
 		
-		typedef char const * name_type;
-		name_type _name;
+		typedef char const *key_type;
+		key_type _key;
 		
 		typedef intrusive::hook<Enumeration> hook_type;
 		hook_type _hook;
@@ -33,17 +33,17 @@ namespace core
 		typedef typename list_type::const_iterator const_iterator;
 		typedef typename list_type::iterator iterator;
 		
-		Enumeration(name_type name)
-		: _name(name)
+		Enumeration(key_type key)
+		: _key(key)
 		{
 			// note: asserts may fail horribly before main begins.
-			ASSERT(find(_name) == nullptr);	// entries must be unique
+			ASSERT(find(_key) == nullptr);	// entries must be unique
 			ASSERT(static_cast<value_type *>(this) == this);	// this must be base for TYPE 
 			
 			iterator insertion = std::upper_bound(begin(), end(), * this);
 			get_values().insert(insertion, * this);
 			
-			ASSERT(find(_name) != nullptr);
+			ASSERT(find(_key) != nullptr);
 		}
 		
 		~Enumeration()
@@ -53,12 +53,12 @@ namespace core
 
 		bool operator<(Enumeration const & rhs) const
 		{
-			return (_name != rhs._name) && strcmp(_name, rhs._name) < 0;
+			return (_key != rhs._key) && strcmp(_key, rhs._key) < 0;
 		}
 		
-		bool operator==(name_type name) const
+		bool operator==(key_type key) const
 		{
-			return (name == _name) || (strcmp(name, _name) == 0);
+			return (key == _key) || (strcmp(key, _key) == 0);
 		}
 		
 		operator value_type & ()
@@ -71,14 +71,14 @@ namespace core
 			return * static_cast<value_type const *>(this);
 		}
 		
-		name_type GetName() const
+		key_type GetKey() const
 		{
-			return _name;
+			return _key;
 		}
 		
-		static value_type * find(name_type name)
+		static value_type * find(key_type key)
 		{
-			iterator found = std::find(begin(), end(), name);
+			iterator found = std::find(begin(), end(), key);
 			if (found == end())
 			{
 				return nullptr;
@@ -91,12 +91,12 @@ namespace core
 			}
 		}
 		
-		static const_iterator begin()
+		static iterator begin()
 		{
 			return get_values().begin();
 		}
 		
-		static const_iterator end()
+		static iterator end()
 		{
 			return get_values().end();
 		}

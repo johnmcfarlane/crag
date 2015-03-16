@@ -23,7 +23,7 @@
 #include "applet/Applet.h"
 
 #include "core/app.h"
-#include "core/ConfigManager.h"
+#include "core/ConfigEntry.h"
 #include "core/GlobalResourceManager.h"
 #include "core/Random.h"
 
@@ -329,8 +329,7 @@ namespace
 		DEBUG_MESSAGE("-> CragMain");
 
 		// Instance the config manager first of all so that all the config variables, such as full_screen are correct.
-		::crag::core::config::Manager config_manager;
-		if (! config_manager.ParseCommandLine(argc, argv))
+		if (! ::crag::core::config::Init(argc, argv))
 		{
 			return false;
 		}
