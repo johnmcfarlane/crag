@@ -10,7 +10,7 @@
 #pragma once
 
 
-#if defined(PROFILE)
+#if defined(CRAG_DEBUG)
 
 namespace profile
 {

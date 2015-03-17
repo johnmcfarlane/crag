@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if defined(CRAG_GL) && (defined(PROFILE) || defined(CRAG_DEBUG))
+#if defined(CRAG_GL) && defined(CRAG_DEBUG)
 #define CRAG_GFX_DEBUG
 #endif
 

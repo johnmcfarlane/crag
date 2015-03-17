@@ -9,7 +9,7 @@
 
 #include "pch.h"
 
-#if defined(PROFILE)
+#if defined(CRAG_DEBUG)
 
 #include "profile.h"
 

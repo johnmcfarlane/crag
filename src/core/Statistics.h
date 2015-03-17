@@ -12,7 +12,7 @@
 #include "Enumeration.h"
 
 
-#if defined (PROFILE)
+#if defined (CRAG_DEBUG)
 #define GATHER_STATS
 #endif
 
