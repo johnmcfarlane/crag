@@ -188,6 +188,11 @@ core::Time Engine::GetTime() const
 	return _time;
 }
 
+std::uint64_t Engine::GetNumTicks() const
+{
+	return _num_ticks;
+}
+
 physics::Engine & Engine::GetPhysicsEngine()
 {
 	return * _physics_engine;
@@ -275,8 +280,6 @@ void Engine::Tick()
 	else
 		STAT_SET(form_changed_sim, false);
 
-	_time += sim_tick_duration;
-	
 	// tick everything
 	_tick_roster->Call();
 
@@ -293,6 +296,9 @@ void Engine::Tick()
 
 	// Tell renderer about changes.
 	UpdateRenderer();
+
+	_time += sim_tick_duration;
+	++ _num_ticks;
 }
 
 void Engine::UpdateRenderer() const

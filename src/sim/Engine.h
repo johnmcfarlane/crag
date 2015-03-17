@@ -103,6 +103,7 @@ namespace sim
 
 		// accessors
 		core::Time GetTime() const;
+		std::uint64_t GetNumTicks() const;
 		physics::Engine & GetPhysicsEngine();		
 
 		form::Scene & GetScene();
@@ -129,6 +130,7 @@ namespace sim
 		int _pause_counter = 0;
 		
 		core::Time _time;
+		std::uint64_t _num_ticks = 0;
 
 		Ray3 _camera;
 		geom::Space _space;
