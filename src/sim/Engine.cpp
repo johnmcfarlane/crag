@@ -29,7 +29,7 @@
 #include "core/Roster.h"
 
 CONFIG_DEFINE(sim_tick_duration, 1. / 60.);
-
+CONFIG_DECLARE(profile_mode, bool);
 
 namespace
 {
@@ -230,8 +230,8 @@ crag::core::Roster & Engine::GetDrawRoster()
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	core::Time next_tick_time = app::GetTime();
-	
+	auto next_tick_time = app::GetTime();
+
 	while (! quit_flag)
 	{
 		if (IsPaused()) 
@@ -251,14 +251,17 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		else
 		{
 			Tick();
-			
-			if (time_to_next_tick < -1)
+
+			if (! profile_mode)
 			{
-				next_tick_time = time;
-			}
-			else
-			{
-				next_tick_time += sim_tick_duration;
+				if (time_to_next_tick < -1)
+				{
+					next_tick_time = time;
+				}
+				else
+				{
+					next_tick_time += sim_tick_duration;
+				}
 			}
 		}
 	}
