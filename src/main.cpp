@@ -38,7 +38,6 @@
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
-CONFIG_DEFINE(profile_mode, false);
 CONFIG_DECLARE (shadows_enabled, bool);
 CONFIG_DECLARE (physics_debug_draw, bool);
 

@@ -32,7 +32,10 @@
 using geom::Vector3f;
 using applet::AppletInterface;
 
-namespace 
+CONFIG_DEFINE(profile_mode, false);
+CONFIG_DEFINE(profile_max_ticks, uint64_t(20000));
+
+namespace
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// types
@@ -207,10 +210,12 @@ void GameScript(AppletInterface & applet_interface)
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), 10000000), 3634, 0);
 	
 	InitSpace(applet_interface, space);
-	
-	// Give formations time to expand.
-	applet_interface.WaitFor(.25f);
-	
+
+	sim::Daemon::Call([] (sim::Engine & engine)
+	{
+		engine.IncrementPause(1);
+	});
+
 #if defined(CRAG_OS_ANDROID)
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
 		"assets/skybox/right.png",
@@ -260,9 +265,29 @@ void GameScript(AppletInterface & applet_interface)
 		_shapes.push_back(obelisk);
 	}
 
+	std::uint64_t starting_num_ticks = applet_interface.Get<sim::Engine, std::uint64_t>([] (sim::Engine & engine) -> std::uint64_t {
+		engine.IncrementPause(-1);
+		return engine.GetNumTicks();
+	});
+	auto first_tick_time = app::GetTime();
+
 	// main loop
 	while (applet_interface.WaitFor(0))
 	{
+		if (profile_mode)
+		{
+			auto num_ticks = applet_interface.Get<sim::Engine, std::uint64_t>([] (sim::Engine & engine) -> std::uint64_t {
+				return engine.GetNumTicks();
+			}) - starting_num_ticks;
+			if (num_ticks > profile_max_ticks)
+			{
+				auto last_tick_time = app::GetTime();
+				ERROR_MESSAGE("Profile: %" PRIu64 " ticks in %lf seconds\n",
+					num_ticks, last_tick_time - first_tick_time);
+				app::Quit();
+			}
+		}
+
 		HandleEvents(event_watcher, applet_interface);
 
 		if (test_suspend_resume)
