@@ -181,7 +181,7 @@ namespace
 		{
 			float sleep = Squared(Random::sequence.GetUnit());
 			DEBUG_MESSAGE("sleep=%f", sleep);
-			applet_interface.Sleep(sleep);
+			applet_interface.WaitFor(sleep);
 		}
 	}
 }
@@ -209,7 +209,7 @@ void GameScript(AppletInterface & applet_interface)
 	InitSpace(applet_interface, space);
 	
 	// Give formations time to expand.
-	applet_interface.Sleep(.25f);
+	applet_interface.WaitFor(.25f);
 	
 #if defined(CRAG_OS_ANDROID)
 	gfx::ObjectHandle skybox = SpawnBitmapSkybox({{
@@ -261,7 +261,7 @@ void GameScript(AppletInterface & applet_interface)
 	}
 
 	// main loop
-	while (applet_interface.Sleep(0))
+	while (applet_interface.WaitFor(0))
 	{
 		HandleEvents(event_watcher, applet_interface);
 

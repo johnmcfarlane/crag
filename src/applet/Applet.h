@@ -59,7 +59,7 @@ namespace applet
 
 		char const * GetName() const override;
 		
-		bool Sleep(core::Time duration) override;
+		bool WaitFor(core::Time duration) override;
 
 	private:
 		// called on fiber startup

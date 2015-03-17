@@ -76,7 +76,7 @@ char const * Applet::GetName() const
 	return _fiber.GetName();
 }
 
-bool Applet::Sleep(core::Time duration)
+bool Applet::WaitFor(core::Time duration)
 {
 	CRAG_VERIFY(* this);
 	CRAG_VERIFY(! _quit_flag);

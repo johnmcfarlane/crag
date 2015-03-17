@@ -32,7 +32,7 @@ namespace applet
 		virtual char const * GetName() const = 0;
 		
 		// pause execution; returns false if quit flag is set
-		virtual bool Sleep(core::Time duration) = 0;
+		virtual bool WaitFor(core::Time duration) = 0;
 		
 		// non-blocking call to engine on separate thread
 		template <typename ENGINE, typename RESULT_TYPE, typename FUNCTION_TYPE>
