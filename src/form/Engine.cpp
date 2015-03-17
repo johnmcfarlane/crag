@@ -24,12 +24,15 @@
 #include "gfx/SetSpaceEvent.h"
 
 #include "core/app.h"
+#include "core/ConfigEntry.h"
 #include "core/profile.h"
 #include "core/Statistics.h"
 
 #include "geom/Intersection.h"
 
 using namespace form;
+
+CONFIG_DECLARE(profile_mode, bool);
 
 namespace 
 {
@@ -206,7 +209,10 @@ void Engine::TickScene()
 	}
 	else
 	{
-		smp::Sleep(.01);
+		if (! profile_mode)
+		{
+			smp::Sleep(.01);
+		}
 
 		STAT_SET(form_changed_gfx, false);
 	}
@@ -283,7 +289,7 @@ void Engine::OnSpaceReset()
 	while (surrounding.GetNumQuaternaUsed() < num_quaterna)
 	{
 		TickScene();
-		ASSERT(surrounding.GetTargetNumQuaterna() == num_quaterna);
+		ASSERT(profile_mode || surrounding.GetTargetNumQuaterna() == num_quaterna);
 	}
 }
 
