@@ -29,7 +29,7 @@
 #include "core/Roster.h"
 
 CONFIG_DEFINE(sim_tick_duration, 1. / 60.);
-
+CONFIG_DECLARE(profile_mode, bool);
 
 namespace
 {
@@ -188,6 +188,11 @@ core::Time Engine::GetTime() const
 	return _time;
 }
 
+std::uint64_t Engine::GetNumTicks() const
+{
+	return _num_ticks;
+}
+
 physics::Engine & Engine::GetPhysicsEngine()
 {
 	return * _physics_engine;
@@ -225,8 +230,8 @@ crag::core::Roster & Engine::GetDrawRoster()
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	core::Time next_tick_time = app::GetTime();
-	
+	auto next_tick_time = app::GetTime();
+
 	while (! quit_flag)
 	{
 		if (IsPaused()) 
@@ -246,14 +251,17 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 		else
 		{
 			Tick();
-			
-			if (time_to_next_tick < -1)
+
+			if (! profile_mode)
 			{
-				next_tick_time = time;
-			}
-			else
-			{
-				next_tick_time += sim_tick_duration;
+				if (time_to_next_tick < -1)
+				{
+					next_tick_time = time;
+				}
+				else
+				{
+					next_tick_time += sim_tick_duration;
+				}
 			}
 		}
 	}
@@ -275,8 +283,6 @@ void Engine::Tick()
 	else
 		STAT_SET(form_changed_sim, false);
 
-	_time += sim_tick_duration;
-	
 	// tick everything
 	_tick_roster->Call();
 
@@ -293,6 +299,9 @@ void Engine::Tick()
 
 	// Tell renderer about changes.
 	UpdateRenderer();
+
+	_time += sim_tick_duration;
+	++ _num_ticks;
 }
 
 void Engine::UpdateRenderer() const

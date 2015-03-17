@@ -281,7 +281,7 @@ void RegulatorScript(applet::AppletInterface & applet_interface)
 	{
 		Tick(regulators);
 
-		applet_interface.Sleep(0.5);
+		applet_interface.WaitFor(0.5);
 	}
 
 	for (auto regulator : regulators)
@@ -291,7 +291,7 @@ void RegulatorScript(applet::AppletInterface & applet_interface)
 	
 	do
 	{
-		applet_interface.Sleep(0);
+		applet_interface.WaitFor(0);
 	}	while (std::any_of(std::begin(regulators), std::end(regulators), [] (Regulator const * regulator) {
 			return ! regulator->IsExitOk();
 		}));

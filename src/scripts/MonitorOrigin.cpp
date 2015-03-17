@@ -108,7 +108,7 @@ void MonitorOrigin(applet::AppletInterface & applet_interface)
 	
 	while (! applet_interface.GetQuitFlag())
 	{
-		applet_interface.Sleep(0.23432);
+		applet_interface.WaitFor(0.23432);
 		sim::Daemon::Call(& ReviseOrigin);
 	}
 }

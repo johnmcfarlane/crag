@@ -38,7 +38,6 @@
 //////////////////////////////////////////////////////////////////////
 // Local Variables
 
-CONFIG_DEFINE(profile_mode, false);
 CONFIG_DECLARE (shadows_enabled, bool);
 CONFIG_DECLARE (physics_debug_draw, bool);
 
@@ -56,7 +55,7 @@ namespace
 	CONFIG_DEFINE(window_resolution_y, 600);
 #endif
 
-#if defined(CRAG_PC) && (defined(CRAG_DEBUG) || defined(PROFILE))
+#if defined(CRAG_PC) && defined(CRAG_DEBUG)
 	// during development, a window 
 	CONFIG_DEFINE(full_screen, false);
 #else

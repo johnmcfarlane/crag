@@ -56,7 +56,7 @@ namespace applet
 		
 		do
 		{
-			Sleep(0);
+			WaitFor(0);
 		}	while (! future.IsComplete());
 		
 		return future.Get();
