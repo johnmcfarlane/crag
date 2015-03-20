@@ -76,7 +76,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 {
 	Transformation::Vector3 translation = leaf.GetTranslation();
 
-	auto distance_to_camera = Length(translation);
+	auto distance_to_camera = Magnitude(translation);
 	if (distance_to_camera == 0)
 	{
 		return leaf;

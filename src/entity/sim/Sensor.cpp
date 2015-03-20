@@ -41,7 +41,7 @@ namespace
 			random_direction.x = sequence.GetUnitInclusive<Scalar>() - 0.5f;
 			random_direction.y = sequence.GetUnitInclusive<Scalar>() - 0.5f;
 			random_direction.z = sequence.GetUnitInclusive<Scalar>() - 0.5f;
-			auto length_squared = geom::LengthSq(random_direction);
+			auto length_squared = geom::MagnitudeSq(random_direction);
 			if (length_squared > 1.0f)
 			{
 				continue;
@@ -49,7 +49,7 @@ namespace
 			
 			auto inverse_length = FastInvSqrt(length_squared);
 			random_direction *= inverse_length;
-			ASSERT(NearEqual(geom::Length(random_direction), 1.f, 0.001f));
+			ASSERT(NearEqual(geom::Magnitude(random_direction), 1.f, 0.001f));
 			
 			return random_direction;
 		}
@@ -145,7 +145,7 @@ void Sensor::GenerateScanRay() const
 	auto random_direction = GetRandomDirection(Random::sequence);
 	scan_ray.direction += random_direction * _length * _variance;
 	
-	auto scan_length = geom::Length(scan_ray.direction);
+	auto scan_length = geom::Magnitude(scan_ray.direction);
 	scan_ray.direction /= scan_length;
 	
 	// generate new ray

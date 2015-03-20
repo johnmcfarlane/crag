@@ -102,7 +102,7 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 	geom::abs::Vector3 near_a = geom::Cast<geom::abs::Scalar>(a.GetCorner(TriMod(index + 1))->pos) - center;
 	geom::abs::Vector3 near_b = geom::Cast<geom::abs::Scalar>(b.GetCorner(TriMod(index + 1))->pos) - center;
 	geom::abs::Vector3 near_mid = near_a + near_b;
-	near_mid *= shape.radius / Length(near_mid);
+	near_mid *= shape.radius / Magnitude(near_mid);
 	
 	Random crater_randomizer(formation.GetSeed() + 2);
 	ApplyCraters(crater_randomizer, near_mid);
@@ -162,7 +162,7 @@ void MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom
 	do
 	{
 		crater.center = geom::abs::Vector3(rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f);
-		crater_center_squared = LengthSq(crater.center);
+		crater_center_squared = MagnitudeSq(crater.center);
 	}
 	while (crater_center_squared > Squared(.5f));
 	

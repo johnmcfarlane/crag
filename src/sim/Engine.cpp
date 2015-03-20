@@ -117,7 +117,7 @@ void Engine::operator() (gfx::SetSpaceEvent const & event)
 	auto delta = geom::Cast<Scalar>(event.space - _space);
 
 	// quit if there's no change
-	if (geom::LengthSq(delta) == 0)
+	if (geom::MagnitudeSq(delta) == 0)
 	{
 		return;
 	}
@@ -332,7 +332,7 @@ void Engine::PurgeEntities()
 		}
 		
 		Vector3 position = location->GetTranslation();
-		if (Length(position) < purge_distance)
+		if (Magnitude(position) < purge_distance)
 		{
 			return false;
 		}

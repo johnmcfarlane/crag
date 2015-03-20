@@ -165,7 +165,7 @@ namespace
 		const auto screen_position_diff = geom::Cast<Scalar>(contact2.screen_position) - geom::Cast<Scalar>(contact1.screen_position);
 		
 		// distance between screen positions, PQ
-		const auto screen_span = geom::Length(screen_position_diff);
+		const auto screen_span = geom::Magnitude(screen_position_diff);
 		
 		if (screen_span < .00001f)
 		{
@@ -173,8 +173,8 @@ namespace
 		}
 		const auto screen_position_direction = screen_position_diff / screen_span;
 		
-		const auto camera_to_screen_distance1 = geom::Length(geom::Cast<Scalar>(contact1.screen_position));
-		const auto camera_to_screen_distance2 = geom::Length(geom::Cast<Scalar>(contact2.screen_position));
+		const auto camera_to_screen_distance1 = geom::Magnitude(geom::Cast<Scalar>(contact1.screen_position));
+		const auto camera_to_screen_distance2 = geom::Magnitude(geom::Cast<Scalar>(contact2.screen_position));
 		
 		const auto camera_to_screen_direction1 = geom::Cast<Scalar>(contact1.screen_position) * Scalar(1) / camera_to_screen_distance1;
 		const auto camera_to_screen_direction2 = geom::Cast<Scalar>(contact2.screen_position) * Scalar(1) / camera_to_screen_distance2;
@@ -189,7 +189,7 @@ namespace
 		const auto world_position_diff_forward = geom::DotProduct(world_position_diff, camera_forward);
 
 		// distance between world positions, |AB| aka c
-		const auto world_span = geom::Length(world_position_diff);
+		const auto world_span = geom::Magnitude(world_position_diff);
 		
 		const auto world_position_diff_direction = world_position_diff / world_span;
 
@@ -581,7 +581,7 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 	auto ConvertBackground = [&] (Contact const & background_contact, Vector3 const & foreground_contact_position)
 	{
 		auto camera_position = this->_down_transformation.GetTranslation();
-		auto distance = geom::Length(foreground_contact_position - camera_position);
+		auto distance = geom::Magnitude(foreground_contact_position - camera_position);
 
 		TranslationRollContact translation_roll_contact = 
 		{

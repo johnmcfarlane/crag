@@ -91,7 +91,7 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 
 void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal)
 {
-	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
+	ASSERT(NearEqual(MagnitudeSq(normal), 1.f, 0.01f));
 	
 	auto & vertices = _lit_mesh.GetVertices();
 	auto & indices = _lit_mesh.GetIndices();

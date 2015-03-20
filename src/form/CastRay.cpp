@@ -106,8 +106,8 @@ namespace
 
 		SideAttributes GenerateSideAttribute(Ray3 const & ray, Plane3 const & plane)
 		{
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(ray.direction), Scalar(1.), Scalar(.001));
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(plane.normal), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.direction), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(plane.normal), Scalar(1.), Scalar(.001));
 
 			SideAttributes side_attributes;
 

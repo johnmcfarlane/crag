@@ -119,7 +119,7 @@ Object const * Light::GetException() const
 PreRenderResult Light::PreRender()
 {
 	Vector3 intensity(_color.r, _color.g, _color.b);
-	Debug::AddBasis(GetModelTransformation(), geom::Length(intensity));
+	Debug::AddBasis(GetModelTransformation(), geom::Magnitude(intensity));
 	
 	return ok;
 }

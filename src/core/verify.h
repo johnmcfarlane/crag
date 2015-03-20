@@ -110,7 +110,7 @@
 #define CRAG_VERIFY_ARRAY_ELEMENT ::crag::core::VerifyArrayElement
 
 // verifies that given element is a valid pointer in the given range
-#define CRAG_VERIFY_UNIT(V, EPSILON) CRAG_VERIFY_NEARLY_EQUAL(geom::Length(V), decltype(geom::Length(V))(1), EPSILON)
+#define CRAG_VERIFY_UNIT(V, EPSILON) CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(V), decltype(geom::Magnitude(V))(1), EPSILON)
 
 // runs custom verification routine on given type
 #define CRAG_VERIFY(VARIABLE) ::crag::core::VerifyInvariants(VARIABLE)

@@ -328,7 +328,7 @@ namespace gfx
 		for (auto vertex : mesh.GetVertices())
 		{
 			// remember position with greatest length
-			auto length_squared = geom::LengthSq(transformation(vertex.pos));
+			auto length_squared = geom::MagnitudeSq(transformation(vertex.pos));
 			max_length_squared = std::max(max_length_squared, length_squared);
 		}
 

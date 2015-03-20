@@ -243,7 +243,7 @@ bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::a
 	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
-	geom::abs::Scalar length = Length(result);
+	geom::abs::Scalar length = Magnitude(result);
 	result *= (radius / length);
 	result += shape.center;
 	
@@ -257,7 +257,7 @@ bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, g
 	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
-	geom::abs::Scalar result_length = Length(result);
+	geom::abs::Scalar result_length = Magnitude(result);
 	
 	geom::abs::Scalar near_a_altitude = GetAltitude(near_a);
 	geom::abs::Scalar near_b_altitude = GetAltitude(near_b);
@@ -308,5 +308,5 @@ geom::abs::Scalar PlanetShader::GetAltitude(form::Vector3 const & point_pos, geo
 
 geom::abs::Scalar PlanetShader::GetAltitude(geom::abs::Vector3 const & local_pos) const
 {
-	return Length(local_pos);
+	return Magnitude(local_pos);
 }

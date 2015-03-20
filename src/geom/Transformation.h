@@ -148,9 +148,9 @@ namespace geom
 		Vector3 GetScale() const
 		{
 			Matrix33 const & rotation = GetRotation();
-			return Vector3(Length(rotation.GetColumn(0)), 
-						  Length(rotation.GetColumn(1)), 
-						  Length(rotation.GetColumn(2)));
+			return Vector3(Magnitude(rotation.GetColumn(0)),
+				Magnitude(rotation.GetColumn(1)),
+				Magnitude(rotation.GetColumn(2)));
 		}
 		
 		Vector3 Transform(Vector3 const & point) const

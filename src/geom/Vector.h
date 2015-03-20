@@ -78,7 +78,7 @@ namespace geom
 	}
 
 	template<typename S, int N>
-	S LengthSq(Vector<S, N> const & v)
+	S MagnitudeSq(Vector<S, N> const & v)
 	{
 		return DotProduct(v, v);
 	}

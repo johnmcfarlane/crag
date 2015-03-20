@@ -21,12 +21,12 @@ namespace geom
 
 	template<typename S, int N> S Distance(Vector<S, N> const & a, Vector<S, N> const & b)
 	{
-		return Length(a - b);
+		return Magnitude(a - b);
 	}
 
 	template<typename S, int N> S DistanceSq(Vector<S, N> const & a, Vector<S, N> const & b)
 	{
-		return LengthSq(a - b);
+		return MagnitudeSq(a - b);
 	}
 
 

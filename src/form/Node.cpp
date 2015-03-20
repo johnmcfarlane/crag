@@ -221,7 +221,7 @@ bool form::Node::InitScoreParameters()
 	
 	normal = geom::Normal(surface);
 	CRAG_VERIFY(normal);
-	CRAG_VERIFY_OP(LengthSq(normal), >, 0);
+	CRAG_VERIFY_OP(MagnitudeSq(normal), >, 0);
 	Normalize(normal);
 	
 	area = geom::Area(surface);
@@ -342,7 +342,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Node, self)
 			}
 
 			CRAG_VERIFY_OP(self.area, >, 0);
-			CRAG_VERIFY_NEARLY_EQUAL(LengthSq(self.normal), 1.f, .001f);
+			CRAG_VERIFY_NEARLY_EQUAL(MagnitudeSq(self.normal), 1.f, .001f);
 			CRAG_VERIFY_OP(self.score, >=, 0);
 		}
 	}

@@ -17,25 +17,25 @@
 namespace geom
 {
 	////////////////////////////////////////////////////////////////////////////////
-	// Length
+	// Magnitude
 
 	template<typename T> 
-	auto Length(T const & o) -> decltype(LengthSq(o))
+	auto Magnitude(T const &o) -> decltype(MagnitudeSq(o))
 	{
-		auto length_squared = LengthSq(o);
-		return std::sqrt(length_squared);
+		auto magnitude_squared = MagnitudeSq(o);
+		return std::sqrt(magnitude_squared);
 	}
 
-	// Changes v to unit length. 
-	// Is undefined when input is zero length.
+	// Changes v to unit magnitude.
+	// Is undefined when input is zero magnitude.
 	template <typename T> 
 	void Normalize(T & v)
 	{
-		v *= InvSqrt(LengthSq(v));
+		v *= InvSqrt(MagnitudeSq(v));
 	}
 
-	// Returns a copy of v with unit length. 
-	// Is undefined when input is zero length.
+	// Returns a copy of v with unit magnitude.
+	// Is undefined when input is zero magnitude.
 	template <typename T>
 	T Normalized(T v)
 	{
@@ -43,39 +43,39 @@ namespace geom
 		return v;
 	}
 
-	// Changes v to given length. 
-	// Is undefined when length is zero.
+	// Changes v to given magnitude.
+	// Is undefined when magnitude is zero.
 	template <typename T, typename S> 
-	void Resize(T & v, S length)
+	void Resize(T & v, S magnitude)
 	{
-		v *= (InvSqrt(LengthSq(v)) * length);
+		v *= (InvSqrt(MagnitudeSq(v)) * magnitude);
 	}
 
-	// Returns a copy of v with given length. 
+	// Returns a copy of v with given magnitude.
 	// Is undefined when input is zero.
 	template <typename T, typename S> 
-	T Resized(T v, S length)
+	T Resized(T v, S magnitude)
 	{
-		Resize(v, length);
+		Resize(v, magnitude);
 		return v;
 	}
 
-	// Minimizes v to given length. 
+	// Minimizes v to given magnitude.
 	template <typename T, typename S> 
-	void Clamp(T & v, S length)
+	void Clamp(T & v, S magnitude)
 	{
-		auto length_squared = LengthSq(v);
-		if (length_squared > Squared(length))
+		auto magnitude_squared = MagnitudeSq(v);
+		if (magnitude_squared > Squared(magnitude))
 		{
-			v *= (InvSqrt(length_squared) * length);
+			v *= (InvSqrt(magnitude_squared) * magnitude);
 		}
 	}
 
-	// Returns a copy of v no greater than given length. 
+	// Returns a copy of v no greater than given magnitude.
 	template <typename T, typename S> 
-	T Clamped(T v, S length)
+	T Clamped(T v, S magnitude)
 	{
-		Clamp(v, length);
+		Clamp(v, magnitude);
 		return v;
 	}
 
@@ -83,7 +83,7 @@ namespace geom
 	////////////////////////////////////////////////////////////////////////////////
 	// Area
 
-	// Given the lengths of the sides of a triangle, returns the area of the triangle.
+	// Given the magnitudes of the sides of a triangle, returns the area of the triangle.
 	template<typename S> S TriangleArea(S a, S b, S c)
 	{
 		S p = (a + b + c) * static_cast<S> (.5);	// half perimeter
@@ -94,9 +94,9 @@ namespace geom
 	// Given the positions of the corners of a triangle, returns the area of the triangle.
 	template<typename S, int N> S Area(Triangle<S, N> const & t)
 	{
-		S ab = Length(t.points[0] - t.points[1]);
-		S bc = Length(t.points[1] - t.points[2]);
-		S ca = Length(t.points[2] - t.points[0]);
+		S ab = Magnitude(t.points[0] - t.points[1]);
+		S bc = Magnitude(t.points[1] - t.points[2]);
+		S ca = Magnitude(t.points[2] - t.points[0]);
 		return TriangleArea(ab, bc, ca);
 	}
 

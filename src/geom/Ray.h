@@ -53,11 +53,11 @@ namespace geom
 		V direction;
 	};
 
-	// returns the length of the given ray
+	// returns the magnitude of the given ray
 	template<typename S, int N> 
-	S LengthSq(Ray<S, N> const & ray)
+	S MagnitudeSq(Ray<S, N> const &ray)
 	{
-		return LengthSq(ray.direction);
+		return MagnitudeSq(ray.direction);
 	}
 
 	// Get a position at some point along ray.

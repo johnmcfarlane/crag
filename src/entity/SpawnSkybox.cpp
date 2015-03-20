@@ -109,7 +109,7 @@ namespace
 					Normalize(line_direction);
 
 					float dp = DotProduct(star.center, line_direction);
-					float a_sq = LengthSq(star.center) - Squared(dp);
+					float a_sq = MagnitudeSq(star.center) - Squared(dp);
 
 					intensity += (double)star.radius / (double)a_sq;
 				}

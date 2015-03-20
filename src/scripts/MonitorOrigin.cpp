@@ -42,7 +42,7 @@ namespace
 	// is the origin too far away to allow for precise, camera-centric calculations?
 	bool ShouldReviseOrigin(geom::rel::Vector3 const & lod_center, float min_leaf_distance_squared)
 	{
-		auto distance_from_origin = geom::Length(lod_center);
+		auto distance_from_origin = geom::Magnitude(lod_center);
 		
 		STAT_SET(sim_origin_reset_distance_factor, -1.f);
 		STAT_SET(sim_origin_reset_precision_factor, -1.f);
