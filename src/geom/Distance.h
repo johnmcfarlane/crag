@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Magnitude.h"
 #include "Plane.h"
 #include "Triangle.h"
 
@@ -38,6 +39,7 @@ namespace geom
 	template<typename S, int N>
 	S Distance(Plane<S, N> const & surface, Vector<S, N> const & point) 
 	{
+		CRAG_VERIFY_UNIT(surface.normal, S(.0001f));
 		return DotProduct(surface.normal, point - surface.position);
 	}
 	template<typename S, int N>

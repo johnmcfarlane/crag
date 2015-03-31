@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Triangle.h"
+#include "Magnitude.h"
 
 namespace geom
 {
@@ -33,8 +34,9 @@ namespace geom
 		}
 
 		Plane(Triangle const & triangle) 
-		: Plane(geom::Centroid(triangle), geom::Normal(triangle))
+		: Plane(geom::Centroid(triangle), geom::Normalized(geom::Normal(triangle)))
 		{
+			CRAG_VERIFY(* this);
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
@@ -42,6 +44,7 @@ namespace geom
 			CRAG_VERIFY(self.position);
 			CRAG_VERIFY(self.normal);
 			CRAG_VERIFY_OP(self.normal, !=, Vector::Zero());
+			CRAG_VERIFY_UNIT(self.normal, .0001f);
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 
