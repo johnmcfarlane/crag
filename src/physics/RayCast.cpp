@@ -79,7 +79,9 @@ void RayCast::SetRay(Ray3 const & ray)
 		ray.direction.x, ray.direction.y, ray.direction.z);
 
 	CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.position - GetRay().position), 0.f, 0.01f);
-	CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(geom::Normalized(ray.direction) - geom::Normalized(GetRay().direction)), 0.f, 0.001f);
+	CRAG_VERIFY_UNIT(ray.direction, .0001f);
+	CRAG_VERIFY_UNIT(GetRay().direction, .0001f);
+	CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.direction - GetRay().direction), 0.f, 0.001f);
 	CRAG_VERIFY_NEARLY_EQUAL_LOG(geom::Magnitude(ray.direction), geom::Magnitude(GetRay().direction), 0.001f);
 	CRAG_VERIFY(* this);
 }

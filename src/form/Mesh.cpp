@@ -151,6 +151,13 @@ Mesh::LitMesh const & Mesh::GetLitMesh() const
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Mesh, self)
-	// slow
-	//CRAG_VERIFY(self._lit_mesh);
+#if ! defined(CRAG_FORM_FLAT_SHADE)
+	CRAG_VERIFY(self._lit_mesh);
+#endif
+
+	for (auto & vertex : self._lit_mesh)
+	{
+		auto & norm = vertex.norm;
+		CRAG_VERIFY_UNIT(norm, .0001f);
+	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END

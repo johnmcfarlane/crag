@@ -206,7 +206,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Surrounding, self)
 	{
 		self.VerifyUsed(q);
 	}*/
-	
+
 	// Rarely cause a problem and they are often the majority so slow to verify.
 	/*for (auto index = self._quaterna_buffer.size(); index != self._quaterna_buffer.capacity(); ++ index) 
 	{
@@ -461,9 +461,6 @@ void Surrounding::ResetMeshPointers()
 
 void Surrounding::GenerateMesh(Mesh & mesh) 
 {
-	CRAG_VERIFY(* this);
-	CRAG_VERIFY_TRUE(mesh.GetLitMesh().empty());
-
 	for (auto const & node : _node_buffer)
 	{
 		if (! node.IsLeaf()) 
