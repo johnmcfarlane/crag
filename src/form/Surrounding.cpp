@@ -478,8 +478,10 @@ void Surrounding::GenerateMesh(Mesh & mesh)
 			mesh.AddFace(a, b, c, normal, color);
 		});
 	}
-	
+
+#if ! defined(CRAG_FORM_FLAT_SHADE)
 	mesh.NormalizeNormals();
+#endif
 }
 
 ///////////////////////////////////////////////////////
