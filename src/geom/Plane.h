@@ -14,7 +14,7 @@
 
 namespace geom
 {
-	// an infinite plane represented by a surface point and normal
+	// an infinite plane represented by a surface point and unit normal
 	template <typename S, int N>
 	class Plane
 	{
@@ -34,9 +34,8 @@ namespace geom
 		}
 
 		Plane(Triangle const & triangle) 
-		: Plane(geom::Centroid(triangle), geom::Normalized(geom::Normal(triangle)))
+		: Plane(geom::Centroid(triangle), geom::UnitNormal(triangle))
 		{
-			CRAG_VERIFY(* this);
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
@@ -49,8 +48,8 @@ namespace geom
 #endif
 
 		// attributes
-		Vector position;	// arbitrary point on surface
-		Vector normal;	// normal to surface
+		Vector const position;	// arbitrary point on surface
+		Vector const normal;	// normal to surface
 	};
 
 	// catches pointless casts and bypasses them

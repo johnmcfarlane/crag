@@ -55,7 +55,7 @@ namespace gfx
 				triangle.points[p] = vertex.pos;
 			}
 
-			bool lit = geom::Contains(geom::MakePlane(triangle), light_position);
+			bool lit = geom::Contains(triangle, light_position);
 
 			auto RegisterEdge = [&] (Vector3 const * a, Vector3 const * b, bool lit)
 			{

@@ -67,10 +67,16 @@ namespace geom
 		return (t.points[0] + t.points[1] + t.points[2]) * third;
 	}
 
-	template <typename S, int N>
-	Vector<S, N> Normal(Triangle<S, N> const & t)
+	template <typename S>
+	Vector<S, 3> Normal(Triangle<S, 3> const & t)
 	{
 		return CrossProduct(t.points[1] - t.points[0], t.points[1] - t.points[2]);
+	}
+
+	template <typename S>
+	Vector<S, 3> UnitNormal(Triangle<S, 3> const & t)
+	{
+		return Normalized(Normal(t));
 	}
 
 	// streaming

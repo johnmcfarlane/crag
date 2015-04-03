@@ -219,11 +219,9 @@ bool form::Node::InitScoreParameters()
 {
 	Triangle3 surface(ref(triple[0].corner).pos, ref(triple[1].corner).pos, ref(triple[2].corner).pos);
 	
-	normal = geom::Normal(surface);
+	normal = geom::UnitNormal(surface);
 	CRAG_VERIFY(normal);
-	CRAG_VERIFY_OP(MagnitudeSq(normal), >, 0);
-	Normalize(normal);
-	
+
 	area = geom::Area(surface);
 	if (area == 0) 
 	{

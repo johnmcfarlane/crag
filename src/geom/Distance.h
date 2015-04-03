@@ -54,8 +54,6 @@ namespace geom
 	S Distance(Triangle<S, N> const & triangle, Vector<S, N> const & point)
 	{
 		Plane<S, N> plane(triangle);
-		Normalize(plane.normal);
-		
 		return Distance(plane, point);
 	}
 	template<typename S, int N>
@@ -71,7 +69,7 @@ namespace geom
 	{
 		Plane<S, N> plane;
 		plane.position = triangle.points[1];
-		plane.normal = Normalized(Normal(triangle));
+		plane.normal = Normalized(UnitNormal(triangle));
 		
 		return Distance(plane, point);
 	}
