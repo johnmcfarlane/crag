@@ -53,7 +53,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)
 		physics::Convert(direction)
 	);
 	CRAG_VERIFY(ray);
-	CRAG_VERIFY_TRUE(NearEqual(geom::Length(ray), 1, .0001f));
+	CRAG_VERIFY_TRUE(NearEqual(geom::Magnitude(ray), 1, .0001f));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void RayCast::SetDirection(Vector3 const & direction)
@@ -78,9 +78,11 @@ void RayCast::SetRay(Ray3 const & ray)
 		ray.position.x, ray.position.y, ray.position.z, 
 		ray.direction.x, ray.direction.y, ray.direction.z);
 
-	CRAG_VERIFY_NEARLY_EQUAL(geom::Length(ray.position - GetRay().position), 0.f, 0.01f);
-	CRAG_VERIFY_NEARLY_EQUAL(geom::Length(geom::Normalized(ray.direction) - geom::Normalized(GetRay().direction)), 0.f, 0.001f);
-	CRAG_VERIFY_NEARLY_EQUAL_LOG(geom::Length(ray.direction), geom::Length(GetRay().direction), 0.001f);
+	CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.position - GetRay().position), 0.f, 0.01f);
+	CRAG_VERIFY_UNIT(ray.direction, .0001f);
+	CRAG_VERIFY_UNIT(GetRay().direction, .0001f);
+	CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.direction - GetRay().direction), 0.f, 0.001f);
+	CRAG_VERIFY_NEARLY_EQUAL_LOG(geom::Magnitude(ray.direction), geom::Magnitude(GetRay().direction), 0.001f);
 	CRAG_VERIFY(* this);
 }
 

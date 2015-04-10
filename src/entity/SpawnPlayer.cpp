@@ -477,7 +477,7 @@ namespace
 			auto normal_angle = slope_angle * .5f;
 			auto normal_slice = Vector2(std::sin(normal_angle), std::cos(normal_angle));
 			auto normal = Vector3(normal_slice.x * radial.x, normal_slice.x * radial.y, normal_slice.y);
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(normal), 1.f, .001f);
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(normal), 1.f, .001f);
 
 			return gfx::LitVertex
 			{
@@ -567,7 +567,7 @@ namespace
 			auto normal_angle = slope_angle * .5f;
 			auto normal_slice = Vector2(std::sin(normal_angle), std::cos(normal_angle));
 			auto normal = Vector3(normal_slice.x * radial.x, normal_slice.x * radial.y, normal_slice.y);
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(normal), 1.f, .001f);
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(normal), 1.f, .001f);
 
 			return gfx::LitVertex
 			{

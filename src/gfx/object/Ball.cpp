@@ -88,7 +88,7 @@ bool Ball::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volum
 		auto transformation = GetModelTransformation();
 		auto position = transformation.GetTranslation();
 		auto light_to_ball = geom::Inverse(transformation.GetRotation()) * (position - light_position);
-		auto light_to_ball_distance = geom::Length(light_to_ball);
+		auto light_to_ball_distance = geom::Magnitude(light_to_ball);
 		auto light_to_ball_direction = light_to_ball / light_to_ball_distance;
 
 		// from ball center, angle between light and shadow contact on surface

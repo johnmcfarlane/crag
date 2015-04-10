@@ -131,7 +131,7 @@ namespace geom
 		
 		static Quaternion SetAxisAngle(Vector const & axis, Scalar angle)
 		{
-			ASSERT(NearEqual(Length(axis), 1, 0.001));
+			ASSERT(NearEqual(Magnitude(axis), 1, 0.001));
 
 			angle *= 0.5;
 			auto s = std::sin(angle);

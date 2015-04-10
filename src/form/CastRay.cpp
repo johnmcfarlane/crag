@@ -106,8 +106,8 @@ namespace
 
 		SideAttributes GenerateSideAttribute(Ray3 const & ray, Plane3 const & plane)
 		{
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(ray.direction), Scalar(1.), Scalar(.001));
-			CRAG_VERIFY_NEARLY_EQUAL(geom::Length(plane.normal), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.direction), Scalar(1.), Scalar(.001));
+			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(plane.normal), Scalar(1.), Scalar(.001));
 
 			SideAttributes side_attributes;
 
@@ -122,9 +122,9 @@ namespace
 		SideAttributes GenerateSideAttribute(Ray3 const & ray, Triangle3 const & side)
 		{
 			// assumes contact will typically occur much closer to surface
-			Plane3 plane;
-			plane.position = (side.points[0] + side.points[1]) * Scalar(.5);
-			plane.normal = geom::Normalized(geom::Normal(side));
+			Plane3 plane(
+				(side.points[0] + side.points[1]) * Scalar(.5),
+				geom::Normalized(geom::UnitNormal(side)));
 
 			return GenerateSideAttribute(ray, plane);
 		}
@@ -247,7 +247,6 @@ namespace
 
 			Triangle3 const & side = leaf_attributes.surface;
 			Plane3 plane(side);
-			geom::Normalize(plane.normal);
 			const auto side_attributes = GenerateSideAttribute(uniforms.ray, plane);
 
 			if (side_attributes.dot_product > 0 // only register entry - not exit

@@ -53,7 +53,7 @@ void VernierThruster::Tick(VernierThruster * thruster)
 
 	auto const & local_ray = thruster->GetRay();
 	auto global_ray = body.GetTransformation().Transform(local_ray);
-	global_ray.direction /= - geom::Length(global_ray.direction);
+	global_ray.direction /= - geom::Magnitude(global_ray.direction);
 	
 	auto thrust_factor = 1.f;
 	

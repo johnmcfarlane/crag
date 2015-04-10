@@ -63,7 +63,7 @@ namespace form
 				ForEachNodeFace(node, [this] (Point const & a, Point const & b, Point const & c, geom::Vector3f const & normal, float)
 				{
 					Triangle3 face(a.pos, b.pos, c.pos);
-					CRAG_VERIFY_NEARLY_EQUAL(geom::Length(geom::Normalized(geom::Normal(face)) - normal), 0.f, .01f);
+					CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(geom::UnitNormal(face) - normal), 0.f, .01f);
 					
 					_poly_functor(face, normal);
 				});
@@ -182,7 +182,7 @@ namespace form
 				
 				if (TouchesProjection(polyhedron_center, surface, sphere))
 				{
-					Vector3 normal = geom::Normalized(geom::Normal(surface));
+					Vector3 normal = geom::UnitNormal(surface);
 					poly_functor(surface, normal);
 				}
 			};

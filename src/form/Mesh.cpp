@@ -91,7 +91,7 @@ Mesh::Vertex & Mesh::AddVertex(Point const & p, Color color)
 
 void Mesh::AddFace(Vertex & a, Vertex & b, Vertex & c, Vertex::Vector3 const & normal)
 {
-	ASSERT(NearEqual(LengthSq(normal), 1.f, 0.01f));
+	ASSERT(NearEqual(MagnitudeSq(normal), 1.f, 0.01f));
 	
 	auto & vertices = _lit_mesh.GetVertices();
 	auto & indices = _lit_mesh.GetIndices();
@@ -151,6 +151,13 @@ Mesh::LitMesh const & Mesh::GetLitMesh() const
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Mesh, self)
-	// slow
-	//CRAG_VERIFY(self._lit_mesh);
+#if ! defined(CRAG_FORM_FLAT_SHADE)
+	CRAG_VERIFY(self._lit_mesh);
+#endif
+
+	for (auto & vertex : self._lit_mesh)
+	{
+		auto & norm = vertex.norm;
+		CRAG_VERIFY_UNIT(norm, .0001f);
+	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END

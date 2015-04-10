@@ -76,7 +76,7 @@ void sim::ApplyGravity(Engine & engine, core::Time delta)
 
 Vector3 sim::GetUp(Vector3 const & gravitational_force)
 {
-	auto force_magnitude_sq = geom::LengthSq(gravitational_force);
+	auto force_magnitude_sq = geom::MagnitudeSq(gravitational_force);
 	if (! force_magnitude_sq)
 	{
 		return Vector3::Zero();

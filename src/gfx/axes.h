@@ -96,9 +96,9 @@ namespace gfx
 		axis2 = cp(axis1, axis3);
 
 		// verify that axes are units
-		CRAG_VERIFY_NEARLY_EQUAL(Length(axis1), S(1), S(0.0001));
-		CRAG_VERIFY_NEARLY_EQUAL(Length(axis2), S(1), S(0.0001));
-		CRAG_VERIFY_NEARLY_EQUAL(Length(axis3), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Magnitude(axis1), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Magnitude(axis2), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Magnitude(axis3), S(1), S(0.0001));
 		
 		// assign to matrix object
 		geom::Matrix<S, 3, 3> rotation;
@@ -107,8 +107,8 @@ namespace gfx
 		rotation.SetColumn(a3, axis3);
 		
 		// verify requested axes are as requested
-		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis1 - rotation.GetColumn(a1)), S(0), S(0.0001));
-		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis2 - rotation.GetColumn(a2)), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(axis1 - rotation.GetColumn(a1)), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(axis2 - rotation.GetColumn(a2)), S(0), S(0.0001));
 
 		return rotation;
 	}
@@ -119,11 +119,11 @@ namespace gfx
 	{
 		typedef geom::Vector<S, 3> Vector;
 		
-		CRAG_VERIFY_NEARLY_EQUAL(Length(axis), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Magnitude(axis), S(1), S(0.0001));
 
 		Vector axis_d2 = Normalized(Perpendicular(axis));
 		Vector axis_d1 = CrossProduct(axis, axis_d2);
-		CRAG_VERIFY_NEARLY_EQUAL(Length(axis_d1), S(1), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(Magnitude(axis_d1), S(1), S(0.0001));
 		
 		// verify axes are perpendicular to one another
 		CRAG_VERIFY_NEARLY_EQUAL(DotProduct(axis, axis_d1), S(0), S(0.0001));
@@ -140,7 +140,7 @@ namespace gfx
 		rotation.SetColumn(d2, axis_d2);
 		
 		// verify requested axis is as requested
-		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(axis - rotation.GetColumn(d0)), S(0), S(0.0001));
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(axis - rotation.GetColumn(d0)), S(0), S(0.0001));
 
 		return rotation;
 	}

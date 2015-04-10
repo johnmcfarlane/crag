@@ -32,7 +32,7 @@ namespace form
 	// Calculates normal for given face and passes it on to functor.
 	template<typename FaceFunctor> void AddFace(Point & a, Point & b, Point & c, float score, FaceFunctor & f)
 	{
-		geom::Vector3f normal = Normalized(geom::Normal(Triangle3(a.pos, b.pos, c.pos)));
+		geom::Vector3f normal = geom::UnitNormal(Triangle3(a.pos, b.pos, c.pos));
 		f (a, b, c, normal, score);
 	}
 	

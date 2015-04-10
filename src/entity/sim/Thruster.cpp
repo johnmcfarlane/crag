@@ -37,7 +37,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 	if (graphical)
 	{
 		// calculate local transformation
-		auto thrust_max = Length(ray.direction);
+		auto thrust_max = Magnitude(ray.direction);
 		if (thrust_max)
 		{
 			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
@@ -114,7 +114,7 @@ void Thruster::SetRay(Ray3 const & ray)
 		_model.Call([ray] (gfx::Object & model)
 		{
 			// calculate new local light transformation
-			auto thrust_max = Length(ray.direction);
+			auto thrust_max = Magnitude(ray.direction);
 			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
 			model.SetLocalTransformation(local_transformation);
 		});

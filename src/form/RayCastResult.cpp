@@ -49,7 +49,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCastResult, self)
 	if (self._distance != self._max_distance)
 	{
 		CRAG_VERIFY(self._normal);
-		CRAG_VERIFY_NEARLY_EQUAL(geom::Length(self._normal), 1.f, .001f);
+		CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(self._normal), 1.f, .001f);
 
 		CRAG_VERIFY(self._distance);
 		CRAG_VERIFY_OP(self._distance, >=, 0.f);

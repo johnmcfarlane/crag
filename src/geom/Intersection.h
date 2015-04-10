@@ -53,13 +53,23 @@ namespace geom
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
+	// Triangle / Point
+
+	// returns true iff half-space represented by triangle contains point
+	template<typename S, int N>
+	bool Contains(Triangle<S, N> const & triangle, Vector<S, N> const & point)
+	{
+		return DotProduct(Normal(triangle), point - geom::Centroid(triangle)) < 0;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
 	// Plane / Point
 
-	// Returns true iff half-space represented by plane, abc, contains point, p.
+	// returns true iff half-space represented by plane contains point
 	template<typename S, int N>
-	bool Contains(Plane<S, N> const & plane, Vector<S, N> const & p) 
+	bool Contains(Plane<S, N> const & plane, Vector<S, N> const & point)
 	{
-		return Distance<S>(plane, p) < 0;
+		return Distance<S>(plane, point) < 0;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +77,7 @@ namespace geom
 
 	// Returns true iff half-space represented by plane, abc, contains sphere, s.
 	template<typename S, int N>
-	bool Contains(Plane<S, N> const & plane, Sphere<S, N> const & s) 
+	bool Contains(Plane<S, N> const & plane, Sphere<S, N> const & s)
 	{
 		return Distance<S>(plane, s.center) < - s.radius;
 	}
@@ -135,9 +145,9 @@ namespace geom
 	bool Intersects(Sphere<S, N> const & sphere, Ray<S, N> const & line)
 	{
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
-		S a = LengthSq(line);
+		S a = MagnitudeSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
-		S c = LengthSq(sphere_to_start) - Squared(sphere.radius);
+		S c = MagnitudeSq(sphere_to_start) - Squared(sphere.radius);
 		
 		// (Slightly reduced) Quadratic:
 		// t = (- half_b (+/-) sqrt(Squared(half_b) - (a * c))) / a
@@ -159,9 +169,9 @@ namespace geom
 	bool GetIntersection(Sphere<S, N> const & sphere, Ray<S, N> const & line, S & t1, S & t2)
 	{
 		Vector<S, N> sphere_to_start = line.position - sphere.center;
-		S a = LengthSq(line);
+		S a = MagnitudeSq(line);
 		S half_b = DotProduct(line.direction, sphere_to_start);
-		S c = LengthSq(sphere_to_start) - Squared(sphere.radius);
+		S c = MagnitudeSq(sphere_to_start) - Squared(sphere.radius);
 		
 		// (Slightly reduced) Quadratic:
 		// t = (- half_b (+/-) sqrt(Squared(half_b) - (a * c))) / a

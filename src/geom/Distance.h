@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Magnitude.h"
 #include "Plane.h"
 #include "Triangle.h"
 
@@ -21,12 +22,12 @@ namespace geom
 
 	template<typename S, int N> S Distance(Vector<S, N> const & a, Vector<S, N> const & b)
 	{
-		return Length(a - b);
+		return Magnitude(a - b);
 	}
 
 	template<typename S, int N> S DistanceSq(Vector<S, N> const & a, Vector<S, N> const & b)
 	{
-		return LengthSq(a - b);
+		return MagnitudeSq(a - b);
 	}
 
 
@@ -38,6 +39,7 @@ namespace geom
 	template<typename S, int N>
 	S Distance(Plane<S, N> const & surface, Vector<S, N> const & point) 
 	{
+		CRAG_VERIFY_UNIT(surface.normal, S(.0001f));
 		return DotProduct(surface.normal, point - surface.position);
 	}
 	template<typename S, int N>
@@ -52,8 +54,6 @@ namespace geom
 	S Distance(Triangle<S, N> const & triangle, Vector<S, N> const & point)
 	{
 		Plane<S, N> plane(triangle);
-		Normalize(plane.normal);
-		
 		return Distance(plane, point);
 	}
 	template<typename S, int N>
@@ -69,7 +69,7 @@ namespace geom
 	{
 		Plane<S, N> plane;
 		plane.position = triangle.points[1];
-		plane.normal = Normalized(Normal(triangle));
+		plane.normal = Normalized(UnitNormal(triangle));
 		
 		return Distance(plane, point);
 	}

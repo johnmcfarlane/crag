@@ -87,7 +87,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	
 	// distance	
 	geom::Vector3f node_to_lod_center = _lod_parameters.center - node.center;
-	float distance_squared = LengthSq(node_to_lod_center);
+	float distance_squared = MagnitudeSq(node_to_lod_center);
 	ASSERT(distance_squared < std::numeric_limits<float>::max());
 	if (distance_squared > 0) 
 	{
@@ -97,7 +97,7 @@ void CalculateNodeScoreFunctor::operator()(Node & node)
 	{
 		node_to_lod_center = geom::Vector3f(1,0,0);
 	}
-	ASSERT(NearEqual(LengthSq(node_to_lod_center), 1.f, 1.02f));
+	ASSERT(NearEqual(MagnitudeSq(node_to_lod_center), 1.f, 1.02f));
 	
 	// towardness: -1=facing away, 1=facing towards
 	// purpose: favour polys which are facing towards the LOD center

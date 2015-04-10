@@ -157,7 +157,7 @@ void CameraController::Tick(CameraController * controller)
 
 	auto const & subject_translation = subject_location->GetTranslation();
 	auto camera_to_subject = subject_translation - camera_translation;
-	auto distance = geom::Length(camera_to_subject);
+	auto distance = geom::Magnitude(camera_to_subject);
 	
 	if (distance < .01f)
 	{

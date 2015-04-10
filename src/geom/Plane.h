@@ -10,10 +10,11 @@
 #pragma once
 
 #include "Triangle.h"
+#include "Magnitude.h"
 
 namespace geom
 {
-	// an infinite plane represented by a surface point and normal
+	// an infinite plane represented by a surface point and unit normal
 	template <typename S, int N>
 	class Plane
 	{
@@ -33,7 +34,7 @@ namespace geom
 		}
 
 		Plane(Triangle const & triangle) 
-		: Plane(geom::Centroid(triangle), geom::Normal(triangle))
+		: Plane(geom::Centroid(triangle), geom::UnitNormal(triangle))
 		{
 		}
 
@@ -42,12 +43,13 @@ namespace geom
 			CRAG_VERIFY(self.position);
 			CRAG_VERIFY(self.normal);
 			CRAG_VERIFY_OP(self.normal, !=, Vector::Zero());
+			CRAG_VERIFY_UNIT(self.normal, .0001f);
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
 #endif
 
 		// attributes
-		Vector position;	// arbitrary point on surface
-		Vector normal;	// normal to surface
+		Vector const position;	// arbitrary point on surface
+		Vector const normal;	// normal to surface
 	};
 
 	// catches pointless casts and bypasses them

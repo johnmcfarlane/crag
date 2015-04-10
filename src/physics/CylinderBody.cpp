@@ -51,7 +51,7 @@ bool CylinderBody::OnCollision(Body & body, ContactInterface & contact_interface
 {
 	Scalar radius, length;
 	GetParams(radius, length);
-	auto bounding_radius = geom::Length(Vector3(radius, length, length));
+	auto bounding_radius = geom::Magnitude(Vector3(radius, length, length));
 
 	Sphere3 bounding_sphere(GetTranslation(), bounding_radius);
 	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_interface);

@@ -70,7 +70,7 @@ Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 {
 	Vector3 const & center = GetTranslation();
 	Vector3 to_center = center - pos;
-	Scalar distance = Length(to_center);
+	Scalar distance = Magnitude(to_center);
 	
 	// Calculate the direction of the pull.
 	Vector3 direction = to_center / distance;

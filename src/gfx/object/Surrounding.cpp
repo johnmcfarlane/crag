@@ -96,9 +96,6 @@ void Surrounding::UpdateModelViewTransformation(Transformation const & model_vie
 
 void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
 {
-	CRAG_VERIFY(* this);
-	CRAG_VERIFY_TRUE(mesh);
-	
 	// if there's already a mesh queued up,
 	if (_mesh)
 	{
@@ -229,7 +226,6 @@ void Surrounding::UpdateVbo()
 	// state number of polygons/quaterna
 	STAT_SET (num_polys, lit_mesh.size() / 3);
 	STAT_SET (num_quats_used, properties._num_quaterne);
-	CRAG_VERIFY(* this);
 }
 
 void Surrounding::ReturnMesh(std::shared_ptr<form::Mesh> const & mesh)

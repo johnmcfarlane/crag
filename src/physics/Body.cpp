@@ -450,8 +450,8 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
 	CRAG_VERIFY(self.GetTranslation());
 	CRAG_VERIFY(self.GetVelocity());
 	CRAG_VERIFY(self.GetRotation());
-	CRAG_VERIFY_OP(geom::Length(self.GetTranslation()), <, 4.0e+8);
-//	CRAG_VERIFY_OP(geom::Length(GetVelocity()), <, 1000);
+	CRAG_VERIFY_OP(geom::Magnitude(self.GetTranslation()), <, 4.0e+8);
+//	CRAG_VERIFY_OP(geom::Magnitude(GetVelocity()), <, 1000);
 
 	auto mass = self.GetMass();
 	CRAG_VERIFY(mass);
