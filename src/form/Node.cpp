@@ -44,7 +44,7 @@ form::Node::Triplet::~Triplet()
 
 form::Node::Node()
 : _children (nullptr)
-, _owner (nullptr)
+, _owner ()
 , seed (0)
 , score (0)
 {

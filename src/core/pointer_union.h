@@ -17,239 +17,23 @@ namespace crag
 	{
 		namespace impl
 		{
-			////////////////////////////////////////////////////////////////////////////////
-			// traits
-			
-			template <typename ... Types>
-			struct traits;
-			
-			template <typename HeadType>
-			struct traits <HeadType>
+			// only works for variadic type with unique types
+			template <typename Type, typename ... Types>
+			struct tuple_index;
+
+			template <typename Head, typename ... Types>
+			struct tuple_index <Head, Head, Types ...>
 			{
-				template <typename Type>
-				static constexpr int index()
-				{
-					return std::is_same<Type, HeadType>::value ? 0 : -1;
-				}
-
-				static constexpr int pointer_size()
-				{
-					return sizeof(HeadType *);
-				}
-				
-				static constexpr int pointer_align()
-				{
-					return alignof(HeadType *);
-				}
-
-				static constexpr int object_size()
-				{
-					return sizeof(HeadType);
-				}
-				
-				static constexpr int object_align()
-				{
-					return alignof(HeadType);
-				}
+				static constexpr std::size_t value = 0;
 			};
-			
-			template <typename HeadType, typename ... TailTypes>
-			struct traits <HeadType, TailTypes ...>
+
+			template <typename Type, typename Head, typename ... Tail>
+			struct tuple_index <Type, Head, Tail ...>
 			{
-				template <typename Type>
-				static constexpr int index()
-				{
-					return std::is_same<Type, HeadType>::value ? sizeof ... (TailTypes) : traits<TailTypes ...>::template index<Type>();
-				}
-
-				static constexpr int pointer_size()
-				{
-					return (traits<HeadType *>::pointer_size() > traits<TailTypes ...>::pointer_size()) ? traits<HeadType *>::pointer_size() : traits<TailTypes ...>::pointer_size();
-				}
-				
-				static constexpr int pointer_align()
-				{
-					return (traits<HeadType *>::pointer_align() > traits<TailTypes ...>::pointer_align()) ? traits<HeadType *>::pointer_align() : traits<TailTypes ...>::pointer_align();
-				}
-
-				static constexpr int object_size()
-				{
-					return (traits<HeadType *>::object_size() > traits<TailTypes ...>::object_size()) ? traits<HeadType *>::object_size() : traits<TailTypes ...>::object_size();
-				}
-				
-				static constexpr int object_align()
-				{
-					return (traits<HeadType *>::object_align() > traits<TailTypes ...>::object_align()) ? traits<HeadType *>::object_align() : traits<TailTypes ...>::object_align();
-				}
+				static constexpr std::size_t value = tuple_index<Type, Tail ...>::value + 1;
 			};
 		}
-		
-		////////////////////////////////////////////////////////////////////////////////
-		// pointer_union_base class definition
-		
-		// base class template for pointer_union type
-		template <int pointer_size, int pointer_align, int object_size, int object_align, typename ... Types>
-		class pointer_union_base
-		{
-			// type
-			typedef union_buffer<pointer_size, pointer_align> Unionbuffer;
-			typedef int IndexType;
-			
-		public:
-			// functions
-			pointer_union_base() = default;
-			pointer_union_base(std::nullptr_t) { }
-			pointer_union_base(pointer_union_base const &) = default;
-			~pointer_union_base()
-			{
-				CRAG_VERIFY(* this);
-			}
-			
-			pointer_union_base & operator=(pointer_union_base const &) = default;
 
-			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(pointer_union_base, self)
-			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
-			
-			template <typename Type>
-			static constexpr bool can_contain()
-			{
-				return get_index_of_type<Type>() != -1;
-			}
-			
-			void clear()
-			{
-				buffer.clear();
-			}
-			
-			operator bool() const
-			{
-				return ! buffer.empty();
-			}
-			
-			bool operator==(std::nullptr_t) const
-			{
-				return buffer.empty();
-			}
-
-			bool operator!=(std::nullptr_t) const
-			{
-				return ! buffer.empty();
-			}
-
-			bool operator==(pointer_union_base const & rhs) const
-			{
-				return buffer == rhs.buffer;
-			}
-			
-			template <typename Type>
-			bool operator==(Type const * rhs) const
-			{
-				return find<Type>() == rhs;
-			}
-			
-			template <typename Type>
-			bool operator!=(Type const & rhs) const
-			{
-				return ! operator==(rhs);
-			}
-			
-			template <typename Type>
-			pointer_union_base & operator=(Type * ptr)
-			{
-				CRAG_VERIFY(* this);
-				CRAG_VERIFY(ptr);
-				CRAG_VERIFY_FALSE(reinterpret_cast<uintptr_t>(ptr) & (object_align - 1));
-				
-				// get index of Type
-				constexpr auto index = get_index_of_type<Type>();
-#if ! defined(CRAG_COMPILER_MSVC)
-				static_assert(index != -1, "Type not found in Types");
-				static_assert(! (index & ~ index_mask), "index exceeds capacity");
-#endif
-
-				// deal with the special case of a nullptr
-				if (! ptr)
-				{
-					// in case of null, we want to blank the entire store for easy null checking
-					buffer.clear();
-					return * this;
-				}
-
-				// get a reference to the pointer as the index type
-				auto & ptr_as_index = reinterpret_cast<IndexType &>(ptr);
-				ptr_as_index |= index;
-				
-				auto & dest = buffer.template get<Type *>();
-				dest = ptr;
-				
-				CRAG_VERIFY(* this);
-
-				return * this;
-			}
-			
-			template <typename Type>
-			Type * find() const
-			{
-				CRAG_VERIFY(* this);
-				
-				// get index of Type
-				constexpr IndexType required_index = get_index_of_type<Type>();
-#if ! defined(CRAG_COMPILER_MSVC)
-				static_assert(required_index != -1, "Type not stored");
-				static_assert(! (required_index & ~ index_mask), "index exceeds capacity");
-#endif
-
-				// access this' data assuming that it's the type in question
-				auto ptr = buffer.template get<Type *>();
-				
-				// test the previous assumption
-				auto & ptr_as_index = reinterpret_cast<IndexType &>(ptr);
-				auto stored_index = ptr_as_index & index_mask;
-				
-				if (stored_index != required_index)
-				{
-					// this doesn't represent a pointer to Type
-					return nullptr;
-				}
-				
-				ptr_as_index &= ~ index_mask;
-				
-				return ptr;
-			}
-			
-		private:
-			IndexType get_index() const
-			{
-				return buffer.template get<IndexType>() & index_mask;
-			}
-			
-			template <typename Type>
-			static constexpr IndexType get_index_of_type()
-			{
-				typedef ::crag::core::impl::traits<Types ...> traits;
-				return traits::template index<Type>();
-			}
-			
-			// friends
-			template <int _pointer_size, int _pointer_align, int _object_size, int _object_align, typename ... _Types>
-			friend std::ostream & operator << (std::ostream & out, pointer_union_base<_pointer_size, _pointer_align, _object_size, _object_align, _Types ...> const & pu)
-			{
-				return out << pu.buffer;
-			}
-
-			template <int _pointer_size, int _pointer_align, int _object_size, int _object_align, typename ... _Types>
-			friend std::istream & operator >> (std::istream & in, pointer_union_base<_pointer_size, _pointer_align, _object_size, _object_align, _Types ...> & pu)
-			{
-				return in >> pu.buffer;
-			}
-
-			// variables
-			Unionbuffer buffer;
-			
-			static constexpr IndexType index_limit = object_align;
-			static constexpr IndexType index_mask = index_limit - 1;
-		};
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// pointer_union type definition
 		//
@@ -257,11 +41,125 @@ namespace crag
 		// allows run-time safe storage of alternate pointers in the same space
 
 		template <typename ... Types>
-		using pointer_union = pointer_union_base<
-			::crag::core::impl::traits<Types ...>::pointer_size(), 
-			::crag::core::impl::traits<Types ...>::pointer_align(),
-			::crag::core::impl::traits<Types ...>::object_size(), 
-			::crag::core::impl::traits<Types ...>::object_align(), 
-			Types ...>;
+		class pointer_union
+		{
+			// types
+			using IndexType = std::uintptr_t;
+
+		public:
+			// functions
+			bool operator == (std::nullptr_t) const
+			{
+				CRAG_VERIFY(* this);
+
+				return _data == _null;
+			}
+			bool operator != (std::nullptr_t) const
+			{
+				CRAG_VERIFY(* this);
+
+				return _data != _null;
+			}
+
+			template <typename Type>
+			Type * operator=(Type * p)
+			{
+				CRAG_VERIFY(* this);
+				static_assert(sizeof(p) == sizeof(IndexType), "all pointers used by pointer_union must be vanilla");
+
+				if (p == nullptr)
+				{
+					(* this) = nullptr;
+					CRAG_VERIFY_TRUE((* this) == nullptr);
+					CRAG_VERIFY_EQUAL(find<Type>(), nullptr);
+
+					CRAG_VERIFY(* this);
+					return nullptr;
+				}
+
+				auto index = get_index<Type>();
+				auto data = reinterpret_cast<IndexType>(p);
+				CRAG_VERIFY_FALSE(data & _index_mask);
+
+				_data = index | data;
+				CRAG_VERIFY_TRUE((* this) != nullptr);
+				CRAG_VERIFY_EQUAL(this->find<Type>(), p);
+
+				CRAG_VERIFY(* this);
+				return p;
+			}
+
+			std::nullptr_t operator=(std::nullptr_t)
+			{
+				CRAG_VERIFY(* this);
+
+				_data = _null;
+				return nullptr;
+			}
+
+			template <typename Type>
+			Type * find()
+			{
+				CRAG_VERIFY(* this);
+
+				// if no (non-null) pointer value is stored,
+				if (! _data)
+				{
+					// return nullptr
+					return nullptr;
+				}
+
+				// if a different type of pointer is stored,
+				if (get_index() != get_index<Type>())
+				{
+					ASSERT(get_ptr());
+					return nullptr;
+				}
+
+				return reinterpret_cast<Type *>(get_ptr());
+			}
+
+			template <typename Type>
+			Type const * find() const
+			{
+				pointer_union & non_const_this = const_cast<pointer_union &>(* this);
+				return non_const_this.find<Type>();
+			}
+
+			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(pointer_union, self)
+				CRAG_VERIFY_EQUAL((self.get_index() == _null_index), (self.get_ptr() == _null));
+			CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
+
+		private:
+			IndexType get_index() const
+			{
+				return _data & _index_mask;
+			}
+
+			IndexType get_ptr() const
+			{
+				return _data & _ptr_mask;
+			}
+
+			// return index of given type
+			template <typename Type>
+			static constexpr IndexType get_index()
+			{
+				return impl::tuple_index<Type, Types...>::value + 1;
+			}
+
+			// constants
+			static constexpr IndexType _num_types = sizeof...(Types);
+			static constexpr IndexType _null_index = 0;
+			static constexpr IndexType _null = 0;
+			static constexpr IndexType _max_index = _num_types + 1;
+			static constexpr IndexType _num_index_bits = Number<_max_index>::FIELD_SIZE;
+			static constexpr IndexType _index_limit = 1 << _num_index_bits;
+			static constexpr IndexType _index_mask = _index_limit - 1;
+			static constexpr IndexType _ptr_mask = ~ _index_mask;
+
+			// variables
+			IndexType _data = 0;
+		};
 	}
 }
