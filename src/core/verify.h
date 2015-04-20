@@ -28,8 +28,6 @@
 
 #if defined(CRAG_VERIFY_ENABLED)
 
-#include <sstream>
-
 // verifies that given expression is true
 #define CRAG_VERIFY_TRUE(CONDITION) \
 	DO_STATEMENT( \
