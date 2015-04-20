@@ -40,23 +40,6 @@ char const * core::DebugGetThreadName()
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-// crag::core::Break definition
-
-void crag::core::Break()
-{
-#if defined(CRAG_COMPILER_MSVC)
-	assert(false);	// sometimes __debugbreak does nothing
-	__debugbreak();
-#elif defined(CRAG_OS_ANDROID)
-	__android_log_assert("error", "crag", "internal error");
-#elif defined(CRAG_COMPILER_GCC)
-	__builtin_trap();
-#else
-	assert(false);
-#endif
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // core::PrintMessage definition
 
 namespace

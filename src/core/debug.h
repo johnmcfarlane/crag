@@ -98,7 +98,7 @@ namespace core
 #define DEBUG_BREAK(FORMAT, ...) \
 	DO_STATEMENT ( \
 		DEBUG_MESSAGE(FORMAT, ## __VA_ARGS__); \
-		::crag::core::Break(); \
+		CRAG_BREAK(); \
 	)
 
 // ASSERT - interrupt execution in a debug build iff given condition fails
@@ -143,14 +143,16 @@ namespace core
 
 #endif
 
-// crag::core::Break() - interrupt execution
-namespace crag
-{
-	namespace core
-	{
-		void Break();
-	}
-}
+// CRAG_BREAK() - interrupt execution
+#if defined(CRAG_COMPILER_MSVC)
+#define CRAG_BREAK() __debugbreak()
+#elif defined(CRAG_OS_ANDROID)
+#define CRAG_BREAK() __android_log_assert("error", "crag", "internal error")
+#elif defined(CRAG_COMPILER_GCC)
+#define CRAG_BREAK() __builtin_trap()
+#else
+#define CRAG_BREAK() assert(false)
+#endif
 
 // Console output
 void PrintMessage(FILE * out, char const * format, ...);
