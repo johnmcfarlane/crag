@@ -67,6 +67,21 @@ namespace geom
 		return (t.points[0] + t.points[1] + t.points[2]) * third;
 	}
 
+	template <typename S, int N>
+	Vector<S, N> RandomPoint(Triangle<S, N> const & t, S r1, S r2)
+	{
+		// http://math.stackexchange.com/q/18686
+		CRAG_VERIFY_OP(r1, >=, S(0));
+		CRAG_VERIFY_OP(r1, <=, S(1));
+		CRAG_VERIFY_OP(r2, >=, S(0));
+		CRAG_VERIFY_OP(r2, <=, S(1));
+
+		auto root_r1 = std::sqrt(r1);
+		return t.points[0] * (S(1) - root_r1)
+			+ t.points[1] * (root_r1 * (S(1) - r2))
+			+ t.points[2] * (r2 * root_r1);
+	}
+
 	template <typename S>
 	Vector<S, 3> Normal(Triangle<S, 3> const & t)
 	{
