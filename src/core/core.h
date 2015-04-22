@@ -76,6 +76,15 @@ namespace crag
 		static_assert(std::is_same<double, element_type<std::list<double>>>::value, "element_type test failed");
 		static_assert(std::is_same<int, element_type<std::vector<int>>>::value, "element_type test failed");
 		static_assert(std::is_same<std::shared_ptr<std::string>, element_type<std::vector<std::shared_ptr<std::string>>>>::value, "element_type test failed");
+
+		//////////////////////////////////////////////////////////////////////
+		// hash_combine - http://www.boost.org/doc/libs/1_33_1/doc/html/hash_combine.html
+
+		// returns new seed
+		constexpr std::size_t hash_combine(std::size_t previous_seed, std::size_t hash_value)
+		{
+			return previous_seed ^ hash_value + 0x9e3779b9 + (previous_seed << 6) + (previous_seed >> 2);
+		}
 	}
 }
 
