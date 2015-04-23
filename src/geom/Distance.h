@@ -30,6 +30,23 @@ namespace geom
 		return MagnitudeSq(a - b);
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// Lines
+
+	template<typename S, int N>
+	S Distance(Ray<S, N> const & ray, Vector<S, N> const & point)
+	{
+		CRAG_VERIFY(ray);
+		CRAG_VERIFY(point);
+
+		return Magnitude(CrossProduct(ray.direction, point - ray.position));
+	}
+
+	template<typename S, int N>
+	S Distance(Vector<S, N> const & point, Ray<S, N> const & ray)
+	{
+		return Distance(ray, point);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Surfaces
