@@ -39,17 +39,18 @@ namespace std
 
 		result_type operator()(argument_type const & triangle) const
 		{
-			auto h = size_t(0);
+			auto seed = size_t(0);
 
 			for (auto & point : triangle.points)
 			{
 				for (auto component = ::begin(point); component != ::end(point); ++ component)
 				{
-					h ^= std::hash<Scalar>()(* component);
+					auto hash = std::hash<Scalar>()(* component);
+					seed = crag::core::hash_combine(seed, hash);
 				}
 			}
 
-			return h;
+			return seed;
 		}
 	};
 }
