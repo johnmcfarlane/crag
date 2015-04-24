@@ -9,15 +9,19 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 ## Setup and Install
 
-1. Install Git and your favorite C++11 compiler:
+1. Install the necessary packages:
 
-   `sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev`
+   ```
+   sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev
+   ```
 
-   Crag is regularly tested against g++ and Clang.
+   Crag is regularly tested against G++ and Clang.
 
 2. Clone the project:
 
-   `git clone https://github.com/johnmcfarlane/crag.git`
+   ```
+   git clone https://github.com/johnmcfarlane/crag.git
+   ```
 
 3. Run the setup script which installs Debian packages and other dependencies:
 
@@ -26,21 +30,44 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    ./setup.sh
    ```
 
-## Build and Run
+## Run
 
 1. Use cmake to generate a release build Makefile:
 
-   `cmake -DCMAKE_BUILD_TYPE=Release`
+   ```
+   cmake -DCMAKE_BUILD_TYPE=Release
+   ```
 
 2. Compile and link the program:
 
-   `make`
-
+   ```
+   make
+   ```
+   
    (You can speed up compilation on multicore systems using the [jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html) option.)
 
 3. Run:
 
-   `./crag`
+   ```
+   ./crag
+   ```
+
+## Debug
+
+1. Build and run as above but with the `Debug` build type and no limit on core dump size:
+
+   ```
+   cmake -DCMAKE_BUILD_TYPE=Debug
+   make
+   ulimit -c unlimited
+   ./crag
+   ```
+
+2. Following a crash, a core file, `core`, will appear in the working directory.
+
+   ```
+   gdb ./crag core -batch -ex bt
+   ```
 
 ## CLion IDE
 
@@ -50,7 +77,9 @@ To try it out:
 
 1. Install a JDK, e.g.:
 
-   `sudo apt-get install openjdk-7-jdk`
+   ```
+   sudo apt-get install openjdk-7-jdk
+   ```
 
 2. Download, extract and launch the latest [Early Access Program (EAP)](https://confluence.jetbrains.com/display/CLION/Early+Access+Program) build.
 
