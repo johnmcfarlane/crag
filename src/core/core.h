@@ -83,7 +83,7 @@ namespace crag
 		// returns new seed
 		constexpr std::size_t hash_combine(std::size_t previous_seed, std::size_t hash_value)
 		{
-			return previous_seed ^ hash_value + 0x9e3779b9 + (previous_seed << 6) + (previous_seed >> 2);
+			return previous_seed ^ (hash_value + 0x9e3779b9 + (previous_seed << 6) + (previous_seed >> 2));
 		}
 	}
 }
