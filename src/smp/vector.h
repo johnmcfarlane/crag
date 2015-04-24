@@ -141,7 +141,7 @@ namespace smp
 		bool empty() const
 		{
 			CRAG_VERIFY(* this);
-			return first == last;
+			return begin() == end();
 		}
 		
 		size_type size() const
