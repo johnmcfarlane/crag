@@ -98,6 +98,7 @@ Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 
 bool PlanetBody::OnCollision(Body & body, ContactInterface & contact_interface)
 {
+	// TODO: planet-to-planet collision causes stack overflow
 	return body.OnCollision(* this, contact_interface);
 }
 
