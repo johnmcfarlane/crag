@@ -11,7 +11,7 @@
 
 namespace physics
 {
-	// A locator which gets its location from a physics::Body
+	// a Location which does not change over time
 	class PassiveLocation final : public Location
 	{
 	public:
