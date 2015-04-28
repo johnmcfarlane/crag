@@ -45,6 +45,30 @@ template<typename T> inline void ZeroObject(T & object)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Alignment
+
+namespace crag
+{
+	namespace core
+	{
+		template <typename T>
+		bool IsAligned(T const * ptr, std::size_t alignment)
+		{
+			ASSERT(alignment > 0);
+
+			auto address_bytes = reinterpret_cast<std::intptr_t>(ptr);
+			return ! (address_bytes & (alignment - 1));
+		}
+
+		template <typename T>
+		bool IsAligned(T const * ptr)
+		{
+			return IsAligned<T>(ptr, alignof(T));
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
@@ -56,8 +80,14 @@ T* Allocate(size_t count)
 {
 	size_t num_bytes = count * sizeof(T);
 	size_t alignment = std::max(alignof(T), sizeof(void*));
-	void * buffer = Allocate(num_bytes, alignment);
-	return reinterpret_cast<T *>(buffer);
+	void * allocation = Allocate(num_bytes, alignment);
+
+	T * array = reinterpret_cast<T *>(allocation);
+
+	bool ia = crag::core::IsAligned(array);
+	ASSERT(ia);
+
+	return array;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
