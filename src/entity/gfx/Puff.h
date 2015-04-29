@@ -20,8 +20,6 @@ namespace gfx
 	class Puff : public Object
 	{
 	public:
-		DECLARE_ALLOCATOR(Puff);
-
 		Puff(Engine & engine, Transformation const & local_transformation, Scalar spawn_volume);
 		~Puff();
 		

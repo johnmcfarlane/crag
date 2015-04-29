@@ -21,8 +21,6 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // RoverThruster member definitions
 
-DEFINE_DEFAULT_ALLOCATOR(RoverThruster)
-
 RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback, bool graphical)
 : Thruster(entity, ray, graphical, 0.f)
 , _activation_callback(activation_callback)

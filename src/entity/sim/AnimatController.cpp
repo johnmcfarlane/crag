@@ -27,8 +27,6 @@ CONFIG_DEFINE(animat_sensor_length, 5.f);
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
 
-DEFINE_POOL_ALLOCATOR(AnimatController)
-
 AnimatController::AnimatController(Entity & entity, float radius)
 : VehicleController(entity)
 {

@@ -58,8 +58,6 @@ namespace std
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
 
-DEFINE_POOL_ALLOCATOR(PlanetBody)
-
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)
 , _polyhedron(polyhedron)

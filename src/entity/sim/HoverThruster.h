@@ -20,8 +20,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(HoverThruster);
-
 		HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude);
 		~HoverThruster();
 

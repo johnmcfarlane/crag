@@ -22,8 +22,6 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Planet member definitions
 
-DEFINE_POOL_ALLOCATOR(Planet)
-
 Planet::Planet(Engine & engine, Transformation const & local_transformation)
 : Object(engine, local_transformation, Layer::opaque)
 {

@@ -25,8 +25,6 @@ namespace gfx
 	{
 	public:
 		// functions
-		DECLARE_ALLOCATOR(Ball);
-
 		Ball(Engine & engine, Transformation const & local_transformation, float radius, Color4f const & color);
 
 	private:

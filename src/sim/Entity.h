@@ -42,8 +42,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(Entity);
-
 		Entity(Engine & engine);
 		~Entity();
 		

@@ -35,8 +35,6 @@ namespace sim
 		
 	public:
 		// functions
-		DECLARE_ALLOCATOR(PlanetController);
-
 		PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters);
 		~PlanetController();
 

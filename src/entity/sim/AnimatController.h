@@ -23,8 +23,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(AnimatController);
-
 		AnimatController(Entity & entity, float radius);
 		~AnimatController();
 

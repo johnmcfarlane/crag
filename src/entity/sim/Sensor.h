@@ -35,7 +35,6 @@ namespace sim
 		// functions
 
 		OBJECT_NO_COPY(Sensor);
-		DECLARE_ALLOCATOR(Sensor);
 
 		Sensor(Entity & entity, Ray3 const & position, Scalar length, Scalar variance = 0);
 		~Sensor();

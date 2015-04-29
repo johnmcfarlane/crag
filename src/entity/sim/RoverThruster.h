@@ -22,8 +22,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(RoverThruster);
-
 		RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback, bool graphical);
 		~RoverThruster();
 	private:
