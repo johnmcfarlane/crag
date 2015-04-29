@@ -244,7 +244,7 @@ namespace smp
 		void init(size_type c) 
 		{
 			// Allocate the buffer and set first and last to the start of it.
-			first = Allocate<T>(c);
+			first = new T[c];
 			last = reinterpret_cast<atomic_type> (first);
 			
 			// Set everything to end of buffer.

@@ -75,21 +75,6 @@ void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
 void Free(void * allocation);
 void CheckMemory();
 
-template <typename T>
-T* Allocate(size_t count)
-{
-	size_t num_bytes = count * sizeof(T);
-	size_t alignment = std::max(alignof(T), sizeof(void*));
-	void * allocation = Allocate(num_bytes, alignment);
-
-	T * array = reinterpret_cast<T *>(allocation);
-
-	bool ia = crag::core::IsAligned(array);
-	ASSERT(ia);
-
-	return array;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Page Allocations
 
