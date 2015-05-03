@@ -23,7 +23,7 @@ namespace physics
 		~MeshBody();
 
 	protected:
-		bool OnCollision(Body & that_body, ContactInterface & contact_interface) override;
+		bool OnCollision(Body & that_body, ContactFunction & contact_function) override;
 
 		void DebugDraw() const override;
 

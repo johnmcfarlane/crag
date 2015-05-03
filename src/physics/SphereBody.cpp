@@ -46,8 +46,8 @@ void SphereBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-bool SphereBody::OnCollision(Body & body, ContactInterface & contact_interface)
+bool SphereBody::OnCollision(Body & body, ContactFunction & contact_function)
 {
 	Sphere3 bounding_sphere(GetTranslation(), GetRadius());
-	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_interface);
+	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
 }

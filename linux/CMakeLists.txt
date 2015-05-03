@@ -267,7 +267,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/physics/Body.h
     ${CRAG_SOURCE_DIRECTORY}/physics/BoxBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/physics/BoxBody.h
-    ${CRAG_SOURCE_DIRECTORY}/physics/ContactInterface.h
     ${CRAG_SOURCE_DIRECTORY}/physics/CylinderBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/physics/CylinderBody.h
     ${CRAG_SOURCE_DIRECTORY}/physics/defs.h

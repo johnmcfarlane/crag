@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "ContactInterface.h"
 #include "Location.h"
 
 namespace physics
@@ -67,8 +66,8 @@ namespace physics
 		void SetIsCollidable(Body const & body, bool collidable);
 		bool IsCollidable(Body const & body) const;
 		
-		virtual bool OnCollision(Body & that_body, ContactInterface & contact_interface) = 0;
-		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface);
+		virtual bool OnCollision(Body & that_body, ContactFunction & contact_function) = 0;
+		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function);
 		virtual bool OnCollisionWithRay(Body & body);
 
 		virtual void DebugDraw() const;
