@@ -80,7 +80,8 @@ namespace form
 		void OnSetMesh(std::shared_ptr<Mesh> const & mesh);
 		void operator() (gfx::SetLodParametersEvent const & event) final;
 		void operator() (gfx::SetSpaceEvent const & event) final;
-		
+		geom::Space const & GetSpace() const;
+
 		void EnableAdjustNumQuaterna(bool enabled);
 		void OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne);
 		
@@ -88,6 +89,10 @@ namespace form
 		void OnToggleMeshGeneration();
 		
 		bool IsSettled() const;
+
+		// returns the maximum sphere around the LOD origin
+		// that does not contain any vertices
+		Sphere3 GetEmptySpace () const;
 
 		void Run(Daemon::MessageQueue & message_queue);
 
