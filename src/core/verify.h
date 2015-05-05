@@ -142,7 +142,7 @@ namespace crag
 			// TODO: Re-enable when std::align is defined
 			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
 			auto alignment = alignof(Type);
-			CRAG_VERIFY_EQUAL(reinterpret_cast<std::size_t>(ptr) & (alignment - 1), 0);
+			CRAG_VERIFY_EQUAL(reinterpret_cast<std::size_t>(ptr) & (alignment - 1), 0u);
 		}
 #endif
 
