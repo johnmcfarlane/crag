@@ -15,7 +15,9 @@
 #include "Entity.h"
 #include "EntityFunctions.h"
 
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 #include "form/Engine.h"
+#endif
 
 #include "physics/Location.h"
 #include "physics/Engine.h"
@@ -37,7 +39,9 @@ namespace
 	CONFIG_DEFINE(purge_distance, 1000000000000.);
 
 	STAT_DEFAULT(sim_space, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 	STAT(form_changed_sim, bool, 0);
+#endif
 }
 
 
@@ -54,7 +58,9 @@ Engine::Engine()
 , _camera(Ray3::Zero())
 , _lod_parameters({ Vector3::Zero(), 1.f })
 , _physics_engine(new physics::Engine)
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 , _collision_scene(new form::Scene(512, 512))
+#endif
 , _tick_roster(new crag::core::Roster)
 , _draw_roster(new crag::core::Roster)
 {
@@ -90,15 +96,25 @@ void Engine::OnAddObject(ObjectSharedPtr const &)
 	});
 }
 
-void Engine::AddFormation(form::Formation& formation)
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
+void Engine::AddFormation(form::Formation & formation)
 {
 	_collision_scene->AddFormation(formation, GetSpace());
 }
 
-void Engine::RemoveFormation(form::Formation& formation)
+void Engine::RemoveFormation(form::Formation & formation)
 {
 	_collision_scene->RemoveFormation(formation);
 }
+#else
+void Engine::AddFormation(form::Formation &)
+{
+}
+
+void Engine::RemoveFormation(form::Formation &)
+{
+}
+#endif
 
 void Engine::operator() (gfx::SetCameraEvent const & event)
 {
@@ -130,9 +146,11 @@ void Engine::operator() (gfx::SetSpaceEvent const & event)
 	// If so, could it result in a bad frame?
 	UpdateRenderer();
 
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 	// local collision formation scene
 	_collision_scene->OnSpaceReset(event.space);
-	
+#endif
+
 	// camera
 	_camera = geom::Convert(_camera, _space, event.space);
 	
@@ -198,6 +216,7 @@ physics::Engine & Engine::GetPhysicsEngine()
 	return * _physics_engine;
 }
 
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 form::Scene & Engine::GetScene()
 {
 	return * _collision_scene;
@@ -207,15 +226,20 @@ form::Scene const & Engine::GetScene() const
 {
 	return * _collision_scene;
 }
+#endif
 
 bool Engine::IsSettled() const
 {
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 	if (quit_flag)
 	{
 		return true;
 	}
 	
 	return _collision_scene->IsSettled();
+#else
+	return true;
+#endif
 }
 
 crag::core::Roster & Engine::GetTickRoster()
@@ -278,10 +302,12 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 
 void Engine::Tick()
 {
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 	if (_collision_scene->Tick(_lod_parameters))
 		STAT_SET(form_changed_sim, true);
 	else
 		STAT_SET(form_changed_sim, false);
+#endif
 
 	// tick everything
 	_tick_roster->Call();

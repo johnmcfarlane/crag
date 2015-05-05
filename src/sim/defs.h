@@ -11,6 +11,9 @@
 
 #include "ipc/Handle.h"
 
+// essentially enables planet collision
+#define CRAG_SIM_FORMATION_PHYSICS
+
 namespace geom
 {
 	// forward-declarations

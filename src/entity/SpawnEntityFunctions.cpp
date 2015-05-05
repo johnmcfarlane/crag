@@ -162,15 +162,15 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 	auto handle = EntityHandle::Create();
 
 	handle.Call([sphere, random_seed, num_craters] (Entity & entity) {
-		auto & engine = entity.GetEngine();
-
 		// controller
 		auto controller = make_shared<PlanetController>(entity, sphere, random_seed, num_craters);
-		auto& formation = controller->GetFormation();
 		entity.SetController(controller);
 
 		// body
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
+		auto & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
+		auto const & formation = controller->GetFormation();
 		auto const * polyhedron = engine.GetScene().GetPolyhedron(formation);
 		if (polyhedron)
 		{
@@ -181,6 +181,10 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		{
 			DEBUG_BREAK("missing formation polyhedron");
 		}
+#else
+		auto body = make_shared<physics::PassiveLocation>(sphere.center);
+		entity.SetLocation(body);
+#endif
 
 		// register with the renderer
 		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center));
