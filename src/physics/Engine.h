@@ -79,7 +79,6 @@ namespace physics
 
 		void AddContacts(ContactGeom const * begin, ContactGeom const * end);
 
-	private:		
 		// variables
 		dWorldID world;
 		dSpaceID space;

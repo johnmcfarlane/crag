@@ -26,14 +26,18 @@ Scene::Scene(Engine & engine)
 : _time(-1)
 , _root(engine, Transformation::Matrix44::Identity(), Layer::background)
 {
+	CRAG_VERIFY(* this);
 }
 
 Scene::~Scene()
 {
+	CRAG_VERIFY(* this);
 	ASSERT(_root.GetChildren().empty());
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, self)
+	CRAG_VERIFY(self._time);
+	CRAG_VERIFY(self._pov.GetTransformation());
 	CRAG_VERIFY(self._root);
 	for (auto object : self._render_list)
 	{

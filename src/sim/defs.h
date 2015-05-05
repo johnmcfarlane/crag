@@ -48,6 +48,7 @@ namespace sim
 	typedef geom::Plane<Scalar, 3> Plane3;
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Sphere<Scalar, 3> Sphere3;
+	using Triangle3 = geom::Triangle<Scalar, 3>;
 	typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 	typedef geom::Matrix<Scalar, 4, 4> Matrix44;
 	typedef geom::Transformation<Scalar> Transformation;
