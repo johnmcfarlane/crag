@@ -314,7 +314,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/smp/smp.h
     ${CRAG_SOURCE_DIRECTORY}/smp/Thread.cpp
     ${CRAG_SOURCE_DIRECTORY}/smp/Thread.h
-    ${CRAG_SOURCE_DIRECTORY}/smp/vector.h
     ${CRAG_SOURCE_DIRECTORY}/main.cpp
     ${CRAG_SOURCE_DIRECTORY}/pch.cpp
     ${CRAG_SOURCE_DIRECTORY}/pch.h)
