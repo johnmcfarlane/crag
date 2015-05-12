@@ -18,8 +18,6 @@ namespace gfx
 	{
 	public:
 		// functions
-		DECLARE_ALLOCATOR(Planet);
-
 		Planet(Engine & engine, Transformation const & local_transformation);
 		
 		void SetMaxRadius(Scalar max_radius);

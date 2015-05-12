@@ -27,8 +27,6 @@ namespace gfx
 		typedef Light super;
 		
 		// functions
-		DECLARE_ALLOCATOR(Thruster);
-
 		Thruster(Engine & engine, Transformation const & local_transformation, float thrust_max);
 		
 		void Update(float const & thrust_factor);

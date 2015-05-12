@@ -30,15 +30,13 @@ namespace physics
 		// functions
 
 	public:
-		DECLARE_ALLOCATOR(PlanetBody);
-
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
 		Vector3 GetGravitationalAttraction(Vector3 const & pos) const override;
 	private:
-		virtual bool OnCollision(Body & body, ContactInterface & contact_interface);
+		virtual bool OnCollision(Body & body, ContactFunction & contact_function);
 
-		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface) override;
+		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function) override;
 		bool OnCollisionWithRay(Body & body) override;
 
 		void DebugDraw() const override;

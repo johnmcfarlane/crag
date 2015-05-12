@@ -631,8 +631,25 @@ void TouchObserverController::UpdateCamera(std::array<Contact const *, 2> contac
 // adjusts given transformation to avoid penetrating world geometry;
 void TouchObserverController::ClampTransformation()
 {
+	auto push = physics::Vector3::Zero();
+	physics::Scalar max_push_distance = 0;
+
+	auto contact_function = physics::ContactFunction([&] (physics::ContactGeom const * begin, physics::ContactGeom const * end) {
+		ASSERT(end > begin);
+		do
+		{
+			auto push_distance = begin->depth;
+			if (push_distance > max_push_distance)
+			{
+				max_push_distance = push_distance;
+				push = physics::Convert(begin->normal);
+			}
+		}
+		while ((++ begin) != end);
+	});
+
 	auto camera_near = _frustum.depth_range[0];
-	
+
 	for (auto pass = 5; pass; -- pass)
 	{
 		ASSERT(touch_observer_distance_buffer >= 1.f);
@@ -645,24 +662,6 @@ void TouchObserverController::ClampTransformation()
 		auto & engine = entity.GetEngine();
 		auto & physics_engine = engine.GetPhysicsEngine();
 	
-		auto push = physics::Vector3::Zero();
-		physics::Scalar max_push_distance = 0;
-		auto function = [& push, & max_push_distance] (physics::ContactGeom const * begin, physics::ContactGeom const * end)
-		{
-			ASSERT(end > begin);
-			do
-			{
-				auto push_distance = begin->depth;
-				if (push_distance > max_push_distance)
-				{
-					max_push_distance = push_distance;
-					push = physics::Convert(begin->normal);
-				}
-			}
-			while ((++ begin) != end);
-		};
-
-		physics::ContactFunction<decltype(function)> contact_function(function);
 		physics_engine.Collide(geom::Cast<physics::Scalar>(collision_sphere), contact_function);
 	
 		if (max_push_distance <= 0)

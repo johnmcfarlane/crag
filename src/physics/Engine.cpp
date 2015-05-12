@@ -94,7 +94,7 @@ namespace
 	{
 		//ASSERT(dGeomGetClass(body_handle) == dSphereClass);
 		
-		auto & contact_interface = ref(static_cast<ContactInterface *>(data));
+		auto & contact_interface = ref(static_cast<ContactFunction *>(data));
 
 		auto body_data = dGeomGetData (body_handle);
 		auto & body = ref(static_cast<Body *>(body_data));
@@ -265,14 +265,14 @@ form::RayCastResult Engine::CastRay(Ray3 const & ray, Scalar length, Body const 
 	return ray_cast.GetResult();
 }
 
-void Engine::Collide(Sphere3 const & sphere, ContactInterface & callback)
+void Engine::Collide(Sphere3 const & sphere, ContactFunction & contact_function)
 {
 	// create physics::SphereBody object
 	SphereBody body(Transformation(sphere.center), nullptr, * this, sphere.radius);
 	
 	// perform collision between ray_cast and all pre-existing objects
 	auto handle = body.GetCollisionHandle();
-	dSpaceCollide2(reinterpret_cast<CollisionHandle>(space), handle, & callback, OnSphereCollision);
+	dSpaceCollide2(reinterpret_cast<CollisionHandle>(space), handle, & contact_function, OnSphereCollision);
 }
 
 void Engine::ToggleCollisions()
@@ -334,13 +334,17 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 	{
 		return;
 	}
+
+	auto contact_function = ContactFunction([& engine] (ContactGeom const * begin, ContactGeom const * end) {
+		engine.AddContacts(begin, end);
+	});
 	
-	if (body1.OnCollision(body2, engine))
+	if (body1.OnCollision(body2, contact_function))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(body1, engine))
+	if (body2.OnCollision(body1, contact_function))
 	{
 		return;
 	}
@@ -363,12 +367,12 @@ void Engine::OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2)
 	
 	// Time to increase max_num_contacts?
 	ASSERT (num_contacts * 2 <= max_contacts_per_collision);
-	
-	(* this)(contact_geoms, contact_geoms + num_contacts);
+
+	AddContacts(contact_geoms, contact_geoms + num_contacts);
 }
 
 // Called once individual points of contact have been determined.
-void Engine::operator() (ContactGeom const * begin, ContactGeom const * end)
+void Engine::AddContacts(ContactGeom const * begin, ContactGeom const * end)
 {
 	auto count = end - begin;
 	_contacts.reserve(_contacts.size() + count);

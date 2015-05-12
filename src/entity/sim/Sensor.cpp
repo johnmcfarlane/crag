@@ -59,8 +59,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
-DEFINE_POOL_ALLOCATOR(Sensor)
-
 Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance)
 : _entity(entity)
 , _length(length)

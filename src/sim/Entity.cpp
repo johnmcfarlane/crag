@@ -29,8 +29,6 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
-DEFINE_POOL_ALLOCATOR(Entity)
-
 Entity::Entity(Engine & engine)
 : super(engine)
 {

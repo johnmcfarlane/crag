@@ -28,8 +28,6 @@
 
 #if defined(CRAG_VERIFY_ENABLED)
 
-#include <sstream>
-
 // verifies that given expression is true
 #define CRAG_VERIFY_TRUE(CONDITION) \
 	DO_STATEMENT( \
@@ -143,8 +141,8 @@ namespace crag
 		{
 			// TODO: Re-enable when std::align is defined
 			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
-
-			CRAG_VERIFY_TRUE(! (reinterpret_cast<std::size_t>(ptr) & (alignof(Type) - 1)));
+			auto alignment = alignof(Type);
+			CRAG_VERIFY_EQUAL(reinterpret_cast<std::size_t>(ptr) & (alignment - 1), 0u);
 		}
 #endif
 

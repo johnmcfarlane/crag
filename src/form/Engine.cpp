@@ -123,6 +123,11 @@ void Engine::operator() (gfx::SetSpaceEvent const & event)
 	_space = event.space;
 }
 
+geom::Space const & Engine::GetSpace() const
+{
+	return _space;
+}
+
 void Engine::EnableAdjustNumQuaterna(bool enabled)
 {
 	_enable_adjust_num_quaterna = enabled;
@@ -146,6 +151,14 @@ void Engine::OnToggleMeshGeneration()
 bool Engine::IsSettled() const
 {
 	return quit_flag || _scene.IsSettled();
+}
+
+Sphere3 Engine::GetEmptySpace() const
+{
+	auto & surrounding = _scene.GetSurrounding();
+	auto min_leaf_distance_squared = surrounding.GetMinLeafDistanceSquared();
+
+	return Sphere3(_lod_parameters.center, min_leaf_distance_squared);
 }
 
 void Engine::Run(Daemon::MessageQueue & message_queue)

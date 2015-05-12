@@ -14,9 +14,6 @@
 
 #include "gfx/Color.h"
 
-#include "smp/vector.h"
-
-
 namespace form
 {
 	// forward-delcares
@@ -33,5 +30,5 @@ namespace form
 	typedef geom::Triangle<Scalar, 3> Triangle3;
 	
 	// thread-safe node vector
-	typedef smp::vector<Node *> SmpNodeVector;
+	typedef std::vector<Node *> NodeVector;
 }

@@ -44,8 +44,6 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Thruster member definitions
 
-DEFINE_POOL_ALLOCATOR(Thruster)
-
 Thruster::Thruster(Engine & engine, Transformation const & local_transformation, float thrust_max)
 : super(engine, local_transformation, thruster_color, thruster_light_attribs)
 , _thrust_max(thrust_max)

@@ -11,10 +11,7 @@
 
 #include "MonitorOrigin.h"
 
-#include "sim/Engine.h"
-
-#include "form/Surrounding.h"
-#include "form/Scene.h"
+#include "form/Engine.h"
 
 #include "gfx/SetSpaceEvent.h"
 
@@ -34,8 +31,8 @@ namespace
 	CONFIG_DEFINE(min_precision_score, .001f);
 	CONFIG_DEFINE(origin_touch_max_distance, 10000.f);
    
-	STAT_DEFAULT(sim_origin_reset_distance_factor, sim::Scalar, 0.6f, 0.f);
-	STAT_DEFAULT(sim_origin_reset_precision_factor, sim::Scalar, 0.3f, 0.f);
+	STAT_DEFAULT(sim_origin_reset_distance_factor, form::Scalar, 0.6f, 0.f);
+	STAT_DEFAULT(sim_origin_reset_precision_factor, form::Scalar, 0.3f, 0.f);
 
 	// Given the camera position relative to the current origin
 	// and the distance to the closest bit of geometry,
@@ -77,15 +74,11 @@ namespace
 		return false;
 	}
 	
-	void ReviseOrigin(sim::Engine & engine)
+	void ReviseOrigin(form::Engine & engine)
 	{
-		auto & scene = engine.GetScene();
-		auto & surrounding = scene.GetSurrounding();
+		auto empty_space = engine.GetEmptySpace();
 
-		auto & lod_center = engine.GetLodParameters().center;
-		auto min_leaf_distance_squared = surrounding.GetMinLeafDistanceSquared();
-
-		if (ShouldReviseOrigin(lod_center, min_leaf_distance_squared))
+		if (ShouldReviseOrigin(empty_space.center, empty_space.radius))
 		{
 #if defined(CRAG_DEBUG)
 			app::Beep();
@@ -93,7 +86,7 @@ namespace
 
 			auto space = engine.GetSpace();
 
-			auto origin = space.RelToAbs(lod_center);
+			auto origin = space.RelToAbs(empty_space.center);
 			DEBUG_MESSAGE("Set: %lf,%lf,%lf", origin.x, origin.y, origin.z);
 
 			gfx::SetSpaceEvent event = { geom::Space(origin) };
@@ -109,6 +102,6 @@ void MonitorOrigin(applet::AppletInterface & applet_interface)
 	while (! applet_interface.GetQuitFlag())
 	{
 		applet_interface.WaitFor(0.23432);
-		sim::Daemon::Call(& ReviseOrigin);
+		form::Daemon::Call(& ReviseOrigin);
 	}
 }

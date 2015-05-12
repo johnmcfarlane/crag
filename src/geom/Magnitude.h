@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Ray.h"
+#include "Sphere.h"
 #include "Triangle.h"
 
 namespace geom
@@ -122,5 +123,97 @@ namespace geom
 	template<typename V> auto TetrahedronVolume(V const & a, V const & b, V const & c, V const & d) -> decltype(DotProduct(a, a))
 	{
 		return std::abs(DotProduct((a - d), CrossProduct((b - d), (c - d)))) / 6;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// comparison
+
+	// for comparison between triangles
+	template<typename S, int N>
+	S Magnitude(Triangle<S, N> const & t)
+	{
+		return Area(t);
+	}
+
+	// for comparison between spheres
+	template<typename S, int N>
+	S Magnitude(Sphere<S, N> const & s)
+	{
+		return s.radius;
+	}
+
+	// Vector (uses mag-squared hack)
+	template <typename S, int N>
+	bool operator > (Vector<S, N> const & lhs, Vector<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) > MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator >= (Vector<S, N> const & lhs, Vector<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) >= MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator < (Vector<S, N> const & lhs, Vector<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) < MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator <= (Vector<S, N> const & lhs, Vector<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) <= MagnitudeSq(rhs);
+	}
+
+	// Ray (uses mag-squared hack)
+	template <typename S, int N>
+	bool operator > (Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) > MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator >= (Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) >= MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator < (Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) < MagnitudeSq(rhs);
+	}
+
+	template <typename S, int N>
+	bool operator <= (Ray<S, N> const & lhs, Ray<S, N> const & rhs)
+	{
+		return MagnitudeSq(lhs) <= MagnitudeSq(rhs);
+	}
+
+	// non-Vector, non-Ray (uses magnitude)
+	template <typename T>
+	bool operator > (T const & lhs, T const & rhs)
+	{
+		return Magnitude(lhs) > Magnitude(rhs);
+	}
+
+	template <typename T>
+	bool operator >= (T const & lhs, T const & rhs)
+	{
+		return Magnitude(lhs) >= Magnitude(rhs);
+	}
+
+	template <typename T>
+	bool operator < (T const & lhs, T const & rhs)
+	{
+		return Magnitude(lhs) < Magnitude(rhs);
+	}
+
+	template <typename T>
+	bool operator <= (T const & lhs, T const & rhs)
+	{
+		return Magnitude(lhs) <= Magnitude(rhs);
 	}
 }

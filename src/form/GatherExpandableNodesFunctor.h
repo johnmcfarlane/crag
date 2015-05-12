@@ -13,10 +13,7 @@
 #include "Surrounding.h"
 #include "Quaterna.h"
 
-#include "smp/vector.h"
-
-
-namespace form 
+namespace form
 {
 	// Called on each node to (conditionally) expand it
 	// such that newly allocated nodes are assigned as children of it. 
@@ -26,7 +23,7 @@ namespace form
 		
 	public:
 		// functions
-		GatherExpandableNodesFunctor (Surrounding & surrounding, SmpNodeVector & expandable_nodes)
+		GatherExpandableNodesFunctor (Surrounding & surrounding, NodeVector & expandable_nodes)
 		: _surrounding (surrounding)
 		, _expandable_nodes(expandable_nodes)
 		{
@@ -62,7 +59,7 @@ namespace form
 	private:
 		// variables
 		Surrounding & _surrounding;
-		SmpNodeVector & _expandable_nodes;
+		NodeVector & _expandable_nodes;
 		float min_score;
 	};
 }

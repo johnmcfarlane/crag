@@ -39,25 +39,24 @@ namespace std
 
 		result_type operator()(argument_type const & triangle) const
 		{
-			auto h = size_t(0);
+			auto seed = size_t(0);
 
 			for (auto & point : triangle.points)
 			{
 				for (auto component = ::begin(point); component != ::end(point); ++ component)
 				{
-					h ^= std::hash<Scalar>()(* component);
+					auto hash = std::hash<Scalar>()(* component);
+					seed = crag::core::hash_combine(seed, hash);
 				}
 			}
 
-			return h;
+			return seed;
 		}
 	};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
-
-DEFINE_POOL_ALLOCATOR(PlanetBody)
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)
@@ -95,12 +94,13 @@ Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 	return direction * force;
 }
 
-bool PlanetBody::OnCollision(Body & body, ContactInterface & contact_interface)
+bool PlanetBody::OnCollision(Body & body, ContactFunction & contact_function)
 {
-	return body.OnCollision(* this, contact_interface);
+	// TODO: planet-to-planet collision causes stack overflow
+	return body.OnCollision(* this, contact_function);
 }
 
-bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactInterface & contact_interface)
+bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function)
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// gather the two collision handles together
@@ -225,7 +225,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	{
 		// add it to the list to be resolved.
 		auto begin = contacts.data();
-		contact_interface(begin, begin + num_contacts);
+		contact_function(begin, begin + num_contacts);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

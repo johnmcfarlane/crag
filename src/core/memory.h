@@ -45,20 +45,35 @@ template<typename T> inline void ZeroObject(T & object)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Alignment
+
+namespace crag
+{
+	namespace core
+	{
+		template <typename T>
+		bool IsAligned(T const * ptr, std::size_t alignment)
+		{
+			ASSERT(alignment > 0);
+
+			auto address_bytes = reinterpret_cast<std::intptr_t>(ptr);
+			return ! (address_bytes & (alignment - 1));
+		}
+
+		template <typename T>
+		bool IsAligned(T const * ptr)
+		{
+			return IsAligned<T>(ptr, alignof(T));
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
 void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
 void Free(void * allocation);
 void CheckMemory();
-
-template <typename T>
-T* Allocate(size_t count)
-{
-	size_t num_bytes = count * sizeof(T);
-	size_t alignment = std::max(alignof(T), sizeof(void*));
-	void * buffer = Allocate(num_bytes, alignment);
-	return reinterpret_cast<T *>(buffer);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Page Allocations
@@ -69,63 +84,3 @@ size_t GetPageSize();
 
 void * AllocatePage(size_t num_bytes);
 void FreePage(void * allocation, size_t num_bytes);
-
-////////////////////////////////////////////////////////////////////////////////
-// Object allocation macros
-
-// DECLARE_ALLOCATOR:
-//  placed in class definition, then add one of the three DEFINE macros: 
-//  DEFINE_DEFAULT_ALLOCATOR, DISABLE_ALLOCATOR or DEFINE_POOL_ALLOCATOR 
-//  in class' compilation unit.
-#define DECLARE_ALLOCATOR(TYPE) \
-	void* operator new(size_t sz) noexcept; \
-	void* operator new [](size_t sz) noexcept; \
-	void operator delete(void* p) noexcept; \
-	void operator delete [](void* p) noexcept
-
-// regular, do-nothing implementation;
-// placed with class member definitions
-#define DEFINE_DEFAULT_ALLOCATOR(TYPE) \
-	void* TYPE::operator new(size_t sz) noexcept \
-	{ \
-		ASSERT(sz == sizeof(TYPE)); \
-		return ::Allocate(sz, alignof(TYPE)); \
-	} \
-	void* TYPE::operator new [](size_t sz) noexcept \
-	{ \
-		ASSERT(sz == sizeof(TYPE)); \
-		return ::Allocate(sz, alignof(TYPE)); \
-	} \
-	void TYPE::operator delete(void* p) noexcept \
-	{ \
-		::Free(p); \
-	} \
-	void TYPE::operator delete [](void* p) noexcept \
-	{ \
-		::Free(p); \
-	}
-
-// prevents class (or sub-classes) from being allocated;
-// placed with class member definitions
-#define DISABLE_ALLOCATOR(TYPE) \
-	void* TYPE::operator new(size_t sz) noexcept \
-	{ \
-		DEBUG_BREAK("disabled"); \
-		return ::Allocate(sz, alignof(TYPE)); \
-	} \
-	void* TYPE::operator new [](size_t sz) noexcept \
-	{ \
-		DEBUG_BREAK("disabled"); \
-		return ::Allocate(sz, alignof(TYPE)); \
-	} \
-	void TYPE::operator delete(void* p) noexcept \
-	{ \
-		::Free(p); \
-	} \
-	void TYPE::operator delete [](void* p) noexcept \
-	{ \
-		::Free(p); \
-	}
-
-// TODO: Write a good pool allocator
-#define DEFINE_POOL_ALLOCATOR DEFINE_DEFAULT_ALLOCATOR

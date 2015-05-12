@@ -20,8 +20,6 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		DECLARE_ALLOCATOR(AnimatThruster);
-
 		AnimatThruster(Entity & entity, Ray3 const & ray);
 		~AnimatThruster();
 	private:

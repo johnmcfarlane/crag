@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ContactInterface.h"
+#include "defs.h"
 
 namespace crag
 {
@@ -30,7 +30,7 @@ namespace physics
 	class Body;
 	
 	// The physics singleton.
-	class Engine : public ContactInterface
+	class Engine
 	{
 		////////////////////////////////////////////////////////////////////////////////
 		// types
@@ -64,7 +64,7 @@ namespace physics
 		
 		// use sparingly
 		form::RayCastResult CastRay(Ray3 const & ray, Scalar length, Body const * exception = nullptr);
-		void Collide(Sphere3 const & sphere, ContactInterface & callback);
+		void Collide(Sphere3 const & sphere, ContactFunction & contact_function);
 		
 		void ToggleCollisions();
 	private:
@@ -76,10 +76,9 @@ namespace physics
 		
 		// called on bodies which don't handling their own collision
 		void OnUnhandledCollision(CollisionHandle geom1, CollisionHandle geom2);
-		
-		void operator() (ContactGeom const * begin, ContactGeom const * end) final;
-		
-	private:		
+
+		void AddContacts(ContactGeom const * begin, ContactGeom const * end);
+
 		// variables
 		dWorldID world;
 		dSpaceID space;

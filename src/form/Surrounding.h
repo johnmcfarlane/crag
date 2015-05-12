@@ -17,8 +17,6 @@
 
 #include "core/debug.h"
 
-#include "smp/vector.h"
-
 #include "CalculateNodeScoreFunctor.h"
 
 namespace form
@@ -128,7 +126,7 @@ namespace form
 		CalculateNodeScoreFunctor node_score_functor;
 		
 		// used by ChurnNodes
-		SmpNodeVector _expandable_nodes;
+		NodeVector _expandable_nodes;
 		
 		bool _changed;
 	};

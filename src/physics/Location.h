@@ -17,9 +17,7 @@
 
 namespace physics
 {
-	class Body;
-
-	// A locator which gets its location from a physics::Body
+	// base class of the component representing an entity's physical location
 	class Location : private crag::counted_object<Location>
 	{
 		OBJECT_NO_COPY(Location);

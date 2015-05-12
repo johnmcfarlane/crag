@@ -41,7 +41,9 @@ namespace physics
 namespace form
 {
 	class Formation;
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 	class Scene;
+#endif
 }
 
 namespace gfx
@@ -106,9 +108,11 @@ namespace sim
 		std::uint64_t GetNumTicks() const;
 		physics::Engine & GetPhysicsEngine();		
 
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 		form::Scene & GetScene();
 		form::Scene const & GetScene() const;
-		
+#endif
+
 		bool IsSettled() const;
 
 		crag::core::Roster & GetTickRoster();
@@ -136,7 +140,9 @@ namespace sim
 		geom::Space _space;
 		gfx::LodParameters _lod_parameters;
 		std::unique_ptr<physics::Engine> _physics_engine;
+#if defined(CRAG_SIM_FORMATION_PHYSICS)
 		std::unique_ptr<form::Scene> _collision_scene;	// for collision
+#endif
 
 		std::unique_ptr<crag::core::Roster> _tick_roster;	// general simulation tick
 		std::unique_ptr<crag::core::Roster> _draw_roster;	// provides opportunity to communicate graphical changes to renderer

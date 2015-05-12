@@ -172,10 +172,10 @@ Surrounding::Surrounding(size_t max_num_quaterne)
 , _quaterna_buffer(max_num_quaterne)
 , _target_num_quaterne(std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
 , point_buffer(max_num_quaterne * num_verts_per_quaterna)
-, _expandable_nodes(max_num_quaterne * num_nodes_per_quaterna)
 , _changed(true)
 {
 	InitQuaterna(std::begin(_quaterna_buffer) + _quaterna_buffer.capacity());
+	_expandable_nodes.reserve(max_num_quaterne * num_nodes_per_quaterna);
 
 	CRAG_VERIFY(* this);
 }

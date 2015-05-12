@@ -43,6 +43,8 @@ namespace physics
 	typedef dMass Mass;
 	typedef dTriMeshDataID MeshData;
 
+	using ContactFunction = std::function<void (ContactGeom const * begin, ContactGeom const * end)>;
+
 	typedef geom::Vector<Scalar, 3> Vector3;
 	typedef geom::Ray<Scalar, 3> Ray3;
 	typedef geom::Sphere<Scalar, 3> Sphere3;

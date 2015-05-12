@@ -81,6 +81,6 @@ void Semaphore::Increment()
 	if (SDL_SemPost(& _sdl_semaphore) != 0)
 	{
 		CRAG_REPORT_SDL_ERROR();
-		::crag::core::Break();
+		CRAG_BREAK();
 	}
 }

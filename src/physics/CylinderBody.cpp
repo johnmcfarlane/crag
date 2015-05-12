@@ -47,12 +47,12 @@ void CylinderBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-bool CylinderBody::OnCollision(Body & body, ContactInterface & contact_interface)
+bool CylinderBody::OnCollision(Body & body, ContactFunction & contact_function)
 {
 	Scalar radius, length;
 	GetParams(radius, length);
 	auto bounding_radius = geom::Magnitude(Vector3(radius, length, length));
 
 	Sphere3 bounding_sphere(GetTranslation(), bounding_radius);
-	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_interface);
+	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
 }
