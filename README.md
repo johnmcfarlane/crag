@@ -16,8 +16,17 @@ It is written mostly in C++ and is designed to be as portable as possible, using
 
 Infrequently built binaries are available for:
 
-- [Android](https://drive.google.com/file/d/0BzcKPEavdc2NdUlfNTdmeTUwLTQ/edit?usp=sharing) (works on most devices).
-- [Windows](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)
+### Android
+
+Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NdUlfNTdmeTUwLTQ/edit?usp=sharing)]. 
+
+This package in known to work on a number of popular modern devices. It is primarily developed on HTC One (M7).
+
+### Windows
+
+Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)]. 
+
+This archive contains a copy of the demo and its necessary assets developed against Windows 7. All files must be expanded and the appropriate C run-time libraries installed. Your best bet is to install [this Microsoft package](https://www.microsoft.com/en-us/download/details.aspx?id=40784) first. 
 
 ## Clone
 
