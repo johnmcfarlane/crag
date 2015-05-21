@@ -34,7 +34,7 @@ namespace physics
 		
 		Vector3 GetGravitationalAttraction(Vector3 const & pos) const override;
 	private:
-		virtual bool OnCollision(Body & body, ContactFunction & contact_function);
+		bool OnCollision(Body & body, ContactFunction & contact_function) override;
 
 		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function) override;
 		bool OnCollisionWithRay(Body & body) override;
