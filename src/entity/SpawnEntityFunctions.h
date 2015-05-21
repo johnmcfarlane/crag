@@ -22,3 +22,4 @@ sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & v
 sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject);
 sim::EntityHandle SpawnPlanet(sim::Sphere3 const & sphere, int random_seed, int num_craters);
 sim::EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color, bool casts_shadow = true);
+std::vector<sim::EntityHandle> SpawnAnimats(sim::Vector3 const & base_position, int num_animats);

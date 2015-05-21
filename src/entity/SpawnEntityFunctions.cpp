@@ -15,6 +15,7 @@
 
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
+#include "entity/sim/AnimatController.h"
 #include "entity/sim/PlanetController.h"
 
 #include "sim/Engine.h"
@@ -38,6 +39,7 @@
 #include "gfx/object/MeshObject.h"
 
 #include "core/ConfigEntry.h"
+#include "core/Random.h"
 
 using namespace std;
 using namespace sim;
@@ -115,6 +117,35 @@ namespace
 		auto const & subject = engine.GetObject(subject_handle);
 		auto controller = make_shared<CameraController>(camera, subject);
 		camera.SetController(controller);
+	}
+
+	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
+	{
+		auto animat = sim::EntityHandle::Create();
+
+		sim::Sphere3 sphere(position, 1);
+		animat.Call([sphere] (sim::Entity & entity)
+					{
+						sim::Engine & engine = entity.GetEngine();
+						physics::Engine & physics_engine = engine.GetPhysicsEngine();
+
+						// physics
+						auto zero_vector = sim::Vector3::Zero();
+						auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
+						body->SetDensity(1);
+						entity.SetLocation(body);
+
+						// graphics
+						gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
+						gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
+						entity.SetModel(model);
+
+						// controller
+						auto controller = std::make_shared<sim::AnimatController>(entity, sphere.radius);
+						entity.SetController(controller);
+					});
+
+		return animat;
 	}
 }
 
@@ -213,4 +244,24 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 	});
 
 	return sun;
+}
+
+std::vector<sim::EntityHandle> SpawnAnimats(sim::Vector3 const & base_position, int num_animats)
+{
+	std::vector<sim::EntityHandle> animats(num_animats);
+
+	for (auto & animat : animats)
+	{
+		sim::Vector3 offset;
+		float r;
+		Random::sequence.GetGaussians(offset.x, offset.y);
+		offset.y = std::abs(offset.y);
+		Random::sequence.GetGaussians(offset.z, r);
+
+		auto position = base_position + offset * 10.f;
+
+		animat = SpawnAnimat(position);
+	}
+
+	return animats;
 }

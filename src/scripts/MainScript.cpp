@@ -11,7 +11,6 @@
 
 #include "InitSpace.h"
 
-#include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnPlayer.h"
 #include "entity/SpawnSkybox.h"
@@ -28,7 +27,6 @@
 
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
-#include "core/Random.h"
 
 CONFIG_DECLARE(player_type, int);
 CONFIG_DEFINE(num_animats, 1);
@@ -58,52 +56,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
-	{
-		auto animat = sim::EntityHandle::Create();
-
-		sim::Sphere3 sphere(position, 1);
-		animat.Call([sphere] (sim::Entity & entity) 
-		{
-			sim::Engine & engine = entity.GetEngine();
-			physics::Engine & physics_engine = engine.GetPhysicsEngine();
-
-			// physics
-			auto zero_vector = sim::Vector3::Zero();
-			auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
-			body->SetDensity(1);
-			entity.SetLocation(body);
-
-			// graphics
-			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-			gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-			entity.SetModel(model);
-
-			// controller
-			auto controller = std::make_shared<sim::AnimatController>(entity, sphere.radius);
-			entity.SetController(controller);
-		});
-
-		return animat;
-	}
-
-	void SpawnAnimats(Vector3f base_position)
-	{
-		animats.resize(num_animats);
-		for (auto & animat : animats)
-		{
-			Vector3f offset;
-			float r;
-			Random::sequence.GetGaussians(offset.x, offset.y);
-			offset.y = std::abs(offset.y);
-			Random::sequence.GetGaussians(offset.z, r);
-
-			auto position = base_position + offset * 10.f;
-
-			animat = SpawnAnimat(position);
-		}
-	}
-
 	// returns true if the applet should NOT quit
 	void HandleEvents()
 	{
@@ -159,7 +111,7 @@ void MainScript(AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	auto rel_animat_start_pos = space.AbsToRel(animat_start_pos);
-	SpawnAnimats(rel_animat_start_pos);
+	animats = SpawnAnimats(rel_animat_start_pos, num_animats);
 
 	// main loop
 	while (applet_interface.WaitFor(0))
