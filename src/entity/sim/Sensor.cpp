@@ -16,6 +16,8 @@
 
 #include "physics/RayCast.h"
 
+#include "gfx/Debug.h"
+
 #include "core/Random.h"
 #include "core/Roster.h"
 
@@ -123,6 +125,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Sensor::Tick(Sensor * sensor)
 {
+#if defined(CRAG_GFX_DEBUG)
+	sensor->_ray_cast->DebugDraw();
+#endif
+
 	sensor->GenerateScanRay();
 }
 
