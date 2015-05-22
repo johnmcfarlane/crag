@@ -118,11 +118,6 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 	CRAG_VERIFY(* this);
 }
 
-void RayCast::ResetResult(RayCast * ray_cast)
-{
-	ray_cast->_result = form::RayCastResult();
-}
-
 void RayCast::DebugDraw() const
 {
 	// draw previous ray result
@@ -140,6 +135,11 @@ void RayCast::DebugDraw() const
 	{
 		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
 	}
+}
+
+void RayCast::ResetResult(RayCast * ray_cast)
+{
+	ray_cast->_result = form::RayCastResult();
 }
 
 void RayCast::SetDensity(Scalar)
