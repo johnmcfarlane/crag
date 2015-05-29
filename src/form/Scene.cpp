@@ -23,25 +23,24 @@ using namespace form;
 // Scene
 
 Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
-: _surrounding(ref(new Surrounding(max_num_quaterne)))
+: _surrounding(new Surrounding(max_num_quaterne))
 {
-	_surrounding.SetTargetNumQuaterna(int(min_num_quaterne));
+	_surrounding->SetTargetNumQuaterna(int(min_num_quaterne));
 }
 
 Scene::~Scene()
 {
 	Clear();
-	delete & _surrounding;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Scene, scene)
-	auto const & surrounding = scene._surrounding;
+	auto const & surrounding = * scene._surrounding;
 	if (! surrounding.GetPoints().IsEmpty())
 	{
 		CRAG_VERIFY_FALSE(scene.formation_map.empty());
 	}
 
-	CRAG_VERIFY(scene._surrounding);
+	CRAG_VERIFY(surrounding);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Scene::Clear()
@@ -58,12 +57,12 @@ void Scene::Clear()
 
 Surrounding & Scene::GetSurrounding()
 {
-	return _surrounding;
+	return * _surrounding;
 }
 
 Surrounding const & Scene::GetSurrounding() const
 {
-	return _surrounding;
+	return * _surrounding;
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
@@ -117,7 +116,7 @@ bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 {
 	CRAG_VERIFY(lod_parameters);
 	
-	bool changed = _surrounding.Tick(lod_parameters);
+	bool changed = _surrounding->Tick(lod_parameters);
 	TickModels();
 	
 	if (! changed)
@@ -131,13 +130,13 @@ bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 void Scene::GenerateMesh(Mesh & mesh, geom::Space const & space) const
 {
 	mesh.Clear();
-	_surrounding.ResetMeshPointers();
+	_surrounding->ResetMeshPointers();
 	
-	_surrounding.GenerateMesh(mesh);
+	_surrounding->GenerateMesh(mesh);
 	
 	MeshProperties & properties = mesh.GetProperties();
 	properties._space = space;
-	properties._num_quaterne = _surrounding.GetNumQuaternaUsed();
+	properties._num_quaterne = _surrounding->GetNumQuaternaUsed();
 }
 
 // Currently just updates the formation_map contents.
@@ -166,7 +165,7 @@ void Scene::ResetFormations(geom::Space const & space)
 		DeinitPolyhedron(pair);
 	}
 	
-	_surrounding.OnReset();
+	_surrounding->OnReset();
 
 	for (auto & pair : formation_map) 
 	{
@@ -181,7 +180,7 @@ void Scene::TickPolyhedron(Polyhedron & polyhedron)
 	if (root_node.IsExpandable()) 
 	{
 		CRAG_VERIFY(* this);
-		_surrounding.ExpandNode(root_node);
+		_surrounding->ExpandNode(root_node);
 		CRAG_VERIFY(* this);
 	}
 }
@@ -191,7 +190,7 @@ void Scene::InitPolyhedron(FormationPair & pair, geom::Space const & space)
 {
 	Polyhedron & polyhedron = pair.second;
 
-	PointBuffer & points = _surrounding.GetPoints();
+	PointBuffer & points = _surrounding->GetPoints();
 	
 	polyhedron.Init(space, points);
 }
@@ -203,9 +202,9 @@ void Scene::DeinitPolyhedron(FormationPair & pair)
 	// Collapse the root node by fair means or foul.
 	Node & root_node = polyhedron._root_node;
 
-	_surrounding.CollapseNodes(root_node);
+	_surrounding->CollapseNodes(root_node);
 	ASSERT(! root_node.HasChildren());
 
 	// Continue deinitialization somewhere a bit calmer.
-	polyhedron.Deinit(_surrounding.GetPoints());
+	polyhedron.Deinit(_surrounding->GetPoints());
 }

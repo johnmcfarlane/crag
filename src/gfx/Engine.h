@@ -148,10 +148,10 @@ namespace gfx
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
-		
-		ResourceManager & _resource_manager;
 
-		Scene & _scene;
+		std::unique_ptr<ResourceManager> _resource_manager;
+
+		std::unique_ptr<Scene> _scene;
 		geom::Space _space;
 		
 		core::Time _target_frame_duration;

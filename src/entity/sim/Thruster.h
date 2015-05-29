@@ -11,6 +11,8 @@
 
 #include "sim/defs.h"
 
+#include "core/counted_object.h"
+
 namespace gfx 
 { 
 	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
@@ -27,6 +29,7 @@ namespace sim
 	// applies force to an entity; is owned by a controller;
 	// ray is in entity-local coordinate space
 	struct Thruster
+	: public crag::counted_object<Thruster>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////

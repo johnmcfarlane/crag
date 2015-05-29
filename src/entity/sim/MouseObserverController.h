@@ -55,6 +55,6 @@ namespace sim
 		int _speed;
 		core::EventWatcher _event_watcher;
 		bool _collidable;
-		Sensor & _sensor;
+		std::unique_ptr<Sensor> _sensor;
 	};
 }

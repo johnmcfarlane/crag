@@ -112,7 +112,7 @@ namespace
 
 CameraController::CameraController(Entity & entity, std::shared_ptr<Entity> const & subject)
 : _super(entity)
-, _ray_cast(* new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
+, _ray_cast(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
 , _subject(subject)
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
@@ -125,8 +125,6 @@ CameraController::~CameraController()
 	// roster
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.RemoveCommand(* this, & CameraController::Tick);
-
-	delete & _ray_cast;
 }
 
 void CameraController::Tick(CameraController * controller)
@@ -171,7 +169,7 @@ void CameraController::Tick(CameraController * controller)
 
 	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_transformation, space, forward, up);
-	UpdateBody(camera_body, controller->_ray_cast, subject_translation, up);
+	UpdateBody(camera_body, * controller->_ray_cast, subject_translation, up);
 	controller->UpdateCameraRayCast();
 }
 
@@ -187,7 +185,7 @@ void CameraController::UpdateCameraRayCast() const
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
-	_ray_cast.SetRay(Ray3(camera_translation, - up));
+	_ray_cast->SetRay(Ray3(camera_translation, - up));
 }
 
 physics::Body & CameraController::GetBody()
