@@ -11,6 +11,8 @@
 
 #include "sim/defs.h"
 
+#include "core/counted_object.h"
+
 namespace crag
 {
 	   namespace core
@@ -29,6 +31,7 @@ namespace sim
 	class Entity;
 
 	class Sensor
+	: public crag::counted_object<Sensor>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
