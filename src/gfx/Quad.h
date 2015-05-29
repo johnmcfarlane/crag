@@ -38,7 +38,7 @@ namespace gfx
 		void Activate() const override;
 		void Deactivate() const override;
 
-		void Draw() const;
+		void Draw() const override;
 		
 	private:
 		
