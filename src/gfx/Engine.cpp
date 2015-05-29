@@ -208,13 +208,13 @@ Engine::StateParam const Engine::init_state[] =
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Engine, self)
 	CRAG_VERIFY(core::StaticCast<super const>(self));
-	CRAG_VERIFY(self._scene);
+	CRAG_VERIFY(* self._scene);
 	CRAG_VERIFY(self._current_program);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Engine::Engine()
-: _resource_manager(* new ResourceManager)
-, _scene(* new Scene(* this))
+: _resource_manager(new ResourceManager)
+, _scene(new Scene(* this))
 , _target_frame_duration(.1)
 , last_frame_end_position(app::GetTime())
 , quit_flag(false)
@@ -230,8 +230,8 @@ Engine::Engine()
 	std::fill(std::begin(_frame_time_history), std::end(_frame_time_history), last_frame_end_position);
 #endif
 
-	RegisterResources(_resource_manager);
-	Debug::Init(_resource_manager);
+	RegisterResources(* _resource_manager);
+	Debug::Init(* _resource_manager);
 	
 	SetIsSuspended(false);
 }
@@ -245,33 +245,30 @@ Engine::~Engine()
 	// must be turned on by key input or by cfg edit
 	capture_enable = false;
 	init_culling = culling;
-	
-	delete & _scene;
-	delete & _resource_manager;
 }
 
 ResourceManager & Engine::GetResourceManager()
 {
-	return _resource_manager;
+	return * _resource_manager;
 }
 
 ResourceManager const & Engine::GetResourceManager() const
 {
-	return _resource_manager;
+	return * _resource_manager;
 }
 
 Scene & Engine::GetScene()
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
-	return _scene;
+	return * _scene;
 }
 
 Scene const & Engine::GetScene() const
 {
 	ASSERT(Daemon::IsCurrentThread());
 	
-	return _scene;
+	return * _scene;
 }
 
 ProgramHandle Engine::GetCurrentProgram() const
@@ -337,7 +334,7 @@ void Engine::OnQuit()
 void Engine::OnAddObject(ObjectSharedPtr const & object_ptr)
 {
 	auto & object = * object_ptr;
-	_scene.AddObject(object);
+	_scene->AddObject(object);
 	OnSetParent(object, Handle());
 }
 
@@ -351,7 +348,7 @@ void Engine::OnRemoveObject(ObjectSharedPtr const & object_ptr)
 		ReleaseObject(back);
 	}
 
-	_scene.RemoveObject(object);
+	_scene->RemoveObject(object);
 }
 
 void Engine::OnSetParent(ObjectHandle child_handle, ObjectHandle parent_handle)
@@ -381,7 +378,7 @@ void Engine::OnSetParent(Object & child, ObjectHandle parent_uid)
 			}
 		}
 		
-		return _scene.GetRoot();
+		return _scene->GetRoot();
 	} ();
 	
 	OnSetParent(child, parent);
@@ -395,7 +392,7 @@ void Engine::OnSetParent(Object & child, Object & parent)
 
 void Engine::OnSetTime(Time time)
 {
-	_scene.SetTime(time);
+	_scene->SetTime(time);
 }
 
 void Engine::OnSetReady(bool ready)
@@ -406,9 +403,9 @@ void Engine::OnSetReady(bool ready)
 
 	if (! _suspended)
 	{
-		_resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
-		_resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
-		_resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
+		_resource_manager->GetHandle<PolyProgram>("PolyProgram")->SetNeedsMatrixUpdate(true);
+		_resource_manager->GetHandle<DiskProgram>("SphereProgram")->SetNeedsMatrixUpdate(true);
+		_resource_manager->GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsMatrixUpdate(true);
 	}
 }
 
@@ -425,8 +422,8 @@ void Engine::OnToggleCapture()
 
 void Engine::operator() (SetCameraEvent const & event)
 {
-	auto const & scene_frustum = _scene.GetPov().GetFrustum();
-	_scene.SetPov({
+	auto const & scene_frustum = _scene->GetPov().GetFrustum();
+	_scene->SetPov({
 		_space.AbsToRel(event.transformation),
 		{
 			scene_frustum.resolution,
@@ -475,15 +472,15 @@ bool Engine::GetIsSuspended() const
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
 {
-	auto const & children = _scene.GetRoot().GetChildren();
+	auto const & children = _scene->GetRoot().GetChildren();
 	
 	do
 	{
-		CRAG_VERIFY(_scene);
+		CRAG_VERIFY(* _scene);
 		
 		message_queue.DispatchMessage(* this);
 		
-		CRAG_VERIFY(_scene);
+		CRAG_VERIFY(* _scene);
 
 		if (! _suspended && _ready && _dirty)
 		{
@@ -536,9 +533,9 @@ void Engine::Deinit()
 
 void Engine::Flush()
 {
-	_resource_manager.UnloadAll();
+	_resource_manager->UnloadAll();
 
-	for (auto & shadow_pair : _scene.GetShadows())
+	for (auto & shadow_pair : _scene->GetShadows())
 	{
 		shadow_pair.second.Unload();
 	}
@@ -597,7 +594,7 @@ void Engine::VerifyRenderState() const
 void Engine::PreRender()
 {
 	// purge objects
-	auto & render_list = _scene.GetRenderList();
+	auto & render_list = _scene->GetRenderList();
 	for (auto i = std::begin(render_list), end = std::end(render_list); i != end; )
 	{
 		auto object = * i;
@@ -640,7 +637,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 	else
 	{
 		// if it's an empty branch,
-		if (children.empty() && & object != & _scene.GetRoot())
+		if (children.empty() && & object != & _scene->GetRoot())
 		{
 			// release it
 			ReleaseObject(object);
@@ -660,21 +657,21 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 
 void Engine::UpdateTransformations()
 {
-	Object & root_node = _scene.GetRoot();
+	Object & root_node = _scene->GetRoot();
 	UpdateTransformations(root_node, Transformation::Matrix44::Identity());
 	
-	_scene.SortRenderList();
+	_scene->SortRenderList();
 }
 
 void Engine::UpdateShadowVolumes()
 {
-	auto & lights = _scene.GetLightList();
+	auto & lights = _scene->GetLightList();
 	for (auto & light : lights)
 	{
 		light.SetIsExtinguished(false);
 	}
 	
-	ShadowMap & shadows = _scene.GetShadows();
+	ShadowMap & shadows = _scene->GetShadows();
 	for (auto & pair : shadows)
 	{
 		auto & key = pair.first;
@@ -732,8 +729,8 @@ void Engine::RenderScene()
 	ASSERT(GetInt<GL_DEPTH_FUNC>() == depth_func);
 	
 	// calculate matrices
-	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(_scene);
-	auto background_projection_matrix = CalcBackgroundProjectionMatrix(_scene);
+	auto foreground_projection_matrix = CalcForegroundProjectionMatrix(* _scene);
+	auto background_projection_matrix = CalcBackgroundProjectionMatrix(* _scene);
 	
 	if (shadows_enabled)
 	{
@@ -791,14 +788,14 @@ void Engine::RenderTransparentPass(Matrix44 const & projection_matrix)
 void Engine::RenderLayer(Matrix44 const & projection_matrix, Layer layer, LightFilter const & light_filter, bool add_ambient)
 {
 	// mark all (relevant) shaders as having out-of-date light uniforms
-	_resource_manager.GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
-	_resource_manager.GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
-	_resource_manager.GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager->GetHandle<PolyProgram>("PolyProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager->GetHandle<DiskProgram>("SphereProgram")->SetNeedsLightsUpdate(true);
+	_resource_manager->GetHandle<TexturedProgram>("SkyboxProgram")->SetNeedsLightsUpdate(true);
 
 	auto ambient = add_ambient ? global_ambient : Color4f::Black();
-	auto & lights = _scene.GetLightList();
+	auto & lights = _scene->GetLightList();
 	
-	auto & render_list = _scene.GetRenderList();
+	auto & render_list = _scene->GetRenderList();
 	for (auto object : render_list)
 	{
 		if (object->GetLayer() != layer)
@@ -853,7 +850,7 @@ void Engine::RenderShadowLights(Matrix44 const & projection_matrix)
 	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	auto & lights = _scene.GetLightList();
+	auto & lights = _scene->GetLightList();
 	for (auto & light : lights)
 	{
 		if (light.GetAttributes().makes_shadow && light.GetIsLuminant())
@@ -877,7 +874,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 
 	GL_CALL(glClear(GL_STENCIL_BUFFER_BIT));
 
-	auto shadow_program = _resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	auto shadow_program = _resource_manager->GetHandle<ShadowProgram>("ShadowProgram");
 	SetCurrentProgram(shadow_program);
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -908,7 +905,7 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 	// light
 
 	// program
-	auto screen_program = _resource_manager.GetHandle<ScreenProgram>("ScreenProgram");
+	auto screen_program = _resource_manager->GetHandle<ScreenProgram>("ScreenProgram");
 	SetCurrentProgram(screen_program);
 
 	// state
@@ -955,13 +952,13 @@ void Engine::RenderShadowLight(Matrix44 const & projection_matrix, Light & light
 
 void Engine::RenderShadowVolumes(Matrix44 const & projection_matrix, Light & light)
 {
-	auto shadow_program = _resource_manager.GetHandle<ShadowProgram>("ShadowProgram");
+	auto shadow_program = _resource_manager->GetHandle<ShadowProgram>("ShadowProgram");
 	ASSERT(GetCurrentProgram() == shadow_program);
 
 	shadow_program->SetProjectionMatrix(projection_matrix);
 	
-	auto & shadows = _scene.GetShadows();
-	auto & render_list = _scene.GetRenderList();
+	auto & shadows = _scene->GetShadows();
+	auto & render_list = _scene->GetRenderList();
 
 	ShadowMapKey key;
 	key.second = & light;
@@ -1014,7 +1011,7 @@ void Engine::DebugDraw(Matrix44 const & projection_matrix)
 	SetCurrentProgram(nullptr);
 	
 	// calculate model view transformation
-	auto & pov = _scene.GetPov();
+	auto & pov = _scene->GetPov();
 	auto & model_view_projection = pov.GetTransformation();
 
 	// mark the local space
@@ -1058,7 +1055,7 @@ void Engine::DebugText()
 		}
 	}
 	
-	auto sprite_program = _resource_manager.GetHandle<SpriteProgram>("SpriteProgram");
+	auto sprite_program = _resource_manager->GetHandle<SpriteProgram>("SpriteProgram");
 	SetCurrentProgram(sprite_program);
 	sprite_program->SetUniforms(app::GetResolution());
 	Debug::DrawText(out_stream.str().c_str(), geom::Vector2i(5, 5));

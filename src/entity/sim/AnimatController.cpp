@@ -44,11 +44,6 @@ AnimatController::~AnimatController()
 {
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.RemoveCommand(* this, & AnimatController::Tick);
-
-	for (auto sensor : _sensors)
-	{
-		delete sensor;
-	}
 }
 
 void AnimatController::Tick(AnimatController *)
@@ -115,7 +110,7 @@ void AnimatController::Connect()
 
 void AnimatController::AddSensor(Ray3 const & ray)
 {
-	_sensors.push_back(new Sensor(GetEntity(), ray, animat_sensor_length, 0.2f));
+	_sensors.emplace_back(new Sensor(GetEntity(), ray, animat_sensor_length, 0.2f));
 }
 
 void AnimatController::TickThrusters()

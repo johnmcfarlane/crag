@@ -83,7 +83,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// Attributes
 		
-		Surrounding & _surrounding;
+		std::unique_ptr<Surrounding> _surrounding;
 		
 		FormationMap formation_map;		// The internal record of formations.
 		

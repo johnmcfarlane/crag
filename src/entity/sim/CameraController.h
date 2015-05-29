@@ -41,7 +41,7 @@ namespace sim
 		physics::Body const & GetBody() const;
 
 		// variables
-		physics::RayCast & _ray_cast;
+		std::unique_ptr<physics::RayCast> _ray_cast;
 		std::shared_ptr<Entity> _subject;
 	};
 }

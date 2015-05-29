@@ -40,7 +40,7 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		std::vector<Sensor *> _sensors;
+		std::vector<std::unique_ptr<Sensor>> _sensors;
 		ga::Genome _genome;
 	};
 }
