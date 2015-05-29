@@ -72,9 +72,6 @@ MouseObserverController::~MouseObserverController()
 	// roster
 	auto & roster = GetEntity().GetEngine().GetTickRoster();
 	roster.RemoveCommand(* this, & MouseObserverController::Tick);
-
-	// record speed in config file
-	observer_speed = _speed;
 }
 
 void MouseObserverController::Tick(MouseObserverController * controller)
