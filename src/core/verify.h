@@ -209,6 +209,13 @@ namespace crag
 			VerifyPtr(ptr.get());
 		}
 
+		// std::shared_ptr
+		template <typename Type>
+		void VerifyInvariants(std::unique_ptr<Type> const & ptr)
+		{
+			VerifyPtr(ptr.get());
+		}
+
 		// everything else
 		template <typename Type, typename ::std::enable_if<! ::std::is_floating_point<Type>::value && ! std::is_class<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type const & object)
