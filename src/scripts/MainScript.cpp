@@ -70,9 +70,10 @@ namespace
 
 			// physics
 			auto zero_vector = sim::Vector3::Zero();
-			auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
+			auto body = std::unique_ptr<physics::SphereBody>(
+				new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius));
 			body->SetDensity(1);
-			entity.SetLocation(body);
+			entity.SetLocation(std::move(body));
 
 			// graphics
 			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
@@ -80,8 +81,9 @@ namespace
 			entity.SetModel(model);
 
 			// controller
-			auto controller = std::make_shared<sim::AnimatController>(entity, sphere.radius);
-			entity.SetController(controller);
+			auto controller = std::unique_ptr<sim::AnimatController>(
+				new sim::AnimatController(entity, sphere.radius));
+			entity.SetController(std::move(controller));
 		});
 
 		return animat;

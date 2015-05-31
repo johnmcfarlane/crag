@@ -50,40 +50,40 @@ void Entity::Tick(Entity *)
 	ASSERT(false);
 }
 
-void Entity::SetController(ControllerPtr const & controller)
+void Entity::SetController(ControllerPtr controller)
 {
-	_controller = controller;
+	_controller = std::move(controller);
 
 	CRAG_VERIFY(* this);
 }
 
-Entity::ControllerPtr & Entity::GetController()
+Controller * Entity::GetController()
 {
-	return _controller;
+	return _controller.get();
 }
 
-Entity::ControllerPtr const & Entity::GetController() const
+Controller const * Entity::GetController() const
 {
-	return _controller;
+	return _controller.get();
 }
 
-void Entity::SetLocation(LocationPtr const & location)
+void Entity::SetLocation(LocationPtr location)
 {
 	// TODO: exploit ODE fn, dBodySetMovedCallback(dBodyID, void (*)(dBodyID));
 	// TODO: in conjunction with dBodySetData
-	_location = location;
+	_location = std::move(location);
 
 	CRAG_VERIFY(* this);
 }
 
-Entity::LocationPtr & Entity::GetLocation()
+physics::Location * Entity::GetLocation()
 {
-	return _location;
+	return _location.get();
 }
 
-Entity::LocationPtr const & Entity::GetLocation() const
+physics::Location const * Entity::GetLocation() const
 {
-	return _location;
+	return _location.get();
 }
 
 gfx::ObjectHandle Entity::GetModel() const
@@ -98,7 +98,7 @@ void Entity::SetModel(gfx::ObjectHandle model)
 
 void Entity::UpdateModels(Entity const * entity)
 {
-	auto location = entity->_location;
+	auto location = entity->GetLocation();
 	if (location == nullptr || ! entity->_model.IsInitialized())
 	{
 		return;

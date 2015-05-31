@@ -50,7 +50,6 @@
 #include "core/ConfigEntry.h"
 #include "core/GlobalResourceManager.h"
 
-using namespace std;
 using namespace sim;
 
 #if defined(CRAG_USE_MOUSE)
@@ -224,8 +223,8 @@ namespace
 	// TODO: Write a more general-purpose flat-faced mesh converted which scans for dupes as it generates new verts
 	gfx::LitMesh GenerateFlatLitMesh(gfx::LitMesh const & source_mesh)
 	{
-		auto & source_vertices = source_mesh.GetVertices();
-		auto & source_indices = source_mesh.GetIndices();
+		auto const & source_vertices = source_mesh.GetVertices();
+		auto const & source_indices = source_mesh.GetIndices();
 		auto num_source_indices = source_indices.size();
 
 		gfx::LitMesh destination_mesh;
@@ -251,12 +250,12 @@ namespace
 				destination_indices.push_back(destination_vertices.size());
 				
 				auto const & source_vertex = source_iterator[i];
-				destination_vertices.push_back(gfx::LitVertex(
+				destination_vertices.push_back(gfx::LitVertex
 				{ 
 					source_vertex.pos,
 					geom::Normalized(source_plane.normal),
 					source_vertex.color
-				}));
+				});
 			}
 		}
 		
@@ -588,11 +587,12 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto body = make_shared<physics::GhostBody>(position, velocity, physics_engine);
+		auto body = std::unique_ptr<physics::GhostBody>(
+			new physics::GhostBody(position, velocity, physics_engine));
 		
 		// setting the mass of a shapeless body is somewhat nonsensical
 		body->SetMass(m);
-		entity.SetLocation(body);
+		entity.SetLocation(std::move(body));
 	}
 
 	void ConstructSphereBody(Entity & entity, Sphere3 const & sphere, Vector3 const & velocity, float density)
@@ -600,9 +600,10 @@ namespace
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+		auto body = std::unique_ptr<physics::SphereBody>(
+			new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius));
 		body->SetDensity(density);
-		entity.SetLocation(body);
+		entity.SetLocation(std::move(body));
 	}
 
 	void ConstructBall(Entity & ball, Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
@@ -634,13 +635,13 @@ namespace
 		}
 
 		// controller
-		auto controller = [&] () -> shared_ptr<Controller>
+		auto controller = [&] () -> std::unique_ptr<Controller>
 		{
 			if (! observer_use_touch)
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
-					return make_shared<MouseObserverController>(observer);
+					return std::unique_ptr<Controller>(new MouseObserverController(observer));
 				}
 				else
 				{
@@ -649,10 +650,10 @@ namespace
 				}
 			}
 
-			return make_shared<TouchObserverController>(observer, position);
+			return std::unique_ptr<Controller>(new TouchObserverController(observer, position));
 		} ();
 		
-		observer.SetController(controller);
+		observer.SetController(std::move(controller));
 
 #if defined(OBSERVER_LIGHT)
 		// register light with the renderer
@@ -692,8 +693,9 @@ namespace
 	{
 		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
-		auto controller = make_shared<VehicleController>(entity);
-		entity.SetController(controller);
+		auto controller = std::unique_ptr<VehicleController>(
+			new VehicleController(entity));
+		entity.SetController(std::move(controller));
 
 		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
@@ -710,8 +712,9 @@ namespace
 
 		auto velocity = Vector3::Zero();
 		auto physics_mesh = crag::GlobalResourceManager::GetHandle<physics::Mesh>("ShipPhysicsMesh");
-		auto body = make_shared<physics::MeshBody>(position, & velocity, physics_engine, * physics_mesh);
-		entity.SetLocation(body);
+		auto body = std::unique_ptr<physics::MeshBody>(
+			new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh));
+		entity.SetLocation(std::move(body));
 
 		// graphics
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
@@ -720,8 +723,8 @@ namespace
 		entity.SetModel(model_handle);
 
 		// controller
-		auto controller = make_shared<VehicleController>(entity);
-		entity.SetController(controller);
+		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
+		entity.SetController(std::move(controller));
 
 		// add a single thruster
 		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert)
@@ -765,9 +768,9 @@ namespace
 
 		auto velocity = Vector3::Zero();
 
-		// saucer physics
-		auto body = make_shared<physics::CylinderBody>(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height);
-		ufo_entity.SetLocation(body);
+		// create saucer physics
+		auto body = std::unique_ptr<physics::CylinderBody>(
+			new physics::CylinderBody(transformation, & velocity, physics_engine, radius, is_thargoid ? thargoid_height : saucer_cylinder_height));
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
@@ -777,7 +780,7 @@ namespace
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
 		
-		shared_ptr<Entity> ball_entity;
+		std::shared_ptr<Entity> ball_entity;
 		gfx::ObjectHandle exception_object;
 		
 		if (_player_type == PlayerType::cos_saucer || _player_type == PlayerType::ball_saucer)
@@ -785,12 +788,13 @@ namespace
 			ball_entity = engine.CreateObject<Entity>();
 
 			// physics
-			auto ball_body = make_shared<physics::SphereBody>(transformation, & velocity, physics_engine, saucer_ball_radius);
-			ball_entity->SetLocation(ball_body);
-		
-			AttachEntities(ufo_entity, * ball_entity, physics_engine);
+			auto ball_body = std::unique_ptr<physics::SphereBody>(
+				new physics::SphereBody(transformation, & velocity, physics_engine, saucer_ball_radius));
+
+			// weld UFO's cylinder and ball together to approximate its graphical shape
 			ball_body->SetIsCollidable(* body, false);
 			body->SetIsCollidable(* ball_body, false);
+			physics_engine.Attach(* body, * ball_body);
 
 			if (_player_type == PlayerType::ball_saucer)
 			{
@@ -804,8 +808,13 @@ namespace
 			{
 				exception_object = model_handle;
 			}
+
+			ball_entity->SetLocation(std::move(ball_body));
 		}
-		
+
+		// assign saucer physics
+		ufo_entity.SetLocation(std::move(body));
+
 		////////////////////////////////////////////////////////////////////////////////
 		// saucer
 		
@@ -828,13 +837,14 @@ namespace
 		}
 
 		// controller
-		shared_ptr<Controller> controller;
+		std::unique_ptr<Controller> controller;
 		switch (ufo_controller_type)
 		{
 			default:
 				DEBUG_BREAK("invalid value; ufo_controller_type:%d; range:[1,2]", ufo_controller_type);
 			case 1:
-				controller = make_shared<UfoController1>(ufo_entity, ball_entity, thrust);
+				controller = std::unique_ptr<UfoController1>(
+					new UfoController1(ufo_entity, ball_entity, thrust));
 
 				if (SDL_SetRelativeMouseMode(SDL_TRUE))
 				{
@@ -843,10 +853,11 @@ namespace
 				}
 				break;
 			case 2:
-				controller = make_shared<UfoController2>(ufo_entity, ball_entity, thrust);
+				controller = std::unique_ptr<UfoController2>(
+					new UfoController2(ufo_entity, ball_entity, thrust));
 				break;
 		}
-		ufo_entity.SetController(controller);
+		ufo_entity.SetController(std::move(controller));
 	}
 	
 	void AddUfoResources()
