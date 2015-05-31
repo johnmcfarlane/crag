@@ -36,8 +36,8 @@ namespace sim
 	public:
 		using super = ipc::ObjectBase<Entity, sim::Engine>;
 
-		using ControllerPtr = std::shared_ptr<Controller>;
-		using LocationPtr = std::shared_ptr<physics::Location>;
+		using ControllerPtr = std::unique_ptr<Controller>;
+		using LocationPtr = std::unique_ptr<physics::Location>;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -49,14 +49,14 @@ namespace sim
 		static void Tick(Entity *);
 
 		// controller
-		void SetController(ControllerPtr const & controller);
-		ControllerPtr & GetController();
-		ControllerPtr const & GetController() const;
+		void SetController(ControllerPtr controller);
+		Controller * GetController();
+		Controller const * GetController() const;
 		
 		// physics
-		void SetLocation(LocationPtr const & locator);
-		LocationPtr & GetLocation();
-		LocationPtr const & GetLocation() const;
+		void SetLocation(LocationPtr locator);
+		physics::Location * GetLocation();
+		physics::Location const * GetLocation() const;
 
 		// graphics
 		gfx::ObjectHandle GetModel() const;
