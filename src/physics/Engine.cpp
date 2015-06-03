@@ -23,7 +23,7 @@
 #include <ode/ode.h>
 
 #if defined(CRAG_DEBUG)
-#define DEBUG_CONTACTS
+//#define DEBUG_CONTACTS
 #endif
 
 using namespace physics;
