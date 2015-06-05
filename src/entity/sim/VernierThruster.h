@@ -24,7 +24,9 @@ namespace sim
 
 		VernierThruster(Entity & entity, Ray3 const & ray);
 
-		static void Tick(VernierThruster *);
+		CRAG_ROSTER_OBJECT_DECLARE(VernierThruster);
+
+		void Tick();
 
 	private:
 		////////////////////////////////////////////////////////////////////////////////

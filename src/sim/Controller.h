@@ -10,6 +10,7 @@
 #pragma once
 
 #include "core/counted_object.h"
+#include "core/RosterObjectDeclare.h"
 
 namespace sim
 {

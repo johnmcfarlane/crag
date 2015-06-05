@@ -14,10 +14,17 @@
 #include "sim/Entity.h"
 #include "sim/Engine.h"
 
+#include "core/RosterObjectDefine.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::VehicleController member functions
+
+CRAG_ROSTER_OBJECT_DEFINE(
+	VehicleController,
+	10,
+	Pool::NoCall())
 
 VehicleController::VehicleController(Entity & entity)
 : _super(entity)

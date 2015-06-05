@@ -25,13 +25,17 @@
 
 #include "gfx/Engine.h"
 
-#include "core/Random.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
 //////////////////////////////////////////////////////////////////////
 // sim::PlanetController member definitions
+
+CRAG_ROSTER_OBJECT_DEFINE(
+	PlanetController,
+	10,
+	Pool::CallBefore<& PlanetController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)
@@ -61,20 +65,11 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	_formation = FormationPtr(new form::Formation(random_seed_formation, shader, formation_sphere));
 	_handle.CreateObject(* _formation);
 	engine.AddFormation(* _formation);
-
-	// roster
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& PlanetController::Tick, & Entity::Tick);
-	roster.AddCommand(* this, & PlanetController::Tick);
 }
 
 PlanetController::~PlanetController()
 {
 	auto& engine = GetEntity().GetEngine();
-
-	// roster
-	auto & roster = engine.GetTickRoster();
-	roster.RemoveCommand(* this, & PlanetController::Tick);
 
 	// remove physics
 	engine.RemoveFormation(* _formation);
@@ -89,10 +84,10 @@ form::Formation const & PlanetController::GetFormation() const
 	return * _formation;
 }
 
-void PlanetController::Tick(PlanetController * controller)
+void PlanetController::Tick()
 {
-	auto max_radius = controller->_formation->GetMaxRadius();
-	auto & entity = controller->GetEntity();
+	auto max_radius = _formation->GetMaxRadius();
+	auto & entity = GetEntity();
 
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
 	auto const & location = entity.GetLocation();

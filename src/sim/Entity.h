@@ -13,6 +13,8 @@
 
 #include "defs.h"
 
+#include "core/RosterObjectDeclare.h"
+
 namespace gfx
 {
 	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
@@ -44,9 +46,11 @@ namespace sim
 
 		Entity(Engine & engine);
 		~Entity();
-		
+
+		CRAG_ROSTER_OBJECT_DECLARE(Entity);
+
 		// general callbacks
-		static void Tick(Entity *);
+		void Tick();
 
 		// controller
 		void SetController(ControllerPtr controller);
@@ -61,7 +65,7 @@ namespace sim
 		// graphics
 		gfx::ObjectHandle GetModel() const;
 		void SetModel(gfx::ObjectHandle model);
-		static void UpdateModels(Entity const *);
+		void UpdateModels();
 		
 		// Verification
 		CRAG_VERIFY_INVARIANTS_DECLARE(Entity);

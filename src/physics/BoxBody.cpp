@@ -13,7 +13,8 @@
 
 #include "Engine.h"
 
-#include <ode/collision.h>
+#include "core/RosterObjectDefine.h"
+
 #include <ode/objects.h>
 
 using namespace physics;
@@ -21,9 +22,15 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // BoxBody
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	BoxBody,
+	250,
+	Pool::Call<& BoxBody::Tick>(Engine::GetPreTickRoster()))
+
 BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions)
 : Body(transformation, velocity, engine, engine.CreateBox(dimensions))
 {
+	CRAG_ROSTER_OBJECT_VERIFY(* this);
 }
 
 void BoxBody::SetDimensions(Vector3 const & dimensions) const
@@ -55,4 +62,9 @@ bool BoxBody::OnCollision(Body & body, ContactFunction & contact_function)
 	Sphere3 bounding_sphere(GetTranslation(), geom::Magnitude(extents));
 	
 	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
+}
+
+void BoxBody::Tick()
+{
+	Body::Tick();
 }

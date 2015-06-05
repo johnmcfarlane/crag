@@ -27,14 +27,16 @@ namespace sim
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		
+
+		CRAG_ROSTER_OBJECT_DECLARE(UfoController1);
+
 		UfoController1(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust);
 		~UfoController1();
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(UfoController1);
 
 	private:
-		static void Tick(UfoController1 *);
+		void Tick();
 
 		void ApplyThrust(Vector2 pointer_delta);
 		bool ShouldThrust(bool is_rotating) const;

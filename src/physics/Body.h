@@ -24,9 +24,13 @@ namespace physics
 	class Body : public Location
 	{
 	public:
+		CRAG_ROSTER_OBJECT_DECLARE(Body);
+
 		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle);
 		virtual ~Body();
-		
+
+		void Tick();
+
 		virtual bool ObeysGravity() const;
 		
 		// the sum force being exherted on this body as a result of gravity
@@ -74,7 +78,7 @@ namespace physics
 
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
-		
+
 		CRAG_VERIFY_INVARIANTS_DECLARE(Body);
 	private:
 		virtual Vector3 const & GetGeomTranslation() const;
@@ -87,10 +91,7 @@ namespace physics
 		Transformation GetGeomTransformation() const;
 		void SetGeomTransformation(Transformation const & transformation);
 
-	private:
-		static void Tick(Body *);
-
-	protected:
+		// variables
 		Engine & _engine;
 		CollisionHandle _collision_handle;	// the collision info
 		BodyHandle _body_handle;	// the dynaical info

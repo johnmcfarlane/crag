@@ -29,7 +29,7 @@
 #include "core/app.h"
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 #include "geom/Quaternion.h"
 
@@ -257,6 +257,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // TouchObserverController member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	TouchObserverController,
+	1,
+	Pool::CallBefore<& TouchObserverController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+
 TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
 : Controller(entity)
 , _down_transformation(transformation)
@@ -264,30 +269,21 @@ TouchObserverController::TouchObserverController(Entity & entity, Transformation
 {
 	_frustum.resolution = app::GetResolution();
 	_frustum.depth_range = Vector2(1, 2);
-
-	// register 
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& TouchObserverController::Tick, & Entity::Tick);
-	roster.AddCommand(* this, & TouchObserverController::Tick);
 }
 
 TouchObserverController::~TouchObserverController()
 {
 	SetIsListening(false);
-
-	// roster
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & TouchObserverController::Tick);
 }
 
-void TouchObserverController::Tick(TouchObserverController * controller)
+void TouchObserverController::Tick()
 {
 	// event-based input
-	controller->HandleEvents();
+	HandleEvents();
 
-	controller->UpdateCamera();
-	controller->ClampTransformation();
-	controller->BroadcastTransformation();
+	UpdateCamera();
+	ClampTransformation();
+	BroadcastTransformation();
 }
 
 void TouchObserverController::operator() (gfx::SetSpaceEvent const & event)

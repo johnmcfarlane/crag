@@ -20,6 +20,8 @@ namespace physics
 	class SphereBody : public Body
 	{
 	public:
+		CRAG_ROSTER_OBJECT_DECLARE(SphereBody);
+
 		SphereBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine, Scalar radius);
 		
 		void SetRadius(Scalar radius) const;
@@ -29,6 +31,7 @@ namespace physics
 		
 	protected:
 		bool OnCollision(Body & body, ContactFunction & contact_function) override;
+
+		void Tick();
 	};
-	
 }

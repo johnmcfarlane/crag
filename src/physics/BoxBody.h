@@ -19,6 +19,8 @@ namespace physics
 	class BoxBody : public Body
 	{
 	public:
+		CRAG_ROSTER_OBJECT_DECLARE(BoxBody);
+
 		BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions);
 		
 		void SetDimensions(Vector3 const & dimensions) const;
@@ -28,6 +30,8 @@ namespace physics
 		
 	protected:
 		virtual bool OnCollision(Body & that_body, ContactFunction & contact_function) final;
+
+	private:
+		void Tick();
 	};
-	
 }

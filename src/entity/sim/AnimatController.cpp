@@ -12,13 +12,11 @@
 #include "AnimatController.h"
 
 #include "AnimatThruster.h"
-#include "Sensor.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "core/ConfigEntry.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -27,26 +25,23 @@ CONFIG_DEFINE(animat_sensor_length, 5.f);
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	AnimatController,
+	1,
+	Pool::CallBetween<
+		& AnimatController::Tick,
+		Entity, & Entity::Tick,
+		Sensor, & Sensor::GenerateScanRay>(Engine::GetTickRoster()))
+
 AnimatController::AnimatController(Entity & entity, float radius)
 : VehicleController(entity)
 {
 	CreateSensors(radius);
 	CreateThrusters(radius);
 	Connect();
-
-	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddOrdering(& AnimatController::Tick, & Entity::Tick);
-	roster.AddOrdering(& Sensor::Tick, & AnimatController::Tick);
-	roster.AddCommand(* this, & AnimatController::Tick);
 }
 
-AnimatController::~AnimatController()
-{
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & AnimatController::Tick);
-}
-
-void AnimatController::Tick(AnimatController *)
+void AnimatController::Tick()
 {
 }
 
