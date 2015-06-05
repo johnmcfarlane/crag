@@ -114,7 +114,7 @@
 #define CRAG_VERIFY(VARIABLE) ::crag::core::VerifyInvariants(VARIABLE)
 
 // makes it possible (albeit pointless) to say cout << nullptr
-inline std::ostream & operator << (std::ostream & out, std::nullptr_t)
+inline std::ostream & operator << (std::ostream & out, std::nullptr_t) noexcept
 {
 	return out << "<null>";
 }
@@ -132,12 +132,12 @@ namespace crag
 		// Verify that pointer is valid
 #if defined(CRAG_COMPILER_MSVC)
 		template<typename Type>
-		void VerifyPtr(Type const *) 
+		void VerifyPtr(Type const *) noexcept
 		{
 		}
 #else
 		template<typename Type>
-		void VerifyPtr(Type const * ptr) 
+		void VerifyPtr(Type const * ptr) noexcept
 		{
 			// TODO: Re-enable when std::align is defined
 			//CRAG_VERIFY_EQUAL(ptr, std::align(alignof(Type), sizeof(Type), ptr, sizeof(Type)));
@@ -148,7 +148,7 @@ namespace crag
 
 		// Verify that the reference is not null - nor a value suspiciously close to null.
 		template <typename Type>
-		void VerifyRef(Type const & ref)
+		void VerifyRef(Type const & ref) noexcept
 		{
 			// a reference is everything a pointer is, plus it's non-null
 			CRAG_VERIFY_TRUE(& ref);
@@ -157,12 +157,12 @@ namespace crag
 		}
 
 		// void pointer
-		inline void VerifyInvariants(void const *)
+		inline void VerifyInvariants(void const *) noexcept
 		{
 		}
 
 		// bool
-		inline void VerifyInvariants(bool const & b)
+		inline void VerifyInvariants(bool const & b) noexcept
 		{
 			static_assert(sizeof(bool) == sizeof(char), "bad assumption about type size");
 
@@ -176,27 +176,27 @@ namespace crag
 
 		// integer
 		template <typename Type, is_integer<Type> = 0>
-		void VerifyInvariants(Type)
+		void VerifyInvariants(Type) noexcept
 		{
 		}
 
 		// real
 		template <typename Type, typename std::enable_if<std::is_floating_point<Type>::value, int>::type = 0>
-		void VerifyInvariants(Type real)
+		void VerifyInvariants(Type real) noexcept
 		{
 			CRAG_VERIFY(std::isfinite(real));
 		}
 
 		// pointer
 		template <typename Type>
-		void VerifyInvariants(Type const * pointer)
+		void VerifyInvariants(Type const * pointer) noexcept
 		{
 			VerifyPtr(pointer);
 		}
 
 		// classes with VerifyInvariants function
 		template <typename Type, typename std::enable_if<std::is_class<Type>::value, int>::type = 0>
-		void VerifyInvariants(Type const & object)
+		void VerifyInvariants(Type const & object) noexcept
 		{
 			VerifyRef(object);
 			Type::VerifyInvariants(object);
@@ -204,7 +204,7 @@ namespace crag
 
 		// std::shared_ptr
 		template <typename Type>
-		void VerifyInvariants(std::shared_ptr<Type> const & ptr)
+		void VerifyInvariants(std::shared_ptr<Type> const & ptr) noexcept
 		{
 			VerifyPtr(ptr.get());
 		}
@@ -218,7 +218,7 @@ namespace crag
 
 		// everything else
 		template <typename Type, typename ::std::enable_if<! ::std::is_floating_point<Type>::value && ! std::is_class<Type>::value, int>::type = 0>
-		void VerifyInvariants(Type const & object)
+		void VerifyInvariants(Type const & object) noexcept
 		{
 			VerifyRef(object);
 		}
@@ -226,7 +226,7 @@ namespace crag
 		// TODO: the VerifyArray* fns need to work with iterators;
 		// TODO: even if that means implementing safe printf or somesuch
 		template<typename T>
-		void VerifyArrayOffset(T const * offset, T const * array) 
+		void VerifyArrayOffset(T const * offset, T const * array) noexcept
 		{ 
 			VerifyPtr(offset);	// check pointer
 			CRAG_VERIFY_OP(array, <=, offset);	// in range
@@ -235,7 +235,7 @@ namespace crag
 
 		// verifies that element is a valid point in range, (begin, end)
 		template<typename T>
-		void VerifyArrayPointer(T const * element, T const * begin, T const * end) 
+		void VerifyArrayPointer(T const * element, T const * begin, T const * end) noexcept
 		{
 			VerifyArrayOffset(element, begin);
 			CRAG_VERIFY_OP(element, >=, begin);
@@ -244,7 +244,7 @@ namespace crag
 
 		// verifies that element is a valid point in range, (begin, end]
 		template<typename T>
-		void VerifyArrayElement(T const * element, T const * begin, T const * end) 
+		void VerifyArrayElement(T const * element, T const * begin, T const * end) noexcept
 		{ 
 			VerifyArrayOffset(element, begin);
 			CRAG_VERIFY_OP(element, >=, begin);
@@ -273,14 +273,14 @@ namespace crag
 #endif
 
 // macros for declaration and definition of class-specific verification routines
-#define CRAG_VERIFY_INVARIANTS_DECLARE(CLASS) static void VerifyInvariants(CLASS const &)
+#define CRAG_VERIFY_INVARIANTS_DECLARE(CLASS) static void VerifyInvariants(CLASS const &) noexcept
 #define CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(CLASS, OBJECT) \
-	void CLASS::VerifyInvariants(CLASS const & OBJECT) { \
+	void CLASS::VerifyInvariants(CLASS const & OBJECT) noexcept { \
 		DO_STATEMENT(if (sizeof(OBJECT)) { });
 #define CRAG_VERIFY_INVARIANTS_DEFINE_END }
 
 #define CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(CLASS_TEMPLATE, OBJECT) \
-	static void VerifyInvariants(CLASS_TEMPLATE const & OBJECT) \
+	static void VerifyInvariants(CLASS_TEMPLATE const & OBJECT) noexcept \
 	{ \
 		DO_STATEMENT(if (sizeof(OBJECT)) { });
 #define CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END }
@@ -289,7 +289,8 @@ namespace crag
 // ref
 
 // pointer to ref
-template<typename T> T & ref(T * ptr)
+template<typename T>
+T & ref(T * ptr) noexcept
 {
 	CRAG_VERIFY_REF(* ptr);
 	return * ptr;
