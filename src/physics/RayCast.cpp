@@ -29,7 +29,8 @@ RayCast::RayCast(Engine & engine, Scalar length)
 CRAG_ROSTER_OBJECT_DEFINE(
 	RayCast,
 	10,
-	Pool::Call<& RayCast::ResetResult>(Engine::GetPreTickRoster()))
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)
 	CRAG_VERIFY(self._result);

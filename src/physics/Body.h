@@ -29,7 +29,8 @@ namespace physics
 		Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle);
 		virtual ~Body();
 
-		void Tick();
+		void PreTick();
+		void PostTick();
 
 		virtual bool ObeysGravity() const;
 		

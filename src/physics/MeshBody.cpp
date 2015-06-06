@@ -29,7 +29,8 @@ using namespace physics;
 CRAG_ROSTER_OBJECT_DEFINE(
 	MeshBody,
 	1,
-	Pool::CallBase<Body, & Body::Tick>(Engine::GetPreTickRoster()));
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()));
 
 MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh, Scalar volume)
 : Body(transformation, velocity, engine, engine.CreateMesh(nullptr))

@@ -68,7 +68,8 @@ namespace
 CRAG_ROSTER_OBJECT_DEFINE(
 	Body,
 	10,
-	Pool::Call<& Body::Tick>(Engine::GetPreTickRoster()))
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
@@ -127,14 +128,17 @@ Body::~Body()
 	}
 }
 
-void Body::Tick()
+void Body::PreTick()
 {
-	SetTransformation(GetGeomTransformation());
-
 	if (_body_handle)
 	{
 		AddForce(_gravitational_force);
 	}
+}
+
+void Body::PostTick()
+{
+	SetTransformation(GetGeomTransformation());
 }
 
 bool Body::ObeysGravity() const

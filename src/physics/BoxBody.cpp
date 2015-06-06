@@ -25,7 +25,8 @@ using namespace physics;
 CRAG_ROSTER_OBJECT_DEFINE(
 	BoxBody,
 	250,
-	Pool::CallBase<Body, & Body::Tick>(Engine::GetPreTickRoster()))
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions)
 : Body(transformation, velocity, engine, engine.CreateBox(dimensions))
