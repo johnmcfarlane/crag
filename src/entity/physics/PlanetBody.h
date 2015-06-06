@@ -30,6 +30,8 @@ namespace physics
 		// functions
 
 	public:
+		CRAG_ROSTER_OBJECT_DECLARE(PlanetBody);
+
 		PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius);
 		
 		Vector3 GetGravitationalAttraction(Vector3 const & pos) const override;

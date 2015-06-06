@@ -33,7 +33,6 @@ using geom::Vector3f;
 using applet::AppletInterface;
 
 CONFIG_DEFINE(profile_mode, false);
-CONFIG_DEFINE(profile_max_ticks, uint64_t(20000));
 
 namespace
 {
@@ -54,8 +53,10 @@ namespace
 	CONFIG_DEFINE(test_suspend_resume, false);
 #endif
 
+	CONFIG_DEFINE(profile_max_ticks, std::uint64_t(10000));
+
 	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
-	size_t max_shapes = 50;
+	size_t max_shapes = 250;
 	bool cleanup_shapes = true;
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -276,6 +277,9 @@ void GameScript(AppletInterface & applet_interface)
 	{
 		if (profile_mode)
 		{
+			SpawnShapes(0, applet_interface);
+			SpawnShapes(1, applet_interface);
+
 			auto num_ticks = applet_interface.Get<sim::Engine, std::uint64_t>([] (sim::Engine & engine) -> std::uint64_t {
 				return engine.GetNumTicks();
 			}) - starting_num_ticks;

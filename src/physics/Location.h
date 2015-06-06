@@ -14,6 +14,7 @@
 #include "geom/Transformation.h"
 
 #include "core/counted_object.h"
+#include "core/RosterObjectDeclare.h"
 
 namespace physics
 {

@@ -56,7 +56,6 @@
           <option name="BRACE_STYLE" value="2" />
           <option name="CLASS_BRACE_STYLE" value="2" />
           <option name="SPACE_AROUND_UNARY_OPERATOR" value="true" />
-          <option name="SPACE_BEFORE_METHOD_PARENTHESES" value="true" />
           <indentOptions>
             <option name="CONTINUATION_INDENT_SIZE" value="4" />
             <option name="USE_TAB_CHARACTER" value="true" />

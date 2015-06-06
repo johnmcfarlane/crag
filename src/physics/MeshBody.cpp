@@ -13,16 +13,24 @@
 
 #include "Engine.h"
 
+#include "gfx/Debug.h"
 #include "gfx/Mesh.h"
 #include "gfx/PlainVertex.h"
 
+#include "core/RosterObjectDefine.h"
+
 #include <ode/objects.h>
-#include <gfx/Debug.h>
 
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MeshBody
+
+CRAG_ROSTER_OBJECT_DEFINE(
+	MeshBody,
+	1,
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()));
 
 MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh, Scalar volume)
 : Body(transformation, velocity, engine, engine.CreateMesh(nullptr))

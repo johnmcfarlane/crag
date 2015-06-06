@@ -21,7 +21,7 @@
 #include "gfx/SetCameraEvent.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 #include "geom/Space.h"
 
@@ -110,33 +110,26 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // CameraController member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	CameraController,
+	1,
+	Pool::CallBefore<& CameraController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+
 CameraController::CameraController(Entity & entity, std::shared_ptr<Entity> const & subject)
 : _super(entity)
-, _ray_cast(* new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
+, _ray_cast(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), camera_controller_height))
 , _subject(subject)
 {
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& CameraController::Tick, & Entity::Tick);
-	roster.AddCommand(* this, & CameraController::Tick);
 }
 
-CameraController::~CameraController()
+void CameraController::Tick()
 {
-	// roster
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & CameraController::Tick);
-
-	delete & _ray_cast;
-}
-
-void CameraController::Tick(CameraController * controller)
-{
-	if (! controller->_subject)
+	if (! _subject)
 	{
 		DEBUG_BREAK("camera has no subject");
 		return;
 	}
-	auto const & subject = * controller->_subject;
+	auto const & subject = * _subject;
 	
 	auto subject_location = subject.GetLocation();
 	if (! subject_location)
@@ -145,7 +138,7 @@ void CameraController::Tick(CameraController * controller)
 		return;
 	}
 	
-	auto & camera_body = controller->GetBody();
+	auto & camera_body = GetBody();
 	Vector3 up = GetUp(camera_body.GetGravitationalForce());
 	if (up == Vector3::Zero())
 	{
@@ -165,14 +158,14 @@ void CameraController::Tick(CameraController * controller)
 		return;
 	}
 	
-	auto & engine = controller->GetEntity().GetEngine();
+	auto & engine = GetEntity().GetEngine();
 	const auto & space = engine.GetSpace();
 	auto forward = camera_to_subject / distance;
 
 	UpdateLodParameters(camera_translation, subject_translation);
 	UpdateCamera(camera_transformation, space, forward, up);
-	UpdateBody(camera_body, controller->_ray_cast, subject_translation, up);
-	controller->UpdateCameraRayCast();
+	UpdateBody(camera_body, * _ray_cast, subject_translation, up);
+	UpdateCameraRayCast();
 }
 
 void CameraController::UpdateCameraRayCast() const
@@ -187,7 +180,7 @@ void CameraController::UpdateCameraRayCast() const
 	auto camera_transformation = camera_body.GetTransformation();
 	auto camera_translation = camera_transformation.GetTranslation();
 
-	_ray_cast.SetRay(Ray3(camera_translation, - up));
+	_ray_cast->SetRay(Ray3(camera_translation, - up));
 }
 
 physics::Body & CameraController::GetBody()

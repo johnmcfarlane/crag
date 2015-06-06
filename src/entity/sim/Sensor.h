@@ -11,6 +11,10 @@
 
 #include "sim/defs.h"
 
+#include "physics/RayCast.h"
+
+#include "core/counted_object.h"
+
 namespace crag
 {
 	   namespace core
@@ -19,16 +23,12 @@ namespace crag
 	   }
 }
 
-namespace physics
-{
-	class RayCast;
-}
-
 namespace sim
 {
 	class Entity;
 
 	class Sensor
+	: public crag::counted_object<Sensor>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -37,19 +37,20 @@ namespace sim
 		OBJECT_NO_COPY(Sensor);
 
 		Sensor(Entity & entity, Ray3 const & position, Scalar length, Scalar variance = 0);
-		~Sensor();
-		
+
+		CRAG_ROSTER_OBJECT_DECLARE(Sensor);
+
 		Scalar GetReading() const;
 		Scalar GetReadingDistance() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 
-		static void Tick(Sensor *);
-	private:
-		Ray3 GetGlobalRay() const;
-		void GenerateScanRay() const;
+		void GenerateScanRay();
 
-		crag::core::Roster & GetTickRoster();
+	private:
+		void Tick();
+
+		Ray3 GetGlobalRay() const;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

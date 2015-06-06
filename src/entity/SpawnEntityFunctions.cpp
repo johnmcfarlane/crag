@@ -37,11 +37,9 @@
 #include "gfx/object/Ball.h"
 #include "gfx/object/Light.h"
 #include "gfx/object/MeshObject.h"
-
 #include "core/ConfigEntry.h"
 #include "core/Random.h"
 
-using namespace std;
 using namespace sim;
 
 namespace gfx 
@@ -58,10 +56,10 @@ namespace
 	CONFIG_DEFINE(box_density, 1.f);
 
 	CONFIG_DEFINE(ball_density, 1.f);
+	CONFIG_DEFINE(ball_linear_damping, 0.01f);
 
 	CONFIG_DEFINE(camera_radius, .5f);
 	CONFIG_DEFINE(camera_density, 1.f);
-	
 	CONFIG_DEFINE(camera_linear_damping, 0.5f);
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -73,9 +71,10 @@ namespace
 		Engine & engine = box.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto body = make_shared<physics::BoxBody>(spawn_pos, & velocity, physics_engine, size);
+		auto body = std::unique_ptr<physics::BoxBody>(
+			new physics::BoxBody(spawn_pos, & velocity, physics_engine, size));
 		body->SetDensity(box_density);
-		box.SetLocation(body);
+		box.SetLocation(std::move(body));
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
@@ -83,22 +82,23 @@ namespace
 		box.SetModel(model);
 	}
 
-	shared_ptr<physics::SphereBody> ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density)
+	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-		auto body = make_shared<physics::SphereBody>(sphere.center, & velocity, physics_engine, sphere.radius);
+		auto body = std::unique_ptr<physics::SphereBody>(
+			new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius));
 		body->SetDensity(density);
-		entity.SetLocation(body);
+		body->SetLinearDamping(linear_damping);
 		
-		return body;
+		entity.SetLocation(std::move(body));
 	}
 
 	void ConstructBall(Entity & ball, geom::rel::Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphereBody(ball, sphere, velocity, ball_density);
+		ConstructSphereBody(ball, sphere, velocity, ball_density, ball_linear_damping);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -109,14 +109,13 @@ namespace
 	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
 	{
 		// physics
-		auto body = ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density);
-		body->SetLinearDamping(camera_linear_damping);
+		ConstructSphereBody(camera, geom::rel::Sphere3(position, camera_radius), Vector3::Zero(), camera_density, camera_linear_damping);
 
 		// controller
 		auto & engine = camera.GetEngine();
 		auto const & subject = engine.GetObject(subject_handle);
-		auto controller = make_shared<CameraController>(camera, subject);
-		camera.SetController(controller);
+		auto controller = std::unique_ptr<CameraController>(new CameraController(camera, subject));
+		camera.SetController(std::move(controller));
 	}
 
 	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
@@ -125,25 +124,27 @@ namespace
 
 		sim::Sphere3 sphere(position, 1);
 		animat.Call([sphere] (sim::Entity & entity)
-					{
-						sim::Engine & engine = entity.GetEngine();
-						physics::Engine & physics_engine = engine.GetPhysicsEngine();
+		{
+			sim::Engine & engine = entity.GetEngine();
+			physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-						// physics
-						auto zero_vector = sim::Vector3::Zero();
-						auto body = std::make_shared<physics::SphereBody>(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius);
-						body->SetDensity(1);
-						entity.SetLocation(body);
+			// physics
+			auto zero_vector = sim::Vector3::Zero();
+			auto body = std::unique_ptr<physics::SphereBody>(
+				new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius));
+			body->SetDensity(1);
+			entity.SetLocation(std::move(body));
 
-						// graphics
-						gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-						gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-						entity.SetModel(model);
+			// graphics
+			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
+			gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
+			entity.SetModel(model);
 
-						// controller
-						auto controller = std::make_shared<sim::AnimatController>(entity, sphere.radius);
-						entity.SetController(controller);
-					});
+			// controller
+			auto controller = std::unique_ptr<sim::AnimatController>(
+				new sim::AnimatController(entity, sphere.radius));
+			entity.SetController(std::move(controller));
+		});
 
 		return animat;
 	}
@@ -193,9 +194,9 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 	auto handle = EntityHandle::Create();
 
 	handle.Call([sphere, random_seed, num_craters] (Entity & entity) {
-		// controller
-		auto controller = make_shared<PlanetController>(entity, sphere, random_seed, num_craters);
-		entity.SetController(controller);
+		// create controller
+		auto controller = std::unique_ptr<PlanetController>(
+			new PlanetController(entity, sphere, random_seed, num_craters));
 
 		// body
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
@@ -205,17 +206,21 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		auto const * polyhedron = engine.GetScene().GetPolyhedron(formation);
 		if (polyhedron)
 		{
-			auto body = make_shared<physics::PlanetBody>(sphere.center, physics_engine, * polyhedron, physics::Scalar(sphere.radius));
-			entity.SetLocation(body);
+			auto body = std::unique_ptr<physics::PlanetBody>(
+				new physics::PlanetBody(sphere.center, physics_engine, * polyhedron, physics::Scalar(sphere.radius)));
+			entity.SetLocation(std::move(body));
 		}
 		else
 		{
 			DEBUG_BREAK("missing formation polyhedron");
 		}
 #else
-		auto body = make_shared<physics::PassiveLocation>(sphere.center);
-		entity.SetLocation(body);
+		auto body = std::unique_ptr<physics::PassiveLocation>(new physics::PassiveLocation(sphere.center));
+		entity.SetLocation(std::move(body));
 #endif
+
+		// transfer controller
+		entity.SetController(std::move(controller));
 
 		// register with the renderer
 		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center));
@@ -233,8 +238,8 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 	sun.Call([volume, color, casts_shadow] (Entity & entity) {
 		// physics
 		Transformation transformation(geom::Cast<Scalar>(volume.center));
-		auto location = make_shared<physics::PassiveLocation>(transformation);
-		entity.SetLocation(location);
+		auto location = std::unique_ptr<physics::PassiveLocation>(new physics::PassiveLocation(transformation));
+		entity.SetLocation(std::move(location));
 
 		// graphics
 		auto light = gfx::LightHandle::Create(

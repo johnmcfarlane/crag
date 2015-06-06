@@ -11,6 +11,9 @@
 
 #include "sim/defs.h"
 
+#include "core/counted_object.h"
+#include "core/RosterObjectDeclare.h"
+
 namespace gfx 
 { 
 	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
@@ -27,6 +30,7 @@ namespace sim
 	// applies force to an entity; is owned by a controller;
 	// ray is in entity-local coordinate space
 	struct Thruster
+	: public crag::counted_object<Thruster>
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +41,14 @@ namespace sim
 		Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor);
 		virtual ~Thruster();
 
+		CRAG_ROSTER_OBJECT_DECLARE(Thruster);
 		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
 
 		void SetParentModel(gfx::ObjectHandle parent_handle);
 
 		Entity & GetEntity();
-		
+		Entity const & GetEntity() const;
+
 		Ray3 const & GetRay() const;
 		void SetRay(Ray3 const & ray);
 
@@ -50,10 +56,10 @@ namespace sim
 		float GetThrustFactor() const;
 		void SetThrustFactor(float thrust_factor);
 
-		static void Tick(Thruster *);
+		void Tick();
 	private:
 		// adds a puff of smoke
-		static void UpdateModel(Thruster const *);
+		void UpdateModel();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

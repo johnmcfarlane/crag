@@ -14,11 +14,10 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/RayCast.h"
-
 #include "gfx/axes.h"
 
 #include "core/ConfigEntry.h"
+#include <core/RosterObjectDefine.h>
 
 using namespace sim;
 
@@ -31,6 +30,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	VernierThruster,
+	10,
+	Pool::Call<& VernierThruster::Tick>(Engine::GetTickRoster()));
+
 VernierThruster::VernierThruster(Entity & entity, Ray3 const & ray)
 : Thruster(entity, ray, false, 0.f)
 , _ray_cast(new physics::RayCast(entity.GetEngine().GetPhysicsEngine(), thrust_ground_effect_max_distance))
@@ -38,11 +42,11 @@ VernierThruster::VernierThruster(Entity & entity, Ray3 const & ray)
 	CRAG_VERIFY(* this);
 }
 
-void VernierThruster::Tick(VernierThruster * thruster)
+void VernierThruster::Tick()
 {
-	CRAG_VERIFY(* thruster);
+	CRAG_VERIFY(* this);
 
-	auto location = thruster->GetEntity().GetLocation();
+	auto location = GetEntity().GetLocation();
 	if (! location)
 	{
 		DEBUG_BREAK("thruster attached to eneity with no location");
@@ -51,7 +55,7 @@ void VernierThruster::Tick(VernierThruster * thruster)
 
 	auto & body = core::StaticCast<physics::Body>(* location);
 
-	auto const & local_ray = thruster->GetRay();
+	auto const & local_ray = GetRay();
 	auto global_ray = body.GetTransformation().Transform(local_ray);
 	global_ray.direction /= - geom::Magnitude(global_ray.direction);
 	
@@ -59,7 +63,7 @@ void VernierThruster::Tick(VernierThruster * thruster)
 	
 	thrust_factor += [&] ()
 	{
-		auto const & result = thruster->_ray_cast->GetResult();
+		auto const & result = _ray_cast->GetResult();
 		if (! result)
 		{
 			// ray cast isn't colliding with anything
@@ -74,10 +78,10 @@ void VernierThruster::Tick(VernierThruster * thruster)
 		return cusion;
 	} ();
 
-	thruster->SetThrustFactor(thrust_factor);
+	SetThrustFactor(thrust_factor);
 	
 	// update ray cast
-	thruster->_ray_cast->SetRay(global_ray);
+	_ray_cast->SetRay(global_ray);
 	
-	Thruster::Tick(thruster);
+	Thruster::Tick();
 }

@@ -20,7 +20,7 @@
 #include "gfx/axes.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -38,6 +38,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::UfoController1 member functions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	UfoController1,
+	1,
+	Pool::Call<& UfoController1::Tick>(Engine::GetTickRoster()))
+
 UfoController1::UfoController1(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar max_thrust)
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
@@ -46,9 +51,6 @@ UfoController1::UfoController1(Entity & entity, std::shared_ptr<Entity> const & 
 , _num_presses(0)
 {
 	AddThruster(VehicleController::ThrusterPtr(_main_thruster));
-
-	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddCommand(* this, & UfoController1::Tick);
 
 	CRAG_VERIFY(* this);
 }
@@ -61,10 +63,6 @@ UfoController1::~UfoController1()
 
 	// deactivate listener
 	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
-	
-	// roster
-	auto & roster = engine.GetTickRoster();
-	roster.RemoveCommand(* this, & UfoController1::Tick);
 	
 	// remove ball
 	if (_ball_entity)
@@ -82,12 +80,12 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(UfoController1, self)
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void UfoController1::Tick(UfoController1 * controller)
+void UfoController1::Tick()
 {
-	Vector2 pointer_delta = controller->HandleEvents();
+	Vector2 pointer_delta = HandleEvents();
 
-	controller->ApplyThrust(pointer_delta);
-	controller->ApplyTilt(pointer_delta);
+	ApplyThrust(pointer_delta);
+	ApplyTilt(pointer_delta);
 }
 
 void UfoController1::ApplyThrust(Vector2 pointer_delta)

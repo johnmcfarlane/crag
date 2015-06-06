@@ -21,10 +21,10 @@ namespace sim
 		// functions
 
 		HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude);
-		~HoverThruster();
 
+		CRAG_ROSTER_OBJECT_DECLARE(HoverThruster);
 	private:
-		static void TickThrustDirection(HoverThruster *);
+		void TickThrustDirection();
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

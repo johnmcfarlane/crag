@@ -27,7 +27,9 @@ namespace sim
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
-		
+
+		CRAG_ROSTER_OBJECT_DECLARE(UfoController2);
+
 		UfoController2(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar thrust);
 		~UfoController2();
 
@@ -36,7 +38,7 @@ namespace sim
 	private:
 		void operator() (gfx::SetCameraEvent const & event);
 
-		static void Tick(UfoController2 *);
+		void Tick();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// data

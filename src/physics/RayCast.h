@@ -20,8 +20,8 @@ namespace physics
 	{
 	public:
 		RayCast(Engine & engine, Scalar length);
-		~RayCast();
-		
+
+		CRAG_ROSTER_OBJECT_DECLARE(RayCast);
 		CRAG_VERIFY_INVARIANTS_DECLARE(RayCast);
 
 		void SetDirection(Vector3 const & direction);
@@ -40,7 +40,7 @@ namespace physics
 		void DebugDraw() const override;
 
 	private:
-		static void ResetResult(RayCast *);
+		void ResetResult();
 		
 		void SetDensity(Scalar density) override;
 

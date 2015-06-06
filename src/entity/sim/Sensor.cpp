@@ -14,12 +14,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/RayCast.h"
-
-#include "gfx/Debug.h"
-
 #include "core/Random.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -61,6 +57,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	Sensor,
+	100,
+	Pool::Call<& Sensor::Tick>(Engine::GetDrawRoster()))
+
 Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance)
 : _entity(entity)
 , _length(length)
@@ -73,15 +74,6 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 	auto & location = * entity.GetLocation();
 	auto & body = core::StaticCast<physics::Body>(location);
 	_ray_cast->SetIsCollidable(body, false);
-	
-	auto & roster = GetTickRoster();
-	roster.AddCommand(* this, & Sensor::Tick);
-}
-
-Sensor::~Sensor()
-{
-	auto & roster = GetTickRoster();
-	roster.RemoveCommand(* this, & Sensor::Tick);
 }
 
 Scalar Sensor::GetReading() const
@@ -123,21 +115,16 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
 	CRAG_VERIFY_UNIT(self._local_ray.direction, .0001f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Sensor::Tick(Sensor * sensor)
+void Sensor::Tick()
 {
 #if defined(CRAG_GFX_DEBUG)
-	sensor->_ray_cast->DebugDraw();
+	_ray_cast->DebugDraw();
 #endif
 
-	sensor->GenerateScanRay();
+	GenerateScanRay();
 }
 
-Ray3 Sensor::GetGlobalRay() const
-{
-	return Transform(_local_ray, _entity);
-}
-
-void Sensor::GenerateScanRay() const
+void Sensor::GenerateScanRay()
 {
 	CRAG_VERIFY(* this);
 	
@@ -156,7 +143,7 @@ void Sensor::GenerateScanRay() const
 	_ray_cast->SetRay(scan_ray);
 }
 
-crag::core::Roster & Sensor::GetTickRoster()
+Ray3 Sensor::GetGlobalRay() const
 {
-	return _entity.GetEngine().GetTickRoster();
+	return Transform(_local_ray, _entity);
 }

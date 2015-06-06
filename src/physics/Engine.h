@@ -46,9 +46,10 @@ namespace physics
 
 		Engine();
 		~Engine();
-		
-		crag::core::Roster & GetPreTickRoster();
-		crag::core::Roster & GetPostTickRoster();
+
+		// list of objcets called at start/end of tick
+		static crag::core::Roster & GetPreTickRoster();
+		static crag::core::Roster & GetPostTickRoster();
 
 		dBodyID CreateBody() const;
 		CollisionHandle CreateBox(Vector3 const & dimensions) const;
@@ -87,10 +88,6 @@ namespace physics
 		// it seems that ODE keeps a hold of the contacts which are passed to it.
 		ContactVector _contacts;
 		dContact _contact;	// permanently stores common properties
-
-		// list of objcets called at start/end of tick
-		std::unique_ptr<crag::core::Roster> _pre_tick_roster;
-		std::unique_ptr<crag::core::Roster> _post_tick_roster;
 	};
 	
 }

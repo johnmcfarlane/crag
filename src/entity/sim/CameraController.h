@@ -11,10 +11,11 @@
 
 #include "sim/Controller.h"
 
+#include "physics/RayCast.h"
+
 namespace physics
 {
 	class Body;
-	class RayCast;
 }
 
 namespace sim
@@ -30,18 +31,19 @@ namespace sim
 		
 	public:
 		// functions
+		CRAG_ROSTER_OBJECT_DECLARE(CameraController);
+
 		CameraController(Entity & entity, std::shared_ptr<Entity> const & subject);
-		virtual ~CameraController();
 
 	private:
-		static void Tick(CameraController *);
+		void Tick();
 		void UpdateCameraRayCast() const;
 
 		physics::Body & GetBody();
 		physics::Body const & GetBody() const;
 
 		// variables
-		physics::RayCast & _ray_cast;
+		std::unique_ptr<physics::RayCast> _ray_cast;
 		std::shared_ptr<Entity> _subject;
 	};
 }

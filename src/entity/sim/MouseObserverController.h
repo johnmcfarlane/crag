@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Sensor.h"
+
 #include "sim/Controller.h"
 #include "sim/defs.h"
 
@@ -22,7 +24,6 @@ namespace physics
 namespace sim
 {
 	struct ObserverInput;
-	class Sensor;
 
 	// controls an entity whose job it is to translate mouse and keyboard events 
 	// into camera impulses which are then appied to a physics body
@@ -32,10 +33,10 @@ namespace sim
 	public:
 		// functions
 		MouseObserverController(Entity & entity);
-		virtual ~MouseObserverController();
 
-	private:		
-		static void Tick(MouseObserverController *);
+		CRAG_ROSTER_OBJECT_DECLARE(MouseObserverController);
+	private:
+		void Tick();
 
 		void HandleEvents(ObserverInput & input);
 		void HandleEvent(ObserverInput & input, SDL_Event const & event);
@@ -55,6 +56,6 @@ namespace sim
 		int _speed;
 		core::EventWatcher _event_watcher;
 		bool _collidable;
-		Sensor & _sensor;
+		std::unique_ptr<Sensor> _sensor;
 	};
 }

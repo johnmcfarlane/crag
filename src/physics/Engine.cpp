@@ -23,7 +23,7 @@
 #include <ode/ode.h>
 
 #if defined(CRAG_DEBUG)
-#define DEBUG_CONTACTS
+//#define DEBUG_CONTACTS
 #endif
 
 using namespace physics;
@@ -115,8 +115,6 @@ Engine::Engine()
 : world(dWorldCreate())
 , space(dSimpleSpaceCreate(0))
 , contact_joints(dJointGroupCreate(0))
-, _pre_tick_roster(new crag::core::Roster)
-, _post_tick_roster(new crag::core::Roster)
 {
 	// init ODE error handling
 #if defined(CRAG_DEBUG)
@@ -151,12 +149,14 @@ Engine::~Engine()
 
 crag::core::Roster & Engine::GetPreTickRoster()
 {
-	return * _pre_tick_roster;
+	static crag::core::Roster pre_tick_roster;
+	return pre_tick_roster;
 }
 
 crag::core::Roster & Engine::GetPostTickRoster()
 {
-	return * _post_tick_roster;
+	static crag::core::Roster post_tick_roster;
+	return post_tick_roster;
 }
 
 dBodyID Engine::CreateBody() const
@@ -210,7 +210,7 @@ void Engine::Attach(Body const & body1, Body const & body2)
 void Engine::Tick(double delta_time)
 {
 	// call objects that want to know that physics is about to be ticked
-	_pre_tick_roster->Call();
+	GetPreTickRoster().Call();
 
 	if (collisions)
 	{
@@ -233,7 +233,7 @@ void Engine::Tick(double delta_time)
 	}
 	
 	// call objects that want to know that physics has ticked
-	_post_tick_roster->Call();
+	GetPostTickRoster().Call();
 
 #if defined(CRAG_DEBUG)
 	if (physics_debug_draw)

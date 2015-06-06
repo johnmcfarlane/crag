@@ -19,9 +19,7 @@
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
 
-#include "geom/Transformation.h"
-
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -29,61 +27,64 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	Entity,
+	500,
+	Pool::Call<& Entity::UpdateModels>(Engine::GetDrawRoster()))
+
 Entity::Entity(Engine & engine)
 : super(engine)
 {
-	auto & draw_roster = GetEngine().GetDrawRoster();
-	draw_roster.AddCommand(* this, & Entity::UpdateModels);
+	CRAG_VERIFY(* this);
 }
 
 Entity::~Entity()
 {
-	auto & draw_roster = GetEngine().GetDrawRoster();
-	draw_roster.RemoveCommand(* this, & Entity::UpdateModels);
+	CRAG_VERIFY(* this);
 
 	_model.Release();
 }
 
 // placeholder helps govern the order in which stuff gets called by _tick_roster
-void Entity::Tick(Entity *)
+void Entity::Tick()
 {
 	ASSERT(false);
 }
 
-void Entity::SetController(ControllerPtr const & controller)
+void Entity::SetController(ControllerPtr controller)
 {
-	_controller = controller;
+	_controller = std::move(controller);
 
 	CRAG_VERIFY(* this);
 }
 
-Entity::ControllerPtr & Entity::GetController()
+Controller * Entity::GetController()
 {
-	return _controller;
+	return _controller.get();
 }
 
-Entity::ControllerPtr const & Entity::GetController() const
+Controller const * Entity::GetController() const
 {
-	return _controller;
+	return _controller.get();
 }
 
-void Entity::SetLocation(LocationPtr const & location)
+void Entity::SetLocation(LocationPtr location)
 {
 	// TODO: exploit ODE fn, dBodySetMovedCallback(dBodyID, void (*)(dBodyID));
 	// TODO: in conjunction with dBodySetData
-	_location = location;
+	_location = std::move(location);
 
 	CRAG_VERIFY(* this);
 }
 
-Entity::LocationPtr & Entity::GetLocation()
+physics::Location * Entity::GetLocation()
 {
-	return _location;
+	return _location.get();
 }
 
-Entity::LocationPtr const & Entity::GetLocation() const
+physics::Location const * Entity::GetLocation() const
 {
-	return _location;
+	return _location.get();
 }
 
 gfx::ObjectHandle Entity::GetModel() const
@@ -96,10 +97,10 @@ void Entity::SetModel(gfx::ObjectHandle model)
 	_model = model;
 }
 
-void Entity::UpdateModels(Entity const * entity)
+void Entity::UpdateModels()
 {
-	auto location = entity->_location;
-	if (location == nullptr || ! entity->_model.IsInitialized())
+	auto location = GetLocation();
+	if (location == nullptr || ! _model.IsInitialized())
 	{
 		return;
 	}
@@ -108,12 +109,13 @@ void Entity::UpdateModels(Entity const * entity)
 	Matrix33 rotation = location->GetRotation();
 	Transformation transformation(translation, rotation);
 
-	entity->_model.Call([transformation] (gfx::Object & node) {
+	_model.Call([transformation] (gfx::Object & node) {
 		node.SetLocalTransformation(transformation);
 	});
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Entity, entity)
+	CRAG_ROSTER_OBJECT_VERIFY(entity);
 	CRAG_VERIFY(static_cast<Entity::super const &>(entity));
 
 	CRAG_VERIFY(entity._location);

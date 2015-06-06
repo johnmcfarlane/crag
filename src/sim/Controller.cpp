@@ -13,15 +13,6 @@
 
 using namespace sim;
 
-namespace
-{
-	class NullController : public Controller
-	{
-	};
-
-//	NullController const null_controller;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Controller member definitions
 

@@ -12,7 +12,7 @@
 #include "RayCast.h"
 #include "Engine.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 #include "gfx/Debug.h"
 
@@ -24,17 +24,12 @@ using namespace physics;
 RayCast::RayCast(Engine & engine, Scalar length)
 : Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(length))
 {
-	// register for physics tick
-	auto & roster = _engine.GetPreTickRoster();
-	roster.AddCommand(* this, & RayCast::ResetResult);
 }
 
-RayCast::~RayCast()
-{
-	// register for physics tick
-	auto & roster = _engine.GetPreTickRoster();
-	roster.RemoveCommand(* this, & RayCast::ResetResult);
-}
+CRAG_ROSTER_OBJECT_DEFINE(
+	RayCast,
+	10,
+	Pool::Call<& RayCast::ResetResult>(Engine::GetPreTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)
 	CRAG_VERIFY(self._result);
@@ -118,6 +113,11 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 	CRAG_VERIFY(* this);
 }
 
+void RayCast::ResetResult()
+{
+	_result = form::RayCastResult();
+}
+
 void RayCast::DebugDraw() const
 {
 	// draw previous ray result
@@ -135,11 +135,6 @@ void RayCast::DebugDraw() const
 	{
 		gfx::Debug::AddLine(start, end, gfx::Debug::Color::Green());
 	}
-}
-
-void RayCast::ResetResult(RayCast * ray_cast)
-{
-	ray_cast->_result = form::RayCastResult();
 }
 
 void RayCast::SetDensity(Scalar)

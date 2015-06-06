@@ -32,6 +32,7 @@ namespace sim
 		VehicleController(Entity & entity);
 		~VehicleController();
 
+		CRAG_ROSTER_OBJECT_DECLARE(VehicleController);
 		CRAG_VERIFY_INVARIANTS_DECLARE(VehicleController);
 		
 		// Add a Thruster
