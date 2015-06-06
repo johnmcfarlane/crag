@@ -29,7 +29,7 @@ using namespace physics;
 CRAG_ROSTER_OBJECT_DEFINE(
 	MeshBody,
 	1,
-	Pool::Call<& MeshBody::Tick>(Engine::GetPreTickRoster()));
+	Pool::CallBase<Body, & Body::Tick>(Engine::GetPreTickRoster()));
 
 MeshBody::MeshBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Mesh const & mesh, Scalar volume)
 : Body(transformation, velocity, engine, engine.CreateMesh(nullptr))
@@ -94,9 +94,4 @@ void MeshBody::DebugDraw() const
 		gfx::Debug::AddTriangle(Convert(triangle));
 	}
 #endif
-}
-
-void MeshBody::Tick()
-{
-	Body::Tick();
 }

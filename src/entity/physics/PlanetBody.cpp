@@ -63,7 +63,7 @@ namespace std
 CRAG_ROSTER_OBJECT_DEFINE(
 	PlanetBody,
 	10,
-	Pool::Call<& PlanetBody::Tick>(Engine::GetPreTickRoster()))
+	Pool::CallBase<Body, & Body::Tick>(Engine::GetPreTickRoster()))
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)
@@ -306,9 +306,4 @@ void PlanetBody::DebugDraw() const
 	};
 
 	form::ForEachFaceInSphere(_polyhedron, bounding_sphere, face_functor);
-}
-
-void PlanetBody::Tick()
-{
-	SphereBody::Tick();
 }

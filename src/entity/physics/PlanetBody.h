@@ -43,8 +43,6 @@ namespace physics
 
 		void DebugDraw() const override;
 
-		void Tick();
-
 		// variables
 		form::Polyhedron const & _polyhedron;
 		Scalar _mean_radius;

@@ -31,7 +31,5 @@ namespace physics
 		
 	protected:
 		bool OnCollision(Body & body, ContactFunction & contact_function) override;
-
-		void Tick();
 	};
 }

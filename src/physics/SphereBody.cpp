@@ -25,7 +25,7 @@ using namespace physics;
 CRAG_ROSTER_OBJECT_DEFINE(
 	SphereBody,
 	250,
-	Pool::Call<& SphereBody::Tick>(Engine::GetPreTickRoster()))
+	Pool::CallBase<Body, & Body::Tick>(Engine::GetPreTickRoster()))
 
 SphereBody::SphereBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Scalar radius)
 : Body(transformation, velocity, engine, engine.CreateSphere(radius))
@@ -56,9 +56,4 @@ bool SphereBody::OnCollision(Body & body, ContactFunction & contact_function)
 {
 	Sphere3 bounding_sphere(GetTranslation(), GetRadius());
 	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
-}
-
-void SphereBody::Tick()
-{
-	Body::Tick();
 }

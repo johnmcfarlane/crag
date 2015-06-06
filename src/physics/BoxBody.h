@@ -30,8 +30,5 @@ namespace physics
 		
 	protected:
 		virtual bool OnCollision(Body & that_body, ContactFunction & contact_function) final;
-
-	private:
-		void Tick();
 	};
 }

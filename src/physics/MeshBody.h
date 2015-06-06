@@ -30,8 +30,6 @@ namespace physics
 		void DebugDraw() const override;
 
 	private:
-		void Tick();
-
 		// variables
 		MeshData _mesh_data;
 		Scalar _bounding_radius;
