@@ -13,20 +13,12 @@
 
 #include "Engine.h"
 
-#include "core/RosterObjectDefine.h"
-
 #include <ode/objects.h>
 
 using namespace physics;
 
 ////////////////////////////////////////////////////////////////////////////////
 // SphereBody
-
-CRAG_ROSTER_OBJECT_DEFINE(
-	SphereBody,
-	250,
-	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
-	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 SphereBody::SphereBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Scalar radius)
 : Body(transformation, velocity, engine, engine.CreateSphere(radius))

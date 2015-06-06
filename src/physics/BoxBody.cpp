@@ -13,8 +13,6 @@
 
 #include "Engine.h"
 
-#include "core/RosterObjectDefine.h"
-
 #include <ode/objects.h>
 
 using namespace physics;
@@ -22,16 +20,9 @@ using namespace physics;
 ////////////////////////////////////////////////////////////////////////////////
 // BoxBody
 
-CRAG_ROSTER_OBJECT_DEFINE(
-	BoxBody,
-	250,
-	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
-	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
-
 BoxBody::BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions)
 : Body(transformation, velocity, engine, engine.CreateBox(dimensions))
 {
-	CRAG_ROSTER_OBJECT_VERIFY(* this);
 }
 
 void BoxBody::SetDimensions(Vector3 const & dimensions) const

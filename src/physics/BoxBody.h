@@ -19,8 +19,6 @@ namespace physics
 	class BoxBody : public Body
 	{
 	public:
-		CRAG_ROSTER_OBJECT_DECLARE(BoxBody);
-
 		BoxBody(Transformation const & transformation, Vector3 const * velocity, Engine & engine, Vector3 const & dimensions);
 		
 		void SetDimensions(Vector3 const & dimensions) const;
