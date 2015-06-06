@@ -13,7 +13,6 @@
 
 #include "Engine.h"
 
-#include <ode/collision.h>
 #include <ode/objects.h>
 
 using namespace physics;

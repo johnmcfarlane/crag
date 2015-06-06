@@ -10,7 +10,6 @@
 #pragma once
 
 #include "sim/defs.h"
-
 #include "sim/Controller.h"
 
 namespace gfx
@@ -35,13 +34,15 @@ namespace sim
 		
 	public:
 		// functions
+		CRAG_ROSTER_OBJECT_DECLARE(PlanetController);
+
 		PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters);
 		~PlanetController();
 
 		form::Formation const & GetFormation() const;
 
 	private:
-		static void Tick(PlanetController *);
+		void Tick();
 		
 		// variables
 		FormationPtr _formation;	// physics

@@ -19,9 +19,7 @@
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"
 
-#include "geom/Transformation.h"
-
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -29,23 +27,26 @@ using namespace sim;
 //////////////////////////////////////////////////////////////////////
 // Entity member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	Entity,
+	500,
+	Pool::Call<& Entity::UpdateModels>(Engine::GetDrawRoster()))
+
 Entity::Entity(Engine & engine)
 : super(engine)
 {
-	auto & draw_roster = GetEngine().GetDrawRoster();
-	draw_roster.AddCommand(* this, & Entity::UpdateModels);
+	CRAG_VERIFY(* this);
 }
 
 Entity::~Entity()
 {
-	auto & draw_roster = GetEngine().GetDrawRoster();
-	draw_roster.RemoveCommand(* this, & Entity::UpdateModels);
+	CRAG_VERIFY(* this);
 
 	_model.Release();
 }
 
 // placeholder helps govern the order in which stuff gets called by _tick_roster
-void Entity::Tick(Entity *)
+void Entity::Tick()
 {
 	ASSERT(false);
 }
@@ -96,10 +97,10 @@ void Entity::SetModel(gfx::ObjectHandle model)
 	_model = model;
 }
 
-void Entity::UpdateModels(Entity const * entity)
+void Entity::UpdateModels()
 {
-	auto location = entity->GetLocation();
-	if (location == nullptr || ! entity->_model.IsInitialized())
+	auto location = GetLocation();
+	if (location == nullptr || ! _model.IsInitialized())
 	{
 		return;
 	}
@@ -108,12 +109,13 @@ void Entity::UpdateModels(Entity const * entity)
 	Matrix33 rotation = location->GetRotation();
 	Transformation transformation(translation, rotation);
 
-	entity->_model.Call([transformation] (gfx::Object & node) {
+	_model.Call([transformation] (gfx::Object & node) {
 		node.SetLocalTransformation(transformation);
 	});
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Entity, entity)
+	CRAG_ROSTER_OBJECT_VERIFY(entity);
 	CRAG_VERIFY(static_cast<Entity::super const &>(entity));
 
 	CRAG_VERIFY(entity._location);

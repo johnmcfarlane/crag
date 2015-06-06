@@ -11,6 +11,7 @@
 
 #include "PlanetBody.h"
 
+#include "physics/Engine.h"
 #include "physics/RayCast.h"
 
 #include "form/CastRay.h"
@@ -21,6 +22,7 @@
 #include "gfx/PlainVertex.h"
 
 #include "core/Random.h"
+#include "core/RosterObjectDefine.h"
 
 #include "geom/Vector.h"
 
@@ -57,6 +59,12 @@ namespace std
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetBody members
+
+CRAG_ROSTER_OBJECT_DEFINE(
+	PlanetBody,
+	10,
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 PlanetBody::PlanetBody(Transformation const & transformation, Engine & engine, form::Polyhedron const & polyhedron, Scalar radius)
 : SphereBody(transformation, nullptr, engine, radius)

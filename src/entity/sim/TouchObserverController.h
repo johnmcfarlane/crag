@@ -52,11 +52,13 @@ namespace sim
 
 	public:
 		// functions
+		CRAG_ROSTER_OBJECT_DECLARE(TouchObserverController);
+
 		TouchObserverController(Entity & entity, Transformation const & transformation);
 		virtual ~TouchObserverController();
 
 	private:
-		static void Tick(TouchObserverController *);
+		void Tick();
 
 		void operator() (gfx::SetSpaceEvent const & event) final;
 

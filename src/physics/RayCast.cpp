@@ -12,7 +12,7 @@
 #include "RayCast.h"
 #include "Engine.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 #include "gfx/Debug.h"
 
@@ -24,17 +24,13 @@ using namespace physics;
 RayCast::RayCast(Engine & engine, Scalar length)
 : Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(length))
 {
-	// register for physics tick
-	auto & roster = _engine.GetPreTickRoster();
-	roster.AddCommand(* this, & RayCast::ResetResult);
 }
 
-RayCast::~RayCast()
-{
-	// register for physics tick
-	auto & roster = _engine.GetPreTickRoster();
-	roster.RemoveCommand(* this, & RayCast::ResetResult);
-}
+CRAG_ROSTER_OBJECT_DEFINE(
+	RayCast,
+	10,
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)
 	CRAG_VERIFY(self._result);
@@ -118,9 +114,9 @@ void RayCast::SampleResult(form::RayCastResult const & result)
 	CRAG_VERIFY(* this);
 }
 
-void RayCast::ResetResult(RayCast * ray_cast)
+void RayCast::ResetResult()
 {
-	ray_cast->_result = form::RayCastResult();
+	_result = form::RayCastResult();
 }
 
 void RayCast::DebugDraw() const

@@ -115,8 +115,8 @@ namespace sim
 
 		bool IsSettled() const;
 
-		crag::core::Roster & GetTickRoster();
-		crag::core::Roster & GetDrawRoster();
+		static crag::core::Roster & GetTickRoster();
+		static crag::core::Roster & GetDrawRoster();
 
 		// called be Daemon when simulation thread starts
 		void Run(Daemon::MessageQueue & message_queue);
@@ -143,9 +143,6 @@ namespace sim
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
 		std::unique_ptr<form::Scene> _collision_scene;	// for collision
 #endif
-
-		std::unique_ptr<crag::core::Roster> _tick_roster;	// general simulation tick
-		std::unique_ptr<crag::core::Roster> _draw_roster;	// provides opportunity to communicate graphical changes to renderer
 	};
 	
 }

@@ -56,6 +56,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/ring_buffer.h
     ${CRAG_SOURCE_DIRECTORY}/core/Roster.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/Roster.h
+    ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDeclare.h
+    ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDefine.h
     ${CRAG_SOURCE_DIRECTORY}/core/Singleton.h
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.h

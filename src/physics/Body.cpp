@@ -17,7 +17,7 @@
 
 #include "geom/Matrix33.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 #include "gfx/Debug.h"
 
@@ -65,6 +65,12 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // physics::Body member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	Body,
+	10,
+	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
+
 Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
 , _engine(engine)
@@ -95,19 +101,12 @@ Body::Body(Transformation const & transformation, Vector3 const * velocity, Engi
 		// set ODE transformation
 		SetGeomTransformation(transformation);
 	}
-	
-	// register for physics tick
-	auto & roster = _engine.GetPreTickRoster();
-	roster.AddCommand(* this, & Body::Tick);
-	
+
 	CRAG_VERIFY(* this);
 }
 
 Body::~Body()
 {
-	auto & roster = _engine.GetPreTickRoster();
-	roster.RemoveCommand(* this, & Body::Tick);
-
 	if (_body_handle != 0)
 	{
 		// destroy all joints associated with the body
@@ -127,6 +126,19 @@ Body::~Body()
 	{
 		_engine.DestroyShape(_collision_handle);
 	}
+}
+
+void Body::PreTick()
+{
+	if (_body_handle)
+	{
+		AddForce(_gravitational_force);
+	}
+}
+
+void Body::PostTick()
+{
+	SetTransformation(GetGeomTransformation());
 }
 
 bool Body::ObeysGravity() const
@@ -496,16 +508,6 @@ void physics::Body::SetGeomTransformation(Transformation const & transformation)
 {
 	SetGeomTranslation(transformation.GetTranslation());
 	SetGeomRotation(transformation.GetRotation());
-}
-
-void Body::Tick(Body * body)
-{
-	body->SetTransformation(body->GetGeomTransformation());
-	
-	if (body->_body_handle)
-	{
-		body->AddForce(body->_gravitational_force);
-	}
 }
 
 void Body::DebugDraw() const

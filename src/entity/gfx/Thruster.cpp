@@ -11,8 +11,6 @@
 
 #include "Thruster.h"
 
-#include "Puff.h"
-
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Scene.h"

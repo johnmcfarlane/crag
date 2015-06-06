@@ -21,9 +21,10 @@ namespace sim
 		// functions
 
 		AnimatThruster(Entity & entity, Ray3 const & ray);
-		~AnimatThruster();
+
+		CRAG_ROSTER_OBJECT_DECLARE(AnimatThruster);
 	private:
-		static void TickThrustFactor(AnimatThruster *);
+		void TickThrustFactor();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

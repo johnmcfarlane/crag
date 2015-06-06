@@ -722,9 +722,8 @@ namespace
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, "ShipVbo", "ShipShadowMesh");
 		entity.SetModel(model_handle);
 
-		// controller
+		// create controller
 		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
-		entity.SetController(std::move(controller));
 
 		// add a single thruster
 		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert)
@@ -756,6 +755,9 @@ namespace
 		
 		AddHoverThruster(* controller, Vector3(0.f, -.25f, 0.f), -.1f);
 		AddHoverThruster(* controller, Vector3(0.f, .25f, 0.f), .1f);
+
+		// assign controller
+		entity.SetController(std::move(controller));
 	}
 
 	void ConstructUfo(Entity & ufo_entity, Transformation const & transformation, crag::core::HashString vbo_name, crag::core::HashString shadow_mesh_name, PlayerType _player_type, Scalar thrust, Scalar radius)

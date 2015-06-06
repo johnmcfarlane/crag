@@ -17,35 +17,30 @@
 
 #include "physics/Body.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HoverThruster member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	HoverThruster,
+	10,
+	Pool::CallBefore<& HoverThruster::TickThrustDirection, Thruster, & Thruster::Tick>(Engine::GetTickRoster()))
+
 HoverThruster::HoverThruster(Entity & entity, Vector3 const & position, Scalar magnitude)
 : Thruster(entity, Ray3(position, Vector3::Zero()), false, 1.f)
 , _magnitude(magnitude)
 {
 	ASSERT(_magnitude != 0);
-	
-	auto & tick_roster = entity.GetEngine().GetTickRoster();
-	tick_roster.AddOrdering(& HoverThruster::TickThrustDirection, & Thruster::Tick);
-	tick_roster.AddCommand(* this, & HoverThruster::TickThrustDirection);
-	
+
 	SetThrustFactor(1.f);
 }
 
-HoverThruster::~HoverThruster()
+void HoverThruster::TickThrustDirection()
 {
-	auto & tick_roster = GetEntity().GetEngine().GetTickRoster();
-	tick_roster.RemoveCommand(* this, & HoverThruster::TickThrustDirection);
-}
-
-void HoverThruster::TickThrustDirection(HoverThruster * thruster)
-{
-	auto location = thruster->GetEntity().GetLocation();
+	auto location = GetEntity().GetLocation();
 	if (! location)
 	{
 		DEBUG_BREAK("missing location");
@@ -59,10 +54,10 @@ void HoverThruster::TickThrustDirection(HoverThruster * thruster)
 		return;
 	}
 	
-	auto up_thrust = up * thruster->_magnitude;
+	auto up_thrust = up * _magnitude;
 	auto transformation = body.GetTransformation();
 	
-	auto new_ray = thruster->GetRay();
+	auto new_ray = GetRay();
 	new_ray.direction = geom::Inverse(transformation).Rotate(up_thrust);
-	thruster->SetRay(new_ray);
+	SetRay(new_ray);
 }

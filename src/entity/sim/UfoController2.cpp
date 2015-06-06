@@ -13,7 +13,6 @@
 #include "RoverThruster.h"
 
 #include "sim/Entity.h"
-#include "sim/Engine.h"
 #include "sim/gravity.h"
 
 #include "physics/Body.h"
@@ -24,7 +23,7 @@
 #include "geom/Intersection.h"
 
 #include "core/ConfigEntry.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
@@ -83,6 +82,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::UfoController2 member functions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	UfoController2,
+	1,
+	Pool::Call<& UfoController2::Tick>(Engine::GetTickRoster()))
+
 UfoController2::UfoController2(Entity & entity, std::shared_ptr<Entity> const & ball_entity, Scalar thrust)
 : Controller(entity)
 , _ball_entity(ball_entity)
@@ -90,9 +94,6 @@ UfoController2::UfoController2(Entity & entity, std::shared_ptr<Entity> const & 
 {
 	auto & frustum = _pov.GetFrustum();
 	frustum.depth_range = { 1, 2 };
-	
-	auto & roster = entity.GetEngine().GetTickRoster();
-	roster.AddCommand(* this, & UfoController2::Tick);
 
 	CRAG_VERIFY(* this);
 }
@@ -105,10 +106,6 @@ UfoController2::~UfoController2()
 
 	// deactivate listener
 	ipc::Listener<Engine, gfx::SetCameraEvent>::SetIsListening(false);
-	
-	// roster
-	auto & roster = engine.GetTickRoster();
-	roster.RemoveCommand(* this, & UfoController2::Tick);
 	
 	// remove ball
 	if (_ball_entity)
@@ -134,7 +131,7 @@ void UfoController2::operator() (gfx::SetCameraEvent const & event)
 	_pov.GetFrustum().fov = event.fov;
 }
 
-void UfoController2::Tick(UfoController2 * controller)
+void UfoController2::Tick()
 {
 	geom::Vector2i pixel_position;
 	auto mouse_state = SDL_GetMouseState(& pixel_position.x, & pixel_position.y);
@@ -143,7 +140,7 @@ void UfoController2::Tick(UfoController2 * controller)
 		return;
 	}
 	
-	auto const & location = controller->GetEntity().GetLocation();
+	auto const & location = GetEntity().GetLocation();
 	if (! location)
 	{
 		return;
@@ -165,10 +162,10 @@ void UfoController2::Tick(UfoController2 * controller)
 	auto const & horizontal_plane = Plane3(translation, up);
 
 	// target position
-	Vector3 target_position = GetTargetPosition(controller->_pov, pixel_position, horizontal_plane);
+	Vector3 target_position = GetTargetPosition(_pov, pixel_position, horizontal_plane);
 	
 	// force
-	auto const & force = GetForce(target_position, horizontal_plane, controller->_thrust);
+	auto const & force = GetForce(target_position, horizontal_plane, _thrust);
 	
 	// point at top of UFO
 	auto const & ufo_up = gfx::GetAxis(rotation, gfx::Direction::forward);

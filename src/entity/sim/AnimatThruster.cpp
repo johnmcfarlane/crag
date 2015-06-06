@@ -14,27 +14,23 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // AnimatThruster member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	AnimatThruster,
+	100,
+	Pool::CallBefore<& AnimatThruster::TickThrustFactor, Thruster, & Thruster::Tick>(Engine::GetTickRoster()))
+
 AnimatThruster::AnimatThruster(Entity & entity, Ray3 const & ray)
 : Thruster(entity, ray, false, 1.f)
 {
-	auto & tick_roster = entity.GetEngine().GetTickRoster();
-	tick_roster.AddOrdering(& AnimatThruster::TickThrustFactor, & Thruster::Tick);
-	tick_roster.AddCommand(* this, & AnimatThruster::TickThrustFactor);
 }
 
-AnimatThruster::~AnimatThruster()
-{
-	auto & tick_roster = GetEntity().GetEngine().GetTickRoster();
-	tick_roster.RemoveCommand(* this, & AnimatThruster::TickThrustFactor);
-}
-
-void AnimatThruster::TickThrustFactor(AnimatThruster *)
+void AnimatThruster::TickThrustFactor()
 {
 }

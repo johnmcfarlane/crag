@@ -61,8 +61,6 @@ Engine::Engine()
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
 , _collision_scene(new form::Scene(512, 512))
 #endif
-, _tick_roster(new crag::core::Roster)
-, _draw_roster(new crag::core::Roster)
 {
 }
 
@@ -244,12 +242,14 @@ bool Engine::IsSettled() const
 
 crag::core::Roster & Engine::GetTickRoster()
 {
-	return * _tick_roster;
+	static crag::core::Roster _tick_roster;	// general simulation tick
+	return _tick_roster;
 }
 
 crag::core::Roster & Engine::GetDrawRoster()
 {
-	return * _draw_roster;
+	static crag::core::Roster _draw_roster;	// provides opportunity to communicate graphical changes to renderer
+	return _draw_roster;
 }
 
 void Engine::Run(Daemon::MessageQueue & message_queue)
@@ -310,7 +310,7 @@ void Engine::Tick()
 #endif
 
 	// tick everything
-	_tick_roster->Call();
+	GetTickRoster().Call();
 
 	// Perform the Entity-specific simulation.
 	PurgeEntities();
@@ -337,8 +337,8 @@ void Engine::UpdateRenderer() const
 	gfx::Daemon::Call([] (gfx::Engine & engine) {
 		engine.OnSetReady(false);
 	});
-	
-	_draw_roster->Call();
+
+	GetDrawRoster().Call();
 
 	auto time = _time;
 	gfx::Daemon::Call([time] (gfx::Engine & engine) {

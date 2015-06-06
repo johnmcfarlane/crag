@@ -27,8 +27,7 @@
 #include "geom/Matrix33.h"
 #include "geom/Transformation.h"
 
-#include "core/ConfigEntry.h"
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 CONFIG_DECLARE(sim_tick_duration, core::Time);
 CONFIG_DECLARE(frustum_default_depth_near, float);
@@ -57,39 +56,32 @@ namespace
 
 using namespace sim;
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	MouseObserverController,
+	1,
+	Pool::CallBefore<& MouseObserverController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+
 MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
 , _sensor(new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, 0.f, 1.f)), observer_mouse_ray_cast_distance))
 {
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.AddOrdering(& MouseObserverController::Tick, & Entity::Tick);
-	roster.AddCommand(* this, & MouseObserverController::Tick);
+	CRAG_ROSTER_OBJECT_VERIFY(* this);
 }
 
-MouseObserverController::~MouseObserverController()
-{
-	// roster
-	auto & roster = GetEntity().GetEngine().GetTickRoster();
-	roster.RemoveCommand(* this, & MouseObserverController::Tick);
-
-	// record speed in config file
-	observer_speed = _speed;
-}
-
-void MouseObserverController::Tick(MouseObserverController * controller)
+void MouseObserverController::Tick()
 {
 	// send last location update to rendered etc.
-	controller->UpdateCamera();
+	UpdateCamera();
 
 	// state-based input
 	ObserverInput input = GetObserverInput();
 
 	// event-based input
-	controller->HandleEvents(input);
+	HandleEvents(input);
 
-	controller->ScaleInput(input);
-	controller->ApplyInput(input);
+	ScaleInput(input);
+	ApplyInput(input);
 }
 
 void MouseObserverController::HandleEvents(ObserverInput & input)

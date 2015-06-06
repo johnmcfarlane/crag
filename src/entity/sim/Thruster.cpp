@@ -21,12 +21,18 @@
 #include "gfx/axes.h"
 #include "gfx/Engine.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Thruster member definitions
+
+CRAG_ROSTER_OBJECT_DEFINE(
+	Thruster,
+	1,
+	Pool::CallBefore<& Thruster::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()),
+	Pool::Call<& Thruster::UpdateModel>(Engine::GetDrawRoster()))
 
 Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor)
 	: _entity(entity)
@@ -46,17 +52,6 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 		}
 	}
 
-	// roster
-	auto & tick_roster = entity.GetEngine().GetTickRoster();
-
-	// register tick
-	tick_roster.AddOrdering(& Thruster::Tick, & Entity::Tick);
-	tick_roster.AddCommand(* this, & Thruster::Tick);
-	
-	// register draw
-	auto & draw_roster = entity.GetEngine().GetDrawRoster();
-	draw_roster.AddCommand(* this, & Thruster::UpdateModel);
-
 	CRAG_VERIFY(* this);
 }
 
@@ -66,14 +61,6 @@ Thruster::~Thruster()
 
 	// release model
 	_model.Release();
-
-	// unregister draw
-	auto & draw_roster = GetEntity().GetEngine().GetDrawRoster();
-	draw_roster.RemoveCommand(* this, & Thruster::UpdateModel);
-
-	// unregister tick
-	auto & tick_roster = GetEntity().GetEngine().GetTickRoster();
-	tick_roster.RemoveCommand(* this, & Thruster::Tick);
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Thruster, self)
@@ -95,6 +82,11 @@ void Thruster::SetParentModel(gfx::ObjectHandle parent_handle)
 }
 
 Entity & Thruster::GetEntity()
+{
+	return _entity;
+}
+
+Entity const & Thruster::GetEntity() const
 {
 	return _entity;
 }
@@ -137,32 +129,32 @@ void Thruster::SetThrustFactor(float thrust_factor)
 	CRAG_VERIFY(* this);
 }
 
-void Thruster::Tick(Thruster * thruster)
+void Thruster::Tick()
 {
-	CRAG_VERIFY(* thruster);
+	CRAG_VERIFY(* this);
 
-	if (thruster->_thrust_factor <= 0)
+	if (_thrust_factor <= 0)
 	{
 		return;
 	}
 
-	auto & location = * thruster->GetEntity().GetLocation();
+	auto & location = * GetEntity().GetLocation();
 	auto & body = core::StaticCast<physics::Body>(location);
-	auto & ray = thruster->_ray;
-	body.AddRelForceAtRelPos(ray.direction * thruster->_thrust_factor, ray.position);
+	auto & ray = _ray;
+	body.AddRelForceAtRelPos(ray.direction * _thrust_factor, ray.position);
 }
 
-void Thruster::UpdateModel(Thruster const * thruster)
+void Thruster::UpdateModel()
 {
-	CRAG_VERIFY(* thruster);
+	CRAG_VERIFY(* this);
 
-	float thrust_factor = thruster->_thrust_factor;
+	float thrust_factor = _thrust_factor;
 	if (thrust_factor <= 0)
 	{
 		return;
 	}
 
-	auto & model = thruster->_model;
+	auto & model = _model;
 	if (model.IsInitialized())
 	{
 		model.Call([thrust_factor] (gfx::Thruster & thruster)

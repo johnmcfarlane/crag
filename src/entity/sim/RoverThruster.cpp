@@ -14,30 +14,27 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "core/Roster.h"
+#include "core/RosterObjectDefine.h"
 
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
 // RoverThruster member definitions
 
+CRAG_ROSTER_OBJECT_DEFINE(
+	RoverThruster,
+	10,
+	Pool::CallBefore<& RoverThruster::TickThrustFactor, Thruster, & Thruster::Tick>(Engine::GetTickRoster()))
+
 RoverThruster::RoverThruster(Entity & entity, Ray3 const & ray, ActivationCallback const & activation_callback, bool graphical)
 : Thruster(entity, ray, graphical, 0.f)
 , _activation_callback(activation_callback)
 {
-	auto & tick_roster = entity.GetEngine().GetTickRoster();
-	tick_roster.AddOrdering(& RoverThruster::TickThrustFactor, & Thruster::Tick);
-	tick_roster.AddCommand(* this, & RoverThruster::TickThrustFactor);
+	CRAG_ROSTER_OBJECT_VERIFY(* this);
 }
 
-RoverThruster::~RoverThruster()
+void RoverThruster::TickThrustFactor()
 {
-	auto & tick_roster = GetEntity().GetEngine().GetTickRoster();
-	tick_roster.RemoveCommand(* this, & RoverThruster::TickThrustFactor);
-}
-
-void RoverThruster::TickThrustFactor(RoverThruster * thruster)
-{
-	auto activation = thruster->_activation_callback();
-	thruster->SetThrustFactor(activation);
+	auto activation = _activation_callback();
+	SetThrustFactor(activation);
 }

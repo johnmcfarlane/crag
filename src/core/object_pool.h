@@ -86,7 +86,7 @@ namespace core
 			{
 				if (new_list_element == _array_end)
 				{
-					DEBUG_MESSAGE("object pool is full");
+					DEBUG_BREAK("object pool is full");
 					return nullptr;
 				}
 
@@ -167,9 +167,19 @@ namespace core
 			return _array_end - _array;
 		}
 		
-		bool empty() const
+		constexpr bool empty() const noexcept
 		{
 			return _num_allocated == 0;
+		}
+
+		constexpr value_type & operator[] (size_type index) const noexcept
+		{
+			return _array[index];
+		}
+
+		constexpr size_type get_index(value_type const & element) const noexcept
+		{
+			return & element - _array;
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
