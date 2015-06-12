@@ -158,7 +158,7 @@ namespace crag
 				auto index = 0;
 				for (auto element : buffer)
 				{
-					if (! element)
+					if (element == all_off)
 					{
 						index += buffer_element_type_bits;
 						continue;
@@ -211,6 +211,14 @@ namespace crag
 				return ((num_bits - 1) >> buffer_element_type_bit_shift) + 1;
 			}
 
+			// constants
+			static constexpr auto all_off =  buffer_element_type(0);
+			static constexpr auto all_on =  ~ all_off;
+			static_assert(
+				all_on == std::numeric_limits<buffer_element_type>::max(),
+				"conflicting alternative methods of generating all-set bit masks");
+
+			// variables
 			buffer_type buffer;
 		};
 	}
