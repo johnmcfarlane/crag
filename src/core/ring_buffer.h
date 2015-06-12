@@ -339,14 +339,6 @@ namespace core
 			
 			CRAG_VERIFY(* this);
 		}
-		
-		// Null this object (except _data_end can never be null).
-		// Is used to ensure that new deallocation occurs in d'tor.
-		void nuke()
-		{
-			_buffer_begin = _buffer_end = nullptr;
-			init_data();
-		}
 
 #if defined(CRAG_VERIFY_ENABLED)
 		static void verify_address(size_type num_bytes)
