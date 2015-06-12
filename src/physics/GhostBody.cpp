@@ -43,7 +43,7 @@ void GhostBody::SetMass(Mass const & m) const
 	dBodySetMass(_body_handle, & m);
 }
 
-bool GhostBody::OnCollision(Body &, ContactFunction &)
+bool GhostBody::HandleCollision(Body &, ContactFunction &)
 {
 	CRAG_VERIFY(* this);
 	

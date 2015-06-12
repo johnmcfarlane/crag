@@ -47,11 +47,11 @@ void BoxBody::SetDensity(Scalar density)
 	dBodySetMass (GetBodyHandle(), & m);
 }
 
-bool BoxBody::OnCollision(Body & body, ContactFunction & contact_function)
+bool BoxBody::HandleCollision(Body & body, ContactFunction & contact_function)
 {
 	Vector3 dimensions = GetDimensions();
 	Vector3 extents = dimensions * Scalar(.5);
 	Sphere3 bounding_sphere(GetTranslation(), geom::Magnitude(extents));
 	
-	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
+	return body.HandleCollisionWithSolid(* this, bounding_sphere, contact_function);
 }

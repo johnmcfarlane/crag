@@ -25,7 +25,7 @@ namespace physics
 		CRAG_ROSTER_OBJECT_DECLARE(MeshBody);
 
 	protected:
-		bool OnCollision(Body & that_body, ContactFunction & contact_function) override;
+		bool HandleCollision(Body & that_body, ContactFunction & contact_function) override;
 
 		void DebugDraw() const override;
 

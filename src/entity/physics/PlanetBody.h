@@ -36,10 +36,10 @@ namespace physics
 		
 		Vector3 GetGravitationalAttraction(Vector3 const & pos) const override;
 	private:
-		bool OnCollision(Body & body, ContactFunction & contact_function) override;
+		bool HandleCollision(Body & body, ContactFunction & contact_function) override;
 
-		bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function) override;
-		bool OnCollisionWithRay(Body & body) override;
+		bool HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function) override;
+		bool HandleCollisionWithRay(Body & body) override;
 
 		void DebugDraw() const override;
 

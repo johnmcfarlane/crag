@@ -44,7 +44,7 @@ namespace physics
 		
 		void SetDensity(Scalar density) override;
 
-		bool OnCollision(Body & that_body, ContactFunction & contact_function) override;
+		bool HandleCollision(Body & that_body, ContactFunction & contact_function) override;
 
 		form::RayCastResult _result;
 	};

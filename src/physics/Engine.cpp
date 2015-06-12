@@ -87,7 +87,7 @@ namespace
 		void * ray_data = dGeomGetData (ray_handle);
 		RayCast & ray_cast = ref(static_cast<RayCast *>(ray_data));
 	
-		body.OnCollisionWithRay(ray_cast);
+		body.HandleCollisionWithRay(ray_cast);
 	}
 
 	void OnSphereCollision(void * data, CollisionHandle body_handle, CollisionHandle sphere_handle)
@@ -102,7 +102,7 @@ namespace
 		auto sphere_data = dGeomGetData (sphere_handle);
 		auto & sphere = ref(static_cast<Body *>(sphere_data));
 	
-		sphere.OnCollision(body, contact_interface);
+		sphere.HandleCollision(body, contact_interface);
 	}
 }
 CONFIG_DEFINE(collisions_parallelization, true);
@@ -339,12 +339,12 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 		engine.AddContacts(begin, end);
 	});
 	
-	if (body1.OnCollision(body2, contact_function))
+	if (body1.HandleCollision(body2, contact_function))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(body1, contact_function))
+	if (body2.HandleCollision(body1, contact_function))
 	{
 		return;
 	}

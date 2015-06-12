@@ -25,7 +25,7 @@ namespace physics
 
 		void SetMass(Mass const & m) const override;
 	private:
-		bool OnCollision(Body & that_body, ContactFunction & contact_function) override;
+		bool HandleCollision(Body & that_body, ContactFunction & contact_function) override;
 		
 		Vector3 const & GetGeomTranslation() const override;
 		void SetGeomTranslation(Vector3 const & translation) override;

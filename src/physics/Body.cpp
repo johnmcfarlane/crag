@@ -344,12 +344,12 @@ bool Body::IsCollidable(Body const & body) const
 	return & body != _exception;
 }
 
-bool Body::OnCollisionWithSolid(Body &, Sphere3 const &, ContactFunction &)
+bool Body::HandleCollisionWithSolid(Body &, Sphere3 const &, ContactFunction &)
 {
 	return false;
 }
 
-bool Body::OnCollisionWithRay(Body & that_body)
+bool Body::HandleCollisionWithRay(Body & that_body)
 {
 	auto & ray_cast = static_cast<RayCast &>(that_body);
 

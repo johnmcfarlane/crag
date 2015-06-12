@@ -72,11 +72,11 @@ MeshBody::~MeshBody()
 	dGeomTriMeshDataDestroy(_mesh_data);
 }
 
-bool MeshBody::OnCollision(Body & body, ContactFunction & contact_function)
+bool MeshBody::HandleCollision(Body & body, ContactFunction & contact_function)
 {
 	Sphere3 bounding_sphere(GetTranslation(), _bounding_radius);
 	
-	return body.OnCollisionWithSolid(* this, bounding_sphere, contact_function);
+	return body.HandleCollisionWithSolid(* this, bounding_sphere, contact_function);
 }
 
 void MeshBody::DebugDraw() const

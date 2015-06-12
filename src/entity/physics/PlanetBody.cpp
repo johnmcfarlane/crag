@@ -102,13 +102,13 @@ Vector3 PlanetBody::GetGravitationalAttraction(Vector3 const & pos) const
 	return direction * force;
 }
 
-bool PlanetBody::OnCollision(Body & body, ContactFunction & contact_function)
+bool PlanetBody::HandleCollision(Body & body, ContactFunction & contact_function)
 {
 	// TODO: planet-to-planet collision causes stack overflow
-	return body.OnCollision(* this, contact_function);
+	return body.HandleCollision(* this, contact_function);
 }
 
-bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function)
+bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function)
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// gather the two collision handles together
@@ -252,7 +252,7 @@ bool PlanetBody::OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphe
 	return true;
 }
 
-bool PlanetBody::OnCollisionWithRay(Body & body)
+bool PlanetBody::HandleCollisionWithRay(Body & body)
 {
 	auto & ray_cast = static_cast<RayCast &>(body);
 
