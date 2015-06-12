@@ -14,6 +14,8 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
+#include "physics/Engine.h"
+
 #include "core/Random.h"
 #include "core/RosterObjectDefine.h"
 
@@ -60,7 +62,11 @@ namespace
 CRAG_ROSTER_OBJECT_DEFINE(
 	Sensor,
 	100,
-	Pool::Call<& Sensor::Tick>(Engine::GetDrawRoster()))
+#if defined(CRAG_DEBUG)
+	Pool::Call<& Sensor::DebugDraw>(Engine::GetDrawRoster()),
+#endif
+	Pool::Call<& Sensor::GenerateScanRay>(physics::Engine::GetPreTickRoster()),
+	Pool::Call<& Sensor::SendReading>(physics::Engine::GetPostTickRoster()))
 
 Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance)
 : _entity(entity)
@@ -76,54 +82,14 @@ Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance
 	_ray_cast->SetIsCollidable(body, false);
 }
 
-Scalar Sensor::GetReading() const
-{
-	const auto & result = _ray_cast->GetResult();
-	if (! result)
-	{
-		return 1.f;
-	}
-	
-	auto contact_distance = result.GetDistance();
-	CRAG_VERIFY_OP (contact_distance, >=, 0);
-	CRAG_VERIFY_OP (contact_distance, <=, _length);
-	
-	auto ratio = contact_distance / _length;
-	ASSERT(ratio >= 0);
-	ASSERT(ratio <= 1.f);
-	
-	return ratio;
-}
-
-Scalar Sensor::GetReadingDistance() const
-{
-	const auto & result = _ray_cast->GetResult();
-	if (! result)
-	{
-		return _length;
-	}
-	
-	auto contact_distance = result.GetDistance();
-	CRAG_VERIFY_OP (contact_distance, >=, 0);
-	CRAG_VERIFY_OP (contact_distance, <=, _length);
-	
-	return contact_distance;
-}
-
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
+	CRAG_ROSTER_OBJECT_VERIFY(self);
 	CRAG_VERIFY(self._local_ray.position);
 	CRAG_VERIFY_UNIT(self._local_ray.direction, .0001f);
+	CRAG_VERIFY_EQUAL(self._ray_cast->GetLength(), self._length);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Sensor::Tick()
-{
-#if defined(CRAG_GFX_DEBUG)
-	_ray_cast->DebugDraw();
-#endif
-
-	GenerateScanRay();
-}
-
+// update global sensor ray position
 void Sensor::GenerateScanRay()
 {
 	CRAG_VERIFY(* this);
@@ -141,6 +107,37 @@ void Sensor::GenerateScanRay()
 	
 	// generate new ray
 	_ray_cast->SetRay(scan_ray);
+}
+
+void Sensor::SendReading()
+{
+	TransmitSignal(CalcReading());
+}
+
+#if defined(CRAG_DEBUG)
+void Sensor::DebugDraw()
+{
+	_ray_cast->DebugDraw();
+}
+#endif
+
+Scalar Sensor::CalcReading() const
+{
+	const auto & result = _ray_cast->GetResult();
+	if (! result)
+	{
+		return 0.f;
+	}
+
+	auto contact_distance = result.GetDistance();
+	CRAG_VERIFY_OP (contact_distance, >=, 0);
+	CRAG_VERIFY_OP (contact_distance, <=, _length);
+
+	auto ratio = 1.f - contact_distance / _length;
+	ASSERT(ratio >= 0);
+	ASSERT(ratio <= 1.f);
+
+	return ratio;
 }
 
 Ray3 Sensor::GetGlobalRay() const

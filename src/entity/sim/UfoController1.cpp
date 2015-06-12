@@ -10,10 +10,11 @@
 #include "pch.h"
 
 #include "UfoController1.h"
-#include "RoverThruster.h"
+
+#include "Signal.h"
+#include "Thruster.h"
 
 #include "sim/Entity.h"
-#include "sim/Engine.h"
 
 #include "physics/Body.h"
 
@@ -47,10 +48,12 @@ UfoController1::UfoController1(Entity & entity, std::shared_ptr<Entity> const & 
 : VehicleController(entity)
 , _camera_rotation(Matrix33::Identity())
 , _ball_entity(ball_entity)
-, _main_thruster(new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, max_thrust)), false, 1.f))
 , _num_presses(0)
 {
-	AddThruster(VehicleController::ThrusterPtr(_main_thruster));
+	auto thruster = new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, max_thrust)), false, 1.f);
+	auto transmitter = new Transmitter(thruster);
+	AddReceiver(ReceiverPtr(thruster));
+	AddTransmitter(TransmitterPtr(transmitter));
 
 	CRAG_VERIFY(* this);
 }
@@ -92,7 +95,10 @@ void UfoController1::ApplyThrust(Vector2 pointer_delta)
 {
 	bool is_rotating = pointer_delta != Vector2::Zero();
 	auto thrust_factor = ShouldThrust(is_rotating) ? 1.f : 0.f;
-	_main_thruster->SetThrustFactor(thrust_factor);
+
+	auto & transmitters = GetTransmitters();
+	CRAG_VERIFY_TRUE(transmitters.size() == 1);
+	transmitters.front()->TransmitSignal(thrust_factor);
 }
 
 bool UfoController1::ShouldThrust(bool) const

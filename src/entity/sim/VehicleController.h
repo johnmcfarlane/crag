@@ -11,10 +11,11 @@
 
 #include "sim/Controller.h"
 
-#include "Thruster.h"
-
 namespace sim
 {
+	class Transmitter;
+	class Receiver;
+
 	// An entity with its own locomotion.
 	class VehicleController : public Controller
 	{
@@ -23,27 +24,32 @@ namespace sim
 
 		typedef Controller _super;
 	public:
-		typedef std::unique_ptr<Thruster> ThrusterPtr;
-		typedef std::vector<ThrusterPtr> ThrusterVector;
+		typedef std::unique_ptr<Transmitter> TransmitterPtr;
+		typedef std::vector<TransmitterPtr> TransmitterVector;
+
+		typedef std::unique_ptr<Receiver> ReceiverPtr;
+		typedef std::vector<ReceiverPtr> ReceiverVector;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
 		VehicleController(Entity & entity);
-		~VehicleController();
 
 		CRAG_ROSTER_OBJECT_DECLARE(VehicleController);
 		CRAG_VERIFY_INVARIANTS_DECLARE(VehicleController);
-		
-		// Add a Thruster
-		void AddThruster(ThrusterPtr && thruster);
-	protected:
-		void PopThruster();
+
+		// Add a Transmitter
+		void AddTransmitter(TransmitterPtr && transmitter) noexcept;
+		void AddReceiver(ReceiverPtr && receiver) noexcept;
+
+		TransmitterVector const & GetTransmitters() const noexcept;
+		ReceiverVector const & GetReceivers() const noexcept;
 
 	private:
-
 		////////////////////////////////////////////////////////////////////////////////
-		// data
-		ThrusterVector _thrusters;
+		// variables
+
+		TransmitterVector _transmitters;
+		ReceiverVector _receivers;
 	};
 }

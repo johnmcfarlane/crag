@@ -10,7 +10,6 @@
 #include "pch.h"
 
 #include "UfoController2.h"
-#include "RoverThruster.h"
 
 #include "sim/Entity.h"
 #include "sim/gravity.h"

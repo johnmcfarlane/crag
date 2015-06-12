@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "Sensor.h"
-
 #include "sim/Controller.h"
 #include "sim/defs.h"
 
@@ -56,6 +54,5 @@ namespace sim
 		int _speed;
 		core::EventWatcher _event_watcher;
 		bool _collidable;
-		std::unique_ptr<Sensor> _sensor;
 	};
 }

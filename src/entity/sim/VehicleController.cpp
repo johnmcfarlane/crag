@@ -11,6 +11,8 @@
 
 #include "VehicleController.h"
 
+#include "Thruster.h"
+
 #include "sim/Entity.h"
 #include "sim/Engine.h"
 
@@ -32,46 +34,35 @@ VehicleController::VehicleController(Entity & entity)
 	CRAG_VERIFY(* this);
 }
 
-VehicleController::~VehicleController()
-{
-	CRAG_VERIFY(* this);
-
-	while (! _thrusters.empty())
-	{
-		PopThruster();
-	}
-}
-
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(VehicleController, self)
-	for (auto & thruster : self._thrusters)
+	for (auto & transmitter : self._transmitters)
 	{
-		CRAG_VERIFY(* thruster);
-		CRAG_VERIFY_EQUAL(& thruster->GetEntity(), & self.GetEntity());
+		CRAG_VERIFY_TRUE(transmitter->GetReceiver());
+	}
+	for (auto & receiver : self._receivers)
+	{
+		CRAG_VERIFY(receiver->GetSignal());
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void VehicleController::AddThruster(ThrusterPtr && thruster)
+void VehicleController::AddTransmitter(TransmitterPtr && transmitter) noexcept
 {
-	CRAG_VERIFY(* this);
-
-	// model
-	auto & entity = GetEntity();
-	auto parent_model = entity.GetModel();
-	thruster->SetParentModel(parent_model);
-
-	// add to vector
-	_thrusters.push_back(std::move(thruster));
-
-	CRAG_VERIFY(* this);
+	_transmitters.push_back(std::move(transmitter));
 }
 
-void VehicleController::PopThruster()
+void VehicleController::AddReceiver(ReceiverPtr && receiver) noexcept
+{
+	_receivers.push_back(std::move(receiver));
+}
+
+VehicleController::TransmitterVector const & VehicleController::GetTransmitters() const noexcept
+{
+	return _transmitters;
+}
+
+VehicleController::ReceiverVector const & VehicleController::GetReceivers() const noexcept
 {
 	CRAG_VERIFY(* this);
-	ASSERT(! _thrusters.empty());
 
-	// remove it from vector
-	_thrusters.pop_back();
-
-	CRAG_VERIFY(* this);
+	return _receivers;
 }

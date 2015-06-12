@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Signal.h"
+
 #include "sim/defs.h"
 
 #include "core/counted_object.h"
@@ -29,8 +31,8 @@ namespace sim
 {
 	// applies force to an entity; is owned by a controller;
 	// ray is in entity-local coordinate space
-	struct Thruster
-	: public crag::counted_object<Thruster>
+	class Thruster final
+	: public Receiver
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -52,10 +54,6 @@ namespace sim
 		Ray3 const & GetRay() const;
 		void SetRay(Ray3 const & ray);
 
-		// get/set the amount of thrust being applied to entity's body
-		float GetThrustFactor() const;
-		void SetThrustFactor(float thrust_factor);
-
 		void Tick();
 	private:
 		// adds a puff of smoke
@@ -67,6 +65,5 @@ namespace sim
 		sim::Entity & _entity;
 		Ray3 _ray;	// position/direction of Thruster relative to vehicle
 		gfx::ThrusterHandle _model;
-		Scalar _thrust_factor;
 	};
 }

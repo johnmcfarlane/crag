@@ -11,7 +11,7 @@
 
 #include "AnimatController.h"
 
-#include "AnimatThruster.h"
+#include "Thruster.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -93,7 +93,7 @@ void AnimatController::CreateThrusters(float radius)
 				ray.position.x = x ? root_third : -root_third;
 				ray.direction.x = ray.position.x * direction_scale;
 
-				AddThruster(VehicleController::ThrusterPtr(new AnimatThruster(entity, ray)));
+				AddReceiver(VehicleController::ReceiverPtr(new Thruster(entity, ray, false, 0.f)));
 			}
 		}
 	}

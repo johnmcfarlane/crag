@@ -12,20 +12,12 @@
 #include "MouseObserverController.h"
 #include "ObserverInput.h"
 
-#include "entity/sim/Sensor.h"
-
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
 #include "physics/Body.h"
 
 #include "gfx/SetCameraEvent.h"
-#include "gfx/SetLodParametersEvent.h"
-
-#include "ipc/Daemon.h"
-
-#include "geom/Matrix33.h"
-#include "geom/Transformation.h"
 
 #include "core/RosterObjectDefine.h"
 
@@ -64,7 +56,6 @@ CRAG_ROSTER_OBJECT_DEFINE(
 MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)
 , _speed(observer_speed)
-, _sensor(new Sensor(entity, Ray3(Vector3::Zero(), Vector3(0.f, 0.f, 1.f)), observer_mouse_ray_cast_distance))
 {
 	CRAG_ROSTER_OBJECT_VERIFY(* this);
 }
