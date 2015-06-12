@@ -114,7 +114,9 @@ namespace
 			auto ray_to_plane = ray.position - plane.position;
 			auto ray_to_plane_distance = geom::DotProduct(ray_to_plane, plane.normal);
 			side_attributes.dot_product = - geom::DotProduct(plane.normal, ray.direction);
-			side_attributes.intersection = ray_to_plane_distance / side_attributes.dot_product;
+			side_attributes.intersection = side_attributes.dot_product
+				? ray_to_plane_distance / side_attributes.dot_product
+				: std::numeric_limits<Scalar>::max();
 
 			return side_attributes;
 		}
@@ -150,6 +152,9 @@ namespace
 					attributes.range[1] = std::min(attributes.range[1], side_attributes.intersection);
 				}
 			}
+
+			CRAG_VERIFY(attributes.range[0]);
+			CRAG_VERIFY(attributes.range[1]);
 		}
 
 		// fill out attributes given the ray cast invariants
