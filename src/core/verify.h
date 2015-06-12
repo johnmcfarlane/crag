@@ -262,6 +262,9 @@ namespace crag
 	}
 }
 
+// use in place of constexpr in places where VERIFY macros would violate constexpr function rules
+#define CRAG_CONSTEXPR
+
 #else
 
 // no-op versions of the above verification macros
@@ -278,6 +281,8 @@ namespace crag
 #define CRAG_VERIFY_ARRAY_ELEMENT(P, B, E) DO_STATEMENT(CRAG_UNUSED(P); CRAG_UNUSED(B); CRAG_UNUSED(E);)
 #define CRAG_VERIFY_UNIT(V, EPSILON) DO_STATEMENT(CRAG_UNUSED(V); CRAG_UNUSED(EPSILON);)
 #define CRAG_VERIFY(OBJECT) CRAG_UNUSED(OBJECT)
+
+#define CRAG_CONSTEXPR constexpr
 
 #endif
 
