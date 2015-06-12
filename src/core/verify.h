@@ -193,7 +193,7 @@ namespace crag
 		template <typename Type, typename std::enable_if<std::is_floating_point<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type real) noexcept
 		{
-			CRAG_VERIFY(std::isfinite(real));
+			CRAG_VERIFY_TRUE(std::isfinite(real));
 		}
 
 		// pointer
