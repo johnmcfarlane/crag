@@ -61,7 +61,7 @@ namespace
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Sensor,
-	100,
+	1000,
 #if defined(CRAG_DEBUG)
 	Pool::Call<& Sensor::DebugDraw>(Engine::GetDrawRoster()),
 #endif

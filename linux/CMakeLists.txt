@@ -89,6 +89,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MoonShader.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MouseObserverController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MouseObserverController.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/nnet.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/nnet.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/ObserverInput.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/ObserverInput.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/PlanetController.cpp

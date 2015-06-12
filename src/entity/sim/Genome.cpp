@@ -20,35 +20,40 @@ using namespace sim;
 
 using namespace sim::ga;
 
-Genome::size_type Genome::Size() const
+Genome::size_type Genome::size() const
 {
-	return _genes.size();
+	return _buffer.size();
 }
 
-ConstGeneIterator Genome::begin() const
+Genome::const_iterator Genome::begin() const
 {
-	return std::begin(_genes);
+	return std::begin(_buffer);
 }
 
-GeneIterator Genome::begin()
+Genome::iterator Genome::begin()
 {
-	return std::begin(_genes);
+	return std::begin(_buffer);
 }
 
-ConstGeneIterator Genome::end() const
+Genome::const_iterator Genome::end() const
 {
-	return std::end(_genes);
+	return std::end(_buffer);
 }
 
-GeneIterator Genome::end()
+Genome::iterator Genome::end() noexcept
 {
-	return std::end(_genes);
+	return std::end(_buffer);
+}
+
+GeneType Genome::operator[] (size_type index) const noexcept
+{
+	CRAG_VERIFY_OP(index, <, size());
+	return _buffer[index];
 }
 
 void Genome::Grow()
 {
-	ASSERT(_genes.size() < 1000);
-	_genes.push_back(Random::sequence.GetUnit<float>());
+	_buffer.push_back(Random::sequence.GetUnit<float>());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,21 +61,15 @@ void Genome::Grow()
 
 GenomeReader::GenomeReader(Genome & genome)
 : _genome(genome)
-, _position(std::begin(genome))
 {
 }
 
-Gene GenomeReader::Read()
+GeneType GenomeReader::Read()
 {
-	if (_position == std::end(_genome))
+	if (_position == _genome.size())
 	{
-		Genome::size_type index = _position - std::begin(_genome);
-		ASSERT(index < _genome.Size());
-
 		_genome.Grow();
-		_position = std::begin(_genome) + index;
-		ASSERT(_position < std::end(_genome));
 	}
 
-	return * _position;
+	return _genome[_position ++];
 }

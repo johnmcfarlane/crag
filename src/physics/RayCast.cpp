@@ -28,7 +28,7 @@ RayCast::RayCast(Engine & engine, Scalar length)
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	RayCast,
-	20,
+	2000,
 	Pool::Call<& RayCast::ResetResult>(Engine::GetPreTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)

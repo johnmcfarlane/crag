@@ -67,7 +67,7 @@ namespace
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Body,
-	10,
+	1000,
 	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
 	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
 

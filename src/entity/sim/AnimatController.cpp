@@ -27,22 +27,22 @@ CONFIG_DEFINE(animat_sensor_length, 5.f);
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	AnimatController,
-	1,
-	Pool::CallBetween<
-		& AnimatController::Tick,
-		Entity, & Entity::Tick,
-		Sensor, & Sensor::GenerateScanRay>(Engine::GetTickRoster()))
+	100,
+	Pool::NoCall())
+
+CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
+	CRAG_VERIFY(static_cast<VehicleController const &>(self));
+CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 AnimatController::AnimatController(Entity & entity, float radius)
 : VehicleController(entity)
+, _network(_genome, std::vector<int>{8/*,4*/,8})
 {
 	CreateSensors(radius);
 	CreateThrusters(radius);
 	Connect();
-}
 
-void AnimatController::Tick()
-{
+	CRAG_VERIFY(* this);
 }
 
 void AnimatController::CreateSensors(float radius)
@@ -75,7 +75,7 @@ void AnimatController::CreateThrusters(float radius)
 {
 	auto & entity = GetEntity();
 	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
-	auto direction_scale = 5.f;
+	auto direction_scale = 15.f;
 
 	Ray3 ray;
 	for (auto z = 0; z < 2; ++ z)
@@ -101,13 +101,18 @@ void AnimatController::CreateThrusters(float radius)
 
 void AnimatController::Connect()
 {
+	auto trasmitters = core::make_transform(GetTransmitters(), [] (TransmitterPtr const & sensor) {
+		return static_cast<Transmitter *>(sensor.get());
+	});
+	_network.ConnectInputs(trasmitters);
+
+	auto receivers = core::make_transform(GetReceivers(), [] (ReceiverPtr const & motor) {
+		return static_cast<Receiver *>(motor.get());
+	});
+	_network.ConnectOutputs(receivers);
 }
 
 void AnimatController::AddSensor(Ray3 const & ray)
 {
-	_sensors.emplace_back(new Sensor(GetEntity(), ray, animat_sensor_length, 0.2f));
-}
-
-void AnimatController::TickThrusters()
-{
+	AddTransmitter(TransmitterPtr(new Sensor(GetEntity(), ray, animat_sensor_length, 0.2f)));
 }

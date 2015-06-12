@@ -7,34 +7,38 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#pragma once
+
 namespace sim
 {
 	namespace ga
 	{
-		typedef float Gene;
-		typedef std::vector<Gene> GeneVector;
-		typedef GeneVector::iterator GeneIterator;
-		typedef GeneVector::const_iterator ConstGeneIterator;
+		using GeneType = float;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// the set of Genes associated with an Animat
 		class Genome
 		{
+			using buffer_type = std::vector<GeneType>;
 		public:
-			typedef GeneVector::size_type size_type;
-			typedef GeneVector::difference_type difference_type;
+			using size_type = buffer_type::size_type;
+			using difference_type = buffer_type::difference_type;
+			using iterator = buffer_type::iterator;
+			using const_iterator = buffer_type::const_iterator;
 
-			size_type Size() const;
+			size_type size() const noexcept;
 
-			ConstGeneIterator begin() const;
-			GeneIterator begin();
+			const_iterator begin() const noexcept;
+			iterator begin() noexcept;
 
-			ConstGeneIterator end() const;
-			GeneIterator end();
+			const_iterator end() const noexcept;
+			iterator end() noexcept;
 
-			void Grow();
+			GeneType operator[] (size_type index) const noexcept;
+
+			void Grow() noexcept;
 		private:
-			GeneVector _genes;
+			buffer_type _buffer;
 		};
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -44,12 +48,12 @@ namespace sim
 			OBJECT_NO_COPY(GenomeReader);
 
 		public:
-			GenomeReader(Genome & genome);
+			GenomeReader(Genome & genome) noexcept;
 
-			Gene Read();
+			GeneType Read() noexcept;
 		private:
 			Genome & _genome;
-			ConstGeneIterator _position;
+			Genome::size_type _position = 0;
 		};
 	}
 }
