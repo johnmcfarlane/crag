@@ -46,6 +46,10 @@ namespace physics
 
 		bool HandleCollision(Body & that_body, ContactFunction & contact_function) override;
 
+#if defined(CRAG_DEBUG)
+		void OnContact(Body const & that_body) final;
+#endif
+
 		form::RayCastResult _result;
 	};
 }

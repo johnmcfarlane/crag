@@ -335,8 +335,10 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 		return;
 	}
 
-	auto contact_function = ContactFunction([& engine] (ContactGeom const * begin, ContactGeom const * end) {
+	auto contact_function = ContactFunction([& engine, & body1, & body2] (ContactGeom const * begin, ContactGeom const * end) {
 		engine.AddContacts(begin, end);
+		body1.OnContact(body2);
+		body2.OnContact(body1);
 	});
 	
 	if (body1.HandleCollision(body2, contact_function))

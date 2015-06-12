@@ -405,6 +405,10 @@ bool Body::HandleCollisionWithRay(Body & that_body)
 	return true;
 }
 
+void Body::OnContact(Body const &)
+{
+}
+
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 {
 	ASSERT(body1._body_handle != nullptr);
