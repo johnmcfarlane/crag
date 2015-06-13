@@ -23,8 +23,6 @@
 
 #include "geom/Space.h"
 
-#include "core/Singleton.h"
-
 namespace crag
 {
 	namespace core
@@ -66,8 +64,6 @@ namespace sim
 	, private ipc::Listener<Engine, gfx::SetSpaceEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
-		OBJECT_SINGLETON(Engine);
-
 	public:
 		typedef ipc::EngineBase<Engine, Entity> super;
 		typedef ipc::Daemon<Engine> Daemon;

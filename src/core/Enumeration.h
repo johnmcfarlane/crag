@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include "Singleton.h"
-
-
 namespace core
 {
 	

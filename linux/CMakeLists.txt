@@ -28,8 +28,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/counted_object.h
     ${CRAG_SOURCE_DIRECTORY}/core/debug.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/debug.h
-    ${CRAG_SOURCE_DIRECTORY}/core/double_buffer.h
-    ${CRAG_SOURCE_DIRECTORY}/core/enum_bitset.h
     ${CRAG_SOURCE_DIRECTORY}/core/Enumeration.h
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.h
@@ -59,12 +57,10 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDeclare.h
     ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDefine.h
     ${CRAG_SOURCE_DIRECTORY}/core/Sigmoid.h
-    ${CRAG_SOURCE_DIRECTORY}/core/Singleton.h
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.h
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.h
-    ${CRAG_SOURCE_DIRECTORY}/core/union_buffer.h
     ${CRAG_SOURCE_DIRECTORY}/core/verify.h
     ${CRAG_SOURCE_DIRECTORY}/core/windows.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Planet.cpp

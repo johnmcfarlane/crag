@@ -18,8 +18,6 @@
 #include "gfx/SetSpaceEvent.h"
 #endif
 
-#include "core/Singleton.h"
-
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 #include "ipc/Listener.h"
@@ -53,8 +51,6 @@ namespace form
 	, private ipc::Listener<Engine, gfx::SetSpaceEvent>
 	, private ipc::Listener<Engine, gfx::SetLodParametersEvent>
 	{
-		OBJECT_SINGLETON(Engine);
-		
 		////////////////////////////////////////////////////////////////////////////////
 		// types
 

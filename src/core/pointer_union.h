@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "core/union_buffer.h"
-
 namespace crag
 {
 	namespace core
