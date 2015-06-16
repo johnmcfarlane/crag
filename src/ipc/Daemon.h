@@ -190,17 +190,8 @@ namespace ipc
 		{
 			ASSERT(singleton->_state < State::acknowledge_flush_end);
 
-			// If caller is on the same thread as the engine,
-			if (singleton->_thread.IsCurrent())
-			{
-				// make the call directly
-				function(ref(singleton->_engine));
-			}
-			else
-			{
-				// otherwise, wrap up the function and send it over.
-				singleton->PushMessage(function);
-			}
+			// otherwise, wrap up the function and send it over.
+			singleton->PushMessage(function);
 		}
 
 		// pass parameters to all Listeners of matching parameters
