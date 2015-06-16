@@ -89,7 +89,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 1. Then:
    ```
    cd crag/linux
-   cmake -DCMAKE_BUILD_TYPE=Release
+   cmake -DCMAKE_BUILD_TYPE=Profile
    valgrind --tool=callgrind ./crag 
    kcachegrind callgrind.out.XXXXX &
    ```
