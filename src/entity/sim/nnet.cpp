@@ -153,6 +153,14 @@ Network::Network(ga::Genome & genome, std::vector<int> const & num_layer_nodes) 
 
 		layers.emplace_back(genome_reader, num_inputs, num_outputs);
 	}
+
+	for (auto layer_index0 = 0u, layer_index1 = 1u; layer_index1 != num_layers; ++ layer_index0, ++ layer_index1)
+	{
+		auto & output_layer = layers[layer_index0];
+		auto & input_layer = layers[layer_index1];
+
+		Layer::Connect(output_layer, input_layer);
+	}
 }
 
 void Network::ConnectInputs(std::vector<Transmitter *> const & transmitters) noexcept
