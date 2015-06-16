@@ -31,6 +31,11 @@ namespace crag
 			{
 			}
 
+			constexpr int size() const noexcept
+			{
+				return object_pool.size();
+			}
+
 			constexpr int capacity() const noexcept
 			{
 				return object_pool.capacity();
