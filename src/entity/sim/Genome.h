@@ -19,12 +19,17 @@ namespace sim
 		// the set of Genes associated with an Animat
 		class Genome
 		{
+			// types
 			using buffer_type = std::vector<GeneType>;
 		public:
 			using size_type = buffer_type::size_type;
 			using difference_type = buffer_type::difference_type;
 			using iterator = buffer_type::iterator;
 			using const_iterator = buffer_type::const_iterator;
+
+			// functions
+			Genome() noexcept = default;
+			Genome(Genome const & parent1, Genome const & parent2);
 
 			size_type size() const noexcept;
 
@@ -37,7 +42,9 @@ namespace sim
 			GeneType operator[] (size_type index) const noexcept;
 
 			void Grow() noexcept;
+
 		private:
+			// variables
 			buffer_type _buffer;
 		};
 

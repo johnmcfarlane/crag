@@ -11,14 +11,50 @@
 
 #include "Genome.h"
 
+#include <core/ConfigEntry.h>
 #include "core/Random.h"
 
 using namespace sim;
+using namespace sim::ga;
+
+namespace
+{
+	CONFIG_DEFINE(mutation_rate, .01f);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::ga::Genome member definitions
 
-using namespace sim::ga;
+Genome::Genome(Genome const & parent1, Genome const & parent2)
+{
+	CRAG_VERIFY_EQUAL(parent1.size(), parent2.size());
+
+	for (
+		auto
+			iterators = std::make_pair(std::begin(parent1), std::begin(parent2));
+			iterators.first != std::end(parent1);
+			++ iterators.second, ++ iterators.first)
+	{
+		CRAG_VERIFY_TRUE(iterators.second != std::end(parent2));
+
+		auto generate_gene = [&] ()
+		{
+			auto splicing = Random::sequence.GetBool() ? * iterators.first : * iterators.second;
+
+			if (Random::sequence.GetBool(mutation_rate))
+			{
+				auto mutation_weight = Random::sequence.GetFloat<GeneType>();
+				auto existing_weight = 1.f - mutation_weight;
+				auto mutated_value = splicing * existing_weight + mutation_weight * mutation_weight;
+				return mutated_value;
+			}
+
+			return splicing;
+		};
+
+		_buffer.push_back(generate_gene());
+	}
+}
 
 Genome::size_type Genome::size() const
 {
