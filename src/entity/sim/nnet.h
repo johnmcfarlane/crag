@@ -95,7 +95,11 @@ namespace sim
 		{
 		public:
 			// functions
+			Network() = default;
+			Network(Network && rhs) = default;
 			Network(ga::Genome & genome, std::vector<int> const & num_layer_nodes) noexcept;
+
+			Network & operator=(Network && rhs) = default;
 
 			void ConnectInputs(std::vector<Transmitter *> const & transmitters) noexcept;
 			void ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept;
