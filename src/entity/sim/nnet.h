@@ -79,6 +79,9 @@ namespace sim
 			Layer(ga::GenomeReader & genome_reader, int num_inputs, int num_neurons) noexcept;
 			Layer(Layer && rhs) noexcept = default;
 
+			// connect together the neighbouring layers in a feed-forward network
+			static void Connect(Layer & output, Layer & intput) noexcept;
+
 			void ConnectInputs(std::vector<Transmitter *> const & transmitters) noexcept;
 			void ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept;
 

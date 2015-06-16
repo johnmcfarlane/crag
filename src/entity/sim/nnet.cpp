@@ -96,6 +96,20 @@ Layer::Layer(ga::GenomeReader & genome_reader, int num_inputs, int num_neurons) 
 	}
 }
 
+void Layer::Connect(Layer & output, Layer & input) noexcept
+{
+	CRAG_VERIFY_EQUAL(output.neurons.size(), input.inputs.size());
+
+	for (auto i = std::make_pair(std::begin(output.neurons), std::begin(input.inputs));
+		i.first != std::end(output.neurons);
+		++ i.second, ++ i.first)
+	{
+		CRAG_VERIFY_TRUE(i.second != std::end(input.inputs));
+
+		(* i.first)->SetReceiver(i.second->get());
+	}
+}
+
 void Layer::ConnectInputs(std::vector<Transmitter *> const & transmitters) noexcept
 {
 	CRAG_VERIFY_EQUAL(inputs.size(), transmitters.size());
