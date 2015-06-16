@@ -72,7 +72,7 @@ namespace
 	// random number generation
 	double GetRandomUnit()
 	{
-		return random_sequence.GetUnit<double>();
+		return random_sequence.GetFloat<double>();
 	}
 	
 	void SpawnShapes(int shape_num, AppletInterface & applet_interface)
@@ -103,9 +103,10 @@ namespace
 	
 		sim::Vector3 spawn_pos = geom::Project(camera_ray, sim::Scalar(5));
 	
-		gfx::Color4f color(Random::sequence.GetUnitInclusive<float>(), 
-					Random::sequence.GetUnitInclusive<float>(), 
-					Random::sequence.GetUnitInclusive<float>());
+		gfx::Color4f color(
+			Random::sequence.GetFloatInclusive<float>(),
+			Random::sequence.GetFloatInclusive<float>(),
+			Random::sequence.GetFloatInclusive<float>());
 
 		switch (shape_num)
 		{
@@ -183,7 +184,7 @@ namespace
 
 		if (Random::sequence.GetBool())
 		{
-			float sleep = Squared(Random::sequence.GetUnit());
+			float sleep = Squared(Random::sequence.GetFloat());
 			DEBUG_MESSAGE("sleep=%f", sleep);
 			applet_interface.WaitFor(sleep);
 		}

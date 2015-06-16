@@ -53,7 +53,7 @@ GeneType Genome::operator[] (size_type index) const noexcept
 
 void Genome::Grow()
 {
-	_buffer.push_back(Random::sequence.GetUnit<float>());
+	_buffer.push_back(Random::sequence.GetFloatInclusive<float>());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

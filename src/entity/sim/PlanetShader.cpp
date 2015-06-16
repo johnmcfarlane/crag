@@ -227,7 +227,7 @@ void PlanetShader::CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position)
 
 geom::abs::Scalar PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
-	geom::abs::Scalar random_exponent = (.5 - rnd.GetUnitInclusive<geom::abs::Scalar>()) * planet_shader_random_range;
+	geom::abs::Scalar random_exponent = (.5 - rnd.GetFloatInclusive<geom::abs::Scalar>()) * planet_shader_random_range;
 	geom::abs::Scalar coefficient = std::exp(random_exponent);
 	return coefficient;
 }
@@ -263,7 +263,7 @@ bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, g
 	geom::abs::Scalar near_b_altitude = GetAltitude(near_b);
 	geom::abs::Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
-	geom::abs::Scalar rnd_x = params.rnd.GetUnitInclusive<geom::abs::Scalar>() * 2. - 1.;
+	geom::abs::Scalar rnd_x = params.rnd.GetFloatInclusive<geom::abs::Scalar>() * 2. - 1.;
 	rnd_x *= Squared(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,

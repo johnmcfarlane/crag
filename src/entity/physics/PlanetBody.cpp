@@ -300,7 +300,7 @@ void PlanetBody::DebugDraw() const
 	{
 		Random s(std::hash<form::Triangle3>()(face));
 
-		auto r = [& s] () { return s.GetUnit<float>(); };
+		auto r = [& s] () { return s.GetFloatInclusive(); };
 		auto color = Color(r(), r(), r());
 
 		AddTriangle(face, ColorPair(color, color * .25f));

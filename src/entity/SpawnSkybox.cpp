@@ -89,10 +89,10 @@ namespace
 
 				for (int i = num_stars; i; -- i)
 				{
-					star.center.x = random.GetUnitInclusive<float>() - .5f;
-					star.center.y = random.GetUnitInclusive<float>() - .5f;
-					star.center.z = random.GetUnitInclusive<float>() - .5f;
-					star.radius = Squared(random.GetUnitInclusive<float>());
+					star.center.x = random.GetFloatInclusive<float>() - .5f;
+					star.center.y = random.GetFloatInclusive<float>() - .5f;
+					star.center.z = random.GetFloatInclusive<float>() - .5f;
+					star.radius = Squared(random.GetFloatInclusive<float>());
 
 					float w = star_z;
 					if ((w > 0) != (pole != 0) || w == 0)
@@ -156,10 +156,10 @@ namespace
 			//random.GetGaussians(star.center.x, star.center.y);
 			//random.GetGaussians(star.center.z, star.radius);
 			//star.radius = Abs(star.radius);
-			star.center.x = random.GetUnitInclusive<float>() - .5f;
-			star.center.y = random.GetUnitInclusive<float>() - .5f;
-			star.center.z = random.GetUnitInclusive<float>() - .5f;
-			star.radius = Squared(random.GetUnitInclusive<float>());
+			star.center.x = random.GetFloatInclusive<float>() - .5f;
+			star.center.y = random.GetFloatInclusive<float>() - .5f;
+			star.center.z = random.GetFloatInclusive<float>() - .5f;
+			star.radius = Squared(random.GetFloatInclusive<float>());
 		
 			float const * axes = star.center.GetAxes();
 			float w = axes[axis];

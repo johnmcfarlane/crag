@@ -55,7 +55,7 @@ Puff::Puff(Engine & engine, Transformation const & local_transformation, Scalar 
 	
 	Scene const & scene = engine.GetScene();
 	core::Time time = scene.GetTime();
-	_spawn_time = time - (Random::sequence.GetUnit<double>() / 60.);
+	_spawn_time = time - Random::sequence.GetFloat(1. / 60.);
 }
 
 Puff::~Puff()
