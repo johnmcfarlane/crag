@@ -88,7 +88,7 @@ Layer::Layer(ga::GenomeReader & genome_reader, int num_inputs, int num_neurons) 
 		{
 			input->Connect(Connection{
 				neuron_ptr.get(),
-				genome_reader.Read()
+				genome_reader.Read() * 2.f - 1.f
 			});
 		}
 
