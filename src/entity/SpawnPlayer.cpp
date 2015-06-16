@@ -665,12 +665,15 @@ namespace
 #endif
 	}
 
-	void MakeSignalPair(VehicleController & controller, Transmitter * transmitter, Receiver * receiver)
+	void MakeSignalPair(
+		VehicleController & controller,
+		std::unique_ptr<Transmitter> && transmitter,
+		std::unique_ptr<Receiver> && receiver)
 	{
-		transmitter->SetReceiver(receiver);
+		transmitter->SetReceiver(receiver.get());
 
-		controller.AddTransmitter(std::unique_ptr<Transmitter>(transmitter));
-		controller.AddReceiver(std::unique_ptr<Receiver>(receiver));
+		controller.AddTransmitter(std::move(transmitter));
+		controller.AddReceiver(std::move(receiver));
 	}
 
 	void AddRoverThruster(VehicleController & controller, Ray3 const & ray, SDL_Scancode key, bool graphical, bool invert = false)
@@ -680,10 +683,10 @@ namespace
 		auto down_signal = invert ? 0.f : 1.f;
 		auto up_signal = invert ? 1.f : 0.f;
 
-		auto keyboard_transmitter = new KeyboardTransmitter(key, down_signal, up_signal);
-		auto thruster = new Thruster(entity, ray, graphical, up_signal);
+		auto keyboard_transmitter = std::unique_ptr<Transmitter>(new KeyboardTransmitter(key, down_signal, up_signal));
+		auto thruster = std::unique_ptr<Receiver>(new Thruster(entity, ray, graphical, up_signal));
 
-		MakeSignalPair(controller, keyboard_transmitter, thruster);
+		MakeSignalPair(controller, std::move(keyboard_transmitter), std::move(thruster));
 	}
 
 	void AddVernierThruster(VehicleController & controller, Ray3 ray, Scalar sensor_length, Scalar thrust)
@@ -692,10 +695,10 @@ namespace
 
 		auto & entity = controller.GetEntity();
 
-		auto sensor = new Sensor(entity, ray, sensor_length);
-		auto thruster = new Thruster(entity, ray * thrust, false, 0.f);
+		auto sensor = std::unique_ptr<Transmitter>(new Sensor(entity, ray, sensor_length));
+		auto thruster = std::unique_ptr<Receiver>(new Thruster(entity, ray * thrust, false, 0.f));
 
-		MakeSignalPair(controller, sensor, thruster);
+		MakeSignalPair(controller, std::move(sensor), std::move(thruster));
 	}
 
 	void ConstructRover(Entity & entity, Sphere3 const & sphere, Scalar thrust)
