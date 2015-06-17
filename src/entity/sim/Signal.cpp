@@ -41,6 +41,10 @@ Transmitter::Transmitter(Receiver * r) noexcept
 
 void Transmitter::SetReceiver(Receiver * r) noexcept
 {
+	// no reason not to overwrite a pointer but currently not done
+	CRAG_VERIFY_TRUE(r);
+	CRAG_VERIFY_FALSE(receiver);
+
 	receiver = r;
 }
 
