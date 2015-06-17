@@ -405,7 +405,7 @@ bool Body::HandleCollisionWithRay(Body & that_body)
 	return true;
 }
 
-void Body::OnContact(Body const &)
+void Body::OnContact(Body &)
 {
 }
 

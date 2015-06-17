@@ -148,7 +148,7 @@ bool RayCast::HandleCollision(Body & body, ContactFunction &)
 }
 
 #if defined(CRAG_DEBUG)
-void RayCast::OnContact(Body const &)
+void RayCast::OnContact(Body &)
 {
 	DEBUG_BREAK("Rays are not meant to collide with anything");
 }

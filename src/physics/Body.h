@@ -75,7 +75,7 @@ namespace physics
 		virtual bool HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function);
 		virtual bool HandleCollisionWithRay(Body & body);
 
-		virtual void OnContact(Body const & that_body);
+		virtual void OnContact(Body & that_body);
 
 		virtual void DebugDraw() const;
 
