@@ -462,6 +462,11 @@ bool physics::IsAttached(Body const & body1, Body const & body2)
 	return dAreConnected(body1._body_handle, body2._body_handle) != 0;
 }
 
+bool Body::HasHealth() const
+{
+	return false;
+}
+
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
 	CRAG_VERIFY(self.GetTranslation());
 	CRAG_VERIFY(self.GetVelocity());

@@ -34,15 +34,21 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-AnimatController::AnimatController(Entity & entity, float radius)
+AnimatController::AnimatController(Entity & entity, float radius, TransmitterPtr && health_transmitter, ga::Genome && genome)
 : VehicleController(entity)
-, _network(_genome, std::vector<int>{8/*,4*/,8})
+, _genome(std::move(genome))
 {
+	AddTransmitter(std::move(health_transmitter));
 	CreateSensors(radius);
 	CreateThrusters(radius);
-	Connect();
+	CreateNetwork();
 
 	CRAG_VERIFY(* this);
+}
+
+ga::Genome const & AnimatController::GetGenome() const
+{
+	return _genome;
 }
 
 void AnimatController::CreateSensors(float radius)
@@ -99,16 +105,20 @@ void AnimatController::CreateThrusters(float radius)
 	}
 }
 
-void AnimatController::Connect()
+void AnimatController::CreateNetwork()
 {
 	auto trasmitters = core::make_transform(GetTransmitters(), [] (TransmitterPtr const & sensor) {
 		return static_cast<Transmitter *>(sensor.get());
 	});
-	_network.ConnectInputs(trasmitters);
-
 	auto receivers = core::make_transform(GetReceivers(), [] (ReceiverPtr const & motor) {
 		return static_cast<Receiver *>(motor.get());
 	});
+
+	_network = std::move(nnet::Network(_genome, std::vector<int>{
+		int(trasmitters.size()),
+		6,
+		int(receivers.size())}));
+	_network.ConnectInputs(trasmitters);
 	_network.ConnectOutputs(receivers);
 }
 

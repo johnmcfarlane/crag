@@ -19,6 +19,17 @@ namespace gfx
 	typedef Color4<float> Color4f;
 }
 
+namespace sim
+{
+	namespace ga
+	{
+		class Genome;
+	}
+}
+
+void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::ga::Genome && genome);
+
+sim::EntityHandle SpawnAnimat(const sim::Vector3 & position);
 sim::EntityHandle SpawnBall(sim::Sphere3 const & sphere, sim::Vector3 const & velocity, gfx::Color4f color);
 sim::EntityHandle SpawnBox(sim::Vector3 const & position, sim::Vector3 const & velocity, sim::Vector3 const & size, gfx::Color4f color);
 sim::EntityHandle SpawnCamera(sim::Vector3 const & position, sim::EntityHandle subject);

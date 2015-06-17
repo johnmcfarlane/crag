@@ -82,6 +82,8 @@ namespace physics
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
 
+		virtual bool HasHealth() const;
+
 		CRAG_VERIFY_INVARIANTS_DECLARE(Body);
 	private:
 		virtual Vector3 const & GetGeomTranslation() const;

@@ -71,6 +71,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Puff.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Thruster.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Thruster.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/physics/AnimatBody.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/physics/AnimatBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/physics/PlanetBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/physics/PlanetBody.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatController.cpp
