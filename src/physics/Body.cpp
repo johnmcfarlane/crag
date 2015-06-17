@@ -68,8 +68,8 @@ namespace
 CRAG_ROSTER_OBJECT_DEFINE(
 	Body,
 	1000,
-	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
-	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
+	Pool::Call<& Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::Call<& Body::PostTick>(Engine::GetPostTickRoster()))
 
 Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
