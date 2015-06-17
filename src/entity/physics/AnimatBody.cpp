@@ -27,9 +27,9 @@ CONFIG_DECLARE(sim_tick_duration, core::Time);
 
 namespace
 {
-	CONFIG_DEFINE(animat_health_exchange_coefficient, .01f);
-	CONFIG_DEFINE(animat_health_loss_per_second, 0.01f);
-	//CONFIG_DEFINE(animat_health_loss_per_contact, 0.01f);	// TODO: contact damage
+	CONFIG_DEFINE(animat_health_exchange_coefficient, .1f);
+	CONFIG_DEFINE(animat_health_loss_per_second, .01f);
+	CONFIG_DEFINE(animat_health_loss_per_contact, .001f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,15 @@ void AnimatBody::OnContact(Body & that_body) noexcept
 		return;
 	}
 
-	if (! that_body.HasHealth())
+	_health -= animat_health_loss_per_contact;
+	if (_health <= 0)
+	{
+		_health = 0;
+		OnZeroHealth();
+	}
+
+	CRAG_VERIFY_OP(& that_body, !=, this);
+	if (! that_body.HasHealth() || & that_body < this)
 	{
 		return;
 	}

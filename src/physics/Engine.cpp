@@ -338,6 +338,7 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 	auto contact_function = ContactFunction([& engine, & body1, & body2] (ContactGeom const * begin, ContactGeom const * end) {
 		engine.AddContacts(begin, end);
 		body1.OnContact(body2);
+		body2.OnContact(body1);
 	});
 	
 	if (body1.HandleCollision(body2, contact_function))
@@ -352,6 +353,7 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 	
 	engine.OnUnhandledCollision(geom1, geom2);
 	body1.OnContact(body2);
+	body2.OnContact(body1);
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
