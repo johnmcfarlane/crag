@@ -15,7 +15,8 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
-LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
+LOCAL_SRC_FILES := \
+	$(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/applet/Applet.cpp \
 	$(CRAG_PATH)/applet/Engine.cpp \
 	$(CRAG_PATH)/core/app.cpp \
@@ -36,25 +37,25 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	$(CRAG_PATH)/entity/gfx/Puff.cpp \
 	$(CRAG_PATH)/entity/gfx/Thruster.cpp \
 	$(CRAG_PATH)/entity/physics/PlanetBody.cpp \
+	$(CRAG_PATH)/entity/physics/AnimatBody.cpp \
 	$(CRAG_PATH)/entity/sim/AnimatController.cpp \
-	$(CRAG_PATH)/entity/sim/AnimatThruster.cpp \
 	$(CRAG_PATH)/entity/sim/CameraController.cpp \
 	$(CRAG_PATH)/entity/sim/Contact.cpp \
-	$(CRAG_PATH)/entity/sim/HoverThruster.cpp \
 	$(CRAG_PATH)/entity/sim/Genome.cpp \
+	$(CRAG_PATH)/entity/sim/KeyboardTransmitter.cpp \
 	$(CRAG_PATH)/entity/sim/MoonShader.cpp \
 	$(CRAG_PATH)/entity/sim/MouseObserverController.cpp \
+	$(CRAG_PATH)/entity/sim/nnet.cpp \
 	$(CRAG_PATH)/entity/sim/ObserverInput.cpp \
 	$(CRAG_PATH)/entity/sim/PlanetController.cpp \
 	$(CRAG_PATH)/entity/sim/PlanetShader.cpp \
-	$(CRAG_PATH)/entity/sim/RoverThruster.cpp \
 	$(CRAG_PATH)/entity/sim/Sensor.cpp \
+	$(CRAG_PATH)/entity/sim/Signal.cpp \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
 	$(CRAG_PATH)/entity/sim/UfoController1.cpp \
 	$(CRAG_PATH)/entity/sim/UfoController2.cpp \
 	$(CRAG_PATH)/entity/sim/VehicleController.cpp \
-	$(CRAG_PATH)/entity/sim/VernierThruster.cpp \
 	$(CRAG_PATH)/entity/SpawnEntityFunctions.cpp \
 	$(CRAG_PATH)/entity/SpawnPlayer.cpp \
 	$(CRAG_PATH)/entity/SpawnSkybox.cpp \
