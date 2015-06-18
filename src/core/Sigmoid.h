@@ -36,8 +36,8 @@ namespace crag
 				a = value_type((l1 - l2) / (x1 - x2));
 				b = value_type((l1 - l2 * xr) / (1. - xr));
 
-				CRAG_VERIFY_NEARLY_EQUAL((*this)(x1), value_type(y1), value_type(.0001));
-				CRAG_VERIFY_NEARLY_EQUAL((*this)(x2), value_type(y2), value_type(.0001));
+				CRAG_VERIFY_NEARLY_EQUAL((*this)(x1), value_type(y1), value_type(.0005));
+				CRAG_VERIFY_NEARLY_EQUAL((*this)(x2), value_type(y2), value_type(.0005));
 			}
 
 			constexpr value_type operator() (value_type x) const noexcept
