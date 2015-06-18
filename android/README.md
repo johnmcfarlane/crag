@@ -14,7 +14,7 @@ The Crag project comes with an Android `setup` script which will attempt to prep
 2. `git clone https://github.com/johnmcfarlane/crag.git`
 3. Download the following files to the crag/android/dl folder:
    * [Android SDK Tools](http://developer.android.com/sdk/index.html)
-   * [Android NDK](http://developer.android.com/tools/sdk/ndk/index.html)
+   * [Android NDK](http://developer.android.com/ndk/downloads/index.html)
 4. Instal Oracle's JDK:
    * On Debian, Oracle's Java development kit is not available as a package and must be prepared as follows:
      * Download the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) to the crag/android/dl folder.
