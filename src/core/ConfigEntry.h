@@ -101,6 +101,13 @@ namespace config
 
 #else
 
+namespace crag {
+namespace core {
+namespace config {
+	// contains the complete list of configuration settings; returns false on fatal error
+	bool Init(int argc, char * const * argv);
+}}}
+
 #define CONFIG_DEFINE(name, default_value) \
 	decltype(default_value) name = default_value;
 

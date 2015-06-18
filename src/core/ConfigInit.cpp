@@ -369,4 +369,11 @@ bool crag::core::config::Init(int argc, char * const * argv)
 	return LoadSave() && ParseCommandLine(argc, argv);
 }
 
+#else
+
+bool crag::core::config::Init(int, char * const *)
+{
+	return true;
+}
+
 #endif	// ENABLE_CONFIG
