@@ -92,6 +92,17 @@ namespace config
 		return sscanf(string, "%d", & value) == 1;
 	}
 
+	// std::uint64_t
+	template<> bool GenericEntry<std::uint64_t>::ValueToString(std::uint64_t const & value, char * string, std::size_t max_string_size)
+	{
+		return snprintf(string, max_string_size, "%" PRIu64, value) > 0;
+	}
+
+	template<> bool GenericEntry<std::uint64_t>::StringToValue(std::uint64_t & value, char const * string)
+	{
+		return sscanf(string, "%" PRIu64, &value) == 1;
+	}
+
 	// size_t
 	template<> bool GenericEntry<size_t>::ValueToString(size_t const & value, char * string, std::size_t max_string_size)
 	{
