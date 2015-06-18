@@ -67,9 +67,9 @@ namespace
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Body,
-	10,
-	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
-	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()))
+	1000,
+	Pool::Call<& Body::PreTick>(Engine::GetPreTickRoster()),
+	Pool::Call<& Body::PostTick>(Engine::GetPostTickRoster()))
 
 Body::Body(Transformation const & transformation, Vector3 const * velocity, Engine & engine, CollisionHandle collision_handle)
 : Location(transformation)
@@ -344,12 +344,12 @@ bool Body::IsCollidable(Body const & body) const
 	return & body != _exception;
 }
 
-bool Body::OnCollisionWithSolid(Body &, Sphere3 const &, ContactFunction &)
+bool Body::HandleCollisionWithSolid(Body &, Sphere3 const &, ContactFunction &)
 {
 	return false;
 }
 
-bool Body::OnCollisionWithRay(Body & that_body)
+bool Body::HandleCollisionWithRay(Body & that_body)
 {
 	auto & ray_cast = static_cast<RayCast &>(that_body);
 
@@ -405,6 +405,10 @@ bool Body::OnCollisionWithRay(Body & that_body)
 	return true;
 }
 
+void Body::OnContact(Body &)
+{
+}
+
 void physics::Attach(dJointID joint_id, Body const & body1, Body const & body2)
 {
 	ASSERT(body1._body_handle != nullptr);
@@ -456,6 +460,11 @@ bool physics::IsAttached(Body const & body1, Body const & body2)
 	}
 	
 	return dAreConnected(body1._body_handle, body2._body_handle) != 0;
+}
+
+bool Body::HasHealth() const
+{
+	return false;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)

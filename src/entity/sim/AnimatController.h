@@ -7,9 +7,12 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#pragma once
+
 #include "entity/sim/VehicleController.h"
 
 #include "Genome.h"
+#include "nnet.h"
 #include "Sensor.h"
 
 namespace sim
@@ -21,25 +24,24 @@ namespace sim
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
-		AnimatController(Entity & entity, float radius);
-
 		CRAG_ROSTER_OBJECT_DECLARE(AnimatController);
+		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatController);
 
-		void Tick();
+		AnimatController(Entity & entity, float radius, TransmitterPtr && health_transmitter, ga::Genome && genome);
 
+		ga::Genome const & GetGenome() const;
 	private:
+		void CreateHealthReceivers();
 		void CreateSensors(float radius);
 		void CreateThrusters(float radius);
-		void Connect();
+		void CreateNetwork();
 
 		void AddSensor(Ray3 const & ray);
-
-		virtual void TickThrusters() final;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
 
-		std::vector<std::unique_ptr<Sensor>> _sensors;
 		ga::Genome _genome;
+		nnet::Network _network;
 	};
 }

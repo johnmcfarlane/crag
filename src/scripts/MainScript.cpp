@@ -11,27 +11,27 @@
 
 #include "InitSpace.h"
 
-#include "entity/sim/AnimatController.h"
 #include "entity/SpawnEntityFunctions.h"
 #include "entity/SpawnPlayer.h"
 #include "entity/SpawnSkybox.h"
+
+#include "entity/sim/AnimatController.h"
 
 #include "applet/Applet.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "physics/SphereBody.h"
-
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
 
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
-#include "core/Random.h"
+#include "core/iterable_object_pool.h"
+#include <core/Random.h>
 
 CONFIG_DECLARE(player_type, int);
-CONFIG_DEFINE(num_animats, 1);
+CONFIG_DEFINE(num_animats, 50);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
 
 using geom::Vector3f;
@@ -39,6 +39,8 @@ using applet::AppletInterface;
 
 namespace 
 {
+	CONFIG_DEFINE(animat_birth_elevation, 10.f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// types
 	typedef std::vector<sim::EntityHandle> EntityVector;
@@ -53,59 +55,10 @@ namespace
 	// variables
 
 	core::EventWatcher _event_watcher;
-	std::vector<sim::EntityHandle> animats;
-	
+
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
-	{
-		auto animat = sim::EntityHandle::Create();
-
-		sim::Sphere3 sphere(position, 1);
-		animat.Call([sphere] (sim::Entity & entity) 
-		{
-			sim::Engine & engine = entity.GetEngine();
-			physics::Engine & physics_engine = engine.GetPhysicsEngine();
-
-			// physics
-			auto zero_vector = sim::Vector3::Zero();
-			auto body = std::unique_ptr<physics::SphereBody>(
-				new physics::SphereBody(sim::Transformation(sphere.center), & zero_vector, physics_engine, sphere.radius));
-			body->SetDensity(1);
-			entity.SetLocation(std::move(body));
-
-			// graphics
-			gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-			gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-			entity.SetModel(model);
-
-			// controller
-			auto controller = std::unique_ptr<sim::AnimatController>(
-				new sim::AnimatController(entity, sphere.radius));
-			entity.SetController(std::move(controller));
-		});
-
-		return animat;
-	}
-
-	void SpawnAnimats(Vector3f base_position)
-	{
-		animats.resize(num_animats);
-		for (auto & animat : animats)
-		{
-			Vector3f offset;
-			float r;
-			Random::sequence.GetGaussians(offset.x, offset.y);
-			offset.y = std::abs(offset.y);
-			Random::sequence.GetGaussians(offset.z, r);
-
-			auto position = base_position + offset * 10.f;
-
-			animat = SpawnAnimat(position);
-		}
-	}
-
 	// returns true if the applet should NOT quit
 	void HandleEvents()
 	{
@@ -134,6 +87,60 @@ namespace
 			}
 		}
 	}
+
+	void Breed()
+	{
+		sim::Daemon::Call([] (sim::Engine & engine)
+		{
+			auto & pool = sim::AnimatController::GetPool();
+			while (pool.size() < num_animats)
+			{
+				auto pool_size = pool.size();
+
+				auto parent_genomes = std::array<sim::ga::Genome const *, 2>();
+				auto sum_position = sim::Vector3::Zero();
+				auto sum_gravity = sim::Vector3::Zero();
+
+				for (auto parent_index = 0; parent_index != 2; ++ parent_index)
+				{
+					// get controller
+					auto pool_index = Random::sequence.GetInt(pool_size);
+
+					auto parent_controller = static_cast<sim::AnimatController * const>(nullptr);
+					pool.for_each([& pool_index, & parent_controller] (sim::AnimatController & controller) {
+						if (! pool_index)
+						{
+							parent_controller = & controller;
+						}
+
+						-- pool_index;
+					});
+					CRAG_VERIFY_TRUE(parent_controller);
+
+					// get genome
+					parent_genomes[parent_index] = & parent_controller->GetGenome();
+
+					// positional
+					auto & location = * parent_controller->GetEntity().GetLocation();
+					auto & body = core::StaticCast<physics::Body>(location);
+					sum_position += body.GetTranslation();
+					sum_gravity += geom::Normalized(body.GetGravitationalForce());
+				};
+
+				if (parent_genomes[0] == parent_genomes[1])
+				{
+					continue;
+				}
+
+				auto child_genome = sim::ga::Genome(* parent_genomes[0], * parent_genomes[1]);
+				auto child_position = sum_position * .5f - geom::Normalized(sum_gravity) * animat_birth_elevation;
+
+				auto handle = sim::EntityHandle::CreateFromUid(ipc::Uid::Create());
+				auto entity = engine.CreateObject<sim::Entity>(handle);
+				ConstructAnimat(* entity, child_position, std::move(child_genome));
+			}
+		});
+	}
 }
 
 // main entry point
@@ -161,12 +168,14 @@ void MainScript(AppletInterface & applet_interface)
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 	
 	auto rel_animat_start_pos = space.AbsToRel(animat_start_pos);
-	SpawnAnimats(rel_animat_start_pos);
+	SpawnAnimats(rel_animat_start_pos, num_animats);
 
 	// main loop
 	while (applet_interface.WaitFor(0))
 	{
 		HandleEvents();
+
+		Breed();
 	}
 	
 	sun.Release();

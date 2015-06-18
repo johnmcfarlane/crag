@@ -154,14 +154,15 @@ void MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom
 	geom::abs::Scalar max_crater_radius = moon_radius * .25;
 	
 	// First off, decide radius.
-	geom::abs::Scalar crater_radius_coefficient = pow(rnd.GetUnitInclusive<float>(), 1.75f);
+	geom::abs::Scalar crater_radius_coefficient = pow(rnd.GetFloatInclusive<float>(), 1.75f);
 	crater.radius = max_crater_radius * crater_radius_coefficient;
 	
 	// Get a position which is within a radius=.5 sphere with even distribution.
 	geom::abs::Scalar crater_center_squared;	// distance from moon center
 	do
 	{
-		crater.center = geom::abs::Vector3(rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f, rnd.GetUnitInclusive<float>() - .5f);
+		auto r = [& rnd] () { return rnd.GetFloatInclusive<float>() - .5f; };
+		crater.center = geom::abs::Vector3(r(), r(), r());
 		crater_center_squared = MagnitudeSq(crater.center);
 	}
 	while (crater_center_squared > Squared(.5f));

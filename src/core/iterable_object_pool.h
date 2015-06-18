@@ -31,6 +31,11 @@ namespace crag
 			{
 			}
 
+			constexpr int size() const noexcept
+			{
+				return object_pool.size();
+			}
+
 			constexpr int capacity() const noexcept
 			{
 				return object_pool.capacity();
@@ -116,14 +121,17 @@ namespace crag
 
 		public:
 			// functions
-			constexpr Bitmap(int num_bits) noexcept
+			Bitmap(int num_bits) noexcept
 				: buffer(GetBufferCapacity(num_bits), false)
 			{
 			}
 
 			~Bitmap() noexcept
 			{
-				CRAG_VERIFY_EQUAL(std::count(std::begin(buffer), std::end(buffer), true), 0);
+				CRAG_VERIFY_TRUE(std::all_of(std::begin(buffer), std::end(buffer), [] (buffer_element_type e)
+				{
+					return e == all_off;
+				}));
 			}
 
 			constexpr bool empty() const noexcept
@@ -134,7 +142,7 @@ namespace crag
 				});
 			}
 
-			constexpr bool get(int index) const noexcept
+			bool get(int index) const noexcept
 			{
 				return (* GetAddress(index).first & GetAddress(index).second) != 0;
 			}
@@ -158,7 +166,7 @@ namespace crag
 				auto index = 0;
 				for (auto element : buffer)
 				{
-					if (! element)
+					if (element == all_off)
 					{
 						index += buffer_element_type_bits;
 						continue;
@@ -192,14 +200,14 @@ namespace crag
 					buffer_element_type(1) << address_indices.second);
 			}
 
-			constexpr std::pair<buffer_type::const_iterator, buffer_element_type> GetAddress(int index) const noexcept
+			std::pair<buffer_type::const_iterator, buffer_element_type> GetAddress(int index) const noexcept
 			{
 				return std::make_pair(
 					static_cast<buffer_type::const_iterator>(const_cast<Bitmap *>(this)->GetAddress(index).first),
 					const_cast<Bitmap *>(this)->GetAddress(index).second);
 			}
 
-			static constexpr std::pair<int, int> GetAddressIndices(int index) noexcept
+			static std::pair<int, int> GetAddressIndices(int index) noexcept
 			{
 				return std::make_pair(
 					(index >> buffer_element_type_bit_shift),
@@ -211,6 +219,14 @@ namespace crag
 				return ((num_bits - 1) >> buffer_element_type_bit_shift) + 1;
 			}
 
+			// constants
+			static constexpr auto all_off =  buffer_element_type(0);
+			static constexpr auto all_on =  ~ all_off;
+			static_assert(
+				all_on == std::numeric_limits<buffer_element_type>::max(),
+				"conflicting alternative methods of generating all-set bit masks");
+
+			// variables
 			buffer_type buffer;
 		};
 	}

@@ -19,7 +19,10 @@
           <option name="NAMESPACE_BRACE_PLACEMENT" value="2" />
           <option name="FUNCTION_BRACE_PLACEMENT" value="2" />
           <option name="BLOCK_BRACE_PLACEMENT" value="2" />
+          <option name="FUNCTION_PARAMETERS_ALIGN_MULTILINE" value="false" />
+          <option name="SUPERCLASS_LIST_ALIGN_MULTILINE" value="false" />
           <option name="SPACE_BEFORE_TEMPLATE_DECLARATION_LT" value="true" />
+          <option name="ALIGN_INIT_LIST_IN_COLUMNS" value="false" />
           <option name="SPACE_AFTER_POINTER_IN_DECLARATION" value="true" />
           <option name="SPACE_AFTER_REFERENCE_IN_DECLARATION" value="true" />
           <option name="SPACE_AFTER_REFERENCE_IN_RVALUE" value="true" />
@@ -55,7 +58,11 @@
         <codeStyleSettings language="ObjectiveC">
           <option name="BRACE_STYLE" value="2" />
           <option name="CLASS_BRACE_STYLE" value="2" />
+          <option name="ALIGN_MULTILINE_FOR" value="false" />
+          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="false" />
           <option name="SPACE_AROUND_UNARY_OPERATOR" value="true" />
+          <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
+          <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
           <indentOptions>
             <option name="CONTINUATION_INDENT_SIZE" value="4" />
             <option name="USE_TAB_CHARACTER" value="true" />

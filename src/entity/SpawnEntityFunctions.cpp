@@ -15,6 +15,7 @@
 
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
+#include "entity/sim/AnimatController.h"
 #include "entity/sim/PlanetController.h"
 
 #include "sim/Engine.h"
@@ -25,7 +26,7 @@
 #include "physics/Engine.h"
 #include "physics/GhostBody.h"
 #include "physics/PassiveLocation.h"
-#include "physics/SphereBody.h"
+#include "physics/AnimatBody.h"
 
 #include "form/Scene.h"
 
@@ -37,6 +38,7 @@
 #include "gfx/object/Light.h"
 #include "gfx/object/MeshObject.h"
 #include "core/ConfigEntry.h"
+#include "core/Random.h"
 
 using namespace sim;
 
@@ -115,6 +117,46 @@ namespace
 		auto controller = std::unique_ptr<CameraController>(new CameraController(camera, subject));
 		camera.SetController(std::move(controller));
 	}
+}
+
+void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::ga::Genome && genome)
+{
+	sim::Sphere3 sphere(position, 1);
+	sim::Engine & engine = entity.GetEngine();
+	physics::Engine & physics_engine = engine.GetPhysicsEngine();
+
+	auto health_transmitter = VehicleController::TransmitterPtr(new Transmitter);
+
+	// physics
+	auto zero_vector = sim::Vector3::Zero();
+	auto body = std::unique_ptr<physics::AnimatBody>(
+		new physics::AnimatBody(
+			sim::Transformation(sphere.center), & zero_vector, physics_engine,
+			sphere.radius, * health_transmitter, entity));
+	body->SetDensity(1);
+	entity.SetLocation(std::move(body));
+
+	// graphics
+	gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
+	gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
+	entity.SetModel(model);
+
+	// controller
+	auto controller = std::unique_ptr<sim::AnimatController>(
+		new sim::AnimatController(entity, sphere.radius, std::move(health_transmitter), std::move(genome)));
+	entity.SetController(std::move(controller));
+}
+
+sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
+{
+	auto animat = sim::EntityHandle::Create();
+
+	animat.Call([position] (sim::Entity & entity)
+				{
+					ConstructAnimat(entity, position, sim::ga::Genome());
+				});
+
+	return animat;
 }
 
 EntityHandle SpawnBall(Sphere3 const & sphere, Vector3 const & velocity, gfx::Color4f color)
@@ -216,4 +258,24 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 	});
 
 	return sun;
+}
+
+std::vector<sim::EntityHandle> SpawnAnimats(sim::Vector3 const & base_position, int num_animats)
+{
+	std::vector<sim::EntityHandle> animats(num_animats);
+
+	for (auto & animat : animats)
+	{
+		sim::Vector3 offset;
+		float r;
+		Random::sequence.GetGaussians(offset.x, offset.y);
+		offset.y = std::abs(offset.y);
+		Random::sequence.GetGaussians(offset.z, r);
+
+		auto position = base_position + offset * 10.f;
+
+		animat = SpawnAnimat(position);
+	}
+
+	return animats;
 }

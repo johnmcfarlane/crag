@@ -28,7 +28,7 @@ RayCast::RayCast(Engine & engine, Scalar length)
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	RayCast,
-	10,
+	2000,
 	Pool::Call<& RayCast::ResetResult>(Engine::GetPreTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(RayCast, self)
@@ -142,7 +142,14 @@ void RayCast::SetDensity(Scalar)
 	ASSERT(false);
 }
 
-bool RayCast::OnCollision(Body & body, ContactFunction &)
+bool RayCast::HandleCollision(Body & body, ContactFunction &)
 {
-	return body.OnCollisionWithRay(* this);
+	return body.HandleCollisionWithRay(* this);
 }
+
+#if defined(CRAG_DEBUG)
+void RayCast::OnContact(Body &)
+{
+	DEBUG_BREAK("Rays are not meant to collide with anything");
+}
+#endif

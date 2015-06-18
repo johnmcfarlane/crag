@@ -92,15 +92,26 @@ namespace config
 		return sscanf(string, "%d", & value) == 1;
 	}
 
-	// size_t
-	template<> bool GenericEntry<size_t>::ValueToString(size_t const & value, char * string, std::size_t max_string_size)
+	// std::uint64_t
+	template<> bool GenericEntry<std::uint64_t>::ValueToString(std::uint64_t const & value, char * string, std::size_t max_string_size)
 	{
-		return snprintf(string, max_string_size, SIZE_T_FORMAT_SPEC, value) > 0;
+		return snprintf(string, max_string_size, "%" PRIu64, value) > 0;
 	}
 
-	template<> bool GenericEntry<size_t>::StringToValue(size_t & value, char const * string)
+	template<> bool GenericEntry<std::uint64_t>::StringToValue(std::uint64_t & value, char const * string)
 	{
-		return sscanf(string, SIZE_T_FORMAT_SPEC, & value) == 1;
+		return sscanf(string, "%" PRIu64, &value) == 1;
+	}
+
+	// std::uint32_t
+	template<> bool GenericEntry<std::uint32_t>::ValueToString(std::uint32_t const & value, char * string, std::size_t max_string_size)
+	{
+		return snprintf(string, max_string_size, "%" PRIu32, value) > 0;
+	}
+
+	template<> bool GenericEntry<std::uint32_t>::StringToValue(std::uint32_t & value, char const * string)
+	{
+		return sscanf(string, "%" PRIu32, & value) == 1;
 	}
 
 	// float

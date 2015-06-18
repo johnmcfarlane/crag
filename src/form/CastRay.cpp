@@ -104,7 +104,7 @@ namespace
 		}
 #endif
 
-		SideAttributes GenerateSideAttribute(Ray3 const & ray, Plane3 const & plane)
+		SideAttributes GenerateSideAttributes(Ray3 const & ray, Plane3 const & plane)
 		{
 			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray.direction), Scalar(1.), Scalar(.001));
 			CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(plane.normal), Scalar(1.), Scalar(.001));
@@ -114,19 +114,21 @@ namespace
 			auto ray_to_plane = ray.position - plane.position;
 			auto ray_to_plane_distance = geom::DotProduct(ray_to_plane, plane.normal);
 			side_attributes.dot_product = - geom::DotProduct(plane.normal, ray.direction);
-			side_attributes.intersection = ray_to_plane_distance / side_attributes.dot_product;
+			side_attributes.intersection = side_attributes.dot_product
+				? ray_to_plane_distance / side_attributes.dot_product
+				: std::numeric_limits<Scalar>::max();
 
 			return side_attributes;
 		}
 
-		SideAttributes GenerateSideAttribute(Ray3 const & ray, Triangle3 const & side)
+		SideAttributes GenerateSideAttributes(Ray3 const & ray, Triangle3 const & side)
 		{
 			// assumes contact will typically occur much closer to surface
 			Plane3 plane(
 				(side.points[0] + side.points[1]) * Scalar(.5),
 				geom::Normalized(geom::UnitNormal(side)));
 
-			return GenerateSideAttribute(ray, plane);
+			return GenerateSideAttributes(ray, plane);
 		}
 
 		// given attributes with all 3 side attributes filled out, calculate the range
@@ -150,6 +152,9 @@ namespace
 					attributes.range[1] = std::min(attributes.range[1], side_attributes.intersection);
 				}
 			}
+
+			CRAG_VERIFY(attributes.range[0]);
+			CRAG_VERIFY(attributes.range[1]);
 		}
 
 		// fill out attributes given the ray cast invariants
@@ -169,7 +174,7 @@ namespace
 				const auto & q = attributes.surface.points[side_index1];
 				const Triangle3 side(p, q, uniforms.center);
 
-				attributes.sides[side_index0] = GenerateSideAttribute(uniforms.ray, side);
+				attributes.sides[side_index0] = GenerateSideAttributes(uniforms.ray, side);
 			}
 
 			GenerateAttributesRange(attributes);
@@ -247,7 +252,7 @@ namespace
 
 			Triangle3 const & side = leaf_attributes.surface;
 			Plane3 plane(side);
-			const auto side_attributes = GenerateSideAttribute(uniforms.ray, plane);
+			const auto side_attributes = GenerateSideAttributes(uniforms.ray, plane);
 
 			if (side_attributes.dot_product > 0 // only register entry - not exit
 			&& side_attributes.intersection >= leaf_attributes.range[0]	// within the volume covered by the node

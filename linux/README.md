@@ -69,6 +69,31 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    gdb ./crag core -batch -ex bt
    ```
 
+## Profile
+
+1. Preparation:
+   ```
+   sudo apt-get install valgrind kcachegrind
+   ```
+
+1. In CMakeLists.txt, add "-g" switch to CMAKE_CXX_FLAGS_RELEASE:
+   ```
+   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast -g")
+   ```
+   
+   and add:
+   ```
+   set(CMAKE_EXE_LINKER_FLAGS "-g")
+   ```
+
+1. Then:
+   ```
+   cd crag/linux
+   cmake -DCMAKE_BUILD_TYPE=Profile
+   valgrind --tool=callgrind ./crag 
+   kcachegrind callgrind.out.XXXXX &
+   ```
+
 ## CLion IDE
 
 [CLion](https://www.jetbrains.com/clion/) is a yet-to-be released IDE from [JetBrains](https://www.jetbrains.com/). 

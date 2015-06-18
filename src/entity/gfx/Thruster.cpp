@@ -53,7 +53,7 @@ void Thruster::Update(float const & thrust_factor)
 	_thrust_factor = thrust_factor;
 	if (_thrust_factor != 0)
 	{
-		if (Random::sequence.GetUnit<float>() < puff_probability)
+		if (Random::sequence.GetBool(puff_probability))
 		{
 			AddPuff(_thrust_factor);
 		}
@@ -64,7 +64,7 @@ Object::PreRenderResult Thruster::PreRender()
 {
 	Light::PreRender();
 	
-	SetColor(thruster_color * _thrust_factor * Random::sequence.GetUnit<float>());
+	SetColor(thruster_color * _thrust_factor * Random::sequence.GetFloat<float>());
 	
 	// TODO: Resetting this here is wrong. (What happens if sim stalls?)
 	_thrust_factor = 0;

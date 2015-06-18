@@ -12,8 +12,6 @@
 #include "ipc/Daemon.h"
 #include "ipc/EngineBase.h"
 
-#include "core/Singleton.h"
-
 namespace applet
 {
 	////////////////////////////////////////////////////////////////////////////////

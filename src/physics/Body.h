@@ -71,14 +71,18 @@ namespace physics
 		void SetIsCollidable(Body const & body, bool collidable);
 		bool IsCollidable(Body const & body) const;
 		
-		virtual bool OnCollision(Body & that_body, ContactFunction & contact_function) = 0;
-		virtual bool OnCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function);
-		virtual bool OnCollisionWithRay(Body & body);
+		virtual bool HandleCollision(Body & that_body, ContactFunction & contact_function) = 0;
+		virtual bool HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_sphere, ContactFunction & contact_function);
+		virtual bool HandleCollisionWithRay(Body & body);
+
+		virtual void OnContact(Body & that_body);
 
 		virtual void DebugDraw() const;
 
 		friend void Attach(JointHandle joint, Body const & body1, Body const & body2);
 		friend bool IsAttached(Body const & body1, Body const & body2);
+
+		virtual bool HasHealth() const;
 
 		CRAG_VERIFY_INVARIANTS_DECLARE(Body);
 	private:

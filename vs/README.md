@@ -14,7 +14,7 @@ Here are some pieces of software you will likely need.
 
 Crag is built against Windows 7. Newer and older versions may work. The main limitation is likely to be the choice of compiler.
 
-### 1.2 Visual C++ Express Edition 2013 ==
+### 1.2 Visual C++ Express Edition 2013
 
 This free version of Microsoft's IDE can be downloaded [here](http://www.microsoft.com/visualstudio/), although you may need to register to get an activation key.
 
@@ -26,9 +26,8 @@ This is required by SDL. Apparently, it's possible to flip some switches in SDL 
 
 Studio Express 2013 comes with Git integration but I am unable to make it work. Try [Git](http://git-scm.com/download/win) itself.
 
-### 1.5 Decompression Software
-
-Windows XP comes with the facility to open zip files. However, one or two of the below dependencies come in the .bz2 format which is not supported natively. Suggestions on opening bz2 files under Windows can be found [here](http://answers.microsoft.com/en-us/windows/forum/windows_xp-files/open-files-with-bz2-ext/4cc62e44-ee4b-4a1d-b6e4-9d52065c6fa8). Another one is the freebie version of [WinRAR](http://www.win-rar.com/).
+Studio 2015 RC has imporved Git integration. 
+You can clone the Crag repository from inside the IDE and it give you the option of installing the above Git tools automatically.
 
 ## 2 Getting Crag Source Code
 
@@ -36,11 +35,11 @@ First, you need to get the crag source code from [GitHub](https://github.com/joh
 
 ## 3 Dependencies
 
-Crag relies on a number of middleware libraries. The Crag project expect them to be locate in specific folders under the `dependencies` folder. Apart from Python, they can all be built automatically using the crag solution. But each requires specific instructions to download and prepare.
+Crag relies on a number of middleware libraries. The Crag project expect them to be locate in specific folders under the `vc` folder. They can all be built automatically using the crag solution. But each requires specific instructions to download and prepare.
 
 ### 3.1 SDL
 
-The [Simple Direct-media Layer](http://http://www.libsdl.org/) provides everything a game needs to run on a variety of systems and hardware.
+The [Simple Direct-media Layer](http://www.libsdl.org/) provides everything a game needs to run on a variety of systems and hardware.
 
   * Download `SDL2-devel-2.0.X-VC.zip` from [here](http://www.libsdl.org/download-2.0.php).
   * Open the zip file and copy the contents of the `SDL-2.0.0-XXXX' folder to `crag\vc\SDL2'.
@@ -54,9 +53,17 @@ The [Simple Direct-media Layer](http://http://www.libsdl.org/) provides everythi
 
 The [Open Dynamic Engine](http://www.ode.org/) is an open-source library which simulates rigid-body physics.
 
-  * Follow the download link from the [ODE download page](http://sourceforge.net/projects/opende/files/) and download the latest version (currently 0.11.1) as a zip file.
-  * Open the zip file and copy the contents of the `ode-0.11.1` into the `crag\vs\ode` folder of the crag project. 
-  * The ODE project files need to be built by running `vs\ode\build\premake_ode.bat`. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).
+  * Follow the download link from the [ODE download page](https://bitbucket.org/odedevs/ode/downloads) and download the latest version (currently ode-0.13.1.tar.gz) into the crag/vs folder.
+  * Open a Git Bash console and go to the crag/vs folder:
+  
+    ```
+	cd crag/vs
+	gunzip.exe ode-0.13.1.tar.gz
+	tar -xf ode-0.13.1.tar
+	mv ode-0.13.1 ode
+	```
+
+  * The ODE project files need to be built by running `vs\premake_ode.bat`. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).
   * Open dependencies\ode\build\vs2008
   * Build DebugSingleLib and/or ReleaseSingleLib configurations
   * Add the dNODEBUG pre-processor definition to the DebugDoubleLib and ReleaseDoubleLib configurations. (Still needed?)

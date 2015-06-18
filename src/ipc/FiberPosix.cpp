@@ -16,7 +16,7 @@
 #include "core/Random.h"
 
 #if defined(CRAG_VERIFY_ENABLED)
-#define CRAG_FIBER_VERIFY
+//#define CRAG_FIBER_VERIFY
 #endif
 
 

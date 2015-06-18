@@ -39,30 +39,53 @@ public:
 		r >>= num_bits;
 		return static_cast<ValueType>(r);
 	}
-	
-	// returns pseudo-random number in the range [0, 1)
-	template <typename S = float>
-	S GetUnit()
+
+	// returns pseudo-random number in the range [0, limit)
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	S GetFloat(S limit)
 	{
-		S inverse = S(1) / bound;
+		S inverse = limit / bound;
 		return inverse * GetInt();
 	}
-	
-	// returns pseudo-random boolean
+
+	// returns pseudo-random number in the range [0, 1)
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	S GetFloat()
+	{
+		return GetFloat<S>(1);
+	}
+
+	// returns pseudo-random boolean with given probability of being true
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	bool GetBool(S probability)
+	{
+		auto r = GetFloat<S>();
+		return probability > r;
+	}
+
+	// returns pseudo-random boolean; roughly equivalent to GetBool(.5)
 	bool GetBool()
 	{
 		auto r = GetInt();
 		return (r & (1 << (num_bits - 1))) != 0;
 	}
-	
+
 	// returns pseudo-random number in the range [0, 1]
-	template <typename S = float>
-	S GetUnitInclusive()
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	S GetFloatInclusive()
 	{
 		S inverse = S(1) / maximum;
 		return inverse * GetInt();
 	}
-	
+
+	// returns pseudo-random number in the range [0, max]
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	S GetFloatInclusive(S max)
+	{
+		S inverse = max / maximum;
+		return inverse * GetInt();
+	}
+
 	template <typename S = float>
 	void GetGaussians(S & y1, S & y2)
 	{
@@ -73,8 +96,8 @@ public:
 		S x1, x2, w;
 
 		do {
-			x1 = two * GetUnitInclusive<S>() - one;
-			x2 = two * GetUnitInclusive<S>() - one;
+			x1 = two * GetFloatInclusive<S>() - one;
+			x2 = two * GetFloatInclusive<S>() - one;
 			w = x1 * x1 + x2 * x2;
 		} while ( w >= one );
 
@@ -83,8 +106,8 @@ public:
 		y2 = x2 * w;
 
 		//// might be faster for non-RISC chipsets
-		//S x1 = one - GetUnit<S>();
-		//S x2 = GetUnitInclusive<S>();
+		//S x1 = one - GetFloat<S>();
+		//S x2 = GetFloatInclusive<S>();
 		//S d = sqrt(-two * std::log(x1));
 		//S a = two * static_cast<S>(PI) * x2;
 		//y1 = d * cos(a);

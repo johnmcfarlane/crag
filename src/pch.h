@@ -101,6 +101,7 @@
 #include <condition_variable>
 #include <functional>
 #include <initializer_list>
+#include <inttypes.h>
 #include <iostream>
 #include <limits>
 #include <list>

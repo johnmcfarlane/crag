@@ -8,6 +8,8 @@ set(OPT_FLAGS "-fno-exceptions -fno-unwind-tables")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} ${MACRO_FLAGS} ${OPT_FLAGS} -std=c++11 -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE -O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast")
+set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -g")
+set(CMAKE_EXE_LINKER_FLAGS "-g")
 
 set(CRAG_SOURCE_DIRECTORY "../src")
 
@@ -28,8 +30,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/counted_object.h
     ${CRAG_SOURCE_DIRECTORY}/core/debug.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/debug.h
-    ${CRAG_SOURCE_DIRECTORY}/core/double_buffer.h
-    ${CRAG_SOURCE_DIRECTORY}/core/enum_bitset.h
     ${CRAG_SOURCE_DIRECTORY}/core/Enumeration.h
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.h
@@ -58,12 +58,11 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/Roster.h
     ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDeclare.h
     ${CRAG_SOURCE_DIRECTORY}/core/RosterObjectDefine.h
-    ${CRAG_SOURCE_DIRECTORY}/core/Singleton.h
+    ${CRAG_SOURCE_DIRECTORY}/core/Sigmoid.h
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.h
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.h
-    ${CRAG_SOURCE_DIRECTORY}/core/union_buffer.h
     ${CRAG_SOURCE_DIRECTORY}/core/verify.h
     ${CRAG_SOURCE_DIRECTORY}/core/windows.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Planet.cpp
@@ -72,34 +71,36 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Puff.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Thruster.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Thruster.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/physics/AnimatBody.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/physics/AnimatBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/physics/PlanetBody.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/physics/PlanetBody.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatController.h
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatThruster.cpp
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatThruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.h
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/HoverThruster.cpp
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/HoverThruster.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/KeyboardTransmitter.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/KeyboardTransmitter.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MoonShader.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MoonShader.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MouseObserverController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MouseObserverController.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/nnet.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/nnet.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/ObserverInput.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/ObserverInput.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/PlanetController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/PlanetController.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/PlanetShader.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/PlanetShader.h
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/RoverThruster.cpp
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/RoverThruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Sensor.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Sensor.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/TouchObserverController.cpp
@@ -110,8 +111,6 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/UfoController2.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/VehicleController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/VehicleController.h
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/VernierThruster.cpp
-    ${CRAG_SOURCE_DIRECTORY}/entity/sim/VernierThruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/SpawnEntityFunctions.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/SpawnEntityFunctions.h
     ${CRAG_SOURCE_DIRECTORY}/entity/SpawnPlayer.cpp

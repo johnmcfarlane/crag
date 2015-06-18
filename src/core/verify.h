@@ -21,6 +21,11 @@
 #define CRAG_VERIFY_ENABLED
 #endif
 
+#if defined(CRAG_VERIFY_ENABLED)
+// iff defined, enables verification specifically of object invariants
+//#define CRAG_VERIFY_INVARIANTS_ENABLED
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // Verify helper functions
 //
@@ -111,7 +116,11 @@
 #define CRAG_VERIFY_UNIT(V, EPSILON) CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(V), decltype(geom::Magnitude(V))(1), EPSILON)
 
 // runs custom verification routine on given type
+#if defined(CRAG_VERIFY_INVARIANTS_ENABLED)
 #define CRAG_VERIFY(VARIABLE) ::crag::core::VerifyInvariants(VARIABLE)
+#else
+#define CRAG_VERIFY(OBJECT) CRAG_UNUSED(OBJECT)
+#endif
 
 // makes it possible (albeit pointless) to say cout << nullptr
 inline std::ostream & operator << (std::ostream & out, std::nullptr_t) noexcept
@@ -184,7 +193,7 @@ namespace crag
 		template <typename Type, typename std::enable_if<std::is_floating_point<Type>::value, int>::type = 0>
 		void VerifyInvariants(Type real) noexcept
 		{
-			CRAG_VERIFY(std::isfinite(real));
+			CRAG_VERIFY_TRUE(std::isfinite(real));
 		}
 
 		// pointer
@@ -253,6 +262,9 @@ namespace crag
 	}
 }
 
+// use in place of constexpr in places where VERIFY macros would violate constexpr function rules
+#define CRAG_CONSTEXPR
+
 #else
 
 // no-op versions of the above verification macros
@@ -269,6 +281,8 @@ namespace crag
 #define CRAG_VERIFY_ARRAY_ELEMENT(P, B, E) DO_STATEMENT(CRAG_UNUSED(P); CRAG_UNUSED(B); CRAG_UNUSED(E);)
 #define CRAG_VERIFY_UNIT(V, EPSILON) DO_STATEMENT(CRAG_UNUSED(V); CRAG_UNUSED(EPSILON);)
 #define CRAG_VERIFY(OBJECT) CRAG_UNUSED(OBJECT)
+
+#define CRAG_CONSTEXPR constexpr
 
 #endif
 

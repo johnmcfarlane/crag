@@ -161,15 +161,21 @@ namespace core
 			free(ptr);
 		}
 
+		// returns the current count of objects
+		constexpr size_type size() const noexcept
+		{
+			return _num_allocated;
+		}
+
 		// returns the maximum count of objects
-		size_type capacity() const
+		constexpr size_type capacity() const noexcept
 		{
 			return _array_end - _array;
 		}
-		
+
 		constexpr bool empty() const noexcept
 		{
-			return _num_allocated == 0;
+			return size() == 0;
 		}
 
 		constexpr value_type & operator[] (size_type index) const noexcept

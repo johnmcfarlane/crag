@@ -30,14 +30,14 @@ using namespace sim;
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Thruster,
-	1,
+	2000,
 	Pool::CallBefore<& Thruster::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()),
 	Pool::Call<& Thruster::UpdateModel>(Engine::GetDrawRoster()))
 
 Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor)
-	: _entity(entity)
+	: Receiver(thrust_factor)
+	, _entity(entity)
 	, _ray(ray)
-	, _thrust_factor(thrust_factor)
 {
 	// create model
 	if (graphical)
@@ -52,10 +52,12 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 		}
 	}
 
+	SetParentModel(entity.GetModel());
+
 	CRAG_VERIFY(* this);
 }
 
-Thruster::~Thruster()
+Thruster::~Thruster() noexcept
 {
 	CRAG_VERIFY(* this);
 
@@ -65,7 +67,8 @@ Thruster::~Thruster()
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Thruster, self)
 	CRAG_VERIFY(self._entity);
-	CRAG_VERIFY_OP(self._thrust_factor, >=, 0);
+	CRAG_VERIFY_OP(self.GetSignal(), >=, 0);
+	CRAG_VERIFY_OP(self.GetSignal(), <=, 1.f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 void Thruster::SetParentModel(gfx::ObjectHandle parent_handle)
@@ -113,27 +116,11 @@ void Thruster::SetRay(Ray3 const & ray)
 	}
 }
 
-float Thruster::GetThrustFactor() const
-{
-	CRAG_VERIFY(* this);
-
-	return _thrust_factor;
-}
-
-void Thruster::SetThrustFactor(float thrust_factor)
-{
-	CRAG_VERIFY(* this);
-
-	_thrust_factor = thrust_factor;
-
-	CRAG_VERIFY(* this);
-}
-
 void Thruster::Tick()
 {
 	CRAG_VERIFY(* this);
 
-	if (_thrust_factor <= 0)
+	if (GetSignal() <= 0)
 	{
 		return;
 	}
@@ -141,14 +128,14 @@ void Thruster::Tick()
 	auto & location = * GetEntity().GetLocation();
 	auto & body = core::StaticCast<physics::Body>(location);
 	auto & ray = _ray;
-	body.AddRelForceAtRelPos(ray.direction * _thrust_factor, ray.position);
+	body.AddRelForceAtRelPos(ray.direction * GetSignal(), ray.position);
 }
 
 void Thruster::UpdateModel()
 {
 	CRAG_VERIFY(* this);
 
-	float thrust_factor = _thrust_factor;
+	float thrust_factor = GetSignal();
 	if (thrust_factor <= 0)
 	{
 		return;

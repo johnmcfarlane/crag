@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////
 // Bit-related operations.
 
-// run-time bit properties
+// compile-time bit properties
 
 template <unsigned N>
 class Number

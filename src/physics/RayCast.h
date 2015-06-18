@@ -37,14 +37,18 @@ namespace physics
 		form::RayCastResult const & GetResult() const;
 		void SampleResult(form::RayCastResult const & result);
 
+		void DebugDraw() const override;
+
 	private:
 		void ResetResult();
 		
 		void SetDensity(Scalar density) override;
 
-		bool OnCollision(Body & that_body, ContactFunction & contact_function) override;
+		bool HandleCollision(Body & that_body, ContactFunction & contact_function) override;
 
-		void DebugDraw() const override;
+#if defined(CRAG_DEBUG)
+		void OnContact(Body & that_body) final;
+#endif
 
 		form::RayCastResult _result;
 	};

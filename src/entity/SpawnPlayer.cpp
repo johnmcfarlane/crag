@@ -12,14 +12,14 @@
 #include "SpawnPlayer.h"
 #include "SpawnEntityFunctions.h"
 
-#include "entity/sim/HoverThruster.h"
+#include <entity/sim/KeyboardTransmitter.h>
 #include "entity/sim/MouseObserverController.h"
-#include "entity/sim/RoverThruster.h"
+#include <entity/sim/Sensor.h>
+#include <entity/sim/Thruster.h>
+#include "entity/sim/TouchObserverController.h"
 #include "entity/sim/UfoController1.h"
 #include "entity/sim/UfoController2.h"
-#include "entity/sim/TouchObserverController.h"
 #include "entity/sim/VehicleController.h"
-#include "entity/sim/VernierThruster.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -84,10 +84,13 @@ namespace
 
 	CONFIG_DEFINE(observer_radius, .5f);
 	CONFIG_DEFINE(observer_density, 1.f);
-	
-	CONFIG_DEFINE(ship_upward_thrust, 0.25f);
-	CONFIG_DEFINE(ship_upward_thrust_gradient, 0.75f);
-	CONFIG_DEFINE(ship_forward_thrust, 10.0f);
+
+	CONFIG_DEFINE(ship_angular_damping, .25f);
+	CONFIG_DEFINE(ship_upward_thrust_gradient, 1.f);
+	CONFIG_DEFINE(ship_forward_thrust, 5.0f);
+	CONFIG_DEFINE(ship_vernier_scan_depth, 35.f);
+	CONFIG_DEFINE(ship_vernier_force, -1.5f);
+	CONFIG_DEFINE(ship_vernier_elevation, .1f);
 
 	CONFIG_DEFINE(ufo_color1, gfx::Color4f::Green());
 	CONFIG_DEFINE(ufo_color2, gfx::Color4f::Red());
@@ -662,47 +665,55 @@ namespace
 #endif
 	}
 
-	void AddThruster(VehicleController & controller, Thruster * thruster)
+	void MakeSignalPair(
+		VehicleController & controller,
+		std::unique_ptr<Transmitter> && transmitter,
+		std::unique_ptr<Receiver> && receiver)
 	{
-		controller.AddThruster(VehicleController::ThrusterPtr(thruster));
-	}
+		transmitter->SetReceiver(receiver.get());
 
-	void AddHoverThruster(VehicleController & controller, Vector3 const & position, Scalar distance)
-	{
-		auto & entity = controller.GetEntity();
-		AddThruster(controller, new HoverThruster(entity, position, distance));
+		controller.AddTransmitter(std::move(transmitter));
+		controller.AddReceiver(std::move(receiver));
 	}
 
 	void AddRoverThruster(VehicleController & controller, Ray3 const & ray, SDL_Scancode key, bool graphical, bool invert = false)
 	{
 		auto & entity = controller.GetEntity();
-		auto activation_callback = [key, invert] ()
-		{
-			return (app::IsKeyDown(key) != invert) ? 1.f : 0.f;
-		};
-		AddThruster(controller, new RoverThruster(entity, ray, activation_callback, graphical));
+
+		auto down_signal = invert ? 0.f : 1.f;
+		auto up_signal = invert ? 1.f : 0.f;
+
+		auto keyboard_transmitter = std::unique_ptr<Transmitter>(new KeyboardTransmitter(key, down_signal, up_signal));
+		auto thruster = std::unique_ptr<Receiver>(new Thruster(entity, ray, graphical, up_signal));
+
+		MakeSignalPair(controller, std::move(keyboard_transmitter), std::move(thruster));
 	}
 
-	void AddVernierThruster(VehicleController & controller, Ray3 const & ray)
+	void AddVernierThruster(VehicleController & controller, Ray3 ray, Scalar sensor_length, Scalar thrust)
 	{
+		geom::Normalize(ray);
+
 		auto & entity = controller.GetEntity();
-		AddThruster(controller, new VernierThruster(entity, ray));
+
+		auto sensor = std::unique_ptr<Transmitter>(new Sensor(entity, ray, sensor_length));
+		auto thruster = std::unique_ptr<Receiver>(new Thruster(entity, ray * thrust, false, 0.f));
+
+		MakeSignalPair(controller, std::move(sensor), std::move(thruster));
 	}
 
 	void ConstructRover(Entity & entity, Sphere3 const & sphere, Scalar thrust)
 	{
 		ConstructBall(entity, sphere, Vector3::Zero(), gfx::Color4f::White());
 
-		auto controller = std::unique_ptr<VehicleController>(
-			new VehicleController(entity));
-		entity.SetController(std::move(controller));
+		auto controller = new VehicleController(entity);
+		entity.SetController(std::unique_ptr<VehicleController>(controller));
 
 		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
 	}
-	
+
 	void ConstructShip(Entity & entity, Vector3 const & position)
 	{
 		Engine & engine = entity.GetEngine();
@@ -714,6 +725,7 @@ namespace
 		auto physics_mesh = crag::GlobalResourceManager::GetHandle<physics::Mesh>("ShipPhysicsMesh");
 		auto body = std::unique_ptr<physics::MeshBody>(
 			new physics::MeshBody(position, & velocity, physics_engine, * physics_mesh));
+		body->SetAngularDamping(ship_angular_damping);
 		entity.SetLocation(std::move(body));
 
 		// graphics
@@ -725,36 +737,15 @@ namespace
 		// create controller
 		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
 
-		// add a single thruster
-		auto add_thruster = [&] (Ray3 const & ray, SDL_Scancode key, bool invert)
-		{
-			if (key == SDL_SCANCODE_UNKNOWN)
-			{
-				AddVernierThruster(* controller, ray);
-			}
-			else
-			{
-				AddRoverThruster(* controller, ray, key, true, invert);
-			}
-		};
-		
 		// add two complimentary thrusters
-		auto add_thrusters = [&] (Ray3 ray, SDL_Scancode first_key, int axis, SDL_Scancode second_key, bool invert)
-		{
-			add_thruster(ray, first_key, invert);
-			ray.position[axis] *= -1.f;
-			ray.direction[axis] *= -1.f;
-			add_thruster(ray, second_key, invert);
-		};
-		
 		auto forward = Vector3(0, 0, ship_forward_thrust);
+		AddRoverThruster(* controller, Ray3(Vector3( .25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, false, true);
+		AddRoverThruster(* controller, Ray3(Vector3(-.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_LEFT, false, true);
 
-		add_thrusters(Ray3(Vector3(0.f, 0.f, 1.f), geom::Resized(Vector3(0.f, 1.f, - ship_upward_thrust_gradient), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 2, SDL_SCANCODE_UNKNOWN, false);
-		add_thrusters(Ray3(Vector3(1., 0.f, 0), geom::Resized(Vector3(-ship_upward_thrust_gradient, 1.f, 0.f), ship_upward_thrust)), SDL_SCANCODE_UNKNOWN, 0, SDL_SCANCODE_UNKNOWN, false);
-		add_thrusters(Ray3(Vector3(.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, 0, SDL_SCANCODE_LEFT, true);
-		
-		AddHoverThruster(* controller, Vector3(0.f, -.25f, 0.f), -.1f);
-		AddHoverThruster(* controller, Vector3(0.f, .25f, 0.f), .1f);
+		AddVernierThruster(* controller, Ray3(Vector3( 1.f, ship_vernier_elevation,  0.f), Vector3(  ship_upward_thrust_gradient, - 1.f, 0.f)), ship_vernier_scan_depth, ship_vernier_force);
+		AddVernierThruster(* controller, Ray3(Vector3(-1.f, ship_vernier_elevation,  0.f), Vector3(- ship_upward_thrust_gradient, - 1.f, 0.f)), ship_vernier_scan_depth, ship_vernier_force);
+		AddVernierThruster(* controller, Ray3(Vector3( 0.f, ship_vernier_elevation,  1.f), Vector3(0.f, - 1.f,   ship_upward_thrust_gradient)), ship_vernier_scan_depth, ship_vernier_force);
+		AddVernierThruster(* controller, Ray3(Vector3( 0.f, ship_vernier_elevation, -1.f), Vector3(0.f, - 1.f, - ship_upward_thrust_gradient)), ship_vernier_scan_depth, ship_vernier_force);
 
 		// assign controller
 		entity.SetController(std::move(controller));

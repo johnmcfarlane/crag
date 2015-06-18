@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "entity/sim/VehicleController.h"
+#include "VehicleController.h"
+
+#include <sim/Engine.h>
 
 #include "gfx/SetCameraEvent.h"
-
-#include "ipc/Listener.h"
 
 #include "core/EventWatcher.h"
 
@@ -57,8 +57,6 @@ namespace sim
 		Matrix33 _camera_rotation;
 		
 		std::shared_ptr<Entity> _ball_entity;
-		
-		Thruster * _main_thruster;
 		int _num_presses;
 	};
 }

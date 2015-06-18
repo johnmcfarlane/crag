@@ -178,7 +178,10 @@ namespace crag
 				template <typename OBJECT_TYPE, void (OBJECT_TYPE::*FUNCTION)()>
 				static constexpr Roster::key_type OrderingKeyCast() noexcept
 				{
-					return reinterpret_cast<Roster::key_type>(& OrderingKeyCastDummy<OBJECT_TYPE, FUNCTION>);
+					return reinterpret_cast<Roster::key_type>(
+						reinterpret_cast<void *>(
+							static_cast<void(*) (OBJECT_TYPE &)>(
+								&OrderingKeyCastDummy<OBJECT_TYPE, FUNCTION>)));
 				}
 
 				// helper for OrderingKeyCast function template

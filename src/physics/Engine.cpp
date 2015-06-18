@@ -87,7 +87,7 @@ namespace
 		void * ray_data = dGeomGetData (ray_handle);
 		RayCast & ray_cast = ref(static_cast<RayCast *>(ray_data));
 	
-		body.OnCollisionWithRay(ray_cast);
+		body.HandleCollisionWithRay(ray_cast);
 	}
 
 	void OnSphereCollision(void * data, CollisionHandle body_handle, CollisionHandle sphere_handle)
@@ -102,7 +102,7 @@ namespace
 		auto sphere_data = dGeomGetData (sphere_handle);
 		auto & sphere = ref(static_cast<Body *>(sphere_data));
 	
-		sphere.OnCollision(body, contact_interface);
+		sphere.HandleCollision(body, contact_interface);
 	}
 }
 CONFIG_DEFINE(collisions_parallelization, true);
@@ -335,21 +335,25 @@ void Engine::OnNearCollisionCallback (void * data, CollisionHandle geom1, Collis
 		return;
 	}
 
-	auto contact_function = ContactFunction([& engine] (ContactGeom const * begin, ContactGeom const * end) {
+	auto contact_function = ContactFunction([& engine, & body1, & body2] (ContactGeom const * begin, ContactGeom const * end) {
 		engine.AddContacts(begin, end);
+		body1.OnContact(body2);
+		body2.OnContact(body1);
 	});
 	
-	if (body1.OnCollision(body2, contact_function))
+	if (body1.HandleCollision(body2, contact_function))
 	{
 		return;
 	}
 	
-	if (body2.OnCollision(body1, contact_function))
+	if (body2.HandleCollision(body1, contact_function))
 	{
 		return;
 	}
 	
 	engine.OnUnhandledCollision(geom1, geom2);
+	body1.OnContact(body2);
+	body2.OnContact(body1);
 }
 
 // This is the default handler. It leaves ODE to deal with it. 
@@ -384,13 +388,11 @@ void Engine::AddContacts(ContactGeom const * begin, ContactGeom const * end)
 
 		_contact.geom = contact_geom;
 		_contacts.push_back(_contact);
-		//std::cout << contact.geom.depth << ' ' << contact.geom.normal[0] << ',' << contact.geom.normal[1] << ',' << contact.geom.normal[2] << '\n';
 
 #if defined(DEBUG_CONTACTS)
 		Vector3 pos(Convert(contact_geom.pos));
 		Vector3 normal(Convert(contact_geom.normal));
 		gfx::Debug::AddLine(pos, pos + normal * contact_geom.depth * 100.f);
-		//std::cout << pos << ' ' << normal << ' ' << contact_geom.depth << '\n';
 #endif
 	});
 }

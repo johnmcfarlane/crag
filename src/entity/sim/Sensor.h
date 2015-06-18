@@ -9,26 +9,26 @@
 
 #pragma once
 
+#include "Signal.h"
+
 #include "sim/defs.h"
 
 #include "physics/RayCast.h"
 
-#include "core/counted_object.h"
-
 namespace crag
 {
-	   namespace core
-	   {
-			   class Roster;
-	   }
+	namespace core
+	{
+		class Roster;
+	}
 }
 
 namespace sim
 {
 	class Entity;
 
-	class Sensor
-	: public crag::counted_object<Sensor>
+	class Sensor final
+		: public Transmitter
 	{
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -39,17 +39,18 @@ namespace sim
 		Sensor(Entity & entity, Ray3 const & position, Scalar length, Scalar variance = 0);
 
 		CRAG_ROSTER_OBJECT_DECLARE(Sensor);
-
-		Scalar GetReading() const;
-		Scalar GetReadingDistance() const;
-
 		CRAG_VERIFY_INVARIANTS_DECLARE(Sensor);
 
-		void GenerateScanRay();
+		void GenerateScanRay() noexcept;
 	private:
-		Ray3 GetGlobalRay() const;
+		void SendReading() noexcept;
 
-		crag::core::Roster & GetTickRoster();
+#if defined(CRAG_DEBUG)
+		void DebugDraw() noexcept;
+#endif
+
+		Scalar CalcReading() const;
+		Ray3 GetGlobalRay() const;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables
@@ -58,7 +59,7 @@ namespace sim
 		Scalar _length;
 		Scalar _variance;
 		std::unique_ptr<physics::RayCast> const _ray_cast;
-		Ray3 const _local_ray;	// Project(_ray, 1) = average sensor tip
+		Ray3 const _local_ray;    // Project(_ray, 1) = average sensor tip
 		std::vector<float> _thruster_mapping;
 	};
 }
