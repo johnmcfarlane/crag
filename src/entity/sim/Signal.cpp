@@ -21,6 +21,10 @@ Receiver::Receiver(SignalType v)
 {
 }
 
+Receiver::~Receiver() noexcept
+{
+}
+
 SignalType Receiver::GetSignal() const noexcept
 {
 	return value;
@@ -36,6 +40,10 @@ void Receiver::ReceiveSignal(SignalType v) noexcept
 
 Transmitter::Transmitter(Receiver * r) noexcept
 : receiver(r)
+{
+}
+
+Transmitter::~Transmitter() noexcept
 {
 }
 

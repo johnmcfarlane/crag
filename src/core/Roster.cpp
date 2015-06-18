@@ -74,7 +74,7 @@ void Roster::AddCommand(key_type key, value_type function) noexcept
 	CRAG_VERIFY(* this);
 }
 
-void Roster::AddOrdering(Roster::key_type lhs, Roster::key_type rhs)
+void Roster::AddOrdering(Roster::key_type lhs, Roster::key_type rhs) noexcept
 {
 	CRAG_VERIFY(* this);
 
