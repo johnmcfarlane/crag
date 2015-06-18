@@ -147,6 +147,7 @@ namespace core
 #if defined(CRAG_COMPILER_MSVC)
 #define CRAG_BREAK() __debugbreak()
 #elif defined(CRAG_OS_ANDROID)
+#include <android/log.h>
 #define CRAG_BREAK() __android_log_assert("error", "crag", "internal error")
 #elif defined(CRAG_COMPILER_GCC)
 #define CRAG_BREAK() __builtin_trap()
