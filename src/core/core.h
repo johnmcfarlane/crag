@@ -24,7 +24,6 @@
 // Missing keywords etc.
 
 #if defined(CRAG_COMPILER_MSVC)
-#define constexpr const
 #if defined(WIN32_C3861_WORKAROUND)
 #define alignof __alignof
 #define snprintf _snprintf
