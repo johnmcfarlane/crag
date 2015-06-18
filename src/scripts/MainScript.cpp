@@ -7,7 +7,6 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include <core/Random.h>
 #include "pch.h"
 
 #include "InitSpace.h"
@@ -29,6 +28,7 @@
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
 #include "core/iterable_object_pool.h"
+#include <core/Random.h>
 
 CONFIG_DECLARE(player_type, int);
 CONFIG_DEFINE(num_animats, 50);

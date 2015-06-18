@@ -57,7 +57,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 	CRAG_VERIFY(* this);
 }
 
-Thruster::~Thruster()
+Thruster::~Thruster() noexcept
 {
 	CRAG_VERIFY(* this);
 

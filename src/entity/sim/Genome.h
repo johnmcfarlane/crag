@@ -28,8 +28,8 @@ namespace sim
 			using const_iterator = buffer_type::const_iterator;
 
 			// functions
-			Genome() noexcept = default;
-			Genome(Genome const & parent1, Genome const & parent2);
+			Genome() noexcept;
+			Genome(Genome const & parent1, Genome const & parent2) noexcept;
 
 			size_type size() const noexcept;
 

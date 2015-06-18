@@ -25,7 +25,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::ga::Genome member definitions
 
-Genome::Genome(Genome const & parent1, Genome const & parent2)
+Genome::Genome() noexcept
+{
+}
+
+Genome::Genome(Genome const & parent1, Genome const & parent2) noexcept
 {
 	CRAG_VERIFY_EQUAL(parent1.size(), parent2.size());
 
@@ -56,22 +60,22 @@ Genome::Genome(Genome const & parent1, Genome const & parent2)
 	}
 }
 
-Genome::size_type Genome::size() const
+Genome::size_type Genome::size() const noexcept
 {
 	return _buffer.size();
 }
 
-Genome::const_iterator Genome::begin() const
+Genome::const_iterator Genome::begin() const noexcept
 {
 	return std::begin(_buffer);
 }
 
-Genome::iterator Genome::begin()
+Genome::iterator Genome::begin() noexcept
 {
 	return std::begin(_buffer);
 }
 
-Genome::const_iterator Genome::end() const
+Genome::const_iterator Genome::end() const noexcept
 {
 	return std::end(_buffer);
 }
@@ -87,7 +91,7 @@ GeneType Genome::operator[] (size_type index) const noexcept
 	return _buffer[index];
 }
 
-void Genome::Grow()
+void Genome::Grow() noexcept
 {
 	_buffer.push_back(Random::sequence.GetFloatInclusive<float>());
 }
@@ -95,12 +99,12 @@ void Genome::Grow()
 ////////////////////////////////////////////////////////////////////////////////
 // sim::ga::Genome member definitions
 
-GenomeReader::GenomeReader(Genome & genome)
+GenomeReader::GenomeReader(Genome & genome) noexcept
 : _genome(genome)
 {
 }
 
-GeneType GenomeReader::Read()
+GeneType GenomeReader::Read() noexcept
 {
 	if (_position == _genome.size())
 	{

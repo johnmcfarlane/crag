@@ -69,6 +69,16 @@
 #define WIN32_C2144_WORKAROUND	// syntax error : 'char' should be preceded by ';' (threadlocal)
 #endif
 
+#if _MSC_VER < 1900	// VS2015
+#define constexpr const
+#endif
+
+#define CRAG_CONSTEXPR_CTOR
+
+#else	// CRAG_COMPILER_MSVC
+
+#define CRAG_CONSTEXPR_CTOR constexpr
+
 #endif	// CRAG_COMPILER_MSVC
 
 //////////////////////////////////////////////////////////////////////

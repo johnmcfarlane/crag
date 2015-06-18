@@ -59,14 +59,20 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Sensor member definitions
 
+#if defined(CRAG_DEBUG)
 CRAG_ROSTER_OBJECT_DEFINE(
 	Sensor,
 	1000,
-#if defined(CRAG_DEBUG)
 	Pool::Call<& Sensor::DebugDraw>(Engine::GetDrawRoster()),
-#endif
 	Pool::Call<& Sensor::GenerateScanRay>(physics::Engine::GetPreTickRoster()),
 	Pool::Call<& Sensor::SendReading>(physics::Engine::GetPostTickRoster()))
+#else
+CRAG_ROSTER_OBJECT_DEFINE(
+		Sensor,
+		1000,
+		Pool::Call<&Sensor::GenerateScanRay>(physics::Engine::GetPreTickRoster()),
+		Pool::Call<&Sensor::SendReading>(physics::Engine::GetPostTickRoster()))
+#endif
 
 Sensor::Sensor(Entity & entity, Ray3 const & ray, Scalar length, Scalar variance)
 : _entity(entity)
@@ -90,7 +96,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Sensor, self)
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 // update global sensor ray position
-void Sensor::GenerateScanRay()
+void Sensor::GenerateScanRay() noexcept
 {
 	CRAG_VERIFY(* this);
 	
@@ -109,13 +115,13 @@ void Sensor::GenerateScanRay()
 	_ray_cast->SetRay(scan_ray);
 }
 
-void Sensor::SendReading()
+void Sensor::SendReading() noexcept
 {
 	TransmitSignal(CalcReading());
 }
 
 #if defined(CRAG_DEBUG)
-void Sensor::DebugDraw()
+void Sensor::DebugDraw() noexcept
 {
 	_ray_cast->DebugDraw();
 }

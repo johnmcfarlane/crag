@@ -27,7 +27,7 @@ namespace crag
 			// functions
 		
 		public:
-			constexpr HashString(char const * string)
+			CRAG_CONSTEXPR_CTOR HashString(char const * string)
 			: _value(Calculate(string))
 #if defined(CRAG_DEBUG)
 			, _debug_string(string)

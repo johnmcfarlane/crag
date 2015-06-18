@@ -15,7 +15,9 @@
 
 #include <core/RosterObjectDefine.h>
 
+using namespace sim;
 using namespace sim::nnet;
+using namespace sim::ga;
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::nnet::Input
@@ -52,7 +54,7 @@ CRAG_ROSTER_OBJECT_DEFINE(
 	2000,
 	Pool::Call<& Neuron::Tick>(Engine::GetTickRoster()));
 
-Neuron::Neuron(ga::GenomeReader & genome_reader) noexcept
+Neuron::Neuron(GenomeReader & genome_reader) noexcept
 	: sigmoid(genome_reader.Read(), genome_reader.Read(), genome_reader.Read(), genome_reader.Read())
 {
 }
@@ -71,7 +73,7 @@ void Neuron::Tick() noexcept
 ////////////////////////////////////////////////////////////////////////////////
 // sim::nnet::Layer
 
-Layer::Layer(ga::GenomeReader & genome_reader, int num_inputs, int num_neurons) noexcept
+Layer::Layer(GenomeReader & genome_reader, int num_inputs, int num_neurons) noexcept
 {
 	neurons.reserve(num_neurons);
 	for (auto count = num_neurons; count; -- count)
@@ -139,9 +141,9 @@ void Layer::ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept
 ////////////////////////////////////////////////////////////////////////////////
 // sim::nnet::Network
 
-Network::Network(ga::Genome & genome, std::vector<int> const & num_layer_nodes) noexcept
+Network::Network(Genome & genome, std::vector<int> const & num_layer_nodes) noexcept
 {
-	ga::GenomeReader genome_reader(genome);
+	GenomeReader genome_reader(genome);
 
 	auto num_layers = num_layer_nodes.size() - 1;
 	layers.reserve(num_layers);

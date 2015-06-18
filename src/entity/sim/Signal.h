@@ -24,8 +24,7 @@ namespace sim
 	public:
 		// functions
 		Receiver(SignalType v = 0);
-
-		virtual ~Receiver() noexcept = default;
+		virtual ~Receiver() noexcept;
 
 		SignalType GetSignal() const noexcept;
 	private:
@@ -42,7 +41,7 @@ namespace sim
 	public:
 		// functions
 		Transmitter(Receiver * r = nullptr) noexcept;
-		virtual ~Transmitter() noexcept = default;
+		virtual ~Transmitter() noexcept;
 
 		void SetReceiver(Receiver * r) noexcept;
 		Receiver * GetReceiver() const noexcept;
